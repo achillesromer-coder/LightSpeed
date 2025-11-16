@@ -1,0 +1,23 @@
+app:
+  intro: "_____ Welcome to Römer / EMASSC.  Select a project or create a new workspace."
+  help:  "_____ Use PageUp/PageDown to switch Z floors. Drag nodes to arrange flow. Right panel edits metadata."
+  empty_workspace: "No projects yet. Click New Project to begin."
+  save_success: "Saved."
+  save_error: "_____ Failed to save (check permissions / disk)."
+
+wizard:
+  title: "First-Run Setup"
+  theme_q: "Choose theme (light/dark)"
+  users_q: "Add your initial team members now or later in Settings."
+  done: "Setup complete."
+
+zmap:
+  add_node_label: "Add Node"
+  node_tooltip: "Drag to reposition. Double-click to edit label."
+  inspector_title: "Inspector"
+  draft_hint: "Drafts are visible to permitted roles only."
+  portal_hint: "Set portal target floor to link layers."
+
+errors:
+  invalid_value: "_____ Invalid value for {field}. Expected {hint}."
+  permission_denied: "Permission denied for this action."

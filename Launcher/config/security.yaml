@@ -1,0 +1,23 @@
+export_controls:
+  published_export:
+    allowed_roles: [Ops,Designer,Engineer,Scientist,IT,Admin,Founder]
+  draft_export:
+    allowed_roles: [Admin,Founder]
+  dual_approval_roles: [Admin,Founder,IT]
+
+redaction_profiles:
+  finance:  ["mask_amounts_over","remove_account_ids"]
+  legal:    ["mask_pii","remove_contract_ids"]
+  research: ["remove_raw_subject_ids","mask_location_precision"]
+
+data_residency:
+  region: "AU-primary"
+  backups:
+    cadence: "daily"
+    retain: "30d"
+    encryption_at_rest: "AES-256"
+    encryption_in_transit: "TLS1.3"
+
+incident_response:
+  contact: "Notice Board → Incident"
+  sla_hours: 4

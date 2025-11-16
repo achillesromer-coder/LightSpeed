@@ -1,0 +1,9 @@
+{
+  "theme": "dark",
+  "ui_scale": 1.0,
+  "autosave_interval": 900,
+  "tabs_on_launch": ["Z"],
+  "gfx_profile": "Performance",
+  "zmap": { "snap": 32, "max_nodes": 500, "max_edges": 1000 },
+  "telemetry_interval_ms": 500
+}

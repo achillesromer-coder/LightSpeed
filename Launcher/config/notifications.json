@@ -1,0 +1,9 @@
+{
+  "channels": ["in-app","email","slack"],
+  "digest": {
+    "daily":   ["maintainers","owners"],
+    "weekly":  ["contributors","viewers"],
+    "monthly": ["execs","investors_manual_only"]
+  },
+  "investor_updates_auto": false
+}

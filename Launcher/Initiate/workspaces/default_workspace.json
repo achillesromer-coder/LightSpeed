@@ -1,0 +1,17 @@
+{
+  "workspace_name": "LightSpeed",
+  "projects": [
+    {
+      "name": "Layer N",
+      "created_ts": 1755753018.7176824,
+      "notes": ""
+    }
+  ],
+  "assets": [],
+  "apis": [],
+  "settings": {
+    "theme": "auto-dark",
+    "autosave_interval": 900,
+    "plot_samples": 200
+  }
+}

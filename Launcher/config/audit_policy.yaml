@@ -1,0 +1,26 @@
+events:
+  - create
+  - edit
+  - move
+  - comment
+  - review_request
+  - publish
+  - permission_change
+  - export
+  - import
+  - link
+  - delete
+  - workflow_transition
+
+retention:
+  mode: ongoing
+  cleanup_mode: "closet"          # interactive clean; tick items to keep
+  export_formats: [jsonl, csv]
+
+entry_fields:
+  base: [id, ts, actor_id, actor_role, project_id, item_ref, action, summary]
+  optional_by_type:
+    publish: [checksum, reviewers, approvals]
+    export:  [destination, format, bytes]
+    edit:    [diff_hash, field_names]
+    link:    [from_ref, to_ref, relation]
