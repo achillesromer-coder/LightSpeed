@@ -1,0 +1,1060 @@
+<div id="gmatWrap"></div>
+<script>
+(function () {
+  var root = document.getElementById("gmatWrap");
+  if (!root) return;
+
+  var NS = "gmatx";
+  var STORE_KEY = "ach_gmat_history_v2";
+  var PARAM_KEY = "ach_gmat_params_v2";
+  var toastTimer = null;
+
+  var TARGET_DB = {
+    "16Psyche": { aAU: 2.923, e: 0.140, inc: 3.10, type: "M-Type Asteroid", transfer: "Main Belt Transfer" },
+    "1Ceres": { aAU: 2.767, e: 0.076, inc: 10.59, type: "Dwarf Planet", transfer: "Main Belt Transfer" },
+    "433Eros": { aAU: 1.458, e: 0.223, inc: 10.83, type: "NEA", transfer: "Near-Earth Asteroid" },
+    "Mars": { aAU: 1.524, e: 0.093, inc: 1.85, type: "Planet", transfer: "Interplanetary Transfer" },
+    "Moon": { aAU: 1.003, e: 0.055, inc: 5.15, type: "Natural Satellite", transfer: "Cislunar Transfer" },
+    "Jupiter": { aAU: 5.204, e: 0.049, inc: 1.30, type: "Planet", transfer: "Outer Planet Transfer" },
+    "L2": { aAU: 1.010, e: 0.000, inc: 0.0, type: "Lagrange Point", transfer: "Halo / Libration Transfer" },
+    "Custom": { aAU: 2.000, e: 0.100, inc: 5.0, type: "Custom Body", transfer: "Custom Transfer" }
+  };
+
+  var SAMPLE_SCRIPTS = [
+    { name: "Earth_to_Mars_Hohmann.script", cat: "transfer", url: "https://drive.google.com/drive/folders/1fpLX8XvQxQgj2GMbpyX-mZ6RKmjvULnf" },
+    { name: "LEO_to_GEO_Raise.script", cat: "transfer", url: "https://drive.google.com/drive/folders/1fpLX8XvQxQgj2GMbpyX-mZ6RKmjvULnf" },
+    { name: "Psyche_Rendezvous_Reference.script", cat: "transfer", url: "https://drive.google.com/drive/folders/1fpLX8XvQxQgj2GMbpyX-mZ6RKmjvULnf" },
+    { name: "Lunar_Capture_Targeting.script", cat: "lunar", url: "https://drive.google.com/drive/folders/1fpLX8XvQxQgj2GMbpyX-mZ6RKmjvULnf" },
+    { name: "Mars_Capture_Aerobrake_Study.script", cat: "mars", url: "https://drive.google.com/drive/folders/1fpLX8XvQxQgj2GMbpyX-mZ6RKmjvULnf" },
+    { name: "EMFF_Formation_Prototype.script", cat: "electric", url: "https://drive.google.com/drive/folders/1fpLX8XvQxQgj2GMbpyX-mZ6RKmjvULnf" },
+    { name: "Ion_Transfer_Generic.script", cat: "electric", url: "https://drive.google.com/drive/folders/1fpLX8XvQxQgj2GMbpyX-mZ6RKmjvULnf" },
+    { name: "Attitude_VNB_Example.script", cat: "attitude", url: "https://drive.google.com/drive/folders/1fpLX8XvQxQgj2GMbpyX-mZ6RKmjvULnf" },
+    { name: "Spin_Stabilized_Basic.script", cat: "attitude", url: "https://drive.google.com/drive/folders/1fpLX8XvQxQgj2GMbpyX-mZ6RKmjvULnf" },
+    { name: "Tutorial_Orbit_Propagation.script", cat: "tutorial", url: "https://drive.google.com/drive/folders/1fpLX8XvQxQgj2GMbpyX-mZ6RKmjvULnf" },
+    { name: "Tutorial_Targeter_DifferentialCorrector.script", cat: "tutorial", url: "https://drive.google.com/drive/folders/1fpLX8XvQxQgj2GMbpyX-mZ6RKmjvULnf" }
+  ];
+
+  var TEMPLATE_SET = [
+    {
+      name: "LEO Parking Orbit",
+      desc: "Earth departure baseline with near-circular LEO initial conditions and chemical propulsion.",
+      apply: function () {
+        setValue("g_target", "Mars");
+        setValue("g_type", "rendezvous");
+        setValue("g_prop", "chemical_biprop");
+        setValue("g_mass", "2500");
+        setValue("g_isp", "320");
+        setValue("g_thrust", "445");
+        setValue("g_fuel", "800");
+        setValue("g_sma", "6978");
+        setValue("g_ecc", "0.001");
+        setValue("g_inc", "28.5");
+      }
+    },
+    {
+      name: "Electric Deep Space",
+      desc: "High-Isp electric mission profile for asteroid rendezvous and long-duration cruise.",
+      apply: function () {
+        setValue("g_target", "16Psyche");
+        setValue("g_type", "rendezvous");
+        setValue("g_prop", "electric_ion");
+        setValue("g_mass", "3200");
+        setValue("g_isp", "2200");
+        setValue("g_thrust", "0.32");
+        setValue("g_fuel", "1100");
+        setValue("g_sma", "6978");
+        setValue("g_ecc", "0.003");
+        setValue("g_inc", "28.5");
+      }
+    },
+    {
+      name: "Sample Return",
+      desc: "Outbound, operations, departure, and Earth-return baseline for small-body retrieval studies.",
+      apply: function () {
+        setValue("g_target", "433Eros");
+        setValue("g_type", "return");
+        setValue("g_prop", "hybrid");
+        setValue("g_mass", "2800");
+        setValue("g_isp", "650");
+        setValue("g_thrust", "25");
+        setValue("g_fuel", "950");
+      }
+    },
+    {
+      name: "L2 Relay Platform",
+      desc: "Sun-Earth L2 insertion concept with low-thrust stationkeeping assumptions.",
+      apply: function () {
+        setValue("g_target", "L2");
+        setValue("g_type", "constellation");
+        setValue("g_prop", "electric_hall");
+        setValue("g_mass", "1800");
+        setValue("g_isp", "1500");
+        setValue("g_thrust", "0.18");
+        setValue("g_fuel", "450");
+      }
+    },
+    {
+      name: "EMFF Formation Flight",
+      desc: "Formation-flight mission with EMFF force model active and synchronized control assumptions.",
+      apply: function () {
+        setValue("g_target", "Moon");
+        setValue("g_type", "formation");
+        setValue("g_prop", "electric_hall");
+        setValue("g_mass", "1400");
+        setValue("g_isp", "1600");
+        setValue("g_thrust", "0.12");
+        setValue("g_fuel", "320");
+        setCheckbox("g_emff", true);
+      }
+    },
+    {
+      name: "Mars Cargo Transfer",
+      desc: "Cargo-class Mars transfer using chemical departure with long cruise propagation.",
+      apply: function () {
+        setValue("g_target", "Mars");
+        setValue("g_type", "flyby");
+        setValue("g_prop", "chemical_biprop");
+        setValue("g_mass", "6500");
+        setValue("g_isp", "355");
+        setValue("g_thrust", "890");
+        setValue("g_fuel", "2700");
+      }
+    }
+  ];
+
+  function style() {
+    return `
+      #gmatWrap,#gmatWrap *{margin:0;padding:0;box-sizing:border-box}
+      #gmatWrap{font-family:Inter,system-ui,sans-serif;background:linear-gradient(135deg,#020818,#0a1628,#0d1f3c);color:#fff;width:100%;position:relative;border:1px solid #0a2040;border-radius:14px;overflow:hidden}
+      .gmat-hdr{background:rgba(0,5,20,.97);padding:16px 32px;border-bottom:2px solid #00d4ff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:100}
+      .gmat-brand{display:flex;align-items:center;gap:12px}
+      .gmat-logo{font-size:24px}
+      .gmat-title{font-size:18px;font-weight:700;color:#00d4ff;letter-spacing:3px;text-transform:uppercase}
+      .gmat-sub{font-size:9px;color:#456;letter-spacing:2px;margin-top:2px}
+      .gmat-nav{display:flex;gap:6px;flex-wrap:wrap}
+      .gmat-nav a{color:#556;text-decoration:none;font-size:10px;padding:5px 10px;border:1px solid #1a2a4a;border-radius:3px;transition:.3s;letter-spacing:1px;text-transform:uppercase}
+      .gmat-nav a:hover{color:#00d4ff;border-color:#00d4ff;background:rgba(0,212,255,.06)}
+      .gmat-status-bar{background:rgba(0,212,255,.04);border-bottom:1px solid #0a2040;padding:6px 32px;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+      .gmat-status-item{display:flex;align-items:center;gap:6px;font-size:10px;letter-spacing:1px}
+      .gmat-dot{width:7px;height:7px;border-radius:50%;animation:gmatPulse 2s infinite}
+      .gmat-dot.green{background:#00ff88;box-shadow:0 0 6px #00ff88}
+      .gmat-dot.cyan{background:#00d4ff;box-shadow:0 0 6px #00d4ff}
+      .gmat-dot.amber{background:#ffaa00;box-shadow:0 0 6px #ffaa00}
+      @keyframes gmatPulse{0%,100%{opacity:1}50%{opacity:.4}}
+      .gmat-body{padding:24px 32px;display:grid;grid-template-columns:280px 1fr;gap:24px;min-height:760px}
+      .gmat-sidebar{display:flex;flex-direction:column;gap:12px}
+      .gmat-section{background:rgba(0,212,255,.03);border:1px solid #0a2040;border-radius:8px;padding:16px}
+      .gmat-section-title{font-size:10px;font-weight:700;color:#00d4ff;letter-spacing:2px;margin-bottom:12px;text-transform:uppercase}
+      .gmat-field{margin-bottom:10px}
+      .gmat-label{font-size:10px;color:#557;margin-bottom:3px;letter-spacing:.5px;display:block}
+      .gmat-input{width:100%;background:rgba(0,212,255,.05);border:1px solid #0d2040;border-radius:4px;color:#cde;padding:7px 10px;font-size:12px;outline:none;transition:.2s;font-family:inherit}
+      .gmat-input:focus{border-color:#00d4ff;background:rgba(0,212,255,.08)}
+      .gmat-input.gmat-err{border-color:#ff4455!important;background:rgba(255,68,85,.08)!important}
+      .gmat-select{width:100%;background:#020c1a;border:1px solid #0d2040;border-radius:4px;color:#cde;padding:7px 10px;font-size:12px;outline:none;cursor:pointer;font-family:inherit}
+      .gmat-btn{width:100%;padding:9px;border-radius:4px;border:none;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:1.5px;transition:.3s;margin-bottom:6px;text-transform:uppercase;font-family:inherit}
+      .gmat-btn-primary{background:linear-gradient(135deg,#00d4ff,#0099cc);color:#000}
+      .gmat-btn-primary:hover{background:linear-gradient(135deg,#00eeff,#00b8e6);transform:translateY(-1px)}
+      .gmat-btn-secondary{background:rgba(0,212,255,.08);color:#00d4ff;border:1px solid rgba(0,212,255,.3)}
+      .gmat-btn-secondary:hover{background:rgba(0,212,255,.16)}
+      .gmat-btn-warning{background:rgba(255,170,0,.1);color:#ffaa00;border:1px solid rgba(255,170,0,.3)}
+      .gmat-btn-warning:hover{background:rgba(255,170,0,.2)}
+      .gmat-btn-danger{background:rgba(255,100,50,.1);color:#ff6432;border:1px solid rgba(255,100,50,.3)}
+      .gmat-btn-danger:hover{background:rgba(255,100,50,.2)}
+      .gmat-main{display:flex;flex-direction:column;gap:16px;min-width:0}
+      .gmat-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+      .gmat-metric{background:rgba(0,212,255,.04);border:1px solid #0a2040;border-radius:8px;padding:14px;text-align:center}
+      .gmat-metric-val{font-size:22px;font-weight:700;color:#00d4ff;font-family:monospace;letter-spacing:1px}
+      .gmat-metric-unit{font-size:9px;color:#456;margin:2px 0;letter-spacing:1px;text-transform:uppercase}
+      .gmat-metric-lbl{font-size:10px;color:#667}
+      .gmat-phase-track{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+      .gmat-phase{background:rgba(0,212,255,.04);border:1px solid #0a2040;border-radius:6px;padding:10px;text-align:center;transition:.3s}
+      .gmat-phase.active{border-color:#00d4ff;background:rgba(0,212,255,.1)}
+      .gmat-phase.complete{border-color:#00ff88;background:rgba(0,255,136,.05)}
+      .gmat-phase-icon{font-size:18px;margin-bottom:4px}
+      .gmat-phase-name{font-size:9px;color:#667;letter-spacing:.5px}
+      .gmat-phase-dv{font-size:11px;color:#00d4ff;font-family:monospace;margin-top:2px}
+      .gmat-tabs{display:flex;border-bottom:1px solid #0a2040;flex-wrap:wrap}
+      .gmat-tab{padding:8px 13px;font-size:10px;cursor:pointer;color:#556;border:none;background:none;letter-spacing:1px;text-transform:uppercase;transition:.2s;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:inherit}
+      .gmat-tab.active{color:#00d4ff;border-bottom-color:#00d4ff}
+      .gmat-panel{display:none;background:rgba(0,0,0,.6);border:1px solid #0a2040;border-top:none;border-radius:0 0 8px 8px;padding:16px}
+      .gmat-panel.active{display:block}
+      .gmat-terminal{background:#000a1a;border:1px solid #0a2040;border-radius:6px;padding:14px;font-family:'Courier New',monospace;font-size:11px;line-height:1.7;min-height:300px;max-height:540px;overflow-y:auto}
+      .gmat-terminal pre{color:#00ff66;white-space:pre-wrap;word-break:break-word}
+      .gmat-terminal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px}
+      .gmat-terminal-title{font-size:10px;color:#00d4ff;letter-spacing:2px}
+      .gmat-terminal-status{font-size:9px;color:#456;letter-spacing:1px}
+      .gmat-progress{height:3px;background:#0a2040;border-radius:2px;overflow:hidden;margin-top:8px}
+      .gmat-progress-bar{height:100%;background:linear-gradient(90deg,#00d4ff,#00ff88);width:0%;transition:width .5s;border-radius:2px}
+      .gmat-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+      .gmat-3col{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+      .gmat-force-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+      .gmat-force-item{display:flex;align-items:center;gap:8px;font-size:11px;color:#889;padding:6px;border:1px solid #0a2040;border-radius:4px;cursor:pointer}
+      .gmat-force-item:hover{border-color:#00d4ff;color:#00d4ff}
+      .gmat-checkbox{width:14px;height:14px;accent-color:#00d4ff}
+      .gmat-info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+      .gmat-info-card{background:rgba(0,212,255,.03);border:1px solid #0a2040;border-radius:6px;padding:12px}
+      .gmat-info-title{font-size:10px;color:#00d4ff;letter-spacing:1px;margin-bottom:6px}
+      .gmat-info-val{font-size:13px;font-family:monospace;color:#acd}
+      .gmat-info-sub{font-size:9px;color:#556;margin-top:2px}
+      .gmat-tpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+      .gmat-tpl{background:rgba(0,212,255,.04);border:1px solid #0a2040;border-radius:6px;padding:12px;cursor:pointer;transition:.2s}
+      .gmat-tpl:hover{border-color:#00d4ff;background:rgba(0,212,255,.1);transform:translateY(-2px)}
+      .gmat-tpl-name{font-size:11px;font-weight:700;color:#00d4ff;margin-bottom:4px}
+      .gmat-tpl-desc{font-size:9px;color:#556;line-height:1.5}
+      .gmat-samples-filter{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+      .gmat-filter-btn{padding:4px 12px;font-size:9px;border-radius:3px;border:1px solid #0a2040;background:none;color:#556;cursor:pointer;letter-spacing:1px;text-transform:uppercase;font-family:inherit;transition:.2s}
+      .gmat-filter-btn.active,.gmat-filter-btn:hover{border-color:#00d4ff;color:#00d4ff;background:rgba(0,212,255,.06)}
+      .gmat-samples-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-height:400px;overflow-y:auto}
+      .gmat-sample-item{background:rgba(0,212,255,.03);border:1px solid #0a2040;border-radius:5px;padding:10px;cursor:pointer;transition:.2s;text-decoration:none;display:block}
+      .gmat-sample-item:hover{border-color:#00d4ff;background:rgba(0,212,255,.08)}
+      .gmat-sample-name{font-size:10px;color:#00d4ff;font-weight:700;margin-bottom:3px;word-break:break-word}
+      .gmat-sample-cat{font-size:9px;color:#445;letter-spacing:1px;text-transform:uppercase}
+      .gmat-history-list{display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto}
+      .gmat-history-item{background:rgba(0,212,255,.03);border:1px solid #0a2040;border-radius:6px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+      .gmat-history-item:hover{border-color:#00d4ff}
+      .gmat-history-name{font-size:12px;color:#00d4ff;font-weight:700}
+      .gmat-history-meta{font-size:10px;color:#557;font-family:monospace;margin-top:2px}
+      .gmat-history-btns{display:flex;gap:6px}
+      .gmat-hbtn{padding:4px 10px;font-size:9px;border-radius:3px;border:none;cursor:pointer;letter-spacing:1px;text-transform:uppercase;font-family:inherit}
+      .gmat-hbtn-restore{background:rgba(0,212,255,.1);color:#00d4ff;border:1px solid rgba(0,212,255,.3)}
+      .gmat-hbtn-del{background:rgba(255,100,50,.1);color:#ff6432;border:1px solid rgba(255,100,50,.3)}
+      .gmat-history-empty{font-size:11px;color:#445;text-align:center;padding:40px 0;letter-spacing:1px}
+      .gmat-ref-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+      .gmat-ref-card{background:rgba(0,212,255,.03);border:1px solid #0a2040;border-radius:6px;padding:12px}
+      .gmat-ref-h{font-size:10px;color:#00d4ff;letter-spacing:1px;margin-bottom:6px;text-transform:uppercase}
+      .gmat-ref-body{font-size:10px;color:#89a;line-height:1.7}
+      .gmat-toast{position:fixed;bottom:24px;right:24px;background:rgba(0,10,24,.95);border:1px solid rgba(0,212,255,.3);border-radius:6px;padding:10px 18px;font-size:11px;color:#00d4ff;letter-spacing:.5px;z-index:99999;opacity:0;transition:opacity .3s;pointer-events:none;max-width:320px;line-height:1.6;font-family:Inter,system-ui,sans-serif}
+      .gmat-toast.show{opacity:1}
+      .gmat-toast.err{border-color:rgba(255,68,68,.4);color:#ff6666}
+      .gmat-toast.ok{border-color:rgba(0,255,136,.3);color:#00ff88}
+      .gmat-license-bar{background:rgba(0,5,20,.97);border-top:1px solid rgba(0,212,255,.12);padding:8px 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+      .gmat-license-text{font-size:9px;color:#445;letter-spacing:.5px;line-height:1.7}
+      .gmat-license-text strong{color:#00d4ff}
+      .gmat-utc{font-size:9px;color:#334;font-family:monospace;letter-spacing:1px}
+      @media(max-width:800px){
+        .gmat-body{grid-template-columns:1fr;padding:14px}
+        .gmat-hdr{padding:12px 14px}
+        .gmat-status-bar{padding:6px 14px}
+        .gmat-metrics{grid-template-columns:repeat(2,1fr)}
+        .gmat-phase-track{grid-template-columns:repeat(3,1fr)}
+        .gmat-tpl-grid,.gmat-samples-grid,.gmat-info-grid,.gmat-3col,.gmat-ref-grid{grid-template-columns:repeat(2,1fr)}
+      }
+      @media(max-width:480px){
+        .gmat-metrics{grid-template-columns:1fr 1fr}
+        .gmat-phase-track{grid-template-columns:repeat(2,1fr)}
+        .gmat-tpl-grid,.gmat-samples-grid,.gmat-info-grid,.gmat-ref-grid{grid-template-columns:1fr}
+      }
+    `;
+  }
+
+  function html() {
+    return `
+      <style>${style()}</style>
+      <div class="gmat-toast" id="g_toast"></div>
+
+      <div class="gmat-hdr">
+        <div class="gmat-brand">
+          <div class="gmat-logo">🛸</div>
+          <div>
+            <div class="gmat-title">GMAT Interface</div>
+            <div class="gmat-sub">General Mission Analysis Tool · R2025a · Achilles Protocol</div>
+          </div>
+        </div>
+        <nav class="gmat-nav">
+          <a href="/library">LIBRARY</a>
+          <a href="/w1/data">W1/DATA</a>
+          <a href="/calculators">CALCULATORS</a>
+          <a href="/sims">SIMS</a>
+        </nav>
+      </div>
+
+      <div class="gmat-status-bar">
+        <div class="gmat-status-item"><div class="gmat-dot green"></div><span style="color:#00ff88">GMAT ENGINE READY</span></div>
+        <div class="gmat-status-item"><div class="gmat-dot cyan"></div><span style="color:#00d4ff">ACHILLES PROTOCOL LINKED</span></div>
+        <div class="gmat-status-item"><div class="gmat-dot amber"></div><span style="color:#ffaa00">SPICE DE440 KERNELS</span></div>
+        <div class="gmat-status-item"><div class="gmat-dot green"></div><span style="color:#00ff88">R2025A VALIDATED</span></div>
+      </div>
+
+      <div class="gmat-body">
+        <div class="gmat-sidebar">
+
+          <div class="gmat-section">
+            <div class="gmat-section-title">⚙ Mission Parameters</div>
+            <div class="gmat-field"><label class="gmat-label" for="g_name">Mission Name</label><input class="gmat-input" id="g_name" value="ROMER_ACHILLES_001"/></div>
+            <div class="gmat-field"><label class="gmat-label" for="g_target">Target Body</label>
+              <select class="gmat-select" id="g_target">
+                <option value="16Psyche">16 Psyche (M-Type)</option>
+                <option value="1Ceres">1 Ceres (Dwarf Planet)</option>
+                <option value="433Eros">433 Eros (NEA)</option>
+                <option value="Mars">Mars</option>
+                <option value="Moon">Moon (Luna)</option>
+                <option value="Jupiter">Jupiter</option>
+                <option value="L2">Sun-Earth L2</option>
+                <option value="Custom">Custom Body</option>
+              </select>
+            </div>
+            <div class="gmat-field"><label class="gmat-label" for="g_epoch">Launch Epoch (UTC)</label><input class="gmat-input" id="g_epoch" value="2027 Jan 15 12:00:00.000"/></div>
+            <div class="gmat-field"><label class="gmat-label" for="g_type">Mission Type</label>
+              <select class="gmat-select" id="g_type">
+                <option value="rendezvous">Rendezvous and Orbit</option>
+                <option value="flyby">Flyby</option>
+                <option value="return">Sample Return</option>
+                <option value="formation">Formation Flight EMFF</option>
+                <option value="constellation">Constellation Deploy</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="gmat-section">
+            <div class="gmat-section-title">🔥 Propulsion</div>
+            <div class="gmat-field"><label class="gmat-label" for="g_prop">System Type</label>
+              <select class="gmat-select" id="g_prop">
+                <option value="chemical_biprop">Chemical Bi-prop</option>
+                <option value="chemical_monoprop">Chemical Mono-prop</option>
+                <option value="electric_ion">Electric Ion Thruster</option>
+                <option value="electric_hall">Electric Hall Effect</option>
+                <option value="hybrid">Hybrid Chem+Electric</option>
+              </select>
+            </div>
+            <div class="gmat-2col">
+              <div class="gmat-field"><label class="gmat-label" for="g_mass">Wet Mass (kg)</label><input class="gmat-input" id="g_mass" type="number" value="2500" min="1"/></div>
+              <div class="gmat-field"><label class="gmat-label" for="g_isp">Isp (s)</label><input class="gmat-input" id="g_isp" type="number" value="320" min="1"/></div>
+            </div>
+            <div class="gmat-2col">
+              <div class="gmat-field"><label class="gmat-label" for="g_thrust">Thrust (N)</label><input class="gmat-input" id="g_thrust" type="number" value="445" min="0.001" step="0.001"/></div>
+              <div class="gmat-field"><label class="gmat-label" for="g_fuel">Fuel Mass (kg)</label><input class="gmat-input" id="g_fuel" type="number" value="800" min="1"/></div>
+            </div>
+          </div>
+
+          <div class="gmat-section">
+            <div class="gmat-section-title">🪐 Orbit Config (Keplerian)</div>
+            <div class="gmat-2col">
+              <div class="gmat-field"><label class="gmat-label" for="g_sma">SMA (km)</label><input class="gmat-input" id="g_sma" type="number" value="6978" min="6371"/></div>
+              <div class="gmat-field"><label class="gmat-label" for="g_ecc">Eccentricity</label><input class="gmat-input" id="g_ecc" type="number" value="0.0" step="0.001" min="0" max="0.9999"/></div>
+            </div>
+            <div class="gmat-2col">
+              <div class="gmat-field"><label class="gmat-label" for="g_inc">Inclination (°)</label><input class="gmat-input" id="g_inc" type="number" value="28.5" min="0" max="180"/></div>
+              <div class="gmat-field"><label class="gmat-label" for="g_raan">RAAN (°)</label><input class="gmat-input" id="g_raan" type="number" value="0.0" min="0" max="360"/></div>
+            </div>
+            <div class="gmat-2col">
+              <div class="gmat-field"><label class="gmat-label" for="g_aop">AoP (°)</label><input class="gmat-input" id="g_aop" type="number" value="0.0" min="0" max="360"/></div>
+              <div class="gmat-field"><label class="gmat-label" for="g_ta">True Anomaly (°)</label><input class="gmat-input" id="g_ta" type="number" value="0.0" min="0" max="360"/></div>
+            </div>
+          </div>
+
+          <div class="gmat-section">
+            <div class="gmat-section-title">📡 Propagator</div>
+            <div class="gmat-field"><label class="gmat-label" for="g_integ">Integrator</label>
+              <select class="gmat-select" id="g_integ">
+                <option value="RungeKutta89">RungeKutta89 (High Accuracy)</option>
+                <option value="RungeKutta45">RungeKutta45</option>
+                <option value="RungeKutta4">RungeKutta4</option>
+                <option value="DormandPrince45">Dormand-Prince 45</option>
+                <option value="AdamsBashforthMoulton">Adams-Bashforth-Moulton</option>
+              </select>
+            </div>
+            <div class="gmat-2col">
+              <div class="gmat-field"><label class="gmat-label" for="g_step">Init Step (s)</label><input class="gmat-input" id="g_step" type="number" value="60" min="1"/></div>
+              <div class="gmat-field"><label class="gmat-label" for="g_maxstep">Max Step (s)</label><input class="gmat-input" id="g_maxstep" type="number" value="86400" min="60"/></div>
+            </div>
+            <label class="gmat-label" style="margin:8px 0 6px;display:block">Force Models</label>
+            <div class="gmat-force-grid">
+              <div class="gmat-force-item"><input class="gmat-checkbox" type="checkbox" id="g_grav" checked/><label for="g_grav">Earth Gravity JGM3</label></div>
+              <div class="gmat-force-item"><input class="gmat-checkbox" type="checkbox" id="g_drag" checked/><label for="g_drag">Atm Drag</label></div>
+              <div class="gmat-force-item"><input class="gmat-checkbox" type="checkbox" id="g_srp" checked/><label for="g_srp">Solar Rad Pressure</label></div>
+              <div class="gmat-force-item"><input class="gmat-checkbox" type="checkbox" id="g_nbody" checked/><label for="g_nbody">N-Body Sun/Moon</label></div>
+              <div class="gmat-force-item"><input class="gmat-checkbox" type="checkbox" id="g_reldyn"/><label for="g_reldyn">Relativistic Corr</label></div>
+              <div class="gmat-force-item"><input class="gmat-checkbox" type="checkbox" id="g_emff"/><label for="g_emff">EMFF Forces</label></div>
+            </div>
+          </div>
+
+          <div class="gmat-section">
+            <div class="gmat-section-title">🎯 B-Plane Targeting</div>
+            <div class="gmat-2col">
+              <div class="gmat-field"><label class="gmat-label" for="g_bdott">BdotT (km)</label><input class="gmat-input" id="g_bdott" value="0.0"/></div>
+              <div class="gmat-field"><label class="gmat-label" for="g_bdotr">BdotR (km)</label><input class="gmat-input" id="g_bdotr" value="0.0"/></div>
+            </div>
+            <div class="gmat-field"><label class="gmat-label" for="g_att">Attitude Mode</label>
+              <select class="gmat-select" id="g_att">
+                <option value="NadirPointing">Nadir Pointing</option>
+                <option value="VNB">VNB Velocity-Normal-Binormal</option>
+                <option value="InertialFixed">Inertial Fixed</option>
+                <option value="SpinStabilized">Spin Stabilized</option>
+                <option value="BodyFixed">Body Fixed</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="gmat-section">
+            <div class="gmat-section-title">▶ Script Actions</div>
+            <button class="gmat-btn gmat-btn-primary" id="btn_generate">GENERATE SCRIPT</button>
+            <button class="gmat-btn gmat-btn-secondary" id="btn_compute">COMPUTE DV</button>
+            <button class="gmat-btn gmat-btn-secondary" id="btn_copy">COPY TO CLIPBOARD</button>
+            <button class="gmat-btn gmat-btn-secondary" id="btn_export">EXPORT .SCRIPT</button>
+            <button class="gmat-btn gmat-btn-secondary" id="btn_print">PRINT / PDF</button>
+            <button class="gmat-btn gmat-btn-warning" id="btn_share">SHARE MISSION URL</button>
+            <button class="gmat-btn gmat-btn-danger" id="btn_send">SEND TO W1/DATA</button>
+          </div>
+
+        </div>
+
+        <div class="gmat-main">
+          <div class="gmat-metrics">
+            <div class="gmat-metric"><div class="gmat-metric-val" id="g_dv">--</div><div class="gmat-metric-unit">m/s</div><div class="gmat-metric-lbl">Dv Budget</div></div>
+            <div class="gmat-metric"><div class="gmat-metric-val" id="g_tof">--</div><div class="gmat-metric-unit">days</div><div class="gmat-metric-lbl">TOF</div></div>
+            <div class="gmat-metric"><div class="gmat-metric-val" id="g_mfinal">--</div><div class="gmat-metric-unit">kg</div><div class="gmat-metric-lbl">Final Mass</div></div>
+            <div class="gmat-metric"><div class="gmat-metric-val" id="g_c3">--</div><div class="gmat-metric-unit">km²/s²</div><div class="gmat-metric-lbl">C3 Energy</div></div>
+          </div>
+
+          <div class="gmat-phase-track">
+            <div class="gmat-phase" id="ph0"><div class="gmat-phase-icon">🌍</div><div class="gmat-phase-name">Earth Departure</div><div class="gmat-phase-dv" id="ph0_dv">--</div></div>
+            <div class="gmat-phase" id="ph1"><div class="gmat-phase-icon">🛸</div><div class="gmat-phase-name">Deep Space</div><div class="gmat-phase-dv" id="ph1_dv">--</div></div>
+            <div class="gmat-phase" id="ph2"><div class="gmat-phase-icon">🎯</div><div class="gmat-phase-name">Approach</div><div class="gmat-phase-dv" id="ph2_dv">--</div></div>
+            <div class="gmat-phase" id="ph3"><div class="gmat-phase-icon">⛏</div><div class="gmat-phase-name">Operations</div><div class="gmat-phase-dv" id="ph3_dv">--</div></div>
+            <div class="gmat-phase" id="ph4"><div class="gmat-phase-icon">🔄</div><div class="gmat-phase-name">Return</div><div class="gmat-phase-dv" id="ph4_dv">--</div></div>
+          </div>
+
+          <div class="gmat-tabs">
+            <button class="gmat-tab active" data-tab="script">Script Output</button>
+            <button class="gmat-tab" data-tab="analysis">Mission Analysis</button>
+            <button class="gmat-tab" data-tab="samples">Sample Scripts</button>
+            <button class="gmat-tab" data-tab="templates">Quick Templates</button>
+            <button class="gmat-tab" data-tab="reference">R2025a Reference</button>
+            <button class="gmat-tab" data-tab="history">History</button>
+          </div>
+
+          <div class="gmat-panel active" id="panel_script">
+            <div class="gmat-terminal">
+              <div class="gmat-terminal-hdr">
+                <span class="gmat-terminal-title">GMAT Script Output</span>
+                <span class="gmat-terminal-status" id="g_status">AWAITING GENERATION</span>
+              </div>
+              <pre id="g_output">% ROMER INDUSTRIES — ACHILLES PROTOCOL
+% GMAT Script Generator v3.0 · R2025a
+%
+% Configure mission parameters in the sidebar
+% and click GENERATE SCRIPT to produce a
+% GMAT R2025a-compatible mission script.
+%
+% [Awaiting generation...]</pre>
+            </div>
+            <div class="gmat-progress"><div class="gmat-progress-bar" id="g_prog"></div></div>
+          </div>
+
+          <div class="gmat-panel" id="panel_analysis">
+            <div class="gmat-info-grid">
+              <div class="gmat-info-card"><div class="gmat-info-title">NEXT LAUNCH WINDOW</div><div class="gmat-info-val" id="a_window">--</div><div class="gmat-info-sub" id="a_window_sub">Run compute to calculate</div></div>
+              <div class="gmat-info-card"><div class="gmat-info-title">TRANSFER TYPE</div><div class="gmat-info-val" id="a_transfer">--</div><div class="gmat-info-sub">Trajectory class</div></div>
+              <div class="gmat-info-card"><div class="gmat-info-title">DV BREAKDOWN</div><div class="gmat-info-val" id="a_dvbreak">--</div><div class="gmat-info-sub">Departure / Arrival</div></div>
+              <div class="gmat-info-card"><div class="gmat-info-title">PROP MASS EST</div><div class="gmat-info-val" id="a_propmass">--</div><div class="gmat-info-sub">Tsiolkovsky estimate</div></div>
+              <div class="gmat-info-card"><div class="gmat-info-title">C3 ENERGY</div><div class="gmat-info-val" id="a_c3">--</div><div class="gmat-info-sub">Hyperbolic excess</div></div>
+              <div class="gmat-info-card"><div class="gmat-info-title">SPICE KERNEL</div><div class="gmat-info-val">DE440</div><div class="gmat-info-sub">JPL planetary ephem · Drive linked</div></div>
+            </div>
+          </div>
+
+          <div class="gmat-panel" id="panel_samples">
+            <div class="gmat-samples-filter">
+              <button class="gmat-filter-btn active" data-filter="all">ALL</button>
+              <button class="gmat-filter-btn" data-filter="transfer">TRANSFER</button>
+              <button class="gmat-filter-btn" data-filter="attitude">ATTITUDE</button>
+              <button class="gmat-filter-btn" data-filter="electric">ELECTRIC</button>
+              <button class="gmat-filter-btn" data-filter="lunar">LUNAR</button>
+              <button class="gmat-filter-btn" data-filter="mars">MARS</button>
+              <button class="gmat-filter-btn" data-filter="tutorial">TUTORIALS</button>
+            </div>
+            <div class="gmat-samples-grid" id="samples_grid"></div>
+          </div>
+
+          <div class="gmat-panel" id="panel_templates">
+            <div class="gmat-tpl-grid" id="tpl_grid"></div>
+          </div>
+
+          <div class="gmat-panel" id="panel_reference">
+            <div class="gmat-ref-grid">
+              <div class="gmat-ref-card">
+                <div class="gmat-ref-h">R2025a Object Pattern</div>
+                <div class="gmat-ref-body">
+                  Create Spacecraft, Propagator, ForceModel, ODEModel, Thruster, Tank, ReportFile, and coordinate systems explicitly.<br><br>
+                  Use clear mission phases and deterministic object names for reproducibility.
+                </div>
+              </div>
+              <div class="gmat-ref-card">
+                <div class="gmat-ref-h">Propagation</div>
+                <div class="gmat-ref-body">
+                  RungeKutta89 remains the high-accuracy default for most mission studies.<br><br>
+                  Initial step, max step, and force-model inclusion materially affect runtime and fidelity.
+                </div>
+              </div>
+              <div class="gmat-ref-card">
+                <div class="gmat-ref-h">Force Models</div>
+                <div class="gmat-ref-body">
+                  Gravity field, SRP, drag, and N-body perturbations should match the mission regime.<br><br>
+                  EMFF here is represented as a custom placeholder force-model hook for architectural continuity.
+                </div>
+              </div>
+              <div class="gmat-ref-card">
+                <div class="gmat-ref-h">Targeting</div>
+                <div class="gmat-ref-body">
+                  B-plane parameters BdotT and BdotR are included as mission placeholders for flyby / approach shaping and future targeter integration.
+                </div>
+              </div>
+              <div class="gmat-ref-card">
+                <div class="gmat-ref-h">Script Discipline</div>
+                <div class="gmat-ref-body">
+                  Include mission metadata header, validated constants, explicit epochs, and clear report sections for downstream ingestion into dataspaces and logs.
+                </div>
+              </div>
+              <div class="gmat-ref-card">
+                <div class="gmat-ref-h">Achilles Integration</div>
+                <div class="gmat-ref-body">
+                  This module stores mission definitions locally, supports shareable mission URLs, and exports data payloads for W1/DATA continuation and archive.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="gmat-panel" id="panel_history">
+            <div class="gmat-history-list" id="history_list"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gmat-license-bar">
+        <div class="gmat-license-text">
+          <strong>GMAT Interactive</strong> · Mission planning front-end for GMAT R2025a-aligned script generation · Local mission persistence enabled
+        </div>
+        <div class="gmat-utc" id="g_utc">UTC --:--:--</div>
+      </div>
+    `;
+  }
+
+  root.innerHTML = html();
+
+  function $(id) { return root.querySelector("#" + id); }
+  function setText(id, val) { var el = $(id); if (el) el.textContent = val; }
+  function setValue(id, val) { var el = $(id); if (el) el.value = val; }
+  function setCheckbox(id, val) { var el = $(id); if (el) el.checked = !!val; }
+  function getValue(id) { var el = $(id); return el ? el.value : ""; }
+  function getNum(id) { return parseFloat(getValue(id)) || 0; }
+  function getCheckbox(id) { var el = $(id); return el ? !!el.checked : false; }
+
+  function showToast(msg, kind) {
+    var t = $("g_toast");
+    t.textContent = msg;
+    t.className = "gmat-toast show" + (kind ? " " + kind : "");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      t.className = "gmat-toast";
+    }, 2400);
+  }
+
+  function saveParams() {
+    localStorage.setItem(PARAM_KEY, JSON.stringify(readParams()));
+  }
+
+  function loadParams() {
+    try {
+      var p = JSON.parse(localStorage.getItem(PARAM_KEY) || "null");
+      if (!p) return;
+      Object.keys(p).forEach(function (k) {
+        var el = $(k);
+        if (!el) return;
+        if (el.type === "checkbox") el.checked = !!p[k];
+        else el.value = p[k];
+      });
+    } catch (e) {}
+  }
+
+  function readParams() {
+    return {
+      g_name: getValue("g_name"),
+      g_target: getValue("g_target"),
+      g_epoch: getValue("g_epoch"),
+      g_type: getValue("g_type"),
+      g_prop: getValue("g_prop"),
+      g_mass: getValue("g_mass"),
+      g_isp: getValue("g_isp"),
+      g_thrust: getValue("g_thrust"),
+      g_fuel: getValue("g_fuel"),
+      g_sma: getValue("g_sma"),
+      g_ecc: getValue("g_ecc"),
+      g_inc: getValue("g_inc"),
+      g_raan: getValue("g_raan"),
+      g_aop: getValue("g_aop"),
+      g_ta: getValue("g_ta"),
+      g_integ: getValue("g_integ"),
+      g_step: getValue("g_step"),
+      g_maxstep: getValue("g_maxstep"),
+      g_grav: getCheckbox("g_grav"),
+      g_drag: getCheckbox("g_drag"),
+      g_srp: getCheckbox("g_srp"),
+      g_nbody: getCheckbox("g_nbody"),
+      g_reldyn: getCheckbox("g_reldyn"),
+      g_emff: getCheckbox("g_emff"),
+      g_bdott: getValue("g_bdott"),
+      g_bdotr: getValue("g_bdotr"),
+      g_att: getValue("g_att")
+    };
+  }
+
+  function validate() {
+    var ids = ["g_name","g_epoch","g_mass","g_isp","g_thrust","g_fuel","g_sma","g_ecc","g_inc","g_step","g_maxstep"];
+    var ok = true;
+    ids.forEach(function (id) {
+      var el = $(id);
+      el.classList.remove("gmat-err");
+      if (!el.value.trim()) { el.classList.add("gmat-err"); ok = false; }
+    });
+    if (getNum("g_mass") <= 0 || getNum("g_fuel") <= 0 || getNum("g_isp") <= 0 || getNum("g_sma") <= 0) ok = false;
+    if (getNum("g_ecc") < 0 || getNum("g_ecc") >= 1) ok = false;
+    if (!ok) showToast("Validation failed — check highlighted / invalid fields", "err");
+    return ok;
+  }
+
+  function julianLikeWindowDays(target) {
+    var body = TARGET_DB[target] || TARGET_DB.Custom;
+    if (target === "Mars") return 780;
+    if (target === "Moon") return 27.3;
+    if (target === "L2") return 14.0;
+    if (target === "Jupiter") return 399;
+    if (target === "433Eros") return 120;
+    if (target === "16Psyche" || target === "1Ceres") return 420;
+    return Math.max(30, body.aAU * 150);
+  }
+
+  function computeMission() {
+    if (!validate()) return null;
+
+    var target = getValue("g_target");
+    var body = TARGET_DB[target] || TARGET_DB.Custom;
+
+    var wet = getNum("g_mass");
+    var fuel = getNum("g_fuel");
+    var isp = getNum("g_isp");
+    var thrust = getNum("g_thrust");
+    var dry = Math.max(1, wet - fuel);
+    var g0 = 9.80665;
+
+    var dv = isp * g0 * Math.log(wet / dry);
+    var finalMass = dry;
+
+    var originAU = 1.0;
+    var destAU = body.aAU;
+    var muSun = 1.32712440018e11; // km^3/s^2
+    var AUkm = 149597870.7;
+    var r1 = originAU * AUkm;
+    var r2 = destAU * AUkm;
+    var aTrans = (r1 + r2) / 2;
+    var tofDays = Math.PI * Math.sqrt((aTrans * aTrans * aTrans) / muSun) / 86400;
+    if (target === "Moon") tofDays = 5;
+    if (target === "L2") tofDays = 21;
+
+    var c3 = Math.max(0, Math.abs(destAU - originAU) * 12 + (thrust < 1 ? 1.2 : 3.6));
+    var nextWindow = julianLikeWindowDays(target);
+
+    var dep = dv * 0.42;
+    var cruise = dv * 0.08;
+    var app = dv * 0.18;
+    var ops = dv * 0.07;
+    var ret = (getValue("g_type") === "return") ? dv * 0.25 : dv * 0.05;
+
+    setText("g_dv", dv.toFixed(0));
+    setText("g_tof", tofDays.toFixed(0));
+    setText("g_mfinal", finalMass.toFixed(0));
+    setText("g_c3", c3.toFixed(2));
+
+    setText("ph0_dv", dep.toFixed(0) + " m/s");
+    setText("ph1_dv", cruise.toFixed(0) + " m/s");
+    setText("ph2_dv", app.toFixed(0) + " m/s");
+    setText("ph3_dv", ops.toFixed(0) + " m/s");
+    setText("ph4_dv", ret.toFixed(0) + " m/s");
+
+    ["ph0","ph1","ph2","ph3","ph4"].forEach(function (id, idx) {
+      var el = $(id);
+      el.classList.remove("active","complete");
+      if (idx === 0) el.classList.add("active");
+      if (idx < 1) el.classList.add("complete");
+    });
+
+    setText("a_window", nextWindow.toFixed(1) + " d");
+    setText("a_window_sub", "Next nominal launch opportunity cadence");
+    setText("a_transfer", body.transfer);
+    setText("a_dvbreak", dep.toFixed(0) + " / " + app.toFixed(0) + " m/s");
+    setText("a_propmass", fuel.toFixed(0) + " kg");
+    setText("a_c3", c3.toFixed(2) + " km²/s²");
+
+    saveParams();
+    return {
+      target: target,
+      body: body,
+      dv: dv,
+      tofDays: tofDays,
+      finalMass: finalMass,
+      c3: c3,
+      phases: { dep: dep, cruise: cruise, app: app, ops: ops, ret: ret }
+    };
+  }
+
+  function forceModelLines() {
+    var lines = [];
+    if (getCheckbox("g_grav")) lines.push("Create GravityField EarthJGM3;");
+    if (getCheckbox("g_drag")) lines.push("Create DragForce AtmDrag;");
+    if (getCheckbox("g_srp")) lines.push("Create SolarRadiationPressure SRP;");
+    if (getCheckbox("g_nbody")) lines.push("% N-Body point masses: Sun, Luna, major planets");
+    if (getCheckbox("g_reldyn")) lines.push("% Relativistic corrections enabled");
+    if (getCheckbox("g_emff")) lines.push("% EMFF custom force placeholder enabled");
+    return lines.join("\n");
+  }
+
+  function propSpec() {
+    var prop = getValue("g_prop");
+    if (prop === "electric_ion") return { tank: "XenonTank", thr: "IonThruster", mode: "Electric / Ion" };
+    if (prop === "electric_hall") return { tank: "XenonTank", thr: "HallThruster", mode: "Electric / Hall" };
+    if (prop === "chemical_monoprop") return { tank: "HydrazineTank", thr: "MonoThruster", mode: "Chemical / Monoprop" };
+    if (prop === "hybrid") return { tank: "HybridTank", thr: "HybridThruster", mode: "Hybrid" };
+    return { tank: "MainTank", thr: "MainThruster", mode: "Chemical / Biprop" };
+  }
+
+  function generateScript() {
+    var result = computeMission();
+    if (!result) return;
+
+    var p = readParams();
+    var prop = propSpec();
+    var out = [
+      "% ROMER INDUSTRIES — ACHILLES PROTOCOL",
+      "% GMAT Script Generator v3.0 · R2025a",
+      "% Mission: " + p.g_name,
+      "% Epoch: " + p.g_epoch,
+      "% Target: " + p.g_target,
+      "% Mission Type: " + p.g_type,
+      "% Generated: " + new Date().toISOString(),
+      "",
+      "Create Spacecraft AchillesSC;",
+      "GMAT AchillesSC.DateFormat = UTCGregorian;",
+      "GMAT AchillesSC.Epoch = '" + p.g_epoch + "';",
+      "GMAT AchillesSC.CoordinateSystem = EarthMJ2000Eq;",
+      "GMAT AchillesSC.DisplayStateType = Keplerian;",
+      "GMAT AchillesSC.SMA = " + p.g_sma + ";",
+      "GMAT AchillesSC.ECC = " + p.g_ecc + ";",
+      "GMAT AchillesSC.INC = " + p.g_inc + ";",
+      "GMAT AchillesSC.RAAN = " + p.g_raan + ";",
+      "GMAT AchillesSC.AOP = " + p.g_aop + ";",
+      "GMAT AchillesSC.TA = " + p.g_ta + ";",
+      "GMAT AchillesSC.DryMass = " + Math.max(1, getNum("g_mass") - getNum("g_fuel")).toFixed(3) + ";",
+      "GMAT AchillesSC.Cd = 2.2;",
+      "GMAT AchillesSC.Cr = 1.8;",
+      "GMAT AchillesSC.DragArea = 12;",
+      "GMAT AchillesSC.SRPArea = 12;",
+      "",
+      "Create ChemicalTank " + prop.tank + ";",
+      "GMAT " + prop.tank + ".FuelMass = " + p.g_fuel + ";",
+      "",
+      "Create Thruster " + prop.thr + ";",
+      "GMAT " + prop.thr + ".ThrustDirection1 = 1;",
+      "GMAT " + prop.thr + ".ThrustDirection2 = 0;",
+      "GMAT " + prop.thr + ".ThrustDirection3 = 0;",
+      "GMAT " + prop.thr + ".Isp = " + p.g_isp + ";",
+      "GMAT " + prop.thr + ".ThrustScaleFactor = " + p.g_thrust + ";",
+      "",
+      "Create ForceModel MainFM;",
+      forceModelLines(),
+      "",
+      "Create Propagator MainProp;",
+      "GMAT MainProp.Type = " + p.g_integ + ";",
+      "GMAT MainProp.InitialStepSize = " + p.g_step + ";",
+      "GMAT MainProp.MaxStep = " + p.g_maxstep + ";",
+      "GMAT MainProp.FM = MainFM;",
+      "",
+      "Create ReportFile MissionReport;",
+      "GMAT MissionReport.Filename = '" + p.g_name + "_report.txt';",
+      "",
+      "% B-Plane placeholders",
+      "% BdotT = " + p.g_bdott,
+      "% BdotR = " + p.g_bdotr,
+      "% Attitude = " + p.g_att,
+      "",
+      "BeginMissionSequence;",
+      "Propagate MainProp(AchillesSC) {AchillesSC.ElapsedDays = " + Math.max(1, result.tofDays).toFixed(3) + "};",
+      "Report MissionReport AchillesSC.ElapsedDays AchillesSC.SMA AchillesSC.ECC AchillesSC.INC;",
+      "",
+      "% Derived mission estimates",
+      "% Transfer Class: " + result.body.transfer,
+      "% Est Total DV: " + result.dv.toFixed(3) + " m/s",
+      "% Est TOF: " + result.tofDays.toFixed(3) + " days",
+      "% Est Final Mass: " + result.finalMass.toFixed(3) + " kg",
+      "% Est C3: " + result.c3.toFixed(3) + " km^2/s^2",
+      "",
+      "% End of script"
+    ].join("\n");
+
+    $("g_output").textContent = out;
+    $("g_status").textContent = "SCRIPT GENERATED";
+    $("g_prog").style.width = "100%";
+
+    pushHistory({
+      mission: p.g_name,
+      target: p.g_target,
+      type: p.g_type,
+      epoch: p.g_epoch,
+      script: out,
+      params: p,
+      summary: {
+        dv: result.dv.toFixed(0),
+        tof: result.tofDays.toFixed(0),
+        mf: result.finalMass.toFixed(0),
+        c3: result.c3.toFixed(2)
+      },
+      ts: Date.now()
+    });
+
+    showToast("GMAT script generated", "ok");
+  }
+
+  function copyScript() {
+    var text = $("g_output").textContent;
+    navigator.clipboard.writeText(text).then(function () {
+      showToast("Script copied to clipboard", "ok");
+    }).catch(function () {
+      showToast("Clipboard copy failed", "err");
+    });
+  }
+
+  function exportScript() {
+    var name = getValue("g_name").trim() || "mission";
+    var blob = new Blob([$(
+      "g_output"
+    ).textContent], { type: "text/plain" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = name + ".script";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    showToast("Script exported", "ok");
+  }
+
+  function shareURL() {
+    var params = readParams();
+    var enc = encodeURIComponent(btoa(JSON.stringify(params)));
+    var url = location.origin + location.pathname + "#gmat=" + enc;
+    navigator.clipboard.writeText(url).then(function () {
+      showToast("Mission URL copied to clipboard", "ok");
+    }).catch(function () {
+      showToast("Share URL generated — copy manually", "");
+      prompt("Copy mission URL:", url);
+    });
+  }
+
+  function sendToData() {
+    var result = computeMission();
+    if (!result) return;
+    var payload = {
+      mission: getValue("g_name"),
+      target: getValue("g_target"),
+      epoch: getValue("g_epoch"),
+      type: getValue("g_type"),
+      propulsion: getValue("g_prop"),
+      dv_mps: +result.dv.toFixed(3),
+      tof_days: +result.tofDays.toFixed(3),
+      final_mass_kg: +result.finalMass.toFixed(3),
+      c3_km2_s2: +result.c3.toFixed(3),
+      generated_utc: new Date().toISOString()
+    };
+    localStorage.setItem("ach_gmat_to_w1_data", JSON.stringify(payload));
+    showToast("Mission payload staged for W1/DATA", "ok");
+  }
+
+  function applyURLState() {
+    try {
+      if (!location.hash || location.hash.indexOf("#gmat=") !== 0) return;
+      var raw = location.hash.replace("#gmat=", "");
+      var p = JSON.parse(atob(decodeURIComponent(raw)));
+      Object.keys(p).forEach(function (k) {
+        var el = $(k);
+        if (!el) return;
+        if (el.type === "checkbox") el.checked = !!p[k];
+        else el.value = p[k];
+      });
+      showToast("Mission loaded from shared URL", "ok");
+    } catch (e) {
+      showToast("Failed to parse shared mission URL", "err");
+    }
+  }
+
+  function computeOnly() {
+    var r = computeMission();
+    if (!r) return;
+    $("g_status").textContent = "MISSION ANALYSIS COMPUTED";
+    $("g_prog").style.width = "68%";
+    showToast("Mission analysis computed", "ok");
+  }
+
+  function pushHistory(item) {
+    var h = JSON.parse(localStorage.getItem(STORE_KEY) || "[]");
+    h.unshift(item);
+    h = h.slice(0, 10);
+    localStorage.setItem(STORE_KEY, JSON.stringify(h));
+    renderHistory();
+  }
+
+  function renderHistory() {
+    var el = $("history_list");
+    var h = JSON.parse(localStorage.getItem(STORE_KEY) || "[]");
+    if (!h.length) {
+      el.innerHTML = '<div class="gmat-history-empty">NO SAVED MISSIONS</div>';
+      return;
+    }
+    el.innerHTML = h.map(function (x, i) {
+      return `
+        <div class="gmat-history-item">
+          <div>
+            <div class="gmat-history-name">${escapeHtml(x.mission)}</div>
+            <div class="gmat-history-meta">${escapeHtml(x.target)} · ${escapeHtml(x.type)} · ${new Date(x.ts).toLocaleString()}</div>
+          </div>
+          <div class="gmat-history-btns">
+            <button class="gmat-hbtn gmat-hbtn-restore" data-restore="${i}">RESTORE</button>
+            <button class="gmat-hbtn gmat-hbtn-del" data-del="${i}">DELETE</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    Array.prototype.forEach.call(el.querySelectorAll("[data-restore]"), function (b) {
+      b.onclick = function () {
+        var idx = +b.getAttribute("data-restore");
+        var arr = JSON.parse(localStorage.getItem(STORE_KEY) || "[]");
+        var item = arr[idx];
+        if (!item) return;
+        Object.keys(item.params).forEach(function (k) {
+          var node = $(k);
+          if (!node) return;
+          if (node.type === "checkbox") node.checked = !!item.params[k];
+          else node.value = item.params[k];
+        });
+        $("g_output").textContent = item.script;
+        computeOnly();
+        showToast("Mission restored from history", "ok");
+      };
+    });
+
+    Array.prototype.forEach.call(el.querySelectorAll("[data-del]"), function (b) {
+      b.onclick = function () {
+        var idx = +b.getAttribute("data-del");
+        var arr = JSON.parse(localStorage.getItem(STORE_KEY) || "[]");
+        arr.splice(idx, 1);
+        localStorage.setItem(STORE_KEY, JSON.stringify(arr));
+        renderHistory();
+        showToast("Mission deleted from history", "");
+      };
+    });
+  }
+
+  function renderSamples(filter) {
+    var el = $("samples_grid");
+    var list = SAMPLE_SCRIPTS.filter(function (x) {
+      return filter === "all" ? true : x.cat === filter;
+    });
+    el.innerHTML = list.map(function (x) {
+      return `
+        <a class="gmat-sample-item" href="${x.url}" target="_blank" rel="noopener">
+          <div class="gmat-sample-name">${escapeHtml(x.name)}</div>
+          <div class="gmat-sample-cat">${escapeHtml(x.cat)}</div>
+        </a>
+      `;
+    }).join("");
+  }
+
+  function renderTemplates() {
+    $("tpl_grid").innerHTML = TEMPLATE_SET.map(function (t, i) {
+      return `
+        <div class="gmat-tpl" data-tpl="${i}">
+          <div class="gmat-tpl-name">${escapeHtml(t.name)}</div>
+          <div class="gmat-tpl-desc">${escapeHtml(t.desc)}</div>
+        </div>
+      `;
+    }).join("");
+
+    Array.prototype.forEach.call($("tpl_grid").querySelectorAll("[data-tpl]"), function (card) {
+      card.onclick = function () {
+        var idx = +card.getAttribute("data-tpl");
+        TEMPLATE_SET[idx].apply();
+        saveParams();
+        showToast("Template applied: " + TEMPLATE_SET[idx].name, "ok");
+      };
+    });
+  }
+
+  function tab(name, btn) {
+    Array.prototype.forEach.call(root.querySelectorAll(".gmat-tab"), function (b) {
+      b.classList.toggle("active", b === btn);
+    });
+    Array.prototype.forEach.call(root.querySelectorAll(".gmat-panel"), function (p) {
+      p.classList.remove("active");
+    });
+    $("panel_" + name).classList.add("active");
+  }
+
+  function tickUTC() {
+    var d = new Date();
+    var t = d.toUTCString().replace("GMT", "UTC");
+    $("g_utc").textContent = t;
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  Array.prototype.forEach.call(root.querySelectorAll(".gmat-tab"), function (b) {
+    b.onclick = function () { tab(b.getAttribute("data-tab"), b); };
+  });
+
+  Array.prototype.forEach.call(root.querySelectorAll(".gmat-filter-btn"), function (b) {
+    b.onclick = function () {
+      Array.prototype.forEach.call(root.querySelectorAll(".gmat-filter-btn"), function (x) { x.classList.remove("active"); });
+      b.classList.add("active");
+      renderSamples(b.getAttribute("data-filter"));
+    };
+  });
+
+  Array.prototype.forEach.call(root.querySelectorAll(".gmat-input, .gmat-select, .gmat-checkbox"), function (el) {
+    el.addEventListener("change", saveParams);
+    el.addEventListener("input", saveParams);
+  });
+
+  $("btn_generate").onclick = generateScript;
+  $("btn_compute").onclick = computeOnly;
+  $("btn_copy").onclick = copyScript;
+  $("btn_export").onclick = exportScript;
+  $("btn_print").onclick = function () { window.print(); };
+  $("btn_share").onclick = shareURL;
+  $("btn_send").onclick = sendToData;
+
+  loadParams();
+  applyURLState();
+  renderSamples("all");
+  renderTemplates();
+  renderHistory();
+  tickUTC();
+  setInterval(tickUTC, 1000);
+  computeOnly();
+
+  window.GMAT2 = {
+    generate: generateScript,
+    compute: computeOnly,
+    copy: copyScript,
+    exportScript: exportScript,
+    shareURL: shareURL,
+    sendToData: sendToData,
+    tab: function (name, btn) { tab(name, btn); },
+    filterSamples: function (filter, btn) {
+      Array.prototype.forEach.call(root.querySelectorAll(".gmat-filter-btn"), function (x) { x.classList.remove("active"); });
+      if (btn) btn.classList.add("active");
+      renderSamples(filter);
+    }
+  };
+})();
+</script>
