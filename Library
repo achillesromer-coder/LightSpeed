@@ -1,0 +1,182 @@
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+var acc='#c0a0ff';
+var body=document.querySelector('body');
+// Hide existing broken content blocks (code blocks showing raw JS)
+var allSections=document.querySelectorAll('.sqs-layout,.sqs-block-code,.sqs-block-html');
+allSections.forEach(function(s){s.style.display='none';});
+
+// Build the Library hub
+var w=document.createElement('div');
+w.id='lib-hub';
+w.innerHTML=`<style>
+#lib-hub{font-family:'Courier New',monospace;background:#0a0e1a;color:#c8d6e5;min-height:100vh;padding:20px;margin:-40px -20px 0;}
+#lib-hub *{box-sizing:border-box;}
+.lh-hdr{background:#0d1221;border:2px solid #c0a0ff;border-radius:8px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.lh-title{font-size:16px;font-weight:700;color:#c0a0ff;letter-spacing:2px;text-transform:uppercase;}
+.lh-sub{font-size:10px;color:#7a8aaa;margin-top:2px;}
+.lh-fuse{display:flex;gap:4px;flex-wrap:wrap;}
+.lh-fuse a{padding:4px 8px;border-radius:3px;font-size:10px;font-weight:700;text-decoration:none;border:1px solid #c0a0ff;}
+.lh-meta{background:#080c18;border:1px solid #1a2540;border-radius:4px;padding:6px 14px;display:flex;align-items:center;gap:12px;font-size:10px;margin-bottom:16px;flex-wrap:wrap;}
+.lh-live{background:#c0a0ff;color:#000;padding:2px 6px;border-radius:2px;font-weight:700;font-size:9px;animation:lhblink 2s infinite;}
+@keyframes lhblink{0%,100%{opacity:1}50%{opacity:.4}}
+.lh-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;}
+.lh-card{background:#0d1221;border:1px solid #1a2540;border-radius:6px;padding:14px;transition:border-color .2s;}
+.lh-card:hover{border-color:#c0a0ff;}
+.lh-card-hdr{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #1a2540;}
+.lh-btn{display:block;padding:7px 10px;border-radius:4px;font-size:10px;font-weight:700;text-decoration:none;margin-bottom:6px;text-align:center;letter-spacing:.5px;border:1px solid;}
+.lh-btn:hover{opacity:.85;}
+.lh-ws-btn{border-color:#1a3040;background:#0d1a24;}
+.lh-acc-btn{border-color:#2a1040;background:#1a0d24;}
+.lh-full{grid-column:1/-1;}
+.lh-acc{background:#0d1221;border:1px solid #1a2540;border-radius:6px;overflow:hidden;margin-bottom:8px;}
+.lh-acc-hdr{padding:10px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700;color:#c0a0ff;background:#0d1221;}
+.lh-acc-hdr:hover{background:#131928;}
+.lh-acc-body{padding:12px 14px;border-top:1px solid #1a2540;display:none;flex-wrap:wrap;gap:6px;}
+.lh-acc-body.open{display:flex;}
+.lh-file-btn{padding:6px 12px;border-radius:3px;font-size:10px;font-weight:700;text-decoration:none;background:#1a1f2e;color:#c0a0ff;border:1px solid #2a3550;white-space:nowrap;}
+.lh-file-btn:hover{background:#231830;border-color:#c0a0ff;}
+.lh-section-title{font-size:9px;font-weight:700;color:#c0a0ff;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;margin-top:4px;width:100%;}
+</style>
+<div class="lh-hdr">
+  <div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:22px;color:#c0a0ff;">&#9889;</span>
+      <div>
+        <div class="lh-title">&#9632; LIBRARY · ACHILLES PROTOCOL</div>
+        <div class="lh-sub">Resource hub &middot; Files, Calculators &amp; Workspace Links &middot; /library</div>
+      </div>
+    </div>
+  </div>
+  <div class="lh-fuse">
+    <a href="/operations/w1" style="background:#1a1f2e;color:#00d4ff;border-color:#00d4ff;">W1</a>
+    <a href="/operations/w2" style="background:#1a1f2e;color:#7b2cbf;border-color:#7b2cbf;">W2</a>
+    <a href="/operations/w3" style="background:#1a1f2e;color:#ff3366;border-color:#ff3366;">W3</a>
+    <a href="/operations/w4" style="background:#1a1f2e;color:#ffaa00;border-color:#ffaa00;">W4</a>
+    <a href="/operations/w5" style="background:#1a1f2e;color:#00ff88;border-color:#00ff88;">W5</a>
+    <a href="/operations/w6" style="background:#1a1f2e;color:#ff6b9d;border-color:#ff6b9d;">W6</a>
+    <a href="/library" style="background:#c0a0ff;color:#000;border-color:#c0a0ff;">LIB</a>
+    <a href="/achilles" style="background:#1a1f2e;color:#c0a0ff;border-color:#c0a0ff;">&#9889; ACHILLES</a>
+  </div>
+</div>
+<div class="lh-meta">
+  <span class="lh-live">&#11044; LIVE</span>
+  <span style="color:#3a4a6a;">/library</span>
+  <span style="color:#5a6a8a;">Römer Industries / EMASSC</span>
+  <span id="lh-clk" style="margin-left:auto;color:#5a6a8a;font-size:9px;"></span>
+</div>
+<div class="lh-grid">
+  <div class="lh-card">
+    <div class="lh-card-hdr" style="color:#00d4ff;">&#9654; WORKSPACES</div>
+    <a href="/operations/w1" class="lh-btn lh-ws-btn" style="color:#00d4ff;border-color:#00d4ff;">W1 · Incoming Deposit Analysis</a>
+    <a href="/operations/w2" class="lh-btn lh-ws-btn" style="color:#7b2cbf;border-color:#7b2cbf;">W2 · Geostationary Luke II</a>
+    <a href="/operations/w3" class="lh-btn lh-ws-btn" style="color:#ff3366;border-color:#ff3366;">W3 · RFS &amp; EMFF Field Projections</a>
+    <a href="/operations/w4" class="lh-btn lh-ws-btn" style="color:#ffaa00;border-color:#ffaa00;">W4 · Inter-planetary Supply Chain</a>
+    <a href="/operations/w5" class="lh-btn lh-ws-btn" style="color:#00ff88;border-color:#00ff88;">W5 · Mission Mapping / GMAT</a>
+    <a href="/operations/w6" class="lh-btn lh-ws-btn" style="color:#ff6b9d;border-color:#ff6b9d;">W6 · Asset Library Final</a>
+  </div>
+  <div class="lh-card">
+    <div class="lh-card-hdr" style="color:#ffaa00;">&#9889; DATASPACES</div>
+    <a href="/w1/data" class="lh-btn lh-ws-btn" style="color:#00d4ff;border-color:#00d4ff;">W1/Data · Deposit Backend</a>
+    <a href="/w2/data" class="lh-btn lh-ws-btn" style="color:#7b2cbf;border-color:#7b2cbf;">W2/Data · Luke II Backend</a>
+    <a href="/w3/data" class="lh-btn lh-ws-btn" style="color:#ff3366;border-color:#ff3366;">W3/Data · RFS Backend</a>
+    <a href="/w4/data" class="lh-btn lh-ws-btn" style="color:#ffaa00;border-color:#ffaa00;">W4/Data · Supply Chain Backend</a>
+    <a href="/w5/data" class="lh-btn lh-ws-btn" style="color:#00ff88;border-color:#00ff88;">W5/Data · Mission Backend</a>
+    <a href="/w6/data" class="lh-btn lh-ws-btn" style="color:#ff6b9d;border-color:#ff6b9d;">W6/Data · Asset Backend</a>
+  </div>
+  <div class="lh-card">
+    <div class="lh-card-hdr" style="color:#c0a0ff;">&#9632; TOOLS</div>
+    <div class="lh-section-title">Calculators</div>
+    <a href="/orbital-mechanics" class="lh-btn lh-acc-btn" style="color:#c0a0ff;border-color:#c0a0ff;">Orbital Mechanics</a>
+    <a href="/launch-windows" class="lh-btn lh-acc-btn" style="color:#c0a0ff;border-color:#c0a0ff;">Launch Windows</a>
+    <a href="/magnetostatics" class="lh-btn lh-acc-btn" style="color:#c0a0ff;border-color:#c0a0ff;">Magnetostatics</a>
+    <a href="/energy-power" class="lh-btn lh-acc-btn" style="color:#c0a0ff;border-color:#c0a0ff;">Energy &amp; Power</a>
+    <a href="/fluid-dynamics" class="lh-btn lh-acc-btn" style="color:#c0a0ff;border-color:#c0a0ff;">Fluid Dynamics</a>
+    <div class="lh-section-title" style="margin-top:8px;">Simulators</div>
+    <a href="/rfs-extraction" class="lh-btn lh-acc-btn" style="color:#ff3366;border-color:#ff3366;">RFS Extraction</a>
+    <a href="/emff-node" class="lh-btn lh-acc-btn" style="color:#ff3366;border-color:#ff3366;">EMFF Node</a>
+    <a href="/emf-fields" class="lh-btn lh-acc-btn" style="color:#ff3366;border-color:#ff3366;">EMF Fields</a>
+    <a href="/re-entry" class="lh-btn lh-acc-btn" style="color:#ff3366;border-color:#ff3366;">Re-Entry</a>
+  </div>
+  <div class="lh-card lh-full">
+    <div class="lh-card-hdr" style="color:#c0a0ff;">&#9632; FILES &amp; DOCUMENTS</div>
+    <div id="lh-accordion">
+      <div class="lh-acc">
+        <div class="lh-acc-hdr" onclick="var b=this.nextElementSibling;b.classList.toggle('open');this.querySelector('.lh-arr').textContent=b.classList.contains('open')?'&#9660;':'&#9654;';">
+          <span>&#9632; Blueprints &amp; Technical Drawings</span><span class="lh-arr">&#9654;</span>
+        </div>
+        <div class="lh-acc-body">
+          <a href="/operations/w6" class="lh-file-btn">Mark III · Mining Unit Blueprint</a>
+          <a href="/operations/w6" class="lh-file-btn">Mark V · Asteroid Tag Blueprint</a>
+          <a href="/operations/w6" class="lh-file-btn">Luke II · Toroidal Satellite Specs</a>
+          <a href="/operations/w6" class="lh-file-btn">Luke IV · Mag-Lev Station Schematics</a>
+          <a href="/operations/w6" class="lh-file-btn">Inter-Sol Re-Launch Facility</a>
+        </div>
+      </div>
+      <div class="lh-acc">
+        <div class="lh-acc-hdr" onclick="var b=this.nextElementSibling;b.classList.toggle('open');this.querySelector('.lh-arr').textContent=b.classList.contains('open')?'&#9660;':'&#9654;';">
+          <span>&#9632; Mission Templates &amp; GMAT Files</span><span class="lh-arr">&#9654;</span>
+        </div>
+        <div class="lh-acc-body">
+          <a href="/operations/w5" class="lh-file-btn">Mark III GMAT Template</a>
+          <a href="/operations/w5" class="lh-file-btn">Mark V Deep-Mission Template</a>
+          <a href="/operations/w5" class="lh-file-btn">Luke Chain Auto-Log v2</a>
+          <a href="/operations/w5" class="lh-file-btn">GMAT Solver Pipeline v1</a>
+          <a href="/operations/w5" class="lh-file-btn">Launch Window Reports</a>
+        </div>
+      </div>
+      <div class="lh-acc">
+        <div class="lh-acc-hdr" onclick="var b=this.nextElementSibling;b.classList.toggle('open');this.querySelector('.lh-arr').textContent=b.classList.contains('open')?'&#9660;':'&#9654;';">
+          <span>&#9632; Data &amp; JSON Files</span><span class="lh-arr">&#9654;</span>
+        </div>
+        <div class="lh-acc-body">
+          <a href="/operations/w6" class="lh-file-btn">Quantum · Operators &amp; Models</a>
+          <a href="/operations/w6" class="lh-file-btn">Consolidating · Fractal Unification</a>
+          <a href="/operations/w6" class="lh-file-btn">Atomic · Elemental Constants</a>
+          <a href="/operations/w6" class="lh-file-btn">Molecular · Gases &amp; Silicates</a>
+          <a href="/w6/data" class="lh-file-btn">W6/Data Asset Registry</a>
+        </div>
+      </div>
+      <div class="lh-acc">
+        <div class="lh-acc-hdr" onclick="var b=this.nextElementSibling;b.classList.toggle('open');this.querySelector('.lh-arr').textContent=b.classList.contains('open')?'&#9660;':'&#9654;';">
+          <span>&#9632; Supply Chain &amp; Trajectory</span><span class="lh-arr">&#9654;</span>
+        </div>
+        <div class="lh-acc-body">
+          <a href="/operations/w4" class="lh-file-btn">Hohmann Transfer Config v2</a>
+          <a href="/operations/w4" class="lh-file-btn">Resupply Sequence · 3-leg transit</a>
+          <a href="/operations/w4" class="lh-file-btn">Supply Node Config v2</a>
+          <a href="/operations/w1" class="lh-file-btn">Deposit Analysis Manifests</a>
+          <a href="/w4/data" class="lh-file-btn">W4/Data Supply Chain Backend</a>
+        </div>
+      </div>
+      <div class="lh-acc">
+        <div class="lh-acc-hdr" onclick="var b=this.nextElementSibling;b.classList.toggle('open');this.querySelector('.lh-arr').textContent=b.classList.contains('open')?'&#9660;':'&#9654;';">
+          <span>&#9632; Documentation &amp; Plans</span><span class="lh-arr">&#9654;</span>
+        </div>
+        <div class="lh-acc-body">
+          <a href="/docs" class="lh-file-btn">&#9889; /docs — Plans &amp; Agreements</a>
+          <a href="/docs" class="lh-file-btn">Reports &amp; Templates</a>
+          <a href="/achilles" class="lh-file-btn">Achilles Protocol Overview</a>
+          <a href="/contributors" class="lh-file-btn">Contributors</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div style="background:#080c18;border:1px solid #1a2540;border-radius:6px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:9px;">
+  <span style="color:#3a4a6a;">Römer Industries / EMASSC · Achilles Protocol v1.1</span>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <a href="/achilles" style="padding:6px 12px;border-radius:4px;font-size:10px;font-weight:700;text-decoration:none;background:#c0a0ff;color:#000;">&#9889; ACHILLES DESKTOP</a>
+    <a href="/operations/w6" style="padding:6px 12px;border-radius:4px;font-size:10px;font-weight:700;text-decoration:none;background:#ff6b9d;color:#000;">&#9632; W6 ASSET LIBRARY</a>
+  </div>
+  <span id="lh-bcn" style="color:#3a4a6a;">&#9679; Initialising...</span>
+</div>`;
+document.body.insertBefore(w, document.body.firstChild);
+// Clock
+var clk=document.getElementById('lh-clk');
+var bcn=document.getElementById('lh-bcn');
+function tick(){if(clk)clk.textContent=new Date().toUTCString().replace('GMT','UTC');}
+tick();setInterval(tick,1000);
+if(bcn){bcn.textContent='&#9679; Library hub active';bcn.style.color='#00aa44';}
+});
+</script>
