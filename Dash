@@ -1,0 +1,361 @@
+<style>
+:root{--bg:#0a0e1a;--bg2:#1a1f2e;--bg3:#252b3d;--cyan:#00d4ff;--purple:#7b2cbf;--mag:#ff3366;--amb:#ffaa00;--grn:#00ff88;--pink:#ff6b9d;--txt:#e8eaf0;--txt2:#8b92a8;--brd:#2a3050;}
+*{box-sizing:border-box;margin:0;padding:0;}
+#dash-root{font-family:'Courier New',monospace;background:var(--bg);color:var(--txt);min-height:100vh;padding:0;}
+.fuse-nav{background:var(--bg2);border-bottom:1px solid var(--brd);padding:8px 16px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.fuse-nav .logo{color:var(--cyan);font-weight:700;font-size:13px;letter-spacing:2px;margin-right:10px;}
+.fn-btn{background:var(--bg3);border:1px solid var(--brd);color:var(--txt2);padding:5px 10px;border-radius:4px;font-size:11px;cursor:pointer;letter-spacing:1px;text-decoration:none;display:inline-flex;align-items:center;gap:4px;transition:all 0.2s;}
+.fn-btn:hover,.fn-btn.active{border-color:var(--cyan);color:var(--cyan);}
+.dash-header{background:linear-gradient(135deg,var(--bg2),var(--bg3));border-bottom:1px solid var(--brd);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;}
+.dash-title{color:var(--cyan);font-size:18px;font-weight:700;letter-spacing:3px;}
+.dash-sub{color:var(--txt2);font-size:11px;letter-spacing:1px;margin-top:4px;}
+.dash-status{display:flex;gap:16px;align-items:center;}
+.status-badge{background:var(--bg3);border:1px solid var(--grn);color:var(--grn);padding:4px 10px;border-radius:4px;font-size:11px;letter-spacing:1px;}
+.status-badge.warn{border-color:var(--amb);color:var(--amb);}
+.dash-clock{color:var(--txt2);font-size:12px;font-variant-numeric:tabular-nums;}
+.dash-body{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;padding:16px;min-height:calc(100vh - 130px);}
+.dash-panel{background:var(--bg2);border:1px solid var(--brd);border-radius:8px;overflow:hidden;}
+.panel-hdr{padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--brd);}
+.panel-title{font-size:12px;font-weight:700;letter-spacing:2px;}
+.panel-title.completed{color:var(--grn);}
+.panel-title.progress{color:var(--cyan);}
+.panel-title.todo{color:var(--mag);}
+.panel-actions{display:flex;gap:4px;}
+.icon-btn{background:var(--bg3);border:1px solid var(--brd);color:var(--txt2);width:24px;height:24px;border-radius:4px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.icon-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+.panel-body{padding:10px;max-height:500px;overflow-y:auto;}
+.task-item{background:var(--bg3);border:1px solid var(--brd);border-radius:6px;padding:10px;margin-bottom:8px;cursor:pointer;transition:all 0.2s;}
+.task-item:hover{border-color:var(--cyan);transform:translateX(2px);}
+.task-item.completed{border-left:3px solid var(--grn);}
+.task-item.inprogress{border-left:3px solid var(--cyan);}
+.task-item.todo-high{border-left:3px solid var(--mag);}
+.task-item.todo-med{border-left:3px solid var(--amb);}
+.task-item.todo-low{border-left:3px solid var(--purple);}
+.task-name{font-size:12px;font-weight:600;color:var(--txt);margin-bottom:4px;}
+.task-meta{font-size:10px;color:var(--txt2);display:flex;gap:8px;}
+.task-badge{padding:2px 6px;border-radius:3px;font-size:10px;font-weight:600;letter-spacing:1px;}
+.badge-done{background:rgba(0,255,136,0.15);color:var(--grn);border:1px solid var(--grn);}
+.badge-run{background:rgba(0,212,255,0.15);color:var(--cyan);border:1px solid var(--cyan);}
+.badge-high{background:rgba(255,51,102,0.15);color:var(--mag);border:1px solid var(--mag);}
+.badge-med{background:rgba(255,170,0,0.15);color:var(--amb);border:1px solid var(--amb);}
+.badge-low{background:rgba(123,44,191,0.15);color:var(--purple);border:1px solid var(--purple);}
+.progress-bar{background:var(--bg);border-radius:3px;height:4px;margin-top:6px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:3px;transition:width 0.3s;}
+.add-task-form{background:var(--bg3);border:1px solid var(--brd);border-radius:6px;padding:10px;margin-top:8px;}
+.add-task-form input,.add-task-form select{background:var(--bg);border:1px solid var(--brd);color:var(--txt);padding:5px 8px;border-radius:4px;font-size:11px;width:100%;margin-bottom:6px;}
+.add-task-form input::placeholder{color:var(--txt2);}
+.btn-sm{background:var(--bg3);border:1px solid var(--cyan);color:var(--cyan);padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;letter-spacing:1px;transition:all 0.2s;}
+.btn-sm:hover{background:var(--cyan);color:var(--bg);}
+.bottom-panels{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:0 16px 16px;}
+.sys-panel{background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:14px;}
+.sys-title{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--cyan);margin-bottom:10px;}
+.ws-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.ws-chip{background:var(--bg3);border-radius:6px;padding:8px;text-align:center;}
+.ws-chip .ws-id{font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:2px;}
+.ws-chip .ws-status{font-size:9px;color:var(--txt2);}
+.ws-chip .ws-dot{width:6px;height:6px;border-radius:50%;margin:4px auto 0;}
+.health-rows{display:flex;flex-direction:column;gap:6px;}
+.health-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;}
+.health-label{color:var(--txt2);}
+.health-val{color:var(--grn);font-weight:600;}
+.health-val.warn{color:var(--amb);}
+.health-bar{background:var(--bg);border-radius:3px;height:3px;width:120px;overflow:hidden;display:inline-block;}
+.health-fill{height:100%;background:var(--grn);border-radius:3px;}
+.health-fill.warn{background:var(--amb);}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--bg3);border:1px solid var(--cyan);color:var(--cyan);padding:10px 16px;border-radius:6px;font-size:12px;letter-spacing:1px;opacity:0;transition:opacity 0.3s;z-index:9999;pointer-events:none;}
+.toast.show{opacity:1;}
+.add-toggle{cursor:pointer;font-size:11px;color:var(--cyan);letter-spacing:1px;padding:4px 0;}
+</style><div id="dash-root">
+<div class="fuse-nav">
+  <span class="logo">⚡ RÖMER</span>
+  <a class="fn-btn" href="/">🏠 HOME</a>
+  <a class="fn-btn" href="/data/achilles">🤖 ACHILLES</a>
+  <a class="fn-btn" href="/library">📚 LIBRARY</a>
+  <a class="fn-btn" href="/gmat">🛰 GMAT</a>
+  <a class="fn-btn" href="/docs">📄 DOCS</a>
+  <a class="fn-btn active" href="/dash">📊 DASH</a>
+  <a class="fn-btn" href="/calc/orbital">🔢 CALCULATORS</a>
+  <a class="fn-btn" href="/sim/rfs-extraction">⚗️ SIMULATORS</a>
+</div>
+<div class="dash-header">
+  <div>
+    <div class="dash-title">HYPERDYNE TASK NEXUS</div>
+    <div class="dash-sub">RÖMER INDUSTRIES · MISSION CONTROL DASHBOARD · REAL-TIME</div>
+  </div>
+  <div class="dash-status">
+    <span class="status-badge">● SYSTEM NOMINAL</span>
+    <span class="status-badge warn" id="dash-date">UTC --:--:--</span>
+    <span class="dash-clock" id="dash-mission">D+782</span>
+  </div>
+</div>
+<div class="dash-body">
+  <!-- COMPLETED PANEL -->
+  <div class="dash-panel">
+    <div class="panel-hdr">
+      <span class="panel-title completed">✓ RECENTLY COMPLETED</span>
+      <div class="panel-actions">
+        <button class="icon-btn" onclick="window.dashClearCompleted()" title="Clear completed">🗑</button>
+        <button class="icon-btn" onclick="window.dashExport('completed')" title="Export">↗</button>
+      </div>
+    </div>
+    <div class="panel-body" id="completed-list"></div>
+  </div>
+  <!-- IN PROGRESS PANEL -->
+  <div class="dash-panel">
+    <div class="panel-hdr">
+      <span class="panel-title progress">⟳ IN PROGRESS</span>
+      <div class="panel-actions">
+        <button class="icon-btn" onclick="window.dashRefresh()" title="Refresh">↺</button>
+        <button class="icon-btn" onclick="window.dashExport('progress')" title="Export">↗</button>
+      </div>
+    </div>
+    <div class="panel-body" id="progress-list"></div>
+  </div>
+  <!-- TO-DO PANEL -->
+  <div class="dash-panel">
+    <div class="panel-hdr">
+      <span class="panel-title todo">● TO-DO QUEUE</span>
+      <div class="panel-actions">
+        <button class="icon-btn" onclick="window.dashAddToggle()" title="Add task">+</button>
+        <button class="icon-btn" onclick="window.dashExport('todo')" title="Export">↗</button>
+      </div>
+    </div>
+    <div class="panel-body" id="todo-list">
+      <div class="add-task-form" id="add-task-form" style="display:none;">
+        <input type="text" id="new-task-name" placeholder="Task name...">
+        <select id="new-task-priority">
+          <option value="high">High Priority</option>
+          <option value="medium">Medium Priority</option>
+          <option value="low">Low Priority</option>
+        </select>
+        <select id="new-task-ws">
+          <option value="W1">W1 - Deposit Analysis</option>
+          <option value="W2">W2 - Extraction Planning</option>
+          <option value="W3">W3 - RFS & EMFF</option>
+          <option value="W4">W4 - Supply Chain</option>
+          <option value="W5">W5 - Mission GMAT</option>
+          <option value="W6">W6 - Asset Library</option>
+          <option value="SYS">System</option>
+        </select>
+        <button class="btn-sm" onclick="window.dashAddTask()">ADD TASK</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="bottom-panels">
+  <div class="sys-panel">
+    <div class="sys-title">📡 WORKSPACE STATUS</div>
+    <div class="ws-grid" id="ws-status-grid"></div>
+  </div>
+  <div class="sys-panel">
+    <div class="sys-title">⚡ SYSTEM HEALTH</div>
+    <div class="health-rows" id="health-rows"></div>
+  </div>
+</div>
+<div class="toast" id="dash-toast"></div>
+</div><script>
+(function(){
+const STORE='dash_tasks';
+const DEF={
+  completed:[
+    {id:'c1',name:'Orbital Mechanics Calculator',type:'html',ws:'W2',ts:Date.now()-1000*3600*48},
+    {id:'c2',name:'Energy Systems Analyzer',type:'py',ws:'W3',ts:Date.now()-1000*3600*49},
+    {id:'c3',name:'Launch Window Report',type:'pdf',ws:'W4',ts:Date.now()-1000*3600*50},
+    {id:'c4',name:'Magnetostatics Constants Sync',type:'json',ws:'W1',ts:Date.now()-1000*3600*51}
+  ],
+  progress:[
+    {id:'p1',name:'Trajectory Mapping',ws:'W5',gate:'Gate 2',eta:'5 min',pct:72},
+    {id:'p2',name:'Constants Compendium OCR',ws:'W6',gate:'Gate 1',eta:'12 min',pct:35}
+  ],
+  todo:[
+    {id:'t1',name:'Mark V Field Simulation',priority:'high',ws:'W3'},
+    {id:'t2',name:'Luke IV Catch Station Model',priority:'medium',ws:'W2'},
+    {id:'t3',name:'Data Amalgamation Export',priority:'high',ws:'SYS'}
+  ]
+};
+
+function load(){
+  try{return JSON.parse(localStorage.getItem(STORE))||DEF;}catch(e){return DEF;}
+}
+function save(data){localStorage.setItem(STORE,JSON.stringify(data));}
+
+function toast(msg){
+  const t=document.getElementById('dash-toast');
+  if(!t)return;
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function timeAgo(ts){
+  const d=(Date.now()-ts)/1000;
+  if(d<60)return Math.floor(d)+'s ago';
+  if(d<3600)return Math.floor(d/60)+'m ago';
+  return Math.floor(d/3600)+'h ago';
+}
+
+function renderCompleted(){
+  const data=load();
+  const el=document.getElementById('completed-list');
+  if(!el)return;
+  el.innerHTML=data.completed.map(t=>`
+    <div class="task-item completed" onclick="window.dashMoveToProgress('${t.id}')">
+      <div class="task-name">${t.name}</div>
+      <div class="task-meta">
+        <span class="task-badge badge-done">DONE</span>
+        <span>type:${t.type}</span>
+        <span>${t.ws}</span>
+        <span>${timeAgo(t.ts)}</span>
+      </div>
+    </div>`).join('')||'<div style="color:var(--txt2);font-size:11px;padding:8px;">No completed tasks</div>';
+}
+
+function renderProgress(){
+  const data=load();
+  const el=document.getElementById('progress-list');
+  if(!el)return;
+  el.innerHTML=data.progress.map(t=>`
+    <div class="task-item inprogress" onclick="window.dashCompleteTask('${t.id}')">
+      <div class="task-name">${t.name}</div>
+      <div class="task-meta">
+        <span class="task-badge badge-run">RUNNING</span>
+        <span>${t.ws}</span>
+        <span>${t.gate}</span>
+        <span>ETA ${t.eta}</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${t.pct}%;background:var(--cyan);"></div></div>
+    </div>`).join('')||'<div style="color:var(--txt2);font-size:11px;padding:8px;">No tasks in progress</div>';
+}
+
+function renderTodo(){
+  const data=load();
+  const el=document.getElementById('todo-list');
+  const form=document.getElementById('add-task-form');
+  if(!el)return;
+  const items=data.todo.map(t=>`
+    <div class="task-item todo-${t.priority}" onclick="window.dashStartTask('${t.id}')">
+      <div class="task-name">${t.name}</div>
+      <div class="task-meta">
+        <span class="task-badge badge-${t.priority==='high'?'high':t.priority==='medium'?'med':'low'}">${t.priority.toUpperCase()}</span>
+        <span>${t.ws}</span>
+        <button class="btn-sm" style="padding:1px 6px;font-size:9px;" onclick="event.stopPropagation();window.dashDeleteTodo('${t.id}')">✕</button>
+      </div>
+    </div>`).join('');
+  el.innerHTML=items||'<div style="color:var(--txt2);font-size:11px;padding:8px;">Queue empty</div>';
+  if(form)el.insertBefore(form,el.firstChild);
+}
+
+function renderWS(){
+  const el=document.getElementById('ws-status-grid');
+  if(!el)return;
+  const ws=[
+    {id:'W1',color:'var(--cyan)',label:'Deposit Analysis'},
+    {id:'W2',color:'var(--purple)',label:'Extraction Planning'},
+    {id:'W3',color:'var(--mag)',label:'RFS & EMFF'},
+    {id:'W4',color:'var(--amb)',label:'Supply Chain'},
+    {id:'W5',color:'var(--grn)',label:'Mission GMAT'},
+    {id:'W6',color:'var(--pink)',label:'Asset Library'}
+  ];
+  el.innerHTML=ws.map(w=>`
+    <div class="ws-chip">
+      <div class="ws-id" style="color:${w.color}">${w.id}</div>
+      <div class="ws-status">${w.label.split(' ')[0]}</div>
+      <div class="ws-dot" style="background:${w.color};box-shadow:0 0 6px ${w.color};"></div>
+    </div>`).join('');
+}
+
+function renderHealth(){
+  const el=document.getElementById('health-rows');
+  if(!el)return;
+  const metrics=[
+    {label:'Network Nodes',val:'6/6 ONLINE',pct:100,warn:false},
+    {label:'Data Coherence',val:'99.7%',pct:100,warn:false},
+    {label:'Sim Engine Load',val:'43%',pct:43,warn:false},
+    {label:'Storage Used',val:'67%',pct:67,warn:true},
+    {label:'Agent Queue',val:'3 ACTIVE',pct:60,warn:false},
+    {label:'API Latency',val:'142ms',pct:85,warn:true}
+  ];
+  el.innerHTML=metrics.map(m=>`
+    <div class="health-row">
+      <span class="health-label">${m.label}</span>
+      <span class="health-val ${m.warn?'warn':''}">${m.val}</span>
+      <span class="health-bar"><span class="health-fill ${m.warn?'warn':''}" style="width:${m.pct}%"></span></span>
+    </div>`).join('');
+}
+
+function renderAll(){renderCompleted();renderProgress();renderTodo();renderWS();renderHealth();}
+
+// Clock
+function updateClock(){
+  const el=document.getElementById('dash-date');
+  if(el)el.textContent='UTC '+new Date().toUTCString().split(' ')[4];
+}
+setInterval(updateClock,1000);updateClock();
+
+// Progress bar animation
+function tickProgress(){
+  const data=load();
+  data.progress.forEach(t=>{if(t.pct<95)t.pct+=0.2;});
+  save(data);renderProgress();
+}
+setInterval(tickProgress,3000);
+
+// Global functions
+window.dashClearCompleted=function(){
+  const data=load();data.completed=[];save(data);renderCompleted();toast('Completed tasks cleared');
+};
+window.dashRefresh=function(){renderAll();toast('Refreshed');};
+window.dashAddToggle=function(){
+  const f=document.getElementById('add-task-form');
+  if(f)f.style.display=f.style.display==='none'?'block':'none';
+};
+window.dashAddTask=function(){
+  const n=document.getElementById('new-task-name');
+  const p=document.getElementById('new-task-priority');
+  const w=document.getElementById('new-task-ws');
+  if(!n||!n.value.trim())return toast('Enter a task name');
+  const data=load();
+  data.todo.push({id:'t'+Date.now(),name:n.value.trim(),priority:p.value,ws:w.value});
+  save(data);n.value='';renderTodo();toast('Task added to queue');
+};
+window.dashStartTask=function(id){
+  const data=load();
+  const idx=data.todo.findIndex(t=>t.id===id);
+  if(idx<0)return;
+  const t=data.todo.splice(idx,1)[0];
+  data.progress.push({id:t.id,name:t.name,ws:t.ws,gate:'Gate 1',eta:'15 min',pct:5});
+  save(data);renderAll();toast('Task started: '+t.name);
+};
+window.dashCompleteTask=function(id){
+  const data=load();
+  const idx=data.progress.findIndex(t=>t.id===id);
+  if(idx<0)return;
+  const t=data.progress.splice(idx,1)[0];
+  data.completed.unshift({id:t.id,name:t.name,type:'run',ws:t.ws,ts:Date.now()});
+  save(data);renderAll();toast('Task completed: '+t.name);
+};
+window.dashDeleteTodo=function(id){
+  const data=load();
+  data.todo=data.todo.filter(t=>t.id!==id);
+  save(data);renderTodo();toast('Task removed');
+};
+window.dashMoveToProgress=function(id){
+  const data=load();
+  const idx=data.completed.findIndex(t=>t.id===id);
+  if(idx<0)return;
+  const t=data.completed.splice(idx,1)[0];
+  data.progress.push({id:t.id,name:t.name,ws:t.ws||'SYS',gate:'Gate 1',eta:'10 min',pct:0});
+  save(data);renderAll();toast('Restarted: '+t.name);
+};
+window.dashExport=function(type){
+  const data=load();
+  const items=data[type==='completed'?'completed':type==='progress'?'progress':'todo'];
+  const blob=new Blob([JSON.stringify(items,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='dash_'+type+'_'+Date.now()+'.json';
+  a.click();toast('Exported '+type+' tasks');
+};
+
+renderAll();
+})();
+</script> 
