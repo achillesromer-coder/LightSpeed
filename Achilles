@@ -1,0 +1,533 @@
+<div id="ach-datahub-root"></div>
+<script>
+(function () {
+  var ROOT_ID = "ach-datahub-root";
+  var root = document.getElementById(ROOT_ID);
+  if (!root) return;
+
+  var NS = "adh2";
+  var STYLE_ID = NS + "-style";
+
+  var C = {
+    bg: "#050a14",
+    bg2: "#0a0f1e",
+    bg3: "#000d1a",
+    panel: "#0d1525",
+    line: "#1a2a3a",
+    line2: "#1a3a4a",
+    cyan: "#00d4ff",
+    purple: "#9b59b6",
+    magenta: "#e91e8c",
+    amber: "#f39c12",
+    green: "#00e676",
+    rose: "#ff4081",
+    text: "#e0e0e0",
+    muted: "#5a7a9a",
+    dim: "#2a4a6a"
+  };
+
+  var HUB = {
+    epochUtc: "2024-01-15T00:00:00Z",
+    workspaces: [
+      {
+        id: "W1",
+        slug: "/w1/data",
+        color: C.cyan,
+        name: "Deposit Analysis",
+        desc: "Ore body characterization, resource modeling, spectral classification, Luke IV field + trajectory, capture readiness.",
+        status: "ONLINE",
+        metricA: "RUNS",
+        metricAv: 128,
+        metricB: "EXPORTS",
+        metricBv: 19
+      },
+      {
+        id: "W2",
+        slug: "/w2/data",
+        color: C.purple,
+        name: "Luke II Catch / Hold",
+        desc: "Electromagnetic catch radius, hold envelope, release / launch context, route-state preview, station handling logic.",
+        status: "ONLINE",
+        metricA: "STATES",
+        metricAv: 42,
+        metricB: "HANDOFFS",
+        metricBv: 11
+      },
+      {
+        id: "W3",
+        slug: "/w3/data",
+        color: C.magenta,
+        name: "RFS & EMFF",
+        desc: "Rotating field systems, EM formation flight, field control, power envelope, safety state, downstream field payloads.",
+        status: "ONLINE",
+        metricA: "CONFIGS",
+        metricAv: 57,
+        metricB: "SWEEPS",
+        metricBv: 14
+      },
+      {
+        id: "W4",
+        slug: "/w4/data",
+        color: C.amber,
+        name: "Supply Chain & Trajectory",
+        desc: "Cargo logistics, route topology, transfer burden, relay nodes, mass budget, throughput and queue-state modeling.",
+        status: "ONLINE",
+        metricA: "ROUTES",
+        metricAv: 33,
+        metricB: "BUDGETS",
+        metricBv: 9
+      },
+      {
+        id: "W5",
+        slug: "/w5/data",
+        color: C.green,
+        name: "Mission Planning GMAT",
+        desc: "Window analysis, mission routing, maneuver planning, GEO / intersol oversight, operator-facing trajectory state.",
+        status: "ONLINE",
+        metricA: "RUNS",
+        metricAv: 71,
+        metricB: "WINDOWS",
+        metricBv: 23
+      },
+      {
+        id: "W6",
+        slug: "/w6/data",
+        color: C.rose,
+        name: "Asset Library Dataspace",
+        desc: "Ingest, normalize, zone, cluster, score, publish, and pass-off for strategic in-situ asset mapping and routing.",
+        status: "ONLINE",
+        metricA: "OBJECTS",
+        metricAv: 182,
+        metricB: "CLUSTERS",
+        metricBv: 17
+      }
+    ],
+    tools: [
+      { icon: "🪐", name: "Orbital Mechanics", desc: "Kepler · J2 · Vis-Viva", href: "/orbital-mechanics" },
+      { icon: "🚀", name: "Launch Windows", desc: "Porkchop · C3 · Δv", href: "/launch-windows" },
+      { icon: "🧲", name: "Magnetostatics", desc: "EMFF · Biot-Savart · Field Maps", href: "/magnetostatics" },
+      { icon: "⚡", name: "Energy & Power", desc: "Solar · Battery · Power Budget", href: "/energy-power" },
+      { icon: "🌊", name: "Fluid Dynamics", desc: "Propellant · Nozzle · Flow", href: "/fluid-dynamics" },
+      { icon: "⛏️", name: "RFS Extraction Sim", desc: "Regolith · Force · Yield", href: "/rfs-extraction" },
+      { icon: "🔮", name: "EMFF Node Sim", desc: "Formation · Coil Dynamics", href: "/emff-node" },
+      { icon: "🌐", name: "EMF Fields Sim", desc: "Lorentz · Induction · Maps", href: "/emf-fields" },
+      { icon: "🔥", name: "Re-Entry Sim", desc: "Aerobrake · Heatshield · Decel", href: "/re-entry" }
+    ],
+    resources: [
+      { icon: "📚", name: "Physics Library", desc: "Constants · references · core models", href: "/library" },
+      { icon: "🛸", name: "GMAT Interface", desc: "Mission script · SPICE · DE440", href: "/gmat" },
+      { icon: "🤖", name: "Achilles AI", desc: "Agent desktop · task planner", href: "/achilles" },
+      { icon: "📄", name: "Docs & Governance", desc: "Legal · technical · business", href: "/docs" }
+    ],
+    topNav: [
+      { label: "⚡ Fuse Panel", href: "/lightspeedhome" },
+      { label: "📚 Library", href: "/library" },
+      { label: "🤖 AI Desktop", href: "/achilles" },
+      { label: "🛸 GMAT", href: "/gmat" },
+      { label: "🔧 Calculators", href: "/orbital-mechanics" },
+      { label: "🧪 Simulators", href: "/rfs-extraction" },
+      { label: "📄 Docs", href: "/docs" },
+      { label: "📋 Dash", href: "/dash" }
+    ]
+  };
+
+  function esc(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function ensureStyle() {
+    if (document.getElementById(STYLE_ID)) return;
+    var style = document.createElement("style");
+    style.id = STYLE_ID;
+    style.textContent = `
+      #${ROOT_ID}{width:100%}
+      .${NS}-wrap{
+        font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;
+        background:${C.bg};
+        color:${C.text};
+        width:100%;
+        min-height:980px;
+        border:1px solid ${C.line};
+        border-radius:14px;
+        overflow:hidden;
+        box-shadow:0 18px 40px rgba(0,0,0,.3);
+      }
+      .${NS}-header{
+        background:linear-gradient(135deg,${C.bg3} 0%, #001a33 50%, ${C.bg3} 100%);
+        border-bottom:2px solid ${C.cyan};
+        padding:26px 28px;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        flex-wrap:wrap;
+        gap:16px;
+      }
+      .${NS}-title{
+        font-size:28px;
+        font-weight:800;
+        color:${C.cyan};
+        letter-spacing:3px;
+        text-transform:uppercase;
+        line-height:1.1;
+      }
+      .${NS}-title span{color:#fff}
+      .${NS}-sub{
+        font-size:11px;
+        color:${C.muted};
+        letter-spacing:2px;
+        margin-top:8px;
+        text-transform:uppercase;
+      }
+      .${NS}-status{
+        display:flex;
+        gap:12px;
+        align-items:center;
+        flex-wrap:wrap;
+      }
+      .${NS}-badge{
+        background:#001a33;
+        border:1px solid ${C.cyan};
+        color:${C.cyan};
+        padding:6px 14px;
+        font-size:11px;
+        letter-spacing:2px;
+        text-transform:uppercase;
+        white-space:nowrap;
+      }
+      .${NS}-clock{
+        color:${C.cyan};
+        font-size:13px;
+        font-weight:800;
+        letter-spacing:1px;
+      }
+      .${NS}-dot{
+        display:inline-block;
+        width:6px;height:6px;border-radius:50%;
+        background:${C.green};
+        margin-right:6px;
+        animation:${NS}-pulse 2s infinite;
+        vertical-align:middle;
+      }
+      @keyframes ${NS}-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+      .${NS}-nav{
+        background:${C.bg2};
+        border-bottom:1px solid ${C.line};
+        padding:12px 28px;
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+      }
+      .${NS}-nav a{
+        color:${C.muted};
+        text-decoration:none;
+        font-size:11px;
+        letter-spacing:2px;
+        text-transform:uppercase;
+        padding:6px 12px;
+        border:1px solid ${C.line};
+        transition:all .2s;
+        border-radius:6px;
+      }
+      .${NS}-nav a:hover{
+        color:${C.cyan};
+        border-color:${C.cyan};
+        background:#001a33;
+      }
+      .${NS}-body{
+        padding:28px;
+        max-width:1480px;
+        margin:0 auto;
+      }
+      .${NS}-mission{
+        background:${C.bg3};
+        border:1px solid ${C.line2};
+        padding:16px 18px;
+        margin-bottom:28px;
+        display:grid;
+        grid-template-columns:repeat(5,1fr);
+        gap:16px;
+      }
+      .${NS}-mstat{text-align:center}
+      .${NS}-mval{
+        font-size:22px;
+        font-weight:800;
+        color:${C.cyan};
+        letter-spacing:2px;
+      }
+      .${NS}-mlbl{
+        font-size:9px;
+        color:${C.muted};
+        letter-spacing:2px;
+        text-transform:uppercase;
+        margin-top:4px;
+      }
+      .${NS}-sec{
+        font-size:13px;
+        color:${C.cyan};
+        letter-spacing:3px;
+        text-transform:uppercase;
+        border-bottom:1px solid ${C.line2};
+        padding-bottom:8px;
+        margin:0 0 20px 0;
+      }
+      .${NS}-grid{
+        display:grid;
+        grid-template-columns:repeat(3,1fr);
+        gap:16px;
+        margin-bottom:30px;
+      }
+      .${NS}-card{
+        background:${C.bg2};
+        border:1px solid ${C.line};
+        padding:20px;
+        cursor:pointer;
+        transition:all .25s;
+        text-decoration:none;
+        display:block;
+        position:relative;
+        overflow:hidden;
+        border-radius:10px;
+        min-height:160px;
+      }
+      .${NS}-card::before{
+        content:'';
+        position:absolute;
+        top:0;left:0;right:0;
+        height:3px;
+        background:var(--card-color, ${C.cyan});
+      }
+      .${NS}-card:hover{
+        border-color:var(--card-color, ${C.cyan});
+        transform:translateY(-2px);
+        background:${C.panel};
+      }
+      .${NS}-cid{
+        font-size:10px;
+        letter-spacing:3px;
+        text-transform:uppercase;
+        margin-bottom:8px;
+        color:var(--card-color, ${C.cyan});
+        opacity:.9;
+      }
+      .${NS}-cname{
+        font-size:14px;
+        font-weight:800;
+        color:${C.text};
+        margin-bottom:6px;
+        text-transform:uppercase;
+        letter-spacing:1px;
+        line-height:1.35;
+      }
+      .${NS}-cdesc{
+        font-size:11px;
+        color:${C.muted};
+        line-height:1.55;
+        margin-bottom:14px;
+        min-height:52px;
+      }
+      .${NS}-cstats{
+        display:flex;
+        gap:12px;
+        flex-wrap:wrap;
+        font-size:10px;
+        letter-spacing:1px;
+        text-transform:uppercase;
+      }
+      .${NS}-stat{color:${C.dim}}
+      .${NS}-stat span{
+        color:var(--card-color, ${C.cyan});
+        font-weight:700;
+      }
+      .${NS}-tools{
+        display:grid;
+        grid-template-columns:repeat(3,1fr);
+        gap:16px;
+        margin-bottom:30px;
+      }
+      .${NS}-tool{
+        background:${C.bg2};
+        border:1px solid ${C.line};
+        padding:16px;
+        text-decoration:none;
+        display:block;
+        transition:all .2s;
+        border-radius:10px;
+      }
+      .${NS}-tool:hover{
+        border-color:${C.cyan};
+        background:${C.panel};
+        transform:translateY(-1px);
+      }
+      .${NS}-tico{
+        font-size:20px;
+        margin-bottom:8px;
+      }
+      .${NS}-tname{
+        font-size:12px;
+        font-weight:800;
+        color:${C.text};
+        letter-spacing:1px;
+        text-transform:uppercase;
+        margin-bottom:4px;
+      }
+      .${NS}-tdesc{
+        font-size:10px;
+        color:${C.muted};
+        letter-spacing:1px;
+        line-height:1.45;
+      }
+      .${NS}-tools4{
+        display:grid;
+        grid-template-columns:repeat(4,1fr);
+        gap:16px;
+        margin-bottom:22px;
+      }
+      .${NS}-foot{
+        text-align:center;
+        padding:20px 0 4px 0;
+        font-size:10px;
+        color:${C.dim};
+        letter-spacing:3px;
+        text-transform:uppercase;
+      }
+      @media (max-width:1100px){
+        .${NS}-grid,.${NS}-tools{grid-template-columns:1fr 1fr}
+        .${NS}-tools4{grid-template-columns:1fr 1fr}
+        .${NS}-mission{grid-template-columns:repeat(3,1fr)}
+      }
+      @media (max-width:760px){
+        .${NS}-body{padding:18px}
+        .${NS}-header{padding:20px}
+        .${NS}-nav{padding:10px 18px}
+        .${NS}-grid,.${NS}-tools,.${NS}-tools4{grid-template-columns:1fr}
+        .${NS}-mission{grid-template-columns:1fr 1fr}
+        .${NS}-title{font-size:22px}
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function missionDay() {
+    var epoch = new Date(HUB.epochUtc);
+    var now = new Date();
+    return Math.floor((now - epoch) / (1000 * 60 * 60 * 24));
+  }
+
+  function onlineCount() {
+    return HUB.workspaces.filter(function (w) { return w.status === "ONLINE"; }).length;
+  }
+
+  function totalMetric() {
+    return HUB.workspaces.reduce(function (sum, w) {
+      return sum + (w.metricAv || 0);
+    }, 0);
+  }
+
+  function workspaceCard(w) {
+    return ''
+      + '<a href="' + esc(w.slug) + '" class="' + NS + '-card" style="--card-color:' + w.color + '">'
+      +   '<div class="' + NS + '-cid">' + esc(w.id) + ' · Dataspace</div>'
+      +   '<div class="' + NS + '-cname">' + esc(w.name) + '</div>'
+      +   '<div class="' + NS + '-cdesc">' + esc(w.desc) + '</div>'
+      +   '<div class="' + NS + '-cstats">'
+      +     '<div class="' + NS + '-stat">Status: <span>' + esc(w.status) + '</span></div>'
+      +     '<div class="' + NS + '-stat">' + esc(w.metricA) + ': <span>' + esc(w.metricAv) + '</span></div>'
+      +     '<div class="' + NS + '-stat">' + esc(w.metricB) + ': <span>' + esc(w.metricBv) + '</span></div>'
+      +   '</div>'
+      + '</a>';
+  }
+
+  function toolCard(t) {
+    return ''
+      + '<a href="' + esc(t.href) + '" class="' + NS + '-tool">'
+      +   '<div class="' + NS + '-tico">' + esc(t.icon) + '</div>'
+      +   '<div class="' + NS + '-tname">' + esc(t.name) + '</div>'
+      +   '<div class="' + NS + '-tdesc">' + esc(t.desc) + '</div>'
+      + '</a>';
+  }
+
+  function render() {
+    ensureStyle();
+
+    var html = ''
+      + '<div class="' + NS + '-wrap">'
+      +   '<div class="' + NS + '-header">'
+      +     '<div>'
+      +       '<div class="' + NS + '-title">🛸 Achilles <span>Data Network</span></div>'
+      +       '<div class="' + NS + '-sub">Römer Industries · Mission Intelligence Layer · All Workspaces</div>'
+      +     '</div>'
+      +     '<div class="' + NS + '-status">'
+      +       '<div class="' + NS + '-badge"><span class="' + NS + '-dot"></span>Network Online</div>'
+      +       '<div class="' + NS + '-clock" id="' + NS + '-clock">UTC --:--:--</div>'
+      +       '<div class="' + NS + '-badge">' + onlineCount() + ' / 6 Nodes Active</div>'
+      +     '</div>'
+      +   '</div>'
+
+      +   '<div class="' + NS + '-nav">'
+      +     HUB.topNav.map(function (n) {
+              return '<a href="' + esc(n.href) + '">' + esc(n.label) + '</a>';
+            }).join('')
+      +   '</div>'
+
+      +   '<div class="' + NS + '-body">'
+      +     '<div class="' + NS + '-mission">'
+      +       '<div class="' + NS + '-mstat"><div class="' + NS + '-mval">6</div><div class="' + NS + '-mlbl">Active Workspaces</div></div>'
+      +       '<div class="' + NS + '-mstat"><div class="' + NS + '-mval">100</div><div class="' + NS + '-mlbl">Physics Constants</div></div>'
+      +       '<div class="' + NS + '-mstat"><div class="' + NS + '-mval">9</div><div class="' + NS + '-mlbl">Simulation Engines</div></div>'
+      +       '<div class="' + NS + '-mstat"><div class="' + NS + '-mval">' + totalMetric() + '</div><div class="' + NS + '-mlbl">Primary Records</div></div>'
+      +       '<div class="' + NS + '-mstat"><div class="' + NS + '-mval" id="' + NS + '-day">D+' + missionDay() + '</div><div class="' + NS + '-mlbl">Mission Day</div></div>'
+      +     '</div>'
+
+      +     '<div class="' + NS + '-sec">▶ Workspace Datastores — W1 Through W6</div>'
+      +     '<div class="' + NS + '-grid">'
+      +       HUB.workspaces.map(workspaceCard).join('')
+      +     '</div>'
+
+      +     '<div class="' + NS + '-sec">▶ Mission Tools — Calculators · Simulators · Resources</div>'
+      +     '<div class="' + NS + '-tools">'
+      +       HUB.tools.map(toolCard).join('')
+      +     '</div>'
+
+      +     '<div class="' + NS + '-sec">▶ Resource Hub</div>'
+      +     '<div class="' + NS + '-tools4">'
+      +       HUB.resources.map(toolCard).join('')
+      +     '</div>'
+
+      +     '<div class="' + NS + '-foot">Römer Industries · Achilles Protocol · Data Network v4.0 · All Nodes Synchronized</div>'
+      +   '</div>'
+      + '</div>';
+
+    root.innerHTML = html;
+    tick();
+  }
+
+  function tick() {
+    var clock = document.getElementById(NS + "-clock");
+    var day = document.getElementById(NS + "-day");
+    var now = new Date();
+    if (clock) {
+      var h = String(now.getUTCHours()).padStart(2, "0");
+      var m = String(now.getUTCMinutes()).padStart(2, "0");
+      var s = String(now.getUTCSeconds()).padStart(2, "0");
+      clock.textContent = "UTC " + h + ":" + m + ":" + s;
+    }
+    if (day) {
+      day.textContent = "D+" + missionDay();
+    }
+  }
+
+  render();
+  setInterval(tick, 1000);
+
+  window.AchillesDataHub = {
+    getState: function () {
+      return JSON.parse(JSON.stringify(HUB));
+    },
+    rerender: render
+  };
+})();
+</script>
