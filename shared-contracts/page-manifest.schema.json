@@ -1,0 +1,136 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/achillesromer-coder/LightSpeed/main/shared-contracts/page-manifest.schema.json",
+  "title": "Römer Page Manifest Schema",
+  "description": "Schema for validating page manifest entries. Each page must have exactly one manifest entry that specifies module, theme, capabilities, and data bindings.",
+  "type": "object",
+  "required": ["pageId", "label", "route", "surface", "theme", "moduleId", "moduleUrl"],
+  "additionalProperties": false,
+  "properties": {
+    "pageId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$|^[a-z0-9]$",
+      "description": "Unique identifier for the page (e.g., 'w5-workspace', 'data-achilles-control')"
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120,
+      "description": "Human-readable page title (e.g., 'W5 Mission Planning / GMAT')"
+    },
+    "route": {
+      "type": "string",
+      "pattern": "^/[a-z0-9/_-]*$",
+      "description": "Squarespace URL path (e.g., '/operations/w5', '/data/gmat', '/gmat')"
+    },
+    "surface": {
+      "type": "string",
+      "enum": [
+        "workspace",
+        "dataspace",
+        "calculator",
+        "simulator",
+        "gmat",
+        "achilles",
+        "mpl",
+        "library",
+        "scripts",
+        "dashboard",
+        "lightspeed"
+      ],
+      "description": "Page category/surface type"
+    },
+    "theme": {
+      "type": "string",
+      "enum": ["operationsDark", "missionDarkMpl", "publicLight"],
+      "description": "Theme identifier from romer.tokens.json"
+    },
+    "moduleId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$|^[a-z0-9]$",
+      "description": "Identifier for the module in the module registry"
+    },
+    "moduleUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Full URL or path to the module entry point (e.g., 'https://cdn.jsdelivr.net/gh/achillesromer-coder/Operations@main/apps/w5/index.js')"
+    },
+    "shell": {
+      "type": "string",
+      "enum": ["default", "dataspace", "calculator", "app", "public"],
+      "description": "Which shell renderer to use (optional; defaults to 'default')"
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "sessionDrafts",
+          "localStorageRead",
+          "calculators",
+          "simulators",
+          "taskQueue",
+          "gmatHandoff",
+          "mplPreview",
+          "queueControls",
+          "auditTrail",
+          "signOffs",
+          "calendarGate",
+          "threeJsGlobe",
+          "plotlyFallback",
+          "canvasRuntime",
+          "codePanel",
+          "schemaValidation"
+        ]
+      },
+      "description": "Optional list of feature capabilities this page provides"
+    },
+    "dataBindings": {
+      "type": "object",
+      "description": "Optional mappings to external data sources (e.g., Sheets, JSON library)"
+    },
+    "fallbackBehavior": {
+      "type": "string",
+      "enum": ["shell", "none", "error"],
+      "description": "What to render if module fails to load (default: 'shell')"
+    },
+    "guards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["auth", "feature-flag", "environment", "safety-gate"]
+          },
+          "condition": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Optional guards that must pass before page loads"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "workspace": {
+          "type": "string",
+          "enum": ["w1", "w2", "w3", "w4", "w5", "w6"]
+        },
+        "legacy": {
+          "type": "string",
+          "description": "Legacy page name for backwards compatibility (e.g., 'W1; IDA')"
+        },
+        "description": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
