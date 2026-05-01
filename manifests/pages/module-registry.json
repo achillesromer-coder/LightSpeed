@@ -1,0 +1,252 @@
+{
+  "$schema": "https://raw.githubusercontent.com/achillesromer-coder/LightSpeed/main/shared-contracts/page-manifest.schema.json",
+  "metadata": {
+    "version": "2026-05-02",
+    "description": "Module registry. Maps module IDs to their candidate URLs, capabilities, and metadata. Used by shared-loader to resolve which module to load for a given page."
+  },
+  "modules": {
+    "workspace-w1": {
+      "label": "W1 Workspace Module",
+      "description": "Deposit Analysis workspace",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/apps/w1/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/Operations@main/apps/w1/index.js",
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/apps/workspace/index.js"
+      ],
+      "capabilities": ["sessionDrafts", "queueFirst", "calculators", "taskQueue"],
+      "exports": ["mountWorkspace", "mountPage"],
+      "dependencies": ["shared-loader", "tokens", "adapters"]
+    },
+    "workspace-w2": {
+      "label": "W2 Workspace Module",
+      "description": "Luke II Catch / Hold workspace",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/apps/w2/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/Operations@main/apps/w2/index.js",
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/apps/workspace/index.js"
+      ],
+      "capabilities": ["sessionDrafts", "queueFirst", "calculators", "taskQueue", "simulators"],
+      "exports": ["mountWorkspace", "mountPage"],
+      "dependencies": ["shared-loader", "tokens", "adapters"]
+    },
+    "workspace-w3": {
+      "label": "W3 Workspace Module",
+      "description": "RFS & EMFF workspace",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/apps/w3/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/Operations@main/apps/w3/index.js",
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/apps/workspace/index.js"
+      ],
+      "capabilities": ["sessionDrafts", "queueFirst", "simulators", "taskQueue"],
+      "exports": ["mountWorkspace", "mountPage"],
+      "dependencies": ["shared-loader", "tokens", "adapters"]
+    },
+    "workspace-w4": {
+      "label": "W4 Workspace Module",
+      "description": "Supply Chain & Trajectory workspace",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/apps/w4/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/Operations@main/apps/w4/index.js",
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/apps/workspace/index.js"
+      ],
+      "capabilities": ["sessionDrafts", "queueFirst", "calculators", "simulators", "taskQueue", "gmatHandoff", "mplPreview"],
+      "exports": ["mountWorkspace", "mountPage"],
+      "dependencies": ["shared-loader", "tokens", "adapters"]
+    },
+    "workspace-w5": {
+      "label": "W5 Workspace Module",
+      "description": "Mission Planning / GMAT workspace",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/apps/w5/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/Operations@main/apps/w5/index.js",
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/apps/workspace/index.js"
+      ],
+      "capabilities": ["sessionDrafts", "queueFirst", "calculators", "gmatHandoff", "mplPreview", "taskQueue"],
+      "exports": ["mountWorkspace", "mountPage"],
+      "dependencies": ["shared-loader", "tokens", "adapters"]
+    },
+    "workspace-w6": {
+      "label": "W6 Workspace Module",
+      "description": "Asset Library Final workspace",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/apps/w6/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/Operations@main/apps/w6/index.js",
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/apps/workspace/index.js"
+      ],
+      "capabilities": ["sessionDrafts", "queueFirst", "calculators", "simulators", "gmatHandoff", "mplPreview", "taskQueue", "aggregation"],
+      "exports": ["mountWorkspace", "mountPage"],
+      "dependencies": ["shared-loader", "tokens", "adapters"]
+    },
+    "dataspace-workspace": {
+      "label": "Workspace Dataspace Module",
+      "description": "Generic dataspace for W1-W6 control and review",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/Data/main/apps/workspace-data/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/Data@main/apps/workspace-data/index.js",
+        "https://raw.githubusercontent.com/achillesromer-coder/Data/main/apps/dataspace/index.js"
+      ],
+      "capabilities": ["queueReview", "stagedRecords", "commitControls", "auditTrail", "signOffs"],
+      "exports": ["mountDataspace", "mountPage"],
+      "dependencies": ["shared-loader", "tokens", "adapters"]
+    },
+    "calc-orbital": {
+      "label": "Orbital Mechanics Calculator",
+      "description": "Compute orbital parameters, transfer windows, delta-v",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/calculators/orbital/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/Operations@main/calculators/orbital/index.js"
+      ],
+      "capabilities": ["pureJsMath", "sessionStorage", "resultSchema", "sendToWorkspace"],
+      "exports": ["mountCalculator", "mountApp"],
+      "dependencies": ["shared-loader", "tokens"]
+    },
+    "calc-launch": {
+      "label": "Launch Windows Calculator",
+      "description": "Compute launch windows and delta-v for target missions",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/calculators/launch/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/Operations@main/calculators/launch/index.js"
+      ],
+      "capabilities": ["pureJsMath", "sessionStorage", "resultSchema", "sendToWorkspace"],
+      "exports": ["mountCalculator", "mountApp"],
+      "dependencies": ["shared-loader", "tokens"]
+    },
+    "calc-magnetostatics": {
+      "label": "Magnetostatics Calculator",
+      "description": "Compute magnetic field effects and properties",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/calculators/magnetostatics/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/Operations@main/calculators/magnetostatics/index.js"
+      ],
+      "capabilities": ["pureJsMath", "sessionStorage", "resultSchema", "sendToWorkspace"],
+      "exports": ["mountCalculator", "mountApp"],
+      "dependencies": ["shared-loader", "tokens"]
+    },
+    "calc-energy": {
+      "label": "Energy & Power Calculator",
+      "description": "Compute energy budgets, power systems, thermal effects",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/calculators/energy/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/Operations@main/calculators/energy/index.js"
+      ],
+      "capabilities": ["pureJsMath", "sessionStorage", "resultSchema", "sendToWorkspace"],
+      "exports": ["mountCalculator", "mountApp"],
+      "dependencies": ["shared-loader", "tokens"]
+    },
+    "calc-fluids": {
+      "label": "Fluid Dynamics Calculator",
+      "description": "Compute fluid dynamics, aerodynamics, trajectory drag",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/calculators/fluids/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/Operations@main/calculators/fluids/index.js"
+      ],
+      "capabilities": ["pureJsMath", "sessionStorage", "resultSchema", "sendToWorkspace"],
+      "exports": ["mountCalculator", "mountApp"],
+      "dependencies": ["shared-loader", "tokens"]
+    },
+    "sim-rfs-extraction": {
+      "label": "RFS Extraction Simulator",
+      "description": "Simulate RFS extraction dynamics and efficiency",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/simulators/rfs-extraction/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/Operations@main/simulators/rfs-extraction/index.js"
+      ],
+      "capabilities": ["canvasRuntime", "sessionStorage", "resultSchema", "sendToWorkspace"],
+      "exports": ["mountSimulator", "mountApp"],
+      "dependencies": ["shared-loader", "tokens"]
+    },
+    "sim-emff-node": {
+      "label": "EMFF Node Simulator",
+      "description": "Simulate EMFF node behaviour and propagation",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/simulators/emff-node/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/Operations@main/simulators/emff-node/index.js"
+      ],
+      "capabilities": ["canvasRuntime", "sessionStorage", "resultSchema", "sendToWorkspace"],
+      "exports": ["mountSimulator", "mountApp"],
+      "dependencies": ["shared-loader", "tokens"]
+    },
+    "sim-emf-fields": {
+      "label": "EMF Fields Simulator",
+      "description": "Simulate electromagnetic field patterns and interactions",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/simulators/emf-fields/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/Operations@main/simulators/emf-fields/index.js"
+      ],
+      "capabilities": ["canvasRuntime", "sessionStorage", "resultSchema", "sendToWorkspace"],
+      "exports": ["mountSimulator", "mountApp"],
+      "dependencies": ["shared-loader", "tokens"]
+    },
+    "sim-re-entry": {
+      "label": "Re-entry Corridor Simulator",
+      "description": "Simulate spacecraft re-entry dynamics and corridor parameters",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/simulators/re-entry/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/Operations@main/simulators/re-entry/index.js"
+      ],
+      "capabilities": ["canvasRuntime", "sessionStorage", "resultSchema", "sendToWorkspace"],
+      "exports": ["mountSimulator", "mountApp"],
+      "dependencies": ["shared-loader", "tokens"]
+    },
+    "gmat-shell": {
+      "label": "GMAT Mission Planning Shell",
+      "description": "GMAT job queue, local bridge, script generation",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/LightSpeed/main/apps/gmat/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/LightSpeed@main/apps/gmat/index.js",
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/apps/gmat/index.js"
+      ],
+      "capabilities": ["gmatJobQueue", "localGmatBridge", "scriptGeneration", "missionReports", "sendToWorkspaceData"],
+      "exports": ["mountApp", "mountGmat"],
+      "dependencies": ["shared-loader", "tokens", "adapters"]
+    },
+    "achilles-dashboard": {
+      "label": "Achilles Mission Dashboard",
+      "description": "Achilles mission status, audit review, sign-offs",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/LightSpeed/main/apps/achilles/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/LightSpeed@main/apps/achilles/index.js",
+        "https://raw.githubusercontent.com/achillesromer-coder/Data/main/apps/achilles-control/index.js"
+      ],
+      "capabilities": ["missionStatusPanel", "auditReview", "signOffs", "taskQueue", "governanceChecks"],
+      "exports": ["mountApp", "mountAchilles"],
+      "dependencies": ["shared-loader", "tokens", "adapters"]
+    },
+    "mpl-globe": {
+      "label": "MPL Globe / Mission Public Layer",
+      "description": "Three.js globe with population zones, launch sites, mission overlays",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/Romer-MPL/main/public-mpl/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/Romer-MPL@main/public-mpl/index.js",
+        "https://raw.githubusercontent.com/achillesromer-coder/Romer-MPL/main/shared-globe/index.js"
+      ],
+      "capabilities": ["threeJsGlobe", "plotlyFallback", "layerStreaming", "populationZones", "launchSites", "gmatBridgeOverlay"],
+      "exports": ["mountApp", "mountMpl"],
+      "dependencies": ["shared-loader", "tokens", "adapters", "three.js"]
+    },
+    "library-gateway": {
+      "label": "Library Gateway / Resource Hub",
+      "description": "Drive gateway, resource cards, GMAT folders, JSON library",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/Data/main/apps/library-gateway/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/Data@main/apps/library-gateway/index.js",
+        "https://raw.githubusercontent.com/achillesromer-coder/LightSpeed/main/apps/library/index.js"
+      ],
+      "capabilities": ["driveGateway", "resourceCards", "gmatR2025aFolders", "jsonLibrary"],
+      "exports": ["mountApp", "mountLibrary"],
+      "dependencies": ["shared-loader", "tokens", "adapters"]
+    },
+    "scripts-generator": {
+      "label": "Script Library & Generator",
+      "description": "Script templates, code panels, schema validation, export to GMAT",
+      "candidates": [
+        "https://raw.githubusercontent.com/achillesromer-coder/LightSpeed/main/apps/scripts/index.js",
+        "https://cdn.jsdelivr.net/gh/achillesromer-coder/LightSpeed@main/apps/scripts/index.js",
+        "https://raw.githubusercontent.com/achillesromer-coder/Operations/main/scripts/index.js"
+      ],
+      "capabilities": ["scriptLibrary", "codePanel", "schemaValidation", "exportToGmat"],
+      "exports": ["mountApp", "mountScripts"],
+      "dependencies": ["shared-loader", "tokens", "adapters"]
+    }
+  }
+}
