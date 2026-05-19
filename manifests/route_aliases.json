@@ -1,0 +1,37 @@
+{
+  "version": "0.1",
+  "status": "scaffold",
+  "rule": "Do not change live routes until route alias audit and publication gate review are complete.",
+  "canonical_routes": {
+    "home": "/",
+    "lightspeed_home": "/lightspeedhome",
+    "achilles": "/achilles",
+    "achilles_datahub": "/data/achilles",
+    "dashboard": "/dash",
+    "library": "/library",
+    "gmat": "/gmat",
+    "docs": "/docs",
+    "w1_workspace": "/operations/w1",
+    "w1_dataspace": "/w1/data",
+    "w2_workspace": "/operations/w2",
+    "w2_dataspace": "/w2/data",
+    "w3_workspace": "/operations/w3",
+    "w3_dataspace": "/w3/data",
+    "w4_workspace": "/operations/w4",
+    "w4_dataspace": "/w4/data",
+    "w5_workspace": "/operations/w5",
+    "w5_dataspace": "/w5/data",
+    "w6_workspace": "/operations/w6",
+    "w6_dataspace": "/w6/data"
+  },
+  "legacy_aliases_to_resolve": {
+    "/calc/orbital": "/orbital-mechanics",
+    "/sim/rfs-extraction": "/rfs-extraction",
+    "/data/w1": "/w1/data",
+    "/data/w2": "/w2/data",
+    "/data/w3": "/w3/data",
+    "/data/w4": "/w4/data",
+    "/data/w5": "/w5/data",
+    "/data/w6": "/w6/data"
+  }
+}
