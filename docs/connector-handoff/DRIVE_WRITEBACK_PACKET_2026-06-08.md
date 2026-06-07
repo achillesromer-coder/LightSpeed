@@ -13,10 +13,13 @@ Google Drive connector profile check returned `token_expired`, so no Drive read,
 | P0 | `D:\LightSpeed_Consolidated\Agents\Achilles\99_outputs_for_review\ACHILLES_COMPACT_HANDOFF_2026-06-07.md` | `ACHILLES_COMPACT_HANDOFF_2026-06-07` | Compact current-state handoff |
 | P0 | `D:\LightSpeed_Consolidated\Agents\Achilles\99_outputs_for_review\Z_SYSTEM_AGENT_POPULATION_HANDOFF_2026-06-07.md` | `Z_SYSTEM_AGENT_POPULATION_HANDOFF_2026-06-07` | Z-system one-agent-per-floor map |
 | P0 | `D:\LightSpeed_Consolidated\Agents\Achilles\99_outputs_for_review\LOCAL_RUNNER_QUEUE_2026-06-07.md` | `LOCAL_RUNNER_QUEUE_2026-06-07` | Dry-run-first local runner queue |
+| P0 | `D:\LightSpeed_Consolidated\Agents\00_LIGHTSPEED_AGENTS_INDEX.md` | `00_LIGHTSPEED_AGENTS_INDEX` | Corrected Z-system agent-home index |
 | P1 | `D:\LightSpeed_Consolidated\Agents\Achilles\99_outputs_for_review\ACHILLES_RUN_INGESTION_RECEIPT_2026-06-07.json` | `ACHILLES_RUN_INGESTION_RECEIPT_2026-06-07` | Machine-readable run receipt |
 | P1 | `D:\LightSpeed_Consolidated\Agents\Achilles\99_outputs_for_review\achilles_z_system_overlap_2026-06-07.json` | `achilles_z_system_overlap_2026-06-07` | De Sporte / LightSpeed overlap metadata |
 | P1 | `D:\LightSpeed_Consolidated\Agents\Achilles\99_outputs_for_review\GITHUB_PR_PACKET_2026-06-08.md` | `GITHUB_PR_PACKET_2026-06-08` | PR title/body and branch packet |
 | P1 | `D:\LightSpeed_Consolidated\Agents\Achilles\99_outputs_for_review\CONNECTOR_REAUTH_STATUS_2026-06-08.md` | `CONNECTOR_REAUTH_STATUS_2026-06-08` | Connector status record |
+| P2 | `D:\LightSpeed_Consolidated\Agents\Z*\00_AGENT_HOME.md` | `Z_SYSTEM_AGENT_HOME_SET_2026-06-08` | One Markdown home per Z-system agent |
+| P2 | `D:\LightSpeed_Consolidated\Agents\Z*\agent_manifest.json` | `Z_SYSTEM_AGENT_MANIFEST_SET_2026-06-08` | One JSON manifest per Z-system agent |
 
 ## Placement recommendation
 

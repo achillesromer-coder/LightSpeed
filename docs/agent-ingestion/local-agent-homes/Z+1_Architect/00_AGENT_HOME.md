@@ -1,23 +1,23 @@
-﻿# Z+1_Architect Agent Home — Architect
+# Z+1_Architect Agent Home — Architect
 
-Result label: Z_AGENT_HOME_STUB_READY__DRY_RUN_FIRST
+Result label: `Z_AGENT_HOME_STUB_READY__DRY_RUN_FIRST`
 
 ## Identity
 
-- Z system: $(System.Collections.Hashtable.z)
-- LightSpeed primary agent: $(System.Collections.Hashtable.floor) / $(System.Collections.Hashtable.id)
-- Local model profile: $(System.Collections.Hashtable.model)
-- Population mode: $(System.Collections.Hashtable.mode)
-- De Sporte support resident: $(System.Collections.Hashtable.resident)
+- Z system: `Z+1_Architect`
+- LightSpeed primary agent: `Architect` / `architect`
+- Local model profile: `qwen3:8b`
+- Population mode: `staged`
+- De Sporte support resident: `operator`
 - Function: Governance, publish gates, release shape
 
 ## Authority
 
-- Runtime context: D:\LightSpeed_Consolidated\LightSpeed_Runtime\exports\agent_home_2026_06_07_ingestion_run
-- Review queue: D:\LightSpeed_Consolidated\Agents\Achilles\99_outputs_for_review
-- Runner queue: D:\LightSpeed_Consolidated\Agents\Achilles\99_outputs_for_review\LOCAL_RUNNER_QUEUE_2026-06-07.md
-- Achilles oversight: D:\LightSpeed_Consolidated\Agents\Achilles
-- De Sporte co-runner: D:\De Sporte`
+- Runtime context: `D:\LightSpeed_Consolidated\LightSpeed_Runtime\exports\agent_home_2026_06_07_ingestion_run`
+- Review queue: `D:\LightSpeed_Consolidated\Agents\Achilles\99_outputs_for_review`
+- Runner queue: `D:\LightSpeed_Consolidated\Agents\Achilles\99_outputs_for_review\LOCAL_RUNNER_QUEUE_2026-06-07.md`
+- Achilles oversight: `D:\LightSpeed_Consolidated\Agents\Achilles`
+- De Sporte co-runner: `D:\De Sporte``
 
 ## Execution policy
 
