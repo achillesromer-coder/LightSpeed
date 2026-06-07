@@ -1,0 +1,5 @@
+:root{--bg:#07131f;--card:rgba(15,35,52,.94);--text:#f4f0e8;--muted:#b7c3cc;--cyan:#40d3d2;--border:rgba(160,190,210,.22);--font:"EB Garamond",Garamond,Georgia,serif}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:linear-gradient(135deg,#07131f,#0b1d2d);color:var(--text);font-family:var(--font)}
+.lsgo-login{min-height:100vh;display:grid;place-items:center;padding:18px}.lsgo-card{width:min(460px,100%);border:1px solid var(--border);border-radius:18px;padding:20px;background:var(--card)}
+.kicker{color:var(--cyan);letter-spacing:.14em;text-transform:uppercase}form{display:grid;gap:12px;margin-top:18px}label{display:grid;gap:6px;color:var(--muted)}
+input,button{min-height:42px;border:1px solid var(--border);border-radius:12px;padding:8px 10px;font:inherit}input{background:rgba(255,255,255,.06);color:var(--text)}button{background:rgba(64,211,210,.12);color:var(--text);border-color:rgba(64,211,210,.55)}

@@ -1,0 +1,263 @@
+﻿{
+  "generated": "2026-06-07",
+  "result_label": "LS_GO_LAUNCH_SOURCE_ALIGNED__FEATURE_BRANCH_READY",
+  "base": "https://romer.industries",
+  "routes": [
+    {
+      "route": "/ls-go",
+      "url": "https://romer.industries/ls-go",
+      "observed_status": "200",
+      "observed_title": "LightSpeed Go — Römer Industries",
+      "fallback_title": "LightSpeed Go",
+      "primary_header": "H2: ‍ ‍ Römer Industries",
+      "content_length": 307188,
+      "badges": "LS GO, OBSERVED PAGE, OPERATIONS",
+      "purpose": "Operator landing for projects, workspaces, route status, and staged Achilles continuity."
+    },
+    {
+      "route": "/ls-go/status",
+      "url": "https://romer.industries/ls-go/status",
+      "observed_status": "200",
+      "observed_title": "LightSpeed Go Status — Römer Industries",
+      "fallback_title": "LightSpeed Go Status",
+      "primary_header": "H2: ‍ ‍ Römer Industries",
+      "content_length": 106213,
+      "badges": "STATUS, OBSERVED PAGE, SOURCE MAP",
+      "purpose": "Status panel for LS Go observed pages, repo alignment, Drive source state, and blocked actions."
+    },
+    {
+      "route": "/ls-go/handoff",
+      "url": "https://romer.industries/ls-go/handoff",
+      "observed_status": "200",
+      "observed_title": "LightSpeed Go Handoff — Römer Industries",
+      "fallback_title": "LightSpeed Go Handoff",
+      "primary_header": "H2: ‍ ‍ Römer Industries",
+      "content_length": 398476,
+      "badges": "HANDOFF, ACHILLES, COMPACT",
+      "purpose": "Single handoff page for next operator, Codex, Drive, GitHub, and Squarespace alignment."
+    },
+    {
+      "route": "/ls-go/review",
+      "url": "https://romer.industries/ls-go/review",
+      "observed_status": "200",
+      "observed_title": "LightSpeed Go — Römer Industries",
+      "fallback_title": "LightSpeed Go Review",
+      "primary_header": "H2: ‍ ‍ Römer Industries",
+      "content_length": 399223,
+      "badges": "REVIEW, BOUNDARY, QA",
+      "purpose": "Review page for visual QA, evidence boundaries, privacy gates, and launch acceptance notes."
+    },
+    {
+      "route": "/ls-go/agents",
+      "url": "https://romer.industries/ls-go/agents",
+      "observed_status": "ERROR: HTTP Error 404: Not Found",
+      "observed_title": "",
+      "fallback_title": "LightSpeed Go Agents",
+      "primary_header": "LightSpeed Go Agents",
+      "content_length": 0,
+      "badges": "AGENTS, QUEUED, VERIFY",
+      "purpose": "Agent lane placeholder; route observed in planning but unstable from local fetch."
+    }
+  ],
+  "route_config": {
+    "/ls-go": {
+      "title": "LightSpeed Go",
+      "kicker": "Römer Industries operations mobile shell",
+      "purpose": "Operator landing for projects, workspaces, route status, and staged Achilles continuity.",
+      "badges": [
+        "LS GO",
+        "OBSERVED PAGE",
+        "OPERATIONS"
+      ],
+      "panels": [
+        {
+          "title": "Operations Scope",
+          "items": [
+            "login shell",
+            "permission-filtered projects",
+            "workspaces",
+            "handoff",
+            "diagnostics"
+          ]
+        },
+        {
+          "title": "Connected Surfaces",
+          "items": [
+            "/ls-go/status",
+            "/ls-go/handoff",
+            "/ls-go/review",
+            "Drive records",
+            "GitHub source"
+          ]
+        },
+        {
+          "title": "Current State",
+          "items": [
+            "Squarespace pages enabled",
+            "static shell ready",
+            "repo source prepared",
+            "Drive re-auth required"
+          ]
+        }
+      ]
+    },
+    "/ls-go/status": {
+      "title": "LightSpeed Go Status",
+      "kicker": "Build state, route health, and operator readiness",
+      "purpose": "Status panel for LS Go observed pages, repo alignment, Drive source state, and blocked actions.",
+      "badges": [
+        "STATUS",
+        "OBSERVED PAGE",
+        "SOURCE MAP"
+      ],
+      "panels": [
+        {
+          "title": "Observed Routes",
+          "items": [
+            "/ls-go 200",
+            "/ls-go/status 200",
+            "/ls-go/handoff 200",
+            "/ls-go/review 200"
+          ]
+        },
+        {
+          "title": "Needs Attention",
+          "items": [
+            "/ls-go/agents unstable",
+            "Google Drive connector session expired",
+            "repo branch push required"
+          ]
+        },
+        {
+          "title": "Verification",
+          "items": [
+            "desktop preview",
+            "mobile preview",
+            "blocked-action line",
+            "route nav"
+          ]
+        }
+      ]
+    },
+    "/ls-go/handoff": {
+      "title": "LightSpeed Go Handoff",
+      "kicker": "Achilles operator continuation and compact handoff",
+      "purpose": "Single handoff page for next operator, Codex, Drive, GitHub, and Squarespace alignment.",
+      "badges": [
+        "HANDOFF",
+        "ACHILLES",
+        "COMPACT"
+      ],
+      "panels": [
+        {
+          "title": "Operator Handoff",
+          "items": [
+            "current observed route state",
+            "source files",
+            "repo branch",
+            "Drive blocker",
+            "next action"
+          ]
+        },
+        {
+          "title": "Execution Chain",
+          "items": [
+            "Squarespace page",
+            "static embed",
+            "GitHub source",
+            "Drive register",
+            "Codex report"
+          ]
+        },
+        {
+          "title": "Continue From",
+          "items": [
+            "this launch bundle",
+            "repo PR/branch",
+            "Drive re-auth",
+            "Squarespace publish check"
+          ]
+        }
+      ]
+    },
+    "/ls-go/review": {
+      "title": "LightSpeed Go Review",
+      "kicker": "Public-safe review, boundary, and launch acceptance",
+      "purpose": "Review page for visual QA, evidence boundaries, privacy gates, and launch acceptance notes.",
+      "badges": [
+        "REVIEW",
+        "BOUNDARY",
+        "QA"
+      ],
+      "panels": [
+        {
+          "title": "Review Gates",
+          "items": [
+            "no secrets",
+            "no wallet/token",
+            "no backend writes",
+            "no private profile exposure"
+          ]
+        },
+        {
+          "title": "Acceptance",
+          "items": [
+            "desktop layout",
+            "mobile layout",
+            "route nav",
+            "operator copy",
+            "claim boundaries"
+          ]
+        },
+        {
+          "title": "Evidence",
+          "items": [
+            "observed 200 checks",
+            "local no-secrets scan",
+            "repo commit hash after push",
+            "Drive source once re-authenticated"
+          ]
+        }
+      ]
+    },
+    "/ls-go/agents": {
+      "title": "LightSpeed Go Agents",
+      "kicker": "Queued agent/operator lane",
+      "purpose": "Agent lane placeholder; route observed in planning but unstable from local fetch.",
+      "badges": [
+        "AGENTS",
+        "QUEUED",
+        "VERIFY"
+      ],
+      "panels": [
+        {
+          "title": "Agent Lanes",
+          "items": [
+            "Achilles",
+            "Athene",
+            "Neo",
+            "Codex",
+            "Drive"
+          ]
+        },
+        {
+          "title": "Status",
+          "items": [
+            "not confirmed as an accessible route",
+            "create/verify page",
+            "avoid autonomous destructive actions"
+          ]
+        }
+      ]
+    }
+  },
+  "boundaries": [
+    "No wallet/token/mint/payment/custody/IPFS actions.",
+    "No secrets, OAuth client secrets, API keys, private keys, or passwords in source.",
+    "No backend writes from Squarespace shell.",
+    "No main-branch merge; feature branch only.",
+    "No private profile exposure; login remains shell/review until auth is reviewed."
+  ],
+  "drive_status": "BLOCKED_TOKEN_EXPIRED",
+  "repo_target": "NCNBOUWER/LightSpeed feature branch cl3/ls-go-launch-alignment-2026-06-07"
+}
