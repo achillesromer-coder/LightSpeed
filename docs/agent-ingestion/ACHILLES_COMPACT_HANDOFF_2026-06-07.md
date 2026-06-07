@@ -34,6 +34,6 @@ Result label: `ACHILLES_COMPACT_HANDOFF_READY__Z_SYSTEMS_POPULATED`
 
 - Keep De Sporte `.env` path-level only.
 - Re-auth Google Drive and GitHub connectors before connector-side writeback or PR creation.
-- Keep `/ls-go/agents` queued until the public route exists and returns `200`.
+- `[x] missing value: /ls-go/agents public route HTTP 200`; observed value: `ERROR: HTTP Error 404: Not Found`.
 - Keep Athene deferred until public overlay, privacy, and public-claim gates pass.
 - Do not merge `Main`, mutate Drive, publish routes, or launch heavy models without explicit operator gate.

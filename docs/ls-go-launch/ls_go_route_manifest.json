@@ -1,4 +1,4 @@
-﻿{
+{
   "generated": "2026-06-07",
   "result_label": "LS_GO_LAUNCH_SOURCE_ALIGNED__FEATURE_BRANCH_READY",
   "base": "https://romer.industries",
@@ -55,8 +55,8 @@
       "fallback_title": "LightSpeed Go Agents",
       "primary_header": "LightSpeed Go Agents",
       "content_length": 0,
-      "badges": "AGENTS, QUEUED, VERIFY",
-      "purpose": "Agent lane placeholder; route observed in planning but unstable from local fetch."
+      "badges": "AGENTS, [x] MISSING VALUE, HTTP 404",
+      "purpose": "[x] missing value: /ls-go/agents public route HTTP 200; observed value: ERROR: HTTP Error 404: Not Found."
     }
   ],
   "route_config": {
@@ -222,12 +222,12 @@
     },
     "/ls-go/agents": {
       "title": "LightSpeed Go Agents",
-      "kicker": "Queued agent/operator lane",
-      "purpose": "Agent lane placeholder; route observed in planning but unstable from local fetch.",
+      "kicker": "[x] missing value: agent/operator route HTTP 200",
+      "purpose": "[x] missing value: /ls-go/agents public route HTTP 200; observed value: ERROR: HTTP Error 404: Not Found.",
       "badges": [
         "AGENTS",
-        "QUEUED",
-        "VERIFY"
+        "[x] MISSING VALUE",
+        "HTTP 404"
       ],
       "panels": [
         {
@@ -243,8 +243,8 @@
         {
           "title": "Status",
           "items": [
-            "not confirmed as an accessible route",
-            "create/verify page",
+            "[x] missing value: public route HTTP 200",
+            "observed value: ERROR: HTTP Error 404: Not Found",
             "avoid autonomous destructive actions"
           ]
         }

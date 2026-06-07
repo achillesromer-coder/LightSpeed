@@ -1,10 +1,10 @@
-# OpenAI Achilles / Athene Automation Spec — 2026-06-08
+# OpenAI Achilles / Athene Automation Spec â€” 2026-06-08
 
-Result label: `OPENAI_AGENT_AUTOMATION_SPEC_READY__NO_API_KEY_REQUIRED_YET`
+Result label: `OPENAI_AGENT_AUTOMATION_SPEC_READY__RUNTIME_CREDENTIAL_MISSING_EXPLICIT`
 
 ## Purpose
 
-Define the future OpenAI Agents build lane without requiring API keys, secrets, or deployment work in this pass.
+Define the future OpenAI Agents build lane with `[x] missing value: OpenAI runtime credential`; observed value: no approved secret mechanism provided in this pass.
 
 ## Agent lanes
 
@@ -37,3 +37,4 @@ After connector/key authorization, create a minimal local prototype under a sepa
 - `docs/prompt.md` with the static governance prompt.
 
 Keep this separate from the current LS Go launch branch unless explicitly approved.
+

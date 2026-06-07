@@ -30,7 +30,7 @@ Validation:
 - Local secret-pattern scan passed for generated handoff and repo mirror files.
 - JSON validation passed for generated receipt/manifest files.
 - `/ls-go`, `/ls-go/status`, `/ls-go/handoff`, and `/ls-go/review` returned HTTP 200 in the last local route check.
-- `/ls-go/agents` remains queued/unverified and returned HTTP 404.
+- `[x] missing value: /ls-go/agents HTTP 200 verification`; observed value: `ERROR: HTTP Error 404: Not Found`.
 
 Known blockers:
 

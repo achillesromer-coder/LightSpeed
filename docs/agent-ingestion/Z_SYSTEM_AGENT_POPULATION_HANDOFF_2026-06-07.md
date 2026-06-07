@@ -44,7 +44,7 @@ Result label: `Z_SYSTEM_AGENT_POPULATION_INGESTED__RUNNER_HANDOFF_READY`
 
 - Achilles online: governance, build oversight, repo/Drive/Squarespace alignment, and approval records.
 - Athene online: deferred public overlay/automation lane; no hook until route, privacy, and public-claim gates pass.
-- `/ls-go/agents` remains queued/unverified because the observed public route returns `404`.
+- `[x] missing value: /ls-go/agents public route HTTP 200`; observed value: `ERROR: HTTP Error 404: Not Found`.
 - GitHub branch push is complete for the LS Go/static hook package, but GitHub and Drive connectors need re-auth before connector-side PR/Drive writeback.
 
 ## Hard gates retained
