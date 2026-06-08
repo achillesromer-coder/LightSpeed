@@ -24,6 +24,11 @@ Use the `.Claude` file as the executable operator protocol. This repo mirror exi
 | `:36` | Claude/UI artifact and agent-lane build pass | `.Claude`, UI artifact, per-agent oversight docs |
 | `:48` | Launch gate and maintenance handoff compact | Compact handoff, blockers, next-hour queue |
 
+## Agent oversight package
+
+- Canonical index: `D:\LightSpeed_Consolidated\_worktrees\LightSpeed-ls-go-launch-2026-06-07\docs\agent-oversight\00_AGENT_OVERSIGHT_INDEX_2026-06-08.md`
+- Review mirror: `D:\LightSpeed_Consolidated\Agents\Achilles\99_outputs_for_review\agent_oversight`
+
 ## Required output schema
 
 - `run_label`

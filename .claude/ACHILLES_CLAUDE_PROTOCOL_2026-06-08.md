@@ -22,7 +22,7 @@ This `.Claude` protocol gives Claude/UI operators the same execution posture as 
 1. Start every run by checking connector profile status for GitHub, Google Drive, and Gmail when those tools are callable.
 2. If a connector is expired or unavailable, continue with local files and record `[x] missing value: connector authenticated profile`; do not infer Drive, Gmail, or connector-side GitHub state.
 3. Use the newest source records first: live Drive docs if authenticated; otherwise local handoff registers under `D:\LightSpeed_Consolidated\Agents\Achilles\99_outputs_for_review` and repo docs under `docs/`.
-4. Never use placeholders. Every field must be either a concrete value, a bounded range, or `[x] missing value: exact missing field`; include the observed blocker.
+4. Never use unresolved filler text. Every field must be either a concrete value, a bounded range, or `[x] missing value: exact missing field`; include the observed blocker.
 5. Do not read, print, store, or summarize secret values. Treat OAuth files, `.env`, API credentials, private keys, wallet/token/payment/custody/IPFS data as hard stops.
 6. Do not delete, overwrite, merge `Main`, mutate Drive, publish live routes, send Gmail, or deploy production unless the active run has explicit operator approval and a verified tool channel.
 7. Keep Achilles as governance/source-of-truth oversight. Co-Runner, Desktop Codex, Terminal Codex, Claude/UI, and local runners execute only their bounded lane and then hand off evidence.
@@ -36,6 +36,10 @@ This `.Claude` protocol gives Claude/UI operators the same execution posture as 
 | 3 | `D:\LightSpeed_Consolidated\_worktrees\LightSpeed-ls-go-launch-2026-06-07\docs` | Repo-mirrored launch/build records |
 | 4 | `C:\Users\acc\Documents\Codex\2026-06-02\files-mentioned-by-the-user-temporary\achilles-drive-ops` | Achilles/Athene static automation gate |
 | 5 | Older or backup records | Directional context only; never supersede current registers without evidence |
+
+## Agent oversight package
+
+Use `D:\LightSpeed_Consolidated\_worktrees\LightSpeed-ls-go-launch-2026-06-07\docs\agent-oversight\00_AGENT_OVERSIGHT_INDEX_2026-06-08.md` as the canonical per-agent oversight index. The review mirror is `D:\LightSpeed_Consolidated\Agents\Achilles\99_outputs_for_review\agent_oversight`.
 
 ## Claude/UI responsibilities
 
@@ -74,7 +78,7 @@ Every automation must return:
 Use this when a Claude/UI operator or artifact begins a run:
 
 ```text
-You are Claude/UI for Achilles / CCC / LightSpeed CL3. Follow `.claude/ACHILLES_CLAUDE_PROTOCOL_2026-06-08.md`. Check connector/tool state first. Use live Drive only if authenticated; otherwise use local Achilles review queue and repo docs. Never use placeholders. Every absent value must be `[x] missing value: <field>` with the observed blocker. Do not read or print secrets. Do not delete, publish, send Gmail, merge Main, mutate Drive, or deploy production unless explicitly authorized and the tool channel is verified. Return tool_state, source_records_used, actions_completed, missing_values, blocked_actions, and next_handoff.
+You are Claude/UI for Achilles / CCC / LightSpeed CL3. Follow `.claude/ACHILLES_CLAUDE_PROTOCOL_2026-06-08.md`. Check connector/tool state first. Use live Drive only if authenticated; otherwise use local Achilles review queue and repo docs. Never use unresolved filler text. Every absent value must be `[x] missing value: <field>` with the observed blocker. Do not read or print secrets. Do not delete, publish, send Gmail, merge Main, mutate Drive, or deploy production unless explicitly authorized and the tool channel is verified. Return tool_state, source_records_used, actions_completed, missing_values, blocked_actions, and next_handoff.
 ```
 
 ## Completion threshold
