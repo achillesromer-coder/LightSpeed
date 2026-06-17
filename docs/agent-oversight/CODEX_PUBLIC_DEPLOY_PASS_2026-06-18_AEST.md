@@ -23,6 +23,10 @@ Result label: `CODEX_PUBLIC_DEPLOY_PASS__VITE8_AUDIT_CLEAR__COMMIT_AND_PUBLIC_DE
 - Updated the console state to show Vite audit clear and public route verification next.
 - Rebuilt from C staging successfully.
 - Restarted the local preview on `http://127.0.0.1:4173/`.
+- Committed and pushed the approved source/handoff set.
+- Merged `origin/Main` static route package files into the launch branch.
+- Updated GitHub `Main` and `cl3/ls-go-launch-alignment-2026-06-07` to `97ad1fd1b0b90aeec897b30432b1258d747b035b`.
+- Uploaded static deploy packet to Drive: `https://drive.google.com/file/d/1CPWa3P1qM6kedHi7KHFIjAJ72KIW2U8D/view?usp=drivesdk`.
 
 ## Verification
 
@@ -48,14 +52,12 @@ HTTP 200
 
 ## Public Route Notes
 
-- Existing route manifest records `/ls-go`, `/ls-go/status`, `/ls-go/handoff`, and `/ls-go/review` as observed `200`.
-- Existing route manifest records `/ls-go/agents` as observed `404`.
-- The LS Go console now treats `/ls-go/agents` as a post-publish verification item, not a blocking audit gate.
+- Public probe on `2026-06-18` returned HTTP `200` for `/ls-go`, `/ls-go/status`, `/ls-go/handoff`, and `/ls-go/review`.
+- Public probe on `2026-06-18` for `/ls-go/agents` did not return a normal HTTP status; the connection closed unexpectedly.
+- The LS Go console treats `/ls-go/agents` as a post-publish route fix, not a blocking Vite/audit gate.
 
 ## Next Sequence
 
-1. Commit source, lockfile, and oversight records.
-2. Merge or rebase `origin/Main` into the approved branch.
-3. Rebuild/audit from C staging.
-4. Push branch and update `Main` if clean.
-5. Publish or hand off the static route packet and verify public routes.
+1. Fix or remove `/ls-go/agents` from public route scope.
+2. Capture final UI proof for LightSpeed, De Sporte, and LS Go.
+3. Keep Drive/Gmail mutation unused unless a separate handoff or notification is explicitly required.
