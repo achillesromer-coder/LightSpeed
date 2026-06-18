@@ -1,4 +1,5 @@
 import "./styles.css";
+import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
 
 const app = document.getElementById("app");
 if (!app) throw new Error("LightSpeed Go mount node #app not found.");
@@ -55,18 +56,48 @@ const renderRows = (rows: [string, string, string, StatusTone][]) =>
     )
     .join("");
 
+const zoneSummary = twinZones
+  .map(
+    (zone) => `
+      <div class="zone-chip">
+        <strong>${(zone.radiusM / 1000).toFixed(zone.radiusM % 1000 === 0 ? 0 : 1)} km</strong>
+        <span>${zone.name}</span>
+        <em>${zone.description}</em>
+      </div>
+    `,
+  )
+  .join("");
+
+const facilitySummary = facilityRecords
+  .map(
+    (facility) => `
+      <li class="facility-row ${facility.releaseStatus}">
+        <div>
+          <strong>${facility.name}</strong>
+          <span>${facility.footprint}</span>
+          <small>${facility.elevation}</small>
+          <small>${facility.notes}</small>
+        </div>
+        <em>${facility.releaseStatus.replace("-", " ")}</em>
+      </li>
+    `,
+  )
+  .join("");
+
+const workbookSummary = workbookTabs.map((tab) => `<code>${tab}</code>`).join("");
+
 app.innerHTML = `
   <main class="lsgo-shell">
     <section class="hero panel">
       <div>
         <p class="kicker">LightSpeed Go / De Sporte Launch Console</p>
         <h1>Römer Industries Operations</h1>
-        <p class="lede">Static, public-safe operator surface for launch evidence, agent lanes, route gates, app state, and compact co-runner handoff.</p>
+        <p class="lede">Static, public-safe operator surface for launch evidence, site-twin gates, agent lanes, route state, and compact co-runner handoff.</p>
       </div>
       <div class="hero-actions">
         <span class="badge pass">Connectors authenticated</span>
-        <span class="badge pass">Vite audit clear</span>
-        <span class="badge warn">Public route verification next</span>
+        <span class="badge pass">Desktop launch ready 22/22</span>
+        <span class="badge warn">Agent route verification next</span>
       </div>
     </section>
 
@@ -104,6 +135,51 @@ app.innerHTML = `
       </article>
 
       <article class="panel wide">
+        <div class="panel-head twin-head">
+          <div>
+            <p class="kicker">Cognigrex Site Twin</p>
+            <h2>11 km Radial Spaceport Contract</h2>
+          </div>
+          <div class="twin-toggles" aria-label="Viewer controls staged for workbook-backed embed">
+            <span>Römer blueprint</span>
+            <span>Daylight architecture</span>
+            <span>Labels: none / light / descriptive</span>
+            <span>Grid toggle</span>
+          </div>
+        </div>
+        <div class="twin-grid">
+          <figure class="site-map" aria-label="Top-down schematic of central facility, X pad layout, roads, and restoration bands">
+            <svg viewBox="0 0 640 640" role="img">
+              <title>Römer spaceport radial plan</title>
+              <circle class="passive-band" cx="320" cy="320" r="300" />
+              <circle class="active-band" cx="320" cy="320" r="126" />
+              <circle class="facility-band" cx="320" cy="320" r="90" />
+              <line class="road" x1="165" y1="165" x2="475" y2="475" />
+              <line class="road" x1="475" y1="165" x2="165" y2="475" />
+              <line class="road-dash" x1="165" y1="165" x2="475" y2="475" />
+              <line class="road-dash" x1="475" y1="165" x2="165" y2="475" />
+              <rect class="hall" x="282" y="250" width="76" height="140" rx="8" />
+              <polygon class="control" points="320,210 350,232 338,268 302,268 290,232" />
+              <circle class="pad starship" cx="190" cy="190" r="34" />
+              <circle class="pad starship" cx="450" cy="190" r="34" />
+              <circle class="pad falcon" cx="190" cy="450" r="28" />
+              <circle class="pad falcon-heavy" cx="450" cy="450" r="30" />
+              <path class="flame" d="M180 204 L122 232" />
+              <path class="flame" d="M178 437 L125 411" />
+              <text x="320" y="60">11 km passive reserve</text>
+              <text x="320" y="166">3.5 km active band</text>
+              <text x="320" y="306">2.5 km facility limit</text>
+            </svg>
+          </figure>
+          <div class="twin-details">
+            <div class="zone-grid">${zoneSummary}</div>
+            <ul class="facility-list">${facilitySummary}</ul>
+            <p class="workbook-link">Workbook-backed embed contract: ${workbookSummary}</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel wide">
         <div class="panel-head">
           <p class="kicker">Compact Memory</p>
           <h2>RAM + Persistence Policy</h2>
@@ -129,12 +205,13 @@ app.innerHTML = `
           <h2>Launch Queue</h2>
         </div>
         <ol class="queue">
-          <li>Commit and push the LS Go source, route, and handoff packet.</li>
-          <li>Merge the approved branch with <code>origin/Main</code> static-route package files.</li>
-          <li>Publish the static route packet and verify public route status.</li>
+          <li>Promote the workbook contract and site-twin data shape into the Drive/repo truth lane.</li>
+          <li>Replace the static schematic with the existing 3D viewer once the artifact is identified and bounded.</li>
+          <li>Publish the static route packet and verify public route status, including <code>/ls-go/agents</code>.</li>
           <li>Capture manual UX evidence for LightSpeed, De Sporte, and LS Go.</li>
         </ol>
       </article>
     </section>
   </main>
 `;
+
