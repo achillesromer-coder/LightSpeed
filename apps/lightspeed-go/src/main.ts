@@ -17,7 +17,7 @@ const routeRows = [
   ["/ls-go/status", "HTTP 200", "Status route is live", "pass"],
   ["/ls-go/handoff", "HTTP 200", "Handoff route is live", "pass"],
   ["/ls-go/review", "HTTP 200", "Review route is live", "pass"],
-  ["/ls-go/agents", "Verify after publish", "Agent route remains a post-publish route check", "warn"],
+  ["/ls-go/agents", "HTTP 404", "Agent route is not published yet; keep it out of primary navigation until live", "warn"],
 ] satisfies [string, string, string, StatusTone][];
 
 const agentRows = [
@@ -97,7 +97,7 @@ app.innerHTML = `
       <div class="hero-actions">
         <span class="badge pass">Connectors authenticated</span>
         <span class="badge pass">Desktop launch ready 22/22</span>
-        <span class="badge warn">Agent route verification next</span>
+        <span class="badge warn">Agent route pending</span>
       </div>
     </section>
 
@@ -214,4 +214,3 @@ app.innerHTML = `
     </section>
   </main>
 `;
-
