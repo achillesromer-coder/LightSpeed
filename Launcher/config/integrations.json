@@ -6,6 +6,7 @@
   },
   "secrets": {
     "env_keys": ["LINEAR_API_KEY","GITHUB_TOKEN","CANVA_TOKEN"],
-    "storage_floor": "Z+2"   // visible to Admin/Founder/IT only
+    "storage_floor": "Z+2",
+    "visibility": "Admin/Founder/IT only"
   }
 }
