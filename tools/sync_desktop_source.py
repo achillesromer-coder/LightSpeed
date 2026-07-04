@@ -53,6 +53,7 @@ BLOCKED_PARTS = frozenset(
         "queues",
         "receipts",
         "reports",
+        "runtime_data",
         "staging",
         "state",
         "tasks",

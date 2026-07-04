@@ -45,6 +45,7 @@ def test_validate_relative_path_accepts_source_paths(relative):
         "Desktop_Hooks/LightSpeed/Z Axis/Z-2_Oracle/Z Direct/objects.json",
         "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/logs/runtime.json",
         "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/outputs/result.json",
+        "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/simulations/runtime_data/history.json",
         "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/tools/GMAT/api.py",
         "Desktop_Hooks/LightSpeed/Z Axis/Z-1_Morpheus/documentation/build.md",
         "Desktop_Hooks/LightSpeed/ARCHIVE/old.py",
