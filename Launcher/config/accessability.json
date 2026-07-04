@@ -1,0 +1,11 @@
+{
+  "motion_reduction": { "respect_os": true, "default": false },
+  "contrast_targets": { "text": ">=4.5:1", "large_text": ">=3:1", "icons": ">=3:1" },
+  "screen_reader": { "aria_landmarks": true, "live_regions": ["jobs"] },
+  "focus": { "visible_ring_px": 2 },
+  "resize": { "text_scale_max": 2.0, "line_height": 1.5 },
+  "locales": ["en-AU","en-US","en-GB","ar-AE","fr-FR","de-DE","ja-JP","zh-Hans","zh-Hant","es-ES","pt-BR","hi-IN"],
+  "rtl": ["ar-AE"],
+  "timezone_default": "Australia/Brisbane",
+  "units": "metric"
+}

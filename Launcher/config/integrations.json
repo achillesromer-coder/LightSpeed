@@ -1,0 +1,12 @@
+{
+  "connectors": {
+    "linear": { "enabled": false, "workspace": "_____", "team": "_____", "projects": [], "sync": "both" },
+    "github": { "enabled": false, "repositories": [], "watch_paths": ["/engine","/docs"] },
+    "canva":  { "enabled": false, "brand_kits": [], "folders": [], "export_presets": [] }
+  },
+  "secrets": {
+    "env_keys": ["LINEAR_API_KEY","GITHUB_TOKEN","CANVA_TOKEN"],
+    "storage_floor": "Z+2",
+    "visibility": "Admin/Founder/IT only"
+  }
+}

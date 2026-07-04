@@ -1,0 +1,16 @@
+roles:
+  CEO:            { clearance: 5, can_publish: true, can_manage_users: true }
+  CFO:            { clearance: 5, can_publish: true, finance_only: true }
+  COO:            { clearance: 4, can_publish: true }
+  CTO:            { clearance: 4, can_publish: true }
+  Scientist:      { clearance: 3 }
+  Engineer:       { clearance: 3 }
+  Designer:       { clearance: 3 }
+  Ops:            { clearance: 2 }
+  Contributor:    { clearance: 2 }
+  Viewer:         { clearance: 1, read_only: true }
+
+draft_visibility:
+  min_clearance: 2          # Drafts visible from this clearance and up.
+  can_view_own:  true       # Authors can always view their drafts.
+  allow_share_link: false   # Disable public draft links by default.

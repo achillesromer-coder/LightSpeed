@@ -1,0 +1,69 @@
+{
+    "result_label":  "DE_SPORTE_LIGHTSPEED_OVERLAP_POPULATED__METADATA_ONLY",
+    "generated_at_local":  "2026-06-07",
+    "lightspeed_agent_index":  "D:\\LightSpeed_Consolidated\\Agents\\00_LIGHTSPEED_AGENTS_INDEX.md",
+    "runtime_export":  "D:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home_2026_06_07_ingestion_run",
+    "review_queue":  "D:\\LightSpeed_Consolidated\\Agents\\Achilles\\99_outputs_for_review",
+    "de_sporte_root":  "D:\\De Sporte`",
+    "policy":  {
+                   "mode":  "metadata_only_dry_run_first",
+                   "max_ollama_sessions":  1,
+                   "max_active_lightspeed_floors":  1,
+                   "role":  "co_runner_overseer_companion_not_replacement_shell"
+               },
+    "support_residents":  [
+                              {
+                                  "de_sporte_resident":  "orion",
+                                  "lightspeed_agent":  "Merovingian",
+                                  "z_system":  "Z-4_Merovingian"
+                              },
+                              {
+                                  "de_sporte_resident":  "operator",
+                                  "lightspeed_agent":  "Smith",
+                                  "z_system":  "Z-3_Smith"
+                              },
+                              {
+                                  "de_sporte_resident":  "mnemos",
+                                  "lightspeed_agent":  "Oracle",
+                                  "z_system":  "Z-2_Oracle"
+                              },
+                              {
+                                  "de_sporte_resident":  "operator",
+                                  "lightspeed_agent":  "Morpheus",
+                                  "z_system":  "Z-1_Morpheus"
+                              },
+                              {
+                                  "de_sporte_resident":  "atlas",
+                                  "lightspeed_agent":  "TheConstruct",
+                                  "z_system":  "Z0_TheConstruct"
+                              },
+                              {
+                                  "de_sporte_resident":  "operator",
+                                  "lightspeed_agent":  "Architect",
+                                  "z_system":  "Z+1_Architect"
+                              },
+                              {
+                                  "de_sporte_resident":  "neo",
+                                  "lightspeed_agent":  "Neo",
+                                  "z_system":  "Z+2_Neo"
+                              },
+                              {
+                                  "de_sporte_resident":  "iris",
+                                  "lightspeed_agent":  "Trinity",
+                                  "z_system":  "Z+3_Trinity"
+                              }
+                          ],
+    "deferred_online":  {
+                            "raphael":  "query_support_overlay_not_z_floor_owner",
+                            "achilles":  "active_governance_and_build_oversight",
+                            "athene":  "deferred_public_overlay_until_route_privacy_and_claim_gates_pass"
+                        },
+    "holds":  [
+                  "no_env_copy",
+                  "no_secret_values",
+                  "no_drive_mutation",
+                  "no_public_route_mutation",
+                  "no_main_merge",
+                  "no_heavy_runner_without_gate"
+              ]
+}

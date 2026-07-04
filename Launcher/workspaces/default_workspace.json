@@ -1,0 +1,17 @@
+{
+  "workspace_name": "default_workspace",
+  "projects": [
+    {
+      "name": "Layer N",
+      "created_ts": 1755751967.8149073,
+      "notes": ""
+    }
+  ],
+  "assets": [],
+  "apis": [],
+  "settings": {
+    "theme": "light",
+    "autosave_interval": 300,
+    "plot_samples": 200
+  }
+}

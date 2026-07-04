@@ -1,0 +1,23 @@
+allowed_types:
+  images: [".png",".jpg",".jpeg",".gif",".bmp",".tif",".tiff",".exr"]
+  docs:   [".pdf",".txt",".md",".docx",".pptx",".xlsx",".rtf"]
+  code:   [".py",".ipynb",".json",".yaml",".yml",".toml",".ini"]
+  3d:     [".blend",".gltf",".glb",".obj",".fbx",".usd",".usdz",".stl",".step",".iges"]
+  data:   [".csv",".tsv",".parquet",".feather",".h5",".hdf5",".npz",".npy",".arrow"]
+  media:  [".mp4",".mov",".wav",".flac",".mp3"]
+  other:  ["*"]                     # extensible via Z^x admin UI
+
+storage:
+  strategy: "linked"                # local + cloud connectors
+  local_root: "assets"
+  cloud_connectors: ["_____"]       # to be added in-app
+  size_limits_mb: "unbounded"       # warn > 2048MB; chunk uploads if supported
+
+folders:
+  policy: "free_hierarchy"
+  recommended_roots: ["/assets/raw","/assets/cooked","/projects","/exports"]
+
+versioning:
+  mode: "content_hash_with_alias"
+  alias_format: "{basename}_v{n}"
+  finalize_on_restart: true

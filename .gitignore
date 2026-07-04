@@ -1,0 +1,11 @@
+# Generated dependencies and caches
+**/node_modules/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Runtime logs belong in canonical JSONL/XLSX ledgers
+*.log
+
+# Local tool caches
+.cache/

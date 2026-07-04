@@ -1,0 +1,25 @@
+{
+    "result_label":  "Z_AGENT_HOME_STUB_READY__DRY_RUN_FIRST",
+    "generated_at_local":  "2026-06-07",
+    "z_system":  "Z+2_Neo",
+    "lightspeed_floor":  "Neo",
+    "lightspeed_agent_id":  "neo",
+    "local_model":  "qwen3:8b",
+    "population_mode":  "resident",
+    "de_sporte_support_resident":  "neo",
+    "function":  "Orchestration, briefs, local Ollama bridge",
+    "authority_export":  "D:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home_2026_06_07_ingestion_run",
+    "review_queue":  "D:\\LightSpeed_Consolidated\\Agents\\Achilles\\99_outputs_for_review",
+    "runner_queue":  "D:\\LightSpeed_Consolidated\\Agents\\Achilles\\99_outputs_for_review\\LOCAL_RUNNER_QUEUE_2026-06-07.md",
+    "gates":  [
+                  "dry_run_first",
+                  "one_active_floor",
+                  "one_ollama_session",
+                  "no_secret_values",
+                  "no_destructive_moves",
+                  "no_drive_mutation",
+                  "no_public_route_mutation",
+                  "no_main_merge",
+                  "no_heavy_runner_without_gate"
+              ]
+}

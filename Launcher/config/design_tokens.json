@@ -1,0 +1,52 @@
+{
+  "brand": {
+    "name": "Romer Industries / LightSpeed",
+    "primary": "#00E5FF",
+    "accent": "#D4AF37",
+    "danger": "#EF4444",
+    "warning": "#F59E0B",
+    "neutral_0":  "#0B1020",
+    "neutral_1":  "#111827",
+    "neutral_2":  "#1F2937",
+    "neutral_3":  "#374151",
+    "neutral_4":  "#6B7280",
+    "neutral_5":  "#9CA3AF",
+    "neutral_6":  "#D1D5DB",
+    "surface":   "#0B1020",
+    "surface_alt":"#111827",
+    "text_primary":"#FFFFFF",
+    "text_muted":  "#9CA3AF"
+  },
+  "type": {
+    "family_sans": "Aptos",
+    "family_display": "Garamond",
+    "size_sm": 12,
+    "size_md": 14,
+    "size_lg": 16,
+    "size_xl": 18,
+    "line_height": 1.4
+  },
+  "space": {
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24
+  },
+  "radius": {
+    "sm": 6,
+    "md": 10,
+    "lg": 16
+  },
+  "elevation": {
+    "level_0": { "shadow": "none", "blur_px": 0, "opacity": 0 },
+    "level_1": { "shadow": "0 1px 2px rgba(0,0,0,0.20)", "blur_px": 8, "opacity": 0.2 },
+    "level_2": { "shadow": "0 6px 20px rgba(0,0,0,0.35)", "blur_px": 16, "opacity": 0.35 }
+  },
+  "graph": {
+    "node_default_color": "#0EA5E9",
+    "edge_default_color": "#6B7280",
+    "selection_color":    "#22C55E",
+    "portal_color":       "#F59E0B"
+  }
+}
