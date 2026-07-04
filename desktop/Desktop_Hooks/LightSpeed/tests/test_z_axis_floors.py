@@ -327,7 +327,7 @@ class TestITPortalLayoutContracts:
         spec.loader.exec_module(mod)  # type: ignore[union-attr]
         return mod
 
-    def test_it_portal_tabs_are_condensed_and_floors_load(self, lightspeed_root):
+    def test_it_portal_is_one_embedded_shell_with_lazy_floor_routes(self, lightspeed_root):
         try:
             import tkinter as tk
         except Exception as e:
@@ -361,50 +361,29 @@ class TestITPortalLayoutContracts:
             user = {"fullname": "IT Contract Test", "clearance": 4}
 
             portal = mod.ITPortal(root, user, colors, {}, lightspeed_root=lightspeed_root)
-            try:
-                portal.withdraw()
-            except Exception:
-                pass
-
-            nb = getattr(portal, "notebook", None)
-            assert nb is not None, "IT Portal notebook missing"
-
-            top_tabs = [str(nb.tab(t, "text") or "") for t in nb.tabs()]
-            assert top_tabs == ["Dashboard", "Z Direct", "Setup Wizard", "Floors", "Tools"], f"Unexpected top tabs: {top_tabs}"
-
-            tools_nb = getattr(portal, "_tools_notebook", None)
-            assert tools_nb is not None, "Tools notebook missing"
-            tools_tabs = [str(tools_nb.tab(t, "text") or "") for t in tools_nb.tabs()]
-            assert tools_tabs == ["Operator Shortcuts"], f"Unexpected Tools tabs: {tools_tabs}"
-
-            floors_nb = getattr(portal, "_floors_notebook", None)
-            assert floors_nb is not None, "Floors notebook missing"
-            floors_tabs = [str(floors_nb.tab(t, "text") or "") for t in floors_nb.tabs()]
-            assert len(floors_tabs) == 8, f"Expected 8 floor tabs, got {len(floors_tabs)}"
-
-            # Ensure floor UIs are not stubbed (loaded widget instances).
-            instances = getattr(portal, "_floor_ui_instances", {}) or {}
-            expected = {"Trinity", "Neo", "Architect", "TheConstruct", "Morpheus", "Oracle", "Smith", "Merovingian"}
-            assert expected.issubset(set(instances.keys())), f"Missing floor UIs: {sorted(expected - set(instances.keys()))}"
-
-            # Ensure the operator shortcut deep-links map to real tabs (avoid silent no-ops).
-            required_tabs = {
-                "Trinity": {"Themes", "Bento System", "Settings Hub", "Templates", "Wizards", "Portal"},
-                "Architect": {"Project Manager", "Tasks", "Timeline"},
-                "Neo": {"Planner", "API Manager", "Code Assistant"},
-                "Oracle": {"Library", "Ingestion", "Backup & Restore"},
-                "Smith": {"Background Jobs", "Jobs & Artifacts", "SOPs"},
-                "Merovingian": {"System Metrics", "Logs", "Database Browser", "Performance Profiler"},
-                "Morpheus": {"Dependency Map"},
-                "TheConstruct": {"Dashboard", "Physics Calculators", "3D Immersive"},
+            portal.pack(fill="both", expand=True)
+            shell = getattr(portal, "shell", None)
+            assert shell is not None, "Embedded Trinity shell missing"
+            assert isinstance(portal, tk.Frame)
+            assert portal.winfo_toplevel() is root
+            assert not hasattr(portal, "notebook")
+            assert tuple(shell._mode_buttons) == (
+                "workspace",
+                "operator",
+                "review",
+                "publish",
+                "settings",
+                "holospace",
+            )
+            assert shell.state.snapshot() == {
+                "mode": "workspace",
+                "active_floor": "Trinity",
+                "workspace_context": "",
             }
-
-            for floor, tabs in required_tabs.items():
-                ui = instances.get(floor)
-                assert ui is not None, f"Missing UI instance for {floor}"
-                mapping = getattr(ui, "_tabs", {}) or {}
-                missing = sorted(set(tabs) - set(mapping.keys()))
-                assert not missing, f"{floor} missing expected tabs: {missing}"
+            assert shell.floor_selector.get_floor() == "Trinity"
+            assert shell.open_floor_tab("Oracle") is True
+            assert shell.state.snapshot()["active_floor"] == "Oracle"
+            assert shell.state.snapshot()["mode"] == "operator"
         finally:
             try:
                 if portal is not None:

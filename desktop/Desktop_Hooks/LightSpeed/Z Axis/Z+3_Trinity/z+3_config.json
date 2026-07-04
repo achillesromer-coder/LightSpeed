@@ -1,0 +1,35 @@
+{
+  "floor_info": {
+    "floor_id": "Z+3",
+    "floor_name": "Trinity",
+    "floor_code": "Z+3_Trinity",
+    "description": "Operator portal, setup and settings surfaces, UI polish contracts, and glass/bento interaction model.",
+    "primary_role": "Operator portal and UI contracts",
+    "version": "5.1.2"
+  },
+  "theme": {
+    "material": "lightspeed_glass_bento",
+    "primary_color": "#00FFFF",
+    "secondary_color": "#00DDFF",
+    "accent_color": "#4dd0e1",
+    "glass_opacity": 0.84,
+    "blur_radius": 28,
+    "border_radius": 14
+  },
+  "capabilities": [
+    "operator_portal",
+    "setup_wizards",
+    "settings_hub",
+    "glass_bento_ui",
+    "theme_contracts",
+    "file_tree",
+    "code_editor"
+  ],
+  "canonical_paths": {
+    "entrypoint": "Z Axis/Trinity.py",
+    "data_root": "Z Axis/Z+3_Trinity/data",
+    "ui_contracts": "Z Axis/Z+3_Trinity/data/ui",
+    "icon_manifest": "Z Axis/Z+3_Trinity/assets/icons/icon_manifest.json",
+    "theme_config": "config/premium_theme_config.json"
+  }
+}

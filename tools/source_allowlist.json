@@ -16,10 +16,7 @@
     "Desktop_Hooks/LightSpeed/config/workspace_lanes.json",
     "Desktop_Hooks/LightSpeed/tests",
     "Desktop_Hooks/LightSpeed/dataindex",
-    "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai",
-    "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components",
-    "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui",
-    "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core",
+    "Desktop_Hooks/LightSpeed/Z Axis",
     "LightSpeed_Runtime/lightspeed_runtime"
   ],
   "extensions": [

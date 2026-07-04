@@ -1,0 +1,344 @@
+{
+  "floor_name": "Merovingian",
+  "floor_id": "merovingian_core",
+  "z_level": -4,
+  "version": "5.1.2",
+  "description": "Core services, activity tables, audit, telemetry, finalization, and diagnostics floor",
+  "color": "#8B0000",
+  "icon": "\ud83c\udfe5",
+  "components": [
+    {
+      "id": "merovingian_ui",
+      "name": "Merovingian UI",
+      "description": "Primary Merovingian core services, audit, and diagnostics portal UI",
+      "module": "Merovingian",
+      "class": "MerovingianUI",
+      "enabled": true,
+      "source_file": "Z Axis/Merovingian.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#8B0000",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            0.0,
+            0.0,
+            0
+          ],
+          [
+            1.0,
+            0.0,
+            0
+          ],
+          [
+            0.5,
+            0.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "merovingian",
+          "core_services",
+          "high"
+        ],
+        "category": "core"
+      }
+    },
+    {
+      "id": "merovingian_portal_glass",
+      "name": "Merovingian Portal Glass",
+      "description": "Merovingian glass portal window for health, diagnostics, activity, and audit surfaces",
+      "module": "Z_Axis.Z-4_Merovingian.components.merovingian_portal_glass",
+      "class": "MerovingianPortalGlass",
+      "enabled": true,
+      "source_file": "Z Axis/Z-4_Merovingian/components/merovingian_portal_glass.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#8B0000",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            2.0,
+            0.0,
+            0
+          ],
+          [
+            3.0,
+            0.0,
+            0
+          ],
+          [
+            2.5,
+            0.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "merovingian",
+          "activity",
+          "high"
+        ],
+        "category": "utility"
+      }
+    },
+    {
+      "id": "systemmetrics",
+      "name": "System Metrics",
+      "description": "System metrics component for Merovingian diagnostics",
+      "module": "Z_Axis.Z-4_Merovingian.components.system_metrics",
+      "class": "SystemMetricsGUI",
+      "enabled": true,
+      "source_file": "Z Axis/Z-4_Merovingian/components/system_metrics.py",
+      "phase": 2,
+      "priority": "medium",
+      "metadata": {
+        "color": "#8B0000",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            4.0,
+            0.0,
+            0
+          ],
+          [
+            5.0,
+            0.0,
+            0
+          ],
+          [
+            4.5,
+            0.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "merovingian",
+          "medium"
+        ],
+        "category": "utility"
+      }
+    },
+    {
+      "id": "db_browser",
+      "name": "DB Browser",
+      "description": "Database browser and query builder UI for Merovingian-owned SQLite state",
+      "module": "Z_Axis.Z-4_Merovingian.components.db_browser",
+      "class": "DatabaseBrowser",
+      "enabled": true,
+      "source_file": "Z Axis/Z-4_Merovingian/components/db_browser.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#8B0000",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            0.0,
+            2.0,
+            0
+          ],
+          [
+            1.0,
+            2.0,
+            0
+          ],
+          [
+            0.5,
+            2.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "merovingian",
+          "high"
+        ],
+        "category": "utility"
+      }
+    },
+    {
+      "id": "performance_profiler",
+      "name": "Performance Profiler",
+      "description": "Profiler UI for performance diagnostics and runtime health checks",
+      "module": "Z_Axis.Z-4_Merovingian.components.performance_profiler",
+      "class": "PerformanceProfilerGUI",
+      "enabled": true,
+      "source_file": "Z Axis/Z-4_Merovingian/components/performance_profiler.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#8B0000",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            2.0,
+            2.0,
+            0
+          ],
+          [
+            3.0,
+            2.0,
+            0
+          ],
+          [
+            2.5,
+            2.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "merovingian",
+          "high"
+        ],
+        "category": "utility"
+      }
+    },
+    {
+      "id": "auto_healing",
+      "name": "Auto Healing",
+      "description": "Recovery and safe remediation surface for system diagnostics",
+      "module": "Z_Axis.Z-4_Merovingian.components.auto_healing",
+      "class": "AutoHealingGUI",
+      "enabled": true,
+      "source_file": "Z Axis/Z-4_Merovingian/components/auto_healing.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#8B0000",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            4.0,
+            2.0,
+            0
+          ],
+          [
+            5.0,
+            2.0,
+            0
+          ],
+          [
+            4.5,
+            2.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "merovingian",
+          "high"
+        ],
+        "category": "utility"
+      }
+    },
+    {
+      "id": "db_backup",
+      "name": "DB Backup",
+      "description": "Database backup and restore tool for Merovingian-owned databases",
+      "module": "Z_Axis.Z-4_Merovingian.components.db_backup",
+      "class": "DatabaseBackup",
+      "enabled": true,
+      "source_file": "Z Axis/Z-4_Merovingian/components/db_backup.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#8B0000",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            0.0,
+            4.0,
+            0
+          ],
+          [
+            1.0,
+            4.0,
+            0
+          ],
+          [
+            0.5,
+            4.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "merovingian",
+          "high"
+        ],
+        "category": "utility"
+      }
+    }
+  ],
+  "dependencies": [
+    "core.services"
+  ],
+  "services": [
+    {
+      "name": "MerovingianCoreService",
+      "type": "core",
+      "provider": "MerovingianCoreComponent",
+      "status": "active",
+      "endpoints": [
+        "/diagnostics",
+        "/health",
+        "/metrics",
+        "/activity",
+        "/audit",
+        "/telemetry",
+        "/database",
+        "/status"
+      ],
+      "description": "Core services, diagnostics, audit, telemetry, and finalization evidence services for Merovingian floor"
+    }
+  ],
+  "capabilities": [
+    "core_services",
+    "database",
+    "event_bus",
+    "storage",
+    "compact_activity_tables",
+    "telemetry",
+    "audit_ledgers",
+    "quality_reports",
+    "finalization_reports",
+    "closure_readiness",
+    "health_diagnostics"
+  ],
+  "smart_floor": {
+    "auto_expand": true,
+    "ai_suggestions": true
+  },
+  "goals": [
+    {
+      "id": "merovingian.finalization",
+      "description": "Keep runtime evidence compact, queryable, and floor-owned",
+      "target": 1,
+      "current": 1
+    }
+  ],
+  "initialization_order": 1,
+  "inside_out_position": "innermost_core",
+  "created": "2025-12-23T11:44:50.375695",
+  "updated": "2026-04-08T21:15:00+10:00"
+}

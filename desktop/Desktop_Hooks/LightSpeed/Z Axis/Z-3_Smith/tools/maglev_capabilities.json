@@ -1,0 +1,16 @@
+{
+  "tool_name": "Mag-Lev Capture",
+  "tool_key": "maglev_capture",
+  "description": "Simulates Mag-Lev capture (orbital+ground); writes artifacts + manifest under /w6/data/maglev/<run_id>/",
+  "default_z_context": "The Construct",
+  "default_workspace": "w1_deposit_analysis",
+  "actions": [
+    "run",
+    "view_manifest"
+  ],
+  "default_output_path": "/w6/data/maglev",
+  "ui": {
+    "show": true,
+    "category": "Simulators"
+  }
+}

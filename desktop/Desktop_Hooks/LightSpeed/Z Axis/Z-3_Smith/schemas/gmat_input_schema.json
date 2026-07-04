@@ -1,0 +1,126 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GMAT Mission Parameters",
+  "description": "Input schema for GMAT (General Mission Analysis Tool) simulations",
+  "type": "object",
+  "required": [
+    "mission_type",
+    "spacecraft",
+    "initial_state",
+    "duration"
+  ],
+  "properties": {
+    "mission_type": {
+      "type": "string",
+      "enum": [
+        "orbit_propagation",
+        "trajectory",
+        "mission_analysis",
+        "maneuver_planning"
+      ],
+      "description": "Type of mission simulation to perform"
+    },
+    "spacecraft": {
+      "type": "object",
+      "required": ["mass", "area", "Cd", "Cr"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "default": "SC",
+          "description": "Spacecraft name"
+        },
+        "mass": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Spacecraft dry mass in kg"
+        },
+        "area": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Cross-sectional area in m^2"
+        },
+        "Cd": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5,
+          "description": "Drag coefficient (dimensionless)"
+        },
+        "Cr": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5,
+          "description": "Solar radiation pressure coefficient"
+        }
+      }
+    },
+    "initial_state": {
+      "type": "object",
+      "required": ["epoch", "position", "velocity"],
+      "properties": {
+        "epoch": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}$",
+          "description": "Initial epoch in UTC Gregorian format (YYYY-MM-DDTHH:MM:SS.mmm)"
+        },
+        "position": {
+          "type": "array",
+          "items": {"type": "number"},
+          "minItems": 3,
+          "maxItems": 3,
+          "description": "Initial position [x, y, z] in km (EarthMJ2000Eq)"
+        },
+        "velocity": {
+          "type": "array",
+          "items": {"type": "number"},
+          "minItems": 3,
+          "maxItems": 3,
+          "description": "Initial velocity [vx, vy, vz] in km/s (EarthMJ2000Eq)"
+        }
+      }
+    },
+    "duration": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Simulation duration in seconds"
+    },
+    "central_body": {
+      "type": "string",
+      "enum": ["Earth", "Moon", "Mars", "Sun", "Venus", "Mercury", "Jupiter", "Saturn"],
+      "default": "Earth",
+      "description": "Central gravitational body"
+    },
+    "propagator": {
+      "type": "string",
+      "enum": [
+        "RungeKutta89",
+        "PrinceDormand78",
+        "RungeKutta56",
+        "AdamsBashforthMoulton"
+      ],
+      "default": "RungeKutta89",
+      "description": "Numerical integrator to use"
+    },
+    "output_format": {
+      "type": "string",
+      "enum": ["json", "csv", "gmat"],
+      "default": "json",
+      "description": "Output data format"
+    },
+    "include_perturbations": {
+      "type": "object",
+      "properties": {
+        "drag": {"type": "boolean", "default": false},
+        "srp": {"type": "boolean", "default": false},
+        "point_masses": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["Sun", "Moon", "Jupiter", "Venus", "Mars"]
+          },
+          "description": "Additional gravitational bodies to include"
+        }
+      },
+      "description": "Perturbation forces to include in simulation"
+    }
+  }
+}

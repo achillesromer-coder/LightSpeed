@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Energy Trials Input",
+  "type": "object",
+  "required": ["trial_type"],
+  "properties": {
+    "trial_type": {
+      "type": "string",
+      "enum": ["solar_hull", "free_flow"],
+      "description": "Type of trial"
+    },
+    "layers": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Number of electroplated layers (solar_hull)"
+    },
+    "graphene_conc": {
+      "type": "number",
+      "description": "Graphene concentration percentage (free_flow)"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "run_id": {
+      "type": "string",
+      "description": "Optional explicit run_id"
+    }
+  },
+  "additionalProperties": false
+}

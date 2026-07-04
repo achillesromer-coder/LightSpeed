@@ -1,0 +1,19 @@
+[
+  {
+    "name": "Inter-Planetary Supply Chain Network",
+    "type": "Project Workspace",
+    "link_type": "Profile",
+    "link_target": "nathaniel.bouwer - Nathaniel Bouwer",
+    "components": [
+      "Neo (AI Assistant)",
+      "Dashboard Widgets",
+      "Document Viewer",
+      "Project Tree",
+      "Workflow Designer",
+      "Database Browser"
+    ],
+    "require_login": false,
+    "created_at": "2026-01-05 09:37:43.328302",
+    "created_by": "nathaniel.bouwer"
+  }
+]

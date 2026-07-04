@@ -1,0 +1,57 @@
+{
+  "floor_info": {
+    "floor_id": "Z-1",
+    "floor_name": "Morpheus",
+    "floor_code": "Z-1_Morpheus",
+    "description": "Review, proofing, editing, knowledge-preview, and code-analysis floor",
+    "primary_role": "Review and proofing",
+    "version": "5.1.2"
+  },
+  "ownership": {
+    "active_ui_coordinator": "Z Axis/Morpheus.py",
+    "owned_components": [
+      "components/drag_drop_interface.py",
+      "components/rich_text_editor.py",
+      "components/chat_archive_browser.py",
+      "components/morpheus_portal_glass.py"
+    ],
+    "owned_data_roles": [
+      "review_queue",
+      "proofing_preview",
+      "code_analysis",
+      "edited_knowledge"
+    ]
+  },
+  "capabilities": [
+    "proofing_review",
+    "knowledge_preview",
+    "file_review",
+    "rich_text_editing",
+    "chat_archive_review",
+    "code_analysis"
+  ],
+  "runtime_flow": {
+    "inputs": [
+      "Oracle proofing queues",
+      "Oracle definition library",
+      "Smith review jobs",
+      "Neo action context"
+    ],
+    "outputs": [
+      "reviewed knowledge",
+      "edited documents",
+      "proofing notes",
+      "action context for Architect approval"
+    ]
+  },
+  "theme": {
+    "material": "romer_premium_glass",
+    "primary_color": "#8b5cf6",
+    "background": "#0a1929",
+    "panel_background": "#101a25",
+    "text_primary": "#e8f0ff",
+    "text_secondary": "#8fb3d1",
+    "glass_opacity": 0.82,
+    "border_radius": 12
+  }
+}

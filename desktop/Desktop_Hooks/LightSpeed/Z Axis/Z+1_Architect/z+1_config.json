@@ -1,0 +1,34 @@
+{
+  "floor_info": {
+    "floor_id": "Z+1",
+    "floor_name": "Architect",
+    "floor_code": "Z+1_Architect",
+    "description": "Governance, approvals, project planning, publish bundles, and finalization queues.",
+    "primary_role": "Governance and publish control",
+    "version": "5.1.2"
+  },
+  "theme": {
+    "material": "lightspeed_glass_bento",
+    "primary_color": "#DAA520",
+    "secondary_color": "#B8860B",
+    "accent_color": "#10b981",
+    "glass_opacity": 0.82,
+    "blur_radius": 25,
+    "border_radius": 12
+  },
+  "capabilities": [
+    "project_planning",
+    "approvals",
+    "publish_bundles",
+    "finalization_queues",
+    "romer_reference_path",
+    "governance_controls"
+  ],
+  "canonical_paths": {
+    "entrypoint": "Z Axis/Architect.py",
+    "data_root": "Z Axis/Z+1_Architect/data",
+    "execution_queues": "Z Axis/Z+1_Architect/data/finalization/execution_queues.json",
+    "execution_control": "Z Axis/Z+1_Architect/data/finalization/execution_control.json",
+    "publish_root": "Z Axis/Z+1_Architect/data/publish"
+  }
+}

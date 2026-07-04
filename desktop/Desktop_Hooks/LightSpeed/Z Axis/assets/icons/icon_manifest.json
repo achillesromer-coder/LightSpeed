@@ -1,0 +1,213 @@
+{
+  "version": "1.0.0",
+  "theme": "romer",
+  "icons": [
+    {
+      "icon_id": "document_pdf",
+      "category": "documents",
+      "base_svg": null,
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64
+      ],
+      "material": "glass",
+      "depth": 0.8,
+      "glow": true,
+      "glow_color": "#ff0000",
+      "theme_colors": {
+        "romer": {
+          "primary": "#ff0000",
+          "secondary": "#ffffff"
+        },
+        "emassc": {
+          "primary": "#ff6b9d",
+          "secondary": "#ffffff"
+        }
+      },
+      "metadata": {
+        "file_extension": ".pdf",
+        "mime_type": "application/pdf"
+      }
+    },
+    {
+      "icon_id": "document_text",
+      "category": "documents",
+      "base_svg": null,
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64
+      ],
+      "material": "glass",
+      "depth": 0.8,
+      "glow": false,
+      "glow_color": "#4dd0e1",
+      "theme_colors": {
+        "romer": {
+          "primary": "#4dd0e1",
+          "secondary": "#ffffff"
+        },
+        "emassc": {
+          "primary": "#ff6b9d",
+          "secondary": "#ffffff"
+        }
+      },
+      "metadata": {
+        "file_extensions": [
+          ".txt",
+          ".md"
+        ],
+        "mime_type": "text/plain"
+      }
+    },
+    {
+      "icon_id": "code_python",
+      "category": "files",
+      "base_svg": null,
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64
+      ],
+      "material": "neon",
+      "depth": 0.8,
+      "glow": true,
+      "glow_color": "#3776ab",
+      "theme_colors": {
+        "romer": {
+          "primary": "#3776ab",
+          "secondary": "#ffd343"
+        }
+      },
+      "metadata": {
+        "file_extension": ".py",
+        "language": "Python"
+      }
+    },
+    {
+      "icon_id": "code_javascript",
+      "category": "files",
+      "base_svg": null,
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64
+      ],
+      "material": "neon",
+      "depth": 0.8,
+      "glow": true,
+      "glow_color": "#f7df1e",
+      "theme_colors": {
+        "romer": {
+          "primary": "#f7df1e",
+          "secondary": "#000000"
+        }
+      },
+      "metadata": {
+        "file_extension": ".js",
+        "language": "JavaScript"
+      }
+    },
+    {
+      "icon_id": "system_settings",
+      "category": "system",
+      "base_svg": null,
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64
+      ],
+      "material": "metal",
+      "depth": 0.8,
+      "glow": false,
+      "glow_color": "#4dd0e1",
+      "theme_colors": {
+        "romer": {
+          "primary": "#90caf9",
+          "secondary": "#ffffff"
+        }
+      },
+      "metadata": {}
+    },
+    {
+      "icon_id": "system_health",
+      "category": "status",
+      "base_svg": null,
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64
+      ],
+      "material": "glass",
+      "depth": 0.8,
+      "glow": true,
+      "glow_color": "#66bb6a",
+      "theme_colors": {
+        "romer": {
+          "primary": "#66bb6a",
+          "secondary": "#ffffff"
+        }
+      },
+      "metadata": {}
+    },
+    {
+      "icon_id": "ai_neo",
+      "category": "ai",
+      "base_svg": null,
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64
+      ],
+      "material": "hologram",
+      "depth": 0.8,
+      "glow": true,
+      "glow_color": "#4dd0e1",
+      "theme_colors": {
+        "romer": {
+          "primary": "#4dd0e1",
+          "secondary": "#ffa726"
+        }
+      },
+      "metadata": {}
+    },
+    {
+      "icon_id": "tool_workspace",
+      "category": "workspace",
+      "base_svg": null,
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64
+      ],
+      "material": "glass",
+      "depth": 0.8,
+      "glow": false,
+      "glow_color": "#4dd0e1",
+      "theme_colors": {
+        "romer": {
+          "primary": "#4caf50",
+          "secondary": "#ffffff"
+        }
+      },
+      "metadata": {}
+    }
+  ]
+}

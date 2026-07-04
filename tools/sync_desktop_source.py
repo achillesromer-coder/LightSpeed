@@ -32,7 +32,36 @@ DEFAULT_EXTENSIONS = (
 BLOCKED_PARTS = frozenset(
     {
         "data",
+        "backups",
+        "cache",
+        "databases",
+        "db",
+        "documentation",
+        "exports",
+        "generated",
+        "gmat",
+        "gmat_r2025a",
+        "imports",
+        "inbox",
+        "knowns",
+        "library",
+        "logs",
+        "outbox",
+        "outputs",
+        "profiles",
+        "projects",
+        "queues",
+        "receipts",
+        "reports",
+        "staging",
+        "state",
+        "tasks",
+        "temp_shells",
+        "workspaces",
+        "z direct",
+        "z_direct",
         "archive",
+        "archives",
         "ai_logs",
         "__pycache__",
         ".pytest_cache",
@@ -466,6 +495,50 @@ def _atomic_write_manifest(
     )
 
 
+def _prune_managed_files(
+    target_root: Path,
+    *,
+    approved_paths: set[str],
+    prune_roots: Sequence[str],
+    dry_run: bool,
+) -> int:
+    pruned = 0
+    for root_value in prune_roots:
+        relative_root = _normalized_relative_path(root_value)
+        managed_root = _contained_path(target_root, relative_root)
+        _assert_no_reparse_points(managed_root)
+        if not managed_root.exists():
+            continue
+        for current, directories, files in os.walk(
+            managed_root,
+            topdown=False,
+            followlinks=False,
+        ):
+            current_path = Path(current)
+            directories[:] = [
+                name
+                for name in directories
+                if not _is_reparse_point(current_path / name)
+            ]
+            for filename in files:
+                candidate = current_path / filename
+                if _is_reparse_point(candidate):
+                    continue
+                relative = candidate.relative_to(target_root).as_posix()
+                if relative in approved_paths:
+                    continue
+                _validate_destination(target_root, candidate)
+                pruned += 1
+                if not dry_run:
+                    candidate.unlink()
+            if not dry_run and current_path != managed_root:
+                try:
+                    current_path.rmdir()
+                except OSError:
+                    pass
+    return pruned
+
+
 def sync_sources(
     source_root: Path | str,
     target_root: Path | str,
@@ -476,6 +549,7 @@ def sync_sources(
     dry_run: bool = False,
     manifest_name: str = DEFAULT_MANIFEST_NAME,
     before_replace: _BeforeReplace | None = None,
+    prune_roots: Sequence[str] = (),
 ) -> dict[str, object]:
     """Synchronize approved source files and return the manifest records."""
     source_root = _absolute_path(source_root)
@@ -534,6 +608,12 @@ def sync_sources(
 
         records.append({"path": relative, "sha256": digest, "bytes": size})
 
+    pruned = _prune_managed_files(
+        target_root,
+        approved_paths=set(expanded_paths),
+        prune_roots=prune_roots,
+        dry_run=dry_run,
+    )
     manifest = {"schema_version": 1, "records": records}
     manifest_path = _contained_path(target_root, manifest_relative)
     _assert_no_reparse_points(manifest_path)
@@ -549,6 +629,7 @@ def sync_sources(
         "mode": "dry-run" if dry_run else "sync",
         "copied": copied,
         "unchanged": unchanged,
+        "pruned": pruned,
         "manifest": manifest_relative,
         "records": records,
     }
@@ -595,6 +676,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         deny_patterns=allowlist["deny_patterns"],
         dry_run=args.dry_run,
         manifest_name=args.manifest,
+        prune_roots=("Desktop_Hooks", "LightSpeed_Runtime"),
     )
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0

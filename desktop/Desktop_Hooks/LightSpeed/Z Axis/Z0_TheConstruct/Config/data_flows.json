@@ -1,0 +1,65 @@
+[
+  {
+    "source": "mark3_simulator",
+    "target": "hybrid_renderer",
+    "data_type": "mesh_data",
+    "via": "event_bus",
+    "enabled": true
+  },
+  {
+    "source": "hybrid_renderer",
+    "target": "immersive_engine",
+    "data_type": "plotly_figure",
+    "via": "event_bus",
+    "enabled": true
+  },
+  {
+    "source": "cognigrex_models",
+    "target": "database",
+    "data_type": "model_data",
+    "via": "database",
+    "enabled": true
+  },
+  {
+    "source": "database",
+    "target": "data_integration",
+    "data_type": "live_data",
+    "via": "database",
+    "enabled": true
+  },
+  {
+    "source": "data_integration",
+    "target": "floor_widgets",
+    "data_type": "widget_data",
+    "via": "event_bus",
+    "enabled": true
+  },
+  {
+    "source": "ast_analyzer",
+    "target": "database",
+    "data_type": "analysis_results",
+    "via": "database",
+    "enabled": true
+  },
+  {
+    "source": "raphael_equations",
+    "target": "hybrid_renderer",
+    "data_type": "physics_data",
+    "via": "event_bus",
+    "enabled": true
+  },
+  {
+    "source": "orbital_mechanics",
+    "target": "hybrid_renderer",
+    "data_type": "physics_data",
+    "via": "event_bus",
+    "enabled": true
+  },
+  {
+    "source": "quantum_mechanics",
+    "target": "hybrid_renderer",
+    "data_type": "physics_data",
+    "via": "event_bus",
+    "enabled": true
+  }
+]

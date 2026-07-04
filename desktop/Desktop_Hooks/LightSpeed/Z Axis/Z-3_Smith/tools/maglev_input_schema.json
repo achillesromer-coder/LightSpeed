@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Mag-Lev Capture Input",
+  "type": "object",
+  "properties": {
+    "mass_kg": { "type": "number", "description": "Payload mass (kg)" },
+    "initial_orbit": { "type": "string", "description": "Initial orbit (e.g., LEO, GEO)" },
+    "station_orbital": { "type": "string", "description": "Orbital station ID (e.g., Luke II)" },
+    "station_ground": { "type": "string", "description": "Ground station ID (e.g., Luke IV)" },
+    "exec_path": { "type": "string", "description": "Optional external simulator executable" },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "run_id": { "type": "string", "description": "Optional explicit run_id" }
+  },
+  "required": ["mass_kg", "initial_orbit", "station_orbital", "station_ground"],
+  "additionalProperties": false
+}

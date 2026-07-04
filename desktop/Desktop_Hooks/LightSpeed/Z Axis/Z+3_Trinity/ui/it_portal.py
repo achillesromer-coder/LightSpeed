@@ -31,10 +31,10 @@ import logging
 _IMPORT_DEBUG = bool(os.environ.get("LIGHTSPEED_DEBUG_IMPORTS"))
 logger = logging.getLogger(__name__)
 
-# CODEX NOTE (2026-01-30):
-# - Trinity IT Portal is the approval gate for Z Direct durable registries.
-# - Z Direct JSONL streams are append-only staging; commits write into `Z Direct/objects.json` via
-#   `core.services.get_z_direct().commit_envelope_to_registry(...)` (adds provenance + atomic upsert).
+# CODEX NOTE (2026-07-05):
+# - ITShell is the primary embedded operator surface.
+# - This module retains the legacy implementation privately and exports a Frame
+#   facade so old imports cannot create another application window.
 
 
 def _bootstrap_sys_path() -> None:
@@ -458,7 +458,7 @@ except Exception:
         HAS_DASH_WIDGETS = False
 
 
-class ITPortal(tk.Toplevel):
+class _LegacyITPortal(tk.Toplevel):
     """
     IT/Founder Control Portal
 
@@ -8707,6 +8707,52 @@ Use the Master Settings Hub for launchers, page-local setup state, and floor-own
 # STANDALONE LAUNCH (for testing)
 # ==================================================================================
 
+
+class ITPortal(tk.Frame):
+    """Compatibility facade that embeds the canonical Trinity ITShell."""
+
+    def __init__(
+        self,
+        parent,
+        user=None,
+        colors=None,
+        z_floors_available=None,
+        **kwargs,
+    ):
+        super().__init__(parent, bg=(colors or {}).get("bg_dark", "#031A2D"))
+        from it_shell import ITShell
+
+        self.shell = ITShell(
+            self,
+            host=parent,
+            user=user or {},
+            colors=colors or {},
+            z_floors_available=z_floors_available or {},
+            mode=str(kwargs.get("mode") or "workspace"),
+            active_floor=str(kwargs.get("active_floor") or "Trinity"),
+            workspace_context=str(kwargs.get("workspace_context") or ""),
+        )
+        self.shell.pack(fill="both", expand=True)
+
+    def set_services(self, **services):
+        return self.shell.set_services(**services)
+
+    def set_company_context(self, **context):
+        return self.shell.set_company_context(**context)
+
+    def set_project_manager(self, project_manager):
+        return self.shell.set_project_manager(project_manager)
+
+    def open_floor_tab(self, floor_name: str, subtab_title: str = "") -> bool:
+        return self.shell.open_floor_tab(floor_name, subtab_title)
+
+    def _open_z_direct_view(self, **scope):
+        return self.shell._open_z_direct_view(**scope)
+
+    def lift(self):
+        self.tkraise()
+
+
 def main():
     """Test IT Portal standalone"""
     root = tk.Tk()
@@ -8751,8 +8797,10 @@ def main():
         'Trinity': None,
     }
 
+    root.deiconify()
     portal = ITPortal(root, user, colors, z_floors)
-    portal.mainloop()
+    portal.pack(fill="both", expand=True)
+    root.mainloop()
 
 
 if __name__ == "__main__":

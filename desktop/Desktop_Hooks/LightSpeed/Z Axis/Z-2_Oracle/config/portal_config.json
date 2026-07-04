@@ -1,0 +1,7 @@
+{
+  "auto_refresh": true,
+  "refresh_interval_ms": 5000,
+  "show_metrics": true,
+  "log_events": true,
+  "theme": "dark"
+}

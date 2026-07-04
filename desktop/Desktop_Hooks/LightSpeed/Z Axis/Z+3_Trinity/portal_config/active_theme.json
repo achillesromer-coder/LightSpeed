@@ -1,0 +1,16 @@
+{
+  "bg_dark": "#000B1F",
+  "bg_blue": "#001B3F",
+  "bg_panel": "#002855",
+  "accent_cyan": "#ff8080",
+  "accent_magenta": "#FF00FF",
+  "accent_pink": "#FF0088",
+  "text_green": "#00FF88",
+  "text_cyan": "#00DDFF",
+  "text_white": "#FFFFFF",
+  "border_blue": "#0055FF",
+  "button_green": "#00AA00",
+  "error_red": "#FF3333",
+  "warning_orange": "#FF9900",
+  "success_green": "#00FF00"
+}

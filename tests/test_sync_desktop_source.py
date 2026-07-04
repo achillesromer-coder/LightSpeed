@@ -40,7 +40,15 @@ def test_validate_relative_path_accepts_source_paths(relative):
     "relative",
     [
         "Desktop_Hooks/LightSpeed/data/runtime.db",
+        "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/projects/romer/task.json",
+        "Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/queues/pending.json",
+        "Desktop_Hooks/LightSpeed/Z Axis/Z-2_Oracle/Z Direct/objects.json",
+        "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/logs/runtime.json",
+        "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/outputs/result.json",
+        "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/tools/GMAT/api.py",
+        "Desktop_Hooks/LightSpeed/Z Axis/Z-1_Morpheus/documentation/build.md",
         "Desktop_Hooks/LightSpeed/ARCHIVE/old.py",
+        "Desktop_Hooks/LightSpeed/documentation/archives/old.md",
         "Desktop_Hooks/LightSpeed/ai_logs/run.json",
         "Desktop_Hooks/LightSpeed/__pycache__/N.pyc",
         "Desktop_Hooks/LightSpeed/.pytest_cache/state.json",
@@ -244,6 +252,32 @@ def test_dry_run_reports_changes_without_writing_target_or_manifest(tmp_path):
     assert result["mode"] == "dry-run"
     assert result["copied"] == 1
     assert not target.exists()
+
+
+def test_sync_prunes_only_unapproved_files_inside_managed_roots(tmp_path):
+    source = tmp_path / "source"
+    target = tmp_path / "target"
+    approved_source = source / "Desktop_Hooks" / "LightSpeed" / "N.py"
+    stale = target / "Desktop_Hooks" / "LightSpeed" / "stale.json"
+    repository_file = target / "README.md"
+    approved_source.parent.mkdir(parents=True)
+    stale.parent.mkdir(parents=True)
+    approved_source.write_text("print('approved')\n", encoding="utf-8")
+    stale.write_text("{}\n", encoding="utf-8")
+    repository_file.write_text("keep\n", encoding="utf-8")
+
+    result = sync_sources(
+        source,
+        target,
+        ["Desktop_Hooks/LightSpeed/N.py"],
+        extensions=[".py"],
+        prune_roots=["Desktop_Hooks", "LightSpeed_Runtime"],
+    )
+
+    assert result["pruned"] == 1
+    assert not stale.exists()
+    assert repository_file.exists()
+    assert (target / "Desktop_Hooks" / "LightSpeed" / "N.py").exists()
 
 
 def test_sync_rejects_reparse_component_in_target_before_copy(tmp_path, monkeypatch):
@@ -497,13 +531,10 @@ def test_repository_allowlist_names_only_active_source_roots_and_extensions():
         "Desktop_Hooks/LightSpeed/config/input_staging_matrix.json",
         "Desktop_Hooks/LightSpeed/config/premium_theme_config.json",
         "Desktop_Hooks/LightSpeed/config/resource_closure_contract.json",
-        "Desktop_Hooks/LightSpeed/config/workspace_lanes.json",
+            "Desktop_Hooks/LightSpeed/config/workspace_lanes.json",
             "Desktop_Hooks/LightSpeed/tests",
             "Desktop_Hooks/LightSpeed/dataindex",
-            "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai",
-            "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components",
-            "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui",
-            "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core",
+            "Desktop_Hooks/LightSpeed/Z Axis",
             "LightSpeed_Runtime/lightspeed_runtime",
         ]
     assert allowlist["extensions"] == [

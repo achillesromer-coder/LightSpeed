@@ -1,0 +1,76 @@
+{
+  "floor_info": {
+    "floor_id": "Z-2",
+    "floor_name": "Oracle",
+    "floor_code": "Z-2_Oracle",
+    "description": "Catalog, proofed knowns, empirical data, datatables, and provenance floor",
+    "primary_role": "Catalog and proofed knowledge",
+    "version": "5.1.2"
+  },
+  "ownership": {
+    "active_ui_coordinator": "Z Axis/Oracle.py",
+    "owned_data_roots": [
+      "data/knowns",
+      "data/library",
+      "data/encyclopedia",
+      "data/datatables",
+      "data/catalog",
+      "data/legacy"
+    ],
+    "canonical_artifacts": [
+      "data/knowns/knowns_registry.json",
+      "data/knowns/oracle_definition_library.json",
+      "data/library/empirical/empirical_catalog.json",
+      "data/datatables/curated/curated_tables_index.json",
+      "data/catalog/entity_registry.json",
+      "data/catalog/dataset_catalog_shell.json"
+    ]
+  },
+  "capabilities": [
+    "mounted_source_catalog",
+    "proofed_knowns",
+    "definition_library",
+    "empirical_catalog",
+    "encyclopedia_candidates",
+    "curated_datatables",
+    "dataset_catalog",
+    "provenance_views"
+  ],
+  "runtime_flow": {
+    "inputs": [
+      "mounted reservoirs",
+      "absorbed LightSpeed reference folders",
+      "AI log archives",
+      "empirical data sources"
+    ],
+    "outputs": [
+      "proofed knowns",
+      "library entries",
+      "encyclopedia candidates",
+      "datatable records",
+      "simulation-ready empirical anchors",
+      "provenance context for Morpheus and Neo"
+    ]
+  },
+  "ui_contract": {
+    "default_view": "curated_catalog",
+    "raw_source_policy": "Raw and legacy evidence opens through provenance actions only.",
+    "primary_actions": [
+      "Refresh knowns",
+      "Promote proofed entries",
+      "Open dataset catalog",
+      "Open proofing queue",
+      "Open provenance"
+    ]
+  },
+  "theme": {
+    "material": "romer_premium_glass",
+    "primary_color": "#8b5cf6",
+    "background": "#0a1929",
+    "panel_background": "#1e3a5a",
+    "text_primary": "#e0f7fa",
+    "text_secondary": "#80deea",
+    "glass_opacity": 0.82,
+    "border_radius": 12
+  }
+}

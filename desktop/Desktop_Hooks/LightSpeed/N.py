@@ -400,6 +400,15 @@ except Exception as _e:
     HAS_IT_PORTAL = False
     print(f"[!] IT Portal not available: {_e}")
 
+# Canonical embedded Trinity shell
+try:
+    ITShell = _load_symbol_from_file("Z Axis/Z+3_Trinity/ui/it_shell.py", "ITShell")
+    HAS_IT_SHELL = True
+except Exception as _e:
+    ITShell = None
+    HAS_IT_SHELL = False
+    print(f"[!] Trinity IT shell not available: {_e}")
+
 # Trinity Immersive UI (360/portal shell)
 try:
     ImmersiveInterface = _load_symbol_from_file("Z Axis/Z+3_Trinity/ui/immersive_interface.py", "ImmersiveInterface")
@@ -526,14 +535,12 @@ def _resolve_launch_boot_policy(
 def _trinity_ui_surface_available() -> bool:
     """Return True only when the Trinity UI stack is present in this checkout."""
     required_paths = (
-        LIGHTSPEED_ROOT / "Z Axis" / "Z+3_Trinity" / "ui" / "premium_theme_engine.py",
-        LIGHTSPEED_ROOT / "Z Axis" / "Z+3_Trinity" / "ui" / "smart_settings_hub.py",
-        LIGHTSPEED_ROOT / "Z Axis" / "Z+3_Trinity" / "ui" / "it_portal.py",
-        LIGHTSPEED_ROOT / "Z Axis" / "Z+3_Trinity" / "wizards" / "startup_wizard.py",
-        LIGHTSPEED_ROOT / "Z Axis" / "Z+3_Trinity" / "tools" / "open_dialogue_board.py",
-        LIGHTSPEED_ROOT / "Z Axis" / "Z+3_Trinity" / "core" / "services" / "__init__.py",
+        LIGHTSPEED_ROOT / "Z Axis" / "Z+3_Trinity" / "ui" / "it_shell.py",
+        LIGHTSPEED_ROOT / "Z Axis" / "Z+3_Trinity" / "ui" / "shell_routes.py",
+        LIGHTSPEED_ROOT / "Z Axis" / "Z+3_Trinity" / "ui" / "floor_selector.py",
+        LIGHTSPEED_ROOT / "Z Axis" / "Z+3_Trinity" / "ui" / "achilles_dock.py",
     )
-    return all(path.exists() for path in required_paths)
+    return HAS_IT_SHELL and all(path.is_file() for path in required_paths)
 
 
 def _shell_action_catalog() -> list[dict[str, Any]]:
@@ -4365,6 +4372,9 @@ class LightSpeedUnified(tk.Tk):
 
     def show_main_menu(self):
         """Main menu with radial navigation (PDF Page 13)"""
+        if self.user_mode == "it_founder" and HAS_IT_SHELL:
+            self.open_it_portal(mode="workspace")
+            return
         self.clear_screen()
         self.push_history("main_menu")
         self.update_breadcrumb("Home")
@@ -6044,6 +6054,9 @@ class LightSpeedUnified(tk.Tk):
 
     def show_user_dashboard(self):
         """User dashboard with widgets (PDF Page 12)"""
+        if self.user_mode == "it_founder" and HAS_IT_SHELL:
+            self.open_it_portal(mode="workspace")
+            return
         self.clear_screen()
         self.push_history("user_dashboard")
         self.update_breadcrumb("Home > Dashboard")
@@ -6194,11 +6207,14 @@ class LightSpeedUnified(tk.Tk):
     # IT PORTAL (IT/Founder Mode)
     # ========================================================================
 
-    def open_it_portal(self):
-        """
-        Open IT Portal with integrated Z-floor tabs (IT/Founder only)
-        Phase 3: Replaces Toplevel Z-floor windows with dedicated tabbed interface
-        """
+    def open_it_portal(
+        self,
+        *,
+        mode: str = "workspace",
+        active_floor: str = "Trinity",
+        workspace_context: str = "",
+    ):
+        """Open or route the single embedded Trinity IT shell."""
         if self.user_mode != "it_founder":
             messagebox.showwarning(
                 "Access Denied",
@@ -6206,60 +6222,53 @@ class LightSpeedUnified(tk.Tk):
             )
             return
 
-        if not HAS_IT_PORTAL:
-            try:
-                self.show_floors_hub(select_floor="Trinity")
-                self.update_status("Trinity functions opened (IT Portal unavailable)")
-            except Exception:
-                messagebox.showerror(
-                    "IT Portal Unavailable",
-                    "IT Portal module not loaded.\n"
-                    "Check: Z Axis/Z+3_Trinity/ui/it_portal.py",
-                )
+        if not HAS_IT_SHELL or ITShell is None:
+            messagebox.showerror(
+                "Trinity Shell Unavailable",
+                "The embedded Trinity shell is not loaded.\n"
+                "Check: Z Axis/Z+3_Trinity/ui/it_shell.py",
+            )
             return
 
-        # Reuse existing window if already open.
         try:
             existing = getattr(self, "_it_portal", None)
-            if existing is not None:
-                try:
-                    if existing.winfo_exists():
-                        existing.lift()
-                        self.update_status("IT Portal focused")
-                        return
-                except Exception:
-                    pass
+            if (
+                existing is not None
+                and existing.winfo_exists()
+                and self.current_screen == "it_shell"
+            ):
+                existing.navigate(
+                    mode,
+                    active_floor=active_floor,
+                    workspace_context=workspace_context or None,
+                )
+                existing.lift()
+                self.update_status(f"Trinity shell: {mode}")
+                return existing
 
-            # IT Portal implies "automation enabled" for the current session.
-            # If N started in retrieve-only mode, flip the gate and start Smith workers now.
-            try:
-                os.environ.pop("LIGHTSPEED_DISABLE_BACKGROUND_WORKERS", None)
-            except Exception:
-                pass
-            try:
-                import Smith  # type: ignore
+            if not workspace_context and isinstance(self.current_project, dict):
+                workspace_context = str(
+                    self.current_project.get("name")
+                    or self.current_project.get("id")
+                    or ""
+                )
 
-                rt = getattr(Smith, "SMITH_RUNTIME", {}) or {}
-                q = rt.get("queue")
-                if q is not None:
-                    fn = getattr(q, "ensure_oracle_ingestion_worker_started", None)
-                    if callable(fn):
-                        fn()
-                    fn2 = getattr(q, "start_worker", None)
-                    if callable(fn2):
-                        fn2()
-            except Exception:
-                pass
-
-            portal = ITPortal(
-                parent=self,
+            self.clear_screen()
+            self.push_history("it_shell")
+            self.update_breadcrumb("Home > Functions")
+            portal = ITShell(
+                self.main_container,
+                host=self,
                 user=self.current_user,
                 colors=COLORS,
                 z_floors_available=Z_FLOORS_AVAILABLE,
+                mode=mode,
+                active_floor=active_floor,
+                workspace_context=workspace_context,
             )
+            portal.pack(fill="both", expand=True)
             self._it_portal = portal
 
-            # Pass references to core services
             if hasattr(portal, "set_services"):
                 portal.set_services(
                     db=self.db,
@@ -6267,7 +6276,6 @@ class LightSpeedUnified(tk.Tk):
                     storage=self.storage,
                 )
 
-            # Company + project context (multi-company lobby)
             try:
                 company_id = (self.current_company or {}).get("id") if isinstance(self.current_company, dict) else None
                 company_name = (self.current_company or {}).get("name") if isinstance(self.current_company, dict) else None
@@ -6278,18 +6286,15 @@ class LightSpeedUnified(tk.Tk):
             except Exception:
                 pass
 
-            self.update_status("IT Portal opened")
+            self.update_status(f"Trinity shell: {mode}")
+            return portal
         except Exception as e:
-            try:
-                self.show_floors_hub(select_floor="Trinity")
-                self.update_status("Trinity functions opened (IT Portal unavailable)")
-                return
-            except Exception:
-                messagebox.showerror(
-                    "Error Opening IT Portal",
-                    f"Failed to launch IT Portal:\n{e}",
-                )
-                print(f"[ERROR] IT Portal launch failed: {e}")
+            messagebox.showerror(
+                "Error Opening Trinity Shell",
+                f"Failed to mount the embedded shell:\n{e}",
+            )
+            print(f"[ERROR] Trinity shell mount failed: {e}")
+            return None
 
     def open_it_portal_z_direct(
         self,
@@ -6792,6 +6797,12 @@ class LightSpeedUnified(tk.Tk):
         runtime-backed readiness summaries, and lazy floor mounting to reduce
         UI sprawl and background load.
         """
+        if self.user_mode == "it_founder" and HAS_IT_SHELL:
+            self.open_it_portal(
+                mode="operator",
+                active_floor=select_floor or "Trinity",
+            )
+            return
         self.push_history("floors_hub")
         self.update_breadcrumb("Home > Functions")
         self.clear_screen()

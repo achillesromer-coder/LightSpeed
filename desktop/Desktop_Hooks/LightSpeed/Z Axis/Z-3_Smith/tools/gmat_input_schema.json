@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GMAT Runner Stub Input",
+  "type": "object",
+  "required": ["scenario_name"],
+  "properties": {
+    "scenario_name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Name of the scenario/run"
+    },
+    "script_text": {
+      "type": "string",
+      "description": "Inline GMAT script text"
+    },
+    "script_path": {
+      "type": "string",
+      "description": "Path to GMAT script on disk"
+    },
+    "run_id": {
+      "type": "string",
+      "description": "Optional explicit run_id; if omitted, generated from scenario name + timestamp"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional tags for the manifest"
+    }
+  },
+  "additionalProperties": false
+}

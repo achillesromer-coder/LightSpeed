@@ -1,0 +1,70 @@
+{
+  "floor_info": {
+    "floor_id": "Z-3",
+    "floor_name": "Smith",
+    "floor_code": "Z-3_Smith",
+    "description": "Router, bounded execution, workflow state, and cross-floor coordination floor",
+    "primary_role": "Router and execution gateway",
+    "version": "5.1.2"
+  },
+  "ownership": {
+    "active_ui_coordinator": "Z Axis/Smith.py",
+    "owned_data_roots": [
+      "data/operations",
+      "data/legacy"
+    ],
+    "canonical_artifacts": [
+      "data/operations/smith_router.json",
+      "data/operations/workflow_state.json"
+    ],
+    "owned_components": [
+      "components/smith_task_queue.py",
+      "components/smith_interfloor_coordinator.py",
+      "components/workflow_scheduler.py",
+      "components/workflow_debugger.py",
+      "components/workflow_versioning.py",
+      "components/smith_portal_glass.py"
+    ]
+  },
+  "capabilities": [
+    "job_routing",
+    "bounded_tool_execution",
+    "background_jobs",
+    "workflow_scheduling",
+    "workflow_debugging",
+    "workflow_versioning",
+    "cross_floor_coordination",
+    "resumable_workflow_state"
+  ],
+  "runtime_flow": {
+    "inputs": [
+      "Neo action proposals",
+      "Construct simulation work",
+      "Oracle ingestion/proofing jobs",
+      "Morpheus review jobs",
+      "Architect approval state"
+    ],
+    "outputs": [
+      "routed jobs",
+      "workflow state",
+      "execution context",
+      "audit context for Merovingian"
+    ]
+  },
+  "execution_policy": {
+    "read_actions": "allowed when local and bounded",
+    "write_actions": "approval-gated unless policy-whitelisted",
+    "execute_actions": "approval-gated unless policy-whitelisted",
+    "publish_actions": "Architect approval required"
+  },
+  "theme": {
+    "material": "romer_premium_glass",
+    "primary_color": "#f59e0b",
+    "background": "#0a1929",
+    "panel_background": "#1e3a5a",
+    "text_primary": "#e0f7fa",
+    "text_secondary": "#80deea",
+    "glass_opacity": 0.82,
+    "border_radius": 12
+  }
+}
