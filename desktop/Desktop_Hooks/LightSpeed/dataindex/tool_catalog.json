@@ -1,0 +1,77 @@
+{
+  "generated_at": "2026-02-10T05:59:15.188161+00:00",
+  "root": "C:\\Users\\acc\\Desktop\\LightSpeed Consolidated\\LightSpeed",
+  "count": 5,
+  "tools": [
+    {
+      "tool_key": "energy_trials",
+      "tool_name": "Energy Trials (Solar Hull / Free Flow)",
+      "description": "Runs Solar Hull layer and Free Flow graphene concentration trials; writes artifacts and manifests under TheConstruct smart-floor labs.",
+      "default_z_context": "The Construct",
+      "default_workspace": "romer_materials",
+      "actions": [
+        "run",
+        "view_manifest"
+      ],
+      "default_output_path": "/Z Axis/Z0_TheConstruct/data/labs/energy",
+      "ui_category": "Materials",
+      "capabilities_path": "Z Axis\\Z-3_Smith\\tools\\energy_capabilities.json"
+    },
+    {
+      "tool_key": "gmat_runner_stub",
+      "tool_name": "GMAT Runner (Stub)",
+      "description": "Runs GMAT scenarios (stubbed), writes artifacts and manifests under TheConstruct smart-floor labs.",
+      "default_z_context": "The Construct",
+      "default_workspace": "romer_mission_planning",
+      "actions": [
+        "run",
+        "view_manifest"
+      ],
+      "default_output_path": "/Z Axis/Z0_TheConstruct/data/labs/gmat",
+      "ui_category": "Simulators",
+      "capabilities_path": "Z Axis\\Z-3_Smith\\tools\\gmat_capabilities.json"
+    },
+    {
+      "tool_key": "maglev_capture",
+      "tool_name": "Mag-Lev Capture",
+      "description": "Simulates Mag-Lev capture (orbital+ground); writes artifacts and manifests under TheConstruct smart-floor labs.",
+      "default_z_context": "The Construct",
+      "default_workspace": "romer_deposit_analysis",
+      "actions": [
+        "run",
+        "view_manifest"
+      ],
+      "default_output_path": "/Z Axis/Z0_TheConstruct/data/labs/maglev",
+      "ui_category": "Simulators",
+      "capabilities_path": "Z Axis\\Z-3_Smith\\tools\\maglev_capabilities.json"
+    },
+    {
+      "tool_key": "propulsion_window",
+      "tool_name": "Propulsion Window",
+      "description": "Evaluates propulsion duty windows under power/thermal constraints; writes artifacts and manifests under TheConstruct smart-floor labs.",
+      "default_z_context": "The Construct",
+      "default_workspace": "romer_mission_planning",
+      "actions": [
+        "run",
+        "view_manifest"
+      ],
+      "default_output_path": "/Z Axis/Z0_TheConstruct/data/labs/propulsion",
+      "ui_category": "Simulators",
+      "capabilities_path": "Z Axis\\Z-3_Smith\\tools\\propulsion_capabilities.json"
+    },
+    {
+      "tool_key": "rfs_emff_sweep",
+      "tool_name": "RFS/EMFF Sweep",
+      "description": "Runs Resonant Frequency Sifting and EMFF field sweeps; writes artifacts and manifests under TheConstruct smart-floor labs.",
+      "default_z_context": "The Construct",
+      "default_workspace": "romer_rfs_emff",
+      "actions": [
+        "run",
+        "view_manifest"
+      ],
+      "default_output_path": "/Z Axis/Z0_TheConstruct/data/labs/rfs_emff",
+      "ui_category": "Simulators",
+      "capabilities_path": "Z Axis\\Z-3_Smith\\tools\\rfs_emff_capabilities.json"
+    }
+  ]
+}

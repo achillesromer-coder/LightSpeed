@@ -28,6 +28,8 @@ from sync_desktop_source import (
         "Desktop_Hooks/LightSpeed/N.py",
         "Desktop_Hooks/LightSpeed/config/app.json",
         "LightSpeed_Runtime/lightspeed_runtime/store.py",
+        "LightSpeed_Runtime/lightspeed_runtime/reservoirs",
+        "LightSpeed_Runtime/lightspeed_runtime/reservoirs/registry.py",
     ],
 )
 def test_validate_relative_path_accepts_source_paths(relative):
@@ -44,6 +46,8 @@ def test_validate_relative_path_accepts_source_paths(relative):
         "Desktop_Hooks/LightSpeed/.pytest_cache/state.json",
         "Desktop_Hooks/LightSpeed/node_modules/package/index.js",
         "Desktop_Hooks/LightSpeed/reservoirs/raw.json",
+        "LightSpeed_Runtime/lightspeed_runtime/reservoirs/raw.json",
+        "LightSpeed_Runtime/lightspeed_runtime/reservoirs/weights/model.gguf",
         "Desktop_Hooks/LightSpeed/vault/secret.json",
         "Desktop_Hooks/LightSpeed/venv/Lib/site.py",
         "Desktop_Hooks/LightSpeed/legacy/old.py",
@@ -482,10 +486,11 @@ def test_repository_allowlist_names_only_active_source_roots_and_extensions():
     assert allowlist["roots"] == [
         "Desktop_Hooks/LightSpeed/N.py",
         "Desktop_Hooks/LightSpeed/__main__.py",
-        "Desktop_Hooks/LightSpeed/launcher_exe.py",
-        "Desktop_Hooks/LightSpeed/verify_launch_ready.py",
-        "Desktop_Hooks/LightSpeed/config/backend_frontend_build_contract.json",
-        "Desktop_Hooks/LightSpeed/config/deployment_topology.json",
+            "Desktop_Hooks/LightSpeed/launcher_exe.py",
+            "Desktop_Hooks/LightSpeed/verify_launch_ready.py",
+            "Desktop_Hooks/LightSpeed/config/backend_frontend_build_contract.json",
+            "Desktop_Hooks/LightSpeed/config/archives_policy.yaml",
+            "Desktop_Hooks/LightSpeed/config/deployment_topology.json",
         "Desktop_Hooks/LightSpeed/config/floor_environment_realization_contract.json",
         "Desktop_Hooks/LightSpeed/config/function_registry.json",
         "Desktop_Hooks/LightSpeed/config/host_runtime_policy.json",
@@ -493,10 +498,14 @@ def test_repository_allowlist_names_only_active_source_roots_and_extensions():
         "Desktop_Hooks/LightSpeed/config/premium_theme_config.json",
         "Desktop_Hooks/LightSpeed/config/resource_closure_contract.json",
         "Desktop_Hooks/LightSpeed/config/workspace_lanes.json",
-        "Desktop_Hooks/LightSpeed/tests",
-        "Desktop_Hooks/LightSpeed/dataindex",
-        "LightSpeed_Runtime/lightspeed_runtime",
-    ]
+            "Desktop_Hooks/LightSpeed/tests",
+            "Desktop_Hooks/LightSpeed/dataindex",
+            "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai",
+            "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components",
+            "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui",
+            "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core",
+            "LightSpeed_Runtime/lightspeed_runtime",
+        ]
     assert allowlist["extensions"] == [
         ".py",
         ".json",

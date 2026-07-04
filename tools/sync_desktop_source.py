@@ -43,6 +43,11 @@ BLOCKED_PARTS = frozenset(
         "legacy",
     }
 )
+_RESERVOIR_SOURCE_PREFIX = (
+    "lightspeed_runtime",
+    "lightspeed_runtime",
+    "reservoirs",
+)
 _WINDOWS_RESERVED_STEMS = frozenset(
     {
         "con",
@@ -86,7 +91,24 @@ def validate_relative_path(value: str) -> bool:
         for part in raw_parts
     ):
         return False
-    return not any(part.casefold() in BLOCKED_PARTS for part in raw_parts)
+    lowered_parts = tuple(part.casefold() for part in raw_parts)
+    blocked = {
+        part
+        for part in lowered_parts
+        if part in BLOCKED_PARTS
+    }
+    if not blocked:
+        return True
+    if blocked != {"reservoirs"}:
+        return False
+    if lowered_parts[: len(_RESERVOIR_SOURCE_PREFIX)] != _RESERVOIR_SOURCE_PREFIX:
+        return False
+    if len(lowered_parts) == len(_RESERVOIR_SOURCE_PREFIX):
+        return True
+    return (
+        len(lowered_parts) == len(_RESERVOIR_SOURCE_PREFIX) + 1
+        and PurePosixPath(normalized).suffix.casefold() == ".py"
+    )
 
 
 def _normalized_relative_path(value: str) -> str:

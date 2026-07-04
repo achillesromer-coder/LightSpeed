@@ -1,0 +1,601 @@
+{
+  "libraries": {
+    "numpy": {
+      "available": true,
+      "version": "1.26.4",
+      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\numpy\\__init__.py",
+      "description": "Numerical computing library"
+    },
+    "pandas": {
+      "available": true,
+      "version": "3.0.3",
+      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\pandas\\__init__.py",
+      "description": "Data manipulation and analysis"
+    },
+    "scipy": {
+      "available": true,
+      "version": "1.17.1",
+      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\scipy\\__init__.py",
+      "description": "Scientific computing"
+    },
+    "matplotlib": {
+      "available": true,
+      "version": "3.10.9",
+      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\matplotlib\\__init__.py",
+      "description": "Plotting and visualization"
+    },
+    "duckdb": {
+      "available": true,
+      "version": "unknown",
+      "location": "unknown",
+      "description": "Local analytical query engine"
+    },
+    "pyarrow": {
+      "available": true,
+      "version": "unknown",
+      "location": "unknown",
+      "description": "Arrow and Parquet interchange"
+    },
+    "pydantic": {
+      "available": true,
+      "version": "unknown",
+      "location": "unknown",
+      "description": "Typed contracts and validation"
+    },
+    "plotly": {
+      "available": true,
+      "version": "unknown",
+      "location": "unknown",
+      "description": "Interactive analytics charts"
+    },
+    "pytest": {
+      "available": true,
+      "version": "9.0.3",
+      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\pytest\\__init__.py",
+      "description": "Testing framework"
+    },
+    "pandera": {
+      "available": false,
+      "version": "unknown",
+      "location": "unknown",
+      "description": "DataFrame schema validation"
+    },
+    "great_expectations": {
+      "available": false,
+      "version": "unknown",
+      "location": "unknown",
+      "description": "Data quality checkpoints"
+    },
+    "sklearn": {
+      "available": false,
+      "version": "unknown",
+      "location": "unknown",
+      "description": "Machine learning toolkit"
+    },
+    "seaborn": {
+      "available": true,
+      "version": "0.13.2",
+      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\seaborn\\__init__.py",
+      "description": "Statistical data visualization"
+    },
+    "requests": {
+      "available": true,
+      "version": "2.34.2",
+      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\requests\\__init__.py",
+      "description": "HTTP library"
+    },
+    "flask": {
+      "available": false,
+      "version": "unknown",
+      "location": "unknown",
+      "description": "Web framework"
+    },
+    "fastapi": {
+      "available": true,
+      "version": "0.136.3",
+      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\fastapi\\__init__.py",
+      "description": "Modern API framework"
+    },
+    "sqlalchemy": {
+      "available": true,
+      "version": "2.0.50",
+      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\sqlalchemy\\__init__.py",
+      "description": "SQL toolkit"
+    },
+    "psycopg2": {
+      "available": false,
+      "version": "unknown",
+      "location": "unknown",
+      "description": "PostgreSQL adapter"
+    },
+    "pymongo": {
+      "available": false,
+      "version": "unknown",
+      "location": "unknown",
+      "description": "MongoDB driver"
+    },
+    "redis": {
+      "available": false,
+      "version": "unknown",
+      "location": "unknown",
+      "description": "Redis client"
+    },
+    "black": {
+      "available": true,
+      "version": "26.5.1",
+      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\black\\__init__.cp311-win_amd64.pyd",
+      "description": "Code formatter"
+    },
+    "pylint": {
+      "available": true,
+      "version": "4.0.5",
+      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\pylint\\__init__.py",
+      "description": "Code analyzer"
+    },
+    "mypy": {
+      "available": true,
+      "version": "unknown",
+      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\mypy\\__init__.cp311-win_amd64.pyd",
+      "description": "Static type checker"
+    },
+    "asyncio": {
+      "available": true,
+      "version": "unknown",
+      "location": "C:\\Users\\acc\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\asyncio\\__init__.py",
+      "description": "Asynchronous I/O"
+    },
+    "celery": {
+      "available": false,
+      "version": "unknown",
+      "location": "unknown",
+      "description": "Distributed task queue"
+    },
+    "tkinter": {
+      "available": true,
+      "version": "unknown",
+      "location": "C:\\Users\\acc\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\tkinter\\__init__.py",
+      "description": "GUI toolkit"
+    },
+    "PIL": {
+      "available": true,
+      "version": "12.2.0",
+      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\PIL\\__init__.py",
+      "description": "Image processing"
+    },
+    "ollama": {
+      "available": true,
+      "version": "unknown",
+      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\ollama\\__init__.py",
+      "description": "Ollama AI integration"
+    }
+  },
+  "functions": {
+    "neo_operator_console": {
+      "name": "Neo Operator Console",
+      "category": "data_processing",
+      "floor": "Neo",
+      "module": "Neo",
+      "description": "Primary Achilles/Cognigrex operator shell for briefs, plans, and bounded actions."
+    },
+    "runtime_ai_settings": {
+      "name": "Runtime AI Settings",
+      "category": "data_processing",
+      "floor": "Neo",
+      "module": "lightspeed_runtime.ai_settings",
+      "description": "Normalized AI backend, profile, and approval-gating contract."
+    },
+    "oracle_catalog": {
+      "name": "Oracle Catalog",
+      "category": "data_processing",
+      "floor": "Oracle",
+      "module": "Oracle",
+      "description": "Curated catalog, provenance, datatables, and knowns surface."
+    },
+    "oracle_definition_library": {
+      "name": "Oracle Definition Library",
+      "category": "data_processing",
+      "floor": "Oracle",
+      "module": "lightspeed_runtime.definition_library",
+      "description": "Proofed term definitions and theme bindings used across the operator OS."
+    },
+    "morpheus_review_surface": {
+      "name": "Morpheus Review Surface",
+      "category": "data_processing",
+      "floor": "Morpheus",
+      "module": "Morpheus",
+      "description": "Review, compare, and proof queue surface for curated material."
+    },
+    "runtime_entity_registry": {
+      "name": "Runtime Entity Registry",
+      "category": "data_processing",
+      "floor": "Oracle",
+      "module": "lightspeed_runtime.entity_registry",
+      "description": "Unified entity, artifact, run, and agent registry."
+    },
+    "runtime_scientific_query": {
+      "name": "Scientific Query Layer",
+      "category": "data_processing",
+      "floor": "Oracle",
+      "module": "lightspeed_runtime.scientific_query",
+      "description": "Curated scientific query templates and table access layer."
+    },
+    "construct_command_deck": {
+      "name": "Construct Command Deck",
+      "category": "data_processing",
+      "floor": "TheConstruct",
+      "module": "TheConstruct",
+      "description": "Holospace and simulation control surface."
+    },
+    "construct_zoning_lab": {
+      "name": "Heliocentric Zoning Lab",
+      "category": "data_processing",
+      "floor": "TheConstruct",
+      "module": "lightspeed_runtime.labs.zoning",
+      "description": "Zone aggregation, clustering, target shortlist, and GMAT batch generation."
+    },
+    "smith_router": {
+      "name": "Smith Router",
+      "category": "automation",
+      "floor": "Smith",
+      "module": "Smith",
+      "description": "Primary job router and executor gateway."
+    },
+    "smith_workflow_state": {
+      "name": "Smith Workflow State",
+      "category": "automation",
+      "floor": "Smith",
+      "module": "lightspeed_runtime.smith_router",
+      "description": "Durable queue, workflow, and resumable execution state."
+    },
+    "architect_publish_governance": {
+      "name": "Architect Publish Governance",
+      "category": "data_processing",
+      "floor": "Architect",
+      "module": "Architect",
+      "description": "Approvals, publish bundles, execution queues, and governed release control."
+    },
+    "architect_execution_control": {
+      "name": "Architect Execution Control",
+      "category": "data_processing",
+      "floor": "Architect",
+      "module": "lightspeed_runtime.execution_queues",
+      "description": "Ordered task queues, completion state, and finalization control."
+    },
+    "merovingian_activity": {
+      "name": "Merovingian Activity",
+      "category": "data_processing",
+      "floor": "Merovingian",
+      "module": "Merovingian",
+      "description": "Activity, diagnostics, and runtime audit surface."
+    },
+    "runtime_activity_tables": {
+      "name": "Runtime Activity Tables",
+      "category": "data_processing",
+      "floor": "Merovingian",
+      "module": "lightspeed_runtime.activity_tables",
+      "description": "Compact activity JSON and SQLite table views over logs and ledgers."
+    },
+    "architect_architect_ui": {
+      "name": "Architect Ui",
+      "category": "data_processing",
+      "floor": "Architect",
+      "module": "Architect",
+      "description": "Primary Architect governance and project planning UI"
+    },
+    "architect_architect_portal_glass": {
+      "name": "Architect Portal Glass",
+      "category": "data_processing",
+      "floor": "Architect",
+      "module": "lightspeed.floors.architect.portal_glass",
+      "description": "Glass portal UI for governance signals, publish bundles, and finalization control"
+    },
+    "architect_dev_tools_portal_glass": {
+      "name": "Dev Tools Portal Glass",
+      "category": "data_processing",
+      "floor": "Architect",
+      "module": "lightspeed.floors.architect.dev_tools_portal_glass",
+      "description": "Development and environment tools supporting governed project work"
+    },
+    "architect_task_checklist": {
+      "name": "Task Checklist",
+      "category": "data_processing",
+      "floor": "Architect",
+      "module": "Z_Axis.Z+1_Architect.components.progress_widget",
+      "description": "Checklist widget for milestones, tasks, and progress"
+    },
+    "architect_db_task_board": {
+      "name": "Db Task Board",
+      "category": "data_processing",
+      "floor": "Architect",
+      "module": "Z_Axis.Z+1_Architect.components.progress_widget",
+      "description": "Database-backed task board (from doc scans + planning)"
+    },
+    "neo_neo_ui": {
+      "name": "Neo Ui",
+      "category": "data_processing",
+      "floor": "Neo",
+      "module": "Neo",
+      "description": "Primary Neo orchestration operator UI"
+    },
+    "neo_ai_code_assistant": {
+      "name": "Ai Code Assistant",
+      "category": "data_processing",
+      "floor": "Neo",
+      "module": "Z_Axis.Z+2_Neo.components.ai_code_assistant",
+      "description": "Code analysis and completion support for governed operator work"
+    },
+    "neo_ai_training": {
+      "name": "Ai Training",
+      "category": "data_processing",
+      "floor": "Neo",
+      "module": "Z_Axis.Z+2_Neo.components.ai_training",
+      "description": "Dataset and model training support UI"
+    },
+    "neo_ai_context": {
+      "name": "Ai Context",
+      "category": "data_processing",
+      "floor": "Neo",
+      "module": "Z_Axis.Z+2_Neo.components.ai_context",
+      "description": "Proofed context and prompt assembly UI"
+    },
+    "neo_neo_lab_assistant": {
+      "name": "Neo Lab Assistant",
+      "category": "data_processing",
+      "floor": "Neo",
+      "module": "Z_Axis.Z+2_Neo.components.neo_lab_assistant_glass",
+      "description": "Glass Neo operator assistant surface with Achilles oversight context"
+    },
+    "trinity_trinity_ui": {
+      "name": "Trinity Ui",
+      "category": "data_processing",
+      "floor": "Trinity",
+      "module": "Trinity",
+      "description": "Primary Trinity operator portal UI"
+    },
+    "trinity_settings_manager": {
+      "name": "Settings Manager",
+      "category": "data_processing",
+      "floor": "Trinity",
+      "module": "Z_Axis.Z+3_Trinity.components.settings_dialog",
+      "description": "Settings window builder and master setup/configuration manager"
+    },
+    "trinity_theme_designer": {
+      "name": "Theme Designer",
+      "category": "data_processing",
+      "floor": "Trinity",
+      "module": "Z_Axis.Z+3_Trinity.components.theme_switcher",
+      "description": "Glass/bento theme design UI and preview"
+    },
+    "trinity_code_editor": {
+      "name": "Code Editor",
+      "category": "data_processing",
+      "floor": "Trinity",
+      "module": "Z_Axis.Z+3_Trinity.components.code_editor",
+      "description": "Advanced text/code editor widget"
+    },
+    "trinity_file_tree": {
+      "name": "File Tree",
+      "category": "data_processing",
+      "floor": "Trinity",
+      "module": "Z_Axis.Z+3_Trinity.components.file_tree",
+      "description": "Enhanced file tree and search panel widget"
+    },
+    "trinity_analytics_dashboard": {
+      "name": "Analytics Dashboard",
+      "category": "data_processing",
+      "floor": "Trinity",
+      "module": "lightspeed.floors.trinity.analytics_dashboard",
+      "description": "Operator-facing analytics dashboard over Merovingian telemetry"
+    },
+    "trinity_operations_workspace_manager": {
+      "name": "Operations Workspace Manager",
+      "category": "data_processing",
+      "floor": "Trinity",
+      "module": "Z_Axis.Z+3_Trinity.components.operations_workspace_manager",
+      "description": "Operator-facing workspace manager over Smith and Architect state"
+    },
+    "trinity_operations_status_cards": {
+      "name": "Operations Status Cards",
+      "category": "data_processing",
+      "floor": "Trinity",
+      "module": "Z_Axis.Z+3_Trinity.components.operations_status_cards",
+      "description": "Status tiles for governed jobs, artifacts, and asset-library links"
+    },
+    "morpheus_file_manager": {
+      "name": "File Manager",
+      "category": "data_processing",
+      "floor": "Morpheus",
+      "module": "Z_Axis.Z-1_Morpheus.components.drag_drop_interface",
+      "description": "File intake and review surface for Morpheus"
+    },
+    "morpheus_rich_text_editor": {
+      "name": "Rich Text Editor",
+      "category": "data_processing",
+      "floor": "Morpheus",
+      "module": "Z_Axis.Z-1_Morpheus.components.rich_text_editor",
+      "description": "Markdown editor and preview surface for proofed knowledge"
+    },
+    "morpheus_chat_archive_browser": {
+      "name": "Chat Archive Browser",
+      "category": "data_processing",
+      "floor": "Morpheus",
+      "module": "Z_Axis.Z-1_Morpheus.components.chat_archive_browser",
+      "description": "Browse reviewed chat/archive sources and extracted proofing context"
+    },
+    "morpheus_morpheus_portal_glass": {
+      "name": "Morpheus Portal Glass",
+      "category": "data_processing",
+      "floor": "Morpheus",
+      "module": "lightspeed.floors.morpheus.portal_glass",
+      "description": "Glass portal UI for Morpheus review and proofing"
+    },
+    "oracle_oracle_ui": {
+      "name": "Oracle Ui",
+      "category": "data_processing",
+      "floor": "Oracle",
+      "module": "Oracle",
+      "description": "Primary Oracle catalog, knowns, and provenance portal UI"
+    },
+    "oracle_oracle_ui_panel": {
+      "name": "Oracle Ui Panel",
+      "category": "data_processing",
+      "floor": "Oracle",
+      "module": "lightspeed.floors.oracle.ui_panel",
+      "description": "Oracle UI panel for curated catalog, ingestion, and proofed search"
+    },
+    "oracle_oracle_portal_glass": {
+      "name": "Oracle Portal Glass",
+      "category": "data_processing",
+      "floor": "Oracle",
+      "module": "Z_Axis.Z-2_Oracle.components.oracle_portal_glass",
+      "description": "Oracle glass portal window for catalog, knowns, empirical, and datatable surfaces"
+    },
+    "oracle_oracle_smart_floor_integrator": {
+      "name": "Oracle Smart Floor Integrator",
+      "category": "data_processing",
+      "floor": "Oracle",
+      "module": "Z_Axis.Z-2_Oracle.components.oracle_smart_floor_integrator",
+      "description": "DB-backed ingestion queue, extraction, proofing, and Smith routing for Oracle"
+    },
+    "oracle_encyclopedia_system": {
+      "name": "Encyclopedia System",
+      "category": "data_processing",
+      "floor": "Oracle",
+      "module": "Z_Axis.Z-2_Oracle.components.encyclopedia_system",
+      "description": "Encyclopedia candidates and proofed definition surface"
+    },
+    "smith_smith_ui": {
+      "name": "Smith Ui",
+      "category": "data_processing",
+      "floor": "Smith",
+      "module": "Smith",
+      "description": "Primary Smith router, workflow, and execution gateway portal UI"
+    },
+    "smith_smith_portal_glass": {
+      "name": "Smith Portal Glass",
+      "category": "data_processing",
+      "floor": "Smith",
+      "module": "Z_Axis.Z-3_Smith.components.smith_portal_glass",
+      "description": "Smith glass portal window for router, queue, and workflow surfaces"
+    },
+    "smith_workflow_scheduler": {
+      "name": "Workflow Scheduler",
+      "category": "data_processing",
+      "floor": "Smith",
+      "module": "Z_Axis.Z-3_Smith.components.workflow_scheduler",
+      "description": "Schedule bounded workflows and routed jobs"
+    },
+    "smith_workflow_debugger": {
+      "name": "Workflow Debugger",
+      "category": "data_processing",
+      "floor": "Smith",
+      "module": "Z_Axis.Z-3_Smith.components.workflow_debugger",
+      "description": "Inspect workflow execution, resumable state, and routing context"
+    },
+    "smith_workflow_versioning": {
+      "name": "Workflow Versioning",
+      "category": "data_processing",
+      "floor": "Smith",
+      "module": "Z_Axis.Z-3_Smith.components.workflow_versioning",
+      "description": "Workflow version history, diffs, and execution context changes"
+    },
+    "smith_smith_task_queue": {
+      "name": "Smith Task Queue",
+      "category": "data_processing",
+      "floor": "Smith",
+      "module": "Z_Axis.Z-3_Smith.components.smith_task_queue",
+      "description": "Priority queue, quotas, and bounded execution gateway"
+    },
+    "smith_smith_interfloor_coordinator": {
+      "name": "Smith Interfloor Coordinator",
+      "category": "data_processing",
+      "floor": "Smith",
+      "module": "Z_Axis.Z-3_Smith.components.smith_interfloor_coordinator",
+      "description": "Cross-floor task routing and coordination bus"
+    },
+    "merovingian_merovingian_ui": {
+      "name": "Merovingian Ui",
+      "category": "data_processing",
+      "floor": "Merovingian",
+      "module": "Merovingian",
+      "description": "Primary Merovingian core services, audit, and diagnostics portal UI"
+    },
+    "merovingian_merovingian_portal_glass": {
+      "name": "Merovingian Portal Glass",
+      "category": "data_processing",
+      "floor": "Merovingian",
+      "module": "Z_Axis.Z-4_Merovingian.components.merovingian_portal_glass",
+      "description": "Merovingian glass portal window for health, diagnostics, activity, and audit surfaces"
+    },
+    "merovingian_systemmetrics": {
+      "name": "Systemmetrics",
+      "category": "data_processing",
+      "floor": "Merovingian",
+      "module": "Z_Axis.Z-4_Merovingian.components.system_metrics",
+      "description": "System metrics component for Merovingian diagnostics"
+    },
+    "merovingian_db_browser": {
+      "name": "Db Browser",
+      "category": "data_processing",
+      "floor": "Merovingian",
+      "module": "Z_Axis.Z-4_Merovingian.components.db_browser",
+      "description": "Database browser and query builder UI for Merovingian-owned SQLite state"
+    },
+    "merovingian_performance_profiler": {
+      "name": "Performance Profiler",
+      "category": "data_processing",
+      "floor": "Merovingian",
+      "module": "Z_Axis.Z-4_Merovingian.components.performance_profiler",
+      "description": "Profiler UI for performance diagnostics and runtime health checks"
+    },
+    "merovingian_auto_healing": {
+      "name": "Auto Healing",
+      "category": "data_processing",
+      "floor": "Merovingian",
+      "module": "Z_Axis.Z-4_Merovingian.components.auto_healing",
+      "description": "Recovery and safe remediation surface for system diagnostics"
+    },
+    "merovingian_db_backup": {
+      "name": "Db Backup",
+      "category": "data_processing",
+      "floor": "Merovingian",
+      "module": "Z_Axis.Z-4_Merovingian.components.db_backup",
+      "description": "Database backup and restore tool for Merovingian-owned databases"
+    },
+    "theconstruct_project_workspace_portal": {
+      "name": "Project Workspace Portal",
+      "category": "data_processing",
+      "floor": "TheConstruct",
+      "module": "Z_Axis.Z0_TheConstruct.components.project_workspace_portal",
+      "description": "Scenario workspace and project portal for TheConstruct"
+    },
+    "theconstruct_visualization_3d": {
+      "name": "Visualization 3D",
+      "category": "data_processing",
+      "floor": "TheConstruct",
+      "module": "Z_Axis.Z0_TheConstruct.components.visualization_3d",
+      "description": "Interactive holospace and 3D visualization surface for TheConstruct"
+    },
+    "core_data_accumulation_engine": {
+      "name": "DataAccumulationEngine",
+      "category": "floor_operations",
+      "floor": "Core",
+      "module": "core.services.data_accumulation_engine",
+      "description": "Universal data object management"
+    },
+    "core_floor_loader": {
+      "name": "FloorLoader",
+      "category": "floor_operations",
+      "floor": "Core",
+      "module": "core.services.floor_loader",
+      "description": "Dynamic Z-floor component discovery"
+    },
+    "core_smart_floor_expansion": {
+      "name": "SmartFloorExpansionEngine",
+      "category": "floor_operations",
+      "floor": "Core",
+      "module": "core.services.smart_floor_expansion",
+      "description": "Autonomous capability development"
+    }
+  }
+}

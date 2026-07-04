@@ -5,6 +5,7 @@
     "Desktop_Hooks/LightSpeed/launcher_exe.py",
     "Desktop_Hooks/LightSpeed/verify_launch_ready.py",
     "Desktop_Hooks/LightSpeed/config/backend_frontend_build_contract.json",
+    "Desktop_Hooks/LightSpeed/config/archives_policy.yaml",
     "Desktop_Hooks/LightSpeed/config/deployment_topology.json",
     "Desktop_Hooks/LightSpeed/config/floor_environment_realization_contract.json",
     "Desktop_Hooks/LightSpeed/config/function_registry.json",
@@ -15,6 +16,10 @@
     "Desktop_Hooks/LightSpeed/config/workspace_lanes.json",
     "Desktop_Hooks/LightSpeed/tests",
     "Desktop_Hooks/LightSpeed/dataindex",
+    "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai",
+    "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components",
+    "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui",
+    "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core",
     "LightSpeed_Runtime/lightspeed_runtime"
   ],
   "extensions": [

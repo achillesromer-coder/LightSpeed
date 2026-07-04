@@ -1,0 +1,334 @@
+{
+  "theme_version": "5.1.2",
+  "contract_version": "2026.04.finalization",
+  "theme_name": "LightSpeed Glass Bento Operator System",
+  "description": "High-fidelity glass/bento aesthetic for the 1.5m curved panel wall, operator portals, and holospace surfaces.",
+
+  "color_palettes": {
+    "light_mode": {
+      "primary": "#FFFFFF",
+      "secondary": "#F5F5F5",
+      "accent_gold": "#FFD700",
+      "accent_white_marble": "#F8F8FF",
+      "glass_overlay": "#FFFFFF",
+      "text_primary": "#2F4F4F",
+      "text_secondary": "#696969",
+      "border": "#E8E8E8",
+      "shadow": "#E6E6E6",
+      "gradient_start": "#FFFAF0",
+      "gradient_end": "#FFE4B5",
+      "button_hover": "#FFF8DC",
+      "success": "#98FB98",
+      "warning": "#FFD700",
+      "error": "#FFB6C1",
+      "info": "#87CEEB"
+    },
+    "dark_mode": {
+      "primary": "#0A4D4D",
+      "secondary": "#1A5F5F",
+      "accent_phthalo_green": "#123524",
+      "accent_deep_gold": "#B8860B",
+      "accent_velvet_blue": "#191970",
+      "glass_overlay": "#103B2E",
+      "text_primary": "#F5F5DC",
+      "text_secondary": "#D3D3D3",
+      "tortoise_eggshell": "#F0EAD6",
+      "matrix_green": "#00FF41",
+      "charcoal_text": "#36454F",
+      "border": "#2F4F4F",
+      "shadow": "#052626",
+      "gradient_start": "#0A4D4D",
+      "gradient_end": "#191970",
+      "button_hover": "#1A5F5F",
+      "success": "#00FF41",
+      "warning": "#B8860B",
+      "error": "#DC143C",
+      "info": "#4682B4"
+    },
+    "company_palette": {
+      "phthalo_green": "#123524",
+      "deep_gold": "#B8860B",
+      "velvet_blue": "#191970",
+      "tortoise_eggshell_white": "#F0EAD6",
+      "dark_matrix_green": "#00FF41",
+      "charcoal_black": "#36454F"
+    }
+  },
+
+  "glassmorphism": {
+    "blur_radius": 25,
+    "opacity": 0.85,
+    "border_width": 2,
+    "border_opacity": 0.3,
+    "shadow_blur": 20,
+    "shadow_offset": [0, 4],
+    "inner_glow": true,
+    "reflection_effect": true
+  },
+
+  "bento_panel_wall": {
+    "radius_m": 1.5,
+    "front_arc_degrees": 150,
+    "layout": "clean_bento_stack",
+    "page_settings_pattern": "visible page menu, compact pop-up, or Ctrl+Shift+S",
+    "primary_click_behavior": "activate visible targets",
+    "holospace_navigation": "WASD and mouse only while immersive mode is active",
+    "project_navigation": "select project, enter component sets, then edit documents, tables, files, icons, smart previews, maps, and simulations",
+    "artifact_interactions": {
+      "single_click": "preview or near-fullscreen non-interactive view",
+      "double_click": "open full-screen editor/viewer or attach file",
+      "right_click": "context menu with all available grouped actions"
+    }
+  },
+
+  "3d_effects": {
+    "icon_depth": 8,
+    "icon_shadow_depth": 4,
+    "button_raise": 3,
+    "card_elevation": 6,
+    "panel_depth": 10,
+    "perspective": "1000px",
+    "rotation_enabled": true,
+    "hover_lift": 2
+  },
+
+  "marble_texture": {
+    "enabled": true,
+    "pattern": "veined_marble",
+    "base_color_light": "#FFFFFF",
+    "vein_color_light": "#E8E8E8",
+    "base_color_dark": "#1A1A1A",
+    "vein_color_dark": "#2F4F4F",
+    "opacity": 0.15,
+    "blend_mode": "overlay"
+  },
+
+  "typography": {
+    "font_primary": "Garamond",
+    "font_secondary": "Segoe UI",
+    "font_code": "Consolas",
+    "font_icon": "Segoe UI Symbol",
+    "sizes": {
+      "h1": 32,
+      "h2": 26,
+      "h3": 22,
+      "h4": 18,
+      "body": 14,
+      "small": 12,
+      "tiny": 10
+    },
+    "weights": {
+      "light": 300,
+      "regular": 400,
+      "medium": 500,
+      "bold": 700
+    },
+    "line_height": 1.6,
+    "letter_spacing": 0.5
+  },
+
+  "icon_kit": {
+    "style": "3d_glossy_marble",
+    "base_colors": ["#FFFFFF", "#FFD700"],
+    "accent_colors": ["#FFD700", "#F5F5F5"],
+    "shadow_enabled": true,
+    "glow_enabled": true,
+    "reflection_enabled": true,
+    "size_small": 24,
+    "size_medium": 48,
+    "size_large": 64,
+    "size_xlarge": 96
+  },
+
+  "sunset_hues": {
+    "enabled_in_backgrounds": true,
+    "gradient_stops": [
+      {"color": "#FFE5B4", "position": 0},
+      {"color": "#FFDAB9", "position": 0.3},
+      {"color": "#FFB6C1", "position": 0.6},
+      {"color": "#DDA0DD", "position": 1.0}
+    ],
+    "animation": {
+      "enabled": true,
+      "duration_seconds": 30,
+      "loop": true
+    }
+  },
+
+  "ui_components": {
+    "buttons": {
+      "shape": "rounded",
+      "border_radius": 12,
+      "corner_radius_px": 12,
+      "border_color": "#2F4F4F",
+      "fill_color": "#1A5F5F",
+      "hover_color": "#123524",
+      "restore_default": {
+        "shape": "rounded",
+        "corner_radius_px": 12,
+        "border_color": "#2F4F4F",
+        "fill_color": "#1A5F5F",
+        "hover_color": "#123524"
+      },
+      "padding": [12, 24],
+      "shadow": true,
+      "gradient": true,
+      "hover_scale": 1.05,
+      "active_scale": 0.98,
+      "transition_duration": 0.2
+    },
+    "cards": {
+      "border_radius": 16,
+      "padding": 20,
+      "shadow_elevation": 6,
+      "glass_effect": true,
+      "hover_elevation": 10,
+      "border_style": "subtle_glow"
+    },
+    "tables": {
+      "row_height": 48,
+      "header_height": 56,
+      "border_style": "glass_divider",
+      "alternate_row": true,
+      "hover_highlight": true,
+      "striped_opacity": 0.05
+    },
+    "inputs": {
+      "border_radius": 8,
+      "height": 40,
+      "padding": [8, 16],
+      "focus_glow": true,
+      "glass_background": true,
+      "icon_support": true
+    },
+    "modals": {
+      "backdrop_blur": 10,
+      "backdrop_opacity": 0.6,
+      "border_radius": 20,
+      "shadow_blur": 40,
+      "animation": "fade_scale"
+    },
+    "tooltips": {
+      "border_radius": 8,
+      "padding": [8, 12],
+      "max_width": 250,
+      "arrow_size": 8,
+      "delay_ms": 500,
+      "glass_effect": true
+    }
+  },
+
+  "animations": {
+    "enabled": true,
+    "duration_fast": 150,
+    "duration_normal": 250,
+    "duration_slow": 400,
+    "easing_default": "cubic-bezier(0.4, 0.0, 0.2, 1)",
+    "easing_decelerate": "cubic-bezier(0.0, 0.0, 0.2, 1)",
+    "easing_accelerate": "cubic-bezier(0.4, 0.0, 1, 1)",
+    "hover_effects": true,
+    "loading_spinner": "3d_orb",
+    "page_transition": "fade_slide"
+  },
+
+  "operator_surface_contract": {
+    "default_header_layout": "title_status_primary_actions_page_menu",
+    "grouped_action_rows": [
+      "Refresh",
+      "Build",
+      "Review",
+      "Approve",
+      "Publish"
+    ],
+    "preferred_settings_surface": "compact_pop_up_or_visible_page_menu",
+    "search_shortcut": "Ctrl+S",
+    "settings_shortcut": "Ctrl+Shift+S",
+    "top_level_navigation": [
+      "Workspace",
+      "Z Floor"
+    ],
+    "holospace_entry_policy": "available through TheConstruct floor only, not as a top-level header button",
+    "source_provenance_surface": "drawer_or_modal",
+    "blank_pages_allowed": false
+  },
+
+  "editable_backgrounds": {
+    "base_themes": {
+      "minimal": "clean glass bento wall with low-noise gradients",
+      "balanced": "deep-space laboratory glass with readable cards",
+      "futuristic_gamelike": "holospace command wall with stronger depth and glow"
+    },
+    "inputs": [
+      "solid_color",
+      "multi_stop_gradient",
+      "uploaded_picture",
+      "uploaded_environment_reference"
+    ],
+    "drop_file_behavior": "scan and apply as visual background reference; keep heavy 3D traversal opt-in through Holospace"
+  },
+
+  "floor_specific_themes": {
+    "Z+3_Trinity": {
+      "primary_color": "#00FFFF",
+      "accent_color": "#FFFFFF",
+      "icon_theme": "dashboard_glass"
+    },
+    "Z+2_Neo": {
+      "primary_color": "#FF0080",
+      "accent_color": "#FFD700",
+      "icon_theme": "ai_brain_hologram"
+    },
+    "Z+1_Architect": {
+      "primary_color": "#00FF80",
+      "accent_color": "#FFD700",
+      "icon_theme": "blueprint_marble"
+    },
+    "Z0_TheConstruct": {
+      "primary_color": "#FFFF00",
+      "accent_color": "#FFFFFF",
+      "icon_theme": "physics_lab_3d"
+    },
+    "Z-1_Morpheus": {
+      "primary_color": "#8B0000",
+      "accent_color": "#FFD700",
+      "icon_theme": "red_pill_glass"
+    },
+    "Z-2_Oracle": {
+      "primary_color": "#FF8000",
+      "accent_color": "#FFFFFF",
+      "icon_theme": "knowledge_vault_gold"
+    },
+    "Z-3_Smith": {
+      "primary_color": "#8000FF",
+      "accent_color": "#FFFFFF",
+      "icon_theme": "task_automation_chrome"
+    },
+    "Z-4_Merovingian": {
+      "primary_color": "#DC143C",
+      "accent_color": "#FFD700",
+      "icon_theme": "central_hub_ornate"
+    }
+  },
+
+  "quality_standards": {
+    "minimum_resolution": "1920x1080",
+    "icon_format": "SVG preferred, PNG fallback",
+    "icon_dpi": 144,
+    "anti_aliasing": true,
+    "texture_quality": "high",
+    "shadow_quality": "high",
+    "reflection_quality": "medium",
+    "performance_mode": "balanced"
+  },
+
+  "accessibility": {
+    "high_contrast_mode": false,
+    "large_text_mode": false,
+    "reduce_motion": false,
+    "screen_reader_support": true,
+    "keyboard_navigation": true,
+    "focus_indicators": true,
+    "search_shortcut": "Ctrl+S",
+    "settings_shortcut": "Ctrl+Shift+S"
+  }
+}

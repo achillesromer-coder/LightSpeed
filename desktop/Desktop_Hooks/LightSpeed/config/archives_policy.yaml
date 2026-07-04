@@ -1,0 +1,39 @@
+schema_version: lightspeed-archives-policy-v1
+authority:
+  runtime_root: C:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed
+  operational_store: Z Axis\Z-4_Merovingian\data\db\lightspeed_unified.db
+  human_projection: C:\LightSpeed_Consolidated\Logs\Canonical\LightSpeed_Operational_Log_Ledger.xlsx
+
+retention:
+  weekly_jsonl:
+    purpose: bounded recovery and human-readable evidence
+    include:
+      - approval and rejection
+      - failure, error, and blocked work
+      - publish, deploy, and launch
+      - maintenance, cleanup, quarantine, and recovery
+  weekly_quarantine:
+    retain_weeks: 4
+    delete_only_when_second_copy_verified: true
+
+protected:
+  - empirical sources and datasets
+  - source code and configuration
+  - reservoirs and vaults
+  - workbooks
+  - model weights
+  - SQLite databases
+
+superseded_streams:
+  - Z Direct events.jsonl and objects.jsonl
+  - Z Direct channel inbox.jsonl and outbox.jsonl
+  - telemetry otel_spans.jsonl
+  - action_ledger.jsonl
+  - approval_ledger.jsonl
+
+execution:
+  schedule: Friday 19:00 Australia/Brisbane
+  quarantine_first: true
+  manifest_required: true
+  checksum: sha256
+  dry_run_supported: true

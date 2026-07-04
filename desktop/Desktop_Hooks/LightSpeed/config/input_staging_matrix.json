@@ -1,0 +1,361 @@
+{
+  "matrix_id": "smart_floor_stage_inputs_2026_05_22",
+  "policy": "no_placeholder_manifests_without_live_tables_exports_or_directory_roots",
+  "shared_rules": [
+    "Prefer compact columnar logs, tables, and indexed roots over blank planning files.",
+    "Attach proofed inputs to a floor without rewriting the upstream source by default.",
+    "Every floor must show at least one live export or populated directory root before agent population expands."
+  ],
+  "floors": [
+    {
+      "floor": "Trinity",
+      "space_id": "trinity_operator_atrium",
+      "status": "ready_live_inputs",
+      "components": [
+        {
+          "component_id": "trinity_lane_registry",
+          "label": "Workspace lane registry",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\workspace_lanes.json",
+          "status": "live_shell_export"
+        },
+        {
+          "component_id": "trinity_presence_roster",
+          "label": "Presence and stagger roster",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\presence_roster.json",
+          "status": "live_shell_export"
+        },
+        {
+          "component_id": "trinity_approval_gate_log",
+          "label": "Approval and build gate log",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\data\\staging\\gated_build_tasks.json",
+          "status": "live_floor_export"
+        },
+        {
+          "component_id": "trinity_host_policy",
+          "label": "Host runtime policy",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\host_runtime_policy.json",
+          "status": "live_shell_export"
+        },
+        {
+          "component_id": "trinity_local_runtime",
+          "label": "Neo local runtime contract",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\neo_local_runtime.json",
+          "status": "live_shell_export"
+        },
+        {
+          "component_id": "trinity_launch_control",
+          "label": "Launch gate and readiness control",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\launch_control.json",
+          "status": "live_shell_export"
+        },
+        {
+          "component_id": "trinity_upstream_inventory",
+          "label": "Upstream inventory snapshot",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\upstream_inventory.json",
+          "status": "live_shell_export"
+        },
+        {
+          "component_id": "trinity_temp_shell_registry",
+          "label": "Neo temp shell registry",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+2_Neo\\data\\temp_shells\\temp_shell_registry.json",
+          "status": "live_floor_export"
+        }
+      ]
+    },
+    {
+      "floor": "Neo",
+      "space_id": "neo_orchestrator_console",
+      "status": "ready_live_inputs",
+      "components": [
+        {
+          "component_id": "neo_lane_registry",
+          "label": "Operator and device bridge lanes",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\workspace_lanes.json",
+          "status": "live_shell_export"
+        },
+        {
+          "component_id": "neo_persona_runtime",
+          "label": "Resident persona runtime contract",
+          "component_type": "json_config",
+          "path": "D:\\De Sporte`\\Config\\persona_model_runtime.json",
+          "status": "seeded_support_config"
+        },
+        {
+          "component_id": "neo_resident_registry",
+          "label": "Resident registry and standby order",
+          "component_type": "json_config",
+          "path": "D:\\De Sporte`\\Config\\resident_registry.json",
+          "status": "seeded_support_config"
+        },
+        {
+          "component_id": "neo_truth_registry",
+          "label": "Truth and knowns registry",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\truth_registry.json",
+          "status": "live_runtime_export"
+        },
+        {
+          "component_id": "neo_realisation_runtime",
+          "label": "Neo realisation and training runtime",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\neo_realisation_runtime.json",
+          "status": "live_shell_export"
+        },
+        {
+          "component_id": "neo_local_runtime",
+          "label": "Neo local Ollama runtime contract",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\neo_local_runtime.json",
+          "status": "live_shell_export"
+        },
+        {
+          "component_id": "neo_launch_control",
+          "label": "Launch gate and readiness control",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\launch_control.json",
+          "status": "live_shell_export"
+        },
+        {
+          "component_id": "neo_upstream_inventory",
+          "label": "Upstream inventory snapshot",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\upstream_inventory.json",
+          "status": "live_shell_export"
+        },
+        {
+          "component_id": "neo_corunner_handoff",
+          "label": "De Sporte overseer launch handoff",
+          "component_type": "json_export",
+          "path": "D:\\De Sporte`\\Data\\Overseer\\lightspeed_launch_handoff.json",
+          "status": "live_corunner_export"
+        },
+        {
+          "component_id": "neo_temp_shell_registry",
+          "label": "Neo temp shell registry",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+2_Neo\\data\\temp_shells\\temp_shell_registry.json",
+          "status": "live_floor_export"
+        }
+      ]
+    },
+    {
+      "floor": "Smith",
+      "space_id": "smith_route_foundry",
+      "status": "ready_live_inputs",
+      "components": [
+        {
+          "component_id": "smith_build_task_queue",
+          "label": "Build task queue",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\data\\staging\\gated_build_tasks.json",
+          "status": "live_floor_export"
+        },
+        {
+          "component_id": "smith_stage_population",
+          "label": "Floor stage population order",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\data\\staging\\floor_stage_population.json",
+          "status": "live_floor_export"
+        },
+        {
+          "component_id": "smith_consolidation_queue",
+          "label": "Consolidation queue",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\consolidation_queue.json",
+          "status": "live_runtime_export"
+        },
+        {
+          "component_id": "smith_overlap_pressure",
+          "label": "Overlap pressure bellcurve",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\overlap_bellcurve.json",
+          "status": "live_runtime_export"
+        },
+        {
+          "component_id": "smith_launch_control",
+          "label": "Launch gate and readiness control",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\launch_control.json",
+          "status": "live_shell_export"
+        }
+      ]
+    },
+    {
+      "floor": "Oracle",
+      "space_id": "oracle_reservoir_library",
+      "status": "ready_live_inputs",
+      "components": [
+        {
+          "component_id": "oracle_truth_registry",
+          "label": "Truth registry",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\truth_registry.json",
+          "status": "live_runtime_export"
+        },
+        {
+          "component_id": "oracle_reservoir_root",
+          "label": "Reservoir directory root",
+          "component_type": "directory_root",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-2_Oracle\\data\\reservoirs",
+          "status": "live_directory_root"
+        },
+        {
+          "component_id": "oracle_vault_root",
+          "label": "Vault directory root",
+          "component_type": "directory_root",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-2_Oracle\\data\\vault",
+          "status": "live_directory_root"
+        },
+        {
+          "component_id": "oracle_candidate_knowns",
+          "label": "Candidate knowns and corroboration set",
+          "component_type": "directory_root",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-2_Oracle\\data\\encyclopedia\\candidates",
+          "status": "live_directory_root"
+        }
+      ]
+    },
+    {
+      "floor": "Morpheus",
+      "space_id": "morpheus_review_chamber",
+      "status": "ready_live_inputs",
+      "components": [
+        {
+          "component_id": "morpheus_overlap_clusters",
+          "label": "Overlap cluster set",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\overlap_bellcurve.json",
+          "status": "live_runtime_export"
+        },
+        {
+          "component_id": "morpheus_consolidation_queue",
+          "label": "Promotion and review queue",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\consolidation_queue.json",
+          "status": "live_runtime_export"
+        },
+        {
+          "component_id": "morpheus_legacy_review_root",
+          "label": "Legacy review corpus",
+          "component_type": "directory_root",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-1_Morpheus\\organization\\legacy",
+          "status": "live_directory_root"
+        }
+      ]
+    },
+    {
+      "floor": "Architect",
+      "space_id": "architect_publish_wall",
+      "status": "ready_live_inputs",
+      "components": [
+        {
+          "component_id": "architect_deployment_topology",
+          "label": "Deployment topology contract",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\deployment_topology.json",
+          "status": "live_shell_export"
+        },
+        {
+          "component_id": "architect_publish_gate_log",
+          "label": "Approval-gated build and publish task log",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\data\\staging\\gated_build_tasks.json",
+          "status": "live_floor_export"
+        },
+        {
+          "component_id": "architect_bootstrap_summary",
+          "label": "Bootstrap and readiness summary",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\bootstrap_summary.json",
+          "status": "live_runtime_export"
+        },
+        {
+          "component_id": "architect_launch_control",
+          "label": "Launch gate and readiness control",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\launch_control.json",
+          "status": "live_shell_export"
+        },
+        {
+          "component_id": "architect_upstream_inventory",
+          "label": "Upstream inventory snapshot",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\upstream_inventory.json",
+          "status": "live_shell_export"
+        }
+      ]
+    },
+    {
+      "floor": "TheConstruct",
+      "space_id": "construct_digital_twin",
+      "status": "ready_live_inputs",
+      "components": [
+        {
+          "component_id": "construct_dataset_root",
+          "label": "Proofed dataset root",
+          "component_type": "directory_root",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z0_TheConstruct\\data\\datasets",
+          "status": "live_directory_root"
+        },
+        {
+          "component_id": "construct_runtime_profile",
+          "label": "Construct runtime profile",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z0_TheConstruct\\data\\runtime\\construct_runtime_profile.json",
+          "status": "live_floor_export"
+        },
+        {
+          "component_id": "construct_space_contract",
+          "label": "Construct smart-floor space contract",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z0_TheConstruct\\data\\runtime\\smart_floor_spaces.json",
+          "status": "live_floor_export"
+        },
+        {
+          "component_id": "construct_virtual_test_matrix",
+          "label": "Construct virtual-space test matrix",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z0_TheConstruct\\data\\runtime\\virtual_space_test_matrix.json",
+          "status": "live_floor_export"
+        }
+      ]
+    },
+    {
+      "floor": "Merovingian",
+      "space_id": "merovingian_evidence_core",
+      "status": "ready_live_inputs",
+      "components": [
+        {
+          "component_id": "merovingian_db_root",
+          "label": "Runtime database root",
+          "component_type": "directory_root",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-4_Merovingian\\data\\db",
+          "status": "live_directory_root"
+        },
+        {
+          "component_id": "merovingian_logs_root",
+          "label": "Telemetry and log root",
+          "component_type": "directory_root",
+          "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-4_Merovingian\\data\\logs",
+          "status": "live_directory_root"
+        },
+        {
+          "component_id": "merovingian_bootstrap_summary",
+          "label": "Bootstrap summary",
+          "component_type": "json_export",
+          "path": "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\bootstrap_summary.json",
+          "status": "live_runtime_export"
+        }
+      ]
+    }
+  ]
+}

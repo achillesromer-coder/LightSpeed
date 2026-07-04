@@ -1,0 +1,226 @@
+{
+  "Z+2_Neo_analyzer_20260118_123240": {
+    "id": "Z+2_Neo_analyzer_20260118_123240",
+    "name": "Dataset Quality Analyzer",
+    "capability_type": "analyzer",
+    "floor_id": "Z+2_Neo",
+    "description": "Analyzes research dataset quality and completeness",
+    "code": "\n# Analyze dataset quality\ndata = input_data.get('data', {})\n\n# Calculate metrics\ntotal_fields = len(data)\nfilled_fields = sum(1 for v in data.values() if v is not None and v != '')\ncompleteness = filled_fields / total_fields if total_fields > 0 else 0\n\nresult['success'] = True\nresult['completeness'] = completeness\nresult['total_fields'] = total_fields\nresult['filled_fields'] = filled_fields\nresult['quality_score'] = completeness * 0.9  # Simple quality metric\n",
+    "inputs": [
+      {
+        "name": "data",
+        "type": "dict",
+        "description": "Dataset to analyze"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "quality_score",
+        "type": "float",
+        "description": "Overall quality score"
+      },
+      {
+        "name": "completeness",
+        "type": "float",
+        "description": "Data completeness ratio"
+      }
+    ],
+    "usage_count": 1,
+    "success_rate": 1.0,
+    "created_at": "2026-01-18T12:32:40.886250",
+    "last_used": "2026-01-18T12:32:40.887250",
+    "metadata": {}
+  },
+  "Z+2_Neo_analyzer_20260118_133823": {
+    "id": "Z+2_Neo_analyzer_20260118_133823",
+    "name": "Dataset Quality Analyzer",
+    "capability_type": "analyzer",
+    "floor_id": "Z+2_Neo",
+    "description": "Analyzes research dataset quality and completeness",
+    "code": "\n# Analyze dataset quality\ndata = input_data.get('data', {})\n\n# Calculate metrics\ntotal_fields = len(data)\nfilled_fields = sum(1 for v in data.values() if v is not None and v != '')\ncompleteness = filled_fields / total_fields if total_fields > 0 else 0\n\nresult['success'] = True\nresult['completeness'] = completeness\nresult['total_fields'] = total_fields\nresult['filled_fields'] = filled_fields\nresult['quality_score'] = completeness * 0.9  # Simple quality metric\n",
+    "inputs": [
+      {
+        "name": "data",
+        "type": "dict",
+        "description": "Dataset to analyze"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "quality_score",
+        "type": "float",
+        "description": "Overall quality score"
+      },
+      {
+        "name": "completeness",
+        "type": "float",
+        "description": "Data completeness ratio"
+      }
+    ],
+    "usage_count": 1,
+    "success_rate": 1.0,
+    "created_at": "2026-01-18T13:38:23.145960",
+    "last_used": "2026-01-18T13:38:23.146960",
+    "metadata": {}
+  },
+  "Z+2_Neo_analyzer_20260118_141651": {
+    "id": "Z+2_Neo_analyzer_20260118_141651",
+    "name": "Dataset Quality Analyzer",
+    "capability_type": "analyzer",
+    "floor_id": "Z+2_Neo",
+    "description": "Analyzes research dataset quality and completeness",
+    "code": "\n# Analyze dataset quality\ndata = input_data.get('data', {})\n\n# Calculate metrics\ntotal_fields = len(data)\nfilled_fields = sum(1 for v in data.values() if v is not None and v != '')\ncompleteness = filled_fields / total_fields if total_fields > 0 else 0\n\nresult['success'] = True\nresult['completeness'] = completeness\nresult['total_fields'] = total_fields\nresult['filled_fields'] = filled_fields\nresult['quality_score'] = completeness * 0.9  # Simple quality metric\n",
+    "inputs": [
+      {
+        "name": "data",
+        "type": "dict",
+        "description": "Dataset to analyze"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "quality_score",
+        "type": "float",
+        "description": "Overall quality score"
+      },
+      {
+        "name": "completeness",
+        "type": "float",
+        "description": "Data completeness ratio"
+      }
+    ],
+    "usage_count": 1,
+    "success_rate": 1.0,
+    "created_at": "2026-01-18T14:16:51.741302",
+    "last_used": "2026-01-18T14:16:51.742303",
+    "metadata": {}
+  },
+  "Z+2_Neo_analyzer_20260118_145254": {
+    "id": "Z+2_Neo_analyzer_20260118_145254",
+    "name": "Dataset Quality Analyzer",
+    "capability_type": "analyzer",
+    "floor_id": "Z+2_Neo",
+    "description": "Analyzes research dataset quality and completeness",
+    "code": "\n# Analyze dataset quality\ndata = input_data.get('data', {})\n\n# Calculate metrics\ntotal_fields = len(data)\nfilled_fields = sum(1 for v in data.values() if v is not None and v != '')\ncompleteness = filled_fields / total_fields if total_fields > 0 else 0\n\nresult['success'] = True\nresult['completeness'] = completeness\nresult['total_fields'] = total_fields\nresult['filled_fields'] = filled_fields\nresult['quality_score'] = completeness * 0.9  # Simple quality metric\n",
+    "inputs": [
+      {
+        "name": "data",
+        "type": "dict",
+        "description": "Dataset to analyze"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "quality_score",
+        "type": "float",
+        "description": "Overall quality score"
+      },
+      {
+        "name": "completeness",
+        "type": "float",
+        "description": "Data completeness ratio"
+      }
+    ],
+    "usage_count": 1,
+    "success_rate": 1.0,
+    "created_at": "2026-01-18T14:52:54.617997",
+    "last_used": "2026-01-18T14:52:54.618998",
+    "metadata": {}
+  },
+  "Z+2_Neo_analyzer_20260118_155049": {
+    "id": "Z+2_Neo_analyzer_20260118_155049",
+    "name": "Dataset Quality Analyzer",
+    "capability_type": "analyzer",
+    "floor_id": "Z+2_Neo",
+    "description": "Analyzes research dataset quality and completeness",
+    "code": "\n# Analyze dataset quality\ndata = input_data.get('data', {})\n\n# Calculate metrics\ntotal_fields = len(data)\nfilled_fields = sum(1 for v in data.values() if v is not None and v != '')\ncompleteness = filled_fields / total_fields if total_fields > 0 else 0\n\nresult['success'] = True\nresult['completeness'] = completeness\nresult['total_fields'] = total_fields\nresult['filled_fields'] = filled_fields\nresult['quality_score'] = completeness * 0.9  # Simple quality metric\n",
+    "inputs": [
+      {
+        "name": "data",
+        "type": "dict",
+        "description": "Dataset to analyze"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "quality_score",
+        "type": "float",
+        "description": "Overall quality score"
+      },
+      {
+        "name": "completeness",
+        "type": "float",
+        "description": "Data completeness ratio"
+      }
+    ],
+    "usage_count": 1,
+    "success_rate": 1.0,
+    "created_at": "2026-01-18T15:50:49.337415",
+    "last_used": "2026-01-18T15:50:49.339416",
+    "metadata": {}
+  },
+  "Z+2_Neo_analyzer_20260118_163917": {
+    "id": "Z+2_Neo_analyzer_20260118_163917",
+    "name": "Dataset Quality Analyzer",
+    "capability_type": "analyzer",
+    "floor_id": "Z+2_Neo",
+    "description": "Analyzes research dataset quality and completeness",
+    "code": "\n# Analyze dataset quality\ndata = input_data.get('data', {})\n\n# Calculate metrics\ntotal_fields = len(data)\nfilled_fields = sum(1 for v in data.values() if v is not None and v != '')\ncompleteness = filled_fields / total_fields if total_fields > 0 else 0\n\nresult['success'] = True\nresult['completeness'] = completeness\nresult['total_fields'] = total_fields\nresult['filled_fields'] = filled_fields\nresult['quality_score'] = completeness * 0.9  # Simple quality metric\n",
+    "inputs": [
+      {
+        "name": "data",
+        "type": "dict",
+        "description": "Dataset to analyze"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "quality_score",
+        "type": "float",
+        "description": "Overall quality score"
+      },
+      {
+        "name": "completeness",
+        "type": "float",
+        "description": "Data completeness ratio"
+      }
+    ],
+    "usage_count": 1,
+    "success_rate": 1.0,
+    "created_at": "2026-01-18T16:39:17.874962",
+    "last_used": "2026-01-18T16:39:17.876963",
+    "metadata": {}
+  },
+  "Z+2_Neo_analyzer_20260118_192335": {
+    "id": "Z+2_Neo_analyzer_20260118_192335",
+    "name": "Dataset Quality Analyzer",
+    "capability_type": "analyzer",
+    "floor_id": "Z+2_Neo",
+    "description": "Analyzes research dataset quality and completeness",
+    "code": "\n# Analyze dataset quality\ndata = input_data.get('data', {})\n\n# Calculate metrics\ntotal_fields = len(data)\nfilled_fields = sum(1 for v in data.values() if v is not None and v != '')\ncompleteness = filled_fields / total_fields if total_fields > 0 else 0\n\nresult['success'] = True\nresult['completeness'] = completeness\nresult['total_fields'] = total_fields\nresult['filled_fields'] = filled_fields\nresult['quality_score'] = completeness * 0.9  # Simple quality metric\n",
+    "inputs": [
+      {
+        "name": "data",
+        "type": "dict",
+        "description": "Dataset to analyze"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "quality_score",
+        "type": "float",
+        "description": "Overall quality score"
+      },
+      {
+        "name": "completeness",
+        "type": "float",
+        "description": "Data completeness ratio"
+      }
+    ],
+    "usage_count": 1,
+    "success_rate": 1.0,
+    "created_at": "2026-01-18T19:23:35.154776",
+    "last_used": "2026-01-18T19:23:35.156775",
+    "metadata": {}
+  }
+}

@@ -1,0 +1,596 @@
+{
+  "contract_id": "lightspeed_backend_frontend_build_contract_2026_05_28",
+  "purpose": "Boil each LightSpeed agent floor into one backend spine and one frontend surface.",
+  "policy": {
+    "single_active_frontend": true,
+    "backend_write_scope": "owned_floor_paths_only",
+    "external_writes": "blocked_until_operator_approval",
+    "local_llm_first": true,
+    "manual_approval_required": true
+  },
+  "summary": {
+    "floor_count": 8,
+    "backend_enabled_count": 8,
+    "frontend_enabled_count": 8,
+    "agent_count": 8,
+    "ready_task_count": 14,
+    "launch_gate": "CL-3 DESKTOP_READY"
+  },
+  "floors": [
+    {
+      "floor": "Merovingian",
+      "agent": {
+        "agent_id": "merovingian",
+        "label": "Merovingian",
+        "support_resident_id": "orion",
+        "support_state": "verification_sentinel_standby",
+        "resident_host": "De Sporte"
+      },
+      "model": {
+        "provider": "ollama",
+        "model": "qwen3:8b",
+        "persona": "audit_and_telemetry",
+        "enabled": true,
+        "approval_required": true,
+        "max_parallel_tasks": 1,
+        "queue_limit": 2,
+        "workspace_scope": "global"
+      },
+      "runtime": {
+        "population_mode": "resident",
+        "boot_priority": 0,
+        "launch_gate": "CL-3 DESKTOP_READY",
+        "local_endpoint": "http://localhost:11434",
+        "external_writes": "blocked_until_operator_approval"
+      },
+      "backend": {
+        "enabled": true,
+        "role": "telemetry, health checks, action ledgers, runtime database, and recovery evidence",
+        "input_count": 3,
+        "input_paths": [
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-4_Merovingian\\data\\db",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-4_Merovingian\\data\\logs",
+          "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\bootstrap_summary.json"
+        ],
+        "output_roots": [
+          "Z Axis/Z-4_Merovingian/data/audit",
+          "Z Axis/Z-4_Merovingian/data/db",
+          "Z Axis/Z-4_Merovingian/data/logs"
+        ],
+        "write_scope": "owned_floor_paths_only"
+      },
+      "frontend": {
+        "enabled": true,
+        "surface": "Merovingian evidence core and diagnostics panel",
+        "space_id": "merovingian_evidence_core",
+        "default_view": "health_and_logs",
+        "density": "compact_lab_surface",
+        "collapse_policy": "inactive_spaces_export_state_and_collapse"
+      },
+      "build": {
+        "state": "enabled_local_gated",
+        "lane_ids": [
+          "simulation_twin"
+        ],
+        "ready_task_ids": [
+          "merovingian_evidence_snapshots"
+        ],
+        "risk_level": "low",
+        "manual_gates": [
+          "github_push",
+          "drive_writeback",
+          "web_publish"
+        ],
+        "next_safe_action": "Snapshot health and ledger state before deeper autonomous operation."
+      }
+    },
+    {
+      "floor": "Trinity",
+      "agent": {
+        "agent_id": "trinity",
+        "label": "Trinity",
+        "support_resident_id": "iris",
+        "support_state": "habitat_interface_observer_standby",
+        "resident_host": "De Sporte"
+      },
+      "model": {
+        "provider": "ollama",
+        "model": "qwen3:8b",
+        "persona": "portal_and_settings",
+        "enabled": true,
+        "approval_required": true,
+        "max_parallel_tasks": 1,
+        "queue_limit": 2,
+        "workspace_scope": "global"
+      },
+      "runtime": {
+        "population_mode": "resident",
+        "boot_priority": 1,
+        "launch_gate": "CL-3 DESKTOP_READY",
+        "local_endpoint": "http://localhost:11434",
+        "external_writes": "blocked_until_operator_approval"
+      },
+      "backend": {
+        "enabled": true,
+        "role": "settings, shell state, readable operator routing, and approval context",
+        "input_count": 8,
+        "input_paths": [
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\workspace_lanes.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\presence_roster.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\data\\staging\\gated_build_tasks.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\host_runtime_policy.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\neo_local_runtime.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\launch_control.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\upstream_inventory.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+2_Neo\\data\\temp_shells\\temp_shell_registry.json"
+        ],
+        "output_roots": [
+          "config",
+          "Z Axis/Z+3_Trinity/settings",
+          "Z Axis/Z+3_Trinity/data/ui"
+        ],
+        "write_scope": "owned_floor_paths_only"
+      },
+      "frontend": {
+        "enabled": true,
+        "surface": "N.py Functions Hub and Trinity operator home",
+        "space_id": "trinity_operator_atrium",
+        "default_view": "lane_overview",
+        "density": "compact_lab_surface",
+        "collapse_policy": "inactive_spaces_export_state_and_collapse"
+      },
+      "build": {
+        "state": "enabled_local_gated",
+        "lane_ids": [
+          "local_llm_temp_shells",
+          "operator_shell",
+          "publish_and_governance",
+          "queue_and_execution",
+          "web_publish"
+        ],
+        "ready_task_ids": [
+          "trinity_single_surface_shell",
+          "trinity_compact_navigation",
+          "trinity_editor_local_lane"
+        ],
+        "risk_level": "low",
+        "manual_gates": [
+          "github_push",
+          "drive_writeback",
+          "web_publish"
+        ],
+        "next_safe_action": "Keep the operator shell readable and collapse duplicate navigation into one active context."
+      }
+    },
+    {
+      "floor": "Neo",
+      "agent": {
+        "agent_id": "neo",
+        "label": "Neo",
+        "support_resident_id": "neo",
+        "support_state": "lightspeed_orchestrator_standby",
+        "resident_host": "De Sporte"
+      },
+      "model": {
+        "provider": "ollama",
+        "model": "qwen3:8b",
+        "persona": "operator_and_briefing",
+        "enabled": true,
+        "approval_required": true,
+        "max_parallel_tasks": 1,
+        "queue_limit": 3,
+        "workspace_scope": "global"
+      },
+      "runtime": {
+        "population_mode": "resident",
+        "boot_priority": 2,
+        "launch_gate": "CL-3 DESKTOP_READY",
+        "local_endpoint": "http://localhost:11434",
+        "external_writes": "blocked_until_operator_approval"
+      },
+      "backend": {
+        "enabled": true,
+        "role": "local Ollama orchestration, temp-shell staging, and De Sporte corunner handoff",
+        "input_count": 10,
+        "input_paths": [
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\workspace_lanes.json",
+          "D:\\De Sporte`\\Config\\persona_model_runtime.json",
+          "D:\\De Sporte`\\Config\\resident_registry.json",
+          "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\truth_registry.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\neo_realisation_runtime.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\neo_local_runtime.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\launch_control.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\upstream_inventory.json"
+        ],
+        "output_roots": [
+          "config/neo_local_runtime.json",
+          "Z Axis/Z+2_Neo/data/temp_shells"
+        ],
+        "write_scope": "owned_floor_paths_only"
+      },
+      "frontend": {
+        "enabled": true,
+        "surface": "Neo workbench, local-runtime lane, and Trinity editor sync",
+        "space_id": "neo_orchestrator_console",
+        "default_view": "on_call_briefing",
+        "density": "compact_lab_surface",
+        "collapse_policy": "inactive_spaces_export_state_and_collapse"
+      },
+      "build": {
+        "state": "enabled_local_gated",
+        "lane_ids": [
+          "device_bridge",
+          "knowledge_library",
+          "local_llm_temp_shells",
+          "operator_shell",
+          "web_publish"
+        ],
+        "ready_task_ids": [
+          "neo_orchestrator_playbooks",
+          "neo_local_ollama_endpoint",
+          "neo_temp_shell_registry",
+          "desporte_co_running_contract"
+        ],
+        "risk_level": "low",
+        "manual_gates": [
+          "github_push",
+          "drive_writeback",
+          "web_publish"
+        ],
+        "next_safe_action": "Stage bounded local tasks through Neo temp shells before permanent floor population."
+      }
+    },
+    {
+      "floor": "Smith",
+      "agent": {
+        "agent_id": "smith",
+        "label": "Smith",
+        "support_resident_id": "operator",
+        "support_state": "builder_anchor",
+        "resident_host": "De Sporte"
+      },
+      "model": {
+        "provider": "ollama",
+        "model": "qwen3:8b",
+        "persona": "routing_and_execution",
+        "enabled": true,
+        "approval_required": true,
+        "max_parallel_tasks": 1,
+        "queue_limit": 2,
+        "workspace_scope": "project"
+      },
+      "runtime": {
+        "population_mode": "resident",
+        "boot_priority": 3,
+        "launch_gate": "CL-3 DESKTOP_READY",
+        "local_endpoint": "http://localhost:11434",
+        "external_writes": "blocked_until_operator_approval"
+      },
+      "backend": {
+        "enabled": true,
+        "role": "build queue routing, workflow state, and low-risk execution records",
+        "input_count": 5,
+        "input_paths": [
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\data\\staging\\gated_build_tasks.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\data\\staging\\floor_stage_population.json",
+          "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\consolidation_queue.json",
+          "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\overlap_bellcurve.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\launch_control.json"
+        ],
+        "output_roots": [
+          "Z Axis/Z-3_Smith/data/staging",
+          "Z Axis/Z-3_Smith/tasks"
+        ],
+        "write_scope": "owned_floor_paths_only"
+      },
+      "frontend": {
+        "enabled": true,
+        "surface": "Smith route foundry and queue router",
+        "space_id": "smith_route_foundry",
+        "default_view": "build_task_queue",
+        "density": "compact_lab_surface",
+        "collapse_policy": "inactive_spaces_export_state_and_collapse"
+      },
+      "build": {
+        "state": "enabled_local_gated",
+        "lane_ids": [
+          "device_bridge",
+          "local_llm_temp_shells",
+          "operator_shell",
+          "publish_and_governance",
+          "queue_and_execution",
+          "review_and_corroboration"
+        ],
+        "ready_task_ids": [
+          "smith_population_router"
+        ],
+        "risk_level": "low",
+        "manual_gates": [
+          "github_push",
+          "drive_writeback",
+          "web_publish"
+        ],
+        "next_safe_action": "Keep all executable work in the gated Smith queue with owned-floor write scope."
+      }
+    },
+    {
+      "floor": "Oracle",
+      "agent": {
+        "agent_id": "oracle",
+        "label": "Oracle",
+        "support_resident_id": "mnemos",
+        "support_state": "continuity_archivist_standby",
+        "resident_host": "De Sporte"
+      },
+      "model": {
+        "provider": "ollama",
+        "model": "deepseek-r1:8b",
+        "persona": "catalog_and_proofing",
+        "enabled": true,
+        "approval_required": true,
+        "max_parallel_tasks": 1,
+        "queue_limit": 3,
+        "workspace_scope": "project"
+      },
+      "runtime": {
+        "population_mode": "staged",
+        "boot_priority": 4,
+        "launch_gate": "CL-3 DESKTOP_READY",
+        "local_endpoint": "http://localhost:11434",
+        "external_writes": "blocked_until_operator_approval"
+      },
+      "backend": {
+        "enabled": true,
+        "role": "truth registry, provenance receipts, knowns, reservoirs, and attach-only source intake",
+        "input_count": 4,
+        "input_paths": [
+          "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\truth_registry.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-2_Oracle\\data\\reservoirs",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-2_Oracle\\data\\vault",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-2_Oracle\\data\\encyclopedia\\candidates"
+        ],
+        "output_roots": [
+          "Z Axis/Z-2_Oracle/Data/knowns",
+          "Z Axis/Z-2_Oracle/Data/datatables",
+          "Z Axis/Z-2_Oracle/data/reservoirs"
+        ],
+        "write_scope": "owned_floor_paths_only"
+      },
+      "frontend": {
+        "enabled": true,
+        "surface": "Oracle reservoir library and candidate-knowns workbench",
+        "space_id": "oracle_reservoir_library",
+        "default_view": "source_library",
+        "density": "compact_lab_surface",
+        "collapse_policy": "inactive_spaces_export_state_and_collapse"
+      },
+      "build": {
+        "state": "enabled_local_gated",
+        "lane_ids": [
+          "knowledge_library",
+          "queue_and_execution",
+          "review_and_corroboration",
+          "simulation_twin"
+        ],
+        "ready_task_ids": [
+          "oracle_population_attach_contracts"
+        ],
+        "risk_level": "low",
+        "manual_gates": [
+          "github_push",
+          "drive_writeback",
+          "web_publish"
+        ],
+        "next_safe_action": "Attach proofed source sets and receipts without rewriting upstream material."
+      }
+    },
+    {
+      "floor": "Morpheus",
+      "agent": {
+        "agent_id": "morpheus",
+        "label": "Morpheus",
+        "support_resident_id": "operator",
+        "support_state": "builder_anchor",
+        "resident_host": "De Sporte"
+      },
+      "model": {
+        "provider": "ollama",
+        "model": "deepseek-r1:8b",
+        "persona": "review_and_diff",
+        "enabled": true,
+        "approval_required": true,
+        "max_parallel_tasks": 1,
+        "queue_limit": 3,
+        "workspace_scope": "project"
+      },
+      "runtime": {
+        "population_mode": "staged",
+        "boot_priority": 5,
+        "launch_gate": "CL-3 DESKTOP_READY",
+        "local_endpoint": "http://localhost:11434",
+        "external_writes": "blocked_until_operator_approval"
+      },
+      "backend": {
+        "enabled": true,
+        "role": "corroboration, diff review, promotion proposals, and overlap pressure checks",
+        "input_count": 3,
+        "input_paths": [
+          "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\overlap_bellcurve.json",
+          "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\consolidation_queue.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-1_Morpheus\\organization\\legacy"
+        ],
+        "output_roots": [
+          "Z Axis/Z-1_Morpheus/data/reviews",
+          "Z Axis/Z-1_Morpheus/organization"
+        ],
+        "write_scope": "owned_floor_paths_only"
+      },
+      "frontend": {
+        "enabled": true,
+        "surface": "Morpheus review chamber",
+        "space_id": "morpheus_review_chamber",
+        "default_view": "evidence_split_view",
+        "density": "compact_lab_surface",
+        "collapse_policy": "inactive_spaces_export_state_and_collapse"
+      },
+      "build": {
+        "state": "enabled_local_gated",
+        "lane_ids": [
+          "knowledge_library",
+          "review_and_corroboration"
+        ],
+        "ready_task_ids": [
+          "morpheus_review_workspace"
+        ],
+        "risk_level": "low",
+        "manual_gates": [
+          "github_push",
+          "drive_writeback",
+          "web_publish"
+        ],
+        "next_safe_action": "Review Oracle candidates and Smith evidence notes before promotion."
+      }
+    },
+    {
+      "floor": "Architect",
+      "agent": {
+        "agent_id": "architect",
+        "label": "Architect",
+        "support_resident_id": "operator",
+        "support_state": "builder_anchor",
+        "resident_host": "De Sporte"
+      },
+      "model": {
+        "provider": "ollama",
+        "model": "qwen3:8b",
+        "persona": "governance_and_publish",
+        "enabled": true,
+        "approval_required": true,
+        "max_parallel_tasks": 1,
+        "queue_limit": 2,
+        "workspace_scope": "project"
+      },
+      "runtime": {
+        "population_mode": "staged",
+        "boot_priority": 6,
+        "launch_gate": "CL-3 DESKTOP_READY",
+        "local_endpoint": "http://localhost:11434",
+        "external_writes": "blocked_until_operator_approval"
+      },
+      "backend": {
+        "enabled": true,
+        "role": "release packets, manual approvals, external-write gates, and publish topology",
+        "input_count": 5,
+        "input_paths": [
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\deployment_topology.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\data\\staging\\gated_build_tasks.json",
+          "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\bootstrap_summary.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\launch_control.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\upstream_inventory.json"
+        ],
+        "output_roots": [
+          "Z Axis/Z+1_Architect/data/finalization",
+          "Z Axis/Z+1_Architect/data/approvals"
+        ],
+        "write_scope": "owned_floor_paths_only"
+      },
+      "frontend": {
+        "enabled": true,
+        "surface": "Architect publish wall and approval checklist",
+        "space_id": "architect_publish_wall",
+        "default_view": "approval_queue",
+        "density": "compact_lab_surface",
+        "collapse_policy": "inactive_spaces_export_state_and_collapse"
+      },
+      "build": {
+        "state": "enabled_local_gated",
+        "lane_ids": [
+          "device_bridge",
+          "operator_shell",
+          "publish_and_governance",
+          "queue_and_execution",
+          "web_publish"
+        ],
+        "ready_task_ids": [
+          "architect_manual_publish_gate"
+        ],
+        "risk_level": "low",
+        "manual_gates": [
+          "github_push",
+          "drive_writeback",
+          "web_publish"
+        ],
+        "next_safe_action": "Hold GitHub, Drive, and web publish behind explicit yes/no artifact review."
+      }
+    },
+    {
+      "floor": "TheConstruct",
+      "agent": {
+        "agent_id": "theconstruct",
+        "label": "TheConstruct",
+        "support_resident_id": "atlas",
+        "support_state": "scientific_data_spine_standby",
+        "resident_host": "De Sporte"
+      },
+      "model": {
+        "provider": "ollama",
+        "model": "gemma3:27b",
+        "persona": "simulation_and_scenarios",
+        "enabled": true,
+        "approval_required": true,
+        "max_parallel_tasks": 1,
+        "queue_limit": 2,
+        "workspace_scope": "project"
+      },
+      "runtime": {
+        "population_mode": "manual_heavy",
+        "boot_priority": 7,
+        "launch_gate": "CL-3 DESKTOP_READY",
+        "local_endpoint": "http://localhost:11434",
+        "external_writes": "blocked_until_operator_approval"
+      },
+      "backend": {
+        "enabled": true,
+        "role": "dataset-backed scenario planning, render readiness, and bounded digital-twin runtime state",
+        "input_count": 4,
+        "input_paths": [
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z0_TheConstruct\\data\\datasets",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z0_TheConstruct\\data\\runtime\\construct_runtime_profile.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z0_TheConstruct\\data\\runtime\\smart_floor_spaces.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z0_TheConstruct\\data\\runtime\\virtual_space_test_matrix.json"
+        ],
+        "output_roots": [
+          "Z Axis/Z0_TheConstruct/data/runtime",
+          "Z Axis/Z0_TheConstruct/data/datasets",
+          "Z Axis/Z0_TheConstruct/data/outputs"
+        ],
+        "write_scope": "owned_floor_paths_only"
+      },
+      "frontend": {
+        "enabled": true,
+        "surface": "TheConstruct digital twin atrium and manual-heavy render controls",
+        "space_id": "construct_digital_twin",
+        "default_view": "ambient_embed",
+        "density": "compact_lab_surface",
+        "collapse_policy": "inactive_spaces_export_state_and_collapse"
+      },
+      "build": {
+        "state": "enabled_local_gated",
+        "lane_ids": [
+          "simulation_twin"
+        ],
+        "ready_task_ids": [
+          "construct_population_controls",
+          "construct_compact_render_budget"
+        ],
+        "risk_level": "low",
+        "manual_gates": [
+          "github_push",
+          "drive_writeback",
+          "web_publish"
+        ],
+        "next_safe_action": "Keep immersive/render modes manual while proofed datasets populate scenario previews."
+      }
+    }
+  ]
+}

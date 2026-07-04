@@ -1,0 +1,77 @@
+{
+  "policy_id": "host_runtime_2026_05_21",
+  "hardware_baseline": {
+    "cpu": "AMD Ryzen 7 2700X",
+    "cores": 8,
+    "threads": 16,
+    "ram_gb": 32,
+    "ram_speed_mt_s": 2133,
+    "gpu": "NVIDIA GeForce GTX 1660",
+    "gpu_vram_gb": 4,
+    "motherboard": "ASUS ROG STRIX B550-F GAMING (WI-FI)",
+    "bios_version": "1004",
+    "bios_date": "2020-08-13"
+  },
+  "storage_topology": {
+    "windows_root": "C:",
+    "windows_root_type": "hdd",
+    "workspace_root": "D:",
+    "workspace_root_type": "ssd_storage_space",
+    "policy": "Keep Windows/AppData on C while all live LightSpeed and De Sporte runtime surfaces stay on D."
+  },
+  "runtime_limits": {
+    "cpu_scheduler_strategy": "bounded_parallelism_over_global_autostart",
+    "max_floor_boot_parallelism": 4,
+    "max_active_heavy_floors": 2,
+    "max_concurrent_ollama_jobs": 2,
+    "max_background_queue_workers": 2,
+    "construct_widget_budget": 36,
+    "construct_texture_panel_budget": 8,
+    "interactive_session_mode": "chrome_headroom_compact_shell",
+    "chrome_reserved_ram_gb": 6,
+    "chrome_reserved_threads": 4,
+    "lightspeed_max_resident_ui_panels": 4
+  },
+  "windows_tuning": {
+    "power_plan": "General",
+    "cpu_min_percent_ac": 100,
+    "cpu_max_percent_ac": 100,
+    "disk_idle_minutes_ac": 0,
+    "disk_idle_minutes_dc": 0,
+    "background_pause_on_pressure": true,
+    "compact_shell_bias": true,
+    "interactive_browser": "Google Chrome",
+    "ollama_auto_start": "conditional_only",
+    "startup_prune_required": [
+      "Steam",
+      "Epic",
+      "Canva",
+      "Teams",
+      "vendor_updaters"
+    ]
+  },
+  "co_running_apps": {
+    "chrome": {
+      "mode": "keep_responsive",
+      "reserved_ram_gb": 6,
+      "reserved_threads": 4,
+      "interaction_expectation": "normal_business_research_and_repo_tabs"
+    },
+    "de_sporte": {
+      "mode": "low_sleep_persistent_companion",
+      "lightspeed_logged_in_percent": 48,
+      "remaining_window_percent": 52,
+      "idle_persistence_percent_of_remaining_window": 80,
+      "ready_waiting_share_of_remaining_window": 80,
+      "active_interaction_percent_of_remaining_window": 20,
+      "active_interaction_share_of_remaining_window": 20,
+      "cascade_overlap_percent": 49,
+      "interaction_speed_factor": 0.8
+    }
+  },
+  "firmware_follow_up": [
+    "Review BIOS update path before enabling new platform options.",
+    "Enable DOCP/XMP so the 32 GB kit can move off 2133 MT/s if stable.",
+    "Enable SVM/virtualization if local VM or container workloads become required."
+  ]
+}

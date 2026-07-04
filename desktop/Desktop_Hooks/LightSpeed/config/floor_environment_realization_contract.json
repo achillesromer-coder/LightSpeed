@@ -1,0 +1,960 @@
+{
+  "contract_id": "lightspeed_floor_environment_realization_2026_05_28",
+  "purpose": "Tailor each populated floor into a concrete environment with UI, tools, model, and post-population path.",
+  "realization_order": "outside_in_tailoring_with_stable_runtime_boot",
+  "outside_in_order": [
+    "Trinity",
+    "Neo",
+    "Architect",
+    "TheConstruct",
+    "Morpheus",
+    "Oracle",
+    "Smith",
+    "Merovingian"
+  ],
+  "runtime_boot_order": [
+    "Merovingian",
+    "Trinity",
+    "Neo",
+    "Smith",
+    "Oracle",
+    "Morpheus",
+    "Architect",
+    "TheConstruct"
+  ],
+  "model_confirmation_source": "neo_local_runtime.available_models",
+  "policy": {
+    "single_active_frontend": true,
+    "resident_boot_stays_bounded": true,
+    "staged_and_manual_heavy_floors_activate_on_demand": true,
+    "all_external_writes_manual_gated": true,
+    "avoid_previous_smart_floor_failure_modes": [
+      "placeholder-only floors",
+      "hyper-tabbed shells",
+      "parallel popup workflows",
+      "ungated background loops",
+      "unconfirmed model routing"
+    ]
+  },
+  "summary": {
+    "floor_count": 8,
+    "floor_models_confirmed": 8,
+    "cross_system_agent_count": 8,
+    "cross_system_models_confirmed": 8,
+    "ready_task_count": 14,
+    "launch_gate": "CL-3 DESKTOP_READY"
+  },
+  "floors": [
+    {
+      "floor": "Trinity",
+      "outside_in_order": 1,
+      "environment_label": "Readable Operator Atrium",
+      "agent": {
+        "agent_id": "trinity",
+        "label": "Trinity",
+        "support_resident_id": "iris",
+        "resident_host": "De Sporte"
+      },
+      "model": {
+        "provider": "ollama",
+        "model": "qwen3:8b",
+        "persona": "portal_and_settings",
+        "confirmed_installed": true,
+        "activation": "resident",
+        "max_parallel_tasks": 1,
+        "queue_limit": 2
+      },
+      "population": {
+        "mode": "resident",
+        "boot_priority": 1,
+        "backend_ready": true,
+        "frontend_ready": true,
+        "launch_gate": "CL-3 DESKTOP_READY",
+        "external_writes": "blocked_until_operator_approval"
+      },
+      "ui_realization": {
+        "surface": "N.py Functions Hub and Trinity operator home",
+        "space_id": "trinity_operator_atrium",
+        "default_view": "lane_overview",
+        "adapts_to": [
+          "operator focus and visual load",
+          "active approval gate",
+          "current floor and queue pressure"
+        ],
+        "density": "compact_lab_surface",
+        "collapse_policy": "inactive_spaces_export_state_and_collapse"
+      },
+      "tool_realization": {
+        "backend_role": "settings, shell state, readable operator routing, and approval context",
+        "tool_transform": [
+          "settings, themes, setup, approvals, and routing collapse into one operator rail",
+          "secondary tools open as drawers or one active detail pane, not parallel windows"
+        ],
+        "lane_ids": [
+          "local_llm_temp_shells",
+          "operator_shell",
+          "publish_and_governance",
+          "queue_and_execution",
+          "web_publish"
+        ],
+        "lanes": [
+          {
+            "lane_id": "local_llm_temp_shells",
+            "label": "Local LLM and Temp Shell Lane",
+            "owner_floor": "Neo",
+            "state": "ready_minimum_entry"
+          },
+          {
+            "lane_id": "operator_shell",
+            "label": "Single Interface Shell",
+            "owner_floor": "Trinity",
+            "state": "ready_for_population"
+          },
+          {
+            "lane_id": "publish_and_governance",
+            "label": "Governance and Publish Lane",
+            "owner_floor": "Architect",
+            "state": "ready_minimum_entry"
+          },
+          {
+            "lane_id": "queue_and_execution",
+            "label": "Queue and Execution Lane",
+            "owner_floor": "Smith",
+            "state": "ready_for_population"
+          },
+          {
+            "lane_id": "web_publish",
+            "label": "Web and Repo Publish Lane",
+            "owner_floor": "Architect",
+            "state": "later_gated"
+          }
+        ],
+        "input_paths": [
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\workspace_lanes.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\presence_roster.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\data\\staging\\gated_build_tasks.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\host_runtime_policy.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\neo_local_runtime.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\launch_control.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\upstream_inventory.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+2_Neo\\data\\temp_shells\\temp_shell_registry.json"
+        ],
+        "output_roots": [
+          "config",
+          "Z Axis/Z+3_Trinity/settings",
+          "Z Axis/Z+3_Trinity/data/ui"
+        ]
+      },
+      "post_population": {
+        "path": [
+          "show current floor, gate, and next safe action first",
+          "make readability controls immediate and persistent",
+          "route each floor action through the visible approval context"
+        ],
+        "ready_task_ids": [
+          "trinity_single_surface_shell",
+          "trinity_compact_navigation",
+          "trinity_editor_local_lane"
+        ],
+        "next_safe_action": "Keep the operator shell readable and collapse duplicate navigation into one active context.",
+        "manual_gates": [
+          "github_push",
+          "drive_writeback",
+          "web_publish"
+        ]
+      }
+    },
+    {
+      "floor": "Neo",
+      "outside_in_order": 2,
+      "environment_label": "Local Orchestrator Console",
+      "agent": {
+        "agent_id": "neo",
+        "label": "Neo",
+        "support_resident_id": "neo",
+        "resident_host": "De Sporte"
+      },
+      "model": {
+        "provider": "ollama",
+        "model": "qwen3:8b",
+        "persona": "operator_and_briefing",
+        "confirmed_installed": true,
+        "activation": "resident",
+        "max_parallel_tasks": 1,
+        "queue_limit": 3
+      },
+      "population": {
+        "mode": "resident",
+        "boot_priority": 2,
+        "backend_ready": true,
+        "frontend_ready": true,
+        "launch_gate": "CL-3 DESKTOP_READY",
+        "external_writes": "blocked_until_operator_approval"
+      },
+      "ui_realization": {
+        "surface": "Neo workbench, local-runtime lane, and Trinity editor sync",
+        "space_id": "neo_orchestrator_console",
+        "default_view": "on_call_briefing",
+        "adapts_to": [
+          "active temp shell",
+          "model budget",
+          "handoff state between LightSpeed and De Sporte"
+        ],
+        "density": "compact_lab_surface",
+        "collapse_policy": "inactive_spaces_export_state_and_collapse"
+      },
+      "tool_realization": {
+        "backend_role": "local Ollama orchestration, temp-shell staging, and De Sporte corunner handoff",
+        "tool_transform": [
+          "local prompts, file context, and task staging become one bounded orchestration deck",
+          "Neo drafts into temp shells before Smith or Architect can promote work"
+        ],
+        "lane_ids": [
+          "device_bridge",
+          "knowledge_library",
+          "local_llm_temp_shells",
+          "operator_shell",
+          "web_publish"
+        ],
+        "lanes": [
+          {
+            "lane_id": "device_bridge",
+            "label": "Device and GO Bridge Lane",
+            "owner_floor": "Neo",
+            "state": "later_gated"
+          },
+          {
+            "lane_id": "knowledge_library",
+            "label": "Knowledge and Reservoir Lane",
+            "owner_floor": "Oracle",
+            "state": "ready_for_population"
+          },
+          {
+            "lane_id": "local_llm_temp_shells",
+            "label": "Local LLM and Temp Shell Lane",
+            "owner_floor": "Neo",
+            "state": "ready_minimum_entry"
+          },
+          {
+            "lane_id": "operator_shell",
+            "label": "Single Interface Shell",
+            "owner_floor": "Trinity",
+            "state": "ready_for_population"
+          },
+          {
+            "lane_id": "web_publish",
+            "label": "Web and Repo Publish Lane",
+            "owner_floor": "Architect",
+            "state": "later_gated"
+          }
+        ],
+        "input_paths": [
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\workspace_lanes.json",
+          "D:\\De Sporte`\\Config\\persona_model_runtime.json",
+          "D:\\De Sporte`\\Config\\resident_registry.json",
+          "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\truth_registry.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\neo_realisation_runtime.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\neo_local_runtime.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\launch_control.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\upstream_inventory.json"
+        ],
+        "output_roots": [
+          "config/neo_local_runtime.json",
+          "Z Axis/Z+2_Neo/data/temp_shells"
+        ]
+      },
+      "post_population": {
+        "path": [
+          "brief the current floor state",
+          "stage the next local task",
+          "hand off completed artifacts to Trinity review or Smith routing"
+        ],
+        "ready_task_ids": [
+          "neo_orchestrator_playbooks",
+          "neo_local_ollama_endpoint",
+          "neo_temp_shell_registry",
+          "desporte_co_running_contract"
+        ],
+        "next_safe_action": "Stage bounded local tasks through Neo temp shells before permanent floor population.",
+        "manual_gates": [
+          "github_push",
+          "drive_writeback",
+          "web_publish"
+        ]
+      }
+    },
+    {
+      "floor": "Architect",
+      "outside_in_order": 3,
+      "environment_label": "Manual Publish Wall",
+      "agent": {
+        "agent_id": "architect",
+        "label": "Architect",
+        "support_resident_id": "operator",
+        "resident_host": "De Sporte"
+      },
+      "model": {
+        "provider": "ollama",
+        "model": "qwen3:8b",
+        "persona": "governance_and_publish",
+        "confirmed_installed": true,
+        "activation": "on_demand_gated",
+        "max_parallel_tasks": 1,
+        "queue_limit": 2
+      },
+      "population": {
+        "mode": "staged",
+        "boot_priority": 6,
+        "backend_ready": true,
+        "frontend_ready": true,
+        "launch_gate": "CL-3 DESKTOP_READY",
+        "external_writes": "blocked_until_operator_approval"
+      },
+      "ui_realization": {
+        "surface": "Architect publish wall and approval checklist",
+        "space_id": "architect_publish_wall",
+        "default_view": "approval_queue",
+        "adapts_to": [
+          "approval state",
+          "release packet completeness",
+          "external write risk"
+        ],
+        "density": "compact_lab_surface",
+        "collapse_policy": "inactive_spaces_export_state_and_collapse"
+      },
+      "tool_realization": {
+        "backend_role": "release packets, manual approvals, external-write gates, and publish topology",
+        "tool_transform": [
+          "publish, repo, Drive, and web controls become one explicit yes/no gate",
+          "release evidence is shown before any external mutation path"
+        ],
+        "lane_ids": [
+          "device_bridge",
+          "operator_shell",
+          "publish_and_governance",
+          "queue_and_execution",
+          "web_publish"
+        ],
+        "lanes": [
+          {
+            "lane_id": "device_bridge",
+            "label": "Device and GO Bridge Lane",
+            "owner_floor": "Neo",
+            "state": "later_gated"
+          },
+          {
+            "lane_id": "operator_shell",
+            "label": "Single Interface Shell",
+            "owner_floor": "Trinity",
+            "state": "ready_for_population"
+          },
+          {
+            "lane_id": "publish_and_governance",
+            "label": "Governance and Publish Lane",
+            "owner_floor": "Architect",
+            "state": "ready_minimum_entry"
+          },
+          {
+            "lane_id": "queue_and_execution",
+            "label": "Queue and Execution Lane",
+            "owner_floor": "Smith",
+            "state": "ready_for_population"
+          },
+          {
+            "lane_id": "web_publish",
+            "label": "Web and Repo Publish Lane",
+            "owner_floor": "Architect",
+            "state": "later_gated"
+          }
+        ],
+        "input_paths": [
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\deployment_topology.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\data\\staging\\gated_build_tasks.json",
+          "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\bootstrap_summary.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\launch_control.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\upstream_inventory.json"
+        ],
+        "output_roots": [
+          "Z Axis/Z+1_Architect/data/finalization",
+          "Z Axis/Z+1_Architect/data/approvals"
+        ]
+      },
+      "post_population": {
+        "path": [
+          "assemble release packet",
+          "validate source, proof, destination, and rollback",
+          "wait for explicit operator approval before external writes"
+        ],
+        "ready_task_ids": [
+          "architect_manual_publish_gate"
+        ],
+        "next_safe_action": "Hold GitHub, Drive, and web publish behind explicit yes/no artifact review.",
+        "manual_gates": [
+          "github_push",
+          "drive_writeback",
+          "web_publish"
+        ]
+      }
+    },
+    {
+      "floor": "TheConstruct",
+      "outside_in_order": 4,
+      "environment_label": "Bounded Digital Twin Atrium",
+      "agent": {
+        "agent_id": "theconstruct",
+        "label": "TheConstruct",
+        "support_resident_id": "atlas",
+        "resident_host": "De Sporte"
+      },
+      "model": {
+        "provider": "ollama",
+        "model": "gemma3:27b",
+        "persona": "simulation_and_scenarios",
+        "confirmed_installed": true,
+        "activation": "on_demand_gated",
+        "max_parallel_tasks": 1,
+        "queue_limit": 2
+      },
+      "population": {
+        "mode": "manual_heavy",
+        "boot_priority": 7,
+        "backend_ready": true,
+        "frontend_ready": true,
+        "launch_gate": "CL-3 DESKTOP_READY",
+        "external_writes": "blocked_until_operator_approval"
+      },
+      "ui_realization": {
+        "surface": "TheConstruct digital twin atrium and manual-heavy render controls",
+        "space_id": "construct_digital_twin",
+        "default_view": "ambient_embed",
+        "adapts_to": [
+          "dataset proof level",
+          "render budget",
+          "scenario readiness"
+        ],
+        "density": "compact_lab_surface",
+        "collapse_policy": "inactive_spaces_export_state_and_collapse"
+      },
+      "tool_realization": {
+        "backend_role": "dataset-backed scenario planning, render readiness, and bounded digital-twin runtime state",
+        "tool_transform": [
+          "datasets, scenario previews, render readiness, and virtual-space tests become one manual-heavy lab",
+          "immersive mode remains explicit and reversible"
+        ],
+        "lane_ids": [
+          "simulation_twin"
+        ],
+        "lanes": [
+          {
+            "lane_id": "simulation_twin",
+            "label": "Simulation and Digital Twin Lane",
+            "owner_floor": "TheConstruct",
+            "state": "ready_minimum_entry"
+          }
+        ],
+        "input_paths": [
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z0_TheConstruct\\data\\datasets",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z0_TheConstruct\\data\\runtime\\construct_runtime_profile.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z0_TheConstruct\\data\\runtime\\smart_floor_spaces.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z0_TheConstruct\\data\\runtime\\virtual_space_test_matrix.json"
+        ],
+        "output_roots": [
+          "Z Axis/Z0_TheConstruct/data/runtime",
+          "Z Axis/Z0_TheConstruct/data/datasets",
+          "Z Axis/Z0_TheConstruct/data/outputs"
+        ]
+      },
+      "post_population": {
+        "path": [
+          "attach proofed datasets only",
+          "generate scenario preview and missing-variable matrix",
+          "run smoke render lanes before manual-heavy immersive activation"
+        ],
+        "ready_task_ids": [
+          "construct_population_controls",
+          "construct_compact_render_budget"
+        ],
+        "next_safe_action": "Keep immersive/render modes manual while proofed datasets populate scenario previews.",
+        "manual_gates": [
+          "github_push",
+          "drive_writeback",
+          "web_publish"
+        ]
+      }
+    },
+    {
+      "floor": "Morpheus",
+      "outside_in_order": 5,
+      "environment_label": "Review And Corroboration Chamber",
+      "agent": {
+        "agent_id": "morpheus",
+        "label": "Morpheus",
+        "support_resident_id": "operator",
+        "resident_host": "De Sporte"
+      },
+      "model": {
+        "provider": "ollama",
+        "model": "deepseek-r1:8b",
+        "persona": "review_and_diff",
+        "confirmed_installed": true,
+        "activation": "on_demand_gated",
+        "max_parallel_tasks": 1,
+        "queue_limit": 3
+      },
+      "population": {
+        "mode": "staged",
+        "boot_priority": 5,
+        "backend_ready": true,
+        "frontend_ready": true,
+        "launch_gate": "CL-3 DESKTOP_READY",
+        "external_writes": "blocked_until_operator_approval"
+      },
+      "ui_realization": {
+        "surface": "Morpheus review chamber",
+        "space_id": "morpheus_review_chamber",
+        "default_view": "evidence_split_view",
+        "adapts_to": [
+          "evidence agreement",
+          "diff pressure",
+          "promotion readiness"
+        ],
+        "density": "compact_lab_surface",
+        "collapse_policy": "inactive_spaces_export_state_and_collapse"
+      },
+      "tool_realization": {
+        "backend_role": "corroboration, diff review, promotion proposals, and overlap pressure checks",
+        "tool_transform": [
+          "diffs, proof queues, and overlap evidence become one review split-view",
+          "promotion proposals route back through Smith and Architect"
+        ],
+        "lane_ids": [
+          "knowledge_library",
+          "review_and_corroboration"
+        ],
+        "lanes": [
+          {
+            "lane_id": "knowledge_library",
+            "label": "Knowledge and Reservoir Lane",
+            "owner_floor": "Oracle",
+            "state": "ready_for_population"
+          },
+          {
+            "lane_id": "review_and_corroboration",
+            "label": "Review and Corroboration Lane",
+            "owner_floor": "Morpheus",
+            "state": "ready_minimum_entry"
+          }
+        ],
+        "input_paths": [
+          "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\overlap_bellcurve.json",
+          "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\consolidation_queue.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-1_Morpheus\\organization\\legacy"
+        ],
+        "output_roots": [
+          "Z Axis/Z-1_Morpheus/data/reviews",
+          "Z Axis/Z-1_Morpheus/organization"
+        ]
+      },
+      "post_population": {
+        "path": [
+          "compare Oracle receipts and Smith notes",
+          "mark consensus, converging, and held items",
+          "produce promotion recommendation without self-promoting"
+        ],
+        "ready_task_ids": [
+          "morpheus_review_workspace"
+        ],
+        "next_safe_action": "Review Oracle candidates and Smith evidence notes before promotion.",
+        "manual_gates": [
+          "github_push",
+          "drive_writeback",
+          "web_publish"
+        ]
+      }
+    },
+    {
+      "floor": "Oracle",
+      "outside_in_order": 6,
+      "environment_label": "Reservoir And Provenance Library",
+      "agent": {
+        "agent_id": "oracle",
+        "label": "Oracle",
+        "support_resident_id": "mnemos",
+        "resident_host": "De Sporte"
+      },
+      "model": {
+        "provider": "ollama",
+        "model": "deepseek-r1:8b",
+        "persona": "catalog_and_proofing",
+        "confirmed_installed": true,
+        "activation": "on_demand_gated",
+        "max_parallel_tasks": 1,
+        "queue_limit": 3
+      },
+      "population": {
+        "mode": "staged",
+        "boot_priority": 4,
+        "backend_ready": true,
+        "frontend_ready": true,
+        "launch_gate": "CL-3 DESKTOP_READY",
+        "external_writes": "blocked_until_operator_approval"
+      },
+      "ui_realization": {
+        "surface": "Oracle reservoir library and candidate-knowns workbench",
+        "space_id": "oracle_reservoir_library",
+        "default_view": "source_library",
+        "adapts_to": [
+          "source family",
+          "receipt quality",
+          "knowns and unknowns state"
+        ],
+        "density": "compact_lab_surface",
+        "collapse_policy": "inactive_spaces_export_state_and_collapse"
+      },
+      "tool_realization": {
+        "backend_role": "truth registry, provenance receipts, knowns, reservoirs, and attach-only source intake",
+        "tool_transform": [
+          "reservoirs, receipts, datatables, and candidate knowns become one provenance workbench",
+          "source attachment stays non-destructive and receipt-backed"
+        ],
+        "lane_ids": [
+          "knowledge_library",
+          "queue_and_execution",
+          "review_and_corroboration",
+          "simulation_twin"
+        ],
+        "lanes": [
+          {
+            "lane_id": "knowledge_library",
+            "label": "Knowledge and Reservoir Lane",
+            "owner_floor": "Oracle",
+            "state": "ready_for_population"
+          },
+          {
+            "lane_id": "queue_and_execution",
+            "label": "Queue and Execution Lane",
+            "owner_floor": "Smith",
+            "state": "ready_for_population"
+          },
+          {
+            "lane_id": "review_and_corroboration",
+            "label": "Review and Corroboration Lane",
+            "owner_floor": "Morpheus",
+            "state": "ready_minimum_entry"
+          },
+          {
+            "lane_id": "simulation_twin",
+            "label": "Simulation and Digital Twin Lane",
+            "owner_floor": "TheConstruct",
+            "state": "ready_minimum_entry"
+          }
+        ],
+        "input_paths": [
+          "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\truth_registry.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-2_Oracle\\data\\reservoirs",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-2_Oracle\\data\\vault",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-2_Oracle\\data\\encyclopedia\\candidates"
+        ],
+        "output_roots": [
+          "Z Axis/Z-2_Oracle/Data/knowns",
+          "Z Axis/Z-2_Oracle/Data/datatables",
+          "Z Axis/Z-2_Oracle/data/reservoirs"
+        ]
+      },
+      "post_population": {
+        "path": [
+          "attach source roots",
+          "extract receipts and compact tables",
+          "send candidates to Morpheus for corroboration"
+        ],
+        "ready_task_ids": [
+          "oracle_population_attach_contracts"
+        ],
+        "next_safe_action": "Attach proofed source sets and receipts without rewriting upstream material.",
+        "manual_gates": [
+          "github_push",
+          "drive_writeback",
+          "web_publish"
+        ]
+      }
+    },
+    {
+      "floor": "Smith",
+      "outside_in_order": 7,
+      "environment_label": "Route Foundry",
+      "agent": {
+        "agent_id": "smith",
+        "label": "Smith",
+        "support_resident_id": "operator",
+        "resident_host": "De Sporte"
+      },
+      "model": {
+        "provider": "ollama",
+        "model": "qwen3:8b",
+        "persona": "routing_and_execution",
+        "confirmed_installed": true,
+        "activation": "resident",
+        "max_parallel_tasks": 1,
+        "queue_limit": 2
+      },
+      "population": {
+        "mode": "resident",
+        "boot_priority": 3,
+        "backend_ready": true,
+        "frontend_ready": true,
+        "launch_gate": "CL-3 DESKTOP_READY",
+        "external_writes": "blocked_until_operator_approval"
+      },
+      "ui_realization": {
+        "surface": "Smith route foundry and queue router",
+        "space_id": "smith_route_foundry",
+        "default_view": "build_task_queue",
+        "adapts_to": [
+          "queue pressure",
+          "write scope",
+          "task risk"
+        ],
+        "density": "compact_lab_surface",
+        "collapse_policy": "inactive_spaces_export_state_and_collapse"
+      },
+      "tool_realization": {
+        "backend_role": "build queue routing, workflow state, and low-risk execution records",
+        "tool_transform": [
+          "build tasks, execution routes, and evidence notes become one gated queue",
+          "workers remain owned-floor scoped with rollback evidence"
+        ],
+        "lane_ids": [
+          "device_bridge",
+          "local_llm_temp_shells",
+          "operator_shell",
+          "publish_and_governance",
+          "queue_and_execution",
+          "review_and_corroboration"
+        ],
+        "lanes": [
+          {
+            "lane_id": "device_bridge",
+            "label": "Device and GO Bridge Lane",
+            "owner_floor": "Neo",
+            "state": "later_gated"
+          },
+          {
+            "lane_id": "local_llm_temp_shells",
+            "label": "Local LLM and Temp Shell Lane",
+            "owner_floor": "Neo",
+            "state": "ready_minimum_entry"
+          },
+          {
+            "lane_id": "operator_shell",
+            "label": "Single Interface Shell",
+            "owner_floor": "Trinity",
+            "state": "ready_for_population"
+          },
+          {
+            "lane_id": "publish_and_governance",
+            "label": "Governance and Publish Lane",
+            "owner_floor": "Architect",
+            "state": "ready_minimum_entry"
+          },
+          {
+            "lane_id": "queue_and_execution",
+            "label": "Queue and Execution Lane",
+            "owner_floor": "Smith",
+            "state": "ready_for_population"
+          },
+          {
+            "lane_id": "review_and_corroboration",
+            "label": "Review and Corroboration Lane",
+            "owner_floor": "Morpheus",
+            "state": "ready_minimum_entry"
+          }
+        ],
+        "input_paths": [
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\data\\staging\\gated_build_tasks.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\data\\staging\\floor_stage_population.json",
+          "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\consolidation_queue.json",
+          "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\overlap_bellcurve.json",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\launch_control.json"
+        ],
+        "output_roots": [
+          "Z Axis/Z-3_Smith/data/staging",
+          "Z Axis/Z-3_Smith/tasks"
+        ]
+      },
+      "post_population": {
+        "path": [
+          "route no-risk tasks first",
+          "record evidence note and owned write scope",
+          "send promotion or publish candidates to Architect"
+        ],
+        "ready_task_ids": [
+          "smith_population_router"
+        ],
+        "next_safe_action": "Keep all executable work in the gated Smith queue with owned-floor write scope.",
+        "manual_gates": [
+          "github_push",
+          "drive_writeback",
+          "web_publish"
+        ]
+      }
+    },
+    {
+      "floor": "Merovingian",
+      "outside_in_order": 8,
+      "environment_label": "Evidence Core",
+      "agent": {
+        "agent_id": "merovingian",
+        "label": "Merovingian",
+        "support_resident_id": "orion",
+        "resident_host": "De Sporte"
+      },
+      "model": {
+        "provider": "ollama",
+        "model": "qwen3:8b",
+        "persona": "audit_and_telemetry",
+        "confirmed_installed": true,
+        "activation": "resident",
+        "max_parallel_tasks": 1,
+        "queue_limit": 2
+      },
+      "population": {
+        "mode": "resident",
+        "boot_priority": 0,
+        "backend_ready": true,
+        "frontend_ready": true,
+        "launch_gate": "CL-3 DESKTOP_READY",
+        "external_writes": "blocked_until_operator_approval"
+      },
+      "ui_realization": {
+        "surface": "Merovingian evidence core and diagnostics panel",
+        "space_id": "merovingian_evidence_core",
+        "default_view": "health_and_logs",
+        "adapts_to": [
+          "system pressure",
+          "runtime health",
+          "ledger and recovery state"
+        ],
+        "density": "compact_lab_surface",
+        "collapse_policy": "inactive_spaces_export_state_and_collapse"
+      },
+      "tool_realization": {
+        "backend_role": "telemetry, health checks, action ledgers, runtime database, and recovery evidence",
+        "tool_transform": [
+          "health, logs, ledgers, database checks, and recovery become one evidence panel",
+          "failures are recorded as visible evidence rather than silent state"
+        ],
+        "lane_ids": [
+          "simulation_twin"
+        ],
+        "lanes": [
+          {
+            "lane_id": "simulation_twin",
+            "label": "Simulation and Digital Twin Lane",
+            "owner_floor": "TheConstruct",
+            "state": "ready_minimum_entry"
+          }
+        ],
+        "input_paths": [
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-4_Merovingian\\data\\db",
+          "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-4_Merovingian\\data\\logs",
+          "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\bootstrap_summary.json"
+        ],
+        "output_roots": [
+          "Z Axis/Z-4_Merovingian/data/audit",
+          "Z Axis/Z-4_Merovingian/data/db",
+          "Z Axis/Z-4_Merovingian/data/logs"
+        ]
+      },
+      "post_population": {
+        "path": [
+          "snapshot process and model state",
+          "append action ledger",
+          "surface recovery or rollback requirements before deeper autonomy"
+        ],
+        "ready_task_ids": [
+          "merovingian_evidence_snapshots"
+        ],
+        "next_safe_action": "Snapshot health and ledger state before deeper autonomous operation.",
+        "manual_gates": [
+          "github_push",
+          "drive_writeback",
+          "web_publish"
+        ]
+      }
+    }
+  ],
+  "cross_system_agents": [
+    {
+      "persona_id": "raphael",
+      "display_name": "Great Sage",
+      "host": "De Sporte",
+      "primary_model": "gemma3:27b",
+      "confirmed_installed": true,
+      "lightspeed_scope": "No direct LightSpeed authority. Remains separated from operational work posture.",
+      "activation": "de_sporte_hosted_manual_or_policy"
+    },
+    {
+      "persona_id": "achilles",
+      "display_name": "Achilles",
+      "host": "De Sporte",
+      "primary_model": "gpt-oss:120b",
+      "confirmed_installed": true,
+      "lightspeed_scope": "Strategic oversight and human-Cognigrex bridge once the broader system is populated.",
+      "activation": "de_sporte_hosted_manual_or_policy"
+    },
+    {
+      "persona_id": "athene",
+      "display_name": "Athene",
+      "host": "De Sporte",
+      "primary_model": "qwen3:8b",
+      "confirmed_installed": true,
+      "lightspeed_scope": "Search, retrieval, and embedded interface logic across the sovereign network as it expands.",
+      "activation": "de_sporte_hosted_manual_or_policy"
+    },
+    {
+      "persona_id": "neo",
+      "display_name": "Neo",
+      "host": "De Sporte",
+      "primary_model": "deepseek-r1:8b",
+      "confirmed_installed": true,
+      "lightspeed_scope": "Primary orchestration logic for the LightSpeed stack and network sequencing.",
+      "activation": "de_sporte_hosted_manual_or_policy"
+    },
+    {
+      "persona_id": "atlas",
+      "display_name": "Atlas",
+      "host": "De Sporte",
+      "primary_model": "qwen3:8b",
+      "confirmed_installed": true,
+      "lightspeed_scope": "Scientific data-engine worker for the LightSpeed and Cognigrex spine when explicitly called into duty.",
+      "activation": "de_sporte_hosted_manual_or_policy"
+    },
+    {
+      "persona_id": "iris",
+      "display_name": "Iris",
+      "host": "De Sporte",
+      "primary_model": "qwen3:8b",
+      "confirmed_installed": true,
+      "lightspeed_scope": "Observation, interface triage, and surface-level attention across the LightSpeed desktop once linked.",
+      "activation": "de_sporte_hosted_manual_or_policy"
+    },
+    {
+      "persona_id": "mnemos",
+      "display_name": "Mnemos",
+      "host": "De Sporte",
+      "primary_model": "qwen3:8b",
+      "confirmed_installed": true,
+      "lightspeed_scope": "Archive lineage, recall, and long-horizon continuity for the LightSpeed and Cognigrex stack.",
+      "activation": "de_sporte_hosted_manual_or_policy"
+    },
+    {
+      "persona_id": "orion",
+      "display_name": "Orion",
+      "host": "De Sporte",
+      "primary_model": "deepseek-r1:8b",
+      "confirmed_installed": true,
+      "lightspeed_scope": "Validation, safety checks, and release verification when explicitly pulled into work.",
+      "activation": "de_sporte_hosted_manual_or_policy"
+    }
+  ]
+}
