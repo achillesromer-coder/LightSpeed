@@ -6,9 +6,16 @@ runtime authority remains `C:\LightSpeed_Consolidated`; the compatibility
 
 The synchronizer preserves allowlisted paths below this directory and writes
 `source-manifest.json` with the SHA-256 digest and byte size of every included
-file. It copies only approved source, configuration, test, and documentation
-extensions. Runtime data, archives, logs, caches, dependencies, reservoirs,
-vaults, virtual environments, legacy trees, and reparse points are excluded.
+file. It copies only approved source, test, and documentation extensions plus
+explicitly named stable configuration contracts. Mandatory deny patterns
+exclude personal, setup, runtime-state, secret, credential, token, receipt, and
+generated-state names even when their extensions are approved. Runtime data,
+archives, logs, caches, dependencies, reservoirs, vaults, virtual environments,
+legacy trees, and reparse points are excluded.
+
+Every changed source file and the manifest are written to unique, exclusively
+created temporary files under verified target parents. Target containment and
+reparse status are checked again immediately before atomic replacement.
 
 From the repository root, preview the synchronization without writing:
 

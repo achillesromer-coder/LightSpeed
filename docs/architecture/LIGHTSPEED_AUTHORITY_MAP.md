@@ -41,10 +41,15 @@ Evidence grades are `Known`, `Derived`, `Hypothesis`, `Conceptual Model`, and
 link, owner, review status, and next validation action. Evidence grade never
 overrides release class.
 
-Source synchronization is allowlist-only. Paths must be relative, contained,
-free of blocked runtime segments and reparse points, and use an approved
-extension. Z-floor source is admitted file by file only after release
-classification. Manifests carry relative paths, SHA-256 hashes, and byte sizes;
+Source synchronization is allowlist-only. Configuration publication names each
+stable contract file explicitly; directories containing personal, setup,
+runtime, generated, receipt, credential, token, or secret state are never
+recursive roots. Mandatory deny patterns apply even to approved extensions.
+Paths must be relative, contained, free of blocked runtime segments and reparse
+points, and use an approved extension. Z-floor source is admitted file by file
+only after release classification. Source files and manifests use guarded
+temporary files with destination revalidation immediately before atomic
+replacement. Manifests carry relative paths, SHA-256 hashes, and byte sizes;
 they carry no secret or unrestricted runtime payload.
 
 ## Two-Copy Policy

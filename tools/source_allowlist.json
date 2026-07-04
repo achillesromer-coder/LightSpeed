@@ -4,7 +4,15 @@
     "Desktop_Hooks/LightSpeed/__main__.py",
     "Desktop_Hooks/LightSpeed/launcher_exe.py",
     "Desktop_Hooks/LightSpeed/verify_launch_ready.py",
-    "Desktop_Hooks/LightSpeed/config",
+    "Desktop_Hooks/LightSpeed/config/backend_frontend_build_contract.json",
+    "Desktop_Hooks/LightSpeed/config/deployment_topology.json",
+    "Desktop_Hooks/LightSpeed/config/floor_environment_realization_contract.json",
+    "Desktop_Hooks/LightSpeed/config/function_registry.json",
+    "Desktop_Hooks/LightSpeed/config/host_runtime_policy.json",
+    "Desktop_Hooks/LightSpeed/config/input_staging_matrix.json",
+    "Desktop_Hooks/LightSpeed/config/premium_theme_config.json",
+    "Desktop_Hooks/LightSpeed/config/resource_closure_contract.json",
+    "Desktop_Hooks/LightSpeed/config/workspace_lanes.json",
     "Desktop_Hooks/LightSpeed/tests",
     "Desktop_Hooks/LightSpeed/dataindex",
     "LightSpeed_Runtime/lightspeed_runtime"
@@ -18,5 +26,26 @@
     ".md",
     ".ini",
     ".cfg"
+  ],
+  "deny_patterns": [
+    "**/*secret*",
+    "**/*credential*",
+    "**/*token*",
+    "**/*receipt*",
+    "**/*personal*",
+    "**/*setup_state*",
+    "**/*state*.json",
+    "**/*_runtime.json",
+    "**/runtime/**",
+    "**/settings.json",
+    "**/user_config.json",
+    "**/unified_config.json",
+    "**/ai_config.json",
+    "**/apis.json",
+    "**/lightspeed_config.json",
+    "**/*launch_queue*.json",
+    "**/*presence_roster*.json",
+    "**/*inventory*.json",
+    "**/*population*.json"
   ]
 }
