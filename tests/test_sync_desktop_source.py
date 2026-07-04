@@ -195,13 +195,32 @@ def test_sync_uses_hashes_and_sizes_and_does_not_copy_unchanged_files(tmp_path):
     assert manifest == {
         "schema_version": 1,
         "records": [
-                {
-                    "path": "N.py",
-                    "sha256": hashlib.sha256(source_file.read_bytes()).hexdigest(),
-                    "bytes": source_file.stat().st_size,
-                }
+            {
+                "path": "N.py",
+                "sha256": hashlib.sha256(source_file.read_bytes()).hexdigest(),
+                "bytes": source_file.stat().st_size,
+            }
         ],
     }
+
+
+def test_sync_rejects_staged_bytes_that_do_not_match_source_digest(
+    tmp_path, monkeypatch
+):
+    source = tmp_path / "source"
+    target = tmp_path / "target"
+    source.mkdir()
+    (source / "N.py").write_text("print('canonical')\n", encoding="utf-8")
+
+    def corrupt_copy(_source_handle, target_handle):
+        target_handle.write(b"print('corrupt')\n")
+
+    monkeypatch.setattr(sync_desktop_source.shutil, "copyfileobj", corrupt_copy)
+
+    with pytest.raises(ValueError, match="staged source changed during copy"):
+        sync_sources(source, target, ["N.py"])
+
+    assert not (target / "N.py").exists()
 
 
 def test_dry_run_reports_changes_without_writing_target_or_manifest(tmp_path):

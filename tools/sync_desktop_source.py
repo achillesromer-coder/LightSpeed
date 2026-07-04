@@ -397,17 +397,28 @@ def _atomic_copy_source(
     source: Path,
     destination: Path,
     *,
+    expected_sha256: str,
+    expected_size: int,
     before_replace: _BeforeReplace | None = None,
 ) -> None:
     def write_source(handle: BinaryIO) -> None:
         with source.open("rb") as source_handle:
             shutil.copyfileobj(source_handle, handle)
 
+    def validate_staged_source(temporary_path: Path, target_path: Path) -> None:
+        if (
+            temporary_path.stat().st_size != expected_size
+            or _sha256(temporary_path) != expected_sha256
+        ):
+            raise ValueError(f"staged source changed during copy: {source}")
+        if before_replace is not None:
+            before_replace(temporary_path, target_path)
+
     _atomic_replace_from_writer(
         target_root,
         destination,
         write_source,
-        before_replace=before_replace,
+        before_replace=validate_staged_source,
     )
 
 
@@ -494,6 +505,8 @@ def sync_sources(
                     target_root,
                     source,
                     destination,
+                    expected_sha256=digest,
+                    expected_size=size,
                     before_replace=before_replace,
                 )
 
