@@ -9,3 +9,27 @@
 
 # Local tool caches
 .cache/
+
+# Runtime and generated artifacts never enter the source repository
+**/data/
+**/archive/
+**/ai_logs/
+**/reservoirs/
+**/vault/
+**/venv/
+**/legacy/
+*.db
+*.sqlite
+*.sqlite3
+*.fits
+*.npy
+*.npz
+*.parquet
+*.pt
+*.pth
+*.onnx
+*.xlsx
+*.xlsm
+.env
+.env.*
+!.env.example
