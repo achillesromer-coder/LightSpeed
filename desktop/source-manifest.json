@@ -346,6 +346,11 @@
       "sha256": "67fc2af03136fb5633cc6e36b39ad545459d7f5c31d8efa147519696efb8bd12"
     },
     {
+      "bytes": 1146,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_reservoir_registry.py",
+      "sha256": "908d30d7257c67ad20982661c19dd1d25e7fa9adfc2222266b517f66a07b5b01"
+    },
+    {
       "bytes": 125269,
       "path": "Desktop_Hooks/LightSpeed/tests/test_runtime_package.py",
       "sha256": "d97e1eb1b6b857e7d5f9cae0806f00d97b04782f2b2bf433672c7cd55154a7c1"
@@ -3356,9 +3361,9 @@
       "sha256": "bac1469f4db234f032a3e6ce8bfb8099ecbc93e60331b7e085082fc2ad415041"
     },
     {
-      "bytes": 5402,
+      "bytes": 5509,
       "path": "LightSpeed_Runtime/lightspeed_runtime/reservoirs/registry.py",
-      "sha256": "d9fdc7bb92d3911d53a7d5d88153ba6a3806ac62258747946df7adbdbb9a64e7"
+      "sha256": "f333a2070ee3d69e7bf8939a4887c7d7bfd4e3473c14cd2cecbeeea8c12d9d0b"
     },
     {
       "bytes": 6084,

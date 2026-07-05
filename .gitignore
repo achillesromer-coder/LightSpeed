@@ -17,6 +17,10 @@
 **/archive/
 **/ai_logs/
 **/reservoirs/
+!desktop/LightSpeed_Runtime/lightspeed_runtime/reservoirs/
+desktop/LightSpeed_Runtime/lightspeed_runtime/reservoirs/*
+!desktop/LightSpeed_Runtime/lightspeed_runtime/reservoirs/__init__.py
+!desktop/LightSpeed_Runtime/lightspeed_runtime/reservoirs/registry.py
 **/vault/
 **/venv/
 **/legacy/
