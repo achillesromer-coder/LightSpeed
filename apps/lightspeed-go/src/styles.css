@@ -205,6 +205,44 @@ h2 {
   padding-left: 4px;
 }
 
+.exchange-head,
+.exchange-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.exchange-summary {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.exchange-summary span {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--muted);
+  padding: 8px 11px;
+  font-size: 12px;
+}
+
+.exchange-summary strong {
+  color: var(--text);
+  font-size: 15px;
+}
+
+.exchange-list small,
+.exchange-loading {
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.exchange-list small {
+  display: block;
+}
+
 .twin-head {
   align-items: flex-start;
   display: flex;
@@ -434,6 +472,7 @@ h2 {
 
 @media (max-width: 820px) {
   .hero,
+  .exchange-head,
   .status-row,
   .twin-head,
   .facility-row {

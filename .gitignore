@@ -12,6 +12,8 @@
 
 # Runtime and generated artifacts never enter the source repository
 **/data/
+!apps/lightspeed-go/public/data/
+!apps/lightspeed-go/public/data/neo_exchange.json
 **/archive/
 **/ai_logs/
 **/reservoirs/

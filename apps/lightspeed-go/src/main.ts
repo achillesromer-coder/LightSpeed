@@ -1,4 +1,5 @@
 import "./styles.css";
+import { loadNeoExchange, renderExchangePanel } from "./neoExchange";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
 
 const app = document.getElementById("app");
@@ -200,6 +201,19 @@ app.innerHTML = `
       </article>
 
       <article class="panel wide">
+        <div class="panel-head exchange-head">
+          <div>
+            <p class="kicker">Neo Exchange</p>
+            <h2>Public-Safe Queue Projection</h2>
+          </div>
+          <span class="badge ready">Execution remains Desktop-only</span>
+        </div>
+        <div id="neo-exchange" aria-live="polite">
+          <p class="exchange-loading">Reading the bounded exchange projection...</p>
+        </div>
+      </article>
+
+      <article class="panel wide">
         <div class="panel-head">
           <p class="kicker">Next Safe Actions</p>
           <h2>Launch Queue</h2>
@@ -214,3 +228,15 @@ app.innerHTML = `
     </section>
   </main>
 `;
+
+const exchangeMount = document.getElementById("neo-exchange");
+if (exchangeMount) {
+  const projectionUrl = new URL("./data/neo_exchange.json", document.baseURI).toString();
+  void loadNeoExchange(async () => {
+    const response = await fetch(projectionUrl, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Neo exchange returned HTTP ${response.status}`);
+    return response.json();
+  }).then((exchange) => {
+    exchangeMount.innerHTML = renderExchangePanel(exchange);
+  });
+}
