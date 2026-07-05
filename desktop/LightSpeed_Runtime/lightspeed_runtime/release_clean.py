@@ -1,5 +1,11 @@
 from __future__ import annotations
 
+import gzip
+import hashlib
+import json
+import re
+import shutil
+import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List
@@ -16,6 +22,14 @@ from lightspeed_runtime.storage_paths import (
 
 
 DATABASE_TABLES_TO_CLEAR = [
+    {"name": "artifacts", "category": "generated", "reason": "Generated artifact index rows are rebuilt from canonical sources."},
+    {"name": "files", "category": "generated", "reason": "Indexed file rows are rebuilt from bounded canonical roots."},
+    {"name": "jobs", "category": "runtime", "reason": "Completed and abandoned local job state."},
+    {"name": "system_logs", "category": "runtime", "reason": "High-volume runtime logs replaced by the compact cleanup manifest."},
+    {"name": "telemetry_data", "category": "runtime", "reason": "Historical host telemetry from prior runs."},
+    {"name": "calculator_usage", "category": "runtime", "reason": "Transient calculator execution history."},
+    {"name": "operational_events", "category": "runtime", "reason": "Prior operational event stream."},
+    {"name": "operational_routes", "category": "runtime", "reason": "Prior generated routing state."},
     {"name": "time_entries", "category": "user_runtime", "reason": "Transient time tracking and session evidence."},
     {"name": "tasks", "category": "user_runtime", "reason": "Working task rows from in-progress runs."},
     {"name": "projects", "category": "user_runtime", "reason": "User/project runtime rows after publishing or reset."},
@@ -78,6 +92,15 @@ GENERATED_CACHE_TEMP_ROOTS = [
     ".ruff_cache",
     "htmlcov",
     "coverage",
+]
+
+SPLIT_RUNTIME_CACHE_ROOTS = [
+    "__pycache__",
+    "achilles/__pycache__",
+    "labs/__pycache__",
+    "publishing/__pycache__",
+    "reservoirs/__pycache__",
+    "shell/__pycache__",
 ]
 
 DUPLICATE_SURFACE_AUDIT_DESCRIPTORS = [
@@ -194,6 +217,50 @@ def resolve_within_root(root: Path, candidate: Path) -> Path:
     return candidate
 
 
+def infer_consolidation_root(root: Path) -> Path:
+    root = normalize_root(root)
+    if root.name.casefold() == "lightspeed" and root.parent.name.casefold() == "desktop_hooks":
+        return root.parents[1]
+    return root
+
+
+def split_runtime_root(root: Path, consolidation_root: Path | None = None) -> Path:
+    consolidation = normalize_root(consolidation_root or infer_consolidation_root(root))
+    return (consolidation / "LightSpeed_Runtime" / "lightspeed_runtime").resolve()
+
+
+def _resolve_cache_cleanup_candidate(
+    root: Path,
+    candidate: Path,
+    *,
+    consolidation_root: Path | None = None,
+) -> Path:
+    root = normalize_root(root)
+    resolved = Path(candidate).resolve()
+    if is_within_root(root, resolved):
+        return resolved
+
+    split_root = split_runtime_root(root, consolidation_root)
+    try:
+        relative = resolved.relative_to(split_root)
+    except ValueError as exc:
+        raise ValueError(f"Path is outside approved LightSpeed cleanup roots: {resolved}") from exc
+    approved = {Path(path) for path in SPLIT_RUNTIME_CACHE_ROOTS}
+    if relative not in approved:
+        raise ValueError(f"Path is outside approved split-runtime caches: {resolved}")
+    return resolved
+
+
+def _resolve_protected_application_path(root: Path, candidate: Path) -> Path:
+    root = normalize_root(root)
+    resolved = Path(candidate).resolve()
+    if is_within_root(root, resolved):
+        return resolved
+    if resolved == split_runtime_root(root):
+        return resolved
+    raise ValueError(f"Protected path is outside the LightSpeed application roots: {resolved}")
+
+
 def project_workspace_root(root: Path) -> Path:
     return architect_floor_root(normalize_root(root)) / "projects"
 
@@ -243,17 +310,15 @@ def stale_runtime_row_cleanup_plan(root: Path) -> Dict[str, Any]:
 
 def generated_cache_temp_cleanup_plan(root: Path) -> Dict[str, Any]:
     root = normalize_root(root)
-    candidates: List[Dict[str, Any]] = []
-    for rel_path in GENERATED_CACHE_TEMP_ROOTS:
-        candidate = resolve_within_root(root, root / rel_path)
-        candidates.append(
-            {
-                "path": str(candidate),
-                "exists": candidate.exists(),
-                "within_root": True,
-                "dry_run_only": True,
-            }
-        )
+    candidates = [
+        {
+            "path": str(candidate),
+            "exists": candidate.exists(),
+            "within_root": True,
+            "dry_run_only": True,
+        }
+        for candidate in cache_cleanup_roots(root)
+    ]
     return {
         "generated_at": utc_now_iso(),
         "root": str(root),
@@ -307,29 +372,18 @@ def post_final_pass_relocation_plan(root: Path) -> Dict[str, Any]:
 
 def cache_cleanup_roots(root: Path) -> List[Path]:
     root = normalize_root(root)
-    candidates = [
-        root / ".pytest_cache",
-        root / "__pycache__",
-        root / "tests" / "__pycache__",
-        root / "tools" / "__pycache__",
-        root / "lightspeed_runtime" / "__pycache__",
-        root / "lightspeed_runtime" / "achilles" / "__pycache__",
-        root / "lightspeed_runtime" / "labs" / "__pycache__",
-        root / "lightspeed_runtime" / "publishing" / "__pycache__",
-        root / "lightspeed_runtime" / "reservoirs" / "__pycache__",
-        root / "lightspeed_runtime" / "shell" / "__pycache__",
-        root / "Z Axis" / "Z+3_Trinity" / "ui" / "__pycache__",
-        root / "Z Axis" / "Z+3_Trinity" / "components" / "__pycache__",
-        root / "Z Axis" / "Z+3_Trinity" / "diagnostics" / "__pycache__",
-        root / "Z Axis" / "Z+3_Trinity" / "wizards" / "__pycache__",
-        root / "Z Axis" / "Z-4_Merovingian" / "core" / "__pycache__",
-        root / "Z Axis" / "Z-4_Merovingian" / "core" / "services" / "__pycache__",
-        root / "Z Axis" / "Z-4_Merovingian" / "core" / "config" / "__pycache__",
-        root / "Z Axis" / "Z-2_Oracle" / "tools" / "__pycache__",
-        root / "Z Axis" / "Z-1_Morpheus" / "database" / "__pycache__",
-        root / "Z Axis" / "Z-1_Morpheus" / "database" / "models" / "__pycache__",
-    ]
-    return [resolve_within_root(root, candidate) for candidate in candidates]
+    candidates = [root / rel_path for rel_path in GENERATED_CACHE_TEMP_ROOTS]
+    split_root = split_runtime_root(root)
+    candidates.extend(split_root / rel_path for rel_path in SPLIT_RUNTIME_CACHE_ROOTS)
+    resolved: List[Path] = []
+    seen: set[str] = set()
+    for candidate in candidates:
+        path = _resolve_cache_cleanup_candidate(root, candidate)
+        key = str(path).casefold()
+        if key not in seen:
+            seen.add(key)
+            resolved.append(path)
+    return resolved
 
 
 def protected_release_paths(root: Path) -> List[Path]:
@@ -348,27 +402,13 @@ def protected_release_paths(root: Path) -> List[Path]:
         trinity_root(root),
         merovingian_root(root),
     ]
-    return [resolve_within_root(root, path) for path in protected]
+    return [_resolve_protected_application_path(root, path) for path in protected]
 
 
 def blank_state_verification_command(root: Path) -> str:
     root = normalize_root(root)
     db_path = merovingian_root(root) / "db" / "lightspeed_unified.db"
-    tables = [
-        "time_entries",
-        "tasks",
-        "projects",
-        "companies",
-        "users",
-        "user_preferences",
-        "ai_interactions",
-        "chat_messages",
-        "chat_conversations",
-        "doc_task_markers",
-        "oracle_ingestion_tasks",
-        "interfloor_tasks",
-        "simulations",
-    ]
+    tables = [item["name"] for item in DATABASE_TABLES_TO_CLEAR]
     table_list = ",".join(repr(name) for name in tables)
     return (
         "python -c \"import sqlite3; from pathlib import Path; "
@@ -431,6 +471,185 @@ def dry_run_cleanup_summary(root: Path) -> Dict[str, Any]:
         "protected_paths": [str(path) for path in protected_release_paths(root)],
     }
     return summary
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as source:
+        for block in iter(lambda: source.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _tree_metrics(path: Path) -> Dict[str, int]:
+    if not path.exists():
+        return {"files": 0, "bytes": 0}
+    if path.is_file():
+        return {"files": 1, "bytes": path.stat().st_size}
+    files = 0
+    byte_count = 0
+    for item in path.rglob("*"):
+        if item.is_file():
+            files += 1
+            byte_count += item.stat().st_size
+    return {"files": files, "bytes": byte_count}
+
+
+def _database_counts(connection: sqlite3.Connection) -> Dict[str, int]:
+    existing = {
+        row[0]
+        for row in connection.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
+        )
+    }
+    return {
+        item["name"]: connection.execute(f'SELECT COUNT(*) FROM "{item["name"]}"').fetchone()[0]
+        for item in DATABASE_TABLES_TO_CLEAR
+        if item["name"] in existing
+    }
+
+
+def _backup_database(database_path: Path, backup_path: Path) -> Dict[str, Any]:
+    raw_backup = backup_path.with_suffix("")
+    raw_backup.parent.mkdir(parents=True, exist_ok=True)
+    source = sqlite3.connect(database_path)
+    destination = sqlite3.connect(raw_backup)
+    try:
+        source.backup(destination)
+    finally:
+        destination.close()
+        source.close()
+    backup_content_sha256 = _sha256(raw_backup)
+    with raw_backup.open("rb") as source, gzip.open(backup_path, "wb", compresslevel=6) as target:
+        shutil.copyfileobj(source, target, length=1024 * 1024)
+    raw_backup.unlink()
+    return {
+        "source_sha256": _sha256(database_path),
+        "backup_sha256": _sha256(backup_path),
+        "backup_content_sha256": backup_content_sha256,
+        "backup_bytes": backup_path.stat().st_size,
+    }
+
+
+def _clear_database(database_path: Path) -> Dict[str, Dict[str, int]]:
+    with sqlite3.connect(database_path) as connection:
+        connection.execute("PRAGMA foreign_keys=OFF")
+        before = _database_counts(connection)
+        connection.execute("BEGIN IMMEDIATE")
+        try:
+            for table in before:
+                connection.execute(f'DELETE FROM "{table}"')
+            connection.commit()
+        except Exception:
+            connection.rollback()
+            raise
+        after = _database_counts(connection)
+        connection.execute("VACUUM")
+    return {"before": before, "after": after}
+
+
+def execute_clean_slate(
+    root: Path,
+    *,
+    consolidation_root: Path | None = None,
+    run_id: str | None = None,
+    dry_run: bool = True,
+) -> Dict[str, Any]:
+    """Reset generated desktop state while preserving a checksummed rollback."""
+    root = normalize_root(root)
+    consolidation = normalize_root(consolidation_root or infer_consolidation_root(root))
+    if not is_within_root(consolidation, root):
+        raise ValueError(f"LightSpeed root is outside consolidation root: {root}")
+    run_id = run_id or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    if not re.fullmatch(r"[A-Za-z0-9_-]+", run_id):
+        raise ValueError(f"Invalid clean-slate run id: {run_id}")
+
+    database_path = merovingian_root(root) / "db" / "lightspeed_unified.db"
+    workspace = project_workspace_root(root)
+    project_entries = project_workspace_entries(root)
+    caches = [path for path in cache_cleanup_roots(root) if path.exists()]
+    run_root = resolve_within_root(
+        consolidation,
+        consolidation / "_migration" / "clean_slate" / run_id,
+    )
+    quarantine_path = run_root / "projects"
+    backup_path = run_root / "database" / "lightspeed_unified.db.gz"
+    manifest_path = run_root / "clean_slate_manifest.json"
+    plan = {
+        "status": "dry_run" if dry_run else "in_progress",
+        "run_id": run_id,
+        "generated_at": utc_now_iso(),
+        "root": str(root),
+        "consolidation_root": str(consolidation),
+        "database": {
+            "path": str(database_path),
+            "exists": database_path.exists(),
+            "backup_path": str(backup_path),
+            "tables": [item["name"] for item in DATABASE_TABLES_TO_CLEAR],
+        },
+        "project_workspace": {
+            "path": str(workspace),
+            "entry_count": len(project_entries),
+            "entries": [str(path) for path in project_entries],
+            "quarantine_path": str(quarantine_path),
+        },
+        "cache_cleanup": {
+            "candidate_count": len(caches),
+            "candidates": [str(path) for path in caches],
+        },
+        "protected_paths": [str(path) for path in protected_release_paths(root)],
+        "manifest_path": str(manifest_path),
+    }
+    if dry_run:
+        return plan
+    if not database_path.is_file():
+        raise FileNotFoundError(f"Canonical LightSpeed database is missing: {database_path}")
+
+    run_root.mkdir(parents=True, exist_ok=False)
+    try:
+        backup_details = _backup_database(database_path, backup_path)
+        database_rows = _clear_database(database_path)
+        plan["database"].update(backup_details)
+        plan["database"].update(database_rows)
+
+        moved: List[Dict[str, Any]] = []
+        quarantine_path.mkdir(parents=True, exist_ok=True)
+        for entry in project_entries:
+            if entry.parent.resolve() != workspace.resolve():
+                raise ValueError(f"Project entry is not a direct workspace child: {entry}")
+            metrics = _tree_metrics(entry)
+            destination = quarantine_path / entry.name
+            if destination.exists():
+                raise FileExistsError(f"Project quarantine destination already exists: {destination}")
+            shutil.move(str(entry), str(destination))
+            moved.append(
+                {
+                    "source": str(entry),
+                    "destination": str(destination),
+                    **metrics,
+                }
+            )
+        plan["project_workspace"]["moved"] = moved
+
+        removed: List[Dict[str, Any]] = []
+        for cache in caches:
+            cache = _resolve_cache_cleanup_candidate(root, cache, consolidation_root=consolidation)
+            metrics = _tree_metrics(cache)
+            if cache.is_dir():
+                shutil.rmtree(cache)
+            else:
+                cache.unlink()
+            removed.append({"path": str(cache), **metrics})
+        plan["cache_cleanup"]["removed"] = removed
+        plan["status"] = "completed"
+    except Exception as exc:
+        plan["status"] = "failed"
+        plan["error"] = f"{type(exc).__name__}: {exc}"
+        manifest_path.write_text(json.dumps(plan, indent=2), encoding="utf-8")
+        raise
+
+    manifest_path.write_text(json.dumps(plan, indent=2), encoding="utf-8")
+    return plan
 
 
 def build_smoke_checklist(root: Path) -> List[Dict[str, Any]]:

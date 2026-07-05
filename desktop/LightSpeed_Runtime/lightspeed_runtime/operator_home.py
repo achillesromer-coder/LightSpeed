@@ -1369,8 +1369,14 @@ def _write_shell_artifacts(payload: dict) -> dict[str, str]:
     launch_control = payload.get("launch_control") or {}
     co_runner = launch_control.get("co_runner") or {}
     handoff_path_value = co_runner.get("handoff_path")
+    co_runner_state = str(co_runner.get("state") or "").strip().lower()
+    handoff_enabled = (
+        bool(co_runner_state)
+        and not any(marker in co_runner_state for marker in ("hold", "disabled", "paused", "offline"))
+        and any(marker in co_runner_state for marker in ("active", "connected", "detected", "running"))
+    )
     handoff_output = None
-    if isinstance(handoff_path_value, str) and handoff_path_value:
+    if handoff_enabled and isinstance(handoff_path_value, str) and handoff_path_value:
         handoff_output = Path(handoff_path_value)
         _write_json(
             handoff_output,

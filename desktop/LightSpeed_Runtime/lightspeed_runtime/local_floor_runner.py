@@ -195,6 +195,7 @@ def build_ollama_request(
         "prompt": build_floor_prompt(contract, floor),
         "stream": False,
         "think": False,
+        "keep_alive": 0,
         "options": {"num_predict": bounded_num_predict},
     }
 
@@ -202,6 +203,7 @@ def build_ollama_request(
 def build_floor_prompt(contract: dict[str, Any], floor: dict[str, Any]) -> str:
     training = floor.get("training_context") or {}
     draw = floor.get("assimilation_draw") or {}
+    receipt_route = resolve_receipt_path(contract, floor, receipt_target="neo")
     priority_paths = draw.get("priority_paths") or []
     path_lines = [f"- {item.get('relative_path', item.get('name', 'unknown'))}" for item in priority_paths[:12]]
     if not path_lines:
@@ -218,12 +220,15 @@ def build_floor_prompt(contract: dict[str, Any], floor: dict[str, Any]) -> str:
             f"Activation mode: {(floor.get('activation') or {}).get('mode')}",
             f"Wake goal: {training.get('wake_goal', 'unknown')}",
             f"Assimilation role: {training.get('assimilation_role', 'unknown')}",
+            f"Approved receipt route: {receipt_route}",
+            "Use that route verbatim for safe_artifact_route. Do not invent or suggest an alternate path.",
             "Learning sequence:",
             sequence or "- Return a concise floor summary, one safe artifact route, and one blocker if present.",
             "Priority source paths:",
             "\n".join(path_lines),
             "Do not do:",
             do_not_do or "- Do not run heavy/manual models or parallel sessions without approval.",
+            "Keep the entire response under 90 words. Do not use Markdown fences.",
             "Return JSON-compatible text with keys: floor_summary, safe_artifact_route, blocker.",
         ]
     )
@@ -289,6 +294,12 @@ def build_receipt(
         receipt["blocked_reason"] = blocked_reason
     if response is not None:
         receipt["response"] = _summarize_response(response)
+        response_text = response.get("response")
+        if isinstance(response_text, str) and response_text.strip():
+            receipt["response_contract"] = normalize_floor_response(
+                response_text,
+                expected_route=str(receipt_path),
+            )
     if error:
         receipt["error"] = error
     if elapsed_ms is not None:
@@ -328,6 +339,20 @@ def write_receipt(contract: dict[str, Any], latest_path: Path, payload: dict[str
         handle.write(json.dumps(payload, ensure_ascii=False, sort_keys=True) + "\n")
 
 
+def normalize_receipt_file(path: Path) -> dict[str, Any]:
+    """Upgrade one existing latest receipt without calling the model again."""
+    path = Path(path)
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    response_text = ((payload.get("response") or {}).get("response"))
+    if isinstance(response_text, str) and response_text.strip():
+        payload["response_contract"] = normalize_floor_response(
+            response_text,
+            expected_route=str(payload.get("receipt_path") or path),
+        )
+        write_json(path, payload)
+    return payload
+
+
 def _blocked_heavy_reason(floor: dict[str, Any], model: str, *, allow_heavy: bool) -> str | None:
     if allow_heavy:
         return None
@@ -349,6 +374,42 @@ def _summarize_response(response: dict[str, Any]) -> dict[str, Any]:
         summary["response"] = text[:2000]
         summary["response_truncated"] = True
     return summary
+
+
+def normalize_floor_response(text: str, *, expected_route: str) -> dict[str, Any]:
+    """Return a stable receipt contract for JSON or concise labeled text."""
+    raw = text.strip()
+    unfenced = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw, flags=re.IGNORECASE).strip()
+    payload: dict[str, Any] | None = None
+    try:
+        decoded = json.loads(unfenced)
+        if isinstance(decoded, dict):
+            payload = decoded
+    except json.JSONDecodeError:
+        payload = None
+
+    source_format = "json" if payload is not None else "normalized_text"
+    if payload is None:
+        summary_parts = re.split(r"\s*Safe artifact route:\s*", raw, maxsplit=1, flags=re.IGNORECASE)
+        floor_summary = summary_parts[0].strip()
+        blocker = None
+        blocker_match = re.search(r"\bblocker:\s*(.+)$", raw, flags=re.IGNORECASE)
+        if blocker_match and not blocker_match.group(1).strip().lower().startswith(("none", "no blocker")):
+            blocker = blocker_match.group(1).strip()
+        payload = {
+            "floor_summary": floor_summary,
+            "safe_artifact_route": expected_route if expected_route in raw else None,
+            "blocker": blocker,
+        }
+
+    route = str(payload.get("safe_artifact_route") or "")
+    return {
+        "floor_summary": str(payload.get("floor_summary") or "").strip(),
+        "safe_artifact_route": route,
+        "blocker": payload.get("blocker"),
+        "route_verified": route == expected_route,
+        "source_format": source_format,
+    }
 
 
 def _receipt_timestamp() -> str:

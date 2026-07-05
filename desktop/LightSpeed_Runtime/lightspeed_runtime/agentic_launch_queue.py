@@ -26,6 +26,7 @@ FLOOR_ORDER = [
 ]
 
 PRIORITY_RANK = {"critical": 0, "high": 1, "medium": 2, "low": 3}
+MAX_ACTIVE_TASKS_PER_FLOOR = 2
 
 
 def load_json(path: Path, default: Any) -> Any:
@@ -132,6 +133,7 @@ def build_queue(export_dir: Path = EXPORT_DIR) -> dict[str, Any]:
         )
 
     tasks.sort(key=lambda item: (PRIORITY_RANK.get(str(item.get("priority")), 9), FLOOR_ORDER.index(item["owner_floor"]) if item.get("owner_floor") in FLOOR_ORDER else 99, str(item.get("task_id"))))
+    tasks = apply_active_floor_limit(tasks, limit=MAX_ACTIVE_TASKS_PER_FLOOR)
     generated_at = datetime.now(UTC).isoformat()
     mirrors = {
         "runtime_export": str(export_dir / "agentic_launch_queue.json"),
@@ -153,6 +155,7 @@ def build_queue(export_dir: Path = EXPORT_DIR) -> dict[str, Any]:
         },
         "policy": {
             "local_only": True,
+            "max_active_tasks_per_floor": MAX_ACTIVE_TASKS_PER_FLOOR,
             "max_concurrent_ollama_sessions": _max_ollama_sessions(host, wakeup),
             "active_runner_lock": str(RUNTIME_ROOT / "reports" / "local_floor_runner.active.lock"),
             "recursive_ingest_enabled": False,
@@ -173,6 +176,27 @@ def build_queue(export_dir: Path = EXPORT_DIR) -> dict[str, Any]:
         "tasks": tasks,
     }
     return payload
+
+
+def apply_active_floor_limit(
+    tasks: list[dict[str, Any]],
+    *,
+    limit: int = MAX_ACTIVE_TASKS_PER_FLOOR,
+) -> list[dict[str, Any]]:
+    if limit < 1:
+        raise ValueError("Active floor task limit must be at least one")
+    counts: Counter[str] = Counter()
+    limited: list[dict[str, Any]] = []
+    for source in tasks:
+        task = dict(source)
+        floor = str(task.get("owner_floor") or "unknown")
+        counts[floor] += 1
+        task["floor_queue_position"] = counts[floor]
+        if counts[floor] > limit and str(task.get("state") or "").startswith("ready"):
+            task["prior_state"] = task["state"]
+            task["state"] = "backlog_queued"
+        limited.append(task)
+    return limited
 
 
 def write_queue(payload: dict[str, Any]) -> list[Path]:
