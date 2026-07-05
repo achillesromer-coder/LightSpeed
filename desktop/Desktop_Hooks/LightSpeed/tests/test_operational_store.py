@@ -24,6 +24,48 @@ from lightspeed_runtime.telemetry import (
 from core.services.dataspace import ZDirectService
 
 
+def test_z_direct_scaffold_does_not_recreate_legacy_stream_placeholders(
+    tmp_path,
+    monkeypatch,
+):
+    from core.config import paths
+
+    floor_roots = {
+        "TRINITY_ROOT": tmp_path / "Z+3_Trinity",
+        "NEO_ROOT": tmp_path / "Z+2_Neo",
+        "ARCHITECT_ROOT": tmp_path / "Z+1_Architect",
+        "CONSTRUCT_ROOT": tmp_path / "Z0_TheConstruct",
+        "MORPHEUS_ROOT": tmp_path / "Z-1_Morpheus",
+        "ORACLE_ROOT": tmp_path / "Z-2_Oracle",
+        "SMITH_ROOT": tmp_path / "Z-3_Smith",
+        "MEROVINGIAN_ROOT": tmp_path / "Z-4_Merovingian",
+    }
+    for name, value in floor_roots.items():
+        monkeypatch.setattr(paths, name, value)
+        template = value / "Z Direct" / "channels" / "_channel_template"
+        template.mkdir(parents=True)
+        for filename in ("events.jsonl", "objects.jsonl", "notes.md", "attachments.txt", "view.html"):
+            (value / "Z Direct" / filename).write_text("", encoding="utf-8")
+        (template / "inbox.jsonl").write_text("", encoding="utf-8")
+        (template / "outbox.jsonl").write_text("", encoding="utf-8")
+
+    paths.initialize_z_direct_structure()
+
+    for floor_root in floor_roots.values():
+        z_direct = floor_root / "Z Direct"
+        assert (z_direct / "objects.json").is_file()
+        assert (z_direct / "tasks.json").is_file()
+        assert not (z_direct / "events.jsonl").exists()
+        assert not (z_direct / "objects.jsonl").exists()
+        assert not (z_direct / "notes.md").exists()
+        assert not (z_direct / "attachments.txt").exists()
+        assert not (z_direct / "view.html").exists()
+        assert not (z_direct / "channels" / "_channel_template").exists()
+        readme = (z_direct / "README.md").read_text(encoding="utf-8")
+        assert "\\n" not in readme
+        assert "## Files\n" in readme
+
+
 def test_store_deduplicates_idempotent_events(tmp_path):
     store = OperationalStore(tmp_path / "runtime.db")
     event = {

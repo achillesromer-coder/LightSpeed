@@ -368,14 +368,11 @@ def initialize_z_floor_structure():
 
 def initialize_z_direct_structure() -> None:
     """
-    Ensure `Z Direct/` exists for every Z-floor and contains a minimal set of
-    inter-floor exchange files.
+    Ensure each floor has durable registries and a manifest.
 
-    The intent is to provide a consistent, searchable, floor-native place to
-    store:
-    - inbox/outbox JSONL streams (object data, tasks, markers)
-    - per-channel notes and attachments manifests
-    - a floor manifest describing schema/version + pointers to canonical manifests
+    Operational events and routed messages live in the shared Merovingian-owned
+    SQLite store. Startup must not recreate legacy JSONL streams or empty
+    channel/template files.
     """
 
     floors: list[tuple[Path, str, int, str]] = [
@@ -398,24 +395,28 @@ def initialize_z_direct_structure() -> None:
     channels = ["N", "Z+3", "Z+2", "Z+1", "Z0", "Z-1", "Z-2", "Z-3", "Z-4"]
 
     root_files: list[tuple[str, str]] = [
-        ("objects.jsonl", ""),
         ("objects.json", "[]\n"),
-        ("events.jsonl", ""),
         ("tasks.json", "[]\n"),
-        ("notes.md", ""),
-        ("attachments.txt", ""),
-        ("view.html", ""),
     ]
-
-    # On-demand channel templates live under `Z Direct/channels/<CHANNEL>/`.
-    channel_root_templates: list[tuple[str, str]] = [
-        ("inbox.jsonl", ""),
-        ("outbox.jsonl", ""),
-    ]
+    legacy_empty_placeholders = (
+        "objects.jsonl",
+        "events.jsonl",
+        "notes.md",
+        "attachments.txt",
+        "view.html",
+    )
 
     for floor_root, floor_name, z_level, floor_code in floors:
         z_direct = floor_root / "Z Direct"
         ensure_path(z_direct)
+
+        for rel_name in legacy_empty_placeholders:
+            placeholder = z_direct / rel_name
+            try:
+                if placeholder.is_file() and placeholder.stat().st_size == 0:
+                    placeholder.unlink()
+            except OSError:
+                pass
 
         # Root files (data sinks)
         for rel_name, content in root_files:
@@ -428,26 +429,25 @@ def initialize_z_direct_structure() -> None:
 
         # Root README + manifest are templates with minimal useful content.
         readme = z_direct / "README.md"
-        if not readme.exists():
-            try:
-                readme.write_text(
-                    f"# {floor_code} - Z Direct\\n\\n"
-                    f"**Floor:** {floor_name}\\n"
-                    f"**Z Level:** {z_level:+d}\\n\\n"
-                    "This folder is the floor-native inter-floor exchange area.\\n\\n"
-                    "## Files\\n"
-                    "- `objects.jsonl`: object stream (one JSON object per line)\\n"
-                    "- `events.jsonl`: event stream (one JSON event per line)\\n"
-                    "- `notes.md`: operator notes\\n"
-                    "- `attachments.txt`: attachments manifest\\n"
-                    "- `view.html`: optional local preview surface\\n\\n"
-                    "## Channels\\n"
-                    "Channels are created on-demand under `channels/<CHANNEL>/`\\n"
-                    "and contain `inbox.jsonl` and `outbox.jsonl` for directed exchange.\\n",
-                    encoding="utf-8",
-                )
-            except Exception:
-                pass
+        readme_content = (
+            f"# {floor_code} - Z Direct\n\n"
+            f"**Floor:** {floor_name}\n"
+            f"**Z Level:** {z_level:+d}\n\n"
+            "This folder is the floor-native inter-floor exchange area.\n\n"
+            "## Files\n"
+            "- `objects.json`: approved durable object registry\n"
+            "- `tasks.json`: approved durable task registry\n"
+            "- `floor_manifest.json`: floor and channel contract\n\n"
+            "## Channels\n"
+            "Operational events and directed routes are stored once in the\n"
+            "Merovingian-owned SQLite operational authority.\n"
+        )
+        try:
+            current = readme.read_text(encoding="utf-8") if readme.exists() else None
+            if current != readme_content:
+                readme.write_text(readme_content, encoding="utf-8")
+        except OSError:
+            pass
 
         floor_manifest = z_direct / "floor_manifest.json"
         if not floor_manifest.exists():
@@ -473,29 +473,34 @@ def initialize_z_direct_structure() -> None:
         ensure_path(channels_root)
 
         channels_readme = channels_root / "README.md"
-        if not channels_readme.exists():
-            try:
-                channels_readme.write_text(
-                    "# Z Direct Channels\n\n"
-                    "Create per-channel folders on-demand:\n\n"
-                    "- `channels/<CHANNEL>/inbox.jsonl`\n"
-                    "- `channels/<CHANNEL>/outbox.jsonl`\n\n"
-                    "Where `<CHANNEL>` is one of:\n"
-                    f"{', '.join(channels)}\n",
-                    encoding="utf-8",
-                )
-            except Exception:
-                pass
+        channels_readme_content = (
+            "# Z Direct Channels\n\n"
+            "This directory is retained for compatibility and reviewed attachments.\n\n"
+            "Do not create inbox/outbox JSONL streams. Directed exchange is indexed\n"
+            "once in the Merovingian-owned SQLite operational authority.\n\n"
+            "Where `<CHANNEL>` is one of:\n"
+            f"{', '.join(channels)}\n"
+        )
+        try:
+            current = (
+                channels_readme.read_text(encoding="utf-8")
+                if channels_readme.exists()
+                else None
+            )
+            if current != channels_readme_content:
+                channels_readme.write_text(channels_readme_content, encoding="utf-8")
+        except OSError:
+            pass
 
         template_hint = channels_root / "_channel_template"
-        if not template_hint.exists():
+        if template_hint.is_dir():
             try:
-                template_hint.mkdir(parents=True, exist_ok=True)
-                for rel_name, content in channel_root_templates:
-                    fp = template_hint / rel_name
-                    if not fp.exists():
-                        fp.write_text(content, encoding="utf-8")
-            except Exception:
+                for rel_name in ("inbox.jsonl", "outbox.jsonl"):
+                    placeholder = template_hint / rel_name
+                    if placeholder.is_file() and placeholder.stat().st_size == 0:
+                        placeholder.unlink()
+                template_hint.rmdir()
+            except OSError:
                 pass
 
 
