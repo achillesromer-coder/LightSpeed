@@ -1,0 +1,17 @@
+{
+  "panes": ["Directory","Z Axis","Performance","Settings"],
+  "performance_metrics": ["fps","active_floor","entities","cpu_pct","gpu_pct","ram_app","ram_total"],
+  "sample_ms_default": 500,
+  "sample_ms_bounds": [200,2000],
+  "adaptive_policy": {
+    "raise_interval_if": { "cpu_pct_gt": 85, "gpu_pct_gt": 90, "new_ms": 1000 },
+    "lower_interval_if": { "cpu_pct_lt": 35, "gpu_pct_lt": 35, "new_ms": 300 }
+  },
+  "redaction": {
+    "Viewer": ["mask_emails","hash_hostname","hide_paths","hide_api_keys"],
+    "Ops":    ["mask_emails","hash_hostname","hide_api_keys"],
+    "Engineer":["mask_emails","hide_api_keys"],
+    "Admin":  ["hide_api_keys"],
+    "Founder":["hide_api_keys"]
+  }
+}

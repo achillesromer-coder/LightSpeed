@@ -1,0 +1,16 @@
+{
+  "tool_name": "GMAT Runner (Stub)",
+  "tool_key": "gmat_runner_stub",
+  "description": "Runs GMAT scenarios (stubbed), writes artifacts and manifest under /w6/data/gmat/<run_id>/",
+  "default_z_context": "The Construct",
+  "default_workspace": "w5_mission_planning",
+  "actions": [
+    "run",
+    "view_manifest"
+  ],
+  "default_output_path": "/w6/data/gmat",
+  "ui": {
+    "show": true,
+    "category": "Simulators"
+  }
+}

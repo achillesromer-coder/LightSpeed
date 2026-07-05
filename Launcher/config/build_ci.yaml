@@ -1,0 +1,16 @@
+platforms: ["win-x64","win-arm64","mac-intel","mac-arm64","ubuntu-lts"]
+packaging:
+  desktop_shell: "tauri"
+  python_runners: "pyinstaller"
+  installers: ["msi","dmg_or_pkg","deb","appimage"]
+  sbom: "cyclonedx"
+ci:
+  lint: ["ruff","black","mypy"]
+  security: ["bandit","semgrep","pip-audit","secrets-scan"]
+  tests: ["pytest","playwright_smoke"]
+  perf_budgets:
+    frame_ms_p50_at_120hz: "<=8.3"
+    memory_p95_gb: "<=1.0"
+    cold_start_s: "<=4"
+  signing: ["win_ev","mac_notarise"]
+  artifacts: ["checksums","sbom","ip_notarise_receipt"]

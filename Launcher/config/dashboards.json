@@ -1,0 +1,7 @@
+{
+  "CEO":   ["MissionReadiness","MilestoneHitRate","InterSolPhaseProgress","EcoXImpact","PartnerGrantPipeline","SafetyCompliance"],
+  "CFO":   ["RunwayMonths","TreasuryComposition","TokenEmissions12m","CapexVsOpex","GrantsFunnel","RevenueStreams"],
+  "COO":   ["SupplyChainHeat","RunnerThroughput","DeviceUptime","IncidentsSLAs","SiteUtilisation","ComplianceCountdowns"],
+  "CTO":   ["SimFarmStatus","AssetCookPipeline","ModelRegistry","PerfRegressions","BuildHealth","TechDebtTracker"],
+  "Design":["BrandKit","ExportPresets","TemplateLibrary","ContrastChecker","ColorBlindPreview","VariantGenerator"]
+}

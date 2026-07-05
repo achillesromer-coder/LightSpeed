@@ -1,0 +1,324 @@
+{
+  "floor_name": "Trinity",
+  "floor_id": "trinity_ui",
+  "z_level": 3,
+  "version": "5.1.2",
+  "description": "Operator portal, setup, settings, and glass/bento UI contracts",
+  "color": "#FF1493",
+  "icon": "\ud83c\udfa8",
+  "components": [
+    {
+      "id": "trinity_ui",
+      "name": "Trinity UI",
+      "description": "Primary Trinity operator portal UI",
+      "module": "Trinity",
+      "class": "TrinityUI",
+      "enabled": true,
+      "source_file": "Z Axis/Trinity.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#FF1493",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            0.0,
+            0.0,
+            0
+          ],
+          [
+            1.0,
+            0.0,
+            0
+          ],
+          [
+            0.5,
+            0.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "trinity",
+          "high"
+        ],
+        "category": "core"
+      }
+    },
+    {
+      "id": "settings_manager",
+      "name": "Settings Manager",
+      "description": "Settings window builder and master setup/configuration manager",
+      "module": "Z_Axis.Z+3_Trinity.components.settings_dialog",
+      "class": "SettingsManager",
+      "enabled": true,
+      "source_file": "Z Axis/Z+3_Trinity/components/settings_dialog.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#FF1493",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            2.0,
+            0.0,
+            0
+          ],
+          [
+            3.0,
+            0.0,
+            0
+          ],
+          [
+            2.5,
+            0.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "trinity",
+          "high"
+        ],
+        "category": "core"
+      }
+    },
+    {
+      "id": "theme_designer",
+      "name": "Theme Designer",
+      "description": "Glass/bento theme design UI and preview",
+      "module": "Z_Axis.Z+3_Trinity.components.theme_switcher",
+      "class": "ThemeDesigner",
+      "enabled": true,
+      "source_file": "Z Axis/Z+3_Trinity/components/theme_switcher.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#FF1493",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            4.0,
+            0.0,
+            0
+          ],
+          [
+            5.0,
+            0.0,
+            0
+          ],
+          [
+            4.5,
+            0.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "trinity",
+          "high"
+        ],
+        "category": "core"
+      }
+    },
+    {
+      "id": "code_editor",
+      "name": "Code Editor",
+      "description": "Advanced text/code editor widget",
+      "module": "Z_Axis.Z+3_Trinity.components.code_editor",
+      "class": "AdvancedTextEditor",
+      "enabled": true,
+      "source_file": "Z Axis/Z+3_Trinity/components/code_editor.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#FF1493",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            0.0,
+            2.0,
+            0
+          ],
+          [
+            1.0,
+            2.0,
+            0
+          ],
+          [
+            0.5,
+            2.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "trinity",
+          "high"
+        ],
+        "category": "core"
+      }
+    },
+    {
+      "id": "file_tree",
+      "name": "File Tree",
+      "description": "Enhanced file tree and search panel widget",
+      "module": "Z_Axis.Z+3_Trinity.components.file_tree",
+      "class": "EnhancedTreeview",
+      "enabled": true,
+      "source_file": "Z Axis/Z+3_Trinity/components/file_tree.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#FF1493",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            2.0,
+            2.0,
+            0
+          ],
+          [
+            3.0,
+            2.0,
+            0
+          ],
+          [
+            2.5,
+            2.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "trinity",
+          "high"
+        ],
+        "category": "core"
+      }
+    },
+    {
+      "id": "analytics_dashboard",
+      "name": "Analytics Dashboard",
+      "description": "Operator-facing analytics dashboard over Merovingian telemetry",
+      "module": "lightspeed.floors.trinity.analytics_dashboard",
+      "class": "AnalyticsDashboard",
+      "enabled": true,
+      "source_file": "Z Axis/Z+3_Trinity/components/analytics_dashboard.py",
+      "phase": 1,
+      "priority": "medium",
+      "metadata": {
+        "color": "#FF1493",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "tags": [
+          "trinity",
+          "analytics",
+          "monitoring"
+        ],
+        "category": "dashboard"
+      }
+    },
+    {
+      "id": "operations_workspace_manager",
+      "name": "Operations Workspace Manager",
+      "description": "Operator-facing workspace manager over Smith and Architect state",
+      "module": "Z_Axis.Z+3_Trinity.components.operations_workspace_manager",
+      "class": "OperationsWorkspaceManager",
+      "enabled": true,
+      "source_file": "Z Axis/Z+3_Trinity/components/operations_workspace_manager.py",
+      "phase": 1,
+      "priority": "medium",
+      "metadata": {
+        "color": "#FF1493",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "tags": [
+          "operations",
+          "workspace",
+          "registry",
+          "embed"
+        ],
+        "category": "workspace"
+      }
+    },
+    {
+      "id": "operations_status_cards",
+      "name": "Operations Status Cards",
+      "description": "Status tiles for governed jobs, artifacts, and asset-library links",
+      "module": "Z_Axis.Z+3_Trinity.components.operations_status_cards",
+      "class": "OperationsStatusCards",
+      "enabled": true,
+      "source_file": "Z Axis/Z+3_Trinity/components/operations_status_cards.py",
+      "phase": 1,
+      "priority": "medium",
+      "metadata": {
+        "color": "#FF1493",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "tags": [
+          "operations",
+          "status",
+          "status"
+        ],
+        "category": "workspace"
+      }
+    }
+  ],
+  "dependencies": [
+    "core.ui"
+  ],
+  "services": [
+    {
+      "name": "TrinityCoreService",
+      "type": "core",
+      "provider": "TrinityCoreComponent",
+      "status": "active",
+      "endpoints": [
+        "/ui",
+        "/themes",
+        "/widgets",
+        "/dashboard",
+        "/status"
+      ],
+      "description": "Core operator portal, setup, settings, and glass/bento UI services for Trinity floor"
+    }
+  ],
+  "capabilities": [
+    "operator_portal",
+    "setup_wizards",
+    "settings_hub",
+    "glass_bento_ui",
+    "themes",
+    "widgets"
+  ],
+  "smart_floor": {
+    "auto_expand": false,
+    "ai_suggestions": false
+  },
+  "goals": [
+    {
+      "id": "g1",
+      "description": "Create 10 custom themes",
+      "target": 10,
+      "current": 5
+    }
+  ],
+  "initialization_order": 8,
+  "inside_out_position": "outer",
+  "created": "2025-12-23T11:44:50.360071",
+  "updated": "2026-04-08T20:45:00+10:00"
+}

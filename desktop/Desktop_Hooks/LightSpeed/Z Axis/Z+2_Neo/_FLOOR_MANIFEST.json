@@ -1,0 +1,254 @@
+{
+  "floor_name": "Neo",
+  "floor_id": "neo_ai",
+  "z_level": 2,
+  "version": "5.1.2",
+  "description": "Neo orchestration console, AI routing, and approval-gated action proposals with Achilles oversight routed from De Sporte",
+  "color": "#00FF00",
+  "icon": "\ud83e\udd16",
+  "components": [
+    {
+      "id": "neo_ui",
+      "name": "Neo UI",
+      "description": "Primary Neo orchestration operator UI",
+      "module": "Neo",
+      "class": "NeoUI",
+      "enabled": true,
+      "source_file": "Z Axis/Neo.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#00FF00",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            0.0,
+            0.0,
+            0
+          ],
+          [
+            1.0,
+            0.0,
+            0
+          ],
+          [
+            0.5,
+            0.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "neo",
+          "high"
+        ],
+        "category": "utility"
+      }
+    },
+    {
+      "id": "ai_code_assistant",
+      "name": "AI Code Assistant",
+      "description": "Code analysis and completion support for governed operator work",
+      "module": "Z_Axis.Z+2_Neo.components.ai_code_assistant",
+      "class": "AICodeAssistantGUI",
+      "enabled": true,
+      "source_file": "Z Axis/Z+2_Neo/components/ai_code_assistant.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#00FF00",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            2.0,
+            0.0,
+            0
+          ],
+          [
+            3.0,
+            0.0,
+            0
+          ],
+          [
+            2.5,
+            0.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "neo",
+          "high"
+        ],
+        "category": "utility"
+      }
+    },
+    {
+      "id": "ai_training",
+      "name": "AI Training",
+      "description": "Dataset and model training support UI",
+      "module": "Z_Axis.Z+2_Neo.components.ai_training",
+      "class": "AITrainingGUI",
+      "enabled": true,
+      "source_file": "Z Axis/Z+2_Neo/components/ai_training.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#00FF00",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            4.0,
+            0.0,
+            0
+          ],
+          [
+            5.0,
+            0.0,
+            0
+          ],
+          [
+            4.5,
+            0.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "neo",
+          "high"
+        ],
+        "category": "utility"
+      }
+    },
+    {
+      "id": "ai_context",
+      "name": "AI Context",
+      "description": "Proofed context and prompt assembly UI",
+      "module": "Z_Axis.Z+2_Neo.components.ai_context",
+      "class": "AIContextGUI",
+      "enabled": true,
+      "source_file": "Z Axis/Z+2_Neo/components/ai_context.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#00FF00",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            6.0,
+            0.0,
+            0
+          ],
+          [
+            7.0,
+            0.0,
+            0
+          ],
+          [
+            6.5,
+            0.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "neo",
+          "high"
+        ],
+        "category": "utility"
+      }
+    },
+    {
+      "id": "neo_lab_assistant",
+      "name": "Neo Lab Assistant",
+      "description": "Glass Neo operator assistant surface with Achilles oversight context",
+      "module": "Z_Axis.Z+2_Neo.components.neo_lab_assistant_glass",
+      "class": "NEOLabAssistant",
+      "enabled": true,
+      "source_file": "Z Axis/Z+2_Neo/components/neo_lab_assistant_glass.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#00FF00",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            8.0,
+            0.0,
+            0
+          ],
+          [
+            9.0,
+            0.0,
+            0
+          ],
+          [
+            8.5,
+            0.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "neo",
+          "high"
+        ],
+        "category": "utility"
+      }
+    }
+  ],
+  "dependencies": [
+    "core.ai"
+  ],
+  "services": [
+    {
+      "name": "NeoCoreService",
+      "type": "core",
+      "provider": "NeoCoreComponent",
+      "status": "active",
+      "endpoints": [
+        "/ai",
+        "/chat",
+        "/code_assistant",
+        "/training",
+        "/context",
+        "/status"
+      ],
+      "description": "Core AI routing, Cognigrex context, and approval-gated action proposal services for Neo floor"
+    }
+  ],
+  "capabilities": [
+    "achilles_operator_console",
+    "ai_backend_profiles",
+    "cognigrex",
+    "proofed_knowns_briefing",
+    "approval_gated_actions"
+  ],
+  "smart_floor": {
+    "auto_expand": true,
+    "ai_suggestions": true
+  },
+  "goals": [
+    {
+      "id": "g1",
+      "description": "Achieve 95% AI accuracy",
+      "target": 95,
+      "current": 88
+    }
+  ],
+  "initialization_order": 7,
+  "inside_out_position": "outer_intelligence",
+  "created": "2025-12-23T11:44:50.360071",
+  "updated": "2026-04-08T17:20:00+10:00"
+}

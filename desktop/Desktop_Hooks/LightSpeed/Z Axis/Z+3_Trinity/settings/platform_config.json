@@ -1,0 +1,12 @@
+{
+  "initialized": true,
+  "initialization_date": "2026-01-18T09:09:22.927478",
+  "scene_template": "custom",
+  "enabled_floors": [
+    "Z0_TheConstruct",
+    "Z+3_Trinity"
+  ],
+  "ui_preferences": {},
+  "ai_settings": {},
+  "advanced_settings": {}
+}

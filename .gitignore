@@ -1,0 +1,46 @@
+# Generated dependencies and caches
+**/node_modules/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Runtime logs belong in canonical JSONL/XLSX ledgers
+*.log
+
+# Local tool caches
+.cache/
+
+# Runtime and generated artifacts never enter the source repository
+**/data/
+!apps/lightspeed-go/public/data/
+!apps/lightspeed-go/public/data/neo_exchange.json
+!/data/
+/data/*
+!/data/migration/
+/data/migration/*
+!/data/migration/source_roots.json
+**/archive/
+**/ai_logs/
+**/reservoirs/
+!desktop/LightSpeed_Runtime/lightspeed_runtime/reservoirs/
+desktop/LightSpeed_Runtime/lightspeed_runtime/reservoirs/*
+!desktop/LightSpeed_Runtime/lightspeed_runtime/reservoirs/__init__.py
+!desktop/LightSpeed_Runtime/lightspeed_runtime/reservoirs/registry.py
+**/vault/
+**/venv/
+**/legacy/
+*.db
+*.sqlite
+*.sqlite3
+*.fits
+*.npy
+*.npz
+*.parquet
+*.pt
+*.pth
+*.onnx
+*.xlsx
+*.xlsm
+.env
+.env.*
+!.env.example

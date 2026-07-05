@@ -1,0 +1,28 @@
+{
+  "intro": "G'Day, how can I help?",
+  "loading": "Just checking—give me a moment…",
+  "help": "Ask about projects, files, Z-floors, or type / to see commands.",
+  "datasources": {
+    "WorkspaceDrafts": "per-user",
+    "LiveOnly": "per-user",
+    "Archives": "per-user",
+    "Linear": "per-user",
+    "GitHub": "per-user",
+    "Canva": "per-user",
+    "AdminOverrideReadAll": true,
+    "EditRights": "always-reviewed"
+  },
+  "guardrails": ["open-source-and-transparent", "no-secrets-leak", "respect-clearance"],
+  "logging": {
+    "enabled": true,
+    "rollup": "weekly",
+    "archive_to_txt": true,
+    "file_root": "Z+3/ai_logs",
+    "weekly_digest": {
+      "title_auto": true,
+      "toc_auto": true,
+      "append_conclusion": true,
+      "open_tasks_summary": true
+    }
+  }
+}

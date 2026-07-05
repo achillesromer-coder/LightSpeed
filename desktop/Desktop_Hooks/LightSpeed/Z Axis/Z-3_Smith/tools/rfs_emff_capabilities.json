@@ -1,0 +1,16 @@
+{
+  "tool_name": "RFS/EMFF Sweep",
+  "tool_key": "rfs_emff_sweep",
+  "description": "Runs Resonant Frequency Sifting and EMFF field sweeps; writes artifacts + manifest under /w6/data/rfs_emff/<run_id>/",
+  "default_z_context": "The Construct",
+  "default_workspace": "w3_rfs_emff",
+  "actions": [
+    "run",
+    "view_manifest"
+  ],
+  "default_output_path": "/w6/data/rfs_emff",
+  "ui": {
+    "show": true,
+    "category": "Simulators"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "tool_name": "Propulsion Window",
+  "tool_key": "propulsion_window",
+  "description": "Evaluates propulsion duty windows under power/thermal constraints; writes artifacts + manifest under /w6/data/propulsion/<run_id>/",
+  "default_z_context": "The Construct",
+  "default_workspace": "w5_mission_planning",
+  "actions": [
+    "run",
+    "view_manifest"
+  ],
+  "default_output_path": "/w6/data/propulsion",
+  "ui": {
+    "show": true,
+    "category": "Simulators"
+  }
+}

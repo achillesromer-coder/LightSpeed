@@ -1,0 +1,75 @@
+{
+  "floor_info": {
+    "floor_id": "Z-4",
+    "floor_name": "Merovingian",
+    "floor_code": "Z-4_Merovingian",
+    "description": "Core services, activity tables, audit, telemetry, finalization, and diagnostics floor",
+    "primary_role": "Core services and evidence",
+    "version": "5.1.2"
+  },
+  "ownership": {
+    "active_ui_coordinator": "Z Axis/Merovingian.py",
+    "owned_data_roots": [
+      "data/audit",
+      "data/db",
+      "data/files",
+      "data/logs",
+      "data/quality",
+      "data/runtime_exports",
+      "data/telemetry"
+    ],
+    "canonical_artifacts": [
+      "data/audit/activity_tables.json",
+      "data/audit/action_ledger.jsonl",
+      "data/db/lightspeed_activity.db",
+      "data/runtime_exports/finalization_overview.json",
+      "data/runtime_exports/closure_readiness.json",
+      "data/quality/latest_test_results.json",
+      "data/telemetry/otel_spans.jsonl"
+    ]
+  },
+  "capabilities": [
+    "core_services",
+    "database",
+    "event_bus",
+    "storage",
+    "compact_activity_tables",
+    "telemetry",
+    "audit_ledgers",
+    "quality_reports",
+    "finalization_reports",
+    "closure_readiness",
+    "health_diagnostics"
+  ],
+  "runtime_flow": {
+    "inputs": [
+      "floor activity events",
+      "approval/action ledger events",
+      "test results",
+      "finalization and cleanup reports",
+      "telemetry spans"
+    ],
+    "outputs": [
+      "queryable activity database",
+      "compact activity table",
+      "closure readiness report",
+      "finalization overview",
+      "quality report"
+    ]
+  },
+  "log_policy": {
+    "operator_surface": "data/audit/activity_tables.json and data/db/lightspeed_activity.db",
+    "append_only_evidence": "Retain JSONL streams as audit evidence, not primary UI surfaces.",
+    "single_use_logs": "Avoid new single-action log files; embed status into floor-owned artifacts."
+  },
+  "theme": {
+    "material": "romer_premium_glass",
+    "primary_color": "#ef4444",
+    "background": "#0a1929",
+    "panel_background": "#1e3a5a",
+    "text_primary": "#e0f7fa",
+    "text_secondary": "#80deea",
+    "glass_opacity": 0.82,
+    "border_radius": 12
+  }
+}

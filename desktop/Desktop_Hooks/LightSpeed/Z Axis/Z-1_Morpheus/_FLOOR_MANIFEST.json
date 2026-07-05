@@ -1,0 +1,184 @@
+{
+  "floor_name": "Morpheus",
+  "floor_id": "morpheus_knowledge",
+  "z_level": -1,
+  "version": "5.1.2",
+  "description": "Review, proofing, editing, knowledge-preview, and code-analysis floor",
+  "color": "#4B0082",
+  "icon": "\ud83e\udde0",
+  "components": [
+    {
+      "id": "file_manager",
+      "name": "File Manager",
+      "description": "File intake and review surface for Morpheus",
+      "module": "Z_Axis.Z-1_Morpheus.components.drag_drop_interface",
+      "class": "DragDropFileManager",
+      "enabled": true,
+      "source_file": "Z Axis/Z-1_Morpheus/components/drag_drop_interface.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#4B0082",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            0.0,
+            0.0,
+            0
+          ],
+          [
+            1.0,
+            0.0,
+            0
+          ],
+          [
+            0.5,
+            0.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "morpheus",
+          "review",
+          "high"
+        ],
+        "category": "utility"
+      }
+    },
+    {
+      "id": "rich_text_editor",
+      "name": "Rich Text Editor",
+      "description": "Markdown editor and preview surface for proofed knowledge",
+      "module": "Z_Axis.Z-1_Morpheus.components.rich_text_editor",
+      "class": "RichTextEditor",
+      "enabled": true,
+      "source_file": "Z Axis/Z-1_Morpheus/components/rich_text_editor.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#4B0082",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            2.0,
+            0.0,
+            0
+          ],
+          [
+            3.0,
+            0.0,
+            0
+          ],
+          [
+            2.5,
+            0.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "morpheus",
+          "editing",
+          "high"
+        ],
+        "category": "utility"
+      }
+    },
+    {
+      "id": "chat_archive_browser",
+      "name": "Chat Archive Browser",
+      "description": "Browse reviewed chat/archive sources and extracted proofing context",
+      "module": "Z_Axis.Z-1_Morpheus.components.chat_archive_browser",
+      "class": "ChatArchiveBrowser",
+      "enabled": true,
+      "source_file": "Z Axis/Z-1_Morpheus/components/chat_archive_browser.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#4B0082",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "tags": [
+          "morpheus",
+          "high",
+          "chat",
+          "archive"
+        ],
+        "category": "knowledge"
+      }
+    },
+    {
+      "id": "morpheus_portal_glass",
+      "name": "Morpheus Portal Glass",
+      "description": "Glass portal UI for Morpheus review and proofing",
+      "module": "lightspeed.floors.morpheus.portal_glass",
+      "class": "MorpheusPortalGlass",
+      "enabled": true,
+      "source_file": "Z Axis/Z-1_Morpheus/components/morpheus_portal_glass.py",
+      "phase": 1,
+      "priority": "medium",
+      "metadata": {
+        "color": "#4B0082",
+        "brightness": 0.85,
+        "reflectivity": 0.55,
+        "opacity": 1.0,
+        "tags": [
+          "morpheus",
+          "portal",
+          "glass"
+        ],
+        "category": "ui"
+      }
+    }
+  ],
+  "dependencies": [
+    "core.services"
+  ],
+  "services": [
+    {
+      "name": "MorpheusCoreService",
+      "type": "core",
+      "provider": "MorpheusCoreComponent",
+      "status": "active",
+      "endpoints": [
+        "/knowledge",
+        "/documentation",
+        "/search",
+        "/file_manager",
+        "/editor",
+        "/status"
+      ],
+      "description": "Core review, proofing, editing, and knowledge-preview services for Morpheus floor"
+    }
+  ],
+  "capabilities": [
+    "proofing_review",
+    "knowledge_preview",
+    "file_review",
+    "rich_text_editing",
+    "chat_archive_review",
+    "code_analysis"
+  ],
+  "smart_floor": {
+    "auto_expand": true,
+    "ai_suggestions": true
+  },
+  "goals": [
+    {
+      "id": "morpheus.finalization",
+      "description": "Keep review surfaces focused on proofed queues and edited knowledge objects",
+      "target": 1,
+      "current": 1
+    }
+  ],
+  "initialization_order": 4,
+  "inside_out_position": "inner_mid",
+  "created": "2025-12-23T11:44:50.375695",
+  "updated": "2026-04-08T21:00:00+10:00"
+}

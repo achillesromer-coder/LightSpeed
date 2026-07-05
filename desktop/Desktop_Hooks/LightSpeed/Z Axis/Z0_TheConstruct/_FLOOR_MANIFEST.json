@@ -1,0 +1,136 @@
+{
+  "floor_name": "TheConstruct",
+  "floor_id": "construct_training",
+  "z_level": 0,
+  "version": "5.1.2",
+  "description": "Holospace, scenario lab, physics calculation, heliocentric zoning, and GMAT target-batch floor",
+  "color": "#808080",
+  "icon": "\ud83c\udf10",
+  "components": [
+    {
+      "id": "project_workspace_portal",
+      "name": "Project Workspace Portal",
+      "description": "Scenario workspace and project portal for TheConstruct",
+      "module": "Z_Axis.Z0_TheConstruct.components.project_workspace_portal",
+      "class": "ProjectWorkspacePortal",
+      "enabled": true,
+      "source_file": "Z Axis/Z0_TheConstruct/components/project_workspace_portal.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#808080",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            0.0,
+            0.0,
+            0
+          ],
+          [
+            1.0,
+            0.0,
+            0
+          ],
+          [
+            0.5,
+            0.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "theconstruct",
+          "scenario_lab",
+          "high"
+        ],
+        "category": "utility"
+      }
+    },
+    {
+      "id": "visualization_3d",
+      "name": "3D Visualization",
+      "description": "Interactive holospace and 3D visualization surface for TheConstruct",
+      "module": "Z_Axis.Z0_TheConstruct.components.visualization_3d",
+      "class": "Visualization3DGUI",
+      "enabled": true,
+      "source_file": "Z Axis/Z0_TheConstruct/components/visualization_3d.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#808080",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            2.0,
+            0.0,
+            0
+          ],
+          [
+            3.0,
+            0.0,
+            0
+          ],
+          [
+            2.5,
+            0.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "theconstruct",
+          "holospace",
+          "high"
+        ],
+        "category": "utility"
+      }
+    }
+  ],
+  "dependencies": [
+    "core.services",
+    "core.physics"
+  ],
+  "services": [
+    {
+      "name": "TheConstructCoreService",
+      "type": "core",
+      "provider": "TheConstructCoreComponent",
+      "status": "active",
+      "endpoints": [
+        "/simulation",
+        "/physics",
+        "/training",
+        "/visualization",
+        "/status"
+      ],
+      "description": "Core simulation, physics, zoning, and holospace services for TheConstruct floor"
+    }
+  ],
+  "capabilities": [
+    "holospace",
+    "scenario_labs",
+    "physics_calculators",
+    "heliocentric_zoning",
+    "gmat_target_batches"
+  ],
+  "smart_floor": {
+    "auto_expand": true,
+    "ai_suggestions": true
+  },
+  "goals": [
+    {
+      "id": "construct.finalization",
+      "description": "Keep scenario-lab outputs floor-owned, proofed, and packageable through Architect",
+      "target": 1,
+      "current": 1
+    }
+  ],
+  "initialization_order": 5,
+  "inside_out_position": "center",
+  "created": "2025-12-23T11:44:50.375695",
+  "updated": "2026-04-08T20:55:00+10:00"
+}

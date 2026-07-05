@@ -1,0 +1,31 @@
+{
+  "caps": { "default_target_hz": 100, "hard_caps": [30,180] },
+  "physics_hz": 120,
+  "presets": {
+    "performance": {
+      "cap_hz": 120, "adaptive_sync": true, "vsync": false, "hdr": false,
+      "aa": "taa_or_upscaler_quality", "postfx": {"bloom": "off","dof":"off","grain":"off","ca":"off","ssao":"off"},
+      "sharpen": 0.25, "aniso": 8, "dyn_res_floor": 0.9
+    },
+    "quality": {
+      "cap_hz": 165, "hdr": true, "tone_map": "neutral_scientific",
+      "aa": "dlss_or_fsr_quality", "postfx": {"bloom": "low","ssao":"low"},
+      "sharpen": 0.25, "aniso": 16, "dyn_res_floor": 0.85
+    },
+    "vr": {
+      "cap_hz": 120, "min_hz": 90, "reprojection": true, "motion_smoothing": true,
+      "postfx": {"bloom":"off","ssao":"off"}, "foveated":"on"
+    },
+    "scientific": {
+      "cap_hz": 120, "hdr": false,
+      "color_pipeline": "linear_scene+sRGB_UI", "aa": "taa_or_dlaa",
+      "postfx": {"all":"off"}, "sharpen": 0, "aniso": 16
+    }
+  },
+  "auto_tune": {
+    "probe_seconds": 3.0,
+    "step_down_order": ["ssao","bloom","aa_quality","dyn_res_0.9","cap_120","cap_90"],
+    "persist_per_machine": true,
+    "log_changes": true
+  }
+}

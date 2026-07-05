@@ -1,0 +1,167 @@
+{
+  "lane_set_id": "cognigrex_single_interface_2026_05_22",
+  "primary_surface": "Trinity",
+  "interface_mode": "single_surface_bento_shell",
+  "surface_density": "compact_operator_shell",
+  "approval_input_mode": "y_n_and_review_artifacts",
+  "minimum_system_goal": "refined_ui_stabilised_populated_multifunctional_business_rd_scientific_os_tool",
+  "navigation_contract": [
+    "one_home_surface",
+    "single_active_detail_context",
+    "collapse_when_not_in_use",
+    "review_before_expand"
+  ],
+  "chrome_safe_mode": true,
+  "avoid_patterns": [
+    "hyper_tabs",
+    "duplicate_portals",
+    "parallel_popup_workflows",
+    "unbounded_background_actions"
+  ],
+  "manual_activation_lanes": [
+    "simulation_twin",
+    "device_bridge",
+    "web_publish"
+  ],
+  "cognigrex_spine": {
+    "label": "Cognigrex",
+    "definition": "A group of biological or artificial observers who retain their individuality and work in perfect unison akin to a hive mind.",
+    "coordination_mode": "independent_observers_shared_state",
+    "operator_role": "Achilles master builder and approval-gated orchestrator",
+    "guardrails": [
+      "all destructive or external actions remain manual-approval only",
+      "single operator surface owns intake, routing, and approval context",
+      "smart floors populate only from proofed or staged datasets"
+    ]
+  },
+  "lanes": [
+    {
+      "lane_id": "operator_shell",
+      "label": "Single Interface Shell",
+      "owner_floor": "Trinity",
+      "state": "ready_for_population",
+      "surface": "N.py -> Trinity operator surface",
+      "goal": "One intake, review, routing, and settings surface rather than duplicated floor tabs.",
+      "attached_floors": [
+        "Trinity",
+        "Neo",
+        "Smith",
+        "Architect"
+      ],
+      "approval_required": true
+    },
+    {
+      "lane_id": "local_llm_temp_shells",
+      "label": "Local LLM and Temp Shell Lane",
+      "owner_floor": "Neo",
+      "state": "ready_minimum_entry",
+      "surface": "Neo workbench and Trinity editor over local Ollama",
+      "goal": "Use local models for bounded drafting, code assistance, and handoff staging before any remote escalation.",
+      "attached_floors": [
+        "Neo",
+        "Trinity",
+        "Smith"
+      ],
+      "approval_required": true
+    },
+    {
+      "lane_id": "knowledge_library",
+      "label": "Knowledge and Reservoir Lane",
+      "owner_floor": "Oracle",
+      "state": "ready_for_population",
+      "surface": "Oracle library, knowns, datatables, reservoirs",
+      "goal": "Attach proofed doctrine, empirical sets, calculators, and references into one searchable source plane.",
+      "attached_floors": [
+        "Oracle",
+        "Morpheus",
+        "Neo"
+      ],
+      "approval_required": true
+    },
+    {
+      "lane_id": "review_and_corroboration",
+      "label": "Review and Corroboration Lane",
+      "owner_floor": "Morpheus",
+      "state": "ready_minimum_entry",
+      "surface": "Morpheus review workbench",
+      "goal": "Collapse extracted evidence, deltas, and overlap clusters into one review lab before promotion.",
+      "attached_floors": [
+        "Morpheus",
+        "Oracle",
+        "Smith"
+      ],
+      "approval_required": true
+    },
+    {
+      "lane_id": "simulation_twin",
+      "label": "Simulation and Digital Twin Lane",
+      "owner_floor": "TheConstruct",
+      "state": "ready_minimum_entry",
+      "surface": "TheConstruct runtime profile and scenario lab",
+      "goal": "Populate an empty but bounded digital-twin environment with proofed datasets and scenario runs.",
+      "attached_floors": [
+        "TheConstruct",
+        "Oracle",
+        "Merovingian"
+      ],
+      "approval_required": true
+    },
+    {
+      "lane_id": "queue_and_execution",
+      "label": "Queue and Execution Lane",
+      "owner_floor": "Smith",
+      "state": "ready_for_population",
+      "surface": "Smith queue router and workflow state",
+      "goal": "Hold only bounded, low-risk build tasks until manually approved for deeper automation.",
+      "attached_floors": [
+        "Smith",
+        "Trinity",
+        "Oracle",
+        "Architect"
+      ],
+      "approval_required": true
+    },
+    {
+      "lane_id": "publish_and_governance",
+      "label": "Governance and Publish Lane",
+      "owner_floor": "Architect",
+      "state": "ready_minimum_entry",
+      "surface": "Architect publish gate and approval wall",
+      "goal": "Route repo, Drive, GO, and web artefacts through one manual approval gate.",
+      "attached_floors": [
+        "Architect",
+        "Trinity",
+        "Smith"
+      ],
+      "approval_required": true
+    },
+    {
+      "lane_id": "device_bridge",
+      "label": "Device and GO Bridge Lane",
+      "owner_floor": "Neo",
+      "state": "later_gated",
+      "surface": "Neo GO queue bridge with Achilles oversight contract",
+      "goal": "Stage mobile or sidecar device actions only after D-root proof and manual approval.",
+      "attached_floors": [
+        "Neo",
+        "Smith",
+        "Architect"
+      ],
+      "approval_required": true
+    },
+    {
+      "lane_id": "web_publish",
+      "label": "Web and Repo Publish Lane",
+      "owner_floor": "Architect",
+      "state": "later_gated",
+      "surface": "Repo push, web, and external handoff artefacts",
+      "goal": "Publish from proofed runtime state only after human review.",
+      "attached_floors": [
+        "Architect",
+        "Neo",
+        "Trinity"
+      ],
+      "approval_required": true
+    }
+  ]
+}

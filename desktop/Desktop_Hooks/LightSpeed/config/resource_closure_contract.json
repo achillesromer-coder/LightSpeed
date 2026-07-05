@@ -1,0 +1,40 @@
+{
+  "contract_id": "resource_closure_2026_06_22",
+  "principle": "All runtime allocation lanes are normalized so their active shares sum to 1.0 before execution.",
+  "formula": "sum(normalized_shares) = 1.0",
+  "runtime_shares": {
+    "lightspeed_resident": 0.48,
+    "de_sporte_idle_persistence": 0.416,
+    "de_sporte_active_interaction": 0.104,
+    "total": 1.0
+  },
+  "derived_from": {
+    "lightspeed_logged_in_percent": 48,
+    "remaining_window_percent": 52,
+    "de_sporte_idle_persistence_percent_of_remaining_window": 80,
+    "de_sporte_active_percent_of_remaining_window": 20
+  },
+  "hardware_closure": {
+    "ram_gb": 32,
+    "chrome_reserved_ram_gb": 6,
+    "ram_shares": {
+      "chrome_reserved": 0.1875,
+      "system_runtime_remaining": 0.8125,
+      "total": 1.0
+    },
+    "threads": 16,
+    "chrome_reserved_threads": 4,
+    "thread_shares": {
+      "chrome_reserved": 0.25,
+      "system_runtime_remaining": 0.75,
+      "total": 1.0
+    }
+  },
+  "execution_policy": {
+    "primary_focus_surfaces": 1,
+    "max_concurrent_ollama_jobs": 2,
+    "heavy_floors_manual_gated": true,
+    "pause_background_on_pressure": true,
+    "d_drive_dependency_installs_allowed_below_2gb_free": false
+  }
+}

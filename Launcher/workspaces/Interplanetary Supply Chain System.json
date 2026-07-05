@@ -1,0 +1,22 @@
+{
+  "workspace_name": "Interplanetary Supply Chain System",
+  "projects": [
+    {
+      "name": "Layer N",
+      "created_ts": 1755751967.8149073,
+      "notes": ""
+    },
+    {
+      "name": "Interplanetary Supply Chain",
+      "created_ts": 1755752550.4739578,
+      "notes": ""
+    }
+  ],
+  "assets": [],
+  "apis": [],
+  "settings": {
+    "theme": "light",
+    "autosave_interval": 300,
+    "plot_samples": 200
+  }
+}

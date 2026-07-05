@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RFS/EMFF Sweep Input",
+  "type": "object",
+  "required": ["material", "frequencies_mhz", "field_strength_tesla"],
+  "properties": {
+    "material": {
+      "type": "string",
+      "description": "Material or target composition (e.g., Au, Nd regolith)"
+    },
+    "frequencies_mhz": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 1,
+      "description": "Frequencies to sweep (MHz)"
+    },
+    "field_strength_tesla": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 1,
+      "description": "Magnetic field strengths to test (Tesla)"
+    },
+    "amplitudes": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "description": "Optional amplitudes for RFS drive"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "run_id": {
+      "type": "string",
+      "description": "Optional explicit run_id"
+    }
+  },
+  "additionalProperties": false
+}

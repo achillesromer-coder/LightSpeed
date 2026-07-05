@@ -1,0 +1,17 @@
+{
+  "wizard_completed": true,
+  "wizard_version": "1.0.0",
+  "selected_floors": [
+    "Z+3_Trinity",
+    "Z0_TheConstruct",
+    "Z-1_Morpheus",
+    "Z-2_Oracle"
+  ],
+  "oasis_theme_enabled": true,
+  "diagnostic_passed": true,
+  "database_initialized": true,
+  "assets_discovered": false,
+  "search_indexed": true,
+  "integration_complete": true,
+  "setup_date": "2026-04-12T12:06:52.183625"
+}

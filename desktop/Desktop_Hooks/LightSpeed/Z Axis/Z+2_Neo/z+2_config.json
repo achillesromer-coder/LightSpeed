@@ -1,0 +1,34 @@
+{
+  "floor_info": {
+    "floor_id": "Z+2",
+    "floor_name": "Neo",
+    "floor_code": "Z+2_Neo",
+    "description": "Achilles/Cognigrex operator console, AI routing, proofed-knowns action proposals, and approval-gated execution requests.",
+    "primary_role": "Operator AI and governed action proposals",
+    "version": "5.1.2"
+  },
+  "theme": {
+    "material": "lightspeed_glass_bento",
+    "primary_color": "#00FF88",
+    "secondary_color": "#10b981",
+    "accent_color": "#00DDFF",
+    "glass_opacity": 0.82,
+    "blur_radius": 25,
+    "border_radius": 12
+  },
+  "capabilities": [
+    "achilles_operator_console",
+    "cognigrex_context",
+    "ai_backend_profiles",
+    "proofed_knowns_briefing",
+    "approval_gated_actions",
+    "smith_tool_handoff"
+  ],
+  "canonical_paths": {
+    "entrypoint": "Z Axis/Neo.py",
+    "data_root": "Z Axis/Z+2_Neo/data",
+    "ai_config": "config/ai_config.json",
+    "approval_ledger": "Z Axis/Z+1_Architect/data/approvals/approval_ledger.jsonl",
+    "action_ledger": "Z Axis/Z-4_Merovingian/data/audit/action_ledger.jsonl"
+  }
+}

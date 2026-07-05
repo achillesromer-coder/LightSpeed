@@ -1,0 +1,471 @@
+{
+  "Neo": {
+    "type": "floor",
+    "module": "Neo",
+    "capabilities": [
+      "ai_chat",
+      "ollama",
+      "gpt",
+      "task_assistance"
+    ],
+    "provides": [
+      "neo_ui",
+      "neo_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "Morpheus": {
+    "type": "floor",
+    "module": "Morpheus",
+    "capabilities": [
+      "file_analysis",
+      "code_indexing",
+      "ast_parsing",
+      "knowledge_base"
+    ],
+    "provides": [
+      "morpheus_ui",
+      "morpheus_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "Architect": {
+    "type": "floor",
+    "module": "Architect",
+    "capabilities": [
+      "task_management",
+      "time_tracking",
+      "mission_planning"
+    ],
+    "provides": [
+      "architect_ui",
+      "architect_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "TheConstruct": {
+    "type": "floor",
+    "module": "TheConstruct",
+    "capabilities": [
+      "physics_sim",
+      "raphael",
+      "orbital",
+      "quantum",
+      "big_bang"
+    ],
+    "provides": [
+      "theconstruct_ui",
+      "theconstruct_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "Oracle": {
+    "type": "floor",
+    "module": "Oracle",
+    "capabilities": [
+      "document_vault",
+      "ip_storage",
+      "archival"
+    ],
+    "provides": [
+      "oracle_ui",
+      "oracle_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "Smith": {
+    "type": "floor",
+    "module": "Smith",
+    "capabilities": [
+      "automation",
+      "background_jobs",
+      "scheduling"
+    ],
+    "provides": [
+      "smith_ui",
+      "smith_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "Merovingian": {
+    "type": "floor",
+    "module": "Merovingian",
+    "capabilities": [
+      "system_health",
+      "monitoring",
+      "diagnostics",
+      "database"
+    ],
+    "provides": [
+      "merovingian_ui",
+      "merovingian_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "Trinity": {
+    "type": "floor",
+    "module": "Trinity",
+    "capabilities": [
+      "dashboard",
+      "visualization",
+      "3d_ui",
+      "user_interface"
+    ],
+    "provides": [
+      "trinity_ui",
+      "trinity_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "database": {
+    "type": "service",
+    "module": "core.services.database",
+    "capabilities": [
+      "crud_ops",
+      "schema",
+      "migrations"
+    ],
+    "provides": [
+      "database_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "event_bus": {
+    "type": "service",
+    "module": "core.services.event_bus",
+    "capabilities": [
+      "pub_sub",
+      "event_routing",
+      "async_delivery"
+    ],
+    "provides": [
+      "event_bus_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "logger": {
+    "type": "service",
+    "module": "core.services.logger",
+    "capabilities": [
+      "logging",
+      "structured_logs",
+      "json_output"
+    ],
+    "provides": [
+      "logger_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "storage": {
+    "type": "service",
+    "module": "core.services.storage",
+    "capabilities": [
+      "file_storage",
+      "checksums",
+      "namespaces"
+    ],
+    "provides": [
+      "storage_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "predictive_maintenance": {
+    "type": "service",
+    "module": "core.services.predictive_maintenance",
+    "capabilities": [
+      "forecasting",
+      "risk_scoring",
+      "alerting",
+      "job_scheduling"
+    ],
+    "provides": [
+      "predictive_maintenance_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "mark3_simulator": {
+    "type": "simulator",
+    "module": "core.simulations.mark3",
+    "capabilities": [
+      "extraction_sim",
+      "thermal_calc",
+      "efficiency_tracking"
+    ],
+    "provides": [
+      "mark3_api",
+      "simulation_data"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "raphael_equations": {
+    "type": "simulator",
+    "module": "core.physics_modules.raphael_equations",
+    "capabilities": [
+      "unified_field",
+      "energy_calc",
+      "force_calc"
+    ],
+    "provides": [
+      "raphael_equations_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "orbital_mechanics": {
+    "type": "simulator",
+    "module": "core.physics_modules.orbital_mechanics",
+    "capabilities": [
+      "trajectory",
+      "orbital_elements",
+      "n_body"
+    ],
+    "provides": [
+      "orbital_mechanics_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "quantum_mechanics": {
+    "type": "simulator",
+    "module": "core.physics_modules.quantum_mechanics",
+    "capabilities": [
+      "state_evolution",
+      "radial_distribution",
+      "visualization"
+    ],
+    "provides": [
+      "quantum_mechanics_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "big_bang_simulation": {
+    "type": "simulator",
+    "module": "core.physics_modules.big_bang_simulation",
+    "capabilities": [
+      "universe_expansion",
+      "fractal_refinement"
+    ],
+    "provides": [
+      "big_bang_simulation_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "hybrid_renderer": {
+    "type": "renderer",
+    "module": "core.rendering.hybrid_renderer",
+    "capabilities": [
+      "triangle_mesh",
+      "sphere_vertices",
+      "plotly_export",
+      "matplotlib_export",
+      "raphael_energy",
+      "barycentric_color"
+    ],
+    "provides": [
+      "renderer_api",
+      "visualization_data"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "sphere_primitive": {
+    "type": "renderer",
+    "module": "core.rendering.sphere_primitive",
+    "capabilities": [
+      "sphere_generation",
+      "material_system",
+      "rgbt_wavelength"
+    ],
+    "provides": [
+      "primitive_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "ast_analyzer": {
+    "type": "analyzer",
+    "module": "core.analysis.ast_analyzer",
+    "capabilities": [
+      "ast_parsing",
+      "code_structure",
+      "function_extraction"
+    ],
+    "provides": [
+      "ast_analyzer_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "indexer": {
+    "type": "analyzer",
+    "module": "core.analysis.indexer",
+    "capabilities": [
+      "project_indexing",
+      "search",
+      "metadata"
+    ],
+    "provides": [
+      "indexer_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "dependencies": {
+    "type": "analyzer",
+    "module": "core.analysis.dependencies",
+    "capabilities": [
+      "dep_tracking",
+      "import_analysis",
+      "graph_generation"
+    ],
+    "provides": [
+      "dependencies_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "cognigrex_models": {
+    "type": "ai_system",
+    "module": "core.cognigrex.models",
+    "capabilities": [
+      "model_creation",
+      "model_tracking",
+      "subtypes"
+    ],
+    "provides": [
+      "cognigrex_models_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "cognigrex_training": {
+    "type": "ai_system",
+    "module": "core.cognigrex.training",
+    "capabilities": [
+      "training_sessions",
+      "metrics",
+      "validation"
+    ],
+    "provides": [
+      "cognigrex_training_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "cognigrex_fleet": {
+    "type": "ai_system",
+    "module": "core.cognigrex.fleet",
+    "capabilities": [
+      "fleet_management",
+      "deployment",
+      "coordination"
+    ],
+    "provides": [
+      "cognigrex_fleet_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "immersive_engine": {
+    "type": "ui",
+    "module": "core.ui.immersive_engine",
+    "capabilities": [
+      "3d_scene",
+      "camera",
+      "navigation",
+      "web_export"
+    ],
+    "provides": [
+      "immersive_engine_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": true
+  },
+  "floor_widgets": {
+    "type": "ui",
+    "module": "core.ui.floor_widgets",
+    "capabilities": [
+      "widget_system",
+      "floor_ui",
+      "data_binding"
+    ],
+    "provides": [
+      "floor_widgets_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": false
+  },
+  "visualization": {
+    "type": "ui",
+    "module": "core.ui.visualization",
+    "capabilities": [
+      "chart_generation",
+      "real_time_updates"
+    ],
+    "provides": [
+      "visualization_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": false
+  },
+  "data_integration": {
+    "type": "ui",
+    "module": "core.ui.data_integration",
+    "capabilities": [
+      "floor_adapters",
+      "auto_refresh",
+      "live_data"
+    ],
+    "provides": [
+      "data_integration_api"
+    ],
+    "status": "operational",
+    "port": null,
+    "enabled": false
+  }
+}

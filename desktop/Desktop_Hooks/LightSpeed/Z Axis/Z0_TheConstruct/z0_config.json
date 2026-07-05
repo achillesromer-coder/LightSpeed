@@ -1,0 +1,80 @@
+{
+  "floor_info": {
+    "floor_id": "Z0",
+    "floor_name": "TheConstruct",
+    "floor_code": "Z0_TheConstruct",
+    "description": "Holospace, scenario-lab, physics, zoning, and simulation-output floor",
+    "primary_role": "Holospace and scenario labs",
+    "version": "5.1.2"
+  },
+  "ownership": {
+    "active_ui_coordinator": "Z Axis/TheConstruct.py",
+    "owned_data_roots": [
+      "data/labs",
+      "data/labs/heliocentric_zoning",
+      "data/labs/knowns"
+    ],
+    "owned_libraries": [
+      "physics_calculators.py",
+      "dimensions_library.py"
+    ],
+    "owned_outputs": [
+      "simulation_presets.json",
+      "simulation_parameters.json",
+      "clusters.json",
+      "targets_shortlist.json",
+      "gmat_target_batch.json"
+    ]
+  },
+  "ui_contract": {
+    "mode": "holospace_bento_wall",
+    "panel_wall_meters": 1.5,
+    "primary_surfaces": [
+      "Construct Dashboard",
+      "Project Workspace Portal",
+      "3D Visualization"
+    ],
+    "interaction_policy": {
+      "workspace": "Primary click activates visible controls; settings stay in visible menus.",
+      "holospace": "WASD and mouse look are available only in explicit immersive mode."
+    }
+  },
+  "capabilities": [
+    "holospace_preview",
+    "scenario_lab_runs",
+    "physics_calculators",
+    "dimension_reference",
+    "heliocentric_zoning",
+    "gmat_target_batch_exports",
+    "simulation_preset_generation"
+  ],
+  "runtime_flow": {
+    "inputs": [
+      "Oracle proofed knowns",
+      "Oracle empirical anchors",
+      "Neo Achilles simulation proposals",
+      "Smith queued execution jobs"
+    ],
+    "outputs": [
+      "Construct lab artifacts",
+      "GMAT target batches",
+      "Architect publish attachments",
+      "Merovingian audit/activity records"
+    ]
+  },
+  "theme": {
+    "material": "romer_premium_glass",
+    "primary_color": "#4dd0e1",
+    "background": "#0a1929",
+    "panel_background": "#1e3a5a",
+    "text_primary": "#e0f7fa",
+    "text_secondary": "#80deea",
+    "glass_opacity": 0.82,
+    "border_radius": 12
+  },
+  "startup": {
+    "auto_launch": false,
+    "load_last_session": true,
+    "restore_portals": false
+  }
+}

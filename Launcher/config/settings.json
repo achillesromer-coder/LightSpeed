@@ -1,0 +1,38 @@
+{
+  "workspace_name": "LightSpeed",
+  "theme": "auto-dark",
+  "ui_scale": 1.0,
+  "autosave_seconds": 900,
+
+  "launch": {
+    "active_tab": "Z",
+    "hide_other_tabs": true,
+    "tab_quick_switch": { "gesture": "Shift+MiddleClick", "popup_at_cursor": true }
+  },
+
+  "z_stack": {
+    "init_floors": [-3,-2,-1,0,1,2,3],
+    "level_height_m": { "0": 100.0, "default": 12.0 },
+    "neighbor_visibility": true,
+    "neighbor_opacity": 0.7,
+    "floor_labels": {
+      "-3": "Logs / Notes",
+      "-2": "SOP / Workflows",
+      "-1": "Files / Data",
+      "0":  "Lobby (All Apps in Windows)",
+      "1":  "Planning / Governance",
+      "2":  "Index / Patterns / AI Menu",
+      "3":  "AI Runtime / Multiuser",
+      "4":  "Simulation (optional)"
+    }
+  },
+
+  "ui": {
+    "font_family": "Garamond",
+    "window_opacity": 1.0,
+    "node_fill": { "light": "#F4F1EA", "dark": "#2B2B2B" },
+    "text_on_dark_choices": ["#EAEAEA","#D6D6D6","#BFBFBF"],
+    "brand_palette": "_____",
+    "blur_radius_px": 8
+  }
+}

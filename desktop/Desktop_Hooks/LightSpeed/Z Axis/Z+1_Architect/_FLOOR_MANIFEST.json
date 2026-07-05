@@ -1,0 +1,206 @@
+{
+  "floor_name": "Architect",
+  "floor_id": "architect_planning",
+  "z_level": 1,
+  "version": "5.1.2",
+  "description": "Governance, approvals, project planning, publish bundles, and finalization queues",
+  "color": "#DAA520",
+  "icon": "\ud83d\udcd0",
+  "components": [
+    {
+      "id": "architect_ui",
+      "name": "Architect UI",
+      "description": "Primary Architect governance and project planning UI",
+      "module": "Architect",
+      "class": "ArchitectUI",
+      "enabled": true,
+      "source_file": "Z Axis/Architect.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#DAA520",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            0.0,
+            0.0,
+            0
+          ],
+          [
+            1.0,
+            0.0,
+            0
+          ],
+          [
+            0.5,
+            0.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "architect",
+          "high"
+        ],
+        "category": "utility"
+      }
+    },
+    {
+      "id": "architect_portal_glass",
+      "name": "Architect Portal Glass",
+      "description": "Glass portal UI for governance signals, publish bundles, and finalization control",
+      "module": "lightspeed.floors.architect.portal_glass",
+      "class": "ArchitectPortalGlass",
+      "enabled": true,
+      "source_file": "Z Axis/Z+1_Architect/components/architect_portal_glass.py",
+      "phase": 1,
+      "priority": "medium",
+      "metadata": {
+        "color": "#DAA520",
+        "brightness": 0.85,
+        "reflectivity": 0.55,
+        "opacity": 1.0,
+        "tags": [
+          "architect",
+          "portal",
+          "glass",
+          "blueprints"
+        ],
+        "category": "ui"
+      }
+    },
+    {
+      "id": "dev_tools_portal_glass",
+      "name": "Dev Tools Portal Glass",
+      "description": "Development and environment tools supporting governed project work",
+      "module": "lightspeed.floors.architect.dev_tools_portal_glass",
+      "class": "DevToolsPortalGlass",
+      "enabled": true,
+      "source_file": "Z Axis/Z+1_Architect/components/dev_tools_portal_glass.py",
+      "phase": 1,
+      "priority": "low",
+      "metadata": {
+        "color": "#10b981",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "tags": [
+          "devtools",
+          "environment",
+          "terminal",
+          "legacy_tank"
+        ],
+        "category": "tools"
+      }
+    },
+    {
+      "id": "task_checklist",
+      "name": "Task Checklist",
+      "description": "Checklist widget for milestones, tasks, and progress",
+      "module": "Z_Axis.Z+1_Architect.components.progress_widget",
+      "class": "TaskChecklist",
+      "enabled": true,
+      "source_file": "Z Axis/Z+1_Architect/components/progress_widget.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#DAA520",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            2.0,
+            0.0,
+            0
+          ],
+          [
+            3.0,
+            0.0,
+            0
+          ],
+          [
+            2.5,
+            0.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "architect",
+          "high"
+        ],
+        "category": "utility"
+      }
+    }
+    ,
+    {
+      "id": "db_task_board",
+      "name": "DB Task Board",
+      "description": "Database-backed task board (from doc scans + planning)",
+      "module": "Z_Axis.Z+1_Architect.components.progress_widget",
+      "class": "DBTaskBoard",
+      "enabled": true,
+      "source_file": "Z Axis/Z+1_Architect/components/progress_widget.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#DAA520",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "tags": [
+          "architect",
+          "tasks",
+          "db"
+        ],
+        "category": "planning"
+      }
+    }
+  ],
+  "dependencies": [
+    "core.services"
+  ],
+  "services": [
+    {
+      "name": "ArchitectCoreService",
+      "type": "core",
+      "provider": "ArchitectCoreComponent",
+      "status": "active",
+      "endpoints": [
+        "/planning",
+        "/goals",
+        "/okrs",
+        "/roadmap",
+        "/tasks",
+        "/status"
+      ],
+      "description": "Governance, mission planning, approval, and publish services for Architect floor"
+    }
+  ],
+  "capabilities": [
+    "mission_planning",
+    "approvals",
+    "publish_bundles",
+    "finalization_queues",
+    "project_governance"
+  ],
+  "smart_floor": {
+    "auto_expand": true,
+    "ai_suggestions": true
+  },
+  "goals": [
+    {
+      "id": "g1",
+      "description": "Plan next quarter objectives",
+      "target": 4,
+      "current": 3
+    }
+  ],
+  "initialization_order": 6,
+  "inside_out_position": "outer_mid",
+  "created": "2025-12-23T11:44:50.360071",
+  "updated": "2026-04-08T17:15:00+10:00"
+}

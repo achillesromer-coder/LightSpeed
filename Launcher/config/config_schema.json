@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Romer/EMASSC App Config",
+  "type": "object",
+  "properties": {
+    "theme": {
+      "type": "string",
+      "enum": ["light", "dark"],
+      "description": "UI theme choice. Insert 'light' or 'dark'."
+    },
+    "ui_scale": {
+      "type": "number",
+      "minimum": 0.85,
+      "maximum": 1.25,
+      "default": 1.00,
+      "description": "Global UI scale multiplier. Range 0.85–1.25."
+    },
+    "autosave_interval_sec": {
+      "type": "integer",
+      "minimum": 60,
+      "maximum": 1800,
+      "default": 300,
+      "description": "How often to autosave. Range 60–1800 sec."
+    },
+    "visible_tabs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of tabs to show. Example: ['Layer N','Graph','Z Map','Docs']"
+    },
+    "hidden_layers": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Layer IDs to hide from this workspace."
+    },
+    "defaults": {
+      "type": "object",
+      "properties": {
+        "grid_size_px": {
+          "type": "integer",
+          "minimum": 8,
+          "maximum": 64,
+          "default": 24,
+          "description": "Snap grid for Z_Map. Range 8–64."
+        },
+        "opacity": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 1.0,
+          "default": 1.0,
+          "description": "Default element opacity. Range 0.05–1.0."
+        },
+        "blur_radius_px": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 64,
+          "default": 8,
+          "description": "Shadow/blur softness token. Range 0–64 px."
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "required": ["theme", "visible_tabs"],
+  "additionalProperties": true
+}

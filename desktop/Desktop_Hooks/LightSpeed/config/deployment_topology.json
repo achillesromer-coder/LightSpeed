@@ -1,0 +1,59 @@
+{
+  "topology_id": "d_drive_authority_2026_05_21",
+  "authoritative_roots": [
+    {
+      "label": "LightSpeed Runtime",
+      "path": "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime",
+      "role": "canonical_runtime",
+      "exists": true
+    },
+    {
+      "label": "LightSpeed Desktop Shell",
+      "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed",
+      "role": "canonical_shell",
+      "exists": true
+    },
+    {
+      "label": "De Sporte",
+      "path": "D:\\De Sporte`",
+      "role": "sibling_soft_launch_app",
+      "exists": true
+    }
+  ],
+  "reference_roots": [
+    {
+      "label": "Legacy C Drive Shell",
+      "path": "C:\\Users\\acc\\Desktop\\LightSpeed Consolidated\\LightSpeed",
+      "role": "residual_reference_only_until_retired",
+      "exists": true
+    }
+  ],
+  "staging_roots": [
+    {
+      "label": "D Drive 2026 Documents",
+      "path": "D:\\2026 Documents",
+      "role": "external_staging"
+    },
+    {
+      "label": "Raphael Support Archive",
+      "path": "D:\\Raphael",
+      "role": "de_sporte_overlay_support_reference"
+    }
+  ],
+  "migration_policy": {
+    "d_drive_mode": "authoritative_runtime_and_shell",
+    "c_drive_role": "residual_reference_only_for_not_yet_rehomed_bulk_data",
+    "delete_gate": "only_after_construct_and_smith_data_rehome_plus_runtime_verification",
+    "drive_and_repo_push": "approval_gated_after_d_drive_proof"
+  },
+  "persistence_budget": {
+    "lightspeed_primary_presence_percent": 48,
+    "non_lightspeed_window_percent": 52,
+    "de_sporte_ready_waiting_percent_of_remaining_window": 80,
+    "de_sporte_active_interaction_percent_of_remaining_window": 20,
+    "cascade_overlap_percent": 49,
+    "de_sporte_interaction_speed_factor": 0.8,
+    "policy_note": "Budgets are orchestration weights and staging intent, not literal OS CPU caps.",
+    "roster_mode": "staggered_weekly_rotation"
+  }
+}

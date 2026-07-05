@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Propulsion Window Input",
+  "type": "object",
+  "properties": {
+    "thrust_n": { "type": "number", "description": "Thrust (N)" },
+    "isp_s": { "type": "number", "description": "Specific impulse (s)" },
+    "duty_cycle": { "type": "number", "description": "Duty cycle (0-1)" },
+    "power_kw": { "type": "number", "description": "Available power (kW)" },
+    "thermal_limit_c": { "type": "number", "description": "Max temperature (C)" },
+    "exec_path": { "type": "string", "description": "Optional external simulator executable" },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "run_id": { "type": "string", "description": "Optional explicit run_id" }
+  },
+  "required": ["thrust_n", "isp_s", "duty_cycle"],
+  "additionalProperties": false
+}

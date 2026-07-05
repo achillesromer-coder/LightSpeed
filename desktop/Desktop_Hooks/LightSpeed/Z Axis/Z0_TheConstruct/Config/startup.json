@@ -1,0 +1,75 @@
+{
+  "sequence": [
+    "data_integration",
+    "visualization",
+    "floor_widgets",
+    "immersive_engine",
+    "cognigrex_fleet",
+    "cognigrex_training",
+    "cognigrex_models",
+    "dependencies",
+    "indexer",
+    "ast_analyzer",
+    "sphere_primitive",
+    "hybrid_renderer",
+    "big_bang_simulation",
+    "quantum_mechanics",
+    "orbital_mechanics",
+    "raphael_equations",
+    "mark3_simulator",
+    "storage",
+    "event_bus",
+    "Trinity",
+    "Merovingian",
+    "Smith",
+    "Oracle",
+    "TheConstruct",
+    "Architect",
+    "Morpheus",
+    "Neo"
+  ],
+  "parallel_groups": [
+    [
+      "database",
+      "event_bus",
+      "logger",
+      "storage"
+    ],
+    [
+      "mark3_simulator",
+      "raphael_equations",
+      "orbital_mechanics",
+      "quantum_mechanics",
+      "big_bang_simulation",
+      "ast_analyzer",
+      "indexer",
+      "dependencies"
+    ],
+    [
+      "hybrid_renderer",
+      "sphere_primitive",
+      "immersive_engine",
+      "floor_widgets",
+      "visualization",
+      "data_integration"
+    ],
+    [
+      "Neo",
+      "Morpheus",
+      "Architect",
+      "TheConstruct",
+      "Oracle",
+      "Smith",
+      "Merovingian",
+      "Trinity"
+    ]
+  ],
+  "critical_services": [
+    "database",
+    "event_bus",
+    "logger"
+  ],
+  "optional_services": [
+    "storage"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "tool_name": "Energy Trials (Solar Hull / Free Flow)",
+  "tool_key": "energy_trials",
+  "description": "Runs Solar Hull layer and Free Flow graphene concentration trials; writes artifacts + manifest under /w6/data/energy/<run_id>/",
+  "default_z_context": "The Construct",
+  "default_workspace": "w6_asset_library",
+  "actions": [
+    "run",
+    "view_manifest"
+  ],
+  "default_output_path": "/w6/data/energy",
+  "ui": {
+    "show": true,
+    "category": "Materials"
+  }
+}

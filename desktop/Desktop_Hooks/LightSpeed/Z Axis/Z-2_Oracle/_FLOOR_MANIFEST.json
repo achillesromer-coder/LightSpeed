@@ -1,0 +1,185 @@
+{
+  "floor_name": "Oracle",
+  "floor_id": "oracle_archive",
+  "z_level": -2,
+  "version": "5.1.2",
+  "description": "Catalog, proofed knowns, empirical data, datatables, and provenance floor",
+  "color": "#00008B",
+  "icon": "\ud83d\udcda",
+  "components": [
+    {
+      "id": "oracle_ui",
+      "name": "Oracle UI",
+      "description": "Primary Oracle catalog, knowns, and provenance portal UI",
+      "module": "Oracle",
+      "class": "OracleUI",
+      "enabled": true,
+      "source_file": "Z Axis/Oracle.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#00008B",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            0.0,
+            0.0,
+            0
+          ],
+          [
+            1.0,
+            0.0,
+            0
+          ],
+          [
+            0.5,
+            0.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "oracle",
+          "catalog",
+          "high"
+        ],
+        "category": "core"
+      }
+    },
+    {
+      "id": "oracle_ui_panel",
+      "name": "Oracle UI Panel",
+      "description": "Oracle UI panel for curated catalog, ingestion, and proofed search",
+      "module": "lightspeed.floors.oracle.ui_panel",
+      "class": "OracleUIPanel",
+      "enabled": true,
+      "source_file": "Z Axis/Z-2_Oracle/components/oracle_ui_panel.py",
+      "phase": 1,
+      "priority": "medium",
+      "metadata": {
+        "tags": ["oracle", "panel", "catalog"],
+        "category": "ui"
+      }
+    },
+    {
+      "id": "oracle_portal_glass",
+      "name": "Oracle Portal Glass",
+      "description": "Oracle glass portal window for catalog, knowns, empirical, and datatable surfaces",
+      "module": "Z_Axis.Z-2_Oracle.components.oracle_portal_glass",
+      "class": "OraclePortalGlass",
+      "enabled": true,
+      "source_file": "Z Axis/Z-2_Oracle/components/oracle_portal_glass.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "color": "#00008B",
+        "brightness": 0.8,
+        "reflectivity": 0.5,
+        "opacity": 1.0,
+        "triangle_vertices": [
+          [
+            2.0,
+            0.0,
+            0
+          ],
+          [
+            3.0,
+            0.0,
+            0
+          ],
+          [
+            2.5,
+            0.866,
+            0
+          ]
+        ],
+        "circle_radius": 0.5,
+        "tags": [
+          "oracle",
+          "knowns",
+          "high"
+        ],
+        "category": "utility"
+      }
+    },
+    {
+      "id": "oracle_smart_floor_integrator",
+      "name": "Oracle Smart Floor Integrator",
+      "description": "DB-backed ingestion queue, extraction, proofing, and Smith routing for Oracle",
+      "module": "Z_Axis.Z-2_Oracle.components.oracle_smart_floor_integrator",
+      "class": "OracleSmartFloorIntegrator",
+      "enabled": true,
+      "source_file": "Z Axis/Z-2_Oracle/components/oracle_smart_floor_integrator.py",
+      "phase": 1,
+      "priority": "high",
+      "metadata": {
+        "tags": ["oracle", "ingestion", "proofing", "routing", "smith"],
+        "category": "automation"
+      }
+    },
+    {
+      "id": "encyclopedia_system",
+      "name": "Encyclopedia System",
+      "description": "Encyclopedia candidates and proofed definition surface",
+      "module": "Z_Axis.Z-2_Oracle.components.encyclopedia_system",
+      "class": "EncyclopediaSystem",
+      "enabled": true,
+      "source_file": "Z Axis/Z-2_Oracle/components/encyclopedia_system.py",
+      "phase": 1,
+      "priority": "medium",
+      "metadata": {
+        "tags": ["oracle", "knowns", "encyclopedia"],
+        "category": "knowledge"
+      }
+    }
+  ],
+  "dependencies": [
+    "core.services",
+    "core.services.storage"
+  ],
+  "services": [
+    {
+      "name": "OracleCoreService",
+      "type": "core",
+      "provider": "OracleCoreComponent",
+      "status": "active",
+      "endpoints": [
+        "/catalog",
+        "/knowns",
+        "/document",
+        "/datatables",
+        "/ingestion",
+        "/status"
+      ],
+      "description": "Core catalog, proofed knowns, datatable, ingestion, and provenance services for Oracle floor"
+    }
+  ],
+  "capabilities": [
+    "mounted_source_catalog",
+    "proofed_knowns",
+    "definition_library",
+    "empirical_catalog",
+    "encyclopedia_candidates",
+    "curated_datatables",
+    "dataset_catalog",
+    "provenance_views"
+  ],
+  "smart_floor": {
+    "auto_expand": true,
+    "ai_suggestions": false
+  },
+  "goals": [
+    {
+      "id": "oracle.finalization",
+      "description": "Keep raw evidence secondary and expose proofed knowns, catalogs, and datatables as the primary surface",
+      "target": 1,
+      "current": 1
+    }
+  ],
+  "initialization_order": 3,
+  "inside_out_position": "inner_knowledge",
+  "created": "2025-12-23T11:44:50.375695",
+  "updated": "2026-04-08T21:05:00+10:00"
+}

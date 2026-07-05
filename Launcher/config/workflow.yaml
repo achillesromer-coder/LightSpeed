@@ -1,0 +1,14 @@
+reviewers:
+  configurable_in_user_profiles: true       # choose X,Y,Z per project/type
+sla_days:
+  default: null                              # N/A; urgency chip governs
+blocking_rules:
+  publish_requires:
+    - no_open_blockers
+    - reviewer_feedback_resolved
+comments_required_when_blocked: true
+hooks:
+  checksum: "sha256"
+  notarise_ip: true
+  webhooks: []                               # add endpoints later
+  provenance_log_to_z_axis: true
