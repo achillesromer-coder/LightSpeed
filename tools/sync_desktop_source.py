@@ -226,6 +226,7 @@ def _walk_approved_files(
     source_root: Path,
     directory: Path,
     approved_extensions: tuple[str, ...],
+    approved_extensionless_files: frozenset[str],
     deny_patterns: tuple[str, ...],
     records: set[str],
 ) -> None:
@@ -246,11 +247,15 @@ def _walk_approved_files(
                 source_root,
                 path,
                 approved_extensions,
+                approved_extensionless_files,
                 deny_patterns,
                 records,
             )
         elif entry.is_file(follow_symlinks=False):
-            if path.suffix.casefold() in approved_extensions:
+            if (
+                path.suffix.casefold() in approved_extensions
+                or relative in approved_extensionless_files
+            ):
                 records.add(relative)
 
 
@@ -260,10 +265,14 @@ def expand_source_paths(
     extensions: Iterable[str] = DEFAULT_EXTENSIONS,
     *,
     deny_patterns: Iterable[str] = (),
+    extensionless_files: Iterable[str] = (),
 ) -> list[str]:
     """Expand explicit files and directories into deterministic source paths."""
     source_root = _absolute_path(source_root)
     approved_extensions = _normalized_extensions(extensions)
+    approved_extensionless_files = frozenset(
+        _normalized_relative_path(value) for value in extensionless_files
+    )
     normalized_deny_patterns = _normalized_deny_patterns(deny_patterns)
     _assert_no_reparse_points(source_root)
     if not source_root.is_dir():
@@ -279,7 +288,10 @@ def expand_source_paths(
         if not source.exists():
             raise FileNotFoundError(f"allowlisted source does not exist: {relative}")
         if source.is_file():
-            if source.suffix.casefold() not in approved_extensions:
+            if (
+                source.suffix.casefold() not in approved_extensions
+                and relative not in approved_extensionless_files
+            ):
                 raise ValueError(f"source does not use an approved extension: {relative}")
             records.add(relative)
         elif source.is_dir():
@@ -287,6 +299,7 @@ def expand_source_paths(
                 source_root,
                 source,
                 approved_extensions,
+                approved_extensionless_files,
                 normalized_deny_patterns,
                 records,
             )
@@ -306,6 +319,7 @@ def load_allowlist(path: Path | str) -> dict[str, list[str]]:
     roots = payload.get("roots")
     extensions = payload.get("extensions")
     deny_patterns = payload.get("deny_patterns")
+    extensionless_files = payload.get("extensionless_files", [])
     if not isinstance(roots, list) or not roots or not all(
         isinstance(root, str) and validate_relative_path(root) for root in roots
     ):
@@ -314,11 +328,23 @@ def load_allowlist(path: Path | str) -> dict[str, list[str]]:
         raise ValueError("source allowlist extensions must be a list")
     if not isinstance(deny_patterns, list):
         raise ValueError("source allowlist deny_patterns must be a list")
+    if not isinstance(extensionless_files, list) or not all(
+        isinstance(value, str)
+        and validate_relative_path(value)
+        and not PurePosixPath(value.replace("\\", "/")).suffix
+        for value in extensionless_files
+    ):
+        raise ValueError(
+            "source allowlist extensionless_files must be safe extensionless paths"
+        )
 
     return {
         "roots": roots,
         "extensions": list(_normalized_extensions(extensions)),
         "deny_patterns": list(_normalized_deny_patterns(deny_patterns)),
+        "extensionless_files": [
+            _normalized_relative_path(value) for value in extensionless_files
+        ],
     }
 
 
@@ -547,6 +573,7 @@ def sync_sources(
     *,
     extensions: Iterable[str] = DEFAULT_EXTENSIONS,
     deny_patterns: Iterable[str] = (),
+    extensionless_files: Iterable[str] = (),
     dry_run: bool = False,
     manifest_name: str = DEFAULT_MANIFEST_NAME,
     before_replace: _BeforeReplace | None = None,
@@ -561,6 +588,7 @@ def sync_sources(
         paths,
         extensions,
         deny_patterns=deny_patterns,
+        extensionless_files=extensionless_files,
     )
     if manifest_relative in expanded_paths:
         raise ValueError("manifest path conflicts with an allowlisted source file")
@@ -675,6 +703,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         allowlist["roots"],
         extensions=allowlist["extensions"],
         deny_patterns=allowlist["deny_patterns"],
+        extensionless_files=allowlist["extensionless_files"],
         dry_run=args.dry_run,
         manifest_name=args.manifest,
         prune_roots=("Desktop_Hooks", "LightSpeed_Runtime"),

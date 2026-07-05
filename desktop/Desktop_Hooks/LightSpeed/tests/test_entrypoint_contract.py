@@ -34,3 +34,18 @@ def test_trinity_shell_is_embedded_and_readiness_checks_real_surface():
     assert 'portal = ITShell(' in n_source
     assert 'class ITPortal(tk.Frame):' in portal_source
     assert 'class ITPortal(tk.Toplevel):' not in portal_source
+
+
+def test_shell_labels_use_the_canonical_version_file():
+    n_source = (LIGHTSPEED_ROOT / "N.py").read_text(encoding="utf-8")
+
+    assert (LIGHTSPEED_ROOT / "VERSION").read_text(encoding="utf-8").strip() == "5.1.2"
+    assert "LIGHTSPEED_VERSION = _read_lightspeed_version()" in n_source
+    assert (
+        'self.title(f"LightSpeed Unified Orchestrator v{LIGHTSPEED_VERSION}")'
+        in n_source
+    )
+    assert (
+        'description=f"LightSpeed Unified Orchestrator v{LIGHTSPEED_VERSION}"'
+        in n_source
+    )

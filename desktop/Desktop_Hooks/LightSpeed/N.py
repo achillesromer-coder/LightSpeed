@@ -85,6 +85,21 @@ LIGHTSPEED_ROOT = Path(__file__).parent.resolve()
 sys.path.insert(0, str(LIGHTSPEED_ROOT))
 sys.path.insert(0, str(LIGHTSPEED_ROOT / "Z Axis"))
 
+
+def _read_lightspeed_version() -> str:
+    try:
+        return (
+            (LIGHTSPEED_ROOT / "VERSION")
+            .read_text(encoding="utf-8", errors="replace")
+            .strip()
+            or "unknown"
+        )
+    except OSError:
+        return "unknown"
+
+
+LIGHTSPEED_VERSION = _read_lightspeed_version()
+
 # Transitional package roots (until everything is fully floor-native).
 _Z_AXIS_ROOT = LIGHTSPEED_ROOT / "Z Axis"
 _TRINITY_ROOT = _Z_AXIS_ROOT / "Z+3_Trinity"
@@ -678,7 +693,7 @@ class LightSpeedUnified(tk.Tk):
             self.use_premium_theme = False
 
         # Window setup
-        self.title("LightSpeed Unified Orchestrator v1.0.0")
+        self.title(f"LightSpeed Unified Orchestrator v{LIGHTSPEED_VERSION}")
         self.geometry("1600x1000")
         try:
             self.state('zoomed')
@@ -8116,7 +8131,7 @@ def main():
         pass
 
     parser = argparse.ArgumentParser(
-        description="LightSpeed Unified Orchestrator V1.0.0"
+        description=f"LightSpeed Unified Orchestrator v{LIGHTSPEED_VERSION}"
     )
     parser.add_argument('--cli', action='store_true', help='CLI mode')
     parser.add_argument('--portal', '--2d', '--gui', action='store_true',
@@ -8194,11 +8209,7 @@ def main():
         pass
 
     if args.version:
-        try:
-            v = (LIGHTSPEED_ROOT / "VERSION").read_text(encoding="utf-8", errors="replace").strip() or "unknown"
-        except Exception:
-            v = "unknown"
-        print(f"LightSpeed Unified Orchestrator v{v}")
+        print(f"LightSpeed Unified Orchestrator v{LIGHTSPEED_VERSION}")
         print("Primary Interface: N.py (UI shell)")
         print("Admin Surface: Trinity IT Portal")
         print("Author: Romer Industries / EMASSC")

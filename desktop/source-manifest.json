@@ -211,9 +211,9 @@
       "sha256": "93b2140afd2dfb1397cbfcefc27a12adefc0860cad5fb732bc4a99d50af43bd1"
     },
     {
-      "bytes": 368200,
+      "bytes": 368381,
       "path": "Desktop_Hooks/LightSpeed/N.py",
-      "sha256": "8fa6011e7c6cd5165d4ebc822e1bd9eaa9506d9b62cd57fff1a927d489a186eb"
+      "sha256": "2a8935221e80e282a5f53246874c20bf3161468d2c8d3ce515414d567a2ae144"
     },
     {
       "bytes": 738,
@@ -271,9 +271,9 @@
       "sha256": "82b3835d993124274eb79400de6dcaf129c5e370cfed705fae3ba0e25ba36267"
     },
     {
-      "bytes": 1131,
+      "bytes": 1657,
       "path": "Desktop_Hooks/LightSpeed/tests/test_entrypoint_contract.py",
-      "sha256": "0af22476b0e3114a4c262a18b9d578962177d0209a92cc6e576b08d38b13315c"
+      "sha256": "a356c1ad5adef36f08dfd74c10bf1cfd51eea322748562f12cb28a7530c3d1af"
     },
     {
       "bytes": 4394,
@@ -404,6 +404,11 @@
       "bytes": 26655,
       "path": "Desktop_Hooks/LightSpeed/verify_launch_ready.py",
       "sha256": "5e4077fd27c1d98e105ea132d42aeb556cf43bac8236b0344fa8044251bc809f"
+    },
+    {
+      "bytes": 6,
+      "path": "Desktop_Hooks/LightSpeed/VERSION",
+      "sha256": "0c9a9d43610d66f4cc3f42da08cae044483de25894a9daf9dc6a76ff75ca9327"
     },
     {
       "bytes": 3518,

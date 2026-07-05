@@ -2,6 +2,7 @@
   "roots": [
     "Desktop_Hooks/LightSpeed/N.py",
     "Desktop_Hooks/LightSpeed/__main__.py",
+    "Desktop_Hooks/LightSpeed/VERSION",
     "Desktop_Hooks/LightSpeed/launcher_exe.py",
     "Desktop_Hooks/LightSpeed/verify_launch_ready.py",
     "Desktop_Hooks/LightSpeed/config/backend_frontend_build_contract.json",
@@ -28,6 +29,9 @@
     ".md",
     ".ini",
     ".cfg"
+  ],
+  "extensionless_files": [
+    "Desktop_Hooks/LightSpeed/VERSION"
   ],
   "deny_patterns": [
     "**/*secret*",

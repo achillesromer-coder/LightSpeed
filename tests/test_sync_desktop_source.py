@@ -123,6 +123,23 @@ def test_expand_source_paths_rejects_unapproved_explicit_file(tmp_path):
         expand_source_paths(source, ["payload.zip"], [".py"])
 
 
+def test_expand_source_paths_allows_only_named_extensionless_files(tmp_path):
+    source = tmp_path / "source"
+    source.mkdir()
+    (source / "VERSION").write_text("5.1.2\n", encoding="utf-8")
+    (source / "UNREVIEWED").write_text("payload\n", encoding="utf-8")
+
+    assert expand_source_paths(
+        source,
+        ["VERSION"],
+        [".py"],
+        extensionless_files=["VERSION"],
+    ) == ["VERSION"]
+
+    with pytest.raises(ValueError, match="approved extension"):
+        expand_source_paths(source, ["UNREVIEWED"], [".py"])
+
+
 def test_expand_source_paths_excludes_denied_state_and_secret_names(tmp_path):
     source = tmp_path / "source"
     config = source / "config"
@@ -521,6 +538,7 @@ def test_repository_allowlist_names_only_active_source_roots_and_extensions():
     assert allowlist["roots"] == [
         "Desktop_Hooks/LightSpeed/N.py",
         "Desktop_Hooks/LightSpeed/__main__.py",
+            "Desktop_Hooks/LightSpeed/VERSION",
             "Desktop_Hooks/LightSpeed/launcher_exe.py",
             "Desktop_Hooks/LightSpeed/verify_launch_ready.py",
             "Desktop_Hooks/LightSpeed/config/backend_frontend_build_contract.json",
@@ -547,6 +565,9 @@ def test_repository_allowlist_names_only_active_source_roots_and_extensions():
         ".md",
         ".ini",
         ".cfg",
+    ]
+    assert allowlist["extensionless_files"] == [
+        "Desktop_Hooks/LightSpeed/VERSION",
     ]
     assert allowlist["deny_patterns"] == [
         "**/*secret*",
