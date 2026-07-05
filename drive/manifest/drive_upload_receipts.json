@@ -1,0 +1,166 @@
+{
+  "schema_version": "lightspeed-drive-upload-receipts-v1",
+  "verified_at_utc": "2026-07-05T00:00:03Z",
+  "verification": {
+    "folder_readback": true,
+    "native_sheet_mime_type": "application/vnd.google-apps.spreadsheet",
+    "sheet_schema_classes_checked": [
+      "neo",
+      "floor",
+      "exchange"
+    ],
+    "unexpected_duplicates": 0
+  },
+  "targets": {
+    "N. LightSpeed": {
+      "folder_id": "1lGoz1i8UBbYEt7lCl1esRg7IfF3it24q",
+      "landing": {
+        "id": "1ztqfsc5CFCnUzqB-Lfj-T_uUejo71zxp",
+        "name": "N_LIGHTSPEED_README.md",
+        "sha256": "328AF98AE29F9EC4AB276E34DBD55F2160A3314FF0428385B2572BE648E3A222",
+        "url": "https://drive.google.com/file/d/1ztqfsc5CFCnUzqB-Lfj-T_uUejo71zxp/view?usp=drivesdk"
+      },
+      "workbook": {
+        "id": "1eIIOgnB2R_sHxepi8PdKa6qXtaKYPMsOsetjrzdqvmw",
+        "name": "N. LightSpeed",
+        "source_sha256": "8549C7CBF338DDF8870AF66DC7088FC2203D67BBBFDF73495595E2921024233D",
+        "url": "https://docs.google.com/spreadsheets/d/1eIIOgnB2R_sHxepi8PdKa6qXtaKYPMsOsetjrzdqvmw/edit?usp=drivesdk"
+      }
+    },
+    "Trinity": {
+      "folder_id": "1fivprxdxIahCsWSZXTbVdFfJ5m3FCnf3",
+      "landing": {
+        "id": "11leSmuYxP6kq7OUt3vOJwjFOHp7FCChh",
+        "name": "TRINITY_README.md",
+        "sha256": "D57B436031439C742DF6582705F46EC88E4EE74BBDD10C434D509D07596D504F",
+        "url": "https://drive.google.com/file/d/11leSmuYxP6kq7OUt3vOJwjFOHp7FCChh/view?usp=drivesdk"
+      },
+      "workbook": {
+        "id": "1EB_t0RTr9e3Vr4bNstIXcq9f7oDsW3tB80NULrraUdk",
+        "name": "Trinity LightSpeed",
+        "source_sha256": "48B323BE6F65C49A52111FB8D7D6CAD563C70507B1B5D283DB80EAE7A80816F0",
+        "url": "https://docs.google.com/spreadsheets/d/1EB_t0RTr9e3Vr4bNstIXcq9f7oDsW3tB80NULrraUdk/edit?usp=drivesdk"
+      }
+    },
+    "Architect": {
+      "folder_id": "1pyLfQaHBYB_b7Uk-8N1x16_4nmc-_rhA",
+      "landing": {
+        "id": "1rSwfHMwaFhUP9JjWuEZLMPy2HSxtHGys",
+        "name": "ARCHITECT_README.md",
+        "sha256": "85CBC119E9585FD2E72FE47A9C8FE37465BFB505C32E44309A1319D5AF035A44",
+        "url": "https://drive.google.com/file/d/1rSwfHMwaFhUP9JjWuEZLMPy2HSxtHGys/view?usp=drivesdk"
+      },
+      "workbook": {
+        "id": "1wY5MB8HizBrdOUunaBuaXMvzQnWRbHqi_FTiKnpEu7o",
+        "name": "Architect LightSpeed",
+        "source_sha256": "69222460EEEF4EB92754E13FB5786E1379A931605F1D507B3DB8BB83ABF18F0F",
+        "url": "https://docs.google.com/spreadsheets/d/1wY5MB8HizBrdOUunaBuaXMvzQnWRbHqi_FTiKnpEu7o/edit?usp=drivesdk"
+      }
+    },
+    "Morpheous": {
+      "folder_id": "1Gpfq5SQ7Ca1SfPR_-1HLM6GAQTNfO8lE",
+      "landing": {
+        "id": "1olRQW9s4YLxn36kTpC-ewxSk7LlyP9Ut",
+        "name": "MORPHEUS_README.md",
+        "sha256": "EB322325FCBA5763DE372499CD3D1404795F15A9BD5B4F2B3DB645BFD9B29075",
+        "url": "https://drive.google.com/file/d/1olRQW9s4YLxn36kTpC-ewxSk7LlyP9Ut/view?usp=drivesdk"
+      },
+      "workbook": {
+        "id": "1pwZisd2Jt71xY1dI43IFjHZevd1ZPPv9N2wW6OXSO7o",
+        "name": "Morpheous LightSpeed",
+        "source_sha256": "E4D7AC218983015DDC1DE97FE670D9291CAB5D24004F6F133876E1F7891F9E4D",
+        "url": "https://docs.google.com/spreadsheets/d/1pwZisd2Jt71xY1dI43IFjHZevd1ZPPv9N2wW6OXSO7o/edit?usp=drivesdk"
+      }
+    },
+    "Oracle": {
+      "folder_id": "1egRJ7sqDAA1nxysvenavx4g2Z_vrjfQx",
+      "landing": {
+        "id": "1mx1vikvburb-T-SO6fHllKvIgHMGw5PG",
+        "name": "ORACLE_README.md",
+        "sha256": "AAB150826BA9B6E952119F8ADD79D8C97270941B663769C6F827FA01B970E0BD",
+        "url": "https://drive.google.com/file/d/1mx1vikvburb-T-SO6fHllKvIgHMGw5PG/view?usp=drivesdk"
+      },
+      "workbook": {
+        "id": "166ioxhBwP3lWzd_obKuAIJ3xDcgOvnhFmXSLWkBrjA0",
+        "name": "Oracle LightSpeed",
+        "source_sha256": "DCDD659F093434F7487586B13ED1BE5A92CA0ED8EEC67ED1ED8A202DA3CA9EAD",
+        "url": "https://docs.google.com/spreadsheets/d/166ioxhBwP3lWzd_obKuAIJ3xDcgOvnhFmXSLWkBrjA0/edit?usp=drivesdk"
+      }
+    },
+    "Smith": {
+      "folder_id": "1VN0Kw_WZtqpY-b3AI5pEXRMFXSB9zppB",
+      "landing": {
+        "id": "1zUeF5BdbA3y3ap_TIEM8Hl8LcgfsagE4",
+        "name": "SMITH_README.md",
+        "sha256": "719A032C17AA4A46EDDD902098472A3FE9ACFC1E4E09509EF4DF45CED1D95FA6",
+        "url": "https://drive.google.com/file/d/1zUeF5BdbA3y3ap_TIEM8Hl8LcgfsagE4/view?usp=drivesdk"
+      },
+      "workbook": {
+        "id": "1ujs-58JWiTvIcj-vXQiTSq0b78U-9UQUvu6wj2bC2_E",
+        "name": "Smith LightSpeed",
+        "source_sha256": "82E680FD8AACF5392E8549AFC7B67BC773C9BBD8A546570734E45073CE416123",
+        "url": "https://docs.google.com/spreadsheets/d/1ujs-58JWiTvIcj-vXQiTSq0b78U-9UQUvu6wj2bC2_E/edit?usp=drivesdk"
+      }
+    },
+    "Merovingian": {
+      "folder_id": "1I3ObZ-F4Z8T9jAJC3_MKpzdktHAvO2e1",
+      "landing": {
+        "id": "1Wo-5nFwq7Mm1D_qH95zCj-QjAsLCvkWN",
+        "name": "MEROVINGIAN_README.md",
+        "sha256": "3000903E996E4C83F12E7F8A6EE78AD53B0D3ABA67187F3F1306C789BACC2A29",
+        "url": "https://drive.google.com/file/d/1Wo-5nFwq7Mm1D_qH95zCj-QjAsLCvkWN/view?usp=drivesdk"
+      },
+      "workbook": {
+        "id": "13dHeodDC8Wh6xe61EESb45e_oqb8AUOk_k0dNrp-DMU",
+        "name": "Merovingian LightSpeed",
+        "source_sha256": "393A778ADD3D954308E33B4E5C9056B9FE547F37571E5CEBAB46317AE80A6BF9",
+        "url": "https://docs.google.com/spreadsheets/d/13dHeodDC8Wh6xe61EESb45e_oqb8AUOk_k0dNrp-DMU/edit?usp=drivesdk"
+      }
+    },
+    "LS Neo": {
+      "folder_id": "1VCDr6P782elSQCd2YFsZI33DNWJ0Z0cN",
+      "landing": {
+        "id": "1_JoBU-9eLa6lgB0A0k4VvWPff0O7CIeH",
+        "name": "LS_NEO_EXCHANGE_README.md",
+        "sha256": "57292E9F712B0535BD356FD1BB4FB06E70C823AAD7ECFA48E483B10F9EEAB91B",
+        "url": "https://drive.google.com/file/d/1_JoBU-9eLa6lgB0A0k4VvWPff0O7CIeH/view?usp=drivesdk"
+      },
+      "workbook": {
+        "id": "1SdzXsjjEBqDV7MnEjvo5uEFhPwOzW1KFFJTac1TqmpU",
+        "name": "LS Neo Exchange",
+        "source_sha256": "61EC71A587B5B575424C4065838B70FAB88E9DA9C15364B6AD0D45DDEBC0D213",
+        "url": "https://docs.google.com/spreadsheets/d/1SdzXsjjEBqDV7MnEjvo5uEFhPwOzW1KFFJTac1TqmpU/edit?usp=drivesdk"
+      }
+    },
+    "LS Web": {
+      "folder_id": "1Itg0-L_mHrL4D5DdQf0SobelEAc9LFIJ",
+      "landing": {
+        "id": "19hP8rIEZq36bxhp2iLihqn8f6c2u372V",
+        "name": "LS_WEB_EXCHANGE_README.md",
+        "sha256": "37DA0AA03D38162A9128FFB036D5D532F2135311CF2B8902EB1D3791307EACD8",
+        "url": "https://drive.google.com/file/d/19hP8rIEZq36bxhp2iLihqn8f6c2u372V/view?usp=drivesdk"
+      },
+      "workbook": {
+        "id": "1mcAuE8pCaLdKDJJKAhD5eAKAfA9oa6xwuLIBB0NldKo",
+        "name": "LS Web Exchange",
+        "source_sha256": "0E29D73DDA380C77E59CC97CBAFF02350DDF86E5F0258197BCCE5881E7F57190",
+        "url": "https://docs.google.com/spreadsheets/d/1mcAuE8pCaLdKDJJKAhD5eAKAfA9oa6xwuLIBB0NldKo/edit?usp=drivesdk"
+      }
+    },
+    "LS GO": {
+      "folder_id": "1tW4UcuWtuiJHzhfOife1BFfMGqLGzhkt",
+      "landing": {
+        "id": "1XaIwC8jYBQu5iU6K-aSIyfh3SAvWcG65",
+        "name": "LS_GO_EXCHANGE_README.md",
+        "sha256": "57DDBF1ED9B4B1213E588E8B2661B50C7F1CE12D84F85A96FCD8B100BBF6C646",
+        "url": "https://drive.google.com/file/d/1XaIwC8jYBQu5iU6K-aSIyfh3SAvWcG65/view?usp=drivesdk"
+      },
+      "workbook": {
+        "id": "1fQyHcIOn84FLeN9_Rvb_ViDMR0VKT9hElDcyrxvQm1g",
+        "name": "LS GO Exchange",
+        "source_sha256": "F2E2606AA7FE4135525223EE2AB2680787AE666C61450DDEAF5A35860EEECCAA",
+        "url": "https://docs.google.com/spreadsheets/d/1fQyHcIOn84FLeN9_Rvb_ViDMR0VKT9hElDcyrxvQm1g/edit?usp=drivesdk"
+      }
+    }
+  }
+}

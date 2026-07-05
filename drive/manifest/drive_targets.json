@@ -1,0 +1,112 @@
+{
+  "schema_version": "lightspeed-drive-targets-v1",
+  "generated_at": "2026-07-04T15:08:59+00:00",
+  "repository": "https://github.com/achillesromer-coder/LightSpeed",
+  "authority": {
+    "local_runtime": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed",
+    "drive": "approved long-term inter-platform persistence",
+    "git": "source, schemas, manifests, and public-safe projections"
+  },
+  "targets": {
+    "N. LightSpeed": {
+      "folder_id": "1lGoz1i8UBbYEt7lCl1esRg7IfF3it24q",
+      "landing": "N_LIGHTSPEED_README.md",
+      "workbook": "N_LightSpeed.xlsx",
+      "kind": "neo",
+      "owner": "Neo",
+      "folder_url": "https://drive.google.com/drive/folders/1lGoz1i8UBbYEt7lCl1esRg7IfF3it24q",
+      "landing_path": "landings\\N_LIGHTSPEED_README.md",
+      "workbook_path": "workbooks\\N_LightSpeed.xlsx"
+    },
+    "Trinity": {
+      "folder_id": "1fivprxdxIahCsWSZXTbVdFfJ5m3FCnf3",
+      "landing": "TRINITY_README.md",
+      "workbook": "Trinity_LightSpeed.xlsx",
+      "kind": "floor",
+      "owner": "Trinity",
+      "folder_url": "https://drive.google.com/drive/folders/1fivprxdxIahCsWSZXTbVdFfJ5m3FCnf3",
+      "landing_path": "landings\\TRINITY_README.md",
+      "workbook_path": "workbooks\\Trinity_LightSpeed.xlsx"
+    },
+    "Architect": {
+      "folder_id": "1pyLfQaHBYB_b7Uk-8N1x16_4nmc-_rhA",
+      "landing": "ARCHITECT_README.md",
+      "workbook": "Architect_LightSpeed.xlsx",
+      "kind": "floor",
+      "owner": "Architect",
+      "folder_url": "https://drive.google.com/drive/folders/1pyLfQaHBYB_b7Uk-8N1x16_4nmc-_rhA",
+      "landing_path": "landings\\ARCHITECT_README.md",
+      "workbook_path": "workbooks\\Architect_LightSpeed.xlsx"
+    },
+    "Morpheous": {
+      "folder_id": "1Gpfq5SQ7Ca1SfPR_-1HLM6GAQTNfO8lE",
+      "landing": "MORPHEUS_README.md",
+      "workbook": "Morpheous_LightSpeed.xlsx",
+      "kind": "floor",
+      "owner": "Morpheus",
+      "folder_url": "https://drive.google.com/drive/folders/1Gpfq5SQ7Ca1SfPR_-1HLM6GAQTNfO8lE",
+      "landing_path": "landings\\MORPHEUS_README.md",
+      "workbook_path": "workbooks\\Morpheous_LightSpeed.xlsx"
+    },
+    "Oracle": {
+      "folder_id": "1egRJ7sqDAA1nxysvenavx4g2Z_vrjfQx",
+      "landing": "ORACLE_README.md",
+      "workbook": "Oracle_LightSpeed.xlsx",
+      "kind": "floor",
+      "owner": "Oracle",
+      "folder_url": "https://drive.google.com/drive/folders/1egRJ7sqDAA1nxysvenavx4g2Z_vrjfQx",
+      "landing_path": "landings\\ORACLE_README.md",
+      "workbook_path": "workbooks\\Oracle_LightSpeed.xlsx"
+    },
+    "Smith": {
+      "folder_id": "1VN0Kw_WZtqpY-b3AI5pEXRMFXSB9zppB",
+      "landing": "SMITH_README.md",
+      "workbook": "Smith_LightSpeed.xlsx",
+      "kind": "floor",
+      "owner": "Smith",
+      "folder_url": "https://drive.google.com/drive/folders/1VN0Kw_WZtqpY-b3AI5pEXRMFXSB9zppB",
+      "landing_path": "landings\\SMITH_README.md",
+      "workbook_path": "workbooks\\Smith_LightSpeed.xlsx"
+    },
+    "Merovingian": {
+      "folder_id": "1I3ObZ-F4Z8T9jAJC3_MKpzdktHAvO2e1",
+      "landing": "MEROVINGIAN_README.md",
+      "workbook": "Merovingian_LightSpeed.xlsx",
+      "kind": "floor",
+      "owner": "Merovingian",
+      "folder_url": "https://drive.google.com/drive/folders/1I3ObZ-F4Z8T9jAJC3_MKpzdktHAvO2e1",
+      "landing_path": "landings\\MEROVINGIAN_README.md",
+      "workbook_path": "workbooks\\Merovingian_LightSpeed.xlsx"
+    },
+    "LS Neo": {
+      "folder_id": "1VCDr6P782elSQCd2YFsZI33DNWJ0Z0cN",
+      "landing": "LS_NEO_EXCHANGE_README.md",
+      "workbook": "LS_Neo_Exchange.xlsx",
+      "kind": "exchange",
+      "owner": "Neo",
+      "folder_url": "https://drive.google.com/drive/folders/1VCDr6P782elSQCd2YFsZI33DNWJ0Z0cN",
+      "landing_path": "landings\\LS_NEO_EXCHANGE_README.md",
+      "workbook_path": "workbooks\\LS_Neo_Exchange.xlsx"
+    },
+    "LS Web": {
+      "folder_id": "1Itg0-L_mHrL4D5DdQf0SobelEAc9LFIJ",
+      "landing": "LS_WEB_EXCHANGE_README.md",
+      "workbook": "LS_Web_Exchange.xlsx",
+      "kind": "exchange",
+      "owner": "LS Web",
+      "folder_url": "https://drive.google.com/drive/folders/1Itg0-L_mHrL4D5DdQf0SobelEAc9LFIJ",
+      "landing_path": "landings\\LS_WEB_EXCHANGE_README.md",
+      "workbook_path": "workbooks\\LS_Web_Exchange.xlsx"
+    },
+    "LS GO": {
+      "folder_id": "1tW4UcuWtuiJHzhfOife1BFfMGqLGzhkt",
+      "landing": "LS_GO_EXCHANGE_README.md",
+      "workbook": "LS_GO_Exchange.xlsx",
+      "kind": "exchange",
+      "owner": "LS GO",
+      "folder_url": "https://drive.google.com/drive/folders/1tW4UcuWtuiJHzhfOife1BFfMGqLGzhkt",
+      "landing_path": "landings\\LS_GO_EXCHANGE_README.md",
+      "workbook_path": "workbooks\\LS_GO_Exchange.xlsx"
+    }
+  }
+}
