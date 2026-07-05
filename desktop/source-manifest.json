@@ -241,14 +241,19 @@
       "sha256": "4a7bae41cd43897196f1841d5a5227f0c6ef0285986570aaf22a35b573979304"
     },
     {
+      "bytes": 2187,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_cognigrex_render_policy.py",
+      "sha256": "db876112ffb045205eca2a05524534395afa56137d4880cee05b328ed64594ec"
+    },
+    {
       "bytes": 3873,
       "path": "Desktop_Hooks/LightSpeed/tests/test_component_package_exports.py",
       "sha256": "91c6e4f5a81bfe7553d162a90875b8dc21c63fbc2e6cdec876c06b73ea8e4ffc"
     },
     {
-      "bytes": 4926,
+      "bytes": 5306,
       "path": "Desktop_Hooks/LightSpeed/tests/test_config_contracts.py",
-      "sha256": "04aaa40bb36611403f1853f2a822a406feaf6bc1e00936ad12f3ec4f8a3fbeb2"
+      "sha256": "499b19663dad7205e2a9a43155841b100b008e3ef125f13efb0fcc7a6065e28d"
     },
     {
       "bytes": 3485,
@@ -296,9 +301,9 @@
       "sha256": "61005a3ec9bceed921e2d2ffb12b230651da514545f646fe69519e34f1cfc9d6"
     },
     {
-      "bytes": 7563,
+      "bytes": 9387,
       "path": "Desktop_Hooks/LightSpeed/tests/test_operational_store.py",
-      "sha256": "f581673685a4aa1e69b2ab6430b79ae3672cab5f1778c263d410b81affc437af"
+      "sha256": "b51198411f7677063e8e1f397ebc298b219b0e506ca722c6cf82ebd95b28ce0b"
     },
     {
       "bytes": 13538,
@@ -341,9 +346,9 @@
       "sha256": "67fc2af03136fb5633cc6e36b39ad545459d7f5c31d8efa147519696efb8bd12"
     },
     {
-      "bytes": 123514,
+      "bytes": 125269,
       "path": "Desktop_Hooks/LightSpeed/tests/test_runtime_package.py",
-      "sha256": "0db93aa83458b4981d68d97f6d962e21ee4d64713b55f716d4161b2da391b8d6"
+      "sha256": "d97e1eb1b6b857e7d5f9cae0806f00d97b04782f2b2bf433672c7cd55154a7c1"
     },
     {
       "bytes": 15202,
@@ -901,9 +906,9 @@
       "sha256": "dee5811f15c44f393ed519ad5118dac08bfa633485edfb12c26a9ce57c80cedd"
     },
     {
-      "bytes": 19920,
+      "bytes": 22035,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/settings_manager.py",
-      "sha256": "5c1b304e317fc3cd1b0d8cd89ced54eb002f00e3a6b7a471d067b2e6f607a83a"
+      "sha256": "70911b0ecabd2fece3428f1e210bfa0826663ece0a816746bbf91b2f11bffedc"
     },
     {
       "bytes": 4189,
@@ -1751,9 +1756,9 @@
       "sha256": "810b5a300981eb2f6ce4e4ff6bff2fac730a391b4dd5799ecffe8e89ebed926d"
     },
     {
-      "bytes": 20078,
+      "bytes": 20102,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/config/paths.py",
-      "sha256": "6340d9c8d43b7db273522c02a7d0510afae6491c9b66cb09194ba5031831e525"
+      "sha256": "bdd46fd21a8e563a8767ce491563ae65687cd4b576c0f7a871985b8fef364431"
     },
     {
       "bytes": 1894,
@@ -3016,9 +3021,9 @@
       "sha256": "c0041791891e36d8614a912fc57ac0829e43a4c6203b0f581215a1c4ba7f5331"
     },
     {
-      "bytes": 23578,
+      "bytes": 24114,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/ui/cognigrex_3d_environment.py",
-      "sha256": "783e0256d5ab49cf8437df7935584b2c6247fd26f3ad54c162d78f40dced0197"
+      "sha256": "977b90fa5635ea191918b8d6fc73d85f3e6e762f0185c16980b174a8cd0d25fe"
     },
     {
       "bytes": 18777,

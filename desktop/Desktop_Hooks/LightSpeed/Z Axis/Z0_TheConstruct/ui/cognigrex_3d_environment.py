@@ -94,6 +94,9 @@ class ZFloor(Enum):
 
 # Floor spacing in virtual meters
 FLOOR_SPACING = 10.0
+ACTIVE_FRAME_INTERVAL_MS = 33
+PASSIVE_FRAME_INTERVAL_MS = 250
+MAX_FRAME_INTERVAL_MS = 1000
 
 
 # ============================================================================
@@ -521,10 +524,20 @@ class Cognigrex3DEnvironment:
     Stubbed implementation with fixed camera
     """
 
-    def __init__(self, parent: tk.Widget, canvas: Optional[Canvas] = None,
-                 on_floor_select: Optional[Callable[[ZFloor], None]] = None):
+    def __init__(
+        self,
+        parent: tk.Widget,
+        canvas: Optional[Canvas] = None,
+        on_floor_select: Optional[Callable[[ZFloor], None]] = None,
+        *,
+        frame_interval_ms: int = PASSIVE_FRAME_INTERVAL_MS,
+    ):
         self.parent = parent
         self.on_floor_select = on_floor_select
+        self.frame_interval_ms = max(
+            ACTIVE_FRAME_INTERVAL_MS,
+            min(int(frame_interval_ms), MAX_FRAME_INTERVAL_MS),
+        )
 
         # Create or use canvas
         if canvas is None:
@@ -583,8 +596,7 @@ class Cognigrex3DEnvironment:
             # Render everything
             self._render()
 
-            # Schedule next frame (targeting 30 FPS for stubbed version)
-            self.parent.after(33, self._render_loop)
+            self.parent.after(self.frame_interval_ms, self._render_loop)
 
         except tk.TclError:
             # Window closed
@@ -689,7 +701,11 @@ def launch_cognigrex_3d(parent: Optional[tk.Tk] = None,
         root.geometry("1400x900")
         root.configure(bg='#000000')
 
-        env = Cognigrex3DEnvironment(root, on_floor_select=on_floor_select)
+        env = Cognigrex3DEnvironment(
+            root,
+            on_floor_select=on_floor_select,
+            frame_interval_ms=ACTIVE_FRAME_INTERVAL_MS,
+        )
 
         def on_close():
             env.stop()
@@ -699,13 +715,22 @@ def launch_cognigrex_3d(parent: Optional[tk.Tk] = None,
         root.mainloop()
         return env
     else:
-        return Cognigrex3DEnvironment(parent, on_floor_select=on_floor_select)
+        return Cognigrex3DEnvironment(
+            parent,
+            on_floor_select=on_floor_select,
+            frame_interval_ms=ACTIVE_FRAME_INTERVAL_MS,
+        )
 
 
 def attach_cognigrex_3d(parent: tk.Widget, canvas: Canvas,
                         on_floor_select: Optional[Callable] = None) -> Cognigrex3DEnvironment:
     """Attach Cognigrex 3D environment to existing canvas"""
-    return Cognigrex3DEnvironment(parent, canvas, on_floor_select=on_floor_select)
+    return Cognigrex3DEnvironment(
+        parent,
+        canvas,
+        on_floor_select=on_floor_select,
+        frame_interval_ms=PASSIVE_FRAME_INTERVAL_MS,
+    )
 
 
 # ============================================================================
