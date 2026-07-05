@@ -2494,6 +2494,40 @@ def test_trinity_settings_manager_defaults_to_floor_owned_paths(tmp_path: Path) 
     assert Path(manager.settings.backup_directory) == root / "Z Axis" / "Z-4_Merovingian" / "data" / "backups"
 
 
+def test_trinity_settings_manager_preserves_forward_compatible_contract_fields(
+    tmp_path: Path,
+) -> None:
+    root = Path(__file__).resolve().parents[1]
+    module_path = root / "Z Axis" / "Z+3_Trinity" / "ui" / "settings_manager.py"
+    spec = importlib.util.spec_from_file_location(
+        "trinity_settings_manager_contract_test", module_path
+    )
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    config_path = tmp_path / "settings.json"
+    original = {
+        "app_version": "5.1.2",
+        "config_schema_version": "2026.04.finalization",
+        "db_path": "Z Axis/Z-4_Merovingian/data/db/lightspeed_unified.db",
+        "log_file_path": "Z Axis/Z-4_Merovingian/data/logs/main.log",
+        "activity_table_path": "Z Axis/Z-4_Merovingian/data/db/lightspeed_unified.db",
+        "approval_ledger_path": "Z Axis/Z+1_Architect/data/approval_ledger.jsonl",
+        "future_contract": {"enabled": True},
+    }
+    config_path.write_text(json.dumps(original), encoding="utf-8")
+
+    manager = module.SettingsManager(config_path=config_path)
+    persisted = json.loads(config_path.read_text(encoding="utf-8"))
+
+    assert manager.settings.config_schema_version == "2026.04.finalization"
+    assert manager.settings.db_path.startswith("Z Axis/")
+    assert persisted["activity_table_path"].startswith("Z Axis/Z-4_Merovingian/")
+    assert persisted["approval_ledger_path"].startswith("Z Axis/Z+1_Architect/")
+    assert persisted["future_contract"] == {"enabled": True}
+
+
 def test_trinity_settings_dialog_defaults_to_floor_owned_settings_file(tmp_path: Path) -> None:
     root = Path(__file__).resolve().parents[1]
     z_axis = root / "Z Axis"

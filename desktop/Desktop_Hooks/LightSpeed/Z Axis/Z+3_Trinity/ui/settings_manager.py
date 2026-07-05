@@ -18,7 +18,7 @@ Date: April 8, 2026
 import json
 from pathlib import Path
 from typing import Dict, Any, Optional, Callable, List
-from dataclasses import dataclass, asdict, field
+from dataclasses import dataclass, asdict, field, fields as dataclass_fields
 from datetime import datetime
 
 try:
@@ -32,6 +32,13 @@ SETTINGS_FILE = TRINITY_SETTINGS / "settings.json"
 CANONICAL_DB_PATH = MEROVINGIAN_DATA / "db" / "lightspeed_unified.db"
 CANONICAL_LOG_FILE = MEROVINGIAN_DATA / "logs" / "main.log"
 CANONICAL_BACKUP_DIR = MEROVINGIAN_DATA / "backups"
+CONFIG_SCHEMA_VERSION = "2026.04.finalization"
+PORTABLE_DB_PATH = "Z Axis/Z-4_Merovingian/data/db/lightspeed_unified.db"
+PORTABLE_LOG_FILE = "Z Axis/Z-4_Merovingian/data/logs/main.log"
+PORTABLE_ACTIVITY_TABLE = PORTABLE_DB_PATH
+PORTABLE_APPROVAL_LEDGER = "Z Axis/Z+1_Architect/data/approval_ledger.jsonl"
+PORTABLE_PROJECTS_ROOT = "Z Axis/Z+1_Architect/projects"
+PORTABLE_BACKUP_DIR = "Z Axis/Z-4_Merovingian/data/backups"
 
 
 @dataclass
@@ -42,6 +49,7 @@ class LightSpeedSettings:
     # APP SETTINGS
     # =========================================================================
     app_version: str = "5.1.2"
+    config_schema_version: str = CONFIG_SCHEMA_VERSION
     theme: str = "dark"  # dark, light, matrix, ocean, custom
     language: str = "en"
     first_run_complete: bool = False
@@ -129,6 +137,10 @@ class LightSpeedSettings:
     # DATABASE SETTINGS
     # =========================================================================
     db_path: str = str(CANONICAL_DB_PATH)
+    activity_table_path: str = str(CANONICAL_DB_PATH)
+    approval_ledger_path: str = str(
+        ARCHITECT_PROJECTS.parent / "data" / "approval_ledger.jsonl"
+    )
     db_auto_backup: bool = True
     db_backup_interval_hours: int = 24
     db_backup_keep_count: int = 7
@@ -217,6 +229,7 @@ class SettingsManager:
             config_path = SETTINGS_FILE
 
         self.config_path = Path(config_path)
+        self._unknown_settings: Dict[str, Any] = {}
         self.settings = self.load()
         self._observers: List[Callable] = []
 
@@ -231,31 +244,53 @@ class SettingsManager:
                 with open(self.config_path, 'r', encoding='utf-8') as f:
                     data = json.load(f)
 
-                # Convert lists from JSON (for default_factory fields)
-                if 'active_floors' in data and isinstance(data['active_floors'], list):
-                    pass  # Already a list
-                if 'apis_enabled' in data and isinstance(data['apis_enabled'], dict):
-                    pass  # Already a dict
-
-                return LightSpeedSettings(**data)
+                if not isinstance(data, dict):
+                    raise TypeError("settings document must be a JSON object")
+                known_fields = {item.name for item in dataclass_fields(LightSpeedSettings)}
+                self._unknown_settings = {
+                    key: value for key, value in data.items() if key not in known_fields
+                }
+                known_data = {
+                    key: value for key, value in data.items() if key in known_fields
+                }
+                return LightSpeedSettings(**known_data)
             except Exception as e:
                 print(f"[!] Error loading settings: {e}")
                 print("[!] Using default settings")
                 return LightSpeedSettings()
         else:
             print("[*] No settings file found, creating default settings")
-            default_settings = LightSpeedSettings()
-            self.config_path.parent.mkdir(parents=True, exist_ok=True)
-            with open(self.config_path, 'w', encoding='utf-8') as f:
-                json.dump(asdict(default_settings), f, indent=2)
-            return default_settings
+            return LightSpeedSettings()
+
+    def _is_root_config(self) -> bool:
+        parts = tuple(part.casefold() for part in self.config_path.parts)
+        return len(parts) >= 2 and parts[-2:] == ("config", "settings.json")
+
+    def _serialized_settings(self) -> Dict[str, Any]:
+        payload = {**self._unknown_settings, **asdict(self.settings)}
+        if self._is_root_config():
+            payload.update(
+                {
+                    "config_schema_version": CONFIG_SCHEMA_VERSION,
+                    "db_path": PORTABLE_DB_PATH,
+                    "activity_table_path": PORTABLE_ACTIVITY_TABLE,
+                    "approval_ledger_path": PORTABLE_APPROVAL_LEDGER,
+                    "projects_root": PORTABLE_PROJECTS_ROOT,
+                    "log_file_path": PORTABLE_LOG_FILE,
+                    "backup_directory": PORTABLE_BACKUP_DIR,
+                }
+            )
+        return payload
 
     def save(self):
         """Save settings to disk and notify observers"""
         try:
             self.config_path.parent.mkdir(parents=True, exist_ok=True)
-            with open(self.config_path, 'w', encoding='utf-8') as f:
-                json.dump(asdict(self.settings), f, indent=2)
+            temporary = self.config_path.with_name(f".{self.config_path.name}.tmp")
+            with open(temporary, 'w', encoding='utf-8') as f:
+                json.dump(self._serialized_settings(), f, indent=2)
+                f.write("\n")
+            temporary.replace(self.config_path)
 
             # Notify observers
             self._notify_observers()
@@ -286,6 +321,7 @@ class SettingsManager:
 
     def reset_to_defaults(self):
         """Reset all settings to defaults"""
+        self._unknown_settings = {}
         self.settings = LightSpeedSettings()
         self.save()
         print("[*] Settings reset to defaults")
@@ -294,7 +330,7 @@ class SettingsManager:
         """Export settings to a JSON file"""
         try:
             with open(export_path, 'w', encoding='utf-8') as f:
-                json.dump(asdict(self.settings), f, indent=2)
+                json.dump(self._serialized_settings(), f, indent=2)
             print(f"[*] Settings exported to: {export_path}")
             return True
         except Exception as e:
@@ -307,7 +343,15 @@ class SettingsManager:
             with open(import_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
 
-            self.settings = LightSpeedSettings(**data)
+            if not isinstance(data, dict):
+                raise TypeError("settings import must be a JSON object")
+            known_fields = {item.name for item in dataclass_fields(LightSpeedSettings)}
+            self._unknown_settings = {
+                key: value for key, value in data.items() if key not in known_fields
+            }
+            self.settings = LightSpeedSettings(
+                **{key: value for key, value in data.items() if key in known_fields}
+            )
             self.save()
             print(f"[*] Settings imported from: {import_path}")
             return True
