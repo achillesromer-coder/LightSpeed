@@ -45,6 +45,16 @@ def test_settings_and_logging_paths_are_floor_owned() -> None:
     assert unified["trinity_storage"]["base_path"].startswith("Z Axis/Z+3_Trinity/")
 
 
+def test_root_ollama_gate_matches_the_local_agent_contract() -> None:
+    settings = _load_config("settings.json")
+
+    assert settings["ollama_enabled"] is True
+    assert settings["apis_enabled"]["ollama"] is True
+    assert settings["ollama_url"] == "http://localhost:11434"
+    assert settings["ollama_model"] == "qwen3:8b"
+    assert settings["ollama_auto_start"] is False
+
+
 def test_unified_config_uses_canonical_floor_ids() -> None:
     unified = _load_config("unified_config.json")
     expected = {

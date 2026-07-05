@@ -99,9 +99,9 @@ class LightSpeedSettings:
     # =========================================================================
     # AI SETTINGS
     # =========================================================================
-    ollama_enabled: bool = False
+    ollama_enabled: bool = True
     ollama_url: str = "http://localhost:11434"
-    ollama_model: str = "llama2"
+    ollama_model: str = "qwen3:8b"
     ollama_temperature: float = 0.7
     ollama_max_tokens: int = 2048
     ollama_stream_responses: bool = True
@@ -119,7 +119,7 @@ class LightSpeedSettings:
         "qr": True,
         "tol": True,  # Tree of Life
         "weather": False,
-        "ollama": False
+        "ollama": True
     })
 
     api_keys: Dict[str, str] = field(default_factory=dict)

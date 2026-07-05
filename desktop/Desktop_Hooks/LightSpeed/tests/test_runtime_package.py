@@ -2488,6 +2488,9 @@ def test_trinity_settings_manager_defaults_to_floor_owned_paths(tmp_path: Path) 
     manager = module.SettingsManager(config_path=tmp_path / "settings.json")
 
     assert manager.settings.app_version == "5.1.2"
+    assert manager.settings.ollama_enabled is True
+    assert manager.settings.ollama_model == "qwen3:8b"
+    assert manager.settings.apis_enabled["ollama"] is True
     assert Path(manager.settings.db_path) == root / "Z Axis" / "Z-4_Merovingian" / "data" / "db" / "lightspeed_unified.db"
     assert Path(manager.settings.projects_root) == root / "Z Axis" / "Z+1_Architect" / "projects"
     assert Path(manager.settings.log_file_path) == root / "Z Axis" / "Z-4_Merovingian" / "data" / "logs" / "main.log"
