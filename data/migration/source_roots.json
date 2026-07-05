@@ -1,0 +1,109 @@
+{
+  "schema_version": "lightspeed-source-roots-v1",
+  "generated_at": "2026-07-05T03:12:22.606499+00:00",
+  "canonical_root": "C:\\LightSpeed_Consolidated",
+  "destination_root": "C:\\LightSpeed_Consolidated\\Sources\\Historical LightSpeed",
+  "inventory_path": "C:\\LightSpeed_Consolidated\\_migration\\historical_inventory\\lightspeed_inventory_20260705T020812Z.jsonl",
+  "execute_extract": true,
+  "junctions_followed": false,
+  "canonical_hash_count": 13236,
+  "historical_unique_hash_count": 14933,
+  "aggregated_file_count": 601314,
+  "aggregate_record_count": 274,
+  "total_files": 620474,
+  "total_bytes": 151262329743,
+  "duration_seconds": 3642.572,
+  "roots": {
+    "cognigrex": {
+      "path": "C:\\Cognigrex\\LightSpeed Consolidated",
+      "exists": true,
+      "files": 13,
+      "bytes": 130882,
+      "actions": {
+        "extract_candidate": 9,
+        "reference_existing": 2,
+        "inventory_only": 2
+      },
+      "classifications": {
+        "document": 4,
+        "source": 7,
+        "other": 2
+      },
+      "errors": 0,
+      "extracted": 0
+    },
+    "desktop": {
+      "path": "C:\\Users\\acc\\Desktop\\LightSpeed Consolidated",
+      "exists": true,
+      "files": 619995,
+      "bytes": 151072698181,
+      "actions": {
+        "extract_candidate": 179,
+        "reference_existing": 16632,
+        "inventory_only": 603184
+      },
+      "classifications": {
+        "other": 4363,
+        "document": 1437,
+        "source": 13087,
+        "generated": 2893,
+        "model": 104,
+        "archive": 598048,
+        "dataset": 47,
+        "database": 16
+      },
+      "errors": 249,
+      "extracted": 45
+    },
+    "isolated": {
+      "path": "C:\\LightSpeed_Isolated",
+      "exists": true,
+      "files": 377,
+      "bytes": 45497829,
+      "actions": {
+        "extract_candidate": 4,
+        "reference_existing": 2,
+        "inventory_only": 371
+      },
+      "classifications": {
+        "source": 6,
+        "generated": 371
+      },
+      "errors": 0,
+      "extracted": 4
+    },
+    "emc2": {
+      "path": "C:\\Users\\acc\\Desktop\\EMC^2; LightSpeed",
+      "exists": true,
+      "files": 89,
+      "bytes": 144002851,
+      "actions": {
+        "extract_candidate": 11,
+        "reference_existing": 48,
+        "inventory_only": 30
+      },
+      "classifications": {
+        "source": 34,
+        "document": 22,
+        "other": 31,
+        "generated": 2
+      },
+      "errors": 0,
+      "extracted": 11
+    },
+    "emc2_escaped": {
+      "path": "C:\\Users\\acc\\Desktop\\EMC^^2; LightSpeed",
+      "exists": true,
+      "files": 0,
+      "bytes": 0,
+      "actions": {
+        "extract_candidate": 0,
+        "reference_existing": 0,
+        "inventory_only": 0
+      },
+      "classifications": {},
+      "errors": 0,
+      "extracted": 0
+    }
+  }
+}
