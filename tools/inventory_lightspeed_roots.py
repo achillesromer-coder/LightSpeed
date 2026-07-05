@@ -122,6 +122,8 @@ GENERATED_PARTS = {
     "venv",
 }
 ARCHIVE_PARTS = {"archive", "archives", "backup", "backups", "legacy"}
+AGGREGATED_CLASSIFICATIONS = {"archive", "generated"}
+AGGREGATE_SAMPLE_LIMIT = 3
 
 
 @dataclass(frozen=True)
@@ -337,9 +339,11 @@ def inventory_roots(
     canonical_hashes = build_canonical_hashes(canonical_root)
     seen_historical_hashes: set[str] = set()
     summaries = {label: _root_summary(root) for label, root in roots.items()}
+    aggregate_records: dict[tuple[str, str, str, str], dict[str, object]] = {}
     inventory_path.parent.mkdir(parents=True, exist_ok=True)
     total_files = 0
     total_bytes = 0
+    aggregated_file_count = 0
     started = datetime.now(tz=UTC)
 
     with inventory_path.open("w", encoding="utf-8", newline="\n") as inventory:
@@ -352,6 +356,81 @@ def inventory_roots(
                     break
                 try:
                     file_stat = path.stat()
+                except OSError as exc:
+                    summary["errors"] = int(summary["errors"]) + 1
+                    inventory.write(
+                        json.dumps(
+                            {
+                                "root_label": label,
+                                "path": str(path),
+                                "error": str(exc),
+                            },
+                            ensure_ascii=True,
+                            sort_keys=True,
+                        )
+                        + "\n"
+                    )
+                    continue
+                relative = path.relative_to(root)
+                classification_name = source_classification(path)
+                owner = proposed_owner(path)
+                if classification_name in AGGREGATED_CLASSIFICATIONS:
+                    modified_utc = _utc_iso(file_stat.st_mtime)
+                    extension = path.suffix.casefold() or "[none]"
+                    aggregate_key = (label, classification_name, owner, extension)
+                    aggregate = aggregate_records.setdefault(
+                        aggregate_key,
+                        {
+                            "record_type": "aggregate",
+                            "root_label": label,
+                            "root_path": str(root),
+                            "source_classification": classification_name,
+                            "proposed_owner": owner,
+                            "extension": extension,
+                            "action": "inventory_only",
+                            "reason": (
+                                "generated/archive stream aggregated without "
+                                "per-file hashing"
+                            ),
+                            "count": 0,
+                            "bytes": 0,
+                            "earliest_modified_utc": modified_utc,
+                            "latest_modified_utc": modified_utc,
+                            "sample_paths": [],
+                            "last_path": relative.as_posix(),
+                        },
+                    )
+                    aggregate["count"] = int(aggregate["count"]) + 1
+                    aggregate["bytes"] = int(aggregate["bytes"]) + file_stat.st_size
+                    aggregate["earliest_modified_utc"] = min(
+                        str(aggregate["earliest_modified_utc"]),
+                        modified_utc,
+                    )
+                    aggregate["latest_modified_utc"] = max(
+                        str(aggregate["latest_modified_utc"]),
+                        modified_utc,
+                    )
+                    samples = aggregate["sample_paths"]
+                    assert isinstance(samples, list)
+                    if len(samples) < AGGREGATE_SAMPLE_LIMIT:
+                        samples.append(relative.as_posix())
+                    aggregate["last_path"] = relative.as_posix()
+
+                    summary["files"] = int(summary["files"]) + 1
+                    summary["bytes"] = int(summary["bytes"]) + file_stat.st_size
+                    actions = summary["actions"]
+                    assert isinstance(actions, dict)
+                    actions["inventory_only"] = int(actions["inventory_only"]) + 1
+                    classifications = summary["classifications"]
+                    assert isinstance(classifications, dict)
+                    classifications[classification_name] = (
+                        int(classifications.get(classification_name, 0)) + 1
+                    )
+                    total_files += 1
+                    total_bytes += file_stat.st_size
+                    aggregated_file_count += 1
+                    continue
+                try:
                     digest = sha256_file(path)
                 except OSError as exc:
                     summary["errors"] = int(summary["errors"]) + 1
@@ -374,8 +453,8 @@ def inventory_roots(
                     modified_utc=_utc_iso(file_stat.st_mtime),
                     digest=digest,
                 )
-                relative = path.relative_to(root)
                 record: dict[str, object] = {
+                    "record_type": "file",
                     "root_label": label,
                     "root_path": str(root),
                     "path": str(path),
@@ -415,6 +494,15 @@ def inventory_roots(
                 total_bytes += file_stat.st_size
             if max_files is not None and total_files >= max_files:
                 break
+        for aggregate_key in sorted(aggregate_records):
+            inventory.write(
+                json.dumps(
+                    aggregate_records[aggregate_key],
+                    ensure_ascii=True,
+                    sort_keys=True,
+                )
+                + "\n"
+            )
 
     finished = datetime.now(tz=UTC)
     return {
@@ -427,6 +515,8 @@ def inventory_roots(
         "junctions_followed": False,
         "canonical_hash_count": len(canonical_hashes),
         "historical_unique_hash_count": len(seen_historical_hashes),
+        "aggregated_file_count": aggregated_file_count,
+        "aggregate_record_count": len(aggregate_records),
         "total_files": total_files,
         "total_bytes": total_bytes,
         "duration_seconds": round((finished - started).total_seconds(), 3),

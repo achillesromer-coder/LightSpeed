@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 from pathlib import Path
 import sys
@@ -13,6 +14,7 @@ if str(TOOLS_ROOT) not in sys.path:
 from inventory_lightspeed_roots import (  # noqa: E402
     classify_file,
     extract_candidate,
+    inventory_roots,
     iter_physical_files,
 )
 
@@ -89,3 +91,40 @@ def test_inventory_does_not_follow_directory_links(tmp_path: Path) -> None:
     relative_paths = {path.relative_to(root).as_posix() for path in iter_physical_files(root)}
 
     assert relative_paths == {"kept.py"}
+
+
+def test_inventory_aggregates_runaway_archive_records(tmp_path: Path) -> None:
+    historical_root = tmp_path / "historical"
+    runaway_root = historical_root / "legacy" / "oracle_ingest_file"
+    runaway_root.mkdir(parents=True)
+    payloads = [b"one", b"two-two", b"three"]
+    for index, payload in enumerate(payloads):
+        run = runaway_root / f"run-{index}"
+        run.mkdir()
+        (run / "manifest.json").write_bytes(payload)
+
+    canonical_root = tmp_path / "canonical"
+    canonical_root.mkdir()
+    inventory_path = tmp_path / "inventory.jsonl"
+    result = inventory_roots(
+        roots={"desktop": historical_root},
+        canonical_root=canonical_root,
+        destination_root=tmp_path / "extracted",
+        inventory_path=inventory_path,
+        execute_extract=False,
+    )
+
+    records = [
+        json.loads(line)
+        for line in inventory_path.read_text(encoding="utf-8").splitlines()
+    ]
+
+    assert result["total_files"] == 3
+    assert result["total_bytes"] == sum(map(len, payloads))
+    assert len(records) == 1
+    assert records[0]["record_type"] == "aggregate"
+    assert records[0]["source_classification"] == "archive"
+    assert records[0]["count"] == 3
+    assert records[0]["bytes"] == sum(map(len, payloads))
+    assert len(records[0]["sample_paths"]) == 3
+    assert "sha256" not in records[0]
