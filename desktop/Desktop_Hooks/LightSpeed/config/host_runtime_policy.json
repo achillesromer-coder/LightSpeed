@@ -15,9 +15,11 @@
   "storage_topology": {
     "windows_root": "C:",
     "windows_root_type": "hdd",
-    "workspace_root": "D:",
-    "workspace_root_type": "ssd_storage_space",
-    "policy": "Keep Windows/AppData on C while all live LightSpeed and De Sporte runtime surfaces stay on D."
+    "workspace_root": "C:\\LightSpeed_Consolidated",
+    "workspace_root_type": "canonical_app_authority",
+    "ollama_model_root": "D:\\.ollama\\models",
+    "ollama_model_root_type": "junction_backed_local_model_store",
+    "policy": "Keep LightSpeed application/runtime authority on C and the Ollama model payload on D; De Sporte remains held as a separate project."
   },
   "runtime_limits": {
     "cpu_scheduler_strategy": "bounded_parallelism_over_global_autostart",

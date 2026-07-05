@@ -129,3 +129,11 @@ def test_ui_contracts_prefer_function_first_surfaces() -> None:
     assert theme["operator_surface_contract"]["search_shortcut"] == "Ctrl+S"
     assert theme["accessibility"]["settings_shortcut"] == "Ctrl+Shift+S"
     assert "uploaded_environment_reference" in theme["editable_backgrounds"]["inputs"]
+
+
+def test_runtime_authority_separates_desktop_and_model_storage() -> None:
+    host = _load_config("host_runtime_policy.json")
+
+    storage = host["storage_topology"]
+    assert storage["workspace_root"] == "C:\\LightSpeed_Consolidated"
+    assert storage["ollama_model_root"] == "D:\\.ollama\\models"
