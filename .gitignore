@@ -14,11 +14,11 @@
 **/data/
 !apps/lightspeed-go/public/data/
 !apps/lightspeed-go/public/data/neo_exchange.json
-!data/
-data/*
-!data/migration/
-data/migration/*
-!data/migration/source_roots.json
+!/data/
+/data/*
+!/data/migration/
+/data/migration/*
+!/data/migration/source_roots.json
 **/archive/
 **/ai_logs/
 **/reservoirs/
