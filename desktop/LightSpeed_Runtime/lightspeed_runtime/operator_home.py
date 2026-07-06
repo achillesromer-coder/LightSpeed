@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 from lightspeed_runtime.domain_registry import get_source_type_definition
 from lightspeed_runtime.local_agent_wakeup import build_local_agent_wakeup_contract
+from lightspeed_runtime.web_integration import build_romer_web_integration
 
 if TYPE_CHECKING:
     from lightspeed_runtime.runtime import LightSpeedRuntime
@@ -130,6 +131,7 @@ def build_agent_environment(
     workspace_lanes = _workspace_lanes(config)
     smart_floor_spaces = _smart_floor_spaces(config)
     gated_build_tasks = _gated_build_tasks(config)
+    web_drive_bridge = _web_drive_bridge(runtime.root, environment)
     backend_frontend_build = _backend_frontend_build_contract(
         floor_models=floor_models,
         launch_control=launch_control,
@@ -179,6 +181,7 @@ def build_agent_environment(
         "workspace_lanes": workspace_lanes,
         "smart_floor_spaces": smart_floor_spaces,
         "gated_build_tasks": gated_build_tasks,
+        "web_drive_bridge": web_drive_bridge,
         "backend_frontend_build": backend_frontend_build,
         "floor_environment_realization": floor_environment_realization,
         "local_agent_wakeup": local_agent_wakeup,
@@ -220,6 +223,7 @@ def export_agent_environment(
         "workspace_lanes": output_dir / "workspace_lanes.json",
         "smart_floor_spaces": output_dir / "smart_floor_spaces.json",
         "gated_build_tasks": output_dir / "gated_build_tasks.json",
+        "web_drive_bridge": output_dir / "web_drive_bridge.json",
         "backend_frontend_build": output_dir / "backend_frontend_build_contract.json",
         "floor_environment_realization": output_dir / "floor_environment_realization_contract.json",
         "local_agent_wakeup": output_dir / "local_agent_wakeup_contract.json",
@@ -243,6 +247,7 @@ def export_agent_environment(
     _write_json(files["workspace_lanes"], payload["workspace_lanes"])
     _write_json(files["smart_floor_spaces"], payload["smart_floor_spaces"])
     _write_json(files["gated_build_tasks"], payload["gated_build_tasks"])
+    _write_json(files["web_drive_bridge"], payload["web_drive_bridge"])
     _write_json(files["backend_frontend_build"], payload["backend_frontend_build"])
     _write_json(files["floor_environment_realization"], payload["floor_environment_realization"])
     _write_json(files["local_agent_wakeup"], payload["local_agent_wakeup"])
@@ -394,6 +399,14 @@ def _deployment_topology(config: dict) -> dict:
     topology["authoritative_roots"] = _annotate_root_entries(topology.get("authoritative_roots"))
     topology["reference_roots"] = _annotate_root_entries(topology.get("reference_roots"))
     return topology
+
+
+def _web_drive_bridge(runtime_root: Path, environment: dict) -> dict:
+    paths = environment.get("paths") or {}
+    shell_payload = paths.get("desktop_shell_root") if isinstance(paths, dict) else None
+    shell_root_value = shell_payload.get("path") if isinstance(shell_payload, dict) else None
+    bridge_root = Path(shell_root_value) if isinstance(shell_root_value, str) and shell_root_value else runtime_root
+    return build_romer_web_integration(bridge_root)
 
 
 def _host_runtime_policy(config: dict) -> dict:
@@ -1324,6 +1337,7 @@ def _write_shell_artifacts(payload: dict) -> dict[str, str]:
         "neo_temp_shell_registry": shell_root / "Z Axis" / "Z+2_Neo" / "data" / "temp_shells" / "temp_shell_registry.json",
         "floor_stage_population": shell_root / "Z Axis" / "Z-3_Smith" / "data" / "staging" / "floor_stage_population.json",
         "gated_build_tasks": shell_root / "Z Axis" / "Z-3_Smith" / "data" / "staging" / "gated_build_tasks.json",
+        "web_drive_bridge": shell_root / "config" / "web_drive_bridge.json",
         "construct_runtime_profile": shell_root / "Z Axis" / "Z0_TheConstruct" / "data" / "runtime" / "construct_runtime_profile.json",
         "smart_floor_spaces": shell_root / "Z Axis" / "Z0_TheConstruct" / "data" / "runtime" / "smart_floor_spaces.json",
         "virtual_space_test_matrix": shell_root / "Z Axis" / "Z0_TheConstruct" / "data" / "runtime" / "virtual_space_test_matrix.json",
@@ -1341,6 +1355,7 @@ def _write_shell_artifacts(payload: dict) -> dict[str, str]:
     _write_json(outputs["floor_environment_realization"], payload.get("floor_environment_realization") or {})
     _write_json(outputs["local_agent_wakeup"], payload.get("local_agent_wakeup") or {})
     _write_json(outputs["workspace_lanes"], payload.get("workspace_lanes") or {})
+    _write_json(outputs["web_drive_bridge"], payload.get("web_drive_bridge") or {})
     neo_local_runtime = payload.get("neo_local_runtime") or {}
     _write_json(
         outputs["neo_temp_shell_registry"],

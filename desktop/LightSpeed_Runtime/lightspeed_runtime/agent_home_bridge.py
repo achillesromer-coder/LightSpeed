@@ -25,6 +25,7 @@ _EXPORT_FILES = {
     "workspace_lanes": "workspace_lanes.json",
     "smart_floor_spaces": "smart_floor_spaces.json",
     "gated_build_tasks": "gated_build_tasks.json",
+    "web_drive_bridge": "web_drive_bridge.json",
     "backend_frontend_build": "backend_frontend_build_contract.json",
     "floor_environment_realization": "floor_environment_realization_contract.json",
     "local_agent_wakeup": "local_agent_wakeup_contract.json",
@@ -156,6 +157,12 @@ class AgentHomeBridge:
         payload = self._load_export_or_environment_section("gated_build_tasks")
         if not isinstance(payload, dict):
             raise TypeError("gated_build_tasks export must contain a JSON object")
+        return payload
+
+    def web_drive_bridge(self) -> dict:
+        payload = self._load_export_or_environment_section("web_drive_bridge")
+        if not isinstance(payload, dict):
+            raise TypeError("web_drive_bridge export must contain a JSON object")
         return payload
 
     def backend_frontend_build(self) -> dict:
@@ -912,6 +919,55 @@ class AgentHomeBridge:
             ],
         }
 
+    def web_drive_bridge_summary(self) -> dict:
+        payload = self.web_drive_bridge()
+        routes = _expect_list(payload.get("squarespace_routes") or [], "web_drive_bridge.squarespace_routes")
+        log_rows = _expect_list(
+            payload.get("squarespace_implementation_log") or [],
+            "web_drive_bridge.squarespace_implementation_log",
+        )
+        embed = payload.get("squarespace_embed_source") or {}
+        unconfirmed = [
+            row
+            for row in log_rows
+            if "UNCONFIRMED" in {
+                str(row.get("page_exists") or ""),
+                str(row.get("embed_pasted") or ""),
+                str(row.get("desktop_preview") or ""),
+                str(row.get("mobile_preview") or ""),
+            }
+            or "PENDING" in {
+                str(row.get("desktop_preview") or ""),
+                str(row.get("mobile_preview") or ""),
+            }
+        ]
+        partial = [
+            row
+            for row in log_rows
+            if str(row.get("page_exists") or "") == "SEEN_SCREENSHOT"
+            or str(row.get("embed_pasted") or "") == "PARTIAL_RENDER_SEEN"
+        ]
+        return {
+            "site_base_url": payload.get("site_base_url"),
+            "owner_floor": payload.get("owner_floor"),
+            "desktop_operator_floor": payload.get("desktop_operator_floor"),
+            "publish_owner_floor": payload.get("publish_owner_floor"),
+            "contract_path": payload.get("contract_path"),
+            "source_workbook_id": embed.get("id"),
+            "source_workbook_title": embed.get("title"),
+            "copy_cell": embed.get("copy_cell"),
+            "source_status": embed.get("status"),
+            "gate": embed.get("gate"),
+            "boundary": embed.get("boundary"),
+            "route_count": len(routes),
+            "implementation_rows": len(log_rows),
+            "unconfirmed_count": len(unconfirmed),
+            "partial_seen_count": len(partial),
+            "unconfirmed_routes": [str(row.get("route")) for row in unconfirmed if row.get("route")],
+            "partial_seen_routes": [str(row.get("route")) for row in partial if row.get("route")],
+            "blocked_actions": embed.get("blocked_actions") or [],
+        }
+
     def agentic_launch_queue_summary(self, *, top_n: int = 10) -> dict:
         payload = self.agentic_launch_queue()
         if not payload:
@@ -1306,6 +1362,7 @@ class AgentHomeBridge:
             "workspace_lanes": self.workspace_lane_summary(),
             "smart_floor_spaces": self.smart_floor_space_summary(),
             "gated_build_tasks": self.gated_build_task_summary(),
+            "web_drive_bridge": self.web_drive_bridge_summary(),
             "agentic_launch_queue": self.agentic_launch_queue_summary(),
             "backend_frontend_build": self.backend_frontend_build_summary(top_n=16),
             "floor_environment_realization": self.floor_environment_realization_summary(top_n=16),

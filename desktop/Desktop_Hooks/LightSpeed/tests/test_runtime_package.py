@@ -2319,6 +2319,13 @@ def test_romer_web_integration_contract_maps_public_site_and_drive_feeds(tmp_pat
     assert routes["/operations/w1"]["workspace"] == "W1"
     assert routes["/operations/w6"]["role"].endswith("compatibility facade")
     assert routes["/w5/data"]["observed_status"] == "requires_auth_401"
+    assert payload["squarespace_embed_source"]["id"] == "1wLNW2cC-vQ1ZTzNmgGQiSFE0wGp_dvupCW1ZGBtT_yw"
+    assert payload["squarespace_embed_source"]["copy_cell"] == "01_One_Cell_Embed!A10"
+    assert payload["squarespace_embed_source"]["gate"] == "COMP2_STAGED_WAITING_ON_COMP1"
+    assert len(payload["squarespace_routes"]) == 31
+    assert any(item["route"] == "/ls-go/handoff" for item in payload["squarespace_routes"])
+    assert len(payload["squarespace_implementation_log"]) == 8
+    assert payload["brand_tokens"]["romer_gold"] == "#C9A24A"
     assert drive_sources["1clPyKU1C_Prd-a4g-Cbl2RZQybLL2oag"]["observed_status"] == "accessible"
     assert "Empirical Data" in drive_sources["1clPyKU1C_Prd-a4g-Cbl2RZQybLL2oag"]["observed_children"]
     assert sheets["1POCTGwSyaznMCO-7rA79wNRWT7rReSjOsNx-CLn5u5E"]["title"] == "Website Logs"
@@ -2340,6 +2347,9 @@ def test_bridge_health_contract_drives_trinity_bento_status_tile(tmp_path: Path)
     assert payload["overall_status"] == "ready_with_warnings"
     assert payload["public_routes"]["pass_count"] == payload["public_routes"]["required_count"]
     assert payload["dataspace_routes"]["pending_count"] == 8
+    assert payload["squarespace_embed"]["source_workbook_id"] == "1wLNW2cC-vQ1ZTzNmgGQiSFE0wGp_dvupCW1ZGBtT_yw"
+    assert payload["squarespace_embed"]["unconfirmed_count"] == 8
+    assert payload["squarespace_embed"]["partial_seen_routes"] == ["/ls-go/handoff"]
     assert payload["drive_sources"]["pending"] == ["1eRmR6kkNimF-U6-r6bQI9C7pWskc27W9"]
     assert payload["spreadsheet_feeds"]["pending"] == [
         "1GOzjF5BESSTWDqxi1hpGIk4a5R2kyrEY6EUeYN3vm9M",

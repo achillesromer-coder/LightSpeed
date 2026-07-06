@@ -6959,6 +6959,16 @@ class LightSpeedUnified(tk.Tk):
                 )
             return next((path for path in fallbacks if path.exists()), None)
 
+        def _web_bridge_path(summary: dict) -> Optional[Path]:
+            bridge = summary.get("web_drive_bridge") or {}
+            value = bridge.get("contract_path")
+            if value and Path(str(value)).exists():
+                return Path(str(value))
+            fallbacks = [LIGHTSPEED_ROOT / "config" / "web_drive_bridge.json"]
+            if CANONICAL_RUNTIME_ROOT is not None:
+                fallbacks.append(CANONICAL_RUNTIME_ROOT / "exports" / "agent_home" / "web_drive_bridge.json")
+            return next((path for path in fallbacks if path.exists()), None)
+
         def _neo_receipt_path(summary: dict) -> Optional[Path]:
             candidates: list[Path] = []
 
@@ -7013,6 +7023,7 @@ class LightSpeedUnified(tk.Tk):
             active_stage = _first_active_stage(buildout)
             queue = summary.get("consolidation_queue") or {}
             agent_queue = summary.get("agentic_launch_queue") or {}
+            web_bridge = summary.get("web_drive_bridge") or {}
             alignment = summary.get("floor_alignment") or {}
             host = summary.get("host_runtime_policy") or {}
             closure = host.get("resource_closure") or {}
@@ -7028,6 +7039,14 @@ class LightSpeedUnified(tk.Tk):
                         f"{agent_queue.get('ready_count', 0)}/{agent_queue.get('task_count', 0)} ready | "
                         f"manual-heavy={agent_queue.get('manual_heavy_count', 0)} | "
                         f"state={agent_queue.get('state', 'not_exported')}."
+                    ),
+                    (
+                        "WEB/GO: "
+                        f"{web_bridge.get('source_status', 'not_exported')} | "
+                        f"routes={web_bridge.get('route_count', 0)} | "
+                        f"unconfirmed={web_bridge.get('unconfirmed_count', 0)} | "
+                        f"partial={web_bridge.get('partial_seen_count', 0)} | "
+                        f"gate={web_bridge.get('gate', 'not_exported')}."
                     ),
                     (
                         "CLOSURE: "
@@ -7048,6 +7067,7 @@ class LightSpeedUnified(tk.Tk):
             active_stage = _first_active_stage(buildout)
             agent_queue = summary.get("agentic_launch_queue") or {}
             queue_by_floor = agent_queue.get("by_floor") or {}
+            web_bridge = summary.get("web_drive_bridge") or {}
             wake_payload = ((summary.get("local_agent_wakeup") or {}).get("by_floor") or {}).get(floor_name) or {}
             wake_connection = wake_payload.get("ollama_connection") or {}
             chat_payload = wake_payload.get("ai_chat_enablement") or {}
@@ -7067,6 +7087,7 @@ class LightSpeedUnified(tk.Tk):
                     "",
                     f"Backend workspace: gated by {build.get('launch_gate', 'unknown')}",
                     f"Agent queue: {queue_by_floor.get(floor_name, 0)} floor tasks | {_short_path(agent_queue_path)}",
+                    f"Web/GO bridge: {web_bridge.get('source_status', 'not exported')} | unconfirmed={web_bridge.get('unconfirmed_count', 0)} | {_short_path(_web_bridge_path(summary))}",
                     f"Wake packet: {_short_path(wake_payload.get('packet_path'))}",
                     f"Buildout handoff: {_short_path(LIGHTSPEED_ROOT / 'config' / 'buildout_phase_contract.json')}",
                     f"Neo receipt: {_short_path(receipt_path)}",
@@ -7280,6 +7301,9 @@ class LightSpeedUnified(tk.Tk):
         def _open_agentic_launch_queue() -> None:
             _safe_open_path(_agentic_launch_queue_path(summary_state["payload"]), "Agentic Launch Queue")
 
+        def _open_web_bridge() -> None:
+            _safe_open_path(_web_bridge_path(summary_state["payload"]), "Web/GO Bridge")
+
         def _open_neo_smith_artifact() -> None:
             receipt_path = _neo_receipt_path(summary_state["payload"])
             if receipt_path:
@@ -7380,6 +7404,14 @@ class LightSpeedUnified(tk.Tk):
             actions,
             text="Open Agent Queue",
             command=_open_agentic_launch_queue,
+            bg=COLORS["bg_dark"],
+            fg=COLORS["text_white"],
+            relief="flat",
+        ).pack(side="left", padx=(8, 0))
+        tk.Button(
+            actions,
+            text="Open Web/GO Bridge",
+            command=_open_web_bridge,
             bg=COLORS["bg_dark"],
             fg=COLORS["text_white"],
             relief="flat",
