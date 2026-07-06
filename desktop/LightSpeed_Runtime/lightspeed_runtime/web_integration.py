@@ -65,10 +65,10 @@ LS_WEB_GO_ROUTES = [
     ("/ls-go/handoff", "LS GO", "LS GO Handoff", "compact handoff only"),
     ("/ls-go/agents", "LS GO", "LS GO Agents", "no autonomy escalation"),
     ("/ls-go/review", "LS GO", "LS GO Review", "claim-gated"),
-    ("calculator routes", "special", "Calculator Route Hub", "calc not validation"),
-    ("Raphael panels", "special", "Raphael Engine Panels", "proof routing only"),
-    ("node globe", "special", "Achilles Node Globe", "privacy/claim gated"),
-    ("SHFF / M1 panels", "special", "SHFF / M1 Claim-Safe Panels", "concept only"),
+    ("/tools/calculators", "special", "Calculator Route Hub", "calc not validation"),
+    ("/raphael/panels", "special", "Raphael Engine Panels", "proof routing only"),
+    ("/achilles/node-globe", "special", "Achilles Node Globe", "privacy/claim gated"),
+    ("/shff-m1/panels", "special", "SHFF / M1 Claim-Safe Panels", "concept only"),
 ]
 
 LS_WEB_GO_IMPLEMENTATION_LOG = [
@@ -117,6 +117,18 @@ BLOCKED_PUBLIC_ACTIONS = [
     "public_dataset_merge",
     "unsupported_claims",
 ]
+
+LS_GO_DRIVE_QUEUE_CONTRACT = {
+    "id": "future_lightspeed_go_drive_queue",
+    "source_drive_folder_id": "1PkXMyv26BBvvUbxShTRMTwhnEaK_a1qb",
+    "url": "https://drive.google.com/drive/folders/1PkXMyv26BBvvUbxShTRMTwhnEaK_a1qb",
+    "title": "Future LightSpeed GO drive queue",
+    "observed_status": "folder_ready_sheet_not_created",
+    "handoff_mode": "folder-first queue until the GO workbook/table is created under Achilles.",
+    "required_tables": ["Phone Tasks", "Approvals", "Device Commands", "Results", "Sync Health"],
+    "owner_floor": "Neo",
+    "desktop_role": "Known folder contract for LS GO task sync; not a spreadsheet feed until a sheet exists.",
+}
 
 
 def utc_now_iso() -> str:
@@ -264,6 +276,7 @@ def build_romer_web_integration(root: Path) -> dict:
                     "Romer Industries",
                 ],
                 "desktop_role": "Future phone/light dash folder for Achilles Online, Achilles Desktop, LightSpeed, and Neo task sync.",
+                "queue_contract": LS_GO_DRIVE_QUEUE_CONTRACT,
             },
         ],
         "spreadsheet_feeds": [
@@ -313,16 +326,8 @@ def build_romer_web_integration(root: Path) -> dict:
                 "desktop_role": "Desktop-side sheet to be populated from Oracle/Morpheus/Smith after permission is granted.",
                 "tabs_required": ["Task Queue", "Handoff Receipts", "Knowns", "Datatables", "Publish Queue", "Device Sync"],
             },
-            {
-                "id": "future_lightspeed_go_queue",
-                "url": "pending_sheet_inside_future_lightspeed_go_folder",
-                "title": "Future LightSpeed GO queue",
-                "observed_status": "planned",
-                "tabs_observed": [],
-                "desktop_role": "Future phone dash task queue and device command bridge.",
-                "tabs_required": ["Phone Tasks", "Approvals", "Device Commands", "Results", "Sync Health"],
-            },
         ],
+        "drive_queue_contracts": [LS_GO_DRIVE_QUEUE_CONTRACT],
         "webhook_contract": {
             "owner_floor": "Smith",
             "source_floor": "Neo",

@@ -59,18 +59,24 @@ def build_bridge_health(root: Path) -> dict:
 
     drive_sources = list(integration.get("drive_sources", []))
     spreadsheet_feeds = list(integration.get("spreadsheet_feeds", []))
+    drive_queue_contracts = list(integration.get("drive_queue_contracts", []))
     squarespace_routes = list(integration.get("squarespace_routes", []))
     squarespace_log = list(integration.get("squarespace_implementation_log", []))
     embed_source = integration.get("squarespace_embed_source") or {}
     pending_drive = [
         item
         for item in drive_sources
-        if str(item.get("observed_status") or "") not in {"accessible", "enabled"}
+        if str(item.get("observed_status") or "") not in {"accessible", "enabled", "accessible_empty_or_staging"}
     ]
     pending_sheets = [
         item
         for item in spreadsheet_feeds
         if str(item.get("observed_status") or "") not in {"accessible", "enabled"}
+    ]
+    pending_drive_queues = [
+        item
+        for item in drive_queue_contracts
+        if str(item.get("observed_status") or "") not in {"folder_ready_sheet_not_created", "enabled"}
     ]
     pending_data_routes = [
         item
@@ -107,9 +113,11 @@ def build_bridge_health(root: Path) -> dict:
     if pending_data_routes:
         warnings.append("Dataspace endpoints need JSON/table payloads or explicit maintenance status.")
     if pending_drive:
-        warnings.append("One or more Drive folders are not shared with the connector.")
+        warnings.append("One or more Drive folders are not accessible or enabled.")
     if pending_sheets:
         warnings.append("One or more Sheets are not shared with the connector.")
+    if pending_drive_queues:
+        warnings.append("One or more Drive queue contracts need a known folder or enabled workbook.")
     if unconfirmed_embed_rows:
         warnings.append("Squarespace LS Web/GO embed routes still need page, paste, desktop, and mobile proof.")
 
@@ -122,8 +130,16 @@ def build_bridge_health(root: Path) -> dict:
 
     public_pass_count = len(public_routes) - len(public_failures)
     required_count = len(PUBLIC_REQUIRED_ROUTES)
-    readiness_numerator = public_pass_count + len(drive_sources) - len(pending_drive) + len(spreadsheet_feeds) - len(pending_sheets)
-    readiness_denominator = required_count + len(drive_sources) + len(spreadsheet_feeds)
+    readiness_numerator = (
+        public_pass_count
+        + len(drive_sources)
+        - len(pending_drive)
+        + len(spreadsheet_feeds)
+        - len(pending_sheets)
+        + len(drive_queue_contracts)
+        - len(pending_drive_queues)
+    )
+    readiness_denominator = required_count + len(drive_sources) + len(spreadsheet_feeds) + len(drive_queue_contracts)
     readiness_percent = round((readiness_numerator / readiness_denominator) * 100, 1) if readiness_denominator else 0.0
 
     return {
@@ -176,6 +192,16 @@ def build_bridge_health(root: Path) -> dict:
             "accessible_count": len(spreadsheet_feeds) - len(pending_sheets),
             "pending": [item.get("id") for item in pending_sheets],
         },
+        "drive_queue_contracts": {
+            "count": len(drive_queue_contracts),
+            "ready_count": len(drive_queue_contracts) - len(pending_drive_queues),
+            "pending": [item.get("id") for item in pending_drive_queues],
+            "folder_ready": [
+                item.get("id")
+                for item in drive_queue_contracts
+                if str(item.get("observed_status") or "") == "folder_ready_sheet_not_created"
+            ],
+        },
         "bento_tile": {
             "id": "romer_bridge_health",
             "title": "Romer Bridge Health",
@@ -200,8 +226,8 @@ def build_bridge_health(root: Path) -> dict:
             "Proceed with Oracle ingest, Morpheus proof, Smith handoff, TheConstruct sim, and Architect publish demo.",
         ],
         "next_actions": [
-            "Share or disable the second Drive folder.",
             "Share or local-table-gate the desktop population Sheet.",
+            "Materialize the LS GO queue workbook/table inside the known Future LightSpeed GO folder when GO resumes.",
             "Convert connection_closed data endpoints to maintenance_stub, json_200, or table_200 before release.",
             "Paste and preview LS Web/GO one-cell embeds, then update 07_Implementation_Log in the Drive workbook.",
             "Keep W6 public as a compatibility facade while avoiding internal W6 filing.",

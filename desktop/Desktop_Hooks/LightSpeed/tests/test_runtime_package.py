@@ -2324,13 +2324,17 @@ def test_romer_web_integration_contract_maps_public_site_and_drive_feeds(tmp_pat
     assert payload["squarespace_embed_source"]["gate"] == "COMP2_STAGED_WAITING_ON_COMP1"
     assert len(payload["squarespace_routes"]) == 31
     assert any(item["route"] == "/ls-go/handoff" for item in payload["squarespace_routes"])
+    assert any(item["route"] == "/tools/calculators" for item in payload["squarespace_routes"])
+    assert all(str(item["route"]).startswith("/") for item in payload["squarespace_routes"])
     assert len(payload["squarespace_implementation_log"]) == 8
     assert payload["brand_tokens"]["romer_gold"] == "#C9A24A"
     assert drive_sources["1clPyKU1C_Prd-a4g-Cbl2RZQybLL2oag"]["observed_status"] == "accessible"
     assert "Empirical Data" in drive_sources["1clPyKU1C_Prd-a4g-Cbl2RZQybLL2oag"]["observed_children"]
+    assert drive_sources["1PkXMyv26BBvvUbxShTRMTwhnEaK_a1qb"]["queue_contract"]["id"] == "future_lightspeed_go_drive_queue"
     assert sheets["1POCTGwSyaznMCO-7rA79wNRWT7rReSjOsNx-CLn5u5E"]["title"] == "Website Logs"
     assert "Schema Dictionary" in sheets["1POCTGwSyaznMCO-7rA79wNRWT7rReSjOsNx-CLn5u5E"]["tabs_observed"]
     assert sheets["1GOzjF5BESSTWDqxi1hpGIk4a5R2kyrEY6EUeYN3vm9M"]["observed_status"].startswith("permission_denied")
+    assert [item["id"] for item in payload["drive_queue_contracts"]] == ["future_lightspeed_go_drive_queue"]
     assert payload["handoff_policy"]["publish"].startswith("Architect publishes")
 
 
@@ -2350,11 +2354,9 @@ def test_bridge_health_contract_drives_trinity_bento_status_tile(tmp_path: Path)
     assert payload["squarespace_embed"]["source_workbook_id"] == "1wLNW2cC-vQ1ZTzNmgGQiSFE0wGp_dvupCW1ZGBtT_yw"
     assert payload["squarespace_embed"]["unconfirmed_count"] == 8
     assert payload["squarespace_embed"]["partial_seen_routes"] == ["/ls-go/handoff"]
-    assert payload["drive_sources"]["pending"] == ["1eRmR6kkNimF-U6-r6bQI9C7pWskc27W9"]
-    assert payload["spreadsheet_feeds"]["pending"] == [
-        "1GOzjF5BESSTWDqxi1hpGIk4a5R2kyrEY6EUeYN3vm9M",
-        "future_lightspeed_go_queue",
-    ]
+    assert payload["drive_sources"]["pending"] == []
+    assert payload["spreadsheet_feeds"]["pending"] == ["1GOzjF5BESSTWDqxi1hpGIk4a5R2kyrEY6EUeYN3vm9M"]
+    assert payload["drive_queue_contracts"]["folder_ready"] == ["future_lightspeed_go_drive_queue"]
     assert payload["bento_tile"]["id"] == "romer_bridge_health"
     assert payload["bento_tile"]["widget_type"] == "status"
 

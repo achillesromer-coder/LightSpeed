@@ -184,12 +184,15 @@ def external_endpoint_registry() -> dict[str, Any]:
                 "role": "desktop queue/book to populate from Oracle, Morpheus, Smith, Construct, and Architect outputs",
                 "tabs_required": ["Task Queue", "Handoff Receipts", "Knowns", "Datatables", "Publish Queue", "Device Sync"],
             },
+        ],
+        "drive_queue_contracts": [
             {
-                "id": "future_lightspeed_go_queue",
-                "url": "pending_sheet_inside_future_lightspeed_go_folder",
+                "id": "future_lightspeed_go_drive_queue",
+                "url": "https://drive.google.com/drive/folders/1PkXMyv26BBvvUbxShTRMTwhnEaK_a1qb",
                 "owner_floor": "Neo",
-                "role": "future phone dash task queue and device command bridge",
-                "tabs_required": ["Phone Tasks", "Approvals", "Device Commands", "Results", "Sync Health"],
+                "connector_status": "folder_ready_sheet_not_created",
+                "role": "folder-first future phone dash task queue and device command bridge",
+                "required_tables": ["Phone Tasks", "Approvals", "Device Commands", "Results", "Sync Health"],
             },
         ],
         "webhook_contract": {
