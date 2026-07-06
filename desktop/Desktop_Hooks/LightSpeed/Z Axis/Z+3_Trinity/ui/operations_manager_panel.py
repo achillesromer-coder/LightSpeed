@@ -52,6 +52,7 @@ def _bridge_workspace() -> Dict[str, Any]:
         except Exception:
             data_url = ""
     public = health.get("public_routes") or {}
+    squarespace = health.get("squarespace_embed") or {}
     status = health.get("overall_status", "unknown")
     readiness = health.get("readiness_percent", 0)
     return {
@@ -59,7 +60,8 @@ def _bridge_workspace() -> Dict[str, Any]:
         "title": "Romer Bridge Health",
         "description": (
             f"Walkthrough bridge status: {status}, {readiness}% readiness, "
-            f"{public.get('pass_count', 0)}/{public.get('required_count', 0)} public routes live."
+            f"{public.get('pass_count', 0)}/{public.get('required_count', 0)} public routes live, "
+            f"{squarespace.get('unconfirmed_count', 0)} Squarespace embed routes pending proof."
         ),
         "workspace_url": str(health.get("site_base_url") or "https://romer.industries"),
         "data_url": data_url,

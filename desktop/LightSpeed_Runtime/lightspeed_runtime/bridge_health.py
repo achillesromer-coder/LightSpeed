@@ -59,6 +59,9 @@ def build_bridge_health(root: Path) -> dict:
 
     drive_sources = list(integration.get("drive_sources", []))
     spreadsheet_feeds = list(integration.get("spreadsheet_feeds", []))
+    squarespace_routes = list(integration.get("squarespace_routes", []))
+    squarespace_log = list(integration.get("squarespace_implementation_log", []))
+    embed_source = integration.get("squarespace_embed_source") or {}
     pending_drive = [
         item
         for item in drive_sources
@@ -74,6 +77,26 @@ def build_bridge_health(root: Path) -> dict:
         for item in data_routes
         if str(item.get("observed_status") or "") not in {"public_200", "maintenance_stub", "json_200", "table_200"}
     ]
+    unconfirmed_embed_rows = [
+        item
+        for item in squarespace_log
+        if "UNCONFIRMED" in {
+            str(item.get("page_exists") or ""),
+            str(item.get("embed_pasted") or ""),
+            str(item.get("desktop_preview") or ""),
+            str(item.get("mobile_preview") or ""),
+        }
+        or "PENDING" in {
+            str(item.get("desktop_preview") or ""),
+            str(item.get("mobile_preview") or ""),
+        }
+    ]
+    partially_seen_rows = [
+        item
+        for item in squarespace_log
+        if str(item.get("page_exists") or "") == "SEEN_SCREENSHOT"
+        or str(item.get("embed_pasted") or "") == "PARTIAL_RENDER_SEEN"
+    ]
 
     blockers: list[str] = []
     warnings: list[str] = []
@@ -87,6 +110,8 @@ def build_bridge_health(root: Path) -> dict:
         warnings.append("One or more Drive folders are not shared with the connector.")
     if pending_sheets:
         warnings.append("One or more Sheets are not shared with the connector.")
+    if unconfirmed_embed_rows:
+        warnings.append("Squarespace LS Web/GO embed routes still need page, paste, desktop, and mobile proof.")
 
     if blockers:
         overall_status = "blocked"
@@ -125,6 +150,22 @@ def build_bridge_health(root: Path) -> dict:
             "status_counts": _status_counts(data_routes),
             "policy": "During walkthrough, auth-gated endpoints are acceptable only when shown as known warnings. Before publish they need authenticated JSON/table payloads or explicit maintenance status.",
         },
+        "squarespace_embed": {
+            "source_workbook_id": embed_source.get("id"),
+            "source_workbook_title": embed_source.get("title"),
+            "copy_cell": embed_source.get("copy_cell"),
+            "status": embed_source.get("status"),
+            "gate": embed_source.get("gate"),
+            "boundary": embed_source.get("boundary"),
+            "route_count": len(squarespace_routes),
+            "implementation_rows": len(squarespace_log),
+            "unconfirmed_count": len(unconfirmed_embed_rows),
+            "partial_seen_count": len(partially_seen_rows),
+            "unconfirmed_routes": [item.get("route") for item in unconfirmed_embed_rows],
+            "partial_seen_routes": [item.get("route") for item in partially_seen_rows],
+            "blocked_actions": embed_source.get("blocked_actions") or [],
+            "operator_instruction": embed_source.get("operator_instruction"),
+        },
         "drive_sources": {
             "count": len(drive_sources),
             "accessible_count": len(drive_sources) - len(pending_drive),
@@ -142,7 +183,10 @@ def build_bridge_health(root: Path) -> dict:
             "widget_type": "status",
             "state": overall_status,
             "primary_metric": f"{public_pass_count}/{required_count} public routes live",
-            "secondary_metric": f"{len(pending_data_routes)} data endpoints pending explicit payload/status",
+            "secondary_metric": (
+                f"{len(pending_data_routes)} data endpoints pending explicit payload/status; "
+                f"{len(unconfirmed_embed_rows)} Squarespace embeds pending proof"
+            ),
             "open_action": "Open bridge contract",
             "refresh_action": "Refresh route, Drive, and Sheet validation",
         },
@@ -159,6 +203,7 @@ def build_bridge_health(root: Path) -> dict:
             "Share or disable the second Drive folder.",
             "Share or local-table-gate the desktop population Sheet.",
             "Convert connection_closed data endpoints to maintenance_stub, json_200, or table_200 before release.",
+            "Paste and preview LS Web/GO one-cell embeds, then update 07_Implementation_Log in the Drive workbook.",
             "Keep W6 public as a compatibility facade while avoiding internal W6 filing.",
         ],
     }
