@@ -52,7 +52,9 @@ def test_external_endpoint_registry_covers_library_web_and_future_go_links() -> 
     assert folders["web_lightspeed_sheets"]["connector_status"] == "accessible_empty_or_staging"
     assert folders["future_lightspeed_go"]["observed_children"] == ["RAW AI Returns", "Nathaniel Bouwer", "Romer Industries"]
     assert "Device Sync" in sheets["desktop_population"]["tabs_required"]
-    assert drive_queues["future_lightspeed_go_drive_queue"]["connector_status"] == "folder_ready_sheet_not_created"
+    assert "Phone Tasks" in sheets["future_lightspeed_go_queue"]["tabs_required"]
+    assert drive_queues["future_lightspeed_go_drive_queue"]["connector_status"] == "workbook_materialized"
+    assert drive_queues["future_lightspeed_go_drive_queue"]["queue_spreadsheet_id"] == "1f5i4V3FshYHkztv3_HAg0ZofUl0sdcJZcwrlesUlCfM"
     assert "Phone Tasks" in drive_queues["future_lightspeed_go_drive_queue"]["required_tables"]
     assert "payload_ref" in endpoints["webhook_contract"]["payload_fields"]
 
