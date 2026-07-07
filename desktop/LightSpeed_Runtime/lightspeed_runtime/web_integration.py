@@ -123,11 +123,13 @@ LS_GO_DRIVE_QUEUE_CONTRACT = {
     "source_drive_folder_id": "1PkXMyv26BBvvUbxShTRMTwhnEaK_a1qb",
     "url": "https://drive.google.com/drive/folders/1PkXMyv26BBvvUbxShTRMTwhnEaK_a1qb",
     "title": "Future LightSpeed GO drive queue",
-    "observed_status": "folder_ready_sheet_not_created",
-    "handoff_mode": "folder-first queue until the GO workbook/table is created under Achilles.",
+    "observed_status": "workbook_materialized",
+    "queue_spreadsheet_id": "1f5i4V3FshYHkztv3_HAg0ZofUl0sdcJZcwrlesUlCfM",
+    "queue_spreadsheet_url": "https://docs.google.com/spreadsheets/d/1f5i4V3FshYHkztv3_HAg0ZofUl0sdcJZcwrlesUlCfM/edit",
+    "handoff_mode": "Drive-folder queue with native GO workbook materialized under Achilles.",
     "required_tables": ["Phone Tasks", "Approvals", "Device Commands", "Results", "Sync Health"],
     "owner_floor": "Neo",
-    "desktop_role": "Known folder contract for LS GO task sync; not a spreadsheet feed until a sheet exists.",
+    "desktop_role": "Known folder and native workbook contract for LS GO task sync.",
 }
 
 
@@ -325,6 +327,15 @@ def build_romer_web_integration(root: Path) -> dict:
                 "tabs_observed": [],
                 "desktop_role": "Desktop-side sheet to be populated from Oracle/Morpheus/Smith after permission is granted.",
                 "tabs_required": ["Task Queue", "Handoff Receipts", "Knowns", "Datatables", "Publish Queue", "Device Sync"],
+            },
+            {
+                "id": "1f5i4V3FshYHkztv3_HAg0ZofUl0sdcJZcwrlesUlCfM",
+                "url": "https://docs.google.com/spreadsheets/d/1f5i4V3FshYHkztv3_HAg0ZofUl0sdcJZcwrlesUlCfM/edit",
+                "title": "LS_GO_Queue_2026_07_07",
+                "observed_status": "accessible",
+                "tabs_observed": ["Phone Tasks", "Approvals", "Device Commands", "Results", "Sync Health"],
+                "desktop_role": "Phone dash task queue, approvals, device command, result, and sync health bridge.",
+                "tabs_required": ["Phone Tasks", "Approvals", "Device Commands", "Results", "Sync Health"],
             },
         ],
         "drive_queue_contracts": [LS_GO_DRIVE_QUEUE_CONTRACT],

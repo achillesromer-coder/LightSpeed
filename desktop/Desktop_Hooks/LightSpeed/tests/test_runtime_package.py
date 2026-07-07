@@ -2331,9 +2331,12 @@ def test_romer_web_integration_contract_maps_public_site_and_drive_feeds(tmp_pat
     assert drive_sources["1clPyKU1C_Prd-a4g-Cbl2RZQybLL2oag"]["observed_status"] == "accessible"
     assert "Empirical Data" in drive_sources["1clPyKU1C_Prd-a4g-Cbl2RZQybLL2oag"]["observed_children"]
     assert drive_sources["1PkXMyv26BBvvUbxShTRMTwhnEaK_a1qb"]["queue_contract"]["id"] == "future_lightspeed_go_drive_queue"
+    assert drive_sources["1PkXMyv26BBvvUbxShTRMTwhnEaK_a1qb"]["queue_contract"]["observed_status"] == "workbook_materialized"
     assert sheets["1POCTGwSyaznMCO-7rA79wNRWT7rReSjOsNx-CLn5u5E"]["title"] == "Website Logs"
     assert "Schema Dictionary" in sheets["1POCTGwSyaznMCO-7rA79wNRWT7rReSjOsNx-CLn5u5E"]["tabs_observed"]
     assert sheets["1GOzjF5BESSTWDqxi1hpGIk4a5R2kyrEY6EUeYN3vm9M"]["observed_status"].startswith("permission_denied")
+    assert sheets["1f5i4V3FshYHkztv3_HAg0ZofUl0sdcJZcwrlesUlCfM"]["title"] == "LS_GO_Queue_2026_07_07"
+    assert "Phone Tasks" in sheets["1f5i4V3FshYHkztv3_HAg0ZofUl0sdcJZcwrlesUlCfM"]["tabs_observed"]
     assert [item["id"] for item in payload["drive_queue_contracts"]] == ["future_lightspeed_go_drive_queue"]
     assert payload["handoff_policy"]["publish"].startswith("Architect publishes")
 
@@ -2356,7 +2359,7 @@ def test_bridge_health_contract_drives_trinity_bento_status_tile(tmp_path: Path)
     assert payload["squarespace_embed"]["partial_seen_routes"] == ["/ls-go/handoff"]
     assert payload["drive_sources"]["pending"] == []
     assert payload["spreadsheet_feeds"]["pending"] == ["1GOzjF5BESSTWDqxi1hpGIk4a5R2kyrEY6EUeYN3vm9M"]
-    assert payload["drive_queue_contracts"]["folder_ready"] == ["future_lightspeed_go_drive_queue"]
+    assert payload["drive_queue_contracts"]["workbook_materialized"] == ["future_lightspeed_go_drive_queue"]
     assert payload["bento_tile"]["id"] == "romer_bridge_health"
     assert payload["bento_tile"]["widget_type"] == "status"
 

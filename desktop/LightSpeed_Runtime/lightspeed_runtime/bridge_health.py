@@ -76,7 +76,7 @@ def build_bridge_health(root: Path) -> dict:
     pending_drive_queues = [
         item
         for item in drive_queue_contracts
-        if str(item.get("observed_status") or "") not in {"folder_ready_sheet_not_created", "enabled"}
+        if str(item.get("observed_status") or "") not in {"folder_ready_sheet_not_created", "workbook_materialized", "enabled"}
     ]
     pending_data_routes = [
         item
@@ -200,6 +200,11 @@ def build_bridge_health(root: Path) -> dict:
                 item.get("id")
                 for item in drive_queue_contracts
                 if str(item.get("observed_status") or "") == "folder_ready_sheet_not_created"
+            ],
+            "workbook_materialized": [
+                item.get("id")
+                for item in drive_queue_contracts
+                if str(item.get("observed_status") or "") == "workbook_materialized"
             ],
         },
         "bento_tile": {
