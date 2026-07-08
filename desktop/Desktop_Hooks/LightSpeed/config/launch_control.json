@@ -1,0 +1,199 @@
+{
+  "control_id": "cognigrex_launch_control_2026_05_27",
+  "gate": "CL-4 GATE_RELEASED_FINALISE",
+  "state": "gate_released_finalisation_active",
+  "current_focus": "operator_use_and_bounded_floor_tasks",
+  "launch_targets": [
+    "LightSpeed Desktop",
+    "Inter-Platform"
+  ],
+  "publish_policy": "operator_gate_released_source_checked_writeback",
+  "co_runner": {
+    "host_application": "De Sporte",
+    "state": "held_until_lightspeed_stable",
+    "overseer_sync_path": "D:\\De Sporte\\Data\\Overseer\\overview_sync.json",
+    "channel_snapshot_path": "D:\\De Sporte\\Data\\Residents\\operator\\Channels\\raphael_channel_snapshot.json",
+    "workbench_plan_path": "D:\\De Sporte\\Data\\Residents\\operator\\Channels\\workbench_plan.json",
+    "handoff_path": "D:\\De Sporte\\Data\\Overseer\\lightspeed_launch_handoff.json",
+    "review_queue_path": "C:\\LightSpeed_Consolidated\\Agents\\Achilles\\99_outputs_for_review"
+  },
+  "initialisation_sequence": [
+    {
+      "step_id": "inventory_lock",
+      "label": "Lock upstream inventory and authority surfaces",
+      "owner": "Neo",
+      "state": "completed"
+    },
+    {
+      "step_id": "launch_contract_export",
+      "label": "Export launch control and upstream state into the canonical C-drive shell",
+      "owner": "Trinity",
+      "state": "completed"
+    },
+    {
+      "step_id": "corunner_handoff",
+      "label": "Hold the De Sporte handoff until LightSpeed is stable",
+      "owner": "Neo",
+      "state": "held"
+    },
+    {
+      "step_id": "verify_dual_runtime",
+      "label": "Verify LightSpeed while De Sporte remains held",
+      "owner": "Merovingian",
+      "state": "lightspeed_reset_complete_desporte_held"
+    },
+    {
+      "step_id": "soft_launch_hold",
+      "label": "Hold external push, publish, and Drive mutation behind manual approval",
+      "owner": "Architect",
+      "state": "active"
+    }
+  ],
+  "readiness_checks": [
+    {
+      "check_id": "lightspeed_verify",
+      "label": "LightSpeed __main__ --verify",
+      "state": "passed"
+    },
+    {
+      "check_id": "lightspeed_quick_ready",
+      "label": "verify_launch_ready --quick",
+      "state": "passed"
+    },
+    {
+      "check_id": "desktop_shortcut",
+      "label": "Desktop LightSpeed shortcut target and icon",
+      "state": "verified"
+    },
+    {
+      "check_id": "lightspeed_process",
+      "label": "LightSpeed GUI process",
+      "state": "running_responsive_v5_1_2"
+    },
+    {
+      "check_id": "desporte_bridge",
+      "label": "De Sporte bridge functional",
+      "state": "held"
+    },
+    {
+      "check_id": "desporte_process",
+      "label": "De Sporte onscreen process",
+      "state": "held"
+    },
+    {
+      "check_id": "ollama_endpoint",
+      "label": "Neo local Ollama endpoint",
+      "state": "live"
+    },
+    {
+      "check_id": "ollama_model_inventory",
+      "label": "Installed Ollama model inventory",
+      "state": "5_models_live"
+    },
+    {
+      "check_id": "ollama_loaded_model",
+      "label": "Loaded Ollama model",
+      "state": "none_sequential_wakeup_complete"
+    },
+    {
+      "check_id": "drive_inventory",
+      "label": "Drive roots readable",
+      "state": "connected"
+    },
+    {
+      "check_id": "github_inventory",
+      "label": "GitHub repo readable",
+      "state": "connected"
+    },
+    {
+      "check_id": "gated_visual_review",
+      "label": "Functions Hub gated review/source panel",
+      "state": "passed"
+    },
+    {
+      "check_id": "exact_git_worktree",
+      "label": "Clean-slate LightSpeed worktree with canonical remote",
+      "state": "verified"
+    }
+  ],
+  "blockers": [
+    {
+      "blocker_id": "test_routes_unconfirmed",
+      "label": "Test web routes remain unconfirmed in the local runtime"
+    },
+    {
+      "blocker_id": "follow_on_repo_authority",
+      "label": "Achilles.Local and Platform.CCC authority remain pending verification"
+    }
+  ],
+  "manual_gates": [
+    {
+      "gate_id": "github_push",
+      "label": "GitHub push/merge",
+      "state": "released_by_operator",
+      "released_at": "2026-07-08T12:45:48Z"
+    },
+    {
+      "gate_id": "drive_writeback",
+      "label": "Drive mirror or workbook mutation",
+      "state": "released_by_operator",
+      "released_at": "2026-07-08T12:45:48Z"
+    },
+    {
+      "gate_id": "web_publish",
+      "label": "Website, GO, or public route publish",
+      "state": "released_by_operator",
+      "released_at": "2026-07-08T12:45:48Z"
+    }
+  ],
+  "next_actions": [
+    {
+      "action_id": "sync_release_exports",
+      "label": "Keep release-state exports and shell mirrors aligned after gate release"
+    },
+    {
+      "action_id": "commit_push_verified_worktree",
+      "label": "Commit and push only from the exact clean-slate LightSpeed worktree after no-secrets checks"
+    },
+    {
+      "action_id": "drive_writeback_packet",
+      "label": "Prepare Drive writeback packet from approved source contracts"
+    },
+    {
+      "action_id": "floor_automation_release",
+      "label": "Run internal floor automation only within resource guard and approval manifest"
+    }
+  ],
+  "gate_release": {
+    "release_id": "operator_gate_release_2026_07_08_finalise",
+    "released_at": "2026-07-08T12:45:48Z",
+    "source": "operator_chat_explicit_release",
+    "operator_phrase": "Gate is explicitly released, please finalise",
+    "scope": [
+      "LightSpeed Desktop gated visual review source",
+      "Git push from exact verified LightSpeed worktree",
+      "Drive writeback packet preparation through canonical contracts",
+      "Web/GO static/public route contract finalisation",
+      "Internal floor automation queue release within resource guards"
+    ],
+    "held_scope": [
+      "DeSporte launch remains held",
+      "Squarespace manual paste/preview remains a human-browser operation unless a signed-in browser session is available",
+      "TheConstruct heavy model remains resource-held until RAM window is safe"
+    ]
+  },
+  "resolved_blockers": [
+    {
+      "blocker_id": "external_publish_hold",
+      "label": "External publish remains manual-gated",
+      "state": "released_by_operator",
+      "released_at": "2026-07-08T12:45:48Z"
+    },
+    {
+      "blocker_id": "repo_drive_writeback_hold",
+      "label": "Repo push and Drive writeback remain held until explicit approval",
+      "state": "released_by_operator",
+      "released_at": "2026-07-08T12:45:48Z"
+    }
+  ]
+}

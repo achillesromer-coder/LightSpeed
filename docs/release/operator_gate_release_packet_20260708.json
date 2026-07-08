@@ -1,0 +1,18 @@
+{
+  "release_id": "operator_gate_release_2026_07_08_finalise",
+  "released_at": "2026-07-08T12:45:48Z",
+  "source": "operator_chat_explicit_release",
+  "operator_phrase": "Gate is explicitly released, please finalise",
+  "scope": [
+    "LightSpeed Desktop gated visual review source",
+    "Git push from exact verified LightSpeed worktree",
+    "Drive writeback packet preparation through canonical contracts",
+    "Web/GO static/public route contract finalisation",
+    "Internal floor automation queue release within resource guards"
+  ],
+  "held_scope": [
+    "DeSporte launch remains held",
+    "Squarespace manual paste/preview remains a human-browser operation unless a signed-in browser session is available",
+    "TheConstruct heavy model remains resource-held until RAM window is safe"
+  ]
+}

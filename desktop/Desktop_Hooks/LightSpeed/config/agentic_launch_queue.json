@@ -1,0 +1,866 @@
+{
+  "generated_at": "2026-07-07T12:30:33.050557+00:00",
+  "mirrors": {
+    "desktop_config": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\agentic_launch_queue.json",
+    "neo_temp_shells": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+2_Neo\\data\\temp_shells\\agentic_launch_queue.json",
+    "runtime_export": "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\agentic_launch_queue.json",
+    "smith_staging": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\data\\staging\\agentic_launch_queue.json"
+  },
+  "policy": {
+    "active_runner_lock": "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports\\local_floor_runner.active.lock",
+    "external_publish_blocked": false,
+    "local_only": true,
+    "manual_approval_required_for": [
+      "source file mutation",
+      "heavy model execution",
+      "Drive writeback",
+      "Git push",
+      "web publish",
+      "bulk import from D:\\To be assimilated"
+    ],
+    "mass_data_copy_enabled": false,
+    "max_active_tasks_per_floor": 2,
+    "max_concurrent_ollama_sessions": 1,
+    "recursive_ingest_enabled": false,
+    "resource_guard": "one floor receipt at a time; keep Chrome responsive; do not install dependencies on D: while free space is below 2 GB",
+    "external_publish_approved": true,
+    "squarespace_manual_paste_held": true,
+    "drive_writeback_approved": true,
+    "web_publish_approved": true,
+    "heavy_model_execution": "approved_but_resource_held_for_construct",
+    "github_push_approved": true,
+    "operator_gate_release": {
+      "release_id": "operator_gate_release_2026_07_08_finalise",
+      "released_at": "2026-07-08T12:45:48Z",
+      "source": "operator_chat_explicit_release",
+      "operator_phrase": "Gate is explicitly released, please finalise",
+      "scope": [
+        "LightSpeed Desktop gated visual review source",
+        "Git push from exact verified LightSpeed worktree",
+        "Drive writeback packet preparation through canonical contracts",
+        "Web/GO static/public route contract finalisation",
+        "Internal floor automation queue release within resource guards"
+      ],
+      "held_scope": [
+        "DeSporte launch remains held",
+        "Squarespace manual paste/preview remains a human-browser operation unless a signed-in browser session is available",
+        "TheConstruct heavy model remains resource-held until RAM window is safe"
+      ]
+    }
+  },
+  "purpose": "Single no-risk launch queue for local Ollama smart floors, floor spaces, compaction, and gated desktop buildout.",
+  "queue_id": "lightspeed_agentic_launch_queue_2026_06_22",
+  "source_contracts": {
+    "floor_environment_realization": "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\floor_environment_realization_contract.json",
+    "gated_build_tasks": "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\gated_build_tasks.json",
+    "host_runtime_policy": "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\host_runtime_policy.json",
+    "local_agent_wakeup": "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\local_agent_wakeup_contract.json",
+    "smart_floor_spaces": "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\smart_floor_spaces.json"
+  },
+  "state": "released_for_finalisation_with_resource_guards",
+  "summary": {
+    "task_count": 22,
+    "approved_count": 21,
+    "resource_held_count": 1,
+    "operator_held_count": 1,
+    "manual_heavy_count": 3,
+    "floor_count": 8,
+    "by_floor": {
+      "Architect": 2,
+      "Merovingian": 2,
+      "Morpheus": 2,
+      "Neo": 5,
+      "Oracle": 2,
+      "Smith": 2,
+      "TheConstruct": 3,
+      "Trinity": 4
+    },
+    "by_state": {
+      "approved_for_execution": 20,
+      "approved_resource_held": 1,
+      "held_by_operator": 1
+    },
+    "by_priority": {
+      "high": 12,
+      "medium": 10
+    },
+    "by_type": {
+      "floor_wakeup_receipt": 8,
+      "gated_floor_buildout": 14
+    }
+  },
+  "tasks": [
+    {
+      "activation_mode": "resident",
+      "default_view": "health_and_logs",
+      "done_when": [
+        "receipt is written to Neo or the owner floor",
+        "floor reports role, model, write scope, and one next safe action",
+        "no source files, Drive, repo, or web surfaces are changed"
+      ],
+      "endpoint": "http://localhost:11434",
+      "execute_command": "C:\\LightSpeed_Consolidated\\venv\\Scripts\\python.exe C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\lightspeed_runtime\\local_floor_runner.py --floor Merovingian --receipt-target neo --num-predict 320 --execute",
+      "floor_queue_position": 1,
+      "goal": "Generate one bounded local wake-up receipt for this floor before any code, data, or UI mutation.",
+      "manual_heavy": false,
+      "model": "qwen3:8b",
+      "next_safe_action": "Snapshot process/model state and accept only ledger/report writes.",
+      "owner_floor": "Merovingian",
+      "priority": "high",
+      "queue_lane": "local_ollama_floor_wakeup",
+      "risk_level": "low",
+      "safe_command": "C:\\LightSpeed_Consolidated\\venv\\Scripts\\python.exe C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\lightspeed_runtime\\local_floor_runner.py --floor Merovingian --receipt-target neo --num-predict 320",
+      "source_draw_count": 0,
+      "space_id": "merovingian_evidence_core",
+      "space_label": "Evidence Core",
+      "state": "approved_for_execution",
+      "task_id": "floor_wakeup_merovingian",
+      "task_type": "floor_wakeup_receipt",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-4_Merovingian\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-4_Merovingian\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    },
+    {
+      "activation_mode": "resident",
+      "default_view": "lane_overview",
+      "done_when": [
+        "receipt is written to Neo or the owner floor",
+        "floor reports role, model, write scope, and one next safe action",
+        "no source files, Drive, repo, or web surfaces are changed"
+      ],
+      "endpoint": "http://localhost:11434",
+      "execute_command": "C:\\LightSpeed_Consolidated\\venv\\Scripts\\python.exe C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\lightspeed_runtime\\local_floor_runner.py --floor Trinity --receipt-target neo --num-predict 320 --execute",
+      "floor_queue_position": 1,
+      "goal": "Generate one bounded local wake-up receipt for this floor before any code, data, or UI mutation.",
+      "manual_heavy": false,
+      "model": "qwen3:8b",
+      "next_safe_action": "Show wake-up state in the Functions Hub and collapse duplicate controls into one surface.",
+      "owner_floor": "Trinity",
+      "priority": "high",
+      "queue_lane": "local_ollama_floor_wakeup",
+      "risk_level": "low",
+      "safe_command": "C:\\LightSpeed_Consolidated\\venv\\Scripts\\python.exe C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\lightspeed_runtime\\local_floor_runner.py --floor Trinity --receipt-target neo --num-predict 320",
+      "source_draw_count": 0,
+      "space_id": "trinity_operator_atrium",
+      "space_label": "Operator Atrium",
+      "state": "approved_for_execution",
+      "task_id": "floor_wakeup_trinity",
+      "task_type": "floor_wakeup_receipt",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+3_Trinity\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+3_Trinity\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    },
+    {
+      "done_when": [
+        "the shell defaults to a compact operator density",
+        "only one active detail context expands at a time"
+      ],
+      "endpoint": "http://localhost:11434",
+      "floor_queue_position": 2,
+      "goal": "Keep the shell compact and Chrome-safe by limiting concurrent panels and collapsing inactive detail views.",
+      "manual_heavy": false,
+      "model": "qwen3:8b",
+      "next_safe_action": "Route through Smith with manual yes/no approval before source mutation.",
+      "owner_floor": "Trinity",
+      "priority": "high",
+      "queue_lane": "operator_shell",
+      "risk_level": "low",
+      "source_task_id": "trinity_compact_navigation",
+      "space_id": "trinity_operator_atrium",
+      "space_label": "Operator Atrium",
+      "state": "approved_for_execution",
+      "task_id": "gated_trinity_compact_navigation",
+      "task_type": "gated_floor_buildout",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+3_Trinity\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+3_Trinity\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    },
+    {
+      "done_when": [
+        "the editor shows local-runtime state without opening a separate settings surface",
+        "current-file work can be staged into Neo temp shells with a visible approval trail"
+      ],
+      "endpoint": "http://localhost:11434",
+      "floor_queue_position": 3,
+      "goal": "Expose a bounded Neo local-runtime lane inside the Trinity editor for refresh, task staging, and current-file context handoff.",
+      "manual_heavy": false,
+      "model": "qwen3:8b",
+      "next_safe_action": "Route through Smith with manual yes/no approval before source mutation.",
+      "owner_floor": "Trinity",
+      "prior_state": "ready_no_risk_seed",
+      "priority": "high",
+      "queue_lane": "local_llm_temp_shells",
+      "risk_level": "low",
+      "source_task_id": "trinity_editor_local_lane",
+      "space_id": "trinity_operator_atrium",
+      "space_label": "Operator Atrium",
+      "state": "approved_for_execution",
+      "task_id": "gated_trinity_editor_local_lane",
+      "task_type": "gated_floor_buildout",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+3_Trinity\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+3_Trinity\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    },
+    {
+      "done_when": [
+        "one primary operator entry surface is visible",
+        "workspace, approvals, and queue state are accessible without opening parallel popups"
+      ],
+      "endpoint": "http://localhost:11434",
+      "floor_queue_position": 4,
+      "goal": "Collapse duplicate operator navigation into one shell-first surface with lane, approval, and queue summaries.",
+      "manual_heavy": false,
+      "model": "qwen3:8b",
+      "next_safe_action": "Route through Smith with manual yes/no approval before source mutation.",
+      "owner_floor": "Trinity",
+      "prior_state": "ready_no_risk_seed",
+      "priority": "high",
+      "queue_lane": "operator_shell",
+      "risk_level": "low",
+      "source_task_id": "trinity_single_surface_shell",
+      "space_id": "trinity_operator_atrium",
+      "space_label": "Operator Atrium",
+      "state": "approved_for_execution",
+      "task_id": "gated_trinity_single_surface_shell",
+      "task_type": "gated_floor_buildout",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+3_Trinity\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+3_Trinity\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    },
+    {
+      "activation_mode": "resident",
+      "default_view": "on_call_briefing",
+      "done_when": [
+        "receipt is written to Neo or the owner floor",
+        "floor reports role, model, write scope, and one next safe action",
+        "no source files, Drive, repo, or web surfaces are changed"
+      ],
+      "endpoint": "http://localhost:11434",
+      "execute_command": "C:\\LightSpeed_Consolidated\\venv\\Scripts\\python.exe C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\lightspeed_runtime\\local_floor_runner.py --floor Neo --receipt-target neo --num-predict 320 --execute",
+      "floor_queue_position": 1,
+      "goal": "Generate one bounded local wake-up receipt for this floor before any code, data, or UI mutation.",
+      "manual_heavy": false,
+      "model": "qwen3:8b",
+      "next_safe_action": "Stage one local prompt at a time from floor wake-up packets.",
+      "owner_floor": "Neo",
+      "priority": "high",
+      "queue_lane": "local_ollama_floor_wakeup",
+      "risk_level": "low",
+      "safe_command": "C:\\LightSpeed_Consolidated\\venv\\Scripts\\python.exe C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\lightspeed_runtime\\local_floor_runner.py --floor Neo --receipt-target neo --num-predict 320",
+      "source_draw_count": 0,
+      "space_id": "neo_orchestrator_console",
+      "space_label": "Neo Orchestrator Console",
+      "state": "approved_for_execution",
+      "task_id": "floor_wakeup_neo",
+      "task_type": "floor_wakeup_receipt",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+2_Neo\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+2_Neo\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    },
+    {
+      "done_when": [
+        "Neo reports the canonical local endpoint, active profile, and available models",
+        "local-first usage stays bounded to one concurrent session by policy"
+      ],
+      "endpoint": "http://localhost:11434",
+      "floor_queue_position": 2,
+      "goal": "Anchor Neo to the verified local Ollama endpoint and actual available models so low-lag buildout work can stay on-device.",
+      "manual_heavy": false,
+      "model": "qwen3:8b",
+      "next_safe_action": "Route through Smith with manual yes/no approval before source mutation.",
+      "owner_floor": "Neo",
+      "priority": "high",
+      "queue_lane": "local_llm_temp_shells",
+      "risk_level": "low",
+      "source_task_id": "neo_local_ollama_endpoint",
+      "space_id": "neo_orchestrator_console",
+      "space_label": "Neo Orchestrator Console",
+      "state": "approved_for_execution",
+      "task_id": "gated_neo_local_ollama_endpoint",
+      "task_type": "gated_floor_buildout",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+2_Neo\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+2_Neo\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    },
+    {
+      "done_when": [
+        "a live temp-shell registry exists on the Neo floor",
+        "each temp shell declares owner floor, model, purpose, and write scope"
+      ],
+      "endpoint": "http://localhost:11434",
+      "floor_queue_position": 3,
+      "goal": "Create bounded temporary shells for Neo-led local assistance so floor-specific work can be staged before permanent population.",
+      "manual_heavy": false,
+      "model": "qwen3:8b",
+      "next_safe_action": "Route through Smith with manual yes/no approval before source mutation.",
+      "owner_floor": "Neo",
+      "prior_state": "ready_no_risk_seed",
+      "priority": "high",
+      "queue_lane": "local_llm_temp_shells",
+      "risk_level": "low",
+      "source_task_id": "neo_temp_shell_registry",
+      "space_id": "neo_orchestrator_console",
+      "space_label": "Neo Orchestrator Console",
+      "state": "approved_for_execution",
+      "task_id": "gated_neo_temp_shell_registry",
+      "task_type": "gated_floor_buildout",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+2_Neo\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+2_Neo\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    },
+    {
+      "activation_mode": "resident",
+      "default_view": "build_task_queue",
+      "done_when": [
+        "receipt is written to Neo or the owner floor",
+        "floor reports role, model, write scope, and one next safe action",
+        "no source files, Drive, repo, or web surfaces are changed"
+      ],
+      "endpoint": "http://localhost:11434",
+      "execute_command": "C:\\LightSpeed_Consolidated\\venv\\Scripts\\python.exe C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\lightspeed_runtime\\local_floor_runner.py --floor Smith --receipt-target neo --num-predict 320 --execute",
+      "floor_queue_position": 1,
+      "goal": "Generate one bounded local wake-up receipt for this floor before any code, data, or UI mutation.",
+      "manual_heavy": false,
+      "model": "qwen3:8b",
+      "next_safe_action": "Turn file movement, scripts, and support packs into no-risk queued tasks.",
+      "owner_floor": "Smith",
+      "priority": "high",
+      "queue_lane": "local_ollama_floor_wakeup",
+      "risk_level": "low",
+      "safe_command": "C:\\LightSpeed_Consolidated\\venv\\Scripts\\python.exe C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\lightspeed_runtime\\local_floor_runner.py --floor Smith --receipt-target neo --num-predict 320",
+      "source_draw_count": 0,
+      "space_id": "smith_route_foundry",
+      "space_label": "Route Foundry",
+      "state": "approved_for_execution",
+      "task_id": "floor_wakeup_smith",
+      "task_type": "floor_wakeup_receipt",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    },
+    {
+      "done_when": [
+        "population-ready tasks are visible in one queue view",
+        "all tasks remain approval-gated and bounded"
+      ],
+      "endpoint": "http://localhost:11434",
+      "floor_queue_position": 2,
+      "goal": "Seed a no-risk build queue for floor population, workflow scaffolding, and review routing.",
+      "manual_heavy": false,
+      "model": "qwen3:8b",
+      "next_safe_action": "Route through Smith with manual yes/no approval before source mutation.",
+      "owner_floor": "Smith",
+      "priority": "high",
+      "queue_lane": "queue_and_execution",
+      "risk_level": "low",
+      "source_task_id": "smith_population_router",
+      "space_id": "smith_route_foundry",
+      "space_label": "Route Foundry",
+      "state": "approved_for_execution",
+      "task_id": "gated_smith_population_router",
+      "task_type": "gated_floor_buildout",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    },
+    {
+      "done_when": [
+        "source groups are attachable without rewriting originals",
+        "proof and provenance remain visible per source family"
+      ],
+      "endpoint": "http://localhost:11434",
+      "floor_queue_position": 1,
+      "goal": "Prepare attach-only contracts for doctrine, empirical, calculator, and reference reservoir population.",
+      "manual_heavy": false,
+      "model": "deepseek-r1:8b",
+      "next_safe_action": "Route through Smith with manual yes/no approval before source mutation.",
+      "owner_floor": "Oracle",
+      "priority": "high",
+      "queue_lane": "knowledge_library",
+      "risk_level": "low",
+      "source_task_id": "oracle_population_attach_contracts",
+      "space_id": "oracle_reservoir_library",
+      "space_label": "Reservoir Library",
+      "state": "approved_for_execution",
+      "task_id": "gated_oracle_population_attach_contracts",
+      "task_type": "gated_floor_buildout",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-2_Oracle\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-2_Oracle\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    },
+    {
+      "done_when": [
+        "proofed datasets attach into the runtime profile",
+        "scenario preview remains bounded and reversible"
+      ],
+      "endpoint": "http://localhost:11434",
+      "floor_queue_position": 1,
+      "goal": "Prepare dataset attach controls, scenario previews, and smoke/manual render lanes for digital twin growth.",
+      "manual_heavy": true,
+      "model": "gemma3:27b",
+      "next_safe_action": "Route through Smith with manual yes/no approval before source mutation.",
+      "owner_floor": "TheConstruct",
+      "priority": "high",
+      "queue_lane": "simulation_twin",
+      "risk_level": "low",
+      "source_task_id": "construct_population_controls",
+      "space_id": "construct_digital_twin",
+      "space_label": "Digital Twin Atrium",
+      "state": "approved_for_execution",
+      "task_id": "gated_construct_population_controls",
+      "task_type": "gated_floor_buildout",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z0_TheConstruct\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z0_TheConstruct\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    },
+    {
+      "done_when": [
+        "each resident or staged floor has a health snapshot",
+        "failures route to evidence rather than silent state"
+      ],
+      "endpoint": "http://localhost:11434",
+      "floor_queue_position": 2,
+      "goal": "Stage health, telemetry, and evidence snapshots for each floor before deeper autonomous operation.",
+      "manual_heavy": false,
+      "model": "qwen3:8b",
+      "next_safe_action": "Route through Smith with manual yes/no approval before source mutation.",
+      "owner_floor": "Merovingian",
+      "priority": "medium",
+      "queue_lane": "queue_and_execution",
+      "risk_level": "low",
+      "source_task_id": "merovingian_evidence_snapshots",
+      "space_id": "merovingian_evidence_core",
+      "space_label": "Evidence Core",
+      "state": "approved_for_execution",
+      "task_id": "gated_merovingian_evidence_snapshots",
+      "task_type": "gated_floor_buildout",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-4_Merovingian\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-4_Merovingian\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    },
+    {
+      "done_when": [
+        "De Sporte presence is represented as a co-running contract not a competing shell",
+        "active interaction stays within the exported host/runtime budget"
+      ],
+      "endpoint": "http://localhost:11434",
+      "floor_queue_position": 4,
+      "goal": "Formalize De Sporte as a bounded co-running companion with low-sleep persistence and a compact interaction budget.",
+      "manual_heavy": false,
+      "model": "qwen3:8b",
+      "next_safe_action": "Route through Smith with manual yes/no approval before source mutation.",
+      "owner_floor": "Neo",
+      "prior_state": "ready_no_risk_seed",
+      "priority": "medium",
+      "queue_lane": "operator_shell",
+      "risk_level": "low",
+      "source_task_id": "desporte_co_running_contract",
+      "space_id": "neo_orchestrator_console",
+      "space_label": "Neo Orchestrator Console",
+      "state": "held_by_operator",
+      "task_id": "gated_desporte_co_running_contract",
+      "task_type": "gated_floor_buildout",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+2_Neo\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+2_Neo\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "held_by_operator"
+    },
+    {
+      "done_when": [
+        "Neo has visible playbooks for intake, route, review, and publish",
+        "model usage remains bounded by host and floor policy"
+      ],
+      "endpoint": "http://localhost:11434",
+      "floor_queue_position": 5,
+      "goal": "Prepare Neo-led on-call and operator playbooks with Achilles oversight routed from De Sporte rather than a dedicated LightSpeed floor.",
+      "manual_heavy": false,
+      "model": "qwen3:8b",
+      "next_safe_action": "Route through Smith with manual yes/no approval before source mutation.",
+      "owner_floor": "Neo",
+      "prior_state": "ready_no_risk_seed",
+      "priority": "medium",
+      "queue_lane": "operator_shell",
+      "risk_level": "low",
+      "source_task_id": "neo_orchestrator_playbooks",
+      "space_id": "neo_orchestrator_console",
+      "space_label": "Neo Orchestrator Console",
+      "state": "approved_for_execution",
+      "task_id": "gated_neo_orchestrator_playbooks",
+      "task_type": "gated_floor_buildout",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+2_Neo\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+2_Neo\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    },
+    {
+      "activation_mode": "staged",
+      "default_view": "source_library",
+      "done_when": [
+        "receipt is written to Neo or the owner floor",
+        "floor reports role, model, write scope, and one next safe action",
+        "no source files, Drive, repo, or web surfaces are changed"
+      ],
+      "endpoint": "http://localhost:11434",
+      "execute_command": "C:\\LightSpeed_Consolidated\\venv\\Scripts\\python.exe C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\lightspeed_runtime\\local_floor_runner.py --floor Oracle --receipt-target neo --num-predict 320 --execute",
+      "floor_queue_position": 2,
+      "goal": "Generate one bounded local wake-up receipt for this floor before any code, data, or UI mutation.",
+      "manual_heavy": false,
+      "model": "deepseek-r1:8b",
+      "next_safe_action": "Attach source-root receipts and keep originals read-only.",
+      "owner_floor": "Oracle",
+      "priority": "medium",
+      "queue_lane": "local_ollama_floor_wakeup",
+      "risk_level": "low",
+      "safe_command": "C:\\LightSpeed_Consolidated\\venv\\Scripts\\python.exe C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\lightspeed_runtime\\local_floor_runner.py --floor Oracle --receipt-target neo --num-predict 320",
+      "source_draw_count": 0,
+      "space_id": "oracle_reservoir_library",
+      "space_label": "Reservoir Library",
+      "state": "approved_for_execution",
+      "task_id": "floor_wakeup_oracle",
+      "task_type": "floor_wakeup_receipt",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-2_Oracle\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-2_Oracle\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    },
+    {
+      "activation_mode": "staged",
+      "default_view": "evidence_split_view",
+      "done_when": [
+        "receipt is written to Neo or the owner floor",
+        "floor reports role, model, write scope, and one next safe action",
+        "no source files, Drive, repo, or web surfaces are changed"
+      ],
+      "endpoint": "http://localhost:11434",
+      "execute_command": "C:\\LightSpeed_Consolidated\\venv\\Scripts\\python.exe C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\lightspeed_runtime\\local_floor_runner.py --floor Morpheus --receipt-target neo --num-predict 320 --execute",
+      "floor_queue_position": 1,
+      "goal": "Generate one bounded local wake-up receipt for this floor before any code, data, or UI mutation.",
+      "manual_heavy": false,
+      "model": "deepseek-r1:8b",
+      "next_safe_action": "Review overlap and duplicate-function reports before promotion.",
+      "owner_floor": "Morpheus",
+      "priority": "medium",
+      "queue_lane": "local_ollama_floor_wakeup",
+      "risk_level": "low",
+      "safe_command": "C:\\LightSpeed_Consolidated\\venv\\Scripts\\python.exe C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\lightspeed_runtime\\local_floor_runner.py --floor Morpheus --receipt-target neo --num-predict 320",
+      "source_draw_count": 0,
+      "space_id": "morpheus_review_chamber",
+      "space_label": "Review Chamber",
+      "state": "approved_for_execution",
+      "task_id": "floor_wakeup_morpheus",
+      "task_type": "floor_wakeup_receipt",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-1_Morpheus\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-1_Morpheus\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    },
+    {
+      "done_when": [
+        "review work happens in one workspace",
+        "promotion proposals route back through Smith and Trinity"
+      ],
+      "endpoint": "http://localhost:11434",
+      "floor_queue_position": 2,
+      "goal": "Prepare a single review chamber for overlap evidence, diff packets, and promotion proposals.",
+      "manual_heavy": false,
+      "model": "deepseek-r1:8b",
+      "next_safe_action": "Route through Smith with manual yes/no approval before source mutation.",
+      "owner_floor": "Morpheus",
+      "priority": "medium",
+      "queue_lane": "review_and_corroboration",
+      "risk_level": "low",
+      "source_task_id": "morpheus_review_workspace",
+      "space_id": "morpheus_review_chamber",
+      "space_label": "Review Chamber",
+      "state": "approved_for_execution",
+      "task_id": "gated_morpheus_review_workspace",
+      "task_type": "gated_floor_buildout",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-1_Morpheus\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-1_Morpheus\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    },
+    {
+      "activation_mode": "staged",
+      "default_view": "approval_queue",
+      "done_when": [
+        "receipt is written to Neo or the owner floor",
+        "floor reports role, model, write scope, and one next safe action",
+        "no source files, Drive, repo, or web surfaces are changed"
+      ],
+      "endpoint": "http://localhost:11434",
+      "execute_command": "C:\\LightSpeed_Consolidated\\venv\\Scripts\\python.exe C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\lightspeed_runtime\\local_floor_runner.py --floor Architect --receipt-target neo --num-predict 320 --execute",
+      "floor_queue_position": 1,
+      "goal": "Generate one bounded local wake-up receipt for this floor before any code, data, or UI mutation.",
+      "manual_heavy": false,
+      "model": "qwen3:8b",
+      "next_safe_action": "Hold publish/repo/Drive gates closed while release packets mature.",
+      "owner_floor": "Architect",
+      "priority": "medium",
+      "queue_lane": "local_ollama_floor_wakeup",
+      "risk_level": "low",
+      "safe_command": "C:\\LightSpeed_Consolidated\\venv\\Scripts\\python.exe C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\lightspeed_runtime\\local_floor_runner.py --floor Architect --receipt-target neo --num-predict 320",
+      "source_draw_count": 0,
+      "space_id": "architect_publish_wall",
+      "space_label": "Publish Wall",
+      "state": "approved_for_execution",
+      "task_id": "floor_wakeup_architect",
+      "task_type": "floor_wakeup_receipt",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+1_Architect\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+1_Architect\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    },
+    {
+      "done_when": [
+        "external publish remains blocked until manual approval",
+        "handoff artefacts show source, proof, and destination"
+      ],
+      "endpoint": "http://localhost:11434",
+      "floor_queue_position": 2,
+      "goal": "Prepare repo, GO, and web artefact gates with explicit yes/no approval and evidence requirements.",
+      "manual_heavy": false,
+      "model": "qwen3:8b",
+      "next_safe_action": "Route through Smith with manual yes/no approval before source mutation.",
+      "owner_floor": "Architect",
+      "priority": "medium",
+      "queue_lane": "publish_and_governance",
+      "risk_level": "low",
+      "source_task_id": "architect_manual_publish_gate",
+      "space_id": "architect_publish_wall",
+      "space_label": "Publish Wall",
+      "state": "approved_for_execution",
+      "task_id": "gated_architect_manual_publish_gate",
+      "task_type": "gated_floor_buildout",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+1_Architect\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+1_Architect\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    },
+    {
+      "activation_mode": "manual_heavy",
+      "default_view": "ambient_embed",
+      "done_when": [
+        "receipt is written to Neo or the owner floor",
+        "floor reports role, model, write scope, and one next safe action",
+        "no source files, Drive, repo, or web surfaces are changed"
+      ],
+      "endpoint": "http://localhost:11434",
+      "execute_command": null,
+      "floor_queue_position": 2,
+      "goal": "Generate one bounded local wake-up receipt for this floor before any code, data, or UI mutation.",
+      "manual_heavy": true,
+      "model": "gemma3:27b",
+      "next_safe_action": "Prepare proofed visual/data lanes without launching immersive heavy mode.",
+      "owner_floor": "TheConstruct",
+      "priority": "medium",
+      "queue_lane": "local_ollama_floor_wakeup",
+      "risk_level": "manual_heavy",
+      "safe_command": "C:\\LightSpeed_Consolidated\\venv\\Scripts\\python.exe C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\lightspeed_runtime\\local_floor_runner.py --floor TheConstruct --receipt-target neo --num-predict 320",
+      "source_draw_count": 0,
+      "space_id": "construct_digital_twin",
+      "space_label": "Digital Twin Atrium",
+      "state": "approved_resource_held",
+      "task_id": "floor_wakeup_theconstruct",
+      "task_type": "floor_wakeup_receipt",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z0_TheConstruct\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z0_TheConstruct\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "resource_hold_reason": "gemma3:27b model payload is about 17 GB; current free RAM is not sufficient for a safe heavy run while LightSpeed/Chrome remain responsive."
+    },
+    {
+      "done_when": [
+        "ambient and tower modes respect compact render budgets",
+        "immersive mode stays manual-only"
+      ],
+      "endpoint": "http://localhost:11434",
+      "floor_queue_position": 3,
+      "goal": "Keep render/runtime surfaces inside compact widget, panel, and concurrency budgets while Chrome remains responsive.",
+      "manual_heavy": true,
+      "model": "gemma3:27b",
+      "next_safe_action": "Route through Smith with manual yes/no approval before source mutation.",
+      "owner_floor": "TheConstruct",
+      "prior_state": "ready_no_risk_seed",
+      "priority": "medium",
+      "queue_lane": "simulation_twin",
+      "risk_level": "low",
+      "source_task_id": "construct_compact_render_budget",
+      "space_id": "construct_digital_twin",
+      "space_label": "Digital Twin Atrium",
+      "state": "approved_for_execution",
+      "task_id": "gated_construct_compact_render_budget",
+      "task_type": "gated_floor_buildout",
+      "write_scope": [
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z0_TheConstruct\\data",
+        "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z0_TheConstruct\\Z Direct",
+        "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\reports"
+      ],
+      "approval_state": "approved_by_operator",
+      "approved_at": "2026-07-07T12:31:44+00:00"
+    }
+  ],
+  "operator_approval_manifest": {
+    "manifest_id": "operator_approvals_2026_07_07_launch_set",
+    "generated_at": "2026-07-07T12:31:44+00:00",
+    "approved_numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      16,
+      17
+    ],
+    "held_numbers": [
+      15,
+      18
+    ],
+    "approvals": {
+      "desktop_launch": true,
+      "safe_floor_run": true,
+      "ui_compact": true,
+      "neo_local": true,
+      "smith_queue": true,
+      "oracle_attach": true,
+      "morpheus_review": true,
+      "merovingian_evidence": true,
+      "architect_gates": true,
+      "construct_prep": true,
+      "drive_writeback": true,
+      "population_sheet_gate": true,
+      "ls_go_queue": true,
+      "dataspace_maintenance": true,
+      "squarespace_manual": false,
+      "construct_heavy": true,
+      "web_publish": true,
+      "desporte_launch": false,
+      "github_push": true,
+      "gated_visual_review": true,
+      "desktop_finalise": true
+    },
+    "resource_guard": {
+      "construct_heavy_model": "gemma3:27b",
+      "construct_heavy_approval": "approved_by_operator",
+      "construct_heavy_execution_state": "resource_held_until_free_ram_window",
+      "observed_free_ram_gb": 7.7,
+      "reason": "gemma3:27b model payload is about 17 GB; current free RAM is not sufficient for a safe heavy run while LightSpeed/Chrome remain responsive."
+    },
+    "manual_holds": {
+      "squarespace_manual_paste_preview": "held_by_operator",
+      "de_sporte_launch": "held_by_operator"
+    },
+    "approved_external": {
+      "drive_writeback": true,
+      "web_publish_authority": true,
+      "web_publish_boundary": "Public route/data contract authorised; Squarespace embed remains manual-held until user paste/preview proof."
+    },
+    "ls_go_queue": {
+      "spreadsheet_id": "1f5i4V3FshYHkztv3_HAg0ZofUl0sdcJZcwrlesUlCfM",
+      "url": "https://docs.google.com/spreadsheets/d/1f5i4V3FshYHkztv3_HAg0ZofUl0sdcJZcwrlesUlCfM/edit",
+      "state": "materialized_in_future_lightspeed_go_folder"
+    },
+    "gate_release": {
+      "release_id": "operator_gate_release_2026_07_08_finalise",
+      "released_at": "2026-07-08T12:45:48Z",
+      "source": "operator_chat_explicit_release",
+      "operator_phrase": "Gate is explicitly released, please finalise",
+      "scope": [
+        "LightSpeed Desktop gated visual review source",
+        "Git push from exact verified LightSpeed worktree",
+        "Drive writeback packet preparation through canonical contracts",
+        "Web/GO static/public route contract finalisation",
+        "Internal floor automation queue release within resource guards"
+      ],
+      "held_scope": [
+        "DeSporte launch remains held",
+        "Squarespace manual paste/preview remains a human-browser operation unless a signed-in browser session is available",
+        "TheConstruct heavy model remains resource-held until RAM window is safe"
+      ]
+    }
+  },
+  "released_at": "2026-07-08T12:45:48Z"
+}

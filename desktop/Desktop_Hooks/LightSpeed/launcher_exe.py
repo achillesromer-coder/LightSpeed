@@ -22,8 +22,8 @@ def build_launch_command(root: Path) -> tuple[list[str], Path]:
     shell_root = root / "Desktop_Hooks" / "LightSpeed"
     entrypoint = shell_root / "__main__.py"
     python_candidates = (
-        root / "venv" / "Scripts" / "pythonw.exe",
         root / "venv" / "Scripts" / "python.exe",
+        root / "venv" / "Scripts" / "pythonw.exe",
     )
     python = next((candidate for candidate in python_candidates if candidate.is_file()), None)
 
@@ -39,11 +39,19 @@ def launch() -> int:
     command, working_directory = build_launch_command(root)
     environment = os.environ.copy()
     environment["LIGHTSPEED_CANONICAL_ROOT"] = str(root)
+    environment["LIGHTSPEED_RUNTIME_RESOLVED"] = "1"
+    environment.setdefault("LIGHTSPEED_PYTHON", command[0])
+    venv_root = root / "venv"
+    if venv_root.exists():
+        environment["VIRTUAL_ENV"] = str(venv_root)
+        environment["PATH"] = f"{venv_root / 'Scripts'}{os.pathsep}{environment.get('PATH', '')}"
+    creation_flags = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
+    creation_flags |= getattr(subprocess, "CREATE_NO_WINDOW", 0)
     process = subprocess.Popen(
         command,
         cwd=working_directory,
         env=environment,
-        creationflags=getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0),
+        creationflags=creation_flags,
         close_fds=True,
     )
     return process.pid

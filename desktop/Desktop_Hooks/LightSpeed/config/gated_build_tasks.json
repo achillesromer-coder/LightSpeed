@@ -1,0 +1,195 @@
+{
+  "task_set_id": "population_build_tasks_2026_05_22",
+  "default_state": "ready_no_risk_seed",
+  "execution_mode": "agent_assist_with_manual_y_n_gate",
+  "approval_policy": {
+    "input_mode": "y_n",
+    "artifact_review_required": true,
+    "write_scope": "owned_floor_paths_only",
+    "external_publish_blocked": true
+  },
+  "tasks": [
+    {
+      "task_id": "trinity_single_surface_shell",
+      "lane_id": "operator_shell",
+      "owner_floor": "Trinity",
+      "priority": "high",
+      "state": "ready_no_risk_seed",
+      "risk_level": "low",
+      "goal": "Collapse duplicate operator navigation into one shell-first surface with lane, approval, and queue summaries.",
+      "done_when": [
+        "one primary operator entry surface is visible",
+        "workspace, approvals, and queue state are accessible without opening parallel popups"
+      ]
+    },
+    {
+      "task_id": "trinity_compact_navigation",
+      "lane_id": "operator_shell",
+      "owner_floor": "Trinity",
+      "priority": "high",
+      "state": "ready_no_risk_seed",
+      "risk_level": "low",
+      "goal": "Keep the shell compact and Chrome-safe by limiting concurrent panels and collapsing inactive detail views.",
+      "done_when": [
+        "the shell defaults to a compact operator density",
+        "only one active detail context expands at a time"
+      ]
+    },
+    {
+      "task_id": "trinity_editor_local_lane",
+      "lane_id": "local_llm_temp_shells",
+      "owner_floor": "Trinity",
+      "priority": "high",
+      "state": "ready_no_risk_seed",
+      "risk_level": "low",
+      "goal": "Expose a bounded Neo local-runtime lane inside the Trinity editor for refresh, task staging, and current-file context handoff.",
+      "done_when": [
+        "the editor shows local-runtime state without opening a separate settings surface",
+        "current-file work can be staged into Neo temp shells with a visible approval trail"
+      ]
+    },
+    {
+      "task_id": "smith_population_router",
+      "lane_id": "queue_and_execution",
+      "owner_floor": "Smith",
+      "priority": "high",
+      "state": "ready_no_risk_seed",
+      "risk_level": "low",
+      "goal": "Seed a no-risk build queue for floor population, workflow scaffolding, and review routing.",
+      "done_when": [
+        "population-ready tasks are visible in one queue view",
+        "all tasks remain approval-gated and bounded"
+      ]
+    },
+    {
+      "task_id": "oracle_population_attach_contracts",
+      "lane_id": "knowledge_library",
+      "owner_floor": "Oracle",
+      "priority": "high",
+      "state": "ready_no_risk_seed",
+      "risk_level": "low",
+      "goal": "Prepare attach-only contracts for doctrine, empirical, calculator, and reference reservoir population.",
+      "done_when": [
+        "source groups are attachable without rewriting originals",
+        "proof and provenance remain visible per source family"
+      ]
+    },
+    {
+      "task_id": "morpheus_review_workspace",
+      "lane_id": "review_and_corroboration",
+      "owner_floor": "Morpheus",
+      "priority": "medium",
+      "state": "ready_no_risk_seed",
+      "risk_level": "low",
+      "goal": "Prepare a single review chamber for overlap evidence, diff packets, and promotion proposals.",
+      "done_when": [
+        "review work happens in one workspace",
+        "promotion proposals route back through Smith and Trinity"
+      ]
+    },
+    {
+      "task_id": "construct_population_controls",
+      "lane_id": "simulation_twin",
+      "owner_floor": "TheConstruct",
+      "priority": "high",
+      "state": "ready_no_risk_seed",
+      "risk_level": "low",
+      "goal": "Prepare dataset attach controls, scenario previews, and smoke/manual render lanes for digital twin growth.",
+      "done_when": [
+        "proofed datasets attach into the runtime profile",
+        "scenario preview remains bounded and reversible"
+      ]
+    },
+    {
+      "task_id": "construct_compact_render_budget",
+      "lane_id": "simulation_twin",
+      "owner_floor": "TheConstruct",
+      "priority": "medium",
+      "state": "ready_no_risk_seed",
+      "risk_level": "low",
+      "goal": "Keep render/runtime surfaces inside compact widget, panel, and concurrency budgets while Chrome remains responsive.",
+      "done_when": [
+        "ambient and tower modes respect compact render budgets",
+        "immersive mode stays manual-only"
+      ]
+    },
+    {
+      "task_id": "merovingian_evidence_snapshots",
+      "lane_id": "queue_and_execution",
+      "owner_floor": "Merovingian",
+      "priority": "medium",
+      "state": "ready_no_risk_seed",
+      "risk_level": "low",
+      "goal": "Stage health, telemetry, and evidence snapshots for each floor before deeper autonomous operation.",
+      "done_when": [
+        "each resident or staged floor has a health snapshot",
+        "failures route to evidence rather than silent state"
+      ]
+    },
+    {
+      "task_id": "neo_orchestrator_playbooks",
+      "lane_id": "operator_shell",
+      "owner_floor": "Neo",
+      "priority": "medium",
+      "state": "ready_no_risk_seed",
+      "risk_level": "low",
+      "goal": "Prepare Neo-led on-call and operator playbooks with Achilles oversight routed from De Sporte rather than a dedicated LightSpeed floor.",
+      "done_when": [
+        "Neo has visible playbooks for intake, route, review, and publish",
+        "model usage remains bounded by host and floor policy"
+      ]
+    },
+    {
+      "task_id": "neo_local_ollama_endpoint",
+      "lane_id": "local_llm_temp_shells",
+      "owner_floor": "Neo",
+      "priority": "high",
+      "state": "ready_no_risk_seed",
+      "risk_level": "low",
+      "goal": "Anchor Neo to the verified local Ollama endpoint and actual available models so low-lag buildout work can stay on-device.",
+      "done_when": [
+        "Neo reports the canonical local endpoint, active profile, and available models",
+        "local-first usage stays bounded to one concurrent session by policy"
+      ]
+    },
+    {
+      "task_id": "neo_temp_shell_registry",
+      "lane_id": "local_llm_temp_shells",
+      "owner_floor": "Neo",
+      "priority": "high",
+      "state": "ready_no_risk_seed",
+      "risk_level": "low",
+      "goal": "Create bounded temporary shells for Neo-led local assistance so floor-specific work can be staged before permanent population.",
+      "done_when": [
+        "a live temp-shell registry exists on the Neo floor",
+        "each temp shell declares owner floor, model, purpose, and write scope"
+      ]
+    },
+    {
+      "task_id": "desporte_co_running_contract",
+      "lane_id": "operator_shell",
+      "owner_floor": "Neo",
+      "priority": "medium",
+      "state": "ready_no_risk_seed",
+      "risk_level": "low",
+      "goal": "Formalize De Sporte as a bounded co-running companion with low-sleep persistence and a compact interaction budget.",
+      "done_when": [
+        "De Sporte presence is represented as a co-running contract not a competing shell",
+        "active interaction stays within the exported host/runtime budget"
+      ]
+    },
+    {
+      "task_id": "architect_manual_publish_gate",
+      "lane_id": "publish_and_governance",
+      "owner_floor": "Architect",
+      "priority": "medium",
+      "state": "ready_no_risk_seed",
+      "risk_level": "low",
+      "goal": "Prepare repo, GO, and web artefact gates with explicit yes/no approval and evidence requirements.",
+      "done_when": [
+        "external publish remains blocked until manual approval",
+        "handoff artefacts show source, proof, and destination"
+      ]
+    }
+  ]
+}

@@ -248,6 +248,18 @@ class AgentHomeBridge:
 
     def floor_model_summary(self) -> dict:
         assignments = self.floor_models()
+        wake_models: dict[str, str] = {}
+        try:
+            wake_payload = self.local_agent_wakeup()
+            for floor_packet in _expect_list(wake_payload.get("floors") or [], "local_agent_wakeup.floors"):
+                floor = str(floor_packet.get("floor") or "").strip()
+                connection = floor_packet.get("ollama_connection") if isinstance(floor_packet.get("ollama_connection"), dict) else {}
+                model = str(connection.get("model") or "").strip()
+                if floor and model:
+                    wake_models[floor] = model
+        except Exception:
+            wake_models = {}
+
         by_provider = Counter(str(item.get("provider") or "unknown") for item in assignments)
         by_workspace_scope = Counter(str(item.get("workspace_scope") or "unknown") for item in assignments)
 
@@ -259,10 +271,17 @@ class AgentHomeBridge:
             "by_workspace_scope": dict(sorted(by_workspace_scope.items())),
             "by_floor": {
                 str(item.get("floor")): {
-                    "model": item.get("model"),
+                    "model": wake_models.get(str(item.get("floor") or ""), item.get("model")),
+                    "configured_model": item.get("model"),
+                    "active_model_source": (
+                        "local_agent_wakeup"
+                        if wake_models.get(str(item.get("floor") or ""))
+                        else "floor_models"
+                    ),
                     "persona": item.get("persona"),
                     "enabled": bool(item.get("enabled")),
                     "workspace_scope": item.get("workspace_scope"),
+                    "preferred_light_model": item.get("preferred_light_model"),
                 }
                 for item in assignments
                 if item.get("floor")

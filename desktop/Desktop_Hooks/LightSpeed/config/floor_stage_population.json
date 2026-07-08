@@ -1,0 +1,70 @@
+{
+  "policy_id": "d_drive_stage_population_2026_05_21",
+  "boot_lane_order": [
+    "Merovingian",
+    "Trinity",
+    "Neo",
+    "Smith",
+    "Oracle",
+    "Morpheus",
+    "Architect",
+    "TheConstruct"
+  ],
+  "resident_floors": [
+    "Merovingian",
+    "Trinity",
+    "Neo",
+    "Smith"
+  ],
+  "staged_floors": [
+    "Oracle",
+    "Morpheus",
+    "Architect"
+  ],
+  "manual_heavy_floors": [
+    "TheConstruct"
+  ],
+  "heavy_floor_limit": 2,
+  "floor_profiles": {
+    "Merovingian": {
+      "population_mode": "resident",
+      "boot_priority": 0,
+      "reason": "Audit, diagnostics, and evidence."
+    },
+    "Trinity": {
+      "population_mode": "resident",
+      "boot_priority": 1,
+      "reason": "Settings, startup policy, and operator routing."
+    },
+    "Neo": {
+      "population_mode": "resident",
+      "boot_priority": 2,
+      "reason": "Neo orchestration console with De Sporte-hosted oversight routed through Achilles rather than a dedicated Achilles floor."
+    },
+    "Smith": {
+      "population_mode": "resident",
+      "boot_priority": 3,
+      "reason": "Queue routing and bounded execution."
+    },
+    "Oracle": {
+      "population_mode": "staged",
+      "boot_priority": 4,
+      "reason": "Catalog and provenance only when needed."
+    },
+    "Morpheus": {
+      "population_mode": "staged",
+      "boot_priority": 5,
+      "reason": "Review and corroboration only when needed."
+    },
+    "Architect": {
+      "population_mode": "staged",
+      "boot_priority": 6,
+      "reason": "Governance and publish are approval-triggered."
+    },
+    "TheConstruct": {
+      "population_mode": "manual_heavy",
+      "boot_priority": 7,
+      "reason": "Visual/render and simulation surfaces are loaded on demand."
+    }
+  }
+}

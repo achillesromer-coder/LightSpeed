@@ -1,0 +1,121 @@
+{
+  "manifest_id": "operator_approvals_2026_07_07_launch_set",
+  "generated_at": "2026-07-07T12:31:44+00:00",
+  "approved_numbers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    16,
+    17
+  ],
+  "held_numbers": [
+    15,
+    18
+  ],
+  "approvals": {
+    "desktop_launch": true,
+    "safe_floor_run": true,
+    "ui_compact": true,
+    "neo_local": true,
+    "smith_queue": true,
+    "oracle_attach": true,
+    "morpheus_review": true,
+    "merovingian_evidence": true,
+    "architect_gates": true,
+    "construct_prep": true,
+    "drive_writeback": true,
+    "population_sheet_gate": true,
+    "ls_go_queue": true,
+    "dataspace_maintenance": true,
+    "squarespace_manual": false,
+    "construct_heavy": true,
+    "web_publish": true,
+    "desporte_launch": false,
+    "github_push": true,
+    "gated_visual_review": true,
+    "desktop_finalise": true
+  },
+  "resource_guard": {
+    "construct_heavy_model": "gemma3:27b",
+    "construct_heavy_approval": "approved_by_operator",
+    "construct_heavy_execution_state": "resource_held_until_free_ram_window",
+    "observed_free_ram_gb": 7.7,
+    "reason": "gemma3:27b model payload is about 17 GB; current free RAM is not sufficient for a safe heavy run while LightSpeed/Chrome remain responsive."
+  },
+  "manual_holds": {
+    "squarespace_manual_paste_preview": "held_by_operator",
+    "de_sporte_launch": "held_by_operator"
+  },
+  "approved_external": {
+    "drive_writeback": true,
+    "web_publish_authority": true,
+    "web_publish_boundary": "Public route/data contract authorised; Squarespace embed remains manual-held until user paste/preview proof.",
+    "github_push": true,
+    "gate_release_scope": [
+      "LightSpeed Desktop gated visual review source",
+      "Git push from exact verified LightSpeed worktree",
+      "Drive writeback packet preparation through canonical contracts",
+      "Web/GO static/public route contract finalisation",
+      "Internal floor automation queue release within resource guards"
+    ]
+  },
+  "ls_go_queue": {
+    "spreadsheet_id": "1f5i4V3FshYHkztv3_HAg0ZofUl0sdcJZcwrlesUlCfM",
+    "url": "https://docs.google.com/spreadsheets/d/1f5i4V3FshYHkztv3_HAg0ZofUl0sdcJZcwrlesUlCfM/edit",
+    "state": "materialized_in_future_lightspeed_go_folder"
+  },
+  "written_artifacts": [
+    "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+3_Trinity\\data\\ui\\operator_surface_launch_approval.json",
+    "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+2_Neo\\data\\temp_shells\\approved_temp_shell_registry.json",
+    "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\data\\staging\\approved_agentic_launch_queue.json",
+    "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\data\\staging\\ls_go_queue_contract.json",
+    "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\ls_go_queue_contract.json",
+    "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-2_Oracle\\data\\catalog\\source_attach_contracts_approved.json",
+    "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-2_Oracle\\data\\catalog\\website\\dataspace_maintenance_contract.json",
+    "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-1_Morpheus\\data\\review\\review_workspace_approved.json",
+    "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-4_Merovingian\\data\\evidence\\launch_health_snapshot_approved.json",
+    "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+1_Architect\\data\\publish\\manual_publish_gate_approval.json",
+    "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z0_TheConstruct\\data\\runtime\\construct_approval_and_resource_hold.json",
+    "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\desktop_population_sheet_gate.json",
+    "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\operator_approval_manifest.json",
+    "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\launch_control.json",
+    "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\operator_approval_manifest.json",
+    "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\launch_control.json",
+    "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\agentic_launch_queue.json",
+    "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime\\exports\\agent_home\\gated_build_tasks.json",
+    "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\config\\agentic_launch_queue.json",
+    "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\data\\staging\\agentic_launch_queue.json",
+    "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z+2_Neo\\data\\temp_shells\\agentic_launch_queue.json",
+    "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-3_Smith\\data\\staging\\gated_build_tasks_approved.json"
+  ],
+  "artifact_count": 22,
+  "gate_release": {
+    "release_id": "operator_gate_release_2026_07_08_finalise",
+    "released_at": "2026-07-08T12:45:48Z",
+    "source": "operator_chat_explicit_release",
+    "operator_phrase": "Gate is explicitly released, please finalise",
+    "scope": [
+      "LightSpeed Desktop gated visual review source",
+      "Git push from exact verified LightSpeed worktree",
+      "Drive writeback packet preparation through canonical contracts",
+      "Web/GO static/public route contract finalisation",
+      "Internal floor automation queue release within resource guards"
+    ],
+    "held_scope": [
+      "DeSporte launch remains held",
+      "Squarespace manual paste/preview remains a human-browser operation unless a signed-in browser session is available",
+      "TheConstruct heavy model remains resource-held until RAM window is safe"
+    ]
+  }
+}

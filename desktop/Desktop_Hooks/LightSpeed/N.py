@@ -209,6 +209,44 @@ def _force_trinity_ui_package() -> None:
             sys.modules.pop(key, None)
 
 
+def _recover_agent_home_bridge_from_exports() -> Optional[Any]:
+    """
+    Attach to the latest generated agent-home export without running bootstrap.
+
+    GUI launch should not fall back to shell-only mode just because a runtime
+    bootstrap step is unavailable. The export is the canonical read surface for
+    floor alignment, wake-up packets, and current task queues.
+    """
+    if CANONICAL_RUNTIME_ROOT is None:
+        return None
+
+    try:
+        _force_canonical_runtime_package()
+        from lightspeed_runtime.agent_home_bridge import AgentHomeBridge
+    except Exception as exc:
+        print(f"[WARNING] Agent home bridge import unavailable: {exc}")
+        return None
+
+    candidates = [
+        CANONICAL_RUNTIME_ROOT / "exports" / "agent_home",
+        LIGHTSPEED_ROOT / "config" / "agent_home",
+    ]
+    seen: set[str] = set()
+    for export_dir in candidates:
+        try:
+            resolved = export_dir.resolve()
+            key = str(resolved).lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            candidate = AgentHomeBridge(resolved)
+            candidate.agent_environment()
+            return candidate
+        except Exception:
+            continue
+    return None
+
+
 def _bootstrap_canonical_runtime(index_limit_per_source: int = 20) -> Optional[Dict[str, Any]]:
     if CANONICAL_RUNTIME_ROOT is None:
         return None
@@ -238,6 +276,16 @@ def _bootstrap_canonical_runtime(index_limit_per_source: int = 20) -> Optional[D
         }
     except Exception as exc:
         print(f"[WARNING] Canonical runtime unavailable: {exc}")
+        agent_home_bridge = _recover_agent_home_bridge_from_exports()
+        if agent_home_bridge is not None:
+            print("[OK] Agent home bridge recovered from existing exports")
+            return {
+                "runtime": None,
+                "oracle_morpheus_bridge": None,
+                "trinity_shell_bridge": None,
+                "neo_achilles_bridge": None,
+                "agent_home_bridge": agent_home_bridge,
+            }
         return None
 
 # Optional immersive modules (may live in archived oracle tree)
@@ -749,6 +797,9 @@ class LightSpeedUnified(tk.Tk):
                 print("[WARNING] Agent home bridge not connected")
         else:
             print("[WARNING] Canonical runtime not connected")
+            self.agent_home_bridge = _recover_agent_home_bridge_from_exports()
+            if self.agent_home_bridge is not None:
+                print("[OK] Agent home bridge connected from existing exports")
 
         # Service registry (optional): drives floor/service enablement and GUI status
         self.service_registry_status = None
@@ -6959,6 +7010,43 @@ class LightSpeedUnified(tk.Tk):
                 )
             return next((path for path in fallbacks if path.exists()), None)
 
+        def _agent_home_file_path(filename: str) -> Optional[Path]:
+            fallbacks = [LIGHTSPEED_ROOT / "config" / filename]
+            if CANONICAL_RUNTIME_ROOT is not None:
+                fallbacks.append(CANONICAL_RUNTIME_ROOT / "exports" / "agent_home" / filename)
+            return next((path for path in fallbacks if path.exists()), None)
+
+        def _gated_tasks_path(summary: dict) -> Optional[Path]:
+            queue = summary.get("agentic_launch_queue") or {}
+            sources = queue.get("source_contracts") or {}
+            value = sources.get("gated_build_tasks")
+            if value and Path(str(value)).exists():
+                return Path(str(value))
+            return _agent_home_file_path("gated_build_tasks.json")
+
+        def _floor_stage_population_path(summary: dict) -> Optional[Path]:
+            queue = summary.get("agentic_launch_queue") or {}
+            sources = queue.get("source_contracts") or {}
+            value = sources.get("floor_stage_population")
+            if value and Path(str(value)).exists():
+                return Path(str(value))
+            return _agent_home_file_path("floor_stage_population.json")
+
+        def _launch_control_path(summary: dict) -> Optional[Path]:
+            return _agent_home_file_path("launch_control.json")
+
+        def _read_json_path(path_value: object) -> dict:
+            if not path_value:
+                return {}
+            try:
+                path = Path(str(path_value))
+                if not path.exists():
+                    return {}
+                payload = json.loads(path.read_text(encoding="utf-8"))
+                return payload if isinstance(payload, dict) else {}
+            except Exception:
+                return {}
+
         def _web_bridge_path(summary: dict) -> Optional[Path]:
             bridge = summary.get("web_drive_bridge") or {}
             value = bridge.get("contract_path")
@@ -7092,6 +7180,110 @@ class LightSpeedUnified(tk.Tk):
                     f"Buildout handoff: {_short_path(LIGHTSPEED_ROOT / 'config' / 'buildout_phase_contract.json')}",
                     f"Neo receipt: {_short_path(receipt_path)}",
                     f"Smith queue: {_short_path(queue_path)}",
+                ]
+            )
+
+        def _format_gated_review(summary: dict, floor_name: str) -> str:
+            gated_path = _gated_tasks_path(summary)
+            population_path = _floor_stage_population_path(summary)
+            launch_path = _launch_control_path(summary)
+            agent_queue_path = _agentic_launch_queue_path(summary)
+            web_bridge_path = _web_bridge_path(summary)
+            queue_path = _queue_path(summary)
+
+            gated = _read_json_path(gated_path)
+            population = _read_json_path(population_path)
+            launch = _read_json_path(launch_path)
+            agent_queue = _read_json_path(agent_queue_path)
+            web_bridge = _read_json_path(web_bridge_path)
+
+            gated_tasks = gated.get("tasks") if isinstance(gated.get("tasks"), list) else []
+            floor_gated = [task for task in gated_tasks if str(task.get("owner_floor")) == floor_name]
+            agent_tasks = agent_queue.get("tasks") if isinstance(agent_queue.get("tasks"), list) else []
+            floor_agent_tasks = [task for task in agent_tasks if str(task.get("owner_floor")) == floor_name]
+            queue_summary = agent_queue.get("summary") or {}
+            web_summary = summary.get("web_drive_bridge") or {}
+            launch_gates = launch.get("manual_gates") if isinstance(launch.get("manual_gates"), list) else []
+            profile = ((population.get("floor_profiles") or {}).get(floor_name) or {})
+            manual_heavy = floor_name in (population.get("manual_heavy_floors") or [])
+            external_blocked = (
+                ((agent_queue.get("policy") or {}).get("external_publish_blocked") is not False)
+                and ((gated.get("approval_policy") or {}).get("external_publish_blocked") is not False)
+            )
+
+            def _task_line(task: dict, index: int) -> str:
+                return (
+                    f"{index}. {task.get('task_id', 'task')} | "
+                    f"{task.get('state', task.get('approval_state', 'state?'))} | "
+                    f"{task.get('priority', 'priority?')} | "
+                    f"{task.get('risk_level', 'risk?')}"
+                )
+
+            def _goal_line(task: dict) -> str:
+                goal = str(task.get("goal") or task.get("next_safe_action") or "").strip()
+                return f"   {goal[:150]}" if goal else "   no goal exported"
+
+            selected_gated_lines = []
+            for index, task in enumerate(floor_gated[:6], start=1):
+                selected_gated_lines.extend([_task_line(task, index), _goal_line(task)])
+            if len(floor_gated) > 6:
+                selected_gated_lines.append(f"... {len(floor_gated) - 6} additional gated tasks hidden for compact review")
+
+            selected_queue_lines = []
+            for index, task in enumerate(floor_agent_tasks[:6], start=1):
+                selected_queue_lines.extend([_task_line(task, index), _goal_line(task)])
+            if len(floor_agent_tasks) > 6:
+                selected_queue_lines.append(f"... {len(floor_agent_tasks) - 6} additional queue tasks hidden for compact review")
+
+            manual_gate_lines = [
+                f"- {gate.get('gate_id', 'gate')}: {gate.get('label', 'manual approval')}"
+                for gate in launch_gates
+                if isinstance(gate, dict)
+            ]
+            canon_gate_lines = [f"- {gate}" for gate in (web_bridge.get("canon_gates") or [])[:8]]
+
+            return "\n".join(
+                [
+                    "GATED REVIEW / SOURCE",
+                    "",
+                    f"Selected floor: {floor_name}",
+                    f"Population mode: {profile.get('population_mode', 'not exported')} | manual-heavy={manual_heavy}",
+                    f"Model lane: {profile.get('model', 'not exported')} | default view={profile.get('default_view', 'not exported')}",
+                    "",
+                    "Source files:",
+                    f"- Gated tasks: {_short_path(gated_path)}",
+                    f"- Floor population: {_short_path(population_path)}",
+                    f"- Launch control: {_short_path(launch_path)}",
+                    f"- Agent queue: {_short_path(agent_queue_path)}",
+                    f"- Web/GO bridge: {_short_path(web_bridge_path)}",
+                    f"- Smith queue: {_short_path(queue_path)}",
+                    "",
+                    "Gate state:",
+                    f"- Launch gate: {launch.get('gate', 'not exported')} | {launch.get('state', 'not exported')}",
+                    f"- External writes: {'blocked pending operator approval' if external_blocked else 'not blocked by local contract'}",
+                    "- Git/Drive/Web actions: released only through source-checked workflows and audit packets.",
+                    "",
+                    "Counts:",
+                    f"- Gated build tasks: {len(gated_tasks)} total | {len(floor_gated)} for {floor_name}",
+                    f"- Agent queue: {queue_summary.get('task_count', len(agent_tasks))} total | {len(floor_agent_tasks)} for {floor_name} | ready={queue_summary.get('approved_count', queue_summary.get('ready_count', 'n/a'))} | manual-heavy={queue_summary.get('manual_heavy_count', 'n/a')}",
+                    f"- Web/GO: routes={len(web_bridge.get('website_routes') or [])} | squarespace={len(web_bridge.get('squarespace_routes') or [])} | unconfirmed={web_summary.get('unconfirmed_count', 'not exported')} | gate={web_summary.get('gate', web_bridge.get('squarespace_embed_source', {}).get('gate', 'not exported'))}",
+                    "",
+                    "Manual gates:",
+                    *(manual_gate_lines or ["- no manual gates exported"]),
+                    "",
+                    "Web/GO canon gates:",
+                    *(canon_gate_lines or ["- no Web/GO gates exported"]),
+                    "",
+                    f"{floor_name} gated tasks:",
+                    *(selected_gated_lines or ["- no gated tasks exported for this floor"]),
+                    "",
+                    f"{floor_name} internal automation queue:",
+                    *(selected_queue_lines or ["- no agent queue entries exported for this floor"]),
+                    "",
+                    "Next safe action:",
+                    "1. Visually review the selected floor queue here.",
+                    "2. Use Open Gated Source / Launch Control only when the source JSON needs inspection.",
+                    "3. Route approved work through Smith/Neo local queues; external writeback must use the current release packet and audit trail.",
                 ]
             )
 
@@ -7265,6 +7457,10 @@ class LightSpeedUnified(tk.Tk):
 
         actions = tk.Frame(info, bg=COLORS["bg_panel"])
         actions.pack(fill="x", padx=12, pady=(0, 12))
+        action_row_primary = tk.Frame(actions, bg=COLORS["bg_panel"])
+        action_row_primary.pack(fill="x")
+        action_row_secondary = tk.Frame(actions, bg=COLORS["bg_panel"])
+        action_row_secondary.pack(fill="x", pady=(6, 0))
 
         detail_header = tk.Label(
             detail,
@@ -7277,19 +7473,39 @@ class LightSpeedUnified(tk.Tk):
         detail_mount = tk.Frame(detail, bg=COLORS["bg_dark"])
         detail_mount.pack(fill="both", expand=True, padx=12, pady=(0, 12))
 
-        def _workspace_placeholder(floor_name: str) -> None:
+        def _render_detail_text(title: str, payload: str) -> None:
+            detail_header.configure(text=title)
             for child in detail_mount.winfo_children():
                 child.destroy()
-            tk.Label(
-                detail_mount,
-                text=_format_operator_home(summary_state["payload"], floor_name),
-                justify="left",
-                anchor="nw",
+            frame = tk.Frame(detail_mount, bg=COLORS["bg_dark"])
+            frame.pack(fill="both", expand=True, padx=10, pady=10)
+            scrollbar = tk.Scrollbar(frame)
+            scrollbar.pack(side="right", fill="y")
+            text = tk.Text(
+                frame,
+                wrap="word",
+                font=("Consolas", 10),
                 bg=COLORS["bg_dark"],
                 fg=COLORS["text_white"],
-                font=("Consolas", 10),
-                wraplength=520,
-            ).pack(fill="both", expand=True, padx=14, pady=14)
+                insertbackground=COLORS["accent_cyan"],
+                yscrollcommand=scrollbar.set,
+                relief="flat",
+            )
+            text.pack(side="left", fill="both", expand=True)
+            scrollbar.configure(command=text.yview)
+            text.insert("1.0", payload)
+            text.configure(state="disabled")
+
+        def _workspace_placeholder(floor_name: str) -> None:
+            _render_detail_text("Operator Surface", _format_operator_home(summary_state["payload"], floor_name))
+
+        def _show_gated_review() -> None:
+            floor_name = selected_floor["name"]
+            _render_detail_text(
+                f"Gated Review / Source: {floor_name}",
+                _format_gated_review(summary_state["payload"], floor_name),
+            )
+            self.update_status(f"Gated review: {floor_name}")
 
         def _open_wakeup_packet() -> None:
             wake_payload = ((summary_state["payload"].get("local_agent_wakeup") or {}).get("by_floor") or {}).get(selected_floor["name"]) or {}
@@ -7303,6 +7519,12 @@ class LightSpeedUnified(tk.Tk):
 
         def _open_web_bridge() -> None:
             _safe_open_path(_web_bridge_path(summary_state["payload"]), "Web/GO Bridge")
+
+        def _open_gated_source() -> None:
+            _safe_open_path(_gated_tasks_path(summary_state["payload"]), "Gated Build Tasks")
+
+        def _open_launch_control() -> None:
+            _safe_open_path(_launch_control_path(summary_state["payload"]), "Launch Control")
 
         def _open_neo_smith_artifact() -> None:
             receipt_path = _neo_receipt_path(summary_state["payload"])
@@ -7369,7 +7591,7 @@ class LightSpeedUnified(tk.Tk):
             floor_buttons[fname] = button
 
         tk.Button(
-            actions,
+            action_row_primary,
             text="Refresh State",
             command=lambda: _refresh_state(rebuild_detail=False),
             bg=COLORS["bg_dark"],
@@ -7377,7 +7599,7 @@ class LightSpeedUnified(tk.Tk):
             relief="flat",
         ).pack(side="left")
         tk.Button(
-            actions,
+            action_row_primary,
             text="Open Backend Workspace",
             command=lambda: _mount_floor(selected_floor["name"]),
             bg=COLORS["bg_dark"],
@@ -7385,7 +7607,7 @@ class LightSpeedUnified(tk.Tk):
             relief="flat",
         ).pack(side="left", padx=(8, 0))
         tk.Button(
-            actions,
+            action_row_primary,
             text="Open Wake Packet",
             command=_open_wakeup_packet,
             bg=COLORS["bg_dark"],
@@ -7393,7 +7615,7 @@ class LightSpeedUnified(tk.Tk):
             relief="flat",
         ).pack(side="left", padx=(8, 0))
         tk.Button(
-            actions,
+            action_row_primary,
             text="Open Buildout Handoff",
             command=_open_buildout_handoff,
             bg=COLORS["bg_dark"],
@@ -7401,7 +7623,7 @@ class LightSpeedUnified(tk.Tk):
             relief="flat",
         ).pack(side="left", padx=(8, 0))
         tk.Button(
-            actions,
+            action_row_primary,
             text="Open Agent Queue",
             command=_open_agentic_launch_queue,
             bg=COLORS["bg_dark"],
@@ -7409,7 +7631,7 @@ class LightSpeedUnified(tk.Tk):
             relief="flat",
         ).pack(side="left", padx=(8, 0))
         tk.Button(
-            actions,
+            action_row_primary,
             text="Open Web/GO Bridge",
             command=_open_web_bridge,
             bg=COLORS["bg_dark"],
@@ -7417,7 +7639,7 @@ class LightSpeedUnified(tk.Tk):
             relief="flat",
         ).pack(side="left", padx=(8, 0))
         tk.Button(
-            actions,
+            action_row_primary,
             text="Open Neo Receipt / Smith Queue",
             command=_open_neo_smith_artifact,
             bg=COLORS["bg_dark"],
@@ -7425,7 +7647,31 @@ class LightSpeedUnified(tk.Tk):
             relief="flat",
         ).pack(side="left", padx=(8, 0))
         tk.Button(
-            actions,
+            action_row_secondary,
+            text="Gated Review",
+            command=_show_gated_review,
+            bg=COLORS["accent_cyan"],
+            fg=COLORS["bg_dark"],
+            relief="flat",
+        ).pack(side="left", padx=(8, 0))
+        tk.Button(
+            action_row_secondary,
+            text="Open Gated Source",
+            command=_open_gated_source,
+            bg=COLORS["bg_dark"],
+            fg=COLORS["text_white"],
+            relief="flat",
+        ).pack(side="left", padx=(8, 0))
+        tk.Button(
+            action_row_secondary,
+            text="Open Launch Control",
+            command=_open_launch_control,
+            bg=COLORS["bg_dark"],
+            fg=COLORS["text_white"],
+            relief="flat",
+        ).pack(side="left", padx=(8, 0))
+        tk.Button(
+            action_row_secondary,
             text="Home",
             command=self.show_home,
             bg=COLORS["bg_dark"],

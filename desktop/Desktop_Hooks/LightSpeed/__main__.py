@@ -58,12 +58,31 @@ def _launch_runtime_missing_modules() -> list[str]:
 
 
 def _maybe_reexec_preferred_runtime(args: list[str]) -> int | None:
+    if os.environ.get("LIGHTSPEED_ALLOW_RUNTIME_REEXEC") != "1":
+        return None
+
     if os.environ.get("LIGHTSPEED_RUNTIME_RESOLVED") == "1":
         return None
 
-    current_executable = Path(sys.executable).resolve()
-    workspace_venv_python = (LIGHTSPEED_ROOT.parent.parent / "venv" / "Scripts" / "python.exe").resolve()
-    if current_executable == workspace_venv_python:
+    current_executable_raw = Path(sys.executable)
+    current_executable = current_executable_raw.resolve()
+    workspace_venv_root = (LIGHTSPEED_ROOT.parent.parent / "venv").resolve()
+    workspace_venv_scripts = (LIGHTSPEED_ROOT.parent.parent / "venv" / "Scripts").resolve()
+    workspace_venv_runtimes = {
+        (workspace_venv_scripts / "python.exe").resolve(),
+        (workspace_venv_scripts / "pythonw.exe").resolve(),
+    }
+    try:
+        if current_executable_raw.parent.resolve() == workspace_venv_scripts:
+            return None
+    except Exception:
+        pass
+    try:
+        if Path(sys.prefix).resolve() == workspace_venv_root:
+            return None
+    except Exception:
+        pass
+    if current_executable in workspace_venv_runtimes:
         return None
 
     missing_modules = _launch_runtime_missing_modules()

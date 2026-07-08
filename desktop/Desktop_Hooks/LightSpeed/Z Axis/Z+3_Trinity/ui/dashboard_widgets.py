@@ -11,6 +11,7 @@ from typing import List, Dict, Optional, Callable, Any
 from datetime import datetime, timedelta
 import calendar
 import json
+import os
 import sqlite3
 from pathlib import Path
 import sys
@@ -56,6 +57,129 @@ def _connect_db(db: Path) -> sqlite3.Connection:
     except Exception:
         pass
     return conn
+
+
+def _agent_home_export_dir(ls_root: Optional[Path] = None) -> Path:
+    root = ls_root or _find_lightspeed_root()
+    env_root = os.environ.get("LIGHTSPEED_CANONICAL_ROOT")
+    candidates: List[Path] = []
+    if env_root:
+        candidates.append(Path(env_root) / "LightSpeed_Runtime" / "exports" / "agent_home")
+        candidates.append(Path(env_root) / "exports" / "agent_home")
+    candidates.append(root.parent.parent / "LightSpeed_Runtime" / "exports" / "agent_home")
+    candidates.append(root / "config" / "agent_home")
+    return next((path.resolve() for path in candidates if path.exists()), candidates[0].resolve() if candidates else root)
+
+
+def _load_agent_home_json(filename: str) -> Any:
+    try:
+        path = _agent_home_export_dir() / filename
+        return json.loads(path.read_text(encoding="utf-8-sig"))
+    except Exception:
+        return None
+
+
+def _agent_home_gated_tasks() -> List[Dict[str, Any]]:
+    payload = _load_agent_home_json("gated_build_tasks.json")
+    if not isinstance(payload, dict):
+        return []
+    tasks = payload.get("tasks")
+    return [item for item in (tasks or []) if isinstance(item, dict)]
+
+
+def _user_config_path(ls_root: Optional[Path] = None) -> Path:
+    return (ls_root or _find_lightspeed_root()) / "config" / "user_config.json"
+
+
+def _load_user_config_okrs(user_id: Optional[str]) -> List[Dict[str, Any]]:
+    try:
+        path = _user_config_path()
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
+        if not isinstance(data, dict):
+            return []
+        keyed = data.get("user_okrs")
+        if isinstance(keyed, dict) and user_id and isinstance(keyed.get(user_id), list):
+            return [item for item in keyed[user_id] if isinstance(item, dict)]
+        raw = data.get("okrs")
+        return [item for item in (raw or []) if isinstance(item, dict)]
+    except Exception:
+        return []
+
+
+def _save_user_config_okrs(user_id: Optional[str], okrs: List[Dict[str, Any]]) -> None:
+    path = _user_config_path()
+    try:
+        data = json.loads(path.read_text(encoding="utf-8-sig")) if path.exists() else {}
+    except Exception:
+        data = {}
+    if not isinstance(data, dict):
+        data = {}
+
+    clean_okrs = [item for item in (okrs or []) if isinstance(item, dict)]
+    data["okrs"] = clean_okrs
+    if user_id:
+        keyed = data.get("user_okrs")
+        if not isinstance(keyed, dict):
+            keyed = {}
+        keyed[str(user_id)] = clean_okrs
+        data["user_okrs"] = keyed
+    data["okr_last_updated"] = datetime.now().isoformat()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def _build_seed_okrs_from_agent_home() -> List[Dict[str, Any]]:
+    tasks = _agent_home_gated_tasks()
+    if not tasks:
+        return []
+
+    grouped: Dict[str, List[Dict[str, Any]]] = {}
+    for task in tasks:
+        floor = str(task.get("owner_floor") or "LightSpeed").strip() or "LightSpeed"
+        grouped.setdefault(floor, []).append(task)
+
+    display_order = [
+        "Trinity",
+        "Neo",
+        "Smith",
+        "Oracle",
+        "Morpheus",
+        "TheConstruct",
+        "Architect",
+        "Merovingian",
+    ]
+    ordered_floors = [floor for floor in display_order if floor in grouped]
+    ordered_floors.extend(sorted(floor for floor in grouped if floor not in set(ordered_floors)))
+
+    okrs: List[Dict[str, Any]] = []
+    for floor in ordered_floors:
+        rows = grouped.get(floor, [])[:4]
+        key_results = []
+        for row in rows:
+            done_when = row.get("done_when") if isinstance(row.get("done_when"), list) else []
+            description = str(row.get("goal") or row.get("task_id") or "Launch-ready floor task").strip()
+            key_results.append(
+                {
+                    "description": description,
+                    "progress": 0,
+                    "target_value": 100,
+                    "task_id": row.get("task_id"),
+                    "lane_id": row.get("lane_id"),
+                    "done_when": done_when,
+                }
+            )
+        if not key_results:
+            continue
+        okrs.append(
+            {
+                "objective": f"{floor}: reach launch-ready smart-floor population",
+                "key_results": key_results,
+                "target_date": "Friday 19:00 weekly review",
+                "created_date": datetime.now().isoformat(),
+                "source": "agent_home_gated_build_tasks",
+            }
+        )
+    return okrs
 
 
 def _try_get_user_preferences(user_id: Optional[str]):
@@ -135,25 +259,33 @@ class OKRWidget(ttk.Frame):
 
     def _load_okrs(self) -> None:
         """
-        Load OKRs from per-user preferences (tailoring), if available.
-        This intentionally does not write to durable registries.
+        Load OKRs from durable user preferences, then local short-term memory.
+        If neither exists, seed from canonical agent-home launch tasks.
         """
         try:
             if self._prefs is None or not hasattr(self._prefs, "get_preference"):
-                self._refresh_display()
-                return
-            data = self._prefs.get_preference("okr.okrs", default=[])
-            if isinstance(data, list):
-                self.okrs = [x for x in data if isinstance(x, dict)]
+                self.okrs = _load_user_config_okrs(self.user_id)
+            else:
+                data = self._prefs.get_preference("okr.okrs", default=[])
+                if isinstance(data, list):
+                    self.okrs = [x for x in data if isinstance(x, dict)]
+                if not self.okrs:
+                    self.okrs = _load_user_config_okrs(self.user_id)
         except Exception:
             pass
+        if not self.okrs:
+            self.okrs = _build_seed_okrs_from_agent_home()
+            if self.okrs:
+                self._save_okrs()
         self._refresh_display()
 
     def _save_okrs(self) -> None:
         try:
             if self._prefs is None or not hasattr(self._prefs, "set_preference"):
+                _save_user_config_okrs(self.user_id, list(self.okrs or []))
                 return
             self._prefs.set_preference("okr.okrs", list(self.okrs or []))
+            _save_user_config_okrs(self.user_id, list(self.okrs or []))
         except Exception:
             return
 
@@ -171,6 +303,7 @@ class OKRWidget(ttk.Frame):
             "key_results": key_results,
             "target_date": target_date,
             "created_date": datetime.now().isoformat(),
+            "source": "manual_dashboard",
         }
         self.okrs.append(okr)
         self._save_okrs()
@@ -410,6 +543,7 @@ class TaskListWidget(ttk.Frame):
         self.tasks: List[Dict[str, Any]] = []
 
         self._create_ui()
+        self._seed_canonical_tasks()
         self._refresh_display()
 
     def set_company_id(self, company_id: Optional[int]) -> None:
@@ -513,6 +647,79 @@ class TaskListWidget(ttk.Frame):
             return
 
         self._refresh_display()
+
+    def _seed_canonical_tasks(self) -> None:
+        """Seed global launch tasks from agent-home exports without duplicating them."""
+        seed_tasks = _agent_home_gated_tasks()
+        if not seed_tasks:
+            return
+
+        try:
+            with _connect_db(self._db_path) as conn:
+                cur = conn.cursor()
+                cur.execute("PRAGMA table_info(tasks)")
+                cols = {str(r[1]) for r in (cur.fetchall() or []) if r and r[1]}
+                has_company_col = "company_id" in cols
+                now = datetime.now().isoformat()
+
+                for task in seed_tasks:
+                    task_id = str(task.get("task_id") or "").strip()
+                    if not task_id:
+                        continue
+                    cur.execute(
+                        "SELECT id FROM tasks WHERE metadata_json LIKE ? LIMIT 1",
+                        (f'%"task_id": "{task_id}"%',),
+                    )
+                    if cur.fetchone():
+                        continue
+
+                    owner = str(task.get("owner_floor") or "LightSpeed").strip()
+                    title = f"{owner}: {str(task.get('goal') or task_id).strip()}"
+                    title = title[:180]
+                    done_when = task.get("done_when") if isinstance(task.get("done_when"), list) else []
+                    description_parts = [
+                        str(task.get("goal") or "").strip(),
+                        "",
+                        "Done when:",
+                        *[f"- {item}" for item in done_when],
+                    ]
+                    description = "\n".join(part for part in description_parts if part is not None).strip()
+                    priority = str(task.get("priority") or "normal").strip().lower()
+                    if priority not in {"low", "normal", "medium", "high", "critical"}:
+                        priority = "normal"
+                    if priority == "medium":
+                        priority = "normal"
+                    state = str(task.get("state") or "").lower()
+                    status = "in_progress" if state.startswith("active") else "pending"
+                    metadata = {
+                        "source": "agent_home_gated_build_tasks",
+                        "task_id": task_id,
+                        "owner_floor": owner,
+                        "lane_id": task.get("lane_id"),
+                        "risk_level": task.get("risk_level"),
+                        "launch_state": task.get("state"),
+                        "done_when": done_when,
+                    }
+
+                    if has_company_col:
+                        cur.execute(
+                            """
+                            INSERT INTO tasks (title, description, company_id, status, priority, created_at, updated_at, metadata_json)
+                            VALUES (?, ?, NULL, ?, ?, ?, ?, ?)
+                            """,
+                            (title, description, status, priority, now, now, json.dumps(metadata, ensure_ascii=False)),
+                        )
+                    else:
+                        cur.execute(
+                            """
+                            INSERT INTO tasks (title, description, status, priority, created_at, updated_at, metadata_json)
+                            VALUES (?, ?, ?, ?, ?, ?, ?)
+                            """,
+                            (title, description, status, priority, now, now, json.dumps(metadata, ensure_ascii=False)),
+                        )
+                conn.commit()
+        except Exception:
+            return
 
     def _fetch_tasks(self) -> List[Dict[str, Any]]:
         where = []

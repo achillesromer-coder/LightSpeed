@@ -1,0 +1,890 @@
+{
+  "generated_at": "2026-07-07T23:31:38+00:00",
+  "owner_floor": "Oracle",
+  "desktop_operator_floor": "Neo",
+  "publish_owner_floor": "Architect",
+  "support_floors": [
+    "Smith",
+    "Neo",
+    "Morpheus",
+    "TheConstruct",
+    "Architect",
+    "Trinity"
+  ],
+  "contract_path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\Z Axis\\Z-2_Oracle\\data\\catalog\\website\\romer_web_integration.json",
+  "site_base_url": "https://romer.industries",
+  "website_routes": [
+    {
+      "route": "/",
+      "url": "https://romer.industries/",
+      "title": "Romer Industries",
+      "owner_floor": "Architect",
+      "workspace": "Front",
+      "role": "front-facing company landing page",
+      "observed_status": "public_200"
+    },
+    {
+      "route": "/operations",
+      "url": "https://romer.industries/operations",
+      "title": "Romer Industries Operations",
+      "owner_floor": "Smith",
+      "workspace": "Operations",
+      "role": "public operations index",
+      "observed_status": "public_200"
+    },
+    {
+      "route": "/operations/w1",
+      "url": "https://romer.industries/operations/w1",
+      "title": "Incoming Deposit Analysis",
+      "owner_floor": "Oracle",
+      "workspace": "W1",
+      "role": "deposit/target intake tracker",
+      "observed_status": "public_200"
+    },
+    {
+      "route": "/operations/w2",
+      "url": "https://romer.industries/operations/w2",
+      "title": "Geostationary Luke II",
+      "owner_floor": "TheConstruct",
+      "workspace": "W2",
+      "role": "EMFF catch-and-hold modelling tracker",
+      "observed_status": "public_200"
+    },
+    {
+      "route": "/operations/w3",
+      "url": "https://romer.industries/operations/w3",
+      "title": "RFS & EMFF Field Projections",
+      "owner_floor": "TheConstruct",
+      "workspace": "W3",
+      "role": "RFS/EMFF extraction modelling tracker",
+      "observed_status": "public_200"
+    },
+    {
+      "route": "/operations/w4",
+      "url": "https://romer.industries/operations/w4",
+      "title": "Inter-planetary Supply Chain Network",
+      "owner_floor": "Architect",
+      "workspace": "W4",
+      "role": "supply-chain closure tracker",
+      "observed_status": "public_200"
+    },
+    {
+      "route": "/operations/w5",
+      "url": "https://romer.industries/operations/w5",
+      "title": "Mission Mapping",
+      "owner_floor": "TheConstruct",
+      "workspace": "W5",
+      "role": "GMAT mission planning tracker",
+      "observed_status": "public_200"
+    },
+    {
+      "route": "/operations/w6",
+      "url": "https://romer.industries/operations/w6",
+      "title": "Asset Library",
+      "owner_floor": "Oracle",
+      "workspace": "W6",
+      "role": "legacy public asset-library compatibility facade",
+      "observed_status": "public_200"
+    },
+    {
+      "route": "/gmat",
+      "url": "https://romer.industries/gmat",
+      "title": "GMAT",
+      "owner_floor": "TheConstruct",
+      "workspace": "W5",
+      "role": "public GMAT reference and mission-analysis surface",
+      "observed_status": "public_200"
+    },
+    {
+      "route": "/library",
+      "url": "https://romer.industries/library",
+      "title": "Library",
+      "owner_floor": "Oracle",
+      "workspace": "Library",
+      "role": "public knowledge/library facade",
+      "observed_status": "public_200"
+    },
+    {
+      "route": "/docs",
+      "url": "https://romer.industries/docs",
+      "title": "Docs",
+      "owner_floor": "Oracle",
+      "workspace": "Docs",
+      "role": "public document facade",
+      "observed_status": "public_200"
+    },
+    {
+      "route": "/dash",
+      "url": "https://romer.industries/dash",
+      "title": "Dash",
+      "owner_floor": "Trinity",
+      "workspace": "Dash",
+      "role": "public dashboard facade",
+      "observed_status": "public_200"
+    },
+    {
+      "route": "/data/achilles",
+      "url": "https://romer.industries/data/achilles",
+      "title": "Achilles Dataspace",
+      "owner_floor": "Neo",
+      "workspace": "Achilles",
+      "role": "data endpoint for operator/backend sync",
+      "observed_status": "requires_auth_401"
+    },
+    {
+      "route": "/data/directory",
+      "url": "https://romer.industries/data/directory",
+      "title": "Data Directory",
+      "owner_floor": "Oracle",
+      "workspace": "Directory",
+      "role": "data endpoint for public directory sync",
+      "observed_status": "requires_auth_401"
+    },
+    {
+      "route": "/w1/data",
+      "url": "https://romer.industries/w1/data",
+      "title": "W1 Dataspace",
+      "owner_floor": "Smith",
+      "workspace": "W1",
+      "role": "workspace dataspace endpoint referenced from operations pages",
+      "observed_status": "requires_auth_401"
+    },
+    {
+      "route": "/w2/data",
+      "url": "https://romer.industries/w2/data",
+      "title": "W2 Dataspace",
+      "owner_floor": "Smith",
+      "workspace": "W2",
+      "role": "workspace dataspace endpoint referenced from operations pages",
+      "observed_status": "requires_auth_401"
+    },
+    {
+      "route": "/w3/data",
+      "url": "https://romer.industries/w3/data",
+      "title": "W3 Dataspace",
+      "owner_floor": "Smith",
+      "workspace": "W3",
+      "role": "workspace dataspace endpoint referenced from operations pages",
+      "observed_status": "requires_auth_401"
+    },
+    {
+      "route": "/w4/data",
+      "url": "https://romer.industries/w4/data",
+      "title": "W4 Dataspace",
+      "owner_floor": "Smith",
+      "workspace": "W4",
+      "role": "workspace dataspace endpoint referenced from operations pages",
+      "observed_status": "requires_auth_401"
+    },
+    {
+      "route": "/w5/data",
+      "url": "https://romer.industries/w5/data",
+      "title": "W5 Dataspace",
+      "owner_floor": "Smith",
+      "workspace": "W5",
+      "role": "workspace dataspace endpoint referenced from operations pages",
+      "observed_status": "requires_auth_401"
+    },
+    {
+      "route": "/w6/data",
+      "url": "https://romer.industries/w6/data",
+      "title": "W6 Dataspace",
+      "owner_floor": "Smith",
+      "workspace": "W6",
+      "role": "workspace dataspace endpoint referenced from operations pages",
+      "observed_status": "requires_auth_401"
+    }
+  ],
+  "squarespace_embed_source": {
+    "id": "1wLNW2cC-vQ1ZTzNmgGQiSFE0wGp_dvupCW1ZGBtT_yw",
+    "url": "https://docs.google.com/spreadsheets/d/1wLNW2cC-vQ1ZTzNmgGQiSFE0wGp_dvupCW1ZGBtT_yw/edit",
+    "title": "LS_WEB_LS_GO_One_Cell_Embed_Block_Source_2026_06_02",
+    "copy_cell": "01_One_Cell_Embed!A10",
+    "status": "READY_FOR_OPERATOR_RELEASED_COPY_PASTE_PREVIEW",
+    "gate": "OPERATOR_RELEASED_COMP2_MANUAL_PASTE_PREVIEW_REQUIRED",
+    "boundary": "static shell only; no API, no secrets, no wallet/token/mint/payment/custody, no dataset merge",
+    "sheets": [
+      "01_One_Cell_Embed",
+      "02_Routes",
+      "03_Checks",
+      "04_Shell_Link_Index",
+      "05_Landing_Graph_Map",
+      "06_Brand_Tokens",
+      "07_Implementation_Log",
+      "08_Archive_Amalgamation",
+      "09_Canon_Buildout_Gates",
+      "10_Canonical_Targets_Staging",
+      "11_Git_Lanes_Staging",
+      "12_Domain_Brackets",
+      "13_Dashboard_Classification",
+      "14_ZIP_Authority_Rules",
+      "15_Logo_Earth_Policy"
+    ],
+    "blocked_actions": [
+      "publish",
+      "deploy",
+      "live_write",
+      "secrets",
+      "wallet",
+      "token",
+      "mint",
+      "ipfs",
+      "payment",
+      "custody",
+      "public_dataset_merge",
+      "unsupported_claims"
+    ],
+    "operator_instruction": "Copy only cell A10 into Squarespace Embed/Code Block, preview desktop and mobile, then log Page Exists, Embed Pasted, Desktop Preview, Mobile Preview, Badges, Blocked Actions, and Claim Gate into 07_Implementation_Log."
+  },
+  "squarespace_routes": [
+    {
+      "route_id": "R-001",
+      "route": "/data/achilles",
+      "url": "https://romer.industries/data/achilles",
+      "group": "data",
+      "page_title": "Achilles Core Data Node",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "COMP-2 staged",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-002",
+      "route": "/test/work",
+      "url": "https://romer.industries/test/work",
+      "group": "workspace",
+      "page_title": "Workspace Test Shell",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "test/no prod",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-003",
+      "route": "/test/data",
+      "url": "https://romer.industries/test/data",
+      "group": "data",
+      "page_title": "Dataspace Test Shell",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "no private data",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-004",
+      "route": "/workspaces",
+      "url": "https://romer.industries/workspaces",
+      "group": "workspace",
+      "page_title": "Workspace Hub",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "staged",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-005",
+      "route": "/data",
+      "url": "https://romer.industries/data",
+      "group": "data",
+      "page_title": "Dataspace Hub",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "staged",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-006",
+      "route": "/w1/work",
+      "url": "https://romer.industries/w1/work",
+      "group": "workspace",
+      "page_title": "W1 Deposit Workspace",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "no prod action",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-007",
+      "route": "/w1/data",
+      "url": "https://romer.industries/w1/data",
+      "group": "data",
+      "page_title": "Deposit Analysis Dataspace",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "no reserves claim",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-008",
+      "route": "/w2/work",
+      "url": "https://romer.industries/w2/work",
+      "group": "workspace",
+      "page_title": "W2 Luke Workspace",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "no prod action",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-009",
+      "route": "/w2/data",
+      "url": "https://romer.industries/w2/data",
+      "group": "data",
+      "page_title": "Luke II Dataspace",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "no capture claim",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-010",
+      "route": "/w3/work",
+      "url": "https://romer.industries/w3/work",
+      "group": "workspace",
+      "page_title": "W3 RFS / EMFF Workspace",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "claim-gated",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-011",
+      "route": "/w3/data",
+      "url": "https://romer.industries/w3/data",
+      "group": "data",
+      "page_title": "RFS & EMFF Dataspace",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "no extraction claim",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-012",
+      "route": "/w4/work",
+      "url": "https://romer.industries/w4/work",
+      "group": "workspace",
+      "page_title": "W4 Supply Chain Workspace",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "claim-gated",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-013",
+      "route": "/w4/data",
+      "url": "https://romer.industries/w4/data",
+      "group": "data",
+      "page_title": "Supply Chain Dataspace",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "no throughput claim",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-014",
+      "route": "/w5/work",
+      "url": "https://romer.industries/w5/work",
+      "group": "workspace",
+      "page_title": "W5 GMAT Workspace",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "simulation only",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-015",
+      "route": "/w5/data",
+      "url": "https://romer.industries/w5/data",
+      "group": "data",
+      "page_title": "GMAT Dataspace",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "simulation only",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-016",
+      "route": "/w6/work",
+      "url": "https://romer.industries/w6/work",
+      "group": "workspace",
+      "page_title": "W6 Asset Library Workspace",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "privacy review",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-017",
+      "route": "/w6/data",
+      "url": "https://romer.industries/w6/data",
+      "group": "data",
+      "page_title": "Asset Library Dataspace",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "privacy review",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-018",
+      "route": "/ccc/test",
+      "url": "https://romer.industries/ccc/test",
+      "group": "CCC",
+      "page_title": "CCC Builder Shell",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "no wallet/token/mint",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-019",
+      "route": "/ccc/dash",
+      "url": "https://romer.industries/ccc/dash",
+      "group": "CCC",
+      "page_title": "CCC Member Dashboard",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "private by default",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-020",
+      "route": "/build/portfolio",
+      "url": "https://romer.industries/build/portfolio",
+      "group": "builder",
+      "page_title": "Portfolio Builder",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "draft/review",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-021",
+      "route": "/build/collective",
+      "url": "https://romer.industries/build/collective",
+      "group": "builder",
+      "page_title": "Collective Builder",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "no governance activation",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-022",
+      "route": "/build/collection",
+      "url": "https://romer.industries/build/collection",
+      "group": "builder",
+      "page_title": "Collection Builder",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "no mint/token",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-023",
+      "route": "/ls-go",
+      "url": "https://romer.industries/ls-go",
+      "group": "LS GO",
+      "page_title": "LightSpeed GO",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "read/status/handoff only",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-024",
+      "route": "/ls-go/status",
+      "url": "https://romer.industries/ls-go/status",
+      "group": "LS GO",
+      "page_title": "LS GO Status",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "no backend writes",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-025",
+      "route": "/ls-go/handoff",
+      "url": "https://romer.industries/ls-go/handoff",
+      "group": "LS GO",
+      "page_title": "LS GO Handoff",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "compact handoff only",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-026",
+      "route": "/ls-go/agents",
+      "url": "https://romer.industries/ls-go/agents",
+      "group": "LS GO",
+      "page_title": "LS GO Agents",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "no autonomy escalation",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-027",
+      "route": "/ls-go/review",
+      "url": "https://romer.industries/ls-go/review",
+      "group": "LS GO",
+      "page_title": "LS GO Review",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "claim-gated",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-028",
+      "route": "/tools/calculators",
+      "url": "https://romer.industries/tools/calculators",
+      "group": "special",
+      "page_title": "Calculator Route Hub",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "calc not validation",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-029",
+      "route": "/raphael/panels",
+      "url": "https://romer.industries/raphael/panels",
+      "group": "special",
+      "page_title": "Raphael Engine Panels",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "proof routing only",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-030",
+      "route": "/achilles/node-globe",
+      "url": "https://romer.industries/achilles/node-globe",
+      "group": "special",
+      "page_title": "Achilles Node Globe",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "privacy/claim gated",
+      "state": "staged"
+    },
+    {
+      "route_id": "R-031",
+      "route": "/shff-m1/panels",
+      "url": "https://romer.industries/shff-m1/panels",
+      "group": "special",
+      "page_title": "SHFF / M1 Claim-Safe Panels",
+      "shell_source": "Master one-cell",
+      "copy_cell": "01_One_Cell_Embed!A10",
+      "gate": "concept only",
+      "state": "staged"
+    }
+  ],
+  "squarespace_implementation_log": [
+    {
+      "route": "/ls-go",
+      "page_exists": "UNCONFIRMED",
+      "embed_pasted": "UNCONFIRMED",
+      "desktop_preview": "PENDING",
+      "mobile_preview": "PENDING",
+      "claim_gate": "read/status/handoff only",
+      "next_action": "Verify page and paste row-10 embed"
+    },
+    {
+      "route": "/ls-go/status",
+      "page_exists": "UNCONFIRMED",
+      "embed_pasted": "UNCONFIRMED",
+      "desktop_preview": "PENDING",
+      "mobile_preview": "PENDING",
+      "claim_gate": "status only; no backend writes",
+      "next_action": "Verify page and paste row-10 embed"
+    },
+    {
+      "route": "/ls-go/handoff",
+      "page_exists": "SEEN_SCREENSHOT",
+      "embed_pasted": "PARTIAL_RENDER_SEEN",
+      "desktop_preview": "UNCONFIRMED",
+      "mobile_preview": "UNCONFIRMED",
+      "claim_gate": "compact handoff only",
+      "next_action": "Confirm saved embed and preview both views"
+    },
+    {
+      "route": "/ls-go/agents",
+      "page_exists": "UNCONFIRMED",
+      "embed_pasted": "UNCONFIRMED",
+      "desktop_preview": "PENDING",
+      "mobile_preview": "PENDING",
+      "claim_gate": "no autonomy escalation",
+      "next_action": "Verify page exists and paste row-10 embed"
+    },
+    {
+      "route": "/ls-go/review",
+      "page_exists": "UNCONFIRMED",
+      "embed_pasted": "UNCONFIRMED",
+      "desktop_preview": "PENDING",
+      "mobile_preview": "PENDING",
+      "claim_gate": "claim-gated",
+      "next_action": "Verify page exists and paste row-10 embed"
+    },
+    {
+      "route": "/data/achilles",
+      "page_exists": "UNCONFIRMED",
+      "embed_pasted": "UNCONFIRMED",
+      "desktop_preview": "PENDING",
+      "mobile_preview": "PENDING",
+      "claim_gate": "not MCP server; dashboard only",
+      "next_action": "Verify/paste/preview"
+    },
+    {
+      "route": "/data",
+      "page_exists": "UNCONFIRMED",
+      "embed_pasted": "UNCONFIRMED",
+      "desktop_preview": "PENDING",
+      "mobile_preview": "PENDING",
+      "claim_gate": "staged data hub",
+      "next_action": "Verify/paste/preview"
+    },
+    {
+      "route": "/workspaces",
+      "page_exists": "UNCONFIRMED",
+      "embed_pasted": "UNCONFIRMED",
+      "desktop_preview": "PENDING",
+      "mobile_preview": "PENDING",
+      "claim_gate": "staged workspace hub",
+      "next_action": "Verify/paste/preview"
+    }
+  ],
+  "brand_tokens": {
+    "primary": "#156162",
+    "secondary": "#235160",
+    "dark": "#0A0C0B",
+    "white": "#ECE4E2",
+    "romer_gold": "#C9A24A",
+    "ready_green": "#B7FF59",
+    "pending_yellow": "#F2C94C",
+    "blocked_red": "#D66A6A",
+    "concept_velvet": "#5A2A4A"
+  },
+  "canon_gates": [
+    "Landing graph map is staging, not final authority yet.",
+    "Comprehensive folder/file system waits until deletion reconciliation.",
+    "Branding must come from canonical sources first.",
+    "Final pages/docs should be unversioned in visible public surfaces.",
+    "Archive is preservation-first: extract before marking for deletion.",
+    "Secondary Z stack remains excluded."
+  ],
+  "drive_sources": [
+    {
+      "id": "1clPyKU1C_Prd-a4g-Cbl2RZQybLL2oag",
+      "url": "https://drive.google.com/drive/folders/1clPyKU1C_Prd-a4g-Cbl2RZQybLL2oag",
+      "title": "Library",
+      "observed_status": "accessible",
+      "observed_children": [
+        "Solar System Archive",
+        "Web Scrape & Analysis",
+        "GMAT_R2025a",
+        "BioChem",
+        "Physics",
+        "Empirical Data",
+        "EMASSC",
+        "Raphael",
+        "JSON Library"
+      ],
+      "desktop_role": "Oracle source library and empirical/reference reservoir for Neo/Achilles tasks."
+    },
+    {
+      "id": "1eRmR6kkNimF-U6-r6bQI9C7pWskc27W9",
+      "url": "https://drive.google.com/drive/folders/1eRmR6kkNimF-U6-r6bQI9C7pWskc27W9",
+      "title": "Web/Lightspeed respective sheets",
+      "observed_status": "accessible_empty_or_staging",
+      "observed_children": [],
+      "desktop_role": "Website/dataspace sheet staging folder and future web-hook source."
+    },
+    {
+      "id": "1PkXMyv26BBvvUbxShTRMTwhnEaK_a1qb",
+      "url": "https://drive.google.com/drive/folders/1PkXMyv26BBvvUbxShTRMTwhnEaK_a1qb",
+      "title": "Future LightSpeed GO",
+      "observed_status": "accessible",
+      "observed_children": [
+        "RAW AI Returns",
+        "Nathaniel Bouwer",
+        "Romer Industries"
+      ],
+      "desktop_role": "Future phone/light dash folder for Achilles Online, Achilles Desktop, LightSpeed, and Neo task sync.",
+      "queue_contract": {
+        "id": "future_lightspeed_go_drive_queue",
+        "source_drive_folder_id": "1PkXMyv26BBvvUbxShTRMTwhnEaK_a1qb",
+        "url": "https://drive.google.com/drive/folders/1PkXMyv26BBvvUbxShTRMTwhnEaK_a1qb",
+        "title": "Future LightSpeed GO drive queue",
+        "observed_status": "workbook_materialized",
+        "queue_spreadsheet_id": "1f5i4V3FshYHkztv3_HAg0ZofUl0sdcJZcwrlesUlCfM",
+        "queue_spreadsheet_url": "https://docs.google.com/spreadsheets/d/1f5i4V3FshYHkztv3_HAg0ZofUl0sdcJZcwrlesUlCfM/edit",
+        "handoff_mode": "Drive-folder queue with native GO workbook materialized under Achilles.",
+        "required_tables": [
+          "Phone Tasks",
+          "Approvals",
+          "Device Commands",
+          "Results",
+          "Sync Health"
+        ],
+        "owner_floor": "Neo",
+        "desktop_role": "Known folder and native workbook contract for LS GO task sync."
+      }
+    }
+  ],
+  "spreadsheet_feeds": [
+    {
+      "id": "1POCTGwSyaznMCO-7rA79wNRWT7rReSjOsNx-CLn5u5E",
+      "url": "https://docs.google.com/spreadsheets/d/1POCTGwSyaznMCO-7rA79wNRWT7rReSjOsNx-CLn5u5E/edit",
+      "title": "Website Logs",
+      "observed_status": "accessible",
+      "tabs_observed": [
+        "Achilles Tasked Logs",
+        "Contents",
+        "Schema Dictionary",
+        "Engine Overview",
+        "Zone Overview",
+        "Scenario Overview",
+        "Handoff Protocols",
+        "Equation Constants",
+        "QA Validation",
+        "Changelog",
+        "Zone NEA",
+        "Zone IMB",
+        "Zone CB",
+        "Zone RE",
+        "Engine Zone",
+        "Engine Cluster",
+        "Engine Object Classification",
+        "Engine Transport Suitability",
+        "Engine Extraction Suitability",
+        "Engine Mission Readiness",
+        "Engine Handoff",
+        "Scenario's W1",
+        "Scenario's W2",
+        "Scenario's W3",
+        "Scenario's W4",
+        "Scenario's W5",
+        "W6 Index",
+        "00_Contents"
+      ],
+      "desktop_role": "Website-facing logs/schema feed; publish_flag gates external reporting."
+    },
+    {
+      "id": "1GOzjF5BESSTWDqxi1hpGIk4a5R2kyrEY6EUeYN3vm9M",
+      "url": "https://docs.google.com/spreadsheets/d/1GOzjF5BESSTWDqxi1hpGIk4a5R2kyrEY6EUeYN3vm9M/edit",
+      "title": "Desktop population sheet",
+      "observed_status": "permission_denied_or_not_shared_to_connector",
+      "tabs_observed": [],
+      "desktop_role": "Desktop-side sheet to be populated from Oracle/Morpheus/Smith after permission is granted.",
+      "tabs_required": [
+        "Task Queue",
+        "Handoff Receipts",
+        "Knowns",
+        "Datatables",
+        "Publish Queue",
+        "Device Sync"
+      ]
+    },
+    {
+      "id": "1f5i4V3FshYHkztv3_HAg0ZofUl0sdcJZcwrlesUlCfM",
+      "url": "https://docs.google.com/spreadsheets/d/1f5i4V3FshYHkztv3_HAg0ZofUl0sdcJZcwrlesUlCfM/edit",
+      "title": "LS_GO_Queue_2026_07_07",
+      "observed_status": "accessible",
+      "tabs_observed": [
+        "Phone Tasks",
+        "Approvals",
+        "Device Commands",
+        "Results",
+        "Sync Health"
+      ],
+      "desktop_role": "Phone dash task queue, approvals, device command, result, and sync health bridge.",
+      "tabs_required": [
+        "Phone Tasks",
+        "Approvals",
+        "Device Commands",
+        "Results",
+        "Sync Health"
+      ]
+    }
+  ],
+  "drive_queue_contracts": [
+    {
+      "id": "future_lightspeed_go_drive_queue",
+      "source_drive_folder_id": "1PkXMyv26BBvvUbxShTRMTwhnEaK_a1qb",
+      "url": "https://drive.google.com/drive/folders/1PkXMyv26BBvvUbxShTRMTwhnEaK_a1qb",
+      "title": "Future LightSpeed GO drive queue",
+      "observed_status": "workbook_materialized",
+      "queue_spreadsheet_id": "1f5i4V3FshYHkztv3_HAg0ZofUl0sdcJZcwrlesUlCfM",
+      "queue_spreadsheet_url": "https://docs.google.com/spreadsheets/d/1f5i4V3FshYHkztv3_HAg0ZofUl0sdcJZcwrlesUlCfM/edit",
+      "handoff_mode": "Drive-folder queue with native GO workbook materialized under Achilles.",
+      "required_tables": [
+        "Phone Tasks",
+        "Approvals",
+        "Device Commands",
+        "Results",
+        "Sync Health"
+      ],
+      "owner_floor": "Neo",
+      "desktop_role": "Known folder and native workbook contract for LS GO task sync."
+    }
+  ],
+  "webhook_contract": {
+    "owner_floor": "Smith",
+    "source_floor": "Neo",
+    "proof_floor": "Morpheus",
+    "approval_floor": "Architect",
+    "policy": "External tools receive queued rows from Z Direct only after proof/approval.",
+    "payload_fields": [
+      "task_id",
+      "source_system",
+      "source_floor",
+      "target_floor",
+      "action",
+      "payload_ref",
+      "status",
+      "proof_state",
+      "approved_by",
+      "created_at",
+      "updated_at"
+    ]
+  },
+  "handoff_policy": {
+    "ingest": "Oracle stores original files and extracts components into knowns, datatables, object records, and task candidates.",
+    "proof": "Morpheus validates extracted facts against schema dictionary, source_type, confidence_level, and publish_flag.",
+    "route": "Smith/Z Direct queues floor updates and dataspace writes, including received/updated/deleted states.",
+    "operate": "Neo and Achilles propose work, populate approved rows, and hand off to TheConstruct or Architect as required.",
+    "publish": "Operator released public route/data contract; publish only approved static/public rows and keep secrets/payment/wallet/custody blocked."
+  },
+  "pre_walkthrough_tasks": [
+    "Expose the LS Web/GO embed workbook state inside LightSpeed Desktop so Neo can see pending route proof without searching Drive.",
+    "Verify /ls-go, /ls-go/status, /ls-go/handoff, /ls-go/agents, /ls-go/review, /data/achilles, /data, and /workspaces against 07_Implementation_Log.",
+    "Confirm connector access for the second Drive folder and desktop population sheet.",
+    "Normalize website route spellings and fix public typos before publishing.",
+    "Replace W6 as an internal filing system with Oracle/Construct/Architect ownership while keeping public /operations/w6 as a compatibility facade.",
+    "Map every public /w*/data endpoint to a desktop datasource table, queue, or stub with health state.",
+    "Run startup wizard through project creation, bento artifact creation, file attach, Morpheus proof, Smith handoff, and Architect publish.",
+    "Validate missing dependency flow creates Neo approval tasks instead of crashing.",
+    "Verify startup/loading bars around Drive/Sheets fetches, dataset ingestion, GMAT runs, and Holospace rendering.",
+    "Cull safe generated caches and archive stale dataindex notes into Merovingian reports before packaging.",
+    "Run N.py smoke, pytest contracts, launch verifier, and route/Drive bridge validation.",
+    "Package C-root canonical application to D-root snapshot only after walkthrough approval."
+  ],
+  "gate_release": {
+    "release_id": "operator_gate_release_2026_07_08_finalise",
+    "released_at": "2026-07-08T12:45:48Z",
+    "source": "operator_chat_explicit_release",
+    "operator_phrase": "Gate is explicitly released, please finalise",
+    "scope": [
+      "LightSpeed Desktop gated visual review source",
+      "Git push from exact verified LightSpeed worktree",
+      "Drive writeback packet preparation through canonical contracts",
+      "Web/GO static/public route contract finalisation",
+      "Internal floor automation queue release within resource guards"
+    ],
+    "held_scope": [
+      "DeSporte launch remains held",
+      "Squarespace manual paste/preview remains a human-browser operation unless a signed-in browser session is available",
+      "TheConstruct heavy model remains resource-held until RAM window is safe"
+    ]
+  }
+}
