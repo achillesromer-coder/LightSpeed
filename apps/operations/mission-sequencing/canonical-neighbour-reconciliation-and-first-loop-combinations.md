@@ -1,6 +1,6 @@
 # Canonical Neighbour Reconciliation and First-Loop Combinations
 
-Date: 2026-07-14
+Date: 2026-07-15
 
 ## Canonical inputs
 
@@ -16,12 +16,19 @@ Asteroid workbook
 - Cluster Neighbour Matrix!A1:Y21
 - Cluster Review Pack
 - Cluster Source Capture
+- Cluster Enrichment Queue
+- Task Roadmap
 
 Operations workbook
+- Mission 1 Detail
+- Mission 2 Detail
+- Mission 3 Detail
 - Cluster Sequence!A14:AB43   canonical edge and branch-summary layer
 - Cluster Sequence!A45:S55    first-loop combination layer
 - Cluster Sequence!A57:S67    non-scoring evidence-sensitivity layer
 - Cluster Sequence!A69:R79    qualitative perturbation-test results
+- Readiness Gates
+- LS Cognigrex Handoff
 ```
 
 ## Reconciliation state
@@ -60,7 +67,7 @@ Toutatis: 5.4 km, albedo 0.405, Sk (Bus)
 Apollo/Apl: 1.5 km, albedo 0.25, Q (Bus/Tholen)
 ```
 
-Legacy values remain in workbook/Git reconciliation logs. Density gaps remain visible where JPL does not supply a value.
+Legacy values remain in workbook/Git reconciliation logs. Density and composition gaps remain visible where primary sources do not provide values.
 
 ## First-loop comparison set
 
@@ -118,6 +125,28 @@ Cross-combination results:
 6. FLC-008 remained robust as a negative-control comparator after all candidate and anchor physical holds were resolved.
 7. No perturbation produced a preferred, feasible or selected sequence.
 
+## Cognigrex stable-freeze state
+
+The workbooks are now stable for deferred Cognigrex continuation under freeze ID:
+
+```text
+CGX-FREEZE-001
+Freeze date: 2026-07-15
+Selection state: none
+Operations readiness: stable complete
+Scientific evidence state: complete where sourced; remaining gaps explicitly deferred
+```
+
+Stable completion means:
+
+- canonical source and window manifests are registered;
+- candidate and anchor source conflicts are resolved and logged;
+- neighbour, branch, combination, sensitivity and perturbation surfaces are complete;
+- M1, M2 and M3 detail pages are structurally complete and selection-deferred;
+- dashboard, task registers, readiness gates and review queues are current;
+- missing physical evidence is explicit and non-blocking;
+- no public release, runtime activation, target selection or autonomous action is implied.
+
 ## Cognigrex consumption rules
 
 Cognigrex may compare:
@@ -142,6 +171,19 @@ Cognigrex must not infer:
 - a numeric ranking from categorical sensitivity states or qualitative test outcomes;
 - a final preferred branch without an explicit later review decision.
 
+## Approved future restart protocol
+
+A future Cognigrex continuation must:
+
+1. cite `CGX-FREEZE-001`;
+2. verify the current Data and LightSpeed commits and canonical manifests;
+3. run the workbook assumption-drift and formula-error checks;
+4. identify material source, rule or workbook changes since the freeze;
+5. rerun only the affected sensitivity and perturbation tests;
+6. read canonical surfaces without inheriting a preferred order;
+7. return suggestions only to `Open Build Tasks`, `Readiness Gates`, `Cluster Sequence`, `Publish Review Queue`, or `Appendix & Log`;
+8. preserve the distinction between evidence, sensitivity, test outcome and recommendation.
+
 ## Current canon
 
 ```text
@@ -149,12 +191,13 @@ Current hardware: Mark III + Mark V only
 Mark IV: post-mission successor / next model of Mark III
 Apophis: strategic tag/support posture, not mine-first
 Apollo shorthand: Apl
+M1/M2/M3 interface allocation: 3/7/11 m3
 Selection state: none
 ```
 
-## Next computation lane
+## Deferred, non-blocking work
 
-1. Enrich remaining candidate density, albedo, diameter and taxonomy gaps from primary sources.
-2. Maintain the reviewed internal export packet that distinguishes evidence posture, sensitivity, test outcome and recommendation.
-3. Repeat perturbation tests after material evidence updates rather than reusing stale results.
-4. Do not publish or activate a selected sequence without explicit release authority.
+1. Enrich remaining density, composition, albedo, diameter and taxonomy gaps from primary sources when later analysis needs them.
+2. Reopen curated Asteroid Master promotion only under a separate reviewed catalogue objective.
+3. Repeat perturbation tests after material evidence or rule changes rather than reusing stale results.
+4. Make a separate reviewed decision before any public release or selected-sequence activation.
