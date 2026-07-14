@@ -26,6 +26,29 @@ M5 = 19 m3
 M16 = 63 m3
 ```
 
+## Current hardware canon
+
+Current / to-date mission hardware:
+
+```text
+Mark III + Mark V only
+```
+
+Mark IV:
+
+```text
+post-mission successor / next model of Mark III
+not current hardware
+not current capacity input
+```
+
+Luke IV:
+
+```text
+facility / logistics / terrestrial receiver layer
+not a Mark-series extraction/capture unit
+```
+
 ## Separate source layer
 
 Phase II's 3/5/7-unit batch envelope is retained as a source-backed deployment/configuration reference. It is not the same as the cumulative serial/fleet capacity value.
@@ -38,9 +61,17 @@ When ranking clusters, neighbours, or branch sequences, LS and Cognigrex must co
 - `Capacity_m3`
 - `Tag_Capacity_Asteroids`
 - source-backed batch envelope fields
+- current hardware canon: Mark III + Mark V only
 
 Do not infer capacity from mission number.
 
-## Mark IV note
+## Drift guards
 
-Attached and retrieved source material in this correction pass evidences Mark III and Mark V repeatedly. Direct capacity-bearing Mark IV evidence was not found. Preserve user/project Mark IV references as source-pending rather than deleting them or using them as capacity inputs.
+- Do not use Mark IV in branch ranking before a post-mission successor-model surface is intentionally opened.
+- Do not conflate Luke IV with Mark IV.
+- Do not promote historical/OCR Mark I-IV fragments as current canon without reconciliation.
+- Do not write planned/post-mission/future states as current.
+
+## Continuation lane
+
+Run M1-M3 branch and cluster ranking from the corrected model, then continue source/Horizons payload expansion.
