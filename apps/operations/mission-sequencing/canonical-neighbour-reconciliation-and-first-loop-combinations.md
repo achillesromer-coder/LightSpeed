@@ -21,6 +21,7 @@ Operations workbook
 - Cluster Sequence!A14:AB43   canonical edge and branch-summary layer
 - Cluster Sequence!A45:S55    first-loop combination layer
 - Cluster Sequence!A57:S67    non-scoring evidence-sensitivity layer
+- Cluster Sequence!A69:R79    qualitative perturbation-test results
 ```
 
 ## Reconciliation state
@@ -80,7 +81,7 @@ These are branch arrangements, not trajectories or recommendations.
 
 ## Evidence-sensitivity layer
 
-The operations workbook also contains `ES-001` through `ES-008`, one row for each first-loop arrangement. The sensitivity layer is categorical and non-scoring.
+The operations workbook contains `ES-001` through `ES-008`, one row for each first-loop arrangement. The sensitivity layer is categorical and non-scoring.
 
 It exposes sensitivity to:
 
@@ -94,16 +95,28 @@ It exposes sensitivity to:
 
 `HIGH` or `VERY HIGH` means that the comparative interpretation is sensitive to that assumption or evidence gap. It does not mean that the arrangement is better, worse, preferred or more feasible.
 
-Required evidence tests include:
+## Completed perturbation pass
+
+`ETR-001` through `ETR-008` record the completed qualitative tests:
 
 ```text
-- set shared-edge operational benefit to zero;
-- remove assumed strategic utility from Apophis comparisons;
-- vary unresolved density/composition assumptions;
-- hold evidence constant while changing role order;
-- remove Earth-relative range ordering from comparative interpretation;
-- separate governance/review burden from technical evidence depth.
+- shared-edge operational benefit set to zero;
+- assumed strategic utility removed from Apophis comparisons;
+- unresolved density/composition assumptions stressed;
+- branch role order perturbed while evidence remained fixed;
+- Earth-relative range ordering removed from interpretation;
+- governance/review burden separated from technical evidence depth.
 ```
+
+Cross-combination results:
+
+1. Removing Earth-relative range order caused no material change in any comparator because range was never permitted as selection logic.
+2. Removing shared-edge benefit materially changed FLC-001, FLC-004 and FLC-006, but each retained a narrower data-reuse or directionality comparison function.
+3. Removing assumed Apophis strategic utility materially changed FLC-002, FLC-003 and FLC-007. FLC-007 remained useful only as a governance stress comparator.
+4. Density/composition uncertainty remained high-impact across all eight arrangements and is the main outstanding technical evidence sensitivity.
+5. Separating review burden from technical evidence confirmed that PHA concentration and governance complexity are burdens, not comparative advantages.
+6. FLC-008 remained robust as a negative-control comparator after all candidate and anchor physical holds were resolved.
+7. No perturbation produced a preferred, feasible or selected sequence.
 
 ## Cognigrex consumption rules
 
@@ -126,7 +139,7 @@ Cognigrex must not infer:
 - launch suitability from Earth-relative range;
 - mining feasibility from candidate diameter;
 - whole-body fit from 3/7/11 m3 interface allocation;
-- a numeric ranking from categorical sensitivity states;
+- a numeric ranking from categorical sensitivity states or qualitative test outcomes;
 - a final preferred branch without an explicit later review decision.
 
 ## Current canon
@@ -142,6 +155,6 @@ Selection state: none
 ## Next computation lane
 
 1. Enrich remaining candidate density, albedo, diameter and taxonomy gaps from primary sources.
-2. Run the specified evidence tests against ES-001 to ES-008 and record interpretation changes without producing a final rank.
-3. Prepare reviewed internal exports that distinguish evidence posture, sensitivity and recommendation.
+2. Maintain the reviewed internal export packet that distinguishes evidence posture, sensitivity, test outcome and recommendation.
+3. Repeat perturbation tests after material evidence updates rather than reusing stale results.
 4. Do not publish or activate a selected sequence without explicit release authority.
