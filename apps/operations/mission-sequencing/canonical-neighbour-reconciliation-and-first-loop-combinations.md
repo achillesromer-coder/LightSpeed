@@ -20,6 +20,7 @@ Asteroid workbook
 Operations workbook
 - Cluster Sequence!A14:AB43   canonical edge and branch-summary layer
 - Cluster Sequence!A45:S55    first-loop combination layer
+- Cluster Sequence!A57:S67    non-scoring evidence-sensitivity layer
 ```
 
 ## Reconciliation state
@@ -41,7 +42,7 @@ Vishnu, Minos, Lugh, Pan, Ptah -> PHA
 Toro -> non-PHA
 ```
 
-SBDB-first candidate comparison resolutions:
+SBDB-first candidate resolutions:
 
 ```text
 Ninkasi taxonomy: legacy A -> Sq (Bus)
@@ -77,6 +78,33 @@ FLC-008 high-PHA negative-control comparator
 
 These are branch arrangements, not trajectories or recommendations.
 
+## Evidence-sensitivity layer
+
+The operations workbook also contains `ES-001` through `ES-008`, one row for each first-loop arrangement. The sensitivity layer is categorical and non-scoring.
+
+It exposes sensitivity to:
+
+- missing physical and density evidence;
+- PHA classification and review burden;
+- shared-edge assumptions;
+- Apophis strategic-role assumptions;
+- M1/M2/M3 interface allocation at 3/7/11 m3;
+- cross-mission data continuity;
+- failure modes that could distort interpretation.
+
+`HIGH` or `VERY HIGH` means that the comparative interpretation is sensitive to that assumption or evidence gap. It does not mean that the arrangement is better, worse, preferred or more feasible.
+
+Required evidence tests include:
+
+```text
+- set shared-edge operational benefit to zero;
+- remove assumed strategic utility from Apophis comparisons;
+- vary unresolved density/composition assumptions;
+- hold evidence constant while changing role order;
+- remove Earth-relative range ordering from comparative interpretation;
+- separate governance/review burden from technical evidence depth.
+```
+
 ## Cognigrex consumption rules
 
 Cognigrex may compare:
@@ -88,7 +116,8 @@ Cognigrex may compare:
 - branch role;
 - M1/M2/M3 interface allocation at 3/7/11 m3;
 - review burden;
-- sensitivity to unresolved density/composition fields.
+- sensitivity to unresolved density/composition fields;
+- stability of an arrangement when the listed evidence tests are applied.
 
 Cognigrex must not infer:
 
@@ -97,6 +126,7 @@ Cognigrex must not infer:
 - launch suitability from Earth-relative range;
 - mining feasibility from candidate diameter;
 - whole-body fit from 3/7/11 m3 interface allocation;
+- a numeric ranking from categorical sensitivity states;
 - a final preferred branch without an explicit later review decision.
 
 ## Current canon
@@ -112,6 +142,6 @@ Selection state: none
 ## Next computation lane
 
 1. Enrich remaining candidate density, albedo, diameter and taxonomy gaps from primary sources.
-2. Run evidence-sensitivity comparison across FLC-001 to FLC-008.
-3. Prepare reviewed internal exports that distinguish evidence posture from recommendation.
+2. Run the specified evidence tests against ES-001 to ES-008 and record interpretation changes without producing a final rank.
+3. Prepare reviewed internal exports that distinguish evidence posture, sensitivity and recommendation.
 4. Do not publish or activate a selected sequence without explicit release authority.
