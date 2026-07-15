@@ -201,3 +201,19 @@ Selection state: none
 2. Reopen curated Asteroid Master promotion only under a separate reviewed catalogue objective.
 3. Repeat perturbation tests after material evidence or rule changes rather than reusing stale results.
 4. Make a separate reviewed decision before any public release or selected-sequence activation.
+
+## Repository validation alignment
+
+The post-freeze repository changes are aligned with this contract:
+
+```text
+Stable-freeze commit: 732568b5c1175b54d33ffad36296db35f6d38020
+Surface validator: dcdb38c0ee12a9629d82b01d47c357fde4bf79fb
+Validation workflow: 62d906b11a198ec60454ca6003cdd0dd8c6ee390
+Cold-start and LS Go integration: 80551170ad645389a94403ee55ae36f25578d31a
+Open pull requests: 0
+```
+
+The read-only validator checks required LightSpeed desktop surfaces and source-manifest integrity while excluding Raphael/N3-adjacent records from this pass. The integration change raises the bounded cold-start probe from 20 seconds to 60 seconds, adds regression coverage and refreshes the tracked LS Go bundle. These changes do not alter the Cognigrex freeze, mission evidence, capacity canon or selection state.
+
+Any later continuation must verify the then-current main head, run the LightSpeed surface validator and repeat the affected startup/build checks before using the result as current evidence.
