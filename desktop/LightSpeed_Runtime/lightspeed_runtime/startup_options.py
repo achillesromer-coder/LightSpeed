@@ -139,7 +139,7 @@ def probe_launch_python(
     python_path: Path,
     *,
     modules: List[str] | None = None,
-    timeout_seconds: int = 20,
+    timeout_seconds: int = 60,
 ) -> Dict[str, Any]:
     """Probe a Python executable for the core modules LightSpeed needs to launch."""
     python_path = Path(python_path).resolve()

@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
+import lightspeed_runtime.startup_options as startup_options
 from lightspeed_runtime.startup_options import (
     build_startup_action_catalog,
     launch_runtime_candidates,
+    probe_launch_python,
     read_launch_control_profile,
     read_startup_options,
     startup_setting_defaults,
@@ -156,3 +159,33 @@ def test_launch_runtime_candidates_prefer_workspace_venv_then_python311(
     assert [candidate["label"] for candidate in candidates] == ["workspace_venv", "python311"]
     assert candidates[0]["exists"] is True
     assert candidates[1]["exists"] is True
+
+
+def test_launch_runtime_probe_allows_cold_import_headroom(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    python_path = tmp_path / "python.exe"
+    python_path.write_text("", encoding="utf-8")
+    observed: dict[str, int] = {}
+
+    def fake_run(*args, timeout: int, **kwargs):
+        observed["timeout"] = timeout
+        return SimpleNamespace(
+            returncode=0,
+            stdout=json.dumps(
+                {
+                    "version": "3.11.9",
+                    "missing_modules": [],
+                    "module_results": {"json": "ok"},
+                }
+            ),
+            stderr="",
+        )
+
+    monkeypatch.setattr(startup_options.subprocess, "run", fake_run)
+
+    result = probe_launch_python(python_path, modules=["json"])
+
+    assert result["ok"] is True
+    assert observed["timeout"] == 60
