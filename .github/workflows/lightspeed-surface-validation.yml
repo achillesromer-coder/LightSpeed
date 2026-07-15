@@ -1,0 +1,52 @@
+name: LightSpeed Surface Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "desktop/source-manifest.json"
+      - "desktop/Desktop_Hooks/LightSpeed/**"
+      - "desktop/LightSpeed_Runtime/**"
+      - "scripts/validate_lightspeed_surfaces.py"
+      - ".github/workflows/lightspeed-surface-validation.yml"
+  push:
+    branches:
+      - main
+      - "ops/**"
+      - "fix/**"
+    paths:
+      - "desktop/source-manifest.json"
+      - "desktop/Desktop_Hooks/LightSpeed/**"
+      - "desktop/LightSpeed_Runtime/**"
+      - "scripts/validate_lightspeed_surfaces.py"
+      - ".github/workflows/lightspeed-surface-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lightspeed-surface-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate eligible LightSpeed desktop surfaces
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Compile validator
+        run: python -m py_compile scripts/validate_lightspeed_surfaces.py
+
+      - name: Validate source manifest and runtime surfaces
+        run: python scripts/validate_lightspeed_surfaces.py
