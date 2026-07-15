@@ -134,3 +134,66 @@ No public publish, print, deploy, merge or public status update was promoted. Cu
 - Drive persistence: Drive documents remain canonical source carriers; direct workbook editing of the active CORE `.xlsx` remains blocked through the current connector path.
 - Operations handoff should mirror this manual automation execution pass.
 - No destructive action was executed.
+
+## Asteroid and Type 1 operations persistence — 2026-07-15
+
+The asteroid evidence and Type 1 operations lane is stable under `CGX-FREEZE-001`.
+
+Canonical workbooks:
+
+- Asteroid evidence: `Asteroid_Strategic_Mapping_Base_withRocks`, Drive ID `148UObDgK_YsqHDbIkJo89yDvyDcgySTE4wQMEVGwga8`.
+- Type 1 operations: `Type1_Asteroid_Operating_Workbook`, Drive ID `1Uy04F5gtf2mXf9tDmAyIvNrsCn1kn4Csa2oc-skSZxY`.
+
+Canonical Git heads:
+
+- Data reconciliation: `fc02db1c387f8021d6999f1f0dce92291386a85a`.
+- LightSpeed comparison and validation: `34687b36c62b4bcc6805a85c1d4a6d85f55201ce`.
+- Operations Codex handoff: `2d4c08875df9e825e22471ce2ad0c8a271bb920b`.
+
+Stable state:
+
+- Data integrity and LightSpeed surface-validation layers are on `main`.
+- Open Data and LightSpeed pull requests: zero.
+- Final scanned workbook surfaces contain zero `#REF!` and zero `#N/A`.
+- Current hardware: Mark III + Mark V only.
+- Mark IV: post-mission successor, not current capacity input.
+- M1/M2/M3 active interface allocation: 3/7/11 m3.
+- Apophis: strategic tag/support, not mine-first.
+- Selected or preferred sequence: none.
+- Remaining physical enrichment is deferred and non-blocking.
+
+This lane is `COMPLETE / FROZEN / RESTART ON MATERIAL CHANGE ONLY`. A future restart must verify current Git heads, run the Data and LightSpeed validators, run workbook drift/formula checks, identify material changes and rerun only affected tests.
+
+## Next Z01 smart-floor lane
+
+The next bounded workstream is a source-and-interface launch map for two future separate control workbooks:
+
+1. **Interplanetary Supply Chain Systems** — logistics, transfer, capture/return, infrastructure, hardware/data interfaces and mission-to-network continuity.
+2. **Cognigrex Node Control** — node identities, roles, permissions, data flows, health/state, audit, reviewed recommendation outputs and human approval gates.
+
+The workbooks are not created from names alone. First reconcile:
+
+- the Type 1 operations workbook;
+- the asteroid evidence workbook;
+- `Interface Control Document Master`;
+- National Commitments and LinkDrive source carriers;
+- the innovation register;
+- current Operations and LightSpeed control surfaces.
+
+Boundary model:
+
+- asteroid workbook = evidence, source capture and cluster context;
+- Type 1 operations workbook = mission control and cross-workbook interface;
+- future supply-chain workbook = logistics and network continuity;
+- future Cognigrex control workbook = nodes, permissions, state and audit.
+
+Agent flow:
+
+- Architect produces dependency and workbook-boundary mapping.
+- Morpheus and Oracle reconcile source identity, interface evidence and claim state.
+- Neo produces the bounded launch map and cross-platform routes.
+- Smith queues only CORE-accepted actions.
+- Trinity defers interface implementation until data-model stability.
+- Achilles gates workbook creation, public language and release.
+
+Do not create duplicate small files. Persist the next pass into CORE, the Neo/Achilles agent file, Operations `CORE/GITHUB_ALIGNMENT_HANDOFF_2026_07_03.md`, this ledger and the existing workbook control registers. Raphael/N3-adjacent work remains outside this pass.
