@@ -80,8 +80,8 @@ export const normalizeQueueRecord = (value: unknown): PublicQueueRecord => {
     title: requiredString(value.title, "title", 160),
     priority: enumValue(value.priority, PRIORITIES, "normal"),
     status: enumValue(value.status, STATUSES, "queued"),
-    source: boundedString(value.source, "Neo", 48),
-    target: boundedString(value.target, "Review", 48),
+    source: boundedString(value.source, "GO Gate", 48),
+    target: boundedString(value.target, "Neo", 48),
     created_utc: boundedString(value.created_utc, "", 32),
     extensions: normalizeExtensions(value.extensions),
     notes: boundedString(value.notes, "", 240),
@@ -155,14 +155,14 @@ export const renderExchangePanel = (exchange: NeoExchange): string => {
     : `
       <li class="status-row ready">
         <div>
-          <strong>Queue clear</strong>
-          <span>No public-safe Neo exchange tasks are waiting.</span>
+          <strong>Routed queue clear</strong>
+          <span>No GO-accepted Neo actions are waiting.</span>
         </div>
         <em>ready</em>
       </li>
     `;
   return `
-    <div class="exchange-summary" aria-label="Neo exchange summary">
+    <div class="exchange-summary" aria-label="GO-gated Neo routing summary">
       <span><strong>${summary.total}</strong> total</span>
       <span aria-label="${summary.active} active"><strong>${summary.active}</strong> active</span>
       <span><strong>${summary.critical}</strong> critical</span>
