@@ -1,0 +1,255 @@
+from __future__ import annotations
+
+import json
+import os
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Optional
+
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+import uvicorn
+
+from lightspeed_runtime.storage_paths import neo_actions_root
+
+COMMAND_SCHEMA = "lightspeed-go-command-v1"
+ALLOWED_FLOORS = {
+    "Achilles",
+    "Neo",
+    "Architect",
+    "TheConstruct",
+    "Morpheus",
+    "Oracle",
+    "Smith",
+    "Merovingian",
+    "Trinity",
+}
+ALLOWED_PRIORITIES = {"critical", "high", "normal", "low"}
+ALLOWED_MODES = {"review", "queue"}
+DEFAULT_ALLOWED_ORIGINS = [
+    "https://lightspeed-go.nathaniel-b.chatgpt.site",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:4173",
+    "http://localhost:5173",
+    "http://localhost:4173",
+]
+
+
+def utc_now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def _bounded(value: Any, *, maximum: int, required: bool = False) -> str:
+    text = " ".join(str(value or "").split()).strip()[:maximum]
+    if required and not text:
+        raise HTTPException(status_code=400, detail="Required command field is missing")
+    return text
+
+
+def _allowed_origins() -> list[str]:
+    configured = [item.strip() for item in os.environ.get("LIGHTSPEED_GO_ALLOWED_ORIGINS", "").split(",")]
+    return [*DEFAULT_ALLOWED_ORIGINS, *[item for item in configured if item]]
+
+
+def _try_get_services():
+    try:
+        from core.services import get_db, get_storage  # type: ignore
+
+        return get_db(), get_storage()
+    except Exception:
+        return None, None
+
+
+def _queue_path(root: Path) -> Path:
+    path = neo_actions_root(root) / "ls_go_command_queue.jsonl"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def _read_queue(root: Path, limit: int = 30) -> list[dict[str, Any]]:
+    path = _queue_path(root)
+    if not path.exists():
+        return []
+    rows: list[dict[str, Any]] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        try:
+            value = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(value, dict):
+            rows.append(value)
+    return list(reversed(rows[-max(1, min(limit, 200)) :]))
+
+
+def _append_queue(root: Path, payload: dict[str, Any]) -> str:
+    path = _queue_path(root)
+    with path.open("a", encoding="utf-8") as stream:
+        stream.write(json.dumps(payload, ensure_ascii=False, sort_keys=True) + "\n")
+    return str(path)
+
+
+def create_app(root: Path | str) -> FastAPI:
+    runtime_root = Path(root).resolve()
+    db, storage = _try_get_services()
+    app = FastAPI(
+        title="LightSpeed GO Desktop Bridge",
+        description="Local-only, review-gated command bridge for LS GO.",
+        version="1.0.0",
+    )
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=_allowed_origins(),
+        allow_credentials=False,
+        allow_methods=["GET", "POST", "OPTIONS"],
+        allow_headers=["Content-Type"],
+        max_age=600,
+    )
+
+    @app.get("/api/v1/status")
+    async def status():
+        return JSONResponse(
+            {
+                "ok": True,
+                "time_utc": utc_now_iso(),
+                "bridge": "ls-go",
+                "root": str(runtime_root),
+                "services": {"db": bool(db), "storage": bool(storage)},
+                "queue_path": str(_queue_path(runtime_root)),
+                "execution_boundary": "queue and review only; no public direct execution",
+            }
+        )
+
+    @app.get("/api/v1/tasks")
+    async def list_tasks(limit: int = 30):
+        if db:
+            try:
+                rows = db.execute_query(
+                    "SELECT id, title, description, project_id, status, priority, created_at, updated_at, metadata_json "
+                    "FROM tasks ORDER BY id DESC LIMIT ?",
+                    (max(1, min(int(limit), 200)),),
+                )
+                return JSONResponse({"tasks": rows})
+            except Exception:
+                pass
+        queue_rows = _read_queue(runtime_root, limit=limit)
+        tasks = [
+            {
+                "id": row.get("command_id"),
+                "title": row.get("title"),
+                "description": row.get("instruction"),
+                "status": row.get("state", "queued"),
+                "priority": row.get("priority", "normal"),
+                "created_at": row.get("accepted_utc"),
+            }
+            for row in queue_rows
+        ]
+        return JSONResponse({"tasks": tasks})
+
+    @app.post("/api/v1/ls-go/commands")
+    async def accept_command(body: dict[str, Any]):
+        if body.get("schema_version") != COMMAND_SCHEMA:
+            raise HTTPException(status_code=400, detail="Unsupported command schema")
+
+        command_id = _bounded(body.get("command_id"), maximum=96, required=True)
+        instruction = _bounded(body.get("instruction"), maximum=4000, required=True)
+        title = _bounded(body.get("title") or instruction, maximum=160, required=True)
+        target_floor = _bounded(body.get("target_floor"), maximum=40, required=True)
+        priority = _bounded(body.get("priority") or "normal", maximum=16)
+        execution_mode = _bounded(body.get("execution_mode") or "review", maximum=16)
+
+        if target_floor not in ALLOWED_FLOORS:
+            raise HTTPException(status_code=400, detail="Unsupported target floor")
+        if priority not in ALLOWED_PRIORITIES:
+            raise HTTPException(status_code=400, detail="Unsupported priority")
+        if execution_mode not in ALLOWED_MODES:
+            raise HTTPException(status_code=400, detail="Unsupported execution mode")
+        if body.get("oversight_floor") != "Achilles":
+            raise HTTPException(status_code=400, detail="Achilles oversight is required")
+        if body.get("proof_required") is not True or body.get("public_safe") is not True:
+            raise HTTPException(status_code=400, detail="Proof and public-safe gates are required")
+
+        accepted = {
+            "schema_version": COMMAND_SCHEMA,
+            "command_id": command_id,
+            "accepted_utc": utc_now_iso(),
+            "source": "LS GO",
+            "title": title,
+            "instruction": instruction,
+            "target_floor": target_floor,
+            "oversight_floor": "Achilles",
+            "priority": priority,
+            "execution_mode": execution_mode,
+            "state": "review" if execution_mode == "review" else "queued",
+            "proof_required": True,
+            "public_safe": True,
+        }
+        artifact_ref = _append_queue(runtime_root, accepted)
+
+        task_id: Optional[int] = None
+        job: Optional[dict[str, Any]] = None
+        if db:
+            try:
+                now = accepted["accepted_utc"]
+                metadata_json = json.dumps(
+                    {
+                        "schema_version": COMMAND_SCHEMA,
+                        "command_id": command_id,
+                        "source": "LS GO",
+                        "target_floor": target_floor,
+                        "oversight_floor": "Achilles",
+                        "execution_mode": execution_mode,
+                        "proof_required": True,
+                        "public_safe": True,
+                        "artifact_ref": artifact_ref,
+                    },
+                    ensure_ascii=False,
+                )
+                with db.get_connection() as conn:
+                    cursor = conn.cursor()
+                    cursor.execute(
+                        "INSERT INTO tasks (title, description, project_id, status, priority, created_at, updated_at, metadata_json) "
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                        (title, instruction, "LS-GO", accepted["state"], priority, now, now, metadata_json),
+                    )
+                    task_id = int(cursor.lastrowid)
+                created = db.create_job_v1(
+                    job_type="ls_go_command",
+                    tool_key="ls_go_command",
+                    z_context=target_floor,
+                    params={
+                        "command_id": command_id,
+                        "instruction": instruction,
+                        "execution_mode": execution_mode,
+                        "oversight_floor": "Achilles",
+                    },
+                    task_id=task_id,
+                    project_id="LS-GO",
+                    tags=["ls-go", "achilles", target_floor.lower()],
+                    inputs=[{"kind": "command_envelope", "path": artifact_ref}],
+                )
+                job = created if isinstance(created, dict) else {"result": created}
+            except Exception as exc:
+                accepted["db_detail"] = f"Queue persisted; database handoff unavailable: {type(exc).__name__}"
+
+        return JSONResponse(
+            {
+                "accepted": True,
+                "command_id": command_id,
+                "task_id": task_id,
+                "job": job,
+                "state": accepted["state"],
+                "artifact_ref": artifact_ref,
+                "detail": accepted.get("db_detail", "Command persisted and routed to the Desktop task/job lane."),
+            }
+        )
+
+    return app
+
+
+def start_server(root: Path | str, host: str = "127.0.0.1", port: int = 8765) -> None:
+    uvicorn.run(create_app(root), host=host, port=port, log_level="info")
+
+
+if __name__ == "__main__":
+    start_server(Path(os.environ.get("LIGHTSPEED_ROOT", Path.cwd())))
