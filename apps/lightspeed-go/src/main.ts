@@ -16,7 +16,7 @@ import {
   type Floor,
   type Priority,
 } from "./desktopBridge";
-import { loadNeoExchange, renderExchangePanel } from "./neoExchange";
+import { escapeHtml, loadNeoExchange, renderExchangePanel } from "./neoExchange";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
 
 const app = document.getElementById("app");
@@ -176,7 +176,7 @@ const renderPending = (): void => {
     mount.innerHTML = `<p class="muted">No locally saved commands.</p>`;
     return;
   }
-  mount.innerHTML = commands.map((command) => `<article class="task-card"><div><strong>${command.title}</strong><span>${command.target_floor} · ${command.priority} · ${command.execution_mode}</span><small>${command.command_id}</small></div><div class="task-actions"><button data-send="${command.command_id}">Send</button><button data-download="${command.command_id}">Download</button></div></article>`).join("");
+  mount.innerHTML = commands.map((command) => `<article class="task-card"><div><strong>${escapeHtml(command.title)}</strong><span>${escapeHtml(command.target_floor)} · ${escapeHtml(command.priority)} · ${escapeHtml(command.execution_mode)}</span><small>${escapeHtml(command.command_id)}</small></div><div class="task-actions"><button data-send="${escapeHtml(command.command_id)}">Send</button><button data-download="${escapeHtml(command.command_id)}">Download</button></div></article>`).join("");
   mount.querySelectorAll<HTMLButtonElement>("[data-send]").forEach((button) => button.addEventListener("click", async () => {
     const command = commands.find((item) => item.command_id === button.dataset.send);
     if (!command) return;
@@ -249,7 +249,7 @@ const refreshDesktop = async (): Promise<void> => {
     state.textContent = status.ok ? "Online" : "Degraded";
     try {
       const tasks = await listDesktopTasks();
-      tasksMount.innerHTML = tasks.length ? tasks.map((task) => `<article class="task-card"><div><strong>${String(task.title || "Untitled task")}</strong><span>${String(task.status || "unknown")} · ${String(task.priority || "normal")}</span><small>Task ${String(task.id || "")}</small></div></article>`).join("") : `<p class="muted">Desktop queue is clear.</p>`;
+      tasksMount.innerHTML = tasks.length ? tasks.map((task) => `<article class="task-card"><div><strong>${escapeHtml(String(task.title || "Untitled task"))}</strong><span>${escapeHtml(String(task.status || "unknown"))} · ${escapeHtml(String(task.priority || "normal"))}</span><small>Task ${escapeHtml(String(task.id || ""))}</small></div></article>`).join("") : `<p class="muted">Desktop queue is clear.</p>`;
     } catch {
       tasksMount.innerHTML = `<p class="muted">Desktop is online, but task listing is unavailable or authentication-gated.</p>`;
     }
