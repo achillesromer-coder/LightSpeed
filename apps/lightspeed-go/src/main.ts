@@ -7,38 +7,47 @@ if (!app) throw new Error("LightSpeed Go mount node #app not found.");
 
 type StatusTone = "pass" | "warn" | "blocked" | "ready";
 
+const controlGateRows = [
+  ["Nathaniel Bower", "Owner orientation", "Sets intent, priorities, approvals, holds and final operating direction", "pass"],
+  ["Achilles", "Governance and control gate", "Validates authority, evidence, risk, rationale and release boundaries", "pass"],
+  ["DBL", "Inform and direct through GO", "May analyse and recommend direction to Neo only after Achilles/owner gate acceptance", "ready"],
+  ["Neo", "Subordinate routing and execution", "Routes one accepted bounded action; cannot redefine owner intent or orient the system", "ready"],
+] satisfies [string, string, string, StatusTone][];
+
 const connectorRows = [
-  ["GitHub", "Authenticated", "Connected account verified; private identity held in gated handoff", "pass"],
-  ["Google Drive", "Authenticated", "Connected account verified; writeback remains approval-gated", "pass"],
-  ["Gmail", "Authenticated", "Connected account verified; outbound send remains approval-gated", "pass"],
+  ["GitHub", "Authenticated", "Connected account verified; write and merge remain GO/Achilles gated", "pass"],
+  ["Google Drive", "Authenticated", "Connected account verified; canonical writeback remains approval-gated", "pass"],
+  ["Gmail", "Authenticated", "Connected account verified; outbound send remains owner-gated", "pass"],
 ] satisfies [string, string, string, StatusTone][];
 
 const routeRows = [
-  ["/ls-go", "HTTP 200", "Public route is live", "pass"],
-  ["/ls-go/status", "HTTP 200", "Status route is live", "pass"],
-  ["/ls-go/handoff", "HTTP 200", "Handoff route is live", "pass"],
-  ["/ls-go/review", "HTTP 200", "Review route is live", "pass"],
-  ["/ls-go/agents", "HTTP 404", "Agent route is not published yet; keep it out of primary navigation until live", "warn"],
+  ["/ls-go", "Observed HTTP 200", "Owner-control route observed; access and publication state remain separate", "pass"],
+  ["/ls-go/status", "Observed HTTP 200", "Status route observed; claims require current evidence", "pass"],
+  ["/ls-go/handoff", "Observed HTTP 200", "Handoff route observed; action remains GO-gated", "pass"],
+  ["/ls-go/review", "Observed HTTP 200", "Review route observed; Athene remains training/review-only", "pass"],
+  ["/ls-go/agents", "Observed HTTP 404", "Agent route is not proven available; keep it out of primary navigation", "warn"],
 ] satisfies [string, string, string, StatusTone][];
 
 const agentRows = [
-  ["Achilles Core", "Governance/source-of-truth", ":00 / :48", "ready"],
-  ["Co-Runner", "Drive review and workbook reconciliation", ":12", "ready"],
-  ["Desktop Codex", "Repo build, branch, app evidence", ":24", "ready"],
-  ["Terminal Codex", "Shell validation and command receipts", ":24", "ready"],
-  ["Claude/UI", "Console and agent-lane artifact pass", ":36", "ready"],
-  ["Local Runners", "One-session De Sporte/Ollama gate", ":48", "warn"],
+  ["Achilles Core", "Owner governance and source-of-truth gate", "Daily owner brief / control decision", "ready"],
+  ["DBL", "Evidence, analysis and direction input", "Feeds GO; no direct execution authority", "ready"],
+  ["Neo", "Accepted-action router", "One bounded envelope after GO acceptance", "ready"],
+  ["Co-Runner", "Drive review and workbook reconciliation", "Evidence and canonical sync", "ready"],
+  ["Desktop Codex", "Repo build, branch and app evidence", "Execution beneath accepted Neo routing", "ready"],
+  ["Terminal Codex", "Shell validation and command receipts", "Execution proof only", "ready"],
+  ["Claude/UI", "Console and agent-lane artifact pass", "Presentation consumes accepted state", "ready"],
+  ["Local Runners", "One-session De Sporte/Ollama gate", "No autonomous authority", "warn"],
 ] satisfies [string, string, string, StatusTone][];
 
 const appRows = [
-  ["LightSpeed Go", "Vite 8 build green", "C-drive staging is the build lane while D: remains space constrained", "pass"],
-  ["De Sporte", "Desktop/runtime world shell", "Packaged Cognigrex shortcut uses explicit data-root and stays resident", "ready"],
-  ["Cognigrex", "Operator shell + Smith queue proof", "Desktop launch lane is active; capture UI proof after public route update", "warn"],
+  ["LightSpeed Go", "Owner/Achilles control gate", "Private review and approval surface; not canonical data authority or public publication surface", "pass"],
+  ["De Sporte", "Desktop/runtime world shell", "Runs accepted work beneath GO and Neo routing", "ready"],
+  ["Cognigrex", "Bounded analysis host", "May compare and recommend; cannot select, approve, publish or deploy independently", "warn"],
 ] satisfies [string, string, string, StatusTone][];
 
 const memoryRows = [
   ["Short-term", "RAM/current run only", "Keep run deltas compact; do not accumulate raw logs in prompt memory"],
-  ["Long-term", "Drive/repo/local review records", "Persist evidence paths, hashes, route statuses, and blockers only"],
+  ["Long-term", "CORE/Drive/repo review records", "Persist owner decisions, evidence paths, hashes, route states and blockers"],
   ["Safety", "No secret persistence", "Never store credential values, OAuth secrets, wallet/token/payment/custody/IPFS data"],
 ];
 
@@ -91,18 +100,26 @@ app.innerHTML = `
   <main class="lsgo-shell">
     <section class="hero panel">
       <div>
-        <p class="kicker">LightSpeed Go / De Sporte Launch Console</p>
-        <h1>Römer Industries Operations</h1>
-        <p class="lede">Static, public-safe operator surface for launch evidence, site-twin gates, agent lanes, route state, and compact co-runner handoff.</p>
+        <p class="kicker">LightSpeed Go / Achilles Control Gate</p>
+        <h1>Nathaniel Bower · Römer Industries</h1>
+        <p class="lede">Private owner and Achilles control-gate surface for intent, approvals, holds, evidence, rationale and the next authorised actions. DBL may inform and direct Neo through this gate; Neo remains subordinate routing and execution.</p>
       </div>
       <div class="hero-actions">
-        <span class="badge pass">Connectors authenticated</span>
-        <span class="badge pass">Desktop launch ready 22/22</span>
-        <span class="badge warn">Agent route pending</span>
+        <span class="badge pass">Owner-oriented</span>
+        <span class="badge pass">Achilles governed</span>
+        <span class="badge ready">Neo subordinate</span>
       </div>
     </section>
 
     <section class="grid">
+      <article class="panel wide">
+        <div class="panel-head">
+          <p class="kicker">Authority Chain</p>
+          <h2>GO Control Gate</h2>
+        </div>
+        <ul class="status-list">${renderRows(controlGateRows)}</ul>
+      </article>
+
       <article class="panel">
         <div class="panel-head">
           <p class="kicker">Tool State</p>
@@ -113,8 +130,8 @@ app.innerHTML = `
 
       <article class="panel">
         <div class="panel-head">
-          <p class="kicker">Public Web</p>
-          <h2>Route Gates</h2>
+          <p class="kicker">Route Evidence</p>
+          <h2>Observed Gates</h2>
         </div>
         <ul class="status-list">${renderRows(routeRows)}</ul>
       </article>
@@ -122,15 +139,15 @@ app.innerHTML = `
       <article class="panel">
         <div class="panel-head">
           <p class="kicker">Applications</p>
-          <h2>Build / Run State</h2>
+          <h2>Control / Run State</h2>
         </div>
         <ul class="status-list">${renderRows(appRows)}</ul>
       </article>
 
       <article class="panel">
         <div class="panel-head">
-          <p class="kicker">Agent Rotation</p>
-          <h2>Oversight Lanes</h2>
+          <p class="kicker">Authority and Execution</p>
+          <h2>Bounded Lanes</h2>
         </div>
         <ul class="status-list">${renderRows(agentRows)}</ul>
       </article>
@@ -175,7 +192,7 @@ app.innerHTML = `
           <div class="twin-details">
             <div class="zone-grid">${zoneSummary}</div>
             <ul class="facility-list">${facilitySummary}</ul>
-            <p class="workbook-link">Workbook-backed embed contract: ${workbookSummary}</p>
+            <p class="workbook-link">Workbook-backed review contract: ${workbookSummary}</p>
           </div>
         </div>
       </article>
@@ -203,26 +220,26 @@ app.innerHTML = `
       <article class="panel wide">
         <div class="panel-head exchange-head">
           <div>
-            <p class="kicker">Neo Exchange</p>
-            <h2>Public-Safe Queue Projection</h2>
+            <p class="kicker">GO-Gated Neo Routing</p>
+            <h2>Accepted Queue Projection</h2>
           </div>
-          <span class="badge ready">Execution remains Desktop-only</span>
+          <span class="badge ready">Requires owner/Achilles acceptance</span>
         </div>
         <div id="neo-exchange" aria-live="polite">
-          <p class="exchange-loading">Reading the bounded exchange projection...</p>
+          <p class="exchange-loading">Reading the bounded routed-action projection...</p>
         </div>
       </article>
 
       <article class="panel wide">
         <div class="panel-head">
-          <p class="kicker">Next Safe Actions</p>
-          <h2>Launch Queue</h2>
+          <p class="kicker">Next Authorised Actions</p>
+          <h2>GO-Gated Queue</h2>
         </div>
         <ol class="queue">
-          <li>Promote the workbook contract and site-twin data shape into the Drive/repo truth lane.</li>
-          <li>Replace the static schematic with the existing 3D viewer once the artifact is identified and bounded.</li>
-          <li>Publish the static route packet and verify public route status, including <code>/ls-go/agents</code>.</li>
-          <li>Capture manual UX evidence for LightSpeed, De Sporte, and LS Go.</li>
+          <li>Read the current CORE and GO owner-decision state before selecting work.</li>
+          <li>Consolidate duplicate knowledge, draft and site records through the unified Appendix &amp; Log while retaining provenance.</li>
+          <li>Route one DBL-informed, Achilles-accepted bounded action to Neo for execution and receipt capture.</li>
+          <li>Verify route, claim and data-state evidence before any publication or deployment decision.</li>
         </ol>
       </article>
     </section>
