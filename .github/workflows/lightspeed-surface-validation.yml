@@ -9,6 +9,7 @@ on:
       - "desktop/Desktop_Hooks/LightSpeed/**"
       - "desktop/LightSpeed_Runtime/**"
       - "scripts/validate_lightspeed_surfaces.py"
+      - "scripts/refresh_desktop_source_manifest.py"
       - ".github/workflows/lightspeed-surface-validation.yml"
   push:
     branches:
@@ -20,6 +21,7 @@ on:
       - "desktop/Desktop_Hooks/LightSpeed/**"
       - "desktop/LightSpeed_Runtime/**"
       - "scripts/validate_lightspeed_surfaces.py"
+      - "scripts/refresh_desktop_source_manifest.py"
       - ".github/workflows/lightspeed-surface-validation.yml"
   workflow_dispatch:
 
@@ -39,14 +41,52 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          show-progress: false
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Compile validator
-        run: python -m py_compile scripts/validate_lightspeed_surfaces.py
+      - name: Compile validators
+        run: |
+          python -m py_compile scripts/validate_lightspeed_surfaces.py
+          python -m py_compile scripts/refresh_desktop_source_manifest.py
 
       - name: Validate source manifest and runtime surfaces
-        run: python scripts/validate_lightspeed_surfaces.py
+        id: validation
+        shell: bash
+        run: |
+          set +e
+          python scripts/validate_lightspeed_surfaces.py > surface-validation.log 2>&1
+          exit_code=$?
+          cat surface-validation.log
+          echo "exit_code=${exit_code}" >> "${GITHUB_OUTPUT}"
+          exit 0
+
+      - name: Generate bounded manifest refresh candidate
+        if: steps.validation.outputs.exit_code != '0'
+        run: |
+          python scripts/refresh_desktop_source_manifest.py \
+            --output refreshed-source-manifest.json
+
+      - name: Upload validation diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lightspeed-surface-validation
+          path: |
+            surface-validation.log
+            refreshed-source-manifest.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Enforce validation result
+        if: always()
+        shell: bash
+        run: |
+          if [ "${{ steps.validation.outputs.exit_code }}" != "0" ]; then
+            echo "Surface validation failed; inspect the lightspeed-surface-validation artifact."
+            exit 1
+          fi
