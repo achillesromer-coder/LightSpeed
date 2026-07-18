@@ -7,7 +7,7 @@ const EXTENSION_KEYS = ["icon", "age_label"] as const;
 export type QueuePriority = (typeof PRIORITIES)[number];
 export type QueueStatus = (typeof STATUSES)[number];
 
-export interface PublicQueueRecord {
+export interface RoutedActionRecord {
   id: string;
   title: string;
   priority: QueuePriority;
@@ -22,7 +22,7 @@ export interface PublicQueueRecord {
 export interface NeoExchange {
   schema_version: typeof EXCHANGE_SCHEMA;
   generated_at_utc: string;
-  queue: PublicQueueRecord[];
+  queue: RoutedActionRecord[];
 }
 
 export interface ExchangeSummary {
@@ -53,7 +53,7 @@ const requiredString = (
   maximumLength: number,
 ): string => {
   const normalized = boundedString(value, "", maximumLength);
-  if (!normalized) throw new TypeError(`queue record ${field} is required`);
+  if (!normalized) throw new TypeError(`routed-action record ${field} is required`);
   return normalized;
 };
 
@@ -73,15 +73,15 @@ const normalizeExtensions = (value: unknown): Record<string, string> => {
   );
 };
 
-export const normalizeQueueRecord = (value: unknown): PublicQueueRecord => {
-  if (!isRecord(value)) throw new TypeError("queue record must be an object");
+export const normalizeQueueRecord = (value: unknown): RoutedActionRecord => {
+  if (!isRecord(value)) throw new TypeError("routed-action record must be an object");
   return {
     id: requiredString(value.id, "id", 80),
     title: requiredString(value.title, "title", 160),
     priority: enumValue(value.priority, PRIORITIES, "normal"),
     status: enumValue(value.status, STATUSES, "queued"),
-    source: boundedString(value.source, "Neo", 48),
-    target: boundedString(value.target, "Review", 48),
+    source: boundedString(value.source, "GO Gate", 48),
+    target: boundedString(value.target, "Neo", 48),
     created_utc: boundedString(value.created_utc, "", 32),
     extensions: normalizeExtensions(value.extensions),
     notes: boundedString(value.notes, "", 240),
@@ -89,7 +89,7 @@ export const normalizeQueueRecord = (value: unknown): PublicQueueRecord => {
 };
 
 export const normalizeExchange = (value: unknown): NeoExchange => {
-  if (!isRecord(value)) throw new TypeError("Neo exchange must be an object");
+  if (!isRecord(value)) throw new TypeError("Neo routed-action exchange must be an object");
   const queue = Array.isArray(value.queue) ? value.queue.map(normalizeQueueRecord) : [];
   return {
     schema_version: EXCHANGE_SCHEMA,
@@ -128,7 +128,7 @@ export const loadNeoExchange = async (
   }
 };
 
-const queueTone = (record: PublicQueueRecord): string => {
+const queueTone = (record: RoutedActionRecord): string => {
   if (record.status === "blocked") return "blocked";
   if (record.status === "complete") return "pass";
   if (record.priority === "critical" || record.priority === "high") return "warn";
@@ -155,14 +155,14 @@ export const renderExchangePanel = (exchange: NeoExchange): string => {
     : `
       <li class="status-row ready">
         <div>
-          <strong>Queue clear</strong>
-          <span>No public-safe Neo exchange tasks are waiting.</span>
+          <strong>Routed queue clear</strong>
+          <span>No GO-accepted Neo actions are waiting.</span>
         </div>
         <em>ready</em>
       </li>
     `;
   return `
-    <div class="exchange-summary" aria-label="Neo exchange summary">
+    <div class="exchange-summary" aria-label="GO-gated Neo routing summary">
       <span><strong>${summary.total}</strong> total</span>
       <span aria-label="${summary.active} active"><strong>${summary.active}</strong> active</span>
       <span><strong>${summary.critical}</strong> critical</span>
