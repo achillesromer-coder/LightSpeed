@@ -26,7 +26,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: lightspeed-surface-${{ github.workflow }}-${{ github.ref }}
@@ -39,10 +39,9 @@ jobs:
     timeout-minutes: 15
 
     steps:
-      - name: Check out controlled head branch
+      - name: Check out repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref || github.ref_name }}
           show-progress: false
 
       - name: Set up Python
@@ -72,17 +71,6 @@ jobs:
           python scripts/refresh_desktop_source_manifest.py \
             --output refreshed-source-manifest.json
 
-      - name: Apply refresh candidate on controlled LS GO branch
-        if: steps.validation.outputs.exit_code != '0' && github.head_ref == 'codex/ls-go-command-centre-2026-07-19'
-        shell: bash
-        run: |
-          cp refreshed-source-manifest.json desktop/source-manifest.json
-          git config user.name "lightspeed-validation-bot"
-          git config user.email "actions@users.noreply.github.com"
-          git add desktop/source-manifest.json
-          git commit -m "chore(desktop): refresh approved source manifest hashes"
-          git push origin "HEAD:${GITHUB_HEAD_REF}"
-
       - name: Upload validation diagnostic
         if: always()
         uses: actions/upload-artifact@v4
@@ -99,6 +87,6 @@ jobs:
         shell: bash
         run: |
           if [ "${{ steps.validation.outputs.exit_code }}" != "0" ]; then
-            echo "Surface validation failed; refresh candidate was generated for the controlled branch."
+            echo "Surface validation failed; inspect the lightspeed-surface-validation artifact."
             exit 1
           fi
