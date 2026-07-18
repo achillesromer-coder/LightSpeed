@@ -11,7 +11,7 @@ import {
 
 
 describe("normalizeQueueRecord", () => {
-  it("accepts minimal and extended queue records", () => {
+  it("accepts minimal and extended routed-action records", () => {
     expect(normalizeQueueRecord({ id: "T-1", title: "Review" }).id).toBe("T-1");
     expect(
       normalizeQueueRecord({
@@ -39,8 +39,8 @@ describe("normalizeQueueRecord", () => {
       title: "Bounded handoff",
       priority: "normal",
       status: "queued",
-      source: "Neo",
-      target: "Review",
+      source: "GO Gate",
+      target: "Neo",
       created_utc: "",
       extensions: {},
       notes: "",
@@ -52,7 +52,7 @@ describe("normalizeQueueRecord", () => {
     expect(() => normalizeQueueRecord({ id: "T-4" })).toThrow("title");
   });
 
-  it("escapes queue content before HTML rendering", () => {
+  it("escapes routed-action content before HTML rendering", () => {
     expect(escapeHtml(`<img src=x onerror="alert(1)">`)).toBe(
       "&lt;img src=x onerror=&quot;alert(1)&quot;&gt;",
     );
@@ -61,7 +61,7 @@ describe("normalizeQueueRecord", () => {
 
 
 describe("normalizeExchange", () => {
-  it("normalizes the public queue and derives bounded counts", () => {
+  it("normalizes the bounded routed queue and derives counts", () => {
     const exchange = normalizeExchange({
       schema_version: "lightspeed-neo-exchange-v1",
       generated_at_utc: "2026-07-05T00:00:00Z",
@@ -79,7 +79,7 @@ describe("normalizeExchange", () => {
     });
   });
 
-  it("returns an empty bounded exchange when the public projection is unavailable", async () => {
+  it("returns an empty bounded exchange when the projection is unavailable", async () => {
     const exchange = await loadNeoExchange(async () => {
       throw new Error("offline");
     });
@@ -88,7 +88,7 @@ describe("normalizeExchange", () => {
     expect(exchange.schema_version).toBe("lightspeed-neo-exchange-v1");
   });
 
-  it("renders escaped queue content and summary counts", () => {
+  it("renders escaped routed-action content and summary counts", () => {
     const exchange = normalizeExchange({
       queue: [
         {
