@@ -1,0 +1,32 @@
+{
+  "schema_version": "lightspeed-go-sites-integration-v1",
+  "site_name": "LightSpeed GO",
+  "edit_mode": "existing-site-side-edit",
+  "create_new_site": false,
+  "publish_state": "review-required",
+  "authority_chain": [
+    "Nathaniel Bower",
+    "Achilles / GO gate",
+    "agent floor",
+    "LightSpeed Desktop",
+    "Git and Drive receipts"
+  ],
+  "current_views": [
+    "Command",
+    "Activity",
+    "System",
+    "Sources"
+  ],
+  "promoted_components": [
+    "current Site identity",
+    "owner orientation",
+    "GO control gate",
+    "source parity",
+    "publish receipt"
+  ],
+  "deferred_components": [
+    "duplicate application authentication",
+    "private profile data",
+    "older broad route shells"
+  ]
+}
