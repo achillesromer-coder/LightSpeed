@@ -2,7 +2,7 @@
   "control_id": "cognigrex_soft_launch_control_2026_07_20",
   "gate": "CL-4 GATE_RELEASED_FINALISE",
   "state": "sandbox_soft_launch_active",
-  "current_focus": "desporte_desktop_bridge_debug_and_population",
+  "current_focus": "desporte_local_probe_and_desktop_population",
   "launch_targets": [
     "LightSpeed Desktop",
     "LightSpeed GO",
@@ -13,7 +13,7 @@
   "co_runner": {
     "host_application": "De Sporte",
     "root_path": "D:\\De Sporte",
-    "state": "sandbox_debug_active",
+    "state": "sandbox_static_verified_pending_local",
     "overseer_sync_path": "D:\\De Sporte\\Data\\Overseer\\overview_sync.json",
     "channel_snapshot_path": "D:\\De Sporte\\Data\\Residents\\operator\\Channels\\raphael_channel_snapshot.json",
     "workbench_plan_path": "D:\\De Sporte\\Data\\Residents\\operator\\Channels\\workbench_plan.json",
@@ -39,7 +39,7 @@
       "step_id": "corunner_handoff",
       "label": "Probe De Sporte and populate its read-only runtime summary into LightSpeed Desktop",
       "owner": "Neo",
-      "state": "sandbox_active"
+      "state": "static_contract_passed_pending_local"
     },
     {
       "step_id": "verify_dual_runtime",
@@ -74,6 +74,16 @@
       "check_id": "lightspeed_process",
       "label": "LightSpeed GUI process",
       "state": "running_responsive_v5_1_2"
+    },
+    {
+      "check_id": "desktop_manifest_integrity",
+      "label": "Desktop source manifest and runtime surfaces",
+      "state": "static_validation_passed"
+    },
+    {
+      "check_id": "desporte_static_contract",
+      "label": "De Sporte topology, launch state and Desktop population code",
+      "state": "passed"
     },
     {
       "check_id": "desporte_root",
@@ -134,11 +144,7 @@
   "blockers": [
     {
       "blocker_id": "desporte_local_receipt_missing",
-      "label": "De Sporte local root, process and bridge receipts have not yet been captured from the Windows host"
-    },
-    {
-      "blocker_id": "desktop_manifest_stale",
-      "label": "Desktop source-manifest hashes require refresh against the accepted repository tree"
+      "label": "De Sporte local root, process, bridge and Desktop population receipts have not yet been captured from the Windows host"
     },
     {
       "blocker_id": "test_routes_unconfirmed",
@@ -176,10 +182,6 @@
     {
       "action_id": "populate_desporte_desktop_summary",
       "label": "Regenerate the LightSpeed agent-home export so De Sporte status appears in Desktop"
-    },
-    {
-      "action_id": "refresh_desktop_manifest",
-      "label": "Refresh and validate the bounded Desktop source manifest"
     },
     {
       "action_id": "verify_go_desktop_receipt_chain",
@@ -220,7 +222,13 @@
     {
       "blocker_id": "desporte_path_typo",
       "label": "De Sporte topology path contained a trailing backtick",
-      "state": "corrected_in_git_candidate",
+      "state": "corrected_and_static_validation_passed",
+      "resolved_at": "2026-07-20T00:00:00Z"
+    },
+    {
+      "blocker_id": "desktop_manifest_stale",
+      "label": "Desktop source-manifest hash drift blocked the LightSpeed Surface Validation workflow",
+      "state": "refreshed_and_static_validation_passed",
       "resolved_at": "2026-07-20T00:00:00Z"
     }
   ]
