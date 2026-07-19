@@ -1,5 +1,5 @@
 {
-  "topology_id": "d_drive_authority_2026_05_21",
+  "topology_id": "lightspeed_desporte_soft_launch_2026_07_20",
   "authoritative_roots": [
     {
       "label": "LightSpeed Runtime",
@@ -15,7 +15,7 @@
     },
     {
       "label": "De Sporte",
-      "path": "D:\\De Sporte`",
+      "path": "D:\\De Sporte",
       "role": "sibling_soft_launch_app",
       "exists": true
     }
@@ -37,14 +37,26 @@
     {
       "label": "Raphael Support Archive",
       "path": "D:\\Raphael",
-      "role": "de_sporte_overlay_support_reference"
+      "role": "de_sporte_overlay_support_reference_only"
     }
   ],
   "migration_policy": {
-    "d_drive_mode": "authoritative_runtime_and_shell",
-    "c_drive_role": "residual_reference_only_for_not_yet_rehomed_bulk_data",
+    "d_drive_mode": "de_sporte_sibling_and_external_staging",
+    "c_drive_role": "canonical_lightspeed_runtime_and_shell",
     "delete_gate": "only_after_construct_and_smith_data_rehome_plus_runtime_verification",
-    "drive_and_repo_push": "approval_gated_after_d_drive_proof"
+    "drive_and_repo_push": "approval_gated_after_local_runtime_proof"
+  },
+  "soft_launch_boundary": {
+    "mode": "local_sandbox",
+    "web_frontend_in_scope": false,
+    "de_sporte_population_mode": "read_only_probe_then_receipt_backed_sync",
+    "direct_cross_app_execution": false,
+    "required_receipts": [
+      "root_path_probe",
+      "config_and_data_probe",
+      "bridge_state_probe",
+      "desktop_summary_probe"
+    ]
   },
   "persistence_budget": {
     "lightspeed_primary_presence_percent": 48,
