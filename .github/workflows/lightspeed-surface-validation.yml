@@ -10,6 +10,8 @@ on:
       - "desktop/LightSpeed_Runtime/**"
       - "scripts/validate_lightspeed_surfaces.py"
       - "scripts/refresh_desktop_source_manifest.py"
+      - "scripts/validate_desporte_desktop_bridge.py"
+      - "tools/run_desporte_desktop_probe.cmd"
       - ".github/workflows/lightspeed-surface-validation.yml"
   push:
     branches:
@@ -22,6 +24,8 @@ on:
       - "desktop/LightSpeed_Runtime/**"
       - "scripts/validate_lightspeed_surfaces.py"
       - "scripts/refresh_desktop_source_manifest.py"
+      - "scripts/validate_desporte_desktop_bridge.py"
+      - "tools/run_desporte_desktop_probe.cmd"
       - ".github/workflows/lightspeed-surface-validation.yml"
   workflow_dispatch:
 
@@ -34,7 +38,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Validate eligible LightSpeed desktop surfaces
+    name: Validate LightSpeed Desktop and De Sporte bridge
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -53,6 +57,20 @@ jobs:
         run: |
           python -m py_compile scripts/validate_lightspeed_surfaces.py
           python -m py_compile scripts/refresh_desktop_source_manifest.py
+          python -m py_compile scripts/validate_desporte_desktop_bridge.py
+
+      - name: Validate De Sporte Desktop bridge contract
+        id: desporte
+        shell: bash
+        run: |
+          set +e
+          python scripts/validate_desporte_desktop_bridge.py \
+            --json-output desporte-static-receipt.json \
+            > desporte-validation.log 2>&1
+          exit_code=$?
+          cat desporte-validation.log
+          echo "exit_code=${exit_code}" >> "${GITHUB_OUTPUT}"
+          exit 0
 
       - name: Validate source manifest and runtime surfaces
         id: validation
@@ -77,16 +95,24 @@ jobs:
         with:
           name: lightspeed-surface-validation
           path: |
+            desporte-validation.log
+            desporte-static-receipt.json
             surface-validation.log
             refreshed-source-manifest.json
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 14
 
       - name: Enforce validation result
         if: always()
         shell: bash
         run: |
+          failed=0
+          if [ "${{ steps.desporte.outputs.exit_code }}" != "0" ]; then
+            echo "De Sporte Desktop bridge validation failed."
+            failed=1
+          fi
           if [ "${{ steps.validation.outputs.exit_code }}" != "0" ]; then
             echo "Surface validation failed; inspect the lightspeed-surface-validation artifact."
-            exit 1
+            failed=1
           fi
+          exit "$failed"
