@@ -1,0 +1,105 @@
+name: Merovingian Project Routing
+
+on:
+  pull_request:
+    branches:
+      - main
+      - "fix/**"
+    paths:
+      - "apps/lightspeed-go/**"
+      - "desktop/Desktop_Hooks/LightSpeed/config/project_routing.json"
+      - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/**"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
+      - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
+      - "scripts/run_merovingian_soft_launch.py"
+      - "tools/run_merovingian_soft_launch.cmd"
+      - ".github/workflows/merovingian-project-routing.yml"
+  push:
+    branches:
+      - "ops/merovingian-project-routing-*"
+    paths:
+      - "apps/lightspeed-go/**"
+      - "desktop/Desktop_Hooks/LightSpeed/config/project_routing.json"
+      - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/**"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
+      - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
+      - "scripts/run_merovingian_soft_launch.py"
+      - "tools/run_merovingian_soft_launch.cmd"
+      - ".github/workflows/merovingian-project-routing.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: merovingian-project-routing-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate health, projects, receipts and GO review
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install bounded Python test dependencies
+        run: python -m pip install --disable-pip-version-check pytest fastapi uvicorn httpx
+
+      - name: Compile essential runtime
+        run: |
+          python -m py_compile \
+            "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/__init__.py" \
+            "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/__init__.py" \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py \
+            scripts/run_merovingian_soft_launch.py
+
+      - name: Run static Merovingian contract check
+        run: |
+          python scripts/run_merovingian_soft_launch.py \
+            --static-check \
+            --runtime-root desktop/LightSpeed_Runtime \
+            --shell-root desktop/Desktop_Hooks/LightSpeed
+
+      - name: Run project and bridge tests
+        run: |
+          python -m pytest -q \
+            desktop/LightSpeed_Runtime/tests/test_project_pipeline.py \
+            desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/lightspeed-go/package-lock.json
+
+      - name: Install LS GO dependencies
+        working-directory: apps/lightspeed-go
+        run: npm ci
+
+      - name: Test LS GO
+        working-directory: apps/lightspeed-go
+        run: npm test
+
+      - name: Type-check LS GO
+        working-directory: apps/lightspeed-go
+        run: npm run check
+
+      - name: Build LS GO
+        working-directory: apps/lightspeed-go
+        run: npm run build
