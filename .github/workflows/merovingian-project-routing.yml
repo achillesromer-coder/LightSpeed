@@ -10,6 +10,7 @@ on:
       - "desktop/Desktop_Hooks/LightSpeed/config/project_routing.json"
       - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/**"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
@@ -28,6 +29,7 @@ on:
       - "desktop/Desktop_Hooks/LightSpeed/config/project_routing.json"
       - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/**"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
@@ -49,7 +51,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Validate health, projects, receipts and GO review
+    name: Validate health, projects, artifacts, receipts and GO review
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -75,6 +77,7 @@ jobs:
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/__init__.py" \
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/__init__.py" \
             desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py \
             scripts/validate_lightspeed_surfaces.py \
             scripts/run_merovingian_soft_launch.py \
@@ -96,7 +99,7 @@ jobs:
         continue-on-error: true
         run: python scripts/validate_lightspeed_surfaces.py 2>&1 | tee surface-validation.log
 
-      - name: Run project and bridge tests
+      - name: Run project, artifact and bridge tests
         id: python_tests
         continue-on-error: true
         run: |
