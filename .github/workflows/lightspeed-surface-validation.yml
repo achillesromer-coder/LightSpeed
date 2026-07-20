@@ -107,11 +107,11 @@ jobs:
           python scripts/refresh_desktop_source_manifest.py \
             --output refreshed-source-manifest.json
 
-      - name: Apply bounded manifest refresh on controlled fix branch
+      - name: Apply bounded manifest refresh on controlled branch
         id: refresh
         if: >-
           github.event_name == 'push' &&
-          startsWith(github.ref_name, 'fix/') &&
+          (startsWith(github.ref_name, 'fix/') || github.ref_name == 'ops/merovingian-project-routing-2026-07-20') &&
           steps.validation.outputs.exit_code != '0'
         shell: bash
         run: |
