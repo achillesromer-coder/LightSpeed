@@ -1,135 +1,106 @@
-"""
-LightSpeed Core - Unified Platform Foundation
-Version: 0.9.5
-Date: December 21, 2025
+"""LightSpeed core package.
 
-Consolidated from: Cognigrex Core + core modules
-This is THE unified core for all LightSpeed platform functionality.
-
-Architecture:
-- services/     - Core integration systems (FloorLoader, Data Accumulation, Smart Expansion, PhysicsTools)
-- ai/           - AI systems (Ollama connector, AI tools)
-- ui/           - User interface components and widgets
-- api/          - API management and endpoints
-- workflows/    - Workflow engine and designer
-- project_manager/ - Project management tools
-
-Clean Code Principle: Single consolidated core, no duplication
+The essential runtime is intentionally small: database, event bus, storage and
+service lifecycle. Optional AI, physics, template, expansion and analysis
+systems are loaded only when explicitly requested. This prevents one missing
+optional dependency from disabling Merovingian, Architect, LS Desktop or the
+LS GO loopback bridge.
 """
 
-__version__ = "0.9.5"
+from __future__ import annotations
+
+from importlib import import_module
+from typing import Any
+
+__version__ = "1.0.0"
 __author__ = "LightSpeed Team / Römer Industries"
 
-# Services - Core Integration Systems
-from .services import (
-    initialize_services,
-    shutdown_services,
+from .services import (  # noqa: E402
     get_db,
     get_event_bus,
     get_storage,
+    initialize_services,
+    shutdown_services,
 )
 
-from .services.floor_loader import FloorLoader
-from .services.data_accumulation_engine import DataAccumulationEngine, DataType, DataObject
-from .services.smart_floor_expansion import SmartFloorExpansionEngine, CapabilityType
-from .services.function_registry import FunctionLibraryRegistry, get_registry
-
-# AI Systems
-from .ai.ollama_connector import OllamaConnector, OllamaConfig
-from .ai.ai_tools import AITools
-
-# Physics Tools (consolidated)
-from .services.physics_tools import (
-    PhysicsTools,
-    get_physics_tools,
-    calculate_raphael_equations,
-    generate_big_bang_simulation,
-    calculate_schwarzschild_radius,
-)
-
-# User Preferences
-from .services.user_preferences import UserPreferences, get_user_preferences
-
-# Template System
-from .services.template_system import (
-    BaseTemplate,
-    DocumentTemplate,
-    UITemplate,
-    TestTemplate,
-    QRCodeTemplate,
-    TableTemplate,
-    ImageTemplate,
-    ThemeTemplate,
-    VenvSetupTemplate,
-    TemplateRegistry,
-    get_template_registry
-)
-
-# All exported symbols
-__all__ = [
-    # Version info
-    '__version__',
-    '__author__',
-
-    # Services
-    'initialize_services',
-    'shutdown_services',
-    'get_db',
-    'get_event_bus',
-    'get_storage',
-    'FloorLoader',
-    'DataAccumulationEngine',
-    'DataType',
-    'DataObject',
-    'SmartFloorExpansionEngine',
-    'CapabilityType',
-    'FunctionLibraryRegistry',
-    'get_registry',
-
-    # AI
-    'OllamaConnector',
-    'OllamaConfig',
-    'AITools',
-
-    # Physics Tools
-    'PhysicsTools',
-    'get_physics_tools',
-    'calculate_raphael_equations',
-    'generate_big_bang_simulation',
-    'calculate_schwarzschild_radius',
-
-    # User Preferences
-    'UserPreferences',
-    'get_user_preferences',
-
-    # Template System
-    'BaseTemplate',
-    'DocumentTemplate',
-    'UITemplate',
-    'TestTemplate',
-    'QRCodeTemplate',
-    'TableTemplate',
-    'ImageTemplate',
-    'ThemeTemplate',
-    'VenvSetupTemplate',
-    'TemplateRegistry',
-    'get_template_registry',
-]
-
-# Module information for introspection
-CORE_MODULES = {
-    'services': 'Core integration systems (DB, EventBus, Storage, PhysicsTools, UserPreferences, TemplateSystem)',
-    'ai': 'AI systems and connectors (Ollama, Achilles, tools)',
-    'ui': 'User interface components and widgets (TemplateManager, SettingsManager)',
-    'api': 'API management and endpoints',
-    'workflows': 'Workflow engine and designer',
-    'project_manager': 'Project management and file handling',
+_LAZY_EXPORTS: dict[str, tuple[str, str]] = {
+    "FloorLoader": (".services.floor_loader", "FloorLoader"),
+    "DataAccumulationEngine": (".services.data_accumulation_engine", "DataAccumulationEngine"),
+    "DataType": (".services.data_accumulation_engine", "DataType"),
+    "DataObject": (".services.data_accumulation_engine", "DataObject"),
+    "SmartFloorExpansionEngine": (".services.smart_floor_expansion", "SmartFloorExpansionEngine"),
+    "CapabilityType": (".services.smart_floor_expansion", "CapabilityType"),
+    "FunctionLibraryRegistry": (".services.function_registry", "FunctionLibraryRegistry"),
+    "get_registry": (".services.function_registry", "get_registry"),
+    "OllamaConnector": (".ai.ollama_connector", "OllamaConnector"),
+    "OllamaConfig": (".ai.ollama_connector", "OllamaConfig"),
+    "AITools": (".ai.ai_tools", "AITools"),
+    "PhysicsTools": (".services.physics_tools", "PhysicsTools"),
+    "get_physics_tools": (".services.physics_tools", "get_physics_tools"),
+    "calculate_raphael_equations": (".services.physics_tools", "calculate_raphael_equations"),
+    "generate_big_bang_simulation": (".services.physics_tools", "generate_big_bang_simulation"),
+    "calculate_schwarzschild_radius": (".services.physics_tools", "calculate_schwarzschild_radius"),
+    "UserPreferences": (".services.user_preferences", "UserPreferences"),
+    "get_user_preferences": (".services.user_preferences", "get_user_preferences"),
+    "BaseTemplate": (".services.template_system", "BaseTemplate"),
+    "DocumentTemplate": (".services.template_system", "DocumentTemplate"),
+    "UITemplate": (".services.template_system", "UITemplate"),
+    "TestTemplate": (".services.template_system", "TestTemplate"),
+    "QRCodeTemplate": (".services.template_system", "QRCodeTemplate"),
+    "TableTemplate": (".services.template_system", "TableTemplate"),
+    "ImageTemplate": (".services.template_system", "ImageTemplate"),
+    "ThemeTemplate": (".services.template_system", "ThemeTemplate"),
+    "VenvSetupTemplate": (".services.template_system", "VenvSetupTemplate"),
+    "TemplateRegistry": (".services.template_system", "TemplateRegistry"),
+    "get_template_registry": (".services.template_system", "get_template_registry"),
 }
 
-def get_core_info():
-    """Get information about core modules"""
+
+def __getattr__(name: str) -> Any:
+    target = _LAZY_EXPORTS.get(name)
+    if target is None:
+        raise AttributeError(name)
+    module_name, attribute = target
+    try:
+        value = getattr(import_module(module_name, __name__), attribute)
+    except Exception as exc:  # optional capability failure must not break core import
+        raise ImportError(f"Optional LightSpeed capability {name!r} is unavailable: {exc}") from exc
+    globals()[name] = value
+    return value
+
+
+def __dir__() -> list[str]:
+    return sorted(set(globals()) | set(_LAZY_EXPORTS))
+
+
+CORE_MODULES = {
+    "services": "Essential database, event bus, storage and runtime lifecycle",
+    "ai": "Optional local AI systems and connectors",
+    "ui": "Optional user-interface components",
+    "api": "Optional API management and endpoints",
+    "workflows": "Optional workflow engine and designer",
+    "project_manager": "Project management and file handling",
+}
+
+
+def get_core_info() -> dict[str, Any]:
     return {
-        'version': __version__,
-        'modules': CORE_MODULES,
-        'total_modules': len(CORE_MODULES)
+        "version": __version__,
+        "modules": CORE_MODULES,
+        "total_modules": len(CORE_MODULES),
+        "essential_runtime": ["database", "event_bus", "storage"],
+        "optional_loading": "lazy",
     }
+
+
+__all__ = [
+    "__version__",
+    "__author__",
+    "get_db",
+    "get_event_bus",
+    "get_storage",
+    "initialize_services",
+    "shutdown_services",
+    "get_core_info",
+    *_LAZY_EXPORTS.keys(),
+]
