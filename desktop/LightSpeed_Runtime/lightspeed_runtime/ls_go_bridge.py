@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import uvicorn
 
+from lightspeed_runtime.project_artifact_store import stage_project_artifacts
 from lightspeed_runtime.project_pipeline import ProjectPipeline
 from lightspeed_runtime.storage_paths import neo_actions_root
 
@@ -100,7 +101,7 @@ def create_app(root: Path | str) -> FastAPI:
     app = FastAPI(
         title="LightSpeed GO Desktop Bridge",
         description="Local-only, Achilles-governed command, project and review bridge for LS GO.",
-        version="1.1.0",
+        version="1.2.0",
     )
     app.add_middleware(
         CORSMiddleware,
@@ -135,7 +136,7 @@ def create_app(root: Path | str) -> FastAPI:
                 },
                 "queue_path": str(_queue_path(shell_root)),
                 "review_queue_path": str(project_pipeline.review_queue_path),
-                "execution_boundary": "local queue, receipts and review only; no public direct execution",
+                "execution_boundary": "local queue, immutable named artifacts, receipts and review only; no public direct execution",
             }
         )
 
@@ -179,8 +180,9 @@ def create_app(root: Path | str) -> FastAPI:
 
     @app.get("/api/v1/reviews")
     async def list_reviews(limit: int = 50):
-        rows = list(project_pipeline.list_reviews(limit=max(1, min(int(limit), 200))))
-        return JSONResponse({"reviews": rows})
+        return JSONResponse(
+            {"reviews": project_pipeline.list_reviews(limit=max(1, min(int(limit), 200)))}
+        )
 
     @app.post("/api/v1/reviews/{review_id}/decision")
     async def decide_review(review_id: str, body: dict[str, Any]):
@@ -196,17 +198,47 @@ def create_app(root: Path | str) -> FastAPI:
 
     @app.post("/api/v1/projects/{project_id}/receipts")
     async def accept_project_receipt(project_id: str, body: dict[str, Any]):
+        bounded_project_id = _bounded(project_id, maximum=96, required=True)
         summary = _bounded(body.get("summary"), maximum=4000, required=True)
         raw_paths = body.get("artifact_paths") or []
         if not isinstance(raw_paths, list):
             raise HTTPException(status_code=400, detail="artifact_paths must be a list")
-        artifact_paths = [_bounded(value, maximum=1000) for value in raw_paths[:50]]
-        packet = project_pipeline.queue_project_work_receipt(
-            project_id=_bounded(project_id, maximum=96, required=True),
-            summary=summary,
-            artifact_paths=artifact_paths,
+        artifact_paths = [_bounded(value, maximum=1000) for value in raw_paths]
+        try:
+            artifact_manifest = stage_project_artifacts(
+                project_pipeline,
+                project_id=bounded_project_id,
+                artifact_paths=artifact_paths,
+            )
+        except KeyError:
+            raise HTTPException(status_code=404, detail="Registered project not found")
+        except (ValueError, FileNotFoundError, FileExistsError, OSError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc))
+
+        copied_paths = [
+            str(item.get("destination_path"))
+            for item in artifact_manifest.get("copied") or []
+            if item.get("destination_path")
+        ]
+        review_artifacts = [str(artifact_manifest["manifest_path"]), *copied_paths]
+        staging_summary = (
+            f"{summary} Immutable artifact staging: "
+            f"{artifact_manifest.get('copied_count', 0)} copied, "
+            f"{artifact_manifest.get('skipped_count', 0)} skipped; "
+            f"mode={artifact_manifest.get('drive_writeback_mode')}."
         )
-        return JSONResponse({"accepted": True, "review": packet})
+        packet = project_pipeline.queue_project_work_receipt(
+            project_id=bounded_project_id,
+            summary=staging_summary,
+            artifact_paths=review_artifacts,
+        )
+        return JSONResponse(
+            {
+                "accepted": True,
+                "review": packet,
+                "artifact_manifest": artifact_manifest,
+            }
+        )
 
     @app.post("/api/v1/ls-go/commands")
     async def accept_command(body: dict[str, Any]):
