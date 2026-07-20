@@ -11,7 +11,9 @@ on:
       - "scripts/validate_lightspeed_surfaces.py"
       - "scripts/refresh_desktop_source_manifest.py"
       - "scripts/validate_desporte_desktop_bridge.py"
+      - "scripts/populate_desporte_desktop.py"
       - "tools/run_desporte_desktop_probe.cmd"
+      - "tools/run_desporte_desktop_population.cmd"
       - ".github/workflows/lightspeed-surface-validation.yml"
   push:
     branches:
@@ -25,7 +27,9 @@ on:
       - "scripts/validate_lightspeed_surfaces.py"
       - "scripts/refresh_desktop_source_manifest.py"
       - "scripts/validate_desporte_desktop_bridge.py"
+      - "scripts/populate_desporte_desktop.py"
       - "tools/run_desporte_desktop_probe.cmd"
+      - "tools/run_desporte_desktop_population.cmd"
       - ".github/workflows/lightspeed-surface-validation.yml"
   workflow_dispatch:
 
@@ -54,11 +58,12 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Compile validators
+      - name: Compile validators and population helper
         run: |
           python -m py_compile scripts/validate_lightspeed_surfaces.py
           python -m py_compile scripts/refresh_desktop_source_manifest.py
           python -m py_compile scripts/validate_desporte_desktop_bridge.py
+          python -m py_compile scripts/populate_desporte_desktop.py
 
       - name: Validate De Sporte Desktop bridge contract
         id: desporte
@@ -70,6 +75,18 @@ jobs:
             > desporte-validation.log 2>&1
           exit_code=$?
           cat desporte-validation.log
+          echo "exit_code=${exit_code}" >> "${GITHUB_OUTPUT}"
+          exit 0
+
+      - name: Validate De Sporte population sequence surfaces
+        id: population
+        shell: bash
+        run: |
+          set +e
+          python scripts/populate_desporte_desktop.py --static-check \
+            > desporte-population-static.log 2>&1
+          exit_code=$?
+          cat desporte-population-static.log
           echo "exit_code=${exit_code}" >> "${GITHUB_OUTPUT}"
           exit 0
 
@@ -121,6 +138,7 @@ jobs:
           path: |
             desporte-validation.log
             desporte-static-receipt.json
+            desporte-population-static.log
             surface-validation.log
             surface-validation-refreshed.log
             refreshed-source-manifest.json
@@ -134,6 +152,10 @@ jobs:
           failed=0
           if [ "${{ steps.desporte.outputs.exit_code }}" != "0" ]; then
             echo "De Sporte Desktop bridge validation failed."
+            failed=1
+          fi
+          if [ "${{ steps.population.outputs.exit_code }}" != "0" ]; then
+            echo "De Sporte Desktop population sequence validation failed."
             failed=1
           fi
           if [ "${{ steps.validation.outputs.exit_code }}" != "0" ] && [ "${{ steps.refresh.outputs.applied }}" != "true" ]; then
