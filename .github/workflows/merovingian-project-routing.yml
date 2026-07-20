@@ -65,9 +65,8 @@ jobs:
 
       - name: Compile essential runtime
         id: compile
-        shell: bash
+        continue-on-error: true
         run: |
-          set +e
           python -m py_compile \
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/__init__.py" \
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/__init__.py" \
@@ -75,40 +74,26 @@ jobs:
             desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py \
             scripts/run_merovingian_soft_launch.py \
             scripts/run_cognigrex_local_stack.py \
-            > compile.log 2>&1
-          code=$?
-          cat compile.log
-          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
-          exit 0
+            2>&1 | tee compile.log
 
       - name: Run static Merovingian contract check
         id: static
-        shell: bash
+        continue-on-error: true
         run: |
-          set +e
           python scripts/run_merovingian_soft_launch.py \
             --static-check \
             --runtime-root desktop/LightSpeed_Runtime \
             --shell-root desktop/Desktop_Hooks/LightSpeed \
-            > static-check.log 2>&1
-          code=$?
-          cat static-check.log
-          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
-          exit 0
+            2>&1 | tee static-check.log
 
       - name: Run project and bridge tests
         id: python_tests
-        shell: bash
+        continue-on-error: true
         run: |
-          set +e
           python -m pytest -q \
             desktop/LightSpeed_Runtime/tests/test_project_pipeline.py \
             desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py \
-            > python-tests.log 2>&1
-          code=$?
-          cat python-tests.log
-          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
-          exit 0
+            2>&1 | tee python-tests.log
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -119,51 +104,27 @@ jobs:
 
       - name: Install LS GO dependencies
         id: npm_install
-        shell: bash
+        continue-on-error: true
         working-directory: apps/lightspeed-go
-        run: |
-          set +e
-          npm ci > ../../npm-install.log 2>&1
-          code=$?
-          cat ../../npm-install.log
-          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
-          exit 0
+        run: npm ci 2>&1 | tee ../../npm-install.log
 
       - name: Test LS GO
         id: npm_test
-        shell: bash
+        continue-on-error: true
         working-directory: apps/lightspeed-go
-        run: |
-          set +e
-          npm test > ../../npm-test.log 2>&1
-          code=$?
-          cat ../../npm-test.log
-          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
-          exit 0
+        run: npm test 2>&1 | tee ../../npm-test.log
 
       - name: Type-check LS GO
         id: npm_check
-        shell: bash
+        continue-on-error: true
         working-directory: apps/lightspeed-go
-        run: |
-          set +e
-          npm run check > ../../npm-check.log 2>&1
-          code=$?
-          cat ../../npm-check.log
-          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
-          exit 0
+        run: npm run check 2>&1 | tee ../../npm-check.log
 
       - name: Build LS GO
         id: npm_build
-        shell: bash
+        continue-on-error: true
         working-directory: apps/lightspeed-go
-        run: |
-          set +e
-          npm run build > ../../npm-build.log 2>&1
-          code=$?
-          cat ../../npm-build.log
-          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
-          exit 0
+        run: npm run build 2>&1 | tee ../../npm-build.log
 
       - name: Upload complete validation diagnostics
         if: always()
@@ -183,18 +144,19 @@ jobs:
 
       - name: Enforce combined result
         if: always()
+        env:
+          COMPILE: ${{ steps.compile.outcome }}
+          STATIC: ${{ steps.static.outcome }}
+          PYTHON_TESTS: ${{ steps.python_tests.outcome }}
+          NPM_INSTALL: ${{ steps.npm_install.outcome }}
+          NPM_TEST: ${{ steps.npm_test.outcome }}
+          NPM_CHECK: ${{ steps.npm_check.outcome }}
+          NPM_BUILD: ${{ steps.npm_build.outcome }}
         shell: bash
         run: |
           failed=0
-          for value in \
-            "${{ steps.compile.outputs.exit_code }}" \
-            "${{ steps.static.outputs.exit_code }}" \
-            "${{ steps.python_tests.outputs.exit_code }}" \
-            "${{ steps.npm_install.outputs.exit_code }}" \
-            "${{ steps.npm_test.outputs.exit_code }}" \
-            "${{ steps.npm_check.outputs.exit_code }}" \
-            "${{ steps.npm_build.outputs.exit_code }}"; do
-            if [ "$value" != "0" ]; then
+          for value in "$COMPILE" "$STATIC" "$PYTHON_TESTS" "$NPM_INSTALL" "$NPM_TEST" "$NPM_CHECK" "$NPM_BUILD"; do
+            if [ "$value" != "success" ]; then
               failed=1
             fi
           done
