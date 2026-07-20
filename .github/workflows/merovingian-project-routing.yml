@@ -14,7 +14,9 @@ on:
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
       - "scripts/run_merovingian_soft_launch.py"
+      - "scripts/run_cognigrex_local_stack.py"
       - "tools/run_merovingian_soft_launch.cmd"
+      - "tools/run_cognigrex_local_stack.cmd"
       - ".github/workflows/merovingian-project-routing.yml"
   push:
     branches:
@@ -28,7 +30,9 @@ on:
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
       - "scripts/run_merovingian_soft_launch.py"
+      - "scripts/run_cognigrex_local_stack.py"
       - "tools/run_merovingian_soft_launch.cmd"
+      - "tools/run_cognigrex_local_stack.cmd"
       - ".github/workflows/merovingian-project-routing.yml"
   workflow_dispatch:
 
@@ -66,7 +70,8 @@ jobs:
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/__init__.py" \
             desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py \
-            scripts/run_merovingian_soft_launch.py
+            scripts/run_merovingian_soft_launch.py \
+            scripts/run_cognigrex_local_stack.py
 
       - name: Run static Merovingian contract check
         run: |
