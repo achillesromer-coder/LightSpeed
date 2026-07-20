@@ -4,6 +4,7 @@ import json
 import os
 from datetime import datetime, timezone
 from pathlib import Path
+import sys
 from typing import Any, Optional
 
 from fastapi import FastAPI, HTTPException
@@ -11,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import uvicorn
 
+from lightspeed_runtime.project_pipeline import ProjectPipeline
 from lightspeed_runtime.storage_paths import neo_actions_root
 
 COMMAND_SCHEMA = "lightspeed-go-command-v1"
@@ -52,7 +54,9 @@ def _allowed_origins() -> list[str]:
     return [*DEFAULT_ALLOWED_ORIGINS, *[item for item in configured if item]]
 
 
-def _try_get_services():
+def _try_get_services(shell_root: Path):
+    if str(shell_root) not in sys.path:
+        sys.path.insert(0, str(shell_root))
     try:
         from core.services import get_db, get_storage  # type: ignore
 
@@ -72,7 +76,7 @@ def _read_queue(root: Path, limit: int = 30) -> list[dict[str, Any]]:
     if not path.exists():
         return []
     rows: list[dict[str, Any]] = []
-    for line in path.read_text(encoding="utf-8").splitlines():
+    for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
         try:
             value = json.loads(line)
         except json.JSONDecodeError:
@@ -90,12 +94,13 @@ def _append_queue(root: Path, payload: dict[str, Any]) -> str:
 
 
 def create_app(root: Path | str) -> FastAPI:
-    runtime_root = Path(root).resolve()
-    db, storage = _try_get_services()
+    shell_root = Path(root).resolve()
+    db, storage = _try_get_services(shell_root)
+    project_pipeline = ProjectPipeline(shell_root)
     app = FastAPI(
         title="LightSpeed GO Desktop Bridge",
-        description="Local-only, review-gated command bridge for LS GO.",
-        version="1.0.0",
+        description="Local-only, Achilles-governed command, project and review bridge for LS GO.",
+        version="1.1.0",
     )
     app.add_middleware(
         CORSMiddleware,
@@ -108,15 +113,29 @@ def create_app(root: Path | str) -> FastAPI:
 
     @app.get("/api/v1/status")
     async def status():
+        registry = project_pipeline.refresh(force=False, queue_changes=True)
+        health = registry.get("health") or {}
         return JSONResponse(
             {
-                "ok": True,
+                "ok": health.get("status") == "pass",
                 "time_utc": utc_now_iso(),
                 "bridge": "ls-go",
-                "root": str(runtime_root),
-                "services": {"db": bool(db), "storage": bool(storage)},
-                "queue_path": str(_queue_path(runtime_root)),
-                "execution_boundary": "queue and review only; no public direct execution",
+                "root": str(shell_root),
+                "services": {
+                    "db": bool(db),
+                    "storage": bool(storage),
+                    "merovingian": health.get("status") == "pass",
+                },
+                "merovingian": {
+                    "status": health.get("status"),
+                    "receipt": str(project_pipeline.health_path),
+                    "project_summary": registry.get("summary") or {},
+                    "cleanup_summary": registry.get("cleanup_summary") or {},
+                    "drive_writeback": (health.get("details") or {}).get("drive_writeback"),
+                },
+                "queue_path": str(_queue_path(shell_root)),
+                "review_queue_path": str(project_pipeline.review_queue_path),
+                "execution_boundary": "local queue, receipts and review only; no public direct execution",
             }
         )
 
@@ -132,7 +151,7 @@ def create_app(root: Path | str) -> FastAPI:
                 return JSONResponse({"tasks": rows})
             except Exception:
                 pass
-        queue_rows = _read_queue(runtime_root, limit=limit)
+        queue_rows = _read_queue(shell_root, limit=limit)
         tasks = [
             {
                 "id": row.get("command_id"),
@@ -145,6 +164,49 @@ def create_app(root: Path | str) -> FastAPI:
             for row in queue_rows
         ]
         return JSONResponse({"tasks": tasks})
+
+    @app.get("/api/v1/projects")
+    async def list_projects():
+        registry = project_pipeline.refresh(force=False, queue_changes=True)
+        return JSONResponse(
+            {
+                "projects": registry.get("projects") or [],
+                "summary": registry.get("summary") or {},
+                "duplicate_names": registry.get("duplicate_names") or [],
+                "cleanup_summary": registry.get("cleanup_summary") or {},
+            }
+        )
+
+    @app.get("/api/v1/reviews")
+    async def list_reviews(limit: int = 50):
+        rows = list(project_pipeline.list_reviews(limit=max(1, min(int(limit), 200))))
+        return JSONResponse({"reviews": rows})
+
+    @app.post("/api/v1/reviews/{review_id}/decision")
+    async def decide_review(review_id: str, body: dict[str, Any]):
+        decision = _bounded(body.get("decision"), maximum=16, required=True).lower()
+        note = _bounded(body.get("note"), maximum=1000)
+        try:
+            receipt = project_pipeline.decide_review(review_id, decision, note)
+        except KeyError:
+            raise HTTPException(status_code=404, detail="Review item not found")
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc))
+        return JSONResponse({"accepted": True, "receipt": receipt})
+
+    @app.post("/api/v1/projects/{project_id}/receipts")
+    async def accept_project_receipt(project_id: str, body: dict[str, Any]):
+        summary = _bounded(body.get("summary"), maximum=4000, required=True)
+        raw_paths = body.get("artifact_paths") or []
+        if not isinstance(raw_paths, list):
+            raise HTTPException(status_code=400, detail="artifact_paths must be a list")
+        artifact_paths = [_bounded(value, maximum=1000) for value in raw_paths[:50]]
+        packet = project_pipeline.queue_project_work_receipt(
+            project_id=_bounded(project_id, maximum=96, required=True),
+            summary=summary,
+            artifact_paths=artifact_paths,
+        )
+        return JSONResponse({"accepted": True, "review": packet})
 
     @app.post("/api/v1/ls-go/commands")
     async def accept_command(body: dict[str, Any]):
@@ -184,7 +246,7 @@ def create_app(root: Path | str) -> FastAPI:
             "proof_required": True,
             "public_safe": True,
         }
-        artifact_ref = _append_queue(runtime_root, accepted)
+        artifact_ref = _append_queue(shell_root, accepted)
 
         task_id: Optional[int] = None
         job: Optional[dict[str, Any]] = None
