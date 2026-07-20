@@ -1,6 +1,6 @@
 {
   "schema_version": "lightspeed-project-routing-v1",
-  "updated_utc": "2026-07-20T23:00:00Z",
+  "updated_utc": "2026-07-20T23:08:00Z",
   "authority": {
     "owner": "Nathaniel Bower",
     "governance": "Achilles / LS GO gate",
@@ -62,7 +62,22 @@
     ],
     "relative_receipt_path": "LightSpeed/Project Receipts",
     "local_fallback_path": "Z Axis/Z-4_Merovingian/data/runtime_exports/drive_outbox",
-    "write_scope": "receipts_manifests_and_review_packets_only",
+    "write_scope": "immutable_named_project_artifacts_receipts_manifests_and_review_packets_only",
+    "artifact_mode": "immutable_review_copy",
+    "max_artifact_files": 50,
+    "max_artifact_total_bytes": 268435456,
+    "max_single_artifact_bytes": 134217728,
+    "blocked_artifact_patterns": [
+      ".env",
+      ".env.*",
+      "*.pem",
+      "*.key",
+      "id_rsa*",
+      "credentials*.json",
+      "token*.json",
+      "*.p12",
+      "*.pfx"
+    ],
     "workbooks_mutable": false
   },
   "go_review": {
