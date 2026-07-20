@@ -1,47 +1,18 @@
+"""Essential LightSpeed services with lazy optional capability loading.
+
+Database, event bus, storage and logging must remain available even when an
+optional integration, UI package, websocket dependency or physics module is
+missing. Optional services are imported only when a caller asks for them.
 """
-Core Services - Basement Layer Infrastructure
-LightSpeed Type I Civilization Platform
 
-This module provides the foundational services that connect all Z-axis floors:
+from __future__ import annotations
 
-Services:
-- DatabaseService: Unified database access across all floors
-- EventBus: Inter-floor communication system
-- StorageService: File management and storage
-- FloorLogger: 99.9% fidelity logging system
-- PhysicsTools: Consolidated physics simulations and calculations
-- UserPreferences: Per-user settings and customization
-- TemplateSystem: Productive template generators (QR, tables, UI, tests)
-
-The services layer forms the basement/foundation of the tower, providing
-shared infrastructure that all floors (Neo, Morpheus, Architect, TheConstruct,
-Oracle, Smith, Merovingian, Trinity) rely upon.
-
-Author: LightSpeed Team / ACHILLES
-Version: 0.9.5 - Added PhysicsTools umbrella
-"""
+from importlib import import_module
+from typing import Any
 
 from .database import DatabaseService, get_db
-from .event_bus import (
-    EventBus,
-    Event,
-    EventTypes,
-    FloorEventPublisher,
-    get_event_bus
-)
-from .settings_hub import (
-    SettingsHub,
-    get_settings_hub
-)
-from .floor_manager import (
-    FloorManager,
-    FloorInfo,
-    get_floor_manager,
-    initialize_all_floors
-)
+from .event_bus import EventBus, Event, EventTypes, FloorEventPublisher, get_event_bus
 from .storage import StorageService, get_storage
-from .dataspace import DataspaceService, get_dataspace, ArtifactRef
-from .dataspace import ZDirectService, get_z_direct
 from .logger import (
     FloorLogger,
     LoggedOperation,
@@ -54,220 +25,104 @@ from .logger import (
     get_smith_logger,
     get_merovingian_logger,
     get_trinity_logger,
-    get_services_logger
-)
-from .physics_tools import (
-    PhysicsTools,
-    get_physics_tools,
-    calculate_raphael_equations,
-    generate_big_bang_simulation,
-    calculate_schwarzschild_radius
-)
-from .user_preferences import UserPreferences, get_user_preferences
-from .template_system import (
-    BaseTemplate,
-    DocumentTemplate,
-    UITemplate,
-    TestTemplate,
-    QRCodeTemplate,
-    TableTemplate,
-    ImageTemplate,
-    ThemeTemplate,
-    VenvSetupTemplate,
-    TemplateRegistry,
-    get_template_registry
-)
-from .predictive_maintenance import (
-    PredictiveMaintenanceEngine,
-    get_predictive_maintenance_engine,
-)
-from .world_server import (
-    WorldServer,
-    get_world_server,
-    start_world_server,
-    stop_world_server
-)
-from .external_integrations import (
-    ExternalServiceManager,
-    CanvaIntegration,
-    DropboxIntegration,
-    GoogleDriveIntegration,
-    OneDriveIntegration,
-    get_service_manager,
-    get_canva,
-    get_dropbox,
-    get_google_drive,
-    get_onedrive
-)
-from .performance_monitor import (
-    PerformanceMonitor,
-    MetricType,
-    AlertLevel,
-    PerformanceMetric,
-    PerformanceAlert,
-    get_performance_monitor,
-    monitor_performance
-)
-from .cache_manager import (
-    CacheManager,
-    CachePolicy,
-    LRUCache,
-    DiskCache,
-    get_cache_manager,
-    cached
-)
-from .websocket_server import (
-    WebSocketServer,
-    WebSocketClient,
-    WebSocketMessage,
-    MessageType,
-    get_websocket_server,
-    start_websocket_server,
-    stop_websocket_server,
-    integrate_with_event_bus,
-    integrate_with_performance_monitor
+    get_services_logger,
 )
 
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 __author__ = "LightSpeed Team / ACHILLES"
 
-__all__ = [
-    # Database
-    'DatabaseService',
-    'get_db',
-
-    # Event Bus
-    'EventBus',
-    'Event',
-    'EventTypes',
-    'FloorEventPublisher',
-    'get_event_bus',
-
-    # Settings Hub
-    'SettingsHub',
-    'get_settings_hub',
-
-    # Floor Manager
-    'FloorManager',
-    'FloorInfo',
-    'get_floor_manager',
-    'initialize_all_floors',
-
-    # Storage
-    'StorageService',
-    'get_storage',
-
-    # Dataspace
-    'DataspaceService',
-    'get_dataspace',
-    'ArtifactRef',
-    'ZDirectService',
-    'get_z_direct',
-
-    # Logging
-    'FloorLogger',
-    'LoggedOperation',
-    'get_logger',
-    'get_neo_logger',
-    'get_morpheus_logger',
-    'get_architect_logger',
-    'get_construct_logger',
-    'get_oracle_logger',
-    'get_smith_logger',
-    'get_merovingian_logger',
-    'get_trinity_logger',
-    'get_services_logger',
-
-    # Physics Tools
-    'PhysicsTools',
-    'get_physics_tools',
-    'calculate_raphael_equations',
-    'generate_big_bang_simulation',
-    'calculate_schwarzschild_radius',
-
-    # User Preferences
-    'UserPreferences',
-    'get_user_preferences',
-
-    # Template System
-    'BaseTemplate',
-    'DocumentTemplate',
-    'UITemplate',
-    'TestTemplate',
-    'QRCodeTemplate',
-    'TableTemplate',
-    'ImageTemplate',
-    'ThemeTemplate',
-    'VenvSetupTemplate',
-    'TemplateRegistry',
-    'get_template_registry',
-
-    # Predictive Maintenance (Merovingian)
-    'PredictiveMaintenanceEngine',
-    'get_predictive_maintenance_engine',
-
-    # World Server
-    'WorldServer',
-    'get_world_server',
-    'start_world_server',
-    'stop_world_server',
-
-    # External Integrations
-    'ExternalServiceManager',
-    'CanvaIntegration',
-    'DropboxIntegration',
-    'GoogleDriveIntegration',
-    'OneDriveIntegration',
-    'get_service_manager',
-    'get_canva',
-    'get_dropbox',
-    'get_google_drive',
-    'get_onedrive',
-
-    # Performance Monitoring
-    'PerformanceMonitor',
-    'MetricType',
-    'AlertLevel',
-    'PerformanceMetric',
-    'PerformanceAlert',
-    'get_performance_monitor',
-    'monitor_performance',
-
-    # Cache Management
-    'CacheManager',
-    'CachePolicy',
-    'LRUCache',
-    'DiskCache',
-    'get_cache_manager',
-    'cached',
-
-    # WebSocket Server
-    'WebSocketServer',
-    'WebSocketClient',
-    'WebSocketMessage',
-    'MessageType',
-    'get_websocket_server',
-    'start_websocket_server',
-    'stop_websocket_server',
-    'integrate_with_event_bus',
-    'integrate_with_performance_monitor',
-]
+_LAZY_EXPORTS: dict[str, tuple[str, str]] = {
+    "SettingsHub": (".settings_hub", "SettingsHub"),
+    "get_settings_hub": (".settings_hub", "get_settings_hub"),
+    "FloorManager": (".floor_manager", "FloorManager"),
+    "FloorInfo": (".floor_manager", "FloorInfo"),
+    "get_floor_manager": (".floor_manager", "get_floor_manager"),
+    "initialize_all_floors": (".floor_manager", "initialize_all_floors"),
+    "DataspaceService": (".dataspace", "DataspaceService"),
+    "get_dataspace": (".dataspace", "get_dataspace"),
+    "ArtifactRef": (".dataspace", "ArtifactRef"),
+    "ZDirectService": (".dataspace", "ZDirectService"),
+    "get_z_direct": (".dataspace", "get_z_direct"),
+    "PhysicsTools": (".physics_tools", "PhysicsTools"),
+    "get_physics_tools": (".physics_tools", "get_physics_tools"),
+    "calculate_raphael_equations": (".physics_tools", "calculate_raphael_equations"),
+    "generate_big_bang_simulation": (".physics_tools", "generate_big_bang_simulation"),
+    "calculate_schwarzschild_radius": (".physics_tools", "calculate_schwarzschild_radius"),
+    "UserPreferences": (".user_preferences", "UserPreferences"),
+    "get_user_preferences": (".user_preferences", "get_user_preferences"),
+    "BaseTemplate": (".template_system", "BaseTemplate"),
+    "DocumentTemplate": (".template_system", "DocumentTemplate"),
+    "UITemplate": (".template_system", "UITemplate"),
+    "TestTemplate": (".template_system", "TestTemplate"),
+    "QRCodeTemplate": (".template_system", "QRCodeTemplate"),
+    "TableTemplate": (".template_system", "TableTemplate"),
+    "ImageTemplate": (".template_system", "ImageTemplate"),
+    "ThemeTemplate": (".template_system", "ThemeTemplate"),
+    "VenvSetupTemplate": (".template_system", "VenvSetupTemplate"),
+    "TemplateRegistry": (".template_system", "TemplateRegistry"),
+    "get_template_registry": (".template_system", "get_template_registry"),
+    "PredictiveMaintenanceEngine": (".predictive_maintenance", "PredictiveMaintenanceEngine"),
+    "get_predictive_maintenance_engine": (".predictive_maintenance", "get_predictive_maintenance_engine"),
+    "WorldServer": (".world_server", "WorldServer"),
+    "get_world_server": (".world_server", "get_world_server"),
+    "start_world_server": (".world_server", "start_world_server"),
+    "stop_world_server": (".world_server", "stop_world_server"),
+    "ExternalServiceManager": (".external_integrations", "ExternalServiceManager"),
+    "CanvaIntegration": (".external_integrations", "CanvaIntegration"),
+    "DropboxIntegration": (".external_integrations", "DropboxIntegration"),
+    "GoogleDriveIntegration": (".external_integrations", "GoogleDriveIntegration"),
+    "OneDriveIntegration": (".external_integrations", "OneDriveIntegration"),
+    "get_service_manager": (".external_integrations", "get_service_manager"),
+    "get_canva": (".external_integrations", "get_canva"),
+    "get_dropbox": (".external_integrations", "get_dropbox"),
+    "get_google_drive": (".external_integrations", "get_google_drive"),
+    "get_onedrive": (".external_integrations", "get_onedrive"),
+    "PerformanceMonitor": (".performance_monitor", "PerformanceMonitor"),
+    "MetricType": (".performance_monitor", "MetricType"),
+    "AlertLevel": (".performance_monitor", "AlertLevel"),
+    "PerformanceMetric": (".performance_monitor", "PerformanceMetric"),
+    "PerformanceAlert": (".performance_monitor", "PerformanceAlert"),
+    "get_performance_monitor": (".performance_monitor", "get_performance_monitor"),
+    "monitor_performance": (".performance_monitor", "monitor_performance"),
+    "CacheManager": (".cache_manager", "CacheManager"),
+    "CachePolicy": (".cache_manager", "CachePolicy"),
+    "LRUCache": (".cache_manager", "LRUCache"),
+    "DiskCache": (".cache_manager", "DiskCache"),
+    "get_cache_manager": (".cache_manager", "get_cache_manager"),
+    "cached": (".cache_manager", "cached"),
+    "WebSocketServer": (".websocket_server", "WebSocketServer"),
+    "WebSocketClient": (".websocket_server", "WebSocketClient"),
+    "WebSocketMessage": (".websocket_server", "WebSocketMessage"),
+    "MessageType": (".websocket_server", "MessageType"),
+    "get_websocket_server": (".websocket_server", "get_websocket_server"),
+    "start_websocket_server": (".websocket_server", "start_websocket_server"),
+    "stop_websocket_server": (".websocket_server", "stop_websocket_server"),
+    "integrate_with_event_bus": (".websocket_server", "integrate_with_event_bus"),
+    "integrate_with_performance_monitor": (".websocket_server", "integrate_with_performance_monitor"),
+}
 
 
-def initialize_services():
-    """
-    Initialize all core services.
+def __getattr__(name: str) -> Any:
+    target = _LAZY_EXPORTS.get(name)
+    if target is None:
+        raise AttributeError(name)
+    module_name, attribute = target
+    try:
+        value = getattr(import_module(module_name, __name__), attribute)
+    except Exception as exc:
+        raise ImportError(f"Optional service capability {name!r} is unavailable: {exc}") from exc
+    globals()[name] = value
+    return value
 
-    Call this at application startup to ensure all services are ready.
 
-    Returns:
-        Dict with service instances
-    """
-    # Ensure floor-native directory scaffolds exist before services start
-    # (idempotent; avoids legacy root folders like `Data/` being recreated).
+def __dir__() -> list[str]:
+    return sorted(set(globals()) | set(_LAZY_EXPORTS))
+
+
+def initialize_services() -> dict[str, Any]:
+    """Initialize the essential Merovingian runtime only."""
     try:
         from core.config.paths import initialize_z_floor_structure  # type: ignore
-
         initialize_z_floor_structure()
     except Exception:
         pass
@@ -276,91 +131,39 @@ def initialize_services():
     event_bus = get_event_bus()
     storage = get_storage()
     logger = get_services_logger()
-
-    logger.info("=== LightSpeed Core Services Initialized ===")
-    logger.info(f"Database: {db.db_path}")
-    logger.info(f"Storage: {storage.storage_root}")
-    logger.info(f"Event Bus: {event_bus.get_stats()['enabled']}")
-
+    logger.info("=== LightSpeed Essential Services Initialized ===")
+    logger.info(f"Database: {getattr(db, 'db_path', 'unknown')}")
+    logger.info(f"Storage: {getattr(storage, 'storage_root', 'unknown')}")
+    try:
+        logger.info(f"Event Bus: {event_bus.get_stats().get('enabled')}")
+    except Exception:
+        logger.info("Event Bus: available")
     return {
-        'database': db,
-        'event_bus': event_bus,
-        'storage': storage,
-        'logger': logger
+        "database": db,
+        "event_bus": event_bus,
+        "storage": storage,
+        "logger": logger,
     }
 
 
-def shutdown_services():
-    """
-    Gracefully shutdown all services.
-
-    Call this before application exit.
-    """
+def shutdown_services() -> None:
     logger = get_services_logger()
-    logger.info("=== Shutting down LightSpeed Core Services ===")
+    logger.info("=== Shutting down LightSpeed Essential Services ===")
+    try:
+        get_event_bus().disable()
+    except Exception:
+        pass
+    logger.info("Essential services shutdown complete")
 
-    # Clean up resources
-    event_bus = get_event_bus()
-    event_bus.disable()
 
-    logger.info("Core services shutdown complete")
+_ESSENTIAL_EXPORTS = [
+    "DatabaseService", "get_db", "EventBus", "Event", "EventTypes",
+    "FloorEventPublisher", "get_event_bus", "StorageService", "get_storage",
+    "FloorLogger", "LoggedOperation", "get_logger", "get_neo_logger",
+    "get_morpheus_logger", "get_architect_logger", "get_construct_logger",
+    "get_oracle_logger", "get_smith_logger", "get_merovingian_logger",
+    "get_trinity_logger", "get_services_logger", "initialize_services",
+    "shutdown_services",
+]
 
-
-if __name__ == "__main__":
-    # Test services integration
-    print("Core Services Integration Test")
-    print("=" * 50)
-
-    # Initialize all services
-    print("\nInitializing services...")
-    services = initialize_services()
-
-    print("\n✓ Services initialized:")
-    for name, service in services.items():
-        print(f"  - {name}: {type(service).__name__}")
-
-    # Test inter-service communication
-    print("\nTest: Inter-service communication")
-
-    # Create event publisher for TheConstruct
-    publisher = FloorEventPublisher('TheConstruct', services['event_bus'])
-
-    # Subscribe Trinity dashboard to simulation events
-    def on_simulation_complete(event: Event):
-        logger = get_trinity_logger()
-        logger.info(f"Dashboard: Simulation completed - {event.data}")
-
-    services['event_bus'].subscribe(
-        EventTypes.SIMULATION_COMPLETED,
-        on_simulation_complete,
-        floor='Trinity'
-    )
-
-    # Publish simulation event
-    publisher.publish(
-        EventTypes.SIMULATION_COMPLETED,
-        data={'sim_id': 100, 'type': 'raphael', 'status': 'success'}
-    )
-
-    import time
-    time.sleep(0.1)  # Allow async processing
-
-    # Get stats
-    print("\nService Statistics:")
-    eb_stats = services['event_bus'].get_stats()
-    print(f"  Event Bus: {eb_stats['total_subscribers']} subscribers, "
-          f"{eb_stats['history_size']} events")
-
-    storage_stats = services['storage'].get_storage_stats()
-    print(f"  Storage: {storage_stats['total_files']} files, "
-          f"{storage_stats['total_size_mb']:.2f} MB")
-
-    db_tables = services['database'].get_all_tables()
-    print(f"  Database: {len(db_tables)} tables")
-
-    # Shutdown
-    print("\nShutting down services...")
-    shutdown_services()
-
-    print("\n" + "=" * 50)
-    print("Core services ready to support all floors!")
+__all__ = [*_ESSENTIAL_EXPORTS, *_LAZY_EXPORTS.keys()]
