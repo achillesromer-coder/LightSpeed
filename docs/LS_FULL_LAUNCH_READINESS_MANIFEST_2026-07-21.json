@@ -1,0 +1,118 @@
+{
+  "schema_version": "lightspeed-full-launch-readiness-v1",
+  "generated_at_utc": "2026-07-21T15:00:00Z",
+  "status": "READY_FOR_OWNER_FULL_LAUNCH_REVIEW",
+  "current_release_state": "OPERATIONAL_PRIVATE",
+  "full_launch_executed": false,
+  "repository": {
+    "name": "achillesromer-coder/LightSpeed",
+    "main_commit": "5e73543778978ec0c269293808df7badce213a36",
+    "accepted_pull_request": 15,
+    "accepted_pull_request_url": "https://github.com/achillesromer-coder/LightSpeed/pull/15"
+  },
+  "site": {
+    "url": "https://lightspeed-go.nathaniel-b.chatgpt.site",
+    "project_id": "appgprj_6a5970791a9c8191a4540cf8c0811af4",
+    "version_number": 8,
+    "version_id": "appgprj_6a5970791a9c8191a4540cf8c0811af4~appgver_e0dbd4d40a0c819196904277733aab1b",
+    "deployment_id": "appgdep_6a5f88d466e08191b749fc09e11c50d7",
+    "access": "private_owner_only",
+    "site_source_commit": "10d33303eeed385cd6f3c21a3b1367873f97beb2",
+    "deployment_receipt_drive_file": "lightspeed_go_site_deployment_receipt_2026-07-21.json"
+  },
+  "accepted_evidence": {
+    "site_build": "pass",
+    "site_lint": "pass",
+    "site_tests": "2_passed",
+    "live_readback": "pass",
+    "desktop_api": "online",
+    "merovingian": "healthy",
+    "desktop_visible_projects": 11,
+    "neo_exchange_records": 2,
+    "desporte_project_number": 11,
+    "python_tests": "15_passed",
+    "go_tests": "10_passed",
+    "typescript": "pass",
+    "vite_production_build": "pass",
+    "npm_audit": "0_vulnerabilities",
+    "source_manifest_eligible_records": 613,
+    "source_manifest_excluded_protected_records": 83
+  },
+  "gates": [
+    {
+      "id": "FL-01",
+      "name": "owner_release_decision",
+      "state": "PENDING",
+      "required": "APPROVED"
+    },
+    {
+      "id": "FL-02",
+      "name": "publication_target_and_visibility",
+      "state": "CURRENT_PRIVATE_OWNER_ONLY",
+      "required": "OWNER_SELECTED_TARGET_RECORDED"
+    },
+    {
+      "id": "FL-03",
+      "name": "source_site_parity",
+      "state": "PASS_AT_ACCEPTED_RECEIPT",
+      "required": "PASS_AT_RELEASE_CHECKPOINT"
+    },
+    {
+      "id": "FL-04",
+      "name": "pre_release_health",
+      "state": "PASS_AT_ACCEPTED_RECEIPT",
+      "required": "PASS_AT_RELEASE_CHECKPOINT"
+    },
+    {
+      "id": "FL-05",
+      "name": "bounded_end_to_end_command_receipt",
+      "state": "REQUIRED_AFTER_OWNER_APPROVAL",
+      "required": "PASS"
+    },
+    {
+      "id": "FL-06",
+      "name": "privacy_package_claim_boundaries",
+      "state": "PASS_AT_ACCEPTED_RECEIPT",
+      "required": "PASS_AT_RELEASE_CHECKPOINT"
+    },
+    {
+      "id": "FL-07",
+      "name": "rollback_readiness",
+      "state": "READY",
+      "required": "READY"
+    },
+    {
+      "id": "FL-08",
+      "name": "monitoring_and_incident_routing",
+      "state": "ACTIVE",
+      "required": "ACTIVE"
+    }
+  ],
+  "rollback": {
+    "git_commit": "5e73543778978ec0c269293808df7badce213a36",
+    "site_version": 8,
+    "drive_receipt_folder_id": "1FlIjBrt3vQG67Jh37aWGf2cVEa6OmXZX"
+  },
+  "hold_conditions": [
+    "owner decision absent",
+    "source and Site mismatch",
+    "Desktop API or Merovingian health failure",
+    "failed actionable queue item",
+    "unexpected outbound data destination",
+    "privacy or protected-package boundary failure",
+    "unsupported scientific or regulatory claim promotion"
+  ],
+  "known_held_items": [
+    "Windows visual capture limitation 0x80004002",
+    "three empty legacy project directories remain cleanup candidates",
+    "public or wider Site visibility is not approved by this manifest"
+  ],
+  "non_actions": [
+    "No full or public launch",
+    "No visibility expansion",
+    "No source deletion",
+    "No protected-package expansion",
+    "No public Desktop execution",
+    "No scientific claim promotion"
+  ]
+}
