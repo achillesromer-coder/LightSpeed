@@ -6,10 +6,10 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$python = 'C:\LightSpeed_Consolidated\venv\Scripts\python.exe'
-$workingDirectory = 'C:\LightSpeed_Consolidated\LightSpeed_Runtime'
-$runtimeRoot = 'C:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed'
-$arguments = '-m lightspeed_runtime.maintenance --root C:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed'
+$python = 'D:\LightSpeed_Consolidated\venv\Scripts\python.exe'
+$workingDirectory = 'D:\LightSpeed_Consolidated\LightSpeed_Runtime'
+$runtimeRoot = 'D:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed'
+$arguments = '-m lightspeed_runtime.maintenance --root D:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed'
 
 foreach ($requiredPath in @($python, $workingDirectory, $runtimeRoot)) {
     if (-not (Test-Path -LiteralPath $requiredPath)) {

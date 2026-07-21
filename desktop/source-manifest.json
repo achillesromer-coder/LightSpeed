@@ -8,7 +8,7 @@
     {
       "bytes": 1159,
       "path": "Desktop_Hooks/LightSpeed/config/archives_policy.yaml",
-      "sha256": "4f4e6ba899680c79903dea96c03bf70e8bab31e8e6d7f8a54cf3eb81751612ef"
+      "sha256": "61166603bece90a2cdf6ba4bf27c7c5311ca314fa0c39eb1c841b8f3e2ea4356"
     },
     {
       "bytes": 21709,
@@ -16,9 +16,9 @@
       "sha256": "6ed425974371cca1682ccbce1026eecd92be49aafae7244d838b7ccf5588c763"
     },
     {
-      "bytes": 2263,
+      "bytes": 2133,
       "path": "Desktop_Hooks/LightSpeed/config/deployment_topology.json",
-      "sha256": "1faaced961c591492ef2b71b9e9861f3f321cc1578d854b42814e38ddfa0d748"
+      "sha256": "70dee42c3e7f179c70db660ede1de3575e285ecb9654b23f4c1a6f0b0a81ea47"
     },
     {
       "bytes": 34339,
@@ -31,9 +31,9 @@
       "sha256": "a5fda201c319de6ef8410f92549337ad08155faec639d9c66756b732e7b1d82b"
     },
     {
-      "bytes": 2715,
+      "bytes": 2844,
       "path": "Desktop_Hooks/LightSpeed/config/host_runtime_policy.json",
-      "sha256": "83f1ef6977c93f9e963bcf4e5df85dc403ee98f1a39bb6043a4316f58962f677"
+      "sha256": "c43264b7861a2a42172c06ca856f94785a5819a2fbe8c0b09afa5a47f71cf54e"
     },
     {
       "bytes": 15246,
@@ -44,6 +44,11 @@
       "bytes": 9101,
       "path": "Desktop_Hooks/LightSpeed/config/premium_theme_config.json",
       "sha256": "3f547bf5102650e6214047d0a5f0d1bffa50ac82db271cc13f4d90fc95c8d4ee"
+    },
+    {
+      "bytes": 3880,
+      "path": "Desktop_Hooks/LightSpeed/config/project_routing.json",
+      "sha256": "79b34a1af202d2d1b0d452ffbc5a848b1bafa2d8c662b31df48bbd528aa1aa0c"
     },
     {
       "bytes": 1210,
@@ -3296,6 +3301,11 @@
       "sha256": "8efc3372e032bcb1c156c93aa67b7fbe77a63ee696b77e021cd74be6a29a7f50"
     },
     {
+      "bytes": 14188,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py",
+      "sha256": "16a9f5771d99e5f7465124266f2da6f317fce2cdb32bdf8111cd17bdb0a3f15d"
+    },
+    {
       "bytes": 11584,
       "path": "LightSpeed_Runtime/lightspeed_runtime/maintenance.py",
       "sha256": "1f6ef46c3c00f0b7f2079e411b77c20e2a38d6ae26c16ee869a2c921e38d20f0"
@@ -3329,6 +3339,11 @@
       "bytes": 53099,
       "path": "LightSpeed_Runtime/lightspeed_runtime/project_component_wall.py",
       "sha256": "ad17db0c2f4ab4558a15fccfbc31388b101cc2803300efb26414d39d92208dfd"
+    },
+    {
+      "bytes": 30757,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py",
+      "sha256": "7c1c7e7fa5d8a45a97d818d48c1ad5a6ba19cbddb26d12b0223c514868763a00"
     },
     {
       "bytes": 19560,

@@ -4,12 +4,12 @@
   "site_url": "https://lightspeed-go.nathaniel-b.chatgpt.site/",
   "edit_mode": "existing-site-side-edit",
   "create_new_site": false,
-  "publish_state": "published-current-site",
+  "publish_state": "verified-local-current-site-update-pending",
   "release_date": "2026-07-20",
   "source_commit": "140dd4ad2d173123b95411fa55a9443b5fa785bd",
   "source_pull_request": 10,
   "authority_chain": [
-    "Nathaniel Bower",
+    "Nathaniel Bouwer",
     "Achilles / GO gate",
     "Neo routing",
     "agent floor",
@@ -23,7 +23,7 @@
     "Sources"
   ],
   "canonical_surfaces": {
-    "owner_and_governance": "Nathaniel Bower / Achilles",
+    "owner_and_governance": "Nathaniel Bouwer / Achilles",
     "task_and_index_authority": "Drive CORE",
     "implementation_authority": "achillesromer-coder/LightSpeed",
     "operator_surface": "LightSpeed GO",

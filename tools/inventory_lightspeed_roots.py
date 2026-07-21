@@ -13,7 +13,7 @@ from typing import Iterable, Iterator
 import uuid
 
 
-CANONICAL_ROOT = Path(r"C:\LightSpeed_Consolidated")
+CANONICAL_ROOT = Path(r"D:\LightSpeed_Consolidated")
 DEFAULT_DESTINATION_ROOT = CANONICAL_ROOT / "Sources" / "Historical LightSpeed"
 DEFAULT_INVENTORY_ROOT = CANONICAL_ROOT / "_migration" / "historical_inventory"
 DEFAULT_SUMMARY_PATH = (

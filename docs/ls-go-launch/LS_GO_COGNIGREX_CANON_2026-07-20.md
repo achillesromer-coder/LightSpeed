@@ -26,7 +26,7 @@ A cognigrex is the coordinated operating system formed by the owner, governance 
 
 | Layer | Canonical role |
 |---|---|
-| Nathaniel Bower | Owner, final intent and approval authority. |
+| Nathaniel Bouwer | Owner, final intent and approval authority. |
 | Achilles / GO gate | Governance, source truth, safety gates and owner-decision control. |
 | Neo | Routing, bounded divvy and handoff packaging. |
 | Agent floor | Specialist work under assigned scope and evidence constraints. |

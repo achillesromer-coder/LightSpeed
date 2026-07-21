@@ -38,11 +38,18 @@ def write_json(path: Path, payload: dict[str, Any]) -> None:
     temporary.replace(path)
 
 
-def select_root(explicit: Path | None, env_name: str, canonical: Path, fallback: Path, marker: Path) -> Path:
+def select_root(
+    explicit: Path | None,
+    env_name: str,
+    canonical: Path,
+    legacy: Path,
+    repository: Path,
+    marker: Path,
+) -> Path:
     candidates = [explicit, Path(os.environ[env_name]) if os.environ.get(env_name) else None]
     if os.name == "nt":
-        candidates.append(canonical)
-    candidates.append(fallback)
+        candidates.extend((canonical, legacy))
+    candidates.append(repository)
     for candidate in candidates:
         if candidate and (candidate / marker).is_file():
             return candidate.resolve()
@@ -60,6 +67,17 @@ def port_open(host: str, port: int, timeout: float = 0.35) -> bool:
 def pid_alive(pid: int | None) -> bool:
     if not pid or pid <= 0:
         return False
+    if os.name == "nt":
+        import ctypes
+
+        process_query_limited_information = 0x1000
+        handle = ctypes.windll.kernel32.OpenProcess(
+            process_query_limited_information, False, int(pid)
+        )
+        if not handle:
+            return False
+        ctypes.windll.kernel32.CloseHandle(handle)
+        return True
     try:
         os.kill(pid, 0)
     except OSError:
@@ -104,11 +122,12 @@ def start_background(command: list[str], *, cwd: Path, log_path: Path) -> int:
 def windows_command_running(fragment: str) -> bool:
     if os.name != "nt":
         return False
-    escaped = fragment.replace("'", "''")
+    # Do not embed ``fragment`` in the PowerShell command: doing so makes the
+    # probe match its own command line and report every process as running.
     command = (
-        "$p = Get-CimInstance Win32_Process | "
-        f"Where-Object {{ $_.CommandLine -and $_.CommandLine -like '*{escaped}*' }}; "
-        "if ($p) { exit 0 } else { exit 1 }"
+        "Get-CimInstance Win32_Process | ForEach-Object { "
+        "if ($_.CommandLine) { Write-Output ($_.ProcessId.ToString() + \"`t\" + $_.CommandLine) } "
+        "}"
     )
     completed = subprocess.run(
         ["powershell", "-NoProfile", "-NonInteractive", "-Command", command],
@@ -117,7 +136,10 @@ def windows_command_running(fragment: str) -> bool:
         check=False,
         timeout=15,
     )
-    return completed.returncode == 0
+    if completed.returncode != 0:
+        return False
+    needle = fragment.casefold()
+    return any(needle in line.casefold() for line in completed.stdout.splitlines())
 
 
 def run_desporte_population(python: str, receipt_dir: Path) -> dict[str, Any]:
@@ -152,9 +174,18 @@ def optional_desporte_start() -> dict[str, Any]:
         return {"state": "missing", "path": str(executable)}
     if windows_command_running(executable.name):
         return {"state": "already_running", "path": str(executable)}
-    args = shlex.split(os.environ.get("DESPORTE_LAUNCH_ARGS", ""), posix=os.name != "nt")
+    # ``posix=False`` retains quote characters in Windows arguments, causing
+    # the packaged app to receive a literal \"path\" value and exit.  The
+    # configured argument contract is shell-style, so strip its grouping
+    # quotes before passing the argument list to ``Popen``.
+    args = shlex.split(os.environ.get("DESPORTE_LAUNCH_ARGS", ""), posix=True)
     pid = start_background([str(executable), *args], cwd=executable.parent, log_path=REPO_ROOT / "logs" / "desporte-launch.log")
-    return {"state": "started", "path": str(executable), "pid": pid}
+    time.sleep(2)
+    return {
+        "state": "started" if pid_alive(pid) else "launch_failed",
+        "path": str(executable),
+        "pid": pid,
+    }
 
 
 def read_bridge_status() -> dict[str, Any]:
@@ -164,6 +195,17 @@ def read_bridge_status() -> dict[str, Any]:
             return payload if isinstance(payload, dict) else {"ok": False}
     except Exception as exc:
         return {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+
+
+def wait_for_bridge_status(timeout_seconds: float = 30.0) -> dict[str, Any]:
+    deadline = time.monotonic() + max(1.0, timeout_seconds)
+    latest: dict[str, Any] = {"ok": False, "error": "bridge readiness not checked"}
+    while time.monotonic() < deadline:
+        latest = read_bridge_status()
+        if latest.get("ok"):
+            return latest
+        time.sleep(1)
+    return latest
 
 
 def main() -> int:
@@ -178,6 +220,7 @@ def main() -> int:
     runtime_root = select_root(
         args.runtime_root,
         "LIGHTSPEED_RUNTIME_ROOT",
+        Path(r"D:\LightSpeed_Consolidated\LightSpeed_Runtime"),
         Path(r"C:\LightSpeed_Consolidated\LightSpeed_Runtime"),
         REPO_RUNTIME_ROOT,
         Path("lightspeed_runtime") / "__init__.py",
@@ -185,6 +228,7 @@ def main() -> int:
     shell_root = select_root(
         args.shell_root,
         "LIGHTSPEED_SHELL_ROOT",
+        Path(r"D:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed"),
         Path(r"C:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed"),
         REPO_SHELL_ROOT,
         Path("N.py"),
@@ -253,13 +297,13 @@ def main() -> int:
             "stderr_tail": completed.stderr[-1000:],
         }
 
-    time.sleep(5)
-    bridge_status = read_bridge_status()
+    bridge_status = wait_for_bridge_status()
     required_states = {
         "merovingian": merovingian.get("state") in {"started", "already_running"},
         "bridge": bool(bridge_status.get("ok")),
         "desktop": desktop.get("state") in {"started", "already_running", "skipped_by_operator"},
         "desporte_population": desporte.get("status") in {"pass", "skipped_by_operator"},
+        "desporte_process": desporte_process.get("state") in {"started", "already_running"},
     }
     receipt = {
         "schema_version": "lightspeed-cognigrex-local-stack-v1",

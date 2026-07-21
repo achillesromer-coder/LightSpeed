@@ -32,6 +32,7 @@ def _runtime_candidates(explicit: Path | None = None) -> list[Path]:
     if configured:
         rows.append(Path(configured))
     if os.name == "nt":
+        rows.append(Path(r"D:\LightSpeed_Consolidated\LightSpeed_Runtime"))
         rows.append(Path(r"C:\LightSpeed_Consolidated\LightSpeed_Runtime"))
     rows.append(REPO_RUNTIME_ROOT)
     return list(dict.fromkeys(rows))
@@ -45,6 +46,7 @@ def _shell_candidates(explicit: Path | None = None) -> list[Path]:
     if configured:
         rows.append(Path(configured))
     if os.name == "nt":
+        rows.append(Path(r"D:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed"))
         rows.append(Path(r"C:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed"))
     rows.append(REPO_SHELL_ROOT)
     return list(dict.fromkeys(rows))
@@ -76,6 +78,17 @@ def _pid_alive(pid: int | None) -> bool:
     if not pid or pid <= 0:
         return False
     if pid == os.getpid():
+        return True
+    if os.name == "nt":
+        import ctypes
+
+        process_query_limited_information = 0x1000
+        handle = ctypes.windll.kernel32.OpenProcess(
+            process_query_limited_information, False, int(pid)
+        )
+        if not handle:
+            return False
+        ctypes.windll.kernel32.CloseHandle(handle)
         return True
     try:
         os.kill(pid, 0)
@@ -149,8 +162,10 @@ def static_check(runtime_root: Path, shell_root: Path) -> dict[str, Any]:
 
 def run_once(runtime_root: Path, shell_root: Path, *, queue_changes: bool) -> dict[str, Any]:
     for path in (runtime_root, shell_root):
-        if str(path) not in sys.path:
-            sys.path.insert(0, str(path))
+        value = str(path)
+        while value in sys.path:
+            sys.path.remove(value)
+        sys.path.insert(0, value)
 
     from lightspeed_runtime.project_pipeline import ProjectPipeline
 

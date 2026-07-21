@@ -56,12 +56,14 @@ def _allowed_origins() -> list[str]:
 
 
 def _try_get_services(shell_root: Path):
-    if str(shell_root) not in sys.path:
-        sys.path.insert(0, str(shell_root))
+    merovingian_root = shell_root / "Z Axis" / "Z-4_Merovingian"
+    if str(merovingian_root) not in sys.path:
+        sys.path.insert(0, str(merovingian_root))
     try:
-        from core.services import get_db, get_storage  # type: ignore
+        from core.services import initialize_services  # type: ignore
 
-        return get_db(), get_storage()
+        services = initialize_services()
+        return services.get("database"), services.get("storage")
     except Exception:
         return None, None
 

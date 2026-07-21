@@ -46,6 +46,7 @@ def runtime_candidates() -> list[Path]:
     if override:
         values.append(Path(override))
     if os.name == "nt":
+        values.append(Path(r"D:\LightSpeed_Consolidated\LightSpeed_Runtime"))
         values.append(Path(r"C:\LightSpeed_Consolidated\LightSpeed_Runtime"))
     values.extend([REPO_RUNTIME_ROOT, REPO_ROOT / "LightSpeed_Runtime"])
     unique: list[Path] = []
@@ -71,9 +72,12 @@ def select_shell_root(explicit: Path | None = None) -> Path:
     if override:
         return Path(override)
     if os.name == "nt":
-        canonical = Path(r"C:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed")
-        if canonical.is_dir():
-            return canonical
+        for canonical in (
+            Path(r"D:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed"),
+            Path(r"C:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed"),
+        ):
+            if canonical.is_dir():
+                return canonical
     return REPO_SHELL_ROOT
 
 

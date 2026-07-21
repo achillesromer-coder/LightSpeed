@@ -173,7 +173,7 @@ class ProjectPipeline:
     def _scan_project(self, root: ProjectRoot, path: Path, budget: list[int]) -> dict[str, Any]:
         ignored_dirs = self._ignored_dirs()
         ignored_files = self._ignored_files()
-        per_project_limit = max(100, int(self._scan_policy().get("max_files_per_project") or 50_000))
+        per_project_limit = max(1, int(self._scan_policy().get("max_files_per_project") or 50_000))
         file_count = 0
         significant_count = 0
         total_bytes = 0
@@ -181,7 +181,7 @@ class ProjectPipeline:
         truncated = False
         fingerprint = hashlib.sha256()
         placeholder_names = {
-            ".gitkeep", "notes.md", "checklist.md", "readme.md",
+            ".gitkeep", "notes.md", "checklist.md",
             "requirements.txt", "config.json", "config.yaml",
         }
 
@@ -496,7 +496,7 @@ class ProjectPipeline:
             "target": "LS GO",
             "oversight_floor": "Achilles",
             "routing_floor": "Neo",
-            "owner": "Nathaniel Bower",
+            "owner": "Nathaniel Bouwer",
             "event_type": event_type,
             "title": title,
             "summary": summary,
@@ -532,8 +532,11 @@ class ProjectPipeline:
         }
 
     def essential_health(self, registry: dict[str, Any]) -> dict[str, Any]:
-        if str(self.shell_root) not in sys.path:
-            sys.path.insert(0, str(self.shell_root))
+        # ``core`` is the Merovingian package, not a package at the Desktop
+        # shell root.  Add its parent explicitly so an installed runtime works
+        # the same way as a repository checkout and CI environment.
+        if str(self.merovingian_root) not in sys.path:
+            sys.path.insert(0, str(self.merovingian_root))
         service_states = {"database": False, "event_bus": False, "storage": False}
         details: dict[str, Any] = {}
         errors: list[str] = []
@@ -685,7 +688,7 @@ class ProjectPipeline:
             "decision": decision,
             "note": " ".join(note.split())[:1000],
             "decided_utc": utc_now_iso(),
-            "decided_by": "Nathaniel Bower / Achilles GO gate",
+            "decided_by": "Nathaniel Bouwer / Achilles GO gate",
             "applies_external_write": False,
         }
         _append_jsonl(self.review_decisions_path, receipt)

@@ -47,7 +47,7 @@ const mount = async (): Promise<boolean> => {
   injectStyles();
   const manifest = await loadManifest();
   const authority = manifest?.authority_chain ?? [
-    "Nathaniel Bower",
+    "Nathaniel Bouwer",
     "Achilles / GO gate",
     "agent floor",
     "LightSpeed Desktop",
@@ -59,7 +59,7 @@ const mount = async (): Promise<boolean> => {
     strip.id = "site-context-strip";
     strip.className = "site-context-strip";
     strip.innerHTML = `
-      <span><strong>Owner:</strong> Nathaniel Bower</span>
+      <span><strong>Owner:</strong> Nathaniel Bouwer</span>
       <span><strong>Mode:</strong> existing Site side edit</span>
       <span><strong>Source:</strong> Git + Drive aligned</span>
     `;
