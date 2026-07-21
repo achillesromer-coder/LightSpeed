@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "rfs_emff_input_schema_v1.json",
+  "title": "Evidence-gated RFS/EMFF screening packet",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description"],
+      "properties": {
+        "description": {"type": "string", "minLength": 1},
+        "source": {"type": "string"},
+        "instrumented": {"type": "boolean"},
+        "parameters_recorded": {"type": "boolean"}
+      }
+    },
+    "rfs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["frequency_hz", "displacement_amplitude_m", "particle_diameter_m", "particle_density_kg_m3"],
+      "properties": {
+        "frequency_hz": {"type": "number", "minimum": 0},
+        "displacement_amplitude_m": {"type": "number", "minimum": 0},
+        "particle_diameter_m": {"type": "number", "exclusiveMinimum": 0},
+        "particle_density_kg_m3": {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "emff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["coil_turns", "coil_length_m", "current_a", "relative_permeability", "particle_diameter_m", "particle_density_kg_m3"],
+      "properties": {
+        "coil_turns": {"type": "number", "minimum": 0},
+        "coil_length_m": {"type": "number", "exclusiveMinimum": 0},
+        "coil_diameter_m": {"type": "number", "exclusiveMinimum": 0},
+        "current_a": {"type": "number", "minimum": 0},
+        "relative_permeability": {"type": "number", "exclusiveMinimum": 0},
+        "particle_susceptibility": {"type": "number"},
+        "particle_diameter_m": {"type": "number", "exclusiveMinimum": 0},
+        "particle_density_kg_m3": {"type": "number", "exclusiveMinimum": 0},
+        "field_gradient_t_per_m": {"type": "number"},
+        "grad_b2_t2_per_m": {"type": "number"}
+      }
+    },
+    "medium": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dynamic_viscosity_pa_s", "density_kg_m3"],
+      "properties": {
+        "dynamic_viscosity_pa_s": {"type": "number", "exclusiveMinimum": 0},
+        "density_kg_m3": {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "reasoning_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["boundary_conditions_defined", "alternative_causes_controlled", "model_applicability_reviewed", "independent_reviewer"],
+      "properties": {
+        "boundary_conditions_defined": {"type": "boolean"},
+        "alternative_causes_controlled": {"type": "boolean"},
+        "model_applicability_reviewed": {"type": "boolean"},
+        "independent_reviewer": {"type": "boolean"}
+      }
+    },
+    "empirical_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repeat_count", "controls_passed", "instrumented", "raw_logs_attached"],
+      "properties": {
+        "repeat_count": {"type": "integer", "minimum": 0},
+        "controls_passed": {"type": "boolean"},
+        "instrumented": {"type": "boolean"},
+        "raw_logs_attached": {"type": "boolean"}
+      }
+    }
+  },
+  "anyOf": [
+    {"required": ["observation"]},
+    {"required": ["rfs"]},
+    {"required": ["emff"]}
+  ]
+}
