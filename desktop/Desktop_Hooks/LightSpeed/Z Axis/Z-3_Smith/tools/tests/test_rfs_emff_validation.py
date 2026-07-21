@@ -1,5 +1,11 @@
 import math
+import sys
 import unittest
+from pathlib import Path
+
+TOOLS_DIR = Path(__file__).resolve().parents[1]
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
 
 from rfs_emff_validation import ValidationError, evaluate
 
