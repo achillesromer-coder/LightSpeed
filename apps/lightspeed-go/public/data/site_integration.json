@@ -5,9 +5,9 @@
   "edit_mode": "existing-site-side-edit",
   "create_new_site": false,
   "publish_state": "verified-local-current-site-update-pending",
-  "release_date": "2026-07-20",
-  "source_commit": "140dd4ad2d173123b95411fa55a9443b5fa785bd",
-  "source_pull_request": 10,
+  "release_date": "2026-07-21",
+  "source_commit": "bf1d8466b2b6018406214d8b42785d6d428d22c2",
+  "source_pull_request": 15,
   "authority_chain": [
     "Nathaniel Bouwer",
     "Achilles / GO gate",
