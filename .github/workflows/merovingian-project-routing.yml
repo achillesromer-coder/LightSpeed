@@ -1,0 +1,181 @@
+name: Merovingian Project Routing
+
+on:
+  pull_request:
+    branches:
+      - main
+      - "fix/**"
+    paths:
+      - "apps/lightspeed-go/**"
+      - "desktop/Desktop_Hooks/LightSpeed/config/project_routing.json"
+      - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/**"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
+      - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
+      - "desktop/source-manifest.json"
+      - "scripts/validate_lightspeed_surfaces.py"
+      - "scripts/run_merovingian_soft_launch.py"
+      - "scripts/run_cognigrex_local_stack.py"
+      - "tools/run_merovingian_soft_launch.cmd"
+      - "tools/run_cognigrex_local_stack.cmd"
+      - ".github/workflows/merovingian-project-routing.yml"
+  push:
+    branches:
+      - "ops/merovingian-project-routing-*"
+    paths:
+      - "apps/lightspeed-go/**"
+      - "desktop/Desktop_Hooks/LightSpeed/config/project_routing.json"
+      - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/**"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
+      - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
+      - "desktop/source-manifest.json"
+      - "scripts/validate_lightspeed_surfaces.py"
+      - "scripts/run_merovingian_soft_launch.py"
+      - "scripts/run_cognigrex_local_stack.py"
+      - "tools/run_merovingian_soft_launch.cmd"
+      - "tools/run_cognigrex_local_stack.cmd"
+      - ".github/workflows/merovingian-project-routing.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: merovingian-project-routing-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate health, projects, artifacts, receipts and GO review
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install bounded Python test dependencies
+        run: python -m pip install --disable-pip-version-check pytest fastapi uvicorn httpx
+
+      - name: Compile essential runtime
+        id: compile
+        continue-on-error: true
+        run: |
+          python -m py_compile \
+            "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/__init__.py" \
+            "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/__init__.py" \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py \
+            scripts/validate_lightspeed_surfaces.py \
+            scripts/run_merovingian_soft_launch.py \
+            scripts/run_cognigrex_local_stack.py \
+            2>&1 | tee compile.log
+
+      - name: Run static Merovingian contract check
+        id: static
+        continue-on-error: true
+        run: |
+          python scripts/run_merovingian_soft_launch.py \
+            --static-check \
+            --runtime-root desktop/LightSpeed_Runtime \
+            --shell-root desktop/Desktop_Hooks/LightSpeed \
+            2>&1 | tee static-check.log
+
+      - name: Validate global Desktop source manifest
+        id: surface
+        continue-on-error: true
+        run: python scripts/validate_lightspeed_surfaces.py 2>&1 | tee surface-validation.log
+
+      - name: Run project, artifact and bridge tests
+        id: python_tests
+        continue-on-error: true
+        run: |
+          python -m pytest -q \
+            desktop/LightSpeed_Runtime/tests/test_project_pipeline.py \
+            desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py \
+            2>&1 | tee python-tests.log
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/lightspeed-go/package-lock.json
+
+      - name: Install LS GO dependencies
+        id: npm_install
+        continue-on-error: true
+        working-directory: apps/lightspeed-go
+        run: npm ci 2>&1 | tee ../../npm-install.log
+
+      - name: Test LS GO
+        id: npm_test
+        continue-on-error: true
+        working-directory: apps/lightspeed-go
+        run: npm test 2>&1 | tee ../../npm-test.log
+
+      - name: Type-check LS GO
+        id: npm_check
+        continue-on-error: true
+        working-directory: apps/lightspeed-go
+        run: npm run check 2>&1 | tee ../../npm-check.log
+
+      - name: Build LS GO
+        id: npm_build
+        continue-on-error: true
+        working-directory: apps/lightspeed-go
+        run: npm run build 2>&1 | tee ../../npm-build.log
+
+      - name: Upload complete validation diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: merovingian-project-routing-diagnostics
+          path: |
+            compile.log
+            static-check.log
+            surface-validation.log
+            python-tests.log
+            npm-install.log
+            npm-test.log
+            npm-check.log
+            npm-build.log
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Enforce combined result
+        if: always()
+        env:
+          COMPILE: ${{ steps.compile.outcome }}
+          STATIC: ${{ steps.static.outcome }}
+          SURFACE: ${{ steps.surface.outcome }}
+          PYTHON_TESTS: ${{ steps.python_tests.outcome }}
+          NPM_INSTALL: ${{ steps.npm_install.outcome }}
+          NPM_TEST: ${{ steps.npm_test.outcome }}
+          NPM_CHECK: ${{ steps.npm_check.outcome }}
+          NPM_BUILD: ${{ steps.npm_build.outcome }}
+        shell: bash
+        run: |
+          failed=0
+          for value in "$COMPILE" "$STATIC" "$SURFACE" "$PYTHON_TESTS" "$NPM_INSTALL" "$NPM_TEST" "$NPM_CHECK" "$NPM_BUILD"; do
+            if [ "$value" != "success" ]; then
+              failed=1
+            fi
+          done
+          if [ "$failed" != "0" ]; then
+            echo "One or more Merovingian/LS GO validation stages failed; inspect the diagnostic artifact."
+          fi
+          exit "$failed"

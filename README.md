@@ -2,13 +2,13 @@
 
 LightSpeed is the local Cognigrex desktop control plane and its approved
 inter-platform contracts. The canonical runtime is
-`C:\LightSpeed_Consolidated`; `D:\LightSpeed_Consolidated` is compatibility
-only and must not become an independent source of truth.
+`D:\LightSpeed_Consolidated`. The C-drive tree is the retained migration and
+recovery source until D-drive launch receipts and checksums are complete.
 
 ## Operate
 
-- Launch from `C:\Users\acc\Desktop\LightSpeed.lnk` or
-  `C:\LightSpeed_Consolidated\LightSpeed.exe`.
+- Launch from `C:\Users\acc\Desktop\LightSpeed.lnk`; its canonical target is
+  the D-drive LightSpeed launcher.
 - Use Trinity as the single human operator shell. The floor agents remain
   backend workspaces, not separate competing application surfaces.
 - Use Neo for reviewed handoffs between Desktop, LS GO, LS Web, and Drive.
@@ -37,13 +37,13 @@ The complete boundary and classification rules are in
 Run the Desktop suite:
 
 ```powershell
-C:\LightSpeed_Consolidated\venv\Scripts\python.exe -m pytest C:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed\tests -q -W error
+D:\LightSpeed_Consolidated\venv\Scripts\python.exe -m pytest D:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed\tests -q -W error
 ```
 
 Run launch readiness:
 
 ```powershell
-C:\LightSpeed_Consolidated\venv\Scripts\python.exe C:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed\verify_launch_ready.py --quick
+D:\LightSpeed_Consolidated\venv\Scripts\python.exe D:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed\verify_launch_ready.py --quick
 ```
 
 Run LS GO checks:

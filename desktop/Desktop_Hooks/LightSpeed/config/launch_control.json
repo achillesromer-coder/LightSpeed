@@ -1,21 +1,26 @@
 {
-  "control_id": "cognigrex_launch_control_2026_05_27",
+  "control_id": "cognigrex_soft_launch_control_2026_07_20",
   "gate": "CL-4 GATE_RELEASED_FINALISE",
-  "state": "gate_released_finalisation_active",
-  "current_focus": "operator_use_and_bounded_floor_tasks",
+  "state": "sandbox_soft_launch_active",
+  "current_focus": "desporte_local_probe_and_desktop_population",
   "launch_targets": [
     "LightSpeed Desktop",
-    "Inter-Platform"
+    "LightSpeed GO",
+    "De Sporte local sidecar",
+    "Git and Drive receipts"
   ],
-  "publish_policy": "operator_gate_released_source_checked_writeback",
+  "publish_policy": "local_sandbox_and_receipt_backed_changes_only",
   "co_runner": {
     "host_application": "De Sporte",
-    "state": "held_until_lightspeed_stable",
+    "root_path": "D:\\De Sporte",
+    "state": "sandbox_static_verified_pending_local",
     "overseer_sync_path": "D:\\De Sporte\\Data\\Overseer\\overview_sync.json",
     "channel_snapshot_path": "D:\\De Sporte\\Data\\Residents\\operator\\Channels\\raphael_channel_snapshot.json",
     "workbench_plan_path": "D:\\De Sporte\\Data\\Residents\\operator\\Channels\\workbench_plan.json",
     "handoff_path": "D:\\De Sporte\\Data\\Overseer\\lightspeed_launch_handoff.json",
-    "review_queue_path": "C:\\LightSpeed_Consolidated\\Agents\\Achilles\\99_outputs_for_review"
+    "review_queue_path": "C:\\LightSpeed_Consolidated\\Agents\\Achilles\\99_outputs_for_review",
+    "execution_policy": "probe_read_only_then_receipt_backed_local_sync",
+    "web_frontend_in_scope": false
   },
   "initialisation_sequence": [
     {
@@ -32,19 +37,19 @@
     },
     {
       "step_id": "corunner_handoff",
-      "label": "Hold the De Sporte handoff until LightSpeed is stable",
+      "label": "Probe De Sporte and populate its read-only runtime summary into LightSpeed Desktop",
       "owner": "Neo",
-      "state": "held"
+      "state": "static_contract_passed_pending_local"
     },
     {
       "step_id": "verify_dual_runtime",
-      "label": "Verify LightSpeed while De Sporte remains held",
+      "label": "Verify LightSpeed Desktop and De Sporte local processes without direct cross-app execution",
       "owner": "Merovingian",
-      "state": "lightspeed_reset_complete_desporte_held"
+      "state": "pending_local_probe"
     },
     {
       "step_id": "soft_launch_hold",
-      "label": "Hold external push, publish, and Drive mutation behind manual approval",
+      "label": "Keep public web, broad deployment and destructive storage actions outside this soft launch",
       "owner": "Architect",
       "state": "active"
     }
@@ -71,14 +76,34 @@
       "state": "running_responsive_v5_1_2"
     },
     {
+      "check_id": "desktop_manifest_integrity",
+      "label": "Desktop source manifest and runtime surfaces",
+      "state": "static_validation_passed"
+    },
+    {
+      "check_id": "desporte_static_contract",
+      "label": "De Sporte topology, launch state and Desktop population code",
+      "state": "passed"
+    },
+    {
+      "check_id": "desporte_root",
+      "label": "De Sporte canonical root path",
+      "state": "pending_local_probe"
+    },
+    {
       "check_id": "desporte_bridge",
       "label": "De Sporte bridge functional",
-      "state": "held"
+      "state": "pending_local_probe"
     },
     {
       "check_id": "desporte_process",
       "label": "De Sporte onscreen process",
-      "state": "held"
+      "state": "pending_local_probe"
+    },
+    {
+      "check_id": "desporte_desktop_population",
+      "label": "De Sporte summary populated in LightSpeed Desktop",
+      "state": "pending_local_probe"
     },
     {
       "check_id": "ollama_endpoint",
@@ -118,8 +143,12 @@
   ],
   "blockers": [
     {
+      "blocker_id": "desporte_local_receipt_missing",
+      "label": "De Sporte local root, process, bridge and Desktop population receipts have not yet been captured from the Windows host"
+    },
+    {
       "blocker_id": "test_routes_unconfirmed",
-      "label": "Test web routes remain unconfirmed in the local runtime"
+      "label": "Test web routes remain unconfirmed and are outside the current soft-launch scope"
     },
     {
       "blocker_id": "follow_on_repo_authority",
@@ -141,59 +170,66 @@
     },
     {
       "gate_id": "web_publish",
-      "label": "Website, GO, or public route publish",
-      "state": "released_by_operator",
-      "released_at": "2026-07-08T12:45:48Z"
+      "label": "Website or public route publish",
+      "state": "out_of_scope_for_current_soft_launch"
     }
   ],
   "next_actions": [
     {
-      "action_id": "sync_release_exports",
-      "label": "Keep release-state exports and shell mirrors aligned after gate release"
+      "action_id": "probe_desporte_local_root",
+      "label": "Run the local read-only De Sporte bridge diagnostic and capture its JSON receipt"
     },
     {
-      "action_id": "commit_push_verified_worktree",
-      "label": "Commit and push only from the exact clean-slate LightSpeed worktree after no-secrets checks"
+      "action_id": "populate_desporte_desktop_summary",
+      "label": "Regenerate the LightSpeed agent-home export so De Sporte status appears in Desktop"
     },
     {
-      "action_id": "drive_writeback_packet",
-      "label": "Prepare Drive writeback packet from approved source contracts"
+      "action_id": "verify_go_desktop_receipt_chain",
+      "label": "Confirm LS GO, Desktop, Git and Drive reference the same soft-launch state"
     },
     {
       "action_id": "floor_automation_release",
-      "label": "Run internal floor automation only within resource guard and approval manifest"
+      "label": "Continue internal floor automation only within resource guard and accepted queues"
     }
   ],
   "gate_release": {
-    "release_id": "operator_gate_release_2026_07_08_finalise",
-    "released_at": "2026-07-08T12:45:48Z",
-    "source": "operator_chat_explicit_release",
-    "operator_phrase": "Gate is explicitly released, please finalise",
+    "release_id": "operator_soft_launch_release_2026_07_20",
+    "released_at": "2026-07-20T00:00:00Z",
+    "source": "operator_chat_explicit_soft_launch_direction",
+    "operator_phrase": "trouble shoot and debug desporte to populate LightSpeed Desktop",
     "scope": [
-      "LightSpeed Desktop gated visual review source",
-      "Git push from exact verified LightSpeed worktree",
-      "Drive writeback packet preparation through canonical contracts",
-      "Web/GO static/public route contract finalisation",
-      "Internal floor automation queue release within resource guards"
+      "LightSpeed Desktop local validation and curation",
+      "LightSpeed GO private operator surface alignment",
+      "De Sporte local sandbox diagnostics and Desktop population",
+      "Git validation and bounded repair branches",
+      "Drive evidence and receipt synchronization",
+      "Internal floor queue execution within resource guards"
     ],
     "held_scope": [
-      "DeSporte launch remains held",
-      "Squarespace manual paste/preview remains a human-browser operation unless a signed-in browser session is available",
-      "TheConstruct heavy model remains resource-held until RAM window is safe"
+      "Public Web frontend and broad web route testing remain deferred",
+      "Direct public Desktop execution remains prohibited",
+      "TheConstruct heavy model remains resource-held until RAM window is safe",
+      "Deletion remains proof-gated and excludes unique source, evidence and workbooks"
     ]
   },
   "resolved_blockers": [
     {
-      "blocker_id": "external_publish_hold",
-      "label": "External publish remains manual-gated",
-      "state": "released_by_operator",
-      "released_at": "2026-07-08T12:45:48Z"
+      "blocker_id": "desporte_blanket_hold",
+      "label": "De Sporte was globally held rather than available for bounded diagnostics",
+      "state": "resolved_to_local_sandbox",
+      "resolved_at": "2026-07-20T00:00:00Z"
     },
     {
-      "blocker_id": "repo_drive_writeback_hold",
-      "label": "Repo push and Drive writeback remain held until explicit approval",
-      "state": "released_by_operator",
-      "released_at": "2026-07-08T12:45:48Z"
+      "blocker_id": "desporte_path_typo",
+      "label": "De Sporte topology path contained a trailing backtick",
+      "state": "corrected_and_static_validation_passed",
+      "resolved_at": "2026-07-20T00:00:00Z"
+    },
+    {
+      "blocker_id": "desktop_manifest_stale",
+      "label": "Desktop source-manifest hash drift blocked the LightSpeed Surface Validation workflow",
+      "state": "refreshed_and_static_validation_passed",
+      "resolved_at": "2026-07-20T00:00:00Z"
     }
   ]
 }

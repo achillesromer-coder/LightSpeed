@@ -1,49 +1,73 @@
 {
-  "policy_id": "host_runtime_2026_05_21",
+  "co_running_apps": {
+    "chrome": {
+      "interaction_expectation": "normal_business_research_and_repo_tabs",
+      "mode": "keep_responsive",
+      "reserved_ram_gb": 6,
+      "reserved_threads": 4
+    },
+    "de_sporte": {
+      "active_interaction_percent_of_remaining_window": 20,
+      "active_interaction_share_of_remaining_window": 20,
+      "cascade_overlap_percent": 49,
+      "idle_persistence_percent_of_remaining_window": 80,
+      "interaction_speed_factor": 0.8,
+      "lightspeed_logged_in_percent": 48,
+      "mode": "low_sleep_persistent_companion",
+      "ready_waiting_share_of_remaining_window": 80,
+      "remaining_window_percent": 52
+    }
+  },
+  "firmware_follow_up": [
+    "Review BIOS update path before enabling new platform options.",
+    "Enable DOCP/XMP so the 32 GB kit can move off 2133 MT/s if stable.",
+    "Enable SVM/virtualization if local VM or container workloads become required."
+  ],
   "hardware_baseline": {
-    "cpu": "AMD Ryzen 7 2700X",
+    "bios_date": "2020-08-13",
+    "bios_version": "1004",
     "cores": 8,
-    "threads": 16,
-    "ram_gb": 32,
-    "ram_speed_mt_s": 2133,
+    "cpu": "AMD Ryzen 7 2700X",
     "gpu": "NVIDIA GeForce GTX 1660",
     "gpu_vram_gb": 4,
     "motherboard": "ASUS ROG STRIX B550-F GAMING (WI-FI)",
-    "bios_version": "1004",
-    "bios_date": "2020-08-13"
+    "ram_gb": 32,
+    "ram_speed_mt_s": 2133,
+    "threads": 16
   },
-  "storage_topology": {
-    "windows_root": "C:",
-    "windows_root_type": "hdd",
-    "workspace_root": "C:\\LightSpeed_Consolidated",
-    "workspace_root_type": "canonical_app_authority",
-    "ollama_model_root": "D:\\.ollama\\models",
-    "ollama_model_root_type": "junction_backed_local_model_store",
-    "policy": "Keep LightSpeed application/runtime authority on C and the Ollama model payload on D; De Sporte remains held as a separate project."
-  },
+  "policy_id": "host_runtime_2026_05_21",
   "runtime_limits": {
-    "cpu_scheduler_strategy": "bounded_parallelism_over_global_autostart",
-    "max_floor_boot_parallelism": 4,
-    "max_active_heavy_floors": 2,
-    "max_concurrent_ollama_jobs": 2,
-    "max_background_queue_workers": 2,
-    "construct_widget_budget": 36,
-    "construct_texture_panel_budget": 8,
-    "interactive_session_mode": "chrome_headroom_compact_shell",
     "chrome_reserved_ram_gb": 6,
     "chrome_reserved_threads": 4,
-    "lightspeed_max_resident_ui_panels": 4
+    "construct_texture_panel_budget": 8,
+    "construct_widget_budget": 36,
+    "cpu_scheduler_strategy": "bounded_parallelism_over_global_autostart",
+    "interactive_session_mode": "chrome_headroom_compact_shell",
+    "lightspeed_max_resident_ui_panels": 4,
+    "max_active_heavy_floors": 2,
+    "max_background_queue_workers": 2,
+    "max_concurrent_ollama_jobs": 2,
+    "max_floor_boot_parallelism": 4
+  },
+  "storage_topology": {
+    "ollama_model_root": "C:\\LightSpeed_Consolidated\\.dependencies\\ollama\\models",
+    "ollama_model_root_type": "vendor_dependency_store_reached_from_d_drive_junction",
+    "policy": "Use D:\\LightSpeed_Consolidated as the canonical operational namespace; retain C-backed junction targets and large dependency payloads until a separately verified physical migration is appropriate.",
+    "windows_root": "C:",
+    "windows_root_type": "hdd",
+    "workspace_root": "D:\\LightSpeed_Consolidated",
+    "workspace_root_type": "canonical_d_drive_namespace"
   },
   "windows_tuning": {
-    "power_plan": "General",
-    "cpu_min_percent_ac": 100,
-    "cpu_max_percent_ac": 100,
-    "disk_idle_minutes_ac": 0,
-    "disk_idle_minutes_dc": 0,
     "background_pause_on_pressure": true,
     "compact_shell_bias": true,
+    "cpu_max_percent_ac": 100,
+    "cpu_min_percent_ac": 100,
+    "disk_idle_minutes_ac": 0,
+    "disk_idle_minutes_dc": 0,
     "interactive_browser": "Google Chrome",
     "ollama_auto_start": "conditional_only",
+    "power_plan": "General",
     "startup_prune_required": [
       "Steam",
       "Epic",
@@ -51,29 +75,5 @@
       "Teams",
       "vendor_updaters"
     ]
-  },
-  "co_running_apps": {
-    "chrome": {
-      "mode": "keep_responsive",
-      "reserved_ram_gb": 6,
-      "reserved_threads": 4,
-      "interaction_expectation": "normal_business_research_and_repo_tabs"
-    },
-    "de_sporte": {
-      "mode": "low_sleep_persistent_companion",
-      "lightspeed_logged_in_percent": 48,
-      "remaining_window_percent": 52,
-      "idle_persistence_percent_of_remaining_window": 80,
-      "ready_waiting_share_of_remaining_window": 80,
-      "active_interaction_percent_of_remaining_window": 20,
-      "active_interaction_share_of_remaining_window": 20,
-      "cascade_overlap_percent": 49,
-      "interaction_speed_factor": 0.8
-    }
-  },
-  "firmware_follow_up": [
-    "Review BIOS update path before enabling new platform options.",
-    "Enable DOCP/XMP so the 32 GB kit can move off 2133 MT/s if stable.",
-    "Enable SVM/virtualization if local VM or container workloads become required."
-  ]
+  }
 }

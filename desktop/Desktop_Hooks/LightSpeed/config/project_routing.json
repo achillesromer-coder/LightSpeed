@@ -1,0 +1,146 @@
+{
+  "schema_version": "lightspeed-project-routing-v1",
+  "updated_utc": "2026-07-20T23:08:00Z",
+  "authority": {
+    "owner": "Nathaniel Bouwer",
+    "governance": "Achilles / LS GO gate",
+    "routing": "Neo",
+    "project_planning": "Architect",
+    "runtime_health_storage": "Merovingian",
+    "background_execution": "Smith",
+    "provenance": "Oracle",
+    "review": "Morpheus",
+    "interface": "Trinity"
+  },
+  "project_roots": [
+    {
+      "root_id": "architect-canonical",
+      "path": "Z Axis/Z+1_Architect/projects",
+      "authority": "canonical",
+      "writable": true,
+      "desktop_visible": true
+    },
+    {
+      "root_id": "construct-legacy",
+      "path": "Z Axis/Z0_TheConstruct/projects",
+      "authority": "legacy_reference",
+      "writable": false,
+      "desktop_visible": true
+    }
+  ],
+  "external_project_roots": {
+    "environment_variable": "LIGHTSPEED_PROJECT_ROOTS",
+    "separator": ";",
+    "authority": "external_reference",
+    "writable": false
+  },
+  "scan_policy": {
+    "ignored_directories": [
+      ".git",
+      ".venv",
+      "venv",
+      "node_modules",
+      "__pycache__",
+      ".pytest_cache",
+      ".mypy_cache",
+      "dist",
+      "build"
+    ],
+    "ignored_files": [
+      "Thumbs.db",
+      ".DS_Store"
+    ],
+    "max_hash_bytes": 1073741824,
+    "registry_refresh_seconds": 60,
+    "project_change_debounce_seconds": 120
+  },
+  "drive_writeback": {
+    "mode": "drive_for_desktop_or_connector_outbox",
+    "root_environment_variables": [
+      "LIGHTSPEED_DRIVE_SYNC_ROOT",
+      "GOOGLE_DRIVE_ROOT"
+    ],
+    "relative_receipt_path": "LightSpeed/Project Receipts",
+    "local_fallback_path": "Z Axis/Z-4_Merovingian/data/runtime_exports/drive_outbox",
+    "write_scope": "immutable_named_project_artifacts_receipts_manifests_and_review_packets_only",
+    "artifact_mode": "immutable_review_copy",
+    "max_artifact_files": 50,
+    "max_artifact_total_bytes": 268435456,
+    "max_single_artifact_bytes": 134217728,
+    "blocked_artifact_patterns": [
+      ".env",
+      ".env.*",
+      "*.pem",
+      "*.key",
+      "id_rsa*",
+      "credentials*.json",
+      "token*.json",
+      "*.p12",
+      "*.pfx"
+    ],
+    "workbooks_mutable": false
+  },
+  "go_review": {
+    "queue_path": "Z Axis/Z-4_Merovingian/data/runtime_exports/go_review_queue.jsonl",
+    "decision_path": "Z Axis/Z-4_Merovingian/data/runtime_exports/go_review_decisions.jsonl",
+    "require_owner_gate": true,
+    "allowed_decisions": [
+      "approve",
+      "hold",
+      "reject"
+    ],
+    "private_local_projection": true
+  },
+  "cleanup_policy": {
+    "mode": "evidence_gated_quarantine",
+    "candidate_report_path": "Z Axis/Z-4_Merovingian/data/runtime_exports/cleanup_candidates.json",
+    "quarantine_path": "Z Axis/Z-4_Merovingian/data/quarantine",
+    "automatic_deletion": false,
+    "safe_candidate_classes": [
+      "empty_generated_file",
+      "empty_generated_directory",
+      "stale_cache",
+      "duplicate_archive_checksum"
+    ],
+    "never_delete_patterns": [
+      "*.xlsx",
+      "*.xls",
+      "*.ods",
+      "*.db",
+      "*.sqlite",
+      "*.sqlite3",
+      "*.zip",
+      "*.7z",
+      "*.tar",
+      "*.gz",
+      "*.pdf",
+      "*.docx",
+      "*.pptx",
+      "project.json",
+      "manifest.json"
+    ],
+    "required_proof": [
+      "exact_path",
+      "size_and_hash",
+      "reference_scan",
+      "canonical_retention_copy",
+      "recovery_path",
+      "Achilles approval"
+    ]
+  },
+  "resource_guard": {
+    "single_primary_scan": true,
+    "max_parallel_hashes": 1,
+    "max_project_scan_files": 200000,
+    "warning_disk_percent": 85,
+    "critical_disk_percent": 95,
+    "heavy_construct_work_manual": true
+  },
+  "release_boundary": {
+    "web_frontend": "deferred",
+    "public_publish": false,
+    "direct_cross_app_execution": false,
+    "destructive_cleanup": false,
+    "secondary_z": false
+  }
+}

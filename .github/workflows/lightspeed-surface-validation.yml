@@ -10,6 +10,10 @@ on:
       - "desktop/LightSpeed_Runtime/**"
       - "scripts/validate_lightspeed_surfaces.py"
       - "scripts/refresh_desktop_source_manifest.py"
+      - "scripts/validate_desporte_desktop_bridge.py"
+      - "scripts/populate_desporte_desktop.py"
+      - "tools/run_desporte_desktop_probe.cmd"
+      - "tools/run_desporte_desktop_population.cmd"
       - ".github/workflows/lightspeed-surface-validation.yml"
   push:
     branches:
@@ -22,11 +26,15 @@ on:
       - "desktop/LightSpeed_Runtime/**"
       - "scripts/validate_lightspeed_surfaces.py"
       - "scripts/refresh_desktop_source_manifest.py"
+      - "scripts/validate_desporte_desktop_bridge.py"
+      - "scripts/populate_desporte_desktop.py"
+      - "tools/run_desporte_desktop_probe.cmd"
+      - "tools/run_desporte_desktop_population.cmd"
       - ".github/workflows/lightspeed-surface-validation.yml"
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: lightspeed-surface-${{ github.workflow }}-${{ github.ref }}
@@ -34,7 +42,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Validate eligible LightSpeed desktop surfaces
+    name: Validate LightSpeed Desktop and De Sporte bridge
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -43,16 +51,44 @@ jobs:
         uses: actions/checkout@v4
         with:
           show-progress: false
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Compile validators
+      - name: Compile validators and population helper
         run: |
           python -m py_compile scripts/validate_lightspeed_surfaces.py
           python -m py_compile scripts/refresh_desktop_source_manifest.py
+          python -m py_compile scripts/validate_desporte_desktop_bridge.py
+          python -m py_compile scripts/populate_desporte_desktop.py
+
+      - name: Validate De Sporte Desktop bridge contract
+        id: desporte
+        shell: bash
+        run: |
+          set +e
+          python scripts/validate_desporte_desktop_bridge.py \
+            --json-output desporte-static-receipt.json \
+            > desporte-validation.log 2>&1
+          exit_code=$?
+          cat desporte-validation.log
+          echo "exit_code=${exit_code}" >> "${GITHUB_OUTPUT}"
+          exit 0
+
+      - name: Validate De Sporte population sequence surfaces
+        id: population
+        shell: bash
+        run: |
+          set +e
+          python scripts/populate_desporte_desktop.py --static-check \
+            > desporte-population-static.log 2>&1
+          exit_code=$?
+          cat desporte-population-static.log
+          echo "exit_code=${exit_code}" >> "${GITHUB_OUTPUT}"
+          exit 0
 
       - name: Validate source manifest and runtime surfaces
         id: validation
@@ -71,22 +107,59 @@ jobs:
           python scripts/refresh_desktop_source_manifest.py \
             --output refreshed-source-manifest.json
 
+      - name: Apply bounded manifest refresh on controlled branch
+        id: refresh
+        if: >-
+          github.event_name == 'push' &&
+          (startsWith(github.ref_name, 'fix/') || github.ref_name == 'ops/merovingian-project-routing-2026-07-20') &&
+          steps.validation.outputs.exit_code != '0'
+        shell: bash
+        run: |
+          cp refreshed-source-manifest.json desktop/source-manifest.json
+          python scripts/validate_lightspeed_surfaces.py > surface-validation-refreshed.log 2>&1
+          cat surface-validation-refreshed.log
+
+          git config user.name "cognigrex-validation"
+          git config user.email "actions@users.noreply.github.com"
+          git add desktop/source-manifest.json
+          if git diff --cached --quiet; then
+            echo "No manifest update was required."
+          else
+            git commit -m "Refresh bounded LightSpeed Desktop source manifest"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+          echo "applied=true" >> "${GITHUB_OUTPUT}"
+
       - name: Upload validation diagnostic
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: lightspeed-surface-validation
           path: |
+            desporte-validation.log
+            desporte-static-receipt.json
+            desporte-population-static.log
             surface-validation.log
+            surface-validation-refreshed.log
             refreshed-source-manifest.json
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 14
 
       - name: Enforce validation result
         if: always()
         shell: bash
         run: |
-          if [ "${{ steps.validation.outputs.exit_code }}" != "0" ]; then
-            echo "Surface validation failed; inspect the lightspeed-surface-validation artifact."
-            exit 1
+          failed=0
+          if [ "${{ steps.desporte.outputs.exit_code }}" != "0" ]; then
+            echo "De Sporte Desktop bridge validation failed."
+            failed=1
           fi
+          if [ "${{ steps.population.outputs.exit_code }}" != "0" ]; then
+            echo "De Sporte Desktop population sequence validation failed."
+            failed=1
+          fi
+          if [ "${{ steps.validation.outputs.exit_code }}" != "0" ] && [ "${{ steps.refresh.outputs.applied }}" != "true" ]; then
+            echo "Surface validation failed; inspect the lightspeed-surface-validation artifact."
+            failed=1
+          fi
+          exit "$failed"

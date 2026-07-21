@@ -1,8 +1,8 @@
 schema_version: lightspeed-archives-policy-v1
 authority:
-  runtime_root: C:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed
+  runtime_root: D:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed
   operational_store: Z Axis\Z-4_Merovingian\data\db\lightspeed_unified.db
-  human_projection: C:\LightSpeed_Consolidated\Logs\Canonical\LightSpeed_Operational_Log_Ledger.xlsx
+  human_projection: D:\LightSpeed_Consolidated\Logs\Canonical\LightSpeed_Operational_Log_Ledger.xlsx
 
 retention:
   weekly_jsonl:

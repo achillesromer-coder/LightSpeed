@@ -28,7 +28,7 @@ Preserve the current four-view application:
 The side-edit layer is additive. It mounts after the existing application and adds only:
 
 - current-Site identity;
-- Nathaniel Bower owner orientation;
+- Nathaniel Bouwer owner orientation;
 - Achilles / GO control-gate chain;
 - Git and Drive source-parity status;
 - review/publish state.

@@ -1,12 +1,17 @@
 {
   "schema_version": "lightspeed-go-sites-integration-v1",
   "site_name": "LightSpeed GO",
+  "site_url": "https://lightspeed-go.nathaniel-b.chatgpt.site/",
   "edit_mode": "existing-site-side-edit",
   "create_new_site": false,
-  "publish_state": "review-required",
+  "publish_state": "verified-local-current-site-update-pending",
+  "release_date": "2026-07-21",
+  "source_commit": "bf1d8466b2b6018406214d8b42785d6d428d22c2",
+  "source_pull_request": 15,
   "authority_chain": [
-    "Nathaniel Bower",
+    "Nathaniel Bouwer",
     "Achilles / GO gate",
+    "Neo routing",
     "agent floor",
     "LightSpeed Desktop",
     "Git and Drive receipts"
@@ -17,16 +22,27 @@
     "System",
     "Sources"
   ],
+  "canonical_surfaces": {
+    "owner_and_governance": "Nathaniel Bouwer / Achilles",
+    "task_and_index_authority": "Drive CORE",
+    "implementation_authority": "achillesromer-coder/LightSpeed",
+    "operator_surface": "LightSpeed GO",
+    "local_execution_surface": "LightSpeed Desktop",
+    "publication_surface": "existing ChatGPT Site"
+  },
   "promoted_components": [
     "current Site identity",
     "owner orientation",
     "GO control gate",
+    "Neo routing",
     "source parity",
     "publish receipt"
   ],
   "deferred_components": [
     "duplicate application authentication",
     "private profile data",
-    "older broad route shells"
+    "older broad route shells",
+    "public direct Desktop execution",
+    "secondary Z activation"
   ]
 }

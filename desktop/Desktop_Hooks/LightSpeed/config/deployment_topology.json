@@ -1,31 +1,52 @@
 {
-  "topology_id": "d_drive_authority_2026_05_21",
   "authoritative_roots": [
     {
       "label": "LightSpeed Runtime",
-      "path": "C:\\LightSpeed_Consolidated\\LightSpeed_Runtime",
+      "path": "D:\\LightSpeed_Consolidated\\LightSpeed_Runtime",
       "role": "canonical_runtime",
       "exists": true
     },
     {
       "label": "LightSpeed Desktop Shell",
-      "path": "C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed",
+      "path": "D:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed",
       "role": "canonical_shell",
       "exists": true
     },
     {
       "label": "De Sporte",
-      "path": "D:\\De Sporte`",
+      "path": "D:\\De Sporte",
       "role": "sibling_soft_launch_app",
+      "exists": true
+    },
+    {
+      "label": "Ollama Model Store",
+      "path": "C:\\LightSpeed_Consolidated\\.dependencies\\ollama\\models",
+      "role": "canonical_local_model_payloads",
       "exists": true
     }
   ],
+  "migration_policy": {
+    "c_drive_role": "junction_backing_store_recovery_and_large_dependency_payloads",
+    "d_drive_mode": "canonical_lightspeed_namespace_and_de_sporte_sibling",
+    "delete_gate": "only_after_construct_and_smith_data_rehome_plus_runtime_verification",
+    "drive_and_repo_push": "approval_gated_after_local_proof_and_no_secrets"
+  },
+  "persistence_budget": {
+    "cascade_overlap_percent": 49,
+    "de_sporte_active_interaction_percent_of_remaining_window": 20,
+    "de_sporte_interaction_speed_factor": 0.8,
+    "de_sporte_ready_waiting_percent_of_remaining_window": 80,
+    "lightspeed_primary_presence_percent": 48,
+    "non_lightspeed_window_percent": 52,
+    "policy_note": "Budgets are orchestration weights and staging intent, not literal OS CPU caps.",
+    "roster_mode": "staggered_weekly_rotation"
+  },
   "reference_roots": [
     {
-      "label": "Legacy C Drive Shell",
+      "label": "Legacy Desktop Shell",
       "path": "C:\\Users\\acc\\Desktop\\LightSpeed Consolidated\\LightSpeed",
       "role": "residual_reference_only_until_retired",
-      "exists": true
+      "exists": false
     }
   ],
   "staging_roots": [
@@ -40,20 +61,5 @@
       "role": "de_sporte_overlay_support_reference"
     }
   ],
-  "migration_policy": {
-    "d_drive_mode": "authoritative_runtime_and_shell",
-    "c_drive_role": "residual_reference_only_for_not_yet_rehomed_bulk_data",
-    "delete_gate": "only_after_construct_and_smith_data_rehome_plus_runtime_verification",
-    "drive_and_repo_push": "approval_gated_after_d_drive_proof"
-  },
-  "persistence_budget": {
-    "lightspeed_primary_presence_percent": 48,
-    "non_lightspeed_window_percent": 52,
-    "de_sporte_ready_waiting_percent_of_remaining_window": 80,
-    "de_sporte_active_interaction_percent_of_remaining_window": 20,
-    "cascade_overlap_percent": 49,
-    "de_sporte_interaction_speed_factor": 0.8,
-    "policy_note": "Budgets are orchestration weights and staging intent, not literal OS CPU caps.",
-    "roster_mode": "staggered_weekly_rotation"
-  }
+  "topology_id": "lightspeed_d_drive_operational_2026_07_21"
 }

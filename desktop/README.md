@@ -1,8 +1,8 @@
 # LightSpeed Desktop Source Mirror
 
 This directory is the Git boundary for approved LightSpeed Desktop source. The
-runtime authority remains `C:\LightSpeed_Consolidated`; the compatibility
-`D:\LightSpeed_Consolidated` tree is never a synchronization input.
+runtime authority is `D:\LightSpeed_Consolidated`; the retained C-drive tree is
+a migration and recovery source, not a competing runtime authority.
 
 The synchronizer preserves allowlisted paths below this directory and writes
 `source-manifest.json` with the SHA-256 digest and byte size of every included
@@ -20,13 +20,13 @@ reparse status are checked again immediately before atomic replacement.
 From the repository root, preview the synchronization without writing:
 
 ```powershell
-C:\LightSpeed_Consolidated\venv\Scripts\python.exe tools\sync_desktop_source.py --dry-run
+D:\LightSpeed_Consolidated\venv\Scripts\python.exe tools\sync_desktop_source.py --dry-run
 ```
 
 Apply the synchronization:
 
 ```powershell
-C:\LightSpeed_Consolidated\venv\Scripts\python.exe tools\sync_desktop_source.py --sync
+D:\LightSpeed_Consolidated\venv\Scripts\python.exe tools\sync_desktop_source.py --sync
 ```
 
 The source root is fixed by the CLI. `--target-root` exists for isolated
