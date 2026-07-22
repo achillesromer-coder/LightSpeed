@@ -1,9 +1,11 @@
 # LightSpeed
 
 LightSpeed is the local Cognigrex desktop control plane and its approved
-inter-platform contracts. The canonical runtime is
-`D:\LightSpeed_Consolidated`. The C-drive tree is the retained migration and
-recovery source until D-drive launch receipts and checksums are complete.
+inter-platform contracts. `D:\LightSpeed_Consolidated` is the stable operator
+and launch namespace. Its core runtime, shell, agents, applications and data
+paths are junctions backed by `C:\LightSpeed_Consolidated`; those paths are one
+physical system, not competing C- and D-drive copies. Git source worktrees stay
+separate under `_worktrees` and promote reviewed code into the live runtime.
 
 ## Operate
 
@@ -19,13 +21,16 @@ recovery source until D-drive launch receipts and checksums are complete.
 
 | Surface | Authority |
 | --- | --- |
-| Desktop | Executable runtime, SQLite state, local models, empirical inputs, and active work |
+| Desktop | Executable runtime, SQLite state, local models, empirical inputs, and active work under the D operator namespace with C physical backing |
 | Drive | Approved long-term agent memory, review workbooks, handoffs, and receipts |
 | Git | Source, tests, stable contracts, schemas, and public-safe summaries |
 | LS GO / LS Web | Approved queue exchange and front-facing interaction |
 
-Desktop does not invoke Git. Git does not read Desktop runtime state. Approved
-records cross boundaries through explicit manifests and receipts. Secrets,
+The interactive Desktop runtime does not run Git commands. Reviewed Git source
+is promoted into Desktop through the maintenance/launch workflow, while Neo
+routes approved Drive knowledge and receipts. Git never reads unrestricted
+Desktop runtime state. Approved records cross boundaries through explicit
+manifests and receipts. Secrets,
 model weights, databases, logs, archives, empirical payloads, and virtual
 environments never enter Git.
 

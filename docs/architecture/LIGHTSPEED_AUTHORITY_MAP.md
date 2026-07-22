@@ -4,14 +4,26 @@
 
 | Boundary | Authority | Permitted content | Prohibited content |
 | --- | --- | --- | --- |
-| Desktop | `C:\LightSpeed_Consolidated` | Executable runtime, SQLite machine state, local models, empirical inputs, bounded recovery evidence, secrets, and active source | Direct Git operations by the runtime |
-| Compatibility | `D:\LightSpeed_Consolidated` | Junctions that preserve legacy paths | Independent files, synchronization input, or a second-copy claim |
+| Operator namespace | `D:\LightSpeed_Consolidated` | Stable launch paths, operator tooling, projects and junctioned runtime surfaces | Treating a junction as an independent copy or backup |
+| Physical backing | `C:\LightSpeed_Consolidated` | Executable runtime, SQLite machine state, local models, empirical inputs, bounded recovery evidence, secrets, active data and Git worktrees | Running it as a competing second LightSpeed installation |
 | Drive | Approved LightSpeed folders and workbooks | Approved inter-platform knowledge, human-review projections, landing files, links, classifications, and receipts | Secrets, model weights, raw runtime state, unrestricted empirical data, or The Construct memory |
 | Git | Canonical LightSpeed repository | Source, tests, configuration, schemas, manifests, architecture documents, and public-safe queue summaries | Runtime databases, logs, archives, virtual environments, model weights, empirical datasets, secrets, or restricted payloads |
 
-Desktop never invokes Git. Neo reconciles approved local and Drive state through
-explicit manifests and receipts. A Git commit is a publication action, not a
-runtime persistence mechanism.
+The interactive Desktop runtime never invokes Git directly. Reviewed source is
+promoted from the canonical Git worktree through the maintenance/launch layer.
+Neo reconciles approved local and Drive state through explicit manifests and
+receipts. A Git commit is a publication action, not a runtime persistence
+mechanism.
+
+## Canonical Storage Topology
+
+`D:\LightSpeed_Consolidated` is the path operators and launchers use.
+`C:\LightSpeed_Consolidated` currently stores the physical content for the
+junctioned `Agents`, `Apps`, `Desktop_Hooks`, `LightSpeed_Runtime`, `Logs`,
+`Sources`, `venv`, migration and worktree surfaces. Removing either side of a
+junction does not create or remove a second copy; backup proof must point to a
+different physical store such as a verified remote Git object or approved Drive
+artifact. The desktop shortcut targets the D-side launcher.
 
 ## Neo And Floor Topology
 

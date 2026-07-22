@@ -18,12 +18,15 @@ DESKTOP = ROOT / "desktop"
 DEFAULT_MANIFEST = DESKTOP / "source-manifest.json"
 
 
+def portable_content(path: Path) -> bytes:
+    # Git may materialize text files with CRLF on Windows while CI checks them
+    # out with LF. The validator already hashes normalized content, so the
+    # refresher must use the same portable content for hashes and byte counts.
+    return path.read_bytes().replace(b"\r\n", b"\n")
+
+
 def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+    return hashlib.sha256(portable_content(path)).hexdigest()
 
 
 def refresh(manifest_path: Path) -> dict[str, object]:
@@ -41,9 +44,10 @@ def refresh(manifest_path: Path) -> dict[str, object]:
         target.relative_to(ROOT.resolve())
         if not target.is_file():
             raise FileNotFoundError(f"manifest target missing: desktop/{relative}")
+        content = portable_content(target)
         refreshed.append(
             {
-                "bytes": target.stat().st_size,
+                "bytes": len(content),
                 "path": relative,
                 "sha256": sha256(target),
             }

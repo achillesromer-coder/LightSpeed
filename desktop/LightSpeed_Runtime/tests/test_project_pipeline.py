@@ -4,10 +4,40 @@ import json
 import sys
 from pathlib import Path
 
+import pytest
+
 RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RUNTIME_ROOT))
 
+import lightspeed_runtime.project_pipeline as project_pipeline
 from lightspeed_runtime.project_pipeline import ProjectPipeline
+
+
+@pytest.fixture(autouse=True)
+def isolate_external_project_roots(monkeypatch):
+    """Keep host project routing from leaking into temporary test shells."""
+    monkeypatch.delenv("LIGHTSPEED_PROJECT_ROOTS", raising=False)
+
+
+def test_json_write_retries_transient_windows_lock(tmp_path, monkeypatch):
+    target = tmp_path / "health.json"
+    original_replace = Path.replace
+    attempts = {"count": 0}
+
+    def transient_lock(path, destination):
+        attempts["count"] += 1
+        if attempts["count"] < 3:
+            raise PermissionError("simulated reader lock")
+        return original_replace(path, destination)
+
+    monkeypatch.setattr(Path, "replace", transient_lock)
+    monkeypatch.setattr(project_pipeline.time, "sleep", lambda _seconds: None)
+
+    project_pipeline._write_json(target, {"status": "pass"})
+
+    assert attempts["count"] == 3
+    assert json.loads(target.read_text(encoding="utf-8")) == {"status": "pass"}
+    assert not list(tmp_path.glob("health.json.tmp.*"))
 
 
 def make_shell(tmp_path: Path, *, max_scan_files: int = 1000) -> Path:
