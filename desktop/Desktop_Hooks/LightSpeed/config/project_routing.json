@@ -139,6 +139,9 @@
     "warning_disk_percent": 75,
     "critical_disk_percent": 90,
     "minimum_free_bytes": 26843545600,
+    "warning_free_memory_percent": 15,
+    "critical_free_memory_percent": 8,
+    "minimum_free_memory_bytes": 2147483648,
     "heavy_construct_work_manual": true
   },
   "release_boundary": {
