@@ -132,8 +132,13 @@
     "single_primary_scan": true,
     "max_parallel_hashes": 1,
     "max_project_scan_files": 200000,
-    "warning_disk_percent": 85,
-    "critical_disk_percent": 95,
+    "volume_paths": [
+      "C:\\LightSpeed_Consolidated",
+      "D:\\LightSpeed_Consolidated"
+    ],
+    "warning_disk_percent": 75,
+    "critical_disk_percent": 90,
+    "minimum_free_bytes": 26843545600,
     "heavy_construct_work_manual": true
   },
   "release_boundary": {

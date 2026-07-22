@@ -61,9 +61,22 @@ def _select(candidates: list[Path], marker: Path, label: str) -> Path:
 
 def _write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary = path.with_suffix(path.suffix + f".tmp.{os.getpid()}")
     temporary.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    temporary.replace(path)
+    try:
+        for attempt in range(8):
+            try:
+                temporary.replace(path)
+                return
+            except PermissionError:
+                if attempt == 7:
+                    raise
+                time.sleep(0.05 * (attempt + 1))
+    finally:
+        try:
+            temporary.unlink(missing_ok=True)
+        except OSError:
+            pass
 
 
 def _read_pid(lock_path: Path) -> int | None:
@@ -188,6 +201,8 @@ def run_once(runtime_root: Path, shell_root: Path, *, queue_changes: bool) -> di
         "cleanup_candidates": str(pipeline.cleanup_path),
         "review_queue": str(pipeline.review_queue_path),
         "drive_writeback": (health.get("details") or {}).get("drive_writeback"),
+        "resource_guard": (health.get("details") or {}).get("resource_guard"),
+        "agent_floors": (health.get("details") or {}).get("agent_floors"),
         "automatic_deletion": False,
         "web_frontend_in_scope": False,
         "next_action": (
