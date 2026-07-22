@@ -164,6 +164,21 @@ def test_agent_floor_health_materializes_shared_async_queue(tmp_path):
     assert Path(snapshot["transport"]["neo_queue_path"]).is_file()
 
 
+def test_memory_guard_throttles_heavy_work_when_memory_is_low(tmp_path, monkeypatch):
+    shell = make_shell(tmp_path)
+    total = 32 * 1024**3
+    free = 3 * 1024**3
+    monkeypatch.setattr(project_pipeline, "_memory_snapshot", lambda: (total, free))
+
+    snapshot = ProjectPipeline(shell)._resource_health()
+
+    assert snapshot["state"] == "warning"
+    assert snapshot["work_intake"] == "bounded_only"
+    assert snapshot["bounded_work_allowed"] is True
+    assert snapshot["heavy_work_allowed"] is False
+    assert snapshot["memory"]["free_percent"] == 9.38
+
+
 def test_refresh_queues_change_receipt_without_mutating_project(tmp_path, monkeypatch):
     shell = make_shell(tmp_path)
     project = shell / "Z Axis" / "Z+1_Architect" / "projects" / "Receipt Project"

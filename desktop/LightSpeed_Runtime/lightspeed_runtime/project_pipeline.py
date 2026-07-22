@@ -31,6 +31,36 @@ def utc_now_iso() -> str:
     return datetime.now(UTC).isoformat(timespec="seconds")
 
 
+def _memory_snapshot() -> tuple[int, int]:
+    """Return total and available physical memory using only the standard library."""
+    if os.name == "nt":
+        import ctypes
+
+        class MemoryStatusEx(ctypes.Structure):
+            _fields_ = [
+                ("dwLength", ctypes.c_ulong),
+                ("dwMemoryLoad", ctypes.c_ulong),
+                ("ullTotalPhys", ctypes.c_ulonglong),
+                ("ullAvailPhys", ctypes.c_ulonglong),
+                ("ullTotalPageFile", ctypes.c_ulonglong),
+                ("ullAvailPageFile", ctypes.c_ulonglong),
+                ("ullTotalVirtual", ctypes.c_ulonglong),
+                ("ullAvailVirtual", ctypes.c_ulonglong),
+                ("ullAvailExtendedVirtual", ctypes.c_ulonglong),
+            ]
+
+        status = MemoryStatusEx()
+        status.dwLength = ctypes.sizeof(status)
+        if ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(status)):
+            return int(status.ullTotalPhys), int(status.ullAvailPhys)
+        raise OSError("GlobalMemoryStatusEx failed")
+
+    page_size = int(os.sysconf("SC_PAGE_SIZE"))
+    total = page_size * int(os.sysconf("SC_PHYS_PAGES"))
+    available = page_size * int(os.sysconf("SC_AVPHYS_PAGES"))
+    return total, available
+
+
 def _read_json(path: Path) -> dict[str, Any]:
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
@@ -225,6 +255,62 @@ class ProjectPipeline:
             "critical_disk_percent": critical_percent,
             "minimum_free_bytes": minimum_free_bytes,
             "volumes": rows,
+        }
+
+    def _memory_health(self) -> dict[str, Any]:
+        guard = self._resource_guard()
+        warning_free_percent = float(guard.get("warning_free_memory_percent") or 15)
+        critical_free_percent = float(guard.get("critical_free_memory_percent") or 8)
+        minimum_free_bytes = int(guard.get("minimum_free_memory_bytes") or 2 * 1024**3)
+        try:
+            total_bytes, free_bytes = _memory_snapshot()
+        except (OSError, ValueError) as exc:
+            return {
+                "available": False,
+                "state": "warning",
+                "error": f"{type(exc).__name__}:{exc}",
+                "warning_free_percent": warning_free_percent,
+                "critical_free_percent": critical_free_percent,
+                "minimum_free_bytes": minimum_free_bytes,
+            }
+
+        free_percent = (free_bytes / total_bytes * 100.0) if total_bytes else 0.0
+        state = "pass"
+        if free_percent <= critical_free_percent or free_bytes < minimum_free_bytes:
+            state = "critical"
+        elif free_percent <= warning_free_percent or free_bytes < minimum_free_bytes * 2:
+            state = "warning"
+        return {
+            "available": True,
+            "state": state,
+            "total_bytes": total_bytes,
+            "free_bytes": free_bytes,
+            "used_bytes": max(0, total_bytes - free_bytes),
+            "free_percent": round(free_percent, 2),
+            "used_percent": round(100.0 - free_percent, 2),
+            "warning_free_percent": warning_free_percent,
+            "critical_free_percent": critical_free_percent,
+            "minimum_free_bytes": minimum_free_bytes,
+        }
+
+    def _resource_health(self) -> dict[str, Any]:
+        disks = self._disk_health()
+        memory = self._memory_health()
+        states = {str(disks.get("state")), str(memory.get("state"))}
+        state = "critical" if "critical" in states else ("warning" if "warning" in states else "pass")
+        return {
+            "schema_version": "lightspeed-resource-health-v2",
+            "state": state,
+            "work_intake": "hold_heavy" if state == "critical" else (
+                "bounded_only" if state == "warning" else "normal"
+            ),
+            "bounded_work_allowed": state != "critical",
+            "heavy_work_allowed": state == "pass",
+            "warning_disk_percent": disks["warning_disk_percent"],
+            "critical_disk_percent": disks["critical_disk_percent"],
+            "minimum_free_bytes": disks["minimum_free_bytes"],
+            "volumes": disks["volumes"],
+            "memory": memory,
         }
 
     def agent_floor_health(
@@ -734,7 +820,7 @@ class ProjectPipeline:
         except Exception as exc:
             errors.append(f"essential_services:{type(exc).__name__}:{exc}")
 
-        resources = self._disk_health()
+        resources = self._resource_health()
         details["resource_guard"] = resources
         details["disks"] = resources["volumes"]
         if resources["volumes"]:
