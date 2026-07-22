@@ -76,6 +76,7 @@ jobs:
         id: compile
         continue-on-error: true
         run: |
+          set -o pipefail
           python -m py_compile \
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/__init__.py" \
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/__init__.py" \
@@ -92,6 +93,7 @@ jobs:
         id: static
         continue-on-error: true
         run: |
+          set -o pipefail
           python scripts/run_merovingian_soft_launch.py \
             --static-check \
             --runtime-root desktop/LightSpeed_Runtime \
@@ -101,12 +103,15 @@ jobs:
       - name: Validate global Desktop source manifest
         id: surface
         continue-on-error: true
-        run: python scripts/validate_lightspeed_surfaces.py 2>&1 | tee surface-validation.log
+        run: |
+          set -o pipefail
+          python scripts/validate_lightspeed_surfaces.py 2>&1 | tee surface-validation.log
 
       - name: Run project, artifact, bridge and secret-boundary tests
         id: python_tests
         continue-on-error: true
         run: |
+          set -o pipefail
           python -m pytest -q \
             desktop/LightSpeed_Runtime/tests/test_project_pipeline.py \
             desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py \
@@ -124,25 +129,33 @@ jobs:
         id: npm_install
         continue-on-error: true
         working-directory: apps/lightspeed-go
-        run: npm ci 2>&1 | tee ../../npm-install.log
+        run: |
+          set -o pipefail
+          npm ci 2>&1 | tee ../../npm-install.log
 
       - name: Test LS GO
         id: npm_test
         continue-on-error: true
         working-directory: apps/lightspeed-go
-        run: npm test 2>&1 | tee ../../npm-test.log
+        run: |
+          set -o pipefail
+          npm test 2>&1 | tee ../../npm-test.log
 
       - name: Type-check LS GO
         id: npm_check
         continue-on-error: true
         working-directory: apps/lightspeed-go
-        run: npm run check 2>&1 | tee ../../npm-check.log
+        run: |
+          set -o pipefail
+          npm run check 2>&1 | tee ../../npm-check.log
 
       - name: Build LS GO
         id: npm_build
         continue-on-error: true
         working-directory: apps/lightspeed-go
-        run: npm run build 2>&1 | tee ../../npm-build.log
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee ../../npm-build.log
 
       - name: Upload complete validation diagnostics
         if: always()

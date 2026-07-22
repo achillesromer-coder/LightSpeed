@@ -40,6 +40,23 @@ def test_json_write_retries_transient_windows_lock(tmp_path, monkeypatch):
     assert not list(tmp_path.glob("health.json.tmp.*"))
 
 
+def test_runtime_root_redirects_to_sibling_desktop_shell(tmp_path, monkeypatch):
+    monkeypatch.delenv("LIGHTSPEED_SHELL_ROOT", raising=False)
+    runtime_root = tmp_path / "LightSpeed_Runtime"
+    runtime_root.mkdir()
+    shell_root = tmp_path / "Desktop_Hooks" / "LightSpeed"
+    (shell_root / "config").mkdir(parents=True)
+    (shell_root / "config" / "project_routing.json").write_text("{}\n", encoding="utf-8")
+
+    pipeline = ProjectPipeline(runtime_root)
+
+    assert pipeline.requested_shell_root == runtime_root.resolve()
+    assert pipeline.shell_root == shell_root.resolve()
+    assert pipeline.root_resolution_mode == "runtime_sibling_contract_root"
+    assert pipeline.runtime_exports.is_relative_to(shell_root.resolve())
+    assert not (runtime_root / "Z Axis").exists()
+
+
 def make_shell(tmp_path: Path, *, max_scan_files: int = 1000) -> Path:
     shell = tmp_path / "shell"
     (shell / "config").mkdir(parents=True)

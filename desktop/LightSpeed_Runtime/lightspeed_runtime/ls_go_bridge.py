@@ -208,6 +208,7 @@ def create_app(root: Path | str) -> FastAPI:
                     "project_summary": registry.get("summary") or {},
                     "cleanup_summary": registry.get("cleanup_summary") or {},
                     "drive_writeback": health_details.get("drive_writeback"),
+                    "root_resolution": health_details.get("root_resolution"),
                 },
                 "resources": health_details.get("resource_guard") or {},
                 "agent_floors": health_details.get("agent_floors") or {},

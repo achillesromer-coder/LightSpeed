@@ -127,6 +127,40 @@ def _windows_absolute(value: str) -> bool:
     return bool(PureWindowsPath(value).drive)
 
 
+def _has_project_routing_contract(path: Path) -> bool:
+    return (path / "config" / "project_routing.json").is_file()
+
+
+def _canonical_shell_root(requested: Path) -> tuple[Path, str]:
+    """Resolve runtime callers onto the one Desktop shell receipt authority."""
+    requested = requested.resolve()
+    if _has_project_routing_contract(requested):
+        return requested, "requested_contract_root"
+
+    candidates: list[tuple[Path, str]] = []
+    configured = os.environ.get("LIGHTSPEED_SHELL_ROOT", "").strip()
+    if configured:
+        candidates.append((Path(configured), "environment_contract_root"))
+    if requested.name.casefold() == "lightspeed_runtime":
+        candidates.append(
+            (requested.parent / "Desktop_Hooks" / "LightSpeed", "runtime_sibling_contract_root")
+        )
+    candidates.append(
+        (requested / "Desktop_Hooks" / "LightSpeed", "workspace_child_contract_root")
+    )
+
+    seen: set[str] = set()
+    for candidate, mode in candidates:
+        resolved = candidate.resolve()
+        key = os.path.normcase(str(resolved))
+        if key in seen:
+            continue
+        seen.add(key)
+        if _has_project_routing_contract(resolved):
+            return resolved, mode
+    return requested, "unresolved_requested_root"
+
+
 @dataclass(frozen=True)
 class ProjectRoot:
     root_id: str
@@ -144,7 +178,8 @@ class ProjectPipeline:
     """
 
     def __init__(self, shell_root: Path | str):
-        self.shell_root = Path(shell_root).resolve()
+        self.requested_shell_root = Path(shell_root).resolve()
+        self.shell_root, self.root_resolution_mode = _canonical_shell_root(self.requested_shell_root)
         self.config_path = self.shell_root / "config" / "project_routing.json"
         self.config = _read_json(self.config_path)
         self.merovingian_root = self.shell_root / "Z Axis" / "Z-4_Merovingian"
@@ -822,6 +857,13 @@ class ProjectPipeline:
 
         resources = self._resource_health()
         details["resource_guard"] = resources
+        details["root_resolution"] = {
+            "requested_root": str(self.requested_shell_root),
+            "canonical_shell_root": str(self.shell_root),
+            "mode": self.root_resolution_mode,
+            "redirected": self.requested_shell_root != self.shell_root,
+            "receipt_authority": "desktop_shell_only",
+        }
         details["disks"] = resources["volumes"]
         if resources["volumes"]:
             details["disk"] = resources["volumes"][0]
