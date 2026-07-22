@@ -14,6 +14,7 @@ on:
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/tests/test_secure_settings_hub.py"
       - "desktop/source-manifest.json"
       - "scripts/validate_lightspeed_surfaces.py"
       - "scripts/run_merovingian_soft_launch.py"
@@ -24,6 +25,7 @@ on:
   push:
     branches:
       - "ops/merovingian-project-routing-*"
+      - "fix/provider-secret-boundary-*"
     paths:
       - "apps/lightspeed-go/**"
       - "desktop/Desktop_Hooks/LightSpeed/config/project_routing.json"
@@ -33,6 +35,7 @@ on:
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/tests/test_secure_settings_hub.py"
       - "desktop/source-manifest.json"
       - "scripts/validate_lightspeed_surfaces.py"
       - "scripts/run_merovingian_soft_launch.py"
@@ -76,6 +79,7 @@ jobs:
           python -m py_compile \
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/__init__.py" \
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/__init__.py" \
+            "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/secure_settings_hub.py" \
             desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py \
@@ -99,13 +103,14 @@ jobs:
         continue-on-error: true
         run: python scripts/validate_lightspeed_surfaces.py 2>&1 | tee surface-validation.log
 
-      - name: Run project, artifact and bridge tests
+      - name: Run project, artifact, bridge and secret-boundary tests
         id: python_tests
         continue-on-error: true
         run: |
           python -m pytest -q \
             desktop/LightSpeed_Runtime/tests/test_project_pipeline.py \
             desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py \
+            desktop/LightSpeed_Runtime/tests/test_secure_settings_hub.py \
             2>&1 | tee python-tests.log
 
       - name: Set up Node

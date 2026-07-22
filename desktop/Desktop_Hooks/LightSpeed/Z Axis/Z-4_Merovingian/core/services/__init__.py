@@ -32,8 +32,8 @@ __version__ = "1.3.0"
 __author__ = "LightSpeed Team / ACHILLES"
 
 _LAZY_EXPORTS: dict[str, tuple[str, str]] = {
-    "SettingsHub": (".settings_hub", "SettingsHub"),
-    "get_settings_hub": (".settings_hub", "get_settings_hub"),
+    "SettingsHub": (".secure_settings_hub", "SettingsHub"),
+    "get_settings_hub": (".secure_settings_hub", "get_settings_hub"),
     "FloorManager": (".floor_manager", "FloorManager"),
     "FloorInfo": (".floor_manager", "FloorInfo"),
     "get_floor_manager": (".floor_manager", "get_floor_manager"),
