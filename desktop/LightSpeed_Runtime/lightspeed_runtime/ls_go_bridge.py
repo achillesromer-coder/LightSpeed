@@ -43,6 +43,74 @@ def utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
+def _pid_alive(pid: int | None) -> bool:
+    if not pid or pid <= 0:
+        return False
+    if pid == os.getpid():
+        return True
+    if os.name == "nt":
+        import ctypes
+
+        process_query_limited_information = 0x1000
+        handle = ctypes.windll.kernel32.OpenProcess(
+            process_query_limited_information, False, int(pid)
+        )
+        if not handle:
+            return False
+        ctypes.windll.kernel32.CloseHandle(handle)
+        return True
+    try:
+        os.kill(pid, 0)
+    except OSError:
+        return False
+    return True
+
+
+def _supervisor_status(shell_root: Path) -> dict[str, Any]:
+    lock_path = (
+        shell_root
+        / "Z Axis"
+        / "Z-4_Merovingian"
+        / "data"
+        / "runtime_exports"
+        / "merovingian_supervisor.lock.json"
+    )
+    try:
+        payload = json.loads(lock_path.read_text(encoding="utf-8"))
+        heartbeat = datetime.fromisoformat(str(payload["heartbeat_utc"]).replace("Z", "+00:00"))
+        if heartbeat.tzinfo is None:
+            heartbeat = heartbeat.replace(tzinfo=timezone.utc)
+        age_seconds = max(0.0, (datetime.now(timezone.utc) - heartbeat).total_seconds())
+        interval_seconds = max(30, min(int(payload.get("interval_seconds", 60)), 3600))
+        stale_after_seconds = max(90, interval_seconds * 2 + 15)
+        pid = int(payload.get("pid"))
+    except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
+        return {
+            "alive": False,
+            "reason": f"invalid_or_missing_supervisor_lock:{type(exc).__name__}",
+            "lock_path": str(lock_path),
+        }
+
+    process_alive = _pid_alive(pid)
+    heartbeat_fresh = age_seconds <= stale_after_seconds
+    return {
+        "alive": process_alive and heartbeat_fresh,
+        "pid": pid,
+        "process_alive": process_alive,
+        "heartbeat_fresh": heartbeat_fresh,
+        "heartbeat_utc": heartbeat.astimezone(timezone.utc).isoformat(timespec="seconds"),
+        "heartbeat_age_seconds": round(age_seconds, 3),
+        "stale_after_seconds": stale_after_seconds,
+        "state": payload.get("state"),
+        "lock_path": str(lock_path),
+        "reason": (
+            "live"
+            if process_alive and heartbeat_fresh
+            else "process_not_running" if not process_alive else "heartbeat_stale"
+        ),
+    }
+
+
 def _bounded(value: Any, *, maximum: int, required: bool = False) -> str:
     text = " ".join(str(value or "").split()).strip()[:maximum]
     if required and not text:
@@ -118,20 +186,24 @@ def create_app(root: Path | str) -> FastAPI:
     async def status():
         registry = project_pipeline.refresh(force=False, queue_changes=True)
         health = registry.get("health") or {}
+        supervisor = _supervisor_status(shell_root)
+        merovingian_healthy = health.get("status") == "pass" and bool(supervisor.get("alive"))
+        core_services_healthy = bool(db) and bool(storage) and merovingian_healthy
         return JSONResponse(
             {
-                "ok": health.get("status") == "pass",
+                "ok": core_services_healthy,
                 "time_utc": utc_now_iso(),
                 "bridge": "ls-go",
                 "root": str(shell_root),
                 "services": {
                     "db": bool(db),
                     "storage": bool(storage),
-                    "merovingian": health.get("status") == "pass",
+                    "merovingian": merovingian_healthy,
                 },
                 "merovingian": {
-                    "status": health.get("status"),
+                    "status": "pass" if merovingian_healthy else "unavailable",
                     "receipt": str(project_pipeline.health_path),
+                    "supervisor": supervisor,
                     "project_summary": registry.get("summary") or {},
                     "cleanup_summary": registry.get("cleanup_summary") or {},
                     "drive_writeback": (health.get("details") or {}).get("drive_writeback"),

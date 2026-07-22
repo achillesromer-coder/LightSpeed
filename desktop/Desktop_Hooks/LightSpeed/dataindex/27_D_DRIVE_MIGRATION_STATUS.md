@@ -1,15 +1,21 @@
-# D-Drive Migration Status
+# Canonical C/D Storage Topology
 
-Date: 2026-05-21
-Status: D-drive shell/runtme alignment completed to non-GUI launch parity
+Status: active soft-launch topology
 
-## D Is Now Authoritative
+## Current Authority
 
-- Active launcher: `D:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed\N.py`
-- Runtime authority: `D:\LightSpeed_Consolidated\LightSpeed_Runtime`
+- Operator and launch namespace: `D:\LightSpeed_Consolidated`
+- Physical backing store: `C:\LightSpeed_Consolidated`
+- Active launcher: `D:\LightSpeed_Consolidated\tools\launch_lightspeed.ps1`
+- Runtime namespace: `D:\LightSpeed_Consolidated\LightSpeed_Runtime`
+- Desktop namespace: `D:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed`
 - Exported operator-home state: `D:\LightSpeed_Consolidated\LightSpeed_Runtime\exports\agent_home`
 
-## Imported Canonical Source Surfaces
+The D runtime, shell, agents, applications, logs, sources and environment paths
+are junctioned to C. They are one installation and must never be counted as two
+recoverable copies.
+
+## Consolidated Source Surfaces
 
 - root launch surfaces from C: `__main__.py`, `verify_launch_ready.py`, `LAUNCH_GUI.bat`, `VERSION`
 - root source/config/test/doc roots from C: `config`, `data`, `tests`, `tools`, `dataindex`
@@ -18,7 +24,7 @@ Status: D-drive shell/runtme alignment completed to non-GUI launch parity
 - Oracle AI log archive copied into `Z Axis/Z-2_Oracle/data/legacy/ai_logs`
 - Merovingian unified DB copied into `Z Axis/Z-4_Merovingian/data/db/lightspeed_unified.db`
 
-## Preserved D-Only Authority
+## Preserved Runtime Authority
 
 - `LightSpeed_Runtime\lightspeed_runtime\operator_home.py`
 - `LightSpeed_Runtime\lightspeed_runtime\agent_home_bridge.py`
@@ -31,9 +37,10 @@ Status: D-drive shell/runtme alignment completed to non-GUI launch parity
 - `python __main__.py --smoke` -> completed on D with `8/8` canonical floors initialized
 - `LightSpeed_Runtime` targeted tests -> `18 passed`
 
-## C-Side Residues
+## Historical Residues
 
-Treat these as reference or deletion candidates, not active authority:
+Treat these as reference or evidence-gated cleanup candidates, not active
+authority:
 
 - `C:\Users\acc\Desktop\LightSpeed Consolidated\LightSpeed\ai_logs`
 - `C:\Users\acc\Desktop\LightSpeed Consolidated\LightSpeed\w6`
@@ -42,4 +49,8 @@ Treat these as reference or deletion candidates, not active authority:
 
 ## Current Rule
 
-No new active work should target the C-drive LightSpeed root. Use the D-drive shell/runtime split as the live system and treat the C-drive tree as reference-only until final manual residue deletion.
+Operators and shortcuts target D. Services resolve through the D junctions to C
+physical backing. Git changes originate in `_worktrees`, pass validation and
+review, then promote into the live runtime. Historical roots may be archived or
+removed only after exact-path, checksum, reference and independent-recovery
+proof; a C/D junction pair never satisfies the two-copy rule.

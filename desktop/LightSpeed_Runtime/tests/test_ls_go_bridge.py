@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -77,6 +79,52 @@ def healthy_pipeline(monkeypatch) -> None:
             "errors": [],
         },
     )
+
+
+def write_supervisor_lock(root: Path, *, heartbeat: datetime | None = None, pid: int | None = None) -> None:
+    runtime_exports = root / "Z Axis" / "Z-4_Merovingian" / "data" / "runtime_exports"
+    runtime_exports.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "schema_version": "lightspeed-merovingian-supervisor-lock-v1",
+        "pid": pid or os.getpid(),
+        "heartbeat_utc": (heartbeat or datetime.now(timezone.utc)).isoformat(timespec="seconds"),
+        "interval_seconds": 60,
+        "state": "pass",
+    }
+    (runtime_exports / "merovingian_supervisor.lock.json").write_text(
+        json.dumps(payload), encoding="utf-8"
+    )
+
+
+def test_status_requires_live_merovingian_supervisor(tmp_path, monkeypatch):
+    configure_shell(tmp_path)
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (object(), object()))
+    healthy_pipeline(monkeypatch)
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    missing = client.get("/api/v1/status").json()
+    assert missing["ok"] is False
+    assert missing["services"]["merovingian"] is False
+    assert missing["merovingian"]["supervisor"]["alive"] is False
+
+    write_supervisor_lock(tmp_path)
+    live = client.get("/api/v1/status").json()
+    assert live["ok"] is True
+    assert live["services"] == {"db": True, "storage": True, "merovingian": True}
+    assert live["merovingian"]["supervisor"]["reason"] == "live"
+
+
+def test_status_rejects_stale_supervisor_heartbeat(tmp_path, monkeypatch):
+    configure_shell(tmp_path)
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (object(), object()))
+    healthy_pipeline(monkeypatch)
+    write_supervisor_lock(tmp_path, heartbeat=datetime.now(timezone.utc) - timedelta(minutes=10))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    body = client.get("/api/v1/status").json()
+    assert body["ok"] is False
+    assert body["merovingian"]["status"] == "unavailable"
+    assert body["merovingian"]["supervisor"]["reason"] == "heartbeat_stale"
 
 
 def test_bridge_persists_review_gated_command(tmp_path, monkeypatch):
