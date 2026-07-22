@@ -186,6 +186,7 @@ def create_app(root: Path | str) -> FastAPI:
     async def status():
         registry = project_pipeline.refresh(force=False, queue_changes=True)
         health = registry.get("health") or {}
+        health_details = health.get("details") or {}
         supervisor = _supervisor_status(shell_root)
         merovingian_healthy = health.get("status") == "pass" and bool(supervisor.get("alive"))
         core_services_healthy = bool(db) and bool(storage) and merovingian_healthy
@@ -206,8 +207,10 @@ def create_app(root: Path | str) -> FastAPI:
                     "supervisor": supervisor,
                     "project_summary": registry.get("summary") or {},
                     "cleanup_summary": registry.get("cleanup_summary") or {},
-                    "drive_writeback": (health.get("details") or {}).get("drive_writeback"),
+                    "drive_writeback": health_details.get("drive_writeback"),
                 },
+                "resources": health_details.get("resource_guard") or {},
+                "agent_floors": health_details.get("agent_floors") or {},
                 "queue_path": str(_queue_path(shell_root)),
                 "review_queue_path": str(project_pipeline.review_queue_path),
                 "execution_boundary": "local queue, immutable named artifacts, receipts and review only; no public direct execution",

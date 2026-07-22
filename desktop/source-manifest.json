@@ -46,9 +46,9 @@
       "sha256": "3f547bf5102650e6214047d0a5f0d1bffa50ac82db271cc13f4d90fc95c8d4ee"
     },
     {
-      "bytes": 3880,
+      "bytes": 4021,
       "path": "Desktop_Hooks/LightSpeed/config/project_routing.json",
-      "sha256": "79b34a1af202d2d1b0d452ffbc5a848b1bafa2d8c662b31df48bbd528aa1aa0c"
+      "sha256": "39ec3f6fd1e88e33a6f98ad10f7f3c0def9671006a4f6f6b54473532c6da2265"
     },
     {
       "bytes": 1210,
@@ -3301,9 +3301,9 @@
       "sha256": "8efc3372e032bcb1c156c93aa67b7fbe77a63ee696b77e021cd74be6a29a7f50"
     },
     {
-      "bytes": 16828,
+      "bytes": 17013,
       "path": "LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py",
-      "sha256": "c878bd107fb81ae0badee30ec8f121cf96029a631014dff2babba0ef7c605152"
+      "sha256": "35bfdec9a15e50bb6798d1fe242557eb786fa0f47d653e997345fdbfa0252ff5"
     },
     {
       "bytes": 11584,
@@ -3341,9 +3341,9 @@
       "sha256": "ad17db0c2f4ab4558a15fccfbc31388b101cc2803300efb26414d39d92208dfd"
     },
     {
-      "bytes": 31357,
+      "bytes": 38432,
       "path": "LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py",
-      "sha256": "c04b6cdf0b6eab162a0a526ee2aebdcae330cd1510f270f7896e0880d267fb02"
+      "sha256": "992312966d0607d20b8e1e263c9020414a75774372c144c52caca2f627488da6"
     },
     {
       "bytes": 19560,

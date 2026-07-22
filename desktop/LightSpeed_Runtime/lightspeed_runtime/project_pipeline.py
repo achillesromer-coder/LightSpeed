@@ -15,6 +15,17 @@ from typing import Any, Iterable
 SCHEMA_VERSION = "lightspeed-project-routing-v1"
 REVIEW_SCHEMA = "lightspeed-go-project-review-v1"
 
+FLOOR_ROOTS = {
+    "Architect": "Z+1_Architect",
+    "Neo": "Z+2_Neo",
+    "Trinity": "Z+3_Trinity",
+    "Morpheus": "Z-1_Morpheus",
+    "Oracle": "Z-2_Oracle",
+    "Smith": "Z-3_Smith",
+    "Merovingian": "Z-4_Merovingian",
+    "TheConstruct": "Z0_TheConstruct",
+}
+
 
 def utc_now_iso() -> str:
     return datetime.now(UTC).isoformat(timespec="seconds")
@@ -111,6 +122,7 @@ class ProjectPipeline:
         self.registry_path = self.runtime_exports / "project_registry.json"
         self.registry_state_path = self.runtime_exports / "project_registry_state.json"
         self.health_path = self.runtime_exports / "merovingian_health.json"
+        self.floor_health_path = self.runtime_exports / "agent_floor_health.json"
         self.cleanup_path = self.runtime_exports / "cleanup_candidates.json"
         go_config = self.config.get("go_review") if isinstance(self.config.get("go_review"), dict) else {}
         self.review_queue_path = self._resolve_shell_path(
@@ -137,6 +149,138 @@ class ProjectPipeline:
     def _resource_guard(self) -> dict[str, Any]:
         value = self.config.get("resource_guard")
         return value if isinstance(value, dict) else {}
+
+    def _disk_health(self) -> dict[str, Any]:
+        guard = self._resource_guard()
+        configured = [str(item) for item in guard.get("volume_paths") or [] if str(item).strip()]
+        paths = configured or [str(self.shell_root)]
+        warning_percent = float(guard.get("warning_disk_percent") or 85)
+        critical_percent = float(guard.get("critical_disk_percent") or 95)
+        minimum_free_bytes = int(guard.get("minimum_free_bytes") or 0)
+        previous = _read_json(self.health_path)
+        previous_rows = {
+            str(item.get("path")): item
+            for item in ((previous.get("details") or {}).get("disks") or [])
+            if isinstance(item, dict) and item.get("path")
+        }
+        previous_time = None
+        try:
+            previous_time = datetime.fromisoformat(str(previous.get("generated_utc")).replace("Z", "+00:00"))
+        except (TypeError, ValueError):
+            pass
+        sample_seconds = (
+            max(1.0, (datetime.now(UTC) - previous_time).total_seconds())
+            if previous_time is not None else None
+        )
+
+        rows: list[dict[str, Any]] = []
+        for value in paths:
+            path = Path(value)
+            try:
+                usage = shutil.disk_usage(path)
+            except OSError as exc:
+                rows.append({
+                    "path": value,
+                    "state": "critical",
+                    "available": False,
+                    "error": f"{type(exc).__name__}:{exc}",
+                })
+                continue
+            used_percent = (usage.used / usage.total * 100.0) if usage.total else 0.0
+            state = "pass"
+            if used_percent >= critical_percent or (minimum_free_bytes and usage.free < minimum_free_bytes):
+                state = "critical"
+            elif used_percent >= warning_percent or (
+                minimum_free_bytes and usage.free < minimum_free_bytes * 2
+            ):
+                state = "warning"
+            prior = previous_rows.get(value) or {}
+            growth = usage.used - int(prior.get("used_bytes") or usage.used)
+            hours_to_warning = None
+            if sample_seconds and growth > 0 and usage.total:
+                warning_used = int(usage.total * warning_percent / 100.0)
+                remaining = max(0, warning_used - usage.used)
+                bytes_per_second = growth / sample_seconds
+                hours_to_warning = round(remaining / bytes_per_second / 3600.0, 2) if bytes_per_second else None
+            rows.append({
+                "path": value,
+                "volume": path.anchor or value,
+                "available": True,
+                "state": state,
+                "total_bytes": usage.total,
+                "used_bytes": usage.used,
+                "free_bytes": usage.free,
+                "used_percent": round(used_percent, 2),
+                "growth_bytes_since_previous": growth if sample_seconds else None,
+                "sample_seconds": round(sample_seconds, 1) if sample_seconds else None,
+                "estimated_hours_to_warning": hours_to_warning,
+            })
+        overall = "critical" if any(row.get("state") == "critical" for row in rows) else (
+            "warning" if any(row.get("state") == "warning" for row in rows) else "pass"
+        )
+        return {
+            "schema_version": "lightspeed-volume-health-v1",
+            "state": overall,
+            "warning_disk_percent": warning_percent,
+            "critical_disk_percent": critical_percent,
+            "minimum_free_bytes": minimum_free_bytes,
+            "volumes": rows,
+        }
+
+    def agent_floor_health(
+        self,
+        *,
+        services: dict[str, bool],
+        event_bus_enabled: bool,
+    ) -> dict[str, Any]:
+        neo_queue = self.shell_root / "Z Axis" / "Z+2_Neo" / "data" / "actions" / "ls_go_command_queue.jsonl"
+        for queue_path in (neo_queue, self.review_queue_path, self.review_decisions_path):
+            queue_path.parent.mkdir(parents=True, exist_ok=True)
+            queue_path.touch(exist_ok=True)
+        shared_services = all(bool(services.get(name)) for name in ("database", "event_bus", "storage"))
+        floors: list[dict[str, Any]] = []
+        for floor, directory in FLOOR_ROOTS.items():
+            root = self.shell_root / "Z Axis" / directory
+            markers = [root / "_FLOOR_MANIFEST.json", root / "__init__.py", root / "Z Direct"]
+            missing = [str(path) for path in markers if not path.exists()]
+            if not shared_services:
+                missing.append("shared_services")
+            floors.append({
+                "floor": floor,
+                "root": str(root),
+                "state": "operational" if not missing else "degraded",
+                "execution_model": "asynchronous_shared_queue",
+                "markers_present": len(markers) - len([item for item in markers if not item.exists()]),
+                "markers_required": len(markers),
+                "missing": missing,
+            })
+        transport = {
+            "event_bus_enabled": event_bus_enabled,
+            "neo_queue_path": str(neo_queue),
+            "neo_queue_writable": neo_queue.is_file() and os.access(neo_queue, os.W_OK),
+            "go_review_queue_path": str(self.review_queue_path),
+            "go_review_queue_available": self.review_queue_path.is_file(),
+            "go_decision_path": str(self.review_decisions_path),
+            "go_decision_available": self.review_decisions_path.is_file(),
+            "coordination_mode": "independent_observers_shared_state",
+        }
+        operational_count = sum(item["state"] == "operational" for item in floors)
+        aligned = (
+            operational_count == len(FLOOR_ROOTS)
+            and event_bus_enabled
+            and transport["neo_queue_writable"]
+            and transport["go_review_queue_available"]
+            and transport["go_decision_available"]
+        )
+        return {
+            "schema_version": "lightspeed-agent-floor-health-v1",
+            "generated_utc": utc_now_iso(),
+            "state": "operational" if aligned else "degraded",
+            "operational_count": operational_count,
+            "floor_count": len(FLOOR_ROOTS),
+            "floors": floors,
+            "transport": transport,
+        }
 
     def _ignored_dirs(self) -> set[str]:
         return {str(item) for item in (self._scan_policy().get("ignored_directories") or [])}
@@ -556,6 +700,7 @@ class ProjectPipeline:
         service_states = {"database": False, "event_bus": False, "storage": False}
         details: dict[str, Any] = {}
         errors: list[str] = []
+        event_bus_enabled = False
         try:
             from core.services import initialize_services  # type: ignore
 
@@ -577,6 +722,7 @@ class ProjectPipeline:
             if event_bus is not None:
                 try:
                     details["event_bus"] = event_bus.get_stats()
+                    event_bus_enabled = bool(details["event_bus"].get("enabled"))
                 except Exception as exc:
                     errors.append(f"event_bus_probe:{type(exc).__name__}")
             if storage is not None:
@@ -588,24 +734,28 @@ class ProjectPipeline:
         except Exception as exc:
             errors.append(f"essential_services:{type(exc).__name__}:{exc}")
 
-        try:
-            usage = shutil.disk_usage(self.shell_root)
-            used_percent = (usage.used / usage.total * 100.0) if usage.total else 0.0
-            details["disk"] = {
-                "total_bytes": usage.total,
-                "used_bytes": usage.used,
-                "free_bytes": usage.free,
-                "used_percent": round(used_percent, 2),
-            }
-        except OSError as exc:
-            errors.append(f"disk_probe:{type(exc).__name__}")
+        resources = self._disk_health()
+        details["resource_guard"] = resources
+        details["disks"] = resources["volumes"]
+        if resources["volumes"]:
+            details["disk"] = resources["volumes"][0]
+
+        floor_health = self.agent_floor_health(
+            services=service_states,
+            event_bus_enabled=event_bus_enabled,
+        )
+        details["agent_floors"] = floor_health
 
         drive_root, drive_mode = self.resolve_drive_receipt_root()
         details["drive_writeback"] = {"path": str(drive_root), "mode": drive_mode}
         return {
             "schema_version": "lightspeed-merovingian-health-v1",
             "generated_utc": utc_now_iso(),
-            "status": "pass" if all(service_states.values()) else "degraded",
+            "status": "pass" if (
+                all(service_states.values())
+                and resources["state"] != "critical"
+                and floor_health["state"] == "operational"
+            ) else "degraded",
             "services": service_states,
             "details": details,
             "project_summary": registry.get("summary") or {},
@@ -625,6 +775,7 @@ class ProjectPipeline:
         _write_json(self.registry_path, registry)
         _write_json(self.cleanup_path, cleanup)
         _write_json(self.health_path, health)
+        _write_json(self.floor_health_path, (health.get("details") or {}).get("agent_floors") or {})
 
         changes = self._project_changes(previous, registry) if previous else {"added": [], "removed": [], "changed": []}
         review_packet = None
@@ -637,7 +788,12 @@ class ProjectPipeline:
                     f"{len(changes['changed'])} modified, {len(changes['removed'])} removed."
                 ),
                 project_ids=[str(item.get("project_id")) for item in affected if item.get("project_id")],
-                artifact_paths=[str(self.registry_path), str(self.cleanup_path), str(self.health_path)],
+                artifact_paths=[
+                    str(self.registry_path),
+                    str(self.cleanup_path),
+                    str(self.health_path),
+                    str(self.floor_health_path),
+                ],
                 event_type="project_registry_change",
             )
 

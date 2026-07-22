@@ -10,7 +10,7 @@ RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RUNTIME_ROOT))
 
 import lightspeed_runtime.project_pipeline as project_pipeline
-from lightspeed_runtime.project_pipeline import ProjectPipeline
+from lightspeed_runtime.project_pipeline import FLOOR_ROOTS, ProjectPipeline
 
 
 @pytest.fixture(autouse=True)
@@ -141,6 +141,27 @@ def test_scan_stops_at_resource_limit(tmp_path):
     assert row["file_count"] == 50
     assert row["scan_truncated"] is True
     assert registry["summary"]["truncated_project_count"] == 1
+
+
+def test_agent_floor_health_materializes_shared_async_queue(tmp_path):
+    shell = make_shell(tmp_path)
+    for directory in FLOOR_ROOTS.values():
+        root = shell / "Z Axis" / directory
+        (root / "Z Direct").mkdir(parents=True, exist_ok=True)
+        (root / "_FLOOR_MANIFEST.json").write_text("{}\n", encoding="utf-8")
+        (root / "__init__.py").write_text("", encoding="utf-8")
+    runtime_exports = shell / "Z Axis" / "Z-4_Merovingian" / "data" / "runtime_exports"
+    (runtime_exports / "go_review_queue.jsonl").write_text("", encoding="utf-8")
+    (runtime_exports / "go_review_decisions.jsonl").write_text("", encoding="utf-8")
+
+    snapshot = ProjectPipeline(shell).agent_floor_health(
+        services={"database": True, "event_bus": True, "storage": True},
+        event_bus_enabled=True,
+    )
+
+    assert snapshot["state"] == "operational"
+    assert snapshot["operational_count"] == 8
+    assert Path(snapshot["transport"]["neo_queue_path"]).is_file()
 
 
 def test_refresh_queues_change_receipt_without_mutating_project(tmp_path, monkeypatch):

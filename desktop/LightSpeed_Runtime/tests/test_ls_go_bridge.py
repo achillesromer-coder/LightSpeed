@@ -112,6 +112,8 @@ def test_status_requires_live_merovingian_supervisor(tmp_path, monkeypatch):
     assert live["ok"] is True
     assert live["services"] == {"db": True, "storage": True, "merovingian": True}
     assert live["merovingian"]["supervisor"]["reason"] == "live"
+    assert "resources" in live
+    assert "agent_floors" in live
 
 
 def test_status_rejects_stale_supervisor_heartbeat(tmp_path, monkeypatch):
