@@ -6,9 +6,15 @@ import sys
 
 import pytest
 
-DESKTOP_ROOT = Path(__file__).resolve().parents[2] / "Desktop_Hooks" / "LightSpeed"
-if str(DESKTOP_ROOT) not in sys.path:
-    sys.path.insert(0, str(DESKTOP_ROOT))
+MEROVINGIAN_ROOT = (
+    Path(__file__).resolve().parents[2]
+    / "Desktop_Hooks"
+    / "LightSpeed"
+    / "Z Axis"
+    / "Z-4_Merovingian"
+)
+if str(MEROVINGIAN_ROOT) not in sys.path:
+    sys.path.insert(0, str(MEROVINGIAN_ROOT))
 
 from core.services.secure_settings_hub import SettingsHub
 
