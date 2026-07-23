@@ -3451,7 +3451,7 @@ class LightSpeedUnified(tk.Tk):
 
     def bind_shortcuts(self):
         """Keyboard shortcuts"""
-        self.bind('<Control-h>', lambda e: self.show_main_menu() if self.current_user else None)
+        self.bind('<Control-h>', lambda e: self.show_home() if self.current_user else None)
         self.bind('<Control-k>', lambda e: self.open_command_palette() if self.current_user else None)
         self.bind('<Control-comma>', lambda e: self.show_settings() if self.current_user else None)
         self.bind('<Control-f>', lambda e: self.focus_bento_search() if self.current_user else None)
@@ -3499,9 +3499,9 @@ class LightSpeedUnified(tk.Tk):
                 getattr(self, f"show_{prev}")()
 
     def show_home(self):
-        """Return to the main lobby, or login when no user session exists."""
+        """Return to the compact operator toolkit, or login without a session."""
         if self.current_user:
-            self.show_main_menu()
+            self.show_floors_hub()
         else:
             self.show_login()
 
@@ -4100,7 +4100,7 @@ class LightSpeedUnified(tk.Tk):
                 try:
                     self.check_first_run()
                 except Exception:
-                    self.show_main_menu()
+                    self.show_home()
 
                 # If Trinity login requested IT Portal, open it after first-run routing.
                 if mode == "it_portal":
@@ -4147,7 +4147,7 @@ class LightSpeedUnified(tk.Tk):
         }
         self.user_label.config(text="Guest (Client)")
         self.update_top_bar_controls()
-        self.show_main_menu()
+        self.show_home()
 
     def logout(self):
         """Logout current user and return to login screen"""
@@ -4287,12 +4287,12 @@ class LightSpeedUnified(tk.Tk):
                     except Exception as e:
                         print(f"[WARNING] Failed to load company: {e}")
 
-                self.show_main_menu()
+                self.show_home()
 
         except Exception as e:
             print(f"[ERROR] Database check failed: {e}")
             # Continue anyway - show immersive shell (canonical home)
-            self.show_main_menu()
+            self.show_home()
 
     # ========================================================================
     # FIRST-RUN SETUP (UNIFIED WIZARD)
@@ -4315,7 +4315,7 @@ class LightSpeedUnified(tk.Tk):
                                 self.current_company = dict(company)
                     except Exception:
                         pass
-                    self.show_main_menu()
+                    self.show_home()
 
                 # Provide a minimal on-screen context while the wizard window is open
                 frame = tk.Frame(self.main_container, bg=COLORS['bg_dark'])
@@ -4414,7 +4414,7 @@ class LightSpeedUnified(tk.Tk):
                 )
                 self.current_company = {'name': company_name, 'industry': industry}
                 messagebox.showinfo("Setup Complete", f"Welcome to {company_name}!", parent=self)
-                self.show_main_menu()
+                self.show_home()
             except Exception as e:
                 print(f"[ERROR] Failed to save company: {e}")
                 messagebox.showerror("Error", f"Failed to save setup:\n{e}", parent=self)
@@ -4831,7 +4831,7 @@ class LightSpeedUnified(tk.Tk):
             self.set_active_company(companies[idx])
             win.destroy()
             try:
-                self.show_main_menu()
+                self.show_home()
             except Exception:
                 pass
 
@@ -7111,7 +7111,6 @@ class LightSpeedUnified(tk.Tk):
             active_stage = _first_active_stage(buildout)
             queue = summary.get("consolidation_queue") or {}
             agent_queue = summary.get("agentic_launch_queue") or {}
-            web_bridge = summary.get("web_drive_bridge") or {}
             alignment = summary.get("floor_alignment") or {}
             host = summary.get("host_runtime_policy") or {}
             closure = host.get("resource_closure") or {}
@@ -7128,14 +7127,7 @@ class LightSpeedUnified(tk.Tk):
                         f"manual-heavy={agent_queue.get('manual_heavy_count', 0)} | "
                         f"state={agent_queue.get('state', 'not_exported')}."
                     ),
-                    (
-                        "WEB/GO: "
-                        f"{web_bridge.get('source_status', 'not_exported')} | "
-                        f"routes={web_bridge.get('route_count', 0)} | "
-                        f"unconfirmed={web_bridge.get('unconfirmed_count', 0)} | "
-                        f"partial={web_bridge.get('partial_seen_count', 0)} | "
-                        f"gate={web_bridge.get('gate', 'not_exported')}."
-                    ),
+                    "GO: local review surface http://127.0.0.1:4173 | external Web deferred.",
                     (
                         "CLOSURE: "
                         f"runtime={closure.get('runtime_total', 'n/a')} | "
@@ -7507,31 +7499,20 @@ class LightSpeedUnified(tk.Tk):
             )
             self.update_status(f"Gated review: {floor_name}")
 
-        def _open_wakeup_packet() -> None:
-            wake_payload = ((summary_state["payload"].get("local_agent_wakeup") or {}).get("by_floor") or {}).get(selected_floor["name"]) or {}
-            _safe_open_path(wake_payload.get("packet_path"), f"Wake Packet: {selected_floor['name']}")
-
-        def _open_buildout_handoff() -> None:
-            _safe_open_path(LIGHTSPEED_ROOT / "config" / "buildout_phase_contract.json", "Buildout Handoff")
-
         def _open_agentic_launch_queue() -> None:
             _safe_open_path(_agentic_launch_queue_path(summary_state["payload"]), "Agentic Launch Queue")
 
-        def _open_web_bridge() -> None:
-            _safe_open_path(_web_bridge_path(summary_state["payload"]), "Web/GO Bridge")
+        def _open_go_review() -> None:
+            try:
+                import webbrowser
 
-        def _open_gated_source() -> None:
-            _safe_open_path(_gated_tasks_path(summary_state["payload"]), "Gated Build Tasks")
+                webbrowser.open("http://127.0.0.1:4173/")
+                self.update_status("Opened local GO review")
+            except Exception as exc:
+                messagebox.showwarning("GO Review", f"Could not open local GO:\n{exc}", parent=self)
 
         def _open_launch_control() -> None:
             _safe_open_path(_launch_control_path(summary_state["payload"]), "Launch Control")
-
-        def _open_neo_smith_artifact() -> None:
-            receipt_path = _neo_receipt_path(summary_state["payload"])
-            if receipt_path:
-                _safe_open_path(receipt_path, "Neo Receipt")
-                return
-            _safe_open_path(_queue_path(summary_state["payload"]), "Smith Queue")
 
         def _sync_button_states() -> None:
             for fname, button in floor_buttons.items():
@@ -7600,7 +7581,7 @@ class LightSpeedUnified(tk.Tk):
         ).pack(side="left")
         tk.Button(
             action_row_primary,
-            text="Open Backend Workspace",
+            text="Open Selected Floor",
             command=lambda: _mount_floor(selected_floor["name"]),
             bg=COLORS["bg_dark"],
             fg=COLORS["text_white"],
@@ -7608,40 +7589,16 @@ class LightSpeedUnified(tk.Tk):
         ).pack(side="left", padx=(8, 0))
         tk.Button(
             action_row_primary,
-            text="Open Wake Packet",
-            command=_open_wakeup_packet,
+            text="Ask Achilles",
+            command=self.ask_achilles,
             bg=COLORS["bg_dark"],
             fg=COLORS["text_white"],
             relief="flat",
         ).pack(side="left", padx=(8, 0))
         tk.Button(
             action_row_primary,
-            text="Open Buildout Handoff",
-            command=_open_buildout_handoff,
-            bg=COLORS["bg_dark"],
-            fg=COLORS["text_white"],
-            relief="flat",
-        ).pack(side="left", padx=(8, 0))
-        tk.Button(
-            action_row_primary,
-            text="Open Agent Queue",
-            command=_open_agentic_launch_queue,
-            bg=COLORS["bg_dark"],
-            fg=COLORS["text_white"],
-            relief="flat",
-        ).pack(side="left", padx=(8, 0))
-        tk.Button(
-            action_row_primary,
-            text="Open Web/GO Bridge",
-            command=_open_web_bridge,
-            bg=COLORS["bg_dark"],
-            fg=COLORS["text_white"],
-            relief="flat",
-        ).pack(side="left", padx=(8, 0))
-        tk.Button(
-            action_row_primary,
-            text="Open Neo Receipt / Smith Queue",
-            command=_open_neo_smith_artifact,
+            text="Open GO Review",
+            command=_open_go_review,
             bg=COLORS["bg_dark"],
             fg=COLORS["text_white"],
             relief="flat",
@@ -7656,8 +7613,8 @@ class LightSpeedUnified(tk.Tk):
         ).pack(side="left", padx=(8, 0))
         tk.Button(
             action_row_secondary,
-            text="Open Gated Source",
-            command=_open_gated_source,
+            text="Open Agent Queue",
+            command=_open_agentic_launch_queue,
             bg=COLORS["bg_dark"],
             fg=COLORS["text_white"],
             relief="flat",

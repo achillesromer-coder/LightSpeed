@@ -133,7 +133,7 @@ def _has_project_routing_contract(path: Path) -> bool:
 
 def _canonical_shell_root(requested: Path) -> tuple[Path, str]:
     """Resolve runtime callers onto the one Desktop shell receipt authority."""
-    requested = requested.resolve()
+    requested = requested.absolute()
     if _has_project_routing_contract(requested):
         return requested, "requested_contract_root"
 
@@ -151,7 +151,7 @@ def _canonical_shell_root(requested: Path) -> tuple[Path, str]:
 
     seen: set[str] = set()
     for candidate, mode in candidates:
-        resolved = candidate.resolve()
+        resolved = candidate.absolute()
         key = os.path.normcase(str(resolved))
         if key in seen:
             continue
@@ -178,7 +178,7 @@ class ProjectPipeline:
     """
 
     def __init__(self, shell_root: Path | str):
-        self.requested_shell_root = Path(shell_root).resolve()
+        self.requested_shell_root = Path(shell_root).absolute()
         self.shell_root, self.root_resolution_mode = _canonical_shell_root(self.requested_shell_root)
         self.config_path = self.shell_root / "config" / "project_routing.json"
         self.config = _read_json(self.config_path)
@@ -433,10 +433,19 @@ class ProjectPipeline:
             for index, value in enumerate(os.environ.get(variable, "").split(separator), start=1):
                 value = value.strip()
                 if value:
+                    external_path = Path(value)
+                    canonical_projects = self.shell_root.parent / "Projects"
+                    folded = str(external_path).replace("/", "\\").casefold()
+                    if (
+                        not external_path.exists()
+                        and folded.endswith(r"\lightspeed_consolidated\projects")
+                        and canonical_projects.exists()
+                    ):
+                        external_path = canonical_projects
                     rows.append(
                         ProjectRoot(
                             root_id=f"external-{index}",
-                            path=Path(value),
+                            path=external_path,
                             authority=str(external.get("authority") or "external_reference"),
                             writable=bool(external.get("writable", False)),
                         )
@@ -495,7 +504,13 @@ class ProjectPipeline:
                 break
 
         metadata = _read_json(path / "project.json")
-        project_id = f"{_slug(path.name)}-{hashlib.sha1(str(path).encode('utf-8')).hexdigest()[:8]}"
+        # Identity follows the declared logical root and project name, not the
+        # physical C:/D: path used to reach a junction-backed project.
+        logical_identity = f"{root.root_id}|{path.name.casefold()}"
+        project_id = (
+            f"{_slug(path.name)}-"
+            f"{hashlib.sha1(logical_identity.encode('utf-8')).hexdigest()[:8]}"
+        )
         if file_count == 0:
             condition = "empty"
         elif significant_count == 0:
@@ -767,7 +782,10 @@ class ProjectPipeline:
         event_type: str,
     ) -> dict[str, Any]:
         created = utc_now_iso()
-        seed = f"{created}|{event_type}|{'|'.join(project_ids)}|{'|'.join(artifact_paths)}"
+        seed = (
+            f"{created}|{time.time_ns()}|{event_type}|"
+            f"{'|'.join(project_ids)}|{'|'.join(artifact_paths)}"
+        )
         review_id = f"LSGO-REVIEW-{hashlib.sha256(seed.encode('utf-8')).hexdigest()[:16].upper()}"
         packet = {
             "schema_version": REVIEW_SCHEMA,
@@ -793,6 +811,54 @@ class ProjectPipeline:
         drive_path = drive_root / f"{review_id}.json"
         _write_json(drive_path, {**packet, "drive_writeback_mode": drive_mode})
         return {**packet, "drive_receipt_path": str(drive_path), "drive_writeback_mode": drive_mode}
+
+    def _supersede_registry_reviews(
+        self,
+        keep_review_id: str | None = None,
+        *,
+        retain_latest: bool = True,
+    ) -> int:
+        """Collapse path-migration review churn while retaining audit history."""
+        queue_rows = _read_jsonl(self.review_queue_path, limit=5000)
+        decisions = {
+            str(item.get("review_id")): item
+            for item in _read_jsonl(self.review_decisions_path, limit=5000)
+            if item.get("review_id")
+        }
+        pending = [
+            item
+            for item in queue_rows
+            if item.get("event_type") == "project_registry_change"
+            and item.get("review_id")
+            and str(item.get("review_id")) not in decisions
+        ]
+        if not pending or (retain_latest and len(pending) <= 1):
+            return 0
+        retained = keep_review_id or (
+            str(pending[-1].get("review_id")) if retain_latest else None
+        )
+        superseded = 0
+        for item in pending:
+            review_id = str(item.get("review_id"))
+            if review_id == retained:
+                continue
+            _append_jsonl(
+                self.review_decisions_path,
+                {
+                    "schema_version": "lightspeed-go-review-decision-v1",
+                    "review_id": review_id,
+                    "decision": "superseded",
+                    "note": (
+                        f"Superseded by {retained} while canonical project paths stabilised; "
+                        "the original event remains in the immutable queue history."
+                    ),
+                    "decided_utc": utc_now_iso(),
+                    "decided_by": "Merovingian canonical queue maintenance",
+                    "applies_external_write": False,
+                },
+            )
+            superseded += 1
+        return superseded
 
     def _project_changes(self, previous: dict[str, Any], current: dict[str, Any]) -> dict[str, list[dict[str, Any]]]:
         previous_map = {
@@ -931,6 +997,9 @@ class ProjectPipeline:
             "projects": registry.get("projects") or [],
             "last_review_id": review_packet.get("review_id") if review_packet else previous.get("last_review_id"),
         })
+        superseded_review_count = self._supersede_registry_reviews(
+            review_packet.get("review_id") if review_packet else None
+        )
         registry.update({
             "health": health,
             "cleanup_summary": {
@@ -939,6 +1008,7 @@ class ProjectPipeline:
             },
             "changes": {key: [item.get("project_id") for item in value] for key, value in changes.items()},
             "review_packet": review_packet,
+            "superseded_review_count": superseded_review_count,
         })
         self._cached_registry = registry
         self._last_refresh_monotonic = time.monotonic()
@@ -972,6 +1042,8 @@ class ProjectPipeline:
             if decision:
                 output["state"] = str(decision.get("decision") or "reviewed")
                 output["decision"] = decision
+            if output.get("state") == "superseded":
+                continue
             result.append(output)
         return result
 

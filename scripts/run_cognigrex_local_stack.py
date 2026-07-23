@@ -25,6 +25,7 @@ from urllib.request import urlopen
 REPO_ROOT = Path(__file__).resolve().parents[1]
 REPO_RUNTIME_ROOT = REPO_ROOT / "desktop" / "LightSpeed_Runtime"
 REPO_SHELL_ROOT = REPO_ROOT / "desktop" / "Desktop_Hooks" / "LightSpeed"
+CANONICAL_ROOT = Path(os.environ.get("LIGHTSPEED_CANONICAL_ROOT", r"D:\LightSpeed"))
 
 
 def utc_now_iso() -> str:
@@ -46,13 +47,20 @@ def select_root(
     repository: Path,
     marker: Path,
 ) -> Path:
-    candidates = [explicit, Path(os.environ[env_name]) if os.environ.get(env_name) else None]
+    # The operator namespace outranks stale machine variables from older
+    # LightSpeed layouts. An explicit CLI path remains the diagnostic override.
+    candidates = [explicit]
     if os.name == "nt":
-        candidates.extend((canonical, legacy))
+        candidates.append(canonical)
+    candidates.append(Path(os.environ[env_name]) if os.environ.get(env_name) else None)
+    if os.name == "nt":
+        candidates.append(legacy)
     candidates.append(repository)
     for candidate in candidates:
         if candidate and (candidate / marker).is_file():
-            return candidate.resolve()
+            # Preserve D:\LightSpeed as the operator namespace instead of
+            # resolving its junctions back to their physical C: targets.
+            return candidate.absolute()
     raise FileNotFoundError(f"No valid {env_name} root found")
 
 
@@ -119,14 +127,24 @@ def start_background(command: list[str], *, cwd: Path, log_path: Path) -> int:
     return int(process.pid)
 
 
-def windows_command_running(fragment: str) -> bool:
+def installed_or_repository_script(group: str, name: str) -> Path:
+    installed = CANONICAL_ROOT / group / name
+    if installed.is_file():
+        return installed
+    repository_group = "scripts" if group.casefold() == "automation" else "tools"
+    return REPO_ROOT / repository_group / name
+
+
+def windows_command_processes(fragment: str) -> list[dict[str, Any]]:
     if os.name != "nt":
-        return False
+        return []
     # Do not embed ``fragment`` in the PowerShell command: doing so makes the
     # probe match its own command line and report every process as running.
     command = (
         "Get-CimInstance Win32_Process | ForEach-Object { "
-        "if ($_.CommandLine) { Write-Output ($_.ProcessId.ToString() + \"`t\" + $_.CommandLine) } "
+        "if ($_.CommandLine) { Write-Output ("
+        "$_.ProcessId.ToString() + \"`t\" + $_.ParentProcessId.ToString() + \"`t\" + "
+        "$_.CreationDate.ToUniversalTime().Ticks.ToString() + \"`t\" + $_.CommandLine) } "
         "}"
     )
     completed = subprocess.run(
@@ -137,13 +155,134 @@ def windows_command_running(fragment: str) -> bool:
         timeout=15,
     )
     if completed.returncode != 0:
-        return False
+        return []
     needle = fragment.casefold()
-    return any(needle in line.casefold() for line in completed.stdout.splitlines())
+    rows: list[dict[str, Any]] = []
+    for line in completed.stdout.splitlines():
+        if needle not in line.casefold():
+            continue
+        parts = line.split("\t", 3)
+        if len(parts) != 4:
+            continue
+        try:
+            rows.append(
+                {
+                    "pid": int(parts[0]),
+                    "parent_pid": int(parts[1]),
+                    "created_ticks": int(parts[2]),
+                    "command_line": parts[3],
+                }
+            )
+        except ValueError:
+            continue
+    return rows
+
+
+def windows_command_running(fragment: str) -> bool:
+    return bool(windows_command_processes(fragment))
+
+
+def listening_pid(port: int) -> int | None:
+    if os.name != "nt":
+        return None
+    command = (
+        f"$row=Get-NetTCPConnection -State Listen -LocalPort {int(port)} "
+        "-ErrorAction SilentlyContinue | Select-Object -First 1; "
+        "if($row){Write-Output $row.OwningProcess}"
+    )
+    completed = subprocess.run(
+        ["powershell", "-NoProfile", "-NonInteractive", "-Command", command],
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=15,
+    )
+    try:
+        return int(completed.stdout.strip()) if completed.returncode == 0 else None
+    except ValueError:
+        return None
+
+
+def _root_processes(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    by_pid = {int(row["pid"]): row for row in rows}
+    return [row for row in rows if int(row["parent_pid"]) not in by_pid]
+
+
+def reconcile_singleton(
+    fragment: str,
+    *,
+    preferred_pid: int | None = None,
+) -> dict[str, Any]:
+    """Keep one matching Windows process tree and stop duplicate roots only."""
+    rows = windows_command_processes(fragment)
+    if not rows:
+        return {"matching_processes": 0, "duplicate_roots_stopped": []}
+    by_pid = {int(row["pid"]): row for row in rows}
+    roots = _root_processes(rows)
+    if len(roots) <= 1:
+        return {"matching_processes": len(rows), "duplicate_roots_stopped": []}
+
+    keep_root: int | None = None
+    if preferred_pid in by_pid:
+        cursor = int(preferred_pid)
+        while int(by_pid[cursor]["parent_pid"]) in by_pid:
+            cursor = int(by_pid[cursor]["parent_pid"])
+        keep_root = cursor
+    if keep_root is None:
+        keep_root = int(min(roots, key=lambda row: int(row["created_ticks"]))["pid"])
+
+    stopped: list[int] = []
+    for root in roots:
+        pid = int(root["pid"])
+        if pid == keep_root:
+            continue
+        completed = subprocess.run(
+            ["taskkill", "/PID", str(pid), "/T", "/F"],
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=20,
+        )
+        if completed.returncode == 0:
+            stopped.append(pid)
+    return {
+        "matching_processes": len(rows),
+        "kept_root_pid": keep_root,
+        "duplicate_roots_stopped": stopped,
+    }
+
+
+def stop_noncanonical_process_roots(
+    fragment: str,
+    canonical_marker: str,
+) -> dict[str, Any]:
+    """Stop matching roots that do not execute through the canonical path."""
+    rows = windows_command_processes(fragment)
+    if not rows:
+        return {"matching_processes": 0, "noncanonical_roots_stopped": []}
+    marker = canonical_marker.casefold()
+    stopped: list[int] = []
+    for root in _root_processes(rows):
+        if marker in str(root["command_line"]).casefold():
+            continue
+        pid = int(root["pid"])
+        completed = subprocess.run(
+            ["taskkill", "/PID", str(pid), "/T", "/F"],
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=20,
+        )
+        if completed.returncode == 0:
+            stopped.append(pid)
+    return {
+        "matching_processes": len(rows),
+        "noncanonical_roots_stopped": stopped,
+    }
 
 
 def run_desporte_population(python: str, receipt_dir: Path) -> dict[str, Any]:
-    script = REPO_ROOT / "scripts" / "populate_desporte_desktop.py"
+    script = installed_or_repository_script("Automation", "populate_desporte_desktop.py")
     completed = subprocess.run(
         [python, str(script)],
         cwd=REPO_ROOT,
@@ -179,7 +318,11 @@ def optional_desporte_start() -> dict[str, Any]:
     # configured argument contract is shell-style, so strip its grouping
     # quotes before passing the argument list to ``Popen``.
     args = shlex.split(os.environ.get("DESPORTE_LAUNCH_ARGS", ""), posix=True)
-    pid = start_background([str(executable), *args], cwd=executable.parent, log_path=REPO_ROOT / "logs" / "desporte-launch.log")
+    pid = start_background(
+        [str(executable), *args],
+        cwd=executable.parent,
+        log_path=CANONICAL_ROOT / "Logs" / "desporte-launch.log",
+    )
     time.sleep(2)
     return {
         "state": "started" if pid_alive(pid) else "launch_failed",
@@ -208,19 +351,19 @@ def wait_for_bridge_status(timeout_seconds: float = 30.0) -> dict[str, Any]:
     return latest
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--runtime-root", type=Path)
     parser.add_argument("--shell-root", type=Path)
     parser.add_argument("--skip-desporte-population", action="store_true")
     parser.add_argument("--no-desktop-launch", action="store_true")
     parser.add_argument("--json-output", type=Path)
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     runtime_root = select_root(
         args.runtime_root,
         "LIGHTSPEED_RUNTIME_ROOT",
-        Path(r"D:\LightSpeed_Consolidated\LightSpeed_Runtime"),
+        CANONICAL_ROOT / "Core",
         Path(r"C:\LightSpeed_Consolidated\LightSpeed_Runtime"),
         REPO_RUNTIME_ROOT,
         Path("lightspeed_runtime") / "__init__.py",
@@ -228,12 +371,20 @@ def main() -> int:
     shell_root = select_root(
         args.shell_root,
         "LIGHTSPEED_SHELL_ROOT",
-        Path(r"D:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed"),
+        CANONICAL_ROOT / "App",
         Path(r"C:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed"),
         REPO_SHELL_ROOT,
         Path("N.py"),
     )
-    python = os.environ.get("LIGHTSPEED_PYTHON") or sys.executable
+    os.environ["LIGHTSPEED_CANONICAL_ROOT"] = str(CANONICAL_ROOT)
+    os.environ["LIGHTSPEED_RUNTIME_ROOT"] = str(runtime_root)
+    os.environ["LIGHTSPEED_SHELL_ROOT"] = str(shell_root)
+    canonical_python = CANONICAL_ROOT / "Environment" / "Scripts" / "python.exe"
+    python = (
+        str(canonical_python)
+        if canonical_python.is_file()
+        else os.environ.get("LIGHTSPEED_PYTHON") or sys.executable
+    )
     receipt_dir = runtime_root / "exports" / "agent_home"
     receipt_dir.mkdir(parents=True, exist_ok=True)
 
@@ -252,7 +403,12 @@ def main() -> int:
         merovingian_pid = start_background(
             [
                 python,
-                str(REPO_ROOT / "scripts" / "run_merovingian_soft_launch.py"),
+                str(
+                    installed_or_repository_script(
+                        "Automation",
+                        "run_merovingian_soft_launch.py",
+                    )
+                ),
                 "--watch",
                 "--interval",
                 "60",
@@ -261,25 +417,44 @@ def main() -> int:
                 "--shell-root",
                 str(shell_root),
             ],
-            cwd=REPO_ROOT,
+            cwd=CANONICAL_ROOT if CANONICAL_ROOT.is_dir() else REPO_ROOT,
             log_path=shell_root / "Z Axis" / "Z-4_Merovingian" / "data" / "logs" / "merovingian-supervisor.log",
         )
         merovingian = {"state": "started", "pid": merovingian_pid}
 
+    bridge_reconciliation = reconcile_singleton(
+        "run_ls_go_bridge.py",
+        preferred_pid=listening_pid(8765),
+    )
     if port_open("127.0.0.1", 8765):
         bridge = {"state": "already_running", "origin": "http://127.0.0.1:8765"}
     else:
+        # A matching process without a listener is stale. Stop only its root
+        # process tree before starting the canonical bridge.
+        for row in _root_processes(windows_command_processes("run_ls_go_bridge.py")):
+            subprocess.run(
+                ["taskkill", "/PID", str(row["pid"]), "/T", "/F"],
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=20,
+            )
         bridge_pid = start_background(
-            [python, str(REPO_ROOT / "tools" / "run_ls_go_bridge.py")],
-            cwd=REPO_ROOT,
+            [python, str(installed_or_repository_script("Tools", "run_ls_go_bridge.py"))],
+            cwd=CANONICAL_ROOT if CANONICAL_ROOT.is_dir() else REPO_ROOT,
             log_path=shell_root / "Z Axis" / "Z-4_Merovingian" / "data" / "logs" / "ls-go-bridge.log",
         )
         bridge = {"state": "started", "pid": bridge_pid, "origin": "http://127.0.0.1:8765"}
 
-    desktop_fragment = "Desktop_Hooks\\LightSpeed\\__main__.py"
+    canonical_desktop_marker = str(shell_root / "__main__.py")
+    legacy_desktop_reconciliation = stop_noncanonical_process_roots(
+        r"Desktop_Hooks\LightSpeed\__main__.py",
+        canonical_desktop_marker,
+    )
+    desktop_reconciliation = reconcile_singleton(canonical_desktop_marker)
     if args.no_desktop_launch:
         desktop = {"state": "skipped_by_operator"}
-    elif windows_command_running(desktop_fragment):
+    elif windows_command_running(canonical_desktop_marker):
         desktop = {"state": "already_running"}
     else:
         launcher = shell_root / "launcher_exe.py"
@@ -309,13 +484,19 @@ def main() -> int:
         "schema_version": "lightspeed-cognigrex-local-stack-v1",
         "generated_utc": utc_now_iso(),
         "status": "pass" if all(required_states.values()) else "review_required",
-        "runtime_root": str(runtime_root),
-        "shell_root": str(shell_root),
+        "canonical_root": str(CANONICAL_ROOT),
+        "core_root": str(runtime_root),
+        "app_root": str(shell_root),
         "checks": required_states,
         "desporte_population": desporte,
         "desporte_process": desporte_process,
         "merovingian": merovingian,
         "ls_go_bridge": bridge,
+        "process_reconciliation": {
+            "bridge": bridge_reconciliation,
+            "desktop": desktop_reconciliation,
+            "legacy_desktop": legacy_desktop_reconciliation,
+        },
         "desktop": desktop,
         "bridge_status": bridge_status,
         "web_frontend_in_scope": False,

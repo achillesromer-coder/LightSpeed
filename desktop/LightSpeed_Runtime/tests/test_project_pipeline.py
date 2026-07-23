@@ -126,6 +126,23 @@ def test_project_registry_prefers_architect_and_detects_duplicate_names(tmp_path
     assert canonical_row["condition"] == "active"
 
 
+def test_project_identity_is_stable_across_canonical_path_changes(tmp_path):
+    first_shell = make_shell(tmp_path / "first")
+    second_shell = make_shell(tmp_path / "second")
+    for shell in (first_shell, second_shell):
+        project = shell / "Z Axis" / "Z+1_Architect" / "projects" / "Apollo"
+        project.mkdir()
+        (project / "README.md").write_text(
+            "same logical project",
+            encoding="utf-8",
+        )
+
+    first_id = ProjectPipeline(first_shell).scan_projects()["projects"][0]["project_id"]
+    second_id = ProjectPipeline(second_shell).scan_projects()["projects"][0]["project_id"]
+
+    assert first_id == second_id
+
+
 def test_archive_duplicates_are_evidence_only(tmp_path):
     shell = make_shell(tmp_path)
     project = shell / "Z Axis" / "Z+1_Architect" / "projects" / "Archive Project"
@@ -222,3 +239,22 @@ def test_refresh_queues_change_receipt_without_mutating_project(tmp_path, monkey
     assert second["review_packet"]["state"] == "pending_review"
     assert source.read_text(encoding="utf-8") == "second"
     assert pipeline.review_queue_path.is_file()
+
+    source.write_text("third payload", encoding="utf-8")
+    third = pipeline.refresh(force=True, queue_changes=True)
+    pending_registry_reviews = [
+        item
+        for item in pipeline.list_reviews(limit=100)
+        if item.get("event_type") == "project_registry_change"
+        and item.get("state") == "pending_review"
+    ]
+
+    assert third["superseded_review_count"] == 1
+    assert len(pending_registry_reviews) == 1
+    assert pipeline._supersede_registry_reviews(retain_latest=False) == 1
+    assert not [
+        item
+        for item in pipeline.list_reviews(limit=100)
+        if item.get("event_type") == "project_registry_change"
+        and item.get("state") == "pending_review"
+    ]

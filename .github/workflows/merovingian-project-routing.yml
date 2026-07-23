@@ -19,6 +19,10 @@ on:
       - "scripts/validate_lightspeed_surfaces.py"
       - "scripts/run_merovingian_soft_launch.py"
       - "scripts/run_cognigrex_local_stack.py"
+      - "scripts/ensure_cognigrex_local_stack.py"
+      - "scripts/register_cognigrex_watchdog.ps1"
+      - "tests/test_cognigrex_local_stack.py"
+      - "tests/test_merovingian_service_integration.py"
       - "tools/run_merovingian_soft_launch.cmd"
       - "tools/run_cognigrex_local_stack.cmd"
       - ".github/workflows/merovingian-project-routing.yml"
@@ -40,6 +44,10 @@ on:
       - "scripts/validate_lightspeed_surfaces.py"
       - "scripts/run_merovingian_soft_launch.py"
       - "scripts/run_cognigrex_local_stack.py"
+      - "scripts/ensure_cognigrex_local_stack.py"
+      - "scripts/register_cognigrex_watchdog.ps1"
+      - "tests/test_cognigrex_local_stack.py"
+      - "tests/test_merovingian_service_integration.py"
       - "tools/run_merovingian_soft_launch.cmd"
       - "tools/run_cognigrex_local_stack.cmd"
       - ".github/workflows/merovingian-project-routing.yml"
@@ -87,6 +95,8 @@ jobs:
             scripts/validate_lightspeed_surfaces.py \
             scripts/run_merovingian_soft_launch.py \
             scripts/run_cognigrex_local_stack.py \
+            scripts/ensure_cognigrex_local_stack.py \
+            tests/test_merovingian_service_integration.py \
             2>&1 | tee compile.log
 
       - name: Run static Merovingian contract check
@@ -112,7 +122,13 @@ jobs:
         continue-on-error: true
         run: |
           set -o pipefail
+          PYTHONPATH="desktop/LightSpeed_Runtime:desktop/Desktop_Hooks/LightSpeed" \
           python -m pytest -q \
+            tests/test_cognigrex_local_stack.py \
+            tests/test_merovingian_service_integration.py \
+            desktop/Desktop_Hooks/LightSpeed/tests/test_launcher_exe.py \
+            desktop/Desktop_Hooks/LightSpeed/tests/test_functions_hub_operator_surface.py \
+            desktop/Desktop_Hooks/LightSpeed/tests/test_operator_home_export_gates.py \
             desktop/LightSpeed_Runtime/tests/test_project_pipeline.py \
             desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py \
             desktop/LightSpeed_Runtime/tests/test_secure_settings_hub.py \
