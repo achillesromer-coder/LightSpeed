@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import launcher_exe
 from launcher_exe import build_launch_command, resolve_canonical_root
 
 
@@ -22,4 +23,24 @@ def test_build_launch_command_prefers_windowless_canonical_python(tmp_path: Path
     command, working_directory = build_launch_command(tmp_path)
 
     assert command == [str(pythonw), str(entrypoint)]
+    assert working_directory == entrypoint.parent
+
+
+def test_canonical_operator_namespace_uses_app_and_environment(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    entrypoint = tmp_path / "App" / "__main__.py"
+    python = tmp_path / "Environment" / "Scripts" / "python.exe"
+    entrypoint.parent.mkdir(parents=True)
+    python.parent.mkdir(parents=True)
+    entrypoint.touch()
+    python.touch()
+    monkeypatch.setenv("LIGHTSPEED_CANONICAL_ROOT", str(tmp_path))
+
+    root = resolve_canonical_root()
+    command, working_directory = build_launch_command(root)
+
+    assert root == tmp_path.absolute()
+    assert command == [str(python), str(entrypoint)]
     assert working_directory == entrypoint.parent

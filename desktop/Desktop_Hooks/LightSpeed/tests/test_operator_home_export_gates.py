@@ -61,3 +61,29 @@ def test_shell_export_includes_web_go_bridge_without_external_write(tmp_path: Pa
     assert bridge_path == shell_root / "config" / "web_drive_bridge.json"
     assert bridge_path.exists()
     assert "1wLNW2cC" in bridge_path.read_text(encoding="utf-8")
+
+
+def test_unstated_corunner_state_can_receive_local_handoff(tmp_path: Path) -> None:
+    shell_root = tmp_path / "LightSpeed"
+    shell_root.mkdir()
+    handoff_path = tmp_path / "DeSporte" / "lightspeed_launch_handoff.json"
+    payload = {
+        "generated_at": "2026-07-23T00:00:00+00:00",
+        "environment": {
+            "paths": {
+                "desktop_shell_root": {
+                    "path": str(shell_root),
+                }
+            }
+        },
+        "launch_control": {
+            "co_runner": {
+                "handoff_path": str(handoff_path),
+            }
+        },
+    }
+
+    outputs = _write_shell_artifacts(payload)
+
+    assert Path(outputs["co_runner_handoff"]) == handoff_path
+    assert handoff_path.is_file()
