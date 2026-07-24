@@ -2,12 +2,14 @@ import "./styles.css";
 import {
   createCommandEnvelope,
   decideDesktopReview,
+  decideRepresentationReview,
   DEFAULT_DESKTOP_ORIGIN,
   downloadCommand,
   FLOORS,
   listDesktopProjects,
   listDesktopReviews,
   listDesktopTasks,
+  listRepresentationGraphs,
   readDesktopStatus,
   readPendingCommands,
   removePendingCommand,
@@ -19,10 +21,13 @@ import {
   type Floor,
   type Priority,
   type ProjectRecord,
+  type RepresentationDecision,
+  type RepresentationGraph,
   type ReviewDecision,
   type ReviewRecord,
 } from "./desktopBridge";
 import { escapeHtml, loadNeoExchange, renderExchangePanel } from "./neoExchange";
+import { renderRepresentationGraphs } from "./representationGraphs";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
 
 const app = document.getElementById("app");
@@ -64,6 +69,7 @@ app.innerHTML = `
     <nav class="tabs" aria-label="LS GO views">
       <button class="tab active" data-view="command">Command</button>
       <button class="tab" data-view="activity">Activity</button>
+      <button class="tab" data-view="objects">Objects</button>
       <button class="tab" data-view="system">System</button>
       <button class="tab" data-view="sources">Sources</button>
     </nav>
@@ -125,6 +131,16 @@ app.innerHTML = `
       <article class="panel"><div class="panel-head"><div><p class="eyebrow">Neo exchange</p><h2>Public-safe projection</h2></div></div><div id="neo-exchange"><p class="muted">Reading bounded exchange projection…</p></div></article>
     </section>
 
+    <section class="view" id="view-objects">
+      <article class="panel definition">
+        <div><p class="eyebrow">Canonical representation edge</p><h2>Identity, evidence, horizon, review</h2></div>
+        <p>Three bounded local candidates prove the complete intake route. Drive becomes canonical only after owner decision, promotion, and exact readback.</p>
+      </article>
+      <div id="representation-graphs" class="graph-stack">
+        <article class="panel"><p class="muted">Reading feature-gated object graphs from Desktopâ€¦</p></article>
+      </div>
+    </section>
+
     <section class="view" id="view-system">
       <article class="panel definition">
         <div><p class="eyebrow">cognigrex</p><h2>Common goal, distinct agents</h2></div>
@@ -158,6 +174,7 @@ const routePreview = byId<HTMLDivElement>("route-preview");
 const resultBox = byId<HTMLDivElement>("command-result");
 let currentCommand: CommandEnvelope | null = null;
 let currentReviews: ReviewRecord[] = [];
+let currentRepresentationGraphs: RepresentationGraph[] = [];
 
 const renderRoute = (): void => {
   const routed = routeInstruction(instruction.value || "governance");
@@ -254,6 +271,47 @@ const renderReviews = (reviews: ReviewRecord[]): void => {
   }));
 };
 
+const renderCanonicalGraphs = (graphs: RepresentationGraph[]): void => {
+  currentRepresentationGraphs = graphs;
+  const mount = byId("representation-graphs");
+  mount.innerHTML = renderRepresentationGraphs(graphs);
+  mount.querySelectorAll<HTMLButtonElement>("[data-representation-review]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const reviewId = button.dataset.representationReview || "";
+      const decision = button.dataset.decision as RepresentationDecision;
+      const scope = (button.dataset.scope || "identity") as "identity" | "edges";
+      const edgeIds = scope === "edges"
+        ? (button.dataset.edgeIds || "").split("|").filter(Boolean).slice(0, 100)
+        : [];
+      const graph = currentRepresentationGraphs.find(
+        (item) => item.review?.review_id === reviewId,
+      );
+      if (!reviewId || !graph) return;
+      const note = window.prompt(
+        `${decision.replace(/_/g, " ").toUpperCase()}: ${graph.object.display_name}\n` +
+        `${scope === "identity"
+          ? "Identity is reviewed before edges."
+          : `${edgeIds.length} bounded edges selected.`}\n` +
+        "Optional decision note:",
+        "",
+      ) ?? "";
+      try {
+        await decideRepresentationReview(reviewId, decision, scope, edgeIds, note);
+        setResult(
+          "good",
+          `${reviewId} recorded ${decision}; local staging remains noncanonical until Drive readback.`,
+        );
+        await refreshDesktop();
+      } catch (error) {
+        setResult(
+          "bad",
+          error instanceof Error ? error.message : "Representation review decision failed.",
+        );
+      }
+    });
+  });
+};
+
 byId<HTMLFormElement>("command-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   try {
@@ -328,6 +386,12 @@ const refreshDesktop = async (): Promise<void> => {
     } catch {
       renderReviews([]);
     }
+
+    try {
+      renderCanonicalGraphs(await listRepresentationGraphs());
+    } catch {
+      renderCanonicalGraphs([]);
+    }
   } catch {
     pill.dataset.state = "offline";
     pillText.textContent = "start LightSpeed Desktop and the local bridge";
@@ -337,6 +401,7 @@ const refreshDesktop = async (): Promise<void> => {
     tasksMount.innerHTML = `<p class="muted">Desktop is offline. Commands can still be saved, copied or downloaded.</p>`;
     byId("desktop-projects").innerHTML = `<p class="muted">Project registry unavailable while Desktop is offline.</p>`;
     byId("desktop-reviews").innerHTML = `<p class="muted">Review queue unavailable while Desktop is offline.</p>`;
+    renderCanonicalGraphs([]);
   }
 };
 

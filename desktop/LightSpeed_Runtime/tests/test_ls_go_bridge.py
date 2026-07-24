@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import sqlite3
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -13,6 +14,7 @@ sys.path.insert(0, str(RUNTIME_ROOT))
 
 from lightspeed_runtime import ls_go_bridge
 from lightspeed_runtime.project_pipeline import ProjectPipeline
+from lightspeed_runtime.representation_edge import FEATURE_FLAG
 
 
 def command_payload(**overrides):
@@ -224,3 +226,87 @@ def test_bridge_rejects_unknown_project_and_skips_outside_path(tmp_path, monkeyp
     assert manifest["copied_count"] == 0
     assert manifest["skipped"][0]["reason"] == "outside_registered_project_root"
     assert outside.read_text(encoding="utf-8") == "outside"
+
+
+def test_representation_edge_routes_are_disabled_by_default(tmp_path, monkeypatch):
+    configure_shell(tmp_path)
+    monkeypatch.delenv(FEATURE_FLAG, raising=False)
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    status = client.get("/api/v1/representation-edge/status")
+    graphs = client.get("/api/v1/representation-graphs")
+
+    assert status.status_code == 200
+    assert status.json()["enabled"] is False
+    assert graphs.status_code == 404
+    assert not (tmp_path / "Z Axis" / "Z-4_Merovingian" / "data" / "db" / "lightspeed_unified.db").exists()
+
+
+def test_representation_edge_api_renders_graphs_and_enforces_identity_first(tmp_path, monkeypatch):
+    configure_shell(tmp_path)
+    database = (
+        tmp_path
+        / "Z Axis"
+        / "Z-4_Merovingian"
+        / "data"
+        / "db"
+        / "lightspeed_unified.db"
+    )
+    database.parent.mkdir(parents=True)
+    sqlite3.connect(database).close()
+    monkeypatch.setenv(FEATURE_FLAG, "1")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    graphs = client.get("/api/v1/representation-graphs")
+    assert graphs.status_code == 200
+    rows = graphs.json()["graphs"]
+    assert {row["object"]["object_id"] for row in rows} == {
+        "ASPHA.0001",
+        "engineering-twin:rfs-emff-sandbox",
+        "de-sporte-05d89c2a",
+    }
+    assert all("missing" in row and "conflicts" in row and "horizons" in row for row in rows)
+
+    apophis = next(row for row in rows if row["object"]["object_id"] == "ASPHA.0001")
+    review_id = apophis["review"]["review_id"]
+    edge_id = apophis["edges"][0]["edge_id"]
+    premature = client.post(
+        f"/api/v1/representation-reviews/{review_id}/decision",
+        json={
+            "decision": "hold",
+            "actor": "Nathaniel",
+            "scope": "edges",
+            "edge_ids": [edge_id],
+        },
+    )
+    assert premature.status_code == 400
+
+    identity = client.post(
+        f"/api/v1/representation-reviews/{review_id}/decision",
+        json={
+            "decision": "provisional_approve",
+            "actor": "Achilles",
+            "scope": "identity",
+            "note": "Candidate identity only.",
+        },
+    )
+    assert identity.status_code == 200
+    assert identity.json()["receipt"]["drive_write_executed"] is False
+
+    edge = client.post(
+        f"/api/v1/representation-reviews/{review_id}/decision",
+        json={
+            "decision": "request_evidence",
+            "actor": "Nathaniel",
+            "scope": "edges",
+            "edge_ids": [edge_id],
+            "note": "Stable workbook key required.",
+        },
+    )
+    assert edge.status_code == 200
+
+    promotions = client.get("/api/v1/representation-promotions").json()
+    assert promotions["drive_write_executed"] is False
+    assert promotions["readback_required"] is True
