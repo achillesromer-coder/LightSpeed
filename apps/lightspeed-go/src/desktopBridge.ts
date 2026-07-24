@@ -17,6 +17,13 @@ export type Floor = (typeof FLOORS)[number];
 export type Priority = "critical" | "high" | "normal" | "low";
 export type ExecutionMode = "review" | "queue";
 export type ReviewDecision = "approve" | "hold" | "reject";
+export type RepresentationDecision =
+  | "approve"
+  | "provisional_approve"
+  | "hold"
+  | "reject"
+  | "request_evidence"
+  | "supersede";
 
 export interface CommandEnvelope {
   schema_version: typeof COMMAND_SCHEMA;
@@ -84,6 +91,94 @@ export interface DesktopStatus {
     cleanup_summary?: Record<string, unknown>;
     drive_writeback?: { path?: string; mode?: string };
   };
+  representation_edge?: {
+    enabled?: boolean;
+    migration_applied?: boolean;
+    error?: string | null;
+  };
+}
+
+export interface RepresentationIdentifier {
+  identifier_id: string;
+  namespace: string;
+  identifier_value: string;
+  identifier_type: string;
+  authority: string;
+  is_primary: number | boolean;
+  state: string;
+}
+
+export interface ObjectRepresentation {
+  representation_id: string;
+  object_id: string;
+  representation_type: string;
+  locator_type: string;
+  locator: Record<string, unknown>;
+  content_sha256?: string | null;
+  schema_id?: string | null;
+  source_authority: string;
+  confidence_numeric: number;
+  confidence_class: string;
+  evidence_class: string;
+  horizon_id?: string | null;
+  state: string;
+  claim_boundary: string;
+}
+
+export interface RepresentationEdge {
+  edge_id: string;
+  from_representation_id: string;
+  to_representation_id: string;
+  relation: string;
+  evidence_bundle_id?: string | null;
+  confidence_numeric: number;
+  confidence_class: string;
+  claim_boundary: string;
+  created_by_floor: string;
+  review_state: string;
+  owner_decision_id?: string | null;
+}
+
+export interface RepresentationHorizon {
+  horizon_id: string;
+  name: string;
+  horizon_type: string;
+  objective: string;
+  assumptions: Record<string, unknown>;
+  constraints: Record<string, unknown>;
+  input_set_sha256: string;
+  sensitivity_summary: Record<string, unknown>;
+  state: string;
+}
+
+export interface RepresentationGraph {
+  schema_version: string;
+  object: {
+    object_id: string;
+    object_type: string;
+    canonical_name: string;
+    display_name: string;
+    description: string;
+    authority: string;
+    identity_confidence_numeric: number;
+    identity_confidence_class: string;
+    state: string;
+    metadata: Record<string, unknown>;
+  };
+  identifiers: RepresentationIdentifier[];
+  representations: ObjectRepresentation[];
+  edges: RepresentationEdge[];
+  missing: Record<string, unknown>[];
+  conflicts: Record<string, unknown>[];
+  horizons: RepresentationHorizon[];
+  review?: {
+    review_id: string;
+    state: string;
+    review_stage: "identity" | "edges";
+    graph_sha256: string;
+  } | null;
+  decisions: Record<string, unknown>[];
+  canonical_state: string;
 }
 
 export interface CommandReceipt {
@@ -221,6 +316,41 @@ export const decideDesktopReview = async (
       body: JSON.stringify({ decision, note: normalize(note, 1000) }),
     },
     7000,
+  );
+
+export const listRepresentationGraphs = async (
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<RepresentationGraph[]> => {
+  const response = await withTimeout<{ graphs?: RepresentationGraph[] }>(
+    `${origin}/api/v1/representation-graphs`,
+    { method: "GET" },
+    15000,
+  );
+  return Array.isArray(response.graphs) ? response.graphs : [];
+};
+
+export const decideRepresentationReview = async (
+  reviewId: string,
+  decision: RepresentationDecision,
+  scope: "identity" | "edges",
+  edgeIds: string[] = [],
+  note = "",
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<Record<string, unknown>> =>
+  withTimeout<Record<string, unknown>>(
+    `${origin}/api/v1/representation-reviews/${encodeURIComponent(reviewId)}/decision`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        decision,
+        actor: "Nathaniel",
+        scope,
+        edge_ids: edgeIds.slice(0, 100),
+        note: normalize(note, 1000),
+      }),
+    },
+    10000,
   );
 
 const STORAGE_KEY = "lightspeed-go-pending-commands-v1";
