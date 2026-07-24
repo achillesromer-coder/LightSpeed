@@ -25,7 +25,6 @@ on:
       - main
       - "ops/**"
       - "fix/**"
-      - "agent/**"
     paths:
       - "desktop/source-manifest.json"
       - "desktop/Desktop_Hooks/LightSpeed/**"

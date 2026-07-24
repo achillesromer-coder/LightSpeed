@@ -33,7 +33,6 @@ on:
     branches:
       - "ops/merovingian-project-routing-*"
       - "fix/provider-secret-boundary-*"
-      - "agent/**"
     paths:
       - "apps/lightspeed-go/**"
       - "desktop/Desktop_Hooks/LightSpeed/config/project_routing.json"
