@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - "fix/**"
+      - "agent/**"
     paths:
       - "apps/lightspeed-go/**"
       - "desktop/Desktop_Hooks/LightSpeed/config/project_routing.json"
@@ -12,8 +13,10 @@ on:
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/representation_edge.py"
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/tests/test_representation_edge.py"
       - "desktop/LightSpeed_Runtime/tests/test_secure_settings_hub.py"
       - "desktop/source-manifest.json"
       - "scripts/validate_lightspeed_surfaces.py"
@@ -30,6 +33,7 @@ on:
     branches:
       - "ops/merovingian-project-routing-*"
       - "fix/provider-secret-boundary-*"
+      - "agent/**"
     paths:
       - "apps/lightspeed-go/**"
       - "desktop/Desktop_Hooks/LightSpeed/config/project_routing.json"
@@ -37,8 +41,10 @@ on:
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/representation_edge.py"
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/tests/test_representation_edge.py"
       - "desktop/LightSpeed_Runtime/tests/test_secure_settings_hub.py"
       - "desktop/source-manifest.json"
       - "scripts/validate_lightspeed_surfaces.py"
@@ -92,6 +98,7 @@ jobs:
             desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/representation_edge.py \
             scripts/validate_lightspeed_surfaces.py \
             scripts/run_merovingian_soft_launch.py \
             scripts/run_cognigrex_local_stack.py \
@@ -131,6 +138,7 @@ jobs:
             desktop/Desktop_Hooks/LightSpeed/tests/test_operator_home_export_gates.py \
             desktop/LightSpeed_Runtime/tests/test_project_pipeline.py \
             desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py \
+            desktop/LightSpeed_Runtime/tests/test_representation_edge.py \
             desktop/LightSpeed_Runtime/tests/test_secure_settings_hub.py \
             2>&1 | tee python-tests.log
 

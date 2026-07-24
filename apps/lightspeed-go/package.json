@@ -8,7 +8,7 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "check": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run --pool=threads --maxWorkers=1 --no-file-parallelism"
   },
   "dependencies": {
     "typescript": "^5.7.0",

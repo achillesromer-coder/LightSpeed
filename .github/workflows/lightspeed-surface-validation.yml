@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - "agent/**"
     paths:
       - "desktop/source-manifest.json"
       - "desktop/Desktop_Hooks/LightSpeed/**"
@@ -24,6 +25,7 @@ on:
       - main
       - "ops/**"
       - "fix/**"
+      - "agent/**"
     paths:
       - "desktop/source-manifest.json"
       - "desktop/Desktop_Hooks/LightSpeed/**"
