@@ -1,7 +1,8 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "record_id": "coin-protocol-canon-2026-07-29",
   "recorded_utc": "2026-07-29T11:34:03Z",
+  "expanded_utc": "2026-07-29T12:01:11Z",
   "owner_instruction": "continue with canon expansion and next in queue",
   "canonical_store": "google_drive",
   "drive": {
@@ -16,6 +17,25 @@
     "archive_size_bytes": 143933,
     "archive_sha256": "fa23f1c0e193bde6d10470b00dd416da28015b7d664e58dc7eb38695c5196f1e"
   },
+  "private_compile_assurance": {
+    "folder_id": "1xl-HI6gSS3E4zNmSvSQY-FalSITkE_ML",
+    "readback_verified": true,
+    "canonical_handoff_id": "1YChM6SGVJ9cpTyJSi6YxNEjTyO4uz4PtTB_Ke2fhqyM",
+    "codex_prompt_id": "1ureExwweNRIR-OekuSut-5tJX2rAoaIjREq3n4Sxb8k",
+    "receipt_contract_id": "1gi4o61hilqz87VioT5KQ9XPVnQs49CbPEesE3xBHMDc",
+    "protocol_source_included": false,
+    "public_network_authorised": false,
+    "ephemeral_local_rehearsal_only": true
+  },
+  "dependency_baseline": {
+    "solidity": "0.8.36+commit.8a079791",
+    "solidity_wasm_path": "soljson-v0.8.36+commit.8a079791.js",
+    "solidity_wasm_sha256": "704877a592467d7de651ec5377ea6e3c676ae71d31f325401957d41bedfaa0d8",
+    "openzeppelin_contracts": "5.6.1",
+    "foundry": "must_be_pinned_in_private_receipt",
+    "forge_std": "must_be_pinned_in_private_receipt",
+    "current_registry_attempt": "blocked_404_openzeppelin_dependency_no_compile_claim"
+  },
   "implementation": {
     "coin_name": "Cognigrex Operations Integrity Network",
     "state": "canonical_source_artifact_implementation_not_deployed",
@@ -25,6 +45,8 @@
     "independent_security_audit_complete": false
   },
   "feature_gates": {
+    "production_authorised": false,
+    "public_source_publication": false,
     "public_token": false,
     "public_sale": false,
     "market_listing": false,
@@ -35,10 +57,12 @@
     "exchange_service": false,
     "payment_or_stored_value": false,
     "public_value_bridge": false,
+    "dao_activation": false,
+    "asset_fractionalisation": false,
     "autonomous_legal_commitment": false,
     "physical_mission_execution": false,
     "personal_data_on_immutable_public_ledger": false
   },
-  "next_gate": "private/local materialisation, pinned dependency compile, Foundry/property tests, security review and LS GO receipt",
+  "next_gate": "private/local materialisation, exact dependency compile, Foundry/property tests, security review and redacted LS GO receipt",
   "rollback": "Close the draft topology PR and delete its branch; Drive canon remains unchanged."
 }
