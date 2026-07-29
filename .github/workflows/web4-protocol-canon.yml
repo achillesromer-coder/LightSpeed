@@ -1,0 +1,28 @@
+name: Web4 Protocol Canon Topology
+
+on:
+  pull_request:
+    paths:
+      - "docs/web4/COIN_PROTOCOL_CANON_2026-07-29.*"
+      - "scripts/validate_web4_protocol_canon.py"
+      - ".github/workflows/web4-protocol-canon.yml"
+  push:
+    branches: [main]
+    paths:
+      - "docs/web4/COIN_PROTOCOL_CANON_2026-07-29.*"
+      - "scripts/validate_web4_protocol_canon.py"
+      - ".github/workflows/web4-protocol-canon.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-topology:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate public-safe protocol topology and negative gates
+        run: python scripts/validate_web4_protocol_canon.py

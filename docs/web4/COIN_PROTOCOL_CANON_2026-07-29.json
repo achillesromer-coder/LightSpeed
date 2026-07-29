@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "record_id": "coin-protocol-canon-2026-07-29",
+  "recorded_utc": "2026-07-29T11:34:03Z",
+  "owner_instruction": "continue with canon expansion and next in queue",
+  "canonical_store": "google_drive",
+  "drive": {
+    "folder_id": "13QOVYc6WPW3D9hCelMEsu7ZOcXaPDhpX",
+    "parent_receipts_folder_id": "1FlIjBrt3vQG67Jh37aWGf2cVEa6OmXZX",
+    "archive_id": "1tZizmq__mFluwlSM0LHwAkMhW0NRmS9f",
+    "manifest_id": "1ExuuSa67t2Rq-td78RREQrd49VgWwYJN",
+    "build_receipt_id": "1v62Ev6g1B-E5v4m5jjJEJ5GiWCRIdAXP",
+    "checksum_id": "1zbnAnYrFWlSfLt-oip8toh1GEtPbD8A5",
+    "canon_receipt_id": "1uM6xwMTDw8sKtd-9W8OmwSAThO9YoqUfdCEmbwF1pGM",
+    "readback_verified": true,
+    "archive_size_bytes": 143933,
+    "archive_sha256": "fa23f1c0e193bde6d10470b00dd416da28015b7d664e58dc7eb38695c5196f1e"
+  },
+  "implementation": {
+    "coin_name": "Cognigrex Operations Integrity Network",
+    "state": "canonical_source_artifact_implementation_not_deployed",
+    "full_source_published_to_public_git": false,
+    "local_tests_passed": true,
+    "solidity_compiled": false,
+    "independent_security_audit_complete": false
+  },
+  "feature_gates": {
+    "public_token": false,
+    "public_sale": false,
+    "market_listing": false,
+    "transferable_value_rights": false,
+    "redemption": false,
+    "yield_or_profit": false,
+    "customer_custody": false,
+    "exchange_service": false,
+    "payment_or_stored_value": false,
+    "public_value_bridge": false,
+    "autonomous_legal_commitment": false,
+    "physical_mission_execution": false,
+    "personal_data_on_immutable_public_ledger": false
+  },
+  "next_gate": "private/local materialisation, pinned dependency compile, Foundry/property tests, security review and LS GO receipt",
+  "rollback": "Close the draft topology PR and delete its branch; Drive canon remains unchanged."
+}
