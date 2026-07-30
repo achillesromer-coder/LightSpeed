@@ -165,6 +165,13 @@ export interface RepresentationGraph {
     state: string;
     metadata: Record<string, unknown>;
   };
+  linked_objects?: Array<{
+    object_id: string;
+    canonical_name: string;
+    display_name: string;
+    state: string;
+    metadata: Record<string, unknown>;
+  }>;
   identifiers: RepresentationIdentifier[];
   representations: ObjectRepresentation[];
   edges: RepresentationEdge[];
@@ -335,16 +342,19 @@ export const decideRepresentationReview = async (
   scope: "identity" | "edges",
   edgeIds: string[] = [],
   note = "",
+  ownerConfirmation = "",
   origin = DEFAULT_DESKTOP_ORIGIN,
 ): Promise<Record<string, unknown>> =>
   withTimeout<Record<string, unknown>>(
     `${origin}/api/v1/representation-reviews/${encodeURIComponent(reviewId)}/decision`,
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "X-LightSpeed-Owner-Confirmation": ownerConfirmation.slice(0, 256),
+      },
       body: JSON.stringify({
         decision,
-        actor: "Nathaniel",
         scope,
         edge_ids: edgeIds.slice(0, 100),
         note: normalize(note, 1000),

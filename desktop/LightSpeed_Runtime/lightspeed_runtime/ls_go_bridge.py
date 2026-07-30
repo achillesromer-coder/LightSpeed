@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hmac
 import json
 import os
 from datetime import datetime, timezone
@@ -7,7 +8,7 @@ from pathlib import Path
 import sys
 from typing import Any, Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import uvicorn
@@ -43,6 +44,7 @@ DEFAULT_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:4173",
 ]
+OWNER_CONFIRMATION_ENV = "LIGHTSPEED_OWNER_APPROVAL_TOKEN"
 
 
 def utc_now_iso() -> str:
@@ -129,6 +131,18 @@ def _allowed_origins() -> list[str]:
     return [*DEFAULT_ALLOWED_ORIGINS, *[item for item in configured if item]]
 
 
+def _verified_owner_actor(confirmation: str | None) -> str:
+    expected = os.environ.get(OWNER_CONFIRMATION_ENV, "")
+    if not expected:
+        raise HTTPException(
+            status_code=403,
+            detail=f"Owner confirmation is not configured in {OWNER_CONFIRMATION_ENV}",
+        )
+    if not confirmation or not hmac.compare_digest(confirmation, expected):
+        raise HTTPException(status_code=403, detail="Owner confirmation failed")
+    return "Nathaniel"
+
+
 def _try_get_services(shell_root: Path):
     merovingian_root = shell_root / "Z Axis" / "Z-4_Merovingian"
     if str(merovingian_root) not in sys.path:
@@ -196,7 +210,7 @@ def create_app(root: Path | str) -> FastAPI:
         allow_origins=_allowed_origins(),
         allow_credentials=False,
         allow_methods=["GET", "POST", "OPTIONS"],
-        allow_headers=["Content-Type"],
+        allow_headers=["Content-Type", "X-LightSpeed-Owner-Confirmation"],
         max_age=600,
     )
 
@@ -349,10 +363,17 @@ def create_app(root: Path | str) -> FastAPI:
         return JSONResponse({"reviews": edge.list_reviews()})
 
     @app.post("/api/v1/representation-reviews/{review_id}/decision")
-    async def decide_representation_review(review_id: str, body: dict[str, Any]):
+    async def decide_representation_review(
+        review_id: str,
+        body: dict[str, Any],
+        owner_confirmation: str | None = Header(
+            default=None,
+            alias="X-LightSpeed-Owner-Confirmation",
+        ),
+    ):
         edge = require_representation_edge()
         decision = _bounded(body.get("decision"), maximum=32, required=True)
-        actor = _bounded(body.get("actor"), maximum=80, required=True)
+        actor = _verified_owner_actor(owner_confirmation)
         scope = _bounded(body.get("scope") or "identity", maximum=16, required=True)
         note = _bounded(body.get("note"), maximum=1000)
         raw_edge_ids = body.get("edge_ids") or []
@@ -365,6 +386,7 @@ def create_app(root: Path | str) -> FastAPI:
                 review_id=_bounded(review_id, maximum=96, required=True),
                 decision=decision,
                 actor=actor,
+                owner_authenticated=True,
                 scope=scope,
                 note=note,
                 edge_ids=edge_ids,

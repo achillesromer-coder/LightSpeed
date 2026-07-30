@@ -295,8 +295,23 @@ const renderCanonicalGraphs = (graphs: RepresentationGraph[]): void => {
         "Optional decision note:",
         "",
       ) ?? "";
+      const ownerConfirmation = window.prompt(
+        "Enter the local owner-confirmation token. It is sent only to the loopback Desktop bridge and is not stored.",
+        "",
+      ) ?? "";
+      if (!ownerConfirmation) {
+        setResult("bad", "Representation decision cancelled: owner confirmation is required.");
+        return;
+      }
       try {
-        await decideRepresentationReview(reviewId, decision, scope, edgeIds, note);
+        await decideRepresentationReview(
+          reviewId,
+          decision,
+          scope,
+          edgeIds,
+          note,
+          ownerConfirmation,
+        );
         setResult(
           "good",
           `${reviewId} recorded ${decision}; local staging remains noncanonical until Drive readback.`,

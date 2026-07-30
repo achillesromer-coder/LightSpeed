@@ -123,6 +123,22 @@ def stable_graph_payload(value: Any) -> Any:
     return value
 
 
+def semantic_graph_payload(graph: Mapping[str, Any]) -> dict[str, Any]:
+    """Exclude mutable review/promotion state from the semantic graph hash."""
+    payload = json.loads(canonical_json(graph))
+    payload.get("object", {}).pop("state", None)
+    for linked_object in payload.get("linked_objects", []):
+        linked_object.pop("state", None)
+    for identifier in payload.get("identifiers", []):
+        identifier.pop("state", None)
+    for representation in payload.get("representations", []):
+        representation.pop("state", None)
+    for edge in payload.get("edges", []):
+        edge.pop("review_state", None)
+        edge.pop("owner_decision_id", None)
+    return stable_graph_payload(payload)
+
+
 def feature_enabled(environ: Mapping[str, str] | None = None) -> bool:
     source = os.environ if environ is None else environ
     return str(source.get(FEATURE_FLAG, "")).strip().casefold() in TRUE_VALUES
@@ -938,6 +954,94 @@ class RepresentationEdgeStore:
                 ),
             )
 
+    def _semantic_graph_hash(self, object_id: str) -> str:
+        graph = self.graph(object_id)
+        graph_for_hash = {
+            key: graph[key]
+            for key in (
+                "schema_version",
+                "object",
+                "linked_objects",
+                "identifiers",
+                "representations",
+                "edges",
+                "missing",
+                "conflicts",
+                "horizons",
+            )
+        }
+        return content_sha256(semantic_graph_payload(graph_for_hash))
+
+    def _capture_operational_state(self, object_id: str) -> dict[str, Any] | None:
+        try:
+            graph = self.graph(object_id)
+        except KeyError:
+            return None
+        review = graph.get("review") or {}
+        prior_hash = str(review.get("graph_sha256") or "")
+        if not prior_hash:
+            return None
+        return {
+            "graph_sha256": prior_hash,
+            "object_state": graph["object"]["state"],
+            "linked_object_states": {
+                row["object_id"]: row["state"]
+                for row in graph.get("linked_objects", [])
+            },
+            "identifier_states": {
+                row["identifier_id"]: row["state"] for row in graph["identifiers"]
+            },
+            "representation_states": {
+                row["representation_id"]: row["state"]
+                for row in graph["representations"]
+            },
+            "edge_states": {
+                row["edge_id"]: {
+                    "review_state": row["review_state"],
+                    "owner_decision_id": row["owner_decision_id"],
+                }
+                for row in graph["edges"]
+            },
+        }
+
+    def _restore_operational_state(
+        self,
+        object_id: str,
+        snapshot: Mapping[str, Any],
+    ) -> bool:
+        if snapshot.get("graph_sha256") != self._semantic_graph_hash(object_id):
+            return False
+        with self._connect() as connection:
+            connection.execute(
+                "UPDATE canonical_objects SET state=? WHERE object_id=?",
+                (snapshot["object_state"], object_id),
+            )
+            for linked_object_id, state in snapshot["linked_object_states"].items():
+                connection.execute(
+                    "UPDATE canonical_objects SET state=? WHERE object_id=?",
+                    (state, linked_object_id),
+                )
+            for identifier_id, state in snapshot["identifier_states"].items():
+                connection.execute(
+                    "UPDATE object_identifiers SET state=? WHERE identifier_id=?",
+                    (state, identifier_id),
+                )
+            for representation_id, state in snapshot["representation_states"].items():
+                connection.execute(
+                    "UPDATE object_representations SET state=? WHERE representation_id=?",
+                    (state, representation_id),
+                )
+            for edge_id, state in snapshot["edge_states"].items():
+                connection.execute(
+                    """
+                    UPDATE representation_edges
+                    SET review_state=?, owner_decision_id=?
+                    WHERE edge_id=?
+                    """,
+                    (state["review_state"], state["owner_decision_id"], edge_id),
+                )
+        return True
+
     def seed_proof_graphs(
         self,
         *,
@@ -946,6 +1050,16 @@ class RepresentationEdgeStore:
         local_outbox: Path,
     ) -> dict[str, Any]:
         self.apply_migration()
+        root_object_ids = (
+            "ASPHA.0001",
+            "engineering-twin:rfs-emff-sandbox",
+            "de-sporte-05d89c2a",
+        )
+        prior_operational_state = {
+            object_id: snapshot
+            for object_id in root_object_ids
+            if (snapshot := self._capture_operational_state(object_id)) is not None
+        }
         proofs = _proof_definitions()
         for proof in proofs:
             for value in proof["objects"]:
@@ -965,9 +1079,12 @@ class RepresentationEdgeStore:
             for value in proof["edges"]:
                 self._upsert_edge(value)
 
+        for object_id, snapshot in prior_operational_state.items():
+            self._restore_operational_state(object_id, snapshot)
+
         packets = []
         promotions = []
-        for object_id in ("ASPHA.0001", "engineering-twin:rfs-emff-sandbox", "de-sporte-05d89c2a"):
+        for object_id in root_object_ids:
             packet = self._prepare_review_packet(
                 object_id=object_id,
                 review_queue_path=review_queue_path,
@@ -1186,6 +1303,54 @@ class RepresentationEdgeStore:
                         (*representation_ids, *representation_ids),
                     ).fetchall()
                 ]
+            linked_representation_ids = sorted(
+                {
+                    str(edge[key])
+                    for edge in edges
+                    for key in ("from_representation_id", "to_representation_id")
+                    if str(edge[key]) not in representation_ids
+                }
+            )
+            if linked_representation_ids:
+                placeholders = ",".join("?" for _ in linked_representation_ids)
+                representations.extend(
+                    dict(row)
+                    for row in connection.execute(
+                        f"""
+                        SELECT * FROM object_representations
+                        WHERE representation_id IN ({placeholders})
+                        ORDER BY representation_type, representation_id
+                        """,
+                        linked_representation_ids,
+                    ).fetchall()
+                )
+                representations.sort(
+                    key=lambda row: (
+                        str(row["representation_type"]),
+                        str(row["representation_id"]),
+                    )
+                )
+            linked_object_ids = sorted(
+                {
+                    str(row["object_id"])
+                    for row in representations
+                    if str(row["object_id"]) != object_id
+                }
+            )
+            linked_objects: list[dict[str, Any]] = []
+            if linked_object_ids:
+                placeholders = ",".join("?" for _ in linked_object_ids)
+                linked_objects = [
+                    dict(row)
+                    for row in connection.execute(
+                        f"""
+                        SELECT * FROM canonical_objects
+                        WHERE object_id IN ({placeholders})
+                        ORDER BY object_id
+                        """,
+                        linked_object_ids,
+                    ).fetchall()
+                ]
             horizon_ids = sorted(
                 {str(row["horizon_id"]) for row in representations if row.get("horizon_id")}
             )
@@ -1221,6 +1386,8 @@ class RepresentationEdgeStore:
 
         object_value = dict(object_row)
         object_value["metadata"] = _loaded(object_value.pop("metadata_json"), {})
+        for row in linked_objects:
+            row["metadata"] = _loaded(row.pop("metadata_json"), {})
         for row in representations:
             row["locator"] = self._public_locator(row)
             row.pop("locator_json", None)
@@ -1255,6 +1422,7 @@ class RepresentationEdgeStore:
         return {
             "schema_version": SCHEMA_VERSION,
             "object": object_value,
+            "linked_objects": linked_objects,
             "identifiers": identifiers,
             "representations": representations,
             "edges": edges,
@@ -1278,20 +1446,7 @@ class RepresentationEdgeStore:
         local_outbox: Path,
     ) -> dict[str, Any]:
         graph = self.graph(object_id)
-        graph_for_hash = {
-            key: graph[key]
-            for key in (
-                "schema_version",
-                "object",
-                "identifiers",
-                "representations",
-                "edges",
-                "missing",
-                "conflicts",
-                "horizons",
-            )
-        }
-        graph_hash = content_sha256(stable_graph_payload(graph_for_hash))
+        graph_hash = self._semantic_graph_hash(object_id)
         review_id = (
             "LSGO-REVIEW-"
             + hashlib.sha256(f"{SCHEMA_VERSION}|{object_id}".encode("utf-8")).hexdigest()[:16].upper()
@@ -1433,6 +1588,7 @@ class RepresentationEdgeStore:
         edge_ids: Iterable[str],
         decision_path: Path,
         local_outbox: Path,
+        owner_authenticated: bool = False,
     ) -> dict[str, Any]:
         decision = decision.strip().casefold()
         actor_key = actor.strip().casefold()
@@ -1441,7 +1597,9 @@ class RepresentationEdgeStore:
             raise RepresentationValidationError("unsupported review decision")
         if scope not in {"identity", "edges"}:
             raise RepresentationValidationError("decision scope must be identity or edges")
-        if decision in OWNER_ONLY_DECISIONS and actor_key not in OWNER_ACTORS:
+        if decision in OWNER_ONLY_DECISIONS and (
+            actor_key not in OWNER_ACTORS or not owner_authenticated
+        ):
             raise PermissionError("final approval and supersession require Nathaniel")
         if actor_key not in ACHILLES_ACTORS:
             raise PermissionError("Nathaniel or Achilles review authority is required")
@@ -1495,6 +1653,7 @@ class RepresentationEdgeStore:
                 "scope": scope,
                 "decision": decision,
                 "actor": actor,
+                "owner_authentication_verified": bool(owner_authenticated),
                 "edge_ids": edge_ids,
                 "note": " ".join(note.split())[:1000],
                 "created_utc": stamp,

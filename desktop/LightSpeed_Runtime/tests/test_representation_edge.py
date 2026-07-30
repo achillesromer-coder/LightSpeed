@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 from pathlib import Path
 import sqlite3
@@ -11,6 +12,7 @@ RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RUNTIME_ROOT))
 
 from lightspeed_runtime.operational_store import default_operational_db_path
+from lightspeed_runtime import representation_edge as representation_edge_module
 from lightspeed_runtime.representation_edge import (
     FEATURE_FLAG,
     RELATIONS,
@@ -192,6 +194,7 @@ def test_idempotent_startup_preserves_review_and_staged_target_state(tmp_path):
         edge_ids=[],
         decision_path=decisions,
         local_outbox=outbox,
+        owner_authenticated=True,
     )
     promotion = next(
         row for row in store.list_promotions() if row["object_id"] == "ASPHA.0001"
@@ -217,6 +220,133 @@ def test_idempotent_startup_preserves_review_and_staged_target_state(tmp_path):
     assert promotion["state"] == "approved_target_pending_drive_write"
     assert promotion["expected_parent"] == "drive-folder:canonical-object-graphs"
     assert promotion["decision_id"] == decision["decision_id"]
+
+
+def test_startup_reseed_preserves_promoted_and_reviewed_graph_state(tmp_path):
+    store, queue, decisions, outbox, result = make_store(tmp_path)
+    review_id = next(
+        row["review_id"]
+        for row in store.list_reviews()
+        if row["object_id"] == "ASPHA.0001"
+    )
+    graph = store.graph("ASPHA.0001")
+    edge_id = graph["edges"][0]["edge_id"]
+    representation_id = graph["representations"][0]["representation_id"]
+    store.record_decision(
+        review_id=review_id,
+        decision="provisional_approve",
+        actor="Achilles",
+        scope="identity",
+        note="Identity fixture.",
+        edge_ids=[],
+        decision_path=decisions,
+        local_outbox=outbox,
+    )
+    edge_decision = store.record_decision(
+        review_id=review_id,
+        decision="hold",
+        actor="Achilles",
+        scope="edges",
+        note="Evidence hold fixture.",
+        edge_ids=[edge_id],
+        decision_path=decisions,
+        local_outbox=outbox,
+    )
+    with store._connect() as connection:
+        connection.execute(
+            "UPDATE canonical_objects SET state='active' WHERE object_id='ASPHA.0001'"
+        )
+        connection.execute(
+            "UPDATE object_representations SET state='superseded' WHERE representation_id=?",
+            (representation_id,),
+        )
+
+    store.seed_proof_graphs(
+        review_queue_path=queue,
+        decision_path=decisions,
+        local_outbox=outbox,
+    )
+
+    graph = store.graph("ASPHA.0001")
+    representation = next(
+        row
+        for row in graph["representations"]
+        if row["representation_id"] == representation_id
+    )
+    edge = next(row for row in graph["edges"] if row["edge_id"] == edge_id)
+    review = next(row for row in store.list_reviews() if row["review_id"] == review_id)
+    assert graph["object"]["state"] == "active"
+    assert representation["state"] == "superseded"
+    assert edge["review_state"] == "hold"
+    assert edge["owner_decision_id"] == edge_decision["decision_id"]
+    assert review["state"] == "held"
+    assert review["review_stage"] == "edges"
+
+
+def test_changed_semantic_hash_invalidates_promoted_and_reviewed_state(
+    tmp_path, monkeypatch
+):
+    store, queue, decisions, outbox, _result = make_store(tmp_path)
+    review = next(
+        row for row in store.list_reviews() if row["object_id"] == "ASPHA.0001"
+    )
+    seeded_edge = store.graph("ASPHA.0001")["edges"][0]
+    edge_id = seeded_edge["edge_id"]
+    store.record_decision(
+        review_id=review["review_id"],
+        decision="provisional_approve",
+        actor="Achilles",
+        scope="identity",
+        note="Identity fixture.",
+        edge_ids=[],
+        decision_path=decisions,
+        local_outbox=outbox,
+    )
+    store.record_decision(
+        review_id=review["review_id"],
+        decision="hold",
+        actor="Achilles",
+        scope="edges",
+        note="Evidence hold fixture.",
+        edge_ids=[edge_id],
+        decision_path=decisions,
+        local_outbox=outbox,
+    )
+    with store._connect() as connection:
+        connection.execute(
+            "UPDATE canonical_objects SET state='active' WHERE object_id='ASPHA.0001'"
+        )
+
+    changed_proofs = copy.deepcopy(representation_edge_module._proof_definitions())
+    apophis = next(
+        value
+        for proof in changed_proofs
+        for value in proof["objects"]
+        if value["object_id"] == "ASPHA.0001"
+    )
+    apophis["description"] += " Materially changed fixture."
+    monkeypatch.setattr(
+        representation_edge_module,
+        "_proof_definitions",
+        lambda: changed_proofs,
+    )
+
+    store.seed_proof_graphs(
+        review_queue_path=queue,
+        decision_path=decisions,
+        local_outbox=outbox,
+    )
+
+    graph = store.graph("ASPHA.0001")
+    edge = next(row for row in graph["edges"] if row["edge_id"] == edge_id)
+    review = next(
+        row for row in store.list_reviews() if row["object_id"] == "ASPHA.0001"
+    )
+    assert graph["object"]["state"] != "active"
+    assert edge["review_state"] == seeded_edge["review_state"]
+    assert edge["owner_decision_id"] is None
+    assert review["state"] == "pending_identity_review"
+    assert review["review_stage"] == "identity"
 
 
 def test_apophis_identity_and_workbook_missing_key_are_retained(tmp_path):
@@ -534,6 +664,60 @@ def test_held_rfs_evidence_and_mathematics_cannot_promote_capability(tmp_path):
         )
 
 
+def test_rfs_seed_retains_classification_contract_and_linked_object_semantics(
+    tmp_path, monkeypatch
+):
+    store, queue, decisions, outbox, _result = make_store(tmp_path)
+    graph = store.graph("engineering-twin:rfs-emff-sandbox")
+    original_hash = graph["review"]["graph_sha256"]
+    assert {row["object_id"] for row in graph["linked_objects"]} == {
+        "engineering-system:rfs",
+        "engineering-system:emff",
+    }
+    assert {
+        row["object_id"]
+        for row in graph["representations"]
+        if row["object_id"] != "engineering-twin:rfs-emff-sandbox"
+    } == {"engineering-system:rfs", "engineering-system:emff"}
+    with store._connect() as connection:
+        evidence = connection.execute(
+            """
+            SELECT duplicate_reference_count, source_weight_summary_json,
+                   confidence_effect
+            FROM evidence_bundles
+            WHERE evidence_bundle_id='evidence:rfs-emff:classification:v1'
+            """
+        ).fetchone()
+    summary = json.loads(evidence["source_weight_summary_json"])
+    assert summary["retained_classified_sources"] == 27
+    assert summary["duplicate_references_held"] == 148
+    assert evidence["duplicate_reference_count"] == 148
+    assert evidence["confidence_effect"] == 0.0
+
+    changed_proofs = copy.deepcopy(representation_edge_module._proof_definitions())
+    child = next(
+        value
+        for proof in changed_proofs
+        for value in proof["objects"]
+        if value["object_id"] == "engineering-system:rfs"
+    )
+    child["description"] += " Materially changed linked-object fixture."
+    monkeypatch.setattr(
+        representation_edge_module,
+        "_proof_definitions",
+        lambda: changed_proofs,
+    )
+    store.seed_proof_graphs(
+        review_queue_path=queue,
+        decision_path=decisions,
+        local_outbox=outbox,
+    )
+    assert (
+        store.graph("engineering-twin:rfs-emff-sandbox")["review"]["graph_sha256"]
+        != original_hash
+    )
+
+
 def test_controlled_unpack_blocks_path_traversal_secrets_and_excess(tmp_path):
     valid = RepresentationEdgeStore.validate_controlled_unpack_manifest(
         [{"path": "docs/readme.txt", "size_bytes": 20}]
@@ -601,6 +785,17 @@ def test_identity_review_precedes_edges_and_owner_actions_are_enforced(tmp_path)
             decision_path=decisions,
             local_outbox=outbox,
         )
+    with pytest.raises(PermissionError, match="Nathaniel"):
+        store.record_decision(
+            review_id=review_id,
+            decision="approve",
+            actor="Nathaniel",
+            scope="identity",
+            note="An actor label alone is not owner authentication.",
+            edge_ids=[],
+            decision_path=decisions,
+            local_outbox=outbox,
+        )
     identity = store.record_decision(
         review_id=review_id,
         decision="provisional_approve",
@@ -651,6 +846,7 @@ def test_all_review_actions_produce_bounded_nonwriting_receipts(
         edge_ids=[],
         decision_path=decisions,
         local_outbox=outbox,
+        owner_authenticated=decision in {"approve", "supersede"},
     )
 
     assert receipt["decision"] == decision
@@ -681,6 +877,7 @@ def test_drive_readback_requires_owner_decision_exact_parent_metadata_and_hashes
         edge_ids=[],
         decision_path=decisions,
         local_outbox=outbox,
+        owner_authenticated=True,
     )
     promotion = next(
         row for row in store.list_promotions() if row["object_id"] == "ASPHA.0001"

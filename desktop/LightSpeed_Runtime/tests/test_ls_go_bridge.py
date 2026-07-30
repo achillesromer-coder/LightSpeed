@@ -268,6 +268,7 @@ def test_representation_edge_api_renders_graphs_and_enforces_identity_first(tmp_
     database.parent.mkdir(parents=True)
     sqlite3.connect(database).close()
     monkeypatch.setenv(FEATURE_FLAG, "1")
+    monkeypatch.setenv("LIGHTSPEED_OWNER_APPROVAL_TOKEN", "owner-test-token")
     monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
     client = TestClient(ls_go_bridge.create_app(tmp_path))
 
@@ -286,9 +287,9 @@ def test_representation_edge_api_renders_graphs_and_enforces_identity_first(tmp_
     edge_id = apophis["edges"][0]["edge_id"]
     premature = client.post(
         f"/api/v1/representation-reviews/{review_id}/decision",
+        headers={"X-LightSpeed-Owner-Confirmation": "owner-test-token"},
         json={
             "decision": "hold",
-            "actor": "Nathaniel",
             "scope": "edges",
             "edge_ids": [edge_id],
         },
@@ -297,9 +298,9 @@ def test_representation_edge_api_renders_graphs_and_enforces_identity_first(tmp_
 
     identity = client.post(
         f"/api/v1/representation-reviews/{review_id}/decision",
+        headers={"X-LightSpeed-Owner-Confirmation": "owner-test-token"},
         json={
             "decision": "provisional_approve",
-            "actor": "Achilles",
             "scope": "identity",
             "note": "Candidate identity only.",
         },
@@ -309,9 +310,9 @@ def test_representation_edge_api_renders_graphs_and_enforces_identity_first(tmp_
 
     edge = client.post(
         f"/api/v1/representation-reviews/{review_id}/decision",
+        headers={"X-LightSpeed-Owner-Confirmation": "owner-test-token"},
         json={
             "decision": "request_evidence",
-            "actor": "Nathaniel",
             "scope": "edges",
             "edge_ids": [edge_id],
             "note": "Stable workbook key required.",
@@ -322,3 +323,69 @@ def test_representation_edge_api_renders_graphs_and_enforces_identity_first(tmp_
     promotions = client.get("/api/v1/representation-promotions").json()
     assert promotions["drive_write_executed"] is False
     assert promotions["readback_required"] is True
+
+
+def test_representation_decision_rejects_actor_spoof_without_owner_confirmation(
+    tmp_path, monkeypatch
+):
+    configure_shell(tmp_path)
+    database = (
+        tmp_path
+        / "Z Axis"
+        / "Z-4_Merovingian"
+        / "data"
+        / "db"
+        / "lightspeed_unified.db"
+    )
+    database.parent.mkdir(parents=True)
+    sqlite3.connect(database).close()
+    monkeypatch.setenv(FEATURE_FLAG, "1")
+    monkeypatch.setenv("LIGHTSPEED_OWNER_APPROVAL_TOKEN", "owner-test-token")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    review_id = client.get("/api/v1/representation-graphs").json()["graphs"][0]["review"][
+        "review_id"
+    ]
+
+    missing = client.post(
+        f"/api/v1/representation-reviews/{review_id}/decision",
+        json={
+            "decision": "approve",
+            "actor": "Nathaniel",
+            "scope": "identity",
+        },
+    )
+    wrong = client.post(
+        f"/api/v1/representation-reviews/{review_id}/decision",
+        headers={"X-LightSpeed-Owner-Confirmation": "wrong-token"},
+        json={
+            "decision": "approve",
+            "actor": "Nathaniel",
+            "scope": "identity",
+        },
+    )
+    authenticated = client.post(
+        f"/api/v1/representation-reviews/{review_id}/decision",
+        headers={"X-LightSpeed-Owner-Confirmation": "owner-test-token"},
+        json={
+            "decision": "approve",
+            "actor": "Achilles",
+            "scope": "identity",
+        },
+    )
+    monkeypatch.delenv("LIGHTSPEED_OWNER_APPROVAL_TOKEN")
+    unconfigured = client.post(
+        f"/api/v1/representation-reviews/{review_id}/decision",
+        headers={"X-LightSpeed-Owner-Confirmation": "owner-test-token"},
+        json={
+            "decision": "request_evidence",
+            "scope": "identity",
+        },
+    )
+
+    assert missing.status_code == 403
+    assert wrong.status_code == 403
+    assert authenticated.status_code == 200
+    assert authenticated.json()["receipt"]["actor"] == "Nathaniel"
+    assert authenticated.json()["receipt"]["owner_authentication_verified"] is True
+    assert unconfigured.status_code == 403
