@@ -1463,6 +1463,7 @@ class RepresentationEdgeStore:
         packet = {
             "schema_version": REVIEW_SCHEMA,
             "review_id": review_id,
+            "queue_event_id": f"{review_id}:{graph_hash}",
             "created_utc": stamp,
             "source": "LightSpeed Desktop / canonical representation edge",
             "target": "LS GO",
@@ -1529,7 +1530,7 @@ class RepresentationEdgeStore:
                     stamp,
                 ),
             )
-        _append_jsonl_once(review_queue_path, packet, "review_id")
+        _append_jsonl_once(review_queue_path, packet, "queue_event_id")
         _write_json(local_outbox / f"{review_id}.json", packet)
         return packet
 

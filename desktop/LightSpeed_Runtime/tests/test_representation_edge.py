@@ -290,6 +290,7 @@ def test_changed_semantic_hash_invalidates_promoted_and_reviewed_state(
     review = next(
         row for row in store.list_reviews() if row["object_id"] == "ASPHA.0001"
     )
+    original_hash = review["graph_sha256"]
     seeded_edge = store.graph("ASPHA.0001")["edges"][0]
     edge_id = seeded_edge["edge_id"]
     store.record_decision(
@@ -347,6 +348,19 @@ def test_changed_semantic_hash_invalidates_promoted_and_reviewed_state(
     assert edge["owner_decision_id"] is None
     assert review["state"] == "pending_identity_review"
     assert review["review_stage"] == "identity"
+    queue_rows = [
+        json.loads(line)
+        for line in queue.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    apophis_events = [
+        row for row in queue_rows if row["review_id"] == review["review_id"]
+    ]
+    assert len(apophis_events) == 2
+    assert {row["graph_sha256"] for row in apophis_events} == {
+        original_hash,
+        review["graph_sha256"],
+    }
 
 
 def test_apophis_identity_and_workbook_missing_key_are_retained(tmp_path):
