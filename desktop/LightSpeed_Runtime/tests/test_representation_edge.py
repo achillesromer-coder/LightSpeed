@@ -709,13 +709,13 @@ def test_rfs_seed_retains_classification_contract_and_linked_object_semantics(
     assert evidence["confidence_effect"] == 0.0
 
     changed_proofs = copy.deepcopy(representation_edge_module._proof_definitions())
-    child = next(
+    child_identifier = next(
         value
         for proof in changed_proofs
-        for value in proof["objects"]
-        if value["object_id"] == "engineering-system:rfs"
+        for value in proof["identifiers"]
+        if value["identifier_id"] == "identifier:rfs"
     )
-    child["description"] += " Materially changed linked-object fixture."
+    child_identifier["identifier_value"] = "rfs-linked-identity-changed"
     monkeypatch.setattr(
         representation_edge_module,
         "_proof_definitions",
@@ -730,6 +730,98 @@ def test_rfs_seed_retains_classification_contract_and_linked_object_semantics(
         store.graph("engineering-twin:rfs-emff-sandbox")["review"]["graph_sha256"]
         != original_hash
     )
+    assert any(
+        row["identifier_value"] == "rfs-linked-identity-changed"
+        for row in store.graph("engineering-twin:rfs-emff-sandbox")[
+            "linked_identifiers"
+        ]
+    )
+
+
+def test_rfs_evidence_bundle_change_invalidates_composite_hash(tmp_path, monkeypatch):
+    store, queue, decisions, outbox, _result = make_store(tmp_path)
+    original_hash = store.graph("engineering-twin:rfs-emff-sandbox")["review"][
+        "graph_sha256"
+    ]
+    changed_proofs = copy.deepcopy(representation_edge_module._proof_definitions())
+    bundle = next(
+        value
+        for proof in changed_proofs
+        for value in proof.get("evidence_bundles", [])
+        if value["evidence_bundle_id"] == "evidence:rfs-emff:classification:v1"
+    )
+    bundle["claim_boundary"] += " Materially changed evidence fixture."
+    monkeypatch.setattr(
+        representation_edge_module,
+        "_proof_definitions",
+        lambda: changed_proofs,
+    )
+
+    store.seed_proof_graphs(
+        review_queue_path=queue,
+        decision_path=decisions,
+        local_outbox=outbox,
+    )
+
+    graph = store.graph("engineering-twin:rfs-emff-sandbox")
+    assert graph["review"]["graph_sha256"] != original_hash
+    assert graph["review"]["state"] == "pending_identity_review"
+    assert any(
+        "Materially changed evidence fixture" in row["claim_boundary"]
+        for row in graph["evidence_bundles"]
+    )
+
+
+def test_stable_identifier_and_edge_ids_apply_semantic_definition_changes(
+    tmp_path, monkeypatch
+):
+    store, queue, decisions, outbox, _result = make_store(tmp_path)
+    graph = store.graph("ASPHA.0001")
+    original_hash = graph["review"]["graph_sha256"]
+    changed_proofs = copy.deepcopy(representation_edge_module._proof_definitions())
+    identifier = next(
+        value
+        for proof in changed_proofs
+        for value in proof["identifiers"]
+        if value["identifier_id"] == "identifier:ASPHA.0001:jpl"
+    )
+    identifier["identifier_value"] = "99943"
+    identifier["valid_to_utc"] = "2030-01-01T00:00:00+00:00"
+    edge = next(
+        value
+        for proof in changed_proofs
+        for value in proof["edges"]
+        if value["edge_id"] == graph["edges"][0]["edge_id"]
+    )
+    replacement_target = next(
+        row["representation_id"]
+        for row in graph["representations"]
+        if row["representation_id"]
+        not in {edge["from_representation_id"], edge["to_representation_id"]}
+    )
+    edge["to_representation_id"] = replacement_target
+    monkeypatch.setattr(
+        representation_edge_module,
+        "_proof_definitions",
+        lambda: changed_proofs,
+    )
+
+    store.seed_proof_graphs(
+        review_queue_path=queue,
+        decision_path=decisions,
+        local_outbox=outbox,
+    )
+
+    graph = store.graph("ASPHA.0001")
+    stored_edge = next(row for row in graph["edges"] if row["edge_id"] == edge["edge_id"])
+    assert any(
+        row["identifier_id"] == "identifier:ASPHA.0001:jpl"
+        and row["identifier_value"] == "99943"
+        and row["valid_to_utc"] == "2030-01-01T00:00:00+00:00"
+        for row in graph["identifiers"]
+    )
+    assert stored_edge["to_representation_id"] == replacement_target
+    assert graph["review"]["graph_sha256"] != original_hash
 
 
 def test_controlled_unpack_blocks_path_traversal_secrets_and_excess(tmp_path):

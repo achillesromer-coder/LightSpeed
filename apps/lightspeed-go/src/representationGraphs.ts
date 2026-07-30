@@ -103,6 +103,28 @@ export const renderRepresentationGraph = (graph: RepresentationGraph): string =>
   const nextQuestion = graph.representations
     .find((row) => row.representation_type === "recommendation")
     ?.locator.next_highest_value_question;
+  const linkedIdentities = (graph.linked_objects || []).length
+    ? (graph.linked_objects || []).map((linked) => {
+      const aliases = (graph.linked_identifiers || [])
+        .filter((identifier) => identifier.object_id === linked.object_id)
+        .map((identifier) => `${identifier.namespace}: ${identifier.identifier_value}`)
+        .join(" | ");
+      return `<article class="missing-card">
+        <strong>${escapeHtml(linked.display_name)} · ${escapeHtml(linked.state)}</strong>
+        <span><b>Object:</b> ${escapeHtml(linked.object_id)}</span>
+        <span><b>Identifiers:</b> ${escapeHtml(aliases || "none recorded")}</span>
+      </article>`;
+    }).join("")
+    : `<p class="muted">No linked object identity is included.</p>`;
+  const evidenceBundles = (graph.evidence_bundles || []).length
+    ? (graph.evidence_bundles || []).map((bundle) => `
+      <article class="horizon-card">
+        <div><strong>${escapeHtml(bundle.title)}</strong><span>${escapeHtml(bundle.state)}</span></div>
+        <p>${escapeHtml(bundle.claim_boundary)}</p>
+        <small>${bundle.independence_group_count} independence groups · ${bundle.duplicate_reference_count} duplicate references · confidence effect ${bundle.confidence_effect}</small>
+        <details><summary>Source weight summary</summary><pre>${jsonSummary(bundle.source_weight_summary)}</pre></details>
+      </article>`).join("")
+    : `<p class="muted">No evidence bundle is linked.</p>`;
 
   return `
     <article class="panel graph-panel" data-object-id="${escapeHtml(graph.object.object_id)}">
@@ -122,8 +144,10 @@ export const renderRepresentationGraph = (graph: RepresentationGraph): string =>
         <div><span>Judgment</span><strong>${graphJudgment(graph)}</strong></div>
       </div>
       <details open><summary>Identifiers (${graph.identifiers.length})</summary><div class="identifier-list">${graph.identifiers.map((item) => `<span><strong>${escapeHtml(item.namespace)}</strong>${escapeHtml(item.identifier_value)} · ${escapeHtml(item.authority)}</span>`).join("")}</div></details>
+      <details open><summary>Linked identities (${(graph.linked_objects || []).length})</summary><div class="graph-grid">${linkedIdentities}</div></details>
       <details open><summary>Representations (${graph.representations.length})</summary><div class="table-scroll"><table class="graph-table"><thead><tr><th>Type</th><th>Locator</th><th>Authority</th><th>Hash/revision</th><th>Confidence</th><th>State</th><th>Claim boundary</th></tr></thead><tbody>${representations}</tbody></table></div></details>
       <details open><summary>Edges (${graph.edges.length})</summary><div class="table-scroll"><table class="graph-table"><thead><tr><th>Source</th><th>Relation</th><th>Destination</th><th>Evidence</th><th>Review</th><th>Boundary</th></tr></thead><tbody>${edges}</tbody></table></div></details>
+      <details open><summary>Evidence bundles (${(graph.evidence_bundles || []).length})</summary>${evidenceBundles}</details>
       <div class="graph-grid">
         <section><h3>Missing</h3>${missing}</section>
         <section><h3>Conflicts</h3>${conflicts}</section>

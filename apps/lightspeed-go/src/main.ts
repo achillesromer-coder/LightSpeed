@@ -137,7 +137,7 @@ app.innerHTML = `
         <p>Three bounded local candidates prove the complete intake route. Drive becomes canonical only after owner decision, promotion, and exact readback.</p>
       </article>
       <div id="representation-graphs" class="graph-stack">
-        <article class="panel"><p class="muted">Reading feature-gated object graphs from Desktopâ€¦</p></article>
+        <article class="panel"><p class="muted">Reading feature-gated object graphs from Desktop…</p></article>
       </div>
     </section>
 

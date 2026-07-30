@@ -123,7 +123,35 @@ const fixture = (objectId: string, missing = 1): RepresentationGraph => ({
 
 describe("canonical representation graph view", () => {
   it("renders identity, representations, edges, missing, horizon and review actions", () => {
-    const html = renderRepresentationGraph(fixture("ASPHA.0001"));
+    const graph = fixture("ASPHA.0001");
+    graph.linked_objects = [{
+      object_id: "engineering-system:rfs",
+      canonical_name: "RFS",
+      display_name: "RFS",
+      state: "held",
+      metadata: {},
+    }];
+    graph.linked_identifiers = [{
+      identifier_id: "identifier:rfs",
+      object_id: "engineering-system:rfs",
+      namespace: "engineering_system",
+      identifier_value: "rfs",
+      identifier_type: "internal",
+      authority: "Nathaniel",
+      is_primary: 1,
+      state: "active",
+    }];
+    graph.evidence_bundles = [{
+      evidence_bundle_id: "evidence:rfs",
+      title: "RFS retained-source classification",
+      state: "held",
+      independence_group_count: 0,
+      duplicate_reference_count: 148,
+      source_weight_summary: { retained_classified_sources: 27 },
+      confidence_effect: 0,
+      claim_boundary: "Classification only.",
+    }];
+    const html = renderRepresentationGraph(graph);
     expect(html).toContain("ASPHA.0001");
     expect(html).toContain("Representations (3)");
     expect(html).toContain("Edges (1)");
@@ -134,6 +162,11 @@ describe("canonical representation graph view", () => {
     expect(html).toContain("Review identity first");
     expect(html).toContain('data-decision="supersede"');
     expect(html).toContain("What evidence closes the gap?");
+    expect(html).toContain("Linked identities (1)");
+    expect(html).toContain("engineering_system: rfs");
+    expect(html).toContain("Evidence bundles (1)");
+    expect(html).toContain("148 duplicate references");
+    expect(html).toContain("retained_classified_sources");
     expect(html).not.toContain("D:\\");
   });
 

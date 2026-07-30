@@ -129,10 +129,15 @@ def semantic_graph_payload(graph: Mapping[str, Any]) -> dict[str, Any]:
     payload.get("object", {}).pop("state", None)
     for linked_object in payload.get("linked_objects", []):
         linked_object.pop("state", None)
-    for identifier in payload.get("identifiers", []):
+    for identifier in (
+        list(payload.get("identifiers", []))
+        + list(payload.get("linked_identifiers", []))
+    ):
         identifier.pop("state", None)
     for representation in payload.get("representations", []):
         representation.pop("state", None)
+    for evidence_bundle in payload.get("evidence_bundles", []):
+        evidence_bundle.pop("state", None)
     for edge in payload.get("edges", []):
         edge.pop("review_state", None)
         edge.pop("owner_decision_id", None)
@@ -640,11 +645,18 @@ class RepresentationEdgeStore:
                     valid_from_utc, valid_to_utc
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(identifier_id) DO UPDATE SET
+                    object_id=excluded.object_id,
+                    namespace=excluded.namespace,
+                    identifier_value=excluded.identifier_value,
+                    identifier_type=excluded.identifier_type,
                     authority=excluded.authority,
                     is_primary=excluded.is_primary,
                     state=excluded.state,
-                    valid_from_utc=excluded.valid_from_utc,
-                    valid_to_utc=excluded.valid_to_utc
+                    valid_from_utc=COALESCE(?, object_identifiers.valid_from_utc),
+                    valid_to_utc=CASE
+                        WHEN ? THEN excluded.valid_to_utc
+                        ELSE object_identifiers.valid_to_utc
+                    END
                 """,
                 (
                     value["identifier_id"],
@@ -657,6 +669,8 @@ class RepresentationEdgeStore:
                     value.get("state") or "active",
                     value.get("valid_from_utc") or stamp,
                     value.get("valid_to_utc"),
+                    value.get("valid_from_utc"),
+                    int("valid_to_utc" in value),
                 ),
             )
         return {"inserted": not bool(existing), "collision": False}
@@ -685,7 +699,11 @@ class RepresentationEdgeStore:
                     input_set_sha256=excluded.input_set_sha256,
                     sensitivity_summary_json=excluded.sensitivity_summary_json,
                     state=excluded.state,
-                    valid_to_utc=excluded.valid_to_utc,
+                    valid_from_utc=COALESCE(?, horizons.valid_from_utc),
+                    valid_to_utc=CASE
+                        WHEN ? THEN excluded.valid_to_utc
+                        ELSE horizons.valid_to_utc
+                    END,
                     updated_utc=excluded.updated_utc
                 """,
                 (
@@ -704,6 +722,8 @@ class RepresentationEdgeStore:
                     value.get("valid_to_utc"),
                     value.get("created_utc") or stamp,
                     stamp,
+                    value.get("valid_from_utc"),
+                    int("valid_to_utc" in value),
                 ),
             )
 
@@ -877,7 +897,14 @@ class RepresentationEdgeStore:
                     confidence_numeric=excluded.confidence_numeric,
                     confidence_class=excluded.confidence_class,
                     evidence_class=excluded.evidence_class,
-                    valid_to_utc=excluded.valid_to_utc,
+                    valid_from_utc=COALESCE(
+                        ?,
+                        object_representations.valid_from_utc
+                    ),
+                    valid_to_utc=CASE
+                        WHEN ? THEN excluded.valid_to_utc
+                        ELSE object_representations.valid_to_utc
+                    END,
                     horizon_id=excluded.horizon_id,
                     state=excluded.state,
                     claim_boundary=excluded.claim_boundary,
@@ -902,6 +929,8 @@ class RepresentationEdgeStore:
                     claim_boundary,
                     value.get("created_utc") or stamp,
                     stamp,
+                    value.get("valid_from_utc"),
+                    int("valid_to_utc" in value),
                 ),
             )
 
@@ -929,10 +958,14 @@ class RepresentationEdgeStore:
                     owner_decision_id, created_utc, updated_utc
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(edge_id) DO UPDATE SET
+                    from_representation_id=excluded.from_representation_id,
+                    to_representation_id=excluded.to_representation_id,
+                    relation=excluded.relation,
                     evidence_bundle_id=excluded.evidence_bundle_id,
                     confidence_numeric=excluded.confidence_numeric,
                     confidence_class=excluded.confidence_class,
                     claim_boundary=excluded.claim_boundary,
+                    created_by_floor=excluded.created_by_floor,
                     review_state=excluded.review_state,
                     owner_decision_id=excluded.owner_decision_id,
                     updated_utc=excluded.updated_utc
@@ -963,8 +996,10 @@ class RepresentationEdgeStore:
                 "object",
                 "linked_objects",
                 "identifiers",
+                "linked_identifiers",
                 "representations",
                 "edges",
+                "evidence_bundles",
                 "missing",
                 "conflicts",
                 "horizons",
@@ -989,7 +1024,11 @@ class RepresentationEdgeStore:
                 for row in graph.get("linked_objects", [])
             },
             "identifier_states": {
-                row["identifier_id"]: row["state"] for row in graph["identifiers"]
+                row["identifier_id"]: row["state"]
+                for row in (
+                    list(graph["identifiers"])
+                    + list(graph.get("linked_identifiers", []))
+                )
             },
             "representation_states": {
                 row["representation_id"]: row["state"]
@@ -1001,6 +1040,10 @@ class RepresentationEdgeStore:
                     "owner_decision_id": row["owner_decision_id"],
                 }
                 for row in graph["edges"]
+            },
+            "evidence_bundle_states": {
+                row["evidence_bundle_id"]: row["state"]
+                for row in graph.get("evidence_bundles", [])
             },
         }
 
@@ -1039,6 +1082,11 @@ class RepresentationEdgeStore:
                     WHERE edge_id=?
                     """,
                     (state["review_state"], state["owner_decision_id"], edge_id),
+                )
+            for evidence_bundle_id, state in snapshot["evidence_bundle_states"].items():
+                connection.execute(
+                    "UPDATE evidence_bundles SET state=? WHERE evidence_bundle_id=?",
+                    (state, evidence_bundle_id),
                 )
         return True
 
@@ -1268,8 +1316,9 @@ class RepresentationEdgeStore:
                 dict(row)
                 for row in connection.execute(
                     """
-                    SELECT identifier_id, namespace, identifier_value, identifier_type,
-                           authority, is_primary, state
+                    SELECT identifier_id, object_id, namespace, identifier_value,
+                           identifier_type, authority, is_primary, state,
+                           valid_from_utc, valid_to_utc
                     FROM object_identifiers WHERE object_id=?
                     ORDER BY is_primary DESC, namespace, identifier_value
                     """,
@@ -1338,6 +1387,7 @@ class RepresentationEdgeStore:
                 }
             )
             linked_objects: list[dict[str, Any]] = []
+            linked_identifiers: list[dict[str, Any]] = []
             if linked_object_ids:
                 placeholders = ",".join("?" for _ in linked_object_ids)
                 linked_objects = [
@@ -1349,6 +1399,41 @@ class RepresentationEdgeStore:
                         ORDER BY object_id
                         """,
                         linked_object_ids,
+                    ).fetchall()
+                ]
+                linked_identifiers = [
+                    dict(row)
+                    for row in connection.execute(
+                        f"""
+                        SELECT identifier_id, object_id, namespace, identifier_value,
+                               identifier_type, authority, is_primary, state,
+                               valid_from_utc, valid_to_utc
+                        FROM object_identifiers
+                        WHERE object_id IN ({placeholders})
+                        ORDER BY object_id, is_primary DESC, namespace, identifier_value
+                        """,
+                        linked_object_ids,
+                    ).fetchall()
+                ]
+            evidence_bundle_ids = sorted(
+                {
+                    str(row["evidence_bundle_id"])
+                    for row in edges
+                    if row.get("evidence_bundle_id")
+                }
+            )
+            evidence_bundles: list[dict[str, Any]] = []
+            if evidence_bundle_ids:
+                placeholders = ",".join("?" for _ in evidence_bundle_ids)
+                evidence_bundles = [
+                    dict(row)
+                    for row in connection.execute(
+                        f"""
+                        SELECT * FROM evidence_bundles
+                        WHERE evidence_bundle_id IN ({placeholders})
+                        ORDER BY evidence_bundle_id
+                        """,
+                        evidence_bundle_ids,
                     ).fetchall()
                 ]
             horizon_ids = sorted(
@@ -1388,6 +1473,12 @@ class RepresentationEdgeStore:
         object_value["metadata"] = _loaded(object_value.pop("metadata_json"), {})
         for row in linked_objects:
             row["metadata"] = _loaded(row.pop("metadata_json"), {})
+        for row in evidence_bundles:
+            row["evidence_items"] = _loaded(row.pop("evidence_items_json"), [])
+            row["source_weight_summary"] = _loaded(
+                row.pop("source_weight_summary_json"),
+                {},
+            )
         for row in representations:
             row["locator"] = self._public_locator(row)
             row.pop("locator_json", None)
@@ -1424,8 +1515,10 @@ class RepresentationEdgeStore:
             "object": object_value,
             "linked_objects": linked_objects,
             "identifiers": identifiers,
+            "linked_identifiers": linked_identifiers,
             "representations": representations,
             "edges": edges,
+            "evidence_bundles": evidence_bundles,
             "missing": missing,
             "conflicts": conflicts,
             "horizons": horizons,

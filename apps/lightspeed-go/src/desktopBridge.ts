@@ -100,6 +100,7 @@ export interface DesktopStatus {
 
 export interface RepresentationIdentifier {
   identifier_id: string;
+  object_id?: string;
   namespace: string;
   identifier_value: string;
   identifier_type: string;
@@ -173,8 +174,19 @@ export interface RepresentationGraph {
     metadata: Record<string, unknown>;
   }>;
   identifiers: RepresentationIdentifier[];
+  linked_identifiers?: RepresentationIdentifier[];
   representations: ObjectRepresentation[];
   edges: RepresentationEdge[];
+  evidence_bundles?: Array<{
+    evidence_bundle_id: string;
+    title: string;
+    state: string;
+    independence_group_count: number;
+    duplicate_reference_count: number;
+    source_weight_summary: Record<string, unknown>;
+    confidence_effect: number;
+    claim_boundary: string;
+  }>;
   missing: Record<string, unknown>[];
   conflicts: Record<string, unknown>[];
   horizons: RepresentationHorizon[];
