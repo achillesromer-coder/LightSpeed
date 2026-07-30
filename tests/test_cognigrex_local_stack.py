@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 import subprocess
 import sys
@@ -139,6 +140,62 @@ def test_noncanonical_reconciliation_does_not_stop_canonical_tree(
     assert calls == [["taskkill", "/PID", "20", "/T", "/F"]]
 
 
+def test_unhealthy_bridge_recovery_stops_only_verified_listener_tree(
+    monkeypatch,
+    stack_module,
+) -> None:
+    rows = [
+        {
+            "pid": 10,
+            "parent_pid": 1,
+            "created_ticks": 100,
+            "command_line": "python run_ls_go_bridge.py",
+        },
+        {
+            "pid": 11,
+            "parent_pid": 10,
+            "created_ticks": 101,
+            "command_line": "bridge child",
+        },
+    ]
+    calls: list[list[str]] = []
+    monkeypatch.setattr(stack_module, "listening_pid", lambda _port: 11)
+    monkeypatch.setattr(stack_module, "windows_command_processes", lambda _fragment: rows)
+
+    def fake_run(command, **_kwargs):
+        calls.append(command)
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    monkeypatch.setattr(stack_module.subprocess, "run", fake_run)
+
+    result = stack_module.stop_unhealthy_bridge_listener()
+
+    assert result["verified_bridge_owner"] is True
+    assert result["stopped_root_pid"] == 10
+    assert calls == [["taskkill", "/PID", "10", "/T", "/F"]]
+
+
+def test_unhealthy_bridge_recovery_preserves_unknown_listener(
+    monkeypatch,
+    stack_module,
+) -> None:
+    monkeypatch.setattr(stack_module, "listening_pid", lambda _port: 99)
+    monkeypatch.setattr(stack_module, "windows_command_processes", lambda _fragment: [])
+
+    def fail_run(*_args, **_kwargs):
+        raise AssertionError("unknown listener must not be terminated")
+
+    monkeypatch.setattr(stack_module.subprocess, "run", fail_run)
+
+    result = stack_module.stop_unhealthy_bridge_listener()
+
+    assert result == {
+        "listener_pid": 99,
+        "verified_bridge_owner": False,
+        "stopped_root_pid": None,
+    }
+
+
 def test_watchdog_observes_healthy_stack_without_repair(
     tmp_path: Path,
     monkeypatch,
@@ -149,6 +206,7 @@ def test_watchdog_observes_healthy_stack_without_repair(
         "observe",
         lambda _root, max_heartbeat_age: {
             "bridge": True,
+            "bridge_tcp": True,
             "merovingian_heartbeat": True,
             "go_interface": True,
             "desktop": True,
@@ -178,6 +236,7 @@ def test_watchdog_bounds_missing_repair_prerequisites(
         "observe",
         lambda _root, max_heartbeat_age: {
             "bridge": False,
+            "bridge_tcp": False,
             "merovingian_heartbeat": False,
             "go_interface": False,
             "desktop": False,
@@ -193,3 +252,62 @@ def test_watchdog_bounds_missing_repair_prerequisites(
     assert '"launch_error": "canonical_python_or_launcher_missing"' in receipt
     assert '"automatic_deletion": false' in receipt
     assert '"public_export": false' in receipt
+
+
+def test_bridge_health_requires_http_ok_and_canonical_root(
+    tmp_path: Path,
+    monkeypatch,
+    watchdog_module,
+) -> None:
+    class Response:
+        status = 200
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        def read(self, _limit: int) -> bytes:
+            return json.dumps(
+                {"ok": True, "root": str(tmp_path / "App")}
+            ).encode("utf-8")
+
+    monkeypatch.setattr(watchdog_module, "urlopen", lambda *_args, **_kwargs: Response())
+
+    assert watchdog_module.bridge_status_healthy(tmp_path)
+
+    monkeypatch.setattr(
+        watchdog_module,
+        "urlopen",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(TimeoutError()),
+    )
+    assert not watchdog_module.bridge_status_healthy(tmp_path)
+
+
+def test_observe_rejects_tcp_only_bridge_health(
+    tmp_path: Path,
+    monkeypatch,
+    watchdog_module,
+) -> None:
+    monkeypatch.setattr(watchdog_module, "port_open", lambda _port: True)
+    monkeypatch.setattr(
+        watchdog_module,
+        "bridge_status_healthy",
+        lambda _root: False,
+    )
+    monkeypatch.setattr(
+        watchdog_module,
+        "heartbeat_fresh",
+        lambda _path, _age: True,
+    )
+    monkeypatch.setattr(
+        watchdog_module,
+        "process_command_running",
+        lambda _fragment: True,
+    )
+
+    observed = watchdog_module.observe(tmp_path, max_heartbeat_age=180)
+
+    assert observed["bridge_tcp"] is True
+    assert observed["bridge"] is False

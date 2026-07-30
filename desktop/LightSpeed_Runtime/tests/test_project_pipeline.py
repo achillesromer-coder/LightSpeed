@@ -258,3 +258,35 @@ def test_refresh_queues_change_receipt_without_mutating_project(tmp_path, monkey
         if item.get("event_type") == "project_registry_change"
         and item.get("state") == "pending_review"
     ]
+
+
+def test_latest_snapshot_reads_receipts_without_rescanning(tmp_path, monkeypatch):
+    shell = make_shell(tmp_path)
+    pipeline = ProjectPipeline(shell)
+    pipeline.registry_path.write_text(
+        json.dumps({"projects": [{"project_id": "project-alpha"}], "summary": {"project_count": 1}}),
+        encoding="utf-8",
+    )
+    pipeline.health_path.write_text(
+        json.dumps({"status": "pass", "services": {"database": True}}),
+        encoding="utf-8",
+    )
+    pipeline.cleanup_path.write_text(
+        json.dumps({"candidate_count": 3}),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        pipeline,
+        "scan_projects",
+        lambda: (_ for _ in ()).throw(AssertionError("snapshot must not scan")),
+    )
+
+    snapshot = pipeline.latest_snapshot()
+
+    assert snapshot["summary"]["project_count"] == 1
+    assert snapshot["health"]["status"] == "pass"
+    assert snapshot["cleanup_summary"] == {
+        "candidate_count": 3,
+        "automatic_deletion": False,
+    }

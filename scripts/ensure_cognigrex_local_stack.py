@@ -12,6 +12,8 @@ import socket
 import subprocess
 import sys
 from typing import Any
+from urllib.error import URLError
+from urllib.request import Request, urlopen
 
 
 DEFAULT_CANONICAL_ROOT = Path(
@@ -29,6 +31,35 @@ def port_open(port: int) -> bool:
             return True
     except OSError:
         return False
+
+
+def bridge_status_healthy(root: Path, timeout_seconds: float = 10.0) -> bool:
+    """Require a bounded, canonical HTTP status response from the LS GO bridge."""
+    request = Request(
+        "http://127.0.0.1:8765/api/v1/status",
+        headers={"Accept": "application/json"},
+    )
+    try:
+        with urlopen(request, timeout=timeout_seconds) as response:
+            if response.status != 200:
+                return False
+            raw = response.read((1024 * 1024) + 1)
+    except (OSError, TimeoutError, URLError):
+        return False
+
+    if len(raw) > 1024 * 1024:
+        return False
+
+    try:
+        payload = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return False
+
+    expected_root = os.path.normcase(os.path.normpath(str(root / "App")))
+    reported_root = os.path.normcase(
+        os.path.normpath(str(payload.get("root", "")))
+    )
+    return payload.get("ok") is True and reported_root == expected_root
 
 
 def heartbeat_fresh(lock_path: Path, max_age_seconds: int = 180) -> bool:
@@ -84,7 +115,8 @@ def observe(root: Path, *, max_heartbeat_age: int) -> dict[str, bool]:
         / "merovingian_supervisor.lock.json"
     )
     return {
-        "bridge": port_open(8765),
+        "bridge": bridge_status_healthy(root),
+        "bridge_tcp": port_open(8765),
         "merovingian_heartbeat": heartbeat_fresh(lock_path, max_heartbeat_age),
         "go_interface": port_open(4173),
         "desktop": process_command_running(str(root / "App" / "__main__.py")),
@@ -142,7 +174,7 @@ def main(argv: list[str] | None = None) -> int:
         else "review_required"
     )
     payload = {
-        "schema_version": "lightspeed-cognigrex-watchdog-v1",
+        "schema_version": "lightspeed-cognigrex-watchdog-v2",
         "generated_utc": utc_now().isoformat(timespec="seconds"),
         "status": status,
         "action": "repair" if needs_repair else "observe",

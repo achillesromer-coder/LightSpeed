@@ -281,6 +281,36 @@ def stop_noncanonical_process_roots(
     }
 
 
+def stop_unhealthy_bridge_listener(port: int = 8765) -> dict[str, Any]:
+    """Stop only a verified LS GO bridge tree that owns an unhealthy listener."""
+    listener_pid = listening_pid(port)
+    rows = windows_command_processes("run_ls_go_bridge.py")
+    by_pid = {int(row["pid"]): row for row in rows}
+    if listener_pid not in by_pid:
+        return {
+            "listener_pid": listener_pid,
+            "verified_bridge_owner": False,
+            "stopped_root_pid": None,
+        }
+
+    root_pid = int(listener_pid)
+    while int(by_pid[root_pid]["parent_pid"]) in by_pid:
+        root_pid = int(by_pid[root_pid]["parent_pid"])
+    completed = subprocess.run(
+        ["taskkill", "/PID", str(root_pid), "/T", "/F"],
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=20,
+    )
+    return {
+        "listener_pid": listener_pid,
+        "verified_bridge_owner": True,
+        "stopped_root_pid": root_pid if completed.returncode == 0 else None,
+        "exit_code": int(completed.returncode),
+    }
+
+
 def run_desporte_population(python: str, receipt_dir: Path) -> dict[str, Any]:
     script = installed_or_repository_script("Automation", "populate_desporte_desktop.py")
     completed = subprocess.run(
@@ -331,9 +361,12 @@ def optional_desporte_start() -> dict[str, Any]:
     }
 
 
-def read_bridge_status() -> dict[str, Any]:
+def read_bridge_status(timeout_seconds: float = 8.0) -> dict[str, Any]:
     try:
-        with urlopen("http://127.0.0.1:8765/api/v1/status", timeout=8) as response:
+        with urlopen(
+            "http://127.0.0.1:8765/api/v1/status",
+            timeout=max(0.1, timeout_seconds),
+        ) as response:
             payload = json.loads(response.read().decode("utf-8"))
             return payload if isinstance(payload, dict) else {"ok": False}
     except Exception as exc:
@@ -426,25 +459,57 @@ def main(argv: list[str] | None = None) -> int:
         "run_ls_go_bridge.py",
         preferred_pid=listening_pid(8765),
     )
-    if port_open("127.0.0.1", 8765):
+    initial_bridge_status = read_bridge_status(timeout_seconds=10.0)
+    bridge_root_matches = (
+        os.path.normcase(os.path.normpath(str(initial_bridge_status.get("root", ""))))
+        == os.path.normcase(os.path.normpath(str(shell_root)))
+    )
+    bridge_responding = (
+        initial_bridge_status.get("bridge") == "ls-go"
+        and bridge_root_matches
+        and "error" not in initial_bridge_status
+    )
+    bridge_recovery: dict[str, Any] = {"action": "not_required"}
+    if bridge_responding:
         bridge = {"state": "already_running", "origin": "http://127.0.0.1:8765"}
     else:
-        # A matching process without a listener is stale. Stop only its root
-        # process tree before starting the canonical bridge.
-        for row in _root_processes(windows_command_processes("run_ls_go_bridge.py")):
-            subprocess.run(
-                ["taskkill", "/PID", str(row["pid"]), "/T", "/F"],
-                capture_output=True,
-                text=True,
-                check=False,
-                timeout=20,
+        bridge = {
+            "state": "unhealthy_unrecovered",
+            "origin": "http://127.0.0.1:8765",
+        }
+        if port_open("127.0.0.1", 8765):
+            bridge_recovery = stop_unhealthy_bridge_listener(8765)
+            if bridge_recovery.get("stopped_root_pid"):
+                deadline = time.monotonic() + 10.0
+                while port_open("127.0.0.1", 8765) and time.monotonic() < deadline:
+                    time.sleep(0.25)
+            elif port_open("127.0.0.1", 8765):
+                bridge = {
+                    "state": "unhealthy_unknown_listener",
+                    "origin": "http://127.0.0.1:8765",
+                }
+
+        if not port_open("127.0.0.1", 8765):
+            # A matching process without a listener is stale. Stop only its
+            # verified bridge root before starting the canonical bridge.
+            for row in _root_processes(windows_command_processes("run_ls_go_bridge.py")):
+                subprocess.run(
+                    ["taskkill", "/PID", str(row["pid"]), "/T", "/F"],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                    timeout=20,
+                )
+            bridge_pid = start_background(
+                [python, str(installed_or_repository_script("Tools", "run_ls_go_bridge.py"))],
+                cwd=CANONICAL_ROOT if CANONICAL_ROOT.is_dir() else REPO_ROOT,
+                log_path=shell_root / "Z Axis" / "Z-4_Merovingian" / "data" / "logs" / "ls-go-bridge.log",
             )
-        bridge_pid = start_background(
-            [python, str(installed_or_repository_script("Tools", "run_ls_go_bridge.py"))],
-            cwd=CANONICAL_ROOT if CANONICAL_ROOT.is_dir() else REPO_ROOT,
-            log_path=shell_root / "Z Axis" / "Z-4_Merovingian" / "data" / "logs" / "ls-go-bridge.log",
-        )
-        bridge = {"state": "started", "pid": bridge_pid, "origin": "http://127.0.0.1:8765"}
+            bridge = {
+                "state": "started",
+                "pid": bridge_pid,
+                "origin": "http://127.0.0.1:8765",
+            }
 
     canonical_desktop_marker = str(shell_root / "__main__.py")
     legacy_desktop_reconciliation = stop_noncanonical_process_roots(
@@ -494,6 +559,7 @@ def main(argv: list[str] | None = None) -> int:
         "ls_go_bridge": bridge,
         "process_reconciliation": {
             "bridge": bridge_reconciliation,
+            "bridge_recovery": bridge_recovery,
             "desktop": desktop_reconciliation,
             "legacy_desktop": legacy_desktop_reconciliation,
         },

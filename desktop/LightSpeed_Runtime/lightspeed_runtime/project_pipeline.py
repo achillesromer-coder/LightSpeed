@@ -1014,6 +1014,22 @@ class ProjectPipeline:
         self._last_refresh_monotonic = time.monotonic()
         return registry
 
+    def latest_snapshot(self) -> dict[str, Any]:
+        """Read the last supervisor materialization without scanning projects."""
+        registry = _read_json(self.registry_path)
+        health = _read_json(self.health_path)
+        cleanup = _read_json(self.cleanup_path)
+        registry.update(
+            {
+                "health": health,
+                "cleanup_summary": {
+                    "candidate_count": cleanup.get("candidate_count", 0),
+                    "automatic_deletion": False,
+                },
+            }
+        )
+        return registry
+
     def queue_project_work_receipt(
         self,
         *,

@@ -184,7 +184,10 @@ def create_app(root: Path | str) -> FastAPI:
 
     @app.get("/api/v1/status")
     async def status():
-        registry = project_pipeline.refresh(force=False, queue_changes=True)
+        # Merovingian materializes these receipts on its own interval. A health
+        # request must stay read-only and must not rescan the complete project
+        # tree or create review packets.
+        registry = project_pipeline.latest_snapshot()
         health = registry.get("health") or {}
         health_details = health.get("details") or {}
         supervisor = _supervisor_status(shell_root)
@@ -246,7 +249,11 @@ def create_app(root: Path | str) -> FastAPI:
 
     @app.get("/api/v1/projects")
     async def list_projects():
-        registry = project_pipeline.refresh(force=False, queue_changes=True)
+        registry = project_pipeline.latest_snapshot()
+        if not registry.get("projects"):
+            # Fresh, test and recovery shells may not yet have a supervisor
+            # receipt. Populate once without queueing a synthetic change.
+            registry = project_pipeline.refresh(force=True, queue_changes=False)
         return JSONResponse(
             {
                 "projects": registry.get("projects") or [],
