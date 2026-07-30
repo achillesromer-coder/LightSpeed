@@ -7,6 +7,12 @@ on:
     paths:
       - public_artifacts/eros/materialize_official_eros.py
       - .github/workflows/materialize_eros_public.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - public_artifacts/eros/materialize_official_eros.py
+      - .github/workflows/materialize_eros_public.yml
   workflow_dispatch:
 
 permissions:
