@@ -218,16 +218,16 @@
     .site-parity-card .site-chain { display:flex; flex-wrap:wrap; gap:7px; align-items:center; }
     .site-parity-card .site-chain span { border:1px solid var(--line); border-radius:999px; padding:6px 9px; font-size:12px; }
     .site-parity-card .site-chain i { color:var(--teal); font-style:normal; }
-  `,document.head.appendChild(e)},ye=async()=>{let e=document.querySelector(`.topbar > div:first-child`),t=document.querySelector(`#view-sources`);if(!e||!t)return!1;Z();let n=await ve(),r=n?.authority_chain??[`Nathaniel Bouwer`,`Achilles / GO gate`,`agent floor`,`LightSpeed Desktop`,`Git and Drive receipts`];if(!document.getElementById(`site-context-strip`)){let t=document.createElement(`div`);t.id=`site-context-strip`,t.className=`site-context-strip`,t.innerHTML=`
+  `,document.head.appendChild(e)},ye=async()=>{let e=document.querySelector(`.topbar > div:first-child`),t=document.querySelector(`#view-sources`);if(!e||!t)return!1;Z();let n=(await ve())?.authority_chain??[`Nathaniel Bouwer`,`Achilles / GO gate`,`agent floor`,`LightSpeed Desktop`,`Git and Drive receipts`];if(!document.getElementById(`site-context-strip`)){let t=document.createElement(`div`);t.id=`site-context-strip`,t.className=`site-context-strip`,t.innerHTML=`
       <span><strong>Owner:</strong> Nathaniel Bouwer</span>
-      <span><strong>Mode:</strong> existing Site side edit</span>
+      <span><strong>Mode:</strong> private soft launch</span>
       <span><strong>Source:</strong> Git + Drive aligned</span>
     `,e.appendChild(t)}if(!document.getElementById(`site-parity-card`)){let e=document.createElement(`article`);e.id=`site-parity-card`,e.className=`panel site-parity-card`,e.innerHTML=`
-      <p class="eyebrow">Current Site integration</p>
-      <h2>One surface, additive side edit</h2>
-      <p>The existing LightSpeed GO Site remains canonical. Git carries implementation, Drive carries evidence and control records, and Sites publishes only the reviewed delta.</p>
+      <p class="eyebrow">Canonical source chain</p>
+      <h2>One operator surface, durable receipts</h2>
+      <p>Desktop executes locally, Git carries implementation, Drive carries evidence and review records, and LS GO remains the operator decision surface.</p>
       <div class="site-chain">
-        ${r.map((e,t)=>`${t?`<i>→</i>`:``}<span>${e}</span>`).join(``)}
+        ${n.map((e,t)=>`${t?`<i>→</i>`:``}<span>${e}</span>`).join(``)}
       </div>
-      <p><strong>Publish state:</strong> ${n?.publish_state??`review-required`}. No replacement Site is created.</p>
+      <p><strong>Launch state:</strong> private local operation. Public Web work remains deferred.</p>
     `,t.prepend(e)}return!0},Q=0,$=()=>{ye().then(e=>{e||Q>=40||(Q+=1,window.requestAnimationFrame($))})};$();
