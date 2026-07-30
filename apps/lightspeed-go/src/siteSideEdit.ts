@@ -60,7 +60,7 @@ const mount = async (): Promise<boolean> => {
     strip.className = "site-context-strip";
     strip.innerHTML = `
       <span><strong>Owner:</strong> Nathaniel Bouwer</span>
-      <span><strong>Mode:</strong> existing Site side edit</span>
+      <span><strong>Mode:</strong> private soft launch</span>
       <span><strong>Source:</strong> Git + Drive aligned</span>
     `;
     topbar.appendChild(strip);
@@ -71,13 +71,13 @@ const mount = async (): Promise<boolean> => {
     card.id = "site-parity-card";
     card.className = "panel site-parity-card";
     card.innerHTML = `
-      <p class="eyebrow">Current Site integration</p>
-      <h2>One surface, additive side edit</h2>
-      <p>The existing LightSpeed GO Site remains canonical. Git carries implementation, Drive carries evidence and control records, and Sites publishes only the reviewed delta.</p>
+      <p class="eyebrow">Canonical source chain</p>
+      <h2>One operator surface, durable receipts</h2>
+      <p>Desktop executes locally, Git carries implementation, Drive carries evidence and review records, and LS GO remains the operator decision surface.</p>
       <div class="site-chain">
         ${authority.map((item, index) => `${index ? "<i>→</i>" : ""}<span>${item}</span>`).join("")}
       </div>
-      <p><strong>Publish state:</strong> ${manifest?.publish_state ?? "review-required"}. No replacement Site is created.</p>
+      <p><strong>Launch state:</strong> private local operation. Public Web work remains deferred.</p>
     `;
     sources.prepend(card);
   }
