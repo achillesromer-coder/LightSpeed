@@ -160,7 +160,9 @@ class AgentHomeBridge:
         return payload
 
     def web_drive_bridge(self) -> dict:
-        payload = self._load_export_or_environment_section("web_drive_bridge")
+        payload = self._load_json("web_drive_bridge", required=False)
+        if payload is None:
+            payload = self.agent_environment().get("web_drive_bridge") or {}
         if not isinstance(payload, dict):
             raise TypeError("web_drive_bridge export must contain a JSON object")
         return payload

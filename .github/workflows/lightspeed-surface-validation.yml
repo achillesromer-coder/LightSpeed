@@ -12,6 +12,10 @@ on:
       - "scripts/refresh_desktop_source_manifest.py"
       - "scripts/validate_desporte_desktop_bridge.py"
       - "scripts/populate_desporte_desktop.py"
+      - "scripts/run_cognigrex_local_stack.py"
+      - "scripts/ensure_cognigrex_local_stack.py"
+      - "scripts/register_cognigrex_watchdog.ps1"
+      - "tests/test_cognigrex_local_stack.py"
       - "tools/run_desporte_desktop_probe.cmd"
       - "tools/run_desporte_desktop_population.cmd"
       - ".github/workflows/lightspeed-surface-validation.yml"
@@ -28,6 +32,10 @@ on:
       - "scripts/refresh_desktop_source_manifest.py"
       - "scripts/validate_desporte_desktop_bridge.py"
       - "scripts/populate_desporte_desktop.py"
+      - "scripts/run_cognigrex_local_stack.py"
+      - "scripts/ensure_cognigrex_local_stack.py"
+      - "scripts/register_cognigrex_watchdog.ps1"
+      - "tests/test_cognigrex_local_stack.py"
       - "tools/run_desporte_desktop_probe.cmd"
       - "tools/run_desporte_desktop_population.cmd"
       - ".github/workflows/lightspeed-surface-validation.yml"
@@ -64,6 +72,8 @@ jobs:
           python -m py_compile scripts/refresh_desktop_source_manifest.py
           python -m py_compile scripts/validate_desporte_desktop_bridge.py
           python -m py_compile scripts/populate_desporte_desktop.py
+          python -m py_compile scripts/run_cognigrex_local_stack.py
+          python -m py_compile scripts/ensure_cognigrex_local_stack.py
 
       - name: Validate De Sporte Desktop bridge contract
         id: desporte

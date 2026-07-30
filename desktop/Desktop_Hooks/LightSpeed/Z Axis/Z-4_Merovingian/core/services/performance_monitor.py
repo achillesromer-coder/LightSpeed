@@ -164,8 +164,9 @@ class PerformanceMonitor:
         # Performance history (last 24 hours)
         self.max_history_age = timedelta(hours=24)
 
-        # Lock for thread safety
-        self.lock = threading.Lock()
+        # Threshold and retention helpers run while record_metric holds the
+        # monitor lock, so the lock must support same-thread re-entry.
+        self.lock = threading.RLock()
 
     def record_metric(self, metric_type: MetricType, value: float,
                      floor: Optional[str] = None, operation: Optional[str] = None,

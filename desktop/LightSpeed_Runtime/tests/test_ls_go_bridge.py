@@ -79,6 +79,18 @@ def healthy_pipeline(monkeypatch) -> None:
             "errors": [],
         },
     )
+    monkeypatch.setattr(
+        ProjectPipeline,
+        "latest_snapshot",
+        lambda self: {
+            **self.scan_projects(),
+            "health": self.essential_health(self.scan_projects()),
+            "cleanup_summary": {
+                "candidate_count": 0,
+                "automatic_deletion": False,
+            },
+        },
+    )
 
 
 def write_supervisor_lock(root: Path, *, heartbeat: datetime | None = None, pid: int | None = None) -> None:

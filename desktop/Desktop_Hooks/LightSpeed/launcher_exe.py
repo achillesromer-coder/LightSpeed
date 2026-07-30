@@ -11,6 +11,17 @@ def resolve_canonical_root(
     executable: Path | None = None,
     frozen: bool | None = None,
 ) -> Path:
+    configured = os.environ.get("LIGHTSPEED_CANONICAL_ROOT")
+    if configured:
+        candidate = Path(configured).absolute()
+        if (candidate / "App" / "__main__.py").is_file():
+            return candidate
+    invoked = Path(__file__).absolute()
+    if (
+        invoked.parent.name.casefold() == "app"
+        and invoked.parent.parent.name.casefold() == "lightspeed"
+    ):
+        return invoked.parent.parent
     is_frozen = bool(getattr(sys, "frozen", False)) if frozen is None else frozen
     if is_frozen:
         return Path(executable or sys.executable).resolve().parent
@@ -18,17 +29,26 @@ def resolve_canonical_root(
 
 
 def build_launch_command(root: Path) -> tuple[list[str], Path]:
-    root = Path(root).resolve()
-    shell_root = root / "Desktop_Hooks" / "LightSpeed"
+    root = Path(root).absolute()
+    canonical_shell = root / "App"
+    shell_root = (
+        canonical_shell
+        if (canonical_shell / "__main__.py").is_file()
+        else root / "Desktop_Hooks" / "LightSpeed"
+    )
     entrypoint = shell_root / "__main__.py"
     python_candidates = (
+        root / "Environment" / "Scripts" / "python.exe",
+        root / "Environment" / "Scripts" / "pythonw.exe",
         root / "venv" / "Scripts" / "python.exe",
         root / "venv" / "Scripts" / "pythonw.exe",
     )
     python = next((candidate for candidate in python_candidates if candidate.is_file()), None)
 
     if python is None:
-        raise FileNotFoundError(f"LightSpeed Python runtime not found under {root / 'venv'}")
+        raise FileNotFoundError(
+            f"LightSpeed Python runtime not found under {root / 'Environment'} or {root / 'venv'}"
+        )
     if not entrypoint.is_file():
         raise FileNotFoundError(f"LightSpeed entrypoint not found: {entrypoint}")
     return [str(python), str(entrypoint)], shell_root
@@ -39,6 +59,8 @@ def launch() -> int:
     command, working_directory = build_launch_command(root)
     environment = os.environ.copy()
     environment["LIGHTSPEED_CANONICAL_ROOT"] = str(root)
+    environment["LIGHTSPEED_RUNTIME_ROOT"] = str(root / "Core")
+    environment["LIGHTSPEED_SHELL_ROOT"] = str(root / "App")
     environment["LIGHTSPEED_RUNTIME_RESOLVED"] = "1"
     environment.setdefault("LIGHTSPEED_PYTHON", command[0])
     venv_root = root / "venv"
