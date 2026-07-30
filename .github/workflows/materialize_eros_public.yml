@@ -1,0 +1,71 @@
+name: Materialize Official 433 Eros Public Assets
+
+on:
+  push:
+    branches:
+      - public/eros-official-materialization
+    paths:
+      - public_artifacts/eros/materialize_official_eros.py
+      - .github/workflows/materialize_eros_public.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  materialize:
+    name: Retrieve, verify and package official Eros assets
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out isolated branch
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install public materialization dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy matplotlib trimesh scipy networkx lxml pygltflib
+
+      - name: Materialize official NASA, PDS and JPL sources
+        env:
+          EROS_OUTPUT: ${{ github.workspace }}/eros_materialized
+        run: |
+          set -euo pipefail
+          python public_artifacts/eros/materialize_official_eros.py | tee materialization-summary.json
+
+      - name: Display bounded receipt summary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          receipt = json.loads(Path('eros_materialized/metadata/materialization-receipt.json').read_text())
+          assert receipt['state'] == 'MATERIALIZED_OFFICIAL_SOURCE_READY_FOR_REVIEW'
+          assert receipt['navigation_grade'] is False
+          assert receipt['mission_selected'] is False
+          assert receipt['silent_scaling'] is False
+          assert receipt['silent_repair'] is False
+          print(json.dumps({
+              'state': receipt['state'],
+              'nasa_geometry': receipt['geometry']['nasa_printable_stl'],
+              'pds_geometry': receipt['geometry']['pds_gaskell_q64'],
+              'jpl_object': receipt['jpl_object'],
+          }, indent=2))
+          PY
+
+      - name: Upload complete materialized pack
+        uses: actions/upload-artifact@v4
+        with:
+          name: eros-official-materialized-v1-1
+          path: |
+            433_Eros_Official_Materialized_Public_Pack_v1_1.zip
+            433_Eros_Official_Materialized_Public_Pack_v1_1.zip.sha256
+            materialization-summary.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
