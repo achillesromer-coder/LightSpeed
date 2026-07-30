@@ -1,2 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Vite emits portable LF bundles. Keep clean Windows builds byte-reproducible.
+apps/lightspeed-go/index.html text eol=lf
+apps/lightspeed-go/dist/** text eol=lf

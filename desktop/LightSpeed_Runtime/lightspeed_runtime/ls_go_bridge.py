@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hmac
 import json
 import os
 from datetime import datetime, timezone
@@ -7,13 +8,19 @@ from pathlib import Path
 import sys
 from typing import Any, Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import uvicorn
 
 from lightspeed_runtime.project_artifact_store import stage_project_artifacts
 from lightspeed_runtime.project_pipeline import ProjectPipeline
+from lightspeed_runtime.representation_edge import (
+    RepresentationEdgeDisabled,
+    RepresentationValidationError,
+    build_store as build_representation_edge_store,
+    default_review_paths as representation_review_paths,
+)
 from lightspeed_runtime.storage_paths import neo_actions_root
 
 COMMAND_SCHEMA = "lightspeed-go-command-v1"
@@ -37,6 +44,7 @@ DEFAULT_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:4173",
 ]
+OWNER_CONFIRMATION_ENV = "LIGHTSPEED_OWNER_APPROVAL_TOKEN"
 
 
 def utc_now_iso() -> str:
@@ -123,6 +131,18 @@ def _allowed_origins() -> list[str]:
     return [*DEFAULT_ALLOWED_ORIGINS, *[item for item in configured if item]]
 
 
+def _verified_owner_actor(confirmation: str | None) -> str:
+    expected = os.environ.get(OWNER_CONFIRMATION_ENV, "")
+    if not expected:
+        raise HTTPException(
+            status_code=403,
+            detail=f"Owner confirmation is not configured in {OWNER_CONFIRMATION_ENV}",
+        )
+    if not confirmation or not hmac.compare_digest(confirmation, expected):
+        raise HTTPException(status_code=403, detail="Owner confirmation failed")
+    return "Nathaniel"
+
+
 def _try_get_services(shell_root: Path):
     merovingian_root = shell_root / "Z Axis" / "Z-4_Merovingian"
     if str(merovingian_root) not in sys.path:
@@ -168,6 +188,18 @@ def create_app(root: Path | str) -> FastAPI:
     shell_root = Path(root).resolve()
     db, storage = _try_get_services(shell_root)
     project_pipeline = ProjectPipeline(shell_root)
+    representation_edge = build_representation_edge_store(shell_root)
+    representation_edge_error: str | None = None
+    if representation_edge.enabled:
+        review_queue, decisions, outbox = representation_review_paths(shell_root)
+        try:
+            representation_edge.seed_proof_graphs(
+                review_queue_path=review_queue,
+                decision_path=decisions,
+                local_outbox=outbox,
+            )
+        except Exception as exc:
+            representation_edge_error = f"{type(exc).__name__}: {exc}"
     app = FastAPI(
         title="LightSpeed GO Desktop Bridge",
         description="Local-only, Achilles-governed command, project and review bridge for LS GO.",
@@ -178,7 +210,7 @@ def create_app(root: Path | str) -> FastAPI:
         allow_origins=_allowed_origins(),
         allow_credentials=False,
         allow_methods=["GET", "POST", "OPTIONS"],
-        allow_headers=["Content-Type"],
+        allow_headers=["Content-Type", "X-LightSpeed-Owner-Confirmation"],
         max_age=600,
     )
 
@@ -217,6 +249,10 @@ def create_app(root: Path | str) -> FastAPI:
                 "agent_floors": health_details.get("agent_floors") or {},
                 "queue_path": str(_queue_path(shell_root)),
                 "review_queue_path": str(project_pipeline.review_queue_path),
+                "representation_edge": {
+                    **representation_edge.status(),
+                    "error": representation_edge_error,
+                },
                 "execution_boundary": "local queue, immutable named artifacts, receipts and review only; no public direct execution",
             }
         )
@@ -280,6 +316,101 @@ def create_app(root: Path | str) -> FastAPI:
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc))
         return JSONResponse({"accepted": True, "receipt": receipt})
+
+    def require_representation_edge():
+        if not representation_edge.enabled:
+            raise HTTPException(
+                status_code=404,
+                detail="Canonical representation edge is disabled by feature flag.",
+            )
+        if representation_edge_error:
+            raise HTTPException(status_code=503, detail=representation_edge_error)
+        try:
+            state = representation_edge.status()
+        except RepresentationEdgeDisabled as exc:
+            raise HTTPException(status_code=404, detail=str(exc))
+        if not state.get("migration_applied"):
+            raise HTTPException(status_code=503, detail="Representation-edge migration is unavailable.")
+        return representation_edge
+
+    @app.get("/api/v1/representation-edge/status")
+    async def representation_edge_status():
+        return JSONResponse(
+            {
+                **representation_edge.status(),
+                "error": representation_edge_error,
+                "drive_write_executed": False,
+            }
+        )
+
+    @app.get("/api/v1/representation-graphs")
+    async def list_representation_graphs():
+        edge = require_representation_edge()
+        return JSONResponse({"graphs": edge.list_graphs()})
+
+    @app.get("/api/v1/representation-graphs/{object_id:path}")
+    async def get_representation_graph(object_id: str):
+        edge = require_representation_edge()
+        try:
+            graph = edge.graph(_bounded(object_id, maximum=160, required=True))
+        except KeyError:
+            raise HTTPException(status_code=404, detail="Canonical object candidate not found")
+        return JSONResponse({"graph": graph})
+
+    @app.get("/api/v1/representation-reviews")
+    async def list_representation_reviews():
+        edge = require_representation_edge()
+        return JSONResponse({"reviews": edge.list_reviews()})
+
+    @app.post("/api/v1/representation-reviews/{review_id}/decision")
+    async def decide_representation_review(
+        review_id: str,
+        body: dict[str, Any],
+        owner_confirmation: str | None = Header(
+            default=None,
+            alias="X-LightSpeed-Owner-Confirmation",
+        ),
+    ):
+        edge = require_representation_edge()
+        decision = _bounded(body.get("decision"), maximum=32, required=True)
+        actor = _verified_owner_actor(owner_confirmation)
+        scope = _bounded(body.get("scope") or "identity", maximum=16, required=True)
+        note = _bounded(body.get("note"), maximum=1000)
+        raw_edge_ids = body.get("edge_ids") or []
+        if not isinstance(raw_edge_ids, list):
+            raise HTTPException(status_code=400, detail="edge_ids must be a bounded list")
+        edge_ids = [_bounded(value, maximum=160, required=True) for value in raw_edge_ids[:100]]
+        _, decision_path, outbox = representation_review_paths(shell_root)
+        try:
+            receipt = edge.record_decision(
+                review_id=_bounded(review_id, maximum=96, required=True),
+                decision=decision,
+                actor=actor,
+                owner_authenticated=True,
+                scope=scope,
+                note=note,
+                edge_ids=edge_ids,
+                decision_path=decision_path,
+                local_outbox=outbox,
+            )
+        except KeyError:
+            raise HTTPException(status_code=404, detail="Representation review not found")
+        except PermissionError as exc:
+            raise HTTPException(status_code=403, detail=str(exc))
+        except RepresentationValidationError as exc:
+            raise HTTPException(status_code=400, detail=str(exc))
+        return JSONResponse({"accepted": True, "receipt": receipt})
+
+    @app.get("/api/v1/representation-promotions")
+    async def list_representation_promotions():
+        edge = require_representation_edge()
+        return JSONResponse(
+            {
+                "promotions": edge.list_promotions(),
+                "drive_write_executed": False,
+                "readback_required": True,
+            }
+        )
 
     @app.post("/api/v1/projects/{project_id}/receipts")
     async def accept_project_receipt(project_id: str, body: dict[str, Any]):
