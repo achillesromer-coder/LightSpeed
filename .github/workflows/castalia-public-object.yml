@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "scripts/public/build_castalia_public_object.py"
+      - "scripts/public/refine_castalia_public_object_v1_1.py"
       - ".github/workflows/castalia-public-object.yml"
   workflow_dispatch:
 
@@ -48,25 +49,30 @@ jobs:
           path.write_text(text.replace(old, new), encoding="utf-8")
           PY
 
-      - name: Build official-source Castalia pack
+      - name: Build official-source Castalia v1.0 pack
         run: |
           python scripts/public/build_castalia_public_object.py --output "$RUNNER_TEMP/castalia-output"
+
+      - name: Apply v1.1 public-fidelity supersession
+        run: |
+          python scripts/public/refine_castalia_public_object_v1_1.py --output "$RUNNER_TEMP/castalia-output"
           cp castalia-build-dependencies.txt "$RUNNER_TEMP/castalia-output/"
 
       - name: Verify no private or prohibited material
         run: |
-          test -f "$RUNNER_TEMP/castalia-output/4769_Castalia_Official_Public_Canonical_Object_Pack_v1_0.zip"
-          test -f "$RUNNER_TEMP/castalia-output/4769_Castalia_Official_Public_Canonical_Object_Pack_v1_0.zip.sha256"
+          test -f "$RUNNER_TEMP/castalia-output/4769_Castalia_Official_Public_Canonical_Object_Pack_v1_1.zip"
+          test -f "$RUNNER_TEMP/castalia-output/4769_Castalia_Official_Public_Canonical_Object_Pack_v1_1.zip.sha256"
           ! grep -R -E "BEGIN [A-Z ]*PRIVATE KEY|sk-[A-Za-z0-9_-]{20,}|seed phrase|mnemonic phrase" "$RUNNER_TEMP/castalia-output" --exclude='*.zip'
           ! grep -R -E '"mission_selected"[[:space:]]*:[[:space:]]*true|"navigation_grade"[[:space:]]*:[[:space:]]*true|"physical_execution_authorised"[[:space:]]*:[[:space:]]*true' "$RUNNER_TEMP/castalia-output"
+          ! grep -R -F '/home/runner/' "$RUNNER_TEMP/castalia-output/4769_Castalia_Official_Public_Canonical_Object_Pack_v1_1" --include='*.json' --include='*.md' --include='*.txt'
 
-      - name: Upload public review artifact
+      - name: Upload corrected public review artifact
         uses: actions/upload-artifact@v4
         with:
-          name: castalia-official-public-canonical-object-v1-0
+          name: castalia-official-public-canonical-object-v1-1
           path: |
-            ${{ runner.temp }}/castalia-output/4769_Castalia_Official_Public_Canonical_Object_Pack_v1_0.zip
-            ${{ runner.temp }}/castalia-output/4769_Castalia_Official_Public_Canonical_Object_Pack_v1_0.zip.sha256
+            ${{ runner.temp }}/castalia-output/4769_Castalia_Official_Public_Canonical_Object_Pack_v1_1.zip
+            ${{ runner.temp }}/castalia-output/4769_Castalia_Official_Public_Canonical_Object_Pack_v1_1.zip.sha256
             ${{ runner.temp }}/castalia-output/castalia-build-dependencies.txt
           if-no-files-found: error
           retention-days: 30
