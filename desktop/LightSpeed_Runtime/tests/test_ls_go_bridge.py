@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.util
 import json
 import os
 import sqlite3
@@ -13,8 +14,78 @@ RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RUNTIME_ROOT))
 
 from lightspeed_runtime import ls_go_bridge
+from lightspeed_runtime.floor_bridges import NeoAchillesBridge
 from lightspeed_runtime.project_pipeline import ProjectPipeline
 from lightspeed_runtime.representation_edge import FEATURE_FLAG
+
+
+def test_neo_operator_approval_forwards_authority_contract() -> None:
+    observed: dict = {}
+
+    class RuntimeStub:
+        def approve_workspace_action(self, *args, **kwargs):
+            observed["args"] = args
+            observed["kwargs"] = kwargs
+            return {"approval_state": "approved"}
+
+    bridge = object.__new__(NeoAchillesBridge)
+    bridge.runtime = RuntimeStub()
+    authority = {
+        "canonical_gate_id": "GO-GATE-TEST-001",
+        "owner_decision_ref": "OWNER-TEST-001",
+        "core_acceptance_ref": "CORE-TEST-001",
+        "approval_or_hold_state": "approve",
+        "authorised_scope": "private deterministic test only",
+        "prohibited_scope": "deployment and publication",
+    }
+
+    result = bridge.approve_operator_action(
+        "workspace-test",
+        "action-test",
+        audit_ref="audit-test",
+        authority_contract=authority,
+    )
+
+    assert result["approval_state"] == "approved"
+    assert observed["args"] == ("workspace-test", "Romer", "action-test")
+    assert observed["kwargs"]["audit_ref"] == "audit-test"
+    assert observed["kwargs"]["authority_contract"] == authority
+
+
+def test_half_speed_host_profile_bounds_background_work() -> None:
+    policy_path = (
+        RUNTIME_ROOT.parent
+        / "Desktop_Hooks"
+        / "LightSpeed"
+        / "config"
+        / "host_runtime_policy.json"
+    )
+    limits = json.loads(policy_path.read_text(encoding="utf-8"))["runtime_limits"]
+
+    assert limits["cognigrex_speed_percent"] == 50
+    assert limits["max_background_queue_workers"] == 1
+    assert limits["max_concurrent_ollama_jobs"] == 1
+    assert limits["max_floor_boot_parallelism"] == 2
+    assert limits["merovingian_interval_seconds"] == 120
+    assert limits["watchdog_interval_minutes"] == 10
+
+
+def test_watchdog_accepts_canonical_junction_alias(monkeypatch) -> None:
+    watchdog_path = (
+        RUNTIME_ROOT.parents[1]
+        / "scripts"
+        / "ensure_cognigrex_local_stack.py"
+    )
+    spec = importlib.util.spec_from_file_location("ensure_cognigrex_local_stack", watchdog_path)
+    assert spec is not None and spec.loader is not None
+    watchdog = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(watchdog)
+    monkeypatch.setattr(watchdog.os.path, "samefile", lambda left, right: True)
+
+    assert watchdog.paths_refer_to_same_location(
+        Path(r"D:\LightSpeed\App"),
+        Path(r"C:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed"),
+    )
 
 
 def command_payload(**overrides):

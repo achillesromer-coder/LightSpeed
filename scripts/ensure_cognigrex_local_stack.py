@@ -33,6 +33,18 @@ def port_open(port: int) -> bool:
         return False
 
 
+def paths_refer_to_same_location(left: Path, right: Path) -> bool:
+    """Treat the canonical D: namespace and its C: junction target as one root."""
+    left_text = os.path.normcase(os.path.normpath(str(left)))
+    right_text = os.path.normcase(os.path.normpath(str(right)))
+    if left_text == right_text:
+        return True
+    try:
+        return os.path.samefile(left, right)
+    except (OSError, ValueError, TypeError):
+        return False
+
+
 def bridge_status_healthy(root: Path, timeout_seconds: float = 10.0) -> bool:
     """Require a bounded, canonical HTTP status response from the LS GO bridge."""
     request = Request(
@@ -55,11 +67,12 @@ def bridge_status_healthy(root: Path, timeout_seconds: float = 10.0) -> bool:
     except (UnicodeDecodeError, json.JSONDecodeError):
         return False
 
-    expected_root = os.path.normcase(os.path.normpath(str(root / "App")))
-    reported_root = os.path.normcase(
-        os.path.normpath(str(payload.get("root", "")))
+    expected_root = root / "App"
+    reported_root = Path(str(payload.get("root", "")))
+    return payload.get("ok") is True and paths_refer_to_same_location(
+        expected_root,
+        reported_root,
     )
-    return payload.get("ok") is True and reported_root == expected_root
 
 
 def heartbeat_fresh(lock_path: Path, max_age_seconds: int = 180) -> bool:

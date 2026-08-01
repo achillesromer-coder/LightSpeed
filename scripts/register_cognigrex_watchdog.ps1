@@ -24,7 +24,7 @@ $action = New-ScheduledTaskAction `
 $repeating = New-ScheduledTaskTrigger `
     -Once `
     -At (Get-Date).AddMinutes(1) `
-    -RepetitionInterval (New-TimeSpan -Minutes 5) `
+    -RepetitionInterval (New-TimeSpan -Minutes 10) `
     -RepetitionDuration (New-TimeSpan -Days 3650)
 $atLogon = New-ScheduledTaskTrigger -AtLogOn
 $settings = New-ScheduledTaskSettingsSet `
@@ -51,7 +51,7 @@ if ($PSCmdlet.ShouldProcess($TaskName, 'Register canonical Cognigrex local guard
     }
     catch [Microsoft.Management.Infrastructure.CimException] {
         $taskCommand = ('"{0}" "{1}" --canonical-root "{2}"' -f $python, $script, $root)
-        & schtasks.exe /Create /TN $TaskName /TR $taskCommand /SC MINUTE /MO 5 /F /RL LIMITED | Out-Null
+        & schtasks.exe /Create /TN $TaskName /TR $taskCommand /SC MINUTE /MO 10 /F /RL LIMITED | Out-Null
         if ($LASTEXITCODE -ne 0) {
             throw
         }
@@ -65,7 +65,7 @@ $registered = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinu
     Executable = $python
     Script = $script
     WorkingDirectory = $root
-    IntervalMinutes = 5
+    IntervalMinutes = 10
     AtLogon = $true
     WakeToRun = $false
 } | ConvertTo-Json
