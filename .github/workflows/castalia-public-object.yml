@@ -1,0 +1,58 @@
+name: Castalia public object materialization
+
+on:
+  pull_request:
+    paths:
+      - "scripts/public/build_castalia_public_object.py"
+      - ".github/workflows/castalia-public-object.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install bounded public build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install \
+            requests==2.32.5 \
+            numpy==2.3.2 \
+            trimesh==4.7.4 \
+            matplotlib==3.10.5 \
+            plotly==6.3.0
+          python -m pip freeze | sort > castalia-build-dependencies.txt
+
+      - name: Build official-source Castalia pack
+        run: |
+          python scripts/public/build_castalia_public_object.py --output "$RUNNER_TEMP/castalia-output"
+          cp castalia-build-dependencies.txt "$RUNNER_TEMP/castalia-output/"
+
+      - name: Verify no private or prohibited material
+        run: |
+          test -f "$RUNNER_TEMP/castalia-output/4769_Castalia_Official_Public_Canonical_Object_Pack_v1_0.zip"
+          test -f "$RUNNER_TEMP/castalia-output/4769_Castalia_Official_Public_Canonical_Object_Pack_v1_0.zip.sha256"
+          ! grep -R -E "BEGIN [A-Z ]*PRIVATE KEY|sk-[A-Za-z0-9_-]{20,}|seed phrase|mnemonic phrase" "$RUNNER_TEMP/castalia-output" --exclude='*.zip'
+          ! grep -R -E '"mission_selected"[[:space:]]*:[[:space:]]*true|"navigation_grade"[[:space:]]*:[[:space:]]*true|"physical_execution_authorised"[[:space:]]*:[[:space:]]*true' "$RUNNER_TEMP/castalia-output"
+
+      - name: Upload public review artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: castalia-official-public-canonical-object-v1-0
+          path: |
+            ${{ runner.temp }}/castalia-output/4769_Castalia_Official_Public_Canonical_Object_Pack_v1_0.zip
+            ${{ runner.temp }}/castalia-output/4769_Castalia_Official_Public_Canonical_Object_Pack_v1_0.zip.sha256
+            ${{ runner.temp }}/castalia-output/castalia-build-dependencies.txt
+          if-no-files-found: error
+          retention-days: 30
