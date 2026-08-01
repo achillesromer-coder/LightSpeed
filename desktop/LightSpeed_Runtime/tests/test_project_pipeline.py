@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -196,6 +197,33 @@ def test_agent_floor_health_materializes_shared_async_queue(tmp_path):
     assert snapshot["state"] == "operational"
     assert snapshot["operational_count"] == 8
     assert Path(snapshot["transport"]["neo_queue_path"]).is_file()
+
+
+def test_agent_floor_health_preserves_existing_immutable_ledgers(tmp_path):
+    shell = make_shell(tmp_path)
+    pipeline = ProjectPipeline(shell)
+    queue_paths = [
+        shell / "Z Axis" / "Z+2_Neo" / "data" / "actions" / "ls_go_command_queue.jsonl",
+        pipeline.review_queue_path,
+        pipeline.review_decisions_path,
+    ]
+    expected = {}
+    for index, queue_path in enumerate(queue_paths):
+        queue_path.parent.mkdir(parents=True, exist_ok=True)
+        payload = f'{{"id": {index}}}\n'
+        queue_path.write_text(payload, encoding="utf-8")
+        timestamp_ns = 1_700_000_000_000_000_000 + index
+        os.utime(queue_path, ns=(timestamp_ns, timestamp_ns))
+        expected[queue_path] = (payload, queue_path.stat().st_mtime_ns)
+
+    pipeline.agent_floor_health(
+        services={"database": True, "event_bus": True, "storage": True},
+        event_bus_enabled=True,
+    )
+
+    for queue_path, (payload, timestamp_ns) in expected.items():
+        assert queue_path.read_text(encoding="utf-8") == payload
+        assert queue_path.stat().st_mtime_ns == timestamp_ns
 
 
 def test_memory_guard_throttles_heavy_work_when_memory_is_low(tmp_path, monkeypatch):
