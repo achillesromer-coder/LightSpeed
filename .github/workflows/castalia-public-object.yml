@@ -35,6 +35,19 @@ jobs:
             plotly==6.3.0
           python -m pip freeze | sort > castalia-build-dependencies.txt
 
+      - name: Apply deterministic renderer compatibility patch
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path("scripts/public/build_castalia_public_object.py")
+          text = path.read_text(encoding="utf-8")
+          old = "ax.set_box_aspect(mesh.extents)"
+          new = "ax.set_box_aspect(tuple(float(value) for value in mesh.extents))"
+          if text.count(old) != 1:
+              raise SystemExit(f"expected exactly one renderer target, found {text.count(old)}")
+          path.write_text(text.replace(old, new), encoding="utf-8")
+          PY
+
       - name: Build official-source Castalia pack
         run: |
           python scripts/public/build_castalia_public_object.py --output "$RUNNER_TEMP/castalia-output"
