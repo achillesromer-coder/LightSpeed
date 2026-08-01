@@ -357,7 +357,12 @@ class ProjectPipeline:
         neo_queue = self.shell_root / "Z Axis" / "Z+2_Neo" / "data" / "actions" / "ls_go_command_queue.jsonl"
         for queue_path in (neo_queue, self.review_queue_path, self.review_decisions_path):
             queue_path.parent.mkdir(parents=True, exist_ok=True)
-            queue_path.touch(exist_ok=True)
+            try:
+                queue_path.touch(exist_ok=False)
+            except FileExistsError:
+                # Existing ledgers are immutable history. A health read must not
+                # advance their timestamps and trigger false sync activity.
+                pass
         shared_services = all(bool(services.get(name)) for name in ("database", "event_bus", "storage"))
         floors: list[dict[str, Any]] = []
         for floor, directory in FLOOR_ROOTS.items():
