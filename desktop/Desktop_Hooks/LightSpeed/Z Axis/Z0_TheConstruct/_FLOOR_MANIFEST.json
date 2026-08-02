@@ -118,8 +118,11 @@
     "gmat_target_batches"
   ],
   "smart_floor": {
-    "auto_expand": true,
-    "ai_suggestions": true
+    "auto_expand": false,
+    "ai_suggestions": false,
+    "default_execution_mode": "thin_preview_only",
+    "heavy_execution": "manual_owner_and_resource_gated",
+    "representation_edge_enabled": false
   },
   "goals": [
     {

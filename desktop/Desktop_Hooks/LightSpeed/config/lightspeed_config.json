@@ -1,0 +1,78 @@
+{
+  "platform": {
+    "name": "LightSpeed",
+    "organization": "Romer Industries",
+    "product": "private operator shell",
+    "launch_state": "soft_cognigrex_private"
+  },
+  "database": {
+    "path": "D:\\LightSpeed\\Data\\db\\lightspeed_unified.db",
+    "authority": "singleton_existing",
+    "auto_create": false,
+    "backup_enabled": true
+  },
+  "floors": {
+    "Neo": {
+      "enabled": true,
+      "autostart": false,
+      "execution_model": "asynchronous_shared_queue",
+      "responsibility": "operator_console_and_bounded_routing"
+    },
+    "Morpheus": {
+      "enabled": true,
+      "autostart": false,
+      "execution_model": "asynchronous_shared_queue",
+      "responsibility": "review_proofing_and_reference_catalog"
+    },
+    "Architect": {
+      "enabled": true,
+      "autostart": false,
+      "execution_model": "asynchronous_shared_queue",
+      "responsibility": "governance_approvals_and_publish_control"
+    },
+    "TheConstruct": {
+      "enabled": true,
+      "autostart": false,
+      "execution_model": "asynchronous_shared_queue",
+      "responsibility": "thin_artifacts_and_approval_gated_heavy_work"
+    },
+    "Oracle": {
+      "enabled": true,
+      "autostart": false,
+      "execution_model": "asynchronous_shared_queue",
+      "responsibility": "catalog_provenance_and_canonical_knowns"
+    },
+    "Trinity": {
+      "enabled": true,
+      "autostart": false,
+      "execution_model": "asynchronous_shared_queue",
+      "responsibility": "operator_interface_and_settings"
+    },
+    "Smith": {
+      "enabled": true,
+      "autostart": false,
+      "execution_model": "asynchronous_shared_queue",
+      "responsibility": "idempotent_job_and_receipt_routing"
+    },
+    "Merovingian": {
+      "enabled": true,
+      "autostart": false,
+      "execution_model": "asynchronous_shared_queue",
+      "responsibility": "health_storage_and_audit_evidence"
+    }
+  },
+  "execution": {
+    "resource_profile": "bounded_half_speed",
+    "queue_workers": 1,
+    "max_concurrent_jobs": 1,
+    "heavy_work": "manual_gated",
+    "representation_edge_enabled": false,
+    "public_launch": false
+  },
+  "ui": {
+    "theme": "operator_glass",
+    "mode": "operator_os",
+    "floor_navigation_style": "operator_rail",
+    "raw_sources_secondary": true
+  }
+}

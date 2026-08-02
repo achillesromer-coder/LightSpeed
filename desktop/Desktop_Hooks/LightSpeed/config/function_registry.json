@@ -3,25 +3,25 @@
     "numpy": {
       "available": true,
       "version": "1.26.4",
-      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\numpy\\__init__.py",
+      "location": "D:\\LightSpeed\\Environment\\Lib\\site-packages\\numpy\\__init__.py",
       "description": "Numerical computing library"
     },
     "pandas": {
       "available": true,
       "version": "3.0.3",
-      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\pandas\\__init__.py",
+      "location": "D:\\LightSpeed\\Environment\\Lib\\site-packages\\pandas\\__init__.py",
       "description": "Data manipulation and analysis"
     },
     "scipy": {
       "available": true,
       "version": "1.17.1",
-      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\scipy\\__init__.py",
+      "location": "D:\\LightSpeed\\Environment\\Lib\\site-packages\\scipy\\__init__.py",
       "description": "Scientific computing"
     },
     "matplotlib": {
       "available": true,
       "version": "3.10.9",
-      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\matplotlib\\__init__.py",
+      "location": "D:\\LightSpeed\\Environment\\Lib\\site-packages\\matplotlib\\__init__.py",
       "description": "Plotting and visualization"
     },
     "duckdb": {
@@ -51,7 +51,7 @@
     "pytest": {
       "available": true,
       "version": "9.0.3",
-      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\pytest\\__init__.py",
+      "location": "D:\\LightSpeed\\Environment\\Lib\\site-packages\\pytest\\__init__.py",
       "description": "Testing framework"
     },
     "pandera": {
@@ -75,13 +75,13 @@
     "seaborn": {
       "available": true,
       "version": "0.13.2",
-      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\seaborn\\__init__.py",
+      "location": "D:\\LightSpeed\\Environment\\Lib\\site-packages\\seaborn\\__init__.py",
       "description": "Statistical data visualization"
     },
     "requests": {
       "available": true,
       "version": "2.34.2",
-      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\requests\\__init__.py",
+      "location": "D:\\LightSpeed\\Environment\\Lib\\site-packages\\requests\\__init__.py",
       "description": "HTTP library"
     },
     "flask": {
@@ -93,13 +93,13 @@
     "fastapi": {
       "available": true,
       "version": "0.136.3",
-      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\fastapi\\__init__.py",
+      "location": "D:\\LightSpeed\\Environment\\Lib\\site-packages\\fastapi\\__init__.py",
       "description": "Modern API framework"
     },
     "sqlalchemy": {
       "available": true,
       "version": "2.0.50",
-      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\sqlalchemy\\__init__.py",
+      "location": "D:\\LightSpeed\\Environment\\Lib\\site-packages\\sqlalchemy\\__init__.py",
       "description": "SQL toolkit"
     },
     "psycopg2": {
@@ -123,19 +123,19 @@
     "black": {
       "available": true,
       "version": "26.5.1",
-      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\black\\__init__.cp311-win_amd64.pyd",
+      "location": "D:\\LightSpeed\\Environment\\Lib\\site-packages\\black\\__init__.cp311-win_amd64.pyd",
       "description": "Code formatter"
     },
     "pylint": {
       "available": true,
       "version": "4.0.5",
-      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\pylint\\__init__.py",
+      "location": "D:\\LightSpeed\\Environment\\Lib\\site-packages\\pylint\\__init__.py",
       "description": "Code analyzer"
     },
     "mypy": {
       "available": true,
       "version": "unknown",
-      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\mypy\\__init__.cp311-win_amd64.pyd",
+      "location": "D:\\LightSpeed\\Environment\\Lib\\site-packages\\mypy\\__init__.cp311-win_amd64.pyd",
       "description": "Static type checker"
     },
     "asyncio": {
@@ -159,13 +159,13 @@
     "PIL": {
       "available": true,
       "version": "12.2.0",
-      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\PIL\\__init__.py",
+      "location": "D:\\LightSpeed\\Environment\\Lib\\site-packages\\PIL\\__init__.py",
       "description": "Image processing"
     },
     "ollama": {
       "available": true,
       "version": "unknown",
-      "location": "C:\\LightSpeed_Consolidated\\venv\\Lib\\site-packages\\ollama\\__init__.py",
+      "location": "D:\\LightSpeed\\Environment\\Lib\\site-packages\\ollama\\__init__.py",
       "description": "Ollama AI integration"
     }
   },

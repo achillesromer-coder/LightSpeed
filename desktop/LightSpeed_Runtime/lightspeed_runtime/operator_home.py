@@ -197,6 +197,7 @@ def export_agent_environment(
     *,
     config_path: Path | None = None,
     max_assets_per_source: int = 25,
+    write_shell_artifacts: bool = True,
 ) -> dict:
     payload = build_agent_environment(
         runtime,
@@ -254,7 +255,7 @@ def export_agent_environment(
     _write_json(files["consolidation_queue"], payload["consolidation_queue"])
     _write_json(files["overlap_bellcurve"], payload["overlap_bellcurve"])
 
-    shell_files = _write_shell_artifacts(payload)
+    shell_files = _write_shell_artifacts(payload) if write_shell_artifacts else {}
 
     return {
         "generated_at": payload["generated_at"],

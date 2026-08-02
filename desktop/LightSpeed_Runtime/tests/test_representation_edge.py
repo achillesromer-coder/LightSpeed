@@ -11,7 +11,6 @@ import pytest
 RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RUNTIME_ROOT))
 
-from lightspeed_runtime.operational_store import default_operational_db_path
 from lightspeed_runtime import representation_edge as representation_edge_module
 from lightspeed_runtime.representation_edge import (
     FEATURE_FLAG,
@@ -33,8 +32,7 @@ _SEEDED_RESULT: dict | None = None
 
 def make_store(tmp_path: Path, *, seed: bool = True):
     global _SEEDED_DB_BYTES, _SEEDED_QUEUE_TEXT, _SEEDED_OUTBOX, _SEEDED_RESULT
-    database_path = default_operational_db_path(tmp_path)
-    database_path.parent.mkdir(parents=True)
+    database_path = tmp_path / "lightspeed_unified.db"
     if seed and _SEEDED_DB_BYTES is not None:
         database_path.write_bytes(_SEEDED_DB_BYTES)
     else:
@@ -100,7 +98,7 @@ def representation(
 
 def test_feature_flag_is_disabled_by_default(monkeypatch, tmp_path):
     monkeypatch.delenv(FEATURE_FLAG, raising=False)
-    path = default_operational_db_path(tmp_path)
+    path = tmp_path / "lightspeed_unified.db"
     store = RepresentationEdgeStore(path)
 
     assert feature_enabled({}) is False
@@ -117,7 +115,7 @@ def test_forward_migration_is_idempotent_and_uses_existing_database(tmp_path):
 
     assert first["schema_sha256"] == second["schema_sha256"]
     assert store.status()["migration_applied"] is True
-    assert store.database_path == default_operational_db_path(tmp_path)
+    assert store.database_path == tmp_path / "lightspeed_unified.db"
     assert list(tmp_path.rglob("*.db")) == [store.database_path]
     assert queue.parent == decisions.parent
     assert outbox.parent == queue.parent

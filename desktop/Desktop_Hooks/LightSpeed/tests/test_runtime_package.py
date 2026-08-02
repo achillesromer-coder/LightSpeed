@@ -161,7 +161,9 @@ def test_desktop_ui_state_labels_are_standardized() -> None:
     assert _ui_state("error", "Missing path.") == "Action needed: Missing path."
 
 
-def test_runtime_log_event_emits_otel_compatible_span(tmp_path: Path) -> None:
+def test_runtime_log_event_emits_otel_compatible_span(
+    tmp_path: Path, canonical_operational_store
+) -> None:
     root = tmp_path / "LightSpeed"
     config_dir = root / "config" / "runtime"
     config_dir.mkdir(parents=True, exist_ok=True)
@@ -2119,7 +2121,9 @@ def test_finalization_overview_and_execution_control_are_operator_summaries(tmp_
     assert control["workflow_controls"]["resumable_count"] >= 1
 
 
-def test_activity_tables_compact_runtime_logs_and_governance_ledgers(tmp_path: Path) -> None:
+def test_activity_tables_compact_runtime_logs_and_governance_ledgers(
+    tmp_path: Path, canonical_operational_store
+) -> None:
     root = tmp_path / "LightSpeed"
     runtime = LightSpeedRuntime(root=root)
     runtime.log_event(
@@ -2210,7 +2214,9 @@ def test_governance_ledgers_classify_action_classes_and_floor_ownership(tmp_path
     assert approval["ledger_kind"] == "approval"
 
 
-def test_activity_tables_preserve_floor_signal_when_recent_events_are_noisy(tmp_path: Path) -> None:
+def test_activity_tables_preserve_floor_signal_when_recent_events_are_noisy(
+    tmp_path: Path, canonical_operational_store
+) -> None:
     root = tmp_path / "LightSpeed"
     runtime = LightSpeedRuntime(root=root)
     runtime.log_event(

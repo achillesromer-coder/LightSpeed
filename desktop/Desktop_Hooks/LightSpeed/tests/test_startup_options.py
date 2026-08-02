@@ -1,12 +1,17 @@
 from __future__ import annotations
 
 import json
+import os
+import subprocess
 from pathlib import Path
 from types import SimpleNamespace
+
+import pytest
 
 import lightspeed_runtime.startup_options as startup_options
 from lightspeed_runtime.startup_options import (
     build_startup_action_catalog,
+    canonical_database_path,
     launch_runtime_candidates,
     probe_launch_python,
     read_launch_control_profile,
@@ -19,6 +24,69 @@ from lightspeed_runtime.startup_options import (
 def _write_json(path: Path, payload: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload), encoding="utf-8")
+
+
+def _create_directory_alias(alias: Path, backing: Path) -> None:
+    try:
+        alias.symlink_to(backing, target_is_directory=True)
+        return
+    except OSError:
+        if os.name != "nt":
+            raise
+    completed = subprocess.run(
+        ["cmd", "/c", "mklink", "/J", str(alias), str(backing)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        pytest.skip(f"directory alias unavailable: {completed.stderr or completed.stdout}")
+
+
+def test_operator_namespace_survives_backing_alias(tmp_path: Path, monkeypatch) -> None:
+    backing = tmp_path / "physical_backing" / "LightSpeed"
+    alias = tmp_path / "operator" / "App"
+    backing.mkdir(parents=True)
+    alias.parent.mkdir(parents=True)
+    _create_directory_alias(alias, backing)
+    monkeypatch.setattr(startup_options, "CANONICAL_OPERATOR_ROOT", alias)
+
+    _write_json(backing / "config" / "settings.json", {"show_splash_screen": True})
+    _write_json(backing / "config" / "lightspeed_config.json", {"floors": {}})
+    _write_json(backing / "config" / "unified_config.json", {"z_floors": {}})
+
+    startup = read_startup_options(backing)
+    launch = read_launch_control_profile(backing)
+
+    assert Path(startup["root"]) == alias.absolute()
+    assert Path(launch["root"]) == alias.absolute()
+    assert all(Path(path).is_relative_to(alias.absolute()) for path in startup["source_files"].values())
+    assert all(Path(path).is_relative_to(alias.absolute()) for path in launch["source_files"].values())
+
+    assert write_startup_option_values(backing, {"startup.show_splash_screen": False}) is True
+    assert json.loads((backing / "config" / "settings.json").read_text(encoding="utf-8"))[
+        "show_splash_screen"
+    ] is False
+
+
+def test_database_path_ignores_core_and_cwd_and_fails_closed(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    canonical = tmp_path / "operator_data" / "db" / "lightspeed_unified.db"
+    core_candidate = tmp_path / "Core" / "Z Axis" / "Z-4_Merovingian" / "data" / "db" / "lightspeed_unified.db"
+    canonical.parent.mkdir(parents=True)
+    canonical.write_bytes(b"canonical")
+    core_candidate.parent.mkdir(parents=True)
+    core_candidate.write_bytes(b"noncanonical")
+    monkeypatch.setattr(startup_options, "CANONICAL_DATABASE_PATH", canonical)
+    monkeypatch.chdir(core_candidate.parent)
+
+    assert canonical_database_path(core_candidate) == canonical.absolute()
+
+    canonical.unlink()
+    with pytest.raises(RuntimeError, match="canonical LightSpeed database is unavailable"):
+        canonical_database_path(core_candidate)
 
 
 def test_startup_options_normalize_existing_configs(tmp_path: Path) -> None:

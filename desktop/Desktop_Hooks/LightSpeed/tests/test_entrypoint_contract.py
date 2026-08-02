@@ -41,11 +41,5 @@ def test_shell_labels_use_the_canonical_version_file():
 
     assert (LIGHTSPEED_ROOT / "VERSION").read_text(encoding="utf-8").strip() == "5.1.2"
     assert "LIGHTSPEED_VERSION = _read_lightspeed_version()" in n_source
-    assert (
-        'self.title(f"LightSpeed Unified Orchestrator v{LIGHTSPEED_VERSION}")'
-        in n_source
-    )
-    assert (
-        'description=f"LightSpeed Unified Orchestrator v{LIGHTSPEED_VERSION}"'
-        in n_source
-    )
+    assert 'self.title("LightSpeed")' in n_source
+    assert 'description="LightSpeed Desktop"' in n_source

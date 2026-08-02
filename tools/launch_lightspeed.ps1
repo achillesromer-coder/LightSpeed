@@ -12,10 +12,15 @@ $ollama = 'C:\Users\acc\AppData\Local\Programs\Ollama\ollama.exe'
 $tabby = Join-Path $root 'Desktop_Hooks\LightSpeed\Z Axis\archive\vendor\Tabby\tabby.exe'
 $goDist = Join-Path $root 'Apps\lightspeed-go\dist'
 $stackRunner = Join-Path $root 'scripts\run_cognigrex_local_stack.py'
-$receipt = Join-Path $root 'LightSpeed_Runtime\exports\agent_home\cognigrex_local_stack_receipt.json'
+$canonicalRoot = if ($env:LIGHTSPEED_CANONICAL_ROOT) { $env:LIGHTSPEED_CANONICAL_ROOT } else { 'D:\LightSpeed' }
+$shellRoot = if ($env:LIGHTSPEED_SHELL_ROOT) { $env:LIGHTSPEED_SHELL_ROOT } else { Join-Path $canonicalRoot 'App' }
+$receiptDir = Join-Path $shellRoot 'Z Axis\Z-4_Merovingian\data\runtime_exports'
+$receipt = Join-Path $receiptDir 'cognigrex_local_stack_receipt.json'
 
 $env:LIGHTSPEED_RUNTIME_ROOT = Join-Path $root 'LightSpeed_Runtime'
-$env:LIGHTSPEED_SHELL_ROOT = Join-Path $root 'Desktop_Hooks\LightSpeed'
+$env:LIGHTSPEED_CANONICAL_ROOT = $canonicalRoot
+$env:LIGHTSPEED_SHELL_ROOT = $shellRoot
+$env:LIGHTSPEED_CANONICAL_DB = Join-Path $canonicalRoot 'Data\db\lightspeed_unified.db'
 $env:LIGHTSPEED_PROJECT_ROOTS = Join-Path $root 'Projects'
 $env:LIGHTSPEED_PYTHON = $python
 $env:DESPORTE_ROOT = 'D:\De Sporte'
@@ -28,6 +33,10 @@ foreach ($required in @($python, $ollama, $tabby, $goDist, $stackRunner)) {
     if (-not (Test-Path -LiteralPath $required)) {
         throw "Required LightSpeed launch surface is missing: $required"
     }
+}
+
+if (-not (Test-Path -LiteralPath $receiptDir)) {
+    New-Item -ItemType Directory -Path $receiptDir -Force | Out-Null
 }
 
 function Test-LocalPort([int]$Port) {

@@ -26,6 +26,23 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 REPO_RUNTIME_ROOT = REPO_ROOT / "desktop" / "LightSpeed_Runtime"
 REPO_SHELL_ROOT = REPO_ROOT / "desktop" / "Desktop_Hooks" / "LightSpeed"
 CANONICAL_ROOT = Path(os.environ.get("LIGHTSPEED_CANONICAL_ROOT", r"D:\LightSpeed"))
+CANONICAL_DATABASE = CANONICAL_ROOT / "Data" / "db" / "lightspeed_unified.db"
+
+
+def canonical_receipt_dir(shell_root: Path) -> Path:
+    """Return the sole operator-owned receipt directory.
+
+    Runtime exports under ``Core/exports`` are presentation context for the
+    Desktop bridge. Operational receipts belong to the live Desktop shell so
+    starting the split runtime cannot create a second receipt authority.
+    """
+    return (
+        shell_root
+        / "Z Axis"
+        / "Z-4_Merovingian"
+        / "data"
+        / "runtime_exports"
+    )
 
 
 def utc_now_iso() -> str:
@@ -445,13 +462,14 @@ def main(argv: list[str] | None = None) -> int:
     os.environ["LIGHTSPEED_CANONICAL_ROOT"] = str(CANONICAL_ROOT)
     os.environ["LIGHTSPEED_RUNTIME_ROOT"] = str(runtime_root)
     os.environ["LIGHTSPEED_SHELL_ROOT"] = str(shell_root)
+    os.environ["LIGHTSPEED_CANONICAL_DB"] = str(CANONICAL_DATABASE)
     canonical_python = CANONICAL_ROOT / "Environment" / "Scripts" / "python.exe"
     python = (
         str(canonical_python)
         if canonical_python.is_file()
         else os.environ.get("LIGHTSPEED_PYTHON") or sys.executable
     )
-    receipt_dir = runtime_root / "exports" / "agent_home"
+    receipt_dir = canonical_receipt_dir(shell_root)
     receipt_dir.mkdir(parents=True, exist_ok=True)
 
     desporte = (

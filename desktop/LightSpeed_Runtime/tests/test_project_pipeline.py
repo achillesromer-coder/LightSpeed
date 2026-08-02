@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import json
 import os
+import sqlite3
 import sys
+import types
 from pathlib import Path
 
 import pytest
@@ -56,6 +58,40 @@ def test_runtime_root_redirects_to_sibling_desktop_shell(tmp_path, monkeypatch):
     assert pipeline.root_resolution_mode == "runtime_sibling_contract_root"
     assert pipeline.runtime_exports.is_relative_to(shell_root.resolve())
     assert not (runtime_root / "Z Axis").exists()
+
+
+def test_temporary_shell_health_does_not_initialize_ambient_core_services(
+    tmp_path,
+    monkeypatch,
+):
+    shell = make_shell(tmp_path)
+    pipeline = ProjectPipeline(shell)
+    calls: list[str] = []
+    ambient_core = types.ModuleType("core")
+    ambient_core.__path__ = []
+    ambient_services = types.ModuleType("core.services")
+
+    def initialize_services():
+        calls.append("initialized")
+        return {"database": object(), "event_bus": object(), "storage": object()}
+
+    ambient_services.initialize_services = initialize_services
+    monkeypatch.setitem(sys.modules, "core", ambient_core)
+    monkeypatch.setitem(sys.modules, "core.services", ambient_services)
+
+    health = pipeline.essential_health({"projects": [], "summary": {}})
+
+    assert calls == []
+    assert health["services"] == {
+        "database": False,
+        "event_bus": False,
+        "storage": False,
+    }
+    assert any(
+        "embedded_core_unavailable_for_shell_root" in error
+        for error in health["errors"]
+    )
+    assert pipeline.runtime_exports.is_relative_to(tmp_path)
 
 
 def make_shell(tmp_path: Path, *, max_scan_files: int = 1000) -> Path:
@@ -288,6 +324,32 @@ def test_refresh_queues_change_receipt_without_mutating_project(tmp_path, monkey
     ]
 
 
+def test_cached_refresh_updates_health_without_rescanning_projects(tmp_path, monkeypatch):
+    shell = make_shell(tmp_path)
+    pipeline = ProjectPipeline(shell)
+    monkeypatch.setattr(
+        ProjectPipeline,
+        "essential_health",
+        lambda self, registry: {
+            "status": "pass",
+            "services": {"database": True},
+            "details": {"agent_floors": {"state": "operational"}},
+        },
+    )
+    pipeline.refresh(force=True, queue_changes=False)
+    monkeypatch.setattr(
+        pipeline,
+        "scan_projects",
+        lambda: (_ for _ in ()).throw(AssertionError("cached refresh rescanned projects")),
+    )
+
+    cached = pipeline.refresh(force=False, queue_changes=False)
+
+    assert cached["health"]["status"] == "pass"
+    assert json.loads(pipeline.health_path.read_text(encoding="utf-8"))["status"] == "pass"
+    assert json.loads(pipeline.floor_health_path.read_text(encoding="utf-8"))["state"] == "operational"
+
+
 def test_latest_snapshot_reads_receipts_without_rescanning(tmp_path, monkeypatch):
     shell = make_shell(tmp_path)
     pipeline = ProjectPipeline(shell)
@@ -318,3 +380,427 @@ def test_latest_snapshot_reads_receipts_without_rescanning(tmp_path, monkeypatch
         "candidate_count": 3,
         "automatic_deletion": False,
     }
+
+
+def test_drive_writeback_defaults_to_local_outbox_even_when_drive_env_exists(
+    tmp_path,
+    monkeypatch,
+):
+    shell = make_shell(tmp_path)
+    unapproved_drive = tmp_path / "unapproved-drive"
+    unapproved_drive.mkdir()
+    monkeypatch.setenv("LIGHTSPEED_DRIVE_SYNC_ROOT", str(unapproved_drive))
+    monkeypatch.setenv("GOOGLE_DRIVE_ROOT", str(unapproved_drive))
+
+    root, mode = ProjectPipeline(shell).resolve_drive_receipt_root()
+
+    expected = (
+        shell
+        / "Z Axis"
+        / "Z-4_Merovingian"
+        / "data"
+        / "runtime_exports"
+        / "drive_outbox"
+    )
+    assert root == expected
+    assert root.is_dir()
+    assert mode == "local_outbox_pending_drive_sync"
+    assert list(unapproved_drive.iterdir()) == []
+
+
+def test_drive_writeback_requires_owner_approved_exact_existing_target(tmp_path):
+    shell = make_shell(tmp_path)
+    exact_target = tmp_path / "approved-drive-target"
+    exact_target.mkdir()
+    (shell / "config" / "launch_control.json").write_text(
+        json.dumps(
+            {
+                "manual_gates": [
+                    {
+                        "gate_id": "drive_writeback",
+                        "state": "owner_approved_exact_target",
+                        "approved_by": "Nathaniel Bouwer",
+                        "decision_id": "OWNER-DRIVE-TEST-001",
+                        "approved_target": str(exact_target),
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    root, mode = ProjectPipeline(shell).resolve_drive_receipt_root()
+
+    assert root == exact_target
+    assert mode == "owner_approved_exact_drive_target"
+
+
+def test_review_decision_replay_repairs_missing_fixed_receipt_without_ledger_rewrite(
+    tmp_path,
+    monkeypatch,
+):
+    shell = make_shell(tmp_path)
+    pipeline = ProjectPipeline(shell)
+    review_id = "LSGO-REVIEW-REPAIR-001"
+    pipeline.review_queue_path.write_text(
+        json.dumps({"review_id": review_id, "state": "pending_review"}) + "\n",
+        encoding="utf-8",
+    )
+    original_write_json = project_pipeline._write_json
+    failures = {"remaining": 1}
+
+    def fail_first_receipt(path, payload):
+        if failures["remaining"]:
+            failures["remaining"] -= 1
+            raise OSError("simulated receipt write failure")
+        return original_write_json(path, payload)
+
+    monkeypatch.setattr(project_pipeline, "_write_json", fail_first_receipt)
+    with pytest.raises(OSError, match="simulated receipt write failure"):
+        pipeline.decide_review(review_id, "approve", "Owner reviewed.")
+
+    decision_bytes = pipeline.review_decisions_path.read_bytes()
+    assert len(decision_bytes.splitlines()) == 1
+    fixed_timestamp_ns = 1_700_000_000_000_000_000
+    os.utime(
+        pipeline.review_decisions_path,
+        ns=(fixed_timestamp_ns, fixed_timestamp_ns),
+    )
+    monkeypatch.setattr(project_pipeline, "_write_json", original_write_json)
+
+    repaired = pipeline.decide_review(review_id, "approve", " Owner   reviewed. ")
+
+    receipt_path = Path(repaired["decision_receipt_path"])
+    assert repaired["idempotent_replay"] is True
+    assert repaired["decision_receipt_state"] == "repaired_missing"
+    assert receipt_path.is_file()
+    assert pipeline.review_decisions_path.read_bytes() == decision_bytes
+    assert pipeline.review_decisions_path.stat().st_mtime_ns == fixed_timestamp_ns
+
+    receipt_bytes = receipt_path.read_bytes()
+    receipt_timestamp_ns = 1_700_000_000_100_000_000
+    os.utime(receipt_path, ns=(receipt_timestamp_ns, receipt_timestamp_ns))
+    verified = pipeline.decide_review(review_id, "approve", "Owner reviewed.")
+
+    assert verified["decision_receipt_state"] == "verified_existing"
+    assert receipt_path.read_bytes() == receipt_bytes
+    assert receipt_path.stat().st_mtime_ns == receipt_timestamp_ns
+    assert pipeline.review_decisions_path.read_bytes() == decision_bytes
+    assert pipeline.review_decisions_path.stat().st_mtime_ns == fixed_timestamp_ns
+
+
+def test_jsonl_identity_index_is_bounded_and_preserves_immutable_ledger(tmp_path):
+    ledger = tmp_path / "reviews.jsonl"
+    rows = [
+        {
+            "review_id": f"review-{index:04d}",
+            "payload": "x" * 300,
+        }
+        for index in range(180)
+    ]
+    ledger.write_bytes(
+        b"".join(
+            json.dumps(row, sort_keys=True).encode("utf-8") + b"\n"
+            for row in rows
+        )
+    )
+    ledger_bytes = ledger.read_bytes()
+    ledger_mtime_ns = ledger.stat().st_mtime_ns
+    index = project_pipeline._JsonlIdentityIndex(
+        ledger,
+        "review_id",
+        scan_bytes=4096,
+    )
+
+    with pytest.raises(project_pipeline.ReviewIndexPending):
+        index.find("review-0179")
+    while True:
+        progress = index.advance()
+        assert progress["scanned_bytes"] <= 4096
+        if progress["complete"]:
+            break
+
+    assert index.find("review-0179") == [rows[-1]]
+    assert ledger.read_bytes() == ledger_bytes
+    assert ledger.stat().st_mtime_ns == ledger_mtime_ns
+
+    appended = {"review_id": "review-appended", "payload": "bounded-tail"}
+    with ledger.open("ab") as stream:
+        stream.write(json.dumps(appended).encode("utf-8") + b"\n")
+    appended_bytes = ledger.read_bytes()
+    appended_mtime_ns = ledger.stat().st_mtime_ns
+
+    assert index.find("review-appended") == [appended]
+    assert ledger.read_bytes() == appended_bytes
+    assert ledger.stat().st_mtime_ns == appended_mtime_ns
+
+
+def test_jsonl_list_reader_uses_bounded_tail_without_mutating_large_ledger(
+    tmp_path,
+    monkeypatch,
+):
+    ledger = tmp_path / "large-list-ledger.jsonl"
+    row_count = 40_000
+    with ledger.open("wb") as stream:
+        for index in range(row_count):
+            stream.write(
+                json.dumps(
+                    {
+                        "review_id": f"tail-review-{index:06d}",
+                        "payload": "x" * 160,
+                    },
+                    sort_keys=True,
+                ).encode("utf-8")
+                + b"\n"
+            )
+    ledger_size = ledger.stat().st_size
+    fixed_timestamp_ns = 1_700_000_000_200_000_000
+    os.utime(ledger, ns=(fixed_timestamp_ns, fixed_timestamp_ns))
+    byte_limit = 65_536
+
+    bounded_tail = project_pipeline._bounded_jsonl_tail(
+        ledger,
+        byte_limit=byte_limit,
+    )
+    original_read_text = Path.read_text
+
+    def reject_whole_file_read(path, *args, **kwargs):
+        if path == ledger:
+            raise AssertionError("large JSONL list endpoint used a whole-file text read")
+        return original_read_text(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "read_text", reject_whole_file_read)
+    rows = project_pipeline._read_jsonl(
+        ledger,
+        limit=25,
+        byte_limit=byte_limit,
+    )
+
+    assert ledger_size > byte_limit * 10
+    assert len(bounded_tail) <= byte_limit
+    assert len(rows) == 25
+    assert rows[-1]["review_id"] == f"tail-review-{row_count - 1:06d}"
+    assert rows[0]["review_id"] != "tail-review-000000"
+    assert ledger.stat().st_size == ledger_size
+    assert ledger.stat().st_mtime_ns == fixed_timestamp_ns
+
+
+def test_sqlite_identity_index_resumes_large_ledger_without_resident_rows(tmp_path):
+    ledger = tmp_path / "large-review-ledger.jsonl"
+    database = tmp_path / "lightspeed_unified.db"
+    with sqlite3.connect(database):
+        pass
+    row_count = 25_000
+    with ledger.open("wb") as stream:
+        for index in range(row_count):
+            stream.write(
+                json.dumps(
+                    {
+                        "review_id": f"large-review-{index:06d}",
+                        "payload": "x" * 160,
+                    },
+                    sort_keys=True,
+                ).encode("utf-8")
+                + b"\n"
+            )
+    ledger_bytes = ledger.read_bytes()
+    ledger_mtime_ns = ledger.stat().st_mtime_ns
+
+    first_index = project_pipeline._JsonlIdentityIndex(
+        ledger,
+        "review_id",
+        scan_bytes=65_536,
+        database_path=database,
+        allow_schema_create=True,
+        memory_identity_limit=4,
+    )
+    first = first_index.advance()
+
+    assert first["complete"] is False
+    assert first["scanned_bytes"] <= 65_536
+    assert first["resident_identity_count"] == 0
+    assert first_index.resident_identity_count == 0
+
+    restarted_index = project_pipeline._JsonlIdentityIndex(
+        ledger,
+        "review_id",
+        scan_bytes=65_536,
+        database_path=database,
+        allow_schema_create=False,
+        memory_identity_limit=4,
+    )
+    resumed = restarted_index.advance()
+
+    assert resumed["offset"] > first["offset"]
+    assert resumed["scanned_bytes"] <= 65_536
+    assert resumed["resident_identity_count"] == 0
+    while not resumed["complete"]:
+        resumed = restarted_index.advance()
+        assert resumed["scanned_bytes"] <= 65_536
+        assert resumed["resident_identity_count"] == 0
+
+    assert restarted_index.find(f"large-review-{row_count - 1:06d}") == [
+        {
+            "review_id": f"large-review-{row_count - 1:06d}",
+            "payload": "x" * 160,
+        }
+    ]
+    with sqlite3.connect(database) as connection:
+        indexed_count = connection.execute(
+            "SELECT COUNT(*) FROM immutable_jsonl_identity_offsets"
+        ).fetchone()[0]
+        offset_columns = {
+            row[1]
+            for row in connection.execute(
+                "PRAGMA table_info(immutable_jsonl_identity_offsets)"
+            )
+        }
+    assert indexed_count == row_count
+    assert offset_columns == {"source_key", "identity", "byte_offset", "byte_length"}
+    assert ledger.read_bytes() == ledger_bytes
+    assert ledger.stat().st_mtime_ns == ledger_mtime_ns
+
+
+def test_memory_identity_fallback_fails_closed_before_unbounded_growth(tmp_path):
+    ledger = tmp_path / "too-many-identities.jsonl"
+    ledger.write_text(
+        "".join(
+            json.dumps({"review_id": f"review-{index}"}) + "\n"
+            for index in range(20)
+        ),
+        encoding="utf-8",
+    )
+    index = project_pipeline._JsonlIdentityIndex(
+        ledger,
+        "review_id",
+        scan_bytes=65_536,
+        memory_identity_limit=4,
+    )
+
+    with pytest.raises(project_pipeline.ReviewIndexPending, match="reached capacity"):
+        index.advance()
+
+    assert index.resident_identity_count == 0
+
+
+def test_repository_drive_and_identity_index_contracts_match_runtime_behavior():
+    routing_path = (
+        RUNTIME_ROOT.parent
+        / "Desktop_Hooks"
+        / "LightSpeed"
+        / "config"
+        / "project_routing.json"
+    )
+    routing = json.loads(routing_path.read_text(encoding="utf-8"))
+    drive = routing["drive_writeback"]
+    identity_index = routing["go_review"]["identity_index"]
+
+    assert drive["mode"] == "owner_approved_exact_target_or_local_outbox"
+    assert "root_environment_variables" not in drive
+    assert "relative_receipt_path" not in drive
+    assert drive["required_gate_state"] == "owner_approved_exact_target"
+    assert drive["required_owner"] == "Nathaniel Bouwer"
+    assert identity_index["backend"] == "canonical_database_tables"
+    assert identity_index["schema_activation"] == "owner_approved"
+    assert identity_index["approval_source"].endswith(
+        "manual_gates[gate_id=canonical_queue_indexes]"
+    )
+    assert identity_index["stores_full_payloads"] is False
+
+
+def test_review_index_rejects_noncanonical_same_named_database(
+    tmp_path,
+    monkeypatch,
+):
+    shell = make_shell(tmp_path)
+    candidate = tmp_path / "candidate" / "lightspeed_unified.db"
+    canonical = tmp_path / "canonical" / "lightspeed_unified.db"
+    candidate.parent.mkdir()
+    canonical.parent.mkdir()
+    sqlite3.connect(candidate).close()
+    sqlite3.connect(canonical).close()
+    routing_path = shell / "config" / "project_routing.json"
+    routing = json.loads(routing_path.read_text(encoding="utf-8"))
+    routing["go_review"]["identity_index"] = {
+        "backend": "canonical_database_tables",
+        "schema_activation": "owner_approved",
+        "required_operator_shell": str(shell),
+        "scan_bytes_per_cycle": 65_536,
+        "fallback_memory_identity_limit": 16,
+    }
+    routing_path.write_text(json.dumps(routing), encoding="utf-8")
+    (shell / "config" / "launch_control.json").write_text(
+        json.dumps(
+            {
+                "canonical_authorities": {"database": str(candidate)},
+                "manual_gates": [
+                    {
+                        "gate_id": "canonical_queue_indexes",
+                        "state": "operator_authorized",
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(project_pipeline, "CANONICAL_DATABASE_PATH", canonical)
+
+    rejected = ProjectPipeline(shell)
+
+    assert rejected._review_queue_index.database_path is None
+    assert rejected._review_queue_index.allow_schema_create is False
+
+    (shell / "config" / "launch_control.json").write_text(
+        json.dumps(
+            {
+                "canonical_authorities": {"database": str(canonical)},
+                "manual_gates": [
+                    {
+                        "gate_id": "canonical_queue_indexes",
+                        "state": "operator_authorized",
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    accepted = ProjectPipeline(shell)
+
+    assert accepted._review_queue_index.database_path == canonical
+    assert accepted._review_queue_index.allow_schema_create is True
+
+
+def test_health_rejects_ambient_core_services_when_embedded_root_exists(
+    tmp_path,
+    monkeypatch,
+):
+    shell = make_shell(tmp_path)
+    embedded_core = shell / "Z Axis" / "Z-4_Merovingian" / "core"
+    embedded_core.mkdir(parents=True)
+    ambient_file = tmp_path / "ambient" / "core" / "services" / "__init__.py"
+    ambient_file.parent.mkdir(parents=True)
+    ambient_file.write_text("# ambient collision\n", encoding="utf-8")
+    calls: list[str] = []
+    ambient_services = types.ModuleType("core.services")
+    ambient_services.__file__ = str(ambient_file)
+
+    def initialize_services():
+        calls.append("initialized")
+        return {"database": object(), "event_bus": object(), "storage": object()}
+
+    ambient_services.initialize_services = initialize_services
+    monkeypatch.setattr(
+        project_pipeline.importlib,
+        "import_module",
+        lambda module_name: ambient_services,
+    )
+
+    health = ProjectPipeline(shell).essential_health({"projects": [], "summary": {}})
+
+    assert calls == []
+    assert health["services"] == {
+        "database": False,
+        "event_bus": False,
+        "storage": False,
+    }
+    assert any("ambient core.services origin rejected" in error for error in health["errors"])

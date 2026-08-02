@@ -1,7 +1,7 @@
 ﻿#!/usr/bin/env python
 """
-N.py - LightSpeed Unified Orchestrator
-Complete 200% Implementation - All systems integrated
+N.py - LightSpeed Desktop
+Canonical operator shell for the local Cognigrex system
 
 This is THE ONE entry point for LightSpeed platform.
 Consolidates:
@@ -741,7 +741,7 @@ class LightSpeedUnified(tk.Tk):
             self.use_premium_theme = False
 
         # Window setup
-        self.title(f"LightSpeed Unified Orchestrator v{LIGHTSPEED_VERSION}")
+        self.title("LightSpeed")
         self.geometry("1600x1000")
         try:
             self.state('zoomed')
@@ -7345,15 +7345,13 @@ class LightSpeedUnified(tk.Tk):
         def _floor_button_caption(summary: dict, floor_name: str) -> str:
             payload = _floor_payload(summary, floor_name)
             wake_payload = ((summary.get("local_agent_wakeup") or {}).get("by_floor") or {}).get(floor_name) or {}
-            wake_connection = wake_payload.get("ollama_connection") or {}
-            wake_draw = wake_payload.get("assimilation_draw") or {}
             if not payload and not wake_payload:
                 return f"{floor_name}\nnot aligned"
             status = str(payload.get("primary_status") or "planned").replace("_", " ")
-            agent = str(payload.get("assigned_agent_id") or "unknown")
-            model = str(wake_connection.get("model") or payload.get("model") or "model?")
-            draw_count = len(wake_draw.get("priority_paths") or [])
-            return f"{floor_name}\n{status}\nagent={agent}\n{model} | draw={draw_count}"
+            queue_by_floor = ((summary.get("agentic_launch_queue") or {}).get("by_floor") or {})
+            queue_count = int(queue_by_floor.get(floor_name, 0) or 0)
+            queue_label = f" | {queue_count} queued" if queue_count else ""
+            return f"{floor_name}\n{status}{queue_label}"
 
         summary_state = {"payload": _safe_agent_home_summary()}
         floor_order = _display_order(summary_state["payload"])
@@ -8062,7 +8060,7 @@ class LightSpeedUnified(tk.Tk):
             for item in _shell_action_catalog()
         )
         help_text = f"""
-LIGHTSPEED UNIFIED ORCHESTRATOR v3.0
+LIGHTSPEED
 Keyboard Shortcuts:
 
 {surface_rows}
@@ -8366,7 +8364,7 @@ def main():
         pass
 
     parser = argparse.ArgumentParser(
-        description=f"LightSpeed Unified Orchestrator v{LIGHTSPEED_VERSION}"
+        description="LightSpeed Desktop"
     )
     parser.add_argument('--cli', action='store_true', help='CLI mode')
     parser.add_argument('--portal', '--2d', '--gui', action='store_true',

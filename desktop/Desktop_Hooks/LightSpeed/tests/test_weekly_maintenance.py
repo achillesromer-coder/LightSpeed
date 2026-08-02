@@ -27,7 +27,10 @@ def test_maintenance_requires_friday_1900_without_force(tmp_path):
         )
 
 
-def test_maintenance_quarantines_generated_duplicates_only(tmp_path):
+def test_maintenance_quarantines_generated_duplicates_only(
+    tmp_path,
+    canonical_operational_store,
+):
     source = tmp_path / "Data" / "empirical.fits"
     generated = tmp_path / "reports" / "run_20260701.json"
     source.parent.mkdir(parents=True)
@@ -67,7 +70,10 @@ def test_maintenance_dry_run_writes_no_manifest_or_moves(tmp_path):
     assert result["manifest_path"] is None
 
 
-def test_operational_workbook_is_projection_from_sqlite_and_weekly_log(tmp_path):
+def test_operational_workbook_is_projection_from_sqlite_and_weekly_log(
+    tmp_path,
+    canonical_operational_store,
+):
     root = tmp_path / "LightSpeed"
     store = OperationalStore(default_operational_db_path(root))
     store.record_event(

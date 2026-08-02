@@ -56,3 +56,42 @@ def test_watch_log_record_is_compact_and_does_not_repeat_runtime_paths():
     assert record["projects"] == 9
     assert "LightSpeed" not in rendered
     assert "receipt" not in rendered
+
+
+def test_run_once_reuses_pipeline_and_respects_inventory_gate(tmp_path):
+    class FakePipeline:
+        def __init__(self):
+            self.forces = []
+            self.runtime_exports = tmp_path
+            self.health_path = tmp_path / "health.json"
+            self.registry_path = tmp_path / "registry.json"
+            self.cleanup_path = tmp_path / "cleanup.json"
+            self.review_queue_path = tmp_path / "review.jsonl"
+
+        def refresh(self, *, force, queue_changes):
+            self.forces.append((force, queue_changes))
+            return {
+                "health": {
+                    "status": "pass",
+                    "services": {"database": True},
+                    "details": {
+                        "drive_writeback": {},
+                        "resource_guard": {},
+                        "agent_floors": {},
+                    },
+                },
+                "summary": {"project_count": 1},
+                "cleanup_summary": {"candidate_count": 0},
+                "changes": {},
+            }
+
+    pipeline = FakePipeline()
+    MODULE.run_once(
+        tmp_path / "core",
+        tmp_path / "app",
+        queue_changes=False,
+        pipeline=pipeline,
+        force_inventory=False,
+    )
+
+    assert pipeline.forces == [(False, False)]

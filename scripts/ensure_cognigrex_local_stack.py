@@ -21,6 +21,18 @@ DEFAULT_CANONICAL_ROOT = Path(
 )
 
 
+def canonical_receipt_dir(root: Path) -> Path:
+    """Return the sole Desktop-owned operational receipt directory."""
+    return (
+        root
+        / "App"
+        / "Z Axis"
+        / "Z-4_Merovingian"
+        / "data"
+        / "runtime_exports"
+    )
+
+
 def utc_now() -> datetime:
     return datetime.now(UTC)
 
@@ -147,9 +159,7 @@ def main(argv: list[str] | None = None) -> int:
     python = root / "Environment" / "Scripts" / "python.exe"
     launcher = root / "Automation" / "run_cognigrex_local_stack.py"
     receipt = root / "State" / "Health" / "cognigrex_watchdog_receipt.json"
-    stack_receipt = (
-        root / "Core" / "exports" / "agent_home" / "cognigrex_local_stack_receipt.json"
-    )
+    stack_receipt = canonical_receipt_dir(root) / "cognigrex_local_stack_receipt.json"
 
     before = observe(root, max_heartbeat_age=args.max_heartbeat_age)
     needs_repair = not (

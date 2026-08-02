@@ -4,16 +4,35 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 import fnmatch
 import hashlib
+import importlib
 import json
 import os
 from pathlib import Path, PureWindowsPath
 import shutil
+import sqlite3
 import sys
+import threading
 import time
 from typing import Any, Iterable
 
+from lightspeed_runtime.startup_options import CANONICAL_DATABASE_PATH
+
 SCHEMA_VERSION = "lightspeed-project-routing-v1"
 REVIEW_SCHEMA = "lightspeed-go-project-review-v1"
+_REVIEW_DECISION_LOCK = threading.Lock()
+_JSONL_INDEX_SCAN_BYTES = 8 * 1024 * 1024
+_JSONL_MAX_LINE_BYTES = 1024 * 1024
+_JSONL_MAX_IDENTITY_MATCHES = 64
+_JSONL_MEMORY_IDENTITY_LIMIT = 4096
+_JSONL_TAIL_READ_BYTES = 4 * 1024 * 1024
+
+
+class ReviewDecisionConflict(ValueError):
+    """Raised when one review identity is reused for a different owner decision."""
+
+
+class ReviewIndexPending(ValueError):
+    """Raised when a bounded identity-index pass has not reached ledger EOF."""
 
 FLOOR_ROOTS = {
     "Architect": "Z+1_Architect",
@@ -98,22 +117,470 @@ def _append_jsonl(path: Path, value: dict[str, Any]) -> None:
         stream.write(json.dumps(value, ensure_ascii=False, sort_keys=True) + "\n")
 
 
-def _read_jsonl(path: Path, limit: int = 200) -> list[dict[str, Any]]:
+def _bounded_jsonl_tail(path: Path, *, byte_limit: int) -> bytes:
+    """Read only the bounded tail, dropping a leading partial record."""
     if not path.is_file():
-        return []
+        return b""
     try:
-        lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+        size_bytes = int(path.stat().st_size)
+        read_size = min(size_bytes, max(1, int(byte_limit)))
+        start = max(0, size_bytes - read_size)
+        with path.open("rb") as stream:
+            stream.seek(start)
+            payload = stream.read(read_size)
     except OSError:
+        return b""
+    if start:
+        newline = payload.find(b"\n")
+        if newline < 0:
+            return b""
+        payload = payload[newline + 1 :]
+    return payload
+
+
+def _read_jsonl(
+    path: Path,
+    limit: int = 200,
+    *,
+    byte_limit: int = _JSONL_TAIL_READ_BYTES,
+    line_limit: int = _JSONL_MAX_LINE_BYTES,
+) -> list[dict[str, Any]]:
+    max_rows = max(1, min(int(limit), 2000))
+    bounded_bytes = max(4096, min(int(byte_limit), _JSONL_TAIL_READ_BYTES))
+    bounded_line = max(1, min(int(line_limit), _JSONL_MAX_LINE_BYTES))
+    payload = _bounded_jsonl_tail(path, byte_limit=bounded_bytes)
+    if not payload:
         return []
     rows: list[dict[str, Any]] = []
-    for line in lines[-max(1, min(limit, 2000)) :]:
+    lines = payload.split(b"\n")
+    if lines and not lines[-1]:
+        lines.pop()
+    for raw in lines[-max_rows:]:
+        raw = raw.rstrip(b"\r")
+        if not raw.strip() or len(raw) > bounded_line:
+            continue
         try:
-            value = json.loads(line)
+            value = json.loads(raw.decode("utf-8", errors="replace"))
         except json.JSONDecodeError:
             continue
         if isinstance(value, dict):
             rows.append(value)
     return rows
+
+
+class _JsonlIdentityIndex:
+    """Index immutable JSONL identities as offsets, never retained row payloads.
+
+    The production backend is a pair of tables in the sole canonical LightSpeed
+    database.  Fixtures and pre-migration shells use a small fail-closed memory
+    index; that fallback cannot grow beyond ``memory_identity_limit``.
+    """
+
+    SOURCE_TABLE = "immutable_jsonl_index_sources"
+    OFFSET_TABLE = "immutable_jsonl_identity_offsets"
+
+    def __init__(
+        self,
+        path: Path,
+        field: str,
+        *,
+        scan_bytes: int | None = None,
+        database_path: Path | None = None,
+        allow_schema_create: bool = False,
+        memory_identity_limit: int = _JSONL_MEMORY_IDENTITY_LIMIT,
+    ):
+        self.path = Path(path)
+        self.field = str(field)
+        self.scan_bytes = max(4096, int(scan_bytes or _JSONL_INDEX_SCAN_BYTES))
+        self.database_path = Path(database_path) if database_path is not None else None
+        self.allow_schema_create = bool(allow_schema_create)
+        self.memory_identity_limit = max(1, int(memory_identity_limit))
+        source_identity = f"{os.path.normcase(os.path.abspath(str(self.path)))}\0{self.field}"
+        self.source_key = hashlib.sha256(source_identity.encode("utf-8")).hexdigest()
+        self._lock = threading.Lock()
+        self._file_identity: tuple[int, int] | None = None
+        self._offset = 0
+        self._observed_size = 0
+        self._observed_mtime_ns = 0
+        self._partial = b""
+        self._memory_offsets: dict[str, list[tuple[int, int]]] = {}
+        self._complete = False
+
+    @property
+    def resident_identity_count(self) -> int:
+        return len(self._memory_offsets)
+
+    def _reset_memory(self) -> None:
+        self._file_identity = None
+        self._offset = 0
+        self._observed_size = 0
+        self._observed_mtime_ns = 0
+        self._partial = b""
+        self._memory_offsets.clear()
+        self._complete = False
+
+    def _connect(self) -> sqlite3.Connection:
+        if self.database_path is None:
+            raise ReviewIndexPending("canonical SQLite identity index is not configured")
+        if not self.database_path.is_file():
+            raise ReviewIndexPending(
+                f"existing canonical SQLite database is required: {self.database_path}"
+            )
+        uri = self.database_path.absolute().as_uri() + "?mode=rw"
+        connection = sqlite3.connect(uri, uri=True, timeout=5.0)
+        connection.row_factory = sqlite3.Row
+        connection.execute("PRAGMA busy_timeout=5000")
+        return connection
+
+    def _prepare_schema(self, connection: sqlite3.Connection) -> None:
+        names = {
+            str(row[0])
+            for row in connection.execute(
+                "SELECT name FROM sqlite_master WHERE type='table' AND name IN (?, ?)",
+                (self.SOURCE_TABLE, self.OFFSET_TABLE),
+            )
+        }
+        required = {self.SOURCE_TABLE, self.OFFSET_TABLE}
+        if names == required:
+            return
+        if not self.allow_schema_create:
+            raise ReviewIndexPending(
+                "canonical JSONL identity-index schema activation remains review-gated"
+            )
+        connection.executescript(
+            f"""
+            CREATE TABLE IF NOT EXISTS {self.SOURCE_TABLE} (
+                source_key TEXT PRIMARY KEY,
+                source_path TEXT NOT NULL,
+                identity_field TEXT NOT NULL,
+                file_device INTEGER,
+                file_inode INTEGER,
+                indexed_offset INTEGER NOT NULL DEFAULT 0,
+                observed_size INTEGER NOT NULL DEFAULT 0,
+                observed_mtime_ns INTEGER NOT NULL DEFAULT 0,
+                partial_record BLOB NOT NULL DEFAULT X'',
+                complete INTEGER NOT NULL DEFAULT 0,
+                updated_utc TEXT NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS {self.OFFSET_TABLE} (
+                source_key TEXT NOT NULL,
+                identity TEXT NOT NULL,
+                byte_offset INTEGER NOT NULL,
+                byte_length INTEGER NOT NULL,
+                PRIMARY KEY (source_key, byte_offset)
+            );
+            CREATE INDEX IF NOT EXISTS idx_immutable_jsonl_identity_lookup
+            ON {self.OFFSET_TABLE} (source_key, identity, byte_offset);
+            """
+        )
+
+    def _parse_locator(self, raw: bytes, byte_offset: int) -> tuple[str, int, int] | None:
+        if not raw.strip():
+            return None
+        if len(raw) > _JSONL_MAX_LINE_BYTES:
+            raise ValueError(f"JSONL record exceeds bounded line limit: {self.path}")
+        try:
+            value = json.loads(raw.decode("utf-8", errors="replace"))
+        except json.JSONDecodeError:
+            return None
+        if not isinstance(value, dict):
+            return None
+        identity = str(value.get(self.field) or "")
+        if not identity:
+            return None
+        return identity, int(byte_offset), len(raw)
+
+    def _scan_chunk(
+        self,
+        *,
+        offset: int,
+        partial: bytes,
+        size_bytes: int,
+    ) -> tuple[list[tuple[str, int, int]], int, bytes, bool, int]:
+        remaining = max(0, int(size_bytes) - int(offset))
+        read_size = min(remaining, self.scan_bytes)
+        chunk = b""
+        if read_size:
+            with self.path.open("rb") as stream:
+                stream.seek(offset)
+                chunk = stream.read(read_size)
+        next_offset = int(offset) + len(chunk)
+        content = bytes(partial) + chunk
+        content_start = int(offset) - len(partial)
+        parts = content.split(b"\n")
+        at_snapshot_end = next_offset >= int(size_bytes)
+        next_partial = b"" if at_snapshot_end else (parts.pop() if parts else content)
+        if len(next_partial) > _JSONL_MAX_LINE_BYTES:
+            raise ValueError(f"JSONL record exceeds bounded line limit: {self.path}")
+
+        locators: list[tuple[str, int, int]] = []
+        relative_offset = 0
+        for raw in parts:
+            clean = raw.rstrip(b"\r")
+            locator = self._parse_locator(clean, content_start + relative_offset)
+            if locator is not None:
+                locators.append(locator)
+            relative_offset += len(raw) + 1
+        return locators, next_offset, next_partial, at_snapshot_end, len(chunk)
+
+    def _advance_memory(self, stat: os.stat_result) -> dict[str, Any]:
+        identity = (int(stat.st_dev), int(stat.st_ino))
+        replaced = self._file_identity is not None and identity != self._file_identity
+        truncated = stat.st_size < self._offset
+        rewritten_at_same_size = (
+            self._file_identity == identity
+            and stat.st_size == self._observed_size
+            and self._observed_size > 0
+            and stat.st_mtime_ns != self._observed_mtime_ns
+        )
+        if replaced or truncated or rewritten_at_same_size:
+            self._reset_memory()
+        self._file_identity = identity
+        locators, next_offset, partial, complete, scanned = self._scan_chunk(
+            offset=self._offset,
+            partial=self._partial,
+            size_bytes=int(stat.st_size),
+        )
+        new_identities = {item[0] for item in locators} - set(self._memory_offsets)
+        if len(self._memory_offsets) + len(new_identities) > self.memory_identity_limit:
+            raise ReviewIndexPending(
+                "bounded memory identity index reached capacity; activate the reviewed "
+                "canonical SQLite index tables before processing this ledger"
+            )
+        for record_identity, byte_offset, byte_length in locators:
+            matches = self._memory_offsets.setdefault(record_identity, [])
+            if len(matches) >= _JSONL_MAX_IDENTITY_MATCHES:
+                raise ValueError(f"too many JSONL records share identity {record_identity!r}")
+            matches.append((byte_offset, byte_length))
+        self._offset = next_offset
+        self._partial = partial
+        self._observed_size = int(stat.st_size)
+        self._observed_mtime_ns = int(stat.st_mtime_ns)
+        self._complete = complete
+        return {
+            "complete": complete,
+            "scanned_bytes": scanned,
+            "indexed_locator_delta": len(locators),
+            "resident_identity_count": self.resident_identity_count,
+            "storage_backend": "bounded_memory",
+            "offset": next_offset,
+            "size_bytes": int(stat.st_size),
+        }
+
+    def _advance_sqlite(self, stat: os.stat_result) -> dict[str, Any]:
+        with self._connect() as connection:
+            self._prepare_schema(connection)
+            row = connection.execute(
+                f"SELECT * FROM {self.SOURCE_TABLE} WHERE source_key=?",
+                (self.source_key,),
+            ).fetchone()
+            state = dict(row) if row is not None else {
+                "file_device": None,
+                "file_inode": None,
+                "indexed_offset": 0,
+                "observed_size": 0,
+                "observed_mtime_ns": 0,
+                "partial_record": b"",
+                "complete": 0,
+            }
+            identity = (int(stat.st_dev), int(stat.st_ino))
+            prior_identity = (
+                int(state["file_device"]),
+                int(state["file_inode"]),
+            ) if state.get("file_device") is not None and state.get("file_inode") is not None else None
+            offset = int(state.get("indexed_offset") or 0)
+            observed_size = int(state.get("observed_size") or 0)
+            replaced = prior_identity is not None and identity != prior_identity
+            truncated = int(stat.st_size) < offset
+            rewritten_at_same_size = (
+                prior_identity == identity
+                and int(stat.st_size) == observed_size
+                and observed_size > 0
+                and int(stat.st_mtime_ns) != int(state.get("observed_mtime_ns") or 0)
+            )
+            if replaced or truncated or rewritten_at_same_size:
+                connection.execute(
+                    f"DELETE FROM {self.OFFSET_TABLE} WHERE source_key=?",
+                    (self.source_key,),
+                )
+                offset = 0
+                state["partial_record"] = b""
+
+            locators, next_offset, partial, complete, scanned = self._scan_chunk(
+                offset=offset,
+                partial=bytes(state.get("partial_record") or b""),
+                size_bytes=int(stat.st_size),
+            )
+            connection.executemany(
+                f"""
+                INSERT OR REPLACE INTO {self.OFFSET_TABLE}
+                    (source_key, identity, byte_offset, byte_length)
+                VALUES (?, ?, ?, ?)
+                """,
+                (
+                    (self.source_key, record_identity, byte_offset, byte_length)
+                    for record_identity, byte_offset, byte_length in locators
+                ),
+            )
+            connection.execute(
+                f"""
+                INSERT INTO {self.SOURCE_TABLE} (
+                    source_key, source_path, identity_field, file_device, file_inode,
+                    indexed_offset, observed_size, observed_mtime_ns, partial_record,
+                    complete, updated_utc
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(source_key) DO UPDATE SET
+                    source_path=excluded.source_path,
+                    identity_field=excluded.identity_field,
+                    file_device=excluded.file_device,
+                    file_inode=excluded.file_inode,
+                    indexed_offset=excluded.indexed_offset,
+                    observed_size=excluded.observed_size,
+                    observed_mtime_ns=excluded.observed_mtime_ns,
+                    partial_record=excluded.partial_record,
+                    complete=excluded.complete,
+                    updated_utc=excluded.updated_utc
+                """,
+                (
+                    self.source_key,
+                    str(self.path.absolute()),
+                    self.field,
+                    identity[0],
+                    identity[1],
+                    next_offset,
+                    int(stat.st_size),
+                    int(stat.st_mtime_ns),
+                    sqlite3.Binary(partial),
+                    int(complete),
+                    utc_now_iso(),
+                ),
+            )
+        return {
+            "complete": complete,
+            "scanned_bytes": scanned,
+            "indexed_locator_delta": len(locators),
+            "resident_identity_count": 0,
+            "storage_backend": "canonical_sqlite",
+            "offset": next_offset,
+            "size_bytes": int(stat.st_size),
+        }
+
+    def _reset_missing(self) -> None:
+        if self.database_path is None:
+            self._reset_memory()
+            self._complete = True
+            return
+        with self._connect() as connection:
+            self._prepare_schema(connection)
+            connection.execute(
+                f"DELETE FROM {self.OFFSET_TABLE} WHERE source_key=?",
+                (self.source_key,),
+            )
+            connection.execute(
+                f"DELETE FROM {self.SOURCE_TABLE} WHERE source_key=?",
+                (self.source_key,),
+            )
+
+    def advance(self) -> dict[str, Any]:
+        """Read at most one bounded chunk and preserve ledger bytes and mtime."""
+        with self._lock:
+            try:
+                stat = self.path.stat()
+            except OSError:
+                self._reset_missing()
+                return {
+                    "complete": True,
+                    "scanned_bytes": 0,
+                    "resident_identity_count": self.resident_identity_count,
+                    "storage_backend": (
+                        "canonical_sqlite" if self.database_path is not None else "bounded_memory"
+                    ),
+                    "size_bytes": 0,
+                }
+            if self.database_path is not None:
+                return self._advance_sqlite(stat)
+            return self._advance_memory(stat)
+
+    def _read_offsets(self, expected: str) -> list[tuple[int, int]]:
+        if self.database_path is None:
+            return list(self._memory_offsets.get(str(expected), []))
+        with self._connect() as connection:
+            self._prepare_schema(connection)
+            rows = connection.execute(
+                f"""
+                SELECT byte_offset, byte_length
+                FROM {self.OFFSET_TABLE}
+                WHERE source_key=? AND identity=?
+                ORDER BY byte_offset
+                LIMIT ?
+                """,
+                (self.source_key, str(expected), _JSONL_MAX_IDENTITY_MATCHES + 1),
+            ).fetchall()
+        if len(rows) > _JSONL_MAX_IDENTITY_MATCHES:
+            raise ValueError(f"too many JSONL records share identity {expected!r}")
+        return [(int(row[0]), int(row[1])) for row in rows]
+
+    def _read_rows(self, expected: str, offsets: list[tuple[int, int]]) -> list[dict[str, Any]]:
+        rows: list[dict[str, Any]] = []
+        if not offsets:
+            return rows
+        with self.path.open("rb") as stream:
+            for byte_offset, byte_length in offsets:
+                stream.seek(byte_offset)
+                raw = stream.read(byte_length)
+                try:
+                    value = json.loads(raw.decode("utf-8", errors="replace"))
+                except json.JSONDecodeError as exc:
+                    raise ReviewIndexPending(
+                        f"indexed JSONL locator no longer resolves cleanly: {self.path}"
+                    ) from exc
+                if not isinstance(value, dict) or str(value.get(self.field) or "") != str(expected):
+                    raise ReviewIndexPending(
+                        f"indexed JSONL identity no longer matches immutable source: {self.path}"
+                    )
+                rows.append(value)
+        return rows
+
+    def find(self, expected: str) -> list[dict[str, Any]]:
+        progress = self.advance()
+        if not progress["complete"]:
+            raise ReviewIndexPending(
+                f"bounded identity index is still preparing {self.path.name}: "
+                f"{progress['offset']}/{progress['size_bytes']} bytes; retry after the next cycle"
+            )
+        return self._read_rows(str(expected), self._read_offsets(str(expected)))
+
+
+def _review_decision_contract(review_id: str, decision: str, note: str) -> dict[str, Any]:
+    return {
+        "schema_version": "lightspeed-go-review-decision-v1",
+        "review_id": review_id,
+        "decision": decision,
+        "note": note,
+        "decided_by": "Nathaniel Bouwer / Achilles GO gate",
+        "applies_external_write": False,
+    }
+
+
+def _review_decision_sha256(review_id: str, decision: str, note: str) -> str:
+    payload = json.dumps(
+        _review_decision_contract(review_id, decision, note),
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def _ensure_fixed_json_receipt(path: Path, payload: dict[str, Any]) -> str:
+    """Verify or repair one fixed receipt without creating history variants."""
+    existed = path.is_file()
+    if existed and _read_json(path) == payload:
+        return "verified_existing"
+    _write_json(path, payload)
+    if _read_json(path) != payload:
+        raise OSError(f"fixed receipt readback failed: {path}")
+    return "repaired_mismatch" if existed else "repaired_missing"
 
 
 def _slug(value: str) -> str:
@@ -129,6 +596,32 @@ def _windows_absolute(value: str) -> bool:
 
 def _has_project_routing_contract(path: Path) -> bool:
     return (path / "config" / "project_routing.json").is_file()
+
+
+def _path_is_within(path: Path, root: Path) -> bool:
+    try:
+        path.resolve().relative_to(root.resolve())
+        return True
+    except (OSError, ValueError):
+        return False
+
+
+def _embedded_core_services(merovingian_root: Path) -> Any:
+    """Import Merovingian services only when module origin proves identity."""
+    embedded_core = Path(merovingian_root) / "core"
+    if not embedded_core.is_dir():
+        raise ImportError("embedded_core_unavailable_for_shell_root")
+    root_text = str(merovingian_root)
+    if root_text not in sys.path:
+        sys.path.insert(0, root_text)
+    services = importlib.import_module("core.services")
+    origin_text = str(getattr(services, "__file__", "") or "")
+    if not origin_text or not _path_is_within(Path(origin_text), embedded_core):
+        raise ImportError(
+            "ambient core.services origin rejected: "
+            f"{origin_text or 'unknown'}; expected under {embedded_core}"
+        )
+    return services
 
 
 def _canonical_shell_root(requested: Path) -> tuple[Path, str]:
@@ -196,8 +689,86 @@ class ProjectPipeline:
         self.review_decisions_path = self._resolve_shell_path(
             str(go_config.get("decision_path") or "Z Axis/Z-4_Merovingian/data/runtime_exports/go_review_decisions.jsonl")
         )
+        index_options = self._review_index_options(go_config)
+        self._review_queue_index = _JsonlIdentityIndex(
+            self.review_queue_path,
+            "review_id",
+            **index_options,
+        )
+        self._review_decisions_index = _JsonlIdentityIndex(
+            self.review_decisions_path,
+            "review_id",
+            **index_options,
+        )
         self._last_refresh_monotonic = 0.0
         self._cached_registry: dict[str, Any] = {}
+
+    def _review_index_options(self, go_config: dict[str, Any]) -> dict[str, Any]:
+        """Resolve an index backend without inventing a second database.
+
+        Schema activation is deliberately explicit.  Until the reviewed state
+        is enabled on the canonical operator shell, the capped memory fallback
+        supports small fixtures and fails closed before RAM can grow unchecked.
+        """
+        config = go_config.get("identity_index")
+        config = config if isinstance(config, dict) else {}
+        options: dict[str, Any] = {
+            "scan_bytes": int(config.get("scan_bytes_per_cycle") or _JSONL_INDEX_SCAN_BYTES),
+            "memory_identity_limit": int(
+                config.get("fallback_memory_identity_limit") or _JSONL_MEMORY_IDENTITY_LIMIT
+            ),
+        }
+        if str(config.get("backend") or "").casefold() != "canonical_database_tables":
+            return options
+        if str(config.get("schema_activation") or "").casefold() != "owner_approved":
+            return options
+
+        operator_shell_text = str(config.get("required_operator_shell") or r"D:\LightSpeed\App")
+        operator_shell = Path(operator_shell_text)
+        try:
+            if not operator_shell.is_dir() or not os.path.samefile(self.shell_root, operator_shell):
+                return options
+        except OSError:
+            return options
+
+        launch_control = _read_json(self.shell_root / "config" / "launch_control.json")
+        manual_gates = launch_control.get("manual_gates")
+        index_gate = next(
+            (
+                item
+                for item in (manual_gates if isinstance(manual_gates, list) else [])
+                if isinstance(item, dict)
+                and item.get("gate_id") == "canonical_queue_indexes"
+            ),
+            {},
+        )
+        if str(index_gate.get("state") or "").casefold() != "operator_authorized":
+            return options
+        authorities = launch_control.get("canonical_authorities")
+        authorities = authorities if isinstance(authorities, dict) else {}
+        database_text = str(authorities.get("database") or "").strip()
+        database_path = Path(database_text).expanduser() if database_text else None
+        if (
+            database_path is None
+            or not (database_path.is_absolute() or _windows_absolute(database_text))
+            or database_path.name.casefold() != "lightspeed_unified.db"
+            or not database_path.is_file()
+        ):
+            return options
+        canonical_database = Path(CANONICAL_DATABASE_PATH)
+        try:
+            if not canonical_database.is_file() or not os.path.samefile(
+                database_path,
+                canonical_database,
+            ):
+                return options
+        except (OSError, ValueError):
+            return options
+        return {
+            **options,
+            "database_path": database_path,
+            "allow_schema_create": True,
+        }
 
     def _resolve_shell_path(self, value: str) -> Path:
         if not value:
@@ -745,30 +1316,31 @@ class ProjectPipeline:
         }
 
     def resolve_drive_receipt_root(self) -> tuple[Path, str]:
+        """Return an exact owner-approved Drive target or the local outbox."""
         config = self.config.get("drive_writeback") or {}
-        relative = Path(str(config.get("relative_receipt_path") or "LightSpeed/Project Receipts"))
-        variables = [str(item) for item in config.get("root_environment_variables") or []]
-        candidates: list[tuple[Path, str]] = []
-        for variable in variables:
-            value = os.environ.get(variable)
-            if value:
-                candidates.append((Path(value).expanduser() / relative, f"environment:{variable}"))
-
-        home = Path.home()
-        candidates.extend([
-            (home / "My Drive" / relative, "drive_for_desktop_detected"),
-            (home / "Google Drive" / "My Drive" / relative, "drive_for_desktop_detected"),
-        ])
-        if os.name == "nt":
-            candidates.extend((Path(f"{drive}:/My Drive") / relative, "drive_for_desktop_detected") for drive in "GHI")
-
-        for candidate, mode in candidates:
-            try:
-                if candidate.parent.is_dir():
-                    candidate.mkdir(parents=True, exist_ok=True)
-                    return candidate, mode
-            except OSError:
-                continue
+        launch_control = _read_json(self.shell_root / "config" / "launch_control.json")
+        gates = launch_control.get("manual_gates")
+        drive_gate = next(
+            (
+                item
+                for item in (gates if isinstance(gates, list) else [])
+                if isinstance(item, dict) and item.get("gate_id") == "drive_writeback"
+            ),
+            {},
+        )
+        gate_state = str(drive_gate.get("state") or "").casefold()
+        approved_by = str(drive_gate.get("approved_by") or "").strip().casefold()
+        decision_id = str(drive_gate.get("decision_id") or "").strip()
+        approved_target_text = str(drive_gate.get("approved_target") or "").strip()
+        if (
+            gate_state == "owner_approved_exact_target"
+            and approved_by in {"nathaniel", "nathaniel bouwer"}
+            and decision_id
+            and approved_target_text
+        ):
+            approved_target = Path(approved_target_text).expanduser()
+            if (approved_target.is_absolute() or _windows_absolute(approved_target_text)) and approved_target.is_dir():
+                return approved_target, "owner_approved_exact_drive_target"
 
         fallback = self._resolve_shell_path(str(
             config.get("local_fallback_path")
@@ -776,6 +1348,17 @@ class ProjectPipeline:
         ))
         fallback.mkdir(parents=True, exist_ok=True)
         return fallback, "local_outbox_pending_drive_sync"
+
+    def _reconcile_decision_receipt(self, receipt: dict[str, Any]) -> dict[str, str]:
+        drive_root, drive_mode = self.resolve_drive_receipt_root()
+        receipt_path = drive_root / f"{receipt['review_id']}_{receipt['decision']}.json"
+        receipt_payload = {**receipt, "drive_writeback_mode": drive_mode}
+        receipt_state = _ensure_fixed_json_receipt(receipt_path, receipt_payload)
+        return {
+            "drive_writeback_mode": drive_mode,
+            "decision_receipt_path": str(receipt_path),
+            "decision_receipt_state": receipt_state,
+        }
 
     def _queue_review_packet(
         self,
@@ -884,19 +1467,15 @@ class ProjectPipeline:
         }
 
     def essential_health(self, registry: dict[str, Any]) -> dict[str, Any]:
-        # ``core`` is the Merovingian package, not a package at the Desktop
-        # shell root.  Add its parent explicitly so an installed runtime works
-        # the same way as a repository checkout and CI environment.
-        if str(self.merovingian_root) not in sys.path:
-            sys.path.insert(0, str(self.merovingian_root))
         service_states = {"database": False, "event_bus": False, "storage": False}
         details: dict[str, Any] = {}
         errors: list[str] = []
         event_bus_enabled = False
         try:
-            from core.services import initialize_services  # type: ignore
-
-            services = initialize_services()
+            services_module = _embedded_core_services(self.merovingian_root)
+            services = services_module.initialize_services()
+            if not isinstance(services, dict):
+                raise TypeError("initialize_services did not return a service mapping")
             db = services.get("database")
             event_bus = services.get("event_bus")
             storage = services.get("storage")
@@ -963,9 +1542,16 @@ class ProjectPipeline:
         }
 
     def refresh(self, *, force: bool = False, queue_changes: bool = True) -> dict[str, Any]:
+        self.prepare_identity_indexes()
         refresh_seconds = int(self._scan_policy().get("registry_refresh_seconds") or 60)
         if not force and self._cached_registry and time.monotonic() - self._last_refresh_monotonic < refresh_seconds:
-            return self._cached_registry
+            registry = dict(self._cached_registry)
+            health = self.essential_health(registry)
+            _write_json(self.health_path, health)
+            _write_json(self.floor_health_path, (health.get("details") or {}).get("agent_floors") or {})
+            registry["health"] = health
+            self._cached_registry = registry
+            return registry
 
         previous = _read_json(self.registry_state_path)
         registry = self.scan_projects()
@@ -1019,8 +1605,25 @@ class ProjectPipeline:
         self._last_refresh_monotonic = time.monotonic()
         return registry
 
+    def prepare_identity_indexes(self) -> dict[str, dict[str, Any]]:
+        """Advance fixed in-memory ledger indexes by one bounded chunk each."""
+        result: dict[str, dict[str, Any]] = {}
+        for name, index in (
+            ("review_queue", self._review_queue_index),
+            ("review_decisions", self._review_decisions_index),
+        ):
+            try:
+                result[name] = index.advance()
+            except (OSError, ValueError) as exc:
+                result[name] = {
+                    "complete": False,
+                    "error": f"{type(exc).__name__}:{exc}",
+                }
+        return result
+
     def latest_snapshot(self) -> dict[str, Any]:
         """Read the last supervisor materialization without scanning projects."""
+        self.prepare_identity_indexes()
         registry = _read_json(self.registry_path)
         health = _read_json(self.health_path)
         cleanup = _read_json(self.cleanup_path)
@@ -1072,19 +1675,46 @@ class ProjectPipeline:
         allowed = set((self.config.get("go_review") or {}).get("allowed_decisions") or [])
         if decision not in allowed:
             raise ValueError(f"Unsupported review decision: {decision}")
-        review = next((item for item in self.list_reviews(limit=1000) if item.get("review_id") == review_id), None)
-        if review is None:
-            raise KeyError(review_id)
-        receipt = {
-            "schema_version": "lightspeed-go-review-decision-v1",
-            "review_id": review_id,
-            "decision": decision,
-            "note": " ".join(note.split())[:1000],
-            "decided_utc": utc_now_iso(),
-            "decided_by": "Nathaniel Bouwer / Achilles GO gate",
-            "applies_external_write": False,
-        }
-        _append_jsonl(self.review_decisions_path, receipt)
-        drive_root, drive_mode = self.resolve_drive_receipt_root()
-        _write_json(drive_root / f"{review_id}_{decision}.json", {**receipt, "drive_writeback_mode": drive_mode})
-        return receipt
+        normalized_note = " ".join(note.split())[:1000]
+        canonical_payload_sha256 = _review_decision_sha256(
+            review_id,
+            decision,
+            normalized_note,
+        )
+        with _REVIEW_DECISION_LOCK:
+            review_rows = self._review_queue_index.find(review_id)
+            if not review_rows:
+                raise KeyError(review_id)
+
+            existing_decisions = self._review_decisions_index.find(review_id)
+            if existing_decisions:
+                existing_hashes = {
+                    str(
+                        item.get("canonical_payload_sha256")
+                        or _review_decision_sha256(
+                            review_id,
+                            str(item.get("decision") or ""),
+                            " ".join(str(item.get("note") or "").split())[:1000],
+                        )
+                    )
+                    for item in existing_decisions
+                }
+                if existing_hashes != {canonical_payload_sha256}:
+                    raise ReviewDecisionConflict(
+                        f"review_id {review_id!r} already identifies a different owner decision"
+                    )
+                existing = dict(existing_decisions[-1])
+                existing.setdefault("canonical_payload_sha256", canonical_payload_sha256)
+                receipt_status = self._reconcile_decision_receipt(existing)
+                existing["idempotent_replay"] = True
+                existing.update(receipt_status)
+                return existing
+
+            receipt = {
+                **_review_decision_contract(review_id, decision, normalized_note),
+                "canonical_payload_sha256": canonical_payload_sha256,
+                "decided_utc": utc_now_iso(),
+            }
+            _append_jsonl(self.review_decisions_path, receipt)
+            receipt_status = self._reconcile_decision_receipt(receipt)
+            return {**receipt, **receipt_status}

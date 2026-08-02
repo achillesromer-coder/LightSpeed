@@ -28,6 +28,17 @@ REPO_RUNTIME_ROOT = REPO_ROOT / "desktop" / "LightSpeed_Runtime"
 REPO_SHELL_ROOT = REPO_ROOT / "desktop" / "Desktop_Hooks" / "LightSpeed"
 
 
+def canonical_receipt_dir(shell_root: Path) -> Path:
+    """Anchor local operational receipts to the live Desktop shell."""
+    return (
+        shell_root
+        / "Z Axis"
+        / "Z-4_Merovingian"
+        / "data"
+        / "runtime_exports"
+    )
+
+
 def read_json(path: Path) -> dict[str, Any]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
@@ -146,12 +157,6 @@ def merged_agent_home_config(
     config["agent_population"] = population
 
     launch = dict(config.get("launch_control") or {})
-    launch.update(
-        {
-            "state": "sandbox_local_probe_passed",
-            "current_focus": "desporte_desktop_population",
-        }
-    )
     co_runner = dict(launch.get("co_runner") or {})
     co_runner.update(
         {
@@ -182,7 +187,11 @@ def regenerate_from_config(
     if not config_path.is_file():
         return None
 
-    config = merged_agent_home_config(read_json(config_path), desporte=desporte, shell_root=shell_root)
+    source = read_json(config_path)
+    shell_launch_control = shell_root / "config" / "launch_control.json"
+    if shell_launch_control.is_file():
+        source["launch_control"] = read_json(shell_launch_control)
+    config = merged_agent_home_config(source, desporte=desporte, shell_root=shell_root)
     export_dir.mkdir(parents=True, exist_ok=True)
     overlay_path: Path | None = None
     try:
@@ -208,6 +217,7 @@ def regenerate_from_config(
             export_dir,
             config_path=overlay_path,
             max_assets_per_source=5,
+            write_shell_artifacts=False,
         )
     finally:
         if overlay_path and overlay_path.exists():
@@ -288,8 +298,9 @@ def main() -> int:
     runtime_root = select_runtime_root(args.runtime_root)
     shell_root = select_shell_root(args.shell_root)
     export_dir = runtime_root / "exports" / "agent_home"
-    probe_path = export_dir / "desporte_soft_launch_receipt.json"
-    population_path = export_dir / "desporte_desktop_population_receipt.json"
+    receipt_dir = canonical_receipt_dir(shell_root)
+    probe_path = receipt_dir / "desporte_soft_launch_receipt.json"
+    population_path = receipt_dir / "desporte_desktop_population_receipt.json"
     desporte = de_sporte_root()
 
     probe = run_probe(probe_path)

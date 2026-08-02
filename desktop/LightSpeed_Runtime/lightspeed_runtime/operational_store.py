@@ -3,24 +3,129 @@ from __future__ import annotations
 from datetime import UTC, datetime
 import hashlib
 import json
+import os
 from pathlib import Path
 import sqlite3
 from typing import Any
+
+
+_FLOOR_ROUTE_TARGETS = {
+    value.casefold(): value
+    for value in (
+        "Achilles",
+        "Neo",
+        "Architect",
+        "TheConstruct",
+        "Morpheus",
+        "Oracle",
+        "Smith",
+        "Merovingian",
+        "Trinity",
+        "Z+3",
+        "Z+2",
+        "Z+1",
+        "Z0",
+        "Z-1",
+        "Z-2",
+        "Z-3",
+        "Z-4",
+    )
+}
+
+
+def _materialized_route_targets(target: str) -> list[str]:
+    """Split only an explicit slash-delimited list of known floor identities."""
+    value = str(target).strip()
+    parts = [part.strip() for part in value.split("/") if part.strip()]
+    if len(parts) <= 1 or not all(part.casefold() in _FLOOR_ROUTE_TARGETS for part in parts):
+        return [value]
+    resolved: list[str] = []
+    for part in parts:
+        canonical = _FLOOR_ROUTE_TARGETS[part.casefold()]
+        if canonical not in resolved:
+            resolved.append(canonical)
+    return resolved
 
 
 class OperationalConflict(ValueError):
     """Raised when an idempotency key is reused for different event content."""
 
 
-def default_operational_db_path(root: Path) -> Path:
-    return (
-        Path(root)
-        / "Z Axis"
-        / "Z-4_Merovingian"
-        / "data"
-        / "db"
-        / "lightspeed_unified.db"
-    )
+CANONICAL_DATABASE_ENV = "LIGHTSPEED_CANONICAL_DB"
+CANONICAL_OPERATOR_ROOT = Path(r"D:\LightSpeed")
+CANONICAL_OPERATOR_DATABASE = (
+    CANONICAL_OPERATOR_ROOT / "Data" / "db" / "lightspeed_unified.db"
+)
+_LEGACY_DATABASE_RELATIVE = (
+    Path("Z Axis")
+    / "Z-4_Merovingian"
+    / "data"
+    / "db"
+    / "lightspeed_unified.db"
+)
+
+
+def _require_same_database_file(candidate: Path, canonical: Path, *, label: str) -> None:
+    if not candidate.is_file():
+        raise FileNotFoundError(f"{label} database does not exist: {candidate}")
+    try:
+        same_identity = os.path.samefile(candidate, canonical)
+    except OSError as exc:
+        raise RuntimeError(
+            f"Could not prove {label} database identity: {candidate} -> {canonical}"
+        ) from exc
+    if not same_identity:
+        raise ValueError(
+            f"{label} database must identify the same file as {canonical}; "
+            f"refusing database alias {candidate}"
+        )
+
+
+def default_operational_db_path(root: Path | None = None) -> Path:
+    r"""Resolve the existing singleton operator database without creating it.
+
+    ``root`` is retained for callers that also own a legacy Merovingian alias.
+    A present alias must identify the canonical database by file identity. A
+    missing alias is never recreated; callers use ``D:\LightSpeed\Data``
+    directly. Arbitrary databases are available only through
+    :meth:`OperationalStore.for_fixture`.
+    """
+
+    canonical_root = Path(CANONICAL_OPERATOR_ROOT)
+    canonical = Path(CANONICAL_OPERATOR_DATABASE)
+    if not canonical_root.is_dir():
+        raise FileNotFoundError(
+            f"The canonical LightSpeed operator namespace is unavailable: {canonical_root}"
+        )
+    if not canonical.is_file():
+        raise FileNotFoundError(
+            "The LightSpeed operator namespace exists but its sole canonical "
+            f"database is missing: {canonical}"
+        )
+
+    configured = os.environ.get(CANONICAL_DATABASE_ENV, "").strip()
+    if configured:
+        configured_path = Path(configured).expanduser()
+        if not configured_path.is_absolute():
+            raise ValueError(
+                f"{CANONICAL_DATABASE_ENV} must be an absolute path: {configured_path}"
+            )
+        _require_same_database_file(
+            configured_path,
+            canonical,
+            label="Configured canonical LightSpeed",
+        )
+
+    if root is not None:
+        legacy_alias = Path(root) / _LEGACY_DATABASE_RELATIVE
+        if os.path.lexists(legacy_alias):
+            _require_same_database_file(
+                legacy_alias,
+                canonical,
+                label="Legacy operational",
+            )
+
+    return canonical
 
 
 class OperationalStore:
@@ -28,10 +133,27 @@ class OperationalStore:
 
     _COUNTABLE_TABLES = frozenset({"operational_events"})
 
-    def __init__(self, path: Path):
-        self.path = Path(path)
-        self.path.parent.mkdir(parents=True, exist_ok=True)
+    def __init__(self, path: Path | None = None, *, _fixture: bool = False):
+        if _fixture:
+            if path is None:
+                raise ValueError("fixture database path is required")
+            self.path = Path(path)
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+        else:
+            canonical = default_operational_db_path()
+            if path is not None:
+                _require_same_database_file(
+                    Path(path),
+                    canonical,
+                    label="OperationalStore",
+                )
+            self.path = canonical
         self._initialize()
+
+    @classmethod
+    def for_fixture(cls, path: Path) -> "OperationalStore":
+        """Create an isolated database explicitly for a test or fixture."""
+        return cls(path, _fixture=True)
 
     def _connect(self) -> sqlite3.Connection:
         connection = sqlite3.connect(self.path, timeout=30)
@@ -111,6 +233,9 @@ class OperationalStore:
         )
         payload_sha256 = hashlib.sha256(payload_json.encode("utf-8")).hexdigest()
         stamp = self._optional_text(event, "recorded_at") or datetime.now(UTC).isoformat()
+        source = self._optional_text(event, "source")
+        target = self._optional_text(event, "target")
+        route_targets = _materialized_route_targets(target) if source and target else []
 
         with self._connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
@@ -136,11 +261,24 @@ class OperationalStore:
                     """,
                     (duplicate_count, stamp, event_id),
                 )
+                route_inserted_count = 0
+                for route_target in route_targets:
+                    route_inserted_count += connection.execute(
+                        """
+                        INSERT OR IGNORE INTO operational_routes (
+                            event_id, source, target, created_utc
+                        ) VALUES (?, ?, ?, ?)
+                        """,
+                        (event_id, source, route_target, stamp),
+                    ).rowcount
                 return {
                     "event_id": event_id,
                     "inserted": False,
                     "duplicate_count": duplicate_count,
                     "payload_sha256": payload_sha256,
+                    "route_inserted": route_inserted_count > 0,
+                    "route_count": len(route_targets),
+                    "route_targets": route_targets,
                 }
 
             connection.execute(
@@ -164,8 +302,8 @@ class OperationalStore:
                 (
                     event_id,
                     kind,
-                    self._optional_text(event, "source"),
-                    self._optional_text(event, "target"),
+                    source,
+                    target,
                     self._optional_text(event, "project_id"),
                     self._optional_text(event, "priority"),
                     self._optional_text(event, "risk"),
@@ -176,11 +314,24 @@ class OperationalStore:
                     stamp,
                 ),
             )
+            route_inserted_count = 0
+            for route_target in route_targets:
+                route_inserted_count += connection.execute(
+                    """
+                    INSERT OR IGNORE INTO operational_routes (
+                        event_id, source, target, created_utc
+                    ) VALUES (?, ?, ?, ?)
+                    """,
+                    (event_id, source, route_target, stamp),
+                ).rowcount
             return {
                 "event_id": event_id,
                 "inserted": True,
                 "duplicate_count": 0,
                 "payload_sha256": payload_sha256,
+                "route_inserted": route_inserted_count > 0,
+                "route_count": len(route_targets),
+                "route_targets": route_targets,
             }
 
     def count(
@@ -248,16 +399,19 @@ class OperationalStore:
         if not event_id or not source or not target:
             raise ValueError("event_id, source, and target are required")
         stamp = recorded_at or datetime.now(UTC).isoformat()
+        route_targets = _materialized_route_targets(target)
         with self._connect() as connection:
-            cursor = connection.execute(
-                """
-                INSERT OR IGNORE INTO operational_routes (
-                    event_id, source, target, created_utc
-                ) VALUES (?, ?, ?, ?)
-                """,
-                (event_id, source, target, stamp),
-            )
-        return cursor.rowcount > 0
+            inserted = 0
+            for route_target in route_targets:
+                inserted += connection.execute(
+                    """
+                    INSERT OR IGNORE INTO operational_routes (
+                        event_id, source, target, created_utc
+                    ) VALUES (?, ?, ?, ?)
+                    """,
+                    (event_id, source, route_target, stamp),
+                ).rowcount
+        return inserted > 0
 
     def routed(
         self,
