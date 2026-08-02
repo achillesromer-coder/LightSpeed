@@ -42,3 +42,16 @@ def test_resolve_runtime_layout_honours_explicit_canonical_root(tmp_path: Path) 
     assert canonical == configured
     assert desktop == configured / "App"
     assert runtime == configured / "Core"
+
+
+def test_bridge_status_preserves_the_operator_namespace() -> None:
+    source = (
+        MODULE_PATH.parents[1]
+        / "desktop"
+        / "LightSpeed_Runtime"
+        / "lightspeed_runtime"
+        / "ls_go_bridge.py"
+    ).read_text(encoding="utf-8")
+
+    assert "shell_root = Path(root).absolute()" in source
+    assert "shell_root = Path(root).resolve()" not in source

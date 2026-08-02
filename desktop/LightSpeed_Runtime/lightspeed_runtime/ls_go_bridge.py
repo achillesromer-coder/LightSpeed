@@ -185,7 +185,10 @@ def _append_queue(root: Path, payload: dict[str, Any]) -> str:
 
 
 def create_app(root: Path | str) -> FastAPI:
-    shell_root = Path(root).resolve()
+    # Preserve the stable D:\LightSpeed operator namespace. Path.resolve()
+    # follows the App junction to its C-drive backing target and makes one
+    # physical shell appear to be a second authority in status receipts.
+    shell_root = Path(root).absolute()
     db, storage = _try_get_services(shell_root)
     project_pipeline = ProjectPipeline(shell_root)
     representation_edge = build_representation_edge_store(shell_root)
