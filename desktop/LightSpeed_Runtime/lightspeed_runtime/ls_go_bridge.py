@@ -41,6 +41,21 @@ ALLOWED_FLOORS = {
 }
 ALLOWED_PRIORITIES = {"critical", "high", "normal", "low"}
 ALLOWED_MODES = {"review", "queue"}
+APPROVED_AUTHORITY_STATES = {
+    "approve",
+    "approved",
+    "operator_approved",
+    "operator_authorized",
+    "operator_authorised",
+}
+AUTHORITY_REQUIRED_FIELDS = (
+    "canonical_gate_id",
+    "owner_decision_ref",
+    "core_acceptance_ref",
+    "approval_or_hold_state",
+    "authorised_scope",
+    "prohibited_scope",
+)
 DEFAULT_ALLOWED_ORIGINS = [
     "https://lightspeed-go.nathaniel-b.chatgpt.site",
     "http://127.0.0.1:5173",
@@ -268,6 +283,13 @@ def _command_contract(payload: dict[str, Any]) -> dict[str, Any]:
         "execution_mode": str(payload.get("execution_mode") or "review"),
         "proof_required": payload.get("proof_required") is True,
         "public_safe": payload.get("public_safe") is True,
+        "canonical_gate_id": str(payload.get("canonical_gate_id") or ""),
+        "owner_decision_ref": str(payload.get("owner_decision_ref") or ""),
+        "core_acceptance_ref": str(payload.get("core_acceptance_ref") or ""),
+        "approval_or_hold_state": str(payload.get("approval_or_hold_state") or ""),
+        "authorised_scope": str(payload.get("authorised_scope") or ""),
+        "prohibited_scope": str(payload.get("prohibited_scope") or ""),
+        "requested_scope": str(payload.get("requested_scope") or ""),
     }
 
 
@@ -559,6 +581,101 @@ def _validated_command_id(command_id: str) -> str:
     return value
 
 
+def _scope_tokens(value: str) -> list[str]:
+    return [
+        token
+        for token in re.split(r"[^a-z0-9+_.:-]+", value.casefold())
+        if len(token) >= 3
+    ]
+
+
+def _authority_scope_allows(
+    *,
+    authorised_scope: str,
+    requested_scope: str,
+    target_floor: str,
+    execution_mode: str,
+) -> bool:
+    authority = authorised_scope.casefold()
+    requested = requested_scope.casefold()
+    floor = target_floor.casefold()
+    if requested and requested in authority:
+        return True
+    if floor and floor in authority:
+        return True
+    if "all floors" in authority or "all known" in authority:
+        return True
+    authority_tokens = set(_scope_tokens(authorised_scope))
+    requested_tokens = set(_scope_tokens(requested_scope or target_floor))
+    return bool(requested_tokens) and requested_tokens.issubset(authority_tokens)
+
+
+def _authority_scope_prohibits(
+    *,
+    prohibited_scope: str,
+    requested_scope: str,
+    title: str,
+    instruction: str,
+) -> bool:
+    requested = f"{requested_scope} {title} {instruction}".casefold()
+    requested_tokens = set(_scope_tokens(requested))
+    for item in re.split(r"[,;\n]+", prohibited_scope):
+        normalized = " ".join(item.casefold().split()).strip()
+        if len(normalized) >= 4 and normalized in requested:
+            return True
+        for token in _scope_tokens(normalized):
+            if token in requested_tokens:
+                return True
+            if any(
+                len(token) >= 5
+                and len(requested_token) >= 5
+                and (requested_token.startswith(token[:5]) or token.startswith(requested_token[:5]))
+                for requested_token in requested_tokens
+            ):
+                return True
+    return False
+
+
+def _validated_authority_contract(
+    body: dict[str, Any],
+    *,
+    target_floor: str,
+    title: str,
+    instruction: str,
+    execution_mode: str,
+) -> dict[str, str]:
+    values = {
+        "canonical_gate_id": _bounded(body.get("canonical_gate_id"), maximum=160, required=True),
+        "owner_decision_ref": _bounded(body.get("owner_decision_ref"), maximum=160, required=True),
+        "core_acceptance_ref": _bounded(body.get("core_acceptance_ref"), maximum=160, required=True),
+        "approval_or_hold_state": _bounded(
+            body.get("approval_or_hold_state"),
+            maximum=40,
+            required=True,
+        ).casefold(),
+        "authorised_scope": _bounded(body.get("authorised_scope"), maximum=1000, required=True),
+        "prohibited_scope": _bounded(body.get("prohibited_scope"), maximum=1000, required=True),
+        "requested_scope": _bounded(body.get("requested_scope") or target_floor, maximum=1000, required=True),
+    }
+    if values["approval_or_hold_state"] not in APPROVED_AUTHORITY_STATES:
+        raise HTTPException(status_code=403, detail="Owner authority is not approved")
+    if _authority_scope_prohibits(
+        prohibited_scope=values["prohibited_scope"],
+        requested_scope=values["requested_scope"],
+        title=title,
+        instruction=instruction,
+    ):
+        raise HTTPException(status_code=403, detail="Command falls within prohibited scope")
+    if not _authority_scope_allows(
+        authorised_scope=values["authorised_scope"],
+        requested_scope=values["requested_scope"],
+        target_floor=target_floor,
+        execution_mode=execution_mode,
+    ):
+        raise HTTPException(status_code=403, detail="Command is outside authorised scope")
+    return values
+
+
 def _escaped_like_literal(value: str) -> str:
     return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
 
@@ -675,6 +792,13 @@ def _create_command_task(
             "execution_mode": accepted["execution_mode"],
             "proof_required": True,
             "public_safe": True,
+            "canonical_gate_id": accepted["canonical_gate_id"],
+            "owner_decision_ref": accepted["owner_decision_ref"],
+            "core_acceptance_ref": accepted["core_acceptance_ref"],
+            "approval_or_hold_state": accepted["approval_or_hold_state"],
+            "authorised_scope": accepted["authorised_scope"],
+            "prohibited_scope": accepted["prohibited_scope"],
+            "requested_scope": accepted["requested_scope"],
             "artifact_ref": artifact_ref,
         },
         ensure_ascii=False,
@@ -718,6 +842,13 @@ def _create_command_job(
             "instruction": accepted["instruction"],
             "execution_mode": accepted["execution_mode"],
             "oversight_floor": "Achilles",
+            "canonical_gate_id": accepted["canonical_gate_id"],
+            "owner_decision_ref": accepted["owner_decision_ref"],
+            "core_acceptance_ref": accepted["core_acceptance_ref"],
+            "approval_or_hold_state": accepted["approval_or_hold_state"],
+            "authorised_scope": accepted["authorised_scope"],
+            "prohibited_scope": accepted["prohibited_scope"],
+            "requested_scope": accepted["requested_scope"],
         },
         ensure_ascii=False,
     )
@@ -1232,6 +1363,13 @@ def create_app(root: Path | str) -> FastAPI:
             raise HTTPException(status_code=400, detail="Achilles oversight is required")
         if body.get("proof_required") is not True or body.get("public_safe") is not True:
             raise HTTPException(status_code=400, detail="Proof and public-safe gates are required")
+        authority_contract = _validated_authority_contract(
+            body,
+            target_floor=target_floor,
+            title=title,
+            instruction=instruction,
+            execution_mode=execution_mode,
+        )
 
         accepted = {
             "schema_version": COMMAND_SCHEMA,
@@ -1247,6 +1385,7 @@ def create_app(root: Path | str) -> FastAPI:
             "state": "review" if execution_mode == "review" else "queued",
             "proof_required": True,
             "public_safe": True,
+            **authority_contract,
         }
         canonical_payload_sha256 = _command_payload_sha256(accepted)
         accepted["canonical_payload_sha256"] = canonical_payload_sha256

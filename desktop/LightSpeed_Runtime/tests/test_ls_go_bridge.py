@@ -107,6 +107,13 @@ def command_payload(**overrides):
         "execution_mode": "review",
         "proof_required": True,
         "public_safe": True,
+        "canonical_gate_id": "GO-GATE-TEST-001",
+        "owner_decision_ref": "OWNER-TEST-001",
+        "core_acceptance_ref": "CORE-TEST-001",
+        "approval_or_hold_state": "approve",
+        "authorised_scope": "Smith local review queue",
+        "prohibited_scope": "deployment, publication, destructive filesystem changes",
+        "requested_scope": "Smith local review queue",
     }
     payload.update(overrides)
     return payload
@@ -785,6 +792,72 @@ def test_bridge_rejects_command_without_achilles_oversight(tmp_path, monkeypatch
 
     assert response.status_code == 400
     assert "Achilles oversight" in response.json()["detail"]
+
+
+def test_bridge_rejects_command_without_canonical_authority_contract(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    payload = command_payload()
+    for field in ls_go_bridge.AUTHORITY_REQUIRED_FIELDS:
+        payload.pop(field, None)
+
+    response = client.post("/api/v1/ls-go/commands", json=payload)
+
+    queue_path = (
+        tmp_path
+        / "Z Axis"
+        / "Z+2_Neo"
+        / "data"
+        / "actions"
+        / "ls_go_command_queue.jsonl"
+    )
+    assert response.status_code == 400
+    assert "Required command field" in response.json()["detail"]
+    assert not queue_path.exists()
+
+
+def test_bridge_rejects_command_on_hold_authority_contract(tmp_path, monkeypatch):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(approval_or_hold_state="hold"),
+    )
+
+    assert response.status_code == 403
+    assert "not approved" in response.json()["detail"]
+
+
+def test_bridge_rejects_command_outside_authorised_scope(tmp_path, monkeypatch):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(
+            authorised_scope="Oracle local review queue",
+            requested_scope="Smith local review queue",
+        ),
+    )
+
+    assert response.status_code == 403
+    assert "outside authorised scope" in response.json()["detail"]
+
+
+def test_bridge_rejects_command_inside_prohibited_scope(tmp_path, monkeypatch):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(instruction="Publish the reviewed receipt."),
+    )
+
+    assert response.status_code == 403
+    assert "prohibited scope" in response.json()["detail"]
 
 
 def test_bridge_stages_project_artifact_and_accepts_owner_review(tmp_path, monkeypatch):
