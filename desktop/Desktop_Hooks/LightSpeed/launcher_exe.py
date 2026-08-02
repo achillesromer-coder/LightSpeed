@@ -16,15 +16,21 @@ def resolve_canonical_root(
         candidate = Path(configured).absolute()
         if (candidate / "App" / "__main__.py").is_file():
             return candidate
+    is_frozen = bool(getattr(sys, "frozen", False)) if frozen is None else frozen
+    if is_frozen:
+        executable_root = Path(executable or sys.executable).resolve().parent
+        if (
+            executable_root.name.casefold() == "app"
+            and executable_root.parent.name.casefold() == "lightspeed"
+        ):
+            return executable_root.parent
+        return executable_root
     invoked = Path(__file__).absolute()
     if (
         invoked.parent.name.casefold() == "app"
         and invoked.parent.parent.name.casefold() == "lightspeed"
     ):
         return invoked.parent.parent
-    is_frozen = bool(getattr(sys, "frozen", False)) if frozen is None else frozen
-    if is_frozen:
-        return Path(executable or sys.executable).resolve().parent
     return Path(__file__).resolve().parents[2]
 
 

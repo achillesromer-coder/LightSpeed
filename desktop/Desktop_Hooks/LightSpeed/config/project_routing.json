@@ -133,8 +133,8 @@
     "max_parallel_hashes": 1,
     "max_project_scan_files": 200000,
     "volume_paths": [
-      "C:\\LightSpeed_Consolidated",
-      "D:\\LightSpeed_Consolidated"
+      "D:\\LightSpeed",
+      "C:\\"
     ],
     "warning_disk_percent": 75,
     "critical_disk_percent": 90,

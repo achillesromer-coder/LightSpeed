@@ -144,28 +144,18 @@ def configure_shell(root: Path) -> Path:
 def healthy_pipeline(monkeypatch) -> None:
     monkeypatch.setattr(
         ProjectPipeline,
-        "essential_health",
-        lambda self, registry: {
-            "status": "pass",
-            "services": {"database": True, "event_bus": True, "storage": True},
-            "details": {"drive_writeback": {"path": str(self.runtime_exports), "mode": "test"}},
-            "errors": [],
-        },
-    )
-    monkeypatch.setattr(
-        ProjectPipeline,
         "latest_snapshot",
         lambda self: {
-            **self.scan_projects(),
-            "health": self.essential_health(self.scan_projects()),
-            "cleanup_summary": {
-                "candidate_count": 0,
-                "automatic_deletion": False,
+            "health": {
+                "status": "pass",
+                "services": {"database": True, "event_bus": True, "storage": True},
+                "details": {"drive_writeback": {"path": str(self.runtime_exports), "mode": "test"}},
+                "errors": [],
             },
+            "summary": {},
+            "cleanup_summary": {"candidate_count": 0, "automatic_deletion": False},
         },
     )
-
-
 def write_supervisor_lock(root: Path, *, heartbeat: datetime | None = None, pid: int | None = None) -> None:
     runtime_exports = root / "Z Axis" / "Z-4_Merovingian" / "data" / "runtime_exports"
     runtime_exports.mkdir(parents=True, exist_ok=True)

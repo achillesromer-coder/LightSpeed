@@ -1,7 +1,6 @@
 # Smith Floor
 
 **Z-Level:** -3
-**Version:** 5.1.2
 **Status:** Active smart floor
 
 Smith owns job routing, bounded tool execution, background work, resumable workflow

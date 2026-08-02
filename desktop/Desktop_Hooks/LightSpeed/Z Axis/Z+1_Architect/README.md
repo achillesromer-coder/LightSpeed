@@ -1,7 +1,6 @@
 # Architect Floor
 
 **Z-Level:** +1
-**Version:** 5.1.2
 **Status:** Operational
 
 Architect owns governance, approvals, project planning, publish bundles, Romer reference paths, and finalization queue state.

@@ -1,7 +1,6 @@
 # Morpheus Floor
 
 **Z-Level:** -1
-**Version:** 5.1.2
 **Status:** Active smart floor
 
 Morpheus owns review, proofing, file editing, knowledge previews, and code-analysis

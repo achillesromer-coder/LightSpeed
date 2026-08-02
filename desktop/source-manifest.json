@@ -46,9 +46,9 @@
       "sha256": "3f547bf5102650e6214047d0a5f0d1bffa50ac82db271cc13f4d90fc95c8d4ee"
     },
     {
-      "bytes": 4144,
+      "bytes": 4108,
       "path": "Desktop_Hooks/LightSpeed/config/project_routing.json",
-      "sha256": "98d1d6085fa374687dda0620623ec8f9bd664ac5ff7ec426e371a2739f731b87"
+      "sha256": "1b1018590dc8824187bdc56348a3d0da8011a0c173d883a45195760629d67c39"
     },
     {
       "bytes": 1210,
@@ -211,9 +211,9 @@
       "sha256": "c8b940d9a78a7303d7c08dd7169dd5b058f42c9ef846be098a691a39859e8b0d"
     },
     {
-      "bytes": 3231,
+      "bytes": 3463,
       "path": "Desktop_Hooks/LightSpeed/launcher_exe.py",
-      "sha256": "c674c3f46bc8f8cc23db0ab89aa3dfb90ea7c7e9d91ad3c7d9bf76af6da78896"
+      "sha256": "a4ea6ef7ae61bf3fa659b455649dc926d8067e5803ce37cfcd0773116a6567b4"
     },
     {
       "bytes": 377678,
@@ -261,9 +261,9 @@
       "sha256": "91c6e4f5a81bfe7553d162a90875b8dc21c63fbc2e6cdec876c06b73ea8e4ffc"
     },
     {
-      "bytes": 5609,
+      "bytes": 2848,
       "path": "Desktop_Hooks/LightSpeed/tests/test_config_contracts.py",
-      "sha256": "52ffacadfc4f968ada12aa2ea681d1628731530c300944bce2cb5cdebfe2ac06"
+      "sha256": "5fdf807be9feb48ff54fbec493e8cffe74f83b597cbf63629dd0a3a0a8780a41"
     },
     {
       "bytes": 3485,
@@ -536,9 +536,9 @@
       "sha256": "afefc468d7652eba010a12de8fe525bc87bdec41a5aa31ffcd97fb6356a8b287"
     },
     {
-      "bytes": 775,
+      "bytes": 756,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/README.md",
-      "sha256": "ad547934fb864f26d9f66caadb04529c9a639e574b6fea19e07a82b0d027a515"
+      "sha256": "28fbb87910c774c2a454439c66ba359f671749f5a08589e617287d9898ee9cfe"
     },
     {
       "bytes": 372,
@@ -656,9 +656,9 @@
       "sha256": "36ea27d7938831cb2add1b66620c1646613dc7c3792acc62ffe676c3dcdd873e"
     },
     {
-      "bytes": 775,
+      "bytes": 756,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/README.md",
-      "sha256": "ae7a430c4dbaf3c1b5c7526be0b2942061448b6141028f2a35de0e7d2567b9f1"
+      "sha256": "4a67e9eb9af050fed4b5f9569d8639b06f40f7ee35f79f199a065286d52aed84"
     },
     {
       "bytes": 354,
@@ -791,9 +791,9 @@
       "sha256": "718db9698b5017ae315ffbea4ad84126c84ead4d32286b1e287df3cafbb6e44e"
     },
     {
-      "bytes": 854,
+      "bytes": 835,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/README.md",
-      "sha256": "bfcd6c72352b1b18f6c8e9e800e63e33b17d0dba5f29eb6ee8cd1a4bd73c8d23"
+      "sha256": "406c7855852ef1b9d20171dc071475488abfd2a03d59387ec1700d0994380143"
     },
     {
       "bytes": 250,
@@ -1211,9 +1211,9 @@
       "sha256": "297b5f24e8ebc5faf2777c18d4c3241b7a5ae6779ef503fd6d0376d1e9bb85d9"
     },
     {
-      "bytes": 1297,
+      "bytes": 1278,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-1_Morpheus/README.md",
-      "sha256": "8a3f53ff1580bf63200a25ebf3eb7853207056c18c21c04045fa367496ea3731"
+      "sha256": "db8084310204e967c5fab4b316b1184cf4a671439fcc622943b2deeda848d42b"
     },
     {
       "bytes": 370,
@@ -1296,9 +1296,9 @@
       "sha256": "da54267342223a11045466c599777b5f6bfc7e596ac96d552f5d4d88e1172df8"
     },
     {
-      "bytes": 1559,
+      "bytes": 1540,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-2_Oracle/README.md",
-      "sha256": "407a3fc295c22ca8f5a018ac29568df97ebcc49418a8695f7a8ab9c45e7eca2c"
+      "sha256": "24c572eaeba5dee15deb326826abd511b33cc4600aa951b569536965d45d3cf4"
     },
     {
       "bytes": 364,
@@ -1376,9 +1376,9 @@
       "sha256": "e902be7f8b84a258bbd9f4e65de36d966fd81c6e8ac5b435cb2a3ff83ad93cbb"
     },
     {
-      "bytes": 1323,
+      "bytes": 1304,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/README.md",
-      "sha256": "0fc5453da815b3c450a5dddcd24793df7616f45e7615169e955c76ff9382ae0f"
+      "sha256": "836ad905b9fda3472d5afc5e4bb8edd19f8b88c0760cd1d9040e2edfccd46980"
     },
     {
       "bytes": 3537,
@@ -2616,9 +2616,9 @@
       "sha256": "a89f555afdfe83735f4ede8829c9814ab28764e78743d6c3163facb42ae08f49"
     },
     {
-      "bytes": 1489,
+      "bytes": 1470,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/README.md",
-      "sha256": "a4efbd4f2e3583424daf4d62a4fbbba1ac0f4831d01a79b9ecc0dafb61187610"
+      "sha256": "98dba09b308e4bf28e535d5f1121a401f8324619fd3c06c4fa8b8885304bae1a"
     },
     {
       "bytes": 2099,
@@ -3001,9 +3001,9 @@
       "sha256": "1b6c75e933fcbbd2a0640131198e1c1d37a4af7ed322533d513a71f1e4a744b7"
     },
     {
-      "bytes": 1504,
+      "bytes": 1563,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/README.md",
-      "sha256": "2fcdd366013b4e8cae12366f21f373b96fb2f319cc3f45f75a05c396459dea6a"
+      "sha256": "146f4852740cbff296c0a6a9e6e8cce87728b977a7e0dc491cae4643710022f2"
     },
     {
       "bytes": 269,

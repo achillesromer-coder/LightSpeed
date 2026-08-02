@@ -1,7 +1,6 @@
 # Trinity Floor
 
 **Z-Level:** +3
-**Version:** 5.1.2
 **Status:** Operational
 
 Trinity owns the operator portal, setup and settings surfaces, UI polish contracts, and the glass/bento interaction model.

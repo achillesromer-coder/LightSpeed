@@ -1,7 +1,6 @@
 # TheConstruct Floor
 
 **Z-Level:** 0
-**Version:** 5.1.2
 **Status:** Active smart floor
 
 TheConstruct owns LightSpeed holospace, scenario labs, scientific calculators,
@@ -13,7 +12,7 @@ folder holds the owned components, libraries, and generated lab state.
 
 - `components/`: holospace dashboards, 3D visualization, and project workspace panels.
 - `data/labs/`: scenario-lab runs, knowns promoted into simulation context, and simulation presets.
-- `physics_calculators.py`: active Raphael-style physics calculator library used by the Construct UI and Trinity context actions.
+- `physics_calculators.py`: retained calculator source. Its Raphael/N3/RFS-EMFF-adjacent paths remain disabled unless an empirical evidence class, bounded test, and owner gate explicitly authorise execution.
 - `dimensions_library.py`: physical-dimension and unit reference library.
 - `tools/`: floor-local dependency and component-linking utilities kept for bounded Construct operations.
 

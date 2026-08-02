@@ -1,7 +1,6 @@
 # Merovingian Floor
 
 **Z-Level:** -4
-**Version:** 5.1.2
 **Status:** Active smart floor
 
 Merovingian owns core services, databases, storage, logs, compact activity tables,

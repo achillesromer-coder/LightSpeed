@@ -1,7 +1,6 @@
 # Neo Floor
 
 **Z-Level:** +2
-**Version:** 5.1.2
 **Status:** Operational
 
 Neo owns the Achilles/Cognigrex operator console, AI routing, proofed-knowns action proposals, and approval-gated execution requests.
