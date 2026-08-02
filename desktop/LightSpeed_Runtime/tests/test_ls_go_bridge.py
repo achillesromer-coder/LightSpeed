@@ -57,7 +57,7 @@ def test_neo_operator_approval_forwards_authority_contract() -> None:
     assert observed["kwargs"]["authority_contract"] == authority
 
 
-def test_half_speed_host_profile_bounds_background_work() -> None:
+def test_quarter_speed_host_profile_bounds_background_work() -> None:
     policy_path = (
         RUNTIME_ROOT.parent
         / "Desktop_Hooks"
@@ -67,7 +67,7 @@ def test_half_speed_host_profile_bounds_background_work() -> None:
     )
     limits = json.loads(policy_path.read_text(encoding="utf-8"))["runtime_limits"]
 
-    assert limits["cognigrex_speed_percent"] == 50
+    assert limits["cognigrex_speed_percent"] == 25
     assert limits["max_background_queue_workers"] == 1
     assert limits["max_concurrent_ollama_jobs"] == 1
     assert limits["max_floor_boot_parallelism"] == 2

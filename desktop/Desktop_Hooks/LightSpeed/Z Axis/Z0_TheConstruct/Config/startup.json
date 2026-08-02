@@ -39,8 +39,8 @@
     "dependencies"
   ],
   "execution_policy": {
-    "profile": "cognigrex_half_speed",
-    "speed_percent": 50,
+    "profile": "cognigrex_quarter_speed",
+    "speed_percent": 25,
     "default_mode": "thin_preview_only",
     "manual_heavy_auto_start": false,
     "max_concurrent_heavy_jobs": 1,

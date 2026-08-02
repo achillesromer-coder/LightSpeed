@@ -31,10 +31,10 @@ def test_operator_namespace_and_model_storage_are_explicit() -> None:
     assert storage["ollama_model_root"] == "D:\\LightSpeed\\Models"
 
 
-def test_half_speed_profile_preserves_host_headroom() -> None:
+def test_quarter_speed_profile_preserves_host_headroom() -> None:
     limits = _load_config("host_runtime_policy.json")["runtime_limits"]
-    assert limits["active_operating_profile"] == "cognigrex_half_speed"
-    assert limits["cognigrex_speed_percent"] == 50
+    assert limits["active_operating_profile"] == "cognigrex_quarter_speed"
+    assert limits["cognigrex_speed_percent"] == 25
     assert limits["max_background_queue_workers"] == 1
     assert limits["max_concurrent_ollama_jobs"] == 1
     assert limits["max_active_heavy_floors"] == 1
@@ -86,8 +86,8 @@ def test_construct_defaults_to_thin_preview_and_holds_heavy_execution() -> None:
 
     construct_startup = construct["startup"]
     assert construct_startup["auto_launch"] is False
-    assert construct_startup["execution_profile"] == "cognigrex_half_speed"
-    assert construct_startup["speed_percent"] == 50
+    assert construct_startup["execution_profile"] == "cognigrex_quarter_speed"
+    assert construct_startup["speed_percent"] == 25
     assert construct_startup["thin_preview_default"] is True
     assert construct_startup["max_concurrent_heavy_jobs"] == 1
     assert construct_startup["heavy_services_auto_launch"] is False
@@ -96,8 +96,8 @@ def test_construct_defaults_to_thin_preview_and_holds_heavy_execution() -> None:
     assert startup["sequence"] == ["database", "logger", "storage", "event_bus"]
     assert startup["parallel_groups"] == [["database", "event_bus", "logger", "storage"]]
     assert startup["execution_policy"] == {
-        "profile": "cognigrex_half_speed",
-        "speed_percent": 50,
+        "profile": "cognigrex_quarter_speed",
+        "speed_percent": 25,
         "default_mode": "thin_preview_only",
         "manual_heavy_auto_start": False,
         "max_concurrent_heavy_jobs": 1,
