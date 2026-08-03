@@ -57,6 +57,7 @@ jobs:
 
       - name: Run geometry, evidence and audit tests
         run: |
+          set -o pipefail
           python -m unittest discover -v \
             -s "$LUKE_DIR" \
             -p "test_luke_ii*.py" \
@@ -64,6 +65,7 @@ jobs:
 
       - name: Regenerate deterministic geometry outputs
         run: |
+          set -o pipefail
           mkdir -p "$RUNNER_TEMP/luke-ii-output"
           python "$LUKE_DIR/luke_ii_parametric.py" \
             --parameters "$LUKE_DIR/luke_ii_parameters.json" \
@@ -72,6 +74,7 @@ jobs:
 
       - name: Generate dimensional engineering-review register
         run: |
+          set -o pipefail
           mkdir -p "$RUNNER_TEMP/luke-ii-audit"
           python "$LUKE_DIR/luke_ii_dimensional_audit.py" \
             --parameters "$LUKE_DIR/luke_ii_parameters.json" \
