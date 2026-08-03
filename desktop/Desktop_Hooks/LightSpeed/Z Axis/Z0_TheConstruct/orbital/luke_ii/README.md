@@ -30,18 +30,36 @@ python luke_ii_dimensional_audit.py \
   --out-dir ./audit
 ```
 
-Expected deterministic outputs:
+## Acceptance invariants
 
-| Output | SHA-256 |
-|---|---|
-| `luke_ii_assembly.glb` | `3238db7ebf2148786d8060b751825b218eb6b04c44a57adb14f617d40a2fa182` |
-| `luke_ii_reference_1to100.stl` | `8f1dbbc530e8e3bba67f74b48cf12eff545128b5d19192d905e2f10e00927861` |
-| `luke_ii_verification.json` | `238f3740aed070cf17653fd2da6f4fc29bfc177c2afe6b5d27a3e3e6fd7aad25` |
-| `luke_ii_dimensional_audit.csv` | `4d7d4c743b4c24acc2c7c5e7e47e5b0c6d753209bec396011a12fbd02cd65825` |
-| `luke_ii_dimensional_audit_summary.json` | `1c9d870ba38952a18afb5f21791c84bff0aa73562e7d23aa03ad8189595d401a` |
+| Invariant | SHA-256 / value | Gate |
+|---|---|---|
+| Canonical parameter bytes | `505a077cb1461718d3078eb17a62c51ca1c0d1d9f4a15ccf11bc11e91ec49b1f` | Exact |
+| Semantic named geometry | `18b61fb32815cb3237fb62e49d8f46e91e7f57468a1749cbc8bd5ecd9ef0295f` | Exact at 1×10⁻⁸ m quantisation |
+| Portable 1:100 STL | `8f1dbbc530e8e3bba67f74b48cf12eff545128b5d19192d905e2f10e00927861` | Exact |
+| Dimensional-audit CSV | `4d7d4c743b4c24acc2c7c5e7e47e5b0c6d753209bec396011a12fbd02cd65825` | Exact |
+| Named nodes | `96` | Exact |
+| Watertight / winding-consistent nodes | `96 / 96` | Exact |
+| Test suite | `10 / 10` | Required |
+
+### GLB hash scope
+
+The 1:1 GLB is required to contain the accepted named semantic geometry, but its
+raw container SHA is a build receipt rather than a cross-platform acceptance
+invariant. The controlled package build produced
+`3238db7ebf2148786d8060b751825b218eb6b04c44a57adb14f617d40a2fa182`;
+the pinned clean Linux runner produced
+`c87030bd5329dc7b6b912b877dccdff697de83836156fd747b949b07ae03e073`.
+Both contained 96 accepted nodes and the same portable STL/audit evidence.
+Exporter ordering or metadata must not be mistaken for a geometry change.
+
+`luke_ii_geometry_fingerprint.py` removes that ambiguity by hashing sorted named,
+oriented triangles after fixed-point quantisation. Cyclic face-index changes do
+not alter the fingerprint; reversed winding, changed topology, changed node names
+or changed coordinates do.
 
 Generated binary and audit outputs remain workflow artifacts or controlled package
-assets; they are not committed as repository bloat or treated as approval records.
+assets. They are not committed as repository bloat or treated as approval records.
 
 ## Dimensional review register
 
@@ -75,7 +93,7 @@ validated by this model.
 
 ## Review sequence
 
-1. Run the unit, deterministic-hash and dimensional-audit checks.
+1. Pass the unit, portable-hash, semantic-fingerprint and dimensional-audit checks.
 2. Inspect the named 1:1 GLB assembly in Blender or equivalent CAD software.
 3. Record dimensional findings against the audit node and review gate.
 4. Replace provisional values only with source-backed engineering review.
