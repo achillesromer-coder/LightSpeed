@@ -1,42 +1,77 @@
 {
-  "schema_version": "luke-ii-execution-receipt-v1",
-  "recorded_at_utc": "2026-08-03T22:05:00Z",
+  "schema_version": "luke-ii-execution-receipt-v1.2",
+  "recorded_at_utc": "2026-08-03T23:49:00Z",
   "status": "PASS_REFERENCE_GEOMETRY",
   "canonical_target": "Luke II within the existing Luke / Luke II / Apostle Twin",
   "source_branch": "execution/luke-ii-parametric-reference-2026-08-04",
   "source_baseline": "86f028d9fac1a2fd6320ce9a1a4de58b3e5f8b1c",
+  "canonical_source": {
+    "parameters_file": "luke_ii_parameters.json",
+    "parameters_sha256": "505a077cb1461718d3078eb17a62c51ca1c0d1d9f4a15ccf11bc11e91ec49b1f",
+    "dependency_file": "requirements.txt",
+    "dependency_state": "PINNED_CLEAN_RUNNER_REPRODUCIBILITY"
+  },
   "generated_artifacts": {
     "glb": {
       "file": "luke_ii_assembly.glb",
-      "sha256": "3238db7ebf2148786d8060b751825b218eb6b04c44a57adb14f617d40a2fa182",
+      "controlled_package_sha256": "3238db7ebf2148786d8060b751825b218eb6b04c44a57adb14f617d40a2fa182",
+      "known_clean_runner_sha256": "c87030bd5329dc7b6b912b877dccdff697de83836156fd747b949b07ae03e073",
       "bytes": 543788,
-      "units": "metres"
+      "units": "metres",
+      "hash_scope": "BUILD_RECEIPT_ONLY_NOT_CROSS_PLATFORM_ACCEPTANCE_GATE",
+      "acceptance_invariant": "geometry_verification.semantic_geometry_sha256"
     },
     "stl": {
       "file": "luke_ii_reference_1to100.stl",
       "sha256": "8f1dbbc530e8e3bba67f74b48cf12eff545128b5d19192d905e2f10e00927861",
       "bytes": 3276884,
       "units": "millimetres",
-      "scale": "1:100"
+      "scale": "1:100",
+      "hash_scope": "PORTABLE_EXACT_ACCEPTANCE_GATE"
     },
     "interactive_html": {
       "file": "luke_ii_interactive.html",
-      "sha256": "9402512df488ecbd6df258810b9d00554dd5cecf6f88bd3b02fca230daee7337",
-      "bytes": 735321
+      "controlled_package_sha256": "9402512df488ecbd6df258810b9d00554dd5cecf6f88bd3b02fca230daee7337",
+      "bytes": 735321,
+      "hash_scope": "CONTROLLED_PACKAGE_BUILD_RECEIPT"
     }
   },
   "geometry_verification": {
     "named_nodes": 96,
     "individual_nodes_watertight": 96,
     "individual_nodes_winding_consistent": 96,
+    "semantic_geometry_sha256": "18b61fb32815cb3237fb62e49d8f46e91e7f57468a1749cbc8bd5ecd9ef0295f",
+    "semantic_geometry_schema": "luke-ii-semantic-geometry-v1",
+    "semantic_geometry_quantization_m": 1e-08,
     "print_shell_watertight": true,
     "print_shell_winding_consistent": true,
     "print_bounds_mm": [280.0, 280.0, 40.0],
     "unit_tests": {
-      "run": 5,
-      "passed": 5,
+      "run": 10,
+      "passed": 10,
       "failed": 0
     }
+  },
+  "dimensional_audit": {
+    "generator": "luke_ii_dimensional_audit.py",
+    "csv_file": "luke_ii_dimensional_audit.csv",
+    "csv_sha256": "4d7d4c743b4c24acc2c7c5e7e47e5b0c6d753209bec396011a12fbd02cd65825",
+    "node_count": 96,
+    "review_state": "OPEN_ENGINEERING_REVIEW",
+    "claim_gate_state": "UNCHANGED"
+  },
+  "ci_gate": {
+    "workflow": "Luke II Reference Validation",
+    "required": true,
+    "status": "PENDING_CURRENT_HEAD_VALIDATION",
+    "acceptance_basis": [
+      "canonical parameter bytes",
+      "portable STL bytes",
+      "dimensional-audit CSV bytes",
+      "semantic geometry fingerprint",
+      "mesh quality and node counts",
+      "claim-sensitive evidence classifications"
+    ]
   },
   "geometry": {
     "major_radius_m": 12.0,
@@ -57,12 +92,14 @@
     "action": "replace existing XLSX bytes in place",
     "status": "BLOCKED_APP_NOT_AUTHORIZED_TO_FILE",
     "parallel_workbook_uploaded": false,
+    "non_authoritative_package_file_id": "1VfsDVBLgNAAphEo8jOrF6F-RUNZIHt_9",
     "required_next_action": "Grant the connected Drive app write access to the existing file and retry in-place replacement."
   },
   "claim_gates": [
     "No flight or human-rating certification.",
     "No validated capture, controlled return or redistribution performance.",
     "No validated coil current, field strength, thermal, shielding, pressure-vessel or gas-handling claim.",
+    "Geometric bounds and volumes are reference observations, not validated structural or operational envelopes.",
     "Legacy million-ampere and five-tesla simulation values remain quarantined and are not used as active geometry capability inputs."
   ]
 }
