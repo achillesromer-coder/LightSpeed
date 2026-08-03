@@ -181,7 +181,7 @@ jobs:
           print(json.dumps(result, indent=2))
           PY
 
-      - name: Upload deterministic validation evidence
+      - name: Upload deterministic validation evidence and source snapshot
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -194,5 +194,15 @@ jobs:
             ${{ runner.temp }}/luke-ii-output/luke_ii_verification.json
             ${{ runner.temp }}/luke-ii-audit/luke_ii_dimensional_audit.csv
             ${{ runner.temp }}/luke-ii-audit/luke_ii_dimensional_audit_summary.json
+            ${{ env.LUKE_DIR }}/README.md
+            ${{ env.LUKE_DIR }}/requirements.txt
+            ${{ env.LUKE_DIR }}/luke_ii_parameters.json
+            ${{ env.LUKE_DIR }}/luke_ii_parametric.py
+            ${{ env.LUKE_DIR }}/luke_ii_geometry_fingerprint.py
+            ${{ env.LUKE_DIR }}/luke_ii_dimensional_audit.py
+            ${{ env.LUKE_DIR }}/luke_ii_execution_receipt.json
+            ${{ env.LUKE_DIR }}/test_luke_ii_parametric.py
+            ${{ env.LUKE_DIR }}/test_luke_ii_dimensional_audit.py
+            .github/workflows/luke-ii-reference-validation.yml
           if-no-files-found: warn
           retention-days: 30
