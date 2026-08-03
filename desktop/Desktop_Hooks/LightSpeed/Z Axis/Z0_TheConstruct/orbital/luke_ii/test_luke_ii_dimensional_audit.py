@@ -29,6 +29,12 @@ class LukeIIDimensionalAuditTests(unittest.TestCase):
         self.assertTrue(self.summary["all_nodes_watertight"])
         self.assertTrue(self.summary["all_nodes_winding_consistent"])
 
+    def test_semantic_geometry_fingerprint_is_canonical(self):
+        self.assertEqual(
+            self.summary["semantic_geometry_sha256"],
+            "18b61fb32815cb3237fb62e49d8f46e91e7f57468a1749cbc8bd5ecd9ef0295f",
+        )
+
     def test_claim_sensitive_nodes_remain_bounded(self):
         self.assertEqual(classify_node("FIELD_GUIDE_RING_1")[1], "ILLUSTRATIVE_ONLY_NOT_PHYSICAL_FIELD")
         self.assertEqual(classify_node("PAYLOAD_ACTIVE")[1], "ILLUSTRATIVE_SEQUENCE_ONLY")
