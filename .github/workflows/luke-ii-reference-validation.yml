@@ -48,12 +48,21 @@ jobs:
         run: python -m pip install --disable-pip-version-check -r "$LUKE_DIR/requirements.txt"
 
       - name: Compile executable source
-        run: python -m py_compile "$LUKE_DIR/luke_ii_parametric.py" "$LUKE_DIR/test_luke_ii_parametric.py"
+        run: |
+          python -m py_compile \
+            "$LUKE_DIR/luke_ii_parametric.py" \
+            "$LUKE_DIR/luke_ii_dimensional_audit.py" \
+            "$LUKE_DIR/test_luke_ii_parametric.py" \
+            "$LUKE_DIR/test_luke_ii_dimensional_audit.py"
 
-      - name: Run geometry and evidence tests
-        run: python "$LUKE_DIR/test_luke_ii_parametric.py" 2>&1 | tee "$RUNNER_TEMP/luke-ii-tests.log"
+      - name: Run geometry, evidence and audit tests
+        run: |
+          python -m unittest discover -v \
+            -s "$LUKE_DIR" \
+            -p "test_luke_ii*.py" \
+            2>&1 | tee "$RUNNER_TEMP/luke-ii-tests.log"
 
-      - name: Regenerate deterministic outputs
+      - name: Regenerate deterministic geometry outputs
         run: |
           mkdir -p "$RUNNER_TEMP/luke-ii-output"
           python "$LUKE_DIR/luke_ii_parametric.py" \
@@ -61,7 +70,15 @@ jobs:
             --out-dir "$RUNNER_TEMP/luke-ii-output" \
             | tee "$RUNNER_TEMP/luke-ii-generation.log"
 
-      - name: Verify hashes and evidence receipt
+      - name: Generate dimensional engineering-review register
+        run: |
+          mkdir -p "$RUNNER_TEMP/luke-ii-audit"
+          python "$LUKE_DIR/luke_ii_dimensional_audit.py" \
+            --parameters "$LUKE_DIR/luke_ii_parameters.json" \
+            --out-dir "$RUNNER_TEMP/luke-ii-audit" \
+            | tee "$RUNNER_TEMP/luke-ii-audit.log"
+
+      - name: Verify hashes and evidence receipts
         run: |
           python - <<'PY'
           from __future__ import annotations
@@ -73,8 +90,10 @@ jobs:
 
           source = Path(os.environ["LUKE_DIR"])
           output = Path(os.environ["RUNNER_TEMP"]) / "luke-ii-output"
+          audit_dir = Path(os.environ["RUNNER_TEMP"]) / "luke-ii-audit"
           receipt = json.loads((source / "luke_ii_execution_receipt.json").read_text(encoding="utf-8"))
           verification = json.loads((output / "luke_ii_verification.json").read_text(encoding="utf-8"))
+          audit = json.loads((audit_dir / "luke_ii_dimensional_audit_summary.json").read_text(encoding="utf-8"))
 
           expected = {
               "luke_ii_assembly.glb": receipt["generated_artifacts"]["glb"]["sha256"],
@@ -108,11 +127,32 @@ jobs:
           if verification["print_shell"]["watertight"] is not True:
               raise SystemExit("Printable reference shell is not watertight")
 
+          if audit["status"] != "PASS_DIMENSIONAL_REFERENCE_AUDIT":
+              raise SystemExit(f"Unexpected dimensional-audit status: {audit['status']}")
+          if audit["node_count"] != named_nodes:
+              raise SystemExit("Dimensional-audit node count does not match regenerated geometry")
+          if not audit["all_nodes_watertight"] or not audit["all_nodes_winding_consistent"]:
+              raise SystemExit("Dimensional-audit mesh-quality gate failed")
+          if audit["evidence_state_counts"].get("ILLUSTRATIVE_ONLY_NOT_PHYSICAL_FIELD") != 3:
+              raise SystemExit("Field-guide claim classification changed unexpectedly")
+          if audit["evidence_state_counts"].get("ILLUSTRATIVE_SEQUENCE_ONLY") != 4:
+              raise SystemExit("Payload-sequence claim classification changed unexpectedly")
+
+          audit_csv = audit_dir / "luke_ii_dimensional_audit.csv"
+          audit_summary = audit_dir / "luke_ii_dimensional_audit_summary.json"
+          audit_hashes = {
+              audit_csv.name: hashlib.sha256(audit_csv.read_bytes()).hexdigest(),
+              audit_summary.name: hashlib.sha256(audit_summary.read_bytes()).hexdigest(),
+          }
+          if audit_hashes[audit_csv.name] != audit["csv_sha256"]:
+              raise SystemExit("Dimensional-audit CSV hash does not match its summary receipt")
+
           result = {
-              "status": "PASS_DETERMINISTIC_REGENERATION",
+              "status": "PASS_DETERMINISTIC_REGENERATION_AND_DIMENSIONAL_AUDIT",
               "source_branch": os.environ.get("GITHUB_REF_NAME"),
               "commit": os.environ.get("GITHUB_SHA"),
               "observed_sha256": observed,
+              "audit_sha256": audit_hashes,
               "geometry_nodes": named_nodes,
               "claim_gate_state": "UNCHANGED",
           }
@@ -129,7 +169,10 @@ jobs:
           path: |
             ${{ runner.temp }}/luke-ii-tests.log
             ${{ runner.temp }}/luke-ii-generation.log
+            ${{ runner.temp }}/luke-ii-audit.log
             ${{ runner.temp }}/luke-ii-ci-receipt.json
             ${{ runner.temp }}/luke-ii-output/luke_ii_verification.json
+            ${{ runner.temp }}/luke-ii-audit/luke_ii_dimensional_audit.csv
+            ${{ runner.temp }}/luke-ii-audit/luke_ii_dimensional_audit_summary.json
           if-no-files-found: warn
           retention-days: 30
