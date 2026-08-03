@@ -32,7 +32,7 @@ Expected deterministic outputs:
 | Output | SHA-256 |
 |---|---|
 | `luke_ii_assembly.glb` | `3238db7ebf2148786d8060b751825b218eb6b04c44a57adb14f617d40a2fa182` |
-| `luke_ii_reference_1to100.stl` | `8f1dbbc530e8bba67f74b48cf12eff545128b5d19192d905e2f10e00927861` |
+| `luke_ii_reference_1to100.stl` | `8f1dbbc530e8e3bba67f74b48cf12eff545128b5d19192d905e2f10e00927861` |
 | `luke_ii_verification.json` | `238f3740aed070cf17653fd2da6f4fc29bfc177c2afe6b5d27a3e3e6fd7aad25` |
 
 Generated binary outputs remain workflow artifacts or controlled package assets;
