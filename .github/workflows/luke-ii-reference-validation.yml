@@ -1,0 +1,135 @@
+name: Luke II Reference Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/luke_ii/**"
+      - ".github/workflows/luke-ii-reference-validation.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/luke_ii/**"
+      - ".github/workflows/luke-ii-reference-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: luke-ii-reference-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  LUKE_DIR: desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/luke_ii
+
+jobs:
+  validate:
+    name: Regenerate and verify Luke II reference geometry
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: "${{ env.LUKE_DIR }}/requirements.txt"
+
+      - name: Install pinned geometry dependencies
+        run: python -m pip install --disable-pip-version-check -r "$LUKE_DIR/requirements.txt"
+
+      - name: Compile executable source
+        run: python -m py_compile "$LUKE_DIR/luke_ii_parametric.py" "$LUKE_DIR/test_luke_ii_parametric.py"
+
+      - name: Run geometry and evidence tests
+        run: python "$LUKE_DIR/test_luke_ii_parametric.py" 2>&1 | tee "$RUNNER_TEMP/luke-ii-tests.log"
+
+      - name: Regenerate deterministic outputs
+        run: |
+          mkdir -p "$RUNNER_TEMP/luke-ii-output"
+          python "$LUKE_DIR/luke_ii_parametric.py" \
+            --parameters "$LUKE_DIR/luke_ii_parameters.json" \
+            --out-dir "$RUNNER_TEMP/luke-ii-output" \
+            | tee "$RUNNER_TEMP/luke-ii-generation.log"
+
+      - name: Verify hashes and evidence receipt
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          source = Path(os.environ["LUKE_DIR"])
+          output = Path(os.environ["RUNNER_TEMP"]) / "luke-ii-output"
+          receipt = json.loads((source / "luke_ii_execution_receipt.json").read_text(encoding="utf-8"))
+          verification = json.loads((output / "luke_ii_verification.json").read_text(encoding="utf-8"))
+
+          expected = {
+              "luke_ii_assembly.glb": receipt["generated_artifacts"]["glb"]["sha256"],
+              "luke_ii_reference_1to100.stl": receipt["generated_artifacts"]["stl"]["sha256"],
+              "luke_ii_verification.json": "238f3740aed070cf17653fd2da6f4fc29bfc177c2afe6b5d27a3e3e6fd7aad25",
+          }
+
+          observed = {}
+          for name, expected_hash in expected.items():
+              path = output / name
+              if not path.is_file():
+                  raise SystemExit(f"Missing generated artifact: {name}")
+              digest = hashlib.sha256(path.read_bytes()).hexdigest()
+              observed[name] = digest
+              if digest != expected_hash:
+                  raise SystemExit(f"Hash mismatch for {name}: {digest} != {expected_hash}")
+
+          geometry = receipt["geometry_verification"]
+          if verification["status"] != "PASS_REFERENCE_GEOMETRY":
+              raise SystemExit(f"Unexpected verification status: {verification['status']}")
+          checks = verification["geometry_checks"]
+          named_nodes = verification["scene"]["geometry_nodes"]
+          watertight_nodes = sum(1 for check in checks.values() if check["watertight"])
+          winding_consistent_nodes = sum(1 for check in checks.values() if check["winding_consistent"])
+          if named_nodes != geometry["named_nodes"]:
+              raise SystemExit("Named geometry-node count does not match the execution receipt")
+          if watertight_nodes != geometry["individual_nodes_watertight"]:
+              raise SystemExit("Watertight-node count does not match the execution receipt")
+          if winding_consistent_nodes != geometry["individual_nodes_winding_consistent"]:
+              raise SystemExit("Winding-consistent-node count does not match the execution receipt")
+          if verification["print_shell"]["watertight"] is not True:
+              raise SystemExit("Printable reference shell is not watertight")
+
+          result = {
+              "status": "PASS_DETERMINISTIC_REGENERATION",
+              "source_branch": os.environ.get("GITHUB_REF_NAME"),
+              "commit": os.environ.get("GITHUB_SHA"),
+              "observed_sha256": observed,
+              "geometry_nodes": named_nodes,
+              "claim_gate_state": "UNCHANGED",
+          }
+          result_path = Path(os.environ["RUNNER_TEMP"]) / "luke-ii-ci-receipt.json"
+          result_path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+          print(json.dumps(result, indent=2))
+          PY
+
+      - name: Upload deterministic validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: luke-ii-reference-validation
+          path: |
+            ${{ runner.temp }}/luke-ii-tests.log
+            ${{ runner.temp }}/luke-ii-generation.log
+            ${{ runner.temp }}/luke-ii-ci-receipt.json
+            ${{ runner.temp }}/luke-ii-output/luke_ii_verification.json
+          if-no-files-found: warn
+          retention-days: 30
