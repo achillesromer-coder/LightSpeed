@@ -1,0 +1,151 @@
+{
+  "schema_version": "luke-ii-parametric-reference-v1",
+  "artifact_status": "SOURCE_RECONCILED_ENGINEERING_REFERENCE_NOT_FLIGHT_CERTIFIED",
+  "canonical_target": "Luke II orbital EMF distribution / telemetry / refinement node",
+  "generated_at_utc": "2026-08-03T21:50:57.627856+00:00",
+  "units": "SI unless export scale states otherwise",
+  "source_parameters": {
+    "major_radius_m": {
+      "value": 12.0,
+      "state": "LEGACY_SURROGATE_SOURCE",
+      "source": "LightSpeed/Z0_TheConstruct/orbital/luke_master_runs.py Toroid.major_R_m"
+    },
+    "body_minor_radius_m": {
+      "value": 2.0,
+      "state": "LEGACY_SURROGATE_SOURCE",
+      "source": "LightSpeed/Z0_TheConstruct/orbital/luke_master_runs.py Toroid.minor_a_m"
+    },
+    "field_sector_count": {
+      "value": 16,
+      "state": "LEGACY_SURROGATE_SOURCE",
+      "source": "LightSpeed/Z0_TheConstruct/orbital/luke_master_runs.py Toroid.sectors"
+    },
+    "payload_mass_range_kg": {
+      "value": [
+        500.0,
+        2500.0
+      ],
+      "state": "SOURCE_LABEL_INTERPRETED_AS_TONNES",
+      "source": "Canva Luke / II: 0.5-2.5T Deposit"
+    },
+    "payload_nominal_mass_kg": {
+      "value": 1500.0,
+      "state": "DERIVED_MIDPOINT",
+      "source": "midpoint of Canva 0.5-2.5 tonne range"
+    },
+    "payload_reference_radius_m": {
+      "value": 0.45,
+      "state": "LEGACY_SURROGATE_SOURCE",
+      "source": "LightSpeed luke_master_runs.py Deposit.radius_m"
+    }
+  },
+  "derived_geometry": {
+    "outer_diameter_m": 28.0,
+    "central_aperture_diameter_m": 20.0,
+    "axial_thickness_m": 4.0,
+    "centerline_circumference_m": 75.39822368615503,
+    "sector_arc_length_m": 4.71238898038469,
+    "structural_shell_thickness_m": {
+      "value": 0.25,
+      "state": "PROVISIONAL_REFERENCE",
+      "reason": "needed to create a printable and inspectable reference shell; not source validated"
+    }
+  },
+  "habitation": {
+    "crew": 3,
+    "iss_habitable_volume_m3": 388.0,
+    "iss_reference_crew": 7,
+    "iss_scaled_baseline_m3": 166.28571428571428,
+    "deep_space_study_volume_m3_for_4_crew": 268.0,
+    "deep_space_linear_3_crew_comparator_m3": 201.0,
+    "reserved_sector_count": 5,
+    "clear_minor_radius_m": 1.65,
+    "modelled_habitable_volume_m3": 201.5249848647433,
+    "state": "DERIVED_TARGET",
+    "warning": "ISS and NASA deep-space volumes are analogues, not a certified Luke II human-factors requirement."
+  },
+  "functional_zones": [
+    {
+      "id": "HAB-01",
+      "name": "Command / telemetry / field-control watchstation",
+      "state": "DERIVED_FUNCTIONAL_LAYOUT"
+    },
+    {
+      "id": "HAB-02",
+      "name": "Wardroom / galley / common work area",
+      "state": "DERIVED_FUNCTIONAL_LAYOUT"
+    },
+    {
+      "id": "HAB-03",
+      "name": "Three crew sleep stations",
+      "state": "DERIVED_FUNCTIONAL_LAYOUT"
+    },
+    {
+      "id": "HAB-04",
+      "name": "Hygiene / waste / exercise",
+      "state": "DERIVED_FUNCTIONAL_LAYOUT"
+    },
+    {
+      "id": "HAB-05",
+      "name": "ECLSS / medical safe-haven / stores",
+      "state": "DERIVED_FUNCTIONAL_LAYOUT"
+    },
+    {
+      "id": "SYS-01",
+      "name": "Sixteen segmented toroidal field modules",
+      "state": "SOURCE_ALIGNED_TOPOLOGY"
+    },
+    {
+      "id": "SYS-02",
+      "name": "Frequency-generator and resonator bays",
+      "state": "SOURCE_ALIGNED_TOPOLOGY"
+    },
+    {
+      "id": "SYS-03",
+      "name": "Battery / Free Flow capacitor pulse bays",
+      "state": "SOURCE_ALIGNED_TOPOLOGY"
+    },
+    {
+      "id": "SYS-04",
+      "name": "Field, current, voltage, thermal, EMI and vibration sensor network",
+      "state": "SOURCE_ALIGNED_TOPOLOGY"
+    },
+    {
+      "id": "SYS-05",
+      "name": "Xenon/argon damping chamber placeholders",
+      "state": "CONCEPTUAL_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "INT-01",
+      "name": "Two radial service/docking collars",
+      "state": "PROVISIONAL_INTERFACE"
+    },
+    {
+      "id": "INT-02",
+      "name": "Central contact-free payload transit aperture",
+      "state": "SOURCE_ALIGNED_TOPOLOGY"
+    }
+  ],
+  "operational_sequence": [
+    "INCOMING",
+    "SLOW_CORRECT",
+    "GLIDE_CONTACT_FREE",
+    "SEND_REDISTRIBUTE"
+  ],
+  "claim_gates": [
+    "No payload capture or controlled-return performance claim.",
+    "No orbital readiness or crew-safety certification claim.",
+    "No safe high-current, shielding, pressure-vessel or gas-handling claim.",
+    "All coil, field, thermal and human-rating values require measured evidence and independent engineering review."
+  ],
+  "legacy_simulation_quarantine": {
+    "turns": 2500,
+    "current_max_a": 1000000,
+    "field_cap_t": 5.0,
+    "state": "QUARANTINED_UNVERIFIED_NOT_USED_FOR_GEOMETRY_OR_CAPABILITY"
+  },
+  "exports": {
+    "reference_model_scale": "1:1 metres in GLB",
+    "print_model_scale": "1:100, coordinates in millimetres in STL"
+  }
+}
