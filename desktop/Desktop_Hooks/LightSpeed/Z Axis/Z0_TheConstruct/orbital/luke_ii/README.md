@@ -21,10 +21,13 @@ From this directory:
 
 ```bash
 python -m pip install -r requirements.txt
-python test_luke_ii_parametric.py
+python -m unittest discover -v -s . -p "test_luke_ii*.py"
 python luke_ii_parametric.py \
   --parameters luke_ii_parameters.json \
   --out-dir ./generated
+python luke_ii_dimensional_audit.py \
+  --parameters luke_ii_parameters.json \
+  --out-dir ./audit
 ```
 
 Expected deterministic outputs:
@@ -34,9 +37,26 @@ Expected deterministic outputs:
 | `luke_ii_assembly.glb` | `3238db7ebf2148786d8060b751825b218eb6b04c44a57adb14f617d40a2fa182` |
 | `luke_ii_reference_1to100.stl` | `8f1dbbc530e8e3bba67f74b48cf12eff545128b5d19192d905e2f10e00927861` |
 | `luke_ii_verification.json` | `238f3740aed070cf17653fd2da6f4fc29bfc177c2afe6b5d27a3e3e6fd7aad25` |
+| `luke_ii_dimensional_audit.csv` | `4d7d4c743b4c24acc2c7c5e7e47e5b0c6d753209bec396011a12fbd02cd65825` |
+| `luke_ii_dimensional_audit_summary.json` | `1c9d870ba38952a18afb5f21791c84bff0aa73562e7d23aa03ad8189595d401a` |
 
-Generated binary outputs remain workflow artifacts or controlled package assets;
-they are not committed as repository bloat.
+Generated binary and audit outputs remain workflow artifacts or controlled package
+assets; they are not committed as repository bloat or treated as approval records.
+
+## Dimensional review register
+
+`luke_ii_dimensional_audit.py` inventories all 96 named geometry nodes with:
+
+- component family and evidence state;
+- mandatory engineering-review gate;
+- minimum and maximum coordinates, extents and centroid in metres;
+- vertices, faces, signed geometric volume, watertight state and winding state;
+- an open engineering-review status for every node.
+
+The audit deliberately classifies field-guide nodes as illustrative rather than
+physical field evidence, payload nodes as sequence illustrations, docking collars
+as provisional interfaces and damping nodes as requiring specialist gas/pressure
+hazard review.
 
 ## Source-state discipline
 
@@ -55,9 +75,9 @@ validated by this model.
 
 ## Review sequence
 
-1. Run the unit and deterministic-hash checks.
+1. Run the unit, deterministic-hash and dimensional-audit checks.
 2. Inspect the named 1:1 GLB assembly in Blender or equivalent CAD software.
-3. Record dimensional findings against the parameter ID and component node.
+3. Record dimensional findings against the audit node and review gate.
 4. Replace provisional values only with source-backed engineering review.
 5. Synchronise the existing Drive workbook in place and verify its unchanged ID.
 6. Keep publication and merge gates closed until the evidence state is accepted.
