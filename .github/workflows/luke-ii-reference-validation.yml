@@ -51,6 +51,7 @@ jobs:
         run: |
           python -m py_compile \
             "$LUKE_DIR/luke_ii_parametric.py" \
+            "$LUKE_DIR/luke_ii_geometry_fingerprint.py" \
             "$LUKE_DIR/luke_ii_dimensional_audit.py" \
             "$LUKE_DIR/test_luke_ii_parametric.py" \
             "$LUKE_DIR/test_luke_ii_dimensional_audit.py"
@@ -81,7 +82,7 @@ jobs:
             --out-dir "$RUNNER_TEMP/luke-ii-audit" \
             | tee "$RUNNER_TEMP/luke-ii-audit.log"
 
-      - name: Verify hashes and evidence receipts
+      - name: Verify source, portable artifacts and semantic geometry
         run: |
           python - <<'PY'
           from __future__ import annotations
@@ -98,21 +99,40 @@ jobs:
           verification = json.loads((output / "luke_ii_verification.json").read_text(encoding="utf-8"))
           audit = json.loads((audit_dir / "luke_ii_dimensional_audit_summary.json").read_text(encoding="utf-8"))
 
-          expected = {
-              "luke_ii_assembly.glb": receipt["generated_artifacts"]["glb"]["sha256"],
-              "luke_ii_reference_1to100.stl": receipt["generated_artifacts"]["stl"]["sha256"],
-              "luke_ii_verification.json": "238f3740aed070cf17653fd2da6f4fc29bfc177c2afe6b5d27a3e3e6fd7aad25",
+          def sha256(path: Path) -> str:
+              if not path.is_file():
+                  raise SystemExit(f"Missing required artifact: {path.name}")
+              return hashlib.sha256(path.read_bytes()).hexdigest()
+
+          parameters_path = source / "luke_ii_parameters.json"
+          glb_path = output / "luke_ii_assembly.glb"
+          stl_path = output / "luke_ii_reference_1to100.stl"
+          verification_path = output / "luke_ii_verification.json"
+          audit_csv = audit_dir / "luke_ii_dimensional_audit.csv"
+          audit_summary = audit_dir / "luke_ii_dimensional_audit_summary.json"
+
+          expected_parameters = receipt["canonical_source"]["parameters_sha256"]
+          expected_stl = receipt["generated_artifacts"]["stl"]["sha256"]
+          expected_audit_csv = receipt["dimensional_audit"]["csv_sha256"]
+          expected_semantic = receipt["geometry_verification"]["semantic_geometry_sha256"]
+
+          observed = {
+              "parameters": sha256(parameters_path),
+              "assembly_glb_build_receipt": sha256(glb_path),
+              "print_shell_stl": sha256(stl_path),
+              "verification_build_receipt": sha256(verification_path),
+              "dimensional_audit_csv": sha256(audit_csv),
+              "dimensional_audit_summary": sha256(audit_summary),
           }
 
-          observed = {}
-          for name, expected_hash in expected.items():
-              path = output / name
-              if not path.is_file():
-                  raise SystemExit(f"Missing generated artifact: {name}")
-              digest = hashlib.sha256(path.read_bytes()).hexdigest()
-              observed[name] = digest
-              if digest != expected_hash:
-                  raise SystemExit(f"Hash mismatch for {name}: {digest} != {expected_hash}")
+          if observed["parameters"] != expected_parameters:
+              raise SystemExit("Canonical parameter bytes changed without receipt update")
+          if observed["print_shell_stl"] != expected_stl:
+              raise SystemExit("Portable STL hash does not match the execution receipt")
+          if observed["dimensional_audit_csv"] != expected_audit_csv:
+              raise SystemExit("Dimensional-audit CSV hash does not match the execution receipt")
+          if audit["semantic_geometry_sha256"] != expected_semantic:
+              raise SystemExit("Semantic geometry fingerprint does not match the execution receipt")
 
           geometry = receipt["geometry_verification"]
           if verification["status"] != "PASS_REFERENCE_GEOMETRY":
@@ -140,23 +160,20 @@ jobs:
               raise SystemExit("Field-guide claim classification changed unexpectedly")
           if audit["evidence_state_counts"].get("ILLUSTRATIVE_SEQUENCE_ONLY") != 4:
               raise SystemExit("Payload-sequence claim classification changed unexpectedly")
-
-          audit_csv = audit_dir / "luke_ii_dimensional_audit.csv"
-          audit_summary = audit_dir / "luke_ii_dimensional_audit_summary.json"
-          audit_hashes = {
-              audit_csv.name: hashlib.sha256(audit_csv.read_bytes()).hexdigest(),
-              audit_summary.name: hashlib.sha256(audit_summary.read_bytes()).hexdigest(),
-          }
-          if audit_hashes[audit_csv.name] != audit["csv_sha256"]:
-              raise SystemExit("Dimensional-audit CSV hash does not match its summary receipt")
+          if audit["csv_sha256"] != observed["dimensional_audit_csv"]:
+              raise SystemExit("Dimensional-audit CSV hash does not match its summary")
 
           result = {
-              "status": "PASS_DETERMINISTIC_REGENERATION_AND_DIMENSIONAL_AUDIT",
-              "source_branch": os.environ.get("GITHUB_REF_NAME"),
+              "schema_version": "luke-ii-ci-receipt-v1",
+              "status": "PASS_PORTABLE_AND_SEMANTIC_REGENERATION",
+              "source_branch": os.environ.get("GITHUB_HEAD_REF") or os.environ.get("GITHUB_REF_NAME"),
               "commit": os.environ.get("GITHUB_SHA"),
               "observed_sha256": observed,
-              "audit_sha256": audit_hashes,
+              "semantic_geometry_sha256": audit["semantic_geometry_sha256"],
+              "semantic_geometry_quantization_m": audit["semantic_geometry_quantization_m"],
               "geometry_nodes": named_nodes,
+              "raw_glb_hash_policy": "BUILD_RECEIPT_ONLY_NOT_CROSS_PLATFORM_ACCEPTANCE_GATE",
+              "raw_verification_hash_policy": "BUILD_RECEIPT_ONLY_INCLUDES_OBSERVED_GLB_HASH",
               "claim_gate_state": "UNCHANGED",
           }
           result_path = Path(os.environ["RUNNER_TEMP"]) / "luke-ii-ci-receipt.json"
