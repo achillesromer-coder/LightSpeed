@@ -1,0 +1,68 @@
+{
+  "schema_version": "luke-ii-execution-receipt-v1",
+  "recorded_at_utc": "2026-08-03T22:05:00Z",
+  "status": "PASS_REFERENCE_GEOMETRY",
+  "canonical_target": "Luke II within the existing Luke / Luke II / Apostle Twin",
+  "source_branch": "execution/luke-ii-parametric-reference-2026-08-04",
+  "source_baseline": "86f028d9fac1a2fd6320ce9a1a4de58b3e5f8b1c",
+  "generated_artifacts": {
+    "glb": {
+      "file": "luke_ii_assembly.glb",
+      "sha256": "3238db7ebf2148786d8060b751825b218eb6b04c44a57adb14f617d40a2fa182",
+      "bytes": 543788,
+      "units": "metres"
+    },
+    "stl": {
+      "file": "luke_ii_reference_1to100.stl",
+      "sha256": "8f1dbbc530e8e3bba67f74b48cf12eff545128b5d19192d905e2f10e00927861",
+      "bytes": 3276884,
+      "units": "millimetres",
+      "scale": "1:100"
+    },
+    "interactive_html": {
+      "file": "luke_ii_interactive.html",
+      "sha256": "9402512df488ecbd6df258810b9d00554dd5cecf6f88bd3b02fca230daee7337",
+      "bytes": 735321
+    }
+  },
+  "geometry_verification": {
+    "named_nodes": 96,
+    "individual_nodes_watertight": 96,
+    "individual_nodes_winding_consistent": 96,
+    "print_shell_watertight": true,
+    "print_shell_winding_consistent": true,
+    "print_bounds_mm": [280.0, 280.0, 40.0],
+    "unit_tests": {
+      "run": 5,
+      "passed": 5,
+      "failed": 0
+    }
+  },
+  "geometry": {
+    "major_radius_m": 12.0,
+    "body_minor_radius_m": 2.0,
+    "outer_diameter_m": 28.0,
+    "central_aperture_diameter_m": 20.0,
+    "field_sectors": 16
+  },
+  "habitation": {
+    "crew": 3,
+    "iss_scaled_baseline_m3": 166.28571428571428,
+    "deep_space_comparator_m3": 201.0,
+    "modelled_clear_volume_m3": 201.5249848647433,
+    "state": "DERIVED_REFERENCE_NOT_HUMAN_RATED"
+  },
+  "drive_canonical_update": {
+    "target_file_id": "1BGwPdfafqVKwh3AS5fwvkhIImBmfPdMU",
+    "action": "replace existing XLSX bytes in place",
+    "status": "BLOCKED_APP_NOT_AUTHORIZED_TO_FILE",
+    "parallel_workbook_uploaded": false,
+    "required_next_action": "Grant the connected Drive app write access to the existing file and retry in-place replacement."
+  },
+  "claim_gates": [
+    "No flight or human-rating certification.",
+    "No validated capture, controlled return or redistribution performance.",
+    "No validated coil current, field strength, thermal, shielding, pressure-vessel or gas-handling claim.",
+    "Legacy million-ampere and five-tesla simulation values remain quarantined and are not used as active geometry capability inputs."
+  ]
+}
