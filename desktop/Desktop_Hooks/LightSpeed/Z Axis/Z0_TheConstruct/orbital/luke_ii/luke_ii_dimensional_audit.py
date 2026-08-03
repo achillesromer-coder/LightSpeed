@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from luke_ii_parametric import build_scene
+from luke_ii_geometry_fingerprint import QUANTIZATION_METRES, semantic_geometry_fingerprint
 
 
 def sha256_file(path: Path) -> str:
@@ -103,11 +104,13 @@ def build_audit(parameters: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[
     evidence_counts = Counter(row["evidence_state"] for row in rows)
     gate_counts = Counter(row["review_gate"] for row in rows)
     summary = {
-        "schema_version": "luke-ii-dimensional-audit-v1",
+        "schema_version": "luke-ii-dimensional-audit-v1.1",
         "status": "PASS_DIMENSIONAL_REFERENCE_AUDIT",
         "source_state": parameters["artifact_status"],
         "units": "metres",
         "node_count": len(rows),
+        "semantic_geometry_sha256": semantic_geometry_fingerprint(scene),
+        "semantic_geometry_quantization_m": QUANTIZATION_METRES,
         "all_nodes_watertight": all(row["watertight"] for row in rows),
         "all_nodes_winding_consistent": all(row["winding_consistent"] for row in rows),
         "scene_bounds_m": [rounded(scene.bounds[0]), rounded(scene.bounds[1])],
@@ -154,6 +157,7 @@ def main() -> int:
     result = {
         "status": summary["status"],
         "node_count": summary["node_count"],
+        "semantic_geometry_sha256": summary["semantic_geometry_sha256"],
         "csv": {"path": csv_path.name, "sha256": sha256_file(csv_path)},
         "summary": {"path": json_path.name, "sha256": sha256_file(json_path)},
         "claim_gate_state": "UNCHANGED",
