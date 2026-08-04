@@ -1,6 +1,6 @@
 {
   "schema_version": "luke-ii-execution-receipt-v1.2",
-  "recorded_at_utc": "2026-08-03T23:55:00Z",
+  "recorded_at_utc": "2026-08-04T00:04:00Z",
   "status": "PASS_REFERENCE_GEOMETRY",
   "canonical_target": "Luke II within the existing Luke / Luke II / Apostle Twin",
   "source_branch": "execution/luke-ii-parametric-reference-2026-08-04",
@@ -47,9 +47,22 @@
     "print_shell_winding_consistent": true,
     "print_bounds_mm": [280.0, 280.0, 40.0],
     "unit_tests": {
-      "run": 10,
-      "passed": 10,
+      "run": 11,
+      "passed": 11,
       "failed": 0
+    },
+    "glb_roundtrip": {
+      "status": "PASS_GLB_ROUNDTRIP_REFERENCE",
+      "matched_nodes": 96,
+      "linear_tolerance_m": 2e-05,
+      "relative_measure_tolerance": 5e-06,
+      "maximum_observed_errors": {
+        "bounds_m": 4.602300638367751e-07,
+        "centroid_m": 2.5644281720360596e-07,
+        "extents_m": 8.406668428051489e-07,
+        "relative_area": 4.0642483999721336e-07,
+        "relative_volume": 3.2240568506344405e-06
+      }
     }
   },
   "dimensional_audit": {
@@ -63,16 +76,17 @@
   "ci_gate": {
     "workflow": "Luke II Reference Validation",
     "required": true,
-    "status": "PASS_PORTABLE_AND_SEMANTIC_REGENERATION",
-    "qualification_run_id": 30863800405,
-    "qualification_head_sha": "35ac6feab8a02c27967b894f5e4f853fcdcbf2f2",
-    "qualification_artifact_id": 8875333940,
-    "qualification_artifact_digest": "sha256:4a57341465297f320c8e96ac1f6e2ea26fc556249a9cf3695a72ff8d9f2c159f",
+    "status": "PASS_PORTABLE_SEMANTIC_AND_GLB_ROUNDTRIP_REGENERATION",
+    "qualification_run_id": 30864261388,
+    "qualification_head_sha": "ab9e82e541e98899deefcc273947d8c20850041f",
+    "qualification_artifact_id": 8875506399,
+    "qualification_artifact_digest": "sha256:da6a07e6bffb0b304db3fa1a7e6c5c9387150906aba8c4157e04097e16732db0",
     "acceptance_basis": [
       "canonical parameter bytes",
       "portable STL bytes",
       "dimensional-audit CSV bytes",
       "semantic geometry fingerprint",
+      "exported GLB roundtrip structural fidelity",
       "mesh quality and node counts",
       "claim-sensitive evidence classifications"
     ]
