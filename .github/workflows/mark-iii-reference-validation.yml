@@ -133,7 +133,7 @@ jobs:
               return hashlib.sha256(p.read_bytes()).hexdigest()
           expected={
             'parameters':'daec4cc655530ad46d509fc7815b1991971269cac6be84c02ff4ca503b05082e',
-            'requirements':'3a8d4ccebd5cde60bb12f3a0c9a1f478e45fd59865b60638643fd685c23c43d0',
+            'requirements':'244f51ebf93a745071d171f8fdf65b47ddbbcdaf7b59b73e77cdfc9c2e8bec92',
             'parametric':'4331d9d8e0318840a00bb86c9afce1124170bdb9c51c6feab6bb8517758482f3',
             'semantic':'8ff2f295d0bebdd9cfb45c1942bda6dfe8dfd6493d7d9861fb97bf91458c2303',
             'manifest':'9f95b1c5a6e552a626f50a9e2448f45a2cfb8642e65f92b904f0211fee64d813',
