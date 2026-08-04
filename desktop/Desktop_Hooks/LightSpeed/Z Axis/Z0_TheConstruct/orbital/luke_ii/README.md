@@ -40,7 +40,8 @@ python luke_ii_dimensional_audit.py \
 | Dimensional-audit CSV | `4d7d4c743b4c24acc2c7c5e7e47e5b0c6d753209bec396011a12fbd02cd65825` | Exact |
 | Named nodes | `96` | Exact |
 | Watertight / winding-consistent nodes | `96 / 96` | Exact |
-| Test suite | `10 / 10` | Required |
+| Test suite | `11 / 11` | Required |
+| Exported GLB roundtrip | `96 / 96` nodes matched | Exact topology/mesh state + bounded float32 measures |
 
 ### GLB hash scope
 
@@ -57,6 +58,11 @@ Exporter ordering or metadata must not be mistaken for a geometry change.
 oriented triangles after fixed-point quantisation. Cyclic face-index changes do
 not alter the fingerprint; reversed winding, changed topology, changed node names
 or changed coordinates do.
+
+`luke_ii_glb_roundtrip_audit.py` then reloads the actual exported GLB. It requires
+all 96 node identities, vertex/face counts, watertight and winding states to match
+exactly, while bounding float32 container deviations to 2×10⁻⁵ m linearly and
+5×10⁻⁶ for relative area/volume measures.
 
 Generated binary and audit outputs remain workflow artifacts or controlled package
 assets. They are not committed as repository bloat or treated as approval records.
@@ -93,7 +99,7 @@ validated by this model.
 
 ## Review sequence
 
-1. Pass the unit, portable-hash, semantic-fingerprint and dimensional-audit checks.
+1. Pass the unit, portable-hash, semantic-fingerprint, GLB roundtrip and dimensional-audit checks.
 2. Inspect the named 1:1 GLB assembly in Blender or equivalent CAD software.
 3. Record dimensional findings against the audit node and review gate.
 4. Replace provisional values only with source-backed engineering review.
