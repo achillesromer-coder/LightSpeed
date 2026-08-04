@@ -55,7 +55,7 @@ jobs:
           echo "$BUNDLE_SHA256  $bundle" | sha256sum -c -
           mkdir -p "$staging" "$MARK_DIR"
           unzip -q "$bundle" -d "$staging"
-          cp -f "$staging"/source/* "$MARK_DIR"/
+          cp -f "$staging"/* "$MARK_DIR"/
           rm -rf "$parts"
           echo "expanded=true" >> "$GITHUB_OUTPUT"
 
