@@ -1,0 +1,212 @@
+name: Mark III Reference Validation
+
+on:
+  pull_request:
+    branches:
+      - execution/luke-ii-parametric-reference-2026-08-04
+      - main
+    paths:
+      - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii/**"
+      - ".github/workflows/mark-iii-reference-validation.yml"
+  push:
+    branches:
+      - execution/mark-iii-serviceable-reference-2026-08-05
+      - main
+    paths:
+      - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii/**"
+      - ".github/workflows/mark-iii-reference-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mark-iii-reference-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MARK_DIR: desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii
+
+jobs:
+  validate:
+    name: Regenerate and verify Mark III serviceable reference
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: "${{ env.MARK_DIR }}/requirements.txt"
+
+      - name: Install pinned geometry dependencies
+        run: python -m pip install --disable-pip-version-check -r "$MARK_DIR/requirements.txt"
+
+      - name: Compile executable source
+        run: |
+          python -m py_compile \
+            "$MARK_DIR/mark_iii_parametric.py" \
+            "$MARK_DIR/mark_iii_geometry_fingerprint.py" \
+            "$MARK_DIR/mark_iii_manifest_fingerprint.py" \
+            "$MARK_DIR/mark_iii_dimensional_audit.py" \
+            "$MARK_DIR/mark_iii_serviceability_audit.py" \
+            "$MARK_DIR/mark_iii_glb_roundtrip_audit.py" \
+            "$MARK_DIR/mark_iii_interactive.py" \
+            "$MARK_DIR/test_mark_iii_parametric.py" \
+            "$MARK_DIR/test_mark_iii_audits.py" \
+            "$MARK_DIR/test_mark_iii_glb_roundtrip.py" \
+            "$MARK_DIR/test_mark_iii_interactive.py"
+
+      - name: Run 17 geometry, serviceability and review tests
+        run: |
+          set -o pipefail
+          python -m unittest discover -v \
+            -s "$MARK_DIR" \
+            -p "test_mark_iii*.py" \
+            2>&1 | tee "$RUNNER_TEMP/mark-iii-tests.log"
+
+      - name: Regenerate geometry and print references
+        run: |
+          set -o pipefail
+          mkdir -p "$RUNNER_TEMP/mark-iii-output"
+          python "$MARK_DIR/mark_iii_parametric.py" \
+            --parameters "$MARK_DIR/mark_iii_parameters.json" \
+            --out-dir "$RUNNER_TEMP/mark-iii-output" \
+            | tee "$RUNNER_TEMP/mark-iii-generation.log"
+
+      - name: Generate dimensional register
+        run: |
+          set -o pipefail
+          python "$MARK_DIR/mark_iii_dimensional_audit.py" \
+            --parameters "$MARK_DIR/mark_iii_parameters.json" \
+            --out-dir "$RUNNER_TEMP/mark-iii-output" \
+            | tee "$RUNNER_TEMP/mark-iii-dimensional.log"
+
+      - name: Generate serviceability and array audit
+        run: |
+          set -o pipefail
+          python "$MARK_DIR/mark_iii_serviceability_audit.py" \
+            --parameters "$MARK_DIR/mark_iii_parameters.json" \
+            --out-dir "$RUNNER_TEMP/mark-iii-output" \
+            | tee "$RUNNER_TEMP/mark-iii-serviceability.log"
+
+      - name: Verify exported GLB roundtrip
+        run: |
+          set -o pipefail
+          python "$MARK_DIR/mark_iii_glb_roundtrip_audit.py" \
+            --parameters "$MARK_DIR/mark_iii_parameters.json" \
+            --glb "$RUNNER_TEMP/mark-iii-output/mark_iii_assembly.glb" \
+            --output "$RUNNER_TEMP/mark-iii-output/mark_iii_glb_roundtrip_audit.json" \
+            | tee "$RUNNER_TEMP/mark-iii-glb-roundtrip.log"
+
+      - name: Build interactive review surface
+        run: |
+          set -o pipefail
+          python "$MARK_DIR/mark_iii_interactive.py" \
+            --glb "$RUNNER_TEMP/mark-iii-output/mark_iii_assembly.glb" \
+            --manifest "$RUNNER_TEMP/mark-iii-output/mark_iii_component_manifest.json" \
+            --parameters "$MARK_DIR/mark_iii_parameters.json" \
+            --verification "$RUNNER_TEMP/mark-iii-output/mark_iii_verification.json" \
+            --serviceability "$RUNNER_TEMP/mark-iii-output/mark_iii_serviceability_audit.json" \
+            --roundtrip "$RUNNER_TEMP/mark-iii-output/mark_iii_glb_roundtrip_audit.json" \
+            --output "$RUNNER_TEMP/mark-iii-output/mark_iii_interactive.html" \
+            | tee "$RUNNER_TEMP/mark-iii-interactive.log"
+
+      - name: Verify portable semantic and serviceability invariants
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+          import hashlib,json,os
+          from pathlib import Path
+          import sys
+          source=Path(os.environ['MARK_DIR']);out=Path(os.environ['RUNNER_TEMP'])/'mark-iii-output'
+          sys.path.insert(0,str(source))
+          from mark_iii_manifest_fingerprint import canonical_manifest_sha256
+          def sha(p):
+              if not p.is_file(): raise SystemExit(f'Missing artifact: {p}')
+              return hashlib.sha256(p.read_bytes()).hexdigest()
+          expected={
+            'parameters':'daec4cc655530ad46d509fc7815b1991971269cac6be84c02ff4ca503b05082e',
+            'requirements':'3a8d4ccebd5cde60bb12f3a0c9a1f478e45fd59865b60638643fd685c23c43d0',
+            'parametric':'4331d9d8e0318840a00bb86c9afce1124170bdb9c51c6feab6bb8517758482f3',
+            'semantic':'8ff2f295d0bebdd9cfb45c1942bda6dfe8dfd6493d7d9861fb97bf91458c2303',
+            'manifest':'9f95b1c5a6e552a626f50a9e2448f45a2cfb8642e65f92b904f0211fee64d813',
+            'full_stl':'3242e6d6a4fa28d1975bed77b1c799e49d6ca295bc30f8837d056a1ee42a711a',
+            'panel_stl':'630cd96d6bc1576a36cbde86e6e6826970484002fc15c44217dba13d6853a6d0',
+            'coupler_stl':'0dc6973290e053cf3ce7bd2dcdd9250a940eaa4f01d83894c099fc067248b13f',
+            'solenoid_stl':'c71136f92f1a3eef3e6566ddb99d615ce0fd1e986157a63908bbc0bf166e914b',
+            'arm_stl':'fe01d49da370f6c69dfabbc6943b31e329b5abc03516ee928144b79a1d37aa32',
+            'print_array_csv':'370364ab567d20d3239474cfb3e5ee9326619ada217199c601e8df7c0a85ce09',
+          }
+          observed={
+            'parameters':sha(source/'mark_iii_parameters.json'),'requirements':sha(source/'requirements.txt'),'parametric':sha(source/'mark_iii_parametric.py'),
+            'full_stl':sha(out/'mark_iii_full_module_1to5.stl'),'panel_stl':sha(out/'mark_iii_representative_panel_1to3.stl'),
+            'coupler_stl':sha(out/'mark_iii_coupler_1to2.stl'),'solenoid_stl':sha(out/'mark_iii_solenoid_cartridge_1to1.stl'),
+            'arm_stl':sha(out/'mark_iii_arm_assembly_1to2.stl'),'print_array_csv':sha(out/'mark_iii_print_and_array_audit.csv'),
+            'assembly_glb_build_receipt':sha(out/'mark_iii_assembly.glb'),'interactive_html_build_receipt':sha(out/'mark_iii_interactive.html')}
+          for key in ('parameters','requirements','parametric','full_stl','panel_stl','coupler_stl','solenoid_stl','arm_stl','print_array_csv'):
+              if observed[key]!=expected[key]: raise SystemExit(f'Exact invariant mismatch: {key}: {observed[key]}')
+          manifest=json.loads((out/'mark_iii_component_manifest.json').read_text());semantic_manifest=dict(manifest);semantic_manifest.pop('canonical_manifest_sha256',None)
+          if canonical_manifest_sha256(semantic_manifest)!=expected['manifest']: raise SystemExit('Canonical component manifest changed')
+          verification=json.loads((out/'mark_iii_verification.json').read_text());service=json.loads((out/'mark_iii_serviceability_audit.json').read_text());rt=json.loads((out/'mark_iii_glb_roundtrip_audit.json').read_text())
+          if verification['semantic_geometry_sha256']!=expected['semantic']: raise SystemExit('Semantic geometry changed')
+          if verification['status']!='PASS_SERVICEABLE_REFERENCE_GEOMETRY' or verification['scene']['geometry_nodes']!=339 or verification['scene']['physical_nodes']!=192: raise SystemExit('Geometry status/count mismatch')
+          if service['status']!='PASS_SERVICEABILITY_REFERENCE_AUDIT' or service['failures']: raise SystemExit('Serviceability gate failed')
+          if service['canonical_module_envelope_m']['extents']!=[0.75,0.32,0.32]: raise SystemExit('Canonical module envelope changed')
+          if rt['status']!='PASS_GLB_ROUNDTRIP_REFERENCE' or rt['matched_nodes']!=339 or rt['missing_nodes'] or rt['unexpected_nodes'] or rt['failures']: raise SystemExit('GLB roundtrip failed')
+          if (out/'mark_iii_interactive.html').stat().st_size<900000: raise SystemExit('Interactive review surface unexpectedly small')
+          receipt={'schema_version':'mark-iii-ci-receipt-v0.2','status':'PASS_SERVICEABLE_PORTABLE_SEMANTIC_GLB_ARRAY_AND_INTERACTIVE_REGENERATION',
+                   'source_branch':os.environ.get('GITHUB_HEAD_REF') or os.environ.get('GITHUB_REF_NAME'),'commit':os.environ.get('GITHUB_SHA'),
+                   'observed_sha256':observed,'semantic_geometry_sha256':expected['semantic'],'canonical_manifest_sha256':expected['manifest'],
+                   'geometry_nodes':339,'physical_nodes':192,'serviceability_status':service['status'],'serviceability_counts':service['counts'],
+                   'canonical_module_envelope_m':service['canonical_module_envelope_m'],'array_configurations':service['arrays'],
+                   'glb_roundtrip':{'status':rt['status'],'matched_nodes':rt['matched_nodes'],'maximum_observed_errors':rt['maximum_observed_errors']},
+                   'raw_glb_hash_policy':'BUILD_RECEIPT_ONLY','raw_interactive_hash_policy':'BUILD_RECEIPT_ONLY_EMBEDS_GLTF_CONTAINER','claim_gate_state':'UNCHANGED'}
+          path=Path(os.environ['RUNNER_TEMP'])/'mark-iii-ci-receipt.json';path.write_text(json.dumps(receipt,indent=2)+'\n');print(json.dumps(receipt,indent=2))
+          PY
+
+      - name: Upload qualification evidence and source snapshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mark-iii-serviceable-reference-validation
+          path: |
+            ${{ runner.temp }}/mark-iii-tests.log
+            ${{ runner.temp }}/mark-iii-generation.log
+            ${{ runner.temp }}/mark-iii-dimensional.log
+            ${{ runner.temp }}/mark-iii-serviceability.log
+            ${{ runner.temp }}/mark-iii-glb-roundtrip.log
+            ${{ runner.temp }}/mark-iii-interactive.log
+            ${{ runner.temp }}/mark-iii-ci-receipt.json
+            ${{ runner.temp }}/mark-iii-output/mark_iii_verification.json
+            ${{ runner.temp }}/mark-iii-output/mark_iii_component_manifest.json
+            ${{ runner.temp }}/mark-iii-output/mark_iii_dimensional_audit.csv
+            ${{ runner.temp }}/mark-iii-output/mark_iii_dimensional_audit_summary.json
+            ${{ runner.temp }}/mark-iii-output/mark_iii_serviceability_audit.json
+            ${{ runner.temp }}/mark-iii-output/mark_iii_print_and_array_audit.csv
+            ${{ runner.temp }}/mark-iii-output/mark_iii_glb_roundtrip_audit.json
+            ${{ env.MARK_DIR }}/README.md
+            ${{ env.MARK_DIR }}/requirements.txt
+            ${{ env.MARK_DIR }}/mark_iii_parameters.json
+            ${{ env.MARK_DIR }}/mark_iii_parametric.py
+            ${{ env.MARK_DIR }}/mark_iii_geometry_fingerprint.py
+            ${{ env.MARK_DIR }}/mark_iii_manifest_fingerprint.py
+            ${{ env.MARK_DIR }}/mark_iii_dimensional_audit.py
+            ${{ env.MARK_DIR }}/mark_iii_serviceability_audit.py
+            ${{ env.MARK_DIR }}/mark_iii_glb_roundtrip_audit.py
+            ${{ env.MARK_DIR }}/mark_iii_interactive.py
+            ${{ env.MARK_DIR }}/mark_iii_execution_receipt.json
+            ${{ env.MARK_DIR }}/upstream_source_register.json
+            ${{ env.MARK_DIR }}/test_mark_iii_parametric.py
+            ${{ env.MARK_DIR }}/test_mark_iii_audits.py
+            ${{ env.MARK_DIR }}/test_mark_iii_glb_roundtrip.py
+            ${{ env.MARK_DIR }}/test_mark_iii_interactive.py
+            .github/workflows/mark-iii-reference-validation.yml
+          if-no-files-found: warn
+          retention-days: 30
