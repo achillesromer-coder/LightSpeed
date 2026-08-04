@@ -7,6 +7,12 @@ on:
     paths:
       - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/luke_ii/luke_ii_v1_3_source_bundle_parts/**"
       - ".github/workflows/luke-ii-expand-v1-3.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/luke_ii/luke_ii_v1_3_source_bundle_parts/**"
+      - ".github/workflows/luke-ii-expand-v1-3.yml"
 
 permissions:
   contents: write
@@ -56,5 +62,3 @@ jobs:
           git diff --cached --check
           git commit -m "Materialise Luke II v1.3 serviceable reference source"
           git push origin HEAD:execution/luke-ii-parametric-reference-2026-08-04
-
-# contents-API trigger: 2026-08-05
