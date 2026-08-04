@@ -56,3 +56,5 @@ jobs:
           git diff --cached --check
           git commit -m "Materialise Luke II v1.3 serviceable reference source"
           git push origin HEAD:execution/luke-ii-parametric-reference-2026-08-04
+
+# contents-API trigger: 2026-08-05
