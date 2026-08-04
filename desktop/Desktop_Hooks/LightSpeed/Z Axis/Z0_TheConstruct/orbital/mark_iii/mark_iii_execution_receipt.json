@@ -1,7 +1,7 @@
 {
-  "schema_version": "mark-iii-execution-receipt-v0.2.2",
-  "recorded_at_utc": "2026-08-04T23:42:00Z",
-  "status": "PASS_REPOSITORY_QUALIFICATION_INTERACTIVE_CAD_REVIEW_AND_CANONICAL_DRIVE_SYNC_OPEN",
+  "schema_version": "mark-iii-execution-receipt-v0.2.3",
+  "recorded_at_utc": "2026-08-04T23:46:00Z",
+  "status": "PASS_REPOSITORY_QUALIFICATION_CANONICAL_DRIVE_SYNC_BLOCKED_INTERACTIVE_CAD_REVIEW_OPEN",
   "task_issue": "https://github.com/achillesromer-coder/LightSpeed/issues/32",
   "source_branch": "execution/mark-iii-serviceable-reference-2026-08-05",
   "stacked_base_branch": "execution/luke-ii-parametric-reference-2026-08-04",
@@ -23,18 +23,8 @@
     "serviceability_status": "PASS_SERVICEABILITY_REFERENCE_AUDIT",
     "glb_roundtrip_status": "PASS_GLB_ROUNDTRIP_REFERENCE",
     "glb_roundtrip_matched_nodes": 339,
-    "canonical_module_envelope_m": [
-      0.75,
-      0.32,
-      0.32
-    ],
-    "array_configurations": [
-      1,
-      2,
-      4,
-      8,
-      18
-    ]
+    "canonical_module_envelope_m": [0.75,0.32,0.32],
+    "array_configurations": [1,2,4,8,18]
   },
   "configuration": {
     "shell_panels": 18,
@@ -59,62 +49,20 @@
     "workflow_sha256": "704c71041139451a308f38cb73f49216f5a5e9909dfeb55b7fce67a4f5006173"
   },
   "generated_artifacts": {
-    "mark_iii_arm_assembly_1to2.stl": {
-      "sha256": "fe01d49da370f6c69dfabbc6943b31e329b5abc03516ee928144b79a1d37aa32",
-      "bytes": 90084
-    },
-    "mark_iii_assembly.glb": {
-      "sha256": "1c3d1791f6c80f72113599bd7bab03b68b262fc435c21eb663b56165fcc6ac63",
-      "bytes": 367824
-    },
-    "mark_iii_component_manifest.json": {
-      "sha256": "e133ce2bc2c3be2c2e45be1853ef4975eb1907485be333047707eac8bc319031",
-      "bytes": 377070
-    },
-    "mark_iii_coupler_1to2.stl": {
-      "sha256": "0dc6973290e053cf3ce7bd2dcdd9250a940eaa4f01d83894c099fc067248b13f",
-      "bytes": 25684
-    },
-    "mark_iii_dimensional_audit.csv": {
-      "sha256": "6758bc6d85a28f84a0569dd42b0a6cf9494852d9fab438090c03ca94e49b7108",
-      "bytes": 134692
-    },
-    "mark_iii_dimensional_audit_summary.json": {
-      "sha256": "0ef3a19b0f228cbe5c29e52c6d13bff9817d66476661779685d3b0b883f7bbe4",
-      "bytes": 2178
-    },
-    "mark_iii_full_module_1to5.stl": {
-      "sha256": "3242e6d6a4fa28d1975bed77b1c799e49d6ca295bc30f8837d056a1ee42a711a",
-      "bytes": 12884
-    },
-    "mark_iii_glb_roundtrip_audit.json": {
-      "sha256": "ab71a68fa77ad64984f235947443eea4432c8d6fb4a92e6a2d1e666e1dabd866",
-      "bytes": 230089
-    },
-    "mark_iii_interactive.html": {
-      "sha256": "c5690c2cb0a70b3fc1f2494de9d0af8804467665ec3fd3edfdfc9dc6804cb06a",
-      "bytes": 966039
-    },
-    "mark_iii_print_and_array_audit.csv": {
-      "sha256": "370364ab567d20d3239474cfb3e5ee9326619ada217199c601e8df7c0a85ce09",
-      "bytes": 862
-    },
-    "mark_iii_representative_panel_1to3.stl": {
-      "sha256": "630cd96d6bc1576a36cbde86e6e6826970484002fc15c44217dba13d6853a6d0",
-      "bytes": 684
-    },
-    "mark_iii_serviceability_audit.json": {
-      "sha256": "7f3f471208c4abbe52e2361803a0043f5c95ec993fd153f4ab955b352c06fe52",
-      "bytes": 5702
-    },
-    "mark_iii_solenoid_cartridge_1to1.stl": {
-      "sha256": "c71136f92f1a3eef3e6566ddb99d615ce0fd1e986157a63908bbc0bf166e914b",
-      "bytes": 19284
-    },
-    "mark_iii_verification.json": {
-      "sha256": "9683cf9929d709355f9ea3699c03762769c9fe70698ade7a1e85bb52dba11c2f",
-      "bytes": 50781
-    }
+    "mark_iii_arm_assembly_1to2.stl": {"sha256":"fe01d49da370f6c69dfabbc6943b31e329b5abc03516ee928144b79a1d37aa32","bytes":90084},
+    "mark_iii_assembly.glb": {"sha256":"1c3d1791f6c80f72113599bd7bab03b68b262fc435c21eb663b56165fcc6ac63","bytes":367824},
+    "mark_iii_component_manifest.json": {"sha256":"e133ce2bc2c3be2c2e45be1853ef4975eb1907485be333047707eac8bc319031","bytes":377070},
+    "mark_iii_coupler_1to2.stl": {"sha256":"0dc6973290e053cf3ce7bd2dcdd9250a940eaa4f01d83894c099fc067248b13f","bytes":25684},
+    "mark_iii_dimensional_audit.csv": {"sha256":"6758bc6d85a28f84a0569dd42b0a6cf9494852d9fab438090c03ca94e49b7108","bytes":134692},
+    "mark_iii_dimensional_audit_summary.json": {"sha256":"0ef3a19b0f228cbe5c29e52c6d13bff9817d66476661779685d3b0b883f7bbe4","bytes":2178},
+    "mark_iii_full_module_1to5.stl": {"sha256":"3242e6d6a4fa28d1975bed77b1c799e49d6ca295bc30f8837d056a1ee42a711a","bytes":12884},
+    "mark_iii_glb_roundtrip_audit.json": {"sha256":"ab71a68fa77ad64984f235947443eea4432c8d6fb4a92e6a2d1e666e1dabd866","bytes":230089},
+    "mark_iii_interactive.html": {"sha256":"c5690c2cb0a70b3fc1f2494de9d0af8804467665ec3fd3edfdfc9dc6804cb06a","bytes":966039},
+    "mark_iii_print_and_array_audit.csv": {"sha256":"370364ab567d20d3239474cfb3e5ee9326619ada217199c601e8df7c0a85ce09","bytes":862},
+    "mark_iii_representative_panel_1to3.stl": {"sha256":"630cd96d6bc1576a36cbde86e6e6826970484002fc15c44217dba13d6853a6d0","bytes":684},
+    "mark_iii_serviceability_audit.json": {"sha256":"7f3f471208c4abbe52e2361803a0043f5c95ec993fd153f4ab955b352c06fe52","bytes":5702},
+    "mark_iii_solenoid_cartridge_1to1.stl": {"sha256":"c71136f92f1a3eef3e6566ddb99d615ce0fd1e986157a63908bbc0bf166e914b","bytes":19284},
+    "mark_iii_verification.json": {"sha256":"9683cf9929d709355f9ea3699c03762769c9fe70698ade7a1e85bb52dba11c2f","bytes":50781}
   },
   "ci_gate": {
     "workflow": "Mark III Reference Validation",
@@ -142,8 +90,14 @@
   },
   "drive_canonical_update": {
     "target_file_id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2",
-    "status": "PENDING_FINAL_WORKBOOK_AND_SAME_ID_REPLACEMENT_ATTEMPT",
-    "parallel_workbook_uploaded": false
+    "action": "replace existing XLSX bytes in place while preserving file ID",
+    "status": "BLOCKED_APP_NOT_AUTHORIZED_TO_FILE",
+    "http_status": 403,
+    "provider_reason": "appNotAuthorizedToFile",
+    "drive_app_id": "77377267392",
+    "provider_message": "The user has not granted the app 77377267392 write access to the file 1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2.",
+    "parallel_workbook_uploaded": false,
+    "required_next_action": "Grant the connected Drive app file-specific write access, retry the same-ID replacement and verify raw read-back."
   },
   "review_gate": {
     "interactive_cad_review": "OPEN",
