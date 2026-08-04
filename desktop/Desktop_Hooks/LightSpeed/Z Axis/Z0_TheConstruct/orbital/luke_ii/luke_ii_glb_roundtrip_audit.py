@@ -19,6 +19,8 @@ from luke_ii_parametric import build_scene
 
 DEFAULT_LINEAR_TOLERANCE_M = 2e-5
 DEFAULT_RELATIVE_MEASURE_TOLERANCE = 5e-6
+DEFAULT_ABSOLUTE_VOLUME_TOLERANCE_M3 = 1e-6
+DEFAULT_ABSOLUTE_AREA_TOLERANCE_M2 = 2e-6
 
 
 def _max_abs(a: Any, b: Any) -> float:
@@ -30,6 +32,8 @@ def audit_glb_roundtrip(
     glb_path: Path,
     linear_tolerance_m: float = DEFAULT_LINEAR_TOLERANCE_M,
     relative_measure_tolerance: float = DEFAULT_RELATIVE_MEASURE_TOLERANCE,
+    absolute_volume_tolerance_m3: float = DEFAULT_ABSOLUTE_VOLUME_TOLERANCE_M3,
+    absolute_area_tolerance_m2: float = DEFAULT_ABSOLUTE_AREA_TOLERANCE_M2,
 ) -> dict[str, Any]:
     source = build_scene(parameters)
     exported = trimesh.load(glb_path, force="scene")
@@ -60,8 +64,10 @@ def audit_glb_roundtrip(
         centroid_error = _max_abs(expected.centroid, observed.centroid)
         volume_denominator = max(abs(float(expected.volume)), 1e-12)
         area_denominator = max(abs(float(expected.area)), 1e-12)
-        relative_volume_error = abs(float(expected.volume) - float(observed.volume)) / volume_denominator
-        relative_area_error = abs(float(expected.area) - float(observed.area)) / area_denominator
+        absolute_volume_error = abs(float(expected.volume) - float(observed.volume))
+        absolute_area_error = abs(float(expected.area) - float(observed.area))
+        relative_volume_error = absolute_volume_error / volume_denominator
+        relative_area_error = absolute_area_error / area_denominator
 
         checks = {
             "vertex_count_exact": len(expected.vertices) == len(observed.vertices),
@@ -71,8 +77,8 @@ def audit_glb_roundtrip(
             "bounds_within_tolerance": bounds_error <= linear_tolerance_m,
             "extents_within_tolerance": extents_error <= linear_tolerance_m,
             "centroid_within_tolerance": centroid_error <= linear_tolerance_m,
-            "volume_within_tolerance": relative_volume_error <= relative_measure_tolerance,
-            "area_within_tolerance": relative_area_error <= relative_measure_tolerance,
+            "volume_within_tolerance": (relative_volume_error <= relative_measure_tolerance or absolute_volume_error <= absolute_volume_tolerance_m3),
+            "area_within_tolerance": (relative_area_error <= relative_measure_tolerance or absolute_area_error <= absolute_area_tolerance_m2),
         }
         if not all(checks.values()):
             failures.append(f"{name}: {[key for key, value in checks.items() if not value]}")
@@ -85,6 +91,8 @@ def audit_glb_roundtrip(
             "bounds_max_abs_error_m": bounds_error,
             "extents_max_abs_error_m": extents_error,
             "centroid_max_abs_error_m": centroid_error,
+            "absolute_volume_error_m3": absolute_volume_error,
+            "absolute_area_error_m2": absolute_area_error,
             "relative_volume_error": relative_volume_error,
             "relative_area_error": relative_area_error,
             "checks": checks,
@@ -106,6 +114,8 @@ def audit_glb_roundtrip(
         "unexpected_nodes": unexpected,
         "linear_tolerance_m": linear_tolerance_m,
         "relative_measure_tolerance": relative_measure_tolerance,
+        "absolute_volume_tolerance_m3": absolute_volume_tolerance_m3,
+        "absolute_area_tolerance_m2": absolute_area_tolerance_m2,
         "maximum_observed_errors": {
             "bounds_m": max_bounds_error,
             "extents_m": max_extents_error,

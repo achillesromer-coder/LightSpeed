@@ -1,123 +1,151 @@
 {
-  "schema_version": "luke-ii-execution-receipt-v1.2",
-  "recorded_at_utc": "2026-08-04T00:04:00Z",
-  "status": "PASS_REFERENCE_GEOMETRY",
+  "schema_version": "luke-ii-execution-receipt-v1.3.1",
+  "recorded_at_utc": "2026-08-04T21:34:02Z",
+  "status": "PENDING_CLEAN_RUNNER_QUALIFICATION_INTERACTIVE_CAD_REVIEW_AND_CANONICAL_DRIVE_SYNC",
+  "task_state": "CURRENT_NEXT_TASK_LUKE_CLOSURE_BEFORE_MARK_III",
+  "task_issue": "https://github.com/achillesromer-coder/LightSpeed/issues/31",
+  "draft_pr": "https://github.com/achillesromer-coder/LightSpeed/pull/30",
   "canonical_target": "Luke II within the existing Luke / Luke II / Apostle Twin",
   "source_branch": "execution/luke-ii-parametric-reference-2026-08-04",
-  "source_baseline": "86f028d9fac1a2fd6320ce9a1a4de58b3e5f8b1c",
-  "canonical_source": {
-    "parameters_file": "luke_ii_parameters.json",
-    "parameters_sha256": "505a077cb1461718d3078eb17a62c51ca1c0d1d9f4a15ccf11bc11e91ec49b1f",
-    "dependency_file": "requirements.txt",
-    "dependency_state": "PINNED_CLEAN_RUNNER_REPRODUCIBILITY"
+  "acceptance_invariants": {
+    "named_nodes": 1357,
+    "physical_nodes": 824,
+    "individual_nodes_watertight": 1357,
+    "individual_nodes_winding_consistent": 1357,
+    "semantic_geometry_sha256": "1e58a8e6c5643c4d7d6320de5740b5451a7919259c9aa7d886285ea9f8a3bf8a",
+    "semantic_quantization_m": 1e-08,
+    "unit_tests_run": 16,
+    "unit_tests_passed": 16,
+    "serviceability_status": "PASS_SERVICEABILITY_REFERENCE_AUDIT",
+    "glb_roundtrip_status": "PASS_GLB_ROUNDTRIP_REFERENCE",
+    "glb_roundtrip_matched_nodes": 1357
   },
-  "generated_artifacts": {
-    "glb": {
-      "file": "luke_ii_assembly.glb",
-      "controlled_package_sha256": "3238db7ebf2148786d8060b751825b218eb6b04c44a57adb14f617d40a2fa182",
-      "known_clean_runner_sha256": "c87030bd5329dc7b6b912b877dccdff697de83836156fd747b949b07ae03e073",
-      "bytes": 543788,
-      "units": "metres",
-      "hash_scope": "BUILD_RECEIPT_ONLY_NOT_CROSS_PLATFORM_ACCEPTANCE_GATE",
-      "acceptance_invariant": "geometry_verification.semantic_geometry_sha256"
-    },
-    "stl": {
-      "file": "luke_ii_reference_1to100.stl",
-      "sha256": "8f1dbbc530e8e3bba67f74b48cf12eff545128b5d19192d905e2f10e00927861",
-      "bytes": 3276884,
-      "units": "millimetres",
-      "scale": "1:100",
-      "hash_scope": "PORTABLE_EXACT_ACCEPTANCE_GATE"
-    },
-    "interactive_html": {
-      "file": "luke_ii_interactive.html",
-      "controlled_package_sha256": "9402512df488ecbd6df258810b9d00554dd5cecf6f88bd3b02fca230daee7337",
-      "bytes": 735321,
-      "hash_scope": "CONTROLLED_PACKAGE_BUILD_RECEIPT"
-    }
-  },
-  "geometry_verification": {
-    "named_nodes": 96,
-    "individual_nodes_watertight": 96,
-    "individual_nodes_winding_consistent": 96,
-    "semantic_geometry_sha256": "18b61fb32815cb3237fb62e49d8f46e91e7f57468a1749cbc8bd5ecd9ef0295f",
-    "semantic_geometry_schema": "luke-ii-semantic-geometry-v1",
-    "semantic_geometry_quantization_m": 1e-08,
-    "print_shell_watertight": true,
-    "print_shell_winding_consistent": true,
-    "print_bounds_mm": [280.0, 280.0, 40.0],
-    "unit_tests": {
-      "run": 11,
-      "passed": 11,
-      "failed": 0
-    },
-    "glb_roundtrip": {
-      "status": "PASS_GLB_ROUNDTRIP_REFERENCE",
-      "matched_nodes": 96,
-      "linear_tolerance_m": 2e-05,
-      "relative_measure_tolerance": 5e-06,
-      "maximum_observed_errors": {
-        "bounds_m": 4.602300638367751e-07,
-        "centroid_m": 2.5644281720360596e-07,
-        "extents_m": 8.406668428051489e-07,
-        "relative_area": 4.0642483999721336e-07,
-        "relative_volume": 3.2240568506344405e-06
-      }
-    }
-  },
-  "dimensional_audit": {
-    "generator": "luke_ii_dimensional_audit.py",
-    "csv_file": "luke_ii_dimensional_audit.csv",
-    "csv_sha256": "4d7d4c743b4c24acc2c7c5e7e47e5b0c6d753209bec396011a12fbd02cd65825",
-    "node_count": 96,
-    "review_state": "OPEN_ENGINEERING_REVIEW",
-    "claim_gate_state": "UNCHANGED"
-  },
-  "ci_gate": {
-    "workflow": "Luke II Reference Validation",
-    "required": true,
-    "status": "PASS_PORTABLE_SEMANTIC_AND_GLB_ROUNDTRIP_REGENERATION",
-    "qualification_run_id": 30864261388,
-    "qualification_head_sha": "ab9e82e541e98899deefcc273947d8c20850041f",
-    "qualification_artifact_id": 8875506399,
-    "qualification_artifact_digest": "sha256:da6a07e6bffb0b304db3fa1a7e6c5c9387150906aba8c4157e04097e16732db0",
-    "acceptance_basis": [
-      "canonical parameter bytes",
-      "portable STL bytes",
-      "dimensional-audit CSV bytes",
-      "semantic geometry fingerprint",
-      "exported GLB roundtrip structural fidelity",
-      "mesh quality and node counts",
-      "claim-sensitive evidence classifications"
-    ]
-  },
-  "geometry": {
-    "major_radius_m": 12.0,
-    "body_minor_radius_m": 2.0,
-    "outer_diameter_m": 28.0,
-    "central_aperture_diameter_m": 20.0,
-    "field_sectors": 16
+  "closure_configuration": {
+    "solar_hull_panels": 162,
+    "window_apertures": 30,
+    "pressure_window_layers": 120,
+    "window_frame_parts": 120,
+    "walkway_segments": 25,
+    "egress_segments": 25,
+    "bulkhead_parts": 24,
+    "cable_tray_segments": 32,
+    "service_clearances": 265,
+    "removal_paths": 227,
+    "mark_iii_interface_arm_nodes": 23,
+    "maximum_walkway_centre_gap_m": 0.9422355782176538
   },
   "habitation": {
     "crew": 3,
-    "iss_scaled_baseline_m3": 166.28571428571428,
-    "deep_space_comparator_m3": 201.0,
-    "modelled_clear_volume_m3": 201.5249848647433,
-    "state": "DERIVED_REFERENCE_NOT_HUMAN_RATED"
+    "gross_planning_volume_m3": 201.5249848647433,
+    "pressure_liner_clear_volume_m3": 177.8379343021289,
+    "service_allocated_reference_volume_m3": 134.90515515739017,
+    "state": "DERIVED_SERVICEABILITY_ALLOCATION_NOT_HUMAN_RATED"
+  },
+  "generated_artifacts": {
+    "assembly_glb": {
+      "file": "luke_ii_assembly.glb",
+      "sha256": "ef6fdde551aae09e10fc383112bdd4a5fd2c8753ad3a306ba7a5c5cfe2f8dae9",
+      "units": "metres",
+      "hash_policy": "BUILD_RECEIPT_ONLY"
+    },
+    "component_manifest": {
+      "file": "luke_ii_component_manifest.json",
+      "sha256": "97e6b52fa499e049d71e51d53657b32fc133003e897f9e55cdcd871aa303a4b8"
+    },
+    "full_print_reference": {
+      "file": "luke_ii_reference_1to100.stl",
+      "sha256": "369556ec27188050d190d7fb48ffdf38842186047706846dcbfdb66edda3bc4c",
+      "scale": "1:100"
+    },
+    "panel_print_reference": {
+      "file": "luke_ii_representative_hull_panel_1to20.stl",
+      "sha256": "d6cae8d62e2e866f9df067187a4324def177c15334804fdddc71f8f022ce9c12",
+      "scale": "1:20"
+    },
+    "window_print_reference": {
+      "file": "luke_ii_representative_window_1to20.stl",
+      "sha256": "1db0160f10881eeebe5900a89d4238f35f7ab1ad300cd7eeba9fa2333373596e",
+      "scale": "1:20"
+    },
+    "mark_iii_arm_print_reference": {
+      "file": "luke_ii_mark_iii_interface_arm_1to20.stl",
+      "sha256": "cab23130583e0323855fcdec6a20654349fc9811f8c45ca86f3fe760c085a645",
+      "scale": "1:20"
+    },
+    "interactive_html": {
+      "file": "luke_ii_interactive.html",
+      "sha256": "91625248113edbe4026e4af5ab122bbf57982517d024aebfb4ce55d5e3124eb5",
+      "network_note": "Three.js library modules load from CDN; geometry and review data are embedded"
+    },
+    "dimensional_audit": {
+      "file": "luke_ii_dimensional_audit.csv",
+      "sha256": "6fcc3934f4ccf8e3c13d76bc0ca83bfb951601efd0e0046ecf23370a0f84a399"
+    },
+    "serviceability_audit": {
+      "file": "luke_ii_serviceability_audit.json",
+      "sha256": "896df9a7193e42c69d2beb71458e68b3da5e516d8d691b26fa5a041c809e00b4"
+    },
+    "glb_roundtrip_audit": {
+      "file": "luke_ii_glb_roundtrip_audit.json",
+      "sha256": "9c9a3f58e738f30da8c65f7dd4ce7444fd7c4f5c04af6455cbcc37c371045913"
+    },
+    "dimensional_audit_summary": {
+      "file": "luke_ii_dimensional_audit_summary.json",
+      "sha256": "b56a0745d40098e2c0eb70dc050b7a36f0d14821427d56205da28852b35f4830"
+    },
+    "print_segmentation_audit": {
+      "file": "luke_ii_print_segmentation_audit.csv",
+      "sha256": "efca0cee8cdb9f818a3651463460bfb1f01686694b841567939c23c9468426e5"
+    }
   },
   "drive_canonical_update": {
     "target_file_id": "1BGwPdfafqVKwh3AS5fwvkhIImBmfPdMU",
     "action": "replace existing XLSX bytes in place",
     "status": "BLOCKED_APP_NOT_AUTHORIZED_TO_FILE",
     "parallel_workbook_uploaded": false,
-    "prior_non_authoritative_package_file_id": "1VfsDVBLgNAAphEo8jOrF6F-RUNZIHt_9",
-    "required_next_action": "Grant the connected Drive app write access to the existing file and retry in-place replacement."
+    "required_next_action": "Grant the connected Drive app file-specific write access, replace the existing file bytes, preserve the ID and verify raw read-back hash."
+  },
+  "transition_gate": {
+    "next_system": "Mark III",
+    "state": "HELD_UNTIL_LUKE_INTERACTIVE_CAD_REVIEW_ACCEPTED",
+    "required_mark_iii_scope": "joint, arm, actuator/solenoid, bracket, harness, service-access and print-segmentation decomposition"
   },
   "claim_gates": [
-    "No flight or human-rating certification.",
-    "No validated capture, controlled return or redistribution performance.",
-    "No validated coil current, field strength, thermal, shielding, pressure-vessel or gas-handling claim.",
-    "Geometric bounds and volumes are reference observations, not validated structural or operational envelopes.",
-    "Legacy million-ampere and five-tesla simulation values remain quarantined and are not used as active geometry capability inputs."
-  ]
+    "No flight, human-rating, pressure-vessel or manufacturing certification.",
+    "No validated capture, controlled-return, redistribution, field-current or field-strength performance.",
+    "No validated thermal, shielding, gas-handling, ECLSS, docking-load or arm-load capability.",
+    "All panel, window, cable, clearance, attachment and arm values remain spatial references pending specialist evidence."
+  ],
+  "canonical_source": {
+    "parameters_file": "luke_ii_parameters.json",
+    "parameters_sha256": "356d0ba63578869e73955edbbe2add9e37dbb2f2b53b7796cd35bfc4cb3983b4",
+    "dependency_file": "requirements.txt",
+    "dependency_sha256": "3a8d4ccebd5cde60bb12f3a0c9a1f478e45fd59865b60638643fd685c23c43d0",
+    "dependency_state": "PINNED_CLEAN_RUNNER_REPRODUCIBILITY",
+    "parametric_representation": "FULL_READABLE_UTF8_SOURCE",
+    "parametric_full_source_sha256": "37a015e68c7fceafbf7b5f27c7d78a6409687cd7be41a3fc82cfd46a38f38f5f"
+  },
+  "ci_gate": {
+    "workflow": "Luke II Reference Validation",
+    "required": true,
+    "status": "PENDING_CLEAN_RUNNER_QUALIFICATION",
+    "acceptance_basis": [
+      "canonical parameter and dependency bytes",
+      "portable display-print STL bytes",
+      "component manifest and dimensional-audit bytes",
+      "serviceability and print-segmentation audit bytes",
+      "semantic geometry fingerprint",
+      "exported GLB roundtrip structural fidelity",
+      "attachment cable clearance removal and walkway continuity gates",
+      "claim-sensitive evidence classifications"
+    ]
+  },
+  "controlled_package": {
+    "file": "LukeII_Canonical_Execution_Package_v1_3.zip",
+    "drive_file_id": "1FhgAXB5mnyjoaOLgG5xTpU23jIM2bzXV",
+    "sha256": "9b54bb76af9628a132678fb362358e0a05e9e5ce9c615ec948eddf394d45563c",
+    "bytes": 2896411,
+    "raw_drive_readback_verified": true,
+    "authority": "NON_AUTHORITATIVE_EXECUTION_PACKAGE"
+  }
 }

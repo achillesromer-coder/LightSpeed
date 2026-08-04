@@ -1,8 +1,8 @@
 {
-  "schema_version": "luke-ii-parametric-reference-v1",
-  "artifact_status": "SOURCE_RECONCILED_ENGINEERING_REFERENCE_NOT_FLIGHT_CERTIFIED",
+  "schema_version": "luke-ii-serviceable-reference-v1.3",
+  "artifact_status": "SOURCE_RECONCILED_SERVICEABLE_REFERENCE_NOT_ENGINEERING_RELEASE",
   "canonical_target": "Luke II orbital EMF distribution / telemetry / refinement node",
-  "generated_at_utc": "2026-08-03T21:50:57.627856+00:00",
+  "generated_at_utc": "2026-08-04T07:50:00Z",
   "units": "SI unless export scale states otherwise",
   "source_parameters": {
     "major_radius_m": {
@@ -62,7 +62,14 @@
     "clear_minor_radius_m": 1.65,
     "modelled_habitable_volume_m3": 201.5249848647433,
     "state": "DERIVED_TARGET",
-    "warning": "ISS and NASA deep-space volumes are analogues, not a certified Luke II human-factors requirement."
+    "warning": "ISS and NASA deep-space volumes are analogues, not a certified Luke II human-factors requirement.",
+    "gross_clear_volume_m3": 201.5249848647433,
+    "pressure_liner_clear_minor_radius_m": 1.55,
+    "pressure_liner_clear_volume_m3": 177.8379343021289,
+    "service_allocated_clear_minor_radius_m": 1.35,
+    "service_allocated_reference_volume_m3": 134.90515515739017,
+    "volume_revision_state": "DERIVED_SERVICEABILITY_ALLOCATION_NOT_HUMAN_RATED",
+    "volume_revision_note": "The prior 1.65 m clear-radius volume is retained as a gross planning envelope. The 1.55 m pressure-liner clearance and 1.35 m service-allocated envelope reserve wall, window, cable, access and maintainability volume and are not certified habitable volumes."
   },
   "functional_zones": [
     {
@@ -147,5 +154,181 @@
   "exports": {
     "reference_model_scale": "1:1 metres in GLB",
     "print_model_scale": "1:100, coordinates in millimetres in STL"
-  }
+  },
+  "source_reconciliation": {
+    "current_task_issue": "https://github.com/achillesromer-coder/LightSpeed/issues/31",
+    "draft_pr": "https://github.com/achillesromer-coder/LightSpeed/pull/30",
+    "visual_reference": {
+      "state": "OWNER_SUPPLIED_EXTERNAL_FORM_REFERENCE",
+      "files": [
+        "1A.JPG",
+        "1B.JPG",
+        "1c(1).JPG",
+        "1D.JPG"
+      ],
+      "interpretation": "flattened toroidal body with stepped/panelled solar-hull exterior and central aperture"
+    },
+    "drive_sources": [
+      {
+        "id": "1BGwPdfafqVKwh3AS5fwvkhIImBmfPdMU",
+        "title": "Luke_LukeII_Apostle_Toroidal_EMF_Digital_Twin_v0_1.xlsx",
+        "role": "canonical Luke/Luke II/Apostle Twin"
+      },
+      {
+        "id": "18U8yd0HFsfFB9oVGGE3qNna4rD21HMPc",
+        "title": "Solar_Hull_Digital_Twin_v0_2.xlsx",
+        "role": "panel skin/layer inheritance"
+      },
+      {
+        "id": "1vxWhIHsIPIpkGn6Y_OjOxhpGkB43Q1tw",
+        "title": "Free_Flow_Solenoid_Stack_Digital_Twin_v0_1.xlsx",
+        "role": "solenoid/field-module inheritance"
+      },
+      {
+        "id": "1DzVG1xAJH_UHsFjUXGocbViJDNDn53Qo",
+        "title": "Free_Flow_Batteries_Digital_Twin_v0_1.xlsx",
+        "role": "battery/BMS module inheritance"
+      },
+      {
+        "id": "12IelrmiuDE06-5IdalimdO7FFNBaJixL",
+        "title": "Free_Flow_Capacitors_Digital_Twin_v0_1.xlsx",
+        "role": "capacitor/pulse module inheritance"
+      },
+      {
+        "id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2",
+        "title": "Mark_III_Digital_Twin_v0_1.xlsx",
+        "role": "upstream modular coupling/arm interface context only"
+      }
+    ]
+  },
+  "closure_revision": {
+    "revision": "v1.3",
+    "task_state": "CURRENT_NEXT_TASK_LUKE_CLOSURE_BEFORE_MARK_III",
+    "owner_directive": {
+      "state": "OWNER_DEFINED_DESIGN_DIRECTION",
+      "requirements": [
+        "panelled solar-hull exterior suitable for distributed assembly",
+        "curved living-quarter window bands from 8L/4R waist reference to 11L/1R raised-arm reference",
+        "connected walkways between habitation sectors",
+        "internal compartments with repair access and removable panels",
+        "physical attachments for represented components",
+        "cable and wire routing volume including bend radius, connectors and strain relief",
+        "joint and arm component decomposition at the Mark III handoff",
+        "interactive component/layer review before Mark III execution"
+      ]
+    },
+    "panelisation": {
+      "major_sector_count": 16,
+      "minor_band_count": 12,
+      "major_seam_gap_rad": 0.012,
+      "minor_seam_gap_rad": 0.018,
+      "outer_panel_outer_radius_m": 2.0,
+      "outer_panel_inner_radius_m": 1.92,
+      "panel_step_inset_max_m": 0.06,
+      "state": "DERIVED_PANELISED_REFERENCE",
+      "source_basis": "owner visual reference plus Solar Hull modular skin inheritance"
+    },
+    "pressure_and_service_layers": {
+      "pressure_liner_outer_radius_m": 1.72,
+      "pressure_liner_inner_radius_m": 1.55,
+      "service_bay_radial_depth_m": 0.2,
+      "service_lining_inner_radius_m": 1.35,
+      "state": "PROVISIONAL_SPATIAL_RESERVATION",
+      "guardrail": "No pressure rating, material or proof-pressure claim"
+    },
+    "windows": {
+      "habitat_sector_indices_zero_based": [
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "clock_ranges": {
+        "right": [
+          1,
+          4
+        ],
+        "left": [
+          8,
+          11
+        ]
+      },
+      "minor_band_indices": [
+        0,
+        1,
+        4,
+        5,
+        6,
+        11
+      ],
+      "outer_layer_thickness_m": 0.025,
+      "interlayer_gap_m": 0.015,
+      "inner_layer_thickness_m": 0.025,
+      "frame_depth_m": 0.12,
+      "state": "OWNER_DEFINED_LOCATION_PROVISIONAL_PRESSURE_LAYER_REFERENCE",
+      "guardrail": "Window geometry is a visual/spatial pressure-control reference, not a qualified transparent pressure vessel"
+    },
+    "habitat_access": {
+      "walkway_width_m": 1.1,
+      "walkway_deck_thickness_m": 0.08,
+      "walkway_segment_count": 25,
+      "door_clear_width_m": 0.82,
+      "door_clear_height_m": 1.9,
+      "service_corridor_width_m": 0.55,
+      "removable_lining_depth_m": 0.08,
+      "state": "DERIVED_SERVICEABLE_LAYOUT",
+      "guardrail": "Ergonomic and emergency-egress validation remains open"
+    },
+    "serviceability": {
+      "component_service_clearance_m": 0.55,
+      "connector_access_m": 0.18,
+      "cable_tray_width_m": 0.24,
+      "cable_tray_height_m": 0.12,
+      "minimum_bend_radius_m": 0.2,
+      "strain_relief_length_m": 0.18,
+      "removal_path_length_m": 0.8,
+      "state": "PROVISIONAL_MAINTAINABILITY_RESERVATION",
+      "guardrail": "Clearances are configuration placeholders pending component datasheets and maintenance analysis"
+    },
+    "mark_iii_interface_arm": {
+      "base_yaw_radius_m": 0.42,
+      "base_yaw_depth_m": 0.24,
+      "shoulder_pitch_radius_m": 0.28,
+      "upper_link_length_m": 1.65,
+      "fore_link_length_m": 1.3,
+      "link_section_m": [
+        0.22,
+        0.18
+      ],
+      "elbow_radius_m": 0.24,
+      "wrist_radius_m": 0.18,
+      "end_effector_length_m": 0.42,
+      "actuator_housing_radius_m": 0.16,
+      "cable_chain_clearance_m": 0.12,
+      "state": "PROVISIONAL_INTERFACE_DECOMPOSITION_FROM_MARK_III_TWIN",
+      "guardrail": "No load, torque, deployment, capture or manufacturing claim"
+    },
+    "print_references": {
+      "full_assembly_scale": "1:100",
+      "representative_panel_scale": "1:20",
+      "window_frame_scale": "1:20",
+      "mark_iii_interface_arm_scale": "1:20",
+      "state": "DISPLAY_AND_ASSEMBLY_REVIEW_ONLY_NOT_MANUFACTURING_RELEASE"
+    }
+  },
+  "open_engineering_gaps": [
+    "pressure shell materials, thickness, seals and proof pressure",
+    "transparent pressure-window laminate, frame, seal and impact qualification",
+    "radiation and micrometeoroid protection",
+    "service-bay thermal rejection and fire zoning",
+    "cable gauge, insulation, connector family, EMI separation and bend limits",
+    "component mass properties, attachment loads and launch restraints",
+    "walkway, door, emergency egress and safe-haven human-factors validation",
+    "ECLSS mass, capacity, redundancy and maintenance paths",
+    "validated coil geometry, current, insulation and cooling",
+    "docking/Mark III interface standard, arm loads, actuation and controls",
+    "panel fasteners, tolerance stack, seal strategy and on-site assembly sequence",
+    "printer/material/process capability for any proposed physical segment"
+  ]
 }
