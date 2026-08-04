@@ -1,7 +1,7 @@
 {
-  "schema_version": "mark-iii-execution-receipt-v0.2.0",
-  "recorded_at_utc": "2026-08-04T23:16:00Z",
-  "status": "PENDING_CLEAN_RUNNER_QUALIFICATION_INTERACTIVE_CAD_REVIEW_AND_CANONICAL_DRIVE_SYNC",
+  "schema_version": "mark-iii-execution-receipt-v0.2.2",
+  "recorded_at_utc": "2026-08-04T23:42:00Z",
+  "status": "PASS_REPOSITORY_QUALIFICATION_INTERACTIVE_CAD_REVIEW_AND_CANONICAL_DRIVE_SYNC_OPEN",
   "task_issue": "https://github.com/achillesromer-coder/LightSpeed/issues/32",
   "source_branch": "execution/mark-iii-serviceable-reference-2026-08-05",
   "stacked_base_branch": "execution/luke-ii-parametric-reference-2026-08-04",
@@ -54,9 +54,9 @@
   },
   "canonical_source": {
     "parameters_sha256": "daec4cc655530ad46d509fc7815b1991971269cac6be84c02ff4ca503b05082e",
-    "requirements_sha256": "3a8d4ccebd5cde60bb12f3a0c9a1f478e45fd59865b60638643fd685c23c43d0",
+    "requirements_sha256": "244f51ebf93a745071d171f8fdf65b47ddbbcdaf7b59b73e77cdfc9c2e8bec92",
     "parametric_sha256": "4331d9d8e0318840a00bb86c9afce1124170bdb9c51c6feab6bb8517758482f3",
-    "workflow_sha256": "21a78f4b2713893f63bc664cc07cef732691826222246c162e9656c0a0eb2570"
+    "workflow_sha256": "704c71041139451a308f38cb73f49216f5a5e9909dfeb55b7fce67a4f5006173"
   },
   "generated_artifacts": {
     "mark_iii_arm_assembly_1to2.stl": {
@@ -119,17 +119,37 @@
   "ci_gate": {
     "workflow": "Mark III Reference Validation",
     "required": true,
-    "status": "PENDING_CLEAN_RUNNER_QUALIFICATION"
+    "status": "PASS_SERVICEABLE_PORTABLE_SEMANTIC_GLB_ARRAY_AND_INTERACTIVE_REGENERATION",
+    "qualification_run_id": 30960741775,
+    "qualification_run_number": 6,
+    "qualification_head_sha": "631b21e97c17bbce3736536bdfba828ded986553",
+    "qualification_merge_sha": "9af469135dff4f8cfe85de041295d886e9c74881",
+    "qualification_artifact_id": 8912834503,
+    "qualification_artifact_digest": "sha256:d08e2ea2ac7e9b67d1b9429ca4b2c58f83ccd4b24fc344df6870fcdc7f47c358",
+    "qualification_artifact_bytes": 103479,
+    "dependency_correction": "Pinned scipy==1.17.0 because trimesh face-colour mesh copying requires scipy on a clean runner.",
+    "acceptance_basis": [
+      "canonical parameter dependency and generator bytes",
+      "five portable display-print STL byte hashes",
+      "print and array audit byte hash",
+      "semantic named geometry fingerprint",
+      "canonical component manifest meaning",
+      "339-node mesh quality and GLB roundtrip fidelity",
+      "attachment cable connector bend-space clearance removal and array gates",
+      "interactive review surface coverage",
+      "claim-sensitive evidence classifications"
+    ]
   },
   "drive_canonical_update": {
     "target_file_id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2",
-    "status": "NOT_ATTEMPTED_PENDING_CI_AND_FINAL_WORKBOOK",
+    "status": "PENDING_FINAL_WORKBOOK_AND_SAME_ID_REPLACEMENT_ATTEMPT",
     "parallel_workbook_uploaded": false
   },
   "review_gate": {
     "interactive_cad_review": "OPEN",
     "manufacturing_release": "BLOCKED",
-    "claim_gate_state": "UNCHANGED"
+    "claim_gate_state": "UNCHANGED",
+    "repository_qualification": "PASS"
   },
   "claim_gates": [
     "No validated extraction, separation, efficiency, field-strength, current or material-response claim.",
