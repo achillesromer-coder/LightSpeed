@@ -1,0 +1,142 @@
+{
+  "schema_version": "mark-iii-execution-receipt-v0.2.0",
+  "recorded_at_utc": "2026-08-04T23:16:00Z",
+  "status": "PENDING_CLEAN_RUNNER_QUALIFICATION_INTERACTIVE_CAD_REVIEW_AND_CANONICAL_DRIVE_SYNC",
+  "task_issue": "https://github.com/achillesromer-coder/LightSpeed/issues/32",
+  "source_branch": "execution/mark-iii-serviceable-reference-2026-08-05",
+  "stacked_base_branch": "execution/luke-ii-parametric-reference-2026-08-04",
+  "stacked_base_sha": "4cbba640bf8f1589f542ec164016c4f39b4c85e1",
+  "canonical_target": {
+    "file": "Mark_III_Digital_Twin_v0_1.xlsx",
+    "drive_file_id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2",
+    "action": "replace existing XLSX bytes in place"
+  },
+  "acceptance_invariants": {
+    "named_nodes": 339,
+    "physical_nodes": 192,
+    "individual_nodes_watertight": 339,
+    "individual_nodes_winding_consistent": 339,
+    "semantic_geometry_sha256": "8ff2f295d0bebdd9cfb45c1942bda6dfe8dfd6493d7d9861fb97bf91458c2303",
+    "canonical_manifest_sha256": "9f95b1c5a6e552a626f50a9e2448f45a2cfb8642e65f92b904f0211fee64d813",
+    "unit_tests_run": 17,
+    "unit_tests_passed": 17,
+    "serviceability_status": "PASS_SERVICEABILITY_REFERENCE_AUDIT",
+    "glb_roundtrip_status": "PASS_GLB_ROUNDTRIP_REFERENCE",
+    "glb_roundtrip_matched_nodes": 339,
+    "canonical_module_envelope_m": [
+      0.75,
+      0.32,
+      0.32
+    ],
+    "array_configurations": [
+      1,
+      2,
+      4,
+      8,
+      18
+    ]
+  },
+  "configuration": {
+    "shell_panels": 18,
+    "solar_hull_skins": 6,
+    "coupler_latches": 8,
+    "solenoid_geometry_nodes": 12,
+    "resonators": 4,
+    "battery_bms_modules": 1,
+    "capacitor_modules": 2,
+    "sensors": 8,
+    "damping_placeholders": 4,
+    "arm_system_nodes": 34,
+    "service_clearances": 50,
+    "connector_access_envelopes": 19,
+    "cable_bend_spaces": 4,
+    "removal_paths": 38
+  },
+  "canonical_source": {
+    "parameters_sha256": "daec4cc655530ad46d509fc7815b1991971269cac6be84c02ff4ca503b05082e",
+    "requirements_sha256": "3a8d4ccebd5cde60bb12f3a0c9a1f478e45fd59865b60638643fd685c23c43d0",
+    "parametric_sha256": "4331d9d8e0318840a00bb86c9afce1124170bdb9c51c6feab6bb8517758482f3",
+    "workflow_sha256": "21a78f4b2713893f63bc664cc07cef732691826222246c162e9656c0a0eb2570"
+  },
+  "generated_artifacts": {
+    "mark_iii_arm_assembly_1to2.stl": {
+      "sha256": "fe01d49da370f6c69dfabbc6943b31e329b5abc03516ee928144b79a1d37aa32",
+      "bytes": 90084
+    },
+    "mark_iii_assembly.glb": {
+      "sha256": "1c3d1791f6c80f72113599bd7bab03b68b262fc435c21eb663b56165fcc6ac63",
+      "bytes": 367824
+    },
+    "mark_iii_component_manifest.json": {
+      "sha256": "e133ce2bc2c3be2c2e45be1853ef4975eb1907485be333047707eac8bc319031",
+      "bytes": 377070
+    },
+    "mark_iii_coupler_1to2.stl": {
+      "sha256": "0dc6973290e053cf3ce7bd2dcdd9250a940eaa4f01d83894c099fc067248b13f",
+      "bytes": 25684
+    },
+    "mark_iii_dimensional_audit.csv": {
+      "sha256": "6758bc6d85a28f84a0569dd42b0a6cf9494852d9fab438090c03ca94e49b7108",
+      "bytes": 134692
+    },
+    "mark_iii_dimensional_audit_summary.json": {
+      "sha256": "0ef3a19b0f228cbe5c29e52c6d13bff9817d66476661779685d3b0b883f7bbe4",
+      "bytes": 2178
+    },
+    "mark_iii_full_module_1to5.stl": {
+      "sha256": "3242e6d6a4fa28d1975bed77b1c799e49d6ca295bc30f8837d056a1ee42a711a",
+      "bytes": 12884
+    },
+    "mark_iii_glb_roundtrip_audit.json": {
+      "sha256": "ab71a68fa77ad64984f235947443eea4432c8d6fb4a92e6a2d1e666e1dabd866",
+      "bytes": 230089
+    },
+    "mark_iii_interactive.html": {
+      "sha256": "c5690c2cb0a70b3fc1f2494de9d0af8804467665ec3fd3edfdfc9dc6804cb06a",
+      "bytes": 966039
+    },
+    "mark_iii_print_and_array_audit.csv": {
+      "sha256": "370364ab567d20d3239474cfb3e5ee9326619ada217199c601e8df7c0a85ce09",
+      "bytes": 862
+    },
+    "mark_iii_representative_panel_1to3.stl": {
+      "sha256": "630cd96d6bc1576a36cbde86e6e6826970484002fc15c44217dba13d6853a6d0",
+      "bytes": 684
+    },
+    "mark_iii_serviceability_audit.json": {
+      "sha256": "7f3f471208c4abbe52e2361803a0043f5c95ec993fd153f4ab955b352c06fe52",
+      "bytes": 5702
+    },
+    "mark_iii_solenoid_cartridge_1to1.stl": {
+      "sha256": "c71136f92f1a3eef3e6566ddb99d615ce0fd1e986157a63908bbc0bf166e914b",
+      "bytes": 19284
+    },
+    "mark_iii_verification.json": {
+      "sha256": "9683cf9929d709355f9ea3699c03762769c9fe70698ade7a1e85bb52dba11c2f",
+      "bytes": 50781
+    }
+  },
+  "ci_gate": {
+    "workflow": "Mark III Reference Validation",
+    "required": true,
+    "status": "PENDING_CLEAN_RUNNER_QUALIFICATION"
+  },
+  "drive_canonical_update": {
+    "target_file_id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2",
+    "status": "NOT_ATTEMPTED_PENDING_CI_AND_FINAL_WORKBOOK",
+    "parallel_workbook_uploaded": false
+  },
+  "review_gate": {
+    "interactive_cad_review": "OPEN",
+    "manufacturing_release": "BLOCKED",
+    "claim_gate_state": "UNCHANGED"
+  },
+  "claim_gates": [
+    "No validated extraction, separation, efficiency, field-strength, current or material-response claim.",
+    "No high-current build instructions or energy-safety approval.",
+    "No pressure, vacuum, gas-handling, thermal, flight, human-rating or payload-handling certification.",
+    "No arm torque, reach, capture, deployment, load or collision-avoidance claim.",
+    "No manufacturing release, public capability promotion or operational deployment approval.",
+    "Synthetic RFS/EMFF and Free Flow values remain quarantined from active capability inputs."
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "schema_version": "mark-iii-upstream-source-register-v0.2",
+  "canonical_target": {
+    "title": "Mark_III_Digital_Twin_v0_1.xlsx",
+    "drive_file_id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2",
+    "role": "same-ID replacement authority"
+  },
+  "sources": [
+    {"title": "Mark III Digital Twin v0.1", "drive_file_id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2", "use": "module envelope, topology, component counts, arrays and guardrails", "state": "SOURCE_ALIGNED_SYNTHETIC_SCAFFOLD"},
+    {"title": "Mark 1P Digital Twin v0.1", "drive_file_id": "1WEqxlBfOi5SSLhmwSiIQAUkWeH2oKEXD", "use": "serviceable bays, cartridge isolation, harness and panel access lineage", "state": "SOURCE_LINEAGE"},
+    {"title": "Mark I Terrestrial Test Chamber Digital Twin v0.1", "drive_file_id": "12TWqJ-Kh0twh7t582MPwL82MoHsuOWd_", "use": "test, assay, safety and evidence gates", "state": "SOURCE_LINEAGE"},
+    {"title": "RFS/EMFF Digital Twin Test Sandbox v0.1", "drive_file_id": "1YDs4fjNZgzDAB1LJcf7xT9N-bywD4Qgf", "use": "controller, frequency/resonator, solenoid, sensors and synchronized data architecture", "state": "SYNTHETIC_RESPONSE_MODEL_QUARANTINED"},
+    {"title": "Free Flow Solenoid Stack Digital Twin Package v0.1", "use": "solenoid scenario/interface lineage; 0.16 m scenario length recorded as source conflict", "state": "SYNTHETIC_SCENARIO_QUARANTINED"},
+    {"title": "Free Flow Batteries Digital Twin Package v0.1", "use": "battery/BMS interface lineage", "state": "SYNTHETIC_SCAFFOLD"},
+    {"title": "Free Flow Capacitors Digital Twin Package v0.1", "use": "capacitor interface lineage", "state": "SYNTHETIC_SCAFFOLD"},
+    {"title": "Solar Hull Digital Twin Package v0.2", "use": "six-sector exterior functional-skin interface", "state": "TARGET_PROTOTYPE_PATHWAY"},
+    {"title": "Luke II canonical execution package v1.3.2 / PR #30", "use": "Mark III interface-arm lineage and stacked branch baseline", "state": "QUALIFIED_REFERENCE_PENDING_EXTERNAL_GATES"}
+  ],
+  "source_discipline": [
+    "Source-aligned values are not measured hardware unless an evidence record explicitly says so.",
+    "Derived dimensions exist only to make the source topology spatially inspectable and serviceable.",
+    "Synthetic RFS/EMFF and Free Flow values are excluded from active capability claims.",
+    "Mark II remains excluded unless a specific intermediate evidence gap is demonstrated."
+  ]
+}

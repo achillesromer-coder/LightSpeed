@@ -1,0 +1,108 @@
+{
+  "schema_version": "mark-iii-serviceable-reference-v0.2",
+  "artifact_status": "SOURCE_RECONCILED_SPATIAL_REFERENCE_NOT_VALIDATED_HARDWARE",
+  "canonical_target": "Mark III modular/linkable field-control and processing platform",
+  "units": "SI unless an export scale states otherwise",
+  "canonical_drive_workbook": {
+    "file": "Mark_III_Digital_Twin_v0_1.xlsx",
+    "file_id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2",
+    "authority": "SAME_ID_REPLACEMENT_TARGET"
+  },
+  "source_parameters": {
+    "module_length_m": {"value": 0.75, "state": "SOURCE_ALIGNED_SYNTHETIC_SCAFFOLD", "source": "Mark III v0.1 workbook geometry"},
+    "outer_radius_m": {"value": 0.16, "state": "SOURCE_ALIGNED_SYNTHETIC_SCAFFOLD", "source": "Mark III v0.1 workbook geometry"},
+    "wall_thickness_m": {"value": 0.006, "state": "SOURCE_ALIGNED_PROVISIONAL", "source": "Mark III v0.1 workbook geometry"},
+    "shell_sector_count": {"value": 6, "state": "SOURCE_ALIGNED_TOPOLOGY", "source": "Mark III v0.1 component register"},
+    "coupling_node_count": {"value": 8, "state": "SOURCE_ALIGNED_TOPOLOGY", "source": "Mark III v0.1 component register"},
+    "solenoid_cartridge_count": {"value": 6, "state": "SOURCE_ALIGNED_TOPOLOGY", "source": "Mark III v0.1 component register"},
+    "resonator_cartridge_count": {"value": 4, "state": "SOURCE_ALIGNED_TOPOLOGY", "source": "Mark III v0.1 component register"},
+    "capacitor_module_count": {"value": 2, "state": "SOURCE_ALIGNED_TOPOLOGY", "source": "Mark III v0.1 component register"},
+    "battery_bms_count": {"value": 1, "state": "SOURCE_ALIGNED_TOPOLOGY", "source": "Mark III v0.1 component register"},
+    "sensor_node_count": {"value": 8, "state": "SOURCE_ALIGNED_TOPOLOGY", "source": "Mark III v0.1 component register"},
+    "damping_placeholder_count": {"value": 4, "state": "SOURCE_ALIGNED_TOPOLOGY", "source": "Mark III v0.1 component register"},
+    "arm_interface_count": {"value": 2, "state": "SOURCE_ALIGNED_TOPOLOGY", "source": "Mark III v0.1 component register"}
+  },
+  "derived_configuration": {
+    "axial_panel_count": 3,
+    "structural_panel_inner_radius_m": 0.154,
+    "structural_panel_outer_radius_m": 0.158,
+    "solar_skin_inner_radius_m": 0.158,
+    "solar_skin_outer_radius_m": 0.16,
+    "main_body_length_m": 0.67,
+    "coupler_length_m": 0.04,
+    "process_tunnel_inner_radius_m": 0.029,
+    "process_tunnel_outer_radius_m": 0.033,
+    "sample_cartridge_radius_m": 0.026,
+    "sample_cartridge_length_m": 0.18,
+    "solenoid_inner_radius_m": 0.038,
+    "solenoid_outer_radius_m": 0.06,
+    "solenoid_axial_length_m": 0.055,
+    "solenoid_axial_pitch_m": 0.09,
+    "service_clearance_radial_m": 0.018,
+    "connector_access_length_m": 0.035,
+    "cable_minimum_bend_radius_m": 0.018,
+    "cable_tray_radius_m": 0.132,
+    "cable_tray_section_m": [0.012, 0.018],
+    "arm": {
+      "upper_link_length_m": 0.22,
+      "fore_link_length_m": 0.18,
+      "base_radius_m": 0.045,
+      "joint_radius_m": 0.035,
+      "link_radius_m": 0.018,
+      "wrist_radius_m": 0.025,
+      "end_effector_length_m": 0.07,
+      "cable_chain_radius_m": 0.009,
+      "service_clearance_radius_m": 0.055
+    },
+    "array_spacing_m": 0.79,
+    "array_configurations": [1, 2, 4, 8, 18]
+  },
+  "source_conflicts": [
+    {
+      "id": "M3-CONFLICT-001",
+      "description": "The Free Flow Mark III scenario lists a 0.16 m solenoid length; six such units cannot be arranged axially inside the 0.75 m source envelope with couplers and service space.",
+      "resolution": "Use six compact 0.055 m spatial-reference cartridges. Preserve the 0.16 m Free Flow value as a quarantined scenario input pending measured BOM and integration review."
+    },
+    {
+      "id": "M3-CONFLICT-002",
+      "description": "Source workbooks describe synthetic energy, RFS and EMFF behavior without measured logs.",
+      "resolution": "Represent component interfaces and sensor locations only; exclude performance values from geometry and capability claims."
+    }
+  ],
+  "known_unknowns": [
+    {"id": "M3-GAP-001", "description": "Qualified material stack, fastener system and panel tolerance are unknown."},
+    {"id": "M3-GAP-002", "description": "Coupler structural loads, sealing, alignment tolerance and repeated-cycle life are unknown."},
+    {"id": "M3-GAP-003", "description": "Solenoid conductor, turn count, insulation, current, thermal rejection and field map are unverified."},
+    {"id": "M3-GAP-004", "description": "RFS resonator frequency, acceleration, coupling and assay response require controlled tests and blanks."},
+    {"id": "M3-GAP-005", "description": "Battery, BMS and capacitor architecture requires pulse logs, ESR/DCIR, fault containment and thermal review."},
+    {"id": "M3-GAP-006", "description": "Cable gauges, connector families, shielding, grounding and minimum bend radii require electrical design."},
+    {"id": "M3-GAP-007", "description": "Arm joint loads, actuator selection, tendon/spool sizing, torque, reach and collision limits are unknown."},
+    {"id": "M3-GAP-008", "description": "Damping chamber medium, pressure, containment and venting remain specialist-review placeholders."},
+    {"id": "M3-GAP-009", "description": "Array-level bus sharing, synchronization, thermal interaction, field interaction and coupler loads are unknown."},
+    {"id": "M3-GAP-010", "description": "Manufacturing method, inspection, assembly sequence and repair certification are not established."}
+  ],
+  "evidence_states": {
+    "source": "SOURCE_ALIGNED_SYNTHETIC_SCAFFOLD",
+    "topology": "SOURCE_ALIGNED_TOPOLOGY",
+    "derived": "DERIVED_SPATIAL_REFERENCE",
+    "provisional": "PROVISIONAL_INTERFACE_REFERENCE",
+    "illustrative": "ILLUSTRATIVE_ONLY_NOT_PHYSICAL_PERFORMANCE",
+    "quarantined": "QUARANTINED_UNVERIFIED_NOT_USED_FOR_CAPABILITY"
+  },
+  "claim_gates": [
+    "No validated extraction, separation, efficiency, field-strength, current or material-response claim.",
+    "No high-current build instructions or energy-safety approval.",
+    "No pressure, vacuum, gas-handling, thermal, flight, human-rating or payload-handling certification.",
+    "No arm torque, reach, capture, deployment, load or collision-avoidance claim.",
+    "No manufacturing release, public capability promotion or operational deployment approval.",
+    "Synthetic RFS/EMFF and Free Flow values remain quarantined from active capability inputs."
+  ],
+  "exports": {
+    "assembly": "1:1 metres in GLB",
+    "full_module_print": "1:5 millimetres in STL",
+    "panel_print": "1:3 millimetres in STL",
+    "coupler_print": "1:2 millimetres in STL",
+    "solenoid_print": "1:1 millimetres in STL",
+    "arm_print": "1:2 millimetres in STL"
+  }
+}
