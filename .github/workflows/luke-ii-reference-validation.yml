@@ -53,8 +53,10 @@ jobs:
             "$LUKE_DIR/luke_ii_parametric.py" \
             "$LUKE_DIR/luke_ii_geometry_fingerprint.py" \
             "$LUKE_DIR/luke_ii_dimensional_audit.py" \
+            "$LUKE_DIR/luke_ii_glb_roundtrip_audit.py" \
             "$LUKE_DIR/test_luke_ii_parametric.py" \
-            "$LUKE_DIR/test_luke_ii_dimensional_audit.py"
+            "$LUKE_DIR/test_luke_ii_dimensional_audit.py" \
+            "$LUKE_DIR/test_luke_ii_glb_roundtrip_audit.py"
 
       - name: Run geometry, evidence and audit tests
         run: |
@@ -72,6 +74,15 @@ jobs:
             --parameters "$LUKE_DIR/luke_ii_parameters.json" \
             --out-dir "$RUNNER_TEMP/luke-ii-output" \
             | tee "$RUNNER_TEMP/luke-ii-generation.log"
+
+      - name: Verify exported GLB roundtrip structure
+        run: |
+          set -o pipefail
+          python "$LUKE_DIR/luke_ii_glb_roundtrip_audit.py" \
+            --parameters "$LUKE_DIR/luke_ii_parameters.json" \
+            --glb "$RUNNER_TEMP/luke-ii-output/luke_ii_assembly.glb" \
+            --output "$RUNNER_TEMP/luke-ii-glb-roundtrip-audit.json" \
+            | tee "$RUNNER_TEMP/luke-ii-glb-roundtrip.log"
 
       - name: Generate dimensional engineering-review register
         run: |
@@ -98,6 +109,8 @@ jobs:
           receipt = json.loads((source / "luke_ii_execution_receipt.json").read_text(encoding="utf-8"))
           verification = json.loads((output / "luke_ii_verification.json").read_text(encoding="utf-8"))
           audit = json.loads((audit_dir / "luke_ii_dimensional_audit_summary.json").read_text(encoding="utf-8"))
+          glb_roundtrip_path = Path(os.environ["RUNNER_TEMP"]) / "luke-ii-glb-roundtrip-audit.json"
+          glb_roundtrip = json.loads(glb_roundtrip_path.read_text(encoding="utf-8"))
 
           def sha256(path: Path) -> str:
               if not path.is_file():
@@ -121,6 +134,7 @@ jobs:
               "assembly_glb_build_receipt": sha256(glb_path),
               "print_shell_stl": sha256(stl_path),
               "verification_build_receipt": sha256(verification_path),
+              "glb_roundtrip_audit": sha256(glb_roundtrip_path),
               "dimensional_audit_csv": sha256(audit_csv),
               "dimensional_audit_summary": sha256(audit_summary),
           }
@@ -150,6 +164,13 @@ jobs:
           if verification["print_shell"]["watertight"] is not True:
               raise SystemExit("Printable reference shell is not watertight")
 
+          if glb_roundtrip["status"] != "PASS_GLB_ROUNDTRIP_REFERENCE":
+              raise SystemExit("Exported GLB failed roundtrip structural audit")
+          if glb_roundtrip["matched_nodes"] != named_nodes:
+              raise SystemExit("Exported GLB node count does not match source geometry")
+          if glb_roundtrip["missing_nodes"] or glb_roundtrip["unexpected_nodes"]:
+              raise SystemExit("Exported GLB node identity changed")
+
           if audit["status"] != "PASS_DIMENSIONAL_REFERENCE_AUDIT":
               raise SystemExit(f"Unexpected dimensional-audit status: {audit['status']}")
           if audit["node_count"] != named_nodes:
@@ -164,14 +185,21 @@ jobs:
               raise SystemExit("Dimensional-audit CSV hash does not match its summary")
 
           result = {
-              "schema_version": "luke-ii-ci-receipt-v1",
-              "status": "PASS_PORTABLE_AND_SEMANTIC_REGENERATION",
+              "schema_version": "luke-ii-ci-receipt-v1.1",
+              "status": "PASS_PORTABLE_SEMANTIC_AND_GLB_ROUNDTRIP_REGENERATION",
               "source_branch": os.environ.get("GITHUB_HEAD_REF") or os.environ.get("GITHUB_REF_NAME"),
               "commit": os.environ.get("GITHUB_SHA"),
               "observed_sha256": observed,
               "semantic_geometry_sha256": audit["semantic_geometry_sha256"],
               "semantic_geometry_quantization_m": audit["semantic_geometry_quantization_m"],
               "geometry_nodes": named_nodes,
+              "glb_roundtrip": {
+                  "status": glb_roundtrip["status"],
+                  "matched_nodes": glb_roundtrip["matched_nodes"],
+                  "linear_tolerance_m": glb_roundtrip["linear_tolerance_m"],
+                  "relative_measure_tolerance": glb_roundtrip["relative_measure_tolerance"],
+                  "maximum_observed_errors": glb_roundtrip["maximum_observed_errors"],
+              },
               "raw_glb_hash_policy": "BUILD_RECEIPT_ONLY_NOT_CROSS_PLATFORM_ACCEPTANCE_GATE",
               "raw_verification_hash_policy": "BUILD_RECEIPT_ONLY_INCLUDES_OBSERVED_GLB_HASH",
               "claim_gate_state": "UNCHANGED",
@@ -189,6 +217,8 @@ jobs:
           path: |
             ${{ runner.temp }}/luke-ii-tests.log
             ${{ runner.temp }}/luke-ii-generation.log
+            ${{ runner.temp }}/luke-ii-glb-roundtrip.log
+            ${{ runner.temp }}/luke-ii-glb-roundtrip-audit.json
             ${{ runner.temp }}/luke-ii-audit.log
             ${{ runner.temp }}/luke-ii-ci-receipt.json
             ${{ runner.temp }}/luke-ii-output/luke_ii_verification.json
@@ -200,9 +230,11 @@ jobs:
             ${{ env.LUKE_DIR }}/luke_ii_parametric.py
             ${{ env.LUKE_DIR }}/luke_ii_geometry_fingerprint.py
             ${{ env.LUKE_DIR }}/luke_ii_dimensional_audit.py
+            ${{ env.LUKE_DIR }}/luke_ii_glb_roundtrip_audit.py
             ${{ env.LUKE_DIR }}/luke_ii_execution_receipt.json
             ${{ env.LUKE_DIR }}/test_luke_ii_parametric.py
             ${{ env.LUKE_DIR }}/test_luke_ii_dimensional_audit.py
+            ${{ env.LUKE_DIR }}/test_luke_ii_glb_roundtrip_audit.py
             .github/workflows/luke-ii-reference-validation.yml
           if-no-files-found: warn
           retention-days: 30
