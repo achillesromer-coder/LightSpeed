@@ -1,7 +1,7 @@
 {
-  "schema_version": "luke-ii-execution-receipt-v1.3.1",
-  "recorded_at_utc": "2026-08-04T21:34:02Z",
-  "status": "PENDING_CLEAN_RUNNER_QUALIFICATION_INTERACTIVE_CAD_REVIEW_AND_CANONICAL_DRIVE_SYNC",
+  "schema_version": "luke-ii-execution-receipt-v1.3.2",
+  "recorded_at_utc": "2026-08-04T22:12:00Z",
+  "status": "PASS_SERVICEABLE_REFERENCE_GEOMETRY_PENDING_INTERACTIVE_CAD_REVIEW_AND_CANONICAL_DRIVE_SYNC",
   "task_state": "CURRENT_NEXT_TASK_LUKE_CLOSURE_BEFORE_MARK_III",
   "task_issue": "https://github.com/achillesromer-coder/LightSpeed/issues/31",
   "draft_pr": "https://github.com/achillesromer-coder/LightSpeed/pull/30",
@@ -18,7 +18,8 @@
     "unit_tests_passed": 16,
     "serviceability_status": "PASS_SERVICEABILITY_REFERENCE_AUDIT",
     "glb_roundtrip_status": "PASS_GLB_ROUNDTRIP_REFERENCE",
-    "glb_roundtrip_matched_nodes": 1357
+    "glb_roundtrip_matched_nodes": 1357,
+    "component_manifest_canonical_sha256": "0ebff95d8047d04a27c00ea8f56f961672ce9f6388bb68efc0464e89e9ca792e"
   },
   "closure_configuration": {
     "solar_hull_panels": 162,
@@ -50,7 +51,10 @@
     },
     "component_manifest": {
       "file": "luke_ii_component_manifest.json",
-      "sha256": "97e6b52fa499e049d71e51d53657b32fc133003e897f9e55cdcd871aa303a4b8"
+      "sha256": "97e6b52fa499e049d71e51d53657b32fc133003e897f9e55cdcd871aa303a4b8",
+      "hash_policy": "CONTROLLED_BUILD_RECEIPT_ONLY_SEMANTIC_OR_STRUCTURAL_ACCEPTANCE_GATE",
+      "canonical_semantic_sha256": "0ebff95d8047d04a27c00ea8f56f961672ce9f6388bb68efc0464e89e9ca792e",
+      "canonical_float_quantization_decimal_places": 8
     },
     "full_print_reference": {
       "file": "luke_ii_reference_1to100.stl",
@@ -79,19 +83,23 @@
     },
     "dimensional_audit": {
       "file": "luke_ii_dimensional_audit.csv",
-      "sha256": "6fcc3934f4ccf8e3c13d76bc0ca83bfb951601efd0e0046ecf23370a0f84a399"
+      "sha256": "6fcc3934f4ccf8e3c13d76bc0ca83bfb951601efd0e0046ecf23370a0f84a399",
+      "hash_policy": "CONTROLLED_BUILD_RECEIPT_ONLY_SEMANTIC_OR_STRUCTURAL_ACCEPTANCE_GATE"
     },
     "serviceability_audit": {
       "file": "luke_ii_serviceability_audit.json",
-      "sha256": "896df9a7193e42c69d2beb71458e68b3da5e516d8d691b26fa5a041c809e00b4"
+      "sha256": "896df9a7193e42c69d2beb71458e68b3da5e516d8d691b26fa5a041c809e00b4",
+      "hash_policy": "CONTROLLED_BUILD_RECEIPT_ONLY_SEMANTIC_OR_STRUCTURAL_ACCEPTANCE_GATE"
     },
     "glb_roundtrip_audit": {
       "file": "luke_ii_glb_roundtrip_audit.json",
-      "sha256": "9c9a3f58e738f30da8c65f7dd4ce7444fd7c4f5c04af6455cbcc37c371045913"
+      "sha256": "9c9a3f58e738f30da8c65f7dd4ce7444fd7c4f5c04af6455cbcc37c371045913",
+      "hash_policy": "CONTROLLED_BUILD_RECEIPT_ONLY_SEMANTIC_OR_STRUCTURAL_ACCEPTANCE_GATE"
     },
     "dimensional_audit_summary": {
       "file": "luke_ii_dimensional_audit_summary.json",
-      "sha256": "b56a0745d40098e2c0eb70dc050b7a36f0d14821427d56205da28852b35f4830"
+      "sha256": "b56a0745d40098e2c0eb70dc050b7a36f0d14821427d56205da28852b35f4830",
+      "hash_policy": "CONTROLLED_BUILD_RECEIPT_ONLY_SEMANTIC_OR_STRUCTURAL_ACCEPTANCE_GATE"
     },
     "print_segmentation_audit": {
       "file": "luke_ii_print_segmentation_audit.csv",
@@ -128,17 +136,76 @@
   "ci_gate": {
     "workflow": "Luke II Reference Validation",
     "required": true,
-    "status": "PENDING_CLEAN_RUNNER_QUALIFICATION",
+    "status": "PASS_SERVICEABLE_PORTABLE_SEMANTIC_GLB_AND_INTERACTIVE_REGENERATION",
     "acceptance_basis": [
-      "canonical parameter and dependency bytes",
-      "portable display-print STL bytes",
-      "component manifest and dimensional-audit bytes",
-      "serviceability and print-segmentation audit bytes",
-      "semantic geometry fingerprint",
-      "exported GLB roundtrip structural fidelity",
-      "attachment cable clearance removal and walkway continuity gates",
+      "canonical parameter dependency and full-generator source bytes",
+      "portable display-print STL bytes and print-segmentation CSV bytes",
+      "canonical component-manifest meaning at eight-decimal float normalisation",
+      "semantic named-geometry fingerprint and mesh-quality counts",
+      "serviceability attachment cable clearance removal and walkway continuity gates",
+      "exported GLB roundtrip identity topology and bounded-measure fidelity",
+      "interactive review-surface construction and manifest coverage",
       "claim-sensitive evidence classifications"
-    ]
+    ],
+    "prior_qualification_attempt": {
+      "run_id": 30954795557,
+      "artifact_id": 8910583173,
+      "result": "FAILED_RAW_COMPONENT_MANIFEST_BYTE_HASH_ONLY",
+      "substantive_gates": "ALL_PASSED",
+      "resolution": "REPLACE_PLATFORM_SENSITIVE_RAW_DERIVED_JSON_CSV_HASHES_WITH_SEMANTIC_AND_STRUCTURAL_GATES",
+      "superseded_by_run_id": 30955347504,
+      "resolution_status": "RESOLVED_SEMANTIC_GATE_PASS"
+    },
+    "qualification_run_id": 30955347504,
+    "qualification_head_sha": "2f8e97362ab2fda9056a6e3d431c4d689510a7d6",
+    "qualification_merge_sha": "bc7ff1c1b50040049c3307801a496c017197ecae",
+    "qualification_artifact_id": 8910788751,
+    "qualification_artifact_digest": "sha256:c09cd911cbab3f7e63b078959496dc4e5691b979281f8ee789be0e8cc4c6911b",
+    "qualification_artifact_entries": 32,
+    "unit_tests": {
+      "run": 16,
+      "passed": 16,
+      "failed": 0
+    },
+    "observed": {
+      "geometry_nodes": 1357,
+      "physical_nodes": 824,
+      "semantic_geometry_sha256": "1e58a8e6c5643c4d7d6320de5740b5451a7919259c9aa7d886285ea9f8a3bf8a",
+      "component_manifest_canonical_sha256": "0ebff95d8047d04a27c00ea8f56f961672ce9f6388bb68efc0464e89e9ca792e",
+      "serviceability_status": "PASS_SERVICEABILITY_REFERENCE_AUDIT",
+      "serviceability_counts": {
+        "bulkhead_parts": 24,
+        "cable_required_nodes": 92,
+        "cable_tray_segments": 32,
+        "egress_segments": 25,
+        "geometry_nodes": 1357,
+        "maintainable_nodes": 610,
+        "mark_iii_interface_arm_nodes": 23,
+        "physical_nodes": 824,
+        "removal_paths": 227,
+        "service_clearances": 265,
+        "walkway_segments": 25,
+        "window_frame_parts": 120,
+        "window_layers": 120
+      },
+      "maximum_walkway_gap_m": 0.9422355782176538,
+      "glb_roundtrip": {
+        "status": "PASS_GLB_ROUNDTRIP_REFERENCE",
+        "matched_nodes": 1357,
+        "maximum_observed_errors": {
+          "bounds_m": 9.094238251350362e-07,
+          "centroid_m": 1.2255375039238459e-06,
+          "extents_m": 1.2969970697440658e-06,
+          "relative_area": 6.521456000797745e-06,
+          "relative_volume": 1.2898455048208105e-05
+        }
+      }
+    },
+    "repository_surface_validation": {
+      "status": "PASS",
+      "run_id": 30955347220,
+      "head_sha": "2f8e97362ab2fda9056a6e3d431c4d689510a7d6"
+    }
   },
   "controlled_package": {
     "file": "LukeII_Canonical_Execution_Package_v1_3.zip",
