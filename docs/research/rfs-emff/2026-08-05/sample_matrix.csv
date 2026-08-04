@@ -1,0 +1,13 @@
+sample_id,target_material_id,medium,variable_focus,objective,base_volume_l,base_volume_m3,bulk_density_kg_m3,bulk_mass_kg,source
+1a,Au,Gravel dust,variable dust particle size,find optimal wavelengths,10.0,0.001,1600,1.6,Project Overview p5; bulk density/default volume are screening assumptions
+1b,Au,Clay sphere,variable clay grit and moisture,find permeability limitation,10.0,0.001,1800,1.8,Project Overview p5; bulk density/default volume are screening assumptions
+1c,Au,Anthropic regolith,variable regolith density,find optimal wavelengths/displacement,10.0,0.001,1500,1.5,Project Overview p5; bulk density/default volume are screening assumptions
+2a,Nd,Sands,variable grain size / grit and purity,find optimal SOP,10.0,0.001,1650,1.6500000000000001,Project Overview p5; bulk density/default volume are screening assumptions
+2b,Nd,Clay ball,"variable clay density, optimal grit",find permeability limitation,10.0,0.001,1800,1.8,Project Overview p5; bulk density/default volume are screening assumptions
+2c,Nd,Anthropic regolith,variable element concentrations,find range of operations,10.0,0.001,1500,1.5,Project Overview p5; bulk density/default volume are screening assumptions
+3a,Fe,Sand,variable element concentration,find optimal displacement,10.0,0.001,1650,1.6500000000000001,Project Overview p5; bulk density/default volume are screening assumptions
+3b,Fe,Clay ball,variable element concentration,find optimal energy/displacement,10.0,0.001,1800,1.8,Project Overview p5; bulk density/default volume are screening assumptions
+3c,Fe,Anthropic regolith,statistically improbable natural samples,find optimal SOP/energy/extraction,10.0,0.001,1500,1.5,Project Overview p5; bulk density/default volume are screening assumptions
+4a,C_graphite,Graphene / gravel,variable element concentration,map energy pathways,10.0,0.001,1550,1.55,Project Overview p5; bulk density/default volume are screening assumptions
+4b,C_graphite,Baked clay ball,variable element purity and alloys,find range of operations,10.0,0.001,1900,1.9000000000000001,Project Overview p5; bulk density/default volume are screening assumptions
+4c,Mixed,Anthropic regolith element mixes,statistically most probable natural samples,base training and deployment planning/SOP,10.0,0.001,1500,1.5,Project Overview p5; bulk density/default volume are screening assumptions

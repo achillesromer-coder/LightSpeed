@@ -1,0 +1,5 @@
+material_id,name,pdf_resonance_cm1_min,pdf_resonance_cm1_max,density_kg_m3,conductivity_s_m,relative_permeability,susceptibility_proxy,target_role,confidence,source
+Au,Gold,1000,2000,19320,41000000.0,1.0,-3.4e-05,primary noble/electric-field responsive target,reference-required,Project Overview p4; NIST resistivity literature baseline; engineering density default
+Nd,Neodymium,400,4000,7007,1560000.0,1.05,0.0056,secondary rare-earth magnetic-response target,placeholder-needs-material-certificate,Project Overview p4; values must be replaced by assay/vendor certificate
+Fe,Iron,200,700,7874,10000000.0,200.0,200.0,primary magnetic control/target,screening-default,Project Overview p4; NIST resistivity literature baseline; permeability highly state-dependent
+C_graphite,Carbon / graphite,2800,3300,2260,100000.0,1.0,-2e-05,control and carbonaceous/regolith proxy,anisotropic-placeholder,Project Overview p4; graphite properties anisotropic; use measured sample values before claims
