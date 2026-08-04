@@ -2,14 +2,12 @@ name: Luke II Reference Validation
 
 on:
   pull_request:
-    branches:
-      - main
+    branches: [main]
     paths:
       - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/luke_ii/**"
       - ".github/workflows/luke-ii-reference-validation.yml"
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/luke_ii/**"
       - ".github/workflows/luke-ii-reference-validation.yml"
@@ -27,9 +25,9 @@ env:
 
 jobs:
   validate:
-    name: Regenerate and verify Luke II reference geometry
+    name: Regenerate and verify Luke II serviceable reference
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
 
     steps:
       - name: Check out repository
@@ -53,12 +51,16 @@ jobs:
             "$LUKE_DIR/luke_ii_parametric.py" \
             "$LUKE_DIR/luke_ii_geometry_fingerprint.py" \
             "$LUKE_DIR/luke_ii_dimensional_audit.py" \
+            "$LUKE_DIR/luke_ii_serviceability_audit.py" \
             "$LUKE_DIR/luke_ii_glb_roundtrip_audit.py" \
+            "$LUKE_DIR/luke_ii_interactive.py" \
             "$LUKE_DIR/test_luke_ii_parametric.py" \
             "$LUKE_DIR/test_luke_ii_dimensional_audit.py" \
+            "$LUKE_DIR/test_luke_ii_serviceability_audit.py" \
             "$LUKE_DIR/test_luke_ii_glb_roundtrip_audit.py"
 
-      - name: Run geometry, evidence and audit tests
+      - name: Run geometry, serviceability and audit tests
+        shell: bash
         run: |
           set -o pipefail
           python -m unittest discover -v \
@@ -66,7 +68,8 @@ jobs:
             -p "test_luke_ii*.py" \
             2>&1 | tee "$RUNNER_TEMP/luke-ii-tests.log"
 
-      - name: Regenerate deterministic geometry outputs
+      - name: Regenerate geometry and display-print references
+        shell: bash
         run: |
           set -o pipefail
           mkdir -p "$RUNNER_TEMP/luke-ii-output"
@@ -75,25 +78,50 @@ jobs:
             --out-dir "$RUNNER_TEMP/luke-ii-output" \
             | tee "$RUNNER_TEMP/luke-ii-generation.log"
 
-      - name: Verify exported GLB roundtrip structure
+      - name: Generate dimensional register
+        shell: bash
+        run: |
+          set -o pipefail
+          python "$LUKE_DIR/luke_ii_dimensional_audit.py" \
+            --parameters "$LUKE_DIR/luke_ii_parameters.json" \
+            --out-dir "$RUNNER_TEMP/luke-ii-output" \
+            | tee "$RUNNER_TEMP/luke-ii-dimensional.log"
+
+      - name: Generate serviceability and print audit
+        shell: bash
+        run: |
+          set -o pipefail
+          python "$LUKE_DIR/luke_ii_serviceability_audit.py" \
+            --parameters "$LUKE_DIR/luke_ii_parameters.json" \
+            --out-dir "$RUNNER_TEMP/luke-ii-output" \
+            | tee "$RUNNER_TEMP/luke-ii-serviceability.log"
+
+      - name: Verify exported GLB roundtrip
+        shell: bash
         run: |
           set -o pipefail
           python "$LUKE_DIR/luke_ii_glb_roundtrip_audit.py" \
             --parameters "$LUKE_DIR/luke_ii_parameters.json" \
             --glb "$RUNNER_TEMP/luke-ii-output/luke_ii_assembly.glb" \
-            --output "$RUNNER_TEMP/luke-ii-glb-roundtrip-audit.json" \
+            --output "$RUNNER_TEMP/luke-ii-output/luke_ii_glb_roundtrip_audit.json" \
             | tee "$RUNNER_TEMP/luke-ii-glb-roundtrip.log"
 
-      - name: Generate dimensional engineering-review register
+      - name: Build interactive review surface
+        shell: bash
         run: |
           set -o pipefail
-          mkdir -p "$RUNNER_TEMP/luke-ii-audit"
-          python "$LUKE_DIR/luke_ii_dimensional_audit.py" \
+          python "$LUKE_DIR/luke_ii_interactive.py" \
+            --glb "$RUNNER_TEMP/luke-ii-output/luke_ii_assembly.glb" \
+            --manifest "$RUNNER_TEMP/luke-ii-output/luke_ii_component_manifest.json" \
             --parameters "$LUKE_DIR/luke_ii_parameters.json" \
-            --out-dir "$RUNNER_TEMP/luke-ii-audit" \
-            | tee "$RUNNER_TEMP/luke-ii-audit.log"
+            --verification "$RUNNER_TEMP/luke-ii-output/luke_ii_verification.json" \
+            --serviceability "$RUNNER_TEMP/luke-ii-output/luke_ii_serviceability_audit.json" \
+            --roundtrip "$RUNNER_TEMP/luke-ii-output/luke_ii_glb_roundtrip_audit.json" \
+            --output "$RUNNER_TEMP/luke-ii-output/luke_ii_interactive.html" \
+            | tee "$RUNNER_TEMP/luke-ii-interactive.log"
 
-      - name: Verify source, portable artifacts and semantic geometry
+      - name: Verify portable, semantic and maintainability invariants
+        shell: bash
         run: |
           python - <<'PY'
           from __future__ import annotations
@@ -105,135 +133,169 @@ jobs:
 
           source = Path(os.environ["LUKE_DIR"])
           output = Path(os.environ["RUNNER_TEMP"]) / "luke-ii-output"
-          audit_dir = Path(os.environ["RUNNER_TEMP"]) / "luke-ii-audit"
           receipt = json.loads((source / "luke_ii_execution_receipt.json").read_text(encoding="utf-8"))
           verification = json.loads((output / "luke_ii_verification.json").read_text(encoding="utf-8"))
-          audit = json.loads((audit_dir / "luke_ii_dimensional_audit_summary.json").read_text(encoding="utf-8"))
-          glb_roundtrip_path = Path(os.environ["RUNNER_TEMP"]) / "luke-ii-glb-roundtrip-audit.json"
-          glb_roundtrip = json.loads(glb_roundtrip_path.read_text(encoding="utf-8"))
+          dimensional = json.loads((output / "luke_ii_dimensional_audit_summary.json").read_text(encoding="utf-8"))
+          serviceability = json.loads((output / "luke_ii_serviceability_audit.json").read_text(encoding="utf-8"))
+          roundtrip = json.loads((output / "luke_ii_glb_roundtrip_audit.json").read_text(encoding="utf-8"))
+          manifest = json.loads((output / "luke_ii_component_manifest.json").read_text(encoding="utf-8"))
 
           def sha256(path: Path) -> str:
               if not path.is_file():
-                  raise SystemExit(f"Missing required artifact: {path.name}")
+                  raise SystemExit(f"Missing required artifact: {path}")
               return hashlib.sha256(path.read_bytes()).hexdigest()
 
-          parameters_path = source / "luke_ii_parameters.json"
-          glb_path = output / "luke_ii_assembly.glb"
-          stl_path = output / "luke_ii_reference_1to100.stl"
-          verification_path = output / "luke_ii_verification.json"
-          audit_csv = audit_dir / "luke_ii_dimensional_audit.csv"
-          audit_summary = audit_dir / "luke_ii_dimensional_audit_summary.json"
-
-          expected_parameters = receipt["canonical_source"]["parameters_sha256"]
-          expected_stl = receipt["generated_artifacts"]["stl"]["sha256"]
-          expected_audit_csv = receipt["dimensional_audit"]["csv_sha256"]
-          expected_semantic = receipt["geometry_verification"]["semantic_geometry_sha256"]
-
+          expected = receipt["generated_artifacts"]
           observed = {
-              "parameters": sha256(parameters_path),
-              "assembly_glb_build_receipt": sha256(glb_path),
-              "print_shell_stl": sha256(stl_path),
-              "verification_build_receipt": sha256(verification_path),
-              "glb_roundtrip_audit": sha256(glb_roundtrip_path),
-              "dimensional_audit_csv": sha256(audit_csv),
-              "dimensional_audit_summary": sha256(audit_summary),
+              "parameters": sha256(source / "luke_ii_parameters.json"),
+              "requirements": sha256(source / "requirements.txt"),
+              "assembly_glb_build_receipt": sha256(output / "luke_ii_assembly.glb"),
+              "component_manifest": sha256(output / "luke_ii_component_manifest.json"),
+              "full_print_reference": sha256(output / "luke_ii_reference_1to100.stl"),
+              "panel_print_reference": sha256(output / "luke_ii_representative_hull_panel_1to20.stl"),
+              "window_print_reference": sha256(output / "luke_ii_representative_window_1to20.stl"),
+              "mark_iii_arm_print_reference": sha256(output / "luke_ii_mark_iii_interface_arm_1to20.stl"),
+              "interactive_html_build_receipt": sha256(output / "luke_ii_interactive.html"),
+              "dimensional_audit": sha256(output / "luke_ii_dimensional_audit.csv"),
+              "dimensional_audit_summary": sha256(output / "luke_ii_dimensional_audit_summary.json"),
+              "serviceability_audit": sha256(output / "luke_ii_serviceability_audit.json"),
+              "print_segmentation_audit": sha256(output / "luke_ii_print_segmentation_audit.csv"),
+              "glb_roundtrip_audit_build_receipt": sha256(output / "luke_ii_glb_roundtrip_audit.json"),
           }
 
-          if observed["parameters"] != expected_parameters:
+          canonical = receipt["canonical_source"]
+          parametric_full_source_sha = sha256(source / "luke_ii_parametric.py")
+          if parametric_full_source_sha != canonical["parametric_full_source_sha256"]:
+              raise SystemExit("Full parametric source does not match the registered source hash")
+          observed["parametric_full_source"] = parametric_full_source_sha
+          if observed["parameters"] != canonical["parameters_sha256"]:
               raise SystemExit("Canonical parameter bytes changed without receipt update")
-          if observed["print_shell_stl"] != expected_stl:
-              raise SystemExit("Portable STL hash does not match the execution receipt")
-          if observed["dimensional_audit_csv"] != expected_audit_csv:
-              raise SystemExit("Dimensional-audit CSV hash does not match the execution receipt")
-          if audit["semantic_geometry_sha256"] != expected_semantic:
-              raise SystemExit("Semantic geometry fingerprint does not match the execution receipt")
+          if observed["requirements"] != canonical["dependency_sha256"]:
+              raise SystemExit("Pinned dependency bytes changed without receipt update")
 
-          geometry = receipt["geometry_verification"]
-          if verification["status"] != "PASS_REFERENCE_GEOMETRY":
-              raise SystemExit(f"Unexpected verification status: {verification['status']}")
+          exact_artifact_keys = {
+              "component_manifest": "component_manifest",
+              "full_print_reference": "full_print_reference",
+              "panel_print_reference": "panel_print_reference",
+              "window_print_reference": "window_print_reference",
+              "mark_iii_arm_print_reference": "mark_iii_arm_print_reference",
+              "dimensional_audit": "dimensional_audit",
+              "dimensional_audit_summary": "dimensional_audit_summary",
+              "serviceability_audit": "serviceability_audit",
+              "print_segmentation_audit": "print_segmentation_audit",
+          }
+          for observed_key, receipt_key in exact_artifact_keys.items():
+              if observed[observed_key] != expected[receipt_key]["sha256"]:
+                  raise SystemExit(f"Portable artifact mismatch: {receipt_key}")
+
+          invariants = receipt["acceptance_invariants"]
           checks = verification["geometry_checks"]
-          named_nodes = verification["scene"]["geometry_nodes"]
-          watertight_nodes = sum(1 for check in checks.values() if check["watertight"])
-          winding_consistent_nodes = sum(1 for check in checks.values() if check["winding_consistent"])
-          if named_nodes != geometry["named_nodes"]:
-              raise SystemExit("Named geometry-node count does not match the execution receipt")
-          if watertight_nodes != geometry["individual_nodes_watertight"]:
-              raise SystemExit("Watertight-node count does not match the execution receipt")
-          if winding_consistent_nodes != geometry["individual_nodes_winding_consistent"]:
-              raise SystemExit("Winding-consistent-node count does not match the execution receipt")
-          if verification["print_shell"]["watertight"] is not True:
-              raise SystemExit("Printable reference shell is not watertight")
+          node_count = verification["scene"]["geometry_nodes"]
+          watertight = sum(1 for value in checks.values() if value["watertight"])
+          winding = sum(1 for value in checks.values() if value["winding_consistent"])
 
-          if glb_roundtrip["status"] != "PASS_GLB_ROUNDTRIP_REFERENCE":
-              raise SystemExit("Exported GLB failed roundtrip structural audit")
-          if glb_roundtrip["matched_nodes"] != named_nodes:
-              raise SystemExit("Exported GLB node count does not match source geometry")
-          if glb_roundtrip["missing_nodes"] or glb_roundtrip["unexpected_nodes"]:
-              raise SystemExit("Exported GLB node identity changed")
+          if verification["status"] != "PASS_SERVICEABLE_REFERENCE_GEOMETRY":
+              raise SystemExit(f"Unexpected geometry status: {verification['status']}")
+          if node_count != invariants["named_nodes"]:
+              raise SystemExit("Named-node count changed")
+          if verification["configuration"]["physical_nodes"] != invariants["physical_nodes"]:
+              raise SystemExit("Physical-node count changed")
+          if watertight != invariants["individual_nodes_watertight"] or winding != invariants["individual_nodes_winding_consistent"]:
+              raise SystemExit("Mesh-quality count changed")
+          if dimensional["semantic_geometry_sha256"] != invariants["semantic_geometry_sha256"]:
+              raise SystemExit("Semantic geometry fingerprint changed")
+          if dimensional["node_count"] != node_count or not dimensional["all_nodes_watertight"] or not dimensional["all_nodes_winding_consistent"]:
+              raise SystemExit("Dimensional audit does not reconcile with source scene")
 
-          if audit["status"] != "PASS_DIMENSIONAL_REFERENCE_AUDIT":
-              raise SystemExit(f"Unexpected dimensional-audit status: {audit['status']}")
-          if audit["node_count"] != named_nodes:
-              raise SystemExit("Dimensional-audit node count does not match regenerated geometry")
-          if not audit["all_nodes_watertight"] or not audit["all_nodes_winding_consistent"]:
-              raise SystemExit("Dimensional-audit mesh-quality gate failed")
-          if audit["evidence_state_counts"].get("ILLUSTRATIVE_ONLY_NOT_PHYSICAL_FIELD") != 3:
-              raise SystemExit("Field-guide claim classification changed unexpectedly")
-          if audit["evidence_state_counts"].get("ILLUSTRATIVE_SEQUENCE_ONLY") != 4:
-              raise SystemExit("Payload-sequence claim classification changed unexpectedly")
-          if audit["csv_sha256"] != observed["dimensional_audit_csv"]:
-              raise SystemExit("Dimensional-audit CSV hash does not match its summary")
+          if serviceability["status"] != invariants["serviceability_status"]:
+              raise SystemExit("Serviceability audit failed")
+          if serviceability["failures"]:
+              raise SystemExit(f"Serviceability failures: {serviceability['failures']}")
+          required_service_checks = [
+              "all_physical_nodes_have_parent",
+              "all_physical_nodes_resolve_to_root",
+              "all_cable_required_nodes_have_route",
+              "all_nonstructural_maintainable_nodes_have_clearance",
+              "all_declared_removal_paths_resolve",
+              "walkway_centre_gap_within_reference",
+              "all_print_references_fit_280mm_display_envelope",
+          ]
+          if not all(serviceability["checks"].get(key) is True for key in required_service_checks):
+              raise SystemExit("One or more maintainability gates are not true")
+
+          if roundtrip["status"] != invariants["glb_roundtrip_status"]:
+              raise SystemExit("GLB roundtrip audit failed")
+          if roundtrip["matched_nodes"] != invariants["glb_roundtrip_matched_nodes"]:
+              raise SystemExit("GLB roundtrip node count changed")
+          if roundtrip["missing_nodes"] or roundtrip["unexpected_nodes"] or roundtrip["failures"]:
+              raise SystemExit("GLB roundtrip contains identity or tolerance failures")
+
+          if len(manifest["components"]) != node_count:
+              raise SystemExit("Component manifest does not cover every named node")
+          interactive = output / "luke_ii_interactive.html"
+          if interactive.stat().st_size < 1_000_000:
+              raise SystemExit("Interactive review surface is unexpectedly small")
 
           result = {
-              "schema_version": "luke-ii-ci-receipt-v1.1",
-              "status": "PASS_PORTABLE_SEMANTIC_AND_GLB_ROUNDTRIP_REGENERATION",
+              "schema_version": "luke-ii-ci-receipt-v1.3",
+              "status": "PASS_SERVICEABLE_PORTABLE_SEMANTIC_GLB_AND_INTERACTIVE_REGENERATION",
               "source_branch": os.environ.get("GITHUB_HEAD_REF") or os.environ.get("GITHUB_REF_NAME"),
               "commit": os.environ.get("GITHUB_SHA"),
               "observed_sha256": observed,
-              "semantic_geometry_sha256": audit["semantic_geometry_sha256"],
-              "semantic_geometry_quantization_m": audit["semantic_geometry_quantization_m"],
-              "geometry_nodes": named_nodes,
+              "geometry_nodes": node_count,
+              "physical_nodes": verification["configuration"]["physical_nodes"],
+              "semantic_geometry_sha256": dimensional["semantic_geometry_sha256"],
+              "serviceability_status": serviceability["status"],
+              "serviceability_counts": serviceability["counts"],
+              "maximum_walkway_gap_m": serviceability["walkway"]["maximum_centre_gap_m"],
               "glb_roundtrip": {
-                  "status": glb_roundtrip["status"],
-                  "matched_nodes": glb_roundtrip["matched_nodes"],
-                  "linear_tolerance_m": glb_roundtrip["linear_tolerance_m"],
-                  "relative_measure_tolerance": glb_roundtrip["relative_measure_tolerance"],
-                  "maximum_observed_errors": glb_roundtrip["maximum_observed_errors"],
+                  "status": roundtrip["status"],
+                  "matched_nodes": roundtrip["matched_nodes"],
+                  "maximum_observed_errors": roundtrip["maximum_observed_errors"],
               },
               "raw_glb_hash_policy": "BUILD_RECEIPT_ONLY_NOT_CROSS_PLATFORM_ACCEPTANCE_GATE",
-              "raw_verification_hash_policy": "BUILD_RECEIPT_ONLY_INCLUDES_OBSERVED_GLB_HASH",
+              "raw_interactive_hash_policy": "BUILD_RECEIPT_ONLY_EMBEDS_PLATFORM_GLTF_CONTAINER",
               "claim_gate_state": "UNCHANGED",
           }
-          result_path = Path(os.environ["RUNNER_TEMP"]) / "luke-ii-ci-receipt.json"
-          result_path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+          path = Path(os.environ["RUNNER_TEMP"]) / "luke-ii-ci-receipt.json"
+          path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
           print(json.dumps(result, indent=2))
           PY
 
-      - name: Upload deterministic validation evidence and source snapshot
+      - name: Upload qualification evidence and source snapshot
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: luke-ii-reference-validation
+          name: luke-ii-serviceable-reference-validation
           path: |
             ${{ runner.temp }}/luke-ii-tests.log
             ${{ runner.temp }}/luke-ii-generation.log
+            ${{ runner.temp }}/luke-ii-dimensional.log
+            ${{ runner.temp }}/luke-ii-serviceability.log
             ${{ runner.temp }}/luke-ii-glb-roundtrip.log
-            ${{ runner.temp }}/luke-ii-glb-roundtrip-audit.json
-            ${{ runner.temp }}/luke-ii-audit.log
+            ${{ runner.temp }}/luke-ii-interactive.log
             ${{ runner.temp }}/luke-ii-ci-receipt.json
             ${{ runner.temp }}/luke-ii-output/luke_ii_verification.json
-            ${{ runner.temp }}/luke-ii-audit/luke_ii_dimensional_audit.csv
-            ${{ runner.temp }}/luke-ii-audit/luke_ii_dimensional_audit_summary.json
+            ${{ runner.temp }}/luke-ii-output/luke_ii_component_manifest.json
+            ${{ runner.temp }}/luke-ii-output/luke_ii_dimensional_audit.csv
+            ${{ runner.temp }}/luke-ii-output/luke_ii_dimensional_audit_summary.json
+            ${{ runner.temp }}/luke-ii-output/luke_ii_serviceability_audit.json
+            ${{ runner.temp }}/luke-ii-output/luke_ii_print_segmentation_audit.csv
+            ${{ runner.temp }}/luke-ii-output/luke_ii_glb_roundtrip_audit.json
             ${{ env.LUKE_DIR }}/README.md
             ${{ env.LUKE_DIR }}/requirements.txt
             ${{ env.LUKE_DIR }}/luke_ii_parameters.json
             ${{ env.LUKE_DIR }}/luke_ii_parametric.py
             ${{ env.LUKE_DIR }}/luke_ii_geometry_fingerprint.py
             ${{ env.LUKE_DIR }}/luke_ii_dimensional_audit.py
+            ${{ env.LUKE_DIR }}/luke_ii_serviceability_audit.py
             ${{ env.LUKE_DIR }}/luke_ii_glb_roundtrip_audit.py
+            ${{ env.LUKE_DIR }}/luke_ii_interactive.py
             ${{ env.LUKE_DIR }}/luke_ii_execution_receipt.json
+            ${{ env.LUKE_DIR }}/upstream_source_register.json
             ${{ env.LUKE_DIR }}/test_luke_ii_parametric.py
             ${{ env.LUKE_DIR }}/test_luke_ii_dimensional_audit.py
+            ${{ env.LUKE_DIR }}/test_luke_ii_serviceability_audit.py
             ${{ env.LUKE_DIR }}/test_luke_ii_glb_roundtrip_audit.py
             .github/workflows/luke-ii-reference-validation.yml
           if-no-files-found: warn
