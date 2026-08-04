@@ -48,19 +48,17 @@ jobs:
           mkdir -p "$staging"
           unzip -q "$bundle" -d "$staging"
           cp -f "$staging"/source/* "$LUKE_DIR"/
-          cp -f "$staging/_workflow/luke-ii-reference-validation.yml" .github/workflows/luke-ii-reference-validation.yml
           rm -rf "$LUKE_DIR/luke_ii_v1_3_source_bundle_parts"
-          rm -f .github/workflows/luke-ii-expand-v1-3.yml
 
-      - name: Commit full source and validation gate
+      - name: Commit full readable source
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git add -A "$LUKE_DIR"
           git diff --cached --check
           git commit -m "Materialise Luke II v1.3 serviceable reference source"
           git push origin HEAD:execution/luke-ii-parametric-reference-2026-08-04
 
-# transport-integrity retry: 2026-08-05
+# workflow installation and cleanup are performed by the connected GitHub app
