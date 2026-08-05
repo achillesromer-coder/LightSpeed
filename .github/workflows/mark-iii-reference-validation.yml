@@ -10,7 +10,7 @@ on:
       - ".github/workflows/mark-iii-reference-validation.yml"
   push:
     branches:
-      - execution/mark-iii-serviceable-reference-2026-08-05
+      - execution/mark-iii-original-layout-v0.3-2026-08-05
       - main
     paths:
       - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii/**"
@@ -29,9 +29,9 @@ env:
 
 jobs:
   validate:
-    name: Regenerate and verify Mark III serviceable reference
+    name: Regenerate original-layout Mark III reference
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -56,6 +56,7 @@ jobs:
             "$MARK_DIR/mark_iii_manifest_fingerprint.py" \
             "$MARK_DIR/mark_iii_dimensional_audit.py" \
             "$MARK_DIR/mark_iii_serviceability_audit.py" \
+            "$MARK_DIR/mark_iii_manufacturing_audit.py" \
             "$MARK_DIR/mark_iii_glb_roundtrip_audit.py" \
             "$MARK_DIR/mark_iii_interactive.py" \
             "$MARK_DIR/test_mark_iii_parametric.py" \
@@ -63,7 +64,7 @@ jobs:
             "$MARK_DIR/test_mark_iii_glb_roundtrip.py" \
             "$MARK_DIR/test_mark_iii_interactive.py"
 
-      - name: Run 17 geometry, serviceability and review tests
+      - name: Run 20 geometry, serviceability, manufacturing and review tests
         run: |
           set -o pipefail
           python -m unittest discover -v \
@@ -71,7 +72,7 @@ jobs:
             -p "test_mark_iii*.py" \
             2>&1 | tee "$RUNNER_TEMP/mark-iii-tests.log"
 
-      - name: Regenerate geometry and print references
+      - name: Regenerate geometry and 18-part print kit
         run: |
           set -o pipefail
           mkdir -p "$RUNNER_TEMP/mark-iii-output"
@@ -96,6 +97,14 @@ jobs:
             --out-dir "$RUNNER_TEMP/mark-iii-output" \
             | tee "$RUNNER_TEMP/mark-iii-serviceability.log"
 
+      - name: Generate print and plating qualification audit
+        run: |
+          set -o pipefail
+          python "$MARK_DIR/mark_iii_manufacturing_audit.py" \
+            --parameters "$MARK_DIR/mark_iii_parameters.json" \
+            --out-dir "$RUNNER_TEMP/mark-iii-output" \
+            | tee "$RUNNER_TEMP/mark-iii-manufacturing.log"
+
       - name: Verify exported GLB roundtrip
         run: |
           set -o pipefail
@@ -105,7 +114,7 @@ jobs:
             --output "$RUNNER_TEMP/mark-iii-output/mark_iii_glb_roundtrip_audit.json" \
             | tee "$RUNNER_TEMP/mark-iii-glb-roundtrip.log"
 
-      - name: Build interactive review surface
+      - name: Build original-layout interactive review surface
         run: |
           set -o pipefail
           python "$MARK_DIR/mark_iii_interactive.py" \
@@ -115,59 +124,94 @@ jobs:
             --verification "$RUNNER_TEMP/mark-iii-output/mark_iii_verification.json" \
             --serviceability "$RUNNER_TEMP/mark-iii-output/mark_iii_serviceability_audit.json" \
             --roundtrip "$RUNNER_TEMP/mark-iii-output/mark_iii_glb_roundtrip_audit.json" \
+            --manufacturing "$RUNNER_TEMP/mark-iii-output/mark_iii_manufacturing_audit.json" \
             --output "$RUNNER_TEMP/mark-iii-output/mark_iii_interactive.html" \
             | tee "$RUNNER_TEMP/mark-iii-interactive.log"
 
-      - name: Verify portable semantic and serviceability invariants
+      - name: Verify portable semantic, print and manufacturing invariants
         run: |
           python - <<'PY'
           from __future__ import annotations
-          import hashlib,json,os
+          import hashlib,json,os,sys
           from pathlib import Path
-          import sys
           source=Path(os.environ['MARK_DIR']);out=Path(os.environ['RUNNER_TEMP'])/'mark-iii-output'
           sys.path.insert(0,str(source))
           from mark_iii_manifest_fingerprint import canonical_manifest_sha256
-          def sha(p):
-              if not p.is_file(): raise SystemExit(f'Missing artifact: {p}')
-              return hashlib.sha256(p.read_bytes()).hexdigest()
-          expected={
-            'parameters':'daec4cc655530ad46d509fc7815b1991971269cac6be84c02ff4ca503b05082e',
-            'requirements':'244f51ebf93a745071d171f8fdf65b47ddbbcdaf7b59b73e77cdfc9c2e8bec92',
-            'parametric':'4331d9d8e0318840a00bb86c9afce1124170bdb9c51c6feab6bb8517758482f3',
-            'semantic':'8ff2f295d0bebdd9cfb45c1942bda6dfe8dfd6493d7d9861fb97bf91458c2303',
-            'manifest':'9f95b1c5a6e552a626f50a9e2448f45a2cfb8642e65f92b904f0211fee64d813',
-            'full_stl':'3242e6d6a4fa28d1975bed77b1c799e49d6ca295bc30f8837d056a1ee42a711a',
-            'panel_stl':'630cd96d6bc1576a36cbde86e6e6826970484002fc15c44217dba13d6853a6d0',
-            'coupler_stl':'0dc6973290e053cf3ce7bd2dcdd9250a940eaa4f01d83894c099fc067248b13f',
-            'solenoid_stl':'c71136f92f1a3eef3e6566ddb99d615ce0fd1e986157a63908bbc0bf166e914b',
-            'arm_stl':'fe01d49da370f6c69dfabbc6943b31e329b5abc03516ee928144b79a1d37aa32',
-            'print_array_csv':'370364ab567d20d3239474cfb3e5ee9326619ada217199c601e8df7c0a85ce09',
+          def sha(path:Path)->str:
+              if not path.is_file():raise SystemExit(f'Missing artifact: {path}')
+              return hashlib.sha256(path.read_bytes()).hexdigest()
+          source_expected={
+            'requirements.txt':'244f51ebf93a745071d171f8fdf65b47ddbbcdaf7b59b73e77cdfc9c2e8bec92',
+            'mark_iii_parameters.json':'92f2223c21b6fe16c67e7f06fdd2bc3bf0ab3aa15b819ea19cbbc378369063b7',
+            'mark_iii_parametric.py':'cfffc1bc79cff8d041b89dea376bf4e3768c66bb550af0bcc2a80ec6e20e4f5e',
+            'mark_iii_dimensional_audit.py':'d3b4ee130e55c1d262c3521ff9013f02ca839083f8b2d74c35597b89a97519c3',
+            'mark_iii_serviceability_audit.py':'9a280394f9f824726d261c765a5f64546527a713f09b20448a2440e29a2de0d2',
+            'mark_iii_manufacturing_audit.py':'b0102c34bda3c22d2d1b89b5d2227afcf91e2de8ae3ba89aeef4e6bbcec36662',
+            'mark_iii_glb_roundtrip_audit.py':'b4e9d9072c26deb76d2954235423854134d1df7d1fa42e947bd727f2e6c4149f',
+            'mark_iii_interactive.py':'d06a29f0cedc431408065de4a3bb2cf2d00bc7c68d7623dd3b58e6479b341b20',
           }
-          observed={
-            'parameters':sha(source/'mark_iii_parameters.json'),'requirements':sha(source/'requirements.txt'),'parametric':sha(source/'mark_iii_parametric.py'),
-            'full_stl':sha(out/'mark_iii_full_module_1to5.stl'),'panel_stl':sha(out/'mark_iii_representative_panel_1to3.stl'),
-            'coupler_stl':sha(out/'mark_iii_coupler_1to2.stl'),'solenoid_stl':sha(out/'mark_iii_solenoid_cartridge_1to1.stl'),
-            'arm_stl':sha(out/'mark_iii_arm_assembly_1to2.stl'),'print_array_csv':sha(out/'mark_iii_print_and_array_audit.csv'),
-            'assembly_glb_build_receipt':sha(out/'mark_iii_assembly.glb'),'interactive_html_build_receipt':sha(out/'mark_iii_interactive.html')}
-          for key in ('parameters','requirements','parametric','full_stl','panel_stl','coupler_stl','solenoid_stl','arm_stl','print_array_csv'):
-              if observed[key]!=expected[key]: raise SystemExit(f'Exact invariant mismatch: {key}: {observed[key]}')
+          for name,expected in source_expected.items():
+              observed=sha(source/name)
+              if observed!=expected:raise SystemExit(f'Source invariant mismatch {name}: {observed}')
+          stl_expected={
+            'mark_iii_alignment_and_plating_jig_1to1.stl':'72c87268dc0c2f2fd98bded7f61ed7ebfa21b195e7fba4015b11cf008e53b330',
+            'mark_iii_arm_assembly_display_1to5.stl':'8d935933581f8eab4b5f3ef0ed7778fa6c91261d581f128299aaf5e13d330b74',
+            'mark_iii_arm_joint_ring_1to1.stl':'fb5aa53907515634901d29949c1c2b4681d7d62244db4e7d4546f4c8b4bbfe9e',
+            'mark_iii_arm_link_half_shell_1to1.stl':'94839009435ecce6e031221e59e9f8b485583e512fa9a96c3825c3ba35e63268',
+            'mark_iii_capacitor_pair_tray_1to1.stl':'8ae0f4a34fae66ef897315f0b4afedb1334940dd8075ed886693dd204e88eed6',
+            'mark_iii_collector_pad_1to1.stl':'54e49cc8f41323ee0767b4cdbd54e095e22c26016f6609ae70101a22aa4557e6',
+            'mark_iii_controller_bay_reference_1to1.stl':'dcaf97edf831c778b3497f59d75c83c1cf187a6c46d4ffe82bf1fb14b673f9cc',
+            'mark_iii_coupler_quadrant_1to1.stl':'8f90e9cc8f83a56070e5ae6d65a136d90fbf084f27b6c095a632ba486179c3b7',
+            'mark_iii_full_module_display_1to8.stl':'e43d4ab39b37b9e74883b48ff4f52b0c401ea4dacac7062ffce8751b0f617547',
+            'mark_iii_plating_witness_coupon_tree_1to1.stl':'a67509ab0c54222b00bd37f47cea70245f4c02bc0f13204167ecf41407171358',
+            'mark_iii_probe_segment_1to1.stl':'c8755ca6cd00f590ab746cab6437ca73c75ede170def352a20199369299ecf6a',
+            'mark_iii_resonator_tray_25_socket_1to1.stl':'2ccbf62f4cc0f7194af1d4b1a5b9ea11d96c97a74241e2bafb50bb0e9baee339',
+            'mark_iii_solenoid_cartridge_half_shell_1to1.stl':'3484153bc3663c3b08b987bb99b76c9e1e40f567a0a7f7830c77618f719df814',
+            'mark_iii_solenoid_mount_bracket_1to1.stl':'326bb2d79f814fbd369f18eb99286305391230066d339207275818e03973674e',
+            'mark_iii_solenoid_sector_rail_half_A_1to1.stl':'06556919f1a89e1e0f81a1346a65d2b064b3a12bc37d506b52c0df664b51d21c',
+            'mark_iii_solenoid_sector_rail_half_B_1to1.stl':'68c9bb9e1fd65ba083c7c2623a6b89a467caddf9bf382c6a64b06d3fa32d4b16',
+            'mark_iii_standard_service_panel_1to1.stl':'646a22014f6b1fae1d26f24ccec4b1c21f0dd8ab697e49540a39474a9afa0b32',
+            'mark_iii_standard_shell_panel_1to1.stl':'b7286ebe9bbc599b604a7d9a0e8b3c7f8797383eca07835224af73fdfa419b52',
+          }
+          for name,expected in stl_expected.items():
+              observed=sha(out/name)
+              if observed!=expected:raise SystemExit(f'Print invariant mismatch {name}: {observed}')
+          file_expected={
+            'mark_iii_print_kit_manifest.json':'3f5f59e4a9d0452db2fec8664625dfe06a993a5b92dca8dd5c90038a508df319',
+            'mark_iii_print_kit_manifest.csv':'34d07987bc3b72397acd218a2045899a77a4521770a72106533e70011d0670e6',
+            'mark_iii_manufacturing_audit.json':'b9c2ffa4ad07501f6f8cc50e46bff5c26688081a2ccaf852cebdf3dc19044636',
+            'mark_iii_manufacturing_panel_register.csv':'4eb93f02f36bb54971f7a17965ec7bc7f62c9590ae64d631f7735903acf2aabe',
+            'mark_iii_manufacturing_stage_gate.csv':'2965271e72707353ddcde32da0185342b715dc63f2523ed0c0e596a5be7ad018',
+            'mark_iii_print_and_array_audit.csv':'efe61b5e84646e1bccb468556cb9875d29545d976de03d5e5b6a97824d2e1326',
+          }
+          for name,expected in file_expected.items():
+              observed=sha(out/name)
+              if observed!=expected:raise SystemExit(f'Portable invariant mismatch {name}: {observed}')
+          expected_semantic='8ae71a80a820b3a583b2d76c9b75a46a823840109601074e89c262f8ce824205'
+          expected_manifest='dfbb3cd373d4f8771d6f3655ec420dbd61a27445b9e5c029e274a51dcc451a3b'
           manifest=json.loads((out/'mark_iii_component_manifest.json').read_text());semantic_manifest=dict(manifest);semantic_manifest.pop('canonical_manifest_sha256',None)
-          if canonical_manifest_sha256(semantic_manifest)!=expected['manifest']: raise SystemExit('Canonical component manifest changed')
-          verification=json.loads((out/'mark_iii_verification.json').read_text());service=json.loads((out/'mark_iii_serviceability_audit.json').read_text());rt=json.loads((out/'mark_iii_glb_roundtrip_audit.json').read_text())
-          if verification['semantic_geometry_sha256']!=expected['semantic']: raise SystemExit('Semantic geometry changed')
-          if verification['status']!='PASS_SERVICEABLE_REFERENCE_GEOMETRY' or verification['scene']['geometry_nodes']!=339 or verification['scene']['physical_nodes']!=192: raise SystemExit('Geometry status/count mismatch')
-          if service['status']!='PASS_SERVICEABILITY_REFERENCE_AUDIT' or service['failures']: raise SystemExit('Serviceability gate failed')
-          if service['canonical_module_envelope_m']['extents']!=[0.75,0.32,0.32]: raise SystemExit('Canonical module envelope changed')
-          if rt['status']!='PASS_GLB_ROUNDTRIP_REFERENCE' or rt['matched_nodes']!=339 or rt['missing_nodes'] or rt['unexpected_nodes'] or rt['failures']: raise SystemExit('GLB roundtrip failed')
-          if (out/'mark_iii_interactive.html').stat().st_size<900000: raise SystemExit('Interactive review surface unexpectedly small')
-          receipt={'schema_version':'mark-iii-ci-receipt-v0.2','status':'PASS_SERVICEABLE_PORTABLE_SEMANTIC_GLB_ARRAY_AND_INTERACTIVE_REGENERATION',
-                   'source_branch':os.environ.get('GITHUB_HEAD_REF') or os.environ.get('GITHUB_REF_NAME'),'commit':os.environ.get('GITHUB_SHA'),
-                   'observed_sha256':observed,'semantic_geometry_sha256':expected['semantic'],'canonical_manifest_sha256':expected['manifest'],
-                   'geometry_nodes':339,'physical_nodes':192,'serviceability_status':service['status'],'serviceability_counts':service['counts'],
-                   'canonical_module_envelope_m':service['canonical_module_envelope_m'],'array_configurations':service['arrays'],
-                   'glb_roundtrip':{'status':rt['status'],'matched_nodes':rt['matched_nodes'],'maximum_observed_errors':rt['maximum_observed_errors']},
-                   'raw_glb_hash_policy':'BUILD_RECEIPT_ONLY','raw_interactive_hash_policy':'BUILD_RECEIPT_ONLY_EMBEDS_GLTF_CONTAINER','claim_gate_state':'UNCHANGED'}
+          if canonical_manifest_sha256(semantic_manifest)!=expected_manifest:raise SystemExit('Canonical component manifest changed')
+          verification=json.loads((out/'mark_iii_verification.json').read_text());service=json.loads((out/'mark_iii_serviceability_audit.json').read_text());manufacturing=json.loads((out/'mark_iii_manufacturing_audit.json').read_text());roundtrip=json.loads((out/'mark_iii_glb_roundtrip_audit.json').read_text())
+          if verification['semantic_geometry_sha256']!=expected_semantic:raise SystemExit('Semantic geometry changed')
+          if verification['status']!='PASS_ORIGINAL_LAYOUT_PRINT_REFERENCE_GEOMETRY' or verification['scene']['geometry_nodes']!=764 or verification['scene']['physical_nodes']!=480:raise SystemExit('Geometry status/count mismatch')
+          if verification['family_counts']['resonator']!=25 or verification['family_counts']['solenoid']!=18:raise SystemExit('Original-layout resonator/solenoid count mismatch')
+          if service['status']!='PASS_SERVICEABILITY_REFERENCE_AUDIT' or service['failures']:raise SystemExit('Serviceability gate failed')
+          if manufacturing['status']!='PASS_MANUFACTURING_REFERENCE_CONTROLS_DEPLOYMENT_BLOCKED' or manufacturing['failures'] or manufacturing['flight_or_deployment_release']!='BLOCKED':raise SystemExit('Manufacturing/deployment gate failed')
+          if service['canonical_module_envelope_m']['extents']!=[0.75,0.32,0.32]:raise SystemExit('Canonical module envelope changed')
+          if roundtrip['status']!='PASS_GLB_ROUNDTRIP_REFERENCE' or roundtrip['matched_nodes']!=764 or roundtrip['failures']:raise SystemExit('GLB roundtrip failed')
+          if (out/'mark_iii_interactive.html').stat().st_size<2000000:raise SystemExit('Interactive review surface unexpectedly small')
+          receipt={
+            'schema_version':'mark-iii-ci-receipt-v0.3',
+            'status':'PASS_ORIGINAL_LAYOUT_PRINT_PLATING_SEMANTIC_GLB_AND_INTERACTIVE_REGENERATION_DEPLOYMENT_BLOCKED',
+            'source_branch':os.environ.get('GITHUB_HEAD_REF') or os.environ.get('GITHUB_REF_NAME'),
+            'commit':os.environ.get('GITHUB_SHA'),
+            'semantic_geometry_sha256':expected_semantic,'canonical_manifest_sha256':expected_manifest,
+            'geometry_nodes':764,'physical_nodes':480,'resonators':25,'body_solenoids':18,'print_references':18,
+            'serviceability_status':service['status'],'manufacturing_status':manufacturing['status'],
+            'canonical_module_envelope_m':service['canonical_module_envelope_m'],'array_configurations':service['arrays'],
+            'glb_roundtrip':{'status':roundtrip['status'],'matched_nodes':roundtrip['matched_nodes'],'maximum_observed_errors':roundtrip['maximum_observed_errors']},
+            'raw_glb_sha256':sha(out/'mark_iii_assembly.glb'),'raw_interactive_sha256':sha(out/'mark_iii_interactive.html'),
+            'manufacturing_release':'BLOCKED','flight_or_deployment_release':'BLOCKED','claim_gate_state':'STRENGTHENED'}
           path=Path(os.environ['RUNNER_TEMP'])/'mark-iii-ci-receipt.json';path.write_text(json.dumps(receipt,indent=2)+'\n');print(json.dumps(receipt,indent=2))
           PY
 
@@ -175,22 +219,13 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: mark-iii-serviceable-reference-validation
+          name: mark-iii-original-layout-print-plating-validation
           path: |
-            ${{ runner.temp }}/mark-iii-tests.log
-            ${{ runner.temp }}/mark-iii-generation.log
-            ${{ runner.temp }}/mark-iii-dimensional.log
-            ${{ runner.temp }}/mark-iii-serviceability.log
-            ${{ runner.temp }}/mark-iii-glb-roundtrip.log
-            ${{ runner.temp }}/mark-iii-interactive.log
+            ${{ runner.temp }}/mark-iii-*.log
             ${{ runner.temp }}/mark-iii-ci-receipt.json
-            ${{ runner.temp }}/mark-iii-output/mark_iii_verification.json
-            ${{ runner.temp }}/mark-iii-output/mark_iii_component_manifest.json
-            ${{ runner.temp }}/mark-iii-output/mark_iii_dimensional_audit.csv
-            ${{ runner.temp }}/mark-iii-output/mark_iii_dimensional_audit_summary.json
-            ${{ runner.temp }}/mark-iii-output/mark_iii_serviceability_audit.json
-            ${{ runner.temp }}/mark-iii-output/mark_iii_print_and_array_audit.csv
-            ${{ runner.temp }}/mark-iii-output/mark_iii_glb_roundtrip_audit.json
+            ${{ runner.temp }}/mark-iii-output/*.json
+            ${{ runner.temp }}/mark-iii-output/*.csv
+            ${{ runner.temp }}/mark-iii-output/*.stl
             ${{ env.MARK_DIR }}/README.md
             ${{ env.MARK_DIR }}/requirements.txt
             ${{ env.MARK_DIR }}/mark_iii_parameters.json
@@ -199,6 +234,7 @@ jobs:
             ${{ env.MARK_DIR }}/mark_iii_manifest_fingerprint.py
             ${{ env.MARK_DIR }}/mark_iii_dimensional_audit.py
             ${{ env.MARK_DIR }}/mark_iii_serviceability_audit.py
+            ${{ env.MARK_DIR }}/mark_iii_manufacturing_audit.py
             ${{ env.MARK_DIR }}/mark_iii_glb_roundtrip_audit.py
             ${{ env.MARK_DIR }}/mark_iii_interactive.py
             ${{ env.MARK_DIR }}/mark_iii_execution_receipt.json
