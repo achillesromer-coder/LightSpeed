@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 READY = ROOT / "_mark_iii_v0_3_parts.ready"
 EXPECTED_SHA256 = "1fb38913a705bb799321fc2186c4e191a70c9603cc4501b27bb98e3dcb777a4a"
-PART_COUNT = 4
+PART_COUNT = 10
 
 if not READY.is_file():
     print("Transport parts are not yet marked ready; materialisation deferred.")
