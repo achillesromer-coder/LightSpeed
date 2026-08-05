@@ -1,0 +1,40 @@
+name: Mark III v0.3 Source Materialisation
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+    paths:
+      - 'desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii/**'
+      - '.github/workflows/mark-iii-materialize-v0.3.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  materialise:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - name: Expand verified source bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT='desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii'
+          if [[ ! -f "$ROOT/_mark_iii_v0_3_source_bundle.zip" ]]; then
+            echo 'No transport bundle remains; nothing to materialise.'
+            exit 0
+          fi
+          python "$ROOT/_materialize_v0_3.py"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$ROOT"
+          if git diff --cached --quiet; then
+            echo 'No materialisation changes.'
+            exit 0
+          fi
+          git commit -m 'Materialise Mark III v0.3 original-layout source'
+          git push origin "HEAD:${{ github.head_ref }}"
