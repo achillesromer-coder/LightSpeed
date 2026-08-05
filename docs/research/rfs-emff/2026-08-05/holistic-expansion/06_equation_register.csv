@@ -1,0 +1,15 @@
+equation_id,name,equation,unit,assumptions,claim_boundary
+EQ-MASS-001,Target mass,m_i = V_sample * rho_bulk * w_i,kg,"Known sample volume, measured bulk density and mass fraction",valid bookkeeping identity
+EQ-MIX-001,Solid-mixture density,rho_solid = 1 / SUM_i(w_i / rho_i),kg/m3,Volume-additivity approximation,screening only; phase change/voids excluded
+EQ-BULK-001,Bulk density,rho_bulk = (1 - porosity) * rho_solid,kg/m3,Porosity measured independently,screening approximation
+EQ-RFS-001,Lorentzian alignment,A_i = 1 / (1 + (2*Q_i*(f/f0_i - f0_i/f))^2),0-1,Single damped mode,do not use across mechanical/RF/IR domains without modality lock
+EQ-RFS-002,Empirical alignment,A_i = exp(-(|f-f0_i|/Delta_f_i)^p),0-1,Fit p and bandwidth from measured control-normalized response,screening/fitting only
+EQ-SKIN-001,Skin depth,delta = sqrt(2 / (omega * mu * sigma)),m,Linear homogeneous conductor and sinusoidal steady state,"phase, frequency and temperature dependent"
+EQ-MAG-001,Magnetic force proxy,F_mag ~= (chi*V_p/(2*mu0)) * grad(B^2),N,Linear low-susceptibility particle,invalid for saturated/hysteretic ferromagnets without B-H model
+EQ-DEP-001,Dielectrophoresis proxy,F_DEP ~= 2*pi*epsilon_m*r^3*Re(K(omega))*grad(|E|^2),N,Spherical particle in continuum medium,geometry and complex permittivity required
+EQ-DRAG-001,Stokes drag,F_drag = 6*pi*eta*r*v,N,Low Reynolds number continuum flow,not valid in high vacuum/free molecular regime
+EQ-RESP-001,Controlled response,"R_ctrl = (signal_target - signal_blank) / max(|signal_blank|, epsilon)",ratio,Matched blank and calibrated sensors,report uncertainty and floor
+EQ-ENERGY-001,Specific separation energy,E_spec = E_input / m_recovered,J/kg,Measured energy and mass balance,undefined/blocked when recovered mass is below detection limit
+EQ-YIELD-001,Mass recovery,Y = m_collected_target / m_initial_target,0-1,Assay-backed initial and collected target mass,not purity
+EQ-PURITY-001,Product purity,P = m_collected_target / m_collected_total,0-1,Post-run assay,no visual-proxy substitution
+EQ-SCORE-001,Gated screening score,S = Gate * A_i * FieldResponse * Transport * SensorConfidence,0-1,All terms normalized and documented,ranking aid only; never capability proof

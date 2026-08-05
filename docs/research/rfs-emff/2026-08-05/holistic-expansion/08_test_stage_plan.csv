@@ -1,0 +1,13 @@
+stage_id,stage,scope,planned_case_count,exit_criterion,claim_boundary
+ST-00,"Identity, assay and certificate lock",all materials and asteroid records,0,exact IDs; batch certificate; phase; composition; units,unresolved identity or missing sample certificate blocks physical inference
+ST-01,Instrument/calibration and blank controls,10 media plus negative/positive controls,120,"frequency, field, mass, temperature and noise calibrations pass",no target claim
+ST-02,Single-material low-energy response screen,44 materials x 10 media x n=3,1320,control-normalized response above detection floor and safe,candidate response only
+ST-03,Concentration baseline,44 x 10 x 7 compositions,3080,mass ledger reconciles and response curve is monotonic/repeatable where expected,screening matrix
+ST-04,"Particle, moisture and porosity sensitivity",fractional factorial within each retained material-medium pair,,interaction terms estimated with uncertainty,do not brute-force before ST-03 down-select
+ST-05,Frequency-domain separated sweeps,mechanical vs RF vs IR protocols,,modality-specific calibration and response model,cross-domain equivalence blocked
+ST-06,EMFF field-map and transport screen,"B, grad(B2), E and duty axes",,"field map, thermal log and blank transport pass",no separation claim without mass/assay
+ST-07,Sequential and combined RFS+EMFF,retained candidates only,,order effect and interaction effect quantified,combined index remains screening
+ST-08,Vacuum/microgravity digital sensitivity,retained candidates and asteroid mixture hypotheses,,regime-valid force/drag model,simulation only until facility test
+ST-09,Asteroid taxonomy mixture hypotheses,"canonical anchors, candidates and science calibrators",33,source-backed taxonomy mapped to explicit lab recipe,taxonomy is not assay or ore grade
+ST-10,"Repeatability, uncertainty and falsification",n>=5 retained cases plus negative controls,,"predefined effect threshold, confidence interval and failure criteria",failed/negative results retained
+ST-11,ACHILLES claim and publish gate,Drive/Git/LS outputs,0,"raw logs, calibration, assay, receipt and human review attached",public/external claims blocked by default
