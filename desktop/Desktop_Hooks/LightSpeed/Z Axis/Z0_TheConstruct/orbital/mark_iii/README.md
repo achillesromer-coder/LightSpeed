@@ -7,8 +7,8 @@ This directory supersedes v0.2.2 **for design review** after reconciliation of t
 - Canonical Twin: `Mark_III_Digital_Twin_v0_1.xlsx`
 - Canonical Drive file ID: `1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2`
 - GitHub issue: `#32`
-- Draft stacked PR: `#33`
-- Branch: `execution/mark-iii-serviceable-reference-2026-08-05`
+- Draft stacked PR: `#34`
+- Branch: `execution/mark-iii-original-layout-v0.3-2026-08-05`
 - Base lineage: sealed Luke II commit `4cbba640bf8f1589f542ec164016c4f39b4c85e1`
 
 The workbook is an in-place replacement candidate. No parallel authoritative Twin may be created.
@@ -58,8 +58,9 @@ python mark_iii_glb_roundtrip_audit.py --parameters mark_iii_parameters.json --g
 python mark_iii_interactive.py --glb generated/mark_iii_assembly.glb --manifest generated/mark_iii_component_manifest.json --parameters mark_iii_parameters.json --verification generated/mark_iii_verification.json --serviceability generated/mark_iii_serviceability_audit.json --roundtrip generated/mark_iii_glb_roundtrip_audit.json --manufacturing generated/mark_iii_manufacturing_audit.json --output generated/mark_iii_interactive.html
 ```
 
-## Controlled local invariants
+## Controlled invariants
 
+- tests: `20 / 20` passed locally and on the clean GitHub runner;
 - named nodes: `764`;
 - physical nodes: `480`;
 - all nodes watertight and winding-consistent;
