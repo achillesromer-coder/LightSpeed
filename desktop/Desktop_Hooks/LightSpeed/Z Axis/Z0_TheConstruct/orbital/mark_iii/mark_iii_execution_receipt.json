@@ -1,10 +1,12 @@
 {
-  "schema_version": "mark-iii-execution-receipt-v0.3.0",
-  "recorded_at_utc": "2026-08-05T13:30:00Z",
-  "status": "PASS_LOCAL_ORIGINAL_LAYOUT_PRINT_PLATING_REFERENCE_CI_PENDING_CANONICAL_DRIVE_SYNC_PENDING",
+  "schema_version": "mark-iii-execution-receipt-v0.3.1",
+  "recorded_at_utc": "2026-08-05T14:18:00Z",
+  "status": "PASS_REPOSITORY_ORIGINAL_LAYOUT_PRINT_PLATING_REFERENCE_CANONICAL_DRIVE_SYNC_BLOCKED_REVIEW_OPEN",
   "task_issue": "https://github.com/achillesromer-coder/LightSpeed/issues/32",
-  "draft_pr": "https://github.com/achillesromer-coder/LightSpeed/pull/33",
-  "source_branch": "execution/mark-iii-serviceable-reference-2026-08-05",
+  "draft_pr": "https://github.com/achillesromer-coder/LightSpeed/pull/34",
+  "source_branch": "execution/mark-iii-original-layout-v0.3-2026-08-05",
+  "qualified_head_sha": "0d33807ebf90c3a87029eadf0909e10fe6ac4af4",
+  "stacked_base_branch": "execution/luke-ii-parametric-reference-2026-08-04",
   "stacked_base_sha": "4cbba640bf8f1589f542ec164016c4f39b4c85e1",
   "design_authority": "OWNER_ORIGINAL_MARK_III_LAYOUT_RECONCILED_2026_08_05",
   "canonical_target": {
@@ -15,34 +17,60 @@
   "acceptance_invariants": {
     "named_nodes": 764,
     "physical_nodes": 480,
+    "individual_nodes_watertight": 764,
+    "individual_nodes_winding_consistent": 764,
     "resonators": 25,
     "body_solenoids": 18,
     "print_references": 18,
     "semantic_geometry_sha256": "8ae71a80a820b3a583b2d76c9b75a46a823840109601074e89c262f8ce824205",
     "canonical_manifest_sha256": "dfbb3cd373d4f8771d6f3655ec420dbd61a27445b9e5c029e274a51dcc451a3b",
-    "canonical_module_envelope_m": [
-      0.75,
-      0.32,
-      0.32
-    ]
+    "canonical_module_envelope_m": [0.75, 0.32, 0.32],
+    "array_configurations": [1, 2, 4, 8, 18]
   },
-  "local_gates": {
-    "geometry": "PASS",
-    "serviceability": "PASS",
-    "manufacturing_reference": "PASS_CONTROLS_DEPLOYMENT_BLOCKED",
+  "configuration": {
+    "shell_panels": 18,
+    "solar_hull_skins": 6,
+    "coupler_latches": 8,
+    "body_solenoids": 18,
+    "resonator_sockets": 25,
+    "resonator_configuration": "DUAL_INTERLEAVED_A_B_SPIRALS_WITH_FLOWER_OF_LIFE_ROLE_BANDS",
+    "bilateral_arm_links": 16,
+    "central_probe_links": 6,
+    "print_and_process_references": 18
+  },
+  "qualification": {
+    "tests": "PASS_20_OF_20",
+    "geometry": "PASS_ORIGINAL_LAYOUT_PRINT_REFERENCE_GEOMETRY",
+    "serviceability": "PASS_SERVICEABILITY_REFERENCE_AUDIT",
+    "manufacturing_reference": "PASS_MANUFACTURING_REFERENCE_CONTROLS_DEPLOYMENT_BLOCKED",
     "glb_roundtrip": "PASS_764_OF_764",
-    "tests": "PENDING_FINAL_RERUN"
+    "interactive_review": "PASS_GENERATION"
   },
   "ci_gate": {
-    "status": "PENDING_V0_3_REPOSITORY_QUALIFICATION"
+    "status": "PASS_ORIGINAL_LAYOUT_PRINT_PLATING_SEMANTIC_GLB_AND_INTERACTIVE_REGENERATION_DEPLOYMENT_BLOCKED",
+    "workflow": "Mark III Reference Validation",
+    "qualification_run_id": 31013947425,
+    "qualification_run_number": 30,
+    "artifact_id": 8933673697,
+    "artifact_digest": "sha256:d87ef394a9815aba494ea49fe54e5b0d2a310eb521df301a272deadc83f93759",
+    "artifact_archive_sha256_verified": "d87ef394a9815aba494ea49fe54e5b0d2a310eb521df301a272deadc83f93759"
   },
   "drive_canonical_update": {
     "target_file_id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2",
-    "status": "PENDING_RETRY",
-    "parallel_workbook_uploaded": false
+    "current_v0_3_attempt": "BLOCKED_BEFORE_PROVIDER_UNREGISTERED_CONNECTOR_FILE_REFERENCE",
+    "current_attempt_reached_google_drive": false,
+    "last_provider_confirmed_state": "403_APP_NOT_AUTHORIZED_TO_FILE",
+    "last_provider_reason": "appNotAuthorizedToFile",
+    "drive_app_id": "77377267392",
+    "parallel_workbook_uploaded": false,
+    "required_next_action": "Register the final v0.3 workbook as an active connector file reference, grant app 77377267392 file-specific write access if still required, replace the existing file ID in place and verify raw read-back."
   },
   "review_gate": {
     "interactive_cad_review": "OPEN",
+    "print_process_qualification": "OPEN",
+    "metallisation_coupon_qualification": "OPEN",
+    "structural_and_mechanism_qualification": "OPEN",
+    "electrical_thermal_emi_environmental_qualification": "OPEN",
     "manufacturing_release": "BLOCKED",
     "flight_or_deployment_release": "BLOCKED"
   },
@@ -50,9 +78,9 @@
     "No validated extraction, separation, efficiency, field-strength, current, resonance or material-response claim.",
     "No high-current, pressure, vacuum, gas-handling, electrochemical or energy-safety approval.",
     "No flight, human-rating, payload-handling, arm-load, capture, deployment or collision-avoidance certification.",
-    "Print and plating artifacts are manufacturing references, not released structural or electrical hardware.",
+    "Print and plating artifacts are manufacturing-development references, not released structural or electrical hardware.",
     "No radioactive material, xenon pressure, crystal doping or graphene-fill implementation is authorised by this package.",
     "No manufacturing release, public capability promotion or operational deployment approval.",
-    "Synthetic corpus confidence labels do not override missing empirical test evidence."
+    "Synthetic corpus confidence and maturity labels do not override missing empirical test evidence."
   ]
 }
