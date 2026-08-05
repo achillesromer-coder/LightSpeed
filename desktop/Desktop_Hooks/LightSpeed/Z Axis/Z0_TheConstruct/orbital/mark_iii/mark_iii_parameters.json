@@ -1,7 +1,7 @@
 {
-  "schema_version": "mark-iii-serviceable-reference-v0.2",
-  "artifact_status": "SOURCE_RECONCILED_SPATIAL_REFERENCE_NOT_VALIDATED_HARDWARE",
-  "canonical_target": "Mark III modular/linkable field-control and processing platform",
+  "schema_version": "mark-iii-original-layout-manufacturing-reference-v0.3",
+  "artifact_status": "SOURCE_RECONCILED_PRINT_AND_PLATING_REFERENCE_NOT_DEPLOYMENT_QUALIFIED",
+  "canonical_target": "Mark III multi-function modular extraction, sensing and field-control platform",
   "units": "SI unless an export scale states otherwise",
   "canonical_drive_workbook": {
     "file": "Mark_III_Digital_Twin_v0_1.xlsx",
@@ -9,100 +9,419 @@
     "authority": "SAME_ID_REPLACEMENT_TARGET"
   },
   "source_parameters": {
-    "module_length_m": {"value": 0.75, "state": "SOURCE_ALIGNED_SYNTHETIC_SCAFFOLD", "source": "Mark III v0.1 workbook geometry"},
-    "outer_radius_m": {"value": 0.16, "state": "SOURCE_ALIGNED_SYNTHETIC_SCAFFOLD", "source": "Mark III v0.1 workbook geometry"},
-    "wall_thickness_m": {"value": 0.006, "state": "SOURCE_ALIGNED_PROVISIONAL", "source": "Mark III v0.1 workbook geometry"},
-    "shell_sector_count": {"value": 6, "state": "SOURCE_ALIGNED_TOPOLOGY", "source": "Mark III v0.1 component register"},
-    "coupling_node_count": {"value": 8, "state": "SOURCE_ALIGNED_TOPOLOGY", "source": "Mark III v0.1 component register"},
-    "solenoid_cartridge_count": {"value": 6, "state": "SOURCE_ALIGNED_TOPOLOGY", "source": "Mark III v0.1 component register"},
-    "resonator_cartridge_count": {"value": 4, "state": "SOURCE_ALIGNED_TOPOLOGY", "source": "Mark III v0.1 component register"},
-    "capacitor_module_count": {"value": 2, "state": "SOURCE_ALIGNED_TOPOLOGY", "source": "Mark III v0.1 component register"},
-    "battery_bms_count": {"value": 1, "state": "SOURCE_ALIGNED_TOPOLOGY", "source": "Mark III v0.1 component register"},
-    "sensor_node_count": {"value": 8, "state": "SOURCE_ALIGNED_TOPOLOGY", "source": "Mark III v0.1 component register"},
-    "damping_placeholder_count": {"value": 4, "state": "SOURCE_ALIGNED_TOPOLOGY", "source": "Mark III v0.1 component register"},
-    "arm_interface_count": {"value": 2, "state": "SOURCE_ALIGNED_TOPOLOGY", "source": "Mark III v0.1 component register"}
+    "module_length_m": {
+      "value": 0.75,
+      "state": "SOURCE_ALIGNED_SYNTHETIC_SCAFFOLD",
+      "source": "Mark III v0.1 workbook geometry"
+    },
+    "outer_radius_m": {
+      "value": 0.16,
+      "state": "SOURCE_ALIGNED_SYNTHETIC_SCAFFOLD",
+      "source": "Mark III v0.1 workbook geometry"
+    },
+    "wall_thickness_m": {
+      "value": 0.006,
+      "state": "SOURCE_ALIGNED_PROVISIONAL",
+      "source": "Mark III v0.1 workbook geometry"
+    },
+    "shell_sector_count": {
+      "value": 6,
+      "state": "SOURCE_ALIGNED_TOPOLOGY",
+      "source": "Mark III v0.1 + original schematic faceted body"
+    },
+    "coupling_node_count": {
+      "value": 8,
+      "state": "SOURCE_ALIGNED_TOPOLOGY",
+      "source": "Original Mark III schematic"
+    },
+    "solenoid_segment_count": {
+      "value": 6,
+      "state": "SOURCE_ALIGNED_TOPOLOGY",
+      "source": "Original Mark III schematic"
+    },
+    "solenoids_per_segment": {
+      "value": 3,
+      "state": "SOURCE_ALIGNED_TOPOLOGY",
+      "source": "Original Mark III schematic: 3 per segment"
+    },
+    "resonator_socket_count": {
+      "value": 25,
+      "state": "SOURCE_RECONCILED_TOPOLOGY",
+      "source": "Original Flower-of-Life roles reconciled with requested dual spiral"
+    },
+    "resonator_spiral_count": {
+      "value": 2,
+      "state": "OWNER_DIRECTION",
+      "source": "Owner-supplied spiral/double-over requirement"
+    },
+    "capacitor_assembly_count": {
+      "value": 2,
+      "state": "SOURCE_ALIGNED_TOPOLOGY",
+      "source": "Mark III v0.1 register"
+    },
+    "capacitor_cell_count": {
+      "value": 4,
+      "state": "SOURCE_RECONCILED_TOPOLOGY",
+      "source": "Original Mark III four-cell visual bank"
+    },
+    "battery_bms_count": {
+      "value": 1,
+      "state": "SOURCE_ALIGNED_TOPOLOGY",
+      "source": "Mark III v0.1 register"
+    },
+    "sensor_node_count": {
+      "value": 8,
+      "state": "SOURCE_ALIGNED_TOPOLOGY",
+      "source": "Mark III v0.1 register"
+    },
+    "damping_placeholder_count": {
+      "value": 4,
+      "state": "SOURCE_ALIGNED_TOPOLOGY",
+      "source": "Original Mark III side chamber layout"
+    },
+    "primary_arm_count": {
+      "value": 2,
+      "state": "SOURCE_ALIGNED_TOPOLOGY",
+      "source": "Original Mark III bilateral arms"
+    },
+    "central_probe_mast_count": {
+      "value": 1,
+      "state": "SOURCE_RECONCILED_TOPOLOGY",
+      "source": "Original central segmented appendage"
+    },
+    "arm_link_segments_per_arm": {
+      "value": 8,
+      "state": "DERIVED_FROM_ORIGINAL_VISUAL",
+      "source": "Original segmented arm silhouette"
+    },
+    "antenna_interface_count": {
+      "value": 4,
+      "state": "SOURCE_RECONCILED_TOPOLOGY",
+      "source": "Original multiple specialized survey/communication antennae"
+    }
   },
   "derived_configuration": {
     "axial_panel_count": 3,
-    "structural_panel_inner_radius_m": 0.154,
-    "structural_panel_outer_radius_m": 0.158,
+    "structural_panel_inner_radius_m": 0.1515,
+    "print_substrate_outer_radius_m": 0.15785,
+    "electroplate_nominal_outer_radius_m": 0.158,
     "solar_skin_inner_radius_m": 0.158,
     "solar_skin_outer_radius_m": 0.16,
+    "plating_allowance_per_surface_m": 0.00015,
+    "plating_mask_land_width_m": 0.004,
+    "plating_drain_bore_radius_m": 0.0025,
+    "plating_witness_coupon_m": [
+      0.08,
+      0.025,
+      0.003
+    ],
     "main_body_length_m": 0.67,
     "coupler_length_m": 0.04,
-    "process_tunnel_inner_radius_m": 0.029,
-    "process_tunnel_outer_radius_m": 0.033,
-    "sample_cartridge_radius_m": 0.026,
+    "process_tunnel_inner_radius_m": 0.027,
+    "process_tunnel_outer_radius_m": 0.032,
+    "sample_cartridge_radius_m": 0.024,
     "sample_cartridge_length_m": 0.18,
-    "solenoid_inner_radius_m": 0.038,
-    "solenoid_outer_radius_m": 0.06,
-    "solenoid_axial_length_m": 0.055,
-    "solenoid_axial_pitch_m": 0.09,
-    "service_clearance_radial_m": 0.018,
-    "connector_access_length_m": 0.035,
+    "internal_decks_z_m": [
+      0.105,
+      0.035,
+      -0.085
+    ],
+    "solenoid_inner_radius_m": 0.01,
+    "solenoid_outer_radius_m": 0.021,
+    "solenoid_axial_length_m": 0.045,
+    "solenoid_radial_position_m": 0.082,
+    "solenoid_axial_positions_m": [
+      -0.21,
+      0.0,
+      0.21
+    ],
+    "resonator_tray_x_m": -0.055,
+    "resonator_tray_inner_radius_m": 0.034,
+    "resonator_tray_outer_radius_m": 0.126,
+    "resonator_tray_thickness_m": 0.008,
+    "resonator_socket_radius_m": 0.009,
+    "resonator_socket_length_m": 0.02,
+    "resonator_spiral_start_radius_m": 0.048,
+    "resonator_spiral_end_radius_m": 0.112,
+    "resonator_spiral_step_angle_deg": 60.0,
+    "resonator_spiral_phase_offset_deg": 30.0,
+    "service_clearance_radial_m": 0.014,
+    "connector_access_length_m": 0.032,
     "cable_minimum_bend_radius_m": 0.018,
-    "cable_tray_radius_m": 0.132,
-    "cable_tray_section_m": [0.012, 0.018],
+    "cable_tray_radius_m": 0.135,
+    "cable_tray_section_m": [
+      0.01,
+      0.016
+    ],
     "arm": {
-      "upper_link_length_m": 0.22,
-      "fore_link_length_m": 0.18,
-      "base_radius_m": 0.045,
-      "joint_radius_m": 0.035,
-      "link_radius_m": 0.018,
-      "wrist_radius_m": 0.025,
-      "end_effector_length_m": 0.07,
-      "cable_chain_radius_m": 0.009,
-      "service_clearance_radius_m": 0.055
+      "link_segment_count": 8,
+      "link_segment_length_m": 0.075,
+      "base_radius_m": 0.046,
+      "joint_radius_m": 0.027,
+      "link_radius_m": 0.022,
+      "wrist_radius_m": 0.024,
+      "collector_pad_radius_m": 0.065,
+      "collector_pad_thickness_m": 0.012,
+      "cable_chain_radius_m": 0.007,
+      "service_clearance_radius_m": 0.05,
+      "segment_solenoid_reference_count": 3
     },
-    "array_spacing_m": 0.79,
-    "array_configurations": [1, 2, 4, 8, 18]
+    "central_probe": {
+      "segment_count": 6,
+      "segment_length_m": 0.065,
+      "link_radius_m": 0.018,
+      "joint_radius_m": 0.022,
+      "instrument_head_radius_m": 0.035
+    },
+    "array_spacing_m": 0.82,
+    "array_configurations": [
+      1,
+      2,
+      4,
+      8,
+      18
+    ],
+    "print_bed_mm": [
+      280.0,
+      280.0,
+      40.0
+    ],
+    "print_process_assumption": "MATERIAL_EXTRUSION_POLYMER_REFERENCE_ONLY",
+    "minimum_print_wall_m": 0.003,
+    "minimum_insert_boss_wall_m": 0.0025
+  },
+  "resonator_configuration": {
+    "default_mode": "DUAL_INTERLEAVED_ARCHIMEDEAN_SPIRAL_WITH_FLOWER_OF_LIFE_ROLE_BANDS",
+    "available_modes": [
+      "DUAL_INTERLEAVED_SPIRAL",
+      "SPIRAL_A_ONLY",
+      "SPIRAL_B_ONLY",
+      "FLOWER_OF_LIFE_ROLE_BANDS"
+    ],
+    "roles": {
+      "central": {
+        "count": 1,
+        "source_label": "Pt-Pd-Rh doped crystal concept",
+        "state": "QUARANTINED_INSERT_LABEL"
+      },
+      "surrounding": {
+        "count": 6,
+        "source_label": "alternating Pt-Pd / Pt-Rh concepts",
+        "state": "QUARANTINED_INSERT_LABEL"
+      },
+      "peripheral": {
+        "count": 12,
+        "source_label": "alternating Au-Ir / Ni-Co concepts",
+        "state": "QUARANTINED_INSERT_LABEL"
+      },
+      "support": {
+        "count": 6,
+        "source_label": "undoped quartz concept",
+        "state": "QUARANTINED_INSERT_LABEL"
+      }
+    },
+    "multifunction_strategy": "Replaceable keyed sockets and A/B drive buses allow alternating, paired, swept and redundant configurations without asserting material-specific performance."
+  },
+  "manufacturing_reference": {
+    "substrate_state": "UNSELECTED_POLYMER_OR_COMPOSITE_PENDING_TEST",
+    "surface_finish_state": "SANDED_AND_SEALED_PROCESS_TO_BE_QUALIFIED",
+    "metallization_state": "QUALIFIED_EXTERNAL_PLATER_PROCESS_REQUIRED",
+    "plating_stack_state": "SEED_AND_METAL_BUILD_LAYERS_UNSELECTED_PENDING_COUPONS",
+    "mandatory_witnesses": [
+      "flat thickness/mass coupon",
+      "adhesion coupon",
+      "through-hole/drain coupon",
+      "masked-datum coupon",
+      "representative lattice/edge coupon"
+    ],
+    "mandatory_inspections": [
+      "incoming filament/resin lot traceability",
+      "printer calibration and build log",
+      "dimensional inspection before and after sanding",
+      "surface sealing continuity",
+      "conductive seed continuity",
+      "plating thickness map from witness coupons",
+      "adhesion and thermal-cycle screening",
+      "electrical continuity and isolation",
+      "outgassing and flammability screening for intended environment",
+      "NDE or proof testing of structural load paths"
+    ],
+    "process_research_findings": [
+      "Polymer-to-metal adhesion depends strongly on substrate chemistry, surface topography, activation and seed-layer process.",
+      "A plating process proven on one polymer, print process or geometry cannot be transferred without representative coupons and environmental testing.",
+      "Sanding is a dimensional operation and must be controlled against datum surfaces and recorded before and after finishing.",
+      "Conductive continuity does not establish structural adhesion, vacuum compatibility, corrosion resistance or fatigue life."
+    ]
   },
   "source_conflicts": [
     {
       "id": "M3-CONFLICT-001",
-      "description": "The Free Flow Mark III scenario lists a 0.16 m solenoid length; six such units cannot be arranged axially inside the 0.75 m source envelope with couplers and service space.",
-      "resolution": "Use six compact 0.055 m spatial-reference cartridges. Preserve the 0.16 m Free Flow value as a quarantined scenario input pending measured BOM and integration review."
+      "description": "The v0.1 workbook encoded six solenoid positions, while the original Mark III schematic states three solenoids per segment.",
+      "resolution": "v0.3 models six body sectors with three compact axial solenoid cartridges each (18 total). Performance and electrical values remain unassigned."
     },
     {
       "id": "M3-CONFLICT-002",
-      "description": "Source workbooks describe synthetic energy, RFS and EMFF behavior without measured logs.",
-      "resolution": "Represent component interfaces and sensor locations only; exclude performance values from geometry and capability claims."
+      "description": "The v0.1 workbook encoded four resonators, while the original schematic defines central, surrounding, peripheral and supporting Flower-of-Life roles.",
+      "resolution": "v0.3 provides 25 replaceable sockets: one central, six surrounding, twelve peripheral and six support sockets, placed as two interleaved spirals with Flower-of-Life role bands."
+    },
+    {
+      "id": "M3-CONFLICT-003",
+      "description": "Original source claims for xenon damping/amplification, doped crystals, graphene-filled solenoids and extraction performance are not supported by measured qualification evidence.",
+      "resolution": "Retain only replaceable envelopes, role labels and test interfaces. Treat media, doping, fill, field and extraction claims as quarantined hypotheses."
+    },
+    {
+      "id": "M3-CONFLICT-004",
+      "description": "Electroplating is requested as part of the build path, but substrate, surface preparation, seed layer, metal stack, thickness, internal stress and environmental compatibility are not qualified.",
+      "resolution": "Include configurable plating allowance, drainage, masking lands, electrical contact tabs and witness coupons. Release only after coupon-led process qualification by a competent plater and engineering review."
     }
   ],
   "known_unknowns": [
-    {"id": "M3-GAP-001", "description": "Qualified material stack, fastener system and panel tolerance are unknown."},
-    {"id": "M3-GAP-002", "description": "Coupler structural loads, sealing, alignment tolerance and repeated-cycle life are unknown."},
-    {"id": "M3-GAP-003", "description": "Solenoid conductor, turn count, insulation, current, thermal rejection and field map are unverified."},
-    {"id": "M3-GAP-004", "description": "RFS resonator frequency, acceleration, coupling and assay response require controlled tests and blanks."},
-    {"id": "M3-GAP-005", "description": "Battery, BMS and capacitor architecture requires pulse logs, ESR/DCIR, fault containment and thermal review."},
-    {"id": "M3-GAP-006", "description": "Cable gauges, connector families, shielding, grounding and minimum bend radii require electrical design."},
-    {"id": "M3-GAP-007", "description": "Arm joint loads, actuator selection, tendon/spool sizing, torque, reach and collision limits are unknown."},
-    {"id": "M3-GAP-008", "description": "Damping chamber medium, pressure, containment and venting remain specialist-review placeholders."},
-    {"id": "M3-GAP-009", "description": "Array-level bus sharing, synchronization, thermal interaction, field interaction and coupler loads are unknown."},
-    {"id": "M3-GAP-010", "description": "Manufacturing method, inspection, assembly sequence and repair certification are not established."}
+    {
+      "id": "M3-GAP-001",
+      "description": "Qualified print substrate, infill, raster, wall schedule, moisture control and batch traceability are unknown."
+    },
+    {
+      "id": "M3-GAP-002",
+      "description": "Sanding, sealing, activation, seed and electroplate stack require coupon-led adhesion, thickness, stress and thermal-cycle qualification."
+    },
+    {
+      "id": "M3-GAP-003",
+      "description": "Fastener inserts, captive hardware, thread engagement, conductive bonding and galvanic isolation are unselected."
+    },
+    {
+      "id": "M3-GAP-004",
+      "description": "Coupler structural loads, sealing, alignment tolerance and repeated-cycle life are unknown."
+    },
+    {
+      "id": "M3-GAP-005",
+      "description": "Solenoid conductor, turn count, insulation, current, thermal rejection, switching and field map are unverified."
+    },
+    {
+      "id": "M3-GAP-006",
+      "description": "Resonator material, doping, frequency, Q, acceleration, coupling and assay response require calibrated blank-controlled tests."
+    },
+    {
+      "id": "M3-GAP-007",
+      "description": "Battery, BMS and capacitor architecture requires measured capacity, ESR/DCIR, pulse, containment and thermal evidence."
+    },
+    {
+      "id": "M3-GAP-008",
+      "description": "Cable gauges, connectors, shielding, grounding, bonding, isolation and bend radii require electrical design and EMC testing."
+    },
+    {
+      "id": "M3-GAP-009",
+      "description": "Arm and mast joint loads, actuator/tendon selection, torque, reach, stiffness, collision and latch life are unknown."
+    },
+    {
+      "id": "M3-GAP-010",
+      "description": "Damping chamber medium, pressure, containment, venting and claimed EMI/energy effects remain specialist-review placeholders."
+    },
+    {
+      "id": "M3-GAP-011",
+      "description": "Thermal paths and radiative rejection for coils, energy storage, electronics and plated polymer are unverified."
+    },
+    {
+      "id": "M3-GAP-012",
+      "description": "Vacuum outgassing, flammability, atomic oxygen, radiation and contamination compatibility of all polymers, sealants and coatings are unknown."
+    },
+    {
+      "id": "M3-GAP-013",
+      "description": "Array-level bus sharing, synchronization, thermal interaction, field interaction and coupler loads are unknown."
+    },
+    {
+      "id": "M3-GAP-014",
+      "description": "Manufacturing tolerances, inspection methods, assembly sequence, repair limits and acceptance sampling are not established."
+    },
+    {
+      "id": "M3-GAP-015",
+      "description": "No deployment release exists; environmental and structural qualification articles must precede any mission article."
+    }
   ],
   "evidence_states": {
     "source": "SOURCE_ALIGNED_SYNTHETIC_SCAFFOLD",
     "topology": "SOURCE_ALIGNED_TOPOLOGY",
+    "owner": "OWNER_DIRECTED_CONFIGURATION",
     "derived": "DERIVED_SPATIAL_REFERENCE",
     "provisional": "PROVISIONAL_INTERFACE_REFERENCE",
+    "manufacturing": "MANUFACTURING_REFERENCE_PENDING_PROCESS_QUALIFICATION",
     "illustrative": "ILLUSTRATIVE_ONLY_NOT_PHYSICAL_PERFORMANCE",
     "quarantined": "QUARANTINED_UNVERIFIED_NOT_USED_FOR_CAPABILITY"
   },
   "claim_gates": [
-    "No validated extraction, separation, efficiency, field-strength, current or material-response claim.",
-    "No high-current build instructions or energy-safety approval.",
-    "No pressure, vacuum, gas-handling, thermal, flight, human-rating or payload-handling certification.",
-    "No arm torque, reach, capture, deployment, load or collision-avoidance claim.",
+    "No validated extraction, separation, efficiency, field-strength, current, resonance or material-response claim.",
+    "No high-current, pressure, vacuum, gas-handling, electrochemical or energy-safety approval.",
+    "No flight, human-rating, payload-handling, arm-load, capture, deployment or collision-avoidance certification.",
+    "Print and plating artifacts are manufacturing references, not released structural or electrical hardware.",
+    "No radioactive material, xenon pressure, crystal doping or graphene-fill implementation is authorised by this package.",
     "No manufacturing release, public capability promotion or operational deployment approval.",
-    "Synthetic RFS/EMFF and Free Flow values remain quarantined from active capability inputs."
+    "Synthetic corpus confidence labels do not override missing empirical test evidence."
   ],
   "exports": {
     "assembly": "1:1 metres in GLB",
-    "full_module_print": "1:5 millimetres in STL",
-    "panel_print": "1:3 millimetres in STL",
-    "coupler_print": "1:2 millimetres in STL",
-    "solenoid_print": "1:1 millimetres in STL",
-    "arm_print": "1:2 millimetres in STL"
-  }
+    "full_module_display": "1:5 millimetres in STL",
+    "production_reference_parts": "1:1 millimetres in STL, each oriented to fit 280 x 280 x 40 mm reference bed",
+    "arm_display": "1:3 millimetres in STL"
+  },
+  "design_authority_update": {
+    "revision": "v0.3",
+    "trigger": "Owner supplied original Mark III layout, Free Flow, RFS/EMFF, Solar Hull, Mark V and programme corpus on 2026-08-05.",
+    "authority_effect": "v0.2.2 remains a qualified generic serviceability baseline; v0.3 restores original layout and supersedes it for design review.",
+    "original_layout_invariants": [
+      "bilateral segmented arms with spool/motor interfaces",
+      "central segmented probe mast",
+      "upper control and communications zone",
+      "middle energy-storage zone",
+      "lower field and resonator zone",
+      "three solenoid references per body sector and per arm segment",
+      "interlocking multi-module couplings",
+      "replaceable multi-role resonator matrix"
+    ]
+  },
+  "qualification_references": [
+    {
+      "document": "NASA-STD-6030",
+      "scope": "Additive manufacturing requirements for spaceflight systems",
+      "state": "ACTIVE_REFERENCE_NOT_COMPLIANCE_CLAIM"
+    },
+    {
+      "document": "NASA-STD-6033",
+      "scope": "AM equipment and facility control",
+      "state": "ACTIVE_REFERENCE_NOT_COMPLIANCE_CLAIM"
+    },
+    {
+      "document": "NASA-HDBK-5026",
+      "scope": "Strength, fatigue and fracture-control guidance for AM spaceflight hardware",
+      "state": "ACTIVE_REFERENCE_NOT_COMPLIANCE_CLAIM"
+    },
+    {
+      "document": "ISO/ASTM 52910:2018",
+      "scope": "AM design requirements, guidelines and recommendations",
+      "state": "DESIGN_REFERENCE_NOT_CERTIFICATION"
+    },
+    {
+      "document": "ASTM F3529-21",
+      "scope": "Material-extrusion polymer design guidance",
+      "state": "PROCESS_REFERENCE_NOT_CERTIFICATION"
+    },
+    {
+      "document": "ECSS-Q-ST-70-02C",
+      "scope": "Thermal-vacuum outgassing screening",
+      "state": "TEST_REFERENCE_NOT_CERTIFICATION"
+    },
+    {
+      "document": "NASA-STD-6001",
+      "scope": "Flammability, offgassing and compatibility requirements/test procedures",
+      "state": "TEST_REFERENCE_NOT_CERTIFICATION"
+    },
+    {
+      "document": "NASA-STD-6012A",
+      "scope": "Corrosion protection for spaceflight hardware",
+      "state": "MATERIALS_REFERENCE_NOT_CERTIFICATION"
+    },
+    {
+      "document": "NASA-STD-6016",
+      "scope": "Spacecraft materials and processes requirements",
+      "state": "MATERIALS_REFERENCE_NOT_CERTIFICATION"
+    }
+  ]
 }

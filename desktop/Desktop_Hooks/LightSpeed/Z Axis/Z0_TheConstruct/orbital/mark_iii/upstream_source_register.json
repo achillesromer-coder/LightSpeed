@@ -1,25 +1,101 @@
 {
-  "schema_version": "mark-iii-upstream-source-register-v0.2",
+  "schema_version": "mark-iii-upstream-source-register-v0.3",
   "canonical_target": {
     "title": "Mark_III_Digital_Twin_v0_1.xlsx",
     "drive_file_id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2",
     "role": "same-ID replacement authority"
   },
+  "design_authority_update": {
+    "date": "2026-08-05",
+    "effect": "Original owner-supplied Mark III layout supersedes the generic v0.2.2 layout for design review; v0.2.2 remains a valid prior qualification receipt."
+  },
   "sources": [
-    {"title": "Mark III Digital Twin v0.1", "drive_file_id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2", "use": "module envelope, topology, component counts, arrays and guardrails", "state": "SOURCE_ALIGNED_SYNTHETIC_SCAFFOLD"},
-    {"title": "Mark 1P Digital Twin v0.1", "drive_file_id": "1WEqxlBfOi5SSLhmwSiIQAUkWeH2oKEXD", "use": "serviceable bays, cartridge isolation, harness and panel access lineage", "state": "SOURCE_LINEAGE"},
-    {"title": "Mark I Terrestrial Test Chamber Digital Twin v0.1", "drive_file_id": "12TWqJ-Kh0twh7t582MPwL82MoHsuOWd_", "use": "test, assay, safety and evidence gates", "state": "SOURCE_LINEAGE"},
-    {"title": "RFS/EMFF Digital Twin Test Sandbox v0.1", "drive_file_id": "1YDs4fjNZgzDAB1LJcf7xT9N-bywD4Qgf", "use": "controller, frequency/resonator, solenoid, sensors and synchronized data architecture", "state": "SYNTHETIC_RESPONSE_MODEL_QUARANTINED"},
-    {"title": "Free Flow Solenoid Stack Digital Twin Package v0.1", "use": "solenoid scenario/interface lineage; 0.16 m scenario length recorded as source conflict", "state": "SYNTHETIC_SCENARIO_QUARANTINED"},
-    {"title": "Free Flow Batteries Digital Twin Package v0.1", "use": "battery/BMS interface lineage", "state": "SYNTHETIC_SCAFFOLD"},
-    {"title": "Free Flow Capacitors Digital Twin Package v0.1", "use": "capacitor interface lineage", "state": "SYNTHETIC_SCAFFOLD"},
-    {"title": "Solar Hull Digital Twin Package v0.2", "use": "six-sector exterior functional-skin interface", "state": "TARGET_PROTOTYPE_PATHWAY"},
-    {"title": "Luke II canonical execution package v1.3.2 / PR #30", "use": "Mark III interface-arm lineage and stacked branch baseline", "state": "QUALIFIED_REFERENCE_PENDING_EXTERNAL_GATES"}
+    {
+      "title": "Original Mark III simplified internal and overview",
+      "artifact": "Mark III(4).pdf / owner image",
+      "use": "bilateral arms, central probe, control/energy/field zoning, 3 solenoids per segment, gas-joint placeholders, couplings and resonator role hierarchy",
+      "state": "PRIMARY_OWNER_DESIGN_SOURCE_WITH_UNVERIFIED_PERFORMANCE_CLAIMS"
+    },
+    {
+      "title": "Original Mark III paired deployment visual",
+      "artifact": "Mark III x 2(2).jpg",
+      "use": "paired-body silhouette, body-to-body and arm/coupling visual target",
+      "state": "PRIMARY_OWNER_VISUAL_SOURCE"
+    },
+    {
+      "title": "Free Flow solenoid/battery schematic",
+      "artifact": "Free Flow(3).jpg and corpus PDF",
+      "use": "packaging layers, internal void/carbon chamber, conductor and energy-interface lineage",
+      "state": "CONCEPTUAL_COMPONENT_SOURCE_PERFORMANCE_QUARANTINED"
+    },
+    {
+      "title": "RFS & EMFF simplified system",
+      "artifact": "RFS & EMFF(3).pdf",
+      "use": "controller, resonator, solenoid, sensors, feedback, safety and EMI architecture",
+      "state": "ARCHITECTURE_SOURCE_PERFORMANCE_QUARANTINED"
+    },
+    {
+      "title": "Solar Hull energy systems",
+      "artifact": "Solar Hull(4).pdf",
+      "use": "protective, photovoltaic, thermal, structural conductive and base-layer interface",
+      "state": "CONCEPTUAL_LAYER_SOURCE_PENDING_COUPON_TESTS"
+    },
+    {
+      "title": "ACHILLES hypergraph",
+      "artifact": "ACHILLES_Hypergraph.json",
+      "use": "Mark III integrates RFS/EMFF and is powered by Solar Hull/Free Flow; programme lineage",
+      "state": "PRE_FINAL_CANONICAL_INTEGRATION_SCAFFOLD"
+    },
+    {
+      "title": "Mark III Digital Twin v0.1",
+      "drive_file_id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2",
+      "use": "canonical envelope, prior topology, claims and workbook authority",
+      "state": "SOURCE_ALIGNED_SYNTHETIC_SCAFFOLD"
+    },
+    {
+      "title": "Mark 1P Digital Twin v0.1",
+      "drive_file_id": "1WEqxlBfOi5SSLhmwSiIQAUkWeH2oKEXD",
+      "use": "serviceable bays, cartridge isolation, harness and panel-access lineage",
+      "state": "SOURCE_LINEAGE"
+    },
+    {
+      "title": "Mark I Terrestrial Test Chamber v0.1",
+      "drive_file_id": "12TWqJ-Kh0twh7t582MPwL82MoHsuOWd_",
+      "use": "test, assay, controls and evidence gates",
+      "state": "SOURCE_LINEAGE"
+    },
+    {
+      "title": "RFS/EMFF Digital Twin Test Sandbox v0.1",
+      "drive_file_id": "1YDs4fjNZgzDAB1LJcf7xT9N-bywD4Qgf",
+      "use": "test matrix and evidence-gated architecture",
+      "state": "SYNTHETIC_RESPONSE_MODEL_QUARANTINED"
+    },
+    {
+      "title": "Luke II v1.3.2 / PR #30",
+      "use": "stacked branch baseline and Mark III interface lineage",
+      "state": "QUALIFIED_REFERENCE_PENDING_EXTERNAL_GATES"
+    },
+    {
+      "title": "NASA-STD-6030 / NASA-STD-6033 / NASA-HDBK-5026",
+      "use": "AM process, facility, strength, fatigue and fracture qualification planning",
+      "state": "PUBLIC_ENGINEERING_REFERENCES_NOT_COMPLIANCE_CLAIMS"
+    },
+    {
+      "title": "ISO/ASTM 52910:2018 / ASTM F3529-21",
+      "use": "AM and MEX/polymer design review framework",
+      "state": "PUBLIC_ENGINEERING_REFERENCES_NOT_CERTIFICATION"
+    },
+    {
+      "title": "ECSS-Q-ST-70-02C / NASA-STD-6001 / NASA-STD-6012A / NASA-STD-6016",
+      "use": "outgassing, flammability, corrosion and materials/process qualification planning",
+      "state": "PUBLIC_ENGINEERING_REFERENCES_NOT_CERTIFICATION"
+    }
   ],
   "source_discipline": [
-    "Source-aligned values are not measured hardware unless an evidence record explicitly says so.",
-    "Derived dimensions exist only to make the source topology spatially inspectable and serviceable.",
-    "Synthetic RFS/EMFF and Free Flow values are excluded from active capability claims.",
-    "Mark II remains excluded unless a specific intermediate evidence gap is demonstrated."
+    "Original geometry and component-placement intent is binding for this revision; source performance wording is not.",
+    "Doped-crystal labels, xenon/gas effects, graphene-filled coil effects and extraction performance remain quarantined hypotheses.",
+    "Derived dimensions make the layout printable, inspectable and serviceable; they do not establish structural or environmental qualification.",
+    "Electroplating features are process-enabling references only and require representative coupons and a competent external plater.",
+    "No manufacturing, flight or deployment release is created by the digital package."
   ]
 }

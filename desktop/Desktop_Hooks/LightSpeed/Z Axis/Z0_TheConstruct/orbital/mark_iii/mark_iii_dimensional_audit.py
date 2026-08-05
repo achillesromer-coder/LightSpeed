@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the Mark III v0.2 dimensional/configuration review register."""
+"""Generate the Mark III v0.3 original-layout dimensional/configuration register."""
 from __future__ import annotations
 import argparse, csv, hashlib, json
 from collections import Counter
@@ -23,7 +23,8 @@ def build_audit(parameters: dict[str,Any]):
             'review_gate':r['review_gate'],'attachment_parent':r['attachment_parent'],'physical':r['physical'],
             'maintainable':r['maintainable'],'cable_required':r['cable_required'],'cable_route':r['cable_route'],
             'service_clearance':r['service_clearance'],'removal_path':r['removal_path'],'panel_access':r['panel_access'],
-            'array_configuration':r['array_configuration'],'source_basis':r['source_basis'],'units':'metres',
+            'array_configuration':r['array_configuration'],'configuration':r.get('configuration',''),'component_role':r.get('component_role',''),
+            'manufacturing_state':r.get('manufacturing_state',''),'print_part':r.get('print_part',''),'source_basis':r['source_basis'],'units':'metres',
             'min_x':round(float(b[0][0]),6),'min_y':round(float(b[0][1]),6),'min_z':round(float(b[0][2]),6),
             'max_x':round(float(b[1][0]),6),'max_y':round(float(b[1][1]),6),'max_z':round(float(b[1][2]),6),
             'extent_x':round(float(e[0]),6),'extent_y':round(float(e[1]),6),'extent_z':round(float(e[2]),6),
@@ -32,7 +33,7 @@ def build_audit(parameters: dict[str,Any]):
             'winding_consistent':bool(m.is_winding_consistent),'signed_volume_m3':round(float(m.volume),9),
             'review_status':'OPEN_ENGINEERING_REVIEW'})
     fc=Counter(x['family'] for x in rows);ec=Counter(x['evidence_state'] for x in rows);sc=Counter(x['subsystem'] for x in rows)
-    summary={'schema_version':'mark-iii-dimensional-audit-v0.2','status':'PASS_DIMENSIONAL_SERVICEABLE_REFERENCE_AUDIT',
+    summary={'schema_version':'mark-iii-dimensional-audit-v0.3','status':'PASS_DIMENSIONAL_SERVICEABLE_REFERENCE_AUDIT',
              'source_state':parameters['artifact_status'],'units':'metres','node_count':len(rows),
              'physical_node_count':sum(x['physical'] for x in rows),'maintainable_node_count':sum(x['maintainable'] for x in rows),
              'semantic_geometry_sha256':semantic_geometry_fingerprint(scene),'semantic_geometry_quantization_m':QUANTIZATION_METRES,
@@ -40,7 +41,7 @@ def build_audit(parameters: dict[str,Any]):
              'scene_bounds_m':[[round(float(v),6) for v in row] for row in scene.bounds],
              'scene_extents_m':[round(float(v),6) for v in scene.extents],
              'family_counts':dict(sorted(fc.items())),'subsystem_counts':dict(sorted(sc.items())),'evidence_state_counts':dict(sorted(ec.items())),
-             'known_unknown_count':len(parameters['known_unknowns']),'claim_gate_state':'UNCHANGED'}
+             'known_unknown_count':len(parameters['known_unknowns']),'claim_gate_state':'STRENGTHENED','manufacturing_release':'BLOCKED_PENDING_PHYSICAL_QUALIFICATION'}
     return rows,summary
 
 def write_audit(rows,summary,out):

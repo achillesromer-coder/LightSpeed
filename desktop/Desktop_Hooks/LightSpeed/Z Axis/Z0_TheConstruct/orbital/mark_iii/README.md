@@ -1,37 +1,51 @@
-# Mark III v0.2 — serviceable modular reference assembly
+# Mark III v0.3 — original-layout print and plating development reference
 
-This directory is the executable source for the Mark III modular/linkable reference under the existing `Z0_TheConstruct` authority. It is stacked above the sealed Luke II branch to preserve interface lineage and does not create a second design master.
+This directory supersedes v0.2.2 **for design review** after reconciliation of the owner-supplied original Mark III drawings and the wider ACHILLES/Römer corpus. The v0.2.2 package remains a valid prior generic-serviceability receipt; v0.3 restores the original bilateral body/arm architecture and original component zoning.
 
-## Canonical authority
+## Authority and boundaries
 
 - Canonical Twin: `Mark_III_Digital_Twin_v0_1.xlsx`
 - Canonical Drive file ID: `1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2`
 - GitHub issue: `#32`
-- Implementation branch: `execution/mark-iii-serviceable-reference-2026-08-05`
-- Base lineage: Luke II sealed commit `4cbba640bf8f1589f542ec164016c4f39b4c85e1`
+- Draft stacked PR: `#33`
+- Branch: `execution/mark-iii-serviceable-reference-2026-08-05`
+- Base lineage: sealed Luke II commit `4cbba640bf8f1589f542ec164016c4f39b4c85e1`
 
-The workbook in the controlled package is an **in-place replacement candidate**. It must not be uploaded as a parallel authoritative Twin.
+The workbook is an in-place replacement candidate. No parallel authoritative Twin may be created.
 
-## Source-reconciled configuration
+## Restored original-layout configuration
 
-The v0.2 reference preserves the Mark III v0.1 source envelope and source component topology:
+- canonical body envelope preserved at `0.75 m × 0.32 m × 0.32 m`;
+- six angular body sectors and three axial print/service zones: 18 removable shell panels;
+- original upper control/comms, middle energy and lower field/resonator zoning;
+- 18 compact body solenoid envelopes: three per sector;
+- 25 replaceable resonator sockets: one central, six surrounding, twelve peripheral and six support;
+- two interleaved spiral buses plus Flower-of-Life role bands, enabling A-only, B-only, paired, alternating and swept test configurations;
+- isolated control power, four capacitor-cell envelopes in two trays, controller/DSP, sensors, comms and damping placeholders;
+- bilateral eight-link segmented arms with spool/motor/lock interfaces, joint placeholders, three quarantined coil references per link, cable chains and octagonal collector pads;
+- six-segment central probe mast and instrument head;
+- eight interlocking coupling latches and 1/2/4/8/18-module illustrative arrays.
 
-- canonical module: `0.75 m × Ø0.32 m`;
-- provisional source wall: `0.006 m`;
-- six angular shell sectors, implemented as 18 replaceable structural panels and six continuous Solar Hull skin sectors;
-- front and rear coupling rings with eight source-aligned latches total, alignment keys and power/data bridge references;
-- central process tunnel and removable sample cartridge;
-- six compact spatial-reference solenoid cartridges;
-- four resonator cartridges;
-- two capacitor bays, one battery/BMS bay and one controller/DSP bay;
-- eight sensor nodes, four damping placeholders and one comms interface;
-- four cable trays and routed harness trunks with connector access, bend-space and strain-relief reservations;
-- two articulated service/deployment arms with joints, links, actuator housings, spool/tendon interfaces, cable chain and removal envelopes;
-- selectable 1-, 2-, 4-, 8- and 18-module array guides.
+Material-specific resonance, gas/xenon effects, graphene-filled coil effects, field strength and extraction performance are not validated and remain quarantined.
 
-The six compact solenoid cartridges are a recorded spatial resolution of a source conflict: the Free Flow Mark III scenario's `0.16 m` solenoid length cannot be placed six times axially inside the `0.75 m` module while preserving couplers and service space. The scenario value remains quarantined pending measured BOM and integration evidence.
+## Print and plating development package
 
-## Local qualification
+Every shell panel has a pre-plate substrate, nominal plating allowance, mask lands, insert bosses, drain sleeve, assembly datum and service/removal correspondence. The 18-part reference print kit includes shell/service panels, resonator tray, split sector rail, split solenoid shell, mounts, coupler quadrant, energy/control trays, arm and probe parts, collector pad, a witness-coupon tree, alignment/plating jig and display assemblies.
+
+The reference bed is `280 × 280 × 40 mm`; every STL is watertight, winding-consistent and fits by orientation. This is a **manufacturing-development reference**, not a production release.
+
+## Qualification sequence
+
+1. CAD/datum and interface review.
+2. Printer, material-lot, raster/wall and mechanical coupon qualification.
+3. Serialised article print, pre/post sanding dimensional inspection and insert testing.
+4. Sealing/activation/seed/plating qualification on representative witness coupons by a competent external plater.
+5. Low-energy subassembly integration with electrical isolation and harness inspection.
+6. Structural, mechanism-life, vibration/shock, thermal-vacuum/outgassing, flammability, corrosion, EMI/EMC and low-energy RFS/EMFF testing.
+
+NASA-STD-6030, NASA-STD-6033, NASA-HDBK-5026, ISO/ASTM 52910, ASTM F3529, ECSS-Q-ST-70-02C and applicable NASA material/process standards are planning references only; this package does not claim compliance or certification.
+
+## Local regeneration
 
 ```bash
 python -m pip install -r requirements.txt
@@ -39,56 +53,23 @@ python -m unittest discover -v -s . -p "test_mark_iii*.py"
 python mark_iii_parametric.py --parameters mark_iii_parameters.json --out-dir generated
 python mark_iii_dimensional_audit.py --parameters mark_iii_parameters.json --out-dir generated
 python mark_iii_serviceability_audit.py --parameters mark_iii_parameters.json --out-dir generated
-python mark_iii_glb_roundtrip_audit.py \
-  --parameters mark_iii_parameters.json \
-  --glb generated/mark_iii_assembly.glb \
-  --output generated/mark_iii_glb_roundtrip_audit.json
-python mark_iii_interactive.py \
-  --glb generated/mark_iii_assembly.glb \
-  --manifest generated/mark_iii_component_manifest.json \
-  --parameters mark_iii_parameters.json \
-  --verification generated/mark_iii_verification.json \
-  --serviceability generated/mark_iii_serviceability_audit.json \
-  --roundtrip generated/mark_iii_glb_roundtrip_audit.json \
-  --output generated/mark_iii_interactive.html
+python mark_iii_manufacturing_audit.py --parameters mark_iii_parameters.json --out-dir generated
+python mark_iii_glb_roundtrip_audit.py --parameters mark_iii_parameters.json --glb generated/mark_iii_assembly.glb --output generated/mark_iii_glb_roundtrip_audit.json
+python mark_iii_interactive.py --glb generated/mark_iii_assembly.glb --manifest generated/mark_iii_component_manifest.json --parameters mark_iii_parameters.json --verification generated/mark_iii_verification.json --serviceability generated/mark_iii_serviceability_audit.json --roundtrip generated/mark_iii_glb_roundtrip_audit.json --manufacturing generated/mark_iii_manufacturing_audit.json --output generated/mark_iii_interactive.html
 ```
 
-Current controlled local result:
+## Controlled local invariants
 
-- tests: `17 / 17` passed;
-- named nodes: `339`;
-- physical nodes: `192`;
-- source module envelope: `0.75 × 0.32 × 0.32 m`;
-- source nodes watertight/winding-consistent: `339 / 339`;
-- serviceability: `PASS_SERVICEABILITY_REFERENCE_AUDIT`;
-- GLB round-trip: `339 / 339` node identities and topology counts matched;
-- semantic geometry SHA-256: `8ff2f295d0bebdd9cfb45c1942bda6dfe8dfd6493d7d9861fb97bf91458c2303`;
-- canonical component-manifest SHA-256: `9f95b1c5a6e552a626f50a9e2448f45a2cfb8642e65f92b904f0211fee64d813`.
+- named nodes: `764`;
+- physical nodes: `480`;
+- all nodes watertight and winding-consistent;
+- resonators: `25`;
+- body solenoids: `18`;
+- print references: `18`;
+- GLB round-trip: `764 / 764`;
+- semantic geometry SHA-256: `8ae71a80a820b3a583b2d76c9b75a46a823840109601074e89c262f8ce824205`;
+- canonical component-manifest SHA-256: `dfbb3cd373d4f8771d6f3655ec420dbd61a27445b9e5c029e274a51dcc451a3b`.
 
-## Interactive review
+## Release boundary
 
-`mark_iii_interactive.html` embeds the GLB and review data and provides:
-
-- component search and selection metadata;
-- evidence-state and subsystem layer toggles;
-- exploded view;
-- X/Y/Z clipping cutaways;
-- transparent service, connector, cable-bend and removal envelopes;
-- selectable 1/2/4/8/18 module array guides;
-- explicit source conflicts and known unknowns.
-
-Three.js modules load from a CDN, so the viewer library requires network access. Geometry and review data are embedded.
-
-## Print-reference scope
-
-- full module: `1:5`;
-- representative panel: `1:3`;
-- coupler: `1:2`;
-- solenoid cartridge: `1:1`;
-- arm assembly: `1:2`.
-
-These are display, spatial-review and assembly-planning references only. They are not manufacturing releases.
-
-## Claim boundaries
-
-No validated extraction/separation performance, field strength, current, efficiency, energy safety, pressure/vacuum safety, thermal performance, human rating, flight readiness, payload handling, arm torque/load/reach, deployment, manufacturing release or public capability promotion is authorized.
+No validated extraction/separation, resonant material response, field strength, current, energy safety, pressure/gas system, thermal performance, EMI/EMC, corrosion life, arm load/torque, structural strength, flight readiness, manufacturing release or deployment approval is authorised.
