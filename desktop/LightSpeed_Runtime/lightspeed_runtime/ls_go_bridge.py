@@ -259,6 +259,61 @@ def _canonical_queue_index_gate_authorized(shell_root: Path) -> bool:
     )
 
 
+def _current_go_authority_contract(shell_root: Path) -> dict[str, str]:
+    """Return the bounded command authority currently released by local canon."""
+    try:
+        approvals = json.loads(
+            (shell_root / "config" / "operator_approval_manifest.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        launch_control = json.loads(
+            (shell_root / "config" / "launch_control.json").read_text(encoding="utf-8")
+        )
+    except (OSError, TypeError, ValueError, json.JSONDecodeError):
+        return {
+            "canonical_gate_id": "unavailable",
+            "owner_decision_ref": "unavailable",
+            "core_acceptance_ref": "unavailable",
+            "approval_or_hold_state": "hold",
+            "authorised_scope": "none",
+            "prohibited_scope": "all execution",
+        }
+
+    release = approvals.get("gate_release") if isinstance(approvals, dict) else {}
+    approval_flags = approvals.get("approvals") if isinstance(approvals, dict) else {}
+    release = release if isinstance(release, dict) else {}
+    approval_flags = approval_flags if isinstance(approval_flags, dict) else {}
+    gate_id = str(release.get("release_id") or "").strip()
+    owner_ref = str(release.get("source") or "").strip()
+    control_id = str(launch_control.get("control_id") or "").strip()
+    launch_gate = str(launch_control.get("gate") or "").strip()
+    approved = bool(
+        approval_flags.get("ls_go_queue")
+        and gate_id
+        and owner_ref
+        and control_id
+        and launch_gate
+        and str(launch_control.get("state") or "").casefold()
+        == "private_soft_cognigrex_active"
+    )
+    return {
+        "canonical_gate_id": gate_id or "unavailable",
+        "owner_decision_ref": owner_ref or "unavailable",
+        "core_acceptance_ref": f"{control_id}:{launch_gate}" if control_id and launch_gate else "unavailable",
+        "approval_or_hold_state": "approved" if approved else "hold",
+        "authorised_scope": (
+            "all floors; private local review queue; internal bounded execution; fixed receipts"
+            if approved
+            else "none"
+        ),
+        "prohibited_scope": (
+            "public publish; destructive filesystem changes; workbook mutation; "
+            "De Sporte launch; Mark III mesh export; heavy simulation without manual gate"
+        ),
+    }
+
+
 def _canonical_sha256(value: dict[str, Any]) -> str:
     payload = json.dumps(
         value,
@@ -623,16 +678,36 @@ def _authority_scope_prohibits(
         normalized = " ".join(item.casefold().split()).strip()
         if len(normalized) >= 4 and normalized in requested:
             return True
-        for token in _scope_tokens(normalized):
-            if token in requested_tokens:
-                return True
-            if any(
-                len(token) >= 5
-                and len(requested_token) >= 5
-                and (requested_token.startswith(token[:5]) or token.startswith(requested_token[:5]))
-                for requested_token in requested_tokens
-            ):
-                return True
+        prohibited_tokens = _scope_tokens(normalized)
+        if "without" in prohibited_tokens:
+            prohibited_tokens = prohibited_tokens[:prohibited_tokens.index("without")]
+        remaining_requested = set(requested_tokens)
+        unmatched_prohibited: list[str] = []
+        for token in prohibited_tokens:
+            if token in remaining_requested:
+                remaining_requested.remove(token)
+            else:
+                unmatched_prohibited.append(token)
+        fuzzy_match_failed = False
+        for token in unmatched_prohibited:
+            requested_token = next(
+                (
+                    candidate
+                    for candidate in remaining_requested
+                    if (
+                        len(token) >= 5
+                        and len(candidate) >= 5
+                        and (candidate.startswith(token[:5]) or token.startswith(candidate[:5]))
+                    )
+                ),
+                None,
+            )
+            if requested_token is None:
+                fuzzy_match_failed = True
+                break
+            remaining_requested.remove(requested_token)
+        if prohibited_tokens and not fuzzy_match_failed:
+            return True
     return False
 
 
@@ -1125,6 +1200,7 @@ def create_app(root: Path | str) -> FastAPI:
                     "command_identity": command_identity_migration,
                     "review_identity": "canonical_database_tables_or_bounded_fail_closed_fallback",
                 },
+                "authority_contract": _current_go_authority_contract(shell_root),
                 "queue_path": str(_queue_path(shell_root)),
                 "review_queue_path": str(project_pipeline.review_queue_path),
                 "representation_edge": {
@@ -1184,11 +1260,19 @@ def create_app(root: Path | str) -> FastAPI:
         )
 
     @app.post("/api/v1/reviews/{review_id}/decision")
-    async def decide_review(review_id: str, body: dict[str, Any]):
+    async def decide_review(
+        review_id: str,
+        body: dict[str, Any],
+        owner_confirmation: str | None = Header(
+            default=None,
+            alias="X-LightSpeed-Owner-Confirmation",
+        ),
+    ):
         decision = _bounded(body.get("decision"), maximum=16, required=True).lower()
         note = _bounded(body.get("note"), maximum=1000)
+        actor = _verified_owner_actor(owner_confirmation)
         try:
-            receipt = project_pipeline.decide_review(review_id, decision, note)
+            receipt = project_pipeline.decide_review(review_id, decision, note, actor=actor)
         except KeyError:
             raise HTTPException(status_code=404, detail="Review item not found")
         except ReviewDecisionConflict as exc:

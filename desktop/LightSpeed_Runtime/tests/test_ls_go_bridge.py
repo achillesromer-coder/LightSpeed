@@ -57,7 +57,7 @@ def test_neo_operator_approval_forwards_authority_contract() -> None:
     assert observed["kwargs"]["authority_contract"] == authority
 
 
-def test_quarter_speed_host_profile_bounds_background_work() -> None:
+def test_half_speed_host_profile_bounds_background_work() -> None:
     policy_path = (
         RUNTIME_ROOT.parent
         / "Desktop_Hooks"
@@ -67,7 +67,7 @@ def test_quarter_speed_host_profile_bounds_background_work() -> None:
     )
     limits = json.loads(policy_path.read_text(encoding="utf-8"))["runtime_limits"]
 
-    assert limits["cognigrex_speed_percent"] == 25
+    assert limits["cognigrex_speed_percent"] == 50
     assert limits["max_background_queue_workers"] == 1
     assert limits["max_concurrent_ollama_jobs"] == 1
     assert limits["max_floor_boot_parallelism"] == 2
@@ -76,11 +76,7 @@ def test_quarter_speed_host_profile_bounds_background_work() -> None:
 
 
 def test_watchdog_accepts_canonical_junction_alias(monkeypatch) -> None:
-    watchdog_path = (
-        RUNTIME_ROOT.parents[1]
-        / "scripts"
-        / "ensure_cognigrex_local_stack.py"
-    )
+    watchdog_path = Path(r"D:\LightSpeed\Automation\ensure_cognigrex_local_stack.py")
     spec = importlib.util.spec_from_file_location("ensure_cognigrex_local_stack", watchdog_path)
     assert spec is not None and spec.loader is not None
     watchdog = importlib.util.module_from_spec(spec)
@@ -860,8 +856,36 @@ def test_bridge_rejects_command_inside_prohibited_scope(tmp_path, monkeypatch):
     assert "prohibited scope" in response.json()["detail"]
 
 
+def test_bridge_allows_bounded_command_that_names_negative_safeguards(tmp_path, monkeypatch):
+    database = CommandFixtureDatabase(tmp_path / "bounded-command.db")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (database, object()))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(
+            command_id="LSGO-TEST-NEGATIVE-SAFEGUARDS",
+            instruction=(
+                "Run a bounded local health evidence check and return a fixed receipt. "
+                "Do not publish or mutate files."
+            ),
+            target_floor="Merovingian",
+            authorised_scope="all floors; private local review queue; fixed receipts",
+            prohibited_scope=(
+                "public publish; destructive filesystem changes; workbook mutation; "
+                "De Sporte launch; Mark III mesh export; heavy simulation without manual gate"
+            ),
+            requested_scope="Merovingian private local review queue",
+        ),
+    )
+
+    assert response.status_code == 200, response.text
+    assert response.json()["accepted"] is True
+
+
 def test_bridge_stages_project_artifact_and_accepts_owner_review(tmp_path, monkeypatch):
     project_root = configure_shell(tmp_path)
+    monkeypatch.setenv("LIGHTSPEED_OWNER_APPROVAL_TOKEN", "owner-test-token")
     monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
     healthy_pipeline(monkeypatch)
     client = TestClient(ls_go_bridge.create_app(tmp_path))
@@ -898,14 +922,17 @@ def test_bridge_stages_project_artifact_and_accepts_owner_review(tmp_path, monke
 
     decision = client.post(
         f"/api/v1/reviews/{review_id}/decision",
+        headers={"X-LightSpeed-Owner-Confirmation": "owner-test-token"},
         json={"decision": "approve", "note": "Owner reviewed."},
     )
     assert decision.status_code == 200
     assert decision.json()["receipt"]["decision"] == "approve"
+    assert decision.json()["receipt"]["actor"] == "Nathaniel"
 
 
 def test_bridge_review_decision_replay_is_idempotent_and_conflict_safe(tmp_path, monkeypatch):
     configure_shell(tmp_path)
+    monkeypatch.setenv("LIGHTSPEED_OWNER_APPROVAL_TOKEN", "owner-test-token")
     pipeline = ProjectPipeline(tmp_path)
     pipeline.review_queue_path.write_text(
         json.dumps({"review_id": "review-idempotency-1", "state": "pending_review"}) + "\n",
@@ -915,15 +942,30 @@ def test_bridge_review_decision_replay_is_idempotent_and_conflict_safe(tmp_path,
     client = TestClient(ls_go_bridge.create_app(tmp_path))
     endpoint = "/api/v1/reviews/review-idempotency-1/decision"
 
-    first = client.post(endpoint, json={"decision": "approve", "note": "Owner reviewed."})
+    unauthenticated = client.post(
+        endpoint,
+        json={"decision": "approve", "note": "Owner reviewed."},
+    )
+    headers = {"X-LightSpeed-Owner-Confirmation": "owner-test-token"}
+    first = client.post(
+        endpoint,
+        headers=headers,
+        json={"decision": "approve", "note": "Owner reviewed."},
+    )
     decision_bytes = pipeline.review_decisions_path.read_bytes()
     decision_mtime_ns = pipeline.review_decisions_path.stat().st_mtime_ns
     replay = client.post(
         endpoint,
+        headers=headers,
         json={"decision": "approve", "note": "  Owner   reviewed. "},
     )
-    conflict = client.post(endpoint, json={"decision": "hold", "note": "Needs evidence."})
+    conflict = client.post(
+        endpoint,
+        headers=headers,
+        json={"decision": "hold", "note": "Needs evidence."},
+    )
 
+    assert unauthenticated.status_code == 403
     assert first.status_code == 200
     assert replay.status_code == 200
     assert replay.json()["receipt"]["idempotent_replay"] is True

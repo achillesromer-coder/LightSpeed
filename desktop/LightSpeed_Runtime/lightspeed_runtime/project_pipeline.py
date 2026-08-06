@@ -1671,7 +1671,14 @@ class ProjectPipeline:
             result.append(output)
         return result
 
-    def decide_review(self, review_id: str, decision: str, note: str = "") -> dict[str, Any]:
+    def decide_review(
+        self,
+        review_id: str,
+        decision: str,
+        note: str = "",
+        *,
+        actor: str = "",
+    ) -> dict[str, Any]:
         allowed = set((self.config.get("go_review") or {}).get("allowed_decisions") or [])
         if decision not in allowed:
             raise ValueError(f"Unsupported review decision: {decision}")
@@ -1705,6 +1712,8 @@ class ProjectPipeline:
                     )
                 existing = dict(existing_decisions[-1])
                 existing.setdefault("canonical_payload_sha256", canonical_payload_sha256)
+                if actor:
+                    existing.setdefault("actor", actor)
                 receipt_status = self._reconcile_decision_receipt(existing)
                 existing["idempotent_replay"] = True
                 existing.update(receipt_status)
@@ -1715,6 +1724,8 @@ class ProjectPipeline:
                 "canonical_payload_sha256": canonical_payload_sha256,
                 "decided_utc": utc_now_iso(),
             }
+            if actor:
+                receipt["actor"] = actor
             _append_jsonl(self.review_decisions_path, receipt)
             receipt_status = self._reconcile_decision_receipt(receipt)
             return {**receipt, **receipt_status}

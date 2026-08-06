@@ -1,9 +1,11 @@
 import "./styles.css";
+import "./mobile.css";
 import {
   createCommandEnvelope,
   decideDesktopReview,
   decideRepresentationReview,
   DEFAULT_DESKTOP_ORIGIN,
+  DesktopRequestError,
   downloadCommand,
   FLOORS,
   listDesktopProjects,
@@ -16,6 +18,7 @@ import {
   routeInstruction,
   storePendingCommand,
   submitDesktopCommand,
+  type AuthorityContract,
   type CommandEnvelope,
   type ExecutionMode,
   type Floor,
@@ -173,13 +176,15 @@ const executionMode = byId<HTMLSelectElement>("execution-mode");
 const routePreview = byId<HTMLDivElement>("route-preview");
 const resultBox = byId<HTMLDivElement>("command-result");
 let currentCommand: CommandEnvelope | null = null;
+let currentAuthorityContract: AuthorityContract | null = null;
 let currentReviews: ReviewRecord[] = [];
 let currentRepresentationGraphs: RepresentationGraph[] = [];
 
 const renderRoute = (): void => {
   const routed = routeInstruction(instruction.value || "governance");
   targetFloor.value = routed;
-  routePreview.innerHTML = `<strong>Achilles route:</strong> ${routed} is primary. Neo coordinates and proof returns to this gate.`;
+  const gate = currentAuthorityContract?.canonical_gate_id;
+  routePreview.innerHTML = `<strong>Achilles route:</strong> ${routed} is primary. Neo coordinates and proof returns to this gate.${gate ? ` <small>Authority: ${escapeHtml(gate)}</small>` : " <small>Waiting for the Desktop authority contract.</small>"}`;
 };
 instruction.addEventListener("input", renderRoute);
 renderRoute();
@@ -189,6 +194,7 @@ const buildCommand = (): CommandEnvelope => createCommandEnvelope({
   targetFloor: targetFloor.value as Floor,
   priority: priority.value as Priority,
   executionMode: executionMode.value as ExecutionMode,
+  authorityContract: currentAuthorityContract,
 });
 
 const setResult = (tone: "good" | "warn" | "bad", text: string): void => {
@@ -261,8 +267,16 @@ const renderReviews = (reviews: ReviewRecord[]): void => {
     const review = currentReviews.find((item) => item.review_id === reviewId);
     if (!review || !reviewId) return;
     const note = window.prompt(`${decision.toUpperCase()}: ${review.title || reviewId}\nOptional decision note:`, "") ?? "";
+    const ownerConfirmation = window.prompt(
+      "Enter the local owner-confirmation token. It is sent only to the loopback Desktop bridge and is not stored.",
+      "",
+    ) ?? "";
+    if (!ownerConfirmation) {
+      setResult("bad", "Review decision cancelled: owner confirmation is required.");
+      return;
+    }
     try {
-      await decideDesktopReview(reviewId, decision, note);
+      await decideDesktopReview(reviewId, decision, note, ownerConfirmation);
       setResult("good", `${reviewId} marked ${decision}. Drive decision receipt written by Desktop.`);
       await refreshDesktop();
     } catch (error) {
@@ -329,6 +343,7 @@ const renderCanonicalGraphs = (graphs: RepresentationGraph[]): void => {
 
 byId<HTMLFormElement>("command-form").addEventListener("submit", async (event) => {
   event.preventDefault();
+  currentCommand = null;
   try {
     currentCommand = buildCommand();
     setResult("warn", `Sending ${currentCommand.command_id} to Desktop…`);
@@ -338,9 +353,16 @@ byId<HTMLFormElement>("command-form").addEventListener("submit", async (event) =
     setResult("good", `Accepted by Desktop. Task ${receipt.task_id ?? "created"}; ${receipt.state || "queued for governed processing"}.`);
     await refreshDesktop();
   } catch (error) {
-    if (currentCommand) storePendingCommand(currentCommand);
+    const rejected = error instanceof DesktopRequestError;
+    if (currentCommand && !rejected) storePendingCommand(currentCommand);
     renderPending();
-    setResult("bad", `${error instanceof Error ? error.message : "Desktop unavailable"} The command envelope was saved locally.`);
+    const detail = error instanceof Error ? error.message : "Desktop unavailable";
+    setResult(
+      "bad",
+      rejected
+        ? `${detail} Desktop rejected the command; it was not mislabeled as an offline save.`
+        : `${detail}${currentCommand ? " The command envelope was saved locally." : ""}`,
+    );
   }
 });
 
@@ -377,6 +399,8 @@ const refreshDesktop = async (): Promise<void> => {
   merovingianState.textContent = "Checking";
   try {
     const status = await readDesktopStatus();
+    currentAuthorityContract = status.authority_contract || null;
+    renderRoute();
     pill.dataset.state = status.ok ? "online" : "degraded";
     pillText.textContent = status.ok ? "local runtime connected" : "runtime connected; health needs review";
     desktopState.textContent = "Online";
@@ -404,10 +428,16 @@ const refreshDesktop = async (): Promise<void> => {
 
     try {
       renderCanonicalGraphs(await listRepresentationGraphs());
-    } catch {
-      renderCanonicalGraphs([]);
+    } catch (error) {
+      currentRepresentationGraphs = [];
+      const reason = status.representation_edge?.enabled === false
+        ? "Canonical representation objects are intentionally disabled by the current launch gate."
+        : error instanceof Error ? error.message : "Representation objects are unavailable.";
+      byId("representation-graphs").innerHTML = `<article class="panel"><p class="eyebrow">Objects unavailable</p><h2>Feature-gated, not empty</h2><p class="muted">${escapeHtml(reason)}</p></article>`;
     }
   } catch {
+    currentAuthorityContract = null;
+    renderRoute();
     pill.dataset.state = "offline";
     pillText.textContent = "start LightSpeed Desktop and the local bridge";
     desktopState.textContent = "Offline";
