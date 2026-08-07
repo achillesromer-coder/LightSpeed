@@ -90,3 +90,5 @@ Clean-runner v0.3.3 qualification is pending the repository commit containing th
 ## Release boundary
 
 No validated extraction/separation, resonant material response, field strength, current, energy safety, pressure/gas system, propulsion, thermal performance, EMI/EMC, corrosion life, arm load/torque, structural strength, flight readiness, manufacturing release or deployment approval is authorised.
+
+<!-- v0.3.3 materialisation retry: repaired staged patch boundary -->
