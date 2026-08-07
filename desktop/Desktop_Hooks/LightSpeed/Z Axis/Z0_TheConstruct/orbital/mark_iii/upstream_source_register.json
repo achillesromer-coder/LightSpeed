@@ -1,5 +1,5 @@
 {
-  "schema_version": "mark-iii-upstream-source-register-v0.3",
+  "schema_version": "mark-iii-upstream-source-register-v0.3.3",
   "canonical_target": {
     "title": "Mark_III_Digital_Twin_v0_1.xlsx",
     "drive_file_id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2",
@@ -7,13 +7,13 @@
   },
   "design_authority_update": {
     "date": "2026-08-05",
-    "effect": "Original owner-supplied Mark III layout supersedes the generic v0.2.2 layout for design review; v0.2.2 remains a valid prior qualification receipt."
+    "effect": "Original owner-supplied Mark III layout remains current design authority; v0.3.3 closes omitted propulsion/refillable-reservoir interface allocation and viewer metadata without promoting performance claims."
   },
   "sources": [
     {
       "title": "Original Mark III simplified internal and overview",
       "artifact": "Mark III(4).pdf / owner image",
-      "use": "bilateral arms, central probe, control/energy/field zoning, 3 solenoids per segment, gas-joint placeholders, couplings and resonator role hierarchy",
+      "use": "bilateral arms, central probe, control/energy/field zoning, 3 solenoids per segment, gas-joint placeholders, couplings, resonator hierarchy, four visible propulsion-interface locations and refillable-reservoir functional intent",
       "state": "PRIMARY_OWNER_DESIGN_SOURCE_WITH_UNVERIFIED_PERFORMANCE_CLAIMS"
     },
     {
@@ -93,6 +93,7 @@
   ],
   "source_discipline": [
     "Original geometry and component-placement intent is binding for this revision; source performance wording is not.",
+    "Thruster/refillable-reservoir wording is implemented only as generic non-operational interface, allocation, routing and service geometry until a propulsion architecture is selected and qualified.",
     "Doped-crystal labels, xenon/gas effects, graphene-filled coil effects and extraction performance remain quarantined hypotheses.",
     "Derived dimensions make the layout printable, inspectable and serviceable; they do not establish structural or environmental qualification.",
     "Electroplating features are process-enabling references only and require representative coupons and a competent external plater.",
