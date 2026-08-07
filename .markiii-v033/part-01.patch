@@ -1,4 +1,5 @@
-    polyline_tube(
++        scene, records,
++        polyline_tube(
 +            [reservoir_center, [0.24, 0.0, -0.145], service_base.tolist()],
 +            d["propulsion_route_reservation_radius_m"], 10
 +        ),
