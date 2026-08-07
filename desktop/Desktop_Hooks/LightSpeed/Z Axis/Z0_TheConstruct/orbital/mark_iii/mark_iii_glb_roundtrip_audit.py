@@ -26,7 +26,7 @@ def audit(parameters,glb):
         nodes[n]={'vertices':len(b.vertices),'faces':len(b.faces),'watertight':bool(b.is_watertight),'winding_consistent':bool(b.is_winding_consistent),
                   'bounds_error_m':be,'extents_error_m':ee,'centroid_error_m':ce,'relative_volume_error':rv,'relative_area_error':ra,'checks':checks}
         maxe['bounds_m']=max(maxe['bounds_m'],be);maxe['extents_m']=max(maxe['extents_m'],ee);maxe['centroid_m']=max(maxe['centroid_m'],ce);maxe['relative_volume']=max(maxe['relative_volume'],rv);maxe['relative_area']=max(maxe['relative_area'],ra)
-    return {'schema_version':'mark-iii-glb-roundtrip-v0.3','status':'PASS_GLB_ROUNDTRIP_REFERENCE' if not fail else 'FAIL_GLB_ROUNDTRIP_REFERENCE','glb_file':glb.name,
+    return {'schema_version':'mark-iii-glb-roundtrip-v0.3.3','status':'PASS_GLB_ROUNDTRIP_REFERENCE' if not fail else 'FAIL_GLB_ROUNDTRIP_REFERENCE','glb_file':glb.name,
             'source_nodes':len(sn),'exported_nodes':len(en),'matched_nodes':len(sn&en),'missing_nodes':missing,'unexpected_nodes':unexpected,
             'linear_tolerance_m':LINEAR,'relative_measure_tolerance':REL,'maximum_observed_errors':maxe,'failures':fail,'nodes':nodes,'claim_gate_state':'STRENGTHENED'}
 def main():

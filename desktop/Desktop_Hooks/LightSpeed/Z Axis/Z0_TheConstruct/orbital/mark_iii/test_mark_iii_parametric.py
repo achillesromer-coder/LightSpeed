@@ -12,8 +12,8 @@ from mark_iii_parametric import build_print_references, build_reference, export_
 
 ROOT = Path(__file__).resolve().parent
 P = json.loads((ROOT / "mark_iii_parameters.json").read_text())
-EXPECTED_SEMANTIC = "8ae71a80a820b3a583b2d76c9b75a46a823840109601074e89c262f8ce824205"
-EXPECTED_MANIFEST = "dfbb3cd373d4f8771d6f3655ec420dbd61a27445b9e5c029e274a51dcc451a3b"
+EXPECTED_SEMANTIC = "205912a4f248db9a444f30f5b258d78285dc5799e657b684af82e4fe1474a339"
+EXPECTED_MANIFEST = "7e5638ef12b6d5861c7664c623b54aa485749cb4405a11becdd326339f61ca7e"
 
 
 class MarkIIIParametricTests(unittest.TestCase):
@@ -27,7 +27,7 @@ class MarkIIIParametricTests(unittest.TestCase):
         self.assertEqual(P["source_parameters"]["module_length_m"]["value"], 0.75)
         self.assertEqual(P["source_parameters"]["outer_radius_m"]["value"], 0.16)
         self.assertEqual(P["source_parameters"]["shell_sector_count"]["value"], 6)
-        self.assertEqual(P["design_authority_update"]["revision"], "v0.3")
+        self.assertEqual(P["design_authority_update"]["revision"], "v0.3.3")
 
     def test_reconciled_component_counts(self) -> None:
         expected = {
@@ -41,14 +41,18 @@ class MarkIIIParametricTests(unittest.TestCase):
             "damping": 4,
             "plating_allowance": 18,
             "fastener": 36,
+            "propulsion_interface": 4,
+            "reservoir_placeholder": 1,
+            "propulsion_service_port": 1,
+            "fluid_route_reservation": 5,
         }
         for family, count in expected.items():
             self.assertEqual(self.family_counts[family], count, family)
 
     def test_named_geometry_is_complete_and_manifold(self) -> None:
-        self.assertEqual(len(self.scene.geometry), 764)
-        self.assertEqual(len(self.records), 764)
-        self.assertEqual(sum(record["physical"] for record in self.records), 480)
+        self.assertEqual(len(self.scene.geometry), 786)
+        self.assertEqual(len(self.records), 786)
+        self.assertEqual(sum(record["physical"] for record in self.records), 486)
         self.assertTrue(
             all(
                 mesh.is_watertight and mesh.is_winding_consistent
@@ -109,6 +113,20 @@ class MarkIIIParametricTests(unittest.TestCase):
         self.assertEqual(configurations["DUAL_SPIRAL_B"], 12)
         self.assertEqual(configurations["SHARED_CENTRAL"], 1)
 
+    def test_original_propulsion_and_reservoir_interfaces_are_restored(self) -> None:
+        self.assertEqual(self.family_counts["propulsion_interface"], 4)
+        self.assertEqual(self.family_counts["reservoir_placeholder"], 1)
+        self.assertEqual(self.family_counts["propulsion_service_port"], 1)
+        self.assertEqual(self.family_counts["fluid_route_reservation"], 5)
+        for idx in range(1, 5):
+            node = self.record_map[f"M3_PROPULSION_INTERFACE_{idx:02d}"]
+            self.assertTrue(node["cable_required"])
+            self.assertEqual(node["evidence_state"], "SOURCE_RECONCILED_TOPOLOGY")
+            self.assertIn("INTERFACE_ONLY", node["component_role"])
+        reservoir = self.record_map["M3_PROPULSION_RESERVOIR_ALLOCATION"]
+        self.assertIn("UNPRESSURISED", reservoir["component_role"])
+        self.assertTrue(any("propellant" in gate.lower() for gate in P["claim_gates"]))
+
     def test_array_guides_are_exact(self) -> None:
         for count in P["derived_configuration"]["array_configurations"]:
             self.assertEqual(
@@ -122,7 +140,7 @@ class MarkIIIParametricTests(unittest.TestCase):
 
     def test_print_references_are_complete_manifold_and_fit(self) -> None:
         references = build_print_references(P, self.scene, self.records)
-        self.assertEqual(len(references), 18)
+        self.assertEqual(len(references), 20)
         bed = sorted(P["derived_configuration"]["print_bed_mm"])
         self.assertTrue(
             all(
@@ -158,7 +176,7 @@ class MarkIIIParametricTests(unittest.TestCase):
 
     def test_manifest_canonical_meaning_is_stable(self) -> None:
         manifest = {
-            "schema_version": "mark-iii-component-manifest-v0.3",
+            "schema_version": "mark-iii-component-manifest-v0.3.3",
             "node_count": len(self.records),
             "components": self.records,
         }
@@ -173,7 +191,7 @@ class MarkIIIParametricTests(unittest.TestCase):
                 "mark_iii_print_kit_manifest.json",
                 "mark_iii_print_kit_manifest.csv",
             ] + [path.name for path in Path(first).glob("*.stl")]
-            self.assertEqual(len([name for name in names if name.endswith(".stl")]), 18)
+            self.assertEqual(len([name for name in names if name.endswith(".stl")]), 20)
             for name in names:
                 self.assertEqual(
                     (Path(first) / name).read_bytes(),

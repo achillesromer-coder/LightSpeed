@@ -8,8 +8,8 @@ from typing import Any
 import numpy as np
 from mark_iii_parametric import ROOTS, build_print_references, build_reference
 
-STRUCTURAL_EXEMPT={'primary_structure','shell_panel','solar_hull_skin','fastener','coupler','coupler_latch','cable_tray','harness','arm','arm_joint','arm_actuator','process_tunnel','plating_feature','plating_allowance','resonator_mount','coil_reference','arm_solenoid_reference','arm_gas_joint','energy_tray','probe_mast','collector_pad'}
-CRITICAL_REMOVAL={'sample_cartridge','solenoid','resonator','energy','controller','comms','damping'}
+STRUCTURAL_EXEMPT={'primary_structure','shell_panel','solar_hull_skin','fastener','coupler','coupler_latch','cable_tray','harness','arm','arm_joint','arm_actuator','process_tunnel','plating_feature','plating_allowance','resonator_mount','coil_reference','arm_solenoid_reference','arm_gas_joint','energy_tray','probe_mast','collector_pad','fluid_route_reservation'}
+CRITICAL_REMOVAL={'sample_cartridge','solenoid','resonator','energy','controller','comms','damping','propulsion_interface','reservoir_placeholder'}
 
 def sha(path):
     h=hashlib.sha256();h.update(path.read_bytes());return h.hexdigest()
@@ -61,8 +61,8 @@ def build_audit(parameters:dict[str,Any]):
         print_rows.append({'file':name,'watertight':bool(m.is_watertight),'winding_consistent':bool(m.is_winding_consistent),
                            'extent_x_mm':round(float(m.extents[0]),6),'extent_y_mm':round(float(m.extents[1]),6),'extent_z_mm':round(float(m.extents[2]),6),
                            'largest_extent_mm':round(float(max(m.extents)),6),'fits_reference_bed_by_orientation':fits})
-    # Canonical shell envelope only, excluding arms/guides/antenna.
-    module_names=[r['node_name'] for r in records if r['physical'] and r['subsystem'] not in {'arm_system','probe_system'} and not r['node_name'].startswith('M3_COMMS_ANTENNA_')]
+    # Canonical shell envelope only, excluding appendages, antenna and propulsion interface geometry.
+    module_names=[r['node_name'] for r in records if r['physical'] and r['subsystem'] not in {'arm_system','probe_system','propulsion_reference'} and not r['node_name'].startswith('M3_COMMS_ANTENNA_')]
     mins=np.min([scene.geometry[n].bounds[0] for n in module_names],axis=0);maxs=np.max([scene.geometry[n].bounds[1] for n in module_names],axis=0)
     envelope=(maxs-mins).tolist()
     expected_len=parameters['source_parameters']['module_length_m']['value'];expected_diam=2*parameters['source_parameters']['outer_radius_m']['value']
@@ -82,6 +82,10 @@ def build_audit(parameters:dict[str,Any]):
       'source_reconciled_resonator_count':fc['resonator']==25,
       'source_sensor_count':sum(1 for r in records if r['node_name'].startswith('M3_SENSOR_NODE_'))==8,
       'source_damping_count':fc['damping']==4,
+      'source_propulsion_interface_count':fc['propulsion_interface']==parameters['source_parameters']['propulsion_thruster_interface_count']['value'],
+      'source_reservoir_placeholder_count':fc['reservoir_placeholder']==parameters['source_parameters']['refillable_reservoir_interface_count']['value'],
+      'source_refill_service_port_present':fc['propulsion_service_port']==1,
+      'propulsion_route_reservations_present':fc['fluid_route_reservation']==5,
       'original_appendage_decomposition_present':sum(1 for r in records if r['node_name'].startswith('M3_ARM_') and r['node_name'].endswith('_BASE_INTERFACE'))==2 and any(r['node_name']=='M3_CENTRAL_PROBE_BASE_INTERFACE' for r in records) and fc['arm_joint']>=22,
       'array_configuration_counts_exact':all(arrays[str(c)]['node_count']==c for c in parameters['derived_configuration']['array_configurations']),
       'array_spacing_not_less_than_reference':all(v['minimum_centre_spacing_m']+1e-9>=parameters['derived_configuration']['array_spacing_m'] for k,v in arrays.items() if int(k)>1),
@@ -91,15 +95,18 @@ def build_audit(parameters:dict[str,Any]):
       'all_print_references_winding_consistent':all(r['winding_consistent'] for r in print_rows),
       'all_print_references_fit_reference_bed':all(r['fits_reference_bed_by_orientation'] for r in print_rows),
       'claim_gates_present':len(parameters['claim_gates'])>=6,
-      'known_unknowns_explicit':len(parameters['known_unknowns'])>=15,
+      'known_unknowns_explicit':len(parameters['known_unknowns'])>=16,
       'source_conflicts_explicit':len(parameters['source_conflicts'])>=4,
     }
     failures=[k for k,v in checks.items() if not v]
-    result={'schema_version':'mark-iii-serviceability-audit-v0.3','status':'PASS_SERVICEABILITY_REFERENCE_AUDIT' if not failures else 'FAIL_SERVICEABILITY_REFERENCE_AUDIT',
+    result={'schema_version':'mark-iii-serviceability-audit-v0.3.3','status':'PASS_SERVICEABILITY_REFERENCE_AUDIT' if not failures else 'FAIL_SERVICEABILITY_REFERENCE_AUDIT',
             'checks':checks,'failures':failures,'counts':{'geometry_nodes':len(records),'physical_nodes':len(physical),'maintainable_nodes':len(maint),'cable_required_nodes':len(cable),
               'shell_panels':fc['shell_panel'],'solar_hull_skins':fc['solar_hull_skin'],'coupler_latches':fc['coupler_latch'],'solenoid_nodes':fc['solenoid'],
               'resonators':fc['resonator'],'resonator_mounts':fc['resonator_mount'],'sensors_total':fc['sensor'],'body_sensor_nodes':sum(1 for r in records if r['node_name'].startswith('M3_SENSOR_NODE_')),'damping_placeholders':fc['damping'],'service_clearances':fc['service_clearance'],
-              'connector_access_envelopes':fc['connector_access'],'cable_bend_spaces':fc['cable_bend_space'],'removal_paths':fc['removal_path'],'arm_nodes':sc['arm_system'],'probe_nodes':sc['probe_system'],'print_reference_count':len(print_rows)},
+              'connector_access_envelopes':fc['connector_access'],'cable_bend_spaces':fc['cable_bend_space'],'removal_paths':fc['removal_path'],'arm_nodes':sc['arm_system'],'probe_nodes':sc['probe_system'],'propulsion_nodes':sc['propulsion_reference'],
+              'propulsion_interfaces':fc['propulsion_interface'],'reservoir_placeholders':fc['reservoir_placeholder'],
+              'propulsion_service_ports':fc['propulsion_service_port'],'fluid_route_reservations':fc['fluid_route_reservation'],
+              'print_reference_count':len(print_rows)},
             'canonical_module_envelope_m':{'extents':envelope,'source_length':expected_len,'source_diameter':expected_diam},
             'arrays':arrays,'print_references':print_rows,'missing':{'parent':missing_parent,'bad_parent':bad_parent,'unrooted':unrooted,'cable_route':missing_route,'clearance':missing_clearance,'removal':missing_removal,'panel_access':bad_panel},
             'known_unknowns':parameters['known_unknowns'],'claim_gate_state':'STRENGTHENED','manufacturing_release':'BLOCKED_PENDING_PROCESS_AND_ENVIRONMENTAL_QUALIFICATION'}

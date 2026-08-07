@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Audit Mark III v0.3 print, sanding, metallisation and assembly-development controls."""
+"""Audit Mark III v0.3.3 print, sanding, metallisation and assembly-development controls."""
 from __future__ import annotations
 
 import argparse
@@ -83,7 +83,7 @@ def build_audit(parameters: dict[str, Any]) -> dict[str, Any]:
     }
     checks = {
         "all_18_panels_have_manufacturing_features": len(panels) == 18 and not feature_failures,
-        "all_18_print_references_fit_and_are_manifold": len(refs) == 18 and not print_failures,
+        "all_20_print_references_fit_and_are_manifold": len(refs) == 20 and not print_failures,
         "plating_allowance_exists_for_each_panel": families["plating_allowance"] == 18,
         "two_insert_bosses_exist_for_each_panel": families["fastener"] == 36,
         "mask_drain_datum_features_exist": families["plating_feature"] >= 72,
@@ -117,7 +117,7 @@ def build_audit(parameters: dict[str, Any]) -> dict[str, Any]:
             "stage": "A",
             "name": "CAD and datum freeze",
             "state": "REFERENCE_COMPLETE",
-            "evidence": "v0.3 geometry, component manifest and dimensional audit",
+            "evidence": "v0.3.3 geometry, component manifest and dimensional audit",
             "release": "No physical release",
         },
         {
@@ -145,20 +145,20 @@ def build_audit(parameters: dict[str, Any]) -> dict[str, Any]:
             "stage": "E",
             "name": "Subassembly integration",
             "state": "OPEN",
-            "evidence": "Torque/locking records, harness inspection, electrical isolation, pressure-system exclusion or certification",
+            "evidence": "Torque/locking records, harness inspection, electrical isolation, propulsion-interface inert-fit checks, and pressure-system exclusion or certification",
             "release": "Low-energy bench article only",
         },
         {
             "stage": "F",
             "name": "Environmental and functional qualification",
             "state": "OPEN",
-            "evidence": "Vibration, shock, TVAC/outgassing, flammability, EMI/EMC, thermal, mechanism life and low-energy RFS/EMFF evidence",
+            "evidence": "Vibration, shock, TVAC/outgassing, flammability, EMI/EMC, thermal, mechanism life, propulsion-interface structural/contamination controls and low-energy RFS/EMFF evidence",
             "release": "Required before any flight or deployment consideration",
         },
     ]
 
     return {
-        "schema_version": "mark-iii-manufacturing-qualification-audit-v0.3",
+        "schema_version": "mark-iii-manufacturing-qualification-audit-v0.3.3",
         "status": "PASS_MANUFACTURING_REFERENCE_CONTROLS_DEPLOYMENT_BLOCKED"
         if not failures
         else "FAIL_MANUFACTURING_REFERENCE_CONTROLS",

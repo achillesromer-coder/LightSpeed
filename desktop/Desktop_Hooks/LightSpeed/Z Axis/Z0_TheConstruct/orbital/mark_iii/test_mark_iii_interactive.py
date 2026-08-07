@@ -39,12 +39,14 @@ class MarkIIIInteractiveTests(unittest.TestCase):
                 out / "mark_iii_manufacturing_audit.json",
             )
             self.assertGreater(len(html), 1_200_000)
-            self.assertIn("Mark III v0.3", html)
+            self.assertIn("Mark III v0.3.3", html)
             self.assertIn("Resonator mode", html)
             self.assertIn("Dual interleaved A+B", html)
             self.assertIn("Manufacturing view", html)
             self.assertIn("Manufacturing gates", html)
-            self.assertIn("764 named nodes", html)
+            self.assertIn("786 named nodes", html)
+            self.assertIn("propulsion interfaces", html.lower())
+            self.assertIn("PR #34", html)
             self.assertIn("deployment blocked", html.lower())
 
 

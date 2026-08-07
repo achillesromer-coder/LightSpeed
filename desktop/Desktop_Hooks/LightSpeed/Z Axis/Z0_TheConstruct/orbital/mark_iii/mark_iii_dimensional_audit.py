@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the Mark III v0.3 original-layout dimensional/configuration register."""
+"""Generate the Mark III v0.3.3 original-layout dimensional/configuration register."""
 from __future__ import annotations
 import argparse, csv, hashlib, json
 from collections import Counter
@@ -33,7 +33,7 @@ def build_audit(parameters: dict[str,Any]):
             'winding_consistent':bool(m.is_winding_consistent),'signed_volume_m3':round(float(m.volume),9),
             'review_status':'OPEN_ENGINEERING_REVIEW'})
     fc=Counter(x['family'] for x in rows);ec=Counter(x['evidence_state'] for x in rows);sc=Counter(x['subsystem'] for x in rows)
-    summary={'schema_version':'mark-iii-dimensional-audit-v0.3','status':'PASS_DIMENSIONAL_SERVICEABLE_REFERENCE_AUDIT',
+    summary={'schema_version':'mark-iii-dimensional-audit-v0.3.3','status':'PASS_DIMENSIONAL_SERVICEABLE_REFERENCE_AUDIT',
              'source_state':parameters['artifact_status'],'units':'metres','node_count':len(rows),
              'physical_node_count':sum(x['physical'] for x in rows),'maintainable_node_count':sum(x['maintainable'] for x in rows),
              'semantic_geometry_sha256':semantic_geometry_fingerprint(scene),'semantic_geometry_quantization_m':QUANTIZATION_METRES,

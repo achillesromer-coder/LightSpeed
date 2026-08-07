@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the Mark III v0.3 original-layout print-and-plating reference.
+"""Generate the Mark III v0.3.3 original-layout print-and-plating reference.
 
 This is a deterministic geometry, serviceability and manufacturing-reference
 artifact. It is not validated hardware, a hazardous-process instruction set,
@@ -62,6 +62,10 @@ FAMILY_COLORS = {
     "collector_pad": [66, 102, 125, 255],
     "probe_mast": [109, 121, 135, 255],
     "print_fixture": [118, 126, 133, 255],
+    "propulsion_interface": [91, 122, 154, 255],
+    "reservoir_placeholder": [122, 108, 138, 255],
+    "propulsion_service_port": [108, 126, 142, 255],
+    "fluid_route_reservation": [82, 145, 163, 55],
 }
 
 
@@ -433,7 +437,7 @@ def build_original_layout_structure(scene: trimesh.Scene, records: list[dict[str
             scene, records, box([ext[0], ext[1], 0.045], center, 0),
             f"M3_LAYOUT_GUIDE_{label}", "layout_guide", "original_layout",
             f"M3_INTERNAL_DECK_{label}", "ILLUSTRATIVE_ONLY_NOT_PHYSICAL_PERFORMANCE",
-            "Compare v0.3 packaging against the owner-supplied original schematic",
+            "Compare v0.3.3 packaging against the owner-supplied original schematic",
             "Original schematic zoning guide", configuration="ORIGINAL_SCHEMATIC"
         )
     for sector in range(6):
@@ -947,6 +951,165 @@ def build_internal_systems(scene: trimesh.Scene, records: list[dict[str, Any]],
                      "Confirm antenna replacement path","Derived antenna removal corridor")
 
 
+def build_propulsion_reference(scene: trimesh.Scene, records: list[dict[str, Any]],
+                               p: dict[str, Any]) -> None:
+    """Restore the original drawing's propulsion/reservoir callout as inert interface volumes.
+
+    No propellant, pressure, nozzle, thrust or operational propulsion parameter is
+    assigned. Fluid-route geometry is a nonphysical volume reservation only.
+    """
+    d = p["derived_configuration"]
+    radius = p["source_parameters"]["outer_radius_m"]["value"]
+    interface_radius = d["propulsion_thruster_interface_radius_m"]
+    interface_length = d["propulsion_thruster_interface_length_m"]
+    angles = [math.radians(value) for value in d["propulsion_thruster_interface_angles_deg"]]
+
+    reservoir = "M3_PROPULSION_RESERVOIR_ALLOCATION"
+    reservoir_center = np.asarray(d["propulsion_reservoir_reference_center_m"], dtype=float)
+    reservoir_extents = d["propulsion_reservoir_reference_extents_m"]
+    add_node(
+        scene, records,
+        box(reservoir_extents, reservoir_center, 0),
+        reservoir, "reservoir_placeholder", "propulsion_reference",
+        "PROVISIONAL_INTERFACE_REFERENCE",
+        "Select working fluid/propellant, vessel construction, pressure, isolation, venting, thermal, contamination and hazard controls before any physical reservoir design",
+        "Original refillable-fuel-reservoir callout restored only as an unpressurised packaging allocation",
+        maintainable=True, attachment_parent="M3_INTERNAL_DECK_LOWER_FIELD",
+        service_clearance="M3_SERVICE_CLEARANCE_PROPULSION_RESERVOIR",
+        removal_path="M3_REMOVAL_PATH_PROPULSION_RESERVOIR",
+        panel_access="M3_SHELL_PANEL_A03_S05",
+        component_role="UNPRESSURISED_RESERVOIR_ALLOCATION_ONLY"
+    )
+    add_envelope(
+        scene, records,
+        box([reservoir_extents[0] + 0.04, reservoir_extents[1] + 0.04, reservoir_extents[2] + 0.04],
+            reservoir_center, 0),
+        "M3_SERVICE_CLEARANCE_PROPULSION_RESERVOIR",
+        "service_clearance", "serviceability", reservoir,
+        "DERIVED_MAINTENANCE_ENVELOPE",
+        "Confirm reservoir, valve and restraint access after hardware selection",
+        "Derived maintenance allocation around unpressurised reservoir placeholder"
+    )
+    add_envelope(
+        scene, records,
+        box([0.13, 0.075, 0.06], [0.31, 0.0, -0.118], 0),
+        "M3_REMOVAL_PATH_PROPULSION_RESERVOIR",
+        "removal_path", "serviceability", reservoir,
+        "DERIVED_MAINTENANCE_ENVELOPE",
+        "Confirm reservoir removal through rear/lower service opening after structure and vessel selection",
+        "Derived removal corridor; not a pressure-system design"
+    )
+
+    # Refill/service port at the lower exterior. This is an interface allocation,
+    # not a selected fill connector or pressure fitting.
+    service_a = -math.pi / 2
+    service_base = np.array([0.24, radius * math.cos(service_a), radius * math.sin(service_a)])
+    service_tip = np.array([
+        0.24,
+        (radius + d["propulsion_service_port_length_m"]) * math.cos(service_a),
+        (radius + d["propulsion_service_port_length_m"]) * math.sin(service_a),
+    ])
+    service_port = "M3_PROPULSION_REFILL_SERVICE_PORT"
+    add_node(
+        scene, records,
+        cylinder_between(service_base, service_tip, d["propulsion_service_port_radius_m"], 18),
+        service_port, "propulsion_service_port", "propulsion_reference",
+        "PROVISIONAL_INTERFACE_REFERENCE",
+        "Select qualified fill/service connector, isolation, caps, venting, contamination controls and access after propulsion architecture is chosen",
+        "Original refillable-reservoir concept requires an external service interface; geometry is allocation-only",
+        maintainable=True, attachment_parent="M3_SHELL_PANEL_A03_S05",
+        service_clearance="M3_SERVICE_CLEARANCE_PROPULSION_REFILL_PORT",
+        panel_access="M3_SHELL_PANEL_A03_S05",
+        component_role="REFILL_SERVICE_INTERFACE_ALLOCATION_ONLY"
+    )
+    add_envelope(
+        scene, records,
+        cylinder_between(
+            service_base - np.array([0.0, 0.0, 0.025]),
+            service_tip - np.array([0.0, 0.0, 0.040]),
+            0.022, 16
+        ),
+        "M3_SERVICE_CLEARANCE_PROPULSION_REFILL_PORT",
+        "service_clearance", "serviceability", service_port,
+        "DERIVED_MAINTENANCE_ENVELOPE",
+        "Confirm external hand/tool access, cap removal and contamination-control envelope",
+        "Derived refill/service keep-out"
+    )
+    add_envelope(
+        scene, records,
+        polyline_tube(
+            [reservoir_center, [0.24, 0.0, -0.145], service_base.tolist()],
+            d["propulsion_route_reservation_radius_m"], 10
+        ),
+        "M3_PROPULSION_FILL_ROUTE_RESERVATION",
+        "fluid_route_reservation", "propulsion_reference", reservoir,
+        "DERIVED_SPATIAL_REFERENCE",
+        "Reserve routing volume only; line material, diameter, fittings, pressure and medium remain unselected",
+        "Nonphysical reservoir-to-service-port corridor",
+        configuration="ROUTE_RESERVATION_ONLY"
+    )
+
+    # Four source-visible corner thruster/attitude-control interfaces.
+    # Their geometry is intentionally generic and excludes nozzle/thrust parameters.
+    for idx, angle in enumerate(angles, start=1):
+        inward_r = radius - 0.012
+        outward_r = radius + interface_length
+        base = np.array([0.0, inward_r * math.cos(angle), inward_r * math.sin(angle)])
+        tip = np.array([0.0, outward_r * math.cos(angle), outward_r * math.sin(angle)])
+        sector = int(((angle % (2 * math.pi)) / (2 * math.pi / 6))) + 1
+        panel = f"M3_SHELL_PANEL_A02_S{sector:02d}"
+        route = f"M3_HARNESS_TRUNK_{sector:02d}"
+        name = f"M3_PROPULSION_INTERFACE_{idx:02d}"
+        clearance = f"M3_SERVICE_CLEARANCE_PROPULSION_INTERFACE_{idx:02d}"
+        removal = f"M3_REMOVAL_PATH_PROPULSION_INTERFACE_{idx:02d}"
+        add_node(
+            scene, records,
+            cylinder_between(base, tip, interface_radius, 20),
+            name, "propulsion_interface", "propulsion_reference",
+            "SOURCE_RECONCILED_TOPOLOGY",
+            "Select propulsion/attitude-control hardware, loads, thermal isolation, contamination control, electrical interface and safe operating envelope",
+            "Four source-visible thruster locations restored as generic hardware interface envelopes only",
+            maintainable=True, cable_required=True,
+            attachment_parent=panel, cable_route=route,
+            service_clearance=clearance, removal_path=removal, panel_access=panel,
+            component_role="PROPULSION_OR_ATTITUDE_CONTROL_INTERFACE_ONLY"
+        )
+        radial = np.array([0.0, math.cos(angle), math.sin(angle)])
+        add_envelope(
+            scene, records,
+            cylinder_between(base - radial * 0.020, tip + radial * 0.045, 0.026, 16),
+            clearance, "service_clearance", "serviceability", name,
+            "DERIVED_MAINTENANCE_ENVELOPE",
+            "Confirm hardware installation, connector access, thermal clearance and external keep-out",
+            "Derived generic propulsion-interface clearance"
+        )
+        add_envelope(
+            scene, records,
+            cylinder_between(tip, tip + radial * 0.090, 0.020, 16),
+            removal, "removal_path", "serviceability", name,
+            "DERIVED_MAINTENANCE_ENVELOPE",
+            "Confirm outward replacement/removal corridor after hardware selection",
+            "Derived generic propulsion-interface removal path"
+        )
+        # Reserve volume from the reservoir allocation to each interface. This is
+        # deliberately not a pipe, pressure line or selected plumbing geometry.
+        waypoint = np.array([0.16 if idx <= 2 else 0.05, 0.0, -0.105])
+        inner = np.array([0.0, (radius - 0.035) * math.cos(angle), (radius - 0.035) * math.sin(angle)])
+        add_envelope(
+            scene, records,
+            polyline_tube(
+                [reservoir_center, waypoint, inner],
+                d["propulsion_route_reservation_radius_m"], 10
+            ),
+            f"M3_PROPULSION_ROUTE_RESERVATION_{idx:02d}",
+            "fluid_route_reservation", "propulsion_reference", reservoir,
+            "DERIVED_SPATIAL_REFERENCE",
+            "Reserve service-routing volume only; no pipe diameter, medium, pressure, valve or fitting is defined",
+            "Nonphysical reservoir-to-interface routing corridor",
+            configuration="ROUTE_RESERVATION_ONLY"
+        )
+
+
 def build_harnesses(scene: trimesh.Scene, records: list[dict[str, Any]],
                     p: dict[str, Any]) -> None:
     d=p["derived_configuration"];tray_radius=d["cable_tray_radius_m"]
@@ -1254,6 +1417,7 @@ def build_reference(parameters: dict[str, Any]) -> tuple[trimesh.Scene, list[dic
     build_original_layout_structure(scene,records,parameters)
     build_couplers(scene,records,parameters)
     build_internal_systems(scene,records,parameters)
+    build_propulsion_reference(scene,records,parameters)
     build_harnesses(scene,records,parameters)
     build_arm(scene,records,parameters,1,-1.0)
     build_arm(scene,records,parameters,2,1.0)
@@ -1390,6 +1554,25 @@ def build_print_references(parameters: dict[str, Any], scene: trimesh.Scene,
     jig=trimesh.util.concatenate(jig_meshes);jig.apply_scale(1000)
     refs["mark_iii_alignment_and_plating_jig_1to1.stl"]=jig
 
+    # Generic interface mount only; not a nozzle or thrust device.
+    prop_mount = trimesh.util.concatenate([
+        annulus_x(0.008, 0.020, 0.012, [0,0,0], 24),
+        box([0.050,0.038,0.006], [-0.009,0,0], 0),
+    ])
+    prop_mount.apply_scale(1000)
+    refs["mark_iii_propulsion_interface_mount_1to1.stl"] = prop_mount
+
+    # Reservoir cradle reference only. The pressure/working-fluid vessel itself
+    # is explicitly not a printed part in this package.
+    cradle = trimesh.util.concatenate([
+        box([0.115,0.012,0.010], [0,-0.032,0], 0),
+        box([0.115,0.012,0.010], [0,0.032,0], 0),
+        box([0.012,0.076,0.025], [-0.050,0,0.008], 0),
+        box([0.012,0.076,0.025], [0.050,0,0.008], 0),
+    ])
+    cradle.apply_scale(1000)
+    refs["mark_iii_reservoir_cradle_reference_1to1.stl"] = cradle
+
     arm_names=[r["node_name"] for r in records
                if r["node_name"].startswith("M3_ARM_01") and r["physical"]
                and r["family"] not in {"harness"}]
@@ -1419,6 +1602,8 @@ def print_kit_manifest(parameters:dict[str,Any],
       "mark_iii_collector_pad_1to1.stl":"Pad face down; mask end-coupler and sensor interfaces.",
       "mark_iii_plating_witness_coupon_tree_1to1.stl":"Print with every production build and process through identical sanding/sealing/plating steps.",
       "mark_iii_alignment_and_plating_jig_1to1.stl":"Non-flight shop fixture; do not plate datum pins unless specified.",
+      "mark_iii_propulsion_interface_mount_1to1.stl":"Generic mount/interface only; no nozzle, pressure line or propulsion hardware is defined.",
+      "mark_iii_reservoir_cradle_reference_1to1.stl":"Cradle only; do not interpret as a printable pressure or propellant vessel.",
       "mark_iii_arm_assembly_display_1to5.stl":"Display/kinematic review only."
     }
     rows=[]
@@ -1437,7 +1622,7 @@ def print_kit_manifest(parameters:dict[str,Any],
           "release_state":"MANUFACTURING_REFERENCE_ONLY"
         })
     return {
-      "schema_version":"mark-iii-print-kit-manifest-v0.3",
+      "schema_version":"mark-iii-print-kit-manifest-v0.3.3",
       "print_bed_mm":bed,
       "plating_allowance_per_surface_mm":parameters["derived_configuration"]["plating_allowance_per_surface_m"]*1000,
       "mandatory_witnesses":parameters["manufacturing_reference"]["mandatory_witnesses"],
@@ -1459,7 +1644,7 @@ def build_verification(parameters: dict[str, Any], scene: trimesh.Scene,
     bed=parameters["derived_configuration"]["print_bed_mm"]
     bed_sorted=sorted(bed)
     return {
-      "schema_version":"mark-iii-verification-v0.3",
+      "schema_version":"mark-iii-verification-v0.3.3",
       "status":"PASS_ORIGINAL_LAYOUT_PRINT_REFERENCE_GEOMETRY"
                if all(v["watertight"] and v["winding_consistent"] for v in checks.values())
                else "FAIL_GEOMETRY",
@@ -1493,7 +1678,7 @@ def export_reference(parameters_path: Path, out_dir: Path) -> dict[str,Any]:
     glb_path.write_bytes(scene.export(file_type="glb"))
     for name,mesh in print_refs.items():
         (out_dir/name).write_bytes(mesh.export(file_type="stl"))
-    manifest={"schema_version":"mark-iii-component-manifest-v0.3",
+    manifest={"schema_version":"mark-iii-component-manifest-v0.3.3",
               "node_count":len(records),"components":records}
     manifest["canonical_manifest_sha256"]=canonical_manifest_sha256(manifest)
     (out_dir/"mark_iii_component_manifest.json").write_text(
