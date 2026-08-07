@@ -1,6 +1,13 @@
 name: Mark III v0.3.3 Source Materialisation
 
 on:
+  pull_request:
+    branches:
+      - execution/luke-ii-parametric-reference-2026-08-04
+    paths:
+      - ".markiii-v033-bundle/**"
+      - ".github/workflows/mark-iii-reference-validation.yml"
+      - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii/**"
   push:
     branches:
       - execution/mark-iii-original-layout-v0.3-2026-08-05
@@ -41,7 +48,6 @@ jobs:
 
           cat .markiii-v033-bundle/source-*.b64 | base64 --decode > "$RUNNER_TEMP/markiii-v033-source.tar.gz"
           echo "b9f66b3ef78fa561eba4e09dbfc4cd35f7d679a771ecba94e03516c65acc7af4  $RUNNER_TEMP/markiii-v033-source.tar.gz" | sha256sum --check --strict
-
           tar -tzf "$RUNNER_TEMP/markiii-v033-source.tar.gz"
           tar -xzf "$RUNNER_TEMP/markiii-v033-source.tar.gz" -C "$MARK_DIR"
 
