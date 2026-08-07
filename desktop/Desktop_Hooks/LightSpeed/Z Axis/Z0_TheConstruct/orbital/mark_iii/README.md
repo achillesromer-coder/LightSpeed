@@ -70,9 +70,9 @@ python mark_iii_glb_roundtrip_audit.py --parameters mark_iii_parameters.json --g
 python mark_iii_interactive.py --glb generated/mark_iii_assembly.glb --manifest generated/mark_iii_component_manifest.json --parameters mark_iii_parameters.json --verification generated/mark_iii_verification.json --serviceability generated/mark_iii_serviceability_audit.json --roundtrip generated/mark_iii_glb_roundtrip_audit.json --manufacturing generated/mark_iii_manufacturing_audit.json --output generated/mark_iii_interactive.html
 ```
 
-## Controlled local invariants
+## Qualified invariants
 
-- tests: `21 / 21` passed;
+- tests: `21 / 21` passed locally and on the clean GitHub runner;
 - named nodes: `786`;
 - physical nodes: `486`;
 - all nodes watertight and winding-consistent;
@@ -85,10 +85,8 @@ python mark_iii_interactive.py --glb generated/mark_iii_assembly.glb --manifest 
 - semantic geometry SHA-256: `205912a4f248db9a444f30f5b258d78285dc5799e657b684af82e4fe1474a339`;
 - canonical component-manifest SHA-256: `7e5638ef12b6d5861c7664c623b54aa485749cb4405a11becdd326339f61ca7e`.
 
-Clean-runner v0.3.3 qualification is pending the repository commit containing these exact source and workflow invariants.
+Clean-runner source/workflow qualification passed on Actions run `31135554203` / run `68`, artifact `8977793544`, digest `sha256:521f1b175d6a7aad9ff97079aa70cb220ee237330ac600342bfd081175ebc51d`.
 
 ## Release boundary
 
 No validated extraction/separation, resonant material response, field strength, current, energy safety, pressure/gas system, propulsion, thermal performance, EMI/EMC, corrosion life, arm load/torque, structural strength, flight readiness, manufacturing release or deployment approval is authorised.
-
-<!-- v0.3.3 materialisation retry: repaired staged patch boundary -->
