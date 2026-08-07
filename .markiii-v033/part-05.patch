@@ -1,0 +1,27 @@
+     self.assertEqual(result["status"], "PASS_GLB_ROUNDTRIP_REFERENCE")
+-            self.assertEqual(result["schema_version"], "mark-iii-glb-roundtrip-v0.3")
+-            self.assertEqual(result["matched_nodes"], 764)
++            self.assertEqual(result["schema_version"], "mark-iii-glb-roundtrip-v0.3.3")
++            self.assertEqual(result["matched_nodes"], 786)
+             self.assertFalse(result["missing_nodes"])
+             self.assertFalse(result["unexpected_nodes"])
+             self.assertFalse(result["failures"])
+--- a/desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii/test_mark_iii_interactive.py
++++ b/desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii/test_mark_iii_interactive.py
+@@ -39,12 +39,14 @@
+                 out / "mark_iii_manufacturing_audit.json",
+             )
+             self.assertGreater(len(html), 1_200_000)
+-            self.assertIn("Mark III v0.3", html)
++            self.assertIn("Mark III v0.3.3", html)
+             self.assertIn("Resonator mode", html)
+             self.assertIn("Dual interleaved A+B", html)
+             self.assertIn("Manufacturing view", html)
+             self.assertIn("Manufacturing gates", html)
+-            self.assertIn("764 named nodes", html)
++            self.assertIn("786 named nodes", html)
++            self.assertIn("propulsion interfaces", html.lower())
++            self.assertIn("PR #34", html)
+             self.assertIn("deployment blocked", html.lower())
+ 
+ 
