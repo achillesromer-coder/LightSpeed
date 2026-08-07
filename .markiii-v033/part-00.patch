@@ -1,0 +1,225 @@
+--- a/desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii/mark_iii_parameters.json
++++ b/desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii/mark_iii_parameters.json
+@@ -1,5 +1,5 @@
+ {
+-  "schema_version": "mark-iii-original-layout-manufacturing-reference-v0.3",
++  "schema_version": "mark-iii-original-layout-manufacturing-reference-v0.3.3",
+   "artifact_status": "SOURCE_RECONCILED_PRINT_AND_PLATING_REFERENCE_NOT_DEPLOYMENT_QUALIFIED",
+   "canonical_target": "Mark III multi-function modular extraction, sensing and field-control platform",
+   "units": "SI unless an export scale states otherwise",
+@@ -98,6 +98,16 @@
+       "value": 4,
+       "state": "SOURCE_RECONCILED_TOPOLOGY",
+       "source": "Original multiple specialized survey/communication antennae"
++    },
++    "propulsion_thruster_interface_count": {
++      "value": 4,
++      "state": "SOURCE_RECONCILED_TOPOLOGY",
++      "source": "Original Mark III schematic: movement through space controlled from thrusters"
++    },
++    "refillable_reservoir_interface_count": {
++      "value": 1,
++      "state": "SOURCE_RECONCILED_TOPOLOGY",
++      "source": "Original Mark III schematic: refillable fuel reservoir"
+     }
+   },
+   "derived_configuration": {
+@@ -188,7 +198,28 @@
+     ],
+     "print_process_assumption": "MATERIAL_EXTRUSION_POLYMER_REFERENCE_ONLY",
+     "minimum_print_wall_m": 0.003,
+-    "minimum_insert_boss_wall_m": 0.0025
++    "minimum_insert_boss_wall_m": 0.0025,
++    "propulsion_thruster_interface_radius_m": 0.012,
++    "propulsion_thruster_interface_length_m": 0.042,
++    "propulsion_thruster_interface_angles_deg": [
++      45.0,
++      135.0,
++      225.0,
++      315.0
++    ],
++    "propulsion_reservoir_reference_extents_m": [
++      0.1,
++      0.05,
++      0.035
++    ],
++    "propulsion_reservoir_reference_center_m": [
++      0.24,
++      0.0,
++      -0.118
++    ],
++    "propulsion_service_port_radius_m": 0.01,
++    "propulsion_service_port_length_m": 0.02,
++    "propulsion_route_reservation_radius_m": 0.006
+   },
+   "resonator_configuration": {
+     "default_mode": "DUAL_INTERLEAVED_ARCHIMEDEAN_SPIRAL_WITH_FLOWER_OF_LIFE_ROLE_BANDS",
+@@ -335,6 +366,10 @@
+     {
+       "id": "M3-GAP-015",
+       "description": "No deployment release exists; environmental and structural qualification articles must precede any mission article."
++    },
++    {
++      "id": "M3-GAP-016",
++      "description": "Propulsion/attitude-control architecture, working fluid or propellant, reservoir construction, pressure, valves, plumbing, nozzle geometry, thrust, impulse, thermal rejection, contamination control and refill interface are unselected and unqualified."
+     }
+   ],
+   "evidence_states": {
+@@ -354,7 +389,8 @@
+     "Print and plating artifacts are manufacturing references, not released structural or electrical hardware.",
+     "No radioactive material, xenon pressure, crystal doping or graphene-fill implementation is authorised by this package.",
+     "No manufacturing release, public capability promotion or operational deployment approval.",
+-    "Synthetic corpus confidence labels do not override missing empirical test evidence."
++    "Synthetic corpus confidence labels do not override missing empirical test evidence.",
++    "No propellant, pressure-vessel, thruster, nozzle, thrust, impulse or operational propulsion approval is authorised; propulsion geometry is interface/allocation-only."
+   ],
+   "exports": {
+     "assembly": "1:1 metres in GLB",
+@@ -363,9 +399,9 @@
+     "arm_display": "1:3 millimetres in STL"
+   },
+   "design_authority_update": {
+-    "revision": "v0.3",
++    "revision": "v0.3.3",
+     "trigger": "Owner supplied original Mark III layout, Free Flow, RFS/EMFF, Solar Hull, Mark V and programme corpus on 2026-08-05.",
+-    "authority_effect": "v0.2.2 remains a qualified generic serviceability baseline; v0.3 restores original layout and supersedes it for design review.",
++    "authority_effect": "v0.2.2 remains a qualified generic serviceability baseline; v0.3 restored the original layout; v0.3.3 closes the omitted propulsion/reservoir interface and review-metadata refinements.",
+     "original_layout_invariants": [
+       "bilateral segmented arms with spool/motor interfaces",
+       "central segmented probe mast",
+@@ -374,7 +410,9 @@
+       "lower field and resonator zone",
+       "three solenoid references per body sector and per arm segment",
+       "interlocking multi-module couplings",
+-      "replaceable multi-role resonator matrix"
++      "replaceable multi-role resonator matrix",
++      "four source-derived propulsion/attitude-control interface envelopes",
++      "one refillable-reservoir allocation with service-port and routing reservations"
+     ]
+   },
+   "qualification_references": [
+@@ -423,5 +461,17 @@
+       "scope": "Spacecraft materials and processes requirements",
+       "state": "MATERIALS_REFERENCE_NOT_CERTIFICATION"
+     }
++  ],
++  "refinement_register": [
++    {
++      "id": "M3-REF-001",
++      "description": "v0.3 restored the original body, arms, resonators and component zoning but did not yet encode the source drawing's explicit thruster and refillable-reservoir callout.",
++      "resolution": "v0.3.3 adds four external propulsion/attitude-control interface envelopes, one internal reservoir-allocation envelope, one refill/service port and five nonphysical routing reservations. No propellant, pressure, nozzle, thrust, impulse or operational propulsion value is assigned."
++    },
++    {
++      "id": "M3-REF-002",
++      "description": "The v0.3 interactive footer still named superseded PR #33.",
++      "resolution": "v0.3.3 binds the interactive review to draft PR #34 and labels the final design-review authority correctly."
++    }
+   ]
+ }
+--- a/desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii/mark_iii_parametric.py
++++ b/desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii/mark_iii_parametric.py
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""Generate the Mark III v0.3 original-layout print-and-plating reference.
++"""Generate the Mark III v0.3.3 original-layout print-and-plating reference.
+ 
+ This is a deterministic geometry, serviceability and manufacturing-reference
+ artifact. It is not validated hardware, a hazardous-process instruction set,
+@@ -62,6 +62,10 @@
+     "collector_pad": [66, 102, 125, 255],
+     "probe_mast": [109, 121, 135, 255],
+     "print_fixture": [118, 126, 133, 255],
++    "propulsion_interface": [91, 122, 154, 255],
++    "reservoir_placeholder": [122, 108, 138, 255],
++    "propulsion_service_port": [108, 126, 142, 255],
++    "fluid_route_reservation": [82, 145, 163, 55],
+ }
+ 
+ 
+@@ -433,7 +437,7 @@
+             scene, records, box([ext[0], ext[1], 0.045], center, 0),
+             f"M3_LAYOUT_GUIDE_{label}", "layout_guide", "original_layout",
+             f"M3_INTERNAL_DECK_{label}", "ILLUSTRATIVE_ONLY_NOT_PHYSICAL_PERFORMANCE",
+-            "Compare v0.3 packaging against the owner-supplied original schematic",
++            "Compare v0.3.3 packaging against the owner-supplied original schematic",
+             "Original schematic zoning guide", configuration="ORIGINAL_SCHEMATIC"
+         )
+     for sector in range(6):
+@@ -947,6 +951,165 @@
+                      "Confirm antenna replacement path","Derived antenna removal corridor")
+ 
+ 
++def build_propulsion_reference(scene: trimesh.Scene, records: list[dict[str, Any]],
++                               p: dict[str, Any]) -> None:
++    """Restore the original drawing's propulsion/reservoir callout as inert interface volumes.
++
++    No propellant, pressure, nozzle, thrust or operational propulsion parameter is
++    assigned. Fluid-route geometry is a nonphysical volume reservation only.
++    """
++    d = p["derived_configuration"]
++    radius = p["source_parameters"]["outer_radius_m"]["value"]
++    interface_radius = d["propulsion_thruster_interface_radius_m"]
++    interface_length = d["propulsion_thruster_interface_length_m"]
++    angles = [math.radians(value) for value in d["propulsion_thruster_interface_angles_deg"]]
++
++    reservoir = "M3_PROPULSION_RESERVOIR_ALLOCATION"
++    reservoir_center = np.asarray(d["propulsion_reservoir_reference_center_m"], dtype=float)
++    reservoir_extents = d["propulsion_reservoir_reference_extents_m"]
++    add_node(
++        scene, records,
++        box(reservoir_extents, reservoir_center, 0),
++        reservoir, "reservoir_placeholder", "propulsion_reference",
++        "PROVISIONAL_INTERFACE_REFERENCE",
++        "Select working fluid/propellant, vessel construction, pressure, isolation, venting, thermal, contamination and hazard controls before any physical reservoir design",
++        "Original refillable-fuel-reservoir callout restored only as an unpressurised packaging allocation",
++        maintainable=True, attachment_parent="M3_INTERNAL_DECK_LOWER_FIELD",
++        service_clearance="M3_SERVICE_CLEARANCE_PROPULSION_RESERVOIR",
++        removal_path="M3_REMOVAL_PATH_PROPULSION_RESERVOIR",
++        panel_access="M3_SHELL_PANEL_A03_S05",
++        component_role="UNPRESSURISED_RESERVOIR_ALLOCATION_ONLY"
++    )
++    add_envelope(
++        scene, records,
++        box([reservoir_extents[0] + 0.04, reservoir_extents[1] + 0.04, reservoir_extents[2] + 0.04],
++            reservoir_center, 0),
++        "M3_SERVICE_CLEARANCE_PROPULSION_RESERVOIR",
++        "service_clearance", "serviceability", reservoir,
++        "DERIVED_MAINTENANCE_ENVELOPE",
++        "Confirm reservoir, valve and restraint access after hardware selection",
++        "Derived maintenance allocation around unpressurised reservoir placeholder"
++    )
++    add_envelope(
++        scene, records,
++        box([0.13, 0.075, 0.06], [0.31, 0.0, -0.118], 0),
++        "M3_REMOVAL_PATH_PROPULSION_RESERVOIR",
++        "removal_path", "serviceability", reservoir,
++        "DERIVED_MAINTENANCE_ENVELOPE",
++        "Confirm reservoir removal through rear/lower service opening after structure and vessel selection",
++        "Derived removal corridor; not a pressure-system design"
++    )
++
++    # Refill/service port at the lower exterior. This is an interface allocation,
++    # not a selected fill connector or pressure fitting.
++    service_a = -math.pi / 2
++    service_base = np.array([0.24, radius * math.cos(service_a), radius * math.sin(service_a)])
++    service_tip = np.array([
++        0.24,
++        (radius + d["propulsion_service_port_length_m"]) * math.cos(service_a),
++        (radius + d["propulsion_service_port_length_m"]) * math.sin(service_a),
++    ])
++    service_port = "M3_PROPULSION_REFILL_SERVICE_PORT"
++    add_node(
++        scene, records,
++        cylinder_between(service_base, service_tip, d["propulsion_service_port_radius_m"], 18),
++        service_port, "propulsion_service_port", "propulsion_reference",
++        "PROVISIONAL_INTERFACE_REFERENCE",
++        "Select qualified fill/service connector, isolation, caps, venting, contamination controls and access after propulsion architecture is chosen",
++        "Original refillable-reservoir concept requires an external service interface; geometry is allocation-only",
++        maintainable=True, attachment_parent="M3_SHELL_PANEL_A03_S05",
++        service_clearance="M3_SERVICE_CLEARANCE_PROPULSION_REFILL_PORT",
++        panel_access="M3_SHELL_PANEL_A03_S05",
++        component_role="REFILL_SERVICE_INTERFACE_ALLOCATION_ONLY"
++    )
++    add_envelope(
++        scene, records,
++
