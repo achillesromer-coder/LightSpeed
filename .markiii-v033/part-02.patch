@@ -1,0 +1,114 @@
+st()
+     expected_len=parameters['source_parameters']['module_length_m']['value'];expected_diam=2*parameters['source_parameters']['outer_radius_m']['value']
+@@ -82,6 +82,10 @@
+       'source_reconciled_resonator_count':fc['resonator']==25,
+       'source_sensor_count':sum(1 for r in records if r['node_name'].startswith('M3_SENSOR_NODE_'))==8,
+       'source_damping_count':fc['damping']==4,
++      'source_propulsion_interface_count':fc['propulsion_interface']==parameters['source_parameters']['propulsion_thruster_interface_count']['value'],
++      'source_reservoir_placeholder_count':fc['reservoir_placeholder']==parameters['source_parameters']['refillable_reservoir_interface_count']['value'],
++      'source_refill_service_port_present':fc['propulsion_service_port']==1,
++      'propulsion_route_reservations_present':fc['fluid_route_reservation']==5,
+       'original_appendage_decomposition_present':sum(1 for r in records if r['node_name'].startswith('M3_ARM_') and r['node_name'].endswith('_BASE_INTERFACE'))==2 and any(r['node_name']=='M3_CENTRAL_PROBE_BASE_INTERFACE' for r in records) and fc['arm_joint']>=22,
+       'array_configuration_counts_exact':all(arrays[str(c)]['node_count']==c for c in parameters['derived_configuration']['array_configurations']),
+       'array_spacing_not_less_than_reference':all(v['minimum_centre_spacing_m']+1e-9>=parameters['derived_configuration']['array_spacing_m'] for k,v in arrays.items() if int(k)>1),
+@@ -91,15 +95,18 @@
+       'all_print_references_winding_consistent':all(r['winding_consistent'] for r in print_rows),
+       'all_print_references_fit_reference_bed':all(r['fits_reference_bed_by_orientation'] for r in print_rows),
+       'claim_gates_present':len(parameters['claim_gates'])>=6,
+-      'known_unknowns_explicit':len(parameters['known_unknowns'])>=15,
++      'known_unknowns_explicit':len(parameters['known_unknowns'])>=16,
+       'source_conflicts_explicit':len(parameters['source_conflicts'])>=4,
+     }
+     failures=[k for k,v in checks.items() if not v]
+-    result={'schema_version':'mark-iii-serviceability-audit-v0.3','status':'PASS_SERVICEABILITY_REFERENCE_AUDIT' if not failures else 'FAIL_SERVICEABILITY_REFERENCE_AUDIT',
++    result={'schema_version':'mark-iii-serviceability-audit-v0.3.3','status':'PASS_SERVICEABILITY_REFERENCE_AUDIT' if not failures else 'FAIL_SERVICEABILITY_REFERENCE_AUDIT',
+             'checks':checks,'failures':failures,'counts':{'geometry_nodes':len(records),'physical_nodes':len(physical),'maintainable_nodes':len(maint),'cable_required_nodes':len(cable),
+               'shell_panels':fc['shell_panel'],'solar_hull_skins':fc['solar_hull_skin'],'coupler_latches':fc['coupler_latch'],'solenoid_nodes':fc['solenoid'],
+               'resonators':fc['resonator'],'resonator_mounts':fc['resonator_mount'],'sensors_total':fc['sensor'],'body_sensor_nodes':sum(1 for r in records if r['node_name'].startswith('M3_SENSOR_NODE_')),'damping_placeholders':fc['damping'],'service_clearances':fc['service_clearance'],
+-              'connector_access_envelopes':fc['connector_access'],'cable_bend_spaces':fc['cable_bend_space'],'removal_paths':fc['removal_path'],'arm_nodes':sc['arm_system'],'probe_nodes':sc['probe_system'],'print_reference_count':len(print_rows)},
++              'connector_access_envelopes':fc['connector_access'],'cable_bend_spaces':fc['cable_bend_space'],'removal_paths':fc['removal_path'],'arm_nodes':sc['arm_system'],'probe_nodes':sc['probe_system'],'propulsion_nodes':sc['propulsion_reference'],
++              'propulsion_interfaces':fc['propulsion_interface'],'reservoir_placeholders':fc['reservoir_placeholder'],
++              'propulsion_service_ports':fc['propulsion_service_port'],'fluid_route_reservations':fc['fluid_route_reservation'],
++              'print_reference_count':len(print_rows)},
+             'canonical_module_envelope_m':{'extents':envelope,'source_length':expected_len,'source_diameter':expected_diam},
+             'arrays':arrays,'print_references':print_rows,'missing':{'parent':missing_parent,'bad_parent':bad_parent,'unrooted':unrooted,'cable_route':missing_route,'clearance':missing_clearance,'removal':missing_removal,'panel_access':bad_panel},
+             'known_unknowns':parameters['known_unknowns'],'claim_gate_state':'STRENGTHENED','manufacturing_release':'BLOCKED_PENDING_PROCESS_AND_ENVIRONMENTAL_QUALIFICATION'}
+--- a/desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii/mark_iii_manufacturing_audit.py
++++ b/desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii/mark_iii_manufacturing_audit.py
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""Audit Mark III v0.3 print, sanding, metallisation and assembly-development controls."""
++"""Audit Mark III v0.3.3 print, sanding, metallisation and assembly-development controls."""
+ from __future__ import annotations
+ 
+ import argparse
+@@ -83,7 +83,7 @@
+     }
+     checks = {
+         "all_18_panels_have_manufacturing_features": len(panels) == 18 and not feature_failures,
+-        "all_18_print_references_fit_and_are_manifold": len(refs) == 18 and not print_failures,
++        "all_20_print_references_fit_and_are_manifold": len(refs) == 20 and not print_failures,
+         "plating_allowance_exists_for_each_panel": families["plating_allowance"] == 18,
+         "two_insert_bosses_exist_for_each_panel": families["fastener"] == 36,
+         "mask_drain_datum_features_exist": families["plating_feature"] >= 72,
+@@ -117,7 +117,7 @@
+             "stage": "A",
+             "name": "CAD and datum freeze",
+             "state": "REFERENCE_COMPLETE",
+-            "evidence": "v0.3 geometry, component manifest and dimensional audit",
++            "evidence": "v0.3.3 geometry, component manifest and dimensional audit",
+             "release": "No physical release",
+         },
+         {
+@@ -145,20 +145,20 @@
+             "stage": "E",
+             "name": "Subassembly integration",
+             "state": "OPEN",
+-            "evidence": "Torque/locking records, harness inspection, electrical isolation, pressure-system exclusion or certification",
++            "evidence": "Torque/locking records, harness inspection, electrical isolation, propulsion-interface inert-fit checks, and pressure-system exclusion or certification",
+             "release": "Low-energy bench article only",
+         },
+         {
+             "stage": "F",
+             "name": "Environmental and functional qualification",
+             "state": "OPEN",
+-            "evidence": "Vibration, shock, TVAC/outgassing, flammability, EMI/EMC, thermal, mechanism life and low-energy RFS/EMFF evidence",
++            "evidence": "Vibration, shock, TVAC/outgassing, flammability, EMI/EMC, thermal, mechanism life, propulsion-interface structural/contamination controls and low-energy RFS/EMFF evidence",
+             "release": "Required before any flight or deployment consideration",
+         },
+     ]
+ 
+     return {
+-        "schema_version": "mark-iii-manufacturing-qualification-audit-v0.3",
++        "schema_version": "mark-iii-manufacturing-qualification-audit-v0.3.3",
+         "status": "PASS_MANUFACTURING_REFERENCE_CONTROLS_DEPLOYMENT_BLOCKED"
+         if not failures
+         else "FAIL_MANUFACTURING_REFERENCE_CONTROLS",
+--- a/desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii/mark_iii_glb_roundtrip_audit.py
++++ b/desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii/mark_iii_glb_roundtrip_audit.py
+@@ -26,7 +26,7 @@
+         nodes[n]={'vertices':len(b.vertices),'faces':len(b.faces),'watertight':bool(b.is_watertight),'winding_consistent':bool(b.is_winding_consistent),
+                   'bounds_error_m':be,'extents_error_m':ee,'centroid_error_m':ce,'relative_volume_error':rv,'relative_area_error':ra,'checks':checks}
+         maxe['bounds_m']=max(maxe['bounds_m'],be);maxe['extents_m']=max(maxe['extents_m'],ee);maxe['centroid_m']=max(maxe['centroid_m'],ce);maxe['relative_volume']=max(maxe['relative_volume'],rv);maxe['relative_area']=max(maxe['relative_area'],ra)
+-    return {'schema_version':'mark-iii-glb-roundtrip-v0.3','status':'PASS_GLB_ROUNDTRIP_REFERENCE' if not fail else 'FAIL_GLB_ROUNDTRIP_REFERENCE','glb_file':glb.name,
++    return {'schema_version':'mark-iii-glb-roundtrip-v0.3.3','status':'PASS_GLB_ROUNDTRIP_REFERENCE' if not fail else 'FAIL_GLB_ROUNDTRIP_REFERENCE','glb_file':glb.name,
+             'source_nodes':len(sn),'exported_nodes':len(en),'matched_nodes':len(sn&en),'missing_nodes':missing,'unexpected_nodes':unexpected,
+             'linear_tolerance_m':LINEAR,'relative_measure_tolerance':REL,'maximum_observed_errors':maxe,'failures':fail,'nodes':nodes,'claim_gate_state':'STRENGTHENED'}
+ def main():
+--- a/desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii/mark_iii_interactive.py
++++ b/desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii/mark_iii_interactive.py
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""Build the Mark III v0.3 original-layout interactive review surface."""
++"""Build the Mark III v0.3.3 original-layout interactive review surface."""
+ from __future__ import annotations
+ 
+ import argparse
+@@ -29,9 +29,9 @@
+     }
+     glb64 = base64.b64encode(glb.read_bytes()).decode("ascii")
+     payload = json.dumps(data, separators=(",", ":")).replace("</", "<\\/")
+-    template = r'''<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mark III v0.3 Original-Layout Review</title>
++    template = r'''<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mark III v0.3.3 Original-Layout Review</title>
+ <style>*{box-sizing:border-box}body{margin:0;background:#090d12;color:#dce5ed;font:13px system-ui,Segoe UI,sans-serif;overflow:hidden}#app{display:grid;grid-template-columns:330px 1fr 350px;grid-template-rows:58px calc(100vh - 88px) 30px;height:100vh}header{grid-column:1/4;display:flex;align-items:center;gap:12px;padding:0 16px;background:#101821;border-bottom:1px solid #293746;white-space:nowrap;overflow:auto}header b{font-size:17px}.tag{padding:5px 9px;border:1px solid #3a536b;border-radius:12px;color:#a8c8df}aside{background:#0f161e;overflow:auto;padding:12px;border-right:1px solid #263544}#right{border-left:1px solid #263544;border-right:0}#viewport{position:relative;min-width:0}canvas{display:block}h3{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:#8eabc0;margin:14px 0 8px}button,select,input{background:#17232e;color:#dce5ed;border:1px solid #364c60;border-radius:5px;padding:7px}button{cursor:pointer}.row{display:flex;gap:6px;flex-wrap:wrap}.layer{display:grid;grid-template-columns:22px 1fr auto;gap:5px;align-items:center;padding:4px 0}.count,.muted{color:#8196a7}#search{width:100%}.result{padding:7px;border-bottom:1px solid #1f2b37;cursor:pointer;overflow-wrap:anywhere}.result:hover,.result.active{background:#1b2a38}.metric{display:grid;grid-template-columns:1fr 1.3fr;gap:6px 8px}.metric b{overflow-wrap:anywhere}.good{color:#7fd1a1}.warn{color:#e5c374}.bad{color:#e48d8d}.gap{padding:7px 0;border-bottom:1px solid #24323f}label.ctrl{display:grid;gap:5px;margin:8px 0}input[type=range]{width:100%;padding:0}footer{grid-column:1/4;padding:6px 12px;color:#8295a6;background:#101821;border-top:1px solid #263544}#loading{position:absolute;inset:0;display:grid;place-items:center;background:#090d12;color:#9fc3dc;z-index:4}#selection{position:absolute;left:12px;bottom:12px;background:#101821e8;border:1px solid #354c60;padding:8px;max-width:72%;border-radius:5px}.small{font-size:11px;color:#92a6b7;line-height:1.4}.gate{border-left:3px solid #e5c374;padding-left:8px}.mode{border-left:3px solid #6fb3d2;padding-left:8px}</style></head>
+-<body><div id="app"><header><b>Mark III v0.3 — Original Layout / Print &amp; Plating Development</b><span class="tag" id="nodeTag">__NODECOUNT__ named nodes</span><span class="tag">25-socket dual sp
