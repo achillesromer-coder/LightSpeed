@@ -47,7 +47,7 @@ jobs:
           fi
 
           cat .markiii-v033-bundle/source-*.b64 | base64 --decode > "$RUNNER_TEMP/markiii-v033-source.tar.gz"
-          echo "b9f66b3ef78fa561eba4e09dbfc4cd35f7d679a771ecba94e03516c65acc7af4  $RUNNER_TEMP/markiii-v033-source.tar.gz" | sha256sum --check --strict
+          echo "5ad1aa68fae97794808a444d5a73b7aab30334b0495a4f9ba8930ab5bb68652f  $RUNNER_TEMP/markiii-v033-source.tar.gz" | sha256sum --check --strict
           tar -tzf "$RUNNER_TEMP/markiii-v033-source.tar.gz"
           tar -xzf "$RUNNER_TEMP/markiii-v033-source.tar.gz" -C "$MARK_DIR"
 
