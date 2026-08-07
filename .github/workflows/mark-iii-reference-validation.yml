@@ -1,61 +1,258 @@
-name: Mark III v0.3.3 Source Materialisation
+name: Mark III Reference Validation
 
 on:
   pull_request:
     branches:
       - execution/luke-ii-parametric-reference-2026-08-04
+      - main
     paths:
-      - ".markiii-v033-bundle/**"
-      - ".github/workflows/mark-iii-reference-validation.yml"
       - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii/**"
+      - ".github/workflows/mark-iii-reference-validation.yml"
   push:
     branches:
       - execution/mark-iii-original-layout-v0.3-2026-08-05
+      - main
     paths:
-      - ".markiii-v033-bundle/**"
+      - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii/**"
       - ".github/workflows/mark-iii-reference-validation.yml"
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: mark-iii-v033-materialise-${{ github.ref }}
+  group: mark-iii-reference-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:
   MARK_DIR: desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/orbital/mark_iii
 
 jobs:
-  materialise:
+  validate:
+    name: Regenerate original-layout Mark III reference
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out repository
+        uses: actions/checkout@v4
         with:
-          ref: execution/mark-iii-original-layout-v0.3-2026-08-05
-          fetch-depth: 1
           show-progress: false
 
-      - name: Verify and materialise v0.3.3 source bundle
-        shell: bash
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: "${{ env.MARK_DIR }}/requirements.txt"
+
+      - name: Install pinned geometry dependencies
+        run: python -m pip install --disable-pip-version-check -r "$MARK_DIR/requirements.txt"
+
+      - name: Compile executable source
         run: |
-          set -euo pipefail
-          if ! compgen -G ".markiii-v033-bundle/source-*.b64" > /dev/null; then
-            echo "No staged bundle present; source is already materialised."
-            exit 0
-          fi
+          python -m py_compile \
+            "$MARK_DIR/mark_iii_parametric.py" \
+            "$MARK_DIR/mark_iii_geometry_fingerprint.py" \
+            "$MARK_DIR/mark_iii_manifest_fingerprint.py" \
+            "$MARK_DIR/mark_iii_dimensional_audit.py" \
+            "$MARK_DIR/mark_iii_serviceability_audit.py" \
+            "$MARK_DIR/mark_iii_manufacturing_audit.py" \
+            "$MARK_DIR/mark_iii_glb_roundtrip_audit.py" \
+            "$MARK_DIR/mark_iii_interactive.py" \
+            "$MARK_DIR/test_mark_iii_parametric.py" \
+            "$MARK_DIR/test_mark_iii_audits.py" \
+            "$MARK_DIR/test_mark_iii_glb_roundtrip.py" \
+            "$MARK_DIR/test_mark_iii_interactive.py"
 
-          cat .markiii-v033-bundle/source-*.b64 | base64 --decode > "$RUNNER_TEMP/markiii-v033-source.tar.gz"
-          echo "5ad1aa68fae97794808a444d5a73b7aab30334b0495a4f9ba8930ab5bb68652f  $RUNNER_TEMP/markiii-v033-source.tar.gz" | sha256sum --check --strict
-          tar -tzf "$RUNNER_TEMP/markiii-v033-source.tar.gz"
-          tar -xzf "$RUNNER_TEMP/markiii-v033-source.tar.gz" -C "$MARK_DIR"
+      - name: Run 21 geometry, serviceability, manufacturing and review tests
+        run: |
+          set -o pipefail
+          python -m unittest discover -v \
+            -s "$MARK_DIR" \
+            -p "test_mark_iii*.py" \
+            2>&1 | tee "$RUNNER_TEMP/mark-iii-tests.log"
 
-          git rm -r .markiii-v033-bundle
-          if [ -d .markiii-v033 ]; then git rm -r .markiii-v033; fi
-          git add "$MARK_DIR"
+      - name: Regenerate geometry and 20-part print kit
+        run: |
+          set -o pipefail
+          mkdir -p "$RUNNER_TEMP/mark-iii-output"
+          python "$MARK_DIR/mark_iii_parametric.py" \
+            --parameters "$MARK_DIR/mark_iii_parameters.json" \
+            --out-dir "$RUNNER_TEMP/mark-iii-output" \
+            | tee "$RUNNER_TEMP/mark-iii-generation.log"
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Refine Mark III v0.3.3 propulsion and review closure"
-          git push origin HEAD:execution/mark-iii-original-layout-v0.3-2026-08-05
+      - name: Generate dimensional register
+        run: |
+          set -o pipefail
+          python "$MARK_DIR/mark_iii_dimensional_audit.py" \
+            --parameters "$MARK_DIR/mark_iii_parameters.json" \
+            --out-dir "$RUNNER_TEMP/mark-iii-output" \
+            | tee "$RUNNER_TEMP/mark-iii-dimensional.log"
+
+      - name: Generate serviceability and array audit
+        run: |
+          set -o pipefail
+          python "$MARK_DIR/mark_iii_serviceability_audit.py" \
+            --parameters "$MARK_DIR/mark_iii_parameters.json" \
+            --out-dir "$RUNNER_TEMP/mark-iii-output" \
+            | tee "$RUNNER_TEMP/mark-iii-serviceability.log"
+
+      - name: Generate print and plating qualification audit
+        run: |
+          set -o pipefail
+          python "$MARK_DIR/mark_iii_manufacturing_audit.py" \
+            --parameters "$MARK_DIR/mark_iii_parameters.json" \
+            --out-dir "$RUNNER_TEMP/mark-iii-output" \
+            | tee "$RUNNER_TEMP/mark-iii-manufacturing.log"
+
+      - name: Verify exported GLB roundtrip
+        run: |
+          set -o pipefail
+          python "$MARK_DIR/mark_iii_glb_roundtrip_audit.py" \
+            --parameters "$MARK_DIR/mark_iii_parameters.json" \
+            --glb "$RUNNER_TEMP/mark-iii-output/mark_iii_assembly.glb" \
+            --output "$RUNNER_TEMP/mark-iii-output/mark_iii_glb_roundtrip_audit.json" \
+            | tee "$RUNNER_TEMP/mark-iii-glb-roundtrip.log"
+
+      - name: Build original-layout interactive review surface
+        run: |
+          set -o pipefail
+          python "$MARK_DIR/mark_iii_interactive.py" \
+            --glb "$RUNNER_TEMP/mark-iii-output/mark_iii_assembly.glb" \
+            --manifest "$RUNNER_TEMP/mark-iii-output/mark_iii_component_manifest.json" \
+            --parameters "$MARK_DIR/mark_iii_parameters.json" \
+            --verification "$RUNNER_TEMP/mark-iii-output/mark_iii_verification.json" \
+            --serviceability "$RUNNER_TEMP/mark-iii-output/mark_iii_serviceability_audit.json" \
+            --roundtrip "$RUNNER_TEMP/mark-iii-output/mark_iii_glb_roundtrip_audit.json" \
+            --manufacturing "$RUNNER_TEMP/mark-iii-output/mark_iii_manufacturing_audit.json" \
+            --output "$RUNNER_TEMP/mark-iii-output/mark_iii_interactive.html" \
+            | tee "$RUNNER_TEMP/mark-iii-interactive.log"
+
+      - name: Verify portable semantic, print and manufacturing invariants
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+          import hashlib,json,os,sys
+          from pathlib import Path
+          source=Path(os.environ['MARK_DIR']);out=Path(os.environ['RUNNER_TEMP'])/'mark-iii-output'
+          sys.path.insert(0,str(source))
+          from mark_iii_manifest_fingerprint import canonical_manifest_sha256
+          def sha(path:Path)->str:
+              if not path.is_file():raise SystemExit(f'Missing artifact: {path}')
+              return hashlib.sha256(path.read_bytes()).hexdigest()
+          source_expected={
+            'requirements.txt':'244f51ebf93a745071d171f8fdf65b47ddbbcdaf7b59b73e77cdfc9c2e8bec92',
+            'mark_iii_parameters.json':'f6b00e828ef8fe5740ca5d05023cd4309bbb493a2f630afcd270daa548cc26a7',
+            'mark_iii_parametric.py':'72b62bf09a1ffcf8d2854387ddade111c021271fbd2ae99b56329aec1f2c672e',
+            'mark_iii_geometry_fingerprint.py':'cc58bcc8114b908c434010343dddf4a06b872896c2ad978560609b90e0aea77e',
+            'mark_iii_manifest_fingerprint.py':'54f919d12fe98bfd46c22e4dfb48d727ee86fd68fc3d8fc05bac6ae43b65c6bf',
+            'mark_iii_dimensional_audit.py':'04f40245df98a5c5a86242a397ca671c5ae14af7881706189afdebcaae119a92',
+            'mark_iii_serviceability_audit.py':'f16175d05d51c52d28998a4a29c34c14240d60b074f9eafe3a720f77d45b97f6',
+            'mark_iii_manufacturing_audit.py':'ae116735adc049cdf1b1e3557c233a4e8683421ffd37c4dc853a08079ca3611c',
+            'mark_iii_glb_roundtrip_audit.py':'c9e65b22a86e5e49f7646bdbc9ac91f2398a0934bb750f292744166a7581dd31',
+            'mark_iii_interactive.py':'0b25d255a145fabd41a2e0f7e26cb6cbeb07bef67a213498c09fcdd5f59b9cd1',
+            'upstream_source_register.json':'56507837f5c9579d8673e129fe7c1407d3e9da6a012f60a38a1357c7779040cc',
+            'test_mark_iii_parametric.py':'c3b00dcaec456e03d7c8d1d77d02081cb5606c84fd252ca0f0794671904f18d8',
+            'test_mark_iii_audits.py':'08aee12ec7b8eec7c4d47f9eeb75119ee8ba6bda711ac752bfb692ec9b6f14f4',
+            'test_mark_iii_glb_roundtrip.py':'87ac0c91de5d2a81afe8aa7589080a1937195ee9695838d1c489202870179952',
+            'test_mark_iii_interactive.py':'28db96eeacf0b3bb56ba0ee5d47f2fac6105195e6a0cb63b8c4e7cd775361afa',
+          }
+          for name,expected in source_expected.items():
+              observed=sha(source/name)
+              if observed!=expected:raise SystemExit(f'Source invariant mismatch {name}: {observed}')
+          stl_expected={
+            'mark_iii_alignment_and_plating_jig_1to1.stl':'72c87268dc0c2f2fd98bded7f61ed7ebfa21b195e7fba4015b11cf008e53b330',
+            'mark_iii_arm_assembly_display_1to5.stl':'8d935933581f8eab4b5f3ef0ed7778fa6c91261d581f128299aaf5e13d330b74',
+            'mark_iii_arm_joint_ring_1to1.stl':'fb5aa53907515634901d29949c1c2b4681d7d62244db4e7d4546f4c8b4bbfe9e',
+            'mark_iii_arm_link_half_shell_1to1.stl':'94839009435ecce6e031221e59e9f8b485583e512fa9a96c3825c3ba35e63268',
+            'mark_iii_capacitor_pair_tray_1to1.stl':'8ae0f4a34fae66ef897315f0b4afedb1334940dd8075ed886693dd204e88eed6',
+            'mark_iii_collector_pad_1to1.stl':'54e49cc8f41323ee0767b4cdbd54e095e22c26016f6609ae70101a22aa4557e6',
+            'mark_iii_controller_bay_reference_1to1.stl':'dcaf97edf831c778b3497f59d75c83c1cf187a6c46d4ffe82bf1fb14b673f9cc',
+            'mark_iii_coupler_quadrant_1to1.stl':'8f90e9cc8f83a56070e5ae6d65a136d90fbf084f27b6c095a632ba486179c3b7',
+            'mark_iii_full_module_display_1to8.stl':'e43d4ab39b37b9e74883b48ff4f52b0c401ea4dacac7062ffce8751b0f617547',
+            'mark_iii_plating_witness_coupon_tree_1to1.stl':'a67509ab0c54222b00bd37f47cea70245f4c02bc0f13204167ecf41407171358',
+            'mark_iii_probe_segment_1to1.stl':'c8755ca6cd00f590ab746cab6437ca73c75ede170def352a20199369299ecf6a',
+            'mark_iii_propulsion_interface_mount_1to1.stl':'43b74e47e22ef84aebbf79e53c970877e83ace5f53ddb3221ef4a1bb828a186c',
+            'mark_iii_reservoir_cradle_reference_1to1.stl':'fe2b39e0575953bbff5f5e9692b3e80e9e74c540e6fa33118f4e1554cdb929bf',
+            'mark_iii_resonator_tray_25_socket_1to1.stl':'2ccbf62f4cc0f7194af1d4b1a5b9ea11d96c97a74241e2bafb50bb0e9baee339',
+            'mark_iii_solenoid_cartridge_half_shell_1to1.stl':'3484153bc3663c3b08b987bb99b76c9e1e40f567a0a7f7830c77618f719df814',
+            'mark_iii_solenoid_mount_bracket_1to1.stl':'326bb2d79f814fbd369f18eb99286305391230066d339207275818e03973674e',
+            'mark_iii_solenoid_sector_rail_half_A_1to1.stl':'06556919f1a89e1e0f81a1346a65d2b064b3a12bc37d506b52c0df664b51d21c',
+            'mark_iii_solenoid_sector_rail_half_B_1to1.stl':'68c9bb9e1fd65ba083c7c2623a6b89a467caddf9bf382c6a64b06d3fa32d4b16',
+            'mark_iii_standard_service_panel_1to1.stl':'646a22014f6b1fae1d26f24ccec4b1c21f0dd8ab697e49540a39474a9afa0b32',
+            'mark_iii_standard_shell_panel_1to1.stl':'b7286ebe9bbc599b604a7d9a0e8b3c7f8797383eca07835224af73fdfa419b52',
+          }
+          for name,expected in stl_expected.items():
+              observed=sha(out/name)
+              if observed!=expected:raise SystemExit(f'Print invariant mismatch {name}: {observed}')
+          file_expected={
+            'mark_iii_print_kit_manifest.json':'ece4894de31323fb116fe78d032ea85e16378f68bde36f9ce8e49af5bceab6a9',
+            'mark_iii_print_kit_manifest.csv':'e9bd4ca144d31fc7449ed6cbad462b9e5cb5cbd5cc98751ac5cbd7fb648f521a',
+            'mark_iii_manufacturing_audit.json':'760fe0a76b5c700718cb9df82aae57406f3594e926a72305646754cf5ede6b75',
+            'mark_iii_manufacturing_panel_register.csv':'4eb93f02f36bb54971f7a17965ec7bc7f62c9590ae64d631f7735903acf2aabe',
+            'mark_iii_manufacturing_stage_gate.csv':'96a89b5458b51ca0331444163742a717b971eb97946f29b6bff749f2cda04ae6',
+            'mark_iii_print_and_array_audit.csv':'171b579cba8067c965e11dd24228493e8e35e73f8d16c95f60ee5c934766c150',
+          }
+          for name,expected in file_expected.items():
+              observed=sha(out/name)
+              if observed!=expected:raise SystemExit(f'Portable invariant mismatch {name}: {observed}')
+          expected_semantic='205912a4f248db9a444f30f5b258d78285dc5799e657b684af82e4fe1474a339'
+          expected_manifest='7e5638ef12b6d5861c7664c623b54aa485749cb4405a11becdd326339f61ca7e'
+          manifest=json.loads((out/'mark_iii_component_manifest.json').read_text());semantic_manifest=dict(manifest);semantic_manifest.pop('canonical_manifest_sha256',None)
+          if canonical_manifest_sha256(semantic_manifest)!=expected_manifest:raise SystemExit('Canonical component manifest changed')
+          verification=json.loads((out/'mark_iii_verification.json').read_text());service=json.loads((out/'mark_iii_serviceability_audit.json').read_text());manufacturing=json.loads((out/'mark_iii_manufacturing_audit.json').read_text());roundtrip=json.loads((out/'mark_iii_glb_roundtrip_audit.json').read_text())
+          if verification['semantic_geometry_sha256']!=expected_semantic:raise SystemExit('Semantic geometry changed')
+          if verification['status']!='PASS_ORIGINAL_LAYOUT_PRINT_REFERENCE_GEOMETRY' or verification['scene']['geometry_nodes']!=786 or verification['scene']['physical_nodes']!=486:raise SystemExit('Geometry status/count mismatch')
+          if verification['family_counts']['resonator']!=25 or verification['family_counts']['solenoid']!=18:raise SystemExit('Original-layout resonator/solenoid count mismatch')
+          if service['counts']['propulsion_interfaces']!=4 or service['counts']['reservoir_placeholders']!=1 or service['counts']['propulsion_service_ports']!=1 or service['counts']['fluid_route_reservations']!=5:raise SystemExit('Propulsion/reservoir refinement count mismatch')
+          if service['status']!='PASS_SERVICEABILITY_REFERENCE_AUDIT' or service['failures']:raise SystemExit('Serviceability gate failed')
+          if manufacturing['status']!='PASS_MANUFACTURING_REFERENCE_CONTROLS_DEPLOYMENT_BLOCKED' or manufacturing['failures'] or manufacturing['flight_or_deployment_release']!='BLOCKED':raise SystemExit('Manufacturing/deployment gate failed')
+          if service['canonical_module_envelope_m']['extents']!=[0.75,0.32,0.32]:raise SystemExit('Canonical module envelope changed')
+          if roundtrip['status']!='PASS_GLB_ROUNDTRIP_REFERENCE' or roundtrip['matched_nodes']!=786 or roundtrip['failures']:raise SystemExit('GLB roundtrip failed')
+          if (out/'mark_iii_interactive.html').stat().st_size<2000000:raise SystemExit('Interactive review surface unexpectedly small')
+          receipt={
+            'schema_version':'mark-iii-ci-receipt-v0.3.3',
+            'status':'PASS_ORIGINAL_LAYOUT_PRINT_PLATING_SEMANTIC_GLB_AND_INTERACTIVE_REGENERATION_DEPLOYMENT_BLOCKED',
+            'source_branch':os.environ.get('GITHUB_HEAD_REF') or os.environ.get('GITHUB_REF_NAME'),
+            'commit':os.environ.get('GITHUB_SHA'),
+            'semantic_geometry_sha256':expected_semantic,'canonical_manifest_sha256':expected_manifest,
+            'geometry_nodes':786,'physical_nodes':486,'resonators':25,'body_solenoids':18,'propulsion_interfaces':4,'reservoir_allocations':1,'print_references':20,
+            'serviceability_status':service['status'],'manufacturing_status':manufacturing['status'],
+            'canonical_module_envelope_m':service['canonical_module_envelope_m'],'array_configurations':service['arrays'],
+            'glb_roundtrip':{'status':roundtrip['status'],'matched_nodes':roundtrip['matched_nodes'],'maximum_observed_errors':roundtrip['maximum_observed_errors']},
+            'raw_glb_sha256':sha(out/'mark_iii_assembly.glb'),'raw_interactive_sha256':sha(out/'mark_iii_interactive.html'),
+            'manufacturing_release':'BLOCKED','flight_or_deployment_release':'BLOCKED','claim_gate_state':'STRENGTHENED'}
+          path=Path(os.environ['RUNNER_TEMP'])/'mark-iii-ci-receipt.json';path.write_text(json.dumps(receipt,indent=2)+'\n');print(json.dumps(receipt,indent=2))
+          PY
+
+      - name: Upload qualification evidence and source snapshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mark-iii-original-layout-print-plating-validation
+          path: |
+            ${{ runner.temp }}/mark-iii-*.log
+            ${{ runner.temp }}/mark-iii-ci-receipt.json
+            ${{ runner.temp }}/mark-iii-output/*.json
+            ${{ runner.temp }}/mark-iii-output/*.csv
+            ${{ runner.temp }}/mark-iii-output/*.stl
+            ${{ env.MARK_DIR }}/README.md
+            ${{ env.MARK_DIR }}/requirements.txt
+            ${{ env.MARK_DIR }}/mark_iii_parameters.json
+            ${{ env.MARK_DIR }}/mark_iii_parametric.py
+            ${{ env.MARK_DIR }}/mark_iii_geometry_fingerprint.py
+            ${{ env.MARK_DIR }}/mark_iii_manifest_fingerprint.py
+            ${{ env.MARK_DIR }}/mark_iii_dimensional_audit.py
+            ${{ env.MARK_DIR }}/mark_iii_serviceability_audit.py
+            ${{ env.MARK_DIR }}/mark_iii_manufacturing_audit.py
+            ${{ env.MARK_DIR }}/mark_iii_glb_roundtrip_audit.py
+            ${{ env.MARK_DIR }}/mark_iii_interactive.py
+            ${{ env.MARK_DIR }}/mark_iii_execution_receipt.json
+            ${{ env.MARK_DIR }}/upstream_source_register.json
+            ${{ env.MARK_DIR }}/test_mark_iii_parametric.py
+            ${{ env.MARK_DIR }}/test_mark_iii_audits.py
+            ${{ env.MARK_DIR }}/test_mark_iii_glb_roundtrip.py
+            ${{ env.MARK_DIR }}/test_mark_iii_interactive.py
+            .github/workflows/mark-iii-reference-validation.yml
+          if-no-files-found: warn
+          retention-days: 30
