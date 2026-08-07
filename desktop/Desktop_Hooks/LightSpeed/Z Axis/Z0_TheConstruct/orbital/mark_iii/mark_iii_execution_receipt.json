@@ -1,13 +1,13 @@
 {
-  "schema_version": "mark-iii-execution-receipt-v0.3.3-pre-ci",
-  "recorded_at_utc": "2026-08-07T00:05:00Z",
-  "status": "PASS_LOCAL_REFINEMENT_QUALIFICATION_REPOSITORY_CI_PENDING_CANONICAL_DRIVE_SYNC_BLOCKED",
+  "schema_version": "mark-iii-execution-receipt-v0.3.3",
+  "recorded_at_utc": "2026-08-07T00:45:00Z",
+  "status": "PASS_REPOSITORY_SOURCE_QUALIFICATION_CANONICAL_DRIVE_SYNC_BLOCKED_PHYSICAL_RELEASE_BLOCKED",
   "task_issue": "https://github.com/achillesromer-coder/LightSpeed/issues/32",
   "draft_pr": "https://github.com/achillesromer-coder/LightSpeed/pull/34",
   "source_branch": "execution/mark-iii-original-layout-v0.3-2026-08-05",
   "stacked_base_sha": "4cbba640bf8f1589f542ec164016c4f39b4c85e1",
   "design_authority": "OWNER_ORIGINAL_MARK_III_LAYOUT_RECONCILED_V0.3.3",
-  "local_acceptance": {
+  "acceptance_invariants": {
     "tests": "PASS_21_OF_21",
     "named_nodes": 786,
     "physical_nodes": 486,
@@ -17,8 +17,11 @@
     "body_solenoids": 18,
     "propulsion_interfaces": 4,
     "reservoir_allocations": 1,
+    "propulsion_service_ports": 1,
+    "fluid_route_reservations": 5,
     "print_references": 20,
     "glb_roundtrip": "PASS_786_OF_786",
+    "canonical_module_envelope_m": [0.75, 0.32, 0.32],
     "semantic_geometry_sha256": "205912a4f248db9a444f30f5b258d78285dc5799e657b684af82e4fe1474a339",
     "canonical_manifest_sha256": "7e5638ef12b6d5861c7664c623b54aa485749cb4405a11becdd326339f61ca7e"
   },
@@ -30,7 +33,14 @@
     "No propulsion medium, pressure, nozzle, thrust or impulse values are assigned."
   ],
   "repository_ci": {
-    "state": "PENDING_EXACT_SOURCE_COMMIT"
+    "qualification_head_sha": "f4dff7bcf017fdd286df5f5f1d36156b4ea16f59",
+    "workflow": "Mark III Reference Validation",
+    "run_id": 31135554203,
+    "run_number": 68,
+    "status": "PASS",
+    "artifact_id": 8977793544,
+    "artifact_digest": "sha256:521f1b175d6a7aad9ff97079aa70cb220ee237330ac600342bfd081175ebc51d",
+    "final_documentation_confirmation": "PENDING_RECEIPT_AND_README_CLOSURE_COMMIT"
   },
   "drive_canonical_update": {
     "target_file_id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2",
@@ -41,6 +51,11 @@
     "parallel_workbook_uploaded": false
   },
   "release_state": {
+    "interactive_cad_review": "OPEN",
+    "print_process_qualification": "OPEN",
+    "metallisation_coupon_qualification": "OPEN",
+    "structural_mechanism_qualification": "OPEN",
+    "electrical_thermal_emi_environmental_qualification": "OPEN",
     "manufacturing_release": "BLOCKED",
     "flight_or_deployment_release": "BLOCKED",
     "propulsion_release": "BLOCKED"
