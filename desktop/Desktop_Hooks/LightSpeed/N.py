@@ -7047,6 +7047,76 @@ class LightSpeedUnified(tk.Tk):
             except Exception:
                 return {}
 
+        def _resource_preflight_lines(receipt_path: Optional[Path]) -> list[str]:
+            receipt = _read_json_path(receipt_path)
+            preflight = receipt.get("resource_preflight") or {}
+            if not isinstance(preflight, dict) or not preflight:
+                return [
+                    "Resource preflight: not exported",
+                    "Ollama loaded: not probed",
+                    "Last floor receipt: not exported",
+                ]
+
+            memory = preflight.get("memory") or {}
+            thresholds = preflight.get("thresholds") or {}
+            ollama = preflight.get("ollama") or {}
+            previous = preflight.get("last_receipt") or {}
+
+            def _gib(value: object) -> str:
+                try:
+                    return f"{int(value) / (1024 ** 3):.2f} GiB"
+                except (TypeError, ValueError, OverflowError):
+                    return "not available"
+
+            free_percent = memory.get("free_percent")
+            try:
+                percent_label = f"{float(free_percent):.1f}%"
+            except (TypeError, ValueError):
+                percent_label = "not available"
+
+            loaded_models = ollama.get("loaded_models") or []
+            model_names = [
+                str(item.get("name"))
+                for item in loaded_models
+                if isinstance(item, dict) and item.get("name")
+            ]
+            loaded_count = ollama.get("loaded_model_count")
+            if model_names:
+                loaded_label = ", ".join(model_names[:3])
+            elif loaded_count is not None:
+                loaded_label = f"{loaded_count} model(s)"
+            else:
+                loaded_label = str(ollama.get("state") or "not probed")
+
+            receipt_label = " | ".join(
+                str(value)
+                for value in (
+                    receipt.get("status"),
+                    receipt.get("floor"),
+                    receipt.get("created_at"),
+                )
+                if value
+            ) or "not exported"
+            previous_label = " | ".join(
+                str(value)
+                for value in (
+                    previous.get("status"),
+                    previous.get("floor"),
+                    previous.get("created_at"),
+                )
+                if value
+            ) or "none recorded"
+
+            return [
+                (
+                    f"Resource preflight: {preflight.get('execution_state', 'unknown')} | "
+                    f"RAM free={_gib(memory.get('free_bytes'))} ({percent_label}) | "
+                    f"stop floor={_gib(thresholds.get('minimum_free_memory_bytes'))}"
+                ),
+                f"Ollama loaded: {loaded_label} | telemetry={ollama.get('state', 'unknown')}",
+                f"Last floor receipt: {receipt_label} | previous={previous_label}",
+            ]
+
         def _web_bridge_path(summary: dict) -> Optional[Path]:
             bridge = summary.get("web_drive_bridge") or {}
             value = bridge.get("contract_path")
@@ -7164,6 +7234,7 @@ class LightSpeedUnified(tk.Tk):
                     f"Buildout: {buildout.get('state', 'not exported')}",
                     f"Stage: {active_stage.get('label') or active_stage.get('stage_id', 'not exported')} | {active_stage.get('state', 'not exported')}",
                     f"Next safe action: {wake_payload.get('next_safe_action') or buildout.get('next_action') or 'not exported'}",
+                    *_resource_preflight_lines(receipt_path),
                     "",
                     f"Backend workspace: gated by {build.get('launch_gate', 'unknown')}",
                     f"Agent queue: {queue_by_floor.get(floor_name, 0)} floor tasks | {_short_path(agent_queue_path)}",
