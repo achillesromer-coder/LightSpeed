@@ -4,8 +4,11 @@ import importlib.util
 from pathlib import Path
 
 
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
 def _load_org_module():
-    path = Path(__file__).resolve().parents[1] / "Launcher" / "services" / "org.py"
+    path = REPO_ROOT / "Launcher" / "services" / "org.py"
     spec = importlib.util.spec_from_file_location("launcher_org_under_test", path)
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
@@ -47,3 +50,13 @@ def test_explicit_project_creation_is_minimal_and_idempotent(tmp_path, monkeypat
     second = org.create_project("romer", "rfs-emff", "Changed display name")
     assert second["created_ts"] == first_created
     assert second["name"] == "RFS & EMFF"
+
+
+def test_legacy_neo_ui_does_not_create_per_message_files() -> None:
+    source = (REPO_ROOT / "Launcher" / "Z Axis" / "Neo.py").read_text(encoding="utf-8")
+
+    assert '"ai_logs"' not in source
+    assert ".mkdir(" not in source
+    assert 'history.jsonl' in source
+    assert 'history.open("a"' in source
+    assert '.write_text(' not in source
