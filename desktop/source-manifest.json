@@ -211,14 +211,14 @@
       "sha256": "c8b940d9a78a7303d7c08dd7169dd5b058f42c9ef846be098a691a39859e8b0d"
     },
     {
-      "bytes": 3231,
+      "bytes": 3790,
       "path": "Desktop_Hooks/LightSpeed/launcher_exe.py",
-      "sha256": "c674c3f46bc8f8cc23db0ab89aa3dfb90ea7c7e9d91ad3c7d9bf76af6da78896"
+      "sha256": "6152357497504a8619b8c8d49bc203d8298a7aeb73a4384887ca35f5fcd2db34"
     },
     {
-      "bytes": 377678,
+      "bytes": 380609,
       "path": "Desktop_Hooks/LightSpeed/N.py",
-      "sha256": "d72fcaf63b9f6ac240bcbad30aa1d132ac24c24b493f1edd8280d745852320df"
+      "sha256": "fdb740534a60f0a1b1d8912fef16458c98b2edc064ee563217bcf6efe4d4e756"
     },
     {
       "bytes": 738,
@@ -291,9 +291,9 @@
       "sha256": "0959e9e04c2182cae9c4bcc736f6b905c2559d36a1adbd18c80b344d0d1c7bf0"
     },
     {
-      "bytes": 1425,
+      "bytes": 1654,
       "path": "Desktop_Hooks/LightSpeed/tests/test_functions_hub_operator_surface.py",
-      "sha256": "03999cdafff9240aa5cff4dd39015202bae2bd58928c37b1894beb9efe6899ed"
+      "sha256": "2901e880f1581ee803dcab206b16a770da43a5a5147ada8f995fe66d0e3080af"
     },
     {
       "bytes": 16802,
@@ -3156,9 +3156,9 @@
       "sha256": "148c0c1b78792ae3cdef7cac714705b848e34501b9d52ad4c1c83dd51418e9ee"
     },
     {
-      "bytes": 19600,
+      "bytes": 20718,
       "path": "LightSpeed_Runtime/lightspeed_runtime/consolidation_registry.py",
-      "sha256": "7c9bb461cec0c5b10b62b909a51ca0184188521f9a5a54e1faadd1c10248a3c7"
+      "sha256": "223a67558bb121d74b6104234080054dad4cefffe131b41a86f85d67756fcae4"
     },
     {
       "bytes": 11155,
@@ -3281,14 +3281,14 @@
       "sha256": "1cac4c3993b49041f41dc350054eea57b34fa13873795b1ff60ac6bf5e574e8c"
     },
     {
-      "bytes": 41681,
+      "bytes": 42279,
       "path": "LightSpeed_Runtime/lightspeed_runtime/local_agent_wakeup.py",
-      "sha256": "6e1c6c9928e296940000df0b42bd7e3925971cebe7c602c780ff777c96ce6711"
+      "sha256": "a0e8fe305fb2af5ece89cc71e3e1bbe339b626a75399ef6df6fea45cd8da12d9"
     },
     {
-      "bytes": 18900,
+      "bytes": 29392,
       "path": "LightSpeed_Runtime/lightspeed_runtime/local_floor_runner.py",
-      "sha256": "6e916551433d99b48632cff145bbd28b2c781e334955a1458aa3d06411c75615"
+      "sha256": "8a4979744d613370e945935bae1d7c8d4ced3016e0d48698f3fd2cf31e8542b7"
     },
     {
       "bytes": 9880,
