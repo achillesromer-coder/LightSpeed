@@ -1,6 +1,6 @@
 {
   "schema_version": "lightspeed-project-routing-v1",
-  "updated_utc": "2026-07-20T23:08:00Z",
+  "updated_utc": "2026-08-14T11:42:00Z",
   "authority": {
     "owner": "Nathaniel Bouwer",
     "governance": "Achilles / LS GO gate",
@@ -12,12 +12,57 @@
     "review": "Morpheus",
     "interface": "Trinity"
   },
+  "canonical_sources": {
+    "drive": {
+      "role": "canonical knowledge, evidence, reviewed workbooks and owner assets",
+      "promotion_rule": "stable identity plus source revision/hash plus lineage/readback receipt"
+    },
+    "git": {
+      "role": "operational code, topology, schemas, manifests, receipts and web/platform integration links",
+      "repository_visibility": "public",
+      "private_payloads_allowed": false
+    },
+    "local": {
+      "role": "execution runtime, bounded working state, cache and staging",
+      "installed_shell_last_verified": "D:\\LightSpeed\\App",
+      "canonical_without_receipt": false
+    },
+    "recovery": {
+      "role": "recovery/reference evidence",
+      "promotion_rule": "reconcile exact hash, source lineage and current Drive/Git authority before use"
+    }
+  },
+  "startup_materialization": {
+    "mode": "reference_first",
+    "new_project_policy": "register stable identity and canonical pointers first; materialise writable local state only when execution requires it",
+    "new_agent_policy": "reuse the existing floor runtime and shared canonical pointers; do not clone source/project payloads into Agents, Z Direct, X, Y or Z trees",
+    "create_if_missing_only": [
+      "required runtime directories",
+      "one canonical project identity record for an explicitly created project",
+      "queue or receipt ledger only when the ledger does not already exist"
+    ],
+    "never_duplicate_for_convenience": [
+      "canonical workbooks",
+      "owner CAD/source assets",
+      "project payloads",
+      "database snapshots",
+      "agent/floor mirrors"
+    ],
+    "task_source_lock": "resolve current Drive revision/hash and Git commit before heavy execution"
+  },
   "project_roots": [
     {
-      "root_id": "architect-canonical",
-      "path": "Z Axis/Z+1_Architect/projects",
-      "authority": "canonical",
+      "root_id": "projects-canonical",
+      "path": "Projects",
+      "authority": "canonical_runtime_pointer",
       "writable": true,
+      "desktop_visible": true
+    },
+    {
+      "root_id": "architect-legacy",
+      "path": "Z Axis/Z+1_Architect/projects",
+      "authority": "legacy_reference",
+      "writable": false,
       "desktop_visible": true
     },
     {
@@ -62,7 +107,7 @@
     ],
     "relative_receipt_path": "LightSpeed/Project Receipts",
     "local_fallback_path": "Z Axis/Z-4_Merovingian/data/runtime_exports/drive_outbox",
-    "write_scope": "immutable_named_project_artifacts_receipts_manifests_and_review_packets_only",
+    "write_scope": "immutable named project artifacts, receipts, manifests, provenance pointers and review packets only",
     "artifact_mode": "immutable_review_copy",
     "max_artifact_files": 50,
     "max_artifact_total_bytes": 268435456,
@@ -84,6 +129,7 @@
     "queue_path": "Z Axis/Z-4_Merovingian/data/runtime_exports/go_review_queue.jsonl",
     "decision_path": "Z Axis/Z-4_Merovingian/data/runtime_exports/go_review_decisions.jsonl",
     "require_owner_gate": true,
+    "active_owner_approval_ref": "operator_canonical_consolidation_destructive_progress_2026_08_14",
     "allowed_decisions": [
       "approve",
       "hold",
@@ -92,10 +138,12 @@
     "private_local_projection": true
   },
   "cleanup_policy": {
-    "mode": "evidence_gated_quarantine",
+    "mode": "evidence_gated_quarantine_then_delete",
+    "owner_destructive_authority_ref": "operator_canonical_consolidation_destructive_progress_2026_08_14",
     "candidate_report_path": "Z Axis/Z-4_Merovingian/data/runtime_exports/cleanup_candidates.json",
     "quarantine_path": "Z Axis/Z-4_Merovingian/data/quarantine",
     "automatic_deletion": false,
+    "destructive_progress_enabled_after_required_proof": true,
     "safe_candidate_classes": [
       "empty_generated_file",
       "empty_generated_directory",
@@ -123,6 +171,8 @@
       "exact_path",
       "size_and_hash",
       "reference_scan",
+      "unique_content_ingested_or_absent",
+      "canonical_destination_and_readback",
       "canonical_retention_copy",
       "recovery_path",
       "Achilles approval"
@@ -133,8 +183,7 @@
     "max_parallel_hashes": 1,
     "max_project_scan_files": 200000,
     "volume_paths": [
-      "C:\\LightSpeed_Consolidated",
-      "D:\\LightSpeed_Consolidated"
+      "D:\\LightSpeed"
     ],
     "warning_disk_percent": 75,
     "critical_disk_percent": 90,
@@ -142,13 +191,14 @@
     "warning_free_memory_percent": 15,
     "critical_free_memory_percent": 8,
     "minimum_free_memory_bytes": 2147483648,
-    "heavy_construct_work_manual": true
+    "heavy_construct_work_manual": false,
+    "heavy_work_requires_live_resource_pass": true
   },
   "release_boundary": {
-    "web_frontend": "deferred",
+    "web_frontend": "review_gated",
     "public_publish": false,
-    "direct_cross_app_execution": false,
-    "destructive_cleanup": false,
-    "secondary_z": false
+    "direct_cross_app_execution": "bounded_receipt_gated",
+    "destructive_cleanup": "evidence_gated",
+    "secondary_z": "reference_only_no_duplicate_payload"
   }
 }
