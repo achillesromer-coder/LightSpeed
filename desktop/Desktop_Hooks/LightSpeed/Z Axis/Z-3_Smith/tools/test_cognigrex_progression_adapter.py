@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import importlib.util
 from pathlib import Path
+import sys
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
@@ -21,6 +22,7 @@ ADAPTER_PATH = (
 _spec = importlib.util.spec_from_file_location("cognigrex_progression_adapter", ADAPTER_PATH)
 assert _spec and _spec.loader
 adapter = importlib.util.module_from_spec(_spec)
+sys.modules[_spec.name] = adapter
 _spec.loader.exec_module(adapter)
 
 
