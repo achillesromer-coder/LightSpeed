@@ -15,9 +15,16 @@ on:
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_cycle.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_wakeup.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_floor_runner.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/representation_edge.py"
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/tests/test_ls_go_exact_once.py"
+      - "desktop/LightSpeed_Runtime/tests/test_local_agent_cycle.py"
+      - "desktop/LightSpeed_Runtime/tests/test_local_agent_wakeup.py"
+      - "desktop/LightSpeed_Runtime/tests/test_local_floor_runner.py"
       - "desktop/LightSpeed_Runtime/tests/test_representation_edge.py"
       - "desktop/LightSpeed_Runtime/tests/test_secure_settings_hub.py"
       - "desktop/source-manifest.json"
@@ -37,7 +44,7 @@ on:
   push:
     branches:
       - "ops/merovingian-project-routing-*"
-      - "fix/provider-secret-boundary-*"
+      - "fix/**"
     paths:
       - "apps/lightspeed-go/**"
       - "Launcher/services/org.py"
@@ -47,9 +54,16 @@ on:
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_cycle.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_wakeup.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_floor_runner.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/representation_edge.py"
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/tests/test_ls_go_exact_once.py"
+      - "desktop/LightSpeed_Runtime/tests/test_local_agent_cycle.py"
+      - "desktop/LightSpeed_Runtime/tests/test_local_agent_wakeup.py"
+      - "desktop/LightSpeed_Runtime/tests/test_local_floor_runner.py"
       - "desktop/LightSpeed_Runtime/tests/test_representation_edge.py"
       - "desktop/LightSpeed_Runtime/tests/test_secure_settings_hub.py"
       - "desktop/source-manifest.json"
@@ -109,6 +123,9 @@ jobs:
             desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_cycle.py \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_wakeup.py \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/local_floor_runner.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/representation_edge.py \
             scripts/validate_lightspeed_surfaces.py \
             scripts/run_merovingian_soft_launch.py \
@@ -152,6 +169,10 @@ jobs:
             desktop/Desktop_Hooks/LightSpeed/tests/test_operator_home_export_gates.py \
             desktop/LightSpeed_Runtime/tests/test_project_pipeline.py \
             desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py \
+            desktop/LightSpeed_Runtime/tests/test_ls_go_exact_once.py \
+            desktop/LightSpeed_Runtime/tests/test_local_agent_cycle.py \
+            desktop/LightSpeed_Runtime/tests/test_local_agent_wakeup.py \
+            desktop/LightSpeed_Runtime/tests/test_local_floor_runner.py \
             desktop/LightSpeed_Runtime/tests/test_representation_edge.py \
             desktop/LightSpeed_Runtime/tests/test_secure_settings_hub.py \
             2>&1 | tee python-tests.log
