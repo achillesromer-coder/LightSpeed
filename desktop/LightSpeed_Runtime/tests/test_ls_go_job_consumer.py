@@ -67,6 +67,7 @@ def configure_db(path: Path) -> SQLiteDB:
 
 
 def configure_shell(root: Path) -> None:
+    root.mkdir(parents=True, exist_ok=True)
     (root / "N.py").write_text("# test shell\n", encoding="utf-8")
     runtime_exports = (
         root
