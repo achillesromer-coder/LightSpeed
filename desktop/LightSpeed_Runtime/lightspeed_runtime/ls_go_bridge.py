@@ -6,6 +6,7 @@ import os
 from datetime import datetime, timezone
 from pathlib import Path
 import sys
+import threading
 from typing import Any, Optional
 
 from fastapi import FastAPI, Header, HTTPException
@@ -45,6 +46,21 @@ DEFAULT_ALLOWED_ORIGINS = [
     "http://localhost:4173",
 ]
 OWNER_CONFIRMATION_ENV = "LIGHTSPEED_OWNER_APPROVAL_TOKEN"
+COMMAND_IDENTITY_FIELDS = (
+    "schema_version",
+    "command_id",
+    "source",
+    "title",
+    "instruction",
+    "target_floor",
+    "oversight_floor",
+    "priority",
+    "execution_mode",
+    "state",
+    "proof_required",
+    "public_safe",
+)
+_QUEUE_WRITE_LOCK = threading.Lock()
 
 
 def utc_now_iso() -> str:
@@ -184,6 +200,28 @@ def _append_queue(root: Path, payload: dict[str, Any]) -> str:
     return str(path)
 
 
+def _command_identity(payload: dict[str, Any]) -> dict[str, Any]:
+    return {field: payload.get(field) for field in COMMAND_IDENTITY_FIELDS}
+
+
+def _find_queue_command(root: Path, command_id: str) -> dict[str, Any] | None:
+    path = _queue_path(root)
+    if not path.exists():
+        return None
+    try:
+        with path.open("r", encoding="utf-8", errors="replace") as stream:
+            for line in stream:
+                try:
+                    value = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if isinstance(value, dict) and value.get("command_id") == command_id:
+                    return value
+    except OSError:
+        return None
+    return None
+
+
 def create_app(root: Path | str) -> FastAPI:
     shell_root = Path(root).resolve()
     db, storage = _try_get_services(shell_root)
@@ -203,7 +241,7 @@ def create_app(root: Path | str) -> FastAPI:
     app = FastAPI(
         title="LightSpeed GO Desktop Bridge",
         description="Local-only, Achilles-governed command, project and review bridge for LS GO.",
-        version="1.2.0",
+        version="1.2.1",
     )
     app.add_middleware(
         CORSMiddleware,
@@ -479,10 +517,10 @@ def create_app(root: Path | str) -> FastAPI:
         if body.get("proof_required") is not True or body.get("public_safe") is not True:
             raise HTTPException(status_code=400, detail="Proof and public-safe gates are required")
 
-        accepted = {
+        state = "review" if execution_mode == "review" else "queued"
+        candidate = {
             "schema_version": COMMAND_SCHEMA,
             "command_id": command_id,
-            "accepted_utc": utc_now_iso(),
             "source": "LS GO",
             "title": title,
             "instruction": instruction,
@@ -490,69 +528,95 @@ def create_app(root: Path | str) -> FastAPI:
             "oversight_floor": "Achilles",
             "priority": priority,
             "execution_mode": execution_mode,
-            "state": "review" if execution_mode == "review" else "queued",
+            "state": state,
             "proof_required": True,
             "public_safe": True,
         }
-        artifact_ref = _append_queue(shell_root, accepted)
 
-        task_id: Optional[int] = None
-        job: Optional[dict[str, Any]] = None
-        if db:
-            try:
-                now = accepted["accepted_utc"]
-                metadata_json = json.dumps(
-                    {
-                        "schema_version": COMMAND_SCHEMA,
-                        "command_id": command_id,
-                        "source": "LS GO",
-                        "target_floor": target_floor,
-                        "oversight_floor": "Achilles",
-                        "execution_mode": execution_mode,
-                        "proof_required": True,
-                        "public_safe": True,
-                        "artifact_ref": artifact_ref,
-                    },
-                    ensure_ascii=False,
-                )
-                with db.get_connection() as conn:
-                    cursor = conn.cursor()
-                    cursor.execute(
-                        "INSERT INTO tasks (title, description, project_id, status, priority, created_at, updated_at, metadata_json) "
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                        (title, instruction, "LS-GO", accepted["state"], priority, now, now, metadata_json),
+        with _QUEUE_WRITE_LOCK:
+            existing = _find_queue_command(shell_root, command_id)
+            if existing is not None:
+                if _command_identity(existing) != _command_identity(candidate):
+                    raise HTTPException(
+                        status_code=409,
+                        detail="command_id already exists with a different normalized envelope",
                     )
-                    task_id = int(cursor.lastrowid)
-                created = db.create_job_v1(
-                    job_type="ls_go_command",
-                    tool_key="ls_go_command",
-                    z_context=target_floor,
-                    params={
+                return JSONResponse(
+                    {
+                        "accepted": True,
+                        "duplicate": True,
                         "command_id": command_id,
-                        "instruction": instruction,
-                        "execution_mode": execution_mode,
-                        "oversight_floor": "Achilles",
-                    },
-                    task_id=task_id,
-                    project_id="LS-GO",
-                    tags=["ls-go", "achilles", target_floor.lower()],
-                    inputs=[{"kind": "command_envelope", "path": artifact_ref}],
+                        "task_id": None,
+                        "job": None,
+                        "state": existing.get("state", state),
+                        "accepted_utc": existing.get("accepted_utc"),
+                        "artifact_ref": str(_queue_path(shell_root)),
+                        "detail": "Command already persisted; idempotent readback returned without queue/task/job mutation.",
+                    }
                 )
-                job = created if isinstance(created, dict) else {"result": created}
-            except Exception as exc:
-                accepted["db_detail"] = f"Queue persisted; database handoff unavailable: {type(exc).__name__}"
 
-        return JSONResponse(
-            {
-                "accepted": True,
-                "command_id": command_id,
-                "task_id": task_id,
-                "job": job,
-                "state": accepted["state"],
-                "artifact_ref": artifact_ref,
-                "detail": accepted.get("db_detail", "Command persisted and routed to the Desktop task/job lane."),
-            }
-        )
+            accepted = {**candidate, "accepted_utc": utc_now_iso()}
+            artifact_ref = _append_queue(shell_root, accepted)
+
+            task_id: Optional[int] = None
+            job: Optional[dict[str, Any]] = None
+            if db:
+                try:
+                    now = accepted["accepted_utc"]
+                    metadata_json = json.dumps(
+                        {
+                            "schema_version": COMMAND_SCHEMA,
+                            "command_id": command_id,
+                            "source": "LS GO",
+                            "target_floor": target_floor,
+                            "oversight_floor": "Achilles",
+                            "execution_mode": execution_mode,
+                            "proof_required": True,
+                            "public_safe": True,
+                            "artifact_ref": artifact_ref,
+                        },
+                        ensure_ascii=False,
+                    )
+                    with db.get_connection() as conn:
+                        cursor = conn.cursor()
+                        cursor.execute(
+                            "INSERT INTO tasks (title, description, project_id, status, priority, created_at, updated_at, metadata_json) "
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                            (title, instruction, "LS-GO", accepted["state"], priority, now, now, metadata_json),
+                        )
+                        task_id = int(cursor.lastrowid)
+                    created = db.create_job_v1(
+                        job_type="ls_go_command",
+                        tool_key="ls_go_command",
+                        z_context=target_floor,
+                        params={
+                            "command_id": command_id,
+                            "instruction": instruction,
+                            "execution_mode": execution_mode,
+                            "oversight_floor": "Achilles",
+                        },
+                        task_id=task_id,
+                        project_id="LS-GO",
+                        tags=["ls-go", "achilles", target_floor.lower()],
+                        inputs=[{"kind": "command_envelope", "path": artifact_ref}],
+                    )
+                    job = created if isinstance(created, dict) else {"result": created}
+                except Exception as exc:
+                    accepted["db_detail"] = f"Queue persisted; database handoff unavailable: {type(exc).__name__}"
+
+            return JSONResponse(
+                {
+                    "accepted": True,
+                    "duplicate": False,
+                    "command_id": command_id,
+                    "task_id": task_id,
+                    "job": job,
+                    "state": accepted["state"],
+                    "accepted_utc": accepted["accepted_utc"],
+                    "artifact_ref": artifact_ref,
+                    "detail": accepted.get("db_detail", "Command persisted and routed to the Desktop task/job lane."),
+                }
+            )
 
     return app
 
