@@ -11,10 +11,12 @@ on:
       - "Launcher/services/org.py"
       - "Launcher/Z Axis/Neo.py"
       - "desktop/Desktop_Hooks/LightSpeed/config/project_routing.json"
+      - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Smith.py"
       - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/**"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_job_consumer.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_cycle.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_wakeup.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_floor_runner.py"
@@ -22,6 +24,7 @@ on:
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_exact_once.py"
+      - "desktop/LightSpeed_Runtime/tests/test_ls_go_job_consumer.py"
       - "desktop/LightSpeed_Runtime/tests/test_local_agent_cycle.py"
       - "desktop/LightSpeed_Runtime/tests/test_local_agent_wakeup.py"
       - "desktop/LightSpeed_Runtime/tests/test_local_floor_runner.py"
@@ -50,10 +53,12 @@ on:
       - "Launcher/services/org.py"
       - "Launcher/Z Axis/Neo.py"
       - "desktop/Desktop_Hooks/LightSpeed/config/project_routing.json"
+      - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Smith.py"
       - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/**"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_job_consumer.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_cycle.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_wakeup.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_floor_runner.py"
@@ -61,6 +66,7 @@ on:
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_exact_once.py"
+      - "desktop/LightSpeed_Runtime/tests/test_ls_go_job_consumer.py"
       - "desktop/LightSpeed_Runtime/tests/test_local_agent_cycle.py"
       - "desktop/LightSpeed_Runtime/tests/test_local_agent_wakeup.py"
       - "desktop/LightSpeed_Runtime/tests/test_local_floor_runner.py"
@@ -117,16 +123,19 @@ jobs:
           python -m py_compile \
             "Launcher/services/org.py" \
             "Launcher/Z Axis/Neo.py" \
+            "desktop/Desktop_Hooks/LightSpeed/Z Axis/Smith.py" \
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/__init__.py" \
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/__init__.py" \
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/secure_settings_hub.py" \
             desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_job_consumer.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_cycle.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_wakeup.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/local_floor_runner.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/representation_edge.py \
+            tools/run_ls_go_bridge.py \
             scripts/validate_lightspeed_surfaces.py \
             scripts/run_merovingian_soft_launch.py \
             scripts/run_cognigrex_local_stack.py \
@@ -170,6 +179,7 @@ jobs:
             desktop/LightSpeed_Runtime/tests/test_project_pipeline.py \
             desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py \
             desktop/LightSpeed_Runtime/tests/test_ls_go_exact_once.py \
+            desktop/LightSpeed_Runtime/tests/test_ls_go_job_consumer.py \
             desktop/LightSpeed_Runtime/tests/test_local_agent_cycle.py \
             desktop/LightSpeed_Runtime/tests/test_local_agent_wakeup.py \
             desktop/LightSpeed_Runtime/tests/test_local_floor_runner.py \
