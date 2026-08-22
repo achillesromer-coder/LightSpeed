@@ -1,0 +1,170 @@
+{
+  "schema": "digital_twin_web2_local_preview.v0_1",
+  "run_id": "NEO-SPATIAL-MB-20260823-ACR3-PARAMS-01",
+  "mode": "local_internal_preview",
+  "public_launch": false,
+  "geometry_authority_rule": "owner-authored accepted CAD/FreeCAD remains geometry authority; spreadsheet/mesh/STEP/STL/render artifacts are derived unless explicitly promoted",
+  "evidence_classes": ["KNOWN", "INFERRED", "TARGET", "HYPOTHESIS", "VERIFIED"],
+  "required_record_fields": [
+    "Twin_ID",
+    "project_system",
+    "component_object_ID",
+    "parent_child_interface_IDs",
+    "source_authority_ID_path",
+    "source_revision_hash",
+    "geometry_revision_hash",
+    "units",
+    "reference_frame_origin_axes",
+    "authoritative_dimensions_tolerances",
+    "material_state_source",
+    "mesh_export_identity",
+    "test_simulation_config_IDs",
+    "evidence_class",
+    "validation_state",
+    "provenance",
+    "open_gaps",
+    "last_comparison_receipt"
+  ],
+  "recovered_engineering_baselines": {
+    "mark_iii_arm": {
+      "twin_id": "mark_iii.v0_1",
+      "source_backed_knowns": {
+        "arm_count": 3,
+        "internal_solenoids_per_segment": 3,
+        "dynamic_control": "electric motor + Kevlar rope on spool",
+        "spool_lock_intent": true,
+        "gas_compressed_joint_intent": true,
+        "gas_chamber_EMI_damping_concept": true,
+        "multi_unit_interlock": "2+ Mark III units"
+      },
+      "unresolved_targets": [
+        "tendon_count",
+        "segment_count",
+        "vertebra_dimensions",
+        "exact_interlock_geometry",
+        "production_tolerances",
+        "print_material"
+      ],
+      "demoted_legacy_values": [
+        {
+          "value": "72 mm OD / 42 mm height vertebra",
+          "status": "concept_only_not_canonical"
+        }
+      ],
+      "primary_tests": [
+        "3_vs_4_vs_5_tendon_kinematics_trade",
+        "interlock_insertion_retention_release_coupon",
+        "segment_structural_coupon_and_FEM",
+        "joint_abrasion_creep_hard_stop_thermal_cycle"
+      ],
+      "trade_variables": [
+        "bend_DOF",
+        "torsion",
+        "holding_power",
+        "spool_count",
+        "redundancy",
+        "routing_friction",
+        "motor_packaging"
+      ]
+    },
+    "rfs_emff": {
+      "twin_id": "rfs_emff_sandbox.v0_1",
+      "claim_boundary": "test-design schema only; no extraction or resonance performance constants",
+      "tier_A_materials": ["Fe", "C", "Au", "Nd"],
+      "tier_B_materials": ["Ni", "Co", "Pt", "Pd", "Ag", "Rh", "Ir", "Mg", "Dy", "Li"],
+      "independent_variables": [
+        "excitation_frequency_or_input_mechanism",
+        "matrix_composition",
+        "sample_composition",
+        "particle_size",
+        "material_phase",
+        "pressure_atmosphere",
+        "EM_field_strength",
+        "EM_field_gradient",
+        "coil_geometry",
+        "turns",
+        "current",
+        "resistance",
+        "inductance",
+        "gap",
+        "duty_cycle",
+        "temperature"
+      ],
+      "dependent_metrics": [
+        "recovery_pct",
+        "grade_purity_pct",
+        "selectivity",
+        "energy_J_per_g",
+        "throughput_g_per_h",
+        "displacement_manipulation_precision",
+        "thermal_rise_dissipation",
+        "stability_drift",
+        "EMI",
+        "repeatability_confidence_bounds"
+      ],
+      "primary_tests": [
+        "baseline_blank",
+        "resonator_only",
+        "EMFF_only",
+        "combined_RFS_EMFF"
+      ],
+      "secondary_tests": [
+        "single_species_Fe_C_Au_Nd",
+        "mixtures_and_alloys",
+        "particle_size_bins",
+        "atmosphere_vs_rated_vacuum",
+        "field_gradient_map",
+        "thermal_duty_cycle",
+        "randomized_repeated_trials"
+      ]
+    },
+    "mark_1p": {
+      "twin_id": "mark_1p.v0_1",
+      "design_provenance_only": {
+        "approx_frame_mm": [220, 152, 21],
+        "approx_internal_chamber_area_mm": [178, 110],
+        "physical_slider_controls": 2,
+        "usb_c_ports": 1,
+        "rechargeable_batteries": 8,
+        "resonators": 7,
+        "solenoid_button_assemblies": 4,
+        "housing_pieces": 2,
+        "chamber_sample_assemblies": 1,
+        "internal_CPU_units": 2
+      },
+      "rebaseline_before_manufacture": true
+    },
+    "solar_hull": {
+      "first_coupon_tests": [
+        "copper_foil_or_flex_copper_clad_plus_carbon_filled_polymer",
+        "flat_vs_curved_coupon",
+        "peel",
+        "bend",
+        "thermal_cycle",
+        "electrical_continuity",
+        "PV_TE_benchmark_control"
+      ],
+      "claim_boundary": "copper alone is not photovoltaic; bismuth thermoelectric performance requires delta-T and measured system evidence"
+    },
+    "free_flow": {
+      "required_precondition": "explicit electrochemistry selection before battery/cell capability claims",
+      "candidate_chemistry_classes": ["EDLC_supercapacitor", "Li_ion_derivative", "sodium_ion_or_other_explicitly_sourced_system"],
+      "separate_solenoid_tests": ["capacitance", "loss", "heating", "field_effect_vs_empty_control", "field_effect_vs_solid_dielectric_control"],
+      "early_test_exclusion": ["radioactive_materials"]
+    }
+  },
+  "local_preview_surfaces": {
+    "summary_card": ["Twin_ID", "source_authority", "evidence_class", "validation_state"],
+    "component_inspector": ["component_ID", "source_hash", "geometry_authority", "knowns", "unknowns", "test_hooks"],
+    "test_matrix": ["independent_variables", "dependent_metrics", "controls", "repeat_count", "uncertainty"],
+    "artifact_panel": ["CAD", "mesh_export", "render", "simulation", "receipt"],
+    "gates": ["owner", "engineering", "scientific", "security", "legal", "public_release"]
+  },
+  "prohibited_preview_claims": [
+    "operational_without_receipt",
+    "validated_physics_without_empirical_evidence",
+    "manufacturing_ready_without_tolerances_materials_and_tests",
+    "public_launch_without_release_receipt",
+    "derived_geometry_as_owner_CAD"
+  ]
+}
