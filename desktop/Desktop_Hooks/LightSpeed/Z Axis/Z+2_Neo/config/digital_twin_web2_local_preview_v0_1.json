@@ -1,9 +1,19 @@
 {
   "schema": "digital_twin_web2_local_preview.v0_1",
-  "run_id": "NEO-SPATIAL-MB-20260823-ACR3-PARAMS-01",
+  "run_id": "NEO-SPATIAL-MB-20260823-LIVING-CANON-02",
   "mode": "local_internal_preview",
   "public_launch": false,
   "geometry_authority_rule": "owner-authored accepted CAD/FreeCAD remains geometry authority; spreadsheet/mesh/STEP/STL/render artifacts are derived unless explicitly promoted",
+  "living_canonical_states": [
+    "CURRENT_AUTHORITATIVE",
+    "COMPLETE_UNINDEXED",
+    "COMPLETE_PARTIAL_EVIDENCE",
+    "SUPERSEDED_RETAINED",
+    "DERIVED_REQUIRES_VALIDATION",
+    "AWAITING_RECEIPT",
+    "GENUINELY_OPEN",
+    "UNKNOWN"
+  ],
   "evidence_classes": ["KNOWN", "INFERRED", "TARGET", "HYPOTHESIS", "VERIFIED"],
   "required_record_fields": [
     "Twin_ID",
@@ -102,12 +112,7 @@
         "EMI",
         "repeatability_confidence_bounds"
       ],
-      "primary_tests": [
-        "baseline_blank",
-        "resonator_only",
-        "EMFF_only",
-        "combined_RFS_EMFF"
-      ],
+      "primary_tests": ["baseline_blank", "resonator_only", "EMFF_only", "combined_RFS_EMFF"],
       "secondary_tests": [
         "single_species_Fe_C_Au_Nd",
         "mixtures_and_alloys",
@@ -153,9 +158,104 @@
       "early_test_exclusion": ["radioactive_materials"]
     }
   },
+  "recovered_program_architecture": {
+    "visualized_six_runtime": {
+      "state": "COMPLETE_PARTIAL_EVIDENCE",
+      "classification_note": "program specification and interaction requirements are preserved; runtime implementation is not established",
+      "source": "ACR3 Closure Handoff — Mark III Visualized Digital Twin — 2026-08-22",
+      "runtimes": {
+        "Mark_III.run": "interactive Mark III engineering/digital-twin viewer and analysis environment",
+        "Mark_V.run": "interactive Mark V/MSD/tagging unit viewer and analysis environment",
+        "Extraction.run": "RFS/EMFF asteroid/regolith scenario simulator",
+        "Launch.run": "Mission 1 launch/deployment/trajectory environment",
+        "Launch_2.run": "Mission 2 / multi-group Cognigrex expansion environment",
+        "Visualized": "oversight launcher and integrated scenario/runtime shell"
+      },
+      "interaction_requirements": [
+        "2D_3D_views",
+        "xray_view",
+        "exploded_view",
+        "hover_component_information",
+        "parameter_interaction",
+        "data_export",
+        "scenario_controls"
+      ],
+      "implementation_state": "GENUINELY_OPEN"
+    },
+    "cognigrex_node_hierarchy": {
+      "state": "COMPLETE_UNINDEXED",
+      "evidence_class": "DESIGN_PROVENANCE",
+      "hierarchy": [
+        "Mark_V_edge_interface",
+        "Mark_series_local_autonomous_nodes",
+        "Luke_Apostle_higher_order_coordination",
+        "terrestrial_systems"
+      ],
+      "open_specification_fields": [
+        "node_classes",
+        "compute_allocation",
+        "message_types",
+        "latency_offline_behaviour",
+        "identity_key_management",
+        "consensus_command_authority",
+        "human_override",
+        "fault_isolation",
+        "cybersecurity",
+        "data_provenance",
+        "simulation_digital_twin_interfaces"
+      ]
+    },
+    "mark_v": {
+      "state": "COMPLETE_UNINDEXED",
+      "evidence_class": "KNOWN_SOURCE_SUPPORTED_DESIGN_INTENT",
+      "role": "low-compute/minimal-I-O edge tagging/status/registry interface dependent on upstream Mark/Luke/Apostle processing",
+      "source_backed_components": [
+        "display_LCD",
+        "receiver_transponder",
+        "CPU",
+        "solar_recharge_strips",
+        "battery",
+        "attachment_screws_hardware",
+        "housing"
+      ],
+      "requirements_tree_pending": [
+        "mass_size_power",
+        "display",
+        "transponder_comms",
+        "processor_security_element",
+        "storage",
+        "attachment",
+        "thermal",
+        "radiation",
+        "endurance",
+        "safe_mode",
+        "physical_verification",
+        "registry_interface",
+        "legal_disclaimer"
+      ],
+      "legal_boundary": "physical attachment or token/registry record does not itself establish legal celestial title"
+    }
+  },
+  "recovered_web_shell": {
+    "state": "COMPLETE_PARTIAL_EVIDENCE",
+    "source_workbook_id": "1na5Y4MuwrOdLxub0teoS_hO5n9FmNXIIYPlVjYZk88k",
+    "source_workbook": "LightSpeed_Web_Shell_Builder_CL3_v0_2",
+    "recovered_surfaces": [
+      "Squarespace_operations_route_code_embeds",
+      "GitHub_private_authority_repo_lane",
+      "GitHub_public_safe_static_web_shell_lane",
+      "Link_Drive_platform_registry_lane",
+      "Vercel_preview_target",
+      "LightSpeed_GO_private_preview",
+      "ChatGPT_Sites_existing_site_side_edit_lane"
+    ],
+    "launch_rule": "reuse existing surfaces and target-specific gates before creating replacement frontend architecture",
+    "current_boundary": "local/internal preview first; public deploy requires separate target-specific release receipt"
+  },
   "local_preview_surfaces": {
-    "summary_card": ["Twin_ID", "source_authority", "evidence_class", "validation_state"],
+    "summary_card": ["Twin_ID", "source_authority", "evidence_class", "validation_state", "living_canonical_state"],
     "component_inspector": ["component_ID", "source_hash", "geometry_authority", "knowns", "unknowns", "test_hooks"],
+    "runtime_map": ["runtime_ID", "purpose", "implementation_state", "dependencies", "latest_receipt"],
     "test_matrix": ["independent_variables", "dependent_metrics", "controls", "repeat_count", "uncertainty"],
     "artifact_panel": ["CAD", "mesh_export", "render", "simulation", "receipt"],
     "gates": ["owner", "engineering", "scientific", "security", "legal", "public_release"]
@@ -165,6 +265,8 @@
     "validated_physics_without_empirical_evidence",
     "manufacturing_ready_without_tolerances_materials_and_tests",
     "public_launch_without_release_receipt",
-    "derived_geometry_as_owner_CAD"
+    "derived_geometry_as_owner_CAD",
+    "visualized_runtime_implemented_from_specification_only",
+    "token_or_attachment_as_legal_celestial_title"
   ]
 }
