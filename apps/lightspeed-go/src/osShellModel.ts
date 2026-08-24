@@ -155,11 +155,15 @@ export const inferWorkflowStage = (instruction: string): WorkflowStageId => {
 
 export const routeOperationalFloor = (instruction: string): Floor => {
   const text = instruction.trim().toLowerCase();
+  if (!text) return "Neo";
   if (/\b(proof|claim|verify|verification|conflict|confidence|audit|contradiction|supersession)\b/.test(text)) {
     return "Morpheus";
   }
+  if (/\b(achilles|governance|canonical promotion|release gate|safety gate)\b/.test(text)) {
+    return "Achilles";
+  }
   const routed = routeInstruction(instruction);
-  return routed === "Achilles" && text ? "Neo" : routed;
+  return routed === "Achilles" ? "Neo" : routed;
 };
 
 export const workflowStage = (id: WorkflowStageId): WorkflowStage =>
