@@ -499,7 +499,7 @@ Z_FLOORS_AVAILABLE: Dict[str, Any] = {}
 
 # Map floor names to their directory locations
 FLOOR_LOCATIONS = {
-    'Merovingian': 'Z Axis/Z-4_Merovingian',  # Core services (always available)
+    'Merovingian': 'Z Axis/Merovingian.py',  # Core services and operator UI
     # Canonical floor entrypoints live in `Z Axis/<Floor>.py` (manifest-owned).
     'Smith': 'Z Axis/Smith.py',
     'Oracle': 'Z Axis/Oracle.py',
@@ -512,8 +512,6 @@ FLOOR_LOCATIONS = {
 
 
 def _resolve_floor_entry_path(floor_name: str) -> Optional[Path]:
-    if floor_name == "Merovingian":
-        return None
     floor_path = FLOOR_LOCATIONS.get(floor_name)
     if not floor_path:
         return None
@@ -542,7 +540,6 @@ def _build_shell_startup_audit() -> dict[str, Any]:
     floor_status = {
         floor_name: _is_floor_entry_available(floor_name)
         for floor_name in FLOOR_LOCATIONS
-        if floor_name != "Merovingian"
     }
     return {
         "missing_targets": missing_targets,
@@ -628,9 +625,6 @@ def _get_z_floor_module(floor_name: str) -> Optional[Any]:
     noisy warnings and heavyweight side-effects (e.g. Tk initialization) during
     simple operations like `python N.py --smoke`.
     """
-    if floor_name == "Merovingian":
-        return None
-
     cached = Z_FLOORS_AVAILABLE.get(floor_name)
     if cached is not None:
         return cached
@@ -667,10 +661,7 @@ def _get_z_floor_module(floor_name: str) -> Optional[Any]:
 
 # Seed cache keys so downstream UIs can list floors without importing them.
 for _floor_name in FLOOR_LOCATIONS.keys():
-    if _floor_name == "Merovingian":
-        Z_FLOORS_AVAILABLE[_floor_name] = None
-    else:
-        Z_FLOORS_AVAILABLE.setdefault(_floor_name, None)
+    Z_FLOORS_AVAILABLE.setdefault(_floor_name, None)
 
 
 # ============================================================================
