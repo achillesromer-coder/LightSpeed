@@ -1190,10 +1190,23 @@ class ProjectPipeline:
         max_hash_bytes = int(self._scan_policy().get("max_hash_bytes") or 1_073_741_824)
         max_archives = max(10, int(self._resource_guard().get("max_archive_inventory") or 2000))
         max_hashes = max(1, int(self._resource_guard().get("max_archive_hashes") or 100))
+        max_scan_files = max(
+            100,
+            int(self._resource_guard().get("max_archive_scan_files") or 50_000),
+        )
+        max_hash_bytes_per_run = max(
+            0,
+            int(
+                self._resource_guard().get("max_archive_hash_bytes_per_run")
+                or 268_435_456
+            ),
+        )
         ignored_dirs = self._ignored_dirs()
         archive_suffixes = {".zip", ".7z", ".tar", ".gz", ".bz2", ".rar"}
         archives: list[dict[str, Any]] = []
         hash_budget = max_hashes
+        hash_byte_budget = max_hash_bytes_per_run
+        scanned_file_count = 0
         truncated = False
 
         for project in registry.get("projects") or []:
@@ -1203,9 +1216,13 @@ class ProjectPipeline:
             for current, directories, filenames in os.walk(project_path):
                 directories[:] = [name for name in directories if name not in ignored_dirs]
                 for filename in sorted(filenames):
-                    if len(archives) >= max_archives:
+                    if (
+                        len(archives) >= max_archives
+                        or scanned_file_count >= max_scan_files
+                    ):
                         truncated = True
                         break
+                    scanned_file_count += 1
                     target = Path(current) / filename
                     if target.suffix.lower() not in archive_suffixes:
                         continue
@@ -1215,7 +1232,13 @@ class ProjectPipeline:
                         continue
                     checksum = None
                     hash_state = "not_hashed_budget_or_size"
-                    if hash_budget > 0 and int(stat.st_size) <= max_hash_bytes:
+                    size_bytes = int(stat.st_size)
+                    if (
+                        hash_budget > 0
+                        and size_bytes <= max_hash_bytes
+                        and size_bytes <= hash_byte_budget
+                    ):
+                        hash_byte_budget -= size_bytes
                         digest = hashlib.sha256()
                         try:
                             with target.open("rb") as stream:
@@ -1230,7 +1253,7 @@ class ProjectPipeline:
                         "candidate_class": "archive_inventory",
                         "path": str(target),
                         "project_id": project.get("project_id"),
-                        "size_bytes": int(stat.st_size),
+                        "size_bytes": size_bytes,
                         "sha256": checksum,
                         "hash_state": hash_state,
                         "protected_by_pattern": any(fnmatch.fnmatch(target.name, pattern) for pattern in never_patterns),
@@ -1259,7 +1282,12 @@ class ProjectPipeline:
         if truncated:
             archives.append({
                 "candidate_class": "archive_inventory_limit",
-                "limit": max_archives,
+                "archive_limit": max_archives,
+                "scan_file_limit": max_scan_files,
+                "scanned_file_count": scanned_file_count,
+                "hash_file_limit": max_hashes,
+                "hash_bytes_limit": max_hash_bytes_per_run,
+                "hash_bytes_consumed": max_hash_bytes_per_run - hash_byte_budget,
                 "action": "continue_in_next_bounded_pass",
             })
         return [*archives, *duplicates]

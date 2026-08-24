@@ -195,6 +195,10 @@
     "single_primary_scan": true,
     "max_parallel_hashes": 1,
     "max_project_scan_files": 200000,
+    "max_archive_inventory": 2000,
+    "max_archive_hashes": 100,
+    "max_archive_scan_files": 50000,
+    "max_archive_hash_bytes_per_run": 268435456,
     "volume_paths": [
       "D:\\LightSpeed"
     ],

@@ -10,12 +10,14 @@ The runner never deletes, publishes, launches Web or mutates workbooks.
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager, nullcontext
 from datetime import UTC, datetime
 import errno
 import json
 import os
 from pathlib import Path
 import sys
+import threading
 import time
 from typing import Any
 
@@ -148,6 +150,42 @@ def _heartbeat(lock_path: Path, *, interval: int, state: str) -> None:
     })
 
 
+@contextmanager
+def _heartbeat_pulse(
+    lock_path: Path,
+    *,
+    interval: int,
+    pulse_seconds: float | None = None,
+):
+    """Keep the supervisor live while a bounded inventory pass is running."""
+    cadence = (
+        max(0.01, float(pulse_seconds))
+        if pulse_seconds is not None
+        else max(5.0, min(float(interval) / 2.0, 30.0))
+    )
+    stop = threading.Event()
+
+    def pulse() -> None:
+        while not stop.wait(cadence):
+            try:
+                _heartbeat(lock_path, interval=interval, state="scanning")
+            except OSError:
+                # A transient reader lock must not terminate the supervisor.
+                continue
+
+    thread = threading.Thread(
+        target=pulse,
+        name="merovingian-heartbeat",
+        daemon=True,
+    )
+    thread.start()
+    try:
+        yield
+    finally:
+        stop.set()
+        thread.join(timeout=max(2.0, cadence + 1.0))
+
+
 def static_check(runtime_root: Path, shell_root: Path) -> dict[str, Any]:
     required = [
         runtime_root / "lightspeed_runtime" / "project_pipeline.py",
@@ -244,7 +282,17 @@ def main() -> int:
         while True:
             if args.watch:
                 _heartbeat(lock_path, interval=interval, state="scanning")
-            payload = run_once(runtime_root, shell_root, queue_changes=not args.no_queue_changes)
+            pulse_context = (
+                _heartbeat_pulse(lock_path, interval=interval)
+                if args.watch
+                else nullcontext()
+            )
+            with pulse_context:
+                payload = run_once(
+                    runtime_root,
+                    shell_root,
+                    queue_changes=not args.no_queue_changes,
+                )
             rendered = json.dumps(payload, indent=2, sort_keys=True) + "\n"
             print(rendered, end="")
             if args.json_output:

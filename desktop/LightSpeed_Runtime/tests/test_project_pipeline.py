@@ -126,6 +126,8 @@ def make_shell(tmp_path: Path, *, max_scan_files: int = 1000) -> Path:
             "max_project_scan_files": max_scan_files,
             "max_archive_inventory": 100,
             "max_archive_hashes": 20,
+            "max_archive_scan_files": 1000,
+            "max_archive_hash_bytes_per_run": 1048576,
         },
         "go_review": {
             "queue_path": "Z Axis/Z-4_Merovingian/data/runtime_exports/go_review_queue.jsonl",
@@ -196,6 +198,53 @@ def test_archive_duplicates_are_evidence_only(tmp_path):
     assert len(duplicate["paths"]) == 2
     assert cleanup["automatic_deletion"] is False
     assert all(item.get("action") != "delete" for item in cleanup["candidates"])
+
+
+def test_archive_inventory_stops_at_scan_file_budget(tmp_path):
+    shell = make_shell(tmp_path)
+    config_path = shell / "config" / "project_routing.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    config["resource_guard"]["max_archive_scan_files"] = 100
+    config_path.write_text(json.dumps(config), encoding="utf-8")
+    project = shell / "Z Axis" / "Z+1_Architect" / "projects" / "Archive Budget"
+    project.mkdir()
+    for index in range(110):
+        (project / f"item-{index:03d}.txt").write_text(str(index), encoding="utf-8")
+    (project / "item-999.zip").write_bytes(b"archive")
+
+    pipeline = ProjectPipeline(shell)
+    registry = pipeline.scan_projects()
+    candidates = pipeline._archive_candidates(registry)
+
+    limit = next(item for item in candidates if item["candidate_class"] == "archive_inventory_limit")
+    assert limit["scan_file_limit"] == 100
+    assert limit["scanned_file_count"] == 100
+    assert not any(item.get("path", "").endswith("item-999.zip") for item in candidates)
+
+
+def test_archive_hashing_stops_at_total_byte_budget(tmp_path):
+    shell = make_shell(tmp_path)
+    config_path = shell / "config" / "project_routing.json"
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    config["resource_guard"]["max_archive_hash_bytes_per_run"] = 10
+    config_path.write_text(json.dumps(config), encoding="utf-8")
+    project = shell / "Z Axis" / "Z+1_Architect" / "projects" / "Hash Budget"
+    project.mkdir()
+    (project / "a.zip").write_bytes(b"12345678")
+    (project / "b.zip").write_bytes(b"abcdefgh")
+
+    pipeline = ProjectPipeline(shell)
+    registry = pipeline.scan_projects()
+    archives = [
+        item
+        for item in pipeline._archive_candidates(registry)
+        if item.get("candidate_class") == "archive_inventory"
+    ]
+
+    assert [item["hash_state"] for item in archives] == [
+        "hashed",
+        "not_hashed_budget_or_size",
+    ]
 
 
 def test_scan_stops_at_resource_limit(tmp_path):
