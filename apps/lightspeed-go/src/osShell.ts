@@ -224,6 +224,55 @@ const renderPaletteResults = (): void => {
   });
 };
 
+const alignLegacySurfaceCopy = (shell: HTMLElement): void => {
+  const commandEyebrow = shell.querySelector<HTMLElement>("#view-command .command-panel .panel-head .eyebrow");
+  if (commandEyebrow) commandEyebrow.textContent = "Neo intake";
+  const commandHeading = shell.querySelector<HTMLElement>("#view-command .command-panel .panel-head h2");
+  if (commandHeading) commandHeading.textContent = "State the outcome";
+  const submit = shell.querySelector<HTMLButtonElement>("#command-form button.primary[type=submit]");
+  if (submit) submit.textContent = "Send to runtime";
+
+  const guardrailEyebrow = shell.querySelector<HTMLElement>("#view-command .guardrail-panel .eyebrow");
+  if (guardrailEyebrow) guardrailEyebrow.textContent = "Cognigrex operating contract";
+  const guardrailHeading = shell.querySelector<HTMLElement>("#view-command .guardrail-panel h2");
+  if (guardrailHeading) guardrailHeading.textContent = "Neo-led work, durable proof";
+  const contractItems = shell.querySelectorAll<HTMLElement>("#view-command .guardrail-panel .compact-list li");
+  const contractCopy = [
+    "Neo owns intake, decomposition, routing and aggregate workflow identity.",
+    "Specialist floors execute only their bounded purpose and return receipts.",
+    "Oracle, Smith and Morpheus preserve source, implementation and proof boundaries.",
+    "Achilles governs evidence class, canonical promotion, safety and release.",
+    "Accepted results return as compact canonical deltas rather than duplicate masters.",
+  ];
+  contractItems.forEach((item, index) => {
+    if (contractCopy[index]) item.textContent = contractCopy[index];
+  });
+
+  const flow = shell.querySelector<HTMLElement>("#view-system .flow");
+  if (flow) {
+    flow.innerHTML = "<span>LS GO</span><i>→</i><span>Neo</span><i>→</i><span>specialist floors</span><i>→</i><span>Morpheus proof</span><i>→</i><span>Achilles gate</span><i>→</i><span>canon / release</span>";
+  }
+
+  const agentGrid = shell.querySelector<HTMLElement>("#view-system .agent-grid");
+  if (agentGrid) {
+    const byName = new Map<string, HTMLElement>();
+    agentGrid.querySelectorAll<HTMLElement>(".agent").forEach((card) => {
+      const name = card.querySelector("strong")?.textContent?.trim();
+      if (name) byName.set(name, card);
+    });
+    AGENT_ROLES.forEach((agent) => {
+      const card = byName.get(agent.floor);
+      if (card) agentGrid.append(card);
+    });
+  }
+
+  shell.querySelectorAll<HTMLElement>(".panel-head").forEach((head) => {
+    if (head.querySelector("h2")?.textContent?.trim() !== "Review queue") return;
+    const eyebrow = head.querySelector<HTMLElement>(".eyebrow");
+    if (eyebrow) eyebrow.textContent = "Achilles / owner gate";
+  });
+};
+
 const bindExistingSurface = (): void => {
   document.querySelectorAll<HTMLButtonElement>(".tab[data-view]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -286,12 +335,18 @@ const installShell = (): void => {
   const lede = shell.querySelector(".topbar .lede");
   if (lede) lede.textContent = "Neo coordinates specialised purpose agents across intake, workshop execution, proof, canonical consolidation and publish-ready digital artifacts; Achilles governs evidence and release.";
 
+  alignLegacySurfaceCopy(shell);
   bindExistingSurface();
   setActiveView(state.activeView);
   setActiveAgent(state.activeAgent);
 
   const instruction = document.getElementById("instruction") as HTMLTextAreaElement | null;
-  setWorkflowStage(inferWorkflowStage(instruction?.value || ""));
+  if (instruction) {
+    instruction.dispatchEvent(new Event("input", { bubbles: true }));
+  } else {
+    setWorkflowStage("intake");
+    setActiveAgent("Neo");
+  }
   refreshRuntimeStatus().catch(() => undefined);
   window.setInterval(() => refreshRuntimeStatus().catch(() => undefined), 30000);
 
