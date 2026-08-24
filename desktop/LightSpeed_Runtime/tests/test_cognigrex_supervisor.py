@@ -21,7 +21,10 @@ def write_contract(tmp_path: Path) -> Path:
                 "order": index,
                 "floor_root": str(shell_root / "Z Axis" / floor),
                 "activation": {"mode": "staged"},
-                "ollama_connection": {"endpoint": "http://localhost:11434", "model": "test-model"},
+                "ollama_connection": {
+                    "endpoint": "http://localhost:11434",
+                    "model": "test-model",
+                },
                 "training_context": {
                     "wake_goal": f"Wake {floor}",
                     "assimilation_role": f"Role {floor}",
@@ -58,18 +61,22 @@ def test_plan_keeps_neo_as_head_and_routes_specialists_then_morpheus():
 
 
 def test_default_unclassified_work_routes_to_architect_under_neo():
-    plan = cognigrex_supervisor.build_workflow_plan("Coordinate this bounded new matter")
+    plan = cognigrex_supervisor.build_workflow_plan(
+        "Coordinate this bounded new matter"
+    )
     assert plan.primary_floors == ("Architect",)
     assert plan.floor_sequence == ("Neo", "Architect", "Morpheus")
 
 
-def test_supervised_dry_run_persists_hashes_and_receipts_not_raw_instruction(tmp_path):
+def test_supervised_dry_run_keeps_raw_text_out_of_aggregate_and_learning(tmp_path):
     contract_path = write_contract(tmp_path)
     instruction = "Inspect private runtime health and reconcile the UI evidence route."
     seen_contracts: list[dict] = []
 
     def fake_runner(**kwargs):
-        overlay = json.loads(Path(kwargs["contract_path"]).read_text(encoding="utf-8"))
+        overlay = json.loads(
+            Path(kwargs["contract_path"]).read_text(encoding="utf-8")
+        )
         seen_contracts.append(overlay)
         floor = kwargs["floor"]
         return {
@@ -91,21 +98,34 @@ def test_supervised_dry_run_persists_hashes_and_receipts_not_raw_instruction(tmp
 
     assert receipt["operational_head"] == "Neo"
     assert receipt["canonical_release_gate"] == "Achilles"
-    assert receipt["raw_instruction_persisted"] is False
+    assert receipt["raw_instruction_persisted_in_aggregate"] is False
+    assert receipt["floor_receipt_prompt_preview_may_include_task_text"] is True
+    assert receipt["learning_state_raw_instruction_persisted"] is False
     assert receipt["requested_execution"] is False
     assert receipt["complete_workflow"] is True
     assert receipt["de_sporte_content_ingest_authorized"] is False
-    assert receipt["instruction_sha256"] == cognigrex_supervisor.instruction_hash(instruction)
-    assert instruction not in Path(receipt["receipt_path"]).read_text(encoding="utf-8")
-    assert instruction not in Path(receipt["learning_state_path"]).read_text(encoding="utf-8")
+    assert receipt["instruction_sha256"] == cognigrex_supervisor.instruction_hash(
+        instruction
+    )
+    assert instruction not in Path(receipt["receipt_path"]).read_text(
+        encoding="utf-8"
+    )
+    assert instruction not in Path(receipt["learning_state_path"]).read_text(
+        encoding="utf-8"
+    )
     assert seen_contracts
     assert instruction in json.dumps(seen_contracts[0])
-    assert not Path(seen_contracts[0].get("contract_path", "nonexistent")).exists()
+    overlay_meta = seen_contracts[0]["cognigrex_supervisor"]
+    assert overlay_meta["overlay_ephemeral"] is True
+    assert overlay_meta["floor_receipt_prompt_preview_may_include_task_text"] is True
 
-    learning = json.loads(Path(receipt["learning_state_path"]).read_text(encoding="utf-8"))
+    learning = json.loads(
+        Path(receipt["learning_state_path"]).read_text(encoding="utf-8")
+    )
     assert learning["dry_run_observations"] == 1
     assert learning["executed_observations"] == 0
     assert learning["policy"]["adaptive_routing_mode"] == "advisory_only"
+    assert learning["policy"]["raw_instruction_persisted"] is False
 
 
 def test_completed_execution_updates_private_advisory_learning(tmp_path):
@@ -129,7 +149,9 @@ def test_completed_execution_updates_private_advisory_learning(tmp_path):
         dry_run=False,
         runner=fake_runner,
     )
-    learning = json.loads(Path(receipt["learning_state_path"]).read_text(encoding="utf-8"))
+    learning = json.loads(
+        Path(receipt["learning_state_path"]).read_text(encoding="utf-8")
+    )
 
     assert learning["executed_observations"] == 1
     assert learning["dry_run_observations"] == 0
@@ -142,7 +164,9 @@ def test_completed_execution_updates_private_advisory_learning(tmp_path):
 def test_missing_required_floor_is_rejected_before_execution(tmp_path):
     contract_path = write_contract(tmp_path)
     payload = json.loads(contract_path.read_text(encoding="utf-8"))
-    payload["floors"] = [row for row in payload["floors"] if row["floor"] != "Morpheus"]
+    payload["floors"] = [
+        row for row in payload["floors"] if row["floor"] != "Morpheus"
+    ]
     contract_path.write_text(json.dumps(payload), encoding="utf-8")
 
     try:
