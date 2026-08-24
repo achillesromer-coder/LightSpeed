@@ -221,11 +221,11 @@
   `,document.head.appendChild(e)},Pe=async()=>{let e=document.querySelector(`.topbar > div:first-child`),t=document.querySelector(`#view-sources`);if(!e||!t)return!1;Ne();let n=(await Me())?.authority_chain??[`Nathaniel Bouwer`,`Achilles / GO gate`,`agent floor`,`LightSpeed Desktop`,`Git and Drive receipts`];if(!document.getElementById(`site-context-strip`)){let t=document.createElement(`div`);t.id=`site-context-strip`,t.className=`site-context-strip`,t.innerHTML=`
       <span><strong>Owner:</strong> Nathaniel Bouwer</span>
       <span><strong>Mode:</strong> private soft launch</span>
-      <span><strong>Source:</strong> Git + Drive aligned</span>
+      <span><strong>Source:</strong> Git + Drive evidence pending</span>
     `,e.appendChild(t)}if(!document.getElementById(`site-parity-card`)){let e=document.createElement(`article`);e.id=`site-parity-card`,e.className=`panel site-parity-card`,e.innerHTML=`
       <p class="eyebrow">Canonical source chain</p>
       <h2>One operator surface, durable receipts</h2>
-      <p>Desktop executes locally, Git carries implementation, Drive carries evidence and review records, and LS GO remains the operator decision surface.</p>
+      <p>Desktop executes locally, Git carries implementation, Drive carries evidence and review records, and LS GO remains the operator decision surface. Alignment is shown only after current evidence validates.</p>
       <div class="site-chain">
         ${n.map((e,t)=>`${t?`<i>→</i>`:``}<span>${e}</span>`).join(``)}
       </div>
