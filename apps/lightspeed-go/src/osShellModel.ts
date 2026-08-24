@@ -154,8 +154,12 @@ export const inferWorkflowStage = (instruction: string): WorkflowStageId => {
 };
 
 export const routeOperationalFloor = (instruction: string): Floor => {
+  const text = instruction.trim().toLowerCase();
+  if (/\b(proof|claim|verify|verification|conflict|confidence|audit|contradiction|supersession)\b/.test(text)) {
+    return "Morpheus";
+  }
   const routed = routeInstruction(instruction);
-  return routed === "Achilles" && instruction.trim() ? "Neo" : routed;
+  return routed === "Achilles" && text ? "Neo" : routed;
 };
 
 export const workflowStage = (id: WorkflowStageId): WorkflowStage =>
