@@ -2,15 +2,16 @@ from __future__ import annotations
 
 """Neo-supervised Cognigrex workflow over the existing LightSpeed floor runtime.
 
-This module is intentionally additive. It does not create a second runtime,
-queue, model server, canonical library, or publication path. It composes the
-existing local_floor_runner with a task-specific temporary contract, writes
-receipt-backed aggregate state into Neo's private output area, and keeps
-Achilles outside the local execution sequence as the canonical/release gate.
+This is an additive coordinator, not a second runtime. It reuses
+``local_floor_runner`` with an ephemeral task overlay, writes a Neo aggregate
+receipt, and keeps Achilles outside the local execution sequence as the
+canonical/release gate.
 
-Persisted learning is operational metadata only: instruction hashes, routes,
-statuses and bounded success statistics. Raw instructions and source content
-are not retained in the learning state.
+Learning persistence is deliberately narrow: only instruction hashes, routes,
+statuses and bounded success statistics are retained in the learning state.
+The existing floor runner may retain bounded task text in its ``prompt_preview``
+execution receipts; that receipt behavior is explicit and separate from the
+learning-state privacy boundary.
 """
 
 from dataclasses import dataclass
@@ -33,125 +34,52 @@ from lightspeed_runtime.local_floor_runner import (
 SUPERVISOR_SCHEMA = "lightspeed-cognigrex-supervisor-v1"
 LEARNING_SCHEMA = "lightspeed-cognigrex-learning-v1"
 LEARNING_ALPHA = 0.2
-
 FloorRunner = Callable[..., dict[str, Any]]
 
 SPECIALIST_KEYWORDS: tuple[tuple[str, tuple[str, ...]], ...] = (
     (
         "Merovingian",
         (
-            "runtime",
-            "process",
-            "service",
-            "storage",
-            "recovery",
-            "persist",
-            "persistence",
-            "downtime",
-            "health",
-            "resource",
-            "memory",
-            "database",
-            "bridge",
-            "localhost",
+            "runtime", "process", "service", "storage", "recovery", "persist",
+            "persistence", "downtime", "health", "resource", "memory",
+            "database", "bridge", "localhost",
         ),
     ),
     (
         "Trinity",
         (
-            "ui",
-            "ux",
-            "interface",
-            "visual",
-            "web",
-            "website",
-            "screen",
-            "layout",
-            "interaction",
-            "accessibility",
+            "ui", "ux", "interface", "visual", "web", "website", "screen",
+            "layout", "interaction", "accessibility",
         ),
     ),
     (
         "TheConstruct",
         (
-            "cad",
-            "mesh",
-            "3d",
-            "digital twin",
-            "simulation",
-            "simulate",
-            "step",
-            "stl",
-            "3mf",
-            "glb",
-            "geometry",
-            "render",
+            "cad", "mesh", "3d", "digital twin", "simulation", "simulate",
+            "step", "stl", "3mf", "glb", "geometry", "render",
         ),
     ),
     (
         "Smith",
         (
-            "code",
-            "build",
-            "test",
-            "schema",
-            "transform",
-            "compile",
-            "git",
-            "repo",
-            "repository",
-            "data pipeline",
-            "export",
-            "artifact",
+            "code", "build", "test", "schema", "transform", "compile", "git",
+            "repo", "repository", "data pipeline", "export", "artifact",
         ),
     ),
     (
         "Oracle",
         (
-            "source",
-            "evidence",
-            "research",
-            "citation",
-            "reference",
-            "known",
-            "document",
-            "library",
-            "provenance source",
+            "source", "evidence", "research", "citation", "reference", "known",
+            "document", "library", "provenance source",
         ),
     ),
     (
         "Architect",
         (
-            "architecture",
-            "project",
-            "plan",
-            "dependency",
-            "topology",
-            "workflow",
-            "system",
-            "scope",
-            "roadmap",
-            "design",
+            "architecture", "project", "plan", "dependency", "topology",
+            "workflow", "system", "scope", "roadmap", "design",
         ),
     ),
-)
-
-PROOF_KEYWORDS = (
-    "proof",
-    "verify",
-    "verification",
-    "validate",
-    "validation",
-    "audit",
-    "claim",
-    "conflict",
-    "contradiction",
-    "confidence",
-    "supersed",
-    "canonical",
-    "canon",
-    "publish",
-    "release",
 )
 
 
@@ -161,7 +89,7 @@ class WorkflowPlan:
     instruction_sha256: str
     primary_floors: tuple[str, ...]
     floor_sequence: tuple[str, ...]
-    proof_required: bool
+    proof_required: bool = True
     canonical_promotion_authorized: bool = False
     public_publish_authorized: bool = False
 
@@ -190,24 +118,21 @@ def _contains_any(text: str, keywords: Iterable[str]) -> bool:
 
 
 def classify_primary_floors(instruction: str) -> tuple[str, ...]:
-    """Return a bounded ordered specialist set for Neo to coordinate.
+    """Deterministically choose a bounded specialist set for Neo.
 
-    The classifier is deliberately deterministic. Persisted operational learning
-    may later inform a secondary recommendation, but it does not silently change
-    the route or authority model.
+    Learned routing statistics remain advisory and never silently alter this
+    authority-preserving classifier.
     """
     text = instruction.strip().casefold()
     if not text:
         return ("Architect",)
 
-    matched: list[str] = []
-    for floor, keywords in SPECIALIST_KEYWORDS:
-        if _contains_any(text, keywords):
-            matched.append(floor)
-
-    if not matched:
-        matched.append("Architect")
-    return tuple(matched)
+    matched = [
+        floor
+        for floor, keywords in SPECIALIST_KEYWORDS
+        if _contains_any(text, keywords)
+    ]
+    return tuple(matched or ["Architect"])
 
 
 def build_workflow_plan(
@@ -216,30 +141,23 @@ def build_workflow_plan(
     task_id: str | None = None,
 ) -> WorkflowPlan:
     digest = instruction_hash(instruction)
-    suffix = digest[:12]
     stable_task = (task_id or "ad-hoc").strip() or "ad-hoc"
-    workflow_id = f"cognigrex-{stable_task}-{suffix}"
     primary = classify_primary_floors(instruction)
-    text = instruction.strip().casefold()
-    proof_required = bool(_contains_any(text, PROOF_KEYWORDS)) or True
 
     sequence: list[str] = ["Neo"]
     for floor in primary:
         if floor != "Neo" and floor not in sequence:
             sequence.append(floor)
-
-    # Morpheus is the bounded contradiction/provenance proof stage for every
-    # completed task. Oracle/Smith are included only when the task actually
-    # routes through their specialist capabilities.
-    if proof_required and "Morpheus" not in sequence:
+    # Every bounded workflow returns through Morpheus for contradiction,
+    # provenance and proof review before Achilles can consider promotion.
+    if "Morpheus" not in sequence:
         sequence.append("Morpheus")
 
     return WorkflowPlan(
-        workflow_id=workflow_id,
+        workflow_id=f"cognigrex-{stable_task}-{digest[:12]}",
         instruction_sha256=digest,
         primary_floors=primary,
         floor_sequence=tuple(sequence),
-        proof_required=proof_required,
     )
 
 
@@ -254,9 +172,14 @@ def supervisor_output_dir(contract: dict[str, Any]) -> Path:
     )
 
 
-def supervisor_receipt_paths(contract: dict[str, Any], workflow_id: str) -> tuple[Path, Path]:
+def supervisor_receipt_paths(
+    contract: dict[str, Any], workflow_id: str
+) -> tuple[Path, Path]:
     root = supervisor_output_dir(contract)
-    safe_id = "".join(character if character.isalnum() or character in "-_." else "_" for character in workflow_id)
+    safe_id = "".join(
+        character if character.isalnum() or character in "-_." else "_"
+        for character in workflow_id
+    )
     return (
         root / f"cognigrex_supervisor_receipt_{safe_id}.json",
         root / "cognigrex_supervisor_receipt_latest.json",
@@ -270,7 +193,9 @@ def learning_state_path(contract: dict[str, Any]) -> Path:
 def _atomic_write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    temporary.write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
     temporary.replace(path)
 
 
@@ -290,16 +215,21 @@ def _task_contract_overlay(
     task_id: str | None,
     project_id: str | None,
 ) -> dict[str, Any]:
-    """Return a temporary task-aware contract without mutating canonical files."""
+    """Build an ephemeral task-aware contract; canonical files are untouched."""
     overlay = json.loads(json.dumps(contract))
-    overlay["contract_id"] = f"{contract.get('contract_id', 'lightspeed')}::{plan.workflow_id}"
+    overlay["contract_id"] = (
+        f"{contract.get('contract_id', 'lightspeed')}::{plan.workflow_id}"
+    )
     overlay["cognigrex_supervisor"] = {
         "schema_version": SUPERVISOR_SCHEMA,
         "workflow_id": plan.workflow_id,
         "task_id": task_id,
         "project_id": project_id,
         "instruction_sha256": plan.instruction_sha256,
-        "raw_instruction_persisted": False,
+        "overlay_ephemeral": True,
+        "raw_instruction_present_in_overlay": True,
+        "floor_receipt_prompt_preview_may_include_task_text": True,
+        "learning_state_raw_instruction_persisted": False,
         "authority": {
             "operational_head": "Neo",
             "canonical_release_gate": "Achilles",
@@ -316,11 +246,13 @@ def _task_contract_overlay(
         existing_goal = str(training.get("wake_goal") or "").strip()
         existing_role = str(training.get("assimilation_role") or "").strip()
         task_line = (
-            f"Bounded Cognigrex task {task_id or plan.workflow_id}: {instruction.strip()}"
+            f"Bounded Cognigrex task {task_id or plan.workflow_id}: "
+            f"{instruction.strip()}"
         )
         role_line = (
-            f"Project {project_id or 'unresolved'}; return only your specialist result, "
-            "evidence boundary, blocker and safe artifact/receipt route to Neo."
+            f"Project {project_id or 'unresolved'}; return only your specialist "
+            "result, evidence boundary, blocker and safe artifact/receipt route "
+            "to Neo."
         )
         training["wake_goal"] = f"{existing_goal} {task_line}".strip()
         training["assimilation_role"] = f"{existing_role} {role_line}".strip()
@@ -328,7 +260,9 @@ def _task_contract_overlay(
     return overlay
 
 
-def _validate_plan_against_contract(plan: WorkflowPlan, contract: dict[str, Any]) -> None:
+def _validate_plan_against_contract(
+    plan: WorkflowPlan, contract: dict[str, Any]
+) -> None:
     available = {
         str(item.get("floor"))
         for item in contract.get("floors") or []
@@ -337,7 +271,8 @@ def _validate_plan_against_contract(plan: WorkflowPlan, contract: dict[str, Any]
     missing = [floor for floor in plan.floor_sequence if floor not in available]
     if missing:
         raise LocalFloorRunnerError(
-            "Cognigrex workflow contract is missing required floor(s): " + ", ".join(missing)
+            "Cognigrex workflow contract is missing required floor(s): "
+            + ", ".join(missing)
         )
 
 
@@ -360,14 +295,12 @@ def _learning_default() -> dict[str, Any]:
 
 
 def update_learning_state(
-    contract: dict[str, Any],
-    aggregate: dict[str, Any],
+    contract: dict[str, Any], aggregate: dict[str, Any]
 ) -> dict[str, Any]:
     """Persist privacy-bounded online routing statistics.
 
-    This is an intentionally small online-learning surface: each specialist
-    accumulates route frequency and an EWMA completion score. It is advisory
-    only and cannot alter canonical or publication state.
+    Each routed floor accumulates frequency plus an EWMA completion score. The
+    state remains advisory only; it cannot write canon or alter release state.
     """
     path = learning_state_path(contract)
     state = _read_json(path) or _learning_default()
@@ -391,11 +324,17 @@ def update_learning_state(
             completed = 1.0 if row.get("status") == "completed" else 0.0
             previous = current.get("ewma_completion")
             current["executed_count"] = int(current.get("executed_count") or 0) + 1
-            current["completed_count"] = int(current.get("completed_count") or 0) + int(completed)
+            current["completed_count"] = (
+                int(current.get("completed_count") or 0) + int(completed)
+            )
             current["ewma_completion"] = (
                 completed
                 if previous is None
-                else round((1.0 - LEARNING_ALPHA) * float(previous) + LEARNING_ALPHA * completed, 6)
+                else round(
+                    (1.0 - LEARNING_ALPHA) * float(previous)
+                    + LEARNING_ALPHA * completed,
+                    6,
+                )
             )
         floor_state[floor] = current
 
@@ -404,7 +343,9 @@ def update_learning_state(
         "instruction_sha256": aggregate.get("instruction_sha256"),
         "created_at": aggregate.get("created_at"),
         "requested_execution": requested_execution,
-        "floor_sequence": [row.get("floor") for row in aggregate.get("floors") or []],
+        "floor_sequence": [
+            row.get("floor") for row in aggregate.get("floors") or []
+        ],
         "status": aggregate.get("status"),
     }
     _atomic_write_json(path, state)
@@ -426,7 +367,9 @@ def run_supervised_workflow(
     persist_learning: bool = True,
 ) -> dict[str, Any]:
     if not instruction.strip():
-        raise LocalFloorRunnerError("Cognigrex supervised workflow requires a non-empty instruction")
+        raise LocalFloorRunnerError(
+            "Cognigrex supervised workflow requires a non-empty instruction"
+        )
 
     contract = load_contract(contract_path)
     plan = build_workflow_plan(instruction, task_id=task_id)
@@ -467,7 +410,9 @@ def run_supervised_workflow(
                 "receipt_id": receipt.get("receipt_id"),
                 "receipt_path": receipt.get("receipt_path"),
                 "model": receipt.get("model"),
-                "resource_state": (receipt.get("resource_preflight") or {}).get("execution_state"),
+                "resource_state": (
+                    receipt.get("resource_preflight") or {}
+                ).get("execution_state"),
                 "elapsed_ms": receipt.get("elapsed_ms"),
             }
             rows.append(row)
@@ -491,7 +436,9 @@ def run_supervised_workflow(
         "task_id": task_id,
         "project_id": project_id,
         "instruction_sha256": plan.instruction_sha256,
-        "raw_instruction_persisted": False,
+        "raw_instruction_persisted_in_aggregate": False,
+        "floor_receipt_prompt_preview_may_include_task_text": True,
+        "learning_state_raw_instruction_persisted": False,
         "requested_execution": not dry_run,
         "allow_heavy": allow_heavy,
         "status": aggregate_status,
@@ -504,7 +451,10 @@ def run_supervised_workflow(
         "canonical_promotion_authorized": False,
         "public_publish_authorized": False,
         "de_sporte_content_ingest_authorized": False,
-        "next_gate": "Achilles/ACR3 review of durable receipts before canonical promotion or release",
+        "next_gate": (
+            "Achilles/ACR3 review of durable receipts before canonical promotion "
+            "or release"
+        ),
     }
 
     timestamped, latest = supervisor_receipt_paths(contract, plan.workflow_id)
