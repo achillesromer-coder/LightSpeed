@@ -25,10 +25,12 @@ describe("Cognigrex OS shell model", () => {
     ]);
   });
 
-  it("maps unknown operational work to Neo rather than routine Achilles routing", () => {
+  it("maps blank and unknown operational work to Neo while preserving explicit governance", () => {
+    expect(routeOperationalFloor("")).toBe("Neo");
     expect(routeOperationalFloor("coordinate this bounded work")).toBe("Neo");
     expect(routeOperationalFloor("prepare dinner notes")).toBe("Neo");
     expect(routeOperationalFloor("audit the evidence conflict")).toBe("Morpheus");
+    expect(routeOperationalFloor("send this to the Achilles governance gate")).toBe("Achilles");
   });
 
   it("infers workflow stage without elevating release state", () => {
