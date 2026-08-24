@@ -26,6 +26,15 @@ export type RepresentationDecision =
   | "request_evidence"
   | "supersede";
 
+export interface AuthorityContract {
+  canonical_gate_id: string;
+  owner_decision_ref: string;
+  core_acceptance_ref: string;
+  approval_or_hold_state: string;
+  authorised_scope: string;
+  prohibited_scope: string;
+}
+
 export interface CommandEnvelope {
   schema_version: typeof COMMAND_SCHEMA;
   command_id: string;
@@ -40,6 +49,13 @@ export interface CommandEnvelope {
   action_type: CommandAction;
   proof_required: true;
   public_safe: true;
+  canonical_gate_id: string;
+  owner_decision_ref: string;
+  core_acceptance_ref: string;
+  approval_or_hold_state: string;
+  authorised_scope: string;
+  prohibited_scope: string;
+  requested_scope: string;
 }
 
 export interface CommandInput {
@@ -49,6 +65,7 @@ export interface CommandInput {
   priority?: Priority;
   executionMode?: ExecutionMode;
   actionType?: CommandAction;
+  authorityContract?: AuthorityContract | null;
 }
 
 export interface ProjectRecord {
@@ -99,6 +116,7 @@ export interface DesktopStatus {
     migration_applied?: boolean;
     error?: string | null;
   };
+  authority_contract?: AuthorityContract;
 }
 
 export interface RepresentationIdentifier {
@@ -234,6 +252,21 @@ export const createCommandEnvelope = (input: CommandInput): CommandEnvelope => {
   const created = new Date().toISOString();
   const entropy = Math.random().toString(36).slice(2, 8).toUpperCase();
   const targetFloor = input.targetFloor ?? routeInstruction(instruction);
+  const authority = input.authorityContract;
+  if (!authority) throw new TypeError("Desktop authority contract is not available");
+  const canonicalGateId = normalize(authority.canonical_gate_id, 160);
+  const ownerDecisionRef = normalize(authority.owner_decision_ref, 160);
+  const coreAcceptanceRef = normalize(authority.core_acceptance_ref, 160);
+  const approvalState = normalize(authority.approval_or_hold_state, 40).toLowerCase();
+  const authorisedScope = normalize(authority.authorised_scope, 1000);
+  const prohibitedScope = normalize(authority.prohibited_scope, 1000);
+  if (!canonicalGateId || !ownerDecisionRef || !coreAcceptanceRef || !authorisedScope || !prohibitedScope) {
+    throw new TypeError("Desktop authority contract is incomplete");
+  }
+  if (!["approve", "approved", "operator_approved", "operator_authorized", "operator_authorised"].includes(approvalState)) {
+    throw new TypeError("Desktop authority contract is held");
+  }
+  const executionMode = input.executionMode ?? "review";
   return {
     schema_version: COMMAND_SCHEMA,
     command_id: `LSGO-${created.replace(/\D/g, "").slice(0, 14)}-${entropy}`,
@@ -244,12 +277,29 @@ export const createCommandEnvelope = (input: CommandInput): CommandEnvelope => {
     target_floor: targetFloor,
     oversight_floor: "Achilles",
     priority: input.priority ?? "normal",
-    execution_mode: input.executionMode ?? "review",
+    execution_mode: executionMode,
     action_type: input.actionType ?? "cognigrex_workflow",
     proof_required: true,
     public_safe: true,
+    canonical_gate_id: canonicalGateId,
+    owner_decision_ref: ownerDecisionRef,
+    core_acceptance_ref: coreAcceptanceRef,
+    approval_or_hold_state: approvalState,
+    authorised_scope: authorisedScope,
+    prohibited_scope: prohibitedScope,
+    requested_scope: `${targetFloor} private local ${executionMode} queue`,
   };
 };
+
+export class DesktopRequestError extends Error {
+  readonly status: number;
+
+  constructor(status: number, message: string) {
+    super(message);
+    this.name = "DesktopRequestError";
+    this.status = status;
+  }
+}
 
 const withTimeout = async <T>(url: string, init: RequestInit, timeoutMs = 3500): Promise<T> => {
   const controller = new AbortController();
@@ -264,7 +314,7 @@ const withTimeout = async <T>(url: string, init: RequestInit, timeoutMs = 3500):
       } catch {
         // Keep the bounded HTTP detail.
       }
-      throw new Error(detail);
+      throw new DesktopRequestError(response.status, detail);
     }
     return (await response.json()) as T;
   } finally {
@@ -329,13 +379,17 @@ export const decideDesktopReview = async (
   reviewId: string,
   decision: ReviewDecision,
   note = "",
+  ownerConfirmation = "",
   origin = DEFAULT_DESKTOP_ORIGIN,
 ): Promise<Record<string, unknown>> =>
   withTimeout<Record<string, unknown>>(
     `${origin}/api/v1/reviews/${encodeURIComponent(reviewId)}/decision`,
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "X-LightSpeed-Owner-Confirmation": ownerConfirmation,
+      },
       body: JSON.stringify({ decision, note: normalize(note, 1000) }),
     },
     7000,
