@@ -10,7 +10,7 @@ import {
 describe("Cognigrex OS shell model", () => {
   it("keeps Neo as operational head and Achilles as governance", () => {
     expect(AGENT_ROLES[0]?.floor).toBe("Neo");
-    expect(AGENT_ROLES.at(-1)?.floor).toBe("Achilles");
+    expect(AGENT_ROLES[AGENT_ROLES.length - 1]?.floor).toBe("Achilles");
   });
 
   it("preserves the complete intake-to-release workflow", () => {
