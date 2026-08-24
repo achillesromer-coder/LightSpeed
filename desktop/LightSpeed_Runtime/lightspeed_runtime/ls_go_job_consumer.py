@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
+import importlib
 import json
 import os
 from pathlib import Path
@@ -23,6 +24,7 @@ SAFE_ACTIONS = {
     "transport_diagnostic",
     "local_agent_cycle",
     "local_floor_wakeup",
+    "rfs_emff_sweep",
     "review_only",
 }
 COMPATIBILITY_ACTIONS = {
@@ -191,6 +193,43 @@ def resolve_action(command_id: str, params: dict[str, Any]) -> tuple[str | None,
     if action in SAFE_ACTIONS:
         return action, "typed_action"
     return None, "untyped_command_held"
+
+
+def execute_rfs_emff_sweep(
+    action_payload: dict[str, Any],
+    *,
+    command_id: str,
+    task_id: Any,
+    job_id: int,
+    shell_root: Path,
+    allow_heavy: bool = False,
+) -> dict[str, Any]:
+    """Dispatch through the executor-owned schema and existing task/job identity."""
+    if allow_heavy:
+        raise ValueError("rfs_emff_sweep transport does not permit heavy execution")
+    module = importlib.import_module("lightspeed_runtime.rfs_emff_sweep")
+    validator = getattr(module, "validate_sweep_request", None)
+    executor = getattr(module, "execute_sweep", None)
+    if not callable(validator) or not callable(executor):
+        raise RuntimeError("RFS/EMFF sweep validator or executor is unavailable")
+    normalized = validator(action_payload)
+    if not isinstance(normalized, dict):
+        raise RuntimeError("RFS/EMFF sweep validator returned an invalid contract")
+    result = executor(
+        normalized,
+        task_id=task_id,
+        job_id=job_id,
+        shell_root=shell_root,
+        allow_heavy=False,
+        command_id=command_id,
+    )
+    if not isinstance(result, dict):
+        raise RuntimeError("RFS/EMFF sweep executor returned an invalid result")
+    if result.get("drive_write_executed") is True:
+        raise RuntimeError("RFS/EMFF sweep executor attempted a Drive write")
+    if result.get("public_publish_authorized") is True or result.get("public_publish_executed") is True:
+        raise RuntimeError("RFS/EMFF sweep executor attempted public publication")
+    return result
 
 
 def _try_get_db(shell_root: Path):
@@ -445,6 +484,56 @@ class LSGoJobConsumer:
                 "summary": "Neo-supervised Cognigrex workflow returned durable per-floor and aggregate receipts.",
                 "workflow": workflow,
                 "next_action": "Achilles/ACR3 must review the aggregate and per-floor receipts before any canonical promotion or release.",
+            }
+        if action_type == "rfs_emff_sweep":
+            if str(job.get("z_context") or "") != "TheConstruct":
+                return {
+                    "status": "blocked",
+                    "action_type": action_type,
+                    "error": "typed rfs_emff_sweep must target TheConstruct",
+                    "next_action": "Submit a new validated v2 command targeting TheConstruct; do not rewrite this identity.",
+                }
+            if params.get("execution_mode") != "queue" or params.get("execute") is not True:
+                return {
+                    "status": "blocked",
+                    "action_type": action_type,
+                    "error": "typed rfs_emff_sweep requires queue execution mode",
+                    "next_action": "Submit a new validated queued command; do not infer execution authority.",
+                }
+            if params.get("allow_heavy") is not False:
+                return {
+                    "status": "blocked",
+                    "action_type": action_type,
+                    "error": "typed rfs_emff_sweep requires allow_heavy=false",
+                    "next_action": "Use the bounded local sweep contract; any heavy run requires a separate manual gate.",
+                }
+            action_payload = params.get("action_payload")
+            if not isinstance(action_payload, dict):
+                return {
+                    "status": "blocked",
+                    "action_type": action_type,
+                    "error": "typed rfs_emff_sweep requires a validated action_payload",
+                    "next_action": "Submit a new command identity with an executor-validated sweep request.",
+                }
+            sweep = execute_rfs_emff_sweep(
+                action_payload,
+                command_id=command_id,
+                task_id=job.get("task_id"),
+                job_id=int(job.get("id") or 0),
+                shell_root=self.shell_root,
+                allow_heavy=False,
+            )
+            successful = str(sweep.get("status") or "").casefold() in {"complete", "completed"}
+            return {
+                "status": "completed" if successful else "blocked",
+                "action_type": action_type,
+                "summary": "Bounded local RFS/EMFF parameter sweep returned through TheConstruct.",
+                "sweep": sweep,
+                "next_action": (
+                    "Review the local artifacts and evidence classes before any canonical or Drive promotion."
+                    if successful
+                    else "Resolve the executor validation or runtime gap against this same task/job identity."
+                ),
             }
         if action_type == "review_only":
             return {

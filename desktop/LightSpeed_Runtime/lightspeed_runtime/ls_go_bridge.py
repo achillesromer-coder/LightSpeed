@@ -47,6 +47,7 @@ ALLOWED_ACTIONS = {
     "cognigrex_workflow",
     "local_agent_cycle",
     "local_floor_wakeup",
+    "rfs_emff_sweep",
     "review_only",
     "transport_diagnostic",
 }
@@ -81,6 +82,7 @@ _QUEUE_TAIL_MAX_BYTES = 2 * 1024 * 1024
 _QUEUE_TAIL_MAX_LINE_BYTES = 256 * 1024
 _LEGACY_COMMAND_LOOKUP_LIMIT = 64
 _COMMAND_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,95}$")
+_ACTION_PAYLOAD_MAX_BYTES = 64 * 1024
 
 
 def utc_now_iso() -> str:
@@ -333,9 +335,68 @@ def _canonical_sha256(value: dict[str, Any]) -> str:
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
+def _load_rfs_emff_sweep_module():
+    """Load the executor-owned RFS/EMFF request schema lazily.
+
+    The transport must not carry a second allowlist that can drift from the
+    executor. Until the executor module and validator are installed, this
+    action therefore fails closed before any queue or database write.
+    """
+    return importlib.import_module("lightspeed_runtime.rfs_emff_sweep")
+
+
+def _canonical_json_clone(value: Any, *, maximum_bytes: int) -> Any:
+    try:
+        encoded = json.dumps(
+            value,
+            allow_nan=False,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(status_code=400, detail="action_payload must be finite JSON") from exc
+    if len(encoded) > maximum_bytes:
+        raise HTTPException(
+            status_code=400,
+            detail=f"action_payload exceeds {maximum_bytes} canonical JSON bytes",
+        )
+    return json.loads(encoded.decode("utf-8"))
+
+
+def _validated_rfs_emff_action_payload(value: Any) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise HTTPException(status_code=400, detail="rfs_emff_sweep requires an action_payload object")
+    candidate = _canonical_json_clone(value, maximum_bytes=_ACTION_PAYLOAD_MAX_BYTES)
+    try:
+        module = _load_rfs_emff_sweep_module()
+    except (ImportError, ModuleNotFoundError) as exc:
+        raise HTTPException(
+            status_code=503,
+            detail="RFS/EMFF sweep schema validator is unavailable",
+        ) from exc
+    validator = getattr(module, "validate_sweep_request", None)
+    if not callable(validator):
+        raise HTTPException(
+            status_code=503,
+            detail="RFS/EMFF sweep schema validator is unavailable",
+        )
+    try:
+        normalized = validator(candidate)
+    except (TypeError, ValueError) as exc:
+        detail = str(exc).strip() or "invalid RFS/EMFF sweep request"
+        raise HTTPException(status_code=400, detail=detail[:500]) from exc
+    if not isinstance(normalized, dict):
+        raise HTTPException(
+            status_code=503,
+            detail="RFS/EMFF sweep schema validator returned an invalid contract",
+        )
+    return _canonical_json_clone(normalized, maximum_bytes=_ACTION_PAYLOAD_MAX_BYTES)
+
+
 def _command_contract(payload: dict[str, Any]) -> dict[str, Any]:
     """Return the immutable LS GO command content, excluding transport timestamps."""
-    return {
+    contract = {
         "schema_version": str(payload.get("schema_version") or COMMAND_SCHEMA),
         "command_id": str(payload.get("command_id") or ""),
         "source": str(payload.get("source") or "LS GO"),
@@ -356,6 +417,9 @@ def _command_contract(payload: dict[str, Any]) -> dict[str, Any]:
         "prohibited_scope": str(payload.get("prohibited_scope") or ""),
         "requested_scope": str(payload.get("requested_scope") or ""),
     }
+    if "action_payload" in payload:
+        contract["action_payload"] = payload.get("action_payload")
+    return contract
 
 
 def _command_payload_sha256(payload: dict[str, Any]) -> str:
@@ -876,6 +940,11 @@ def _create_command_task(
             "oversight_floor": "Achilles",
             "execution_mode": accepted["execution_mode"],
             "action_type": accepted.get("action_type"),
+            **(
+                {"action_payload": accepted["action_payload"]}
+                if "action_payload" in accepted
+                else {}
+            ),
             "proof_required": True,
             "public_safe": True,
             "canonical_gate_id": accepted["canonical_gate_id"],
@@ -929,6 +998,11 @@ def _create_command_job(
             "execution_mode": accepted["execution_mode"],
             "oversight_floor": "Achilles",
             **({"action_type": accepted["action_type"]} if accepted.get("action_type") else {}),
+            **(
+                {"action_payload": accepted["action_payload"]}
+                if "action_payload" in accepted
+                else {}
+            ),
             "execute": accepted["execution_mode"] == "queue",
             "allow_heavy": False,
             "canonical_gate_id": accepted["canonical_gate_id"],
@@ -1463,6 +1537,29 @@ def create_app(root: Path | str) -> FastAPI:
             raise HTTPException(status_code=400, detail="Typed v2 command requires a registered action_type")
         if schema_version == LEGACY_COMMAND_SCHEMA and action_type:
             raise HTTPException(status_code=400, detail="Typed actions require the v2 command schema")
+        action_payload: dict[str, Any] | None = None
+        if action_type == "rfs_emff_sweep":
+            if target_floor != "TheConstruct":
+                raise HTTPException(
+                    status_code=400,
+                    detail="rfs_emff_sweep must target TheConstruct",
+                )
+            if execution_mode != "queue":
+                raise HTTPException(
+                    status_code=400,
+                    detail="rfs_emff_sweep requires queue execution mode",
+                )
+            if body.get("allow_heavy", False) is not False:
+                raise HTTPException(
+                    status_code=400,
+                    detail="rfs_emff_sweep requires allow_heavy=false",
+                )
+            action_payload = _validated_rfs_emff_action_payload(body.get("action_payload"))
+        elif "action_payload" in body:
+            raise HTTPException(
+                status_code=400,
+                detail="action_payload is only registered for rfs_emff_sweep",
+            )
         if body.get("oversight_floor") != "Achilles":
             raise HTTPException(status_code=400, detail="Achilles oversight is required")
         if body.get("proof_required") is not True or body.get("public_safe") is not True:
@@ -1487,6 +1584,7 @@ def create_app(root: Path | str) -> FastAPI:
             "priority": priority,
             "execution_mode": execution_mode,
             "action_type": action_type or None,
+            **({"action_payload": action_payload} if action_payload is not None else {}),
             "state": "review" if execution_mode == "review" else "queued",
             "proof_required": True,
             "public_safe": True,

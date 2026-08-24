@@ -117,6 +117,25 @@ def command_payload(**overrides):
     return payload
 
 
+def rfs_emff_action_payload(**overrides):
+    payload = {
+        "schema_version": "lightspeed-rfs-emff-sweep-request-v1",
+        "base_case": {
+            "rfs": {
+                "frequency_hz": 10.0,
+                "displacement_amplitude_m": 0.001,
+                "particle_diameter_m": 0.001,
+                "particle_density_kg_m3": 7800.0,
+            }
+        },
+        "axes": [
+            {"path": "rfs.frequency_hz", "values": [10.0, 20.0]},
+        ],
+    }
+    payload.update(overrides)
+    return payload
+
+
 def install_command_identity_schema(connection) -> None:
     connection.executescript(
         """
@@ -759,6 +778,128 @@ def test_typed_v2_cognigrex_workflow_reaches_durable_job_params(
     assert params["action_type"] == "cognigrex_workflow"
     assert params["execute"] is True
     assert params["allow_heavy"] is False
+
+
+def test_typed_rfs_emff_sweep_is_hashed_and_persisted_without_heavy_authority(
+    tmp_path, monkeypatch
+):
+    database = CommandFixtureDatabase(tmp_path / "typed-sweep.db")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (database, object()))
+    validated: list[dict] = []
+
+    def validate(payload):
+        validated.append(payload)
+        return payload
+
+    monkeypatch.setattr(
+        ls_go_bridge,
+        "_load_rfs_emff_sweep_module",
+        lambda: types.SimpleNamespace(validate_sweep_request=validate),
+    )
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    action_payload = rfs_emff_action_payload()
+    command = command_payload(
+        schema_version="lightspeed-go-command-v2",
+        command_id="LSGO-V2-RFS-EMFF-001",
+        action_type="rfs_emff_sweep",
+        action_payload=action_payload,
+        target_floor="TheConstruct",
+        execution_mode="queue",
+        authorised_scope="all floors; private local queue",
+        requested_scope="TheConstruct private local queue",
+    )
+
+    response = client.post("/api/v1/ls-go/commands", json=command)
+
+    assert response.status_code == 200, response.text
+    assert validated == [action_payload]
+    queue_row = json.loads(Path(response.json()["artifact_ref"]).read_text(encoding="utf-8"))
+    with database.get_connection() as connection:
+        task_metadata = json.loads(
+            connection.execute("SELECT metadata_json FROM tasks").fetchone()[0]
+        )
+        job_params = json.loads(connection.execute("SELECT params_json FROM jobs").fetchone()[0])
+    assert queue_row["action_payload"] == action_payload
+    assert task_metadata["action_payload"] == action_payload
+    assert job_params["action_payload"] == action_payload
+    assert job_params["allow_heavy"] is False
+    assert job_params["execute"] is True
+    assert response.json()["job"]["z_context"] == "TheConstruct"
+
+    changed = json.loads(json.dumps(command))
+    changed["action_payload"]["axes"][0]["values"] = [10.0, 30.0]
+    conflict = client.post("/api/v1/ls-go/commands", json=changed)
+    assert conflict.status_code == 409
+
+
+@pytest.mark.parametrize(
+    ("overrides", "detail"),
+    [
+        ({"target_floor": "Smith"}, "target TheConstruct"),
+        ({"execution_mode": "review"}, "queue execution mode"),
+        ({"allow_heavy": True}, "allow_heavy=false"),
+    ],
+)
+def test_typed_rfs_emff_sweep_rejects_transport_scope_drift(
+    tmp_path, monkeypatch, overrides, detail
+):
+    database = CommandFixtureDatabase(tmp_path / "typed-sweep.db")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (database, object()))
+    monkeypatch.setattr(
+        ls_go_bridge,
+        "_load_rfs_emff_sweep_module",
+        lambda: types.SimpleNamespace(validate_sweep_request=lambda payload: payload),
+    )
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    command_overrides = {
+        "schema_version": "lightspeed-go-command-v2",
+        "command_id": "LSGO-V2-RFS-EMFF-INVALID",
+        "action_type": "rfs_emff_sweep",
+        "action_payload": rfs_emff_action_payload(),
+        "target_floor": "TheConstruct",
+        "execution_mode": "queue",
+        "authorised_scope": "all floors; private local queue",
+        "requested_scope": "TheConstruct private local queue",
+    }
+    command_overrides.update(overrides)
+    command = command_payload(**command_overrides)
+
+    response = client.post("/api/v1/ls-go/commands", json=command)
+
+    assert response.status_code == 400
+    assert detail in response.json()["detail"]
+    assert not ls_go_bridge._queue_path(tmp_path).exists()
+
+
+def test_typed_rfs_emff_sweep_fails_closed_without_executor_validator(
+    tmp_path, monkeypatch
+):
+    database = CommandFixtureDatabase(tmp_path / "typed-sweep.db")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (database, object()))
+    monkeypatch.setattr(
+        ls_go_bridge,
+        "_load_rfs_emff_sweep_module",
+        lambda: (_ for _ in ()).throw(ModuleNotFoundError("not installed")),
+    )
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(
+            schema_version="lightspeed-go-command-v2",
+            command_id="LSGO-V2-RFS-EMFF-MISSING",
+            action_type="rfs_emff_sweep",
+            action_payload=rfs_emff_action_payload(),
+            target_floor="TheConstruct",
+            execution_mode="queue",
+            authorised_scope="all floors; private local queue",
+            requested_scope="TheConstruct private local queue",
+        ),
+    )
+
+    assert response.status_code == 503
+    assert "validator is unavailable" in response.json()["detail"]
+    assert not ls_go_bridge._queue_path(tmp_path).exists()
 
 
 def test_v2_command_requires_registered_action_type(tmp_path, monkeypatch):

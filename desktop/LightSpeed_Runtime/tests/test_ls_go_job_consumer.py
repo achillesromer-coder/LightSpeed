@@ -103,29 +103,26 @@ def configure_shell(root: Path) -> None:
     )
 
 
-def write_command(root: Path, command_id: str) -> None:
+def write_command(root: Path, command_id: str, **overrides) -> None:
     path = ls_go_job_consumer._queue_path(root)
     path.parent.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "schema_version": "lightspeed-go-command-v1",
+        "command_id": command_id,
+        "source": "LS GO",
+        "title": "Test transport",
+        "instruction": "Bounded diagnostic only.",
+        "target_floor": "Neo",
+        "oversight_floor": "Achilles",
+        "priority": "high",
+        "execution_mode": "queue",
+        "state": "queued",
+        "proof_required": True,
+        "public_safe": True,
+    }
+    payload.update(overrides)
     with path.open("a", encoding="utf-8") as stream:
-        stream.write(
-            json.dumps(
-                {
-                    "schema_version": "lightspeed-go-command-v1",
-                    "command_id": command_id,
-                    "source": "LS GO",
-                    "title": "Test transport",
-                    "instruction": "Bounded diagnostic only.",
-                    "target_floor": "Neo",
-                    "oversight_floor": "Achilles",
-                    "priority": "high",
-                    "execution_mode": "queue",
-                    "state": "queued",
-                    "proof_required": True,
-                    "public_safe": True,
-                }
-            )
-            + "\n"
-        )
+        stream.write(json.dumps(payload) + "\n")
 
 
 def test_consumer_closes_existing_go_task_0016_once(tmp_path: Path):
@@ -318,3 +315,150 @@ def test_typed_cognigrex_workflow_routes_to_supervisor(tmp_path: Path, monkeypat
     assert receipt["workflow"]["workflow_id"] == "cognigrex-test"
     assert seen["instruction"] == "Reconcile one bounded source and verify its receipt."
     assert seen["dry_run"] is True
+
+
+def test_typed_rfs_emff_sweep_reuses_job_identity_and_stays_local(
+    tmp_path: Path, monkeypatch
+):
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    action_payload = {
+        "schema_version": "lightspeed-rfs-emff-sweep-request-v1",
+        "base_case": {
+            "rfs": {
+                "frequency_hz": 10.0,
+                "displacement_amplitude_m": 0.001,
+                "particle_diameter_m": 0.001,
+                "particle_density_kg_m3": 7800.0,
+            }
+        },
+        "axes": [{"path": "rfs.frequency_hz", "values": [10.0, 20.0]}],
+    }
+    write_command(
+        shell,
+        "LSGO-RFS-EMFF-0300",
+        schema_version="lightspeed-go-command-v2",
+        action_type="rfs_emff_sweep",
+        action_payload=action_payload,
+        target_floor="TheConstruct",
+    )
+    db = configure_db(tmp_path / "lightspeed.db")
+    now = datetime.now(UTC).isoformat(timespec="seconds")
+    with sqlite3.connect(db.path) as conn:
+        conn.execute(
+            "INSERT INTO tasks (id, status, updated_at, metadata_json) VALUES (300, 'queued', ?, '{}')",
+            (now,),
+        )
+        conn.execute(
+            """
+            INSERT INTO jobs
+              (id, job_type, status, params_json, metadata_json, task_id, project_id, tool_key, z_context, created_at, updated_at)
+            VALUES
+              (301, 'ls_go_command', 'pending', ?, '{}', 300, 'LS-GO', 'ls_go_command', 'TheConstruct', ?, ?)
+            """,
+            (
+                json.dumps(
+                    {
+                        "command_id": "LSGO-RFS-EMFF-0300",
+                        "action_type": "rfs_emff_sweep",
+                        "action_payload": action_payload,
+                        "execution_mode": "queue",
+                        "execute": True,
+                        "allow_heavy": False,
+                    }
+                ),
+                now,
+                now,
+            ),
+        )
+        conn.commit()
+
+    seen = {}
+
+    def fake_sweep(payload, **kwargs):
+        seen["payload"] = payload
+        seen.update(kwargs)
+        return {
+            "status": "completed",
+            "idempotent_replay": False,
+            "manifest_path": str(tmp_path / "manifest.json"),
+            "drive_write_executed": False,
+            "public_publish_authorized": False,
+        }
+
+    monkeypatch.setattr(ls_go_job_consumer, "execute_rfs_emff_sweep", fake_sweep)
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    summary = consumer.process_once()
+
+    assert summary["results_written"] == 1
+    receipt = json.loads(
+        ls_go_job_consumer.result_file_path(shell, "LSGO-RFS-EMFF-0300").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert receipt["status"] == "completed"
+    assert receipt["action_type"] == "rfs_emff_sweep"
+    assert receipt["target_floor"] == "TheConstruct"
+    assert receipt["drive_write_executed"] is False
+    assert receipt["public_publish_authorized"] is False
+    assert seen == {
+        "payload": action_payload,
+        "command_id": "LSGO-RFS-EMFF-0300",
+        "task_id": 300,
+        "job_id": 301,
+        "shell_root": shell.absolute(),
+        "allow_heavy": False,
+    }
+    with sqlite3.connect(db.path) as conn:
+        job_status = conn.execute("SELECT status FROM jobs WHERE id = 301").fetchone()[0]
+        task_status = conn.execute("SELECT status FROM tasks WHERE id = 300").fetchone()[0]
+    assert job_status == "completed"
+    assert task_status == "completed"
+
+
+def test_rfs_emff_dispatch_uses_executor_validator_and_command_identity(
+    tmp_path: Path, monkeypatch
+):
+    payload = {
+        "schema_version": "lightspeed-rfs-emff-sweep-request-v1",
+        "base_case": {"rfs": {"frequency_hz": 10.0}},
+        "axes": [{"path": "rfs.frequency_hz", "values": [10.0]}],
+    }
+    seen = {}
+
+    def validate(value):
+        seen["validated"] = value
+        return {**value, "normalized": True}
+
+    def execute(value, **kwargs):
+        seen["executed"] = value
+        seen.update(kwargs)
+        return {"status": "completed", "drive_write_executed": False}
+
+    class ExecutorModule:
+        validate_sweep_request = staticmethod(validate)
+        execute_sweep = staticmethod(execute)
+
+    monkeypatch.setattr(
+        ls_go_job_consumer.importlib,
+        "import_module",
+        lambda name: ExecutorModule if name == "lightspeed_runtime.rfs_emff_sweep" else None,
+    )
+
+    result = ls_go_job_consumer.execute_rfs_emff_sweep(
+        payload,
+        command_id="LSGO-RFS-EMFF-DISPATCH",
+        task_id=400,
+        job_id=401,
+        shell_root=tmp_path,
+        allow_heavy=False,
+    )
+
+    assert result["status"] == "completed"
+    assert seen["validated"] == payload
+    assert seen["executed"]["normalized"] is True
+    assert seen["command_id"] == "LSGO-RFS-EMFF-DISPATCH"
+    assert seen["task_id"] == 400
+    assert seen["job_id"] == 401
+    assert seen["shell_root"] == tmp_path
+    assert seen["allow_heavy"] is False
