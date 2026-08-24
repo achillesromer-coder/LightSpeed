@@ -216,9 +216,9 @@
       "sha256": "6152357497504a8619b8c8d49bc203d8298a7aeb73a4384887ca35f5fcd2db34"
     },
     {
-      "bytes": 380609,
+      "bytes": 380355,
       "path": "Desktop_Hooks/LightSpeed/N.py",
-      "sha256": "fdb740534a60f0a1b1d8912fef16458c98b2edc064ee563217bcf6efe4d4e756"
+      "sha256": "66198393018afb6d9bfa71c92b05f76d709e3a4e340e69ac6e5badd407cac939"
     },
     {
       "bytes": 738,
@@ -281,9 +281,9 @@
       "sha256": "82b3835d993124274eb79400de6dcaf129c5e370cfed705fae3ba0e25ba36267"
     },
     {
-      "bytes": 1657,
+      "bytes": 3414,
       "path": "Desktop_Hooks/LightSpeed/tests/test_entrypoint_contract.py",
-      "sha256": "a356c1ad5adef36f08dfd74c10bf1cfd51eea322748562f12cb28a7530c3d1af"
+      "sha256": "e78965c92b6178bbca1e7c5b8da11068955d6adac2b3a90cd10bd502335990bd"
     },
     {
       "bytes": 4394,
@@ -381,9 +381,9 @@
       "sha256": "c52167133abe6845557b85939dad3313f6b963f955a2e145989a50c6819b933b"
     },
     {
-      "bytes": 2284,
+      "bytes": 2680,
       "path": "Desktop_Hooks/LightSpeed/tests/test_shell_routes.py",
-      "sha256": "b15cff802a11428192938b238d909b48344a56f9a335b5d008d4a63446a3e0e3"
+      "sha256": "7e3275555f95b4f549258cbe65eb0cd8377bf943fe4d3c5ae926f9a132c48470"
     },
     {
       "bytes": 17809,
@@ -921,9 +921,9 @@
       "sha256": "8f06d19ae166ba5d21fea7cd6bee342661b1c300a8959d241b365adb735eeaa1"
     },
     {
-      "bytes": 24968,
+      "bytes": 25085,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/it_shell.py",
-      "sha256": "18457268f9685ba9e7121ba51cbd5a13fd0de2b217172d36d0840a31fedad2f9"
+      "sha256": "7078491f4f3f0f9ef7c2a0162890ff1c1e427326c1fdca0d72f3928b0fe968ff"
     },
     {
       "bytes": 5447,
@@ -941,9 +941,9 @@
       "sha256": "91949f45ec63f91b11d0a32fd809902c53781c9186d9b0b9a2f7ea0b63263f16"
     },
     {
-      "bytes": 4189,
+      "bytes": 4452,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/shell_routes.py",
-      "sha256": "dca07ec01bb9a6d9da40685503c77ddddfb040cbb91a8584513d23bec5d2d745"
+      "sha256": "47a6b3e0d46b39627d2183ade9f64994e88666c2b53219ba191e3b6fb610784b"
     },
     {
       "bytes": 50388,
