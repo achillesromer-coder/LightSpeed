@@ -157,6 +157,40 @@ def test_bridge_persists_review_gated_command(tmp_path, monkeypatch):
     assert Path(body["artifact_ref"]).exists()
 
 
+def test_bridge_persists_typed_v2_cognigrex_workflow(tmp_path, monkeypatch):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(
+            schema_version="lightspeed-go-command-v2",
+            command_id="LSGO-V2-WORKFLOW-001",
+            action_type="cognigrex_workflow",
+            target_floor="Neo",
+            execution_mode="queue",
+        ),
+    )
+
+    assert response.status_code == 200
+    row = json.loads(Path(response.json()["artifact_ref"]).read_text(encoding="utf-8").splitlines()[0])
+    assert row["schema_version"] == "lightspeed-go-command-v2"
+    assert row["action_type"] == "cognigrex_workflow"
+
+
+def test_bridge_rejects_untyped_v2_command(tmp_path, monkeypatch):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(schema_version="lightspeed-go-command-v2"),
+    )
+
+    assert response.status_code == 400
+    assert "registered action_type" in response.json()["detail"]
+
+
 def test_bridge_rejects_command_without_achilles_oversight(tmp_path, monkeypatch):
     monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
     client = TestClient(ls_go_bridge.create_app(tmp_path))

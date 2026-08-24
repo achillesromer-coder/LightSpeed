@@ -1,4 +1,4 @@
-export const COMMAND_SCHEMA = "lightspeed-go-command-v1";
+export const COMMAND_SCHEMA = "lightspeed-go-command-v2";
 export const DEFAULT_DESKTOP_ORIGIN = "http://127.0.0.1:8765";
 
 export const FLOORS = [
@@ -16,6 +16,7 @@ export const FLOORS = [
 export type Floor = (typeof FLOORS)[number];
 export type Priority = "critical" | "high" | "normal" | "low";
 export type ExecutionMode = "review" | "queue";
+export type CommandAction = "cognigrex_workflow";
 export type ReviewDecision = "approve" | "hold" | "reject";
 export type RepresentationDecision =
   | "approve"
@@ -36,6 +37,7 @@ export interface CommandEnvelope {
   oversight_floor: "Achilles";
   priority: Priority;
   execution_mode: ExecutionMode;
+  action_type: CommandAction;
   proof_required: true;
   public_safe: true;
 }
@@ -46,6 +48,7 @@ export interface CommandInput {
   targetFloor?: Floor;
   priority?: Priority;
   executionMode?: ExecutionMode;
+  actionType?: CommandAction;
 }
 
 export interface ProjectRecord {
@@ -242,6 +245,7 @@ export const createCommandEnvelope = (input: CommandInput): CommandEnvelope => {
     oversight_floor: "Achilles",
     priority: input.priority ?? "normal",
     execution_mode: input.executionMode ?? "review",
+    action_type: input.actionType ?? "cognigrex_workflow",
     proof_required: true,
     public_safe: true,
   };

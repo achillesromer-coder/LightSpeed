@@ -245,3 +245,63 @@ def test_typed_review_only_job_executes_without_source_mutation(tmp_path: Path):
     assert receipt["action_type"] == "review_only"
     assert receipt["action_source"] == "typed_action"
     assert receipt["public_publish_authorized"] is False
+
+
+def test_typed_cognigrex_workflow_routes_to_supervisor(tmp_path: Path, monkeypatch):
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    write_command(shell, "GO-TASK-0200")
+    db = configure_db(tmp_path / "lightspeed.db")
+    now = datetime.now(UTC).isoformat(timespec="seconds")
+    with sqlite3.connect(db.path) as conn:
+        conn.execute(
+            "INSERT INTO tasks (id, status, updated_at, metadata_json) VALUES (200, 'queued', ?, '{}')",
+            (now,),
+        )
+        conn.execute(
+            """
+            INSERT INTO jobs
+              (id, job_type, status, params_json, metadata_json, task_id, project_id, tool_key, z_context, created_at, updated_at)
+            VALUES
+              (201, 'ls_go_command', 'pending', ?, '{}', 200, 'LS-GO', 'ls_go_command', 'Neo', ?, ?)
+            """,
+            (
+                json.dumps(
+                    {
+                        "command_id": "GO-TASK-0200",
+                        "action_type": "cognigrex_workflow",
+                        "instruction": "Reconcile one bounded source and verify its receipt.",
+                        "execute": False,
+                    }
+                ),
+                now,
+                now,
+            ),
+        )
+        conn.commit()
+
+    seen = {}
+
+    def fake_supervisor(instruction, **kwargs):
+        seen["instruction"] = instruction
+        seen.update(kwargs)
+        return {
+            "status": "complete",
+            "complete_workflow": True,
+            "workflow_id": "cognigrex-test",
+            "floors": [],
+        }
+
+    monkeypatch.setattr(ls_go_job_consumer, "run_supervised_workflow", fake_supervisor)
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    summary = consumer.process_once()
+
+    assert summary["results_written"] == 1
+    receipt = json.loads(
+        ls_go_job_consumer.result_file_path(shell, "GO-TASK-0200").read_text(encoding="utf-8")
+    )
+    assert receipt["status"] == "completed"
+    assert receipt["action_type"] == "cognigrex_workflow"
+    assert receipt["workflow"]["workflow_id"] == "cognigrex-test"
+    assert seen["instruction"] == "Reconcile one bounded source and verify its receipt."
+    assert seen["dry_run"] is True

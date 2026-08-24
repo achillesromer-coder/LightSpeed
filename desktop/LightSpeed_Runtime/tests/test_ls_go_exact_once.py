@@ -112,3 +112,24 @@ def test_duplicate_request_does_not_create_second_database_task_or_job(tmp_path,
     assert task_count == 1
     assert len(fake_db.jobs) == 1
     assert len(queue_rows(tmp_path)) == 1
+
+
+def test_typed_v2_action_reaches_durable_job_params(tmp_path, monkeypatch):
+    fake_db = FakeDb()
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (fake_db, object()))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(
+            schema_version="lightspeed-go-command-v2",
+            command_id="LSGO-V2-EXACT-001",
+            action_type="cognigrex_workflow",
+            execution_mode="queue",
+            target_floor="Neo",
+        ),
+    )
+
+    assert response.status_code == 200
+    assert fake_db.jobs[0]["params"]["action_type"] == "cognigrex_workflow"
+    assert fake_db.jobs[0]["params"]["execute"] is True

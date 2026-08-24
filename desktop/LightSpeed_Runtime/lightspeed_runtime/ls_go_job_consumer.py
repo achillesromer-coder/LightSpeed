@@ -11,6 +11,7 @@ from typing import Any
 
 from lightspeed_runtime.local_agent_cycle import run_cycle
 from lightspeed_runtime.local_floor_runner import run_floor
+from lightspeed_runtime.cognigrex_supervisor import run_supervised_workflow
 from lightspeed_runtime.storage_paths import neo_actions_root
 
 
@@ -18,6 +19,7 @@ CONSUMER_SCHEMA = "lightspeed-ls-go-job-consumer-v1"
 RESULT_SCHEMA = "lightspeed-go-local-result-v1"
 POLL_SECONDS = 1.0
 SAFE_ACTIONS = {
+    "cognigrex_workflow",
     "transport_diagnostic",
     "local_agent_cycle",
     "local_floor_wakeup",
@@ -416,6 +418,32 @@ class LSGoJobConsumer:
                 envelope=envelope,
                 envelope_count=envelope_count,
             )
+        if action_type == "cognigrex_workflow":
+            instruction = str(params.get("instruction") or "").strip()
+            if not instruction:
+                return {
+                    "status": "blocked",
+                    "action_type": action_type,
+                    "error": "typed cognigrex_workflow requires a bounded instruction",
+                    "next_action": "Supply the instruction through a new v2 command identity; do not infer it from free-form metadata.",
+                }
+            workflow = run_supervised_workflow(
+                instruction,
+                task_id=str(job.get("task_id") or command_id),
+                project_id=str(job.get("project_id") or "LS-GO"),
+                dry_run=not bool(params.get("execute", False)),
+                allow_heavy=bool(params.get("allow_heavy", False)),
+                receipt_target=str(params.get("receipt_target") or "neo"),
+                stop_on_failure=bool(params.get("stop_on_failure", True)),
+            )
+            successful = bool(workflow.get("complete_workflow")) and workflow.get("status") == "complete"
+            return {
+                "status": "completed" if successful else "blocked",
+                "action_type": action_type,
+                "summary": "Neo-supervised Cognigrex workflow returned durable per-floor and aggregate receipts.",
+                "workflow": workflow,
+                "next_action": "Achilles/ACR3 must review the aggregate and per-floor receipts before any canonical promotion or release.",
+            }
         if action_type == "review_only":
             return {
                 "status": "completed",

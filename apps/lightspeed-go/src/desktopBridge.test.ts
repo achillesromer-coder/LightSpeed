@@ -20,6 +20,7 @@ describe("LS GO desktop command routing", () => {
     expect(command.oversight_floor).toBe("Achilles");
     expect(command.proof_required).toBe(true);
     expect(command.public_safe).toBe(true);
+    expect(command.action_type).toBe("cognigrex_workflow");
     expect(command.target_floor).toBe("Architect");
   });
 });

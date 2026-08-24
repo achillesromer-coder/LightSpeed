@@ -24,7 +24,9 @@ from lightspeed_runtime.representation_edge import (
 )
 from lightspeed_runtime.storage_paths import neo_actions_root
 
-COMMAND_SCHEMA = "lightspeed-go-command-v1"
+LEGACY_COMMAND_SCHEMA = "lightspeed-go-command-v1"
+COMMAND_SCHEMA = "lightspeed-go-command-v2"
+COMMAND_SCHEMAS = {LEGACY_COMMAND_SCHEMA, COMMAND_SCHEMA}
 ALLOWED_FLOORS = {
     "Achilles",
     "Neo",
@@ -38,6 +40,13 @@ ALLOWED_FLOORS = {
 }
 ALLOWED_PRIORITIES = {"critical", "high", "normal", "low"}
 ALLOWED_MODES = {"review", "queue"}
+ALLOWED_ACTIONS = {
+    "cognigrex_workflow",
+    "local_agent_cycle",
+    "local_floor_wakeup",
+    "review_only",
+    "transport_diagnostic",
+}
 DEFAULT_ALLOWED_ORIGINS = [
     "https://lightspeed-go.nathaniel-b.chatgpt.site",
     "http://127.0.0.1:5173",
@@ -56,6 +65,7 @@ COMMAND_IDENTITY_FIELDS = (
     "oversight_floor",
     "priority",
     "execution_mode",
+    "action_type",
     "state",
     "proof_required",
     "public_safe",
@@ -496,7 +506,8 @@ def create_app(root: Path | str) -> FastAPI:
 
     @app.post("/api/v1/ls-go/commands")
     async def accept_command(body: dict[str, Any]):
-        if body.get("schema_version") != COMMAND_SCHEMA:
+        schema_version = _bounded(body.get("schema_version"), maximum=64, required=True)
+        if schema_version not in COMMAND_SCHEMAS:
             raise HTTPException(status_code=400, detail="Unsupported command schema")
 
         command_id = _bounded(body.get("command_id"), maximum=96, required=True)
@@ -505,6 +516,7 @@ def create_app(root: Path | str) -> FastAPI:
         target_floor = _bounded(body.get("target_floor"), maximum=40, required=True)
         priority = _bounded(body.get("priority") or "normal", maximum=16)
         execution_mode = _bounded(body.get("execution_mode") or "review", maximum=16)
+        action_type = _bounded(body.get("action_type"), maximum=64)
 
         if target_floor not in ALLOWED_FLOORS:
             raise HTTPException(status_code=400, detail="Unsupported target floor")
@@ -512,6 +524,10 @@ def create_app(root: Path | str) -> FastAPI:
             raise HTTPException(status_code=400, detail="Unsupported priority")
         if execution_mode not in ALLOWED_MODES:
             raise HTTPException(status_code=400, detail="Unsupported execution mode")
+        if schema_version == COMMAND_SCHEMA and action_type not in ALLOWED_ACTIONS:
+            raise HTTPException(status_code=400, detail="Typed v2 command requires a registered action_type")
+        if schema_version == LEGACY_COMMAND_SCHEMA and action_type:
+            raise HTTPException(status_code=400, detail="Typed actions require the v2 command schema")
         if body.get("oversight_floor") != "Achilles":
             raise HTTPException(status_code=400, detail="Achilles oversight is required")
         if body.get("proof_required") is not True or body.get("public_safe") is not True:
@@ -519,7 +535,7 @@ def create_app(root: Path | str) -> FastAPI:
 
         state = "review" if execution_mode == "review" else "queued"
         candidate = {
-            "schema_version": COMMAND_SCHEMA,
+            "schema_version": schema_version,
             "command_id": command_id,
             "source": "LS GO",
             "title": title,
@@ -528,6 +544,7 @@ def create_app(root: Path | str) -> FastAPI:
             "oversight_floor": "Achilles",
             "priority": priority,
             "execution_mode": execution_mode,
+            "action_type": action_type or None,
             "state": state,
             "proof_required": True,
             "public_safe": True,
@@ -565,12 +582,13 @@ def create_app(root: Path | str) -> FastAPI:
                     now = accepted["accepted_utc"]
                     metadata_json = json.dumps(
                         {
-                            "schema_version": COMMAND_SCHEMA,
+                            "schema_version": schema_version,
                             "command_id": command_id,
                             "source": "LS GO",
                             "target_floor": target_floor,
                             "oversight_floor": "Achilles",
                             "execution_mode": execution_mode,
+                            "action_type": action_type or None,
                             "proof_required": True,
                             "public_safe": True,
                             "artifact_ref": artifact_ref,
@@ -594,6 +612,9 @@ def create_app(root: Path | str) -> FastAPI:
                             "instruction": instruction,
                             "execution_mode": execution_mode,
                             "oversight_floor": "Achilles",
+                            **({"action_type": action_type} if action_type else {}),
+                            "execute": execution_mode == "queue",
+                            "allow_heavy": False,
                         },
                         task_id=task_id,
                         project_id="LS-GO",
