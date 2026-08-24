@@ -124,7 +124,13 @@ def run_floor(
     selection = select_floor(contract, floor=floor, order=order)
     floor_row = selection.floor
     conn = floor_row.get("ollama_connection") or {}
-    endpoint = str(conn.get("endpoint") or (contract.get("ollama") or {}).get("endpoint") or "http://localhost:11434")
+    endpoint = _canonical_loopback_endpoint(
+        str(
+            conn.get("endpoint")
+            or (contract.get("ollama") or {}).get("endpoint")
+            or "http://127.0.0.1:11434"
+        )
+    )
     model = str(conn.get("model") or "")
     request_body = build_ollama_request(contract, floor_row, num_predict=num_predict)
     receipt_path = resolve_receipt_path(contract, floor_row, receipt_target=receipt_target)
@@ -221,6 +227,17 @@ def build_ollama_request(
         "keep_alive": 0,
         "options": {"num_predict": bounded_num_predict},
     }
+
+
+def _canonical_loopback_endpoint(endpoint: str) -> str:
+    """Route local model work to the model-bearing IPv4 singleton."""
+    parsed = urlparse(endpoint)
+    if parsed.hostname != "localhost":
+        return endpoint
+    host = "127.0.0.1"
+    if parsed.port is not None:
+        host = f"{host}:{parsed.port}"
+    return parsed._replace(netloc=host).geturl()
 
 
 def build_floor_prompt(contract: dict[str, Any], floor: dict[str, Any]) -> str:

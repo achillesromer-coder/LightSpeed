@@ -13,6 +13,19 @@ sys.path.insert(0, str(RUNTIME_ROOT))
 from lightspeed_runtime import ls_go_job_consumer
 
 
+def test_consumer_does_not_resolve_operator_root(tmp_path: Path, monkeypatch):
+    shell = tmp_path / "App"
+    shell.mkdir()
+
+    def unexpected_resolve(*_args, **_kwargs):
+        raise AssertionError("operator root must remain lexical")
+
+    monkeypatch.setattr(Path, "resolve", unexpected_resolve)
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=object())
+
+    assert consumer.shell_root == shell.absolute()
+
+
 class SQLiteDB:
     def __init__(self, path: Path) -> None:
         self.path = path

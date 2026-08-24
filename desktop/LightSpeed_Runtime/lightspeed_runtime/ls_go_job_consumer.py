@@ -217,7 +217,9 @@ class LSGoJobConsumer:
     """
 
     def __init__(self, shell_root: Path | str, *, db: Any | None = None) -> None:
-        self.shell_root = Path(shell_root).resolve()
+        # Keep the canonical D:\LightSpeed operator namespace in durable
+        # receipts instead of resolving the App junction to its C: backing.
+        self.shell_root = Path(shell_root).absolute()
         self.db = db if db is not None else _try_get_db(self.shell_root)
         self._stop = threading.Event()
         self._job_columns_cache: set[str] | None = None

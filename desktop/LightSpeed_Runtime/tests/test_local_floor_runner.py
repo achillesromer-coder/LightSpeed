@@ -9,6 +9,7 @@ if str(RUNTIME_ROOT) not in sys.path:
     sys.path.insert(0, str(RUNTIME_ROOT))
 
 from lightspeed_runtime.local_floor_runner import (
+    _canonical_loopback_endpoint,
     LocalFloorRunnerError,
     build_ollama_request,
     build_resource_preflight,
@@ -151,7 +152,7 @@ def test_execute_uses_mocked_http_and_writes_floor_receipt(tmp_path: Path) -> No
 
     assert receipt["status"] == "completed"
     assert len(calls) == 1
-    assert calls[0][0] == "http://localhost:11434/api/generate"
+    assert calls[0][0] == "http://127.0.0.1:11434/api/generate"
     assert calls[0][1]["model"] == "gemma3:27b"
     assert calls[0][1]["stream"] is False
     assert calls[0][1]["think"] is False
@@ -271,3 +272,14 @@ def test_stale_exported_shell_route_is_overridden_by_agent_home_authority(tmp_pa
     assert receipt_path.is_relative_to(canonical_app)
     assert receipt_path.exists()
     assert not (stale_shell / "Z Axis" / "Z+2_Neo" / "data" / "temp_shells" / "outputs" / receipt_path.name).exists()
+
+
+def test_canonical_loopback_endpoint_preserves_remote_hosts() -> None:
+    assert (
+        _canonical_loopback_endpoint("http://localhost:11434")
+        == "http://127.0.0.1:11434"
+    )
+    assert (
+        _canonical_loopback_endpoint("https://models.example:11434")
+        == "https://models.example:11434"
+    )
