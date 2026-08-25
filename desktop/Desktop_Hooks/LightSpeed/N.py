@@ -2981,8 +2981,7 @@ class LightSpeedUnified(tk.Tk):
         """
         Host hook for data-defined actions/simulations (simulation_def/action_def).
 
-        Invokes TheConstruct's floor API (which stages outputs into Z Direct) and
-        returns the raw result.
+        Invokes the canonical TheConstruct floor API and returns the raw result.
         """
         sim_type = str(sim_type or "").strip()
         if not sim_type:
@@ -2991,7 +2990,7 @@ class LightSpeedUnified(tk.Tk):
         try:
             from importlib.util import spec_from_file_location, module_from_spec
 
-            tc_path = (Path(__file__).resolve().parent / "Z Axis" / "Z0_TheConstruct" / "TheConstruct.py").resolve()
+            tc_path = (Path(__file__).resolve().parent / "Z Axis" / "TheConstruct.py").resolve()
             if not tc_path.exists():
                 raise FileNotFoundError(tc_path)
             spec = spec_from_file_location("lightspeed_construct_floor", str(tc_path))

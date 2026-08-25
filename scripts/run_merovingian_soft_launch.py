@@ -57,7 +57,11 @@ def _shell_candidates(explicit: Path | None = None) -> list[Path]:
 def _select(candidates: list[Path], marker: Path, label: str) -> Path:
     for candidate in candidates:
         if (candidate / marker).is_file():
-            return candidate.resolve()
+            # Preserve the selected operator namespace spelling. The production
+            # D:\LightSpeed App/Core roots are governed junctions; resolving them
+            # rewrites receipts to their C: targets even though both paths name
+            # the same object.
+            return candidate.absolute()
     raise FileNotFoundError(f"No {label} root found. Checked: {', '.join(str(item) for item in candidates)}")
 
 

@@ -704,6 +704,24 @@ def build(*args, **kwargs):
     return create_gui(*args, **kwargs)
 
 
+def run_simulation(sim_type: str, **params):
+    """Run a bounded simulation exposed by the canonical floor entrypoint."""
+    simulation = str(sim_type or "").strip().lower()
+    if not simulation:
+        raise ValueError("sim_type is required")
+
+    if simulation == "raphael":
+        from core.services.physics_tools import calculate_raphael_equations  # type: ignore
+
+        return calculate_raphael_equations(**params)
+    if simulation == "bigbang":
+        from core.services.physics_tools import generate_big_bang_simulation  # type: ignore
+
+        return generate_big_bang_simulation(**params)
+
+    raise ValueError(f"Unknown simulation type: {simulation}")
+
+
 # ---------------------------------------------------------------------------
 # Floor boot hook (used by FloorLoader)
 # ---------------------------------------------------------------------------
