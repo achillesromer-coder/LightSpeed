@@ -18,6 +18,14 @@ from fastapi.responses import JSONResponse
 import uvicorn
 
 from lightspeed_runtime.project_artifact_store import stage_project_artifacts
+from lightspeed_runtime.project_file_browser import (
+    ProjectFileBlocked,
+    ProjectFileNotFound,
+    ProjectFilePathRejected,
+    ProjectFileUnavailable,
+    list_project_files,
+    open_project_file,
+)
 from lightspeed_runtime.project_pipeline import ProjectPipeline, ReviewDecisionConflict
 from lightspeed_runtime.representation_edge import (
     RepresentationEdgeDisabled,
@@ -1340,6 +1348,38 @@ def create_app(root: Path | str) -> FastAPI:
                 "cleanup_summary": registry.get("cleanup_summary") or {},
             }
         )
+
+    @app.get("/api/v1/projects/{project_id}/files")
+    async def list_project_file_metadata(project_id: str, limit: int = 200):
+        try:
+            result = list_project_files(
+                project_pipeline,
+                project_id=_bounded(project_id, maximum=96, required=True),
+                limit=max(1, min(int(limit), 500)),
+            )
+        except ProjectFileNotFound as exc:
+            raise HTTPException(status_code=404, detail=str(exc))
+        except ProjectFileUnavailable as exc:
+            raise HTTPException(status_code=503, detail=str(exc))
+        return JSONResponse(result)
+
+    @app.get("/api/v1/projects/{project_id}/files/{relative_path:path}")
+    async def open_project_file_result(project_id: str, relative_path: str):
+        try:
+            result = open_project_file(
+                project_pipeline,
+                project_id=_bounded(project_id, maximum=96, required=True),
+                relative_path=relative_path,
+            )
+        except ProjectFileNotFound as exc:
+            raise HTTPException(status_code=404, detail=str(exc))
+        except ProjectFileBlocked as exc:
+            raise HTTPException(status_code=403, detail=str(exc))
+        except ProjectFilePathRejected as exc:
+            raise HTTPException(status_code=400, detail=str(exc))
+        except ProjectFileUnavailable as exc:
+            raise HTTPException(status_code=503, detail=str(exc))
+        return JSONResponse(result)
 
     @app.get("/api/v1/reviews")
     async def list_reviews(limit: int = 50):

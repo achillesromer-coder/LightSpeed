@@ -84,6 +84,48 @@ export interface ProjectRecord {
   metadata?: Record<string, unknown>;
 }
 
+export interface ProjectFileRecord {
+  relative_path: string;
+  name: string;
+  extension: string;
+  mime_type: string;
+  kind: "text" | "binary_or_unknown";
+  size_bytes: number;
+  modified_utc?: string | null;
+  preview_supported: boolean;
+}
+
+export interface ProjectFilesResponse {
+  schema_version: "lightspeed-project-files-v1";
+  state: "available" | "empty" | "restricted";
+  project: Pick<ProjectRecord, "project_id" | "name" | "authority" | "condition">;
+  files: ProjectFileRecord[];
+  summary: {
+    visible_file_count: number;
+    blocked_file_count: number;
+    skipped_file_count: number;
+    scanned_file_count: number;
+    scan_truncated: boolean;
+    limit: number;
+  };
+  boundary: string;
+}
+
+export interface ProjectFileOpenResult {
+  schema_version: "lightspeed-project-file-open-result-v1";
+  state: "opened_read_only";
+  project: Pick<ProjectRecord, "project_id" | "name" | "authority">;
+  file: ProjectFileRecord;
+  preview: {
+    state: "available" | "empty" | "metadata_only" | "metadata_only_non_utf8";
+    encoding: "utf-8" | null;
+    truncated: boolean;
+    text: string | null;
+  };
+  source_mutated: false;
+  boundary: string;
+}
+
 export interface ReviewRecord {
   review_id: string;
   created_utc?: string;
@@ -97,6 +139,16 @@ export interface ReviewRecord {
   drive_receipt_path?: string;
   drive_writeback_mode?: string;
   decision?: Record<string, unknown>;
+}
+
+export interface ReviewDecisionResponse {
+  accepted?: boolean;
+  receipt?: {
+    review_id?: string;
+    decision?: string;
+    drive_writeback_mode?: string;
+    decision_receipt_state?: string;
+  };
 }
 
 export interface DesktopStatus {
@@ -363,6 +415,34 @@ export const listDesktopProjects = async (origin = DEFAULT_DESKTOP_ORIGIN): Prom
   };
 };
 
+export const projectFileApiPath = (projectId: string, relativePath?: string): string => {
+  const project = encodeURIComponent(projectId);
+  if (relativePath === undefined) return `/api/v1/projects/${project}/files`;
+  const path = relativePath.split("/").map((part) => encodeURIComponent(part)).join("/");
+  return `/api/v1/projects/${project}/files/${path}`;
+};
+
+export const listDesktopProjectFiles = async (
+  projectId: string,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<ProjectFilesResponse> =>
+  withTimeout<ProjectFilesResponse>(
+    `${origin}${projectFileApiPath(projectId)}?limit=200`,
+    { method: "GET" },
+    15000,
+  );
+
+export const openDesktopProjectFile = async (
+  projectId: string,
+  relativePath: string,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<ProjectFileOpenResult> =>
+  withTimeout<ProjectFileOpenResult>(
+    `${origin}${projectFileApiPath(projectId, relativePath)}`,
+    { method: "GET" },
+    10000,
+  );
+
 export const listDesktopReviews = async (
   origin = DEFAULT_DESKTOP_ORIGIN,
   limit = 50,
@@ -381,8 +461,8 @@ export const decideDesktopReview = async (
   note = "",
   ownerConfirmation = "",
   origin = DEFAULT_DESKTOP_ORIGIN,
-): Promise<Record<string, unknown>> =>
-  withTimeout<Record<string, unknown>>(
+): Promise<ReviewDecisionResponse> =>
+  withTimeout<ReviewDecisionResponse>(
     `${origin}/api/v1/reviews/${encodeURIComponent(reviewId)}/decision`,
     {
       method: "POST",
@@ -394,6 +474,21 @@ export const decideDesktopReview = async (
     },
     7000,
   );
+
+export const reviewDecisionOutcomeMessage = (
+  reviewId: string,
+  decision: ReviewDecision,
+  response: ReviewDecisionResponse,
+): string => {
+  const mode = response.receipt?.drive_writeback_mode;
+  if (mode === "owner_approved_exact_drive_target") {
+    return `${reviewId} marked ${decision}. Owner-approved Drive decision receipt written by Desktop.`;
+  }
+  if (mode === "local_outbox_pending_drive_sync") {
+    return `${reviewId} marked ${decision}. Local outbox receipt staged; Drive sync remains pending.`;
+  }
+  return `${reviewId} marked ${decision}. Decision receipt recorded; destination requires verification.`;
+};
 
 export const listRepresentationGraphs = async (
   origin = DEFAULT_DESKTOP_ORIGIN,

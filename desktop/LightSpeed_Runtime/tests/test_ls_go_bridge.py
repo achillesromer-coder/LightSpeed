@@ -1190,6 +1190,158 @@ def test_bridge_rejects_unknown_project_and_skips_outside_path(tmp_path, monkeyp
     assert outside.read_text(encoding="utf-8") == "outside"
 
 
+def test_bridge_lists_and_opens_bounded_project_files_read_only(tmp_path, monkeypatch):
+    project_root = configure_shell(tmp_path)
+    nested = project_root / "results" / "sweep.json"
+    nested.parent.mkdir()
+    nested.write_text('{"result":"derived"}\n', encoding="utf-8")
+    binary = project_root / "model.glb"
+    binary.write_bytes(b"glTF\x00bounded")
+    source_before = {
+        path.relative_to(project_root).as_posix(): (path.read_bytes(), path.stat().st_mtime_ns)
+        for path in project_root.rglob("*")
+        if path.is_file()
+    }
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    project = client.get("/api/v1/projects").json()["projects"][0]
+    listing = client.get(f"/api/v1/projects/{project['project_id']}/files?limit=20")
+
+    assert listing.status_code == 200, listing.text
+    body = listing.json()
+    assert body["schema_version"] == "lightspeed-project-files-v1"
+    assert body["state"] == "available"
+    assert body["project"] == {
+        "project_id": project["project_id"],
+        "name": "Project Alpha",
+        "authority": "canonical",
+        "condition": "active",
+    }
+    relative_paths = {item["relative_path"] for item in body["files"]}
+    assert relative_paths == {"README.md", "model.glb", "receipt.json", "results/sweep.json"}
+    assert body["summary"]["blocked_file_count"] == 1
+    assert ".env" not in json.dumps(body)
+    assert str(project_root) not in json.dumps(body)
+
+    opened = client.get(
+        f"/api/v1/projects/{project['project_id']}/files/results/sweep.json"
+    )
+    assert opened.status_code == 200, opened.text
+    result = opened.json()
+    assert result["schema_version"] == "lightspeed-project-file-open-result-v1"
+    assert result["state"] == "opened_read_only"
+    assert result["file"]["relative_path"] == "results/sweep.json"
+    assert result["preview"] == {
+        "state": "available",
+        "encoding": "utf-8",
+        "truncated": False,
+        "text": nested.read_bytes().decode("utf-8"),
+    }
+    assert result["source_mutated"] is False
+    assert str(project_root) not in json.dumps(result)
+
+    binary_result = client.get(
+        f"/api/v1/projects/{project['project_id']}/files/model.glb"
+    )
+    assert binary_result.status_code == 200
+    assert binary_result.json()["preview"]["state"] == "metadata_only"
+    assert binary_result.json()["preview"]["text"] is None
+
+    source_after = {
+        path.relative_to(project_root).as_posix(): (path.read_bytes(), path.stat().st_mtime_ns)
+        for path in project_root.rglob("*")
+        if path.is_file()
+    }
+    assert source_after == source_before
+
+
+def test_bridge_project_file_access_fails_closed_on_unknown_blocked_and_traversal(
+    tmp_path, monkeypatch
+):
+    configure_shell(tmp_path)
+    outside = tmp_path / "outside.txt"
+    outside.write_text("not-authorised", encoding="utf-8")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    project = client.get("/api/v1/projects").json()["projects"][0]
+
+    unknown_project = client.get("/api/v1/projects/not-known/files")
+    blocked_file = client.get(
+        f"/api/v1/projects/{project['project_id']}/files/.env"
+    )
+    missing_file = client.get(
+        f"/api/v1/projects/{project['project_id']}/files/missing.txt"
+    )
+
+    assert unknown_project.status_code == 404
+    assert blocked_file.status_code == 403
+    assert missing_file.status_code == 404
+    with pytest.raises(ls_go_bridge.ProjectFilePathRejected, match="Traversal"):
+        ls_go_bridge.open_project_file(
+            ProjectPipeline(tmp_path),
+            project_id=project["project_id"],
+            relative_path="../outside.txt",
+        )
+    with pytest.raises(ls_go_bridge.ProjectFilePathRejected, match="Absolute"):
+        ls_go_bridge.open_project_file(
+            ProjectPipeline(tmp_path),
+            project_id=project["project_id"],
+            relative_path=str(outside),
+        )
+    assert outside.read_text(encoding="utf-8") == "not-authorised"
+
+
+def test_bridge_project_file_listing_reports_empty_and_preview_reports_empty(
+    tmp_path, monkeypatch
+):
+    configure_shell(tmp_path)
+    empty_project = (
+        tmp_path / "Z Axis" / "Z+1_Architect" / "projects" / "Empty Project"
+    )
+    empty_project.mkdir()
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    projects = client.get("/api/v1/projects").json()["projects"]
+    project = next(item for item in projects if item["name"] == "Empty Project")
+
+    listing = client.get(f"/api/v1/projects/{project['project_id']}/files")
+    zero_file = empty_project / "empty.txt"
+    zero_file.touch()
+    opened = client.get(
+        f"/api/v1/projects/{project['project_id']}/files/empty.txt"
+    )
+
+    assert listing.status_code == 200
+    assert listing.json()["state"] == "empty"
+    assert listing.json()["files"] == []
+    assert opened.status_code == 200
+    assert opened.json()["preview"] == {
+        "state": "empty",
+        "encoding": "utf-8",
+        "truncated": False,
+        "text": "",
+    }
+
+
+def test_project_file_browser_rejects_a_symlinked_project_root(tmp_path, monkeypatch):
+    project_root = configure_shell(tmp_path)
+    pipeline = ProjectPipeline(tmp_path)
+    project = pipeline.scan_projects()["projects"][0]
+    original_is_symlink = Path.is_symlink
+    monkeypatch.setattr(
+        Path,
+        "is_symlink",
+        lambda path: True if path == project_root else original_is_symlink(path),
+    )
+
+    with pytest.raises(ls_go_bridge.ProjectFileUnavailable, match="Symlinked project roots"):
+        ls_go_bridge.list_project_files(
+            pipeline,
+            project_id=project["project_id"],
+        )
+
+
 def test_representation_edge_routes_are_disabled_by_default(tmp_path, monkeypatch):
     configure_shell(tmp_path)
     monkeypatch.delenv(FEATURE_FLAG, raising=False)

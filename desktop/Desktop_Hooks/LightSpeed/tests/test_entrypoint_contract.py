@@ -94,3 +94,21 @@ def test_shell_labels_use_the_canonical_version_file():
         'description=f"LightSpeed Unified Orchestrator v{LIGHTSPEED_VERSION}"'
         in n_source
     )
+
+
+def test_project_file_dialog_has_one_pack_only_status_bar():
+    n_path = LIGHTSPEED_ROOT / "N.py"
+    n_source = n_path.read_text(encoding="utf-8-sig")
+    n_module = ast.parse(n_source, filename=str(n_path))
+    methods = [
+        node
+        for node in ast.walk(n_module)
+        if isinstance(node, ast.FunctionDef) and node.name == "manage_project_files"
+    ]
+
+    assert len(methods) == 1
+    method_source = ast.get_source_segment(n_source, methods[0]) or ""
+    assert method_source.count("status_bar = tk.Frame") == 1
+    assert "progress_bar.pack(" in method_source
+    assert "progress_bar.grid(" not in method_source
+    assert "progress_bar.grid_remove(" not in method_source

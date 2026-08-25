@@ -5728,39 +5728,6 @@ class LightSpeedUnified(tk.Tk):
         search_var.trace_add("write", lambda *_: render_files())
         category_var.trace_add("write", lambda *_: render_files())
 
-        status_bar = tk.Frame(dialog, bg=COLORS['bg_panel'])
-        status_bar.pack(fill='x', side='bottom')
-        status_var = tk.StringVar(value="Ready")
-        tk.Label(status_bar, textvariable=status_var, bg=COLORS['bg_panel'], fg=COLORS['text_green'], font=('Arial', 9), anchor='w').pack(side='left', padx=10, pady=6)
-        progress_bar = ttk.Progressbar(status_bar, mode='determinate', length=220)
-        progress_bar.pack(side='right', padx=10, pady=6)
-        progress_bar.grid_remove()
-        cancel_btn = tk.Button(status_bar, text="Cancel Import", command=lambda: ui_state.__setitem__("cancel_import", True), bg=COLORS['error_red'], fg='white', font=('Arial', 9, 'bold'))
-        cancel_btn.pack(side='right', padx=6, pady=4)
-
-        def set_status(text, busy=False, progress=None):
-            status_var.set(text)
-            try:
-                if busy:
-                    progress_bar.grid()
-                    if progress is None:
-                        progress_bar.config(mode='indeterminate')
-                        progress_bar.start(10)
-                    else:
-                        progress_bar.stop()
-                        progress_bar.config(mode='determinate', maximum=100)
-                        progress_bar['value'] = max(0, min(100, progress))
-                else:
-                    progress_bar.stop()
-                    progress_bar['value'] = 0
-                    progress_bar.grid_remove()
-            except Exception:
-                pass
-            try:
-                dialog.update_idletasks()
-            except Exception:
-                pass
-
         dialog._project_files_ui = {
             "cancel_import": False,
             "cancel_btn": cancel_btn,

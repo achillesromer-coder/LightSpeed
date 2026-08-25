@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { COMMAND_SCHEMA, createCommandEnvelope, routeInstruction } from "./desktopBridge";
+import {
+  COMMAND_SCHEMA,
+  createCommandEnvelope,
+  projectFileApiPath,
+  reviewDecisionOutcomeMessage,
+  routeInstruction,
+} from "./desktopBridge";
 
 const authorityContract = {
   canonical_gate_id: "gate-soft-launch",
@@ -40,5 +46,25 @@ describe("LS GO desktop command routing", () => {
     expect(() => createCommandEnvelope({ instruction: "Run a bounded health check" })).toThrow(
       "Desktop authority contract is not available",
     );
+  });
+
+  it("encodes project file routes segment-by-segment", () => {
+    expect(projectFileApiPath("project alpha", "results/a file.json")).toBe(
+      "/api/v1/projects/project%20alpha/files/results/a%20file.json",
+    );
+  });
+
+  it("distinguishes local outbox staging from an owner-approved Drive write", () => {
+    const pending = reviewDecisionOutcomeMessage("review-1", "approve", {
+      accepted: true,
+      receipt: { drive_writeback_mode: "local_outbox_pending_drive_sync" },
+    });
+    const drive = reviewDecisionOutcomeMessage("review-2", "hold", {
+      accepted: true,
+      receipt: { drive_writeback_mode: "owner_approved_exact_drive_target" },
+    });
+    expect(pending).toContain("Local outbox receipt staged; Drive sync remains pending");
+    expect(pending).not.toContain("Drive decision receipt written");
+    expect(drive).toContain("Owner-approved Drive decision receipt written");
   });
 });

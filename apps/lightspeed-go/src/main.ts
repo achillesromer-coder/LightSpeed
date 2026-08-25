@@ -1,5 +1,6 @@
 import "./styles.css";
 import "./mobile.css";
+import "./projectFiles.css";
 import {
   createCommandEnvelope,
   decideDesktopReview,
@@ -9,13 +10,16 @@ import {
   downloadCommand,
   FLOORS,
   listDesktopProjects,
+  listDesktopProjectFiles,
   listDesktopReviews,
   listDesktopTasks,
   listRepresentationGraphs,
+  openDesktopProjectFile,
   readDesktopStatus,
   readPendingCommands,
   removePendingCommand,
   routeInstruction,
+  reviewDecisionOutcomeMessage,
   storePendingCommand,
   submitDesktopCommand,
   type AuthorityContract,
@@ -30,6 +34,14 @@ import {
   type ReviewRecord,
 } from "./desktopBridge";
 import { escapeHtml, loadNeoExchange, renderExchangePanel } from "./neoExchange";
+import {
+  bindProjectBrowseButtons,
+  bindProjectFileOpenButtons,
+  renderProjectCards,
+  renderProjectFileOpenResult,
+  renderProjectFiles,
+  renderProjectFilesError,
+} from "./projectFiles";
 import { renderRepresentationGraphs } from "./representationGraphs";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
 
@@ -230,22 +242,55 @@ const renderPending = (): void => {
   }));
 };
 
-const formatBytes = (value?: number): string => {
-  const bytes = Number(value || 0);
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 ** 2) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 ** 3) return `${(bytes / 1024 ** 2).toFixed(1)} MB`;
-  return `${(bytes / 1024 ** 3).toFixed(1)} GB`;
-};
-
 const renderProjects = (projects: ProjectRecord[]): void => {
   const mount = byId("desktop-projects");
   byId("project-count").textContent = String(projects.length);
-  if (!projects.length) {
-    mount.innerHTML = `<p class="muted">No project folders were found in the configured roots.</p>`;
-    return;
-  }
-  mount.innerHTML = projects.slice(0, 30).map((project) => `<article class="task-card"><div><strong>${escapeHtml(project.name)}</strong><span>${escapeHtml(project.condition || "unknown")} · ${escapeHtml(project.authority || "reference")} · ${project.file_count || 0} files</span><small>${formatBytes(project.size_bytes)}${project.scan_truncated ? " · bounded scan" : ""}</small></div></article>`).join("");
+  mount.innerHTML = renderProjectCards(projects);
+  bindProjectBrowseButtons(mount, async (projectId, button) => {
+    const card = button.closest<HTMLElement>("[data-project-card]");
+    const filesMount = card?.querySelector<HTMLElement>(".project-files");
+    if (!filesMount) return;
+    if (button.getAttribute("aria-expanded") === "true") {
+      button.setAttribute("aria-expanded", "false");
+      button.textContent = "Files";
+      filesMount.hidden = true;
+      return;
+    }
+    button.disabled = true;
+    button.textContent = "Loading…";
+    filesMount.hidden = false;
+    filesMount.innerHTML = `<p class="muted">Reading bounded project metadata…</p>`;
+    try {
+      const response = await listDesktopProjectFiles(projectId);
+      filesMount.innerHTML = renderProjectFiles(response);
+      bindProjectFileOpenButtons(filesMount, async (selectedProjectId, relativePath, openButton) => {
+        const resultMount = filesMount.querySelector<HTMLElement>(".project-file-result");
+        if (!resultMount) return;
+        openButton.disabled = true;
+        resultMount.innerHTML = `<p class="muted">Opening read-only result…</p>`;
+        try {
+          resultMount.innerHTML = renderProjectFileOpenResult(
+            await openDesktopProjectFile(selectedProjectId, relativePath),
+          );
+        } catch (error) {
+          resultMount.innerHTML = renderProjectFilesError(
+            error instanceof Error ? error.message : "Project file result is unavailable.",
+          );
+        } finally {
+          openButton.disabled = false;
+        }
+      });
+      button.setAttribute("aria-expanded", "true");
+      button.textContent = "Hide files";
+    } catch (error) {
+      filesMount.innerHTML = renderProjectFilesError(
+        error instanceof Error ? error.message : "Project files are unavailable.",
+      );
+      button.textContent = "Retry files";
+    } finally {
+      button.disabled = false;
+    }
+  });
 };
 
 const renderReviews = (reviews: ReviewRecord[]): void => {
@@ -276,8 +321,8 @@ const renderReviews = (reviews: ReviewRecord[]): void => {
       return;
     }
     try {
-      await decideDesktopReview(reviewId, decision, note, ownerConfirmation);
-      setResult("good", `${reviewId} marked ${decision}. Drive decision receipt written by Desktop.`);
+      const response = await decideDesktopReview(reviewId, decision, note, ownerConfirmation);
+      setResult("good", reviewDecisionOutcomeMessage(reviewId, decision, response));
       await refreshDesktop();
     } catch (error) {
       setResult("bad", error instanceof Error ? error.message : "Review decision failed.");
