@@ -216,9 +216,9 @@
       "sha256": "6152357497504a8619b8c8d49bc203d8298a7aeb73a4384887ca35f5fcd2db34"
     },
     {
-      "bytes": 380355,
+      "bytes": 378744,
       "path": "Desktop_Hooks/LightSpeed/N.py",
-      "sha256": "66198393018afb6d9bfa71c92b05f76d709e3a4e340e69ac6e5badd407cac939"
+      "sha256": "28314e6d16e1d2dbc2fea74b38a9076ed9723522b5c8de277ba3c16e7ac41ff2"
     },
     {
       "bytes": 738,
@@ -281,9 +281,9 @@
       "sha256": "82b3835d993124274eb79400de6dcaf129c5e370cfed705fae3ba0e25ba36267"
     },
     {
-      "bytes": 3414,
+      "bytes": 4109,
       "path": "Desktop_Hooks/LightSpeed/tests/test_entrypoint_contract.py",
-      "sha256": "e78965c92b6178bbca1e7c5b8da11068955d6adac2b3a90cd10bd502335990bd"
+      "sha256": "13f00430b02eacefbb5f90e87cae46476cd79c99eb744cdd341b542f4f4e57e0"
     },
     {
       "bytes": 4394,
@@ -2361,9 +2361,9 @@
       "sha256": "abd1dd30bca3bce7d9d4ed1905b384c78ed7f3f7b137be0f33f4a5c6497d9d37"
     },
     {
-      "bytes": 75396,
+      "bytes": 77420,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/database.py",
-      "sha256": "5ccab10bfe2586ddac73518f1f55ba62d27bc92a56a857e6b699ed30d235d2d7"
+      "sha256": "782bf7ee677e6ffef66ecd3fd34508dc6bf956081081086d0489791df3240368"
     },
     {
       "bytes": 46120,
@@ -3296,9 +3296,9 @@
       "sha256": "8efc3372e032bcb1c156c93aa67b7fbe77a63ee696b77e021cd74be6a29a7f50"
     },
     {
-      "bytes": 65610,
+      "bytes": 67287,
       "path": "LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py",
-      "sha256": "6b490c99fe8e225344a2f8663fb65abcc7f66f0e6b0d8f7a36ce2da6bf722356"
+      "sha256": "c2bdcc4f2579ce3730d718bd9d57db8e2af93ca11eaf105909cda047027d7289"
     },
     {
       "bytes": 11584,
