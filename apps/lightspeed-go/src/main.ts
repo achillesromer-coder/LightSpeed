@@ -1,6 +1,7 @@
 import "./styles.css";
 import "./mobile.css";
 import "./projectFiles.css";
+import "./resultReceipts.css";
 import {
   createCommandEnvelope,
   decideDesktopReview,
@@ -12,9 +13,11 @@ import {
   listDesktopProjects,
   listDesktopProjectFiles,
   listDesktopReviews,
+  listDesktopResults,
   listDesktopTasks,
   listRepresentationGraphs,
   openDesktopProjectFile,
+  openDesktopResult,
   readDesktopStatus,
   readPendingCommands,
   removePendingCommand,
@@ -26,6 +29,7 @@ import {
   type CommandEnvelope,
   type ExecutionMode,
   type Floor,
+  type LocalResultsResponse,
   type Priority,
   type ProjectRecord,
   type RepresentationDecision,
@@ -42,6 +46,12 @@ import {
   renderProjectFiles,
   renderProjectFilesError,
 } from "./projectFiles";
+import {
+  bindResultReceiptButtons,
+  renderResultReceiptOpen,
+  renderResultReceipts,
+  renderResultReceiptsError,
+} from "./resultReceipts";
 import { renderRepresentationGraphs } from "./representationGraphs";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
 
@@ -143,6 +153,7 @@ app.innerHTML = `
         <article class="panel"><div class="panel-head"><div><p class="eyebrow">Architect + Merovingian</p><h2>Available projects</h2></div></div><div id="desktop-projects" class="stack-list"><p class="muted">Project registry appears when Desktop is online.</p></div></article>
         <article class="panel"><div class="panel-head"><div><p class="eyebrow">Nathaniel / Achilles gate</p><h2>Review queue</h2></div></div><div id="desktop-reviews" class="stack-list"><p class="muted">Project receipts appear here for approval.</p></div></article>
       </div>
+      <article class="panel result-receipts-panel"><div class="panel-head"><div><p class="eyebrow">Neo + Smith durable proof</p><h2>Local results</h2></div><span class="badge" id="result-auth-state">Checking owner gate</span></div><div id="desktop-results"><p class="muted">Reading fixed local result metadata…</p></div></article>
       <article class="panel"><div class="panel-head"><div><p class="eyebrow">Neo exchange</p><h2>Public-safe projection</h2></div></div><div id="neo-exchange"><p class="muted">Reading bounded exchange projection…</p></div></article>
     </section>
 
@@ -297,6 +308,49 @@ const renderProjects = (projects: ProjectRecord[]): void => {
         error instanceof Error ? error.message : "Project files are unavailable.",
       );
       button.textContent = "Retry files";
+    } finally {
+      button.disabled = false;
+    }
+  });
+};
+
+const renderResults = (
+  response: LocalResultsResponse,
+  ownerConfirmationConfigured: boolean,
+): void => {
+  const mount = byId("desktop-results");
+  const authState = byId("result-auth-state");
+  authState.textContent = ownerConfirmationConfigured ? "Owner gate configured" : "Content gate held";
+  mount.innerHTML = renderResultReceipts(response, ownerConfirmationConfigured);
+  bindResultReceiptButtons(mount, async (resultId, button) => {
+    const detailMount = mount.querySelector<HTMLElement>(".result-receipt-detail");
+    if (!detailMount) return;
+    if (!ownerConfirmationConfigured) {
+      detailMount.innerHTML = renderResultReceiptsError(
+        "Receipt content is held because owner confirmation is not configured on the local bridge.",
+      );
+      return;
+    }
+    const ownerConfirmation = window.prompt(
+      "Enter the local owner-confirmation token to inspect this unredacted fixed receipt. It is sent only to the loopback Desktop bridge and is not stored.",
+      "",
+    ) ?? "";
+    if (!ownerConfirmation) {
+      detailMount.innerHTML = renderResultReceiptsError(
+        "Receipt inspection cancelled: owner confirmation is required.",
+      );
+      return;
+    }
+    button.disabled = true;
+    detailMount.innerHTML = `<p class="muted">Opening owner-confirmed read-only receipt…</p>`;
+    try {
+      detailMount.innerHTML = renderResultReceiptOpen(
+        await openDesktopResult(resultId, ownerConfirmation),
+      );
+    } catch (error) {
+      detailMount.innerHTML = renderResultReceiptsError(
+        error instanceof Error ? error.message : "Local result receipt is unavailable.",
+      );
     } finally {
       button.disabled = false;
     }
@@ -482,6 +536,17 @@ const refreshDesktop = async (): Promise<void> => {
     }
 
     try {
+      renderResults(await listDesktopResults(), status.auth?.configured === true);
+    } catch (error) {
+      byId("result-auth-state").textContent = status.auth?.configured === true
+        ? "Owner gate configured"
+        : "Content gate held";
+      byId("desktop-results").innerHTML = renderResultReceiptsError(
+        error instanceof Error ? error.message : "Local result metadata is unavailable.",
+      );
+    }
+
+    try {
       renderCanonicalGraphs(await listRepresentationGraphs());
     } catch (error) {
       currentRepresentationGraphs = [];
@@ -501,6 +566,8 @@ const refreshDesktop = async (): Promise<void> => {
     tasksMount.innerHTML = `<p class="muted">Desktop is offline. Commands can still be saved, copied or downloaded.</p>`;
     byId("desktop-projects").innerHTML = `<p class="muted">Project registry unavailable while Desktop is offline.</p>`;
     byId("desktop-reviews").innerHTML = `<p class="muted">Review queue unavailable while Desktop is offline.</p>`;
+    byId("result-auth-state").textContent = "Desktop offline";
+    byId("desktop-results").innerHTML = `<p class="muted">Fixed local result metadata is unavailable while Desktop is offline.</p>`;
     renderCanonicalGraphs([]);
   }
 };

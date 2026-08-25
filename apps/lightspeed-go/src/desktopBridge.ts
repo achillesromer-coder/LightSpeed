@@ -126,6 +126,54 @@ export interface ProjectFileOpenResult {
   boundary: string;
 }
 
+export interface ResultReceiptMetadata {
+  result_id: string;
+  command_id?: string | null;
+  task_id?: number | null;
+  job_id?: number | null;
+  status: string;
+  action_type?: string | null;
+  target_floor?: string | null;
+  created_utc?: string | null;
+  completed_utc?: string | null;
+  public_safe_state: "true" | "false" | "unknown";
+  proof_required_state: "true" | "false" | "unknown";
+  public_publish_authorized: boolean;
+  drive_write_executed: boolean;
+  size_bytes: number;
+  modified_utc: string;
+  sha256: string;
+}
+
+export interface LocalResultsResponse {
+  schema_version: "lightspeed-local-results-index-v1";
+  state: "available" | "empty" | "restricted";
+  results: ResultReceiptMetadata[];
+  summary: {
+    visible_result_count: number;
+    invalid_file_count: number;
+    scanned_file_count: number;
+    limit: number;
+    truncated: boolean;
+    status_counts: Record<string, number>;
+  };
+  boundary: string;
+}
+
+export interface LocalResultOpenResponse {
+  schema_version: "lightspeed-local-result-open-v1";
+  state: "opened_read_only";
+  identity: {
+    result_id: string;
+    size_bytes: number;
+    modified_utc: string;
+    sha256: string;
+  };
+  result: Record<string, unknown>;
+  source_mutated: false;
+  boundary: string;
+}
+
 export interface ReviewRecord {
   review_id: string;
   created_utc?: string;
@@ -154,7 +202,7 @@ export interface ReviewDecisionResponse {
 export interface DesktopStatus {
   ok: boolean;
   time_utc?: string;
-  auth?: { configured?: boolean };
+  auth?: { configured?: boolean; mode?: string };
   services?: { db?: boolean; storage?: boolean; merovingian?: boolean };
   merovingian?: {
     status?: string;
@@ -440,6 +488,35 @@ export const openDesktopProjectFile = async (
 ): Promise<ProjectFileOpenResult> =>
   withTimeout<ProjectFileOpenResult>(
     `${origin}${projectFileApiPath(projectId, relativePath)}`,
+    {
+      method: "GET",
+      headers: { "X-LightSpeed-Owner-Confirmation": ownerConfirmation.slice(0, 256) },
+    },
+    10000,
+  );
+
+export const resultReceiptApiPath = (resultId?: string): string => {
+  if (resultId === undefined) return "/api/v1/results";
+  return `/api/v1/results/${encodeURIComponent(resultId)}`;
+};
+
+export const listDesktopResults = async (
+  origin = DEFAULT_DESKTOP_ORIGIN,
+  limit = 50,
+): Promise<LocalResultsResponse> =>
+  withTimeout<LocalResultsResponse>(
+    `${origin}${resultReceiptApiPath()}?limit=${Math.max(1, Math.min(limit, 200))}`,
+    { method: "GET" },
+    10000,
+  );
+
+export const openDesktopResult = async (
+  resultId: string,
+  ownerConfirmation: string,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<LocalResultOpenResponse> =>
+  withTimeout<LocalResultOpenResponse>(
+    `${origin}${resultReceiptApiPath(resultId)}`,
     {
       method: "GET",
       headers: { "X-LightSpeed-Owner-Confirmation": ownerConfirmation.slice(0, 256) },

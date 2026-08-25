@@ -3,6 +3,7 @@ import {
   COMMAND_SCHEMA,
   createCommandEnvelope,
   projectFileApiPath,
+  resultReceiptApiPath,
   reviewDecisionOutcomeMessage,
   routeInstruction,
 } from "./desktopBridge";
@@ -51,6 +52,13 @@ describe("LS GO desktop command routing", () => {
   it("encodes project file routes segment-by-segment", () => {
     expect(projectFileApiPath("project alpha", "results/a file.json")).toBe(
       "/api/v1/projects/project%20alpha/files/results/a%20file.json",
+    );
+  });
+
+  it("encodes a result identity as one fixed route segment", () => {
+    expect(resultReceiptApiPath()).toBe("/api/v1/results");
+    expect(resultReceiptApiPath("LSGO RESULT/held")).toBe(
+      "/api/v1/results/LSGO%20RESULT%2Fheld",
     );
   });
 

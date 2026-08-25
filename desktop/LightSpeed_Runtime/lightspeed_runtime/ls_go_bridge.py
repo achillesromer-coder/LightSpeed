@@ -33,6 +33,13 @@ from lightspeed_runtime.representation_edge import (
     build_store as build_representation_edge_store,
     default_review_paths as representation_review_paths,
 )
+from lightspeed_runtime.result_receipt_browser import (
+    ResultReceiptIdRejected,
+    ResultReceiptNotFound,
+    ResultReceiptUnavailable,
+    list_result_receipts,
+    open_result_receipt,
+)
 from lightspeed_runtime.storage_paths import neo_actions_root
 
 LEGACY_COMMAND_SCHEMA = "lightspeed-go-command-v1"
@@ -1281,6 +1288,10 @@ def create_app(root: Path | str) -> FastAPI:
                     "storage": bool(storage),
                     "merovingian": merovingian_healthy,
                 },
+                "auth": {
+                    "configured": bool(os.environ.get(OWNER_CONFIRMATION_ENV, "").strip()),
+                    "mode": "owner_confirmation_header",
+                },
                 "merovingian": {
                     "status": "pass" if merovingian_healthy else "unavailable",
                     "receipt": str(project_pipeline.health_path),
@@ -1332,6 +1343,39 @@ def create_app(root: Path | str) -> FastAPI:
             for row in queue_rows
         ]
         return JSONResponse({"tasks": tasks})
+
+    @app.get("/api/v1/results")
+    async def list_local_results(limit: int = 50):
+        try:
+            result = list_result_receipts(
+                shell_root,
+                limit=max(1, min(int(limit), 200)),
+            )
+        except ResultReceiptUnavailable as exc:
+            raise HTTPException(status_code=503, detail=str(exc))
+        return JSONResponse(result)
+
+    @app.get("/api/v1/results/{result_id}")
+    async def open_local_result(
+        result_id: str,
+        owner_confirmation: str | None = Header(
+            default=None,
+            alias="X-LightSpeed-Owner-Confirmation",
+        ),
+    ):
+        _verified_owner_actor(owner_confirmation)
+        try:
+            result = open_result_receipt(
+                shell_root,
+                result_id=result_id,
+            )
+        except ResultReceiptIdRejected as exc:
+            raise HTTPException(status_code=400, detail=str(exc))
+        except ResultReceiptNotFound as exc:
+            raise HTTPException(status_code=404, detail=str(exc))
+        except ResultReceiptUnavailable as exc:
+            raise HTTPException(status_code=503, detail=str(exc))
+        return JSONResponse(result)
 
     @app.get("/api/v1/projects")
     async def list_projects():
