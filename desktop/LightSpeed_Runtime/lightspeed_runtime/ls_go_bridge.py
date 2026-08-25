@@ -1364,7 +1364,15 @@ def create_app(root: Path | str) -> FastAPI:
         return JSONResponse(result)
 
     @app.get("/api/v1/projects/{project_id}/files/{relative_path:path}")
-    async def open_project_file_result(project_id: str, relative_path: str):
+    async def open_project_file_result(
+        project_id: str,
+        relative_path: str,
+        owner_confirmation: str | None = Header(
+            default=None,
+            alias="X-LightSpeed-Owner-Confirmation",
+        ),
+    ):
+        _verified_owner_actor(owner_confirmation)
         try:
             result = open_project_file(
                 project_pipeline,

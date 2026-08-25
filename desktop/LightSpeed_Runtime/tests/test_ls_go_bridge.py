@@ -1203,6 +1203,7 @@ def test_bridge_lists_and_opens_bounded_project_files_read_only(tmp_path, monkey
         if path.is_file()
     }
     monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    monkeypatch.setenv(ls_go_bridge.OWNER_CONFIRMATION_ENV, "test-owner-token")
     client = TestClient(ls_go_bridge.create_app(tmp_path))
 
     project = client.get("/api/v1/projects").json()["projects"][0]
@@ -1224,9 +1225,14 @@ def test_bridge_lists_and_opens_bounded_project_files_read_only(tmp_path, monkey
     assert ".env" not in json.dumps(body)
     assert str(project_root) not in json.dumps(body)
 
-    opened = client.get(
+    unauthorized = client.get(
         f"/api/v1/projects/{project['project_id']}/files/results/sweep.json"
     )
+    opened = client.get(
+        f"/api/v1/projects/{project['project_id']}/files/results/sweep.json",
+        headers={"X-LightSpeed-Owner-Confirmation": "test-owner-token"},
+    )
+    assert unauthorized.status_code == 403
     assert opened.status_code == 200, opened.text
     result = opened.json()
     assert result["schema_version"] == "lightspeed-project-file-open-result-v1"
@@ -1242,7 +1248,8 @@ def test_bridge_lists_and_opens_bounded_project_files_read_only(tmp_path, monkey
     assert str(project_root) not in json.dumps(result)
 
     binary_result = client.get(
-        f"/api/v1/projects/{project['project_id']}/files/model.glb"
+        f"/api/v1/projects/{project['project_id']}/files/model.glb",
+        headers={"X-LightSpeed-Owner-Confirmation": "test-owner-token"},
     )
     assert binary_result.status_code == 200
     assert binary_result.json()["preview"]["state"] == "metadata_only"
@@ -1263,15 +1270,19 @@ def test_bridge_project_file_access_fails_closed_on_unknown_blocked_and_traversa
     outside = tmp_path / "outside.txt"
     outside.write_text("not-authorised", encoding="utf-8")
     monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    monkeypatch.setenv(ls_go_bridge.OWNER_CONFIRMATION_ENV, "test-owner-token")
     client = TestClient(ls_go_bridge.create_app(tmp_path))
     project = client.get("/api/v1/projects").json()["projects"][0]
+    owner_headers = {"X-LightSpeed-Owner-Confirmation": "test-owner-token"}
 
     unknown_project = client.get("/api/v1/projects/not-known/files")
     blocked_file = client.get(
-        f"/api/v1/projects/{project['project_id']}/files/.env"
+        f"/api/v1/projects/{project['project_id']}/files/.env",
+        headers=owner_headers,
     )
     missing_file = client.get(
-        f"/api/v1/projects/{project['project_id']}/files/missing.txt"
+        f"/api/v1/projects/{project['project_id']}/files/missing.txt",
+        headers=owner_headers,
     )
 
     assert unknown_project.status_code == 404
@@ -1301,6 +1312,7 @@ def test_bridge_project_file_listing_reports_empty_and_preview_reports_empty(
     )
     empty_project.mkdir()
     monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    monkeypatch.setenv(ls_go_bridge.OWNER_CONFIRMATION_ENV, "test-owner-token")
     client = TestClient(ls_go_bridge.create_app(tmp_path))
     projects = client.get("/api/v1/projects").json()["projects"]
     project = next(item for item in projects if item["name"] == "Empty Project")
@@ -1309,7 +1321,8 @@ def test_bridge_project_file_listing_reports_empty_and_preview_reports_empty(
     zero_file = empty_project / "empty.txt"
     zero_file.touch()
     opened = client.get(
-        f"/api/v1/projects/{project['project_id']}/files/empty.txt"
+        f"/api/v1/projects/{project['project_id']}/files/empty.txt",
+        headers={"X-LightSpeed-Owner-Confirmation": "test-owner-token"},
     )
 
     assert listing.status_code == 200

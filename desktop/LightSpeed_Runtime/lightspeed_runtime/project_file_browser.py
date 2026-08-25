@@ -372,5 +372,9 @@ def open_project_file(
         "file": file_record,
         "preview": preview,
         "source_mutated": False,
-        "boundary": "Read-only bounded preview; this result does not execute, edit, upload, or publish the file.",
+        "boundary": (
+            "Owner-confirmed read-only bounded preview; source text is unredacted and may "
+            "contain paths or sensitive context. This result does not execute, edit, upload, "
+            "or publish the file."
+        ),
     }

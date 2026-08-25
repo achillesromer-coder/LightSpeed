@@ -266,11 +266,21 @@ const renderProjects = (projects: ProjectRecord[]): void => {
       bindProjectFileOpenButtons(filesMount, async (selectedProjectId, relativePath, openButton) => {
         const resultMount = filesMount.querySelector<HTMLElement>(".project-file-result");
         if (!resultMount) return;
+        const ownerConfirmation = window.prompt(
+          "Enter the local owner-confirmation token to open this unredacted read-only preview. It is sent only to the loopback Desktop bridge and is not stored.",
+          "",
+        ) ?? "";
+        if (!ownerConfirmation) {
+          resultMount.innerHTML = renderProjectFilesError(
+            "File preview cancelled: owner confirmation is required.",
+          );
+          return;
+        }
         openButton.disabled = true;
         resultMount.innerHTML = `<p class="muted">Opening read-only result…</p>`;
         try {
           resultMount.innerHTML = renderProjectFileOpenResult(
-            await openDesktopProjectFile(selectedProjectId, relativePath),
+            await openDesktopProjectFile(selectedProjectId, relativePath, ownerConfirmation),
           );
         } catch (error) {
           resultMount.innerHTML = renderProjectFilesError(

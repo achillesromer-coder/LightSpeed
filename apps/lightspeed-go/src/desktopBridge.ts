@@ -435,11 +435,15 @@ export const listDesktopProjectFiles = async (
 export const openDesktopProjectFile = async (
   projectId: string,
   relativePath: string,
+  ownerConfirmation: string,
   origin = DEFAULT_DESKTOP_ORIGIN,
 ): Promise<ProjectFileOpenResult> =>
   withTimeout<ProjectFileOpenResult>(
     `${origin}${projectFileApiPath(projectId, relativePath)}`,
-    { method: "GET" },
+    {
+      method: "GET",
+      headers: { "X-LightSpeed-Owner-Confirmation": ownerConfirmation.slice(0, 256) },
+    },
     10000,
   );
 
