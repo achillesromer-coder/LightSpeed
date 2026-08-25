@@ -63,9 +63,36 @@ def test_n_dispatches_through_the_canonical_construct_entrypoint() -> None:
     source = ast.get_source_segment(n_source, methods[0]) or ""
     assert '/ "Z Axis" / "TheConstruct.py"' in source
     assert '"Z0_TheConstruct" / "TheConstruct.py"' not in source
+    assert "physics_tools" not in source
+    assert not any(isinstance(node, ast.Try) for node in ast.walk(methods[0]))
 
 
-def test_construct_entrypoint_dispatches_only_declared_simulations(
+def test_construct_gate_requires_three_literal_true_values() -> None:
+    construct = _load_module(CONSTRUCT_ENTRYPOINT, "lightspeed_construct_gate_contract")
+
+    assert construct.CONSTRUCT_THIN_CAPABILITIES == (
+        "dashboard_readback",
+        "registry_readback",
+        "runtime_profile_readback",
+        "scenario_descriptors",
+        "bounded_calculator_registry",
+    )
+    assert "physics_simulations" in construct.CONSTRUCT_HELD_CAPABILITIES
+    assert "big_bang" in construct.CONSTRUCT_HELD_CAPABILITIES
+    assert not construct.evaluate_construct_heavy_gate()["allowed"]
+    assert not construct.evaluate_construct_heavy_gate(
+        operator_requested="True",
+        owner_approved="True",
+        resource_approved="True",
+    )["allowed"]
+    assert construct.evaluate_construct_heavy_gate(
+        operator_requested=True,
+        owner_approved=True,
+        resource_approved=True,
+    )["allowed"]
+
+
+def test_construct_dispatch_denies_before_importing_physics(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     calls = []
@@ -81,14 +108,37 @@ def test_construct_entrypoint_dispatches_only_declared_simulations(
     monkeypatch.setitem(sys.modules, "core.services.physics_tools", physics_tools)
     construct = _load_module(CONSTRUCT_ENTRYPOINT, "lightspeed_construct_dispatch_contract")
 
-    assert construct.run_simulation(" RAPHAEL ", protons=1) == {"kind": "raphael"}
-    assert construct.run_simulation("bigbang", time_steps=2) == {"kind": "bigbang"}
+    denied_approvals = (
+        {},
+        {
+            "operator_requested": True,
+            "owner_approved": True,
+        },
+        {
+            "operator_requested": "True",
+            "owner_approved": "True",
+            "resource_approved": "True",
+        },
+    )
+    for approvals in denied_approvals:
+        with pytest.raises(PermissionError, match="remains held"):
+            construct.run_simulation("raphael", protons=1, **approvals)
+    assert calls == []
+
+    approvals = {
+        "operator_requested": True,
+        "owner_approved": True,
+        "resource_approved": True,
+    }
+    assert construct.run_simulation(" RAPHAEL ", protons=1, **approvals) == {"kind": "raphael"}
+    assert construct.run_simulation("bigbang", time_steps=2, **approvals) == {"kind": "bigbang"}
     assert calls == [
         ("raphael", {"protons": 1}),
         ("bigbang", {"time_steps": 2}),
     ]
     with pytest.raises(ValueError, match="Unknown simulation type"):
-        construct.run_simulation("unregistered")
+        construct.run_simulation("unregistered", **approvals)
+    assert len(calls) == 2
 
 
 def test_launcher_parameter_parser_is_literal_only(

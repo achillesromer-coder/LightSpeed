@@ -1,27 +1,15 @@
 #!/usr/bin/env python
-"""
-TheConstruct (Z0) - Physics & Simulation Floor
-Complete Floor Coordinator with 3D Rendering, Physics, and Visualization
+"""TheConstruct (Z0) bounded artifact and simulation-coordination floor.
 
-The Construct is THE primary simulation environment. It holds:
-- All 3D rendering (immersive engine)
-- Physics simulations (Raphael engine)
-- Scientific calculations (12+ physics formulas)
-- Physical constants (CODATA 2018)
-- 3D object management
+Soft-launch default: thin preview/readback only. Dashboard, registry, runtime
+profile, scenario descriptors and the bounded calculator registry are exposed
+as thin capabilities. Simulations, Raphael, orbital/quantum/big-bang work,
+immersive 3D, model loads and training remain held until one operation has an
+explicit operator request, owner approval and resource approval.
 
-Variables Held:
-- camera_position: (x, y, z, yaw, pitch)
-- physics_state: {gravity, velocities, forces}
-- simulation_results: Active calculation results
-- 3d_objects: All interactive 3D objects
-- active_calculations: Running simulations
-
-Renders:
-- 3D environment (WASD navigation)
-- Physics graphs and visualizations
-- Calculator interfaces
-- Simulation dashboards
+The presence of a calculator, dataset, historical output or visualization is
+not empirical validation, scientific promotion, feasibility proof or runtime
+capability evidence.
 """
 
 from __future__ import annotations
@@ -57,6 +45,52 @@ def _load_symbol(rel_path: str, symbol: str):
 
 # Backwards compatibility
 _load_class = _load_symbol
+
+
+CONSTRUCT_THIN_CAPABILITIES = (
+    "dashboard_readback",
+    "registry_readback",
+    "runtime_profile_readback",
+    "scenario_descriptors",
+    "bounded_calculator_registry",
+)
+
+CONSTRUCT_HELD_CAPABILITIES = (
+    "physics_simulations",
+    "raphael_equations",
+    "big_bang",
+    "orbital_mechanics",
+    "quantum_mechanics",
+    "immersive_3d",
+    "model_loads",
+    "training_runs",
+)
+
+
+def evaluate_construct_heavy_gate(
+    *,
+    operator_requested: object = False,
+    owner_approved: object = False,
+    resource_approved: object = False,
+) -> Dict[str, Any]:
+    """Return the deterministic three-condition gate for heavy Construct work.
+
+    Approval flags deliberately require the boolean value ``True``. Strings,
+    environment values and merely opening a tab cannot accidentally promote a
+    heavy capability.
+    """
+    requirements = {
+        "operator_request": operator_requested is True,
+        "owner_approval": owner_approved is True,
+        "resource_approval": resource_approved is True,
+    }
+    missing = [name for name, approved in requirements.items() if not approved]
+    return {
+        "allowed": not missing,
+        "requirements": requirements,
+        "missing": missing,
+        "default_mode": "thin_preview_only",
+    }
 
 
 class TheConstructFloorState:
@@ -105,6 +139,8 @@ class TheConstructUI(ttk.Frame):
         self.compact = bool(compact)
         self.state = TheConstructFloorState()
         self.shell_bridge = getattr(app, "trinity_shell_bridge", None)
+        self._construct_owner_approved = _ignored.pop("construct_owner_approved", False) is True
+        self._construct_resource_approved = _ignored.pop("construct_resource_approved", False) is True
 
         # Services
         try:
@@ -392,16 +428,16 @@ class TheConstructUI(ttk.Frame):
                     title="Raphael Engine",
                     widget_type=BentoWidgetType.BUTTON,
                     floor="Z0_TheConstruct",
-                    callback=lambda w: self._launch_raphael(),
-                    config={"icon": "⚛️", "description": "Full physics engine"}
+                    callback=lambda w: self._launch_raphael(operator_requested=True),
+                    config={"icon": "⚛️", "description": "Held: requires operator, owner and resource approval"}
                 ),
                 BentoWidget(
                     id="construct_3d_launcher",
                     title="3D Environment",
                     widget_type=BentoWidgetType.BUTTON,
                     floor="Z0_TheConstruct",
-                    callback=lambda w: self._launch_3d_immersive(),
-                    config={"icon": "🌌", "description": "Launch immersive 3D"}
+                    callback=lambda w: self._launch_3d_immersive(operator_requested=True),
+                    config={"icon": "🌌", "description": "Held: requires operator, owner and resource approval"}
                 )
             ]
 
@@ -425,9 +461,21 @@ class TheConstructUI(ttk.Frame):
             text="Primary Construct workbench: use the dashboard as the floor home, then launch tools on demand.",
             justify="left",
         ).pack(side="left", padx=(0, 12))
-        ttk.Button(actions, text="Physics Tools", command=lambda: self.select_tab("Physics Calculators")).pack(side="left")
+        ttk.Button(
+            actions,
+            text="Physics Tools (gated)",
+            command=lambda: self._launch_raphael(operator_requested=True),
+        ).pack(side="left")
         ttk.Button(actions, text="Immersive", command=lambda: self.select_tab("3D Immersive")).pack(side="left", padx=(8, 0))
         ttk.Button(actions, text="Registry", command=lambda: self.select_tab("Z Direct Registry")).pack(side="left", padx=(8, 0))
+        ttk.Label(
+            parent,
+            text=(
+                "Thin capabilities: dashboard/readback, registry, runtime profile, scenario descriptors, bounded calculators.\n"
+                "Held capabilities: simulations, Raphael, orbital/quantum/big-bang, immersive 3D, model loads and training."
+            ),
+            justify="left",
+        ).pack(fill="x", padx=12, pady=(0, 10))
         try:
             Dashboard = _load_class("Z Axis/Z0_TheConstruct/components/construct_dashboard_glass.py", "ConstructDashboardGlass")
             ui = Dashboard(parent)
@@ -650,6 +698,7 @@ class TheConstructUI(ttk.Frame):
                         f"smoke={len(((tests.get('virtual_space_tests') or {}).get('smoke_lanes') or []))} | "
                         f"manual={len(((tests.get('virtual_space_tests') or {}).get('manual_lanes') or []))}"
                     ),
+                    "Heavy launch gate: operator request + owner approval + resource approval",
                 ]
             except Exception as exc:
                 lines = [f"Construct runtime profile unavailable: {exc}"]
@@ -661,21 +710,51 @@ class TheConstructUI(ttk.Frame):
         ttk.Button(actions, text="Refresh Runtime Profile", command=_refresh_runtime_profile).pack(side="left")
         _refresh_runtime_profile()
         ttk.Label(parent, text="🌌 Launch 3D Immersive Environment", font=("Consolas", 14, "bold")).pack(pady=10)
-        ttk.Button(parent, text="🚀 Launch 3D", command=self._launch_3d_immersive).pack(pady=20)
+        ttk.Button(
+            parent,
+            text="Request gated 3D launch",
+            command=lambda: self._launch_3d_immersive(operator_requested=True),
+        ).pack(pady=20)
 
-    def _launch_3d_immersive(self):
-        """Launch full 3D immersive environment"""
+    def _heavy_gate_for_action(self, *, operator_requested: object = False) -> Dict[str, Any]:
+        return evaluate_construct_heavy_gate(
+            operator_requested=operator_requested,
+            owner_approved=self._construct_owner_approved,
+            resource_approved=self._construct_resource_approved,
+        )
+
+    def _hold_heavy_action(self, action: str, gate: Dict[str, Any]) -> bool:
+        missing = ", ".join(gate.get("missing") or ["required approvals"])
+        message = f"{action} remains held. Missing: {missing}."
+        print(f"[TheConstruct] {message}")
+        try:
+            messagebox.showwarning("Construct heavy-work gate", message, parent=self.winfo_toplevel())
+        except Exception:
+            pass
+        return False
+
+    def _launch_3d_immersive(self, *, operator_requested: object = False) -> bool:
+        """Launch immersive 3D only after all three local approvals."""
+        gate = self._heavy_gate_for_action(operator_requested=operator_requested)
+        if not gate["allowed"]:
+            return self._hold_heavy_action("Immersive 3D", gate)
         try:
             launch_fn = _load_symbol("Z Axis/Z0_TheConstruct/ui/immersive_3d_engine.py", "launch_immersive_3d_environment")
             self.state.immersive_active = True
             launch_fn(parent=self.winfo_toplevel())
+            return True
         except Exception as e:
             print(f"[TheConstruct] Error launching 3D: {e}")
+            return False
 
-    def _launch_raphael(self):
-        """Launch Raphael physics engine"""
+    def _launch_raphael(self, *, operator_requested: object = False) -> bool:
+        """Expose physics tooling only after all three local approvals."""
+        gate = self._heavy_gate_for_action(operator_requested=operator_requested)
+        if not gate["allowed"]:
+            return self._hold_heavy_action("Physics tooling", gate)
         print("[TheConstruct] Launching Raphael physics engine...")
         self.select_tab("Physics Calculators")
+        return True
 
 
 def create_gui(*args, **kwargs):
@@ -696,7 +775,13 @@ def create_gui(*args, **kwargs):
     if parent is None:
         return None
     compact = bool(kwargs.get("compact") or kwargs.get("it_portal"))
-    return TheConstructUI(parent, app=app, compact=compact)
+    return TheConstructUI(
+        parent,
+        app=app,
+        compact=compact,
+        construct_owner_approved=kwargs.get("construct_owner_approved", False),
+        construct_resource_approved=kwargs.get("construct_resource_approved", False),
+    )
 
 
 def build(*args, **kwargs):
@@ -704,11 +789,27 @@ def build(*args, **kwargs):
     return create_gui(*args, **kwargs)
 
 
-def run_simulation(sim_type: str, **params):
-    """Run a bounded simulation exposed by the canonical floor entrypoint."""
+def run_simulation(
+    sim_type: str,
+    *,
+    operator_requested: object = False,
+    owner_approved: object = False,
+    resource_approved: object = False,
+    **params,
+):
+    """Run a declared simulation only inside an explicit three-condition gate."""
     simulation = str(sim_type or "").strip().lower()
     if not simulation:
         raise ValueError("sim_type is required")
+
+    gate = evaluate_construct_heavy_gate(
+        operator_requested=operator_requested,
+        owner_approved=owner_approved,
+        resource_approved=resource_approved,
+    )
+    if not gate["allowed"]:
+        missing = ", ".join(gate["missing"])
+        raise PermissionError(f"Construct simulation remains held. Missing: {missing}.")
 
     if simulation == "raphael":
         from core.services.physics_tools import calculate_raphael_equations  # type: ignore
@@ -771,18 +872,31 @@ def initialize(*, components: Optional[Dict[str, Any]] = None, dependencies: Opt
     THECONSTRUCT_RUNTIME["event_bus"] = event_bus
     THECONSTRUCT_RUNTIME["storage"] = storage
     THECONSTRUCT_RUNTIME["logger"] = logger
+    heavy_gate = evaluate_construct_heavy_gate(
+        operator_requested=_kwargs.get("heavy_operator_requested", False),
+        owner_approved=_kwargs.get("heavy_owner_approved", False),
+        resource_approved=_kwargs.get("heavy_resource_approved", False),
+    )
+    THECONSTRUCT_RUNTIME["heavy_gate"] = heavy_gate
+    THECONSTRUCT_RUNTIME["capabilities"] = list(CONSTRUCT_THIN_CAPABILITIES)
+    THECONSTRUCT_RUNTIME["held_capabilities"] = list(CONSTRUCT_HELD_CAPABILITIES)
 
     # Floor-specific initialization
 
-    # Initialize physics simulation engines
-    try:
-        from core.services import get_physics_tools  # type: ignore
-        physics = get_physics_tools()
-        THECONSTRUCT_RUNTIME["physics_tools"] = physics
-        if logger:
-            logger.info("[TheConstruct] Physics tools initialized")
-    except Exception as e:
-        THECONSTRUCT_RUNTIME["physics_error"] = str(e)
+    # Heavy physics and visualization imports remain inert unless the explicit
+    # operator, owner and resource approvals are all present for this call.
+    if heavy_gate["allowed"]:
+        try:
+            from core.services import get_physics_tools  # type: ignore
+            physics = get_physics_tools()
+            THECONSTRUCT_RUNTIME["physics_tools"] = physics
+            THECONSTRUCT_RUNTIME["physics_status"] = "approved_for_this_session"
+            if logger:
+                logger.info("[TheConstruct] Physics tools initialized after three-condition approval")
+        except Exception as e:
+            THECONSTRUCT_RUNTIME["physics_error"] = str(e)
+    else:
+        THECONSTRUCT_RUNTIME["physics_status"] = "held_by_three_condition_gate"
 
     try:
         load_profile = _load_symbol(
@@ -809,16 +923,21 @@ def initialize(*, components: Optional[Dict[str, Any]] = None, dependencies: Opt
     except Exception as e:
         THECONSTRUCT_RUNTIME["runtime_profile_error"] = str(e)
 
-    # Start 3D rendering service
-    try:
-        # `Z0_TheConstruct` is a valid package name when `Z Axis/` is on sys.path.
-        from Z0_TheConstruct.components.visualization_3d import Visualization3DComponent  # type: ignore
-        # Do not instantiate a Tk frame during non-GUI floor bootstrap. Store the
-        # class so UIs (N.py / Trinity overlays) can instantiate it with a parent.
-        THECONSTRUCT_RUNTIME["visualization_class"] = Visualization3DComponent
-    except Exception as e:
-        if logger:
-            logger.debug(f"[TheConstruct] 3D visualization not available: {e}")
+    # Start 3D rendering service only inside the same explicit approval scope.
+    if heavy_gate["allowed"]:
+        try:
+            # `Z0_TheConstruct` is a valid package name when `Z Axis/` is on sys.path.
+            from Z0_TheConstruct.components.visualization_3d import Visualization3DComponent  # type: ignore
+            # Do not instantiate a Tk frame during non-GUI floor bootstrap. Store the
+            # class so UIs (N.py / Trinity overlays) can instantiate it with a parent.
+            THECONSTRUCT_RUNTIME["visualization_class"] = Visualization3DComponent
+            THECONSTRUCT_RUNTIME["visualization_status"] = "approved_for_this_session"
+        except Exception as e:
+            THECONSTRUCT_RUNTIME["visualization_error"] = str(e)
+            if logger:
+                logger.debug(f"[TheConstruct] 3D visualization not available: {e}")
+    else:
+        THECONSTRUCT_RUNTIME["visualization_status"] = "held_by_three_condition_gate"
 
 
     # Subscribe to relevant events
@@ -835,7 +954,9 @@ def initialize(*, components: Optional[Dict[str, Any]] = None, dependencies: Opt
             event_bus.publish("theconstruct.floor.ready", {
                 "floor": "TheConstruct",
                 "z_level": 0,
-                "capabilities": ['physics_simulations', 'raphael_equations', 'big_bang', 'orbital_mechanics', 'quantum_mechanics']
+                "capabilities": list(CONSTRUCT_THIN_CAPABILITIES),
+                "held_capabilities": list(CONSTRUCT_HELD_CAPABILITIES),
+                "heavy_gate": heavy_gate,
             })
         except Exception as e:
             if logger:
@@ -855,7 +976,10 @@ def _on_health_check(event):
             event_bus.publish("theconstruct.health.status", {
                 "floor": "TheConstruct",
                 "status": "operational",
-                "z_level": 0
+                "z_level": 0,
+                "capabilities": list(CONSTRUCT_THIN_CAPABILITIES),
+                "held_capabilities": list(CONSTRUCT_HELD_CAPABILITIES),
+                "heavy_gate": THECONSTRUCT_RUNTIME.get("heavy_gate"),
             })
         except Exception:
             pass

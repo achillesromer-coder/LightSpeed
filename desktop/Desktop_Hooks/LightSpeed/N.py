@@ -2987,33 +2987,20 @@ class LightSpeedUnified(tk.Tk):
         if not sim_type:
             raise ValueError("sim_type is required")
 
-        try:
-            from importlib.util import spec_from_file_location, module_from_spec
+        from importlib.util import spec_from_file_location, module_from_spec
 
-            tc_path = (Path(__file__).resolve().parent / "Z Axis" / "TheConstruct.py").resolve()
-            if not tc_path.exists():
-                raise FileNotFoundError(tc_path)
-            spec = spec_from_file_location("lightspeed_construct_floor", str(tc_path))
-            if spec is None or spec.loader is None:
-                raise ImportError("Cannot load TheConstruct floor module")
-            mod = module_from_spec(spec)
-            spec.loader.exec_module(mod)  # type: ignore
-            fn = getattr(mod, "run_simulation", None)
-            if not callable(fn):
-                raise AttributeError("TheConstruct.run_simulation not found")
-            return fn(sim_type, **params)
-        except Exception:
-            # Minimal fallback (no staging) for basic sims.
-            try:
-                from core.services.physics_tools import calculate_raphael_equations, generate_big_bang_simulation  # type: ignore
-
-                if sim_type == "raphael":
-                    return calculate_raphael_equations(**params)
-                if sim_type == "bigbang":
-                    return generate_big_bang_simulation(**params)
-            except Exception:
-                pass
-            raise
+        tc_path = (Path(__file__).resolve().parent / "Z Axis" / "TheConstruct.py").resolve()
+        if not tc_path.exists():
+            raise FileNotFoundError(tc_path)
+        spec = spec_from_file_location("lightspeed_construct_floor", str(tc_path))
+        if spec is None or spec.loader is None:
+            raise ImportError("Cannot load TheConstruct floor module")
+        mod = module_from_spec(spec)
+        spec.loader.exec_module(mod)  # type: ignore
+        fn = getattr(mod, "run_simulation", None)
+        if not callable(fn):
+            raise AttributeError("TheConstruct.run_simulation not found")
+        return fn(sim_type, **params)
 
     def show_immersive_world(self, interactive: bool = False):
         """
