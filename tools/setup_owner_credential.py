@@ -11,10 +11,17 @@ import sys
 from typing import Any
 
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
-RUNTIME_ROOT = REPO_ROOT / "desktop" / "LightSpeed_Runtime"
-if str(RUNTIME_ROOT) not in sys.path:
-    sys.path.insert(0, str(RUNTIME_ROOT))
+SCRIPT_ROOT = Path(__file__).resolve().parent
+RUNTIME_CANDIDATES = (
+    SCRIPT_ROOT.parent / "Core",
+    SCRIPT_ROOT.parent / "desktop" / "LightSpeed_Runtime",
+    SCRIPT_ROOT.parents[1] / "desktop" / "LightSpeed_Runtime",
+)
+for runtime_root in RUNTIME_CANDIDATES:
+    if (runtime_root / "lightspeed_runtime" / "owner_credentials.py").is_file():
+        if str(runtime_root) not in sys.path:
+            sys.path.insert(0, str(runtime_root))
+        break
 
 from lightspeed_runtime.owner_credentials import (  # noqa: E402
     CredentialStore,
