@@ -18,6 +18,15 @@ from fastapi.responses import JSONResponse
 import uvicorn
 
 from lightspeed_runtime.project_artifact_store import stage_project_artifacts
+from lightspeed_runtime.owner_credentials import (
+    CredentialAuthenticationFailed,
+    CredentialError,
+    CredentialStore,
+    CredentialUnavailable,
+    OwnerSessionStore,
+    credential_status,
+    write_achilles_credential_reference,
+)
 from lightspeed_runtime.project_file_browser import (
     ProjectFileBlocked,
     ProjectFileNotFound,
@@ -89,6 +98,7 @@ DEFAULT_ALLOWED_ORIGINS = [
     "http://localhost:4173",
 ]
 OWNER_CONFIRMATION_ENV = "LIGHTSPEED_OWNER_APPROVAL_TOKEN"
+OWNER_USERNAME_ENV = "LIGHTSPEED_OWNER_USERNAME"
 _COMMAND_SUBMISSION_LOCK = threading.Lock()
 _TERMINAL_COMMAND_STATES = frozenset(
     {"complete", "completed", "blocked", "failed", "cancelled", "canceled"}
@@ -184,7 +194,29 @@ def _allowed_origins() -> list[str]:
     return [*DEFAULT_ALLOWED_ORIGINS, *[item for item in configured if item]]
 
 
-def _verified_owner_actor(confirmation: str | None) -> str:
+def _verified_owner_actor(
+    confirmation: str | None,
+    *,
+    session_token: str | None = None,
+    credential_store: CredentialStore | None = None,
+    session_store: OwnerSessionStore | None = None,
+) -> str:
+    if session_token and credential_store is not None and session_store is not None:
+        try:
+            session = session_store.verify(session_token, required_scope="owner")
+            record = credential_store.read_record(session.username)
+            status = credential_status(record)
+        except (CredentialError, CredentialUnavailable) as exc:
+            raise HTTPException(status_code=403, detail=str(exc)) from exc
+        if not status.get("configured"):
+            raise HTTPException(status_code=403, detail="Owner credential is not configured")
+        if status.get("credential_key_id") != session.credential_key_id:
+            session_store.revoke(session_token)
+            raise HTTPException(status_code=403, detail="Owner session was superseded by a password rotation")
+        if status.get("must_change"):
+            raise HTTPException(status_code=428, detail="Password change is required before owner actions")
+        return session.username
+
     expected = os.environ.get(OWNER_CONFIRMATION_ENV, "")
     if not expected:
         raise HTTPException(
@@ -1215,6 +1247,37 @@ def create_app(root: Path | str) -> FastAPI:
     # physical shell appear to be a second authority in status receipts.
     shell_root = Path(root).absolute()
     db, storage = _try_get_services(shell_root)
+    credential_store = (
+        CredentialStore(db)
+        if callable(getattr(db, "execute_query", None))
+        and callable(getattr(db, "execute_update", None))
+        else None
+    )
+    owner_sessions = OwnerSessionStore()
+    owner_username = os.environ.get(OWNER_USERNAME_ENV, "NCNB").strip() or "NCNB"
+
+    def current_credential_status() -> dict[str, Any]:
+        if credential_store is None:
+            return {
+                "configured": False,
+                "username": owner_username,
+                "state": "database_unavailable",
+            }
+        try:
+            status = credential_status(credential_store.read_record(owner_username))
+        except CredentialUnavailable as exc:
+            return {
+                "configured": False,
+                "username": owner_username,
+                "state": "migration_required",
+                "detail": str(exc),
+            }
+        return {**status, "state": "configured" if status.get("configured") else "bootstrap_required"}
+
+    def achilles_reference_path(username: str) -> Path:
+        configured = os.environ.get("LIGHTSPEED_DATA_ROOT", "").strip()
+        data_root = Path(configured) if configured else shell_root.parent / "Data"
+        return data_root / "runtime_exports" / "achilles_pa" / f"credential_{username}.json"
     command_identity_migration: dict[str, Any] = {
         "state": "held",
         "detail": "canonical_queue_indexes gate is not operator-authorized",
@@ -1262,7 +1325,12 @@ def create_app(root: Path | str) -> FastAPI:
         allow_origins=_allowed_origins(),
         allow_credentials=False,
         allow_methods=["GET", "POST", "OPTIONS"],
-        allow_headers=["Content-Type", "X-LightSpeed-Owner-Confirmation"],
+        allow_headers=[
+            "Content-Type",
+            "X-LightSpeed-Owner-Confirmation",
+            "X-LightSpeed-Session",
+            "X-LightSpeed-Password-Change",
+        ],
         max_age=600,
     )
 
@@ -1277,6 +1345,8 @@ def create_app(root: Path | str) -> FastAPI:
         supervisor = _supervisor_status(shell_root)
         merovingian_healthy = health.get("status") == "pass" and bool(supervisor.get("alive"))
         core_services_healthy = bool(db) and bool(storage) and merovingian_healthy
+        credential = current_credential_status()
+        legacy_confirmation = bool(os.environ.get(OWNER_CONFIRMATION_ENV, "").strip())
         return JSONResponse(
             {
                 "ok": core_services_healthy,
@@ -1289,8 +1359,13 @@ def create_app(root: Path | str) -> FastAPI:
                     "merovingian": merovingian_healthy,
                 },
                 "auth": {
-                    "configured": bool(os.environ.get(OWNER_CONFIRMATION_ENV, "").strip()),
-                    "mode": "owner_confirmation_header",
+                    **credential,
+                    "configured": bool(credential.get("configured") or legacy_confirmation),
+                    "mode": (
+                        "username_password_session"
+                        if credential.get("configured")
+                        else "legacy_owner_confirmation_header"
+                    ),
                 },
                 "merovingian": {
                     "status": "pass" if merovingian_healthy else "unavailable",
@@ -1317,6 +1392,106 @@ def create_app(root: Path | str) -> FastAPI:
                 "execution_boundary": "local queue, immutable named artifacts, receipts and review only; no public direct execution",
             }
         )
+
+    @app.post("/api/v1/auth/login")
+    async def owner_login(body: dict[str, Any]):
+        if credential_store is None:
+            raise HTTPException(status_code=503, detail="Owner credential database is unavailable")
+        username = str(body.get("username") or "").strip()
+        password = body.get("password")
+        if not isinstance(password, str) or len(password) > 1024:
+            raise HTTPException(status_code=400, detail="A bounded password is required")
+        try:
+            status = credential_store.authenticate(username, password)
+        except CredentialAuthenticationFailed as exc:
+            raise HTTPException(status_code=401, detail=str(exc)) from exc
+        except (CredentialError, CredentialUnavailable) as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
+        scope = "password_change" if status.get("must_change") else "owner"
+        token, expires_utc = owner_sessions.issue(
+            username=str(status.get("username") or username),
+            credential_key_id=str(status.get("credential_key_id") or ""),
+            scope=scope,
+        )
+        response = {
+            "authenticated": scope == "owner",
+            "change_required": scope == "password_change",
+            "expires_utc": expires_utc,
+            "credential": status,
+        }
+        if scope == "owner":
+            response["session_token"] = token
+        else:
+            response["password_change_token"] = token
+        return JSONResponse(response, headers={"Cache-Control": "no-store"})
+
+    @app.post("/api/v1/auth/change-password")
+    async def owner_change_password(
+        body: dict[str, Any],
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+        password_change_token: str | None = Header(
+            default=None,
+            alias="X-LightSpeed-Password-Change",
+        ),
+    ):
+        if credential_store is None:
+            raise HTTPException(status_code=503, detail="Owner credential database is unavailable")
+        token = password_change_token or owner_session or ""
+        try:
+            session = owner_sessions.verify(token)
+        except CredentialAuthenticationFailed as exc:
+            raise HTTPException(status_code=403, detail=str(exc)) from exc
+        username = str(body.get("username") or "").strip()
+        if username.casefold() != session.username.casefold():
+            raise HTTPException(status_code=403, detail="Password change session does not match the user")
+        current_password = body.get("current_password")
+        new_password = body.get("new_password")
+        if not isinstance(current_password, str) or not isinstance(new_password, str):
+            raise HTTPException(status_code=400, detail="Current and new passwords are required")
+        if len(current_password) > 1024 or len(new_password) > 1024:
+            raise HTTPException(status_code=400, detail="Password input exceeds the bounded limit")
+        try:
+            status = credential_store.change_password(
+                username,
+                current_password,
+                new_password,
+            )
+            reference = write_achilles_credential_reference(
+                achilles_reference_path(username),
+                status=status,
+                event="password_rotation",
+            )
+        except CredentialAuthenticationFailed as exc:
+            raise HTTPException(status_code=401, detail=str(exc)) from exc
+        except CredentialError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        except (CredentialUnavailable, OSError) as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
+        owner_sessions.revoke_username(username)
+        replacement, expires_utc = owner_sessions.issue(
+            username=username,
+            credential_key_id=str(status.get("credential_key_id") or ""),
+            scope="owner",
+        )
+        return JSONResponse(
+            {
+                "authenticated": True,
+                "change_required": False,
+                "session_token": replacement,
+                "expires_utc": expires_utc,
+                "credential": status,
+                "achilles_reference": str(reference),
+            },
+            headers={"Cache-Control": "no-store"},
+        )
+
+    @app.post("/api/v1/auth/logout")
+    async def owner_logout(
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        if owner_session:
+            owner_sessions.revoke(owner_session)
+        return JSONResponse({"authenticated": False}, headers={"Cache-Control": "no-store"})
 
     @app.get("/api/v1/tasks")
     async def list_tasks(limit: int = 30):
@@ -1362,8 +1537,14 @@ def create_app(root: Path | str) -> FastAPI:
             default=None,
             alias="X-LightSpeed-Owner-Confirmation",
         ),
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
     ):
-        _verified_owner_actor(owner_confirmation)
+        _verified_owner_actor(
+            owner_confirmation,
+            session_token=owner_session,
+            credential_store=credential_store,
+            session_store=owner_sessions,
+        )
         try:
             result = open_result_receipt(
                 shell_root,
@@ -1415,8 +1596,14 @@ def create_app(root: Path | str) -> FastAPI:
             default=None,
             alias="X-LightSpeed-Owner-Confirmation",
         ),
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
     ):
-        _verified_owner_actor(owner_confirmation)
+        _verified_owner_actor(
+            owner_confirmation,
+            session_token=owner_session,
+            credential_store=credential_store,
+            session_store=owner_sessions,
+        )
         try:
             result = open_project_file(
                 project_pipeline,
@@ -1447,10 +1634,16 @@ def create_app(root: Path | str) -> FastAPI:
             default=None,
             alias="X-LightSpeed-Owner-Confirmation",
         ),
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
     ):
         decision = _bounded(body.get("decision"), maximum=16, required=True).lower()
         note = _bounded(body.get("note"), maximum=1000)
-        actor = _verified_owner_actor(owner_confirmation)
+        actor = _verified_owner_actor(
+            owner_confirmation,
+            session_token=owner_session,
+            credential_store=credential_store,
+            session_store=owner_sessions,
+        )
         try:
             receipt = project_pipeline.decide_review(review_id, decision, note, actor=actor)
         except KeyError:
@@ -1514,10 +1707,16 @@ def create_app(root: Path | str) -> FastAPI:
             default=None,
             alias="X-LightSpeed-Owner-Confirmation",
         ),
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
     ):
         edge = require_representation_edge()
         decision = _bounded(body.get("decision"), maximum=32, required=True)
-        actor = _verified_owner_actor(owner_confirmation)
+        actor = _verified_owner_actor(
+            owner_confirmation,
+            session_token=owner_session,
+            credential_store=credential_store,
+            session_store=owner_sessions,
+        )
         scope = _bounded(body.get("scope") or "identity", maximum=16, required=True)
         note = _bounded(body.get("note"), maximum=1000)
         raw_edge_ids = body.get("edge_ids") or []

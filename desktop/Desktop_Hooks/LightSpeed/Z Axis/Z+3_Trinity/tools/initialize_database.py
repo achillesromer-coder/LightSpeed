@@ -89,6 +89,28 @@ def initialize_database(db_path: Optional[Union[str, Path]] = None, *, quiet: bo
             """,
         )
         _create_table(
+            "auth_credentials",
+            """
+            CREATE TABLE IF NOT EXISTS auth_credentials (
+                username TEXT PRIMARY KEY,
+                schema_version TEXT NOT NULL,
+                alg TEXT NOT NULL,
+                iterations INTEGER NOT NULL CHECK (iterations >= 200000),
+                salt_b64 TEXT NOT NULL,
+                hash_b64 TEXT NOT NULL,
+                credential_key_id TEXT NOT NULL UNIQUE,
+                rotation_sequence INTEGER NOT NULL DEFAULT 1,
+                changed_utc TEXT NOT NULL,
+                reminder_due_utc TEXT NOT NULL,
+                mandatory_due_utc TEXT NOT NULL,
+                must_change INTEGER NOT NULL DEFAULT 1 CHECK (must_change IN (0, 1)),
+                bootstrap_credential INTEGER NOT NULL DEFAULT 0 CHECK (bootstrap_credential IN (0, 1)),
+                updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (username) REFERENCES users(username) ON DELETE RESTRICT
+            )
+            """,
+        )
+        _create_table(
             "companies",
             """
             CREATE TABLE IF NOT EXISTS companies (

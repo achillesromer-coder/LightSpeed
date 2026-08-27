@@ -2,8 +2,10 @@ import "./styles.css";
 import "./mobile.css";
 import "./projectFiles.css";
 import "./resultReceipts.css";
+import "./ownerAuth.css";
 import {
   createCommandEnvelope,
+  changeDesktopOwnerPassword,
   decideDesktopReview,
   decideRepresentationReview,
   DEFAULT_DESKTOP_ORIGIN,
@@ -16,6 +18,8 @@ import {
   listDesktopResults,
   listDesktopTasks,
   listRepresentationGraphs,
+  loginDesktopOwner,
+  logoutDesktopOwner,
   openDesktopProjectFile,
   openDesktopResult,
   readDesktopStatus,
@@ -30,6 +34,7 @@ import {
   type ExecutionMode,
   type Floor,
   type LocalResultsResponse,
+  type OwnerAuthResponse,
   type Priority,
   type ProjectRecord,
   type RepresentationDecision,
@@ -139,6 +144,26 @@ app.innerHTML = `
     </section>
 
     <section class="view" id="view-activity">
+      <article class="panel owner-auth-panel">
+        <div class="panel-head">
+          <div><p class="eyebrow">NCNB owner access</p><h2>Local credential gate</h2></div>
+          <span class="badge" id="owner-auth-state">Checking credential</span>
+        </div>
+        <form id="owner-login-form" class="owner-auth-form">
+          <label class="field"><span>Username</span><input id="owner-username" autocomplete="username" value="NCNB" maxlength="64"></label>
+          <label class="field"><span>Password</span><input id="owner-password" type="password" autocomplete="current-password" maxlength="1024"></label>
+          <button class="primary" type="submit">Sign in</button>
+          <button id="owner-logout" type="button" hidden>Sign out</button>
+        </form>
+        <form id="owner-change-form" class="owner-auth-form" hidden>
+          <label class="field"><span>Current password</span><input id="owner-current-password" type="password" autocomplete="current-password" maxlength="1024"></label>
+          <label class="field"><span>New password</span><input id="owner-new-password" type="password" autocomplete="new-password" maxlength="1024"></label>
+          <label class="field"><span>Confirm new password</span><input id="owner-confirm-password" type="password" autocomplete="new-password" maxlength="1024"></label>
+          <button class="primary" type="submit">Change password</button>
+        </form>
+        <div id="owner-auth-result" class="result" aria-live="polite"></div>
+        <p class="muted">Sessions remain in memory and expire when this page closes. The Achilles reference stores only the non-secret rotation ID and due dates.</p>
+      </article>
       <div class="metric-grid">
         <article class="metric"><span>Desktop API</span><strong id="desktop-state">Checking</strong><small>${DEFAULT_DESKTOP_ORIGIN}</small></article>
         <article class="metric"><span>Merovingian</span><strong id="merovingian-state">Checking</strong><small>database · storage · health</small></article>
@@ -202,6 +227,108 @@ let currentCommand: CommandEnvelope | null = null;
 let currentAuthorityContract: AuthorityContract | null = null;
 let currentReviews: ReviewRecord[] = [];
 let currentRepresentationGraphs: RepresentationGraph[] = [];
+let ownerSessionToken = "";
+let ownerPasswordChangeToken = "";
+let ownerUsername = "NCNB";
+
+const ownerAuthMessage = (tone: "good" | "warn" | "bad", message: string): void => {
+  const mount = byId("owner-auth-result");
+  mount.dataset.tone = tone;
+  mount.textContent = message;
+};
+
+const applyOwnerAuth = (response: OwnerAuthResponse): void => {
+  const loginForm = byId<HTMLFormElement>("owner-login-form");
+  const changeForm = byId<HTMLFormElement>("owner-change-form");
+  const logoutButton = byId<HTMLButtonElement>("owner-logout");
+  ownerUsername = response.credential?.username || ownerUsername;
+  ownerSessionToken = response.session_token || "";
+  ownerPasswordChangeToken = response.password_change_token || "";
+  byId<HTMLInputElement>("owner-password").value = "";
+  if (response.authenticated && ownerSessionToken) {
+    changeForm.hidden = true;
+    logoutButton.hidden = false;
+    byId("owner-auth-state").textContent = `${ownerUsername} signed in`;
+    ownerAuthMessage("good", `Owner session active until ${response.expires_utc || "page close"}.`);
+    return;
+  }
+  logoutButton.hidden = true;
+  changeForm.hidden = !response.change_required;
+  loginForm.hidden = false;
+  byId("owner-auth-state").textContent = response.change_required
+    ? "Password change required"
+    : "Sign-in required";
+  ownerAuthMessage(
+    "warn",
+    response.change_required
+      ? "The bootstrap password was verified. Enter it again with a new password to complete first login."
+      : "Owner sign-in is required for unredacted files, receipts, and decisions.",
+  );
+};
+
+const requireOwnerSession = (): string => {
+  if (ownerSessionToken) return ownerSessionToken;
+  ownerAuthMessage("warn", "Sign in as NCNB before performing this owner-gated action.");
+  return "";
+};
+
+byId<HTMLFormElement>("owner-login-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const username = byId<HTMLInputElement>("owner-username").value.trim();
+  const passwordInput = byId<HTMLInputElement>("owner-password");
+  try {
+    applyOwnerAuth(await loginDesktopOwner(username, passwordInput.value));
+  } catch (error) {
+    passwordInput.value = "";
+    ownerAuthMessage("bad", error instanceof Error ? error.message : "Owner sign-in failed.");
+  }
+});
+
+byId<HTMLFormElement>("owner-change-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const current = byId<HTMLInputElement>("owner-current-password");
+  const next = byId<HTMLInputElement>("owner-new-password");
+  const confirmation = byId<HTMLInputElement>("owner-confirm-password");
+  if (next.value !== confirmation.value) {
+    ownerAuthMessage("bad", "The new passwords do not match.");
+    return;
+  }
+  const token = ownerPasswordChangeToken || ownerSessionToken;
+  if (!token) {
+    ownerAuthMessage("bad", "Sign in before changing the password.");
+    return;
+  }
+  try {
+    const response = await changeDesktopOwnerPassword(
+      ownerUsername,
+      current.value,
+      next.value,
+      token,
+      Boolean(ownerPasswordChangeToken),
+    );
+    current.value = "";
+    next.value = "";
+    confirmation.value = "";
+    applyOwnerAuth(response);
+  } catch (error) {
+    current.value = "";
+    next.value = "";
+    confirmation.value = "";
+    ownerAuthMessage("bad", error instanceof Error ? error.message : "Password change failed.");
+  }
+});
+
+byId<HTMLButtonElement>("owner-logout").addEventListener("click", async () => {
+  const token = ownerSessionToken;
+  ownerSessionToken = "";
+  ownerPasswordChangeToken = "";
+  if (token) {
+    try { await logoutDesktopOwner(token); } catch { /* The local session is already cleared. */ }
+  }
+  byId<HTMLButtonElement>("owner-logout").hidden = true;
+  byId("owner-auth-state").textContent = "Signed out";
+  ownerAuthMessage("warn", "Owner session cleared from this page.");
+});
 
 const renderRoute = (): void => {
   const routed = routeInstruction(instruction.value || "governance");
@@ -277,13 +404,10 @@ const renderProjects = (projects: ProjectRecord[]): void => {
       bindProjectFileOpenButtons(filesMount, async (selectedProjectId, relativePath, openButton) => {
         const resultMount = filesMount.querySelector<HTMLElement>(".project-file-result");
         if (!resultMount) return;
-        const ownerConfirmation = window.prompt(
-          "Enter the local owner-confirmation token to open this unredacted read-only preview. It is sent only to the loopback Desktop bridge and is not stored.",
-          "",
-        ) ?? "";
-        if (!ownerConfirmation) {
+        const ownerSession = requireOwnerSession();
+        if (!ownerSession) {
           resultMount.innerHTML = renderProjectFilesError(
-            "File preview cancelled: owner confirmation is required.",
+            "File preview held: sign in through the NCNB owner gate first.",
           );
           return;
         }
@@ -291,7 +415,7 @@ const renderProjects = (projects: ProjectRecord[]): void => {
         resultMount.innerHTML = `<p class="muted">Opening read-only result…</p>`;
         try {
           resultMount.innerHTML = renderProjectFileOpenResult(
-            await openDesktopProjectFile(selectedProjectId, relativePath, ownerConfirmation),
+            await openDesktopProjectFile(selectedProjectId, relativePath, ownerSession),
           );
         } catch (error) {
           resultMount.innerHTML = renderProjectFilesError(
@@ -331,13 +455,10 @@ const renderResults = (
       );
       return;
     }
-    const ownerConfirmation = window.prompt(
-      "Enter the local owner-confirmation token to inspect this unredacted fixed receipt. It is sent only to the loopback Desktop bridge and is not stored.",
-      "",
-    ) ?? "";
-    if (!ownerConfirmation) {
+    const ownerSession = requireOwnerSession();
+    if (!ownerSession) {
       detailMount.innerHTML = renderResultReceiptsError(
-        "Receipt inspection cancelled: owner confirmation is required.",
+        "Receipt inspection held: sign in through the NCNB owner gate first.",
       );
       return;
     }
@@ -345,7 +466,7 @@ const renderResults = (
     detailMount.innerHTML = `<p class="muted">Opening owner-confirmed read-only receipt…</p>`;
     try {
       detailMount.innerHTML = renderResultReceiptOpen(
-        await openDesktopResult(resultId, ownerConfirmation),
+        await openDesktopResult(resultId, ownerSession),
       );
     } catch (error) {
       detailMount.innerHTML = renderResultReceiptsError(
@@ -376,16 +497,13 @@ const renderReviews = (reviews: ReviewRecord[]): void => {
     const review = currentReviews.find((item) => item.review_id === reviewId);
     if (!review || !reviewId) return;
     const note = window.prompt(`${decision.toUpperCase()}: ${review.title || reviewId}\nOptional decision note:`, "") ?? "";
-    const ownerConfirmation = window.prompt(
-      "Enter the local owner-confirmation token. It is sent only to the loopback Desktop bridge and is not stored.",
-      "",
-    ) ?? "";
-    if (!ownerConfirmation) {
-      setResult("bad", "Review decision cancelled: owner confirmation is required.");
+    const ownerSession = requireOwnerSession();
+    if (!ownerSession) {
+      setResult("bad", "Review decision held: sign in through the NCNB owner gate first.");
       return;
     }
     try {
-      const response = await decideDesktopReview(reviewId, decision, note, ownerConfirmation);
+      const response = await decideDesktopReview(reviewId, decision, note, ownerSession);
       setResult("good", reviewDecisionOutcomeMessage(reviewId, decision, response));
       await refreshDesktop();
     } catch (error) {
@@ -418,12 +536,9 @@ const renderCanonicalGraphs = (graphs: RepresentationGraph[]): void => {
         "Optional decision note:",
         "",
       ) ?? "";
-      const ownerConfirmation = window.prompt(
-        "Enter the local owner-confirmation token. It is sent only to the loopback Desktop bridge and is not stored.",
-        "",
-      ) ?? "";
-      if (!ownerConfirmation) {
-        setResult("bad", "Representation decision cancelled: owner confirmation is required.");
+      const ownerSession = requireOwnerSession();
+      if (!ownerSession) {
+        setResult("bad", "Representation decision held: sign in through the NCNB owner gate first.");
         return;
       }
       try {
@@ -433,7 +548,7 @@ const renderCanonicalGraphs = (graphs: RepresentationGraph[]): void => {
           scope,
           edgeIds,
           note,
-          ownerConfirmation,
+          ownerSession,
         );
         setResult(
           "good",
@@ -509,6 +624,18 @@ const refreshDesktop = async (): Promise<void> => {
   try {
     const status = await readDesktopStatus();
     currentAuthorityContract = status.authority_contract || null;
+    ownerUsername = status.auth?.username || ownerUsername;
+    byId<HTMLInputElement>("owner-username").value = ownerUsername;
+    if (!ownerSessionToken) {
+      byId("owner-auth-state").textContent = status.auth?.configured
+        ? status.auth.must_change ? "First change required" : "Sign-in required"
+        : "Credential setup held";
+      if (!status.auth?.configured) {
+        ownerAuthMessage("bad", "The dedicated owner credential is not configured on Desktop.");
+      } else if (status.auth.must_change) {
+        ownerAuthMessage("warn", "Sign in with the bootstrap password, then complete the required change.");
+      }
+    }
     renderRoute();
     pill.dataset.state = status.ok ? "online" : "degraded";
     pillText.textContent = status.ok ? "local runtime connected" : "runtime connected; health needs review";
@@ -566,6 +693,8 @@ const refreshDesktop = async (): Promise<void> => {
     tasksMount.innerHTML = `<p class="muted">Desktop is offline. Commands can still be saved, copied or downloaded.</p>`;
     byId("desktop-projects").innerHTML = `<p class="muted">Project registry unavailable while Desktop is offline.</p>`;
     byId("desktop-reviews").innerHTML = `<p class="muted">Review queue unavailable while Desktop is offline.</p>`;
+    byId("owner-auth-state").textContent = "Desktop offline";
+    ownerAuthMessage("bad", "Start the local Desktop bridge before signing in.");
     byId("result-auth-state").textContent = "Desktop offline";
     byId("desktop-results").innerHTML = `<p class="muted">Fixed local result metadata is unavailable while Desktop is offline.</p>`;
     renderCanonicalGraphs([]);

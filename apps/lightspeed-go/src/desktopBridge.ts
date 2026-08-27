@@ -202,7 +202,17 @@ export interface ReviewDecisionResponse {
 export interface DesktopStatus {
   ok: boolean;
   time_utc?: string;
-  auth?: { configured?: boolean; mode?: string };
+  auth?: {
+    configured?: boolean;
+    mode?: string;
+    username?: string;
+    must_change?: boolean;
+    reminder_due?: boolean;
+    mandatory_due?: boolean;
+    reminder_due_utc?: string | null;
+    mandatory_due_utc?: string | null;
+    state?: string;
+  };
   services?: { db?: boolean; storage?: boolean; merovingian?: boolean };
   merovingian?: {
     status?: string;
@@ -217,6 +227,22 @@ export interface DesktopStatus {
     error?: string | null;
   };
   authority_contract?: AuthorityContract;
+}
+
+export interface OwnerAuthResponse {
+  authenticated: boolean;
+  change_required: boolean;
+  session_token?: string;
+  password_change_token?: string;
+  expires_utc?: string;
+  credential?: {
+    username?: string;
+    must_change?: boolean;
+    reminder_due?: boolean;
+    mandatory_due?: boolean;
+    reminder_due_utc?: string | null;
+    mandatory_due_utc?: string | null;
+  };
 }
 
 export interface RepresentationIdentifier {
@@ -425,6 +451,47 @@ const withTimeout = async <T>(url: string, init: RequestInit, timeoutMs = 3500):
 export const readDesktopStatus = (origin = DEFAULT_DESKTOP_ORIGIN): Promise<DesktopStatus> =>
   withTimeout<DesktopStatus>(`${origin}/api/v1/status`, { method: "GET" }, 10000);
 
+export const loginDesktopOwner = (
+  username: string,
+  password: string,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<OwnerAuthResponse> =>
+  withTimeout<OwnerAuthResponse>(`${origin}/api/v1/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: normalize(username, 64), password: password.slice(0, 1024) }),
+  }, 15000);
+
+export const changeDesktopOwnerPassword = (
+  username: string,
+  currentPassword: string,
+  newPassword: string,
+  token: string,
+  changeOnly: boolean,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<OwnerAuthResponse> =>
+  withTimeout<OwnerAuthResponse>(`${origin}/api/v1/auth/change-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      [changeOnly ? "X-LightSpeed-Password-Change" : "X-LightSpeed-Session"]: token.slice(0, 256),
+    },
+    body: JSON.stringify({
+      username: normalize(username, 64),
+      current_password: currentPassword.slice(0, 1024),
+      new_password: newPassword.slice(0, 1024),
+    }),
+  }, 20000);
+
+export const logoutDesktopOwner = (
+  sessionToken: string,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<{ authenticated: boolean }> =>
+  withTimeout<{ authenticated: boolean }>(`${origin}/api/v1/auth/logout`, {
+    method: "POST",
+    headers: { "X-LightSpeed-Session": sessionToken.slice(0, 256) },
+  }, 7000);
+
 export const submitDesktopCommand = (
   command: CommandEnvelope,
   origin = DEFAULT_DESKTOP_ORIGIN,
@@ -483,14 +550,14 @@ export const listDesktopProjectFiles = async (
 export const openDesktopProjectFile = async (
   projectId: string,
   relativePath: string,
-  ownerConfirmation: string,
+  ownerSession: string,
   origin = DEFAULT_DESKTOP_ORIGIN,
 ): Promise<ProjectFileOpenResult> =>
   withTimeout<ProjectFileOpenResult>(
     `${origin}${projectFileApiPath(projectId, relativePath)}`,
     {
       method: "GET",
-      headers: { "X-LightSpeed-Owner-Confirmation": ownerConfirmation.slice(0, 256) },
+      headers: { "X-LightSpeed-Session": ownerSession.slice(0, 256) },
     },
     10000,
   );
@@ -512,14 +579,14 @@ export const listDesktopResults = async (
 
 export const openDesktopResult = async (
   resultId: string,
-  ownerConfirmation: string,
+  ownerSession: string,
   origin = DEFAULT_DESKTOP_ORIGIN,
 ): Promise<LocalResultOpenResponse> =>
   withTimeout<LocalResultOpenResponse>(
     `${origin}${resultReceiptApiPath(resultId)}`,
     {
       method: "GET",
-      headers: { "X-LightSpeed-Owner-Confirmation": ownerConfirmation.slice(0, 256) },
+      headers: { "X-LightSpeed-Session": ownerSession.slice(0, 256) },
     },
     10000,
   );
@@ -540,7 +607,7 @@ export const decideDesktopReview = async (
   reviewId: string,
   decision: ReviewDecision,
   note = "",
-  ownerConfirmation = "",
+  ownerSession = "",
   origin = DEFAULT_DESKTOP_ORIGIN,
 ): Promise<ReviewDecisionResponse> =>
   withTimeout<ReviewDecisionResponse>(
@@ -549,7 +616,7 @@ export const decideDesktopReview = async (
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-LightSpeed-Owner-Confirmation": ownerConfirmation,
+        "X-LightSpeed-Session": ownerSession.slice(0, 256),
       },
       body: JSON.stringify({ decision, note: normalize(note, 1000) }),
     },
@@ -588,7 +655,7 @@ export const decideRepresentationReview = async (
   scope: "identity" | "edges",
   edgeIds: string[] = [],
   note = "",
-  ownerConfirmation = "",
+  ownerSession = "",
   origin = DEFAULT_DESKTOP_ORIGIN,
 ): Promise<Record<string, unknown>> =>
   withTimeout<Record<string, unknown>>(
@@ -597,7 +664,7 @@ export const decideRepresentationReview = async (
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-LightSpeed-Owner-Confirmation": ownerConfirmation.slice(0, 256),
+        "X-LightSpeed-Session": ownerSession.slice(0, 256),
       },
       body: JSON.stringify({
         decision,

@@ -75,10 +75,7 @@ import queue
 import argparse
 import json
 import re
-import base64
 import hashlib
-import hmac
-import secrets
 
 # Add paths
 LIGHTSPEED_ROOT = Path(__file__).parent.resolve()
@@ -302,7 +299,22 @@ for _p in IMMERSIVE_MODULES_PATHS:
 
 # Tkinter
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog, scrolledtext
+from tkinter import ttk, messagebox, filedialog, scrolledtext, simpledialog
+
+try:
+    from lightspeed_runtime.owner_credentials import (
+        CredentialAuthenticationFailed,
+        CredentialError,
+        CredentialStore,
+        CredentialUnavailable,
+        create_password_record,
+        verify_password_record,
+        write_achilles_credential_reference,
+    )
+    HAS_OWNER_CREDENTIALS = True
+except ImportError as e:
+    print(f"[CRITICAL] Owner credential service unavailable: {e}")
+    HAS_OWNER_CREDENTIALS = False
 
 # Premium Theme Engine (Trinity Z+3)
 try:
@@ -1310,34 +1322,70 @@ class LightSpeedUnified(tk.Tk):
             return True
 
     def _hash_password_record(self, password: str) -> Dict[str, Any]:
-        """Create a PBKDF2 password record for storage in user_preferences.preferences_json."""
-        pwd = (password or "").encode("utf-8")
-        salt = secrets.token_bytes(16)
-        iterations = 200_000
-        digest = hashlib.pbkdf2_hmac("sha256", pwd, salt, iterations)
-        return {
-            "alg": "pbkdf2_sha256",
-            "iter": iterations,
-            "salt_b64": base64.b64encode(salt).decode("ascii"),
-            "hash_b64": base64.b64encode(digest).decode("ascii"),
-        }
+        """Compatibility wrapper for the dedicated credential service."""
+        if not HAS_OWNER_CREDENTIALS:
+            raise RuntimeError("Owner credential service is unavailable")
+        username = str((self.current_user or {}).get("username") or "NCNB")
+        return create_password_record(password, username=username)
 
     def _verify_password_record(self, record: Dict[str, Any], password: str) -> bool:
-        """Verify a PBKDF2 password record."""
-        try:
-            if not isinstance(record, dict):
-                return False
-            if str(record.get("alg") or "") != "pbkdf2_sha256":
-                return False
-            iterations = int(record.get("iter") or 0)
-            salt = base64.b64decode(str(record.get("salt_b64") or ""), validate=False)
-            expected = base64.b64decode(str(record.get("hash_b64") or ""), validate=False)
-            if iterations <= 0 or (not salt) or (not expected):
-                return False
-            got = hashlib.pbkdf2_hmac("sha256", (password or "").encode("utf-8"), salt, iterations)
-            return hmac.compare_digest(got, expected)
-        except Exception:
+        """Compatibility wrapper for the dedicated credential service."""
+        return bool(HAS_OWNER_CREDENTIALS and verify_password_record(record, password))
+
+    def _achilles_credential_reference_path(self, username: str) -> Path:
+        configured = os.environ.get("LIGHTSPEED_DATA_ROOT", "").strip()
+        data_root = Path(configured) if configured else LIGHTSPEED_ROOT.parent / "Data"
+        return data_root / "runtime_exports" / "achilles_pa" / f"credential_{username}.json"
+
+    def _change_owner_password(self, username: str, current_password: str) -> bool:
+        """Require and persist one policy-compliant password rotation."""
+        new_password = simpledialog.askstring(
+            "Change Password",
+            "Enter a new password (12+ characters; use at least three character classes):",
+            show="*",
+            parent=self,
+        )
+        if new_password is None:
             return False
+        confirmation = simpledialog.askstring(
+            "Confirm Password",
+            "Re-enter the new password:",
+            show="*",
+            parent=self,
+        )
+        if confirmation is None or new_password != confirmation:
+            messagebox.showerror("Password Change", "The new passwords did not match.", parent=self)
+            return False
+        try:
+            status = CredentialStore(self.db).change_password(
+                username,
+                current_password,
+                new_password,
+            )
+            write_achilles_credential_reference(
+                self._achilles_credential_reference_path(username),
+                status=status,
+                event="password_rotation",
+            )
+        except CredentialAuthenticationFailed:
+            messagebox.showerror("Password Change", "The current password was not accepted.", parent=self)
+            return False
+        except CredentialError as exc:
+            messagebox.showerror("Password Change", str(exc), parent=self)
+            return False
+        except (CredentialUnavailable, OSError) as exc:
+            messagebox.showerror(
+                "Password Change",
+                f"The credential update could not be persisted. Login remains held.\n\n{exc}",
+                parent=self,
+            )
+            return False
+        messagebox.showinfo(
+            "Password Changed",
+            "Password rotation completed. Achilles P.A received the non-secret rotation reference.",
+            parent=self,
+        )
+        return True
 
     def _immersive_unpinned(self) -> bool:
         """Interactive immersive controls are pinned off unless the active user explicitly unpins."""
@@ -3833,7 +3881,7 @@ class LightSpeedUnified(tk.Tk):
 
             require_pw = bool(self._require_password_login())
 
-            # DB-backed login (password-less by design for now; Setup Wizard manages users/clearance).
+            # DB-backed identity lookup followed by the dedicated credential gate.
             try:
                 user_row = self.db.fetchone("SELECT * FROM users WHERE username = ?", (username,))
             except Exception:
@@ -3842,57 +3890,48 @@ class LightSpeedUnified(tk.Tk):
             if user_row:
                 user = dict(user_row)
 
-                # Enforce/enroll a local password (stored under user_preferences.preferences_json).
-                try:
-                    prefs = get_user_preferences(username)
-                except Exception:
-                    prefs = None
-
-                if require_pw and getattr(prefs, "table_available", False):
+                # Authentication is fail-closed and independent from tailoring preferences.
+                if require_pw:
+                    if not HAS_OWNER_CREDENTIALS:
+                        messagebox.showerror(
+                            "Login Held",
+                            "The canonical owner credential service is unavailable.",
+                            parent=self,
+                        )
+                        return
                     try:
-                        record = prefs.get_preference("auth.password", default=None) if prefs else None
-                    except Exception:
-                        record = None
+                        auth_status = CredentialStore(self.db).authenticate(username, password or "")
+                    except CredentialAuthenticationFailed:
+                        messagebox.showerror("Login Failed", "Username or password is incorrect.", parent=self)
+                        return
+                    except (CredentialError, CredentialUnavailable) as exc:
+                        messagebox.showerror(
+                            "Login Held",
+                            f"Authentication is not configured or cannot be verified.\n\n{exc}",
+                            parent=self,
+                        )
+                        return
 
-                    if record:
-                        if not self._verify_password_record(record, password or ""):
-                            messagebox.showerror("Login Failed", "Incorrect password.", parent=self)
+                    if auth_status.get("must_change"):
+                        messagebox.showinfo(
+                            "Password Change Required",
+                            "The bootstrap password or annual limit requires a new password before login.",
+                            parent=self,
+                        )
+                        if not self._change_owner_password(username, password or ""):
                             return
-                    else:
-                        if not (password or "").strip():
-                            messagebox.showerror(
-                                "Login Failed",
-                                "Password required.\n\n"
-                                "This user has no password set yet. Enter a password to enroll it on this device.",
-                                parent=self,
-                            )
+                    elif auth_status.get("reminder_due"):
+                        change_now = messagebox.askyesno(
+                            "Password Rotation Reminder",
+                            "This password has reached its 90-day review point. Change it now?\n\n"
+                            "You may continue today, but a change becomes mandatory at one year.",
+                            parent=self,
+                        )
+                        if change_now and not self._change_owner_password(username, password or ""):
                             return
-                        try:
-                            prefs.set_preference("auth.password", self._hash_password_record(password))
-                            # Reduce the chance of accidental disclosure.
-                            try:
-                                password_entry.delete(0, "end")
-                            except Exception:
-                                pass
-                            messagebox.showinfo(
-                                "Password Set",
-                                "Password enrolled for this user.\n\n"
-                                "You can reset it later from Settings Hub -> Tailoring.",
-                                parent=self,
-                            )
-                        except Exception:
-                            # If we cannot persist, do not block login (but warn).
-                            messagebox.showwarning(
-                                "Password Warning",
-                                "Could not persist password enrollment. Continuing without password persistence.",
-                                parent=self,
-                            )
 
-                elif require_pw and not getattr(prefs, "table_available", True):
-                    # If the preferences table is missing, we cannot persist the password record.
-                    # Do not block login; direct IT to run migrations.
                     try:
-                        self.update_status("Password enforcement skipped (user_preferences table missing).")
+                        password_entry.delete(0, "end")
                     except Exception:
                         pass
 

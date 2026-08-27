@@ -184,7 +184,9 @@ def test_result_receipt_bridge_exposes_auth_state_and_fails_closed(tmp_path, mon
     assert status_without_auth.status_code == 200
     assert status_without_auth.json()["auth"] == {
         "configured": False,
-        "mode": "owner_confirmation_header",
+        "mode": "legacy_owner_confirmation_header",
+        "username": "NCNB",
+        "state": "database_unavailable",
     }
     assert listing.status_code == 200
     assert listing.json()["results"][0]["result_id"] == "LSGO-RESULT-BRIDGE"

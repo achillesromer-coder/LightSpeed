@@ -186,6 +186,7 @@ jobs:
             desktop/LightSpeed_Runtime/tests/test_project_pipeline.py \
             desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py \
             desktop/LightSpeed_Runtime/tests/test_ls_go_job_consumer.py \
+            desktop/LightSpeed_Runtime/tests/test_owner_credentials.py \
             desktop/LightSpeed_Runtime/tests/test_local_agent_cycle.py \
             desktop/LightSpeed_Runtime/tests/test_local_agent_wakeup.py \
             desktop/LightSpeed_Runtime/tests/test_local_floor_runner.py \
