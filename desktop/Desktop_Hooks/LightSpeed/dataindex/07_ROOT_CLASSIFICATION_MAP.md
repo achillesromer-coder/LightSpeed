@@ -73,3 +73,18 @@ Policy:
 1. Generated report consolidation inside [Z Axis/Z-4_Merovingian/data/runtime_exports](/C:/Users/acc/Desktop/LightSpeed%20Consolidated/LightSpeed/Z%20Axis/Z-4_Merovingian/data/runtime_exports)
 2. Legacy bundle declassification once the rehomed bundle diff is fully clean
 3. Empty/cache cleanup after final reference scans
+
+## 2026-08-28 final-home canonical consolidation receipt
+
+Authority: ACR3 GST-058 / `PUSHFOLD-DRIVE-CANON-PRELOG-20260828-1512` and execution receipt `PUSHFOLD-DRIVE-CANON-EXEC-20260828-1515`.
+
+- Canonical finalisation/build home: Google Drive `Temporary Drives` ID `1nma8t8pNW7YD8FttBCnoc_0IVsifYMjM`.
+- Existing canonical package-classification destination: `ZIP Check` ID `1NwiFmDDKkxBWQV047G7c2A7aM_ANmyz_`.
+- Existing canonical archive destination: `Logs/99_Archive` ID `1gilzVeOsBXMBvWcAbOLYd8UZ0zpVriqL`.
+- `ACR3_Hotdogg3211_Drive_Alignment_Map_TEMP_TO_ACHILLES_2026_06_24` (`Drive:1XI9VEu5sN72dv2dUHLVXALA02VD2DUOiPyQe8Dnef3E`) was moved in-place to `Logs/99_Archive`; provider readback returned parent `1gilzVeOsBXMBvWcAbOLYd8UZ0zpVriqL`.
+- Both `LightSpeed_CL3_Final_Handoff_Set_2026_06_02.zip` objects remain intact and held because Google Drive returned `appNotAuthorizedToFile` for the first move attempt. No retry churn, copy, deletion, or second move was performed.
+- The two held ZIP IDs are `1gtUQ39dnZ6nCjxiJ6dqxxdqrTUgXnTXL` and `1O_jQtRfN2o4LPcSAItHMQ5zPkOQ41vGY`.
+- Byte-duplicate status does not authorize deletion; retained-copy authority, member-level canonical destination/readback, recovery path, and steward closure remain required.
+- This execution branch is intentionally review-only. `main` merge, deployment, public release, autonomous deletion, owner-CAD overwrite, and unsupported engineering/scientific promotion remain prohibited.
+
+Independent proof: the Drive mutation succeeded and returned the archive parent directly; the ACR3 readback preserves the exact moved/held IDs and the continuation boundary. This receipt records cloud canonical consolidation only and does not assert installed-shell execution or physical validation.
