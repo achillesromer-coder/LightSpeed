@@ -68,6 +68,16 @@ The final Drive root still contains historical objects that cannot be moved by t
 
 A representative ZIP Check legacy-twin package/workbook pair was also tested against the pre-logged move to `03_Drive_Export_Packages`; both exact-ID parent mutations returned `403 appNotAuthorizedToFile`. The remaining eight cohort items were deliberately left unattempted to avoid deterministic retry churn. No copy-around, deletion, rename or authority promotion was used to manufacture folder cleanliness.
 
+### RAPH-HIST-001 semantic extraction closure
+
+The substantive legacy equation source `Drive:1_T18Emle45yey8PSjcderY7OoZ2KAUqZQkIVkGyR5n4` has now been independently reconciled against Type 1 Systems `ROMEREC6A_Raphael Classic`.
+
+- The historical equation string is reproduced exactly in current Type-1 row `RAPH-HIST-001`.
+- The source exposes 15 ordered variable/function tokens; `RAPH-HIST-001-VARS` preserves the same 15-token order with whitespace-only presentation differences.
+- Current Type-1 correctly classifies the expression as a `RELATED / NON-IDENTICAL HISTORICAL VARIANT`; derivational/symbol equivalence to current Raphael formulations remains OPEN.
+- This closes source-recovery/semantic-assimilation for the historical expression. It does not validate the equation empirically, prove scientific correctness, or authorize replacement/unification of current Raphael formulas.
+- One archive-not-delete parent mutation of the original source to `Logs/99_Archive` returned `403 appNotAuthorizedToFile`; the original source therefore remains a permission-held provenance/recovery object at the Temporary Drives root.
+
 ## Git authority and branch state
 
 This consolidation branch was created from current `main` at `86f028d9fac1a2fd6320ce9a1a4de58b3e5f8b1c`:
@@ -82,7 +92,7 @@ Concurrent same-lane work was reconciled rather than overwritten. Commit `e2a6d9
 
 ACR3 task `GST-058 — Drive / LightSpeed / Cognigrex Final Home` is the active cross-corpus consolidation task. The Drive/Web/Git changes represented by this receipt must be reconciled there and read back before any later release state is advanced.
 
-Current ACR3 handoff lineage includes the bounded Drive canonical pre-log/reconciliation, GST-058 Git receipt, Raphael scaffold archive reconciliation, ZIP Check legacy-twin representative write-hold reconciliation, and Library historical-source wrapper de-duplication pre-log. Permission-held operations remain held, not silently completed.
+Current ACR3 handoff lineage includes the bounded Drive canonical pre-log/reconciliation, GST-058 Git receipt, Raphael scaffold archive reconciliation, ZIP Check legacy-twin representative write-hold reconciliation, Library historical-source wrapper de-duplication reconciliation, and `RAPH-HIST-001` semantic-parity closure. Permission-held operations remain held, not silently completed.
 
 ## Held gates
 
@@ -102,6 +112,7 @@ The following remain held unless separately evidenced/authorized:
 1. Continue populating hybrid cells from exact Type-1 owners and stable IDs, not duplicated summaries.
 2. Reconcile legacy root sources extraction-first and retain provider permission exceptions explicitly.
 3. Treat `Redundant/Source Internal` as existing historical archive lineage and `06_Legacy_Source_Corpus` as root-intake control until provider authority allows a single physical wrapper.
-4. Run Drive/ACR3/Git readback parity after each bounded mutation.
-5. Use this branch/PR for canonical consolidation receipts and compatible implementation deltas; do not merge to `main` until review/release gates are explicitly resolved.
-6. Preserve failed/null/rejected evidence and contradiction sets alongside successful results.
+4. Treat RAPH-HIST-001 source recovery as closed; any further work is derivational/symbol mapping under current Raphael authority, not re-extraction.
+5. Run Drive/ACR3/Git readback parity after each bounded mutation.
+6. Use this branch/PR for canonical consolidation receipts and compatible implementation deltas; do not merge to `main` until review/release gates are explicitly resolved.
+7. Preserve failed/null/rejected evidence and contradiction sets alongside successful results.
