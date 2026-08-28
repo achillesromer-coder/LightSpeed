@@ -52,6 +52,18 @@ Principal current bindings include:
 - Infrastructure/supply chain: Römer `116_INFRA_FINALIZATION_MATRIX_v0_1`, `121_INTERSOL_SPACE_PROGRAM_v0_1`, `131_REQUIREMENTS_TRACEABILITY_v0_1`, `154_INTERSOL_MASTER_READOUT_v0_1`; Operations `Interplanetary Supply Chain`, `Mission Architecture Control`; Eco-Grex site/ecology surfaces where relevant.
 - Models/calculators: Systems `Calculator Registry`, owning `*_Formula_Library` and `*_Scenario_Analysis`; Raphael only when an explicit model-scope/authority binding exists.
 
+## Mark III current topology authority
+
+The current count/configuration authority is **closed at three appendages**. This is a current-canon selection, not a physical qualification claim.
+
+- Current stable appendage identities: `M3_APPENDAGE_01`, `M3_APPENDAGE_02`, `M3_APPENDAGE_03`.
+- Current stable interlock identities: `M3-INTLK-APP-01`, `M3-INTLK-APP-02`, `M3-INTLK-APP-03`.
+- Each appendage carries the owner-confirmed heterogeneous/hermaphroditic mating role for secondary Mark III↔Mark III appendage-to-appendage coupling and Mark III↔Mark V primary-launch coupling.
+- The former PR #34 bilateral/two-arm implementation is retained as superseded-for-current-count digital/reference lineage and must not be used to reopen the count gate.
+- Exact interlock/appendage CAD, connector dimensions, materials, tolerances, loads, kinematics, latch/release behavior, Mark V mechanical mating geometry and physical capability remain source/engineering/empirical gated.
+
+Owning authority remains Type 1 Römer `OD-050/OD-051` with the corresponding Type 1 Systems `MARKIFAB2` propagation and ACR3 manual persistence receipts. Git is a synchronized operational/provenance consumer for this state and does not supersede the owning workbook authority.
+
 ## Drive source-consolidation state
 
 `Library/06_Legacy_Source_Corpus/` is the controlled root-intake/extraction wrapper, not a second historical archive. Its current intake lanes are:
@@ -92,7 +104,7 @@ Concurrent same-lane work was reconciled rather than overwritten. Commit `e2a6d9
 
 ACR3 task `GST-058 — Drive / LightSpeed / Cognigrex Final Home` is the active cross-corpus consolidation task. The Drive/Web/Git changes represented by this receipt must be reconciled there and read back before any later release state is advanced.
 
-Current ACR3 handoff lineage includes the bounded Drive canonical pre-log/reconciliation, GST-058 Git receipt, Raphael scaffold archive reconciliation, ZIP Check legacy-twin representative write-hold reconciliation, Library historical-source wrapper de-duplication reconciliation, and `RAPH-HIST-001` semantic-parity closure. Permission-held operations remain held, not silently completed.
+Current ACR3 handoff lineage includes the bounded Drive canonical pre-log/reconciliation, GST-058 Git receipt, Raphael scaffold archive reconciliation, ZIP Check legacy-twin representative write-hold reconciliation, Library historical-source wrapper de-duplication reconciliation, `RAPH-HIST-001` semantic-parity closure, and the Mark III current three-appendage topology authority parity correction. Permission-held operations remain held, not silently completed.
 
 ## Held gates
 
@@ -104,7 +116,8 @@ The following remain held unless separately evidenced/authorized:
 - `main` merge;
 - physical/manufacturing/performance qualification;
 - empirical validation without calibrated raw receipts and uncertainty;
-- owner-authoritative geometry semantics where contradiction/authority gates remain open;
+- Mark III exact appendage/interlock engineering and Mark V mechanical mating where the count gate is closed but detailed ICD/physical authority remains open;
+- owner-authoritative geometry semantics for other unresolved contradiction/authority gates;
 - deletion before extraction, canonical mapping and explicit deletion authority.
 
 ## Next execution contract
@@ -113,6 +126,7 @@ The following remain held unless separately evidenced/authorized:
 2. Reconcile legacy root sources extraction-first and retain provider permission exceptions explicitly.
 3. Treat `Redundant/Source Internal` as existing historical archive lineage and `06_Legacy_Source_Corpus` as root-intake control until provider authority allows a single physical wrapper.
 4. Treat RAPH-HIST-001 source recovery as closed; any further work is derivational/symbol mapping under current Raphael authority, not re-extraction.
-5. Run Drive/ACR3/Git readback parity after each bounded mutation.
-6. Use this branch/PR for canonical consolidation receipts and compatible implementation deltas; do not merge to `main` until review/release gates are explicitly resolved.
-7. Preserve failed/null/rejected evidence and contradiction sets alongside successful results.
+5. Treat Mark III three-appendage count/configuration as closed current canon; only the detailed ICD/engineering/empirical gates remain open.
+6. Run Drive/ACR3/Git readback parity after each bounded mutation.
+7. Use this branch/PR for canonical consolidation receipts and compatible implementation deltas; do not merge to `main` until review/release gates are explicitly resolved.
+8. Preserve failed/null/rejected evidence and contradiction sets alongside successful results.
