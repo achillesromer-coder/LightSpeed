@@ -54,15 +54,19 @@ Principal current bindings include:
 
 ## Drive source-consolidation state
 
-`Library/06_Legacy_Source_Corpus/` has been materialised as an extraction-first lane with:
+`Library/06_Legacy_Source_Corpus/` is the controlled root-intake/extraction wrapper, not a second historical archive. Its current intake lanes are:
 
-- `01_2023_2024_Raw_Source/`
-- `02_2025_2026_Pre_CL3_Source/`
-- `03_Media_and_Documents/`
+- `01_Root_Intake_2023_2024/`
+- `02_Root_Intake_2025_2026/`
+- `03_Root_Media_Intake/`
 
-Historical presence in this lane does not promote a source to canonical-current. Useful information is extracted and reconciled to the current owner surface first; archive/delete decisions follow only after source mapping and proof.
+The pre-existing historical archive lineage remains `Library/Redundant/Source Internal/` (`1gWkPOEHLsF2xOk4cTcp0TuMnonrFGcEb` -> `1J-IWXXsui63VtGSJQijpJR2_p7yOkOjF`) with year-bucketed `2022`, `2023`, `2024`, `2025` and `Side Projects` branches. A bounded in-place attempt to nest `Redundant` beneath `06_Legacy_Source_Corpus` returned Google `403 appNotAuthorizedToFile`. Therefore the two surfaces are explicitly role-distinguished rather than duplicated: existing historical archive versus new unresolved-root intake wrapper. A third Library archive must not be created while this topology remains provider-held.
 
-The final Drive root still contains historical objects that cannot be moved by the connected application. A bounded attempt against `Romer Industries - Project Phase 1 Finalization` returned Google `403 appNotAuthorizedToFile`. Earlier bounded attempts established the same class of permission hold for additional historical files. These remain explicit root exceptions; they are not recreated, copied around, or deleted to manufacture a clean gate.
+Historical presence in either historical/intake lane does not promote a source to canonical-current. Useful information is extracted and reconciled to the current owner surface first; archive/delete decisions follow only after source mapping and proof.
+
+The final Drive root still contains historical objects that cannot be moved by the connected application. A bounded attempt against `Romer Industries - Project Phase 1 Finalization` returned Google `403 appNotAuthorizedToFile`. Three shallow Raphael scaffold sheets were independently read and preserve the distinct labels `Raphael Equation`, `Interaction Function (f)`, and `Quantum-Geometric Term (gQG)`; one archive attempt per exact ID returned the same provider authorization hold, so they remain archive-not-delete lineage. These permission outcomes are not evidence of semantic duplication or supersession.
+
+A representative ZIP Check legacy-twin package/workbook pair was also tested against the pre-logged move to `03_Drive_Export_Packages`; both exact-ID parent mutations returned `403 appNotAuthorizedToFile`. The remaining eight cohort items were deliberately left unattempted to avoid deterministic retry churn. No copy-around, deletion, rename or authority promotion was used to manufacture folder cleanliness.
 
 ## Git authority and branch state
 
@@ -72,9 +76,13 @@ This consolidation branch was created from current `main` at `86f028d9fac1a2fd63
 
 The older branch `codex/ls-go-current-integration-2026-07-14` was independently compared to current `main` and is diverged (`ahead_by=1`, `behind_by=18`). It is therefore retained as lineage and is not used as the current consolidation base.
 
+Concurrent same-lane work was reconciled rather than overwritten. Commit `e2a6d9a5fe58274de16cabbc4dea281b79e7e8b8` advanced `desktop/Desktop_Hooks/LightSpeed/dataindex/07_ROOT_CLASSIFICATION_MAP.md` with the bounded Drive archive/move receipt after this handoff's initial commit `971f1daf0d305cb778804ffe985e8b7e1c2a06bf`. Draft PR #38 (`GST-058 final-home canonical consolidation`) remains the review boundary; `main` is unchanged and auto-merge is not authorized.
+
 ## ACR3 binding
 
 ACR3 task `GST-058 — Drive / LightSpeed / Cognigrex Final Home` is the active cross-corpus consolidation task. The Drive/Web/Git changes represented by this receipt must be reconciled there and read back before any later release state is advanced.
+
+Current ACR3 handoff lineage includes the bounded Drive canonical pre-log/reconciliation, GST-058 Git receipt, Raphael scaffold archive reconciliation, ZIP Check legacy-twin representative write-hold reconciliation, and Library historical-source wrapper de-duplication pre-log. Permission-held operations remain held, not silently completed.
 
 ## Held gates
 
@@ -93,6 +101,7 @@ The following remain held unless separately evidenced/authorized:
 
 1. Continue populating hybrid cells from exact Type-1 owners and stable IDs, not duplicated summaries.
 2. Reconcile legacy root sources extraction-first and retain provider permission exceptions explicitly.
-3. Run Drive/ACR3/Git readback parity after each bounded mutation.
-4. Use this branch for canonical consolidation receipts and compatible implementation deltas; do not merge to `main` until its current divergence, gates and review state are explicitly resolved.
-5. Preserve failed/null/rejected evidence and contradiction sets alongside successful results.
+3. Treat `Redundant/Source Internal` as existing historical archive lineage and `06_Legacy_Source_Corpus` as root-intake control until provider authority allows a single physical wrapper.
+4. Run Drive/ACR3/Git readback parity after each bounded mutation.
+5. Use this branch/PR for canonical consolidation receipts and compatible implementation deltas; do not merge to `main` until review/release gates are explicitly resolved.
+6. Preserve failed/null/rejected evidence and contradiction sets alongside successful results.
