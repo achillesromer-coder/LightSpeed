@@ -1,7 +1,7 @@
 {
   "schema": "romer.web2.prepublish-review.v0_1",
   "review_id": "WEB2-PREPUBLISH-HYBRID-20260831",
-  "version": "0.1",
+  "version": "0.2",
   "state": "IN_CHAT_REVIEW_ACTIVE",
   "publicly_released": false,
   "authority": {
@@ -10,6 +10,9 @@
     "source_sheets": [
       "68_Web_Copy_Blocks_v0_6",
       "97_PUBLICATION_GATE_v1_1",
+      "110_WATCHTOWER_LIVING_TWIN_v0_1",
+      "121_INTERSOL_SPACE_PROGRAM_v0_1",
+      "125_IMPLEMENTATION_STATES_v0_1",
       "154_INTERSOL_MASTER_READOUT_v0_1",
       "157_INTERSOL_EXPORT_MANIFEST_v0_1",
       "159_INTERSOL_PUBLISH_HANDOFF_v0_1"
@@ -17,8 +20,25 @@
     "receipt_register": "ACR3 Next Stage Consolidation Register / 12_Cross_Corpus_Handoff",
     "git_role": "review and implementation mirror only; Drive remains canonical"
   },
+  "execution_doctrine": {
+    "owner_receipt": "REC-OWNER-EXECUTION-DOCTRINE-20260831-01",
+    "intent": "Digital twins are execution and operations infrastructure for real physical systems, not an endpoint or permanent substitute for physical delivery.",
+    "lifecycle": [
+      "SOURCE_AND_REQUIREMENTS",
+      "PARAMETRIC_DIGITAL_TWIN",
+      "SIMULATE_AND_TEST",
+      "FABRICATE_AND_INTEGRATE",
+      "COMMISSION_AND_VERIFY",
+      "OPERATE",
+      "MONITOR_MAINTAIN_OPTIMISE",
+      "FEED_OPERATIONAL_EVIDENCE_BACK_TO_TWIN"
+    ],
+    "intersol_programme_state": "PLANNED_PHYSICAL_FACILITY_AND_OPERATING_PLATFORM",
+    "gate_semantics": "Evidence gates constrain current status and claim scope. They do not negate or downgrade established physical execution intent.",
+    "current_state_rule": "Current build, approval, certification, procurement, commissioned-operation and empirical-performance claims remain programme-specific and evidence-gated."
+  },
   "review_sequence": [
-    {"stage": 1, "id": "IN_CHAT_MINI_PREPUBLISH", "state": "ACTIVE", "purpose": "Review copy, evidence labels, exclusions and route composition inside ChatGPT before formal prepublish review."},
+    {"stage": 1, "id": "IN_CHAT_MINI_PREPUBLISH", "state": "ACTIVE", "purpose": "Review copy, evidence labels, exclusions, execution intent and route composition inside ChatGPT before formal prepublish review."},
     {"stage": 2, "id": "FORMAL_PREPUBLISH_REVIEW", "state": "PENDING_OWNER_REVIEW", "purpose": "Freeze accepted candidate and complete claim-source, restricted-content, entity/legal and status-truth checks."},
     {"stage": 3, "id": "PRIMARY_PUBLISH_REVIEW", "state": "PENDING", "purpose": "Verify exact release artifact, destination, route/alias and provider action."},
     {"stage": 4, "id": "WEB_IMPLEMENTATION", "state": "PENDING", "purpose": "Implement the accepted review contract in the web surface through branch/PR, adapters and release receipts."},
@@ -30,9 +50,9 @@
       "route": "/romer-industries",
       "section": "Press Boilerplate",
       "headline": "About Römer Industries",
-      "body": "Römer Industries develops and coordinates a portfolio of research, digital systems and infrastructure concepts using an evidence-governed workflow. Current work includes digital-twin and data architecture, infrastructure and facility concepts, advanced-material and energy research, and long-horizon space-systems studies. Public materials distinguish source-backed digital design and tested software from externally validated physical capability.",
-      "guardrail": "Development-stage portfolio. No government approval, certified engineering/performance, partner status or definitive corporate/IP relationship is implied unless separately evidenced.",
-      "state": "PRIMARY_REVIEW_PASS_PREPUBLISH"
+      "body": "Römer Industries develops and coordinates a portfolio of research, digital systems and infrastructure programmes using an evidence-governed execution workflow. Digital twins, simulation and data systems are developed as engineering and operational instruments to design, test, integrate, commission and ultimately operate physical systems and facilities. Current work spans infrastructure and facility programmes, advanced-material and energy research, digital operations architecture and long-horizon space systems, with each physical claim advanced only as its corresponding evidence closes.",
+      "guardrail": "Development and execution programme. Current physical build, approval, certification, procurement and operating status remain programme-specific and must be stated from evidence; digital maturity is not itself physical qualification.",
+      "state": "OWNER_DOCTRINE_CORRECTED_CLAIM_SOURCE_PARITY_PREPUBLISH"
     },
     {
       "copy_id": "COPY-009",
@@ -41,43 +61,43 @@
       "headline": "Evidence Before Promotion",
       "body": "Each programme is tracked by source, revision, evidence class and discipline maturity. Digital equations, simulations and 3D/reference geometry may be published when independently checked and clearly labelled; they do not become manufacturing, certification or empirical-performance proof without the corresponding external evidence.",
       "guardrail": "Unresolved evidence remains visible and claim scope is reduced rather than filled by assumption.",
-      "state": "PRIMARY_REVIEW_PASS_PREPUBLISH"
+      "state": "CLAIM_SOURCE_PARITY_PASS_PREPUBLISH"
     },
     {
       "copy_id": "COPY-010",
       "route": "/portfolio",
       "section": "Overview",
       "headline": "A Portfolio Built in Stages",
-      "body": "The public-safe portfolio is organised by maturity rather than a single pass/fail label: source recovery, geometry and interface mapping, parametric modelling, digital execution, independent proof, fabrication-readiness subject to external gates, and empirical validation. This lets mature digital work be reviewed without overstating physical readiness.",
-      "guardrail": "Programme-specific evidence and restrictions govern every claim.",
-      "state": "PRIMARY_REVIEW_PASS_PREPUBLISH"
+      "body": "The public-safe portfolio is organised as an execution pathway: source recovery and requirements, geometry and interface mapping, parametric/digital-twin development, digital execution and independent proof, fabrication and subsystem testing, commissioning, empirical validation, operations, monitoring and iterative improvement. Different disciplines can advance at different rates without collapsing readiness to a single pass/fail label.",
+      "guardrail": "Programme-specific evidence and restrictions govern the transition between digital design, fabrication, commissioning and operation.",
+      "state": "OWNER_DOCTRINE_CORRECTED_CLAIM_SOURCE_PARITY_PREPUBLISH"
     },
     {
       "copy_id": "COPY-011",
       "route": "/m1-seqld",
       "section": "Programme Summary",
-      "headline": "M1 / SEQLD Living Infrastructure Study",
-      "body": "M1 / SEQLD is a digital infrastructure study of modular elevated-corridor geometry, transfer logic and living-infrastructure interfaces. The current publishable state includes source-extracted and parametric geometry, governed edge-envelope equations and labelled 3D/reference views. Current CAD regeneration, physical structural adequacy, approvals, construction and performance remain open evidence lanes.",
-      "guardrail": "Concept/digital-study status only; no TMR approval, certified design, procurement, construction or operational-performance claim.",
-      "state": "PRIMARY_REVIEW_PASS_PREPUBLISH_GATE_014"
+      "headline": "M1 / SEQLD Living Infrastructure Programme",
+      "body": "M1 / SEQLD is a planned living-infrastructure programme currently progressing through source recovery, parametric geometry, digital-twin development and governed engineering analysis for later physical verification, delivery and operation. The current publishable state includes source-extracted and parametric geometry, governed edge-envelope equations and labelled 3D/reference views. Current CAD regeneration, physical structural adequacy, approvals, construction and operational performance remain open evidence lanes rather than cancelled objectives.",
+      "guardrail": "Planned physical infrastructure programme; current digital/reference outputs do not imply TMR approval, certified design, procurement, construction or demonstrated operational performance.",
+      "state": "OWNER_DOCTRINE_CORRECTED_CLAIM_SOURCE_PARITY_PREPUBLISH_GATE_014"
     },
     {
       "copy_id": "COPY-012",
       "route": "/intersol",
       "section": "Programme Summary",
-      "headline": "InterSol Platform",
-      "body": "InterSol is a proposed multidisciplinary facility/platform concept used to organise digital-twin, research, operations and specialist-review workflows. Its current public-safe material focuses on function, interfaces, source geometry and evidence acquisition rather than site, partner, approval or construction claims.",
-      "guardrail": "Proposed/conceptual platform; no confirmed site, partner, approval, procurement or construction status is implied.",
-      "state": "PRIMARY_REVIEW_PASS_PREPUBLISH_CONCEPTUAL_PLATFORM"
+      "headline": "InterSol Planned Facility",
+      "body": "InterSol is a planned multidisciplinary physical facility and operating platform. Its digital twins and data/control architecture are being developed to design and integrate the facility, test interfaces and operating logic before build, support commissioning and verification, and then continue as living operational twins for monitoring, maintenance, optimisation and future upgrades. Current public-safe material can describe the planned facility, its functions, interfaces and development pathway while site, partner, approval, procurement, construction and commissioned-operating status are stated only when separately evidenced.",
+      "guardrail": "Planned physical facility; planning intent is established, while exact site, partner, approval, procurement, construction and commissioned-operating status remain separately evidence-gated.",
+      "state": "OWNER_DOCTRINE_CORRECTED_CLAIM_SOURCE_PARITY_PREPUBLISH_PLANNED_FACILITY"
     },
     {
       "copy_id": "COPY-013",
       "route": "/intersol/watch-tower",
       "section": "3D / Twin",
       "headline": "Watch Tower Digital Reference",
-      "body": "The Watch Tower public-safe twin is grounded in source-locked owner CAD and separates source-extracted geometry from parametric secondary views and future engineering decisions. The 3D display can expose object/interface relationships and evidence state while structural ratings, cable design, site applicability and physical qualification remain gated.",
-      "guardrail": "Digital/source geometry is not a certified structural or construction model; restricted or security-sensitive details are excluded.",
-      "state": "PRIMARY_REVIEW_PASS_PREPUBLISH_SOURCE_GEOMETRY_ONLY"
+      "body": "The Watch Tower public-safe twin is grounded in source-locked owner CAD and separates source-extracted geometry from parametric secondary views while supporting progressive engineering development. The twin is intended to help test object/interface relationships and operating logic before physical qualification, support commissioning as evidence closes, and later contribute to monitoring, maintenance and operational review of the physical asset. Structural ratings, cable design, site applicability and physical qualification remain independently gated.",
+      "guardrail": "Operational-intent digital twin; current source/reference geometry is not yet a certified structural or construction model, and restricted or security-sensitive details remain excluded.",
+      "state": "OWNER_DOCTRINE_CORRECTED_CLAIM_SOURCE_PARITY_PREPUBLISH_SOURCE_GEOMETRY_CURRENT"
     }
   ],
   "publication_gates": {
@@ -96,7 +116,8 @@
       "Consume JSON/adapters rather than hard-coded Sheets ranges",
       "No live URL or alias mutation before final route/alias audit",
       "Preserve public/restricted separation",
-      "Status truth requires deployment/readback receipt"
+      "Status truth requires deployment/readback receipt",
+      "Do not rewrite planned physical programmes as permanent concepts merely because physical evidence gates remain open"
     ]
   }
 }
