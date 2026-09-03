@@ -1,0 +1,8 @@
+taxonomy_group,interpretation,phase_hypotheses,material_suite,calibration,claim_boundary
+C/Ch/B,carbonaceous/hydrated,phyllosilicates; carbonates; magnetite; Fe-Ni sulfides; organics; phosphates; salts,PHA-PHY|PHA-CAR|PHA-MAG|PHA-TRO|PHA-ORG|PHA-PHO|PHA-HAL,Bennu/Ryugu sample-return calibration,taxonomy is not ore grade; free ice not implied
+S/Sq/Q/O/Sk,stony to ordinary-chondrite-like,olivine; pyroxene; plagioclase; Fe-Ni metal; troilite,PHA-OLI|PHA-PYX|PHA-PLG|PHA-FENI|PHA-TRO,silicate/metal mixed controls,exact mineralogy and metal fraction require spectra/sample
+M,metal-rich archetype,Fe-Ni metal plus possible silicate fraction,PHA-FENI|MAT-FE|MAT-NI|PHA-OLI|PHA-PYX,Psyche calibration archetype,PGM/Au abundance must not be inferred
+X/Xe/Xk,compositionally ambiguous X-complex,metal-silicate-carbonaceous alternatives,PHA-FENI|PHA-OLI|PHA-PYX|PHA-ORG|PHA-TRO,"require albedo, radar and density disambiguation",no metallic promotion from X alone
+V,basaltic,pyroxene; plagioclase; Fe/Ti oxides; basaltic mix,MIX-BAS|PHA-PYX|PHA-PLG|MAT-FE|MAT-TI,Vesta/basaltic calibration,does not imply accessible metal
+D/P,dark organic-rich hypothesis,organic carbon; silicate; sulfide; possible volatile-bearing phases,PHA-ORG|PHA-PHY|PHA-TRO|PHA-ICE,broad low-albedo calibration,free ice and abundance remain held
+L/unknown,unresolved/broad,"negative controls plus silicate, metal and carbonaceous endmembers",CTL-GLS|PHA-OLI|PHA-FENI|PHA-ORG,identity/source gate first,no compositional promotion

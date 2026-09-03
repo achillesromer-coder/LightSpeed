@@ -1,0 +1,21 @@
+axis_id,field,unit,values,domain,rationale,gate
+AX-VOL,sample_volume_m3,m3,0.0001|0.0005|0.001|0.005|0.01,sample,Project Overview requires base volume,measure vessel working volume
+AX-RHO,bulk_density_kg_m3,kg/m3,media-specific low|base|high,sample,base density required,measure every batch
+AX-WT,target_mass_fraction,fraction,0.001|0.005|0.01|0.05|0.1|0.25|0.5,composition,complete baseline concentration axis,assay prepared mixture
+AX-DP,particle_diameter_m,m,0.000001|0.00001|0.00005|0.00025|0.001|0.005,geometry,Project Overview particle/grit variable,laser sieve/microscopy
+AX-MOI,moisture_mass_fraction,fraction,0|0.01|0.05|0.12|0.20,sample,clay/regolith damping variable,gravimetric moisture
+AX-POR,porosity,fraction,0.20|0.35|0.50|0.65,sample,bulk/solid density reconciliation,"measured, not inferred"
+AX-T,temperature_k,K,223|273|298|323|373,environment,property and thermal-risk sensitivity,qualified range only
+AX-P,pressure_pa,Pa,0.001|10|100000,environment,vacuum-to-ambient screening,facility gate; no Stokes drag in high vacuum
+AX-G,gravity_m_s2,m/s2,0|0.000001|0.0001|0.001|9.80665,environment,microgravity sensitivity,digital/simulation first
+AX-FMECH,mechanical_frequency_hz,Hz,10|100|1000|10000|20000|40000,RFS mechanical,RFS twin control range,calibrated actuator required
+AX-FRF,rf_frequency_hz,Hz,1000000|2000000|5000000|10000000|20000000,RFS RF/EMFF,LightSpeed runner MHz domain,do not equate with PDF cm-1 bands
+AX-FIR,ir_wavenumber_cm1,cm-1,200|400|700|1000|2000|2800|3300|4000,IR spectroscopy,Project Overview reported bands,spectroscopy/excitation modality must be defined
+AX-Q,quality_factor,1,2|5|10|20|50|100,RFS,bandwidth sensitivity,fit from measured response
+AX-AMP,drive_amplitude_norm,0-1,0.10|0.25|0.50|0.75,RFS,low-energy screening,replace with measured acceleration/force
+AX-B,magnetic_flux_density_t,T,0|0.05|0.10|0.20|0.50|1.00,EMFF,field-strength axis,field map and safety review
+AX-GB,magnetic_gradient_t_m,T/m,0|0.5|1|5|10,EMFF,force-proxy driver,spatially measured
+AX-E,electric_field_v_m,V/m,0|1000|10000|100000,EMFF electric,electric-field response axis,qualified HV/electrode review
+AX-DUTY,duty_cycle,fraction,0.10|0.25|0.50|0.75|1.00,power,thermal/load sensitivity,temperature/current interlock
+AX-DUR,run_duration_s,s,1|10|60|300|1800,protocol,transient-to-steady response,time-synchronised logs
+AX-REP,replicates_n,count,3|5|10,statistics,repeatability/proofing,randomised run order

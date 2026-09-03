@@ -22,6 +22,8 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[1]
 REPO_RUNTIME_ROOT = REPO_ROOT / "desktop" / "LightSpeed_Runtime"
 REPO_SHELL_ROOT = REPO_ROOT / "desktop" / "Desktop_Hooks" / "LightSpeed"
+CANONICAL_ROOT = Path(os.environ.get("LIGHTSPEED_CANONICAL_ROOT", r"D:\LightSpeed"))
+CANONICAL_DATABASE = CANONICAL_ROOT / "Data" / "db" / "lightspeed_unified.db"
 
 
 def _runtime_candidates(explicit: Path | None = None) -> list[Path]:
@@ -32,7 +34,7 @@ def _runtime_candidates(explicit: Path | None = None) -> list[Path]:
     if configured:
         rows.append(Path(configured))
     if os.name == "nt":
-        rows.append(Path(r"D:\LightSpeed_Consolidated\LightSpeed_Runtime"))
+        rows.append(CANONICAL_ROOT / "Core")
         rows.append(Path(r"C:\LightSpeed_Consolidated\LightSpeed_Runtime"))
     rows.append(REPO_RUNTIME_ROOT)
     return list(dict.fromkeys(rows))
@@ -46,7 +48,7 @@ def _shell_candidates(explicit: Path | None = None) -> list[Path]:
     if configured:
         rows.append(Path(configured))
     if os.name == "nt":
-        rows.append(Path(r"D:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed"))
+        rows.append(CANONICAL_ROOT / "App")
         rows.append(Path(r"C:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed"))
     rows.append(REPO_SHELL_ROOT)
     return list(dict.fromkeys(rows))
@@ -55,7 +57,9 @@ def _shell_candidates(explicit: Path | None = None) -> list[Path]:
 def _select(candidates: list[Path], marker: Path, label: str) -> Path:
     for candidate in candidates:
         if (candidate / marker).is_file():
-            return candidate.resolve()
+            # Keep the stable D:\LightSpeed operator namespace visible even when
+            # the directory is backed by a C-drive junction.
+            return candidate.absolute()
     raise FileNotFoundError(f"No {label} root found. Checked: {', '.join(str(item) for item in candidates)}")
 
 
@@ -164,8 +168,9 @@ def static_check(runtime_root: Path, shell_root: Path) -> dict[str, Any]:
         "schema_version": "lightspeed-merovingian-static-check-v1",
         "generated_utc": datetime.now(UTC).isoformat(timespec="seconds"),
         "status": "pass" if not missing else "fail",
-        "runtime_root": str(runtime_root),
-        "shell_root": str(shell_root),
+        "canonical_root": str(CANONICAL_ROOT),
+        "core_root": str(runtime_root),
+        "app_root": str(shell_root),
         "required_surface_count": len(required),
         "missing": missing,
         "web_frontend_in_scope": False,
@@ -173,7 +178,7 @@ def static_check(runtime_root: Path, shell_root: Path) -> dict[str, Any]:
     }
 
 
-def run_once(runtime_root: Path, shell_root: Path, *, queue_changes: bool) -> dict[str, Any]:
+def _build_project_pipeline(runtime_root: Path, shell_root: Path) -> Any:
     for path in (runtime_root, shell_root):
         value = str(path)
         while value in sys.path:
@@ -182,8 +187,20 @@ def run_once(runtime_root: Path, shell_root: Path, *, queue_changes: bool) -> di
 
     from lightspeed_runtime.project_pipeline import ProjectPipeline
 
-    pipeline = ProjectPipeline(shell_root)
-    registry = pipeline.refresh(force=True, queue_changes=queue_changes)
+    return ProjectPipeline(shell_root)
+
+
+def run_once(
+    runtime_root: Path,
+    shell_root: Path,
+    *,
+    queue_changes: bool,
+    pipeline: Any | None = None,
+    force_inventory: bool = True,
+) -> dict[str, Any]:
+    pipeline = pipeline or _build_project_pipeline(runtime_root, shell_root)
+
+    registry = pipeline.refresh(force=force_inventory, queue_changes=queue_changes)
     health = registry.get("health") or {}
     receipt = {
         "schema_version": "lightspeed-merovingian-soft-launch-v1",
@@ -216,6 +233,32 @@ def run_once(runtime_root: Path, shell_root: Path, *, queue_changes: bool) -> di
     return {**receipt, "receipt_path": str(receipt_path)}
 
 
+def _watch_log_record(payload: dict[str, Any]) -> dict[str, Any]:
+    """Return one compact, path-free supervisor observation.
+
+    The complete state remains available in the fixed JSON receipts.  The
+    append-only supervisor log only needs enough information to diagnose
+    liveness and resource transitions; writing the full receipt every cycle
+    caused an unbounded log without adding queryable state.
+    """
+
+    resources = payload.get("resource_guard") or {}
+    floors = payload.get("agent_floors") or {}
+    projects = payload.get("project_summary") or {}
+    cleanup = payload.get("cleanup_summary") or {}
+    return {
+        "time_utc": payload.get("generated_utc"),
+        "status": payload.get("status"),
+        "services": payload.get("services") or {},
+        "work_intake": resources.get("work_intake"),
+        "resource_state": resources.get("state"),
+        "floor_state": floors.get("state"),
+        "operational_floors": floors.get("operational_count"),
+        "projects": projects.get("project_count"),
+        "cleanup_candidates": cleanup.get("candidate_count"),
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--runtime-root", type=Path)
@@ -227,8 +270,12 @@ def main() -> int:
     parser.add_argument("--json-output", type=Path)
     args = parser.parse_args()
 
-    runtime_root = _select(_runtime_candidates(args.runtime_root), Path("lightspeed_runtime") / "__init__.py", "LightSpeed Runtime")
-    shell_root = _select(_shell_candidates(args.shell_root), Path("N.py"), "LightSpeed Desktop shell")
+    runtime_root = _select(_runtime_candidates(args.runtime_root), Path("lightspeed_runtime") / "__init__.py", "LightSpeed Core")
+    shell_root = _select(_shell_candidates(args.shell_root), Path("N.py"), "LightSpeed App")
+    os.environ["LIGHTSPEED_CANONICAL_ROOT"] = str(CANONICAL_ROOT)
+    os.environ["LIGHTSPEED_RUNTIME_ROOT"] = str(runtime_root)
+    os.environ["LIGHTSPEED_SHELL_ROOT"] = str(shell_root)
+    os.environ["LIGHTSPEED_CANONICAL_DB"] = str(CANONICAL_DATABASE)
 
     if args.static_check:
         payload = static_check(runtime_root, shell_root)
@@ -240,12 +287,24 @@ def main() -> int:
     if args.watch:
         _acquire_lock(lock_path, interval=interval)
 
+    pipeline = _build_project_pipeline(runtime_root, shell_root)
+
     try:
         while True:
             if args.watch:
                 _heartbeat(lock_path, interval=interval, state="scanning")
-            payload = run_once(runtime_root, shell_root, queue_changes=not args.no_queue_changes)
-            rendered = json.dumps(payload, indent=2, sort_keys=True) + "\n"
+            payload = run_once(
+                runtime_root,
+                shell_root,
+                queue_changes=not args.no_queue_changes,
+                pipeline=pipeline,
+                force_inventory=not args.watch,
+            )
+            rendered = (
+                json.dumps(_watch_log_record(payload), separators=(",", ":"), sort_keys=True) + "\n"
+                if args.watch
+                else json.dumps(payload, indent=2, sort_keys=True) + "\n"
+            )
             print(rendered, end="")
             if args.json_output:
                 _write_json(args.json_output, payload)

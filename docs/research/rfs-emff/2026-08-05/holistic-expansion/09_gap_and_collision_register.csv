@@ -1,0 +1,12 @@
+gap_id,area,state,finding,next_action
+GAP-001,Workbook authoring runtime,BLOCKING_XLSX_ONLY,load_workspace_dependencies and a connected Excel/Sheets document session were unavailable,CSV/JSON workbook-ready layers produced; connect approved runtime before .xlsx/native Sheet creation
+GAP-002,RFS twin response model,CRITICAL_MODEL_REVIEW,"Current v0.1 values grow explosively with detuning, consistent with a sign/normalization defect",audit formula and require bounded 0-1 alignment before reuse
+GAP-003,Frequency modality,CRITICAL_DOMAIN_GAP,Project Overview bands are cm-1/IR scale while LightSpeed runner proof uses MHz RF,"separate mechanical, RF and IR protocols until hardware/excitation modality is explicit"
+GAP-004,Material properties,EVIDENCE_GAP,"conductivity, permeability, susceptibility, permittivity and resonance are batch/phase/temperature dependent",replace screening proxies with certified and measured values
+GAP-005,Asteroid composition,EVIDENCE_GAP,taxonomy and albedo are not ore grade or phase abundance,use lab hypotheses only; require spectra/radar/density/sample evidence
+GAP-006,Asteroid physical completeness,KNOWN_CANON_GAP,"Corpus Atlas reports density missing for 199,547 of 200,000 raw rows",bounded enrichment; never globally impute as fact
+GAP-007,Internal targets,IDENTITY_BLOCK,"1986 DA1, 1980 RE3 and 2016 QH55 remain externally unresolved",owner alias provenance plus exact JPL/MPC readback
+GAP-008,Capacity drift,CANON_RECONCILED,Older roadmap text says 3/4/5 m3; current capacity guardrail says M1/M2/M3 = 3/7/11 m3,use active Mark III/capture-capable units; current hardware Mark III + Mark V
+GAP-009,Repository data mirrors,LOCAL_CHECKOUT_GAP,Docs reference data/jpl/neighbours manifests not present in the inspected worktree,verify Data-main checkout/mirror before automated source reuse
+GAP-010,Ownership/legal,LEGAL_BLOCK,"tag, acquisition and internal portfolio labels do not create property rights",legal/security review before any ownership or exploitation wording
+GAP-011,Drive duplicates,PROVENANCE_RISK,"multiple duplicate copies of RFS, Mark and Project documents exist","canonicalize by file ID, modified time and source-register decision; do not merge by title alone"

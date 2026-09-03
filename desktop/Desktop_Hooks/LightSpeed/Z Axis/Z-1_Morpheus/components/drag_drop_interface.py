@@ -1,28 +1,28 @@
 #!/usr/bin/env python
 """
-Drag-and-Drop File Manager - Interactive file operations
-Complete drag-and-drop system for file management
+Morpheus evidence-reference catalog.
 
 Features:
-- Drag files between categories
-- Drop files from OS
+- Add individual file references without copying source content
+- Reclassify references between categories
 - Visual drag feedback
 - Multi-select operations
-- Copy/Move/Delete operations
 - Category management
-- File preview on hover
-- Undo/Redo support
+- Read-only file details
 
-Author: LightSpeed Team
-Version: 0.9.5
-Date: December 16, 2025
+Launch safety:
+- Source files are never copied, moved, renamed, or deleted.
+- Recursive folder intake is held until an asynchronous, resource-bounded
+  implementation is available.
+- Only catalog-reference mutations are supported.
+
+Maintainer: Morpheus floor
 """
 
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from pathlib import Path
-from typing import List, Dict, Optional, Callable
-import shutil
+from typing import Optional
 import json
 from datetime import datetime
 
@@ -143,8 +143,21 @@ class FileCategory:
         return cat
 
 
+def remove_catalog_references(categories, filepaths):
+    """Remove catalog references only; return the paths actually removed."""
+    requested = set(filepaths)
+    removed = []
+    for category in categories.values():
+        for filepath in list(category.files):
+            if filepath in requested:
+                category.remove_file(filepath)
+                if filepath not in removed:
+                    removed.append(filepath)
+    return removed
+
+
 class DragDropFileManager(tk.Frame):
-    """Complete drag-and-drop file manager"""
+    """Organize evidence references without mutating referenced files."""
 
     def __init__(self, parent, base_path: Path = None, **kwargs):
         super().__init__(parent, **kwargs)
@@ -152,9 +165,6 @@ class DragDropFileManager(tk.Frame):
 
         self.base_path = base_path or Path.cwd()
         self.categories = {}  # {category_name: FileCategory}
-        self.history = []  # Undo/redo history
-        self.history_index = -1
-
         self._load_categories()
         self._build_ui()
         self._populate_tree()
@@ -171,12 +181,12 @@ class DragDropFileManager(tk.Frame):
                  bg='#0e639c', fg='white', font=('Arial', 9, 'bold'),
                  relief='flat', padx=10).pack(side=tk.LEFT, padx=5, pady=5)
 
-        tk.Button(toolbar, text="📁 Add Folder", command=self._add_folder,
-                 bg='#0e639c', fg='white', font=('Arial', 9, 'bold'),
-                 relief='flat', padx=10).pack(side=tk.LEFT, padx=5, pady=5)
+        tk.Button(toolbar, text="Folder Intake (held)", command=self._add_folder,
+                 bg='#555555', fg='#c8c8c8', font=('Arial', 9, 'bold'),
+                 relief='flat', padx=10, state=tk.DISABLED).pack(side=tk.LEFT, padx=5, pady=5)
 
-        tk.Button(toolbar, text="🗑️ Delete", command=self._delete_selected,
-                 bg='#d9534f', fg='white', font=('Arial', 9, 'bold'),
+        tk.Button(toolbar, text="Remove Reference", command=self._remove_selected_references,
+                 bg='#8a5a44', fg='white', font=('Arial', 9, 'bold'),
                  relief='flat', padx=10).pack(side=tk.LEFT, padx=5, pady=5)
 
         # Separator
@@ -187,24 +197,9 @@ class DragDropFileManager(tk.Frame):
                  bg='#5cb85c', fg='white', font=('Arial', 9, 'bold'),
                  relief='flat', padx=10).pack(side=tk.LEFT, padx=5, pady=5)
 
-        tk.Button(toolbar, text="🎨 Edit Category", command=self._edit_category,
-                 bg='#f0ad4e', fg='white', font=('Arial', 9, 'bold'),
-                 relief='flat', padx=10).pack(side=tk.LEFT, padx=5, pady=5)
-
-        # Separator
-        ttk.Separator(toolbar, orient='vertical').pack(side=tk.LEFT, fill=tk.Y, padx=10, pady=5)
-
-        # Undo/Redo
-        tk.Button(toolbar, text="↶ Undo", command=self._undo,
-                 bg='#5bc0de', fg='white', font=('Arial', 9, 'bold'),
-                 relief='flat', padx=10).pack(side=tk.LEFT, padx=5, pady=5)
-
-        tk.Button(toolbar, text="↷ Redo", command=self._redo,
-                 bg='#5bc0de', fg='white', font=('Arial', 9, 'bold'),
-                 relief='flat', padx=10).pack(side=tk.LEFT, padx=5, pady=5)
-
         # Status
-        self.status_label = tk.Label(toolbar, text="Ready", bg='#2d2d2d', fg='#00ff00',
+        self.status_label = tk.Label(toolbar, text="Reference catalog only — source files stay unchanged",
+                                     bg='#2d2d2d', fg='#00ff00',
                                      font=('Arial', 9), anchor='e')
         self.status_label.pack(side=tk.RIGHT, padx=10)
 
@@ -272,9 +267,6 @@ class DragDropFileManager(tk.Frame):
 
         # Bind selection
         self.tree.bind('<<TreeviewSelect>>', self._on_select)
-
-        # Enable OS file drops
-        self._enable_os_drops()
 
     def _populate_tree(self):
         """Populate tree with categories and files"""
@@ -345,7 +337,7 @@ class DragDropFileManager(tk.Frame):
         if not target_cat:
             return
 
-        # Move files
+        # Reclassify catalog references; referenced files remain unchanged.
         moved_files = []
         for item in items:
             item_data = self.tree.item(item)
@@ -363,16 +355,11 @@ class DragDropFileManager(tk.Frame):
                     moved_files.append(filepath)
 
         if moved_files:
-            # Add to history
-            self._add_to_history({
-                'action': 'move',
-                'files': moved_files,
-                'target': target_cat.name
-            })
-
             self._populate_tree()
             self._save_categories()
-            self.status_label.config(text=f"Moved {len(moved_files)} file(s) to {target_cat.name}")
+            self.status_label.config(
+                text=f"Reclassified {len(moved_files)} reference(s) to {target_cat.name}"
+            )
 
     def _add_files(self):
         """Add files from file picker"""
@@ -385,64 +372,48 @@ class DragDropFileManager(tk.Frame):
                 for filepath in filepaths:
                     category.add_file(filepath)
 
-                self._add_to_history({
-                    'action': 'add',
-                    'files': list(filepaths),
-                    'category': cat_name
-                })
-
                 self._populate_tree()
                 self._save_categories()
-                self.status_label.config(text=f"Added {len(filepaths)} file(s)")
+                self.status_label.config(text=f"Added {len(filepaths)} file reference(s)")
 
     def _add_folder(self):
-        """Add entire folder"""
-        folder_path = filedialog.askdirectory(title="Select Folder")
-        if folder_path:
-            folder = Path(folder_path)
-            files = list(folder.rglob('*'))
-            files = [str(f) for f in files if f.is_file()]
+        """Explain why recursive folder intake is held during soft launch."""
+        message = (
+            "Recursive folder intake is held for soft-launch safety. "
+            "Add individual evidence files instead; source files remain unchanged."
+        )
+        self.status_label.config(text="Folder intake held — add individual references")
+        messagebox.showinfo("Folder Intake Held", message)
 
-            if files:
-                cat_name = self._select_category("Select category for folder contents")
-                if cat_name and cat_name in self.categories:
-                    category = self.categories[cat_name]
-                    for filepath in files:
-                        category.add_file(filepath)
-
-                    self._populate_tree()
-                    self._save_categories()
-                    self.status_label.config(text=f"Added {len(files)} file(s) from folder")
-
-    def _delete_selected(self):
-        """Delete selected files"""
+    def _remove_selected_references(self):
+        """Remove selected catalog references without touching source files."""
         selected = self.tree.selection()
         if not selected:
-            messagebox.showwarning("No Selection", "Please select files to delete")
+            messagebox.showwarning("No Selection", "Please select file references to remove")
             return
 
-        if messagebox.askyesno("Confirm Delete", f"Delete {len(selected)} selected item(s)?"):
-            deleted_files = []
-            for item in selected:
-                item_data = self.tree.item(item)
-                if 'category' not in item_data['tags']:
-                    filepath = item_data['tags'][0] if item_data['tags'] else None
-                    if filepath:
-                        # Remove from category
-                        for cat in self.categories.values():
-                            if filepath in cat.files:
-                                cat.remove_file(filepath)
-                                deleted_files.append(filepath)
+        filepaths = []
+        for item in selected:
+            item_data = self.tree.item(item)
+            if 'category' not in item_data['tags'] and item_data['tags']:
+                filepaths.append(item_data['tags'][0])
 
-            if deleted_files:
-                self._add_to_history({
-                    'action': 'delete',
-                    'files': deleted_files
-                })
+        if not filepaths:
+            messagebox.showwarning("No File References", "Category rows cannot be removed here")
+            return
 
+        prompt = (
+            f"Remove {len(filepaths)} selected reference(s) from this catalog?\n\n"
+            "The referenced files will remain unchanged on disk."
+        )
+        if messagebox.askyesno("Confirm Reference Removal", prompt):
+            removed = remove_catalog_references(self.categories, filepaths)
+            if removed:
                 self._populate_tree()
                 self._save_categories()
-                self.status_label.config(text=f"Deleted {len(deleted_files)} file(s)")
+                self.status_label.config(
+                    text=f"Removed {len(removed)} catalog reference(s); source files unchanged"
+                )
 
     def _new_category(self):
         """Create new category"""
@@ -496,28 +467,6 @@ class DragDropFileManager(tk.Frame):
         tk.Button(dialog, text="Create", command=create,
                  bg='#5cb85c', fg='white', font=('Arial', 11, 'bold'),
                  width=15).pack(pady=20)
-
-    def _edit_category(self):
-        """Edit selected category"""
-        selected = self.tree.selection()
-        if not selected:
-            messagebox.showwarning("No Selection", "Please select a category to edit")
-            return
-
-        # Get selected category
-        item_data = self.tree.item(selected[0])
-        if 'category' not in item_data['tags']:
-            messagebox.showwarning("Invalid Selection", "Please select a category (not a file)")
-            return
-
-        cat_name = item_data['text'].replace('📁 ', '')
-        category = self.categories.get(cat_name)
-
-        if not category:
-            return
-
-        # Edit dialog (similar to new category)
-        messagebox.showinfo("Edit Category", f"Editing: {cat_name}\n(Full edit dialog would be here)")
 
     def _select_category(self, title: str) -> Optional[str]:
         """Show category selection dialog"""
@@ -592,58 +541,6 @@ class DragDropFileManager(tk.Frame):
         self.details_text.delete('1.0', 'end')
         self.details_text.insert('1.0', details)
 
-    def _enable_os_drops(self):
-        """Enable dropping files from OS (requires tkinterdnd2 - optional)"""
-        # This would use tkinterdnd2 if available
-        # For now, we have the manual add files/folder buttons
-        pass
-
-    def _add_to_history(self, action: dict):
-        """Add action to history for undo/redo"""
-        # Remove any redo history
-        self.history = self.history[:self.history_index + 1]
-        self.history.append(action)
-        self.history_index = len(self.history) - 1
-
-    def _undo(self):
-        """Undo last action"""
-        if self.history_index < 0:
-            self.status_label.config(text="Nothing to undo")
-            return
-
-        action = self.history[self.history_index]
-        self.history_index -= 1
-
-        # Reverse the action
-        if action['action'] == 'move':
-            # Move files back (simplified - would need source tracking)
-            self.status_label.config(text="Undo: Move")
-        elif action['action'] == 'add':
-            # Remove added files
-            category = self.categories.get(action['category'])
-            if category:
-                for filepath in action['files']:
-                    category.remove_file(filepath)
-                self._populate_tree()
-                self.status_label.config(text=f"Undo: Removed {len(action['files'])} file(s)")
-        elif action['action'] == 'delete':
-            # Would restore deleted files (simplified)
-            self.status_label.config(text="Undo: Delete")
-
-        self._save_categories()
-
-    def _redo(self):
-        """Redo last undone action"""
-        if self.history_index >= len(self.history) - 1:
-            self.status_label.config(text="Nothing to redo")
-            return
-
-        self.history_index += 1
-        action = self.history[self.history_index]
-
-        # Reapply the action (simplified)
-        self.status_label.config(text=f"Redo: {action['action']}")
-
     def _load_categories(self):
         """Load categories from disk"""
         categories_file = self.base_path / "data" / "file_categories.json"
@@ -678,7 +575,7 @@ class DragDropFileManager(tk.Frame):
 # Demo/Test
 if __name__ == "__main__":
     root = tk.Tk()
-    root.title("Drag-Drop File Manager - Test")
+    root.title("Morpheus Evidence Reference Catalog")
     root.geometry("1200x700")
 
     manager = DragDropFileManager(root, base_path=Path.cwd())

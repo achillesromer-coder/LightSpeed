@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -57,7 +58,7 @@ CONSOLIDATION_RECORDS: tuple[ConsolidationRecord, ...] = (
             "project wall preview/drawer/action descriptors expose edit, fullscreen, and Z Direct actions",
         ),
         refinement_status="implemented_and_tested",
-        packaging_gate="Bind live renderers for PDF/image/map/simulation tiles before V0.10.0 walkthrough.",
+        packaging_gate="Bind only reviewed renderer implementations before the operator walkthrough.",
     ),
     ConsolidationRecord(
         area="Smart-floor visual, chart, 3D map, and simulation contracts",
@@ -201,19 +202,19 @@ CONSOLIDATION_RECORDS: tuple[ConsolidationRecord, ...] = (
             "D-root snapshot clarification",
         ),
         superseded_patterns=(
-            "using D-root as a live working copy",
+            "treating the C backing directory as a second runtime beside the D operator namespace",
             "w6 as active runtime floor",
             "deleting old files without proof of preserved information",
         ),
         final_call_chain=(
-            "C-root remains live source of truth",
-            "Architect publish_snapshot writes overwrite-only D-root snapshot when approved",
+            "D:\\LightSpeed\\App remains the sole operator shell and receipt authority",
+            "the C backing directory remains the same junction-backed shell, not a publish snapshot",
             "Merovingian release_clean identifies cull candidates and report state",
             "AI logs and launch-readiness reports move to the outer consolidated archive only after the complete final pass",
             "Smith executes approved filesystem actions only after receipt/approval",
         ),
         refinement_status="implemented_as_dry_run_contract",
-        packaging_gate="Run final release-clean dry run, then move AI logs/reports to the outer LightSpeed Consolidated archive before package write.",
+        packaging_gate="Run a bounded release-clean dry run; move logs only after exact retention and recovery approval.",
     ),
     ConsolidationRecord(
         area="8am orchestration, progress bars, and process/token budget",
@@ -269,7 +270,7 @@ CONSOLIDATION_RECORDS: tuple[ConsolidationRecord, ...] = (
             "consolidation registry proves canonical files exist and records packaging gates",
         ),
         refinement_status="implemented_and_tested",
-        packaging_gate="Run final diagnostics immediately before V0.10.0 packaging and record result path.",
+        packaging_gate="Run final diagnostics immediately before private acceptance and retain the fixed result path.",
     ),
     ConsolidationRecord(
         area="Protocol sequences, shared controls, external web hooks, and LightSpeed GO",
@@ -320,10 +321,29 @@ def default_consolidation_report_path(root: Path) -> Path:
 
 
 def _path_status(root: Path, relative_path: str) -> dict[str, Any]:
-    path = Path(root) / relative_path
+    root = Path(root)
+    relative = Path(relative_path)
+    path = root / relative
+    authority = "desktop_shell"
+    if not path.exists() and relative.parts[:1] == ("lightspeed_runtime",):
+        runtime_roots: list[Path] = []
+        configured = os.environ.get("LIGHTSPEED_RUNTIME_ROOT", "").strip()
+        if configured:
+            runtime_roots.append(Path(configured))
+        if root.name.casefold() == "app" and root.parent.name.casefold() == "lightspeed":
+            runtime_roots.append(root.parent / "Core")
+        runtime_roots.append(root.parent.parent / "LightSpeed_Runtime")
+        for runtime_root in runtime_roots:
+            candidate = runtime_root / relative
+            if candidate.exists():
+                path = candidate
+                authority = "split_core_runtime"
+                break
     exists = path.exists()
     return {
         "path": relative_path,
+        "resolved_path": str(path),
+        "authority": authority,
         "exists": exists,
         "kind": "directory" if path.is_dir() else "file" if path.is_file() else "missing",
         "size_bytes": path.stat().st_size if path.is_file() else None,
@@ -334,16 +354,25 @@ def build_consolidation_register(root: Path) -> dict[str, Any]:
     root = Path(root)
     records = []
     missing_canonical: list[str] = []
+    missing_runtime: list[str] = []
+    missing_outputs: list[str] = []
     for record in CONSOLIDATION_RECORDS:
         runtime_status = [_path_status(root, path) for path in record.final_runtime_files]
         output_status = [_path_status(root, path) for path in record.final_data_outputs]
-        for item in runtime_status + output_status:
+        for item in runtime_status:
             if not item["exists"]:
                 missing_canonical.append(item["path"])
+                missing_runtime.append(item["path"])
+        for item in output_status:
+            if not item["exists"]:
+                missing_canonical.append(item["path"])
+                missing_outputs.append(item["path"])
         payload = record.to_dict()
         payload["runtime_status"] = runtime_status
         payload["output_status"] = output_status
-        payload["canonical_complete"] = not any(not item["exists"] for item in runtime_status + output_status)
+        payload["runtime_complete"] = all(item["exists"] for item in runtime_status)
+        payload["outputs_complete"] = all(item["exists"] for item in output_status)
+        payload["canonical_complete"] = payload["runtime_complete"] and payload["outputs_complete"]
         records.append(payload)
 
     return {
@@ -351,17 +380,21 @@ def build_consolidation_register(root: Path) -> dict[str, Any]:
         "root": str(root),
         "purpose": "Executable consolidation map for overlapping LightSpeed build attempts before final run and packaging.",
         "record_count": len(records),
+        "runtime_complete_count": sum(1 for record in records if record["runtime_complete"]),
+        "outputs_complete_count": sum(1 for record in records if record["outputs_complete"]),
         "canonical_complete_count": sum(1 for record in records if record["canonical_complete"]),
+        "missing_runtime": sorted(set(missing_runtime)),
+        "missing_outputs": sorted(set(missing_outputs)),
         "missing_canonical": sorted(set(missing_canonical)),
         "records": records,
         "next_packaging_sequence": [
             "Regenerate visual catalog, widget export, UI polish contract, orchestration plan, and consolidation register.",
             "Run focused runtime tests for consolidation, smart-floor visuals, project wall, UI polish, and orchestration.",
-            "Run launch readiness and complete diagnostics.",
-            "Run release-clean dry run and review stale roots before D-root publish snapshot.",
+            "Run launch readiness and complete diagnostics before private acceptance.",
+            "Run a bounded release-clean dry run and review stale roots without creating a parallel D-root snapshot.",
             "After the complete final pass, move AI logs and non-package reports to the outer LightSpeed Consolidated archive.",
             "Confirm protocol registry and Achilles external handoff are generated and external writes remain approval-gated.",
-            "Package V0.10.0 only after all warnings have an owner floor and packaging gate.",
+            "Prepare an operator package only after all warnings have an owner floor and acceptance gate.",
         ],
     }
 

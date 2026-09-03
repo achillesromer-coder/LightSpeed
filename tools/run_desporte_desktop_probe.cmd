@@ -1,7 +1,9 @@
 @echo off
 setlocal
 set "REPO_ROOT=%~dp0.."
-set "RECEIPT_DIR=%REPO_ROOT%\desktop\LightSpeed_Runtime\exports\agent_home"
+if not defined LIGHTSPEED_CANONICAL_ROOT set "LIGHTSPEED_CANONICAL_ROOT=D:\LightSpeed"
+if not defined LIGHTSPEED_SHELL_ROOT set "LIGHTSPEED_SHELL_ROOT=%LIGHTSPEED_CANONICAL_ROOT%\App"
+set "RECEIPT_DIR=%LIGHTSPEED_SHELL_ROOT%\Z Axis\Z-4_Merovingian\data\runtime_exports"
 set "RECEIPT_PATH=%RECEIPT_DIR%\desporte_soft_launch_receipt.json"
 
 if not exist "%RECEIPT_DIR%" mkdir "%RECEIPT_DIR%"

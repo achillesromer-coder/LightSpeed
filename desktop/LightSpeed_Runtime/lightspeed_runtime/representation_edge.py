@@ -10,7 +10,10 @@ import re
 import sqlite3
 from typing import Any, Iterable, Mapping
 
-from lightspeed_runtime.operational_store import default_operational_db_path
+from lightspeed_runtime.operational_store import (
+    CANONICAL_OPERATOR_DATABASE,
+    default_operational_db_path,
+)
 
 
 FEATURE_FLAG = "LIGHTSPEED_REPRESENTATION_EDGE_ENABLED"
@@ -3020,7 +3023,13 @@ def _proof_definitions() -> list[dict[str, Any]]:
 
 
 def build_store(shell_root: Path, *, enabled: bool | None = None) -> RepresentationEdgeStore:
-    return RepresentationEdgeStore(default_operational_db_path(shell_root), enabled=enabled)
+    active = feature_enabled() if enabled is None else bool(enabled)
+    if not active:
+        # A disabled feature must remain inspectable without opening, creating,
+        # or even requiring a database.  This also keeps recovery/test shells
+        # read-only and prevents them from growing a second runtime tree.
+        return RepresentationEdgeStore(CANONICAL_OPERATOR_DATABASE, enabled=False)
+    return RepresentationEdgeStore(default_operational_db_path(shell_root), enabled=True)
 
 
 def main(argv: list[str] | None = None) -> int:

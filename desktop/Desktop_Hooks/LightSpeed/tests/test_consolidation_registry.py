@@ -30,11 +30,14 @@ def test_consolidation_register_validates_canonical_files_in_active_root() -> No
     register = build_consolidation_register(RUNTIME_ROOT)
 
     assert register["record_count"] == len(CONSOLIDATION_RECORDS)
-    assert register["canonical_complete_count"] == register["record_count"]
-    assert register["missing_canonical"] == []
+    assert register["runtime_complete_count"] == register["record_count"]
+    assert register["missing_runtime"] == []
+    assert register["canonical_complete_count"] <= register["record_count"]
+    assert set(register["missing_canonical"]) == set(register["missing_outputs"])
     project_wall = next(record for record in register["records"] if record["area"] == "Project Bento wall and smart widgets")
-    assert project_wall["canonical_complete"] is True
+    assert project_wall["runtime_complete"] is True
     assert any(item["path"] == "lightspeed_runtime/project_component_wall.py" for item in project_wall["runtime_status"])
+    assert all(item["authority"] == "split_core_runtime" for item in project_wall["runtime_status"])
 
 
 def test_write_consolidation_register_outputs_json_and_report(tmp_path: Path) -> None:

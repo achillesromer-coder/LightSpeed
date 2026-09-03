@@ -75,6 +75,18 @@
   "startup": {
     "auto_launch": false,
     "load_last_session": true,
-    "restore_portals": false
+    "restore_portals": false,
+    "execution_profile": "cognigrex_quarter_speed",
+    "speed_percent": 25,
+    "thin_preview_default": true,
+    "max_concurrent_heavy_jobs": 1,
+    "heavy_services_auto_launch": false,
+    "heavy_execution_requires": [
+      "explicit owner approval",
+      "resource_guard.heavy_work_allowed",
+      "proofed inputs",
+      "rollback contract"
+    ],
+    "representation_edge_enabled": false
   }
 }

@@ -1,0 +1,66 @@
+{
+  "schema": "romer-rfs-emff-type1-analysis-v1",
+  "generated_utc": "2026-08-04T22:54:22.287101+00:00",
+  "source_pdf": "C:\\Users\\acc\\Desktop\\2025 Documents\\Romer Ind\\Project Overview.pdf",
+  "prior_lightspeed_receipt": "rfs_emff_sweep_proof_2026-08-05\\sweep_receipt.json",
+  "claim_boundary": "screening_only_no_physical_capability_claim",
+  "summary": {
+    "materials": 4,
+    "samples": 12,
+    "sweep_rows": 116640,
+    "best_score": 0.35000129999999996,
+    "physical_claim_allowed": false
+  },
+  "artifacts": {
+    "workbook": {
+      "path": "C:\\Users\\acc\\Documents\\Codex\\2026-07-20\\blease-run-a-quick-check-through\\romer_rfs_emff_type1_analysis_2026-08-05\\Romer_RFS_EMFF_Type1_Cognigrex_Workbook_2026-08-05.xlsx",
+      "sha256": "0a50b99e0ab371ed8b8e958e9c1aa4ba3871f0f102860f7788e6bc9751cb7511",
+      "size_bytes": 423138
+    },
+    "handoff": {
+      "path": "C:\\Users\\acc\\Documents\\Codex\\2026-07-20\\blease-run-a-quick-check-through\\romer_rfs_emff_type1_analysis_2026-08-05\\RFS_EMFF_TYPE1_HANDOFF_AND_WORKFLOW_2026-08-05.md",
+      "sha256": "111892c354413f3314cdb529108e4d830bcc138f0b6731807cb5ba3e879f2ca8",
+      "size_bytes": 3085
+    },
+    "material_properties_csv": {
+      "path": "C:\\Users\\acc\\Documents\\Codex\\2026-07-20\\blease-run-a-quick-check-through\\romer_rfs_emff_type1_analysis_2026-08-05\\material_properties.csv",
+      "sha256": "941efc0560c8a756a8d5755096b3e396604306cf7f9e683c5855ee88e7844483",
+      "size_bytes": 990
+    },
+    "sample_matrix_csv": {
+      "path": "C:\\Users\\acc\\Documents\\Codex\\2026-07-20\\blease-run-a-quick-check-through\\romer_rfs_emff_type1_analysis_2026-08-05\\sample_matrix.csv",
+      "sha256": "fc5d585548dfad861787e13a6ba8156bd7219b2c128363948cf48ec1042a27fe",
+      "size_bytes": 2349
+    },
+    "simulation_grid_csv": {
+      "path": "C:\\Users\\acc\\Documents\\Codex\\2026-07-20\\blease-run-a-quick-check-through\\romer_rfs_emff_type1_analysis_2026-08-05\\simulation_grid.csv",
+      "sha256": "a5a3d7dea5389bbda8390fa03ac2fef211bfa432387eee202e50f9a6f576ad34",
+      "size_bytes": 31952626
+    },
+    "best_screening_cases_csv": {
+      "path": "C:\\Users\\acc\\Documents\\Codex\\2026-07-20\\blease-run-a-quick-check-through\\romer_rfs_emff_type1_analysis_2026-08-05\\best_screening_cases.csv",
+      "sha256": "9e073cd7f214f352518acbb7a28dc6fa32ac8dd70b7f9405e84972802bc6dd6b",
+      "size_bytes": 4341
+    },
+    "figure_1": {
+      "path": "C:\\Users\\acc\\Documents\\Codex\\2026-07-20\\blease-run-a-quick-check-through\\romer_rfs_emff_type1_analysis_2026-08-05\\figures\\top_screening_cases.png",
+      "sha256": "513513b36b78f1e283c7d2babf31eed9d11bee871dbed192acbbe3e3da51827b",
+      "size_bytes": 76139
+    },
+    "figure_2": {
+      "path": "C:\\Users\\acc\\Documents\\Codex\\2026-07-20\\blease-run-a-quick-check-through\\romer_rfs_emff_type1_analysis_2026-08-05\\figures\\resonance_alignment_heatmap.png",
+      "sha256": "1b11e23e05886d1373a7cb6645e5e0f9871f0dbb815528bb554c998bab1db37c",
+      "size_bytes": 61254
+    },
+    "figure_3": {
+      "path": "C:\\Users\\acc\\Documents\\Codex\\2026-07-20\\blease-run-a-quick-check-through\\romer_rfs_emff_type1_analysis_2026-08-05\\figures\\skin_depth_by_material.png",
+      "sha256": "50c42b019b01046a901e2b18a7d723e03428298946499730b21a229380dedd41",
+      "size_bytes": 80152
+    },
+    "figure_4": {
+      "path": "C:\\Users\\acc\\Documents\\Codex\\2026-07-20\\blease-run-a-quick-check-through\\romer_rfs_emff_type1_analysis_2026-08-05\\figures\\rf_vs_pdf_frequency_domain_gap.png",
+      "sha256": "f233bc295623b7417bcff56148ab0b7a7cd4398d098f3246270db0831598fdb9",
+      "size_bytes": 65526
+    }
+  }
+}

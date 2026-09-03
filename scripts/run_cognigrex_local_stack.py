@@ -26,6 +26,23 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 REPO_RUNTIME_ROOT = REPO_ROOT / "desktop" / "LightSpeed_Runtime"
 REPO_SHELL_ROOT = REPO_ROOT / "desktop" / "Desktop_Hooks" / "LightSpeed"
 CANONICAL_ROOT = Path(os.environ.get("LIGHTSPEED_CANONICAL_ROOT", r"D:\LightSpeed"))
+CANONICAL_DATABASE = CANONICAL_ROOT / "Data" / "db" / "lightspeed_unified.db"
+
+
+def canonical_receipt_dir(shell_root: Path) -> Path:
+    """Return the sole operator-owned receipt directory.
+
+    Runtime exports under ``Core/exports`` are presentation context for the
+    Desktop bridge. Operational receipts belong to the live Desktop shell so
+    starting the split runtime cannot create a second receipt authority.
+    """
+    return (
+        shell_root
+        / "Z Axis"
+        / "Z-4_Merovingian"
+        / "data"
+        / "runtime_exports"
+    )
 
 
 def utc_now_iso() -> str:
@@ -108,6 +125,7 @@ def creation_flags() -> int:
         getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
         | getattr(subprocess, "DETACHED_PROCESS", 0)
         | getattr(subprocess, "CREATE_NO_WINDOW", 0)
+        | getattr(subprocess, "BELOW_NORMAL_PRIORITY_CLASS", 0)
     )
 
 
@@ -409,16 +427,49 @@ def main(argv: list[str] | None = None) -> int:
         REPO_SHELL_ROOT,
         Path("N.py"),
     )
+    runtime_policy_path = shell_root / "config" / "host_runtime_policy.json"
+    runtime_limits: dict[str, Any] = {}
+    try:
+        runtime_policy = json.loads(runtime_policy_path.read_text(encoding="utf-8"))
+        runtime_limits = dict(runtime_policy.get("runtime_limits") or {})
+    except (OSError, TypeError, ValueError, json.JSONDecodeError):
+        runtime_limits = {}
+    cognigrex_speed_percent = max(
+        10,
+        min(int(runtime_limits.get("cognigrex_speed_percent", 100)), 100),
+    )
+    merovingian_interval_seconds = max(
+        30,
+        min(int(runtime_limits.get("merovingian_interval_seconds", 60)), 3600),
+    )
+    operating_profile = {
+        "name": runtime_limits.get("active_operating_profile", "default"),
+        "speed_percent": cognigrex_speed_percent,
+        "background_process_priority": runtime_limits.get(
+            "background_process_priority", "below_normal"
+        ),
+        "max_background_queue_workers": runtime_limits.get(
+            "max_background_queue_workers", 1
+        ),
+        "max_concurrent_ollama_jobs": runtime_limits.get(
+            "max_concurrent_ollama_jobs", 1
+        ),
+        "max_floor_boot_parallelism": runtime_limits.get(
+            "max_floor_boot_parallelism", 2
+        ),
+        "merovingian_interval_seconds": merovingian_interval_seconds,
+    }
     os.environ["LIGHTSPEED_CANONICAL_ROOT"] = str(CANONICAL_ROOT)
     os.environ["LIGHTSPEED_RUNTIME_ROOT"] = str(runtime_root)
     os.environ["LIGHTSPEED_SHELL_ROOT"] = str(shell_root)
+    os.environ["LIGHTSPEED_CANONICAL_DB"] = str(CANONICAL_DATABASE)
     canonical_python = CANONICAL_ROOT / "Environment" / "Scripts" / "python.exe"
     python = (
         str(canonical_python)
         if canonical_python.is_file()
         else os.environ.get("LIGHTSPEED_PYTHON") or sys.executable
     )
-    receipt_dir = runtime_root / "exports" / "agent_home"
+    receipt_dir = canonical_receipt_dir(shell_root)
     receipt_dir.mkdir(parents=True, exist_ok=True)
 
     desporte = (
@@ -444,7 +495,7 @@ def main(argv: list[str] | None = None) -> int:
                 ),
                 "--watch",
                 "--interval",
-                "60",
+                str(merovingian_interval_seconds),
                 "--runtime-root",
                 str(runtime_root),
                 "--shell-root",
@@ -565,6 +616,7 @@ def main(argv: list[str] | None = None) -> int:
         },
         "desktop": desktop,
         "bridge_status": bridge_status,
+        "operating_profile": operating_profile,
         "web_frontend_in_scope": False,
         "automatic_deletion": False,
         "next_action": (

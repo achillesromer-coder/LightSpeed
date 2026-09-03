@@ -1,7 +1,6 @@
 # Oracle Floor
 
 **Z-Level:** -2
-**Version:** 5.1.2
 **Status:** Active smart floor
 
 Oracle owns LightSpeed's catalog, proofed knowns, empirical data layer, library,

@@ -45,3 +45,12 @@ def test_functions_hub_routes_home_to_the_compact_operator_surface() -> None:
 
     assert "self.show_floors_hub()" in source
     assert "self.bind('<Control-h>', lambda e: self.show_home()" in source
+
+
+def test_functions_hub_floor_rail_keeps_detail_out_of_button_captions() -> None:
+    source = N_PY.read_text(encoding="utf-8")
+    caption_source = source.split("def _floor_button_caption", 1)[1].split("summary_state", 1)[0]
+
+    assert 'return f"{floor_name}\\n{status}{queue_label}"' in caption_source
+    assert "agent=" not in caption_source
+    assert "draw=" not in caption_source

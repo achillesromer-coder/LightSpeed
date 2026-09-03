@@ -1,0 +1,81 @@
+{
+  "schema": "romer-rfs-asteroid-holistic-expansion-receipt-v1",
+  "generated_utc": "2026-08-05T12:52:44.896Z",
+  "output_directory": "C:\\Users\\acc\\Documents\\Codex\\2026-07-20\\blease-run-a-quick-check-through\\romer_holistic_rfs_asteroid_expansion_2026-08-05",
+  "summary": {
+    "corpus_sources": 16,
+    "material_rows": 44,
+    "sample_media": 10,
+    "concentrations": 7,
+    "baseline_grid_rows": 3080,
+    "asteroid_rows": 33,
+    "equation_rows": 14,
+    "sweep_axes": 20,
+    "test_stages": 12,
+    "gaps": 11
+  },
+  "workbook_authoring": {
+    "xlsx_created": false,
+    "blocker": "approved artifact runtime and connected document session unavailable",
+    "ready_for_import": true
+  },
+  "claim_boundary": "screening_test_design_only_no_physical_or_operational_capability_claim",
+  "artifacts": {
+    "00_corpus_register.csv": {
+      "size_bytes": 3718,
+      "sha256": "8dd4b145bc94fbe7a492fc00bc992c05a2f2c45dec238cd3695d5417046f34f5"
+    },
+    "01_material_target_register.csv": {
+      "size_bytes": 15148,
+      "sha256": "141522d432a1e6c52f135ca03e5fc35bd41ce3d81ef52987068b45932677cd41"
+    },
+    "02_secondary_sample_media.csv": {
+      "size_bytes": 1311,
+      "sha256": "29859f7072c00a61b65459bee88d7e74f8990827cd2b845674dbd7851ca956af"
+    },
+    "03_material_media_concentration_grid.csv": {
+      "size_bytes": 369605,
+      "sha256": "2e3dfd37c06160818341bc99b59309f40ec0dfa5ad56c5ddaea71f70d342631b"
+    },
+    "04_taxonomy_material_hypotheses.csv": {
+      "size_bytes": 1496,
+      "sha256": "ee24a6928d40b84e15dcee03098b4cc0b5c47ff59cef7cb56879a89792157e8d"
+    },
+    "05_asteroid_target_register.csv": {
+      "size_bytes": 7811,
+      "sha256": "6603068cff595333e4c397c9ed7e544eb5777e32461abbfb81da0c6837533947"
+    },
+    "06_equation_register.csv": {
+      "size_bytes": 2220,
+      "sha256": "7e52f10a8cdc114cf120516c6b0996c48a6c6128b780f70f31d447c391d09c2d"
+    },
+    "07_sweep_parameter_register.csv": {
+      "size_bytes": 2434,
+      "sha256": "1eb4471d66acd1e74b68aaca845c4bf03ef0f0308f2b0e3c377913e362fa0d63"
+    },
+    "08_test_stage_plan.csv": {
+      "size_bytes": 2178,
+      "sha256": "92faa0a07f3acde90d4a5f3a46e7b4ab9c9ac5c40201d786c8b77c46fc85c048"
+    },
+    "09_gap_and_collision_register.csv": {
+      "size_bytes": 2224,
+      "sha256": "005bfab9c631f8730ba23e24cd02c72acdfa7c19aa5c39864669741533188587"
+    },
+    "RFS_ASTEROID_HOLISTIC_HANDOFF_2026-08-05.md": {
+      "size_bytes": 2609,
+      "sha256": "d9a8238d3b99e1a77f395c68740ef3a20273af78dffa93e3ef869af5c5099df6"
+    },
+    "asteroid_register_roles.svg": {
+      "size_bytes": 3327,
+      "sha256": "dafc2d4bba8a4dca13ce80eb1578f1a308b323a22edc247860cd2ad1e6b7fdf7"
+    },
+    "material_target_coverage.svg": {
+      "size_bytes": 3309,
+      "sha256": "a31520677b4cf863b309f90c532474fed5e378474800008b8176228f5fb5cf31"
+    },
+    "romer_rfs_asteroid_holistic_expansion.json": {
+      "size_bytes": 1301518,
+      "sha256": "004b0d3e88e13bce3d693d28c0a934544fea49ad05b5da13684430162d012af7"
+    }
+  }
+}

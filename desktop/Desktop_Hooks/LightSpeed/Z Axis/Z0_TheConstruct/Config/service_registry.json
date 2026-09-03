@@ -221,9 +221,11 @@
       "mark3_api",
       "simulation_data"
     ],
-    "status": "operational",
+    "status": "blocked_input",
     "port": null,
-    "enabled": true
+    "enabled": false,
+    "execution_policy": "owner_and_resource_gated",
+    "blocker": "authoritative Mark III source object and export contract required"
   },
   "raphael_equations": {
     "type": "simulator",
@@ -236,9 +238,10 @@
     "provides": [
       "raphael_equations_api"
     ],
-    "status": "operational",
+    "status": "evidence_hold",
     "port": null,
-    "enabled": true
+    "enabled": false,
+    "execution_policy": "classification_only_until_empirical_owner_gate"
   },
   "orbital_mechanics": {
     "type": "simulator",
@@ -251,9 +254,10 @@
     "provides": [
       "orbital_mechanics_api"
     ],
-    "status": "operational",
+    "status": "manual_heavy_held",
     "port": null,
-    "enabled": true
+    "enabled": false,
+    "execution_policy": "bounded_fixture_or_owner_approved_run_only"
   },
   "quantum_mechanics": {
     "type": "simulator",
@@ -266,9 +270,10 @@
     "provides": [
       "quantum_mechanics_api"
     ],
-    "status": "operational",
+    "status": "manual_heavy_held",
     "port": null,
-    "enabled": true
+    "enabled": false,
+    "execution_policy": "bounded_fixture_or_owner_approved_run_only"
   },
   "big_bang_simulation": {
     "type": "simulator",
@@ -280,9 +285,10 @@
     "provides": [
       "big_bang_simulation_api"
     ],
-    "status": "operational",
+    "status": "manual_heavy_held",
     "port": null,
-    "enabled": true
+    "enabled": false,
+    "execution_policy": "bounded_fixture_or_owner_approved_run_only"
   },
   "hybrid_renderer": {
     "type": "renderer",
@@ -299,9 +305,10 @@
       "renderer_api",
       "visualization_data"
     ],
-    "status": "operational",
+    "status": "manual_heavy_held",
     "port": null,
-    "enabled": true
+    "enabled": false,
+    "execution_policy": "thin_preview_or_owner_approved_render_only"
   },
   "sphere_primitive": {
     "type": "renderer",
@@ -314,9 +321,10 @@
     "provides": [
       "primitive_api"
     ],
-    "status": "operational",
+    "status": "manual_heavy_held",
     "port": null,
-    "enabled": true
+    "enabled": false,
+    "execution_policy": "thin_preview_or_owner_approved_render_only"
   },
   "ast_analyzer": {
     "type": "analyzer",
@@ -329,9 +337,10 @@
     "provides": [
       "ast_analyzer_api"
     ],
-    "status": "operational",
+    "status": "staged_on_demand",
     "port": null,
-    "enabled": true
+    "enabled": false,
+    "execution_policy": "bounded_source_scope_only"
   },
   "indexer": {
     "type": "analyzer",
@@ -344,9 +353,10 @@
     "provides": [
       "indexer_api"
     ],
-    "status": "operational",
+    "status": "staged_on_demand",
     "port": null,
-    "enabled": true
+    "enabled": false,
+    "execution_policy": "bounded_source_scope_only"
   },
   "dependencies": {
     "type": "analyzer",
@@ -359,9 +369,10 @@
     "provides": [
       "dependencies_api"
     ],
-    "status": "operational",
+    "status": "staged_on_demand",
     "port": null,
-    "enabled": true
+    "enabled": false,
+    "execution_policy": "bounded_source_scope_only"
   },
   "cognigrex_models": {
     "type": "ai_system",
@@ -374,9 +385,10 @@
     "provides": [
       "cognigrex_models_api"
     ],
-    "status": "operational",
+    "status": "manual_model_gate",
     "port": null,
-    "enabled": true
+    "enabled": false,
+    "execution_policy": "one_model_session_at_a_time"
   },
   "cognigrex_training": {
     "type": "ai_system",
@@ -389,9 +401,10 @@
     "provides": [
       "cognigrex_training_api"
     ],
-    "status": "operational",
+    "status": "manual_model_gate",
     "port": null,
-    "enabled": true
+    "enabled": false,
+    "execution_policy": "deterministic_fixture_or_owner_approved_training_only"
   },
   "cognigrex_fleet": {
     "type": "ai_system",
@@ -404,9 +417,10 @@
     "provides": [
       "cognigrex_fleet_api"
     ],
-    "status": "operational",
+    "status": "manual_model_gate",
     "port": null,
-    "enabled": true
+    "enabled": false,
+    "execution_policy": "no_autonomous_deployment"
   },
   "immersive_engine": {
     "type": "ui",
@@ -420,9 +434,10 @@
     "provides": [
       "immersive_engine_api"
     ],
-    "status": "operational",
+    "status": "manual_heavy_held",
     "port": null,
-    "enabled": true
+    "enabled": false,
+    "execution_policy": "explicit_operator_drill_in_only"
   },
   "floor_widgets": {
     "type": "ui",

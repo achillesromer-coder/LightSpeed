@@ -185,7 +185,9 @@ class TestConfigurationValidation:
 
         for floor_name, floor_config in floors.items():
             assert "enabled" in floor_config, f"Floor {floor_name} missing 'enabled'"
-            assert "port" in floor_config, f"Floor {floor_name} missing 'port'"
+            assert floor_config.get("execution_model") == "asynchronous_shared_queue"
+            assert floor_config.get("autostart") is False
+            assert "port" not in floor_config, f"Floor {floor_name} retains a fake private port"
 
 
 class TestDatabaseHealth:

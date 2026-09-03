@@ -102,6 +102,32 @@ def temp_test_dir():
 
 
 @pytest.fixture(scope="function")
+def canonical_operational_store(tmp_path, monkeypatch):
+    """Provide an existing singleton DB without touching the live operator DB."""
+    import lightspeed_runtime.operational_store as operational_store
+
+    operator_root = tmp_path / "canonical_operator"
+    database_path = operator_root / "Data" / "db" / "lightspeed_unified.db"
+    store = operational_store.OperationalStore.for_fixture(database_path)
+    monkeypatch.setattr(
+        operational_store,
+        "CANONICAL_OPERATOR_ROOT",
+        operator_root,
+    )
+    monkeypatch.setattr(
+        operational_store,
+        "CANONICAL_OPERATOR_DATABASE",
+        database_path,
+    )
+    monkeypatch.delenv(operational_store.CANONICAL_DATABASE_ENV, raising=False)
+    return {
+        "root": operator_root,
+        "path": database_path,
+        "store": store,
+    }
+
+
+@pytest.fixture(scope="function")
 def mock_database(temp_test_dir):
     """Create an isolated test database."""
     import sqlite3

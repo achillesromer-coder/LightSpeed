@@ -23,6 +23,7 @@ Version: 0.9.5
 import sqlite3
 import json
 import datetime
+import os
 import time
 from pathlib import Path
 from typing import Optional, List, Dict, Any, Tuple
@@ -50,6 +51,81 @@ logging.basicConfig(
     format='%(asctime)s [%(levelname)s] %(name)s: %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+
+CANONICAL_DATABASE_ENV = "LIGHTSPEED_CANONICAL_DB"
+CANONICAL_OPERATOR_ROOT = Path(r"D:\LightSpeed")
+CANONICAL_OPERATOR_DATABASE = (
+    CANONICAL_OPERATOR_ROOT / "Data" / "db" / "lightspeed_unified.db"
+)
+
+
+def _default_database_path() -> tuple[Path, bool]:
+    r"""Resolve the singleton operator database without creating an alias tree.
+
+    Explicit ``db_path=`` values remain available for deterministic fixtures. A
+    running Windows operator namespace, however, must use the existing database
+    under ``D:\LightSpeed\Data``. Missing configured/operator databases fail
+    closed so importing a stale Core copy cannot silently instantiate another
+    Merovingian tree.
+    """
+
+    configured = os.environ.get(CANONICAL_DATABASE_ENV, "").strip()
+
+    if os.name == "nt":
+        if not CANONICAL_OPERATOR_ROOT.is_dir():
+            raise FileNotFoundError(
+                "The canonical LightSpeed operator namespace is unavailable: "
+                f"{CANONICAL_OPERATOR_ROOT}"
+            )
+        if not CANONICAL_OPERATOR_DATABASE.is_file():
+            raise FileNotFoundError(
+                "The LightSpeed operator namespace exists but its sole canonical "
+                f"database is missing: {CANONICAL_OPERATOR_DATABASE}"
+            )
+
+        if configured:
+            candidate = Path(configured).expanduser()
+            if not candidate.is_absolute():
+                raise ValueError(
+                    f"{CANONICAL_DATABASE_ENV} must be an absolute path: {candidate}"
+                )
+            if not candidate.is_file():
+                raise FileNotFoundError(
+                    f"Configured canonical LightSpeed database does not exist: {candidate}"
+                )
+            try:
+                same_identity = os.path.samefile(candidate, CANONICAL_OPERATOR_DATABASE)
+            except OSError as exc:
+                raise RuntimeError(
+                    "Could not prove configured LightSpeed database file identity: "
+                    f"{candidate} -> {CANONICAL_OPERATOR_DATABASE}"
+                ) from exc
+            if not same_identity:
+                raise ValueError(
+                    f"{CANONICAL_DATABASE_ENV} must identify the same file as "
+                    f"{CANONICAL_OPERATOR_DATABASE}; refusing database alias {candidate}"
+                )
+
+        # Always return the canonical operator namespace even when the configured
+        # path is a proven hard-link/junction alias of the same file.
+        return CANONICAL_OPERATOR_DATABASE, True
+
+    if configured:
+        candidate = Path(configured).expanduser()
+        if not candidate.is_absolute():
+            raise ValueError(
+                f"{CANONICAL_DATABASE_ENV} must be an absolute path: {candidate}"
+            )
+        if not candidate.is_file():
+            raise FileNotFoundError(
+                f"Configured canonical LightSpeed database does not exist: {candidate}"
+            )
+        return candidate, True
+
+    # Non-Windows development only. Windows can never reach this source-relative
+    # fallback and therefore cannot instantiate a second operator database tree.
+    return Path(MEROVINGIAN_DATA) / "db" / "lightspeed_unified.db", False
 
 
 def retry_on_locked(max_retries=3, backoff_factor=0.5):
@@ -92,27 +168,32 @@ class DatabaseService:
         Initialize database service.
 
         Parameters:
-            db_path: Path to SQLite database file
-                     Default: Z Axis/Z-4_Merovingian/data/db/lightspeed_unified.db
+            db_path: Explicit SQLite database path for fixtures or isolated
+                     tools. Runtime default: the configured/existing singleton
+                     operator database.
         """
         if db_path is None:
-            # Canonical: prefer floor-native Merovingian data store.
-            # Trinity (Z+3) owns setup flow and explicit schema migrations; runtime must not silently mutate schema.
             self.legacy_db_path = Path(LIGHTSPEED_ROOT) / "Data" / "lightspeed_unified.db"
-            self.db_path = Path(MEROVINGIAN_DATA) / "db" / "lightspeed_unified.db"
+            self.db_path, self.operator_canonical = _default_database_path()
             self.legacy_db_found = bool(self.legacy_db_path.exists() and not self.db_path.exists())
         else:
             self.db_path = Path(db_path)
             self.legacy_db_path = None
             self.legacy_db_found = False
+            self.operator_canonical = False
 
-        try:
-            self.db_path.parent.mkdir(parents=True, exist_ok=True)
-        except Exception:
-            pass
+        if not self.operator_canonical:
+            try:
+                self.db_path.parent.mkdir(parents=True, exist_ok=True)
+            except Exception:
+                pass
 
         # Ensure database exists
         if not self.db_path.exists():
+            if self.operator_canonical:
+                raise FileNotFoundError(
+                    f"Canonical LightSpeed database does not exist: {self.db_path}"
+                )
             logger.warning(f"Database not found at {self.db_path}")
             logger.info("Database will be created on first connection")
 
@@ -1803,6 +1884,51 @@ class DatabaseService:
         query = "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
         results = self.execute_query(query)
         return [row['name'] for row in results]
+
+    def ensure_ls_go_command_identity_schema(self) -> None:
+        """Install the bounded LS GO command identity/index schema.
+
+        This migration is deliberately explicit: normal service initialization
+        never calls it.  Achilles must run it as a separately audited migration
+        before command submission is enabled against the canonical database.
+        """
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS ls_go_command_identities (
+                    command_id TEXT PRIMARY KEY,
+                    canonical_payload_sha256 TEXT NOT NULL,
+                    queue_state TEXT NOT NULL DEFAULT 'indexed',
+                    queue_occurrence_count INTEGER NOT NULL DEFAULT 0,
+                    first_queue_offset INTEGER,
+                    last_queue_offset INTEGER,
+                    task_id INTEGER,
+                    job_id INTEGER,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                )
+            """)
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS ls_go_command_queue_state (
+                    queue_key TEXT PRIMARY KEY,
+                    queue_path TEXT NOT NULL,
+                    device INTEGER,
+                    inode INTEGER,
+                    indexed_offset INTEGER NOT NULL DEFAULT 0,
+                    observed_size INTEGER NOT NULL DEFAULT 0,
+                    observed_mtime_ns INTEGER NOT NULL DEFAULT 0,
+                    complete INTEGER NOT NULL DEFAULT 0,
+                    updated_at TEXT NOT NULL
+                )
+            """)
+            cursor.execute("""
+                CREATE INDEX IF NOT EXISTS idx_ls_go_command_task
+                ON ls_go_command_identities(task_id)
+            """)
+            cursor.execute("""
+                CREATE INDEX IF NOT EXISTS idx_ls_go_command_job
+                ON ls_go_command_identities(job_id)
+            """)
 
     def vacuum(self):
         """

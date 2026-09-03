@@ -1,32 +1,9 @@
 {
   "sequence": [
-    "data_integration",
-    "visualization",
-    "floor_widgets",
-    "immersive_engine",
-    "cognigrex_fleet",
-    "cognigrex_training",
-    "cognigrex_models",
-    "dependencies",
-    "indexer",
-    "ast_analyzer",
-    "sphere_primitive",
-    "hybrid_renderer",
-    "big_bang_simulation",
-    "quantum_mechanics",
-    "orbital_mechanics",
-    "raphael_equations",
-    "mark3_simulator",
+    "database",
+    "logger",
     "storage",
-    "event_bus",
-    "Trinity",
-    "Merovingian",
-    "Smith",
-    "Oracle",
-    "TheConstruct",
-    "Architect",
-    "Morpheus",
-    "Neo"
+    "event_bus"
   ],
   "parallel_groups": [
     [
@@ -34,34 +11,6 @@
       "event_bus",
       "logger",
       "storage"
-    ],
-    [
-      "mark3_simulator",
-      "raphael_equations",
-      "orbital_mechanics",
-      "quantum_mechanics",
-      "big_bang_simulation",
-      "ast_analyzer",
-      "indexer",
-      "dependencies"
-    ],
-    [
-      "hybrid_renderer",
-      "sphere_primitive",
-      "immersive_engine",
-      "floor_widgets",
-      "visualization",
-      "data_integration"
-    ],
-    [
-      "Neo",
-      "Morpheus",
-      "Architect",
-      "TheConstruct",
-      "Oracle",
-      "Smith",
-      "Merovingian",
-      "Trinity"
     ]
   ],
   "critical_services": [
@@ -71,5 +20,30 @@
   ],
   "optional_services": [
     "storage"
-  ]
+  ],
+  "manual_services": [
+    "TheConstruct",
+    "mark3_simulator",
+    "raphael_equations",
+    "orbital_mechanics",
+    "quantum_mechanics",
+    "big_bang_simulation",
+    "hybrid_renderer",
+    "sphere_primitive",
+    "immersive_engine",
+    "cognigrex_models",
+    "cognigrex_training",
+    "cognigrex_fleet",
+    "ast_analyzer",
+    "indexer",
+    "dependencies"
+  ],
+  "execution_policy": {
+    "profile": "cognigrex_quarter_speed",
+    "speed_percent": 25,
+    "default_mode": "thin_preview_only",
+    "manual_heavy_auto_start": false,
+    "max_concurrent_heavy_jobs": 1,
+    "representation_edge_enabled": false
+  }
 }

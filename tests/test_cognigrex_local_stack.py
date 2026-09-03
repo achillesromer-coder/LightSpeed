@@ -32,6 +32,138 @@ def watchdog_module():
     return load_script("ensure_cognigrex_local_stack.py")
 
 
+@pytest.fixture
+def population_module():
+    return load_script("populate_desporte_desktop.py")
+
+
+def test_operational_receipts_are_owned_by_desktop_shell(
+    tmp_path: Path,
+    stack_module,
+    population_module,
+    watchdog_module,
+) -> None:
+    shell_root = tmp_path / "App"
+    expected = (
+        shell_root
+        / "Z Axis"
+        / "Z-4_Merovingian"
+        / "data"
+        / "runtime_exports"
+    )
+
+    assert stack_module.canonical_receipt_dir(shell_root) == expected
+    assert population_module.canonical_receipt_dir(shell_root) == expected
+    assert watchdog_module.canonical_receipt_dir(tmp_path) == expected
+    assert "Core" not in expected.parts
+
+
+def test_active_wrappers_cannot_target_core_export_receipts() -> None:
+    wrapper_paths = (
+        REPO_ROOT / "tools" / "run_cognigrex_local_stack.cmd",
+        REPO_ROOT / "tools" / "launch_lightspeed.ps1",
+        REPO_ROOT / "tools" / "run_desporte_desktop_probe.cmd",
+    )
+    for path in wrapper_paths:
+        source = path.read_text(encoding="utf-8")
+        lowered = source.casefold()
+        assert "lightspeed_runtime\\exports\\agent_home" not in lowered
+        assert "core\\exports\\agent_home" not in lowered
+        assert "z axis\\z-4_merovingian\\data\\runtime_exports" in lowered
+
+    watchdog_source = (
+        REPO_ROOT / "scripts" / "ensure_cognigrex_local_stack.py"
+    ).read_text(encoding="utf-8")
+    assert 'root / "Core" / "exports" / "agent_home"' not in watchdog_source
+    assert 'canonical_receipt_dir(root) / "cognigrex_local_stack_receipt.json"' in watchdog_source
+
+
+def test_launch_control_declares_receipt_gates_not_mutable_health() -> None:
+    launch_control = json.loads(
+        (
+            REPO_ROOT
+            / "desktop"
+            / "Desktop_Hooks"
+            / "LightSpeed"
+            / "config"
+            / "launch_control.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert launch_control["co_runner"]["state"] == "local_receipt_required"
+    next_action_ids = {item["action_id"] for item in launch_control["next_actions"]}
+    assert "desporte_receipt_readback" not in next_action_ids
+    assert "desporte_desktop_visual_verification" in next_action_ids
+    mutable_observations = {
+        "running",
+        "passed",
+        "completed",
+        "operational",
+        "operational_8_of_8",
+        "passed_singleton_enforced",
+        "local_probe_passed_receipt_backed",
+    }
+    declared_states = {
+        str(item.get("state") or "")
+        for section in ("initialisation_sequence", "readiness_checks")
+        for item in launch_control[section]
+    }
+    assert not declared_states.intersection(mutable_observations)
+
+
+def test_agent_home_export_can_refresh_context_without_rewriting_shell(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    runtime_root = REPO_ROOT / "desktop" / "LightSpeed_Runtime"
+    sys.path.insert(0, str(runtime_root))
+    from lightspeed_runtime import operator_home
+
+    payload = {
+        "generated_at": "2026-08-02T00:00:00+00:00",
+        "profile_id": "test",
+        "truth_registry": [],
+        "floor_models": [],
+        "deployment_topology": {},
+        "host_runtime_policy": {},
+        "neo_local_runtime": {},
+        "neo_realisation_runtime": {},
+        "upstream_inventory": {},
+        "launch_control": {},
+        "agent_population": {},
+        "input_staging_matrix": {},
+        "floor_stage_population": {},
+        "construct_runtime": {},
+        "presence_roster": {},
+        "workspace_lanes": {},
+        "smart_floor_spaces": {},
+        "gated_build_tasks": {},
+        "web_drive_bridge": {},
+        "backend_frontend_build": {},
+        "floor_environment_realization": {},
+        "local_agent_wakeup": {},
+        "consolidation_queue": [],
+        "overlap_bellcurve": {"summary": {"cluster_count": 0}},
+    }
+    monkeypatch.setattr(operator_home, "build_agent_environment", lambda *_args, **_kwargs: payload)
+
+    def fail_shell_write(_payload):
+        raise AssertionError("context-only export must not rewrite the live shell")
+
+    monkeypatch.setattr(operator_home, "_write_shell_artifacts", fail_shell_write)
+    result = operator_home.export_agent_environment(
+        object(),
+        tmp_path / "exports",
+        write_shell_artifacts=False,
+    )
+
+    assert result["shell_files"] == {}
+    assert result["queue_size"] == 0
+    populate_source = (REPO_ROOT / "scripts" / "populate_desporte_desktop.py").read_text(
+        encoding="utf-8"
+    )
+    assert "write_shell_artifacts=False" in populate_source
+
+
 def test_web_bridge_is_optional_when_external_web_is_deferred(tmp_path: Path) -> None:
     bridge_path = (
         REPO_ROOT
