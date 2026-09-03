@@ -75,10 +75,7 @@ import queue
 import argparse
 import json
 import re
-import base64
 import hashlib
-import hmac
-import secrets
 
 # Add paths
 LIGHTSPEED_ROOT = Path(__file__).parent.resolve()
@@ -302,7 +299,22 @@ for _p in IMMERSIVE_MODULES_PATHS:
 
 # Tkinter
 import tkinter as tk
-from tkinter import ttk, messagebox, filedialog, scrolledtext
+from tkinter import ttk, messagebox, filedialog, scrolledtext, simpledialog
+
+try:
+    from lightspeed_runtime.owner_credentials import (
+        CredentialAuthenticationFailed,
+        CredentialError,
+        CredentialStore,
+        CredentialUnavailable,
+        create_password_record,
+        verify_password_record,
+        write_achilles_credential_reference,
+    )
+    HAS_OWNER_CREDENTIALS = True
+except ImportError as e:
+    print(f"[CRITICAL] Owner credential service unavailable: {e}")
+    HAS_OWNER_CREDENTIALS = False
 
 # Premium Theme Engine (Trinity Z+3)
 try:
@@ -499,7 +511,7 @@ Z_FLOORS_AVAILABLE: Dict[str, Any] = {}
 
 # Map floor names to their directory locations
 FLOOR_LOCATIONS = {
-    'Merovingian': 'Z Axis/Z-4_Merovingian',  # Core services (always available)
+    'Merovingian': 'Z Axis/Merovingian.py',  # Core services and operator UI
     # Canonical floor entrypoints live in `Z Axis/<Floor>.py` (manifest-owned).
     'Smith': 'Z Axis/Smith.py',
     'Oracle': 'Z Axis/Oracle.py',
@@ -512,8 +524,6 @@ FLOOR_LOCATIONS = {
 
 
 def _resolve_floor_entry_path(floor_name: str) -> Optional[Path]:
-    if floor_name == "Merovingian":
-        return None
     floor_path = FLOOR_LOCATIONS.get(floor_name)
     if not floor_path:
         return None
@@ -542,7 +552,6 @@ def _build_shell_startup_audit() -> dict[str, Any]:
     floor_status = {
         floor_name: _is_floor_entry_available(floor_name)
         for floor_name in FLOOR_LOCATIONS
-        if floor_name != "Merovingian"
     }
     return {
         "missing_targets": missing_targets,
@@ -628,9 +637,6 @@ def _get_z_floor_module(floor_name: str) -> Optional[Any]:
     noisy warnings and heavyweight side-effects (e.g. Tk initialization) during
     simple operations like `python N.py --smoke`.
     """
-    if floor_name == "Merovingian":
-        return None
-
     cached = Z_FLOORS_AVAILABLE.get(floor_name)
     if cached is not None:
         return cached
@@ -667,10 +673,7 @@ def _get_z_floor_module(floor_name: str) -> Optional[Any]:
 
 # Seed cache keys so downstream UIs can list floors without importing them.
 for _floor_name in FLOOR_LOCATIONS.keys():
-    if _floor_name == "Merovingian":
-        Z_FLOORS_AVAILABLE[_floor_name] = None
-    else:
-        Z_FLOORS_AVAILABLE.setdefault(_floor_name, None)
+    Z_FLOORS_AVAILABLE.setdefault(_floor_name, None)
 
 
 # ============================================================================
@@ -1319,34 +1322,70 @@ class LightSpeedUnified(tk.Tk):
             return True
 
     def _hash_password_record(self, password: str) -> Dict[str, Any]:
-        """Create a PBKDF2 password record for storage in user_preferences.preferences_json."""
-        pwd = (password or "").encode("utf-8")
-        salt = secrets.token_bytes(16)
-        iterations = 200_000
-        digest = hashlib.pbkdf2_hmac("sha256", pwd, salt, iterations)
-        return {
-            "alg": "pbkdf2_sha256",
-            "iter": iterations,
-            "salt_b64": base64.b64encode(salt).decode("ascii"),
-            "hash_b64": base64.b64encode(digest).decode("ascii"),
-        }
+        """Compatibility wrapper for the dedicated credential service."""
+        if not HAS_OWNER_CREDENTIALS:
+            raise RuntimeError("Owner credential service is unavailable")
+        username = str((self.current_user or {}).get("username") or "NCNB")
+        return create_password_record(password, username=username)
 
     def _verify_password_record(self, record: Dict[str, Any], password: str) -> bool:
-        """Verify a PBKDF2 password record."""
-        try:
-            if not isinstance(record, dict):
-                return False
-            if str(record.get("alg") or "") != "pbkdf2_sha256":
-                return False
-            iterations = int(record.get("iter") or 0)
-            salt = base64.b64decode(str(record.get("salt_b64") or ""), validate=False)
-            expected = base64.b64decode(str(record.get("hash_b64") or ""), validate=False)
-            if iterations <= 0 or (not salt) or (not expected):
-                return False
-            got = hashlib.pbkdf2_hmac("sha256", (password or "").encode("utf-8"), salt, iterations)
-            return hmac.compare_digest(got, expected)
-        except Exception:
+        """Compatibility wrapper for the dedicated credential service."""
+        return bool(HAS_OWNER_CREDENTIALS and verify_password_record(record, password))
+
+    def _achilles_credential_reference_path(self, username: str) -> Path:
+        configured = os.environ.get("LIGHTSPEED_DATA_ROOT", "").strip()
+        data_root = Path(configured) if configured else LIGHTSPEED_ROOT.parent / "Data"
+        return data_root / "runtime_exports" / "achilles_pa" / f"credential_{username}.json"
+
+    def _change_owner_password(self, username: str, current_password: str) -> bool:
+        """Require and persist one policy-compliant password rotation."""
+        new_password = simpledialog.askstring(
+            "Change Password",
+            "Enter a new password (12+ characters; use at least three character classes):",
+            show="*",
+            parent=self,
+        )
+        if new_password is None:
             return False
+        confirmation = simpledialog.askstring(
+            "Confirm Password",
+            "Re-enter the new password:",
+            show="*",
+            parent=self,
+        )
+        if confirmation is None or new_password != confirmation:
+            messagebox.showerror("Password Change", "The new passwords did not match.", parent=self)
+            return False
+        try:
+            status = CredentialStore(self.db).change_password(
+                username,
+                current_password,
+                new_password,
+            )
+            write_achilles_credential_reference(
+                self._achilles_credential_reference_path(username),
+                status=status,
+                event="password_rotation",
+            )
+        except CredentialAuthenticationFailed:
+            messagebox.showerror("Password Change", "The current password was not accepted.", parent=self)
+            return False
+        except CredentialError as exc:
+            messagebox.showerror("Password Change", str(exc), parent=self)
+            return False
+        except (CredentialUnavailable, OSError) as exc:
+            messagebox.showerror(
+                "Password Change",
+                f"The credential update could not be persisted. Login remains held.\n\n{exc}",
+                parent=self,
+            )
+            return False
+        messagebox.showinfo(
+            "Password Changed",
+            "Password rotation completed. Achilles P.A received the non-secret rotation reference.",
+            parent=self,
+        )
+        return True
 
     def _immersive_unpinned(self) -> bool:
         """Interactive immersive controls are pinned off unless the active user explicitly unpins."""
@@ -2990,40 +3029,26 @@ class LightSpeedUnified(tk.Tk):
         """
         Host hook for data-defined actions/simulations (simulation_def/action_def).
 
-        Invokes TheConstruct's floor API (which stages outputs into Z Direct) and
-        returns the raw result.
+        Invokes the canonical TheConstruct floor API and returns the raw result.
         """
         sim_type = str(sim_type or "").strip()
         if not sim_type:
             raise ValueError("sim_type is required")
 
-        try:
-            from importlib.util import spec_from_file_location, module_from_spec
+        from importlib.util import spec_from_file_location, module_from_spec
 
-            tc_path = (Path(__file__).resolve().parent / "Z Axis" / "Z0_TheConstruct" / "TheConstruct.py").resolve()
-            if not tc_path.exists():
-                raise FileNotFoundError(tc_path)
-            spec = spec_from_file_location("lightspeed_construct_floor", str(tc_path))
-            if spec is None or spec.loader is None:
-                raise ImportError("Cannot load TheConstruct floor module")
-            mod = module_from_spec(spec)
-            spec.loader.exec_module(mod)  # type: ignore
-            fn = getattr(mod, "run_simulation", None)
-            if not callable(fn):
-                raise AttributeError("TheConstruct.run_simulation not found")
-            return fn(sim_type, **params)
-        except Exception:
-            # Minimal fallback (no staging) for basic sims.
-            try:
-                from core.services.physics_tools import calculate_raphael_equations, generate_big_bang_simulation  # type: ignore
-
-                if sim_type == "raphael":
-                    return calculate_raphael_equations(**params)
-                if sim_type == "bigbang":
-                    return generate_big_bang_simulation(**params)
-            except Exception:
-                pass
-            raise
+        tc_path = (Path(__file__).resolve().parent / "Z Axis" / "TheConstruct.py").resolve()
+        if not tc_path.exists():
+            raise FileNotFoundError(tc_path)
+        spec = spec_from_file_location("lightspeed_construct_floor", str(tc_path))
+        if spec is None or spec.loader is None:
+            raise ImportError("Cannot load TheConstruct floor module")
+        mod = module_from_spec(spec)
+        spec.loader.exec_module(mod)  # type: ignore
+        fn = getattr(mod, "run_simulation", None)
+        if not callable(fn):
+            raise AttributeError("TheConstruct.run_simulation not found")
+        return fn(sim_type, **params)
 
     def show_immersive_world(self, interactive: bool = False):
         """
@@ -3856,7 +3881,7 @@ class LightSpeedUnified(tk.Tk):
 
             require_pw = bool(self._require_password_login())
 
-            # DB-backed login (password-less by design for now; Setup Wizard manages users/clearance).
+            # DB-backed identity lookup followed by the dedicated credential gate.
             try:
                 user_row = self.db.fetchone("SELECT * FROM users WHERE username = ?", (username,))
             except Exception:
@@ -3865,57 +3890,48 @@ class LightSpeedUnified(tk.Tk):
             if user_row:
                 user = dict(user_row)
 
-                # Enforce/enroll a local password (stored under user_preferences.preferences_json).
-                try:
-                    prefs = get_user_preferences(username)
-                except Exception:
-                    prefs = None
-
-                if require_pw and getattr(prefs, "table_available", False):
+                # Authentication is fail-closed and independent from tailoring preferences.
+                if require_pw:
+                    if not HAS_OWNER_CREDENTIALS:
+                        messagebox.showerror(
+                            "Login Held",
+                            "The canonical owner credential service is unavailable.",
+                            parent=self,
+                        )
+                        return
                     try:
-                        record = prefs.get_preference("auth.password", default=None) if prefs else None
-                    except Exception:
-                        record = None
+                        auth_status = CredentialStore(self.db).authenticate(username, password or "")
+                    except CredentialAuthenticationFailed:
+                        messagebox.showerror("Login Failed", "Username or password is incorrect.", parent=self)
+                        return
+                    except (CredentialError, CredentialUnavailable) as exc:
+                        messagebox.showerror(
+                            "Login Held",
+                            f"Authentication is not configured or cannot be verified.\n\n{exc}",
+                            parent=self,
+                        )
+                        return
 
-                    if record:
-                        if not self._verify_password_record(record, password or ""):
-                            messagebox.showerror("Login Failed", "Incorrect password.", parent=self)
+                    if auth_status.get("must_change"):
+                        messagebox.showinfo(
+                            "Password Change Required",
+                            "The bootstrap password or annual limit requires a new password before login.",
+                            parent=self,
+                        )
+                        if not self._change_owner_password(username, password or ""):
                             return
-                    else:
-                        if not (password or "").strip():
-                            messagebox.showerror(
-                                "Login Failed",
-                                "Password required.\n\n"
-                                "This user has no password set yet. Enter a password to enroll it on this device.",
-                                parent=self,
-                            )
+                    elif auth_status.get("reminder_due"):
+                        change_now = messagebox.askyesno(
+                            "Password Rotation Reminder",
+                            "This password has reached its 90-day review point. Change it now?\n\n"
+                            "You may continue today, but a change becomes mandatory at one year.",
+                            parent=self,
+                        )
+                        if change_now and not self._change_owner_password(username, password or ""):
                             return
-                        try:
-                            prefs.set_preference("auth.password", self._hash_password_record(password))
-                            # Reduce the chance of accidental disclosure.
-                            try:
-                                password_entry.delete(0, "end")
-                            except Exception:
-                                pass
-                            messagebox.showinfo(
-                                "Password Set",
-                                "Password enrolled for this user.\n\n"
-                                "You can reset it later from Settings Hub -> Tailoring.",
-                                parent=self,
-                            )
-                        except Exception:
-                            # If we cannot persist, do not block login (but warn).
-                            messagebox.showwarning(
-                                "Password Warning",
-                                "Could not persist password enrollment. Continuing without password persistence.",
-                                parent=self,
-                            )
 
-                elif require_pw and not getattr(prefs, "table_available", True):
-                    # If the preferences table is missing, we cannot persist the password record.
-                    # Do not block login; direct IT to run migrations.
                     try:
-                        self.update_status("Password enforcement skipped (user_preferences table missing).")
+                        password_entry.delete(0, "end")
                     except Exception:
                         pass
 
@@ -5737,39 +5753,6 @@ class LightSpeedUnified(tk.Tk):
         search_var.trace_add("write", lambda *_: render_files())
         category_var.trace_add("write", lambda *_: render_files())
 
-        status_bar = tk.Frame(dialog, bg=COLORS['bg_panel'])
-        status_bar.pack(fill='x', side='bottom')
-        status_var = tk.StringVar(value="Ready")
-        tk.Label(status_bar, textvariable=status_var, bg=COLORS['bg_panel'], fg=COLORS['text_green'], font=('Arial', 9), anchor='w').pack(side='left', padx=10, pady=6)
-        progress_bar = ttk.Progressbar(status_bar, mode='determinate', length=220)
-        progress_bar.pack(side='right', padx=10, pady=6)
-        progress_bar.grid_remove()
-        cancel_btn = tk.Button(status_bar, text="Cancel Import", command=lambda: ui_state.__setitem__("cancel_import", True), bg=COLORS['error_red'], fg='white', font=('Arial', 9, 'bold'))
-        cancel_btn.pack(side='right', padx=6, pady=4)
-
-        def set_status(text, busy=False, progress=None):
-            status_var.set(text)
-            try:
-                if busy:
-                    progress_bar.grid()
-                    if progress is None:
-                        progress_bar.config(mode='indeterminate')
-                        progress_bar.start(10)
-                    else:
-                        progress_bar.stop()
-                        progress_bar.config(mode='determinate', maximum=100)
-                        progress_bar['value'] = max(0, min(100, progress))
-                else:
-                    progress_bar.stop()
-                    progress_bar['value'] = 0
-                    progress_bar.grid_remove()
-            except Exception:
-                pass
-            try:
-                dialog.update_idletasks()
-            except Exception:
-                pass
-
         dialog._project_files_ui = {
             "cancel_import": False,
             "cancel_btn": cancel_btn,
@@ -7047,6 +7030,76 @@ class LightSpeedUnified(tk.Tk):
             except Exception:
                 return {}
 
+        def _resource_preflight_lines(receipt_path: Optional[Path]) -> list[str]:
+            receipt = _read_json_path(receipt_path)
+            preflight = receipt.get("resource_preflight") or {}
+            if not isinstance(preflight, dict) or not preflight:
+                return [
+                    "Resource preflight: not exported",
+                    "Ollama loaded: not probed",
+                    "Last floor receipt: not exported",
+                ]
+
+            memory = preflight.get("memory") or {}
+            thresholds = preflight.get("thresholds") or {}
+            ollama = preflight.get("ollama") or {}
+            previous = preflight.get("last_receipt") or {}
+
+            def _gib(value: object) -> str:
+                try:
+                    return f"{int(value) / (1024 ** 3):.2f} GiB"
+                except (TypeError, ValueError, OverflowError):
+                    return "not available"
+
+            free_percent = memory.get("free_percent")
+            try:
+                percent_label = f"{float(free_percent):.1f}%"
+            except (TypeError, ValueError):
+                percent_label = "not available"
+
+            loaded_models = ollama.get("loaded_models") or []
+            model_names = [
+                str(item.get("name"))
+                for item in loaded_models
+                if isinstance(item, dict) and item.get("name")
+            ]
+            loaded_count = ollama.get("loaded_model_count")
+            if model_names:
+                loaded_label = ", ".join(model_names[:3])
+            elif loaded_count is not None:
+                loaded_label = f"{loaded_count} model(s)"
+            else:
+                loaded_label = str(ollama.get("state") or "not probed")
+
+            receipt_label = " | ".join(
+                str(value)
+                for value in (
+                    receipt.get("status"),
+                    receipt.get("floor"),
+                    receipt.get("created_at"),
+                )
+                if value
+            ) or "not exported"
+            previous_label = " | ".join(
+                str(value)
+                for value in (
+                    previous.get("status"),
+                    previous.get("floor"),
+                    previous.get("created_at"),
+                )
+                if value
+            ) or "none recorded"
+
+            return [
+                (
+                    f"Resource preflight: {preflight.get('execution_state', 'unknown')} | "
+                    f"RAM free={_gib(memory.get('free_bytes'))} ({percent_label}) | "
+                    f"stop floor={_gib(thresholds.get('minimum_free_memory_bytes'))}"
+                ),
+                f"Ollama loaded: {loaded_label} | telemetry={ollama.get('state', 'unknown')}",
+                f"Last floor receipt: {receipt_label} | previous={previous_label}",
+            ]
+
         def _web_bridge_path(summary: dict) -> Optional[Path]:
             bridge = summary.get("web_drive_bridge") or {}
             value = bridge.get("contract_path")
@@ -7164,6 +7217,7 @@ class LightSpeedUnified(tk.Tk):
                     f"Buildout: {buildout.get('state', 'not exported')}",
                     f"Stage: {active_stage.get('label') or active_stage.get('stage_id', 'not exported')} | {active_stage.get('state', 'not exported')}",
                     f"Next safe action: {wake_payload.get('next_safe_action') or buildout.get('next_action') or 'not exported'}",
+                    *_resource_preflight_lines(receipt_path),
                     "",
                     f"Backend workspace: gated by {build.get('launch_gate', 'unknown')}",
                     f"Agent queue: {queue_by_floor.get(floor_name, 0)} floor tasks | {_short_path(agent_queue_path)}",

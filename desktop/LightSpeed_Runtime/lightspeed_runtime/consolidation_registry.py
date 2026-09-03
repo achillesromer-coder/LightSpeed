@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -320,10 +321,35 @@ def default_consolidation_report_path(root: Path) -> Path:
 
 
 def _path_status(root: Path, relative_path: str) -> dict[str, Any]:
-    path = Path(root) / relative_path
+    root = Path(root)
+    relative = Path(relative_path)
+    path = root / relative
+    authority = "desktop_shell"
+    if relative.parts[:1] == ("lightspeed_runtime",):
+        runtime_roots: list[Path] = []
+        configured = os.environ.get("LIGHTSPEED_RUNTIME_ROOT", "").strip()
+        if configured:
+            runtime_roots.append(Path(configured))
+        if root.name.casefold() == "app" and root.parent.name.casefold() == "lightspeed":
+            runtime_roots.append(root.parent / "Core")
+        runtime_roots.append(root.parent.parent / "LightSpeed_Runtime")
+        for runtime_root in runtime_roots:
+            candidate = runtime_root / relative
+            if not candidate.exists():
+                continue
+            try:
+                same_runtime_file = path.exists() and os.path.samefile(path, candidate)
+            except (OSError, ValueError):
+                same_runtime_file = False
+            if not path.exists() or same_runtime_file:
+                path = candidate
+                authority = "split_core_runtime"
+                break
     exists = path.exists()
     return {
         "path": relative_path,
+        "resolved_path": str(path),
+        "authority": authority,
         "exists": exists,
         "kind": "directory" if path.is_dir() else "file" if path.is_file() else "missing",
         "size_bytes": path.stat().st_size if path.is_file() else None,

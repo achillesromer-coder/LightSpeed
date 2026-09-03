@@ -31,9 +31,9 @@
       "sha256": "a5fda201c319de6ef8410f92549337ad08155faec639d9c66756b732e7b1d82b"
     },
     {
-      "bytes": 2844,
+      "bytes": 3051,
       "path": "Desktop_Hooks/LightSpeed/config/host_runtime_policy.json",
-      "sha256": "c43264b7861a2a42172c06ca856f94785a5819a2fbe8c0b09afa5a47f71cf54e"
+      "sha256": "d763d6fe4d04ecb34f81968ee7dab83a38d8e7224c62bdeb071b9be5f84d806f"
     },
     {
       "bytes": 15246,
@@ -46,9 +46,9 @@
       "sha256": "3f547bf5102650e6214047d0a5f0d1bffa50ac82db271cc13f4d90fc95c8d4ee"
     },
     {
-      "bytes": 4144,
+      "bytes": 7441,
       "path": "Desktop_Hooks/LightSpeed/config/project_routing.json",
-      "sha256": "98d1d6085fa374687dda0620623ec8f9bd664ac5ff7ec426e371a2739f731b87"
+      "sha256": "74065c0ba51d0ec93fc9ad2fb2012eda76fef5b2979249ecb96982393d71a68b"
     },
     {
       "bytes": 1210,
@@ -211,14 +211,14 @@
       "sha256": "c8b940d9a78a7303d7c08dd7169dd5b058f42c9ef846be098a691a39859e8b0d"
     },
     {
-      "bytes": 3231,
+      "bytes": 3790,
       "path": "Desktop_Hooks/LightSpeed/launcher_exe.py",
-      "sha256": "c674c3f46bc8f8cc23db0ab89aa3dfb90ea7c7e9d91ad3c7d9bf76af6da78896"
+      "sha256": "6152357497504a8619b8c8d49bc203d8298a7aeb73a4384887ca35f5fcd2db34"
     },
     {
-      "bytes": 377678,
+      "bytes": 379568,
       "path": "Desktop_Hooks/LightSpeed/N.py",
-      "sha256": "d72fcaf63b9f6ac240bcbad30aa1d132ac24c24b493f1edd8280d745852320df"
+      "sha256": "408aac575f158c7a4fecda9ddf105ad65deec1c7013f7f42193fdba90b905f3c"
     },
     {
       "bytes": 738,
@@ -281,9 +281,9 @@
       "sha256": "82b3835d993124274eb79400de6dcaf129c5e370cfed705fae3ba0e25ba36267"
     },
     {
-      "bytes": 1657,
+      "bytes": 4109,
       "path": "Desktop_Hooks/LightSpeed/tests/test_entrypoint_contract.py",
-      "sha256": "a356c1ad5adef36f08dfd74c10bf1cfd51eea322748562f12cb28a7530c3d1af"
+      "sha256": "13f00430b02eacefbb5f90e87cae46476cd79c99eb744cdd341b542f4f4e57e0"
     },
     {
       "bytes": 4394,
@@ -291,9 +291,9 @@
       "sha256": "0959e9e04c2182cae9c4bcc736f6b905c2559d36a1adbd18c80b344d0d1c7bf0"
     },
     {
-      "bytes": 1425,
+      "bytes": 1654,
       "path": "Desktop_Hooks/LightSpeed/tests/test_functions_hub_operator_surface.py",
-      "sha256": "03999cdafff9240aa5cff4dd39015202bae2bd58928c37b1894beb9efe6899ed"
+      "sha256": "2901e880f1581ee803dcab206b16a770da43a5a5147ada8f995fe66d0e3080af"
     },
     {
       "bytes": 16802,
@@ -381,9 +381,9 @@
       "sha256": "c52167133abe6845557b85939dad3313f6b963f955a2e145989a50c6819b933b"
     },
     {
-      "bytes": 2284,
+      "bytes": 2680,
       "path": "Desktop_Hooks/LightSpeed/tests/test_shell_routes.py",
-      "sha256": "b15cff802a11428192938b238d909b48344a56f9a335b5d008d4a63446a3e0e3"
+      "sha256": "7e3275555f95b4f549258cbe65eb0cd8377bf943fe4d3c5ae926f9a132c48470"
     },
     {
       "bytes": 17809,
@@ -401,9 +401,9 @@
       "sha256": "d84166a03283a9fa70d10f73df900b7767579a855855cd07436f584077d35cab"
     },
     {
-      "bytes": 6769,
+      "bytes": 6975,
       "path": "Desktop_Hooks/LightSpeed/tests/test_trinity_ui_contracts.py",
-      "sha256": "1a17561abab057c4f36f681b6f427669f069aa833e3ee28f95ccf0aa9e70cb52"
+      "sha256": "5940777633ebac8351cdee2238292f864c2598210e33bc44e2e729cd8123fd5f"
     },
     {
       "bytes": 1459,
@@ -476,14 +476,14 @@
       "sha256": "819d1e138209fe6e3f2921c1d25b8200526bd2212c798b138a0f16b0e0d7bf5a"
     },
     {
-      "bytes": 6056,
+      "bytes": 9148,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Smith.py",
-      "sha256": "dd75b77cb05f849bd4fdb821a3fa6e755ee85e26c99d9982acc4406d2504f1f1"
+      "sha256": "f94edb4f3719bcd7da16baeee219dc13cc1553cf540ab8eb82b01a1f0706e476"
     },
     {
-      "bytes": 33090,
+      "bytes": 39375,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/TheConstruct.py",
-      "sha256": "49c2437a45777ae14fd583107addeae27cebcc602ae8224bc0398150c7f18ed8"
+      "sha256": "14b61b7c4b327a125cbed8f69400cfcd92f15acd80239fdbac7d4d2206428914"
     },
     {
       "bytes": 8141,
@@ -706,9 +706,9 @@
       "sha256": "52bde827fee0a3ec436aa28ac6383e5367827242442efd728c0815766cc550b2"
     },
     {
-      "bytes": 21723,
+      "bytes": 26368,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/cognigrex_login.py",
-      "sha256": "1e1f0e1ece401dc15d28c4bad53b5a556d4fe107ee59d56fcf6d57c3d1dd5088"
+      "sha256": "5b3e11e3a26ff1ca9e6e583c83b2176e18374ccf8d1baf88163985efcfe76058"
     },
     {
       "bytes": 25113,
@@ -831,9 +831,9 @@
       "sha256": "bafb373af2b666ffc5e64ef60e48d2400889093f10481ac9df47b68369942135"
     },
     {
-      "bytes": 24823,
+      "bytes": 25863,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/tools/initialize_database.py",
-      "sha256": "a7b33b648ab8968122b0a364a58bdb24fc7ff7d121abcdec22cbaa9675330910"
+      "sha256": "f4b96210f6aaee917a41f5295022e9acc96319a0b88db846e7250cbd51e007f2"
     },
     {
       "bytes": 15988,
@@ -876,9 +876,9 @@
       "sha256": "d4d4abb185da0250dcc91bb34d44e984fd9f7a4c97ad1d1691e4cd1bad17e20e"
     },
     {
-      "bytes": 16436,
+      "bytes": 16867,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/components/simulation_launcher.py",
-      "sha256": "eb8964bcd43d7529532e1d7fa03ec4f6f246594c768f6655524036aa15d861b7"
+      "sha256": "a91d79c40079718262a4c2f5dad561e8cf2c6f3f0b37de1b297e520832bd9d7a"
     },
     {
       "bytes": 98641,
@@ -921,9 +921,9 @@
       "sha256": "8f06d19ae166ba5d21fea7cd6bee342661b1c300a8959d241b365adb735eeaa1"
     },
     {
-      "bytes": 24968,
+      "bytes": 25085,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/it_shell.py",
-      "sha256": "18457268f9685ba9e7121ba51cbd5a13fd0de2b217172d36d0840a31fedad2f9"
+      "sha256": "7078491f4f3f0f9ef7c2a0162890ff1c1e427326c1fdca0d72f3928b0fe968ff"
     },
     {
       "bytes": 5447,
@@ -941,9 +941,9 @@
       "sha256": "91949f45ec63f91b11d0a32fd809902c53781c9186d9b0b9a2f7ea0b63263f16"
     },
     {
-      "bytes": 4189,
+      "bytes": 4452,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/shell_routes.py",
-      "sha256": "dca07ec01bb9a6d9da40685503c77ddddfb040cbb91a8584513d23bec5d2d745"
+      "sha256": "47a6b3e0d46b39627d2183ade9f64994e88666c2b53219ba191e3b6fb610784b"
     },
     {
       "bytes": 50388,
@@ -2361,9 +2361,9 @@
       "sha256": "abd1dd30bca3bce7d9d4ed1905b384c78ed7f3f7b137be0f33f4a5c6497d9d37"
     },
     {
-      "bytes": 75396,
+      "bytes": 77420,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/database.py",
-      "sha256": "5ccab10bfe2586ddac73518f1f55ba62d27bc92a56a857e6b699ed30d235d2d7"
+      "sha256": "782bf7ee677e6ffef66ecd3fd34508dc6bf956081081086d0489791df3240368"
     },
     {
       "bytes": 46120,
@@ -3156,9 +3156,9 @@
       "sha256": "148c0c1b78792ae3cdef7cac714705b848e34501b9d52ad4c1c83dd51418e9ee"
     },
     {
-      "bytes": 19600,
+      "bytes": 20718,
       "path": "LightSpeed_Runtime/lightspeed_runtime/consolidation_registry.py",
-      "sha256": "7c9bb461cec0c5b10b62b909a51ca0184188521f9a5a54e1faadd1c10248a3c7"
+      "sha256": "223a67558bb121d74b6104234080054dad4cefffe131b41a86f85d67756fcae4"
     },
     {
       "bytes": 11155,
@@ -3226,9 +3226,9 @@
       "sha256": "7e6e9f4f49ec0755845b783a0bc051e540471c5a1eda5444e15355194ef44db2"
     },
     {
-      "bytes": 19145,
+      "bytes": 19350,
       "path": "LightSpeed_Runtime/lightspeed_runtime/floor_bridges.py",
-      "sha256": "33f2dd36b3bbec485b5cb89e96750a0e3535ff255607bc50746dac6ebe1d9902"
+      "sha256": "2e537643f305ea518bb64aacded11a078d299ec15bd581c1c925a6112f386c17"
     },
     {
       "bytes": 11556,
@@ -3281,14 +3281,14 @@
       "sha256": "1cac4c3993b49041f41dc350054eea57b34fa13873795b1ff60ac6bf5e574e8c"
     },
     {
-      "bytes": 41681,
+      "bytes": 42279,
       "path": "LightSpeed_Runtime/lightspeed_runtime/local_agent_wakeup.py",
-      "sha256": "6e1c6c9928e296940000df0b42bd7e3925971cebe7c602c780ff777c96ce6711"
+      "sha256": "a0e8fe305fb2af5ece89cc71e3e1bbe339b626a75399ef6df6fea45cd8da12d9"
     },
     {
-      "bytes": 18900,
+      "bytes": 29848,
       "path": "LightSpeed_Runtime/lightspeed_runtime/local_floor_runner.py",
-      "sha256": "6e916551433d99b48632cff145bbd28b2c781e334955a1458aa3d06411c75615"
+      "sha256": "77197e8dd775fb4f7b34584cd82fd8a1a9ae0d787a05e92d90e93c6454a30233"
     },
     {
       "bytes": 9880,
@@ -3296,9 +3296,9 @@
       "sha256": "8efc3372e032bcb1c156c93aa67b7fbe77a63ee696b77e021cd74be6a29a7f50"
     },
     {
-      "bytes": 23100,
+      "bytes": 77939,
       "path": "LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py",
-      "sha256": "17c01e6f0b3907145222ab3bdfeef713cfc297fc36e526a404121bee635cf70a"
+      "sha256": "2fe96a3b059b0da2518f889caba30b31167e2287f30be2e61e6f399a42ff9548"
     },
     {
       "bytes": 11584,
@@ -3336,9 +3336,9 @@
       "sha256": "ad17db0c2f4ab4558a15fccfbc31388b101cc2803300efb26414d39d92208dfd"
     },
     {
-      "bytes": 47813,
+      "bytes": 75523,
       "path": "LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py",
-      "sha256": "08efb41bf817912ca7df0ca9800e53860e8bf8941b203de19ec134af71323cfb"
+      "sha256": "6b835736a6ae082e6250053cc287960d6bb4a1cab2942f538f28b8e087d52ae6"
     },
     {
       "bytes": 19560,
@@ -3431,9 +3431,9 @@
       "sha256": "b0bfc2f3dd9d14d8c3aa7df34340eac050d095a880dcd541879a31a29c6b2b53"
     },
     {
-      "bytes": 19954,
+      "bytes": 21903,
       "path": "LightSpeed_Runtime/lightspeed_runtime/startup_options.py",
-      "sha256": "4c31ecb7309a23ad8b79b51461211299710153a1901d4bb925fa6a67dfdc61d7"
+      "sha256": "758e429c7ac8777ddb026d00a5cf19881cbb5df3951644105489c5e9873c4c19"
     },
     {
       "bytes": 11020,

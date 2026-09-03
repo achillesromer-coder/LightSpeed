@@ -1,4 +1,4 @@
-export const COMMAND_SCHEMA = "lightspeed-go-command-v1";
+export const COMMAND_SCHEMA = "lightspeed-go-command-v2";
 export const DEFAULT_DESKTOP_ORIGIN = "http://127.0.0.1:8765";
 
 export const FLOORS = [
@@ -16,6 +16,7 @@ export const FLOORS = [
 export type Floor = (typeof FLOORS)[number];
 export type Priority = "critical" | "high" | "normal" | "low";
 export type ExecutionMode = "review" | "queue";
+export type CommandAction = "cognigrex_workflow";
 export type ReviewDecision = "approve" | "hold" | "reject";
 export type RepresentationDecision =
   | "approve"
@@ -24,6 +25,15 @@ export type RepresentationDecision =
   | "reject"
   | "request_evidence"
   | "supersede";
+
+export interface AuthorityContract {
+  canonical_gate_id: string;
+  owner_decision_ref: string;
+  core_acceptance_ref: string;
+  approval_or_hold_state: string;
+  authorised_scope: string;
+  prohibited_scope: string;
+}
 
 export interface CommandEnvelope {
   schema_version: typeof COMMAND_SCHEMA;
@@ -36,8 +46,16 @@ export interface CommandEnvelope {
   oversight_floor: "Achilles";
   priority: Priority;
   execution_mode: ExecutionMode;
+  action_type: CommandAction;
   proof_required: true;
   public_safe: true;
+  canonical_gate_id: string;
+  owner_decision_ref: string;
+  core_acceptance_ref: string;
+  approval_or_hold_state: string;
+  authorised_scope: string;
+  prohibited_scope: string;
+  requested_scope: string;
 }
 
 export interface CommandInput {
@@ -46,6 +64,8 @@ export interface CommandInput {
   targetFloor?: Floor;
   priority?: Priority;
   executionMode?: ExecutionMode;
+  actionType?: CommandAction;
+  authorityContract?: AuthorityContract | null;
 }
 
 export interface ProjectRecord {
@@ -64,6 +84,96 @@ export interface ProjectRecord {
   metadata?: Record<string, unknown>;
 }
 
+export interface ProjectFileRecord {
+  relative_path: string;
+  name: string;
+  extension: string;
+  mime_type: string;
+  kind: "text" | "binary_or_unknown";
+  size_bytes: number;
+  modified_utc?: string | null;
+  preview_supported: boolean;
+}
+
+export interface ProjectFilesResponse {
+  schema_version: "lightspeed-project-files-v1";
+  state: "available" | "empty" | "restricted";
+  project: Pick<ProjectRecord, "project_id" | "name" | "authority" | "condition">;
+  files: ProjectFileRecord[];
+  summary: {
+    visible_file_count: number;
+    blocked_file_count: number;
+    skipped_file_count: number;
+    scanned_file_count: number;
+    scan_truncated: boolean;
+    limit: number;
+  };
+  boundary: string;
+}
+
+export interface ProjectFileOpenResult {
+  schema_version: "lightspeed-project-file-open-result-v1";
+  state: "opened_read_only";
+  project: Pick<ProjectRecord, "project_id" | "name" | "authority">;
+  file: ProjectFileRecord;
+  preview: {
+    state: "available" | "empty" | "metadata_only" | "metadata_only_non_utf8";
+    encoding: "utf-8" | null;
+    truncated: boolean;
+    text: string | null;
+  };
+  source_mutated: false;
+  boundary: string;
+}
+
+export interface ResultReceiptMetadata {
+  result_id: string;
+  command_id?: string | null;
+  task_id?: number | null;
+  job_id?: number | null;
+  status: string;
+  action_type?: string | null;
+  target_floor?: string | null;
+  created_utc?: string | null;
+  completed_utc?: string | null;
+  public_safe_state: "true" | "false" | "unknown";
+  proof_required_state: "true" | "false" | "unknown";
+  public_publish_authorized: boolean;
+  drive_write_executed: boolean;
+  size_bytes: number;
+  modified_utc: string;
+  sha256: string;
+}
+
+export interface LocalResultsResponse {
+  schema_version: "lightspeed-local-results-index-v1";
+  state: "available" | "empty" | "restricted";
+  results: ResultReceiptMetadata[];
+  summary: {
+    visible_result_count: number;
+    invalid_file_count: number;
+    scanned_file_count: number;
+    limit: number;
+    truncated: boolean;
+    status_counts: Record<string, number>;
+  };
+  boundary: string;
+}
+
+export interface LocalResultOpenResponse {
+  schema_version: "lightspeed-local-result-open-v1";
+  state: "opened_read_only";
+  identity: {
+    result_id: string;
+    size_bytes: number;
+    modified_utc: string;
+    sha256: string;
+  };
+  result: Record<string, unknown>;
+  source_mutated: false;
+  boundary: string;
+}
+
 export interface ReviewRecord {
   review_id: string;
   created_utc?: string;
@@ -79,10 +189,30 @@ export interface ReviewRecord {
   decision?: Record<string, unknown>;
 }
 
+export interface ReviewDecisionResponse {
+  accepted?: boolean;
+  receipt?: {
+    review_id?: string;
+    decision?: string;
+    drive_writeback_mode?: string;
+    decision_receipt_state?: string;
+  };
+}
+
 export interface DesktopStatus {
   ok: boolean;
   time_utc?: string;
-  auth?: { configured?: boolean };
+  auth?: {
+    configured?: boolean;
+    mode?: string;
+    username?: string;
+    must_change?: boolean;
+    reminder_due?: boolean;
+    mandatory_due?: boolean;
+    reminder_due_utc?: string | null;
+    mandatory_due_utc?: string | null;
+    state?: string;
+  };
   services?: { db?: boolean; storage?: boolean; merovingian?: boolean };
   merovingian?: {
     status?: string;
@@ -95,6 +225,23 @@ export interface DesktopStatus {
     enabled?: boolean;
     migration_applied?: boolean;
     error?: string | null;
+  };
+  authority_contract?: AuthorityContract;
+}
+
+export interface OwnerAuthResponse {
+  authenticated: boolean;
+  change_required: boolean;
+  session_token?: string;
+  password_change_token?: string;
+  expires_utc?: string;
+  credential?: {
+    username?: string;
+    must_change?: boolean;
+    reminder_due?: boolean;
+    mandatory_due?: boolean;
+    reminder_due_utc?: string | null;
+    mandatory_due_utc?: string | null;
   };
 }
 
@@ -231,6 +378,21 @@ export const createCommandEnvelope = (input: CommandInput): CommandEnvelope => {
   const created = new Date().toISOString();
   const entropy = Math.random().toString(36).slice(2, 8).toUpperCase();
   const targetFloor = input.targetFloor ?? routeInstruction(instruction);
+  const authority = input.authorityContract;
+  if (!authority) throw new TypeError("Desktop authority contract is not available");
+  const canonicalGateId = normalize(authority.canonical_gate_id, 160);
+  const ownerDecisionRef = normalize(authority.owner_decision_ref, 160);
+  const coreAcceptanceRef = normalize(authority.core_acceptance_ref, 160);
+  const approvalState = normalize(authority.approval_or_hold_state, 40).toLowerCase();
+  const authorisedScope = normalize(authority.authorised_scope, 1000);
+  const prohibitedScope = normalize(authority.prohibited_scope, 1000);
+  if (!canonicalGateId || !ownerDecisionRef || !coreAcceptanceRef || !authorisedScope || !prohibitedScope) {
+    throw new TypeError("Desktop authority contract is incomplete");
+  }
+  if (!["approve", "approved", "operator_approved", "operator_authorized", "operator_authorised"].includes(approvalState)) {
+    throw new TypeError("Desktop authority contract is held");
+  }
+  const executionMode = input.executionMode ?? "review";
   return {
     schema_version: COMMAND_SCHEMA,
     command_id: `LSGO-${created.replace(/\D/g, "").slice(0, 14)}-${entropy}`,
@@ -241,11 +403,29 @@ export const createCommandEnvelope = (input: CommandInput): CommandEnvelope => {
     target_floor: targetFloor,
     oversight_floor: "Achilles",
     priority: input.priority ?? "normal",
-    execution_mode: input.executionMode ?? "review",
+    execution_mode: executionMode,
+    action_type: input.actionType ?? "cognigrex_workflow",
     proof_required: true,
     public_safe: true,
+    canonical_gate_id: canonicalGateId,
+    owner_decision_ref: ownerDecisionRef,
+    core_acceptance_ref: coreAcceptanceRef,
+    approval_or_hold_state: approvalState,
+    authorised_scope: authorisedScope,
+    prohibited_scope: prohibitedScope,
+    requested_scope: `${targetFloor} private local ${executionMode} queue`,
   };
 };
+
+export class DesktopRequestError extends Error {
+  readonly status: number;
+
+  constructor(status: number, message: string) {
+    super(message);
+    this.name = "DesktopRequestError";
+    this.status = status;
+  }
+}
 
 const withTimeout = async <T>(url: string, init: RequestInit, timeoutMs = 3500): Promise<T> => {
   const controller = new AbortController();
@@ -260,7 +440,7 @@ const withTimeout = async <T>(url: string, init: RequestInit, timeoutMs = 3500):
       } catch {
         // Keep the bounded HTTP detail.
       }
-      throw new Error(detail);
+      throw new DesktopRequestError(response.status, detail);
     }
     return (await response.json()) as T;
   } finally {
@@ -270,6 +450,47 @@ const withTimeout = async <T>(url: string, init: RequestInit, timeoutMs = 3500):
 
 export const readDesktopStatus = (origin = DEFAULT_DESKTOP_ORIGIN): Promise<DesktopStatus> =>
   withTimeout<DesktopStatus>(`${origin}/api/v1/status`, { method: "GET" }, 10000);
+
+export const loginDesktopOwner = (
+  username: string,
+  password: string,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<OwnerAuthResponse> =>
+  withTimeout<OwnerAuthResponse>(`${origin}/api/v1/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: normalize(username, 64), password: password.slice(0, 1024) }),
+  }, 15000);
+
+export const changeDesktopOwnerPassword = (
+  username: string,
+  currentPassword: string,
+  newPassword: string,
+  token: string,
+  changeOnly: boolean,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<OwnerAuthResponse> =>
+  withTimeout<OwnerAuthResponse>(`${origin}/api/v1/auth/change-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      [changeOnly ? "X-LightSpeed-Password-Change" : "X-LightSpeed-Session"]: token.slice(0, 256),
+    },
+    body: JSON.stringify({
+      username: normalize(username, 64),
+      current_password: currentPassword.slice(0, 1024),
+      new_password: newPassword.slice(0, 1024),
+    }),
+  }, 20000);
+
+export const logoutDesktopOwner = (
+  sessionToken: string,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<{ authenticated: boolean }> =>
+  withTimeout<{ authenticated: boolean }>(`${origin}/api/v1/auth/logout`, {
+    method: "POST",
+    headers: { "X-LightSpeed-Session": sessionToken.slice(0, 256) },
+  }, 7000);
 
 export const submitDesktopCommand = (
   command: CommandEnvelope,
@@ -309,6 +530,67 @@ export const listDesktopProjects = async (origin = DEFAULT_DESKTOP_ORIGIN): Prom
   };
 };
 
+export const projectFileApiPath = (projectId: string, relativePath?: string): string => {
+  const project = encodeURIComponent(projectId);
+  if (relativePath === undefined) return `/api/v1/projects/${project}/files`;
+  const path = relativePath.split("/").map((part) => encodeURIComponent(part)).join("/");
+  return `/api/v1/projects/${project}/files/${path}`;
+};
+
+export const listDesktopProjectFiles = async (
+  projectId: string,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<ProjectFilesResponse> =>
+  withTimeout<ProjectFilesResponse>(
+    `${origin}${projectFileApiPath(projectId)}?limit=200`,
+    { method: "GET" },
+    15000,
+  );
+
+export const openDesktopProjectFile = async (
+  projectId: string,
+  relativePath: string,
+  ownerSession: string,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<ProjectFileOpenResult> =>
+  withTimeout<ProjectFileOpenResult>(
+    `${origin}${projectFileApiPath(projectId, relativePath)}`,
+    {
+      method: "GET",
+      headers: { "X-LightSpeed-Session": ownerSession.slice(0, 256) },
+    },
+    10000,
+  );
+
+export const resultReceiptApiPath = (resultId?: string): string => {
+  if (resultId === undefined) return "/api/v1/results";
+  return `/api/v1/results/${encodeURIComponent(resultId)}`;
+};
+
+export const listDesktopResults = async (
+  origin = DEFAULT_DESKTOP_ORIGIN,
+  limit = 50,
+): Promise<LocalResultsResponse> =>
+  withTimeout<LocalResultsResponse>(
+    `${origin}${resultReceiptApiPath()}?limit=${Math.max(1, Math.min(limit, 200))}`,
+    { method: "GET" },
+    10000,
+  );
+
+export const openDesktopResult = async (
+  resultId: string,
+  ownerSession: string,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<LocalResultOpenResponse> =>
+  withTimeout<LocalResultOpenResponse>(
+    `${origin}${resultReceiptApiPath(resultId)}`,
+    {
+      method: "GET",
+      headers: { "X-LightSpeed-Session": ownerSession.slice(0, 256) },
+    },
+    10000,
+  );
+
 export const listDesktopReviews = async (
   origin = DEFAULT_DESKTOP_ORIGIN,
   limit = 50,
@@ -325,17 +607,36 @@ export const decideDesktopReview = async (
   reviewId: string,
   decision: ReviewDecision,
   note = "",
+  ownerSession = "",
   origin = DEFAULT_DESKTOP_ORIGIN,
-): Promise<Record<string, unknown>> =>
-  withTimeout<Record<string, unknown>>(
+): Promise<ReviewDecisionResponse> =>
+  withTimeout<ReviewDecisionResponse>(
     `${origin}/api/v1/reviews/${encodeURIComponent(reviewId)}/decision`,
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "X-LightSpeed-Session": ownerSession.slice(0, 256),
+      },
       body: JSON.stringify({ decision, note: normalize(note, 1000) }),
     },
     7000,
   );
+
+export const reviewDecisionOutcomeMessage = (
+  reviewId: string,
+  decision: ReviewDecision,
+  response: ReviewDecisionResponse,
+): string => {
+  const mode = response.receipt?.drive_writeback_mode;
+  if (mode === "owner_approved_exact_drive_target") {
+    return `${reviewId} marked ${decision}. Owner-approved Drive decision receipt written by Desktop.`;
+  }
+  if (mode === "local_outbox_pending_drive_sync") {
+    return `${reviewId} marked ${decision}. Local outbox receipt staged; Drive sync remains pending.`;
+  }
+  return `${reviewId} marked ${decision}. Decision receipt recorded; destination requires verification.`;
+};
 
 export const listRepresentationGraphs = async (
   origin = DEFAULT_DESKTOP_ORIGIN,
@@ -354,7 +655,7 @@ export const decideRepresentationReview = async (
   scope: "identity" | "edges",
   edgeIds: string[] = [],
   note = "",
-  ownerConfirmation = "",
+  ownerSession = "",
   origin = DEFAULT_DESKTOP_ORIGIN,
 ): Promise<Record<string, unknown>> =>
   withTimeout<Record<string, unknown>>(
@@ -363,7 +664,7 @@ export const decideRepresentationReview = async (
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-LightSpeed-Owner-Confirmation": ownerConfirmation.slice(0, 256),
+        "X-LightSpeed-Session": ownerSession.slice(0, 256),
       },
       body: JSON.stringify({
         decision,

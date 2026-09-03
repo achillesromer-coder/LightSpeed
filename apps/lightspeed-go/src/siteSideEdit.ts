@@ -61,7 +61,7 @@ const mount = async (): Promise<boolean> => {
     strip.innerHTML = `
       <span><strong>Owner:</strong> Nathaniel Bouwer</span>
       <span><strong>Mode:</strong> private soft launch</span>
-      <span><strong>Source:</strong> Git + Drive aligned</span>
+      <span><strong>Source:</strong> Git + Drive evidence pending</span>
     `;
     topbar.appendChild(strip);
   }
@@ -73,7 +73,7 @@ const mount = async (): Promise<boolean> => {
     card.innerHTML = `
       <p class="eyebrow">Canonical source chain</p>
       <h2>One operator surface, durable receipts</h2>
-      <p>Desktop executes locally, Git carries implementation, Drive carries evidence and review records, and LS GO remains the operator decision surface.</p>
+      <p>Desktop executes locally, Git carries implementation, Drive carries evidence and review records, and LS GO remains the operator decision surface. Alignment is shown only after current evidence validates.</p>
       <div class="site-chain">
         ${authority.map((item, index) => `${index ? "<i>→</i>" : ""}<span>${item}</span>`).join("")}
       </div>

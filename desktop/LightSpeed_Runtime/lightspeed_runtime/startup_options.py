@@ -51,6 +51,51 @@ LAUNCH_CORE_MODULES = [
 ]
 
 
+# These are operator-facing namespace contracts, not filesystem-discovery
+# defaults.  In particular, do not resolve the App junction to its C: backing
+# path or derive a database beside whichever source tree happens to be active.
+CANONICAL_OPERATOR_ROOT = Path(r"D:\LightSpeed\App")
+CANONICAL_DATABASE_PATH = Path(r"D:\LightSpeed\Data\db\lightspeed_unified.db")
+
+
+def _absolute_without_resolving(path: Path) -> Path:
+    """Return an absolute lexical path without dereferencing a junction."""
+    return Path(os.path.abspath(os.path.expanduser(str(path))))
+
+
+def _same_existing_path(left: Path, right: Path) -> bool:
+    """Compare filesystem identity without making identity a startup blocker."""
+    try:
+        return os.path.samefile(left, right)
+    except (FileNotFoundError, OSError, ValueError):
+        return False
+
+
+def _operator_root(root: Path) -> Path:
+    """Prefer the canonical D: operator alias for the live shell identity."""
+    requested = _absolute_without_resolving(Path(root))
+    operator_root = _absolute_without_resolving(CANONICAL_OPERATOR_ROOT)
+    if _same_existing_path(requested, operator_root):
+        return operator_root
+    return requested
+
+
+def canonical_database_path(_root: Path | None = None) -> Path:
+    """
+    Return the sole canonical database path or fail closed.
+
+    ``_root`` is accepted for callers migrating from root-relative derivation,
+    but is deliberately ignored.  Neither Core, a review worktree nor the
+    current working directory is permitted to become a database authority.
+    """
+    database_path = _absolute_without_resolving(CANONICAL_DATABASE_PATH)
+    if database_path.name.casefold() != "lightspeed_unified.db":
+        raise RuntimeError("canonical LightSpeed database contract is invalid")
+    if not database_path.is_file():
+        raise RuntimeError(f"canonical LightSpeed database is unavailable: {database_path}")
+    return database_path
+
+
 def _read_json(path: Path) -> Dict[str, Any]:
     try:
         if path.exists():
@@ -85,7 +130,7 @@ def _config_paths(root: Path) -> Dict[str, Path]:
 
 
 def _workspace_root(root: Path) -> Path:
-    root = Path(root).resolve()
+    root = _operator_root(Path(root))
     if (root / "Desktop_Hooks").exists() and (root / "LightSpeed_Runtime").exists():
         return root
     if root.name == "LightSpeed" and root.parent.name == "Desktop_Hooks":
@@ -262,7 +307,7 @@ def write_startup_option_values(root: Path, values: Dict[str, Any]) -> bool:
     also depend on manifests and host availability; those are surfaced as a
     profile summary rather than edited blindly.
     """
-    root = Path(root).resolve()
+    root = _operator_root(Path(root))
     settings_path = _config_paths(root)["settings"]
     settings = _read_json(settings_path)
     changed = False
@@ -292,7 +337,7 @@ def read_startup_options(root: Path) -> Dict[str, Any]:
     fourth startup source while still surfacing the current values consistently
     across Trinity, Smith, Merovingian, and the floor shells.
     """
-    root = Path(root).resolve()
+    root = _operator_root(Path(root))
     paths = _config_paths(root)
     settings = _read_json(paths["settings"])
     lightspeed = _read_json(paths["lightspeed"])
@@ -352,7 +397,7 @@ def read_launch_control_profile(root: Path) -> Dict[str, Any]:
     - leave staged floors deferred
     - require explicit activation for manual-heavy floors
     """
-    root = Path(root).resolve()
+    root = _operator_root(Path(root))
     paths = _config_paths(root)
     startup = read_startup_options(root)
     stage_population = _read_json(paths["floor_stage_population"])

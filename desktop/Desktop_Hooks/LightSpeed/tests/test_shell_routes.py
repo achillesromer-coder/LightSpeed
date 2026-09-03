@@ -75,6 +75,19 @@ def test_shell_router_normalizes_floor_channels_and_enforces_clearance():
         module.ShellRouter(clearance=2).resolve("publish")
 
 
+@pytest.mark.parametrize("value", ("Z0", "The Construct", "TheConstruct"))
+def test_shell_translates_construct_display_names_at_n_host_boundary(value):
+    module = _load_shell_routes()
+
+    assert module.host_floor_name(value) == "TheConstruct"
+
+
+def test_shell_preserves_other_n_host_floor_names():
+    module = _load_shell_routes()
+
+    assert module.host_floor_name("Z-4") == "Merovingian"
+
+
 def test_shell_state_rejects_unknown_mode_and_floor():
     module = _load_shell_routes()
     state = module.ShellState()

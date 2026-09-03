@@ -8,23 +8,38 @@ on:
       - "agent/**"
     paths:
       - "apps/lightspeed-go/**"
+      - "Launcher/services/org.py"
+      - "Launcher/Z Axis/Neo.py"
       - "desktop/Desktop_Hooks/LightSpeed/config/project_routing.json"
+      - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Smith.py"
       - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/**"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/cognigrex_supervisor.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_job_consumer.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_cycle.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_wakeup.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_floor_runner.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/representation_edge.py"
+      - "desktop/LightSpeed_Runtime/tests/test_cognigrex_supervisor.py"
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/tests/test_ls_go_job_consumer.py"
+      - "desktop/LightSpeed_Runtime/tests/test_local_agent_cycle.py"
+      - "desktop/LightSpeed_Runtime/tests/test_local_agent_wakeup.py"
+      - "desktop/LightSpeed_Runtime/tests/test_local_floor_runner.py"
       - "desktop/LightSpeed_Runtime/tests/test_representation_edge.py"
       - "desktop/LightSpeed_Runtime/tests/test_secure_settings_hub.py"
       - "desktop/source-manifest.json"
       - "scripts/validate_lightspeed_surfaces.py"
       - "scripts/run_merovingian_soft_launch.py"
       - "scripts/run_cognigrex_local_stack.py"
+      - "scripts/run_cognigrex_supervisor.py"
       - "scripts/ensure_cognigrex_local_stack.py"
       - "scripts/register_cognigrex_watchdog.ps1"
       - "tests/test_cognigrex_local_stack.py"
+      - "tests/test_launcher_org_materialization.py"
       - "tests/test_merovingian_service_integration.py"
       - "tests/test_run_ls_go_bridge_layout.py"
       - "tools/run_ls_go_bridge.py"
@@ -34,26 +49,41 @@ on:
   push:
     branches:
       - "ops/merovingian-project-routing-*"
-      - "fix/provider-secret-boundary-*"
+      - "fix/**"
     paths:
       - "apps/lightspeed-go/**"
+      - "Launcher/services/org.py"
+      - "Launcher/Z Axis/Neo.py"
       - "desktop/Desktop_Hooks/LightSpeed/config/project_routing.json"
+      - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Smith.py"
       - "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/**"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/cognigrex_supervisor.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_job_consumer.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_cycle.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_wakeup.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_floor_runner.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/representation_edge.py"
+      - "desktop/LightSpeed_Runtime/tests/test_cognigrex_supervisor.py"
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/tests/test_ls_go_job_consumer.py"
+      - "desktop/LightSpeed_Runtime/tests/test_local_agent_cycle.py"
+      - "desktop/LightSpeed_Runtime/tests/test_local_agent_wakeup.py"
+      - "desktop/LightSpeed_Runtime/tests/test_local_floor_runner.py"
       - "desktop/LightSpeed_Runtime/tests/test_representation_edge.py"
       - "desktop/LightSpeed_Runtime/tests/test_secure_settings_hub.py"
       - "desktop/source-manifest.json"
       - "scripts/validate_lightspeed_surfaces.py"
       - "scripts/run_merovingian_soft_launch.py"
       - "scripts/run_cognigrex_local_stack.py"
+      - "scripts/run_cognigrex_supervisor.py"
       - "scripts/ensure_cognigrex_local_stack.py"
       - "scripts/register_cognigrex_watchdog.ps1"
       - "tests/test_cognigrex_local_stack.py"
+      - "tests/test_launcher_org_materialization.py"
       - "tests/test_merovingian_service_integration.py"
       - "tests/test_run_ls_go_bridge_layout.py"
       - "tools/run_ls_go_bridge.py"
@@ -95,18 +125,29 @@ jobs:
         run: |
           set -o pipefail
           python -m py_compile \
+            "Launcher/services/org.py" \
+            "Launcher/Z Axis/Neo.py" \
+            "desktop/Desktop_Hooks/LightSpeed/Z Axis/Smith.py" \
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/__init__.py" \
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/__init__.py" \
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/secure_settings_hub.py" \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/cognigrex_supervisor.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_job_consumer.py \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_cycle.py \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_wakeup.py \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/local_floor_runner.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/representation_edge.py \
+            tools/run_ls_go_bridge.py \
             scripts/validate_lightspeed_surfaces.py \
             scripts/run_merovingian_soft_launch.py \
             scripts/run_cognigrex_local_stack.py \
+            scripts/run_cognigrex_supervisor.py \
             scripts/ensure_cognigrex_local_stack.py \
             tests/test_merovingian_service_integration.py \
+            tests/test_launcher_org_materialization.py \
             2>&1 | tee compile.log
 
       - name: Run static Merovingian contract check
@@ -135,13 +176,20 @@ jobs:
           PYTHONPATH="desktop/LightSpeed_Runtime:desktop/Desktop_Hooks/LightSpeed" \
           python -m pytest -q \
             tests/test_cognigrex_local_stack.py \
+            tests/test_launcher_org_materialization.py \
             tests/test_merovingian_service_integration.py \
             tests/test_run_ls_go_bridge_layout.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_launcher_exe.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_functions_hub_operator_surface.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_operator_home_export_gates.py \
+            desktop/LightSpeed_Runtime/tests/test_cognigrex_supervisor.py \
             desktop/LightSpeed_Runtime/tests/test_project_pipeline.py \
             desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py \
+            desktop/LightSpeed_Runtime/tests/test_ls_go_job_consumer.py \
+            desktop/LightSpeed_Runtime/tests/test_owner_credentials.py \
+            desktop/LightSpeed_Runtime/tests/test_local_agent_cycle.py \
+            desktop/LightSpeed_Runtime/tests/test_local_agent_wakeup.py \
+            desktop/LightSpeed_Runtime/tests/test_local_floor_runner.py \
             desktop/LightSpeed_Runtime/tests/test_representation_edge.py \
             desktop/LightSpeed_Runtime/tests/test_secure_settings_hub.py \
             2>&1 | tee python-tests.log

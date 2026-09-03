@@ -13,6 +13,84 @@ from tkinter import ttk
 from typing import Any
 
 
+SMITH_RUNTIME: dict[str, Any] = {
+    "queue": None,
+    "coordinator": None,
+    "initialized": False,
+    "generic_worker_started": False,
+}
+
+
+def initialize(
+    *,
+    components: dict[str, Any] | None = None,
+    dependencies: dict[str, Any] | None = None,
+) -> bool:
+    """Materialize the manifest-loaded Smith runtime exactly once.
+
+    FloorLoader loads component classes from the Smith manifest, then calls this
+    top-level runner.  The previous thin facade did not expose ``initialize`` or
+    ``SMITH_RUNTIME``, so N.py could not obtain the queue/coordinator objects it
+    already expects.  We deliberately do *not* auto-start the legacy generic
+    in-memory worker here: it has many historical task types without registered
+    handlers.  Durable LS GO jobs are consumed by the dedicated, typed
+    ``ls_go_job_consumer`` attached to the local bridge process.
+    """
+    global SMITH_RUNTIME
+
+    if SMITH_RUNTIME.get("initialized") and SMITH_RUNTIME.get("queue") is not None:
+        return True
+
+    classes = components or {}
+    deps = dependencies or {}
+    queue_cls = classes.get("smith_task_queue")
+    coordinator_cls = classes.get("smith_interfloor_coordinator")
+    if queue_cls is None:
+        SMITH_RUNTIME = {
+            **SMITH_RUNTIME,
+            "initialized": False,
+            "error": "smith_task_queue component unavailable",
+        }
+        return False
+
+    try:
+        queue = queue_cls(
+            db=deps.get("db"),
+            event_bus=deps.get("event_bus"),
+            logger=deps.get("logger"),
+        )
+        coordinator = None
+        if coordinator_cls is not None:
+            coordinator = coordinator_cls(
+                db=deps.get("db"),
+                event_bus=deps.get("event_bus"),
+                logger=deps.get("logger"),
+                smith_queue=queue,
+            )
+        SMITH_RUNTIME = {
+            "queue": queue,
+            "coordinator": coordinator,
+            "initialized": True,
+            "generic_worker_started": False,
+            "durable_ls_go_consumer": "bridge_owned",
+        }
+        return True
+    except Exception as exc:
+        SMITH_RUNTIME = {
+            "queue": None,
+            "coordinator": None,
+            "initialized": False,
+            "generic_worker_started": False,
+            "error": f"{type(exc).__name__}: {exc}",
+        }
+        return False
+
+
+def get_runtime() -> dict[str, Any]:
+    """Return Smith's process-local runtime handles for N.py and diagnostics."""
+    return SMITH_RUNTIME
+
+
 def _resolve_app(parent: tk.Misc, app: Any | None = None) -> Any:
     if app is not None:
         return app
@@ -38,6 +116,19 @@ def _status_line(app: Any) -> str:
                 f"Romer package root: {runtime.resolve_package_output_dir('Romer')}",
             ]
         )
+
+    smith_queue = getattr(app, "smith_queue", None)
+    smith_coordinator = getattr(app, "smith_coordinator", None)
+    if smith_queue is not None:
+        try:
+            queue_status = smith_queue.get_queue_status()
+            lines.append(
+                "Smith runtime: "
+                f"queue=connected | coordinator={'connected' if smith_coordinator is not None else 'unavailable'} | "
+                f"in_memory={queue_status.get('queue_size', 0)}"
+            )
+        except Exception:
+            lines.append("Smith runtime: queue=connected")
 
     bridge = getattr(app, "agent_home_bridge", None)
     if bridge is not None:
@@ -93,6 +184,7 @@ def _status_line(app: Any) -> str:
             lines.append(f"Agent home export unavailable: {exc}")
     return "\n".join(lines)
 
+
 def _populate(frame: ttk.Frame, app: Any) -> ttk.Frame:
     frame.columnconfigure(0, weight=1)
 
@@ -105,7 +197,7 @@ def _populate(frame: ttk.Frame, app: Any) -> ttk.Frame:
         justify="left",
     ).grid(row=1, column=0, sticky="w", padx=16, pady=(0, 12))
 
-    status = tk.Text(frame, height=7, wrap="word", font=("Consolas", 9))
+    status = tk.Text(frame, height=8, wrap="word", font=("Consolas", 9))
     status.grid(row=2, column=0, sticky="nsew", padx=16, pady=(0, 12))
     status.insert("1.0", _status_line(app))
 

@@ -1,20 +1,94 @@
 from __future__ import annotations
 
+import importlib.util
 import json
 import os
 import sqlite3
 import sys
+import tracemalloc
+import types
+from contextlib import contextmanager
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import pytest
 from fastapi.testclient import TestClient
 
 RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RUNTIME_ROOT))
 
 from lightspeed_runtime import ls_go_bridge
+from lightspeed_runtime.floor_bridges import NeoAchillesBridge
 from lightspeed_runtime.project_pipeline import ProjectPipeline
-from lightspeed_runtime.representation_edge import FEATURE_FLAG
+from lightspeed_runtime.representation_edge import FEATURE_FLAG, RepresentationEdgeStore
+
+
+def test_neo_operator_approval_forwards_authority_contract() -> None:
+    observed: dict = {}
+
+    class RuntimeStub:
+        def approve_workspace_action(self, *args, **kwargs):
+            observed["args"] = args
+            observed["kwargs"] = kwargs
+            return {"approval_state": "approved"}
+
+    bridge = object.__new__(NeoAchillesBridge)
+    bridge.runtime = RuntimeStub()
+    authority = {
+        "canonical_gate_id": "GO-GATE-TEST-001",
+        "owner_decision_ref": "OWNER-TEST-001",
+        "core_acceptance_ref": "CORE-TEST-001",
+        "approval_or_hold_state": "approve",
+        "authorised_scope": "private deterministic test only",
+        "prohibited_scope": "deployment and publication",
+    }
+
+    result = bridge.approve_operator_action(
+        "workspace-test",
+        "action-test",
+        audit_ref="audit-test",
+        authority_contract=authority,
+    )
+
+    assert result["approval_state"] == "approved"
+    assert observed["args"] == ("workspace-test", "Romer", "action-test")
+    assert observed["kwargs"]["audit_ref"] == "audit-test"
+    assert observed["kwargs"]["authority_contract"] == authority
+
+
+def test_half_speed_host_profile_bounds_background_work() -> None:
+    policy_path = (
+        RUNTIME_ROOT.parent
+        / "Desktop_Hooks"
+        / "LightSpeed"
+        / "config"
+        / "host_runtime_policy.json"
+    )
+    limits = json.loads(policy_path.read_text(encoding="utf-8"))["runtime_limits"]
+
+    assert limits["cognigrex_speed_percent"] == 50
+    assert limits["max_background_queue_workers"] == 1
+    assert limits["max_concurrent_ollama_jobs"] == 1
+    assert limits["max_floor_boot_parallelism"] == 2
+    assert limits["merovingian_interval_seconds"] == 120
+    assert limits["watchdog_interval_minutes"] == 10
+
+
+def test_watchdog_accepts_canonical_junction_alias(monkeypatch) -> None:
+    watchdog_path = Path(r"D:\LightSpeed\Automation\ensure_cognigrex_local_stack.py")
+    if not watchdog_path.is_file():
+        pytest.skip("local LightSpeed watchdog is not installed on this host")
+    spec = importlib.util.spec_from_file_location("ensure_cognigrex_local_stack", watchdog_path)
+    assert spec is not None and spec.loader is not None
+    watchdog = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(watchdog)
+    monkeypatch.setattr(watchdog.os.path, "samefile", lambda left, right: True)
+
+    assert watchdog.paths_refer_to_same_location(
+        Path(r"D:\LightSpeed\App"),
+        Path(r"C:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed"),
+    )
 
 
 def command_payload(**overrides):
@@ -31,9 +105,108 @@ def command_payload(**overrides):
         "execution_mode": "review",
         "proof_required": True,
         "public_safe": True,
+        "canonical_gate_id": "GO-GATE-TEST-001",
+        "owner_decision_ref": "OWNER-TEST-001",
+        "core_acceptance_ref": "CORE-TEST-001",
+        "approval_or_hold_state": "approve",
+        "authorised_scope": "Smith local review queue",
+        "prohibited_scope": "deployment, publication, destructive filesystem changes",
+        "requested_scope": "Smith local review queue",
     }
     payload.update(overrides)
     return payload
+
+
+def rfs_emff_action_payload(**overrides):
+    payload = {
+        "schema_version": "lightspeed-rfs-emff-sweep-request-v1",
+        "base_case": {
+            "rfs": {
+                "frequency_hz": 10.0,
+                "displacement_amplitude_m": 0.001,
+                "particle_diameter_m": 0.001,
+                "particle_density_kg_m3": 7800.0,
+            }
+        },
+        "axes": [
+            {"path": "rfs.frequency_hz", "values": [10.0, 20.0]},
+        ],
+    }
+    payload.update(overrides)
+    return payload
+
+
+def install_command_identity_schema(connection) -> None:
+    connection.executescript(
+        """
+        CREATE TABLE IF NOT EXISTS ls_go_command_identities (
+            command_id TEXT PRIMARY KEY,
+            canonical_payload_sha256 TEXT NOT NULL,
+            queue_state TEXT NOT NULL DEFAULT 'indexed',
+            queue_occurrence_count INTEGER NOT NULL DEFAULT 0,
+            first_queue_offset INTEGER,
+            last_queue_offset INTEGER,
+            task_id INTEGER,
+            job_id INTEGER,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS ls_go_command_queue_state (
+            queue_key TEXT PRIMARY KEY,
+            queue_path TEXT NOT NULL,
+            device INTEGER,
+            inode INTEGER,
+            indexed_offset INTEGER NOT NULL DEFAULT 0,
+            observed_size INTEGER NOT NULL DEFAULT 0,
+            observed_mtime_ns INTEGER NOT NULL DEFAULT 0,
+            complete INTEGER NOT NULL DEFAULT 0,
+            updated_at TEXT NOT NULL
+        );
+        """
+    )
+
+
+class CommandFixtureDatabase:
+    def __init__(self, path: Path, *, install_identity: bool = True):
+        self.path = path
+        with self.get_connection() as connection:
+            connection.executescript(
+                """
+                CREATE TABLE tasks (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    title TEXT,
+                    description TEXT,
+                    project_id TEXT,
+                    status TEXT,
+                    priority TEXT,
+                    created_at TEXT,
+                    updated_at TEXT,
+                    metadata_json TEXT
+                );
+                CREATE TABLE jobs (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    job_type TEXT,
+                    task_id INTEGER,
+                    status TEXT,
+                    params_json TEXT
+                );
+                """
+            )
+            if install_identity:
+                install_command_identity_schema(connection)
+
+    @contextmanager
+    def get_connection(self):
+        connection = sqlite3.connect(self.path, timeout=10, check_same_thread=False)
+        connection.row_factory = sqlite3.Row
+        try:
+            yield connection
+            connection.commit()
+        except Exception:
+            connection.rollback()
+            raise
+        finally:
+            connection.close()
 
 
 def configure_shell(root: Path) -> Path:
@@ -73,26 +246,326 @@ def configure_shell(root: Path) -> Path:
 def healthy_pipeline(monkeypatch) -> None:
     monkeypatch.setattr(
         ProjectPipeline,
-        "essential_health",
-        lambda self, registry: {
-            "status": "pass",
-            "services": {"database": True, "event_bus": True, "storage": True},
-            "details": {"drive_writeback": {"path": str(self.runtime_exports), "mode": "test"}},
-            "errors": [],
-        },
-    )
-    monkeypatch.setattr(
-        ProjectPipeline,
         "latest_snapshot",
         lambda self: {
-            **self.scan_projects(),
-            "health": self.essential_health(self.scan_projects()),
-            "cleanup_summary": {
-                "candidate_count": 0,
-                "automatic_deletion": False,
+            "health": {
+                "status": "pass",
+                "services": {"database": True, "event_bus": True, "storage": True},
+                "details": {"drive_writeback": {"path": str(self.runtime_exports), "mode": "test"}},
+                "errors": [],
             },
+            "summary": {},
+            "cleanup_summary": {"candidate_count": 0, "automatic_deletion": False},
         },
     )
+
+
+def test_temp_bridge_does_not_initialize_ambient_merovingian_services(tmp_path, monkeypatch):
+    calls: list[str] = []
+    ambient_core = types.ModuleType("core")
+    ambient_core.__path__ = []
+    ambient_services = types.ModuleType("core.services")
+
+    def initialize_services():
+        calls.append("initialized")
+        return {"database": object(), "storage": object()}
+
+    ambient_services.initialize_services = initialize_services
+    monkeypatch.setitem(sys.modules, "core", ambient_core)
+    monkeypatch.setitem(sys.modules, "core.services", ambient_services)
+
+    assert ls_go_bridge._try_get_services(tmp_path) == (None, None)
+    assert calls == []
+
+
+def test_bridge_rejects_core_services_outside_embedded_merovingian_root(
+    tmp_path, monkeypatch
+):
+    embedded_services = (
+        tmp_path / "Z Axis" / "Z-4_Merovingian" / "core" / "services"
+    )
+    embedded_services.mkdir(parents=True)
+    ambient_services_file = tmp_path / "ambient" / "core" / "services" / "__init__.py"
+    ambient_services_file.parent.mkdir(parents=True)
+    ambient_services_file.write_text("# wrong runtime\n", encoding="utf-8")
+
+    calls: list[str] = []
+    ambient_services = types.ModuleType("core.services")
+    ambient_services.__file__ = str(ambient_services_file)
+
+    def initialize_services():
+        calls.append("initialized")
+        return {"database": object(), "storage": object()}
+
+    ambient_services.initialize_services = initialize_services
+    monkeypatch.setattr(
+        ls_go_bridge.importlib,
+        "import_module",
+        lambda module_name: ambient_services,
+    )
+
+    assert ls_go_bridge._try_get_services(tmp_path) == (None, None)
+    assert calls == []
+
+
+def test_bridge_initializes_core_services_from_embedded_merovingian_root(
+    tmp_path, monkeypatch
+):
+    embedded_services_file = (
+        tmp_path
+        / "Z Axis"
+        / "Z-4_Merovingian"
+        / "core"
+        / "services"
+        / "__init__.py"
+    )
+    embedded_services_file.parent.mkdir(parents=True)
+    embedded_services_file.write_text("# canonical runtime\n", encoding="utf-8")
+
+    expected_db = object()
+    expected_storage = object()
+    embedded_services = types.ModuleType("core.services")
+    embedded_services.__file__ = str(embedded_services_file)
+    embedded_services.initialize_services = lambda: {
+        "database": expected_db,
+        "storage": expected_storage,
+    }
+    monkeypatch.setattr(
+        ls_go_bridge.importlib,
+        "import_module",
+        lambda module_name: embedded_services,
+    )
+
+    assert ls_go_bridge._try_get_services(tmp_path) == (
+        expected_db,
+        expected_storage,
+    )
+
+
+def test_bridge_applies_command_identity_schema_only_through_authorized_gate(
+    tmp_path, monkeypatch
+):
+    configure_shell(tmp_path)
+
+    class MigrationDatabase:
+        def __init__(self):
+            self.calls = 0
+
+        def ensure_ls_go_command_identity_schema(self):
+            self.calls += 1
+
+    database = MigrationDatabase()
+    monkeypatch.setattr(
+        ls_go_bridge,
+        "_try_get_services",
+        lambda _root: (database, object()),
+    )
+
+    ls_go_bridge.create_app(tmp_path)
+    assert database.calls == 0
+
+    (tmp_path / "config" / "launch_control.json").write_text(
+        json.dumps(
+            {
+                "manual_gates": [
+                    {
+                        "gate_id": "canonical_queue_indexes",
+                        "state": "operator_authorized",
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    ls_go_bridge.create_app(tmp_path)
+    assert database.calls == 1
+
+
+def test_persistent_command_index_startup_does_not_scan_million_entry_queue(tmp_path):
+    queue_path = tmp_path / "ls_go_command_queue.jsonl"
+    queue_path.write_bytes(b"{}\n" * 1_000_000)
+
+    class NoStartupDatabaseAccess:
+        def get_connection(self):
+            raise AssertionError("index construction accessed the database")
+
+    tracemalloc.start()
+    index = ls_go_bridge._PersistentCommandEnvelopeIndex(
+        NoStartupDatabaseAccess(),
+        queue_path,
+    )
+    _, peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+
+    assert index.path == queue_path
+    assert peak < 256 * 1024
+
+
+def test_persistent_command_index_is_bounded_restartable_and_preserves_mtime(tmp_path):
+    queue_path = tmp_path / "ls_go_command_queue.jsonl"
+    historical = [
+        command_payload(command_id=f"LSGO-HISTORY-{index:04d}")
+        for index in range(300)
+    ]
+    queue_path.write_bytes(
+        b"".join(
+            json.dumps(record, sort_keys=True).encode("utf-8") + b"\n"
+            for record in historical
+        )
+    )
+    initial_mtime_ns = queue_path.stat().st_mtime_ns
+    database = CommandFixtureDatabase(tmp_path / "identity.db")
+    index = ls_go_bridge._PersistentCommandEnvelopeIndex(database, queue_path)
+    index.SCAN_BYTES = 4096
+
+    pending_count = 0
+    while True:
+        try:
+            index.synchronize()
+            break
+        except ls_go_bridge.CommandQueueIndexPreparing:
+            pending_count += 1
+            assert pending_count < 100
+    assert pending_count > 1
+    assert queue_path.stat().st_mtime_ns == initial_mtime_ns
+    with database.get_connection() as connection:
+        count = connection.execute(
+            "SELECT COUNT(*) FROM ls_go_command_identities"
+        ).fetchone()[0]
+        state = connection.execute(
+            "SELECT indexed_offset, complete FROM ls_go_command_queue_state"
+        ).fetchone()
+    assert count == 300
+    assert state[0] == queue_path.stat().st_size
+    assert state[1] == 1
+
+    restarted = ls_go_bridge._PersistentCommandEnvelopeIndex(database, queue_path)
+    assert restarted.synchronize()["scanned_bytes"] == 0
+    appended = command_payload(command_id="LSGO-APPENDED-0001")
+    with queue_path.open("ab") as stream:
+        stream.write(json.dumps(appended, sort_keys=True).encode("utf-8") + b"\n")
+    appended_mtime_ns = queue_path.stat().st_mtime_ns
+    restarted.synchronize()
+    with database.get_connection() as connection:
+        found = connection.execute(
+            "SELECT canonical_payload_sha256, queue_occurrence_count "
+            "FROM ls_go_command_identities WHERE command_id = ?",
+            ("LSGO-APPENDED-0001",),
+        ).fetchone()
+    assert found[0] == ls_go_bridge._command_payload_sha256(appended)
+    assert found[1] == 1
+    assert queue_path.stat().st_mtime_ns == appended_mtime_ns
+
+
+def test_persistent_command_index_fails_closed_on_truncation(tmp_path):
+    queue_path = tmp_path / "ls_go_command_queue.jsonl"
+    original = command_payload(command_id="LSGO-INDEX-BASE")
+    queue_path.write_text(json.dumps(original) + "\n", encoding="utf-8")
+    database = CommandFixtureDatabase(tmp_path / "identity.db")
+    index = ls_go_bridge._PersistentCommandEnvelopeIndex(database, queue_path)
+    index.synchronize()
+    queue_path.write_bytes(b"")
+
+    with pytest.raises(
+        ls_go_bridge.CommandQueueIndexStale,
+        match="truncated",
+    ):
+        index.synchronize()
+
+
+def test_read_queue_tails_large_ledger_with_byte_and_line_caps(tmp_path, monkeypatch):
+    queue_path = ls_go_bridge._queue_path(tmp_path)
+    historical = b'{"command_id":"OLD"}\n' * 20_000
+    oversized = json.dumps(
+        {"command_id": "OVERSIZED", "payload": "x" * 1000}
+    ).encode("utf-8") + b"\n"
+    recent = b"".join(
+        json.dumps({"command_id": f"RECENT-{index}"}).encode("utf-8") + b"\n"
+        for index in range(5)
+    )
+    queue_path.write_bytes(historical + oversized + recent)
+    original_mtime_ns = queue_path.stat().st_mtime_ns
+    monkeypatch.setattr(ls_go_bridge, "_QUEUE_TAIL_MAX_BYTES", 4096)
+    monkeypatch.setattr(ls_go_bridge, "_QUEUE_TAIL_MAX_LINE_BYTES", 512)
+
+    real_open = Path.open
+    reads: list[int] = []
+
+    class GuardedReader:
+        def __init__(self, stream):
+            self.stream = stream
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return self.stream.__exit__(*args)
+
+        def seek(self, *args):
+            return self.stream.seek(*args)
+
+        def read(self, size=-1):
+            assert 0 <= size <= 4096
+            reads.append(size)
+            return self.stream.read(size)
+
+    def guarded_open(path, *args, **kwargs):
+        stream = real_open(path, *args, **kwargs)
+        if path == queue_path and args and args[0] == "rb":
+            return GuardedReader(stream)
+        return stream
+
+    monkeypatch.setattr(Path, "open", guarded_open)
+    rows = ls_go_bridge._read_queue(tmp_path, limit=6)
+
+    identifiers = [row.get("command_id") for row in rows]
+    assert identifiers[:5] == [f"RECENT-{index}" for index in reversed(range(5))]
+    assert "OVERSIZED" not in identifiers
+    assert reads == [4096]
+    assert queue_path.stat().st_mtime_ns == original_mtime_ns
+
+
+def test_legacy_command_lookup_escapes_wildcards_and_remains_bounded(tmp_path):
+    database = CommandFixtureDatabase(tmp_path / "lookup.db")
+    statements: list[str] = []
+    with database.get_connection() as connection:
+        for index in range(100):
+            connection.execute(
+                "INSERT INTO tasks (title, metadata_json, status) VALUES (?, ?, 'pending')",
+                (f"decoy-{index}", json.dumps({"command_id": "LSGOXTEST"})),
+            )
+        target = connection.execute(
+            "INSERT INTO tasks (title, metadata_json, status) VALUES (?, ?, 'pending')",
+            ("target", json.dumps({"command_id": "LSGO_TEST"})),
+        ).lastrowid
+        job_id = connection.execute(
+            "INSERT INTO jobs (job_type, task_id, status, params_json) "
+            "VALUES ('ls_go_command', ?, 'pending', '{}')",
+            (target,),
+        ).lastrowid
+        connection.set_trace_callback(statements.append)
+        task, job = ls_go_bridge._find_command_database_state_connection(
+            connection,
+            "LSGO_TEST",
+        )
+
+    assert task["id"] == target
+    assert job["job_id"] == job_id
+    legacy_queries = [statement for statement in statements if "FROM tasks" in statement]
+    assert len(legacy_queries) == 1
+    assert "ESCAPE" in legacy_queries[0]
+    assert "LIMIT 64" in legacy_queries[0]
+
+
+@pytest.mark.parametrize(
+    "command_id",
+    ["LSGO%TEST", "LSGO TEST", "LSGO/TEST", "' OR 1=1 --", "_leading"],
+)
+def test_legacy_command_lookup_rejects_adversarial_identity(tmp_path, command_id):
+    database = CommandFixtureDatabase(tmp_path / "adversarial.db")
+    with database.get_connection() as connection:
+        with pytest.raises(ValueError, match="command_id must use"):
+            ls_go_bridge._find_command_database_state_connection(connection, command_id)
 
 
 def write_supervisor_lock(root: Path, *, heartbeat: datetime | None = None, pid: int | None = None) -> None:
@@ -144,17 +617,349 @@ def test_status_rejects_stale_supervisor_heartbeat(tmp_path, monkeypatch):
     assert body["merovingian"]["supervisor"]["reason"] == "heartbeat_stale"
 
 
-def test_bridge_persists_review_gated_command(tmp_path, monkeypatch):
+def test_bridge_fails_closed_when_canonical_command_database_is_unavailable(
+    tmp_path, monkeypatch
+):
     monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
     client = TestClient(ls_go_bridge.create_app(tmp_path))
 
     response = client.post("/api/v1/ls-go/commands", json=command_payload())
 
-    assert response.status_code == 200
-    body = response.json()
-    assert body["accepted"] is True
-    assert body["state"] == "review"
-    assert Path(body["artifact_ref"]).exists()
+    assert response.status_code == 503
+    assert "canonical command database is unavailable" in response.json()["detail"]
+    assert not (tmp_path / "Z Axis" / "Z+2_Neo" / "data" / "actions" / "ls_go_command_queue.jsonl").exists()
+
+
+def test_bridge_command_replay_is_idempotent_and_conflict_safe(tmp_path, monkeypatch):
+    database = CommandFixtureDatabase(tmp_path / "command.db")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (database, object()))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    first = client.post("/api/v1/ls-go/commands", json=command_payload())
+    queue_path = Path(first.json()["artifact_ref"])
+    first_bytes = queue_path.read_bytes()
+    first_mtime_ns = queue_path.stat().st_mtime_ns
+
+    replay = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(created_utc="2099-01-01T00:00:00Z"),
+    )
+    conflict = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(instruction="Different command content."),
+    )
+
+    assert first.status_code == 200
+    assert replay.status_code == 200
+    assert replay.json()["idempotent_replay"] is True
+    assert replay.json()["canonical_payload_sha256"] == first.json()["canonical_payload_sha256"]
+    assert queue_path.read_bytes() == first_bytes
+    assert queue_path.stat().st_mtime_ns == first_mtime_ns
+    assert conflict.status_code == 409
+    assert queue_path.read_bytes() == first_bytes
+
+
+def test_bridge_database_lookup_failure_is_503_and_never_appends_queue(
+    tmp_path, monkeypatch
+):
+    class UnavailableDatabase:
+        def get_connection(self):
+            raise sqlite3.OperationalError("injected canonical database outage")
+
+    monkeypatch.setattr(
+        ls_go_bridge,
+        "_try_get_services",
+        lambda _root: (UnavailableDatabase(), object()),
+    )
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post("/api/v1/ls-go/commands", json=command_payload())
+
+    queue_path = (
+        tmp_path
+        / "Z Axis"
+        / "Z+2_Neo"
+        / "data"
+        / "actions"
+        / "ls_go_command_queue.jsonl"
+    )
+    assert response.status_code == 503
+    assert "canonical command database" in response.json()["detail"]
+    assert not queue_path.exists()
+
+
+def test_concurrent_identical_command_creates_one_queue_task_and_job(
+    tmp_path, monkeypatch
+):
+    database = CommandFixtureDatabase(tmp_path / "concurrent.db")
+    monkeypatch.setattr(
+        ls_go_bridge,
+        "_try_get_services",
+        lambda _root: (database, object()),
+    )
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        responses = list(
+            executor.map(
+                lambda _: client.post(
+                    "/api/v1/ls-go/commands",
+                    json=command_payload(),
+                ),
+                range(2),
+            )
+        )
+
+    assert [response.status_code for response in responses] == [200, 200]
+    assert sorted(response.json()["idempotent_replay"] for response in responses) == [
+        False,
+        True,
+    ]
+    queue_path = Path(responses[0].json()["artifact_ref"])
+    assert len(queue_path.read_text(encoding="utf-8").splitlines()) == 1
+    with database.get_connection() as connection:
+        assert connection.execute("SELECT COUNT(*) FROM tasks").fetchone()[0] == 1
+        assert connection.execute("SELECT COUNT(*) FROM jobs").fetchone()[0] == 1
+        identity = connection.execute(
+            "SELECT first_queue_offset, last_queue_offset, queue_occurrence_count "
+            "FROM ls_go_command_identities WHERE command_id = ?",
+            ("LSGO-TEST-001",),
+        ).fetchone()
+    assert identity[0] == 0
+    assert identity[1] > identity[0]
+    assert identity[2] == 1
+
+
+def test_bridge_command_replay_does_not_duplicate_task_or_job(tmp_path, monkeypatch):
+    database = CommandFixtureDatabase(tmp_path / "command.db")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (database, object()))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    first = client.post("/api/v1/ls-go/commands", json=command_payload())
+    with database.get_connection() as connection:
+        connection.execute("UPDATE tasks SET status = 'completed'")
+    replay = client.post("/api/v1/ls-go/commands", json=command_payload())
+
+    with database.get_connection() as connection:
+        task_count = connection.execute("SELECT COUNT(*) FROM tasks").fetchone()[0]
+        job_count = connection.execute("SELECT COUNT(*) FROM jobs").fetchone()[0]
+    assert first.status_code == 200
+    assert replay.status_code == 200
+    assert replay.json()["idempotent_replay"] is True
+    assert replay.json()["state"] == "completed"
+    assert replay.json()["task_id"] == first.json()["task_id"]
+    assert task_count == 1
+    assert job_count == 1
+
+
+def test_typed_v2_cognigrex_workflow_reaches_durable_job_params(
+    tmp_path, monkeypatch
+):
+    database = CommandFixtureDatabase(tmp_path / "typed-command.db")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (database, object()))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(
+            schema_version="lightspeed-go-command-v2",
+            command_id="LSGO-V2-WORKFLOW-001",
+            action_type="cognigrex_workflow",
+            target_floor="Neo",
+            execution_mode="queue",
+            authorised_scope="all floors; private local queue",
+            requested_scope="Neo private local queue",
+        ),
+    )
+
+    assert response.status_code == 200, response.text
+    with database.get_connection() as connection:
+        params = json.loads(connection.execute("SELECT params_json FROM jobs").fetchone()[0])
+    assert params["action_type"] == "cognigrex_workflow"
+    assert params["execute"] is True
+    assert params["allow_heavy"] is False
+
+
+def test_typed_rfs_emff_sweep_is_hashed_and_persisted_without_heavy_authority(
+    tmp_path, monkeypatch
+):
+    database = CommandFixtureDatabase(tmp_path / "typed-sweep.db")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (database, object()))
+    validated: list[dict] = []
+
+    def validate(payload):
+        validated.append(payload)
+        return payload
+
+    monkeypatch.setattr(
+        ls_go_bridge,
+        "_load_rfs_emff_sweep_module",
+        lambda: types.SimpleNamespace(validate_sweep_request=validate),
+    )
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    action_payload = rfs_emff_action_payload()
+    command = command_payload(
+        schema_version="lightspeed-go-command-v2",
+        command_id="LSGO-V2-RFS-EMFF-001",
+        action_type="rfs_emff_sweep",
+        action_payload=action_payload,
+        target_floor="TheConstruct",
+        execution_mode="queue",
+        authorised_scope="all floors; private local queue",
+        requested_scope="TheConstruct private local queue",
+    )
+
+    response = client.post("/api/v1/ls-go/commands", json=command)
+
+    assert response.status_code == 200, response.text
+    assert validated == [action_payload]
+    queue_row = json.loads(Path(response.json()["artifact_ref"]).read_text(encoding="utf-8"))
+    with database.get_connection() as connection:
+        task_metadata = json.loads(
+            connection.execute("SELECT metadata_json FROM tasks").fetchone()[0]
+        )
+        job_params = json.loads(connection.execute("SELECT params_json FROM jobs").fetchone()[0])
+    assert queue_row["action_payload"] == action_payload
+    assert task_metadata["action_payload"] == action_payload
+    assert job_params["action_payload"] == action_payload
+    assert job_params["allow_heavy"] is False
+    assert job_params["execute"] is True
+    assert response.json()["job"]["z_context"] == "TheConstruct"
+
+    changed = json.loads(json.dumps(command))
+    changed["action_payload"]["axes"][0]["values"] = [10.0, 30.0]
+    conflict = client.post("/api/v1/ls-go/commands", json=changed)
+    assert conflict.status_code == 409
+
+
+@pytest.mark.parametrize(
+    ("overrides", "detail"),
+    [
+        ({"target_floor": "Smith"}, "target TheConstruct"),
+        ({"execution_mode": "review"}, "queue execution mode"),
+        ({"allow_heavy": True}, "allow_heavy=false"),
+    ],
+)
+def test_typed_rfs_emff_sweep_rejects_transport_scope_drift(
+    tmp_path, monkeypatch, overrides, detail
+):
+    database = CommandFixtureDatabase(tmp_path / "typed-sweep.db")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (database, object()))
+    monkeypatch.setattr(
+        ls_go_bridge,
+        "_load_rfs_emff_sweep_module",
+        lambda: types.SimpleNamespace(validate_sweep_request=lambda payload: payload),
+    )
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    command_overrides = {
+        "schema_version": "lightspeed-go-command-v2",
+        "command_id": "LSGO-V2-RFS-EMFF-INVALID",
+        "action_type": "rfs_emff_sweep",
+        "action_payload": rfs_emff_action_payload(),
+        "target_floor": "TheConstruct",
+        "execution_mode": "queue",
+        "authorised_scope": "all floors; private local queue",
+        "requested_scope": "TheConstruct private local queue",
+    }
+    command_overrides.update(overrides)
+    command = command_payload(**command_overrides)
+
+    response = client.post("/api/v1/ls-go/commands", json=command)
+
+    assert response.status_code == 400
+    assert detail in response.json()["detail"]
+    assert not ls_go_bridge._queue_path(tmp_path).exists()
+
+
+def test_typed_rfs_emff_sweep_fails_closed_without_executor_validator(
+    tmp_path, monkeypatch
+):
+    database = CommandFixtureDatabase(tmp_path / "typed-sweep.db")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (database, object()))
+    monkeypatch.setattr(
+        ls_go_bridge,
+        "_load_rfs_emff_sweep_module",
+        lambda: (_ for _ in ()).throw(ModuleNotFoundError("not installed")),
+    )
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(
+            schema_version="lightspeed-go-command-v2",
+            command_id="LSGO-V2-RFS-EMFF-MISSING",
+            action_type="rfs_emff_sweep",
+            action_payload=rfs_emff_action_payload(),
+            target_floor="TheConstruct",
+            execution_mode="queue",
+            authorised_scope="all floors; private local queue",
+            requested_scope="TheConstruct private local queue",
+        ),
+    )
+
+    assert response.status_code == 503
+    assert "validator is unavailable" in response.json()["detail"]
+    assert not ls_go_bridge._queue_path(tmp_path).exists()
+
+
+def test_v2_command_requires_registered_action_type(tmp_path, monkeypatch):
+    database = CommandFixtureDatabase(tmp_path / "typed-command.db")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (database, object()))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(schema_version="lightspeed-go-command-v2"),
+    )
+
+    assert response.status_code == 400
+    assert "registered action_type" in response.json()["detail"]
+
+
+def test_bridge_replay_repairs_one_incomplete_database_lifecycle(tmp_path, monkeypatch):
+    database = CommandFixtureDatabase(tmp_path / "repair.db")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (database, object()))
+    original_create_job = ls_go_bridge._create_command_job
+    attempts = 0
+
+    def fail_once(*args, **kwargs):
+        nonlocal attempts
+        attempts += 1
+        if attempts == 1:
+            raise OSError("injected job handoff failure")
+        return original_create_job(*args, **kwargs)
+
+    monkeypatch.setattr(ls_go_bridge, "_create_command_job", fail_once)
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    first = client.post("/api/v1/ls-go/commands", json=command_payload())
+    queue_path = tmp_path / "Z Axis" / "Z+2_Neo" / "data" / "actions" / "ls_go_command_queue.jsonl"
+    queue_bytes = queue_path.read_bytes()
+    queue_mtime_ns = queue_path.stat().st_mtime_ns
+    repaired = client.post("/api/v1/ls-go/commands", json=command_payload())
+    replay = client.post("/api/v1/ls-go/commands", json=command_payload())
+
+    with database.get_connection() as connection:
+        task_count = connection.execute("SELECT COUNT(*) FROM tasks").fetchone()[0]
+        job_count = connection.execute("SELECT COUNT(*) FROM jobs").fetchone()[0]
+        connection.execute("DELETE FROM jobs")
+        connection.execute("UPDATE tasks SET status = 'blocked'")
+    terminal = client.post("/api/v1/ls-go/commands", json=command_payload())
+    with database.get_connection() as connection:
+        terminal_job_count = connection.execute("SELECT COUNT(*) FROM jobs").fetchone()[0]
+
+    assert first.status_code == 503
+    assert repaired.status_code == 200
+    assert repaired.json()["idempotent_replay"] is True
+    assert repaired.json()["repair_performed"] is True
+    assert replay.json()["repair_performed"] is False
+    assert task_count == 1
+    assert job_count == 1
+    assert terminal.json()["state"] == "blocked"
+    assert terminal.json()["repair_performed"] is False
+    assert terminal_job_count == 0
+    assert queue_path.read_bytes() == queue_bytes
+    assert queue_path.stat().st_mtime_ns == queue_mtime_ns
 
 
 def test_bridge_rejects_command_without_achilles_oversight(tmp_path, monkeypatch):
@@ -170,8 +975,102 @@ def test_bridge_rejects_command_without_achilles_oversight(tmp_path, monkeypatch
     assert "Achilles oversight" in response.json()["detail"]
 
 
+def test_bridge_rejects_command_without_canonical_authority_contract(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    payload = command_payload()
+    for field in ls_go_bridge.AUTHORITY_REQUIRED_FIELDS:
+        payload.pop(field, None)
+
+    response = client.post("/api/v1/ls-go/commands", json=payload)
+
+    queue_path = (
+        tmp_path
+        / "Z Axis"
+        / "Z+2_Neo"
+        / "data"
+        / "actions"
+        / "ls_go_command_queue.jsonl"
+    )
+    assert response.status_code == 400
+    assert "Required command field" in response.json()["detail"]
+    assert not queue_path.exists()
+
+
+def test_bridge_rejects_command_on_hold_authority_contract(tmp_path, monkeypatch):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(approval_or_hold_state="hold"),
+    )
+
+    assert response.status_code == 403
+    assert "not approved" in response.json()["detail"]
+
+
+def test_bridge_rejects_command_outside_authorised_scope(tmp_path, monkeypatch):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(
+            authorised_scope="Oracle local review queue",
+            requested_scope="Smith local review queue",
+        ),
+    )
+
+    assert response.status_code == 403
+    assert "outside authorised scope" in response.json()["detail"]
+
+
+def test_bridge_rejects_command_inside_prohibited_scope(tmp_path, monkeypatch):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(instruction="Publish the reviewed receipt."),
+    )
+
+    assert response.status_code == 403
+    assert "prohibited scope" in response.json()["detail"]
+
+
+def test_bridge_allows_bounded_command_that_names_negative_safeguards(tmp_path, monkeypatch):
+    database = CommandFixtureDatabase(tmp_path / "bounded-command.db")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (database, object()))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(
+            command_id="LSGO-TEST-NEGATIVE-SAFEGUARDS",
+            instruction=(
+                "Run a bounded local health evidence check and return a fixed receipt. "
+                "Do not publish or mutate files."
+            ),
+            target_floor="Merovingian",
+            authorised_scope="all floors; private local review queue; fixed receipts",
+            prohibited_scope=(
+                "public publish; destructive filesystem changes; workbook mutation; "
+                "De Sporte launch; Mark III mesh export; heavy simulation without manual gate"
+            ),
+            requested_scope="Merovingian private local review queue",
+        ),
+    )
+
+    assert response.status_code == 200, response.text
+    assert response.json()["accepted"] is True
+
+
 def test_bridge_stages_project_artifact_and_accepts_owner_review(tmp_path, monkeypatch):
     project_root = configure_shell(tmp_path)
+    monkeypatch.setenv("LIGHTSPEED_OWNER_APPROVAL_TOKEN", "owner-test-token")
     monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
     healthy_pipeline(monkeypatch)
     client = TestClient(ls_go_bridge.create_app(tmp_path))
@@ -208,10 +1107,61 @@ def test_bridge_stages_project_artifact_and_accepts_owner_review(tmp_path, monke
 
     decision = client.post(
         f"/api/v1/reviews/{review_id}/decision",
+        headers={"X-LightSpeed-Owner-Confirmation": "owner-test-token"},
         json={"decision": "approve", "note": "Owner reviewed."},
     )
     assert decision.status_code == 200
     assert decision.json()["receipt"]["decision"] == "approve"
+    assert decision.json()["receipt"]["actor"] == "Nathaniel"
+
+
+def test_bridge_review_decision_replay_is_idempotent_and_conflict_safe(tmp_path, monkeypatch):
+    configure_shell(tmp_path)
+    monkeypatch.setenv("LIGHTSPEED_OWNER_APPROVAL_TOKEN", "owner-test-token")
+    pipeline = ProjectPipeline(tmp_path)
+    pipeline.review_queue_path.write_text(
+        json.dumps({"review_id": "review-idempotency-1", "state": "pending_review"}) + "\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    endpoint = "/api/v1/reviews/review-idempotency-1/decision"
+
+    unauthenticated = client.post(
+        endpoint,
+        json={"decision": "approve", "note": "Owner reviewed."},
+    )
+    headers = {"X-LightSpeed-Owner-Confirmation": "owner-test-token"}
+    first = client.post(
+        endpoint,
+        headers=headers,
+        json={"decision": "approve", "note": "Owner reviewed."},
+    )
+    decision_bytes = pipeline.review_decisions_path.read_bytes()
+    decision_mtime_ns = pipeline.review_decisions_path.stat().st_mtime_ns
+    replay = client.post(
+        endpoint,
+        headers=headers,
+        json={"decision": "approve", "note": "  Owner   reviewed. "},
+    )
+    conflict = client.post(
+        endpoint,
+        headers=headers,
+        json={"decision": "hold", "note": "Needs evidence."},
+    )
+
+    assert unauthenticated.status_code == 403
+    assert first.status_code == 200
+    assert replay.status_code == 200
+    assert replay.json()["receipt"]["idempotent_replay"] is True
+    assert (
+        replay.json()["receipt"]["canonical_payload_sha256"]
+        == first.json()["receipt"]["canonical_payload_sha256"]
+    )
+    assert pipeline.review_decisions_path.read_bytes() == decision_bytes
+    assert pipeline.review_decisions_path.stat().st_mtime_ns == decision_mtime_ns
+    assert conflict.status_code == 409
+    assert pipeline.review_decisions_path.read_bytes() == decision_bytes
 
 
 def test_bridge_rejects_unknown_project_and_skips_outside_path(tmp_path, monkeypatch):
@@ -238,6 +1188,171 @@ def test_bridge_rejects_unknown_project_and_skips_outside_path(tmp_path, monkeyp
     assert manifest["copied_count"] == 0
     assert manifest["skipped"][0]["reason"] == "outside_registered_project_root"
     assert outside.read_text(encoding="utf-8") == "outside"
+
+
+def test_bridge_lists_and_opens_bounded_project_files_read_only(tmp_path, monkeypatch):
+    project_root = configure_shell(tmp_path)
+    nested = project_root / "results" / "sweep.json"
+    nested.parent.mkdir()
+    nested.write_text('{"result":"derived"}\n', encoding="utf-8")
+    binary = project_root / "model.glb"
+    binary.write_bytes(b"glTF\x00bounded")
+    source_before = {
+        path.relative_to(project_root).as_posix(): (path.read_bytes(), path.stat().st_mtime_ns)
+        for path in project_root.rglob("*")
+        if path.is_file()
+    }
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    monkeypatch.setenv(ls_go_bridge.OWNER_CONFIRMATION_ENV, "test-owner-token")
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    project = client.get("/api/v1/projects").json()["projects"][0]
+    listing = client.get(f"/api/v1/projects/{project['project_id']}/files?limit=20")
+
+    assert listing.status_code == 200, listing.text
+    body = listing.json()
+    assert body["schema_version"] == "lightspeed-project-files-v1"
+    assert body["state"] == "available"
+    assert body["project"] == {
+        "project_id": project["project_id"],
+        "name": "Project Alpha",
+        "authority": "canonical",
+        "condition": "active",
+    }
+    relative_paths = {item["relative_path"] for item in body["files"]}
+    assert relative_paths == {"README.md", "model.glb", "receipt.json", "results/sweep.json"}
+    assert body["summary"]["blocked_file_count"] == 1
+    assert ".env" not in json.dumps(body)
+    assert str(project_root) not in json.dumps(body)
+
+    unauthorized = client.get(
+        f"/api/v1/projects/{project['project_id']}/files/results/sweep.json"
+    )
+    opened = client.get(
+        f"/api/v1/projects/{project['project_id']}/files/results/sweep.json",
+        headers={"X-LightSpeed-Owner-Confirmation": "test-owner-token"},
+    )
+    assert unauthorized.status_code == 403
+    assert opened.status_code == 200, opened.text
+    result = opened.json()
+    assert result["schema_version"] == "lightspeed-project-file-open-result-v1"
+    assert result["state"] == "opened_read_only"
+    assert result["file"]["relative_path"] == "results/sweep.json"
+    assert result["preview"] == {
+        "state": "available",
+        "encoding": "utf-8",
+        "truncated": False,
+        "text": nested.read_bytes().decode("utf-8"),
+    }
+    assert result["source_mutated"] is False
+    assert str(project_root) not in json.dumps(result)
+
+    binary_result = client.get(
+        f"/api/v1/projects/{project['project_id']}/files/model.glb",
+        headers={"X-LightSpeed-Owner-Confirmation": "test-owner-token"},
+    )
+    assert binary_result.status_code == 200
+    assert binary_result.json()["preview"]["state"] == "metadata_only"
+    assert binary_result.json()["preview"]["text"] is None
+
+    source_after = {
+        path.relative_to(project_root).as_posix(): (path.read_bytes(), path.stat().st_mtime_ns)
+        for path in project_root.rglob("*")
+        if path.is_file()
+    }
+    assert source_after == source_before
+
+
+def test_bridge_project_file_access_fails_closed_on_unknown_blocked_and_traversal(
+    tmp_path, monkeypatch
+):
+    configure_shell(tmp_path)
+    outside = tmp_path / "outside.txt"
+    outside.write_text("not-authorised", encoding="utf-8")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    monkeypatch.setenv(ls_go_bridge.OWNER_CONFIRMATION_ENV, "test-owner-token")
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    project = client.get("/api/v1/projects").json()["projects"][0]
+    owner_headers = {"X-LightSpeed-Owner-Confirmation": "test-owner-token"}
+
+    unknown_project = client.get("/api/v1/projects/not-known/files")
+    blocked_file = client.get(
+        f"/api/v1/projects/{project['project_id']}/files/.env",
+        headers=owner_headers,
+    )
+    missing_file = client.get(
+        f"/api/v1/projects/{project['project_id']}/files/missing.txt",
+        headers=owner_headers,
+    )
+
+    assert unknown_project.status_code == 404
+    assert blocked_file.status_code == 403
+    assert missing_file.status_code == 404
+    with pytest.raises(ls_go_bridge.ProjectFilePathRejected, match="Traversal"):
+        ls_go_bridge.open_project_file(
+            ProjectPipeline(tmp_path),
+            project_id=project["project_id"],
+            relative_path="../outside.txt",
+        )
+    with pytest.raises(ls_go_bridge.ProjectFilePathRejected, match="Absolute"):
+        ls_go_bridge.open_project_file(
+            ProjectPipeline(tmp_path),
+            project_id=project["project_id"],
+            relative_path=str(outside),
+        )
+    assert outside.read_text(encoding="utf-8") == "not-authorised"
+
+
+def test_bridge_project_file_listing_reports_empty_and_preview_reports_empty(
+    tmp_path, monkeypatch
+):
+    configure_shell(tmp_path)
+    empty_project = (
+        tmp_path / "Z Axis" / "Z+1_Architect" / "projects" / "Empty Project"
+    )
+    empty_project.mkdir()
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    monkeypatch.setenv(ls_go_bridge.OWNER_CONFIRMATION_ENV, "test-owner-token")
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    projects = client.get("/api/v1/projects").json()["projects"]
+    project = next(item for item in projects if item["name"] == "Empty Project")
+
+    listing = client.get(f"/api/v1/projects/{project['project_id']}/files")
+    zero_file = empty_project / "empty.txt"
+    zero_file.touch()
+    opened = client.get(
+        f"/api/v1/projects/{project['project_id']}/files/empty.txt",
+        headers={"X-LightSpeed-Owner-Confirmation": "test-owner-token"},
+    )
+
+    assert listing.status_code == 200
+    assert listing.json()["state"] == "empty"
+    assert listing.json()["files"] == []
+    assert opened.status_code == 200
+    assert opened.json()["preview"] == {
+        "state": "empty",
+        "encoding": "utf-8",
+        "truncated": False,
+        "text": "",
+    }
+
+
+def test_project_file_browser_rejects_a_symlinked_project_root(tmp_path, monkeypatch):
+    project_root = configure_shell(tmp_path)
+    pipeline = ProjectPipeline(tmp_path)
+    project = pipeline.scan_projects()["projects"][0]
+    original_is_symlink = Path.is_symlink
+    monkeypatch.setattr(
+        Path,
+        "is_symlink",
+        lambda path: True if path == project_root else original_is_symlink(path),
+    )
+
+    with pytest.raises(ls_go_bridge.ProjectFileUnavailable, match="Symlinked project roots"):
+        ls_go_bridge.list_project_files(
+            pipeline,
+            project_id=project["project_id"],
+        )
 
 
 def test_representation_edge_routes_are_disabled_by_default(tmp_path, monkeypatch):
@@ -270,6 +1385,11 @@ def test_representation_edge_api_renders_graphs_and_enforces_identity_first(tmp_
     monkeypatch.setenv(FEATURE_FLAG, "1")
     monkeypatch.setenv("LIGHTSPEED_OWNER_APPROVAL_TOKEN", "owner-test-token")
     monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    monkeypatch.setattr(
+        ls_go_bridge,
+        "build_representation_edge_store",
+        lambda _root: RepresentationEdgeStore(database, enabled=True),
+    )
     client = TestClient(ls_go_bridge.create_app(tmp_path))
 
     graphs = client.get("/api/v1/representation-graphs")
@@ -342,6 +1462,11 @@ def test_representation_decision_rejects_actor_spoof_without_owner_confirmation(
     monkeypatch.setenv(FEATURE_FLAG, "1")
     monkeypatch.setenv("LIGHTSPEED_OWNER_APPROVAL_TOKEN", "owner-test-token")
     monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    monkeypatch.setattr(
+        ls_go_bridge,
+        "build_representation_edge_store",
+        lambda _root: RepresentationEdgeStore(database, enabled=True),
+    )
     client = TestClient(ls_go_bridge.create_app(tmp_path))
     review_id = client.get("/api/v1/representation-graphs").json()["graphs"][0]["review"][
         "review_id"

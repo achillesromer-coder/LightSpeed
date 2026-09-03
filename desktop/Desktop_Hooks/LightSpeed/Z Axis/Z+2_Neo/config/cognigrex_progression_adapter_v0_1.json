@@ -1,0 +1,45 @@
+{
+  "version": "0.1.0",
+  "status": "REVIEW_GATED_ADAPTER_CONTRACT_ONLY",
+  "task_id": "TASK-084",
+  "canonical_authority": "Google Drive Type 1 Romer Cognigrex / 143_COGNIGREX_PROGRESSION_RULES_v0_1",
+  "data_contract": "Data PR #8 / data/intersol/facility/cognigrex_progression_registry_schema_v0_1.json",
+  "runtime_surface": "Z+2_Neo",
+  "verification_surface": "Z-3_Smith",
+  "mode": "READ_VALIDATE_STAGE_ONLY",
+  "allowed_operations": [
+    "validate_stable_id",
+    "validate_required_fields",
+    "validate_status_transition",
+    "validate_closure_receipt_presence",
+    "detect_duplicate_identity",
+    "classify_invalid_harness_input_model_limit_separately_from_physical_null",
+    "stage_reanalysis_trigger_for_review"
+  ],
+  "prohibited_operations": [
+    "canonical_drive_write",
+    "z_direct_submission",
+    "autonomous_evidence_promotion",
+    "autonomous_scientific_validation",
+    "owner_decision_override",
+    "safety_or_compliance_override",
+    "deployment_or_merge"
+  ],
+  "test_contract": {
+    "side_effect_free": true,
+    "fixture_or_temp_state_only": true,
+    "must_not_write_z_direct": true,
+    "required_cases": [
+      "valid_KU_record",
+      "valid_RP_record",
+      "valid_RA_record",
+      "reject_missing_required_field",
+      "reject_illegal_status_transition",
+      "reject_resolved_evidence_without_receipt",
+      "detect_duplicate_stable_id",
+      "preserve_invalid_harness_vs_valid_null_boundary",
+      "preserve_prior_state_on_reanalysis"
+    ]
+  },
+  "evidence_boundary": "This contract defines integration behaviour only. It is not runtime execution, test evidence, physical validation, or permission to submit operational actions."
+}

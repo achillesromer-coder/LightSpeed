@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import sys
+import threading
 from pathlib import Path
 
 
@@ -36,8 +37,32 @@ sys.path.insert(0, str(RUNTIME_ROOT))
 sys.path.insert(0, str(DESKTOP_ROOT))
 
 from lightspeed_runtime.ls_go_bridge import start_server
+from lightspeed_runtime.ls_go_job_consumer import LSGoJobConsumer
+
+
+def start_local_bridge(root: Path) -> None:
+    """Start the local bridge with its Smith-owned durable DB consumer.
+
+    The consumer is deliberately hosted in the same singleton process as the
+    localhost bridge. A healthy bridge therefore has one durable command
+    consumer, while the consumer's own lock prevents duplicate threads/processes
+    from draining the same persisted job ledger.
+    """
+    consumer = LSGoJobConsumer(root)
+    thread = threading.Thread(
+        target=consumer.run_forever,
+        kwargs={"poll_seconds": 1.0},
+        name="lightspeed-ls-go-job-consumer",
+        daemon=True,
+    )
+    thread.start()
+    try:
+        start_server(root=root)
+    finally:
+        consumer.stop()
+        thread.join(timeout=3.0)
 
 
 if __name__ == "__main__":
     root = Path(os.environ.get("LIGHTSPEED_ROOT", DESKTOP_ROOT))
-    start_server(root=root)
+    start_local_bridge(root=root)
