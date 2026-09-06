@@ -18,8 +18,7 @@ w.innerHTML=`<style>
 .lh-fuse{display:flex;gap:4px;flex-wrap:wrap;}
 .lh-fuse a{padding:4px 8px;border-radius:3px;font-size:10px;font-weight:700;text-decoration:none;border:1px solid #c0a0ff;}
 .lh-meta{background:#080c18;border:1px solid #1a2540;border-radius:4px;padding:6px 14px;display:flex;align-items:center;gap:12px;font-size:10px;margin-bottom:16px;flex-wrap:wrap;}
-.lh-live{background:#c0a0ff;color:#000;padding:2px 6px;border-radius:2px;font-weight:700;font-size:9px;animation:lhblink 2s infinite;}
-@keyframes lhblink{0%,100%{opacity:1}50%{opacity:.4}}
+.lh-state{background:#c0a0ff;color:#000;padding:2px 6px;border-radius:2px;font-weight:700;font-size:9px;}
 .lh-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;}
 .lh-card{background:#0d1221;border:1px solid #1a2540;border-radius:6px;padding:14px;transition:border-color .2s;}
 .lh-card:hover{border-color:#c0a0ff;}
@@ -60,7 +59,7 @@ w.innerHTML=`<style>
   </div>
 </div>
 <div class="lh-meta">
-  <span class="lh-live">&#11044; LIVE</span>
+  <span class="lh-state">ROUTE INDEX</span>
   <span style="color:#3a4a6a;">/library</span>
   <span style="color:#5a6a8a;">Römer Industries / EMASSC</span>
   <span id="lh-clk" style="margin-left:auto;color:#5a6a8a;font-size:9px;"></span>
@@ -73,7 +72,7 @@ w.innerHTML=`<style>
     <a href="/operations/w3" class="lh-btn lh-ws-btn" style="color:#ff3366;border-color:#ff3366;">W3 · RFS &amp; EMFF Field Projections</a>
     <a href="/operations/w4" class="lh-btn lh-ws-btn" style="color:#ffaa00;border-color:#ffaa00;">W4 · Inter-planetary Supply Chain</a>
     <a href="/operations/w5" class="lh-btn lh-ws-btn" style="color:#00ff88;border-color:#00ff88;">W5 · Mission Mapping / GMAT</a>
-    <a href="/operations/w6" class="lh-btn lh-ws-btn" style="color:#ff6b9d;border-color:#ff6b9d;">W6 · Asset Library Final</a>
+    <a href="/operations/w6" class="lh-btn lh-ws-btn" style="color:#ff6b9d;border-color:#ff6b9d;">W6 · Asset / Evidence Library</a>
   </div>
   <div class="lh-card">
     <div class="lh-card-hdr" style="color:#ffaa00;">&#9889; DATASPACES</div>
@@ -87,16 +86,16 @@ w.innerHTML=`<style>
   <div class="lh-card">
     <div class="lh-card-hdr" style="color:#c0a0ff;">&#9632; TOOLS</div>
     <div class="lh-section-title">Calculators</div>
-    <a href="/orbital-mechanics" class="lh-btn lh-acc-btn" style="color:#c0a0ff;border-color:#c0a0ff;">Orbital Mechanics</a>
-    <a href="/launch-windows" class="lh-btn lh-acc-btn" style="color:#c0a0ff;border-color:#c0a0ff;">Launch Windows</a>
-    <a href="/magnetostatics" class="lh-btn lh-acc-btn" style="color:#c0a0ff;border-color:#c0a0ff;">Magnetostatics</a>
-    <a href="/energy-power" class="lh-btn lh-acc-btn" style="color:#c0a0ff;border-color:#c0a0ff;">Energy &amp; Power</a>
-    <a href="/fluid-dynamics" class="lh-btn lh-acc-btn" style="color:#c0a0ff;border-color:#c0a0ff;">Fluid Dynamics</a>
+    <a href="/calc/orbital" class="lh-btn lh-acc-btn" style="color:#c0a0ff;border-color:#c0a0ff;">Orbital Mechanics</a>
+    <a href="/calc/launch" class="lh-btn lh-acc-btn" style="color:#c0a0ff;border-color:#c0a0ff;">Launch</a>
+    <a href="/calc/magnetostatics" class="lh-btn lh-acc-btn" style="color:#c0a0ff;border-color:#c0a0ff;">Magnetostatics</a>
+    <a href="/calc/energy" class="lh-btn lh-acc-btn" style="color:#c0a0ff;border-color:#c0a0ff;">Energy &amp; Power</a>
+    <a href="/calc/fluids" class="lh-btn lh-acc-btn" style="color:#c0a0ff;border-color:#c0a0ff;">Fluid Dynamics</a>
     <div class="lh-section-title" style="margin-top:8px;">Simulators</div>
-    <a href="/rfs-extraction" class="lh-btn lh-acc-btn" style="color:#ff3366;border-color:#ff3366;">RFS Extraction</a>
-    <a href="/emff-node" class="lh-btn lh-acc-btn" style="color:#ff3366;border-color:#ff3366;">EMFF Node</a>
-    <a href="/emf-fields" class="lh-btn lh-acc-btn" style="color:#ff3366;border-color:#ff3366;">EMF Fields</a>
-    <a href="/re-entry" class="lh-btn lh-acc-btn" style="color:#ff3366;border-color:#ff3366;">Re-Entry</a>
+    <a href="/sims/rfs-extraction" class="lh-btn lh-acc-btn" style="color:#ff3366;border-color:#ff3366;">RFS Rendezvous / Extraction Route</a>
+    <a href="/sim/node" class="lh-btn lh-acc-btn" style="color:#ff3366;border-color:#ff3366;">EMFF Node</a>
+    <a href="/sim/fields" class="lh-btn lh-acc-btn" style="color:#ff3366;border-color:#ff3366;">EM Fields</a>
+    <a href="/sim/re-entry" class="lh-btn lh-acc-btn" style="color:#ff3366;border-color:#ff3366;">Re-Entry</a>
   </div>
   <div class="lh-card lh-full">
     <div class="lh-card-hdr" style="color:#c0a0ff;">&#9632; FILES &amp; DOCUMENTS</div>
@@ -177,6 +176,6 @@ var clk=document.getElementById('lh-clk');
 var bcn=document.getElementById('lh-bcn');
 function tick(){if(clk)clk.textContent=new Date().toUTCString().replace('GMT','UTC');}
 tick();setInterval(tick,1000);
-if(bcn){bcn.textContent='&#9679; Library hub active';bcn.style.color='#00aa44';}
+if(bcn){bcn.textContent='&#9679; Library route index rendered';bcn.style.color='#00aa44';}
 });
 </script>
