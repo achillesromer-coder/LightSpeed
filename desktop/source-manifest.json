@@ -3466,9 +3466,9 @@
       "sha256": "eb67434b56a778bcb0b0b417ff837a050c269075a685df30f25c1f798625ed1f"
     },
     {
-      "bytes": 19012,
+      "bytes": 19490,
       "path": "LightSpeed_Runtime/lightspeed_runtime/web_integration.py",
-      "sha256": "7aa69771ac4f9baa045392a10dae989697c7886d52952740efbeceda60ac1201"
+      "sha256": "bcc2452ca6606bd3a1584d9b660938d236f475508bdd2ca8007a3841e02ad654"
     },
     {
       "bytes": 4355,
