@@ -2322,11 +2322,30 @@ def test_romer_web_integration_contract_maps_public_site_and_drive_feeds(tmp_pat
     assert payload["squarespace_embed_source"]["id"] == "1wLNW2cC-vQ1ZTzNmgGQiSFE0wGp_dvupCW1ZGBtT_yw"
     assert payload["squarespace_embed_source"]["copy_cell"] == "01_One_Cell_Embed!A10"
     assert payload["squarespace_embed_source"]["gate"] == "COMP2_STAGED_WAITING_ON_COMP1"
-    assert len(payload["squarespace_routes"]) == 31
-    assert any(item["route"] == "/ls-go/handoff" for item in payload["squarespace_routes"])
-    assert any(item["route"] == "/tools/calculators" for item in payload["squarespace_routes"])
-    assert all(str(item["route"]).startswith("/") for item in payload["squarespace_routes"])
-    assert len(payload["squarespace_implementation_log"]) == 8
+    staged_routes = [str(item["route"]) for item in payload["squarespace_routes"]]
+    staged_route_set = set(staged_routes)
+    assert len(staged_routes) == len(staged_route_set)
+    assert "/ls-go/handoff" in staged_route_set
+    assert {f"/operations/w{i}" for i in range(1, 7)} <= staged_route_set
+    assert {f"/w{i}/data" for i in range(1, 7)} <= staged_route_set
+    assert "/library" in staged_route_set
+    assert "/tools/calculators" not in staged_route_set
+    assert "/workspaces" not in staged_route_set
+    assert all(f"/w{i}/work" not in staged_route_set for i in range(1, 7))
+    assert all(route.startswith("/") for route in staged_routes)
+    implementation_routes = [str(item["route"]) for item in payload["squarespace_implementation_log"]]
+    implementation_route_set = set(implementation_routes)
+    assert len(implementation_routes) == len(implementation_route_set)
+    assert {
+        "/ls-go",
+        "/ls-go/status",
+        "/ls-go/handoff",
+        "/ls-go/agents",
+        "/ls-go/review",
+        "/data/achilles",
+        "/data",
+    } <= implementation_route_set
+    assert "/workspaces" not in implementation_route_set
     assert payload["brand_tokens"]["romer_gold"] == "#C9A24A"
     assert drive_sources["1clPyKU1C_Prd-a4g-Cbl2RZQybLL2oag"]["observed_status"] == "accessible"
     assert "Empirical Data" in drive_sources["1clPyKU1C_Prd-a4g-Cbl2RZQybLL2oag"]["observed_children"]
