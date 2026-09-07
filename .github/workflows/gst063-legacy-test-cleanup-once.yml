@@ -1,4 +1,5 @@
 name: GST-063 Legacy Test Cleanup Once
+# Triggered by Type-1 manual persistence pass after same-head route/bridge validation.
 
 on:
   push:
