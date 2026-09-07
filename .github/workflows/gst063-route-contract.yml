@@ -1,5 +1,6 @@
 name: GST-063 Route Contract
 # Final same-head validation trigger after one-shot legacy semantic migration.
+# Final manifest-sync validation trigger; no runtime/source semantics changed.
 
 on:
   pull_request:
