@@ -10,6 +10,11 @@ on:
       - 'desktop/Desktop_Hooks/LightSpeed/tests/test_gst063_route_semantics.py'
       - 'desktop/Desktop_Hooks/LightSpeed/tools/regenerate_gst063_web_bridge.py'
       - '.github/workflows/gst063-route-contract.yml'
+  push:
+    branches:
+      - 'fix/gst063-route-registry-2026-09-06'
+    paths:
+      - '.github/workflows/gst063-route-contract.yml'
   workflow_dispatch:
 
 permissions:
