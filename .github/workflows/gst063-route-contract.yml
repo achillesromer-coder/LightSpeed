@@ -32,10 +32,27 @@ jobs:
       - name: Install test runner
         run: python -m pip install --disable-pip-version-check --no-input pytest
 
-      - name: Execute GST-063 regression gate
+      - name: Generate canonical bridge candidate
+        env:
+          PYTHONPATH: desktop/LightSpeed_Runtime
+        run: python desktop/Desktop_Hooks/LightSpeed/tools/regenerate_gst063_web_bridge.py
+
+      - name: Execute GST-063 regression gate against generated candidate
         env:
           PYTHONPATH: desktop/LightSpeed_Runtime
         run: >-
           python -m pytest -q
           desktop/Desktop_Hooks/LightSpeed/tests/test_gst063_route_contract.py
           desktop/Desktop_Hooks/LightSpeed/tests/test_gst063_route_semantics.py
+
+      - name: Upload canonical bridge candidate
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gst063-web-drive-bridge-candidate
+          path: desktop/Desktop_Hooks/LightSpeed/config/web_drive_bridge.json
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Enforce committed generated parity
+        run: git diff --exit-code -- desktop/Desktop_Hooks/LightSpeed/config/web_drive_bridge.json
