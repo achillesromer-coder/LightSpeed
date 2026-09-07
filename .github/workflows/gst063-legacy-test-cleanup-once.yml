@@ -1,5 +1,6 @@
 name: GST-063 Legacy Test Cleanup Once
 # Triggered by Type-1 manual persistence pass after same-head route/bridge validation.
+# Retry 2: retire the implementation-log count assumption together with stale route assertions.
 
 on:
   push:
@@ -44,12 +45,12 @@ jobs:
 
           path = Path('desktop/Desktop_Hooks/LightSpeed/tests/test_runtime_package.py')
           text = path.read_text(encoding='utf-8')
-          old = '''    assert len(payload["squarespace_routes"]) == 31
+          old_routes = '''    assert len(payload["squarespace_routes"]) == 31
               assert any(item["route"] == "/ls-go/handoff" for item in payload["squarespace_routes"])
               assert any(item["route"] == "/tools/calculators" for item in payload["squarespace_routes"])
               assert all(str(item["route"]).startswith("/") for item in payload["squarespace_routes"])
           '''
-          new = '''    staged_routes = [str(item["route"]) for item in payload["squarespace_routes"]]
+          new_routes = '''    staged_routes = [str(item["route"]) for item in payload["squarespace_routes"]]
               staged_route_set = set(staged_routes)
               assert len(staged_routes) == len(staged_route_set)
               assert "/ls-go/handoff" in staged_route_set
@@ -61,11 +62,30 @@ jobs:
               assert all(f"/w{i}/work" not in staged_route_set for i in range(1, 7))
               assert all(route.startswith("/") for route in staged_routes)
           '''
-          if text.count(old) != 1:
-              raise SystemExit(f'expected stale assertion block exactly once; found {text.count(old)}')
-          if new in text:
+          old_log = '    assert len(payload["squarespace_implementation_log"]) == 8\n'
+          new_log = '''    implementation_routes = [str(item["route"]) for item in payload["squarespace_implementation_log"]]
+              implementation_route_set = set(implementation_routes)
+              assert len(implementation_routes) == len(implementation_route_set)
+              assert {
+                  "/ls-go",
+                  "/ls-go/status",
+                  "/ls-go/handoff",
+                  "/ls-go/agents",
+                  "/ls-go/review",
+                  "/data/achilles",
+                  "/data",
+              } <= implementation_route_set
+              assert "/workspaces" not in implementation_route_set
+          '''
+          if text.count(old_routes) != 1:
+              raise SystemExit(f'expected stale route assertion block exactly once; found {text.count(old_routes)}')
+          if text.count(old_log) != 1:
+              raise SystemExit(f'expected stale implementation-log count exactly once; found {text.count(old_log)}')
+          if new_routes in text or new_log in text:
               raise SystemExit('replacement block already present')
-          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          text = text.replace(old_routes, new_routes, 1)
+          text = text.replace(old_log, new_log, 1)
+          path.write_text(text, encoding='utf-8')
           PY
 
       - name: Run targeted legacy and GST-063 semantic tests
