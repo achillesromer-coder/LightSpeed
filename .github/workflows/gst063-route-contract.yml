@@ -7,6 +7,8 @@ on:
       - 'desktop/Desktop_Hooks/LightSpeed/config/web_drive_bridge.json'
       - 'desktop/Desktop_Hooks/LightSpeed/tests/test_runtime_package.py'
       - 'desktop/Desktop_Hooks/LightSpeed/tests/test_gst063_route_contract.py'
+      - 'desktop/Desktop_Hooks/LightSpeed/tests/test_gst063_route_semantics.py'
+      - 'desktop/Desktop_Hooks/LightSpeed/tools/regenerate_gst063_web_bridge.py'
       - '.github/workflows/gst063-route-contract.yml'
   workflow_dispatch:
 
@@ -33,4 +35,7 @@ jobs:
       - name: Execute GST-063 regression gate
         env:
           PYTHONPATH: desktop/LightSpeed_Runtime
-        run: python -m pytest -q desktop/Desktop_Hooks/LightSpeed/tests/test_gst063_route_contract.py
+        run: >-
+          python -m pytest -q
+          desktop/Desktop_Hooks/LightSpeed/tests/test_gst063_route_contract.py
+          desktop/Desktop_Hooks/LightSpeed/tests/test_gst063_route_semantics.py
