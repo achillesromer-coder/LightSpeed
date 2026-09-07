@@ -1,0 +1,231 @@
+{
+  "contract_id": "M1-ACV-001",
+  "title": "M1 Elevated Bypass Under-Deck Acoustic, Vibration and Integrated-Network Model Contract",
+  "version": "v0.1",
+  "date": "2026-09-08",
+  "status": "DERIVED_SCENARIO_REVIEW",
+  "authority_model": {
+    "drive_is_living_canonical_authority": true,
+    "git_role": "machine-readable review and implementation contract only",
+    "canonical_workbook": {
+      "title": "M1_Elevated_Bypass_Living_Infrastructure_Buildout_Register_v0_1",
+      "drive_file_id": "14gBPrvgI9XdLcm6FCHoGK9mfU5XFOJUyB3S_5DalqLY",
+      "url": "https://docs.google.com/spreadsheets/d/14gBPrvgI9XdLcm6FCHoGK9mfU5XFOJUyB3S_5DalqLY/edit",
+      "relevant_tabs": [
+        "06_Decision_Log",
+        "07_Open_Questions",
+        "10_Parametric_Equation_Ledger",
+        "12_Source_Proof_Register",
+        "14_Traffic_Microsim_Schema",
+        "15_Pilot_Evidence_Scorecard",
+        "18_CAD_Base_Structure",
+        "19_Web2_Collection_Manifest"
+      ]
+    },
+    "evidence_classes": ["SOURCE_DIGITAL", "DERIVED_SCENARIO", "EMPIRICAL"],
+    "promotion_rule": "No derived result becomes empirical, approved, operational or public-performance evidence without its corresponding raw receipt, calibration and review gate."
+  },
+  "canonical_invariants": {
+    "lower_m1_remains_distinct_active_layer": true,
+    "upper_m1_remains_distinct_active_layer": true,
+    "upper_through_lanes_per_direction": 5,
+    "transfer_lanes_are_additional": true,
+    "base_modelling_block_m": 1000,
+    "base_block_is_not_structural_span": true,
+    "selected_structural_span_m": null,
+    "selected_damper": null,
+    "selected_operating_speed_kmh": null
+  },
+  "geometry_lineage": {
+    "base_collection_id": "COL-M1-SEQLD-1KM-BASE-V0.1",
+    "base_fcstd": {
+      "source_file": "SEQLD Pilot Builds.FCStd",
+      "sha256": "7e3074a5c7f74b9f796ea6156e0376bdf191b78bb7356eb5840515b0102df79a",
+      "northbound_stage0_massing_mm": [1000000, 23500, 2000],
+      "southbound_stage0_massing_mm": [1000000, 23500, 2000],
+      "underlay_stage0_massing_mm": [1000000, 57000, 1500],
+      "structural_depth_state": "OPEN_MASSING_ONLY"
+    },
+    "pillar_lineage": {
+      "asset_id": "ASSET-PILLAR-P0",
+      "source_file": "Base pillar - Twist and Y branch.20260623-211243.FCBak",
+      "sha256": "1dba2db3722746036592ab62ca07a9839b4446e9dab3d12aaebca69f5da90ba5",
+      "outer_heptagon_radius_mm": 4000,
+      "inner_pocket_radius_mm": 3500,
+      "source_body_height_mm": 22000,
+      "state": "OWNER_ACCEPTED_ENVELOPE_HEIGHT_AND_STRUCTURE_OPEN"
+    },
+    "stp7_clearance_lineage_m": 15,
+    "stp7_clearance_state": "CONCEPTUAL_SOURCE_LINEAGE_NOT_CERTIFIED"
+  },
+  "traffic_scenarios": [
+    {"scenario_id": "ACV-T00", "name": "NO_TRAFFIC", "ambient_dba": null, "ambient_rule": "MEASURE_REQUIRED"},
+    {"scenario_id": "ACV-T01", "name": "LOW", "flow_state": "LOW_DEMAND"},
+    {"scenario_id": "ACV-T02", "name": "MEDIUM", "flow_state": "MID_DEMAND"},
+    {"scenario_id": "ACV-T03", "name": "HIGH_FREE_FLOW", "flow_state": "HIGH_DEMAND_FREE_FLOW"},
+    {"scenario_id": "ACV-T04", "name": "FULL_CONGESTED", "flow_state": "MAXIMUM_VOLUME_CONGESTED"},
+    {"scenario_id": "ACV-T05", "name": "FULL_FREE_FLOW_STRESS", "flow_state": "ACOUSTIC_DYNAMIC_STRESS_ENVELOPE"}
+  ],
+  "traffic_input_boundary": {
+    "annual_aadt_can_anchor_demand": true,
+    "annual_aadt_can_replace_hourly_or_od": false,
+    "authoritative_hourly_rows_required": true,
+    "ramp_od_required_for_transfer_node_calibration": true,
+    "maximum_volume_equals_acoustic_worst_case": false
+  },
+  "acoustic_screening": {
+    "state": "DESKTOP_DERIVED_SCREENING_ONLY",
+    "metric": "dB(A)",
+    "representative_outer_cavity_low_traffic": "high-70s",
+    "representative_outer_cavity_high_or_full_free_flow": "mid/high-80s",
+    "model_uncertainty_db": {"lower": -5, "upper": 5, "typical": 4},
+    "no_traffic_ambient_assigned": false,
+    "required_future_outputs": [
+      "LAeq",
+      "LA10",
+      "one_third_octave_spectra",
+      "cavity_cross_section_contours",
+      "external_receiver_height_contours",
+      "deck_structure_radiated_sound"
+    ],
+    "claim_boundary": "Values are screening envelopes, not measured M1 performance or compliance predictions."
+  },
+  "dynamic_response": {
+    "analysis_band_hz": [0, 100],
+    "candidate_clusters": [
+      {
+        "range_hz": [2, 6],
+        "hypothesis": ["vehicle_sprung_or_wheelbase_forcing", "pier_or_global_response"]
+      },
+      {
+        "range_hz": [10, 20],
+        "hypothesis": ["axle_tire_joint_excitation", "local_deck_response", "low_frequency_structure_radiation"]
+      }
+    ],
+    "candidate_clusters_are_selected_modes": false,
+    "required_solver_outputs": [
+      "mode_shapes",
+      "natural_frequencies_hz",
+      "damping_assumptions",
+      "frequency_response_functions",
+      "stress_antinodes",
+      "acceleration_antinodes",
+      "deck_surface_velocity",
+      "foundation_and_ground_transmission",
+      "utility_mount_transmissibility",
+      "uncertainty_and_sensitivity"
+    ]
+  },
+  "structural_hotspots": [
+    "JOINTS_AND_DISCONTINUITIES",
+    "Y_HEAD_AND_BEARING_SEATS",
+    "Y_ROOT_OR_CROTCH",
+    "PIER_BASE_AND_PILE_CAP",
+    "SPAN_CENTRE",
+    "DIAPHRAGM_AND_SUPPORT_ZONES",
+    "CANTILEVER_AND_BARRIER_INTERFACES",
+    "TRANSFER_TRANSITIONS",
+    "UTILITY_MOUNTS"
+  ],
+  "instrumentation_contract": {
+    "time_sync_required": true,
+    "raw_packets_immutable": true,
+    "stable_sensor_ids_required": true,
+    "channels": [
+      "traffic_lane_class_speed",
+      "triaxial_acceleration",
+      "strain_or_fbg",
+      "displacement_or_tilt",
+      "class_1_acoustic_pressure",
+      "low_frequency_pressure",
+      "geophone_ground_velocity",
+      "weather",
+      "pavement_condition"
+    ],
+    "target_locations": [
+      "span_centre",
+      "quarter_span",
+      "y_head",
+      "y_root",
+      "bearing_or_support_zone",
+      "pier_shaft",
+      "pier_base_or_pile_cap",
+      "foundation_offset",
+      "underdeck_cavity_heights",
+      "external_receiver_transects"
+    ]
+  },
+  "mitigation_gate": {
+    "selected_solution": null,
+    "sequence": [
+      "REDUCE_SOURCE_EXCITATION_PAVEMENT_ROUGHNESS_AND_JOINT_DISCONTINUITY",
+      "SOLVE_AND_CALIBRATE_STRUCTURAL_MODES",
+      "TEST_TUNED_MASS_DAMPER_VARIANTS",
+      "TEST_VISCOUS_OR_VISCOELASTIC_VARIANTS",
+      "TEST_ACOUSTIC_SOFFIT_OR_BARRIER_VARIANTS",
+      "TEST_EQUIPMENT_ISOLATION_VARIANTS"
+    ],
+    "selection_requires": ["FE_MODE_EVIDENCE", "FIELD_CALIBRATION", "STRUCTURAL_REVIEW", "MAINTAINABILITY_REVIEW"]
+  },
+  "integrated_network_utility": {
+    "fibre_and_sensing": "STRONG_CANDIDATE",
+    "isolated_edge_network_cabinets": "PROMISING_CONDITIONAL",
+    "dense_compute": "CONDITIONAL",
+    "battery_or_energy_storage": "CONDITIONAL",
+    "conditional_gates": ["VIBRATION", "THERMAL", "FIRE", "WATER", "ACCESS", "MAINTAINABILITY", "ELECTRICAL_SAFETY"]
+  },
+  "next_engineering_object": {
+    "object_id": "M1-ACV-CELL-001",
+    "description": "Representative span-support-span coupled acoustic/vehicle-bridge response cell",
+    "analysis_band_hz": [0, 100],
+    "span_sensitivity_m": [40, 60, 80, 120, 200],
+    "span_sensitivity_is_selection": false,
+    "minimum_outputs": [
+      "modal_solution",
+      "vehicle_load_response",
+      "frf_map",
+      "stress_acceleration_antinode_map",
+      "deck_surface_velocity_radiation_interface",
+      "foundation_ground_transmission",
+      "receiver_height_acoustic_contours",
+      "utility_mount_transmissibility",
+      "sensor_placement_map",
+      "mitigation_sensitivity",
+      "uncertainty_register"
+    ]
+  },
+  "primary_source_classes": [
+    "Queensland_TMR_Transport_Noise_Management_Code_of_Practice",
+    "Queensland_TMR_Bridge_Design_and_Assessment_Criteria",
+    "Queensland_Traffic_Census_and_Hourly_Data",
+    "AS_5100_Bridge_Design",
+    "Qualified_Project_Geometry_and_CAD"
+  ],
+  "open_gates": [
+    "EXACT_TMR_HOURLY_SITE_ROWS",
+    "RAMP_AND_CORRIDOR_OD",
+    "EXACT_CHAINAGE_AND_LOWER_M1_GEOMETRY",
+    "STRUCTURAL_DECK_AND_BEARING_PROPERTIES",
+    "GEOTECH_AND_SOIL_MODEL",
+    "FE_CONFIGURATION_AND_MESH_CONVERGENCE",
+    "FIELD_ACOUSTIC_AND_VIBRATION_CALIBRATION",
+    "RPEQ_STRUCTURAL_ACOUSTIC_REVIEW",
+    "TMR_REVIEW_OR_APPROVAL",
+    "PUBLIC_RELEASE_GATE"
+  ],
+  "presentation_derivative": {
+    "canva_design_id": "DAHUgon5AFY",
+    "title": "M1 Elevated Bypass — Under-Deck Acoustic, Vibration & Integrated Network Engineering Analysis",
+    "state": "COMMITTED_2026_09_08",
+    "role": "communication_and_review_derivative_not_canonical_engineering_authority"
+  },
+  "non_actions": [
+    "NO_MAIN_BRANCH_MUTATION",
+    "NO_DEPLOYMENT",
+    "NO_PUBLIC_RELEASE_ASSERTION",
+    "NO_DAMPER_SELECTION",
+    "NO_SPAN_SELECTION",
+    "NO_EMPIRICAL_PERFORMANCE_PROMOTION",
+    "NO_TMR_OR_RPEQ_APPROVAL_INFERENCE"
+  ]
+}
