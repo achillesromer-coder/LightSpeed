@@ -24,6 +24,81 @@ from lightspeed_runtime.project_pipeline import ProjectPipeline
 from lightspeed_runtime.representation_edge import FEATURE_FLAG, RepresentationEdgeStore
 
 
+@pytest.mark.parametrize(
+    "launch_state",
+    [
+        "private_soft_cognigrex_active",
+        "sandbox_soft_launch_active",
+        "gate_released_cognigrex_operations_active",
+    ],
+)
+def test_current_go_authority_contract_accepts_released_private_states(
+    tmp_path, launch_state
+):
+    config = tmp_path / "config"
+    config.mkdir()
+    (config / "operator_approval_manifest.json").write_text(
+        json.dumps(
+            {
+                "approvals": {"ls_go_queue": True},
+                "gate_release": {
+                    "release_id": "GO-GATE-TEST-001",
+                    "source": "OWNER-TEST-001",
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    (config / "launch_control.json").write_text(
+        json.dumps(
+            {
+                "control_id": "CORE-TEST-001",
+                "gate": "PRIVATE-SOFT-LAUNCH",
+                "state": launch_state,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    contract = ls_go_bridge._current_go_authority_contract(tmp_path)
+
+    assert contract["approval_or_hold_state"] == "approved"
+    assert "private local review queue" in contract["authorised_scope"]
+    assert "public publish" in contract["prohibited_scope"]
+
+
+def test_current_go_authority_contract_rejects_unreleased_state(tmp_path):
+    config = tmp_path / "config"
+    config.mkdir()
+    (config / "operator_approval_manifest.json").write_text(
+        json.dumps(
+            {
+                "approvals": {"ls_go_queue": True},
+                "gate_release": {
+                    "release_id": "GO-GATE-TEST-001",
+                    "source": "OWNER-TEST-001",
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    (config / "launch_control.json").write_text(
+        json.dumps(
+            {
+                "control_id": "CORE-TEST-001",
+                "gate": "PRIVATE-SOFT-LAUNCH",
+                "state": "hold",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    contract = ls_go_bridge._current_go_authority_contract(tmp_path)
+
+    assert contract["approval_or_hold_state"] == "hold"
+    assert contract["authorised_scope"] == "none"
+
+
 def test_neo_operator_approval_forwards_authority_contract() -> None:
     observed: dict = {}
 

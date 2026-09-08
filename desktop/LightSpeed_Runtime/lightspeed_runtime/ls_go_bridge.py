@@ -317,6 +317,13 @@ def _canonical_queue_index_gate_authorized(shell_root: Path) -> bool:
     )
 
 
+ACTIVE_PRIVATE_LAUNCH_STATES = {
+    "private_soft_cognigrex_active",
+    "sandbox_soft_launch_active",
+    "gate_released_cognigrex_operations_active",
+}
+
+
 def _current_go_authority_contract(shell_root: Path) -> dict[str, str]:
     """Return the bounded command authority currently released by local canon."""
     try:
@@ -346,14 +353,14 @@ def _current_go_authority_contract(shell_root: Path) -> dict[str, str]:
     owner_ref = str(release.get("source") or "").strip()
     control_id = str(launch_control.get("control_id") or "").strip()
     launch_gate = str(launch_control.get("gate") or "").strip()
+    launch_state = str(launch_control.get("state") or "").casefold()
     approved = bool(
         approval_flags.get("ls_go_queue")
         and gate_id
         and owner_ref
         and control_id
         and launch_gate
-        and str(launch_control.get("state") or "").casefold()
-        == "private_soft_cognigrex_active"
+        and launch_state in ACTIVE_PRIVATE_LAUNCH_STATES
     )
     return {
         "canonical_gate_id": gate_id or "unavailable",
