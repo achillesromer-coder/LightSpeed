@@ -8,6 +8,8 @@ import unittest
 RUNNER = pathlib.Path(__file__).parents[1] / "tools" / "rfs_emff_runner.py"
 EXPECTED_FILE_ID = "1OfpojKyX7gefk7c0-2NL3xm-ZnohhJI5"
 EXPECTED_SHA256 = "05b34a9fb912dd9f349479b5f3480048f96c7871daa67798f29cee021aa559e6"
+EXPECTED_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+EXPECTED_SIZE = 52351
 
 
 class W3SourceProvenanceContractTests(unittest.TestCase):
@@ -18,6 +20,8 @@ class W3SourceProvenanceContractTests(unittest.TestCase):
     def test_canonical_drive_source_identity_is_declared(self) -> None:
         self.assertIn(EXPECTED_FILE_ID, self.source)
         self.assertIn(EXPECTED_SHA256, self.source)
+        self.assertIn(EXPECTED_MIME, self.source)
+        self.assertIn(f'"size_bytes": {EXPECTED_SIZE}', self.source)
         self.assertIn('"provider": "google_drive"', self.source)
         self.assertIn('"role": "canonical_w3_digital_twin_source"', self.source)
 
