@@ -13,6 +13,9 @@ HERE = pathlib.Path(__file__).resolve()
 SMITH_ROOT = HERE.parents[1]
 RUNNER_PATH = SMITH_ROOT / "tools" / "rfs_emff_runner.py"
 REPO_ROOT = HERE.parents[6]
+LIGHTSPEED_RUNTIME_ROOT = REPO_ROOT / "desktop" / "LightSpeed_Runtime"
+if str(LIGHTSPEED_RUNTIME_ROOT) not in sys.path:
+    sys.path.insert(0, str(LIGHTSPEED_RUNTIME_ROOT))
 RECEIPT_PATH = REPO_ROOT / "w3-runtime-persistence-receipt.json"
 RECEIPT_DIR = REPO_ROOT / "w3-runtime-receipt"
 
