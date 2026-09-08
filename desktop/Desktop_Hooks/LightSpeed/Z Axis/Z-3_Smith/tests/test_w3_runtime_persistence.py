@@ -69,6 +69,7 @@ def main() -> None:
 
     result_json = json.loads(result_path.read_text(encoding="utf-8"))
     manifest_json = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest_job = manifest_json.get("job") or {}
 
     manifest_inputs = manifest_json.get("inputs") or []
     matching_inputs = [
@@ -78,6 +79,8 @@ def main() -> None:
         and item.get("sha256") == EXPECTED_SHA256
     ]
     assert len(matching_inputs) == 1, manifest_inputs
+    assert manifest_job.get("id") == job_id, manifest_job
+    assert manifest_job.get("status") == "completed", manifest_job
 
     job_rows = db.execute_query("SELECT * FROM jobs WHERE id = ?", (job_id,))
     assert len(job_rows) == 1, job_rows
@@ -137,8 +140,8 @@ def main() -> None:
             "path": str(manifest_path),
             "sha256": manifest_sha,
             "size_bytes": manifest_path.stat().st_size,
-            "job_id_readback": manifest_json.get("job_id"),
-            "status_readback": manifest_json.get("status"),
+            "job_id_readback": manifest_job.get("id"),
+            "status_readback": manifest_job.get("status"),
             "inputs": manifest_inputs,
         },
         "artifact_ledger": artifact_rows,
@@ -147,6 +150,8 @@ def main() -> None:
             "canonical_drive_sha256_persisted_in_job_metadata": True,
             "canonical_drive_id_persisted_in_manifest": True,
             "canonical_drive_sha256_persisted_in_manifest": True,
+            "manifest_job_identity_matches_ledger_job": True,
+            "manifest_status_completed": True,
             "result_artifact_hash_matches_ledger": True,
             "manifest_artifact_hash_matches_ledger": True,
         },
