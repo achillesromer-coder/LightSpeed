@@ -77,6 +77,14 @@ jobs:
           python -m py_compile scripts/run_cognigrex_local_stack.py
           python -m py_compile scripts/ensure_cognigrex_local_stack.py
 
+      - name: Verify W3 source provenance contract
+        run: |
+          python "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/tests/test_w3_source_provenance.py"
+
+      - name: Execute W3 CI-runtime persistence receipt
+        run: |
+          python "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/tests/test_w3_runtime_persistence.py"
+
       - name: Validate De Sporte Desktop bridge contract
         id: desporte
         shell: bash
@@ -154,6 +162,8 @@ jobs:
             surface-validation.log
             surface-validation-refreshed.log
             refreshed-source-manifest.json
+            w3-runtime-persistence-receipt.json
+            w3-runtime-receipt/**
           if-no-files-found: warn
           retention-days: 14
 
