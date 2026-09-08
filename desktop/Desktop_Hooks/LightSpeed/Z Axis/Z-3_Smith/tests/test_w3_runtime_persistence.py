@@ -44,6 +44,11 @@ def load_runner():
 def main() -> None:
     started_at = datetime.now(timezone.utc).isoformat()
     runner = load_runner()
+    runner._force_merovingian_core_package()
+    from core.services import get_db  # type: ignore
+
+    db = get_db()
+    db.ensure_schema()
 
     payload = {
         "material": "Cu",
@@ -74,10 +79,6 @@ def main() -> None:
     ]
     assert len(matching_inputs) == 1, manifest_inputs
 
-    runner._force_merovingian_core_package()
-    from core.services import get_db  # type: ignore
-
-    db = get_db()
     job_rows = db.execute_query("SELECT * FROM jobs WHERE id = ?", (job_id,))
     assert len(job_rows) == 1, job_rows
     job_row = job_rows[0]
@@ -122,6 +123,7 @@ def main() -> None:
         "run_dir": str(run_dir),
         "manifest_path": str(manifest_path),
         "database_path": str(getattr(db, "db_path", "")),
+        "schema_bootstrap": "DatabaseService.ensure_schema",
         "canonical_source": matching_inputs[0],
         "ledger_metadata_inputs": ledger_inputs,
         "result": {
