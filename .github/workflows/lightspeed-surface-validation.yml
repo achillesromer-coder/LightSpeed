@@ -77,6 +77,10 @@ jobs:
           python -m py_compile scripts/run_cognigrex_local_stack.py
           python -m py_compile scripts/ensure_cognigrex_local_stack.py
 
+      - name: Verify W3 source provenance contract
+        run: |
+          python "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/tests/test_w3_source_provenance.py"
+
       - name: Validate De Sporte Desktop bridge contract
         id: desporte
         shell: bash
