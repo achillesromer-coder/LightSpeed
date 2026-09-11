@@ -1,24 +1,40 @@
 import "./styles.css";
+import "./mobile.css";
+import "./projectFiles.css";
+import "./resultReceipts.css";
+import "./ownerAuth.css";
 import {
   createCommandEnvelope,
+  changeDesktopOwnerPassword,
   decideDesktopReview,
   decideRepresentationReview,
   DEFAULT_DESKTOP_ORIGIN,
+  DesktopRequestError,
   downloadCommand,
   FLOORS,
   listDesktopProjects,
+  listDesktopProjectFiles,
   listDesktopReviews,
+  listDesktopResults,
   listDesktopTasks,
   listRepresentationGraphs,
+  loginDesktopOwner,
+  logoutDesktopOwner,
+  openDesktopProjectFile,
+  openDesktopResult,
   readDesktopStatus,
   readPendingCommands,
   removePendingCommand,
   routeInstruction,
+  reviewDecisionOutcomeMessage,
   storePendingCommand,
   submitDesktopCommand,
+  type AuthorityContract,
   type CommandEnvelope,
   type ExecutionMode,
   type Floor,
+  type LocalResultsResponse,
+  type OwnerAuthResponse,
   type Priority,
   type ProjectRecord,
   type RepresentationDecision,
@@ -27,6 +43,20 @@ import {
   type ReviewRecord,
 } from "./desktopBridge";
 import { escapeHtml, loadNeoExchange, renderExchangePanel } from "./neoExchange";
+import {
+  bindProjectBrowseButtons,
+  bindProjectFileOpenButtons,
+  renderProjectCards,
+  renderProjectFileOpenResult,
+  renderProjectFiles,
+  renderProjectFilesError,
+} from "./projectFiles";
+import {
+  bindResultReceiptButtons,
+  renderResultReceiptOpen,
+  renderResultReceipts,
+  renderResultReceiptsError,
+} from "./resultReceipts";
 import { renderRepresentationGraphs } from "./representationGraphs";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
 
@@ -114,6 +144,26 @@ app.innerHTML = `
     </section>
 
     <section class="view" id="view-activity">
+      <article class="panel owner-auth-panel">
+        <div class="panel-head">
+          <div><p class="eyebrow">NCNB owner access</p><h2>Local credential gate</h2></div>
+          <span class="badge" id="owner-auth-state">Checking credential</span>
+        </div>
+        <form id="owner-login-form" class="owner-auth-form">
+          <label class="field"><span>Username</span><input id="owner-username" autocomplete="username" value="NCNB" maxlength="64"></label>
+          <label class="field"><span>Password</span><input id="owner-password" type="password" autocomplete="current-password" maxlength="1024"></label>
+          <button class="primary" type="submit">Sign in</button>
+          <button id="owner-logout" type="button" hidden>Sign out</button>
+        </form>
+        <form id="owner-change-form" class="owner-auth-form" hidden>
+          <label class="field"><span>Current password</span><input id="owner-current-password" type="password" autocomplete="current-password" maxlength="1024"></label>
+          <label class="field"><span>New password</span><input id="owner-new-password" type="password" autocomplete="new-password" maxlength="1024"></label>
+          <label class="field"><span>Confirm new password</span><input id="owner-confirm-password" type="password" autocomplete="new-password" maxlength="1024"></label>
+          <button class="primary" type="submit">Change password</button>
+        </form>
+        <div id="owner-auth-result" class="result" aria-live="polite"></div>
+        <p class="muted">Sessions remain in memory and expire when this page closes. The Achilles reference stores only the non-secret rotation ID and due dates.</p>
+      </article>
       <div class="metric-grid">
         <article class="metric"><span>Desktop API</span><strong id="desktop-state">Checking</strong><small>${DEFAULT_DESKTOP_ORIGIN}</small></article>
         <article class="metric"><span>Merovingian</span><strong id="merovingian-state">Checking</strong><small>database · storage · health</small></article>
@@ -128,6 +178,7 @@ app.innerHTML = `
         <article class="panel"><div class="panel-head"><div><p class="eyebrow">Architect + Merovingian</p><h2>Available projects</h2></div></div><div id="desktop-projects" class="stack-list"><p class="muted">Project registry appears when Desktop is online.</p></div></article>
         <article class="panel"><div class="panel-head"><div><p class="eyebrow">Nathaniel / Achilles gate</p><h2>Review queue</h2></div></div><div id="desktop-reviews" class="stack-list"><p class="muted">Project receipts appear here for approval.</p></div></article>
       </div>
+      <article class="panel result-receipts-panel"><div class="panel-head"><div><p class="eyebrow">Neo + Smith durable proof</p><h2>Local results</h2></div><span class="badge" id="result-auth-state">Checking owner gate</span></div><div id="desktop-results"><p class="muted">Reading fixed local result metadata…</p></div></article>
       <article class="panel"><div class="panel-head"><div><p class="eyebrow">Neo exchange</p><h2>Public-safe projection</h2></div></div><div id="neo-exchange"><p class="muted">Reading bounded exchange projection…</p></div></article>
     </section>
 
@@ -173,13 +224,117 @@ const executionMode = byId<HTMLSelectElement>("execution-mode");
 const routePreview = byId<HTMLDivElement>("route-preview");
 const resultBox = byId<HTMLDivElement>("command-result");
 let currentCommand: CommandEnvelope | null = null;
+let currentAuthorityContract: AuthorityContract | null = null;
 let currentReviews: ReviewRecord[] = [];
 let currentRepresentationGraphs: RepresentationGraph[] = [];
+let ownerSessionToken = "";
+let ownerPasswordChangeToken = "";
+let ownerUsername = "NCNB";
+
+const ownerAuthMessage = (tone: "good" | "warn" | "bad", message: string): void => {
+  const mount = byId("owner-auth-result");
+  mount.dataset.tone = tone;
+  mount.textContent = message;
+};
+
+const applyOwnerAuth = (response: OwnerAuthResponse): void => {
+  const loginForm = byId<HTMLFormElement>("owner-login-form");
+  const changeForm = byId<HTMLFormElement>("owner-change-form");
+  const logoutButton = byId<HTMLButtonElement>("owner-logout");
+  ownerUsername = response.credential?.username || ownerUsername;
+  ownerSessionToken = response.session_token || "";
+  ownerPasswordChangeToken = response.password_change_token || "";
+  byId<HTMLInputElement>("owner-password").value = "";
+  if (response.authenticated && ownerSessionToken) {
+    changeForm.hidden = true;
+    logoutButton.hidden = false;
+    byId("owner-auth-state").textContent = `${ownerUsername} signed in`;
+    ownerAuthMessage("good", `Owner session active until ${response.expires_utc || "page close"}.`);
+    return;
+  }
+  logoutButton.hidden = true;
+  changeForm.hidden = !response.change_required;
+  loginForm.hidden = false;
+  byId("owner-auth-state").textContent = response.change_required
+    ? "Password change required"
+    : "Sign-in required";
+  ownerAuthMessage(
+    "warn",
+    response.change_required
+      ? "The bootstrap password was verified. Enter it again with a new password to complete first login."
+      : "Owner sign-in is required for unredacted files, receipts, and decisions.",
+  );
+};
+
+const requireOwnerSession = (): string => {
+  if (ownerSessionToken) return ownerSessionToken;
+  ownerAuthMessage("warn", "Sign in as NCNB before performing this owner-gated action.");
+  return "";
+};
+
+byId<HTMLFormElement>("owner-login-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const username = byId<HTMLInputElement>("owner-username").value.trim();
+  const passwordInput = byId<HTMLInputElement>("owner-password");
+  try {
+    applyOwnerAuth(await loginDesktopOwner(username, passwordInput.value));
+  } catch (error) {
+    passwordInput.value = "";
+    ownerAuthMessage("bad", error instanceof Error ? error.message : "Owner sign-in failed.");
+  }
+});
+
+byId<HTMLFormElement>("owner-change-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const current = byId<HTMLInputElement>("owner-current-password");
+  const next = byId<HTMLInputElement>("owner-new-password");
+  const confirmation = byId<HTMLInputElement>("owner-confirm-password");
+  if (next.value !== confirmation.value) {
+    ownerAuthMessage("bad", "The new passwords do not match.");
+    return;
+  }
+  const token = ownerPasswordChangeToken || ownerSessionToken;
+  if (!token) {
+    ownerAuthMessage("bad", "Sign in before changing the password.");
+    return;
+  }
+  try {
+    const response = await changeDesktopOwnerPassword(
+      ownerUsername,
+      current.value,
+      next.value,
+      token,
+      Boolean(ownerPasswordChangeToken),
+    );
+    current.value = "";
+    next.value = "";
+    confirmation.value = "";
+    applyOwnerAuth(response);
+  } catch (error) {
+    current.value = "";
+    next.value = "";
+    confirmation.value = "";
+    ownerAuthMessage("bad", error instanceof Error ? error.message : "Password change failed.");
+  }
+});
+
+byId<HTMLButtonElement>("owner-logout").addEventListener("click", async () => {
+  const token = ownerSessionToken;
+  ownerSessionToken = "";
+  ownerPasswordChangeToken = "";
+  if (token) {
+    try { await logoutDesktopOwner(token); } catch { /* The local session is already cleared. */ }
+  }
+  byId<HTMLButtonElement>("owner-logout").hidden = true;
+  byId("owner-auth-state").textContent = "Signed out";
+  ownerAuthMessage("warn", "Owner session cleared from this page.");
+});
 
 const renderRoute = (): void => {
   const routed = routeInstruction(instruction.value || "governance");
   targetFloor.value = routed;
-  routePreview.innerHTML = `<strong>Achilles route:</strong> ${routed} is primary. Neo coordinates and proof returns to this gate.`;
+  const gate = currentAuthorityContract?.canonical_gate_id;
+  routePreview.innerHTML = `<strong>Achilles route:</strong> ${routed} is primary. Neo coordinates and proof returns to this gate.${gate ? ` <small>Authority: ${escapeHtml(gate)}</small>` : " <small>Waiting for the Desktop authority contract.</small>"}`;
 };
 instruction.addEventListener("input", renderRoute);
 renderRoute();
@@ -189,6 +344,7 @@ const buildCommand = (): CommandEnvelope => createCommandEnvelope({
   targetFloor: targetFloor.value as Floor,
   priority: priority.value as Priority,
   executionMode: executionMode.value as ExecutionMode,
+  authorityContract: currentAuthorityContract,
 });
 
 const setResult = (tone: "good" | "warn" | "bad", text: string): void => {
@@ -224,22 +380,102 @@ const renderPending = (): void => {
   }));
 };
 
-const formatBytes = (value?: number): string => {
-  const bytes = Number(value || 0);
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 ** 2) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 ** 3) return `${(bytes / 1024 ** 2).toFixed(1)} MB`;
-  return `${(bytes / 1024 ** 3).toFixed(1)} GB`;
-};
-
 const renderProjects = (projects: ProjectRecord[]): void => {
   const mount = byId("desktop-projects");
   byId("project-count").textContent = String(projects.length);
-  if (!projects.length) {
-    mount.innerHTML = `<p class="muted">No project folders were found in the configured roots.</p>`;
-    return;
-  }
-  mount.innerHTML = projects.slice(0, 30).map((project) => `<article class="task-card"><div><strong>${escapeHtml(project.name)}</strong><span>${escapeHtml(project.condition || "unknown")} · ${escapeHtml(project.authority || "reference")} · ${project.file_count || 0} files</span><small>${formatBytes(project.size_bytes)}${project.scan_truncated ? " · bounded scan" : ""}</small></div></article>`).join("");
+  mount.innerHTML = renderProjectCards(projects);
+  bindProjectBrowseButtons(mount, async (projectId, button) => {
+    const card = button.closest<HTMLElement>("[data-project-card]");
+    const filesMount = card?.querySelector<HTMLElement>(".project-files");
+    if (!filesMount) return;
+    if (button.getAttribute("aria-expanded") === "true") {
+      button.setAttribute("aria-expanded", "false");
+      button.textContent = "Files";
+      filesMount.hidden = true;
+      return;
+    }
+    button.disabled = true;
+    button.textContent = "Loading…";
+    filesMount.hidden = false;
+    filesMount.innerHTML = `<p class="muted">Reading bounded project metadata…</p>`;
+    try {
+      const response = await listDesktopProjectFiles(projectId);
+      filesMount.innerHTML = renderProjectFiles(response);
+      bindProjectFileOpenButtons(filesMount, async (selectedProjectId, relativePath, openButton) => {
+        const resultMount = filesMount.querySelector<HTMLElement>(".project-file-result");
+        if (!resultMount) return;
+        const ownerSession = requireOwnerSession();
+        if (!ownerSession) {
+          resultMount.innerHTML = renderProjectFilesError(
+            "File preview held: sign in through the NCNB owner gate first.",
+          );
+          return;
+        }
+        openButton.disabled = true;
+        resultMount.innerHTML = `<p class="muted">Opening read-only result…</p>`;
+        try {
+          resultMount.innerHTML = renderProjectFileOpenResult(
+            await openDesktopProjectFile(selectedProjectId, relativePath, ownerSession),
+          );
+        } catch (error) {
+          resultMount.innerHTML = renderProjectFilesError(
+            error instanceof Error ? error.message : "Project file result is unavailable.",
+          );
+        } finally {
+          openButton.disabled = false;
+        }
+      });
+      button.setAttribute("aria-expanded", "true");
+      button.textContent = "Hide files";
+    } catch (error) {
+      filesMount.innerHTML = renderProjectFilesError(
+        error instanceof Error ? error.message : "Project files are unavailable.",
+      );
+      button.textContent = "Retry files";
+    } finally {
+      button.disabled = false;
+    }
+  });
+};
+
+const renderResults = (
+  response: LocalResultsResponse,
+  ownerConfirmationConfigured: boolean,
+): void => {
+  const mount = byId("desktop-results");
+  const authState = byId("result-auth-state");
+  authState.textContent = ownerConfirmationConfigured ? "Owner gate configured" : "Content gate held";
+  mount.innerHTML = renderResultReceipts(response, ownerConfirmationConfigured);
+  bindResultReceiptButtons(mount, async (resultId, button) => {
+    const detailMount = mount.querySelector<HTMLElement>(".result-receipt-detail");
+    if (!detailMount) return;
+    if (!ownerConfirmationConfigured) {
+      detailMount.innerHTML = renderResultReceiptsError(
+        "Receipt content is held because owner confirmation is not configured on the local bridge.",
+      );
+      return;
+    }
+    const ownerSession = requireOwnerSession();
+    if (!ownerSession) {
+      detailMount.innerHTML = renderResultReceiptsError(
+        "Receipt inspection held: sign in through the NCNB owner gate first.",
+      );
+      return;
+    }
+    button.disabled = true;
+    detailMount.innerHTML = `<p class="muted">Opening owner-confirmed read-only receipt…</p>`;
+    try {
+      detailMount.innerHTML = renderResultReceiptOpen(
+        await openDesktopResult(resultId, ownerSession),
+      );
+    } catch (error) {
+      detailMount.innerHTML = renderResultReceiptsError(
+        error instanceof Error ? error.message : "Local result receipt is unavailable.",
+      );
+    } finally {
+      button.disabled = false;
+    }
+  });
 };
 
 const renderReviews = (reviews: ReviewRecord[]): void => {
@@ -261,9 +497,14 @@ const renderReviews = (reviews: ReviewRecord[]): void => {
     const review = currentReviews.find((item) => item.review_id === reviewId);
     if (!review || !reviewId) return;
     const note = window.prompt(`${decision.toUpperCase()}: ${review.title || reviewId}\nOptional decision note:`, "") ?? "";
+    const ownerSession = requireOwnerSession();
+    if (!ownerSession) {
+      setResult("bad", "Review decision held: sign in through the NCNB owner gate first.");
+      return;
+    }
     try {
-      await decideDesktopReview(reviewId, decision, note);
-      setResult("good", `${reviewId} marked ${decision}. Drive decision receipt written by Desktop.`);
+      const response = await decideDesktopReview(reviewId, decision, note, ownerSession);
+      setResult("good", reviewDecisionOutcomeMessage(reviewId, decision, response));
       await refreshDesktop();
     } catch (error) {
       setResult("bad", error instanceof Error ? error.message : "Review decision failed.");
@@ -295,12 +536,9 @@ const renderCanonicalGraphs = (graphs: RepresentationGraph[]): void => {
         "Optional decision note:",
         "",
       ) ?? "";
-      const ownerConfirmation = window.prompt(
-        "Enter the local owner-confirmation token. It is sent only to the loopback Desktop bridge and is not stored.",
-        "",
-      ) ?? "";
-      if (!ownerConfirmation) {
-        setResult("bad", "Representation decision cancelled: owner confirmation is required.");
+      const ownerSession = requireOwnerSession();
+      if (!ownerSession) {
+        setResult("bad", "Representation decision held: sign in through the NCNB owner gate first.");
         return;
       }
       try {
@@ -310,7 +548,7 @@ const renderCanonicalGraphs = (graphs: RepresentationGraph[]): void => {
           scope,
           edgeIds,
           note,
-          ownerConfirmation,
+          ownerSession,
         );
         setResult(
           "good",
@@ -329,6 +567,7 @@ const renderCanonicalGraphs = (graphs: RepresentationGraph[]): void => {
 
 byId<HTMLFormElement>("command-form").addEventListener("submit", async (event) => {
   event.preventDefault();
+  currentCommand = null;
   try {
     currentCommand = buildCommand();
     setResult("warn", `Sending ${currentCommand.command_id} to Desktop…`);
@@ -338,9 +577,16 @@ byId<HTMLFormElement>("command-form").addEventListener("submit", async (event) =
     setResult("good", `Accepted by Desktop. Task ${receipt.task_id ?? "created"}; ${receipt.state || "queued for governed processing"}.`);
     await refreshDesktop();
   } catch (error) {
-    if (currentCommand) storePendingCommand(currentCommand);
+    const rejected = error instanceof DesktopRequestError;
+    if (currentCommand && !rejected) storePendingCommand(currentCommand);
     renderPending();
-    setResult("bad", `${error instanceof Error ? error.message : "Desktop unavailable"} The command envelope was saved locally.`);
+    const detail = error instanceof Error ? error.message : "Desktop unavailable";
+    setResult(
+      "bad",
+      rejected
+        ? `${detail} Desktop rejected the command; it was not mislabeled as an offline save.`
+        : `${detail}${currentCommand ? " The command envelope was saved locally." : ""}`,
+    );
   }
 });
 
@@ -377,6 +623,20 @@ const refreshDesktop = async (): Promise<void> => {
   merovingianState.textContent = "Checking";
   try {
     const status = await readDesktopStatus();
+    currentAuthorityContract = status.authority_contract || null;
+    ownerUsername = status.auth?.username || ownerUsername;
+    byId<HTMLInputElement>("owner-username").value = ownerUsername;
+    if (!ownerSessionToken) {
+      byId("owner-auth-state").textContent = status.auth?.configured
+        ? status.auth.must_change ? "First change required" : "Sign-in required"
+        : "Credential setup held";
+      if (!status.auth?.configured) {
+        ownerAuthMessage("bad", "The dedicated owner credential is not configured on Desktop.");
+      } else if (status.auth.must_change) {
+        ownerAuthMessage("warn", "Sign in with the bootstrap password, then complete the required change.");
+      }
+    }
+    renderRoute();
     pill.dataset.state = status.ok ? "online" : "degraded";
     pillText.textContent = status.ok ? "local runtime connected" : "runtime connected; health needs review";
     desktopState.textContent = "Online";
@@ -403,11 +663,28 @@ const refreshDesktop = async (): Promise<void> => {
     }
 
     try {
+      renderResults(await listDesktopResults(), status.auth?.configured === true);
+    } catch (error) {
+      byId("result-auth-state").textContent = status.auth?.configured === true
+        ? "Owner gate configured"
+        : "Content gate held";
+      byId("desktop-results").innerHTML = renderResultReceiptsError(
+        error instanceof Error ? error.message : "Local result metadata is unavailable.",
+      );
+    }
+
+    try {
       renderCanonicalGraphs(await listRepresentationGraphs());
-    } catch {
-      renderCanonicalGraphs([]);
+    } catch (error) {
+      currentRepresentationGraphs = [];
+      const reason = status.representation_edge?.enabled === false
+        ? "Canonical representation objects are intentionally disabled by the current launch gate."
+        : error instanceof Error ? error.message : "Representation objects are unavailable.";
+      byId("representation-graphs").innerHTML = `<article class="panel"><p class="eyebrow">Objects unavailable</p><h2>Feature-gated, not empty</h2><p class="muted">${escapeHtml(reason)}</p></article>`;
     }
   } catch {
+    currentAuthorityContract = null;
+    renderRoute();
     pill.dataset.state = "offline";
     pillText.textContent = "start LightSpeed Desktop and the local bridge";
     desktopState.textContent = "Offline";
@@ -416,6 +693,10 @@ const refreshDesktop = async (): Promise<void> => {
     tasksMount.innerHTML = `<p class="muted">Desktop is offline. Commands can still be saved, copied or downloaded.</p>`;
     byId("desktop-projects").innerHTML = `<p class="muted">Project registry unavailable while Desktop is offline.</p>`;
     byId("desktop-reviews").innerHTML = `<p class="muted">Review queue unavailable while Desktop is offline.</p>`;
+    byId("owner-auth-state").textContent = "Desktop offline";
+    ownerAuthMessage("bad", "Start the local Desktop bridge before signing in.");
+    byId("result-auth-state").textContent = "Desktop offline";
+    byId("desktop-results").innerHTML = `<p class="muted">Fixed local result metadata is unavailable while Desktop is offline.</p>`;
     renderCanonicalGraphs([]);
   }
 };

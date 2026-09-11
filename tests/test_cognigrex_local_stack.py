@@ -196,6 +196,129 @@ def test_unhealthy_bridge_recovery_preserves_unknown_listener(
     }
 
 
+def test_stack_desporte_launch_requires_explicit_gate(
+    monkeypatch,
+    stack_module,
+) -> None:
+    monkeypatch.setenv("DESPORTE_EXECUTABLE", r"C:\configured\desporte.exe")
+
+    def fail_start(*_args, **_kwargs):
+        raise AssertionError("De Sporte must remain held without the explicit flag")
+
+    monkeypatch.setattr(stack_module, "start_background", fail_start)
+
+    assert stack_module.optional_desporte_start()["state"] == "held_by_gate"
+
+
+def test_stack_desktop_health_requires_expected_server_identity(
+    monkeypatch,
+    stack_module,
+) -> None:
+    class Response:
+        status = 200
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        def read(self, _limit: int) -> bytes:
+            return json.dumps(
+                {
+                    "status": "operational",
+                    "version": "3.1.0",
+                    "server": "FastAPI + Three.js",
+                }
+            ).encode("utf-8")
+
+    monkeypatch.setattr(
+        stack_module,
+        "port_open",
+        lambda _host, port, timeout=0.35: port == 8081,
+    )
+    monkeypatch.setattr(stack_module, "urlopen", lambda *_args, **_kwargs: Response())
+
+    health = stack_module.desktop_health_status()
+
+    assert health["healthy"] is True
+    assert health["port"] == 8081
+
+
+def test_verified_process_stop_preserves_command_mismatch(
+    monkeypatch,
+    stack_module,
+) -> None:
+    monkeypatch.setattr(
+        stack_module,
+        "windows_command_processes",
+        lambda _fragment: [
+            {
+                "name": "powershell.exe",
+                "pid": 20,
+                "parent_pid": 1,
+                "created_ticks": 10,
+                "command_line": r"python C:\unexpected\__main__.py",
+            }
+        ],
+    )
+
+    def fail_run(*_args, **_kwargs):
+        raise AssertionError("identity mismatch must not be terminated")
+
+    monkeypatch.setattr(stack_module.subprocess, "run", fail_run)
+
+    result = stack_module.stop_verified_process_tree(
+        20,
+        process_fragment="__main__.py",
+        required_command_fragment=r"D:\LightSpeed\App\__main__.py",
+    )
+
+    assert result["verified"] is False
+    assert result["stopped_root_pid"] is None
+
+
+def test_verified_process_stop_targets_only_verified_tree(
+    monkeypatch,
+    stack_module,
+) -> None:
+    rows = [
+        {
+            "name": "python.exe",
+            "pid": 20,
+            "parent_pid": 1,
+            "created_ticks": 10,
+            "command_line": r"python D:\LightSpeed\App\__main__.py",
+        },
+        {
+            "name": "python.exe",
+            "pid": 21,
+            "parent_pid": 20,
+            "created_ticks": 11,
+            "command_line": r"python D:\LightSpeed\App\__main__.py --child",
+        },
+    ]
+    calls: list[list[str]] = []
+    monkeypatch.setattr(stack_module, "windows_command_processes", lambda _fragment: rows)
+    monkeypatch.setattr(stack_module, "pid_alive", lambda _pid: False)
+
+    def fake_run(command, **_kwargs):
+        calls.append(command)
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    monkeypatch.setattr(stack_module.subprocess, "run", fake_run)
+
+    result = stack_module.stop_verified_process_tree(
+        21,
+        process_fragment="__main__.py",
+        required_command_fragment=r"D:\LightSpeed\App\__main__.py",
+    )
+
+    assert result["verified"] is True
+    assert result["stopped_root_pid"] == 20
+    assert calls == [["taskkill", "/PID", "20", "/T", "/F"]]
+
+
 def test_watchdog_observes_healthy_stack_without_repair(
     tmp_path: Path,
     monkeypatch,
@@ -285,6 +408,67 @@ def test_bridge_health_requires_http_ok_and_canonical_root(
     assert not watchdog_module.bridge_status_healthy(tmp_path)
 
 
+def test_desktop_health_requires_lightspeed_http_identity(
+    monkeypatch,
+    watchdog_module,
+) -> None:
+    class Response:
+        status = 200
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        def read(self, _limit: int) -> bytes:
+            return json.dumps(
+                {
+                    "status": "operational",
+                    "version": "3.1.0",
+                    "server": "FastAPI + Three.js",
+                }
+            ).encode("utf-8")
+
+    monkeypatch.setattr(
+        watchdog_module,
+        "port_open",
+        lambda port: port in {8080, 8081},
+    )
+    monkeypatch.setattr(watchdog_module, "urlopen", lambda request, **_kwargs: (
+        (_ for _ in ()).throw(TimeoutError())
+        if ":8080/" in request.full_url
+        else Response()
+    ))
+
+    health = watchdog_module.desktop_health_status()
+
+    assert health["healthy"] is True
+    assert health["port"] == 8081
+
+
+def test_desktop_health_rejects_wrong_or_unresponsive_service(
+    monkeypatch,
+    watchdog_module,
+) -> None:
+    class WrongResponse:
+        status = 200
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        def read(self, _limit: int) -> bytes:
+            return b'{"status":"operational","server":"Tabby"}'
+
+    monkeypatch.setattr(watchdog_module, "port_open", lambda port: port == 8080)
+    monkeypatch.setattr(watchdog_module, "urlopen", lambda *_args, **_kwargs: WrongResponse())
+
+    assert watchdog_module.desktop_health_status()["healthy"] is False
+
+
 def test_observe_rejects_tcp_only_bridge_health(
     tmp_path: Path,
     monkeypatch,
@@ -306,8 +490,30 @@ def test_observe_rejects_tcp_only_bridge_health(
         "process_command_running",
         lambda _fragment: True,
     )
+    monkeypatch.setattr(
+        watchdog_module,
+        "desktop_health_status",
+        lambda: {"healthy": False, "port": None},
+    )
 
     observed = watchdog_module.observe(tmp_path, max_heartbeat_age=180)
 
     assert observed["bridge_tcp"] is True
     assert observed["bridge"] is False
+    assert observed["desktop_process"] is True
+    assert observed["desktop_http"] is False
+    assert observed["desktop"] is False
+
+
+def test_heartbeat_rejects_future_timestamp(
+    tmp_path: Path,
+    monkeypatch,
+    watchdog_module,
+) -> None:
+    lock = tmp_path / "lock.json"
+    lock.write_text(
+        json.dumps({"heartbeat_utc": "2099-01-01T00:00:00+00:00"}),
+        encoding="utf-8",
+    )
+
+    assert not watchdog_module.heartbeat_fresh(lock)
