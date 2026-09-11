@@ -17,10 +17,11 @@ Date: 2026-01-30
 """
 
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, simpledialog
 from pathlib import Path
 from typing import Optional, Dict, Any, Callable
 import json
+import os
 import sys
 import importlib.util
 import subprocess
@@ -155,6 +156,7 @@ class CognigrexLogin:
         # Load configuration
         self.users = self._load_users()
         self.selected_user = tk.StringVar()
+        self.password = tk.StringVar()
         self.launch_mode = tk.StringVar(value='dashboard')
         self.immersive_3d = tk.BooleanVar(value=True)
 
@@ -305,6 +307,26 @@ class CognigrexLogin:
             self._create_user_button(users_frame, role, user, i)
             if i == 0:
                 self.selected_user.set(role)
+
+        credential_frame = tk.Frame(section, bg=self.colors['bg_card'])
+        credential_frame.pack(fill=tk.X, pady=(18, 0))
+        tk.Label(
+            credential_frame,
+            text="Password",
+            font=('Segoe UI', 10, 'bold'),
+            fg=self.colors['fg_text'],
+            bg=self.colors['bg_card'],
+        ).pack(side=tk.LEFT, padx=(0, 12))
+        tk.Entry(
+            credential_frame,
+            textvariable=self.password,
+            show="*",
+            font=('Segoe UI', 11),
+            width=28,
+            bg=self.colors['bg_panel'],
+            fg=self.colors['fg_text'],
+            insertbackground=self.colors['fg_text'],
+        ).pack(side=tk.LEFT, fill=tk.X, expand=True)
 
     def _create_user_button(self, parent: tk.Frame, role: str, user: Dict, index: int):
         """Create a user selection button"""
@@ -500,8 +522,12 @@ class CognigrexLogin:
         """Process login and launch appropriate interface"""
         user_role = self.selected_user.get()
         user = self.users.get(user_role, {})
+        username = str(user.get('username') or '').strip()
         mode = self.launch_mode.get()
         immersive = self.immersive_3d.get()
+
+        if not self._authenticate_user(username, self.password.get()):
+            return
 
         # Validate IT Portal access
         if mode == 'it_portal' and user.get('clearance', 0) < 4:
@@ -519,6 +545,7 @@ class CognigrexLogin:
             'immersive_3d': immersive,
             'login_time': datetime.now().isoformat()
         }
+        self.password.set("")
 
         session_file = CONFIG_ROOT / "session.json"
         try:
@@ -552,6 +579,92 @@ class CognigrexLogin:
             args.append("--3d")
 
         subprocess.Popen(args, cwd=str(LIGHTSPEED_ROOT))
+
+    def _credential_service(self):
+        try:
+            from core.services import get_db
+            from lightspeed_runtime.owner_credentials import CredentialStore
+            return CredentialStore(get_db())
+        except Exception as exc:
+            raise RuntimeError(f"Canonical credential service is unavailable: {exc}") from exc
+
+    def _achilles_credential_reference_path(self, username: str) -> Path:
+        configured = os.environ.get("LIGHTSPEED_DATA_ROOT", "").strip()
+        data_root = Path(configured) if configured else LIGHTSPEED_ROOT.parent / "Data"
+        return data_root / "runtime_exports" / "achilles_pa" / f"credential_{username}.json"
+
+    def _change_password(self, username: str, current_password: str) -> bool:
+        new_password = simpledialog.askstring(
+            "Change Password",
+            "Enter a new password (12+ characters; use at least three character classes):",
+            show="*",
+            parent=self.root,
+        )
+        if new_password is None:
+            return False
+        confirmation = simpledialog.askstring(
+            "Confirm Password",
+            "Re-enter the new password:",
+            show="*",
+            parent=self.root,
+        )
+        if confirmation is None or confirmation != new_password:
+            messagebox.showerror("Password Change", "The new passwords did not match.", parent=self.root)
+            return False
+        try:
+            status = self._credential_service().change_password(
+                username,
+                current_password,
+                new_password,
+            )
+            from lightspeed_runtime.owner_credentials import write_achilles_credential_reference
+            write_achilles_credential_reference(
+                self._achilles_credential_reference_path(username),
+                status=status,
+                event="password_rotation",
+            )
+        except Exception as exc:
+            messagebox.showerror(
+                "Password Change",
+                f"The credential update failed closed.\n\n{exc}",
+                parent=self.root,
+            )
+            return False
+        messagebox.showinfo(
+            "Password Changed",
+            "Password rotation completed. Achilles P.A received the non-secret rotation reference.",
+            parent=self.root,
+        )
+        return True
+
+    def _authenticate_user(self, username: str, password: str) -> bool:
+        if not username or not password:
+            messagebox.showerror("Login Failed", "Username and password are required.", parent=self.root)
+            return False
+        try:
+            status = self._credential_service().authenticate(username, password)
+        except Exception:
+            messagebox.showerror(
+                "Login Failed",
+                "Username or password is incorrect, or the credential service is unavailable.",
+                parent=self.root,
+            )
+            return False
+        if status.get("must_change"):
+            messagebox.showinfo(
+                "Password Change Required",
+                "The bootstrap password or annual limit requires a new password before login.",
+                parent=self.root,
+            )
+            return self._change_password(username, password)
+        if status.get("reminder_due") and messagebox.askyesno(
+            "Password Rotation Reminder",
+            "This password has reached its 90-day review point. Change it now?\n\n"
+            "You may continue today, but a change becomes mandatory at one year.",
+            parent=self.root,
+        ):
+            return self._change_password(username, password)
+        return True
 
     def _load_symbol_from_file(self, rel_path: str, symbol: str):
         path = (LIGHTSPEED_ROOT / rel_path).resolve()

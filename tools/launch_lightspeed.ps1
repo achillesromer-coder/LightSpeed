@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
-    [switch]$NoBrowser
+    [switch]$NoBrowser,
+    [switch]$AllowDeSporteLaunch
 )
 
 Set-StrictMode -Version Latest
@@ -12,17 +13,22 @@ $ollama = 'C:\Users\acc\AppData\Local\Programs\Ollama\ollama.exe'
 $tabby = Join-Path $root 'Desktop_Hooks\LightSpeed\Z Axis\archive\vendor\Tabby\tabby.exe'
 $goDist = Join-Path $root 'Apps\lightspeed-go\dist'
 $stackRunner = Join-Path $root 'scripts\run_cognigrex_local_stack.py'
-$receipt = Join-Path $root 'LightSpeed_Runtime\exports\agent_home\cognigrex_local_stack_receipt.json'
+$receipt = 'D:\LightSpeed\App\Z Axis\Z-4_Merovingian\data\runtime_exports\cognigrex_local_stack_receipt.json'
 
 $env:LIGHTSPEED_RUNTIME_ROOT = Join-Path $root 'LightSpeed_Runtime'
 $env:LIGHTSPEED_SHELL_ROOT = Join-Path $root 'Desktop_Hooks\LightSpeed'
 $env:LIGHTSPEED_PROJECT_ROOTS = Join-Path $root 'Projects'
 $env:LIGHTSPEED_PYTHON = $python
-$env:DESPORTE_ROOT = 'D:\De Sporte'
-$env:DESPORTE_EXECUTABLE = 'C:\Cognigrex\DeSporte_Isolated\application\DeSporte-20260616\DeSporte.exe'
-$env:DESPORTE_LAUNCH_ARGS = '--data-root "C:\Cognigrex\DeSporte_Isolated\application\DeSporte-20260616\Data" --play --window-type onscreen'
 $env:OLLAMA_MODELS = 'C:\LightSpeed_Consolidated\.dependencies\ollama\models'
 $env:TABBY_ROOT = Join-Path $root '.tabby'
+
+$stackArguments = @($stackRunner, '--skip-desporte-population', '--json-output', $receipt)
+if ($AllowDeSporteLaunch) {
+    $env:DESPORTE_ROOT = 'D:\De Sporte'
+    $env:DESPORTE_EXECUTABLE = 'C:\Cognigrex\DeSporte_Isolated\application\DeSporte-20260616\DeSporte.exe'
+    $env:DESPORTE_LAUNCH_ARGS = '--data-root "C:\Cognigrex\DeSporte_Isolated\application\DeSporte-20260616\Data" --play --window-type onscreen'
+    $stackArguments += '--allow-desporte-launch'
+}
 
 foreach ($required in @($python, $ollama, $tabby, $goDist, $stackRunner)) {
     if (-not (Test-Path -LiteralPath $required)) {
@@ -52,7 +58,7 @@ if (-not (Test-LocalPort 4173)) {
     Start-Process -FilePath $python -ArgumentList @('-m', 'http.server', '4173', '--bind', '127.0.0.1', '--directory', $goDist) -WorkingDirectory $goDist -WindowStyle Hidden
 }
 
-& $python $stackRunner --json-output $receipt
+& $python @stackArguments
 if ($LASTEXITCODE -ne 0) {
     throw "LightSpeed local stack did not pass startup checks. Review $receipt"
 }
