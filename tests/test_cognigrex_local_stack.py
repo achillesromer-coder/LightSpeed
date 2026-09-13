@@ -12,6 +12,15 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
+def test_readme_uses_canonical_operator_namespace() -> None:
+    readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+    assert "`D:\\LightSpeed` is the stable operator and launch" in readme
+    assert "D:\\LightSpeed\\Environment\\Scripts\\python.exe" in readme
+    assert "D:\\LightSpeed\\App\\verify_launch_ready.py" in readme
+    assert "D:\\LightSpeed_Consolidated\\venv" not in readme
+    assert "D:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed\\tests" not in readme
+
+
 def load_script(name: str):
     path = REPO_ROOT / "scripts" / name
     spec = importlib.util.spec_from_file_location(path.stem, path)

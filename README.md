@@ -1,11 +1,14 @@
 # LightSpeed
 
 LightSpeed is the local Cognigrex desktop control plane and its approved
-inter-platform contracts. `D:\LightSpeed_Consolidated` is the stable operator
-and launch namespace. Its core runtime, shell, agents, applications and data
-paths are junctions backed by `C:\LightSpeed_Consolidated`; those paths are one
-physical system, not competing C- and D-drive copies. Git source worktrees stay
-separate under `_worktrees` and promote reviewed code into the live runtime.
+inter-platform contracts. `D:\LightSpeed` is the stable operator and launch
+namespace. Its `App`, `Core` and `Apps` surfaces resolve to the established
+`C:\LightSpeed_Consolidated` backing stores; `Environment`, `Automation`,
+`Tools`, `Data`, `State` and `Worktrees` remain under the D-drive namespace.
+These paths form one controlled system rather than competing C- and D-drive
+copies. Reviewed Git worktrees stay separate under `D:\LightSpeed\Worktrees`
+and promote code into the live runtime only through the maintenance/launch
+workflow.
 
 ## Operate
 
@@ -42,13 +45,13 @@ The complete boundary and classification rules are in
 Run the Desktop suite:
 
 ```powershell
-D:\LightSpeed_Consolidated\venv\Scripts\python.exe -m pytest D:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed\tests -q -W error
+D:\LightSpeed\Environment\Scripts\python.exe -m pytest D:\LightSpeed\App\tests -q -W error
 ```
 
 Run launch readiness:
 
 ```powershell
-D:\LightSpeed_Consolidated\venv\Scripts\python.exe D:\LightSpeed_Consolidated\Desktop_Hooks\LightSpeed\verify_launch_ready.py --quick
+D:\LightSpeed\Environment\Scripts\python.exe D:\LightSpeed\App\verify_launch_ready.py --quick
 ```
 
 Run LS GO checks:
