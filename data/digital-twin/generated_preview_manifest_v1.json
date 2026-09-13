@@ -1,0 +1,315 @@
+{
+  "schema": "achilles_six_view_preview_receipt_v1",
+  "generator": "tools/digital-twin/render_atrium_views.py",
+  "dependencies": {
+    "numpy": "1.26.4",
+    "pillow": "12.2.0",
+    "trimesh": "5.1.0"
+  },
+  "assets": [
+    {
+      "twin_id": "embedded_bio_blocks",
+      "source_obj": "assets/models/embedded_bio_blocks.obj",
+      "file": "assets/previews/embedded_bio_blocks_six_view.png",
+      "format": "PNG",
+      "views": [
+        "TOP",
+        "BOTTOM",
+        "LEFT",
+        "RIGHT",
+        "TOP LEFT",
+        "TOP RIGHT"
+      ],
+      "width": 1200,
+      "height": 800,
+      "size_bytes": 25282,
+      "sha256": "2b363f00c91b2bb4f7d3e8bea551173b095eb1ce74dbc09ec3961ea2a28f215f",
+      "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
+    },
+    {
+      "twin_id": "free_flow_batteries",
+      "source_obj": "assets/models/free_flow_batteries.obj",
+      "file": "assets/previews/free_flow_batteries_six_view.png",
+      "format": "PNG",
+      "views": [
+        "TOP",
+        "BOTTOM",
+        "LEFT",
+        "RIGHT",
+        "TOP LEFT",
+        "TOP RIGHT"
+      ],
+      "width": 1200,
+      "height": 800,
+      "size_bytes": 38254,
+      "sha256": "285f02a33bce16252fbaf84c7d68213d673ebb46d5d7a40ed77b09f6a2118340",
+      "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
+    },
+    {
+      "twin_id": "free_flow_capacitors",
+      "source_obj": "assets/models/free_flow_capacitors.obj",
+      "file": "assets/previews/free_flow_capacitors_six_view.png",
+      "format": "PNG",
+      "views": [
+        "TOP",
+        "BOTTOM",
+        "LEFT",
+        "RIGHT",
+        "TOP LEFT",
+        "TOP RIGHT"
+      ],
+      "width": 1200,
+      "height": 800,
+      "size_bytes": 27797,
+      "sha256": "7929826b089fb226d88a3e40f09873746756a4fd287adf46c3fc92cace44f588",
+      "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
+    },
+    {
+      "twin_id": "free_flow_solenoid_stack",
+      "source_obj": "assets/models/free_flow_solenoid_stack.obj",
+      "file": "assets/previews/free_flow_solenoid_stack_six_view.png",
+      "format": "PNG",
+      "views": [
+        "TOP",
+        "BOTTOM",
+        "LEFT",
+        "RIGHT",
+        "TOP LEFT",
+        "TOP RIGHT"
+      ],
+      "width": 1200,
+      "height": 800,
+      "size_bytes": 61244,
+      "sha256": "d186a8182bd2b7973cc542f14b94289c50a89c2da34b1788a4131dc1e08d7871",
+      "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
+    },
+    {
+      "twin_id": "intersol",
+      "source_obj": "assets/models/intersol.obj",
+      "file": "assets/previews/intersol_six_view.png",
+      "format": "PNG",
+      "views": [
+        "TOP",
+        "BOTTOM",
+        "LEFT",
+        "RIGHT",
+        "TOP LEFT",
+        "TOP RIGHT"
+      ],
+      "width": 1200,
+      "height": 800,
+      "size_bytes": 34166,
+      "sha256": "44d9bb4963c4fc4a57f979723354cce478f89fe9487895bf07dd6479efd58132",
+      "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
+    },
+    {
+      "twin_id": "luke_family",
+      "source_obj": "assets/models/luke_family.obj",
+      "file": "assets/previews/luke_family_six_view.png",
+      "format": "PNG",
+      "views": [
+        "TOP",
+        "BOTTOM",
+        "LEFT",
+        "RIGHT",
+        "TOP LEFT",
+        "TOP RIGHT"
+      ],
+      "width": 1200,
+      "height": 800,
+      "size_bytes": 49548,
+      "sha256": "331e20fc5daecffe5f8f09fd9a1241644b944a9dad2e726b165bca2932e9a738",
+      "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
+    },
+    {
+      "twin_id": "m1_elevated_bypass",
+      "source_obj": "assets/models/m1_elevated_bypass.obj",
+      "file": "assets/previews/m1_elevated_bypass_six_view.png",
+      "format": "PNG",
+      "views": [
+        "TOP",
+        "BOTTOM",
+        "LEFT",
+        "RIGHT",
+        "TOP LEFT",
+        "TOP RIGHT"
+      ],
+      "width": 1200,
+      "height": 800,
+      "size_bytes": 13981,
+      "sha256": "3941fbaf83738883ea04bc6c7b9b869009523c669a65b1e88bcb147a2bf85a0f",
+      "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
+    },
+    {
+      "twin_id": "maglev_luke_iv",
+      "source_obj": "assets/models/maglev_luke_iv.obj",
+      "file": "assets/previews/maglev_luke_iv_six_view.png",
+      "format": "PNG",
+      "views": [
+        "TOP",
+        "BOTTOM",
+        "LEFT",
+        "RIGHT",
+        "TOP LEFT",
+        "TOP RIGHT"
+      ],
+      "width": 1200,
+      "height": 800,
+      "size_bytes": 37379,
+      "sha256": "2b4e5154b850fd02530fd06bf68b9e40f38af07fe8945b5773c1657a83f1b284",
+      "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
+    },
+    {
+      "twin_id": "mark_1p",
+      "source_obj": "assets/models/mark_1p.obj",
+      "file": "assets/previews/mark_1p_six_view.png",
+      "format": "PNG",
+      "views": [
+        "TOP",
+        "BOTTOM",
+        "LEFT",
+        "RIGHT",
+        "TOP LEFT",
+        "TOP RIGHT"
+      ],
+      "width": 1200,
+      "height": 800,
+      "size_bytes": 30333,
+      "sha256": "5b9fc667144b69e3a61dfb8a506deb87a86388f35ebd85d11cddebb0861c7fd3",
+      "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
+    },
+    {
+      "twin_id": "mark_i",
+      "source_obj": "assets/models/mark_i.obj",
+      "file": "assets/previews/mark_i_six_view.png",
+      "format": "PNG",
+      "views": [
+        "TOP",
+        "BOTTOM",
+        "LEFT",
+        "RIGHT",
+        "TOP LEFT",
+        "TOP RIGHT"
+      ],
+      "width": 1200,
+      "height": 800,
+      "size_bytes": 45591,
+      "sha256": "477be549278dcb195919e791e4f255b472aead217b0a85fd16f592ee25b8cd38",
+      "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
+    },
+    {
+      "twin_id": "mark_iii",
+      "source_obj": "assets/models/mark_iii.obj",
+      "file": "assets/previews/mark_iii_six_view.png",
+      "format": "PNG",
+      "views": [
+        "TOP",
+        "BOTTOM",
+        "LEFT",
+        "RIGHT",
+        "TOP LEFT",
+        "TOP RIGHT"
+      ],
+      "width": 1200,
+      "height": 800,
+      "size_bytes": 26090,
+      "sha256": "89f8fcd53364de9724d90efec4122da55f1b49c8fd942b033b8342d182bbe3a5",
+      "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
+    },
+    {
+      "twin_id": "rfs_emff",
+      "source_obj": "assets/models/rfs_emff.obj",
+      "file": "assets/previews/rfs_emff_six_view.png",
+      "format": "PNG",
+      "views": [
+        "TOP",
+        "BOTTOM",
+        "LEFT",
+        "RIGHT",
+        "TOP LEFT",
+        "TOP RIGHT"
+      ],
+      "width": 1200,
+      "height": 800,
+      "size_bytes": 37116,
+      "sha256": "9d668157568e0f54d56ab12a70fffca8de87f6ca328c9b2864db3bc3d44ac6ec",
+      "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
+    },
+    {
+      "twin_id": "romer_spaceport",
+      "source_obj": "assets/models/romer_spaceport.obj",
+      "file": "assets/previews/romer_spaceport_six_view.png",
+      "format": "PNG",
+      "views": [
+        "TOP",
+        "BOTTOM",
+        "LEFT",
+        "RIGHT",
+        "TOP LEFT",
+        "TOP RIGHT"
+      ],
+      "width": 1200,
+      "height": 800,
+      "size_bytes": 17923,
+      "sha256": "bfedad16d53d93ddb758993767ac50a23a999c01cff03780329de7a80b892788",
+      "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
+    },
+    {
+      "twin_id": "second_cycle",
+      "source_obj": "assets/models/second_cycle.obj",
+      "file": "assets/previews/second_cycle_six_view.png",
+      "format": "PNG",
+      "views": [
+        "TOP",
+        "BOTTOM",
+        "LEFT",
+        "RIGHT",
+        "TOP LEFT",
+        "TOP RIGHT"
+      ],
+      "width": 1200,
+      "height": 800,
+      "size_bytes": 30805,
+      "sha256": "fe5505146cd9c1b440dceae3600ccdc3621c90033308d5ef3b04cfed15868c65",
+      "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
+    },
+    {
+      "twin_id": "solar_hull",
+      "source_obj": "assets/models/solar_hull.obj",
+      "file": "assets/previews/solar_hull_six_view.png",
+      "format": "PNG",
+      "views": [
+        "TOP",
+        "BOTTOM",
+        "LEFT",
+        "RIGHT",
+        "TOP LEFT",
+        "TOP RIGHT"
+      ],
+      "width": 1200,
+      "height": 800,
+      "size_bytes": 22299,
+      "sha256": "f1437878b2004b565c19ff2ac4aec6a6bc45f7398e31fc8d8fecd73e66bcd119",
+      "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
+    },
+    {
+      "twin_id": "watchtower",
+      "source_obj": "assets/models/watchtower.obj",
+      "file": "assets/previews/watchtower_six_view.png",
+      "format": "PNG",
+      "views": [
+        "TOP",
+        "BOTTOM",
+        "LEFT",
+        "RIGHT",
+        "TOP LEFT",
+        "TOP RIGHT"
+      ],
+      "width": 1200,
+      "height": 800,
+      "size_bytes": 23666,
+      "sha256": "105a1171196cd506fe35486ddbf7fcd98ebe03dfca8c9f7147ce3397f1375181",
+      "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
+    }
+  ]
+}

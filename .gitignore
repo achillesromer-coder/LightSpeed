@@ -19,6 +19,9 @@
 !/data/migration/
 /data/migration/*
 !/data/migration/source_roots.json
+!/data/digital-twin/
+!/data/digital-twin/generated_mesh_manifest_v1.json
+!/data/digital-twin/generated_preview_manifest_v1.json
 **/archive/
 **/ai_logs/
 **/reservoirs/

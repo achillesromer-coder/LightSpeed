@@ -1,0 +1,4 @@
+# trimesh does not guarantee API stability across releases; keep this exact.
+numpy==1.26.4
+Pillow==12.2.0
+trimesh==5.1.0

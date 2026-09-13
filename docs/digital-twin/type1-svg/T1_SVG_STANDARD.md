@@ -1,7 +1,9 @@
 # Type 1 SVG — Canonical Technical Projection Contract
 
-Status: **ACTIVE / EVIDENCE-GATED / REVIEW BRANCH**  
-Canonical data authority: **Type 1 Romer Cognigrex → `Type1_SVG_Standard`**  
+Status: **ACTIVE / EVIDENCE-GATED / REVIEW BRANCH**
+
+Canonical data authority: **Type 1 Romer Cognigrex → `Type1_SVG_Standard`**
+
 Date: 2026-09-13
 
 ## Purpose
