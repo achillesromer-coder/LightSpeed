@@ -24,6 +24,7 @@
       "height": 800,
       "size_bytes": 25282,
       "sha256": "2b363f00c91b2bb4f7d3e8bea551173b095eb1ce74dbc09ec3961ea2a28f215f",
+      "pixel_sha256": "1508308823ec7c6f312575d9a03bb806cf298c6212291e0fd211c32fbb70c730",
       "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
     },
     {
@@ -43,6 +44,7 @@
       "height": 800,
       "size_bytes": 38254,
       "sha256": "285f02a33bce16252fbaf84c7d68213d673ebb46d5d7a40ed77b09f6a2118340",
+      "pixel_sha256": "5f4fb7c46ffa32772c8f8ad8bd907f9b74f57cefcea420bfbea477e497351fbe",
       "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
     },
     {
@@ -62,6 +64,7 @@
       "height": 800,
       "size_bytes": 27797,
       "sha256": "7929826b089fb226d88a3e40f09873746756a4fd287adf46c3fc92cace44f588",
+      "pixel_sha256": "f7b57e8ce97e31e9911eb8694548643c4dfb0fd82199d6b1233ad8c31d38ef40",
       "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
     },
     {
@@ -81,6 +84,7 @@
       "height": 800,
       "size_bytes": 61244,
       "sha256": "d186a8182bd2b7973cc542f14b94289c50a89c2da34b1788a4131dc1e08d7871",
+      "pixel_sha256": "a6f59cc15120b16715e69b674bf724282adac955f605e575ce30d7ea1aabf7c9",
       "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
     },
     {
@@ -100,6 +104,7 @@
       "height": 800,
       "size_bytes": 34166,
       "sha256": "44d9bb4963c4fc4a57f979723354cce478f89fe9487895bf07dd6479efd58132",
+      "pixel_sha256": "852be0c2d3399805c7ce2f0e1c5adcb39306b73a9bd15adca95db81c56aa3983",
       "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
     },
     {
@@ -119,6 +124,7 @@
       "height": 800,
       "size_bytes": 49548,
       "sha256": "331e20fc5daecffe5f8f09fd9a1241644b944a9dad2e726b165bca2932e9a738",
+      "pixel_sha256": "2d5bf14f090c9437adb2c7833f30f289ae18cf9b35ec511124f6d33a1410e7dd",
       "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
     },
     {
@@ -138,6 +144,7 @@
       "height": 800,
       "size_bytes": 13981,
       "sha256": "3941fbaf83738883ea04bc6c7b9b869009523c669a65b1e88bcb147a2bf85a0f",
+      "pixel_sha256": "f622dc685f329609f35346484d0b17272f8553856b89755f346d43abaf37187f",
       "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
     },
     {
@@ -157,6 +164,7 @@
       "height": 800,
       "size_bytes": 37379,
       "sha256": "2b4e5154b850fd02530fd06bf68b9e40f38af07fe8945b5773c1657a83f1b284",
+      "pixel_sha256": "15fe94be34c32b3dc2b2443a6749b257960b641cddfb5c5de7aa0ee749eae87c",
       "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
     },
     {
@@ -176,6 +184,7 @@
       "height": 800,
       "size_bytes": 30333,
       "sha256": "5b9fc667144b69e3a61dfb8a506deb87a86388f35ebd85d11cddebb0861c7fd3",
+      "pixel_sha256": "20e3949b58bd4b963841c292bceff565afeb44bf491b535a4833f5301fb32eaa",
       "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
     },
     {
@@ -195,6 +204,7 @@
       "height": 800,
       "size_bytes": 45591,
       "sha256": "477be549278dcb195919e791e4f255b472aead217b0a85fd16f592ee25b8cd38",
+      "pixel_sha256": "034f9030c3b0ca4dc1a77d5f1679ba74bc4fe2b2adc570780ca98decfb1f6350",
       "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
     },
     {
@@ -214,6 +224,7 @@
       "height": 800,
       "size_bytes": 26090,
       "sha256": "89f8fcd53364de9724d90efec4122da55f1b49c8fd942b033b8342d182bbe3a5",
+      "pixel_sha256": "adb2efa961bea1c0ef4a76b3f6fbe8c5e58c9106f4d94e2bc34ad00b5d39af19",
       "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
     },
     {
@@ -233,6 +244,7 @@
       "height": 800,
       "size_bytes": 37116,
       "sha256": "9d668157568e0f54d56ab12a70fffca8de87f6ca328c9b2864db3bc3d44ac6ec",
+      "pixel_sha256": "bbfae6d330c79f9f895c380189d89306f9a1b8def5dc47b4a2d3b3cf6bb4ae64",
       "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
     },
     {
@@ -252,6 +264,7 @@
       "height": 800,
       "size_bytes": 17923,
       "sha256": "bfedad16d53d93ddb758993767ac50a23a999c01cff03780329de7a80b892788",
+      "pixel_sha256": "bb044b3b8b7616695922b71cb76b5deda4bfd35c9dc3ebec396d4f839d6bd686",
       "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
     },
     {
@@ -271,6 +284,7 @@
       "height": 800,
       "size_bytes": 30805,
       "sha256": "fe5505146cd9c1b440dceae3600ccdc3621c90033308d5ef3b04cfed15868c65",
+      "pixel_sha256": "ede0d7b9df7e7b67854a206c6285e5b496484ff397ebbef7ee12c3526798888b",
       "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
     },
     {
@@ -290,6 +304,7 @@
       "height": 800,
       "size_bytes": 22299,
       "sha256": "f1437878b2004b565c19ff2ac4aec6a6bc45f7398e31fc8d8fecd73e66bcd119",
+      "pixel_sha256": "b1ae54ccd01c1bb129e4958ddf3e13289e3ddd39fc8863e435b523ee863f868c",
       "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
     },
     {
@@ -309,6 +324,7 @@
       "height": 800,
       "size_bytes": 23666,
       "sha256": "105a1171196cd506fe35486ddbf7fcd98ebe03dfca8c9f7147ce3397f1375181",
+      "pixel_sha256": "484fc52a730bbd8e3e1f8a5f8ae511d76a2fd2e437e73c37ba62ef10270c646b",
       "claim_boundary": "visual review derivative; not engineering or physical validation evidence"
     }
   ]

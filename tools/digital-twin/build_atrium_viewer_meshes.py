@@ -168,7 +168,9 @@ def generate_assets(output_root, manifest_output):
     manifest = []
     for twin_id, mesh in build_meshes().items():
         output = output_root / f"{twin_id}.obj"
-        obj = trimesh.exchange.obj.export_obj(mesh, include_normals=True, include_texture=False).rstrip() + "\n"
+        # Excluding derived vertex normals prevents optional SciPy availability from
+        # changing otherwise identical OBJ bytes across local and hosted runners.
+        obj = trimesh.exchange.obj.export_obj(mesh, include_normals=False, include_texture=False).rstrip() + "\n"
         output.write_text(obj, encoding="utf-8", newline="\n")
         manifest.append({
             "twin_id": twin_id,

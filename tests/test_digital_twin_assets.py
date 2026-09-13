@@ -6,6 +6,8 @@ import json
 from html.parser import HTMLParser
 from pathlib import Path
 
+from PIL import Image
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SOURCE_MANIFEST = REPO_ROOT / "data" / "digital-twin" / "complete_digital_asset_manifest_2026-09-12.json"
@@ -44,6 +46,11 @@ def load_preview_generator():
 
 def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def pixel_sha256(path):
+    with Image.open(path) as image:
+        return hashlib.sha256(image.convert("RGB").tobytes()).hexdigest()
 
 
 def test_checked_in_assets_match_manifests():
@@ -130,10 +137,10 @@ def test_six_view_previews_match_receipt(tmp_path):
         assert item["width"] == 1200 and item["height"] == 800
         assert preview.stat().st_size == item["size_bytes"]
         assert sha256(preview) == item["sha256"]
+        assert pixel_sha256(preview) == item["pixel_sha256"]
 
     generator = load_preview_generator()
     regenerated = generator.generate_previews(REPO_ROOT / "assets" / "models", tmp_path / "previews", tmp_path / "manifest.json")
     assert [item["twin_id"] for item in regenerated] == [item["twin_id"] for item in checked_in]
     for expected, actual in zip(checked_in, regenerated, strict=True):
-        assert actual["sha256"] == expected["sha256"]
-        assert actual["size_bytes"] == expected["size_bytes"]
+        assert actual["pixel_sha256"] == expected["pixel_sha256"]

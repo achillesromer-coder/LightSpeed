@@ -15,8 +15,8 @@
       "vertices": 48,
       "faces": 72,
       "watertight": true,
-      "size_bytes": 5164,
-      "sha256": "2677f624b82fa6abe82c769b49aca7d3e84ddb50e632842bb1f03023efc064bd"
+      "size_bytes": 2540,
+      "sha256": "7a79547a8c2b6210b49ba9bb79b46a716e6a4f1b5efcdfe618a27807e003fe1e"
     },
     {
       "twin_id": "free_flow_batteries",
@@ -27,8 +27,8 @@
       "vertices": 458,
       "faces": 876,
       "watertight": true,
-      "size_bytes": 58050,
-      "sha256": "6d445be9e27080ec89e41196626051a6029cb445de69383d76edd0324cdbf342"
+      "size_bytes": 28378,
+      "sha256": "42542651d030f8fedf347444b5513365eb29f2ac1dabe4b83501681ab92e0055"
     },
     {
       "twin_id": "free_flow_capacitors",
@@ -39,8 +39,8 @@
       "vertices": 208,
       "faces": 396,
       "watertight": true,
-      "size_bytes": 25642,
-      "sha256": "d13ff2b7f62cfc7b35cf089d3ec0bf878875834dea3b07e056ff48e685df9129"
+      "size_bytes": 12537,
+      "sha256": "169386443e9944d6ba764a940e33dc048c932c09c827f9a3231af3236e861c99"
     },
     {
       "twin_id": "free_flow_solenoid_stack",
@@ -51,8 +51,8 @@
       "vertices": 2210,
       "faces": 4416,
       "watertight": true,
-      "size_bytes": 304927,
-      "sha256": "a108fc7e6b85bc18fb2601b8c6953e010957de54290f6619dae7857697a9c156"
+      "size_bytes": 149031,
+      "sha256": "be82322fe84fb75fe050d7edcdea887a5708b5e957ab7790b5a445cbc3454982"
     },
     {
       "twin_id": "rfs_emff",
@@ -63,8 +63,8 @@
       "vertices": 922,
       "faces": 1836,
       "watertight": true,
-      "size_bytes": 120152,
-      "sha256": "86cb24af9ee36909db62861a2390a39676efb348d00febf2a9c7188e1bba6bb6"
+      "size_bytes": 58704,
+      "sha256": "8d97815088182a3ad496ffffaf43ff29bdc459795a3fe79fa7b485c9fef99a45"
     },
     {
       "twin_id": "mark_1p",
@@ -75,8 +75,8 @@
       "vertices": 166,
       "faces": 312,
       "watertight": true,
-      "size_bytes": 20069,
-      "sha256": "a1eaa22b84833e584b5d3df1306268baad28893741b2ae887afd3468d76b34c0"
+      "size_bytes": 9771,
+      "sha256": "71223ddf1438205bac677d34d18196c97b02f42b4b50ebaf3add8601c9b1445e"
     },
     {
       "twin_id": "mark_i",
@@ -87,8 +87,8 @@
       "vertices": 158,
       "faces": 300,
       "watertight": true,
-      "size_bytes": 19106,
-      "sha256": "ad90cda0884826b58e83cc5b98764d8305aed5ae0959bf4b0daa5f1ed3f451c1"
+      "size_bytes": 9341,
+      "sha256": "06798255333872cfbf09bcb623e0153f4fe0eb5f133a2a5c5cc43cb86ce74bb9"
     },
     {
       "twin_id": "mark_iii",
@@ -99,8 +99,8 @@
       "vertices": 74,
       "faces": 132,
       "watertight": true,
-      "size_bytes": 8462,
-      "sha256": "c6927d42eda6a8d9e68c4eb431854eaa1124e6c85fa5247d671af1ae886c2833"
+      "size_bytes": 4145,
+      "sha256": "43655a61ce070f0872b2822a69bf3cf4475648c1d680159a2cf012995ff1826e"
     },
     {
       "twin_id": "luke_family",
@@ -111,8 +111,8 @@
       "vertices": 914,
       "faces": 1824,
       "watertight": true,
-      "size_bytes": 119162,
-      "sha256": "b19f40388b9907bf7eeeff6698e7f913298694620f20d8cc10560526d6545875"
+      "size_bytes": 58185,
+      "sha256": "f7668c80dfc37568f3d622cd5dfea1387e25cc36df425773b9054734f53f5faa"
     },
     {
       "twin_id": "maglev_luke_iv",
@@ -123,8 +123,8 @@
       "vertices": 906,
       "faces": 1804,
       "watertight": true,
-      "size_bytes": 117618,
-      "sha256": "f832077638ab2e41280445169274ce154bde84a26ced7e6f93c71e9c7c3302fc"
+      "size_bytes": 57248,
+      "sha256": "e1262a100563553fae6b8eae9652a2f251b0f5a0fa67ef3c4bc7d1968bef7daf"
     },
     {
       "twin_id": "embedded_bio_blocks",
@@ -135,8 +135,8 @@
       "vertices": 48,
       "faces": 72,
       "watertight": true,
-      "size_bytes": 5164,
-      "sha256": "05a0e4e20991e23c3cd39fa01ac35693f167c6fad8d162ea176b4e1fb5d06afe"
+      "size_bytes": 2540,
+      "sha256": "52ded48cca93f1cde1fd71c799ef7ea26591f6a577703df8e69efc7e40e9389d"
     },
     {
       "twin_id": "second_cycle",
@@ -147,8 +147,8 @@
       "vertices": 304,
       "faces": 576,
       "watertight": true,
-      "size_bytes": 37920,
-      "sha256": "5404a73d66c0f76ea0feee26152d21ce33ad9125059a4d81218a6782894300cd"
+      "size_bytes": 18453,
+      "sha256": "3c09c2bbf10c138ac5cd1c201ea2df4b93e046f0af3e904f706fb6569e46ad6f"
     },
     {
       "twin_id": "watchtower",
@@ -159,8 +159,8 @@
       "vertices": 40,
       "faces": 60,
       "watertight": true,
-      "size_bytes": 4352,
-      "sha256": "e42a82750aaaa0eab3923833309f7eeadad579835fc640039e6dfcdadb0bef2a"
+      "size_bytes": 2172,
+      "sha256": "8053c0310de21986d0e93cfb591da57abd871f424e50d22b5dd8956028583614"
     },
     {
       "twin_id": "intersol",
@@ -171,8 +171,8 @@
       "vertices": 384,
       "faces": 576,
       "watertight": true,
-      "size_bytes": 44296,
-      "sha256": "0dea69396c516cf0db242b22c22022b952ea6a00fc2b0fcbd50aec00f33cfea3"
+      "size_bytes": 21742,
+      "sha256": "a2f3f7f0d5707206be4cfc1ad87f8914279a7c326fdf520a8e74e7fda47130c4"
     },
     {
       "twin_id": "m1_elevated_bypass",
@@ -183,8 +183,8 @@
       "vertices": 32,
       "faces": 48,
       "watertight": true,
-      "size_bytes": 3508,
-      "sha256": "904c0c23ffe6400e0780573f38b203ae476fd4278ab078474dc92ed5b8b5d310"
+      "size_bytes": 1772,
+      "sha256": "f53534e89f197efa0e79df80fe8dd3472b24ca2b682ffcc9e3417153aa10d19c"
     },
     {
       "twin_id": "romer_spaceport",
@@ -195,8 +195,8 @@
       "vertices": 32,
       "faces": 48,
       "watertight": true,
-      "size_bytes": 3476,
-      "sha256": "ed1913243af844bccf2c546a545e3a92e329ad156ef0c953829c18de1653f017"
+      "size_bytes": 1740,
+      "sha256": "a9f7dd4cbc2077e4ac4fbe18a58003b44589f2964e8e4242c4e157e76b284fd4"
     }
   ]
 }

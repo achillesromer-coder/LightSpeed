@@ -36,6 +36,11 @@ def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def pixel_sha256(path):
+    with Image.open(path) as image:
+        return hashlib.sha256(image.convert("RGB").tobytes()).hexdigest()
+
+
 def display_path(path):
     resolved = path.resolve()
     try:
@@ -114,6 +119,7 @@ def generate_previews(model_root, output_root, manifest_output):
             "height": 800,
             "size_bytes": output_path.stat().st_size,
             "sha256": sha256(output_path),
+            "pixel_sha256": pixel_sha256(output_path),
             "claim_boundary": "visual review derivative; not engineering or physical validation evidence",
         })
     receipt = {
