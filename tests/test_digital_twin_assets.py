@@ -22,10 +22,13 @@ class AnchorParser(HTMLParser):
     def __init__(self):
         super().__init__()
         self.hrefs = []
+        self.start_tags = []
 
     def handle_starttag(self, tag, attrs):
+        attributes = dict(attrs)
+        self.start_tags.append((tag, attributes))
         if tag == "a":
-            href = dict(attrs).get("href")
+            href = attributes.get("href")
             if href:
                 self.hrefs.append(href)
 
@@ -135,6 +138,41 @@ def test_type1_local_links_resolve_inside_repository():
         assert target.is_file(), f"broken local link: {href}"
 
 
+def test_type1_surface_is_static_mobile_print_and_privacy_bounded():
+    html_path = REPO_ROOT / "docs" / "digital-twin" / "type1-svg" / "index.html"
+    html = html_path.read_text(encoding="utf-8")
+    parser = AnchorParser()
+    parser.feed(html)
+
+    forbidden = {"script", "form", "iframe", "object", "embed"}
+    assert forbidden.isdisjoint(tag for tag, _ in parser.start_tags)
+    assert "innerHTML" not in html and "eval(" not in html
+
+    metas = [attrs for tag, attrs in parser.start_tags if tag == "meta"]
+    assert any(attrs.get("name") == "viewport" and "width=device-width" in attrs.get("content", "") for attrs in metas)
+    assert any(attrs.get("name") == "referrer" and attrs.get("content") == "no-referrer" for attrs in metas)
+    csp = next(attrs["content"] for attrs in metas if attrs.get("http-equiv") == "Content-Security-Policy")
+    for directive in ("default-src 'none'", "style-src 'unsafe-inline'", "base-uri 'none'", "form-action 'none'"):
+        assert directive in csp
+
+    assert "@media (max-width: 700px)" in html
+    assert "@media print" in html
+    assert "break-inside: avoid" in html
+    assert ".links a:focus-visible" in html
+
+    allowed_external = ("https://docs.google.com/", "https://github.com/")
+    external_links = [href for href in parser.hrefs if "://" in href]
+    assert external_links
+    assert all(href.startswith(allowed_external) for href in external_links)
+
+    cards = [attrs["data-twin-id"] for tag, attrs in parser.start_tags if tag == "article" and "data-twin-id" in attrs]
+    assets = json.loads(SOURCE_MANIFEST.read_text(encoding="utf-8"))["assets"]
+    migration = json.loads((REPO_ROOT / "data" / "digital-twin" / "type1_svg_contract_v1.json").read_text(encoding="utf-8"))["migration"]
+    expected_order = [item["twin_id"] for item in sorted(migration, key=lambda item: int(item["priority"][1:]))]
+    assert cards == expected_order
+    assert set(cards) == {item["twin_id"] for item in assets}
+
+
 def test_six_view_previews_match_receipt(tmp_path):
     receipt_path = REPO_ROOT / "data" / "digital-twin" / "generated_preview_manifest_v1.json"
     checked_in = json.loads(receipt_path.read_text(encoding="utf-8"))["assets"]
@@ -170,12 +208,18 @@ def test_priority_type1_svg_packages_are_addressable_and_reproducible(tmp_path):
         assert svg_path.stat().st_size == item["size_bytes"]
         assert sha256(svg_path) == item["sha256"]
         root = ET.parse(svg_path).getroot()
+        assert root.attrib["width"] == "100%"
+        assert root.attrib["height"] == "auto"
+        assert root.attrib["viewBox"] == "0 0 1600 1000"
+        assert root.attrib["preserveAspectRatio"] == "xMidYMin meet"
         assert root.attrib["data-twin-id"] == item["twin_id"]
         assert root.attrib["data-drawing-id"].endswith(item["sheet_id"])
         assert root.attrib["data-representation-class"] == item["representation_class"]
         assert root.attrib["data-release-state"] == "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
         groups = {child.attrib.get("id") for child in root if child.tag.endswith("g")}
         assert groups == set(receipt["required_layers"])
+        assert not any(element.tag.endswith("script") for element in root.iter())
+        assert not any("href" in element.attrib for element in root.iter())
 
     generator = load_type1_package_generator()
     regenerated = generator.generate_packages(

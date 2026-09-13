@@ -3,6 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'"
+    />
     <title>ACHILLES Type 1 SVG Review</title>
     <style>
       :root {
@@ -63,6 +68,10 @@
         padding: 10px 12px;
         border-radius: 9px;
         background: #0b171c;
+      }
+      .links a:focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 3px;
       }
       main {
         padding: 28px max(24px, 4vw) 60px;
@@ -152,6 +161,62 @@
         font-size: 12px;
         line-height: 1.6;
       }
+      @media (max-width: 700px) {
+        header,
+        main,
+        footer {
+          padding-left: 18px;
+          padding-right: 18px;
+        }
+        header {
+          padding-top: 28px;
+          padding-bottom: 28px;
+        }
+        .grid,
+        .rules,
+        .doctrine {
+          grid-template-columns: 1fr;
+        }
+        .score {
+          display: block;
+          overflow-x: auto;
+        }
+      }
+      @media print {
+        :root {
+          --bg: #fff;
+          --p: #fff;
+          --line: #000;
+          --text: #000;
+          --muted: #222;
+          --accent: #000;
+          --ok: #000;
+          --hold: #000;
+        }
+        body,
+        .card,
+        .node,
+        .score,
+        .links a {
+          background: #fff;
+          color: #000;
+        }
+        .card,
+        .node,
+        .rule,
+        .score,
+        .section {
+          break-inside: avoid;
+        }
+        .lead,
+        .gate,
+        .rule {
+          color: #000;
+        }
+        .links a {
+          text-decoration: underline;
+        }
+      }
     </style>
   </head>
   <body>
@@ -224,7 +289,88 @@
       </section>
       <section class="section">
         <h2>Portfolio migration queue</h2>
-        <div id="grid" class="grid"></div>
+        <div id="grid" class="grid">
+          <article class="card" data-twin-id="watchtower">
+            <span class="priority">P0</span><div class="meta">watchtower · F3</div>
+            <h3>WatchTower Living Twin</h3><div class="meta">SOURCE_DERIVED_GEOMETRY</div>
+            <div class="gate"><b>Next gate:</b> A/C semantic binding; discipline evidence; browser/provider acceptance</div>
+          </article>
+          <article class="card" data-twin-id="m1_elevated_bypass">
+            <span class="priority">P1</span><div class="meta">m1_elevated_bypass · F3</div>
+            <h3>M1 Elevated Bypass</h3><div class="meta">SOURCE_DERIVED_GEOMETRY</div>
+            <div class="gate"><b>Next gate:</b> Native FCStd/topology parity plus engineering/site/traffic/structural evidence</div>
+          </article>
+          <article class="card" data-twin-id="romer_spaceport">
+            <span class="priority">P2</span><div class="meta">romer_spaceport · F2/F3</div>
+            <h3>Römer Spaceport Twin</h3><div class="meta">SOURCE_DERIVED_PARTIAL</div>
+            <div class="gate"><b>Next gate:</b> Accepted current site/facility CAD/BREP/IFC or controlled parametric geometry</div>
+          </article>
+          <article class="card" data-twin-id="mark_iii">
+            <span class="priority">P3</span><div class="meta">mark_iii · F2</div>
+            <h3>Mark III</h3><div class="meta">INTERACTION_PROXY + source subobjects</div>
+            <div class="gate"><b>Next gate:</b> Exact current three-appendage/interlock/Mark V mating CAD/ICD</div>
+          </article>
+          <article class="card" data-twin-id="luke_family">
+            <span class="priority">P4</span><div class="meta">luke_family · F2</div>
+            <h3>Luke / Luke II / Apostle</h3><div class="meta">INTERACTION_PROXY</div>
+            <div class="gate"><b>Next gate:</b> Exact assembly CAD/GLB source revision/hash plus physical ICD/BOD</div>
+          </article>
+          <article class="card" data-twin-id="free_flow_solenoid_stack">
+            <span class="priority">P5</span><div class="meta">free_flow_solenoid_stack · F2</div>
+            <h3>Free Flow Solenoid Stack</h3><div class="meta">INTERACTION_PROXY + centreline source</div>
+            <div class="gate"><b>Next gate:</b> Authoritative conductor/material/insulation/stack geometry</div>
+          </article>
+          <article class="card" data-twin-id="solar_hull">
+            <span class="priority">P6</span><div class="meta">solar_hull · F2</div>
+            <h3>Solar Hull</h3><div class="meta">INTERACTION_PROXY</div>
+            <div class="gate"><b>Next gate:</b> Current layer geometry plus qualified coupon/skin source</div>
+          </article>
+          <article class="card" data-twin-id="free_flow_batteries">
+            <span class="priority">P7</span><div class="meta">free_flow_batteries · F2</div>
+            <h3>Free Flow Batteries</h3><div class="meta">INTERACTION_PROXY</div>
+            <div class="gate"><b>Next gate:</b> Reference-module geometry/BMS/enclosure plus measured evidence</div>
+          </article>
+          <article class="card" data-twin-id="free_flow_capacitors">
+            <span class="priority">P8</span><div class="meta">free_flow_capacitors · F2</div>
+            <h3>Free Flow Capacitors</h3><div class="meta">INTERACTION_PROXY</div>
+            <div class="gate"><b>Next gate:</b> Authoritative module geometry plus ESR/EIS/pulse/thermal evidence</div>
+          </article>
+          <article class="card" data-twin-id="rfs_emff">
+            <span class="priority">P9</span><div class="meta">rfs_emff · F2</div>
+            <h3>RFS &amp; EMFF</h3><div class="meta">INTERACTION_PROXY</div>
+            <div class="gate"><b>Next gate:</b> As-built apparatus geometry plus calibrated sensors/raw controls</div>
+          </article>
+          <article class="card" data-twin-id="mark_1p">
+            <span class="priority">P10</span><div class="meta">mark_1p · F2</div>
+            <h3>Mark 1P</h3><div class="meta">INTERACTION_PROXY</div>
+            <div class="gate"><b>Next gate:</b> Current apparatus CAD/BOM/ICD and test-article identity</div>
+          </article>
+          <article class="card" data-twin-id="mark_i">
+            <span class="priority">P11</span><div class="meta">mark_i · F2</div>
+            <h3>Mark I Chamber</h3><div class="meta">INTERACTION_PROXY</div>
+            <div class="gate"><b>Next gate:</b> Current chamber geometry plus containment/calibration evidence</div>
+          </article>
+          <article class="card" data-twin-id="maglev_luke_iv">
+            <span class="priority">P12</span><div class="meta">maglev_luke_iv · F2</div>
+            <h3>Mag-Lev / Luke IV</h3><div class="meta">INTERACTION_PROXY</div>
+            <div class="gate"><b>Next gate:</b> Current subsystem/source pack plus site/safety/deceleration evidence</div>
+          </article>
+          <article class="card" data-twin-id="embedded_bio_blocks">
+            <span class="priority">P13</span><div class="meta">embedded_bio_blocks · F2</div>
+            <h3>Embedded / Bio-Blocks</h3><div class="meta">INTERACTION_PROXY</div>
+            <div class="gate"><b>Next gate:</b> Block geometry/recipe/batch/trial source plus local review</div>
+          </article>
+          <article class="card" data-twin-id="second_cycle">
+            <span class="priority">P14</span><div class="meta">second_cycle · F2</div>
+            <h3>Second Cycle</h3><div class="meta">INTERACTION_PROXY</div>
+            <div class="gate"><b>Next gate:</b> Bench/flume/mooring geometry plus WQ/mooring evidence</div>
+          </article>
+          <article class="card" data-twin-id="intersol">
+            <span class="priority">P15</span><div class="meta">intersol · F2</div>
+            <h3>InterSol Facility Twin</h3><div class="meta">INTERACTION_PROXY</div>
+            <div class="gate"><b>Next gate:</b> Accepted site-neutral BIM/IFC/parametric room graph plus discipline inputs</div>
+          </article>
+        </div>
       </section>
       <section class="section">
         <h2>Release scoring</h2>
@@ -344,143 +490,5 @@
       does not imply merge, deployment, public release, certified design,
       physical validation or operational readiness.
     </footer>
-    <script>
-      const items = [
-        [
-          "watchtower",
-          "WatchTower Living Twin",
-          "F3",
-          "SOURCE_DERIVED_GEOMETRY",
-          "P0",
-          "A/C semantic binding; discipline evidence; browser/provider acceptance",
-        ],
-        [
-          "m1_elevated_bypass",
-          "M1 Elevated Bypass",
-          "F3",
-          "SOURCE_DERIVED_GEOMETRY",
-          "P1",
-          "Native FCStd/topology parity plus engineering/site/traffic/structural evidence",
-        ],
-        [
-          "romer_spaceport",
-          "Römer Spaceport Twin",
-          "F2/F3",
-          "SOURCE_DERIVED_PARTIAL",
-          "P2",
-          "Accepted current site/facility CAD/BREP/IFC or controlled parametric geometry",
-        ],
-        [
-          "mark_iii",
-          "Mark III",
-          "F2",
-          "INTERACTION_PROXY + source subobjects",
-          "P3",
-          "Exact current three-appendage/interlock/Mark V mating CAD/ICD",
-        ],
-        [
-          "luke_family",
-          "Luke / Luke II / Apostle",
-          "F2",
-          "INTERACTION_PROXY",
-          "P4",
-          "Exact assembly CAD/GLB source revision/hash plus physical ICD/BOD",
-        ],
-        [
-          "free_flow_solenoid_stack",
-          "Free Flow Solenoid Stack",
-          "F2",
-          "INTERACTION_PROXY + centreline source",
-          "P5",
-          "Authoritative conductor/material/insulation/stack geometry",
-        ],
-        [
-          "solar_hull",
-          "Solar Hull",
-          "F2",
-          "INTERACTION_PROXY",
-          "P6",
-          "Current layer geometry plus qualified coupon/skin source",
-        ],
-        [
-          "free_flow_batteries",
-          "Free Flow Batteries",
-          "F2",
-          "INTERACTION_PROXY",
-          "P7",
-          "Reference-module geometry/BMS/enclosure plus measured evidence",
-        ],
-        [
-          "free_flow_capacitors",
-          "Free Flow Capacitors",
-          "F2",
-          "INTERACTION_PROXY",
-          "P8",
-          "Authoritative module geometry plus ESR/EIS/pulse/thermal evidence",
-        ],
-        [
-          "rfs_emff",
-          "RFS & EMFF",
-          "F2",
-          "INTERACTION_PROXY",
-          "P9",
-          "As-built apparatus geometry plus calibrated sensors/raw controls",
-        ],
-        [
-          "mark_1p",
-          "Mark 1P",
-          "F2",
-          "INTERACTION_PROXY",
-          "P10",
-          "Current apparatus CAD/BOM/ICD and test-article identity",
-        ],
-        [
-          "mark_i",
-          "Mark I Chamber",
-          "F2",
-          "INTERACTION_PROXY",
-          "P11",
-          "Current chamber geometry plus containment/calibration evidence",
-        ],
-        [
-          "maglev_luke_iv",
-          "Mag-Lev / Luke IV",
-          "F2",
-          "INTERACTION_PROXY",
-          "P12",
-          "Current subsystem/source pack plus site/safety/deceleration evidence",
-        ],
-        [
-          "embedded_bio_blocks",
-          "Embedded / Bio-Blocks",
-          "F2",
-          "INTERACTION_PROXY",
-          "P13",
-          "Block geometry/recipe/batch/trial source plus local review",
-        ],
-        [
-          "second_cycle",
-          "Second Cycle",
-          "F2",
-          "INTERACTION_PROXY",
-          "P14",
-          "Bench/flume/mooring geometry plus WQ/mooring evidence",
-        ],
-        [
-          "intersol",
-          "InterSol Facility Twin",
-          "F2",
-          "INTERACTION_PROXY",
-          "P15",
-          "Accepted site-neutral BIM/IFC/parametric room graph plus discipline inputs",
-        ],
-      ];
-      document.getElementById("grid").innerHTML = items
-        .map(
-          (x) =>
-            `<article class="card"><span class="priority">${x[4]}</span><div class="meta">${x[0]} · ${x[2]}</div><h3>${x[1]}</h3><div class="meta">${x[3]}</div><div class="gate"><b>Next gate:</b> ${x[5]}</div></article>`,
-        )
-        .join("");
-    </script>
   </body>
 </html>
