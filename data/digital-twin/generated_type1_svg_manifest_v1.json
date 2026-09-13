@@ -1,0 +1,280 @@
+{
+  "schema": "type1_svg_generated_package_receipt_v1",
+  "generator": "tools/digital-twin/build_type1_svg_packages.py",
+  "twins": [
+    "watchtower",
+    "m1_elevated_bypass",
+    "romer_spaceport"
+  ],
+  "required_layers": [
+    "L00-SHEET",
+    "L10-CONTEXT",
+    "L20-AUTH-GEOMETRY",
+    "L21-DERIVED-GEOMETRY",
+    "L22-PROVISIONAL-GEOMETRY",
+    "L30-HIDDEN",
+    "L31-CENTRE-DATUM",
+    "L40-SECTIONS",
+    "L50-DIMENSIONS",
+    "L60-MATERIALS",
+    "L70-INTERFACES",
+    "L75-SENSORS",
+    "L80-SIMULATION",
+    "L90-EVIDENCE",
+    "L91-UNKNOWNS",
+    "L95-ANNOTATIONS",
+    "L99-CLAIM-GATE"
+  ],
+  "sheets": [
+    "T1-00",
+    "T1-01",
+    "T1-02",
+    "T1-03",
+    "T1-04",
+    "T1-05",
+    "T1-06",
+    "T1-07"
+  ],
+  "assets": [
+    {
+      "twin_id": "watchtower",
+      "sheet_id": "T1-00",
+      "file": "assets/type1-svg/watchtower/T1-00.svg",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "source_obj_sha256": "8053c0310de21986d0e93cfb591da57abd871f424e50d22b5dd8956028583614",
+      "size_bytes": 45419,
+      "sha256": "a3aae242dc73a4c48c1abf8eab1b8f54191c5ba8c95424193029d0941ee4f90c",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "watchtower",
+      "sheet_id": "T1-01",
+      "file": "assets/type1-svg/watchtower/T1-01.svg",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "source_obj_sha256": "8053c0310de21986d0e93cfb591da57abd871f424e50d22b5dd8956028583614",
+      "size_bytes": 45433,
+      "sha256": "ec67473cbb26cb11482c2f3b7dcfe6c3fae774e920b35a462e84092caad1caf4",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "watchtower",
+      "sheet_id": "T1-02",
+      "file": "assets/type1-svg/watchtower/T1-02.svg",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "source_obj_sha256": "8053c0310de21986d0e93cfb591da57abd871f424e50d22b5dd8956028583614",
+      "size_bytes": 19726,
+      "sha256": "0150fe0fd1d9e9d0920ec2f43ecf765e76ce3b313a2ad4cc57e1a50233311bd5",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "watchtower",
+      "sheet_id": "T1-03",
+      "file": "assets/type1-svg/watchtower/T1-03.svg",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "source_obj_sha256": "8053c0310de21986d0e93cfb591da57abd871f424e50d22b5dd8956028583614",
+      "size_bytes": 19758,
+      "sha256": "3951bc8b832a6bac087db81c4bd65f7b210d6968eb915ea89624a1e9f190cf13",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "watchtower",
+      "sheet_id": "T1-04",
+      "file": "assets/type1-svg/watchtower/T1-04.svg",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "source_obj_sha256": "8053c0310de21986d0e93cfb591da57abd871f424e50d22b5dd8956028583614",
+      "size_bytes": 19720,
+      "sha256": "1f4c38844a291104b7f8817496d89e3e400caef67f7240ac08afa022208b4933",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "watchtower",
+      "sheet_id": "T1-05",
+      "file": "assets/type1-svg/watchtower/T1-05.svg",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "source_obj_sha256": "8053c0310de21986d0e93cfb591da57abd871f424e50d22b5dd8956028583614",
+      "size_bytes": 19734,
+      "sha256": "b047916c10898519529b3be46173b6275d54a2b0ee18b61954799fc58086f25e",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "watchtower",
+      "sheet_id": "T1-06",
+      "file": "assets/type1-svg/watchtower/T1-06.svg",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "source_obj_sha256": "8053c0310de21986d0e93cfb591da57abd871f424e50d22b5dd8956028583614",
+      "size_bytes": 19774,
+      "sha256": "45061e814d35338d857e72bdd5b9d7b80e1de473a4d3628576b16cb29b599a94",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "watchtower",
+      "sheet_id": "T1-07",
+      "file": "assets/type1-svg/watchtower/T1-07.svg",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "source_obj_sha256": "8053c0310de21986d0e93cfb591da57abd871f424e50d22b5dd8956028583614",
+      "size_bytes": 19774,
+      "sha256": "74502b35737c514c9fa9c884cf68937d4354e16f022c8679b8752b23c4377dd7",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "m1_elevated_bypass",
+      "sheet_id": "T1-00",
+      "file": "assets/type1-svg/m1_elevated_bypass/T1-00.svg",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "source_obj_sha256": "f53534e89f197efa0e79df80fe8dd3472b24ca2b682ffcc9e3417153aa10d19c",
+      "size_bytes": 39387,
+      "sha256": "7935f2122b2d115c447c73e6192077cf2eb9925be4d9e89ba8d16654a2cda5a2",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "m1_elevated_bypass",
+      "sheet_id": "T1-01",
+      "file": "assets/type1-svg/m1_elevated_bypass/T1-01.svg",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "source_obj_sha256": "f53534e89f197efa0e79df80fe8dd3472b24ca2b682ffcc9e3417153aa10d19c",
+      "size_bytes": 39401,
+      "sha256": "ce3e9e72d7231f9c525bfac6c5c332158dbfc22a48544b968e32c69ca7f0dacd",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "m1_elevated_bypass",
+      "sheet_id": "T1-02",
+      "file": "assets/type1-svg/m1_elevated_bypass/T1-02.svg",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "source_obj_sha256": "f53534e89f197efa0e79df80fe8dd3472b24ca2b682ffcc9e3417153aa10d19c",
+      "size_bytes": 17708,
+      "sha256": "d4eab2f7db10cfc8724930bbb25e80fa6a286be941f462828c9894968e4a17b8",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "m1_elevated_bypass",
+      "sheet_id": "T1-03",
+      "file": "assets/type1-svg/m1_elevated_bypass/T1-03.svg",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "source_obj_sha256": "f53534e89f197efa0e79df80fe8dd3472b24ca2b682ffcc9e3417153aa10d19c",
+      "size_bytes": 17740,
+      "sha256": "bcc7cd67a7525f11b89b6ad53d83fb2946cc614ad0f63e363b5093a22b1b6607",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "m1_elevated_bypass",
+      "sheet_id": "T1-04",
+      "file": "assets/type1-svg/m1_elevated_bypass/T1-04.svg",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "source_obj_sha256": "f53534e89f197efa0e79df80fe8dd3472b24ca2b682ffcc9e3417153aa10d19c",
+      "size_bytes": 17702,
+      "sha256": "a885711632f7ca2a61ba8a634297111168a6fb33566c4f11805f436305f53009",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "m1_elevated_bypass",
+      "sheet_id": "T1-05",
+      "file": "assets/type1-svg/m1_elevated_bypass/T1-05.svg",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "source_obj_sha256": "f53534e89f197efa0e79df80fe8dd3472b24ca2b682ffcc9e3417153aa10d19c",
+      "size_bytes": 17716,
+      "sha256": "6010a556f357a0d5f1a64dcd5075ddc1f0f86e00cfac55945441cf025294aa76",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "m1_elevated_bypass",
+      "sheet_id": "T1-06",
+      "file": "assets/type1-svg/m1_elevated_bypass/T1-06.svg",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "source_obj_sha256": "f53534e89f197efa0e79df80fe8dd3472b24ca2b682ffcc9e3417153aa10d19c",
+      "size_bytes": 17756,
+      "sha256": "89810dc0a603d15ac3abe5ae95864b1a272d18d9703fa73da3286821e8d7d1ee",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "m1_elevated_bypass",
+      "sheet_id": "T1-07",
+      "file": "assets/type1-svg/m1_elevated_bypass/T1-07.svg",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "source_obj_sha256": "f53534e89f197efa0e79df80fe8dd3472b24ca2b682ffcc9e3417153aa10d19c",
+      "size_bytes": 17756,
+      "sha256": "f481f4453bd8453801ce530238af5eec066dfa3398c660323b2e68f415b0e4a1",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "romer_spaceport",
+      "sheet_id": "T1-00",
+      "file": "assets/type1-svg/romer_spaceport/T1-00.svg",
+      "representation_class": "SOURCE_DERIVED_PARTIAL",
+      "source_obj_sha256": "a9f7dd4cbc2077e4ac4fbe18a58003b44589f2964e8e4242c4e157e76b284fd4",
+      "size_bytes": 38660,
+      "sha256": "a85bdf099d1e2a12a6718768a089624f97558f8f2016776e4c1e844687adefb4",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "romer_spaceport",
+      "sheet_id": "T1-01",
+      "file": "assets/type1-svg/romer_spaceport/T1-01.svg",
+      "representation_class": "SOURCE_DERIVED_PARTIAL",
+      "source_obj_sha256": "a9f7dd4cbc2077e4ac4fbe18a58003b44589f2964e8e4242c4e157e76b284fd4",
+      "size_bytes": 38674,
+      "sha256": "ccf975797a4c8d8592391c81e8713dafbb7bf98d55a90a65e1d0ce125950c6f9",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "romer_spaceport",
+      "sheet_id": "T1-02",
+      "file": "assets/type1-svg/romer_spaceport/T1-02.svg",
+      "representation_class": "SOURCE_DERIVED_PARTIAL",
+      "source_obj_sha256": "a9f7dd4cbc2077e4ac4fbe18a58003b44589f2964e8e4242c4e157e76b284fd4",
+      "size_bytes": 17359,
+      "sha256": "cd08515d215f9ed0e9a692c12f21825e203b02548bd4a03e0debacbfb07d99d4",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "romer_spaceport",
+      "sheet_id": "T1-03",
+      "file": "assets/type1-svg/romer_spaceport/T1-03.svg",
+      "representation_class": "SOURCE_DERIVED_PARTIAL",
+      "source_obj_sha256": "a9f7dd4cbc2077e4ac4fbe18a58003b44589f2964e8e4242c4e157e76b284fd4",
+      "size_bytes": 17391,
+      "sha256": "bd773e6af76c4ce5a3935b010c120340fce381e4f8fdd454864b742dc7035bb7",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "romer_spaceport",
+      "sheet_id": "T1-04",
+      "file": "assets/type1-svg/romer_spaceport/T1-04.svg",
+      "representation_class": "SOURCE_DERIVED_PARTIAL",
+      "source_obj_sha256": "a9f7dd4cbc2077e4ac4fbe18a58003b44589f2964e8e4242c4e157e76b284fd4",
+      "size_bytes": 17353,
+      "sha256": "2585be9848a8d6a8853519ebaacd27a37d3e7f73a14c08d21b3ce09ed6ede28a",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "romer_spaceport",
+      "sheet_id": "T1-05",
+      "file": "assets/type1-svg/romer_spaceport/T1-05.svg",
+      "representation_class": "SOURCE_DERIVED_PARTIAL",
+      "source_obj_sha256": "a9f7dd4cbc2077e4ac4fbe18a58003b44589f2964e8e4242c4e157e76b284fd4",
+      "size_bytes": 17367,
+      "sha256": "d4233f6a3680123f35b49ba358cd49f9641aeecd7c484a1545faca4330d0c9de",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "romer_spaceport",
+      "sheet_id": "T1-06",
+      "file": "assets/type1-svg/romer_spaceport/T1-06.svg",
+      "representation_class": "SOURCE_DERIVED_PARTIAL",
+      "source_obj_sha256": "a9f7dd4cbc2077e4ac4fbe18a58003b44589f2964e8e4242c4e157e76b284fd4",
+      "size_bytes": 17407,
+      "sha256": "3f1c6b42d642e41bfe91b4c69d8433b39cafff1195a3182fdf69fc21b075ed28",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    },
+    {
+      "twin_id": "romer_spaceport",
+      "sheet_id": "T1-07",
+      "file": "assets/type1-svg/romer_spaceport/T1-07.svg",
+      "representation_class": "SOURCE_DERIVED_PARTIAL",
+      "source_obj_sha256": "a9f7dd4cbc2077e4ac4fbe18a58003b44589f2964e8e4242c4e157e76b284fd4",
+      "size_bytes": 17407,
+      "sha256": "0151eedec6b0a5a02cfe65133d9ffe42c70f294a41f0e2e56e8613088025a1ad",
+      "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+    }
+  ]
+}

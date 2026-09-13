@@ -5,6 +5,7 @@ import importlib.util
 import json
 from html.parser import HTMLParser
 from pathlib import Path
+import xml.etree.ElementTree as ET
 
 from PIL import Image
 
@@ -14,6 +15,7 @@ SOURCE_MANIFEST = REPO_ROOT / "data" / "digital-twin" / "complete_digital_asset_
 GENERATED_MANIFEST = REPO_ROOT / "data" / "digital-twin" / "generated_mesh_manifest_v1.json"
 GENERATOR = REPO_ROOT / "tools" / "digital-twin" / "build_atrium_viewer_meshes.py"
 PREVIEW_GENERATOR = REPO_ROOT / "tools" / "digital-twin" / "render_atrium_views.py"
+TYPE1_PACKAGE_GENERATOR = REPO_ROOT / "tools" / "digital-twin" / "build_type1_svg_packages.py"
 
 
 class AnchorParser(HTMLParser):
@@ -38,6 +40,14 @@ def load_generator():
 
 def load_preview_generator():
     spec = importlib.util.spec_from_file_location("render_atrium_views", PREVIEW_GENERATOR)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def load_type1_package_generator():
+    spec = importlib.util.spec_from_file_location("build_type1_svg_packages", TYPE1_PACKAGE_GENERATOR)
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -144,3 +154,37 @@ def test_six_view_previews_match_receipt(tmp_path):
     assert [item["twin_id"] for item in regenerated] == [item["twin_id"] for item in checked_in]
     for expected, actual in zip(checked_in, regenerated, strict=True):
         assert actual["pixel_sha256"] == expected["pixel_sha256"]
+
+
+def test_priority_type1_svg_packages_are_addressable_and_reproducible(tmp_path):
+    manifest_path = REPO_ROOT / "data" / "digital-twin" / "generated_type1_svg_manifest_v1.json"
+    receipt = json.loads(manifest_path.read_text(encoding="utf-8"))
+    expected_twins = ["watchtower", "m1_elevated_bypass", "romer_spaceport"]
+    expected_sheets = [f"T1-{index:02d}" for index in range(8)]
+    assert receipt["twins"] == expected_twins
+    assert receipt["sheets"] == expected_sheets
+    assert len(receipt["assets"]) == 24
+    for item in receipt["assets"]:
+        svg_path = REPO_ROOT / item["file"]
+        assert svg_path.is_file()
+        assert svg_path.stat().st_size == item["size_bytes"]
+        assert sha256(svg_path) == item["sha256"]
+        root = ET.parse(svg_path).getroot()
+        assert root.attrib["data-twin-id"] == item["twin_id"]
+        assert root.attrib["data-drawing-id"].endswith(item["sheet_id"])
+        assert root.attrib["data-representation-class"] == item["representation_class"]
+        assert root.attrib["data-release-state"] == "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
+        groups = {child.attrib.get("id") for child in root if child.tag.endswith("g")}
+        assert groups == set(receipt["required_layers"])
+
+    generator = load_type1_package_generator()
+    regenerated = generator.generate_packages(
+        REPO_ROOT / "assets" / "models",
+        tmp_path / "type1-svg",
+        tmp_path / "manifest.json",
+    )
+    for expected, actual in zip(receipt["assets"], regenerated, strict=True):
+        assert actual["twin_id"] == expected["twin_id"]
+        assert actual["sheet_id"] == expected["sheet_id"]
+        assert actual["sha256"] == expected["sha256"]
+        assert actual["size_bytes"] == expected["size_bytes"]

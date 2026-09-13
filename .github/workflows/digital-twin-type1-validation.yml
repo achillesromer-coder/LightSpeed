@@ -6,6 +6,7 @@ on:
     paths:
       - "assets/models/**"
       - "assets/previews/**"
+      - "assets/type1-svg/**"
       - "data/digital-twin/**"
       - "docs/digital-twin/**"
       - "tools/digital-twin/**"
@@ -16,6 +17,7 @@ on:
     paths:
       - "assets/models/**"
       - "assets/previews/**"
+      - "assets/type1-svg/**"
       - "data/digital-twin/**"
       - "docs/digital-twin/**"
       - "tools/digital-twin/**"
