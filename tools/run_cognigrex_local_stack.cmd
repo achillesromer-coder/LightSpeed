@@ -1,15 +1,15 @@
 @echo off
 setlocal
-set "REPO_ROOT=%~dp0.."
-set "RECEIPT=%REPO_ROOT%\desktop\LightSpeed_Runtime\exports\agent_home\cognigrex_local_stack_receipt.json"
-if not defined LIGHTSPEED_PYTHON set "LIGHTSPEED_PYTHON=%REPO_ROOT%\venv\Scripts\python.exe"
+if not defined LIGHTSPEED_CANONICAL_ROOT set "LIGHTSPEED_CANONICAL_ROOT=D:\LightSpeed"
+set "RECEIPT=%LIGHTSPEED_CANONICAL_ROOT%\App\Z Axis\Z-4_Merovingian\data\runtime_exports\cognigrex_local_stack_receipt.json"
+if not defined LIGHTSPEED_PYTHON set "LIGHTSPEED_PYTHON=%LIGHTSPEED_CANONICAL_ROOT%\Environment\Scripts\python.exe"
 
 echo Starting the bounded local Cognigrex stack...
-echo Components: De Sporte population, Merovingian, LS GO bridge, LightSpeed Desktop.
+echo Components: Merovingian, LS GO bridge, LightSpeed Desktop.
 echo Web, publication, destructive cleanup and workbook mutation remain disabled.
 echo.
 
-"%LIGHTSPEED_PYTHON%" "%REPO_ROOT%\scripts\run_cognigrex_local_stack.py" --json-output "%RECEIPT%"
+"%LIGHTSPEED_PYTHON%" "%LIGHTSPEED_CANONICAL_ROOT%\Automation\run_cognigrex_local_stack.py" --skip-desporte-population --json-output "%RECEIPT%"
 set "EXIT_CODE=%ERRORLEVEL%"
 
 echo.

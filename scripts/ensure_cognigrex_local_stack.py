@@ -11,6 +11,7 @@ from pathlib import Path
 import socket
 import subprocess
 import sys
+import time
 from typing import Any
 from urllib.error import URLError
 from urllib.request import Request, urlopen
@@ -85,6 +86,48 @@ def bridge_status_healthy(root: Path, timeout_seconds: float = 10.0) -> bool:
         expected_root,
         reported_root,
     )
+
+
+def go_interface_healthy(timeout_seconds: float = 3.0) -> bool:
+    """Require the built LightSpeed Go surface to answer HTTP, not only TCP."""
+    request = Request("http://127.0.0.1:4173/", headers={"Accept": "text/html"})
+    try:
+        with urlopen(request, timeout=timeout_seconds) as response:
+            if response.status != 200:
+                return False
+            raw = response.read((1024 * 1024) + 1)
+    except (OSError, TimeoutError, URLError):
+        return False
+    if len(raw) > 1024 * 1024:
+        return False
+    return b"<html" in raw.lower() or b"<!doctype html" in raw.lower()
+
+
+def start_go_interface(root: Path, python: Path) -> str | None:
+    """Start the checked-in Go distribution without inheriting a console."""
+    distribution = root / "Apps" / "lightspeed-go" / "dist"
+    if not python.is_file() or not (distribution / "index.html").is_file():
+        return "canonical_python_or_go_distribution_missing"
+    creation_flags = subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
+    try:
+        subprocess.Popen(
+            [
+                str(python), "-m", "http.server", "4173", "--bind", "127.0.0.1",
+                "--directory", str(distribution),
+            ],
+            cwd=root,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            creationflags=creation_flags,
+        )
+    except OSError:
+        return "go_interface_start_failed"
+    for _ in range(20):
+        if go_interface_healthy(timeout_seconds=0.5):
+            return None
+        time.sleep(0.1)
+    return "go_interface_start_timeout"
 
 
 def desktop_health_status(
@@ -218,7 +261,7 @@ def observe(root: Path, *, max_heartbeat_age: int) -> dict[str, Any]:
         "bridge": bridge_status_healthy(root),
         "bridge_tcp": port_open(8765),
         "merovingian_heartbeat": heartbeat_fresh(lock_path, max_heartbeat_age),
-        "go_interface": port_open(4173),
+        "go_interface": go_interface_healthy(),
         "desktop_process": desktop_process,
         "desktop_http": bool(desktop_http["healthy"]),
         "desktop_port": desktop_http["port"],
@@ -231,6 +274,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--canonical-root", type=Path, default=DEFAULT_CANONICAL_ROOT)
     parser.add_argument("--max-heartbeat-age", type=int, default=180)
     parser.add_argument("--repair-timeout", type=int, default=180)
+    parser.add_argument("--quiet", action="store_true")
     args = parser.parse_args(argv)
 
     root = args.canonical_root.absolute()
@@ -240,12 +284,14 @@ def main(argv: list[str] | None = None) -> int:
     stack_receipt = canonical_receipt_dir(root) / "cognigrex_local_stack_receipt.json"
 
     before = observe(root, max_heartbeat_age=args.max_heartbeat_age)
-    needs_repair = not (
+    needs_stack_repair = not (
         before["bridge"] and before["merovingian_heartbeat"] and before["desktop"]
     )
+    needs_go_repair = not before["go_interface"]
+    needs_repair = needs_stack_repair or needs_go_repair
     launch_exit_code: int | None = None
     launch_error: str | None = None
-    if needs_repair:
+    if needs_stack_repair:
         if not python.is_file() or not launcher.is_file():
             launch_error = "canonical_python_or_launcher_missing"
         else:
@@ -268,10 +314,14 @@ def main(argv: list[str] | None = None) -> int:
             except subprocess.TimeoutExpired:
                 launch_error = "bounded_repair_timeout"
 
+    go_launch_error: str | None = None
+    if needs_go_repair:
+        go_launch_error = start_go_interface(root, python)
+
     after = observe(root, max_heartbeat_age=args.max_heartbeat_age)
     status = (
         "pass"
-        if after["bridge"] and after["merovingian_heartbeat"] and after["desktop"]
+        if after["bridge"] and after["merovingian_heartbeat"] and after["desktop"] and after["go_interface"]
         else "review_required"
     )
     payload = {
@@ -283,12 +333,14 @@ def main(argv: list[str] | None = None) -> int:
         "after": after,
         "launch_exit_code": launch_exit_code,
         "launch_error": launch_error,
+        "go_launch_error": go_launch_error,
         "canonical_root": str(root),
         "automatic_deletion": False,
         "public_export": False,
     }
     write_receipt(receipt, payload)
-    print(json.dumps(payload, indent=2, sort_keys=True))
+    if not args.quiet:
+        print(json.dumps(payload, indent=2, sort_keys=True))
     return 0 if status == "pass" else 2
 
 

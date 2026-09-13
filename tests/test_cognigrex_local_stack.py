@@ -377,6 +377,57 @@ def test_watchdog_bounds_missing_repair_prerequisites(
     assert '"public_export": false' in receipt
 
 
+def test_watchdog_repairs_missing_go_surface_without_stack_restart(
+    tmp_path: Path,
+    monkeypatch,
+    watchdog_module,
+    capsys,
+) -> None:
+    observations = iter(
+        [
+            {"bridge": True, "bridge_tcp": True, "merovingian_heartbeat": True, "go_interface": False, "desktop": True},
+            {"bridge": True, "bridge_tcp": True, "merovingian_heartbeat": True, "go_interface": True, "desktop": True},
+        ]
+    )
+    monkeypatch.setattr(watchdog_module, "observe", lambda *_args, **_kwargs: next(observations))
+    monkeypatch.setattr(watchdog_module, "start_go_interface", lambda *_args: None)
+
+    def fail_run(*_args, **_kwargs):
+        raise AssertionError("Go-only repair must not restart the bounded stack")
+
+    monkeypatch.setattr(watchdog_module.subprocess, "run", fail_run)
+    result = watchdog_module.main(["--canonical-root", str(tmp_path), "--quiet"])
+    receipt = (tmp_path / "State" / "Health" / "cognigrex_watchdog_receipt.json").read_text(encoding="utf-8")
+    assert result == 0
+    assert capsys.readouterr().out == ""
+    assert '"action": "repair"' in receipt
+    assert '"go_launch_error": null' in receipt
+
+
+def test_go_health_requires_bounded_html_response(monkeypatch, watchdog_module) -> None:
+    class Response:
+        status = 200
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        def read(self, _limit: int) -> bytes:
+            return b"<!doctype html><html><title>LightSpeed Go</title></html>"
+
+    monkeypatch.setattr(watchdog_module, "urlopen", lambda *_args, **_kwargs: Response())
+    assert watchdog_module.go_interface_healthy()
+
+    monkeypatch.setattr(
+        watchdog_module,
+        "urlopen",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(TimeoutError()),
+    )
+    assert not watchdog_module.go_interface_healthy()
+
+
 def test_bridge_health_requires_http_ok_and_canonical_root(
     tmp_path: Path,
     monkeypatch,
