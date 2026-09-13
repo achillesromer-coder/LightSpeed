@@ -61,6 +61,11 @@ def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def normalized_text_sha256(path):
+    text = path.read_text(encoding="utf-8").replace("\r\n", "\n").replace("\r", "\n")
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
 def pixel_sha256(path):
     with Image.open(path) as image:
         return hashlib.sha256(image.convert("RGB").tobytes()).hexdigest()
@@ -218,12 +223,12 @@ def test_type1_svg_packages_are_addressable_bounded_and_reproducible(tmp_path):
     assert proxy_ids == set(expected_twins[3:])
 
     generator_path = REPO_ROOT / receipt["generator"]["file"]
-    assert sha256(generator_path) == receipt["generator"]["sha256"]
+    assert normalized_text_sha256(generator_path) == receipt["generator"]["normalized_lf_sha256"]
     assert receipt["dependency_versions"] == {"numpy": "1.26.4", "trimesh": "5.1.0"}
     for input_receipt in receipt["input_receipts"]:
-        assert sha256(REPO_ROOT / input_receipt["file"]) == input_receipt["sha256"]
+        assert normalized_text_sha256(REPO_ROOT / input_receipt["file"]) == input_receipt["normalized_lf_sha256"]
     for environment_receipt in receipt["environment_receipts"]:
-        assert sha256(REPO_ROOT / environment_receipt["file"]) == environment_receipt["sha256"]
+        assert normalized_text_sha256(REPO_ROOT / environment_receipt["file"]) == environment_receipt["normalized_lf_sha256"]
 
     source_policy = {
         "watchtower": ("SOURCE_BOUNDED_REVIEW", "B", "COMMITTED_DERIVATION_RECEIPT"),

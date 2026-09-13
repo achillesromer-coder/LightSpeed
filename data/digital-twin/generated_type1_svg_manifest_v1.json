@@ -2,7 +2,7 @@
   "schema": "type1_svg_generated_package_receipt_v2",
   "generator": {
     "file": "tools/digital-twin/build_type1_svg_packages.py",
-    "sha256": "c4dc100bedadfb1df236ceca92cf5ce3caa3bf2bddaac4e8658386706104e230"
+    "normalized_lf_sha256": "9776a0859fef32133282ec588acdf4412f7868d8d975fe9e0bed8ee3ee482e1e"
   },
   "dependency_versions": {
     "numpy": "1.26.4",
@@ -11,25 +11,25 @@
   "input_receipts": [
     {
       "file": "data/digital-twin/complete_digital_asset_manifest_2026-09-12.json",
-      "sha256": "67037ba60a577d806147986194cbb81487a4e501bc3f1407f08e3564500cee5c"
+      "normalized_lf_sha256": "066761d69f79f53f4a5e2371db5dc91645c06e1a87f9479683615ef85351f6ca"
     },
     {
       "file": "data/digital-twin/type1_svg_contract_v1.json",
-      "sha256": "78bf5c244927f40ad6c2657679784ab34622d8f06d0ea0b12afa704548d0c2d2"
+      "normalized_lf_sha256": "bfe36993df6ee9c24657297431609099cc3c9a5b2b37c634671cb35f5c63667e"
     },
     {
       "file": "data/digital-twin/generated_mesh_manifest_v1.json",
-      "sha256": "61f0a683be22c25377e50557006763ebe182d45c9bb3513a6c62695b5fafbd75"
+      "normalized_lf_sha256": "61f0a683be22c25377e50557006763ebe182d45c9bb3513a6c62695b5fafbd75"
     }
   ],
   "environment_receipts": [
     {
       "file": "tools/digital-twin/requirements.txt",
-      "sha256": "7a436e52231959c47419ebcbc74181a570d61781efd2a43220701f79c4fcf3db"
+      "normalized_lf_sha256": "7a436e52231959c47419ebcbc74181a570d61781efd2a43220701f79c4fcf3db"
     },
     {
       "file": "tools/digital-twin/requirements-ci-linux-py311.lock",
-      "sha256": "20d59d4b38c6452be8cb2ea93d6b908d1187b2965a432c1a2341e18effa674b4"
+      "normalized_lf_sha256": "20d59d4b38c6452be8cb2ea93d6b908d1187b2965a432c1a2341e18effa674b4"
     }
   ],
   "twins": [

@@ -100,6 +100,11 @@ def sha256(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def normalized_text_sha256(path):
+    text = path.read_text(encoding="utf-8").replace("\r\n", "\n").replace("\r", "\n")
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
 def display_path(path):
     resolved = path.resolve()
     try:
@@ -335,18 +340,18 @@ def generate_packages(model_root, output_root, manifest_output):
         "schema": "type1_svg_generated_package_receipt_v2",
         "generator": {
             "file": display_path(Path(__file__)),
-            "sha256": sha256(Path(__file__)),
+            "normalized_lf_sha256": normalized_text_sha256(Path(__file__)),
         },
         "dependency_versions": {
             "numpy": np.__version__,
             "trimesh": trimesh.__version__,
         },
         "input_receipts": [
-            {"file": display_path(path), "sha256": sha256(path)}
+            {"file": display_path(path), "normalized_lf_sha256": normalized_text_sha256(path)}
             for path in (ASSET_CONTRACT, TYPE1_CONTRACT, MESH_RECEIPT)
         ],
         "environment_receipts": [
-            {"file": display_path(path), "sha256": sha256(path)}
+            {"file": display_path(path), "normalized_lf_sha256": normalized_text_sha256(path)}
             for path in (REQUIREMENTS, CI_LOCK)
         ],
         "twins": package_twins,
