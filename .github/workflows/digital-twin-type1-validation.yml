@@ -48,7 +48,9 @@ jobs:
         with:
           python-version: "3.11.9"
       - name: Install pinned geometry dependencies
-        run: python -m pip install --require-hashes --only-binary=:all: -r tools/digital-twin/requirements-ci-linux-py311.lock
+        run: >-
+          python -m pip install --require-hashes --only-binary=:all:
+          -r tools/digital-twin/requirements-ci-linux-py311.lock
       - name: Validate deterministic assets and Type 1 boundary
         run: python -m pytest -q tests/test_digital_twin_assets.py
       - name: Reject whitespace errors
