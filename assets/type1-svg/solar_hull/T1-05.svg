@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="auto" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMin meet" role="img" aria-labelledby="SOLAR_HULL-T1-05-title SOLAR_HULL-T1-05-desc" data-twin-id="solar_hull" data-drawing-id="SOLAR_HULL-T1-05" data-representation-class="INTERACTION_PROXY" data-package-kind="INTERACTION_PROXY_REVIEW_SHELL" data-evidence-ceiling="E" data-source-binding-state="NONE_PROXY_ONLY" data-dimension-authority="NONE" data-type1-complete="false" data-release-eligible="false" data-release-state="REVIEW_ONLY_NOT_PUBLICLY_RELEASED">
+<title id="SOLAR_HULL-T1-05-title">Solar Hull T1-05 Type 1 review sheet</title>
+<desc id="SOLAR_HULL-T1-05-desc">Simulation / operating envelope. E_CLASS_INCOMPLETE_REVIEW_SHELL. Review only; not engineering authority, physical validation or public release.</desc>
+<metadata>{"dimension_authority":"NONE","drawing_id":"SOLAR_HULL-T1-05","feature_addressability":"WHOLE_PROXY_ONLY","next_gate":"current layer geometry and qualified coupon/skin source","package_evidence_ceiling":"E","package_kind":"INTERACTION_PROXY_REVIEW_SHELL","package_state":"E_CLASS_INCOMPLETE_REVIEW_SHELL","projection_input_obj":"assets/models/solar_hull.obj","projection_input_obj_sha256":"7a79547a8c2b6210b49ba9bb79b46a716e6a4f1b5efcdfe618a27807e003fe1e","proxy_model_extents_m":[5.0,3.0,0.7],"purpose":"Simulation / operating envelope","release_eligible":false,"release_state":"REVIEW_ONLY_NOT_PUBLICLY_RELEASED","representation_class":"INTERACTION_PROXY","sheet_domain_state":"UNBOUND","sheet_id":"T1-05","source_binding_state":"NONE_PROXY_ONLY","twin_id":"solar_hull","type1_complete":false,"units":"m"}</metadata>
+<style>.sheet{fill:#fff;stroke:#111;stroke-width:2}.border,.viewbox{fill:none;stroke:#555;stroke-width:1}.geometry{stroke:#111;stroke-width:1;fill:none;vector-effect:non-scaling-stroke}.datum{stroke:#555;stroke-width:1;stroke-dasharray:8 5}.title{font:700 24px system-ui,sans-serif}.subtitle{font:16px system-ui,sans-serif;fill:#333}.section-title{font:700 13px system-ui,sans-serif}.body,.label{font:12px ui-monospace,monospace;fill:#222}.proxy-watermark{font:700 12px system-ui,sans-serif;fill:#111;letter-spacing:1.5px}.gate{fill:#111}.gate-text{font:700 12px system-ui,sans-serif;fill:#fff;letter-spacing:1px}</style>
+<g id="L00-SHEET" data-layer="L00-SHEET">
+<rect x="18" y="18" width="1564" height="964" class="sheet"/>
+<text x="48" y="62" class="title">TYPE 1 SVG · SOLAR HULL · T1-05</text>
+<text x="48" y="88" class="subtitle">Simulation / operating envelope · DOMAIN UNBOUND</text>
+<line x1="18" y1="900" x2="1582" y2="900" class="border"/>
+<text x="48" y="930" class="body">Drawing ID: SOLAR_HULL-T1-05 · Units: m · Scale: FIT · Coordinate frame: LOCAL REVIEW</text>
+<text x="48" y="954" class="body">Representation: INTERACTION_PROXY · Revision: 1 · Release: REVIEW ONLY</text>
+</g>
+<g id="L10-CONTEXT" data-layer="L10-CONTEXT">
+<text x="48" y="130" class="section-title">PROJECTION INPUT — NOT SOURCE AUTHORITY</text>
+<text x="48" y="152" class="body">Interaction-proxy input</text>
+<text x="48" y="170" class="body">assets/models/solar_hull.obj SHA-256</text>
+<text x="48" y="188" class="body">7a79547a8c2b6210b49ba9bb79b46a71</text>
+<text x="48" y="206" class="body">6e6a4f1b5efcdfe618a27807e003fe1e. The hash</text>
+<text x="48" y="224" class="body">identifies only this review proxy; source binding</text>
+<text x="48" y="242" class="body">is NONE_PROXY_ONLY.</text>
+</g>
+<g id="L20-AUTH-GEOMETRY" data-layer="L20-AUTH-GEOMETRY">
+
+</g>
+<g id="L21-DERIVED-GEOMETRY" data-layer="L21-DERIVED-GEOMETRY">
+
+</g>
+<g id="L22-PROVISIONAL-GEOMETRY" data-layer="L22-PROVISIONAL-GEOMETRY">
+<rect x="430" y="230" width="740" height="450" class="viewbox"/>
+<text x="442" y="252" class="label">ISOMETRIC</text>
+<path id="SOLAR_HULL-T1-05-ISOMETRIC-proxy-wireframe" data-feature-class="INTERACTION_PROXY_WIREFRAME" d="M 477.758 432.442 L 477.758 423.140 M 477.758 432.442 L 719.439 292.907 M 477.758 432.442 L 719.439 283.605 M 477.758 423.140 L 719.439 283.605 M 719.439 292.907 L 719.439 283.605 M 477.758 432.442 L 880.561 665.000 M 477.758 423.140 L 880.561 665.000 M 719.439 292.907 L 880.561 665.000 M 477.758 423.140 L 880.561 655.698 M 880.561 665.000 L 880.561 655.698 M 719.439 292.907 L 1122.242 525.465 M 880.561 665.000 L 1122.242 525.465 M 880.561 655.698 L 1122.242 525.465 M 477.758 423.140 L 1122.242 516.163 M 719.439 292.907 L 1122.242 516.163 M 719.439 283.605 L 1122.242 516.163 M 880.561 655.698 L 1122.242 516.163 M 1122.242 525.465 L 1122.242 516.163 M 490.648 423.140 L 490.648 413.837 M 490.648 423.140 L 722.662 289.186 M 490.648 423.140 L 722.662 279.884 M 490.648 413.837 L 722.662 279.884 M 722.662 289.186 L 722.662 279.884 M 490.648 423.140 L 877.338 646.395 M 490.648 413.837 L 877.338 646.395 M 722.662 289.186 L 877.338 646.395 M 490.648 413.837 L 877.338 637.093 M 877.338 646.395 L 877.338 637.093 M 722.662 289.186 L 1109.352 512.442 M 877.338 646.395 L 1109.352 512.442 M 877.338 637.093 L 1109.352 512.442 M 490.648 413.837 L 1109.352 503.140 M 722.662 289.186 L 1109.352 503.140 M 722.662 279.884 L 1109.352 503.140 M 877.338 637.093 L 1109.352 503.140 M 1109.352 512.442 L 1109.352 503.140 M 503.537 413.837 L 503.537 404.535 M 503.537 413.837 L 725.884 285.465 M 503.537 413.837 L 725.884 276.163 M 503.537 404.535 L 725.884 276.163 M 725.884 285.465 L 725.884 276.163 M 503.537 413.837 L 874.116 627.791 M 503.537 404.535 L 874.116 627.791 M 725.884 285.465 L 874.116 627.791 M 503.537 404.535 L 874.116 618.488 M 874.116 627.791 L 874.116 618.488 M 725.884 285.465 L 1096.463 499.419 M 874.116 627.791 L 1096.463 499.419 M 874.116 618.488 L 1096.463 499.419 M 503.537 404.535 L 1096.463 490.116 M 725.884 285.465 L 1096.463 490.116 M 725.884 276.163 L 1096.463 490.116 M 874.116 618.488 L 1096.463 490.116 M 1096.463 499.419 L 1096.463 490.116 M 516.427 404.535 L 516.427 395.233 M 516.427 404.535 L 729.107 281.744 M 516.427 404.535 L 729.107 272.442 M 516.427 395.233 L 729.107 272.442 M 729.107 281.744 L 729.107 272.442 M 516.427 404.535 L 870.893 609.186 M 516.427 395.233 L 870.893 609.186 M 729.107 281.744 L 870.893 609.186 M 516.427 395.233 L 870.893 599.884 M 870.893 609.186 L 870.893 599.884 M 729.107 281.744 L 1083.573 486.395 M 870.893 609.186 L 1083.573 486.395 M 870.893 599.884 L 1083.573 486.395 M 516.427 395.233 L 1083.573 477.093 M 729.107 281.744 L 1083.573 477.093 M 729.107 272.442 L 1083.573 477.093 M 870.893 599.884 L 1083.573 477.093 M 1083.573 486.395 L 1083.573 477.093 M 529.317 395.233 L 529.317 385.930 M 529.317 395.233 L 732.329 278.023 M 529.317 395.233 L 732.329 268.721 M 529.317 385.930 L 732.329 268.721 M 732.329 278.023 L 732.329 268.721 M 529.317 395.233 L 867.671 590.581 M 529.317 385.930 L 867.671 590.581 M 732.329 278.023 L 867.671 590.581 M 529.317 385.930 L 867.671 581.279 M 867.671 590.581 L 867.671 581.279 M 732.329 278.023 L 1070.683 473.372 M 867.671 590.581 L 1070.683 473.372 M 867.671 581.279 L 1070.683 473.372 M 529.317 385.930 L 1070.683 464.070 M 732.329 278.023 L 1070.683 464.070 M 732.329 268.721 L 1070.683 464.070 M 867.671 581.279 L 1070.683 464.070 M 1070.683 473.372 L 1070.683 464.070 M 542.206 385.930 L 542.206 376.628 M 542.206 385.930 L 735.552 274.302 M 542.206 385.930 L 735.552 265.000 M 542.206 376.628 L 735.552 265.000 M 735.552 274.302 L 735.552 265.000 M 542.206 385.930 L 864.448 571.977 M 542.206 376.628 L 864.448 571.977 M 735.552 274.302 L 864.448 571.977 M 542.206 376.628 L 864.448 562.674 M 864.448 571.977 L 864.448 562.674 M 735.552 274.302 L 1057.794 460.349 M 864.448 571.977 L 1057.794 460.349 M 864.448 562.674 L 1057.794 460.349 M 542.206 376.628 L 1057.794 451.047 M 735.552 274.302 L 1057.794 451.047 M 735.552 265.000 L 1057.794 451.047 M 864.448 562.674 L 1057.794 451.047 M 1057.794 460.349 L 1057.794 451.047" class="geometry"/>
+</g>
+<g id="L30-HIDDEN" data-layer="L30-HIDDEN">
+
+</g>
+<g id="L31-CENTRE-DATUM" data-layer="L31-CENTRE-DATUM">
+<line id="DATUM-X" x1="80" y1="700" x2="300" y2="700" class="datum"/>
+<line id="DATUM-Z" x1="80" y1="700" x2="80" y2="520" class="datum"/>
+<text x="306" y="706" class="label">+X</text><text x="66" y="510" class="label">+Z</text>
+</g>
+<g id="L40-SECTIONS" data-layer="L40-SECTIONS">
+
+</g>
+<g id="L50-DIMENSIONS" data-layer="L50-DIMENSIONS">
+<text x="48" y="710" class="section-title">E-CLASS PROXY MODEL ENVELOPE</text>
+<text x="48" y="732" class="body">X 5 m · Y 3 m · Z 0.7 m. Values describe only the interaction</text>
+<text x="48" y="750" class="body">proxy model; dimension authority is NONE.</text>
+</g>
+<g id="L60-MATERIALS" data-layer="L60-MATERIALS">
+<text x="560" y="710" class="section-title">MATERIAL STATE</text>
+<text x="560" y="732" class="body">Material identity, grade, finish, thickness, batch and physical</text>
+<text x="560" y="750" class="body">qualification remain UNKNOWN unless separately bound in the</text>
+<text x="560" y="768" class="body">owning canon.</text>
+</g>
+<g id="L70-INTERFACES" data-layer="L70-INTERFACES">
+<text x="1072" y="710" class="section-title">INTERFACE STATE</text>
+<text x="1072" y="732" class="body">Critical physical, electrical, structural, fluid, control and</text>
+<text x="1072" y="750" class="body">ecological interfaces remain evidence-gated; no connection</text>
+<text x="1072" y="768" class="body">capacity is inferred from geometry.</text>
+</g>
+<g id="L75-SENSORS" data-layer="L75-SENSORS">
+<text x="48" y="808" class="section-title">TELEMETRY STATE</text>
+<text x="48" y="830" class="body">No LIVE state is asserted. Sensor identity, physical location, calibration, raw</text>
+<text x="48" y="848" class="body">dataset hash, uncertainty and last-valid observation remain required.</text>
+</g>
+<g id="L80-SIMULATION" data-layer="L80-SIMULATION">
+<text x="820" y="808" class="section-title">SIMULATION STATE</text>
+<text x="820" y="830" class="body">No solver result or measured performance is promoted by this projection. Reproducible</text>
+<text x="820" y="848" class="body">inputs, boundary conditions, solver version, residuals and output hashes remain</text>
+<text x="820" y="866" class="body">required.</text>
+</g>
+<g id="L90-EVIDENCE" data-layer="L90-EVIDENCE">
+<text x="440" y="130" class="section-title">EVIDENCE CLASS</text>
+<text x="440" y="152" class="body">INTERACTION_PROXY. Projection input hash is bound;</text>
+<text x="440" y="170" class="body">source binding remains NONE_PROXY_ONLY. Evidence</text>
+<text x="440" y="188" class="body">ceiling E; migration priority P6 and fidelity F2.</text>
+</g>
+<g id="L91-UNKNOWNS" data-layer="L91-UNKNOWNS">
+<text x="800" y="130" class="section-title">OPEN GATE</text>
+<text x="800" y="152" class="body">current layer geometry and qualified coupon/skin</text>
+<text x="800" y="170" class="body">source</text>
+</g>
+<g id="L95-ANNOTATIONS" data-layer="L95-ANNOTATIONS">
+<text x="1160" y="130" class="section-title">SHEET LIMIT</text>
+<text x="1160" y="152" class="body">This is a machine-addressable review projection.</text>
+<text x="1160" y="170" class="body">Blank or gated domains are deliberate and must not</text>
+<text x="1160" y="188" class="body">be aesthetically filled with invented values.</text>
+</g>
+<g id="L99-CLAIM-GATE" data-layer="L99-CLAIM-GATE">
+<text x="800" y="112" text-anchor="middle" class="proxy-watermark">INTERACTION PROXY / INCOMPLETE REVIEW SHELL</text>
+<rect x="18" y="962" width="1564" height="20" class="gate"/>
+<text x="800" y="977" text-anchor="middle" class="gate-text">NOT ENGINEERING AUTHORITY · NOT PHYSICAL VALIDATION · NOT PUBLICLY RELEASED</text>
+</g>
+</svg>

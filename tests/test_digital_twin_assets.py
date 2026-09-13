@@ -194,32 +194,115 @@ def test_six_view_previews_match_receipt(tmp_path):
         assert actual["pixel_sha256"] == expected["pixel_sha256"]
 
 
-def test_priority_type1_svg_packages_are_addressable_and_reproducible(tmp_path):
+def test_type1_svg_packages_are_addressable_bounded_and_reproducible(tmp_path):
     manifest_path = REPO_ROOT / "data" / "digital-twin" / "generated_type1_svg_manifest_v1.json"
     receipt = json.loads(manifest_path.read_text(encoding="utf-8"))
-    expected_twins = ["watchtower", "m1_elevated_bypass", "romer_spaceport"]
+    contract_path = REPO_ROOT / "data" / "digital-twin" / "type1_svg_contract_v1.json"
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    migration = sorted(contract["migration"], key=lambda item: int(item["priority"][1:]))
+    expected_twins = [item["twin_id"] for item in migration]
     expected_sheets = [f"T1-{index:02d}" for index in range(8)]
+    source_assets = json.loads(SOURCE_MANIFEST.read_text(encoding="utf-8"))["assets"]
+    proxy_ids = {item["twin_id"] for item in source_assets if item["representation_class"] == "INTERACTION_PROXY"}
+    mesh_receipts = {
+        item["twin_id"]: item
+        for item in json.loads(GENERATED_MANIFEST.read_text(encoding="utf-8"))["assets"]
+    }
+
+    assert receipt["schema"] == "type1_svg_generated_package_receipt_v2"
     assert receipt["twins"] == expected_twins
     assert receipt["sheets"] == expected_sheets
-    assert len(receipt["assets"]) == 24
+    assert receipt["package_count"] == 16
+    assert receipt["asset_count"] == 128
+    assert len(receipt["assets"]) == 128
+    assert proxy_ids == set(expected_twins[3:])
+
+    generator_path = REPO_ROOT / receipt["generator"]["file"]
+    assert sha256(generator_path) == receipt["generator"]["sha256"]
+    assert receipt["dependency_versions"] == {"numpy": "1.26.4", "trimesh": "5.1.0"}
+    for input_receipt in receipt["input_receipts"]:
+        assert sha256(REPO_ROOT / input_receipt["file"]) == input_receipt["sha256"]
+    for environment_receipt in receipt["environment_receipts"]:
+        assert sha256(REPO_ROOT / environment_receipt["file"]) == environment_receipt["sha256"]
+
+    source_policy = {
+        "watchtower": ("SOURCE_BOUNDED_REVIEW", "B", "COMMITTED_DERIVATION_RECEIPT"),
+        "m1_elevated_bypass": ("SOURCE_BOUNDED_REVIEW", "B", "COMMITTED_DERIVATION_RECEIPT"),
+        "romer_spaceport": ("PARTIAL_SOURCE_REVIEW", "MIXED_B_C", "PARTIAL_DERIVATION_RECEIPT"),
+    }
     for item in receipt["assets"]:
         svg_path = REPO_ROOT / item["file"]
         assert svg_path.is_file()
         assert svg_path.stat().st_size == item["size_bytes"]
         assert sha256(svg_path) == item["sha256"]
-        root = ET.parse(svg_path).getroot()
+        assert item["projection_input_obj_sha256"] == mesh_receipts[item["twin_id"]]["sha256"]
+        assert item["type1_complete"] is False
+        assert item["release_eligible"] is False
+
+        raw_svg = svg_path.read_text(encoding="utf-8")
+        root = ET.fromstring(raw_svg)
         assert root.attrib["width"] == "100%"
         assert root.attrib["height"] == "auto"
         assert root.attrib["viewBox"] == "0 0 1600 1000"
         assert root.attrib["preserveAspectRatio"] == "xMidYMin meet"
+        assert root.attrib["role"] == "img"
         assert root.attrib["data-twin-id"] == item["twin_id"]
         assert root.attrib["data-drawing-id"].endswith(item["sheet_id"])
         assert root.attrib["data-representation-class"] == item["representation_class"]
+        assert root.attrib["data-package-kind"] == item["package_kind"]
+        assert root.attrib["data-evidence-ceiling"] == item["package_evidence_ceiling"]
+        assert root.attrib["data-source-binding-state"] == item["source_binding_state"]
+        assert root.attrib["data-dimension-authority"] == item["dimension_authority"]
+        assert root.attrib["data-type1-complete"] == "false"
+        assert root.attrib["data-release-eligible"] == "false"
         assert root.attrib["data-release-state"] == "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
-        groups = {child.attrib.get("id") for child in root if child.tag.endswith("g")}
-        assert groups == set(receipt["required_layers"])
+
+        title = next(element for element in root if element.tag.endswith("title"))
+        description = next(element for element in root if element.tag.endswith("desc"))
+        assert root.attrib["aria-labelledby"] == f"{title.attrib['id']} {description.attrib['id']}"
+        metadata_element = next(element for element in root if element.tag.endswith("metadata"))
+        metadata = json.loads(metadata_element.text)
+        assert metadata["projection_input_obj_sha256"] == item["projection_input_obj_sha256"]
+        assert metadata["type1_complete"] is False and metadata["release_eligible"] is False
+
+        groups = {child.attrib.get("id"): child for child in root if child.tag.endswith("g")}
+        assert set(groups) == set(receipt["required_layers"])
         assert not any(element.tag.endswith("script") for element in root.iter())
         assert not any("href" in element.attrib for element in root.iter())
+
+        if item["twin_id"] in proxy_ids:
+            assert item["package_kind"] == "INTERACTION_PROXY_REVIEW_SHELL"
+            assert item["package_evidence_ceiling"] == "E"
+            assert item["source_binding_state"] == "NONE_PROXY_ONLY"
+            assert item["dimension_authority"] == "NONE"
+            assert "proxy_model_extents_m" in metadata and "derived_model_extents_m" not in metadata
+            assert "INTERACTION PROXY / INCOMPLETE REVIEW SHELL" in raw_svg
+            assert "source mesh hash" not in raw_svg.lower()
+            assert "bounding dimensions are derived" not in raw_svg.lower()
+            assert metadata["feature_addressability"] == "WHOLE_PROXY_ONLY"
+            assert "data-feature-id=" not in raw_svg
+            assert not any(element.attrib.get("class") == "geometry" for element in groups["L21-DERIVED-GEOMETRY"].iter())
+            assert any(element.attrib.get("class") == "geometry" for element in groups["L22-PROVISIONAL-GEOMETRY"].iter())
+            if item["sheet_id"] in {"T1-02", "T1-03", "T1-04", "T1-05", "T1-06"}:
+                assert metadata["sheet_domain_state"] == "UNBOUND"
+                assert "DOMAIN UNBOUND" in raw_svg
+        else:
+            kind, ceiling, binding = source_policy[item["twin_id"]]
+            assert (item["package_kind"], item["package_evidence_ceiling"], item["source_binding_state"]) == (kind, ceiling, binding)
+            assert "derived_model_extents_m" in metadata and "proxy_model_extents_m" not in metadata
+            assert metadata["feature_addressability"] == "EDGE_LEVEL_DERIVED"
+
+    gallery_path = REPO_ROOT / receipt["gallery"]["file"]
+    assert gallery_path.is_file()
+    assert gallery_path.stat().st_size == receipt["gallery"]["size_bytes"]
+    assert sha256(gallery_path) == receipt["gallery"]["sha256"]
+    gallery_parser = AnchorParser()
+    gallery_parser.feed(gallery_path.read_text(encoding="utf-8"))
+    assert len([href for href in gallery_parser.hrefs if href.endswith(".svg")]) == 128
+    assert len([href for href in gallery_parser.hrefs if href.endswith(".obj")]) == 16
+    assert len([href for href in gallery_parser.hrefs if href.endswith(".png")]) == 16
+    for href in gallery_parser.hrefs:
+        assert (gallery_path.parent / href).resolve().is_file(), href
 
     generator = load_type1_package_generator()
     regenerated = generator.generate_packages(
@@ -232,3 +315,14 @@ def test_priority_type1_svg_packages_are_addressable_and_reproducible(tmp_path):
         assert actual["sheet_id"] == expected["sheet_id"]
         assert actual["sha256"] == expected["sha256"]
         assert actual["size_bytes"] == expected["size_bytes"]
+
+
+def test_ci_dependencies_and_actions_are_immutable():
+    workflow = (REPO_ROOT / ".github" / "workflows" / "digital-twin-type1-validation.yml").read_text(encoding="utf-8")
+    lock = (REPO_ROOT / "tools" / "digital-twin" / "requirements-ci-linux-py311.lock").read_text(encoding="utf-8")
+    assert "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1" in workflow
+    assert "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97" in workflow
+    assert 'python-version: "3.11.9"' in workflow
+    assert "--require-hashes --only-binary=:all:" in workflow
+    assert 'branches: [main, "review/**"]' not in workflow
+    assert lock.count("--hash=sha256:") == 8

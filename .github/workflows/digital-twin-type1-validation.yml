@@ -13,7 +13,7 @@ on:
       - "tests/test_digital_twin_assets.py"
       - ".github/workflows/digital-twin-type1-validation.yml"
   push:
-    branches: [main, "review/**"]
+    branches: [main]
     paths:
       - "assets/models/**"
       - "assets/previews/**"
@@ -39,16 +39,16 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           show-progress: false
           fetch-depth: 0
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
-          python-version: "3.11"
+          python-version: "3.11.9"
       - name: Install pinned geometry dependencies
-        run: python -m pip install -r tools/digital-twin/requirements.txt pytest==8.3.5
+        run: python -m pip install --require-hashes --only-binary=:all: -r tools/digital-twin/requirements-ci-linux-py311.lock
       - name: Validate deterministic assets and Type 1 boundary
         run: python -m pytest -q tests/test_digital_twin_assets.py
       - name: Reject whitespace errors

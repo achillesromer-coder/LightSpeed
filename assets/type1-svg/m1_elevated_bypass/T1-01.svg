@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="auto" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMin meet" data-twin-id="m1_elevated_bypass" data-drawing-id="M1_ELEVATED_BYPASS-T1-01" data-representation-class="SOURCE_DERIVED_GEOMETRY" data-release-state="REVIEW_ONLY_NOT_PUBLICLY_RELEASED">
-<metadata>{"drawing_id":"M1_ELEVATED_BYPASS-T1-01","extents_m":[1000.0,57.0,4.45],"next_gate":"native FCStd/provider topology parity; engineering/site/traffic/structural evidence","purpose":"Geometry / orthographic / sections","release_state":"REVIEW_ONLY_NOT_PUBLICLY_RELEASED","representation_class":"SOURCE_DERIVED_GEOMETRY","sheet_id":"T1-01","source_obj":"assets/models/m1_elevated_bypass.obj","source_obj_sha256":"f53534e89f197efa0e79df80fe8dd3472b24ca2b682ffcc9e3417153aa10d19c","twin_id":"m1_elevated_bypass","units":"m"}</metadata>
-<style>.sheet{fill:#fff;stroke:#111;stroke-width:2}.border,.viewbox{fill:none;stroke:#555;stroke-width:1}.geometry{stroke:#111;stroke-width:1;fill:none;vector-effect:non-scaling-stroke}.datum{stroke:#555;stroke-width:1;stroke-dasharray:8 5}.title{font:700 24px system-ui,sans-serif}.subtitle{font:16px system-ui,sans-serif;fill:#333}.section-title{font:700 13px system-ui,sans-serif}.body,.label{font:12px ui-monospace,monospace;fill:#222}.gate{fill:#111}.gate-text{font:700 12px system-ui,sans-serif;fill:#fff;letter-spacing:1px}</style>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="auto" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMin meet" role="img" aria-labelledby="M1_ELEVATED_BYPASS-T1-01-title M1_ELEVATED_BYPASS-T1-01-desc" data-twin-id="m1_elevated_bypass" data-drawing-id="M1_ELEVATED_BYPASS-T1-01" data-representation-class="SOURCE_DERIVED_GEOMETRY" data-package-kind="SOURCE_BOUNDED_REVIEW" data-evidence-ceiling="B" data-source-binding-state="COMMITTED_DERIVATION_RECEIPT" data-dimension-authority="DERIVED_MODEL_ENVELOPE_ONLY" data-type1-complete="false" data-release-eligible="false" data-release-state="REVIEW_ONLY_NOT_PUBLICLY_RELEASED">
+<title id="M1_ELEVATED_BYPASS-T1-01-title">M1 Elevated Bypass T1-01 Type 1 review sheet</title>
+<desc id="M1_ELEVATED_BYPASS-T1-01-desc">Geometry / orthographic / sections. SOURCE_DERIVED_REVIEW_ONLY. Review only; not engineering authority, physical validation or public release.</desc>
+<metadata>{"derived_model_extents_m":[1000.0,57.0,4.45],"dimension_authority":"DERIVED_MODEL_ENVELOPE_ONLY","drawing_id":"M1_ELEVATED_BYPASS-T1-01","feature_addressability":"EDGE_LEVEL_DERIVED","next_gate":"native FCStd/provider topology parity; engineering/site/traffic/structural evidence","package_evidence_ceiling":"B","package_kind":"SOURCE_BOUNDED_REVIEW","package_state":"SOURCE_DERIVED_REVIEW_ONLY","projection_input_obj":"assets/models/m1_elevated_bypass.obj","projection_input_obj_sha256":"f53534e89f197efa0e79df80fe8dd3472b24ca2b682ffcc9e3417153aa10d19c","purpose":"Geometry / orthographic / sections","release_eligible":false,"release_state":"REVIEW_ONLY_NOT_PUBLICLY_RELEASED","representation_class":"SOURCE_DERIVED_GEOMETRY","sheet_domain_state":"REVIEW_ONLY","sheet_id":"T1-01","source_binding_state":"COMMITTED_DERIVATION_RECEIPT","twin_id":"m1_elevated_bypass","type1_complete":false,"units":"m"}</metadata>
+<style>.sheet{fill:#fff;stroke:#111;stroke-width:2}.border,.viewbox{fill:none;stroke:#555;stroke-width:1}.geometry{stroke:#111;stroke-width:1;fill:none;vector-effect:non-scaling-stroke}.datum{stroke:#555;stroke-width:1;stroke-dasharray:8 5}.title{font:700 24px system-ui,sans-serif}.subtitle{font:16px system-ui,sans-serif;fill:#333}.section-title{font:700 13px system-ui,sans-serif}.body,.label{font:12px ui-monospace,monospace;fill:#222}.proxy-watermark{font:700 12px system-ui,sans-serif;fill:#111;letter-spacing:1.5px}.gate{fill:#111}.gate-text{font:700 12px system-ui,sans-serif;fill:#fff;letter-spacing:1px}</style>
 <g id="L00-SHEET" data-layer="L00-SHEET">
 <rect x="18" y="18" width="1564" height="964" class="sheet"/>
 <text x="48" y="62" class="title">TYPE 1 SVG · M1 ELEVATED BYPASS · T1-01</text>
@@ -12,7 +14,7 @@
 </g>
 <g id="L10-CONTEXT" data-layer="L10-CONTEXT">
 <text x="48" y="130" class="section-title">SOURCE CONTEXT</text>
-<text x="48" y="152" class="body">Projection source</text>
+<text x="48" y="152" class="body">Projection input</text>
 <text x="48" y="170" class="body">assets/models/m1_elevated_bypass.obj SHA-256</text>
 <text x="48" y="188" class="body">f53534e89f197efa0e79df80fe8dd347</text>
 <text x="48" y="206" class="body">2b24ca2b682ffcc9e3417153aa10d19c. Native</text>
@@ -260,10 +262,9 @@
 
 </g>
 <g id="L50-DIMENSIONS" data-layer="L50-DIMENSIONS">
-<text x="48" y="710" class="section-title">BOUNDING EXTENTS</text>
-<text x="48" y="732" class="body">X 1000 m · Y 57 m · Z 4.45 m. Bounding dimensions are derived</text>
-<text x="48" y="750" class="body">from the committed review mesh, not as-built tolerance</text>
-<text x="48" y="768" class="body">authority.</text>
+<text x="48" y="710" class="section-title">DERIVED MODEL ENVELOPE</text>
+<text x="48" y="732" class="body">X 1000 m · Y 57 m · Z 4.45 m. Values derive from the committed</text>
+<text x="48" y="750" class="body">review mesh, not as-built tolerance authority.</text>
 </g>
 <g id="L60-MATERIALS" data-layer="L60-MATERIALS">
 <text x="560" y="710" class="section-title">MATERIAL STATE</text>
@@ -290,9 +291,10 @@
 </g>
 <g id="L90-EVIDENCE" data-layer="L90-EVIDENCE">
 <text x="440" y="130" class="section-title">EVIDENCE CLASS</text>
-<text x="440" y="152" class="body">SOURCE_DERIVED_GEOMETRY. Source mesh hash is</text>
-<text x="440" y="170" class="body">bound. Current migration priority P1 and fidelity</text>
-<text x="440" y="188" class="body">F3.</text>
+<text x="440" y="152" class="body">SOURCE_DERIVED_GEOMETRY. Projection input hash is</text>
+<text x="440" y="170" class="body">bound; source binding remains</text>
+<text x="440" y="188" class="body">COMMITTED_DERIVATION_RECEIPT. Evidence ceiling B;</text>
+<text x="440" y="206" class="body">migration priority P1 and fidelity F3.</text>
 </g>
 <g id="L91-UNKNOWNS" data-layer="L91-UNKNOWNS">
 <text x="800" y="130" class="section-title">OPEN GATE</text>

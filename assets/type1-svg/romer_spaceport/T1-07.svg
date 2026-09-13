@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="auto" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMin meet" data-twin-id="romer_spaceport" data-drawing-id="ROMER_SPACEPORT-T1-07" data-representation-class="SOURCE_DERIVED_PARTIAL" data-release-state="REVIEW_ONLY_NOT_PUBLICLY_RELEASED">
-<metadata>{"drawing_id":"ROMER_SPACEPORT-T1-07","extents_m":[240.0,109.5,24.0],"next_gate":"accepted current site/facility CAD/BREP/IFC or controlled parametric geometry","purpose":"Evidence / verification / unknowns / claim boundary","release_state":"REVIEW_ONLY_NOT_PUBLICLY_RELEASED","representation_class":"SOURCE_DERIVED_PARTIAL","sheet_id":"T1-07","source_obj":"assets/models/romer_spaceport.obj","source_obj_sha256":"a9f7dd4cbc2077e4ac4fbe18a58003b44589f2964e8e4242c4e157e76b284fd4","twin_id":"romer_spaceport","units":"m"}</metadata>
-<style>.sheet{fill:#fff;stroke:#111;stroke-width:2}.border,.viewbox{fill:none;stroke:#555;stroke-width:1}.geometry{stroke:#111;stroke-width:1;fill:none;vector-effect:non-scaling-stroke}.datum{stroke:#555;stroke-width:1;stroke-dasharray:8 5}.title{font:700 24px system-ui,sans-serif}.subtitle{font:16px system-ui,sans-serif;fill:#333}.section-title{font:700 13px system-ui,sans-serif}.body,.label{font:12px ui-monospace,monospace;fill:#222}.gate{fill:#111}.gate-text{font:700 12px system-ui,sans-serif;fill:#fff;letter-spacing:1px}</style>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="auto" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMin meet" role="img" aria-labelledby="ROMER_SPACEPORT-T1-07-title ROMER_SPACEPORT-T1-07-desc" data-twin-id="romer_spaceport" data-drawing-id="ROMER_SPACEPORT-T1-07" data-representation-class="SOURCE_DERIVED_PARTIAL" data-package-kind="PARTIAL_SOURCE_REVIEW" data-evidence-ceiling="MIXED_B_C" data-source-binding-state="PARTIAL_DERIVATION_RECEIPT" data-dimension-authority="PARTIAL_DERIVED_MODEL_ENVELOPE_ONLY" data-type1-complete="false" data-release-eligible="false" data-release-state="REVIEW_ONLY_NOT_PUBLICLY_RELEASED">
+<title id="ROMER_SPACEPORT-T1-07-title">Römer Spaceport Twin T1-07 Type 1 review sheet</title>
+<desc id="ROMER_SPACEPORT-T1-07-desc">Evidence / verification / unknowns / claim boundary. PARTIAL_SOURCE_PROVISIONAL_REVIEW. Review only; not engineering authority, physical validation or public release.</desc>
+<metadata>{"derived_model_extents_m":[240.0,109.5,24.0],"dimension_authority":"PARTIAL_DERIVED_MODEL_ENVELOPE_ONLY","drawing_id":"ROMER_SPACEPORT-T1-07","feature_addressability":"EDGE_LEVEL_DERIVED","next_gate":"accepted current site/facility CAD/BREP/IFC or controlled parametric geometry","package_evidence_ceiling":"MIXED_B_C","package_kind":"PARTIAL_SOURCE_REVIEW","package_state":"PARTIAL_SOURCE_PROVISIONAL_REVIEW","projection_input_obj":"assets/models/romer_spaceport.obj","projection_input_obj_sha256":"a9f7dd4cbc2077e4ac4fbe18a58003b44589f2964e8e4242c4e157e76b284fd4","purpose":"Evidence / verification / unknowns / claim boundary","release_eligible":false,"release_state":"REVIEW_ONLY_NOT_PUBLICLY_RELEASED","representation_class":"SOURCE_DERIVED_PARTIAL","sheet_domain_state":"REVIEW_ONLY","sheet_id":"T1-07","source_binding_state":"PARTIAL_DERIVATION_RECEIPT","twin_id":"romer_spaceport","type1_complete":false,"units":"m"}</metadata>
+<style>.sheet{fill:#fff;stroke:#111;stroke-width:2}.border,.viewbox{fill:none;stroke:#555;stroke-width:1}.geometry{stroke:#111;stroke-width:1;fill:none;vector-effect:non-scaling-stroke}.datum{stroke:#555;stroke-width:1;stroke-dasharray:8 5}.title{font:700 24px system-ui,sans-serif}.subtitle{font:16px system-ui,sans-serif;fill:#333}.section-title{font:700 13px system-ui,sans-serif}.body,.label{font:12px ui-monospace,monospace;fill:#222}.proxy-watermark{font:700 12px system-ui,sans-serif;fill:#111;letter-spacing:1.5px}.gate{fill:#111}.gate-text{font:700 12px system-ui,sans-serif;fill:#fff;letter-spacing:1px}</style>
 <g id="L00-SHEET" data-layer="L00-SHEET">
 <rect x="18" y="18" width="1564" height="964" class="sheet"/>
-<text x="48" y="62" class="title">TYPE 1 SVG · ROMER SPACEPORT · T1-07</text>
+<text x="48" y="62" class="title">TYPE 1 SVG · RÖMER SPACEPORT TWIN · T1-07</text>
 <text x="48" y="88" class="subtitle">Evidence / verification / unknowns / claim boundary</text>
 <line x1="18" y1="900" x2="1582" y2="900" class="border"/>
 <text x="48" y="930" class="body">Drawing ID: ROMER_SPACEPORT-T1-07 · Units: m · Scale: FIT · Coordinate frame: LOCAL REVIEW</text>
 <text x="48" y="954" class="body">Representation: SOURCE_DERIVED_PARTIAL · Revision: 1 · Release: REVIEW ONLY</text>
 </g>
 <g id="L10-CONTEXT" data-layer="L10-CONTEXT">
-<text x="48" y="130" class="section-title">SOURCE CONTEXT</text>
-<text x="48" y="152" class="body">Projection source</text>
+<text x="48" y="130" class="section-title">PARTIAL SOURCE CONTEXT</text>
+<text x="48" y="152" class="body">Partial derived input</text>
 <text x="48" y="170" class="body">assets/models/romer_spaceport.obj SHA-256</text>
 <text x="48" y="188" class="body">a9f7dd4cbc2077e4ac4fbe18a58003b4</text>
 <text x="48" y="206" class="body">4589f2964e8e4242c4e157e76b284fd4. Native</text>
-<text x="48" y="224" class="body">CAD/BREP/owning Drive data remains authority.</text>
+<text x="48" y="224" class="body">CAD/BREP/owning Drive data remains authority;</text>
+<text x="48" y="242" class="body">unbound regions stay provisional.</text>
 </g>
 <g id="L20-AUTH-GEOMETRY" data-layer="L20-AUTH-GEOMETRY">
 
@@ -25,80 +28,80 @@
 
 </g>
 <g id="L22-PROVISIONAL-GEOMETRY" data-layer="L22-PROVISIONAL-GEOMETRY">
-<rect x="430" y="230" width="740" height="500" class="viewbox"/>
+<rect x="430" y="230" width="740" height="450" class="viewbox"/>
 <text x="442" y="252" class="label">ISOMETRIC</text>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0000" data-feature-id="EDGE-0000" x1="487.354" y1="571.029" x2="487.354" y2="507.363" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0001" data-feature-id="EDGE-0001" x1="487.354" y1="571.029" x2="675.317" y2="462.508" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0002" data-feature-id="EDGE-0002" x1="487.354" y1="571.029" x2="675.317" y2="398.842" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0003" data-feature-id="EDGE-0003" x1="487.354" y1="507.363" x2="675.317" y2="398.842" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0004" data-feature-id="EDGE-0004" x1="675.317" y1="462.508" x2="675.317" y2="398.842" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0005" data-feature-id="EDGE-0005" x1="487.354" y1="571.029" x2="587.601" y2="628.907" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0006" data-feature-id="EDGE-0006" x1="487.354" y1="507.363" x2="587.601" y2="628.907" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0007" data-feature-id="EDGE-0007" x1="675.317" y1="462.508" x2="587.601" y2="628.907" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0008" data-feature-id="EDGE-0008" x1="487.354" y1="507.363" x2="587.601" y2="565.241" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0009" data-feature-id="EDGE-0009" x1="587.601" y1="628.907" x2="587.601" y2="565.241" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0010" data-feature-id="EDGE-0010" x1="675.317" y1="462.508" x2="775.565" y2="520.386" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0011" data-feature-id="EDGE-0011" x1="587.601" y1="628.907" x2="775.565" y2="520.386" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0012" data-feature-id="EDGE-0012" x1="587.601" y1="565.241" x2="775.565" y2="520.386" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0013" data-feature-id="EDGE-0013" x1="487.354" y1="507.363" x2="775.565" y2="456.720" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0014" data-feature-id="EDGE-0014" x1="675.317" y1="462.508" x2="775.565" y2="456.720" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0015" data-feature-id="EDGE-0015" x1="675.317" y1="398.842" x2="775.565" y2="456.720" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0016" data-feature-id="EDGE-0016" x1="587.601" y1="565.241" x2="775.565" y2="456.720" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0017" data-feature-id="EDGE-0017" x1="775.565" y1="520.386" x2="775.565" y2="456.720" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0018" data-feature-id="EDGE-0018" x1="764.287" y1="668.698" x2="764.287" y2="651.334" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0019" data-feature-id="EDGE-0019" x1="764.287" y1="668.698" x2="844.485" y2="622.395" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0020" data-feature-id="EDGE-0020" x1="764.287" y1="668.698" x2="844.485" y2="605.032" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0021" data-feature-id="EDGE-0021" x1="764.287" y1="651.334" x2="844.485" y2="605.032" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0022" data-feature-id="EDGE-0022" x1="844.485" y1="622.395" x2="844.485" y2="605.032" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0023" data-feature-id="EDGE-0023" x1="764.287" y1="668.698" x2="844.485" y2="715.000" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0024" data-feature-id="EDGE-0024" x1="764.287" y1="651.334" x2="844.485" y2="715.000" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0025" data-feature-id="EDGE-0025" x1="844.485" y1="622.395" x2="844.485" y2="715.000" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0026" data-feature-id="EDGE-0026" x1="764.287" y1="651.334" x2="844.485" y2="697.637" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0027" data-feature-id="EDGE-0027" x1="844.485" y1="715.000" x2="844.485" y2="697.637" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0028" data-feature-id="EDGE-0028" x1="844.485" y1="622.395" x2="924.683" y2="668.698" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0029" data-feature-id="EDGE-0029" x1="844.485" y1="715.000" x2="924.683" y2="668.698" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0030" data-feature-id="EDGE-0030" x1="844.485" y1="697.637" x2="924.683" y2="668.698" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0031" data-feature-id="EDGE-0031" x1="764.287" y1="651.334" x2="924.683" y2="651.334" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0032" data-feature-id="EDGE-0032" x1="844.485" y1="622.395" x2="924.683" y2="651.334" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0033" data-feature-id="EDGE-0033" x1="844.485" y1="605.032" x2="924.683" y2="651.334" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0034" data-feature-id="EDGE-0034" x1="844.485" y1="697.637" x2="924.683" y2="651.334" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0035" data-feature-id="EDGE-0035" x1="924.683" y1="668.698" x2="924.683" y2="651.334" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0036" data-feature-id="EDGE-0036" x1="799.373" y1="651.334" x2="799.373" y2="599.244" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0037" data-feature-id="EDGE-0037" x1="799.373" y1="651.334" x2="844.485" y2="625.289" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0038" data-feature-id="EDGE-0038" x1="799.373" y1="651.334" x2="844.485" y2="573.199" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0039" data-feature-id="EDGE-0039" x1="799.373" y1="599.244" x2="844.485" y2="573.199" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0040" data-feature-id="EDGE-0040" x1="844.485" y1="625.289" x2="844.485" y2="573.199" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0041" data-feature-id="EDGE-0041" x1="799.373" y1="651.334" x2="844.485" y2="677.379" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0042" data-feature-id="EDGE-0042" x1="799.373" y1="599.244" x2="844.485" y2="677.379" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0043" data-feature-id="EDGE-0043" x1="844.485" y1="625.289" x2="844.485" y2="677.379" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0044" data-feature-id="EDGE-0044" x1="799.373" y1="599.244" x2="844.485" y2="625.289" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0045" data-feature-id="EDGE-0045" x1="844.485" y1="677.379" x2="844.485" y2="625.289" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0046" data-feature-id="EDGE-0046" x1="844.485" y1="625.289" x2="889.596" y2="651.334" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0047" data-feature-id="EDGE-0047" x1="844.485" y1="677.379" x2="889.596" y2="651.334" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0048" data-feature-id="EDGE-0048" x1="844.485" y1="625.289" x2="889.596" y2="651.334" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0049" data-feature-id="EDGE-0049" x1="799.373" y1="599.244" x2="889.596" y2="599.244" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0050" data-feature-id="EDGE-0050" x1="844.485" y1="625.289" x2="889.596" y2="599.244" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0051" data-feature-id="EDGE-0051" x1="844.485" y1="573.199" x2="889.596" y2="599.244" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0052" data-feature-id="EDGE-0052" x1="844.485" y1="625.289" x2="889.596" y2="599.244" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0053" data-feature-id="EDGE-0053" x1="889.596" y1="651.334" x2="889.596" y2="599.244" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0054" data-feature-id="EDGE-0054" x1="501.138" y1="273.682" x2="501.138" y2="270.788" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0055" data-feature-id="EDGE-0055" x1="501.138" y1="273.682" x2="511.162" y2="267.894" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0056" data-feature-id="EDGE-0056" x1="501.138" y1="273.682" x2="511.162" y2="265.000" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0057" data-feature-id="EDGE-0057" x1="501.138" y1="270.788" x2="511.162" y2="265.000" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0058" data-feature-id="EDGE-0058" x1="511.162" y1="267.894" x2="511.162" y2="265.000" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0059" data-feature-id="EDGE-0059" x1="501.138" y1="273.682" x2="1102.622" y2="620.949" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0060" data-feature-id="EDGE-0060" x1="501.138" y1="270.788" x2="1102.622" y2="620.949" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0061" data-feature-id="EDGE-0061" x1="511.162" y1="267.894" x2="1102.622" y2="620.949" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0062" data-feature-id="EDGE-0062" x1="501.138" y1="270.788" x2="1102.622" y2="618.055" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0063" data-feature-id="EDGE-0063" x1="1102.622" y1="620.949" x2="1102.622" y2="618.055" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0064" data-feature-id="EDGE-0064" x1="511.162" y1="267.894" x2="1112.646" y2="615.161" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0065" data-feature-id="EDGE-0065" x1="1102.622" y1="620.949" x2="1112.646" y2="615.161" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0066" data-feature-id="EDGE-0066" x1="1102.622" y1="618.055" x2="1112.646" y2="615.161" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0067" data-feature-id="EDGE-0067" x1="501.138" y1="270.788" x2="1112.646" y2="612.267" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0068" data-feature-id="EDGE-0068" x1="511.162" y1="267.894" x2="1112.646" y2="612.267" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0069" data-feature-id="EDGE-0069" x1="511.162" y1="265.000" x2="1112.646" y2="612.267" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0070" data-feature-id="EDGE-0070" x1="1102.622" y1="618.055" x2="1112.646" y2="612.267" class="geometry"/>
-<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0071" data-feature-id="EDGE-0071" x1="1112.646" y1="615.161" x2="1112.646" y2="612.267" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0000" data-feature-id="EDGE-0000" x1="522.092" y1="537.026" x2="522.092" y2="480.434" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0001" data-feature-id="EDGE-0001" x1="522.092" y1="537.026" x2="689.171" y2="440.563" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0002" data-feature-id="EDGE-0002" x1="522.092" y1="537.026" x2="689.171" y2="383.971" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0003" data-feature-id="EDGE-0003" x1="522.092" y1="480.434" x2="689.171" y2="383.971" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0004" data-feature-id="EDGE-0004" x1="689.171" y1="440.563" x2="689.171" y2="383.971" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0005" data-feature-id="EDGE-0005" x1="522.092" y1="537.026" x2="611.201" y2="588.473" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0006" data-feature-id="EDGE-0006" x1="522.092" y1="480.434" x2="611.201" y2="588.473" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0007" data-feature-id="EDGE-0007" x1="689.171" y1="440.563" x2="611.201" y2="588.473" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0008" data-feature-id="EDGE-0008" x1="522.092" y1="480.434" x2="611.201" y2="531.881" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0009" data-feature-id="EDGE-0009" x1="611.201" y1="588.473" x2="611.201" y2="531.881" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0010" data-feature-id="EDGE-0010" x1="689.171" y1="440.563" x2="778.280" y2="492.010" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0011" data-feature-id="EDGE-0011" x1="611.201" y1="588.473" x2="778.280" y2="492.010" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0012" data-feature-id="EDGE-0012" x1="611.201" y1="531.881" x2="778.280" y2="492.010" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0013" data-feature-id="EDGE-0013" x1="522.092" y1="480.434" x2="778.280" y2="435.418" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0014" data-feature-id="EDGE-0014" x1="689.171" y1="440.563" x2="778.280" y2="435.418" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0015" data-feature-id="EDGE-0015" x1="689.171" y1="383.971" x2="778.280" y2="435.418" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0016" data-feature-id="EDGE-0016" x1="611.201" y1="531.881" x2="778.280" y2="435.418" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0017" data-feature-id="EDGE-0017" x1="778.280" y1="492.010" x2="778.280" y2="435.418" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0018" data-feature-id="EDGE-0018" x1="768.255" y1="623.842" x2="768.255" y2="608.408" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0019" data-feature-id="EDGE-0019" x1="768.255" y1="623.842" x2="839.542" y2="582.685" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0020" data-feature-id="EDGE-0020" x1="768.255" y1="623.842" x2="839.542" y2="567.251" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0021" data-feature-id="EDGE-0021" x1="768.255" y1="608.408" x2="839.542" y2="567.251" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0022" data-feature-id="EDGE-0022" x1="839.542" y1="582.685" x2="839.542" y2="567.251" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0023" data-feature-id="EDGE-0023" x1="768.255" y1="623.842" x2="839.542" y2="665.000" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0024" data-feature-id="EDGE-0024" x1="768.255" y1="608.408" x2="839.542" y2="665.000" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0025" data-feature-id="EDGE-0025" x1="839.542" y1="582.685" x2="839.542" y2="665.000" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0026" data-feature-id="EDGE-0026" x1="768.255" y1="608.408" x2="839.542" y2="649.566" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0027" data-feature-id="EDGE-0027" x1="839.542" y1="665.000" x2="839.542" y2="649.566" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0028" data-feature-id="EDGE-0028" x1="839.542" y1="582.685" x2="910.829" y2="623.842" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0029" data-feature-id="EDGE-0029" x1="839.542" y1="665.000" x2="910.829" y2="623.842" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0030" data-feature-id="EDGE-0030" x1="839.542" y1="649.566" x2="910.829" y2="623.842" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0031" data-feature-id="EDGE-0031" x1="768.255" y1="608.408" x2="910.829" y2="608.408" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0032" data-feature-id="EDGE-0032" x1="839.542" y1="582.685" x2="910.829" y2="608.408" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0033" data-feature-id="EDGE-0033" x1="839.542" y1="567.251" x2="910.829" y2="608.408" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0034" data-feature-id="EDGE-0034" x1="839.542" y1="649.566" x2="910.829" y2="608.408" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0035" data-feature-id="EDGE-0035" x1="910.829" y1="623.842" x2="910.829" y2="608.408" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0036" data-feature-id="EDGE-0036" x1="799.443" y1="608.408" x2="799.443" y2="562.106" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0037" data-feature-id="EDGE-0037" x1="799.443" y1="608.408" x2="839.542" y2="585.257" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0038" data-feature-id="EDGE-0038" x1="799.443" y1="608.408" x2="839.542" y2="538.955" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0039" data-feature-id="EDGE-0039" x1="799.443" y1="562.106" x2="839.542" y2="538.955" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0040" data-feature-id="EDGE-0040" x1="839.542" y1="585.257" x2="839.542" y2="538.955" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0041" data-feature-id="EDGE-0041" x1="799.443" y1="608.408" x2="839.542" y2="631.559" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0042" data-feature-id="EDGE-0042" x1="799.443" y1="562.106" x2="839.542" y2="631.559" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0043" data-feature-id="EDGE-0043" x1="839.542" y1="585.257" x2="839.542" y2="631.559" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0044" data-feature-id="EDGE-0044" x1="799.443" y1="562.106" x2="839.542" y2="585.257" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0045" data-feature-id="EDGE-0045" x1="839.542" y1="631.559" x2="839.542" y2="585.257" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0046" data-feature-id="EDGE-0046" x1="839.542" y1="585.257" x2="879.641" y2="608.408" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0047" data-feature-id="EDGE-0047" x1="839.542" y1="631.559" x2="879.641" y2="608.408" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0048" data-feature-id="EDGE-0048" x1="839.542" y1="585.257" x2="879.641" y2="608.408" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0049" data-feature-id="EDGE-0049" x1="799.443" y1="562.106" x2="879.641" y2="562.106" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0050" data-feature-id="EDGE-0050" x1="839.542" y1="585.257" x2="879.641" y2="562.106" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0051" data-feature-id="EDGE-0051" x1="839.542" y1="538.955" x2="879.641" y2="562.106" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0052" data-feature-id="EDGE-0052" x1="839.542" y1="585.257" x2="879.641" y2="562.106" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0053" data-feature-id="EDGE-0053" x1="879.641" y1="608.408" x2="879.641" y2="562.106" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0054" data-feature-id="EDGE-0054" x1="534.345" y1="272.717" x2="534.345" y2="270.145" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0055" data-feature-id="EDGE-0055" x1="534.345" y1="272.717" x2="543.255" y2="267.572" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0056" data-feature-id="EDGE-0056" x1="534.345" y1="272.717" x2="543.255" y2="265.000" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0057" data-feature-id="EDGE-0057" x1="534.345" y1="270.145" x2="543.255" y2="265.000" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0058" data-feature-id="EDGE-0058" x1="543.255" y1="267.572" x2="543.255" y2="265.000" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0059" data-feature-id="EDGE-0059" x1="534.345" y1="272.717" x2="1068.997" y2="581.399" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0060" data-feature-id="EDGE-0060" x1="534.345" y1="270.145" x2="1068.997" y2="581.399" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0061" data-feature-id="EDGE-0061" x1="543.255" y1="267.572" x2="1068.997" y2="581.399" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0062" data-feature-id="EDGE-0062" x1="534.345" y1="270.145" x2="1068.997" y2="578.826" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0063" data-feature-id="EDGE-0063" x1="1068.997" y1="581.399" x2="1068.997" y2="578.826" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0064" data-feature-id="EDGE-0064" x1="543.255" y1="267.572" x2="1077.908" y2="576.254" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0065" data-feature-id="EDGE-0065" x1="1068.997" y1="581.399" x2="1077.908" y2="576.254" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0066" data-feature-id="EDGE-0066" x1="1068.997" y1="578.826" x2="1077.908" y2="576.254" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0067" data-feature-id="EDGE-0067" x1="534.345" y1="270.145" x2="1077.908" y2="573.682" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0068" data-feature-id="EDGE-0068" x1="543.255" y1="267.572" x2="1077.908" y2="573.682" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0069" data-feature-id="EDGE-0069" x1="543.255" y1="265.000" x2="1077.908" y2="573.682" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0070" data-feature-id="EDGE-0070" x1="1068.997" y1="578.826" x2="1077.908" y2="573.682" class="geometry"/>
+<line id="ROMER_SPACEPORT-T1-07-ISOMETRIC-edge-0071" data-feature-id="EDGE-0071" x1="1077.908" y1="576.254" x2="1077.908" y2="573.682" class="geometry"/>
 </g>
 <g id="L30-HIDDEN" data-layer="L30-HIDDEN">
 
@@ -112,10 +115,9 @@
 
 </g>
 <g id="L50-DIMENSIONS" data-layer="L50-DIMENSIONS">
-<text x="48" y="710" class="section-title">BOUNDING EXTENTS</text>
-<text x="48" y="732" class="body">X 240 m · Y 109.5 m · Z 24 m. Bounding dimensions are derived</text>
-<text x="48" y="750" class="body">from the committed review mesh, not as-built tolerance</text>
-<text x="48" y="768" class="body">authority.</text>
+<text x="48" y="710" class="section-title">PARTIAL DERIVED MODEL ENVELOPE</text>
+<text x="48" y="732" class="body">X 240 m · Y 109.5 m · Z 24 m. Values describe the partial</text>
+<text x="48" y="750" class="body">review model, not an as-built or site-authoritative envelope.</text>
 </g>
 <g id="L60-MATERIALS" data-layer="L60-MATERIALS">
 <text x="560" y="710" class="section-title">MATERIAL STATE</text>
@@ -142,8 +144,11 @@
 </g>
 <g id="L90-EVIDENCE" data-layer="L90-EVIDENCE">
 <text x="440" y="130" class="section-title">EVIDENCE CLASS</text>
-<text x="440" y="152" class="body">SOURCE_DERIVED_PARTIAL. Source mesh hash is bound.</text>
-<text x="440" y="170" class="body">Current migration priority P2 and fidelity F2/F3.</text>
+<text x="440" y="152" class="body">SOURCE_DERIVED_PARTIAL. Projection input hash is</text>
+<text x="440" y="170" class="body">bound; source binding remains</text>
+<text x="440" y="188" class="body">PARTIAL_DERIVATION_RECEIPT. Evidence ceiling</text>
+<text x="440" y="206" class="body">MIXED_B_C; migration priority P2 and fidelity</text>
+<text x="440" y="224" class="body">F2/F3.</text>
 </g>
 <g id="L91-UNKNOWNS" data-layer="L91-UNKNOWNS">
 <text x="800" y="130" class="section-title">OPEN GATE</text>

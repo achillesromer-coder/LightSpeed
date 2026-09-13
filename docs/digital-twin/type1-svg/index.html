@@ -73,6 +73,18 @@
         outline: 3px solid var(--accent);
         outline-offset: 3px;
       }
+      .skip-link {
+        position: absolute;
+        left: 12px;
+        top: -80px;
+        z-index: 2;
+        padding: 10px 14px;
+        background: #fff;
+        color: #000;
+      }
+      .skip-link:focus {
+        top: 12px;
+      }
       main {
         padding: 28px max(24px, 4vw) 60px;
       }
@@ -154,6 +166,11 @@
       .score th {
         color: var(--accent);
       }
+      .score caption {
+        padding: 10px;
+        text-align: left;
+        color: var(--muted);
+      }
       footer {
         border-top: 1px solid var(--line);
         padding: 28px max(24px, 4vw);
@@ -220,6 +237,7 @@
     </style>
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Skip to review content</a>
     <header>
       <div class="ey">Römer Industries · ACHILLES · Type 1</div>
       <h1>Type 1 SVG<br />Technical Projection Review</h1>
@@ -233,15 +251,18 @@
       <div class="links">
         <a
           href="https://docs.google.com/spreadsheets/d/1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8/edit"
+          rel="noreferrer"
           >Open live Drive canon</a
-        ><a href="https://github.com/achillesromer-coder/LightSpeed/pull/46"
+        ><a
+          href="https://github.com/achillesromer-coder/LightSpeed/pull/46"
+          rel="noreferrer"
           >Open review PR #46</a
         ><a href="../../../data/digital-twin/type1_svg_contract_v1.json"
           >Machine contract</a
         ><a href="T1_SVG_STANDARD.md">Full standard</a>
       </div>
     </header>
-    <main>
+    <main id="main-content">
       <section class="section">
         <h2>Execution doctrine</h2>
         <div class="doctrine">
@@ -375,10 +396,11 @@
       <section class="section">
         <h2>Release scoring</h2>
         <table class="score">
+          <caption>Weighted completeness domains; no package currently claims completion.</caption>
           <thead>
             <tr>
-              <th>Domain</th>
-              <th>Weight</th>
+              <th scope="col">Domain</th>
+              <th scope="col">Weight</th>
             </tr>
           </thead>
           <tbody>
@@ -442,11 +464,13 @@
         </div>
       </section>
       <section class="section">
-        <h2>Generated priority review packages</h2>
+        <h2>Generated portfolio review packages</h2>
         <p class="gate">
-          Deterministic, source-bound review derivatives. These sheets preserve
-          unknowns and open discipline gates; they are not certified engineering
-          drawings or public-release assets.
+          Deterministic review derivatives for all sixteen twins. The first trio
+          preserves source-derived or partial status; the other thirteen are
+          explicitly E-class interaction-proxy shells. Every sheet preserves
+          unknowns and open discipline gates and is neither a certified
+          engineering drawing nor a public-release asset.
         </p>
         <div class="grid">
           <article class="card">
@@ -478,6 +502,9 @@
           </article>
         </div>
         <div class="links">
+          <a href="../../../assets/type1-svg/index.html"
+            >Open all 128 sheets, models and previews</a
+          >
           <a href="../../../data/digital-twin/generated_type1_svg_manifest_v1.json"
             >Open generated package manifest</a
           >

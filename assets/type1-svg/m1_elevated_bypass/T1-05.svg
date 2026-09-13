@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="auto" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMin meet" data-twin-id="m1_elevated_bypass" data-drawing-id="M1_ELEVATED_BYPASS-T1-05" data-representation-class="SOURCE_DERIVED_GEOMETRY" data-release-state="REVIEW_ONLY_NOT_PUBLICLY_RELEASED">
-<metadata>{"drawing_id":"M1_ELEVATED_BYPASS-T1-05","extents_m":[1000.0,57.0,4.45],"next_gate":"native FCStd/provider topology parity; engineering/site/traffic/structural evidence","purpose":"Simulation / operating envelope","release_state":"REVIEW_ONLY_NOT_PUBLICLY_RELEASED","representation_class":"SOURCE_DERIVED_GEOMETRY","sheet_id":"T1-05","source_obj":"assets/models/m1_elevated_bypass.obj","source_obj_sha256":"f53534e89f197efa0e79df80fe8dd3472b24ca2b682ffcc9e3417153aa10d19c","twin_id":"m1_elevated_bypass","units":"m"}</metadata>
-<style>.sheet{fill:#fff;stroke:#111;stroke-width:2}.border,.viewbox{fill:none;stroke:#555;stroke-width:1}.geometry{stroke:#111;stroke-width:1;fill:none;vector-effect:non-scaling-stroke}.datum{stroke:#555;stroke-width:1;stroke-dasharray:8 5}.title{font:700 24px system-ui,sans-serif}.subtitle{font:16px system-ui,sans-serif;fill:#333}.section-title{font:700 13px system-ui,sans-serif}.body,.label{font:12px ui-monospace,monospace;fill:#222}.gate{fill:#111}.gate-text{font:700 12px system-ui,sans-serif;fill:#fff;letter-spacing:1px}</style>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="auto" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMin meet" role="img" aria-labelledby="M1_ELEVATED_BYPASS-T1-05-title M1_ELEVATED_BYPASS-T1-05-desc" data-twin-id="m1_elevated_bypass" data-drawing-id="M1_ELEVATED_BYPASS-T1-05" data-representation-class="SOURCE_DERIVED_GEOMETRY" data-package-kind="SOURCE_BOUNDED_REVIEW" data-evidence-ceiling="B" data-source-binding-state="COMMITTED_DERIVATION_RECEIPT" data-dimension-authority="DERIVED_MODEL_ENVELOPE_ONLY" data-type1-complete="false" data-release-eligible="false" data-release-state="REVIEW_ONLY_NOT_PUBLICLY_RELEASED">
+<title id="M1_ELEVATED_BYPASS-T1-05-title">M1 Elevated Bypass T1-05 Type 1 review sheet</title>
+<desc id="M1_ELEVATED_BYPASS-T1-05-desc">Simulation / operating envelope. SOURCE_DERIVED_REVIEW_ONLY. Review only; not engineering authority, physical validation or public release.</desc>
+<metadata>{"derived_model_extents_m":[1000.0,57.0,4.45],"dimension_authority":"DERIVED_MODEL_ENVELOPE_ONLY","drawing_id":"M1_ELEVATED_BYPASS-T1-05","feature_addressability":"EDGE_LEVEL_DERIVED","next_gate":"native FCStd/provider topology parity; engineering/site/traffic/structural evidence","package_evidence_ceiling":"B","package_kind":"SOURCE_BOUNDED_REVIEW","package_state":"SOURCE_DERIVED_REVIEW_ONLY","projection_input_obj":"assets/models/m1_elevated_bypass.obj","projection_input_obj_sha256":"f53534e89f197efa0e79df80fe8dd3472b24ca2b682ffcc9e3417153aa10d19c","purpose":"Simulation / operating envelope","release_eligible":false,"release_state":"REVIEW_ONLY_NOT_PUBLICLY_RELEASED","representation_class":"SOURCE_DERIVED_GEOMETRY","sheet_domain_state":"REVIEW_ONLY","sheet_id":"T1-05","source_binding_state":"COMMITTED_DERIVATION_RECEIPT","twin_id":"m1_elevated_bypass","type1_complete":false,"units":"m"}</metadata>
+<style>.sheet{fill:#fff;stroke:#111;stroke-width:2}.border,.viewbox{fill:none;stroke:#555;stroke-width:1}.geometry{stroke:#111;stroke-width:1;fill:none;vector-effect:non-scaling-stroke}.datum{stroke:#555;stroke-width:1;stroke-dasharray:8 5}.title{font:700 24px system-ui,sans-serif}.subtitle{font:16px system-ui,sans-serif;fill:#333}.section-title{font:700 13px system-ui,sans-serif}.body,.label{font:12px ui-monospace,monospace;fill:#222}.proxy-watermark{font:700 12px system-ui,sans-serif;fill:#111;letter-spacing:1.5px}.gate{fill:#111}.gate-text{font:700 12px system-ui,sans-serif;fill:#fff;letter-spacing:1px}</style>
 <g id="L00-SHEET" data-layer="L00-SHEET">
 <rect x="18" y="18" width="1564" height="964" class="sheet"/>
 <text x="48" y="62" class="title">TYPE 1 SVG · M1 ELEVATED BYPASS · T1-05</text>
@@ -12,7 +14,7 @@
 </g>
 <g id="L10-CONTEXT" data-layer="L10-CONTEXT">
 <text x="48" y="130" class="section-title">SOURCE CONTEXT</text>
-<text x="48" y="152" class="body">Projection source</text>
+<text x="48" y="152" class="body">Projection input</text>
 <text x="48" y="170" class="body">assets/models/m1_elevated_bypass.obj SHA-256</text>
 <text x="48" y="188" class="body">f53534e89f197efa0e79df80fe8dd347</text>
 <text x="48" y="206" class="body">2b24ca2b682ffcc9e3417153aa10d19c. Native</text>
@@ -22,80 +24,80 @@
 
 </g>
 <g id="L21-DERIVED-GEOMETRY" data-layer="L21-DERIVED-GEOMETRY">
-<rect x="430" y="230" width="740" height="500" class="viewbox"/>
+<rect x="430" y="230" width="740" height="450" class="viewbox"/>
 <text x="442" y="252" class="label">ISOMETRIC</text>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0000" data-feature-id="EDGE-0000" x1="447.352" y1="306.205" x2="447.352" y2="304.654" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0001" data-feature-id="EDGE-0001" x1="447.352" y1="306.205" x2="463.137" y2="297.092" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0002" data-feature-id="EDGE-0002" x1="447.352" y1="306.205" x2="463.137" y2="295.541" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0003" data-feature-id="EDGE-0003" x1="447.352" y1="304.654" x2="463.137" y2="295.541" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0004" data-feature-id="EDGE-0004" x1="463.137" y1="297.092" x2="463.137" y2="295.541" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0005" data-feature-id="EDGE-0005" x1="447.352" y1="306.205" x2="1119.064" y2="694.019" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0006" data-feature-id="EDGE-0006" x1="447.352" y1="304.654" x2="1119.064" y2="694.019" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0007" data-feature-id="EDGE-0007" x1="463.137" y1="297.092" x2="1119.064" y2="694.019" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0008" data-feature-id="EDGE-0008" x1="447.352" y1="304.654" x2="1119.064" y2="692.467" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0009" data-feature-id="EDGE-0009" x1="1119.064" y1="694.019" x2="1119.064" y2="692.467" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0010" data-feature-id="EDGE-0010" x1="463.137" y1="297.092" x2="1134.849" y2="684.905" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0011" data-feature-id="EDGE-0011" x1="1119.064" y1="694.019" x2="1134.849" y2="684.905" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0012" data-feature-id="EDGE-0012" x1="1119.064" y1="692.467" x2="1134.849" y2="684.905" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0013" data-feature-id="EDGE-0013" x1="447.352" y1="304.654" x2="1134.849" y2="683.354" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0014" data-feature-id="EDGE-0014" x1="463.137" y1="297.092" x2="1134.849" y2="683.354" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0015" data-feature-id="EDGE-0015" x1="463.137" y1="295.541" x2="1134.849" y2="683.354" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0016" data-feature-id="EDGE-0016" x1="1119.064" y1="692.467" x2="1134.849" y2="683.354" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0017" data-feature-id="EDGE-0017" x1="1134.849" y1="684.905" x2="1134.849" y2="683.354" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0018" data-feature-id="EDGE-0018" x1="465.488" y1="295.734" x2="465.488" y2="294.183" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0019" data-feature-id="EDGE-0019" x1="465.488" y1="295.734" x2="481.273" y2="286.621" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0020" data-feature-id="EDGE-0020" x1="465.488" y1="295.734" x2="481.273" y2="285.070" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0021" data-feature-id="EDGE-0021" x1="465.488" y1="294.183" x2="481.273" y2="285.070" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0022" data-feature-id="EDGE-0022" x1="481.273" y1="286.621" x2="481.273" y2="285.070" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0023" data-feature-id="EDGE-0023" x1="465.488" y1="295.734" x2="1137.200" y2="683.548" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0024" data-feature-id="EDGE-0024" x1="465.488" y1="294.183" x2="1137.200" y2="683.548" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0025" data-feature-id="EDGE-0025" x1="481.273" y1="286.621" x2="1137.200" y2="683.548" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0026" data-feature-id="EDGE-0026" x1="465.488" y1="294.183" x2="1137.200" y2="681.996" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0027" data-feature-id="EDGE-0027" x1="1137.200" y1="683.548" x2="1137.200" y2="681.996" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0028" data-feature-id="EDGE-0028" x1="481.273" y1="286.621" x2="1152.986" y2="674.434" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0029" data-feature-id="EDGE-0029" x1="1137.200" y1="683.548" x2="1152.986" y2="674.434" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0030" data-feature-id="EDGE-0030" x1="1137.200" y1="681.996" x2="1152.986" y2="674.434" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0031" data-feature-id="EDGE-0031" x1="465.488" y1="294.183" x2="1152.986" y2="672.883" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0032" data-feature-id="EDGE-0032" x1="481.273" y1="286.621" x2="1152.986" y2="672.883" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0033" data-feature-id="EDGE-0033" x1="481.273" y1="285.070" x2="1152.986" y2="672.883" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0034" data-feature-id="EDGE-0034" x1="1137.200" y1="681.996" x2="1152.986" y2="672.883" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0035" data-feature-id="EDGE-0035" x1="1152.986" y1="674.434" x2="1152.986" y2="672.883" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0036" data-feature-id="EDGE-0036" x1="445.000" y1="308.339" x2="445.000" y2="307.175" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0037" data-feature-id="EDGE-0037" x1="445.000" y1="308.339" x2="483.288" y2="286.233" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0038" data-feature-id="EDGE-0038" x1="445.000" y1="308.339" x2="483.288" y2="285.070" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0039" data-feature-id="EDGE-0039" x1="445.000" y1="307.175" x2="483.288" y2="285.070" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0040" data-feature-id="EDGE-0040" x1="483.288" y1="286.233" x2="483.288" y2="285.070" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0041" data-feature-id="EDGE-0041" x1="445.000" y1="308.339" x2="1116.712" y2="696.152" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0042" data-feature-id="EDGE-0042" x1="445.000" y1="307.175" x2="1116.712" y2="696.152" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0043" data-feature-id="EDGE-0043" x1="483.288" y1="286.233" x2="1116.712" y2="696.152" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0044" data-feature-id="EDGE-0044" x1="445.000" y1="307.175" x2="1116.712" y2="694.989" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0045" data-feature-id="EDGE-0045" x1="1116.712" y1="696.152" x2="1116.712" y2="694.989" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0046" data-feature-id="EDGE-0046" x1="483.288" y1="286.233" x2="1155.000" y2="674.047" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0047" data-feature-id="EDGE-0047" x1="1116.712" y1="696.152" x2="1155.000" y2="674.047" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0048" data-feature-id="EDGE-0048" x1="1116.712" y1="694.989" x2="1155.000" y2="674.047" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0049" data-feature-id="EDGE-0049" x1="445.000" y1="307.175" x2="1155.000" y2="672.883" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0050" data-feature-id="EDGE-0050" x1="483.288" y1="286.233" x2="1155.000" y2="672.883" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0051" data-feature-id="EDGE-0051" x1="483.288" y1="285.070" x2="1155.000" y2="672.883" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0052" data-feature-id="EDGE-0052" x1="1116.712" y1="694.989" x2="1155.000" y2="672.883" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0053" data-feature-id="EDGE-0053" x1="1155.000" y1="674.047" x2="1155.000" y2="672.883" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0054" data-feature-id="EDGE-0054" x1="446.848" y1="307.466" x2="446.848" y2="304.014" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0055" data-feature-id="EDGE-0055" x1="446.848" y1="307.466" x2="481.777" y2="287.299" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0056" data-feature-id="EDGE-0056" x1="446.848" y1="307.466" x2="481.777" y2="283.848" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0057" data-feature-id="EDGE-0057" x1="446.848" y1="304.014" x2="481.777" y2="283.848" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0058" data-feature-id="EDGE-0058" x1="481.777" y1="287.299" x2="481.777" y2="283.848" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0059" data-feature-id="EDGE-0059" x1="446.848" y1="307.466" x2="1118.560" y2="695.279" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0060" data-feature-id="EDGE-0060" x1="446.848" y1="304.014" x2="1118.560" y2="695.279" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0061" data-feature-id="EDGE-0061" x1="481.777" y1="287.299" x2="1118.560" y2="695.279" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0062" data-feature-id="EDGE-0062" x1="446.848" y1="304.014" x2="1118.560" y2="691.828" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0063" data-feature-id="EDGE-0063" x1="1118.560" y1="695.279" x2="1118.560" y2="691.828" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0064" data-feature-id="EDGE-0064" x1="481.777" y1="287.299" x2="1153.489" y2="675.113" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0065" data-feature-id="EDGE-0065" x1="1118.560" y1="695.279" x2="1153.489" y2="675.113" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0066" data-feature-id="EDGE-0066" x1="1118.560" y1="691.828" x2="1153.489" y2="675.113" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0067" data-feature-id="EDGE-0067" x1="446.848" y1="304.014" x2="1153.489" y2="671.661" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0068" data-feature-id="EDGE-0068" x1="481.777" y1="287.299" x2="1153.489" y2="671.661" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0069" data-feature-id="EDGE-0069" x1="481.777" y1="283.848" x2="1153.489" y2="671.661" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0070" data-feature-id="EDGE-0070" x1="1118.560" y1="691.828" x2="1153.489" y2="671.661" class="geometry"/>
-<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0071" data-feature-id="EDGE-0071" x1="1153.489" y1="675.113" x2="1153.489" y2="671.661" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0000" data-feature-id="EDGE-0000" x1="457.876" y1="286.690" x2="457.876" y2="285.185" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0001" data-feature-id="EDGE-0001" x1="457.876" y1="286.690" x2="473.190" y2="277.849" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0002" data-feature-id="EDGE-0002" x1="457.876" y1="286.690" x2="473.190" y2="276.344" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0003" data-feature-id="EDGE-0003" x1="457.876" y1="285.185" x2="473.190" y2="276.344" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0004" data-feature-id="EDGE-0004" x1="473.190" y1="277.849" x2="473.190" y2="276.344" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0005" data-feature-id="EDGE-0005" x1="457.876" y1="286.690" x2="1109.542" y2="662.930" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0006" data-feature-id="EDGE-0006" x1="457.876" y1="285.185" x2="1109.542" y2="662.930" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0007" data-feature-id="EDGE-0007" x1="473.190" y1="277.849" x2="1109.542" y2="662.930" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0008" data-feature-id="EDGE-0008" x1="457.876" y1="285.185" x2="1109.542" y2="661.425" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0009" data-feature-id="EDGE-0009" x1="1109.542" y1="662.930" x2="1109.542" y2="661.425" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0010" data-feature-id="EDGE-0010" x1="473.190" y1="277.849" x2="1124.857" y2="654.089" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0011" data-feature-id="EDGE-0011" x1="1109.542" y1="662.930" x2="1124.857" y2="654.089" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0012" data-feature-id="EDGE-0012" x1="1109.542" y1="661.425" x2="1124.857" y2="654.089" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0013" data-feature-id="EDGE-0013" x1="457.876" y1="285.185" x2="1124.857" y2="652.584" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0014" data-feature-id="EDGE-0014" x1="473.190" y1="277.849" x2="1124.857" y2="652.584" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0015" data-feature-id="EDGE-0015" x1="473.190" y1="276.344" x2="1124.857" y2="652.584" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0016" data-feature-id="EDGE-0016" x1="1109.542" y1="661.425" x2="1124.857" y2="652.584" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0017" data-feature-id="EDGE-0017" x1="1124.857" y1="654.089" x2="1124.857" y2="652.584" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0018" data-feature-id="EDGE-0018" x1="475.471" y1="276.532" x2="475.471" y2="275.027" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0019" data-feature-id="EDGE-0019" x1="475.471" y1="276.532" x2="490.785" y2="267.690" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0020" data-feature-id="EDGE-0020" x1="475.471" y1="276.532" x2="490.785" y2="266.185" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0021" data-feature-id="EDGE-0021" x1="475.471" y1="275.027" x2="490.785" y2="266.185" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0022" data-feature-id="EDGE-0022" x1="490.785" y1="267.690" x2="490.785" y2="266.185" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0023" data-feature-id="EDGE-0023" x1="475.471" y1="276.532" x2="1127.137" y2="652.772" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0024" data-feature-id="EDGE-0024" x1="475.471" y1="275.027" x2="1127.137" y2="652.772" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0025" data-feature-id="EDGE-0025" x1="490.785" y1="267.690" x2="1127.137" y2="652.772" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0026" data-feature-id="EDGE-0026" x1="475.471" y1="275.027" x2="1127.137" y2="651.267" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0027" data-feature-id="EDGE-0027" x1="1127.137" y1="652.772" x2="1127.137" y2="651.267" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0028" data-feature-id="EDGE-0028" x1="490.785" y1="267.690" x2="1142.452" y2="643.930" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0029" data-feature-id="EDGE-0029" x1="1127.137" y1="652.772" x2="1142.452" y2="643.930" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0030" data-feature-id="EDGE-0030" x1="1127.137" y1="651.267" x2="1142.452" y2="643.930" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0031" data-feature-id="EDGE-0031" x1="475.471" y1="275.027" x2="1142.452" y2="642.425" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0032" data-feature-id="EDGE-0032" x1="490.785" y1="267.690" x2="1142.452" y2="642.425" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0033" data-feature-id="EDGE-0033" x1="490.785" y1="266.185" x2="1142.452" y2="642.425" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0034" data-feature-id="EDGE-0034" x1="1127.137" y1="651.267" x2="1142.452" y2="642.425" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0035" data-feature-id="EDGE-0035" x1="1142.452" y1="643.930" x2="1142.452" y2="642.425" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0036" data-feature-id="EDGE-0036" x1="455.594" y1="288.760" x2="455.594" y2="287.631" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0037" data-feature-id="EDGE-0037" x1="455.594" y1="288.760" x2="492.739" y2="267.314" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0038" data-feature-id="EDGE-0038" x1="455.594" y1="288.760" x2="492.739" y2="266.186" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0039" data-feature-id="EDGE-0039" x1="455.594" y1="287.631" x2="492.739" y2="266.186" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0040" data-feature-id="EDGE-0040" x1="492.739" y1="267.314" x2="492.739" y2="266.186" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0041" data-feature-id="EDGE-0041" x1="455.594" y1="288.760" x2="1107.261" y2="665.000" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0042" data-feature-id="EDGE-0042" x1="455.594" y1="287.631" x2="1107.261" y2="665.000" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0043" data-feature-id="EDGE-0043" x1="492.739" y1="267.314" x2="1107.261" y2="665.000" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0044" data-feature-id="EDGE-0044" x1="455.594" y1="287.631" x2="1107.261" y2="663.871" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0045" data-feature-id="EDGE-0045" x1="1107.261" y1="665.000" x2="1107.261" y2="663.871" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0046" data-feature-id="EDGE-0046" x1="492.739" y1="267.314" x2="1144.406" y2="643.554" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0047" data-feature-id="EDGE-0047" x1="1107.261" y1="665.000" x2="1144.406" y2="643.554" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0048" data-feature-id="EDGE-0048" x1="1107.261" y1="663.871" x2="1144.406" y2="643.554" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0049" data-feature-id="EDGE-0049" x1="455.594" y1="287.631" x2="1144.406" y2="642.426" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0050" data-feature-id="EDGE-0050" x1="492.739" y1="267.314" x2="1144.406" y2="642.426" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0051" data-feature-id="EDGE-0051" x1="492.739" y1="266.186" x2="1144.406" y2="642.426" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0052" data-feature-id="EDGE-0052" x1="1107.261" y1="663.871" x2="1144.406" y2="642.426" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0053" data-feature-id="EDGE-0053" x1="1144.406" y1="643.554" x2="1144.406" y2="642.426" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0054" data-feature-id="EDGE-0054" x1="457.387" y1="287.913" x2="457.387" y2="284.564" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0055" data-feature-id="EDGE-0055" x1="457.387" y1="287.913" x2="491.273" y2="268.349" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0056" data-feature-id="EDGE-0056" x1="457.387" y1="287.913" x2="491.273" y2="265.000" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0057" data-feature-id="EDGE-0057" x1="457.387" y1="284.564" x2="491.273" y2="265.000" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0058" data-feature-id="EDGE-0058" x1="491.273" y1="268.349" x2="491.273" y2="265.000" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0059" data-feature-id="EDGE-0059" x1="457.387" y1="287.913" x2="1109.054" y2="664.153" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0060" data-feature-id="EDGE-0060" x1="457.387" y1="284.564" x2="1109.054" y2="664.153" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0061" data-feature-id="EDGE-0061" x1="491.273" y1="268.349" x2="1109.054" y2="664.153" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0062" data-feature-id="EDGE-0062" x1="457.387" y1="284.564" x2="1109.054" y2="660.805" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0063" data-feature-id="EDGE-0063" x1="1109.054" y1="664.153" x2="1109.054" y2="660.805" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0064" data-feature-id="EDGE-0064" x1="491.273" y1="268.349" x2="1142.940" y2="644.589" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0065" data-feature-id="EDGE-0065" x1="1109.054" y1="664.153" x2="1142.940" y2="644.589" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0066" data-feature-id="EDGE-0066" x1="1109.054" y1="660.805" x2="1142.940" y2="644.589" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0067" data-feature-id="EDGE-0067" x1="457.387" y1="284.564" x2="1142.940" y2="641.240" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0068" data-feature-id="EDGE-0068" x1="491.273" y1="268.349" x2="1142.940" y2="641.240" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0069" data-feature-id="EDGE-0069" x1="491.273" y1="265.000" x2="1142.940" y2="641.240" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0070" data-feature-id="EDGE-0070" x1="1109.054" y1="660.805" x2="1142.940" y2="641.240" class="geometry"/>
+<line id="M1_ELEVATED_BYPASS-T1-05-ISOMETRIC-edge-0071" data-feature-id="EDGE-0071" x1="1142.940" y1="644.589" x2="1142.940" y2="641.240" class="geometry"/>
 </g>
 <g id="L22-PROVISIONAL-GEOMETRY" data-layer="L22-PROVISIONAL-GEOMETRY">
 
@@ -112,10 +114,9 @@
 
 </g>
 <g id="L50-DIMENSIONS" data-layer="L50-DIMENSIONS">
-<text x="48" y="710" class="section-title">BOUNDING EXTENTS</text>
-<text x="48" y="732" class="body">X 1000 m · Y 57 m · Z 4.45 m. Bounding dimensions are derived</text>
-<text x="48" y="750" class="body">from the committed review mesh, not as-built tolerance</text>
-<text x="48" y="768" class="body">authority.</text>
+<text x="48" y="710" class="section-title">DERIVED MODEL ENVELOPE</text>
+<text x="48" y="732" class="body">X 1000 m · Y 57 m · Z 4.45 m. Values derive from the committed</text>
+<text x="48" y="750" class="body">review mesh, not as-built tolerance authority.</text>
 </g>
 <g id="L60-MATERIALS" data-layer="L60-MATERIALS">
 <text x="560" y="710" class="section-title">MATERIAL STATE</text>
@@ -142,9 +143,10 @@
 </g>
 <g id="L90-EVIDENCE" data-layer="L90-EVIDENCE">
 <text x="440" y="130" class="section-title">EVIDENCE CLASS</text>
-<text x="440" y="152" class="body">SOURCE_DERIVED_GEOMETRY. Source mesh hash is</text>
-<text x="440" y="170" class="body">bound. Current migration priority P1 and fidelity</text>
-<text x="440" y="188" class="body">F3.</text>
+<text x="440" y="152" class="body">SOURCE_DERIVED_GEOMETRY. Projection input hash is</text>
+<text x="440" y="170" class="body">bound; source binding remains</text>
+<text x="440" y="188" class="body">COMMITTED_DERIVATION_RECEIPT. Evidence ceiling B;</text>
+<text x="440" y="206" class="body">migration priority P1 and fidelity F3.</text>
 </g>
 <g id="L91-UNKNOWNS" data-layer="L91-UNKNOWNS">
 <text x="800" y="130" class="section-title">OPEN GATE</text>
