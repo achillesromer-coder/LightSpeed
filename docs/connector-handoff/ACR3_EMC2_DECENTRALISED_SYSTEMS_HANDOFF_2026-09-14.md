@@ -1,10 +1,10 @@
 # ACR3 Handoff — Decentralised Systems & EMC² Tokenization Architecture
 
-**Date:** 2026-09-14  
-**Status:** PROJECT-EXIT HANDOFF / PREPUBLISH DESIGN / ECONOMIC ACTIVATION DISABLED  
-**Canonical Drive handoff:** `1bAc2Ezj4DGlBJA8NPW2-gARpFOKHIHSQsFuVFpCT-cI`  
-**Canonical ACR3 register:** `1AgAhLPNtrO91C_-ea7EdOkOsyXrCCYvFVvmDSGq8uls`  
-**Owning Type 1 Romer workbook:** `1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8`  
+**Date:** 2026-09-14
+**Status:** PROJECT-EXIT HANDOFF / PREPUBLISH DESIGN / ECONOMIC ACTIVATION DISABLED
+**Canonical Drive handoff:** `1bAc2Ezj4DGlBJA8NPW2-gARpFOKHIHSQsFuVFpCT-cI`
+**Canonical ACR3 register:** `1AgAhLPNtrO91C_-ea7EdOkOsyXrCCYvFVvmDSGq8uls`
+**Owning Type 1 Romer workbook:** `1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8`
 
 ## Authority
 
