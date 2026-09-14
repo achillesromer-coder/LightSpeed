@@ -58,17 +58,11 @@ import {
   renderResultReceiptsError,
 } from "./resultReceipts";
 import { renderRepresentationGraphs } from "./representationGraphs";
+import { sourceLinks } from "./sourceRegistry";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
 
 const app = document.getElementById("app");
 if (!app) throw new Error("LightSpeed Go mount node #app not found.");
-
-const sourceLinks = [
-  ["LightSpeed Git", "https://github.com/achillesromer-coder/LightSpeed", "Versioned implementation and receipts"],
-  ["LS GO Queue", "https://docs.google.com/spreadsheets/d/1f5i4V3FshYHkztv3_HAg0ZofUl0sdcJZcwrlesUlCfM/edit", "Phone tasks, approvals, commands, results and sync health"],
-  ["Portfolio Handoff", "https://docs.google.com/document/d/1tsDkb79UVX_SqS2-oBgc5DHb89QIlH3DcmKMN77hdOo/edit", "Cross-chat portfolio continuity"],
-  ["Römer Industries", "https://romer.industries", "Reviewed public portfolio surface"],
-] as const;
 
 const agentRows = [
   ["Achilles", "governance, proof and release"],

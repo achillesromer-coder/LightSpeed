@@ -61,7 +61,7 @@ const mount = async (): Promise<boolean> => {
     strip.innerHTML = `
       <span><strong>Owner:</strong> Nathaniel Bouwer</span>
       <span><strong>Mode:</strong> private soft launch</span>
-      <span><strong>Source:</strong> Git + Drive evidence pending</span>
+      <span><strong>Source:</strong> Git + Drive linked · public update held</span>
     `;
     topbar.appendChild(strip);
   }
