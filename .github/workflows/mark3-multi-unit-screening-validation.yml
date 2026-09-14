@@ -74,7 +74,7 @@ jobs:
           assert receipt["solver_version"] == "0.1.0"
           assert len(receipt["limitations"]) >= 6
           assert any("not computed trajectories" in item for item in receipt["limitations"])
-          assert any("not empirical" in item for item in receipt["limitations"])
+          assert any("no result is empirical" in item for item in receipt["limitations"])
           PY
 
       - name: Check the whole pull-request diff
