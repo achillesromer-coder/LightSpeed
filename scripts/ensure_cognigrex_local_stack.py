@@ -11,6 +11,7 @@ from pathlib import Path
 import socket
 import subprocess
 import sys
+import time
 from typing import Any
 from urllib.error import URLError
 from urllib.request import Request, urlopen
@@ -19,6 +20,18 @@ from urllib.request import Request, urlopen
 DEFAULT_CANONICAL_ROOT = Path(
     os.environ.get("LIGHTSPEED_CANONICAL_ROOT", r"D:\LightSpeed")
 )
+
+
+def canonical_receipt_dir(root: Path) -> Path:
+    """Return the sole Desktop-owned operational receipt directory."""
+    return (
+        root
+        / "App"
+        / "Z Axis"
+        / "Z-4_Merovingian"
+        / "data"
+        / "runtime_exports"
+    )
 
 
 def utc_now() -> datetime:
@@ -30,6 +43,18 @@ def port_open(port: int) -> bool:
         with socket.create_connection(("127.0.0.1", port), timeout=0.4):
             return True
     except OSError:
+        return False
+
+
+def paths_refer_to_same_location(left: Path, right: Path) -> bool:
+    """Treat the canonical D: namespace and its C: junction target as one root."""
+    left_text = os.path.normcase(os.path.normpath(str(left)))
+    right_text = os.path.normcase(os.path.normpath(str(right)))
+    if left_text == right_text:
+        return True
+    try:
+        return os.path.samefile(left, right)
+    except (OSError, ValueError, TypeError):
         return False
 
 
@@ -55,18 +80,104 @@ def bridge_status_healthy(root: Path, timeout_seconds: float = 10.0) -> bool:
     except (UnicodeDecodeError, json.JSONDecodeError):
         return False
 
-    expected_root = os.path.normcase(os.path.normpath(str(root / "App")))
-    reported_root = os.path.normcase(
-        os.path.normpath(str(payload.get("root", "")))
+    expected_root = root / "App"
+    reported_root = Path(str(payload.get("root", "")))
+    return payload.get("ok") is True and paths_refer_to_same_location(
+        expected_root,
+        reported_root,
     )
-    return payload.get("ok") is True and reported_root == expected_root
+
+
+def go_interface_healthy(timeout_seconds: float = 3.0) -> bool:
+    """Require the built LightSpeed Go surface to answer HTTP, not only TCP."""
+    request = Request("http://127.0.0.1:4173/", headers={"Accept": "text/html"})
+    try:
+        with urlopen(request, timeout=timeout_seconds) as response:
+            if response.status != 200:
+                return False
+            raw = response.read((1024 * 1024) + 1)
+    except (OSError, TimeoutError, URLError):
+        return False
+    if len(raw) > 1024 * 1024:
+        return False
+    return b"<html" in raw.lower() or b"<!doctype html" in raw.lower()
+
+
+def start_go_interface(root: Path, python: Path) -> str | None:
+    """Start the checked-in Go distribution without inheriting a console."""
+    distribution = root / "Apps" / "lightspeed-go" / "dist"
+    if not python.is_file() or not (distribution / "index.html").is_file():
+        return "canonical_python_or_go_distribution_missing"
+    creation_flags = subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
+    try:
+        subprocess.Popen(
+            [
+                str(python), "-m", "http.server", "4173", "--bind", "127.0.0.1",
+                "--directory", str(distribution),
+            ],
+            cwd=root,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            creationflags=creation_flags,
+        )
+    except OSError:
+        return "go_interface_start_failed"
+    for _ in range(20):
+        if go_interface_healthy(timeout_seconds=0.5):
+            return None
+        time.sleep(0.1)
+    return "go_interface_start_timeout"
+
+
+def desktop_health_status(
+    *,
+    first_port: int = 8080,
+    last_port: int = 8090,
+    timeout_seconds: float = 2.0,
+) -> dict[str, Any]:
+    """Require the bounded LightSpeed Desktop HTTP identity, not just a PID."""
+    for port in range(first_port, last_port + 1):
+        if not port_open(port):
+            continue
+        request = Request(
+            f"http://127.0.0.1:{port}/api/health",
+            headers={"Accept": "application/json"},
+        )
+        try:
+            with urlopen(request, timeout=timeout_seconds) as response:
+                if response.status != 200:
+                    continue
+                raw = response.read((64 * 1024) + 1)
+        except (OSError, TimeoutError, URLError):
+            continue
+        if len(raw) > 64 * 1024:
+            continue
+        try:
+            payload = json.loads(raw.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            continue
+        if not isinstance(payload, dict):
+            continue
+        if (
+            payload.get("status") == "operational"
+            and payload.get("server") == "FastAPI + Three.js"
+        ):
+            return {
+                "healthy": True,
+                "port": port,
+                "version": payload.get("version"),
+                "server": payload.get("server"),
+            }
+    return {"healthy": False, "port": None, "version": None, "server": None}
 
 
 def heartbeat_fresh(lock_path: Path, max_age_seconds: int = 180) -> bool:
     try:
         payload = json.loads(lock_path.read_text(encoding="utf-8"))
         stamp = datetime.fromisoformat(str(payload["heartbeat_utc"]).replace("Z", "+00:00"))
-        return (utc_now() - stamp).total_seconds() <= max_age_seconds
+        age = (utc_now() - stamp).total_seconds()
+        return 0 <= age <= max_age_seconds
     except (OSError, KeyError, ValueError, TypeError, json.JSONDecodeError):
         return False
 
@@ -74,9 +185,31 @@ def heartbeat_fresh(lock_path: Path, max_age_seconds: int = 180) -> bool:
 def process_command_running(fragment: str) -> bool:
     if sys.platform != "win32":
         return False
+    try:
+        import psutil
+
+        needle = fragment.casefold()
+        python_script_fragment = fragment.casefold().endswith(".py")
+        for process in psutil.process_iter(["cmdline", "name"]):
+            try:
+                process_name = str(process.info.get("name") or "").casefold()
+                if python_script_fragment and process_name not in {
+                    "python.exe",
+                    "pythonw.exe",
+                }:
+                    continue
+                command_line = " ".join(process.info.get("cmdline") or [])
+                if needle in command_line.casefold():
+                    return True
+            except (psutil.AccessDenied, psutil.NoSuchProcess, psutil.ZombieProcess):
+                continue
+        return False
+    except (ImportError, OSError):
+        pass
+
     command = (
         "Get-CimInstance Win32_Process | ForEach-Object { "
-        "if ($_.CommandLine) { Write-Output $_.CommandLine } }"
+        "if ($_.CommandLine) { Write-Output ($_.Name + \"`t\" + $_.CommandLine) } }"
     )
     try:
         completed = subprocess.run(
@@ -89,8 +222,15 @@ def process_command_running(fragment: str) -> bool:
     except (OSError, subprocess.SubprocessError):
         return False
     needle = fragment.casefold()
+    python_script_fragment = fragment.casefold().endswith(".py")
     return completed.returncode == 0 and any(
-        needle in line.casefold() for line in completed.stdout.splitlines()
+        needle in parts[1].casefold()
+        for line in completed.stdout.splitlines()
+        if len(parts := line.split("\t", 1)) == 2
+        and (
+            not python_script_fragment
+            or parts[0].casefold() in {"python.exe", "pythonw.exe"}
+        )
     )
 
 
@@ -104,7 +244,7 @@ def write_receipt(path: Path, payload: dict[str, Any]) -> None:
     temporary.replace(path)
 
 
-def observe(root: Path, *, max_heartbeat_age: int) -> dict[str, bool]:
+def observe(root: Path, *, max_heartbeat_age: int) -> dict[str, Any]:
     lock_path = (
         root
         / "App"
@@ -114,12 +254,18 @@ def observe(root: Path, *, max_heartbeat_age: int) -> dict[str, bool]:
         / "runtime_exports"
         / "merovingian_supervisor.lock.json"
     )
+    desktop_marker = str(root / "App" / "__main__.py")
+    desktop_process = process_command_running(desktop_marker)
+    desktop_http = desktop_health_status()
     return {
         "bridge": bridge_status_healthy(root),
         "bridge_tcp": port_open(8765),
         "merovingian_heartbeat": heartbeat_fresh(lock_path, max_heartbeat_age),
-        "go_interface": port_open(4173),
-        "desktop": process_command_running(str(root / "App" / "__main__.py")),
+        "go_interface": go_interface_healthy(),
+        "desktop_process": desktop_process,
+        "desktop_http": bool(desktop_http["healthy"]),
+        "desktop_port": desktop_http["port"],
+        "desktop": desktop_process and bool(desktop_http["healthy"]),
     }
 
 
@@ -128,23 +274,24 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--canonical-root", type=Path, default=DEFAULT_CANONICAL_ROOT)
     parser.add_argument("--max-heartbeat-age", type=int, default=180)
     parser.add_argument("--repair-timeout", type=int, default=180)
+    parser.add_argument("--quiet", action="store_true")
     args = parser.parse_args(argv)
 
     root = args.canonical_root.absolute()
     python = root / "Environment" / "Scripts" / "python.exe"
     launcher = root / "Automation" / "run_cognigrex_local_stack.py"
     receipt = root / "State" / "Health" / "cognigrex_watchdog_receipt.json"
-    stack_receipt = (
-        root / "Core" / "exports" / "agent_home" / "cognigrex_local_stack_receipt.json"
-    )
+    stack_receipt = canonical_receipt_dir(root) / "cognigrex_local_stack_receipt.json"
 
     before = observe(root, max_heartbeat_age=args.max_heartbeat_age)
-    needs_repair = not (
+    needs_stack_repair = not (
         before["bridge"] and before["merovingian_heartbeat"] and before["desktop"]
     )
+    needs_go_repair = not before["go_interface"]
+    needs_repair = needs_stack_repair or needs_go_repair
     launch_exit_code: int | None = None
     launch_error: str | None = None
-    if needs_repair:
+    if needs_stack_repair:
         if not python.is_file() or not launcher.is_file():
             launch_error = "canonical_python_or_launcher_missing"
         else:
@@ -167,10 +314,14 @@ def main(argv: list[str] | None = None) -> int:
             except subprocess.TimeoutExpired:
                 launch_error = "bounded_repair_timeout"
 
+    go_launch_error: str | None = None
+    if needs_go_repair:
+        go_launch_error = start_go_interface(root, python)
+
     after = observe(root, max_heartbeat_age=args.max_heartbeat_age)
     status = (
         "pass"
-        if after["bridge"] and after["merovingian_heartbeat"] and after["desktop"]
+        if after["bridge"] and after["merovingian_heartbeat"] and after["desktop"] and after["go_interface"]
         else "review_required"
     )
     payload = {
@@ -182,12 +333,14 @@ def main(argv: list[str] | None = None) -> int:
         "after": after,
         "launch_exit_code": launch_exit_code,
         "launch_error": launch_error,
+        "go_launch_error": go_launch_error,
         "canonical_root": str(root),
         "automatic_deletion": False,
         "public_export": False,
     }
     write_receipt(receipt, payload)
-    print(json.dumps(payload, indent=2, sort_keys=True))
+    if not args.quiet:
+        print(json.dumps(payload, indent=2, sort_keys=True))
     return 0 if status == "pass" else 2
 
 

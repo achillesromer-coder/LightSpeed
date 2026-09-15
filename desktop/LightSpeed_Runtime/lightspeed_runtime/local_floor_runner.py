@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 from contextlib import AbstractContextManager
+import ctypes
 from dataclasses import dataclass
 from datetime import UTC, datetime
 import hashlib
@@ -12,6 +13,7 @@ import re
 import time
 from typing import Any, Callable
 from urllib.error import HTTPError, URLError
+from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
 
@@ -20,8 +22,14 @@ DEFAULT_TIMEOUT_SECONDS = 90
 DEFAULT_NUM_PREDICT = 512
 MAX_NUM_PREDICT = 1024
 HEAVY_MODEL_PATTERN = re.compile(r"(?:(?:27|70|120|405|671)b)|cloud", re.IGNORECASE)
+DEFAULT_WARNING_FREE_MEMORY_PERCENT = 15.0
+DEFAULT_CRITICAL_FREE_MEMORY_PERCENT = 8.0
+DEFAULT_MINIMUM_FREE_MEMORY_BYTES = 4 * 1024**3
+LAST_RECEIPT_TAIL_BYTES = 64 * 1024
 
 HttpPost = Callable[[str, dict[str, Any], float], dict[str, Any]]
+OllamaStatusProbe = Callable[[str, float], dict[str, Any]]
+MemorySnapshot = Callable[[], tuple[int, int]]
 
 
 class LocalFloorRunnerError(RuntimeError):
@@ -108,19 +116,37 @@ def run_floor(
     timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS,
     num_predict: int | None = None,
     http_post: HttpPost | None = None,
+    ollama_status_probe: OllamaStatusProbe | None = None,
+    memory_snapshot: MemorySnapshot | None = None,
     lock: bool = True,
 ) -> dict[str, Any]:
     contract = load_contract(contract_path)
     selection = select_floor(contract, floor=floor, order=order)
     floor_row = selection.floor
     conn = floor_row.get("ollama_connection") or {}
-    endpoint = str(conn.get("endpoint") or (contract.get("ollama") or {}).get("endpoint") or "http://localhost:11434")
+    endpoint = _canonical_loopback_endpoint(
+        str(
+            conn.get("endpoint")
+            or (contract.get("ollama") or {}).get("endpoint")
+            or "http://127.0.0.1:11434"
+        )
+    )
     model = str(conn.get("model") or "")
     request_body = build_ollama_request(contract, floor_row, num_predict=num_predict)
     receipt_path = resolve_receipt_path(contract, floor_row, receipt_target=receipt_target)
     lock_path = resolve_lock_path(contract)
 
     blocked_reason = _blocked_heavy_reason(floor_row, model, allow_heavy=allow_heavy)
+    resource_status = build_resource_preflight(
+        contract,
+        endpoint=endpoint,
+        probe_ollama=not dry_run and not bool(blocked_reason),
+        timeout_seconds=min(max(float(timeout_seconds), 0.1), 5.0),
+        ollama_status_probe=ollama_status_probe,
+        memory_snapshot=memory_snapshot,
+    )
+    if not blocked_reason and not dry_run and resource_status["execution_state"] == "stop":
+        blocked_reason = "resource stop threshold reached: " + "; ".join(resource_status["stop_reasons"])
     if blocked_reason:
         receipt = build_receipt(
             contract,
@@ -131,6 +157,7 @@ def run_floor(
             contract_path=contract_path,
             request_body=request_body,
             blocked_reason=blocked_reason,
+            resource_status=resource_status,
         )
         write_receipt(contract, receipt_path, receipt)
         return receipt
@@ -144,6 +171,7 @@ def run_floor(
             receipt_path=receipt_path,
             contract_path=contract_path,
             request_body=request_body,
+            resource_status=resource_status,
         )
         write_receipt(contract, receipt_path, receipt)
         return receipt
@@ -172,6 +200,7 @@ def run_floor(
         response=response,
         error=error,
         elapsed_ms=elapsed_ms,
+        resource_status=resource_status,
     )
     write_receipt(contract, receipt_path, receipt)
     return receipt
@@ -198,6 +227,17 @@ def build_ollama_request(
         "keep_alive": 0,
         "options": {"num_predict": bounded_num_predict},
     }
+
+
+def _canonical_loopback_endpoint(endpoint: str) -> str:
+    """Route local model work to the model-bearing IPv4 singleton."""
+    parsed = urlparse(endpoint)
+    if parsed.hostname != "localhost":
+        return endpoint
+    host = "127.0.0.1"
+    if parsed.port is not None:
+        host = f"{host}:{parsed.port}"
+    return parsed._replace(netloc=host).geturl()
 
 
 def build_floor_prompt(contract: dict[str, Any], floor: dict[str, Any]) -> str:
@@ -241,9 +281,25 @@ def resolve_receipt_path(contract: dict[str, Any], floor: dict[str, Any], *, rec
     if receipt_target == "floor":
         return Path(str(floor["floor_root"])) / "data" / "wakeup" / filename
     if receipt_target == "neo":
-        shell_root = Path(str(contract["shell_root"]))
+        shell_root = resolve_contract_shell_root(contract)
         return shell_root / "Z Axis" / "Z+2_Neo" / "data" / "temp_shells" / "outputs" / filename
     raise LocalFloorRunnerError("receipt_target must be 'neo' or 'floor'")
+
+
+def resolve_contract_shell_root(contract: dict[str, Any]) -> Path:
+    """Prefer the canonical operator-shell path over a stale exported route."""
+    requested = Path(str(contract["shell_root"]))
+    root = Path(str(contract.get("root") or DEFAULT_CONTRACT_PATH.parents[2]))
+    agent_home_path = root / "config" / "agent_home.json"
+    try:
+        agent_home = json.loads(agent_home_path.read_text(encoding="utf-8-sig"))
+    except (FileNotFoundError, OSError, json.JSONDecodeError):
+        return requested
+    if not isinstance(agent_home, dict):
+        return requested
+    environment = agent_home.get("environment") if isinstance(agent_home.get("environment"), dict) else {}
+    configured = str(environment.get("desktop_shell_root") or "").strip()
+    return Path(configured) if configured else requested
 
 
 def resolve_lock_path(contract: dict[str, Any]) -> Path:
@@ -264,6 +320,7 @@ def build_receipt(
     error: str | None = None,
     blocked_reason: str | None = None,
     elapsed_ms: int | None = None,
+    resource_status: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     prompt = str(request_body.get("prompt") or "")
     safe_floor = re.sub(r"[^A-Za-z0-9_.-]+", "_", str(floor.get("floor") or "floor")).strip("_")
@@ -289,6 +346,7 @@ def build_receipt(
         },
         "prompt_sha256": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
         "prompt_preview": prompt[:600],
+        "resource_preflight": resource_status or {},
     }
     if blocked_reason:
         receipt["blocked_reason"] = blocked_reason
@@ -316,6 +374,229 @@ def post_ollama_generate(url: str, payload: dict[str, Any], timeout_seconds: flo
     if not isinstance(decoded, dict):
         raise LocalFloorRunnerError("Ollama response was not a JSON object")
     return decoded
+
+
+def probe_ollama_processes(endpoint: str, timeout_seconds: float) -> dict[str, Any]:
+    """Return a compact read-only view of models currently loaded by local Ollama."""
+    request = Request(f"{endpoint.rstrip('/')}/api/ps", method="GET")
+    try:
+        with urlopen(request, timeout=timeout_seconds) as response:
+            response_body = response.read().decode("utf-8")
+        decoded = json.loads(response_body) if response_body.strip() else {}
+        if not isinstance(decoded, dict):
+            raise LocalFloorRunnerError("Ollama process response was not a JSON object")
+        models = decoded.get("models") if isinstance(decoded.get("models"), list) else []
+        loaded = []
+        for row in models[:16]:
+            if not isinstance(row, dict):
+                continue
+            loaded.append(
+                {
+                    "name": row.get("name") or row.get("model"),
+                    "size_bytes": row.get("size"),
+                    "size_vram_bytes": row.get("size_vram"),
+                    "expires_at": row.get("expires_at"),
+                }
+            )
+        return {
+            "state": "available",
+            "loaded_model_count": len(models),
+            "loaded_models": loaded,
+            "truncated": len(models) > len(loaded),
+        }
+    except (HTTPError, URLError, TimeoutError, OSError, ValueError, json.JSONDecodeError, LocalFloorRunnerError) as exc:
+        return {
+            "state": "unavailable",
+            "loaded_model_count": None,
+            "loaded_models": [],
+            "error": str(exc),
+        }
+
+
+def build_resource_preflight(
+    contract: dict[str, Any],
+    *,
+    endpoint: str,
+    probe_ollama: bool,
+    timeout_seconds: float = 2.0,
+    ollama_status_probe: OllamaStatusProbe | None = None,
+    memory_snapshot: MemorySnapshot | None = None,
+) -> dict[str, Any]:
+    """Build the bounded, read-only resource signal recorded before each floor run."""
+    policy = contract.get("policy") if isinstance(contract.get("policy"), dict) else {}
+    guard = policy.get("resource_guard") if isinstance(policy.get("resource_guard"), dict) else {}
+    warning_percent = _float_setting(
+        guard,
+        "warning_free_memory_percent",
+        DEFAULT_WARNING_FREE_MEMORY_PERCENT,
+    )
+    critical_percent = _float_setting(
+        guard,
+        "critical_free_memory_percent",
+        DEFAULT_CRITICAL_FREE_MEMORY_PERCENT,
+    )
+    minimum_free_bytes = _int_setting(
+        guard,
+        "minimum_free_memory_bytes",
+        DEFAULT_MINIMUM_FREE_MEMORY_BYTES,
+    )
+
+    snapshot = memory_snapshot or _memory_snapshot
+    memory: dict[str, Any]
+    stop_reasons: list[str] = []
+    try:
+        total_bytes, free_bytes = snapshot()
+        if total_bytes <= 0 or free_bytes < 0:
+            raise ValueError("memory snapshot returned invalid byte counts")
+        free_percent = round((free_bytes / total_bytes) * 100, 2)
+        memory_state = "ready"
+        if free_percent <= critical_percent or free_bytes < minimum_free_bytes:
+            memory_state = "stop"
+        elif free_percent <= warning_percent:
+            memory_state = "warning"
+        if free_percent <= critical_percent:
+            stop_reasons.append(f"free memory {free_percent}% is at or below {critical_percent}%")
+        if free_bytes < minimum_free_bytes:
+            stop_reasons.append(f"free memory {free_bytes} bytes is below {minimum_free_bytes} bytes")
+        memory = {
+            "state": memory_state,
+            "total_bytes": total_bytes,
+            "free_bytes": free_bytes,
+            "free_percent": free_percent,
+        }
+    except (OSError, ValueError, TypeError) as exc:
+        memory = {
+            "state": "unavailable",
+            "total_bytes": None,
+            "free_bytes": None,
+            "free_percent": None,
+            "error": str(exc),
+        }
+
+    endpoint_host = (urlparse(endpoint).hostname or "").casefold()
+    local_endpoint = endpoint_host in {"localhost", "127.0.0.1", "::1"}
+    if stop_reasons:
+        ollama = {
+            "state": "not_probed",
+            "loaded_model_count": None,
+            "loaded_models": [],
+            "reason": "resource_stop",
+        }
+    elif probe_ollama and not local_endpoint:
+        ollama = {
+            "state": "not_probed",
+            "loaded_model_count": None,
+            "loaded_models": [],
+            "reason": "nonlocal_endpoint_blocked",
+        }
+    elif probe_ollama:
+        probe = ollama_status_probe or probe_ollama_processes
+        try:
+            ollama = probe(endpoint, timeout_seconds)
+        except Exception as exc:  # A telemetry probe must never crash or bypass the run gate.
+            ollama = {
+                "state": "unavailable",
+                "loaded_model_count": None,
+                "loaded_models": [],
+                "error": str(exc),
+            }
+    else:
+        ollama = {
+            "state": "not_probed",
+            "loaded_model_count": None,
+            "loaded_models": [],
+            "reason": "dry_run_or_preexisting_gate",
+        }
+
+    return {
+        "observed_at": _utc_now_iso(),
+        "execution_state": "stop" if stop_reasons else "ready_with_warning" if memory["state"] in {"warning", "unavailable"} else "ready",
+        "stop_reasons": stop_reasons,
+        "thresholds": {
+            "warning_free_memory_percent": warning_percent,
+            "critical_free_memory_percent": critical_percent,
+            "minimum_free_memory_bytes": minimum_free_bytes,
+        },
+        "memory": memory,
+        "ollama": ollama,
+        "last_receipt": _last_receipt_summary(contract),
+    }
+
+
+def _memory_snapshot() -> tuple[int, int]:
+    if os.name == "nt":
+        class MemoryStatusEx(ctypes.Structure):
+            _fields_ = [
+                ("dwLength", ctypes.c_ulong),
+                ("dwMemoryLoad", ctypes.c_ulong),
+                ("ullTotalPhys", ctypes.c_ulonglong),
+                ("ullAvailPhys", ctypes.c_ulonglong),
+                ("ullTotalPageFile", ctypes.c_ulonglong),
+                ("ullAvailPageFile", ctypes.c_ulonglong),
+                ("ullTotalVirtual", ctypes.c_ulonglong),
+                ("ullAvailVirtual", ctypes.c_ulonglong),
+                ("ullAvailExtendedVirtual", ctypes.c_ulonglong),
+            ]
+
+        status = MemoryStatusEx()
+        status.dwLength = ctypes.sizeof(status)
+        if not ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(status)):
+            raise OSError("GlobalMemoryStatusEx failed")
+        return int(status.ullTotalPhys), int(status.ullAvailPhys)
+
+    page_size = int(os.sysconf("SC_PAGE_SIZE"))
+    return page_size * int(os.sysconf("SC_PHYS_PAGES")), page_size * int(os.sysconf("SC_AVPHYS_PAGES"))
+
+
+def _last_receipt_summary(contract: dict[str, Any]) -> dict[str, Any] | None:
+    root = Path(str(contract.get("root") or DEFAULT_CONTRACT_PATH.parents[2]))
+    ledger_root = root / "logs" / "receipts"
+    ledgers = sorted(ledger_root.glob("local_floor_runner_*.jsonl"), reverse=True)
+    for ledger_path in ledgers[:4]:
+        raw = _read_bounded_last_line(ledger_path)
+        if not raw:
+            continue
+        try:
+            receipt = json.loads(raw)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(receipt, dict):
+            continue
+        return {
+            "receipt_id": receipt.get("receipt_id"),
+            "created_at": receipt.get("created_at"),
+            "floor": receipt.get("floor"),
+            "status": receipt.get("status"),
+            "ledger_path": str(ledger_path),
+        }
+    return None
+
+
+def _read_bounded_last_line(path: Path) -> str:
+    try:
+        with path.open("rb") as handle:
+            handle.seek(0, os.SEEK_END)
+            size = handle.tell()
+            handle.seek(max(0, size - LAST_RECEIPT_TAIL_BYTES))
+            tail = handle.read(LAST_RECEIPT_TAIL_BYTES).decode("utf-8", errors="replace")
+    except OSError:
+        return ""
+    lines = [line.strip() for line in tail.splitlines() if line.strip()]
+    return lines[-1] if lines else ""
+
+
+def _float_setting(settings: dict[str, Any], key: str, default: float) -> float:
+    try:
+        return float(settings.get(key, default))
+    except (TypeError, ValueError):
+        return default
+
+
+def _int_setting(settings: dict[str, Any], key: str, default: int) -> int:
+    try:
+        return int(settings.get(key, default))
+    except (TypeError, ValueError):
+        return default
 
 
 def write_json(path: Path, payload: dict[str, Any]) -> None:

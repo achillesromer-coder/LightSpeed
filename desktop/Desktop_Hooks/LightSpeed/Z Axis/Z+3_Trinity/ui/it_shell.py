@@ -22,6 +22,7 @@ from shell_routes import (
     SHELL_MODES,
     ShellRouter,
     ShellState,
+    host_floor_name,
     normalize_floor,
 )
 
@@ -485,6 +486,7 @@ class ITShell(tk.Frame):
     def _mount_active_floor(self, subtab_title: str = "") -> bool:
         self._clear_content()
         floor = self.state.active_floor
+        host_floor = host_floor_name(floor)
         renderer = getattr(self.host, "_render_floor_embedded", None)
         if not callable(renderer):
             self._title(
@@ -493,7 +495,7 @@ class ITShell(tk.Frame):
             )
             return False
         try:
-            renderer(self.content_host, floor)
+            renderer(self.content_host, host_floor)
             self.status.configure(text=f"{floor} mounted in the Trinity shell")
         except Exception as exc:
             self._title(f"{floor} failed to mount", str(exc))
@@ -504,7 +506,9 @@ class ITShell(tk.Frame):
 
     def _select_floor_subtab(self, floor: str, subtab_title: str) -> None:
         try:
-            widget = getattr(self.host, "_floor_ui_widgets", {}).get(floor)
+            widget = getattr(self.host, "_floor_ui_widgets", {}).get(
+                host_floor_name(floor)
+            )
             notebook = getattr(widget, "notebook", None)
             tabs = getattr(widget, "_tabs", {})
             target = tabs.get(subtab_title) if isinstance(tabs, dict) else None

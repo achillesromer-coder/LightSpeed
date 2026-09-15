@@ -37,25 +37,31 @@
   },
   "policy_id": "host_runtime_2026_05_21",
   "runtime_limits": {
+    "active_operating_profile": "cognigrex_half_speed",
+    "background_poll_interval_multiplier": 2.0,
+    "background_process_priority": "below_normal",
     "chrome_reserved_ram_gb": 6,
     "chrome_reserved_threads": 4,
+    "cognigrex_speed_percent": 50,
     "construct_texture_panel_budget": 8,
     "construct_widget_budget": 36,
     "cpu_scheduler_strategy": "bounded_parallelism_over_global_autostart",
     "interactive_session_mode": "chrome_headroom_compact_shell",
     "lightspeed_max_resident_ui_panels": 4,
-    "max_active_heavy_floors": 2,
-    "max_background_queue_workers": 2,
-    "max_concurrent_ollama_jobs": 2,
-    "max_floor_boot_parallelism": 4
+    "max_active_heavy_floors": 1,
+    "max_background_queue_workers": 1,
+    "max_concurrent_ollama_jobs": 1,
+    "max_floor_boot_parallelism": 2,
+    "merovingian_interval_seconds": 120,
+    "watchdog_interval_minutes": 10
   },
   "storage_topology": {
-    "ollama_model_root": "C:\\LightSpeed_Consolidated\\.dependencies\\ollama\\models",
+    "ollama_model_root": "D:\\LightSpeed\\Models",
     "ollama_model_root_type": "vendor_dependency_store_reached_from_d_drive_junction",
-    "policy": "Use D:\\LightSpeed_Consolidated as the canonical operational namespace; retain C-backed junction targets and large dependency payloads until a separately verified physical migration is appropriate.",
+    "policy": "Use D:\\LightSpeed as the canonical operational namespace; retain C-backed junction targets and large dependency payloads until a separately verified physical migration is appropriate.",
     "windows_root": "C:",
     "windows_root_type": "hdd",
-    "workspace_root": "D:\\LightSpeed_Consolidated",
+    "workspace_root": "D:\\LightSpeed",
     "workspace_root_type": "canonical_d_drive_namespace"
   },
   "windows_tuning": {

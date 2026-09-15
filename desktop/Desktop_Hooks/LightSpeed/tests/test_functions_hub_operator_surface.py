@@ -26,6 +26,14 @@ def test_functions_hub_exposes_operator_home_contract() -> None:
         "buildout_phase_queue.json",
         "smart_floor_artifacts",
         "*receipt*.json",
+        "Resource preflight:",
+        "RAM free=",
+        "stop floor=",
+        "Ollama loaded:",
+        "Last floor receipt:",
+        "resource_preflight",
+        "minimum_free_memory_bytes",
+        "loaded_model_count",
     ]
 
     for text in required_surface_text:

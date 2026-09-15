@@ -20,12 +20,30 @@ import subprocess
 import sys
 import time
 from typing import Any
+from urllib.error import URLError
 from urllib.request import urlopen
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 REPO_RUNTIME_ROOT = REPO_ROOT / "desktop" / "LightSpeed_Runtime"
 REPO_SHELL_ROOT = REPO_ROOT / "desktop" / "Desktop_Hooks" / "LightSpeed"
 CANONICAL_ROOT = Path(os.environ.get("LIGHTSPEED_CANONICAL_ROOT", r"D:\LightSpeed"))
+CANONICAL_DATABASE = CANONICAL_ROOT / "Data" / "db" / "lightspeed_unified.db"
+
+
+def canonical_receipt_dir(shell_root: Path) -> Path:
+    """Return the sole operator-owned receipt directory.
+
+    Runtime exports under ``Core/exports`` are presentation context for the
+    Desktop bridge. Operational receipts belong to the live Desktop shell so
+    starting the split runtime cannot create a second receipt authority.
+    """
+    return (
+        shell_root
+        / "Z Axis"
+        / "Z-4_Merovingian"
+        / "data"
+        / "runtime_exports"
+    )
 
 
 def utc_now_iso() -> str:
@@ -101,6 +119,85 @@ def lock_pid(path: Path) -> int | None:
         return None
 
 
+def heartbeat_fresh(path: Path, max_age_seconds: int = 255) -> bool:
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        stamp = datetime.fromisoformat(
+            str(payload["heartbeat_utc"]).replace("Z", "+00:00")
+        )
+        age = (datetime.now(UTC) - stamp).total_seconds()
+        return 0 <= age <= max_age_seconds
+    except (OSError, KeyError, ValueError, TypeError, json.JSONDecodeError):
+        return False
+
+
+def wait_for_heartbeat(
+    path: Path,
+    pid: int,
+    *,
+    timeout_seconds: float = 30.0,
+    max_age_seconds: int = 255,
+) -> bool:
+    deadline = time.monotonic() + max(1.0, timeout_seconds)
+    while time.monotonic() < deadline:
+        if lock_pid(path) == pid and pid_alive(pid) and heartbeat_fresh(
+            path, max_age_seconds
+        ):
+            return True
+        time.sleep(0.5)
+    return False
+
+
+def desktop_health_status(
+    *,
+    first_port: int = 8080,
+    last_port: int = 8090,
+    timeout_seconds: float = 2.0,
+) -> dict[str, Any]:
+    """Return only a bounded, identity-checked LightSpeed Desktop health result."""
+    for port in range(first_port, last_port + 1):
+        if not port_open("127.0.0.1", port):
+            continue
+        try:
+            with urlopen(
+                f"http://127.0.0.1:{port}/api/health",
+                timeout=timeout_seconds,
+            ) as response:
+                if response.status != 200:
+                    continue
+                raw = response.read((64 * 1024) + 1)
+        except (OSError, TimeoutError, URLError):
+            continue
+        if len(raw) > 64 * 1024:
+            continue
+        try:
+            payload = json.loads(raw.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            continue
+        if not isinstance(payload, dict):
+            continue
+        if (
+            payload.get("status") == "operational"
+            and payload.get("server") == "FastAPI + Three.js"
+        ):
+            return {
+                "healthy": True,
+                "port": port,
+                "version": payload.get("version"),
+                "server": payload.get("server"),
+            }
+    return {"healthy": False, "port": None, "version": None, "server": None}
+
+
+def wait_for_desktop_health(timeout_seconds: float = 30.0) -> dict[str, Any]:
+    deadline = time.monotonic() + max(1.0, timeout_seconds)
+    latest = desktop_health_status()
+    while not latest["healthy"] and time.monotonic() < deadline:
+        time.sleep(1)
+        latest = desktop_health_status()
+    return latest
+
+
 def creation_flags() -> int:
     if os.name != "nt":
         return 0
@@ -108,6 +205,7 @@ def creation_flags() -> int:
         getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
         | getattr(subprocess, "DETACHED_PROCESS", 0)
         | getattr(subprocess, "CREATE_NO_WINDOW", 0)
+        | getattr(subprocess, "BELOW_NORMAL_PRIORITY_CLASS", 0)
     )
 
 
@@ -138,39 +236,86 @@ def installed_or_repository_script(group: str, name: str) -> Path:
 def windows_command_processes(fragment: str) -> list[dict[str, Any]]:
     if os.name != "nt":
         return []
+    try:
+        import psutil
+
+        needle = fragment.casefold()
+        rows: list[dict[str, Any]] = []
+        python_script_fragment = fragment.casefold().endswith(".py")
+        for process in psutil.process_iter(
+            ["pid", "ppid", "create_time", "cmdline", "name"]
+        ):
+            try:
+                process_name = str(process.info.get("name") or "").casefold()
+                if python_script_fragment and process_name not in {
+                    "python.exe",
+                    "pythonw.exe",
+                }:
+                    continue
+                command_line = " ".join(process.info.get("cmdline") or [])
+                if needle not in command_line.casefold():
+                    continue
+                rows.append(
+                    {
+                        "pid": int(process.info["pid"]),
+                        "parent_pid": int(process.info.get("ppid") or 0),
+                        "created_ticks": int(
+                            float(process.info.get("create_time") or 0.0)
+                            * 10_000_000
+                        ),
+                        "name": process.info.get("name"),
+                        "command_line": command_line,
+                    }
+                )
+            except (psutil.AccessDenied, psutil.NoSuchProcess, psutil.ZombieProcess):
+                continue
+        return rows
+    except (ImportError, OSError):
+        pass
+
     # Do not embed ``fragment`` in the PowerShell command: doing so makes the
     # probe match its own command line and report every process as running.
     command = (
         "Get-CimInstance Win32_Process | ForEach-Object { "
         "if ($_.CommandLine) { Write-Output ("
-        "$_.ProcessId.ToString() + \"`t\" + $_.ParentProcessId.ToString() + \"`t\" + "
+        "$_.Name + \"`t\" + $_.ProcessId.ToString() + \"`t\" + $_.ParentProcessId.ToString() + \"`t\" + "
         "$_.CreationDate.ToUniversalTime().Ticks.ToString() + \"`t\" + $_.CommandLine) } "
         "}"
     )
-    completed = subprocess.run(
-        ["powershell", "-NoProfile", "-NonInteractive", "-Command", command],
-        capture_output=True,
-        text=True,
-        check=False,
-        timeout=15,
-    )
+    try:
+        completed = subprocess.run(
+            ["powershell", "-NoProfile", "-NonInteractive", "-Command", command],
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=15,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return []
     if completed.returncode != 0:
         return []
     needle = fragment.casefold()
     rows: list[dict[str, Any]] = []
+    python_script_fragment = fragment.casefold().endswith(".py")
     for line in completed.stdout.splitlines():
         if needle not in line.casefold():
             continue
-        parts = line.split("\t", 3)
-        if len(parts) != 4:
+        parts = line.split("\t", 4)
+        if len(parts) != 5:
+            continue
+        if python_script_fragment and parts[0].casefold() not in {
+            "python.exe",
+            "pythonw.exe",
+        }:
             continue
         try:
             rows.append(
                 {
-                    "pid": int(parts[0]),
-                    "parent_pid": int(parts[1]),
-                    "created_ticks": int(parts[2]),
-                    "command_line": parts[3],
+                    "name": parts[0],
+                    "pid": int(parts[1]),
+                    "parent_pid": int(parts[2]),
+                    "created_ticks": int(parts[3]),
+                    "command_line": parts[4],
                 }
             )
         except ValueError:
@@ -182,25 +327,145 @@ def windows_command_running(fragment: str) -> bool:
     return bool(windows_command_processes(fragment))
 
 
-def listening_pid(port: int) -> int | None:
-    if os.name != "nt":
-        return None
-    command = (
-        f"$row=Get-NetTCPConnection -State Listen -LocalPort {int(port)} "
-        "-ErrorAction SilentlyContinue | Select-Object -First 1; "
-        "if($row){Write-Output $row.OwningProcess}"
-    )
+def stop_verified_process_tree(
+    pid: int,
+    *,
+    process_fragment: str,
+    required_command_fragment: str,
+) -> dict[str, Any]:
+    """Stop one process tree only after its exact command identity is verified."""
+    rows = windows_command_processes(process_fragment)
+    by_pid = {int(row["pid"]): row for row in rows}
+    row = by_pid.get(int(pid))
+    required = required_command_fragment.casefold()
+    row_name = str((row or {}).get("name") or "").casefold()
+    python_script_required = required.endswith(".py")
+    if (
+        row is None
+        or required not in str(row["command_line"]).casefold()
+        or (
+            python_script_required
+            and row_name not in {"python.exe", "pythonw.exe"}
+        )
+    ):
+        return {
+            "verified": False,
+            "requested_pid": int(pid),
+            "stopped_root_pid": None,
+        }
+    root_pid = int(pid)
+    while int(by_pid[root_pid]["parent_pid"]) in by_pid:
+        root_pid = int(by_pid[root_pid]["parent_pid"])
+    tree_pids = {root_pid}
+    changed = True
+    while changed:
+        changed = False
+        for candidate in rows:
+            candidate_pid = int(candidate["pid"])
+            if (
+                candidate_pid not in tree_pids
+                and int(candidate["parent_pid"]) in tree_pids
+            ):
+                tree_pids.add(candidate_pid)
+                changed = True
     completed = subprocess.run(
-        ["powershell", "-NoProfile", "-NonInteractive", "-Command", command],
+        ["taskkill", "/PID", str(root_pid), "/T", "/F"],
         capture_output=True,
         text=True,
         check=False,
-        timeout=15,
+        timeout=20,
     )
-    try:
-        return int(completed.stdout.strip()) if completed.returncode == 0 else None
-    except ValueError:
+    survivor_stops: list[int] = []
+    if completed.returncode == 0:
+        deadline = time.monotonic() + 5.0
+        while time.monotonic() < deadline and any(
+            pid_alive(candidate_pid) for candidate_pid in tree_pids
+        ):
+            time.sleep(0.25)
+        current = {
+            int(candidate["pid"]): candidate
+            for candidate in windows_command_processes(process_fragment)
+        }
+        for candidate_pid in sorted(tree_pids):
+            candidate = current.get(candidate_pid)
+            candidate_name = str((candidate or {}).get("name") or "").casefold()
+            if (
+                candidate is None
+                or not pid_alive(candidate_pid)
+                or required not in str(candidate["command_line"]).casefold()
+                or (
+                    python_script_required
+                    and candidate_name not in {"python.exe", "pythonw.exe"}
+                )
+            ):
+                continue
+            survivor = subprocess.run(
+                ["taskkill", "/PID", str(candidate_pid), "/T", "/F"],
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=20,
+            )
+            if survivor.returncode == 0:
+                survivor_stops.append(candidate_pid)
+        if survivor_stops:
+            time.sleep(0.5)
+    unresolved = [
+        candidate_pid
+        for candidate_pid in tree_pids
+        if pid_alive(candidate_pid)
+    ]
+    return {
+        "verified": True,
+        "requested_pid": int(pid),
+        "stopped_root_pid": root_pid if completed.returncode == 0 else None,
+        "exit_code": int(completed.returncode),
+        "verified_tree_pids": sorted(tree_pids),
+        "survivor_pids_stopped": survivor_stops,
+        "unresolved_tree_pids": unresolved,
+    }
+
+
+def listening_pid(port: int) -> int | None:
+    if os.name != "nt":
         return None
+    try:
+        import psutil
+
+        for connection in psutil.net_connections(kind="tcp"):
+            if (
+                connection.status == psutil.CONN_LISTEN
+                and connection.laddr
+                and int(connection.laddr.port) == int(port)
+            ):
+                return int(connection.pid) if connection.pid else None
+        return None
+    except (ImportError, OSError):
+        pass
+
+    try:
+        completed = subprocess.run(
+            ["netstat", "-ano", "-p", "tcp"],
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=10,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    for line in completed.stdout.splitlines():
+        parts = line.split()
+        if len(parts) < 5 or parts[0].upper() != "TCP":
+            continue
+        local = parts[1]
+        state = parts[3].upper()
+        if state != "LISTENING" or not local.endswith(f":{int(port)}"):
+            continue
+        try:
+            return int(parts[4])
+        except ValueError:
+            return None
+    return None
 
 
 def _root_processes(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -331,7 +596,12 @@ def run_desporte_population(python: str, receipt_dir: Path) -> dict[str, Any]:
     }
 
 
-def optional_desporte_start() -> dict[str, Any]:
+def optional_desporte_start(*, allowed: bool = False) -> dict[str, Any]:
+    if not allowed:
+        return {
+            "state": "held_by_gate",
+            "detail": "De Sporte process launch requires --allow-desporte-launch.",
+        }
     executable_value = os.environ.get("DESPORTE_EXECUTABLE")
     if not executable_value:
         return {
@@ -389,6 +659,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--runtime-root", type=Path)
     parser.add_argument("--shell-root", type=Path)
     parser.add_argument("--skip-desporte-population", action="store_true")
+    parser.add_argument("--allow-desporte-launch", action="store_true")
     parser.add_argument("--no-desktop-launch", action="store_true")
     parser.add_argument("--json-output", type=Path)
     args = parser.parse_args(argv)
@@ -409,16 +680,49 @@ def main(argv: list[str] | None = None) -> int:
         REPO_SHELL_ROOT,
         Path("N.py"),
     )
+    runtime_policy_path = shell_root / "config" / "host_runtime_policy.json"
+    runtime_limits: dict[str, Any] = {}
+    try:
+        runtime_policy = json.loads(runtime_policy_path.read_text(encoding="utf-8"))
+        runtime_limits = dict(runtime_policy.get("runtime_limits") or {})
+    except (OSError, TypeError, ValueError, json.JSONDecodeError):
+        runtime_limits = {}
+    cognigrex_speed_percent = max(
+        10,
+        min(int(runtime_limits.get("cognigrex_speed_percent", 100)), 100),
+    )
+    merovingian_interval_seconds = max(
+        30,
+        min(int(runtime_limits.get("merovingian_interval_seconds", 60)), 3600),
+    )
+    operating_profile = {
+        "name": runtime_limits.get("active_operating_profile", "default"),
+        "speed_percent": cognigrex_speed_percent,
+        "background_process_priority": runtime_limits.get(
+            "background_process_priority", "below_normal"
+        ),
+        "max_background_queue_workers": runtime_limits.get(
+            "max_background_queue_workers", 1
+        ),
+        "max_concurrent_ollama_jobs": runtime_limits.get(
+            "max_concurrent_ollama_jobs", 1
+        ),
+        "max_floor_boot_parallelism": runtime_limits.get(
+            "max_floor_boot_parallelism", 2
+        ),
+        "merovingian_interval_seconds": merovingian_interval_seconds,
+    }
     os.environ["LIGHTSPEED_CANONICAL_ROOT"] = str(CANONICAL_ROOT)
     os.environ["LIGHTSPEED_RUNTIME_ROOT"] = str(runtime_root)
     os.environ["LIGHTSPEED_SHELL_ROOT"] = str(shell_root)
+    os.environ["LIGHTSPEED_CANONICAL_DB"] = str(CANONICAL_DATABASE)
     canonical_python = CANONICAL_ROOT / "Environment" / "Scripts" / "python.exe"
     python = (
         str(canonical_python)
         if canonical_python.is_file()
         else os.environ.get("LIGHTSPEED_PYTHON") or sys.executable
     )
-    receipt_dir = runtime_root / "exports" / "agent_home"
+    receipt_dir = canonical_receipt_dir(shell_root)
     receipt_dir.mkdir(parents=True, exist_ok=True)
 
     desporte = (
@@ -426,34 +730,82 @@ def main(argv: list[str] | None = None) -> int:
         if args.skip_desporte_population
         else run_desporte_population(python, receipt_dir)
     )
-    desporte_process = optional_desporte_start()
+    desporte_process = optional_desporte_start(
+        allowed=bool(args.allow_desporte_launch)
+    )
 
-    merovingian_lock = shell_root / "Z Axis" / "Z-4_Merovingian" / "data" / "runtime_exports" / "merovingian_supervisor.lock.json"
+    merovingian_lock = (
+        shell_root
+        / "Z Axis"
+        / "Z-4_Merovingian"
+        / "data"
+        / "runtime_exports"
+        / "merovingian_supervisor.lock.json"
+    )
+    merovingian_script = installed_or_repository_script(
+        "Automation",
+        "run_merovingian_soft_launch.py",
+    )
     merovingian_pid = lock_pid(merovingian_lock)
-    if pid_alive(merovingian_pid):
+    merovingian_recovery: dict[str, Any] = {"action": "not_required"}
+    should_start_merovingian = False
+    if pid_alive(merovingian_pid) and heartbeat_fresh(merovingian_lock):
         merovingian = {"state": "already_running", "pid": merovingian_pid}
+    elif pid_alive(merovingian_pid):
+        merovingian_recovery = stop_verified_process_tree(
+            int(merovingian_pid),
+            process_fragment="run_merovingian_soft_launch.py",
+            required_command_fragment=str(merovingian_script),
+        )
+        merovingian_recovery["action"] = "stale_heartbeat_repair"
+        if (
+            merovingian_recovery.get("stopped_root_pid")
+            and not merovingian_recovery.get("unresolved_tree_pids")
+        ):
+            should_start_merovingian = True
+            merovingian = {"state": "stale_process_stopped", "pid": merovingian_pid}
+        else:
+            merovingian = {
+                "state": "stale_process_identity_unverified",
+                "pid": merovingian_pid,
+            }
     else:
+        should_start_merovingian = True
+        merovingian = {"state": "not_running", "pid": merovingian_pid}
+
+    if should_start_merovingian:
         merovingian_pid = start_background(
             [
                 python,
-                str(
-                    installed_or_repository_script(
-                        "Automation",
-                        "run_merovingian_soft_launch.py",
-                    )
-                ),
+                str(merovingian_script),
                 "--watch",
                 "--interval",
-                "60",
+                str(merovingian_interval_seconds),
                 "--runtime-root",
                 str(runtime_root),
                 "--shell-root",
                 str(shell_root),
             ],
             cwd=CANONICAL_ROOT if CANONICAL_ROOT.is_dir() else REPO_ROOT,
-            log_path=shell_root / "Z Axis" / "Z-4_Merovingian" / "data" / "logs" / "merovingian-supervisor.log",
+            log_path=(
+                shell_root
+                / "Z Axis"
+                / "Z-4_Merovingian"
+                / "data"
+                / "logs"
+                / "merovingian-supervisor.log"
+            ),
         )
-        merovingian = {"state": "started", "pid": merovingian_pid}
+        merovingian_ready = wait_for_heartbeat(
+            merovingian_lock,
+            merovingian_pid,
+            timeout_seconds=60,
+        )
+        merovingian = {
+            "state": "started" if merovingian_ready else "launch_unverified",
+            "pid": merovingian_pid,
+            "heartbeat_fresh": merovingian_ready,
+        }
 
     bridge_reconciliation = reconcile_singleton(
         "run_ls_go_bridge.py",
@@ -517,11 +869,56 @@ def main(argv: list[str] | None = None) -> int:
         canonical_desktop_marker,
     )
     desktop_reconciliation = reconcile_singleton(canonical_desktop_marker)
+    desktop_rows = windows_command_processes(canonical_desktop_marker)
+    desktop_health_before = desktop_health_status()
+    desktop_recovery: dict[str, Any] = {"action": "not_required"}
+    should_launch_desktop = False
     if args.no_desktop_launch:
-        desktop = {"state": "skipped_by_operator"}
-    elif windows_command_running(canonical_desktop_marker):
-        desktop = {"state": "already_running"}
+        desktop = {
+            "state": (
+                "observed_healthy"
+                if desktop_rows and desktop_health_before["healthy"]
+                else "launch_skipped_unhealthy"
+            ),
+            "health": desktop_health_before,
+        }
+    elif desktop_rows and desktop_health_before["healthy"]:
+        desktop = {"state": "already_running", "health": desktop_health_before}
+    elif desktop_rows:
+        desktop_target = min(
+            _root_processes(desktop_rows),
+            key=lambda row: int(row["created_ticks"]),
+        )
+        desktop_recovery = stop_verified_process_tree(
+            int(desktop_target["pid"]),
+            process_fragment=canonical_desktop_marker,
+            required_command_fragment=canonical_desktop_marker,
+        )
+        desktop_recovery["action"] = "unhealthy_http_repair"
+        if (
+            desktop_recovery.get("stopped_root_pid")
+            and not desktop_recovery.get("unresolved_tree_pids")
+        ):
+            should_launch_desktop = True
+            desktop = {
+                "state": "unhealthy_process_stopped",
+                "health": desktop_health_before,
+            }
+        else:
+            desktop = {
+                "state": "unhealthy_process_identity_unverified",
+                "health": desktop_health_before,
+            }
+    elif desktop_health_before["healthy"]:
+        desktop = {
+            "state": "healthy_listener_identity_unverified",
+            "health": desktop_health_before,
+        }
     else:
+        should_launch_desktop = True
+        desktop = {"state": "not_running", "health": desktop_health_before}
+
+    if should_launch_desktop:
         launcher = shell_root / "launcher_exe.py"
         completed = subprocess.run(
             [python, str(launcher)],
@@ -531,19 +928,37 @@ def main(argv: list[str] | None = None) -> int:
             text=True,
             timeout=60,
         )
+        desktop_health_after_launch = wait_for_desktop_health(timeout_seconds=45)
         desktop = {
-            "state": "started" if completed.returncode == 0 else "launch_failed",
+            "state": (
+                "started"
+                if completed.returncode == 0 and desktop_health_after_launch["healthy"]
+                else "launch_unverified"
+            ),
             "exit_code": completed.returncode,
             "stderr_tail": completed.stderr[-1000:],
+            "health": desktop_health_after_launch,
         }
 
     bridge_status = wait_for_bridge_status()
+    desktop_process_verified = windows_command_running(canonical_desktop_marker)
+    desktop_health_final = desktop_health_status()
+    merovingian_verified = (
+        lock_pid(merovingian_lock) == merovingian_pid
+        and pid_alive(merovingian_pid)
+        and heartbeat_fresh(merovingian_lock)
+    )
+    desporte_launch_gate_compliant = (
+        desporte_process.get("state") in {"started", "already_running"}
+        if args.allow_desporte_launch
+        else desporte_process.get("state") == "held_by_gate"
+    )
     required_states = {
-        "merovingian": merovingian.get("state") in {"started", "already_running"},
+        "merovingian": merovingian_verified,
         "bridge": bool(bridge_status.get("ok")),
-        "desktop": desktop.get("state") in {"started", "already_running", "skipped_by_operator"},
+        "desktop": desktop_process_verified and bool(desktop_health_final["healthy"]),
         "desporte_population": desporte.get("status") in {"pass", "skipped_by_operator"},
-        "desporte_process": desporte_process.get("state") in {"started", "already_running"},
+        "desporte_launch_gate": desporte_launch_gate_compliant,
     }
     receipt = {
         "schema_version": "lightspeed-cognigrex-local-stack-v1",
@@ -560,11 +975,18 @@ def main(argv: list[str] | None = None) -> int:
         "process_reconciliation": {
             "bridge": bridge_reconciliation,
             "bridge_recovery": bridge_recovery,
+            "merovingian_recovery": merovingian_recovery,
             "desktop": desktop_reconciliation,
+            "desktop_recovery": desktop_recovery,
             "legacy_desktop": legacy_desktop_reconciliation,
         },
-        "desktop": desktop,
+        "desktop": {
+            **desktop,
+            "process_verified": desktop_process_verified,
+            "final_health": desktop_health_final,
+        },
         "bridge_status": bridge_status,
+        "operating_profile": operating_profile,
         "web_frontend_in_scope": False,
         "automatic_deletion": False,
         "next_action": (

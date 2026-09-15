@@ -31,6 +31,9 @@ FLOOR_CHANNELS = {
     "Z-3": "Smith",
     "Z-4": "Merovingian",
 }
+HOST_FLOOR_NAMES = {
+    "The Construct": "TheConstruct",
+}
 MODE_CLEARANCE = {
     "workspace": 0,
     "operator": 4,
@@ -54,6 +57,12 @@ def normalize_floor(value: str) -> str:
     if folded in {"theconstruct", "construct"}:
         return "The Construct"
     raise ValueError(f"unknown floor: {value}")
+
+
+def host_floor_name(value: str) -> str:
+    """Translate a shell display/channel name to N.py's canonical floor key."""
+    floor = normalize_floor(value)
+    return HOST_FLOOR_NAMES.get(floor, floor)
 
 
 class ShellRoute:

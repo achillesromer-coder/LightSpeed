@@ -11,6 +11,7 @@ from urllib.request import urlopen
 
 CONTRACT_ID = "lightspeed_local_agent_wakeup_2026_05_29"
 DEFAULT_MAX_SCAN_ENTRIES = 3000
+CANONICAL_OPERATOR_ROOT = Path(r"D:\LightSpeed\App")
 SKIP_DIR_NAMES = {
     ".git",
     ".idea",
@@ -92,7 +93,17 @@ def default_assimilation_source_root(root: Path) -> Path:
 
 
 def default_shell_root(root: Path) -> Path:
-    return Path(root).parent / "Desktop_Hooks" / "LightSpeed"
+    root = Path(root)
+    agent_home = _read_json(root / "config" / "agent_home.json")
+    environment = agent_home.get("environment") if isinstance(agent_home.get("environment"), dict) else {}
+    configured = str(environment.get("desktop_shell_root") or "").strip()
+    if configured:
+        return Path(configured)
+    if root.name.casefold() == "core" and root.parent.name.casefold() == "lightspeed":
+        return root.parent / "App"
+    if root == Path(r"C:\LightSpeed_Consolidated\LightSpeed_Runtime"):
+        return CANONICAL_OPERATOR_ROOT
+    return root.parent / "Desktop_Hooks" / "LightSpeed"
 
 
 def default_export_path(root: Path) -> Path:
