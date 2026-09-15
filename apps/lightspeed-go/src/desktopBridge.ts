@@ -82,6 +82,10 @@ export interface ProjectRecord {
   size_bytes?: number;
   latest_modified_utc?: string | null;
   metadata?: Record<string, unknown>;
+  file_browser?: {
+    state: "available" | "restricted" | "unavailable";
+    reason: string;
+  };
 }
 
 export interface ProjectFileRecord {

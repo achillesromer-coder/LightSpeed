@@ -23,19 +23,19 @@
       <span><strong>${t.complete}</strong> complete</span>
     </div>
     <ul class="status-list exchange-list">${n}</ul>
-  `},S=e=>{let t=Number(e||0);return t<1024?`${t} B`:t<1024**2?`${(t/1024).toFixed(1)} KB`:t<1024**3?`${(t/1024**2).toFixed(1)} MB`:`${(t/1024**3).toFixed(1)} GB`},Te=e=>e.length?e.slice(0,30).map(e=>`
+  `},S=e=>{let t=Number(e||0);return t<1024?`${t} B`:t<1024**2?`${(t/1024).toFixed(1)} KB`:t<1024**3?`${(t/1024**2).toFixed(1)} MB`:`${(t/1024**3).toFixed(1)} GB`},Te=e=>e.length?e.slice(0,30).map(e=>{let t=e.file_browser?.state,n=!t||t===`available`,r=t&&t!==`available`?` · ${x(e.file_browser?.reason||`File access held.`)}`:``,i=n?`<button type="button" data-project-files="${x(e.project_id)}" aria-expanded="false">Files</button>`:`<small class="project-file-access">Files ${t===`restricted`?`held`:`unavailable`}</small>`;return`
     <article class="task-card project-card" data-project-card="${x(e.project_id)}">
       <div class="project-summary">
         <strong>${x(e.name)}</strong>
         <span>${x(e.condition||`unknown`)} · ${x(e.authority||`reference`)} · ${e.file_count||0} files</span>
-        <small>${S(e.size_bytes)}${e.scan_truncated?` · bounded scan`:``}</small>
+        <small>${S(e.size_bytes)}${e.scan_truncated?` · bounded scan`:``}${r}</small>
       </div>
       <div class="task-actions">
-        <button type="button" data-project-files="${x(e.project_id)}" aria-expanded="false">Files</button>
+        ${i}
       </div>
       <div class="project-files" aria-live="polite" hidden></div>
     </article>
-  `).join(``):`<p class="muted">No project folders were found in the configured roots.</p>`,Ee=e=>{let t=e.summary,n=`<p class="project-file-boundary">${x(e.boundary)}</p>`;if(!e.files.length){let t=e.state===`restricted`?`No files are visible; credential-like or excluded runtime files are withheld.`:`This registered project currently has no visible files.`;return`<div class="project-files-head"><strong>Files</strong><small>${x(e.project.authority||`reference`)} authority</small></div><p class="muted">${t}</p>${n}`}let r=e.files.map(t=>`
+  `}).join(``):`<p class="muted">No project folders were found in the configured roots.</p>`,Ee=e=>{let t=e.summary,n=`<p class="project-file-boundary">${x(e.boundary)}</p>`;if(!e.files.length){let t=e.state===`restricted`?`No files are visible; credential-like or excluded runtime files are withheld.`:`This registered project currently has no visible files.`;return`<div class="project-files-head"><strong>Files</strong><small>${x(e.project.authority||`reference`)} authority</small></div><p class="muted">${t}</p>${n}`}let r=e.files.map(t=>`
     <article class="project-file-row">
       <div><strong>${x(t.relative_path)}</strong><small>${x(t.mime_type)} · ${S(t.size_bytes)}</small></div>
       <button type="button" data-project-file="${x(t.relative_path)}" data-project-id="${x(e.project.project_id)}">Open</button>

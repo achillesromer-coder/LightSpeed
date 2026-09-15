@@ -122,6 +122,53 @@ def _inside(path: Path, root: Path) -> bool:
         return False
 
 
+def project_file_access(
+    pipeline: ProjectPipeline,
+    project: dict[str, Any],
+) -> dict[str, str]:
+    """Return a cheap, path-free browse state for a registry project."""
+    root_id = str(project.get("root_id") or "")
+    authority_root: ProjectRoot | None = next(
+        (item for item in pipeline.project_roots() if item.root_id == root_id),
+        None,
+    )
+    record_path = Path(str(project.get("path") or ""))
+    if authority_root is None or _normal_absolute(record_path.parent) != _normal_absolute(
+        authority_root.path
+    ):
+        return {
+            "state": "unavailable",
+            "reason": "Project authority could not be re-established.",
+        }
+    if record_path.is_symlink():
+        return {
+            "state": "restricted",
+            "reason": "Redirected project roots are retained as metadata-only references.",
+        }
+    try:
+        resolved_authority_root = authority_root.path.resolve(strict=True)
+        resolved_root = record_path.resolve(strict=True)
+    except OSError:
+        return {
+            "state": "unavailable",
+            "reason": "Registered project root is unavailable.",
+        }
+    if not resolved_root.is_dir():
+        return {
+            "state": "unavailable",
+            "reason": "Registered project root is unavailable.",
+        }
+    if resolved_root.parent != resolved_authority_root:
+        return {
+            "state": "restricted",
+            "reason": "Redirected project roots are retained as metadata-only references.",
+        }
+    return {
+        "state": "available",
+        "reason": "Bounded read-only project metadata is available.",
+    }
+
+
 def _authorised_project(
     pipeline: ProjectPipeline,
     project_id: str,
@@ -140,25 +187,18 @@ def _authorised_project(
     if project is None:
         raise ProjectFileNotFound("Registered project not found")
 
+    access = project_file_access(pipeline, project)
+    if access["state"] != "available":
+        raise ProjectFileUnavailable(access["reason"])
+
     root_id = str(project.get("root_id") or "")
     authority_root: ProjectRoot | None = next(
         (item for item in pipeline.project_roots() if item.root_id == root_id),
         None,
     )
     record_path = Path(str(project.get("path") or ""))
-    if authority_root is None or _normal_absolute(record_path.parent) != _normal_absolute(
-        authority_root.path
-    ):
-        raise ProjectFileUnavailable("Registered project authority could not be re-established")
-    if record_path.is_symlink():
-        raise ProjectFileUnavailable("Symlinked project roots are not eligible for browsing")
-    try:
-        resolved_authority_root = authority_root.path.resolve(strict=True)
-        resolved_root = record_path.resolve(strict=True)
-    except OSError as exc:
-        raise ProjectFileUnavailable("Registered project root is unavailable") from exc
-    if resolved_root.parent != resolved_authority_root or not resolved_root.is_dir():
-        raise ProjectFileUnavailable("Registered project root is unavailable")
+    assert authority_root is not None
+    resolved_root = record_path.resolve(strict=True)
     return project, resolved_root
 
 

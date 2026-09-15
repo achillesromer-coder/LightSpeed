@@ -1282,6 +1282,10 @@ def test_bridge_lists_and_opens_bounded_project_files_read_only(tmp_path, monkey
     client = TestClient(ls_go_bridge.create_app(tmp_path))
 
     project = client.get("/api/v1/projects").json()["projects"][0]
+    assert project["file_browser"] == {
+        "state": "available",
+        "reason": "Bounded read-only project metadata is available.",
+    }
     listing = client.get(f"/api/v1/projects/{project['project_id']}/files?limit=20")
 
     assert listing.status_code == 200, listing.text
@@ -1423,7 +1427,12 @@ def test_project_file_browser_rejects_a_symlinked_project_root(tmp_path, monkeyp
         lambda path: True if path == project_root else original_is_symlink(path),
     )
 
-    with pytest.raises(ls_go_bridge.ProjectFileUnavailable, match="Symlinked project roots"):
+    assert ls_go_bridge.project_file_access(pipeline, project) == {
+        "state": "restricted",
+        "reason": "Redirected project roots are retained as metadata-only references.",
+    }
+
+    with pytest.raises(ls_go_bridge.ProjectFileUnavailable, match="metadata-only references"):
         ls_go_bridge.list_project_files(
             pipeline,
             project_id=project["project_id"],

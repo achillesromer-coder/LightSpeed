@@ -27,19 +27,29 @@ export const renderProjectCards = (projects: ProjectRecord[]): string => {
   if (!projects.length) {
     return `<p class="muted">No project folders were found in the configured roots.</p>`;
   }
-  return projects.slice(0, 30).map((project) => `
+  return projects.slice(0, 30).map((project) => {
+    const browseState = project.file_browser?.state;
+    const canBrowse = !browseState || browseState === "available";
+    const accessNote = browseState && browseState !== "available"
+      ? ` · ${escapeHtml(project.file_browser?.reason || "File access held.")}`
+      : "";
+    const action = canBrowse
+      ? `<button type="button" data-project-files="${escapeHtml(project.project_id)}" aria-expanded="false">Files</button>`
+      : `<small class="project-file-access">Files ${browseState === "restricted" ? "held" : "unavailable"}</small>`;
+    return `
     <article class="task-card project-card" data-project-card="${escapeHtml(project.project_id)}">
       <div class="project-summary">
         <strong>${escapeHtml(project.name)}</strong>
         <span>${escapeHtml(project.condition || "unknown")} · ${escapeHtml(project.authority || "reference")} · ${project.file_count || 0} files</span>
-        <small>${formatBytes(project.size_bytes)}${project.scan_truncated ? " · bounded scan" : ""}</small>
+        <small>${formatBytes(project.size_bytes)}${project.scan_truncated ? " · bounded scan" : ""}${accessNote}</small>
       </div>
       <div class="task-actions">
-        <button type="button" data-project-files="${escapeHtml(project.project_id)}" aria-expanded="false">Files</button>
+        ${action}
       </div>
       <div class="project-files" aria-live="polite" hidden></div>
     </article>
-  `).join("");
+  `;
+  }).join("");
 };
 
 export const renderProjectFiles = (response: ProjectFilesResponse): string => {

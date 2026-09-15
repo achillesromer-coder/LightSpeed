@@ -76,6 +76,20 @@ describe("LightSpeed Go project file browser", () => {
     expect(calls).toEqual([project.project_id]);
   });
 
+  it("labels restricted references without offering a failing file action", () => {
+    const html = renderProjectCards([{
+      ...project,
+      authority: "external_reference",
+      file_browser: {
+        state: "restricted",
+        reason: "Redirected project roots are retained as metadata-only references.",
+      },
+    }]);
+    expect(html).toContain("Files held");
+    expect(html).toContain("metadata-only references");
+    expect(html).not.toContain("data-project-files=");
+  });
+
   it("binds file-open clicks to the exact project-relative file", () => {
     const html = renderProjectFiles(listing);
     expect(html).toContain('data-project-file="results/sweep.json"');

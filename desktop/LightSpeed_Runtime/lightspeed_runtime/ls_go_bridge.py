@@ -34,6 +34,7 @@ from lightspeed_runtime.project_file_browser import (
     ProjectFileUnavailable,
     list_project_files,
     open_project_file,
+    project_file_access,
 )
 from lightspeed_runtime.project_pipeline import ProjectPipeline, ReviewDecisionConflict
 from lightspeed_runtime.representation_edge import (
@@ -1572,9 +1573,17 @@ def create_app(root: Path | str) -> FastAPI:
             # Fresh, test and recovery shells may not yet have a supervisor
             # receipt. Populate once without queueing a synthetic change.
             registry = project_pipeline.refresh(force=True, queue_changes=False)
+        projects = [
+            {
+                **project,
+                "file_browser": project_file_access(project_pipeline, project),
+            }
+            for project in registry.get("projects") or []
+            if isinstance(project, dict)
+        ]
         return JSONResponse(
             {
-                "projects": registry.get("projects") or [],
+                "projects": projects,
                 "summary": registry.get("summary") or {},
                 "duplicate_names": registry.get("duplicate_names") or [],
                 "cleanup_summary": registry.get("cleanup_summary") or {},
