@@ -16,6 +16,17 @@ def main() -> int:
     destination = app_root / "config" / "web_drive_bridge.json"
     payload = build_romer_web_integration(app_root)
 
+    # The committed bridge is a portable repository artifact. Live runtime
+    # writers may retain an absolute contract path, but committing a GitHub
+    # runner or developer-worktree path makes --check pass only on that host.
+    contract_path = Path(str(payload.get("contract_path") or ""))
+    try:
+        payload["contract_path"] = contract_path.relative_to(app_root).as_posix()
+    except ValueError as exc:
+        raise RuntimeError(
+            f"GST-063 contract path must remain under the LightSpeed app root: {contract_path}"
+        ) from exc
+
     # Preserve the generated payload as deterministic JSON apart from generated_at.
     expected = json.dumps(payload, indent=2, sort_keys=False) + "\n"
 

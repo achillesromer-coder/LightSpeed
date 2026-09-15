@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="auto" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMin meet" role="img" aria-labelledby="WATCHTOWER-T1-02-title WATCHTOWER-T1-02-desc" data-twin-id="watchtower" data-drawing-id="WATCHTOWER-T1-02" data-representation-class="SOURCE_DERIVED_GEOMETRY" data-package-kind="SOURCE_BOUNDED_REVIEW" data-evidence-ceiling="B" data-source-binding-state="COMMITTED_DERIVATION_RECEIPT" data-dimension-authority="DERIVED_MODEL_ENVELOPE_ONLY" data-type1-complete="false" data-release-eligible="false" data-release-state="REVIEW_ONLY_NOT_PUBLICLY_RELEASED">
+<title id="WATCHTOWER-T1-02-title">WatchTower Living Twin T1-02 Type 1 review sheet</title>
+<desc id="WATCHTOWER-T1-02-desc">Assembly / exploded / parts. SOURCE_DERIVED_REVIEW_ONLY. Review only; not engineering authority, physical validation or public release.</desc>
+<metadata>{"derived_model_extents_m":[51.339186999999995,75.828757,81.52000000000001],"dimension_authority":"DERIVED_MODEL_ENVELOPE_ONLY","drawing_id":"WATCHTOWER-T1-02","feature_addressability":"EDGE_LEVEL_DERIVED","next_gate":"semantic A/C binding; source-linked materials/interfaces/discipline evidence; browser/provider acceptance","package_evidence_ceiling":"B","package_kind":"SOURCE_BOUNDED_REVIEW","package_state":"SOURCE_DERIVED_REVIEW_ONLY","projection_input_obj":"assets/models/watchtower.obj","projection_input_obj_sha256":"8053c0310de21986d0e93cfb591da57abd871f424e50d22b5dd8956028583614","purpose":"Assembly / exploded / parts","release_eligible":false,"release_state":"REVIEW_ONLY_NOT_PUBLICLY_RELEASED","representation_class":"SOURCE_DERIVED_GEOMETRY","sheet_domain_state":"REVIEW_ONLY","sheet_id":"T1-02","source_binding_state":"COMMITTED_DERIVATION_RECEIPT","twin_id":"watchtower","type1_complete":false,"units":"m"}</metadata>
+<style>.sheet{fill:#fff;stroke:#111;stroke-width:2}.border,.viewbox{fill:none;stroke:#555;stroke-width:1}.geometry{stroke:#111;stroke-width:1;fill:none;vector-effect:non-scaling-stroke}.datum{stroke:#555;stroke-width:1;stroke-dasharray:8 5}.title{font:700 24px system-ui,sans-serif}.subtitle{font:16px system-ui,sans-serif;fill:#333}.section-title{font:700 13px system-ui,sans-serif}.body,.label{font:12px ui-monospace,monospace;fill:#222}.proxy-watermark{font:700 12px system-ui,sans-serif;fill:#111;letter-spacing:1.5px}.gate{fill:#111}.gate-text{font:700 12px system-ui,sans-serif;fill:#fff;letter-spacing:1px}</style>
+<g id="L00-SHEET" data-layer="L00-SHEET">
+<rect x="18" y="18" width="1564" height="964" class="sheet"/>
+<text x="48" y="62" class="title">TYPE 1 SVG · WATCHTOWER LIVING TWIN · T1-02</text>
+<text x="48" y="88" class="subtitle">Assembly / exploded / parts</text>
+<line x1="18" y1="900" x2="1582" y2="900" class="border"/>
+<text x="48" y="930" class="body">Drawing ID: WATCHTOWER-T1-02 · Units: m · Scale: FIT · Coordinate frame: LOCAL REVIEW</text>
+<text x="48" y="954" class="body">Representation: SOURCE_DERIVED_GEOMETRY · Revision: 1 · Release: REVIEW ONLY</text>
+</g>
+<g id="L10-CONTEXT" data-layer="L10-CONTEXT">
+<text x="48" y="130" class="section-title">SOURCE CONTEXT</text>
+<text x="48" y="152" class="body">Projection input assets/models/watchtower.obj</text>
+<text x="48" y="170" class="body">SHA-256 8053c0310de21986d0e93cfb591da57a</text>
+<text x="48" y="188" class="body">bd871f424e50d22b5dd8956028583614. Native</text>
+<text x="48" y="206" class="body">CAD/BREP/owning Drive data remains authority.</text>
+</g>
+<g id="L20-AUTH-GEOMETRY" data-layer="L20-AUTH-GEOMETRY">
+
+</g>
+<g id="L21-DERIVED-GEOMETRY" data-layer="L21-DERIVED-GEOMETRY">
+<rect x="430" y="230" width="740" height="450" class="viewbox"/>
+<text x="442" y="252" class="label">ISOMETRIC</text>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0000" data-feature-id="EDGE-0000" x1="729.631" y1="565.546" x2="729.631" y2="502.885" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0001" data-feature-id="EDGE-0001" x1="729.631" y1="565.546" x2="797.316" y2="526.468" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0002" data-feature-id="EDGE-0002" x1="729.631" y1="565.546" x2="797.316" y2="463.806" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0003" data-feature-id="EDGE-0003" x1="729.631" y1="502.885" x2="797.316" y2="463.806" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0004" data-feature-id="EDGE-0004" x1="797.316" y1="526.468" x2="797.316" y2="463.806" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0005" data-feature-id="EDGE-0005" x1="729.631" y1="565.546" x2="796.202" y2="603.981" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0006" data-feature-id="EDGE-0006" x1="729.631" y1="502.885" x2="796.202" y2="603.981" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0007" data-feature-id="EDGE-0007" x1="797.316" y1="526.468" x2="796.202" y2="603.981" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0008" data-feature-id="EDGE-0008" x1="729.631" y1="502.885" x2="796.202" y2="541.319" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0009" data-feature-id="EDGE-0009" x1="796.202" y1="603.981" x2="796.202" y2="541.319" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0010" data-feature-id="EDGE-0010" x1="797.316" y1="526.468" x2="863.887" y2="564.903" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0011" data-feature-id="EDGE-0011" x1="796.202" y1="603.981" x2="863.887" y2="564.903" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0012" data-feature-id="EDGE-0012" x1="796.202" y1="541.319" x2="863.887" y2="564.903" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0013" data-feature-id="EDGE-0013" x1="729.631" y1="502.885" x2="863.887" y2="502.241" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0014" data-feature-id="EDGE-0014" x1="797.316" y1="526.468" x2="863.887" y2="502.241" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0015" data-feature-id="EDGE-0015" x1="797.316" y1="463.806" x2="863.887" y2="502.241" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0016" data-feature-id="EDGE-0016" x1="796.202" y1="541.319" x2="863.887" y2="502.241" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0017" data-feature-id="EDGE-0017" x1="863.887" y1="564.903" x2="863.887" y2="502.241" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0018" data-feature-id="EDGE-0018" x1="782.930" y1="501.014" x2="782.930" y2="311.652" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0019" data-feature-id="EDGE-0019" x1="782.930" y1="501.014" x2="795.943" y2="493.501" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0020" data-feature-id="EDGE-0020" x1="782.930" y1="501.014" x2="795.943" y2="304.139" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0021" data-feature-id="EDGE-0021" x1="782.930" y1="311.652" x2="795.943" y2="304.139" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0022" data-feature-id="EDGE-0022" x1="795.943" y1="493.501" x2="795.943" y2="304.139" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0023" data-feature-id="EDGE-0023" x1="782.930" y1="501.014" x2="795.729" y2="508.403" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0024" data-feature-id="EDGE-0024" x1="782.930" y1="311.652" x2="795.729" y2="508.403" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0025" data-feature-id="EDGE-0025" x1="795.943" y1="493.501" x2="795.729" y2="508.403" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0026" data-feature-id="EDGE-0026" x1="782.930" y1="311.652" x2="795.729" y2="319.041" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0027" data-feature-id="EDGE-0027" x1="795.729" y1="508.403" x2="795.729" y2="319.041" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0028" data-feature-id="EDGE-0028" x1="795.943" y1="493.501" x2="808.741" y2="500.890" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0029" data-feature-id="EDGE-0029" x1="795.729" y1="508.403" x2="808.741" y2="500.890" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0030" data-feature-id="EDGE-0030" x1="795.729" y1="319.041" x2="808.741" y2="500.890" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0031" data-feature-id="EDGE-0031" x1="782.930" y1="311.652" x2="808.741" y2="311.528" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0032" data-feature-id="EDGE-0032" x1="795.943" y1="493.501" x2="808.741" y2="311.528" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0033" data-feature-id="EDGE-0033" x1="795.943" y1="304.139" x2="808.741" y2="311.528" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0034" data-feature-id="EDGE-0034" x1="795.729" y1="319.041" x2="808.741" y2="311.528" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0035" data-feature-id="EDGE-0035" x1="808.741" y1="500.890" x2="808.741" y2="311.528" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0036" data-feature-id="EDGE-0036" x1="764.094" y1="312.313" x2="764.094" y2="283.668" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0037" data-feature-id="EDGE-0037" x1="764.094" y1="312.313" x2="796.428" y2="293.645" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0038" data-feature-id="EDGE-0038" x1="764.094" y1="312.313" x2="796.428" y2="265.000" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0039" data-feature-id="EDGE-0039" x1="764.094" y1="283.668" x2="796.428" y2="265.000" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0040" data-feature-id="EDGE-0040" x1="796.428" y1="293.645" x2="796.428" y2="265.000" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0041" data-feature-id="EDGE-0041" x1="764.094" y1="312.313" x2="795.896" y2="330.674" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0042" data-feature-id="EDGE-0042" x1="764.094" y1="283.668" x2="795.896" y2="330.674" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0043" data-feature-id="EDGE-0043" x1="796.428" y1="293.645" x2="795.896" y2="330.674" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0044" data-feature-id="EDGE-0044" x1="764.094" y1="283.668" x2="795.896" y2="302.029" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0045" data-feature-id="EDGE-0045" x1="795.896" y1="330.674" x2="795.896" y2="302.029" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0046" data-feature-id="EDGE-0046" x1="796.428" y1="293.645" x2="828.230" y2="312.006" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0047" data-feature-id="EDGE-0047" x1="795.896" y1="330.674" x2="828.230" y2="312.006" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0048" data-feature-id="EDGE-0048" x1="795.896" y1="302.029" x2="828.230" y2="312.006" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0049" data-feature-id="EDGE-0049" x1="764.094" y1="283.668" x2="828.230" y2="283.361" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0050" data-feature-id="EDGE-0050" x1="796.428" y1="293.645" x2="828.230" y2="283.361" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0051" data-feature-id="EDGE-0051" x1="796.428" y1="265.000" x2="828.230" y2="283.361" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0052" data-feature-id="EDGE-0052" x1="795.896" y1="302.029" x2="828.230" y2="283.361" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0053" data-feature-id="EDGE-0053" x1="828.230" y1="312.006" x2="828.230" y2="283.361" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0054" data-feature-id="EDGE-0054" x1="730.719" y1="530.218" x2="730.719" y2="498.887" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0055" data-feature-id="EDGE-0055" x1="730.719" y1="530.218" x2="876.443" y2="446.084" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0056" data-feature-id="EDGE-0056" x1="730.719" y1="530.218" x2="876.443" y2="414.754" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0057" data-feature-id="EDGE-0057" x1="730.719" y1="498.887" x2="876.443" y2="414.754" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0058" data-feature-id="EDGE-0058" x1="876.443" y1="446.084" x2="876.443" y2="414.754" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0059" data-feature-id="EDGE-0059" x1="730.719" y1="530.218" x2="791.930" y2="565.557" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0060" data-feature-id="EDGE-0060" x1="730.719" y1="498.887" x2="791.930" y2="565.557" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0061" data-feature-id="EDGE-0061" x1="876.443" y1="446.084" x2="791.930" y2="565.557" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0062" data-feature-id="EDGE-0062" x1="730.719" y1="498.887" x2="791.930" y2="534.227" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0063" data-feature-id="EDGE-0063" x1="791.930" y1="565.557" x2="791.930" y2="534.227" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0064" data-feature-id="EDGE-0064" x1="876.443" y1="446.084" x2="937.653" y2="481.424" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0065" data-feature-id="EDGE-0065" x1="791.930" y1="565.557" x2="937.653" y2="481.424" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0066" data-feature-id="EDGE-0066" x1="791.930" y1="534.227" x2="937.653" y2="481.424" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0067" data-feature-id="EDGE-0067" x1="730.719" y1="498.887" x2="937.653" y2="450.093" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0068" data-feature-id="EDGE-0068" x1="876.443" y1="446.084" x2="937.653" y2="450.093" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0069" data-feature-id="EDGE-0069" x1="876.443" y1="414.754" x2="937.653" y2="450.093" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0070" data-feature-id="EDGE-0070" x1="791.930" y1="534.227" x2="937.653" y2="450.093" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0071" data-feature-id="EDGE-0071" x1="937.653" y1="481.424" x2="937.653" y2="450.093" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0072" data-feature-id="EDGE-0072" x1="662.347" y1="583.550" x2="662.347" y2="552.219" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0073" data-feature-id="EDGE-0073" x1="662.347" y1="583.550" x2="757.690" y2="528.504" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0074" data-feature-id="EDGE-0074" x1="662.347" y1="583.550" x2="757.690" y2="497.173" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0075" data-feature-id="EDGE-0075" x1="662.347" y1="552.219" x2="757.690" y2="497.173" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0076" data-feature-id="EDGE-0076" x1="757.690" y1="528.504" x2="757.690" y2="497.173" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0077" data-feature-id="EDGE-0077" x1="662.347" y1="583.550" x2="803.423" y2="665.000" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0078" data-feature-id="EDGE-0078" x1="662.347" y1="552.219" x2="803.423" y2="665.000" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0079" data-feature-id="EDGE-0079" x1="757.690" y1="528.504" x2="803.423" y2="665.000" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0080" data-feature-id="EDGE-0080" x1="662.347" y1="552.219" x2="803.423" y2="633.669" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0081" data-feature-id="EDGE-0081" x1="803.423" y1="665.000" x2="803.423" y2="633.669" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0082" data-feature-id="EDGE-0082" x1="757.690" y1="528.504" x2="898.766" y2="609.954" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0083" data-feature-id="EDGE-0083" x1="803.423" y1="665.000" x2="898.766" y2="609.954" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0084" data-feature-id="EDGE-0084" x1="803.423" y1="633.669" x2="898.766" y2="609.954" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0085" data-feature-id="EDGE-0085" x1="662.347" y1="552.219" x2="898.766" y2="578.623" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0086" data-feature-id="EDGE-0086" x1="757.690" y1="528.504" x2="898.766" y2="578.623" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0087" data-feature-id="EDGE-0087" x1="757.690" y1="497.173" x2="898.766" y2="578.623" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0088" data-feature-id="EDGE-0088" x1="803.423" y1="633.669" x2="898.766" y2="578.623" class="geometry"/>
+<line id="WATCHTOWER-T1-02-ISOMETRIC-edge-0089" data-feature-id="EDGE-0089" x1="898.766" y1="609.954" x2="898.766" y2="578.623" class="geometry"/>
+</g>
+<g id="L22-PROVISIONAL-GEOMETRY" data-layer="L22-PROVISIONAL-GEOMETRY">
+
+</g>
+<g id="L30-HIDDEN" data-layer="L30-HIDDEN">
+
+</g>
+<g id="L31-CENTRE-DATUM" data-layer="L31-CENTRE-DATUM">
+<line id="DATUM-X" x1="80" y1="700" x2="300" y2="700" class="datum"/>
+<line id="DATUM-Z" x1="80" y1="700" x2="80" y2="520" class="datum"/>
+<text x="306" y="706" class="label">+X</text><text x="66" y="510" class="label">+Z</text>
+</g>
+<g id="L40-SECTIONS" data-layer="L40-SECTIONS">
+
+</g>
+<g id="L50-DIMENSIONS" data-layer="L50-DIMENSIONS">
+<text x="48" y="710" class="section-title">DERIVED MODEL ENVELOPE</text>
+<text x="48" y="732" class="body">X 51.3392 m · Y 75.8288 m · Z 81.52 m. Values derive from the</text>
+<text x="48" y="750" class="body">committed review mesh, not as-built tolerance authority.</text>
+</g>
+<g id="L60-MATERIALS" data-layer="L60-MATERIALS">
+<text x="560" y="710" class="section-title">MATERIAL STATE</text>
+<text x="560" y="732" class="body">Material identity, grade, finish, thickness, batch and physical</text>
+<text x="560" y="750" class="body">qualification remain UNKNOWN unless separately bound in the</text>
+<text x="560" y="768" class="body">owning canon.</text>
+</g>
+<g id="L70-INTERFACES" data-layer="L70-INTERFACES">
+<text x="1072" y="710" class="section-title">INTERFACE STATE</text>
+<text x="1072" y="732" class="body">Critical physical, electrical, structural, fluid, control and</text>
+<text x="1072" y="750" class="body">ecological interfaces remain evidence-gated; no connection</text>
+<text x="1072" y="768" class="body">capacity is inferred from geometry.</text>
+</g>
+<g id="L75-SENSORS" data-layer="L75-SENSORS">
+<text x="48" y="808" class="section-title">TELEMETRY STATE</text>
+<text x="48" y="830" class="body">No LIVE state is asserted. Sensor identity, physical location, calibration, raw</text>
+<text x="48" y="848" class="body">dataset hash, uncertainty and last-valid observation remain required.</text>
+</g>
+<g id="L80-SIMULATION" data-layer="L80-SIMULATION">
+<text x="820" y="808" class="section-title">SIMULATION STATE</text>
+<text x="820" y="830" class="body">No solver result or measured performance is promoted by this projection. Reproducible</text>
+<text x="820" y="848" class="body">inputs, boundary conditions, solver version, residuals and output hashes remain</text>
+<text x="820" y="866" class="body">required.</text>
+</g>
+<g id="L90-EVIDENCE" data-layer="L90-EVIDENCE">
+<text x="440" y="130" class="section-title">EVIDENCE CLASS</text>
+<text x="440" y="152" class="body">SOURCE_DERIVED_GEOMETRY. Projection input hash is</text>
+<text x="440" y="170" class="body">bound; source binding remains</text>
+<text x="440" y="188" class="body">COMMITTED_DERIVATION_RECEIPT. Evidence ceiling B;</text>
+<text x="440" y="206" class="body">migration priority P0 and fidelity F3.</text>
+</g>
+<g id="L91-UNKNOWNS" data-layer="L91-UNKNOWNS">
+<text x="800" y="130" class="section-title">OPEN GATE</text>
+<text x="800" y="152" class="body">semantic A/C binding; source-linked</text>
+<text x="800" y="170" class="body">materials/interfaces/discipline evidence;</text>
+<text x="800" y="188" class="body">browser/provider acceptance</text>
+</g>
+<g id="L95-ANNOTATIONS" data-layer="L95-ANNOTATIONS">
+<text x="1160" y="130" class="section-title">SHEET LIMIT</text>
+<text x="1160" y="152" class="body">This is a machine-addressable review projection.</text>
+<text x="1160" y="170" class="body">Blank or gated domains are deliberate and must not</text>
+<text x="1160" y="188" class="body">be aesthetically filled with invented values.</text>
+</g>
+<g id="L99-CLAIM-GATE" data-layer="L99-CLAIM-GATE">
+<rect x="18" y="962" width="1564" height="20" class="gate"/>
+<text x="800" y="977" text-anchor="middle" class="gate-text">NOT ENGINEERING AUTHORITY · NOT PHYSICAL VALIDATION · NOT PUBLICLY RELEASED</text>
+</g>
+</svg>

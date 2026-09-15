@@ -11,7 +11,7 @@
     "Architect",
     "Trinity"
   ],
-  "contract_path": "/home/runner/work/LightSpeed/LightSpeed/desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-2_Oracle/data/catalog/website/romer_web_integration.json",
+  "contract_path": "Z Axis/Z-2_Oracle/data/catalog/website/romer_web_integration.json",
   "site_base_url": "https://romer.industries",
   "website_routes": [
     {
