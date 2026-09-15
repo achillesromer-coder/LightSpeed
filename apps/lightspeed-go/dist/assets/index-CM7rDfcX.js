@@ -23,7 +23,7 @@
       <span><strong>${t.complete}</strong> complete</span>
     </div>
     <ul class="status-list exchange-list">${n}</ul>
-  `},S=e=>{let t=Number(e||0);return t<1024?`${t} B`:t<1024**2?`${(t/1024).toFixed(1)} KB`:t<1024**3?`${(t/1024**2).toFixed(1)} MB`:`${(t/1024**3).toFixed(1)} GB`},Te=e=>e.length?e.slice(0,30).map(e=>{let t=e.file_browser?.state,n=!t||t===`available`,r=t&&t!==`available`?` · ${x(e.file_browser?.reason||`File access held.`)}`:``,i=n?`<button type="button" data-project-files="${x(e.project_id)}" aria-expanded="false">Files</button>`:`<small class="project-file-access">Files ${t===`restricted`?`held`:`unavailable`}</small>`;return`
+  `},S=e=>{let t=Number(e||0);return t<1024?`${t} B`:t<1024**2?`${(t/1024).toFixed(1)} KB`:t<1024**3?`${(t/1024**2).toFixed(1)} MB`:`${(t/1024**3).toFixed(1)} GB`},Te=e=>e.length?e.slice(0,30).map(e=>{let t=e.file_browser?.state??(e.authority===`external_reference`?`restricted`:void 0),n=!t||t===`available`,r=t&&t!==`available`?` · ${x(e.file_browser?.reason||`External references remain metadata-only until the bridge confirms bounded access.`)}`:``,i=n?`<button type="button" data-project-files="${x(e.project_id)}" aria-expanded="false">Files</button>`:`<small class="project-file-access">Files ${t===`restricted`?`held`:`unavailable`}</small>`;return`
     <article class="task-card project-card" data-project-card="${x(e.project_id)}">
       <div class="project-summary">
         <strong>${x(e.name)}</strong>

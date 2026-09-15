@@ -28,10 +28,14 @@ export const renderProjectCards = (projects: ProjectRecord[]): string => {
     return `<p class="muted">No project folders were found in the configured roots.</p>`;
   }
   return projects.slice(0, 30).map((project) => {
-    const browseState = project.file_browser?.state;
+    const browseState = project.file_browser?.state
+      ?? (project.authority === "external_reference" ? "restricted" : undefined);
     const canBrowse = !browseState || browseState === "available";
     const accessNote = browseState && browseState !== "available"
-      ? ` · ${escapeHtml(project.file_browser?.reason || "File access held.")}`
+      ? ` · ${escapeHtml(
+        project.file_browser?.reason
+          || "External references remain metadata-only until the bridge confirms bounded access.",
+      )}`
       : "";
     const action = canBrowse
       ? `<button type="button" data-project-files="${escapeHtml(project.project_id)}" aria-expanded="false">Files</button>`

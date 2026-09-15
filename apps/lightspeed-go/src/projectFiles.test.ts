@@ -90,6 +90,16 @@ describe("LightSpeed Go project file browser", () => {
     expect(html).not.toContain("data-project-files=");
   });
 
+  it("fails closed for external references returned by an older bridge", () => {
+    const html = renderProjectCards([{
+      ...project,
+      authority: "external_reference",
+    }]);
+    expect(html).toContain("Files held");
+    expect(html).toContain("until the bridge confirms bounded access");
+    expect(html).not.toContain("data-project-files=");
+  });
+
   it("binds file-open clicks to the exact project-relative file", () => {
     const html = renderProjectFiles(listing);
     expect(html).toContain('data-project-file="results/sweep.json"');
