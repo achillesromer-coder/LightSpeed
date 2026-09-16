@@ -1,5 +1,35 @@
 export const COMMAND_SCHEMA = "lightspeed-go-command-v2";
-export const DEFAULT_DESKTOP_ORIGIN = "http://127.0.0.1:8765";
+const LOCAL_DESKTOP_ORIGIN = "http://127.0.0.1:8765";
+
+export const resolveDesktopOrigin = (configuredOrigin?: string): string => {
+  const candidate = configuredOrigin?.trim();
+  if (!candidate) return LOCAL_DESKTOP_ORIGIN;
+
+  let parsed: URL;
+  try {
+    parsed = new URL(candidate);
+  } catch {
+    throw new TypeError("VITE_LIGHTSPEED_DESKTOP_ORIGIN must be an absolute URL");
+  }
+
+  const loopbackHosts = new Set(["127.0.0.1", "localhost", "::1", "[::1]"]);
+  const isLoopback = loopbackHosts.has(parsed.hostname.toLowerCase());
+  if (parsed.protocol !== "https:" && !(parsed.protocol === "http:" && isLoopback)) {
+    throw new TypeError("Remote LightSpeed Desktop origins must use HTTPS");
+  }
+  if (parsed.username || parsed.password) {
+    throw new TypeError("LightSpeed Desktop origins must not contain credentials");
+  }
+  if (parsed.pathname !== "/" || parsed.search || parsed.hash) {
+    throw new TypeError("LightSpeed Desktop origins must not contain a path, query or fragment");
+  }
+
+  return parsed.origin;
+};
+
+export const DEFAULT_DESKTOP_ORIGIN = resolveDesktopOrigin(
+  import.meta.env.VITE_LIGHTSPEED_DESKTOP_ORIGIN,
+);
 
 export const FLOORS = [
   "Achilles",

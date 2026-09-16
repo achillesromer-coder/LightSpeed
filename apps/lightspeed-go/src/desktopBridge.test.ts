@@ -3,6 +3,7 @@ import {
   COMMAND_SCHEMA,
   createCommandEnvelope,
   projectFileApiPath,
+  resolveDesktopOrigin,
   resultReceiptApiPath,
   reviewDecisionOutcomeMessage,
   routeInstruction,
@@ -18,6 +19,28 @@ const authorityContract = {
 };
 
 describe("LS GO desktop command routing", () => {
+  it("keeps the same-machine Desktop bridge as the default", () => {
+    expect(resolveDesktopOrigin()).toBe("http://127.0.0.1:8765");
+  });
+
+  it("accepts a credential-free HTTPS private relay origin", () => {
+    expect(resolveDesktopOrigin("  https://desktop.example.test  ")).toBe(
+      "https://desktop.example.test",
+    );
+  });
+
+  it("rejects insecure or credential-bearing remote origins", () => {
+    expect(() => resolveDesktopOrigin("http://desktop.example.test")).toThrow(
+      "Remote LightSpeed Desktop origins must use HTTPS",
+    );
+    expect(() => resolveDesktopOrigin("https://owner:secret@desktop.example.test")).toThrow(
+      "must not contain credentials",
+    );
+    expect(() => resolveDesktopOrigin("https://desktop.example.test/api")).toThrow(
+      "must not contain a path",
+    );
+  });
+
   it("routes implementation work to Smith", () => {
     expect(routeInstruction("Update the Git branch, run the build and return a commit receipt")).toBe("Smith");
   });

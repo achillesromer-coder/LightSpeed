@@ -62,6 +62,20 @@ npm.cmd test
 npm.cmd run check
 ```
 
+### Private remote review
+
+LS GO uses the same-machine Desktop bridge at `http://127.0.0.1:8765` by
+default. A reviewed web build can instead use an authenticated private relay by
+setting `VITE_LIGHTSPEED_DESKTOP_ORIGIN` to the relay's credential-free HTTPS
+origin before building. Paths, query strings, embedded credentials and remote
+plain-HTTP origins fail closed. The relay must terminate TLS, forward only to
+the local bridge, and its exact LS GO origin must also be present in
+`LIGHTSPEED_GO_ALLOWED_ORIGINS`.
+
+This setting changes transport only. Owner authentication, first-login password
+change, session expiry, review gates and the prohibition on public direct
+execution remain enforced by Desktop.
+
 Weekly generated-artifact maintenance is registered for Friday at 19:00 local
 time. It quarantines before removal and never treats a junction as a second
 copy. Registration source is `scripts/register_weekly_maintenance.ps1`.
