@@ -219,13 +219,53 @@ def _validated_browser_origin(value: str) -> str:
 
 
 def _allowed_origins() -> list[str]:
-    configured = [item for item in os.environ.get("LIGHTSPEED_GO_ALLOWED_ORIGINS", "").split(",") if item.strip()]
+    configured = _configured_remote_origins()
     origins: list[str] = []
     for item in [*DEFAULT_ALLOWED_ORIGINS, *configured]:
         origin = _validated_browser_origin(item)
         if origin not in origins:
             origins.append(origin)
     return origins
+
+
+def _configured_remote_origins() -> list[str]:
+    origins: list[str] = []
+    configured = os.environ.get("LIGHTSPEED_GO_ALLOWED_ORIGINS", "").split(",")
+    for item in configured:
+        if not item.strip():
+            continue
+        origin = _validated_browser_origin(item)
+        if origin not in origins:
+            origins.append(origin)
+    return origins
+
+
+def _remote_access_status(
+    credential: dict[str, Any], configured_origins: list[str]
+) -> dict[str, Any]:
+    owner_auth_configured = bool(credential.get("configured"))
+    owner_password_change_required = bool(credential.get("must_change"))
+    private_https_origin_count = sum(
+        1 for origin in configured_origins if origin.startswith("https://")
+    )
+    if private_https_origin_count == 0:
+        state = "local_only"
+    elif not owner_auth_configured or owner_password_change_required:
+        state = "credential_gate"
+    else:
+        state = "ready_for_private_relay_verification"
+    return {
+        "state": state,
+        "private_https_origin_count": private_https_origin_count,
+        "owner_auth_configured": owner_auth_configured,
+        "owner_password_change_required": owner_password_change_required,
+        "off_device_verified": False,
+        "public_direct_execution": False,
+        "boundary": (
+            "Transport configuration is not off-device proof; verify the owner-selected "
+            "TLS relay and authenticated review flow from the remote device."
+        ),
+    }
 
 
 def _verified_owner_actor(
@@ -1356,6 +1396,7 @@ def create_app(root: Path | str) -> FastAPI:
             )
         except Exception as exc:
             representation_edge_error = f"{type(exc).__name__}: {exc}"
+    configured_remote_origins = _configured_remote_origins()
     app = FastAPI(
         title="LightSpeed GO Desktop Bridge",
         description="Local-only, Achilles-governed command, project and review bridge for LS GO.",
@@ -1408,6 +1449,9 @@ def create_app(root: Path | str) -> FastAPI:
                         else "legacy_owner_confirmation_header"
                     ),
                 },
+                "remote_access": _remote_access_status(
+                    credential, configured_remote_origins
+                ),
                 "merovingian": {
                     "status": "pass" if merovingian_healthy else "unavailable",
                     "receipt": str(project_pipeline.health_path),

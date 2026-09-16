@@ -3,6 +3,7 @@ import {
   COMMAND_SCHEMA,
   createCommandEnvelope,
   projectFileApiPath,
+  remoteAccessPresentation,
   resolveDesktopOrigin,
   resultReceiptApiPath,
   reviewDecisionOutcomeMessage,
@@ -39,6 +40,20 @@ describe("LS GO desktop command routing", () => {
     expect(() => resolveDesktopOrigin("https://desktop.example.test/api")).toThrow(
       "must not contain a path",
     );
+  });
+
+  it("does not present relay configuration as verified remote operation", () => {
+    expect(remoteAccessPresentation({ state: "local_only" })).toEqual({
+      label: "Local only",
+      detail: "No private HTTPS relay origin is configured.",
+    });
+    expect(remoteAccessPresentation({ state: "credential_gate" }).label).toBe(
+      "Credential held",
+    );
+    expect(remoteAccessPresentation({
+      state: "ready_for_private_relay_verification",
+      off_device_verified: false,
+    }).label).toBe("Verify off-device");
   });
 
   it("routes implementation work to Smith", () => {

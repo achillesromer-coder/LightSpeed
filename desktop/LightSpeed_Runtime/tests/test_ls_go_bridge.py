@@ -63,6 +63,32 @@ def test_allowed_origins_rejects_unsafe_remote_values(monkeypatch, origin):
 
 
 @pytest.mark.parametrize(
+    ("credential", "origins", "expected"),
+    [
+        ({"configured": True, "must_change": False}, [], "local_only"),
+        (
+            {"configured": True, "must_change": True},
+            ["https://desktop.example.test"],
+            "credential_gate",
+        ),
+        (
+            {"configured": True, "must_change": False},
+            ["https://desktop.example.test"],
+            "ready_for_private_relay_verification",
+        ),
+    ],
+)
+def test_remote_access_status_preserves_verification_boundary(
+    credential, origins, expected
+):
+    status = ls_go_bridge._remote_access_status(credential, origins)
+
+    assert status["state"] == expected
+    assert status["off_device_verified"] is False
+    assert status["public_direct_execution"] is False
+
+
+@pytest.mark.parametrize(
     "launch_state",
     [
         "private_soft_cognigrex_active",

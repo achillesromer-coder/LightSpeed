@@ -24,6 +24,7 @@ import {
   openDesktopResult,
   readDesktopStatus,
   readPendingCommands,
+  remoteAccessPresentation,
   removePendingCommand,
   routeInstruction,
   reviewDecisionOutcomeMessage,
@@ -162,6 +163,7 @@ app.innerHTML = `
         <article class="metric"><span>Desktop API</span><strong id="desktop-state">Checking</strong><small>${DEFAULT_DESKTOP_ORIGIN}</small></article>
         <article class="metric"><span>Merovingian</span><strong id="merovingian-state">Checking</strong><small>database · storage · health</small></article>
         <article class="metric"><span>Projects</span><strong id="project-count">0</strong><small>Desktop-visible project roots</small></article>
+        <article class="metric"><span>Remote review</span><strong id="remote-access-state">Checking</strong><small id="remote-access-detail">private relay gate</small></article>
         <article class="metric"><span>Pending fallback</span><strong id="pending-count">0</strong><small>saved command envelopes</small></article>
       </div>
       <div class="two-column">
@@ -609,12 +611,16 @@ const refreshDesktop = async (): Promise<void> => {
   const pill = byId("desktop-pill");
   const desktopState = byId("desktop-state");
   const merovingianState = byId("merovingian-state");
+  const remoteAccessState = byId("remote-access-state");
+  const remoteAccessDetail = byId("remote-access-detail");
   const pillText = byId("desktop-pill-text");
   const tasksMount = byId("desktop-tasks");
   pill.dataset.state = "checking";
   pillText.textContent = "checking local runtime";
   desktopState.textContent = "Checking";
   merovingianState.textContent = "Checking";
+  remoteAccessState.textContent = "Checking";
+  remoteAccessDetail.textContent = "private relay gate";
   try {
     const status = await readDesktopStatus();
     currentAuthorityContract = status.authority_contract || null;
@@ -635,6 +641,9 @@ const refreshDesktop = async (): Promise<void> => {
     pillText.textContent = status.ok ? "local runtime connected" : "runtime connected; health needs review";
     desktopState.textContent = "Online";
     merovingianState.textContent = status.merovingian?.status === "pass" ? "Healthy" : "Degraded";
+    const remoteAccess = remoteAccessPresentation(status.remote_access);
+    remoteAccessState.textContent = remoteAccess.label;
+    remoteAccessDetail.textContent = remoteAccess.detail;
 
     try {
       const tasks = await listDesktopTasks();
@@ -683,6 +692,8 @@ const refreshDesktop = async (): Promise<void> => {
     pillText.textContent = "start LightSpeed Desktop and the local bridge";
     desktopState.textContent = "Offline";
     merovingianState.textContent = "Offline";
+    remoteAccessState.textContent = "Unavailable";
+    remoteAccessDetail.textContent = "Desktop bridge is offline.";
     byId("project-count").textContent = "0";
     tasksMount.innerHTML = `<p class="muted">Desktop is offline. Commands can still be saved, copied or downloaded.</p>`;
     byId("desktop-projects").innerHTML = `<p class="muted">Project registry unavailable while Desktop is offline.</p>`;

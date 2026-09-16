@@ -247,6 +247,15 @@ export interface DesktopStatus {
     mandatory_due_utc?: string | null;
     state?: string;
   };
+  remote_access?: {
+    state?: "local_only" | "credential_gate" | "ready_for_private_relay_verification";
+    private_https_origin_count?: number;
+    owner_auth_configured?: boolean;
+    owner_password_change_required?: boolean;
+    off_device_verified?: boolean;
+    public_direct_execution?: boolean;
+    boundary?: string;
+  };
   services?: { db?: boolean; storage?: boolean; merovingian?: boolean };
   merovingian?: {
     status?: string;
@@ -262,6 +271,27 @@ export interface DesktopStatus {
   };
   authority_contract?: AuthorityContract;
 }
+
+export const remoteAccessPresentation = (
+  remoteAccess?: DesktopStatus["remote_access"],
+): { label: string; detail: string } => {
+  if (remoteAccess?.state === "ready_for_private_relay_verification") {
+    return {
+      label: "Verify off-device",
+      detail: "Private HTTPS origin configured; remote owner flow still needs readback.",
+    };
+  }
+  if (remoteAccess?.state === "credential_gate") {
+    return {
+      label: "Credential held",
+      detail: "Complete the owner password change before remote verification.",
+    };
+  }
+  return {
+    label: "Local only",
+    detail: "No private HTTPS relay origin is configured.",
+  };
+};
 
 export interface OwnerAuthResponse {
   authenticated: boolean;
