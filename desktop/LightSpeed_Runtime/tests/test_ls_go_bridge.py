@@ -1207,6 +1207,64 @@ def test_bridge_allows_bounded_command_that_names_negative_safeguards(tmp_path, 
     assert response.json()["accepted"] is True
 
 
+def test_bridge_allows_full_negated_live_safety_list(tmp_path, monkeypatch):
+    database = CommandFixtureDatabase(tmp_path / "bounded-command-live-list.db")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (database, object()))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(
+            command_id="LSGO-TEST-NEGATED-LIVE-SAFETY-LIST",
+            instruction=(
+                "Read local bridge health and return a fixed receipt. "
+                "Do not publish, deploy, mutate Drive, change credentials, delete files, "
+                "launch De Sporte, export Mark III meshes, or run heavy simulation."
+            ),
+            target_floor="Merovingian",
+            authorised_scope="all floors; private local review queue; fixed receipts",
+            prohibited_scope=(
+                "public publish; destructive filesystem changes; workbook mutation; "
+                "De Sporte launch; Mark III mesh export; heavy simulation without manual gate"
+            ),
+            requested_scope="Merovingian private local review queue",
+        ),
+    )
+
+    assert response.status_code == 200, response.text
+    assert response.json()["accepted"] is True
+
+
+def test_bridge_keeps_positive_action_after_negated_safeguard_visible(tmp_path, monkeypatch):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(
+            instruction="Do not publish the draft, but deploy the reviewed release.",
+        ),
+    )
+
+    assert response.status_code == 403
+    assert "prohibited scope" in response.json()["detail"]
+
+
+def test_bridge_does_not_treat_without_as_blanket_negation(tmp_path, monkeypatch):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post(
+        "/api/v1/ls-go/commands",
+        json=command_payload(
+            instruction="Proceed without delay and deploy the reviewed release.",
+        ),
+    )
+
+    assert response.status_code == 403
+    assert "prohibited scope" in response.json()["detail"]
+
+
 def test_bridge_stages_project_artifact_and_accepts_owner_review(tmp_path, monkeypatch):
     project_root = configure_shell(tmp_path)
     monkeypatch.setenv("LIGHTSPEED_OWNER_APPROVAL_TOKEN", "owner-test-token")

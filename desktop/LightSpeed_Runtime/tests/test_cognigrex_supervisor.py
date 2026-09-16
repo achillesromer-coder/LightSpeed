@@ -68,6 +68,16 @@ def test_default_unclassified_work_routes_to_architect_under_neo():
     assert plan.floor_sequence == ("Neo", "Architect", "Morpheus")
 
 
+def test_health_receipt_wording_does_not_add_oracle_source_work():
+    plan = cognigrex_supervisor.build_workflow_plan(
+        "Read bridge health, supervisor freshness, floor readiness and resource state; "
+        "return a fixed local evidence receipt."
+    )
+
+    assert plan.primary_floors == ("Merovingian",)
+    assert plan.floor_sequence == ("Neo", "Merovingian", "Morpheus")
+
+
 def test_supervised_dry_run_keeps_raw_text_out_of_aggregate_and_learning(tmp_path):
     contract_path = write_contract(tmp_path)
     instruction = "Inspect private runtime health and reconcile the UI evidence route."

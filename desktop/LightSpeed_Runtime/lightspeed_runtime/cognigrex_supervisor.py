@@ -19,6 +19,7 @@ from datetime import UTC, datetime
 import hashlib
 import json
 from pathlib import Path
+import re
 import tempfile
 from typing import Any, Callable, Iterable
 
@@ -69,7 +70,7 @@ SPECIALIST_KEYWORDS: tuple[tuple[str, tuple[str, ...]], ...] = (
     (
         "Oracle",
         (
-            "source", "evidence", "research", "citation", "reference", "known",
+            "source", "empirical evidence", "research", "citation", "reference", "known",
             "document", "library", "provenance source",
         ),
     ),
@@ -114,7 +115,14 @@ def instruction_hash(instruction: str) -> str:
 
 
 def _contains_any(text: str, keywords: Iterable[str]) -> bool:
-    return any(keyword in text for keyword in keywords)
+    return any(
+        re.search(
+            rf"(?<![a-z0-9]){re.escape(keyword)}(?![a-z0-9])",
+            text,
+        )
+        is not None
+        for keyword in keywords
+    )
 
 
 def classify_primary_floors(instruction: str) -> tuple[str, ...]:

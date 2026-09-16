@@ -846,6 +846,26 @@ def _scope_tokens(value: str) -> list[str]:
     ]
 
 
+_NEGATED_SAFEGUARD_SPAN = re.compile(
+    r"\b(?:do\s+not|don't|never)\b"
+    r"(?:(?!\b(?:but|however|instead|then)\b)[^.!?\n])*",
+    re.IGNORECASE,
+)
+
+
+def _without_negated_safeguards(value: str) -> str:
+    """Remove explicit negative guard clauses before prohibited-action matching.
+
+    Owner instructions commonly restate the hold boundary (for example,
+    ``Do not publish, deploy, or delete files``).  Those clauses describe what
+    must *not* happen and should not be treated as action requests.  Contrast
+    words terminate the removal so a positive clause such as ``but deploy the
+    site`` remains visible to the fail-closed matcher.
+    """
+
+    return _NEGATED_SAFEGUARD_SPAN.sub(" ", value)
+
+
 def _authority_scope_allows(
     *,
     authorised_scope: str,
@@ -874,7 +894,9 @@ def _authority_scope_prohibits(
     title: str,
     instruction: str,
 ) -> bool:
-    requested = f"{requested_scope} {title} {instruction}".casefold()
+    requested = _without_negated_safeguards(
+        f"{requested_scope} {title} {instruction}"
+    ).casefold()
     requested_tokens = set(_scope_tokens(requested))
     for item in re.split(r"[,;\n]+", prohibited_scope):
         normalized = " ".join(item.casefold().split()).strip()
