@@ -18,7 +18,7 @@ from urllib.request import Request, urlopen
 
 
 DEFAULT_CONTRACT_PATH = Path(__file__).resolve().parents[1] / "exports" / "agent_home" / "local_agent_wakeup_contract.json"
-DEFAULT_TIMEOUT_SECONDS = 90
+DEFAULT_TIMEOUT_SECONDS = 180
 DEFAULT_NUM_PREDICT = 512
 MAX_NUM_PREDICT = 1024
 HEAVY_MODEL_PATTERN = re.compile(r"(?:(?:27|70|120|405|671)b)|cloud", re.IGNORECASE)
