@@ -141,6 +141,14 @@ export const AGENT_ROLES: readonly AgentRole[] = [
 export const normalizeShellView = (value: string | null | undefined): ShellView =>
   SHELL_VIEWS.includes(value as ShellView) ? (value as ShellView) : "command";
 
+export const shellViewFromSearch = (
+  search: string,
+  fallback: string | null | undefined = "command",
+): ShellView => {
+  const requested = new URLSearchParams(search.startsWith("?") ? search.slice(1) : search).get("view");
+  return requested ? normalizeShellView(requested) : normalizeShellView(fallback);
+};
+
 export const inferWorkflowStage = (instruction: string): WorkflowStageId => {
   const text = instruction.trim().toLowerCase();
   if (!text) return "intake";

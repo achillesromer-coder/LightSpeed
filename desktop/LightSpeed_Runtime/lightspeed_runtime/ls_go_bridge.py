@@ -14,7 +14,7 @@ from typing import Any, Optional
 
 from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 import uvicorn
 
 from lightspeed_runtime.project_artifact_store import stage_project_artifacts
@@ -1399,6 +1399,13 @@ def create_app(root: Path | str) -> FastAPI:
                 },
                 "execution_boundary": "local queue, immutable named artifacts, receipts and review only; no public direct execution",
             }
+        )
+
+    @app.get("/ls-go/agents", include_in_schema=False)
+    def legacy_agent_surface() -> RedirectResponse:
+        return RedirectResponse(
+            url="http://127.0.0.1:4173/?view=system",
+            status_code=307,
         )
 
     @app.post("/api/v1/auth/login")

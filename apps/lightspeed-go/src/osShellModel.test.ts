@@ -4,6 +4,7 @@ import {
   inferWorkflowStage,
   normalizeShellView,
   routeOperationalFloor,
+  shellViewFromSearch,
   WORKFLOW_STAGES,
 } from "./osShellModel";
 
@@ -45,5 +46,11 @@ describe("Cognigrex OS shell model", () => {
     expect(normalizeShellView("objects")).toBe("objects");
     expect(normalizeShellView("not-a-view")).toBe("command");
     expect(normalizeShellView(null)).toBe("command");
+  });
+
+  it("opens a bounded workspace requested by a compatibility URL", () => {
+    expect(shellViewFromSearch("?view=system", "activity")).toBe("system");
+    expect(shellViewFromSearch("view=not-a-view", "activity")).toBe("command");
+    expect(shellViewFromSearch("", "activity")).toBe("activity");
   });
 });

@@ -7,6 +7,7 @@ import {
   routeOperationalFloor,
   SHELL_SCHEMA,
   SHELL_VIEWS,
+  shellViewFromSearch,
   workflowStage,
   WORKFLOW_STAGES,
   type ShellView,
@@ -34,7 +35,7 @@ const readState = (): ShellState => {
       ? parsed.activeAgent as Floor
       : defaultState.activeAgent;
     return {
-      activeView: normalizeShellView(parsed.activeView),
+      activeView: shellViewFromSearch(window.location.search, parsed.activeView),
       activeAgent: floor,
       focusMode: Boolean(parsed.focusMode),
     };

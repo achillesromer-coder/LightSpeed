@@ -24,6 +24,15 @@ from lightspeed_runtime.project_pipeline import ProjectPipeline
 from lightspeed_runtime.representation_edge import FEATURE_FLAG, RepresentationEdgeStore
 
 
+def test_legacy_agent_surface_redirects_to_integrated_system_view(tmp_path):
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.get("/ls-go/agents", follow_redirects=False)
+
+    assert response.status_code == 307
+    assert response.headers["location"] == "http://127.0.0.1:4173/?view=system"
+
+
 @pytest.mark.parametrize(
     "launch_state",
     [
