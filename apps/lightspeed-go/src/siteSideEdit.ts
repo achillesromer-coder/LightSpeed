@@ -4,6 +4,8 @@ type SiteIntegrationManifest = {
   edit_mode: string;
   create_new_site: boolean;
   publish_state: string;
+  launch_state_label?: string;
+  source_state_label?: string;
   authority_chain: string[];
   current_views: string[];
   promoted_components: string[];
@@ -53,6 +55,10 @@ const mount = async (): Promise<boolean> => {
     "LightSpeed Desktop",
     "Git and Drive receipts",
   ];
+  const sourceState = manifest?.source_state_label
+    ?? "Git review source current · Drive successor pending · public update held";
+  const launchState = manifest?.launch_state_label
+    ?? "Private local operation; remote verification and public deployment held";
 
   if (!document.getElementById("site-context-strip")) {
     const strip = document.createElement("div");
@@ -61,7 +67,7 @@ const mount = async (): Promise<boolean> => {
     strip.innerHTML = `
       <span><strong>Owner:</strong> Nathaniel Bouwer</span>
       <span><strong>Mode:</strong> private soft launch</span>
-      <span><strong>Source:</strong> Git + Drive linked · public update held</span>
+      <span><strong>Source:</strong> ${sourceState}</span>
     `;
     topbar.appendChild(strip);
   }
@@ -77,7 +83,7 @@ const mount = async (): Promise<boolean> => {
       <div class="site-chain">
         ${authority.map((item, index) => `${index ? "<i>→</i>" : ""}<span>${item}</span>`).join("")}
       </div>
-      <p><strong>Launch state:</strong> private local operation. Public Web work remains deferred.</p>
+      <p><strong>Launch state:</strong> ${launchState}</p>
     `;
     sources.prepend(card);
   }
