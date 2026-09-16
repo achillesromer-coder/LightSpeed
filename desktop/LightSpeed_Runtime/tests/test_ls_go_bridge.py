@@ -33,6 +33,35 @@ def test_legacy_agent_surface_redirects_to_integrated_system_view(tmp_path):
     assert response.headers["location"] == "http://127.0.0.1:4173/?view=system"
 
 
+def test_allowed_origins_accepts_exact_https_private_relay(monkeypatch):
+    monkeypatch.setenv(
+        "LIGHTSPEED_GO_ALLOWED_ORIGINS",
+        "https://desktop.example.test, https://desktop.example.test/",
+    )
+
+    origins = ls_go_bridge._allowed_origins()
+
+    assert origins.count("https://desktop.example.test") == 1
+    assert "http://127.0.0.1:4173" in origins
+
+
+@pytest.mark.parametrize(
+    "origin",
+    [
+        "*",
+        "http://desktop.example.test",
+        "https://owner:secret@desktop.example.test",
+        "https://desktop.example.test/api",
+        "https://desktop.example.test?mode=owner",
+    ],
+)
+def test_allowed_origins_rejects_unsafe_remote_values(monkeypatch, origin):
+    monkeypatch.setenv("LIGHTSPEED_GO_ALLOWED_ORIGINS", origin)
+
+    with pytest.raises(ValueError):
+        ls_go_bridge._allowed_origins()
+
+
 @pytest.mark.parametrize(
     "launch_state",
     [

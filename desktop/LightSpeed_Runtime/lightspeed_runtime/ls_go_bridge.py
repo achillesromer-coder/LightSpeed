@@ -11,6 +11,7 @@ from pathlib import Path
 import sys
 import threading
 from typing import Any, Optional
+from urllib.parse import urlsplit
 
 from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -190,9 +191,41 @@ def _bounded(value: Any, *, maximum: int, required: bool = False) -> str:
     return text
 
 
+def _validated_browser_origin(value: str) -> str:
+    candidate = value.strip()
+    if not candidate or candidate == "*":
+        raise ValueError("LightSpeed GO origins must be explicit absolute origins")
+    try:
+        parsed = urlsplit(candidate)
+        port = parsed.port
+    except ValueError as exc:
+        raise ValueError("LightSpeed GO origins must be valid absolute origins") from exc
+    if not parsed.scheme or not parsed.hostname:
+        raise ValueError("LightSpeed GO origins must be valid absolute origins")
+    if parsed.username or parsed.password:
+        raise ValueError("LightSpeed GO origins must not contain credentials")
+    if parsed.path not in {"", "/"} or parsed.query or parsed.fragment:
+        raise ValueError("LightSpeed GO origins must not contain a path, query or fragment")
+
+    host = parsed.hostname.lower()
+    loopback = host in {"127.0.0.1", "localhost", "::1"}
+    scheme = parsed.scheme.lower()
+    if scheme != "https" and not (scheme == "http" and loopback):
+        raise ValueError("Remote LightSpeed GO origins must use HTTPS")
+
+    bracketed_host = f"[{host}]" if ":" in host else host
+    authority = f"{bracketed_host}:{port}" if port is not None else bracketed_host
+    return f"{scheme}://{authority}"
+
+
 def _allowed_origins() -> list[str]:
-    configured = [item.strip() for item in os.environ.get("LIGHTSPEED_GO_ALLOWED_ORIGINS", "").split(",")]
-    return [*DEFAULT_ALLOWED_ORIGINS, *[item for item in configured if item]]
+    configured = [item for item in os.environ.get("LIGHTSPEED_GO_ALLOWED_ORIGINS", "").split(",") if item.strip()]
+    origins: list[str] = []
+    for item in [*DEFAULT_ALLOWED_ORIGINS, *configured]:
+        origin = _validated_browser_origin(item)
+        if origin not in origins:
+            origins.append(origin)
+    return origins
 
 
 def _verified_owner_actor(
