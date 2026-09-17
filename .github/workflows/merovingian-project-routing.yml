@@ -30,6 +30,7 @@ on:
       - "tools/run_ls_go_bridge.py"
       - "tools/run_merovingian_soft_launch.cmd"
       - "tools/run_cognigrex_local_stack.cmd"
+      - "tools/merovingian/requirements-ci-linux-py312.lock"
       - ".github/workflows/merovingian-project-routing.yml"
   push:
     branches:
@@ -60,6 +61,7 @@ on:
       - "tools/run_ls_go_bridge.py"
       - "tools/run_merovingian_soft_launch.cmd"
       - "tools/run_cognigrex_local_stack.cmd"
+      - "tools/merovingian/requirements-ci-linux-py312.lock"
       - ".github/workflows/merovingian-project-routing.yml"
       - ".github/workflows/gst063-route-contract.yml"
   workflow_dispatch:
@@ -79,17 +81,20 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           show-progress: false
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: "3.12"
 
       - name: Install bounded Python test dependencies
-        run: python -m pip install --disable-pip-version-check pytest fastapi uvicorn httpx psutil
+        run: >-
+          python -m pip install --disable-pip-version-check --no-input
+          --require-hashes --only-binary=:all:
+          -r tools/merovingian/requirements-ci-linux-py312.lock
 
       - name: Compile essential runtime
         id: compile
@@ -149,7 +154,7 @@ jobs:
             2>&1 | tee python-tests.log
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: "22"
           cache: npm
@@ -189,7 +194,7 @@ jobs:
 
       - name: Upload complete validation diagnostics
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: merovingian-project-routing-diagnostics
           path: |

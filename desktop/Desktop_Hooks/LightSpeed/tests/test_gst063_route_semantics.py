@@ -50,6 +50,9 @@ def test_gst063_committed_bridge_matches_canonical_route_semantics() -> None:
     canonical_website = _route_set(canonical["website_routes"])
     canonical_staged = _route_set(canonical["squarespace_routes"])
 
+    assert committed["contract_path"] == (
+        "Z Axis/Z-2_Oracle/data/catalog/website/romer_web_integration.json"
+    )
     assert committed_website == canonical_website
     assert committed_staged == canonical_staged
     assert REMOVED_ROUTES.isdisjoint(committed_website)
