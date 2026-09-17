@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1",
+  "suite": "CGX Phase B Kernel Conformance",
+  "status": "PASS",
+  "tests": [
+    {"id": "B01", "name": "carrier verify", "status": "PASS"},
+    {"id": "B02", "name": "TXT exact round-trip", "status": "PASS"},
+    {"id": "B03", "name": "Markdown exact round-trip", "status": "PASS"},
+    {"id": "B04", "name": "JSON exact byte round-trip", "status": "PASS"},
+    {"id": "B05", "name": "CSV exact round-trip", "status": "PASS"},
+    {"id": "B06", "name": "overlay leaves canonical state root unchanged", "status": "PASS"},
+    {"id": "B07", "name": "resolve advances canonical semantic state", "status": "PASS"},
+    {"id": "B08", "name": "undo restores target semantic state root while history advances", "status": "PASS"},
+    {"id": "B09", "name": "post-undo package verification", "status": "PASS"}
+  ],
+  "tested_carrier": {
+    "state_id": "S2",
+    "state_root": "e763ae207611ce316d82ab275ccbf895a61e04513a7d5faed80c090c9afd5eb7",
+    "content_root": "6f4b96a70c0507fde9ddf3082f26d36e58992365033c5d99cdd74576651748d1",
+    "dbr_root": "2ec72a6276a9f2076528e2e7fb886797baa97dd234559ffea39a88b25b164b0b",
+    "carrier_sha256": "8afd29054671575480771ad3193fadd297e7d02e0060f8ecc3b9069db756e37a"
+  },
+  "notes": "Tested on a disposable copy; no rich-format, sync, cryptographic signature, lease, WASM, Windows-host, CCC-network, Alexandria, or GMAT execution claim is made."
+}
