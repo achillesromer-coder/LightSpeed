@@ -148,6 +148,10 @@ def test_cognigrex_login_routes_profile_setup_through_settings_hub() -> None:
     assert 'self._open_setup_hub("tailoring")' in source
     assert 'hub.open_dialog_with_context(' in source
     assert 'self._launch_legacy_setup_wizard()' in source
+    assert 'text="Password"' in source
+    assert 'show="*"' in source
+    assert 'if not self._authenticate_user(username, self.password.get()):' in source
+    assert 'CredentialStore(get_db())' in source
 
 
 def test_smart_bento_hub_uses_compact_settings_launchers() -> None:

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import sys
+import threading
 from pathlib import Path
 
 
@@ -26,18 +27,56 @@ def resolve_runtime_layout(
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-CANONICAL_ROOT, DESKTOP_ROOT, RUNTIME_ROOT = resolve_runtime_layout(REPO_ROOT)
 
-os.environ["LIGHTSPEED_CANONICAL_ROOT"] = str(CANONICAL_ROOT)
-os.environ["LIGHTSPEED_RUNTIME_ROOT"] = str(RUNTIME_ROOT)
-os.environ["LIGHTSPEED_SHELL_ROOT"] = str(DESKTOP_ROOT)
 
-sys.path.insert(0, str(RUNTIME_ROOT))
-sys.path.insert(0, str(DESKTOP_ROOT))
+def configure_runtime_layout(
+    repo_root: Path = REPO_ROOT,
+) -> tuple[Path, Path, Path]:
+    """Configure the runtime only when the bridge is actually launched.
 
-from lightspeed_runtime.ls_go_bridge import start_server
+    Keeping this work out of module import makes layout discovery safe for
+    tests and tools: importing ``resolve_runtime_layout`` must not redirect the
+    caller's environment or bind an installed ``lightspeed_runtime`` package.
+    """
+    canonical_root, desktop_root, runtime_root = resolve_runtime_layout(repo_root)
+    os.environ["LIGHTSPEED_CANONICAL_ROOT"] = str(canonical_root)
+    os.environ["LIGHTSPEED_RUNTIME_ROOT"] = str(runtime_root)
+    os.environ["LIGHTSPEED_SHELL_ROOT"] = str(desktop_root)
+    for import_root in (runtime_root, desktop_root):
+        value = str(import_root)
+        if value not in sys.path:
+            sys.path.insert(0, value)
+    return canonical_root, desktop_root, runtime_root
+
+
+def start_local_bridge(root: Path) -> None:
+    """Start the local bridge with its Smith-owned durable DB consumer.
+
+    The consumer is deliberately hosted in the same singleton process as the
+    localhost bridge. A healthy bridge therefore has one durable command
+    consumer, while the consumer's own lock prevents duplicate threads/processes
+    from draining the same persisted job ledger.
+    """
+    configure_runtime_layout()
+    from lightspeed_runtime.ls_go_bridge import start_server
+    from lightspeed_runtime.ls_go_job_consumer import LSGoJobConsumer
+
+    consumer = LSGoJobConsumer(root)
+    thread = threading.Thread(
+        target=consumer.run_forever,
+        kwargs={"poll_seconds": 1.0},
+        name="lightspeed-ls-go-job-consumer",
+        daemon=True,
+    )
+    thread.start()
+    try:
+        start_server(root=root)
+    finally:
+        consumer.stop()
+        thread.join(timeout=3.0)
 
 
 if __name__ == "__main__":
-    root = Path(os.environ.get("LIGHTSPEED_ROOT", DESKTOP_ROOT))
-    start_server(root=root)
+    _canonical_root, desktop_root, _runtime_root = configure_runtime_layout()
+    root = Path(os.environ.get("LIGHTSPEED_ROOT", desktop_root))
+    start_local_bridge(root=root)

@@ -14,6 +14,7 @@ Version: 0.9.5
 Date: January 3, 2026
 """
 
+import ast
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 from typing import Dict, Any, List, Callable, Optional
@@ -27,6 +28,36 @@ import json
 from .layered_card import LayeredCard
 from .loading import ProgressBar, LoadingSpinner
 from .charts import ChartCard
+
+
+_PARAMETER_SCALAR_TYPES = (str, int, float, bool, type(None))
+
+
+def _is_supported_parameter_literal(value: Any) -> bool:
+    """Return whether a literal has a stable JSON-like parameter shape."""
+    if isinstance(value, _PARAMETER_SCALAR_TYPES):
+        return True
+    if isinstance(value, (list, tuple)):
+        return all(_is_supported_parameter_literal(item) for item in value)
+    if isinstance(value, dict):
+        return all(
+            isinstance(key, _PARAMETER_SCALAR_TYPES)
+            and _is_supported_parameter_literal(item)
+            for key, item in value.items()
+        )
+    return False
+
+
+def parse_parameter_value(value: str) -> Any:
+    """Parse a form value without executing input as Python code."""
+    text = str(value).strip()
+    if not text:
+        return ""
+    try:
+        parsed = ast.literal_eval(text)
+    except (SyntaxError, ValueError):
+        return text
+    return parsed if _is_supported_parameter_literal(parsed) else text
 
 
 class SimulationInfo:
@@ -379,22 +410,7 @@ class SimulationLauncher(LayeredCard):
             if not value_str:
                 continue
 
-            # Try to parse value
-            try:
-                # Try numeric first
-                if '.' in value_str:
-                    params[param_name] = float(value_str)
-                else:
-                    params[param_name] = int(value_str)
-            except ValueError:
-                # String or tuple/list
-                if value_str.startswith('(') or value_str.startswith('['):
-                    try:
-                        params[param_name] = eval(value_str)
-                    except:
-                        params[param_name] = value_str
-                else:
-                    params[param_name] = value_str
+            params[param_name] = parse_parameter_value(value_str)
 
         # Run simulation in thread
         def run_thread():
@@ -488,4 +504,4 @@ class SimulationLauncher(LayeredCard):
 
 
 # Export
-__all__ = ['SimulationLauncher', 'SimulationInfo']
+__all__ = ['SimulationLauncher', 'SimulationInfo', 'parse_parameter_value']

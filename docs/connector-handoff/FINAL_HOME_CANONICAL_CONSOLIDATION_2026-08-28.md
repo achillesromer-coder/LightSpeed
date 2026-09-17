@@ -157,3 +157,15 @@ Continue by:
 9. keeping physical, manufacturing, scientific, regulatory, site, professional, security/privacy and value/economic gates independent until their own receipts close.
 
 This is a living handoff. Update this file and existing canonical registers as authority or evidence changes; do not fork it into a new final-home master.
+
+## 2026-09-17 LightSpeed GO successor packet
+
+The current local-runtime, PR44, remote-readiness and workbook-delta evidence is recorded in [`LSGO_CANONICAL_SUCCESSOR_PACKET_2026-09-17.json`](./LSGO_CANONICAL_SUCCESSOR_PACKET_2026-09-17.json).
+
+That sidecar is a bounded machine-readable handoff, not a replacement master. Its state is `STAGED_ONLY`; it authorises no workbook mutation, credential handling, runtime installation, relay exposure, merge, deployment or publication. It preserves the blocked Task498 identity and requires fresh preflight plus exact readback before any accepted canonical write.
+
+## 2026-09-17 CGX integration boundary
+
+The new `.cgx` carrier is mapped into the existing Römer/LightSpeed authority and project structure in [`CGX_ROMER_INTEGRATION_MAP_2026-09-17.md`](./CGX_ROMER_INTEGRATION_MAP_2026-09-17.md), with a machine-readable companion at [`ROMER_CGX_INTEGRATION_PROFILE_2026-09-17.json`](./ROMER_CGX_INTEGRATION_PROFILE_2026-09-17.json).
+
+These are read-only integration contracts, not a new canonical master or corpus migration. They preserve a current Phase A/Phase B lineage conflict and a directly reproduced Phase B content-root verification failure. No source cleanup, move, deletion, workbook write, runtime installation, merge, deployment or public/remote host activation is authorised by them.
