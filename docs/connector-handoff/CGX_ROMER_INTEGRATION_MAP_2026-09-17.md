@@ -69,7 +69,7 @@ The root should reference authoritative objects by stable identity and receipts;
 | Current component | CGX placement | Coordinates / role | Current state | Admission rule |
 |---|---|---|---|---|
 | Owner decisions, Achilles, ACR3 and Type 1 control sheets | `governance.cgx` | Q2/Q4, Z4-Z7, DBR authority and Resolve gates | Drive sources verified read-only; successor mutations staged only | External reference plus revision/readback receipt; never infer authority from recency |
-| GitHub LightSpeed PR44 | `platform.cgx/git.cgx` | Q2/Q4, Z0-Z7, implementation branch and CI receipts | Open, draft, mergeable, unmerged at `b2888e15...`; four exact-head checks passed | Source candidate only until owner review and merge/deployment gates |
+| GitHub LightSpeed PR44 | `platform.cgx/git.cgx` | Q2/Q4, Z0-Z7, implementation branch and CI receipts | Open, draft and unmerged. The last source-code evidence head is `b2888e15...`; later integration-handoff commits are documentation-only. Four source-head checks passed. | Source candidate only until owner review and merge/deployment gates |
 | Installed LightSpeed Desktop / GO / bridge / Ollama | `platform.cgx/desktop.cgx` | Q4, Z5-Z7, H1 local host | HTTP 200 locally; installed runtime predates PR44 | Host adapter read-only first; installation requires owner gate and rollback receipt |
 | Neo, Oracle, Morpheus, Smith, Architect, TheConstruct, Trinity, Merovingian and Achilles | `platform.cgx/floors.cgx` | Q4, Z5-Z7, agents/capabilities/queues | 8/8 operational in last direct runtime sweep; Merovingian live | Stable agent IDs, scoped capability leases, exact-once task/result/receipt chain |
 | LS GO owner interface | `platform.cgx/go.cgx` | CGX Shell/Inspect/Lens + approval Overlay/Resolve | Local review works; first owner credential change and off-device proof absent | No stored credentials; owner-gated execute; authenticated readback required |
@@ -137,4 +137,3 @@ Rules:
 - File deletion or archive removal: `NOT_AUTHORISED`
 - Canonical workbook writes: `NOT_AUTHORISED`
 - Public/remote CGX host: `NOT_IMPLEMENTED / HELD`
-

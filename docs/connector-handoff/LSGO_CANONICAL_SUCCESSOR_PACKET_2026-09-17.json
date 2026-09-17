@@ -15,7 +15,8 @@
       "repository": "achillesromer-coder/LightSpeed",
       "pull_request": 44,
       "url": "https://github.com/achillesromer-coder/LightSpeed/pull/44",
-      "head": "b2888e15eed7e011e9c8cfb2a9e8019e168e83c1",
+      "validated_source_head": "b2888e15eed7e011e9c8cfb2a9e8019e168e83c1",
+      "head_interpretation": "Last source-code evidence head. This packet and the CGX integration handoff are later documentation-only commits, so this value must not be interpreted as the moving PR head.",
       "state": "OPEN_DRAFT_MERGEABLE_UNMERGED",
       "checks": [
         {"name": "GST-063 Route Contract", "run_id": 35152511324, "status": "success"},
