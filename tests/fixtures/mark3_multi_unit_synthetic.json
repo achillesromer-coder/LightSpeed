@@ -1,0 +1,54 @@
+{
+  "scenario_id": "SYN-M3-MULTI-CLI-001",
+  "units": [
+    {
+      "unit_id": "M3-SYN-01",
+      "dry_mass_kg": 100.0,
+      "propellant_mass_kg": 10.0,
+      "isp_s": 300.0,
+      "bounding_radius_m": 0.5,
+      "appendage_count": 3
+    },
+    {
+      "unit_id": "M3-SYN-02",
+      "dry_mass_kg": 100.0,
+      "propellant_mass_kg": 10.0,
+      "isp_s": 300.0,
+      "bounding_radius_m": 0.5,
+      "appendage_count": 3
+    }
+  ],
+  "legs": [
+    {
+      "leg_id": "SYN-LEG-01",
+      "delta_v_m_s": 20.0,
+      "duration_s": 100.0,
+      "active_unit_ids": ["M3-SYN-01", "M3-SYN-02"]
+    }
+  ],
+  "moves": [
+    {
+      "move_id": "SYN-MOVE-01",
+      "unit_id": "M3-SYN-01",
+      "appendage_id": 1,
+      "delta_angle_rad": 0.5,
+      "torque_nm": 4.0,
+      "drive_efficiency": 0.8
+    }
+  ],
+  "placements": [
+    {"unit_id": "M3-SYN-01", "x_m": 0.0, "y_m": 0.0, "z_m": 0.0},
+    {"unit_id": "M3-SYN-02", "x_m": 2.0, "y_m": 0.0, "z_m": 0.0}
+  ],
+  "interlocks": [
+    {
+      "interlock_id": "SYN-LOCK-01",
+      "unit_a": "M3-SYN-01",
+      "appendage_a": 1,
+      "unit_b": "M3-SYN-02",
+      "appendage_b": 1,
+      "role": "SECONDARY_TO_SECONDARY"
+    }
+  ],
+  "delta_v_scale": [0.5, 1.0, 2.0]
+}
