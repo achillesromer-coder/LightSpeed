@@ -39,6 +39,18 @@ from typing import Any, Dict, List, Tuple
 ROOT = Path(__file__).resolve().parents[3]
 TOOL_KEY = "rfs_emff_sweep"
 
+# Canonical W3 digital-twin source. This is a provenance pointer only; the
+# workbook remains Drive-owned and is not copied into Git.
+W3_SOURCE_INPUT = {
+    "kind": "drive_source",
+    "provider": "google_drive",
+    "file_id": "1OfpojKyX7gefk7c0-2NL3xm-ZnohhJI5",
+    "sha256": "05b34a9fb912dd9f349479b5f3480048f96c7871daa67798f29cee021aa559e6",
+    "mime_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "size_bytes": 52351,
+    "role": "canonical_w3_digital_twin_source",
+}
+
 Z_AXIS_ROOT = ROOT / "Z Axis"
 MEROVINGIAN_ROOT = Z_AXIS_ROOT / "Z-4_Merovingian"
 TRINITY_ROOT = Z_AXIS_ROOT / "Z+3_Trinity"
@@ -119,7 +131,7 @@ def run(payload: Dict[str, Any], output_dir: Path | None = None) -> Tuple[List[D
         task_id=payload.get("task_id"),
         project_id=payload.get("project_id"),
         tags=tags,
-        inputs=[],
+        inputs=[dict(W3_SOURCE_INPUT)],
     )
     job_id = int(job["job_id"])
     out_dir = Path(output_dir) if output_dir is not None else Path(job["run_dir"])
