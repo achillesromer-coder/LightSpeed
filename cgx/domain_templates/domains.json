@@ -1,0 +1,100 @@
+{
+  "schema": "CGX-DOMAIN-TEMPLATES/0.1",
+  "namespace_status": "provisional-unbound",
+  "domains": {
+    "romer": {
+      "file": "Romer.cgx",
+      "display": "Römer Industries",
+      "intelligence": "Römer-Grex",
+      "principal_agent": "Neo",
+      "namespace": "cgx://romer.industries/romer",
+      "modules": [
+        "mission",
+        "mark-luke",
+        "rfs",
+        "emff",
+        "free-flow",
+        "solar-hull",
+        "intersol",
+        "watchtower",
+        "spaceport",
+        "terrestrial",
+        "australian-capacity",
+        "operations",
+        "economics",
+        "outreach"
+      ]
+    },
+    "eco": {
+      "file": "Eco.cgx",
+      "display": "Eco-X / Eco-Grex",
+      "intelligence": "Eco-Grex",
+      "principal_agent": "Athene",
+      "namespace": "cgx://romer.industries/eco",
+      "modules": [
+        "ecology",
+        "sites",
+        "species",
+        "flora-fauna",
+        "regeneration",
+        "bio-blocks",
+        "second-cycle",
+        "materials",
+        "monitoring",
+        "infrastructure-interface",
+        "education"
+      ]
+    },
+    "emassc": {
+      "file": "EMASSC.cgx",
+      "display": "EMASSC",
+      "principal_agent": "Achilles",
+      "namespace": "cgx://romer.industries/emassc",
+      "modules": [
+        "research",
+        "measurement",
+        "validation",
+        "standards",
+        "ip",
+        "test-design",
+        "materials",
+        "systems-engineering",
+        "collaboration",
+        "filespace-governance",
+        "methods",
+        "publication-review"
+      ]
+    }
+  },
+  "shared_layout": [
+    "identity",
+    "governance",
+    "security",
+    "sources",
+    "evidence",
+    "integrations",
+    "capabilities",
+    "workflows",
+    "queue",
+    "lenses",
+    "representations",
+    "publications",
+    "preferences",
+    "temporary",
+    "archive-dbr"
+  ],
+  "extensible_dimensions": [
+    "security",
+    "visibility",
+    "authority",
+    "evidence",
+    "lifecycle",
+    "ai-access",
+    "sharing",
+    "export",
+    "network",
+    "residency",
+    "licence"
+  ],
+  "credential_policy": "secret-reference-only"
+}
