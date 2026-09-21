@@ -1,0 +1,9 @@
+{
+  "schema_version":"0.1",
+  "principles":["source-before-claim","preserve-competing-evidence","distinguish-fact-model-proposal","no-silent-authority-promotion","prefer-reproducible-derivation-over-duplicate-archiving","current-object-semantic-halo"],
+  "semantic_halo":{
+    "include":["direct-parent","direct-children","high-strength-siblings","active-evidence","active-tasks","recent-dbr-delta","relevant-capabilities","current-lens"],
+    "exclude_by_default":["unrelated-domains","deep-archive","blocked-security-regions"]
+  },
+  "cross_source_topic_collapse":{"preserve_source_semantics":true,"reconcile_units_and_entities":true,"surface_conflicts":true,"retain_original_recoverability":true}
+}
