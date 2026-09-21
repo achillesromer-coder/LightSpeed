@@ -1,0 +1,44 @@
+{
+  "schema":"CGX-CORPUS-AWARE-BASE-SHELL/0.2",
+  "purpose":"Define a data-light but corpus-aware child workspace that can accept first real files without redesigning identity, authority, intake, work modes, lenses, providers or migration topology.",
+  "required_sections":[
+    "identity/domain",
+    "identity/agent_bindings",
+    "identity/legacy_aliases",
+    "governance/authority_model",
+    "corpus/common_authority_map",
+    "corpus/domain_map",
+    "corpus/acr3_domain_migration",
+    "corpus/current_control_snapshot",
+    "frontier/current_gates",
+    "integrations/provider_root_registry",
+    "profiles/work_modes",
+    "profiles/depth_profiles",
+    "profiles/dimension_registry",
+    "profiles/intake_output",
+    "profiles/reasoning_profiles",
+    "profiles/lens_registry",
+    "profiles/toolkit_registry",
+    "profiles/workflow_registry",
+    "profiles/interaction_preferences",
+    "queue/acr3_assimilation",
+    "queue/first_file_intake",
+    "representations/default_recipes"
+  ],
+  "authority_invariants":[
+    "shell-metadata-is-not-authority-transfer",
+    "source-native-and-current-scoped-owners-remain-authoritative-until-parity-and-explicit-promotion",
+    "acr3-becomes-read-only-provenance-only-after-exit-gate",
+    "validation-state-number-does-not-promote-recovery-authority",
+    "generated-representation-does-not-become-semantic-authority",
+    "no-source-demotion-or-deletion-before-parity-and-recovery-proof"
+  ],
+  "privacy_and_security":[
+    "no-secret-bytes-in-carrier",
+    "credentials-are-references-or-provider-sessions",
+    "domain-shell-must-not-copy-unrelated-personal-pa-payload",
+    "strongest-applicable-security-policy-wins"
+  ],
+  "payload_rule":"Base shell contains corpus maps, current bounded control caches and migration metadata, but not bulk project workbooks/CAD/raw evidence until intake is explicitly reviewed.",
+  "hydration_rule":"Use the latest verifier-valid descendant supported by the trusted seed lineage while retaining the distinct Recovery/promotion authority gate."
+}
