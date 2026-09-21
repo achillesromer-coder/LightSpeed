@@ -1,0 +1,10 @@
+{
+  "schema_version":"0.1",
+  "queues":[
+    {"id":"intake","commit":"manual-or-policy"},
+    {"id":"work","commit":"workflow-dependent"},
+    {"id":"review","commit":"none"},
+    {"id":"output","commit":"representation-only"},
+    {"id":"blocked","commit":"none"}
+  ]
+}
