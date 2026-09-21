@@ -1,0 +1,14 @@
+{
+  "schema_version": "0.1",
+  "dimensions_independent": true,
+  "reasoning_depths": [
+    {"id":"glance","goal":"minimal answer/status","source_pull":"minimum"},
+    {"id":"standard","goal":"normal working analysis","source_pull":"bounded"},
+    {"id":"deep","goal":"cross-source reasoning and trade-offs","source_pull":"expanded"},
+    {"id":"audit","goal":"provenance, contradiction and gate inspection","source_pull":"evidence-first"},
+    {"id":"raw","goal":"direct source/native data inspection","source_pull":"exact-source"}
+  ],
+  "execution_depths":["inspect","propose","simulate","execute","build","publish"],
+  "device_hydration_profiles":["projection-lite","reader","editor","workstation","distributed"],
+  "rule":"Reasoning depth, execution depth and device hydration are orthogonal configuration dimensions."
+}
