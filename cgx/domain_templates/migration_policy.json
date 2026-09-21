@@ -1,0 +1,5 @@
+{
+  "schema_version":"0.1",
+  "rules":["no-source-demotion-before-parity","no-destructive-cleanup-before-hash-reference-recovery","external-surfaces-are-tools-not-semantic-masters","acr3-content-assimilates-to-owning-objects","legacy-representations-retained-by-evidence-and-retention-policy"],
+  "phases":["mirror","federated-authority","cgx-first"]
+}
