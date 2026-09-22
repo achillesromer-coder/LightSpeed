@@ -1,0 +1,222 @@
+{
+  "schema": "CGX-CORPUS-INCLUSION/0.1",
+  "audit_anchor": {
+    "acr3_spreadsheet_id": "1AgAhLPNtrO91C_-ea7EdOkOsyXrCCYvFVvmDSGq8uls",
+    "acr3_handoff_row": 998,
+    "audited_at": "2026-09-22",
+    "note": "The ACR3 507-row workbook migration inventory is a bounded migration subset, not the complete inclusion universe."
+  },
+  "invariants": [
+    "no-authority-by-location",
+    "no-last-chat-wins",
+    "unknown-is-frontier-not-absence",
+    "source-native-identity-preserved",
+    "provider-execution-does-not-promote-semantic-authority",
+    "legacy-source-content-is-assimilated-exactly-once",
+    "bulk-legacy-structure-is-not-copied-merely-for-completeness",
+    "secrets-remain-external"
+  ],
+  "first_class_domains": [
+    {
+      "id": "romer",
+      "filespace": "Romer.cgx",
+      "intelligence": "Römer-Grex",
+      "principal_agent": "Neo"
+    },
+    {
+      "id": "eco",
+      "filespace": "Eco.cgx",
+      "intelligence": "Eco-Grex",
+      "principal_agent": "Athene"
+    },
+    {
+      "id": "emassc",
+      "filespace": "EMASSC.cgx",
+      "principal_agent": "Achilles"
+    },
+    {
+      "id": "australian-capacity",
+      "parent": "romer",
+      "children": [
+        "sai"
+      ],
+      "mode": "semantic-domain"
+    },
+    {
+      "id": "asteroid-mission",
+      "parent": "romer/mission",
+      "mode": "TRACK-or-REFERENCE-specialist-owner"
+    },
+    {
+      "id": "m1-seqld",
+      "parent": "romer/terrestrial",
+      "mode": "TRACK-or-REFERENCE-specialist-project"
+    },
+    {
+      "id": "intersol-workforce",
+      "parent": "romer",
+      "mode": "semantic-domain-with-specialist-owner-links"
+    }
+  ],
+  "control_fabric": [
+    "identity",
+    "governance-authority",
+    "security-admission",
+    "sources-provenance",
+    "evidence",
+    "topology-living-graph",
+    "decisions",
+    "tasks-work-packages",
+    "contradictions-frontier",
+    "dbr",
+    "lenses",
+    "interaction-preferences-tailoring",
+    "representations",
+    "publication-receipts"
+  ],
+  "capability_and_provider_classes": [
+    "lightspeed-runtime",
+    "ccc",
+    "mpl",
+    "gmat",
+    "freecad-cad",
+    "python",
+    "google-drive",
+    "google-sheets",
+    "google-docs",
+    "google-slides",
+    "github",
+    "local-llm",
+    "frontier-llm",
+    "web-browser",
+    "email",
+    "calendar",
+    "canva",
+    "vercel",
+    "neon",
+    "supabase",
+    "future-provider"
+  ],
+  "durable_source_families": [
+    {
+      "title": "Type 1 Romer Cognigrex",
+      "id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+      "observed_sheets": 642,
+      "role": "current-domain-owner/provider"
+    },
+    {
+      "title": "Type 1 Systems Cognigrex",
+      "id": "1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko",
+      "observed_sheets": 385,
+      "role": "systems-specialist-owner/provider"
+    },
+    {
+      "title": "Type 1 Operations Cognigrex",
+      "id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
+      "observed_sheets": 48,
+      "role": "operations-control-provider"
+    },
+    {
+      "title": "Type 1 Eco-Grex",
+      "id": "1kWKbAfHH7ox5Wr8pK0eLXSzlEWdZ8SVqaHvZ-UXuXQU",
+      "observed_sheets": 86,
+      "role": "eco-domain-owner/provider"
+    },
+    {
+      "title": "Type1_Asteroid_Operating_Workbook",
+      "id": "1Uy04F5gtf2mXf9tDmAyIvNrsCn1kn4Csa2oc-skSZxY",
+      "observed_sheets": 46,
+      "role": "mission-asteroid-specialist-owner/provider"
+    },
+    {
+      "title": "MPL Engine",
+      "id": "1uXs-uPDCN8xNFErkAOrCEeYv0ctzoZb5XUYop5UEBvE",
+      "observed_sheets": 20,
+      "role": "specialist-model-engine/provider"
+    },
+    {
+      "title": "N. LightSpeed",
+      "id": "1eIIOgnB2R_sHxepi8PdKa6qXtaKYPMsOsetjrzdqvmw",
+      "observed_sheets": 14,
+      "role": "runtime-operations-view/provider"
+    },
+    {
+      "title": "M1 Elevated Bypass Living Infrastructure",
+      "id": "14gBPrvgI9XdLcm6FCHoGK9mfU5XFOJUyB3S_5DalqLY",
+      "observed_sheets": 21,
+      "role": "specialist-project-owner/provider"
+    },
+    {
+      "title": "LightSpeed Web Shell Builder",
+      "id": "1na5Y4MuwrOdLxub0teoS_hO5n9FmNXIIYPlVjYZk88k",
+      "observed_sheets": 48,
+      "role": "publication-web-deployment-recipes/provider"
+    },
+    {
+      "title": "Romer_EMASSC_LinkDrive_DataIndex_Workbook_v0_1",
+      "id": "1VqclM3KypKoa_e8BbMPDeDVb6eVh5pX7UbDzOCL6fnE",
+      "observed_sheets": 64,
+      "role": "source-provider-publication-control-index"
+    },
+    {
+      "title": "Trinity LightSpeed",
+      "id": "1EB_t0RTr9e3Vr4bNstIXcq9f7oDsW3tB80NULrraUdk",
+      "observed_sheets": 13,
+      "role": "agent-workspace-view/provider"
+    },
+    {
+      "title": "Achilles P.A — Canonical Workbook v1.0",
+      "id": "1Z9eEUsp8uDU5U4ZqQd-YOhlxJAC7UoelmByY6EaRfV0",
+      "role": "transition-governance-provider"
+    },
+    {
+      "title": "ACR3 Next Stage Consolidation Register",
+      "id": "1AgAhLPNtrO91C_-ea7EdOkOsyXrCCYvFVvmDSGq8uls",
+      "role": "transition-provenance-until-retirement"
+    }
+  ],
+  "legacy_provider_classes": [
+    "closure-packets",
+    "temporary-drives",
+    "prior-pdfs-decks",
+    "legacy-agent-ledgers",
+    "historic-achilles-pa",
+    "web2-build-registers",
+    "operational-task-registers",
+    "archive-packages"
+  ],
+  "unresolved_frontiers": [
+    {
+      "id": "FRONTIER-RAPHAEL-BOUNDARY",
+      "topic": "Raphael/physics/paradox families embedded in Römer workbook",
+      "reason": "domain/ownership boundary not yet explicitly resolved"
+    },
+    {
+      "id": "FRONTIER-DE-SPORTE",
+      "topic": "De Sporte",
+      "reason": "private persistence/health sidecar unless explicitly promoted"
+    },
+    {
+      "id": "FRONTIER-SECONDARY-Z",
+      "topic": "secondary Z stack",
+      "reason": "explicit HOLD"
+    },
+    {
+      "id": "FRONTIER-PROVIDER-PERMISSIONS",
+      "topic": "permission-gated or provider-NOT_FOUND Drive items",
+      "reason": "negative search is not absence proof"
+    },
+    {
+      "id": "FRONTIER-AGENT-HISTORICAL-CONFLICTS",
+      "topic": "historical agent ownership/role conflicts",
+      "reason": "retain provenance until reconciled"
+    },
+    {
+      "id": "FRONTIER-S89-UNBOUND",
+      "topic": "S89 User Operability Closure",
+      "reason": "reported local implementation has no durable Drive/Git source/carrier at 2026-09-22 audit and had an outstanding key-provider/private-material regression"
+    }
+  ],
+  "publication_rule": "Living Evidence Atlas, Living Type 1 Dossier, Evidence Review, Web2, social/email/institutional packs are derived lenses/representations, never source authority.",
+  "growth_rule": "New corpus families may be added through the extensible dimension/source-family registry without replacing the CGX schema."
+}
