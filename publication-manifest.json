@@ -1,0 +1,69 @@
+{
+  "binding": {
+    "content_root": "a89356415fda6ba6ce0b068fc289b76b6fefafa7f5198e1d957f46b26b363a95",
+    "dbr_root": "5248c382d2fce138829ff2c35275e4d17716d81121894ddde2906b01a4ad09e6",
+    "object_id": "cgx:phase-a:42d99b46c0d322f08b59b7b7",
+    "state_id": "S89",
+    "topology_snapshot_hash": "12afad193d8af071b2c8a3621acd00852e327881562a6cf9597a0f1c13828ad3"
+  },
+  "default_deny": true,
+  "files": [
+    {
+      "class": "public-bootstrap",
+      "path": "CGX_Seed.cgx",
+      "sha256": "3e6525a0eb9f062d4611d0c59687af5d3ad92200fd0d80f3e620762f5c1c564b",
+      "size_bytes": 18793
+    },
+    {
+      "class": "evaluation-distributable",
+      "path": "LICENSE.md",
+      "sha256": "ce4ceedcee335fbb51741a2baa888f1c55c24451310516a541638a589f9c9686",
+      "size_bytes": 1369
+    },
+    {
+      "class": "evaluation-distributable",
+      "path": "THIRD_PARTY_NOTICES.md",
+      "sha256": "ab5b70a68c1ad9094e209b057569d19c73b77ddc932c7bf2bdd970ef4715d609",
+      "size_bytes": 703
+    },
+    {
+      "class": "public-bootstrap",
+      "path": "cgx-bootstrap.json",
+      "sha256": "e914342f8ce54437fcfcba7fda7af0dc1dfd4d6513c63f2a7959107b58e4f74f",
+      "size_bytes": 1063
+    },
+    {
+      "class": "public-bootstrap",
+      "path": "field-status.json",
+      "sha256": "35e63c30a9f61cf505c128deea2805c24fc6dee0c9bf19629a12b171de8b3119",
+      "size_bytes": 834
+    },
+    {
+      "class": "public-bootstrap",
+      "path": "index.html",
+      "sha256": "69f6d95632ab16362c138ef56f85572a86e35868274ab6c6f8a844aa2dd330b0",
+      "size_bytes": 1465
+    },
+    {
+      "class": "public-bootstrap",
+      "path": "release.json",
+      "sha256": "9beb8154fb9899fba1933a276266fd5ad02623bf73c5fab3593f475679d96d9d",
+      "size_bytes": 767
+    },
+    {
+      "class": "public-bootstrap",
+      "path": "robots.txt",
+      "sha256": "16ceb5ee3e0dc13aa9adf31a3ebbe45a1d965b8c2b9f72eaf84e5911e140ed95",
+      "size_bytes": 23
+    },
+    {
+      "class": "public-bootstrap",
+      "path": "vercel.json",
+      "sha256": "53444baf3d01823fe21323ad1f8194df03dbb119d6f1f4ae25bae85d4ce0e050",
+      "size_bytes": 1942
+    }
+  ],
+  "manifest_hash": "cd970713bb135dfce43683b1c2910ce7f195d0977f878b190f3ced2dfa01d7b1",
+  "protocol": "CGX-PUBLICATION/0.1",
+  "schema_version": "0.1"
+}

@@ -1,0 +1,31 @@
+{
+  "authoritative": false,
+  "binding": {
+    "content_root": "a89356415fda6ba6ce0b068fc289b76b6fefafa7f5198e1d957f46b26b363a95",
+    "dbr_root": "5248c382d2fce138829ff2c35275e4d17716d81121894ddde2906b01a4ad09e6",
+    "object_id": "cgx:phase-a:42d99b46c0d322f08b59b7b7",
+    "state_id": "S89",
+    "topology_snapshot_hash": "12afad193d8af071b2c8a3621acd00852e327881562a6cf9597a0f1c13828ad3"
+  },
+  "logical_master": "cgx://cgx.cgx",
+  "protocol": "CGX-PUBLIC-BOOTSTRAP/0.1",
+  "publication": {
+    "content_objects_public": false,
+    "experimental_discovery_path": "/cgx-bootstrap.json",
+    "full_master_public": false,
+    "well_known_cgx_public": false
+  },
+  "release": {
+    "carrier_version": "1.1",
+    "media_type": "application/x-cgx",
+    "media_type_registration": "provisional-unregistered",
+    "release_line": "0.x",
+    "release_status": "pre-release-candidate"
+  },
+  "schema_version": "0.1",
+  "seed": {
+    "path": "CGX_Seed.cgx",
+    "sha256": "3e6525a0eb9f062d4611d0c59687af5d3ad92200fd0d80f3e620762f5c1c564b",
+    "size_bytes": 18793
+  }
+}

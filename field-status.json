@@ -1,0 +1,36 @@
+{
+  "items": [
+    {
+      "id": "host.android_registration",
+      "state": "E2_required_missing",
+      "target_phase": "E"
+    },
+    {
+      "id": "host.linux_registration",
+      "state": "PARTIAL_CURRENT_HOST_CONFORMANCE",
+      "target_phase": "E"
+    },
+    {
+      "id": "host.macos_registration",
+      "state": "PARTIAL_SOFTWARE_IMPLEMENTED_EXTERNAL_CONFORMANCE",
+      "target_phase": "E"
+    },
+    {
+      "id": "host.windows",
+      "state": "PARTIAL_SOFTWARE_IMPLEMENTED_EXTERNAL_CONFORMANCE",
+      "target_phase": "E"
+    },
+    {
+      "id": "network.discovery_transport",
+      "state": "E2_required_missing",
+      "target_phase": "C"
+    },
+    {
+      "id": "sync.two_device",
+      "state": "E2_required_missing",
+      "target_phase": "G"
+    }
+  ],
+  "public_summary_only": true,
+  "schema_version": "0.1"
+}

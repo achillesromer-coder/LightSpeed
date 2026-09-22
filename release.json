@@ -1,0 +1,20 @@
+{
+  "authority": "DBR+manifest+verifier+ancestry",
+  "binding": {
+    "content_root": "a89356415fda6ba6ce0b068fc289b76b6fefafa7f5198e1d957f46b26b363a95",
+    "dbr_root": "5248c382d2fce138829ff2c35275e4d17716d81121894ddde2906b01a4ad09e6",
+    "object_id": "cgx:phase-a:42d99b46c0d322f08b59b7b7",
+    "state_id": "S89",
+    "topology_snapshot_hash": "12afad193d8af071b2c8a3621acd00852e327881562a6cf9597a0f1c13828ad3"
+  },
+  "full_master_access": "trusted-private-provider-required",
+  "logical_master": "cgx://cgx.cgx",
+  "release": {
+    "carrier_version": "1.1",
+    "media_type": "application/x-cgx",
+    "media_type_registration": "provisional-unregistered",
+    "release_line": "0.x",
+    "release_status": "pre-release-candidate"
+  },
+  "schema_version": "0.1"
+}
