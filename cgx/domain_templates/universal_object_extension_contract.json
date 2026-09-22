@@ -1,0 +1,124 @@
+{
+  "schema": "CGX-UNIVERSAL-OBJECT-EXTENSION/0.1",
+  "status": "review-blueprint",
+  "base_contracts": [
+    "CGX-IR/0.1",
+    "cgx.topology.xyzt.v1",
+    "CGX-Topology/0.2",
+    "CGX-Lens/0.1",
+    "CGX-MultiView-Workspace/0.1"
+  ],
+  "design_rule": "This is an aggregate/domain-extension contract over CGX-IR Universal Cells. It does not create a second canonical object store or replace topology/DBR.",
+  "ir_cell_fields_preserved": [
+    "Cell_ID",
+    "Object_ID",
+    "XY_address",
+    "Z_depth",
+    "T_state_reference",
+    "semantic_type",
+    "value",
+    "value_type",
+    "unit_dimension_basis",
+    "bounds_tolerance_uncertainty",
+    "epistemic_state",
+    "source_evidence",
+    "authority",
+    "method",
+    "dependencies",
+    "relations",
+    "function_bindings",
+    "permissions",
+    "view_hints"
+  ],
+  "object_aggregate": {
+    "required": [
+      "object_id",
+      "domain_id",
+      "type_id",
+      "canonical_name",
+      "lifecycle",
+      "authority"
+    ],
+    "optional": [
+      "aliases",
+      "description",
+      "parent_refs",
+      "configuration_ref",
+      "state_refs",
+      "source_refs",
+      "evidence_refs",
+      "relation_refs",
+      "security_policy_refs",
+      "capability_refs",
+      "frontier_refs",
+      "view_hints",
+      "tags"
+    ],
+    "derived_not_stored_as_duplicate": [
+      "topology_address",
+      "content_identity",
+      "current_state_root",
+      "dbr_root",
+      "available_views",
+      "aggregate_evidence_summary"
+    ]
+  },
+  "identity": {
+    "object_id": "stable cryptographic/logical identity; never inferred solely from filename or display name",
+    "type_id": "domain registry type; extensible through reviewed registries/CCC packages",
+    "domain_id": "owning semantic domain, not necessarily storage/provider location",
+    "aliases": "non-authoritative names and legacy identifiers",
+    "source_identity": "native provider/file/workbook/CAD identity retained independently of object identity"
+  },
+  "lifecycle_values": [
+    "draft",
+    "active",
+    "frozen",
+    "superseded",
+    "archived"
+  ],
+  "authority_values": [
+    "unclassified",
+    "derived",
+    "reviewed",
+    "owner",
+    "canonical"
+  ],
+  "epistemic_values": [
+    "raw",
+    "observed",
+    "source-derived",
+    "derived",
+    "modelled",
+    "simulated",
+    "inferred",
+    "unknown",
+    "contradictory",
+    "validated-within-scope"
+  ],
+  "inheritance": {
+    "security": "strongest applicable policy wins",
+    "authority": "never inherited implicitly across object/domain boundaries",
+    "evidence": "never inherited as proof; only explicit evidence relations count",
+    "defaults": "type/library defaults may be inherited but materialised object overrides are explicit",
+    "lifecycle": "object-specific; parent archival does not silently archive independently owned children",
+    "view_hints": "may inherit as presentation defaults only"
+  },
+  "mutation": {
+    "proposal": "Overlay/private branch",
+    "acceptance": "Resolve through scoped owner/policy",
+    "commit": "atomic DBR-backed mutation",
+    "representation_change": "does not mutate semantics unless an accepted semantic delta returns",
+    "session_view_state": "Host-local/noncanonical unless explicitly saved as a portable lens profile"
+  },
+  "validation_rules": [
+    "confidence values must be finite numbers within declared bounds; NaN/Infinity are invalid",
+    "units/basis required for dimensional numerical values unless explicitly dimensionless",
+    "source/evidence must retain native identity and revision/hash when available",
+    "configuration-sensitive facts must carry configuration/state qualifier",
+    "time-sensitive observations must carry time/state reference",
+    "unknown or contradictory state must not be coerced into a single resolved value",
+    "provider location never establishes semantic authority",
+    "a generated view/export cannot become source authority by existence"
+  ]
+}
