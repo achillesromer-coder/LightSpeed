@@ -5,13 +5,15 @@ This directory is a public operational index for the CGX field-conformance progr
 ## Current authority reference
 
 - Object_ID: `cgx:phase-a:42d99b46c0d322f08b59b7b7`
-- Validation state: `S88`
-- Release: `v1.58`
-- Carrier SHA-256: `e901bb175152eed0b1ceb9cf69fc464bc433e4a37d725c01343cea42151d356f`
-- Current field execution: `CGX-PHY-20260921-BNE-03`
+- Recovery state: `S89`
+- Release: `v1.59`
+- Carrier SHA-256: `dfdcc27b0002c960e81426b9dc14059bdf20b0ca864964bde5461ec6867d5f31`
+- Current field execution: `CGX-PHY-20260922-BNE-04`
 - Field status: `PREPARED` — external physical evidence remains pending.
 
-The canonical carrier and reference implementation are distributed separately through the controlled CGX Drive validation surface. They are **not mirrored into this public repository** because CGX is currently distributed under the CGX Proprietary Evaluation Licence v1.0.
+S89 was promoted into Recovery by exact-content/DBR ancestry reconciliation from Recovery S53 after an independent 72/72 isolated regression pass. The canonical carrier and implementation remain on the controlled CGX Drive surfaces and are **not mirrored into this public repository**.
+
+The earlier S88 field runbook is retained here as provenance. `CURRENT.json` and the S89 runbook identify the active field execution.
 
 This repository surface intentionally contains only:
 - stable identity/hash metadata;
@@ -19,11 +21,11 @@ This repository surface intentionally contains only:
 - PREPARED field-run metadata;
 - the applicable evaluation licence.
 
-It does not contain private node keys, credentials, mutable field receipts, unpacked carrier source, or a second canonical authority.
+It does not contain private node keys, credentials, mutable field receipts, unpacked carrier source, the proprietary `.cgx` carrier, or a second canonical authority.
 
 ## Claim boundary
 
-A GitHub commit, CI run, local process pair, VM pair, container pair, cloud copy, or Drive transfer does not close the CGX physical-device gate.
+A GitHub commit, CI run, local process pair, VM pair, container pair, cloud copy, remote desktop session, or Drive transfer does not close the CGX physical-device gate.
 
 The field gate can close only after two genuinely distinct physical devices run the required direct non-loopback test-plane scenarios, independently sign their node receipts, converge to equal final roots, and pass the existing CGX field-receipt validators.
 
