@@ -1,0 +1,119 @@
+{
+  "schema": "CGX-EMASSC-LS-RELATION-REGISTRY/0.1",
+  "domains": [
+    "emassc",
+    "lightspeed"
+  ],
+  "extends": "CGX-RELATION-QUALIFIER/0.1",
+  "emassc": [
+    {
+      "id": "USES_METHOD"
+    },
+    {
+      "id": "VALIDATES",
+      "rule": "validation scope/criterion required"
+    },
+    {
+      "id": "MEASURES"
+    },
+    {
+      "id": "CALIBRATED_BY"
+    },
+    {
+      "id": "ASSESSES_UNCERTAINTY_OF"
+    },
+    {
+      "id": "APPLIES_STANDARD"
+    },
+    {
+      "id": "REVIEWS"
+    },
+    {
+      "id": "APPROVES_USE_OF"
+    },
+    {
+      "id": "PROTECTS_IP_OF"
+    }
+  ],
+  "lightspeed": [
+    {
+      "id": "EXECUTES_ON"
+    },
+    {
+      "id": "ROUTES_TO"
+    },
+    {
+      "id": "PROVIDED_BY"
+    },
+    {
+      "id": "CONNECTS_TO"
+    },
+    {
+      "id": "SYNCS_WITH"
+    },
+    {
+      "id": "HANDSHAKES_WITH"
+    },
+    {
+      "id": "DISPATCHES"
+    },
+    {
+      "id": "RETURNS"
+    },
+    {
+      "id": "USES_CAPABILITY"
+    },
+    {
+      "id": "REQUIRES_PERMISSION"
+    },
+    {
+      "id": "LEASED_TO"
+    },
+    {
+      "id": "PACKAGED_BY"
+    },
+    {
+      "id": "INSTALLED_FROM"
+    },
+    {
+      "id": "OBSERVED_BY"
+    },
+    {
+      "id": "CONFORMS_TO",
+      "rule": "conformance profile + receipt/evidence required"
+    }
+  ],
+  "bridge": [
+    {
+      "id": "EXECUTES_METHOD",
+      "source_domain": "emassc",
+      "target_domain": "lightspeed"
+    },
+    {
+      "id": "ACQUIRES_EVIDENCE_FOR",
+      "source_domain": "lightspeed",
+      "target_domain": "emassc"
+    },
+    {
+      "id": "RETURNS_RESULT_TO",
+      "source_domain": "lightspeed"
+    },
+    {
+      "id": "MATERIALIZES_FOR",
+      "source_domain": "lightspeed"
+    },
+    {
+      "id": "RECONCILES_WITH",
+      "symmetric": true
+    }
+  ],
+  "host_local_noncanonical": [
+    "lease-instance",
+    "heartbeat-instance",
+    "session-plaintext",
+    "recovery-journal",
+    "temporary-app-handoff",
+    "machine-local-telemetry",
+    "unpromoted-field-run-receipt"
+  ]
+}
