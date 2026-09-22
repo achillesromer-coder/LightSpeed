@@ -1,15 +1,16 @@
 {
   "schema": "CGX-OPERATIONAL-INDEX/0.1",
   "object_id": "cgx:phase-a:42d99b46c0d322f08b59b7b7",
-  "state_id": "S88",
-  "release": "v1.58",
-  "carrier_sha256": "e901bb175152eed0b1ceb9cf69fc464bc433e4a37d725c01343cea42151d356f",
-  "execution_id": "CGX-PHY-20260921-BNE-03",
+  "state_id": "S89",
+  "release": "v1.59",
+  "carrier_sha256": "dfdcc27b0002c960e81426b9dc14059bdf20b0ca864964bde5461ec6867d5f31",
+  "execution_id": "CGX-PHY-20260922-BNE-04",
   "execution_status": "PREPARED",
+  "recovery_authority": true,
   "physical_device_gate_closed": false,
   "network_discovery_gate_closed": false,
   "windows_physical_gate_closed": false,
-  "canonical_authority_location": "controlled-cgx-drive-validation-surface",
+  "canonical_authority_location": "controlled-cgx-drive-recovery-surface",
   "public_repository_role": "operational-index-only",
   "implementation_source_mirrored": false
 }
