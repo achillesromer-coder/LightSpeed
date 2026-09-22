@@ -1,0 +1,47 @@
+{
+  "schema": "CGX-RELATION-QUALIFIER/0.1",
+  "status": "review-blueprint",
+  "relation_record": {
+    "required": [
+      "relation_id",
+      "relation_type",
+      "source_object_id",
+      "target_object_id",
+      "assertion_owner",
+      "epistemic_state"
+    ],
+    "optional": [
+      "domain_id",
+      "inverse_relation",
+      "configuration_ref",
+      "state_ref",
+      "valid_from",
+      "valid_to",
+      "time_ref",
+      "spatial_ref",
+      "geometry_ref",
+      "quantity",
+      "unit",
+      "direction",
+      "strength",
+      "method",
+      "uncertainty",
+      "confidence",
+      "source_refs",
+      "evidence_refs",
+      "security_policy_ref",
+      "admission_state",
+      "notes"
+    ]
+  },
+  "rules": [
+    "relation identity is stable and distinct from endpoint identities",
+    "cross-domain relation does not transfer endpoint ownership",
+    "relation assertion owner must be explicit",
+    "confidence must be finite 0..1 when present",
+    "relation qualifiers are part of semantic meaning and therefore DBR-tracked when canonical",
+    "inverse/symmetric semantics must be declared in registry rather than guessed",
+    "temporal/spatial/configuration qualifiers are mandatory when the relation would otherwise be ambiguous",
+    "contradictory relations may coexist with explicit epistemic/evidence state until resolved"
+  ]
+}
