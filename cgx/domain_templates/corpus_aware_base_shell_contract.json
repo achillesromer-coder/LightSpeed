@@ -1,17 +1,21 @@
 {
-  "schema":"CGX-CORPUS-AWARE-BASE-SHELL/0.2",
-  "purpose":"Define a data-light but corpus-aware child workspace that can accept first real files without redesigning identity, authority, intake, work modes, lenses, providers or migration topology.",
-  "required_sections":[
+  "schema": "CGX-CORPUS-AWARE-BASE-SHELL/0.3",
+  "purpose": "Define a data-light but corpus-aware child workspace that can accept first real files and later-discovered corpus families without redesigning identity, authority, intake, work modes, lenses, providers or migration topology.",
+  "required_sections": [
     "identity/domain",
     "identity/agent_bindings",
     "identity/legacy_aliases",
     "governance/authority_model",
     "corpus/common_authority_map",
     "corpus/domain_map",
+    "corpus/source_family_registry",
     "corpus/acr3_domain_migration",
     "corpus/current_control_snapshot",
+    "corpus/specialist_owner_links",
     "frontier/current_gates",
+    "frontier/unresolved_source_and_role_boundaries",
     "integrations/provider_root_registry",
+    "capabilities/specialist_and_external_tools",
     "profiles/work_modes",
     "profiles/depth_profiles",
     "profiles/dimension_registry",
@@ -23,22 +27,31 @@
     "profiles/interaction_preferences",
     "queue/acr3_assimilation",
     "queue/first_file_intake",
-    "representations/default_recipes"
+    "representations/default_recipes",
+    "publications/derived_surface_registry"
   ],
-  "authority_invariants":[
+  "authority_invariants": [
     "shell-metadata-is-not-authority-transfer",
     "source-native-and-current-scoped-owners-remain-authoritative-until-parity-and-explicit-promotion",
     "acr3-becomes-read-only-provenance-only-after-exit-gate",
     "validation-state-number-does-not-promote-recovery-authority",
     "generated-representation-does-not-become-semantic-authority",
+    "provider-execution-does-not-promote-semantic-authority",
+    "negative-search-is-not-absence-proof",
+    "unknown-source-family-is-frontier-not-omission",
+    "legacy-content-is-assimilated-exactly-once",
     "no-source-demotion-or-deletion-before-parity-and-recovery-proof"
   ],
-  "privacy_and_security":[
+  "privacy_and_security": [
     "no-secret-bytes-in-carrier",
     "credentials-are-references-or-provider-sessions",
     "domain-shell-must-not-copy-unrelated-personal-pa-payload",
-    "strongest-applicable-security-policy-wins"
+    "strongest-applicable-security-policy-wins",
+    "private-sidecar-content-does-not-enter-business-canon-without-explicit-promotion"
   ],
-  "payload_rule":"Base shell contains corpus maps, current bounded control caches and migration metadata, but not bulk project workbooks/CAD/raw evidence until intake is explicitly reviewed.",
-  "hydration_rule":"Use the latest verifier-valid descendant supported by the trusted seed lineage while retaining the distinct Recovery/promotion authority gate."
+  "inclusion_rule": "The ACR3 workbook migration inventory is one bounded migration source, not the complete corpus definition. Base shells must also retain the audited source-family registry, specialist-owner links, provider/runtime surfaces and unresolved Frontiers.",
+  "growth_rule": "New project, agent, provider, tool, file type or source family can be added through the extensible registries and N-dimensional labels without schema replacement. If authority or placement is unclear, preserve source identity and create a Frontier.",
+  "payload_rule": "Base shell contains corpus/source-family maps, current bounded control caches and migration metadata, but not bulk project workbooks/CAD/raw evidence until intake is explicitly reviewed.",
+  "hydration_rule": "Use the latest verifier-valid descendant supported by the trusted seed lineage while retaining the distinct Recovery/promotion authority gate. Local/unbound implementation evidence must not be treated as a durable descendant until source, carrier and test receipts are persisted.",
+  "publication_rule": "Portfolio, dossier, evidence review, Web2, social, email and institutional packages are generated representations/lenses and do not become source authority."
 }
