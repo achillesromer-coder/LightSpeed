@@ -1,13 +1,30 @@
 {
-  "schema": "CGX-CORPUS-INCLUSION/0.2",
+  "schema": "CGX-CORPUS-INCLUSION/0.3",
   "audit_anchor": {
     "acr3_spreadsheet_id": "1AgAhLPNtrO91C_-ea7EdOkOsyXrCCYvFVvmDSGq8uls",
     "acr3_handoff_rows": [
       998,
-      999
+      999,
+      1000,
+      1003,
+      1005,
+      1006
     ],
-    "audited_at": "2026-09-22",
+    "audited_at": "2026-09-23",
     "note": "The ACR3 workbook migration inventory is a bounded migration subset, not the complete inclusion universe."
+  },
+  "current_cgx_authority": {
+    "object_id": "cgx:phase-a:42d99b46c0d322f08b59b7b7",
+    "state_id": "S89",
+    "release": "v1.59",
+    "authority": "Recovery",
+    "content_root": "a89356415fda6ba6ce0b068fc289b76b6fefafa7f5198e1d957f46b26b363a95",
+    "dbr_root": "5248c382d2fce138829ff2c35275e4d17716d81121894ddde2906b01a4ad09e6",
+    "topology_root": "12afad193d8af071b2c8a3621acd00852e327881562a6cf9597a0f1c13828ad3",
+    "carrier_sha256": "dfdcc27b0002c960e81426b9dc14059bdf20b0ca864964bde5461ec6867d5f31",
+    "promotion_audit_drive_id": "1W7N4n_b74zlWIESm8kCPJ1PHq8WTx_1v",
+    "field_index_pr": 53,
+    "physical_gate": "OPEN / PREPARED, not PASS"
   },
   "invariants": [
     "no-authority-by-location",
@@ -18,6 +35,7 @@
     "legacy-source-content-is-assimilated-exactly-once",
     "bulk-legacy-structure-is-not-copied-merely-for-completeness",
     "personal-or-separately-scoped-work-is-not-auto-imported-into-business-domain-filespaces",
+    "views-and-dashboards-do-not-become-authority-by-visibility",
     "secrets-remain-external"
   ],
   "first_class_domains": [
@@ -36,7 +54,16 @@
     {
       "id": "emassc",
       "filespace": "EMASSC.cgx",
-      "principal_agent": "Achilles"
+      "principal_agent": "Achilles",
+      "children": [
+        "lightspeed"
+      ]
+    },
+    {
+      "id": "lightspeed",
+      "filespace": "LS.cgx",
+      "parent": "emassc",
+      "role": "LightSpeed/EMC² runtime-execution child"
     },
     {
       "id": "australian-capacity",
@@ -233,6 +260,16 @@
       "title": "ACR3 Next Stage Consolidation Register",
       "id": "1AgAhLPNtrO91C_-ea7EdOkOsyXrCCYvFVvmDSGq8uls",
       "role": "transition-provenance-until-retirement"
+    },
+    {
+      "title": "CGX S89 Recovery Promotion Audit",
+      "id": "1W7N4n_b74zlWIESm8kCPJ1PHq8WTx_1v",
+      "role": "current-CGX-Recovery-authority-reconciliation-receipt"
+    },
+    {
+      "title": "CGX S89 Physical Field Run bundle",
+      "id": "1_-D6dyWIyVWtYdFkTmRsz7w5gocVSA6I",
+      "role": "controlled-physical-conformance-package-PREPARED"
     }
   ],
   "legacy_provider_classes": [
@@ -286,9 +323,14 @@
       "reason": "retain provenance until reconciled"
     },
     {
-      "id": "FRONTIER-S89-UNBOUND",
-      "topic": "S89 User Operability Closure",
-      "reason": "reported local implementation has no durable Drive/Git source/carrier at 2026-09-22 audit and had an outstanding key-provider/private-material regression"
+      "id": "FRONTIER-PHYSICAL-CONFORMANCE",
+      "topic": "S89 physical two-device / OS field conformance",
+      "reason": "PREPARED package exists; requires genuinely distinct devices and machine evidence before PASS"
+    },
+    {
+      "id": "FRONTIER-ACR3-RETIREMENT",
+      "topic": "ACR3 retirement",
+      "reason": "GST-029 remains held pending no-orphan/source-topology/readback parity even after S89 Recovery promotion"
     }
   ],
   "publication_rule": "Living Evidence Atlas, Living Type 1 Dossier, Evidence Review, Web2, social/email/institutional packs are derived lenses/representations, never source authority.",
