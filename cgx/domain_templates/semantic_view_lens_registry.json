@@ -1,0 +1,265 @@
+{
+  "schema": "CGX-SEMANTIC-VIEW-LENS-REGISTRY/0.1",
+  "status": "review-blueprint",
+  "principle": "one semantic state; many deterministic task-, audience-, device- and domain-appropriate projections",
+  "authority_rule": "views never become semantic authority merely because they are convenient, public, visual or editable",
+  "shared_view_families": [
+    {
+      "id": "filespace-tree",
+      "purpose": "familiar folder-like navigation and scope browsing",
+      "best_for": [
+        "desktop",
+        "manual inspection",
+        "source browsing"
+      ],
+      "canonical_basis": [
+        "Object_ID",
+        "PART_OF",
+        "mount/composition edges"
+      ],
+      "note": "presentation of graph topology, not a separate folder authority"
+    },
+    {
+      "id": "topology-graph",
+      "purpose": "dependency, relationship and cross-domain navigation",
+      "best_for": [
+        "systems reasoning",
+        "impact analysis",
+        "provenance traversal"
+      ],
+      "canonical_basis": [
+        "typed edges",
+        "topology snapshot",
+        "S75 navigation graph"
+      ]
+    },
+    {
+      "id": "hybrid-canonical-cells",
+      "purpose": "operational dashboards using collapsed control + expanded canonical detail",
+      "best_for": [
+        "mission control",
+        "programme dashboards",
+        "mobile/desktop overview"
+      ],
+      "source_pattern": "49_Hybrid_Canonical_Cell_Map",
+      "required_fields": [
+        "Cell_ID",
+        "Host_View",
+        "Function_Family",
+        "Canonical_Owner",
+        "Source_ID",
+        "Stable_Object_ID",
+        "Evidence_State",
+        "Reasoning_Gate",
+        "Collapsed_Control",
+        "Expanded_Canonical_Detail",
+        "Interaction",
+        "Status",
+        "Next_Action"
+      ]
+    },
+    {
+      "id": "apex-pillar-programme",
+      "purpose": "progressive disclosure from whole filespace to pillar to programme/function",
+      "best_for": [
+        "executive",
+        "operator",
+        "portfolio"
+      ],
+      "source_pattern": "45_Dashboard_Taxonomy"
+    },
+    {
+      "id": "active-object-inspector",
+      "purpose": "deep inspect of one object without losing semantic halo",
+      "best_for": [
+        "engineering",
+        "ecology",
+        "audit",
+        "editing"
+      ],
+      "panels": [
+        "identity",
+        "state",
+        "relationships",
+        "sources",
+        "evidence",
+        "work",
+        "frontier",
+        "security",
+        "capabilities",
+        "representations",
+        "history"
+      ]
+    },
+    {
+      "id": "evidence-claim",
+      "purpose": "claim -> evidence -> source/test/run -> limitations/uncertainty",
+      "best_for": [
+        "audit",
+        "review",
+        "publication gating"
+      ]
+    },
+    {
+      "id": "timeline-dbr",
+      "purpose": "temporal/provenance history",
+      "best_for": [
+        "state history",
+        "ecological observations",
+        "configuration lineage",
+        "recovery"
+      ]
+    },
+    {
+      "id": "matrix",
+      "purpose": "requirements, interfaces, gates, risks, contradictions and coverage",
+      "best_for": [
+        "verification",
+        "traceability",
+        "comparison"
+      ]
+    },
+    {
+      "id": "map-spatial",
+      "purpose": "site/corridor/catchment/asset/ecology spatial projection",
+      "best_for": [
+        "Römer infrastructure",
+        "Eco ecology",
+        "cross-domain site interfaces"
+      ]
+    },
+    {
+      "id": "twin-3d",
+      "purpose": "geometry/component twin view bound to semantic object IDs",
+      "best_for": [
+        "Römer hardware/infrastructure",
+        "EMASSC apparatus"
+      ],
+      "rule": "geometry representation cannot override semantic/evidence authority"
+    },
+    {
+      "id": "network-runtime",
+      "purpose": "host/device/provider/node/capability/session projection",
+      "best_for": [
+        "LS.cgx",
+        "operator runtime",
+        "conformance"
+      ],
+      "rule": "transient Host-local state is not canonical by visibility"
+    },
+    {
+      "id": "publication",
+      "purpose": "audience-safe generated representation",
+      "best_for": [
+        "web",
+        "PDF",
+        "deck",
+        "social",
+        "institutional pack"
+      ],
+      "rule": "publication is derived and release-gated"
+    },
+    {
+      "id": "chat-generative",
+      "purpose": "natural-language interaction that materialises the most suitable current view",
+      "best_for": [
+        "discovery",
+        "assisted work",
+        "build-from-chat"
+      ],
+      "rule": "chat may propose deltas but protected mutation follows normal authority/DBR path"
+    }
+  ],
+  "domain_default_lenses": {
+    "romer": [
+      "apex-pillar-programme",
+      "filespace-tree",
+      "topology-graph",
+      "active-object-inspector",
+      "twin-3d",
+      "matrix",
+      "map-spatial",
+      "evidence-claim",
+      "timeline-dbr"
+    ],
+    "eco": [
+      "apex-pillar-programme",
+      "map-spatial",
+      "topology-graph",
+      "active-object-inspector",
+      "timeline-dbr",
+      "evidence-claim",
+      "matrix",
+      "publication"
+    ],
+    "emassc": [
+      "active-object-inspector",
+      "evidence-claim",
+      "matrix",
+      "timeline-dbr",
+      "topology-graph",
+      "twin-3d"
+    ],
+    "lightspeed": [
+      "network-runtime",
+      "topology-graph",
+      "active-object-inspector",
+      "timeline-dbr",
+      "hybrid-canonical-cells"
+    ],
+    "cognigrex": [
+      "apex-pillar-programme",
+      "hybrid-canonical-cells",
+      "topology-graph",
+      "filespace-tree",
+      "publication"
+    ]
+  },
+  "eco_specialised_views": [
+    "food-web",
+    "taxon-population-community",
+    "habitat-corridor",
+    "catchment-flow",
+    "intervention-response",
+    "monitoring-series",
+    "reference-vs-current-condition"
+  ],
+  "romer_specialised_views": [
+    "system-breakdown",
+    "configuration-tree",
+    "interface-control",
+    "mission-sequence",
+    "bom-manufacturing",
+    "requirement-trace",
+    "risk-mpl",
+    "supply-chain"
+  ],
+  "emassc_ls_specialised_views": [
+    "protocol-apparatus",
+    "uncertainty-budget",
+    "test-run-comparison",
+    "provider-capability",
+    "device-conformance",
+    "workflow-job-receipt"
+  ],
+  "projection_contract": {
+    "inputs": [
+      "semantic object set",
+      "typed relations",
+      "lens",
+      "audience",
+      "device capability",
+      "security/admission",
+      "task/work mode"
+    ],
+    "output": [
+      "view model",
+      "source/root binding",
+      "evidence ceiling",
+      "interaction capabilities"
+    ],
+    "must_be_reproducible": true,
+    "may_be_host_local": true,
+    "canonical_mutation_requires_separate_command": true
+  }
+}
