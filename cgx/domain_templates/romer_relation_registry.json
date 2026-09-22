@@ -1,0 +1,204 @@
+{
+  "schema": "CGX-ROMER-RELATION-REGISTRY/0.1",
+  "domain": "romer",
+  "extends": "CGX-RELATION-QUALIFIER/0.1",
+  "families": {
+    "decomposition": [
+      {
+        "id": "PART_OF",
+        "inverse": "HAS_PART"
+      },
+      {
+        "id": "COMPOSED_OF",
+        "inverse": "COMPONENT_OF"
+      },
+      {
+        "id": "HAS_SUBSYSTEM",
+        "inverse": "SUBSYSTEM_OF"
+      },
+      {
+        "id": "HAS_COMPONENT",
+        "inverse": "COMPONENT_OF"
+      },
+      {
+        "id": "HAS_INTERFACE",
+        "inverse": "INTERFACE_OF"
+      }
+    ],
+    "requirements": [
+      {
+        "id": "REQUIRES"
+      },
+      {
+        "id": "SATISFIES"
+      },
+      {
+        "id": "VERIFIES"
+      },
+      {
+        "id": "CONSTRAINED_BY"
+      },
+      {
+        "id": "ALLOCATED_TO"
+      }
+    ],
+    "function": [
+      {
+        "id": "PERFORMS"
+      },
+      {
+        "id": "ENABLES"
+      },
+      {
+        "id": "INPUT_TO"
+      },
+      {
+        "id": "OUTPUT_OF"
+      },
+      {
+        "id": "CONTROLLED_BY"
+      },
+      {
+        "id": "SENSED_BY"
+      }
+    ],
+    "interface": [
+      {
+        "id": "CONNECTS_TO",
+        "symmetric": true
+      },
+      {
+        "id": "INTERFACES_WITH",
+        "symmetric": true
+      },
+      {
+        "id": "ROUTES_TO"
+      },
+      {
+        "id": "TRANSFERS"
+      },
+      {
+        "id": "COUPLES_TO"
+      }
+    ],
+    "programme": [
+      {
+        "id": "PART_OF_PROGRAMME"
+      },
+      {
+        "id": "DELIVERS"
+      },
+      {
+        "id": "DEPENDS_ON"
+      },
+      {
+        "id": "BLOCKED_BY"
+      },
+      {
+        "id": "SUPERSEDES"
+      },
+      {
+        "id": "IMPLEMENTS"
+      }
+    ],
+    "enterprise": [
+      {
+        "id": "OWNED_BY"
+      },
+      {
+        "id": "OPERATED_BY"
+      },
+      {
+        "id": "SUPPLIED_BY"
+      },
+      {
+        "id": "MANUFACTURED_BY"
+      },
+      {
+        "id": "TESTED_BY"
+      },
+      {
+        "id": "REVIEWED_BY"
+      }
+    ],
+    "spatial": [
+      {
+        "id": "LOCATED_AT"
+      },
+      {
+        "id": "DEPLOYED_AT"
+      },
+      {
+        "id": "TRAVERSES"
+      },
+      {
+        "id": "SERVES"
+      },
+      {
+        "id": "TARGETS"
+      }
+    ],
+    "evidence": [
+      {
+        "id": "EVIDENCED_BY"
+      },
+      {
+        "id": "DERIVED_FROM"
+      },
+      {
+        "id": "MEASURED_BY"
+      },
+      {
+        "id": "SIMULATED_BY"
+      },
+      {
+        "id": "VALIDATED_BY",
+        "rule": "scope of validation must be explicit"
+      }
+    ],
+    "economics_legal": [
+      {
+        "id": "COSTED_BY"
+      },
+      {
+        "id": "FUNDED_BY"
+      },
+      {
+        "id": "LICENSED_BY"
+      },
+      {
+        "id": "PROTECTED_BY"
+      },
+      {
+        "id": "CONTRACTED_WITH"
+      }
+    ],
+    "publication": [
+      {
+        "id": "REPRESENTED_BY"
+      },
+      {
+        "id": "PUBLISHED_AS"
+      },
+      {
+        "id": "DERIVED_VIEW_OF"
+      }
+    ]
+  },
+  "common_qualifiers": [
+    "configuration_ref",
+    "revision",
+    "operating_mode",
+    "interface_id",
+    "load_case",
+    "quantity",
+    "unit",
+    "effective_from",
+    "effective_to",
+    "authority",
+    "epistemic_state",
+    "source_refs",
+    "evidence_refs",
+    "uncertainty"
+  ]
+}
