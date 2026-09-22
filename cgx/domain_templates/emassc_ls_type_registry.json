@@ -1,0 +1,148 @@
+{
+  "schema": "CGX-EMASSC-LS-TYPE-REGISTRY/0.1",
+  "domains": [
+    "emassc",
+    "lightspeed"
+  ],
+  "status": "review-blueprint",
+  "emassc": {
+    "research": [
+      "research-programme",
+      "research-question",
+      "hypothesis",
+      "claim",
+      "requirement",
+      "acceptance-criterion"
+    ],
+    "methods": [
+      "method",
+      "measurement-method",
+      "test-protocol",
+      "validation-protocol",
+      "simulation-method",
+      "review-method",
+      "data-schema"
+    ],
+    "apparatus": [
+      "apparatus",
+      "instrument",
+      "sensor",
+      "actuator",
+      "experimental-configuration",
+      "material-system",
+      "material-sample"
+    ],
+    "modelling": [
+      "parameter",
+      "scenario",
+      "model",
+      "equation",
+      "simulation-run",
+      "uncertainty-model"
+    ],
+    "evidence": [
+      "test",
+      "test-run",
+      "measurement",
+      "dataset",
+      "calibration",
+      "control",
+      "blank",
+      "evidence-item",
+      "review",
+      "receipt"
+    ],
+    "governance": [
+      "standard",
+      "release-gate",
+      "ip-asset",
+      "licence",
+      "collaboration"
+    ]
+  },
+  "lightspeed": {
+    "runtime": [
+      "host",
+      "device",
+      "node",
+      "network",
+      "runtime",
+      "application",
+      "agent-runtime",
+      "session",
+      "sandbox"
+    ],
+    "capability": [
+      "provider",
+      "connector",
+      "capability",
+      "tool",
+      "skill",
+      "model-provider",
+      "local-model",
+      "frontier-model",
+      "compute-profile"
+    ],
+    "workflow": [
+      "workflow",
+      "job",
+      "queue",
+      "handoff",
+      "sync",
+      "transport"
+    ],
+    "security": [
+      "lease",
+      "heartbeat",
+      "key-handle",
+      "permission-profile"
+    ],
+    "package": [
+      "package",
+      "ccc-binding",
+      "deployment"
+    ],
+    "observability": [
+      "telemetry",
+      "health",
+      "conformance-profile",
+      "conformance-scenario",
+      "field-run-receipt"
+    ]
+  },
+  "host_local_default": [
+    "lease",
+    "heartbeat",
+    "session",
+    "temporary-handoff",
+    "machine-telemetry",
+    "unpromoted-field-run-receipt"
+  ],
+  "pilot_additions": [
+    {
+      "type": "data-schema",
+      "basis": "RFS/EMFF Sensor & Data Schema"
+    },
+    {
+      "type": "scenario",
+      "basis": "RFS/EMFF synthetic model rows"
+    },
+    {
+      "type": "material-sample",
+      "basis": "RFS/EMFF sample IDs/material matrix"
+    },
+    {
+      "type": "control",
+      "basis": "blank/current-off/inert controls"
+    },
+    {
+      "type": "hypothesis",
+      "basis": "integrated model hypothesis"
+    },
+    {
+      "type": "simulation-run",
+      "basis": "synthetic response models"
+    }
+  ],
+  "numeric_model_rule": "Synthetic/model outputs must retain model/scenario/parameter provenance and epistemic state. Extreme/overflow-like finite results are not physical evidence and should trigger numeric-sanity review rather than claim promotion."
+}
