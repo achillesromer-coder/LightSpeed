@@ -1,36 +1,57 @@
-# CGX Domain Workspace Skeletons — 2026-09-21
+# CGX Domain Workspace Skeletons — 2026-09-23
 
-Review branch for the first Römer/Eco/EMASSC child-filespace skeleton comparison.
+Review branch for the Cognigrex parent/filespace topology and the Römer/Eco/EMASSC tailored child-filespace family.
+
+## Current authority
+
+The current reconciled CGX Recovery authority is:
+- Object_ID: `cgx:phase-a:42d99b46c0d322f08b59b7b7`
+- State: **S89 / v1.59**
+- Content_Root: `a89356415fda6ba6ce0b068fc289b76b6fefafa7f5198e1d957f46b26b363a95`
+- DBR_Root: `5248c382d2fce138829ff2c35275e4d17716d81121894ddde2906b01a4ad09e6`
+- Carrier SHA-256: `dfdcc27b0002c960e81426b9dc14059bdf20b0ca864964bde5461ec6867d5f31`
+
+Recovery promotion is supported by the Drive audit and PR53 operational index. Physical field conformance remains **PREPARED / OPEN**, not PASS.
 
 ## Scope
 
-This branch does not replace `cgx://cgx.cgx`, mutate the rolling CGX master, or promote a Römer corpus into canonical CGX authority.
+This branch is a **review/source blueprint** for child-domain tailoring. It does not replace the Recovery carrier, retire ACR3, or transfer semantic authority from current scoped owners.
 
-It defines two reproducible child-workspace construction methods against the S87 lineage:
+It now defines:
+- `Cognigrex.cgx` as the living parent/filebase and cross-domain resolver;
+- `Romer.cgx` → Römer-Grex / Neo;
+- `Eco.cgx` → Eco-Grex / Athene;
+- `EMASSC.cgx` → EMASSC / Achilles;
+- `LS.cgx` beneath EMASSC for LightSpeed/EMC² execution/runtime systems;
+- shared CCC at the Cognigrex/kernel layer;
+- corpus/source-family inclusion and unresolved Frontier handling;
+- separate Römer, Eco and EMASSC/LS semantic library blueprints;
+- multi-view/lens and layout-convergence contracts.
 
-1. **minimal/manual** — verifier-valid instantiated reader seed + domain identity/agent/layout only; reusable profiles are manually loaded afterward.
-2. **pre-tailored** — same seed lineage + reusable work modes, reasoning/depth profiles, N-dimensional labels, intake/output, toolkit/provider templates, workflows, lenses, queue and migration policy; no project corpus data and no secrets.
+## Historical generated carriers
 
-Generated binary carriers and comparison bundles are stored in Drive rather than Git.
+Earlier minimal/pre-tailored and corpus-aware child carriers were generated against S87/S88-era seed lineages and remain comparison/evidence artifacts. They should not be mislabelled as current S89-derived child bases.
 
-## Domain identities
+Regenerate clean child bases from the current Recovery lineage only after the reviewed semantic/object/view contracts and generator path are reconciled with S89.
 
-- `Romer.cgx` → Römer-Grex; principal agent Neo; provisional namespace `cgx://romer.industries/romer`.
-- `Eco.cgx` → Eco-Grex; principal agent Athene; provisional namespace `cgx://romer.industries/eco`.
-- `EMASSC.cgx` → EMASSC research/filespace domain; principal agent Achilles; provisional namespace `cgx://romer.industries/emassc`.
+## View rule
 
-"Cognigrex" is reserved for the proper CGX-native living intelligence/filespace, not the Römer-specific tailored layer.
+One semantic state may expose multiple deterministic projections:
+- filespace tree;
+- S75-style topology graph;
+- hybrid canonical cells;
+- apex → pillar → programme dashboards;
+- active-object inspector;
+- domain-specific map/twin/evidence/runtime views;
+- task/device filesets;
+- publication/Web2 representations.
 
-## Proven current behavior
-
-The six generated carriers verify under the current S87 kernel. Reader hydration from the S87 master passes and preserves seed verification.
-
-Runtime/developer hydration remains intentionally gated by the S87 distribution-proof mismatch documented in `S87_HYDRATION_GATE.md`. No bypass is introduced here.
+Views do not gain authority by visibility. Layout hurdles resolve by reuse → hybridisation → reusable view → Frontier, not by creating a second semantic master.
 
 ## Credential rule
 
-Provider entries contain capability metadata and secret references only. Raw API keys/tokens are never stored in a carrier. For OpenAI the default reference is `env:OPENAI_API_KEY`; local LightSpeed/host setup owns credential injection.
+Provider entries contain capability metadata and secret references only. Raw API keys/tokens/private keys are never stored in a portable carrier. Local LightSpeed/Host/provider sessions own credential injection.
 
 ## Authority boundary
 
-These are migration/review templates. Existing Drive/Git/CAD/source authorities remain authoritative until semantic parity, provider readback and owner promotion gates are explicitly closed.
+Current Drive/Git/CAD/scoped owner sources remain controlling for their data until semantic parity and promotion gates close. ACR3 remains transition/provenance coordination until GST-029 retirement conditions pass.
