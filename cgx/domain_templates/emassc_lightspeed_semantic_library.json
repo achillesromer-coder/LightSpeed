@@ -1,0 +1,188 @@
+{
+  "schema": "CGX-EMASSC-LIGHTSPEED-SEMANTIC-LIBRARY/0.1",
+  "status": "review-blueprint",
+  "parent_filespace": "EMASSC.cgx",
+  "runtime_child": "LS.cgx",
+  "principal_agent": "Achilles",
+  "principle": "separate scientific/method authority from execution/runtime state while preserving deterministic receipts",
+  "emassc_layers": {
+    "library": {
+      "namespaces": [
+        "research-domain",
+        "method",
+        "measurement-method",
+        "test-protocol",
+        "validation-protocol",
+        "standard",
+        "requirement",
+        "apparatus",
+        "instrument",
+        "calibration",
+        "uncertainty-model",
+        "material-system",
+        "experimental-configuration",
+        "simulation-method",
+        "review-method",
+        "ip-asset",
+        "licence",
+        "collaboration",
+        "publication-review"
+      ]
+    },
+    "graph_roots": [
+      "research-programmes",
+      "methods-protocols",
+      "apparatus-instruments",
+      "measurement-validation",
+      "standards-compliance",
+      "materials-systems",
+      "ip-legal",
+      "collaboration-review"
+    ],
+    "state_model": "Method/Protocol -> Revision -> ApprovedUseScope -> RunRequest -> EvidenceSet",
+    "evidence_rule": "EMASSC owns method/validation semantics; execution output does not self-certify the method or engineering claim."
+  },
+  "ls_layers": {
+    "library": {
+      "namespaces": [
+        "host",
+        "device",
+        "node",
+        "network",
+        "runtime",
+        "application",
+        "agent-runtime",
+        "provider",
+        "connector",
+        "capability",
+        "tool",
+        "skill",
+        "workflow",
+        "job",
+        "queue",
+        "session",
+        "lease",
+        "heartbeat",
+        "handoff",
+        "sync",
+        "transport",
+        "compute-profile",
+        "model-provider",
+        "local-model",
+        "frontier-model",
+        "sandbox",
+        "package",
+        "ccc-binding",
+        "deployment",
+        "telemetry",
+        "health",
+        "conformance-profile"
+      ]
+    },
+    "graph_roots": [
+      "hosts-devices",
+      "nodes-networks",
+      "applications-surfaces",
+      "agents-workflows",
+      "providers-connectors",
+      "compute-models",
+      "jobs-results",
+      "security-capabilities",
+      "ccc-packages",
+      "deployment-conformance"
+    ],
+    "state_model": "Capability/Host -> Session -> Job/Workflow -> Result/Receipt -> Reconciliation",
+    "transient_host_local": [
+      "private-key-material",
+      "leases",
+      "heartbeats",
+      "session-plaintext",
+      "recovery-journals",
+      "temporary-application-handoffs",
+      "conformance-run-receipts-until-promoted",
+      "machine-local-telemetry"
+    ],
+    "canonicalizable_public_metadata": [
+      "provider-descriptor",
+      "capability-contract",
+      "device-profile",
+      "network-profile",
+      "conformance-scenario-definition",
+      "public-key-handle",
+      "workflow-definition",
+      "package-manifest",
+      "result-receipt-after-explicit-promotion"
+    ]
+  },
+  "relation_families": {
+    "emassc": [
+      "USES_METHOD",
+      "VALIDATES",
+      "MEASURES",
+      "CALIBRATED_BY",
+      "ASSESSES_UNCERTAINTY_OF",
+      "APPLIES_STANDARD",
+      "REVIEWS",
+      "APPROVES_USE_OF",
+      "PROTECTS_IP_OF"
+    ],
+    "lightspeed": [
+      "EXECUTES_ON",
+      "ROUTES_TO",
+      "PROVIDED_BY",
+      "CONNECTS_TO",
+      "SYNCS_WITH",
+      "HANDSHAKES_WITH",
+      "DISPATCHES",
+      "RETURNS",
+      "USES_CAPABILITY",
+      "REQUIRES_PERMISSION",
+      "LEASED_TO",
+      "PACKAGED_BY",
+      "INSTALLED_FROM",
+      "OBSERVED_BY",
+      "CONFORMS_TO"
+    ],
+    "bridge": [
+      "EXECUTES_METHOD",
+      "ACQUIRES_EVIDENCE_FOR",
+      "RETURNS_RESULT_TO",
+      "MATERIALIZES_FOR",
+      "RECONCILES_WITH"
+    ]
+  },
+  "side_lane_runtime_rules": [
+    "Canonical CGX defines conformance scenarios and evidence rules.",
+    "Actual host/device run receipts remain outside the portable carrier unless explicitly promoted.",
+    "Two processes on one physical machine must never be upgraded into a two-device physical-interoperability claim.",
+    "Machine identity hints used for conformance must be privacy-preserving and per-run or appropriately scoped.",
+    "Security keys remain non-exportable/provider-backed where applicable; private material stays outside canonical CGX.",
+    "Host/device capability negotiation determines hydration/execution profile; OS name alone is insufficient."
+  ],
+  "providers_and_surfaces": [
+    "LightSpeed Desktop",
+    "LightSpeed Go",
+    "LightSpeed Web",
+    "local CPU/GPU",
+    "local LLM",
+    "frontier LLM",
+    "Python",
+    "GitHub",
+    "Google Drive/Docs/Sheets/Slides",
+    "FreeCAD/CAD",
+    "browser/web",
+    "email/calendar",
+    "Vercel/Neon/Supabase where bound",
+    "future device/sensor adapters"
+  ],
+  "source_family_examples": [
+    "EMC^2 Drive tree / registries / contracts",
+    "LightSpeed Operations Current Task Register",
+    "CORE canonical operations registers",
+    "CORE_AGENT_LEDGER_ROUTING",
+    "N. LightSpeed / Trinity / Smith and other runtime workspaces",
+    "CGX S79-S88 handoffs and carrier lineage",
+    "LightSpeed Git repository source/runtime/tests"
+  ],
+  "expansion_rule": "New runtime, provider, device or application types extend LS.cgx registries/capabilities; create another child filespace only where independent authority/security/lifecycle requires it."
+}
