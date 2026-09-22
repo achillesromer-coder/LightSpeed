@@ -1,10 +1,13 @@
 {
-  "schema": "CGX-CORPUS-INCLUSION/0.1",
+  "schema": "CGX-CORPUS-INCLUSION/0.2",
   "audit_anchor": {
     "acr3_spreadsheet_id": "1AgAhLPNtrO91C_-ea7EdOkOsyXrCCYvFVvmDSGq8uls",
-    "acr3_handoff_row": 998,
+    "acr3_handoff_rows": [
+      998,
+      999
+    ],
     "audited_at": "2026-09-22",
-    "note": "The ACR3 507-row workbook migration inventory is a bounded migration subset, not the complete inclusion universe."
+    "note": "The ACR3 workbook migration inventory is a bounded migration subset, not the complete inclusion universe."
   },
   "invariants": [
     "no-authority-by-location",
@@ -14,6 +17,7 @@
     "provider-execution-does-not-promote-semantic-authority",
     "legacy-source-content-is-assimilated-exactly-once",
     "bulk-legacy-structure-is-not-copied-merely-for-completeness",
+    "personal-or-separately-scoped-work-is-not-auto-imported-into-business-domain-filespaces",
     "secrets-remain-external"
   ],
   "first_class_domains": [
@@ -57,6 +61,62 @@
       "parent": "romer",
       "mode": "semantic-domain-with-specialist-owner-links"
     }
+  ],
+  "first_class_semantic_classes": [
+    "programme",
+    "project",
+    "work-package",
+    "requirement",
+    "component",
+    "assembly",
+    "interface",
+    "material",
+    "process",
+    "site",
+    "asset",
+    "organisation",
+    "person",
+    "role",
+    "credential",
+    "competency",
+    "supplier",
+    "facility",
+    "laboratory",
+    "instrument",
+    "test",
+    "run",
+    "measurement",
+    "simulation",
+    "model",
+    "equation",
+    "parameter",
+    "source",
+    "evidence",
+    "claim",
+    "decision",
+    "task",
+    "dependency",
+    "unknown",
+    "contradiction",
+    "risk",
+    "hazard",
+    "standard",
+    "legal-ip",
+    "contract",
+    "licence",
+    "finance-economics",
+    "funding",
+    "relationship-outreach",
+    "workforce-education",
+    "publication",
+    "representation",
+    "provider",
+    "capability",
+    "agent",
+    "lens",
+    "policy",
+    "preference",
+    "receipt"
   ],
   "control_fabric": [
     "identity",
@@ -185,6 +245,20 @@
     "operational-task-registers",
     "archive-packages"
   ],
+  "scope_exclusions": [
+    {
+      "id": "EXCLUDE-PERSONAL-ADHOC",
+      "rule": "Personal/ad-hoc work and explicitly isolated personal nodes are not automatically imported into Romer.cgx, Eco.cgx or EMASSC.cgx. They require an explicit filespace/relationship decision."
+    },
+    {
+      "id": "EXCLUDE-PRIVATE-PA",
+      "rule": "Unrelated personal P.A payload is not copied into domain shells merely because Achilles participates in governance."
+    },
+    {
+      "id": "EXCLUDE-SECRETS",
+      "rule": "Credentials, tokens, private keys and secret material remain external to portable canonical carriers."
+    }
+  ],
   "unresolved_frontiers": [
     {
       "id": "FRONTIER-RAPHAEL-BOUNDARY",
@@ -218,5 +292,5 @@
     }
   ],
   "publication_rule": "Living Evidence Atlas, Living Type 1 Dossier, Evidence Review, Web2, social/email/institutional packs are derived lenses/representations, never source authority.",
-  "growth_rule": "New corpus families may be added through the extensible dimension/source-family registry without replacing the CGX schema."
+  "growth_rule": "New corpus families, semantic classes, tools, providers and policy dimensions may be added through extensible registries without replacing the CGX schema. If placement or authority is unclear, preserve source identity and create a Frontier."
 }
