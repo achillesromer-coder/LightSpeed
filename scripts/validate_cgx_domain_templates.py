@@ -64,6 +64,28 @@ def main():
         failures.append("generator seed is not Recovery-only")
     if "seed-from-unpromoted-validation-candidate" not in gp.get("forbidden",[]):
         failures.append("unpromoted Validation seed is not fail-closed")
+    expected_seed={
+        "state":"S91/v1.61",
+        "sha256":"1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
+        "content_root":"af640b499078853371196cf7c905979cebf0761c15552b6b8dfbf3ff3d04448d",
+        "dbr_root":"18d43abf68b5f7857a21dcb480d9970e95cdacfc869c61b3b1497e900f0dcc64",
+        "topology":"150e5267792f43f47807a9f5ca61f12db8077ac98153c2cc6c306a4177de937e",
+    }
+    if gp.get("current_recovery_at_2026_09_23")!=expected_seed["state"]:
+        failures.append("current Recovery pointer is not S91/v1.61")
+    if gp.get("current_recovery_sha256")!=expected_seed["sha256"]:
+        failures.append("current Recovery SHA-256 mismatch")
+    if gp.get("current_recovery_content_root")!=expected_seed["content_root"]:
+        failures.append("current Recovery content-root mismatch")
+    if gp.get("current_recovery_dbr_root")!=expected_seed["dbr_root"]:
+        failures.append("current Recovery DBR-root mismatch")
+    if gp.get("current_recovery_topology")!=expected_seed["topology"]:
+        failures.append("current Recovery topology mismatch")
+    if gp.get("accepted_later_candidate") not in (None,"",[]):
+        warnings.append("later candidate remains populated after S91 Recovery promotion")
+    promo=gp.get("recovery_promotion_evidence") or {}
+    if not promo.get("exact_byte_match"):
+        failures.append("S91 Recovery promotion lacks exact-byte-match receipt")
 
     shared=domains.get("shared_contracts",{})
     for key,name in shared.items():
@@ -122,6 +144,10 @@ def main():
         "recovery_seed":gp.get("current_recovery_at_2026_09_23"),
         "later_candidate":gp.get("accepted_later_candidate"),
         "fixture_bundle_sha256":receipt.get("fixture_bundle",{}).get("sha256"),
+        "recovery_sha256":gp.get("current_recovery_sha256"),
+        "recovery_content_root":gp.get("current_recovery_content_root"),
+        "recovery_dbr_root":gp.get("current_recovery_dbr_root"),
+        "recovery_topology":gp.get("current_recovery_topology"),
     }
     print(json.dumps(result,sort_keys=True))
     return 1 if failures else 0
