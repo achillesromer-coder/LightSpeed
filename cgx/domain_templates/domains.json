@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-DOMAIN-TEMPLATES/0.1",
+  "schema": "CGX-DOMAIN-TEMPLATES/0.2",
   "namespace_status": "provisional-unbound",
   "domains": {
     "romer": {
@@ -23,6 +23,18 @@
         "operations",
         "economics",
         "outreach"
+      ],
+      "semantic_library": "romer_semantic_library.json",
+      "type_registry": "romer_type_registry.json",
+      "relation_registry": "romer_relation_registry.json",
+      "default_views": [
+        "apex-pillar-programme",
+        "filespace-tree",
+        "topology-graph",
+        "active-object-inspector",
+        "twin-3d",
+        "matrix",
+        "evidence-claim"
       ]
     },
     "eco": {
@@ -43,6 +55,17 @@
         "monitoring",
         "infrastructure-interface",
         "education"
+      ],
+      "semantic_library": "eco_semantic_library.json",
+      "type_registry": "eco_type_registry.json",
+      "relation_registry": "eco_relation_registry.json",
+      "default_views": [
+        "apex-pillar-programme",
+        "map-spatial",
+        "topology-graph",
+        "active-object-inspector",
+        "timeline-dbr",
+        "evidence-claim"
       ]
     },
     "emassc": {
@@ -63,7 +86,30 @@
         "filespace-governance",
         "methods",
         "publication-review"
-      ]
+      ],
+      "semantic_library": "emassc_lightspeed_semantic_library.json",
+      "type_registry": "emassc_ls_type_registry.json",
+      "relation_registry": "emassc_ls_relation_registry.json",
+      "default_views": [
+        "active-object-inspector",
+        "evidence-claim",
+        "matrix",
+        "timeline-dbr",
+        "topology-graph"
+      ],
+      "children": {
+        "lightspeed": {
+          "file": "LS.cgx",
+          "role": "LightSpeed/EMC² execution-runtime child",
+          "authority_rule": "runtime receipts are evidence inputs, not automatic semantic validation",
+          "default_views": [
+            "network-runtime",
+            "topology-graph",
+            "active-object-inspector",
+            "timeline-dbr"
+          ]
+        }
+      }
     }
   },
   "shared_layout": [
@@ -96,5 +142,45 @@
     "residency",
     "licence"
   ],
-  "credential_policy": "secret-reference-only"
+  "credential_policy": "secret-reference-only",
+  "parent_filespace": {
+    "file": "Cognigrex.cgx",
+    "role": "living-parent-filebase-and-cross-domain-resolver",
+    "shared_kernel": [
+      "CGX-IR",
+      "DBR",
+      "Frontier/Overlay/Resolve",
+      "security/admission",
+      "CCC",
+      "cross-domain bridges"
+    ]
+  },
+  "shared_contracts": {
+    "universal_object_extension": "universal_object_extension_contract.json",
+    "relation_qualifiers": "relation_qualifier_contract.json",
+    "cross_domain_bridges": "cross_domain_bridge_registry.json",
+    "semantic_views": "semantic_view_lens_registry.json",
+    "view_selection": "view_selection_policy.json",
+    "layout_convergence": "layout_convergence_contract.md"
+  },
+  "generation_policy": {
+    "source_authority": "latest-durably-observed-Recovery-authority-only",
+    "current_recovery_at_2026_09_23": "S89/v1.59",
+    "accepted_later_candidate": "S91/v1.61 accepted/recommended for exact-byte promotion but not yet observed in Recovery",
+    "fixture_gate": "pilot_fixture_validation_receipt_2026-09-23.json",
+    "requirements": [
+      "fixture-proof-pass",
+      "type-and-relation-registry-closure",
+      "no-authority-by-validation-state-number",
+      "seed-carrier-hash-readback",
+      "canonical-verifier-pass",
+      "generated-child-verifier-pass"
+    ],
+    "forbidden": [
+      "seed-from-unpromoted-validation-candidate",
+      "copy-workbook-sheet-layout-as-canonical-schema",
+      "bulk-copy-project-payload-into-base-shell",
+      "promote-runtime-or-publication-view-to-semantic-authority"
+    ]
+  }
 }
