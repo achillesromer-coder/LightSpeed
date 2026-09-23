@@ -1,0 +1,43 @@
+{
+  "schema": "CGX-DOMAIN-GENERATOR-READINESS/0.1",
+  "status": "HELD",
+  "date": "2026-09-23",
+  "completed": [
+    "parent/three-sister topology defined",
+    "Universal Cell extension contract defined",
+    "domain type registries defined and pilot gaps closed",
+    "domain relation registries defined",
+    "cross-domain bridge registry defined",
+    "semantic view and deterministic view-selection policy defined",
+    "three pilot fixtures pass with zero failures",
+    "domains.json bound to semantic registries",
+    "base-shell contract upgraded with semantic/fixture gates"
+  ],
+  "bounded_warnings": [
+    "RFS synthetic resonance_index numeric-sanity review",
+    "RFS synthetic response_score numeric-sanity review"
+  ],
+  "hold_reasons": [
+    "Recovery folder still contains S89/v1.59 as current authority",
+    "S91/v1.61 is independently accepted and recommended for exact-byte promotion but not yet observed in Recovery",
+    "child generation must not seed from Validation-only state",
+    "physical S91 field conformance remains separate and open"
+  ],
+  "next_transition": {
+    "trigger": "exact S91 (or later) Recovery promotion is durably observed and hash/DBR ancestry re-verifies",
+    "action": [
+      "refresh current Recovery pointer",
+      "run scripts/validate_cgx_domain_templates.py",
+      "clone exact Recovery seed to disposable child worktrees",
+      "apply reviewed domain registry/profile package",
+      "run canonical verifier on Romer/Eco/EMASSC/LS outputs",
+      "persist build receipts before any corpus payload intake"
+    ]
+  },
+  "no_go": [
+    "do not mutate rolling Recovery carrier from this review branch",
+    "do not regenerate child bases from S89 merely to avoid waiting for accepted S91 promotion",
+    "do not label Validation acceptance as Recovery promotion",
+    "do not close physical/empirical gates from semantic fixture proof"
+  ]
+}
