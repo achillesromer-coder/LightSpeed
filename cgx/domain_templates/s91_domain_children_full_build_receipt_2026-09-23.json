@@ -1,0 +1,108 @@
+{
+  "schema": "CGX-S91-DOMAIN-CHILD-FULL-BUILD-RECEIPT/0.1",
+  "status": "PASS",
+  "date": "2026-09-23",
+  "seed": {
+    "state_id": "S91",
+    "release": "v1.61",
+    "recovery_file_id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR",
+    "sha256": "1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
+    "content_root": "af640b499078853371196cf7c905979cebf0761c15552b6b8dfbf3ff3d04448d",
+    "dbr_root": "18d43abf68b5f7857a21dcb480d9970e95cdacfc869c61b3b1497e900f0dcc64",
+    "topology": "150e5267792f43f47807a9f5ca61f12db8077ac98153c2cc6c306a4177de937e"
+  },
+  "fixture_gate": {
+    "status": "PASS_WITH_BOUNDED_WARNINGS",
+    "fixtures": 3,
+    "failures": 0,
+    "warnings": 2,
+    "bundle_sha256": "73acd97795b97648f072ab5b1fbebdb70d672e970a051cd45db9ee6153ad4402"
+  },
+  "outputs": {
+    "romer": {
+      "file": "Romer.cgx",
+      "object_id": "cgx:local:5e1436518b4faa55dd0c44d8",
+      "state_id": "S2",
+      "content_root": "fbeda9c17048740e5a1b700abfadc6668dd202e663d5ed2b6029997c481d7594",
+      "dbr_root": "b700b74369392e7c3a8235f9b1c188e64f1459426105fdeac6325fd15e4de49a",
+      "topology": "fb0b54b700fd7f2dc3aa0f1a664c9a5d6adaaa931c0039d78b970d7686bfe08f",
+      "sha256": "56075350bb32c627c1f7166e16d3e950741994baffee6f93e1f360551d1ccc28",
+      "tracked_objects": 59,
+      "verify": "PASS",
+      "packed_reopen_verify": "PASS"
+    },
+    "eco": {
+      "file": "Eco.cgx",
+      "object_id": "cgx:local:e5eeb1bd7792431365c30c7e",
+      "state_id": "S2",
+      "content_root": "c02a2e4b4f7d3b56ad2deec07337afe59646cb55ee26365904650c0914f3701d",
+      "dbr_root": "975d5a7ff882e1088e2b5ccd9e0a2080e310f78b1b0ea4fe1e68a72cd78f0671",
+      "topology": "7bf5f16b685eb0a4a42ef7a0e0650b99c5e9b78426fb22ac98d2e1b638e60e7f",
+      "sha256": "c83d20d1f2ddbc85f59e6b11e6671602401a58d29b6d528edf926f19488fb5a2",
+      "tracked_objects": 59,
+      "verify": "PASS",
+      "packed_reopen_verify": "PASS"
+    },
+    "emassc": {
+      "file": "EMASSC.cgx",
+      "object_id": "cgx:local:845b82291185eac77c34b966",
+      "state_id": "S2",
+      "content_root": "a5a4e155e641ab81efbb698e55726d18c6a364074841f0104f255a5567b352b7",
+      "dbr_root": "1a3eb2669978cdfc2203d3b717ef7045a355248cc62906e4c30124e6a7cbd73e",
+      "topology": "c96e558181471a062c662ddcebbeea05acac1588f9735ff0b7a66eab93efb2ba",
+      "sha256": "ed80475c33da047294d018a8beca70efb4f9a215c1cb3646548214130b741903",
+      "tracked_objects": 59,
+      "verify": "PASS",
+      "packed_reopen_verify": "PASS"
+    },
+    "lightspeed": {
+      "file": "LS.cgx",
+      "object_id": "cgx:local:3bbe3e78e70dbdac6ff1fb85",
+      "state_id": "S2",
+      "content_root": "e5aa201fd802aa4439a68d5dfa53b589b599fa271d994bc939e3f4c3fa8c8444",
+      "dbr_root": "c0196c004bab30eca0422724f28f816fe4c37a41315202d50da9710a0eeedeb4",
+      "topology": "4be14ac7b84da22d5568417ac2b69d90e6dc709b705cc08f6409b69b5edfa044",
+      "sha256": "476b2971862840e441c53dd43b3cfd43cb09b31ed2852adfdd45240aa9c070f7",
+      "tracked_objects": 59,
+      "verify": "PASS",
+      "packed_reopen_verify": "PASS"
+    }
+  },
+  "independent_qa": {
+    "status": "PASS",
+    "failures": 0,
+    "warnings": 0,
+    "required_sections_per_child": 34,
+    "checks": [
+      "canonical verify",
+      "required-section closure",
+      "unique Object_IDs",
+      "parent/agent bindings",
+      "exact S91 seed",
+      "physical/ACR3 gate preservation",
+      "first-file queue",
+      "alias/lens compatibility",
+      "inactive provider templates",
+      "stale-currentness scan",
+      "obvious-secret scan"
+    ]
+  },
+  "package": {
+    "file": "CGX_S91_Domain_Children_FULL_2026-09-23.zip",
+    "sha256": "61352cd31e37477e50e1117ccdd63c5c1a3045ebde9b79f3e902e902066eae6f",
+    "bytes": 284607,
+    "drive_folder_id": "1-kZFNb9TKIneBNq9N3W2L_RUUZyJpV-A",
+    "drive_file_id": "1Ty-c4KpJtadOjIwaAH_2pdaxsNOyhUoJ",
+    "drive_path": "/Google Drive/CGX/Validation/Domain Children S91 2026-09-23/CGX_S91_Domain_Children_FULL_2026-09-23.zip",
+    "drive_download_readback_sha256": "61352cd31e37477e50e1117ccdd63c5c1a3045ebde9b79f3e902e902066eae6f",
+    "zip_integrity": "PASS"
+  },
+  "boundaries": {
+    "production_semantic_payload_intake": "NOT_YET_PERFORMED",
+    "physical_s91": "OPEN",
+    "acr3_gst_029": "HELD",
+    "pr52": "DRAFT_UNMERGED",
+    "recovery_carrier_mutated": false
+  },
+  "next": "begin bounded first-file semantic intake into the four verified S91-derived bases; preserve source authority and commit only reviewed semantic deltas"
+}
