@@ -1,0 +1,71 @@
+{
+  "schema": "CGX-S91-DOMAIN-BUILDER-MECHANICS-PROOF/0.1",
+  "status": "PASS",
+  "date": "2026-09-23",
+  "recovery_seed": {
+    "state_id": "S91",
+    "release": "v1.61",
+    "recovery_file_id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR",
+    "sha256": "1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f"
+  },
+  "sequence": [
+    "create_seed_template(reader)",
+    "instantiate_seed(unique child)",
+    "atomic mutate",
+    "canonical verify",
+    "write_carrier",
+    "reopen carrier",
+    "canonical verify"
+  ],
+  "seed_template": {
+    "object_id": "cgx:local:41a099c097b2d093af2a271e",
+    "state_id": "S2",
+    "verify": "PASS"
+  },
+  "children": {
+    "romer": {
+      "object_id": "cgx:local:fc93af1bfb62733c26a42a46",
+      "state_id": "S2",
+      "content_root": "21a228271dce20ea572f3bd791e352ce347190eb25112e9693d2c5a19f9020c4",
+      "dbr_root": "de876567ccfdbec1192df2dff49d0678767b425ce667e9e783da4ba0cfee21d2",
+      "sha256": "bb1ea0b0c73e19e83f017cb9aa49ee72b3f5de9b5cf018361af8c59107bc9216",
+      "verify": "PASS",
+      "packed_reopen": "PASS"
+    },
+    "eco": {
+      "object_id": "cgx:local:17b99fde7b8a1d41e654f875",
+      "state_id": "S2",
+      "content_root": "7e984399d64e3de14fce50a54c54ec2c0c4d30d3e86096b361de5c7d83b6a69a",
+      "dbr_root": "514df3ea90c4fe29d1bc9e3035f31667428d667c601ea5f8621e4a7a4a2e648d",
+      "sha256": "0ceaddc377195a8e2b53fc6f815732eec3ec165bedbb6070c67b86b610c91d42",
+      "verify": "PASS",
+      "packed_reopen": "PASS"
+    },
+    "emassc": {
+      "object_id": "cgx:local:022e8210d9a4bc0da183f922",
+      "state_id": "S2",
+      "content_root": "d99dd2c778510dc48f76a188c5bd32e95f1b6f3b750d611733bd48788787e663",
+      "dbr_root": "fee0af2c6aa6e40bec6e647e2b5ad030921cf787f0946745165f2e4aa4fd87a9",
+      "sha256": "4323665e8921201e2a00976ab9712d8926b8fde05241392fcf0c2a7a7a081b67",
+      "verify": "PASS",
+      "packed_reopen": "PASS"
+    },
+    "lightspeed": {
+      "object_id": "cgx:local:77e1de1be81dc141fb53b441",
+      "state_id": "S2",
+      "content_root": "1473222b732c75db368276dea3620f9af28126ac84e209e43985e057964bfda3",
+      "dbr_root": "63cdc359b9b7b645dbd93902d9723038260aa145a477b678d099bc407e9df869",
+      "sha256": "4468a3ec82389f71334bf8cb57386db9dec7a22ed74bf3b398be3f7fb4227137",
+      "verify": "PASS",
+      "packed_reopen": "PASS"
+    }
+  },
+  "scope": "mechanics probe only; generated probe carriers contain a proof marker, not the complete reviewed domain template package",
+  "next_gate": "execute scripts/build_cgx_domain_children.py from a branch-local checkout against exact S91 Recovery and persist the full-package build receipt before any corpus payload intake",
+  "nonclaims": [
+    "not production child bases",
+    "not semantic authority transfer",
+    "not first-file intake",
+    "physical S91 conformance remains open"
+  ]
+}
