@@ -8,23 +8,26 @@
       1000,
       1003,
       1005,
-      1006
+      1006,
+      1012,
+      1013
     ],
     "audited_at": "2026-09-23",
     "note": "The ACR3 workbook migration inventory is a bounded migration subset, not the complete inclusion universe."
   },
   "current_cgx_authority": {
     "object_id": "cgx:phase-a:42d99b46c0d322f08b59b7b7",
-    "state_id": "S89",
-    "release": "v1.59",
+    "state_id": "S91",
+    "release": "v1.61",
     "authority": "Recovery",
-    "content_root": "a89356415fda6ba6ce0b068fc289b76b6fefafa7f5198e1d957f46b26b363a95",
-    "dbr_root": "5248c382d2fce138829ff2c35275e4d17716d81121894ddde2906b01a4ad09e6",
-    "topology_root": "12afad193d8af071b2c8a3621acd00852e327881562a6cf9597a0f1c13828ad3",
-    "carrier_sha256": "dfdcc27b0002c960e81426b9dc14059bdf20b0ca864964bde5461ec6867d5f31",
-    "promotion_audit_drive_id": "1W7N4n_b74zlWIESm8kCPJ1PHq8WTx_1v",
-    "field_index_pr": 53,
-    "physical_gate": "OPEN / PREPARED, not PASS"
+    "content_root": "af640b499078853371196cf7c905979cebf0761c15552b6b8dfbf3ff3d04448d",
+    "dbr_root": "18d43abf68b5f7857a21dcb480d9970e95cdacfc869c61b3b1497e900f0dcc64",
+    "topology_root": "150e5267792f43f47807a9f5ca61f12db8077ac98153c2cc6c306a4177de937e",
+    "carrier_sha256": "1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
+    "recovery_carrier_drive_id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR",
+    "acceptance_audit_drive_id": "1ST6l0RDTBexq1BXB28gYxxevvLu1cDmu",
+    "field_run_drive_id": "1lPuN0QZ-FpJRQVgIdDfXmquktkTWRkj7",
+    "physical_gate": "OPEN / field package prepared; not accepted as two-device/OS proof"
   },
   "invariants": [
     "no-authority-by-location",
@@ -264,12 +267,27 @@
     {
       "title": "CGX S89 Recovery Promotion Audit",
       "id": "1W7N4n_b74zlWIESm8kCPJ1PHq8WTx_1v",
-      "role": "current-CGX-Recovery-authority-reconciliation-receipt"
+      "role": "historical-Recovery-ancestor-promotion-receipt"
     },
     {
       "title": "CGX S89 Physical Field Run bundle",
       "id": "1_-D6dyWIyVWtYdFkTmRsz7w5gocVSA6I",
-      "role": "controlled-physical-conformance-package-PREPARED"
+      "role": "historical-physical-conformance-package; not S91 proof"
+    },
+    {
+      "title": "CGX S91 Recovery carrier",
+      "id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR",
+      "role": "current-CGX-Recovery-authority-carrier"
+    },
+    {
+      "title": "CGX S91 Independent Acceptance Audit",
+      "id": "1ST6l0RDTBexq1BXB28gYxxevvLu1cDmu",
+      "role": "current-Recovery-acceptance-and-exact-byte-promotion-receipt"
+    },
+    {
+      "title": "CGX S91 Physical Field Run bundle",
+      "id": "1lPuN0QZ-FpJRQVgIdDfXmquktkTWRkj7",
+      "role": "current-physical-conformance-package-PREPARED-not-PASS"
     }
   ],
   "legacy_provider_classes": [
@@ -324,8 +342,8 @@
     },
     {
       "id": "FRONTIER-PHYSICAL-CONFORMANCE",
-      "topic": "S89 physical two-device / OS field conformance",
-      "reason": "PREPARED package exists; requires genuinely distinct devices and machine evidence before PASS"
+      "topic": "S91 physical two-device / OS field conformance",
+      "reason": "fresh S91 field package exists; requires genuinely distinct devices/non-loopback sync and real OS registration evidence"
     },
     {
       "id": "FRONTIER-ACR3-RETIREMENT",
