@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-CORPUS-INCLUSION/0.3",
+  "schema": "CGX-CORPUS-INCLUSION/0.4",
   "audit_anchor": {
     "acr3_spreadsheet_id": "1AgAhLPNtrO91C_-ea7EdOkOsyXrCCYvFVvmDSGq8uls",
     "acr3_handoff_rows": [
@@ -331,8 +331,25 @@
       "id": "FRONTIER-ACR3-RETIREMENT",
       "topic": "ACR3 retirement",
       "reason": "GST-029 remains held pending no-orphan/source-topology/readback parity even after S89 Recovery promotion"
+    },
+    {
+      "id": "FRONTIER-S91-RECOVERY-PROMOTION",
+      "topic": "S91/v1.61 Recovery promotion",
+      "reason": "independently accepted exact descendant but current Recovery folder still tops at S89; exact S91 bytes must be persisted/promoted and hash/DBR read back before it may seed child generation"
     }
   ],
   "publication_rule": "Living Evidence Atlas, Living Type 1 Dossier, Evidence Review, Web2, social/email/institutional packs are derived lenses/representations, never source authority.",
-  "growth_rule": "New corpus families, semantic classes, tools, providers and policy dimensions may be added through extensible registries without replacing the CGX schema. If placement or authority is unclear, preserve source identity and create a Frontier."
+  "growth_rule": "New corpus families, semantic classes, tools, providers and policy dimensions may be added through extensible registries without replacing the CGX schema. If placement or authority is unclear, preserve source identity and create a Frontier.",
+  "accepted_validation_candidate": {
+    "object_id": "cgx:phase-a:42d99b46c0d322f08b59b7b7",
+    "state_id": "S91",
+    "release": "v1.61",
+    "content_root": "af640b499078853371196cf7c905979cebf0761c15552b6b8dfbf3ff3d04448d",
+    "dbr_root": "18d43abf68b5f7857a21dcb480d9970e95cdacfc869c61b3b1497e900f0dcc64",
+    "topology_root": "150e5267792f43f47807a9f5ca61f12db8077ac98153c2cc6c306a4177de937e",
+    "carrier_sha256": "1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
+    "acceptance": "independent ACCEPT / recommend exact-byte Recovery promotion; audit does not itself mutate Recovery",
+    "proof": "74/74 isolated regression PASS; verifier PASS; frontier 0/0; exact S89→S90→S91 DBR continuity",
+    "recovery_status": "NOT YET OBSERVED IN /Google Drive/CGX/Recovery at 2026-09-23 fresh readback"
+  }
 }
