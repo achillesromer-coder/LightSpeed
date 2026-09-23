@@ -1,6 +1,6 @@
 {
   "schema": "CGX-DOMAIN-GENERATOR-READINESS/0.1",
-  "status": "HELD",
+  "status": "READY_FOR_DISPOSABLE_BUILD",
   "date": "2026-09-23",
   "completed": [
     "parent/three-sister topology defined",
@@ -11,27 +11,25 @@
     "semantic view and deterministic view-selection policy defined",
     "three pilot fixtures pass with zero failures",
     "domains.json bound to semantic registries",
-    "base-shell contract upgraded with semantic/fixture gates"
+    "base-shell contract upgraded with semantic/fixture gates",
+    "exact S91/v1.61 Recovery carrier durably observed",
+    "Recovery copy byte-identical to accepted Validation carrier",
+    "Recovery SHA-256/content/DBR/topology roots independently read back"
   ],
   "bounded_warnings": [
     "RFS synthetic resonance_index numeric-sanity review",
     "RFS synthetic response_score numeric-sanity review"
   ],
-  "hold_reasons": [
-    "Recovery folder still contains S89/v1.59 as current authority",
-    "S91/v1.61 is independently accepted and recommended for exact-byte promotion but not yet observed in Recovery",
-    "child generation must not seed from Validation-only state",
-    "physical S91 field conformance remains separate and open"
-  ],
+  "hold_reasons": [],
   "next_transition": {
-    "trigger": "exact S91 (or later) Recovery promotion is durably observed and hash/DBR ancestry re-verifies",
+    "trigger": "template validator PASS against exact S91 Recovery seed",
     "action": [
-      "refresh current Recovery pointer",
-      "run scripts/validate_cgx_domain_templates.py",
-      "clone exact Recovery seed to disposable child worktrees",
-      "apply reviewed domain registry/profile package",
-      "run canonical verifier on Romer/Eco/EMASSC/LS outputs",
-      "persist build receipts before any corpus payload intake"
+      "create clone-required reader seed template from exact S91 Recovery carrier",
+      "instantiate unique disposable Romer/Eco/EMASSC workspaces",
+      "instantiate LS.cgx as EMASSC runtime child",
+      "apply reviewed domain registry/profile package only",
+      "run canonical verifier and packed-reopen verifier on all outputs",
+      "persist build receipts before corpus payload intake"
     ]
   },
   "no_go": [
@@ -39,5 +37,19 @@
     "do not regenerate child bases from S89 merely to avoid waiting for accepted S91 promotion",
     "do not label Validation acceptance as Recovery promotion",
     "do not close physical/empirical gates from semantic fixture proof"
-  ]
+  ],
+  "open_nonblocking_gates": [
+    "physical S91 two-device/OS field conformance remains separate and open",
+    "ACR3 GST-029 retirement remains separately held until no-orphan/source-topology/readback parity"
+  ],
+  "current_seed": {
+    "state_id": "S91",
+    "release": "v1.61",
+    "recovery_file_id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR",
+    "sha256": "1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
+    "content_root": "af640b499078853371196cf7c905979cebf0761c15552b6b8dfbf3ff3d04448d",
+    "dbr_root": "18d43abf68b5f7857a21dcb480d9970e95cdacfc869c61b3b1497e900f0dcc64",
+    "topology": "150e5267792f43f47807a9f5ca61f12db8077ac98153c2cc6c306a4177de937e",
+    "exact_validation_byte_match": true
+  }
 }
