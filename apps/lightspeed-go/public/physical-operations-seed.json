@@ -1,0 +1,364 @@
+{
+  "schema_version": "0.1",
+  "generated_at": "2026-09-23T23:31:00+10:00",
+  "authority_model": {
+    "site": "projection_and_operations_console",
+    "canonical": [
+      "CGX/current canonical sources",
+      "Google Drive durable manuals/evidence",
+      "GitHub code/spec/runtime",
+      "Google Calendar scheduled time"
+    ],
+    "rule": "No level is PASSED without recoverable evidence and explicit close criteria."
+  },
+  "status": [
+    "LOCKED",
+    "READY",
+    "ACTIVE",
+    "AWAITING_EVIDENCE",
+    "REWORK",
+    "BLOCKED",
+    "EXTERNAL",
+    "PASSED",
+    "RETIRED"
+  ],
+  "worlds": [
+    {
+      "world_id": "basecamp",
+      "name": "Basecamp / Workshop",
+      "order": 0
+    },
+    {
+      "world_id": "laboratory",
+      "name": "Laboratory",
+      "order": 1
+    },
+    {
+      "world_id": "solar-hull",
+      "name": "Solar Hull",
+      "order": 2
+    },
+    {
+      "world_id": "free-flow",
+      "name": "Free Flow",
+      "order": 3
+    },
+    {
+      "world_id": "rfs",
+      "name": "RFS",
+      "order": 4
+    },
+    {
+      "world_id": "emff",
+      "name": "EMFF",
+      "order": 5
+    },
+    {
+      "world_id": "mark-i",
+      "name": "Mark 1P / Mark I Test Cell",
+      "order": 6
+    },
+    {
+      "world_id": "mark-iii",
+      "name": "Mark III",
+      "order": 7
+    },
+    {
+      "world_id": "mark-v",
+      "name": "Mark V",
+      "order": 8
+    },
+    {
+      "world_id": "outreach",
+      "name": "Outreach & Partnerships",
+      "order": 9
+    },
+    {
+      "world_id": "mission",
+      "name": "Mission / Flight",
+      "order": 10
+    },
+    {
+      "world_id": "cgx",
+      "name": "CGX / Digital Infrastructure",
+      "order": 11
+    }
+  ],
+  "levels": [
+    {
+      "level_id": "L0",
+      "world_id": "basecamp",
+      "name": "Operating Baseline",
+      "status": "ACTIVE",
+      "objective": "Establish exactly what physical capability exists today.",
+      "prerequisites": [],
+      "evidence_required": [
+        "workspace overview photos",
+        "bench dimensions",
+        "power access notes",
+        "ventilation notes",
+        "tool inventory",
+        "instrument inventory",
+        "materials/samples inventory",
+        "hazards/blockers"
+      ],
+      "close_criterion": "A reviewer can identify what can be built tomorrow without guessing.",
+      "unlocks": [
+        "L1"
+      ]
+    },
+    {
+      "level_id": "L1",
+      "world_id": "basecamp",
+      "name": "Safe Workspace",
+      "status": "LOCKED",
+      "objective": "Create one clean, repeatable and inspectable test area.",
+      "prerequisites": [
+        "L0"
+      ],
+      "evidence_required": [
+        "workspace inspection checklist",
+        "electrical zone photo",
+        "PPE/fire response readiness",
+        "labelled storage",
+        "safe low-voltage distribution"
+      ],
+      "close_criterion": "Workspace checklist passes and hazards are either controlled or explicitly gated.",
+      "unlocks": [
+        "L2"
+      ]
+    },
+    {
+      "level_id": "L2",
+      "world_id": "laboratory",
+      "name": "Measurement Core",
+      "status": "LOCKED",
+      "objective": "Commission the instruments required to trust first measurements.",
+      "prerequisites": [
+        "L1"
+      ],
+      "evidence_required": [
+        "instrument register",
+        "make/model/serial where available",
+        "reference/self-check results",
+        "usable ranges",
+        "calibration/uncertainty state"
+      ],
+      "close_criterion": "Core instruments have a known usable range and check state.",
+      "unlocks": [
+        "L3",
+        "L4",
+        "L5",
+        "L6"
+      ]
+    },
+    {
+      "level_id": "L3",
+      "world_id": "laboratory",
+      "name": "R-01 Electrical Characterisation Rig",
+      "status": "LOCKED",
+      "objective": "Build reusable source-protection-DUT-measurement-load rig.",
+      "prerequisites": [
+        "L2"
+      ],
+      "evidence_required": [
+        "build manual",
+        "wiring diagram",
+        "labelled rig photos",
+        "safety limits",
+        "reference load test"
+      ],
+      "close_criterion": "Known reference load measures within defined tolerance.",
+      "unlocks": [
+        "L7",
+        "solar-baseline",
+        "freeflow-baseline"
+      ]
+    },
+    {
+      "level_id": "L4",
+      "world_id": "rfs",
+      "name": "R-02 Resonance Bench",
+      "status": "LOCKED",
+      "objective": "Build a reproducible frequency-response measurement bench.",
+      "prerequisites": [
+        "L2"
+      ],
+      "evidence_required": [
+        "build manual",
+        "driver/DUT/sensor diagram",
+        "known/reference response run",
+        "noise floor"
+      ],
+      "close_criterion": "Frequency response can be measured reproducibly without attributing mechanism.",
+      "unlocks": [
+        "rfs-baseline"
+      ]
+    },
+    {
+      "level_id": "L5",
+      "world_id": "emff",
+      "name": "R-03 Magnetic Field Bench",
+      "status": "LOCKED",
+      "objective": "Build fixed-geometry current/coil/field characterization bench.",
+      "prerequisites": [
+        "L2"
+      ],
+      "evidence_required": [
+        "coil ID",
+        "geometry",
+        "turn count",
+        "wire gauge",
+        "resistance",
+        "current",
+        "temperature",
+        "distance response"
+      ],
+      "close_criterion": "Repeatable field/current/distance map with safe thermal envelope.",
+      "unlocks": [
+        "emff-baseline"
+      ]
+    },
+    {
+      "level_id": "L6",
+      "world_id": "solar-hull",
+      "name": "R-04 Illumination Bench",
+      "status": "LOCKED",
+      "objective": "Build fixed-geometry comparative illumination test bench.",
+      "prerequisites": [
+        "L2"
+      ],
+      "evidence_required": [
+        "source geometry",
+        "sample fixture",
+        "reference/control readings",
+        "repeat run"
+      ],
+      "close_criterion": "Reference/control readings repeat under fixed conditions.",
+      "unlocks": [
+        "solar-baseline"
+      ]
+    },
+    {
+      "level_id": "L7",
+      "world_id": "laboratory",
+      "name": "Sample & Component Family",
+      "status": "LOCKED",
+      "objective": "Assign stable IDs and build records to every specimen/component.",
+      "prerequisites": [
+        "L2"
+      ],
+      "evidence_required": [
+        "ID convention active",
+        "photos",
+        "materials",
+        "dimensions",
+        "mass where relevant",
+        "build record",
+        "storage/disposition"
+      ],
+      "close_criterion": "Every testable physical object can be traced to a build record.",
+      "unlocks": [
+        "L8"
+      ]
+    },
+    {
+      "level_id": "L8",
+      "world_id": "laboratory",
+      "name": "First Controlled Tests",
+      "status": "LOCKED",
+      "objective": "Run separated Solar Hull, Free Flow, RFS and EMFF baselines.",
+      "prerequisites": [
+        "L3",
+        "L4",
+        "L5",
+        "L6",
+        "L7"
+      ],
+      "evidence_required": [
+        "hypothesis",
+        "control",
+        "variables",
+        "instruments",
+        "raw data",
+        "pass/fail/ambiguous classification"
+      ],
+      "close_criterion": "At least one controlled baseline exists for each active subsystem or an explicit blocker is recorded.",
+      "unlocks": [
+        "L9",
+        "outreach-tech-review"
+      ]
+    },
+    {
+      "level_id": "L9",
+      "world_id": "laboratory",
+      "name": "Replication",
+      "status": "LOCKED",
+      "objective": "Repeat strongest and most informative results.",
+      "prerequisites": [
+        "L8"
+      ],
+      "evidence_required": [
+        "repeat runs",
+        "uncertainty/deviation log",
+        "comparison to first run"
+      ],
+      "close_criterion": "Promoted effects are reproducible across >=3 runs where practical, or remain explicitly unverified.",
+      "unlocks": [
+        "L10",
+        "outreach-lab-access"
+      ]
+    },
+    {
+      "level_id": "L10",
+      "world_id": "mark-v",
+      "name": "Minimum Integrated Bench",
+      "status": "LOCKED",
+      "objective": "Integrate only independently characterized components.",
+      "prerequisites": [
+        "L9"
+      ],
+      "evidence_required": [
+        "BOM",
+        "wiring/geometry",
+        "subsystem IDs",
+        "energy flow",
+        "thermal behavior",
+        "interference/failure log",
+        "serviceability notes"
+      ],
+      "close_criterion": "Integrated behavior is measured and interface failures are distinguished from subsystem failures.",
+      "unlocks": [
+        "mark-i-test-cell",
+        "outreach-partner-packet"
+      ]
+    }
+  ],
+  "urgency_horizons": {
+    "O": "Overdue",
+    "C": "<=24h",
+    "I": "<=72h",
+    "U": "<=7d",
+    "P": "<=14d",
+    "T": "current month",
+    "F": "current quarter",
+    "F+": "next quarter"
+  },
+  "memory_horizon_days": [
+    30,
+    90,
+    180,
+    240
+  ],
+  "primary_loop": [
+    "SELECT LEVEL",
+    "PREPARE",
+    "BUILD",
+    "TEST",
+    "LOG EVIDENCE",
+    "VERIFY",
+    "PASS/FAIL/REWORK",
+    "UNLOCK",
+    "NEXT LEVEL"
+  ]
+}
