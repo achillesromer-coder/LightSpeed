@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-CORPUS-AWARE-BASE-SHELL/0.3",
+  "schema": "CGX-CORPUS-AWARE-BASE-SHELL/0.4",
   "purpose": "Define a data-light but corpus-aware child workspace that can accept first real files and later-discovered corpus families without redesigning identity, authority, intake, work modes, lenses, providers or migration topology.",
   "required_sections": [
     "identity/domain",
@@ -28,7 +28,14 @@
     "queue/acr3_assimilation",
     "queue/first_file_intake",
     "representations/default_recipes",
-    "publications/derived_surface_registry"
+    "publications/derived_surface_registry",
+    "semantic/type_registry",
+    "semantic/relation_registry",
+    "semantic/universal_object_extension",
+    "semantic/cross_domain_bridges",
+    "profiles/semantic_view_registry",
+    "profiles/view_selection_policy",
+    "proof/pilot_fixture_conformance"
   ],
   "authority_invariants": [
     "shell-metadata-is-not-authority-transfer",
@@ -40,7 +47,10 @@
     "negative-search-is-not-absence-proof",
     "unknown-source-family-is-frontier-not-omission",
     "legacy-content-is-assimilated-exactly-once",
-    "no-source-demotion-or-deletion-before-parity-and-recovery-proof"
+    "no-source-demotion-or-deletion-before-parity-and-recovery-proof",
+    "domain-type-and-relation-registries-must-pass-bounded-fixture-proof-before-generator-promotion",
+    "later-validation-descendant-cannot-seed-new-child-bases-until-exact-byte-recovery-promotion-is-durably-observed",
+    "gated-view-projection-remains-gated-when-required-geometry-spatial-or-runtime-evidence-is-absent"
   ],
   "privacy_and_security": [
     "no-secret-bytes-in-carrier",
@@ -53,5 +63,7 @@
   "growth_rule": "New project, agent, provider, tool, file type or source family can be added through the extensible registries and N-dimensional labels without schema replacement. If authority or placement is unclear, preserve source identity and create a Frontier.",
   "payload_rule": "Base shell contains corpus/source-family maps, current bounded control caches and migration metadata, but not bulk project workbooks/CAD/raw evidence until intake is explicitly reviewed.",
   "hydration_rule": "Use the latest verifier-valid descendant supported by the trusted seed lineage while retaining the distinct Recovery/promotion authority gate. Local/unbound implementation evidence must not be treated as a durable descendant until source, carrier and test receipts are persisted.",
-  "publication_rule": "Portfolio, dossier, evidence review, Web2, social, email and institutional packages are generated representations/lenses and do not become source authority."
+  "publication_rule": "Portfolio, dossier, evidence review, Web2, social, email and institutional packages are generated representations/lenses and do not become source authority.",
+  "semantic_fixture_rule": "At least one deterministic bounded fixture per primary domain must reproduce stable Object/Cell/Relation IDs and declared view hashes against the reviewed type/relation/view registries. Warnings may remain only when explicitly epistemic/sanity bounded and non-promoting.",
+  "generator_rule": "Generator consumes reviewed registry contracts and the latest durably observed Recovery carrier by identity/hash/DBR ancestry. It must fail closed on an unpromoted Validation-only seed or fixture/schema mismatch."
 }
