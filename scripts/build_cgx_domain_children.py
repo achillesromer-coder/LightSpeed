@@ -96,6 +96,47 @@ def intake_queue(domain: str) -> dict:
     }
     return {"schema_version":"0.3","domain":domain,"default_action":"review","auto_commit":False,"items":items[domain]}
 
+def legacy_aliases(domain: str) -> dict:
+    aliases={
+        "romer":["Römer-Grex","Romer-Grex","Type 1 Romer Cognigrex","Römer Cognigrex"],
+        "eco":["Eco-Grex","Eco-X","Type 1 Eco-Grex"],
+        "emassc":["EMASSC","EMC² research/validation context"],
+        "lightspeed":["LS","LightSpeed","LightSpeed/EMC² runtime"],
+    }
+    return {
+        "schema_version":"0.2",
+        "domain":domain,
+        "aliases":[{"value":x,"authority":"non-authoritative alias"} for x in aliases[domain]],
+        "rule":"legacy/display aliases aid discovery only; Object_ID/domain ownership and current canonical names control semantics"
+    }
+
+def legacy_lens_profile(domain: str) -> dict:
+    common=[
+        {"id":"founder","read":"all-policy-authorised","mutate":"policy-authorised"},
+        {"id":"internal","read":"internal-and-below","mutate":"role-authorised"},
+        {"id":"technical-review","read":"technical+evidence+uncertainty","mutate":"proposed-delta"},
+        {"id":"evidence-audit","read":"source+provenance+contradictions+gates","mutate":"none-by-default"},
+        {"id":"non-anthropocentric-audit","read":"relevant ethical/ecological/system assumptions","mutate":"analysis-only"},
+        {"id":"government","read":"approved sovereign/public-interest projection","mutate":"none"},
+        {"id":"investor-finance","read":"approved milestones+risk+scenario economics","mutate":"none"},
+        {"id":"public","read":"release-approved only","mutate":"none"},
+        {"id":"machine","read":"policy-scoped semantic closure","mutate":"lease+authority"},
+    ]
+    specialised={
+        "romer":{"id":"sovereign-capacity","read":"australian-capability+evidence+risk+dependencies","mutate":"proposed-delta"},
+        "eco":{"id":"interspecies-egalitarian","read":"ecological+species+stewardship+human-impact","mutate":"analysis/proposed-delta"},
+        "emassc":{"id":"scientific-validation","read":"methods+raw-evidence+uncertainty+calibration+claims","mutate":"proposed-delta"},
+        "lightspeed":{"id":"runtime-operator","read":"host+device+provider+workflow+receipt+conformance","mutate":"lease+policy-authorised"},
+    }
+    return {
+        "schema_version":"0.3",
+        "extensible":True,
+        "domain":domain,
+        "lenses":common+[specialised[domain]],
+        "compatibility":"legacy role/audience lens profile; semantic_view_registry + view_selection_policy control deterministic presentation",
+        "authority_rule":"lens selection never promotes semantic authority, evidence state or permissions"
+    }
+
 def domain_payload(domain: str, domains: dict, inclusion: dict, seed_ref: dict, fixture: dict) -> dict[str,object]:
     if domain=="lightspeed":
         em=domains["domains"]["emassc"]
@@ -131,6 +172,7 @@ def domain_payload(domain: str, domains: dict, inclusion: dict, seed_ref: dict, 
         "authority":"policy+capability+scoped-owner bounded",
         "network_or_model_strength_never_grants_authority":True
       },
+      "identity/legacy_aliases.json":legacy_aliases(domain),
       "governance/authority_model.json":{
         "schema_version":"0.3","domain":domain,"principal_agent":principal,
         "canonical_rule":"one authority per meaning; many representations/providers permitted",
@@ -180,6 +222,7 @@ def domain_payload(domain: str, domains: dict, inclusion: dict, seed_ref: dict, 
       "capabilities/specialist_and_external_tools.json":{
         "schema_version":"0.3","policy":"capability is not authority","provider_classes":inclusion.get("capability_and_provider_classes",[])
       },
+      "profiles/lens_registry.json":legacy_lens_profile(domain),
       "queue/acr3_assimilation.json":{
         "schema_version":"0.3","domain":domain,"status":"ACTIVE_UNTIL_GST-029","exact_once":True
       },
@@ -228,11 +271,18 @@ def main() -> int:
     domains=load("domains.json")
     fixture=load("pilot_fixture_validation_receipt_2026-09-23.json")
     inclusion=load("corpus_inclusion_registry.json")
+    shell_contract=load("corpus_aware_base_shell_contract.json")
     if fixture.get("proof",{}).get("fixtures")!=3 or fixture.get("proof",{}).get("failures")!=0:
         raise SystemExit("FAIL: fixture gate not closed")
     gp=domains.get("generation_policy",{})
     if gp.get("current_recovery_sha256")!=EXPECTED["sha256"]:
         raise SystemExit("FAIL: domains.json Recovery pointer mismatch")
+    inc_auth=inclusion.get("current_cgx_authority",{})
+    if inc_auth.get("state_id")!="S91" or inc_auth.get("carrier_sha256")!=EXPECTED["sha256"]:
+        raise SystemExit("FAIL: corpus inclusion registry is not current to S91 Recovery")
+    boundary=fixture.get("current_authority_boundary",{})
+    if boundary.get("recovery_sha256")!=EXPECTED["sha256"]:
+        raise SystemExit("FAIL: pilot fixture authority boundary is not current to S91 Recovery")
 
     args.out_dir.mkdir(parents=True,exist_ok=True)
     work=args.out_dir/"work"
@@ -265,6 +315,13 @@ def main() -> int:
         state=kernel.mutate(root,"domain_base_install",f"Install reviewed {domain} domain base package",op,
             {"domain":domain,"parent":"EMASSC.cgx" if domain=="lightspeed" else "Cognigrex.cgx",
              "review_source":"LightSpeed PR52","fixture_bundle_sha256":fixture.get("fixture_bundle",{}).get("sha256")})
+        required_missing=[]
+        for section in shell_contract.get("required_sections",[]):
+            p=root/(section+".json")
+            if not p.is_file():
+                required_missing.append(section)
+        if required_missing:
+            raise SystemExit("FAIL: required base-shell sections missing for "+domain+":"+",".join(required_missing))
         check=kernel.verify(root)
         if not check.get("ok"):
             raise SystemExit("FAIL: post-install verifier "+domain+":"+";".join(check.get("errors",[])))
