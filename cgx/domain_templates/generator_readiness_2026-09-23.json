@@ -1,6 +1,6 @@
 {
   "schema": "CGX-DOMAIN-GENERATOR-READINESS/0.1",
-  "status": "MECHANICS_PROVEN_FULL_PACKAGE_BUILD_PENDING",
+  "status": "FULL_PACKAGE_BUILD_PASS_FIRST_FILE_INTAKE_ELIGIBLE",
   "date": "2026-09-23",
   "completed": [
     "parent/three-sister topology defined",
@@ -19,7 +19,12 @@
     "four unique child instantiations verified",
     "atomic child mutation verified",
     "four packed carriers reopen/verify PASS",
-    "domain-template contract validation PASS with 40 files present"
+    "domain-template contract validation PASS with 40 files present",
+    "full reviewed Romer/Eco/EMASSC/LS package build PASS",
+    "all four children contain all 34 required base-shell sections",
+    "all four post-install and packed-reopen verifiers PASS",
+    "independent child QA PASS with zero failures/warnings",
+    "exact full package persisted to Drive Validation and download-readback hash matched"
   ],
   "bounded_warnings": [
     "RFS synthetic resonance_index numeric-sanity review",
@@ -27,14 +32,15 @@
   ],
   "hold_reasons": [],
   "next_transition": {
-    "trigger": "branch-local execution environment with current PR52 templates",
+    "trigger": "verified full S91 child package exists and is durably read back",
     "action": [
-      "run scripts/validate_cgx_domain_templates.py and require PASS",
-      "run scripts/build_cgx_domain_children.py against exact Recovery S91",
-      "require Romer/Eco/EMASSC/LS post-install verifier PASS",
-      "require packed-reopen verifier PASS for all four",
-      "persist full build receipt and hashes to Drive Validation + ACR3",
-      "only then begin bounded first-file intake"
+      "begin bounded first-file intake: Mark III -> Romer.cgx",
+      "begin bounded first-file intake: Embedded Bio Blocks -> Eco.cgx",
+      "begin bounded first-file intake: RFS/EMFF -> EMASSC.cgx with LS runtime/evidence bridge",
+      "preserve native source identity/revision/hash and source-owner authority",
+      "materialise deterministic Universal Cells/relations only from reviewed mappings",
+      "rerun per-child verifier and pilot projection hashes after each intake commit",
+      "persist intake receipts before broader corpus migration"
     ]
   },
   "no_go": [
@@ -57,5 +63,12 @@
     "topology": "150e5267792f43f47807a9f5ca61f12db8077ac98153c2cc6c306a4177de937e",
     "exact_validation_byte_match": true
   },
-  "mechanics_receipt": "s91_domain_builder_mechanics_receipt_2026-09-23.json"
+  "mechanics_receipt": "s91_domain_builder_mechanics_receipt_2026-09-23.json",
+  "full_build_receipt": "s91_domain_children_full_build_receipt_2026-09-23.json",
+  "drive_package": {
+    "file_id": "1Ty-c4KpJtadOjIwaAH_2pdaxsNOyhUoJ",
+    "folder_id": "1-kZFNb9TKIneBNq9N3W2L_RUUZyJpV-A",
+    "sha256": "61352cd31e37477e50e1117ccdd63c5c1a3045ebde9b79f3e902e902066eae6f",
+    "readback": "PASS"
+  }
 }
