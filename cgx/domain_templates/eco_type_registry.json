@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-ECO-TYPE-REGISTRY/0.1",
+  "schema": "CGX-ECO-TYPE-REGISTRY/0.2",
   "domain": "eco",
   "status": "review-blueprint",
   "rule": "Taxon identity, local population, observation, intervention and ecological state estimate remain distinct objects.",
@@ -110,7 +110,8 @@
       "exposure",
       "response",
       "endpoint",
-      "acceptance-criterion"
+      "acceptance-criterion",
+      "test"
     ],
     "state": [
       "baseline",
@@ -159,6 +160,10 @@
     {
       "type": "functional-group",
       "basis": "species/functional register"
+    },
+    {
+      "type": "test",
+      "basis": "Embedded Bio Blocks validation/test matrix"
     }
   ]
 }
