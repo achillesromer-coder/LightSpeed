@@ -1,0 +1,16 @@
+{
+  "schema_version": "0.3",
+  "human_machine_readability": "compact-comprehensive",
+  "units": "SI/metric by default",
+  "unknown_rule": "unknown/unresolved evidence -> explicit Frontier item; never guess merely to fill a field",
+  "proof_rule": "retain source evidence plus independent mathematical/reasoning proof where applicable; do not promote model outputs to empirical state",
+  "change_rule": "mutate living owner where supported; preserve stable IDs, source paths, evidence class, supersessions, receipts and readback",
+  "duplicate_rule": "collapse identical meaning to one semantic owner while preserving source/representation lineage",
+  "anthropocentric_audit": {
+    "enabled": true,
+    "purpose": "explicitly test human-exceptionalist/anthropocentric assumptions where relevant to ecology, governance, technology and ethics; analytical lens only, never evidentiary override"
+  },
+  "publication_rule": "public-ready != published; exact release target/lens/security filter/readback required",
+  "source_precedence": "current scoped owner/native source > validated derivative > historical/legacy reference, subject to evidence class and explicit contradictions",
+  "view_rule": "task/device/user preferences may select or compose views but cannot override security, evidence ceiling or semantic authority"
+}
