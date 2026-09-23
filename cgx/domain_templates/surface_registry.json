@@ -1,0 +1,12 @@
+{
+  "schema_version":"0.1",
+  "surfaces":[
+    {"id":"desktop","interaction":"filespace-tree+active-object+inspector+queue+command","default_hydration":"workstation"},
+    {"id":"web","interaction":"bounded-projection+loader+interactive-approved-tools","default_hydration":"reader"},
+    {"id":"mobile","interaction":"projection-lite+reader+bounded-editor","default_hydration":"projection-lite"},
+    {"id":"cli","interaction":"commands+json+receipts","default_hydration":"reader"},
+    {"id":"chat","interaction":"natural-language+generative-ui+proposed-deltas","default_hydration":"reader"},
+    {"id":"api","interaction":"typed-capability-calls","default_hydration":"custom"},
+    {"id":"node","interaction":"signed-peer-capabilities","default_hydration":"distributed"}
+  ]
+}

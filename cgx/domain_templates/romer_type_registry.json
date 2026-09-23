@@ -1,0 +1,128 @@
+{
+  "schema": "CGX-ROMER-TYPE-REGISTRY/0.1",
+  "domain": "romer",
+  "status": "review-blueprint",
+  "rule": "Types extend CGX-IR semantic_type. Workbook sheets/files are source representations, not types.",
+  "groups": {
+    "engineering": [
+      "system",
+      "system-family",
+      "subsystem",
+      "assembly",
+      "component",
+      "part",
+      "interface",
+      "port",
+      "function",
+      "requirement",
+      "constraint",
+      "parameter",
+      "configuration",
+      "revision",
+      "build",
+      "variant",
+      "operating-mode",
+      "material",
+      "process",
+      "process-step",
+      "environment",
+      "load-case"
+    ],
+    "programme": [
+      "programme",
+      "project",
+      "work-package",
+      "milestone",
+      "gate",
+      "decision",
+      "task",
+      "dependency",
+      "risk",
+      "hazard",
+      "failure-mode",
+      "mitigation",
+      "issue",
+      "change-request",
+      "acceptance-criterion"
+    ],
+    "mission_logistics": [
+      "mission",
+      "mission-phase",
+      "vehicle",
+      "payload",
+      "route",
+      "trajectory",
+      "target-body",
+      "site",
+      "facility",
+      "corridor",
+      "transport-leg",
+      "supply-chain-node",
+      "inventory-item",
+      "service"
+    ],
+    "enterprise": [
+      "organisation",
+      "team",
+      "person",
+      "role",
+      "credential",
+      "competency",
+      "supplier",
+      "laboratory",
+      "institution",
+      "contract",
+      "licence",
+      "ip-asset",
+      "funding-route",
+      "cost-model"
+    ],
+    "evidence": [
+      "claim",
+      "source",
+      "evidence-item",
+      "test",
+      "test-run",
+      "measurement",
+      "simulation",
+      "model",
+      "scenario",
+      "equation",
+      "dataset",
+      "instrument",
+      "calibration",
+      "uncertainty-model",
+      "standard",
+      "review",
+      "receipt"
+    ],
+    "publication": [
+      "representation",
+      "view",
+      "dashboard",
+      "dossier",
+      "brief",
+      "figure",
+      "web-route",
+      "release-package"
+    ]
+  },
+  "pilot_additions": [
+    {
+      "type": "failure-mode",
+      "basis": "Mark III FMEA"
+    },
+    {
+      "type": "environment",
+      "basis": "Mark III Mission/Environment matrix"
+    },
+    {
+      "type": "process-step",
+      "basis": "Mark III Sample Process/Evidence Flow"
+    },
+    {
+      "type": "scenario",
+      "basis": "Mark III/RFS scenario analysis"
+    }
+  ]
+}

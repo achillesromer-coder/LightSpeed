@@ -1,0 +1,16 @@
+{
+  "schema_version":"0.1",
+  "intake":{
+    "default_commit":"never-on-drop",
+    "accepted":["file","folder","url","api","message","dataset","cgx-child","provider-reference"],
+    "storage_modes":["EMBED","REFERENCE","TRACK","PIN","SESSION-CACHE","SEMANTIC-DERIVATIVE"],
+    "recommendation_fields":["detected_type","likely_owner","semantic_overlap","existing_authority","security","recommended_actions"],
+    "actions":["review","commit-selected","open-temporary-workspace","keep-separate","ignore"],
+    "must_preserve":["source_identity","revision-or-hash","provenance","applicable-security"]
+  },
+  "output":{
+    "representations":["pdf","docx","xlsx","pptx","csv","json","svg","png","jpg","step","fcstd","obj","glb","html","cgx"],
+    "required_receipt_fields":["source_object_ids","state_or_content_root","lens","evidence_ceiling","excluded_classifications","renderer","timestamp","hash","release_authority"],
+    "rule":"Outputs are reproducible projections; they never become semantic authority by generation alone."
+  }
+}

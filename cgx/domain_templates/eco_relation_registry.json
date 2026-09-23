@@ -1,0 +1,232 @@
+{
+  "schema": "CGX-ECO-RELATION-REGISTRY/0.1",
+  "domain": "eco",
+  "extends": "CGX-RELATION-QUALIFIER/0.1",
+  "families": {
+    "spatial": [
+      {
+        "id": "OCCURS_AT"
+      },
+      {
+        "id": "WITHIN"
+      },
+      {
+        "id": "ADJACENT_TO",
+        "symmetric": true
+      },
+      {
+        "id": "CONNECTED_TO",
+        "symmetric": true
+      },
+      {
+        "id": "UPSTREAM_OF",
+        "inverse": "DOWNSTREAM_OF"
+      },
+      {
+        "id": "DOWNSTREAM_OF",
+        "inverse": "UPSTREAM_OF"
+      },
+      {
+        "id": "DRAINS_TO"
+      }
+    ],
+    "biogeographic": [
+      {
+        "id": "NATIVE_TO"
+      },
+      {
+        "id": "ENDEMIC_TO"
+      },
+      {
+        "id": "INTRODUCED_AT"
+      },
+      {
+        "id": "MIGRATES_THROUGH"
+      },
+      {
+        "id": "USES_HABITAT"
+      }
+    ],
+    "trophic": [
+      {
+        "id": "FEEDS_ON"
+      },
+      {
+        "id": "PREYS_ON"
+      },
+      {
+        "id": "GRAZES"
+      },
+      {
+        "id": "DECOMPOSES"
+      },
+      {
+        "id": "PROVIDES_FOOD_FOR"
+      }
+    ],
+    "mutualistic": [
+      {
+        "id": "POLLINATES"
+      },
+      {
+        "id": "DISPERSES"
+      },
+      {
+        "id": "SYMBIOTIC_WITH",
+        "symmetric": true
+      },
+      {
+        "id": "FACILITATES"
+      }
+    ],
+    "competitive": [
+      {
+        "id": "COMPETES_WITH",
+        "symmetric": true
+      },
+      {
+        "id": "DISPLACES"
+      },
+      {
+        "id": "INHIBITS"
+      }
+    ],
+    "process": [
+      {
+        "id": "DRIVES"
+      },
+      {
+        "id": "MODIFIES"
+      },
+      {
+        "id": "CONTRIBUTES_TO"
+      },
+      {
+        "id": "DEPENDS_ON"
+      },
+      {
+        "id": "RESPONDS_TO"
+      }
+    ],
+    "pressure": [
+      {
+        "id": "AFFECTED_BY"
+      },
+      {
+        "id": "THREATENED_BY"
+      },
+      {
+        "id": "TOLERATES"
+      },
+      {
+        "id": "SENSITIVE_TO"
+      },
+      {
+        "id": "INDICATES"
+      }
+    ],
+    "intervention": [
+      {
+        "id": "RESTORES",
+        "rule": "effect claim requires evidence/limitation scope"
+      },
+      {
+        "id": "MODIFIES"
+      },
+      {
+        "id": "INTRODUCED_BY"
+      },
+      {
+        "id": "TREATED_BY"
+      },
+      {
+        "id": "MITIGATED_BY"
+      },
+      {
+        "id": "TARGETS"
+      }
+    ],
+    "monitoring": [
+      {
+        "id": "OBSERVED_BY"
+      },
+      {
+        "id": "SAMPLED_BY"
+      },
+      {
+        "id": "MEASURED_BY"
+      },
+      {
+        "id": "MONITORED_BY"
+      },
+      {
+        "id": "DETECTED_BY"
+      }
+    ],
+    "evidence": [
+      {
+        "id": "EVIDENCED_BY"
+      },
+      {
+        "id": "DERIVED_FROM"
+      },
+      {
+        "id": "SUPPORTED_BY"
+      },
+      {
+        "id": "CONTRADICTED_BY"
+      }
+    ],
+    "succession": [
+      {
+        "id": "SUCCEEDS"
+      },
+      {
+        "id": "TRANSITIONS_TO"
+      },
+      {
+        "id": "RECRUITED_FROM"
+      },
+      {
+        "id": "PROPAGATED_FROM"
+      }
+    ],
+    "governance": [
+      {
+        "id": "MANAGED_BY"
+      },
+      {
+        "id": "PERMITTED_BY"
+      },
+      {
+        "id": "RESTRICTED_BY"
+      },
+      {
+        "id": "REVIEWED_BY"
+      }
+    ]
+  },
+  "common_qualifiers": [
+    "site_id",
+    "geometry_ref",
+    "timestamp",
+    "season",
+    "life_stage",
+    "taxonomic_confidence",
+    "interaction_strength",
+    "direction",
+    "method",
+    "detection_limit",
+    "uncertainty",
+    "epistemic_state",
+    "source_refs",
+    "evidence_refs",
+    "observer_or_instrument"
+  ],
+  "hard_rules": [
+    "absence of observation is not evidence of absence unless method/detection context supports it",
+    "historical observation is immutable; later state estimates do not supersede the observation",
+    "taxon identity and local population identity remain distinct",
+    "intervention and response are separate objects/relations"
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "schema": "CGX-COGNIGREX-PARENT-TOPOLOGY/0.1",
+  "status": "review-blueprint",
+  "root": {
+    "file": "Cognigrex.cgx",
+    "display": "Cognigrex",
+    "role": "living parent filespace / semantic filebase / cross-domain resolver",
+    "namespace": "cgx://romer.industries",
+    "authority_rule": "parent-coordinates-cross-domain-identity-and-resolution; child-domains-retain-scoped-semantic-authority",
+    "children": [
+      {
+        "id": "romer",
+        "file": "Romer.cgx",
+        "display": "Römer Industries",
+        "intelligence": "Römer-Grex",
+        "principal_agent": "Neo",
+        "role": "engineering / mission / enterprise / terrestrial systems domain",
+        "composition_default": "TRACK"
+      },
+      {
+        "id": "eco",
+        "file": "Eco.cgx",
+        "display": "Eco-X / Eco-Grex",
+        "intelligence": "Eco-Grex",
+        "principal_agent": "Athene",
+        "role": "ecology / restoration / living systems domain",
+        "composition_default": "TRACK"
+      },
+      {
+        "id": "emassc",
+        "file": "EMASSC.cgx",
+        "display": "EMASSC",
+        "principal_agent": "Achilles",
+        "role": "research / validation / methods / standards / systems R&D domain",
+        "composition_default": "TRACK",
+        "children": [
+          {
+            "id": "lightspeed",
+            "file": "LS.cgx",
+            "display": "LightSpeed / EMC²",
+            "role": "neutral execution, computation, host/device/network runtime and complete LightSpeed/EMC² systems",
+            "composition_default": "TRACK",
+            "note": "LS.cgx is the executable/runtime child of EMASSC.cgx, not a fourth peer domain by default."
+          }
+        ]
+      }
+    ]
+  },
+  "shared_root_services": [
+    {
+      "id": "ccc",
+      "location": "Cognigrex.cgx:/ccc",
+      "future_namespace": "cgx://CCC",
+      "role": "shared capability/package mechanism available across child filespaces",
+      "rule": "one CCC model; internal component plus future external community registry"
+    },
+    {
+      "id": "identity",
+      "location": "Cognigrex.cgx:/identity",
+      "role": "cross-filespace Object_ID, namespace, alias and relation resolution"
+    },
+    {
+      "id": "cross_domain_graph",
+      "location": "Cognigrex.cgx:/graph",
+      "role": "typed bridge edges only; never duplicate child-owned state"
+    },
+    {
+      "id": "lenses",
+      "location": "Cognigrex.cgx:/lenses",
+      "role": "cross-domain/admission-aware views"
+    },
+    {
+      "id": "representations",
+      "location": "Cognigrex.cgx:/representations",
+      "role": "generated multi-domain projections and receipts"
+    },
+    {
+      "id": "archive_dbr",
+      "location": "Cognigrex.cgx:/archive-dbr",
+      "role": "parent-level cross-domain mutation and composition lineage"
+    }
+  ],
+  "invariants": [
+    "Cognigrex is the proper noun for the complete living parent filespace/intelligence architecture.",
+    "Römer-Grex, Eco-Grex and LightSpeed/EMC² are tailored child systems, not alternate names for Cognigrex.",
+    "Child domain authority does not become parent authority merely because the child is mounted.",
+    "Cross-domain links reference child objects by stable identity; state is not copied for convenience.",
+    "Runtime evidence such as leases, heartbeats, host conformance runs and transient app handoffs remains Host-local unless explicitly promoted.",
+    "CCC is shared at the parent/kernel layer rather than duplicated inside each sister.",
+    "EMASSC.cgx owns scientific/governance/methods context; LS.cgx owns execution/runtime semantics.",
+    "A child may later be EMBED, TRACK, PIN or REFERENCE according to deployment/security needs without changing its semantic identity."
+  ],
+  "cross_domain_examples": [
+    "Romer.cgx/M1 engineering geometry -> typed bridge -> Eco.cgx/site ecological baseline",
+    "Romer.cgx/Mark III requirement -> validation request -> EMASSC.cgx/test method",
+    "EMASSC.cgx/test method -> executed_by -> LS.cgx/Python or device capability",
+    "Eco.cgx/field observation -> acquired_by -> LS.cgx/device/sensor runtime",
+    "LS.cgx/result receipt -> evidences -> child-domain claim without becoming that domain's semantic owner"
+  ]
+}

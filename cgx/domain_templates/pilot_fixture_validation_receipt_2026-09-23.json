@@ -1,0 +1,56 @@
+{
+  "schema": "CGX-PILOT-FIXTURE-PROOF-POINTER/0.1",
+  "status": "PASS_WITH_BOUNDED_WARNINGS",
+  "date": "2026-09-23",
+  "fixture_bundle": {
+    "drive_file_id": "1WzBxSMtc8-IDMVgPhu9g6_xHF_xFBl4s",
+    "drive_path": "/Google Drive/CGX/Validation/Semantic Fixtures 2026-09-23/CGX_Pilot_Semantic_Fixture_Proof_2026-09-23.zip",
+    "sha256": "73acd97795b97648f072ab5b1fbebdb70d672e970a051cd45db9ee6153ad4402"
+  },
+  "source_hashes": {
+    "mark3": "fab23970e80c016a2140ec0f87c1d0d7e15c365190fdacb5dc2ee2a1c2a81075",
+    "eco": "f1cf7a5d3a2e463881cd5389d265d0b70f1b56f849d87da70c57697b75b61d0b",
+    "rfs_emff": "1cc3f421ed128186b1ab018f7af8eda27bc30572b21bc8b8a1d2bada91c9a58f"
+  },
+  "proof": {
+    "fixtures": 3,
+    "failures": 0,
+    "warnings": 2,
+    "warning_scope": [
+      "RFS synthetic resonance_index numeric-sanity review",
+      "RFS synthetic response_score numeric-sanity review"
+    ],
+    "warning_effect": "no physical/empirical claim promotion"
+  },
+  "projection_hashes": {
+    "mark3": {
+      "tree": "99288ac3121fa3b71e9cfd6c2c177c70c72faaa06ee0a207b7af296b8df27b33",
+      "graph": "396d526c37ff13ca3d19d6363af1e92d3215847b47b799532b11b074e51788e9",
+      "inspector": "d37aefd34723be16fe4c1267702fea7f07978439fefc21b8471eef4212a0aa35",
+      "engineering": "2bc81e7a3d33e1bf432807fed877e099aecbc6b4ccc02e6f7eff3283e62f778d",
+      "twin_gated": "95f9f4dd52f08b195a7c4e10f3fcd044fa139b5661b8978645e724258604f71b"
+    },
+    "eco": {
+      "tree": "edab5c279f260b621bdc3140a2c013aa8d4b26f0d17ba9260d490300e3bae209",
+      "graph": "9d223e3b600883526eb7a057023c898d9a546598405dc97cd35d5b12b5a22744",
+      "inspector": "3dfecc7b66ad4c8f473a441c974c51a32a1880337bc4c87f86580919a058f6b2",
+      "restoration": "35efc680ccaed7df9b0b986f1e14c6854be0bdde7288bf6cf5d8a914c751a27a",
+      "map_gated": "42f69918fffd70a7d49b4a1fb9f257244853865701b2f41d452419a159285ae4"
+    },
+    "rfs_emff": {
+      "tree": "ecf294136b193589f1877f50df820ecc70bce92353c2cb41b5b566e3d77dd698",
+      "graph": "e8dc19bbd6a0803e72ee916aa8f299be1f4fa239275cf74fa3d7add698da8b4f",
+      "inspector": "1cc96b92512e41e33739246a7b5b1868ba1ff8bac48a161771431beb5ec0b809",
+      "protocol": "07f8b41acd99cedccde3e5cc317367e143068b21466fb8e603a6b13803fca08f",
+      "runtime_gated": "ab2d61bff847b0ea5cb276a70a5a75bf0b74c16bc436eee2a2db761414ab2c34"
+    }
+  },
+  "current_authority_boundary": {
+    "recovery": "S91/v1.61 is durably present in Recovery as exact accepted bytes",
+    "recovery_file_id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR",
+    "recovery_sha256": "1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
+    "later_validation": null,
+    "rule": "child generation may seed only from the exact verified S91 Recovery carrier or a later independently promoted Recovery state"
+  },
+  "generator_gate": "RELEASED_FOR_FULL_PACKAGE_BUILD_AGAINST_EXACT_S91_RECOVERY; require template validator PASS, post-install verifier PASS and packed-reopen verifier PASS for every child before first-file intake"
+}

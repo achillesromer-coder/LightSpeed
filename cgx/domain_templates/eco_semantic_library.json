@@ -1,0 +1,329 @@
+{
+  "schema": "CGX-ECO-SEMANTIC-LIBRARY/0.1",
+  "status": "review-blueprint",
+  "domain": "eco",
+  "filespace": "Eco.cgx",
+  "principle": "living ecological place-process-intervention graph; observations are temporal and append-only",
+  "layers": {
+    "library": {
+      "purpose": "Reusable ecological concepts, taxonomies, measurement schemas and intervention templates.",
+      "namespaces": {
+        "place": [
+          "bioregion",
+          "catchment",
+          "subcatchment",
+          "waterbody",
+          "river-reach",
+          "reef",
+          "wetland",
+          "site",
+          "habitat-patch",
+          "corridor",
+          "management-unit",
+          "sampling-station",
+          "deployment-zone"
+        ],
+        "biota": [
+          "taxon",
+          "species",
+          "population",
+          "cohort",
+          "guild",
+          "community",
+          "flora",
+          "fauna",
+          "fungi",
+          "microbiome",
+          "seed",
+          "spore",
+          "propagule",
+          "indicator-taxon",
+          "keystone-taxon",
+          "invasive-taxon"
+        ],
+        "ecology_process": [
+          "succession",
+          "germination",
+          "recruitment",
+          "mortality",
+          "decomposition",
+          "nutrient-cycle",
+          "nitrogen-fixation",
+          "pollination",
+          "dispersal",
+          "predation",
+          "competition",
+          "symbiosis",
+          "hydrology",
+          "erosion",
+          "sedimentation",
+          "water-quality-process",
+          "carbon-cycle"
+        ],
+        "pressure": [
+          "pollution",
+          "habitat-loss",
+          "fragmentation",
+          "heat",
+          "drought",
+          "flood",
+          "salinity",
+          "erosion",
+          "invasive-pressure",
+          "disease",
+          "biosecurity-risk",
+          "light",
+          "noise",
+          "human-disturbance"
+        ],
+        "intervention": [
+          "bio-block",
+          "substrate",
+          "seed-mix",
+          "slurry",
+          "misting",
+          "brown-waste-input",
+          "habitat-structure",
+          "restoration-treatment",
+          "exclusion",
+          "revegetation",
+          "monitoring-treatment",
+          "adaptive-action"
+        ],
+        "observation": [
+          "field-observation",
+          "sample",
+          "transect",
+          "quadrat",
+          "sensor-reading",
+          "water-sample",
+          "soil-sample",
+          "edna-sample",
+          "remote-sensing-observation",
+          "photo-point",
+          "survey",
+          "lab-result"
+        ],
+        "experiment": [
+          "study",
+          "treatment",
+          "control",
+          "replicate",
+          "exposure",
+          "response",
+          "endpoint",
+          "acceptance-criterion"
+        ],
+        "governance": [
+          "jurisdiction",
+          "land-manager",
+          "permit",
+          "biosecurity-control",
+          "ethics-control",
+          "site-access",
+          "community-engagement",
+          "traditional-knowledge-reference",
+          "release-gate"
+        ]
+      }
+    },
+    "graph": {
+      "purpose": "Persistent living graph of places, organisms, processes, interventions and relationships.",
+      "roots": [
+        "places-landscapes",
+        "taxa-populations-communities",
+        "ecological-processes",
+        "pressures-threats",
+        "interventions-restoration",
+        "monitoring-observations",
+        "experiments-validation",
+        "governance-stewardship",
+        "education-participation",
+        "publications"
+      ],
+      "canonical_intervention_families": [
+        "embedded-bio-blocks",
+        "second-cycle"
+      ]
+    },
+    "state": {
+      "purpose": "Time-indexed ecological condition rather than configuration replacement.",
+      "pattern": "Entity/Place -> Observation/Event -> StateEstimate -> Trend -> Intervention -> Response",
+      "state_objects": [
+        "baseline",
+        "state-estimate",
+        "condition",
+        "trend",
+        "target-state",
+        "reference-condition",
+        "counterfactual",
+        "seasonal-state",
+        "disturbance-event",
+        "recovery-state"
+      ]
+    },
+    "evidence": {
+      "purpose": "Append-only observations, samples and analyses; raw observations remain immutable.",
+      "pattern": "Observation/Sample -> Analysis -> StateEstimate/Claim -> Review",
+      "rules": [
+        "observation-is-not-overwritten-by-later-state",
+        "absence-of-observation-is-not-proof-of-absence",
+        "site-and-time-context-required",
+        "taxonomic-confidence-first-class",
+        "measurement-method-and-detection-limit-first-class",
+        "intervention-effect-needs-comparator-or-explicit-observational-limit"
+      ]
+    },
+    "work": {
+      "purpose": "Adaptive management and unresolved ecological questions.",
+      "classes": [
+        "objective",
+        "management-action",
+        "monitoring-plan",
+        "sampling-plan",
+        "unknown",
+        "hypothesis",
+        "risk",
+        "biosecurity-gate",
+        "permit-gate",
+        "decision",
+        "review-trigger"
+      ]
+    },
+    "views": {
+      "purpose": "Derived ecological maps, dashboards, dossiers and public-safe representations.",
+      "examples": [
+        "site-map",
+        "species-map",
+        "food-web",
+        "water-quality-dashboard",
+        "restoration-twin",
+        "field-pack",
+        "dossier"
+      ]
+    }
+  },
+  "relation_families": {
+    "spatial": [
+      "OCCURS_AT",
+      "WITHIN",
+      "ADJACENT_TO",
+      "CONNECTED_TO",
+      "UPSTREAM_OF",
+      "DOWNSTREAM_OF",
+      "DRAINS_TO"
+    ],
+    "biogeographic": [
+      "NATIVE_TO",
+      "ENDEMIC_TO",
+      "INTRODUCED_AT",
+      "MIGRATES_THROUGH",
+      "USES_HABITAT"
+    ],
+    "trophic": [
+      "FEEDS_ON",
+      "PREYS_ON",
+      "GRAZES",
+      "DECOMPOSES",
+      "PROVIDES_FOOD_FOR"
+    ],
+    "mutualistic": [
+      "POLLINATES",
+      "DISPERSES",
+      "SYMBIOTIC_WITH",
+      "FACILITATES"
+    ],
+    "competitive": [
+      "COMPETES_WITH",
+      "DISPLACES",
+      "INHIBITS"
+    ],
+    "process": [
+      "DRIVES",
+      "MODIFIES",
+      "CONTRIBUTES_TO",
+      "DEPENDS_ON",
+      "RESPONDS_TO"
+    ],
+    "pressure": [
+      "AFFECTED_BY",
+      "THREATENED_BY",
+      "TOLERATES",
+      "SENSITIVE_TO",
+      "INDICATES"
+    ],
+    "intervention": [
+      "RESTORES",
+      "MODIFIES",
+      "INTRODUCED_BY",
+      "TREATED_BY",
+      "MITIGATED_BY",
+      "TARGETS"
+    ],
+    "monitoring": [
+      "OBSERVED_BY",
+      "SAMPLED_BY",
+      "MEASURED_BY",
+      "MONITORED_BY",
+      "DETECTED_BY"
+    ],
+    "evidence": [
+      "EVIDENCED_BY",
+      "DERIVED_FROM",
+      "SUPPORTED_BY",
+      "CONTRADICTED_BY"
+    ],
+    "succession": [
+      "SUCCEEDS",
+      "TRANSITIONS_TO",
+      "RECRUITED_FROM",
+      "PROPAGATED_FROM"
+    ],
+    "governance": [
+      "MANAGED_BY",
+      "PERMITTED_BY",
+      "RESTRICTED_BY",
+      "REVIEWED_BY"
+    ]
+  },
+  "relation_qualifiers": [
+    "site_id",
+    "geometry_ref",
+    "timestamp",
+    "season",
+    "life_stage",
+    "taxonomic_confidence",
+    "interaction_strength",
+    "direction",
+    "method",
+    "detection_limit",
+    "uncertainty",
+    "evidence_state",
+    "source_ref",
+    "observer_or_instrument"
+  ],
+  "inheritance": {
+    "taxonomy": "taxonomic traits may inherit only where scientifically valid and explicitly modelled",
+    "spatial": "place hierarchy may provide environmental context but not overwrite site observations",
+    "authority": "jurisdiction/owner scoped; never inferred from geography alone",
+    "security": "strongest-applicable",
+    "evidence": "no ecological claim inherits proof solely from a related species/site",
+    "temporal": "latest state does not supersede historical observations"
+  },
+  "semantic_expansion_rules": [
+    "Prefer adding taxa, interaction or process types to controlled registries rather than creating new top-level structures.",
+    "Every field observation is immutable and time/place bound.",
+    "Species/taxon identity is separate from local population and local observation.",
+    "Intervention object is separate from ecological response object.",
+    "A site may hold multiple simultaneous state estimates from different methods; reconciliation creates a reviewed estimate without deleting originals.",
+    "New restoration families become child libraries only when they have reusable composition/process/test vocabulary."
+  ],
+  "source_mapping_examples": {
+    "Type 1 Eco-Grex": "domain graph + governance + evidence",
+    "Embedded Bio Blocks": "intervention family + experiment + monitoring",
+    "Second Cycle": "intervention family + water/ecology process + monitoring",
+    "M1/SEQLD ecological interfaces": "cross-domain references to Romer.cgx, not duplicated engineering state",
+    "field datasets": "observation/evidence objects",
+    "public ecology materials": "derived views only"
+  }
+}

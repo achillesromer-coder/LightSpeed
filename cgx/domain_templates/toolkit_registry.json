@@ -1,0 +1,20 @@
+{
+  "schema_version":"0.1",
+  "secrets_policy":"references-only-no-secret-bytes",
+  "extensible":true,
+  "toolkits":[
+    {"id":"cgx-core","kind":"base","binding":"master-hydration","capabilities":["filespace","db-r","security","routing","host","ccc"]},
+    {"id":"lightspeed","kind":"runtime","binding":"local-or-distributed","capabilities":["compute-routing","jobs","receipts","local-llm","remote-llm","tools"]},
+    {"id":"openai","kind":"api","binding":"optional","api_style":"responses","credential_ref":"env:OPENAI_API_KEY","capabilities":["reasoning","vision","tool-use","structured-output"],"secret_in_carrier":false},
+    {"id":"local-llm","kind":"runtime","binding":"optional","credential_ref":null,"capabilities":["private-reasoning","offline-reasoning"]},
+    {"id":"google-drive","kind":"provider","binding":"oauth-or-provider-managed","capabilities":["read","range-read","bounded-write","native-docs","native-sheets","native-slides","file-lifecycle"]},
+    {"id":"github","kind":"provider","binding":"oauth-or-token-ref","credential_ref":"provider-managed-or-env:GITHUB_TOKEN","capabilities":["code","branches","tests","issues","pull-requests","commits"]},
+    {"id":"python","kind":"local-tool","binding":"host","capabilities":["analysis","simulation","conversion","automation"]},
+    {"id":"freecad","kind":"desktop-tool","binding":"host","capabilities":["cad","step","fcstd","geometry","bom"]},
+    {"id":"web","kind":"provider","binding":"network","capabilities":["research","public-evidence","urls"]},
+    {"id":"email","kind":"provider","binding":"oauth","capabilities":["draft","attachment-package","send-gated"]},
+    {"id":"calendar","kind":"provider","binding":"oauth","capabilities":["read","schedule-gated"]},
+    {"id":"ccc","kind":"package-registry","binding":"cgx-native","capabilities":["discover","plan","verify","apply","unapply","receipts"]}
+  ],
+  "extension_contract":{"add_provider":true,"add_tool":true,"add_api":true,"add_skill":true,"scope_to_region_or_object":true}
+}

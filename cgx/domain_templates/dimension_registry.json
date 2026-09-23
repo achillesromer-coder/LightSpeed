@@ -1,0 +1,19 @@
+{
+  "schema_version":"0.1",
+  "extensible":true,
+  "registry_mode":"N-dimensional",
+  "dimensions":[
+    {"id":"security","values":["open","controlled","closed","secret","encrypted"],"inheritance":"strongest-applicable"},
+    {"id":"visibility","values":["public","external-controlled","collaborator","internal","restricted","operator"],"inheritance":"strongest-applicable"},
+    {"id":"authority","values":["unclassified","derived","reviewed","owner","canonical"],"inheritance":"explicit-promotion"},
+    {"id":"evidence","values":["conceptual","source-derived","modelled","test-plan","bench","field","externally-validated"],"inheritance":"no-auto-promotion"},
+    {"id":"lifecycle","values":["draft","active","frozen","superseded","archived"],"inheritance":"object-specific"},
+    {"id":"ai-access","values":["allowed","local-only","approved-provider-only","no-external-ai","no-ai"],"inheritance":"strongest-applicable"},
+    {"id":"sharing","values":["open-source","open-use","open-shared","controlled-share","closed-project","secret-project"],"inheritance":"strongest-applicable"},
+    {"id":"export","values":["allowed","derivative-only","no-export"],"inheritance":"strongest-applicable"},
+    {"id":"network","values":["offline","local","lan","organisation","internet"],"inheritance":"policy"},
+    {"id":"residency","values":["device","local-network","organisation","country-bound","provider-bound"],"inheritance":"policy"},
+    {"id":"licence","values":["open","internal","collaboration","proprietary","restricted"],"inheritance":"object-specific"}
+  ],
+  "extension_contract":{"allow_add_dimension":true,"allow_add_label":true,"allow_custom_validation":true,"allow_scope_to_object_field_tool_workflow_session":true}
+}

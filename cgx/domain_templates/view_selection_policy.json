@@ -1,0 +1,117 @@
+{
+  "schema": "CGX-VIEW-SELECTION-POLICY/0.1",
+  "status": "review-blueprint",
+  "base_contracts": [
+    "CGX-Lens/0.1",
+    "CGX-MultiView-Workspace/0.1",
+    "CGX-SEMANTIC-VIEW-LENS-REGISTRY/0.1"
+  ],
+  "principle": "View choice is deterministic/policy-constrained presentation over canonical semantics; it is not a semantic mutation.",
+  "inputs_in_priority_order": [
+    "security_and_admission",
+    "task_intent",
+    "active_object_domain_and_type",
+    "work_mode",
+    "device_hydration_capability",
+    "role_or_audience",
+    "saved_profile_preferences",
+    "session_override"
+  ],
+  "hard_constraints": [
+    "never show data outside admission/security lease",
+    "never raise evidence ceiling because a public/investor/operator lens prefers certainty",
+    "device constraints may reduce fidelity, not semantic correctness",
+    "user preference cannot override security, authority, evidence or accessibility requirements",
+    "Host-local session state remains outside canonical roots by default"
+  ],
+  "task_mapping": {
+    "browse": [
+      "filespace-tree",
+      "topology-graph"
+    ],
+    "operate": [
+      "hybrid-canonical-cells",
+      "active-object-inspector"
+    ],
+    "engineer": [
+      "active-object-inspector",
+      "twin-3d",
+      "matrix",
+      "topology-graph"
+    ],
+    "ecology": [
+      "map-spatial",
+      "active-object-inspector",
+      "timeline-dbr",
+      "topology-graph"
+    ],
+    "validate": [
+      "evidence-claim",
+      "matrix",
+      "timeline-dbr",
+      "active-object-inspector"
+    ],
+    "runtime": [
+      "network-runtime",
+      "active-object-inspector",
+      "timeline-dbr"
+    ],
+    "audit": [
+      "evidence-claim",
+      "timeline-dbr",
+      "topology-graph",
+      "matrix"
+    ],
+    "publish": [
+      "publication"
+    ],
+    "mobile_quicklook": [
+      "hybrid-canonical-cells",
+      "active-object-inspector"
+    ]
+  },
+  "hybridisation_policy": {
+    "max_primary_views": 1,
+    "secondary_panels_on_demand": true,
+    "combine_if": "complementary dimensions over same stable object set",
+    "examples": [
+      [
+        "twin-3d",
+        "active-object-inspector",
+        "evidence-claim"
+      ],
+      [
+        "map-spatial",
+        "timeline-dbr",
+        "topology-graph"
+      ],
+      [
+        "hybrid-canonical-cells",
+        "active-object-inspector"
+      ],
+      [
+        "network-runtime",
+        "timeline-dbr",
+        "evidence-claim"
+      ]
+    ]
+  },
+  "output": {
+    "fields": [
+      "lens_id",
+      "primary_view",
+      "secondary_views",
+      "selected_subgraph",
+      "z_depth",
+      "filters",
+      "units",
+      "layout",
+      "interaction_capabilities",
+      "evidence_ceiling",
+      "security_scope",
+      "hydration_profile",
+      "source_root_binding"
+    ],
+    "canonical_mutation": false
+  }
+}

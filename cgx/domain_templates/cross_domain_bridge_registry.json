@@ -1,0 +1,85 @@
+{
+  "schema": "CGX-CROSS-DOMAIN-BRIDGE-REGISTRY/0.1",
+  "status": "review-blueprint",
+  "location": "Cognigrex.cgx:/graph/bridges",
+  "rule": "Bridge records link stable child-owned identities; they never copy child state or imply parent ownership.",
+  "admission_states": [
+    "proposed",
+    "single-owner-asserted",
+    "counterparty-reviewed",
+    "accepted",
+    "rejected",
+    "superseded"
+  ],
+  "bridge_types": [
+    {
+      "id": "HAS_ECO_INTERFACE",
+      "source_domain": "romer",
+      "target_domain": "eco",
+      "use": "engineering asset/site exposes an ecological interface",
+      "recommended_admission": "counterparty-reviewed"
+    },
+    {
+      "id": "REQUESTS_VALIDATION_METHOD",
+      "source_domain": "romer",
+      "target_domain": "emassc",
+      "recommended_admission": "accepted"
+    },
+    {
+      "id": "METHOD_APPLIES_TO",
+      "source_domain": "emassc",
+      "target_domain": [
+        "romer",
+        "eco"
+      ],
+      "recommended_admission": "counterparty-reviewed"
+    },
+    {
+      "id": "EXECUTED_BY_RUNTIME",
+      "source_domain": [
+        "emassc",
+        "romer",
+        "eco"
+      ],
+      "target_domain": "lightspeed",
+      "recommended_admission": "accepted"
+    },
+    {
+      "id": "PRODUCES_EVIDENCE_INPUT_FOR",
+      "source_domain": "lightspeed",
+      "target_domain": [
+        "emassc",
+        "romer",
+        "eco"
+      ],
+      "rule": "receipt/result is evidence input, not automatic validation",
+      "recommended_admission": "single-owner-asserted"
+    },
+    {
+      "id": "ACQUIRED_BY_RUNTIME",
+      "source_domain": "eco",
+      "target_domain": "lightspeed",
+      "use": "observation/sample/sensor acquisition path"
+    },
+    {
+      "id": "CORRESPONDS_TO",
+      "source_domain": "any",
+      "target_domain": "any",
+      "use": "identity/source reconciliation without semantic-equivalence promotion"
+    },
+    {
+      "id": "DERIVED_FROM_DOMAIN_OBJECT",
+      "source_domain": "any",
+      "target_domain": "any",
+      "use": "cross-domain derivation/provenance"
+    }
+  ],
+  "cross_domain_rules": [
+    "endpoint Object_IDs remain authoritative in their child filespaces",
+    "bridge assertion owner is explicit and may differ from endpoint owners",
+    "consequential bidirectional claims should use counterparty review or dual acceptance",
+    "parent Cognigrex resolves and projects bridges but does not silently edit child state",
+    "a bridge may carry security/admission policy stronger than either public endpoint view",
+    "if relation placement/authority is uncertain create Frontier rather than duplicate objects"
+  ]
+}

@@ -1,0 +1,169 @@
+{
+  "schema": "CGX-ECO-TYPE-REGISTRY/0.2",
+  "domain": "eco",
+  "status": "review-blueprint",
+  "rule": "Taxon identity, local population, observation, intervention and ecological state estimate remain distinct objects.",
+  "groups": {
+    "place": [
+      "bioregion",
+      "catchment",
+      "subcatchment",
+      "waterbody",
+      "river-reach",
+      "reef",
+      "wetland",
+      "site",
+      "habitat-patch",
+      "corridor",
+      "management-unit",
+      "sampling-station",
+      "deployment-zone"
+    ],
+    "biota": [
+      "taxon",
+      "species",
+      "population",
+      "cohort",
+      "guild",
+      "community",
+      "functional-group",
+      "seed",
+      "spore",
+      "propagule",
+      "indicator-taxon",
+      "keystone-taxon",
+      "invasive-taxon"
+    ],
+    "process": [
+      "succession",
+      "germination",
+      "recruitment",
+      "mortality",
+      "decomposition",
+      "nutrient-cycle",
+      "nitrogen-fixation",
+      "pollination",
+      "dispersal",
+      "predation",
+      "competition",
+      "symbiosis",
+      "hydrology",
+      "erosion",
+      "sedimentation",
+      "water-quality-process",
+      "carbon-cycle"
+    ],
+    "pressure": [
+      "pollution",
+      "habitat-loss",
+      "fragmentation",
+      "heat",
+      "drought",
+      "flood",
+      "salinity",
+      "erosion-pressure",
+      "invasive-pressure",
+      "disease",
+      "biosecurity-risk",
+      "light-pressure",
+      "noise-pressure",
+      "human-disturbance"
+    ],
+    "intervention": [
+      "intervention",
+      "bio-block",
+      "recipe",
+      "composition-component",
+      "composition-layer",
+      "production-batch",
+      "substrate",
+      "seed-mix",
+      "slurry",
+      "misting",
+      "brown-waste-input",
+      "habitat-structure",
+      "restoration-treatment",
+      "management-action"
+    ],
+    "observation": [
+      "field-observation",
+      "sample",
+      "transect",
+      "quadrat",
+      "sensor-reading",
+      "water-sample",
+      "soil-sample",
+      "edna-sample",
+      "remote-sensing-observation",
+      "photo-point",
+      "survey",
+      "lab-result",
+      "monitoring-plan",
+      "sampling-plan"
+    ],
+    "experiment": [
+      "study",
+      "hypothesis",
+      "treatment",
+      "control",
+      "replicate",
+      "exposure",
+      "response",
+      "endpoint",
+      "acceptance-criterion",
+      "test"
+    ],
+    "state": [
+      "baseline",
+      "state-estimate",
+      "condition",
+      "trend",
+      "target-state",
+      "reference-condition",
+      "counterfactual",
+      "seasonal-state",
+      "disturbance-event",
+      "recovery-state"
+    ],
+    "governance": [
+      "jurisdiction",
+      "land-manager",
+      "permit",
+      "biosecurity-control",
+      "ethics-control",
+      "site-access",
+      "community-engagement",
+      "traditional-knowledge-reference",
+      "release-gate",
+      "site-assessment",
+      "assessment-criterion",
+      "risk"
+    ]
+  },
+  "pilot_additions": [
+    {
+      "type": "recipe",
+      "basis": "Embedded Bio Blocks composition and field schema"
+    },
+    {
+      "type": "production-batch",
+      "basis": "production process/batch"
+    },
+    {
+      "type": "site-assessment",
+      "basis": "deployment site assessment"
+    },
+    {
+      "type": "assessment-criterion",
+      "basis": "weighted site assessment criteria"
+    },
+    {
+      "type": "functional-group",
+      "basis": "species/functional register"
+    },
+    {
+      "type": "test",
+      "basis": "Embedded Bio Blocks validation/test matrix"
+    }
+  ]
+}

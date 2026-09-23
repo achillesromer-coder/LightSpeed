@@ -1,0 +1,307 @@
+{
+  "schema": "CGX-ROMER-SEMANTIC-LIBRARY/0.1",
+  "status": "review-blueprint",
+  "domain": "romer",
+  "filespace": "Romer.cgx",
+  "principle": "engineering-enterprise-mission graph; configuration-controlled objects and relations",
+  "layers": {
+    "library": {
+      "purpose": "Reusable definitions, vocabularies, types, templates and relation contracts. Definitions are not project state.",
+      "namespaces": {
+        "engineering": [
+          "system",
+          "system-family",
+          "subsystem",
+          "component",
+          "assembly",
+          "part",
+          "interface",
+          "port",
+          "function",
+          "requirement",
+          "constraint",
+          "parameter",
+          "material",
+          "process",
+          "manufacturing-method",
+          "software-module",
+          "control-loop",
+          "sensor",
+          "actuator",
+          "power-source",
+          "storage-device",
+          "network-node"
+        ],
+        "programme": [
+          "programme",
+          "project",
+          "work-package",
+          "milestone",
+          "gate",
+          "decision",
+          "task",
+          "dependency",
+          "risk",
+          "hazard",
+          "mitigation",
+          "issue",
+          "change-request",
+          "acceptance-criterion"
+        ],
+        "mission_logistics": [
+          "mission",
+          "mission-phase",
+          "vehicle",
+          "payload",
+          "route",
+          "trajectory",
+          "target-body",
+          "site",
+          "facility",
+          "corridor",
+          "transport-leg",
+          "supply-chain-node",
+          "inventory-item",
+          "service"
+        ],
+        "enterprise": [
+          "organisation",
+          "team",
+          "person",
+          "role",
+          "credential",
+          "competency",
+          "supplier",
+          "laboratory",
+          "institution",
+          "partner-status",
+          "contract",
+          "licence",
+          "ip-asset",
+          "funding-route",
+          "cost-model"
+        ],
+        "evidence": [
+          "claim",
+          "source",
+          "evidence-item",
+          "test",
+          "run",
+          "measurement",
+          "simulation",
+          "model",
+          "equation",
+          "dataset",
+          "instrument",
+          "calibration",
+          "uncertainty",
+          "standard",
+          "review",
+          "receipt"
+        ],
+        "publication": [
+          "representation",
+          "view",
+          "dashboard",
+          "dossier",
+          "brief",
+          "figure",
+          "web-route",
+          "release-package"
+        ]
+      }
+    },
+    "graph": {
+      "purpose": "Live domain instances and their typed relationships.",
+      "roots": [
+        "systems-products",
+        "infrastructure-sites",
+        "missions-logistics",
+        "programmes-projects",
+        "enterprise-capability",
+        "research-evidence",
+        "economics-legal",
+        "operations",
+        "publications"
+      ],
+      "canonical_system_families": [
+        "mark",
+        "luke",
+        "rfs",
+        "emff",
+        "free-flow",
+        "solar-hull",
+        "intersol",
+        "watchtower",
+        "spaceport",
+        "sai",
+        "terrestrial-infrastructure"
+      ]
+    },
+    "state": {
+      "purpose": "Current configuration and controlled historical states.",
+      "pattern": "Object -> Configuration -> Revision -> OperatingState",
+      "state_objects": [
+        "configuration",
+        "revision",
+        "build",
+        "variant",
+        "baseline",
+        "operating-mode",
+        "readiness-state",
+        "qualification-state",
+        "release-state"
+      ]
+    },
+    "evidence": {
+      "purpose": "Append-only evidence and provenance bound to claims/configurations.",
+      "pattern": "Claim -> EvidenceSet -> Test/Run/Source -> Receipt",
+      "rules": [
+        "simulation-does-not-promote-physical",
+        "provider-execution-does-not-promote-authority",
+        "evidence-bound-to-exact-configuration",
+        "uncertainty-and-limitations-first-class"
+      ]
+    },
+    "work": {
+      "purpose": "Operational intent and unresolved work; never confused with state-of-the-world facts.",
+      "classes": [
+        "objective",
+        "work-package",
+        "task",
+        "gate",
+        "dependency",
+        "unknown",
+        "contradiction",
+        "risk",
+        "decision",
+        "approval",
+        "queue-item"
+      ]
+    },
+    "views": {
+      "purpose": "Derived representations only.",
+      "examples": [
+        "web2",
+        "dashboard",
+        "dossier",
+        "cad-export",
+        "render",
+        "simulation-report",
+        "brief",
+        "social-asset"
+      ]
+    }
+  },
+  "relation_families": {
+    "decomposition": [
+      "PART_OF",
+      "COMPOSED_OF",
+      "HAS_SUBSYSTEM",
+      "HAS_COMPONENT",
+      "HAS_INTERFACE"
+    ],
+    "requirements": [
+      "REQUIRES",
+      "SATISFIES",
+      "VERIFIES",
+      "CONSTRAINED_BY",
+      "ALLOCATED_TO"
+    ],
+    "function": [
+      "PERFORMS",
+      "ENABLES",
+      "INPUT_TO",
+      "OUTPUT_OF",
+      "CONTROLLED_BY",
+      "SENSED_BY"
+    ],
+    "interface": [
+      "CONNECTS_TO",
+      "INTERFACES_WITH",
+      "ROUTES_TO",
+      "TRANSFERS",
+      "COUPLES_TO"
+    ],
+    "programme": [
+      "PART_OF_PROGRAMME",
+      "DELIVERS",
+      "DEPENDS_ON",
+      "BLOCKED_BY",
+      "SUPERSEDES",
+      "IMPLEMENTS"
+    ],
+    "enterprise": [
+      "OWNED_BY",
+      "OPERATED_BY",
+      "SUPPLIED_BY",
+      "MANUFACTURED_BY",
+      "TESTED_BY",
+      "REVIEWED_BY"
+    ],
+    "spatial": [
+      "LOCATED_AT",
+      "DEPLOYED_AT",
+      "TRAVERSES",
+      "SERVES",
+      "TARGETS"
+    ],
+    "evidence": [
+      "CLAIMS",
+      "EVIDENCED_BY",
+      "DERIVED_FROM",
+      "MEASURED_BY",
+      "SIMULATED_BY",
+      "VALIDATED_BY"
+    ],
+    "economics_legal": [
+      "COSTED_BY",
+      "FUNDED_BY",
+      "LICENSED_BY",
+      "PROTECTED_BY",
+      "CONTRACTED_WITH"
+    ],
+    "publication": [
+      "REPRESENTED_BY",
+      "PUBLISHED_AS",
+      "DERIVED_VIEW_OF"
+    ]
+  },
+  "relation_qualifiers": [
+    "configuration_id",
+    "revision",
+    "operating_mode",
+    "interface_id",
+    "load_case",
+    "units",
+    "effective_from",
+    "effective_to",
+    "authority",
+    "evidence_state",
+    "confidence",
+    "source_ref"
+  ],
+  "inheritance": {
+    "structural": "parent definitions may supply defaults; instances override explicitly",
+    "authority": "never inherited implicitly across domain boundaries",
+    "security": "strongest-applicable",
+    "evidence": "never inherited as proof; children require attributable evidence",
+    "configuration": "edges may be configuration-scoped"
+  },
+  "semantic_expansion_rules": [
+    "Prefer new Type_ID or relation subtype over new top-level folder.",
+    "Create a child library only when it has reusable vocabulary, independent authority/security, or its own lifecycle.",
+    "System families are graph roots, not separate schemas.",
+    "A project/programme may reference the same component without duplicating it.",
+    "CAD, spreadsheets, code and reports are representations/providers of semantic objects, not the semantic objects themselves."
+  ],
+  "source_mapping_examples": {
+    "Type 1 Romer Cognigrex": "graph + enterprise + programme + publications",
+    "Type 1 Systems Cognigrex": "engineering library + system-family state + evidence",
+    "Type 1 Operations Cognigrex": "operations + mission/workflow state",
+    "Type1 Asteroid Operating Workbook": "missions-logistics specialist graph",
+    "MPL Engine": "capability/provider + model/run evidence",
+    "M1 Elevated Bypass": "terrestrial infrastructure project graph",
+    "LinkDrive/DataIndex": "source/provenance/provider index"
+  }
+}

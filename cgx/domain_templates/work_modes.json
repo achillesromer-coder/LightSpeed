@@ -1,0 +1,51 @@
+{
+  "schema": "CGX-WORK-MODES/0.1",
+  "orthogonal_to": [
+    "reasoning_depth",
+    "execution_depth",
+    "device_profile",
+    "security_policy"
+  ],
+  "modes": {
+    "auto": {
+      "purpose": "Route bounded work to the best eligible capability/provider under active policy.",
+      "human_gate": "policy-derived",
+      "canonical_write": "only through normal authority/DBR path"
+    },
+    "assisted": {
+      "purpose": "AI proposes next actions, user selects or edits.",
+      "human_gate": "before consequential execution",
+      "canonical_write": "reviewed"
+    },
+    "api": {
+      "purpose": "Provider/API-led workflow for bounded external capabilities.",
+      "human_gate": "scope/config dependent",
+      "canonical_write": "receipt + reconciliation"
+    },
+    "node": {
+      "purpose": "Operate as one local/distributed CGX node using declared device/network capability.",
+      "human_gate": "policy dependent",
+      "canonical_write": "lease/authority constrained"
+    },
+    "code": {
+      "purpose": "Use code/tests/build tools and temporary Git/local surfaces.",
+      "human_gate": "review before protected merge/publish",
+      "canonical_write": "through tested result receipts"
+    },
+    "chat-build": {
+      "purpose": "Build or modify from conversational intent via proposed structured deltas.",
+      "human_gate": "before protected mutation unless profile explicitly permits",
+      "canonical_write": "structured delta + readback"
+    },
+    "review": {
+      "purpose": "Read/compare/audit with mutation disabled by default.",
+      "human_gate": "n/a",
+      "canonical_write": "false by default"
+    },
+    "publish": {
+      "purpose": "Generate controlled representations from an approved source state/lens.",
+      "human_gate": "release policy",
+      "canonical_write": "publication receipt only"
+    }
+  }
+}

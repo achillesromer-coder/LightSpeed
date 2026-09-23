@@ -1,0 +1,39 @@
+{
+  "schema_version": "0.2",
+  "active_providers": [],
+  "templates": [
+    {
+      "id": "cgx-master-current",
+      "capability": "cgx.master.hydration",
+      "locator": "${CGX_MASTER_CARRIER_OR_GATEWAY}",
+      "trust": "verify-from-seed-anchor",
+      "permission": "read",
+      "state": "template"
+    },
+    {
+      "id": "openai",
+      "capability": "llm.remote",
+      "locator": "https://api.openai.com",
+      "credential_ref": "env:OPENAI_API_KEY",
+      "state": "template",
+      "secret_in_carrier": false
+    },
+    {
+      "id": "google-drive",
+      "capability": "provider.files",
+      "locator": "provider-managed",
+      "credential_ref": "oauth/provider-managed",
+      "state": "template",
+      "secret_in_carrier": false
+    },
+    {
+      "id": "github",
+      "capability": "provider.code",
+      "locator": "provider-managed",
+      "credential_ref": "oauth/provider-managed-or-env:GITHUB_TOKEN",
+      "state": "template",
+      "secret_in_carrier": false
+    }
+  ],
+  "rule": "Templates do not become active providers until binding, permission and verification succeed; provider availability never establishes semantic authority."
+}

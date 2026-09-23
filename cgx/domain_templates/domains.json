@@ -1,0 +1,198 @@
+{
+  "schema": "CGX-DOMAIN-TEMPLATES/0.2",
+  "namespace_status": "provisional-unbound",
+  "domains": {
+    "romer": {
+      "file": "Romer.cgx",
+      "display": "Römer Industries",
+      "intelligence": "Römer-Grex",
+      "principal_agent": "Neo",
+      "namespace": "cgx://romer.industries/romer",
+      "modules": [
+        "mission",
+        "mark-luke",
+        "rfs",
+        "emff",
+        "free-flow",
+        "solar-hull",
+        "intersol",
+        "watchtower",
+        "spaceport",
+        "terrestrial",
+        "australian-capacity",
+        "operations",
+        "economics",
+        "outreach"
+      ],
+      "semantic_library": "romer_semantic_library.json",
+      "type_registry": "romer_type_registry.json",
+      "relation_registry": "romer_relation_registry.json",
+      "default_views": [
+        "apex-pillar-programme",
+        "filespace-tree",
+        "topology-graph",
+        "active-object-inspector",
+        "twin-3d",
+        "matrix",
+        "evidence-claim"
+      ]
+    },
+    "eco": {
+      "file": "Eco.cgx",
+      "display": "Eco-X / Eco-Grex",
+      "intelligence": "Eco-Grex",
+      "principal_agent": "Athene",
+      "namespace": "cgx://romer.industries/eco",
+      "modules": [
+        "ecology",
+        "sites",
+        "species",
+        "flora-fauna",
+        "regeneration",
+        "bio-blocks",
+        "second-cycle",
+        "materials",
+        "monitoring",
+        "infrastructure-interface",
+        "education"
+      ],
+      "semantic_library": "eco_semantic_library.json",
+      "type_registry": "eco_type_registry.json",
+      "relation_registry": "eco_relation_registry.json",
+      "default_views": [
+        "apex-pillar-programme",
+        "map-spatial",
+        "topology-graph",
+        "active-object-inspector",
+        "timeline-dbr",
+        "evidence-claim"
+      ]
+    },
+    "emassc": {
+      "file": "EMASSC.cgx",
+      "display": "EMASSC",
+      "principal_agent": "Achilles",
+      "namespace": "cgx://romer.industries/emassc",
+      "modules": [
+        "research",
+        "measurement",
+        "validation",
+        "standards",
+        "ip",
+        "test-design",
+        "materials",
+        "systems-engineering",
+        "collaboration",
+        "filespace-governance",
+        "methods",
+        "publication-review"
+      ],
+      "semantic_library": "emassc_lightspeed_semantic_library.json",
+      "type_registry": "emassc_ls_type_registry.json",
+      "relation_registry": "emassc_ls_relation_registry.json",
+      "default_views": [
+        "active-object-inspector",
+        "evidence-claim",
+        "matrix",
+        "timeline-dbr",
+        "topology-graph"
+      ],
+      "children": {
+        "lightspeed": {
+          "file": "LS.cgx",
+          "role": "LightSpeed/EMC² execution-runtime child",
+          "authority_rule": "runtime receipts are evidence inputs, not automatic semantic validation",
+          "default_views": [
+            "network-runtime",
+            "topology-graph",
+            "active-object-inspector",
+            "timeline-dbr"
+          ]
+        }
+      }
+    }
+  },
+  "shared_layout": [
+    "identity",
+    "governance",
+    "security",
+    "sources",
+    "evidence",
+    "integrations",
+    "capabilities",
+    "workflows",
+    "queue",
+    "lenses",
+    "representations",
+    "publications",
+    "preferences",
+    "temporary",
+    "archive-dbr"
+  ],
+  "extensible_dimensions": [
+    "security",
+    "visibility",
+    "authority",
+    "evidence",
+    "lifecycle",
+    "ai-access",
+    "sharing",
+    "export",
+    "network",
+    "residency",
+    "licence"
+  ],
+  "credential_policy": "secret-reference-only",
+  "parent_filespace": {
+    "file": "Cognigrex.cgx",
+    "role": "living-parent-filebase-and-cross-domain-resolver",
+    "shared_kernel": [
+      "CGX-IR",
+      "DBR",
+      "Frontier/Overlay/Resolve",
+      "security/admission",
+      "CCC",
+      "cross-domain bridges"
+    ]
+  },
+  "shared_contracts": {
+    "universal_object_extension": "universal_object_extension_contract.json",
+    "relation_qualifiers": "relation_qualifier_contract.json",
+    "cross_domain_bridges": "cross_domain_bridge_registry.json",
+    "semantic_views": "semantic_view_lens_registry.json",
+    "view_selection": "view_selection_policy.json",
+    "layout_convergence": "layout_convergence_contract.md"
+  },
+  "generation_policy": {
+    "source_authority": "latest-durably-observed-Recovery-authority-only",
+    "current_recovery_at_2026_09_23": "S91/v1.61",
+    "accepted_later_candidate": null,
+    "fixture_gate": "pilot_fixture_validation_receipt_2026-09-23.json",
+    "requirements": [
+      "fixture-proof-pass",
+      "type-and-relation-registry-closure",
+      "no-authority-by-validation-state-number",
+      "seed-carrier-hash-readback",
+      "canonical-verifier-pass",
+      "generated-child-verifier-pass"
+    ],
+    "forbidden": [
+      "seed-from-unpromoted-validation-candidate",
+      "copy-workbook-sheet-layout-as-canonical-schema",
+      "bulk-copy-project-payload-into-base-shell",
+      "promote-runtime-or-publication-view-to-semantic-authority"
+    ],
+    "current_recovery_file_id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR",
+    "current_recovery_sha256": "1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
+    "current_recovery_content_root": "af640b499078853371196cf7c905979cebf0761c15552b6b8dfbf3ff3d04448d",
+    "current_recovery_dbr_root": "18d43abf68b5f7857a21dcb480d9970e95cdacfc869c61b3b1497e900f0dcc64",
+    "current_recovery_topology": "150e5267792f43f47807a9f5ca61f12db8077ac98153c2cc6c306a4177de937e",
+    "recovery_promotion_evidence": {
+      "validation_file_id": "1E_FpZFwWwi2smR22GSpFIQhY-qG2klVb",
+      "recovery_file_id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR",
+      "acceptance_audit_id": "1ST6l0RDTBexq1BXB28gYxxevvLu1cDmu",
+      "exact_byte_match": true,
+      "local_cmp_exit": 0
+    }
+  }
+}

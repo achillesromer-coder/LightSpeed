@@ -1,0 +1,100 @@
+{
+  "schema": "CGX-RELATION-QUALIFIER/0.2",
+  "status": "review-blueprint",
+  "relation_record": {
+    "required": [
+      "relation_id",
+      "relation_type",
+      "source_object_id",
+      "target_object_id",
+      "assertion_owner",
+      "epistemic_state"
+    ],
+    "optional": [
+      "domain_id",
+      "inverse_relation",
+      "configuration_ref",
+      "state_ref",
+      "valid_from",
+      "valid_to",
+      "time_ref",
+      "spatial_ref",
+      "geometry_ref",
+      "quantity",
+      "unit",
+      "direction",
+      "strength",
+      "method",
+      "uncertainty",
+      "confidence",
+      "source_refs",
+      "evidence_refs",
+      "security_policy_ref",
+      "admission_state",
+      "notes"
+    ]
+  },
+  "shared_relation_types": {
+    "process": [
+      {
+        "id": "PRECEDES"
+      },
+      {
+        "id": "USES_INPUT"
+      },
+      {
+        "id": "PRODUCES_OUTPUT"
+      },
+      {
+        "id": "USES_CONTROL"
+      },
+      {
+        "id": "GATED_BY"
+      },
+      {
+        "id": "HAS_CRITERION"
+      }
+    ],
+    "risk": [
+      {
+        "id": "CAUSES"
+      },
+      {
+        "id": "AFFECTS"
+      },
+      {
+        "id": "MITIGATED_BY"
+      },
+      {
+        "id": "TRIGGERS_REVIEW"
+      }
+    ],
+    "provenance": [
+      {
+        "id": "DERIVED_FROM"
+      },
+      {
+        "id": "CORRESPONDS_TO"
+      },
+      {
+        "id": "EVIDENCED_BY"
+      },
+      {
+        "id": "REPRESENTED_BY"
+      }
+    ]
+  },
+  "rules": [
+    "relation identity is stable and distinct from endpoint identities",
+    "cross-domain relation does not transfer endpoint ownership",
+    "relation assertion owner must be explicit",
+    "confidence must be finite 0..1 when present",
+    "relation qualifiers are part of semantic meaning and therefore DBR-tracked when canonical",
+    "inverse/symmetric semantics must be declared in registry rather than guessed",
+    "temporal/spatial/configuration qualifiers are mandatory when the relation would otherwise be ambiguous",
+    "contradictory relations may coexist with explicit epistemic/evidence state until resolved",
+    "process ordering is explicit through PRECEDES rather than inferred from filenames or row order",
+    "risk/failure relationships retain cause/effect/mitigation as separate typed edges",
+    "generic provenance edges may be reused across domains but their evidence/authority qualifiers remain scoped"
+  ]
+}
