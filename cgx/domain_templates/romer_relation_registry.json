@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-ROMER-RELATION-REGISTRY/0.1",
+  "schema": "CGX-ROMER-RELATION-REGISTRY/0.2",
   "domain": "romer",
   "extends": "CGX-RELATION-QUALIFIER/0.1",
   "families": {
@@ -23,6 +23,21 @@
       {
         "id": "HAS_INTERFACE",
         "inverse": "INTERFACE_OF"
+      },
+      {
+        "id": "HAS_PART",
+        "inverse": "PART_OF"
+      },
+      {
+        "id": "COMPONENT_OF"
+      },
+      {
+        "id": "SUBSYSTEM_OF",
+        "inverse": "HAS_SUBSYSTEM"
+      },
+      {
+        "id": "INTERFACE_OF",
+        "inverse": "HAS_INTERFACE"
       }
     ],
     "requirements": [
@@ -200,5 +215,6 @@
     "source_refs",
     "evidence_refs",
     "uncertainty"
-  ]
+  ],
+  "hard_rule": "Every relation type permitted as an asserted edge, including inverse forms, must have an explicit registry ID; inverse metadata alone is not type admission."
 }
