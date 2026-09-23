@@ -1,6 +1,6 @@
 {
   "schema": "CGX-DOMAIN-GENERATOR-READINESS/0.1",
-  "status": "READY_FOR_DISPOSABLE_BUILD",
+  "status": "MECHANICS_PROVEN_FULL_PACKAGE_BUILD_PENDING",
   "date": "2026-09-23",
   "completed": [
     "parent/three-sister topology defined",
@@ -14,7 +14,12 @@
     "base-shell contract upgraded with semantic/fixture gates",
     "exact S91/v1.61 Recovery carrier durably observed",
     "Recovery copy byte-identical to accepted Validation carrier",
-    "Recovery SHA-256/content/DBR/topology roots independently read back"
+    "Recovery SHA-256/content/DBR/topology roots independently read back",
+    "S91 seed-template creation verified",
+    "four unique child instantiations verified",
+    "atomic child mutation verified",
+    "four packed carriers reopen/verify PASS",
+    "domain-template contract validation PASS with 40 files present"
   ],
   "bounded_warnings": [
     "RFS synthetic resonance_index numeric-sanity review",
@@ -22,14 +27,14 @@
   ],
   "hold_reasons": [],
   "next_transition": {
-    "trigger": "template validator PASS against exact S91 Recovery seed",
+    "trigger": "branch-local execution environment with current PR52 templates",
     "action": [
-      "create clone-required reader seed template from exact S91 Recovery carrier",
-      "instantiate unique disposable Romer/Eco/EMASSC workspaces",
-      "instantiate LS.cgx as EMASSC runtime child",
-      "apply reviewed domain registry/profile package only",
-      "run canonical verifier and packed-reopen verifier on all outputs",
-      "persist build receipts before corpus payload intake"
+      "run scripts/validate_cgx_domain_templates.py and require PASS",
+      "run scripts/build_cgx_domain_children.py against exact Recovery S91",
+      "require Romer/Eco/EMASSC/LS post-install verifier PASS",
+      "require packed-reopen verifier PASS for all four",
+      "persist full build receipt and hashes to Drive Validation + ACR3",
+      "only then begin bounded first-file intake"
     ]
   },
   "no_go": [
@@ -51,5 +56,6 @@
     "dbr_root": "18d43abf68b5f7857a21dcb480d9970e95cdacfc869c61b3b1497e900f0dcc64",
     "topology": "150e5267792f43f47807a9f5ca61f12db8077ac98153c2cc6c306a4177de937e",
     "exact_validation_byte_match": true
-  }
+  },
+  "mechanics_receipt": "s91_domain_builder_mechanics_receipt_2026-09-23.json"
 }
