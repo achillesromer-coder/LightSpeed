@@ -46,9 +46,11 @@
     }
   },
   "current_authority_boundary": {
-    "recovery": "S89/v1.59 remains current Recovery at fresh folder readback",
-    "later_validation": "S91/v1.61 independently accepted/recommended for exact-byte Recovery promotion but not yet present in Recovery",
-    "rule": "do not regenerate child bases from S91 until exact S91 Recovery promotion is durably observed"
+    "recovery": "S91/v1.61 is durably present in Recovery as exact accepted bytes",
+    "recovery_file_id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR",
+    "recovery_sha256": "1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
+    "later_validation": null,
+    "rule": "child generation may seed only from the exact verified S91 Recovery carrier or a later independently promoted Recovery state"
   },
-  "generator_gate": "domains.json and child-base generator remain unchanged pending current-Recovery reconciliation and generator conformance binding"
+  "generator_gate": "RELEASED_FOR_FULL_PACKAGE_BUILD_AGAINST_EXACT_S91_RECOVERY; require template validator PASS, post-install verifier PASS and packed-reopen verifier PASS for every child before first-file intake"
 }
