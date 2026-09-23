@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-EMASSC-LS-TYPE-REGISTRY/0.1",
+  "schema": "CGX-EMASSC-LS-TYPE-REGISTRY/0.2",
   "domains": [
     "emassc",
     "lightspeed"
@@ -57,7 +57,11 @@
       "release-gate",
       "ip-asset",
       "licence",
-      "collaboration"
+      "collaboration",
+      "risk",
+      "hazard",
+      "failure-mode",
+      "mitigation"
     ]
   },
   "lightspeed": {
@@ -142,6 +146,14 @@
     {
       "type": "simulation-run",
       "basis": "synthetic response models"
+    },
+    {
+      "type": "risk",
+      "basis": "RFS/EMFF FMEA and validation risk layer"
+    },
+    {
+      "type": "failure-mode",
+      "basis": "RFS/EMFF FMEA rows"
     }
   ],
   "numeric_model_rule": "Synthetic/model outputs must retain model/scenario/parameter provenance and epistemic state. Extreme/overflow-like finite results are not physical evidence and should trigger numeric-sanity review rather than claim promotion."
