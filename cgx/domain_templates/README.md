@@ -55,3 +55,11 @@ Provider entries contain capability metadata and secret references only. Raw API
 ## Authority boundary
 
 Current Drive/Git/CAD/scoped owner sources remain controlling for their data until semantic parity and promotion gates close. ACR3 remains transition/provenance coordination until GST-029 retirement conditions pass.
+
+## 2026-09-23 deterministic fixture gate
+
+The Mark III, Embedded Bio Blocks and RFS/EMFF pilot fixtures now pass the bounded semantic/view validator: **3/3 PASS, 0 failures, 2 bounded numeric-sanity warnings**. The RFS warnings remain simulation-only and do not promote physical evidence.
+
+The proof bundle is retained under Drive Validation and is bound by `pilot_fixture_validation_receipt_2026-09-23.json`. Eco type registry v0.2 adds the explicit test type; EMASSC/LS type registry v0.2 adds risk/hazard/failure-mode/mitigation exposed by the real FMEA pilot.
+
+Recovery remains **S89/v1.59** at fresh Recovery-folder readback. **S91/v1.61** has an independent ACCEPT/recommend-promotion audit and exact ancestry proof, but has not yet been observed in the Recovery folder. Therefore domain-carrier regeneration remains fail-closed until exact S91 promotion occurs or another Recovery successor is durably established.
