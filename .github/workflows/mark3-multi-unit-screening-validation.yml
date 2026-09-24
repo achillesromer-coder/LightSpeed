@@ -1,0 +1,81 @@
+name: Mark III Multi-Unit Screening Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+      - "fix/**"
+      - "agent/**"
+    paths:
+      - desktop/LightSpeed_Runtime/lightspeed_runtime/mark3_multi_unit.py
+      - desktop/LightSpeed_Runtime/tests/test_mark3_multi_unit.py
+      - docs/engineering/MARK_III_MULTI_UNIT_SCREENING_CONTRACT.md
+      - schemas/mark3_multi_unit_screening_input.schema.json
+      - scripts/run_mark3_multi_unit_screening.py
+      - tests/fixtures/mark3_multi_unit_synthetic.json
+      - tools/mark3/requirements-ci-linux-py311.lock
+      - .github/workflows/mark3-multi-unit-screening-validation.yml
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out the exact pull-request head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: 3.11.9
+
+      - name: Install hash-locked test runner
+        run: >-
+          python -m pip install --disable-pip-version-check --no-input
+          --require-hashes --only-binary=:all:
+          -r tools/mark3/requirements-ci-linux-py311.lock
+
+      - name: Compile the bounded screening implementation
+        run: |
+          python -m py_compile \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/mark3_multi_unit.py \
+            scripts/run_mark3_multi_unit_screening.py
+
+      - name: Run the Mark III screening contract tests
+        env:
+          PYTHONPATH: desktop/LightSpeed_Runtime
+        run: python -m pytest desktop/LightSpeed_Runtime/tests/test_mark3_multi_unit.py -q
+
+      - name: Verify the synthetic receipt remains screening-only
+        env:
+          PYTHONPATH: desktop/LightSpeed_Runtime
+        run: |
+          python scripts/run_mark3_multi_unit_screening.py \
+            tests/fixtures/mark3_multi_unit_synthetic.json \
+            "${RUNNER_TEMP}/mark3-screening-receipt.json"
+          python - "${RUNNER_TEMP}/mark3-screening-receipt.json" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          receipt = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+          assert receipt["evidence_class"] == "DERIVED_SCREENING"
+          assert receipt["owner_topology"] == {
+              "appendages_per_unit": 3,
+              "hardware_lineage": "MARK_III",
+              "source_rule": "OD-050",
+          }
+          assert receipt["solver_version"] == "0.1.0"
+          assert len(receipt["limitations"]) >= 6
+          assert any("not computed trajectories" in item for item in receipt["limitations"])
+          assert any("no result is empirical" in item for item in receipt["limitations"])
+          PY
+
+      - name: Check the whole pull-request diff
+        run: git diff --check "${{ github.event.pull_request.base.sha }}...HEAD"

@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://lightspeed.local/schemas/mark3_multi_unit_screening_input.schema.json",
+  "title": "Mark III Multi-Unit Screening Input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["scenario_id", "units", "legs", "placements"],
+  "properties": {
+    "scenario_id": {"type": "string", "minLength": 1},
+    "units": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "unit_id",
+          "dry_mass_kg",
+          "propellant_mass_kg",
+          "isp_s",
+          "bounding_radius_m"
+        ],
+        "properties": {
+          "unit_id": {"type": "string", "minLength": 1},
+          "dry_mass_kg": {"type": "number", "exclusiveMinimum": 0},
+          "propellant_mass_kg": {"type": "number", "minimum": 0},
+          "isp_s": {"type": "number", "exclusiveMinimum": 0},
+          "bounding_radius_m": {"type": "number", "exclusiveMinimum": 0},
+          "appendage_count": {"const": 3}
+        }
+      }
+    },
+    "legs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["leg_id", "delta_v_m_s", "duration_s", "active_unit_ids"],
+        "properties": {
+          "leg_id": {"type": "string", "minLength": 1},
+          "delta_v_m_s": {"type": "number", "minimum": 0},
+          "duration_s": {"type": "number", "exclusiveMinimum": 0},
+          "active_unit_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "moves": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "move_id",
+          "unit_id",
+          "appendage_id",
+          "delta_angle_rad",
+          "torque_nm",
+          "drive_efficiency"
+        ],
+        "properties": {
+          "move_id": {"type": "string", "minLength": 1},
+          "unit_id": {"type": "string", "minLength": 1},
+          "appendage_id": {"type": "integer", "minimum": 1, "maximum": 3},
+          "delta_angle_rad": {"type": "number"},
+          "torque_nm": {"type": "number"},
+          "drive_efficiency": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 1
+          }
+        }
+      }
+    },
+    "placements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["unit_id", "x_m", "y_m", "z_m"],
+        "properties": {
+          "unit_id": {"type": "string", "minLength": 1},
+          "x_m": {"type": "number"},
+          "y_m": {"type": "number"},
+          "z_m": {"type": "number"}
+        }
+      }
+    },
+    "interlocks": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "interlock_id",
+          "unit_a",
+          "appendage_a",
+          "unit_b",
+          "appendage_b"
+        ],
+        "properties": {
+          "interlock_id": {"type": "string", "minLength": 1},
+          "unit_a": {"type": "string", "minLength": 1},
+          "appendage_a": {"type": "integer", "minimum": 1, "maximum": 3},
+          "unit_b": {"type": "string", "minLength": 1},
+          "appendage_b": {"type": "integer", "minimum": 1, "maximum": 3},
+          "role": {
+            "enum": [
+              "SECONDARY_TO_SECONDARY",
+              "MARK_III_TO_MARK_V_PRIMARY_LAUNCH"
+            ]
+          }
+        }
+      }
+    },
+    "delta_v_scale": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "number", "exclusiveMinimum": 0}
+    }
+  }
+}
