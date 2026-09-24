@@ -1804,6 +1804,51 @@ class DatabaseService:
         results = self.execute_query(query)
         return [row['name'] for row in results]
 
+    def ensure_ls_go_command_identity_schema(self) -> None:
+        """Install the bounded LS GO command identity/index schema.
+
+        This migration is deliberately explicit: normal service initialization
+        never calls it.  Achilles must run it as a separately audited migration
+        before command submission is enabled against the canonical database.
+        """
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS ls_go_command_identities (
+                    command_id TEXT PRIMARY KEY,
+                    canonical_payload_sha256 TEXT NOT NULL,
+                    queue_state TEXT NOT NULL DEFAULT 'indexed',
+                    queue_occurrence_count INTEGER NOT NULL DEFAULT 0,
+                    first_queue_offset INTEGER,
+                    last_queue_offset INTEGER,
+                    task_id INTEGER,
+                    job_id INTEGER,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                )
+            """)
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS ls_go_command_queue_state (
+                    queue_key TEXT PRIMARY KEY,
+                    queue_path TEXT NOT NULL,
+                    device INTEGER,
+                    inode INTEGER,
+                    indexed_offset INTEGER NOT NULL DEFAULT 0,
+                    observed_size INTEGER NOT NULL DEFAULT 0,
+                    observed_mtime_ns INTEGER NOT NULL DEFAULT 0,
+                    complete INTEGER NOT NULL DEFAULT 0,
+                    updated_at TEXT NOT NULL
+                )
+            """)
+            cursor.execute("""
+                CREATE INDEX IF NOT EXISTS idx_ls_go_command_task
+                ON ls_go_command_identities(task_id)
+            """)
+            cursor.execute("""
+                CREATE INDEX IF NOT EXISTS idx_ls_go_command_job
+                ON ls_go_command_identities(job_id)
+            """)
+
     def vacuum(self):
         """
         Optimize database (reclaim space, rebuild indexes).

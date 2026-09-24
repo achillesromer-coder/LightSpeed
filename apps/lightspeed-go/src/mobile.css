@@ -1,0 +1,52 @@
+.shell,
+.view,
+.panel,
+.task-card > div:first-child {
+  min-width: 0;
+}
+
+.tabs {
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-color: var(--line) transparent;
+  scrollbar-width: thin;
+}
+
+.tab {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  scroll-snap-align: start;
+}
+
+.task-card strong,
+.task-card span,
+.task-card small,
+.connection-pill strong,
+.connection-pill small {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 540px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  h1 {
+    font-size: min(15vw, 52px);
+  }
+
+  .topbar {
+    gap: 12px;
+  }
+
+  .connection-pill {
+    width: 100%;
+  }
+
+  .tabs {
+    margin-left: -14px;
+    margin-right: -14px;
+    padding: 0 14px 4px;
+    scroll-padding-inline: 14px;
+  }
+}

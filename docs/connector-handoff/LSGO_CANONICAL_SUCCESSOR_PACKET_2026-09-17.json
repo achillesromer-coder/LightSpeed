@@ -1,0 +1,197 @@
+{
+  "schema_version": "lightspeed-canonical-successor-packet-v1",
+  "packet_id": "LSGO-CANONICAL-SUCCESSOR-20260917-0732-AEST",
+  "generated_at": "2026-09-17T07:32:11.5940999+10:00",
+  "state": "STAGED_ONLY",
+  "workbook_mutation_authorized": false,
+  "authority": {
+    "canonical_gate_id": "operator_gate_release_2026_07_08_finalise",
+    "owner_decision_ref": "operator_chat_explicit_release",
+    "authorised_scope": "all floors; private local review queue; internal bounded execution; fixed receipts",
+    "prohibited_scope": "public publish; destructive filesystem changes; workbook mutation; De Sporte launch; Mark III mesh export; heavy simulation without manual gate"
+  },
+  "source_state": {
+    "github": {
+      "repository": "achillesromer-coder/LightSpeed",
+      "pull_request": 44,
+      "url": "https://github.com/achillesromer-coder/LightSpeed/pull/44",
+      "validated_source_head": "b2888e15eed7e011e9c8cfb2a9e8019e168e83c1",
+      "head_interpretation": "Last source-code evidence head. This packet and the CGX integration handoff are later documentation-only commits, so this value must not be interpreted as the moving PR head.",
+      "state": "OPEN_DRAFT_MERGEABLE_UNMERGED",
+      "checks": [
+        {"name": "GST-063 Route Contract", "run_id": 35152511324, "status": "success"},
+        {"name": "LS GO Sites Side Edit Validation", "run_id": 35152511318, "status": "success"},
+        {"name": "LightSpeed Surface Validation", "run_id": 35152512674, "status": "success"},
+        {"name": "Merovingian Project Routing", "run_id": 35152511325, "status": "success"}
+      ],
+      "trace_comment": "https://github.com/achillesromer-coder/LightSpeed/pull/44#issuecomment-5704789580"
+    },
+    "runtime": {
+      "go_http_4173": 200,
+      "desktop_http_8080": 200,
+      "bridge_http_8765": 200,
+      "ollama_http_11434": 200,
+      "merovingian": "live",
+      "operational_floors": "8/8",
+      "visible_projects": 9,
+      "resource_gate": "pass",
+      "remote_access": "HELD_UNVERIFIED"
+    },
+    "receipts": [
+      {
+        "task_id": 497,
+        "job_id": 490033,
+        "command_id": "LSGO-20260916211329-G9CORV",
+        "result_id": "LSGO-RESULT-LSGO-20260916211329-G9CORV",
+        "execution_mode": "review",
+        "status": "completed",
+        "sha256": "a9953dce976fee9545fcfeba666a7ada7ba1c5ba76f8dac959c21c1b106cf04f",
+        "interpretation": "dry-run review receipt only"
+      },
+      {
+        "task_id": 498,
+        "job_id": 490034,
+        "command_id": "LSGO-20260916211403-QAZ5TH",
+        "result_id": "LSGO-RESULT-LSGO-20260916211403-QAZ5TH",
+        "execution_mode": "queue",
+        "status": "blocked",
+        "sha256": "12e1082277cc363a0d0255d51ea76132897a88a4b99fe78143b0c1636a6a6db7",
+        "interpretation": "Neo and Merovingian completed; Oracle timed out at 180015 ms; preserved and not redispatched"
+      }
+    ]
+  },
+  "canonical_snapshots": [
+    {
+      "spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+      "title": "Type 1 Romer Cognigrex",
+      "sheet": "99_SYNC_STATUS_v1_1",
+      "observed_range": "A41:M44",
+      "latest_record": "SYNC-041",
+      "latest_row": 42,
+      "next_empty_row": 43,
+      "state": "current row retains an older PR44 head and requires append-only successor reconciliation"
+    },
+    {
+      "spreadsheet_id": "1AgAhLPNtrO91C_-ea7EdOkOsyXrCCYvFVvmDSGq8uls",
+      "title": "ACR3 Next Stage Consolidation Register 2026-06-26",
+      "sheet": "12_Cross_Corpus_Handoff",
+      "observed_range": "A987:L991",
+      "latest_record": "988",
+      "latest_row": 988,
+      "next_empty_row": 989,
+      "state": "directive 988 is stored on spreadsheet row 988"
+    },
+    {
+      "spreadsheet_id": "1Z9eEUsp8uDU5U4ZqQd-YOhlxJAC7UoelmByY6EaRfV0",
+      "title": "Achilles P.A — Canonical Workbook v1.0",
+      "sheet": "Command & Trajectory",
+      "observed_range": "A13:O15",
+      "record": "ROM-0001",
+      "spreadsheet_row": 14,
+      "state": "stale PR37 and GO-result-pending pointer"
+    },
+    {
+      "spreadsheet_id": "1Z9eEUsp8uDU5U4ZqQd-YOhlxJAC7UoelmByY6EaRfV0",
+      "title": "Achilles P.A — Canonical Workbook v1.0",
+      "sheet": "Index Appendix Log",
+      "observed_range": "A115:F130",
+      "latest_record": "APA-CCX011-LENS-20260916-0925",
+      "latest_row": 120,
+      "next_empty_row": 121,
+      "historical_record_preserved": "AKN-007 at row 109"
+    }
+  ],
+  "proposed_mutations": [
+    {
+      "operation": "append_row",
+      "spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+      "sheet": "99_SYNC_STATUS_v1_1",
+      "range": "A43:M43",
+      "precondition": "A43:M43 remains empty and SYNC-041 remains the last accepted record",
+      "values": [
+        "SYNC-042",
+        "2026-09-17 LightSpeed GO local execution and remote-readiness reconciliation",
+        "Local GO, Desktop, bridge and Ollama returned HTTP 200; Merovingian is live; 8/8 floors are operational; 9 projects are visible. PR44 is OPEN/DRAFT/MERGEABLE/UNMERGED at b2888e15eed7e011e9c8cfb2a9e8019e168e83c1 with all four exact-head checks successful. The existing public site is an older localhost-targeting build and is not off-device proof.",
+        "Task497/Job490033 review dry-run completed at receipt SHA-256 a9953dce976fee9545fcfeba666a7ada7ba1c5ba76f8dac959c21c1b106cf04f. Task498/Job490034 queue execution is blocked at receipt SHA-256 12e1082277cc363a0d0255d51ea76132897a88a4b99fe78143b0c1636a6a6db7 after Neo and Merovingian completed and Oracle timed out. PR44 exact-head runs 35152511324, 35152511318, 35152512674 and 35152511325 all succeeded.",
+        "Corrected guarded-command parsing and token-boundary floor routing; refreshed the bounded source manifest; verified local receipts and exact-head provider CI; recorded the Achilles trace on PR44.",
+        "Installed D:\\LightSpeed runtime predates the PR44 repair. First owner password change, private HTTPS relay, exact allowed-origin configuration, approved installation and off-device readback are absent. Preserve Task498 blocked; do not redispatch.",
+        "Owner completes the first password change and reviews PR44; then perform a controlled install, configure a credential-free private HTTPS relay and exact CORS origin, verify off-device Activity, Projects, Reviews and result readback, and only then consider merge, deployment or canonical promotion.",
+        "Owner / Achilles / Neo / Merovingian / Smith / Trinity / GitHub",
+        "Verified local surfaces and receipts; source repair verified; installed successor and off-device remote operation HELD/UNVERIFIED.",
+        "No merge, install, deployment, public publish, credential handling, Drive mutation, task redispatch, evidence promotion, destructive action or heavy simulation.",
+        "Staged",
+        "v3.9-candidate",
+        "Task497 is review-only derived evidence. Task498 is a preserved fail-closed execution receipt. RFS/EMFF remains screening-only. Public site localhost connectivity on this host is not off-device verification."
+      ]
+    },
+    {
+      "operation": "append_row",
+      "spreadsheet_id": "1AgAhLPNtrO91C_-ea7EdOkOsyXrCCYvFVvmDSGq8uls",
+      "sheet": "12_Cross_Corpus_Handoff",
+      "range": "A989:L989",
+      "precondition": "A989:L989 remains empty and directive 988 remains the last accepted record",
+      "values": [
+        "989",
+        "LIGHTSPEED-GO-LOCAL-TRACE-REMOTE-READINESS-20260917",
+        "Post-directive-988 LightSpeed GO/Desktop runtime, source repair, provider CI and remote-readiness reconciliation.",
+        "Consumed ACR3 through directive 988; Type1 through SYNC-041; Achilles ROM-0001 and AKN-007; local bridge status; Tasks497-498; PR44@b2888e1 and exact-head provider checks.",
+        "MATERIAL DELTA: local GO/Desktop/bridge/Ollama respond 200, Merovingian is live, 8/8 floors are operational and 9 projects are visible. Review Task497 completed dry-run. Queue Task498 executed Neo and Merovingian then failed closed on Oracle timeout. PR44 fixes guarded-command and routing defects; exact-head checks all succeeded.",
+        "CLASSIFICATION: current local review/runtime-health is VERIFIED; Task498 aggregate is BLOCKED with preserved receipt; PR44 source candidate is CURRENT_CONFIRMED review-only; installed successor/private relay/off-device operation is HELD/UNVERIFIED.",
+        "SOURCE/TWIN/DERIVATIVE: PR44 code/tests and local receipts are digital implementation evidence only. They do not prove public deployment, remote reachability, empirical/physical performance or RFS/EMFF validation.",
+        "CANONICAL MUTATION/READBACK: stage Type1 SYNC-042, update Achilles ROM-0001 current pointer and append Achilles log row121 only after owner gate; read back exact rows. No workbook write in this packet.",
+        "MISSING EVIDENCE: owner first password change, owner PR44 acceptance, controlled installed-runtime update, credential-free private HTTPS relay, configured exact CORS origin, off-device owner login/review/decision/result readback and canonical row readbacks.",
+        "PUBLICATION/RIGHTS: NOT PUBLICLY RELEASED. No merge, install, deployment, credential handling, Drive mutation, public publish, destructive action, heavy simulation, task redispatch or evidence promotion.",
+        "Handoff=:08 consume directive 989+ after accepted write; owner performs credential reset; then controlled PR44 install and relay verification. Preserve Task498 blocked identity and do not replay.",
+        "NEXT_:00 once owner gates close, verify off-device Activity shows 9 projects, 0 fallbacks and current tasks plus authenticated review/result; otherwise keep the remote gate held."
+      ]
+    },
+    {
+      "operation": "update_range",
+      "spreadsheet_id": "1Z9eEUsp8uDU5U4ZqQd-YOhlxJAC7UoelmByY6EaRfV0",
+      "sheet": "Command & Trajectory",
+      "range": "H14:N14",
+      "precondition": "A14 remains ROM-0001 and H14:N14 still carries the PR37 / awaiting-receipt state observed on 2026-09-17",
+      "values": [
+        "Verified local runtime / current source candidate; remote install held",
+        "Active / owner_install_and_remote_gate",
+        "Owner first credential change; PR44 review/acceptance; controlled install; private relay; off-device readback",
+        "Tasks497-498; PR44@b2888e15eed7e011e9c8cfb2a9e8019e168e83c1; PR trace comment 5704789580",
+        "Römer",
+        "2026-09-17 07:32 AEST",
+        "GO-RESULT-0016 remains historical exact-once provenance and must not be redispatched. Current local proof is Task497 completed review dry-run and Task498 blocked fail-closed execution. PR44 source is green but uninstalled. Remote/off-device operation remains unverified until the owner credential, install, relay and readback gates close."
+      ]
+    },
+    {
+      "operation": "append_row",
+      "spreadsheet_id": "1Z9eEUsp8uDU5U4ZqQd-YOhlxJAC7UoelmByY6EaRfV0",
+      "sheet": "Index Appendix Log",
+      "range": "A121:F121",
+      "precondition": "A121:F121 remains empty and APA-CCX011-LENS-20260916-0925 remains the last log record",
+      "values": [
+        "2026-09-17 07:32 AEST",
+        "APA-LSGO-RUNTIME-REMOTE-GATE-20260917-0732",
+        "Achilles P.A / ACR3 / Type1 / LightSpeed Git / local runtime",
+        "Bound Tasks497-498, PR44 exact-head green checks, the guarded-command and route-boundary fixes, and the remaining owner-install/private-relay/off-device gates into the existing P.A pointer architecture. Preserved historical AKN-007 and GO-RESULT-0016 exact-once provenance without redispatch.",
+        "Runtime receipt / source-candidate / remote-readiness gate / no-overclaim",
+        "Tasks497-498 receipts; PR44@b2888e1; ACR3 directive988; Type1 SYNC-041; local bridge status 2026-09-17"
+      ]
+    }
+  ],
+  "readback_requirements": [
+    "Re-read every precondition range immediately before any mutation.",
+    "Abort the whole candidate write set if any target is non-empty or source identity changed.",
+    "After an authorised write, re-read A43:M43, A989:L989, H14:N14 and A121:F121 exactly.",
+    "Record returned spreadsheet revision or modification metadata where available.",
+    "Do not interpret staged, queued, review, CI success or readback as deployment, publication, empirical validation or owner acceptance."
+  ],
+  "holds": [
+    "owner_first_password_change",
+    "owner_pr44_acceptance",
+    "controlled_runtime_install",
+    "private_https_relay",
+    "exact_allowed_origin_configuration",
+    "off_device_owner_readback",
+    "workbook_write_authority",
+    "merge_and_deployment_authority"
+  ]
+}

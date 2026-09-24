@@ -404,8 +404,21 @@ class NeoAchillesBridge:
         )
         return AchillesActionEnvelope(**payload)
 
-    def approve_operator_action(self, workspace: str, action_id: str, *, audit_ref: str | None = None) -> dict:
-        return self.runtime.approve_workspace_action(workspace, "Romer", action_id, audit_ref=audit_ref)
+    def approve_operator_action(
+        self,
+        workspace: str,
+        action_id: str,
+        *,
+        audit_ref: str | None = None,
+        authority_contract: dict | None = None,
+    ) -> dict:
+        return self.runtime.approve_workspace_action(
+            workspace,
+            "Romer",
+            action_id,
+            audit_ref=audit_ref,
+            authority_contract=authority_contract,
+        )
 
     def workspace_status(self, workspace: str) -> dict:
         return self.runtime.workspace_state(workspace, "Romer", active_floor="Neo")

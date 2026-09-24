@@ -19,7 +19,7 @@ foreach ($requiredPath in @($python, $script, $root)) {
 
 $action = New-ScheduledTaskAction `
     -Execute $python `
-    -Argument ('"{0}" --canonical-root "{1}"' -f $script, $root) `
+    -Argument ('"{0}" --canonical-root "{1}" --quiet' -f $script, $root) `
     -WorkingDirectory $root
 $repeating = New-ScheduledTaskTrigger `
     -Once `
@@ -41,7 +41,7 @@ if ($PSCmdlet.ShouldProcess($TaskName, 'Register canonical Cognigrex local guard
     try {
         Register-ScheduledTask `
             -TaskName $TaskName `
-            -Description 'Keep the local Merovingian and LS GO bridge live; repair only missing bounded services.' `
+            -Description 'Keep bounded local LightSpeed Desktop, Merovingian, bridge and Go surfaces live.' `
             -Action $action `
             -Trigger @($atLogon, $repeating) `
             -Settings $settings `
@@ -50,7 +50,7 @@ if ($PSCmdlet.ShouldProcess($TaskName, 'Register canonical Cognigrex local guard
             -ErrorAction Stop | Out-Null
     }
     catch [Microsoft.Management.Infrastructure.CimException] {
-        $taskCommand = ('"{0}" "{1}" --canonical-root "{2}"' -f $python, $script, $root)
+        $taskCommand = ('"{0}" "{1}" --canonical-root "{2}" --quiet' -f $python, $script, $root)
         & schtasks.exe /Create /TN $TaskName /TR $taskCommand /SC MINUTE /MO 5 /F /RL LIMITED | Out-Null
         if ($LASTEXITCODE -ne 0) {
             throw

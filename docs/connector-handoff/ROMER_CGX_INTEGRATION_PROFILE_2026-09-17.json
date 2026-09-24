@@ -1,0 +1,110 @@
+{
+  "schema_version": "romer-cgx-integration-profile-v1",
+  "map_id": "ROMER-CGX-INTEGRATION-20260917-1427-AEST",
+  "generated_at": "2026-09-17T14:27:41.3357297+10:00",
+  "state": "STAGED_READ_ONLY",
+  "canonical_write_authorized": false,
+  "deletion_authorized": false,
+  "cgx_sources": {
+    "phase_a": {
+      "drive_folder_id": "1uhikLbT2WI85wQUO8poOVRQqm3HIvFn0",
+      "carrier_drive_id": "1OzRStMgNng8PBrrSbOHdfZ9R19NeRm47",
+      "carrier_name": "CGX_Phase_A_v0_1.cgx",
+      "carrier_size_bytes": 23888,
+      "carrier_sha256": "93eb378bfe0e123b93f26def301fea37f39a989b70b2bf2082fb20015a11bf6d",
+      "object_id": "cgx:object:5af9c899-61e3-4958-b46a-bdf0af0ad57f",
+      "manifest_entries": 28,
+      "manifest_hash_size_failures": 0,
+      "status": "PARTIAL_PASS",
+      "limitation": "Root derivation is not independently specified in the carrier, so content/state/DBR root conformance was not accepted from hashes alone."
+    },
+    "phase_b": {
+      "drive_folder_id": "1PZG0bH_ySxiW7oR9tXLc0c39hJ_1f7Il",
+      "carrier_drive_id": "1bXxMUyiz_N7nxpHWp2ImczOeRB-z0HuS",
+      "carrier_name": "CGX_Phase_B_v0_1_S2.cgx",
+      "carrier_size_bytes": 60581,
+      "carrier_sha256": "8afd29054671575480771ad3193fadd297e7d02e0060f8ecc3b9069db756e37a",
+      "object_id": "cgx:phase-a:42d99b46c0d322f08b59b7b7",
+      "tracked_entries": 39,
+      "generated_entries": 3,
+      "manifest_hash_size_failures": 0,
+      "declared_content_root": "6f4b96a70c0507fde9ddf3082f26d36e58992365033c5d99cdd74576651748d1",
+      "recomputed_content_root": "f88db1d2c1a8048ad5c8bf0372ae7b1496325d41b139f46ab1780b302a7ad2ef",
+      "state_root": "e763ae207611ce316d82ab275ccbf895a61e04513a7d5faed80c090c9afd5eb7",
+      "dbr_root": "2ec72a6276a9f2076528e2e7fb886797baa97dd234559ffea39a88b25b164b0b",
+      "bundled_verify_ok": false,
+      "bundled_verify_errors": [
+        "content_root",
+        "bootstrap.content_root",
+        "dbr.content_root"
+      ],
+      "status": "FAIL_CONTENT_ROOT"
+    }
+  },
+  "contradictions": [
+    {
+      "id": "CGX-LINEAGE-001",
+      "class": "BLOCKING_SOURCE",
+      "detail": "Phase A and Phase B carriers expose different object IDs and no observed parent or migration receipt proves continuity."
+    },
+    {
+      "id": "CGX-CONFORMANCE-002",
+      "class": "BLOCKING_TECHNICAL",
+      "detail": "Phase B receipt claims PASS while the current Drive carrier fails its bundled verifier on all content-root bindings."
+    },
+    {
+      "id": "CGX-REPRODUCIBILITY-003",
+      "class": "RESEARCH_REQUIRED",
+      "detail": "Tracked CPython 3.13 bytecode makes the reference carrier interpreter-specific and should be excluded from reproducible source carriers."
+    },
+    {
+      "id": "CGX-OVERLAY-004",
+      "class": "BLOCKING_TECHNICAL",
+      "detail": "The current overlay command repacks mutated overlay/event/aggregate files without regenerating package manifest, content root or DBR binding."
+    }
+  ],
+  "filespaces": [
+    {"id": "governance", "parent": "romer-industries", "sources": ["Achilles P.A", "ACR3", "Type 1 registers"], "quadrants": ["Q2", "Q4"], "layers": ["Z4", "Z5", "Z6", "Z7"], "mode": "external_reference"},
+    {"id": "platform", "parent": "romer-industries", "sources": ["LightSpeed Git", "Desktop", "GO", "Web", "floors"], "quadrants": ["Q2", "Q4"], "layers": ["Z0", "Z5", "Z6", "Z7"], "mode": "reference_and_host_adapter"},
+    {"id": "projects", "parent": "romer-industries", "sources": ["RFS_EMFF", "Mark", "Luke", "Mag-Lev", "Solar Hull", "Free Flow", "InterPlanetary Supply Chain", "Eco-X"], "quadrants": ["Q1", "Q2", "Q3", "Q4"], "layers": ["Z0", "Z1", "Z2", "Z3", "Z4", "Z5", "Z6"], "mode": "nested_cgx_per_project"},
+    {"id": "corpus", "parent": "romer-industries", "sources": ["Drive", "Git", "local", "XLSX", "PDF", "DOCX", "CAD", "GLB", "archives"], "quadrants": ["Q1", "Q2", "Q3"], "layers": ["Z0", "Z1", "Z2", "Z3", "Z4"], "mode": "content_addressed_reference_first"},
+    {"id": "knowledge", "parent": "romer-industries", "sources": ["Oracle evidence", "source registers", "research corpus"], "quadrants": ["Q1", "Q2", "Q3"], "layers": ["Z2", "Z3", "Z4", "Z6", "Z7"], "mode": "alexandria_federation_candidate"},
+    {"id": "components", "parent": "romer-industries", "sources": ["routes", "schemas", "adapters", "solvers", "workflows"], "quadrants": ["Q2", "Q4"], "layers": ["Z5", "Z6", "Z7"], "mode": "ccc_registry_candidate"},
+    {"id": "operations", "parent": "romer-industries", "sources": ["queues", "jobs", "results", "readbacks"], "quadrants": ["Q2", "Q4"], "layers": ["Z4", "Z5", "Z6", "Z7"], "mode": "exact_once_receipt_chain"},
+    {"id": "frontier", "parent": "romer-industries", "sources": ["unknowns", "contradictions", "holds", "gaps"], "quadrants": ["Q1", "Q2", "Q3", "Q4"], "layers": ["Z3", "Z4", "Z5", "Z6", "Z7", "Z8+"], "mode": "explicit_E0_E5"}
+  ],
+  "assimilation_contract": [
+    "discover",
+    "hash_and_inventory",
+    "classify_authority_type_epistemics",
+    "reference_or_overlay_import",
+    "adapter_and_conformance_test",
+    "contradiction_review",
+    "authorized_resolve",
+    "destination_write",
+    "exact_readback",
+    "supersession_link",
+    "archive_candidate",
+    "separately_authorized_removal"
+  ],
+  "holds": [
+    "phase_a_phase_b_lineage_resolution",
+    "phase_b_content_root_rebuild",
+    "rich_xlsx_pdf_docx_html_adapters",
+    "cad_step_glb_authority_adapter",
+    "cryptographic_signatures_and_capability_leases",
+    "multi_device_semantic_merge",
+    "owner_first_password_change",
+    "controlled_lightspeed_runtime_install",
+    "private_https_relay_and_off_device_readback",
+    "canonical_workbook_write_authority",
+    "deletion_and_publication_authority"
+  ],
+  "next_safe_actions": [
+    "Regenerate Phase B from one immutable build boundary and verify the uploaded bytes.",
+    "Issue a superseding receipt that preserves the failed receipt as contradiction evidence.",
+    "Build a read-only Römer source inventory profile from existing Type 1 manifests and object registers.",
+    "Define rich XLSX and spatial adapter conformance before payload migration.",
+    "Expose LightSpeed queues and results through a read-only H1 adapter before granting execution capability."
+  ]
+}

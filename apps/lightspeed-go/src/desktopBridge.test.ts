@@ -1,7 +1,61 @@
 import { describe, expect, it } from "vitest";
-import { COMMAND_SCHEMA, createCommandEnvelope, routeInstruction } from "./desktopBridge";
+import {
+  COMMAND_SCHEMA,
+  createCommandEnvelope,
+  projectFileApiPath,
+  remoteAccessPresentation,
+  resolveDesktopOrigin,
+  resultReceiptApiPath,
+  reviewDecisionOutcomeMessage,
+  routeInstruction,
+} from "./desktopBridge";
+
+const authorityContract = {
+  canonical_gate_id: "gate-soft-launch",
+  owner_decision_ref: "owner-decision-1",
+  core_acceptance_ref: "core-acceptance-1",
+  approval_or_hold_state: "operator_approved",
+  authorised_scope: "all floors; private local review queue",
+  prohibited_scope: "public publish; destructive filesystem operations",
+};
 
 describe("LS GO desktop command routing", () => {
+  it("keeps the same-machine Desktop bridge as the default", () => {
+    expect(resolveDesktopOrigin()).toBe("http://127.0.0.1:8765");
+  });
+
+  it("accepts a credential-free HTTPS private relay origin", () => {
+    expect(resolveDesktopOrigin("  https://desktop.example.test  ")).toBe(
+      "https://desktop.example.test",
+    );
+  });
+
+  it("rejects insecure or credential-bearing remote origins", () => {
+    expect(() => resolveDesktopOrigin("http://desktop.example.test")).toThrow(
+      "Remote LightSpeed Desktop origins must use HTTPS",
+    );
+    expect(() => resolveDesktopOrigin("https://owner:secret@desktop.example.test")).toThrow(
+      "must not contain credentials",
+    );
+    expect(() => resolveDesktopOrigin("https://desktop.example.test/api")).toThrow(
+      "must not contain a path",
+    );
+  });
+
+  it("does not present relay configuration as verified remote operation", () => {
+    expect(remoteAccessPresentation({ state: "local_only" })).toEqual({
+      label: "Local only",
+      detail: "No private HTTPS relay origin is configured.",
+    });
+    expect(remoteAccessPresentation({ state: "credential_gate" }).label).toBe(
+      "Credential held",
+    );
+    expect(remoteAccessPresentation({
+      state: "ready_for_private_relay_verification",
+      off_device_verified: false,
+    }).label).toBe("Verify off-device");
+  });
+
   it("routes implementation work to Smith", () => {
     expect(routeInstruction("Update the Git branch, run the build and return a commit receipt")).toBe("Smith");
   });
@@ -15,11 +69,48 @@ describe("LS GO desktop command routing", () => {
       instruction: "Prepare a reviewed mission architecture update",
       priority: "high",
       executionMode: "review",
+      authorityContract,
     });
     expect(command.schema_version).toBe(COMMAND_SCHEMA);
     expect(command.oversight_floor).toBe("Achilles");
     expect(command.proof_required).toBe(true);
     expect(command.public_safe).toBe(true);
+    expect(command.action_type).toBe("cognigrex_workflow");
     expect(command.target_floor).toBe("Architect");
+    expect(command.canonical_gate_id).toBe("gate-soft-launch");
+    expect(command.requested_scope).toBe("Architect private local review queue");
+  });
+
+  it("fails closed when the Desktop authority contract is unavailable", () => {
+    expect(() => createCommandEnvelope({ instruction: "Run a bounded health check" })).toThrow(
+      "Desktop authority contract is not available",
+    );
+  });
+
+  it("encodes project file routes segment-by-segment", () => {
+    expect(projectFileApiPath("project alpha", "results/a file.json")).toBe(
+      "/api/v1/projects/project%20alpha/files/results/a%20file.json",
+    );
+  });
+
+  it("encodes a result identity as one fixed route segment", () => {
+    expect(resultReceiptApiPath()).toBe("/api/v1/results");
+    expect(resultReceiptApiPath("LSGO RESULT/held")).toBe(
+      "/api/v1/results/LSGO%20RESULT%2Fheld",
+    );
+  });
+
+  it("distinguishes local outbox staging from an owner-approved Drive write", () => {
+    const pending = reviewDecisionOutcomeMessage("review-1", "approve", {
+      accepted: true,
+      receipt: { drive_writeback_mode: "local_outbox_pending_drive_sync" },
+    });
+    const drive = reviewDecisionOutcomeMessage("review-2", "hold", {
+      accepted: true,
+      receipt: { drive_writeback_mode: "owner_approved_exact_drive_target" },
+    });
+    expect(pending).toContain("Local outbox receipt staged; Drive sync remains pending");
+    expect(pending).not.toContain("Drive decision receipt written");
+    expect(drive).toContain("Owner-approved Drive decision receipt written");
   });
 });

@@ -848,11 +848,11 @@ class EnhancedTrinityWizard:
         form_frame.pack(fill=tk.BOTH, expand=True, padx=40, pady=10)
 
         # Startup floor
-            self._create_setting_row(
-                form_frame,
-                "Startup Floor:",
-                tk.OptionMenu,
-                'startup_floor',
+        self._create_setting_row(
+            form_frame,
+            "Startup Floor:",
+            tk.OptionMenu,
+            'startup_floor',
             *['Z+3_Trinity', 'Z+2_Neo', 'Z+1_Architect', 'Z0_TheConstruct',
               'Z-1_Morpheus', 'Z-2_Oracle', 'Z-3_Smith', 'Z-4_Merovingian']
         )
