@@ -1,6 +1,13 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+.gitattributes text eol=lf
 
 # Vite emits portable LF bundles. Keep clean Windows builds byte-reproducible.
 apps/lightspeed-go/index.html text eol=lf
 apps/lightspeed-go/dist/** text eol=lf
+
+# Deterministic digital-twin receipts bind exact bytes.  Keep generated text
+# assets portable across Windows and Linux checkouts; previews stay binary.
+assets/models/*.obj text eol=lf
+assets/type1-svg/** text eol=lf
+assets/previews/*.png binary

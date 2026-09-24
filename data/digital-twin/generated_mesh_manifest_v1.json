@@ -1,0 +1,202 @@
+{
+  "schema": "achilles_generated_mesh_receipt_v1",
+  "generator": "tools/digital-twin/build_atrium_viewer_meshes.py",
+  "dependencies": {
+    "numpy": "1.26.4",
+    "trimesh": "5.1.0"
+  },
+  "assets": [
+    {
+      "twin_id": "solar_hull",
+      "file": "assets/models/solar_hull.obj",
+      "format": "OBJ",
+      "representation_class": "INTERACTION_PROXY",
+      "units": "m",
+      "vertices": 48,
+      "faces": 72,
+      "watertight": true,
+      "size_bytes": 2540,
+      "sha256": "7a79547a8c2b6210b49ba9bb79b46a716e6a4f1b5efcdfe618a27807e003fe1e"
+    },
+    {
+      "twin_id": "free_flow_batteries",
+      "file": "assets/models/free_flow_batteries.obj",
+      "format": "OBJ",
+      "representation_class": "INTERACTION_PROXY",
+      "units": "m",
+      "vertices": 458,
+      "faces": 876,
+      "watertight": true,
+      "size_bytes": 28378,
+      "sha256": "42542651d030f8fedf347444b5513365eb29f2ac1dabe4b83501681ab92e0055"
+    },
+    {
+      "twin_id": "free_flow_capacitors",
+      "file": "assets/models/free_flow_capacitors.obj",
+      "format": "OBJ",
+      "representation_class": "INTERACTION_PROXY",
+      "units": "m",
+      "vertices": 208,
+      "faces": 396,
+      "watertight": true,
+      "size_bytes": 12537,
+      "sha256": "169386443e9944d6ba764a940e33dc048c932c09c827f9a3231af3236e861c99"
+    },
+    {
+      "twin_id": "free_flow_solenoid_stack",
+      "file": "assets/models/free_flow_solenoid_stack.obj",
+      "format": "OBJ",
+      "representation_class": "INTERACTION_PROXY",
+      "units": "m",
+      "vertices": 2210,
+      "faces": 4416,
+      "watertight": true,
+      "size_bytes": 149031,
+      "sha256": "be82322fe84fb75fe050d7edcdea887a5708b5e957ab7790b5a445cbc3454982"
+    },
+    {
+      "twin_id": "rfs_emff",
+      "file": "assets/models/rfs_emff.obj",
+      "format": "OBJ",
+      "representation_class": "INTERACTION_PROXY",
+      "units": "m",
+      "vertices": 922,
+      "faces": 1836,
+      "watertight": true,
+      "size_bytes": 58704,
+      "sha256": "8d97815088182a3ad496ffffaf43ff29bdc459795a3fe79fa7b485c9fef99a45"
+    },
+    {
+      "twin_id": "mark_1p",
+      "file": "assets/models/mark_1p.obj",
+      "format": "OBJ",
+      "representation_class": "INTERACTION_PROXY",
+      "units": "m",
+      "vertices": 166,
+      "faces": 312,
+      "watertight": true,
+      "size_bytes": 9771,
+      "sha256": "71223ddf1438205bac677d34d18196c97b02f42b4b50ebaf3add8601c9b1445e"
+    },
+    {
+      "twin_id": "mark_i",
+      "file": "assets/models/mark_i.obj",
+      "format": "OBJ",
+      "representation_class": "INTERACTION_PROXY",
+      "units": "m",
+      "vertices": 158,
+      "faces": 300,
+      "watertight": true,
+      "size_bytes": 9341,
+      "sha256": "06798255333872cfbf09bcb623e0153f4fe0eb5f133a2a5c5cc43cb86ce74bb9"
+    },
+    {
+      "twin_id": "mark_iii",
+      "file": "assets/models/mark_iii.obj",
+      "format": "OBJ",
+      "representation_class": "INTERACTION_PROXY",
+      "units": "m",
+      "vertices": 74,
+      "faces": 132,
+      "watertight": true,
+      "size_bytes": 4145,
+      "sha256": "43655a61ce070f0872b2822a69bf3cf4475648c1d680159a2cf012995ff1826e"
+    },
+    {
+      "twin_id": "luke_family",
+      "file": "assets/models/luke_family.obj",
+      "format": "OBJ",
+      "representation_class": "INTERACTION_PROXY",
+      "units": "m",
+      "vertices": 914,
+      "faces": 1824,
+      "watertight": true,
+      "size_bytes": 58185,
+      "sha256": "f7668c80dfc37568f3d622cd5dfea1387e25cc36df425773b9054734f53f5faa"
+    },
+    {
+      "twin_id": "maglev_luke_iv",
+      "file": "assets/models/maglev_luke_iv.obj",
+      "format": "OBJ",
+      "representation_class": "INTERACTION_PROXY",
+      "units": "m",
+      "vertices": 906,
+      "faces": 1804,
+      "watertight": true,
+      "size_bytes": 57248,
+      "sha256": "e1262a100563553fae6b8eae9652a2f251b0f5a0fa67ef3c4bc7d1968bef7daf"
+    },
+    {
+      "twin_id": "embedded_bio_blocks",
+      "file": "assets/models/embedded_bio_blocks.obj",
+      "format": "OBJ",
+      "representation_class": "INTERACTION_PROXY",
+      "units": "m",
+      "vertices": 48,
+      "faces": 72,
+      "watertight": true,
+      "size_bytes": 2540,
+      "sha256": "52ded48cca93f1cde1fd71c799ef7ea26591f6a577703df8e69efc7e40e9389d"
+    },
+    {
+      "twin_id": "second_cycle",
+      "file": "assets/models/second_cycle.obj",
+      "format": "OBJ",
+      "representation_class": "INTERACTION_PROXY",
+      "units": "m",
+      "vertices": 304,
+      "faces": 576,
+      "watertight": true,
+      "size_bytes": 18453,
+      "sha256": "3c09c2bbf10c138ac5cd1c201ea2df4b93e046f0af3e904f706fb6569e46ad6f"
+    },
+    {
+      "twin_id": "watchtower",
+      "file": "assets/models/watchtower.obj",
+      "format": "OBJ",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "units": "m",
+      "vertices": 40,
+      "faces": 60,
+      "watertight": true,
+      "size_bytes": 2172,
+      "sha256": "8053c0310de21986d0e93cfb591da57abd871f424e50d22b5dd8956028583614"
+    },
+    {
+      "twin_id": "intersol",
+      "file": "assets/models/intersol.obj",
+      "format": "OBJ",
+      "representation_class": "INTERACTION_PROXY",
+      "units": "m",
+      "vertices": 384,
+      "faces": 576,
+      "watertight": true,
+      "size_bytes": 21742,
+      "sha256": "a2f3f7f0d5707206be4cfc1ad87f8914279a7c326fdf520a8e74e7fda47130c4"
+    },
+    {
+      "twin_id": "m1_elevated_bypass",
+      "file": "assets/models/m1_elevated_bypass.obj",
+      "format": "OBJ",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "units": "m",
+      "vertices": 32,
+      "faces": 48,
+      "watertight": true,
+      "size_bytes": 1772,
+      "sha256": "f53534e89f197efa0e79df80fe8dd3472b24ca2b682ffcc9e3417153aa10d19c"
+    },
+    {
+      "twin_id": "romer_spaceport",
+      "file": "assets/models/romer_spaceport.obj",
+      "format": "OBJ",
+      "representation_class": "SOURCE_DERIVED_PARTIAL",
+      "units": "m",
+      "vertices": 32,
+      "faces": 48,
+      "watertight": true,
+      "size_bytes": 1740,
+      "sha256": "a9f7dd4cbc2077e4ac4fbe18a58003b44589f2964e8e4242c4e157e76b284fd4"
+    }
+  ]
+}

@@ -11,11 +11,13 @@ on:
       - 'desktop/Desktop_Hooks/LightSpeed/tests/test_gst063_route_contract.py'
       - 'desktop/Desktop_Hooks/LightSpeed/tests/test_gst063_route_semantics.py'
       - 'desktop/Desktop_Hooks/LightSpeed/tools/regenerate_gst063_web_bridge.py'
+      - 'tools/gst063/requirements-ci-linux-py312.lock'
       - '.github/workflows/gst063-route-contract.yml'
   push:
     branches:
       - 'fix/gst063-route-registry-2026-09-06'
     paths:
+      - 'tools/gst063/requirements-ci-linux-py312.lock'
       - '.github/workflows/gst063-route-contract.yml'
   workflow_dispatch:
 
@@ -37,7 +39,10 @@ jobs:
           python-version: '3.12'
 
       - name: Install test runner
-        run: python -m pip install --disable-pip-version-check --no-input pytest
+        run: >-
+          python -m pip install --disable-pip-version-check --no-input
+          --require-hashes --only-binary=:all:
+          -r tools/gst063/requirements-ci-linux-py312.lock
 
       - name: Verify committed bridge matches canonical generator
         env:
