@@ -39,6 +39,66 @@ def relation_ids(obj):
             out |= relation_ids(v)
     return out
 
+
+def view_ids_from_registry(views):
+    ids={x.get("id") for x in views.get("shared_view_families",[]) if isinstance(x,dict) and isinstance(x.get("id"),str)}
+    for key in ("eco_specialised_views","romer_specialised_views","emassc_ls_specialised_views"):
+        ids.update(v for v in views.get(key,[]) if isinstance(v,str))
+    return ids
+
+def validate_view_selection_policy(policy, view_ids):
+    failures=[]
+    if policy.get("schema")!="CGX-VIEW-SELECTION-POLICY/0.1":
+        failures.append("view-selection policy schema is not 0.1")
+    if policy.get("status") not in {"review-blueprint","active"}:
+        failures.append("view-selection policy status is not recognised")
+
+    inputs=policy.get("inputs_in_priority_order")
+    if not isinstance(inputs,list) or not inputs or inputs[0]!="security_and_admission":
+        failures.append("view-selection policy does not place security_and_admission first")
+    elif len(set(inputs))!=len(inputs):
+        failures.append("view-selection policy priority inputs contain duplicates")
+
+    required_constraints={
+        "never show data outside admission/security lease",
+        "never raise evidence ceiling because a public/investor/operator lens prefers certainty",
+        "user preference cannot override security, authority, evidence or accessibility requirements",
+        "Host-local session state remains outside canonical roots by default",
+    }
+    constraints=set(policy.get("hard_constraints") or [])
+    missing_constraints=sorted(required_constraints-constraints)
+    if missing_constraints:
+        failures.append("view-selection policy missing hard constraints: "+", ".join(missing_constraints))
+
+    task_mapping=policy.get("task_mapping")
+    if not isinstance(task_mapping,dict) or not task_mapping:
+        failures.append("view-selection policy task mapping is empty")
+    else:
+        for task,mapped in sorted(task_mapping.items()):
+            if not isinstance(mapped,list) or not mapped:
+                failures.append(f"view-selection task {task} has no views")
+                continue
+            unknown=sorted({v for v in mapped if v not in view_ids})
+            if unknown:
+                failures.append(f"view-selection task {task} references unknown views: {unknown}")
+
+    hybrid=policy.get("hybridisation_policy") or {}
+    if hybrid.get("max_primary_views")!=1:
+        failures.append("view-selection hybrid policy must keep exactly one primary view")
+    if "same stable object set" not in str(hybrid.get("combine_if","")):
+        failures.append("view-selection hybrid policy is not bound to the same stable object set")
+
+    output=policy.get("output") or {}
+    if output.get("canonical_mutation") is not False:
+        failures.append("view-selection output must not mutate canon")
+    required_output={"security_scope","evidence_ceiling","source_root_binding"}
+    output_fields=set(output.get("fields") or [])
+    missing_output=sorted(required_output-output_fields)
+    if missing_output:
+        failures.append("view-selection output missing fields: "+", ".join(missing_output))
+
+    return failures
+
 def main():
     failures=[]; warnings=[]
     try:
@@ -46,6 +106,7 @@ def main():
         shell=load("corpus_aware_base_shell_contract.json")
         receipt=load("pilot_fixture_validation_receipt_2026-09-23.json")
         views=load("semantic_view_lens_registry.json")
+        view_policy=load("view_selection_policy.json")
         shared_rel=load("relation_qualifier_contract.json")
         bridge=load("cross_domain_bridge_registry.json")
     except Exception as e:
@@ -92,9 +153,8 @@ def main():
         if not (DT/name).exists():
             failures.append(f"shared contract missing: {key} -> {name}")
 
-    view_ids={x.get("id") for x in views.get("shared_view_families",[]) if isinstance(x,dict)}
-    for key in ("eco_specialised_views","romer_specialised_views","emassc_ls_specialised_views"):
-        view_ids.update(v for v in views.get(key,[]) if isinstance(v,str))
+    view_ids=view_ids_from_registry(views)
+    failures.extend(validate_view_selection_policy(view_policy,view_ids))
 
     domain_files={
         "romer":("romer_type_registry.json","romer_relation_registry.json"),
