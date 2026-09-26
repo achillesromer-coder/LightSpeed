@@ -104,7 +104,6 @@ def test_disallowed_preference_cannot_expand_view_scope_or_evidence_ceiling():
     assert result["evidence_ceiling"] == "derived-digital-verification"
     assert result["selected_subgraph"] == [OBJECTS[0]]
     assert "saved_profile_preferences.primary_view" in result["preference_rejections"]
-    assert "selected_subgraph" not in result
     assert "empirical-pass" not in str(result)
 
 
