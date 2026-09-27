@@ -6,6 +6,7 @@ import pytest
 
 from lightspeed_runtime.cgx_view_policy import CGXViewPolicyError
 from lightspeed_runtime.runtime import LightSpeedRuntime
+from lightspeed_runtime.floor_bridges import TrinityShellBridge
 
 
 RUNTIME_ROOT = Path(__file__).resolve().parents[1]
@@ -145,3 +146,27 @@ def test_no_admitted_view_for_task_fails_closed():
             runtime,
             security_and_admission=lease(allowed_views=["publication"]),
         )
+
+
+def test_trinity_shell_bridge_consumes_runtime_policy_without_widening_authority():
+    runtime = LightSpeedRuntime(RUNTIME_ROOT)
+    bridge = TrinityShellBridge(runtime)
+    result = bridge.select_workspace_projection(
+        security_and_admission=lease(),
+        task_intent="runtime",
+        active_object_domain_and_type="lightspeed/runtime-node",
+        work_mode="operate",
+        device_hydration_capability="reader",
+        role_or_audience="operator",
+        source_root_binding=SOURCE_ROOT,
+        selected_subgraph=[OBJECTS[0]],
+        saved_profile_preferences={"primary_view": "active-object-inspector"},
+        session_override={"primary_view": "publication"},
+        interaction_capabilities=["inspect"],
+    )
+    assert result["primary_view"] == "active-object-inspector"
+    assert result["secondary_views"] == ["network-runtime"]
+    assert result["selected_subgraph"] == [OBJECTS[0]]
+    assert result["evidence_ceiling"] == "derived-digital-verification"
+    assert result["canonical_mutation"] is False
+    assert "publication" not in [result["primary_view"], *result["secondary_views"]]
