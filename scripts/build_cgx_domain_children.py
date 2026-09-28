@@ -123,7 +123,7 @@ def legacy_lens_profile(domain: str) -> dict:
         {"id":"machine","read":"policy-scoped semantic closure","mutate":"lease+authority"},
     ]
     specialised={
-        "romer":{"id":"sovereign-capacity","read":"australian-capability+evidence+risk+dependencies","mutate":"proposed-delta"},
+        "romer":{"id":"sovereign-capacity","read":"operator+country+civilisation-node+australian-capability+bom+bop+boc+supply+services+operations+institutions+workforce+utilities+software+logistics+maintenance+metrology+finance+insurance+legal+recovery+knowledge+ecology+evidence+risk+dependencies","mutate":"proposed-delta"},
         "eco":{"id":"interspecies-egalitarian","read":"ecological+species+stewardship+human-impact","mutate":"analysis/proposed-delta"},
         "emassc":{"id":"scientific-validation","read":"methods+raw-evidence+uncertainty+calibration+claims","mutate":"proposed-delta"},
         "lightspeed":{"id":"runtime-operator","read":"host+device+provider+workflow+receipt+conformance","mutate":"lease+policy-authorised"},
