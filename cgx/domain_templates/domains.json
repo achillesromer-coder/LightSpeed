@@ -161,7 +161,8 @@
     "cross_domain_bridges": "cross_domain_bridge_registry.json",
     "semantic_views": "semantic_view_lens_registry.json",
     "view_selection": "view_selection_policy.json",
-    "layout_convergence": "layout_convergence_contract.md"
+    "layout_convergence": "layout_convergence_contract.md",
+    "intersol_site_community_profile": "intersol_site_community_profile_contract.json"
   },
   "generation_policy": {
     "source_authority": "latest-durably-observed-Recovery-authority-only",
