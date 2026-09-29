@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-ROMER-SEMANTIC-LIBRARY/0.1",
+  "schema": "CGX-ROMER-SEMANTIC-LIBRARY/0.2",
   "status": "review-blueprint",
   "domain": "romer",
   "filespace": "Romer.cgx",
@@ -108,6 +108,32 @@
           "figure",
           "web-route",
           "release-package"
+        ],
+        "sovereign_capacity": [
+          "capability",
+          "capability-chain",
+          "bill-of-capabilities",
+          "service-dependency",
+          "service-provider",
+          "maintenance-plan",
+          "spare",
+          "alternate-source",
+          "supplier-enablement",
+          "offtake",
+          "industrial-commons",
+          "dependency-risk",
+          "localisation-viability",
+          "total-cost-of-ownership",
+          "sovereignty-maturity",
+          "capability-transfer-state",
+          "normal-mode",
+          "degraded-mode",
+          "preservation-mode",
+          "dormant-mode",
+          "restart-plan",
+          "recovery-route",
+          "material-passport",
+          "end-of-life-route"
         ]
       }
     },
@@ -122,7 +148,8 @@
         "research-evidence",
         "economics-legal",
         "operations",
-        "publications"
+        "publications",
+        "sovereign-capacity"
       ],
       "canonical_system_families": [
         "mark",
@@ -265,6 +292,20 @@
       "REPRESENTED_BY",
       "PUBLISHED_AS",
       "DERIVED_VIEW_OF"
+    ],
+    "capability": [
+      "CAPABILITY_REQUIRED_BY",
+      "DEPENDS_ON_SERVICE",
+      "ALTERNATE_TO",
+      "MAINTAINED_BY",
+      "CALIBRATED_BY",
+      "QUALIFIED_BY",
+      "CERTIFIED_BY",
+      "INSURED_BY",
+      "RECOVERED_BY",
+      "SUBSTITUTABLE_BY",
+      "TRANSFERRED_TO",
+      "RESTARTED_BY"
     ]
   },
   "relation_qualifiers": [
@@ -279,7 +320,13 @@
     "authority",
     "evidence_state",
     "confidence",
-    "source_ref"
+    "source_ref",
+    "dependency_risk",
+    "localisation_viability",
+    "tco_state",
+    "sovereignty_level",
+    "capability_transfer_state",
+    "external_gate"
   ],
   "inheritance": {
     "structural": "parent definitions may supply defaults; instances override explicitly",
@@ -293,7 +340,10 @@
     "Create a child library only when it has reusable vocabulary, independent authority/security, or its own lifecycle.",
     "System families are graph roots, not separate schemas.",
     "A project/programme may reference the same component without duplicating it.",
-    "CAD, spreadsheets, code and reports are representations/providers of semantic objects, not the semantic objects themselves."
+    "CAD, spreadsheets, code and reports are representations/providers of semantic objects, not the semantic objects themselves.",
+    "For sovereign-capacity work, bind BOM, BOP and BOC as separate linked objects; do not collapse materials, processes and operating capabilities into one record.",
+    "Shared services, tooling, utilities, qualification and recovery capabilities should be referenced once and linked to all consuming projects rather than duplicated.",
+    "The Sovereign Cross-Discipline Capacity whitepaper is a derived review view and never becomes canonical authority."
   ],
   "source_mapping_examples": {
     "Type 1 Romer Cognigrex": "graph + enterprise + programme + publications",
@@ -303,5 +353,74 @@
     "MPL Engine": "capability/provider + model/run evidence",
     "M1 Elevated Bypass": "terrestrial infrastructure project graph",
     "LinkDrive/DataIndex": "source/provenance/provider index"
+  },
+  "sovereign_capacity_contract": {
+    "status": "review-blueprint",
+    "owner": "Type 1 Romer Cognigrex / 60_Aus_Sovereign_Capacity",
+    "queue": [
+      "TASK-104",
+      "BUILD-054"
+    ],
+    "scope": [
+      "resource-feedstock",
+      "production-process",
+      "service-operations",
+      "maintenance-mro-calibration-spares",
+      "utilities-facilities",
+      "software-data-cyber-continuity",
+      "workforce-knowledge-succession",
+      "procurement-logistics-inventory",
+      "finance-insurance-commercial",
+      "legal-regulatory-certification",
+      "emergency-degraded-preservation-dormant-restart",
+      "recovery-circular-end-of-life",
+      "ecology-interspecies",
+      "off-world-civilisation-node"
+    ],
+    "required_chain": [
+      "need-function",
+      "BOM",
+      "BOP",
+      "BOC",
+      "cross-project-consumers",
+      "dependency-risk",
+      "localisation-viability",
+      "TCO",
+      "SC-0..SC-7",
+      "intervention",
+      "evidence-ceiling",
+      "smallest-external-gate",
+      "readback-receipt"
+    ],
+    "interventions": [
+      "DESIGN-OUT",
+      "STANDARDISE",
+      "SUBSTITUTE",
+      "STOCK",
+      "DUAL-SOURCE",
+      "RECOVER",
+      "ENABLE-SUPPLIER",
+      "OFFTAKE",
+      "SHARED-COMMONS",
+      "ALLIED-SOURCE",
+      "INTERNALISE"
+    ],
+    "service_transfer_levels": {
+      "S0": "supplier-does-all",
+      "S1": "documented",
+      "S2": "operator-trained",
+      "S3": "maintenance-transferred",
+      "S4": "local-manufacture-enabled",
+      "S5": "supplier-is-optional-node"
+    },
+    "execution_contract": "READ -> RESOLVE -> WRITE -> READBACK -> RECEIPT",
+    "whitepaper_rule": "Derived review snapshot only after coverage/provenance/contradiction/evidence-ceiling/external-gate/security-publication/readback parity; never the working master.",
+    "authority_rules": [
+      "localisation-is-not-autarky",
+      "provider-presence-is-not-capacity-proof",
+      "documentation-is-not-credential-or-certification",
+      "BOM-or-BOP-completion-does-not-close-BOC",
+      "unreceipted-mutation-is-PARTIAL-RECOVER-not-COMPLETE"
+    ]
   }
 }
