@@ -1,7 +1,7 @@
 {
   "schema": "CGX-CGP-IES-LAUNCH-FRONTIER/0.1",
   "queue_id": "CGX-LAUNCH-FRONTIER-2026-09-30",
-  "status": "ACTIVE_PRE_LAUNCH / S92_RECOVERY_CURRENT / S92_CHILD_REGENERATION_READY / EMPIRICAL_GATES_OPEN",
+  "status": "ACTIVE_PRE_LAUNCH / S92_TECHNICALLY_ACCEPTED / RECOVERY_PROMOTION_HELD_ON_DURABLE_READBACK",
   "source_authority": {
     "recovery_state": "S91",
     "recovery_release": "v1.61",
@@ -88,13 +88,17 @@
       "evidence": {
         "candidate_state": "S92",
         "candidate_sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
-        "candidate_content_root": "bf851642ac5bef93e8b9663f71ea4aa94ede30bf057528101773dd12de830bc1",
-        "candidate_dbr_root": "a7da29629904db2ac82218eaf36c916adbc057a7e954104053078afbf288ad66",
-        "candidate_topology": "13cc735955ff8aaabdaf43aed968b510b5dab85416fbb7adee5807215c781074",
-        "validation_drive_id": "1qHjs52mH2S-PU4E5auqurIzfIXpxwA0G",
-        "build_receipt_drive_id": "1ycZ-tRfLnyZcKQ6-zv8YwdSW-C-gMuk-",
-        "canonical_verifier": "PASS",
-        "packed_reopen_verifier": "PASS"
+        "content_root": "bf851642ac5bef93e8b9663f71ea4aa94ede30bf057528101773dd12de830bc1",
+        "dbr_root": "a7da29629904db2ac82218eaf36c916adbc057a7e954104053078afbf288ad66",
+        "topology_snapshot_hash": "13cc735955ff8aaabdaf43aed968b510b5dab85416fbb7adee5807215c781074",
+        "verifier": "PASS",
+        "packed_reopen_verify": "PASS",
+        "policy_state": "PRE_CANONICAL",
+        "promotion": "NOT_PERFORMED",
+        "source_workflow_run_id": 36704624557,
+        "source_workflow_head_sha": "fee9eb7999d32d260780af88c813a55d4670159c",
+        "source_artifact_id": 11091735683,
+        "source_artifact_digest": "sha256:52a501198f7ecae6c37e2c6c4bbc40e26394ca956848171226ca1098b46602ce"
       }
     },
     {
@@ -119,12 +123,13 @@
       "evidence_class": "INDEPENDENT_VERIFICATION",
       "completed_at": "2026-09-30",
       "evidence": {
-        "audit_drive_id": "1O4auaYLfBD4heLsZQu2tdu4xWB8ypUQR",
-        "audit_sha256": "6d55d526a9ee19c4542dd855187e90dd51579b7ab3184803a3250ab67a75d263",
         "decision": "ACCEPT_TECHNICAL_CANDIDATE_FOR_ROOT_PROMOTION_GATE",
-        "parent_dbr_exact": true,
-        "source_components_exact": "10/10 semantic + canonical-byte exact",
-        "restricted_authority_boundary": "PASS",
+        "audit_sha256": "6d55d526a9ee19c4542dd855187e90dd51579b7ab3184803a3250ab67a75d263",
+        "candidate_sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+        "dbr_parent_exact": true,
+        "normalized_source_components_exact": "10/10",
+        "candidate_verifier": "PASS",
+        "release_boundary": "PASS",
         "secret_pattern_findings": 0
       }
     },
@@ -136,7 +141,7 @@
       "audit": "Achilles",
       "execution_class": "DIGITAL_WRITE",
       "cascade_class": "C3",
-      "state": "COMPLETE",
+      "state": "HOLD_DURABLE_STORAGE_READBACK",
       "depends_on": [
         "CGX-LAUNCH-003"
       ],
@@ -158,6 +163,13 @@
         "canonical_verifier": "PASS",
         "predecessor_s91_retained": true,
         "promotion_verification": "s92_recovery_promotion_verification_2026-09-30.json"
+      },
+      "release_reason": "Technical acceptance is complete and standing pre-launch root authorization applies to the exact S92 candidate; promotion remains held until exact candidate bytes are durably persisted and re-read from Validation/Recovery.",
+      "blocker": {
+        "id": "CGX-STORAGE-TRANSPORT-001",
+        "description": "Current local-to-Drive file-reference bridge expired/refused an unregistered local path.",
+        "non_effect": "No mutation to S91 Recovery occurred; no failed upload changed Validation candidate contents.",
+        "closure": "Persist exact S92 SHA-256 722558... as a new file, re-download/read back, verify identical hash and canonical verifier, then promote exact bytes."
       }
     },
     {
@@ -387,5 +399,6 @@
       ],
       "evidence_class": "REPEATED_RUN_RECEIPT"
     }
-  ]
+  ],
+  "last_reconciled": "2026-09-30"
 }
