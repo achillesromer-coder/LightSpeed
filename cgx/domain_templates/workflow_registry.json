@@ -1,7 +1,18 @@
 {
-  "schema_version": "0.3",
+  "schema_version": "0.4",
   "extensible": true,
   "workflows": [
+    {
+      "id": "consequence-preflight",
+      "steps": [
+        "hydrate-task-context",
+        "run-assurance-preflight",
+        "run-custodial-preflight",
+        "merge-holds",
+        "emit-consequence-receipt",
+        "route-to-authority-gate-or-hold"
+      ]
+    },
     {
       "id": "assurance-preflight",
       "steps": [
@@ -129,5 +140,21 @@
     "ordering": "assurance before custodial GATE and before consequential execution",
     "receipt_required": true,
     "rule": "clearance means bounded assurance evidence only; risk acceptance, custodial approval, legal approval and execution authority remain separate"
+  },
+  "consequence_preflight": {
+    "executable": "scripts/cgx_consequence_preflight.py",
+    "tests": "scripts/validate_cgx_preflight_chain.py",
+    "ordering": [
+      "evidence-qualification",
+      "assurance",
+      "custodial",
+      "authority/risk-acceptance",
+      "execution-lease",
+      "independent-safety",
+      "tool-execution",
+      "telemetry/readback"
+    ],
+    "terminal_clear_state": "CLEARED_FOR_AUTHORITY_GATE",
+    "rule": "preflight clearance is not permission to execute"
   }
 }
