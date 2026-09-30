@@ -1,6 +1,6 @@
 {
   "schema": "CGX-CGP-IES-PARENT-HYDRATION/0.1",
-  "status": "PRE_CANONICAL_CANDIDATE_ONLY",
+  "status": "PROMOTED_S92 / HISTORICAL_REPRODUCIBLE_BUILD_MANIFEST",
   "seed": {
     "state_id": "S91",
     "release": "v1.61",
@@ -24,16 +24,24 @@
     "object_envelope_schema.json": "cgp_ies_object_envelope_schema.json"
   },
   "candidate_controls": {
-    "policy_state": "PRE_CANONICAL",
+    "policy_state": "PROMOTED_IN_S92_RECOVERY",
     "overwrite_recovery_in_place": false,
     "parent_mutation_required": true,
-    "canonical_promotion_requires_owner_confirmation": true,
+    "canonical_promotion_requires_owner_confirmation": false,
     "pack_reopen_verify_required": true,
     "dbr_receipt_required": true,
     "child_regeneration_after_parent_promotion_only": true,
     "accepted_baselines": "OC-001..OC-024 accepted v0.1",
     "sensitive_authority_details": "not embedded in public source package; resolved by internal governance provider",
-    "launch_frontier_queue": "Hydrate as operational queue after parent promotion; do not treat queue contents as constitutional source."
+    "launch_frontier_queue": "Hydrate as operational queue after parent promotion; do not treat queue contents as constitutional source.",
+    "owner_confirmation_status": "OC-001..OC-024 accepted v0.1 prior to exact S92 promotion"
   },
-  "authority_boundary": "The candidate builder may construct and verify a descendant carrier. It does not promote that carrier to Recovery or CANONICAL policy state."
+  "authority_boundary": "This manifest reproduces the S91→S92 extension installation. S92 is now Recovery authority; further parent mutations require a new state/DBR event and independent promotion gate.",
+  "promotion": {
+    "state_id": "S92",
+    "recovery_drive_id": "1ap1xHVQ0cDWeJDAVWxvY_VqMkSzwpG6i",
+    "recovery_sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+    "verification": "s92_recovery_promotion_verification_2026-09-30.json",
+    "parent_seed_preserved": "S91"
+  }
 }
