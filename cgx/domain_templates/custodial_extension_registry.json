@@ -48,14 +48,22 @@
         {
           "when": {
             "tags_any": [
+              "artificial-moral-patient",
+              "civilization-loss",
+              "communications-loss",
+              "ecosystem-intervention",
+              "external-contact",
+              "external-contact-response",
+              "habitat-translocation",
+              "hazardous-material",
+              "irreversible",
+              "life-impact",
+              "planetary-defense",
+              "planetary-protection",
               "replication",
               "resource-extraction",
-              "irreversible",
-              "hazardous-material",
-              "planetary-protection",
-              "external-contact",
-              "life-impact",
-              "ecosystem-intervention"
+              "successor-restart",
+              "trajectory-change"
             ]
           },
           "minimum_mode": "GATE",
@@ -96,7 +104,17 @@
         "source_unavailable_consequential": "HOLD",
         "source_integrity_mismatch": "HOLD",
         "unknown_affected_party": "preserve-unknown-and-increase-reversibility; not automatic prohibition",
-        "conflicting_lenses": "preserve dissent; compare admissible options; no scalar sovereign-good score"
+        "conflicting_lenses": "preserve dissent; compare admissible options; no scalar sovereign-good score",
+        "unresolved_representation": "preserve-unrepresented-state; do not infer mandate from competence or ownership",
+        "unknown_contact_channel": "observe-and-adapt-interface; no automatic response or execution",
+        "successor_context_unknown": "hold productive restart; preserve protective MVSL where independently justified"
+      },
+      "components": {
+        "policy": "cgp_ies_policy_pack.json",
+        "terminology": "cgp_ies_terminology_map.json",
+        "domain_adapters": "cgp_ies_domain_adapter_registry.json",
+        "decision_receipt": "cgp_ies_decision_receipt_schema.json",
+        "fixtures": "cgp_ies_fixture_scenarios.json"
       }
     }
   ]
