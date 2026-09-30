@@ -72,6 +72,8 @@ def resolve(domain, execution_depth, reasoning_depth="standard", cascade_class="
       "shared_components":{
         "terminology":component_refs.get("terminology"),
         "decision_receipt":component_refs.get("decision_receipt"),
+        "authority_phase":component_refs.get("authority_phase"),
+        "release_visibility":component_refs.get("release_visibility"),
         "policy":component_refs.get("policy",ext.get("source_template"))
       },
       "fail_behaviour":ext["fail_behaviour"],
