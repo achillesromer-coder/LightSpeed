@@ -76,6 +76,12 @@
       "role": "cross-domain/admission-aware views"
     },
     {
+      "id": "agents",
+      "location": "Cognigrex.cgx:/agents",
+      "role": "durable agent identity, role, scoped authority, model/tool bindings, leases, receipts and fallback profiles",
+      "rule": "model/provider is a replaceable capability; agent identity and authority are CGX state"
+    },
+    {
       "id": "representations",
       "location": "Cognigrex.cgx:/representations",
       "role": "generated multi-domain projections and receipts"
