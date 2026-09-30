@@ -1,0 +1,356 @@
+{
+  "schema": "CGX-ASSURANCE-RELATION-REGISTRY/0.1",
+  "status": "implementation-blueprint / parent-carrier-hydration-pending",
+  "location": "Cognigrex.cgx:/assurance/graph",
+  "purpose": "Typed assurance relationships connecting hazards, failures, causes, effects, controls, evidence, consequence estimates and gates without collapsing method-specific semantics.",
+  "relations": [
+    {
+      "id": "HAS_FAILURE_MODE",
+      "from": [
+        "system",
+        "component",
+        "process",
+        "interface",
+        "software-function"
+      ],
+      "to": [
+        "failure-mode"
+      ]
+    },
+    {
+      "id": "CAUSED_BY",
+      "from": [
+        "failure-mode",
+        "hazardous-event",
+        "unsafe-control-action",
+        "top-event"
+      ],
+      "to": [
+        "cause",
+        "failure-mode",
+        "condition",
+        "threat"
+      ]
+    },
+    {
+      "id": "HAS_LOCAL_EFFECT",
+      "from": [
+        "failure-mode"
+      ],
+      "to": [
+        "effect"
+      ]
+    },
+    {
+      "id": "HAS_NEXT_LEVEL_EFFECT",
+      "from": [
+        "failure-mode"
+      ],
+      "to": [
+        "effect"
+      ]
+    },
+    {
+      "id": "HAS_END_EFFECT",
+      "from": [
+        "failure-mode",
+        "hazardous-event"
+      ],
+      "to": [
+        "effect",
+        "loss",
+        "consequence"
+      ]
+    },
+    {
+      "id": "CREATES_HAZARD",
+      "from": [
+        "failure-mode",
+        "condition",
+        "unsafe-control-action",
+        "deviation",
+        "threat"
+      ],
+      "to": [
+        "hazard"
+      ]
+    },
+    {
+      "id": "INITIATES",
+      "from": [
+        "initiating-event",
+        "threat"
+      ],
+      "to": [
+        "event-sequence",
+        "top-event",
+        "hazardous-event"
+      ]
+    },
+    {
+      "id": "LEADS_TO",
+      "from": [
+        "event",
+        "failure-mode",
+        "hazard"
+      ],
+      "to": [
+        "event",
+        "effect",
+        "consequence"
+      ]
+    },
+    {
+      "id": "DETECTED_BY",
+      "from": [
+        "failure-mode",
+        "hazard",
+        "threat"
+      ],
+      "to": [
+        "detector",
+        "monitor",
+        "test",
+        "alarm"
+      ]
+    },
+    {
+      "id": "PREVENTED_BY",
+      "from": [
+        "hazard",
+        "failure-mode",
+        "threat"
+      ],
+      "to": [
+        "control",
+        "barrier",
+        "safety-function"
+      ]
+    },
+    {
+      "id": "MITIGATED_BY",
+      "from": [
+        "hazard",
+        "effect",
+        "consequence",
+        "threat"
+      ],
+      "to": [
+        "control",
+        "barrier",
+        "containment",
+        "recovery"
+      ]
+    },
+    {
+      "id": "CONTROLLED_BY",
+      "from": [
+        "hazard",
+        "unsafe-control-action",
+        "deviation"
+      ],
+      "to": [
+        "control",
+        "safety-function",
+        "procedure"
+      ]
+    },
+    {
+      "id": "PROTECTED_BY",
+      "from": [
+        "asset",
+        "function",
+        "affected-party"
+      ],
+      "to": [
+        "barrier",
+        "interlock",
+        "containment",
+        "control"
+      ]
+    },
+    {
+      "id": "VERIFIED_BY",
+      "from": [
+        "control",
+        "safety-function",
+        "claim",
+        "barrier"
+      ],
+      "to": [
+        "test",
+        "inspection",
+        "analysis",
+        "evidence",
+        "receipt"
+      ]
+    },
+    {
+      "id": "TESTED_BY",
+      "from": [
+        "requirement",
+        "component",
+        "software-function",
+        "control"
+      ],
+      "to": [
+        "test-protocol",
+        "test-run"
+      ]
+    },
+    {
+      "id": "HAS_RESIDUAL_RISK",
+      "from": [
+        "hazard",
+        "assurance-case"
+      ],
+      "to": [
+        "residual-risk-statement"
+      ]
+    },
+    {
+      "id": "ESTIMATES_CONSEQUENCE_OF",
+      "from": [
+        "mpl-result",
+        "qra-result",
+        "eta-result"
+      ],
+      "to": [
+        "scenario",
+        "hazardous-event",
+        "activity"
+      ]
+    },
+    {
+      "id": "INFORMS",
+      "from": [
+        "analysis",
+        "receipt",
+        "result"
+      ],
+      "to": [
+        "claim",
+        "gate",
+        "decision"
+      ],
+      "rule": "informing evidence never becomes authority by relation alone"
+    },
+    {
+      "id": "SUPPORTS_CLAIM",
+      "from": [
+        "evidence",
+        "argument"
+      ],
+      "to": [
+        "assurance-claim"
+      ]
+    },
+    {
+      "id": "CHALLENGES_CLAIM",
+      "from": [
+        "defeater",
+        "contradiction",
+        "evidence"
+      ],
+      "to": [
+        "assurance-claim"
+      ]
+    },
+    {
+      "id": "ARGUES_FOR",
+      "from": [
+        "assurance-argument"
+      ],
+      "to": [
+        "assurance-claim"
+      ]
+    },
+    {
+      "id": "REQUIRES_SAFE_STATE",
+      "from": [
+        "hazard",
+        "operation",
+        "failure-mode"
+      ],
+      "to": [
+        "safe-state"
+      ]
+    },
+    {
+      "id": "TRIGGERS_GATE",
+      "from": [
+        "hazard",
+        "finding",
+        "assurance-state"
+      ],
+      "to": [
+        "gate"
+      ]
+    },
+    {
+      "id": "BOUNDS_OPERATION_OF",
+      "from": [
+        "ceiling",
+        "safety-case",
+        "authority-lease",
+        "control"
+      ],
+      "to": [
+        "operation",
+        "agent",
+        "system"
+      ]
+    },
+    {
+      "id": "APPLIES_METHOD",
+      "from": [
+        "assurance-object"
+      ],
+      "to": [
+        "assurance-method"
+      ]
+    },
+    {
+      "id": "HAS_ASSUMPTION",
+      "from": [
+        "analysis",
+        "assurance-case"
+      ],
+      "to": [
+        "assumption"
+      ]
+    },
+    {
+      "id": "HAS_UNCERTAINTY",
+      "from": [
+        "analysis",
+        "result",
+        "claim"
+      ],
+      "to": [
+        "uncertainty"
+      ]
+    },
+    {
+      "id": "SUPERSEDES",
+      "from": [
+        "analysis",
+        "receipt",
+        "case"
+      ],
+      "to": [
+        "analysis",
+        "receipt",
+        "case"
+      ]
+    }
+  ],
+  "rules": [
+    "failure mode is not synonymous with hazard, cause, consequence or MPL screening scenario",
+    "MPL financial consequence results never satisfy engineering FMEA or hazard-analysis relations",
+    "control presence is not control verification; VERIFIED_BY is separately required",
+    "risk acceptance is not inferred from low RPN, low MPL, low probability or lack of detected failure",
+    "cross-domain relation does not transfer endpoint ownership or acceptance authority",
+    "all consequential relations retain configuration, lifecycle/time and evidence qualifiers where material"
+  ]
+}
