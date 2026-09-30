@@ -1,0 +1,33 @@
+name: CGX custodial extension validation
+
+on:
+  push:
+    paths:
+      - "cgx/domain_templates/**"
+      - "scripts/resolve_cgx_extensions.py"
+      - "scripts/cgx_custodial_preflight.py"
+      - "scripts/validate_cgp_ies_extension.py"
+      - "scripts/validate_cgx_domain_templates.py"
+      - ".github/workflows/cgx-custodial-extension-validation.yml"
+  pull_request:
+    paths:
+      - "cgx/domain_templates/**"
+      - "scripts/resolve_cgx_extensions.py"
+      - "scripts/cgx_custodial_preflight.py"
+      - "scripts/validate_cgp_ies_extension.py"
+      - "scripts/validate_cgx_domain_templates.py"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate CGX templates
+        run: python scripts/validate_cgx_domain_templates.py
+      - name: Validate CGP-IES extension fixtures
+        run: python scripts/validate_cgp_ies_extension.py
+      - name: Resolve observational scenario
+        run: python scripts/resolve_cgx_extensions.py --domain eco --execution-depth inspect --cascade-class C1 --tags field-observation
