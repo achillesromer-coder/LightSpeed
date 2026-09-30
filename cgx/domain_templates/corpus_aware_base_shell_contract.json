@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-CORPUS-AWARE-BASE-SHELL/0.5",
+  "schema": "CGX-CORPUS-AWARE-BASE-SHELL/0.6",
   "purpose": "Define a data-light but corpus-aware child workspace that can accept first real files and later-discovered corpus families without redesigning identity, authority, intake, work modes, lenses, providers or migration topology.",
   "required_sections": [
     "identity/domain",
@@ -36,7 +36,8 @@
     "profiles/semantic_view_registry",
     "profiles/view_selection_policy",
     "proof/pilot_fixture_conformance",
-    "extensions/bindings"
+    "extensions/bindings",
+    "assurance/bindings"
   ],
   "authority_invariants": [
     "shell-metadata-is-not-authority-transfer",
@@ -52,7 +53,9 @@
     "domain-type-and-relation-registries-must-pass-bounded-fixture-proof-before-generator-promotion",
     "later-validation-descendant-cannot-seed-new-child-bases-until-exact-byte-recovery-promotion-is-durably-observed",
     "gated-view-projection-remains-gated-when-required-geometry-spatial-or-runtime-evidence-is-absent",
-    "extension-binding-does-not-transfer-semantic-operational-or-moral-authority"
+    "extension-binding-does-not-transfer-semantic-operational-or-moral-authority",
+    "assurance-binding-does-not-transfer-semantic-operational-risk-acceptance-or-certification-authority",
+    "method-output-does-not-promote-a-risk-number-or-compliance-claim-outside-its-declared-method-and-validity-envelope"
   ],
   "privacy_and_security": [
     "no-secret-bytes-in-carrier",
@@ -68,5 +71,6 @@
   "publication_rule": "Portfolio, dossier, evidence review, Web2, social, email and institutional packages are generated representations/lenses and do not become source authority.",
   "semantic_fixture_rule": "At least one deterministic bounded fixture per primary domain must reproduce stable Object/Cell/Relation IDs and declared view hashes against the reviewed type/relation/view registries. Warnings may remain only when explicitly epistemic/sanity bounded and non-promoting.",
   "generator_rule": "Generator consumes reviewed registry contracts and the latest durably observed Recovery carrier by identity/hash/DBR ancestry. It must fail closed on an unpromoted Validation-only seed or fixture/schema mismatch.",
-  "extension_rule": "Shared policy/lens extensions are parent-owned and child-bound by reference. A child may cache integrity metadata, not duplicate the normative policy payload as its own authority. Consequential execution fails closed when a required extension source cannot be verified."
+  "extension_rule": "Shared policy/lens extensions are parent-owned and child-bound by reference. A child may cache integrity metadata, not duplicate the normative policy payload as its own authority. Consequential execution fails closed when a required extension source cannot be verified.",
+  "assurance_rule": "Cross-domain assurance is parent-coordinated at Cognigrex.cgx:/assurance and child-bound by reference. Methods remain independently identified with applicability, evidence, assumptions and limits. Missing blocking assurance evidence becomes Frontier/HOLD for consequential work rather than a fabricated pass."
 }
