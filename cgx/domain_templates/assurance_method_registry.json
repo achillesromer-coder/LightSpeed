@@ -321,6 +321,97 @@
         "simulation validation does not equal physical validation outside tested envelope"
       ],
       "reference": "systems/software lifecycle + domain qualification standards"
+    },
+    {
+      "id": "ASSURANCE_CASE",
+      "family": "assurance_argument",
+      "purpose": "Maintain a bounded claim-argument-evidence-defeater structure for safety, security, dependability or other assurance properties.",
+      "outputs": [
+        "assurance_claims",
+        "arguments",
+        "evidence_links",
+        "assumptions",
+        "defeaters",
+        "validity_envelope",
+        "review_state"
+      ],
+      "limits": [
+        "supported-within-scope is not certification, legal approval, residual-risk acceptance or execution authority"
+      ],
+      "reference": "ISO/IEC/IEEE 15026-2:2022"
+    },
+    {
+      "id": "AGENTIC_SECURITY",
+      "family": "agent_security",
+      "purpose": "Assess goal hijack, tool misuse, privilege abuse, agentic supply chain, code execution, memory/context poisoning, inter-agent trust, cascade and rogue-agent risks.",
+      "outputs": [
+        "agent_threat_map",
+        "least_agency_controls",
+        "identity_and_lease_controls",
+        "tool_boundaries",
+        "memory_integrity_controls",
+        "inter_agent_trust_controls",
+        "cascade_controls",
+        "quarantine_and_recovery"
+      ],
+      "limits": [
+        "agent-security controls supplement rather than replace software safety, cybersecurity, functional safety or physical interlocks"
+      ],
+      "reference": "OWASP Top 10 for Agentic Applications 2026 + MITRE ATLAS + applicable NIST/IEC controls"
+    },
+    {
+      "id": "SOFTWARE_SAFETY",
+      "family": "software_assurance",
+      "purpose": "Assess software contribution to hazards, safety-critical requirements, configuration/change control, unintended behaviour, verification and independent review through the software lifecycle.",
+      "outputs": [
+        "software_safety_classification",
+        "safety_critical_requirements",
+        "hazardous_software_contributions",
+        "verification_plan",
+        "ivv_need",
+        "configuration_controls",
+        "retirement_constraints"
+      ],
+      "limits": [
+        "software test pass is not physical-system validation; applicable organisational/sector standards and independence requirements govern"
+      ],
+      "reference": "NASA-STD-8739.8B as space-software applicability reference + applicable software/system safety standards"
+    },
+    {
+      "id": "HUMAN_FACTORS",
+      "family": "human_system",
+      "purpose": "Assess workload, fatigue, maintainability, access, warnings, controls, emergency interaction, foreseeable misuse and operator recovery.",
+      "outputs": [
+        "operator_tasks",
+        "human_error_paths",
+        "workload_and_fatigue",
+        "maintainability",
+        "warning_and_control_requirements",
+        "accessibility",
+        "training_and_procedure_needs",
+        "human_recovery_paths"
+      ],
+      "limits": [
+        "human-factors analysis is context-, population- and environment-specific and cannot be reduced to generic operator blame"
+      ],
+      "reference": "InterSol human-factors corpus + applicable ergonomics, accessibility and domain safety requirements"
+    },
+    {
+      "id": "LOPA",
+      "family": "barrier_quantification",
+      "purpose": "Evaluate whether independent protection layers provide sufficient risk reduction for a defined process-hazard scenario where the method is applicable and evidence supports quantification.",
+      "outputs": [
+        "initiating_event_basis",
+        "independent_protection_layers",
+        "layer_independence",
+        "risk_reduction_factors",
+        "residual_scenario_risk",
+        "sif_need"
+      ],
+      "limits": [
+        "protection-layer independence/performance must be justified; LOPA is scenario-specific and not a substitute for HAZOP, full QRA or functional-safety lifecycle"
+      ],
+      "reference": "IEC 61511 process functional-safety family + IEC 31010 risk-assessment techniques"
     }
   ],
   "composition_rule": "Select the smallest sufficient independent method bundle for the actual hazard/problem; add methods when consequence, uncertainty or cross-domain coupling warrants them. One method never silently certifies another method's question.",
@@ -328,7 +419,9 @@
     "assurance_case_contract": "assurance_case_contract.json",
     "agentic_security_threat_registry": "agentic_security_threat_registry.json",
     "agent_assurance_role_matrix": "agent_assurance_role_matrix.json",
-    "unified_assurance_object": "unified_assurance_object_schema.json"
+    "unified_assurance_object": "unified_assurance_object_schema.json",
+    "assurance_relation_registry": "assurance_relation_registry.json",
+    "mpl_assurance_adapter": "mpl_assurance_adapter.json"
   },
   "assurance_case_rule": "A method result may support an assurance-case claim only within its declared configuration, evidence state and validity envelope; blocking defeaters force HOLD."
 }
