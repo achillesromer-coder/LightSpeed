@@ -1,0 +1,299 @@
+{
+  "schema": "CGX-ASSURANCE-SELECTION-MATRIX/0.1",
+  "rule": "Selection is additive and contextual. A matched method adds a lens; it does not suppress other applicable lenses.",
+  "routes": [
+    {
+      "id": "AR-01",
+      "match": {
+        "tags_any": [
+          "hardware",
+          "component",
+          "interface",
+          "manufacturing",
+          "maintenance",
+          "failure"
+        ]
+      },
+      "methods": [
+        "FMEA",
+        "V_AND_V"
+      ],
+      "minimum_state": "ANALYSE"
+    },
+    {
+      "id": "AR-02",
+      "match": {
+        "tags_any": [
+          "criticality",
+          "single-point-failure",
+          "mission-loss",
+          "catastrophic-failure"
+        ]
+      },
+      "methods": [
+        "FMECA",
+        "FTA",
+        "V_AND_V"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AR-03",
+      "match": {
+        "tags_any": [
+          "process",
+          "chemical",
+          "pressure",
+          "thermal",
+          "flow",
+          "operability"
+        ]
+      },
+      "methods": [
+        "HAZOP",
+        "HAZARD_ANALYSIS",
+        "BOW_TIE"
+      ],
+      "minimum_state": "ANALYSE"
+    },
+    {
+      "id": "AR-04",
+      "match": {
+        "tags_any": [
+          "autonomy",
+          "robot",
+          "ai-control",
+          "software-control",
+          "swarm",
+          "agent",
+          "llm"
+        ]
+      },
+      "methods": [
+        "STPA",
+        "AI_IMPACT",
+        "CYBER_THREAT",
+        "FUNCTIONAL_SAFETY"
+      ],
+      "minimum_state": "ANALYSE"
+    },
+    {
+      "id": "AR-05",
+      "match": {
+        "tags_any": [
+          "replication-control",
+          "hard-stop",
+          "life-support",
+          "containment",
+          "hazard-control"
+        ]
+      },
+      "methods": [
+        "FUNCTIONAL_SAFETY",
+        "FTA",
+        "CONTINUITY_RECOVERY",
+        "V_AND_V"
+      ],
+      "minimum_state": "SAFETY_CASE"
+    },
+    {
+      "id": "AR-06",
+      "match": {
+        "tags_any": [
+          "australian-launch",
+          "return-authorisation",
+          "launch",
+          "reentry"
+        ]
+      },
+      "methods": [
+        "HAZARD_ANALYSIS",
+        "QRA_PRA",
+        "MPL",
+        "SPACE_DEBRIS",
+        "CYBER_THREAT",
+        "V_AND_V"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AR-07",
+      "match": {
+        "tags_any": [
+          "asteroid",
+          "offworld-extraction",
+          "fragmentation",
+          "ejecta",
+          "conjunction",
+          "orbital-object"
+        ]
+      },
+      "methods": [
+        "HAZARD_ANALYSIS",
+        "FTA",
+        "ETA",
+        "SPACE_DEBRIS",
+        "QRA_PRA",
+        "V_AND_V"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AR-08",
+      "match": {
+        "tags_any": [
+          "planetary-protection",
+          "sample-return",
+          "unknown-life",
+          "extraterrestrial-biology"
+        ]
+      },
+      "methods": [
+        "PLANETARY_PROTECTION",
+        "ECO_BIOSECURITY",
+        "HAZARD_ANALYSIS",
+        "V_AND_V"
+      ],
+      "minimum_state": "SAFETY_CASE"
+    },
+    {
+      "id": "AR-09",
+      "match": {
+        "domain": [
+          "eco"
+        ],
+        "tags_any": [
+          "field-deployment",
+          "species-movement",
+          "inoculation",
+          "seed",
+          "spore",
+          "soil",
+          "water",
+          "habitat",
+          "ecosystem-intervention",
+          "life-impact"
+        ]
+      },
+      "methods": [
+        "ECO_BIOSECURITY",
+        "HAZARD_ANALYSIS",
+        "FMEA",
+        "V_AND_V"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AR-10",
+      "match": {
+        "tags_any": [
+          "communications-loss",
+          "power-loss",
+          "governance-loss",
+          "founder-loss",
+          "supplier-loss",
+          "black-start",
+          "hibernation",
+          "restart"
+        ]
+      },
+      "methods": [
+        "CONTINUITY_RECOVERY",
+        "FTA",
+        "ETA",
+        "LIFECYCLE_INHERITANCE"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AR-11",
+      "match": {
+        "tags_any": [
+          "decommission",
+          "abandonment",
+          "recycle",
+          "recompose",
+          "hazard-legacy",
+          "succession",
+          "inheritance"
+        ]
+      },
+      "methods": [
+        "LIFECYCLE_INHERITANCE",
+        "HAZARD_ANALYSIS",
+        "CONTINUITY_RECOVERY"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AR-12",
+      "match": {
+        "tags_any": [
+          "public-claim",
+          "publication",
+          "regulatory-claim",
+          "performance-claim"
+        ]
+      },
+      "methods": [
+        "V_AND_V",
+        "AI_IMPACT"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AR-13",
+      "match": {
+        "tags_any": [
+          "interSol",
+          "facility",
+          "public-route",
+          "battery-room",
+          "lab",
+          "material-receiving",
+          "subterranean",
+          "stormwater"
+        ]
+      },
+      "methods": [
+        "HAZARD_ANALYSIS",
+        "FMEA",
+        "BOW_TIE",
+        "CONTINUITY_RECOVERY"
+      ],
+      "minimum_state": "VERIFY"
+    }
+  ],
+  "escalation": [
+    {
+      "when": {
+        "cascade_min": "C3"
+      },
+      "minimum_state": "VERIFY"
+    },
+    {
+      "when": {
+        "execution_depth": [
+          "execute",
+          "build"
+        ],
+        "cascade_min": "C2"
+      },
+      "minimum_state": "VERIFY"
+    },
+    {
+      "when": {
+        "tags_any": [
+          "replication-control",
+          "planetary-protection",
+          "unknown-life",
+          "life-support",
+          "nuclear",
+          "radioactive",
+          "catastrophic-failure"
+        ]
+      },
+      "minimum_state": "SAFETY_CASE"
+    }
+  ]
+}
