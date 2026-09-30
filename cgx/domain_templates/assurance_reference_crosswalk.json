@@ -159,7 +159,42 @@
       "topic": "AI adversary tactics/techniques and red-team knowledge",
       "status": "living threat knowledge base; refresh at use",
       "url": "https://atlas.mitre.org/"
+    },
+    {
+      "id": "IEC-61025-2006",
+      "topic": "fault-tree analysis",
+      "status": "current published edition; revision work in progress",
+      "url": "https://webstore.iec.ch/en/publication/4311",
+      "notes": "top-down FTA; assumptions and failure/event logic explicit"
+    },
+    {
+      "id": "IEC-31010-2019",
+      "topic": "risk assessment techniques",
+      "status": "current; stability date 2027",
+      "url": "https://webstore.iec.ch/en/publication/59809",
+      "notes": "selection/application of multiple risk-assessment techniques; not a single universal method"
+    },
+    {
+      "id": "IEC-61511-SER-2026",
+      "topic": "process functional safety / safety instrumented systems",
+      "status": "current IEC 61511 series pack published 2026-07-10; constituent parts retain their editions",
+      "url": "https://webstore.iec.ch/en/publication/5527",
+      "notes": "process-sector application of functional-safety lifecycle; applicable only where process/SIS context fits"
+    },
+    {
+      "id": "NASA-STD-8739.8B",
+      "topic": "software assurance, software safety and IV&V",
+      "status": "active NASA standard dated 2022-09-08",
+      "url": "https://standards.nasa.gov/standard/nasa/nasa-std-87398",
+      "notes": "space-software applicability reference; does not make Römer/NASA compliant"
+    },
+    {
+      "id": "ISO-21448-2022",
+      "topic": "safety of intended functionality",
+      "status": "published; revision working draft active in 2026",
+      "url": "https://www.iso.org/standard/77490.html",
+      "notes": "road-vehicle SOTIF applicability lens for sensing/automation insufficiency; not universal autonomy standard"
     }
   ],
-  "refresh_rule": "Before regulatory, certification, procurement or high-consequence use, refresh edition/status/applicability from the issuing body and jurisdiction; never infer compliance from registry presence."
+  "refresh_rule": "Before regulatory, certification, procurement or high-consequence use, refresh edition/status/applicability from the issuing body and jurisdiction; never infer compliance from registry presence. Working drafts never silently replace published requirements."
 }
