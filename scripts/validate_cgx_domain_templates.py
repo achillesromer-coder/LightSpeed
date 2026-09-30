@@ -56,6 +56,8 @@ def main():
         cgp_decision_receipt=load("cgp_ies_decision_receipt_schema.json")
         cgp_owner_values=load("cgp_ies_owner_confirmation_values.json")
         cgp_parent_hydration=load("cgp_ies_parent_extension_manifest.json")
+        cgp_authority_ref=load("cgp_ies_authority_phase_ref.json")
+        cgp_visibility=load("cgp_ies_release_visibility_policy.json")
         assurance_registry=load("assurance_method_registry.json")
         assurance_schema=load("unified_assurance_object_schema.json")
         assurance_matrix=load("assurance_selection_matrix.json")
@@ -153,8 +155,8 @@ def main():
             failures.append("cgp-ies parent source path mismatch")
     if cgp_policy.get("schema")!="CGX-CGP-IES-POLICY/0.1":
         failures.append("cgp-ies policy schema mismatch")
-    if len(cgp_fixtures.get("scenarios",[]))<18:
-        failures.append("cgp-ies fixture coverage below eighteen scenarios")
+    if len(cgp_fixtures.get("scenarios",[]))<22:
+        failures.append("cgp-ies fixture coverage below twenty-two scenarios")
     if cgp_terminology.get("schema")!="CGX-CGP-IES-TERMINOLOGY/0.1":
         failures.append("cgp-ies terminology schema mismatch")
     if cgp_adapters.get("schema")!="CGX-CGP-IES-DOMAIN-ADAPTERS/0.1":
@@ -163,8 +165,16 @@ def main():
         failures.append("cgp-ies domain adapter coverage mismatch")
     if cgp_decision_receipt.get("schema")!="CGX-CGP-IES-DECISION-RECEIPT/0.1":
         failures.append("cgp-ies decision receipt schema mismatch")
-    if cgp_owner_values.get("status","").find("REVIEW_REQUIRED")<0:
-        failures.append("cgp-ies owner values must remain review-required before parent promotion")
+    if "ACCEPTED_BASELINES" not in cgp_owner_values.get("status",""):
+        failures.append("cgp-ies owner baseline acceptance missing")
+    if cgp_authority_ref.get("schema")!="CGX-CGP-IES-AUTHORITY-PHASE-REF/0.1":
+        failures.append("cgp-ies authority phase ref schema mismatch")
+    if cgp_authority_ref.get("detailed_contract_class")!="Restricted":
+        failures.append("cgp-ies detailed authority contract must remain Restricted")
+    if cgp_visibility.get("schema")!="CGX-CGP-IES-RELEASE-VISIBILITY/0.1":
+        failures.append("cgp-ies release visibility schema mismatch")
+    if "detailed root-authority topology" not in cgp_visibility.get("public_projection_deny",[]):
+        failures.append("cgp-ies public deny list missing root authority topology")
     if cgp_parent_hydration.get("status")!="PRE_CANONICAL_CANDIDATE_ONLY":
         failures.append("cgp-ies parent hydration must remain pre-canonical candidate only")
     if cgp_parent_hydration.get("seed",{}).get("sha256")!=expected_seed["sha256"]:
