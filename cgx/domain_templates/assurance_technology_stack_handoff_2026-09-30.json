@@ -1,0 +1,82 @@
+{
+  "schema": "CGX-ASSURANCE-TECH-STACK-HANDOFF/0.1",
+  "handoff_id": "CGX-HANDOFF-ASSURANCE-STACK-2026-09-30",
+  "state": "SOURCE_RUNTIME_AND_VALIDATION_IMPLEMENTED / PARENT_CARRIER_HYDRATION_PENDING",
+  "architecture": {
+    "stack": "Cognigrex.cgx:/stack",
+    "agents": "Cognigrex.cgx:/agents",
+    "assurance": "Cognigrex.cgx:/assurance",
+    "custodial": "Cognigrex.cgx:/extensions/cgp-ies",
+    "order": [
+      "physical/source evidence",
+      "epistemic qualification",
+      "assurance",
+      "custodial",
+      "authority/risk acceptance",
+      "execution lease",
+      "independent safety plane",
+      "execution",
+      "telemetry/DBR"
+    ]
+  },
+  "core_files": [
+    "technology_stack_registry.json",
+    "agent_runtime_contract.json",
+    "assurance_method_registry.json",
+    "unified_assurance_object_schema.json",
+    "assurance_selection_matrix.json",
+    "assurance_reference_crosswalk.json",
+    "assurance_fixture_scenarios.json",
+    "assurance_case_contract.json",
+    "agentic_security_threat_registry.json",
+    "agent_assurance_role_matrix.json",
+    "custodial_extension_registry.json",
+    "cgp_ies_policy_pack.json"
+  ],
+  "executables": [
+    "scripts/cgx_assurance_route.py",
+    "scripts/cgx_assurance_preflight.py",
+    "scripts/resolve_cgx_extensions.py",
+    "scripts/cgx_custodial_preflight.py",
+    "scripts/cgx_consequence_preflight.py",
+    "scripts/build_cgx_domain_children.py"
+  ],
+  "validators": [
+    "scripts/validate_cgx_assurance.py",
+    "scripts/validate_cgp_ies_extension.py",
+    "scripts/validate_cgx_preflight_chain.py",
+    "scripts/validate_cgx_domain_templates.py"
+  ],
+  "method_boundary": {
+    "FMEA": "failure mode/effect lens; RPN optional/local",
+    "MPL": "financial/regulatory consequence/insurance lens where applicable; not engineering safety or readiness",
+    "hazard_analysis": "hazard identification/control/residual state",
+    "FTA_ETA_BOW_TIE": "causal/event/barrier structure",
+    "STPA": "unsafe control actions and systemic control interactions",
+    "cyber_AI": "agent/model/tool/memory/privilege and adversarial risk",
+    "eco_biosecurity": "living-system/provenance/pathogen/invasive/cumulative effects",
+    "space_debris_planetary_protection": "orbital environmental and contamination-specific gates",
+    "assurance_case": "claim-argument-evidence-defeater structure; not acceptance authority",
+    "CGP_IES": "affected parties, option-space, custodial/lifecycle/contact reasoning; not engineering safety kernel"
+  },
+  "corpus_boundary": {
+    "historical_fmea_composite": "retain failure hypotheses, subsystem boundaries and recovery patterns; reverify numeric thresholds, claims, compliance and go/no-go conclusions",
+    "current_workbooks": "use current owning sheets/source records by revision and evidence state; workbook presence alone is not validation",
+    "regulatory_external": "refresh issuing-body status at consequential use; reference presence is not compliance/certification"
+  },
+  "next_parent_action": [
+    "review AS-OC-001..012 and existing CGP-IES OC-001..010",
+    "hydrate /stack, /agents, /assurance and /extensions/cgp-ies into one new descendant of trusted Recovery authority",
+    "record DBR mutation; run verifier; pack; reopen; verify hashes/content/DBR/topology",
+    "regenerate Romer.cgx, Eco.cgx, EMASSC.cgx and LS.cgx with assurance and custodial reference bindings",
+    "bind live dispatch to cgx_consequence_preflight.py and normal Task_ID/Run_ID receipt lineage",
+    "execute domain physical/HIL evidence gates before any claim of operational safety or certification"
+  ],
+  "explicit_nonclaims": [
+    "trusted S91 parent carrier has not yet been mutated",
+    "no generated child carrier has yet been regenerated from the new parent stack",
+    "no standards reference is a certification claim",
+    "no historic FMEA/MPL number is promoted by this handoff",
+    "no LLM or agent receives new authority from this architecture"
+  ]
+}
