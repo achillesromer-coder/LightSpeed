@@ -55,6 +55,13 @@ def route(domain,execution_depth,cascade_class="C0",tags=None):
     # High-consequence work with no matched specialist method is not silently clear.
     if CASCADE[cascade_class]>=CASCADE["C3"] and execution_depth in ("execute","build") and not methods:
         state="HOLD"
+    # SAFETY_CASE is a structured assurance claim/argument/evidence obligation,
+    # not merely a higher severity label. Keep specialist analyses and add the
+    # independent case structure that links claims, evidence, assumptions and defeaters.
+    if state=="SAFETY_CASE" and "ASSURANCE_CASE" not in methods:
+        if "ASSURANCE_CASE" not in known:
+            raise ValueError("unknown-assurance-method:ASSURANCE_CASE")
+        methods.append("ASSURANCE_CASE")
     required_evidence=[]
     for m in methods:
         entry=known[m]
