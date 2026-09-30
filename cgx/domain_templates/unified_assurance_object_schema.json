@@ -1,0 +1,136 @@
+{
+  "schema": "CGX-UNIFIED-ASSURANCE-OBJECT/0.1",
+  "object_type": "assurance-risk-object",
+  "purpose": "A common graph object linking multiple assurance analyses to one real system/hazard without forcing method-specific quantities into a universal score.",
+  "required_fields": [
+    "risk_id",
+    "object_id",
+    "domain",
+    "system_boundary",
+    "lifecycle_phase",
+    "environment",
+    "evidence_state",
+    "assurance_state",
+    "owner",
+    "authority_state",
+    "last_verified"
+  ],
+  "fields": {
+    "identity": [
+      "risk_id",
+      "object_id",
+      "system_id",
+      "domain",
+      "subsystem",
+      "function",
+      "interface",
+      "configuration",
+      "version"
+    ],
+    "context": [
+      "mission_or_service",
+      "lifecycle_phase",
+      "environment",
+      "operating_mode",
+      "population_or_ecological_context",
+      "jurisdiction",
+      "cascade_class"
+    ],
+    "mechanism": [
+      "hazard",
+      "initiating_event",
+      "failure_mode",
+      "causes",
+      "unsafe_control_action",
+      "deviation",
+      "top_event",
+      "event_sequence",
+      "common_cause"
+    ],
+    "effects": [
+      "local_effect",
+      "system_effect",
+      "external_effect",
+      "affected_parties",
+      "ecological_effect",
+      "orbital_effect",
+      "information_effect",
+      "financial_effect"
+    ],
+    "analysis": [
+      "severity",
+      "occurrence_model",
+      "detection_model",
+      "rpn_optional",
+      "criticality",
+      "likelihood_model",
+      "consequence_model",
+      "mpl_financial_optional",
+      "uncertainty",
+      "sensitivity",
+      "reversibility"
+    ],
+    "evidence": [
+      "evidence_state",
+      "source_ids",
+      "measurement_ids",
+      "simulation_ids",
+      "assumptions",
+      "unknowns",
+      "contradictions",
+      "validity_envelope",
+      "data_quality"
+    ],
+    "controls": [
+      "preventive_controls",
+      "detective_controls",
+      "mitigative_controls",
+      "safety_functions",
+      "independent_interlocks",
+      "containment",
+      "stop_path",
+      "fallback",
+      "recovery",
+      "inheritance"
+    ],
+    "verification": [
+      "control_verification",
+      "test_protocol_ids",
+      "test_receipts",
+      "calibration_state",
+      "proof_test_interval",
+      "monitoring",
+      "trigger_limits"
+    ],
+    "governance": [
+      "owner",
+      "specialist_owner",
+      "authority_state",
+      "acceptance_basis",
+      "accepted_by",
+      "exception_id",
+      "exception_expiry",
+      "next_review"
+    ],
+    "output": [
+      "assurance_state",
+      "residual_risk_statement",
+      "open_gates",
+      "related_cgp_ies_receipt",
+      "dbr_receipts"
+    ]
+  },
+  "scalar_rules": {
+    "rpn": "optional method-local prioritisation only; never universal accept/reject threshold",
+    "mpl": "financial/regulatory consequence lens only; never substitutes for physical safety or probability",
+    "composite_score": "forbidden as sovereign cross-domain risk or ethical score",
+    "probability": "must identify model, population/time horizon, uncertainty and evidence basis"
+  },
+  "state_semantics": {
+    "LOG": "recorded; no assurance conclusion",
+    "ANALYSE": "method bundle active; evidence incomplete",
+    "VERIFY": "controls/claims require evidence and test readback",
+    "SAFETY_CASE": "bounded argument/evidence package supports declared scope; not universal certification",
+    "HOLD": "one or more blocking conditions unresolved for the requested action"
+  }
+}
