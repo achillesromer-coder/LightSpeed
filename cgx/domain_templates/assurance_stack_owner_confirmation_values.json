@@ -1,0 +1,79 @@
+{
+  "schema": "CGX-ASSURANCE-STACK-OWNER-CONFIRMATION/0.1",
+  "status": "PROPOSED / REVIEW_REQUIRED",
+  "values": [
+    {
+      "id": "AS-OC-001",
+      "term": "ASSURANCE_PARENT_PATH",
+      "proposed": "Cognigrex.cgx:/assurance",
+      "reason": "one cross-domain method/evidence coordination service; child domains retain ownership"
+    },
+    {
+      "id": "AS-OC-002",
+      "term": "TECHNOLOGY_STACK_PARENT_PATH",
+      "proposed": "Cognigrex.cgx:/stack",
+      "reason": "single machine-readable architecture/dependency source"
+    },
+    {
+      "id": "AS-OC-003",
+      "term": "RISK_ACCEPTANCE_BOUNDARY",
+      "proposed": "SEPARATE_FROM_ASSURANCE",
+      "reason": "analysis or safety-case evidence must not become authority to accept residual risk"
+    },
+    {
+      "id": "AS-OC-004",
+      "term": "RPN_ROLE",
+      "proposed": "OPTIONAL_METHOD_LOCAL_PRIORITISATION_ONLY",
+      "reason": "severity/occurrence/detection products are not a universal cross-domain safety threshold"
+    },
+    {
+      "id": "AS-OC-005",
+      "term": "MPL_ROLE",
+      "proposed": "FINANCIAL_REGULATORY_CONSEQUENCE_LENS_ONLY",
+      "reason": "MPL does not substitute for hazard probability, engineering safety or mission readiness"
+    },
+    {
+      "id": "AS-OC-006",
+      "term": "METHOD_SELECTION",
+      "proposed": "ADDITIVE_CONTEXTUAL_MULTI_METHOD",
+      "reason": "FMEA/FMECA, hazard, HAZOP, FTA/ETA, STPA, cyber, ecology, debris and planetary protection answer different questions"
+    },
+    {
+      "id": "AS-OC-007",
+      "term": "INDEPENDENT_SAFETY_PLANE",
+      "proposed": "NON_BYPASSABLE_BY_AGENT_MODEL_OR_PEER_VOTE",
+      "reason": "mission intelligence cannot rewrite or veto root stop/containment/replication controls"
+    },
+    {
+      "id": "AS-OC-008",
+      "term": "AGENT_MODEL_IDENTITY",
+      "proposed": "AGENT_DURABLE_MODEL_REPLACEABLE",
+      "reason": "Neo/Athene/Achilles roles persist across remote/local/no-model modes"
+    },
+    {
+      "id": "AS-OC-009",
+      "term": "PREFLIGHT_CLEAR_STATE",
+      "proposed": "CLEARED_FOR_AUTHORITY_GATE_NOT_GO",
+      "reason": "assurance+custodial clearance remains upstream of legitimate authority, risk acceptance and execution lease"
+    },
+    {
+      "id": "AS-OC-010",
+      "term": "HISTORICAL_FMEA_PROMOTION",
+      "proposed": "FAILURE_HYPOTHESES_AND_RECOVERY_PATTERNS_ONLY_UNTIL_REVERIFIED",
+      "reason": "older composite reports contain mixed assumptions, targets and outdated claim language"
+    },
+    {
+      "id": "AS-OC-011",
+      "term": "NEXT_PARENT_MUTATION",
+      "proposed": "HYDRATE_ASSURANCE_AND_CGP_IES_IN_ONE_NEW_VERIFIED_DESCENDANT",
+      "reason": "avoid serial recovery-carrier churn and verify their interfaces together"
+    },
+    {
+      "id": "AS-OC-012",
+      "term": "SURFACE_AUTHORITY",
+      "proposed": "NO_AUTHORITY_BY_CHAT_WEB_DESKTOP_MOBILE_OR_DISPLAY",
+      "reason": "all surfaces remain projections/interactions using the same underlying identity/authority state"
+    }
+  ],
+  "promotion_rule": "These values remain proposed until owner/governance review. Parent carrier hydration and DBR readback are required before canonical promotion."
+}
