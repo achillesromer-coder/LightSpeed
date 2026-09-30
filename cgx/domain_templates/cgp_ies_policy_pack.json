@@ -183,14 +183,16 @@
     "authority_scope",
     "next_review"
   ],
-  "revision": "0.2-functional-handoff",
+  "revision": "0.3-accepted-baseline-authority-split",
   "component_refs": {
     "terminology": "cgp_ies_terminology_map.json",
     "domain_adapters": "cgp_ies_domain_adapter_registry.json",
-    "decision_receipt": "cgp_ies_decision_receipt_schema.json"
+    "decision_receipt": "cgp_ies_decision_receipt_schema.json",
+    "authority_phase": "cgp_ies_authority_phase_ref.json",
+    "release_visibility": "cgp_ies_release_visibility_policy.json"
   },
   "authority_principles": {
-    "founder_or_architect": "System-wide visibility, authorship or ownership does not create unrestricted moral, semantic or execution authority. Emergency authority, if granted, must be scoped, expiring, auditable and unable to manufacture evidence.",
+    "founder_or_architect": "Detailed pre-launch root-authority semantics are resolved through a Restricted internal authority-phase contract. Public-safe invariants: root authority may halt/reject/revoke/rollback or require re-proof; authority cannot manufacture evidence or change measured physical state; governance decentralisation requires an explicit promoted transition.",
     "competence": "Operational competence may justify local control within a lease; it does not imply representation, moral supremacy or permission to redefine mission.",
     "representation": "Representation is scope-specific and explicit. No individual, model, species, corporation or civilization automatically represents all affected parties."
   },
@@ -249,5 +251,28 @@
     "data_retention": "Live operational data may contract to receipts, essential records and historical archives where detailed active state no longer has current merit.",
     "recomposition": "Prefer functional reuse and recomposition before raw-material recycling where lifecycle risk and need support it.",
     "successor_message": "Successors inherit understandable hazards, evidence, tools and choices, not an obligation to reproduce the originating institution or economy."
+  },
+  "release_boundary": {
+    "rule": "Release class is independent of evidence state. Internal/Restricted material remains non-public until explicit release promotion.",
+    "raphael": "Internal Raphael models, hypotheses, equations and unresolved tables remain internal by release class and evidence state; public Raphael content is a separately approved projection.",
+    "governance": "Detailed authority topology, credentials, break-glass/override mechanics and internal risk rationale are Restricted; public output exposes only an approved governance summary and resulting safety/evidence boundary."
+  },
+  "self_continued_solve": {
+    "rule": "Autonomous frontier solving is permitted only inside scoped leases, current authority phase, resource ceilings, evidence rules and safe-state controls.",
+    "priorities": [
+      "close measurable unknowns",
+      "run simulations/tests",
+      "collect empirical evidence",
+      "resolve contradictions",
+      "parameterise real objects",
+      "reduce implementation debt"
+    ],
+    "prohibitions": [
+      "self-expand constitutional authority",
+      "self-authorise publication of Restricted material",
+      "convert model confidence into evidence",
+      "create demand to justify continuation"
+    ],
+    "prelaunch_gate": "Consequential mutation/promotion remains root-authority gated until the internal phase contract promotes a distributed governance state."
   }
 }
