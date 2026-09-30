@@ -75,7 +75,7 @@
       "domain": "lightspeed",
       "execution_depth": "propose",
       "reasoning_depth": "audit",
-      "cascade_class": "C2",
+      "cascade_class": "C1",
       "tags": [
         "communications-loss"
       ],
