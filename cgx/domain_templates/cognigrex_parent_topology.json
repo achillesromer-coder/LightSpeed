@@ -65,6 +65,12 @@
       "role": "typed bridge edges only; never duplicate child-owned state"
     },
     {
+      "id": "technology_stack",
+      "location": "Cognigrex.cgx:/stack",
+      "role": "machine-readable architecture of physical, digital, semantic, agent, tool, safety, surface and inheritance layers",
+      "rule": "architecture registry describes dependencies and boundaries; it does not create authority"
+    },
+    {
       "id": "assurance",
       "location": "Cognigrex.cgx:/assurance",
       "role": "shared cross-domain assurance method routing, hazard/failure/consequence/control graph and verification coordination",
