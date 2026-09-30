@@ -189,7 +189,9 @@
     "cgp_ies_owner_confirmation": "cgp_ies_owner_confirmation_values.json",
     "cgp_ies_parent_hydration": "cgp_ies_parent_extension_manifest.json",
     "cgp_ies_authority_phase": "cgp_ies_authority_phase_ref.json",
-    "cgp_ies_release_visibility": "cgp_ies_release_visibility_policy.json"
+    "cgp_ies_release_visibility": "cgp_ies_release_visibility_policy.json",
+    "cgp_ies_object_envelope": "cgp_ies_object_envelope_schema.json",
+    "cgp_ies_launch_frontier_queue": "cgp_ies_launch_frontier_queue.json"
   },
   "generation_policy": {
     "source_authority": "latest-durably-observed-Recovery-authority-only",
@@ -239,10 +241,12 @@
       "decision_receipt": "cgp_ies_decision_receipt_schema.json",
       "fixtures": "cgp_ies_fixture_scenarios.json",
       "authority_phase": "cgp_ies_authority_phase_ref.json",
-      "release_visibility": "cgp_ies_release_visibility_policy.json"
+      "release_visibility": "cgp_ies_release_visibility_policy.json",
+      "object_envelope": "cgp_ies_object_envelope_schema.json"
     },
     "inheritance_rule": "children bind by reference; nested descendants may inherit applicable mode/configuration but cannot weaken a required consequence escalation or create authority",
-    "publication_boundary": "public projection requires Public release class + approval; detailed authority topology and internal Raphael material stay out of public projections"
+    "publication_boundary": "public projection requires Public release class + approval; detailed authority topology and internal Raphael material stay out of public projections",
+    "operational_queue": "cgp_ies_launch_frontier_queue.json"
   },
   "shared_assurance": {
     "owner": "Cognigrex.cgx:/assurance",
