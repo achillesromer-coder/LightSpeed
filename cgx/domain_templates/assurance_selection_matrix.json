@@ -1,6 +1,6 @@
 {
   "schema": "CGX-ASSURANCE-SELECTION-MATRIX/0.1",
-  "rule": "Selection is additive and contextual. A matched method adds a lens; it does not suppress other applicable lenses.",
+  "rule": "Selection is additive and contextual. A matched method adds a lens; it does not suppress other applicable lenses. SAFETY_CASE state also requires the assurance-case contract even when the triggering specialist route is different.",
   "routes": [
     {
       "id": "AR-01",
@@ -73,7 +73,9 @@
         "STPA",
         "AI_IMPACT",
         "CYBER_THREAT",
-        "FUNCTIONAL_SAFETY"
+        "FUNCTIONAL_SAFETY",
+        "AGENTIC_SECURITY",
+        "SOFTWARE_SAFETY"
       ],
       "minimum_state": "ANALYSE"
     },
@@ -92,7 +94,8 @@
         "FUNCTIONAL_SAFETY",
         "FTA",
         "CONTINUITY_RECOVERY",
-        "V_AND_V"
+        "V_AND_V",
+        "SOFTWARE_SAFETY"
       ],
       "minimum_state": "SAFETY_CASE"
     },
@@ -259,9 +262,92 @@
         "HAZARD_ANALYSIS",
         "FMEA",
         "BOW_TIE",
-        "CONTINUITY_RECOVERY"
+        "CONTINUITY_RECOVERY",
+        "HUMAN_FACTORS"
       ],
       "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AR-14",
+      "match": {
+        "tags_any": [
+          "tool-use",
+          "multi-agent",
+          "rag",
+          "retrieval",
+          "memory",
+          "mcp",
+          "external-input",
+          "agentic-workflow",
+          "agent-handoff"
+        ]
+      },
+      "methods": [
+        "AGENTIC_SECURITY",
+        "CYBER_THREAT",
+        "AI_IMPACT"
+      ],
+      "minimum_state": "ANALYSE"
+    },
+    {
+      "id": "AR-15",
+      "match": {
+        "tags_any": [
+          "safety-critical-software",
+          "software-safety",
+          "control-software",
+          "flight-software",
+          "autonomy-software",
+          "interlock-software"
+        ]
+      },
+      "methods": [
+        "SOFTWARE_SAFETY",
+        "STPA",
+        "V_AND_V",
+        "CYBER_THREAT"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AR-16",
+      "match": {
+        "tags_any": [
+          "lopa",
+          "protection-layer",
+          "safety-instrumented-system",
+          "sis",
+          "process-safety-quantification"
+        ]
+      },
+      "methods": [
+        "HAZOP",
+        "LOPA",
+        "FUNCTIONAL_SAFETY",
+        "V_AND_V"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AR-17",
+      "match": {
+        "tags_any": [
+          "human-factors",
+          "operator",
+          "maintenance-access",
+          "fatigue",
+          "warning-design",
+          "emergency-egress",
+          "accessibility",
+          "foreseeable-misuse"
+        ]
+      },
+      "methods": [
+        "HUMAN_FACTORS",
+        "HAZARD_ANALYSIS",
+        "V_AND_V"
+      ],
+      "minimum_state": "ANALYSE"
     }
   ],
   "escalation": [
