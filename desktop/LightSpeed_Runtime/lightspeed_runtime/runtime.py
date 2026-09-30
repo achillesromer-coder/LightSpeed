@@ -265,6 +265,7 @@ from lightspeed_runtime.route_probe import (
     read_route_probe_report,
     write_route_probe_report,
 )
+from lightspeed_runtime.cgx_view_policy import select_runtime_view_projection
 from lightspeed_runtime.workflow_state import (
     default_workflow_state_path,
     read_resumable_workflow_state,
@@ -308,6 +309,45 @@ class LightSpeedRuntime:
     def _slug(value: str) -> str:
         slug = re.sub(r"[^a-zA-Z0-9]+", "_", (value or "").strip().lower()).strip("_")
         return slug or "workspace"
+
+    def select_cgx_view(
+        self,
+        *,
+        security_and_admission: dict,
+        task_intent: str,
+        active_object_domain_and_type: str,
+        work_mode: str,
+        device_hydration_capability: str,
+        role_or_audience: str,
+        source_root_binding: str,
+        selected_subgraph: list[str] | None = None,
+        saved_profile_preferences: dict | None = None,
+        session_override: dict | None = None,
+        z_depth: int | str | None = None,
+        filters: dict | None = None,
+        units: str | dict | None = None,
+        layout: str | dict | None = None,
+        interaction_capabilities: list[str] | None = None,
+    ) -> dict:
+        """Select a fail-closed CGX projection without mutating canonical state."""
+        return select_runtime_view_projection(
+            self.root,
+            security_and_admission=security_and_admission,
+            task_intent=task_intent,
+            active_object_domain_and_type=active_object_domain_and_type,
+            work_mode=work_mode,
+            device_hydration_capability=device_hydration_capability,
+            role_or_audience=role_or_audience,
+            source_root_binding=source_root_binding,
+            selected_subgraph=selected_subgraph,
+            saved_profile_preferences=saved_profile_preferences,
+            session_override=session_override,
+            z_depth=z_depth,
+            filters=filters,
+            units=units,
+            layout=layout,
+            interaction_capabilities=interaction_capabilities,
+        )
 
     def _default_runtime_config_path(self) -> Path:
         return canonical_runtime_config_path(self.root)

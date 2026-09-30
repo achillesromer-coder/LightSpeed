@@ -1,4 +1,5 @@
 {
+  "schema_version": 1,
   "records": [
     {
       "bytes": 6443,
@@ -489,591 +490,6 @@
       "bytes": 8141,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Trinity.py",
       "sha256": "b4ba3ded834c27a7933331bbb21b943d9a05d91ca3935f33da9059d5553d640a"
-    },
-    {
-      "bytes": 315,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/__init__.py",
-      "sha256": "e1dda8f460e824c6107e575cd4cd3a1c7aa41e0ece55699eac9c597d7d4a60a9"
-    },
-    {
-      "bytes": 5102,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/_FLOOR_MANIFEST.json",
-      "sha256": "d9e12d295caa4a77a60bc1350c3cbc83957898d4671bee421516f1ba5e7ce533"
-    },
-    {
-      "bytes": 1612,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/components/__init__.py",
-      "sha256": "0f31f37f096057a017e7cc4b8637c606e4ced489bc0f04122b26ece4dc25d3ac"
-    },
-    {
-      "bytes": 38288,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/components/architect_portal_glass.py",
-      "sha256": "af84c629b21859a7c7d0dabc5cf659afe74b53bc3e3e0509e23367f3a9f2db3f"
-    },
-    {
-      "bytes": 16142,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/components/ArchitectCoreComponent.py",
-      "sha256": "9a3b07581fc9791bfe63c65db86a9b3c24244457cae6de05927679677528c62b"
-    },
-    {
-      "bytes": 29062,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/components/dev_tools_portal_glass.py",
-      "sha256": "32109e8d9bde64ed4d8566e34a99f45c4a785606918a123b76349094830e71bf"
-    },
-    {
-      "bytes": 31480,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/components/progress_widget.py",
-      "sha256": "6ad3700767f04856c9c5f583946ae0a4d0f3de3a870e91cb373a543fa2793b21"
-    },
-    {
-      "bytes": 2,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/planning/missions/goals.json",
-      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
-    },
-    {
-      "bytes": 1237,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/planning/missions/missions.json",
-      "sha256": "afefc468d7652eba010a12de8fe525bc87bdec41a5aa31ffcd97fb6356a8b287"
-    },
-    {
-      "bytes": 775,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/README.md",
-      "sha256": "ad547934fb864f26d9f66caadb04529c9a639e574b6fea19e07a82b0d027a515"
-    },
-    {
-      "bytes": 372,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/tests/__init__.py",
-      "sha256": "891a0c301ee777ae0063bf32cffa69478965805157da564517304f110d6c9475"
-    },
-    {
-      "bytes": 372,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/tools/__init__.py",
-      "sha256": "10879dfc9fcf6b949d48f02ca018eab31abbb9678224a4edc478f79f213b2d83"
-    },
-    {
-      "bytes": 1047,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/z+1_config.json",
-      "sha256": "36e43d991d51f0ec0bdd52f54a1647683639ac43029ccae11dd65ef061d5d38b"
-    },
-    {
-      "bytes": 306,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/__init__.py",
-      "sha256": "0616f365f85578eef3ba43b1190efcc1163678b772a794f66a48cf524b7f1bda"
-    },
-    {
-      "bytes": 5695,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/_FLOOR_MANIFEST.json",
-      "sha256": "7f3326d8ec605be755dacb82a89a4f1658ec5c6448229f5398c6475f2e52df75"
-    },
-    {
-      "bytes": 24433,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai/achilles_assistant.py",
-      "sha256": "3d37c0f831cfa0f28ce56c51f31daa37c136a51ae59889a2cf3a399330fa3158"
-    },
-    {
-      "bytes": 12599,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai/achilles_context.py",
-      "sha256": "20de7612b215e1fea1ff4253fc3c3063c26d3ae0255e4af463f41351827f1a96"
-    },
-    {
-      "bytes": 8068,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai/ai_tools.py",
-      "sha256": "4b3c3917cff37ffcff33d63abd183bd303d2dc687c7370ca3765dcbba882b9bd"
-    },
-    {
-      "bytes": 14327,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai/claude_collaboration_interface.py",
-      "sha256": "4ff4d1e34ec1e6b0c2db4fa3db0e30b755f52b61f08d334b20927340f8a03da3"
-    },
-    {
-      "bytes": 33611,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai/document_objectifier.py",
-      "sha256": "e99c255c2e180ec93cca05f162ec1c637ba4720a0d829d4ab6383ef0f2736b8d"
-    },
-    {
-      "bytes": 24569,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai/neo_learning.py",
-      "sha256": "d67b64c3d1f5705d4dae7d6ec4b22d791821c3434c8679941bed11956d41fc7a"
-    },
-    {
-      "bytes": 16443,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai/ollama_connector.py",
-      "sha256": "fc9b29db350ba4810f480ec0db7d7db9f7d45bcf5d8fa11ed9569a02f27412ee"
-    },
-    {
-      "bytes": 12490,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai/workflow_automation.py",
-      "sha256": "2c3483a119a38936b9a90423874dc193e9cc084e5665515b8212f5f62e77d7a8"
-    },
-    {
-      "bytes": 2315,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/__init__.py",
-      "sha256": "a1cf36875f8e2851fba1f0972758800fd4da9446716428dc5a80b74354fbe97e"
-    },
-    {
-      "bytes": 24467,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/ai_code_assistant.py",
-      "sha256": "90bae9d4bc2f37b1a740d3a55833aa591336c08810f27940c79f1ab4e3dd9a54"
-    },
-    {
-      "bytes": 28017,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/ai_context.py",
-      "sha256": "4737292aae36bc6d633cd9deb158147f82012d800f45867e7e310c9ab944f745"
-    },
-    {
-      "bytes": 25189,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/ai_orchestrator.py",
-      "sha256": "281b31f00d074bbbaa0d80c0c10968756adefbb5d1fc7bc9b05b8ae871d541e5"
-    },
-    {
-      "bytes": 28037,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/ai_training.py",
-      "sha256": "d10f46a90624856b804aad1161d235fdfc2ee15aa6455930e77728b372bcabd1"
-    },
-    {
-      "bytes": 46298,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/cognigrex_foundation.py",
-      "sha256": "2b1a37bd4a33979b2b5d02c3f84ee3b9fbc90028a889cdc0b5324054ed19df67"
-    },
-    {
-      "bytes": 44201,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/neo_lab_assistant_glass.py",
-      "sha256": "675d932be0e5001a8117c6d690e69ee4c1863e221ae9f8522184331fd3943cc0"
-    },
-    {
-      "bytes": 15970,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/NeoCoreComponent.py",
-      "sha256": "b84cbfd03fac96319f15dee1079cc0a6cc9f5e1cc83bfa23108a8c754cf723e5"
-    },
-    {
-      "bytes": 5088,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/romer_industries_connector.py",
-      "sha256": "737fe06a405ac1c215d9310f19477ebbecb0ed565f287773faa74bf8948b0848"
-    },
-    {
-      "bytes": 5604,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/romer_sync_panel.py",
-      "sha256": "36ea27d7938831cb2add1b66620c1646613dc7c3792acc62ffe676c3dcdd873e"
-    },
-    {
-      "bytes": 775,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/README.md",
-      "sha256": "ae7a430c4dbaf3c1b5c7526be0b2942061448b6141028f2a35de0e7d2567b9f1"
-    },
-    {
-      "bytes": 354,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/tests/__init__.py",
-      "sha256": "b68a650658ff73ccbbb6dcf99fc6b20edcf7258e11d10910619f9288f84b5630"
-    },
-    {
-      "bytes": 1067,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/z+2_config.json",
-      "sha256": "4336cc71f18107917f40c26c03e122fbacd972fe63098c26791eff92bf0082ff"
-    },
-    {
-      "bytes": 312,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/__init__.py",
-      "sha256": "2b1461fff81bbe1b6357d0fff7818e62d4db39faaf20802d6d30d6cd613fb7ba"
-    },
-    {
-      "bytes": 7723,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/_FLOOR_MANIFEST.json",
-      "sha256": "e57b9a1619c42f1eaf32a395d91cd64f0a1cb532f977e454eb4f05f140872e70"
-    },
-    {
-      "bytes": 4050,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/assets/icons/icon_manifest.json",
-      "sha256": "5bfb5be7290d358500837015b6cd112d3977e0411b3d303e2b4f63c7d6cac8df"
-    },
-    {
-      "bytes": 39680,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/assets/ui_spec/UI_BASE_SPECIFICATION.md",
-      "sha256": "43c884ce18323d961fdd334ee8945f1a6cc97850a4a39cd7c4069bbc4d1fbb63"
-    },
-    {
-      "bytes": 2159,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/__init__.py",
-      "sha256": "d7e0d987581b9985b202a01c1454e27e8df0a89bc18fcc294609d856929ef95b"
-    },
-    {
-      "bytes": 32701,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/analytics_dashboard.py",
-      "sha256": "416639cce4cfbf2823b5f68352519f8f90262845f038f537518ff464a286fc5d"
-    },
-    {
-      "bytes": 32200,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/code_editor.py",
-      "sha256": "52bde827fee0a3ec436aa28ac6383e5367827242442efd728c0815766cc550b2"
-    },
-    {
-      "bytes": 26368,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/cognigrex_login.py",
-      "sha256": "5b3e11e3a26ff1ca9e6e583c83b2176e18374ccf8d1baf88163985efcfe76058"
-    },
-    {
-      "bytes": 25113,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/context_menu.py",
-      "sha256": "e48e133be3456d23e3cf7c12bb6cfd7569563e784436a2be56fd5f249390c326"
-    },
-    {
-      "bytes": 24358,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/file_tree.py",
-      "sha256": "95615527a373d5c2d0d249f1114b80f60a9f7d7348cc3fb6e1f7f58826c627ac"
-    },
-    {
-      "bytes": 8924,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/operations_status_cards.py",
-      "sha256": "dab85a54074e284b0105f60a0f7f95a8662c3765b9fd076eff436d17ec35219f"
-    },
-    {
-      "bytes": 25321,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/operations_workspace_manager.py",
-      "sha256": "916a66fc93d2c6020363a042bad0a3041782a1e1d74597469c026ca51f8adfce"
-    },
-    {
-      "bytes": 61538,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/settings_dialog.py",
-      "sha256": "e7206277aa4c228e1bef731dacf032a1c59be85bebd30677e4357524c668af9a"
-    },
-    {
-      "bytes": 3229,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/startup_wizard.py",
-      "sha256": "d9b39aab861209b5c273c85d20d5bed6222465c1901dbc3ce7c4a949cf55e23d"
-    },
-    {
-      "bytes": 1017,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/state_store.py",
-      "sha256": "9d64ac68a024ac5db416cebfd2fabb42b25ddfac5f618e974ff388e599eca099"
-    },
-    {
-      "bytes": 20041,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/theme_switcher.py",
-      "sha256": "efb55ae3d53f5591e2b5b7b6e5a89f36850f3e303221deb9b458828bae13eb36"
-    },
-    {
-      "bytes": 7085,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/tool_runner_dialog.py",
-      "sha256": "40c67282a8e53e34b760583f8610975f2d73df9ecabc9f67d30f49916ee8cd61"
-    },
-    {
-      "bytes": 71639,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/trinity_collaboration_hub.py",
-      "sha256": "e7882d9be0770dc09089cd75298a9bd49c0f5943969dfd7c40974b69429d28f3"
-    },
-    {
-      "bytes": 34559,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/trinity_portal_glass.py",
-      "sha256": "8fb74b6520a385b8d696e9e84c103d9428326c33983fb71109f870e18017348d"
-    },
-    {
-      "bytes": 16014,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/TrinityCoreComponent.py",
-      "sha256": "2291a0944e51cdc50bdf4c3cb9f6cbd9720c213ec79b5f09c0e18a7c9c1fe018"
-    },
-    {
-      "bytes": 29939,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/diagnostics/complete_diagnostic_system.py",
-      "sha256": "42b02ed32c728ce4fc39adcacb89c4ce460a538d0c735b7ad48d9563b9a539a4"
-    },
-    {
-      "bytes": 8846,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/examples/template_examples.py",
-      "sha256": "bd54c564996684d5485673bda635918b0abe8599dc9ef6b38decfe044f5bb4ea"
-    },
-    {
-      "bytes": 386,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/portal_config/active_theme.json",
-      "sha256": "18ac3a966b123238c4ca2019b29c9c3f0a359d8c90f13d7595effadd928eff58"
-    },
-    {
-      "bytes": 476,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/portal_config/portals.json",
-      "sha256": "718db9698b5017ae315ffbea4ad84126c84ead4d32286b1e287df3cafbb6e44e"
-    },
-    {
-      "bytes": 854,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/README.md",
-      "sha256": "bfcd6c72352b1b18f6c8e9e800e63e33b17d0dba5f29eb6ee8cd1a4bd73c8d23"
-    },
-    {
-      "bytes": 250,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/settings/platform_config.json",
-      "sha256": "1121ce9be2817d3a9f27a61dbca746c5758a0c2b482a80908411af9aa4069004"
-    },
-    {
-      "bytes": 1794,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/settings/smart_settings.json",
-      "sha256": "df51d2932da4f34da9425bf3eb5683c5bd57c7458992c1d6cb8caae0d72f9032"
-    },
-    {
-      "bytes": 392,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/settings/wizard_config.json",
-      "sha256": "263fab45d8300ba3dcb29725f504642c0d0f0a5d6f6f6299d8e50d98e7d71d5c"
-    },
-    {
-      "bytes": 26465,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/smart_bento_hub.py",
-      "sha256": "b57b2126e9a5526806b8248492b6a7fb81d355e21a52a72ce8c170df5053ed63"
-    },
-    {
-      "bytes": 366,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/tests/__init__.py",
-      "sha256": "b3e5a13c41e1f11b79dfa7f2b5adb7d78a441184a10b58f8c78170a589666c6f"
-    },
-    {
-      "bytes": 216,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/themes/Orange Highlight.json",
-      "sha256": "54f76653d095de65accb18e755f985ffbe5e81a88d3ef3bef7c4f8deba35ec57"
-    },
-    {
-      "bytes": 38897,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/tools/enhanced_trinity_wizard.py",
-      "sha256": "f21b783eb930cff2a4e7c1ca0607b9fa2efde9f66c46031eb5a4698f4223dce0"
-    },
-    {
-      "bytes": 25863,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/tools/initialize_database.py",
-      "sha256": "f4b96210f6aaee917a41f5295022e9acc96319a0b88db846e7250cbd51e007f2"
-    },
-    {
-      "bytes": 15988,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/tools/open_dialogue_board.py",
-      "sha256": "fcbeec9967746a19b6d47eff62128bfea21e04a08ff44b2b9abdda7dca149bfa"
-    },
-    {
-      "bytes": 409,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/__init__.py",
-      "sha256": "33016eab3305c52b368a3faaedecde3be2dfc3f36f139ef05b70fe58956e93ff"
-    },
-    {
-      "bytes": 8855,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/achilles_dock.py",
-      "sha256": "b6b693e3f660f9b4ae62701e0aa7d24b8ee217ca362f7c2b364ad5646ad14f2d"
-    },
-    {
-      "bytes": 3306,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/components/__init__.py",
-      "sha256": "01ee51421496605095c1889260ae7782229cab17288a03f7ebcdd7921da575b1"
-    },
-    {
-      "bytes": 11772,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/components/charts.py",
-      "sha256": "33dfa25a237587d965cff9f5ea411729cff3fe2234954cca33b504e5e2365683"
-    },
-    {
-      "bytes": 9725,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/components/layered_card.py",
-      "sha256": "1cff9dd1951968aa614ddec955a62ea30fc9aa2accf9703f50f02349c1f0fb27"
-    },
-    {
-      "bytes": 13729,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/components/loading.py",
-      "sha256": "9ae46bb55bfc9dd12e0dbd38ce394bf6fe2b370a60e6a1e8d4ae513bd002b3bb"
-    },
-    {
-      "bytes": 8174,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/components/registry.py",
-      "sha256": "d4d4abb185da0250dcc91bb34d44e984fd9f7a4c97ad1d1691e4cd1bad17e20e"
-    },
-    {
-      "bytes": 16867,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/components/simulation_launcher.py",
-      "sha256": "a91d79c40079718262a4c2f5dad561e8cf2c6f3f0b37de1b297e520832bd9d7a"
-    },
-    {
-      "bytes": 98641,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/dashboard_widgets.py",
-      "sha256": "813c080a99099f4ac5cb2936f8846f4e3ff8a697d63b14883e1d044621ab8f59"
-    },
-    {
-      "bytes": 2253,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/floor_selector.py",
-      "sha256": "f5e7fb468f21bd25a359150ebc4a71131f469d59eb3270590c8f9d48a545eb35"
-    },
-    {
-      "bytes": 17899,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/glass_theme_manager.py",
-      "sha256": "7c84746657b20158a9c102b72c92328548425bd0308d9f13d409473a81df2d48"
-    },
-    {
-      "bytes": 28056,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/glass_ui.py",
-      "sha256": "ffe1130ae94d796920532c1e13663af3528676ee70b14d51b16c7ada6a8ce39c"
-    },
-    {
-      "bytes": 19763,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/icon_library_glass.py",
-      "sha256": "704857f3f84502622d2f2c9010b569521a6c1c800cbbe472f050a642f63e76df"
-    },
-    {
-      "bytes": 23065,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/immersive_interface.py",
-      "sha256": "54fed23e86af07c8dace9689691cef713ea28a492c137a90619f66fffeb0366c"
-    },
-    {
-      "bytes": 29733,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/interface_orchestrator.py",
-      "sha256": "2a85d19139fc4452455abf837896e1948631cfdb335e0c6dad5ab1914da2b3c8"
-    },
-    {
-      "bytes": 363402,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/it_portal.py",
-      "sha256": "8f06d19ae166ba5d21fea7cd6bee342661b1c300a8959d241b365adb735eeaa1"
-    },
-    {
-      "bytes": 25085,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/it_shell.py",
-      "sha256": "7078491f4f3f0f9ef7c2a0162890ff1c1e427326c1fdca0d72f3928b0fe968ff"
-    },
-    {
-      "bytes": 5447,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/operations_manager_panel.py",
-      "sha256": "cf3a2a47c55e1e0c3a6f6488f48c23ca9e9a3c7890bb5895e6d980b19ac1356a"
-    },
-    {
-      "bytes": 23250,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/premium_theme_engine.py",
-      "sha256": "f7a27a17b8e6340063ed80eac190ab19d6cb4f5eb2fb423c9b557c6dd6f0c27b"
-    },
-    {
-      "bytes": 21640,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/settings_manager.py",
-      "sha256": "91949f45ec63f91b11d0a32fd809902c53781c9186d9b0b9a2f7ea0b63263f16"
-    },
-    {
-      "bytes": 4452,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/shell_routes.py",
-      "sha256": "47a6b3e0d46b39627d2183ade9f64994e88666c2b53219ba191e3b6fb610784b"
-    },
-    {
-      "bytes": 50388,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/smart_settings_hub.py",
-      "sha256": "bb7120076f496a8868d9d71adc468dd8193d452bacc21b7ddcd8fc6f5a6ff467"
-    },
-    {
-      "bytes": 16252,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/smart_theme.py",
-      "sha256": "1452d7b3ae083fe194fb164770db6a16a5a8d24a9be473ac64d0d25e184ab737"
-    },
-    {
-      "bytes": 2147,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spatial/__init__.py",
-      "sha256": "899e6bd0cabeecb8aeee6a6357ae77f43475ba29a03af1128031119a9d1b6c74"
-    },
-    {
-      "bytes": 24013,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spatial/add_new_wizard.py",
-      "sha256": "e8e8cafa179d40db0a38440b816b90ecc2bb5d19c22a3eab485cb3111e1f9ca8"
-    },
-    {
-      "bytes": 4752,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spatial/dollhouse_minimap.py",
-      "sha256": "bd82bc0005315c43ab344ef4c97eef93f3c8c233ebbae2b83d6f79544dac9094"
-    },
-    {
-      "bytes": 12905,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spatial/enhanced_bento_grid.py",
-      "sha256": "f7054198e864a8892518c4aa9dde155d02236d3479148cd60b7161cac28af27d"
-    },
-    {
-      "bytes": 15849,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spatial/environment_renderer.py",
-      "sha256": "71093bb893be1c86ec7fb5849ff2beb2c821a36abee96ed4e6d14313da41446a"
-    },
-    {
-      "bytes": 16187,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spatial/flowchart_visualizer.py",
-      "sha256": "f9478dbd846b27589db669616665c74c178c5c152d00698fe584759d28efc158"
-    },
-    {
-      "bytes": 10530,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spatial/portal_transition.py",
-      "sha256": "3108d6375b88e4b91a26b8a60098f955da7ba7b1dffa7abf3899c53c5892324d"
-    },
-    {
-      "bytes": 15444,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spatial/spatial_navigator.py",
-      "sha256": "57f7112a9653eac0bc991fe7ab7dee78eae5614bf156ecf4d4b16d7c63a467db"
-    },
-    {
-      "bytes": 17137,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spatial/spatial_ui_integration.py",
-      "sha256": "79d321704903217307c2fa820a042015b1f16e7e38b67c5012c9ecf992fcc813"
-    },
-    {
-      "bytes": 13728,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spherical_projection.py",
-      "sha256": "e997d1e905bbe536e02983d9d5ba1eb55541c54032703f2e1596738e73f12550"
-    },
-    {
-      "bytes": 35970,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/template_manager.py",
-      "sha256": "14de559c920f265ffe5be9bff26bfd8ac9743d9a5ae04461523d8847eb8df3db"
-    },
-    {
-      "bytes": 14906,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/themes.py",
-      "sha256": "59fa138a489f193ad0f1ab49e662e796f69d4a2362eda333d60cd1214e462c11"
-    },
-    {
-      "bytes": 100485,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/universal_bento_system.py",
-      "sha256": "3ea1fd4807dd8ed8818405c99f4e5e8d271f1190252c829f738102b5aa3ea939"
-    },
-    {
-      "bytes": 33393,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/universal_context_menu.py",
-      "sha256": "707365da8325cd251b4b9aee9d3426876deca87adfe144dac445400fb8464b84"
-    },
-    {
-      "bytes": 20180,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/widget_registry.py",
-      "sha256": "753b019f7370e0fefb48f5f75c1e4dd53614d846532941f2cc977ca62b67b1b9"
-    },
-    {
-      "bytes": 15034,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/widgets/_widget_base.py",
-      "sha256": "beb761614387bfb5fbede9ee18aa92afb49eafa23978e204572c0cd47dda49c6"
-    },
-    {
-      "bytes": 0,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/__init__.py",
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    {
-      "bytes": 77035,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/cognigrex_setup_wizard.py",
-      "sha256": "07f0cd3f1f449ccd6a2da4c8e94e19b5f49c0064486509e7ae7e3104338f9312"
-    },
-    {
-      "bytes": 54095,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/enhanced_startup_wizard.py",
-      "sha256": "530ad90693de609cc3e52432bcc9da45264fd7613b6bfd1669004c35c06027e2"
-    },
-    {
-      "bytes": 62672,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/setup_wizard.py",
-      "sha256": "c13a6e11aba9eadfbe0061af9f68e593812d232393a5791d278632c312ea2f0d"
-    },
-    {
-      "bytes": 17578,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/startup_wizard.py",
-      "sha256": "ed7e67d32a5f6b1a1956c2c5871dd9c6a874276f5f8007184df40888b0789a48"
-    },
-    {
-      "bytes": 58051,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/unified_search_system.py",
-      "sha256": "bcc234878a26a9b0c0462fc1a2cf3f8d4571e9057efecdec9ac0a3c9646bc354"
-    },
-    {
-      "bytes": 21784,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/unified_wizard_complete.py",
-      "sha256": "1ee49aada846cb776dfa6a60c349a6dd3df46b703a22ef1fa0855a32c21583d8"
-    },
-    {
-      "bytes": 1005,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/z+3_config.json",
-      "sha256": "9f503aaeb15de9b83df3ce4f6f47c83bae9c2d866008498c5aef3a09c74a0124"
     },
     {
       "bytes": 343,
@@ -1831,9 +1247,39 @@
       "sha256": "e5b5126e0c01f2ef33390670934818592bca7d1fb6ddf20e3c67efb6948ebf0d"
     },
     {
+      "bytes": 1306,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics_modules/__init__.py",
+      "sha256": "ee9c86b948684d66fa045215e819557cd7ff2e537882d4fe09b149b4277aac73"
+    },
+    {
+      "bytes": 10675,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics_modules/big_bang_simulation.py",
+      "sha256": "55f36b33393a39cc70df138c542f83348d996f9b1d2c7b4f816d630d335f624f"
+    },
+    {
+      "bytes": 15544,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics_modules/orbital_mechanics.py",
+      "sha256": "9643800a4bca1d9c49ce8b884f2ffd453e97b75d4f1a1f543d5f1104fc85b9b4"
+    },
+    {
+      "bytes": 14288,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics_modules/quantum_mechanics.py",
+      "sha256": "5eda0d0fa9d93c2208ed10196dde6d2b3fd02712b5abf4a39d56a2beb12d7c3f"
+    },
+    {
+      "bytes": 9777,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics_modules/raphael_equations.py",
+      "sha256": "0b3deaf739269f4efcc165ea6de12e840b5379afdef7d61786c479b83afb9d06"
+    },
+    {
       "bytes": 1020,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/__init__.py",
       "sha256": "b32c2b5f6760e91c80c96a879524e7c547cf90ecfbdee1d5480281b3d96a678c"
+    },
+    {
+      "bytes": 21546,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael_renderer_pure.py",
+      "sha256": "2a6a8d883b42700c5a5cfc3d97ea196bad8d4bedbeb79e5d13b5fe50232406b3"
     },
     {
       "bytes": 15442,
@@ -2036,24 +1482,14 @@
       "sha256": "7a4b3417cd527cb0ba9039e9ff757c0ac8e21cca5b9fc7130bd7582b6084f4d2"
     },
     {
-      "bytes": 5636,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/natural_phenonema/stellar/6D_black_hole_venv.py",
-      "sha256": "51b33aab771dfaa562968c27940c4cdbaa5e88459028b6f9ed5b3abd720b80b1"
-    },
-    {
       "bytes": 0,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/natural_phenonema/stellar/__init__.py",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "bytes": 2756,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/natural_phenonema/stellar/black-hole-graphed_simulation.py",
-      "sha256": "0f10f335d2029b09d2db82f1556ba5268b1f2dab53889877929965e11e80bf56"
-    },
-    {
-      "bytes": 5543,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/natural_phenonema/stellar/black-hole-holograph-raw.py",
-      "sha256": "2ed34497b21a8c667e442fa8ac8186c92267dea989efdc11c4b2c5328308ccca"
+      "bytes": 5636,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/natural_phenonema/stellar/6D_black_hole_venv.py",
+      "sha256": "51b33aab771dfaa562968c27940c4cdbaa5e88459028b6f9ed5b3abd720b80b1"
     },
     {
       "bytes": 8373,
@@ -2069,6 +1505,16 @@
       "bytes": 3695,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/natural_phenonema/stellar/black_holes.py",
       "sha256": "fa1cad416229bf8ff48b227feb8959c34376eb4d191a17634f6a34148e2a6c9a"
+    },
+    {
+      "bytes": 2756,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/natural_phenonema/stellar/black-hole-graphed_simulation.py",
+      "sha256": "0f10f335d2029b09d2db82f1556ba5268b1f2dab53889877929965e11e80bf56"
+    },
+    {
+      "bytes": 5543,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/natural_phenonema/stellar/black-hole-holograph-raw.py",
+      "sha256": "2ed34497b21a8c667e442fa8ac8186c92267dea989efdc11c4b2c5328308ccca"
     },
     {
       "bytes": 5455,
@@ -2214,36 +1660,6 @@
       "bytes": 1941,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Website Renders/Scenario_2_Raphael_Observer_Framework.py",
       "sha256": "122656afb4b3671839aabdc58373b8b304e1931f30669a4e757b0a5853be89b0"
-    },
-    {
-      "bytes": 21546,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael_renderer_pure.py",
-      "sha256": "2a6a8d883b42700c5a5cfc3d97ea196bad8d4bedbeb79e5d13b5fe50232406b3"
-    },
-    {
-      "bytes": 1306,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics_modules/__init__.py",
-      "sha256": "ee9c86b948684d66fa045215e819557cd7ff2e537882d4fe09b149b4277aac73"
-    },
-    {
-      "bytes": 10675,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics_modules/big_bang_simulation.py",
-      "sha256": "55f36b33393a39cc70df138c542f83348d996f9b1d2c7b4f816d630d335f624f"
-    },
-    {
-      "bytes": 15544,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics_modules/orbital_mechanics.py",
-      "sha256": "9643800a4bca1d9c49ce8b884f2ffd453e97b75d4f1a1f543d5f1104fc85b9b4"
-    },
-    {
-      "bytes": 14288,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics_modules/quantum_mechanics.py",
-      "sha256": "5eda0d0fa9d93c2208ed10196dde6d2b3fd02712b5abf4a39d56a2beb12d7c3f"
-    },
-    {
-      "bytes": 9777,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics_modules/raphael_equations.py",
-      "sha256": "0b3deaf739269f4efcc165ea6de12e840b5379afdef7d61786c479b83afb9d06"
     },
     {
       "bytes": 46953,
@@ -2651,6 +2067,591 @@
       "sha256": "10e21917e4227fbefa658914ae93c3913e3488586aecaa296c2617683bea7a86"
     },
     {
+      "bytes": 315,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/__init__.py",
+      "sha256": "e1dda8f460e824c6107e575cd4cd3a1c7aa41e0ece55699eac9c597d7d4a60a9"
+    },
+    {
+      "bytes": 5102,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/_FLOOR_MANIFEST.json",
+      "sha256": "d9e12d295caa4a77a60bc1350c3cbc83957898d4671bee421516f1ba5e7ce533"
+    },
+    {
+      "bytes": 1612,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/components/__init__.py",
+      "sha256": "0f31f37f096057a017e7cc4b8637c606e4ced489bc0f04122b26ece4dc25d3ac"
+    },
+    {
+      "bytes": 38288,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/components/architect_portal_glass.py",
+      "sha256": "af84c629b21859a7c7d0dabc5cf659afe74b53bc3e3e0509e23367f3a9f2db3f"
+    },
+    {
+      "bytes": 16142,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/components/ArchitectCoreComponent.py",
+      "sha256": "9a3b07581fc9791bfe63c65db86a9b3c24244457cae6de05927679677528c62b"
+    },
+    {
+      "bytes": 29062,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/components/dev_tools_portal_glass.py",
+      "sha256": "32109e8d9bde64ed4d8566e34a99f45c4a785606918a123b76349094830e71bf"
+    },
+    {
+      "bytes": 31480,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/components/progress_widget.py",
+      "sha256": "6ad3700767f04856c9c5f583946ae0a4d0f3de3a870e91cb373a543fa2793b21"
+    },
+    {
+      "bytes": 2,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/planning/missions/goals.json",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "bytes": 1237,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/planning/missions/missions.json",
+      "sha256": "afefc468d7652eba010a12de8fe525bc87bdec41a5aa31ffcd97fb6356a8b287"
+    },
+    {
+      "bytes": 775,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/README.md",
+      "sha256": "ad547934fb864f26d9f66caadb04529c9a639e574b6fea19e07a82b0d027a515"
+    },
+    {
+      "bytes": 372,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/tests/__init__.py",
+      "sha256": "891a0c301ee777ae0063bf32cffa69478965805157da564517304f110d6c9475"
+    },
+    {
+      "bytes": 372,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/tools/__init__.py",
+      "sha256": "10879dfc9fcf6b949d48f02ca018eab31abbb9678224a4edc478f79f213b2d83"
+    },
+    {
+      "bytes": 1047,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/z+1_config.json",
+      "sha256": "36e43d991d51f0ec0bdd52f54a1647683639ac43029ccae11dd65ef061d5d38b"
+    },
+    {
+      "bytes": 306,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/__init__.py",
+      "sha256": "0616f365f85578eef3ba43b1190efcc1163678b772a794f66a48cf524b7f1bda"
+    },
+    {
+      "bytes": 5695,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/_FLOOR_MANIFEST.json",
+      "sha256": "7f3326d8ec605be755dacb82a89a4f1658ec5c6448229f5398c6475f2e52df75"
+    },
+    {
+      "bytes": 24433,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai/achilles_assistant.py",
+      "sha256": "3d37c0f831cfa0f28ce56c51f31daa37c136a51ae59889a2cf3a399330fa3158"
+    },
+    {
+      "bytes": 12599,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai/achilles_context.py",
+      "sha256": "20de7612b215e1fea1ff4253fc3c3063c26d3ae0255e4af463f41351827f1a96"
+    },
+    {
+      "bytes": 8068,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai/ai_tools.py",
+      "sha256": "4b3c3917cff37ffcff33d63abd183bd303d2dc687c7370ca3765dcbba882b9bd"
+    },
+    {
+      "bytes": 14327,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai/claude_collaboration_interface.py",
+      "sha256": "4ff4d1e34ec1e6b0c2db4fa3db0e30b755f52b61f08d334b20927340f8a03da3"
+    },
+    {
+      "bytes": 33611,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai/document_objectifier.py",
+      "sha256": "e99c255c2e180ec93cca05f162ec1c637ba4720a0d829d4ab6383ef0f2736b8d"
+    },
+    {
+      "bytes": 24569,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai/neo_learning.py",
+      "sha256": "d67b64c3d1f5705d4dae7d6ec4b22d791821c3434c8679941bed11956d41fc7a"
+    },
+    {
+      "bytes": 16443,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai/ollama_connector.py",
+      "sha256": "fc9b29db350ba4810f480ec0db7d7db9f7d45bcf5d8fa11ed9569a02f27412ee"
+    },
+    {
+      "bytes": 12490,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai/workflow_automation.py",
+      "sha256": "2c3483a119a38936b9a90423874dc193e9cc084e5665515b8212f5f62e77d7a8"
+    },
+    {
+      "bytes": 2315,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/__init__.py",
+      "sha256": "a1cf36875f8e2851fba1f0972758800fd4da9446716428dc5a80b74354fbe97e"
+    },
+    {
+      "bytes": 24467,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/ai_code_assistant.py",
+      "sha256": "90bae9d4bc2f37b1a740d3a55833aa591336c08810f27940c79f1ab4e3dd9a54"
+    },
+    {
+      "bytes": 28017,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/ai_context.py",
+      "sha256": "4737292aae36bc6d633cd9deb158147f82012d800f45867e7e310c9ab944f745"
+    },
+    {
+      "bytes": 25189,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/ai_orchestrator.py",
+      "sha256": "281b31f00d074bbbaa0d80c0c10968756adefbb5d1fc7bc9b05b8ae871d541e5"
+    },
+    {
+      "bytes": 28037,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/ai_training.py",
+      "sha256": "d10f46a90624856b804aad1161d235fdfc2ee15aa6455930e77728b372bcabd1"
+    },
+    {
+      "bytes": 46298,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/cognigrex_foundation.py",
+      "sha256": "2b1a37bd4a33979b2b5d02c3f84ee3b9fbc90028a889cdc0b5324054ed19df67"
+    },
+    {
+      "bytes": 44201,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/neo_lab_assistant_glass.py",
+      "sha256": "675d932be0e5001a8117c6d690e69ee4c1863e221ae9f8522184331fd3943cc0"
+    },
+    {
+      "bytes": 15970,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/NeoCoreComponent.py",
+      "sha256": "b84cbfd03fac96319f15dee1079cc0a6cc9f5e1cc83bfa23108a8c754cf723e5"
+    },
+    {
+      "bytes": 5088,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/romer_industries_connector.py",
+      "sha256": "737fe06a405ac1c215d9310f19477ebbecb0ed565f287773faa74bf8948b0848"
+    },
+    {
+      "bytes": 5604,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/romer_sync_panel.py",
+      "sha256": "36ea27d7938831cb2add1b66620c1646613dc7c3792acc62ffe676c3dcdd873e"
+    },
+    {
+      "bytes": 775,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/README.md",
+      "sha256": "ae7a430c4dbaf3c1b5c7526be0b2942061448b6141028f2a35de0e7d2567b9f1"
+    },
+    {
+      "bytes": 354,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/tests/__init__.py",
+      "sha256": "b68a650658ff73ccbbb6dcf99fc6b20edcf7258e11d10910619f9288f84b5630"
+    },
+    {
+      "bytes": 1067,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/z+2_config.json",
+      "sha256": "4336cc71f18107917f40c26c03e122fbacd972fe63098c26791eff92bf0082ff"
+    },
+    {
+      "bytes": 312,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/__init__.py",
+      "sha256": "2b1461fff81bbe1b6357d0fff7818e62d4db39faaf20802d6d30d6cd613fb7ba"
+    },
+    {
+      "bytes": 7723,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/_FLOOR_MANIFEST.json",
+      "sha256": "e57b9a1619c42f1eaf32a395d91cd64f0a1cb532f977e454eb4f05f140872e70"
+    },
+    {
+      "bytes": 4050,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/assets/icons/icon_manifest.json",
+      "sha256": "5bfb5be7290d358500837015b6cd112d3977e0411b3d303e2b4f63c7d6cac8df"
+    },
+    {
+      "bytes": 39680,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/assets/ui_spec/UI_BASE_SPECIFICATION.md",
+      "sha256": "43c884ce18323d961fdd334ee8945f1a6cc97850a4a39cd7c4069bbc4d1fbb63"
+    },
+    {
+      "bytes": 2159,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/__init__.py",
+      "sha256": "d7e0d987581b9985b202a01c1454e27e8df0a89bc18fcc294609d856929ef95b"
+    },
+    {
+      "bytes": 32701,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/analytics_dashboard.py",
+      "sha256": "416639cce4cfbf2823b5f68352519f8f90262845f038f537518ff464a286fc5d"
+    },
+    {
+      "bytes": 32200,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/code_editor.py",
+      "sha256": "52bde827fee0a3ec436aa28ac6383e5367827242442efd728c0815766cc550b2"
+    },
+    {
+      "bytes": 26368,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/cognigrex_login.py",
+      "sha256": "5b3e11e3a26ff1ca9e6e583c83b2176e18374ccf8d1baf88163985efcfe76058"
+    },
+    {
+      "bytes": 25113,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/context_menu.py",
+      "sha256": "e48e133be3456d23e3cf7c12bb6cfd7569563e784436a2be56fd5f249390c326"
+    },
+    {
+      "bytes": 24358,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/file_tree.py",
+      "sha256": "95615527a373d5c2d0d249f1114b80f60a9f7d7348cc3fb6e1f7f58826c627ac"
+    },
+    {
+      "bytes": 8924,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/operations_status_cards.py",
+      "sha256": "dab85a54074e284b0105f60a0f7f95a8662c3765b9fd076eff436d17ec35219f"
+    },
+    {
+      "bytes": 25321,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/operations_workspace_manager.py",
+      "sha256": "916a66fc93d2c6020363a042bad0a3041782a1e1d74597469c026ca51f8adfce"
+    },
+    {
+      "bytes": 61538,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/settings_dialog.py",
+      "sha256": "e7206277aa4c228e1bef731dacf032a1c59be85bebd30677e4357524c668af9a"
+    },
+    {
+      "bytes": 3229,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/startup_wizard.py",
+      "sha256": "d9b39aab861209b5c273c85d20d5bed6222465c1901dbc3ce7c4a949cf55e23d"
+    },
+    {
+      "bytes": 1017,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/state_store.py",
+      "sha256": "9d64ac68a024ac5db416cebfd2fabb42b25ddfac5f618e974ff388e599eca099"
+    },
+    {
+      "bytes": 20041,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/theme_switcher.py",
+      "sha256": "efb55ae3d53f5591e2b5b7b6e5a89f36850f3e303221deb9b458828bae13eb36"
+    },
+    {
+      "bytes": 7085,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/tool_runner_dialog.py",
+      "sha256": "40c67282a8e53e34b760583f8610975f2d73df9ecabc9f67d30f49916ee8cd61"
+    },
+    {
+      "bytes": 71639,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/trinity_collaboration_hub.py",
+      "sha256": "e7882d9be0770dc09089cd75298a9bd49c0f5943969dfd7c40974b69429d28f3"
+    },
+    {
+      "bytes": 34559,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/trinity_portal_glass.py",
+      "sha256": "8fb74b6520a385b8d696e9e84c103d9428326c33983fb71109f870e18017348d"
+    },
+    {
+      "bytes": 16014,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/TrinityCoreComponent.py",
+      "sha256": "2291a0944e51cdc50bdf4c3cb9f6cbd9720c213ec79b5f09c0e18a7c9c1fe018"
+    },
+    {
+      "bytes": 29939,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/diagnostics/complete_diagnostic_system.py",
+      "sha256": "42b02ed32c728ce4fc39adcacb89c4ce460a538d0c735b7ad48d9563b9a539a4"
+    },
+    {
+      "bytes": 8846,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/examples/template_examples.py",
+      "sha256": "bd54c564996684d5485673bda635918b0abe8599dc9ef6b38decfe044f5bb4ea"
+    },
+    {
+      "bytes": 386,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/portal_config/active_theme.json",
+      "sha256": "18ac3a966b123238c4ca2019b29c9c3f0a359d8c90f13d7595effadd928eff58"
+    },
+    {
+      "bytes": 476,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/portal_config/portals.json",
+      "sha256": "718db9698b5017ae315ffbea4ad84126c84ead4d32286b1e287df3cafbb6e44e"
+    },
+    {
+      "bytes": 854,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/README.md",
+      "sha256": "bfcd6c72352b1b18f6c8e9e800e63e33b17d0dba5f29eb6ee8cd1a4bd73c8d23"
+    },
+    {
+      "bytes": 250,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/settings/platform_config.json",
+      "sha256": "1121ce9be2817d3a9f27a61dbca746c5758a0c2b482a80908411af9aa4069004"
+    },
+    {
+      "bytes": 1794,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/settings/smart_settings.json",
+      "sha256": "df51d2932da4f34da9425bf3eb5683c5bd57c7458992c1d6cb8caae0d72f9032"
+    },
+    {
+      "bytes": 392,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/settings/wizard_config.json",
+      "sha256": "263fab45d8300ba3dcb29725f504642c0d0f0a5d6f6f6299d8e50d98e7d71d5c"
+    },
+    {
+      "bytes": 26465,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/smart_bento_hub.py",
+      "sha256": "b57b2126e9a5526806b8248492b6a7fb81d355e21a52a72ce8c170df5053ed63"
+    },
+    {
+      "bytes": 366,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/tests/__init__.py",
+      "sha256": "b3e5a13c41e1f11b79dfa7f2b5adb7d78a441184a10b58f8c78170a589666c6f"
+    },
+    {
+      "bytes": 216,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/themes/Orange Highlight.json",
+      "sha256": "54f76653d095de65accb18e755f985ffbe5e81a88d3ef3bef7c4f8deba35ec57"
+    },
+    {
+      "bytes": 38897,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/tools/enhanced_trinity_wizard.py",
+      "sha256": "f21b783eb930cff2a4e7c1ca0607b9fa2efde9f66c46031eb5a4698f4223dce0"
+    },
+    {
+      "bytes": 25863,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/tools/initialize_database.py",
+      "sha256": "f4b96210f6aaee917a41f5295022e9acc96319a0b88db846e7250cbd51e007f2"
+    },
+    {
+      "bytes": 15988,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/tools/open_dialogue_board.py",
+      "sha256": "fcbeec9967746a19b6d47eff62128bfea21e04a08ff44b2b9abdda7dca149bfa"
+    },
+    {
+      "bytes": 409,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/__init__.py",
+      "sha256": "33016eab3305c52b368a3faaedecde3be2dfc3f36f139ef05b70fe58956e93ff"
+    },
+    {
+      "bytes": 8855,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/achilles_dock.py",
+      "sha256": "b6b693e3f660f9b4ae62701e0aa7d24b8ee217ca362f7c2b364ad5646ad14f2d"
+    },
+    {
+      "bytes": 3306,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/components/__init__.py",
+      "sha256": "01ee51421496605095c1889260ae7782229cab17288a03f7ebcdd7921da575b1"
+    },
+    {
+      "bytes": 11772,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/components/charts.py",
+      "sha256": "33dfa25a237587d965cff9f5ea411729cff3fe2234954cca33b504e5e2365683"
+    },
+    {
+      "bytes": 9725,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/components/layered_card.py",
+      "sha256": "1cff9dd1951968aa614ddec955a62ea30fc9aa2accf9703f50f02349c1f0fb27"
+    },
+    {
+      "bytes": 13729,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/components/loading.py",
+      "sha256": "9ae46bb55bfc9dd12e0dbd38ce394bf6fe2b370a60e6a1e8d4ae513bd002b3bb"
+    },
+    {
+      "bytes": 8174,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/components/registry.py",
+      "sha256": "d4d4abb185da0250dcc91bb34d44e984fd9f7a4c97ad1d1691e4cd1bad17e20e"
+    },
+    {
+      "bytes": 16867,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/components/simulation_launcher.py",
+      "sha256": "a91d79c40079718262a4c2f5dad561e8cf2c6f3f0b37de1b297e520832bd9d7a"
+    },
+    {
+      "bytes": 98641,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/dashboard_widgets.py",
+      "sha256": "813c080a99099f4ac5cb2936f8846f4e3ff8a697d63b14883e1d044621ab8f59"
+    },
+    {
+      "bytes": 2253,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/floor_selector.py",
+      "sha256": "f5e7fb468f21bd25a359150ebc4a71131f469d59eb3270590c8f9d48a545eb35"
+    },
+    {
+      "bytes": 17899,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/glass_theme_manager.py",
+      "sha256": "7c84746657b20158a9c102b72c92328548425bd0308d9f13d409473a81df2d48"
+    },
+    {
+      "bytes": 28056,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/glass_ui.py",
+      "sha256": "ffe1130ae94d796920532c1e13663af3528676ee70b14d51b16c7ada6a8ce39c"
+    },
+    {
+      "bytes": 19763,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/icon_library_glass.py",
+      "sha256": "704857f3f84502622d2f2c9010b569521a6c1c800cbbe472f050a642f63e76df"
+    },
+    {
+      "bytes": 23065,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/immersive_interface.py",
+      "sha256": "54fed23e86af07c8dace9689691cef713ea28a492c137a90619f66fffeb0366c"
+    },
+    {
+      "bytes": 29733,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/interface_orchestrator.py",
+      "sha256": "2a85d19139fc4452455abf837896e1948631cfdb335e0c6dad5ab1914da2b3c8"
+    },
+    {
+      "bytes": 363402,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/it_portal.py",
+      "sha256": "8f06d19ae166ba5d21fea7cd6bee342661b1c300a8959d241b365adb735eeaa1"
+    },
+    {
+      "bytes": 25085,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/it_shell.py",
+      "sha256": "7078491f4f3f0f9ef7c2a0162890ff1c1e427326c1fdca0d72f3928b0fe968ff"
+    },
+    {
+      "bytes": 5447,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/operations_manager_panel.py",
+      "sha256": "cf3a2a47c55e1e0c3a6f6488f48c23ca9e9a3c7890bb5895e6d980b19ac1356a"
+    },
+    {
+      "bytes": 23250,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/premium_theme_engine.py",
+      "sha256": "f7a27a17b8e6340063ed80eac190ab19d6cb4f5eb2fb423c9b557c6dd6f0c27b"
+    },
+    {
+      "bytes": 21640,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/settings_manager.py",
+      "sha256": "91949f45ec63f91b11d0a32fd809902c53781c9186d9b0b9a2f7ea0b63263f16"
+    },
+    {
+      "bytes": 4452,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/shell_routes.py",
+      "sha256": "47a6b3e0d46b39627d2183ade9f64994e88666c2b53219ba191e3b6fb610784b"
+    },
+    {
+      "bytes": 50388,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/smart_settings_hub.py",
+      "sha256": "bb7120076f496a8868d9d71adc468dd8193d452bacc21b7ddcd8fc6f5a6ff467"
+    },
+    {
+      "bytes": 16252,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/smart_theme.py",
+      "sha256": "1452d7b3ae083fe194fb164770db6a16a5a8d24a9be473ac64d0d25e184ab737"
+    },
+    {
+      "bytes": 2147,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spatial/__init__.py",
+      "sha256": "899e6bd0cabeecb8aeee6a6357ae77f43475ba29a03af1128031119a9d1b6c74"
+    },
+    {
+      "bytes": 24013,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spatial/add_new_wizard.py",
+      "sha256": "e8e8cafa179d40db0a38440b816b90ecc2bb5d19c22a3eab485cb3111e1f9ca8"
+    },
+    {
+      "bytes": 4752,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spatial/dollhouse_minimap.py",
+      "sha256": "bd82bc0005315c43ab344ef4c97eef93f3c8c233ebbae2b83d6f79544dac9094"
+    },
+    {
+      "bytes": 12905,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spatial/enhanced_bento_grid.py",
+      "sha256": "f7054198e864a8892518c4aa9dde155d02236d3479148cd60b7161cac28af27d"
+    },
+    {
+      "bytes": 15849,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spatial/environment_renderer.py",
+      "sha256": "71093bb893be1c86ec7fb5849ff2beb2c821a36abee96ed4e6d14313da41446a"
+    },
+    {
+      "bytes": 16187,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spatial/flowchart_visualizer.py",
+      "sha256": "f9478dbd846b27589db669616665c74c178c5c152d00698fe584759d28efc158"
+    },
+    {
+      "bytes": 10530,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spatial/portal_transition.py",
+      "sha256": "3108d6375b88e4b91a26b8a60098f955da7ba7b1dffa7abf3899c53c5892324d"
+    },
+    {
+      "bytes": 15444,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spatial/spatial_navigator.py",
+      "sha256": "57f7112a9653eac0bc991fe7ab7dee78eae5614bf156ecf4d4b16d7c63a467db"
+    },
+    {
+      "bytes": 17137,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spatial/spatial_ui_integration.py",
+      "sha256": "79d321704903217307c2fa820a042015b1f16e7e38b67c5012c9ecf992fcc813"
+    },
+    {
+      "bytes": 13728,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/spherical_projection.py",
+      "sha256": "e997d1e905bbe536e02983d9d5ba1eb55541c54032703f2e1596738e73f12550"
+    },
+    {
+      "bytes": 35970,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/template_manager.py",
+      "sha256": "14de559c920f265ffe5be9bff26bfd8ac9743d9a5ae04461523d8847eb8df3db"
+    },
+    {
+      "bytes": 14906,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/themes.py",
+      "sha256": "59fa138a489f193ad0f1ab49e662e796f69d4a2362eda333d60cd1214e462c11"
+    },
+    {
+      "bytes": 100485,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/universal_bento_system.py",
+      "sha256": "3ea1fd4807dd8ed8818405c99f4e5e8d271f1190252c829f738102b5aa3ea939"
+    },
+    {
+      "bytes": 33393,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/universal_context_menu.py",
+      "sha256": "707365da8325cd251b4b9aee9d3426876deca87adfe144dac445400fb8464b84"
+    },
+    {
+      "bytes": 20180,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/widget_registry.py",
+      "sha256": "753b019f7370e0fefb48f5f75c1e4dd53614d846532941f2cc977ca62b67b1b9"
+    },
+    {
+      "bytes": 15034,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/widgets/_widget_base.py",
+      "sha256": "beb761614387bfb5fbede9ee18aa92afb49eafa23978e204572c0cd47dda49c6"
+    },
+    {
+      "bytes": 0,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 77035,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/cognigrex_setup_wizard.py",
+      "sha256": "07f0cd3f1f449ccd6a2da4c8e94e19b5f49c0064486509e7ae7e3104338f9312"
+    },
+    {
+      "bytes": 54095,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/enhanced_startup_wizard.py",
+      "sha256": "530ad90693de609cc3e52432bcc9da45264fd7613b6bfd1669004c35c06027e2"
+    },
+    {
+      "bytes": 62672,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/setup_wizard.py",
+      "sha256": "c13a6e11aba9eadfbe0061af9f68e593812d232393a5791d278632c312ea2f0d"
+    },
+    {
+      "bytes": 17578,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/startup_wizard.py",
+      "sha256": "ed7e67d32a5f6b1a1956c2c5871dd9c6a874276f5f8007184df40888b0789a48"
+    },
+    {
+      "bytes": 58051,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/unified_search_system.py",
+      "sha256": "bcc234878a26a9b0c0462fc1a2cf3f8d4571e9057efecdec9ac0a3c9646bc354"
+    },
+    {
+      "bytes": 21784,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/unified_wizard_complete.py",
+      "sha256": "1ee49aada846cb776dfa6a60c349a6dd3df46b703a22ef1fa0855a32c21583d8"
+    },
+    {
+      "bytes": 1005,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/z+3_config.json",
+      "sha256": "9f503aaeb15de9b83df3ce4f6f47c83bae9c2d866008498c5aef3a09c74a0124"
+    },
+    {
       "bytes": 404,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/__init__.py",
       "sha256": "201054663aa5ba8f03cc8cabc29d889334d6e0690c3e75e496b7323095b0a474"
@@ -2711,24 +2712,14 @@
       "sha256": "726eaec2e9b18b6caa827c8fb6571afdf93bfe14c98299bce2d8cb4e1e7145ac"
     },
     {
-      "bytes": 6200,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/black_hole/6D_black_hole_venv.py",
-      "sha256": "81d6953502e65005e9ea8267125ed24a15725c9cd94484a31ddb22a4f56e407c"
-    },
-    {
       "bytes": 0,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/black_hole/__init__.py",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "bytes": 3282,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/black_hole/black-hole-graphed_simulation.py",
-      "sha256": "1ac816959efa8e004e95daa57e5c7b868afc14fd57e37688a5ae37e42660d865"
-    },
-    {
-      "bytes": 6069,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/black_hole/black-hole-holograph-raw.py",
-      "sha256": "146c62d56907c10961b7fe150acddf9e2d3df1dde68311b6c8a8c81a54297c58"
+      "bytes": 6200,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/black_hole/6D_black_hole_venv.py",
+      "sha256": "81d6953502e65005e9ea8267125ed24a15725c9cd94484a31ddb22a4f56e407c"
     },
     {
       "bytes": 8939,
@@ -2744,6 +2735,16 @@
       "bytes": 4269,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/black_hole/black_holes.py",
       "sha256": "a8468186c44bfede34031ee0afa43c4a38b9aad67b0c8caca2d0fad3fbb9cbe8"
+    },
+    {
+      "bytes": 3282,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/black_hole/black-hole-graphed_simulation.py",
+      "sha256": "1ac816959efa8e004e95daa57e5c7b868afc14fd57e37688a5ae37e42660d865"
+    },
+    {
+      "bytes": 6069,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/black_hole/black-hole-holograph-raw.py",
+      "sha256": "146c62d56907c10961b7fe150acddf9e2d3df1dde68311b6c8a8c81a54297c58"
     },
     {
       "bytes": 216,
@@ -3151,6 +3152,11 @@
       "sha256": "b0a9988487e6fcd2f8a843be9bd4dd57c8027d60a7137cc78d055a47b9d64f67"
     },
     {
+      "bytes": 10543,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/cgx_view_policy.py",
+      "sha256": "497e5bd7cd2398fbd04856ae43b29fb9548fc05cc0c756ca482807669a1c6fcf"
+    },
+    {
       "bytes": 6314,
       "path": "LightSpeed_Runtime/lightspeed_runtime/closure_readiness.py",
       "sha256": "148c0c1b78792ae3cdef7cac714705b848e34501b9d52ad4c1c83dd51418e9ee"
@@ -3216,19 +3222,19 @@
       "sha256": "7e390a670475b7d908f2415bb242f1445808660a107cd41bd64160d17bafce85"
     },
     {
-      "bytes": 37569,
-      "path": "LightSpeed_Runtime/lightspeed_runtime/finalization.py",
-      "sha256": "e9e1278717f63332a47e6eb6990d2b303e2e22b29f9b5d0fa5ca84ed322c2d1a"
-    },
-    {
       "bytes": 13247,
       "path": "LightSpeed_Runtime/lightspeed_runtime/finalization_control.py",
       "sha256": "7e6e9f4f49ec0755845b783a0bc051e540471c5a1eda5444e15355194ef44db2"
     },
     {
-      "bytes": 19350,
+      "bytes": 37569,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/finalization.py",
+      "sha256": "e9e1278717f63332a47e6eb6990d2b303e2e22b29f9b5d0fa5ca84ed322c2d1a"
+    },
+    {
+      "bytes": 19772,
       "path": "LightSpeed_Runtime/lightspeed_runtime/floor_bridges.py",
-      "sha256": "2e537643f305ea518bb64aacded11a078d299ec15bd581c1c925a6112f386c17"
+      "sha256": "68b8bab02044162223ce4e13412f4d4b031b1899edea2efefc41faa288ce62b0"
     },
     {
       "bytes": 11556,
@@ -3406,9 +3412,9 @@
       "sha256": "d1b83611f91ae6f129d160b876638420a8ef48275d7157e9b01f937ad49c6ca3"
     },
     {
-      "bytes": 143111,
+      "bytes": 144737,
       "path": "LightSpeed_Runtime/lightspeed_runtime/runtime.py",
-      "sha256": "bd63ae3f909115cc6663c4670ea237b8352149af4632232575e902530af3a09e"
+      "sha256": "01de833421a21ebd21a8b2b39f2694efe7c9d7c6b6dbd7cf12fc9b2cbcbe02d6"
     },
     {
       "bytes": 15369,
@@ -3484,7 +3490,11 @@
       "bytes": 4085,
       "path": "LightSpeed_Runtime/lightspeed_runtime/workflow_state.py",
       "sha256": "00ce8fbdd84ce2a30fde046cea59c5dd4f53a1ca071813a35b9f2df1488c9d1a"
+    },
+    {
+      "bytes": 6648,
+      "path": "LightSpeed_Runtime/tests/test_cgx_view_policy_runtime.py",
+      "sha256": "99700f343a73115208c6e7ff5bcef99a61d731d741139bfac9a25b0dc6b96166"
     }
-  ],
-  "schema_version": 1
+  ]
 }

@@ -232,6 +232,15 @@ class TrinityShellBridge:
     def workspace_status(self, workspace_id: str, project_id: str, *, active_floor: str = "Architect") -> dict:
         return self.runtime.workspace_state(workspace_id, project_id, active_floor=active_floor)
 
+    def select_workspace_projection(self, **view_request: Any) -> dict:
+        """Apply the canonical CGX view policy for a Trinity presentation request.
+
+        The caller must supply an explicit security/admission lease and source
+        binding. Trinity consumes the runtime result; it does not manufacture
+        or widen authority locally.
+        """
+        return self.runtime.select_cgx_view(**view_request)
+
     def launch_lab_run(
         self,
         workspace_id: str,
