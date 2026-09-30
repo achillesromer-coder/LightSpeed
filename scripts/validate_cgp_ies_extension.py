@@ -22,6 +22,8 @@ def main():
         authority_ref=load("cgp_ies_authority_phase_ref.json")
         visibility=load("cgp_ies_release_visibility_policy.json")
         owner_values=load("cgp_ies_owner_confirmation_values.json")
+        object_envelope=load("cgp_ies_object_envelope_schema.json")
+        launch_queue=load("cgp_ies_launch_frontier_queue.json")
     except Exception as e:
         print(json.dumps({"status":"FAIL","failures":[str(e)]})); return 1
     if reg.get("schema")!="CGX-EXTENSION-REGISTRY/0.1": failures.append("extension registry schema")
@@ -34,6 +36,8 @@ def main():
     if authority_ref.get("detailed_contract_class")!="Restricted": failures.append("authority details must remain Restricted")
     if "detailed root-authority topology" not in visibility.get("public_projection_deny",[]): failures.append("authority topology missing from public deny list")
     if "ACCEPTED_BASELINES" not in owner_values.get("status",""): failures.append("owner baselines not accepted")
+    if object_envelope.get("schema")!="CGX-CGP-IES-OBJECT-ENVELOPE/0.1": failures.append("object envelope schema")
+    if launch_queue.get("schema")!="CGX-CGP-IES-LAUNCH-FRONTIER/0.1": failures.append("launch frontier queue schema")
     ext=[x for x in reg.get("extensions",[]) if x.get("id")=="cgp-ies"]
     if len(ext)!=1: failures.append("cgp-ies extension missing or duplicated")
     else:
@@ -42,7 +46,7 @@ def main():
         if ext.get("source_path")!="Cognigrex.cgx:/extensions/cgp-ies": failures.append("cgp-ies parent source path")
         if "ENFORCE_SAFETY" not in ext.get("toggle_modes",[]): failures.append("safety mode missing")
         components=ext.get("components",{})
-        for key in ("policy","terminology","domain_adapters","decision_receipt","fixtures","authority_phase","release_visibility"):
+        for key in ("policy","terminology","domain_adapters","decision_receipt","fixtures","authority_phase","release_visibility","object_envelope"):
             if not components.get(key): failures.append("extension component missing:"+key)
     if policy.get("collective_good_rule","").lower().find("sovereign score")<0:
         warnings.append("collective-good anti-scalar wording changed")
