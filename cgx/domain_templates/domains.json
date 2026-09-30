@@ -191,7 +191,8 @@
     "cgp_ies_authority_phase": "cgp_ies_authority_phase_ref.json",
     "cgp_ies_release_visibility": "cgp_ies_release_visibility_policy.json",
     "cgp_ies_object_envelope": "cgp_ies_object_envelope_schema.json",
-    "cgp_ies_launch_frontier_queue": "cgp_ies_launch_frontier_queue.json"
+    "cgp_ies_launch_frontier_queue": "cgp_ies_launch_frontier_queue.json",
+    "s92_recovery_promotion": "s92_recovery_promotion_verification_2026-09-30.json"
   },
   "generation_policy": {
     "source_authority": "latest-durably-observed-Recovery-authority-only",
@@ -212,17 +213,29 @@
       "bulk-copy-project-payload-into-base-shell",
       "promote-runtime-or-publication-view-to-semantic-authority"
     ],
-    "current_recovery_file_id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR",
-    "current_recovery_sha256": "1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
-    "current_recovery_content_root": "af640b499078853371196cf7c905979cebf0761c15552b6b8dfbf3ff3d04448d",
-    "current_recovery_dbr_root": "18d43abf68b5f7857a21dcb480d9970e95cdacfc869c61b3b1497e900f0dcc64",
-    "current_recovery_topology": "150e5267792f43f47807a9f5ca61f12db8077ac98153c2cc6c306a4177de937e",
+    "current_recovery_file_id": "1ap1xHVQ0cDWeJDAVWxvY_VqMkSzwpG6i",
+    "current_recovery_sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+    "current_recovery_content_root": "bf851642ac5bef93e8b9663f71ea4aa94ede30bf057528101773dd12de830bc1",
+    "current_recovery_dbr_root": "a7da29629904db2ac82218eaf36c916adbc057a7e954104053078afbf288ad66",
+    "current_recovery_topology": "13cc735955ff8aaabdaf43aed968b510b5dab85416fbb7adee5807215c781074",
     "recovery_promotion_evidence": {
-      "validation_file_id": "1E_FpZFwWwi2smR22GSpFIQhY-qG2klVb",
-      "recovery_file_id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR",
-      "acceptance_audit_id": "1ST6l0RDTBexq1BXB28gYxxevvLu1cDmu",
+      "validation_file_id": "1qHjs52mH2S-PU4E5auqurIzfIXpxwA0G",
+      "recovery_file_id": "1ap1xHVQ0cDWeJDAVWxvY_VqMkSzwpG6i",
+      "acceptance_audit_id": "1O4auaYLfBD4heLsZQu2tdu4xWB8ypUQR",
+      "root_promotion_receipt_id": "1C7jpNE-RarqdQA5bLy8QeFeZhY11evXn",
+      "promotion_verification": "s92_recovery_promotion_verification_2026-09-30.json",
       "exact_byte_match": true,
-      "local_cmp_exit": 0
+      "download_readback": true,
+      "canonical_verifier": "PASS"
+    },
+    "current_recovery_at_2026_09_30": "S92",
+    "current_recovery_state": "S92",
+    "previous_recovery": {
+      "state_id": "S91",
+      "release": "v1.61",
+      "file_id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR",
+      "sha256": "1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
+      "retained": true
     }
   },
   "shared_extensions": {
