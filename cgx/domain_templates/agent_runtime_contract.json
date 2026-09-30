@@ -112,5 +112,10 @@
     "graceful_degradation": true,
     "safe_state_over_blackout": true,
     "preserve_critical_life_safety_eco_functions": true
+  },
+  "shared_assurance_bindings": {
+    "role_matrix": "Cognigrex.cgx:/assurance/agent-roles",
+    "agentic_security": "Cognigrex.cgx:/assurance/security/agentic",
+    "assurance_case_contract": "Cognigrex.cgx:/assurance/cases"
   }
 }
