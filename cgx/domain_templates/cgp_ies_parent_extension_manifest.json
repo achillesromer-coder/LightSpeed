@@ -20,7 +20,8 @@
     "fixtures.json": "cgp_ies_fixture_scenarios.json",
     "owner_confirmation_values.json": "cgp_ies_owner_confirmation_values.json",
     "authority_phase_ref.json": "cgp_ies_authority_phase_ref.json",
-    "release_visibility_policy.json": "cgp_ies_release_visibility_policy.json"
+    "release_visibility_policy.json": "cgp_ies_release_visibility_policy.json",
+    "object_envelope_schema.json": "cgp_ies_object_envelope_schema.json"
   },
   "candidate_controls": {
     "policy_state": "PRE_CANONICAL",
@@ -31,7 +32,8 @@
     "dbr_receipt_required": true,
     "child_regeneration_after_parent_promotion_only": true,
     "accepted_baselines": "OC-001..OC-024 accepted v0.1",
-    "sensitive_authority_details": "not embedded in public source package; resolved by internal governance provider"
+    "sensitive_authority_details": "not embedded in public source package; resolved by internal governance provider",
+    "launch_frontier_queue": "Hydrate as operational queue after parent promotion; do not treat queue contents as constitutional source."
   },
   "authority_boundary": "The candidate builder may construct and verify a descendant carrier. It does not promote that carrier to Recovery or CANONICAL policy state."
 }
