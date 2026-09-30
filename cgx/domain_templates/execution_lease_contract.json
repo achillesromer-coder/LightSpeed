@@ -16,7 +16,9 @@
     "max_cascade_class",
     "allowed_floors",
     "scope",
-    "revocable"
+    "revocable",
+    "authority_phase",
+    "authority_phase_ref"
   ],
   "state_values": [
     "PROPOSED",
@@ -42,7 +44,9 @@
     "risk_acceptance_ref",
     "stop_authority_ref",
     "safe_state_ref",
-    "rollback_or_recovery_ref"
+    "rollback_or_recovery_ref",
+    "root_authority_receipt_ref",
+    "release_receipt_ref"
   ],
   "invariants": [
     "lease-is-not-agent-identity",
@@ -57,7 +61,11 @@
     "missing-or-stale-lease-means-no-consequential-execution",
     "historical-global-approval-manifest-is-not-an-active-execution-lease",
     "compute-only-lease-cannot-authorise-external-write-publication-or-physical-actuation",
-    "physical-actuation-requires-independent-safety-plane-in-addition-to-lease"
+    "physical-actuation-requires-independent-safety-plane-in-addition-to-lease",
+    "authority-phase-is-explicit-and-cannot-be-inferred-from-node-count",
+    "pre-launch-consequential-lease-requires-root-authority-receipt",
+    "publication-lease-requires-release-receipt",
+    "authority-receipt-does-not-manufacture-evidence"
   ],
   "validation_rules": [
     "valid_from and valid_until use timezone-aware timestamps and current time must fall within the interval",
@@ -70,7 +78,10 @@
     "DIGITAL_WRITE and above require rollback_or_recovery_ref where reversal is meaningful",
     "EXTERNAL_ACTION and PHYSICAL_ACTUATION require stop_authority_ref and safe_state_ref",
     "PHYSICAL_ACTUATION additionally requires independently verified safety/interlock state",
-    "resource/tool budgets are ceilings, never targets"
+    "resource/tool budgets are ceilings, never targets",
+    "PRE_LAUNCH or LAUNCH_TRANSITION consequential execution requires root_authority_receipt_ref",
+    "publish execution requires release_receipt_ref even when the model/runtime plan is otherwise cleared",
+    "authority_phase_ref must resolve to the current promoted governance/phase contract"
   ],
   "compatibility": {
     "legacy_operator_approval_manifest": "historical evidence of operator decisions only; may support issuance of a new lease but cannot itself satisfy this contract",
@@ -82,5 +93,18 @@
     "DIGITAL_WRITE": "bounded mutation of approved digital targets with readback/rollback",
     "EXTERNAL_ACTION": "network/provider action affecting an external system, person or release surface",
     "PHYSICAL_ACTUATION": "command capable of changing physical state"
-  }
+  },
+  "authority_phase_values": [
+    "PRE_LAUNCH",
+    "LAUNCH_TRANSITION",
+    "DISTRIBUTED_OPERATION",
+    "SUCCESSION_OR_RECOVERY"
+  ],
+  "phase_rules": {
+    "PRE_LAUNCH": "Consequential execution requires a current root_authority_receipt_ref plus authority_phase_ref.",
+    "LAUNCH_TRANSITION": "Consequential execution remains root-authority-gated until the exact distributed governance state is promoted.",
+    "DISTRIBUTED_OPERATION": "Authority is determined by the promoted multidimensional authority matrix; pre-launch root receipt is not assumed to remain required.",
+    "SUCCESSION_OR_RECOVERY": "Use the promoted succession/recovery constitution and preserve degraded-mode safety constraints."
+  },
+  "publication_rule": "Any publish execution requires release_receipt_ref. Public publication must also pass the CGP-IES release-visibility preflight."
 }
