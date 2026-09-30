@@ -70,6 +70,17 @@ jobs:
           path: /tmp/cgp-ies-source
           if-no-files-found: error
           retention-days: 7
+      - name: Package S92 domain-child builder source
+        run: |
+          mkdir -p /tmp/cgx-s92-child-source/cgx /tmp/cgx-s92-child-source/scripts
+          cp -R cgx/domain_templates /tmp/cgx-s92-child-source/cgx/
+          cp scripts/build_cgx_domain_children.py /tmp/cgx-s92-child-source/scripts/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cgx-s92-domain-child-source
+          path: /tmp/cgx-s92-child-source
+          if-no-files-found: error
+          retention-days: 7
       - name: Validate CGX assurance fixtures
         run: python scripts/validate_cgx_assurance.py
       - name: Validate consequence preflight chain
