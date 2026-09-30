@@ -8,6 +8,7 @@ on:
       - "scripts/cgx_custodial_preflight.py"
       - "scripts/validate_cgp_ies_extension.py"
       - "scripts/validate_cgx_domain_templates.py"
+      - "scripts/build_cgp_ies_parent_candidate.py"
       - "scripts/validate_cgx_preflight_chain.py"
       - "scripts/cgx_consequence_preflight.py"
       - "scripts/validate_cgx_assurance.py"
@@ -19,6 +20,7 @@ on:
       - "cgx/domain_templates/agentic_security_threat_registry.json"
       - "cgx/domain_templates/execution_lease_contract.json"
       - "scripts/run_cgx_agent_runtime.py"
+      - "scripts/build_cgp_ies_parent_candidate.py"
       - ".github/workflows/cgx-custodial-extension-validation.yml"
   pull_request:
     paths:
@@ -40,6 +42,8 @@ jobs:
         run: python scripts/validate_cgx_domain_templates.py
       - name: Validate CGP-IES extension fixtures
         run: python scripts/validate_cgp_ies_extension.py
+      - name: Compile guarded parent candidate builder
+        run: python -m py_compile scripts/build_cgp_ies_parent_candidate.py
       - name: Validate CGX assurance fixtures
         run: python scripts/validate_cgx_assurance.py
       - name: Validate consequence preflight chain
