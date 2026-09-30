@@ -15,7 +15,10 @@
         "host",
         "ccc",
         "extension-resolution",
-        "custodial-preflight"
+        "custodial-preflight",
+        "assurance-routing",
+        "assurance-preflight",
+        "unified-risk-object"
       ]
     },
     {
@@ -156,6 +159,8 @@
     "add_skill": true,
     "scope_to_region_or_object": true,
     "add_policy_extension": true,
-    "policy_extension_rule": "shared parent source + scoped child binding + receipt; capability does not create authority"
+    "policy_extension_rule": "shared parent source + scoped child binding + receipt; capability does not create authority",
+    "add_assurance_method": true,
+    "assurance_method_rule": "new methods declare question, inputs, outputs, assumptions, applicability, evidence and limitations; they do not create authority or a universal risk score"
   }
 }
