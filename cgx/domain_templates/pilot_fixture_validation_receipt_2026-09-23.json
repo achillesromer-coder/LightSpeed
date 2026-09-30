@@ -46,11 +46,20 @@
     }
   },
   "current_authority_boundary": {
-    "recovery": "S91/v1.61 is durably present in Recovery as exact accepted bytes",
-    "recovery_file_id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR",
-    "recovery_sha256": "1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
+    "recovery": "S92 is durably present in Recovery as exact accepted bytes; S91 retained as predecessor lineage",
+    "recovery_file_id": "1ap1xHVQ0cDWeJDAVWxvY_VqMkSzwpG6i",
+    "recovery_sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+    "recovery_content_root": "bf851642ac5bef93e8b9663f71ea4aa94ede30bf057528101773dd12de830bc1",
+    "recovery_dbr_root": "a7da29629904db2ac82218eaf36c916adbc057a7e954104053078afbf288ad66",
+    "recovery_topology": "13cc735955ff8aaabdaf43aed968b510b5dab85416fbb7adee5807215c781074",
+    "promotion_verification": "s92_recovery_promotion_verification_2026-09-30.json",
+    "previous_recovery": {
+      "state_id": "S91",
+      "file_id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR",
+      "retained": true
+    },
     "later_validation": null,
-    "rule": "child generation may seed only from the exact verified S91 Recovery carrier or a later independently promoted Recovery state"
+    "rule": "child generation may seed only from the exact latest durably promoted Recovery carrier; Validation candidates alone are never sufficient"
   },
-  "generator_gate": "RELEASED_FOR_FULL_PACKAGE_BUILD_AGAINST_EXACT_S91_RECOVERY; require template validator PASS, post-install verifier PASS and packed-reopen verifier PASS for every child before first-file intake"
+  "generator_gate": "RELEASED_FOR_FULL_PACKAGE_BUILD_AGAINST_EXACT_S92_RECOVERY; require template validator PASS, post-install verifier PASS and packed-reopen verifier PASS for every child before runtime promotion"
 }

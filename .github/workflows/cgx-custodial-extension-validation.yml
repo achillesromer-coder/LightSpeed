@@ -7,8 +7,11 @@ on:
       - "scripts/resolve_cgx_extensions.py"
       - "scripts/cgx_custodial_preflight.py"
       - "scripts/validate_cgp_ies_extension.py"
+      - "scripts/validate_cgp_ies_launch_frontier.py"
       - "scripts/validate_cgx_domain_templates.py"
+      - "scripts/validate_cgx_execution_lease.py"
       - "scripts/build_cgp_ies_parent_candidate.py"
+      - "scripts/build_cgx_domain_children.py"
       - "scripts/validate_cgx_preflight_chain.py"
       - "scripts/cgx_consequence_preflight.py"
       - "scripts/validate_cgx_assurance.py"
@@ -20,6 +23,7 @@ on:
       - "cgx/domain_templates/agentic_security_threat_registry.json"
       - "cgx/domain_templates/execution_lease_contract.json"
       - "scripts/run_cgx_agent_runtime.py"
+      - "scripts/validate_cgx_execution_lease.py"
       - "scripts/build_cgp_ies_parent_candidate.py"
       - ".github/workflows/cgx-custodial-extension-validation.yml"
   pull_request:
@@ -42,12 +46,48 @@ jobs:
         run: python scripts/validate_cgx_domain_templates.py
       - name: Validate CGP-IES extension fixtures
         run: python scripts/validate_cgp_ies_extension.py
+      - name: Validate CGP-IES operational queue
+        run: python scripts/validate_cgp_ies_launch_frontier.py
       - name: Compile guarded parent candidate builder
         run: python -m py_compile scripts/build_cgp_ies_parent_candidate.py
+      - name: Package CGP-IES parent source bundle
+        run: |
+          mkdir -p /tmp/cgp-ies-source/cgx/domain_templates /tmp/cgp-ies-source/scripts
+          cp scripts/build_cgp_ies_parent_candidate.py /tmp/cgp-ies-source/scripts/
+          cp cgx/domain_templates/custodial_extension_registry.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_policy_pack.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_terminology_map.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_domain_adapter_registry.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_decision_receipt_schema.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_fixture_scenarios.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_owner_confirmation_values.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_authority_phase_ref.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_release_visibility_policy.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_object_envelope_schema.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_parent_extension_manifest.json /tmp/cgp-ies-source/cgx/domain_templates/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cgp-ies-parent-source
+          path: /tmp/cgp-ies-source
+          if-no-files-found: error
+          retention-days: 7
+      - name: Package S92 domain-child builder source
+        run: |
+          mkdir -p /tmp/cgx-s92-child-source/cgx /tmp/cgx-s92-child-source/scripts
+          cp -R cgx/domain_templates /tmp/cgx-s92-child-source/cgx/
+          cp scripts/build_cgx_domain_children.py /tmp/cgx-s92-child-source/scripts/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cgx-s92-domain-child-source
+          path: /tmp/cgx-s92-child-source
+          if-no-files-found: error
+          retention-days: 7
       - name: Validate CGX assurance fixtures
         run: python scripts/validate_cgx_assurance.py
       - name: Validate consequence preflight chain
         run: python scripts/validate_cgx_preflight_chain.py
+      - name: Validate execution lease authority and release gates
+        run: python scripts/validate_cgx_execution_lease.py
       - name: Route InterSol assurance scenario
         run: python scripts/cgx_assurance_route.py --domain romer --execution-depth build --cascade-class C2 --tags intersol,facility,battery-room,public-route
       - name: Resolve observational scenario

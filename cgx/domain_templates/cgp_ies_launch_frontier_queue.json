@@ -1,0 +1,404 @@
+{
+  "schema": "CGX-CGP-IES-LAUNCH-FRONTIER/0.1",
+  "queue_id": "CGX-LAUNCH-FRONTIER-2026-09-30",
+  "status": "ACTIVE_PRE_LAUNCH / S92_TECHNICALLY_ACCEPTED / RECOVERY_PROMOTION_HELD_ON_DURABLE_READBACK",
+  "source_authority": {
+    "recovery_state": "S91",
+    "recovery_release": "v1.61",
+    "recovery_sha256": "1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
+    "source_main_commit": "f7678324db11131502172585cca1a147a5671ba9",
+    "lifecycle_owner": "Type 1 Romer Cognigrex / 163_EQUILIBRIUM_LIFECYCLE_GOV_v0_1",
+    "authority_phase": "PRE_LAUNCH",
+    "detailed_authority_ref": "cgx://internal/governance/root-authority-phase",
+    "release_boundary": "Cognigrex.cgx:/extensions/cgp-ies/release-visibility"
+  },
+  "policy": {
+    "one_queue_not_parallel_roadmap": true,
+    "task_lineage_required": true,
+    "dbrr_receipt_required_for_canonical_mutation": true,
+    "no_synthetic_empirical_closure": true,
+    "no_self_promotion_of_authority": true,
+    "public_projection_default": "HOLD unless Public + explicitly approved",
+    "execution_rule": "software may advance automatically inside active leases and gates; physical/external/public actions require their applicable evidence and authority receipts"
+  },
+  "priority_order": [
+    "PARENT_CARRIER",
+    "CHILD_CARRIERS",
+    "RUNTIME_AUTHORITY",
+    "LAUNCH_EMPIRICAL",
+    "OBJECT_PARAMETERISATION",
+    "CONTINUOUS_FRONTIER"
+  ],
+  "tasks": [
+    {
+      "task_id": "CGX-LAUNCH-001",
+      "phase": "PARENT_CARRIER",
+      "title": "Materialise exact S91 Recovery input",
+      "owner": "Neo",
+      "audit": "Achilles",
+      "execution_class": "DIGITAL_WRITE",
+      "cascade_class": "C2",
+      "state": "COMPLETE",
+      "depends_on": [],
+      "action": "Retrieve exact Recovery carrier by authoritative Drive ID; verify SHA-256 before any mutation.",
+      "done_when": [
+        "materialised file SHA-256 equals accepted S91 hash",
+        "CGX verifier passes exact input",
+        "receipt records source Drive ID, byte size, hash and verifier result"
+      ],
+      "evidence_class": "DIGITAL_EMPIRICAL_FILE_READBACK",
+      "synthetic_closure_forbidden": true,
+      "completed_at": "2026-09-30",
+      "evidence": {
+        "source_drive_id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR",
+        "file_name": "CGX_Reconciled_S91_ReleaseSupplyChain.cgx",
+        "file_size_bytes": 3609020,
+        "sha256": "1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
+        "verifier": "PASS",
+        "tracked_objects": 432,
+        "object_id": "cgx:phase-a:42d99b46c0d322f08b59b7b7",
+        "content_root": "af640b499078853371196cf7c905979cebf0761c15552b6b8dfbf3ff3d04448d",
+        "dbr_root": "18d43abf68b5f7857a21dcb480d9970e95cdacfc869c61b3b1497e900f0dcc64",
+        "topology_snapshot_hash": "150e5267792f43f47807a9f5ca61f12db8077ac98153c2cc6c306a4177de937e",
+        "proof": "authoritative Drive materialisation + SHA-256 + embedded canonical verifier"
+      }
+    },
+    {
+      "task_id": "CGX-LAUNCH-002",
+      "phase": "PARENT_CARRIER",
+      "title": "Build PRE_CANONICAL CGP-IES parent descendant",
+      "owner": "Neo",
+      "audit": "Achilles",
+      "execution_class": "DIGITAL_WRITE",
+      "cascade_class": "C2",
+      "state": "COMPLETE",
+      "depends_on": [
+        "CGX-LAUNCH-001"
+      ],
+      "action": "Run build_cgp_ies_parent_candidate.py against exact verified S91; output new carrier only.",
+      "done_when": [
+        "new candidate produced without overwriting S91",
+        "kernel mutation receipt exists",
+        "candidate policy state remains PRE_CANONICAL",
+        "packed reopen verifier passes"
+      ],
+      "evidence_class": "VERIFIED_BUILD_RECEIPT",
+      "release_reason": "CGX-LAUNCH-001 exact S91 hash/root/verifier proof closed",
+      "completed_at": "2026-09-30",
+      "evidence": {
+        "candidate_state": "S92",
+        "candidate_sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+        "content_root": "bf851642ac5bef93e8b9663f71ea4aa94ede30bf057528101773dd12de830bc1",
+        "dbr_root": "a7da29629904db2ac82218eaf36c916adbc057a7e954104053078afbf288ad66",
+        "topology_snapshot_hash": "13cc735955ff8aaabdaf43aed968b510b5dab85416fbb7adee5807215c781074",
+        "verifier": "PASS",
+        "packed_reopen_verify": "PASS",
+        "policy_state": "PRE_CANONICAL",
+        "promotion": "NOT_PERFORMED",
+        "source_workflow_run_id": 36704624557,
+        "source_workflow_head_sha": "fee9eb7999d32d260780af88c813a55d4670159c",
+        "source_artifact_id": 11091735683,
+        "source_artifact_digest": "sha256:52a501198f7ecae6c37e2c6c4bbc40e26394ca956848171226ca1098b46602ce"
+      }
+    },
+    {
+      "task_id": "CGX-LAUNCH-003",
+      "phase": "PARENT_CARRIER",
+      "title": "Independent parent-candidate acceptance audit",
+      "owner": "Achilles",
+      "execution_class": "READ_ONLY",
+      "cascade_class": "C2",
+      "state": "COMPLETE",
+      "depends_on": [
+        "CGX-LAUNCH-002"
+      ],
+      "action": "Independently verify DBR continuity, roots, topology, exact extension contents, authority/release refs and pack/reopen hash.",
+      "done_when": [
+        "independent verifier passes",
+        "DBR parent link is exact",
+        "source component hashes are recorded",
+        "no Restricted internal authority topology is embedded in public-safe extension source",
+        "accept/reject recommendation refers to exact candidate hash"
+      ],
+      "evidence_class": "INDEPENDENT_VERIFICATION",
+      "completed_at": "2026-09-30",
+      "evidence": {
+        "decision": "ACCEPT_TECHNICAL_CANDIDATE_FOR_ROOT_PROMOTION_GATE",
+        "audit_sha256": "6d55d526a9ee19c4542dd855187e90dd51579b7ab3184803a3250ab67a75d263",
+        "candidate_sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+        "dbr_parent_exact": true,
+        "normalized_source_components_exact": "10/10",
+        "candidate_verifier": "PASS",
+        "release_boundary": "PASS",
+        "secret_pattern_findings": 0
+      }
+    },
+    {
+      "task_id": "CGX-LAUNCH-004",
+      "phase": "PARENT_CARRIER",
+      "title": "Founder parent-promotion gate",
+      "owner": "RootAuthority",
+      "audit": "Achilles",
+      "execution_class": "DIGITAL_WRITE",
+      "cascade_class": "C3",
+      "state": "HOLD_DURABLE_STORAGE_READBACK",
+      "depends_on": [
+        "CGX-LAUNCH-003"
+      ],
+      "action": "Approve or reject the exact verified candidate hash; if approved, promote exact bytes as next Recovery authority without deleting S91 lineage.",
+      "done_when": [
+        "root-authority decision receipt exists",
+        "promoted Recovery exact hash is read back",
+        "prior S91 remains recoverable provenance",
+        "current Recovery pointer is atomically updated"
+      ],
+      "evidence_class": "AUTHORITY_PLUS_READBACK",
+      "completed_at": "2026-09-30",
+      "evidence": {
+        "recovery_state": "S92",
+        "recovery_drive_id": "1ap1xHVQ0cDWeJDAVWxvY_VqMkSzwpG6i",
+        "recovery_sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+        "root_authority_receipt_ref": "gdrive:1C7jpNE-RarqdQA5bLy8QeFeZhY11evXn",
+        "download_readback_sha256_match": true,
+        "canonical_verifier": "PASS",
+        "predecessor_s91_retained": true,
+        "promotion_verification": "s92_recovery_promotion_verification_2026-09-30.json"
+      },
+      "release_reason": "Technical acceptance is complete and standing pre-launch root authorization applies to the exact S92 candidate; promotion remains held until exact candidate bytes are durably persisted and re-read from Validation/Recovery.",
+      "blocker": {
+        "id": "CGX-STORAGE-TRANSPORT-001",
+        "description": "Current local-to-Drive file-reference bridge expired/refused an unregistered local path.",
+        "non_effect": "No mutation to S91 Recovery occurred; no failed upload changed Validation candidate contents.",
+        "closure": "Persist exact S92 SHA-256 722558... as a new file, re-download/read back, verify identical hash and canonical verifier, then promote exact bytes."
+      }
+    },
+    {
+      "task_id": "CGX-LAUNCH-005",
+      "phase": "CHILD_CARRIERS",
+      "title": "Regenerate and verify domain children",
+      "owner": "Neo",
+      "audit": "Achilles",
+      "execution_class": "DIGITAL_WRITE",
+      "cascade_class": "C2",
+      "state": "READY",
+      "depends_on": [
+        "CGX-LAUNCH-004"
+      ],
+      "action": "Regenerate Romer.cgx, Eco.cgx, EMASSC.cgx and LS.cgx from promoted parent.",
+      "done_when": [
+        "all four canonical verifiers pass",
+        "all four packed reopen verifiers pass",
+        "extensions/bindings.json is REFERENCE-only",
+        "authority_phase_ref and release_visibility_ref are present",
+        "nested child cannot weaken GATE or ENFORCE_SAFETY"
+      ],
+      "evidence_class": "CHILD_BUILD_AND_CONFORMANCE",
+      "release_reason": "Exact S92 Recovery promoted/readback verified; child generator pinned to S92."
+    },
+    {
+      "task_id": "CGX-LAUNCH-006",
+      "phase": "RUNTIME_AUTHORITY",
+      "title": "Bind authority-phase receipts into execution leases",
+      "owner": "Trinity",
+      "audit": "Achilles",
+      "execution_class": "DIGITAL_WRITE",
+      "cascade_class": "C2",
+      "state": "SOFTWARE_READY",
+      "depends_on": [],
+      "action": "Extend execution-lease contract/runtime validation with authority phase, root-authority receipt ref and release receipt ref for applicable actions.",
+      "done_when": [
+        "pre-launch consequential execution requires root-authority receipt reference",
+        "public external action requires release receipt reference",
+        "expired/revoked authority receipt cannot satisfy lease",
+        "tests cover allow and fail-closed cases"
+      ],
+      "evidence_class": "CODE_TEST_RECEIPT"
+    },
+    {
+      "task_id": "CGX-LAUNCH-007",
+      "phase": "LAUNCH_EMPIRICAL",
+      "title": "Physical multi-device and non-loopback CGX proof",
+      "owner": "Merovingian",
+      "audit": "Achilles",
+      "execution_class": "PHYSICAL_ACTUATION",
+      "cascade_class": "C2",
+      "state": "EMPIRICAL_OPEN",
+      "depends_on": [
+        "CGX-LAUNCH-005",
+        "CGX-LAUNCH-006"
+      ],
+      "action": "Execute current physical field package on genuinely distinct devices/nodes; capture discovery, sync, identity, lease, revocation and degraded-mode receipts.",
+      "done_when": [
+        "two genuinely distinct physical devices verified",
+        "non-loopback discovery/sync evidence captured",
+        "identity and lease scopes read back on both nodes",
+        "revocation/stop propagates as designed",
+        "partition/degraded mode does not create authority",
+        "receipts are independently audited"
+      ],
+      "evidence_class": "PHYSICAL_FIELD_EVIDENCE",
+      "synthetic_closure_forbidden": true
+    },
+    {
+      "task_id": "CGX-LAUNCH-008",
+      "phase": "LAUNCH_EMPIRICAL",
+      "title": "Platform keystore and recovery proof",
+      "owner": "Merovingian",
+      "audit": "Achilles",
+      "execution_class": "EXTERNAL_ACTION",
+      "cascade_class": "C2",
+      "state": "EMPIRICAL_OPEN",
+      "depends_on": [
+        "CGX-LAUNCH-006"
+      ],
+      "action": "Verify production-relevant credential storage, revocation and recovery on target host classes without exposing secret material.",
+      "done_when": [
+        "target platform credential boundaries verified",
+        "revocation and recovery tested",
+        "no secret appears in Git/Drive/public receipts",
+        "assurance receipt records capability but not secret"
+      ],
+      "evidence_class": "HOST_SECURITY_EVIDENCE",
+      "synthetic_closure_forbidden": true
+    },
+    {
+      "task_id": "CGX-LAUNCH-009",
+      "phase": "LAUNCH_EMPIRICAL",
+      "title": "Decentralised governance promotion readiness",
+      "owner": "RootAuthority",
+      "audit": "Achilles",
+      "execution_class": "DIGITAL_WRITE",
+      "cascade_class": "C4",
+      "state": "HELD_UNTIL_EMPIRICAL_PROOF",
+      "depends_on": [
+        "CGX-LAUNCH-005",
+        "CGX-LAUNCH-006",
+        "CGX-LAUNCH-007",
+        "CGX-LAUNCH-008"
+      ],
+      "action": "Evaluate EQG-070 launch formula and exact promoted authority matrix; do not promote while any empirical predicate is open.",
+      "done_when": [
+        "all claim-relevant empirical launch predicates pass",
+        "authority matrix is explicit and machine-readable",
+        "recovery/rollback remains proven through transition",
+        "root-authority promotion receipt identifies exact governance/carrier state"
+      ],
+      "evidence_class": "LAUNCH_ACCEPTANCE"
+    },
+    {
+      "task_id": "CGX-OBJ-001",
+      "phase": "OBJECT_PARAMETERISATION",
+      "title": "Mark III / Mark V finite-lifecycle pilot",
+      "owner": "Romer",
+      "audit": "Achilles",
+      "execution_class": "COMPUTE_ONLY",
+      "cascade_class": "C1",
+      "state": "READY_FOR_DATA_ASSEMBLY",
+      "depends_on": [],
+      "action": "Populate stable IDs, beneficiaries, ceilings, MVSL, material/hazard passport, stop/passivation/restart and inheritance fields from current owning evidence.",
+      "done_when": [
+        "required object envelope populated",
+        "unknowns remain explicit",
+        "numeric values cite owning evidence",
+        "no design claim is promoted by template fill"
+      ],
+      "evidence_class": "CANONICAL_DATA_ASSEMBLY"
+    },
+    {
+      "task_id": "CGX-OBJ-002",
+      "phase": "OBJECT_PARAMETERISATION",
+      "title": "Asteroid resource unit equilibrium pilot",
+      "owner": "Romer",
+      "audit": "Achilles",
+      "execution_class": "COMPUTE_ONLY",
+      "cascade_class": "C3",
+      "state": "READY_FOR_DATA_ASSEMBLY",
+      "depends_on": [],
+      "action": "Bind extraction need/ceiling, fleet count, replication budget, orbital cascade, hibernation, closure and successor state.",
+      "done_when": [
+        "all required fields populated or OPEN",
+        "trajectory/orbit unknowns separated from policy defaults",
+        "no autonomous extraction permission inferred"
+      ],
+      "evidence_class": "CANONICAL_DATA_ASSEMBLY"
+    },
+    {
+      "task_id": "CGX-OBJ-003",
+      "phase": "OBJECT_PARAMETERISATION",
+      "title": "Eco-Grex intervention pilot",
+      "owner": "Eco",
+      "audit": "Achilles",
+      "execution_class": "COMPUTE_ONLY",
+      "cascade_class": "C2",
+      "state": "READY_FOR_DATA_ASSEMBLY",
+      "depends_on": [],
+      "action": "Populate affected-party, ecology, welfare, representation, biosecurity, intervention/reversibility and inheritance fields.",
+      "done_when": [
+        "affected parties enumerated",
+        "representation state explicit",
+        "biosecurity/ecology gates mapped",
+        "unknown agency/communication remains uncertainty"
+      ],
+      "evidence_class": "CANONICAL_DATA_ASSEMBLY"
+    },
+    {
+      "task_id": "CGX-OBJ-004",
+      "phase": "OBJECT_PARAMETERISATION",
+      "title": "InterSol lifecycle and dependent-life pilot",
+      "owner": "Romer",
+      "audit": "Achilles",
+      "execution_class": "COMPUTE_ONLY",
+      "cascade_class": "C3",
+      "state": "READY_FOR_DATA_ASSEMBLY",
+      "depends_on": [],
+      "action": "Populate occupancy classes, life-support MVSL, evacuation/safe haven, abandonment, hibernation, restart, hazard and succession.",
+      "done_when": [
+        "dependent-life minima explicit",
+        "production/safety functions separated",
+        "abandonment/restart path explicit",
+        "open facility values remain Frontier"
+      ],
+      "evidence_class": "CANONICAL_DATA_ASSEMBLY"
+    },
+    {
+      "task_id": "CGX-OBJ-005",
+      "phase": "OBJECT_PARAMETERISATION",
+      "title": "Cognigrex self-lifecycle pilot",
+      "owner": "Cognigrex",
+      "audit": "Achilles",
+      "execution_class": "COMPUTE_ONLY",
+      "cascade_class": "C3",
+      "state": "READY_FOR_DATA_ASSEMBLY",
+      "depends_on": [
+        "CGX-LAUNCH-006"
+      ],
+      "action": "Apply the same finite-lifecycle envelope to Cognigrex: compute, agent population, evidence/archive, authority, degeneration, hibernation, succession and shutdown.",
+      "done_when": [
+        "Cognigrex can recommend contraction/shutdown where merit fails",
+        "agent/compute ceilings explicit",
+        "archive separated from executable agency",
+        "no self-preservation terminal objective"
+      ],
+      "evidence_class": "SELF_GOVERNANCE_CONFORMANCE"
+    },
+    {
+      "task_id": "CGX-FRONTIER-001",
+      "phase": "CONTINUOUS_FRONTIER",
+      "title": "Bounded continuous frontier solve",
+      "owner": "Neo",
+      "audit": "Achilles",
+      "execution_class": "COMPUTE_ONLY",
+      "cascade_class": "C1",
+      "state": "ACTIVE_WITHIN_LEASE",
+      "depends_on": [],
+      "action": "Continuously select highest-value solvable OPEN item, execute bounded derive/simulate/cross-analysis work, reconcile result to owning source, and emit next evidence need.",
+      "done_when": [
+        "each run closes or narrows at least one OPEN item or records a justified no-change",
+        "Task_ID/Run_ID lineage preserved",
+        "empirical requirements are never synthetically closed"
+      ],
+      "evidence_class": "REPEATED_RUN_RECEIPT"
+    }
+  ],
+  "last_reconciled": "2026-09-30"
+}

@@ -17,17 +17,21 @@
   },
   "current_cgx_authority": {
     "object_id": "cgx:phase-a:42d99b46c0d322f08b59b7b7",
-    "state_id": "S91",
-    "release": "v1.61",
+    "state_id": "S92",
     "authority": "Recovery",
-    "content_root": "af640b499078853371196cf7c905979cebf0761c15552b6b8dfbf3ff3d04448d",
-    "dbr_root": "18d43abf68b5f7857a21dcb480d9970e95cdacfc869c61b3b1497e900f0dcc64",
-    "topology_root": "150e5267792f43f47807a9f5ca61f12db8077ac98153c2cc6c306a4177de937e",
-    "carrier_sha256": "1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
-    "recovery_carrier_drive_id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR",
-    "acceptance_audit_drive_id": "1ST6l0RDTBexq1BXB28gYxxevvLu1cDmu",
-    "field_run_drive_id": "1lPuN0QZ-FpJRQVgIdDfXmquktkTWRkj7",
-    "physical_gate": "OPEN / field package prepared; not accepted as two-device/OS proof"
+    "content_root": "bf851642ac5bef93e8b9663f71ea4aa94ede30bf057528101773dd12de830bc1",
+    "dbr_root": "a7da29629904db2ac82218eaf36c916adbc057a7e954104053078afbf288ad66",
+    "topology_root": "13cc735955ff8aaabdaf43aed968b510b5dab85416fbb7adee5807215c781074",
+    "carrier_sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+    "recovery_carrier_drive_id": "1ap1xHVQ0cDWeJDAVWxvY_VqMkSzwpG6i",
+    "acceptance_audit_drive_id": "1O4auaYLfBD4heLsZQu2tdu4xWB8ypUQR",
+    "root_promotion_receipt_drive_id": "1C7jpNE-RarqdQA5bLy8QeFeZhY11evXn",
+    "physical_gate": "OPEN / fresh S92 child + runtime + two-device/non-loopback field proof required",
+    "predecessor": {
+      "state_id": "S91",
+      "recovery_carrier_drive_id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR",
+      "retained": true
+    }
   },
   "invariants": [
     "no-authority-by-location",
@@ -277,17 +281,32 @@
     {
       "title": "CGX S91 Recovery carrier",
       "id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR",
-      "role": "current-CGX-Recovery-authority-carrier"
+      "role": "historical-CGX-Recovery-ancestor-carrier"
     },
     {
       "title": "CGX S91 Independent Acceptance Audit",
       "id": "1ST6l0RDTBexq1BXB28gYxxevvLu1cDmu",
-      "role": "current-Recovery-acceptance-and-exact-byte-promotion-receipt"
+      "role": "historical-S91-Recovery-acceptance-receipt"
     },
     {
       "title": "CGX S91 Physical Field Run bundle",
       "id": "1lPuN0QZ-FpJRQVgIdDfXmquktkTWRkj7",
-      "role": "current-physical-conformance-package-PREPARED-not-PASS"
+      "role": "historical-S91-physical-package; not S92 proof"
+    },
+    {
+      "title": "CGX S92 Recovery carrier",
+      "id": "1ap1xHVQ0cDWeJDAVWxvY_VqMkSzwpG6i",
+      "role": "current-CGX-Recovery-authority-carrier"
+    },
+    {
+      "title": "CGX S92 Independent Acceptance Audit",
+      "id": "1O4auaYLfBD4heLsZQu2tdu4xWB8ypUQR",
+      "role": "current-Recovery-independent-acceptance-receipt"
+    },
+    {
+      "title": "CGX S92 Root Promotion Receipt",
+      "id": "1C7jpNE-RarqdQA5bLy8QeFeZhY11evXn",
+      "role": "Restricted-internal-root-promotion-receipt-reference-only"
     }
   ],
   "legacy_provider_classes": [

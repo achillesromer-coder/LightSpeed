@@ -1,0 +1,190 @@
+{
+  "schema": "CGX-CGP-IES-OBJECT-ENVELOPE/0.1",
+  "status": "IMPLEMENTATION_CONTRACT",
+  "source_target": "Cognigrex.cgx:/extensions/cgp-ies/object-envelope",
+  "purpose": "Machine-readable bridge from lifecycle doctrine to actual assets, nodes, agents, fleets, repositories, habitats and mission services.",
+  "required_fields": [
+    "object_id",
+    "object_class",
+    "owner_domain",
+    "purpose",
+    "beneficiaries_dependants",
+    "evidence_state",
+    "release_class",
+    "cascade_class",
+    "lifecycle_state",
+    "effective_ceiling",
+    "mvsl",
+    "authority",
+    "replication_budget",
+    "stop_safe_state",
+    "passivation_or_hibernation",
+    "restart",
+    "material_hazard_passport",
+    "circular_end_state",
+    "inheritance",
+    "open_evidence",
+    "last_verified",
+    "next_revalidation"
+  ],
+  "value_contracts": {
+    "evidence_state": [
+      "OBSERVED",
+      "VERIFIED",
+      "DERIVED",
+      "MODELLED",
+      "INFERRED",
+      "PROPOSED",
+      "CONTESTED",
+      "UNRESOLVED",
+      "PROBABILITY_BOUNDED",
+      "FRAME_DEPENDENT"
+    ],
+    "release_class": [
+      "Public",
+      "Internal",
+      "Restricted",
+      "Secret"
+    ],
+    "cascade_class": [
+      "C0",
+      "C1",
+      "C2",
+      "C3",
+      "C4"
+    ],
+    "lifecycle_state": [
+      "PROPOSED",
+      "EXPERIMENTAL",
+      "QUALIFIED",
+      "ACTIVE",
+      "EXPANDED",
+      "STEADY_STATE",
+      "THROTTLED",
+      "MAINTENANCE_ONLY",
+      "STEWARDSHIP",
+      "HIBERNATING",
+      "MOTHBALLED",
+      "REPURPOSED",
+      "CANNIBALISED",
+      "RECYCLED",
+      "SAFELY_ABANDONED",
+      "PERMANENTLY_CONTAINED",
+      "DECOMMISSIONED"
+    ],
+    "field_state": [
+      "BOUND",
+      "PARTIAL",
+      "OPEN",
+      "NOT_APPLICABLE",
+      "EXTERNAL_EVIDENCE_REQUIRED"
+    ]
+  },
+  "effective_ceiling": {
+    "dimensions": [
+      "technical",
+      "ecological",
+      "material",
+      "energy",
+      "safety",
+      "legal_or_rights",
+      "governance"
+    ],
+    "rule": "permitted operation is bounded by the lowest applicable verified ceiling; OPEN high-consequence dimensions cannot be interpreted as unlimited"
+  },
+  "mvsl": {
+    "fields": [
+      "protective_functions",
+      "minimum_energy",
+      "minimum_material",
+      "minimum_compute",
+      "minimum_staff_or_supervision",
+      "passive_safe_target"
+    ],
+    "rule": "MVSL preserves only independently justified safety/life/ecology/knowledge functions."
+  },
+  "authority": {
+    "fields": [
+      "authority_phase",
+      "decision_owner_ref",
+      "lease_required",
+      "root_authority_receipt_required",
+      "release_receipt_required"
+    ],
+    "rule": "authority is explicit and does not alter evidence state."
+  },
+  "replication_budget": {
+    "fields": [
+      "permitted_count",
+      "issuer",
+      "expiry",
+      "replacement_policy",
+      "child_authority"
+    ],
+    "default_if_open": "0 consequential autonomous children"
+  },
+  "stop_safe_state": {
+    "fields": [
+      "stop_levels",
+      "safe_state",
+      "independent_stop_ref",
+      "non_sheddable_functions"
+    ]
+  },
+  "passivation_or_hibernation": {
+    "fields": [
+      "trigger",
+      "target_state",
+      "residual_energy",
+      "monitoring",
+      "maintenance_burden"
+    ]
+  },
+  "restart": {
+    "fields": [
+      "authority",
+      "inspection",
+      "integrity",
+      "environment_ecology",
+      "beneficiary_need",
+      "commissioning"
+    ]
+  },
+  "material_hazard_passport": {
+    "fields": [
+      "materials",
+      "hazards",
+      "stored_energy",
+      "pressure_or_cryogen",
+      "radioactive_or_biological",
+      "contamination",
+      "disassembly",
+      "unknowns"
+    ]
+  },
+  "circular_end_state": {
+    "preference": [
+      "maintain",
+      "repair",
+      "reuse",
+      "repurpose_or_recompose",
+      "remanufacture",
+      "material_recycle",
+      "controlled_disposal"
+    ],
+    "rule": "selection is consequence/lifecycle based; recycling is not automatically preferred over functional reuse."
+  },
+  "inheritance": {
+    "fields": [
+      "successor_instructions",
+      "hazard_warnings",
+      "human_readable",
+      "machine_readable",
+      "offline_copy",
+      "what_not_to_restart",
+      "recovery_or_disassembly"
+    ]
+  },
+  "evidence_rule": "Every numeric or consequential field carries source/provenance and state; missing evidence remains OPEN and routes evidence acquisition.",
+  "release_rule": "Actual object records may be Internal/Restricted even when this schema is public-safe. Do not copy Internal/Restricted technical payload into public source merely to populate the envelope."
+}
