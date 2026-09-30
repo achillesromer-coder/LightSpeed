@@ -61,6 +61,30 @@ def main():
     cd,crx=assess_custodial(cr,complete_custodial())
     if ad=="HOLD" or cd=="HOLD": failures.append(f"bounded InterSol fixture failed: assurance={arx}, custodial={crx}")
 
+    public_ok=complete_custodial()
+    public_ok.update({
+      "release_class":"Public",
+      "target_visibility":"public",
+      "release_approval_state":"APPROVED",
+      "source_release_classes":["Public"],
+      "contains_restricted_material":False
+    })
+    cr=custodial_resolve("emassc","publish","audit","C1",["public-projection"])
+    cd,crx=assess_custodial(cr,public_ok)
+    if cd=="HOLD": failures.append(f"approved public projection unexpectedly held: {crx}")
+
+    public_bad=complete_custodial()
+    public_bad.update({
+      "release_class":"Restricted",
+      "target_visibility":"public",
+      "release_approval_state":"NOT_APPROVED",
+      "source_release_classes":["Restricted"],
+      "contains_restricted_material":True
+    })
+    cr=custodial_resolve("emassc","publish","audit","C1",["public-projection","internal-raphael"])
+    cd,crx=assess_custodial(cr,public_bad)
+    if cd!="HOLD": failures.append("restricted/internal material was not blocked from public projection")
+
     ar=assurance_route("lightspeed","execute","C3",["replication-control"])
     if ar["minimum_assurance_state"]!="SAFETY_CASE": failures.append("replication control is not routed to SAFETY_CASE")
     cr=custodial_resolve("lightspeed","execute","standard","C3",["replication-control"])
