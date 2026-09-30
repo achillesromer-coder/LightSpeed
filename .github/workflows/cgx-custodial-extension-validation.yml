@@ -7,6 +7,7 @@ on:
       - "scripts/resolve_cgx_extensions.py"
       - "scripts/cgx_custodial_preflight.py"
       - "scripts/validate_cgp_ies_extension.py"
+      - "scripts/validate_cgp_ies_launch_frontier.py"
       - "scripts/validate_cgx_domain_templates.py"
       - "scripts/validate_cgx_execution_lease.py"
       - "scripts/build_cgp_ies_parent_candidate.py"
@@ -44,6 +45,8 @@ jobs:
         run: python scripts/validate_cgx_domain_templates.py
       - name: Validate CGP-IES extension fixtures
         run: python scripts/validate_cgp_ies_extension.py
+      - name: Validate CGP-IES operational queue
+        run: python scripts/validate_cgp_ies_launch_frontier.py
       - name: Compile guarded parent candidate builder
         run: python -m py_compile scripts/build_cgp_ies_parent_candidate.py
       - name: Validate CGX assurance fixtures
