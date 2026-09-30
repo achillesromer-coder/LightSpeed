@@ -1,13 +1,109 @@
 {
-  "schema_version":"0.1",
-  "extensible":true,
-  "workflows":[
-    {"id":"intake-to-canonical","steps":["detect","classify","compare","recommend","review","commit","verify","receipt"]},
-    {"id":"remote-small-edit","steps":["resolve-provider","read-minimum-range","verify-revision","edit","write-bounded-delta","readback","dbr-reconcile"]},
-    {"id":"temporary-offload","steps":["materialise-or-mount","execute-specialist-tool","collect-result-and-receipt","semantic-reconcile","commit-accepted-delta","dispose-or-retain-by-policy"]},
-    {"id":"code-change","steps":["branch-or-sandbox","implement","test","review","commit-receipt","promote-if-authorised"]},
-    {"id":"analysis","steps":["hydrate-current","semi-hydrate-halo","resolve-sources","reason","record-assumptions","propose-delta-or-output"]},
-    {"id":"publish","steps":["select-lens","filter-security","resolve-evidence-ceiling","generate","qa","hash","release-receipt"]},
-    {"id":"build-from-chat","steps":["intent","scope","select-work-mode","materialise","build","verify","present-diff","commit-on-authority"]}
-  ]
+  "schema_version": "0.2",
+  "extensible": true,
+  "workflows": [
+    {
+      "id": "custodial-extension-preflight",
+      "steps": [
+        "classify-domain",
+        "classify-execution-depth",
+        "classify-cascade",
+        "resolve-extension-mode",
+        "load-parent-extension-source",
+        "run-required-checks",
+        "emit-extension-receipt",
+        "allow-or-hold"
+      ]
+    },
+    {
+      "id": "intake-to-canonical",
+      "steps": [
+        "detect",
+        "classify",
+        "compare",
+        "recommend",
+        "review",
+        "commit",
+        "verify",
+        "receipt"
+      ]
+    },
+    {
+      "id": "remote-small-edit",
+      "steps": [
+        "resolve-provider",
+        "read-minimum-range",
+        "verify-revision",
+        "edit",
+        "write-bounded-delta",
+        "readback",
+        "dbr-reconcile"
+      ]
+    },
+    {
+      "id": "temporary-offload",
+      "steps": [
+        "materialise-or-mount",
+        "execute-specialist-tool",
+        "collect-result-and-receipt",
+        "semantic-reconcile",
+        "commit-accepted-delta",
+        "dispose-or-retain-by-policy"
+      ]
+    },
+    {
+      "id": "code-change",
+      "steps": [
+        "branch-or-sandbox",
+        "implement",
+        "test",
+        "review",
+        "commit-receipt",
+        "promote-if-authorised"
+      ]
+    },
+    {
+      "id": "analysis",
+      "steps": [
+        "hydrate-current",
+        "semi-hydrate-halo",
+        "resolve-sources",
+        "reason",
+        "record-assumptions",
+        "propose-delta-or-output"
+      ]
+    },
+    {
+      "id": "publish",
+      "steps": [
+        "select-lens",
+        "filter-security",
+        "resolve-evidence-ceiling",
+        "generate",
+        "qa",
+        "hash",
+        "release-receipt"
+      ]
+    },
+    {
+      "id": "build-from-chat",
+      "steps": [
+        "intent",
+        "scope",
+        "select-work-mode",
+        "materialise",
+        "build",
+        "verify",
+        "present-diff",
+        "commit-on-authority"
+      ]
+    }
+  ],
+  "extension_preflight": {
+    "resolver": "scripts/resolve_cgx_extensions.py",
+    "enforcement": "scripts/cgx_custodial_preflight.py",
+    "source": "Cognigrex.cgx:/extensions/cgp-ies",
+    "rule": "resolve before consequential execution/promotion; review/read paths remain observational unless escalated by cascade/tags",
+    "receipt_required": true
+  }
 }
