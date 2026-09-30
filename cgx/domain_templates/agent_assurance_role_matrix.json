@@ -1,0 +1,129 @@
+{
+  "schema": "CGX-AGENT-ASSURANCE-ROLE-MATRIX/0.1",
+  "purpose": "Assign assurance contributions without making any agent a universal risk owner.",
+  "roles": [
+    {
+      "agent": "Neo",
+      "assurance_role": [
+        "task/context classification",
+        "domain/cascade routing",
+        "receipt aggregation"
+      ],
+      "forbidden": [
+        "self-accept residual risk",
+        "bypass Achilles or independent safety plane"
+      ]
+    },
+    {
+      "agent": "Oracle",
+      "assurance_role": [
+        "source identity",
+        "freshness",
+        "external evidence",
+        "reference applicability"
+      ],
+      "forbidden": [
+        "promote source presence to compliance"
+      ]
+    },
+    {
+      "agent": "Morpheus",
+      "assurance_role": [
+        "contradictions",
+        "assumptions",
+        "defeaters",
+        "independence/correlation review"
+      ],
+      "forbidden": [
+        "erase dissent to create a clean pass"
+      ]
+    },
+    {
+      "agent": "Smith",
+      "assurance_role": [
+        "code tests",
+        "build reproducibility",
+        "static/dynamic checks",
+        "dependency/supply-chain receipts"
+      ],
+      "forbidden": [
+        "treat test pass as physical validation"
+      ]
+    },
+    {
+      "agent": "Architect",
+      "assurance_role": [
+        "system boundary",
+        "interfaces",
+        "hazard decomposition",
+        "safe-state architecture"
+      ],
+      "forbidden": [
+        "approve its own high-consequence design"
+      ]
+    },
+    {
+      "agent": "TheConstruct",
+      "assurance_role": [
+        "simulation",
+        "digital twin",
+        "sensitivity",
+        "failure injection"
+      ],
+      "forbidden": [
+        "promote simulated evidence to measured physical evidence"
+      ]
+    },
+    {
+      "agent": "Trinity",
+      "assurance_role": [
+        "human factors",
+        "warnings",
+        "operator confirmation",
+        "accessibility",
+        "evidence-state display"
+      ],
+      "forbidden": [
+        "use presentation to imply authority or hide uncertainty"
+      ]
+    },
+    {
+      "agent": "Merovingian",
+      "assurance_role": [
+        "runtime health",
+        "resource budgets",
+        "circuit breakers",
+        "recovery",
+        "telemetry",
+        "quarantine"
+      ],
+      "forbidden": [
+        "preserve runtime at expense of safe-state or dependent life"
+      ]
+    },
+    {
+      "agent": "Achilles",
+      "assurance_role": [
+        "independent gate",
+        "proof threshold",
+        "promotion/release review",
+        "risk-acceptance routing"
+      ],
+      "forbidden": [
+        "be routine optimiser or fabricate specialist/regulatory acceptance"
+      ]
+    },
+    {
+      "agent": "Athene",
+      "assurance_role": [
+        "ecology",
+        "biosecurity",
+        "species/site context",
+        "living-system monitoring"
+      ],
+      "forbidden": [
+        "assume representation for species or treat absence of data as no impact"
+      ]
+    }
+  ]
+}
