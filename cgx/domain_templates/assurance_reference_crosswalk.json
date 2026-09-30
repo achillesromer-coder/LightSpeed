@@ -1,0 +1,147 @@
+{
+  "schema": "CGX-ASSURANCE-REFERENCE-CROSSWALK/0.1",
+  "verified_at": "2026-09-30",
+  "status": "applicability map / not certification",
+  "references": [
+    {
+      "id": "IEC-60812-2018",
+      "topic": "FMEA/FMECA",
+      "status": "current reference",
+      "url": "https://webstore.iec.ch/en/publication/26359",
+      "notes": "hardware, software, processes/human action and interfaces; method-local prioritisation"
+    },
+    {
+      "id": "ISO-31000-2018",
+      "topic": "risk management",
+      "status": "current; confirmed 2023",
+      "url": "https://www.iso.org/standard/65694.html"
+    },
+    {
+      "id": "IEC-61882-2016",
+      "topic": "HAZOP",
+      "status": "current reference family",
+      "url": "https://webstore.iec.ch/"
+    },
+    {
+      "id": "ECSS-Q-ST-30-02",
+      "topic": "FMEA/FMECA space product assurance",
+      "status": "applicability reference",
+      "url": "https://ecss.nl/"
+    },
+    {
+      "id": "ECSS-Q-ST-40-02",
+      "topic": "space hazard analysis",
+      "status": "applicability reference",
+      "url": "https://ecss.nl/"
+    },
+    {
+      "id": "ECSS-Q-ST-40-12",
+      "topic": "fault-tree analysis space safety",
+      "status": "applicability reference",
+      "url": "https://ecss.nl/"
+    },
+    {
+      "id": "IEC-61508",
+      "topic": "functional safety",
+      "status": "family reference",
+      "url": "https://www.iec.ch/functional-safety"
+    },
+    {
+      "id": "ISO-13849-1-2023",
+      "topic": "machinery safety-related control systems",
+      "status": "current reference",
+      "url": "https://www.iso.org/"
+    },
+    {
+      "id": "ISO-17757-2019",
+      "topic": "autonomous/semi-autonomous mining/earth-moving safety",
+      "status": "current; confirmed 2024",
+      "url": "https://www.iso.org/"
+    },
+    {
+      "id": "IEC-62443",
+      "topic": "industrial cybersecurity",
+      "status": "family reference",
+      "url": "https://www.iec.ch/"
+    },
+    {
+      "id": "NIST-CSF-2.0",
+      "topic": "cybersecurity governance/risk",
+      "status": "current guidance",
+      "url": "https://www.nist.gov/cyberframework"
+    },
+    {
+      "id": "ISO-IEC-42001-2023",
+      "topic": "AI management systems",
+      "status": "current reference",
+      "url": "https://www.iso.org/"
+    },
+    {
+      "id": "ISO-IEC-23894-2023",
+      "topic": "AI risk management",
+      "status": "current reference",
+      "url": "https://www.iso.org/"
+    },
+    {
+      "id": "ISO-IEC-42005-2025",
+      "topic": "AI impact assessment",
+      "status": "current reference",
+      "url": "https://www.iso.org/"
+    },
+    {
+      "id": "NIST-AI-RMF",
+      "topic": "AI risk/TEVV",
+      "status": "current guidance; versioning must be rechecked at use",
+      "url": "https://www.nist.gov/itl/ai-risk-management-framework"
+    },
+    {
+      "id": "ASA-LAUNCH-PERMIT-2026",
+      "topic": "Australian launch permit evidence/risk/debris/insurance",
+      "status": "published 2026-06-29",
+      "url": "https://www.space.gov.au/about-agency/publications/australian-launch-permit"
+    },
+    {
+      "id": "ASA-FLIGHT-SAFETY-CODE",
+      "topic": "Australian quantitative launch/return public-safety risk",
+      "status": "2019 code; update consultation active in 2026",
+      "url": "https://www.space.gov.au/about-agency/publications/flight-safety-code"
+    },
+    {
+      "id": "ASA-MPL-2019",
+      "topic": "Australian maximum probable loss / insurance",
+      "status": "current published methodology; specialist advice required",
+      "url": "https://www.space.gov.au/about-agency/publications/maximum-probable-loss-methodology"
+    },
+    {
+      "id": "UNOOSA-LTS",
+      "topic": "space sustainability, registration, conjunction, debris, reentry, space weather",
+      "status": "21 voluntary guidelines",
+      "url": "https://lts.unoosa.org/unoosa_lts/en/resources/guidelines/guidelinesabout.html"
+    },
+    {
+      "id": "COSPAR-PP-2026",
+      "topic": "planetary protection",
+      "status": "policy updated 2026-06-30; January 2026 version",
+      "url": "https://cosparhq.cnes.fr/cospar-policy-on-planetary-protection/"
+    },
+    {
+      "id": "ISO-14001-2026",
+      "topic": "environmental management",
+      "status": "2026 edition; applicability only",
+      "url": "https://www.iso.org/"
+    },
+    {
+      "id": "ONE-HEALTH",
+      "topic": "human-animal-plant-environment interface",
+      "status": "international coordination framework; local law/evidence still controls",
+      "url": "https://www.who.int/health-topics/one-health"
+    },
+    {
+      "id": "ISO-59040-2025",
+      "topic": "product circularity data",
+      "status": "current reference",
+      "url": "https://www.iso.org/"
+    }
+  ],
+  "refresh_rule": "Before regulatory, certification, procurement or high-consequence use, refresh edition/status/applicability from the issuing body and jurisdiction; never infer compliance from registry presence."
+}
