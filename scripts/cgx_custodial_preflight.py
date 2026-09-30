@@ -27,6 +27,14 @@ def assess_custodial(resolution, assessment):
             if not assessment.get("authority_confirmed",False):
                 decision="HOLD"
                 reasons.append("authority-not-confirmed")
+            phase=str(assessment.get("authority_phase") or "PRE_LAUNCH")
+            if phase in {"PRE_LAUNCH","LAUNCH_TRANSITION"}:
+                if not assessment.get("authority_contract_verified",False):
+                    decision="HOLD"
+                    reasons.append("authority-phase-contract-not-verified")
+                if not assessment.get("root_authority_approved",False):
+                    decision="HOLD"
+                    reasons.append("root-authority-approval-missing")
             hp=assessment.get("hard_predicates",{})
             required=list(resolution.get("hard_predicates") or [])
             if not required:
@@ -38,6 +46,34 @@ def assess_custodial(resolution, assessment):
                 reasons.append("hard-predicates-open:"+",".join(missing))
     elif resolution["mode"] in ("OBSERVE","ADVISE"):
         decision="ALLOW_WITH_RECEIPT"
+
+    ctx=resolution.get("context",{})
+    tags=set(ctx.get("tags") or [])
+    public_publish=(ctx.get("execution_depth")=="publish" and "public-projection" in tags)
+    if public_publish:
+        if assessment is None:
+            decision="HOLD"
+            reasons.append("public-release-assessment-missing")
+        else:
+            release_class=str(assessment.get("release_class") or "UNKNOWN")
+            target_visibility=str(assessment.get("target_visibility") or "UNKNOWN")
+            approval=str(assessment.get("release_approval_state") or "UNKNOWN")
+            source_classes=set(map(str,assessment.get("source_release_classes") or []))
+            if target_visibility!="public":
+                decision="HOLD"
+                reasons.append("public-target-visibility-not-confirmed")
+            if release_class!="Public":
+                decision="HOLD"
+                reasons.append("release-class-not-public")
+            if approval!="APPROVED":
+                decision="HOLD"
+                reasons.append("public-release-not-approved")
+            if source_classes & {"Internal","Restricted","Secret"}:
+                decision="HOLD"
+                reasons.append("non-public-source-material-in-public-projection")
+            if assessment.get("contains_restricted_material",False):
+                decision="HOLD"
+                reasons.append("restricted-material-present")
     return decision,reasons
 
 def main():
@@ -65,6 +101,8 @@ def main():
       "assessment_supplied":assessment is not None,
       "source_driven_hard_predicates":resolution.get("hard_predicates",[]),
       "decision_receipt_schema":resolution.get("shared_components",{}).get("decision_receipt"),
+      "authority_phase_contract":resolution.get("shared_components",{}).get("authority_phase"),
+      "release_visibility_policy":resolution.get("shared_components",{}).get("release_visibility"),
       "authority_limit":"Custodial preflight applies parent-owned source policy and may HOLD only under declared gate/safety conditions. It does not create moral, semantic, ownership, representation or execution authority."
     }
     print(json.dumps(receipt,indent=2,sort_keys=True))
