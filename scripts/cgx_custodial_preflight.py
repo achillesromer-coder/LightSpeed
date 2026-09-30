@@ -9,11 +9,35 @@ sys.path.insert(0,str(ROOT/"scripts"))
 from resolve_cgx_extensions import resolve, RANK
 
 def load_assessment(path):
-    if not path: return None
+    if not path:
+        return None
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
-def assess_custodial(resolution,assessment):
-    decision,reasons=assess_custodial(resolution,assessment)
+def assess_custodial(resolution, assessment):
+    decision="ALLOW"
+    reasons=[]
+    if RANK[resolution["mode"]]>=RANK["GATE"]:
+        if assessment is None:
+            decision="HOLD"
+            reasons.append("gate-assessment-missing")
+        else:
+            if not assessment.get("source_verified",False):
+                decision="HOLD"
+                reasons.append("extension-source-not-verified")
+            if not assessment.get("authority_confirmed",False):
+                decision="HOLD"
+                reasons.append("authority-not-confirmed")
+            hp=assessment.get("hard_predicates",{})
+            required=[
+                "SAFETY","LEGAL_OR_RIGHTS_AUTHORITY","ECOLOGY","RESOURCE_BUDGET",
+                "WASTE_OR_CLOSURE","SECURITY","SUCCESSION","STOP_PATH"
+            ]
+            missing=[x for x in required if hp.get(x) is not True]
+            if missing:
+                decision="HOLD"
+                reasons.append("hard-predicates-open:"+",".join(missing))
+    elif resolution["mode"] in ("OBSERVE","ADVISE"):
+        decision="ALLOW_WITH_RECEIPT"
     return decision,reasons
 
 def main():
@@ -27,26 +51,12 @@ def main():
     ap.add_argument("--assessment-json")
     args=ap.parse_args()
 
-    resolution=resolve(args.domain,args.execution_depth,args.reasoning_depth,args.cascade_class,[x for x in args.tags.split(",") if x],args.mode)
+    resolution=resolve(
+        args.domain,args.execution_depth,args.reasoning_depth,args.cascade_class,
+        [x for x in args.tags.split(",") if x],args.mode
+    )
     assessment=load_assessment(args.assessment_json)
-    decision="ALLOW"
-    reasons=[]
-    if RANK[resolution["mode"]]>=RANK["GATE"]:
-        if assessment is None:
-            decision="HOLD"; reasons.append("gate-assessment-missing")
-        else:
-            if not assessment.get("source_verified",False):
-                decision="HOLD"; reasons.append("extension-source-not-verified")
-            if not assessment.get("authority_confirmed",False):
-                decision="HOLD"; reasons.append("authority-not-confirmed")
-            hp=assessment.get("hard_predicates",{})
-            required=["SAFETY","LEGAL_OR_RIGHTS_AUTHORITY","ECOLOGY","RESOURCE_BUDGET","WASTE_OR_CLOSURE","SECURITY","SUCCESSION","STOP_PATH"]
-            missing=[x for x in required if hp.get(x) is not True]
-            if missing:
-                decision="HOLD"; reasons.append("hard-predicates-open:"+",".join(missing))
-    elif resolution["mode"] in ("OBSERVE","ADVISE"):
-        decision="ALLOW_WITH_RECEIPT"
-
+    decision,reasons=assess_custodial(resolution,assessment)
     receipt={
       "schema":"CGX-CUSTODIAL-PREFLIGHT/0.1",
       "decision":decision,
