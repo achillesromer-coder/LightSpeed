@@ -51,14 +51,19 @@ def main():
         ext_registry=load("custodial_extension_registry.json")
         cgp_policy=load("cgp_ies_policy_pack.json")
         cgp_fixtures=load("cgp_ies_fixture_scenarios.json")
+        assurance_registry=load("assurance_method_registry.json")
+        assurance_schema=load("unified_assurance_object_schema.json")
+        assurance_matrix=load("assurance_selection_matrix.json")
+        assurance_crosswalk=load("assurance_reference_crosswalk.json")
+        assurance_fixtures=load("assurance_fixture_scenarios.json")
     except Exception as e:
         print(json.dumps({"status":"FAIL","failures":[str(e)]}))
         return 1
 
-    if domains.get("schema")!="CGX-DOMAIN-TEMPLATES/0.3":
-        failures.append("domains schema is not 0.3")
-    if shell.get("schema")!="CGX-CORPUS-AWARE-BASE-SHELL/0.5":
-        failures.append("base-shell contract is not 0.5")
+    if domains.get("schema")!="CGX-DOMAIN-TEMPLATES/0.4":
+        failures.append("domains schema is not 0.4")
+    if shell.get("schema")!="CGX-CORPUS-AWARE-BASE-SHELL/0.6":
+        failures.append("base-shell contract is not 0.6")
     if domains.get("parent_filespace",{}).get("file")!="Cognigrex.cgx":
         failures.append("parent filespace is not Cognigrex.cgx")
 
@@ -145,6 +150,21 @@ def main():
         failures.append("cgp-ies fixture coverage below six scenarios")
     if "extensions/bindings" not in shell.get("required_sections",[]):
         failures.append("base shell does not require extension binding")
+
+    if assurance_registry.get("location")!="Cognigrex.cgx:/assurance":
+        failures.append("assurance parent source path mismatch")
+    if assurance_schema.get("schema")!="CGX-UNIFIED-ASSURANCE-OBJECT/0.1":
+        failures.append("unified assurance object schema mismatch")
+    if assurance_matrix.get("schema")!="CGX-ASSURANCE-SELECTION-MATRIX/0.1":
+        failures.append("assurance selection matrix schema mismatch")
+    if assurance_crosswalk.get("status")!="applicability map / not certification":
+        failures.append("assurance reference crosswalk must remain non-certification")
+    if len(assurance_fixtures.get("scenarios",[]))<10:
+        failures.append("assurance fixture coverage below ten scenarios")
+    if "assurance/bindings" not in shell.get("required_sections",[]):
+        failures.append("base shell does not require assurance binding")
+    if "assurance" not in domains.get("parent_filespace",{}).get("shared_kernel",[]):
+        failures.append("assurance missing from parent shared kernel")
 
     proof=receipt.get("proof",{})
     if proof.get("fixtures")!=3 or proof.get("failures")!=0:
