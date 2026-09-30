@@ -1,0 +1,37 @@
+{
+  "schema": "CGX-CGP-IES-PARENT-HYDRATION/0.1",
+  "status": "PRE_CANONICAL_CANDIDATE_ONLY",
+  "seed": {
+    "state_id": "S91",
+    "release": "v1.61",
+    "sha256": "1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
+    "content_root": "af640b499078853371196cf7c905979cebf0761c15552b6b8dfbf3ff3d04448d",
+    "dbr_root": "18d43abf68b5f7857a21dcb480d9970e95cdacfc869c61b3b1497e900f0dcc64",
+    "topology": "150e5267792f43f47807a9f5ca61f12db8077ac98153c2cc6c306a4177de937e",
+    "recovery_drive_id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR"
+  },
+  "target_root": "extensions/cgp-ies",
+  "install": {
+    "registry.json": "custodial_extension_registry.json",
+    "policy.json": "cgp_ies_policy_pack.json",
+    "terminology.json": "cgp_ies_terminology_map.json",
+    "domain_adapters.json": "cgp_ies_domain_adapter_registry.json",
+    "decision_receipt_schema.json": "cgp_ies_decision_receipt_schema.json",
+    "fixtures.json": "cgp_ies_fixture_scenarios.json",
+    "owner_confirmation_values.json": "cgp_ies_owner_confirmation_values.json",
+    "authority_phase_ref.json": "cgp_ies_authority_phase_ref.json",
+    "release_visibility_policy.json": "cgp_ies_release_visibility_policy.json"
+  },
+  "candidate_controls": {
+    "policy_state": "PRE_CANONICAL",
+    "overwrite_recovery_in_place": false,
+    "parent_mutation_required": true,
+    "canonical_promotion_requires_owner_confirmation": true,
+    "pack_reopen_verify_required": true,
+    "dbr_receipt_required": true,
+    "child_regeneration_after_parent_promotion_only": true,
+    "accepted_baselines": "OC-001..OC-024 accepted v0.1",
+    "sensitive_authority_details": "not embedded in public source package; resolved by internal governance provider"
+  },
+  "authority_boundary": "The candidate builder may construct and verify a descendant carrier. It does not promote that carrier to Recovery or CANONICAL policy state."
+}

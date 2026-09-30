@@ -1,6 +1,6 @@
 {
   "schema": "CGX-CGP-IES-OWNER-CONFIRMATION/0.1",
-  "status": "PROPOSED / REVIEW_REQUIRED",
+  "status": "ACCEPTED_BASELINES / BUILD_OUT_ACTIVE / PARENT_PROMOTION_READY",
   "source_handoff": "CGX-HANDOFF-CGP-IES-2026-09-30",
   "values": [
     {
@@ -11,7 +11,9 @@
         "PRE_CANONICAL",
         "CANONICAL"
       ],
-      "reason": "Functional source exists, but the parent Recovery carrier has not yet been hydrated/promoted."
+      "reason": "Functional source exists, but the parent Recovery carrier has not yet been hydrated/promoted.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
     },
     {
       "id": "OC-002",
@@ -21,7 +23,9 @@
         "Cognigrex.cgx:/extensions/cgp-ies",
         "alternate parent-scoped path"
       ],
-      "reason": "Single shared source prevents child/agent hard-coding."
+      "reason": "Single shared source prevents child/agent hard-coding.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
     },
     {
       "id": "OC-003",
@@ -32,13 +36,17 @@
         "emassc": "OBSERVE",
         "lightspeed": "OBSERVE"
       },
-      "reason": "Low-friction defaults with contextual escalation."
+      "reason": "Low-friction defaults with contextual escalation.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
     },
     {
       "id": "OC-004",
       "term": "CONSEQUENTIAL_GATE_THRESHOLD",
       "proposed": "execute/build/publish with cascade C2+ => at least GATE",
-      "reason": "Separates ordinary reasoning from high-consequence execution."
+      "reason": "Separates ordinary reasoning from high-consequence execution.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
     },
     {
       "id": "OC-005",
@@ -50,7 +58,9 @@
         "life-support",
         "hazard-control"
       ],
-      "reason": "Narrow independent safety-plane enforcement; never general moral sovereignty."
+      "reason": "Narrow independent safety-plane enforcement; never general moral sovereignty.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
     },
     {
       "id": "OC-006",
@@ -65,7 +75,9 @@
         "SUCCESSION",
         "STOP_PATH"
       ],
-      "reason": "All must be explicitly satisfied for gated consequential action."
+      "reason": "All must be explicitly satisfied for gated consequential action.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
     },
     {
       "id": "OC-007",
@@ -76,7 +88,9 @@
         "DEFINE_BOUNDED_VECTOR",
         "DEFINE_NUMERIC_PROXY_WITH_ANTI-GOODHART_CONTROLS"
       ],
-      "reason": "Avoid premature scalar morality metric."
+      "reason": "Avoid premature scalar morality metric.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
     },
     {
       "id": "OC-008",
@@ -86,20 +100,166 @@
         "STRUCTURED_EVIDENCE_NO_SCALAR",
         "BOUNDED_QUALITATIVE_BANDS"
       ],
-      "reason": "Current science does not justify a universal sentience score."
+      "reason": "Current science does not justify a universal sentience score.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
     },
     {
       "id": "OC-009",
       "term": "REPRESENTATION_RULE",
       "proposed": "SCOPE_SPECIFIC / NO_AUTOMATIC_SPECIES_OR_CIVILISATION_REPRESENTATION",
-      "reason": "Operational competence does not confer representation authority."
+      "reason": "Operational competence does not confer representation authority.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
     },
     {
       "id": "OC-010",
       "term": "SOURCE_FAILURE_BEHAVIOUR",
       "proposed": "LOW_CONSEQUENCE=RECEIPT_AND_CONTINUE; CONSEQUENTIAL=HOLD",
-      "reason": "Fail-closed only where consequence warrants it."
+      "reason": "Fail-closed only where consequence warrants it.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
+    },
+    {
+      "id": "OC-011",
+      "term": "PROTECTIVE_PERPETUITY_BASELINE",
+      "proposed": "MVSL_PLUS_JUSTIFIED_PROTECTIVE_FUNCTIONS",
+      "options": [
+        "MVSL_ONLY",
+        "MVSL_PLUS_JUSTIFIED_PROTECTIVE_FUNCTIONS",
+        "CASE_BY_CASE_NO_CLASS_DEFAULT"
+      ],
+      "reason": "Allows future-beneficiary safety/ecology/knowledge functions to persist without preserving unrelated production.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
+    },
+    {
+      "id": "OC-012",
+      "term": "PROTECTIVE_SYSTEM_CANDIDATES",
+      "proposed": [
+        "hazard-containment",
+        "dependent-life-support",
+        "ecological-stewardship",
+        "critical-monitoring",
+        "knowledge-integrity",
+        "planetary-defense-detection-warning",
+        "successor-readable-recovery-beacons"
+      ],
+      "reason": "Candidate baseline only; each implementation still requires an evidence, maintenance and passive-safe case.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
+    },
+    {
+      "id": "OC-013",
+      "term": "CONTACT_DEFAULT",
+      "proposed": "OBSERVE_RECEIVE_VERIFY; RESPONSE_OR_INTERVENTION_GATED",
+      "reason": "Receive does not imply execute or reply; non-interference is a presumption with explicit exceptions.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
+    },
+    {
+      "id": "OC-014",
+      "term": "ARTIFICIAL_MORAL_PATIENT_DEFAULT",
+      "proposed": "STRUCTURED_UNCERTAINTY_WITH_CONSENT_EXIT_ESCALATION",
+      "options": [
+        "STRUCTURED_UNCERTAINTY_WITH_CONSENT_EXIT_ESCALATION",
+        "BOUNDED_QUALITATIVE_BANDS"
+      ],
+      "reason": "Avoids both automatic personhood and automatic property status based on substrate.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
+    },
+    {
+      "id": "OC-015",
+      "term": "FOUNDER_ARCHITECT_AUTHORITY",
+      "proposed": "INTERNAL_ROOT_AUTHORITY_PHASE_CONTRACT",
+      "reason": "Detailed pre-launch root-authority semantics are Restricted/internal and resolved through cgx://internal/governance/root-authority-phase. Public/source payload carries only the enforcement reference and evidence-preservation invariants.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1",
+      "visibility": "Restricted semantics / public-safe reference only"
+    },
+    {
+      "id": "OC-016",
+      "term": "TERMINOLOGY_DEFAULT",
+      "proposed": "INTER_SPECIAL_NEUTRAL; HUMAN_SPECIFIC_ONLY_WHEN_MATERIAL",
+      "reason": "Removes Homo sapiens as implicit reference class while preserving human-specific evidence where relevant.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
+    },
+    {
+      "id": "OC-017",
+      "term": "AGENCY_REPRESENTATION_MODEL",
+      "proposed": "MULTIDIMENSIONAL_AGENCY_VECTOR / EXPLICIT_REPRESENTATION_STATE / NO_UNIVERSAL_SCALAR",
+      "reason": "Agency and representation are separable; competence cannot silently become mandate.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
+    },
+    {
+      "id": "OC-018",
+      "term": "SUCCESSOR_RESTART_DEFAULT",
+      "proposed": "FRESH_COMMISSIONING_NO_AUTOMATIC_PRODUCTIVE_OBJECTIVE_REVIVAL",
+      "reason": "Dormant systems must inspect present ecology, beneficiaries, demand, integrity and legitimate authority before productive restart.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
+    },
+    {
+      "id": "OC-019",
+      "term": "ADAPTIVE_TRANSLATION_DEFAULT",
+      "proposed": "SUBSTRATE_AGNOSTIC_ADAPTERS / NO_FORCED_CONVERSION",
+      "reason": "Binary, radio, language and embodiment are local interfaces; bridge modalities rather than requiring either party to abandon native communication.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
+    },
+    {
+      "id": "OC-020",
+      "term": "POLICY_INHERITANCE_RULE",
+      "proposed": "REFERENCE_PARENT_SOURCE; CHILD_MAY_REDUCE_OPTIONAL_MODE_BUT_NOT_REQUIRED_SAFETY_GATE",
+      "reason": "Supports sparse CGX children/siblings without duplicating doctrine or allowing a descendant to bypass consequence escalation.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
+    },
+    {
+      "id": "OC-021",
+      "term": "AUTHORITY_PHASE_TRANSITION",
+      "proposed": "INTERNAL_PHASE_CONTRACT_REQUIRED; DISTRIBUTED_COMPONENTS_DO_NOT_SELF-PROMOTE_GOVERNANCE",
+      "reason": "Build/finalisation, launch transition and decentralised operation are distinct authority phases; transition requires explicit promoted governance state and empirical readback.",
+      "visibility": "Public-safe summary; detailed transition thresholds Restricted",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
+    },
+    {
+      "id": "OC-022",
+      "term": "PUBLIC_INTERNAL_SEPARATION",
+      "proposed": "RELEASE_CLASS_AND_EVIDENCE_STATE_ORTHOGONAL; INTERNAL_REMAINS_INTERNAL_UNTIL_EXPLICIT_PROMOTION",
+      "reason": "Applies the Raphael-style internal/public boundary to CGP-IES and authority/governance content.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
+    },
+    {
+      "id": "OC-023",
+      "term": "PRELAUNCH_ROOT_AUTHORITY_REF",
+      "proposed": "cgx://internal/governance/root-authority-phase",
+      "reason": "Consequential pre-launch mutations resolve through an internal root-authority contract; missing/unreadable contract holds the action.",
+      "visibility": "Reference may be public; implementation and named topology Restricted",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
+    },
+    {
+      "id": "OC-024",
+      "term": "DECENTRALISED_PROMOTION_GATE",
+      "proposed": "EXPLICIT_GOVERNANCE_PROMOTION + EMPIRICAL_RUNTIME_READBACK + SECURITY/SAFETY/RECOVERY_PROOF",
+      "reason": "Prevents claiming decentralised governance merely because distributed nodes or agents exist.",
+      "accepted_baseline": true,
+      "acceptance_state": "ACCEPTED_V0_1"
     }
   ],
-  "promotion_rule": "No value becomes constitutional/canonical solely because it appears here. Owner/legitimate governance review plus parent-carrier mutation/readback is required."
+  "promotion_rule": "Accepted baseline values authorise implementation. Parent policy becomes canonical only after exact descendant carrier verification/readback and explicit promotion; authority details remain separately release-classed.",
+  "branch": "cgp-ies-functional-handoff-20260930",
+  "review_note": "OC-001..OC-024 are accepted v0.1 baselines. Sensitive authority topology is intentionally absent from this public-safe source and remains in the internal canonical governance provider.",
+  "acceptance": {
+    "accepted_at": "2026-09-30",
+    "acceptance_scope": "OC-001..OC-020 accepted as extensible v0.1 baselines; sensitive authority specifics remain Restricted and are resolved through the internal governance provider.",
+    "canonicality": "Acceptance authorises build-out and parent-candidate construction; canonicality still requires verified parent carrier mutation/readback and promotion.",
+    "baseline_rule": "Accepted values are minima/defaults to build upon; later evidence may refine or extend them without erasing lineage."
+  }
 }

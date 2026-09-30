@@ -1,0 +1,35 @@
+{
+  "schema": "CGX-CGP-IES-RELEASE-VISIBILITY/0.1",
+  "status": "PUBLIC_SAFE_POLICY",
+  "source_target": "Cognigrex.cgx:/extensions/cgp-ies/release-visibility",
+  "release_classes": [
+    "Public",
+    "Internal",
+    "Restricted",
+    "Secret"
+  ],
+  "rules": {
+    "Public": "Only explicitly release-approved evidence, summaries, interfaces, claims and projections.",
+    "Internal": "Approved operational/canonical content for internal Desktop/Drive; not public Git/web projection unless separately promoted.",
+    "Restricted": "Need-to-know internal governance, authority topology, security controls, unpublished model internals and sensitive operational state; never public projection.",
+    "Secret": "Credentials, keys, tokens and secret material; local secure storage only."
+  },
+  "public_projection_allow": [
+    "approved evidence states and provenance summaries",
+    "approved safety/lifecycle principles",
+    "approved capability descriptions",
+    "approved public Raphael framing",
+    "public-safe governance summary"
+  ],
+  "public_projection_deny": [
+    "detailed root-authority topology",
+    "credential, break-glass or override mechanics",
+    "internal risk-acceptance rationale",
+    "unpublished Raphael equations, internal hypotheses or speculative tables",
+    "restricted operational state",
+    "secret material"
+  ],
+  "publication_rule": "Public projection is a derived lens. Absence from public output does not delete internal state; internal state does not become public because a model can read it.",
+  "evidence_rule": "Release class and evidence state are orthogonal. VERIFIED content may still be Restricted; Public content may still be labelled MODELLED/PROPOSED where explicitly approved.",
+  "fail_behaviour": "If release class is missing or ambiguous for sensitive governance/Raphael material, treat as Internal/Restricted and HOLD automatic publication."
+}

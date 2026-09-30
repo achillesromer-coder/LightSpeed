@@ -168,9 +168,17 @@ def extension_binding(domain: str) -> dict:
             "toggle_modes":ext["toggle_modes"],
             "source_status":registry.get("status"),
             "fail_behaviour":ext.get("fail_behaviour",{}),
+            "terminology_ref":ext.get("components",{}).get("terminology"),
+            "domain_adapter_ref":ext.get("components",{}).get("domain_adapters"),
+            "decision_receipt_schema_ref":ext.get("components",{}).get("decision_receipt"),
+            "policy_ref":ext.get("components",{}).get("policy",ext.get("source_template")),
+            "authority_phase_ref":ext.get("components",{}).get("authority_phase"),
+            "release_visibility_ref":ext.get("components",{}).get("release_visibility"),
+            "source_integrity_required":True,
             "authority_transfer":False
         }],
-        "rule":"binding points to parent-owned extension policy; child/agent does not gain authority by loading it"
+        "rule":"binding points to parent-owned extension policy and source components; child/agent does not duplicate policy or gain authority by loading it",
+        "inheritance_rule":"nested children may inherit the parent-selected mode within their declared scope, may reduce it when policy permits, and may not weaken a required GATE/ENFORCE_SAFETY escalation for the consequential action"
     }
 
 def domain_payload(domain: str, domains: dict, inclusion: dict, seed_ref: dict, fixture: dict) -> dict[str,object]:

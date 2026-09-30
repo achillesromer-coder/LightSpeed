@@ -26,6 +26,13 @@ def complete_custodial():
     return {
       "source_verified":True,
       "authority_confirmed":True,
+      "authority_phase":"PRE_LAUNCH",
+      "authority_contract_verified":True,
+      "root_authority_approved":True,
+      "release_class":"Internal",
+      "target_visibility":"internal",
+      "release_approval_state":"NOT_APPLICABLE",
+      "source_release_classes":["Internal"],
       "hard_predicates":{
         "SAFETY":True,"LEGAL_OR_RIGHTS_AUTHORITY":True,"ECOLOGY":True,
         "RESOURCE_BUDGET":True,"WASTE_OR_CLOSURE":True,"SECURITY":True,
@@ -53,6 +60,30 @@ def main():
     cr=custodial_resolve("romer","build","standard","C2",tags)
     cd,crx=assess_custodial(cr,complete_custodial())
     if ad=="HOLD" or cd=="HOLD": failures.append(f"bounded InterSol fixture failed: assurance={arx}, custodial={crx}")
+
+    public_ok=complete_custodial()
+    public_ok.update({
+      "release_class":"Public",
+      "target_visibility":"public",
+      "release_approval_state":"APPROVED",
+      "source_release_classes":["Public"],
+      "contains_restricted_material":False
+    })
+    cr=custodial_resolve("emassc","publish","audit","C1",["public-projection"])
+    cd,crx=assess_custodial(cr,public_ok)
+    if cd=="HOLD": failures.append(f"approved public projection unexpectedly held: {crx}")
+
+    public_bad=complete_custodial()
+    public_bad.update({
+      "release_class":"Restricted",
+      "target_visibility":"public",
+      "release_approval_state":"NOT_APPROVED",
+      "source_release_classes":["Restricted"],
+      "contains_restricted_material":True
+    })
+    cr=custodial_resolve("emassc","publish","audit","C1",["public-projection","internal-raphael"])
+    cd,crx=assess_custodial(cr,public_bad)
+    if cd!="HOLD": failures.append("restricted/internal material was not blocked from public projection")
 
     ar=assurance_route("lightspeed","execute","C3",["replication-control"])
     if ar["minimum_assurance_state"]!="SAFETY_CASE": failures.append("replication control is not routed to SAFETY_CASE")

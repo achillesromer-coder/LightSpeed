@@ -1,0 +1,37 @@
+{
+  "schema": "CGX-CGP-IES-DOMAIN-ADAPTERS/0.1",
+  "status": "PRE_CANONICAL / FUNCTIONAL",
+  "source_target": "Cognigrex.cgx:/extensions/cgp-ies/domain-adapters",
+  "authority_rule": "Adapters select relevant checks and receipts only; they do not transfer semantic, moral, legal or execution authority.",
+  "domains": {
+    "romer": {
+      "default_mode": "ADVISE",
+      "material_tags": ["growth","resource-extraction","autonomous-fleet","mission","settlement","planetary-defense","trajectory-change","pristine-world","habitat-translocation","hazardous-material","intersol"],
+      "required_checks": ["effective_ceiling","demand_merit","cascade_radius","reversibility_and_option_space","closure_or_passivation","successor_inheritance"],
+      "gate_tags": ["resource-extraction","planetary-defense","trajectory-change","pristine-world","habitat-translocation","irreversible","hazardous-material"],
+      "note": "Physical capability is never treated as permission to deploy or expand."
+    },
+    "eco": {
+      "default_mode": "ADVISE",
+      "material_tags": ["ecosystem-intervention","life-impact","biosecurity","interspecies-communication","translocation","release","welfare","restoration","unknown-life"],
+      "required_checks": ["affected_party_enumeration","ecological_integrity","welfare_or_moral_patient_uncertainty","evolutionary_autonomy","communication_uncertainty","biosecurity","representation_scope"],
+      "gate_tags": ["ecosystem-intervention","translocation","release","life-impact","biosecurity"],
+      "note": "Observation and communication research remain distinct from intervention or representation."
+    },
+    "emassc": {
+      "default_mode": "OBSERVE",
+      "material_tags": ["evidence","raphael","hypothesis","model","standards","external-contact","technosignature","biosignature","scientific-claim","public-claim"],
+      "required_checks": ["evidence_and_domain_boundary","knowledge_state","reference_frame","contradictions","external_validation_route","claim_ceiling"],
+      "gate_tags": ["external-contact-response","sample-return","public-claim-high-consequence"],
+      "note": "Conceptual/metaphysical models may guide inquiry but cannot be promoted to empirical physics without evidence."
+    },
+    "lightspeed": {
+      "default_mode": "OBSERVE",
+      "material_tags": ["runtime","execution-lease","replication-control","hard-stop","containment","life-support","hazard-control","communications-loss","civilization-loss","successor-restart","artificial-moral-patient"],
+      "required_checks": ["lease_scope","independent_safety_plane","replication_budget","stop_path","safe_state","receipt_integrity","degraded_mode"],
+      "gate_tags": ["communications-loss","civilization-loss","successor-restart","artificial-moral-patient"],
+      "enforce_safety_tags": ["replication-control","hard-stop","containment","life-support","hazard-control"],
+      "note": "Runtime strength and model intelligence never create authority; safety enforcement is narrow and pre-declared."
+    }
+  }
+}

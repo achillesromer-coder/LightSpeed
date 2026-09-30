@@ -182,7 +182,14 @@
     "agent_assurance_roles": "agent_assurance_role_matrix.json",
     "assurance_relations": "assurance_relation_registry.json",
     "mpl_assurance_adapter": "mpl_assurance_adapter.json",
-    "execution_lease": "execution_lease_contract.json"
+    "execution_lease": "execution_lease_contract.json",
+    "cgp_ies_terminology": "cgp_ies_terminology_map.json",
+    "cgp_ies_domain_adapters": "cgp_ies_domain_adapter_registry.json",
+    "cgp_ies_decision_receipt": "cgp_ies_decision_receipt_schema.json",
+    "cgp_ies_owner_confirmation": "cgp_ies_owner_confirmation_values.json",
+    "cgp_ies_parent_hydration": "cgp_ies_parent_extension_manifest.json",
+    "cgp_ies_authority_phase": "cgp_ies_authority_phase_ref.json",
+    "cgp_ies_release_visibility": "cgp_ies_release_visibility_policy.json"
   },
   "generation_policy": {
     "source_authority": "latest-durably-observed-Recovery-authority-only",
@@ -223,7 +230,19 @@
     "validator": "scripts/validate_cgp_ies_extension.py",
     "extensions": [
       "cgp-ies"
-    ]
+    ],
+    "components": {
+      "registry": "custodial_extension_registry.json",
+      "policy": "cgp_ies_policy_pack.json",
+      "terminology": "cgp_ies_terminology_map.json",
+      "domain_adapters": "cgp_ies_domain_adapter_registry.json",
+      "decision_receipt": "cgp_ies_decision_receipt_schema.json",
+      "fixtures": "cgp_ies_fixture_scenarios.json",
+      "authority_phase": "cgp_ies_authority_phase_ref.json",
+      "release_visibility": "cgp_ies_release_visibility_policy.json"
+    },
+    "inheritance_rule": "children bind by reference; nested descendants may inherit applicable mode/configuration but cannot weaken a required consequence escalation or create authority",
+    "publication_boundary": "public projection requires Public release class + approval; detailed authority topology and internal Raphael material stay out of public projections"
   },
   "shared_assurance": {
     "owner": "Cognigrex.cgx:/assurance",
