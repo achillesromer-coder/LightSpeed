@@ -323,5 +323,12 @@
       "reference": "systems/software lifecycle + domain qualification standards"
     }
   ],
-  "composition_rule": "Select the smallest sufficient independent method bundle for the actual hazard/problem; add methods when consequence, uncertainty or cross-domain coupling warrants them. One method never silently certifies another method's question."
+  "composition_rule": "Select the smallest sufficient independent method bundle for the actual hazard/problem; add methods when consequence, uncertainty or cross-domain coupling warrants them. One method never silently certifies another method's question.",
+  "shared_components": {
+    "assurance_case_contract": "assurance_case_contract.json",
+    "agentic_security_threat_registry": "agentic_security_threat_registry.json",
+    "agent_assurance_role_matrix": "agent_assurance_role_matrix.json",
+    "unified_assurance_object": "unified_assurance_object_schema.json"
+  },
+  "assurance_case_rule": "A method result may support an assurance-case claim only within its declared configuration, evidence state and validity envelope; blocking defeaters force HOLD."
 }
