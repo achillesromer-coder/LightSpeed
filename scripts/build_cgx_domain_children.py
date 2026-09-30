@@ -174,6 +174,7 @@ def extension_binding(domain: str) -> dict:
             "policy_ref":ext.get("components",{}).get("policy",ext.get("source_template")),
             "authority_phase_ref":ext.get("components",{}).get("authority_phase"),
             "release_visibility_ref":ext.get("components",{}).get("release_visibility"),
+            "object_envelope_schema_ref":ext.get("components",{}).get("object_envelope"),
             "source_integrity_required":True,
             "authority_transfer":False
         }],
