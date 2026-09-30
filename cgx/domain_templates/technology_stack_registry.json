@@ -1,0 +1,303 @@
+{
+  "schema": "CGX-TECHNOLOGY-STACK/0.1",
+  "status": "implementation architecture / parent-carrier hydration pending",
+  "principle": "physical reality and authoritative source state are upstream of models; models and interfaces are replaceable capabilities; authority, assurance, custodial constraints and independent safety controls remain explicit.",
+  "layers": [
+    {
+      "id": "L00",
+      "name": "Physical Reality",
+      "owns": [
+        "materials",
+        "organisms",
+        "sites",
+        "machines",
+        "facilities",
+        "orbits",
+        "environment",
+        "people/participants"
+      ],
+      "rule": "digital state never substitutes for physical verification"
+    },
+    {
+      "id": "L01",
+      "name": "Sensing & Actuation",
+      "owns": [
+        "sensors",
+        "metrology",
+        "calibration",
+        "actuators",
+        "interlocks",
+        "PLCs/controllers",
+        "HIL/test cells"
+      ],
+      "rule": "consequential actuation requires scoped authority and independent safe-state path"
+    },
+    {
+      "id": "L02",
+      "name": "Host / Device / Network",
+      "owner": "LS.cgx",
+      "owns": [
+        "compute",
+        "OS/runtime",
+        "storage",
+        "network",
+        "device identity",
+        "time",
+        "power",
+        "local inference",
+        "transport"
+      ],
+      "rule": "host capability is not semantic authority"
+    },
+    {
+      "id": "L03",
+      "name": "Source & Evidence Providers",
+      "owns": [
+        "Drive",
+        "GitHub",
+        "CAD",
+        "raw logs",
+        "instruments",
+        "external APIs",
+        "regulatory sources"
+      ],
+      "rule": "provider location is not authority; revision/hash/provenance required"
+    },
+    {
+      "id": "L04",
+      "name": "CGX Kernel & Semantic State",
+      "owner": "Cognigrex.cgx",
+      "owns": [
+        "object identity",
+        "DBR",
+        "manifest",
+        "Frontier/Overlay/Resolve",
+        "hydration",
+        "security/admission",
+        "cross-domain graph"
+      ],
+      "rule": "one authority per meaning; many representations permitted"
+    },
+    {
+      "id": "L05",
+      "name": "Epistemic / Evidence Qualification",
+      "owner": "EMASSC.cgx + Raphael evidence boundary",
+      "owns": [
+        "claim state",
+        "measurement/model separation",
+        "uncertainty",
+        "contradictions",
+        "validity envelope"
+      ],
+      "rule": "conceptual/metaphysical models remain labelled unless empirically promoted"
+    },
+    {
+      "id": "L06",
+      "name": "Assurance",
+      "owner": "Cognigrex.cgx:/assurance",
+      "owns": [
+        "method routing",
+        "unified risk objects",
+        "controls",
+        "verification",
+        "safety cases"
+      ],
+      "rule": "assurance evidence is not execution authority or ethical sovereignty"
+    },
+    {
+      "id": "L07",
+      "name": "Custodial & Lifecycle Reasoning",
+      "owner": "Cognigrex.cgx:/extensions/cgp-ies",
+      "owns": [
+        "affected parties",
+        "option-space",
+        "admissibility",
+        "growth/degeneration",
+        "inheritance",
+        "contact"
+      ],
+      "rule": "moral compass is multi-lens and non-sovereign; preserve dissent"
+    },
+    {
+      "id": "L08",
+      "name": "Domain Semantics",
+      "owns": [
+        "Romer.cgx",
+        "Eco.cgx",
+        "EMASSC.cgx",
+        "LS.cgx"
+      ],
+      "rule": "children retain scoped semantic ownership and bind shared services by reference"
+    },
+    {
+      "id": "L09",
+      "name": "Agent Runtime",
+      "owns": [
+        "Neo",
+        "Athene",
+        "Achilles",
+        "specialist agents",
+        "resolvers",
+        "future agents"
+      ],
+      "rule": "agent identity/role persists independently of model provider; authority is explicit and leased/scoped"
+    },
+    {
+      "id": "L10",
+      "name": "Model / Reasoning Capabilities",
+      "owns": [
+        "remote LLMs",
+        "local LLMs",
+        "classical solvers",
+        "simulation",
+        "optimisers",
+        "vision",
+        "retrieval"
+      ],
+      "rule": "model strength, confidence, majority or persistence never grants authority"
+    },
+    {
+      "id": "L11",
+      "name": "Tools / Providers / Automation",
+      "owns": [
+        "Python",
+        "FreeCAD",
+        "GMAT",
+        "MPL",
+        "web research",
+        "Drive",
+        "GitHub",
+        "email",
+        "calendar",
+        "specialist APIs",
+        "automations"
+      ],
+      "rule": "tools execute bounded capabilities and return receipts; tool output is evidence/proposal until reconciled"
+    },
+    {
+      "id": "L12",
+      "name": "Workflow / Queue / Resolver Plane",
+      "owns": [
+        "task routing",
+        "preflights",
+        "resolver chain",
+        "owner gates",
+        "Task_ID/Run_ID lineage",
+        "automation dispatch"
+      ],
+      "rule": "assurance and custodial preflights occur before consequential execution"
+    },
+    {
+      "id": "L13",
+      "name": "Independent Safety Plane",
+      "owns": [
+        "hardware interlocks",
+        "watchdogs",
+        "stop authority",
+        "replication/resource limits",
+        "containment",
+        "safe state"
+      ],
+      "rule": "mission intelligence cannot rewrite, veto or peer-vote around independent safety controls"
+    },
+    {
+      "id": "L14",
+      "name": "Interaction Surfaces",
+      "owns": [
+        "desktop",
+        "web",
+        "mobile",
+        "chat",
+        "CLI",
+        "API",
+        "node",
+        "future spatial/AR"
+      ],
+      "rule": "surface is projection/interaction only; no semantic authority by display"
+    },
+    {
+      "id": "L15",
+      "name": "Representations & Publication",
+      "owns": [
+        "PDF",
+        "DOCX",
+        "XLSX",
+        "PPTX",
+        "HTML",
+        "SVG",
+        "images",
+        "public dashboards",
+        "dossiers"
+      ],
+      "rule": "publication is a derived release-gated representation"
+    },
+    {
+      "id": "L16",
+      "name": "Continuity / Archive / Inheritance",
+      "owns": [
+        "offline recovery",
+        "durable records",
+        "material passports",
+        "safe-start",
+        "successor instructions",
+        "migration"
+      ],
+      "rule": "persistent knowledge is preferred over persistent executable agency when active authority is absent"
+    }
+  ],
+  "vertical_controls": [
+    "identity-and-provenance",
+    "security-and-privacy",
+    "configuration-and-version",
+    "evidence-state",
+    "assurance",
+    "custodial-lifecycle",
+    "authority-and-lease",
+    "independent-safety",
+    "observability-and-receipts",
+    "continuity-and-inheritance"
+  ],
+  "execution_path": [
+    "intent/task",
+    "resolve object/domain/source",
+    "hydrate minimum context",
+    "qualify evidence",
+    "route assurance",
+    "run assurance methods",
+    "run CGP-IES when applicable",
+    "resolve legitimate authority",
+    "plan bounded tool calls",
+    "independent safety precheck",
+    "execute",
+    "collect telemetry/receipts",
+    "reconcile semantic delta",
+    "verify/readback",
+    "publish/project only if separately released"
+  ],
+  "degraded_modes": [
+    {
+      "condition": "remote model unavailable",
+      "behaviour": "use eligible local model/classical tools or reduce to deterministic/read-only capability; authority does not expand"
+    },
+    {
+      "condition": "provider unavailable",
+      "behaviour": "use verified cache only within expiry/criticality limits; consequential stale-source work holds"
+    },
+    {
+      "condition": "communications lost",
+      "behaviour": "local bounded lease; contract toward safe/stewardship state over time"
+    },
+    {
+      "condition": "governance unavailable",
+      "behaviour": "freeze expansion/novel irreversible commitments; maintain LIFE/SAFETY/ECO/knowledge functions"
+    },
+    {
+      "condition": "model integrity uncertain",
+      "behaviour": "quarantine model output; deterministic or human/specialist fallback"
+    },
+    {
+      "condition": "CGX source integrity mismatch",
+      "behaviour": "read-only/recovery mode; no canonical promotion"
+    }
+  ]
+}
