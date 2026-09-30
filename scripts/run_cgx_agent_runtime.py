@@ -96,6 +96,8 @@ def validate_lease(
         "issued_by": lease.get("issued_by"),
         "subject_agent": lease.get("subject_agent"),
         "valid_until": lease.get("valid_until"),
+        "authority_phase": lease.get("authority_phase"),
+        "authority_phase_ref": lease.get("authority_phase_ref"),
     }
     if lease_class not in EXECUTION_CLASS_RANK:
         reasons.append("lease-class-invalid")
@@ -140,6 +142,11 @@ def validate_lease(
 
     if lease.get("revocable") is not True:
         reasons.append("lease-not-revocable")
+    phase = str(lease.get("authority_phase") or "")
+    if phase not in {"PRE_LAUNCH","LAUNCH_TRANSITION","DISTRIBUTED_OPERATION","SUCCESSION_OR_RECOVERY"}:
+        reasons.append("lease-authority-phase-invalid")
+    if not lease.get("authority_phase_ref"):
+        reasons.append("lease-authority-phase-ref-missing")
     if EXECUTION_CLASS_RANK[execution_class] >= EXECUTION_CLASS_RANK["DIGITAL_WRITE"]:
         if not lease.get("rollback_or_recovery_ref"):
             reasons.append("lease-rollback-or-recovery-ref-missing")
@@ -152,6 +159,10 @@ def validate_lease(
         for field in ("assurance_receipt_ref", "custodial_receipt_ref", "risk_acceptance_ref"):
             if not lease.get(field):
                 reasons.append("lease-" + field.replace("_", "-") + "-missing")
+        if phase in {"PRE_LAUNCH","LAUNCH_TRANSITION"} and not lease.get("root_authority_receipt_ref"):
+            reasons.append("lease-root-authority-receipt-ref-missing")
+    if execution_depth == "publish" and not lease.get("release_receipt_ref"):
+        reasons.append("lease-release-receipt-ref-missing")
     return not reasons, reasons, summary
 
 def atomic_write(path: Path, payload: dict[str, Any]) -> None:
