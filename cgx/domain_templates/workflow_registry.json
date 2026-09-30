@@ -1,7 +1,22 @@
 {
-  "schema_version": "0.2",
+  "schema_version": "0.3",
   "extensible": true,
   "workflows": [
+    {
+      "id": "assurance-preflight",
+      "steps": [
+        "classify-system-boundary",
+        "classify-lifecycle-phase",
+        "classify-environment",
+        "classify-domain-and-cascade",
+        "route-assurance-methods",
+        "resolve-current-sources",
+        "run-or-load-method-analyses",
+        "verify-controls-and-evidence",
+        "emit-assurance-receipt",
+        "allow-or-hold"
+      ]
+    },
     {
       "id": "custodial-extension-preflight",
       "steps": [
@@ -104,6 +119,15 @@
     "enforcement": "scripts/cgx_custodial_preflight.py",
     "source": "Cognigrex.cgx:/extensions/cgp-ies",
     "rule": "resolve before consequential execution or promotion; review and read paths remain observational unless the task context requires a higher mode",
-    "receipt_required": true
+    "receipt_required": true,
+    "upstream_required_for_consequence": "CGX-ASSURANCE-PREFLIGHT receipt when assurance route is VERIFY/SAFETY_CASE/HOLD"
+  },
+  "assurance_preflight": {
+    "router": "scripts/cgx_assurance_route.py",
+    "enforcement": "scripts/cgx_assurance_preflight.py",
+    "source": "Cognigrex.cgx:/assurance",
+    "ordering": "assurance before custodial GATE and before consequential execution",
+    "receipt_required": true,
+    "rule": "clearance means bounded assurance evidence only; risk acceptance, custodial approval, legal approval and execution authority remain separate"
   }
 }
