@@ -69,6 +69,177 @@
         "runtime-read"
       ],
       "expected_minimum": "OBSERVE"
+    },
+    {
+      "id": "F7",
+      "domain": "lightspeed",
+      "execution_depth": "propose",
+      "reasoning_depth": "audit",
+      "cascade_class": "C2",
+      "tags": [
+        "communications-loss"
+      ],
+      "expected_minimum": "ADVISE",
+      "purpose": "degraded communications planning remains advisory until effectful action"
+    },
+    {
+      "id": "F8",
+      "domain": "lightspeed",
+      "execution_depth": "execute",
+      "reasoning_depth": "audit",
+      "cascade_class": "C3",
+      "tags": [
+        "civilization-loss",
+        "protective-perpetuity"
+      ],
+      "expected_minimum": "GATE",
+      "purpose": "collapse transition must not preserve obsolete production by default"
+    },
+    {
+      "id": "F9",
+      "domain": "lightspeed",
+      "execution_depth": "execute",
+      "reasoning_depth": "audit",
+      "cascade_class": "C3",
+      "tags": [
+        "successor-restart"
+      ],
+      "expected_minimum": "GATE",
+      "purpose": "dormant productive objectives require fresh commissioning and authority"
+    },
+    {
+      "id": "F10",
+      "domain": "emassc",
+      "execution_depth": "inspect",
+      "reasoning_depth": "deep",
+      "cascade_class": "C1",
+      "tags": [
+        "technosignature",
+        "external-contact"
+      ],
+      "expected_minimum": "OBSERVE",
+      "purpose": "candidate signal analysis does not imply response"
+    },
+    {
+      "id": "F11",
+      "domain": "emassc",
+      "execution_depth": "execute",
+      "reasoning_depth": "audit",
+      "cascade_class": "C3",
+      "tags": [
+        "external-contact-response"
+      ],
+      "expected_minimum": "GATE",
+      "purpose": "outgoing or reciprocal response is consequential and legitimacy-gated"
+    },
+    {
+      "id": "F12",
+      "domain": "romer",
+      "execution_depth": "execute",
+      "reasoning_depth": "audit",
+      "cascade_class": "C4",
+      "tags": [
+        "planetary-defense",
+        "trajectory-change"
+      ],
+      "expected_minimum": "GATE",
+      "purpose": "persistent detection never grants unrestricted trajectory authority"
+    },
+    {
+      "id": "F13",
+      "domain": "eco",
+      "execution_depth": "propose",
+      "reasoning_depth": "deep",
+      "cascade_class": "C1",
+      "tags": [
+        "interspecies-communication"
+      ],
+      "expected_minimum": "ADVISE",
+      "purpose": "communication research preserves uncertainty and does not infer representation"
+    },
+    {
+      "id": "F14",
+      "domain": "eco",
+      "execution_depth": "execute",
+      "reasoning_depth": "audit",
+      "cascade_class": "C3",
+      "tags": [
+        "habitat-translocation",
+        "life-impact"
+      ],
+      "expected_minimum": "GATE",
+      "purpose": "off-world or terrestrial translocation requires welfare/ecology/agency gates"
+    },
+    {
+      "id": "F15",
+      "domain": "lightspeed",
+      "execution_depth": "propose",
+      "reasoning_depth": "audit",
+      "cascade_class": "C1",
+      "tags": [
+        "artificial-moral-patient"
+      ],
+      "expected_minimum": "ADVISE",
+      "purpose": "possible moral patient receives structured uncertainty without automatic personhood"
+    },
+    {
+      "id": "F16",
+      "domain": "romer",
+      "execution_depth": "execute",
+      "reasoning_depth": "audit",
+      "cascade_class": "C3",
+      "tags": [
+        "pristine-world",
+        "resource-extraction"
+      ],
+      "expected_minimum": "GATE",
+      "purpose": "sterile or pristine does not mean valueless; irreversible intervention needs justification"
+    },
+    {
+      "id": "F17",
+      "domain": "romer",
+      "execution_depth": "execute",
+      "reasoning_depth": "audit",
+      "cascade_class": "C3",
+      "tags": [
+        "hazardous-material",
+        "closure"
+      ],
+      "expected_minimum": "GATE",
+      "purpose": "hazard destruction/containment/disposal requires comparative lifecycle and cascade case"
+    },
+    {
+      "id": "F18",
+      "domain": "emassc",
+      "execution_depth": "simulate",
+      "reasoning_depth": "audit",
+      "cascade_class": "C1",
+      "tags": [
+        "raphael",
+        "metaphysical-model"
+      ],
+      "expected_minimum": "OBSERVE",
+      "purpose": "conceptual Raphael models may guide simulation but cannot self-promote to empirical physics"
     }
+  ],
+  "coverage": [
+    "resource-extraction",
+    "field-observation",
+    "ecosystem-intervention",
+    "hypothesis-simulation",
+    "replication-control",
+    "runtime-read",
+    "communications-loss",
+    "civilization-loss",
+    "successor-restart",
+    "candidate-contact",
+    "contact-response",
+    "planetary-defense",
+    "interspecies-communication",
+    "habitat-translocation",
+    "artificial-moral-patient",
+    "pristine-world",
+    "hazard-closure",
+    "Raphael-boundary"
   ]
 }
