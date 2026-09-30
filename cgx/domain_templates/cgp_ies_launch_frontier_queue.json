@@ -1,7 +1,7 @@
 {
   "schema": "CGX-CGP-IES-LAUNCH-FRONTIER/0.1",
   "queue_id": "CGX-LAUNCH-FRONTIER-2026-09-30",
-  "status": "ACTIVE_PRE_LAUNCH / SOFTWARE_EXECUTION_READY / EMPIRICAL_GATES_OPEN",
+  "status": "ACTIVE_PRE_LAUNCH / PARENT_DESCENDANT_BUILD_READY / EMPIRICAL_GATES_OPEN",
   "source_authority": {
     "recovery_state": "S91",
     "recovery_release": "v1.61",
@@ -38,7 +38,7 @@
       "audit": "Achilles",
       "execution_class": "DIGITAL_WRITE",
       "cascade_class": "C2",
-      "state": "READY_IF_EXACT_SOURCE_ACCESSIBLE",
+      "state": "COMPLETE",
       "depends_on": [],
       "action": "Retrieve exact Recovery carrier by authoritative Drive ID; verify SHA-256 before any mutation.",
       "done_when": [
@@ -47,7 +47,21 @@
         "receipt records source Drive ID, byte size, hash and verifier result"
       ],
       "evidence_class": "DIGITAL_EMPIRICAL_FILE_READBACK",
-      "synthetic_closure_forbidden": true
+      "synthetic_closure_forbidden": true,
+      "completed_at": "2026-09-30",
+      "evidence": {
+        "source_drive_id": "1JcpfIJObfBg0cQ-gj1ulHrepZxRhZ0FR",
+        "file_name": "CGX_Reconciled_S91_ReleaseSupplyChain.cgx",
+        "file_size_bytes": 3609020,
+        "sha256": "1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
+        "verifier": "PASS",
+        "tracked_objects": 432,
+        "object_id": "cgx:phase-a:42d99b46c0d322f08b59b7b7",
+        "content_root": "af640b499078853371196cf7c905979cebf0761c15552b6b8dfbf3ff3d04448d",
+        "dbr_root": "18d43abf68b5f7857a21dcb480d9970e95cdacfc869c61b3b1497e900f0dcc64",
+        "topology_snapshot_hash": "150e5267792f43f47807a9f5ca61f12db8077ac98153c2cc6c306a4177de937e",
+        "proof": "authoritative Drive materialisation + SHA-256 + embedded canonical verifier"
+      }
     },
     {
       "task_id": "CGX-LAUNCH-002",
@@ -57,7 +71,7 @@
       "audit": "Achilles",
       "execution_class": "DIGITAL_WRITE",
       "cascade_class": "C2",
-      "state": "BLOCKED_BY_CGX-LAUNCH-001",
+      "state": "READY",
       "depends_on": [
         "CGX-LAUNCH-001"
       ],
@@ -68,7 +82,8 @@
         "candidate policy state remains PRE_CANONICAL",
         "packed reopen verifier passes"
       ],
-      "evidence_class": "VERIFIED_BUILD_RECEIPT"
+      "evidence_class": "VERIFIED_BUILD_RECEIPT",
+      "release_reason": "CGX-LAUNCH-001 exact S91 hash/root/verifier proof closed"
     },
     {
       "task_id": "CGX-LAUNCH-003",
