@@ -4,48 +4,58 @@
     "reasoning_depth",
     "execution_depth",
     "device_profile",
-    "security_policy"
+    "security_policy",
+    "custodial_extension_mode"
   ],
   "modes": {
     "auto": {
       "purpose": "Route bounded work to the best eligible capability/provider under active policy.",
       "human_gate": "policy-derived",
-      "canonical_write": "only through normal authority/DBR path"
+      "canonical_write": "only through normal authority/DBR path",
+      "custodial_extension": "resolve-by-context"
     },
     "assisted": {
       "purpose": "AI proposes next actions, user selects or edits.",
       "human_gate": "before consequential execution",
-      "canonical_write": "reviewed"
+      "canonical_write": "reviewed",
+      "custodial_extension": "ADVISE-unless-context-escalates"
     },
     "api": {
       "purpose": "Provider/API-led workflow for bounded external capabilities.",
       "human_gate": "scope/config dependent",
-      "canonical_write": "receipt + reconciliation"
+      "canonical_write": "receipt + reconciliation",
+      "custodial_extension": "resolve-by-context"
     },
     "node": {
       "purpose": "Operate as one local/distributed CGX node using declared device/network capability.",
       "human_gate": "policy dependent",
-      "canonical_write": "lease/authority constrained"
+      "canonical_write": "lease/authority constrained",
+      "custodial_extension": "resolve-by-context"
     },
     "code": {
       "purpose": "Use code/tests/build tools and temporary Git/local surfaces.",
       "human_gate": "review before protected merge/publish",
-      "canonical_write": "through tested result receipts"
+      "canonical_write": "through tested result receipts",
+      "custodial_extension": "resolve-by-context"
     },
     "chat-build": {
       "purpose": "Build or modify from conversational intent via proposed structured deltas.",
       "human_gate": "before protected mutation unless profile explicitly permits",
-      "canonical_write": "structured delta + readback"
+      "canonical_write": "structured delta + readback",
+      "custodial_extension": "resolve-by-context"
     },
     "review": {
       "purpose": "Read/compare/audit with mutation disabled by default.",
       "human_gate": "n/a",
-      "canonical_write": "false by default"
+      "canonical_write": "false by default",
+      "custodial_extension": "OBSERVE"
     },
     "publish": {
       "purpose": "Generate controlled representations from an approved source state/lens.",
       "human_gate": "release policy",
-      "canonical_write": "publication receipt only"
+      "canonical_write": "publication receipt only",
+      "custodial_extension": "resolve-by-context"
     }
-  }
+  },
+  "extension_rule": "A work mode cannot lower a context-required extension mode. Any reduction of a mandatory gate requires separate governing authority and a recorded receipt."
 }
