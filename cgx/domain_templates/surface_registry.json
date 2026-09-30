@@ -1,12 +1,114 @@
 {
-  "schema_version":"0.1",
-  "surfaces":[
-    {"id":"desktop","interaction":"filespace-tree+active-object+inspector+queue+command","default_hydration":"workstation"},
-    {"id":"web","interaction":"bounded-projection+loader+interactive-approved-tools","default_hydration":"reader"},
-    {"id":"mobile","interaction":"projection-lite+reader+bounded-editor","default_hydration":"projection-lite"},
-    {"id":"cli","interaction":"commands+json+receipts","default_hydration":"reader"},
-    {"id":"chat","interaction":"natural-language+generative-ui+proposed-deltas","default_hydration":"reader"},
-    {"id":"api","interaction":"typed-capability-calls","default_hydration":"custom"},
-    {"id":"node","interaction":"signed-peer-capabilities","default_hydration":"distributed"}
+  "schema_version": "0.2",
+  "surfaces": [
+    {
+      "id": "desktop",
+      "interaction": "filespace-tree+active-object+inspector+queue+command",
+      "default_hydration": "workstation",
+      "role": "full operational projection",
+      "authority": "none-by-display",
+      "writes": "structured delta -> authority/preflight -> DBR",
+      "supports": [
+        "agent-status",
+        "assurance",
+        "custodial",
+        "queue",
+        "active-object",
+        "physical-receipts"
+      ]
+    },
+    {
+      "id": "web",
+      "interaction": "bounded-projection+loader+interactive-approved-tools",
+      "default_hydration": "reader",
+      "role": "bounded remote/public-or-internal projection",
+      "authority": "none-by-display",
+      "writes": "scope-dependent bounded actions only",
+      "supports": [
+        "approved-tools",
+        "evidence-views",
+        "readiness",
+        "release-safe-projections"
+      ]
+    },
+    {
+      "id": "mobile",
+      "interaction": "projection-lite+reader+bounded-editor",
+      "default_hydration": "projection-lite",
+      "role": "field/owner lightweight control and evidence capture",
+      "authority": "none-by-device",
+      "writes": "bounded editor/capture -> receipt -> reconciliation",
+      "supports": [
+        "field-receipts",
+        "photos/measurements",
+        "approvals-when-authorised",
+        "alerts"
+      ]
+    },
+    {
+      "id": "cli",
+      "interaction": "commands+json+receipts",
+      "default_hydration": "reader",
+      "role": "deterministic operator/developer interface",
+      "authority": "caller-lease-bound",
+      "writes": "typed command -> preflight -> receipt",
+      "supports": [
+        "automation",
+        "validation",
+        "build",
+        "recovery"
+      ]
+    },
+    {
+      "id": "chat",
+      "interaction": "natural-language+generative-ui+proposed-deltas",
+      "default_hydration": "reader",
+      "role": "natural-language intent/reasoning/proposed-delta surface",
+      "authority": "none-by-conversation",
+      "writes": "proposal or explicitly authorised bounded connector action",
+      "supports": [
+        "multi-agent/lens",
+        "tool-use",
+        "explanations",
+        "owner-gates"
+      ]
+    },
+    {
+      "id": "api",
+      "interaction": "typed-capability-calls",
+      "default_hydration": "custom",
+      "role": "machine-to-machine typed capability surface",
+      "authority": "token/lease/policy-bound",
+      "writes": "schema + preflight + receipt",
+      "supports": [
+        "agents",
+        "external-services",
+        "automation",
+        "telemetry"
+      ]
+    },
+    {
+      "id": "node",
+      "interaction": "signed-peer-capabilities",
+      "default_hydration": "distributed",
+      "role": "local/distributed CGX execution and storage surface",
+      "authority": "signed identity + lease + policy",
+      "writes": "bounded local state/receipts; canonical promotion via normal DBR path",
+      "supports": [
+        "offline",
+        "local-llm",
+        "sensors",
+        "actuators",
+        "peer-sync",
+        "graceful-degradation"
+      ]
+    }
+  ],
+  "global_rules": [
+    "surface-state-is-projection-not-semantic-authority",
+    "model-output-is-labelled-by-source-model-and-evidence-state",
+    "consequential-actions-show-or-record-assurance-custodial-authority-and-safe-state status",
+    "public/restricted/private projections are distinct release lenses",
+    "no surface may bypass independent safety controls"
   ]
 }
