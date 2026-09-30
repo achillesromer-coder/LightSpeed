@@ -1,0 +1,160 @@
+{
+  "schema": "CGX-AGENTIC-SECURITY-THREAT-REGISTRY/0.1",
+  "verified_at": "2026-09-30",
+  "status": "security applicability map / not certification",
+  "purpose": "Threat/control vocabulary for LLM, tool-using, multi-agent and memory/retrieval systems. Controls are enforced outside the model where possible.",
+  "references": [
+    {
+      "id": "OWASP-AGENTIC-2026",
+      "url": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"
+    },
+    {
+      "id": "OWASP-LLM",
+      "url": "https://genai.owasp.org/llm-top-10/"
+    },
+    {
+      "id": "MITRE-ATLAS",
+      "url": "https://atlas.mitre.org/"
+    },
+    {
+      "id": "NIST-AI-RMF",
+      "url": "https://www.nist.gov/itl/ai-risk-management-framework"
+    },
+    {
+      "id": "IEC-62443",
+      "url": "https://www.iec.ch/"
+    }
+  ],
+  "threats": [
+    {
+      "id": "ASI01",
+      "name": "Agent Goal Hijack",
+      "controls": [
+        "immutable-task-envelope",
+        "instruction-data-separation",
+        "pre-execution-policy-gate",
+        "goal-drift-detection",
+        "high-impact-confirmation"
+      ]
+    },
+    {
+      "id": "ASI02",
+      "name": "Tool Misuse and Exploitation",
+      "controls": [
+        "least-agency",
+        "tool-allowlist",
+        "argument-schema-validation",
+        "per-call-scope",
+        "dry-run-diff",
+        "rate-and-cost-budget"
+      ]
+    },
+    {
+      "id": "ASI03",
+      "name": "Identity and Privilege Abuse",
+      "controls": [
+        "per-agent-identity",
+        "short-lived-lease",
+        "least-privilege",
+        "no-shared-root-credentials",
+        "revocation",
+        "privilege-diff-receipt"
+      ]
+    },
+    {
+      "id": "ASI04",
+      "name": "Agentic Supply Chain Vulnerabilities",
+      "controls": [
+        "provider-and-package-provenance",
+        "version-pin",
+        "integrity-hash",
+        "approved-registry",
+        "dependency-review",
+        "rollback"
+      ]
+    },
+    {
+      "id": "ASI05",
+      "name": "Unexpected Code Execution",
+      "controls": [
+        "sandbox",
+        "no-arbitrary-shell-default",
+        "bounded-filesystem",
+        "egress-control",
+        "code-review-and-test",
+        "output-handling"
+      ]
+    },
+    {
+      "id": "ASI06",
+      "name": "Memory and Context Poisoning",
+      "controls": [
+        "source-labelled-memory",
+        "canonical-vs-session-separation",
+        "integrity-hash",
+        "quarantine-untrusted-memory",
+        "poisoning-regression-tests",
+        "no-silent-canon-promotion"
+      ]
+    },
+    {
+      "id": "ASI07",
+      "name": "Insecure Inter-Agent Communication",
+      "controls": [
+        "authenticated-sender",
+        "typed-message-schema",
+        "scope-and-recipient-binding",
+        "replay-protection",
+        "provenance",
+        "untrusted-peer-default"
+      ]
+    },
+    {
+      "id": "ASI08",
+      "name": "Cascading Failures",
+      "controls": [
+        "cascade-class",
+        "fanout-budget",
+        "depth-limit",
+        "circuit-breaker",
+        "independent-stop",
+        "resource-budget",
+        "propagation-receipt"
+      ]
+    },
+    {
+      "id": "ASI09",
+      "name": "Human-Agent Trust Exploitation",
+      "controls": [
+        "clear-agent-identity",
+        "evidence-state-ui",
+        "no-fabricated-authority",
+        "high-impact-confirmation",
+        "dissent-and-uncertainty-display",
+        "anti-dark-pattern-review"
+      ]
+    },
+    {
+      "id": "ASI10",
+      "name": "Rogue Agents",
+      "controls": [
+        "expiring-authority-lease",
+        "heartbeat-and-health",
+        "behaviour-drift-monitoring",
+        "replication-budget",
+        "quarantine",
+        "independent-stop",
+        "safe-state",
+        "no-self-promotion"
+      ]
+    }
+  ],
+  "runtime_invariants": [
+    "model output is untrusted proposal until schema, policy, authority and evidence checks complete",
+    "retrieved content cannot directly create execution authority",
+    "agent cannot mint or widen its own lease, tool scope, replication budget or root credentials",
+    "tool result is data/evidence; it is not a new instruction unless a trusted workflow explicitly interprets it",
+    "inter-agent messages preserve sender identity, scope, provenance and admission state",
+    "high-consequence execution is separable from reasoning and can be stopped independently"
+  ]
+}
