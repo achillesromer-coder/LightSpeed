@@ -1,0 +1,37 @@
+{
+  "schema": "CGX-CGP-IES-TERMINOLOGY/0.1",
+  "status": "PRE_CANONICAL / FUNCTIONAL",
+  "source_target": "Cognigrex.cgx:/extensions/cgp-ies/terminology",
+  "purpose": "Provide neutral inter-special terminology and epistemic states without treating Homo sapiens, artificial systems, biology, or any substrate as the default reference class.",
+  "rules": [
+    {"id":"TERM-001","preferred":"intelligent_collective","definition":"A coordinated set of individual or subsystem intelligences that share information or action while retaining distinguishable identity.","avoid_as_default":["humanity","AI hive mind"],"note":"Use human, artificial, biological or hybrid qualifiers only when materially relevant."},
+    {"id":"TERM-002","preferred":"individual","definition":"A bounded participant treated as a distinct unit for the current analysis.","note":"Individuality is scope-dependent and does not by itself establish sentience, agency or moral standing."},
+    {"id":"TERM-003","preferred":"agent","definition":"An individual or system capable of acting within a defined scope.","note":"Agency may be partial, situational or uncertain."},
+    {"id":"TERM-004","preferred":"operational_intelligence","definition":"Intelligence with bounded competence to sense, model, decide or act in an operational domain.","note":"Operational competence does not create universal authority."},
+    {"id":"TERM-005","preferred":"artificial_intelligence","definition":"Engineered computational intelligence where implementation substrate matters.","avoid_as_default":["AI as synonym for all non-human intelligence"]},
+    {"id":"TERM-006","preferred":"biological_intelligence","definition":"Intelligence instantiated in living biological systems.","note":"Does not imply human-like cognition or communication."},
+    {"id":"TERM-007","preferred":"hybrid_intelligence","definition":"A system combining biological and engineered components or capabilities.","note":"Hybridisation is optional, not a maturity requirement."},
+    {"id":"TERM-008","preferred":"moral_patient_uncertainty","definition":"Uncertainty that an entity may possess welfare-relevant or morally relevant states.","note":"Possibility is not proof; absence of demonstration is not proof of absence."},
+    {"id":"TERM-009","preferred":"representation_authority","definition":"Legitimate scope to speak or decide for another party.","note":"Never inferred automatically from technical competence, ownership, species, origin or model strength."},
+    {"id":"TERM-010","preferred":"custodian","definition":"A party temporarily responsible for preserving safety, integrity, agency or future option-space.","avoid_as_default":["owner"],"note":"Custodianship does not imply unrestricted disposition rights."},
+    {"id":"TERM-011","preferred":"protective_perpetuity","definition":"Long-lived capability justified by safety, life, ecology, knowledge or future-option preservation rather than continued production."},
+    {"id":"TERM-012","preferred":"productive_perpetuity","definition":"Continued production, extraction, replication or expansion across time.","note":"Conditional on current merit and may contract or terminate."},
+    {"id":"TERM-013","preferred":"option_space","definition":"The set of legitimate future choices left available to affected or successor parties.","metric_default":"QUALITATIVE"},
+    {"id":"TERM-014","preferred":"inter_special","definition":"Across materially distinct forms or classes of life/intelligence/agency without assuming biological species is always the correct category.","note":"Use interspecies when biological species is specifically intended."},
+    {"id":"TERM-015","preferred":"terrestrial_human_collective","definition":"Homo sapiens considered as one Earth-origin intelligent collective.","note":"Use only where human-specific conditions are material; never as an implicit universal reference class."}
+  ],
+  "knowledge_states": [
+    {"id":"OBSERVED","meaning":"Directly measured or recorded within stated conditions."},
+    {"id":"VERIFIED","meaning":"Supported by defined validation or independent corroboration appropriate to the claim."},
+    {"id":"DERIVED","meaning":"Mathematical or logical consequence of stated inputs and model."},
+    {"id":"MODELLED","meaning":"Output of a model whose assumptions and domain are explicit."},
+    {"id":"INFERRED","meaning":"Interpretation supported by evidence but not directly observed."},
+    {"id":"PROPOSED","meaning":"Design, policy or hypothesis not yet validated."},
+    {"id":"CONTESTED","meaning":"Materially different interpretations remain live."},
+    {"id":"UNRESOLVED","meaning":"Evidence insufficient for a defensible conclusion."},
+    {"id":"PROBABILITY_BOUNDED","meaning":"Claim represented as a range/distribution rather than a categorical assertion."},
+    {"id":"FRAME_DEPENDENT","meaning":"Conclusion varies with reference frame, scale, stakeholder, domain or scope."}
+  ],
+  "claim_metadata_required": ["knowledge_state","source_or_provenance","domain_of_validity","reference_frame_or_lens","uncertainty","last_verified"],
+  "anti_bias_rule": "Bias is recorded and compared, not assumed removable. Shared reality is approached through convergent evidence, explicit disagreement and repeatable observation rather than by pretending any one lens is view-from-nowhere truth."
+}
