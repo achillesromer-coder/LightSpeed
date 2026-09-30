@@ -1,0 +1,69 @@
+{
+  "schema": "CGX-MPL-ASSURANCE-ADAPTER/0.1",
+  "status": "implementation adapter / screening boundary explicit",
+  "source_authorities": {
+    "executable_code": "achillesromer-coder/Romer-MPL main",
+    "operational_data": "Google Drive MPL Engine",
+    "bridge": "MPL Engine / BRIDGE_MPL_to_ACHILLES"
+  },
+  "semantic_mapping": {
+    "MPL.Failure_Modes": "mission-consequence-scenario",
+    "MPL.Run": "mpl-screening-run",
+    "MPL.Total_AUD": "financial-consequence-estimate",
+    "MPL.Model_Buffer_AUD": "planning-sensitivity-output",
+    "MPL.CAS_Total_Worst": "screening-casualty-output"
+  },
+  "prohibited_aliases": [
+    {
+      "from": "MPL.Failure_Modes",
+      "to": "engineering-FMEA-row"
+    },
+    {
+      "from": "MPL.Total_AUD",
+      "to": "physical-safety-risk"
+    },
+    {
+      "from": "MPL.Model_Buffer_AUD",
+      "to": "regulatory-required-buffer"
+    },
+    {
+      "from": "MPL-screening-pass",
+      "to": "mission-ready-or-safe"
+    }
+  ],
+  "does_not_satisfy": [
+    "FMEA",
+    "FMECA",
+    "HAZARD_ANALYSIS",
+    "FTA",
+    "FUNCTIONAL_SAFETY",
+    "ASSURANCE_CASE",
+    "regulatory-approval"
+  ],
+  "required_receipt_fields": [
+    "MPL_RunID",
+    "source_snapshot_or_revision",
+    "code_commit",
+    "method_reference",
+    "launch_site_id",
+    "vehicle_id",
+    "flight_phase_worst",
+    "screening_method",
+    "regulatory_geometry_status",
+    "impact_isopleth_status",
+    "independent_specialist_review_status",
+    "application_ready",
+    "inputs_provenance",
+    "assumptions",
+    "uncertainty"
+  ],
+  "current_known_boundary": {
+    "method": "Australian Space Agency Maximum Probable Loss Methodology (2019)",
+    "repo_stage": "PRE_RELEASE",
+    "screening_geometry": "ROMER_SCREENING_HEURISTIC where current HVA heuristic is used",
+    "impact_isopleth_10e7_available": false,
+    "application_ready": false,
+    "independent_specialist_review_required": true
+  },
+  "rule": "MPL is admitted only for the bounded financial/insurance consequence question for which it is applicable. It may inform, but never replace, risk-hazard analysis or engineering safety assurance."
+}
