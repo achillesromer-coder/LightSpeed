@@ -185,7 +185,9 @@
     "execution_lease": "execution_lease_contract.json",
     "cgp_ies_terminology": "cgp_ies_terminology_map.json",
     "cgp_ies_domain_adapters": "cgp_ies_domain_adapter_registry.json",
-    "cgp_ies_decision_receipt": "cgp_ies_decision_receipt_schema.json"
+    "cgp_ies_decision_receipt": "cgp_ies_decision_receipt_schema.json",
+    "cgp_ies_owner_confirmation": "cgp_ies_owner_confirmation_values.json",
+    "cgp_ies_parent_hydration": "cgp_ies_parent_extension_manifest.json"
   },
   "generation_policy": {
     "source_authority": "latest-durably-observed-Recovery-authority-only",
