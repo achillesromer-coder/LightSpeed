@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-DOMAIN-TEMPLATES/0.3",
+  "schema": "CGX-DOMAIN-TEMPLATES/0.4",
   "namespace_status": "provisional-unbound",
   "domains": {
     "romer": {
@@ -141,7 +141,8 @@
     "network",
     "residency",
     "licence",
-    "custodial-extension"
+    "custodial-extension",
+    "assurance"
   ],
   "credential_policy": "secret-reference-only",
   "parent_filespace": {
@@ -153,7 +154,9 @@
       "Frontier/Overlay/Resolve",
       "security/admission",
       "CCC",
-      "cross-domain bridges"
+      "cross-domain bridges",
+      "assurance",
+      "custodial-extensions"
     ]
   },
   "shared_contracts": {
@@ -165,7 +168,12 @@
     "layout_convergence": "layout_convergence_contract.md",
     "custodial_extension_registry": "custodial_extension_registry.json",
     "cgp_ies_policy_pack": "cgp_ies_policy_pack.json",
-    "cgp_ies_fixtures": "cgp_ies_fixture_scenarios.json"
+    "cgp_ies_fixtures": "cgp_ies_fixture_scenarios.json",
+    "assurance_method_registry": "assurance_method_registry.json",
+    "unified_assurance_object": "unified_assurance_object_schema.json",
+    "assurance_selection_matrix": "assurance_selection_matrix.json",
+    "assurance_reference_crosswalk": "assurance_reference_crosswalk.json",
+    "assurance_fixtures": "assurance_fixture_scenarios.json"
   },
   "generation_policy": {
     "source_authority": "latest-durably-observed-Recovery-authority-only",
@@ -206,6 +214,17 @@
     "validator": "scripts/validate_cgp_ies_extension.py",
     "extensions": [
       "cgp-ies"
+    ]
+  },
+  "shared_assurance": {
+    "owner": "Cognigrex.cgx:/assurance",
+    "binding_rule": "REFERENCE; method/evidence coordination only; no risk-acceptance or certification authority transfer",
+    "router": "scripts/cgx_assurance_route.py",
+    "validator": "scripts/validate_cgx_assurance.py",
+    "downstream": [
+      "Cognigrex.cgx:/extensions/cgp-ies",
+      "domain authority/gates",
+      "LS execution and independent safety plane"
     ]
   }
 }
