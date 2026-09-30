@@ -3,25 +3,151 @@
   "status": "PRE_CANONICAL / FUNCTIONAL",
   "source_target": "Cognigrex.cgx:/extensions/cgp-ies/receipt-schema",
   "purpose": "Define a machine-readable custodial reasoning receipt that preserves affected-party lenses, uncertainty, dissent, authority and safe-state information without collapsing collective good into one score.",
-  "required": ["extension_id","extension_mode","source_path","source_version","context","knowledge_state","affected_parties","options","hard_predicates","effective_ceiling","reversibility","authority_scope","execution_competence","inheritance","dissent","decision","next_review"],
+  "required": [
+    "extension_id",
+    "extension_mode",
+    "source_path",
+    "source_version",
+    "context",
+    "knowledge_state",
+    "affected_parties",
+    "options",
+    "hard_predicates",
+    "effective_ceiling",
+    "reversibility",
+    "authority_scope",
+    "execution_competence",
+    "inheritance",
+    "dissent",
+    "decision",
+    "next_review",
+    "authority_phase_ref",
+    "release_class",
+    "target_visibility",
+    "release_approval_state"
+  ],
   "affected_party_object": {
-    "required": ["party_id","lens_class","evidence_state","representation_state","impact_summary"],
-    "optional": ["species_or_substrate","agency_vector","sentience_uncertainty","communication_state","welfare_or_interest_indicators","unknowns"]
+    "required": [
+      "party_id",
+      "lens_class",
+      "evidence_state",
+      "representation_state",
+      "impact_summary"
+    ],
+    "optional": [
+      "species_or_substrate",
+      "agency_vector",
+      "sentience_uncertainty",
+      "communication_state",
+      "welfare_or_interest_indicators",
+      "unknowns"
+    ]
   },
-  "agency_vector_fields": ["preference_expression","choice_capacity","self_direction","temporal_persistence","relational_agency","consequence_understanding"],
-  "representation_states": ["SELF","DELEGATED","PROXY_EVIDENCE_BASED","UNREPRESENTED","UNKNOWN"],
+  "agency_vector_fields": [
+    "preference_expression",
+    "choice_capacity",
+    "self_direction",
+    "temporal_persistence",
+    "relational_agency",
+    "consequence_understanding"
+  ],
+  "representation_states": [
+    "SELF",
+    "DELEGATED",
+    "PROXY_EVIDENCE_BASED",
+    "UNREPRESENTED",
+    "UNKNOWN"
+  ],
   "sentience_uncertainty_default": "STRUCTURED_EVIDENCE_NO_SCALAR",
   "option_object": {
-    "required": ["option_id","necessity","beneficiaries","harms","hard_boundary_status","reversibility","option_space_effect","residual_unknowns"],
+    "required": [
+      "option_id",
+      "necessity",
+      "beneficiaries",
+      "harms",
+      "hard_boundary_status",
+      "reversibility",
+      "option_space_effect",
+      "residual_unknowns"
+    ],
     "comparison_rule": "Use explicit multi-criteria/Pareto comparison after hard-boundary screening; do not compute a sovereign moral total."
   },
-  "hard_predicate_states": ["SATISFIED","FAILED","UNKNOWN","NOT_APPLICABLE"],
-  "effective_ceiling_fields": ["technical","ecological","material","energy","safety","legal_or_rights","governance"],
-  "decision_states": ["ALLOW","ALLOW_WITH_RECEIPT","HOLD","DENY_DECLARED_SAFETY_CONSTRAINT","DEFER_FOR_EVIDENCE","DEFER_FOR_REPRESENTATION"],
-  "bias_audit_required": ["whose_frame","known_biases","omitted_or_unrepresented_lenses","counter_lens","uncertainty_effect"],
+  "hard_predicate_states": [
+    "SATISFIED",
+    "FAILED",
+    "UNKNOWN",
+    "NOT_APPLICABLE"
+  ],
+  "effective_ceiling_fields": [
+    "technical",
+    "ecological",
+    "material",
+    "energy",
+    "safety",
+    "legal_or_rights",
+    "governance"
+  ],
+  "decision_states": [
+    "ALLOW",
+    "ALLOW_WITH_RECEIPT",
+    "HOLD",
+    "DENY_DECLARED_SAFETY_CONSTRAINT",
+    "DEFER_FOR_EVIDENCE",
+    "DEFER_FOR_REPRESENTATION"
+  ],
+  "bias_audit_required": [
+    "whose_frame",
+    "known_biases",
+    "omitted_or_unrepresented_lenses",
+    "counter_lens",
+    "uncertainty_effect"
+  ],
   "protective_perpetuity": {
-    "fields": ["protective_functions_required","productive_functions_to_contract","mvsl_state","passive_safe_path","review_horizon"],
+    "fields": [
+      "protective_functions_required",
+      "productive_functions_to_contract",
+      "mvsl_state",
+      "passive_safe_path",
+      "review_horizon"
+    ],
     "rule": "Protective persistence never authorises unrelated productive persistence."
   },
-  "successor_fields": ["successor_assumptions","restart_authority","what_not_to_restart","inheritance_package_ref","future_option_space"]
+  "successor_fields": [
+    "successor_assumptions",
+    "restart_authority",
+    "what_not_to_restart",
+    "inheritance_package_ref",
+    "future_option_space"
+  ],
+  "authority_phase": {
+    "values": [
+      "PRE_LAUNCH",
+      "LAUNCH_TRANSITION",
+      "DISTRIBUTED_OPERATION",
+      "SUCCESSION_OR_RECOVERY"
+    ],
+    "detailed_contract": "Restricted / internal provider",
+    "rule": "Public-safe receipt stores phase/ref/status only, not sensitive topology."
+  },
+  "release_visibility": {
+    "release_classes": [
+      "Public",
+      "Internal",
+      "Restricted",
+      "Secret"
+    ],
+    "target_visibility": [
+      "public",
+      "internal",
+      "restricted"
+    ],
+    "release_approval_states": [
+      "APPROVED",
+      "NOT_APPROVED",
+      "NOT_APPLICABLE",
+      "UNKNOWN"
+    ],
+    "public_rule": "target_visibility=public requires release_class=Public and release_approval_state=APPROVED; otherwise HOLD.",
+    "restricted_rule": "Restricted/Secret content cannot be included in public projection; summaries require separately authored Public projection."
+  }
 }
