@@ -1,0 +1,105 @@
+{
+  "schema": "CGX-CGP-IES-OWNER-CONFIRMATION/0.1",
+  "status": "PROPOSED / REVIEW_REQUIRED",
+  "source_handoff": "CGX-HANDOFF-CGP-IES-2026-09-30",
+  "values": [
+    {
+      "id": "OC-001",
+      "term": "CGP_IES_POLICY_STATE",
+      "proposed": "PRE_CANONICAL",
+      "options": [
+        "PRE_CANONICAL",
+        "CANONICAL"
+      ],
+      "reason": "Functional source exists, but the parent Recovery carrier has not yet been hydrated/promoted."
+    },
+    {
+      "id": "OC-002",
+      "term": "PARENT_EXTENSION_PATH",
+      "proposed": "Cognigrex.cgx:/extensions/cgp-ies",
+      "options": [
+        "Cognigrex.cgx:/extensions/cgp-ies",
+        "alternate parent-scoped path"
+      ],
+      "reason": "Single shared source prevents child/agent hard-coding."
+    },
+    {
+      "id": "OC-003",
+      "term": "DEFAULT_MODES",
+      "proposed": {
+        "romer": "ADVISE",
+        "eco": "ADVISE",
+        "emassc": "OBSERVE",
+        "lightspeed": "OBSERVE"
+      },
+      "reason": "Low-friction defaults with contextual escalation."
+    },
+    {
+      "id": "OC-004",
+      "term": "CONSEQUENTIAL_GATE_THRESHOLD",
+      "proposed": "execute/build/publish with cascade C2+ => at least GATE",
+      "reason": "Separates ordinary reasoning from high-consequence execution."
+    },
+    {
+      "id": "OC-005",
+      "term": "ENFORCE_SAFETY_SCOPE",
+      "proposed": [
+        "replication-control",
+        "hard-stop",
+        "containment",
+        "life-support",
+        "hazard-control"
+      ],
+      "reason": "Narrow independent safety-plane enforcement; never general moral sovereignty."
+    },
+    {
+      "id": "OC-006",
+      "term": "HARD_ADMISSIBILITY_PREDICATES",
+      "proposed": [
+        "SAFETY",
+        "LEGAL_OR_RIGHTS_AUTHORITY",
+        "ECOLOGY",
+        "RESOURCE_BUDGET",
+        "WASTE_OR_CLOSURE",
+        "SECURITY",
+        "SUCCESSION",
+        "STOP_PATH"
+      ],
+      "reason": "All must be explicitly satisfied for gated consequential action."
+    },
+    {
+      "id": "OC-007",
+      "term": "OPTION_SPACE_METRIC",
+      "proposed": "QUALITATIVE_V0_1",
+      "options": [
+        "QUALITATIVE_V0_1",
+        "DEFINE_BOUNDED_VECTOR",
+        "DEFINE_NUMERIC_PROXY_WITH_ANTI-GOODHART_CONTROLS"
+      ],
+      "reason": "Avoid premature scalar morality metric."
+    },
+    {
+      "id": "OC-008",
+      "term": "SENTIENCE_UNCERTAINTY_METRIC",
+      "proposed": "STRUCTURED_EVIDENCE_NO_SCALAR",
+      "options": [
+        "STRUCTURED_EVIDENCE_NO_SCALAR",
+        "BOUNDED_QUALITATIVE_BANDS"
+      ],
+      "reason": "Current science does not justify a universal sentience score."
+    },
+    {
+      "id": "OC-009",
+      "term": "REPRESENTATION_RULE",
+      "proposed": "SCOPE_SPECIFIC / NO_AUTOMATIC_SPECIES_OR_CIVILISATION_REPRESENTATION",
+      "reason": "Operational competence does not confer representation authority."
+    },
+    {
+      "id": "OC-010",
+      "term": "SOURCE_FAILURE_BEHAVIOUR",
+      "proposed": "LOW_CONSEQUENCE=RECEIPT_AND_CONTINUE; CONSEQUENTIAL=HOLD",
+      "reason": "Fail-closed only where consequence warrants it."
+    }
+  ],
+  "promotion_rule": "No value becomes constitutional/canonical solely because it appears here. Owner/legitimate governance review plus parent-carrier mutation/readback is required."
+}
