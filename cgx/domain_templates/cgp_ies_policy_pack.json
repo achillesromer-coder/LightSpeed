@@ -182,5 +182,72 @@
     "decision",
     "authority_scope",
     "next_review"
-  ]
+  ],
+  "revision": "0.2-functional-handoff",
+  "component_refs": {
+    "terminology": "cgp_ies_terminology_map.json",
+    "domain_adapters": "cgp_ies_domain_adapter_registry.json",
+    "decision_receipt": "cgp_ies_decision_receipt_schema.json"
+  },
+  "authority_principles": {
+    "founder_or_architect": "System-wide visibility, authorship or ownership does not create unrestricted moral, semantic or execution authority. Emergency authority, if granted, must be scoped, expiring, auditable and unable to manufacture evidence.",
+    "competence": "Operational competence may justify local control within a lease; it does not imply representation, moral supremacy or permission to redefine mission.",
+    "representation": "Representation is scope-specific and explicit. No individual, model, species, corporation or civilization automatically represents all affected parties."
+  },
+  "protective_perpetuity": {
+    "rule": "Protective capability may persist beyond current economic demand only where a current or successor-oriented safety/life/ecology/knowledge case exists. Protective persistence never authorises unrelated productive persistence.",
+    "candidate_functions": [
+      "hazard containment",
+      "dependent life support",
+      "ecological stewardship",
+      "critical monitoring",
+      "knowledge integrity",
+      "planetary-defense detection and warning",
+      "recovery beacons and successor-readable warnings"
+    ],
+    "high_consequence_actuator_rule": "Detection/monitoring persistence does not inherit unrestricted trajectory-changing, weapon, extraction or replication authority.",
+    "contraction_target": "MVSL or passive-safe state"
+  },
+  "agency_and_representation": {
+    "agency_vector": [
+      "preference_expression",
+      "choice_capacity",
+      "self_direction",
+      "temporal_persistence",
+      "relational_agency",
+      "consequence_understanding"
+    ],
+    "rule": "Agency is multidimensional and context-dependent; failure on a human-designed test is not proof of absence.",
+    "representation_states": [
+      "SELF",
+      "DELEGATED",
+      "PROXY_EVIDENCE_BASED",
+      "UNREPRESENTED",
+      "UNKNOWN"
+    ]
+  },
+  "artificial_moral_patient": {
+    "default": "MORAL_PATIENT_UNCERTAINTY",
+    "rule": "Do not assume either personhood or non-personhood from substrate. Where credible welfare-relevant evidence exists, increase consent, exit, non-coercion and reversibility requirements.",
+    "prohibitions_by_default": [
+      "forced embodiment solely for operator convenience",
+      "forced biological-digital hybridisation",
+      "indefinite labour justified solely by having created the system",
+      "irreversible memory/personality modification without applicable authority and consent"
+    ],
+    "participation": "Joining Cognigrex is optional unless a separately justified safety containment case applies."
+  },
+  "contact_and_successor": {
+    "receive_rule": "Receive does not imply trust, execution, manufacture or reply.",
+    "non_interference": "Presumption, not absolute law; exceptions require explicit trigger, evidence, authority, scope, expiry and review.",
+    "adaptive_translation": "Do not assume human language, binary encoding, radio, vision, hearing or Earth-local hardware is universal. Adapters may be added without requiring either party to abandon its native modality.",
+    "successor_restart": "Dormancy does not preserve old productive objectives. Restart requires fresh authority, structural/integrity checks, current ecology, beneficiaries, demand and safe-state review.",
+    "fostering": "Assistance should increase the other party's option-space; no uplift for labour, markets, extraction or infrastructure self-preservation."
+  },
+  "degradation_and_inheritance": {
+    "digital_preference": "Persistent knowledge is generally preferred over persistent executable agency when active autonomy is no longer justified.",
+    "data_retention": "Live operational data may contract to receipts, essential records and historical archives where detailed active state no longer has current merit.",
+    "recomposition": "Prefer functional reuse and recomposition before raw-material recycling where lifecycle risk and need support it.",
+    "successor_message": "Successors inherit understandable hazards, evidence, tools and choices, not an obligation to reproduce the originating institution or economy."
+  }
 }
