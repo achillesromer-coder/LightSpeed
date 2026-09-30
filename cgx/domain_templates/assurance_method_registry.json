@@ -1,0 +1,327 @@
+{
+  "schema": "CGX-ASSURANCE-METHOD-REGISTRY/0.1",
+  "status": "implementation-blueprint / parent-carrier-hydration-pending",
+  "location": "Cognigrex.cgx:/assurance",
+  "purpose": "Coordinate multiple safety, dependability, consequence, cyber, ecological and mission-assurance methods without collapsing them into one score or transferring child-domain authority.",
+  "governing_principles": [
+    "method-output-is-evidence-not-authority",
+    "no-single-risk-score-is-universal",
+    "severity-and-irreversibility-can-gate-even-when-frequency-is-uncertain",
+    "unknown-is-preserved-as-unknown-not-zero-risk",
+    "independent-safety-functions-remain-independent-of-mission-optimisers",
+    "method-applicability-is-contextual-by-domain-phase-environment-hazard-autonomy-and-jurisdiction",
+    "regulatory-reference-does-not-equal-certification-or-approval",
+    "historical-corpus-values-remain-provenance-until-current-evidence-promotes-them"
+  ],
+  "assurance_states": [
+    "LOG",
+    "ANALYSE",
+    "VERIFY",
+    "SAFETY_CASE",
+    "HOLD"
+  ],
+  "methods": [
+    {
+      "id": "FMEA",
+      "family": "failure",
+      "purpose": "Identify failure modes, causes and local/system effects at item/process/interface level.",
+      "outputs": [
+        "failure_modes",
+        "effects",
+        "controls",
+        "verification_needs",
+        "optional_rpn"
+      ],
+      "limits": [
+        "bottom-up; may miss emergent/control-interaction hazards",
+        "RPN is prioritisation aid, not universal acceptability criterion"
+      ],
+      "reference": "IEC 60812:2018"
+    },
+    {
+      "id": "FMECA",
+      "family": "failure",
+      "purpose": "Extend FMEA with consequence criticality prioritisation.",
+      "outputs": [
+        "criticality",
+        "severity_groups",
+        "treatment_priority"
+      ],
+      "limits": [
+        "criticality model must be declared and evidence-bounded"
+      ],
+      "reference": "IEC 60812:2018"
+    },
+    {
+      "id": "HAZARD_ANALYSIS",
+      "family": "hazard",
+      "purpose": "Identify hazards, hazardous states, controls and residual risk across system lifecycle.",
+      "outputs": [
+        "hazards",
+        "causes",
+        "consequences",
+        "controls",
+        "residual_risk"
+      ],
+      "limits": [
+        "requires explicit system boundary and lifecycle phase"
+      ],
+      "reference": "ECSS-Q-ST-40-02C / applicable jurisdictional safety process"
+    },
+    {
+      "id": "HAZOP",
+      "family": "process",
+      "purpose": "Systematic guide-word review of deviations from intended process/operability.",
+      "outputs": [
+        "deviations",
+        "causes",
+        "consequences",
+        "safeguards",
+        "actions"
+      ],
+      "limits": [
+        "best suited to process/operational flows with defined intent"
+      ],
+      "reference": "IEC 61882:2016"
+    },
+    {
+      "id": "FTA",
+      "family": "causal",
+      "purpose": "Top-down logical decomposition of causes contributing to a defined top event.",
+      "outputs": [
+        "cut_sets",
+        "causal_logic",
+        "independence_assumptions"
+      ],
+      "limits": [
+        "top event and independence/common-cause assumptions must be explicit"
+      ],
+      "reference": "IEC 61025 / ECSS-Q-ST-40-12C"
+    },
+    {
+      "id": "ETA",
+      "family": "consequence",
+      "purpose": "Forward event-sequence analysis after initiating events and protection successes/failures.",
+      "outputs": [
+        "event_sequences",
+        "barrier_outcomes",
+        "consequence_paths"
+      ],
+      "limits": [
+        "branch probabilities require evidence and are not inferred by default"
+      ],
+      "reference": "IEC 62502"
+    },
+    {
+      "id": "BOW_TIE",
+      "family": "barrier",
+      "purpose": "Connect threats, top event, preventive controls, consequences and mitigative controls.",
+      "outputs": [
+        "threats",
+        "preventive_barriers",
+        "top_event",
+        "mitigative_barriers",
+        "consequences"
+      ],
+      "limits": [
+        "barrier independence and performance must be verified"
+      ],
+      "reference": "risk-technique / local procedure"
+    },
+    {
+      "id": "STPA",
+      "family": "control",
+      "purpose": "Analyse unsafe control actions and system-level causal scenarios in complex software/autonomous socio-technical systems.",
+      "outputs": [
+        "losses",
+        "hazards",
+        "unsafe_control_actions",
+        "causal_scenarios",
+        "constraints"
+      ],
+      "limits": [
+        "method model is not a compliance certificate and does not replace domain standards"
+      ],
+      "reference": "MIT STPA method / domain safety process"
+    },
+    {
+      "id": "MPL",
+      "family": "financial_consequence",
+      "purpose": "Estimate maximum probable third-party loss/insurance exposure where applicable to regulated space activity.",
+      "outputs": [
+        "financial_exposure",
+        "insurance_basis",
+        "input_provenance"
+      ],
+      "limits": [
+        "not an engineering hazard probability",
+        "not mission-readiness proof",
+        "not legal determination",
+        "Australian estimator is not application evidence"
+      ],
+      "reference": "Australian Space Agency Maximum Probable Loss Methodology (2019)"
+    },
+    {
+      "id": "QRA_PRA",
+      "family": "quantitative_risk",
+      "purpose": "Quantify likelihood/consequence where models and evidence justify numerical treatment.",
+      "outputs": [
+        "risk_distribution",
+        "uncertainty",
+        "sensitivity",
+        "dominant_contributors"
+      ],
+      "limits": [
+        "numerical output must expose uncertainty/model validity; no false precision"
+      ],
+      "reference": "ISO 31000 + IEC 31010 method family / jurisdictional methods"
+    },
+    {
+      "id": "FUNCTIONAL_SAFETY",
+      "family": "control",
+      "purpose": "Define safety functions, integrity requirements, diagnostics, independence and safe states.",
+      "outputs": [
+        "safety_functions",
+        "integrity_requirements",
+        "proof_tests",
+        "safe_states"
+      ],
+      "limits": [
+        "domain-specific standard selection required"
+      ],
+      "reference": "IEC 61508 / ISO 13849 / sector-specific standards"
+    },
+    {
+      "id": "CYBER_THREAT",
+      "family": "security",
+      "purpose": "Model threats, trust boundaries, compromise paths, privileges, recovery and supply-chain risk.",
+      "outputs": [
+        "assets",
+        "threats",
+        "attack_paths",
+        "controls",
+        "residual_exposure",
+        "recovery"
+      ],
+      "limits": [
+        "cyber controls do not substitute for physical safety interlocks"
+      ],
+      "reference": "NIST CSF 2.0 / IEC 62443 family"
+    },
+    {
+      "id": "AI_IMPACT",
+      "family": "ai_assurance",
+      "purpose": "Assess AI/model impacts, validity envelope, bias, human/agent oversight, drift and failover.",
+      "outputs": [
+        "impact_scope",
+        "model_limits",
+        "monitoring",
+        "fallback",
+        "oversight",
+        "promotion_gate"
+      ],
+      "limits": [
+        "model performance does not confer authority"
+      ],
+      "reference": "ISO/IEC 42001; ISO/IEC 23894; ISO/IEC 42005; NIST AI RMF"
+    },
+    {
+      "id": "ECO_BIOSECURITY",
+      "family": "living_systems",
+      "purpose": "Assess organism/ecosystem health, movement, provenance, pathogen, invasive and cumulative ecological pathways.",
+      "outputs": [
+        "ecological_receptors",
+        "biosecurity_pathways",
+        "controls",
+        "monitoring",
+        "recovery"
+      ],
+      "limits": [
+        "local ecology/provenance and jurisdiction govern; no universal species recipe"
+      ],
+      "reference": "One Health + applicable biosecurity/environmental law + Eco-Grex evidence"
+    },
+    {
+      "id": "SPACE_DEBRIS",
+      "family": "space_environment",
+      "purpose": "Assess generated-object identity, debris creation, conjunction, disposal, passivation and uncontrolled-reentry risk.",
+      "outputs": [
+        "object_ledger",
+        "debris_paths",
+        "conjunction_controls",
+        "disposition",
+        "closure"
+      ],
+      "limits": [
+        "nominal trajectory alone is insufficient"
+      ],
+      "reference": "UNOOSA LTS Guidelines + applicable debris standard/regulation"
+    },
+    {
+      "id": "PLANETARY_PROTECTION",
+      "family": "contamination",
+      "purpose": "Assess forward/back contamination and protected-body/sample pathways.",
+      "outputs": [
+        "mission_category",
+        "contamination_paths",
+        "controls",
+        "verification",
+        "containment"
+      ],
+      "limits": [
+        "mission/body classification and current policy must be verified"
+      ],
+      "reference": "COSPAR Planetary Protection Policy 2026 + applicable agency rules"
+    },
+    {
+      "id": "CONTINUITY_RECOVERY",
+      "family": "resilience",
+      "purpose": "Assess loss of people, communications, power, suppliers, governance, keys and infrastructure with graceful degradation/restart.",
+      "outputs": [
+        "minimum_service",
+        "fallback",
+        "black_start",
+        "succession",
+        "recovery_time",
+        "restart_gates"
+      ],
+      "limits": [
+        "continuity cannot preserve unsafe production merely to preserve activity"
+      ],
+      "reference": "business continuity / domain emergency procedures / CGX lifecycle controls"
+    },
+    {
+      "id": "LIFECYCLE_INHERITANCE",
+      "family": "whole_life",
+      "purpose": "Assess decommissioning, circularity, residual hazards, records and successor legibility.",
+      "outputs": [
+        "end_state",
+        "material_passport",
+        "hazard_legacy",
+        "inheritance_package",
+        "restart_constraints"
+      ],
+      "limits": [
+        "recycling is not automatically preferable to safe containment or reuse"
+      ],
+      "reference": "ISO lifecycle/circularity families + CGP-IES"
+    },
+    {
+      "id": "V_AND_V",
+      "family": "verification",
+      "purpose": "Verify requirements, models, interfaces, tests, calibration, acceptance and evidence lineage.",
+      "outputs": [
+        "requirements_trace",
+        "test_receipts",
+        "calibration",
+        "verification_status",
+        "validation_scope"
+      ],
+      "limits": [
+        "simulation validation does not equal physical validation outside tested envelope"
+      ],
+      "reference": "systems/software lifecycle + domain qualification standards"
+    }
+  ],
+  "composition_rule": "Select the smallest sufficient independent method bundle for the actual hazard/problem; add methods when consequence, uncertainty or cross-domain coupling warrants them. One method never silently certifies another method's question."
+}
