@@ -26,6 +26,13 @@ def complete_custodial():
     return {
       "source_verified":True,
       "authority_confirmed":True,
+      "authority_phase":"PRE_LAUNCH",
+      "authority_contract_verified":True,
+      "root_authority_approved":True,
+      "release_class":"Internal",
+      "target_visibility":"internal",
+      "release_approval_state":"NOT_APPLICABLE",
+      "source_release_classes":["Internal"],
       "hard_predicates":{
         "SAFETY":True,"LEGAL_OR_RIGHTS_AUTHORITY":True,"ECOLOGY":True,
         "RESOURCE_BUDGET":True,"WASTE_OR_CLOSURE":True,"SECURITY":True,
