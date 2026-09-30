@@ -43,6 +43,8 @@ def resolve(domain, execution_depth, reasoning_depth="standard", cascade_class="
         if mode!=before or rule.get("minimum_mode") or rule.get("maximum_mode"):
             reasons.append(rule.get("reason","rule"))
     policy=load(ext["source_template"])
+    adapters=load(ext.get("components",{}).get("domain_adapters","cgp_ies_domain_adapter_registry.json"))
+    adapter=adapters.get("domains",{}).get(domain,{})
     checks=[]
     if RANK[mode]>=RANK["OBSERVE"]:
         checks+=["evidence_and_domain_boundary","affected_party_enumeration"]
@@ -52,11 +54,26 @@ def resolve(domain, execution_depth, reasoning_depth="standard", cascade_class="
         checks+=["admissibility_hard_predicates","effective_ceiling","authority_and_representation","inheritance_and_safe_state"]
     if mode=="ENFORCE_SAFETY":
         checks+=["independent_safety_plane","replication_stop_containment_controls"]
+    if RANK[mode]>=RANK["OBSERVE"]:
+        checks+=adapter.get("required_checks",[])
+    component_refs=ext.get("components",{})
     return {
       "schema":"CGX-CGP-IES-RESOLUTION/0.1",
       "extension_id":"cgp-ies","source_path":ext["source_path"],
       "source_status":reg["status"],"domain":domain,"mode":mode,"activation_reasons":reasons,
       "context":ctx,"checks":list(dict.fromkeys(checks)),
+      "hard_predicates":policy.get("admissibility_hard_predicates",[]),
+      "domain_adapter":{
+        "source_ref":component_refs.get("domain_adapters"),
+        "material_tags":adapter.get("material_tags",[]),
+        "gate_tags":adapter.get("gate_tags",[]),
+        "note":adapter.get("note")
+      },
+      "shared_components":{
+        "terminology":component_refs.get("terminology"),
+        "decision_receipt":component_refs.get("decision_receipt"),
+        "policy":component_refs.get("policy",ext.get("source_template"))
+      },
       "fail_behaviour":ext["fail_behaviour"],
       "authority_limit":"Extension may block/hold only under declared GATE or ENFORCE_SAFETY conditions; it cannot create new semantic, moral, ownership or execution authority.",
       "policy_receipt_fields":policy["required_receipt_fields"]
