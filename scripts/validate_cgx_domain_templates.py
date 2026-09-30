@@ -56,6 +56,8 @@ def main():
         assurance_matrix=load("assurance_selection_matrix.json")
         assurance_crosswalk=load("assurance_reference_crosswalk.json")
         assurance_fixtures=load("assurance_fixture_scenarios.json")
+        technology_stack=load("technology_stack_registry.json")
+        agent_runtime=load("agent_runtime_contract.json")
     except Exception as e:
         print(json.dumps({"status":"FAIL","failures":[str(e)]}))
         return 1
@@ -165,6 +167,15 @@ def main():
         failures.append("base shell does not require assurance binding")
     if "assurance" not in domains.get("parent_filespace",{}).get("shared_kernel",[]):
         failures.append("assurance missing from parent shared kernel")
+
+    if technology_stack.get("schema")!="CGX-TECHNOLOGY-STACK/0.1":
+        failures.append("technology stack schema mismatch")
+    if technology_stack.get("location")!="Cognigrex.cgx:/stack":
+        failures.append("technology stack parent path mismatch")
+    if agent_runtime.get("schema")!="CGX-AGENT-RUNTIME-CONTRACT/0.1":
+        failures.append("agent runtime contract schema mismatch")
+    if "model-is-capability-not-agent-identity" not in agent_runtime.get("invariants",[]):
+        failures.append("agent/model identity boundary missing")
 
     proof=receipt.get("proof",{})
     if proof.get("fixtures")!=3 or proof.get("failures")!=0:
