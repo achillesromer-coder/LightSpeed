@@ -103,7 +103,7 @@
     "resolver": "scripts/resolve_cgx_extensions.py",
     "enforcement": "scripts/cgx_custodial_preflight.py",
     "source": "Cognigrex.cgx:/extensions/cgp-ies",
-    "rule": "resolve before consequential execution/promotion; review/read paths remain observational unless escalated by cascade/tags",
+    "rule": "resolve before consequential execution or promotion; review and read paths remain observational unless the task context requires a higher mode",
     "receipt_required": true
   }
 }
