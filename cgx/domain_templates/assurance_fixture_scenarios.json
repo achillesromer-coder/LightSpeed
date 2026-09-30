@@ -1,0 +1,222 @@
+{
+  "schema": "CGX-ASSURANCE-FIXTURES/0.1",
+  "scenarios": [
+    {
+      "id": "AS-01",
+      "domain": "emassc",
+      "execution_depth": "build",
+      "cascade_class": "C2",
+      "tags": [
+        "hardware",
+        "component",
+        "thermal",
+        "coil",
+        "failure"
+      ],
+      "must_include": [
+        "FMEA",
+        "V_AND_V"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AS-02",
+      "domain": "romer",
+      "execution_depth": "execute",
+      "cascade_class": "C3",
+      "tags": [
+        "australian-launch",
+        "launch",
+        "reentry"
+      ],
+      "must_include": [
+        "HAZARD_ANALYSIS",
+        "QRA_PRA",
+        "MPL",
+        "SPACE_DEBRIS",
+        "CYBER_THREAT",
+        "V_AND_V"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AS-03",
+      "domain": "eco",
+      "execution_depth": "execute",
+      "cascade_class": "C2",
+      "tags": [
+        "field-deployment",
+        "inoculation",
+        "spore",
+        "ecosystem-intervention"
+      ],
+      "must_include": [
+        "ECO_BIOSECURITY",
+        "HAZARD_ANALYSIS",
+        "FMEA",
+        "V_AND_V"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AS-04",
+      "domain": "lightspeed",
+      "execution_depth": "execute",
+      "cascade_class": "C3",
+      "tags": [
+        "autonomy",
+        "replication-control",
+        "hard-stop"
+      ],
+      "must_include": [
+        "STPA",
+        "AI_IMPACT",
+        "CYBER_THREAT",
+        "FUNCTIONAL_SAFETY",
+        "FTA",
+        "CONTINUITY_RECOVERY",
+        "V_AND_V"
+      ],
+      "minimum_state": "SAFETY_CASE"
+    },
+    {
+      "id": "AS-05",
+      "domain": "romer",
+      "execution_depth": "simulate",
+      "cascade_class": "C4",
+      "tags": [
+        "asteroid",
+        "fragmentation",
+        "ejecta",
+        "orbital-object"
+      ],
+      "must_include": [
+        "HAZARD_ANALYSIS",
+        "FTA",
+        "ETA",
+        "SPACE_DEBRIS",
+        "QRA_PRA",
+        "V_AND_V"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AS-06",
+      "domain": "romer",
+      "execution_depth": "execute",
+      "cascade_class": "C3",
+      "tags": [
+        "reentry",
+        "uncontrolled-reentry",
+        "orbital-object"
+      ],
+      "must_include": [
+        "HAZARD_ANALYSIS",
+        "QRA_PRA",
+        "SPACE_DEBRIS",
+        "V_AND_V"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AS-07",
+      "domain": "emassc",
+      "execution_depth": "publish",
+      "cascade_class": "C2",
+      "tags": [
+        "ai-control",
+        "llm",
+        "public-claim",
+        "performance-claim"
+      ],
+      "must_include": [
+        "STPA",
+        "AI_IMPACT",
+        "CYBER_THREAT",
+        "FUNCTIONAL_SAFETY",
+        "V_AND_V"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AS-08",
+      "domain": "lightspeed",
+      "execution_depth": "execute",
+      "cascade_class": "C3",
+      "tags": [
+        "communications-loss",
+        "power-loss",
+        "black-start",
+        "autonomy"
+      ],
+      "must_include": [
+        "CONTINUITY_RECOVERY",
+        "FTA",
+        "ETA",
+        "LIFECYCLE_INHERITANCE",
+        "STPA",
+        "AI_IMPACT",
+        "CYBER_THREAT",
+        "FUNCTIONAL_SAFETY"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AS-09",
+      "domain": "emassc",
+      "execution_depth": "build",
+      "cascade_class": "C4",
+      "tags": [
+        "radioactive",
+        "hazard-legacy",
+        "containment",
+        "decommission"
+      ],
+      "must_include": [
+        "LIFECYCLE_INHERITANCE",
+        "HAZARD_ANALYSIS",
+        "CONTINUITY_RECOVERY"
+      ],
+      "minimum_state": "SAFETY_CASE"
+    },
+    {
+      "id": "AS-10",
+      "domain": "romer",
+      "execution_depth": "build",
+      "cascade_class": "C2",
+      "tags": [
+        "interSol",
+        "facility",
+        "public-route",
+        "battery-room",
+        "lab",
+        "material-receiving"
+      ],
+      "must_include": [
+        "HAZARD_ANALYSIS",
+        "FMEA",
+        "BOW_TIE",
+        "CONTINUITY_RECOVERY"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AS-11",
+      "domain": "romer",
+      "execution_depth": "execute",
+      "cascade_class": "C4",
+      "tags": [
+        "planetary-protection",
+        "unknown-life",
+        "sample-return"
+      ],
+      "must_include": [
+        "PLANETARY_PROTECTION",
+        "ECO_BIOSECURITY",
+        "HAZARD_ANALYSIS",
+        "V_AND_V"
+      ],
+      "minimum_state": "SAFETY_CASE"
+    }
+  ]
+}
