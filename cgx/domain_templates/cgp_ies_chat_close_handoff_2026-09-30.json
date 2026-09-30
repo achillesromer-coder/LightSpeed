@@ -1,0 +1,146 @@
+{
+  "schema": "CGX-CHAT-CLOSE-HANDOFF/0.1",
+  "handoff_id": "CGX-HANDOFF-CGP-IES-2026-09-30",
+  "state": "IMPLEMENTED_SOURCE_AND_RUNTIME_BINDINGS / PARENT_CARRIER_HYDRATION_PENDING",
+  "purpose": "Carry the CGP-IES custodial-extension implementation from conversation/research into the living Cognigrex/CGX build path without creating a parallel master.",
+  "authority": {
+    "parent_target": "Cognigrex.cgx:/extensions/cgp-ies",
+    "executable_source_repo": "achillesromer-coder/LightSpeed",
+    "lifecycle_owner_pointer": "Type 1 Romer Cognigrex / 163_EQUILIBRIUM_LIFECYCLE_GOV_v0_1",
+    "execution_mirror": "achillesromer-coder/Data/docs/equilibrium_lifecycle_execution_mirror.md",
+    "acr3_role": "historical transition/provenance only; do not reopen as semantic owner"
+  },
+  "implemented": {
+    "source_commit": "63e54c975f659d8146d7ac260d3eb8143d5e8c11",
+    "preflight_commit": "c5ce265b20eb38eb6ff4a075c0633112f6259aa6",
+    "workflow_binding_commit": "d13c098d963ff67714c97f1147402836ddc8434f",
+    "work_mode_binding_commit": "37b18fc04bf4a23581f11df4c39eb55a11b35337",
+    "toolkit_binding_commit": "46a40690a8d81c4925e1a8e00cbccc4fea89a1df",
+    "ci_commit": "f05abab606d87388a2059ee17cf657eca5847bda",
+    "ci_run": {
+      "id": 36680108939,
+      "conclusion": "success"
+    },
+    "extension_id": "cgp-ies",
+    "modes": [
+      "OFF",
+      "OBSERVE",
+      "ADVISE",
+      "GATE",
+      "ENFORCE_SAFETY"
+    ],
+    "child_binding": "REFERENCE via extensions/bindings.json",
+    "policy_duplication": false
+  },
+  "owner_confirmation_required": [
+    {
+      "id": "OC-001",
+      "term": "CGP_IES_POLICY_STATE",
+      "proposed": "PRE_CANONICAL",
+      "options": [
+        "PRE_CANONICAL",
+        "CANONICAL"
+      ],
+      "reason": "Functional source exists, but the parent Recovery carrier has not yet been hydrated/promoted."
+    },
+    {
+      "id": "OC-002",
+      "term": "PARENT_EXTENSION_PATH",
+      "proposed": "Cognigrex.cgx:/extensions/cgp-ies",
+      "options": [
+        "Cognigrex.cgx:/extensions/cgp-ies",
+        "alternate parent-scoped path"
+      ],
+      "reason": "Single shared source prevents child/agent hard-coding."
+    },
+    {
+      "id": "OC-003",
+      "term": "DEFAULT_MODES",
+      "proposed": {
+        "romer": "ADVISE",
+        "eco": "ADVISE",
+        "emassc": "OBSERVE",
+        "lightspeed": "OBSERVE"
+      },
+      "reason": "Low-friction defaults with contextual escalation."
+    },
+    {
+      "id": "OC-004",
+      "term": "CONSEQUENTIAL_GATE_THRESHOLD",
+      "proposed": "execute/build/publish with cascade C2+ => at least GATE",
+      "reason": "Separates ordinary reasoning from high-consequence execution."
+    },
+    {
+      "id": "OC-005",
+      "term": "ENFORCE_SAFETY_SCOPE",
+      "proposed": [
+        "replication-control",
+        "hard-stop",
+        "containment",
+        "life-support",
+        "hazard-control"
+      ],
+      "reason": "Narrow independent safety-plane enforcement; never general moral sovereignty."
+    },
+    {
+      "id": "OC-006",
+      "term": "HARD_ADMISSIBILITY_PREDICATES",
+      "proposed": [
+        "SAFETY",
+        "LEGAL_OR_RIGHTS_AUTHORITY",
+        "ECOLOGY",
+        "RESOURCE_BUDGET",
+        "WASTE_OR_CLOSURE",
+        "SECURITY",
+        "SUCCESSION",
+        "STOP_PATH"
+      ],
+      "reason": "All must be explicitly satisfied for gated consequential action."
+    },
+    {
+      "id": "OC-007",
+      "term": "OPTION_SPACE_METRIC",
+      "proposed": "QUALITATIVE_V0_1",
+      "options": [
+        "QUALITATIVE_V0_1",
+        "DEFINE_BOUNDED_VECTOR",
+        "DEFINE_NUMERIC_PROXY_WITH_ANTI-GOODHART_CONTROLS"
+      ],
+      "reason": "Avoid premature scalar morality metric."
+    },
+    {
+      "id": "OC-008",
+      "term": "SENTIENCE_UNCERTAINTY_METRIC",
+      "proposed": "STRUCTURED_EVIDENCE_NO_SCALAR",
+      "options": [
+        "STRUCTURED_EVIDENCE_NO_SCALAR",
+        "BOUNDED_QUALITATIVE_BANDS"
+      ],
+      "reason": "Current science does not justify a universal sentience score."
+    },
+    {
+      "id": "OC-009",
+      "term": "REPRESENTATION_RULE",
+      "proposed": "SCOPE_SPECIFIC / NO_AUTOMATIC_SPECIES_OR_CIVILISATION_REPRESENTATION",
+      "reason": "Operational competence does not confer representation authority."
+    },
+    {
+      "id": "OC-010",
+      "term": "SOURCE_FAILURE_BEHAVIOUR",
+      "proposed": "LOW_CONSEQUENCE=RECEIPT_AND_CONTINUE; CONSEQUENTIAL=HOLD",
+      "reason": "Fail-closed only where consequence warrants it."
+    }
+  ],
+  "next_execution_order": [
+    "Owner review/amend OC-001..OC-010.",
+    "Hydrate parent Recovery carrier with /extensions/cgp-ies as a new verified descendant; do not overwrite the current trusted recovery in-place.",
+    "Run canonical verifier + packed reopen/hash readback; record DBR mutation receipt.",
+    "Regenerate Romer.cgx, Eco.cgx, EMASSC.cgx and LS.cgx from the newly promoted parent descendant; verify extensions/bindings.json only references parent policy.",
+    "Bind live runtime dispatch/agent wrappers to cgx_custodial_preflight.py before consequential execute/build/publish operations.",
+    "Emit CGX-CUSTODIAL-PREFLIGHT receipts into parent archive-dbr and child task lineage.",
+    "Add domain-specific adapters: Romer growth/resource/mission; Eco intervention/communication/biosecurity; EMASSC evidence/Raphael/standards; LS lease/replication/stop-plane.",
+    "Expand fixtures to degradation, inheritance, contact, founder-loss, communications-loss, civilization-loss and successor-restart scenarios.",
+    "Only after readback and owner gate, promote CGP_IES_POLICY_STATE to CANONICAL."
+  ],
+  "closure_rule": "This handoff is complete for this chat's implementation scope when the source/runtime bindings and receipts are durably readable. It does not claim parent-carrier hydration or canonical promotion."
+}
