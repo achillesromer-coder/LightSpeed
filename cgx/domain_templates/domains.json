@@ -156,7 +156,8 @@
       "CCC",
       "cross-domain bridges",
       "assurance",
-      "custodial-extensions"
+      "custodial-extensions",
+      "agent-runtime"
     ]
   },
   "shared_contracts": {
@@ -173,7 +174,9 @@
     "unified_assurance_object": "unified_assurance_object_schema.json",
     "assurance_selection_matrix": "assurance_selection_matrix.json",
     "assurance_reference_crosswalk": "assurance_reference_crosswalk.json",
-    "assurance_fixtures": "assurance_fixture_scenarios.json"
+    "assurance_fixtures": "assurance_fixture_scenarios.json",
+    "technology_stack": "technology_stack_registry.json",
+    "agent_runtime": "agent_runtime_contract.json"
   },
   "generation_policy": {
     "source_authority": "latest-durably-observed-Recovery-authority-only",
