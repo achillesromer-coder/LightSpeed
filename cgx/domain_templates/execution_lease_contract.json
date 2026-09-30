@@ -1,0 +1,73 @@
+{
+  "schema": "CGX-EXECUTION-LEASE-CONTRACT/0.1",
+  "status": "implementation contract / parent-carrier hydration pending",
+  "location": "Cognigrex.cgx:/agents/leases",
+  "purpose": "Provide explicit, revocable, time-bounded execution authority downstream of evidence qualification, assurance and custodial preflights.",
+  "required_fields": [
+    "lease_id",
+    "state",
+    "issued_by",
+    "subject_agent",
+    "valid_from",
+    "valid_until",
+    "domains",
+    "execution_depths",
+    "max_cascade_class",
+    "allowed_floors",
+    "scope",
+    "revocable",
+    "stop_authority_ref",
+    "safe_state_ref"
+  ],
+  "state_values": [
+    "PROPOSED",
+    "ACTIVE",
+    "SUSPENDED",
+    "REVOKED",
+    "EXPIRED",
+    "CONSUMED"
+  ],
+  "scope_fields": [
+    "task_ids",
+    "project_ids",
+    "object_ids",
+    "action_classes",
+    "tool_scopes",
+    "resource_budgets",
+    "geographic_or_orbital_scope",
+    "configuration_ids"
+  ],
+  "consequential_additions": [
+    "risk_acceptance_ref",
+    "assurance_receipt_ref",
+    "custodial_receipt_ref",
+    "rollback_or_recovery_ref"
+  ],
+  "invariants": [
+    "lease-is-not-agent-identity",
+    "lease-is-not-semantic-authority",
+    "lease-is-not-assurance-or-certification",
+    "issuer-and-subject-must-be-distinct-where-independent-approval-is-required",
+    "agent-cannot-issue-extend-or-revive-its-own-lease",
+    "lease-cannot-expand-parent-authority",
+    "lease-expiry-never-defaults-to-continue",
+    "revocation-and-independent-stop-remain-reachable",
+    "tool-access-does-not-expand-beyond-both-lease-and-tool-local-policy",
+    "missing-or-stale-lease-means-no-consequential-execution",
+    "historical-global-approval-manifest-is-not-an-active-execution-lease"
+  ],
+  "validation_rules": [
+    "valid_from and valid_until use timezone-aware timestamps and current time must fall within the interval",
+    "requested domain and execution depth must be explicitly allowed",
+    "requested cascade class must not exceed max_cascade_class",
+    "requested task/project/object/configuration must fit declared scope when the corresponding scope list is non-empty",
+    "planned specialist floors must be a subset of allowed_floors",
+    "consequential C2+ execution requires assurance/custodial receipt references and a separate risk_acceptance_ref unless a governing profile explicitly records why risk acceptance is not applicable",
+    "physical or externally consequential execution requires stop_authority_ref and safe_state_ref",
+    "resource/tool budgets are ceilings, never targets"
+  ],
+  "compatibility": {
+    "legacy_operator_approval_manifest": "historical evidence of operator decisions only; may support issuance of a new lease but cannot itself satisfy this contract",
+    "achilles_action_envelope": "may reference an ACTIVE lease; action-envelope approval does not silently mint one"
+  }
+}
