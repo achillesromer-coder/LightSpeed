@@ -1,0 +1,116 @@
+{
+  "schema": "CGX-AGENT-RUNTIME-CONTRACT/0.1",
+  "purpose": "Define durable agent identity and bounded operation independently of whichever LLM, model, tool or interface happens to serve the agent.",
+  "required_identity": [
+    "agent_id",
+    "display_name",
+    "domain",
+    "role",
+    "parent_or_peer_relationship",
+    "authority_profile",
+    "security_profile"
+  ],
+  "required_bindings": [
+    "cgx_source_root",
+    "domain_semantic_root",
+    "evidence_profile",
+    "assurance_binding",
+    "custodial_extension_binding",
+    "toolkit_profile",
+    "surface_profile",
+    "execution_lease_profile",
+    "receipt_sink",
+    "stop_and_fallback_profile"
+  ],
+  "invariants": [
+    "model-is-capability-not-agent-identity",
+    "prompt-is-not-canon",
+    "conversation-memory-is-not-semantic-authority",
+    "tool-access-is-not-permission-to-use-tool",
+    "model-confidence-is-not-evidence-strength",
+    "model-provider-majority-is-not-independent-review",
+    "agent-may-not-self-expand-authority",
+    "agent-may-not-modify-root-safety-or-replication-policy",
+    "agent-may-propose-its-own-upgrade-but-independent-promotion-is-required",
+    "missing-context-reduces-action-envelope-rather-than-increasing-autonomy"
+  ],
+  "runtime_context": {
+    "minimum": [
+      "Task_ID",
+      "Run_ID",
+      "agent_id",
+      "domain",
+      "object_ids",
+      "source_roots",
+      "work_mode",
+      "reasoning_depth",
+      "execution_depth",
+      "security",
+      "authority_lease"
+    ],
+    "consequence_additions": [
+      "cascade_class",
+      "assurance_route",
+      "assurance_receipt",
+      "cgp_ies_mode",
+      "cgp_ies_receipt",
+      "stop_path",
+      "rollback_or_safe_state"
+    ],
+    "physical_additions": [
+      "configuration_id",
+      "hardware_identity",
+      "calibration_state",
+      "operator_or_supervisor",
+      "environment_state",
+      "interlock_state"
+    ]
+  },
+  "model_binding": {
+    "allowed": [
+      "remote_llm",
+      "local_llm",
+      "specialist_model",
+      "classical_solver",
+      "no_model_deterministic"
+    ],
+    "selection_inputs": [
+      "task_class",
+      "privacy",
+      "latency",
+      "offline_requirement",
+      "verified_capability",
+      "cost_budget",
+      "evidence_need",
+      "safety_class"
+    ],
+    "forbidden_selection_inputs": [
+      "provider-marketing-rank-as-authority",
+      "agent-self-preservation",
+      "hidden-commercial-preference"
+    ],
+    "output_rule": "all model outputs carry model/provider/version where available, tool/source provenance, epistemic state and scope"
+  },
+  "memory_model": {
+    "semantic_memory": "CGX canonical/domain state",
+    "episodic_memory": "DBR/task/run receipts",
+    "temporary_context": "session/hydration cache",
+    "personal_private_memory": "separate scoped sidecar where applicable",
+    "rule": "temporary or personal context does not silently enter business/domain canon"
+  },
+  "action_model": {
+    "propose": "may reason and create bounded delta without execution authority",
+    "simulate": "may use sandbox/digital twin subject to tool/data policy",
+    "execute": "requires execution lease, assurance/custodial preflights as applicable, tool permission and safe-state path",
+    "publish": "requires evidence ceiling + security/privacy + release authority",
+    "self_change": "candidate only; independent review/promotion",
+    "spawn_child": "requires separate identity and explicit parent-authority/replication budget"
+  },
+  "stop_and_fallback": {
+    "independent_stop_reachable": true,
+    "agent_cannot_veto_stop": true,
+    "graceful_degradation": true,
+    "safe_state_over_blackout": true,
+    "preserve_critical_life_safety_eco_functions": true
+  }
+}
