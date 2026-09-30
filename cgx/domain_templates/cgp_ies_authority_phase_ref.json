@@ -1,0 +1,19 @@
+{
+  "schema": "CGX-CGP-IES-AUTHORITY-PHASE-REF/0.1",
+  "status": "PUBLIC_SAFE_REFERENCE",
+  "source_target": "Cognigrex.cgx:/extensions/cgp-ies/authority-phase",
+  "detailed_contract_class": "Restricted",
+  "detailed_contract_provider": "INTERNAL_GOVERNANCE_PROVIDER",
+  "detailed_contract_ref": "cgx://internal/governance/root-authority-phase",
+  "public_safe_invariants": [
+    "pre-launch consequential mutation, promotion, deployment and publication require current root-authority approval",
+    "root authority may halt, reject, revoke, rollback or require re-proof",
+    "authority approval cannot manufacture evidence, change measured physical state, or convert an unverified claim into VERIFIED",
+    "distributed components do not imply distributed constitutional authority",
+    "authority transition requires explicit launch/decentralisation gates, empirical readback and a promoted governance state",
+    "missing or unreadable internal authority contract holds consequential action"
+  ],
+  "release_rule": "Do not project the detailed authority topology, credentials, override mechanics, internal rationale, or named internal role mapping to public surfaces.",
+  "public_projection": "owner-governed pre-launch validation with staged transition to distributed governance after verified launch gates",
+  "raphael_boundary": "Raphael internal hypotheses/models remain internal by release class and evidence state; public Raphael output is separately approved projection only."
+}
