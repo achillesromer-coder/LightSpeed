@@ -28,10 +28,10 @@ def assess_custodial(resolution, assessment):
                 decision="HOLD"
                 reasons.append("authority-not-confirmed")
             hp=assessment.get("hard_predicates",{})
-            required=[
-                "SAFETY","LEGAL_OR_RIGHTS_AUTHORITY","ECOLOGY","RESOURCE_BUDGET",
-                "WASTE_OR_CLOSURE","SECURITY","SUCCESSION","STOP_PATH"
-            ]
+            required=list(resolution.get("hard_predicates") or [])
+            if not required:
+                decision="HOLD"
+                reasons.append("source-hard-predicate-contract-missing")
             missing=[x for x in required if hp.get(x) is not True]
             if missing:
                 decision="HOLD"
@@ -62,7 +62,10 @@ def main():
       "decision":decision,
       "hold_reasons":reasons,
       "resolution":resolution,
-      "assessment_supplied":assessment is not None
+      "assessment_supplied":assessment is not None,
+      "source_driven_hard_predicates":resolution.get("hard_predicates",[]),
+      "decision_receipt_schema":resolution.get("shared_components",{}).get("decision_receipt"),
+      "authority_limit":"Custodial preflight applies parent-owned source policy and may HOLD only under declared gate/safety conditions. It does not create moral, semantic, ownership, representation or execution authority."
     }
     print(json.dumps(receipt,indent=2,sort_keys=True))
     return 3 if decision=="HOLD" else 0
