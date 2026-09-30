@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from lightspeed_runtime.contracts import AchillesActionEnvelope, AssetRecord, LabRunContract
+from lightspeed_runtime.cgx_query_planner import compile_query_plan
 from lightspeed_runtime.domain_registry import get_source_type_definition
 from lightspeed_runtime.runtime import LightSpeedRuntime
 
@@ -67,6 +68,31 @@ class OracleMorpheusBridge:
 
     def __init__(self, runtime: LightSpeedRuntime) -> None:
         self.runtime = runtime
+
+    def plan_query(
+        self,
+        raw_query: str,
+        *,
+        facet_schema: dict[str, dict] | None = None,
+        umbrella_terms: list[str] | dict[str, list[str]] | None = None,
+        capability_manifest: dict | None = None,
+        structured_constraints: dict[str, list[str] | str] | None = None,
+        structured_payload: dict | None = None,
+    ) -> dict:
+        """Compile free text into a minimal umbrella query plus native facets.
+
+        The bridge does not silently apply unsupported filters. Provider/UI adapters
+        consume the returned controls, and progressive hydration is triggered only
+        after the first bounded execution reports insufficiency.
+        """
+        return compile_query_plan(
+            raw_query,
+            facet_schema=facet_schema,
+            umbrella_terms=umbrella_terms,
+            capability_manifest=capability_manifest,
+            structured_constraints=structured_constraints,
+            structured_payload=structured_payload,
+        )
 
     def search(self, query: str, *, sources: Iterable[str] | None = None, limit: int = 10) -> list[SearchResult]:
         allowed = set(sources or [])
