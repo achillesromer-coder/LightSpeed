@@ -206,9 +206,15 @@ def domain_payload(domain: str, domains: dict, inclusion: dict, seed_ref: dict, 
         "authority_transfer":False
       },
       "identity/agent_bindings.json":{
-        "schema_version":"0.3","principal_agent":principal,
+        "schema_version":"0.4","principal_agent":principal,
         "authority":"policy+capability+scoped-owner bounded",
-        "network_or_model_strength_never_grants_authority":True
+        "runtime_contract":"Cognigrex.cgx:/agents",
+        "technology_stack":"Cognigrex.cgx:/stack",
+        "assurance_source":"Cognigrex.cgx:/assurance",
+        "custodial_source":"Cognigrex.cgx:/extensions/cgp-ies",
+        "model_provider_is_replaceable_capability":True,
+        "network_or_model_strength_never_grants_authority":True,
+        "execution_requires_scoped_lease_and_applicable_preflights":True
       },
       "identity/legacy_aliases.json":legacy_aliases(domain),
       "governance/authority_model.json":{
