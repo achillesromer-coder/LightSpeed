@@ -61,3 +61,22 @@ def test_hybridisation_must_keep_one_primary_view_and_same_object_set():
     failures = failures_for(policy)
     assert any("exactly one primary view" in failure for failure in failures)
     assert any("same stable object set" in failure for failure in failures)
+
+
+def query_failures_for(policy):
+    return validator.validate_query_normalisation_policy(policy)
+
+
+def test_query_normalisation_policy_contract_passes():
+    assert query_failures_for(load_json("query_normalisation_policy.json")) == []
+
+
+def test_query_normalisation_requires_native_control_precedence_and_no_mass_hydration():
+    policy = copy.deepcopy(load_json("query_normalisation_policy.json"))
+    policy["hard_constraints"].remove(
+        "when a native checkbox, dropdown, range, scope or selector can represent a constraint, use that control before adding query prose"
+    )
+    policy["progressive_hydration"]["never"] = "hydrate everything"
+    failures = query_failures_for(policy)
+    assert any("missing hard constraints" in failure for failure in failures)
+    assert any("no-mass-hydration" in failure for failure in failures)
