@@ -137,6 +137,23 @@ def legacy_lens_profile(domain: str) -> dict:
         "authority_rule":"lens selection never promotes semantic authority, evidence state or permissions"
     }
 
+def assurance_binding(domain: str) -> dict:
+    registry=load("assurance_method_registry.json")
+    matrix=load("assurance_selection_matrix.json")
+    return {
+        "schema":"CGX-ASSURANCE-BINDINGS/0.1",
+        "domain":domain,
+        "source_path":registry.get("location"),
+        "binding_mode":"REFERENCE",
+        "router":"scripts/cgx_assurance_route.py",
+        "method_registry_schema":registry.get("schema"),
+        "selection_matrix_schema":matrix.get("schema"),
+        "authority_transfer":False,
+        "risk_acceptance_authority":False,
+        "certification_claim":False,
+        "rule":"child references parent assurance methods and unified risk objects; domain semantic ownership and legitimate acceptance authority remain scoped"
+    }
+
 def extension_binding(domain: str) -> dict:
     registry=load("custodial_extension_registry.json")
     ext=next(x for x in registry.get("extensions",[]) if x.get("id")=="cgp-ies")
@@ -179,6 +196,7 @@ def domain_payload(domain: str, domains: dict, inclusion: dict, seed_ref: dict, 
         namespace=cfg.get("namespace")
         parent="Cognigrex.cgx"
     return {
+      "assurance/bindings.json":assurance_binding(domain),
       "extensions/bindings.json":extension_binding(domain),
       "identity/domain.json":{
         "schema_version":"0.3","domain_id":domain,"display_name":display,
