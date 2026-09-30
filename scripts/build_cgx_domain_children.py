@@ -330,8 +330,8 @@ def main() -> int:
     if gp.get("current_recovery_sha256")!=EXPECTED["sha256"]:
         raise SystemExit("FAIL: domains.json Recovery pointer mismatch")
     inc_auth=inclusion.get("current_cgx_authority",{})
-    if inc_auth.get("state_id")!="S91" or inc_auth.get("carrier_sha256")!=EXPECTED["sha256"]:
-        raise SystemExit("FAIL: corpus inclusion registry is not current to S91 Recovery")
+    if inc_auth.get("state_id")!=EXPECTED["state_id"] or inc_auth.get("carrier_sha256")!=EXPECTED["sha256"]:
+        raise SystemExit("FAIL: corpus inclusion registry is not current to S92 Recovery")
     boundary=fixture.get("current_authority_boundary",{})
     if boundary.get("recovery_sha256")!=EXPECTED["sha256"]:
         raise SystemExit("FAIL: pilot fixture authority boundary is not current to S92 Recovery")
