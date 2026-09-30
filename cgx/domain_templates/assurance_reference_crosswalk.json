@@ -141,6 +141,24 @@
       "topic": "product circularity data",
       "status": "current reference",
       "url": "https://www.iso.org/"
+    },
+    {
+      "id": "ISO-IEC-IEEE-15026-2-2022",
+      "topic": "assurance-case structure terminology",
+      "status": "published current reference",
+      "url": "https://www.iso.org/standard/80625.html"
+    },
+    {
+      "id": "OWASP-AGENTIC-2026",
+      "topic": "agentic AI security risks and controls",
+      "status": "2026 community security reference; not certification",
+      "url": "https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/"
+    },
+    {
+      "id": "MITRE-ATLAS",
+      "topic": "AI adversary tactics/techniques and red-team knowledge",
+      "status": "living threat knowledge base; refresh at use",
+      "url": "https://atlas.mitre.org/"
     }
   ],
   "refresh_rule": "Before regulatory, certification, procurement or high-consequence use, refresh edition/status/applicability from the issuing body and jurisdiction; never infer compliance from registry presence."
