@@ -135,7 +135,8 @@
         "decision_receipt": "cgp_ies_decision_receipt_schema.json",
         "fixtures": "cgp_ies_fixture_scenarios.json",
         "authority_phase": "cgp_ies_authority_phase_ref.json",
-        "release_visibility": "cgp_ies_release_visibility_policy.json"
+        "release_visibility": "cgp_ies_release_visibility_policy.json",
+        "object_envelope": "cgp_ies_object_envelope_schema.json"
       }
     }
   ]
