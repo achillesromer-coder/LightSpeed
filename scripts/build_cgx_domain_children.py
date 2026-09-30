@@ -137,6 +137,25 @@ def legacy_lens_profile(domain: str) -> dict:
         "authority_rule":"lens selection never promotes semantic authority, evidence state or permissions"
     }
 
+def extension_binding(domain: str) -> dict:
+    registry=load("custodial_extension_registry.json")
+    ext=next(x for x in registry.get("extensions",[]) if x.get("id")=="cgp-ies")
+    return {
+        "schema":"CGX-EXTENSION-BINDINGS/0.1",
+        "domain":domain,
+        "bindings":[{
+            "extension_id":ext["id"],
+            "source_path":ext["source_path"],
+            "binding_mode":ext["binding_mode"],
+            "default_mode":ext["defaults"][domain],
+            "toggle_modes":ext["toggle_modes"],
+            "source_status":registry.get("status"),
+            "fail_behaviour":ext.get("fail_behaviour",{}),
+            "authority_transfer":False
+        }],
+        "rule":"binding points to parent-owned extension policy; child/agent does not gain authority by loading it"
+    }
+
 def domain_payload(domain: str, domains: dict, inclusion: dict, seed_ref: dict, fixture: dict) -> dict[str,object]:
     if domain=="lightspeed":
         em=domains["domains"]["emassc"]
@@ -160,6 +179,7 @@ def domain_payload(domain: str, domains: dict, inclusion: dict, seed_ref: dict, 
         namespace=cfg.get("namespace")
         parent="Cognigrex.cgx"
     return {
+      "extensions/bindings.json":extension_binding(domain),
       "identity/domain.json":{
         "schema_version":"0.3","domain_id":domain,"display_name":display,
         "filespace_filename":cfg["file"],"preferred_namespace":namespace,

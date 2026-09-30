@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-DOMAIN-TEMPLATES/0.2",
+  "schema": "CGX-DOMAIN-TEMPLATES/0.3",
   "namespace_status": "provisional-unbound",
   "domains": {
     "romer": {
@@ -140,7 +140,8 @@
     "export",
     "network",
     "residency",
-    "licence"
+    "licence",
+    "custodial-extension"
   ],
   "credential_policy": "secret-reference-only",
   "parent_filespace": {
@@ -161,7 +162,10 @@
     "cross_domain_bridges": "cross_domain_bridge_registry.json",
     "semantic_views": "semantic_view_lens_registry.json",
     "view_selection": "view_selection_policy.json",
-    "layout_convergence": "layout_convergence_contract.md"
+    "layout_convergence": "layout_convergence_contract.md",
+    "custodial_extension_registry": "custodial_extension_registry.json",
+    "cgp_ies_policy_pack": "cgp_ies_policy_pack.json",
+    "cgp_ies_fixtures": "cgp_ies_fixture_scenarios.json"
   },
   "generation_policy": {
     "source_authority": "latest-durably-observed-Recovery-authority-only",
@@ -194,5 +198,14 @@
       "exact_byte_match": true,
       "local_cmp_exit": 0
     }
+  },
+  "shared_extensions": {
+    "owner": "Cognigrex.cgx:/extensions",
+    "binding_rule": "REFERENCE; child binding is configuration, not authority transfer",
+    "resolver": "scripts/resolve_cgx_extensions.py",
+    "validator": "scripts/validate_cgp_ies_extension.py",
+    "extensions": [
+      "cgp-ies"
+    ]
   }
 }

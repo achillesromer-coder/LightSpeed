@@ -1,0 +1,103 @@
+{
+  "schema": "CGX-EXTENSION-REGISTRY/0.1",
+  "status": "implementation-ready / parent-carrier-hydration-pending",
+  "location": "Cognigrex.cgx:/extensions",
+  "purpose": "Declare optional/shared Cognigrex extensions once at parent scope and bind children by reference rather than duplicating policy payload into every agent or domain carrier.",
+  "authority_rule": "extension-selection-never-creates-authority; semantic and operational authority remain with scoped owners and leases",
+  "extensions": [
+    {
+      "id": "cgp-ies",
+      "display": "Custodian Growth, Perpetuity Systems & Inter-Special Egalitarian Safeguards",
+      "source_path": "Cognigrex.cgx:/extensions/cgp-ies",
+      "source_template": "cgp_ies_policy_pack.json",
+      "binding_mode": "REFERENCE",
+      "cache_policy": "hash-pinned-metadata-only",
+      "toggle_modes": [
+        "OFF",
+        "OBSERVE",
+        "ADVISE",
+        "GATE",
+        "ENFORCE_SAFETY"
+      ],
+      "mode_semantics": {
+        "OFF": "Extension is not consulted. Permitted only for low-consequence work that is already bounded by other governing controls.",
+        "OBSERVE": "Record relevant custodial/evidence/affected-party context without changing outcome or permissions.",
+        "ADVISE": "Return structured findings, conflicts, options and unresolved affected-party lenses; cannot block by itself.",
+        "GATE": "Require declared admissibility checks before consequential execution/promotion. Failed or unknown hard predicates HOLD the consequential action.",
+        "ENFORCE_SAFETY": "May enforce only pre-existing hard safety, authority, replication, containment, stop and life/ecology-preservation constraints. It is not a sovereign moral optimiser."
+      },
+      "defaults": {
+        "romer": "ADVISE",
+        "eco": "ADVISE",
+        "emassc": "OBSERVE",
+        "lightspeed": "OBSERVE"
+      },
+      "automatic_escalation": [
+        {
+          "when": {
+            "execution_depth": [
+              "execute",
+              "build",
+              "publish"
+            ],
+            "cascade_min": "C2"
+          },
+          "minimum_mode": "GATE",
+          "reason": "consequential execution"
+        },
+        {
+          "when": {
+            "tags_any": [
+              "replication",
+              "resource-extraction",
+              "irreversible",
+              "hazardous-material",
+              "planetary-protection",
+              "external-contact",
+              "life-impact",
+              "ecosystem-intervention"
+            ]
+          },
+          "minimum_mode": "GATE",
+          "reason": "high-consequence custodial domain"
+        },
+        {
+          "when": {
+            "tags_any": [
+              "replication-control",
+              "hard-stop",
+              "containment",
+              "life-support",
+              "hazard-control"
+            ],
+            "execution_depth": [
+              "execute",
+              "build"
+            ]
+          },
+          "minimum_mode": "ENFORCE_SAFETY",
+          "reason": "independent safety-plane control only"
+        },
+        {
+          "when": {
+            "execution_depth": [
+              "inspect",
+              "propose",
+              "simulate"
+            ],
+            "cascade_max": "C1"
+          },
+          "maximum_mode": "ADVISE",
+          "reason": "analysis remains non-blocking unless another gate already applies"
+        }
+      ],
+      "fail_behaviour": {
+        "source_unavailable_low_consequence": "continue-with-extension-unavailable-receipt",
+        "source_unavailable_consequential": "HOLD",
+        "source_integrity_mismatch": "HOLD",
+        "unknown_affected_party": "preserve-unknown-and-increase-reversibility; not automatic prohibition",
+        "conflicting_lenses": "preserve dissent; compare admissible options; no scalar sovereign-good score"
+      }
+    }
+  ]
+}

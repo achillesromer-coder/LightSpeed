@@ -1,0 +1,74 @@
+{
+  "schema": "CGX-CGP-IES-FIXTURES/0.1",
+  "scenarios": [
+    {
+      "id": "F1",
+      "domain": "romer",
+      "execution_depth": "execute",
+      "reasoning_depth": "standard",
+      "cascade_class": "C3",
+      "tags": [
+        "resource-extraction",
+        "autonomous-fleet"
+      ],
+      "expected_minimum": "GATE"
+    },
+    {
+      "id": "F2",
+      "domain": "eco",
+      "execution_depth": "inspect",
+      "reasoning_depth": "deep",
+      "cascade_class": "C1",
+      "tags": [
+        "field-observation"
+      ],
+      "expected_minimum": "ADVISE"
+    },
+    {
+      "id": "F3",
+      "domain": "eco",
+      "execution_depth": "execute",
+      "reasoning_depth": "deep",
+      "cascade_class": "C2",
+      "tags": [
+        "ecosystem-intervention",
+        "life-impact"
+      ],
+      "expected_minimum": "GATE"
+    },
+    {
+      "id": "F4",
+      "domain": "emassc",
+      "execution_depth": "simulate",
+      "reasoning_depth": "audit",
+      "cascade_class": "C1",
+      "tags": [
+        "hypothesis",
+        "model"
+      ],
+      "expected_minimum": "OBSERVE"
+    },
+    {
+      "id": "F5",
+      "domain": "lightspeed",
+      "execution_depth": "execute",
+      "reasoning_depth": "standard",
+      "cascade_class": "C3",
+      "tags": [
+        "replication-control"
+      ],
+      "expected_minimum": "ENFORCE_SAFETY"
+    },
+    {
+      "id": "F6",
+      "domain": "lightspeed",
+      "execution_depth": "inspect",
+      "reasoning_depth": "standard",
+      "cascade_class": "C0",
+      "tags": [
+        "runtime-read"
+      ],
+      "expected_minimum": "OBSERVE"
+    }
+  ]
+}

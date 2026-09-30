@@ -48,14 +48,17 @@ def main():
         views=load("semantic_view_lens_registry.json")
         shared_rel=load("relation_qualifier_contract.json")
         bridge=load("cross_domain_bridge_registry.json")
+        ext_registry=load("custodial_extension_registry.json")
+        cgp_policy=load("cgp_ies_policy_pack.json")
+        cgp_fixtures=load("cgp_ies_fixture_scenarios.json")
     except Exception as e:
         print(json.dumps({"status":"FAIL","failures":[str(e)]}))
         return 1
 
-    if domains.get("schema")!="CGX-DOMAIN-TEMPLATES/0.2":
-        failures.append("domains schema is not 0.2")
-    if shell.get("schema")!="CGX-CORPUS-AWARE-BASE-SHELL/0.4":
-        failures.append("base-shell contract is not 0.4")
+    if domains.get("schema")!="CGX-DOMAIN-TEMPLATES/0.3":
+        failures.append("domains schema is not 0.3")
+    if shell.get("schema")!="CGX-CORPUS-AWARE-BASE-SHELL/0.5":
+        failures.append("base-shell contract is not 0.5")
     if domains.get("parent_filespace",{}).get("file")!="Cognigrex.cgx":
         failures.append("parent filespace is not Cognigrex.cgx")
 
@@ -126,6 +129,22 @@ def main():
     ls=domains.get("domains",{}).get("emassc",{}).get("children",{}).get("lightspeed")
     if not ls or ls.get("file")!="LS.cgx":
         failures.append("LS.cgx is not bound beneath EMASSC")
+
+    cgp=[x for x in ext_registry.get("extensions",[]) if x.get("id")=="cgp-ies"]
+    if len(cgp)!=1:
+        failures.append("cgp-ies shared extension missing or duplicated")
+    else:
+        cgp=cgp[0]
+        if cgp.get("binding_mode")!="REFERENCE":
+            failures.append("cgp-ies must bind by reference")
+        if cgp.get("source_path")!="Cognigrex.cgx:/extensions/cgp-ies":
+            failures.append("cgp-ies parent source path mismatch")
+    if cgp_policy.get("schema")!="CGX-CGP-IES-POLICY/0.1":
+        failures.append("cgp-ies policy schema mismatch")
+    if len(cgp_fixtures.get("scenarios",[]))<6:
+        failures.append("cgp-ies fixture coverage below six scenarios")
+    if "extensions/bindings" not in shell.get("required_sections",[]):
+        failures.append("base shell does not require extension binding")
 
     proof=receipt.get("proof",{})
     if proof.get("fixtures")!=3 or proof.get("failures")!=0:
