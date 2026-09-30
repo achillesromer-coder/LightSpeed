@@ -75,7 +75,10 @@
         "FUNCTIONAL_SAFETY",
         "FTA",
         "CONTINUITY_RECOVERY",
-        "V_AND_V"
+        "V_AND_V",
+        "ASSURANCE_CASE",
+        "AGENTIC_SECURITY",
+        "SOFTWARE_SAFETY"
       ],
       "minimum_state": "SAFETY_CASE"
     },
@@ -134,7 +137,9 @@
         "AI_IMPACT",
         "CYBER_THREAT",
         "FUNCTIONAL_SAFETY",
-        "V_AND_V"
+        "V_AND_V",
+        "AGENTIC_SECURITY",
+        "SOFTWARE_SAFETY"
       ],
       "minimum_state": "VERIFY"
     },
@@ -157,7 +162,9 @@
         "STPA",
         "AI_IMPACT",
         "CYBER_THREAT",
-        "FUNCTIONAL_SAFETY"
+        "FUNCTIONAL_SAFETY",
+        "AGENTIC_SECURITY",
+        "SOFTWARE_SAFETY"
       ],
       "minimum_state": "VERIFY"
     },
@@ -175,7 +182,8 @@
       "must_include": [
         "LIFECYCLE_INHERITANCE",
         "HAZARD_ANALYSIS",
-        "CONTINUITY_RECOVERY"
+        "CONTINUITY_RECOVERY",
+        "ASSURANCE_CASE"
       ],
       "minimum_state": "SAFETY_CASE"
     },
@@ -196,7 +204,8 @@
         "HAZARD_ANALYSIS",
         "FMEA",
         "BOW_TIE",
-        "CONTINUITY_RECOVERY"
+        "CONTINUITY_RECOVERY",
+        "HUMAN_FACTORS"
       ],
       "minimum_state": "VERIFY"
     },
@@ -214,9 +223,87 @@
         "PLANETARY_PROTECTION",
         "ECO_BIOSECURITY",
         "HAZARD_ANALYSIS",
-        "V_AND_V"
+        "V_AND_V",
+        "ASSURANCE_CASE"
       ],
       "minimum_state": "SAFETY_CASE"
+    },
+    {
+      "id": "AS-12",
+      "domain": "lightspeed",
+      "execution_depth": "execute",
+      "cascade_class": "C3",
+      "tags": [
+        "safety-critical-software",
+        "control-software",
+        "autonomy",
+        "agent"
+      ],
+      "must_include": [
+        "SOFTWARE_SAFETY",
+        "STPA",
+        "V_AND_V",
+        "CYBER_THREAT",
+        "AGENTIC_SECURITY"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AS-13",
+      "domain": "lightspeed",
+      "execution_depth": "execute",
+      "cascade_class": "C2",
+      "tags": [
+        "multi-agent",
+        "tool-use",
+        "memory",
+        "mcp",
+        "external-input"
+      ],
+      "must_include": [
+        "AGENTIC_SECURITY",
+        "CYBER_THREAT",
+        "AI_IMPACT"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AS-14",
+      "domain": "romer",
+      "execution_depth": "build",
+      "cascade_class": "C2",
+      "tags": [
+        "process",
+        "protection-layer",
+        "safety-instrumented-system",
+        "lopa"
+      ],
+      "must_include": [
+        "HAZOP",
+        "LOPA",
+        "FUNCTIONAL_SAFETY",
+        "V_AND_V"
+      ],
+      "minimum_state": "VERIFY"
+    },
+    {
+      "id": "AS-15",
+      "domain": "romer",
+      "execution_depth": "build",
+      "cascade_class": "C2",
+      "tags": [
+        "intersol",
+        "facility",
+        "human-factors",
+        "maintenance-access",
+        "emergency-egress"
+      ],
+      "must_include": [
+        "HUMAN_FACTORS",
+        "HAZARD_ANALYSIS",
+        "V_AND_V"
+      ],
+      "minimum_state": "VERIFY"
     }
   ]
 }
