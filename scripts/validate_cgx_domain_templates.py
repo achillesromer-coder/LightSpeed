@@ -99,6 +99,42 @@ def validate_view_selection_policy(policy, view_ids):
 
     return failures
 
+def validate_query_normalisation_policy(policy):
+    failures=[]
+    if policy.get("schema")!="CGX-QUERY-NORMALISATION-POLICY/0.1":
+        failures.append("query-normalisation policy schema is not 0.1")
+    if policy.get("status") not in {"review-blueprint","active"}:
+        failures.append("query-normalisation policy status is not recognised")
+    required_constraints={
+        "raw intent is retained for lineage and may not be silently rewritten",
+        "no facet or constraint may be invented merely to improve retrieval",
+        "when a native checkbox, dropdown, range, scope or selector can represent a constraint, use that control before adding query prose",
+        "do not hydrate full files or corpora when a bounded structured packet is sufficient for the selected tool",
+        "do not assign every model the same role or assume every LLM has the same capability",
+        "query normalisation cannot widen security, authority, evidence or mutation scope",
+    }
+    constraints=set(policy.get("hard_constraints") or [])
+    missing=sorted(required_constraints-constraints)
+    if missing:
+        failures.append("query-normalisation policy missing hard constraints: "+", ".join(missing))
+    profiles=policy.get("capability_native_profiles") or {}
+    for required in ("retrieval_search","llm_semantic","formal_solver","simulation","mpl","gmat","renderer_ui","agent_orchestrator"):
+        if required not in profiles:
+            failures.append(f"query-normalisation policy missing capability profile: {required}")
+    hydration=policy.get("progressive_hydration") or {}
+    if "umbrella query" not in str(hydration.get("stage_0","")):
+        failures.append("query-normalisation stage 0 is not umbrella-query first")
+    if "mass-hydrate" not in str(hydration.get("never","")):
+        failures.append("query-normalisation policy lacks no-mass-hydration rule")
+    output=policy.get("output") or {}
+    if output.get("canonical_mutation") is not False:
+        failures.append("query-normalisation output must not mutate canon")
+    required_output={"raw_query","umbrella_query","applied_facets","controls_used","capability_route","capability_packet","hydration_stage","lineage"}
+    missing_output=sorted(required_output-set(output.get("fields") or []))
+    if missing_output:
+        failures.append("query-normalisation output missing fields: "+", ".join(missing_output))
+    return failures
+
 def main():
     failures=[]; warnings=[]
     try:
@@ -107,6 +143,7 @@ def main():
         receipt=load("pilot_fixture_validation_receipt_2026-09-23.json")
         views=load("semantic_view_lens_registry.json")
         view_policy=load("view_selection_policy.json")
+        query_policy=load("query_normalisation_policy.json")
         shared_rel=load("relation_qualifier_contract.json")
         bridge=load("cross_domain_bridge_registry.json")
     except Exception as e:
@@ -155,6 +192,7 @@ def main():
 
     view_ids=view_ids_from_registry(views)
     failures.extend(validate_view_selection_policy(view_policy,view_ids))
+    failures.extend(validate_query_normalisation_policy(query_policy))
 
     domain_files={
         "romer":("romer_type_registry.json","romer_relation_registry.json"),
