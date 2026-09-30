@@ -14,12 +14,11 @@ DT = ROOT / "cgx" / "domain_templates"
 RUNTIME_DEFAULT = ROOT / "runtime" / "python"
 
 EXPECTED = {
-    "state_id": "S91",
-    "release": "v1.61",
-    "sha256": "1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
-    "content_root": "af640b499078853371196cf7c905979cebf0761c15552b6b8dfbf3ff3d04448d",
-    "dbr_root": "18d43abf68b5f7857a21dcb480d9970e95cdacfc869c61b3b1497e900f0dcc64",
-    "topology": "150e5267792f43f47807a9f5ca61f12db8077ac98153c2cc6c306a4177de937e",
+    "state_id": "S92",
+    "sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+    "content_root": "bf851642ac5bef93e8b9663f71ea4aa94ede30bf057528101773dd12de830bc1",
+    "dbr_root": "a7da29629904db2ac82218eaf36c916adbc057a7e954104053078afbf288ad66",
+    "topology": "13cc735955ff8aaabdaf43aed968b510b5dab85416fbb7adee5807215c781074",
 }
 
 def sha256_file(path: Path) -> str:
@@ -91,7 +90,7 @@ def intake_queue(domain: str) -> dict:
             {"priority":1,"source":"RFS_EMFF_Digital_Twin_Test_Sandbox_v0_1.xlsx","sha256":"1cc3f421ed128186b1ab018f7af8eda27bc30572b21bc8b8a1d2bada91c9a58f","mode":"TRACK/REFERENCE then semantic assimilation","target":"/emassc/rfs-emff","status":"review"},
         ],
         "lightspeed":[
-            {"priority":1,"source":"S91 runtime/conformance provider surfaces","mode":"capability/reference binding","target":"/lightspeed/runtime","status":"review"}
+            {"priority":1,"source":"S92 runtime/conformance provider surfaces","mode":"capability/reference binding","target":"/lightspeed/runtime","status":"review"}
         ]
     }
     return {"schema_version":"0.3","domain":domain,"default_action":"review","auto_commit":False,"items":items[domain]}
@@ -245,7 +244,7 @@ def domain_payload(domain: str, domains: dict, inclusion: dict, seed_ref: dict, 
       },
       "corpus/common_authority_map.json":{
         "schema_version":"0.3","domain":domain,
-        "transition_authority":{"acr3":"transition/provenance until GST-029","current_recovery":"S91/v1.61"},
+        "transition_authority":{"acr3":"transition/provenance until GST-029","current_recovery":"S92"},
         "source_families":[{"title":x.get("title"),"id":x.get("id"),"role":x.get("role")} for x in source_family_subset(domain,inclusion)]
       },
       "corpus/current_control_snapshot.json":{
@@ -309,7 +308,7 @@ def main() -> int:
     import cgx_hydration as hydration
 
     if sha256_file(args.master)!=EXPECTED["sha256"]:
-        raise SystemExit("FAIL: Recovery seed SHA-256 is not accepted S91")
+        raise SystemExit("FAIL: Recovery seed SHA-256 is not accepted S92")
     ws=kernel.open_workspace(args.master)
     try:
         check=kernel.verify(ws.root)
@@ -335,23 +334,23 @@ def main() -> int:
         raise SystemExit("FAIL: corpus inclusion registry is not current to S91 Recovery")
     boundary=fixture.get("current_authority_boundary",{})
     if boundary.get("recovery_sha256")!=EXPECTED["sha256"]:
-        raise SystemExit("FAIL: pilot fixture authority boundary is not current to S91 Recovery")
+        raise SystemExit("FAIL: pilot fixture authority boundary is not current to S92 Recovery")
 
     args.out_dir.mkdir(parents=True,exist_ok=True)
     work=args.out_dir/"work"
     if work.exists(): shutil.rmtree(work)
     work.mkdir()
-    template=work/"S91_seed_template"
+    template=work/"S92_seed_template"
     seed_result=hydration.create_seed_template(template,args.master,profile_id="reader")
     if not seed_result.get("verify",{}).get("ok"):
-        raise SystemExit("FAIL: S91 seed-template verifier")
+        raise SystemExit("FAIL: S92 seed-template verifier")
 
     seed_ref={
       "object_id":"cgx:phase-a:42d99b46c0d322f08b59b7b7",
-      "state_id":"S91","release":"v1.61",
+      "state_id":EXPECTED["state_id"],
       "content_root":EXPECTED["content_root"],"dbr_root":EXPECTED["dbr_root"],
       "topology_snapshot":EXPECTED["topology"],"carrier_sha256":EXPECTED["sha256"],
-      "recovery_file_id":gp.get("current_recovery_file_id"),"verifier":"PASS"
+      "recovery_file_id":gp.get("current_recovery_file_id"),"promotion_verification":"s92_recovery_promotion_verification_2026-09-30.json","verifier":"PASS"
     }
 
     build_receipt={"schema":"CGX-DOMAIN-CHILD-BUILD/0.1","seed":seed_ref,"fixture_gate":fixture.get("fixture_bundle",{}),"outputs":{}}
@@ -397,7 +396,7 @@ def main() -> int:
             "commit_verified":state.get("commit_verified"),"verify":"PASS","packed_reopen_verify":"PASS"
         }
 
-    receipt_path=args.out_dir/"BUILD_RECEIPT_S91_DOMAIN_CHILDREN.json"
+    receipt_path=args.out_dir/"BUILD_RECEIPT_S92_DOMAIN_CHILDREN.json"
     receipt_path.write_text(json.dumps(build_receipt,indent=2,sort_keys=True,ensure_ascii=False)+"\n",encoding="utf-8")
     if not args.keep_workdirs: shutil.rmtree(work)
     print(json.dumps(build_receipt,sort_keys=True))
