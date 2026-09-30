@@ -1,0 +1,88 @@
+{
+  "schema": "CGX-ASSURANCE-CASE-CONTRACT/0.1",
+  "reference": "ISO/IEC/IEEE 15026-2:2022 structural terminology; domain-specific safety/security/dependability rules still govern content quality",
+  "purpose": "Represent an auditable bounded claim-argument-evidence case with explicit context, assumptions, defeaters and review state.",
+  "required": [
+    "case_id",
+    "property",
+    "system_boundary",
+    "configuration",
+    "claim_root",
+    "arguments",
+    "evidence",
+    "context",
+    "assumptions",
+    "defeaters",
+    "owner",
+    "review_state",
+    "validity_envelope",
+    "last_verified"
+  ],
+  "claim": {
+    "required": [
+      "claim_id",
+      "statement",
+      "scope",
+      "owner",
+      "status"
+    ],
+    "status_values": [
+      "PROPOSED",
+      "SUPPORTED_WITHIN_SCOPE",
+      "CHALLENGED",
+      "HOLD",
+      "SUPERSEDED"
+    ]
+  },
+  "argument": {
+    "required": [
+      "argument_id",
+      "supports_claim_ids",
+      "premises",
+      "reasoning_method"
+    ],
+    "optional": [
+      "counterarguments",
+      "uncertainty",
+      "specialist_review"
+    ]
+  },
+  "evidence": {
+    "required": [
+      "evidence_id",
+      "source_identity",
+      "revision_or_hash",
+      "epistemic_state",
+      "validity_scope"
+    ],
+    "optional": [
+      "calibration",
+      "test_receipt",
+      "independence",
+      "freshness"
+    ]
+  },
+  "defeater": {
+    "required": [
+      "defeater_id",
+      "targets",
+      "description",
+      "state"
+    ],
+    "states": [
+      "OPEN",
+      "MITIGATED",
+      "REJECTED_WITH_EVIDENCE",
+      "ACCEPTED_LIMITATION"
+    ]
+  },
+  "close_conditions": [
+    "all material claims have at least one declared argument path",
+    "argument premises are linked to evidence or explicit assumptions",
+    "blocking defeaters are closed or force HOLD",
+    "control verification is distinct from control existence",
+    "configuration and validity envelope match the requested operation",
+    "acceptance authority is external to the assurance case itself"
+  ],
+  "output_rule": "SUPPORTED_WITHIN_SCOPE is not certification, legal approval, custodial approval or execution permission."
+}
