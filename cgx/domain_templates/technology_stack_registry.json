@@ -299,5 +299,6 @@
       "condition": "CGX source integrity mismatch",
       "behaviour": "read-only/recovery mode; no canonical promotion"
     }
-  ]
+  ],
+  "location": "Cognigrex.cgx:/stack"
 }
