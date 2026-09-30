@@ -60,8 +60,10 @@
               "life-impact",
               "planetary-defense",
               "planetary-protection",
+              "public-projection",
               "replication",
               "resource-extraction",
+              "restricted-material",
               "successor-restart",
               "trajectory-change"
             ]
@@ -97,6 +99,21 @@
           },
           "maximum_mode": "ADVISE",
           "reason": "analysis remains non-blocking unless another gate already applies"
+        },
+        {
+          "when": {
+            "execution_depth": [
+              "publish"
+            ],
+            "tags_any": [
+              "public-projection",
+              "restricted-material",
+              "internal-raphael",
+              "internal-governance"
+            ]
+          },
+          "minimum_mode": "GATE",
+          "reason": "release-boundary publication"
         }
       ],
       "fail_behaviour": {
