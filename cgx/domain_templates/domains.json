@@ -179,7 +179,10 @@
     "agent_runtime": "agent_runtime_contract.json",
     "assurance_case": "assurance_case_contract.json",
     "agentic_security_threats": "agentic_security_threat_registry.json",
-    "agent_assurance_roles": "agent_assurance_role_matrix.json"
+    "agent_assurance_roles": "agent_assurance_role_matrix.json",
+    "assurance_relations": "assurance_relation_registry.json",
+    "mpl_assurance_adapter": "mpl_assurance_adapter.json",
+    "execution_lease": "execution_lease_contract.json"
   },
   "generation_policy": {
     "source_authority": "latest-durably-observed-Recovery-authority-only",
