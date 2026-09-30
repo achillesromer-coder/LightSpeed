@@ -8,6 +8,8 @@ on:
       - "scripts/cgx_custodial_preflight.py"
       - "scripts/validate_cgp_ies_extension.py"
       - "scripts/validate_cgx_domain_templates.py"
+      - "scripts/validate_cgx_preflight_chain.py"
+      - "scripts/cgx_consequence_preflight.py"
       - "scripts/validate_cgx_assurance.py"
       - "scripts/cgx_assurance_preflight.py"
       - "scripts/cgx_assurance_route.py"
@@ -34,6 +36,8 @@ jobs:
         run: python scripts/validate_cgp_ies_extension.py
       - name: Validate CGX assurance fixtures
         run: python scripts/validate_cgx_assurance.py
+      - name: Validate consequence preflight chain
+        run: python scripts/validate_cgx_preflight_chain.py
       - name: Route InterSol assurance scenario
         run: python scripts/cgx_assurance_route.py --domain romer --execution-depth build --cascade-class C2 --tags intersol,facility,battery-room,public-route
       - name: Resolve observational scenario
