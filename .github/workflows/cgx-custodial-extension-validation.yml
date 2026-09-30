@@ -11,6 +11,7 @@ on:
       - "scripts/validate_cgx_domain_templates.py"
       - "scripts/validate_cgx_execution_lease.py"
       - "scripts/build_cgp_ies_parent_candidate.py"
+      - "scripts/build_cgx_domain_children.py"
       - "scripts/validate_cgx_preflight_chain.py"
       - "scripts/cgx_consequence_preflight.py"
       - "scripts/validate_cgx_assurance.py"
