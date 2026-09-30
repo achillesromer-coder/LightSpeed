@@ -1,7 +1,7 @@
 {
   "schema": "CGX-CGP-IES-LAUNCH-FRONTIER/0.1",
   "queue_id": "CGX-LAUNCH-FRONTIER-2026-09-30",
-  "status": "ACTIVE_PRE_LAUNCH / PARENT_DESCENDANT_BUILD_READY / EMPIRICAL_GATES_OPEN",
+  "status": "ACTIVE_PRE_LAUNCH / S92_RECOVERY_CURRENT / S92_CHILD_REGENERATION_READY / EMPIRICAL_GATES_OPEN",
   "source_authority": {
     "recovery_state": "S91",
     "recovery_release": "v1.61",
@@ -71,7 +71,7 @@
       "audit": "Achilles",
       "execution_class": "DIGITAL_WRITE",
       "cascade_class": "C2",
-      "state": "READY",
+      "state": "COMPLETE",
       "depends_on": [
         "CGX-LAUNCH-001"
       ],
@@ -83,7 +83,19 @@
         "packed reopen verifier passes"
       ],
       "evidence_class": "VERIFIED_BUILD_RECEIPT",
-      "release_reason": "CGX-LAUNCH-001 exact S91 hash/root/verifier proof closed"
+      "release_reason": "CGX-LAUNCH-001 exact S91 hash/root/verifier proof closed",
+      "completed_at": "2026-09-30",
+      "evidence": {
+        "candidate_state": "S92",
+        "candidate_sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+        "candidate_content_root": "bf851642ac5bef93e8b9663f71ea4aa94ede30bf057528101773dd12de830bc1",
+        "candidate_dbr_root": "a7da29629904db2ac82218eaf36c916adbc057a7e954104053078afbf288ad66",
+        "candidate_topology": "13cc735955ff8aaabdaf43aed968b510b5dab85416fbb7adee5807215c781074",
+        "validation_drive_id": "1qHjs52mH2S-PU4E5auqurIzfIXpxwA0G",
+        "build_receipt_drive_id": "1ycZ-tRfLnyZcKQ6-zv8YwdSW-C-gMuk-",
+        "canonical_verifier": "PASS",
+        "packed_reopen_verifier": "PASS"
+      }
     },
     {
       "task_id": "CGX-LAUNCH-003",
@@ -92,7 +104,7 @@
       "owner": "Achilles",
       "execution_class": "READ_ONLY",
       "cascade_class": "C2",
-      "state": "BLOCKED_BY_CGX-LAUNCH-002",
+      "state": "COMPLETE",
       "depends_on": [
         "CGX-LAUNCH-002"
       ],
@@ -104,7 +116,17 @@
         "no Restricted internal authority topology is embedded in public-safe extension source",
         "accept/reject recommendation refers to exact candidate hash"
       ],
-      "evidence_class": "INDEPENDENT_VERIFICATION"
+      "evidence_class": "INDEPENDENT_VERIFICATION",
+      "completed_at": "2026-09-30",
+      "evidence": {
+        "audit_drive_id": "1O4auaYLfBD4heLsZQu2tdu4xWB8ypUQR",
+        "audit_sha256": "6d55d526a9ee19c4542dd855187e90dd51579b7ab3184803a3250ab67a75d263",
+        "decision": "ACCEPT_TECHNICAL_CANDIDATE_FOR_ROOT_PROMOTION_GATE",
+        "parent_dbr_exact": true,
+        "source_components_exact": "10/10 semantic + canonical-byte exact",
+        "restricted_authority_boundary": "PASS",
+        "secret_pattern_findings": 0
+      }
     },
     {
       "task_id": "CGX-LAUNCH-004",
@@ -114,7 +136,7 @@
       "audit": "Achilles",
       "execution_class": "DIGITAL_WRITE",
       "cascade_class": "C3",
-      "state": "BLOCKED_BY_CGX-LAUNCH-003",
+      "state": "COMPLETE",
       "depends_on": [
         "CGX-LAUNCH-003"
       ],
@@ -125,7 +147,18 @@
         "prior S91 remains recoverable provenance",
         "current Recovery pointer is atomically updated"
       ],
-      "evidence_class": "AUTHORITY_PLUS_READBACK"
+      "evidence_class": "AUTHORITY_PLUS_READBACK",
+      "completed_at": "2026-09-30",
+      "evidence": {
+        "recovery_state": "S92",
+        "recovery_drive_id": "1ap1xHVQ0cDWeJDAVWxvY_VqMkSzwpG6i",
+        "recovery_sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+        "root_authority_receipt_ref": "gdrive:1C7jpNE-RarqdQA5bLy8QeFeZhY11evXn",
+        "download_readback_sha256_match": true,
+        "canonical_verifier": "PASS",
+        "predecessor_s91_retained": true,
+        "promotion_verification": "s92_recovery_promotion_verification_2026-09-30.json"
+      }
     },
     {
       "task_id": "CGX-LAUNCH-005",
@@ -135,7 +168,7 @@
       "audit": "Achilles",
       "execution_class": "DIGITAL_WRITE",
       "cascade_class": "C2",
-      "state": "BLOCKED_BY_CGX-LAUNCH-004",
+      "state": "READY",
       "depends_on": [
         "CGX-LAUNCH-004"
       ],
@@ -147,7 +180,8 @@
         "authority_phase_ref and release_visibility_ref are present",
         "nested child cannot weaken GATE or ENFORCE_SAFETY"
       ],
-      "evidence_class": "CHILD_BUILD_AND_CONFORMANCE"
+      "evidence_class": "CHILD_BUILD_AND_CONFORMANCE",
+      "release_reason": "Exact S92 Recovery promoted/readback verified; child generator pinned to S92."
     },
     {
       "task_id": "CGX-LAUNCH-006",
