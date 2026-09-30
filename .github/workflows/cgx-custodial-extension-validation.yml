@@ -49,6 +49,27 @@ jobs:
         run: python scripts/validate_cgp_ies_launch_frontier.py
       - name: Compile guarded parent candidate builder
         run: python -m py_compile scripts/build_cgp_ies_parent_candidate.py
+      - name: Package CGP-IES parent source bundle
+        run: |
+          mkdir -p /tmp/cgp-ies-source/cgx/domain_templates /tmp/cgp-ies-source/scripts
+          cp scripts/build_cgp_ies_parent_candidate.py /tmp/cgp-ies-source/scripts/
+          cp cgx/domain_templates/custodial_extension_registry.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_policy_pack.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_terminology_map.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_domain_adapter_registry.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_decision_receipt_schema.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_fixture_scenarios.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_owner_confirmation_values.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_authority_phase_ref.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_release_visibility_policy.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_object_envelope_schema.json /tmp/cgp-ies-source/cgx/domain_templates/
+          cp cgx/domain_templates/cgp_ies_parent_extension_manifest.json /tmp/cgp-ies-source/cgx/domain_templates/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cgp-ies-parent-source
+          path: /tmp/cgp-ies-source
+          if-no-files-found: error
+          retention-days: 7
       - name: Validate CGX assurance fixtures
         run: python scripts/validate_cgx_assurance.py
       - name: Validate consequence preflight chain
