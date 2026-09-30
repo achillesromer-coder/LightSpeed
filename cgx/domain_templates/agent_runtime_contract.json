@@ -20,7 +20,9 @@
     "surface_profile",
     "execution_lease_profile",
     "receipt_sink",
-    "stop_and_fallback_profile"
+    "stop_and_fallback_profile",
+    "agent_assurance_role_profile",
+    "agentic_security_profile"
   ],
   "invariants": [
     "model-is-capability-not-agent-identity",
@@ -117,5 +119,15 @@
     "role_matrix": "Cognigrex.cgx:/assurance/agent-roles",
     "agentic_security": "Cognigrex.cgx:/assurance/security/agentic",
     "assurance_case_contract": "Cognigrex.cgx:/assurance/cases"
+  },
+  "execution_lease": {
+    "contract": "execution_lease_contract.json",
+    "rule": "actual execution requires a current scoped lease; historical approvals and tool availability are not substitutes",
+    "default_on_missing": "NO_EXECUTION"
+  },
+  "runtime_entrypoint": {
+    "preferred": "scripts/run_cgx_agent_runtime.py",
+    "lower_level_internal": "scripts/run_cognigrex_supervisor.py",
+    "rule": "consequential execution enters through evidence/assurance/custodial/lease/safe-state envelope before delegating to Neo-supervised floors"
   }
 }
