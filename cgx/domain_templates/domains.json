@@ -161,6 +161,7 @@
     "cross_domain_bridges": "cross_domain_bridge_registry.json",
     "semantic_views": "semantic_view_lens_registry.json",
     "view_selection": "view_selection_policy.json",
+    "query_normalisation": "query_normalisation_policy.json",
     "layout_convergence": "layout_convergence_contract.md"
   },
   "generation_policy": {
