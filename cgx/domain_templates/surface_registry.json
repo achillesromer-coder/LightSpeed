@@ -29,7 +29,8 @@
         "evidence-views",
         "readiness",
         "release-safe-projections"
-      ]
+      ],
+      "release_gate": "Public projection requires explicit Public class + release approval; Internal/Restricted/Secret are not direct web payloads."
     },
     {
       "id": "mobile",
@@ -109,6 +110,10 @@
     "model-output-is-labelled-by-source-model-and-evidence-state",
     "consequential-actions-show-or-record-assurance-custodial-authority-and-safe-state status",
     "public/restricted/private projections are distinct release lenses",
-    "no surface may bypass independent safety controls"
+    "no surface may bypass independent safety controls",
+    "release-class-is-orthogonal-to-evidence-state",
+    "public-projection-requires-explicit-public-release-approval",
+    "internal-restricted-governance-topology-is-never-public-by-default",
+    "internal-raphael-models-remain-internal-unless-a-separate-public-projection-is-approved"
   ]
 }
