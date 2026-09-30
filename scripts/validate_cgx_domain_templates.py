@@ -58,6 +58,7 @@ def main():
         cgp_parent_hydration=load("cgp_ies_parent_extension_manifest.json")
         cgp_authority_ref=load("cgp_ies_authority_phase_ref.json")
         cgp_visibility=load("cgp_ies_release_visibility_policy.json")
+        s92_promotion=load("s92_recovery_promotion_verification_2026-09-30.json")
         assurance_registry=load("assurance_method_registry.json")
         assurance_schema=load("unified_assurance_object_schema.json")
         assurance_matrix=load("assurance_selection_matrix.json")
@@ -82,14 +83,14 @@ def main():
     if "seed-from-unpromoted-validation-candidate" not in gp.get("forbidden",[]):
         failures.append("unpromoted Validation seed is not fail-closed")
     expected_seed={
-        "state":"S91/v1.61",
-        "sha256":"1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
-        "content_root":"af640b499078853371196cf7c905979cebf0761c15552b6b8dfbf3ff3d04448d",
-        "dbr_root":"18d43abf68b5f7857a21dcb480d9970e95cdacfc869c61b3b1497e900f0dcc64",
-        "topology":"150e5267792f43f47807a9f5ca61f12db8077ac98153c2cc6c306a4177de937e",
+        "state":"S92",
+        "sha256":"722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+        "content_root":"bf851642ac5bef93e8b9663f71ea4aa94ede30bf057528101773dd12de830bc1",
+        "dbr_root":"a7da29629904db2ac82218eaf36c916adbc057a7e954104053078afbf288ad66",
+        "topology":"13cc735955ff8aaabdaf43aed968b510b5dab85416fbb7adee5807215c781074",
     }
-    if gp.get("current_recovery_at_2026_09_23")!=expected_seed["state"]:
-        failures.append("current Recovery pointer is not S91/v1.61")
+    if gp.get("current_recovery_state")!=expected_seed["state"]:
+        failures.append("current Recovery pointer is not S92")
     if gp.get("current_recovery_sha256")!=expected_seed["sha256"]:
         failures.append("current Recovery SHA-256 mismatch")
     if gp.get("current_recovery_content_root")!=expected_seed["content_root"]:
@@ -99,10 +100,15 @@ def main():
     if gp.get("current_recovery_topology")!=expected_seed["topology"]:
         failures.append("current Recovery topology mismatch")
     if gp.get("accepted_later_candidate") not in (None,"",[]):
-        warnings.append("later candidate remains populated after S91 Recovery promotion")
+        warnings.append("later candidate remains populated after S92 Recovery promotion")
     promo=gp.get("recovery_promotion_evidence") or {}
-    if not promo.get("exact_byte_match"):
-        failures.append("S91 Recovery promotion lacks exact-byte-match receipt")
+    if not promo.get("exact_byte_match") or not promo.get("download_readback"):
+        failures.append("S92 Recovery promotion lacks exact-byte/readback receipt")
+    if s92_promotion.get("status")!="PROMOTED_AND_READBACK_VERIFIED":
+        failures.append("S92 promotion verification is not promoted/readback verified")
+    sr=s92_promotion.get("recovery",{})
+    if sr.get("sha256")!=expected_seed["sha256"] or sr.get("drive_id")!=gp.get("current_recovery_file_id"):
+        failures.append("S92 promotion verification does not match current Recovery pointer")
 
     shared=domains.get("shared_contracts",{})
     for key,name in shared.items():
@@ -175,10 +181,12 @@ def main():
         failures.append("cgp-ies release visibility schema mismatch")
     if "detailed root-authority topology" not in cgp_visibility.get("public_projection_deny",[]):
         failures.append("cgp-ies public deny list missing root authority topology")
-    if cgp_parent_hydration.get("status")!="PRE_CANONICAL_CANDIDATE_ONLY":
-        failures.append("cgp-ies parent hydration must remain pre-canonical candidate only")
-    if cgp_parent_hydration.get("seed",{}).get("sha256")!=expected_seed["sha256"]:
-        failures.append("cgp-ies parent hydration seed is not exact S91 Recovery")
+    if cgp_parent_hydration.get("status")!="PROMOTED_S92 / HISTORICAL_REPRODUCIBLE_BUILD_MANIFEST":
+        failures.append("cgp-ies parent hydration manifest promotion state mismatch")
+    if cgp_parent_hydration.get("seed",{}).get("sha256")!="1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f":
+        failures.append("cgp-ies historical parent build seed is not exact S91 predecessor")
+    if cgp_parent_hydration.get("promotion",{}).get("recovery_sha256")!=expected_seed["sha256"]:
+        failures.append("cgp-ies parent build manifest does not point to promoted S92")
     if "extensions/bindings" not in shell.get("required_sections",[]):
         failures.append("base shell does not require extension binding")
 
@@ -220,7 +228,7 @@ def main():
         "status":"PASS" if not failures else "FAIL",
         "failures":failures,
         "warnings":warnings,
-        "recovery_seed":gp.get("current_recovery_at_2026_09_23"),
+        "recovery_seed":gp.get("current_recovery_state"),
         "later_candidate":gp.get("accepted_later_candidate"),
         "fixture_bundle_sha256":receipt.get("fixture_bundle",{}).get("sha256"),
         "recovery_sha256":gp.get("current_recovery_sha256"),
