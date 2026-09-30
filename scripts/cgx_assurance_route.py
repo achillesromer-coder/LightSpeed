@@ -53,7 +53,7 @@ def route(domain,execution_depth,cascade_class="C0",tags=None):
         if matches(rule.get("when",{}),ctx):
             state=max_state(state,rule.get("minimum_state","LOG"))
     # High-consequence work with no matched specialist method is not silently clear.
-    if CASCADE[cascade_class]>=CASCADE["C3"] and execution_depth in ("execute","build") and not methods:
+    if CASCADE[cascade_class]>=CASCADE["C2"] and execution_depth in ("execute","build","publish") and not methods:
         state="HOLD"
     # SAFETY_CASE is a structured assurance claim/argument/evidence obligation,
     # not merely a higher severity label. Keep specialist analyses and add the
