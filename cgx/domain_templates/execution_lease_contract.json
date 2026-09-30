@@ -5,6 +5,7 @@
   "purpose": "Provide explicit, revocable, time-bounded execution authority downstream of evidence qualification, assurance and custodial preflights.",
   "required_fields": [
     "lease_id",
+    "lease_class",
     "state",
     "issued_by",
     "subject_agent",
@@ -15,9 +16,7 @@
     "max_cascade_class",
     "allowed_floors",
     "scope",
-    "revocable",
-    "stop_authority_ref",
-    "safe_state_ref"
+    "revocable"
   ],
   "state_values": [
     "PROPOSED",
@@ -38,9 +37,11 @@
     "configuration_ids"
   ],
   "consequential_additions": [
-    "risk_acceptance_ref",
     "assurance_receipt_ref",
     "custodial_receipt_ref",
+    "risk_acceptance_ref",
+    "stop_authority_ref",
+    "safe_state_ref",
     "rollback_or_recovery_ref"
   ],
   "invariants": [
@@ -54,7 +55,9 @@
     "revocation-and-independent-stop-remain-reachable",
     "tool-access-does-not-expand-beyond-both-lease-and-tool-local-policy",
     "missing-or-stale-lease-means-no-consequential-execution",
-    "historical-global-approval-manifest-is-not-an-active-execution-lease"
+    "historical-global-approval-manifest-is-not-an-active-execution-lease",
+    "compute-only-lease-cannot-authorise-external-write-publication-or-physical-actuation",
+    "physical-actuation-requires-independent-safety-plane-in-addition-to-lease"
   ],
   "validation_rules": [
     "valid_from and valid_until use timezone-aware timestamps and current time must fall within the interval",
@@ -62,12 +65,22 @@
     "requested cascade class must not exceed max_cascade_class",
     "requested task/project/object/configuration must fit declared scope when the corresponding scope list is non-empty",
     "planned specialist floors must be a subset of allowed_floors",
-    "consequential C2+ execution requires assurance/custodial receipt references and a separate risk_acceptance_ref unless a governing profile explicitly records why risk acceptance is not applicable",
-    "physical or externally consequential execution requires stop_authority_ref and safe_state_ref",
+    "COMPUTE_ONLY may invoke bounded models/solvers and write operational receipts but cannot authorise provider writes, publication or actuation",
+    "consequential C2+ or DIGITAL_WRITE/EXTERNAL_ACTION/PHYSICAL_ACTUATION requires applicable assurance/custodial receipts and separately scoped authority/risk acceptance",
+    "DIGITAL_WRITE and above require rollback_or_recovery_ref where reversal is meaningful",
+    "EXTERNAL_ACTION and PHYSICAL_ACTUATION require stop_authority_ref and safe_state_ref",
+    "PHYSICAL_ACTUATION additionally requires independently verified safety/interlock state",
     "resource/tool budgets are ceilings, never targets"
   ],
   "compatibility": {
     "legacy_operator_approval_manifest": "historical evidence of operator decisions only; may support issuance of a new lease but cannot itself satisfy this contract",
     "achilles_action_envelope": "may reference an ACTIVE lease; action-envelope approval does not silently mint one"
+  },
+  "lease_classes": {
+    "READ_ONLY": "read/query/review; no mutation and no model/tool side effects beyond bounded source access",
+    "COMPUTE_ONLY": "LLM/classical solver/simulation invocation with receipts; no external mutation, publication or physical actuation",
+    "DIGITAL_WRITE": "bounded mutation of approved digital targets with readback/rollback",
+    "EXTERNAL_ACTION": "network/provider action affecting an external system, person or release surface",
+    "PHYSICAL_ACTUATION": "command capable of changing physical state"
   }
 }
