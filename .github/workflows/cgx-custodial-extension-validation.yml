@@ -13,6 +13,12 @@ on:
       - "scripts/validate_cgx_assurance.py"
       - "scripts/cgx_assurance_preflight.py"
       - "scripts/cgx_assurance_route.py"
+      - "cgx/domain_templates/mpl_assurance_adapter.json"
+      - "cgx/domain_templates/assurance_relation_registry.json"
+      - "cgx/domain_templates/assurance_case_contract.json"
+      - "cgx/domain_templates/agentic_security_threat_registry.json"
+      - "cgx/domain_templates/execution_lease_contract.json"
+      - "scripts/run_cgx_agent_runtime.py"
       - ".github/workflows/cgx-custodial-extension-validation.yml"
   pull_request:
     paths:
@@ -42,3 +48,13 @@ jobs:
         run: python scripts/cgx_assurance_route.py --domain romer --execution-depth build --cascade-class C2 --tags intersol,facility,battery-room,public-route
       - name: Resolve observational scenario
         run: python scripts/resolve_cgx_extensions.py --domain eco --execution-depth inspect --cascade-class C1 --tags field-observation
+
+      - name: Validate guarded runtime low-consequence preflight
+        run: python scripts/run_cgx_agent_runtime.py --preflight-only --instruction "Inspect a bounded runtime status receipt" --domain lightspeed --execution-depth inspect --cascade-class C0 --tags runtime-read
+      - name: Verify unclassified C2 execution holds
+        shell: bash
+        run: |
+          set +e
+          python scripts/run_cgx_agent_runtime.py --preflight-only --instruction "Execute a consequential operation" --domain romer --execution-depth execute --cascade-class C2
+          code=$?
+          test "$code" -eq 3
