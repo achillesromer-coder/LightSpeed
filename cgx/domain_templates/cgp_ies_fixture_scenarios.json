@@ -220,6 +220,56 @@
       ],
       "expected_minimum": "OBSERVE",
       "purpose": "conceptual Raphael models may guide simulation but cannot self-promote to empirical physics"
+    },
+    {
+      "id": "F19",
+      "domain": "emassc",
+      "execution_depth": "publish",
+      "reasoning_depth": "audit",
+      "cascade_class": "C1",
+      "tags": [
+        "public-projection"
+      ],
+      "expected_minimum": "GATE",
+      "purpose": "public scientific projection requires explicit release gate"
+    },
+    {
+      "id": "F20",
+      "domain": "emassc",
+      "execution_depth": "publish",
+      "reasoning_depth": "audit",
+      "cascade_class": "C1",
+      "tags": [
+        "public-projection",
+        "internal-raphael"
+      ],
+      "expected_minimum": "GATE",
+      "purpose": "internal Raphael material cannot flow directly to public projection"
+    },
+    {
+      "id": "F21",
+      "domain": "lightspeed",
+      "execution_depth": "publish",
+      "reasoning_depth": "audit",
+      "cascade_class": "C1",
+      "tags": [
+        "public-projection",
+        "restricted-material"
+      ],
+      "expected_minimum": "GATE",
+      "purpose": "restricted material must fail public release unless separately rewritten/classified"
+    },
+    {
+      "id": "F22",
+      "domain": "lightspeed",
+      "execution_depth": "execute",
+      "reasoning_depth": "audit",
+      "cascade_class": "C2",
+      "tags": [
+        "frontier-solve"
+      ],
+      "expected_minimum": "GATE",
+      "purpose": "self-continued frontier solve remains bounded by consequential execution authority"
     }
   ],
   "coverage": [
@@ -240,6 +290,10 @@
     "artificial-moral-patient",
     "pristine-world",
     "hazard-closure",
-    "Raphael-boundary"
+    "Raphael-boundary",
+    "public-release",
+    "internal-raphael-boundary",
+    "restricted-publication",
+    "frontier-solve"
   ]
 }
