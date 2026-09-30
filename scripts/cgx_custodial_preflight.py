@@ -12,6 +12,10 @@ def load_assessment(path):
     if not path: return None
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
+def assess_custodial(resolution,assessment):
+    decision,reasons=assess_custodial(resolution,assessment)
+    return decision,reasons
+
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--domain",required=True,choices=["romer","eco","emassc","lightspeed"])
