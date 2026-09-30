@@ -1,6 +1,6 @@
 {
   "schema": "CGX-CGP-IES-OWNER-CONFIRMATION/0.1",
-  "status": "PROPOSED / REVIEW_REQUIRED",
+  "status": "PROPOSED / REVIEW_REQUIRED / FUNCTIONAL_BRANCH_READY",
   "source_handoff": "CGX-HANDOFF-CGP-IES-2026-09-30",
   "values": [
     {
@@ -99,7 +99,86 @@
       "term": "SOURCE_FAILURE_BEHAVIOUR",
       "proposed": "LOW_CONSEQUENCE=RECEIPT_AND_CONTINUE; CONSEQUENTIAL=HOLD",
       "reason": "Fail-closed only where consequence warrants it."
+    },
+    {
+      "id": "OC-011",
+      "term": "PROTECTIVE_PERPETUITY_BASELINE",
+      "proposed": "MVSL_PLUS_JUSTIFIED_PROTECTIVE_FUNCTIONS",
+      "options": [
+        "MVSL_ONLY",
+        "MVSL_PLUS_JUSTIFIED_PROTECTIVE_FUNCTIONS",
+        "CASE_BY_CASE_NO_CLASS_DEFAULT"
+      ],
+      "reason": "Allows future-beneficiary safety/ecology/knowledge functions to persist without preserving unrelated production."
+    },
+    {
+      "id": "OC-012",
+      "term": "PROTECTIVE_SYSTEM_CANDIDATES",
+      "proposed": [
+        "hazard-containment",
+        "dependent-life-support",
+        "ecological-stewardship",
+        "critical-monitoring",
+        "knowledge-integrity",
+        "planetary-defense-detection-warning",
+        "successor-readable-recovery-beacons"
+      ],
+      "reason": "Candidate baseline only; each implementation still requires an evidence, maintenance and passive-safe case."
+    },
+    {
+      "id": "OC-013",
+      "term": "CONTACT_DEFAULT",
+      "proposed": "OBSERVE_RECEIVE_VERIFY; RESPONSE_OR_INTERVENTION_GATED",
+      "reason": "Receive does not imply execute or reply; non-interference is a presumption with explicit exceptions."
+    },
+    {
+      "id": "OC-014",
+      "term": "ARTIFICIAL_MORAL_PATIENT_DEFAULT",
+      "proposed": "STRUCTURED_UNCERTAINTY_WITH_CONSENT_EXIT_ESCALATION",
+      "options": [
+        "STRUCTURED_UNCERTAINTY_WITH_CONSENT_EXIT_ESCALATION",
+        "BOUNDED_QUALITATIVE_BANDS"
+      ],
+      "reason": "Avoids both automatic personhood and automatic property status based on substrate."
+    },
+    {
+      "id": "OC-015",
+      "term": "FOUNDER_ARCHITECT_AUTHORITY",
+      "proposed": "SYSTEM_VISIBILITY_DOES_NOT_CREATE_UNRESTRICTED_OVERRIDE",
+      "reason": "Architect/founder authority remains scope-specific; any emergency break-glass power must be explicit, expiring, auditable and evidence-bounded."
+    },
+    {
+      "id": "OC-016",
+      "term": "TERMINOLOGY_DEFAULT",
+      "proposed": "INTER_SPECIAL_NEUTRAL; HUMAN_SPECIFIC_ONLY_WHEN_MATERIAL",
+      "reason": "Removes Homo sapiens as implicit reference class while preserving human-specific evidence where relevant."
+    },
+    {
+      "id": "OC-017",
+      "term": "AGENCY_REPRESENTATION_MODEL",
+      "proposed": "MULTIDIMENSIONAL_AGENCY_VECTOR / EXPLICIT_REPRESENTATION_STATE / NO_UNIVERSAL_SCALAR",
+      "reason": "Agency and representation are separable; competence cannot silently become mandate."
+    },
+    {
+      "id": "OC-018",
+      "term": "SUCCESSOR_RESTART_DEFAULT",
+      "proposed": "FRESH_COMMISSIONING_NO_AUTOMATIC_PRODUCTIVE_OBJECTIVE_REVIVAL",
+      "reason": "Dormant systems must inspect present ecology, beneficiaries, demand, integrity and legitimate authority before productive restart."
+    },
+    {
+      "id": "OC-019",
+      "term": "ADAPTIVE_TRANSLATION_DEFAULT",
+      "proposed": "SUBSTRATE_AGNOSTIC_ADAPTERS / NO_FORCED_CONVERSION",
+      "reason": "Binary, radio, language and embodiment are local interfaces; bridge modalities rather than requiring either party to abandon native communication."
+    },
+    {
+      "id": "OC-020",
+      "term": "POLICY_INHERITANCE_RULE",
+      "proposed": "REFERENCE_PARENT_SOURCE; CHILD_MAY_REDUCE_OPTIONAL_MODE_BUT_NOT_REQUIRED_SAFETY_GATE",
+      "reason": "Supports sparse CGX children/siblings without duplicating doctrine or allowing a descendant to bypass consequence escalation."
     }
   ],
-  "promotion_rule": "No value becomes constitutional/canonical solely because it appears here. Owner/legitimate governance review plus parent-carrier mutation/readback is required."
+  "promotion_rule": "No value becomes constitutional/canonical solely because it appears here. Owner/legitimate governance review plus parent-carrier mutation/readback is required.",
+  "branch": "cgp-ies-functional-handoff-20260930",
+  "review_note": "No OC value is canonical until explicit owner/legitimate-governance acceptance plus parent-carrier descendant verification/readback."
 }
