@@ -69,6 +69,10 @@ def main():
         query_policy=load("query_normalisation_policy.json")
         corpus_test_policy=load("corpus_test_simulation_policy.json")
         corpus_test_caps=load("corpus_test_capability_registry.json")
+        domain_identity=load("domain_child_identity_registry.json")
+        file_conversion=load("file_conversion_contract.json")
+        file_type_conversion=load("file_type_conversion_registry.json")
+        first_file_conversion=load("first_file_conversion_registry.json")
     except Exception as e:
         print(json.dumps({"status":"FAIL","failures":[str(e)]}))
         return 1
@@ -140,6 +144,77 @@ def main():
             failures.append(f"corpus-test capability missing: {capability_id}")
         elif caps[capability_id].get("corpus_packet_required_for_orchestrated_execution") is not True:
             failures.append(f"corpus packet not required for {capability_id}")
+
+    if domain_identity.get("schema")!="CGX-DOMAIN-CHILD-IDENTITY/0.1":
+        failures.append("domain child identity registry schema mismatch")
+    expected_child_ids={
+        "romer":("cgx:domain:romer","cgx:root:cognigrex"),
+        "eco":("cgx:domain:eco","cgx:root:cognigrex"),
+        "emassc":("cgx:domain:emassc","cgx:root:cognigrex"),
+        "lightspeed":("cgx:domain:lightspeed","cgx:domain:emassc"),
+    }
+    children=domain_identity.get("children") or {}
+    for domain,(semantic_id,parent_id) in expected_child_ids.items():
+        child=children.get(domain) or {}
+        if child.get("semantic_object_id")!=semantic_id:
+            failures.append(f"stable semantic identity mismatch for {domain}")
+        if child.get("parent_semantic_object_id")!=parent_id:
+            failures.append(f"stable semantic parent mismatch for {domain}")
+
+    if file_conversion.get("schema")!="CGX-FILE-CONVERSION-CONTRACT/0.1":
+        failures.append("file conversion contract schema mismatch")
+    classes=file_conversion.get("classes") or {}
+    for class_id in ("R0_EXACT","R1_SEMANTIC_REVERSIBLE","R2_RECONSTRUCTED","R3_GENERATIVE"):
+        if class_id not in classes:
+            failures.append(f"file conversion class missing: {class_id}")
+    conversion_invariants=set(file_conversion.get("invariants") or [])
+    for required in (
+        "no bulk file-format conversion automatically transfers semantic authority",
+        "unknown or unsupported structure remains Frontier rather than being guessed",
+        "R3 views never close R0/R1/R2 evidence gaps",
+    ):
+        if required not in conversion_invariants:
+            failures.append(f"file conversion invariant missing: {required}")
+
+    if file_type_conversion.get("schema")!="CGX-FILE-TYPE-CONVERSION-REGISTRY/0.1":
+        failures.append("file type conversion registry schema mismatch")
+    type_items=file_type_conversion.get("types") or []
+    type_ids={item.get("id") for item in type_items if isinstance(item,dict)}
+    for required in (
+        "application/pdf",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "text/html",
+        "application/x-cgx",
+    ):
+        if required not in type_ids:
+            failures.append(f"file type conversion capability missing: {required}")
+    if (file_type_conversion.get("fallback") or {}).get("status")!="R0-reference-only":
+        failures.append("unknown file conversion fallback is not R0-reference-only")
+
+    if first_file_conversion.get("schema")!="CGX-FIRST-FILE-CONVERSION-REGISTRY/0.1":
+        failures.append("first-file conversion registry schema mismatch")
+    mappings=first_file_conversion.get("mappings") or []
+    mapping_ids=[item.get("mapping_id") for item in mappings if isinstance(item,dict)]
+    if len(mapping_ids)!=len(set(mapping_ids)):
+        failures.append("first-file mapping IDs are duplicated")
+    expected_first_files={
+        "FF-MARK3-XLSX-001":("fab23970e80c016a2140ec0f87c1d0d7e15c365190fdacb5dc2ee2a1c2a81075",13,8,6),
+        "FF-ECO-BIOBLOCK-XLSX-001":("f1cf7a5d3a2e463881cd5389d265d0b70f1b56f849d87da70c57697b75b61d0b",14,11,9),
+        "FF-RFS-EMFF-XLSX-001":("1cc3f421ed128186b1ab018f7af8eda27bc30572b21bc8b8a1d2bada91c9a58f",12,11,6),
+    }
+    by_mapping={item.get("mapping_id"):item for item in mappings if isinstance(item,dict)}
+    for mapping_id,(source_hash,cells,objects,relations) in expected_first_files.items():
+        item=by_mapping.get(mapping_id) or {}
+        if item.get("source_sha256")!=source_hash:
+            failures.append(f"first-file source hash mismatch: {mapping_id}")
+        proof=item.get("s91_proof") or {}
+        for key,expected in (("cells",cells),("objects",objects),("relations",relations)):
+            if proof.get(key)!=expected:
+                failures.append(f"first-file S91 proof mismatch: {mapping_id}:{key}")
+    ls_bridge=by_mapping.get("FF-RFS-LS-BRIDGE-001") or {}
+    if (ls_bridge.get("s91_proof") or {}).get("scientific_state_duplicated") is not False:
+        failures.append("LS first-file bridge must not duplicate EMASSC scientific authority")
 
     shared=domains.get("shared_contracts",{})
     for key,name in shared.items():
