@@ -201,24 +201,6 @@
       "note": "Diagnostic structure only; does not satisfy specialist R1 admission."
     },
     {
-      "adapter_id": "step-reference-v0.1",
-      "extensions": [
-        ".step",
-        ".stp"
-      ],
-      "media_families": [
-        "spatial-cad"
-      ],
-      "projection_kinds": [
-        "metadata",
-        "structure"
-      ],
-      "deep_parse": false,
-      "round_trip_claim": "IDENTITY_REFERENCE_ONLY",
-      "admission_state": "REFERENCE_ONLY",
-      "conversion_class": "R0_EXACT"
-    },
-    {
       "adapter_id": "gltf-stdlib-v0.1",
       "extensions": [
         ".gltf",
@@ -276,6 +258,45 @@
       "admission_state": "IMPLEMENTED",
       "conversion_class": "R1_SEMANTIC_REVERSIBLE",
       "note": "Container signature and pixel dimensions only; no OCR, vision interpretation, EXIF inference or visual semantics."
+    },
+    {
+      "adapter_id": "step-part21-stdlib-v0.1",
+      "extensions": [
+        ".step",
+        ".stp"
+      ],
+      "media_families": [
+        "spatial-cad"
+      ],
+      "projection_kinds": [
+        "structure",
+        "metadata",
+        "citation_map"
+      ],
+      "deep_parse": true,
+      "round_trip_claim": "STRUCTURE_PRESERVED",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+      "note": "ISO-10303-21 statement/entity structure only; no B-Rep validation, unit inference, topology solution or engineering interpretation."
+    },
+    {
+      "adapter_id": "freecad-fcstd-stdlib-v0.1",
+      "extensions": [
+        ".fcstd"
+      ],
+      "media_families": [
+        "spatial-cad"
+      ],
+      "projection_kinds": [
+        "structure",
+        "relationship",
+        "metadata"
+      ],
+      "deep_parse": true,
+      "round_trip_claim": "STRUCTURE_PRESERVED",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+      "note": "FCStd ZIP member metadata and Document.xml structure only; embedded shape payloads remain native/uninterpreted."
     }
   ],
   "fallback": {
