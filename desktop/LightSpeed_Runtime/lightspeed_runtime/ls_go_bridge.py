@@ -18,6 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse
 import uvicorn
 
+from lightspeed_runtime.corpus_test_orchestrator import CorpusTestPlanError, plan_cascade
 from lightspeed_runtime.project_artifact_store import stage_project_artifacts
 from lightspeed_runtime.owner_credentials import (
     CredentialAuthenticationFailed,
@@ -1497,6 +1498,32 @@ def create_app(root: Path | str) -> FastAPI:
                     "error": representation_edge_error,
                 },
                 "execution_boundary": "local queue, immutable named artifacts, receipts and review only; no public direct execution",
+            }
+        )
+
+    @app.post("/api/v1/test-cascade/plan")
+    async def plan_test_cascade(body: dict[str, Any]):
+        """Compute a bounded semantic cascade projection without executing tests."""
+        specs = body.get("tests")
+        corpus_snapshot = body.get("corpus_snapshot")
+        receipts = body.get("receipts") or {}
+        if not isinstance(specs, list) or not 1 <= len(specs) <= 256:
+            raise HTTPException(status_code=400, detail="tests must contain 1..256 bounded test specs")
+        if not isinstance(corpus_snapshot, dict):
+            raise HTTPException(status_code=400, detail="corpus_snapshot must be an object")
+        if not isinstance(receipts, dict) or len(receipts) > 256:
+            raise HTTPException(status_code=400, detail="receipts must be a bounded object")
+        try:
+            projection = plan_cascade(specs, corpus_snapshot, receipts)
+        except CorpusTestPlanError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        return JSONResponse(
+            {
+                "projection": projection,
+                "execution_performed": False,
+                "external_action_performed": False,
+                "canonical_mutation": False,
+                "activation_boundary": "planning/status projection only; execution remains lease- and assurance-gated",
             }
         )
 
