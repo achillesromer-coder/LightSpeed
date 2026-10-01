@@ -439,3 +439,125 @@ endsolid demo
     assert triangle["line_start"] == 2
     assert triangle["line_end"] == 8
     assert triangle["vertices"][2] == [0.0, 1.0, 0.0]
+
+
+def _pptx_bytes():
+    out = io.BytesIO()
+    with zipfile.ZipFile(out, "w") as z:
+        z.writestr(
+            "ppt/slides/slide1.xml",
+            '<p:sld xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" '
+            'xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+            '<p:cSld><p:spTree><p:sp><p:txBody><a:p><a:r><a:t>Hello CGX</a:t></a:r></a:p>'
+            '</p:txBody></p:sp></p:spTree></p:cSld></p:sld>',
+        )
+        z.writestr(
+            "ppt/slides/_rels/slide1.xml.rels",
+            '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"/>',
+        )
+    return out.getvalue()
+
+
+def test_pptx_projection_preserves_slide_text_and_relationship_structure():
+    env = build_source_envelope(source_name="brief.pptx", data=_pptx_bytes())
+    projection = env["projections"][0]
+    assert env["adapter_id"] == "pptx-ooxml-stdlib-v0.1"
+    assert projection["format"] == "OOXML-Presentation"
+    assert projection["slide_count"] == 1
+    assert projection["slides"][0]["text_runs"] == ["Hello CGX"]
+    assert projection["relationship_parts"] == ["ppt/slides/_rels/slide1.xml.rels"]
+    assert projection["macros_executed"] is False
+    assert projection["visual_layout_inferred"] is False
+
+
+def test_generic_xml_projection_uses_stable_paths_without_execution():
+    data = b'<root id="r"><item key="a">One</item><item key="b"><child>Two</child></item></root>'
+    env = build_source_envelope(source_name="data.xml", data=data)
+    projection = env["projections"][0]
+    assert env["adapter_id"] == "xml-stdlib-v0.1"
+    assert projection["root_tag"] == "root"
+    assert projection["tag_counts"]["item"] == 2
+    second = next(item for item in projection["elements"] if item["path"] == "/root[1]/item[2]")
+    assert second["attributes"]["key"] == "b"
+    assert projection["external_entities_resolved"] is False
+    assert projection["scripts_executed"] is False
+
+
+def test_zip_projection_preserves_member_metadata_without_interpreting_payloads():
+    out = io.BytesIO()
+    with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED) as z:
+        z.writestr("docs/readme.txt", b"hello")
+        z.writestr("payload.bin", b"\x00\x01")
+    env = build_source_envelope(source_name="bundle.zip", data=out.getvalue())
+    projection = env["projections"][0]
+    assert env["adapter_id"] == "zip-stdlib-v0.1"
+    assert projection["member_count"] == 2
+    assert {item["name"] for item in projection["members_sampled"]} == {
+        "docs/readme.txt",
+        "payload.bin",
+    }
+    assert projection["member_payloads_interpreted"] is False
+
+
+def test_ply_projection_preserves_header_structure_without_decoding_body():
+    data = (
+        b"ply\n"
+        b"format ascii 1.0\n"
+        b"comment test mesh\n"
+        b"element vertex 3\n"
+        b"property float x\n"
+        b"property float y\n"
+        b"property float z\n"
+        b"element face 1\n"
+        b"property list uchar int vertex_indices\n"
+        b"end_header\n"
+        b"0 0 0\n1 0 0\n0 1 0\n3 0 1 2\n"
+    )
+    env = build_source_envelope(source_name="mesh.ply", data=data)
+    projection = env["projections"][0]
+    assert env["adapter_id"] == "ply-mesh-stdlib-v0.1"
+    assert projection["format"] == "PLY"
+    assert projection["encoding"] == "ascii"
+    assert projection["elements"][0]["name"] == "vertex"
+    assert projection["elements"][0]["count"] == 3
+    assert projection["elements"][1]["name"] == "face"
+    assert projection["body_decoded"] is False
+    assert projection["mesh_validation_performed"] is False
+    assert projection["units_inferred"] is False
+
+
+def _3mf_bytes():
+    out = io.BytesIO()
+    model = b'''<model xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" unit="millimeter">
+      <resources>
+        <object id="1" name="PartA" type="model">
+          <mesh>
+            <vertices>
+              <vertex x="0" y="0" z="0"/>
+              <vertex x="1" y="0" z="0"/>
+              <vertex x="0" y="1" z="0"/>
+            </vertices>
+            <triangles><triangle v1="0" v2="1" v3="2"/></triangles>
+          </mesh>
+        </object>
+      </resources>
+      <build><item objectid="1"/></build>
+    </model>'''
+    with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED) as z:
+        z.writestr("3D/3dmodel.model", model)
+        z.writestr("[Content_Types].xml", b"<Types/>")
+    return out.getvalue()
+
+
+def test_3mf_projection_preserves_declared_units_and_mesh_structure():
+    env = build_source_envelope(source_name="part.3mf", data=_3mf_bytes())
+    projection = env["projections"][0]
+    assert env["adapter_id"] == "3mf-stdlib-v0.1"
+    assert projection["format"] == "3MF"
+    assert projection["models"][0]["declared_unit"] == "millimeter"
+    assert projection["models"][0]["object_count"] == 1
+    assert projection["models"][0]["vertex_count"] == 3
+    assert projection["models"][0]["triangle_count"] == 1
+    assert projection["models"][0]["build_item_count"] == 1
+    assert projection["mesh_validation_performed"] is False
+    assert projection["units_inferred"] is False
