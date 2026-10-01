@@ -22,7 +22,8 @@
     "receipt_sink",
     "stop_and_fallback_profile",
     "agent_assurance_role_profile",
-    "agentic_security_profile"
+    "agentic_security_profile",
+    "corpus_test_simulation_profile"
   ],
   "invariants": [
     "model-is-capability-not-agent-identity",
@@ -34,7 +35,9 @@
     "agent-may-not-self-expand-authority",
     "agent-may-not-modify-root-safety-or-replication-policy",
     "agent-may-propose-its-own-upgrade-but-independent-promotion-is-required",
-    "missing-context-reduces-action-envelope-rather-than-increasing-autonomy"
+    "missing-context-reduces-action-envelope-rather-than-increasing-autonomy",
+    "test-or-simulation-results-are-not-known-before-execution",
+    "downstream-test-inputs-use-only-proven-readback-committed-dependency-results"
   ],
   "runtime_context": {
     "minimum": [
@@ -57,7 +60,10 @@
       "cgp_ies_mode",
       "cgp_ies_receipt",
       "stop_path",
-      "rollback_or_safe_state"
+      "rollback_or_safe_state",
+      "corpus_snapshot_id",
+      "test_input_packet_sha256",
+      "dependency_receipts"
     ],
     "physical_additions": [
       "configuration_id",
@@ -102,7 +108,7 @@
   },
   "action_model": {
     "propose": "may reason and create bounded delta without execution authority",
-    "simulate": "may use sandbox/digital twin subject to tool/data policy",
+    "simulate": "may use sandbox/digital twin only from a corpus-bound packet and admitted capability; results are unknown until execution and remain subject to proof/readback/commit",
     "execute": "requires execution lease, assurance/custodial preflights as applicable, tool permission and safe-state path",
     "publish": "requires evidence ceiling + security/privacy + release authority",
     "self_change": "candidate only; independent review/promotion",
@@ -129,5 +135,13 @@
     "preferred": "scripts/run_cgx_agent_runtime.py",
     "lower_level_internal": "scripts/run_cognigrex_supervisor.py",
     "rule": "consequential execution enters through evidence/assurance/custodial/lease/safe-state envelope before delegating to Neo-supervised floors"
+  },
+  "test_simulation_binding": {
+    "contract": "corpus_test_simulation_policy.json",
+    "capability_registry": "corpus_test_capability_registry.json",
+    "query_planner": "query_normalisation_policy.json",
+    "rule": "compile a bounded corpus packet first; unresolved source/measurement/dependency inputs HOLD rather than being generated",
+    "result_rule": "result values enter semantic state only from receipted execution and remain derived/empirical according to the executor method",
+    "activation_rule": "prepared code does not imply agent/provider/local connection activation"
   }
 }
