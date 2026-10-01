@@ -65,5 +65,12 @@
     "application_ready": false,
     "independent_specialist_review_required": true
   },
-  "rule": "MPL is admitted only for the bounded financial/insurance consequence question for which it is applicable. It may inform, but never replace, risk-hazard analysis or engineering safety assurance."
+  "rule": "MPL is admitted only for the bounded financial/insurance consequence question for which it is applicable. It may inform, but never replace, risk-hazard analysis or engineering safety assurance.",
+  "corpus_test_binding": {
+    "policy": "CGX-CORPUS-TEST-CASCADE/0.1",
+    "capability_id": "mpl",
+    "input_rule": "compile applicable launch/site/vehicle/method parameters from admitted corpus records and final dependency receipts; unresolved inputs HOLD",
+    "result_rule": "MPL outputs are unknown until the model executes and remain bounded screening outputs",
+    "downstream_rule": "only proven + verified-readback + committed receipts may parameterise dependent sweeps"
+  }
 }
