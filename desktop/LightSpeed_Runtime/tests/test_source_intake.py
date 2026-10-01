@@ -270,3 +270,89 @@ def test_glb_projection_reads_json_and_chunk_offsets_without_decoding_binary_pay
     assert projection["counts"]["nodes"] == 1
     assert [chunk["type"] for chunk in projection["chunks"]] == ["JSON", "BIN"]
     assert projection["chunks"][1]["byte_length"] == 4
+
+
+def test_step_part21_projection_preserves_entity_identity_and_lines():
+    step = b"""ISO-10303-21;
+HEADER;
+FILE_DESCRIPTION(('CGX test'),'2;1');
+FILE_NAME('sample.step','2026-10-01T00:00:00',('A'),('B'),'','','');
+ENDSEC;
+DATA;
+#1=CARTESIAN_POINT('',(0.0,0.0,0.0));
+#2=DIRECTION('',(0.0,0.0,1.0));
+#3=AXIS2_PLACEMENT_3D('',#1,#2,$);
+ENDSEC;
+END-ISO-10303-21;
+"""
+    env = build_source_envelope(source_name="sample.step", data=step)
+    projection = env["projections"][0]
+    assert env["adapter_id"] == "step-part21-stdlib-v0.1"
+    assert projection["format"] == "STEP-Part21"
+    assert projection["entity_count"] == 3
+    assert projection["entities"][0]["entity_id"] == 1
+    assert projection["entities"][0]["entity_type"] == "CARTESIAN_POINT"
+    assert projection["entities"][2]["raw"].startswith("#3=AXIS2_PLACEMENT_3D")
+    assert projection["engineering_interpretation_performed"] is False
+    assert projection["brep_validation_performed"] is False
+    assert projection["units_inferred"] is False
+
+
+def test_step_semicolon_inside_string_does_not_split_statement():
+    step = b"""ISO-10303-21;
+HEADER;
+FILE_DESCRIPTION(('a;b'),'2;1');
+ENDSEC;
+DATA;
+#1=CARTESIAN_POINT('p;1',(1.,2.,3.));
+ENDSEC;
+END-ISO-10303-21;
+"""
+    env = build_source_envelope(source_name="quoted.stp", data=step)
+    projection = env["projections"][0]
+    assert projection["entity_count"] == 1
+    assert "'p;1'" in projection["entities"][0]["raw"]
+
+
+def test_fcstd_projection_reads_container_and_document_structure_without_shape_interpretation():
+    out = io.BytesIO()
+    document = b'''<Document>
+      <ObjectData>
+        <Object name="Body" type="PartDesign::Body">
+          <Properties>
+            <Property name="Label" type="App::PropertyString"/>
+            <Property name="Shape" type="Part::PropertyPartShape"/>
+          </Properties>
+        </Object>
+      </ObjectData>
+      <ObjectDeps>
+        <ObjectDep name="Body" count="0"/>
+      </ObjectDeps>
+    </Document>'''
+    with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED) as z:
+        z.writestr("Document.xml", document)
+        z.writestr("GuiDocument.xml", b"<GuiDocument/>")
+        z.writestr("PartShape.brp", b"opaque-brep-payload")
+
+    env = build_source_envelope(source_name="model.FCStd", data=out.getvalue())
+    projection = env["projections"][0]
+    assert env["adapter_id"] == "freecad-fcstd-stdlib-v0.1"
+    assert projection["format"] == "FreeCAD-FCStd"
+    assert projection["archive_member_count"] == 3
+    assert any(item["name"] == "Body" and item["type"] == "PartDesign::Body" for item in projection["objects"])
+    assert any(item["name"] == "Shape" and item["type"] == "Part::PropertyPartShape" for item in projection["properties"])
+    assert any(item["name"] == "PartShape.brp" for item in projection["members"])
+    assert projection["shape_payload_interpreted"] is False
+    assert projection["brep_validation_performed"] is False
+    assert projection["engineering_geometry_inferred"] is False
+
+
+def test_invalid_fcstd_falls_back_without_inventing_document_structure():
+    out = io.BytesIO()
+    with zipfile.ZipFile(out, "w") as z:
+        z.writestr("GuiDocument.xml", b"<GuiDocument/>")
+    env = build_source_envelope(source_name="broken.fcstd", data=out.getvalue())
+    assert env["adapter_id"] == "freecad-fcstd-stdlib-v0.1"
+    assert env["projections"][0]["kind"] == "metadata"
+    assert any("deep_projection_failed:SourceIntakeError" in warning for warning in env["warnings"])
+    assert "deep_projection_requires_recovery_or_specialist_adapter" in env["unresolved"]
