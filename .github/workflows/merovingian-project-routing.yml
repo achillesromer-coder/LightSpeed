@@ -40,6 +40,9 @@ on:
       - "desktop/LightSpeed_Runtime/tests/test_cgx_query_planner.py"
       - "desktop/LightSpeed_Runtime/tests/test_cgx_conversion_planner.py"
       - "desktop/LightSpeed_Runtime/tests/test_corpus_test_orchestrator.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/source_intake.py"
+      - "desktop/LightSpeed_Runtime/tests/test_source_intake.py"
+      - "scripts/project_cgx_source.py"
       - "desktop/source-manifest.json"
       - "scripts/validate_lightspeed_surfaces.py"
       - "scripts/validate_cgx_domain_templates.py"
@@ -158,6 +161,7 @@ jobs:
             desktop/LightSpeed_Runtime/lightspeed_runtime/cognigrex_supervisor.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_query_planner.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_conversion_planner.py \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/source_intake.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/corpus_test_orchestrator.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py \
@@ -172,6 +176,7 @@ jobs:
             scripts/validate_lightspeed_surfaces.py \
             scripts/validate_cgx_domain_templates.py \
             scripts/migrate_first_file_semantics_to_s92.py \
+            scripts/project_cgx_source.py \
             scripts/run_merovingian_soft_launch.py \
             scripts/run_cognigrex_local_stack.py \
             scripts/run_cognigrex_supervisor.py \
@@ -224,6 +229,7 @@ jobs:
             desktop/LightSpeed_Runtime/tests/test_cognigrex_supervisor.py \
             desktop/LightSpeed_Runtime/tests/test_cgx_query_planner.py \
             desktop/LightSpeed_Runtime/tests/test_cgx_conversion_planner.py \
+            desktop/LightSpeed_Runtime/tests/test_source_intake.py \
             desktop/LightSpeed_Runtime/tests/test_corpus_test_orchestrator.py \
             desktop/LightSpeed_Runtime/tests/test_project_pipeline.py \
             desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py \
