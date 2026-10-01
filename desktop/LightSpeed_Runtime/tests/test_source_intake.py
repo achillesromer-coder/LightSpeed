@@ -75,7 +75,7 @@ def test_pdf_stays_reference_only_not_fake_text_parse():
     env = build_source_envelope(source_name="paper.pdf", data=b"%PDF-1.7\nnot real pdf")
     assert env["adapter_id"] == "pdf-pypdf-v0.1"
     assert env["projections"][0]["format_signature"] == "PDF"
-    assert "deep_semantic_projection_not_admitted_for_adapter" in env["unresolved"]
+    assert "registered_pdf_capability_not_bound_in_generic_source_intake" in env["unresolved"]
 
 
 def test_obj_projection_counts_geometry_but_does_not_claim_cad_authority():
