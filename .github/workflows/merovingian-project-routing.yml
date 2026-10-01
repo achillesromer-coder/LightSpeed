@@ -35,8 +35,10 @@ on:
       - "desktop/LightSpeed_Runtime/tests/test_representation_edge.py"
       - "desktop/LightSpeed_Runtime/tests/test_secure_settings_hub.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_query_planner.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_conversion_planner.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/corpus_test_orchestrator.py"
       - "desktop/LightSpeed_Runtime/tests/test_cgx_query_planner.py"
+      - "desktop/LightSpeed_Runtime/tests/test_cgx_conversion_planner.py"
       - "desktop/LightSpeed_Runtime/tests/test_corpus_test_orchestrator.py"
       - "desktop/source-manifest.json"
       - "scripts/validate_lightspeed_surfaces.py"
@@ -152,6 +154,7 @@ jobs:
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/secure_settings_hub.py" \
             desktop/LightSpeed_Runtime/lightspeed_runtime/cognigrex_supervisor.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_query_planner.py \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_conversion_planner.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/corpus_test_orchestrator.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py \
@@ -192,7 +195,7 @@ jobs:
           set -o pipefail
           python scripts/validate_lightspeed_surfaces.py 2>&1 | tee surface-validation.log
 
-      - name: Validate CGX query and corpus-test contracts
+      - name: Validate CGX query, conversion and corpus-test contracts
         id: cgx_policy
         continue-on-error: true
         run: |
@@ -215,6 +218,7 @@ jobs:
             desktop/Desktop_Hooks/LightSpeed/tests/test_operator_home_export_gates.py \
             desktop/LightSpeed_Runtime/tests/test_cognigrex_supervisor.py \
             desktop/LightSpeed_Runtime/tests/test_cgx_query_planner.py \
+            desktop/LightSpeed_Runtime/tests/test_cgx_conversion_planner.py \
             desktop/LightSpeed_Runtime/tests/test_corpus_test_orchestrator.py \
             desktop/LightSpeed_Runtime/tests/test_project_pipeline.py \
             desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py \
