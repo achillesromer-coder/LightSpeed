@@ -3525,11 +3525,6 @@
       "path": "LightSpeed_Runtime/lightspeed_runtime/source_intake.py",
       "bytes": 16680,
       "sha256": "b5df601c91f70f9eee1dc96c19b411eab71e28e38bf244204e36657bcd5e33c4"
-    },
-    {
-      "path": "LightSpeed_Runtime/tests/test_source_intake.py",
-      "bytes": 5284,
-      "sha256": "65992f2e2d3b7eb6bab1abeb171fd5fb0b3ceaaab5ecd06d584a66e959589160"
     }
   ]
 }
