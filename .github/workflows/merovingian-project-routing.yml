@@ -43,6 +43,7 @@ on:
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/source_intake.py"
       - "desktop/LightSpeed_Runtime/tests/test_source_intake.py"
       - "scripts/project_cgx_source.py"
+      - "tests/test_project_cgx_source.py"
       - "desktop/source-manifest.json"
       - "scripts/validate_lightspeed_surfaces.py"
       - "scripts/validate_cgx_domain_templates.py"
@@ -183,6 +184,7 @@ jobs:
             scripts/ensure_cognigrex_local_stack.py \
             scripts/run_mark3_multi_unit_screening.py \
             tests/test_merovingian_service_integration.py \
+            tests/test_project_cgx_source.py \
             tests/test_launcher_org_materialization.py \
             2>&1 | tee compile.log
 
