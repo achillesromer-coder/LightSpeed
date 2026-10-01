@@ -55,8 +55,8 @@ def _adapter_for(extension: str) -> tuple[str, str]:
         "image-metadata-stdlib-v0.1": {".png", ".jpg", ".jpeg", ".gif"},
         "image-reference-v0.1": {".webp", ".tif", ".tiff"},
         "svg-xml-stdlib-v0.1": {".svg"},
-        "obj-diagnostic-v0.1": {".obj"},
-        "stl-diagnostic-v0.1": {".stl"},
+        "obj-mesh-stdlib-v0.1": {".obj"},
+        "stl-mesh-stdlib-v0.1": {".stl"},
         "step-part21-stdlib-v0.1": {".step", ".stp"},
         "freecad-fcstd-stdlib-v0.1": {".fcstd"},
         "gltf-stdlib-v0.1": {".gltf", ".glb"},
@@ -74,8 +74,8 @@ def _adapter_for(extension: str) -> tuple[str, str]:
                 "image-metadata-stdlib-v0.1": "image",
                 "image-reference-v0.1": "image",
                 "svg-xml-stdlib-v0.1": "image-vector",
-                "obj-diagnostic-v0.1": "spatial",
-                "stl-diagnostic-v0.1": "spatial",
+                "obj-mesh-stdlib-v0.1": "spatial",
+                "stl-mesh-stdlib-v0.1": "spatial",
                 "step-part21-stdlib-v0.1": "spatial-cad",
                 "freecad-fcstd-stdlib-v0.1": "spatial-cad",
                 "gltf-stdlib-v0.1": "spatial",
@@ -279,35 +279,290 @@ def _xlsx_projection(data: bytes) -> dict[str, Any]:
     }
 
 
+def _parse_obj_float_tokens(tokens: list[str], *, line_no: int, family: str) -> list[float]:
+    try:
+        return [float(token) for token in tokens]
+    except ValueError as exc:
+        raise SourceIntakeError(f"OBJ {family} contains non-numeric value at line {line_no}") from exc
+
+
+def _parse_obj_ref(token: str, *, line_no: int) -> dict[str, Any]:
+    parts = token.split("/")
+    if len(parts) > 3:
+        raise SourceIntakeError(f"OBJ face/reference token has too many fields at line {line_no}")
+    values: list[int | None] = []
+    for part in parts:
+        if part == "":
+            values.append(None)
+            continue
+        try:
+            values.append(int(part))
+        except ValueError as exc:
+            raise SourceIntakeError(f"OBJ reference contains non-integer index at line {line_no}") from exc
+    while len(values) < 3:
+        values.append(None)
+    return {
+        "raw": token,
+        "vertex_index": values[0],
+        "texcoord_index": values[1],
+        "normal_index": values[2],
+    }
+
+
 def _obj_projection(data: bytes) -> dict[str, Any]:
+    if len(data) > _MAX_CAD_TEXT_BYTES:
+        raise SourceIntakeError("OBJ source exceeds bounded structural intake byte limit")
     text, encoding = _decode_text(data)
-    counts = {"vertices": 0, "normals": 0, "texcoords": 0, "faces": 0, "objects": 0, "groups": 0, "materials": 0}
-    names: list[str] = []
-    for line in text.splitlines():
-        s = line.strip()
-        if s.startswith("v "): counts["vertices"] += 1
-        elif s.startswith("vn "): counts["normals"] += 1
-        elif s.startswith("vt "): counts["texcoords"] += 1
-        elif s.startswith("f "): counts["faces"] += 1
-        elif s.startswith("o "):
-            counts["objects"] += 1
-            if len(names) < 256: names.append(s[2:].strip())
-        elif s.startswith("g "): counts["groups"] += 1
-        elif s.startswith("usemtl "): counts["materials"] += 1
-    return {"kind": "spatial", "conversion_class": "R2_RECONSTRUCTED", "admission_state": "FRONTIER_ONLY", "encoding": encoding, "counts": counts, "object_names": names}
+
+    vertices: list[dict[str, Any]] = []
+    texcoords: list[dict[str, Any]] = []
+    normals: list[dict[str, Any]] = []
+    parameter_vertices: list[dict[str, Any]] = []
+    faces: list[dict[str, Any]] = []
+    lines_out: list[dict[str, Any]] = []
+    points: list[dict[str, Any]] = []
+    directives: list[dict[str, Any]] = []
+    total_records = 0
+
+    for line_no, line in enumerate(text.splitlines(), start=1):
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        parts = stripped.split()
+        keyword = parts[0]
+        args = parts[1:]
+        total_records += 1
+        if total_records > _MAX_CAD_ENTITIES:
+            raise SourceIntakeError("OBJ record count exceeds bounded intake limit")
+
+        if keyword == "v":
+            if len(args) not in {3, 4}:
+                raise SourceIntakeError(f"OBJ vertex must have 3 or 4 coordinates at line {line_no}")
+            vertices.append({
+                "index": len(vertices) + 1,
+                "line": line_no,
+                "raw": stripped,
+                "tokens": args,
+                "values": _parse_obj_float_tokens(args, line_no=line_no, family="vertex"),
+            })
+        elif keyword == "vt":
+            if not 1 <= len(args) <= 3:
+                raise SourceIntakeError(f"OBJ texture coordinate must have 1..3 values at line {line_no}")
+            texcoords.append({
+                "index": len(texcoords) + 1,
+                "line": line_no,
+                "raw": stripped,
+                "tokens": args,
+                "values": _parse_obj_float_tokens(args, line_no=line_no, family="texcoord"),
+            })
+        elif keyword == "vn":
+            if len(args) != 3:
+                raise SourceIntakeError(f"OBJ normal must have 3 values at line {line_no}")
+            normals.append({
+                "index": len(normals) + 1,
+                "line": line_no,
+                "raw": stripped,
+                "tokens": args,
+                "values": _parse_obj_float_tokens(args, line_no=line_no, family="normal"),
+            })
+        elif keyword == "vp":
+            if not 1 <= len(args) <= 3:
+                raise SourceIntakeError(f"OBJ parameter-space vertex must have 1..3 values at line {line_no}")
+            parameter_vertices.append({
+                "index": len(parameter_vertices) + 1,
+                "line": line_no,
+                "raw": stripped,
+                "tokens": args,
+                "values": _parse_obj_float_tokens(args, line_no=line_no, family="parameter vertex"),
+            })
+        elif keyword == "f":
+            if len(args) < 3:
+                raise SourceIntakeError(f"OBJ face must contain at least 3 references at line {line_no}")
+            faces.append({
+                "index": len(faces) + 1,
+                "line": line_no,
+                "raw": stripped,
+                "references": [_parse_obj_ref(token, line_no=line_no) for token in args],
+            })
+        elif keyword == "l":
+            if len(args) < 2:
+                raise SourceIntakeError(f"OBJ line must contain at least 2 references at line {line_no}")
+            lines_out.append({
+                "index": len(lines_out) + 1,
+                "line": line_no,
+                "raw": stripped,
+                "references": [_parse_obj_ref(token, line_no=line_no) for token in args],
+            })
+        elif keyword == "p":
+            if not args:
+                raise SourceIntakeError(f"OBJ point record is empty at line {line_no}")
+            points.append({
+                "index": len(points) + 1,
+                "line": line_no,
+                "raw": stripped,
+                "references": [_parse_obj_ref(token, line_no=line_no) for token in args],
+            })
+        else:
+            directives.append({
+                "line": line_no,
+                "keyword": keyword,
+                "arguments": args,
+                "raw": stripped,
+            })
+
+    if not vertices and not faces:
+        raise SourceIntakeError("OBJ source contains no vertex/face structure")
+
+    directive_counts: dict[str, int] = {}
+    for item in directives:
+        directive_counts[item["keyword"]] = directive_counts.get(item["keyword"], 0) + 1
+
+    return {
+        "kind": "spatial",
+        "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+        "format": "Wavefront-OBJ",
+        "encoding": encoding,
+        "counts": {
+            "vertices": len(vertices),
+            "texcoords": len(texcoords),
+            "normals": len(normals),
+            "parameter_vertices": len(parameter_vertices),
+            "faces": len(faces),
+            "lines": len(lines_out),
+            "points": len(points),
+            "directives": len(directives),
+        },
+        "vertices": vertices,
+        "texcoords": texcoords,
+        "normals": normals,
+        "parameter_vertices": parameter_vertices,
+        "faces": faces,
+        "lines": lines_out,
+        "points": points,
+        "directives": directives,
+        "directive_counts": dict(sorted(directive_counts.items())),
+        "mesh_validation_performed": False,
+        "engineering_interpretation_performed": False,
+        "units_inferred": False,
+        "materials_resolved": False,
+    }
+
+
+def _stl_binary_projection(data: bytes, triangles: int) -> dict[str, Any]:
+    if triangles > _MAX_CAD_ENTITIES:
+        raise SourceIntakeError("STL triangle count exceeds bounded intake limit")
+    expected = 84 + triangles * 50
+    if expected != len(data):
+        raise SourceIntakeError("binary STL byte length does not match triangle count")
+    records: list[dict[str, Any]] = []
+    for index in range(triangles):
+        offset = 84 + index * 50
+        values = struct.unpack("<12fH", data[offset:offset + 50])
+        normal = list(values[0:3])
+        vertices = [
+            list(values[3:6]),
+            list(values[6:9]),
+            list(values[9:12]),
+        ]
+        records.append({
+            "index": index,
+            "byte_offset": offset,
+            "normal": normal,
+            "vertices": vertices,
+            "attribute_byte_count": values[12],
+        })
+    return {
+        "kind": "spatial",
+        "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+        "format": "binary-stl",
+        "header_hex": data[:80].hex(),
+        "triangle_count": triangles,
+        "triangles": records,
+        "expected_byte_length": expected,
+        "length_matches": True,
+        "mesh_validation_performed": False,
+        "engineering_interpretation_performed": False,
+        "units_inferred": False,
+    }
+
+
+def _stl_ascii_projection(data: bytes) -> dict[str, Any]:
+    if len(data) > _MAX_CAD_TEXT_BYTES:
+        raise SourceIntakeError("ASCII STL source exceeds bounded structural intake byte limit")
+    text, encoding = _decode_text(data)
+    lines = text.splitlines()
+    solid_name = None
+    triangles: list[dict[str, Any]] = []
+    current: dict[str, Any] | None = None
+
+    def floats(tokens: list[str], line_no: int, family: str) -> list[float]:
+        if len(tokens) != 3:
+            raise SourceIntakeError(f"ASCII STL {family} must contain 3 values at line {line_no}")
+        try:
+            return [float(token) for token in tokens]
+        except ValueError as exc:
+            raise SourceIntakeError(f"ASCII STL {family} contains non-numeric value at line {line_no}") from exc
+
+    for line_no, line in enumerate(lines, start=1):
+        stripped = line.strip()
+        if not stripped:
+            continue
+        parts = stripped.split()
+        lower = [part.lower() for part in parts]
+        if lower[0] == "solid" and solid_name is None:
+            solid_name = stripped[5:].strip()
+        elif len(lower) >= 2 and lower[0] == "facet" and lower[1] == "normal":
+            if current is not None:
+                raise SourceIntakeError(f"nested STL facet at line {line_no}")
+            current = {
+                "index": len(triangles),
+                "line_start": line_no,
+                "normal": floats(parts[2:], line_no, "facet normal"),
+                "vertices": [],
+            }
+        elif lower[0] == "vertex":
+            if current is None:
+                raise SourceIntakeError(f"STL vertex outside facet at line {line_no}")
+            current["vertices"].append(floats(parts[1:], line_no, "vertex"))
+        elif lower[0] == "endfacet":
+            if current is None:
+                raise SourceIntakeError(f"STL endfacet without facet at line {line_no}")
+            if len(current["vertices"]) != 3:
+                raise SourceIntakeError(f"STL facet must contain exactly 3 vertices before line {line_no}")
+            current["line_end"] = line_no
+            triangles.append(current)
+            current = None
+            if len(triangles) > _MAX_CAD_ENTITIES:
+                raise SourceIntakeError("STL triangle count exceeds bounded intake limit")
+
+    if current is not None:
+        raise SourceIntakeError("ASCII STL ends before endfacet")
+    if not triangles:
+        raise SourceIntakeError("ASCII STL contains no facets")
+
+    return {
+        "kind": "spatial",
+        "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+        "format": "ascii-stl",
+        "encoding": encoding,
+        "solid_name": solid_name,
+        "triangle_count": len(triangles),
+        "triangles": triangles,
+        "mesh_validation_performed": False,
+        "engineering_interpretation_performed": False,
+        "units_inferred": False,
+    }
 
 
 def _stl_projection(data: bytes) -> dict[str, Any]:
-    is_ascii = data[:5].lower() == b"solid" and b"facet" in data[:4096].lower()
-    if is_ascii:
-        text, encoding = _decode_text(data)
-        triangles = sum(1 for line in text.splitlines() if line.strip().startswith("facet normal"))
-        return {"kind": "spatial", "conversion_class": "R2_RECONSTRUCTED", "admission_state": "FRONTIER_ONLY", "format": "ascii-stl", "encoding": encoding, "triangle_count": triangles}
-    if len(data) < 84:
-        raise SourceIntakeError("binary STL is shorter than 84-byte header")
-    triangles = struct.unpack("<I", data[80:84])[0]
-    expected = 84 + triangles * 50
-    return {"kind": "spatial", "conversion_class": "R2_RECONSTRUCTED", "admission_state": "FRONTIER_ONLY", "format": "binary-stl", "triangle_count": triangles, "expected_byte_length": expected, "length_matches": expected == len(data)}
+    if len(data) >= 84:
+        triangles = int.from_bytes(data[80:84], "little")
+        expected = 84 + triangles * 50
+        if expected == len(data):
+            return _stl_binary_projection(data, triangles)
+    if data[:5].lower() == b"solid" and b"facet" in data[:4096].lower():
+        return _stl_ascii_projection(data)
+    raise SourceIntakeError("STL source is neither exact binary layout nor recognised ASCII facet structure")
 
 
 def _local_xml_name(tag: str) -> str:
@@ -848,9 +1103,9 @@ def build_source_envelope(
         elif adapter_id == "pdf-pypdf-v0.1":
             projections = [_reference_projection(family, raw)]
             unresolved.append("registered_pdf_capability_not_bound_in_generic_source_intake")
-        elif adapter_id == "obj-diagnostic-v0.1":
-            projections = [_obj_projection(raw[:_MAX_TEXT_BYTES])]
-        elif adapter_id == "stl-diagnostic-v0.1":
+        elif adapter_id == "obj-mesh-stdlib-v0.1":
+            projections = [_obj_projection(raw)]
+        elif adapter_id == "stl-mesh-stdlib-v0.1":
             projections = [_stl_projection(raw)]
         else:
             projections = [_reference_projection(family, raw)]
@@ -871,8 +1126,8 @@ def build_source_envelope(
         "gltf-stdlib-v0.1": "STRUCTURE_PRESERVED",
         "step-part21-stdlib-v0.1": "STRUCTURE_PRESERVED",
         "freecad-fcstd-stdlib-v0.1": "STRUCTURE_PRESERVED",
-        "obj-diagnostic-v0.1": "SEMANTIC_PROJECTION_ONLY",
-        "stl-diagnostic-v0.1": "SEMANTIC_PROJECTION_ONLY",
+        "obj-mesh-stdlib-v0.1": "STRUCTURE_PRESERVED",
+        "stl-mesh-stdlib-v0.1": "STRUCTURE_PRESERVED",
     }.get(adapter_id, "IDENTITY_REFERENCE_ONLY")
 
     envelope = {

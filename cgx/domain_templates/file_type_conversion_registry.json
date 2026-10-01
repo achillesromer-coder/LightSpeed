@@ -131,11 +131,11 @@
       "extensions": [
         "obj"
       ],
-      "ingest": "exact reference first",
+      "ingest": "exact OBJ bytes + bounded mesh records with line locators; engineering geometry/topology/material interpretation remains separate",
       "r0": true,
-      "r1": null,
-      "adapter": null,
-      "status": "specialist-adapter-required"
+      "r1": "OBJ vertices/texcoords/normals/faces/line/point/directive records with exact line/raw-token provenance",
+      "adapter": "obj-mesh-stdlib-v0.1",
+      "status": "supported-structure-only"
     },
     {
       "id": "model/gltf-binary",
@@ -203,6 +203,17 @@
       "r1": "GIF container signature and logical-screen dimensions only",
       "adapter": "image-metadata-stdlib-v0.1",
       "status": "supported-metadata-only"
+    },
+    {
+      "id": "model/stl",
+      "extensions": [
+        "stl"
+      ],
+      "ingest": "exact STL bytes + bounded triangle structure with byte or line locators; engineering geometry/topology/unit interpretation remains separate",
+      "r0": true,
+      "r1": "binary/ASCII STL triangle normals/vertices and exact structural locators",
+      "adapter": "stl-mesh-stdlib-v0.1",
+      "status": "supported-structure-only"
     }
   ],
   "fallback": {
