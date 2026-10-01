@@ -18,6 +18,8 @@ ADAPTER_VERSION = "0.1"
 _MAX_TEXT_BYTES = 2 * 1024 * 1024
 _MAX_ROWS = 5000
 _MAX_XML_MEMBERS = 256
+_MAX_CAD_TEXT_BYTES = 16 * 1024 * 1024
+_MAX_CAD_ENTITIES = 100000
 
 
 class SourceIntakeError(ValueError):
@@ -55,7 +57,8 @@ def _adapter_for(extension: str) -> tuple[str, str]:
         "svg-xml-stdlib-v0.1": {".svg"},
         "obj-diagnostic-v0.1": {".obj"},
         "stl-diagnostic-v0.1": {".stl"},
-        "step-reference-v0.1": {".step", ".stp"},
+        "step-part21-stdlib-v0.1": {".step", ".stp"},
+        "freecad-fcstd-stdlib-v0.1": {".fcstd"},
         "gltf-stdlib-v0.1": {".gltf", ".glb"},
     }
     for adapter, extensions in groups.items():
@@ -73,7 +76,8 @@ def _adapter_for(extension: str) -> tuple[str, str]:
                 "svg-xml-stdlib-v0.1": "image-vector",
                 "obj-diagnostic-v0.1": "spatial",
                 "stl-diagnostic-v0.1": "spatial",
-                "step-reference-v0.1": "spatial-cad",
+                "step-part21-stdlib-v0.1": "spatial-cad",
+                "freecad-fcstd-stdlib-v0.1": "spatial-cad",
                 "gltf-stdlib-v0.1": "spatial",
             }[adapter]
             return adapter, family
@@ -547,6 +551,237 @@ def _gltf_projection(data: bytes, extension: str) -> dict[str, Any]:
     return projection
 
 
+def _step_statements(text: str) -> list[dict[str, Any]]:
+    statements: list[dict[str, Any]] = []
+    buf: list[str] = []
+    in_string = False
+    in_comment = False
+    line = 1
+    start_line = 1
+    i = 0
+    while i < len(text):
+        ch = text[i]
+        nxt = text[i + 1] if i + 1 < len(text) else ""
+
+        if in_comment:
+            if ch == "*" and nxt == "/":
+                in_comment = False
+                i += 2
+                continue
+            if ch == "\n":
+                line += 1
+            i += 1
+            continue
+
+        if not in_string and ch == "/" and nxt == "*":
+            in_comment = True
+            i += 2
+            continue
+
+        if ch == "'":
+            if in_string and nxt == "'":
+                buf.extend([ch, nxt])
+                i += 2
+                continue
+            in_string = not in_string
+            buf.append(ch)
+            i += 1
+            continue
+
+        if not buf and not ch.isspace():
+            start_line = line
+
+        buf.append(ch)
+        if ch == ";" and not in_string:
+            raw = "".join(buf).strip()
+            if raw:
+                statements.append({
+                    "index": len(statements),
+                    "line_start": start_line,
+                    "line_end": line,
+                    "raw": raw,
+                })
+            buf = []
+            if len(statements) > _MAX_CAD_ENTITIES + 10000:
+                raise SourceIntakeError("STEP statement count exceeds bounded intake limit")
+
+        if ch == "\n":
+            line += 1
+        i += 1
+
+    if in_string:
+        raise SourceIntakeError("STEP source ends inside a quoted string")
+    if in_comment:
+        raise SourceIntakeError("STEP source ends inside a block comment")
+    if "".join(buf).strip():
+        raise SourceIntakeError("STEP source contains unterminated statement")
+    return statements
+
+
+def _step_part21_projection(data: bytes) -> dict[str, Any]:
+    if len(data) > _MAX_CAD_TEXT_BYTES:
+        raise SourceIntakeError("STEP source exceeds bounded structural intake byte limit")
+    text, encoding = _decode_text(data)
+    upper_prefix = text[:4096].upper()
+    if "ISO-10303-21" not in upper_prefix:
+        raise SourceIntakeError("STEP Part 21 signature ISO-10303-21 not found")
+
+    statements = _step_statements(text)
+    section = None
+    header: list[dict[str, Any]] = []
+    entities: list[dict[str, Any]] = []
+    type_counts: dict[str, int] = {}
+
+    import re
+    entity_re = re.compile(r"^#(?P<id>\d+)\s*=\s*(?P<type>[A-Z0-9_]+)\s*\(", re.I)
+    header_re = re.compile(r"^(?P<type>[A-Z0-9_]+)\s*\(", re.I)
+
+    for statement in statements:
+        raw = statement["raw"]
+        token = raw.strip().upper()
+        if token == "HEADER;":
+            section = "HEADER"
+            continue
+        if token == "DATA;":
+            section = "DATA"
+            continue
+        if token == "ENDSEC;":
+            section = None
+            continue
+        if token == "END-ISO-10303-21;":
+            continue
+
+        if section == "HEADER":
+            match = header_re.match(raw)
+            header.append({
+                **statement,
+                "type": match.group("type").upper() if match else None,
+            })
+            continue
+
+        if section == "DATA":
+            match = entity_re.match(raw)
+            if not match:
+                raise SourceIntakeError(
+                    f"unrecognised STEP DATA statement at lines {statement['line_start']}-{statement['line_end']}"
+                )
+            entity_type = match.group("type").upper()
+            entity = {
+                **statement,
+                "entity_id": int(match.group("id")),
+                "entity_type": entity_type,
+            }
+            entities.append(entity)
+            type_counts[entity_type] = type_counts.get(entity_type, 0) + 1
+            if len(entities) > _MAX_CAD_ENTITIES:
+                raise SourceIntakeError("STEP entity count exceeds bounded intake limit")
+
+    if not entities:
+        raise SourceIntakeError("STEP DATA section contains no entities")
+
+    return {
+        "kind": "structure",
+        "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+        "format": "STEP-Part21",
+        "encoding": encoding,
+        "header": header,
+        "entity_count": len(entities),
+        "entity_type_counts": dict(sorted(type_counts.items())),
+        "entities": entities,
+        "engineering_interpretation_performed": False,
+        "brep_validation_performed": False,
+        "units_inferred": False,
+    }
+
+
+def _freecad_fcstd_projection(data: bytes) -> dict[str, Any]:
+    zf, names = _safe_zip_names(data)
+    if "Document.xml" not in names:
+        raise SourceIntakeError("FCStd archive has no Document.xml")
+    info_by_name = {info.filename: info for info in zf.infolist()}
+    members = [
+        {
+            "name": name,
+            "file_size": info_by_name[name].file_size,
+            "compressed_size": info_by_name[name].compress_size,
+            "crc32": f"{info_by_name[name].CRC:08x}",
+            "compress_type": info_by_name[name].compress_type,
+        }
+        for name in names[:50000]
+    ]
+
+    document_bytes = zf.read("Document.xml")
+    if len(document_bytes) > _MAX_CAD_TEXT_BYTES:
+        raise SourceIntakeError("FCStd Document.xml exceeds bounded structural intake limit")
+    root = ET.fromstring(document_bytes)
+
+    objects: list[dict[str, Any]] = []
+    object_names: set[str] = set()
+    for element in root.iter():
+        tag = _local_xml_name(element.tag)
+        if tag != "Object":
+            continue
+        name = element.attrib.get("name") or element.attrib.get("Name")
+        obj_type = element.attrib.get("type") or element.attrib.get("Type")
+        if not name and not obj_type:
+            continue
+        record = {
+            "index": len(objects),
+            "name": name,
+            "type": obj_type,
+            "attributes": {str(k): str(v) for k, v in sorted(element.attrib.items())},
+        }
+        objects.append(record)
+        if name:
+            object_names.add(name)
+        if len(objects) > _MAX_CAD_ENTITIES:
+            raise SourceIntakeError("FCStd object count exceeds bounded intake limit")
+
+    properties: list[dict[str, Any]] = []
+    dependencies: list[dict[str, Any]] = []
+    for element in root.iter():
+        tag = _local_xml_name(element.tag)
+        if tag == "Property":
+            properties.append({
+                "index": len(properties),
+                "name": element.attrib.get("name") or element.attrib.get("Name"),
+                "type": element.attrib.get("type") or element.attrib.get("Type"),
+                "attributes": {str(k): str(v) for k, v in sorted(element.attrib.items())},
+            })
+        elif tag in {"ObjectDep", "Dependency", "Link"}:
+            dependencies.append({
+                "index": len(dependencies),
+                "tag": tag,
+                "attributes": {str(k): str(v) for k, v in sorted(element.attrib.items())},
+            })
+        if len(properties) > _MAX_CAD_ENTITIES or len(dependencies) > _MAX_CAD_ENTITIES:
+            raise SourceIntakeError("FCStd property/dependency count exceeds bounded intake limit")
+
+    tag_counts: dict[str, int] = {}
+    for element in root.iter():
+        tag = _local_xml_name(element.tag)
+        tag_counts[tag] = tag_counts.get(tag, 0) + 1
+
+    return {
+        "kind": "structure",
+        "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+        "format": "FreeCAD-FCStd",
+        "archive_member_count": len(names),
+        "members": members,
+        "document_root_tag": _local_xml_name(root.tag),
+        "document_tag_counts": dict(sorted(tag_counts.items())),
+        "object_count": len(objects),
+        "objects": objects,
+        "property_count": len(properties),
+        "properties": properties,
+        "dependency_records": dependencies,
+        "referenced_object_names": sorted(object_names),
+        "shape_payload_interpreted": False,
+        "brep_validation_performed": False,
+        "engineering_geometry_inferred": False,
+    }
+
+
 def _reference_projection(family: str, data: bytes) -> dict[str, Any]:
     projection: dict[str, Any] = {"kind": "metadata", "family": family}
     if family == "document" and data.startswith(b"%PDF-"):
@@ -606,6 +841,10 @@ def build_source_envelope(
             projections = [_image_metadata_projection(raw)]
         elif adapter_id == "gltf-stdlib-v0.1":
             projections = [_gltf_projection(raw, extension)]
+        elif adapter_id == "step-part21-stdlib-v0.1":
+            projections = [_step_part21_projection(raw)]
+        elif adapter_id == "freecad-fcstd-stdlib-v0.1":
+            projections = [_freecad_fcstd_projection(raw)]
         elif adapter_id == "pdf-pypdf-v0.1":
             projections = [_reference_projection(family, raw)]
             unresolved.append("registered_pdf_capability_not_bound_in_generic_source_intake")
@@ -630,6 +869,8 @@ def build_source_envelope(
         "svg-xml-stdlib-v0.1": "STRUCTURE_PRESERVED",
         "image-metadata-stdlib-v0.1": "LOSSLESS_FOR_DECLARED_FIELDS",
         "gltf-stdlib-v0.1": "STRUCTURE_PRESERVED",
+        "step-part21-stdlib-v0.1": "STRUCTURE_PRESERVED",
+        "freecad-fcstd-stdlib-v0.1": "STRUCTURE_PRESERVED",
         "obj-diagnostic-v0.1": "SEMANTIC_PROJECTION_ONLY",
         "stl-diagnostic-v0.1": "SEMANTIC_PROJECTION_ONLY",
     }.get(adapter_id, "IDENTITY_REFERENCE_ONLY")
