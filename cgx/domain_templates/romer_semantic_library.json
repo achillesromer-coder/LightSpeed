@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-ROMER-SEMANTIC-LIBRARY/0.3",
+  "schema": "CGX-ROMER-SEMANTIC-LIBRARY/0.4",
   "status": "review-blueprint",
   "domain": "romer",
   "filespace": "Romer.cgx",
@@ -146,6 +146,32 @@
           "relationship-state",
           "outreach-draft",
           "engagement-receipt"
+        ],
+        "commercial_bridge": [
+          "research-to-operations-coordinator",
+          "temporary-bridge-service",
+          "bridge-revenue",
+          "bridge-acceptance-gate",
+          "bridge-sunset-gate",
+          "post-m1-optional-service",
+          "client-dependency-risk",
+          "credential-boundary",
+          "conflict-boundary"
+        ],
+        "funding_application": [
+          "funding-program",
+          "tax-incentive",
+          "grant-opportunity",
+          "concession",
+          "commercial-finance",
+          "eligibility-gate",
+          "merit-criterion",
+          "application-component",
+          "application-packet",
+          "co-funding-source",
+          "funding-interaction",
+          "submission-receipt",
+          "award-obligation"
         ]
       }
     },
@@ -298,7 +324,20 @@
       "FUNDED_BY",
       "LICENSED_BY",
       "PROTECTED_BY",
-      "CONTRACTED_WITH"
+      "CONTRACTED_WITH",
+      "MONETISES_AS",
+      "FUNDS",
+      "FUNDED_WORK_OF",
+      "SUNSETS_AT",
+      "OPTIONAL_AFTER",
+      "ELIGIBLE_FOR",
+      "APPLIES_TO_PROGRAM",
+      "REQUIRES_PACKET",
+      "SATISFIES_CRITERION",
+      "COFUNDED_BY",
+      "INTERACTS_WITH_FUNDING",
+      "SUBMITTED_AS",
+      "AWARDED_UNDER"
     ],
     "publication": [
       "REPRESENTED_BY",
@@ -358,7 +397,14 @@
     "contact_route_verified_at",
     "pre_outreach_gate_state",
     "lens_id",
-    "engagement_state"
+    "engagement_state",
+    "bridge_state",
+    "bridge_sunset_gate",
+    "funding_status",
+    "application_readiness",
+    "grant_fit",
+    "credential_boundary",
+    "revenue_evidence_state"
   ],
   "inheritance": {
     "structural": "parent definitions may supply defaults; instances override explicitly",
@@ -378,7 +424,12 @@
     "The Sovereign Cross-Discipline Capacity whitepaper is a derived review view and never becomes canonical authority.",
     "Candidate discovery does not create a supplier, partner, endorsement, approval or capacity fact.",
     "Outreach presentation is derived from Candidate_ID + discretion + gate state + Lens_ID + evidence ceiling; message style never promotes authority.",
-    "Relationship-state changes require attributable engagement receipts; absence of response is not rejection and directory presence is not availability proof."
+    "Relationship-state changes require attributable engagement receipts; absence of response is not rejection and directory presence is not availability proof.",
+    "Temporary M1 bridge revenue must sunset from priority when M1 completes or owner-confirmed funding stability is reached.",
+    "Commercial advisory, training and speaking may remain available after M1, but do not become the permanent organising identity of Romer Industries.",
+    "Unknown-intelligence/first-contact work remains hypothetical contingency research until independently verifiable evidence exists.",
+    "Grant and funding applications are derivative views of canonical technical/business evidence and never become a parallel technical master.",
+    "Synthetic market scenarios never promote to real revenue, traction, demand, customer or partner evidence."
   ],
   "source_mapping_examples": {
     "Type 1 Romer Cognigrex": "graph + enterprise + programme + publications",
@@ -505,5 +556,104 @@
     "site_custodial_rule": "Do not guess or cold-contact an individual Traditional Owner representative. Resolve site/Country and the correct representative body/process first.",
     "signoff_default": "Regards & Admiration,",
     "relationship_promotion_rule": "Advance CANDIDATE to any stronger relationship state only from actual engagement, agreement, qualification or provider evidence attributable to that organisation and scope."
+  },
+  "romer_institutional_role_contract": {
+    "status": "permanent-core",
+    "owner": "Type 1 Romer Cognigrex / 60_Aus_Sovereign_Capacity row 40",
+    "role": "multidisciplinary research-to-implementation-to-operations coordinator",
+    "permanent_chain": [
+      "problem-and-evidence-intake",
+      "cross-disciplinary-synthesis",
+      "experiment-model-test",
+      "design-configuration",
+      "supplier-service-professional-integration",
+      "qualification-regulatory-path",
+      "implementation",
+      "operations",
+      "maintenance-recovery",
+      "next-generation-research"
+    ],
+    "identity_guard": "Romer is not permanently redefined as a consultancy, content business, training company, grant vehicle or universal professional authority.",
+    "authority_rule": "Breadth enables integration and routing; lawful/scientific/professional authority remains with the relevant competent person, institution, regulator or evidence owner."
+  },
+  "m1_bridge_commercial_contract": {
+    "status": "temporary-active",
+    "owner": "Type 1 Romer Cognigrex / 60_Aus_Sovereign_Capacity row 41",
+    "register": "166_ROMER_M1_BRIDGE_MODEL_v0_1",
+    "active_condition": "M1 incomplete AND owner-confirmed monetary stability not yet reached",
+    "sunset_condition": "M1 COMPLETE OR owner-confirmed angel/institutional funding creates monetary stability",
+    "after_sunset": "Bridge services become OPTIONAL. Existing compatible relationships may continue selectively where they support research, operations or expansion; fee work is no longer a priority dependency.",
+    "accept_filter": [
+      "cash-positive or strategically funded",
+      "creates reusable research/capability value",
+      "does not materially delay M1 critical path unless it directly funds/closes an M1 gate",
+      "preserves IP/evidence/credential boundaries",
+      "does not create agenda capture or client dependency"
+    ],
+    "prohibited": [
+      "addictive-or-dark-pattern-monetisation",
+      "manipulative-microtransactions",
+      "pay-to-rank-suppliers",
+      "predetermined-analysis-outcomes",
+      "manufactured-crisis-or-dependency",
+      "referral-kickbacks",
+      "unqualified-regulated-advice"
+    ],
+    "revenue_evidence_rule": "Synthetic ROMER30EC market records are scenario data only and cannot prove customers, revenue, demand, traction or grant market acceptance."
+  },
+  "unknown_intelligence_contingency_contract": {
+    "status": "hypothetical-research",
+    "owner": "Type 1 Romer Cognigrex / 60_Aus_Sovereign_Capacity row 42",
+    "rule": "Research may explore bias-aware, non-anthropocentric communication and contingency protocols with unknown agents/intelligences. This is not evidence that monitoring or contact is occurring.",
+    "epistemic_method": [
+      "state operator biases and limits",
+      "seek plural and competing lenses",
+      "separate evidence from interpretation",
+      "independently verify extraordinary evidence",
+      "protect life, autonomy and non-escalation",
+      "escalate real high-consequence evidence to appropriate scientific, legal, security and international institutions"
+    ],
+    "representation_boundary": "No founder, company or model may self-appoint as representative of humanity or claim uniquely unbiased authority.",
+    "commercial_boundary": "No sensational, paranormal, cultic, fear-based or certainty-selling monetisation."
+  },
+  "funding_application_contract": {
+    "status": "active-readiness",
+    "owner": "Type 1 Romer Cognigrex / 60_Aus_Sovereign_Capacity row 43",
+    "funding_register": "167_ROMER_FUNDING_READINESS_v0_1",
+    "application_packet": "168_ROMER_APPLICATION_PACKET_v0_1",
+    "priority_logic": [
+      "earned bridge revenue and owner/angel capital where suitable",
+      "R&D Tax Incentive where activities/entity/expenditure are eligible",
+      "high-fit competitive grants/concessions",
+      "later commercial-scale finance"
+    ],
+    "grant_additionality_rule": "Funding supports rational project work; the project identity, evidence or technical claims must not be reshaped merely to fit a program.",
+    "application_rule": "GO/CONDITIONAL/HOLD/CLOSED/LATER states come from live program eligibility and project fit. Application drafting is derivative; submission is always a separate explicit owner action.",
+    "evidence_rule": "Synthetic scenario markets are not customer evidence. Partner/candidate names require attributable engagement before being presented as partners or committed contributors.",
+    "packet_requirements": [
+      "applicant-entity",
+      "ip-rights",
+      "team-capability",
+      "problem-opportunity",
+      "innovation-differentiation",
+      "rd-hypothesis",
+      "trl-readiness",
+      "project-plan",
+      "budget-sources-uses",
+      "cofunding-runway",
+      "australian-capability",
+      "market-end-user-evidence",
+      "partners",
+      "risk-regulatory-standards",
+      "environment-community-custodial",
+      "cyber-export-security",
+      "commercial-operating-model",
+      "merit-crosswalk",
+      "conflict-funding-interaction",
+      "public-safe-one-pager",
+      "evidence-room-index",
+      "claims-red-team",
+      "submission-control"
+    ]
   }
 }
