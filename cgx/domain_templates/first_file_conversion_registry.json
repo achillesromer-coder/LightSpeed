@@ -45,7 +45,15 @@
         "mark3.tree",
         "mark3.twin"
       ],
-      "evidence_ceiling": "functional/scaffold + source-bounded engineering semantics; no geometry/physical validation promotion"
+      "evidence_ceiling": "functional/scaffold + source-bounded engineering semantics; no geometry/physical validation promotion",
+      "required_relation_types": [
+        "AFFECTS",
+        "COMPONENT_OF",
+        "GATED_BY",
+        "PART_OF",
+        "PRECEDES",
+        "TESTED_BY"
+      ]
     },
     {
       "mapping_id": "FF-ECO-BIOBLOCK-XLSX-001",
@@ -87,7 +95,15 @@
         "eco.restoration",
         "eco.tree"
       ],
-      "evidence_ceiling": "ecological design/test semantics; field survival/biosecurity/ecological performance remain empirical"
+      "evidence_ceiling": "ecological design/test semantics; field survival/biosecurity/ecological performance remain empirical",
+      "required_relation_types": [
+        "GATED_BY",
+        "HAS_CRITERION",
+        "MONITORED_BY",
+        "TARGETS",
+        "THREATENED_BY",
+        "USES_INPUT"
+      ]
     },
     {
       "mapping_id": "FF-RFS-EMFF-XLSX-001",
@@ -135,7 +151,14 @@
         "rfs.scenario.inspect",
         "rfs.tree"
       ],
-      "evidence_ceiling": "simulation/synthetic/model/test-design semantics only until corresponding empirical measurements exist"
+      "evidence_ceiling": "simulation/synthetic/model/test-design semantics only until corresponding empirical measurements exist",
+      "required_relation_types": [
+        "AFFECTS",
+        "DERIVED_FROM",
+        "GATED_BY",
+        "USES_CONTROL",
+        "USES_INPUT"
+      ]
     },
     {
       "mapping_id": "FF-RFS-LS-BRIDGE-001",
