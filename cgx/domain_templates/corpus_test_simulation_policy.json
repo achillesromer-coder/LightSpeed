@@ -1,0 +1,98 @@
+{
+  "schema": "CGX-CORPUS-TEST-CASCADE/0.1",
+  "status": "review-blueprint",
+  "name": "Corpus-Bound Test and Simulation Cascade",
+  "principle": "The admitted corpus is the semantic source for test and simulation inputs. Execution results are not treated as known, derivable or pre-populated merely because the corpus contains models, expectations or prior reasoning.",
+  "input_policy": {
+    "authoritative_sources": [
+      "verified CGX semantic state",
+      "admitted domain-owner records",
+      "proofed source/evidence records",
+      "final dependency receipts"
+    ],
+    "runtime_form": "Tests receive compact structured packets compiled from the corpus; they do not receive an undifferentiated full-corpus prompt unless a bounded specialist adapter explicitly requires it.",
+    "allowed_scientific_parameter_sources": [
+      "corpus",
+      "final dependency receipt"
+    ],
+    "forbidden": [
+      "invented literal parameter used because a source value is missing",
+      "LLM-estimated parameter silently substituted for a missing measurement",
+      "expected result copied into the result field before execution",
+      "downstream use of an upstream output before proof + readback + commit",
+      "mass hydration when a bounded packet is sufficient"
+    ]
+  },
+  "unknown_policy": {
+    "rule": "Unknown inputs stay explicit and block execution or become a separately authorised measured/bounded sweep dimension; they are not filled by generation.",
+    "classes": [
+      "SOURCE_REQUIRED",
+      "SOURCE_VERIFICATION_REQUIRED",
+      "MEASUREMENT_REQUIRED",
+      "DEPENDENCY_REQUIRED",
+      "DEPENDENCY_PROOF_REQUIRED",
+      "DEPENDENCY_OUTPUT_MISSING",
+      "TOOL_CAPABILITY_REQUIRED",
+      "OWNER_DECISION_REQUIRED"
+    ]
+  },
+  "cascade_policy": {
+    "graph": "directed acyclic dependency graph",
+    "ordering": "topological; lowest declared complexity and smallest input surface first within each executable frontier",
+    "example": "For 16 dependent sweeps, resolve the simplest admissible sweep first; verify/prove/read back/commit its receipt; then unlock only the dependants whose required inputs are now final.",
+    "cycle_policy": "HOLD",
+    "parallelism": "Independent tests in the same dependency layer may run concurrently only when resource, assurance and execution-lease gates allow it."
+  },
+  "result_policy": {
+    "known_before_execution": false,
+    "required_final_gate": {
+      "execution_status": ["complete", "completed"],
+      "proof_state": "proven",
+      "readback_state": "verified",
+      "commit_state": "committed",
+      "input_packet_hash_required": true,
+      "result_hash_required": true
+    },
+    "propagation": "Only final receipts may parameterise a downstream test. Prior expectations, model prose and uncommitted outputs cannot."
+  },
+  "semantic_status_projection": {
+    "states": [
+      "blocked",
+      "ready",
+      "underway",
+      "partial",
+      "complete"
+    ],
+    "rule": "Top-down interfaces show the current semantic state while retaining the underlying source/input/result/proof lineage.",
+    "complete": "final execution receipt + proof + verified readback + committed receipt",
+    "underway": "executor reports an active run",
+    "partial": "some dependencies or inputs are resolved/final but the object is not final",
+    "ready": "all required packet inputs and dependency gates are final but execution has not started",
+    "blocked": "one or more required sources, dependencies, capabilities, authorities or proofs are unresolved"
+  },
+  "integration": {
+    "query_normalisation": "FFQP/PQH/CNR selects the smallest relevant corpus subgraph and capability",
+    "agent_runtime": "agent_runtime_contract.json",
+    "execution_lease": "execution_lease_contract.json",
+    "assurance": "shared assurance router + method adapters",
+    "receipts": "append-only run/result evidence; semantic promotion remains separate"
+  },
+  "activation": {
+    "default": "prepared_not_activated",
+    "requirements": [
+      "merged code revision",
+      "CI/validator pass",
+      "bounded corpus snapshot resolver",
+      "capability adapter available",
+      "execution lease where execution is requested",
+      "connector/local runtime authentication where required",
+      "safe-state/rollback route for effectful work"
+    ],
+    "automatic_external_or_physical_activation": false
+  },
+  "output": {
+    "packet_schema": "CGX-CORPUS-TEST-PACKET/0.1",
+    "receipt_schema": "CGX-CORPUS-TEST-RECEIPT/0.1",
+    "canonical_mutation": false
+  }
+}
