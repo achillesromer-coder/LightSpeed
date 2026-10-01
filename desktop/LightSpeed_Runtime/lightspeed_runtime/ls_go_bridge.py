@@ -1497,6 +1497,15 @@ def create_app(root: Path | str) -> FastAPI:
                     **representation_edge.status(),
                     "error": representation_edge_error,
                 },
+                "test_cascade": {
+                    "mode": "corpus_bound",
+                    "planning_endpoint": "/api/v1/test-cascade/plan",
+                    "activation_state": "prepared_not_activated",
+                    "semantic_states": ["blocked", "ready", "underway", "partial", "complete"],
+                    "result_policy": "unknown_until_receipted_execution",
+                    "dependency_gate": "proof + verified readback + committed receipt",
+                    "execution_performed_by_status": False,
+                },
                 "execution_boundary": "local queue, immutable named artifacts, receipts and review only; no public direct execution",
             }
         )
