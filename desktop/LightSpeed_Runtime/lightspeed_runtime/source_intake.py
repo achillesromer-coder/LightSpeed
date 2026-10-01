@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import hashlib
+from html.parser import HTMLParser
 import io
 import json
 import mimetypes
@@ -42,32 +43,34 @@ def _hash_stream(stream: BinaryIO) -> tuple[str, int, bytes]:
 def _adapter_for(extension: str) -> tuple[str, str]:
     ext = extension.lower()
     groups = {
-        "text-v1": {".txt", ".md", ".markdown", ".py", ".yaml", ".yml", ".ini", ".cfg", ".toml"},
-        "json-v1": {".json", ".jsonl"},
-        "tabular-delimited-v1": {".csv", ".tsv"},
-        "docx-ooxml-v1": {".docx"},
-        "xlsx-ooxml-v1": {".xlsx", ".xlsm"},
-        "pdf-reference-v1": {".pdf"},
-        "image-reference-v1": {".png", ".jpg", ".jpeg", ".webp", ".gif", ".tif", ".tiff"},
-        "obj-spatial-v1": {".obj"},
-        "stl-spatial-v1": {".stl"},
-        "step-reference-v1": {".step", ".stp"},
-        "gltf-reference-v1": {".gltf", ".glb"},
+        "text-stdlib-v0.1": {".txt", ".md", ".markdown", ".py", ".yaml", ".yml", ".ini", ".cfg", ".toml"},
+        "json-stdlib-v0.1": {".json", ".jsonl"},
+        "csv-stdlib-v0.1": {".csv", ".tsv"},
+        "html-stdlib-v0.1": {".html", ".htm"},
+        "docx-ooxml-stdlib-v0.1": {".docx"},
+        "xlsx-ooxml-stdlib-v0.1": {".xlsx", ".xlsm"},
+        "pdf-pypdf-v0.1": {".pdf"},
+        "image-reference-v0.1": {".png", ".jpg", ".jpeg", ".webp", ".gif", ".tif", ".tiff"},
+        "obj-diagnostic-v0.1": {".obj"},
+        "stl-diagnostic-v0.1": {".stl"},
+        "step-reference-v0.1": {".step", ".stp"},
+        "gltf-reference-v0.1": {".gltf", ".glb"},
     }
     for adapter, extensions in groups.items():
         if ext in extensions:
             family = {
-                "text-v1": "text",
-                "json-v1": "structured-text",
-                "tabular-delimited-v1": "table",
-                "docx-ooxml-v1": "document",
-                "xlsx-ooxml-v1": "workbook",
-                "pdf-reference-v1": "document",
-                "image-reference-v1": "image",
-                "obj-spatial-v1": "spatial",
-                "stl-spatial-v1": "spatial",
-                "step-reference-v1": "spatial-cad",
-                "gltf-reference-v1": "spatial",
+                "text-stdlib-v0.1": "text",
+                "json-stdlib-v0.1": "structured-text",
+                "csv-stdlib-v0.1": "table",
+                "html-stdlib-v0.1": "document",
+                "docx-ooxml-stdlib-v0.1": "document",
+                "xlsx-ooxml-stdlib-v0.1": "workbook",
+                "pdf-pypdf-v0.1": "document",
+                "image-reference-v0.1": "image",
+                "obj-diagnostic-v0.1": "spatial",
+                "stl-diagnostic-v0.1": "spatial",
+                "step-reference-v0.1": "spatial-cad",
+                "gltf-reference-v0.1": "spatial",
             }[adapter]
             return adapter, family
     return "binary-reference-v1", "binary"
@@ -98,6 +101,53 @@ def _text_projection(data: bytes) -> dict[str, Any]:
         "headings": headings,
         "text": text,
         "truncated": len(data) >= _MAX_TEXT_BYTES,
+    }
+
+
+class _HTMLProjectionParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.tags: dict[str, int] = {}
+        self.links: list[dict[str, str]] = []
+        self.text_parts: list[str] = []
+        self._skip_depth = 0
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        tag = tag.lower()
+        self.tags[tag] = self.tags.get(tag, 0) + 1
+        if tag in {"script", "style"}:
+            self._skip_depth += 1
+        if tag == "a" and len(self.links) < 2048:
+            attr_map = {str(k).lower(): str(v) for k, v in attrs if v is not None}
+            if "href" in attr_map:
+                self.links.append({"href": attr_map["href"]})
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag.lower() in {"script", "style"} and self._skip_depth:
+            self._skip_depth -= 1
+
+    def handle_data(self, data: str) -> None:
+        if self._skip_depth:
+            return
+        text = " ".join(data.split())
+        if text:
+            self.text_parts.append(text)
+
+
+def _html_projection(data: bytes) -> dict[str, Any]:
+    text, encoding = _decode_text(data)
+    parser = _HTMLProjectionParser()
+    parser.feed(text)
+    visible_text = "\n".join(parser.text_parts)
+    return {
+        "kind": "structure",
+        "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+        "encoding": encoding,
+        "tag_counts": dict(sorted(parser.tags.items())),
+        "links": parser.links,
+        "visible_text": visible_text,
+        "execution_performed": False,
+        "scripts_executed": False,
     }
 
 
@@ -236,7 +286,7 @@ def _obj_projection(data: bytes) -> dict[str, Any]:
             if len(names) < 256: names.append(s[2:].strip())
         elif s.startswith("g "): counts["groups"] += 1
         elif s.startswith("usemtl "): counts["materials"] += 1
-    return {"kind": "spatial", "encoding": encoding, "counts": counts, "object_names": names}
+    return {"kind": "spatial", "conversion_class": "R2_RECONSTRUCTED", "admission_state": "FRONTIER_ONLY", "encoding": encoding, "counts": counts, "object_names": names}
 
 
 def _stl_projection(data: bytes) -> dict[str, Any]:
@@ -244,12 +294,12 @@ def _stl_projection(data: bytes) -> dict[str, Any]:
     if is_ascii:
         text, encoding = _decode_text(data)
         triangles = sum(1 for line in text.splitlines() if line.strip().startswith("facet normal"))
-        return {"kind": "spatial", "format": "ascii-stl", "encoding": encoding, "triangle_count": triangles}
+        return {"kind": "spatial", "conversion_class": "R2_RECONSTRUCTED", "admission_state": "FRONTIER_ONLY", "format": "ascii-stl", "encoding": encoding, "triangle_count": triangles}
     if len(data) < 84:
         raise SourceIntakeError("binary STL is shorter than 84-byte header")
     triangles = struct.unpack("<I", data[80:84])[0]
     expected = 84 + triangles * 50
-    return {"kind": "spatial", "format": "binary-stl", "triangle_count": triangles, "expected_byte_length": expected, "length_matches": expected == len(data)}
+    return {"kind": "spatial", "conversion_class": "R2_RECONSTRUCTED", "admission_state": "FRONTIER_ONLY", "format": "binary-stl", "triangle_count": triangles, "expected_byte_length": expected, "length_matches": expected == len(data)}
 
 
 def _reference_projection(family: str, data: bytes) -> dict[str, Any]:
@@ -293,19 +343,24 @@ def build_source_envelope(
     unresolved: list[str] = []
 
     try:
-        if adapter_id == "text-v1":
+        if adapter_id == "text-stdlib-v0.1":
             projections = [_text_projection(raw[:_MAX_TEXT_BYTES])]
-        elif adapter_id == "json-v1":
+        elif adapter_id == "html-stdlib-v0.1":
+            projections = [_html_projection(raw[:_MAX_TEXT_BYTES])]
+        elif adapter_id == "json-stdlib-v0.1":
             projections = [_json_projection(raw[:_MAX_TEXT_BYTES], extension)]
-        elif adapter_id == "tabular-delimited-v1":
+        elif adapter_id == "csv-stdlib-v0.1":
             projections = [_delimited_projection(raw[:_MAX_TEXT_BYTES], "\t" if extension == ".tsv" else ",")]
-        elif adapter_id == "docx-ooxml-v1":
+        elif adapter_id == "docx-ooxml-stdlib-v0.1":
             projections = [_docx_projection(raw)]
-        elif adapter_id == "xlsx-ooxml-v1":
+        elif adapter_id == "xlsx-ooxml-stdlib-v0.1":
             projections = [_xlsx_projection(raw)]
-        elif adapter_id == "obj-spatial-v1":
+        elif adapter_id == "pdf-pypdf-v0.1":
+            projections = [_reference_projection(family, raw)]
+            unresolved.append("registered_pdf_capability_not_bound_in_generic_source_intake")
+        elif adapter_id == "obj-diagnostic-v0.1":
             projections = [_obj_projection(raw[:_MAX_TEXT_BYTES])]
-        elif adapter_id == "stl-spatial-v1":
+        elif adapter_id == "stl-diagnostic-v0.1":
             projections = [_stl_projection(raw)]
         else:
             projections = [_reference_projection(family, raw)]
@@ -316,13 +371,13 @@ def build_source_envelope(
         unresolved.append("deep_projection_requires_recovery_or_specialist_adapter")
 
     round_trip = {
-        "text-v1": "SEMANTIC_PROJECTION_ONLY",
-        "json-v1": "LOSSLESS_FOR_DECLARED_FIELDS",
-        "tabular-delimited-v1": "LOSSLESS_FOR_DECLARED_FIELDS",
-        "docx-ooxml-v1": "SEMANTIC_PROJECTION_ONLY",
-        "xlsx-ooxml-v1": "STRUCTURE_PRESERVED",
-        "obj-spatial-v1": "SEMANTIC_PROJECTION_ONLY",
-        "stl-spatial-v1": "SEMANTIC_PROJECTION_ONLY",
+        "text-stdlib-v0.1": "SEMANTIC_PROJECTION_ONLY",
+        "json-stdlib-v0.1": "LOSSLESS_FOR_DECLARED_FIELDS",
+        "csv-stdlib-v0.1": "LOSSLESS_FOR_DECLARED_FIELDS",
+        "docx-ooxml-stdlib-v0.1": "SEMANTIC_PROJECTION_ONLY",
+        "xlsx-ooxml-stdlib-v0.1": "STRUCTURE_PRESERVED",
+        "obj-diagnostic-v0.1": "SEMANTIC_PROJECTION_ONLY",
+        "stl-diagnostic-v0.1": "SEMANTIC_PROJECTION_ONLY",
     }.get(adapter_id, "IDENTITY_REFERENCE_ONLY")
 
     envelope = {
