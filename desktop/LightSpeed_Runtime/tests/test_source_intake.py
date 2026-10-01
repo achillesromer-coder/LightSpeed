@@ -561,3 +561,115 @@ def test_3mf_projection_preserves_declared_units_and_mesh_structure():
     assert projection["models"][0]["build_item_count"] == 1
     assert projection["mesh_validation_performed"] is False
     assert projection["units_inferred"] is False
+
+
+def test_toml_projection_uses_structured_stdlib_tree():
+    env = build_source_envelope(
+        source_name="config.toml",
+        data=b'[engine]\nmode="screening"\nworkers=4\n',
+    )
+    projection = env["projections"][0]
+    assert env["adapter_id"] == "toml-stdlib-v0.1"
+    assert projection["format"] == "TOML"
+    assert projection["value"]["engine"]["workers"] == 4
+
+
+def _odf_bytes(extension: str):
+    out = io.BytesIO()
+    content = b'''<office:document-content
+      xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
+      xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
+      xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"
+      xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0">
+      <office:body><office:text>
+        <text:h>Heading</text:h>
+        <text:p>Hello CGX</text:p>
+        <table:table table:name="Data">
+          <table:table-row>
+            <table:table-cell office:value-type="string"><text:p>A</text:p></table:table-cell>
+          </table:table-row>
+        </table:table>
+        <draw:page draw:name="Page1"/>
+      </office:text></office:body>
+    </office:document-content>'''
+    mime = {
+        ".odt": "application/vnd.oasis.opendocument.text",
+        ".ods": "application/vnd.oasis.opendocument.spreadsheet",
+        ".odp": "application/vnd.oasis.opendocument.presentation",
+    }[extension]
+    with zipfile.ZipFile(out, "w") as z:
+        z.writestr("mimetype", mime)
+        z.writestr("content.xml", content)
+    return out.getvalue()
+
+
+@pytest.mark.parametrize("extension", [".odt", ".ods", ".odp"])
+def test_odf_projection_preserves_package_content_structure(extension):
+    env = build_source_envelope(source_name="sample" + extension, data=_odf_bytes(extension))
+    projection = env["projections"][0]
+    assert env["adapter_id"] == "odf-stdlib-v0.1"
+    assert projection["format"] == "OpenDocument"
+    assert projection["mimetype"].startswith("application/vnd.oasis.opendocument.")
+    assert "Hello CGX" in projection["paragraphs"]
+    assert projection["tables"][0]["name"] == "Data"
+    assert projection["scripts_executed"] is False
+    assert projection["visual_layout_inferred"] is False
+
+
+def test_sqlite_projection_reads_schema_only_without_table_rows(tmp_path):
+    import sqlite3
+
+    db = tmp_path / "sample.sqlite"
+    conn = sqlite3.connect(db)
+    try:
+        conn.execute("CREATE TABLE sample(id INTEGER PRIMARY KEY, value TEXT)")
+        conn.execute("INSERT INTO sample(value) VALUES ('secret-row-value')")
+        conn.execute("CREATE VIEW sample_view AS SELECT id FROM sample")
+        conn.commit()
+    finally:
+        conn.close()
+
+    env = build_source_envelope(source_name="sample.sqlite", data=db.read_bytes())
+    projection = env["projections"][0]
+    assert env["adapter_id"] == "sqlite-stdlib-v0.1"
+    assert projection["format"] == "SQLite3"
+    names = {item["name"] for item in projection["schema_objects"]}
+    assert {"sample", "sample_view"}.issubset(names)
+    assert projection["table_rows_read"] is False
+    assert projection["database_mutated"] is False
+    assert "secret-row-value" not in str(projection)
+
+
+def test_ascii_dxf_projection_preserves_pairs_sections_and_entity_types():
+    data = (
+        b"0\nSECTION\n2\nHEADER\n0\nENDSEC\n"
+        b"0\nSECTION\n2\nENTITIES\n"
+        b"0\nLINE\n8\nLayer1\n10\n0.0\n20\n0.0\n11\n1.0\n21\n1.0\n"
+        b"0\nCIRCLE\n8\nLayer1\n10\n0.0\n20\n0.0\n40\n5.0\n"
+        b"0\nENDSEC\n0\nEOF\n"
+    )
+    env = build_source_envelope(source_name="drawing.dxf", data=data)
+    projection = env["projections"][0]
+    assert env["adapter_id"] == "dxf-ascii-stdlib-v0.1"
+    assert projection["format"] == "DXF-ASCII"
+    assert projection["sections"] == ["HEADER", "ENTITIES"]
+    assert projection["entity_counts"] == {"CIRCLE": 1, "LINE": 1}
+    assert projection["geometry_interpreted"] is False
+    assert projection["units_inferred"] is False
+
+
+def test_binary_dxf_fails_closed_to_reference_projection():
+    data = b"AutoCAD Binary DXF\r\n\x1a\x00" + b"opaque"
+    env = build_source_envelope(source_name="drawing.dxf", data=data)
+    assert env["adapter_id"] == "dxf-ascii-stdlib-v0.1"
+    assert env["projections"][0]["kind"] == "metadata"
+    assert any("deep_projection_failed:SourceIntakeError" in item for item in env["warnings"])
+    assert "deep_projection_requires_recovery_or_specialist_adapter" in env["unresolved"]
+
+
+@pytest.mark.parametrize("name", ["drawing.dwg", "table.parquet"])
+def test_specialist_gated_binary_formats_remain_reference_only(name):
+    env = build_source_envelope(source_name=name, data=b"opaque-specialist-binary")
+    assert env["projections"][0]["kind"] == "metadata"
+    assert env["native_preservation"]["round_trip_claim"] == "IDENTITY_REFERENCE_ONLY"
+    assert "registered_specialist_capability_not_bound_in_generic_source_intake" in env["unresolved"]
