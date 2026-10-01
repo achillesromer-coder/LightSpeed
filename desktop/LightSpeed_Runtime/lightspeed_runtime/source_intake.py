@@ -7,6 +7,9 @@ import io
 import json
 import mimetypes
 import struct
+import sqlite3
+import tempfile
+import tomllib
 import zipfile
 from pathlib import Path
 from typing import Any, BinaryIO
@@ -45,7 +48,8 @@ def _hash_stream(stream: BinaryIO) -> tuple[str, int, bytes]:
 def _adapter_for(extension: str) -> tuple[str, str]:
     ext = extension.lower()
     groups = {
-        "text-stdlib-v0.1": {".txt", ".md", ".markdown", ".py", ".yaml", ".yml", ".ini", ".cfg", ".toml"},
+        "text-stdlib-v0.1": {".txt", ".md", ".markdown", ".py", ".yaml", ".yml", ".ini", ".cfg"},
+        "toml-stdlib-v0.1": {".toml"},
         "json-stdlib-v0.1": {".json", ".jsonl"},
         "csv-stdlib-v0.1": {".csv", ".tsv"},
         "html-stdlib-v0.1": {".html", ".htm"},
@@ -54,6 +58,11 @@ def _adapter_for(extension: str) -> tuple[str, str]:
         "pptx-ooxml-stdlib-v0.1": {".pptx"},
         "xml-stdlib-v0.1": {".xml"},
         "zip-stdlib-v0.1": {".zip"},
+        "odf-stdlib-v0.1": {".odt", ".ods", ".odp"},
+        "sqlite-stdlib-v0.1": {".sqlite", ".sqlite3", ".db"},
+        "dxf-ascii-stdlib-v0.1": {".dxf"},
+        "dwg-reference-v0.1": {".dwg"},
+        "parquet-reference-v0.1": {".parquet"},
         "pdf-pypdf-v0.1": {".pdf"},
         "image-metadata-stdlib-v0.1": {".png", ".jpg", ".jpeg", ".gif"},
         "image-reference-v0.1": {".webp", ".tif", ".tiff"},
@@ -70,6 +79,7 @@ def _adapter_for(extension: str) -> tuple[str, str]:
         if ext in extensions:
             family = {
                 "text-stdlib-v0.1": "text",
+                "toml-stdlib-v0.1": "structured-text",
                 "json-stdlib-v0.1": "structured-text",
                 "csv-stdlib-v0.1": "table",
                 "html-stdlib-v0.1": "document",
@@ -78,6 +88,11 @@ def _adapter_for(extension: str) -> tuple[str, str]:
                 "pptx-ooxml-stdlib-v0.1": "presentation",
                 "xml-stdlib-v0.1": "structured-text",
                 "zip-stdlib-v0.1": "archive",
+                "odf-stdlib-v0.1": "office-open-document",
+                "sqlite-stdlib-v0.1": "database",
+                "dxf-ascii-stdlib-v0.1": "spatial-cad",
+                "dwg-reference-v0.1": "spatial-cad",
+                "parquet-reference-v0.1": "table-binary",
                 "pdf-pypdf-v0.1": "document",
                 "image-metadata-stdlib-v0.1": "image",
                 "image-reference-v0.1": "image",
@@ -1048,6 +1063,185 @@ def _freecad_fcstd_projection(data: bytes) -> dict[str, Any]:
 
 
 
+
+def _toml_projection(data: bytes) -> dict[str, Any]:
+    value = tomllib.loads(data.decode("utf-8"))
+    return {
+        "kind": "structure",
+        "format": "TOML",
+        "value": value,
+        "parser": "python-stdlib-tomllib",
+    }
+
+
+def _odf_projection(data: bytes, extension: str) -> dict[str, Any]:
+    zf, names = _safe_zip_names(data)
+    if "content.xml" not in names:
+        raise SourceIntakeError("OpenDocument content.xml missing")
+    mimetype = None
+    if "mimetype" in names:
+        mimetype = zf.read("mimetype").decode("ascii", errors="replace").strip()
+    root = ET.fromstring(zf.read("content.xml"))
+    tag_counts: dict[str, int] = {}
+    paragraphs: list[str] = []
+    tables: list[dict[str, Any]] = []
+    pages: list[dict[str, Any]] = []
+    current_table: dict[str, Any] | None = None
+    current_row = -1
+
+    for elem in root.iter():
+        local = _local_xml_name(elem.tag)
+        tag_counts[local] = tag_counts.get(local, 0) + 1
+        if local in {"p", "h"}:
+            text = "".join(elem.itertext()).strip()
+            if text:
+                paragraphs.append(text[:4096])
+        elif local == "table":
+            current_table = {
+                "name": next(
+                    (v for k, v in elem.attrib.items() if _local_xml_name(k) == "name"),
+                    None,
+                ),
+                "rows": [],
+            }
+            tables.append(current_table)
+            current_row = -1
+        elif local == "table-row" and current_table is not None:
+            current_table["rows"].append([])
+            current_row += 1
+        elif local == "table-cell" and current_table is not None and current_row >= 0:
+            attrs = {_local_xml_name(k): v for k, v in elem.attrib.items()}
+            text = "".join(elem.itertext()).strip()
+            current_table["rows"][current_row].append(
+                {
+                    "text": text[:4096] if text else "",
+                    "attributes": dict(sorted(attrs.items())),
+                }
+            )
+        elif local == "page":
+            attrs = {_local_xml_name(k): v for k, v in elem.attrib.items()}
+            pages.append({"attributes": dict(sorted(attrs.items()))})
+
+    return {
+        "kind": "structure",
+        "format": "OpenDocument",
+        "extension": extension,
+        "mimetype": mimetype,
+        "member_count": len(names),
+        "tag_counts": dict(sorted(tag_counts.items())),
+        "paragraph_count": len(paragraphs),
+        "paragraphs": paragraphs[:5000],
+        "tables": tables[:256],
+        "page_like_elements": pages[:1024],
+        "scripts_executed": False,
+        "visual_layout_inferred": False,
+    }
+
+
+def _sqlite_projection(data: bytes) -> dict[str, Any]:
+    if not data.startswith(b"SQLite format 3\x00"):
+        raise SourceIntakeError("SQLite format 3 signature missing")
+    tmp_path = None
+    try:
+        with tempfile.NamedTemporaryFile(prefix="cgx-intake-", suffix=".sqlite", delete=False) as tmp:
+            tmp.write(data)
+            tmp_path = tmp.name
+        conn = sqlite3.connect(f"file:{tmp_path}?mode=ro&immutable=1", uri=True)
+        try:
+            rows = conn.execute(
+                "SELECT type, name, tbl_name, sql FROM sqlite_master "
+                "WHERE type IN ('table','index','view','trigger') "
+                "ORDER BY type, name LIMIT 5000"
+            ).fetchall()
+            page_size = conn.execute("PRAGMA page_size").fetchone()[0]
+            page_count = conn.execute("PRAGMA page_count").fetchone()[0]
+            user_version = conn.execute("PRAGMA user_version").fetchone()[0]
+            schema_version = conn.execute("PRAGMA schema_version").fetchone()[0]
+        finally:
+            conn.close()
+    except sqlite3.Error as exc:
+        raise SourceIntakeError(f"SQLite read-only schema parse failed: {exc}") from exc
+    finally:
+        if tmp_path:
+            try:
+                Path(tmp_path).unlink()
+            except OSError:
+                pass
+    objects = [
+        {
+            "type": row[0],
+            "name": row[1],
+            "table_name": row[2],
+            "sql": row[3],
+        }
+        for row in rows
+    ]
+    return {
+        "kind": "structure",
+        "format": "SQLite3",
+        "page_size": page_size,
+        "page_count": page_count,
+        "user_version": user_version,
+        "schema_version": schema_version,
+        "schema_object_count_sampled": len(objects),
+        "schema_objects": objects,
+        "table_rows_read": False,
+        "database_mutated": False,
+    }
+
+
+def _dxf_ascii_projection(data: bytes) -> dict[str, Any]:
+    if data.startswith(b"AutoCAD Binary DXF"):
+        raise SourceIntakeError("binary DXF requires specialist adapter")
+    text = data.decode("utf-8", errors="strict")
+    lines = text.splitlines()
+    if len(lines) % 2:
+        raise SourceIntakeError("ASCII DXF must contain group-code/value line pairs")
+    pairs: list[dict[str, Any]] = []
+    sections: list[str] = []
+    entity_counts: dict[str, int] = {}
+    current_section: str | None = None
+    expect_section_name = False
+    in_entities = False
+    max_pairs = 100000
+
+    for i in range(0, min(len(lines), max_pairs * 2), 2):
+        code_raw = lines[i].strip()
+        value = lines[i + 1].rstrip("\r\n")
+        try:
+            code = int(code_raw)
+        except ValueError as exc:
+            raise SourceIntakeError(f"invalid DXF group code at line {i + 1}") from exc
+        line_number = i + 1
+        pairs.append({"code": code, "value": value, "line": line_number})
+        if code == 0 and value == "SECTION":
+            expect_section_name = True
+            continue
+        if expect_section_name and code == 2:
+            current_section = value
+            sections.append(value)
+            in_entities = value == "ENTITIES"
+            expect_section_name = False
+            continue
+        if code == 0 and value == "ENDSEC":
+            current_section = None
+            in_entities = False
+            continue
+        if in_entities and code == 0 and value not in {"ENDSEC", "SEQEND"}:
+            entity_counts[value] = entity_counts.get(value, 0) + 1
+
+    return {
+        "kind": "structure",
+        "format": "DXF-ASCII",
+        "pair_count_sampled": len(pairs),
+        "pairs": pairs,
+        "sections": sections,
+        "entity_counts": dict(sorted(entity_counts.items())),
+        "truncated": len(lines) // 2 > len(pairs),
+        "geometry_interpreted": False,
+        "units_inferred": False,
+    }
+
 def _pptx_projection(data: bytes) -> dict[str, Any]:
     zf, names = _safe_zip_names(data)
     slides: list[dict[str, Any]] = []
@@ -1314,6 +1508,8 @@ def build_source_envelope(
     try:
         if adapter_id == "text-stdlib-v0.1":
             projections = [_text_projection(raw[:_MAX_TEXT_BYTES])]
+        elif adapter_id == "toml-stdlib-v0.1":
+            projections = [_toml_projection(raw[:_MAX_TEXT_BYTES])]
         elif adapter_id == "html-stdlib-v0.1":
             projections = [_html_projection(raw[:_MAX_TEXT_BYTES])]
         elif adapter_id == "json-stdlib-v0.1":
@@ -1330,6 +1526,15 @@ def build_source_envelope(
             projections = [_xml_projection(raw[:_MAX_TEXT_BYTES])]
         elif adapter_id == "zip-stdlib-v0.1":
             projections = [_zip_projection(raw)]
+        elif adapter_id == "odf-stdlib-v0.1":
+            projections = [_odf_projection(raw, extension)]
+        elif adapter_id == "sqlite-stdlib-v0.1":
+            projections = [_sqlite_projection(raw)]
+        elif adapter_id == "dxf-ascii-stdlib-v0.1":
+            projections = [_dxf_ascii_projection(raw)]
+        elif adapter_id in {"dwg-reference-v0.1", "parquet-reference-v0.1"}:
+            projections = [_reference_projection(family, raw)]
+            unresolved.append("registered_specialist_capability_not_bound_in_generic_source_intake")
         elif adapter_id == "svg-xml-stdlib-v0.1":
             projections = [_svg_projection(raw[:_MAX_TEXT_BYTES])]
         elif adapter_id == "image-metadata-stdlib-v0.1":
@@ -1361,6 +1566,7 @@ def build_source_envelope(
 
     round_trip = {
         "text-stdlib-v0.1": "SEMANTIC_PROJECTION_ONLY",
+        "toml-stdlib-v0.1": "LOSSLESS_FOR_DECLARED_FIELDS",
         "json-stdlib-v0.1": "LOSSLESS_FOR_DECLARED_FIELDS",
         "csv-stdlib-v0.1": "LOSSLESS_FOR_DECLARED_FIELDS",
         "docx-ooxml-stdlib-v0.1": "SEMANTIC_PROJECTION_ONLY",
@@ -1368,6 +1574,9 @@ def build_source_envelope(
         "pptx-ooxml-stdlib-v0.1": "STRUCTURE_PRESERVED",
         "xml-stdlib-v0.1": "STRUCTURE_PRESERVED",
         "zip-stdlib-v0.1": "STRUCTURE_PRESERVED",
+        "odf-stdlib-v0.1": "STRUCTURE_PRESERVED",
+        "sqlite-stdlib-v0.1": "STRUCTURE_PRESERVED",
+        "dxf-ascii-stdlib-v0.1": "STRUCTURE_PRESERVED",
         "svg-xml-stdlib-v0.1": "STRUCTURE_PRESERVED",
         "image-metadata-stdlib-v0.1": "LOSSLESS_FOR_DECLARED_FIELDS",
         "gltf-stdlib-v0.1": "STRUCTURE_PRESERVED",
