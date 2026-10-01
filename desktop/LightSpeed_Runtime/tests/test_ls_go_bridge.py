@@ -1779,3 +1779,75 @@ def test_corpus_cascade_plan_route_is_read_only_and_dependency_gated(tmp_path, m
         "blocked",
     ]
     assert payload["projection"]["tests"][0]["packet"]["result_values"] == {}
+
+
+
+def test_conversion_plan_route_preserves_source_authority(tmp_path, monkeypatch):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    contracts = tmp_path / "cgx" / "domain_templates"
+    contracts.mkdir(parents=True)
+    (contracts / "file_type_conversion_registry.json").write_text(
+        json.dumps(
+            {
+                "schema": "CGX-FILE-TYPE-CONVERSION-REGISTRY/0.1",
+                "types": [
+                    {
+                        "id": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        "extensions": ["xlsx"],
+                        "r1": "OOXML workbook/sheet/cell/table structure",
+                        "adapter": "xlsx-ooxml-stdlib-v0.1",
+                    }
+                ],
+                "fallback": {"status": "R0-reference-only"},
+            }
+        ),
+        encoding="utf-8",
+    )
+    (contracts / "file_conversion_contract.json").write_text(
+        json.dumps({"schema": "CGX-FILE-CONVERSION-CONTRACT/0.1"}),
+        encoding="utf-8",
+    )
+    (contracts / "first_file_conversion_registry.json").write_text(
+        json.dumps(
+            {
+                "schema": "CGX-FIRST-FILE-CONVERSION-REGISTRY/0.1",
+                "mappings": [
+                    {
+                        "mapping_id": "FF-MARK3-XLSX-001",
+                        "domain": "romer",
+                        "source_sha256": "a" * 64,
+                        "semantic_target": "/romer/mark-iii",
+                        "evidence_ceiling": "source-bounded",
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.post(
+        "/api/v1/conversion/plan",
+        json={
+            "file_name": "Mark_III_Digital_Twin_v0_1.xlsx",
+            "source_sha256": "a" * 64,
+            "source_ref": "gdrive:mark3",
+            "domain": "romer",
+            "requested_outputs": ["mark3.graph"],
+        },
+    )
+
+    assert response.status_code == 200, response.text
+    payload = response.json()
+    assert payload["execution_performed"] is False
+    assert payload["external_action_performed"] is False
+    assert payload["canonical_mutation"] is False
+    assert payload["authority_transfer"] is False
+    assert payload["plan"]["registered_mapping"]["mapping_id"] == "FF-MARK3-XLSX-001"
+    assert payload["plan"]["source"]["native_authority_preserved"] is True
+    assert [stage["class"] for stage in payload["plan"]["stages"]] == [
+        "R0_EXACT",
+        "R1_SEMANTIC_REVERSIBLE",
+        "R2_RECONSTRUCTED",
+        "R3_GENERATIVE",
+    ]
