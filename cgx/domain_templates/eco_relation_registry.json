@@ -213,6 +213,10 @@
       {
         "id": "HAS_CRITERION",
         "rule": "criterion remains source/test scoped"
+      },
+      {
+        "id": "GATED_BY",
+        "rule": "gate identity/state required; gate presence does not prove field clearance"
       }
     ]
   },
