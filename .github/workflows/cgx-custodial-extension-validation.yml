@@ -12,6 +12,7 @@ on:
       - "scripts/validate_cgx_execution_lease.py"
       - "scripts/build_cgp_ies_parent_candidate.py"
       - "scripts/build_cgx_domain_children.py"
+      - "scripts/migrate_first_file_semantics_to_s92.py"
       - "scripts/validate_cgx_preflight_chain.py"
       - "scripts/cgx_consequence_preflight.py"
       - "scripts/validate_cgx_assurance.py"
@@ -76,6 +77,7 @@ jobs:
           mkdir -p /tmp/cgx-s92-child-source/cgx /tmp/cgx-s92-child-source/scripts
           cp -R cgx/domain_templates /tmp/cgx-s92-child-source/cgx/
           cp scripts/build_cgx_domain_children.py /tmp/cgx-s92-child-source/scripts/
+          cp scripts/migrate_first_file_semantics_to_s92.py /tmp/cgx-s92-child-source/scripts/
       - uses: actions/upload-artifact@v4
         with:
           name: cgx-s92-domain-child-source
