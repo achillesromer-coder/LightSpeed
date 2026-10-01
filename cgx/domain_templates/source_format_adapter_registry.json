@@ -1,103 +1,254 @@
 {
   "schema": "CGX-SOURCE-FORMAT-ADAPTER-REGISTRY/0.1",
-  "status": "IMPLEMENTATION_CONTRACT",
+  "status": "implementation-subset",
   "default_mode": "native-preserving-read-only-projection",
   "adapters": [
     {
-      "adapter_id": "text-v1",
-      "extensions": [".txt", ".md", ".markdown", ".py", ".yaml", ".yml", ".ini", ".cfg", ".toml"],
-      "media_families": ["text"],
-      "projection_kinds": ["text", "structure", "citation_map"],
+      "adapter_id": "text-stdlib-v0.1",
+      "extensions": [
+        ".txt",
+        ".md",
+        ".markdown",
+        ".py",
+        ".yaml",
+        ".yml",
+        ".ini",
+        ".cfg",
+        ".toml"
+      ],
+      "media_families": [
+        "text"
+      ],
+      "projection_kinds": [
+        "text",
+        "structure",
+        "citation_map"
+      ],
       "deep_parse": true,
-      "round_trip_claim": "SEMANTIC_PROJECTION_ONLY"
+      "round_trip_claim": "SEMANTIC_PROJECTION_ONLY",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE"
     },
     {
-      "adapter_id": "json-v1",
-      "extensions": [".json", ".jsonl"],
-      "media_families": ["structured-text"],
-      "projection_kinds": ["structure", "text", "citation_map"],
+      "adapter_id": "json-stdlib-v0.1",
+      "extensions": [
+        ".json",
+        ".jsonl"
+      ],
+      "media_families": [
+        "structured-text"
+      ],
+      "projection_kinds": [
+        "structure",
+        "text",
+        "citation_map"
+      ],
       "deep_parse": true,
-      "round_trip_claim": "LOSSLESS_FOR_DECLARED_FIELDS"
+      "round_trip_claim": "LOSSLESS_FOR_DECLARED_FIELDS",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE"
     },
     {
-      "adapter_id": "tabular-delimited-v1",
-      "extensions": [".csv", ".tsv"],
-      "media_families": ["table"],
-      "projection_kinds": ["table", "structure", "citation_map"],
+      "adapter_id": "csv-stdlib-v0.1",
+      "extensions": [
+        ".csv",
+        ".tsv"
+      ],
+      "media_families": [
+        "table"
+      ],
+      "projection_kinds": [
+        "table",
+        "structure",
+        "citation_map"
+      ],
       "deep_parse": true,
-      "round_trip_claim": "LOSSLESS_FOR_DECLARED_FIELDS"
+      "round_trip_claim": "LOSSLESS_FOR_DECLARED_FIELDS",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE"
     },
     {
-      "adapter_id": "docx-ooxml-v1",
-      "extensions": [".docx"],
-      "media_families": ["document"],
-      "projection_kinds": ["text", "structure", "relationship", "metadata"],
+      "adapter_id": "html-stdlib-v0.1",
+      "extensions": [
+        ".html",
+        ".htm"
+      ],
+      "media_families": [
+        "document"
+      ],
+      "projection_kinds": [
+        "text",
+        "structure",
+        "relationship"
+      ],
       "deep_parse": true,
-      "round_trip_claim": "SEMANTIC_PROJECTION_ONLY"
+      "round_trip_claim": "SEMANTIC_PROJECTION_ONLY",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+      "note": "HTML parsing is non-executing; script/style bodies are excluded from visible-text projection."
     },
     {
-      "adapter_id": "xlsx-ooxml-v1",
-      "extensions": [".xlsx", ".xlsm"],
-      "media_families": ["workbook"],
-      "projection_kinds": ["table", "formula", "structure", "relationship", "metadata"],
+      "adapter_id": "docx-ooxml-stdlib-v0.1",
+      "extensions": [
+        ".docx"
+      ],
+      "media_families": [
+        "document"
+      ],
+      "projection_kinds": [
+        "text",
+        "structure",
+        "relationship",
+        "metadata"
+      ],
       "deep_parse": true,
-      "round_trip_claim": "STRUCTURE_PRESERVED"
+      "round_trip_claim": "SEMANTIC_PROJECTION_ONLY",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE"
     },
     {
-      "adapter_id": "pdf-reference-v1",
-      "extensions": [".pdf"],
-      "media_families": ["document"],
-      "projection_kinds": ["metadata"],
+      "adapter_id": "xlsx-ooxml-stdlib-v0.1",
+      "extensions": [
+        ".xlsx",
+        ".xlsm"
+      ],
+      "media_families": [
+        "workbook"
+      ],
+      "projection_kinds": [
+        "table",
+        "formula",
+        "structure",
+        "relationship",
+        "metadata"
+      ],
+      "deep_parse": true,
+      "round_trip_claim": "STRUCTURE_PRESERVED",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE"
+    },
+    {
+      "adapter_id": "pdf-pypdf-v0.1",
+      "extensions": [
+        ".pdf"
+      ],
+      "media_families": [
+        "document"
+      ],
+      "projection_kinds": [
+        "metadata"
+      ],
       "deep_parse": false,
       "round_trip_claim": "IDENTITY_REFERENCE_ONLY",
-      "note": "Page/text/image parsing belongs to a PDF-aware adapter and is not approximated by generic text decoding."
+      "note": "Generic source_intake preserves PDF identity; registered specialist PDF capability must be bound for R1.",
+      "admission_state": "CAPABILITY_BINDING_REQUIRED"
     },
     {
-      "adapter_id": "image-reference-v1",
-      "extensions": [".png", ".jpg", ".jpeg", ".webp", ".gif", ".tif", ".tiff"],
-      "media_families": ["image"],
-      "projection_kinds": ["metadata", "preview"],
+      "adapter_id": "image-reference-v0.1",
+      "extensions": [
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".webp",
+        ".gif",
+        ".tif",
+        ".tiff"
+      ],
+      "media_families": [
+        "image"
+      ],
+      "projection_kinds": [
+        "metadata",
+        "preview"
+      ],
       "deep_parse": false,
       "round_trip_claim": "IDENTITY_REFERENCE_ONLY",
-      "note": "Semantic vision output is a derived representation and must retain source-image identity."
+      "note": "Semantic vision output is a derived representation and must retain source-image identity.",
+      "admission_state": "REFERENCE_ONLY",
+      "conversion_class": "R0_EXACT"
     },
     {
-      "adapter_id": "obj-spatial-v1",
-      "extensions": [".obj"],
-      "media_families": ["spatial"],
-      "projection_kinds": ["spatial", "structure", "metadata"],
+      "adapter_id": "obj-diagnostic-v0.1",
+      "extensions": [
+        ".obj"
+      ],
+      "media_families": [
+        "spatial"
+      ],
+      "projection_kinds": [
+        "spatial",
+        "structure",
+        "metadata"
+      ],
       "deep_parse": true,
-      "round_trip_claim": "SEMANTIC_PROJECTION_ONLY"
+      "round_trip_claim": "SEMANTIC_PROJECTION_ONLY",
+      "admission_state": "FRONTIER_ONLY",
+      "conversion_class": "R2_RECONSTRUCTED",
+      "note": "Diagnostic structure only; does not satisfy specialist R1 admission."
     },
     {
-      "adapter_id": "stl-spatial-v1",
-      "extensions": [".stl"],
-      "media_families": ["spatial"],
-      "projection_kinds": ["spatial", "metadata"],
+      "adapter_id": "stl-diagnostic-v0.1",
+      "extensions": [
+        ".stl"
+      ],
+      "media_families": [
+        "spatial"
+      ],
+      "projection_kinds": [
+        "spatial",
+        "metadata"
+      ],
       "deep_parse": true,
-      "round_trip_claim": "SEMANTIC_PROJECTION_ONLY"
+      "round_trip_claim": "SEMANTIC_PROJECTION_ONLY",
+      "admission_state": "FRONTIER_ONLY",
+      "conversion_class": "R2_RECONSTRUCTED",
+      "note": "Diagnostic structure only; does not satisfy specialist R1 admission."
     },
     {
-      "adapter_id": "step-reference-v1",
-      "extensions": [".step", ".stp"],
-      "media_families": ["spatial-cad"],
-      "projection_kinds": ["metadata", "structure"],
+      "adapter_id": "step-reference-v0.1",
+      "extensions": [
+        ".step",
+        ".stp"
+      ],
+      "media_families": [
+        "spatial-cad"
+      ],
+      "projection_kinds": [
+        "metadata",
+        "structure"
+      ],
       "deep_parse": false,
-      "round_trip_claim": "IDENTITY_REFERENCE_ONLY"
+      "round_trip_claim": "IDENTITY_REFERENCE_ONLY",
+      "admission_state": "REFERENCE_ONLY",
+      "conversion_class": "R0_EXACT"
     },
     {
-      "adapter_id": "gltf-reference-v1",
-      "extensions": [".gltf", ".glb"],
-      "media_families": ["spatial"],
-      "projection_kinds": ["metadata", "structure"],
+      "adapter_id": "gltf-reference-v0.1",
+      "extensions": [
+        ".gltf",
+        ".glb"
+      ],
+      "media_families": [
+        "spatial"
+      ],
+      "projection_kinds": [
+        "metadata",
+        "structure"
+      ],
       "deep_parse": false,
-      "round_trip_claim": "IDENTITY_REFERENCE_ONLY"
+      "round_trip_claim": "IDENTITY_REFERENCE_ONLY",
+      "admission_state": "REFERENCE_ONLY",
+      "conversion_class": "R0_EXACT"
     }
   ],
   "fallback": {
     "adapter_id": "binary-reference-v1",
-    "projection_kinds": ["metadata"],
+    "projection_kinds": [
+      "metadata"
+    ],
     "round_trip_claim": "IDENTITY_REFERENCE_ONLY",
     "rule": "Unknown formats remain content-addressed references with no guessed semantic extraction."
-  }
+  },
+  "parent_type_registry": "file_type_conversion_registry.json",
+  "rule": "This registry describes concrete generic source-intake implementations only. file_type_conversion_registry.json decides admitted R1 capability/status."
 }
