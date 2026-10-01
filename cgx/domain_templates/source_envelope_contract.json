@@ -1,0 +1,62 @@
+{
+  "schema": "CGX-SOURCE-ENVELOPE/0.1",
+  "status": "IMPLEMENTATION_CONTRACT",
+  "purpose": "Preserve native source identity while producing bounded machine-readable projections for .CGX admission, search, test input construction and human-facing views.",
+  "principles": [
+    "native bytes and source identity remain authoritative for the source artifact",
+    "projection is not source replacement",
+    "one source may expose multiple projections without multiplying source authority",
+    "semantic extraction must retain exact provenance to source byte ranges, cells, members or object identifiers where the format permits",
+    "unknown or unsupported native structure remains explicit rather than flattened or guessed",
+    "binary content is never decoded as text merely because a language model can consume arbitrary text",
+    "large or controlled binaries remain referenced/content-addressed unless an adapter explicitly admits embedded payloads",
+    "representations never become geometry, workbook, document or empirical authority"
+  ],
+  "required_envelope_fields": [
+    "source_id",
+    "sha256",
+    "byte_length",
+    "source_name",
+    "media_type",
+    "extension",
+    "adapter_id",
+    "native_preservation",
+    "authority",
+    "evidence_state",
+    "release_class",
+    "projections",
+    "warnings",
+    "unresolved",
+    "lineage"
+  ],
+  "projection_kinds": [
+    "text",
+    "structure",
+    "table",
+    "metadata",
+    "formula",
+    "relationship",
+    "spatial",
+    "preview",
+    "citation_map"
+  ],
+  "native_preservation": {
+    "required": true,
+    "fields": [
+      "source_ref",
+      "source_sha256",
+      "source_byte_length",
+      "adapter_version",
+      "round_trip_claim"
+    ],
+    "round_trip_claim_values": [
+      "NONE",
+      "IDENTITY_REFERENCE_ONLY",
+      "STRUCTURE_PRESERVED",
+      "SEMANTIC_PROJECTION_ONLY",
+      "LOSSLESS_FOR_DECLARED_FIELDS"
+    ]
+  },
+  "admission_rule": "A projection may be used for retrieval/reasoning when its adapter and evidence state are admitted. A canonical mutation or technical result still requires the owning authority/readback/proof gate.",
+  "canonical_mutation": false
+}
