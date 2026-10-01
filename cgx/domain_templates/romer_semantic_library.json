@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-ROMER-SEMANTIC-LIBRARY/0.6",
+  "schema": "CGX-ROMER-SEMANTIC-LIBRARY/0.7",
   "status": "review-blueprint",
   "domain": "romer",
   "filespace": "Romer.cgx",
@@ -407,7 +407,13 @@
     "revenue_evidence_state",
     "resolved_successor_version",
     "resolved_owner_record",
-    "successor_lineage_state"
+    "successor_lineage_state",
+    "applicant_entity_state",
+    "arena_launchpad_state",
+    "rdti_activity_state",
+    "rdti_core_relation",
+    "rdti_supporting_relation",
+    "rdti_exclusion_risk"
   ],
   "inheritance": {
     "structural": "parent definitions may supply defaults; instances override explicitly",
@@ -438,7 +444,11 @@
     "Time-sensitive funding programs require current official-source re-verification and hard eligibility gates before narrative/application drafting.",
     "Manufacturing-support programs must not infer current manufacturer eligibility from planned manufacturing or technology-development intent.",
     "Automation prompt version references are lower-bound anchors; latest verified same-lineage stable-ID successors control execution.",
-    "A newer version with changed stable identity, owner or incompatible lineage is not an automatic successor and must be reconciled explicitly."
+    "A newer version with changed stable identity, owner or incompatible lineage is not an automatic successor and must be reconciled explicitly.",
+    "R&DTI status never inherits from a project family; classify the specific conducted activity and income year.",
+    "Solar Hull synthetic efficiency and target values cannot be used as measured ARENA or R&DTI evidence.",
+    "Grant readiness and R&DTI claim readiness may reuse raw evidence, but neither may promote the other's legal or technical conclusion.",
+    "A provisionally corroborated company identity is not submission-ready until current official applicant and authority evidence is attached."
   ],
   "source_mapping_examples": {
     "Type 1 Romer Cognigrex": "graph + enterprise + programme + publications",
@@ -764,5 +774,58 @@
       "authority owner changed without reconciliation"
     ],
     "evidence_boundary": "Successor resolution cannot promote physical, empirical, legal, regulatory, contractual or professional evidence."
+  },
+  "applicant_entity_readiness_contract": {
+    "status": "provisional",
+    "owner": "168_ROMER_APPLICATION_PACKET_v0_1 / ENTITY-001..002",
+    "applicant": "Römer Industries Pty Ltd",
+    "evidence_state": "Internal corpus + public company-directory corroboration; official current ASIC/ABR extract and applicant-authority facts still required before submission/claim.",
+    "required_close": [
+      "current official company/ABR record",
+      "exact applicant legal name",
+      "program-specific GST/tax facts where required",
+      "authorised representative/binding authority",
+      "bank/finance fields where required",
+      "registered contact/address fields required by form"
+    ],
+    "privacy_rule": "Keep registration identifiers and private finance fields restricted; public briefs use only the minimum public-safe entity facts."
+  },
+  "arena_launchpad_2026_contract": {
+    "state": "HOLD_PRE_APPLICATION_EVIDENCE_SPRINT",
+    "deadline": "2026-10-28T16:00:00+11:00",
+    "candidate_project": "one Solar Hull clean-energy configuration only; never whole Romer corpus",
+    "strategic_fit": "Conditional. Current ARENA priorities include ultra-low-cost solar and renewable-electricity innovation; Solar Hull fits only if the selected configuration is genuinely photoactive/renewable-energy enabling.",
+    "current_blocks": [
+      "official applicant/authority proof",
+      "photoactive mechanism/chemistry unresolved",
+      "versioned controlled energy configuration",
+      "physical coupon evidence",
+      "external commercial/end-user evidence weak",
+      "budget/sources-and-uses not justified until scope/evidence gate passes"
+    ],
+    "evidence_ceiling": "29.288226% Solar Hull value is synthetic/model-only; it is not measured efficiency.",
+    "recommended_gate": "At least one controlled coupon package with raw I-V, irradiance, active area, temperature, baseline/control and uncertainty before internal submission promotion; exact round eligibility remains governed by current ARENA documents.",
+    "fallback": "If honest coherent application cannot clear internal audit before deadline, mark NO-GO for 2026 and retain evidence packet for FMA/ARP/later funding."
+  },
+  "rdti_activity_classification_contract": {
+    "status": "pre_claim_classification",
+    "owner": "168_ROMER_APPLICATION_PACKET_v0_1 / RDTI-A01..A07",
+    "rules": [
+      "R&DTI eligibility is assessed at activity level, not project/technology family level.",
+      "Core candidate requires purpose of generating new knowledge, outcome not knowable in advance, and systematic progression: hypothesis, experiment, observation, evaluation, logical conclusion.",
+      "Supporting activity must be directly related to a core activity; producing-goods/services or excluded activities may also require dominant-purpose support.",
+      "Planning, novelty, difficulty, simulations, ordinary engineering, market work and target values do not automatically establish core R&D.",
+      "Internal-administration software is high exclusion risk and is non-claim by default unless a specific eligible technical experiment is separately evidenced."
+    ],
+    "current_activities": {
+      "RDTI-A01-RFS": "POTENTIAL_CORE_NOT_CLAIM_READY",
+      "RDTI-A02-EMFF": "POTENTIAL_CORE_NOT_CLAIM_READY",
+      "RDTI-A03-SOLAR_HULL_COUPON": "FUTURE_CORE_CANDIDATE_TEST_PLAN_OPEN",
+      "RDTI-A04-FREE_FLOW_SOLENOID": "POTENTIAL_SUPPORTING_CORE_NOT_PRESUMED",
+      "RDTI-A05-FREE_FLOW_BATTERY": "FUTURE_CORE_CANDIDATE_HYPOTHESIS_NOT_LOCKED",
+      "RDTI-A06-COGNIGREX_INTERNAL": "HIGH_EXCLUSION_RISK_NOT_CORE_BY_DEFAULT",
+      "RDTI-A07-COGNIGREX_EXTERNAL_EMBEDDED": "FUTURE_ACTIVITY_SPECIFIC_CORE_CANDIDATE"
+    },
+    "evidence_reuse": "Where scientifically appropriate, the same raw experimental package may support technical validation, IP, grant and R&DTI evidence without changing each system's legal/claim ceiling."
   }
 }
