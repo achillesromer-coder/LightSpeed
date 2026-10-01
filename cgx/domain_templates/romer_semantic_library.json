@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-ROMER-SEMANTIC-LIBRARY/0.5",
+  "schema": "CGX-ROMER-SEMANTIC-LIBRARY/0.6",
   "status": "review-blueprint",
   "domain": "romer",
   "filespace": "Romer.cgx",
@@ -404,7 +404,10 @@
     "application_readiness",
     "grant_fit",
     "credential_boundary",
-    "revenue_evidence_state"
+    "revenue_evidence_state",
+    "resolved_successor_version",
+    "resolved_owner_record",
+    "successor_lineage_state"
   ],
   "inheritance": {
     "structural": "parent definitions may supply defaults; instances override explicitly",
@@ -433,7 +436,9 @@
     "Pre-M1 bridge opportunities are triaged A–D; revenue opportunity never overrides protected M1 critical-path capacity by default.",
     "Bridge revenue state advances only from attributable external receipts: lead, qualified, proposal, contracted, invoiced, paid, allocated.",
     "Time-sensitive funding programs require current official-source re-verification and hard eligibility gates before narrative/application drafting.",
-    "Manufacturing-support programs must not infer current manufacturer eligibility from planned manufacturing or technology-development intent."
+    "Manufacturing-support programs must not infer current manufacturer eligibility from planned manufacturing or technology-development intent.",
+    "Automation prompt version references are lower-bound anchors; latest verified same-lineage stable-ID successors control execution.",
+    "A newer version with changed stable identity, owner or incompatible lineage is not an automatic successor and must be reconciled explicitly."
   ],
   "source_mapping_examples": {
     "Type 1 Romer Cognigrex": "graph + enterprise + programme + publications",
@@ -739,5 +744,25 @@
         "role": "external energy-water-waste-scope1-2 benchmark and action plan"
       }
     }
+  },
+  "stable_successor_resolution_contract": {
+    "status": "active",
+    "owner": "Type 1 Romer Cognigrex / 60_Aus_Sovereign_Capacity row 44",
+    "rule": "A version cited in a prompt is a minimum-known anchor. Runtime must resolve the latest verified successor with the same stable identity and valid lineage before execution.",
+    "procedure": [
+      "read live owning record",
+      "identify latest same Stable_ID/Object_ID/Task_ID/Build_ID successor",
+      "verify parent/lineage and authority/evidence compatibility",
+      "select newest verified successor",
+      "record resolved version and provider readback in receipt"
+    ],
+    "hold_conditions": [
+      "stable identity changed",
+      "fork or incompatible schema",
+      "unresolved conflict",
+      "missing provider readback",
+      "authority owner changed without reconciliation"
+    ],
+    "evidence_boundary": "Successor resolution cannot promote physical, empirical, legal, regulatory, contractual or professional evidence."
   }
 }
