@@ -1,0 +1,88 @@
+{
+  "schema": "CGX-S92-DOMAIN-CHILD-SUCCESSOR-VALIDATION/0.1",
+  "status": "LOCAL_SUCCESSOR_BUILD_VERIFIED / DURABLE_PERSISTENCE_OPEN",
+  "verified_at": "2026-10-01",
+  "source_control": {
+    "branch": "cgx/corpus-bound-cascade-20261001",
+    "reviewed_source_head": "a1434ba6aeb95d4245de873061d372c5f4f9576a",
+    "child_source_artifact_id": 11134474263,
+    "child_source_artifact_digest": "sha256:4258804e28f4cf8cea948b774d5112d8c35fdf3678da16b0867a33040869ecc4",
+    "note": "Subsequent commit 4a85b95ed62e176943dd99689be730a8b06fc8e0 changes only the migration test path and does not change child-generation source semantics."
+  },
+  "parent_recovery": {
+    "state_id": "S92",
+    "drive_id": "1ap1xHVQ0cDWeJDAVWxvY_VqMkSzwpG6i",
+    "sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+    "content_root": "bf851642ac5bef93e8b9663f71ea4aa94ede30bf057528101773dd12de830bc1",
+    "dbr_root": "a7da29629904db2ac82218eaf36c916adbc057a7e954104053078afbf288ad66",
+    "topology_snapshot_hash": "13cc735955ff8aaabdaf43aed968b510b5dab85416fbb7adee5807215c781074",
+    "verifier": "PASS",
+    "direct_drive_readback_verified": true
+  },
+  "identity_model": {
+    "registry_schema": "CGX-DOMAIN-CHILD-IDENTITY/0.1",
+    "rule": "Stable semantic_object_id identifies domain meaning across rebuilds; carrier_instance_object_id and carrier_sha256 identify one exact built artifact.",
+    "supersedes_ephemeral_byte_assumption": true
+  },
+  "outputs": {
+    "romer": {
+      "file": "Romer.cgx",
+      "semantic_object_id": "cgx:domain:romer",
+      "carrier_instance_object_id": "cgx:local:93af03fb4763480c05d7bbda",
+      "sha256": "5338d11c2ad0a85820761ad296a42aa5d436ab78530a9709e9d0553e303df21f",
+      "verify": "PASS",
+      "packed_reopen_verify": "PASS",
+      "tracked_objects": 64,
+      "content_root": "a80ded2e53f0f1ad2727428096438520ae570f965951eaf25c7f6e44607668c3",
+      "dbr_root": "046f9383b1c4263b84b1ca20ced48224900f498b72a6fd4faaa67c7a768024f6",
+      "topology_snapshot_hash": "367f19ac41db5c17b3c26c5966514ccc72d19938b07b8192806400cfb514ff34"
+    },
+    "eco": {
+      "file": "Eco.cgx",
+      "semantic_object_id": "cgx:domain:eco",
+      "carrier_instance_object_id": "cgx:local:e6a95f7f2e34ec364afcf4ff",
+      "sha256": "f36fc718169056ac8bb3c1f287eb060001a46391476efc353383e0efd89a5e9e",
+      "verify": "PASS",
+      "packed_reopen_verify": "PASS",
+      "tracked_objects": 64,
+      "content_root": "1de4e165d335b1314ccd8fd85649e993c6983ea20a53319f7c31c07c5e3baf42",
+      "dbr_root": "3ae9c1107e1a119f1aefdabe30eb550b6dd7c9c75f546c6629f9a5691ccdb4c7",
+      "topology_snapshot_hash": "abc1191fca5fcd82999707a2fdfbd77dcaf0fc7b84953f88517381599a3d5014"
+    },
+    "emassc": {
+      "file": "EMASSC.cgx",
+      "semantic_object_id": "cgx:domain:emassc",
+      "carrier_instance_object_id": "cgx:local:6cfa51daf39420be6e742e7a",
+      "sha256": "8353cea3aa444d96763e3a058a0a0b0d0a7a5b20d0ee71eb4982c2e06e9312f2",
+      "verify": "PASS",
+      "packed_reopen_verify": "PASS",
+      "tracked_objects": 64,
+      "content_root": "03fbf59088e88841b918871a0b7697d1a393089f9b582a807d342f780ab93585",
+      "dbr_root": "8f1e68952b420e2f5365ba64501767563c4a8c217d16bd0a5ad31539221b6a7a",
+      "topology_snapshot_hash": "2ce88841d751ab254e538ec55cdc880e944b8b658fbe991840ffdd8bca25d874"
+    },
+    "lightspeed": {
+      "file": "LS.cgx",
+      "semantic_object_id": "cgx:domain:lightspeed",
+      "carrier_instance_object_id": "cgx:local:d3b111c0cd1fce6b7e54fb63",
+      "sha256": "824a58d0579f9fb9dfc7d0eee7819310b49006f591ae3a43a29af770edd9b83a",
+      "verify": "PASS",
+      "packed_reopen_verify": "PASS",
+      "tracked_objects": 64,
+      "content_root": "b3207c2cded36a86bee5114f2930e9471d622caf08cec3dbf09fb6e3eaff95d4",
+      "dbr_root": "89bbd4c239d7cfeece16cb2aace643b171ab4c13ae72cc21887c64bf86b31aad",
+      "topology_snapshot_hash": "1831d551edb1fe89fdd472fe6d5324d24d6fe1b5c71ebbbbca71f9040bf63924"
+    }
+  },
+  "persistence": {
+    "target_drive_folder_id": "1R3PDW_R24mBSeAi8aT6k1OtmzM9675IO",
+    "target_path": "/Google Drive/Nathaniel/CGX/Validation/S92_Domain_Children_2026-10-01",
+    "attempted": true,
+    "write_succeeded": false,
+    "error_code": "container_session_expired",
+    "attempts": 3,
+    "non_effect": "No child binary was written or promoted by the failed transport attempts.",
+    "close_when": "Persist the exact selected successor carriers, re-fetch by Drive ID, verify SHA-256 and canonical verifier, then record durable authority/promotion state."
+  },
+  "authority_limit": "This receipt proves local deterministic construction from exact S92 Recovery source under the reviewed builder and stable semantic identity contract. It does not claim durable child persistence or promotion."
+}
