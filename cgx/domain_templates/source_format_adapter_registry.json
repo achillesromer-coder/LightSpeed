@@ -299,6 +299,102 @@
       "admission_state": "IMPLEMENTED",
       "conversion_class": "R1_SEMANTIC_REVERSIBLE",
       "note": "Exact bounded binary/ASCII STL triangle structure with byte/line locators; no topology, units or engineering interpretation."
+    },
+    {
+      "adapter_id": "pptx-ooxml-stdlib-v0.1",
+      "extensions": [
+        ".pptx"
+      ],
+      "media_families": [
+        "presentation"
+      ],
+      "projection_kinds": [
+        "text",
+        "structure",
+        "relationship",
+        "metadata"
+      ],
+      "deep_parse": true,
+      "round_trip_claim": "STRUCTURE_PRESERVED",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+      "note": "OOXML slide parts, text runs, relationship-part references and shape-like element counts; macros are not executed and visual layout is not inferred."
+    },
+    {
+      "adapter_id": "xml-stdlib-v0.1",
+      "extensions": [
+        ".xml"
+      ],
+      "media_families": [
+        "structured-text"
+      ],
+      "projection_kinds": [
+        "structure",
+        "text",
+        "metadata",
+        "citation_map"
+      ],
+      "deep_parse": true,
+      "round_trip_claim": "STRUCTURE_PRESERVED",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+      "note": "Bounded XML element/attribute/text tree with stable element paths; external entities/scripts are not executed."
+    },
+    {
+      "adapter_id": "zip-stdlib-v0.1",
+      "extensions": [
+        ".zip"
+      ],
+      "media_families": [
+        "archive"
+      ],
+      "projection_kinds": [
+        "structure",
+        "metadata"
+      ],
+      "deep_parse": true,
+      "round_trip_claim": "STRUCTURE_PRESERVED",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+      "note": "Archive directory structure and member metadata only; member payload semantics remain separately gated."
+    },
+    {
+      "adapter_id": "ply-mesh-stdlib-v0.1",
+      "extensions": [
+        ".ply"
+      ],
+      "media_families": [
+        "spatial-mesh"
+      ],
+      "projection_kinds": [
+        "structure",
+        "metadata",
+        "citation_map"
+      ],
+      "deep_parse": true,
+      "round_trip_claim": "STRUCTURE_PRESERVED",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+      "note": "PLY header encoding/version/element/property structure and body offset only; body geometry is not decoded and units are not inferred."
+    },
+    {
+      "adapter_id": "3mf-stdlib-v0.1",
+      "extensions": [
+        ".3mf"
+      ],
+      "media_families": [
+        "spatial-additive"
+      ],
+      "projection_kinds": [
+        "structure",
+        "relationship",
+        "metadata"
+      ],
+      "deep_parse": true,
+      "round_trip_claim": "STRUCTURE_PRESERVED",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+      "note": "3MF package/model object and mesh counts with exact declared unit attribute where present; mesh validity and engineering intent are not inferred."
     }
   ],
   "fallback": {

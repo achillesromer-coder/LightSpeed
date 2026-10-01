@@ -214,6 +214,61 @@
       "r1": "binary/ASCII STL triangle normals/vertices and exact structural locators",
       "adapter": "stl-mesh-stdlib-v0.1",
       "status": "supported-structure-only"
+    },
+    {
+      "id": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "extensions": [
+        "pptx"
+      ],
+      "ingest": "exact-bytes+ooxml-semantic",
+      "r0": true,
+      "r1": "OOXML presentation/slide/text/relationship structure",
+      "adapter": "pptx-ooxml-stdlib-v0.1",
+      "status": "supported"
+    },
+    {
+      "id": "application/xml",
+      "extensions": [
+        "xml"
+      ],
+      "ingest": "exact-bytes+xml-structure-no-execution",
+      "r0": true,
+      "r1": "bounded XML element/attribute/text structure with stable paths",
+      "adapter": "xml-stdlib-v0.1",
+      "status": "supported"
+    },
+    {
+      "id": "application/zip",
+      "extensions": [
+        "zip"
+      ],
+      "ingest": "exact-bytes+archive-member-structure",
+      "r0": true,
+      "r1": "ZIP member names/sizes/compression/CRC/encryption flags without payload interpretation",
+      "adapter": "zip-stdlib-v0.1",
+      "status": "supported-structure-only"
+    },
+    {
+      "id": "model/ply",
+      "extensions": [
+        "ply"
+      ],
+      "ingest": "exact PLY bytes + bounded header element/property structure; body/geometry interpretation remains separate",
+      "r0": true,
+      "r1": "PLY format/header/elements/properties/body offset",
+      "adapter": "ply-mesh-stdlib-v0.1",
+      "status": "supported-structure-only"
+    },
+    {
+      "id": "model/3mf",
+      "extensions": [
+        "3mf"
+      ],
+      "ingest": "exact 3MF package + bounded model/object/mesh/build structure; engineering interpretation remains separate",
+      "r0": true,
+      "r1": "3MF package/model parts, declared units, object IDs and vertex/triangle/build counts",
+      "adapter": "3mf-stdlib-v0.1",
+      "status": "supported-structure-only"
     }
   ],
   "fallback": {
