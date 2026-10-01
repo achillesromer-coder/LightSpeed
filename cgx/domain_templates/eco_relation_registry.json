@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-ECO-RELATION-REGISTRY/0.1",
+  "schema": "CGX-ECO-RELATION-REGISTRY/0.2",
   "domain": "eco",
   "extends": "CGX-RELATION-QUALIFIER/0.1",
   "families": {
@@ -203,6 +203,16 @@
       },
       {
         "id": "REVIEWED_BY"
+      }
+    ],
+    "recipe_test": [
+      {
+        "id": "USES_INPUT",
+        "rule": "input identity does not itself prove field suitability"
+      },
+      {
+        "id": "HAS_CRITERION",
+        "rule": "criterion remains source/test scoped"
       }
     ]
   },
