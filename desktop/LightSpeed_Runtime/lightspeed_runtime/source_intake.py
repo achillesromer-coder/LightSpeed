@@ -50,11 +50,13 @@ def _adapter_for(extension: str) -> tuple[str, str]:
         "docx-ooxml-stdlib-v0.1": {".docx"},
         "xlsx-ooxml-stdlib-v0.1": {".xlsx", ".xlsm"},
         "pdf-pypdf-v0.1": {".pdf"},
-        "image-reference-v0.1": {".png", ".jpg", ".jpeg", ".webp", ".gif", ".tif", ".tiff"},
+        "image-metadata-stdlib-v0.1": {".png", ".jpg", ".jpeg", ".gif"},
+        "image-reference-v0.1": {".webp", ".tif", ".tiff"},
+        "svg-xml-stdlib-v0.1": {".svg"},
         "obj-diagnostic-v0.1": {".obj"},
         "stl-diagnostic-v0.1": {".stl"},
         "step-reference-v0.1": {".step", ".stp"},
-        "gltf-reference-v0.1": {".gltf", ".glb"},
+        "gltf-stdlib-v0.1": {".gltf", ".glb"},
     }
     for adapter, extensions in groups.items():
         if ext in extensions:
@@ -66,11 +68,13 @@ def _adapter_for(extension: str) -> tuple[str, str]:
                 "docx-ooxml-stdlib-v0.1": "document",
                 "xlsx-ooxml-stdlib-v0.1": "workbook",
                 "pdf-pypdf-v0.1": "document",
+                "image-metadata-stdlib-v0.1": "image",
                 "image-reference-v0.1": "image",
+                "svg-xml-stdlib-v0.1": "image-vector",
                 "obj-diagnostic-v0.1": "spatial",
                 "stl-diagnostic-v0.1": "spatial",
                 "step-reference-v0.1": "spatial-cad",
-                "gltf-reference-v0.1": "spatial",
+                "gltf-stdlib-v0.1": "spatial",
             }[adapter]
             return adapter, family
     return "binary-reference-v1", "binary"
@@ -302,6 +306,247 @@ def _stl_projection(data: bytes) -> dict[str, Any]:
     return {"kind": "spatial", "conversion_class": "R2_RECONSTRUCTED", "admission_state": "FRONTIER_ONLY", "format": "binary-stl", "triangle_count": triangles, "expected_byte_length": expected, "length_matches": expected == len(data)}
 
 
+def _local_xml_name(tag: str) -> str:
+    return tag.rsplit("}", 1)[-1] if "}" in tag else tag
+
+
+def _svg_projection(data: bytes) -> dict[str, Any]:
+    text, encoding = _decode_text(data)
+    root = ET.fromstring(text)
+    if _local_xml_name(root.tag).lower() != "svg":
+        raise SourceIntakeError("SVG root element is not <svg>")
+
+    elements: list[dict[str, Any]] = []
+
+    def walk(node: ET.Element, path: str) -> None:
+        if len(elements) >= 20000:
+            return
+        tag = _local_xml_name(node.tag)
+        attrs = {str(k): str(v) for k, v in sorted(node.attrib.items())}
+        item: dict[str, Any] = {
+            "path": path,
+            "tag": tag,
+            "attributes": attrs,
+        }
+        if node.text and node.text.strip():
+            item["text"] = node.text.strip()
+        elements.append(item)
+        child_counts: dict[str, int] = {}
+        for child in list(node):
+            child_tag = _local_xml_name(child.tag)
+            child_counts[child_tag] = child_counts.get(child_tag, 0) + 1
+            walk(child, f"{path}/{child_tag}[{child_counts[child_tag]}]")
+
+    walk(root, "/svg[1]")
+    tag_counts: dict[str, int] = {}
+    for item in elements:
+        tag = item["tag"]
+        tag_counts[tag] = tag_counts.get(tag, 0) + 1
+
+    return {
+        "kind": "structure",
+        "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+        "encoding": encoding,
+        "root": {
+            "width": root.attrib.get("width"),
+            "height": root.attrib.get("height"),
+            "viewBox": root.attrib.get("viewBox"),
+            "preserveAspectRatio": root.attrib.get("preserveAspectRatio"),
+        },
+        "tag_counts": dict(sorted(tag_counts.items())),
+        "elements": elements,
+        "truncated": len(elements) >= 20000,
+        "scripts_executed": False,
+    }
+
+
+def _jpeg_dimensions(data: bytes) -> tuple[int, int] | None:
+    if len(data) < 4 or data[:2] != b"\xff\xd8":
+        return None
+    pos = 2
+    sof_markers = {
+        0xC0, 0xC1, 0xC2, 0xC3,
+        0xC5, 0xC6, 0xC7,
+        0xC9, 0xCA, 0xCB,
+        0xCD, 0xCE, 0xCF,
+    }
+    while pos + 4 <= len(data):
+        if data[pos] != 0xFF:
+            pos += 1
+            continue
+        while pos < len(data) and data[pos] == 0xFF:
+            pos += 1
+        if pos >= len(data):
+            break
+        marker = data[pos]
+        pos += 1
+        if marker in {0xD8, 0xD9, 0x01} or 0xD0 <= marker <= 0xD7:
+            continue
+        if pos + 2 > len(data):
+            break
+        segment_length = int.from_bytes(data[pos:pos + 2], "big")
+        if segment_length < 2 or pos + segment_length > len(data):
+            break
+        if marker in sof_markers and segment_length >= 7:
+            height = int.from_bytes(data[pos + 3:pos + 5], "big")
+            width = int.from_bytes(data[pos + 5:pos + 7], "big")
+            return width, height
+        pos += segment_length
+    return None
+
+
+def _image_metadata_projection(data: bytes) -> dict[str, Any]:
+    if data.startswith(b"\x89PNG\r\n\x1a\n") and len(data) >= 24 and data[12:16] == b"IHDR":
+        width = int.from_bytes(data[16:20], "big")
+        height = int.from_bytes(data[20:24], "big")
+        return {
+            "kind": "metadata",
+            "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+            "format_signature": "PNG",
+            "width_px": width,
+            "height_px": height,
+        }
+    if data[:3] == b"\xff\xd8\xff":
+        dimensions = _jpeg_dimensions(data)
+        if not dimensions:
+            raise SourceIntakeError("JPEG dimensions could not be read from bounded marker structure")
+        width, height = dimensions
+        return {
+            "kind": "metadata",
+            "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+            "format_signature": "JPEG",
+            "width_px": width,
+            "height_px": height,
+        }
+    if data[:6] in {b"GIF87a", b"GIF89a"} and len(data) >= 10:
+        width = int.from_bytes(data[6:8], "little")
+        height = int.from_bytes(data[8:10], "little")
+        return {
+            "kind": "metadata",
+            "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+            "format_signature": data[:6].decode("ascii"),
+            "width_px": width,
+            "height_px": height,
+        }
+    raise SourceIntakeError("image container is not an admitted PNG/JPEG/GIF structure")
+
+
+def _gltf_structure(value: dict[str, Any], *, container: str, chunks: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+    nodes = value.get("nodes") if isinstance(value.get("nodes"), list) else []
+    meshes = value.get("meshes") if isinstance(value.get("meshes"), list) else []
+    scenes = value.get("scenes") if isinstance(value.get("scenes"), list) else []
+    materials = value.get("materials") if isinstance(value.get("materials"), list) else []
+    buffers = value.get("buffers") if isinstance(value.get("buffers"), list) else []
+    images = value.get("images") if isinstance(value.get("images"), list) else []
+
+    external_uris: list[dict[str, Any]] = []
+    for family, items in (("buffer", buffers), ("image", images)):
+        for index, item in enumerate(items):
+            if isinstance(item, dict) and isinstance(item.get("uri"), str):
+                external_uris.append({"family": family, "index": index, "uri": item["uri"]})
+
+    return {
+        "kind": "structure",
+        "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+        "container": container,
+        "asset": value.get("asset"),
+        "scene": value.get("scene"),
+        "counts": {
+            "scenes": len(scenes),
+            "nodes": len(nodes),
+            "meshes": len(meshes),
+            "materials": len(materials),
+            "buffers": len(buffers),
+            "images": len(images),
+            "accessors": len(value.get("accessors", [])) if isinstance(value.get("accessors"), list) else 0,
+            "bufferViews": len(value.get("bufferViews", [])) if isinstance(value.get("bufferViews"), list) else 0,
+            "animations": len(value.get("animations", [])) if isinstance(value.get("animations"), list) else 0,
+        },
+        "nodes": [
+            {
+                "index": index,
+                "name": item.get("name"),
+                "mesh": item.get("mesh"),
+                "children": item.get("children"),
+                "camera": item.get("camera"),
+                "skin": item.get("skin"),
+            }
+            for index, item in enumerate(nodes)
+            if isinstance(item, dict)
+        ],
+        "meshes": [
+            {
+                "index": index,
+                "name": item.get("name"),
+                "primitive_count": len(item.get("primitives", [])) if isinstance(item.get("primitives"), list) else 0,
+            }
+            for index, item in enumerate(meshes)
+            if isinstance(item, dict)
+        ],
+        "external_uris": external_uris,
+        "chunks": chunks or [],
+    }
+
+
+def _gltf_projection(data: bytes, extension: str) -> dict[str, Any]:
+    if extension == ".gltf":
+        text, encoding = _decode_text(data)
+        value = json.loads(text)
+        if not isinstance(value, dict):
+            raise SourceIntakeError("glTF JSON root must be an object")
+        projection = _gltf_structure(value, container="gltf-json")
+        projection["encoding"] = encoding
+        return projection
+
+    if extension != ".glb":
+        raise SourceIntakeError("unsupported glTF extension")
+    if len(data) < 12 or data[:4] != b"glTF":
+        raise SourceIntakeError("invalid GLB header")
+    version = int.from_bytes(data[4:8], "little")
+    declared_length = int.from_bytes(data[8:12], "little")
+    if version != 2:
+        raise SourceIntakeError(f"unsupported GLB version: {version}")
+    if declared_length != len(data):
+        raise SourceIntakeError("GLB declared length does not match source byte length")
+
+    pos = 12
+    chunks: list[dict[str, Any]] = []
+    json_value: dict[str, Any] | None = None
+    while pos + 8 <= len(data):
+        chunk_length = int.from_bytes(data[pos:pos + 4], "little")
+        chunk_type = data[pos + 4:pos + 8]
+        start = pos + 8
+        end = start + chunk_length
+        if end > len(data):
+            raise SourceIntakeError("GLB chunk exceeds declared source length")
+        type_name = (
+            "JSON" if chunk_type == b"JSON"
+            else "BIN" if chunk_type == b"BIN\x00"
+            else chunk_type.hex()
+        )
+        chunks.append({
+            "index": len(chunks),
+            "type": type_name,
+            "offset": start,
+            "byte_length": chunk_length,
+        })
+        if chunk_type == b"JSON" and json_value is None:
+            decoded = data[start:end].rstrip(b" \t\r\n\x00").decode("utf-8")
+            parsed = json.loads(decoded)
+            if not isinstance(parsed, dict):
+                raise SourceIntakeError("GLB JSON chunk root must be an object")
+            json_value = parsed
+        pos = end
+    if pos != len(data):
+        raise SourceIntakeError("GLB contains trailing partial chunk bytes")
+    if json_value is None:
+        raise SourceIntakeError("GLB contains no JSON chunk")
+    projection = _gltf_structure(json_value, container="glb", chunks=chunks)
+    projection["version"] = version
+    projection["declared_byte_length"] = declared_length
+    return projection
+
+
 def _reference_projection(family: str, data: bytes) -> dict[str, Any]:
     projection: dict[str, Any] = {"kind": "metadata", "family": family}
     if family == "document" and data.startswith(b"%PDF-"):
@@ -355,6 +600,12 @@ def build_source_envelope(
             projections = [_docx_projection(raw)]
         elif adapter_id == "xlsx-ooxml-stdlib-v0.1":
             projections = [_xlsx_projection(raw)]
+        elif adapter_id == "svg-xml-stdlib-v0.1":
+            projections = [_svg_projection(raw[:_MAX_TEXT_BYTES])]
+        elif adapter_id == "image-metadata-stdlib-v0.1":
+            projections = [_image_metadata_projection(raw)]
+        elif adapter_id == "gltf-stdlib-v0.1":
+            projections = [_gltf_projection(raw, extension)]
         elif adapter_id == "pdf-pypdf-v0.1":
             projections = [_reference_projection(family, raw)]
             unresolved.append("registered_pdf_capability_not_bound_in_generic_source_intake")
@@ -376,6 +627,9 @@ def build_source_envelope(
         "csv-stdlib-v0.1": "LOSSLESS_FOR_DECLARED_FIELDS",
         "docx-ooxml-stdlib-v0.1": "SEMANTIC_PROJECTION_ONLY",
         "xlsx-ooxml-stdlib-v0.1": "STRUCTURE_PRESERVED",
+        "svg-xml-stdlib-v0.1": "STRUCTURE_PRESERVED",
+        "image-metadata-stdlib-v0.1": "LOSSLESS_FOR_DECLARED_FIELDS",
+        "gltf-stdlib-v0.1": "STRUCTURE_PRESERVED",
         "obj-diagnostic-v0.1": "SEMANTIC_PROJECTION_ONLY",
         "stl-diagnostic-v0.1": "SEMANTIC_PROJECTION_ONLY",
     }.get(adapter_id, "IDENTITY_REFERENCE_ONLY")

@@ -144,9 +144,9 @@
       ],
       "ingest": "exact reference first",
       "r0": true,
-      "r1": null,
-      "adapter": null,
-      "status": "specialist-adapter-required"
+      "r1": "GLB v2 container/chunk layout plus JSON scene-graph structure and external references",
+      "adapter": "gltf-stdlib-v0.1",
+      "status": "supported-structure-only"
     },
     {
       "id": "image/svg+xml",
@@ -155,9 +155,9 @@
       ],
       "ingest": "exact reference + bounded XML/geometry semantics only when admitted",
       "r0": true,
-      "r1": "bounded SVG XML/geometry when adapter available",
-      "adapter": null,
-      "status": "reference-first"
+      "r1": "bounded SVG XML element/attribute tree with path locators; no script execution or visual inference",
+      "adapter": "svg-xml-stdlib-v0.1",
+      "status": "supported"
     },
     {
       "id": "image/png",
@@ -166,9 +166,9 @@
       ],
       "ingest": "exact bytes + metadata; visual semantics require explicit image capability",
       "r0": true,
-      "r1": null,
-      "adapter": null,
-      "status": "reference-first"
+      "r1": "exact container dimensions/signature metadata only; no visual semantics",
+      "adapter": "image-metadata-stdlib-v0.1",
+      "status": "supported-metadata-only"
     },
     {
       "id": "image/jpeg",
@@ -178,9 +178,31 @@
       ],
       "ingest": "exact bytes + metadata; visual semantics require explicit image capability",
       "r0": true,
-      "r1": null,
-      "adapter": null,
-      "status": "reference-first"
+      "r1": "exact container dimensions/signature metadata only; no visual semantics",
+      "adapter": "image-metadata-stdlib-v0.1",
+      "status": "supported-metadata-only"
+    },
+    {
+      "id": "model/gltf+json",
+      "extensions": [
+        "gltf"
+      ],
+      "ingest": "exact bytes + JSON scene-graph structure; external buffers/images remain separately referenced",
+      "r0": true,
+      "r1": "glTF JSON graph/container structure and external URI references",
+      "adapter": "gltf-stdlib-v0.1",
+      "status": "supported-structure-only"
+    },
+    {
+      "id": "image/gif",
+      "extensions": [
+        "gif"
+      ],
+      "ingest": "exact bytes + logical-screen dimensions/signature metadata; visual semantics remain separate",
+      "r0": true,
+      "r1": "GIF container signature and logical-screen dimensions only",
+      "adapter": "image-metadata-stdlib-v0.1",
+      "status": "supported-metadata-only"
     }
   ],
   "fallback": {

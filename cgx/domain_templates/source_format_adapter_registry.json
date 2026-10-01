@@ -146,11 +146,7 @@
     {
       "adapter_id": "image-reference-v0.1",
       "extensions": [
-        ".png",
-        ".jpg",
-        ".jpeg",
         ".webp",
-        ".gif",
         ".tif",
         ".tiff"
       ],
@@ -223,7 +219,7 @@
       "conversion_class": "R0_EXACT"
     },
     {
-      "adapter_id": "gltf-reference-v0.1",
+      "adapter_id": "gltf-stdlib-v0.1",
       "extensions": [
         ".gltf",
         ".glb"
@@ -232,13 +228,54 @@
         "spatial"
       ],
       "projection_kinds": [
-        "metadata",
-        "structure"
+        "structure",
+        "relationship",
+        "metadata"
       ],
-      "deep_parse": false,
-      "round_trip_claim": "IDENTITY_REFERENCE_ONLY",
-      "admission_state": "REFERENCE_ONLY",
-      "conversion_class": "R0_EXACT"
+      "deep_parse": true,
+      "round_trip_claim": "STRUCTURE_PRESERVED",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+      "note": "glTF/GLB JSON graph and container/chunk structure only; external resources remain referenced."
+    },
+    {
+      "adapter_id": "svg-xml-stdlib-v0.1",
+      "extensions": [
+        ".svg"
+      ],
+      "media_families": [
+        "image-vector"
+      ],
+      "projection_kinds": [
+        "structure",
+        "relationship",
+        "metadata"
+      ],
+      "deep_parse": true,
+      "round_trip_claim": "STRUCTURE_PRESERVED",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+      "note": "Bounded XML element/attribute tree with path locators; scripts are never executed and visual meaning is not inferred."
+    },
+    {
+      "adapter_id": "image-metadata-stdlib-v0.1",
+      "extensions": [
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".gif"
+      ],
+      "media_families": [
+        "image"
+      ],
+      "projection_kinds": [
+        "metadata"
+      ],
+      "deep_parse": true,
+      "round_trip_claim": "LOSSLESS_FOR_DECLARED_FIELDS",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+      "note": "Container signature and pixel dimensions only; no OCR, vision interpretation, EXIF inference or visual semantics."
     }
   ],
   "fallback": {
