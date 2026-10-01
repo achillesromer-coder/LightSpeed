@@ -159,7 +159,9 @@
       "custodial-extensions",
       "agent-runtime",
       "query-normalisation",
-      "corpus-test-cascade"
+      "corpus-test-cascade",
+      "file-conversion",
+      "stable-domain-identity"
     ]
   },
   "shared_contracts": {
@@ -197,7 +199,11 @@
     "s92_recovery_promotion": "s92_recovery_promotion_verification_2026-09-30.json",
     "query_normalisation": "query_normalisation_policy.json",
     "corpus_test_simulation": "corpus_test_simulation_policy.json",
-    "corpus_test_capabilities": "corpus_test_capability_registry.json"
+    "corpus_test_capabilities": "corpus_test_capability_registry.json",
+    "domain_child_identity": "domain_child_identity_registry.json",
+    "file_conversion": "file_conversion_contract.json",
+    "file_type_conversion": "file_type_conversion_registry.json",
+    "first_file_conversion": "first_file_conversion_registry.json"
   },
   "generation_policy": {
     "source_authority": "latest-durably-observed-Recovery-authority-only",
