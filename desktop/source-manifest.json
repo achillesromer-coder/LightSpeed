@@ -3297,9 +3297,9 @@
       "sha256": "8efc3372e032bcb1c156c93aa67b7fbe77a63ee696b77e021cd74be6a29a7f50"
     },
     {
-      "bytes": 83924,
+      "bytes": 84475,
       "path": "LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py",
-      "sha256": "e7f4f0e5873683cc1ee9b98c9665a9e725888ac9909af583d50b578d64f726bf"
+      "sha256": "14c86e43d4046a0f33398f3270de16c4c933cfeb3a1ae8655d094a8946a4ccab"
     },
     {
       "bytes": 11584,
