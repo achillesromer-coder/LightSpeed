@@ -188,3 +188,85 @@ def test_plan_source_mismatch_fails_closed():
     }
     with pytest.raises(SourceIntakeError, match="source hash"):
         bind_envelope_to_conversion_plan(env, plan)
+
+
+def test_svg_projection_is_structural_and_non_executing():
+    data = b'''<svg xmlns="http://www.w3.org/2000/svg" width="100" height="50" viewBox="0 0 100 50">
+      <g id="layer"><rect id="r1" x="1" y="2" width="10" height="20"/></g>
+      <script>danger()</script>
+    </svg>'''
+    env = build_source_envelope(source_name="diagram.svg", data=data)
+    projection = env["projections"][0]
+    assert env["adapter_id"] == "svg-xml-stdlib-v0.1"
+    assert projection["conversion_class"] == "R1_SEMANTIC_REVERSIBLE"
+    assert projection["root"]["viewBox"] == "0 0 100 50"
+    assert projection["tag_counts"]["rect"] == 1
+    rect = next(item for item in projection["elements"] if item["tag"] == "rect")
+    assert rect["path"].endswith("/g[1]/rect[1]")
+    assert rect["attributes"]["id"] == "r1"
+    assert projection["scripts_executed"] is False
+
+
+def test_png_metadata_projection_reads_exact_dimensions_without_visual_inference():
+    png = (
+        b"\x89PNG\r\n\x1a\n"
+        + (13).to_bytes(4, "big")
+        + b"IHDR"
+        + (640).to_bytes(4, "big")
+        + (480).to_bytes(4, "big")
+        + b"\x08\x06\x00\x00\x00"
+    )
+    env = build_source_envelope(source_name="image.png", data=png)
+    projection = env["projections"][0]
+    assert env["adapter_id"] == "image-metadata-stdlib-v0.1"
+    assert projection["width_px"] == 640
+    assert projection["height_px"] == 480
+    assert "text" not in projection
+
+
+def test_gif_metadata_projection_reads_logical_screen_dimensions():
+    gif = b"GIF89a" + (320).to_bytes(2, "little") + (200).to_bytes(2, "little")
+    env = build_source_envelope(source_name="image.gif", data=gif)
+    projection = env["projections"][0]
+    assert projection["format_signature"] == "GIF89a"
+    assert projection["width_px"] == 320
+    assert projection["height_px"] == 200
+
+
+def test_gltf_json_projection_keeps_graph_and_external_references():
+    payload = {
+        "asset": {"version": "2.0"},
+        "scene": 0,
+        "scenes": [{"nodes": [0]}],
+        "nodes": [{"name": "Root", "mesh": 0}],
+        "meshes": [{"name": "Body", "primitives": [{"attributes": {"POSITION": 0}}]}],
+        "buffers": [{"uri": "body.bin", "byteLength": 36}],
+        "images": [{"uri": "skin.png"}],
+    }
+    env = build_source_envelope(
+        source_name="model.gltf",
+        data=json.dumps(payload).encode("utf-8"),
+    )
+    projection = env["projections"][0]
+    assert env["adapter_id"] == "gltf-stdlib-v0.1"
+    assert projection["container"] == "gltf-json"
+    assert projection["counts"]["nodes"] == 1
+    assert projection["counts"]["meshes"] == 1
+    assert {item["uri"] for item in projection["external_uris"]} == {"body.bin", "skin.png"}
+
+
+def test_glb_projection_reads_json_and_chunk_offsets_without_decoding_binary_payload():
+    value = json.dumps({"asset": {"version": "2.0"}, "nodes": [{"name": "A"}]}).encode("utf-8")
+    padded = value + b" " * ((4 - len(value) % 4) % 4)
+    binary = b"\x01\x02\x03\x04"
+    json_chunk = len(padded).to_bytes(4, "little") + b"JSON" + padded
+    bin_chunk = len(binary).to_bytes(4, "little") + b"BIN\x00" + binary
+    length = 12 + len(json_chunk) + len(bin_chunk)
+    glb = b"glTF" + (2).to_bytes(4, "little") + length.to_bytes(4, "little") + json_chunk + bin_chunk
+    env = build_source_envelope(source_name="model.glb", data=glb)
+    projection = env["projections"][0]
+    assert projection["container"] == "glb"
+    assert projection["version"] == 2
+    assert projection["counts"]["nodes"] == 1
+    assert [chunk["type"] for chunk in projection["chunks"]] == ["JSON", "BIN"]
+    assert projection["chunks"][1]["byte_length"] == 4
