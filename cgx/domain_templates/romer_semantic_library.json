@@ -413,7 +413,9 @@
     "rdti_activity_state",
     "rdti_core_relation",
     "rdti_supporting_relation",
-    "rdti_exclusion_risk"
+    "rdti_exclusion_risk",
+    "arena_fit_state",
+    "conducted_experiment_state"
   ],
   "inheritance": {
     "structural": "parent definitions may supply defaults; instances override explicitly",
@@ -448,7 +450,10 @@
     "R&DTI status never inherits from a project family; classify the specific conducted activity and income year.",
     "Solar Hull synthetic efficiency and target values cannot be used as measured ARENA or R&DTI evidence.",
     "Grant readiness and R&DTI claim readiness may reuse raw evidence, but neither may promote the other's legal or technical conclusion.",
-    "A provisionally corroborated company identity is not submission-ready until current official applicant and authority evidence is attached."
+    "A provisionally corroborated company identity is not submission-ready until current official applicant and authority evidence is attached.",
+    "ARENA thematic alignment is distinct from applicant eligibility, application readiness and measured performance.",
+    "RFS and EMFF remain prepared core-candidate experiments until conducted; Solar Hull remains a core-candidate test plan; Free Flow remains pre-candidate until a bounded hypothesis is frozen.",
+    "Routine engineering, design targets, simulation and portfolio labels never automatically become R&DTI core activity evidence."
   ],
   "source_mapping_examples": {
     "Type 1 Romer Cognigrex": "graph + enterprise + programme + publications",
@@ -827,5 +832,46 @@
       "RDTI-A07-COGNIGREX_EXTERNAL_EMBEDDED": "FUTURE_ACTIVITY_SPECIFIC_CORE_CANDIDATE"
     },
     "evidence_reuse": "Where scientifically appropriate, the same raw experimental package may support technical validation, IP, grant and R&DTI evidence without changing each system's legal/claim ceiling."
+  },
+  "application_truth_contract": {
+    "status": "active",
+    "owner": "Type 1 Romer Cognigrex / 168_ROMER_APPLICATION_PACKET_v0_1",
+    "applicant_entity": {
+      "state": "OPEN_VERIFY",
+      "rule": "No grant/tax applicant eligibility is promoted until official legal/entity records reconcile with current governance and authorised representative.",
+      "required": [
+        "exact legal entity name",
+        "company/incorporation status where required",
+        "ACN/ABN as applicable",
+        "GST only where program requires",
+        "income-year/tax status",
+        "authorised representative",
+        "bank/account authority where required"
+      ]
+    },
+    "arena_launchpad": {
+      "state": "THEMATIC_FIT_APPLICATION_HOLD",
+      "project_candidate": "Solar Hull renewable-electricity/photoactive configuration",
+      "rationale": "Current ARENA priorities include ultra low-cost solar and renewable-electricity innovation, but Römer has no measured/validated Solar Hull efficiency and the grant-facing configuration is not yet locked.",
+      "next_gates": [
+        "APP-001 entity truth",
+        "SHQ-ARENA-001 configuration lock",
+        "SHQ-ARENA-002 controlled coupon evidence",
+        "then program merit/budget packet"
+      ],
+      "evidence_ceiling": "No measured efficiency, grant eligibility or performance claim until evidence gates close."
+    },
+    "rdti_activity_states": {
+      "RFS": "CANDIDATE_CORE_NOT_YET_CONDUCTED",
+      "EMFF": "CANDIDATE_CORE_NOT_YET_CONDUCTED",
+      "SolarHull": "CANDIDATE_CORE_TEST_PLAN_OPEN",
+      "FreeFlow": "PRE_CANDIDATE_HYPOTHESIS_NOT_FROZEN"
+    },
+    "rdti_rules": [
+      "Core candidate requires a technical/scientific uncertainty not determinable in advance and a hypothesis-driven systematic progression.",
+      "Prepared experiment cards, models, CAD, targets or routine engineering do not themselves establish conducted core R&D.",
+      "Supporting activities require direct relation to a core activity and, where applicable, dominant purpose.",
+      "Claim readiness requires actual conducted evidence plus expenditure/time nexus and professional review."
+    ]
   }
 }
