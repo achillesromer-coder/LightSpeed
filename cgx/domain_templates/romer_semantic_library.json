@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-ROMER-SEMANTIC-LIBRARY/0.4",
+  "schema": "CGX-ROMER-SEMANTIC-LIBRARY/0.5",
   "status": "review-blueprint",
   "domain": "romer",
   "filespace": "Romer.cgx",
@@ -429,7 +429,11 @@
     "Commercial advisory, training and speaking may remain available after M1, but do not become the permanent organising identity of Romer Industries.",
     "Unknown-intelligence/first-contact work remains hypothetical contingency research until independently verifiable evidence exists.",
     "Grant and funding applications are derivative views of canonical technical/business evidence and never become a parallel technical master.",
-    "Synthetic market scenarios never promote to real revenue, traction, demand, customer or partner evidence."
+    "Synthetic market scenarios never promote to real revenue, traction, demand, customer or partner evidence.",
+    "Pre-M1 bridge opportunities are triaged A–D; revenue opportunity never overrides protected M1 critical-path capacity by default.",
+    "Bridge revenue state advances only from attributable external receipts: lead, qualified, proposal, contracted, invoiced, paid, allocated.",
+    "Time-sensitive funding programs require current official-source re-verification and hard eligibility gates before narrative/application drafting.",
+    "Manufacturing-support programs must not infer current manufacturer eligibility from planned manufacturing or technology-development intent."
   ],
   "source_mapping_examples": {
     "Type 1 Romer Cognigrex": "graph + enterprise + programme + publications",
@@ -599,7 +603,32 @@
       "referral-kickbacks",
       "unqualified-regulated-advice"
     ],
-    "revenue_evidence_rule": "Synthetic ROMER30EC market records are scenario data only and cannot prove customers, revenue, demand, traction or grant market acceptance."
+    "revenue_evidence_rule": "Only attributable external receipts may advance revenue state. Synthetic ROMER30EC market records are scenario data only; proposals and invoices are not paid cash.",
+    "opportunity_tiers": {
+      "A": "Prefer — sponsored R&D or paid work directly closing M1/Cognigrex/shared-capability gates.",
+      "B": "Prefer when low-distraction — high-margin, low-preparation workshops, advisory, speaking or demonstrations with reusable value.",
+      "C": "High threshold — bespoke consulting only when cash/strategic return clearly exceeds delivery burden and M1 opportunity cost.",
+      "D": "Reject pre-M1 by default — audience/ad/content treadmill, broad subscription/support obligations, low-margin custom work or business models dependent on engagement addiction."
+    },
+    "protected_capacity": {
+      "rule": "Allocate M1/critical R&D capacity first. Bridge delivery draws only from owner-defined residual capacity unless the engagement directly funds or closes a verified M1 gate.",
+      "owner_set": "Actual capacity/hours are set by owner/programme state; CGX must not invent availability.",
+      "breach_response": [
+        "rescope",
+        "defer",
+        "controlled-subcontract",
+        "reject"
+      ]
+    },
+    "revenue_evidence_chain": [
+      "LEAD",
+      "QUALIFIED",
+      "PROPOSAL",
+      "CONTRACTED",
+      "INVOICED",
+      "PAID",
+      "ALLOCATED_TO_M1_OR_OPS"
+    ]
   },
   "unknown_intelligence_contingency_contract": {
     "status": "hypothetical-research",
@@ -654,6 +683,61 @@
       "evidence-room-index",
       "claims-red-team",
       "submission-control"
-    ]
+    ],
+    "priority_program_controls": {
+      "rdti": {
+        "state": "baseline-evidence-discipline",
+        "controls": [
+          "entity-and-expenditure-threshold",
+          "core-vs-supporting-activity-classification",
+          "contemporaneous-hypothesis-experiment-observation-evaluation-conclusion records",
+          "10-month registration deadline",
+          "professional tax/R&DTI review before claim"
+        ]
+      },
+      "arena_launchpad_2026": {
+        "state": "time-sensitive-fit-check",
+        "close": "2026-10-28T16:00:00+11:00",
+        "controls": [
+          "ARENA mandate and strategic-priority fit",
+          "single coherent startup project",
+          "technical-commercial readiness gap",
+          "real budget/sources-and-uses",
+          "no synthetic traction"
+        ]
+      },
+      "tqmgp_round2_2026": {
+        "state": "time-sensitive-eligibility-check",
+        "close": "2026-11-25T13:00:00+10:00",
+        "controls": [
+          "current Queensland manufacturer eligibility",
+          "single manufacturing-transformation project",
+          "matched-funding/cashflow",
+          "grant-agreement security risk",
+          "no planned-manufacturing-as-current-eligibility"
+        ]
+      },
+      "qld_manufacturing_ai_uplift_2026": {
+        "state": "time-sensitive-eligibility-check",
+        "close": "2026-10-30",
+        "controls": [
+          "current manufacturer eligibility",
+          "one measurable production/QA/operations use case",
+          "authorised data and baseline",
+          "security/human-review boundary",
+          "in-kind support is not unrestricted cash"
+        ]
+      }
+    },
+    "support_programs": {
+      "catalyst_manufacturing_benchmark": {
+        "trigger": "Only when current eligibility is evidenced, including Queensland manufacturing enterprise and program employee threshold.",
+        "role": "external operational/manufacturing benchmark"
+      },
+      "sustainability_manufacturing_benchmark": {
+        "trigger": "Only when current eligibility and a real manufacturing site/resource baseline exist.",
+        "role": "external energy-water-waste-scope1-2 benchmark and action plan"
+      }
+    }
   }
 }
