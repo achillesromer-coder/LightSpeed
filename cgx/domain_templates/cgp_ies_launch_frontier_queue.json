@@ -19,7 +19,31 @@
     "no_synthetic_empirical_closure": true,
     "no_self_promotion_of_authority": true,
     "public_projection_default": "HOLD unless Public + explicitly approved",
-    "execution_rule": "software may advance automatically inside active leases and gates; physical/external/public actions require their applicable evidence and authority receipts"
+    "execution_rule": "internal reversible evidence-bound work may advance automatically inside ACTIVE leases using the standing root-authority receipt; external, public, irreversible, governance-changing, legal, financial, material-IP or physical actions require their applicable explicit gates and evidence receipts",
+    "root_authority_decision_receipt_ref": "github:cgx/domain_templates/root_authority_decision_receipt_2026-10-01.json",
+    "operational_authority_transition": {
+      "state": "LOCKED",
+      "bootstrap": "Drive anchors exact recovery carriers/readback until distributed CGX authority promotion is empirically justified.",
+      "target": "Cognigrex/.cgx becomes the live distributed operational canon after CGX-LAUNCH-009 exact-state promotion.",
+      "github_role": "source code, schemas, tests, version history, engineering provenance and receipts",
+      "drive_role": "bootstrap recovery, archive/evidence, export/interchange and disaster recovery",
+      "runtime_independence": "promoted distributed Cognigrex operation must not require GitHub or Drive availability"
+    },
+    "standing_internal_execution_authority": {
+      "state": "LOCKED",
+      "rule": "internal + reversible + evidence-bound + within ACTIVE lease may execute without per-action founder reapproval",
+      "standing_receipt_ref": "github:cgx/domain_templates/root_authority_decision_receipt_2026-10-01.json",
+      "explicit_gate_categories": [
+        "root/governance authority change",
+        "distributed governance promotion",
+        "public publication or external-party communication",
+        "contractual/legal/financial/material-IP commitment",
+        "irreversible evidence/recovery deletion",
+        "external action not separately authorised",
+        "physical actuation/safety-boundary change",
+        "authority expansion"
+      ]
+    }
   },
   "priority_order": [
     "PARENT_CARRIER",
