@@ -57,6 +57,14 @@
       "LOSSLESS_FOR_DECLARED_FIELDS"
     ]
   },
-  "admission_rule": "A projection may be used for retrieval/reasoning when its adapter and evidence state are admitted. A canonical mutation or technical result still requires the owning authority/readback/proof gate.",
-  "canonical_mutation": false
+  "admission_rule": "This envelope records extraction output. R1/R2 admission is controlled by CGX-FILE-CONVERSION-CONTRACT/0.1 and CGX-FILE-TYPE-CONVERSION-REGISTRY/0.1; an available parser cannot self-authorise a semantic capability.",
+  "canonical_mutation": false,
+  "parent_conversion_contract": "file_conversion_contract.json",
+  "type_authority": "file_type_conversion_registry.json",
+  "class_mapping": {
+    "native_source": "R0_EXACT",
+    "admitted_exact_structure": "R1_SEMANTIC_REVERSIBLE",
+    "reconstructed_semantics": "R2_RECONSTRUCTED",
+    "generated_or_diagnostic_view": "R3_GENERATIVE"
+  }
 }
