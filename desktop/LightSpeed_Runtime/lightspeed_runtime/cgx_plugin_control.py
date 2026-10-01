@@ -200,15 +200,27 @@ def _setish(value: Any) -> set[str]:
 
 
 def _covers_intent(row: dict[str, Any], intent: Intent) -> bool:
+    """Return True only for an explicit, complete reusable result.
+
+    Absence of operation metadata is not treated as wildcard coverage. Partial
+    results that advertise unresolved discriminants must flow to reconciliation
+    or missing-only execution rather than short-circuiting as exact reuse.
+    """
     if str(row.get("status") or "").upper() not in {"PASS", "VALID", "COMPLETE"}:
         return False
     subject = str(row.get("subject") or "").casefold()
     if subject != intent.subject.casefold():
         return False
+    unresolved = _setish(
+        row.get("unresolved_discriminants") or row.get("missing")
+    )
+    if unresolved:
+        return False
     operations = {
-        item.casefold() for item in _setish(row.get("operations") or row.get("operation"))
+        item.casefold()
+        for item in _setish(row.get("operations") or row.get("operation"))
     }
-    if operations and intent.operation.casefold() not in operations:
+    if not operations or intent.operation.casefold() not in operations:
         return False
     covered = {item.casefold() for item in _setish(row.get("constraints"))}
     required = {item.casefold() for item in intent.constraints}
