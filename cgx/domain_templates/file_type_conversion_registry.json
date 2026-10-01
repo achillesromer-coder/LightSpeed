@@ -109,22 +109,22 @@
         "step",
         "stp"
       ],
-      "ingest": "exact reference first",
+      "ingest": "exact bytes + bounded ISO-10303-21 statement/entity structure; B-Rep/units/engineering meaning remain separate",
       "r0": true,
-      "r1": null,
-      "adapter": null,
-      "status": "specialist-adapter-required"
+      "r1": "STEP Part 21 header and DATA entity IDs/types/raw statements with line locators",
+      "adapter": "step-part21-stdlib-v0.1",
+      "status": "supported-structure-only"
     },
     {
       "id": "application/x-freecad",
       "extensions": [
         "fcstd"
       ],
-      "ingest": "exact reference first",
+      "ingest": "exact FCStd bytes + ZIP member metadata + Document.xml object/property/dependency structure; shape payload interpretation remains separate",
       "r0": true,
-      "r1": null,
-      "adapter": null,
-      "status": "specialist-adapter-required"
+      "r1": "FCStd container and Document.xml structural records",
+      "adapter": "freecad-fcstd-stdlib-v0.1",
+      "status": "supported-structure-only"
     },
     {
       "id": "model/obj",
