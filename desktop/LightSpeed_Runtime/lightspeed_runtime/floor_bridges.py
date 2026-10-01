@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from lightspeed_runtime.contracts import AchillesActionEnvelope, AssetRecord, LabRunContract
+from lightspeed_runtime.cgx_conversion_planner import compile_conversion_plan
 from lightspeed_runtime.cgx_query_planner import compile_query_plan
 from lightspeed_runtime.domain_registry import get_source_type_definition
 from lightspeed_runtime.runtime import LightSpeedRuntime
@@ -87,6 +88,34 @@ class OracleMorpheusBridge:
             capability_manifest=capability_manifest,
             structured_constraints=structured_constraints,
             structured_payload=structured_payload,
+        )
+
+    def plan_conversion(
+        self,
+        *,
+        file_name: str,
+        source_sha256: str,
+        source_ref: str,
+        media_type: str | None = None,
+        domain: str | None = None,
+        semantic_target: str | None = None,
+        requested_outputs: list[str] | None = None,
+        type_registry: dict | None = None,
+        conversion_contract: dict | None = None,
+        first_file_registry: dict | None = None,
+    ) -> dict:
+        """Plan source-preserving R0-R3 conversion without executing or mutating canon."""
+        return compile_conversion_plan(
+            file_name=file_name,
+            source_sha256=source_sha256,
+            source_ref=source_ref,
+            media_type=media_type,
+            domain=domain,
+            semantic_target=semantic_target,
+            requested_outputs=requested_outputs,
+            type_registry=type_registry,
+            conversion_contract=conversion_contract,
+            first_file_registry=first_file_registry,
         )
 
     def search(self, query: str, *, sources: Iterable[str] | None = None, limit: int = 10) -> list[SearchResult]:
