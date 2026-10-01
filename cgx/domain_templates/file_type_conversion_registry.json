@@ -269,6 +269,108 @@
       "r1": "3MF package/model parts, declared units, object IDs and vertex/triangle/build counts",
       "adapter": "3mf-stdlib-v0.1",
       "status": "supported-structure-only"
+    },
+    {
+      "id": "application/toml",
+      "extensions": [
+        "toml"
+      ],
+      "ingest": "exact-bytes+toml-tree",
+      "r0": true,
+      "r1": "TOML parsed tree using stdlib tomllib",
+      "adapter": "toml-stdlib-v0.1",
+      "status": "supported"
+    },
+    {
+      "id": "application/yaml",
+      "extensions": [
+        "yaml",
+        "yml"
+      ],
+      "ingest": "exact-bytes+text-structure",
+      "r0": true,
+      "r1": "text/line/heading-like structure only; YAML object semantics not claimed",
+      "adapter": "text-stdlib-v0.1",
+      "status": "supported-text-only"
+    },
+    {
+      "id": "application/vnd.oasis.opendocument.text",
+      "extensions": [
+        "odt"
+      ],
+      "ingest": "exact-bytes+odf-xml-structure",
+      "r0": true,
+      "r1": "OpenDocument package/content text and structure",
+      "adapter": "odf-stdlib-v0.1",
+      "status": "supported-structure-only"
+    },
+    {
+      "id": "application/vnd.oasis.opendocument.spreadsheet",
+      "extensions": [
+        "ods"
+      ],
+      "ingest": "exact-bytes+odf-xml-structure",
+      "r0": true,
+      "r1": "OpenDocument package/content table/cell structure",
+      "adapter": "odf-stdlib-v0.1",
+      "status": "supported-structure-only"
+    },
+    {
+      "id": "application/vnd.oasis.opendocument.presentation",
+      "extensions": [
+        "odp"
+      ],
+      "ingest": "exact-bytes+odf-xml-structure",
+      "r0": true,
+      "r1": "OpenDocument package/content page/text structure",
+      "adapter": "odf-stdlib-v0.1",
+      "status": "supported-structure-only"
+    },
+    {
+      "id": "application/vnd.sqlite3",
+      "extensions": [
+        "sqlite",
+        "sqlite3",
+        "db"
+      ],
+      "ingest": "exact-bytes+read-only-schema",
+      "r0": true,
+      "r1": "SQLite header, pragma metadata and sqlite_master schema only; table rows not read",
+      "adapter": "sqlite-stdlib-v0.1",
+      "status": "supported-structure-only"
+    },
+    {
+      "id": "image/vnd.dxf",
+      "extensions": [
+        "dxf"
+      ],
+      "ingest": "exact-bytes+bounded-ascii-dxf-pairs",
+      "r0": true,
+      "r1": "ASCII DXF group-code/value pairs, section names and entity-type counts; binary DXF remains specialist-gated",
+      "adapter": "dxf-ascii-stdlib-v0.1",
+      "status": "supported-ascii-structure-only"
+    },
+    {
+      "id": "image/vnd.dwg",
+      "extensions": [
+        "dwg"
+      ],
+      "ingest": "exact-reference-only-until-specialist-decoder",
+      "r0": true,
+      "r1": null,
+      "adapter": "dwg-reference-v0.1",
+      "status": "capability-gated"
+    },
+    {
+      "id": "application/vnd.apache.parquet",
+      "extensions": [
+        "parquet"
+      ],
+      "ingest": "exact-reference-only-until-parquet-capability",
+      "r0": true,
+      "r1": null,
+      "adapter": "parquet-reference-v0.1",
+      "status": "capability-gated"
     }
   ],
   "fallback": {
