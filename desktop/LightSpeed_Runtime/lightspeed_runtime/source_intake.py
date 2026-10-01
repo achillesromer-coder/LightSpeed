@@ -51,12 +51,17 @@ def _adapter_for(extension: str) -> tuple[str, str]:
         "html-stdlib-v0.1": {".html", ".htm"},
         "docx-ooxml-stdlib-v0.1": {".docx"},
         "xlsx-ooxml-stdlib-v0.1": {".xlsx", ".xlsm"},
+        "pptx-ooxml-stdlib-v0.1": {".pptx"},
+        "xml-stdlib-v0.1": {".xml"},
+        "zip-stdlib-v0.1": {".zip"},
         "pdf-pypdf-v0.1": {".pdf"},
         "image-metadata-stdlib-v0.1": {".png", ".jpg", ".jpeg", ".gif"},
         "image-reference-v0.1": {".webp", ".tif", ".tiff"},
         "svg-xml-stdlib-v0.1": {".svg"},
         "obj-mesh-stdlib-v0.1": {".obj"},
         "stl-mesh-stdlib-v0.1": {".stl"},
+        "ply-mesh-stdlib-v0.1": {".ply"},
+        "3mf-stdlib-v0.1": {".3mf"},
         "step-part21-stdlib-v0.1": {".step", ".stp"},
         "freecad-fcstd-stdlib-v0.1": {".fcstd"},
         "gltf-stdlib-v0.1": {".gltf", ".glb"},
@@ -70,12 +75,17 @@ def _adapter_for(extension: str) -> tuple[str, str]:
                 "html-stdlib-v0.1": "document",
                 "docx-ooxml-stdlib-v0.1": "document",
                 "xlsx-ooxml-stdlib-v0.1": "workbook",
+                "pptx-ooxml-stdlib-v0.1": "presentation",
+                "xml-stdlib-v0.1": "structured-text",
+                "zip-stdlib-v0.1": "archive",
                 "pdf-pypdf-v0.1": "document",
                 "image-metadata-stdlib-v0.1": "image",
                 "image-reference-v0.1": "image",
                 "svg-xml-stdlib-v0.1": "image-vector",
                 "obj-mesh-stdlib-v0.1": "spatial",
                 "stl-mesh-stdlib-v0.1": "spatial",
+                "ply-mesh-stdlib-v0.1": "spatial-mesh",
+                "3mf-stdlib-v0.1": "spatial-additive",
                 "step-part21-stdlib-v0.1": "spatial-cad",
                 "freecad-fcstd-stdlib-v0.1": "spatial-cad",
                 "gltf-stdlib-v0.1": "spatial",
@@ -1037,6 +1047,230 @@ def _freecad_fcstd_projection(data: bytes) -> dict[str, Any]:
     }
 
 
+
+def _pptx_projection(data: bytes) -> dict[str, Any]:
+    zf, names = _safe_zip_names(data)
+    slides: list[dict[str, Any]] = []
+    relationship_parts = sorted(
+        name for name in names if name.startswith("ppt/") and name.endswith(".rels")
+    )[:_MAX_XML_MEMBERS]
+    slide_parts = sorted(
+        (
+            name for name in names
+            if name.startswith("ppt/slides/slide") and name.endswith(".xml")
+        ),
+        key=lambda name: (
+            int(Path(name).stem.replace("slide", ""))
+            if Path(name).stem.replace("slide", "").isdigit()
+            else 10**9,
+            name,
+        ),
+    )[:512]
+    for name in slide_parts:
+        root = ET.fromstring(zf.read(name))
+        texts: list[str] = []
+        shape_count = 0
+        for elem in root.iter():
+            local = _local_xml_name(elem.tag)
+            if local in {"sp", "graphicFrame", "pic", "cxnSp"}:
+                shape_count += 1
+            if local == "t" and elem.text:
+                texts.append(elem.text)
+        slides.append(
+            {
+                "part": name,
+                "text_runs": texts[:10000],
+                "text_run_count": len(texts),
+                "shape_like_element_count": shape_count,
+            }
+        )
+    return {
+        "kind": "structure",
+        "format": "OOXML-Presentation",
+        "slide_count": len(slides),
+        "slides": slides,
+        "relationship_parts": relationship_parts,
+        "member_count": len(names),
+        "macros_executed": False,
+        "visual_layout_inferred": False,
+    }
+
+
+def _xml_projection(data: bytes) -> dict[str, Any]:
+    root = ET.fromstring(data)
+    elements: list[dict[str, Any]] = []
+    tag_counts: dict[str, int] = {}
+    max_elements = 20000
+
+    def walk(node: ET.Element, path: str) -> None:
+        if len(elements) >= max_elements:
+            return
+        tag = _local_xml_name(node.tag)
+        tag_counts[tag] = tag_counts.get(tag, 0) + 1
+        record: dict[str, Any] = {
+            "path": path,
+            "tag": tag,
+            "attributes": dict(sorted(node.attrib.items())),
+        }
+        text = (node.text or "").strip()
+        if text:
+            record["text"] = text[:4096]
+        elements.append(record)
+        child_counts: dict[str, int] = {}
+        for child in list(node):
+            child_tag = _local_xml_name(child.tag)
+            child_counts[child_tag] = child_counts.get(child_tag, 0) + 1
+            walk(child, f"{path}/{child_tag}[{child_counts[child_tag]}]")
+
+    root_tag = _local_xml_name(root.tag)
+    walk(root, f"/{root_tag}[1]")
+    return {
+        "kind": "structure",
+        "format": "XML",
+        "root_tag": root_tag,
+        "element_count_sampled": len(elements),
+        "tag_counts": dict(sorted(tag_counts.items())),
+        "elements": elements,
+        "truncated": len(elements) >= max_elements,
+        "external_entities_resolved": False,
+        "scripts_executed": False,
+    }
+
+
+def _zip_projection(data: bytes) -> dict[str, Any]:
+    zf, names = _safe_zip_names(data)
+    members: list[dict[str, Any]] = []
+    encrypted_count = 0
+    for info in zf.infolist()[:10000]:
+        encrypted = bool(info.flag_bits & 0x1)
+        if encrypted:
+            encrypted_count += 1
+        members.append(
+            {
+                "name": info.filename,
+                "file_size": info.file_size,
+                "compress_size": info.compress_size,
+                "crc32": f"{info.CRC:08x}",
+                "compression_method": info.compress_type,
+                "encrypted": encrypted,
+                "is_dir": info.is_dir(),
+            }
+        )
+    return {
+        "kind": "structure",
+        "format": "ZIP",
+        "member_count": len(names),
+        "members_sampled": members,
+        "truncated": len(names) > len(members),
+        "encrypted_member_count_sampled": encrypted_count,
+        "member_payloads_interpreted": False,
+    }
+
+
+def _ply_projection(data: bytes) -> dict[str, Any]:
+    if not data.startswith(b"ply"):
+        raise SourceIntakeError("PLY signature missing")
+    end = data.find(b"end_header")
+    if end < 0 or end > 1024 * 1024:
+        raise SourceIntakeError("PLY end_header missing within bounded header")
+    newline = data.find(b"\n", end)
+    body_offset = len(data) if newline < 0 else newline + 1
+    header_text = data[:body_offset].decode("ascii", errors="strict")
+    lines = [line.strip() for line in header_text.splitlines() if line.strip()]
+    if not lines or lines[0] != "ply":
+        raise SourceIntakeError("invalid PLY header")
+    fmt = None
+    version = None
+    elements: list[dict[str, Any]] = []
+    current: dict[str, Any] | None = None
+    comments: list[str] = []
+    for line_number, line in enumerate(lines[1:], start=2):
+        parts = line.split()
+        if not parts:
+            continue
+        if parts[0] == "format" and len(parts) >= 3:
+            fmt, version = parts[1], parts[2]
+        elif parts[0] == "comment":
+            comments.append(line[len("comment"):].strip())
+        elif parts[0] == "element" and len(parts) == 3:
+            try:
+                count = int(parts[2])
+            except ValueError as exc:
+                raise SourceIntakeError("invalid PLY element count") from exc
+            current = {"name": parts[1], "count": count, "properties": [], "line": line_number}
+            elements.append(current)
+        elif parts[0] == "property" and current is not None:
+            current["properties"].append({"raw": line, "line": line_number})
+    if fmt not in {"ascii", "binary_little_endian", "binary_big_endian"}:
+        raise SourceIntakeError("unsupported or missing PLY format declaration")
+    return {
+        "kind": "structure",
+        "format": "PLY",
+        "encoding": fmt,
+        "version": version,
+        "elements": elements,
+        "comments": comments[:1000],
+        "body_byte_offset": body_offset,
+        "body_byte_length": max(0, len(data) - body_offset),
+        "body_decoded": False,
+        "mesh_validation_performed": False,
+        "units_inferred": False,
+    }
+
+
+def _3mf_projection(data: bytes) -> dict[str, Any]:
+    zf, names = _safe_zip_names(data)
+    model_parts = sorted(
+        name for name in names
+        if name.lower().startswith("3d/") and name.lower().endswith(".model")
+    )
+    if not model_parts:
+        raise SourceIntakeError("3MF model part missing")
+    models: list[dict[str, Any]] = []
+    for name in model_parts[:64]:
+        root = ET.fromstring(zf.read(name))
+        objects: list[dict[str, Any]] = []
+        vertex_count = 0
+        triangle_count = 0
+        build_item_count = 0
+        for elem in root.iter():
+            local = _local_xml_name(elem.tag)
+            if local == "object":
+                objects.append(
+                    {
+                        "id": elem.attrib.get("id"),
+                        "name": elem.attrib.get("name"),
+                        "type": elem.attrib.get("type"),
+                    }
+                )
+            elif local == "vertex":
+                vertex_count += 1
+            elif local == "triangle":
+                triangle_count += 1
+            elif local == "item":
+                build_item_count += 1
+        models.append(
+            {
+                "part": name,
+                "declared_unit": root.attrib.get("unit"),
+                "object_count": len(objects),
+                "objects": objects[:10000],
+                "vertex_count": vertex_count,
+                "triangle_count": triangle_count,
+                "build_item_count": build_item_count,
+            }
+        )
+    return {
+        "kind": "structure",
+        "format": "3MF",
+        "model_part_count": len(model_parts),
+        "models": models,
+        "member_count": len(names),
+        "mesh_validation_performed": False,
+        "units_inferred": False,
+        "declared_units_preserved_exactly": True,
+    }
+
 def _reference_projection(family: str, data: bytes) -> dict[str, Any]:
     projection: dict[str, Any] = {"kind": "metadata", "family": family}
     if family == "document" and data.startswith(b"%PDF-"):
@@ -1090,6 +1324,12 @@ def build_source_envelope(
             projections = [_docx_projection(raw)]
         elif adapter_id == "xlsx-ooxml-stdlib-v0.1":
             projections = [_xlsx_projection(raw)]
+        elif adapter_id == "pptx-ooxml-stdlib-v0.1":
+            projections = [_pptx_projection(raw)]
+        elif adapter_id == "xml-stdlib-v0.1":
+            projections = [_xml_projection(raw[:_MAX_TEXT_BYTES])]
+        elif adapter_id == "zip-stdlib-v0.1":
+            projections = [_zip_projection(raw)]
         elif adapter_id == "svg-xml-stdlib-v0.1":
             projections = [_svg_projection(raw[:_MAX_TEXT_BYTES])]
         elif adapter_id == "image-metadata-stdlib-v0.1":
@@ -1107,6 +1347,10 @@ def build_source_envelope(
             projections = [_obj_projection(raw)]
         elif adapter_id == "stl-mesh-stdlib-v0.1":
             projections = [_stl_projection(raw)]
+        elif adapter_id == "ply-mesh-stdlib-v0.1":
+            projections = [_ply_projection(raw)]
+        elif adapter_id == "3mf-stdlib-v0.1":
+            projections = [_3mf_projection(raw)]
         else:
             projections = [_reference_projection(family, raw)]
             unresolved.append("deep_semantic_projection_not_admitted_for_adapter")
@@ -1121,6 +1365,9 @@ def build_source_envelope(
         "csv-stdlib-v0.1": "LOSSLESS_FOR_DECLARED_FIELDS",
         "docx-ooxml-stdlib-v0.1": "SEMANTIC_PROJECTION_ONLY",
         "xlsx-ooxml-stdlib-v0.1": "STRUCTURE_PRESERVED",
+        "pptx-ooxml-stdlib-v0.1": "STRUCTURE_PRESERVED",
+        "xml-stdlib-v0.1": "STRUCTURE_PRESERVED",
+        "zip-stdlib-v0.1": "STRUCTURE_PRESERVED",
         "svg-xml-stdlib-v0.1": "STRUCTURE_PRESERVED",
         "image-metadata-stdlib-v0.1": "LOSSLESS_FOR_DECLARED_FIELDS",
         "gltf-stdlib-v0.1": "STRUCTURE_PRESERVED",
@@ -1128,6 +1375,8 @@ def build_source_envelope(
         "freecad-fcstd-stdlib-v0.1": "STRUCTURE_PRESERVED",
         "obj-mesh-stdlib-v0.1": "STRUCTURE_PRESERVED",
         "stl-mesh-stdlib-v0.1": "STRUCTURE_PRESERVED",
+        "ply-mesh-stdlib-v0.1": "STRUCTURE_PRESERVED",
+        "3mf-stdlib-v0.1": "STRUCTURE_PRESERVED",
     }.get(adapter_id, "IDENTITY_REFERENCE_ONLY")
 
     envelope = {
