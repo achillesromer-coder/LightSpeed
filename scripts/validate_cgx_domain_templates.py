@@ -212,6 +212,22 @@ def main():
         for key,expected in (("cells",cells),("objects",objects),("relations",relations)):
             if proof.get(key)!=expected:
                 failures.append(f"first-file S91 proof mismatch: {mapping_id}:{key}")
+    relation_registry_by_domain={
+        "romer":load("romer_relation_registry.json"),
+        "eco":load("eco_relation_registry.json"),
+        "emassc":load("emassc_ls_relation_registry.json"),
+    }
+    for mapping_id,item in by_mapping.items():
+        domain=item.get("domain")
+        if domain not in relation_registry_by_domain:
+            continue
+        admitted=relation_ids(relation_registry_by_domain[domain])
+        missing=sorted(set(item.get("required_relation_types") or [])-admitted)
+        if missing:
+            failures.append(
+                f"first-file relation vocabulary missing for {mapping_id}: {', '.join(missing)}"
+            )
+
     ls_bridge=by_mapping.get("FF-RFS-LS-BRIDGE-001") or {}
     if (ls_bridge.get("s91_proof") or {}).get("scientific_state_duplicated") is not False:
         failures.append("LS first-file bridge must not duplicate EMASSC scientific authority")
