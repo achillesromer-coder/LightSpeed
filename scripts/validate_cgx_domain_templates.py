@@ -73,6 +73,8 @@ def main():
         file_conversion=load("file_conversion_contract.json")
         file_type_conversion=load("file_type_conversion_registry.json")
         first_file_conversion=load("first_file_conversion_registry.json")
+        child_successor_receipt=load("s92_domain_children_successor_validation_receipt_2026-10-01.json")
+        first_file_migration_receipt=load("s92_first_file_migration_receipt_2026-10-01.json")
     except Exception as e:
         print(json.dumps({"status":"FAIL","failures":[str(e)]}))
         return 1
@@ -231,6 +233,41 @@ def main():
     ls_bridge=by_mapping.get("FF-RFS-LS-BRIDGE-001") or {}
     if (ls_bridge.get("s91_proof") or {}).get("scientific_state_duplicated") is not False:
         failures.append("LS first-file bridge must not duplicate EMASSC scientific authority")
+
+    if child_successor_receipt.get("schema")!="CGX-S92-DOMAIN-CHILD-SUCCESSOR-VALIDATION/0.1":
+        failures.append("S92 child successor receipt schema mismatch")
+    if "DURABLE_PERSISTENCE_OPEN" not in child_successor_receipt.get("status",""):
+        failures.append("S92 child successor receipt must preserve open persistence gate")
+    persistence=child_successor_receipt.get("persistence") or {}
+    if persistence.get("write_succeeded") is not False:
+        failures.append("S92 child successor receipt falsely claims durable persistence")
+    child_outputs=child_successor_receipt.get("outputs") or {}
+    expected_semantic_ids={
+        "romer":"cgx:domain:romer",
+        "eco":"cgx:domain:eco",
+        "emassc":"cgx:domain:emassc",
+        "lightspeed":"cgx:domain:lightspeed",
+    }
+    for domain,semantic_id in expected_semantic_ids.items():
+        output=child_outputs.get(domain) or {}
+        if output.get("semantic_object_id")!=semantic_id:
+            failures.append(f"S92 successor semantic identity mismatch: {domain}")
+        if output.get("verify")!="PASS" or output.get("packed_reopen_verify")!="PASS":
+            failures.append(f"S92 successor verifier receipt not PASS: {domain}")
+
+    if first_file_migration_receipt.get("schema")!="CGX-S92-FIRST-FILE-MIGRATION-RECEIPT/0.1":
+        failures.append("S92 first-file migration receipt schema mismatch")
+    if "DURABLE_PERSISTENCE_OPEN" not in first_file_migration_receipt.get("status",""):
+        failures.append("S92 first-file migration receipt must preserve open persistence gate")
+    migration_outputs=first_file_migration_receipt.get("outputs") or {}
+    for domain,semantic_id in expected_semantic_ids.items():
+        output=migration_outputs.get(domain) or {}
+        if output.get("semantic_object_id")!=semantic_id:
+            failures.append(f"S92 first-file migration semantic identity mismatch: {domain}")
+        if output.get("verify")!="PASS" or output.get("packed_reopen_verify")!="PASS":
+            failures.append(f"S92 first-file migration verifier receipt not PASS: {domain}")
+    if (migration_outputs.get("lightspeed") or {}).get("scientific_state_duplicated") is not False:
+        failures.append("S92 LightSpeed migration must not duplicate EMASSC scientific state")
 
     shared=domains.get("shared_contracts",{})
     for key,name in shared.items():
