@@ -3520,6 +3520,11 @@
       "bytes": 3429,
       "path": "LightSpeed_Runtime/tests/test_cgx_conversion_planner.py",
       "sha256": "774f2dc6e8d5bfa81268c75bb5c4336000a933141defc0b9d1fdd3b4c0aaca4e"
+    },
+    {
+      "path": "LightSpeed_Runtime/lightspeed_runtime/source_intake.py",
+      "bytes": 19996,
+      "sha256": "f64c9dd3a4d8c662ceb0efeae883a5380582ad99db33264fc69b008f82d95a2f"
     }
   ]
 }
