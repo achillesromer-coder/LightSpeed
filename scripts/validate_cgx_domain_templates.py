@@ -195,6 +195,15 @@ def main():
         "application/zip",
         "model/ply",
         "model/3mf",
+        "application/toml",
+        "application/yaml",
+        "application/vnd.oasis.opendocument.text",
+        "application/vnd.oasis.opendocument.spreadsheet",
+        "application/vnd.oasis.opendocument.presentation",
+        "application/vnd.sqlite3",
+        "image/vnd.dxf",
+        "image/vnd.dwg",
+        "application/vnd.apache.parquet",
     ):
         if required not in type_ids:
             failures.append(f"file type conversion capability missing: {required}")
@@ -215,7 +224,7 @@ def main():
     if source_adapters.get("parent_type_registry")!="file_type_conversion_registry.json":
         failures.append("source adapter registry lacks parent type authority")
     adapter_ids={item.get("adapter_id") for item in source_adapters.get("adapters",[]) if isinstance(item,dict)}
-    for required in ("text-stdlib-v0.1","json-stdlib-v0.1","csv-stdlib-v0.1","docx-ooxml-stdlib-v0.1","xlsx-ooxml-stdlib-v0.1","pptx-ooxml-stdlib-v0.1","xml-stdlib-v0.1","zip-stdlib-v0.1","html-stdlib-v0.1","svg-xml-stdlib-v0.1","image-metadata-stdlib-v0.1","gltf-stdlib-v0.1","step-part21-stdlib-v0.1","freecad-fcstd-stdlib-v0.1","obj-mesh-stdlib-v0.1","stl-mesh-stdlib-v0.1","ply-mesh-stdlib-v0.1","3mf-stdlib-v0.1"):
+    for required in ("text-stdlib-v0.1","toml-stdlib-v0.1","json-stdlib-v0.1","csv-stdlib-v0.1","docx-ooxml-stdlib-v0.1","xlsx-ooxml-stdlib-v0.1","pptx-ooxml-stdlib-v0.1","xml-stdlib-v0.1","zip-stdlib-v0.1","odf-stdlib-v0.1","sqlite-stdlib-v0.1","dxf-ascii-stdlib-v0.1","dwg-reference-v0.1","parquet-reference-v0.1","html-stdlib-v0.1","svg-xml-stdlib-v0.1","image-metadata-stdlib-v0.1","gltf-stdlib-v0.1","step-part21-stdlib-v0.1","freecad-fcstd-stdlib-v0.1","obj-mesh-stdlib-v0.1","stl-mesh-stdlib-v0.1","ply-mesh-stdlib-v0.1","3mf-stdlib-v0.1"):
         if required not in adapter_ids:
             failures.append(f"source intake adapter missing: {required}")
 
@@ -230,6 +239,15 @@ def main():
         "application/vnd.openxmlformats-officedocument.presentationml.presentation":"pptx-ooxml-stdlib-v0.1",
         "application/xml":"xml-stdlib-v0.1",
         "application/zip":"zip-stdlib-v0.1",
+        "application/toml":"toml-stdlib-v0.1",
+        "application/yaml":"text-stdlib-v0.1",
+        "application/vnd.oasis.opendocument.text":"odf-stdlib-v0.1",
+        "application/vnd.oasis.opendocument.spreadsheet":"odf-stdlib-v0.1",
+        "application/vnd.oasis.opendocument.presentation":"odf-stdlib-v0.1",
+        "application/vnd.sqlite3":"sqlite-stdlib-v0.1",
+        "image/vnd.dxf":"dxf-ascii-stdlib-v0.1",
+        "image/vnd.dwg":"dwg-reference-v0.1",
+        "application/vnd.apache.parquet":"parquet-reference-v0.1",
         "text/html":"html-stdlib-v0.1",
         "image/svg+xml":"svg-xml-stdlib-v0.1",
         "image/png":"image-metadata-stdlib-v0.1",
@@ -250,6 +268,10 @@ def main():
             failures.append(f"source intake adapter mismatch: {media_type} -> {item.get('adapter')} expected {adapter_id}")
     if (type_by_id.get("application/pdf") or {}).get("status")!="capability-gated":
         failures.append("PDF conversion must remain capability-gated until specialist parser is bound")
+    if any((type_by_id.get(media_type) or {}).get("status")!="capability-gated" for media_type in ("image/vnd.dwg","application/vnd.apache.parquet")):
+        failures.append("DWG and Parquet must remain capability-gated until specialist parsers are bound")
+    if (type_by_id.get("application/yaml") or {}).get("status")!="supported-text-only":
+        failures.append("YAML must remain text-only until a semantic YAML adapter is admitted")
 
     if first_file_conversion.get("schema")!="CGX-FIRST-FILE-CONVERSION-REGISTRY/0.1":
         failures.append("first-file conversion registry schema mismatch")
