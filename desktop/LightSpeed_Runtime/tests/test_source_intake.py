@@ -52,7 +52,7 @@ def test_docx_ooxml_extracts_paragraphs_without_replacing_source():
     env = build_source_envelope(source_name="brief.docx", data=_docx_bytes())
     assert env["adapter_id"] == "docx-ooxml-stdlib-v0.1"
     assert env["projections"][0]["paragraphs"] == ["Hello CGX"]
-    assert env["native_preservation"]["round_trip_claim"] == "SEMANTIC_PROJECTION_ONLY"
+    assert env["native_preservation"]["round_trip_claim"] == "STRUCTURE_PRESERVED"
 
 
 def _xlsx_bytes():
@@ -88,7 +88,7 @@ def test_obj_projection_counts_geometry_but_does_not_claim_cad_authority():
     projection = env["projections"][0]
     assert projection["counts"]["vertices"] == 3
     assert projection["counts"]["faces"] == 1
-    assert env["native_preservation"]["round_trip_claim"] == "SEMANTIC_PROJECTION_ONLY"
+    assert env["native_preservation"]["round_trip_claim"] == "STRUCTURE_PRESERVED"
 
 
 def test_binary_stl_reads_triangle_header():
@@ -126,9 +126,9 @@ def test_obj_diagnostic_remains_frontier_only():
         data=b"o Block\nv 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n",
     )
     projection = env["projections"][0]
-    assert env["adapter_id"] == "obj-diagnostic-v0.1"
-    assert projection["admission_state"] == "FRONTIER_ONLY"
-    assert projection["conversion_class"] == "R2_RECONSTRUCTED"
+    assert env["adapter_id"] == "obj-mesh-stdlib-v0.1"
+    assert projection["conversion_class"] == "R1_SEMANTIC_REVERSIBLE"
+    assert projection["mesh_validation_performed"] is False
 
 
 def test_conversion_plan_binding_controls_r1_admission():
@@ -356,3 +356,86 @@ def test_invalid_fcstd_falls_back_without_inventing_document_structure():
     assert env["projections"][0]["kind"] == "metadata"
     assert any("deep_projection_failed:SourceIntakeError" in warning for warning in env["warnings"])
     assert "deep_projection_requires_recovery_or_specialist_adapter" in env["unresolved"]
+
+
+def test_obj_projection_preserves_face_reference_indices_and_lines():
+    env = build_source_envelope(
+        source_name="mesh.obj",
+        data=(
+            b"mtllib skin.mtl\n"
+            b"o Block\n"
+            b"v 0 0 0\n"
+            b"v 1 0 0\n"
+            b"v 0 1 0\n"
+            b"vt 0 0\n"
+            b"vt 1 0\n"
+            b"vt 0 1\n"
+            b"vn 0 0 1\n"
+            b"usemtl Skin\n"
+            b"f 1/1/1 2/2/1 3/3/1\n"
+        ),
+    )
+    projection = env["projections"][0]
+    assert env["adapter_id"] == "obj-mesh-stdlib-v0.1"
+    assert projection["conversion_class"] == "R1_SEMANTIC_REVERSIBLE"
+    assert projection["counts"]["vertices"] == 3
+    assert projection["counts"]["faces"] == 1
+    assert projection["faces"][0]["line"] == 11
+    assert projection["faces"][0]["references"][1] == {
+        "raw": "2/2/1",
+        "vertex_index": 2,
+        "texcoord_index": 2,
+        "normal_index": 1,
+    }
+    assert projection["directive_counts"]["mtllib"] == 1
+    assert projection["directive_counts"]["usemtl"] == 1
+    assert projection["materials_resolved"] is False
+    assert projection["units_inferred"] is False
+
+
+def test_obj_negative_indices_are_preserved_not_normalised_by_guess():
+    env = build_source_envelope(
+        source_name="negative.obj",
+        data=b"v 0 0 0\nv 1 0 0\nv 0 1 0\nf -3 -2 -1\n",
+    )
+    refs = env["projections"][0]["faces"][0]["references"]
+    assert [item["vertex_index"] for item in refs] == [-3, -2, -1]
+
+
+def test_binary_stl_header_starting_solid_remains_binary_when_exact_length_matches():
+    header = b"solid binary-but-not-ascii" + b" " * (80 - len(b"solid binary-but-not-ascii"))
+    normal_and_vertices = struct.pack(
+        "<12fH",
+        0.0, 0.0, 1.0,
+        0.0, 0.0, 0.0,
+        1.0, 0.0, 0.0,
+        0.0, 1.0, 0.0,
+        0,
+    )
+    data = header + (1).to_bytes(4, "little") + normal_and_vertices
+    env = build_source_envelope(source_name="binary.stl", data=data)
+    projection = env["projections"][0]
+    assert env["adapter_id"] == "stl-mesh-stdlib-v0.1"
+    assert projection["format"] == "binary-stl"
+    assert projection["triangle_count"] == 1
+    assert projection["triangles"][0]["byte_offset"] == 84
+    assert projection["triangles"][0]["vertices"][1] == [1.0, 0.0, 0.0]
+
+
+def test_ascii_stl_preserves_facet_line_span():
+    data = b"""solid demo
+facet normal 0 0 1
+ outer loop
+  vertex 0 0 0
+  vertex 1 0 0
+  vertex 0 1 0
+ endloop
+endfacet
+endsolid demo
+"""
+    env = build_source_envelope(source_name="ascii.stl", data=data)
+    triangle = env["projections"][0]["triangles"][0]
+    assert env["projections"][0]["format"] == "ascii-stl"
+    assert triangle["line_start"] == 2
+    assert triangle["line_end"] == 8
+    assert triangle["vertices"][2] == [0.0, 1.0, 0.0]
