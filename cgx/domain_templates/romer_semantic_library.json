@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-ROMER-SEMANTIC-LIBRARY/0.7",
+  "schema": "CGX-ROMER-SEMANTIC-LIBRARY/0.8",
   "status": "review-blueprint",
   "domain": "romer",
   "filespace": "Romer.cgx",
@@ -453,7 +453,10 @@
     "A provisionally corroborated company identity is not submission-ready until current official applicant and authority evidence is attached.",
     "ARENA thematic alignment is distinct from applicant eligibility, application readiness and measured performance.",
     "RFS and EMFF remain prepared core-candidate experiments until conducted; Solar Hull remains a core-candidate test plan; Free Flow remains pre-candidate until a bounded hypothesis is frozen.",
-    "Routine engineering, design targets, simulation and portfolio labels never automatically become R&DTI core activity evidence."
+    "Routine engineering, design targets, simulation and portfolio labels never automatically become R&DTI core activity evidence.",
+    "Public business-name registration is distinct from an active incorporated applicant entity.",
+    "Entity remediation is a legal/accounting governance decision and does not retrospectively convert historic sole-trader/founder expenditure into eligible company expenditure.",
+    "R&DTI evidence preservation continues even while current entity eligibility is NO-GO."
   ],
   "source_mapping_examples": {
     "Type 1 Romer Cognigrex": "graph + enterprise + programme + publications",
@@ -837,29 +840,26 @@
     "status": "active",
     "owner": "Type 1 Romer Cognigrex / 168_ROMER_APPLICATION_PACKET_v0_1",
     "applicant_entity": {
-      "state": "OPEN_VERIFY",
-      "rule": "No grant/tax applicant eligibility is promoted until official legal/entity records reconcile with current governance and authorised representative.",
-      "required": [
-        "exact legal entity name",
-        "company/incorporation status where required",
-        "ACN/ABN as applicable",
-        "GST only where program requires",
-        "income-year/tax status",
-        "authorised representative",
-        "bank/account authority where required"
-      ]
+      "state": "PUBLIC_STATUS_VERIFIED_APPLICANT_REMEDIATION_REQUIRED",
+      "public_status": "Romer Industries is currently a business name associated with a cancelled sole-trader ABN; current public status does not establish an active incorporated applicant company.",
+      "rule": "Do not submit grant/tax applications or promote applicant eligibility until an active legal applicant compatible with the target program is evidenced and reconciled with EMASSC/Romer governance.",
+      "remediation_gate": "ENTITY-REMED-01",
+      "professional_gate": "accountant + corporate/IP legal review as applicable",
+      "retrospective_boundary": "Entity activation/restructuring does not automatically make historic founder/sole-trader expenditure or activities eligible company expenditure."
     },
     "arena_launchpad": {
       "state": "THEMATIC_FIT_APPLICATION_HOLD",
       "project_candidate": "Solar Hull renewable-electricity/photoactive configuration",
       "rationale": "Current ARENA priorities include ultra low-cost solar and renewable-electricity innovation, but Römer has no measured/validated Solar Hull efficiency and the grant-facing configuration is not yet locked.",
       "next_gates": [
-        "APP-001 entity truth",
+        "ENTITY-REMED-01",
+        "confirm exact Launchpad entity eligibility from current Program Guidelines/Round Announcement",
         "SHQ-ARENA-001 configuration lock",
         "SHQ-ARENA-002 controlled coupon evidence",
-        "then program merit/budget packet"
+        "then merit/budget packet"
       ],
-      "evidence_ceiling": "No measured efficiency, grant eligibility or performance claim until evidence gates close."
+      "evidence_ceiling": "No measured efficiency, grant eligibility or performance claim until evidence gates close.",
+      "entity_state": "APPLICATION_HOLD_ACTIVE_COMPANY_OR_ELIGIBLE_APPLICANT_GATE_OPEN"
     },
     "rdti_activity_states": {
       "RFS": "CANDIDATE_CORE_NOT_YET_CONDUCTED",
@@ -872,6 +872,20 @@
       "Prepared experiment cards, models, CAD, targets or routine engineering do not themselves establish conducted core R&D.",
       "Supporting activities require direct relation to a core activity and, where applicable, dominant purpose.",
       "Claim readiness requires actual conducted evidence plus expenditure/time nexus and professional review."
-    ]
+    ],
+    "rdti_entity_state": {
+      "state": "CURRENT_ENTITY_NO_GO_EVIDENCE_PRESERVATION_CONTINUES",
+      "reason": "Official R&DTI guidance excludes sole traders from eligible R&D entities; current public Romer entity state is sole-trader/cancelled-ABN.",
+      "allowed_now": [
+        "preserve contemporaneous R&D evidence",
+        "classify candidate core/supporting activities",
+        "map time/cost evidence",
+        "prepare professional review pack"
+      ],
+      "prohibited_now": [
+        "R&DTI claim/application under current entity state",
+        "representing current expenditure as eligible company R&D expenditure without professional determination"
+      ]
+    }
   }
 }
