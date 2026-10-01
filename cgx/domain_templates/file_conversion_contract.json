@@ -1,0 +1,67 @@
+{
+  "schema": "CGX-FILE-CONVERSION-CONTRACT/0.1",
+  "status": "active",
+  "principle": "Preserve native source identity and bytes first; derive only the smallest justified machine-readable semantic state; keep loss, inference and representation boundaries explicit.",
+  "classes": {
+    "R0_EXACT": {
+      "meaning": "Exact retained or referenced native source bytes plus provider identity/hash.",
+      "reversible": true,
+      "authority": "source/provider",
+      "may_promote_semantics": false
+    },
+    "R1_SEMANTIC_REVERSIBLE": {
+      "meaning": "Typed structural extraction with exact source locators/raw values sufficient to reconstruct the declared extracted scope.",
+      "reversible": true,
+      "authority": "derived-from-source",
+      "may_promote_semantics": "only through normal Resolve/DBR gates"
+    },
+    "R2_RECONSTRUCTED": {
+      "meaning": "Semantic objects/relations reconstructed from source structure or meaning; not byte-reversible.",
+      "reversible": false,
+      "authority": "derived/reconstructed",
+      "requires": [
+        "provenance",
+        "mapping rule",
+        "assumptions",
+        "evidence ceiling",
+        "loss map"
+      ]
+    },
+    "R3_GENERATIVE": {
+      "meaning": "Generated explanation, summary, visualization, layout, synthetic view or other representation.",
+      "reversible": false,
+      "authority": "representation-only",
+      "canonical_authority": false
+    }
+  },
+  "pipeline": [
+    "R0 preserve/reference exact source + SHA/provider ID",
+    "classify media/type and applicable adapter/capability",
+    "R1 extract exact bounded structure with stable source locators where supported",
+    "R2 map admitted objects, relations, claims, evidence, parameters and gates",
+    "route unsupported/ambiguous residue to Frontier",
+    "R3 generate requested human/machine representation from resolved state",
+    "Resolve semantic delta only through owning authority/evidence gates"
+  ],
+  "invariants": [
+    "no bulk file-format conversion automatically transfers semantic authority",
+    "native source/provider authority is preserved unless an explicit authority transition is receipted",
+    "unknown or unsupported structure remains Frontier rather than being guessed",
+    "R3 views never close R0/R1/R2 evidence gaps",
+    "every derived object carries source locator(s), conversion class and provenance",
+    "conversion output is capability-specific; models/tools receive only the bounded projection they can faithfully consume",
+    "round-trip claims apply only to the declared R1 scope, not to the whole source file"
+  ],
+  "required_receipt_fields": [
+    "source_ref",
+    "source_sha256",
+    "media_type",
+    "adapter_or_capability",
+    "conversion_classes_used",
+    "semantic_target",
+    "loss_map",
+    "frontier_items",
+    "output_hashes",
+    "authority_state"
+  ]
+}
