@@ -420,3 +420,77 @@ def build_source_envelope_from_path(path: str | Path, **kwargs: Any) -> dict[str
         raise SourceIntakeError(f"source file does not exist: {p}")
     data = p.read_bytes()
     return build_source_envelope(source_name=p.name, data=data, source_ref=str(p.resolve()), **kwargs)
+
+
+def bind_envelope_to_conversion_plan(
+    envelope: dict[str, Any],
+    conversion_plan: dict[str, Any],
+) -> dict[str, Any]:
+    """Bind an extraction envelope to an already-compiled CGX conversion plan.
+
+    Extraction capability and semantic admission are deliberately separate:
+    this function will not treat a parser's output as admitted R1 unless the
+    conversion plan contains a READY R1 stage for the same exact source.
+    """
+    if not isinstance(envelope, dict) or envelope.get("schema") != SCHEMA:
+        raise SourceIntakeError("unsupported source envelope")
+    if not isinstance(conversion_plan, dict) or conversion_plan.get("schema") != "CGX-CONVERSION-PLAN/0.1":
+        raise SourceIntakeError("unsupported conversion plan")
+
+    source = conversion_plan.get("source") or {}
+    if source.get("sha256") != envelope.get("sha256"):
+        raise SourceIntakeError("conversion plan source hash does not match envelope")
+    if source.get("file_name") != envelope.get("source_name"):
+        raise SourceIntakeError("conversion plan source name does not match envelope")
+
+    stages = conversion_plan.get("stages") or []
+    r1 = next(
+        (
+            stage
+            for stage in stages
+            if isinstance(stage, dict)
+            and stage.get("class") == "R1_SEMANTIC_REVERSIBLE"
+            and stage.get("state") == "READY"
+        ),
+        None,
+    )
+    expected_adapter = None
+    type_profile = conversion_plan.get("type_profile") or {}
+    if isinstance(type_profile, dict):
+        expected_adapter = type_profile.get("adapter") or type_profile.get("handler")
+
+    bound = json.loads(json.dumps(envelope))
+    bound["conversion_plan_sha256"] = conversion_plan.get("plan_sha256")
+    bound["conversion_classes_admitted"] = ["R0_EXACT"]
+    bound["semantic_target"] = (
+        (conversion_plan.get("registered_mapping") or {}).get("semantic_target")
+        if isinstance(conversion_plan.get("registered_mapping"), dict)
+        else None
+    )
+
+    if r1 is None:
+        bound["admission_state"] = "R0_REFERENCE_ONLY"
+        bound["unresolved"] = list(bound.get("unresolved") or []) + [
+            "R1_not_admitted_by_conversion_plan"
+        ]
+        for projection in bound.get("projections") or []:
+            if isinstance(projection, dict):
+                projection["admitted_semantic_class"] = None
+        return bound
+
+    if expected_adapter and expected_adapter != envelope.get("adapter_id"):
+        bound["admission_state"] = "BLOCKED_ADAPTER_MISMATCH"
+        bound["unresolved"] = list(bound.get("unresolved") or []) + [
+            f"adapter_mismatch:expected={expected_adapter}:actual={envelope.get('adapter_id')}"
+        ]
+        return bound
+
+    bound["admission_state"] = "R1_ADMITTED"
+    bound["conversion_classes_admitted"].append("R1_SEMANTIC_REVERSIBLE")
+    for projection in bound.get("projections") or []:
+        if isinstance(projection, dict) and projection.get("admission_state") != "FRONTIER_ONLY":
+            projection["admitted_semantic_class"] = "R1_SEMANTIC_REVERSIBLE"
+    if conversion_plan.get("registered_mapping"):
+        bound["conversion_classes_admitted"].append("R2_RECONSTRUCTED")
+        bound["semantic_target"] = (conversion_plan.get("registered_mapping") or {}).get("semantic_target")
+    return bound
