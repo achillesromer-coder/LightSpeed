@@ -4,6 +4,14 @@ param(
 
 $ErrorActionPreference = "Stop"
 $MarketplaceName = "cognigrex-lightspeed"
+$CodexCommand = (Get-Command codex.cmd -ErrorAction SilentlyContinue).Source
+if (-not $CodexCommand) {
+    $CodexCommand = (Get-Command codex -ErrorAction SilentlyContinue).Source
+}
+if (-not $CodexCommand) {
+    throw "Codex CLI was not found on PATH."
+}
+
 $PluginIds = @(
     "achilles@$MarketplaceName",
     "neo@$MarketplaceName",
@@ -67,13 +75,13 @@ function Set-CodexPluginEnabled {
 }
 
 Write-Host "Registering Cognigrex / LightSpeed plugin marketplace..."
-& codex plugin marketplace add achillesromer-coder/LightSpeed --ref $MarketplaceRef
+& $CodexCommand plugin marketplace add achillesromer-coder/LightSpeed --ref $MarketplaceRef
 if ($LASTEXITCODE -ne 0) {
     throw "codex plugin marketplace add failed with exit code $LASTEXITCODE"
 }
 
 Write-Host "Refreshing plugin marketplaces..."
-& codex plugin marketplace upgrade
+& $CodexCommand plugin marketplace upgrade
 if ($LASTEXITCODE -ne 0) {
     throw "codex plugin marketplace upgrade failed with exit code $LASTEXITCODE"
 }
@@ -85,7 +93,7 @@ foreach ($PluginId in $PluginIds) {
 }
 
 Write-Host "Resolved marketplaces:"
-& codex plugin marketplace list
+& $CodexCommand plugin marketplace list
 if ($LASTEXITCODE -ne 0) {
     throw "codex plugin marketplace list failed with exit code $LASTEXITCODE"
 }
