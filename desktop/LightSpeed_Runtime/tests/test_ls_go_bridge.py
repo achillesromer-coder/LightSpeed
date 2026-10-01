@@ -1720,3 +1720,62 @@ def test_representation_decision_rejects_actor_spoof_without_owner_confirmation(
     assert authenticated.json()["receipt"]["actor"] == "Nathaniel"
     assert authenticated.json()["receipt"]["owner_authentication_verified"] is True
     assert unconfigured.status_code == 403
+
+
+def test_corpus_cascade_plan_route_is_read_only_and_dependency_gated(tmp_path, monkeypatch):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    body = {
+        "corpus_snapshot": {
+            "snapshot_id": "CGX-TEST-001",
+            "source_refs": ["drive:test"],
+            "values": {
+                "input.a": {
+                    "value": 2.0,
+                    "units": "m",
+                    "source_ref": "drive:test:a",
+                    "evidence_state": "verified",
+                }
+            },
+        },
+        "tests": [
+            {
+                "test_id": "T-01",
+                "capability_id": "python-deterministic",
+                "kind": "formal_solver",
+                "depends_on": [],
+                "complexity_rank": 1,
+                "input_bindings": {
+                    "a": {"source": "corpus", "source_key": "input.a"}
+                },
+            },
+            {
+                "test_id": "T-02",
+                "capability_id": "python-deterministic",
+                "kind": "formal_solver",
+                "depends_on": ["T-01"],
+                "complexity_rank": 2,
+                "input_bindings": {
+                    "prior": {
+                        "source": "dependency",
+                        "test_id": "T-01",
+                        "output_key": "result",
+                    }
+                },
+            },
+        ],
+        "receipts": {},
+    }
+
+    response = client.post("/api/v1/test-cascade/plan", json=body)
+
+    assert response.status_code == 200, response.text
+    payload = response.json()
+    assert payload["execution_performed"] is False
+    assert payload["external_action_performed"] is False
+    assert payload["canonical_mutation"] is False
+    assert [item["semantic_state"] for item in payload["projection"]["tests"]] == [
+        "ready",
+        "blocked",
+    ]
+    assert payload["projection"]["tests"][0]["packet"]["result_values"] == {}
