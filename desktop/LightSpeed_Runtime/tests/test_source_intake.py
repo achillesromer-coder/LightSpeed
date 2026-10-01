@@ -5,6 +5,8 @@ import json
 import struct
 import zipfile
 
+import pytest
+
 from lightspeed_runtime.source_intake import SourceIntakeError, bind_envelope_to_conversion_plan, build_source_envelope
 
 
