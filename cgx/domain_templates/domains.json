@@ -157,7 +157,9 @@
       "cross-domain bridges",
       "assurance",
       "custodial-extensions",
-      "agent-runtime"
+      "agent-runtime",
+      "query-normalisation",
+      "corpus-test-cascade"
     ]
   },
   "shared_contracts": {
@@ -192,7 +194,10 @@
     "cgp_ies_release_visibility": "cgp_ies_release_visibility_policy.json",
     "cgp_ies_object_envelope": "cgp_ies_object_envelope_schema.json",
     "cgp_ies_launch_frontier_queue": "cgp_ies_launch_frontier_queue.json",
-    "s92_recovery_promotion": "s92_recovery_promotion_verification_2026-09-30.json"
+    "s92_recovery_promotion": "s92_recovery_promotion_verification_2026-09-30.json",
+    "query_normalisation": "query_normalisation_policy.json",
+    "corpus_test_simulation": "corpus_test_simulation_policy.json",
+    "corpus_test_capabilities": "corpus_test_capability_registry.json"
   },
   "generation_policy": {
     "source_authority": "latest-durably-observed-Recovery-authority-only",
