@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from lightspeed_runtime.contracts import AchillesActionEnvelope, AssetRecord, LabRunContract
+from lightspeed_runtime.cgx_query_planner import compile_query_plan
 from lightspeed_runtime.domain_registry import get_source_type_definition
 from lightspeed_runtime.runtime import LightSpeedRuntime
 
@@ -67,6 +68,26 @@ class OracleMorpheusBridge:
 
     def __init__(self, runtime: LightSpeedRuntime) -> None:
         self.runtime = runtime
+
+    def plan_query(
+        self,
+        raw_query: str,
+        *,
+        facet_schema: dict[str, dict] | None = None,
+        umbrella_terms: list[str] | dict[str, list[str]] | None = None,
+        capability_manifest: dict | None = None,
+        structured_constraints: dict[str, list[str] | str] | None = None,
+        structured_payload: dict | None = None,
+    ) -> dict:
+        """Normalize free text into umbrella query, native facets and a capability packet."""
+        return compile_query_plan(
+            raw_query,
+            facet_schema=facet_schema,
+            umbrella_terms=umbrella_terms,
+            capability_manifest=capability_manifest,
+            structured_constraints=structured_constraints,
+            structured_payload=structured_payload,
+        )
 
     def search(self, query: str, *, sources: Iterable[str] | None = None, limit: int = 10) -> list[SearchResult]:
         allowed = set(sources or [])
@@ -225,6 +246,15 @@ class TrinityShellBridge:
 
     def __init__(self, runtime: LightSpeedRuntime) -> None:
         self.runtime = runtime
+
+    def plan_test_cascade(
+        self,
+        specs: list[dict],
+        corpus_snapshot: dict,
+        receipts: dict | None = None,
+    ) -> dict:
+        """Project corpus-bound tests as blocked/ready/underway/partial/complete without execution."""
+        return self.runtime.plan_corpus_test_cascade(specs, corpus_snapshot, receipts)
 
     def open_workspace(self, workspace_id: str, project_id: str, active_floor: str = "Architect") -> dict:
         return self.runtime.ensure_workspace(workspace_id, project_id, active_floor).to_dict()
