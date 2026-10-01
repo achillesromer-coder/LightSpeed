@@ -11,7 +11,7 @@
       "ingest": "exact-bytes+text",
       "r0": true,
       "r1": "text structure",
-      "adapter": null,
+      "adapter": "text-stdlib-v0.1",
       "status": "supported"
     },
     {
@@ -22,7 +22,7 @@
       "ingest": "exact-bytes+markup",
       "r0": true,
       "r1": "markup/text structure",
-      "adapter": null,
+      "adapter": "text-stdlib-v0.1",
       "status": "supported"
     },
     {
@@ -33,7 +33,7 @@
       "ingest": "exact-bytes+tree",
       "r0": true,
       "r1": "JSON tree",
-      "adapter": null,
+      "adapter": "json-stdlib-v0.1",
       "status": "supported"
     },
     {
@@ -44,7 +44,7 @@
       "ingest": "exact-bytes+table",
       "r0": true,
       "r1": "table",
-      "adapter": null,
+      "adapter": "csv-stdlib-v0.1",
       "status": "supported"
     },
     {
@@ -56,7 +56,7 @@
       "r0": true,
       "r1": "bounded PDF semantic extraction",
       "adapter": "pdf-pypdf-v0.1",
-      "status": "supported"
+      "status": "capability-gated"
     },
     {
       "id": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
