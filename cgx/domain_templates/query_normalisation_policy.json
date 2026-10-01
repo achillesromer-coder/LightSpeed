@@ -1,0 +1,137 @@
+{
+  "schema": "CGX-QUERY-NORMALISATION-POLICY/0.1",
+  "status": "review-blueprint",
+  "name": "Facet-First Query Planning / Progressive Query Hydration / Capability-Native Routing",
+  "abbreviations": {
+    "FFQP": "Facet-First Query Planning",
+    "PQH": "Progressive Query Hydration",
+    "CNR": "Capability-Native Routing"
+  },
+  "principle": "Preserve raw user intent; collapse the executable text query to the broadest useful umbrella term; transfer explicit constraints into native structured controls; execute the least-expensive deterministic stage first; hydrate only when a sufficiency gate fails.",
+  "pipeline": [
+    "preserve_raw_intent",
+    "extract_constraint_candidates",
+    "bind_supported_facets_and_controls",
+    "select_umbrella_query",
+    "route_by_declared_capability",
+    "execute_stage_0",
+    "measure_sufficiency",
+    "progressively_hydrate_only_if_required",
+    "return_result_with_query_lineage"
+  ],
+  "control_precedence": [
+    "security_and_scope",
+    "stable_object_or_source_ids",
+    "checkbox_or_multiselect_facets",
+    "dropdown_or_single_select_facets",
+    "numeric_range_controls",
+    "temporal_or_spatial_controls",
+    "sort_or_rank_controls",
+    "umbrella_text_query",
+    "residual_semantic_text"
+  ],
+  "hard_constraints": [
+    "raw intent is retained for lineage and may not be silently rewritten",
+    "no facet or constraint may be invented merely to improve retrieval",
+    "when a native checkbox, dropdown, range, scope or selector can represent a constraint, use that control before adding query prose",
+    "do not hydrate full files or corpora when a bounded structured packet is sufficient for the selected tool",
+    "do not assign every model the same role or assume every LLM has the same capability",
+    "route work by declared and verified designed function before current convenience or historical purpose",
+    "formal solvers and simulators receive typed parameters, units, bounds, configuration IDs and source references rather than unbounded prose where possible",
+    "LLMs are preferred for language decomposition, taxonomy mapping, ambiguity resolution, pattern synthesis and representation; deterministic tools remain preferred for arithmetic, exact transforms and formal simulation when available",
+    "semantic or visual generation may represent resolved state but cannot invent missing canonical values",
+    "query normalisation cannot widen security, authority, evidence or mutation scope"
+  ],
+  "capability_native_profiles": {
+    "retrieval_search": {
+      "designed_for": ["umbrella_query", "facets", "scope", "sort", "bounded_result_set"],
+      "avoid": ["long_prompt_as_query", "full_corpus_hydration_before_filtering"]
+    },
+    "llm_semantic": {
+      "designed_for": ["intent_decomposition", "synonym_collapse", "taxonomy_mapping", "facet_candidate_extraction", "ambiguity_resolution", "pattern_synthesis", "human_explanation"],
+      "avoid": ["acting_as_formal_solver_when_verified_solver_exists", "inventing_missing_parameters", "reading_every_source_when_structured_selection_is_available"]
+    },
+    "formal_solver": {
+      "designed_for": ["equations", "typed_parameters", "units", "bounds", "constraints", "deterministic_outputs"],
+      "avoid": ["freeform_corpus_prompt", "implicit_units", "semantic_guessing"]
+    },
+    "simulation": {
+      "designed_for": ["configuration_packet", "scenario_parameters", "sweeps", "initial_conditions", "solver_settings", "receipted_outputs"],
+      "avoid": ["read_all_then_simulate", "unbound_narrative_parameters"]
+    },
+    "mpl": {
+      "inherits": "simulation",
+      "designed_for": ["hazard_geometry", "object_state", "site_or_frame", "screening_parameters", "scenario_set", "evidence_boundaries"]
+    },
+    "gmat": {
+      "inherits": "simulation",
+      "designed_for": ["bodies", "epochs", "frames", "propagator", "force_model", "maneuvers", "constraints", "objective", "initial_state"]
+    },
+    "renderer_ui": {
+      "designed_for": ["semantic_projection", "visual_representation", "progressive_disclosure", "native_controls", "human_legibility"],
+      "avoid": ["becoming_semantic_authority", "filling_unknowns_for_aesthetic_completeness"]
+    },
+    "agent_orchestrator": {
+      "designed_for": ["decompose", "route", "sequence", "gate", "collect_receipts", "rehydrate_on_failure"],
+      "avoid": ["performing_specialist_math_when_specialist_tool_exists", "blanket_bottom_up_hydration"]
+    }
+  },
+  "model_variability_policy": {
+    "rule": "Model and agent roles are capability-advertised and task-bound. A small/local model may classify or apply known facets while a frontier model may resolve ambiguous semantics; neither inherits authority or competence merely because both are LLMs.",
+    "required_manifest_fields": ["capability_id", "kind", "designed_functions", "accepted_inputs"],
+    "fallback": "If a requested function is not declared or evidenced, route to another admitted capability or hold; do not guess."
+  },
+  "progressive_hydration": {
+    "stage_0": "umbrella query + bound native facets + minimum source/object scope",
+    "rehydrate_when": [
+      "zero_results",
+      "result_set_too_broad_for_task",
+      "required_constraint_unresolved",
+      "tool_rejects_packet",
+      "conflicting_evidence_requires_source_expansion",
+      "requested_precision_exceeds_current_packet"
+    ],
+    "rehydration_order": [
+      "add_one_discriminating_structured_facet",
+      "add_one necessary residual semantic term",
+      "expand synonym or taxonomy branch",
+      "expand source scope",
+      "hydrate selected result detail",
+      "hydrate raw documents or broader corpus last"
+    ],
+    "never": "mass-hydrate by default merely because the model can consume more context"
+  },
+  "examples": [
+    {
+      "surface": "retail_search",
+      "raw_input": "Dairy Free Plant Based Snacks",
+      "umbrella_query": "Snacks",
+      "facets": {"dietary": ["Vegan", "Dairy Free"]},
+      "expected_controls": ["checkbox", "checkbox"]
+    },
+    {
+      "surface": "GMAT",
+      "raw_input": "simulate the selected transfer with the current source-reconciled spacecraft and epoch",
+      "umbrella_query": "transfer",
+      "packet_rule": "resolve source/config IDs and pass typed GMAT state/epoch/force-model/maneuver/objective fields; do not feed the full project corpus into GMAT"
+    }
+  ],
+  "output": {
+    "fields": [
+      "raw_query",
+      "intent_hash",
+      "umbrella_query",
+      "applied_facets",
+      "controls_used",
+      "residual_text",
+      "unresolved_constraints",
+      "capability_route",
+      "capability_packet",
+      "hydration_stage",
+      "sufficiency_state",
+      "rehydration_triggers",
+      "lineage"
+    ],
+    "canonical_mutation": false
+  }
+}
