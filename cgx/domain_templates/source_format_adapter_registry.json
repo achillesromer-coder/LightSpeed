@@ -395,6 +395,121 @@
       "admission_state": "IMPLEMENTED",
       "conversion_class": "R1_SEMANTIC_REVERSIBLE",
       "note": "3MF package/model object and mesh counts with exact declared unit attribute where present; mesh validity and engineering intent are not inferred."
+    },
+    {
+      "adapter_id": "toml-stdlib-v0.1",
+      "extensions": [
+        ".toml"
+      ],
+      "media_families": [
+        "structured-text"
+      ],
+      "projection_kinds": [
+        "structure",
+        "metadata"
+      ],
+      "deep_parse": true,
+      "round_trip_claim": "LOSSLESS_FOR_DECLARED_FIELDS",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+      "note": "Python stdlib tomllib structural parse; native TOML bytes remain authoritative for formatting/comments."
+    },
+    {
+      "adapter_id": "odf-stdlib-v0.1",
+      "extensions": [
+        ".odt",
+        ".ods",
+        ".odp"
+      ],
+      "media_families": [
+        "office-open-document"
+      ],
+      "projection_kinds": [
+        "text",
+        "table",
+        "structure",
+        "relationship",
+        "metadata"
+      ],
+      "deep_parse": true,
+      "round_trip_claim": "STRUCTURE_PRESERVED",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+      "note": "OpenDocument ZIP/content.xml structural extraction; macros/scripts are not executed and visual layout is not inferred."
+    },
+    {
+      "adapter_id": "sqlite-stdlib-v0.1",
+      "extensions": [
+        ".sqlite",
+        ".sqlite3",
+        ".db"
+      ],
+      "media_families": [
+        "database"
+      ],
+      "projection_kinds": [
+        "structure",
+        "metadata",
+        "relationship"
+      ],
+      "deep_parse": true,
+      "round_trip_claim": "STRUCTURE_PRESERVED",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+      "note": "Read-only immutable SQLite schema projection from sqlite_master and PRAGMA metadata; no table-row reads and no mutation."
+    },
+    {
+      "adapter_id": "dxf-ascii-stdlib-v0.1",
+      "extensions": [
+        ".dxf"
+      ],
+      "media_families": [
+        "spatial-cad"
+      ],
+      "projection_kinds": [
+        "structure",
+        "metadata",
+        "citation_map"
+      ],
+      "deep_parse": true,
+      "round_trip_claim": "STRUCTURE_PRESERVED",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+      "note": "ASCII DXF group-code/value pairs, section membership and entity-type counts only; binary DXF and geometry interpretation remain separately gated."
+    },
+    {
+      "adapter_id": "dwg-reference-v0.1",
+      "extensions": [
+        ".dwg"
+      ],
+      "media_families": [
+        "spatial-cad"
+      ],
+      "projection_kinds": [
+        "metadata"
+      ],
+      "deep_parse": false,
+      "round_trip_claim": "IDENTITY_REFERENCE_ONLY",
+      "admission_state": "CAPABILITY_BINDING_REQUIRED",
+      "conversion_class": "R0_EXACT",
+      "note": "DWG remains exact content-addressed reference until an admitted specialist decoder is available."
+    },
+    {
+      "adapter_id": "parquet-reference-v0.1",
+      "extensions": [
+        ".parquet"
+      ],
+      "media_families": [
+        "table-binary"
+      ],
+      "projection_kinds": [
+        "metadata"
+      ],
+      "deep_parse": false,
+      "round_trip_claim": "IDENTITY_REFERENCE_ONLY",
+      "admission_state": "CAPABILITY_BINDING_REQUIRED",
+      "conversion_class": "R0_EXACT",
+      "note": "Parquet remains exact content-addressed reference until an admitted specialist Arrow/Parquet capability is bound."
     }
   ],
   "fallback": {
