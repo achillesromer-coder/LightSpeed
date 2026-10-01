@@ -1,0 +1,187 @@
+{
+  "schema": "CGX-FIRST-FILE-CONVERSION-REGISTRY/0.1",
+  "status": "S91_PROVEN / S92_SUCCESSOR_PENDING",
+  "proof_source": "CGX S91 bounded first-file intake package 2026-09-23",
+  "mappings": [
+    {
+      "mapping_id": "FF-MARK3-XLSX-001",
+      "domain": "romer",
+      "semantic_object_id": "cgx:domain:romer",
+      "source_name": "Mark_III_Digital_Twin_v0_1.xlsx",
+      "source_drive_id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2",
+      "source_sha256": "fab23970e80c016a2140ec0f87c1d0d7e15c365190fdacb5dc2ee2a1c2a81075",
+      "media_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "semantic_target": "/romer/mark-iii",
+      "owner": "Type 1 Systems Cognigrex / MARKIFAB2 family",
+      "fixture_id": "mark3-solenoid-evidence",
+      "s91_proof": {
+        "cells": 13,
+        "objects": 8,
+        "relations": 6,
+        "fixture_roundtrip": "PASS"
+      },
+      "classes": [
+        "R0_EXACT",
+        "R1_SEMANTIC_REVERSIBLE",
+        "R2_RECONSTRUCTED",
+        "R3_GENERATIVE"
+      ],
+      "r2_families": [
+        "system",
+        "component",
+        "function",
+        "interface",
+        "process",
+        "test",
+        "failure-mode",
+        "claim",
+        "gate",
+        "parameter/evidence cells"
+      ],
+      "r3_views": [
+        "mark3.engineering",
+        "mark3.graph",
+        "mark3.solenoid.inspect",
+        "mark3.tree",
+        "mark3.twin"
+      ],
+      "evidence_ceiling": "functional/scaffold + source-bounded engineering semantics; no geometry/physical validation promotion",
+      "required_relation_types": [
+        "AFFECTS",
+        "COMPONENT_OF",
+        "GATED_BY",
+        "PART_OF",
+        "PRECEDES",
+        "TESTED_BY"
+      ]
+    },
+    {
+      "mapping_id": "FF-ECO-BIOBLOCK-XLSX-001",
+      "domain": "eco",
+      "semantic_object_id": "cgx:domain:eco",
+      "source_name": "Embedded_Bio_Blocks_Digital_Twin_v0_1.xlsx",
+      "source_drive_id": "1wgUWkkr1mQIPMmmF1V7eaweToUAu8UxK",
+      "source_sha256": "f1cf7a5d3a2e463881cd5389d265d0b70f1b56f849d87da70c57697b75b61d0b",
+      "media_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "semantic_target": "/eco/bio-blocks",
+      "owner": "Type 1 Eco-Grex / EMBEDF1CF family",
+      "fixture_id": "eco-bio-block-recipe-biosecurity",
+      "s91_proof": {
+        "cells": 14,
+        "objects": 11,
+        "relations": 9,
+        "fixture_roundtrip": "PASS"
+      },
+      "classes": [
+        "R0_EXACT",
+        "R1_SEMANTIC_REVERSIBLE",
+        "R2_RECONSTRUCTED",
+        "R3_GENERATIVE"
+      ],
+      "r2_families": [
+        "recipe",
+        "composition/input",
+        "taxon-candidate",
+        "site-assessment",
+        "monitoring-plan",
+        "test",
+        "risk",
+        "biosecurity/gate"
+      ],
+      "r3_views": [
+        "eco.graph",
+        "eco.map",
+        "eco.recipe.inspect",
+        "eco.restoration",
+        "eco.tree"
+      ],
+      "evidence_ceiling": "ecological design/test semantics; field survival/biosecurity/ecological performance remain empirical",
+      "required_relation_types": [
+        "GATED_BY",
+        "HAS_CRITERION",
+        "MONITORED_BY",
+        "TARGETS",
+        "THREATENED_BY",
+        "USES_INPUT"
+      ]
+    },
+    {
+      "mapping_id": "FF-RFS-EMFF-XLSX-001",
+      "domain": "emassc",
+      "semantic_object_id": "cgx:domain:emassc",
+      "source_name": "RFS_EMFF_Digital_Twin_Test_Sandbox_v0_1.xlsx",
+      "source_drive_id": "1YDs4fjNZgzDAB1LJcf7xT9N-bywD4Qgf",
+      "source_sha256": "1cc3f421ed128186b1ab018f7af8eda27bc30572b21bc8b8a1d2bada91c9a58f",
+      "media_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "semantic_target": "/emassc/rfs-emff",
+      "owner": "Type 1 Systems Cognigrex / RFS-EMFF family",
+      "fixture_id": "rfs-emff-synthetic-control",
+      "s91_proof": {
+        "cells": 12,
+        "objects": 11,
+        "relations": 6,
+        "fixture_roundtrip": "PASS",
+        "warnings": [
+          "numeric-sanity-review:cell:56e2e06bda0190731a29a106",
+          "numeric-sanity-review:cell:b94aa63ab2d83711d835f323"
+        ]
+      },
+      "classes": [
+        "R0_EXACT",
+        "R1_SEMANTIC_REVERSIBLE",
+        "R2_RECONSTRUCTED",
+        "R3_GENERATIVE"
+      ],
+      "r2_families": [
+        "apparatus",
+        "parameter",
+        "scenario",
+        "material-sample/control",
+        "hypothesis",
+        "test",
+        "data-schema",
+        "failure-mode",
+        "claim",
+        "gate"
+      ],
+      "r3_views": [
+        "rfs.graph",
+        "rfs.protocol",
+        "rfs.runtime",
+        "rfs.scenario.inspect",
+        "rfs.tree"
+      ],
+      "evidence_ceiling": "simulation/synthetic/model/test-design semantics only until corresponding empirical measurements exist",
+      "required_relation_types": [
+        "AFFECTS",
+        "DERIVED_FROM",
+        "GATED_BY",
+        "USES_CONTROL",
+        "USES_INPUT"
+      ]
+    },
+    {
+      "mapping_id": "FF-RFS-LS-BRIDGE-001",
+      "domain": "lightspeed",
+      "semantic_object_id": "cgx:domain:lightspeed",
+      "source_name": "RFS_EMFF_Digital_Twin_Test_Sandbox_v0_1.xlsx",
+      "source_drive_id": "1YDs4fjNZgzDAB1LJcf7xT9N-bywD4Qgf",
+      "source_sha256": "1cc3f421ed128186b1ab018f7af8eda27bc30572b21bc8b8a1d2bada91c9a58f",
+      "media_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "semantic_target": "/lightspeed/runtime/rfs-emff",
+      "owner": "EMASSC scientific owner → LS runtime bridge",
+      "fixture_id": "rfs-emff-runtime-binding",
+      "s91_proof": {
+        "runtime_view_state": "gated",
+        "runtime_receipt": null,
+        "scientific_state_duplicated": false
+      },
+      "classes": [
+        "R0_EXACT",
+        "R2_RECONSTRUCTED"
+      ],
+      "evidence_ceiling": "runtime binding proposal only; LS does not own or duplicate EMASSC scientific truth"
+    }
+  ],
+  "successor_rule": "S92 migration must preserve source IDs/hashes and mapping IDs; compare semantic object/relation families and projection hashes against S91 proof, recording any schema-evolution delta rather than reinterpreting the whole workbook."
+}

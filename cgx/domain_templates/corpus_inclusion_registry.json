@@ -43,7 +43,9 @@
     "bulk-legacy-structure-is-not-copied-merely-for-completeness",
     "personal-or-separately-scoped-work-is-not-auto-imported-into-business-domain-filespaces",
     "views-and-dashboards-do-not-become-authority-by-visibility",
-    "secrets-remain-external"
+    "secrets-remain-external",
+    "tests-and-simulations-compile-inputs-from-admitted-corpus-or-final-dependency-receipts",
+    "test-results-do-not-enter-corpus-before-execution-proof-readback-and-commit"
   ],
   "first_class_domains": [
     {
@@ -166,7 +168,8 @@
     "lenses",
     "interaction-preferences-tailoring",
     "representations",
-    "publication-receipts"
+    "publication-receipts",
+    "test-simulation-cascade"
   ],
   "capability_and_provider_classes": [
     "lightspeed-runtime",

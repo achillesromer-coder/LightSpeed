@@ -18,6 +18,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse
 import uvicorn
 
+from lightspeed_runtime.corpus_test_orchestrator import CorpusTestPlanError, plan_cascade
+from lightspeed_runtime.cgx_conversion_planner import CGXConversionPlanError, compile_conversion_plan
 from lightspeed_runtime.project_artifact_store import stage_project_artifacts
 from lightspeed_runtime.owner_credentials import (
     CredentialAuthenticationFailed,
@@ -110,6 +112,28 @@ _QUEUE_TAIL_MAX_LINE_BYTES = 256 * 1024
 _LEGACY_COMMAND_LOOKUP_LIMIT = 64
 _COMMAND_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,95}$")
 _ACTION_PAYLOAD_MAX_BYTES = 64 * 1024
+
+
+def _load_conversion_contracts(shell_root: Path) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
+    roots = [
+        shell_root / "cgx" / "domain_templates",
+        shell_root.parent / "cgx" / "domain_templates",
+    ]
+    selected = next((root for root in roots if root.is_dir()), None)
+    if selected is None:
+        raise FileNotFoundError("CGX domain_templates directory is unavailable")
+    names = (
+        "file_type_conversion_registry.json",
+        "file_conversion_contract.json",
+        "first_file_conversion_registry.json",
+    )
+    payloads = []
+    for name in names:
+        path = selected / name
+        if not path.is_file():
+            raise FileNotFoundError(f"CGX conversion contract is unavailable: {name}")
+        payloads.append(json.loads(path.read_text(encoding="utf-8")))
+    return payloads[0], payloads[1], payloads[2]
 
 
 def utc_now_iso() -> str:
@@ -1496,7 +1520,84 @@ def create_app(root: Path | str) -> FastAPI:
                     **representation_edge.status(),
                     "error": representation_edge_error,
                 },
+                "test_cascade": {
+                    "mode": "corpus_bound",
+                    "planning_endpoint": "/api/v1/test-cascade/plan",
+                    "activation_state": "prepared_not_activated",
+                    "semantic_states": ["blocked", "ready", "underway", "partial", "complete"],
+                    "result_policy": "unknown_until_receipted_execution",
+                    "dependency_gate": "proof + verified readback + committed receipt",
+                    "execution_performed_by_status": False,
+                },
+                "conversion_planning": {
+                    "mode": "source_preserving_R0_R3",
+                    "planning_endpoint": "/api/v1/conversion/plan",
+                    "authority_transfer": False,
+                    "canonical_mutation": False,
+                    "unsupported_structure": "Frontier",
+                },
                 "execution_boundary": "local queue, immutable named artifacts, receipts and review only; no public direct execution",
+            }
+        )
+
+    @app.post("/api/v1/test-cascade/plan")
+    async def plan_test_cascade(body: dict[str, Any]):
+        """Compute a bounded semantic cascade projection without executing tests."""
+        specs = body.get("tests")
+        corpus_snapshot = body.get("corpus_snapshot")
+        receipts = body.get("receipts") or {}
+        if not isinstance(specs, list) or not 1 <= len(specs) <= 256:
+            raise HTTPException(status_code=400, detail="tests must contain 1..256 bounded test specs")
+        if not isinstance(corpus_snapshot, dict):
+            raise HTTPException(status_code=400, detail="corpus_snapshot must be an object")
+        if not isinstance(receipts, dict) or len(receipts) > 256:
+            raise HTTPException(status_code=400, detail="receipts must be a bounded object")
+        try:
+            projection = plan_cascade(specs, corpus_snapshot, receipts)
+        except CorpusTestPlanError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        return JSONResponse(
+            {
+                "projection": projection,
+                "execution_performed": False,
+                "external_action_performed": False,
+                "canonical_mutation": False,
+                "activation_boundary": "planning/status projection only; execution remains lease- and assurance-gated",
+            }
+        )
+
+    @app.post("/api/v1/conversion/plan")
+    async def plan_file_conversion(body: dict[str, Any]):
+        """Plan source-preserving machine-readable conversion without ingest or mutation."""
+        requested_outputs = body.get("requested_outputs") or []
+        if not isinstance(requested_outputs, list) or len(requested_outputs) > 64:
+            raise HTTPException(status_code=400, detail="requested_outputs must be a bounded list")
+        try:
+            type_registry, conversion_contract, first_file_registry = _load_conversion_contracts(shell_root)
+            plan = compile_conversion_plan(
+                file_name=body.get("file_name"),
+                source_sha256=body.get("source_sha256"),
+                source_ref=body.get("source_ref"),
+                media_type=body.get("media_type"),
+                domain=body.get("domain"),
+                semantic_target=body.get("semantic_target"),
+                requested_outputs=requested_outputs,
+                type_registry=type_registry,
+                conversion_contract=conversion_contract,
+                first_file_registry=first_file_registry,
+            )
+        except CGXConversionPlanError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        except (FileNotFoundError, json.JSONDecodeError) as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
+        return JSONResponse(
+            {
+                "plan": plan,
+                "execution_performed": False,
+                "external_action_performed": False,
+                "canonical_mutation": False,
+                "authority_transfer": False,
+                "activation_boundary": "planning only; ingest/Resolve/mutation remain separately gated",
             }
         )
 

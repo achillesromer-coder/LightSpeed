@@ -12,5 +12,13 @@
   "ui": {
     "show": true,
     "category": "Simulators"
+  },
+  "corpus_binding": {
+    "policy": "CGX-CORPUS-TEST-CASCADE/0.1",
+    "capability_id": "rfs-emff-screening",
+    "designed_function": "bounded first-order RFS/EMFF screening sweeps",
+    "orchestrated_execution_requires_packet": true,
+    "result_values_known_before_execution": false,
+    "activation_state": "prepared_not_activated"
   }
 }

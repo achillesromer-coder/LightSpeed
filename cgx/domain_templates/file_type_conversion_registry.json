@@ -1,0 +1,190 @@
+{
+  "schema": "CGX-FILE-TYPE-CONVERSION-REGISTRY/0.1",
+  "status": "active",
+  "source_runtime": "S92 CGX runtime type profiles + current capability policy",
+  "types": [
+    {
+      "id": "text/plain",
+      "extensions": [
+        "txt"
+      ],
+      "ingest": "exact-bytes+text",
+      "r0": true,
+      "r1": "text structure",
+      "adapter": null,
+      "status": "supported"
+    },
+    {
+      "id": "text/markdown",
+      "extensions": [
+        "md"
+      ],
+      "ingest": "exact-bytes+markup",
+      "r0": true,
+      "r1": "markup/text structure",
+      "adapter": null,
+      "status": "supported"
+    },
+    {
+      "id": "application/json",
+      "extensions": [
+        "json"
+      ],
+      "ingest": "exact-bytes+tree",
+      "r0": true,
+      "r1": "JSON tree",
+      "adapter": null,
+      "status": "supported"
+    },
+    {
+      "id": "text/csv",
+      "extensions": [
+        "csv"
+      ],
+      "ingest": "exact-bytes+table",
+      "r0": true,
+      "r1": "table",
+      "adapter": null,
+      "status": "supported"
+    },
+    {
+      "id": "application/pdf",
+      "extensions": [
+        "pdf"
+      ],
+      "ingest": "exact-bytes+pdf-semantic",
+      "r0": true,
+      "r1": "bounded PDF semantic extraction",
+      "adapter": "pdf-pypdf-v0.1",
+      "status": "supported"
+    },
+    {
+      "id": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "extensions": [
+        "xlsx"
+      ],
+      "ingest": "exact-bytes+ooxml-semantic",
+      "r0": true,
+      "r1": "OOXML workbook/sheet/cell/table structure",
+      "adapter": "xlsx-ooxml-stdlib-v0.1",
+      "status": "supported"
+    },
+    {
+      "id": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "extensions": [
+        "docx"
+      ],
+      "ingest": "exact-bytes+ooxml-semantic",
+      "r0": true,
+      "r1": "OOXML document structure",
+      "adapter": "docx-ooxml-stdlib-v0.1",
+      "status": "supported"
+    },
+    {
+      "id": "text/html",
+      "extensions": [
+        "html",
+        "htm"
+      ],
+      "ingest": "exact-bytes+html-semantic-no-execution",
+      "r0": true,
+      "r1": "HTML DOM/text without execution",
+      "adapter": "html-stdlib-v0.1",
+      "status": "supported"
+    },
+    {
+      "id": "application/x-cgx",
+      "extensions": [
+        "cgx"
+      ],
+      "ingest": "verified CGX filespace/carrier",
+      "r0": true,
+      "r1": "native CGX semantic state",
+      "handler": "cgx-host-v0.1",
+      "status": "supported-preferred"
+    },
+    {
+      "id": "model/step",
+      "extensions": [
+        "step",
+        "stp"
+      ],
+      "ingest": "exact reference first",
+      "r0": true,
+      "r1": null,
+      "adapter": null,
+      "status": "specialist-adapter-required"
+    },
+    {
+      "id": "application/x-freecad",
+      "extensions": [
+        "fcstd"
+      ],
+      "ingest": "exact reference first",
+      "r0": true,
+      "r1": null,
+      "adapter": null,
+      "status": "specialist-adapter-required"
+    },
+    {
+      "id": "model/obj",
+      "extensions": [
+        "obj"
+      ],
+      "ingest": "exact reference first",
+      "r0": true,
+      "r1": null,
+      "adapter": null,
+      "status": "specialist-adapter-required"
+    },
+    {
+      "id": "model/gltf-binary",
+      "extensions": [
+        "glb"
+      ],
+      "ingest": "exact reference first",
+      "r0": true,
+      "r1": null,
+      "adapter": null,
+      "status": "specialist-adapter-required"
+    },
+    {
+      "id": "image/svg+xml",
+      "extensions": [
+        "svg"
+      ],
+      "ingest": "exact reference + bounded XML/geometry semantics only when admitted",
+      "r0": true,
+      "r1": "bounded SVG XML/geometry when adapter available",
+      "adapter": null,
+      "status": "reference-first"
+    },
+    {
+      "id": "image/png",
+      "extensions": [
+        "png"
+      ],
+      "ingest": "exact bytes + metadata; visual semantics require explicit image capability",
+      "r0": true,
+      "r1": null,
+      "adapter": null,
+      "status": "reference-first"
+    },
+    {
+      "id": "image/jpeg",
+      "extensions": [
+        "jpg",
+        "jpeg"
+      ],
+      "ingest": "exact bytes + metadata; visual semantics require explicit image capability",
+      "r0": true,
+      "r1": null,
+      "adapter": null,
+      "status": "reference-first"
+    }
+  ],
+  "fallback": {
+    "status": "R0-reference-only",
+    "rule": "Unknown media types may be retained/referenced exactly with hash/provenance but receive no semantic adapter claim until capability is registered."
+  }
+}

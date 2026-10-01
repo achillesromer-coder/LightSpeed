@@ -180,6 +180,10 @@ from lightspeed_runtime.finalization_control import (
     write_execution_control,
     write_finalization_overview,
 )
+from lightspeed_runtime.corpus_test_orchestrator import (
+    compile_test_packet as compile_corpus_test_packet,
+    plan_cascade as plan_corpus_test_cascade,
+)
 from lightspeed_runtime.contracts import (
     ReservoirManifest,
     build_handoff_context,
@@ -303,6 +307,24 @@ class LightSpeedRuntime:
             "romer_workspace": "romer",
             "romer_operations": "romer",
         }
+
+    def compile_corpus_test_packet(
+        self,
+        spec: dict,
+        corpus_snapshot: dict,
+        dependency_receipts: dict | None = None,
+    ) -> dict:
+        """Compile one test/simulation packet strictly from corpus/dependency evidence."""
+        return compile_corpus_test_packet(spec, corpus_snapshot, dependency_receipts)
+
+    def plan_corpus_test_cascade(
+        self,
+        specs: list[dict],
+        corpus_snapshot: dict,
+        receipts: dict | None = None,
+    ) -> dict:
+        """Return dependency-safe top-down status without executing or inventing results."""
+        return plan_corpus_test_cascade(specs, corpus_snapshot, receipts)
 
     @staticmethod
     def _slug(value: str) -> str:

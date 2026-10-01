@@ -1,7 +1,7 @@
 {
   "schema": "CGX-CGP-IES-LAUNCH-FRONTIER/0.1",
   "queue_id": "CGX-LAUNCH-FRONTIER-2026-09-30",
-  "status": "ACTIVE_PRE_LAUNCH / S92_RECOVERY_PROMOTED / CHILD_VALIDATION_COMPLETE / CHILD_PERSISTENCE_AND_EMPIRICAL_GATES_OPEN",
+  "status": "ACTIVE_PRE_LAUNCH / S92_RECOVERY_PROMOTED / CHILD_SUCCESSOR_AND_FIRST_FILE_MIGRATION_VERIFIED / CHILD_PERSISTENCE_AND_EMPIRICAL_GATES_OPEN",
   "source_authority": {
     "recovery_state": "S91",
     "recovery_release": "v1.61",
@@ -167,7 +167,7 @@
         "promotion_verification": "s92_recovery_promotion_verification_2026-09-30.json",
         "predecessor_s91_retained": true
       },
-      "release_reason": "Technical acceptance is complete and standing pre-launch root authorization applies to the exact S92 candidate; promotion remains held until exact candidate bytes are durably persisted and re-read from Validation/Recovery.",
+      "release_reason": "Exact S92 candidate was authorised, durably persisted, downloaded/read back byte-exact, verified, and promoted while S91 provenance remained retained.",
       "blocker": null
     },
     {
@@ -178,25 +178,53 @@
       "audit": "Achilles",
       "execution_class": "DIGITAL_WRITE",
       "cascade_class": "C2",
-      "state": "VALIDATION_BUILD_COMPLETE_DURABLE_PERSISTENCE_OPEN",
+      "state": "SUCCESSOR_BUILD_AND_FIRST_FILE_MIGRATION_VERIFIED / DURABLE_PERSISTENCE_OPEN",
       "depends_on": [
         "CGX-LAUNCH-004"
       ],
-      "action": "Regenerate Romer.cgx, Eco.cgx, EMASSC.cgx and LS.cgx from promoted parent.",
+      "action": "Regenerate Romer.cgx, Eco.cgx, EMASSC.cgx and LS.cgx from promoted S92 with stable semantic domain identities; migrate only the previously proven S91 first-file semantic delta; persist and read back exact successor bytes before durable child promotion.",
       "done_when": [
-        "all four canonical verifiers pass",
-        "all four packed reopen verifiers pass",
+        "all four successor canonical verifiers pass",
+        "all four successor packed reopen verifiers pass",
+        "stable semantic domain IDs are explicit and distinct from carrier-instance IDs",
         "extensions/bindings.json is REFERENCE-only",
-        "authority_phase_ref and release_visibility_ref are present",
-        "nested child cannot weaken GATE or ENFORCE_SAFETY"
+        "first-file semantic migration is bounded to proven S91 semantic/proof/source delta and current relation vocabularies",
+        "exact selected successor bytes are durably persisted and re-fetched by Drive ID",
+        "post-persistence SHA-256 and canonical verifier match the selected successor receipts"
       ],
-      "evidence_class": "CHILD_BUILD_AND_CONFORMANCE",
-      "release_reason": "Exact S92 Recovery promoted/readback verified; child generator pinned to S92.",
+      "evidence_class": "CHILD_BUILD_CONFORMANCE_AND_BOUNDED_SEMANTIC_MIGRATION",
+      "release_reason": "Exact S92 Recovery is current. Stable-identity successor children and bounded S91→S92 first-file semantic migration are locally verifier/packed-reopen proven; durable child-file persistence remains open.",
       "evidence_ref": "s92_domain_children_validation_receipt_2026-10-01.json",
       "blocker": {
         "id": "CGX-STORAGE-TRANSPORT-CHILD-001",
-        "description": "Exact child carriers generated and audited but local-to-Drive file-reference transport failed before file writes.",
-        "closure": "Persist each exact child hash to Validation/Recovery child location; fetch each by Drive ID and re-run SHA + canonical verifier."
+        "description": "Exact successor and migrated child carriers are locally verified, but the current container-to-Drive binary upload transport returned container_session_expired before any child file was written.",
+        "non_effect": "No failed transport attempt changed durable child authority. Local verifier results remain validation evidence only.",
+        "closure": "Persist the selected exact child carriers, fetch each by Drive ID, verify exact SHA-256 and canonical verifier/readback, then promote the durable child set."
+      },
+      "evidence_refs": [
+        "s92_domain_children_validation_receipt_2026-10-01.json",
+        "s92_domain_children_successor_validation_receipt_2026-10-01.json",
+        "s92_first_file_migration_receipt_2026-10-01.json"
+      ],
+      "evidence": {
+        "semantic_identity_contract": "CGX-DOMAIN-CHILD-IDENTITY/0.1",
+        "conversion_contract": "CGX-FILE-CONVERSION-CONTRACT/0.1",
+        "successor_build_status": "PASS",
+        "first_file_migration_status": "PASS",
+        "native_source_authority_preserved": true,
+        "successor_tracked_objects": {
+          "romer": 64,
+          "eco": 64,
+          "emassc": 64,
+          "lightspeed": 64
+        },
+        "migrated_tracked_objects": {
+          "romer": 96,
+          "eco": 103,
+          "emassc": 98,
+          "lightspeed": 67
+        },
+        "binary_transport_write_succeeded": false
       }
     },
     {
@@ -413,5 +441,16 @@
       "evidence_class": "REPEATED_RUN_RECEIPT"
     }
   ],
-  "last_reconciled": "2026-10-01"
+  "last_reconciled": "2026-10-01",
+  "current_recovery_authority": {
+    "state_id": "S92",
+    "drive_id": "1ap1xHVQ0cDWeJDAVWxvY_VqMkSzwpG6i",
+    "sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+    "content_root": "bf851642ac5bef93e8b9663f71ea4aa94ede30bf057528101773dd12de830bc1",
+    "dbr_root": "a7da29629904db2ac82218eaf36c916adbc057a7e954104053078afbf288ad66",
+    "topology_snapshot_hash": "13cc735955ff8aaabdaf43aed968b510b5dab85416fbb7adee5807215c781074",
+    "canonical_verifier": "PASS",
+    "exact_drive_readback": true,
+    "note": "source_authority above is retained as launch-queue origin provenance; this field is the current Recovery authority."
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-ROMER-RELATION-REGISTRY/0.2",
+  "schema": "CGX-ROMER-RELATION-REGISTRY/0.3",
   "domain": "romer",
   "extends": "CGX-RELATION-QUALIFIER/0.1",
   "families": {
@@ -197,6 +197,20 @@
       },
       {
         "id": "DERIVED_VIEW_OF"
+      }
+    ],
+    "test_semantics": [
+      {
+        "id": "AFFECTS",
+        "rule": "direction/scope of effect must be attributable"
+      },
+      {
+        "id": "GATED_BY",
+        "rule": "gate identity and state remain separate from the source object"
+      },
+      {
+        "id": "PRECEDES",
+        "rule": "sequence relation does not imply causation"
       }
     ]
   },

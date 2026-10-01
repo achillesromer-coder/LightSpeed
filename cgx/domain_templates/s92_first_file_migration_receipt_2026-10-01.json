@@ -1,0 +1,116 @@
+{
+  "schema": "CGX-S92-FIRST-FILE-MIGRATION-RECEIPT/0.1",
+  "status": "LOCAL_MIGRATION_VERIFIED / DURABLE_PERSISTENCE_OPEN",
+  "verified_at": "2026-10-01",
+  "source_boundary": "Only the already-proven S91 first-file semantic/proof/source delta was migrated. Old generated events/blob content was excluded and current S92 kernel state was regenerated.",
+  "source_proofs": {
+    "s91_domain_children_drive_id": "1Ty-c4KpJtadOjIwaAH_2pdaxsNOyhUoJ",
+    "s91_first_file_intake_drive_id": "1zw8sqQslEO8WyDcp8sooXib9gZkWLQYB",
+    "first_file_registry_schema": "CGX-FIRST-FILE-CONVERSION-REGISTRY/0.1",
+    "conversion_contract_schema": "CGX-FILE-CONVERSION-CONTRACT/0.1"
+  },
+  "outputs": {
+    "romer": {
+      "semantic_object_id": "cgx:domain:romer",
+      "carrier_instance_object_id": "cgx:local:93af03fb4763480c05d7bbda",
+      "sha256": "d9447c32345c66589c723152fb618e026c9faef3f8739e0eb143e34c2ea7e6db",
+      "verify": "PASS",
+      "packed_reopen_verify": "PASS",
+      "tracked_objects": 96,
+      "content_root": "3c3b9c3401d1463093bb648413c48deb6a3a7ed6539c369fd0a4892f792d8f08",
+      "dbr_root": "0bfba6103366784afc4af12d192af4e5e4fa91c83b0871cdd594fe4f14a03ecd",
+      "topology_snapshot_hash": "1b5648607a2dfae095d2de468b6093866a1301133fdde41da6e79cf0526487fd",
+      "relation_types": [
+        "AFFECTS",
+        "COMPONENT_OF",
+        "GATED_BY",
+        "PART_OF",
+        "PRECEDES",
+        "TESTED_BY"
+      ],
+      "semantic_delta_path_count": 31,
+      "ignored_generated_path_count": 36
+    },
+    "eco": {
+      "semantic_object_id": "cgx:domain:eco",
+      "carrier_instance_object_id": "cgx:local:e6a95f7f2e34ec364afcf4ff",
+      "sha256": "3acc6edf3b6ba86b45939659069e4a73d9677afe99163da2c2ec3dc4eb338f5c",
+      "verify": "PASS",
+      "packed_reopen_verify": "PASS",
+      "tracked_objects": 103,
+      "content_root": "81c89484678c33260867a3f4a5f97c6f791a5cc072288a3e1ac0f89768844311",
+      "dbr_root": "5c3e66dd7452ab52001eac4efdb5ca784df83537269bbf9be9bbe3b86d0025f5",
+      "topology_snapshot_hash": "1f1daae90819d48560146217eec4f5fde095f9bda134c86105b4ccfea1cf09bb",
+      "relation_types": [
+        "GATED_BY",
+        "HAS_CRITERION",
+        "MONITORED_BY",
+        "TARGETS",
+        "THREATENED_BY",
+        "USES_INPUT"
+      ],
+      "semantic_delta_path_count": 38,
+      "ignored_generated_path_count": 40
+    },
+    "emassc": {
+      "semantic_object_id": "cgx:domain:emassc",
+      "carrier_instance_object_id": "cgx:local:6cfa51daf39420be6e742e7a",
+      "sha256": "bfd9b54174db3d6922695f61e7564c63a65bdea0e442928c670ba046b0493a67",
+      "verify": "PASS",
+      "packed_reopen_verify": "PASS",
+      "tracked_objects": 98,
+      "content_root": "69a4c649f638683272ccdb0162e5d92fba8477d03d1d1909ac6432fa9c6fa87f",
+      "dbr_root": "639b97c07ac8781d115f9363d4d40dbd782d487ca0306a40dfe394fec6428bc6",
+      "topology_snapshot_hash": "3e428deae78ef56fd799d9a9432ac0abc743ef4d720c345920e2fb59eccee833",
+      "relation_types": [
+        "AFFECTS",
+        "DERIVED_FROM",
+        "GATED_BY",
+        "USES_CONTROL",
+        "USES_INPUT"
+      ],
+      "semantic_delta_path_count": 33,
+      "ignored_generated_path_count": 35
+    },
+    "lightspeed": {
+      "semantic_object_id": "cgx:domain:lightspeed",
+      "carrier_instance_object_id": "cgx:local:d3b111c0cd1fce6b7e54fb63",
+      "sha256": "3ca08ea1e4d7530a4d5d6275737f00af80075431b30c8708df4c88ad06e02672",
+      "verify": "PASS",
+      "packed_reopen_verify": "PASS",
+      "tracked_objects": 67,
+      "content_root": "64a8c6e6c6c30993a1a8395ddad53e720cb5d3c81b3f7cdd6efbc313362bf760",
+      "dbr_root": "d784c2bcaac2fb82daa9e684770d843f5a727c514a3550deac5dfdcdf7666ba7",
+      "topology_snapshot_hash": "4f5f8309a95cbfad675741863a46d15e297119defa9cac39600605d42be38c3b",
+      "relation_types": [],
+      "semantic_delta_path_count": 2,
+      "ignored_generated_path_count": 4,
+      "scientific_state_duplicated": false
+    }
+  },
+  "migration_logic": {
+    "allowed": [
+      "graph/cells/**",
+      "graph/objects/**",
+      "graph/relations/**",
+      "proof/intake/**",
+      "sources/intake/**",
+      "semantic/intake_index.json",
+      "queue/bridge_proposals/**"
+    ],
+    "excluded": [
+      "historical events/**",
+      "historical store/blobs/**",
+      "unbounded payload/control paths"
+    ],
+    "relation_registry_validation": "PASS",
+    "current_kernel_regeneration": true,
+    "result_receipt_sha256": "37bec26de6af90ed84bd319d2cf5b678abb408dc420d012a47e612316f2bc1d5"
+  },
+  "persistence": {
+    "state": "OPEN",
+    "reason": "The same binary transport boundary that blocks durable successor child upload also blocks durable migrated-carrier upload.",
+    "close_when": "Persist exact migrated carriers and re-fetch/read back exact SHA + canonical verifier."
+  },
+  "authority_limit": "Migration is R2_RECONSTRUCTED source-bounded semantic assimilation. Native workbook/source authority is retained; no empirical, geometry, physical or scientific result is promoted by migration."
+}

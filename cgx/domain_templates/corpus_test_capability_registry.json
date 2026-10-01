@@ -1,0 +1,54 @@
+{
+  "schema": "CGX-CORPUS-TEST-CAPABILITY-REGISTRY/0.1",
+  "status": "review-blueprint",
+  "default_activation_state": "prepared_not_activated",
+  "capabilities": [
+    {
+      "capability_id": "rfs-emff-screening",
+      "kind": "simulation",
+      "adapter": "lightspeed_runtime.rfs_emff_sweep",
+      "designed_function": "bounded first-order screening sweep",
+      "corpus_packet_required_for_orchestrated_execution": true,
+      "result_authority": "derived_screening_only",
+      "activation_state": "prepared_not_activated"
+    },
+    {
+      "capability_id": "gmat",
+      "kind": "simulation",
+      "adapter": "Smith GMAT runner",
+      "designed_function": "trajectory/orbit mission simulation using typed GMAT scenario state",
+      "corpus_packet_required_for_orchestrated_execution": true,
+      "required_input_families": [
+        "epoch",
+        "reference frame",
+        "initial state",
+        "force model",
+        "bodies",
+        "maneuvers",
+        "constraints",
+        "objective"
+      ],
+      "result_authority": "simulation_result_only",
+      "activation_state": "prepared_not_activated"
+    },
+    {
+      "capability_id": "mpl",
+      "kind": "simulation",
+      "adapter": "CGX-MPL-ASSURANCE-ADAPTER/0.1",
+      "designed_function": "bounded financial/insurance consequence screening within MPL applicability",
+      "corpus_packet_required_for_orchestrated_execution": true,
+      "result_authority": "bounded_screening_only",
+      "activation_state": "prepared_not_activated"
+    },
+    {
+      "capability_id": "python-deterministic",
+      "kind": "formal_solver",
+      "adapter": "bounded Python test/simulation runner",
+      "designed_function": "deterministic equations, transforms, parameter sweeps and proofs",
+      "corpus_packet_required_for_orchestrated_execution": true,
+      "result_authority": "derived_by_declared_method",
+      "activation_state": "prepared_not_activated"
+    }
+  ],
+  "routing_rule": "Use the capability for its verified designed function. An LLM may compile, explain or reconcile the packet, but it does not inherit the solver's mathematical authority or the physical test's evidentiary status."
+}

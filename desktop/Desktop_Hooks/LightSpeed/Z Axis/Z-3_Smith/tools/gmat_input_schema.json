@@ -2,7 +2,9 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "GMAT Runner Stub Input",
   "type": "object",
-  "required": ["scenario_name"],
+  "required": [
+    "scenario_name"
+  ],
   "properties": {
     "scenario_name": {
       "type": "string",
@@ -27,6 +29,35 @@
         "type": "string"
       },
       "description": "Optional tags for the manifest"
+    },
+    "corpus_binding": {
+      "type": "object",
+      "description": "Corpus-bound orchestration receipt. Required by the orchestrated activation path; legacy direct-run compatibility remains separately gated.",
+      "required": [
+        "corpus_snapshot_id",
+        "input_packet_sha256"
+      ],
+      "properties": {
+        "corpus_snapshot_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "input_packet_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{64}$"
+        },
+        "source_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "structured_parameters": {
+      "type": "object",
+      "description": "Typed GMAT parameter/configuration references compiled from the admitted corpus; the runner must not infer missing scientific values."
     }
   },
   "additionalProperties": false

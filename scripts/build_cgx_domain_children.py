@@ -61,6 +61,9 @@ def common_profiles(root: Path):
         "semantic/cross_domain_bridges.json":"cross_domain_bridge_registry.json",
         "profiles/semantic_view_registry.json":"semantic_view_lens_registry.json",
         "profiles/view_selection_policy.json":"view_selection_policy.json",
+        "profiles/file_conversion_contract.json":"file_conversion_contract.json",
+        "profiles/file_type_conversion_registry.json":"file_type_conversion_registry.json",
+        "profiles/first_file_conversion_registry.json":"first_file_conversion_registry.json",
     }
     missing=[src for src in mapping.values() if not (DT/src).is_file()]
     if missing:
@@ -79,21 +82,31 @@ def source_family_subset(domain: str, inclusion: dict) -> list[dict]:
     return [x for x in inclusion.get("durable_source_families",[]) if x.get("title") in keep]
 
 def intake_queue(domain: str) -> dict:
-    items={
-        "romer":[
-            {"priority":1,"source":"Mark_III_Digital_Twin_v0_1.xlsx","sha256":"fab23970e80c016a2140ec0f87c1d0d7e15c365190fdacb5dc2ee2a1c2a81075","mode":"TRACK/REFERENCE then semantic assimilation","target":"/romer/mark-iii","status":"review"},
-        ],
-        "eco":[
-            {"priority":1,"source":"Embedded_Bio_Blocks_Digital_Twin_v0_1.xlsx","sha256":"f1cf7a5d3a2e463881cd5389d265d0b70f1b56f849d87da70c57697b75b61d0b","mode":"TRACK/REFERENCE then semantic assimilation","target":"/eco/bio-blocks","status":"review"},
-        ],
-        "emassc":[
-            {"priority":1,"source":"RFS_EMFF_Digital_Twin_Test_Sandbox_v0_1.xlsx","sha256":"1cc3f421ed128186b1ab018f7af8eda27bc30572b21bc8b8a1d2bada91c9a58f","mode":"TRACK/REFERENCE then semantic assimilation","target":"/emassc/rfs-emff","status":"review"},
-        ],
-        "lightspeed":[
-            {"priority":1,"source":"S92 runtime/conformance provider surfaces","mode":"capability/reference binding","target":"/lightspeed/runtime","status":"review"}
-        ]
+    registry=load("first_file_conversion_registry.json")
+    mappings=[x for x in registry.get("mappings",[]) if x.get("domain")==domain]
+    items=[]
+    for index,item in enumerate(mappings,start=1):
+        items.append({
+            "priority":index,
+            "mapping_id":item.get("mapping_id"),
+            "source":item.get("source_name"),
+            "source_drive_id":item.get("source_drive_id"),
+            "sha256":item.get("source_sha256"),
+            "media_type":item.get("media_type"),
+            "mode":"TRACK/REFERENCE then bounded R1/R2 semantic assimilation",
+            "target":item.get("semantic_target"),
+            "conversion_classes":item.get("classes",[]),
+            "evidence_ceiling":item.get("evidence_ceiling"),
+            "status":"review",
+        })
+    return {
+        "schema_version":"0.4",
+        "domain":domain,
+        "default_action":"review",
+        "auto_commit":False,
+        "conversion_contract":"CGX-FILE-CONVERSION-CONTRACT/0.1",
+        "items":items,
     }
-    return {"schema_version":"0.3","domain":domain,"default_action":"review","auto_commit":False,"items":items[domain]}
 
 def legacy_aliases(domain: str) -> dict:
     aliases={
@@ -182,6 +195,8 @@ def extension_binding(domain: str) -> dict:
     }
 
 def domain_payload(domain: str, domains: dict, inclusion: dict, seed_ref: dict, fixture: dict) -> dict[str,object]:
+    identity_registry=load("domain_child_identity_registry.json")
+    stable_identity=identity_registry["children"][domain]
     if domain=="lightspeed":
         em=domains["domains"]["emassc"]
         cfg=em["children"]["lightspeed"]
@@ -211,6 +226,9 @@ def domain_payload(domain: str, domains: dict, inclusion: dict, seed_ref: dict, 
         "filespace_filename":cfg["file"],"preferred_namespace":namespace,
         "namespace_status":domains.get("namespace_status"),"logical_master":"cgx://cgx.cgx",
         "parent_filespace":parent,"source_master_reference":seed_ref,
+        "semantic_object_id":stable_identity["semantic_object_id"],
+        "parent_semantic_object_id":stable_identity["parent_semantic_object_id"],
+        "carrier_instance_rule":"cgx/bootstrap.json object_id identifies this concrete carrier instance; semantic_object_id identifies the stable domain meaning across rebuilds",
         "authority_transfer":False
       },
       "identity/agent_bindings.json":{
@@ -353,7 +371,8 @@ def main() -> int:
       "recovery_file_id":gp.get("current_recovery_file_id"),"promotion_verification":"s92_recovery_promotion_verification_2026-09-30.json","verifier":"PASS"
     }
 
-    build_receipt={"schema":"CGX-DOMAIN-CHILD-BUILD/0.1","seed":seed_ref,"fixture_gate":fixture.get("fixture_bundle",{}),"outputs":{}}
+    identity_registry=load("domain_child_identity_registry.json")
+    build_receipt={"schema":"CGX-DOMAIN-CHILD-BUILD/0.2","seed":seed_ref,"fixture_gate":fixture.get("fixture_bundle",{}),"identity_model":{"registry_schema":identity_registry.get("schema"),"semantic_identity_stable":True,"carrier_instance_identity_exact_build_only":True},"outputs":{}}
     for domain in ("romer","eco","emassc","lightspeed"):
         cfg=domains["domains"][domain] if domain!="lightspeed" else domains["domains"]["emassc"]["children"]["lightspeed"]
         root=work/domain
@@ -389,7 +408,8 @@ def main() -> int:
         if not reopen_check.get("ok"):
             raise SystemExit("FAIL: packed reopen verifier "+domain)
         build_receipt["outputs"][domain]={
-            "file":cfg["file"],"object_id":rb.get("object_id"),"state_id":rb.get("state_id"),
+            "file":cfg["file"],"semantic_object_id":identity_registry["children"][domain]["semantic_object_id"],
+            "carrier_instance_object_id":rb.get("object_id"),"object_id":rb.get("object_id"),"state_id":rb.get("state_id"),
             "content_root":rb.get("content_root"),"dbr_root":rd.get("dbr_root"),
             "topology":rb.get("topology_snapshot_hash"),"sha256":packed_sha,
             "tracked_objects":len(kernel.load_json(root,"cgx/manifest.json",{}).get("files",[])),

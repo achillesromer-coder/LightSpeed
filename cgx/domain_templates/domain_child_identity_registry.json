@@ -1,0 +1,48 @@
+{
+  "schema": "CGX-DOMAIN-CHILD-IDENTITY/0.1",
+  "status": "active",
+  "principle": "Semantic/domain identity is stable across rebuilds; packed carrier identity is an exact build artifact receipt and may change between rebuilds.",
+  "root": {
+    "semantic_object_id": "cgx:root:cognigrex",
+    "filespace": "Cognigrex.cgx",
+    "namespace": "cgx://cgx.cgx"
+  },
+  "children": {
+    "romer": {
+      "semantic_object_id": "cgx:domain:romer",
+      "domain_id": "romer",
+      "filespace": "Romer.cgx",
+      "parent_semantic_object_id": "cgx:root:cognigrex",
+      "namespace": "cgx://romer.industries/romer"
+    },
+    "eco": {
+      "semantic_object_id": "cgx:domain:eco",
+      "domain_id": "eco",
+      "filespace": "Eco.cgx",
+      "parent_semantic_object_id": "cgx:root:cognigrex",
+      "namespace": "cgx://romer.industries/eco"
+    },
+    "emassc": {
+      "semantic_object_id": "cgx:domain:emassc",
+      "domain_id": "emassc",
+      "filespace": "EMASSC.cgx",
+      "parent_semantic_object_id": "cgx:root:cognigrex",
+      "namespace": "cgx://romer.industries/emassc"
+    },
+    "lightspeed": {
+      "semantic_object_id": "cgx:domain:lightspeed",
+      "domain_id": "lightspeed",
+      "filespace": "LS.cgx",
+      "parent_semantic_object_id": "cgx:domain:emassc",
+      "namespace": "cgx://romer.industries/emassc/lightspeed"
+    }
+  },
+  "identity_rules": [
+    "semantic_object_id is the stable machine-readable identity for the domain/filespace meaning",
+    "carrier_instance_object_id is the CGX kernel instance identity for one concrete rebuilt carrier",
+    "carrier_sha256 identifies exact persisted bytes and never substitutes for semantic identity",
+    "content_root/dbr_root/topology identify verified semantic/build state within a carrier",
+    "a rebuild may preserve semantic_object_id while changing carrier_instance_object_id and carrier_sha256",
+    "promotion/readback must name both the stable semantic identity and the exact carrier byte receipt"
+  ]
+}

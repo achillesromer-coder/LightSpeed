@@ -198,6 +198,11 @@ app.innerHTML = `
         <article class="panel"><p class="eyebrow">Execution path</p><h2>One project, one receipt chain</h2><div class="flow"><span>LS GO</span><i>→</i><span>Achilles</span><i>→</i><span>Neo + floor</span><i>→</i><span>Desktop project</span><i>→</i><span>Drive receipt</span><i>→</i><span>GO decision</span></div></article>
         <article class="panel"><p class="eyebrow">Existing twin context</p><h2>Spaceport contract retained</h2><p class="muted">${twinZones.length} zones · ${facilityRecords.length} facility records · ${workbookTabs.length} workbook tabs. The twin remains bounded context, not the command-centre homepage.</p></article>
       </div>
+      <article class="panel">
+        <div class="panel-head"><div><p class="eyebrow">Corpus test cascade</p><h2 id="cascade-mode">Checking Desktop contract</h2></div><span class="badge" id="cascade-activation">Activation gated</span></div>
+        <div class="flow"><span>Blocked</span><i>→</i><span>Ready</span><i>→</i><span>Underway</span><i>→</i><span>Partial</span><i>→</i><span>Complete</span></div>
+        <p class="muted" id="cascade-boundary">Corpus supplies verified inputs and dependency lineage. Results remain unknown until receipted execution; downstream propagation waits for proof, verified readback and commit.</p>
+      </article>
     </section>
 
     <section class="view" id="view-sources">
@@ -644,6 +649,18 @@ const refreshDesktop = async (): Promise<void> => {
     const remoteAccess = remoteAccessPresentation(status.remote_access);
     remoteAccessState.textContent = remoteAccess.label;
     remoteAccessDetail.textContent = remoteAccess.detail;
+    const cascade = status.test_cascade;
+    byId("cascade-mode").textContent = cascade?.mode === "corpus_bound"
+      ? "Corpus-bound planning"
+      : "Cascade unavailable";
+    byId("cascade-activation").textContent = cascade?.activation_state === "active"
+      ? "Active"
+      : cascade?.activation_state === "held"
+        ? "Held"
+        : "Prepared · activation gated";
+    byId("cascade-boundary").textContent = cascade?.dependency_gate
+      ? `Results unknown until execution · downstream gate: ${cascade.dependency_gate}.`
+      : "Corpus inputs and dependency receipts remain required before governed execution.";
 
     try {
       const tasks = await listDesktopTasks();
@@ -694,6 +711,9 @@ const refreshDesktop = async (): Promise<void> => {
     merovingianState.textContent = "Offline";
     remoteAccessState.textContent = "Unavailable";
     remoteAccessDetail.textContent = "Desktop bridge is offline.";
+    byId("cascade-mode").textContent = "Desktop offline";
+    byId("cascade-activation").textContent = "Unavailable";
+    byId("cascade-boundary").textContent = "Start the local Desktop bridge to read the corpus-cascade contract.";
     byId("project-count").textContent = "0";
     tasksMount.innerHTML = `<p class="muted">Desktop is offline. Commands can still be saved, copied or downloaded.</p>`;
     byId("desktop-projects").innerHTML = `<p class="muted">Project registry unavailable while Desktop is offline.</p>`;
