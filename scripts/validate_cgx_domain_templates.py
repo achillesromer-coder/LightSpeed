@@ -75,6 +75,8 @@ def main():
         first_file_conversion=load("first_file_conversion_registry.json")
         child_successor_receipt=load("s92_domain_children_successor_validation_receipt_2026-10-01.json")
         first_file_migration_receipt=load("s92_first_file_migration_receipt_2026-10-01.json")
+        source_envelope=load("source_envelope_contract.json")
+        source_adapters=load("source_format_adapter_registry.json")
     except Exception as e:
         print(json.dumps({"status":"FAIL","failures":[str(e)]}))
         return 1
@@ -193,6 +195,41 @@ def main():
             failures.append(f"file type conversion capability missing: {required}")
     if (file_type_conversion.get("fallback") or {}).get("status")!="R0-reference-only":
         failures.append("unknown file conversion fallback is not R0-reference-only")
+
+    if source_envelope.get("schema")!="CGX-SOURCE-ENVELOPE/0.1":
+        failures.append("source envelope contract schema mismatch")
+    if source_envelope.get("parent_conversion_contract")!="file_conversion_contract.json":
+        failures.append("source envelope is not bound to canonical conversion contract")
+    if source_envelope.get("type_authority")!="file_type_conversion_registry.json":
+        failures.append("source envelope is not bound to canonical file-type registry")
+    if source_envelope.get("canonical_mutation") is not False:
+        failures.append("source envelope must remain read-only projection")
+
+    if source_adapters.get("schema")!="CGX-SOURCE-FORMAT-ADAPTER-REGISTRY/0.1":
+        failures.append("source adapter registry schema mismatch")
+    if source_adapters.get("parent_type_registry")!="file_type_conversion_registry.json":
+        failures.append("source adapter registry lacks parent type authority")
+    adapter_ids={item.get("adapter_id") for item in source_adapters.get("adapters",[]) if isinstance(item,dict)}
+    for required in ("text-stdlib-v0.1","json-stdlib-v0.1","csv-stdlib-v0.1","docx-ooxml-stdlib-v0.1","xlsx-ooxml-stdlib-v0.1","html-stdlib-v0.1"):
+        if required not in adapter_ids:
+            failures.append(f"source intake adapter missing: {required}")
+
+    type_by_id={item.get("id"):item for item in file_type_conversion.get("types",[]) if isinstance(item,dict)}
+    adapter_expectations={
+        "text/plain":"text-stdlib-v0.1",
+        "text/markdown":"text-stdlib-v0.1",
+        "application/json":"json-stdlib-v0.1",
+        "text/csv":"csv-stdlib-v0.1",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":"xlsx-ooxml-stdlib-v0.1",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document":"docx-ooxml-stdlib-v0.1",
+        "text/html":"html-stdlib-v0.1",
+    }
+    for media_type,adapter_id in adapter_expectations.items():
+        item=type_by_id.get(media_type) or {}
+        if item.get("adapter")!=adapter_id:
+            failures.append(f"source intake adapter mismatch: {media_type} -> {item.get('adapter')} expected {adapter_id}")
+    if (type_by_id.get("application/pdf") or {}).get("status")!="capability-gated":
+        failures.append("PDF conversion must remain capability-gated until specialist parser is bound")
 
     if first_file_conversion.get("schema")!="CGX-FIRST-FILE-CONVERSION-REGISTRY/0.1":
         failures.append("first-file conversion registry schema mismatch")
