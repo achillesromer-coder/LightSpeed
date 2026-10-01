@@ -1,0 +1,66 @@
+{
+  "schema": "CGX-PLUGIN-SELECTORS/0.1",
+  "status": "additive-interface-contract",
+  "authority": "Cognigrex.cgx:/agent-runtime",
+  "rule": "Selectors establish defaults only; they do not create new runtimes, truth stores, agents, or authority.",
+  "selectors": {
+    "achilles": {
+      "kind": "agent",
+      "agent": "Achilles",
+      "default_domain": "emassc",
+      "role": "governance-evidence-assurance-release-gate"
+    },
+    "neo": {
+      "kind": "agent",
+      "agent": "Neo",
+      "default_domain": "romer",
+      "role": "routing-decomposition-operational-synthesis"
+    },
+    "athene": {
+      "kind": "agent",
+      "agent": "Athene",
+      "default_domain": "eco",
+      "role": "ecological-domain-intelligence-review"
+    },
+    "raphael": {
+      "kind": "agent",
+      "agent": "Raphael",
+      "default_domain": null,
+      "role": "physics-mathematics-proof-falsification-simulation-routing"
+    },
+    "cognigrex": {
+      "kind": "system",
+      "system": "Cognigrex.cgx",
+      "role": "living-parent-filebase-and-cross-domain-resolver"
+    },
+    "romer-grex": {
+      "kind": "domain",
+      "domain": "romer",
+      "principal_agent": "Neo"
+    },
+    "eco-grex": {
+      "kind": "domain",
+      "domain": "eco",
+      "principal_agent": "Athene"
+    },
+    "emassc": {
+      "kind": "domain",
+      "domain": "emassc",
+      "principal_agent": "Achilles"
+    },
+    "lightspeed": {
+      "kind": "system",
+      "system": "LS.cgx",
+      "parent_domain": "emassc",
+      "role": "existing-execution-runtime-child"
+    }
+  },
+  "invariants": [
+    "Resolve current accepted Recovery authority before execution.",
+    "Use current hydration/verifier state; do not hard-code historical state gates.",
+    "Runtime receipts are evidence inputs, not automatic semantic truth.",
+    "Neo coordinates bounded execution; Achilles remains canonical/release gate.",
+    "Prefer existing proof/results and minimum sufficient new work over repeated sweeps.",
+    "No selector may introduce a second runtime, duplicate filespace, or hidden authority."
+  ]
+}
