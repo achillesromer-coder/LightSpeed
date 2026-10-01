@@ -479,6 +479,7 @@ def _stl_binary_projection(data: bytes, triangles: int) -> dict[str, Any]:
         "triangle_count": triangles,
         "triangles": records,
         "expected_byte_length": expected,
+        "length_matches": True,
         "mesh_validation_performed": False,
         "engineering_interpretation_performed": False,
         "units_inferred": False,
