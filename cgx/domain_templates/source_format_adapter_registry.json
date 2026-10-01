@@ -1,0 +1,103 @@
+{
+  "schema": "CGX-SOURCE-FORMAT-ADAPTER-REGISTRY/0.1",
+  "status": "IMPLEMENTATION_CONTRACT",
+  "default_mode": "native-preserving-read-only-projection",
+  "adapters": [
+    {
+      "adapter_id": "text-v1",
+      "extensions": [".txt", ".md", ".markdown", ".py", ".yaml", ".yml", ".ini", ".cfg", ".toml"],
+      "media_families": ["text"],
+      "projection_kinds": ["text", "structure", "citation_map"],
+      "deep_parse": true,
+      "round_trip_claim": "SEMANTIC_PROJECTION_ONLY"
+    },
+    {
+      "adapter_id": "json-v1",
+      "extensions": [".json", ".jsonl"],
+      "media_families": ["structured-text"],
+      "projection_kinds": ["structure", "text", "citation_map"],
+      "deep_parse": true,
+      "round_trip_claim": "LOSSLESS_FOR_DECLARED_FIELDS"
+    },
+    {
+      "adapter_id": "tabular-delimited-v1",
+      "extensions": [".csv", ".tsv"],
+      "media_families": ["table"],
+      "projection_kinds": ["table", "structure", "citation_map"],
+      "deep_parse": true,
+      "round_trip_claim": "LOSSLESS_FOR_DECLARED_FIELDS"
+    },
+    {
+      "adapter_id": "docx-ooxml-v1",
+      "extensions": [".docx"],
+      "media_families": ["document"],
+      "projection_kinds": ["text", "structure", "relationship", "metadata"],
+      "deep_parse": true,
+      "round_trip_claim": "SEMANTIC_PROJECTION_ONLY"
+    },
+    {
+      "adapter_id": "xlsx-ooxml-v1",
+      "extensions": [".xlsx", ".xlsm"],
+      "media_families": ["workbook"],
+      "projection_kinds": ["table", "formula", "structure", "relationship", "metadata"],
+      "deep_parse": true,
+      "round_trip_claim": "STRUCTURE_PRESERVED"
+    },
+    {
+      "adapter_id": "pdf-reference-v1",
+      "extensions": [".pdf"],
+      "media_families": ["document"],
+      "projection_kinds": ["metadata"],
+      "deep_parse": false,
+      "round_trip_claim": "IDENTITY_REFERENCE_ONLY",
+      "note": "Page/text/image parsing belongs to a PDF-aware adapter and is not approximated by generic text decoding."
+    },
+    {
+      "adapter_id": "image-reference-v1",
+      "extensions": [".png", ".jpg", ".jpeg", ".webp", ".gif", ".tif", ".tiff"],
+      "media_families": ["image"],
+      "projection_kinds": ["metadata", "preview"],
+      "deep_parse": false,
+      "round_trip_claim": "IDENTITY_REFERENCE_ONLY",
+      "note": "Semantic vision output is a derived representation and must retain source-image identity."
+    },
+    {
+      "adapter_id": "obj-spatial-v1",
+      "extensions": [".obj"],
+      "media_families": ["spatial"],
+      "projection_kinds": ["spatial", "structure", "metadata"],
+      "deep_parse": true,
+      "round_trip_claim": "SEMANTIC_PROJECTION_ONLY"
+    },
+    {
+      "adapter_id": "stl-spatial-v1",
+      "extensions": [".stl"],
+      "media_families": ["spatial"],
+      "projection_kinds": ["spatial", "metadata"],
+      "deep_parse": true,
+      "round_trip_claim": "SEMANTIC_PROJECTION_ONLY"
+    },
+    {
+      "adapter_id": "step-reference-v1",
+      "extensions": [".step", ".stp"],
+      "media_families": ["spatial-cad"],
+      "projection_kinds": ["metadata", "structure"],
+      "deep_parse": false,
+      "round_trip_claim": "IDENTITY_REFERENCE_ONLY"
+    },
+    {
+      "adapter_id": "gltf-reference-v1",
+      "extensions": [".gltf", ".glb"],
+      "media_families": ["spatial"],
+      "projection_kinds": ["metadata", "structure"],
+      "deep_parse": false,
+      "round_trip_claim": "IDENTITY_REFERENCE_ONLY"
+    }
+  ],
+  "fallback": {
+    "adapter_id": "binary-reference-v1",
+    "projection_kinds": ["metadata"],
+    "round_trip_claim": "IDENTITY_REFERENCE_ONLY",
+    "rule": "Unknown formats remain content-addressed references with no guessed semantic extraction."
+  }
+}
