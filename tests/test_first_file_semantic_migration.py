@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 
-SCRIPT = Path(__file__).resolve().parents[2] / "scripts" / "migrate_first_file_semantics_to_s92.py"
+SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "migrate_first_file_semantics_to_s92.py"
 SPEC = importlib.util.spec_from_file_location("first_file_migration", SCRIPT)
 assert SPEC is not None and SPEC.loader is not None
 migration = importlib.util.module_from_spec(SPEC)
