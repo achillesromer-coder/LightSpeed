@@ -65,7 +65,9 @@
     "authority-phase-is-explicit-and-cannot-be-inferred-from-node-count",
     "pre-launch-consequential-lease-requires-root-authority-receipt",
     "publication-lease-requires-release-receipt",
-    "authority-receipt-does-not-manufacture-evidence"
+    "authority-receipt-does-not-manufacture-evidence",
+    "standing-root-authority-receipt-may-satisfy-prelaunch-internal-execution-without-per-action-founder-reapproval",
+    "git-and-drive-support-cgx-but-do-not-become-required-runtime-dependencies-of-promoted-distributed-operation"
   ],
   "validation_rules": [
     "valid_from and valid_until use timezone-aware timestamps and current time must fall within the interval",
@@ -81,7 +83,8 @@
     "resource/tool budgets are ceilings, never targets",
     "PRE_LAUNCH or LAUNCH_TRANSITION consequential execution requires root_authority_receipt_ref",
     "publish execution requires release_receipt_ref even when the model/runtime plan is otherwise cleared",
-    "authority_phase_ref must resolve to the current promoted governance/phase contract"
+    "authority_phase_ref must resolve to the current promoted governance/phase contract",
+    "when standing_internal_execution_authority conditions are all satisfied, the standing root-authority receipt is sufficient for PRE_LAUNCH internal execution and no additional per-action founder approval is required"
   ],
   "compatibility": {
     "legacy_operator_approval_manifest": "historical evidence of operator decisions only; may support issuance of a new lease but cannot itself satisfy this contract",
@@ -106,5 +109,35 @@
     "DISTRIBUTED_OPERATION": "Authority is determined by the promoted multidimensional authority matrix; pre-launch root receipt is not assumed to remain required.",
     "SUCCESSION_OR_RECOVERY": "Use the promoted succession/recovery constitution and preserve degraded-mode safety constraints."
   },
-  "publication_rule": "Any publish execution requires release_receipt_ref. Public publication must also pass the CGP-IES release-visibility preflight."
+  "publication_rule": "Any publish execution requires release_receipt_ref. Public publication must also pass the CGP-IES release-visibility preflight.",
+  "standing_internal_execution_authority": {
+    "state": "APPROVED",
+    "root_authority_receipt_ref": "github:cgx/domain_templates/root_authority_decision_receipt_2026-10-01.json",
+    "principle": "internal + reversible + evidence-bound + within ACTIVE lease may execute without per-action founder reapproval",
+    "all_required": [
+      "target is internal to the authorised Cognigrex/CGX working environment",
+      "ACTIVE lease resolves and requested task/object/action fits declared scope",
+      "action does not expand semantic, root or governance authority",
+      "mutation is reversible where reversal is meaningful and rollback_or_recovery_ref is present",
+      "readback/verification and operational receipt are produced for digital mutation",
+      "applicable assurance/custodial/risk controls already required by the lease remain satisfied"
+    ],
+    "per_action_founder_reapproval_not_required_for": [
+      "COMPUTE_ONLY work within lease",
+      "bounded internal DIGITAL_WRITE with rollback/readback inside lease",
+      "canonical data assembly that leaves unknowns explicit",
+      "tests, simulation, derivation, reconciliation, indexing and receipt generation"
+    ],
+    "explicit_gate_required_for": [
+      "root-authority or governance-semantics change",
+      "distributed-governance promotion",
+      "public publication or external-party communication",
+      "contractual, legal, financial or material IP-ownership commitment",
+      "irreversible deletion of irreplaceable evidence/recovery lineage",
+      "EXTERNAL_ACTION unless separately and explicitly authorised",
+      "PHYSICAL_ACTUATION and any physical safety-boundary change",
+      "authority expansion beyond the promoted envelope"
+    ],
+    "audit_boundary": "Achilles may audit, stop, quarantine or require re-proof; this standing authority does not turn Achilles into a competing operational executor."
+  }
 }
