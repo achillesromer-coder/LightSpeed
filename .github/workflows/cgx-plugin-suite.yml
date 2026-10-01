@@ -1,0 +1,69 @@
+name: CGX Plugin Suite
+
+on:
+  pull_request:
+    paths:
+      - "plugins/**"
+      - ".agents/plugins/marketplace.json"
+      - "cgx/domain_templates/plugin_selector_registry.json"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_plugin_control.py"
+      - "desktop/LightSpeed_Runtime/tests/test_cgx_plugin_control.py"
+      - ".github/workflows/cgx-plugin-suite.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "plugins/**"
+      - ".agents/plugins/marketplace.json"
+      - "cgx/domain_templates/plugin_selector_registry.json"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_plugin_control.py"
+      - "desktop/LightSpeed_Runtime/tests/test_cgx_plugin_control.py"
+      - ".github/workflows/cgx-plugin-suite.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build selector packages
+        run: python plugins/source/build_plugin_packages.py
+      - name: Verify generated tree is committed
+        run: git diff --exit-code -- .agents/plugins/marketplace.json plugins/packages
+      - name: Validate manifests and marketplace
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path(".")
+          market=json.loads((root/".agents/plugins/marketplace.json").read_text(encoding="utf-8"))
+          assert market["name"]=="cognigrex-lightspeed"
+          assert len(market["plugins"])==9
+          expected={"achilles","neo","athene","raphael","cognigrex","romer-grex","eco-grex","emassc","lightspeed"}
+          assert {p["name"] for p in market["plugins"]}==expected
+          for p in market["plugins"]:
+              assert p["policy"]["installation"]=="INSTALLED_BY_DEFAULT"
+              package=root/p["source"]["path"]
+              portable=json.loads((package/"plugin.json").read_text(encoding="utf-8"))
+              compat=json.loads((package/".codex-plugin/plugin.json").read_text(encoding="utf-8"))
+              assert portable["name"]==p["name"]
+              assert compat["name"]==p["name"]
+              assert compat["author"]["name"]
+              assert compat["interface"]["displayName"]
+              assert compat["interface"]["shortDescription"]
+              assert compat["interface"]["longDescription"]
+              assert compat["interface"]["developerName"]
+              assert compat["interface"]["category"]
+              assert compat["interface"]["capabilities"]
+              for skill in ("cgx-selector","cgx-handshake","cgx-minimum-sufficient-work"):
+                  skill_file=package/"skills"/skill/"SKILL.md"
+                  assert skill_file.is_file(), skill_file
+          print("CGX plugin suite validation PASS")
+          PY
+      - name: Run runtime selector tests
+        run: python -m pytest desktop/LightSpeed_Runtime/tests/test_cgx_plugin_control.py -q
