@@ -74,30 +74,46 @@ function Set-CodexPluginEnabled {
     Set-Content -LiteralPath $ConfigPath -Value $text -Encoding utf8
 }
 
-Write-Host "Registering Cognigrex / LightSpeed plugin marketplace..."
-& $CodexCommand plugin marketplace add achillesromer-coder/LightSpeed --ref $MarketplaceRef
-if ($LASTEXITCODE -ne 0) {
-    throw "codex plugin marketplace add failed with exit code $LASTEXITCODE"
+$UserConfig = Join-Path $HOME ".codex\config.toml"
+$MarketplaceHeader = "[marketplaces.$MarketplaceName]"
+$MarketplaceRegistered = $false
+if (Test-Path $UserConfig) {
+    $MarketplaceRegistered = (Get-Content -LiteralPath $UserConfig -Raw).Contains($MarketplaceHeader)
 }
 
-Write-Host "Refreshing plugin marketplaces..."
-& $CodexCommand plugin marketplace upgrade
+if (-not $MarketplaceRegistered) {
+    Write-Host "Registering Cognigrex / LightSpeed plugin marketplace..."
+    & $CodexCommand plugin marketplace add achillesromer-coder/LightSpeed --ref $MarketplaceRef
+    if ($LASTEXITCODE -ne 0) {
+        throw "codex plugin marketplace add failed with exit code $LASTEXITCODE"
+    }
+}
+else {
+    Write-Host "Cognigrex / LightSpeed marketplace already registered."
+}
+
+Write-Host "Refreshing Cognigrex / LightSpeed marketplace..."
+& $CodexCommand plugin marketplace upgrade $MarketplaceName
 if ($LASTEXITCODE -ne 0) {
     throw "codex plugin marketplace upgrade failed with exit code $LASTEXITCODE"
 }
 
-$UserConfig = Join-Path $HOME ".codex\config.toml"
 Write-Host "Enabling nine Cognigrex selectors in user plugin config..."
 foreach ($PluginId in $PluginIds) {
     Set-CodexPluginEnabled -PluginId $PluginId -ConfigPath $UserConfig
 }
 
-Write-Host "Resolved marketplaces:"
-& $CodexCommand plugin marketplace list
-if ($LASTEXITCODE -ne 0) {
-    throw "codex plugin marketplace list failed with exit code $LASTEXITCODE"
+$ConfigText = Get-Content -LiteralPath $UserConfig -Raw
+$MissingPluginIds = @(
+    $PluginIds | Where-Object {
+        -not $ConfigText.Contains('[plugins."' + $_ + '"]')
+    }
+)
+if ($MissingPluginIds.Count -gt 0) {
+    throw "Plugin enablement verification failed for: $($MissingPluginIds -join ', ')"
 }
 
+Write-Host "Verified all nine Cognigrex selector IDs in user plugin config."
 Write-Host ""
 Write-Host "Cognigrex chat plugin provisioning complete."
 Write-Host "User config: $UserConfig"
