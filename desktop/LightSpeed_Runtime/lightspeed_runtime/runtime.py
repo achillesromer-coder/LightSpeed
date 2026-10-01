@@ -180,6 +180,7 @@ from lightspeed_runtime.finalization_control import (
     write_execution_control,
     write_finalization_overview,
 )
+from lightspeed_runtime.source_intake import build_source_envelope, build_source_envelope_from_path
 from lightspeed_runtime.corpus_test_orchestrator import (
     compile_test_packet as compile_corpus_test_packet,
     plan_cascade as plan_corpus_test_cascade,
@@ -307,6 +308,42 @@ class LightSpeedRuntime:
             "romer_workspace": "romer",
             "romer_operations": "romer",
         }
+
+    def project_source_bytes(
+        self,
+        source_name: str,
+        data: bytes,
+        *,
+        source_ref: str | None = None,
+        authority: str = "source",
+        evidence_state: str = "OBSERVED",
+        release_class: str = "Internal",
+    ) -> dict:
+        """Build a native-preserving read-only CGX source envelope."""
+        return build_source_envelope(
+            source_name=source_name,
+            data=data,
+            source_ref=source_ref,
+            authority=authority,
+            evidence_state=evidence_state,
+            release_class=release_class,
+        )
+
+    def project_source_path(
+        self,
+        path: str,
+        *,
+        authority: str = "source",
+        evidence_state: str = "OBSERVED",
+        release_class: str = "Internal",
+    ) -> dict:
+        """Project a local source by path without mutating or replacing the source."""
+        return build_source_envelope_from_path(
+            path,
+            authority=authority,
+            evidence_state=evidence_state,
+            release_class=release_class,
+        )
 
     def compile_corpus_test_packet(
         self,
