@@ -66,6 +66,9 @@ def main():
         assurance_fixtures=load("assurance_fixture_scenarios.json")
         technology_stack=load("technology_stack_registry.json")
         agent_runtime=load("agent_runtime_contract.json")
+        query_policy=load("query_normalisation_policy.json")
+        corpus_test_policy=load("corpus_test_simulation_policy.json")
+        corpus_test_caps=load("corpus_test_capability_registry.json")
     except Exception as e:
         print(json.dumps({"status":"FAIL","failures":[str(e)]}))
         return 1
@@ -109,6 +112,34 @@ def main():
     sr=s92_promotion.get("recovery",{})
     if sr.get("sha256")!=expected_seed["sha256"] or sr.get("drive_id")!=gp.get("current_recovery_file_id"):
         failures.append("S92 promotion verification does not match current Recovery pointer")
+
+    if query_policy.get("schema")!="CGX-QUERY-NORMALISATION-POLICY/0.1":
+        failures.append("query-normalisation policy schema mismatch")
+    query_constraints=set(query_policy.get("hard_constraints") or [])
+    if "when a native checkbox, dropdown, range, scope or selector can represent a constraint, use that control before adding query prose" not in query_constraints:
+        failures.append("query-normalisation native-control precedence missing")
+    if query_policy.get("output",{}).get("canonical_mutation") is not False:
+        failures.append("query-normalisation must not mutate canon")
+
+    if corpus_test_policy.get("schema")!="CGX-CORPUS-TEST-CASCADE/0.1":
+        failures.append("corpus-test policy schema mismatch")
+    if corpus_test_policy.get("result_policy",{}).get("known_before_execution") is not False:
+        failures.append("corpus-test policy pre-populates results")
+    if corpus_test_policy.get("activation",{}).get("automatic_external_or_physical_activation") is not False:
+        failures.append("corpus-test policy permits automatic external/physical activation")
+    final_gate=corpus_test_policy.get("result_policy",{}).get("required_final_gate") or {}
+    for field,expected in (("proof_state","proven"),("readback_state","verified"),("commit_state","committed")):
+        if final_gate.get(field)!=expected:
+            failures.append(f"corpus-test final gate missing {field}={expected}")
+
+    if corpus_test_caps.get("schema")!="CGX-CORPUS-TEST-CAPABILITY-REGISTRY/0.1":
+        failures.append("corpus-test capability registry schema mismatch")
+    caps={x.get("capability_id"):x for x in corpus_test_caps.get("capabilities",[]) if isinstance(x,dict)}
+    for capability_id in ("rfs-emff-screening","gmat","mpl","python-deterministic"):
+        if capability_id not in caps:
+            failures.append(f"corpus-test capability missing: {capability_id}")
+        elif caps[capability_id].get("corpus_packet_required_for_orchestrated_execution") is not True:
+            failures.append(f"corpus packet not required for {capability_id}")
 
     shared=domains.get("shared_contracts",{})
     for key,name in shared.items():
