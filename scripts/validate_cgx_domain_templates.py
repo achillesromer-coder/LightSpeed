@@ -210,7 +210,7 @@ def main():
     if source_adapters.get("parent_type_registry")!="file_type_conversion_registry.json":
         failures.append("source adapter registry lacks parent type authority")
     adapter_ids={item.get("adapter_id") for item in source_adapters.get("adapters",[]) if isinstance(item,dict)}
-    for required in ("text-stdlib-v0.1","json-stdlib-v0.1","csv-stdlib-v0.1","docx-ooxml-stdlib-v0.1","xlsx-ooxml-stdlib-v0.1","html-stdlib-v0.1"):
+    for required in ("text-stdlib-v0.1","json-stdlib-v0.1","csv-stdlib-v0.1","docx-ooxml-stdlib-v0.1","xlsx-ooxml-stdlib-v0.1","html-stdlib-v0.1","svg-xml-stdlib-v0.1","image-metadata-stdlib-v0.1","gltf-stdlib-v0.1"):
         if required not in adapter_ids:
             failures.append(f"source intake adapter missing: {required}")
 
@@ -223,6 +223,12 @@ def main():
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":"xlsx-ooxml-stdlib-v0.1",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document":"docx-ooxml-stdlib-v0.1",
         "text/html":"html-stdlib-v0.1",
+        "image/svg+xml":"svg-xml-stdlib-v0.1",
+        "image/png":"image-metadata-stdlib-v0.1",
+        "image/jpeg":"image-metadata-stdlib-v0.1",
+        "image/gif":"image-metadata-stdlib-v0.1",
+        "model/gltf+json":"gltf-stdlib-v0.1",
+        "model/gltf-binary":"gltf-stdlib-v0.1",
     }
     for media_type,adapter_id in adapter_expectations.items():
         item=type_by_id.get(media_type) or {}
