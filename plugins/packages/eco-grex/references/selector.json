@@ -1,0 +1,13 @@
+{
+  "schema": "CGX-PLUGIN-SELECTOR-PROFILE/0.2",
+  "package": "eco-grex",
+  "display": "Eco-Grex",
+  "selector": "eco-grex",
+  "profile": {
+    "kind": "domain",
+    "domain": "eco",
+    "principal_agent": "Athene"
+  },
+  "source_registry": "cgx/domain_templates/plugin_selector_registry.json",
+  "authority_note": "This profile is a routing default only. Resolve live CGX authority and current Recovery state through cgx-handshake."
+}

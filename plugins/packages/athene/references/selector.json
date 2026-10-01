@@ -1,0 +1,14 @@
+{
+  "schema": "CGX-PLUGIN-SELECTOR-PROFILE/0.2",
+  "package": "athene",
+  "display": "Athene",
+  "selector": "athene",
+  "profile": {
+    "kind": "agent",
+    "agent": "Athene",
+    "default_domain": "eco",
+    "role": "ecological-domain-intelligence-review"
+  },
+  "source_registry": "cgx/domain_templates/plugin_selector_registry.json",
+  "authority_note": "This profile is a routing default only. Resolve live CGX authority and current Recovery state through cgx-handshake."
+}
