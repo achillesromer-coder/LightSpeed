@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-ROMER-SEMANTIC-LIBRARY/0.2",
+  "schema": "CGX-ROMER-SEMANTIC-LIBRARY/0.3",
   "status": "review-blueprint",
   "domain": "romer",
   "filespace": "Romer.cgx",
@@ -134,6 +134,18 @@
           "recovery-route",
           "material-passport",
           "end-of-life-route"
+        ],
+        "collaboration_outreach": [
+          "candidate-organisation",
+          "candidate-contact-route",
+          "contact-class",
+          "discretion-class",
+          "outreach-gate",
+          "audience-lens",
+          "collaboration-opportunity",
+          "relationship-state",
+          "outreach-draft",
+          "engagement-receipt"
         ]
       }
     },
@@ -306,6 +318,19 @@
       "SUBSTITUTABLE_BY",
       "TRANSFERRED_TO",
       "RESTARTED_BY"
+    ],
+    "collaboration": [
+      "CANDIDATE_FOR",
+      "COMPATIBLE_WITH",
+      "CAN_ROUTE_TO",
+      "CONTACTED_VIA",
+      "REQUIRES_GATE",
+      "USES_LENS",
+      "DISCLOSES_AT",
+      "UPLIFTS",
+      "ENGAGEMENT_EVIDENCED_BY",
+      "QUALIFIED_AS",
+      "PARTNERED_WITH"
     ]
   },
   "relation_qualifiers": [
@@ -326,7 +351,14 @@
     "tco_state",
     "sovereignty_level",
     "capability_transfer_state",
-    "external_gate"
+    "external_gate",
+    "candidate_status",
+    "discretion_class",
+    "contact_type",
+    "contact_route_verified_at",
+    "pre_outreach_gate_state",
+    "lens_id",
+    "engagement_state"
   ],
   "inheritance": {
     "structural": "parent definitions may supply defaults; instances override explicitly",
@@ -343,7 +375,10 @@
     "CAD, spreadsheets, code and reports are representations/providers of semantic objects, not the semantic objects themselves.",
     "For sovereign-capacity work, bind BOM, BOP and BOC as separate linked objects; do not collapse materials, processes and operating capabilities into one record.",
     "Shared services, tooling, utilities, qualification and recovery capabilities should be referenced once and linked to all consuming projects rather than duplicated.",
-    "The Sovereign Cross-Discipline Capacity whitepaper is a derived review view and never becomes canonical authority."
+    "The Sovereign Cross-Discipline Capacity whitepaper is a derived review view and never becomes canonical authority.",
+    "Candidate discovery does not create a supplier, partner, endorsement, approval or capacity fact.",
+    "Outreach presentation is derived from Candidate_ID + discretion + gate state + Lens_ID + evidence ceiling; message style never promotes authority.",
+    "Relationship-state changes require attributable engagement receipts; absence of response is not rejection and directory presence is not availability proof."
   ],
   "source_mapping_examples": {
     "Type 1 Romer Cognigrex": "graph + enterprise + programme + publications",
@@ -422,5 +457,53 @@
       "BOM-or-BOP-completion-does-not-close-BOC",
       "unreceipted-mutation-is-PARTIAL-RECOVER-not-COMPLETE"
     ]
+  },
+  "collaboration_outreach_contract": {
+    "status": "review-blueprint",
+    "owner": "Type 1 Romer Cognigrex / 60_Aus_Sovereign_Capacity rows 38-39",
+    "registries": {
+      "candidates": "164_ASC_COLLAB_CANDIDATES_v0_1",
+      "outreach_lenses": "165_ASC_OUTREACH_LENS_v0_1"
+    },
+    "queue": {
+      "task": "TASK-104 v1.3",
+      "build": "BUILD-054 v0.6"
+    },
+    "candidate_rule": "Listing is discovery and planning only. Candidate status does not establish partnership, supplier-of-record status, endorsement, approval, qualified capacity, contracted capacity or availability.",
+    "discretion": {
+      "D0": "PUBLIC-SAFE",
+      "D1": "CONTROLLED bounded requirements",
+      "D2": "NDA-PREFERRED before proprietary detail",
+      "D3": "RESTRICTED/PROFESSIONAL with security/legal/professional gate"
+    },
+    "required_pre_contact": [
+      "Candidate_ID",
+      "current public contact route reverified",
+      "current target role/team reverified",
+      "contact type",
+      "discretion class",
+      "row-specific technical/evidence/IP/safety/legal/commercial gates resolved",
+      "Lens_ID",
+      "one bounded ask",
+      "claim ceiling",
+      "owner authority to contact"
+    ],
+    "lenses": {
+      "L01-GOV-ROUTING": "concise formal routing/program-fit request",
+      "L02-REGULATORY-STANDARDS": "configuration-specific process/standard/licence question",
+      "L03-SCIENCE-METROLOGY": "falsifiable measurement/calibration/uncertainty request",
+      "L04-UNIVERSITY-RESEARCH": "bounded assessable research/work-package request",
+      "L05-SUPPLIER-ENGINEERING": "requirements/DFM/technical-fit request",
+      "L06-INDUSTRY-HUB": "shared capability-gap, supplier-enablement or matchmaking request",
+      "L07-WORKFORCE-EDUCATION": "supervised competency/placement/training request",
+      "L08-SPACE-OPERATIONS": "mission/payload/interface feasibility request",
+      "L09-EXPORT-COMMERCIALISATION": "product/evidence/readiness/commercialisation request",
+      "L10-CUSTODIAL-COMMUNITY": "listen-first correct-process/site-linked engagement request"
+    },
+    "drafting_rule": "A bounded draft may be prepared before contact when clearly marked HOLD. Outbound contact or sending is a separate explicit authorised action after gates close and requires provider readback/receipt.",
+    "named_person_rule": "Prefer verified public routing channels before named individuals unless a specific role, prior relationship or authoritative referral makes direct contact appropriate.",
+    "site_custodial_rule": "Do not guess or cold-contact an individual Traditional Owner representative. Resolve site/Country and the correct representative body/process first.",
+    "signoff_default": "Regards & Admiration,",
+    "relationship_promotion_rule": "Advance CANDIDATE to any stronger relationship state only from actual engagement, agreement, qualification or provider evidence attributable to that organisation and scope."
   }
 }
