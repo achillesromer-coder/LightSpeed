@@ -164,43 +164,6 @@
       "conversion_class": "R0_EXACT"
     },
     {
-      "adapter_id": "obj-diagnostic-v0.1",
-      "extensions": [
-        ".obj"
-      ],
-      "media_families": [
-        "spatial"
-      ],
-      "projection_kinds": [
-        "spatial",
-        "structure",
-        "metadata"
-      ],
-      "deep_parse": true,
-      "round_trip_claim": "SEMANTIC_PROJECTION_ONLY",
-      "admission_state": "FRONTIER_ONLY",
-      "conversion_class": "R2_RECONSTRUCTED",
-      "note": "Diagnostic structure only; does not satisfy specialist R1 admission."
-    },
-    {
-      "adapter_id": "stl-diagnostic-v0.1",
-      "extensions": [
-        ".stl"
-      ],
-      "media_families": [
-        "spatial"
-      ],
-      "projection_kinds": [
-        "spatial",
-        "metadata"
-      ],
-      "deep_parse": true,
-      "round_trip_claim": "SEMANTIC_PROJECTION_ONLY",
-      "admission_state": "FRONTIER_ONLY",
-      "conversion_class": "R2_RECONSTRUCTED",
-      "note": "Diagnostic structure only; does not satisfy specialist R1 admission."
-    },
-    {
       "adapter_id": "gltf-stdlib-v0.1",
       "extensions": [
         ".gltf",
@@ -297,6 +260,45 @@
       "admission_state": "IMPLEMENTED",
       "conversion_class": "R1_SEMANTIC_REVERSIBLE",
       "note": "FCStd ZIP member metadata and Document.xml structure only; embedded shape payloads remain native/uninterpreted."
+    },
+    {
+      "adapter_id": "obj-mesh-stdlib-v0.1",
+      "extensions": [
+        ".obj"
+      ],
+      "media_families": [
+        "spatial-mesh"
+      ],
+      "projection_kinds": [
+        "structure",
+        "relationship",
+        "metadata",
+        "citation_map"
+      ],
+      "deep_parse": true,
+      "round_trip_claim": "STRUCTURE_PRESERVED",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+      "note": "Exact bounded OBJ mesh records and line locators; materials/referenced files are names only and engineering interpretation is not performed."
+    },
+    {
+      "adapter_id": "stl-mesh-stdlib-v0.1",
+      "extensions": [
+        ".stl"
+      ],
+      "media_families": [
+        "spatial-mesh"
+      ],
+      "projection_kinds": [
+        "structure",
+        "metadata",
+        "citation_map"
+      ],
+      "deep_parse": true,
+      "round_trip_claim": "STRUCTURE_PRESERVED",
+      "admission_state": "IMPLEMENTED",
+      "conversion_class": "R1_SEMANTIC_REVERSIBLE",
+      "note": "Exact bounded binary/ASCII STL triangle structure with byte/line locators; no topology, units or engineering interpretation."
     }
   ],
   "fallback": {
