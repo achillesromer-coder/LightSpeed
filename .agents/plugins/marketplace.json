@@ -1,0 +1,143 @@
+{
+  "name": "cognigrex-lightspeed",
+  "interface": {
+    "displayName": "Cognigrex / LightSpeed"
+  },
+  "plugins": [
+    {
+      "name": "achilles",
+      "source": {
+        "source": "local",
+        "path": "./plugins/packages/achilles"
+      },
+      "policy": {
+        "installation": "INSTALLED_BY_DEFAULT",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools",
+      "interface": {
+        "displayName": "Achilles"
+      }
+    },
+    {
+      "name": "neo",
+      "source": {
+        "source": "local",
+        "path": "./plugins/packages/neo"
+      },
+      "policy": {
+        "installation": "INSTALLED_BY_DEFAULT",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools",
+      "interface": {
+        "displayName": "Neo"
+      }
+    },
+    {
+      "name": "athene",
+      "source": {
+        "source": "local",
+        "path": "./plugins/packages/athene"
+      },
+      "policy": {
+        "installation": "INSTALLED_BY_DEFAULT",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools",
+      "interface": {
+        "displayName": "Athene"
+      }
+    },
+    {
+      "name": "raphael",
+      "source": {
+        "source": "local",
+        "path": "./plugins/packages/raphael"
+      },
+      "policy": {
+        "installation": "INSTALLED_BY_DEFAULT",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools",
+      "interface": {
+        "displayName": "Raphael"
+      }
+    },
+    {
+      "name": "cognigrex",
+      "source": {
+        "source": "local",
+        "path": "./plugins/packages/cognigrex"
+      },
+      "policy": {
+        "installation": "INSTALLED_BY_DEFAULT",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools",
+      "interface": {
+        "displayName": "Cognigrex"
+      }
+    },
+    {
+      "name": "romer-grex",
+      "source": {
+        "source": "local",
+        "path": "./plugins/packages/romer-grex"
+      },
+      "policy": {
+        "installation": "INSTALLED_BY_DEFAULT",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools",
+      "interface": {
+        "displayName": "Römer-Grex"
+      }
+    },
+    {
+      "name": "eco-grex",
+      "source": {
+        "source": "local",
+        "path": "./plugins/packages/eco-grex"
+      },
+      "policy": {
+        "installation": "INSTALLED_BY_DEFAULT",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools",
+      "interface": {
+        "displayName": "Eco-Grex"
+      }
+    },
+    {
+      "name": "emassc",
+      "source": {
+        "source": "local",
+        "path": "./plugins/packages/emassc"
+      },
+      "policy": {
+        "installation": "INSTALLED_BY_DEFAULT",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools",
+      "interface": {
+        "displayName": "EMASSC"
+      }
+    },
+    {
+      "name": "lightspeed",
+      "source": {
+        "source": "local",
+        "path": "./plugins/packages/lightspeed"
+      },
+      "policy": {
+        "installation": "INSTALLED_BY_DEFAULT",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools",
+      "interface": {
+        "displayName": "LightSpeed"
+      }
+    }
+  ]
+}

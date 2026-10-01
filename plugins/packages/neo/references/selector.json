@@ -1,0 +1,14 @@
+{
+  "schema": "CGX-PLUGIN-SELECTOR-PROFILE/0.2",
+  "package": "neo",
+  "display": "Neo",
+  "selector": "neo",
+  "profile": {
+    "kind": "agent",
+    "agent": "Neo",
+    "default_domain": "romer",
+    "role": "routing-decomposition-operational-synthesis"
+  },
+  "source_registry": "cgx/domain_templates/plugin_selector_registry.json",
+  "authority_note": "This profile is a routing default only. Resolve live CGX authority and current Recovery state through cgx-handshake."
+}

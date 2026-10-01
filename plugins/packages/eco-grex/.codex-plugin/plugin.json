@@ -1,0 +1,28 @@
+{
+  "name": "eco-grex",
+  "version": "0.2.0",
+  "description": "Select Eco-Grex as a thin Cognigrex routing surface. Resolve the current CGX context, minimum sufficient work, and existing LightSpeed/connector execution path without creating a second runtime or authority.",
+  "author": {
+    "name": "Römer Industries"
+  },
+  "repository": "https://github.com/achillesromer-coder/LightSpeed",
+  "keywords": [
+    "cognigrex",
+    "lightspeed",
+    "cgx",
+    "selector"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Eco-Grex",
+    "shortDescription": "Use ecology domain context",
+    "longDescription": "Select Eco-Grex as a thin Cognigrex routing surface. Resolve the current CGX context, minimum sufficient work, and existing LightSpeed/connector execution path without creating a second runtime or authority.",
+    "developerName": "Römer Industries",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Eco domain resolution",
+      "Ecology routing",
+      "Infrastructure ecology interface"
+    ]
+  }
+}

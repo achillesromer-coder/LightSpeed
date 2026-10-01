@@ -1,0 +1,28 @@
+{
+  "name": "neo",
+  "version": "0.2.0",
+  "description": "Select Neo as a thin Cognigrex routing surface. Resolve the current CGX context, minimum sufficient work, and existing LightSpeed/connector execution path without creating a second runtime or authority.",
+  "author": {
+    "name": "Römer Industries"
+  },
+  "repository": "https://github.com/achillesromer-coder/LightSpeed",
+  "keywords": [
+    "cognigrex",
+    "lightspeed",
+    "cgx",
+    "selector"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Neo",
+    "shortDescription": "Route CGX operations",
+    "longDescription": "Select Neo as a thin Cognigrex routing surface. Resolve the current CGX context, minimum sufficient work, and existing LightSpeed/connector execution path without creating a second runtime or authority.",
+    "developerName": "Römer Industries",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Task decomposition",
+      "Operational routing",
+      "Cross-domain coordination"
+    ]
+  }
+}
