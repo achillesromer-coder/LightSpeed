@@ -1,7 +1,7 @@
 {
   "schema": "CGX-CGP-IES-LAUNCH-FRONTIER/0.1",
   "queue_id": "CGX-LAUNCH-FRONTIER-2026-09-30",
-  "status": "ACTIVE_PRE_LAUNCH / S92_TECHNICALLY_ACCEPTED / RECOVERY_PROMOTION_HELD_ON_DURABLE_READBACK",
+  "status": "ACTIVE_PRE_LAUNCH / S92_RECOVERY_PROMOTED / CHILD_VALIDATION_COMPLETE / CHILD_PERSISTENCE_AND_EMPIRICAL_GATES_OPEN",
   "source_authority": {
     "recovery_state": "S91",
     "recovery_release": "v1.61",
@@ -141,7 +141,7 @@
       "audit": "Achilles",
       "execution_class": "DIGITAL_WRITE",
       "cascade_class": "C3",
-      "state": "HOLD_DURABLE_STORAGE_READBACK",
+      "state": "COMPLETE",
       "depends_on": [
         "CGX-LAUNCH-003"
       ],
@@ -158,19 +158,17 @@
         "recovery_state": "S92",
         "recovery_drive_id": "1ap1xHVQ0cDWeJDAVWxvY_VqMkSzwpG6i",
         "recovery_sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
-        "root_authority_receipt_ref": "gdrive:1C7jpNE-RarqdQA5bLy8QeFeZhY11evXn",
         "download_readback_sha256_match": true,
         "canonical_verifier": "PASS",
-        "predecessor_s91_retained": true,
-        "promotion_verification": "s92_recovery_promotion_verification_2026-09-30.json"
+        "content_root": "bf851642ac5bef93e8b9663f71ea4aa94ede30bf057528101773dd12de830bc1",
+        "dbr_root": "a7da29629904db2ac82218eaf36c916adbc057a7e954104053078afbf288ad66",
+        "topology_snapshot_hash": "13cc735955ff8aaabdaf43aed968b510b5dab85416fbb7adee5807215c781074",
+        "root_authority_receipt_ref": "gdrive:1C7jpNE-RarqdQA5bLy8QeFeZhY11evXn",
+        "promotion_verification": "s92_recovery_promotion_verification_2026-09-30.json",
+        "predecessor_s91_retained": true
       },
       "release_reason": "Technical acceptance is complete and standing pre-launch root authorization applies to the exact S92 candidate; promotion remains held until exact candidate bytes are durably persisted and re-read from Validation/Recovery.",
-      "blocker": {
-        "id": "CGX-STORAGE-TRANSPORT-001",
-        "description": "Current local-to-Drive file-reference bridge expired/refused an unregistered local path.",
-        "non_effect": "No mutation to S91 Recovery occurred; no failed upload changed Validation candidate contents.",
-        "closure": "Persist exact S92 SHA-256 722558... as a new file, re-download/read back, verify identical hash and canonical verifier, then promote exact bytes."
-      }
+      "blocker": null
     },
     {
       "task_id": "CGX-LAUNCH-005",
@@ -180,7 +178,7 @@
       "audit": "Achilles",
       "execution_class": "DIGITAL_WRITE",
       "cascade_class": "C2",
-      "state": "READY",
+      "state": "VALIDATION_BUILD_COMPLETE_DURABLE_PERSISTENCE_OPEN",
       "depends_on": [
         "CGX-LAUNCH-004"
       ],
@@ -193,7 +191,13 @@
         "nested child cannot weaken GATE or ENFORCE_SAFETY"
       ],
       "evidence_class": "CHILD_BUILD_AND_CONFORMANCE",
-      "release_reason": "Exact S92 Recovery promoted/readback verified; child generator pinned to S92."
+      "release_reason": "Exact S92 Recovery promoted/readback verified; child generator pinned to S92.",
+      "evidence_ref": "s92_domain_children_validation_receipt_2026-10-01.json",
+      "blocker": {
+        "id": "CGX-STORAGE-TRANSPORT-CHILD-001",
+        "description": "Exact child carriers generated and audited but local-to-Drive file-reference transport failed before file writes.",
+        "closure": "Persist each exact child hash to Validation/Recovery child location; fetch each by Drive ID and re-run SHA + canonical verifier."
+      }
     },
     {
       "task_id": "CGX-LAUNCH-006",
@@ -203,7 +207,7 @@
       "audit": "Achilles",
       "execution_class": "DIGITAL_WRITE",
       "cascade_class": "C2",
-      "state": "SOFTWARE_READY",
+      "state": "COMPLETE",
       "depends_on": [],
       "action": "Extend execution-lease contract/runtime validation with authority phase, root-authority receipt ref and release receipt ref for applicable actions.",
       "done_when": [
@@ -212,7 +216,16 @@
         "expired/revoked authority receipt cannot satisfy lease",
         "tests cover allow and fail-closed cases"
       ],
-      "evidence_class": "CODE_TEST_RECEIPT"
+      "evidence_class": "CODE_TEST_RECEIPT",
+      "completed_at": "2026-09-30",
+      "evidence": {
+        "source_merge_commit": "99e57a76922f7cf14888766fa98d9002ad33bdd8",
+        "execution_lease_contract_updated": true,
+        "runtime_validation_updated": true,
+        "regression": "PASS",
+        "prelaunch_root_receipt_required": true,
+        "publish_release_receipt_required": true
+      }
     },
     {
       "task_id": "CGX-LAUNCH-007",
@@ -400,5 +413,5 @@
       "evidence_class": "REPEATED_RUN_RECEIPT"
     }
   ],
-  "last_reconciled": "2026-09-30"
+  "last_reconciled": "2026-10-01"
 }
