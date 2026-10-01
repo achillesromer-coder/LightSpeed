@@ -52,7 +52,7 @@ def test_docx_ooxml_extracts_paragraphs_without_replacing_source():
     env = build_source_envelope(source_name="brief.docx", data=_docx_bytes())
     assert env["adapter_id"] == "docx-ooxml-stdlib-v0.1"
     assert env["projections"][0]["paragraphs"] == ["Hello CGX"]
-    assert env["native_preservation"]["round_trip_claim"] == "STRUCTURE_PRESERVED"
+    assert env["native_preservation"]["round_trip_claim"] == "SEMANTIC_PROJECTION_ONLY"
 
 
 def _xlsx_bytes():
