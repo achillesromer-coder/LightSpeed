@@ -1,22 +1,110 @@
 {
-  "schema": "CGX-PLUGIN-PACKAGES/0.1",
-  "version": "0.1.0",
+  "schema": "CGX-PLUGIN-PACKAGES/0.2",
+  "version": "0.2.0",
   "description": "Thin Cognigrex selector packages generated from one source definition.",
+  "author": {
+    "name": "Römer Industries"
+  },
+  "repository": "https://github.com/achillesromer-coder/LightSpeed",
+  "category": "Developer Tools",
   "packages": {
-    "achilles": {"display": "Achilles", "selector": "achilles"},
-    "neo": {"display": "Neo", "selector": "neo"},
-    "athene": {"display": "Athene", "selector": "athene"},
-    "raphael": {"display": "Raphael", "selector": "raphael"},
-    "cognigrex": {"display": "Cognigrex", "selector": "cognigrex"},
-    "romer-grex": {"display": "Römer-Grex", "selector": "romer-grex"},
-    "eco-grex": {"display": "Eco-Grex", "selector": "eco-grex"},
-    "emassc": {"display": "EMASSC", "selector": "emassc"},
-    "lightspeed": {"display": "LightSpeed", "selector": "lightspeed"}
+    "achilles": {
+      "display": "Achilles",
+      "selector": "achilles",
+      "short": "Govern CGX evidence",
+      "capabilities": [
+        "Evidence governance",
+        "Authority audit",
+        "Release review"
+      ]
+    },
+    "neo": {
+      "display": "Neo",
+      "selector": "neo",
+      "short": "Route CGX operations",
+      "capabilities": [
+        "Task decomposition",
+        "Operational routing",
+        "Cross-domain coordination"
+      ]
+    },
+    "athene": {
+      "display": "Athene",
+      "selector": "athene",
+      "short": "Apply Eco-Grex lens",
+      "capabilities": [
+        "Ecological intelligence",
+        "Ecological review",
+        "Ecosystem reasoning"
+      ]
+    },
+    "raphael": {
+      "display": "Raphael",
+      "selector": "raphael",
+      "short": "Route proof and physics",
+      "capabilities": [
+        "Physics reasoning",
+        "Mathematical proof",
+        "Simulation routing",
+        "Falsification"
+      ]
+    },
+    "cognigrex": {
+      "display": "Cognigrex",
+      "selector": "cognigrex",
+      "short": "Resolve CGX context",
+      "capabilities": [
+        "Cross-domain resolution",
+        "Bottom-up handshake",
+        "Capability routing"
+      ]
+    },
+    "romer-grex": {
+      "display": "Römer-Grex",
+      "selector": "romer-grex",
+      "short": "Use Römer domain context",
+      "capabilities": [
+        "Römer domain resolution",
+        "Mission and engineering routing",
+        "Operational synthesis"
+      ]
+    },
+    "eco-grex": {
+      "display": "Eco-Grex",
+      "selector": "eco-grex",
+      "short": "Use ecology domain context",
+      "capabilities": [
+        "Eco domain resolution",
+        "Ecology routing",
+        "Infrastructure ecology interface"
+      ]
+    },
+    "emassc": {
+      "display": "EMASSC",
+      "selector": "emassc",
+      "short": "Use EMASSC governance",
+      "capabilities": [
+        "Research governance",
+        "Validation routing",
+        "Filespace governance"
+      ]
+    },
+    "lightspeed": {
+      "display": "LightSpeed",
+      "selector": "lightspeed",
+      "short": "Route existing LS runtime",
+      "capabilities": [
+        "Local-first execution routing",
+        "LS GO review routing",
+        "Receipt retrieval",
+        "Tool arbitration"
+      ]
+    }
   },
   "shared_skills": [
     "cgx-selector",
     "cgx-handshake",
     "cgx-minimum-sufficient-work"
   ],
-  "mcp_policy": "Do not emit mcp.json until an actual deployed/registered CGX MCP endpoint or local supported transport is supplied and verified."
+  "mcp_policy": "Skills-only selector release until an actual deployed/registered CGX MCP endpoint or verified local transport exists. Never invent mcp.json."
 }
