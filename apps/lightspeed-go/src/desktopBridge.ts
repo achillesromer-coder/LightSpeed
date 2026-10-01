@@ -269,6 +269,15 @@ export interface DesktopStatus {
     migration_applied?: boolean;
     error?: string | null;
   };
+  test_cascade?: {
+    mode?: "corpus_bound";
+    planning_endpoint?: string;
+    activation_state?: "prepared_not_activated" | "active" | "held";
+    semantic_states?: Array<"blocked" | "ready" | "underway" | "partial" | "complete">;
+    result_policy?: string;
+    dependency_gate?: string;
+    execution_performed_by_status?: boolean;
+  };
   authority_contract?: AuthorityContract;
 }
 
