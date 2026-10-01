@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cognigrex.local/schemas/cgx-context-envelope.schema.json",
+  "title": "CGXContextEnvelope",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "selector",
+    "recovery",
+    "authority",
+    "intent",
+    "work_policy",
+    "execution"
+  ],
+  "properties": {
+    "schema_version": {"const": "cgx-context-envelope-v1"},
+    "selector": {
+      "type": "object",
+      "required": ["name", "kind"],
+      "properties": {
+        "name": {"type": "string"},
+        "kind": {"enum": ["agent", "domain", "system"]},
+        "agent": {"type": ["string", "null"]},
+        "domain": {"type": ["string", "null"]},
+        "system": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    },
+    "recovery": {
+      "type": "object",
+      "required": ["state_id", "sha256", "verification"],
+      "properties": {
+        "state_id": {"type": "string"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "verification": {"enum": ["PASS", "FAIL", "UNKNOWN"]}
+      }
+    },
+    "authority": {
+      "type": "object",
+      "required": ["operational_head", "canonical_release_gate"],
+      "properties": {
+        "operational_head": {"type": "string"},
+        "canonical_release_gate": {"type": "string"},
+        "principal_agent": {"type": ["string", "null"]},
+        "restrictions": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "intent": {
+      "type": "object",
+      "required": ["operation", "subject", "constraints"],
+      "properties": {
+        "operation": {"type": "string"},
+        "subject": {"type": "string"},
+        "constraints": {"type": "array", "items": {"type": "string"}},
+        "requested_outputs": {"type": "array", "items": {"type": "string"}},
+        "proof_standard": {"type": ["string", "null"]}
+      }
+    },
+    "work_policy": {
+      "type": "object",
+      "required": ["strategy", "reasoning_route", "return_mode"],
+      "properties": {
+        "strategy": {
+          "enum": [
+            "reuse_existing",
+            "reconcile_existing",
+            "execute_missing_only",
+            "bounded_new_execution",
+            "blocked"
+          ]
+        },
+        "reasoning_route": {"enum": ["gpt_only", "local_first", "dual_reasoning"]},
+        "return_mode": {"enum": ["receipt", "summary", "artifact"]},
+        "allow_heavy": {"type": "boolean"},
+        "why": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "execution": {
+      "type": "object",
+      "required": ["target_surfaces", "required_gates"],
+      "properties": {
+        "target_surfaces": {"type": "array", "items": {"type": "string"}},
+        "skills": {"type": "array", "items": {"type": "string"}},
+        "capabilities": {"type": "array", "items": {"type": "string"}},
+        "required_gates": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  },
+  "additionalProperties": true
+}
