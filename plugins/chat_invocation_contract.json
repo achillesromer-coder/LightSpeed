@@ -1,0 +1,60 @@
+{
+  "schema": "CGX-CHAT-PLUGIN-INVOCATION/0.1",
+  "marketplace": "cognigrex-lightspeed",
+  "scope": "ChatGPT and Codex plugin selector interface",
+  "rule": "@ mention selects a thin routing surface only; live CGX authority, Recovery state, capabilities, tools and minimum-sufficient-work are resolved by the shared handshake.",
+  "selectors": [
+    {
+      "mention": "@Achilles",
+      "plugin_id": "achilles@cognigrex-lightspeed",
+      "selector": "achilles"
+    },
+    {
+      "mention": "@Neo",
+      "plugin_id": "neo@cognigrex-lightspeed",
+      "selector": "neo"
+    },
+    {
+      "mention": "@Athene",
+      "plugin_id": "athene@cognigrex-lightspeed",
+      "selector": "athene"
+    },
+    {
+      "mention": "@Raphael",
+      "plugin_id": "raphael@cognigrex-lightspeed",
+      "selector": "raphael"
+    },
+    {
+      "mention": "@Cognigrex",
+      "plugin_id": "cognigrex@cognigrex-lightspeed",
+      "selector": "cognigrex"
+    },
+    {
+      "mention": "@Römer-Grex",
+      "plugin_id": "romer-grex@cognigrex-lightspeed",
+      "selector": "romer-grex"
+    },
+    {
+      "mention": "@Eco-Grex",
+      "plugin_id": "eco-grex@cognigrex-lightspeed",
+      "selector": "eco-grex"
+    },
+    {
+      "mention": "@EMASSC",
+      "plugin_id": "emassc@cognigrex-lightspeed",
+      "selector": "emassc"
+    },
+    {
+      "mention": "@LightSpeed",
+      "plugin_id": "lightspeed@cognigrex-lightspeed",
+      "selector": "lightspeed"
+    }
+  ],
+  "invariants": [
+    "No @ mention creates a second agent instance, runtime, filespace or authority.",
+    "Agent selectors provide actor/lens defaults; domain selectors provide domain context without transferring authority.",
+    "Current Recovery and verifier state are resolved live before execution.",
+    "Exact reusable results outrank reconciliation; valid reconciliation outranks missing-only execution; missing-only outranks bounded new execution.",
+    "Heavy deterministic work remains on existing LightSpeed/local execution surfaces when available."
+  ]
+}

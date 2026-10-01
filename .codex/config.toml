@@ -1,0 +1,31 @@
+# Chat-facing Cognigrex / LightSpeed plugin enablement.
+# These entries apply when this repository is trusted by Codex/ChatGPT Desktop.
+# User-level installation remains in ~/.codex/config.toml and is provisioned by
+# tools/install_cgx_chatgpt_plugins.ps1.
+
+[plugins."achilles@cognigrex-lightspeed"]
+enabled = true
+
+[plugins."neo@cognigrex-lightspeed"]
+enabled = true
+
+[plugins."athene@cognigrex-lightspeed"]
+enabled = true
+
+[plugins."raphael@cognigrex-lightspeed"]
+enabled = true
+
+[plugins."cognigrex@cognigrex-lightspeed"]
+enabled = true
+
+[plugins."romer-grex@cognigrex-lightspeed"]
+enabled = true
+
+[plugins."eco-grex@cognigrex-lightspeed"]
+enabled = true
+
+[plugins."emassc@cognigrex-lightspeed"]
+enabled = true
+
+[plugins."lightspeed@cognigrex-lightspeed"]
+enabled = true

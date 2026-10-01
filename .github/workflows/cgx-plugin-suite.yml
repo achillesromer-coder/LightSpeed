@@ -5,6 +5,8 @@ on:
     paths:
       - "plugins/**"
       - ".agents/plugins/marketplace.json"
+      - ".codex/config.toml"
+      - "tools/install_cgx_chatgpt_plugins.ps1"
       - "cgx/domain_templates/plugin_selector_registry.json"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_plugin_control.py"
       - "desktop/LightSpeed_Runtime/tests/test_cgx_plugin_control.py"
@@ -15,6 +17,8 @@ on:
     paths:
       - "plugins/**"
       - ".agents/plugins/marketplace.json"
+      - ".codex/config.toml"
+      - "tools/install_cgx_chatgpt_plugins.ps1"
       - "cgx/domain_templates/plugin_selector_registry.json"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_plugin_control.py"
       - "desktop/LightSpeed_Runtime/tests/test_cgx_plugin_control.py"
@@ -48,6 +52,10 @@ jobs:
           assert len(market["plugins"])==9
           expected={"achilles","neo","athene","raphael","cognigrex","romer-grex","eco-grex","emassc","lightspeed"}
           assert {p["name"] for p in market["plugins"]}==expected
+          contract=json.loads((root/"plugins/chat_invocation_contract.json").read_text(encoding="utf-8"))
+          project_config=(root/".codex/config.toml").read_text(encoding="utf-8")
+          mentions={item["plugin_id"]: item["mention"] for item in contract["selectors"]}
+          assert len(mentions)==9
           for p in market["plugins"]:
               assert p["policy"]["installation"]=="INSTALLED_BY_DEFAULT"
               package=root/p["source"]["path"]
@@ -62,10 +70,20 @@ jobs:
               assert compat["interface"]["developerName"]
               assert compat["interface"]["category"]
               assert compat["interface"]["capabilities"]
+              plugin_id=f'{p["name"]}@{market["name"]}'
+              assert plugin_id in mentions
+              assert mentions[plugin_id]=="@"+compat["interface"]["displayName"]
+              assert f'[plugins."{plugin_id}"]' in project_config
+              assert "enabled = true" in project_config
               for skill in ("cgx-selector","cgx-handshake","cgx-minimum-sufficient-work"):
                   skill_file=package/"skills"/skill/"SKILL.md"
                   assert skill_file.is_file(), skill_file
           print("CGX plugin suite validation PASS")
           PY
+      - name: Validate Windows bootstrap syntax
+        shell: pwsh
+        run: |
+          [scriptblock]::Create((Get-Content tools/install_cgx_chatgpt_plugins.ps1 -Raw)) | Out-Null
+          Write-Host "PowerShell bootstrap syntax PASS"
       - name: Run runtime selector tests
         run: python -m pytest desktop/LightSpeed_Runtime/tests/test_cgx_plugin_control.py -q
