@@ -45,7 +45,10 @@
     "views-and-dashboards-do-not-become-authority-by-visibility",
     "secrets-remain-external",
     "tests-and-simulations-compile-inputs-from-admitted-corpus-or-final-dependency-receipts",
-    "test-results-do-not-enter-corpus-before-execution-proof-readback-and-commit"
+    "test-results-do-not-enter-corpus-before-execution-proof-readback-and-commit",
+    "native-source-bytes-and-source-identity-remain-authoritative-over-derived-projections",
+    "format-specific-projections-do-not-flatten-workbooks-cad-images-or-binary-artifacts-into-generic-documents",
+    "unsupported-source-structure-remains-explicit-frontier-not-guessed-content"
   ],
   "first_class_domains": [
     {
@@ -169,7 +172,8 @@
     "interaction-preferences-tailoring",
     "representations",
     "publication-receipts",
-    "test-simulation-cascade"
+    "test-simulation-cascade",
+    "source-intake-projection"
   ],
   "capability_and_provider_classes": [
     "lightspeed-runtime",
