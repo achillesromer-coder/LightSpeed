@@ -1,0 +1,62 @@
+{
+  "schema": "CGX-ROOT-AUTHORITY-DECISION-RECEIPT/0.1",
+  "decision_date": "2026-10-01",
+  "authority_phase": "PRE_LAUNCH",
+  "state": "APPROVED_AND_LOCKED",
+  "authority": "RootAuthority",
+  "audit": "Achilles",
+  "scope": "Cognigrex internal operational canon through external-party/public/legal/financial/irreversible gates",
+  "decisions": [
+    {
+      "decision_id": "CGX-RA-2026-10-01-01",
+      "title": "CGX operational-canon authority transition",
+      "state": "LOCKED",
+      "rule": "Cognigrex/.cgx is the target live operational canon and distributed runtime. During bootstrap, Google Drive may anchor exact recovery carriers and durable recovery evidence. GitHub remains source-code/schema/test/provenance/receipt infrastructure. Drive remains archive/evidence/recovery/export/interchange infrastructure. Neither GitHub nor Drive is a required runtime dependency of the final Cognigrex operational canon.",
+      "bootstrap_authority": "Google Drive exact recovery carrier/readback anchor while distributed CGX persistence and governance promotion remain unproven",
+      "target_operational_authority": "Cognigrex distributed .cgx environment across promoted nodes",
+      "support_surfaces": {
+        "github": "source code, schemas, tests, version history, engineering provenance and auditable receipts",
+        "google_drive": "bootstrap recovery anchor, human-accessible evidence/archive, export/interchange and disaster-recovery copy"
+      },
+      "independence_invariant": "Promoted Cognigrex distributed operation must continue within its authorised envelope when GitHub and Google Drive are unavailable.",
+      "transition_gate": "CGX-LAUNCH-009 after CGX-LAUNCH-005, CGX-LAUNCH-007 and CGX-LAUNCH-008 are empirically closed; no authority transition is inferred before the exact governance/carrier state is promoted."
+    },
+    {
+      "decision_id": "CGX-RA-2026-10-01-02",
+      "title": "Standing internal execution authority",
+      "state": "LOCKED",
+      "rule": "Internal + reversible + evidence-bound + within an ACTIVE execution lease may execute without per-action founder reapproval. External, irreversible, governance-changing, public, legal, financial, IP-ownership-changing or physical-actuation actions remain explicitly gated.",
+      "standing_scope": [
+        "corpus reconciliation and canonical data assembly",
+        "bounded derivation, simulation and cross-analysis",
+        "tests, verification and receipt generation",
+        "indexing and search-state maintenance",
+        "schema migration within approved compatibility and rollback bounds",
+        "reversible internal digital writes with readback and rollback/recovery references",
+        "object population where unknowns remain explicit and no unsupported claim is promoted"
+      ],
+      "explicit_owner_gate_remains_for": [
+        "root-authority or governance-semantics changes",
+        "promotion of a new distributed governance authority state",
+        "permanent deletion of irreplaceable evidence or recovery lineage",
+        "public publication or external-party communication",
+        "contracts, legal commitments, financial commitments or material IP-ownership changes",
+        "irreversible physical actuation or physical safety-boundary changes",
+        "any requested authority expansion beyond the currently promoted envelope"
+      ],
+      "audit_separation": "Achilles remains an independent audit/stop/quarantine/re-proof authority and does not become a competing operational executor.",
+      "prelaunch_binding": "This receipt is the standing RootAuthority authorization that may be referenced by otherwise-valid PRE_LAUNCH internal execution leases. It does not satisfy public-release, external-action, physical-safety or empirical-evidence gates."
+    }
+  ],
+  "non_effects": [
+    "Does not synthetically close CGX-LAUNCH-005 durable child persistence.",
+    "Does not close CGX-LAUNCH-007 physical multi-device/non-loopback proof.",
+    "Does not close CGX-LAUNCH-008 platform keystore/recovery proof.",
+    "Does not promote CGX-LAUNCH-009 distributed governance.",
+    "Does not authorize public release, external-party contact, contracts, financial/legal commitments or irreversible physical actuation."
+  ],
+  "lineage": {
+    "launch_queue": "cgx/domain_templates/cgp_ies_launch_frontier_queue.json",
+    "execution_lease_contract": "cgx/domain_templates/execution_lease_contract.json"
+  }
+}
