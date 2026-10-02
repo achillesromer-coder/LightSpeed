@@ -2,9 +2,9 @@ from __future__ import annotations
 
 """Build thin selector plugin packages from the shared CGX skill source.
 
-This builder produces skills-only selector packages plus the repo marketplace.
-It deliberately does not invent or deploy an MCP endpoint. A verified MCP
-transport can be added later without changing selector identity or authority.
+Packages remain selector surfaces over the existing Cognigrex/LightSpeed runtime.
+Capability profiles expose real current routes and shortcalls without inventing
+an MCP endpoint or duplicating the runtime.
 """
 
 import json
@@ -17,8 +17,11 @@ ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "plugins" / "source"
 PACKAGES = ROOT / "plugins" / "packages"
 SELECTORS = ROOT / "cgx" / "domain_templates" / "plugin_selector_registry.json"
+CAPABILITY_ROUTES = ROOT / "cgx" / "domain_templates" / "plugin_capability_routes.json"
+SHORTCALLS = SOURCE / "selector_shortcalls.json"
 CONFIG = SOURCE / "selector_packages.json"
 MARKETPLACE = ROOT / ".agents" / "plugins" / "marketplace.json"
+
 
 
 def read_json(path: Path) -> dict[str, Any]:
@@ -43,9 +46,47 @@ def copy_skill(name: str, destination: Path) -> None:
 def plugin_description(display: str) -> str:
     return (
         f"Select {display} as a thin Cognigrex routing surface. Resolve the "
-        "current CGX context, minimum sufficient work, and existing LightSpeed/"
-        "connector execution path without creating a second runtime or authority."
+        "current CGX context, capability route, minimum sufficient work, and "
+        "existing LightSpeed/connector execution path without creating a "
+        "second runtime or authority."
     )
+
+
+def build_capability_payload(
+    package_name: str,
+    selector_name: str,
+    *,
+    capability_routes: dict[str, Any],
+    shortcalls: dict[str, Any],
+) -> dict[str, Any]:
+    profile = (shortcalls.get("selectors") or {}).get(selector_name)
+    if not isinstance(profile, dict):
+        raise ValueError(f"shortcall profile missing: {selector_name}")
+    global_calls = dict(shortcalls.get("global") or {})
+    selector_calls = dict(profile.get("shortcalls") or {})
+    route_ids = set(global_calls.values()) | set(selector_calls.values())
+    routes = capability_routes.get("routes") or {}
+    missing = sorted(route_id for route_id in route_ids if route_id not in routes)
+    if missing:
+        raise ValueError(
+            f"capability routes missing for {selector_name}: {', '.join(missing)}"
+        )
+    return {
+        "schema": "CGX-PLUGIN-CAPABILITY-PROFILE/0.1",
+        "package": package_name,
+        "selector": selector_name,
+        "syntax": shortcalls.get("syntax"),
+        "global_shortcalls": global_calls,
+        "profile": profile,
+        "routes": {route_id: routes[route_id] for route_id in sorted(route_ids)},
+        "gaps": capability_routes.get("gaps") or [],
+        "extension": capability_routes.get("extension") or {},
+        "toolkit_registry": capability_routes.get("toolkit_registry"),
+        "authority_note": (
+            "Capability and toolkit bindings do not create authority. Resolve "
+            "live CGX/Recovery state through cgx-handshake before execution."
+        ),
+    }
 
 
 def build_package(
@@ -54,6 +95,8 @@ def build_package(
     *,
     config: dict[str, Any],
     selectors: dict[str, Any],
+    capability_routes: dict[str, Any],
+    shortcalls: dict[str, Any],
     shared_skills: list[str],
 ) -> Path:
     selector_name = str(profile["selector"])
@@ -74,7 +117,7 @@ def build_package(
     display = str(profile.get("display") or package_name)
     description = plugin_description(display)
     selector_payload = {
-        "schema": "CGX-PLUGIN-SELECTOR-PROFILE/0.2",
+        "schema": "CGX-PLUGIN-SELECTOR-PROFILE/0.3",
         "package": package_name,
         "display": display,
         "selector": selector_name,
@@ -93,7 +136,26 @@ def build_package(
     selector_ref.mkdir(parents=True, exist_ok=True)
     (selector_ref / "selector.json").write_text(selector_text, encoding="utf-8")
 
-    version = str(config.get("version") or "0.2.0")
+    capability_payload = build_capability_payload(
+        package_name,
+        selector_name,
+        capability_routes=capability_routes,
+        shortcalls=shortcalls,
+    )
+    capability_text = json.dumps(
+        capability_payload, indent=2, ensure_ascii=False
+    ) + "\n"
+    (destination / "references" / "capabilities.json").write_text(
+        capability_text, encoding="utf-8"
+    )
+    for skill_name in ("cgx-capability-router", "cgx-tool-extension"):
+        skill_ref = destination / "skills" / skill_name / "references"
+        skill_ref.mkdir(parents=True, exist_ok=True)
+        (skill_ref / "capabilities.json").write_text(
+            capability_text, encoding="utf-8"
+        )
+
+    version = str(config.get("version") or "0.3.0")
     author = dict(config.get("author") or {"name": "Römer Industries"})
     repository = str(config.get("repository") or "")
     category = str(config.get("category") or "Developer Tools")
@@ -107,7 +169,6 @@ def build_package(
         "category": category,
         "capabilities": capabilities,
     }
-
     portable = {
         "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
         "name": package_name,
@@ -175,6 +236,8 @@ def build_marketplace(config: dict[str, Any]) -> Path:
 def main() -> int:
     config = read_json(CONFIG)
     selectors = read_json(SELECTORS)
+    capability_routes = read_json(CAPABILITY_ROUTES)
+    shortcalls = read_json(SHORTCALLS)
     packages = config.get("packages") or {}
     shared = [str(item) for item in config.get("shared_skills") or []]
     built = []
@@ -188,6 +251,8 @@ def main() -> int:
                     profile,
                     config=config,
                     selectors=selectors,
+                    capability_routes=capability_routes,
+                    shortcalls=shortcalls,
                     shared_skills=shared,
                 )
             )
@@ -199,6 +264,8 @@ def main() -> int:
                 "built": built,
                 "marketplace": str(marketplace),
                 "mcp_emitted": False,
+                "shared_skill_count": len(shared),
+                "capability_route_count": len(capability_routes.get("routes") or {}),
             },
             indent=2,
         )

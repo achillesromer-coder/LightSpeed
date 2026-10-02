@@ -163,3 +163,30 @@ def test_context_envelope_preserves_existing_authority_and_local_first_policy():
     assert envelope["authority"]["canonical_release_gate"] == "Achilles"
     assert envelope["work_policy"]["reasoning_route"] == "local_first"
     assert envelope["work_policy"]["strategy"] == "bounded_new_execution"
+
+
+def test_capability_shortcalls_resolve_real_runtime_and_explicit_gaps():
+    from lightspeed_runtime.cgx_capability_registry import resolve_shortcall
+
+    sweep = resolve_shortcall("Raphael", "/sweep")
+    assert sweep["route_id"] == "science.rfs_emff_sweep"
+    assert sweep["route"]["state"] == "available"
+    assert sweep["route"]["handler"].endswith(":execute_sweep")
+
+    habitat = resolve_shortcall("Eco-Grex", "habitat")
+    assert habitat["route_id"] == "eco.assess"
+    assert habitat["route"]["state"] == "assisted"
+
+
+def test_all_nine_selectors_have_extension_and_capability_shortcalls():
+    from lightspeed_runtime.cgx_capability_registry import (
+        list_shortcalls,
+        load_selector_shortcalls,
+    )
+
+    selectors = load_selector_shortcalls()["selectors"]
+    assert len(selectors) == 9
+    for selector in selectors:
+        calls = list_shortcalls(selector)
+        assert calls["extend"] == "extensions.tool"
+        assert calls["capabilities"] == "interface.capabilities"

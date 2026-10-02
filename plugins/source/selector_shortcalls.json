@@ -1,0 +1,59 @@
+{
+  "schema": "CGX-SELECTOR-SHORTCALLS/0.1",
+  "syntax": "@Selector /shortcall [object] [constraints...]",
+  "global": {
+    "help": "interface.help",
+    "capabilities": "interface.capabilities",
+    "status": "ops.health",
+    "receipt": "receipts.list",
+    "sources": "sources.envelope",
+    "extend": "extensions.tool"
+  },
+  "selectors": {
+    "achilles": {
+      "floors": ["Merovingian", "Oracle", "Morpheus", "Architect"],
+      "toolkits": ["cgx-core", "lightspeed", "google-drive", "github", "web"],
+      "shortcalls": {"audit":"cgx.cross_analysis","gate":"knowns.proof_queue","proof":"data.validate","knowns":"knowns.read","release":"ops.finalize","handoff":"protocols.build"}
+    },
+    "neo": {
+      "floors": ["Neo", "Smith", "Merovingian", "Morpheus"],
+      "toolkits": ["cgx-core", "lightspeed", "local-llm", "python", "github", "google-drive"],
+      "shortcalls": {"route":"cgx.plan_query","plan":"cgx.minimum_work","run":"local.supervise","queue":"ops.queue","local":"local.supervise","resume":"receipts.list"}
+    },
+    "athene": {
+      "floors": ["Oracle", "Morpheus", "Neo", "TheConstruct"],
+      "toolkits": ["cgx-core", "lightspeed", "google-drive", "web", "python"],
+      "shortcalls": {"eco":"eco.assess","impact":"eco.assess","evidence":"sources.envelope","corridor":"eco.assess","mitigate":"eco.assess","species":"eco.assess"}
+    },
+    "raphael": {
+      "floors": ["Morpheus", "TheConstruct", "Neo", "Oracle"],
+      "toolkits": ["cgx-core", "lightspeed", "python", "freecad", "local-llm"],
+      "shortcalls": {"prove":"tests.plan","test":"tests.plan","sweep":"science.rfs_emff_sweep","simulate":"science.mark3_simulate","falsify":"cgx.cross_analysis","units":"science.query"}
+    },
+    "cognigrex": {
+      "floors": ["Neo", "Oracle", "Morpheus", "Architect"],
+      "toolkits": ["cgx-core", "lightspeed", "local-llm", "google-drive", "github", "web"],
+      "shortcalls": {"resolve":"cgx.resolve_context","cross":"cgx.cross_analysis","hydrate":"cgx.resolve_context","reconcile":"cgx.minimum_work","gaps":"interface.capabilities","portfolio":"cgx.cross_analysis"}
+    },
+    "romer-grex": {
+      "floors": ["Neo", "Morpheus", "TheConstruct", "Oracle"],
+      "toolkits": ["cgx-core", "lightspeed", "python", "freecad", "github", "google-drive"],
+      "shortcalls": {"mission":"cgx.cross_analysis","mark":"science.mark3_simulate","luke":"cgx.cross_analysis","twin":"entities.build","sweep":"science.rfs_emff_sweep","route":"cgx.plan_query"}
+    },
+    "eco-grex": {
+      "floors": ["Oracle", "Morpheus", "TheConstruct", "Neo"],
+      "toolkits": ["cgx-core", "lightspeed", "google-drive", "web", "python"],
+      "shortcalls": {"eco":"eco.assess","habitat":"eco.assess","species":"eco.assess","water":"eco.assess","carbon":"eco.assess","mitigate":"eco.assess"}
+    },
+    "emassc": {
+      "floors": ["Merovingian", "Oracle", "Morpheus", "Architect"],
+      "toolkits": ["cgx-core", "lightspeed", "google-drive", "github", "web"],
+      "shortcalls": {"govern":"governance.action_ledger","validate":"data.validate","ledger":"knowns.read","evidence":"sources.envelope","release":"ops.finalize","ip":"cgx.cross_analysis"}
+    },
+    "lightspeed": {
+      "floors": ["Merovingian", "Neo", "Smith", "Trinity", "Oracle", "Morpheus", "Architect", "TheConstruct"],
+      "toolkits": ["lightspeed", "cgx-core", "local-llm", "python", "freecad", "github", "google-drive"],
+      "shortcalls": {"health":"ops.health","run":"local.supervise","queue":"ops.queue","receipt":"receipts.list","files":"files.list","compact":"ops.consolidate","bridge":"ops.route_probe","finalize":"ops.finalize"}
+    }
+  }
+}

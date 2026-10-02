@@ -1,0 +1,171 @@
+{
+  "schema": "CGX-PLUGIN-CAPABILITY-PROFILE/0.1",
+  "package": "lightspeed",
+  "selector": "lightspeed",
+  "syntax": "@Selector /shortcall [object] [constraints...]",
+  "global_shortcalls": {
+    "help": "interface.help",
+    "capabilities": "interface.capabilities",
+    "status": "ops.health",
+    "receipt": "receipts.list",
+    "sources": "sources.envelope",
+    "extend": "extensions.tool"
+  },
+  "profile": {
+    "floors": [
+      "Merovingian",
+      "Neo",
+      "Smith",
+      "Trinity",
+      "Oracle",
+      "Morpheus",
+      "Architect",
+      "TheConstruct"
+    ],
+    "toolkits": [
+      "lightspeed",
+      "cgx-core",
+      "local-llm",
+      "python",
+      "freecad",
+      "github",
+      "google-drive"
+    ],
+    "shortcalls": {
+      "health": "ops.health",
+      "run": "local.supervise",
+      "queue": "ops.queue",
+      "receipt": "receipts.list",
+      "files": "files.list",
+      "compact": "ops.consolidate",
+      "bridge": "ops.route_probe",
+      "finalize": "ops.finalize"
+    }
+  },
+  "routes": {
+    "extensions.tool": {
+      "state": "workflow",
+      "kind": "skill",
+      "ro": false,
+      "skill": "cgx-tool-extension",
+      "gate": "implement/test/register before tool exposure"
+    },
+    "files.list": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.project_file_browser:list_project_files"
+    },
+    "interface.capabilities": {
+      "state": "workflow",
+      "kind": "skill",
+      "ro": true,
+      "skill": "cgx-capability-router"
+    },
+    "interface.help": {
+      "state": "workflow",
+      "kind": "skill",
+      "ro": true,
+      "skill": "cgx-capability-router"
+    },
+    "local.supervise": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": false,
+      "handler": "lightspeed_runtime.cognigrex_supervisor:run_supervised_workflow",
+      "gate": "bounded local receipts; heavy=false unless explicit"
+    },
+    "ops.consolidate": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.consolidation_registry:build_consolidation_register"
+    },
+    "ops.finalize": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.finalization_control:build_finalization_overview"
+    },
+    "ops.health": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.bridge_health:build_bridge_health"
+    },
+    "ops.queue": {
+      "state": "gated",
+      "kind": "runtime",
+      "ro": false,
+      "handler": "lightspeed_runtime.smith_router:queue_smith_job",
+      "gate": "bounded queue write"
+    },
+    "ops.route_probe": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "open_world": true,
+      "handler": "lightspeed_runtime.route_probe:build_route_probe_report"
+    },
+    "receipts.list": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.result_receipt_browser:list_result_receipts"
+    },
+    "sources.envelope": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.source_intake:build_source_envelope_from_path"
+    }
+  },
+  "gaps": [
+    {
+      "id": "shared-mcp-tools",
+      "state": "missing",
+      "priority": "high",
+      "note": "Need one shared typed MCP plane for first-class ChatGPT tools; not nine servers."
+    },
+    {
+      "id": "freecad-adapter",
+      "state": "registered_unwrapped",
+      "priority": "high",
+      "note": "Wrap typed import/export/geometry/BOM operations."
+    },
+    {
+      "id": "femm-adapter",
+      "state": "missing",
+      "priority": "high",
+      "note": "Add only after verified local installation/model contract."
+    },
+    {
+      "id": "eco-deterministic-engine",
+      "state": "missing",
+      "priority": "high",
+      "note": "Current ecology route is source/query/cross-analysis assisted."
+    },
+    {
+      "id": "portfolio-cross-analysis-facade",
+      "state": "partial",
+      "priority": "medium",
+      "note": "Current modules compose this workflow but lack one typed facade/receipt."
+    }
+  ],
+  "extension": {
+    "reuse_before_create": true,
+    "single_shared_tool_plane": true,
+    "sequence": [
+      "define goal",
+      "search registry/runtime/toolkits",
+      "reuse or alias",
+      "implement smallest typed adapter",
+      "add tests/receipt",
+      "register route/shortcall",
+      "rebuild packages",
+      "expose through shared MCP after validation"
+    ]
+  },
+  "toolkit_registry": "cgx/domain_templates/toolkit_registry.json",
+  "authority_note": "Capability and toolkit bindings do not create authority. Resolve live CGX/Recovery state through cgx-handshake before execution."
+}

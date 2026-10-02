@@ -1,0 +1,150 @@
+{
+  "schema": "CGX-PLUGIN-CAPABILITY-PROFILE/0.1",
+  "package": "cognigrex",
+  "selector": "cognigrex",
+  "syntax": "@Selector /shortcall [object] [constraints...]",
+  "global_shortcalls": {
+    "help": "interface.help",
+    "capabilities": "interface.capabilities",
+    "status": "ops.health",
+    "receipt": "receipts.list",
+    "sources": "sources.envelope",
+    "extend": "extensions.tool"
+  },
+  "profile": {
+    "floors": [
+      "Neo",
+      "Oracle",
+      "Morpheus",
+      "Architect"
+    ],
+    "toolkits": [
+      "cgx-core",
+      "lightspeed",
+      "local-llm",
+      "google-drive",
+      "github",
+      "web"
+    ],
+    "shortcalls": {
+      "resolve": "cgx.resolve_context",
+      "cross": "cgx.cross_analysis",
+      "hydrate": "cgx.resolve_context",
+      "reconcile": "cgx.minimum_work",
+      "gaps": "interface.capabilities",
+      "portfolio": "cgx.cross_analysis"
+    }
+  },
+  "routes": {
+    "cgx.cross_analysis": {
+      "state": "workflow",
+      "kind": "composite",
+      "ro": true,
+      "uses": [
+        "cgx.resolve_context",
+        "cgx.plan_query",
+        "cgx.minimum_work",
+        "science.query",
+        "tests.plan",
+        "local.supervise"
+      ]
+    },
+    "cgx.minimum_work": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.cgx_plugin_control:decide_minimum_sufficient_work"
+    },
+    "cgx.resolve_context": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.cgx_plugin_control:build_context_envelope"
+    },
+    "extensions.tool": {
+      "state": "workflow",
+      "kind": "skill",
+      "ro": false,
+      "skill": "cgx-tool-extension",
+      "gate": "implement/test/register before tool exposure"
+    },
+    "interface.capabilities": {
+      "state": "workflow",
+      "kind": "skill",
+      "ro": true,
+      "skill": "cgx-capability-router"
+    },
+    "interface.help": {
+      "state": "workflow",
+      "kind": "skill",
+      "ro": true,
+      "skill": "cgx-capability-router"
+    },
+    "ops.health": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.bridge_health:build_bridge_health"
+    },
+    "receipts.list": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.result_receipt_browser:list_result_receipts"
+    },
+    "sources.envelope": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.source_intake:build_source_envelope_from_path"
+    }
+  },
+  "gaps": [
+    {
+      "id": "shared-mcp-tools",
+      "state": "missing",
+      "priority": "high",
+      "note": "Need one shared typed MCP plane for first-class ChatGPT tools; not nine servers."
+    },
+    {
+      "id": "freecad-adapter",
+      "state": "registered_unwrapped",
+      "priority": "high",
+      "note": "Wrap typed import/export/geometry/BOM operations."
+    },
+    {
+      "id": "femm-adapter",
+      "state": "missing",
+      "priority": "high",
+      "note": "Add only after verified local installation/model contract."
+    },
+    {
+      "id": "eco-deterministic-engine",
+      "state": "missing",
+      "priority": "high",
+      "note": "Current ecology route is source/query/cross-analysis assisted."
+    },
+    {
+      "id": "portfolio-cross-analysis-facade",
+      "state": "partial",
+      "priority": "medium",
+      "note": "Current modules compose this workflow but lack one typed facade/receipt."
+    }
+  ],
+  "extension": {
+    "reuse_before_create": true,
+    "single_shared_tool_plane": true,
+    "sequence": [
+      "define goal",
+      "search registry/runtime/toolkits",
+      "reuse or alias",
+      "implement smallest typed adapter",
+      "add tests/receipt",
+      "register route/shortcall",
+      "rebuild packages",
+      "expose through shared MCP after validation"
+    ]
+  },
+  "toolkit_registry": "cgx/domain_templates/toolkit_registry.json",
+  "authority_note": "Capability and toolkit bindings do not create authority. Resolve live CGX/Recovery state through cgx-handshake before execution."
+}

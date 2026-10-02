@@ -1,6 +1,6 @@
 {
-  "schema": "CGX-PLUGIN-PACKAGES/0.2",
-  "version": "0.2.0",
+  "schema": "CGX-PLUGIN-PACKAGES/0.3",
+  "version": "0.3.0",
   "description": "Thin Cognigrex selector packages generated from one source definition.",
   "author": {
     "name": "Römer Industries"
@@ -104,7 +104,9 @@
   "shared_skills": [
     "cgx-selector",
     "cgx-handshake",
-    "cgx-minimum-sufficient-work"
+    "cgx-minimum-sufficient-work",
+    "cgx-capability-router",
+    "cgx-tool-extension"
   ],
-  "mcp_policy": "Skills-only selector release until an actual deployed/registered CGX MCP endpoint or verified local transport exists. Never invent mcp.json."
+  "mcp_policy": "Skills + capability-routing release. First-class callable tools must use one validated shared CGX MCP server; never emit per-selector MCP servers."
 }
