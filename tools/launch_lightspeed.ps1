@@ -21,7 +21,7 @@ $env:LIGHTSPEED_CANONICAL_DB = Join-Path $canonicalRoot 'Data\db\lightspeed_unif
 $env:LIGHTSPEED_PROJECT_ROOTS = Join-Path $canonicalRoot 'Projects'
 $env:LIGHTSPEED_PYTHON = $python
 $env:OLLAMA_MODELS = 'C:\LightSpeed_Consolidated\.dependencies\ollama\models'
-$env:TABBY_ROOT = Join-Path $root '.tabby'
+$env:TABBY_ROOT = Join-Path $canonicalRoot '.tabby'
 
 $stackArguments = @($stackRunner, '--skip-desporte-population', '--json-output', $receipt)
 if ($AllowDeSporteLaunch) {
@@ -58,8 +58,33 @@ function Test-LocalPort([int]$Port) {
     }
 }
 
-if (-not (Test-LocalPort 11434)) {
+function Test-OllamaReady {
+    try {
+        $response = Invoke-RestMethod -Uri 'http://127.0.0.1:11434/api/tags' -TimeoutSec 3
+        return @($response.models).Count -gt 0
+    } catch {
+        return $false
+    }
+}
+
+if (-not (Test-OllamaReady)) {
+    Get-CimInstance Win32_Process |
+        Where-Object {
+            $_.Name -in @('ollama.exe', 'ollama app.exe') -and
+            $_.ExecutablePath -like '*\Programs\Ollama\*'
+        } |
+        ForEach-Object {
+            Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue
+        }
+    Start-Sleep -Seconds 2
     Start-Process -FilePath $ollama -ArgumentList 'serve' -WindowStyle Hidden
+    $ollamaDeadline = (Get-Date).AddSeconds(15)
+    while ((Get-Date) -lt $ollamaDeadline -and -not (Test-OllamaReady)) {
+        Start-Sleep -Milliseconds 500
+    }
+    if (-not (Test-OllamaReady)) {
+        throw "Ollama did not expose the LightSpeed model catalogue from $env:OLLAMA_MODELS"
+    }
 }
 if (-not (Test-LocalHttp 'http://127.0.0.1:4173/')) {
     Start-Process -FilePath $python -ArgumentList @('-m', 'http.server', '4173', '--bind', '127.0.0.1', '--directory', $goDist) -WorkingDirectory $goDist -WindowStyle Hidden

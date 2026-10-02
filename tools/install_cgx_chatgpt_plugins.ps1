@@ -37,7 +37,7 @@ function Set-CodexPluginEnabled {
     }
 
     $header = '[plugins."' + $PluginId + '"]'
-    $headerPattern = '(?m)^' + [Regex]::Escape($header) + '\s*$'
+    $headerPattern = '(?m)^' + [Regex]::Escape($header) + '[ \t]*\r?$'
     $headerMatch = [Regex]::Match($text, $headerPattern)
 
     if ($headerMatch.Success) {
@@ -45,22 +45,36 @@ function Set-CodexPluginEnabled {
         $nextHeader = [Regex]::Match($text.Substring($afterHeader), '(?m)^\[')
         if ($nextHeader.Success) {
             $blockEnd = $afterHeader + $nextHeader.Index
-        } else {
+        }
+        else {
             $blockEnd = $text.Length
         }
+
         $block = $text.Substring($headerMatch.Index, $blockEnd - $headerMatch.Index)
-        if ($block -match '(?m)^\s*enabled\s*=\s*(true|false)\s*$') {
+        $enabledPattern = '(?m)^[ \t]*enabled[ \t]*=[ \t]*(true|false)[ \t]*\r?$'
+        if ($block -match $enabledPattern) {
             $newBlock = [Regex]::Replace(
                 $block,
-                '(?m)^\s*enabled\s*=\s*(true|false)\s*$',
+                $enabledPattern,
                 'enabled = true',
                 1
             )
-        } else {
-            $newBlock = $header + $nl + 'enabled = true' + $nl + $block.Substring($headerMatch.Length).TrimStart([char]13,[char]10)
         }
-        $text = $text.Substring(0, $headerMatch.Index) + $newBlock + $text.Substring($blockEnd)
-    } else {
+        else {
+            $newBlock = (
+                $header + $nl +
+                'enabled = true' + $nl +
+                $block.Substring($headerMatch.Length).TrimStart([char]13, [char]10)
+            )
+        }
+
+        $text = (
+            $text.Substring(0, $headerMatch.Index) +
+            $newBlock +
+            $text.Substring($blockEnd)
+        )
+    }
+    else {
         if ($text.Length -gt 0 -and -not $text.EndsWith($nl)) {
             $text += $nl
         }
@@ -75,10 +89,20 @@ function Set-CodexPluginEnabled {
 }
 
 $UserConfig = Join-Path $HOME ".codex\config.toml"
+$HadUserConfig = Test-Path $UserConfig
+$BackupPath = $UserConfig + ".pre-cgx-bootstrap-backup"
+
+if ($HadUserConfig) {
+    Copy-Item -LiteralPath $UserConfig -Destination $BackupPath -Force
+    Write-Host "Backed up existing Codex config to: $BackupPath"
+}
+
 $MarketplaceHeader = "[marketplaces.$MarketplaceName]"
 $MarketplaceRegistered = $false
 if (Test-Path $UserConfig) {
-    $MarketplaceRegistered = (Get-Content -LiteralPath $UserConfig -Raw).Contains($MarketplaceHeader)
+    $MarketplaceRegistered = (
+        Get-Content -LiteralPath $UserConfig -Raw
+    ).Contains($MarketplaceHeader)
 }
 
 if (-not $MarketplaceRegistered) {
@@ -98,22 +122,64 @@ if ($LASTEXITCODE -ne 0) {
     throw "codex plugin marketplace upgrade failed with exit code $LASTEXITCODE"
 }
 
-Write-Host "Enabling nine Cognigrex selectors in user plugin config..."
-foreach ($PluginId in $PluginIds) {
-    Set-CodexPluginEnabled -PluginId $PluginId -ConfigPath $UserConfig
-}
-
-$ConfigText = Get-Content -LiteralPath $UserConfig -Raw
-$MissingPluginIds = @(
-    $PluginIds | Where-Object {
-        -not $ConfigText.Contains('[plugins."' + $_ + '"]')
+try {
+    Write-Host "Enabling nine Cognigrex selectors in user plugin config..."
+    foreach ($PluginId in $PluginIds) {
+        Set-CodexPluginEnabled -PluginId $PluginId -ConfigPath $UserConfig
     }
-)
-if ($MissingPluginIds.Count -gt 0) {
-    throw "Plugin enablement verification failed for: $($MissingPluginIds -join ', ')"
+
+    $ConfigText = Get-Content -LiteralPath $UserConfig -Raw
+
+    $MissingPluginIds = @(
+        $PluginIds | Where-Object {
+            -not $ConfigText.Contains('[plugins."' + $_ + '"]')
+        }
+    )
+    if ($MissingPluginIds.Count -gt 0) {
+        throw "Plugin enablement verification failed for: $($MissingPluginIds -join ', ')"
+    }
+
+    $MalformedJoins = [Regex]::Matches(
+        $ConfigText,
+        '(?m)enabled[ \t]*=[ \t]*true[ \t]*\[plugins\.'
+    )
+    if ($MalformedJoins.Count -gt 0) {
+        throw "Plugin enablement produced $($MalformedJoins.Count) malformed TOML table join(s)."
+    }
+
+    $InvalidPluginBlocks = @(
+        $PluginIds | Where-Object {
+            $escaped = [Regex]::Escape($_)
+            $pattern = (
+                '(?m)^\[plugins\."' + $escaped +
+                '"\][ \t]*\r?\n[ \t]*enabled[ \t]*=[ \t]*true[ \t]*\r?$'
+            )
+            -not [Regex]::IsMatch($ConfigText, $pattern)
+        }
+    )
+    if ($InvalidPluginBlocks.Count -gt 0) {
+        throw "Plugin block validation failed for: $($InvalidPluginBlocks -join ', ')"
+    }
+
+    & $CodexCommand plugin --help *> $null
+    if ($LASTEXITCODE -ne 0) {
+        throw "Codex rejected the resulting config (exit code $LASTEXITCODE)."
+    }
+
+    Write-Host "Verified all nine Cognigrex selector IDs and TOML parse state."
+}
+catch {
+    if ($HadUserConfig -and (Test-Path $BackupPath)) {
+        Copy-Item -LiteralPath $BackupPath -Destination $UserConfig -Force
+        Write-Warning "Restored Codex config from backup after bootstrap validation failure."
+    }
+    elseif (-not $HadUserConfig -and (Test-Path $UserConfig)) {
+        Remove-Item -LiteralPath $UserConfig -Force
+        Write-Warning "Removed newly created Codex config after bootstrap validation failure."
+    }
+    throw
 }
 
-Write-Host "Verified all nine Cognigrex selector IDs in user plugin config."
 Write-Host ""
 Write-Host "Cognigrex chat plugin provisioning complete."
 Write-Host "User config: $UserConfig"
