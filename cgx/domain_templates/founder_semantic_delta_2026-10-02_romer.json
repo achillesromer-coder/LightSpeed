@@ -1,0 +1,118 @@
+{
+  "schema": "CGX-FOUNDER-SEMANTIC-DELTA/0.1",
+  "receipt_id": "CGX-FSD-2026-10-02-ROMER-001",
+  "date": "2026-10-02",
+  "status": "FOUNDER_CONFIRMED_PENDING_OWNING_CANON_RECONCILIATION",
+  "domain": "romer",
+  "target_filespace": "Romer.cgx",
+  "source_kind": "founder-conversation",
+  "authority_boundary": "Founder intent/identity semantics only. This receipt does not manufacture engineering, physical, empirical, legal, regulatory, mission-readiness or publication evidence.",
+  "resolution_rule": "Reconcile as semantic deltas through existing owning CGX/Drive authorities using Overlay -> validation -> Resolve -> DBR. Do not create a parallel master, task register or duplicate data payload.",
+  "terminology": {
+    "lens": "Reserve Lens for CGX handshake/representation/audience semantics. Internal architecture should use system, subsystem, function, capability, requirement, constraint, interface, configuration, inheritance, specialization or design objective as applicable.",
+    "interplanetary_supply_chain_simplified_grammar": "Mark -> Luke -> John is an intentionally simplified functional skeleton, not a complete decomposition."
+  },
+  "knowns": [
+    {
+      "subject": "Mark family",
+      "state": "FOUNDER_CONFIRMED",
+      "semantics": [
+        "Mark family covers in-situ hardware that directly interacts with/touches an asteroid.",
+        "Mark I is the terrestrial asteroid-analogue test.",
+        "Mark 1P is a physical/sectional promotional exemplar of internal RFS/EMFF interaction.",
+        "Mark II is the first operational design and a legitimate historical engineering generation.",
+        "Mark III is the comprehensive revised/current operational architecture.",
+        "Mark IV is intentionally reserved for a future substantive high-capacity/growth architecture; do not proliferate IIIA/IIIB-style identities by default.",
+        "Mark V is a distinct Mark-family unit/function; its numeral is an identity, not merely a sequential software-style revision."
+      ]
+    },
+    {
+      "subject": "Luke family",
+      "state": "FOUNDER_CONFIRMED",
+      "semantics": [
+        "Luke is the transport/distribution node hardware family for resources within the interplanetary supply chain; it is not currently scoped as a general crew/capsule relay.",
+        "Luke family membership is not defined by in-situ operation or one particular relay geometry.",
+        "Luke 1P is promotional/demonstrative, analogous in role to Mark 1P.",
+        "Luke I and Luke II are closely related operational designs with different capacity.",
+        "Luke III is deliberately reserved, analogous to Mark IV, for future high-capacity/deeper-understanding development.",
+        "Luke IV is the terrestrial/geostationary Mag-Lev station/node identity; exact architecture remains governed by owning source/canon.",
+        "Apostle is the same underlying hardware family with a distinct primary protection/corridor functional designation. Luke-configured and Apostle-configured hardware may perform each other's functions where actual configuration/capacity permits.",
+        "Toroidal geometry is an implementation/configuration property and must not be used as the defining identity of Luke."
+      ]
+    },
+    {
+      "subject": "John",
+      "state": "FOUNDER_CONFIRMED_DIRECTION",
+      "semantics": [
+        "John is the processing/manufacturing node side of the interplanetary supply chain, distinct from Mark mining/asteroid interaction and Luke transport/distribution.",
+        "John should be treated as an expandable in-space laboratory/manufacturing/processing capability rather than hard-set to one station form.",
+        "Cold-welding/consolidation during extraction/transport preparation is not intrinsically a John function; John transforms received material/feedstock into useful processed/manufactured state."
+      ]
+    },
+    {
+      "subject": "Project C / Matthew",
+      "state": "FOUNDER_CONFIRMED_EVOLUTION",
+      "semantics": [
+        "Project C remains an active debris-mitigation design objective/operational concern; it must not be forced into a current standalone Matthew hardware family.",
+        "The original Matthew/interstage electromagnetic debris-removal implementation remains provenance.",
+        "Newer shared infrastructure, especially suitable orbital/geostationary Luke capability, may satisfy Project C debris interaction/control/re-entry functions subject to engineering/orbital-dynamics/safety validation.",
+        "Superseding an implementation must not discard the original design objective or reasoning."
+      ]
+    },
+    {
+      "subject": "Project P / Apostle",
+      "state": "FOUNDER_CONFIRMED_EVOLUTION",
+      "semantics": [
+        "Project P/Protect is historical programme lineage/design driver; Apostle remains an active protection/corridor functional designation.",
+        "Current understanding allows Apostle and Luke functions to share the same hardware family and be cross-used where configuration/capacity permits.",
+        "This does not close future Frontier for new protection-specific hardware, functions or systems."
+      ]
+    },
+    {
+      "subject": "InterSol",
+      "state": "FOUNDER_CONFIRMED_CURRENT",
+      "semantics": [
+        "InterSol remains an active current project identity.",
+        "InterSol remains primarily a terrestrial physical hub.",
+        "Historical 2023 InterSol material is provenance, not sole current authority; current CGX/Drive InterSol canon controls after verified successor reconciliation."
+      ]
+    },
+    {
+      "subject": "Interplanetary Supply Chain Systems",
+      "state": "FOUNDER_CONFIRMED_SIMPLIFIED_SKELETON",
+      "semantics": [
+        "Project MD is historical lineage for the modern Interplanetary Supply Chain Systems identity.",
+        "As an intentional oversimplification: Mark = asteroid interaction/mining; Luke = resource transport/distribution; John = processing/manufacturing.",
+        "Do not treat shared technologies/capabilities such as RFS, EMFF, Free Flow, Solar Hull, Cognigrex, geometry/metrology, energy, communications, telemetry, autonomy, QA, fault handling or provenance as duplicated project-owned payloads when canonical shared capability/reference semantics suffice."
+      ]
+    },
+    {
+      "subject": "CGX consolidation/deduplication",
+      "state": "FOUNDER_CONFIRMED_METHOD",
+      "semantics": [
+        "Separate semantics from data.",
+        "Separate independently authoritative data from dependent/derived/inherited/calculated/transformed/projected data.",
+        "Define shared capabilities once at the highest appropriate reusable scope and selectively inherit/specialize them.",
+        "Avoid duplicate files/data payloads for consumers; use canonical objects, relations, transforms, inheritance and explicit projections/replicas with authority/synchronisation rules.",
+        "Translate founder clarification into existing CGX semantic primitives and deltas rather than creating a secondary task architecture."
+      ]
+    }
+  ],
+  "unresolved_or_heavy_pass": [
+    "Exact engineering dimensions/configuration/capacity distinctions remain source/evidence work.",
+    "Whether non-contact field-only asteroid interaction satisfies the Mark family boundary remains unresolved unless owning canon already resolves it.",
+    "Physical instance identity/configuration/service-history rules remain implementation work.",
+    "Mark IV and Luke III promotion remain future design/founder gates.",
+    "John detailed capability decomposition, material-object state package and manufacturing envelopes remain heavy-pass work.",
+    "InterSol current detailed facilities/stages/interfaces must be reconciled from current owning CGX/Drive canon before historical sources.",
+    "Project C controlled re-entry concepts require orbital-dynamics, conjunction, regulatory, safety and empirical validation before operational claims."
+  ],
+  "existing_authority_alignment": {
+    "romer_semantic_library": "Use existing types/relations/inheritance; system families are graph roots, projects may reference components without duplication, shared capabilities are linked once.",
+    "drive": "Canonical content/evidence/control authority where current owning records exist.",
+    "git": "Implementation and receipt mirror; this receipt records founder semantic input and routing, not publication authority.",
+    "acr3": "Transition/provenance role; do not reopen as semantic owner where successor CGX authority exists.",
+    "achilles": "Independent evidence/audit role; founder authority cannot manufacture evidence."
+  },
+  "next_action": "During the post-reboot canonical consolidation/hydration pass, reconcile these deltas against the newest verified same-identity owning CGX/Drive records, hold contradictions explicitly, promote only accepted semantic deltas, and record DBR/read-back receipts."
+}
