@@ -37,7 +37,1218 @@ function Set-CodexPluginEnabled {
     }
 
     $header = '[plugins."' + $PluginId + '"]'
-    $headerPattern = '(?m)^' + [Regex]::Escape($header) + '\s*$'
+    $headerPattern = '(?m)^' + [Regex]::Escape($header) + '[ \t]*\r?
+    $headerMatch = [Regex]::Match($text, $headerPattern)
+
+    if ($headerMatch.Success) {
+        $afterHeader = $headerMatch.Index + $headerMatch.Length
+        $nextHeader = [Regex]::Match($text.Substring($afterHeader), '(?m)^\[')
+        if ($nextHeader.Success) {
+            $blockEnd = $afterHeader + $nextHeader.Index
+        } else {
+            $blockEnd = $text.Length
+        }
+        $block = $text.Substring($headerMatch.Index, $blockEnd - $headerMatch.Index)
+        if ($block -match '(?m)^[ \t]*enabled[ \t]*=[ \t]*(true|false)[ \t]*\r?
+            $newBlock = [Regex]::Replace(
+                $block,
+                '(?m)^[ \t]*enabled[ \t]*=[ \t]*(true|false)[ \t]*\r?
+                'enabled = true',
+                1
+            )
+        } else {
+            $newBlock = $header + $nl + 'enabled = true' + $nl + $block.Substring($headerMatch.Length).TrimStart([char]13,[char]10)
+        }
+        $text = $text.Substring(0, $headerMatch.Index) + $newBlock + $text.Substring($blockEnd)
+    } else {
+        if ($text.Length -gt 0 -and -not $text.EndsWith($nl)) {
+            $text += $nl
+        }
+        $text += $nl + $header + $nl + 'enabled = true' + $nl
+    }
+
+    $parent = Split-Path -Parent $ConfigPath
+    if (-not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    }
+    Set-Content -LiteralPath $ConfigPath -Value $text -Encoding utf8
+}
+
+$UserConfig = Join-Path $HOME ".codex\config.toml"
+$HadUserConfig = Test-Path $UserConfig
+$BackupPath = $UserConfig + ".pre-cgx-bootstrap-backup"
+if ($HadUserConfig) {
+    Copy-Item -LiteralPath $UserConfig -Destination $BackupPath -Force
+    Write-Host "Backed up existing Codex config to: $BackupPath"
+}
+$MarketplaceHeader = "[marketplaces.$MarketplaceName]"
+$MarketplaceRegistered = $false
+if (Test-Path $UserConfig) {
+    $MarketplaceRegistered = (Get-Content -LiteralPath $UserConfig -Raw).Contains($MarketplaceHeader)
+}
+
+if (-not $MarketplaceRegistered) {
+    Write-Host "Registering Cognigrex / LightSpeed plugin marketplace..."
+    & $CodexCommand plugin marketplace add achillesromer-coder/LightSpeed --ref $MarketplaceRef
+    if ($LASTEXITCODE -ne 0) {
+        throw "codex plugin marketplace add failed with exit code $LASTEXITCODE"
+    }
+}
+else {
+    Write-Host "Cognigrex / LightSpeed marketplace already registered."
+}
+
+Write-Host "Refreshing Cognigrex / LightSpeed marketplace..."
+& $CodexCommand plugin marketplace upgrade $MarketplaceName
+if ($LASTEXITCODE -ne 0) {
+    throw "codex plugin marketplace upgrade failed with exit code $LASTEXITCODE"
+}
+
+try {
+    Write-Host "Enabling nine Cognigrex selectors in user plugin config..."
+    foreach ($PluginId in $PluginIds) {
+        Set-CodexPluginEnabled -PluginId $PluginId -ConfigPath $UserConfig
+    }
+
+    $ConfigText = Get-Content -LiteralPath $UserConfig -Raw
+
+    $MissingPluginIds = @(
+        $PluginIds | Where-Object {
+            -not $ConfigText.Contains('[plugins."' + $_ + '"]')
+        }
+    )
+    if ($MissingPluginIds.Count -gt 0) {
+        throw "Plugin enablement verification failed for: $($MissingPluginIds -join ', ')"
+    }
+
+    $MalformedJoins = [Regex]::Matches(
+        $ConfigText,
+        '(?m)enabled[ \t]*=[ \t]*true[ \t]*\[plugins\.'
+    )
+    if ($MalformedJoins.Count -gt 0) {
+        throw "Plugin enablement produced $($MalformedJoins.Count) malformed TOML table join(s)."
+    }
+
+    $InvalidPluginBlocks = @(
+        $PluginIds | Where-Object {
+            $escaped = [Regex]::Escape($_)
+            -not [Regex]::IsMatch(
+                $ConfigText,
+                '(?m)^\[plugins\."' + $escaped + '"\][ \t]*\r?\n[ \t]*enabled[ \t]*=[ \t]*true[ \t]*\r?Write-Host ""
+Write-Host "Cognigrex chat plugin provisioning complete."
+Write-Host "User config: $UserConfig"
+Write-Host ""
+Write-Host "After restarting ChatGPT Desktop, these @ mentions should be available in new chats:"
+Write-Host "  @Achilles  @Neo  @Athene  @Raphael  @Cognigrex"
+Write-Host "  @Römer-Grex  @Eco-Grex  @EMASSC  @LightSpeed"
+Write-Host ""
+Write-Host "If a selector does not appear, open Plugins > Personal > Cognigrex / LightSpeed"
+Write-Host "and confirm it is installed/enabled. Local desktop plugins are not made available"
+Write-Host "to web/mobile merely by saving them to the account."
+
+    $headerMatch = [Regex]::Match($text, $headerPattern)
+
+    if ($headerMatch.Success) {
+        $afterHeader = $headerMatch.Index + $headerMatch.Length
+        $nextHeader = [Regex]::Match($text.Substring($afterHeader), '(?m)^\[')
+        if ($nextHeader.Success) {
+            $blockEnd = $afterHeader + $nextHeader.Index
+        } else {
+            $blockEnd = $text.Length
+        }
+        $block = $text.Substring($headerMatch.Index, $blockEnd - $headerMatch.Index)
+        if ($block -match '(?m)^\s*enabled\s*=\s*(true|false)\s*$') {
+            $newBlock = [Regex]::Replace(
+                $block,
+                '(?m)^\s*enabled\s*=\s*(true|false)\s*$',
+                'enabled = true',
+                1
+            )
+        } else {
+            $newBlock = $header + $nl + 'enabled = true' + $nl + $block.Substring($headerMatch.Length).TrimStart([char]13,[char]10)
+        }
+        $text = $text.Substring(0, $headerMatch.Index) + $newBlock + $text.Substring($blockEnd)
+    } else {
+        if ($text.Length -gt 0 -and -not $text.EndsWith($nl)) {
+            $text += $nl
+        }
+        $text += $nl + $header + $nl + 'enabled = true' + $nl
+    }
+
+    $parent = Split-Path -Parent $ConfigPath
+    if (-not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    }
+    Set-Content -LiteralPath $ConfigPath -Value $text -Encoding utf8
+}
+
+$UserConfig = Join-Path $HOME ".codex\config.toml"
+$MarketplaceHeader = "[marketplaces.$MarketplaceName]"
+$MarketplaceRegistered = $false
+if (Test-Path $UserConfig) {
+    $MarketplaceRegistered = (Get-Content -LiteralPath $UserConfig -Raw).Contains($MarketplaceHeader)
+}
+
+if (-not $MarketplaceRegistered) {
+    Write-Host "Registering Cognigrex / LightSpeed plugin marketplace..."
+    & $CodexCommand plugin marketplace add achillesromer-coder/LightSpeed --ref $MarketplaceRef
+    if ($LASTEXITCODE -ne 0) {
+        throw "codex plugin marketplace add failed with exit code $LASTEXITCODE"
+    }
+}
+else {
+    Write-Host "Cognigrex / LightSpeed marketplace already registered."
+}
+
+Write-Host "Refreshing Cognigrex / LightSpeed marketplace..."
+& $CodexCommand plugin marketplace upgrade $MarketplaceName
+if ($LASTEXITCODE -ne 0) {
+    throw "codex plugin marketplace upgrade failed with exit code $LASTEXITCODE"
+}
+
+Write-Host "Enabling nine Cognigrex selectors in user plugin config..."
+foreach ($PluginId in $PluginIds) {
+    Set-CodexPluginEnabled -PluginId $PluginId -ConfigPath $UserConfig
+}
+
+$ConfigText = Get-Content -LiteralPath $UserConfig -Raw
+$MissingPluginIds = @(
+    $PluginIds | Where-Object {
+        -not $ConfigText.Contains('[plugins."' + $_ + '"]')
+    }
+)
+if ($MissingPluginIds.Count -gt 0) {
+    throw "Plugin enablement verification failed for: $($MissingPluginIds -join ', ')"
+}
+
+Write-Host "Verified all nine Cognigrex selector IDs in user plugin config."
+Write-Host ""
+Write-Host "Cognigrex chat plugin provisioning complete."
+Write-Host "User config: $UserConfig"
+Write-Host ""
+Write-Host "After restarting ChatGPT Desktop, these @ mentions should be available in new chats:"
+Write-Host "  @Achilles  @Neo  @Athene  @Raphael  @Cognigrex"
+Write-Host "  @Römer-Grex  @Eco-Grex  @EMASSC  @LightSpeed"
+Write-Host ""
+Write-Host "If a selector does not appear, open Plugins > Personal > Cognigrex / LightSpeed"
+Write-Host "and confirm it is installed/enabled. Local desktop plugins are not made available"
+Write-Host "to web/mobile merely by saving them to the account."
+) {
+            $newBlock = [Regex]::Replace(
+                $block,
+                '(?m)^\s*enabled\s*=\s*(true|false)\s*$',
+                'enabled = true',
+                1
+            )
+        } else {
+            $newBlock = $header + $nl + 'enabled = true' + $nl + $block.Substring($headerMatch.Length).TrimStart([char]13,[char]10)
+        }
+        $text = $text.Substring(0, $headerMatch.Index) + $newBlock + $text.Substring($blockEnd)
+    } else {
+        if ($text.Length -gt 0 -and -not $text.EndsWith($nl)) {
+            $text += $nl
+        }
+        $text += $nl + $header + $nl + 'enabled = true' + $nl
+    }
+
+    $parent = Split-Path -Parent $ConfigPath
+    if (-not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    }
+    Set-Content -LiteralPath $ConfigPath -Value $text -Encoding utf8
+}
+
+$UserConfig = Join-Path $HOME ".codex\config.toml"
+$MarketplaceHeader = "[marketplaces.$MarketplaceName]"
+$MarketplaceRegistered = $false
+if (Test-Path $UserConfig) {
+    $MarketplaceRegistered = (Get-Content -LiteralPath $UserConfig -Raw).Contains($MarketplaceHeader)
+}
+
+if (-not $MarketplaceRegistered) {
+    Write-Host "Registering Cognigrex / LightSpeed plugin marketplace..."
+    & $CodexCommand plugin marketplace add achillesromer-coder/LightSpeed --ref $MarketplaceRef
+    if ($LASTEXITCODE -ne 0) {
+        throw "codex plugin marketplace add failed with exit code $LASTEXITCODE"
+    }
+}
+else {
+    Write-Host "Cognigrex / LightSpeed marketplace already registered."
+}
+
+Write-Host "Refreshing Cognigrex / LightSpeed marketplace..."
+& $CodexCommand plugin marketplace upgrade $MarketplaceName
+if ($LASTEXITCODE -ne 0) {
+    throw "codex plugin marketplace upgrade failed with exit code $LASTEXITCODE"
+}
+
+Write-Host "Enabling nine Cognigrex selectors in user plugin config..."
+foreach ($PluginId in $PluginIds) {
+    Set-CodexPluginEnabled -PluginId $PluginId -ConfigPath $UserConfig
+}
+
+$ConfigText = Get-Content -LiteralPath $UserConfig -Raw
+$MissingPluginIds = @(
+    $PluginIds | Where-Object {
+        -not $ConfigText.Contains('[plugins."' + $_ + '"]')
+    }
+)
+if ($MissingPluginIds.Count -gt 0) {
+    throw "Plugin enablement verification failed for: $($MissingPluginIds -join ', ')"
+}
+
+Write-Host "Verified all nine Cognigrex selector IDs in user plugin config."
+Write-Host ""
+Write-Host "Cognigrex chat plugin provisioning complete."
+Write-Host "User config: $UserConfig"
+Write-Host ""
+Write-Host "After restarting ChatGPT Desktop, these @ mentions should be available in new chats:"
+Write-Host "  @Achilles  @Neo  @Athene  @Raphael  @Cognigrex"
+Write-Host "  @Römer-Grex  @Eco-Grex  @EMASSC  @LightSpeed"
+Write-Host ""
+Write-Host "If a selector does not appear, open Plugins > Personal > Cognigrex / LightSpeed"
+Write-Host "and confirm it is installed/enabled. Local desktop plugins are not made available"
+Write-Host "to web/mobile merely by saving them to the account."
+
+    $headerMatch = [Regex]::Match($text, $headerPattern)
+
+    if ($headerMatch.Success) {
+        $afterHeader = $headerMatch.Index + $headerMatch.Length
+        $nextHeader = [Regex]::Match($text.Substring($afterHeader), '(?m)^\[')
+        if ($nextHeader.Success) {
+            $blockEnd = $afterHeader + $nextHeader.Index
+        } else {
+            $blockEnd = $text.Length
+        }
+        $block = $text.Substring($headerMatch.Index, $blockEnd - $headerMatch.Index)
+        if ($block -match '(?m)^\s*enabled\s*=\s*(true|false)\s*$') {
+            $newBlock = [Regex]::Replace(
+                $block,
+                '(?m)^\s*enabled\s*=\s*(true|false)\s*$',
+                'enabled = true',
+                1
+            )
+        } else {
+            $newBlock = $header + $nl + 'enabled = true' + $nl + $block.Substring($headerMatch.Length).TrimStart([char]13,[char]10)
+        }
+        $text = $text.Substring(0, $headerMatch.Index) + $newBlock + $text.Substring($blockEnd)
+    } else {
+        if ($text.Length -gt 0 -and -not $text.EndsWith($nl)) {
+            $text += $nl
+        }
+        $text += $nl + $header + $nl + 'enabled = true' + $nl
+    }
+
+    $parent = Split-Path -Parent $ConfigPath
+    if (-not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    }
+    Set-Content -LiteralPath $ConfigPath -Value $text -Encoding utf8
+}
+
+$UserConfig = Join-Path $HOME ".codex\config.toml"
+$MarketplaceHeader = "[marketplaces.$MarketplaceName]"
+$MarketplaceRegistered = $false
+if (Test-Path $UserConfig) {
+    $MarketplaceRegistered = (Get-Content -LiteralPath $UserConfig -Raw).Contains($MarketplaceHeader)
+}
+
+if (-not $MarketplaceRegistered) {
+    Write-Host "Registering Cognigrex / LightSpeed plugin marketplace..."
+    & $CodexCommand plugin marketplace add achillesromer-coder/LightSpeed --ref $MarketplaceRef
+    if ($LASTEXITCODE -ne 0) {
+        throw "codex plugin marketplace add failed with exit code $LASTEXITCODE"
+    }
+}
+else {
+    Write-Host "Cognigrex / LightSpeed marketplace already registered."
+}
+
+Write-Host "Refreshing Cognigrex / LightSpeed marketplace..."
+& $CodexCommand plugin marketplace upgrade $MarketplaceName
+if ($LASTEXITCODE -ne 0) {
+    throw "codex plugin marketplace upgrade failed with exit code $LASTEXITCODE"
+}
+
+Write-Host "Enabling nine Cognigrex selectors in user plugin config..."
+foreach ($PluginId in $PluginIds) {
+    Set-CodexPluginEnabled -PluginId $PluginId -ConfigPath $UserConfig
+}
+
+$ConfigText = Get-Content -LiteralPath $UserConfig -Raw
+$MissingPluginIds = @(
+    $PluginIds | Where-Object {
+        -not $ConfigText.Contains('[plugins."' + $_ + '"]')
+    }
+)
+if ($MissingPluginIds.Count -gt 0) {
+    throw "Plugin enablement verification failed for: $($MissingPluginIds -join ', ')"
+}
+
+Write-Host "Verified all nine Cognigrex selector IDs in user plugin config."
+Write-Host ""
+Write-Host "Cognigrex chat plugin provisioning complete."
+Write-Host "User config: $UserConfig"
+Write-Host ""
+Write-Host "After restarting ChatGPT Desktop, these @ mentions should be available in new chats:"
+Write-Host "  @Achilles  @Neo  @Athene  @Raphael  @Cognigrex"
+Write-Host "  @Römer-Grex  @Eco-Grex  @EMASSC  @LightSpeed"
+Write-Host ""
+Write-Host "If a selector does not appear, open Plugins > Personal > Cognigrex / LightSpeed"
+Write-Host "and confirm it is installed/enabled. Local desktop plugins are not made available"
+Write-Host "to web/mobile merely by saving them to the account."
+,
+                'enabled = true',
+                1
+            )
+        } else {
+            $newBlock = $header + $nl + 'enabled = true' + $nl + $block.Substring($headerMatch.Length).TrimStart([char]13,[char]10)
+        }
+        $text = $text.Substring(0, $headerMatch.Index) + $newBlock + $text.Substring($blockEnd)
+    } else {
+        if ($text.Length -gt 0 -and -not $text.EndsWith($nl)) {
+            $text += $nl
+        }
+        $text += $nl + $header + $nl + 'enabled = true' + $nl
+    }
+
+    $parent = Split-Path -Parent $ConfigPath
+    if (-not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    }
+    Set-Content -LiteralPath $ConfigPath -Value $text -Encoding utf8
+}
+
+$UserConfig = Join-Path $HOME ".codex\config.toml"
+$MarketplaceHeader = "[marketplaces.$MarketplaceName]"
+$MarketplaceRegistered = $false
+if (Test-Path $UserConfig) {
+    $MarketplaceRegistered = (Get-Content -LiteralPath $UserConfig -Raw).Contains($MarketplaceHeader)
+}
+
+if (-not $MarketplaceRegistered) {
+    Write-Host "Registering Cognigrex / LightSpeed plugin marketplace..."
+    & $CodexCommand plugin marketplace add achillesromer-coder/LightSpeed --ref $MarketplaceRef
+    if ($LASTEXITCODE -ne 0) {
+        throw "codex plugin marketplace add failed with exit code $LASTEXITCODE"
+    }
+}
+else {
+    Write-Host "Cognigrex / LightSpeed marketplace already registered."
+}
+
+Write-Host "Refreshing Cognigrex / LightSpeed marketplace..."
+& $CodexCommand plugin marketplace upgrade $MarketplaceName
+if ($LASTEXITCODE -ne 0) {
+    throw "codex plugin marketplace upgrade failed with exit code $LASTEXITCODE"
+}
+
+Write-Host "Enabling nine Cognigrex selectors in user plugin config..."
+foreach ($PluginId in $PluginIds) {
+    Set-CodexPluginEnabled -PluginId $PluginId -ConfigPath $UserConfig
+}
+
+$ConfigText = Get-Content -LiteralPath $UserConfig -Raw
+$MissingPluginIds = @(
+    $PluginIds | Where-Object {
+        -not $ConfigText.Contains('[plugins."' + $_ + '"]')
+    }
+)
+if ($MissingPluginIds.Count -gt 0) {
+    throw "Plugin enablement verification failed for: $($MissingPluginIds -join ', ')"
+}
+
+Write-Host "Verified all nine Cognigrex selector IDs in user plugin config."
+Write-Host ""
+Write-Host "Cognigrex chat plugin provisioning complete."
+Write-Host "User config: $UserConfig"
+Write-Host ""
+Write-Host "After restarting ChatGPT Desktop, these @ mentions should be available in new chats:"
+Write-Host "  @Achilles  @Neo  @Athene  @Raphael  @Cognigrex"
+Write-Host "  @Römer-Grex  @Eco-Grex  @EMASSC  @LightSpeed"
+Write-Host ""
+Write-Host "If a selector does not appear, open Plugins > Personal > Cognigrex / LightSpeed"
+Write-Host "and confirm it is installed/enabled. Local desktop plugins are not made available"
+Write-Host "to web/mobile merely by saving them to the account."
+
+    $headerMatch = [Regex]::Match($text, $headerPattern)
+
+    if ($headerMatch.Success) {
+        $afterHeader = $headerMatch.Index + $headerMatch.Length
+        $nextHeader = [Regex]::Match($text.Substring($afterHeader), '(?m)^\[')
+        if ($nextHeader.Success) {
+            $blockEnd = $afterHeader + $nextHeader.Index
+        } else {
+            $blockEnd = $text.Length
+        }
+        $block = $text.Substring($headerMatch.Index, $blockEnd - $headerMatch.Index)
+        if ($block -match '(?m)^\s*enabled\s*=\s*(true|false)\s*$') {
+            $newBlock = [Regex]::Replace(
+                $block,
+                '(?m)^\s*enabled\s*=\s*(true|false)\s*$',
+                'enabled = true',
+                1
+            )
+        } else {
+            $newBlock = $header + $nl + 'enabled = true' + $nl + $block.Substring($headerMatch.Length).TrimStart([char]13,[char]10)
+        }
+        $text = $text.Substring(0, $headerMatch.Index) + $newBlock + $text.Substring($blockEnd)
+    } else {
+        if ($text.Length -gt 0 -and -not $text.EndsWith($nl)) {
+            $text += $nl
+        }
+        $text += $nl + $header + $nl + 'enabled = true' + $nl
+    }
+
+    $parent = Split-Path -Parent $ConfigPath
+    if (-not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    }
+    Set-Content -LiteralPath $ConfigPath -Value $text -Encoding utf8
+}
+
+$UserConfig = Join-Path $HOME ".codex\config.toml"
+$MarketplaceHeader = "[marketplaces.$MarketplaceName]"
+$MarketplaceRegistered = $false
+if (Test-Path $UserConfig) {
+    $MarketplaceRegistered = (Get-Content -LiteralPath $UserConfig -Raw).Contains($MarketplaceHeader)
+}
+
+if (-not $MarketplaceRegistered) {
+    Write-Host "Registering Cognigrex / LightSpeed plugin marketplace..."
+    & $CodexCommand plugin marketplace add achillesromer-coder/LightSpeed --ref $MarketplaceRef
+    if ($LASTEXITCODE -ne 0) {
+        throw "codex plugin marketplace add failed with exit code $LASTEXITCODE"
+    }
+}
+else {
+    Write-Host "Cognigrex / LightSpeed marketplace already registered."
+}
+
+Write-Host "Refreshing Cognigrex / LightSpeed marketplace..."
+& $CodexCommand plugin marketplace upgrade $MarketplaceName
+if ($LASTEXITCODE -ne 0) {
+    throw "codex plugin marketplace upgrade failed with exit code $LASTEXITCODE"
+}
+
+Write-Host "Enabling nine Cognigrex selectors in user plugin config..."
+foreach ($PluginId in $PluginIds) {
+    Set-CodexPluginEnabled -PluginId $PluginId -ConfigPath $UserConfig
+}
+
+$ConfigText = Get-Content -LiteralPath $UserConfig -Raw
+$MissingPluginIds = @(
+    $PluginIds | Where-Object {
+        -not $ConfigText.Contains('[plugins."' + $_ + '"]')
+    }
+)
+if ($MissingPluginIds.Count -gt 0) {
+    throw "Plugin enablement verification failed for: $($MissingPluginIds -join ', ')"
+}
+
+Write-Host "Verified all nine Cognigrex selector IDs in user plugin config."
+Write-Host ""
+Write-Host "Cognigrex chat plugin provisioning complete."
+Write-Host "User config: $UserConfig"
+Write-Host ""
+Write-Host "After restarting ChatGPT Desktop, these @ mentions should be available in new chats:"
+Write-Host "  @Achilles  @Neo  @Athene  @Raphael  @Cognigrex"
+Write-Host "  @Römer-Grex  @Eco-Grex  @EMASSC  @LightSpeed"
+Write-Host ""
+Write-Host "If a selector does not appear, open Plugins > Personal > Cognigrex / LightSpeed"
+Write-Host "and confirm it is installed/enabled. Local desktop plugins are not made available"
+Write-Host "to web/mobile merely by saving them to the account."
+) {
+            $newBlock = [Regex]::Replace(
+                $block,
+                '(?m)^\s*enabled\s*=\s*(true|false)\s*$',
+                'enabled = true',
+                1
+            )
+        } else {
+            $newBlock = $header + $nl + 'enabled = true' + $nl + $block.Substring($headerMatch.Length).TrimStart([char]13,[char]10)
+        }
+        $text = $text.Substring(0, $headerMatch.Index) + $newBlock + $text.Substring($blockEnd)
+    } else {
+        if ($text.Length -gt 0 -and -not $text.EndsWith($nl)) {
+            $text += $nl
+        }
+        $text += $nl + $header + $nl + 'enabled = true' + $nl
+    }
+
+    $parent = Split-Path -Parent $ConfigPath
+    if (-not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    }
+    Set-Content -LiteralPath $ConfigPath -Value $text -Encoding utf8
+}
+
+$UserConfig = Join-Path $HOME ".codex\config.toml"
+$MarketplaceHeader = "[marketplaces.$MarketplaceName]"
+$MarketplaceRegistered = $false
+if (Test-Path $UserConfig) {
+    $MarketplaceRegistered = (Get-Content -LiteralPath $UserConfig -Raw).Contains($MarketplaceHeader)
+}
+
+if (-not $MarketplaceRegistered) {
+    Write-Host "Registering Cognigrex / LightSpeed plugin marketplace..."
+    & $CodexCommand plugin marketplace add achillesromer-coder/LightSpeed --ref $MarketplaceRef
+    if ($LASTEXITCODE -ne 0) {
+        throw "codex plugin marketplace add failed with exit code $LASTEXITCODE"
+    }
+}
+else {
+    Write-Host "Cognigrex / LightSpeed marketplace already registered."
+}
+
+Write-Host "Refreshing Cognigrex / LightSpeed marketplace..."
+& $CodexCommand plugin marketplace upgrade $MarketplaceName
+if ($LASTEXITCODE -ne 0) {
+    throw "codex plugin marketplace upgrade failed with exit code $LASTEXITCODE"
+}
+
+Write-Host "Enabling nine Cognigrex selectors in user plugin config..."
+foreach ($PluginId in $PluginIds) {
+    Set-CodexPluginEnabled -PluginId $PluginId -ConfigPath $UserConfig
+}
+
+$ConfigText = Get-Content -LiteralPath $UserConfig -Raw
+$MissingPluginIds = @(
+    $PluginIds | Where-Object {
+        -not $ConfigText.Contains('[plugins."' + $_ + '"]')
+    }
+)
+if ($MissingPluginIds.Count -gt 0) {
+    throw "Plugin enablement verification failed for: $($MissingPluginIds -join ', ')"
+}
+
+Write-Host "Verified all nine Cognigrex selector IDs in user plugin config."
+Write-Host ""
+Write-Host "Cognigrex chat plugin provisioning complete."
+Write-Host "User config: $UserConfig"
+Write-Host ""
+Write-Host "After restarting ChatGPT Desktop, these @ mentions should be available in new chats:"
+Write-Host "  @Achilles  @Neo  @Athene  @Raphael  @Cognigrex"
+Write-Host "  @Römer-Grex  @Eco-Grex  @EMASSC  @LightSpeed"
+Write-Host ""
+Write-Host "If a selector does not appear, open Plugins > Personal > Cognigrex / LightSpeed"
+Write-Host "and confirm it is installed/enabled. Local desktop plugins are not made available"
+Write-Host "to web/mobile merely by saving them to the account."
+
+    $headerMatch = [Regex]::Match($text, $headerPattern)
+
+    if ($headerMatch.Success) {
+        $afterHeader = $headerMatch.Index + $headerMatch.Length
+        $nextHeader = [Regex]::Match($text.Substring($afterHeader), '(?m)^\[')
+        if ($nextHeader.Success) {
+            $blockEnd = $afterHeader + $nextHeader.Index
+        } else {
+            $blockEnd = $text.Length
+        }
+        $block = $text.Substring($headerMatch.Index, $blockEnd - $headerMatch.Index)
+        if ($block -match '(?m)^\s*enabled\s*=\s*(true|false)\s*$') {
+            $newBlock = [Regex]::Replace(
+                $block,
+                '(?m)^\s*enabled\s*=\s*(true|false)\s*$',
+                'enabled = true',
+                1
+            )
+        } else {
+            $newBlock = $header + $nl + 'enabled = true' + $nl + $block.Substring($headerMatch.Length).TrimStart([char]13,[char]10)
+        }
+        $text = $text.Substring(0, $headerMatch.Index) + $newBlock + $text.Substring($blockEnd)
+    } else {
+        if ($text.Length -gt 0 -and -not $text.EndsWith($nl)) {
+            $text += $nl
+        }
+        $text += $nl + $header + $nl + 'enabled = true' + $nl
+    }
+
+    $parent = Split-Path -Parent $ConfigPath
+    if (-not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    }
+    Set-Content -LiteralPath $ConfigPath -Value $text -Encoding utf8
+}
+
+$UserConfig = Join-Path $HOME ".codex\config.toml"
+$MarketplaceHeader = "[marketplaces.$MarketplaceName]"
+$MarketplaceRegistered = $false
+if (Test-Path $UserConfig) {
+    $MarketplaceRegistered = (Get-Content -LiteralPath $UserConfig -Raw).Contains($MarketplaceHeader)
+}
+
+if (-not $MarketplaceRegistered) {
+    Write-Host "Registering Cognigrex / LightSpeed plugin marketplace..."
+    & $CodexCommand plugin marketplace add achillesromer-coder/LightSpeed --ref $MarketplaceRef
+    if ($LASTEXITCODE -ne 0) {
+        throw "codex plugin marketplace add failed with exit code $LASTEXITCODE"
+    }
+}
+else {
+    Write-Host "Cognigrex / LightSpeed marketplace already registered."
+}
+
+Write-Host "Refreshing Cognigrex / LightSpeed marketplace..."
+& $CodexCommand plugin marketplace upgrade $MarketplaceName
+if ($LASTEXITCODE -ne 0) {
+    throw "codex plugin marketplace upgrade failed with exit code $LASTEXITCODE"
+}
+
+Write-Host "Enabling nine Cognigrex selectors in user plugin config..."
+foreach ($PluginId in $PluginIds) {
+    Set-CodexPluginEnabled -PluginId $PluginId -ConfigPath $UserConfig
+}
+
+$ConfigText = Get-Content -LiteralPath $UserConfig -Raw
+$MissingPluginIds = @(
+    $PluginIds | Where-Object {
+        -not $ConfigText.Contains('[plugins."' + $_ + '"]')
+    }
+)
+if ($MissingPluginIds.Count -gt 0) {
+    throw "Plugin enablement verification failed for: $($MissingPluginIds -join ', ')"
+}
+
+Write-Host "Verified all nine Cognigrex selector IDs in user plugin config."
+Write-Host ""
+Write-Host "Cognigrex chat plugin provisioning complete."
+Write-Host "User config: $UserConfig"
+Write-Host ""
+Write-Host "After restarting ChatGPT Desktop, these @ mentions should be available in new chats:"
+Write-Host "  @Achilles  @Neo  @Athene  @Raphael  @Cognigrex"
+Write-Host "  @Römer-Grex  @Eco-Grex  @EMASSC  @LightSpeed"
+Write-Host ""
+Write-Host "If a selector does not appear, open Plugins > Personal > Cognigrex / LightSpeed"
+Write-Host "and confirm it is installed/enabled. Local desktop plugins are not made available"
+Write-Host "to web/mobile merely by saving them to the account."
+
+            )
+        }
+    )
+    if ($InvalidPluginBlocks.Count -gt 0) {
+        throw "Plugin block validation failed for: $($InvalidPluginBlocks -join ', ')"
+    }
+
+    & $CodexCommand plugin --help *> $null
+    if ($LASTEXITCODE -ne 0) {
+        throw "Codex rejected the resulting config (exit code $LASTEXITCODE)."
+    }
+
+    Write-Host "Verified all nine Cognigrex selector IDs and TOML parse state."
+}
+catch {
+    if ($HadUserConfig -and (Test-Path $BackupPath)) {
+        Copy-Item -LiteralPath $BackupPath -Destination $UserConfig -Force
+        Write-Warning "Restored Codex config from backup after bootstrap validation failure."
+    }
+    elseif (-not $HadUserConfig -and (Test-Path $UserConfig)) {
+        Remove-Item -LiteralPath $UserConfig -Force
+        Write-Warning "Removed newly created Codex config after bootstrap validation failure."
+    }
+    throw
+}
+Write-Host ""
+Write-Host "Cognigrex chat plugin provisioning complete."
+Write-Host "User config: $UserConfig"
+Write-Host ""
+Write-Host "After restarting ChatGPT Desktop, these @ mentions should be available in new chats:"
+Write-Host "  @Achilles  @Neo  @Athene  @Raphael  @Cognigrex"
+Write-Host "  @Römer-Grex  @Eco-Grex  @EMASSC  @LightSpeed"
+Write-Host ""
+Write-Host "If a selector does not appear, open Plugins > Personal > Cognigrex / LightSpeed"
+Write-Host "and confirm it is installed/enabled. Local desktop plugins are not made available"
+Write-Host "to web/mobile merely by saving them to the account."
+
+    $headerMatch = [Regex]::Match($text, $headerPattern)
+
+    if ($headerMatch.Success) {
+        $afterHeader = $headerMatch.Index + $headerMatch.Length
+        $nextHeader = [Regex]::Match($text.Substring($afterHeader), '(?m)^\[')
+        if ($nextHeader.Success) {
+            $blockEnd = $afterHeader + $nextHeader.Index
+        } else {
+            $blockEnd = $text.Length
+        }
+        $block = $text.Substring($headerMatch.Index, $blockEnd - $headerMatch.Index)
+        if ($block -match '(?m)^\s*enabled\s*=\s*(true|false)\s*$') {
+            $newBlock = [Regex]::Replace(
+                $block,
+                '(?m)^\s*enabled\s*=\s*(true|false)\s*$',
+                'enabled = true',
+                1
+            )
+        } else {
+            $newBlock = $header + $nl + 'enabled = true' + $nl + $block.Substring($headerMatch.Length).TrimStart([char]13,[char]10)
+        }
+        $text = $text.Substring(0, $headerMatch.Index) + $newBlock + $text.Substring($blockEnd)
+    } else {
+        if ($text.Length -gt 0 -and -not $text.EndsWith($nl)) {
+            $text += $nl
+        }
+        $text += $nl + $header + $nl + 'enabled = true' + $nl
+    }
+
+    $parent = Split-Path -Parent $ConfigPath
+    if (-not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    }
+    Set-Content -LiteralPath $ConfigPath -Value $text -Encoding utf8
+}
+
+$UserConfig = Join-Path $HOME ".codex\config.toml"
+$MarketplaceHeader = "[marketplaces.$MarketplaceName]"
+$MarketplaceRegistered = $false
+if (Test-Path $UserConfig) {
+    $MarketplaceRegistered = (Get-Content -LiteralPath $UserConfig -Raw).Contains($MarketplaceHeader)
+}
+
+if (-not $MarketplaceRegistered) {
+    Write-Host "Registering Cognigrex / LightSpeed plugin marketplace..."
+    & $CodexCommand plugin marketplace add achillesromer-coder/LightSpeed --ref $MarketplaceRef
+    if ($LASTEXITCODE -ne 0) {
+        throw "codex plugin marketplace add failed with exit code $LASTEXITCODE"
+    }
+}
+else {
+    Write-Host "Cognigrex / LightSpeed marketplace already registered."
+}
+
+Write-Host "Refreshing Cognigrex / LightSpeed marketplace..."
+& $CodexCommand plugin marketplace upgrade $MarketplaceName
+if ($LASTEXITCODE -ne 0) {
+    throw "codex plugin marketplace upgrade failed with exit code $LASTEXITCODE"
+}
+
+Write-Host "Enabling nine Cognigrex selectors in user plugin config..."
+foreach ($PluginId in $PluginIds) {
+    Set-CodexPluginEnabled -PluginId $PluginId -ConfigPath $UserConfig
+}
+
+$ConfigText = Get-Content -LiteralPath $UserConfig -Raw
+$MissingPluginIds = @(
+    $PluginIds | Where-Object {
+        -not $ConfigText.Contains('[plugins."' + $_ + '"]')
+    }
+)
+if ($MissingPluginIds.Count -gt 0) {
+    throw "Plugin enablement verification failed for: $($MissingPluginIds -join ', ')"
+}
+
+Write-Host "Verified all nine Cognigrex selector IDs in user plugin config."
+Write-Host ""
+Write-Host "Cognigrex chat plugin provisioning complete."
+Write-Host "User config: $UserConfig"
+Write-Host ""
+Write-Host "After restarting ChatGPT Desktop, these @ mentions should be available in new chats:"
+Write-Host "  @Achilles  @Neo  @Athene  @Raphael  @Cognigrex"
+Write-Host "  @Römer-Grex  @Eco-Grex  @EMASSC  @LightSpeed"
+Write-Host ""
+Write-Host "If a selector does not appear, open Plugins > Personal > Cognigrex / LightSpeed"
+Write-Host "and confirm it is installed/enabled. Local desktop plugins are not made available"
+Write-Host "to web/mobile merely by saving them to the account."
+) {
+            $newBlock = [Regex]::Replace(
+                $block,
+                '(?m)^\s*enabled\s*=\s*(true|false)\s*$',
+                'enabled = true',
+                1
+            )
+        } else {
+            $newBlock = $header + $nl + 'enabled = true' + $nl + $block.Substring($headerMatch.Length).TrimStart([char]13,[char]10)
+        }
+        $text = $text.Substring(0, $headerMatch.Index) + $newBlock + $text.Substring($blockEnd)
+    } else {
+        if ($text.Length -gt 0 -and -not $text.EndsWith($nl)) {
+            $text += $nl
+        }
+        $text += $nl + $header + $nl + 'enabled = true' + $nl
+    }
+
+    $parent = Split-Path -Parent $ConfigPath
+    if (-not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    }
+    Set-Content -LiteralPath $ConfigPath -Value $text -Encoding utf8
+}
+
+$UserConfig = Join-Path $HOME ".codex\config.toml"
+$MarketplaceHeader = "[marketplaces.$MarketplaceName]"
+$MarketplaceRegistered = $false
+if (Test-Path $UserConfig) {
+    $MarketplaceRegistered = (Get-Content -LiteralPath $UserConfig -Raw).Contains($MarketplaceHeader)
+}
+
+if (-not $MarketplaceRegistered) {
+    Write-Host "Registering Cognigrex / LightSpeed plugin marketplace..."
+    & $CodexCommand plugin marketplace add achillesromer-coder/LightSpeed --ref $MarketplaceRef
+    if ($LASTEXITCODE -ne 0) {
+        throw "codex plugin marketplace add failed with exit code $LASTEXITCODE"
+    }
+}
+else {
+    Write-Host "Cognigrex / LightSpeed marketplace already registered."
+}
+
+Write-Host "Refreshing Cognigrex / LightSpeed marketplace..."
+& $CodexCommand plugin marketplace upgrade $MarketplaceName
+if ($LASTEXITCODE -ne 0) {
+    throw "codex plugin marketplace upgrade failed with exit code $LASTEXITCODE"
+}
+
+Write-Host "Enabling nine Cognigrex selectors in user plugin config..."
+foreach ($PluginId in $PluginIds) {
+    Set-CodexPluginEnabled -PluginId $PluginId -ConfigPath $UserConfig
+}
+
+$ConfigText = Get-Content -LiteralPath $UserConfig -Raw
+$MissingPluginIds = @(
+    $PluginIds | Where-Object {
+        -not $ConfigText.Contains('[plugins."' + $_ + '"]')
+    }
+)
+if ($MissingPluginIds.Count -gt 0) {
+    throw "Plugin enablement verification failed for: $($MissingPluginIds -join ', ')"
+}
+
+Write-Host "Verified all nine Cognigrex selector IDs in user plugin config."
+Write-Host ""
+Write-Host "Cognigrex chat plugin provisioning complete."
+Write-Host "User config: $UserConfig"
+Write-Host ""
+Write-Host "After restarting ChatGPT Desktop, these @ mentions should be available in new chats:"
+Write-Host "  @Achilles  @Neo  @Athene  @Raphael  @Cognigrex"
+Write-Host "  @Römer-Grex  @Eco-Grex  @EMASSC  @LightSpeed"
+Write-Host ""
+Write-Host "If a selector does not appear, open Plugins > Personal > Cognigrex / LightSpeed"
+Write-Host "and confirm it is installed/enabled. Local desktop plugins are not made available"
+Write-Host "to web/mobile merely by saving them to the account."
+
+    $headerMatch = [Regex]::Match($text, $headerPattern)
+
+    if ($headerMatch.Success) {
+        $afterHeader = $headerMatch.Index + $headerMatch.Length
+        $nextHeader = [Regex]::Match($text.Substring($afterHeader), '(?m)^\[')
+        if ($nextHeader.Success) {
+            $blockEnd = $afterHeader + $nextHeader.Index
+        } else {
+            $blockEnd = $text.Length
+        }
+        $block = $text.Substring($headerMatch.Index, $blockEnd - $headerMatch.Index)
+        if ($block -match '(?m)^\s*enabled\s*=\s*(true|false)\s*$') {
+            $newBlock = [Regex]::Replace(
+                $block,
+                '(?m)^\s*enabled\s*=\s*(true|false)\s*$',
+                'enabled = true',
+                1
+            )
+        } else {
+            $newBlock = $header + $nl + 'enabled = true' + $nl + $block.Substring($headerMatch.Length).TrimStart([char]13,[char]10)
+        }
+        $text = $text.Substring(0, $headerMatch.Index) + $newBlock + $text.Substring($blockEnd)
+    } else {
+        if ($text.Length -gt 0 -and -not $text.EndsWith($nl)) {
+            $text += $nl
+        }
+        $text += $nl + $header + $nl + 'enabled = true' + $nl
+    }
+
+    $parent = Split-Path -Parent $ConfigPath
+    if (-not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    }
+    Set-Content -LiteralPath $ConfigPath -Value $text -Encoding utf8
+}
+
+$UserConfig = Join-Path $HOME ".codex\config.toml"
+$MarketplaceHeader = "[marketplaces.$MarketplaceName]"
+$MarketplaceRegistered = $false
+if (Test-Path $UserConfig) {
+    $MarketplaceRegistered = (Get-Content -LiteralPath $UserConfig -Raw).Contains($MarketplaceHeader)
+}
+
+if (-not $MarketplaceRegistered) {
+    Write-Host "Registering Cognigrex / LightSpeed plugin marketplace..."
+    & $CodexCommand plugin marketplace add achillesromer-coder/LightSpeed --ref $MarketplaceRef
+    if ($LASTEXITCODE -ne 0) {
+        throw "codex plugin marketplace add failed with exit code $LASTEXITCODE"
+    }
+}
+else {
+    Write-Host "Cognigrex / LightSpeed marketplace already registered."
+}
+
+Write-Host "Refreshing Cognigrex / LightSpeed marketplace..."
+& $CodexCommand plugin marketplace upgrade $MarketplaceName
+if ($LASTEXITCODE -ne 0) {
+    throw "codex plugin marketplace upgrade failed with exit code $LASTEXITCODE"
+}
+
+Write-Host "Enabling nine Cognigrex selectors in user plugin config..."
+foreach ($PluginId in $PluginIds) {
+    Set-CodexPluginEnabled -PluginId $PluginId -ConfigPath $UserConfig
+}
+
+$ConfigText = Get-Content -LiteralPath $UserConfig -Raw
+$MissingPluginIds = @(
+    $PluginIds | Where-Object {
+        -not $ConfigText.Contains('[plugins."' + $_ + '"]')
+    }
+)
+if ($MissingPluginIds.Count -gt 0) {
+    throw "Plugin enablement verification failed for: $($MissingPluginIds -join ', ')"
+}
+
+Write-Host "Verified all nine Cognigrex selector IDs in user plugin config."
+Write-Host ""
+Write-Host "Cognigrex chat plugin provisioning complete."
+Write-Host "User config: $UserConfig"
+Write-Host ""
+Write-Host "After restarting ChatGPT Desktop, these @ mentions should be available in new chats:"
+Write-Host "  @Achilles  @Neo  @Athene  @Raphael  @Cognigrex"
+Write-Host "  @Römer-Grex  @Eco-Grex  @EMASSC  @LightSpeed"
+Write-Host ""
+Write-Host "If a selector does not appear, open Plugins > Personal > Cognigrex / LightSpeed"
+Write-Host "and confirm it is installed/enabled. Local desktop plugins are not made available"
+Write-Host "to web/mobile merely by saving them to the account."
+,
+                'enabled = true',
+                1
+            )
+        } else {
+            $newBlock = $header + $nl + 'enabled = true' + $nl + $block.Substring($headerMatch.Length).TrimStart([char]13,[char]10)
+        }
+        $text = $text.Substring(0, $headerMatch.Index) + $newBlock + $text.Substring($blockEnd)
+    } else {
+        if ($text.Length -gt 0 -and -not $text.EndsWith($nl)) {
+            $text += $nl
+        }
+        $text += $nl + $header + $nl + 'enabled = true' + $nl
+    }
+
+    $parent = Split-Path -Parent $ConfigPath
+    if (-not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    }
+    Set-Content -LiteralPath $ConfigPath -Value $text -Encoding utf8
+}
+
+$UserConfig = Join-Path $HOME ".codex\config.toml"
+$MarketplaceHeader = "[marketplaces.$MarketplaceName]"
+$MarketplaceRegistered = $false
+if (Test-Path $UserConfig) {
+    $MarketplaceRegistered = (Get-Content -LiteralPath $UserConfig -Raw).Contains($MarketplaceHeader)
+}
+
+if (-not $MarketplaceRegistered) {
+    Write-Host "Registering Cognigrex / LightSpeed plugin marketplace..."
+    & $CodexCommand plugin marketplace add achillesromer-coder/LightSpeed --ref $MarketplaceRef
+    if ($LASTEXITCODE -ne 0) {
+        throw "codex plugin marketplace add failed with exit code $LASTEXITCODE"
+    }
+}
+else {
+    Write-Host "Cognigrex / LightSpeed marketplace already registered."
+}
+
+Write-Host "Refreshing Cognigrex / LightSpeed marketplace..."
+& $CodexCommand plugin marketplace upgrade $MarketplaceName
+if ($LASTEXITCODE -ne 0) {
+    throw "codex plugin marketplace upgrade failed with exit code $LASTEXITCODE"
+}
+
+Write-Host "Enabling nine Cognigrex selectors in user plugin config..."
+foreach ($PluginId in $PluginIds) {
+    Set-CodexPluginEnabled -PluginId $PluginId -ConfigPath $UserConfig
+}
+
+$ConfigText = Get-Content -LiteralPath $UserConfig -Raw
+$MissingPluginIds = @(
+    $PluginIds | Where-Object {
+        -not $ConfigText.Contains('[plugins."' + $_ + '"]')
+    }
+)
+if ($MissingPluginIds.Count -gt 0) {
+    throw "Plugin enablement verification failed for: $($MissingPluginIds -join ', ')"
+}
+
+Write-Host "Verified all nine Cognigrex selector IDs in user plugin config."
+Write-Host ""
+Write-Host "Cognigrex chat plugin provisioning complete."
+Write-Host "User config: $UserConfig"
+Write-Host ""
+Write-Host "After restarting ChatGPT Desktop, these @ mentions should be available in new chats:"
+Write-Host "  @Achilles  @Neo  @Athene  @Raphael  @Cognigrex"
+Write-Host "  @Römer-Grex  @Eco-Grex  @EMASSC  @LightSpeed"
+Write-Host ""
+Write-Host "If a selector does not appear, open Plugins > Personal > Cognigrex / LightSpeed"
+Write-Host "and confirm it is installed/enabled. Local desktop plugins are not made available"
+Write-Host "to web/mobile merely by saving them to the account."
+
+    $headerMatch = [Regex]::Match($text, $headerPattern)
+
+    if ($headerMatch.Success) {
+        $afterHeader = $headerMatch.Index + $headerMatch.Length
+        $nextHeader = [Regex]::Match($text.Substring($afterHeader), '(?m)^\[')
+        if ($nextHeader.Success) {
+            $blockEnd = $afterHeader + $nextHeader.Index
+        } else {
+            $blockEnd = $text.Length
+        }
+        $block = $text.Substring($headerMatch.Index, $blockEnd - $headerMatch.Index)
+        if ($block -match '(?m)^\s*enabled\s*=\s*(true|false)\s*$') {
+            $newBlock = [Regex]::Replace(
+                $block,
+                '(?m)^\s*enabled\s*=\s*(true|false)\s*$',
+                'enabled = true',
+                1
+            )
+        } else {
+            $newBlock = $header + $nl + 'enabled = true' + $nl + $block.Substring($headerMatch.Length).TrimStart([char]13,[char]10)
+        }
+        $text = $text.Substring(0, $headerMatch.Index) + $newBlock + $text.Substring($blockEnd)
+    } else {
+        if ($text.Length -gt 0 -and -not $text.EndsWith($nl)) {
+            $text += $nl
+        }
+        $text += $nl + $header + $nl + 'enabled = true' + $nl
+    }
+
+    $parent = Split-Path -Parent $ConfigPath
+    if (-not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    }
+    Set-Content -LiteralPath $ConfigPath -Value $text -Encoding utf8
+}
+
+$UserConfig = Join-Path $HOME ".codex\config.toml"
+$MarketplaceHeader = "[marketplaces.$MarketplaceName]"
+$MarketplaceRegistered = $false
+if (Test-Path $UserConfig) {
+    $MarketplaceRegistered = (Get-Content -LiteralPath $UserConfig -Raw).Contains($MarketplaceHeader)
+}
+
+if (-not $MarketplaceRegistered) {
+    Write-Host "Registering Cognigrex / LightSpeed plugin marketplace..."
+    & $CodexCommand plugin marketplace add achillesromer-coder/LightSpeed --ref $MarketplaceRef
+    if ($LASTEXITCODE -ne 0) {
+        throw "codex plugin marketplace add failed with exit code $LASTEXITCODE"
+    }
+}
+else {
+    Write-Host "Cognigrex / LightSpeed marketplace already registered."
+}
+
+Write-Host "Refreshing Cognigrex / LightSpeed marketplace..."
+& $CodexCommand plugin marketplace upgrade $MarketplaceName
+if ($LASTEXITCODE -ne 0) {
+    throw "codex plugin marketplace upgrade failed with exit code $LASTEXITCODE"
+}
+
+Write-Host "Enabling nine Cognigrex selectors in user plugin config..."
+foreach ($PluginId in $PluginIds) {
+    Set-CodexPluginEnabled -PluginId $PluginId -ConfigPath $UserConfig
+}
+
+$ConfigText = Get-Content -LiteralPath $UserConfig -Raw
+$MissingPluginIds = @(
+    $PluginIds | Where-Object {
+        -not $ConfigText.Contains('[plugins."' + $_ + '"]')
+    }
+)
+if ($MissingPluginIds.Count -gt 0) {
+    throw "Plugin enablement verification failed for: $($MissingPluginIds -join ', ')"
+}
+
+Write-Host "Verified all nine Cognigrex selector IDs in user plugin config."
+Write-Host ""
+Write-Host "Cognigrex chat plugin provisioning complete."
+Write-Host "User config: $UserConfig"
+Write-Host ""
+Write-Host "After restarting ChatGPT Desktop, these @ mentions should be available in new chats:"
+Write-Host "  @Achilles  @Neo  @Athene  @Raphael  @Cognigrex"
+Write-Host "  @Römer-Grex  @Eco-Grex  @EMASSC  @LightSpeed"
+Write-Host ""
+Write-Host "If a selector does not appear, open Plugins > Personal > Cognigrex / LightSpeed"
+Write-Host "and confirm it is installed/enabled. Local desktop plugins are not made available"
+Write-Host "to web/mobile merely by saving them to the account."
+) {
+            $newBlock = [Regex]::Replace(
+                $block,
+                '(?m)^\s*enabled\s*=\s*(true|false)\s*$',
+                'enabled = true',
+                1
+            )
+        } else {
+            $newBlock = $header + $nl + 'enabled = true' + $nl + $block.Substring($headerMatch.Length).TrimStart([char]13,[char]10)
+        }
+        $text = $text.Substring(0, $headerMatch.Index) + $newBlock + $text.Substring($blockEnd)
+    } else {
+        if ($text.Length -gt 0 -and -not $text.EndsWith($nl)) {
+            $text += $nl
+        }
+        $text += $nl + $header + $nl + 'enabled = true' + $nl
+    }
+
+    $parent = Split-Path -Parent $ConfigPath
+    if (-not (Test-Path $parent)) {
+        New-Item -ItemType Directory -Path $parent -Force | Out-Null
+    }
+    Set-Content -LiteralPath $ConfigPath -Value $text -Encoding utf8
+}
+
+$UserConfig = Join-Path $HOME ".codex\config.toml"
+$MarketplaceHeader = "[marketplaces.$MarketplaceName]"
+$MarketplaceRegistered = $false
+if (Test-Path $UserConfig) {
+    $MarketplaceRegistered = (Get-Content -LiteralPath $UserConfig -Raw).Contains($MarketplaceHeader)
+}
+
+if (-not $MarketplaceRegistered) {
+    Write-Host "Registering Cognigrex / LightSpeed plugin marketplace..."
+    & $CodexCommand plugin marketplace add achillesromer-coder/LightSpeed --ref $MarketplaceRef
+    if ($LASTEXITCODE -ne 0) {
+        throw "codex plugin marketplace add failed with exit code $LASTEXITCODE"
+    }
+}
+else {
+    Write-Host "Cognigrex / LightSpeed marketplace already registered."
+}
+
+Write-Host "Refreshing Cognigrex / LightSpeed marketplace..."
+& $CodexCommand plugin marketplace upgrade $MarketplaceName
+if ($LASTEXITCODE -ne 0) {
+    throw "codex plugin marketplace upgrade failed with exit code $LASTEXITCODE"
+}
+
+Write-Host "Enabling nine Cognigrex selectors in user plugin config..."
+foreach ($PluginId in $PluginIds) {
+    Set-CodexPluginEnabled -PluginId $PluginId -ConfigPath $UserConfig
+}
+
+$ConfigText = Get-Content -LiteralPath $UserConfig -Raw
+$MissingPluginIds = @(
+    $PluginIds | Where-Object {
+        -not $ConfigText.Contains('[plugins."' + $_ + '"]')
+    }
+)
+if ($MissingPluginIds.Count -gt 0) {
+    throw "Plugin enablement verification failed for: $($MissingPluginIds -join ', ')"
+}
+
+Write-Host "Verified all nine Cognigrex selector IDs in user plugin config."
+Write-Host ""
+Write-Host "Cognigrex chat plugin provisioning complete."
+Write-Host "User config: $UserConfig"
+Write-Host ""
+Write-Host "After restarting ChatGPT Desktop, these @ mentions should be available in new chats:"
+Write-Host "  @Achilles  @Neo  @Athene  @Raphael  @Cognigrex"
+Write-Host "  @Römer-Grex  @Eco-Grex  @EMASSC  @LightSpeed"
+Write-Host ""
+Write-Host "If a selector does not appear, open Plugins > Personal > Cognigrex / LightSpeed"
+Write-Host "and confirm it is installed/enabled. Local desktop plugins are not made available"
+Write-Host "to web/mobile merely by saving them to the account."
+
     $headerMatch = [Regex]::Match($text, $headerPattern)
 
     if ($headerMatch.Success) {
