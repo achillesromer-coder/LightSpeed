@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-CAPABILITY-ROUTES/0.1",
+  "schema": "CGX-CAPABILITY-ROUTES/0.2",
   "toolkit_registry": "cgx/domain_templates/toolkit_registry.json",
   "rule": "Route to existing typed functions/providers/workflows; capability does not create authority.",
   "routes": {
@@ -34,17 +34,20 @@
       "handler": "lightspeed_runtime.cgx_query_planner:compile_query_plan"
     },
     "cgx.cross_analysis": {
-      "state": "workflow",
-      "kind": "composite",
+      "state": "available",
+      "kind": "runtime",
       "ro": true,
+      "handler": "lightspeed_runtime.cgx_cross_analysis:build_cross_analysis_plan",
       "uses": [
         "cgx.resolve_context",
         "cgx.plan_query",
         "cgx.minimum_work",
+        "consequence.preflight",
         "science.query",
         "tests.plan",
         "local.supervise"
-      ]
+      ],
+      "limitation": "Plans bounded cross-analysis; it does not automatically execute tests/sweeps or promote results."
     },
     "local.supervise": {
       "state": "available",
@@ -227,7 +230,42 @@
       "kind": "skill",
       "ro": false,
       "skill": "cgx-tool-extension",
-      "gate": "implement/test/register before tool exposure"
+      "gate": "implement/test/register before tool exposure",
+      "uses": [
+        "extensions.plan"
+      ]
+    },
+    "assurance.preflight": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.cgx_preflight:build_assurance_preflight",
+      "limitation": "Clearance bounds assurance evidence only and does not grant execution authority."
+    },
+    "custodial.preflight": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.cgx_preflight:build_custodial_preflight",
+      "limitation": "Custodial checks may hold work but do not create semantic or execution authority."
+    },
+    "consequence.preflight": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.cgx_preflight:build_consequence_preflight",
+      "uses": [
+        "assurance.preflight",
+        "custodial.preflight"
+      ],
+      "limitation": "CLEARED_FOR_AUTHORITY_GATE is not execution permission."
+    },
+    "extensions.plan": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.cgx_extension_planner:plan_tool_extension",
+      "limitation": "Plans reuse/wrap/build decisions only; it does not install or expose tools."
     }
   },
   "gaps": [
@@ -254,12 +292,6 @@
       "state": "missing",
       "priority": "high",
       "note": "Current ecology route is source/query/cross-analysis assisted."
-    },
-    {
-      "id": "portfolio-cross-analysis-facade",
-      "state": "partial",
-      "priority": "medium",
-      "note": "Current modules compose this workflow but lack one typed facade/receipt."
     }
   ],
   "extension": {
@@ -267,13 +299,14 @@
     "single_shared_tool_plane": true,
     "sequence": [
       "define goal",
+      "run extensions.plan",
       "search registry/runtime/toolkits",
-      "reuse or alias",
-      "implement smallest typed adapter",
+      "reuse or alias when sufficient",
+      "implement smallest typed adapter only when missing",
       "add tests/receipt",
-      "register route/shortcall",
+      "register route/shortcall once",
       "rebuild packages",
-      "expose through shared MCP after validation"
+      "expose validated operations individually through one shared MCP plane after transport validation"
     ]
   }
 }
