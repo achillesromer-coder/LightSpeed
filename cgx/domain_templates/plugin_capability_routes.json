@@ -1,0 +1,279 @@
+{
+  "schema": "CGX-CAPABILITY-ROUTES/0.1",
+  "toolkit_registry": "cgx/domain_templates/toolkit_registry.json",
+  "rule": "Route to existing typed functions/providers/workflows; capability does not create authority.",
+  "routes": {
+    "interface.help": {
+      "state": "workflow",
+      "kind": "skill",
+      "ro": true,
+      "skill": "cgx-capability-router"
+    },
+    "interface.capabilities": {
+      "state": "workflow",
+      "kind": "skill",
+      "ro": true,
+      "skill": "cgx-capability-router"
+    },
+    "cgx.resolve_context": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.cgx_plugin_control:build_context_envelope"
+    },
+    "cgx.minimum_work": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.cgx_plugin_control:decide_minimum_sufficient_work"
+    },
+    "cgx.plan_query": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.cgx_query_planner:compile_query_plan"
+    },
+    "cgx.cross_analysis": {
+      "state": "workflow",
+      "kind": "composite",
+      "ro": true,
+      "uses": [
+        "cgx.resolve_context",
+        "cgx.plan_query",
+        "cgx.minimum_work",
+        "science.query",
+        "tests.plan",
+        "local.supervise"
+      ]
+    },
+    "local.supervise": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": false,
+      "handler": "lightspeed_runtime.cognigrex_supervisor:run_supervised_workflow",
+      "gate": "bounded local receipts; heavy=false unless explicit"
+    },
+    "tests.plan": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.corpus_test_orchestrator:plan_cascade"
+    },
+    "science.query": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.scientific_query:execute_scientific_query"
+    },
+    "science.rfs_emff_sweep": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": false,
+      "handler": "lightspeed_runtime.rfs_emff_sweep:execute_sweep",
+      "gate": "bounded immutable sweep"
+    },
+    "science.mark3_simulate": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.mark3_multi_unit:simulate_scenario"
+    },
+    "receipts.list": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.result_receipt_browser:list_result_receipts"
+    },
+    "receipts.open": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.result_receipt_browser:open_result_receipt"
+    },
+    "files.list": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.project_file_browser:list_project_files"
+    },
+    "files.open": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.project_file_browser:open_project_file"
+    },
+    "sources.envelope": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.source_intake:build_source_envelope_from_path"
+    },
+    "data.validate": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.analytics_validation:build_table_validation_report"
+    },
+    "knowns.read": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.knowns:read_knowns_registry"
+    },
+    "knowns.proof_queue": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.knowns:build_knowns_proofing_queue"
+    },
+    "knowns.promote": {
+      "state": "gated",
+      "kind": "runtime",
+      "ro": false,
+      "handler": "lightspeed_runtime.knowns:promote_knowns_entries",
+      "gate": "Achilles/owner promotion authority"
+    },
+    "governance.action_ledger": {
+      "state": "gated",
+      "kind": "runtime",
+      "ro": false,
+      "handler": "lightspeed_runtime.governance_ledgers:append_action_ledger",
+      "gate": "bounded operational write"
+    },
+    "governance.approval_ledger": {
+      "state": "gated",
+      "kind": "runtime",
+      "ro": false,
+      "handler": "lightspeed_runtime.governance_ledgers:append_approval_ledger",
+      "gate": "approval context required"
+    },
+    "ops.health": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.bridge_health:build_bridge_health"
+    },
+    "ops.route_probe": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "open_world": true,
+      "handler": "lightspeed_runtime.route_probe:build_route_probe_report"
+    },
+    "ops.queue": {
+      "state": "gated",
+      "kind": "runtime",
+      "ro": false,
+      "handler": "lightspeed_runtime.smith_router:queue_smith_job",
+      "gate": "bounded queue write"
+    },
+    "ops.finalize": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.finalization_control:build_finalization_overview"
+    },
+    "ops.consolidate": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.consolidation_registry:build_consolidation_register"
+    },
+    "definitions.search": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.definition_library:search_it_dictionary"
+    },
+    "entities.build": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.entity_registry:build_entity_registry"
+    },
+    "protocols.build": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.protocol_sequence_registry:build_protocol_sequence_registry"
+    },
+    "eco.assess": {
+      "state": "assisted",
+      "kind": "composite",
+      "ro": true,
+      "uses": [
+        "cgx.resolve_context",
+        "sources.envelope",
+        "science.query",
+        "cgx.cross_analysis"
+      ],
+      "limitation": "No dedicated deterministic ecology engine is present."
+    },
+    "cad.freecad": {
+      "state": "registered_unwrapped",
+      "kind": "host-tool",
+      "ro": false,
+      "toolkit": "freecad",
+      "limitation": "FreeCAD is registered but no typed LightSpeed adapter was found."
+    },
+    "physics.femm": {
+      "state": "missing",
+      "kind": "planned-tool",
+      "ro": false,
+      "limitation": "No FEMM toolkit entry or typed adapter was found."
+    },
+    "extensions.tool": {
+      "state": "workflow",
+      "kind": "skill",
+      "ro": false,
+      "skill": "cgx-tool-extension",
+      "gate": "implement/test/register before tool exposure"
+    }
+  },
+  "gaps": [
+    {
+      "id": "shared-mcp-tools",
+      "state": "missing",
+      "priority": "high",
+      "note": "Need one shared typed MCP plane for first-class ChatGPT tools; not nine servers."
+    },
+    {
+      "id": "freecad-adapter",
+      "state": "registered_unwrapped",
+      "priority": "high",
+      "note": "Wrap typed import/export/geometry/BOM operations."
+    },
+    {
+      "id": "femm-adapter",
+      "state": "missing",
+      "priority": "high",
+      "note": "Add only after verified local installation/model contract."
+    },
+    {
+      "id": "eco-deterministic-engine",
+      "state": "missing",
+      "priority": "high",
+      "note": "Current ecology route is source/query/cross-analysis assisted."
+    },
+    {
+      "id": "portfolio-cross-analysis-facade",
+      "state": "partial",
+      "priority": "medium",
+      "note": "Current modules compose this workflow but lack one typed facade/receipt."
+    }
+  ],
+  "extension": {
+    "reuse_before_create": true,
+    "single_shared_tool_plane": true,
+    "sequence": [
+      "define goal",
+      "search registry/runtime/toolkits",
+      "reuse or alias",
+      "implement smallest typed adapter",
+      "add tests/receipt",
+      "register route/shortcall",
+      "rebuild packages",
+      "expose through shared MCP after validation"
+    ]
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-PLUGIN-SELECTOR-PROFILE/0.2",
+  "schema": "CGX-PLUGIN-SELECTOR-PROFILE/0.3",
   "package": "eco-grex",
   "display": "Eco-Grex",
   "selector": "eco-grex",

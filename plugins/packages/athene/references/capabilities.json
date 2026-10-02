@@ -1,0 +1,136 @@
+{
+  "schema": "CGX-PLUGIN-CAPABILITY-PROFILE/0.1",
+  "package": "athene",
+  "selector": "athene",
+  "syntax": "@Selector /shortcall [object] [constraints...]",
+  "global_shortcalls": {
+    "help": "interface.help",
+    "capabilities": "interface.capabilities",
+    "status": "ops.health",
+    "receipt": "receipts.list",
+    "sources": "sources.envelope",
+    "extend": "extensions.tool"
+  },
+  "profile": {
+    "floors": [
+      "Oracle",
+      "Morpheus",
+      "Neo",
+      "TheConstruct"
+    ],
+    "toolkits": [
+      "cgx-core",
+      "lightspeed",
+      "google-drive",
+      "web",
+      "python"
+    ],
+    "shortcalls": {
+      "eco": "eco.assess",
+      "impact": "eco.assess",
+      "evidence": "sources.envelope",
+      "corridor": "eco.assess",
+      "mitigate": "eco.assess",
+      "species": "eco.assess"
+    }
+  },
+  "routes": {
+    "eco.assess": {
+      "state": "assisted",
+      "kind": "composite",
+      "ro": true,
+      "uses": [
+        "cgx.resolve_context",
+        "sources.envelope",
+        "science.query",
+        "cgx.cross_analysis"
+      ],
+      "limitation": "No dedicated deterministic ecology engine is present."
+    },
+    "extensions.tool": {
+      "state": "workflow",
+      "kind": "skill",
+      "ro": false,
+      "skill": "cgx-tool-extension",
+      "gate": "implement/test/register before tool exposure"
+    },
+    "interface.capabilities": {
+      "state": "workflow",
+      "kind": "skill",
+      "ro": true,
+      "skill": "cgx-capability-router"
+    },
+    "interface.help": {
+      "state": "workflow",
+      "kind": "skill",
+      "ro": true,
+      "skill": "cgx-capability-router"
+    },
+    "ops.health": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.bridge_health:build_bridge_health"
+    },
+    "receipts.list": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.result_receipt_browser:list_result_receipts"
+    },
+    "sources.envelope": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.source_intake:build_source_envelope_from_path"
+    }
+  },
+  "gaps": [
+    {
+      "id": "shared-mcp-tools",
+      "state": "missing",
+      "priority": "high",
+      "note": "Need one shared typed MCP plane for first-class ChatGPT tools; not nine servers."
+    },
+    {
+      "id": "freecad-adapter",
+      "state": "registered_unwrapped",
+      "priority": "high",
+      "note": "Wrap typed import/export/geometry/BOM operations."
+    },
+    {
+      "id": "femm-adapter",
+      "state": "missing",
+      "priority": "high",
+      "note": "Add only after verified local installation/model contract."
+    },
+    {
+      "id": "eco-deterministic-engine",
+      "state": "missing",
+      "priority": "high",
+      "note": "Current ecology route is source/query/cross-analysis assisted."
+    },
+    {
+      "id": "portfolio-cross-analysis-facade",
+      "state": "partial",
+      "priority": "medium",
+      "note": "Current modules compose this workflow but lack one typed facade/receipt."
+    }
+  ],
+  "extension": {
+    "reuse_before_create": true,
+    "single_shared_tool_plane": true,
+    "sequence": [
+      "define goal",
+      "search registry/runtime/toolkits",
+      "reuse or alias",
+      "implement smallest typed adapter",
+      "add tests/receipt",
+      "register route/shortcall",
+      "rebuild packages",
+      "expose through shared MCP after validation"
+    ]
+  },
+  "toolkit_registry": "cgx/domain_templates/toolkit_registry.json",
+  "authority_note": "Capability and toolkit bindings do not create authority. Resolve live CGX/Recovery state through cgx-handshake before execution."
+}
