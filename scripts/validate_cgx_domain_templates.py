@@ -66,6 +66,7 @@ def main():
         assurance_fixtures=load("assurance_fixture_scenarios.json")
         technology_stack=load("technology_stack_registry.json")
         agent_runtime=load("agent_runtime_contract.json")
+        node_exchange=load("node_exchange_contract.json")
         query_policy=load("query_normalisation_policy.json")
         corpus_test_policy=load("corpus_test_simulation_policy.json")
         corpus_test_caps=load("corpus_test_capability_registry.json")
@@ -128,6 +129,30 @@ def main():
     sr=s92_promotion.get("recovery",{})
     if sr.get("sha256")!=expected_seed["sha256"] or sr.get("drive_id")!=gp.get("current_recovery_file_id"):
         failures.append("S92 promotion verification does not match current Recovery pointer")
+
+    if node_exchange.get("schema")!="CGX-NODE-EXCHANGE-CONTRACT/0.1":
+        failures.append("node-exchange contract schema mismatch")
+    node_invariants=set(node_exchange.get("invariants") or [])
+    for required in (
+        "no-second-runtime",
+        "no-authority-transfer-by-copy",
+        "no-compute-from-unverified-input",
+        "no-peer-claim-from-mounted-volume",
+        "no-free-form-shell-capability",
+        "no-public-direct-execution",
+        "no-canonical-promotion-from-runtime-receipt-alone",
+    ):
+        if required not in node_invariants:
+            failures.append(f"node-exchange invariant missing: {required}")
+    bindings=node_exchange.get("surface_bindings") or {}
+    for required_surface in ("desktop","web","mobile","chat","api","node"):
+        if required_surface not in bindings:
+            failures.append(f"node-exchange surface binding missing: {required_surface}")
+    activation=node_exchange.get("activation") or {}
+    if activation.get("host_root_registry") is None:
+        failures.append("node-exchange host-root registry activation boundary missing")
+    if activation.get("peer_compute") is None:
+        failures.append("node-exchange peer-compute activation boundary missing")
 
     if query_policy.get("schema")!="CGX-QUERY-NORMALISATION-POLICY/0.1":
         failures.append("query-normalisation policy schema mismatch")

@@ -22,6 +22,13 @@ from lightspeed_runtime.corpus_test_orchestrator import CorpusTestPlanError, pla
 from lightspeed_runtime.cgx_conversion_planner import CGXConversionPlanError, compile_conversion_plan
 from lightspeed_runtime.cgx_object_context import CGXObjectContextError, resolve_object_context
 from lightspeed_runtime.project_artifact_store import stage_project_artifacts
+from lightspeed_runtime.node_exchange import (
+    NodeExchangeError,
+    build_compute_request,
+    build_exchange_status,
+    build_transfer_envelope_from_manifest,
+    load_node_root_registry,
+)
 from lightspeed_runtime.owner_credentials import (
     CredentialAuthenticationFailed,
     CredentialError,
@@ -1476,6 +1483,19 @@ def create_app(root: Path | str) -> FastAPI:
         core_services_healthy = bool(db) and bool(storage) and merovingian_healthy
         credential = current_credential_status()
         legacy_confirmation = bool(os.environ.get(OWNER_CONFIRMATION_ENV, "").strip())
+        local_node_id = (
+            os.environ.get("LIGHTSPEED_NODE_ID")
+            or os.environ.get("COMPUTERNAME")
+            or "local-node"
+        )
+        root_registry_ready = False
+        root_registry_ref = os.environ.get("LIGHTSPEED_NODE_ROOT_REGISTRY", "").strip()
+        if root_registry_ref:
+            try:
+                root_registry = load_node_root_registry(root_registry_ref)
+                root_registry_ready = root_registry.get("node_id") == local_node_id
+            except NodeExchangeError:
+                root_registry_ready = False
         return JSONResponse(
             {
                 "ok": core_services_healthy,
@@ -1544,6 +1564,33 @@ def create_app(root: Path | str) -> FastAPI:
                     "automatic_execution": False,
                     "canonical_mutation": False,
                     "authority_transfer": False,
+                },
+                "node_exchange": {
+                    **build_exchange_status(
+                        local_node_id=local_node_id,
+                        local_compute_ready=core_services_healthy,
+                        verified_carriers=[
+                            item.strip()
+                            for item in os.environ.get(
+                                "LIGHTSPEED_VERIFIED_CARRIERS", ""
+                            ).split(",")
+                            if item.strip()
+                        ],
+                        peer_nodes=[
+                            item.strip()
+                            for item in os.environ.get(
+                                "LIGHTSPEED_PEER_NODES", ""
+                            ).split(",")
+                            if item.strip()
+                        ],
+                        host_root_registry_ready=root_registry_ready,
+                    ),
+                    "transfer_planning_endpoint": "/api/v1/node-exchange/transfer/plan",
+                    "compute_planning_endpoint": "/api/v1/node-exchange/compute/plan",
+                    "execution_route": (
+                        "runtime primitives available; web/mobile planning only; "
+                        "typed queue activation awaits host node/root registry"
+                    ),
                 },
                 "execution_boundary": "local queue, immutable named artifacts, receipts and review only; no public direct execution",
             }
@@ -1628,6 +1675,102 @@ def create_app(root: Path | str) -> FastAPI:
                 "authority_transfer": False,
                 "activation_boundary": "planning only; ingest/Resolve/mutation remain separately gated",
             }
+        )
+
+    @app.post("/api/v1/node-exchange/transfer/plan")
+    async def plan_node_transfer(
+        body: dict[str, Any],
+        owner_confirmation: str | None = Header(
+            default=None,
+            alias="X-LightSpeed-Owner-Confirmation",
+        ),
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        """Plan a content-addressed transfer; do not move bytes."""
+        _verified_owner_actor(
+            owner_confirmation,
+            session_token=owner_session,
+            credential_store=credential_store,
+            session_store=owner_sessions,
+        )
+        try:
+            plan = build_transfer_envelope_from_manifest(
+                source_ref=body.get("source_ref"),
+                source_sha256=body.get("source_sha256"),
+                size_bytes=body.get("size_bytes"),
+                file_name=body.get("file_name"),
+                source_node_id=body.get("source_node_id"),
+                target_node_id=body.get("target_node_id"),
+                source_root_id=body.get("source_root_id"),
+                target_root_id=body.get("target_root_id"),
+                object_id=body.get("object_id"),
+            )
+        except (NodeExchangeError, TypeError, ValueError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        return JSONResponse(
+            {
+                "plan": plan,
+                "execution_performed": False,
+                "authority_transfer": False,
+                "canonical_mutation": False,
+                "required_execution_lease_class": "DIGITAL_WRITE",
+                "activation_boundary": (
+                    "planning only; bytes move through an approved node/runtime adapter "
+                    "and become compute-eligible only after exact receiver readback"
+                ),
+            },
+            headers={"Cache-Control": "no-store"},
+        )
+
+    @app.post("/api/v1/node-exchange/compute/plan")
+    async def plan_node_compute(
+        body: dict[str, Any],
+        owner_confirmation: str | None = Header(
+            default=None,
+            alias="X-LightSpeed-Owner-Confirmation",
+        ),
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        """Plan delegated computation; do not invoke an executor."""
+        _verified_owner_actor(
+            owner_confirmation,
+            session_token=owner_session,
+            credential_store=credential_store,
+            session_store=owner_sessions,
+        )
+        input_receipts = body.get("input_receipts") or []
+        resource_budget = body.get("resource_budget") or {}
+        if not isinstance(input_receipts, list) or len(input_receipts) > 64:
+            raise HTTPException(status_code=400, detail="input_receipts must be a bounded list")
+        if not isinstance(resource_budget, dict):
+            raise HTTPException(status_code=400, detail="resource_budget must be an object")
+        try:
+            request = build_compute_request(
+                body.get("instruction"),
+                task_id=body.get("task_id"),
+                run_id=body.get("run_id"),
+                target_node_id=body.get("target_node_id"),
+                capability_id=body.get("capability_id"),
+                lease_ref=body.get("lease_ref"),
+                input_receipts=input_receipts,
+                project_id=body.get("project_id"),
+                resource_budget=resource_budget,
+            )
+        except (NodeExchangeError, TypeError, ValueError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        return JSONResponse(
+            {
+                "request": request,
+                "execution_performed": False,
+                "authority_transfer": False,
+                "canonical_mutation": False,
+                "required_execution_lease_class": "COMPUTE_ONLY",
+                "activation_boundary": (
+                    "planning only; execution must enter the existing typed LightSpeed/Cognigrex "
+                    "queue and validate the current scoped lease before a registered capability runs"
+                ),
+            },
+            headers={"Cache-Control": "no-store"},
         )
 
     @app.get("/ls-go/agents", include_in_schema=False)

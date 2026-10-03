@@ -1851,3 +1851,126 @@ def test_conversion_plan_route_preserves_source_authority(tmp_path, monkeypatch)
         "R2_RECONSTRUCTED",
         "R3_GENERATIVE",
     ]
+
+
+def test_node_exchange_status_distinguishes_carrier_from_peer_compute(tmp_path, monkeypatch):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    monkeypatch.setenv("LIGHTSPEED_NODE_ID", "bouwerbase")
+    monkeypatch.setenv("LIGHTSPEED_VERIFIED_CARRIERS", "E-volume")
+    monkeypatch.delenv("LIGHTSPEED_PEER_NODES", raising=False)
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    response = client.get("/api/v1/status")
+
+    assert response.status_code == 200
+    exchange = response.json()["node_exchange"]
+    assert exchange["node_id"] == "bouwerbase"
+    assert exchange["transport"]["verified_carriers"] == ["E-volume"]
+    assert exchange["transport"]["peer_transport_verified"] is False
+    assert exchange["compute"]["peer_compute_verified"] is False
+    assert exchange["authority_transfer"] is False
+
+
+def test_node_transfer_plan_requires_owner_and_does_not_move_bytes(tmp_path, monkeypatch):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    monkeypatch.setenv("LIGHTSPEED_OWNER_APPROVAL_TOKEN", "owner-test-token")
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    body = {
+        "source_ref": "cgx://source/object-a",
+        "source_sha256": "a" * 64,
+        "size_bytes": 1024,
+        "file_name": "object-a.bin",
+        "source_node_id": "bouwerbase",
+        "target_node_id": "field-node-1",
+        "source_root_id": "local-source",
+        "target_root_id": "node-staging",
+        "object_id": "cgx:object:a",
+    }
+
+    denied = client.post("/api/v1/node-exchange/transfer/plan", json=body)
+    response = client.post(
+        "/api/v1/node-exchange/transfer/plan",
+        json=body,
+        headers={"X-LightSpeed-Owner-Confirmation": "owner-test-token"},
+    )
+
+    assert denied.status_code == 403
+    assert response.status_code == 200, response.text
+    payload = response.json()
+    assert payload["execution_performed"] is False
+    assert payload["authority_transfer"] is False
+    assert payload["canonical_mutation"] is False
+    assert payload["required_execution_lease_class"] == "DIGITAL_WRITE"
+    assert payload["plan"]["source_sha256"] == "a" * 64
+    assert payload["plan"]["target_relative_path"].startswith("transfers/")
+
+
+def test_node_compute_plan_is_owner_gated_and_execution_free(tmp_path, monkeypatch):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    monkeypatch.setenv("LIGHTSPEED_OWNER_APPROVAL_TOKEN", "owner-test-token")
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    body = {
+        "instruction": "Reconcile the transferred bounded test payload.",
+        "task_id": "CGX-T2",
+        "run_id": "RUN-T2",
+        "project_id": "LS-GO",
+        "target_node_id": "bouwerbase",
+        "capability_id": "cognigrex-supervised-workflow",
+        "lease_ref": "LEASE-T2",
+        "input_receipts": [
+            {
+                "transfer_id": "NXFER-T2",
+                "state": "verified",
+                "source_sha256": "b" * 64,
+                "received_sha256": "b" * 64,
+                "size_bytes": 64,
+                "exact_readback": True,
+            }
+        ],
+        "resource_budget": {"max_wall_seconds": 30, "allow_heavy": False},
+    }
+
+    response = client.post(
+        "/api/v1/node-exchange/compute/plan",
+        json=body,
+        headers={"X-LightSpeed-Owner-Confirmation": "owner-test-token"},
+    )
+
+    assert response.status_code == 200, response.text
+    payload = response.json()
+    assert payload["execution_performed"] is False
+    assert payload["authority_transfer"] is False
+    assert payload["canonical_mutation"] is False
+    assert payload["required_execution_lease_class"] == "COMPUTE_ONLY"
+    assert payload["request"]["target_node_id"] == "bouwerbase"
+    assert payload["request"]["resource_budget"]["allow_heavy"] is False
+
+def test_node_exchange_status_reads_host_root_registry_without_activating_peer_compute(tmp_path, monkeypatch):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    root = tmp_path / "node-root"
+    root.mkdir()
+    registry = tmp_path / "node-roots.json"
+    registry.write_text(
+        json.dumps({
+            "schema_version": "cgx-node-root-registry-v1",
+            "node_id": "bouwerbase",
+            "roots": [{
+                "root_id": "node-staging",
+                "path": str(root),
+                "access": "read_write",
+                "kind": "staging",
+            }],
+        }),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("LIGHTSPEED_NODE_ID", "bouwerbase")
+    monkeypatch.setenv("LIGHTSPEED_NODE_ROOT_REGISTRY", str(registry))
+    monkeypatch.delenv("LIGHTSPEED_PEER_NODES", raising=False)
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+
+    exchange = client.get("/api/v1/status").json()["node_exchange"]
+
+    assert exchange["activation"]["host_root_registry_ready"] is True
+    assert exchange["activation"]["typed_transfer_queue_ready"] is True
+    assert exchange["activation"]["peer_compute_queue_ready"] is False
+    assert exchange["compute"]["peer_compute_verified"] is False
