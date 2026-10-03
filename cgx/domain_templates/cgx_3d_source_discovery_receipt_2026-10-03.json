@@ -1,7 +1,7 @@
 {
   "schema": "CGX-3D-SOURCE-DISCOVERY-RECEIPT/0.1",
   "receipt_id": "CGX-3D-INTAKE-DISCOVERY-2026-10-03",
-  "status": "DISCOVERY_VERIFIED / R0_R1_CANDIDATES_IDENTIFIED / R2_MAPPING_HELD / LOCAL_CURRENT_MAIN_EXECUTION_PENDING",
+  "status": "DISCOVERY_VERIFIED / R0_R1_CORPUS_CONFORMANCE_PASS / R2_MAPPING_HELD / INTERNAL_HANDOFF",
   "recorded_at": "2026-10-03T18:41:00+10:00",
   "source_control": {
     "repository": "achillesromer-coder/LightSpeed",
@@ -47,7 +47,11 @@
         "source_object_count": 117,
         "derived_object_count": 114,
         "filtered_dimension_changes": 0,
-        "removed_helper_objects": ["Polygon", "Circle", "Circle001"],
+        "removed_helper_objects": [
+          "Polygon",
+          "Circle",
+          "Circle001"
+        ],
         "body_label_change": "Launch Tower -> Watch Tower Concrete",
         "placement_change_observed": true,
         "classification": "DERIVED_FROM / CONFIGURATION_VIEW_CANDIDATE",
@@ -103,10 +107,46 @@
   ],
   "representation_checks": {
     "obj": [
-      {"name": "Mark III Simple.obj", "vertices": 40482, "faces": 80980, "raw_extent": [85.709, 74.226, 175.0]},
-      {"name": "Luke Simple.obj", "vertices": 60380, "faces": 120760, "raw_extent_approx": [31000.0, 31500.0, 4000.0]},
-      {"name": "Base Plate (Meshed).obj", "vertices": 24898, "faces": 49812, "raw_extent": [290.019, 294.499, 13.0]},
-      {"name": "Top Casing (Meshed).obj", "vertices": 90850, "faces": 181728, "raw_extent": [285.317, 291.519, 55.0]}
+      {
+        "name": "Mark III Simple.obj",
+        "vertices": 40482,
+        "faces": 80980,
+        "raw_extent": [
+          85.709,
+          74.226,
+          175
+        ]
+      },
+      {
+        "name": "Luke Simple.obj",
+        "vertices": 60380,
+        "faces": 120760,
+        "raw_extent_approx": [
+          31000,
+          31500,
+          4000
+        ]
+      },
+      {
+        "name": "Base Plate (Meshed).obj",
+        "vertices": 24898,
+        "faces": 49812,
+        "raw_extent": [
+          290.019,
+          294.499,
+          13
+        ]
+      },
+      {
+        "name": "Top Casing (Meshed).obj",
+        "vertices": 90850,
+        "faces": 181728,
+        "raw_extent": [
+          285.317,
+          291.519,
+          55
+        ]
+      }
     ],
     "glb": {
       "name": "Mag-Lev Comp..glb",
@@ -126,30 +166,129 @@
       "stl-mesh-stdlib-v0.1",
       "gltf-stdlib-v0.1"
     ],
-    "pipeline": ["R0_EXACT", "R1_SEMANTIC_REVERSIBLE", "R2_RECONSTRUCTED", "R3_GENERATIVE"],
+    "pipeline": [
+      "R0_EXACT",
+      "R1_SEMANTIC_REVERSIBLE",
+      "R2_RECONSTRUCTED",
+      "R3_GENERATIVE"
+    ],
     "intake_default": "never-on-drop",
     "r0_r1_assessment": "SUPPORTED_BY_CURRENT_CONTRACT",
     "r2_assessment": "HOLD_MAPPING_REQUIRED for newly discovered FCStd sources until owning semantic mappings are explicitly reviewed.",
-    "r3_assessment": "Generated representations remain non-canonical."
+    "r3_assessment": "Generated representations remain non-canonical.",
+    "executed_on": {
+      "local_repository_head": "46ee9330ce2b6a487fcc030bfcbcdaca47727661",
+      "github_main_verified_same_head": true,
+      "python": "3.11.9",
+      "cli": "scripts/project_cgx_source.py --with-plan --domain romer",
+      "canonical_mutation": false,
+      "native_source_mutation": false
+    },
+    "corpus_result": {
+      "total_files_executed": 57,
+      "return_code_zero": 57,
+      "pass": 57,
+      "by_extension": {
+        "FCStd": 26,
+        "FCBak": 25,
+        "OBJ": 4,
+        "GLB": 1,
+        "FCMacro": 1
+      },
+      "by_adapter_admission": [
+        {
+          "adapter_id": "freecad-fcstd-stdlib-v0.1",
+          "admission_state": "R1_ADMITTED",
+          "status": "PASS",
+          "count": 26
+        },
+        {
+          "adapter_id": "obj-mesh-stdlib-v0.1",
+          "admission_state": "R1_ADMITTED",
+          "status": "PASS",
+          "count": 4
+        },
+        {
+          "adapter_id": "gltf-stdlib-v0.1",
+          "admission_state": "R1_ADMITTED",
+          "status": "PASS",
+          "count": 1
+        },
+        {
+          "adapter_id": "binary-reference-v1",
+          "admission_state": "R0_REFERENCE_ONLY",
+          "status": "PASS",
+          "count": 26
+        }
+      ],
+      "note": "The 26 binary-reference results are 25 historical .FCBak files plus 1 .FCMacro. R0 reference status preserves identity/provenance and does not infer CAD semantics."
+    },
+    "priority_receipts": [
+      {
+        "name": "WatchTower authoritative",
+        "source_id": "src:c476f9f2f9946ab8e99e58dd399aa7b02bac630c5d9336b80ef66f5f2a397321",
+        "admission_state": "R1_ADMITTED",
+        "conversion_classes": [
+          "R0_EXACT",
+          "R1_SEMANTIC_REVERSIBLE"
+        ],
+        "conversion_plan_sha256": "93704588fdc08b9621b7bbafc2f3c65394892c80dd680e31d7bc0b46d411c9a0"
+      },
+      {
+        "name": "WatchTower derived candidate",
+        "source_id": "src:625c877e75a1eed562a385ed1dc0e812d548b0bbbe3203ae3878b726423f349e",
+        "admission_state": "R1_ADMITTED",
+        "conversion_classes": [
+          "R0_EXACT",
+          "R1_SEMANTIC_REVERSIBLE"
+        ],
+        "conversion_plan_sha256": "053cdab7f1072e8da800cad8c1a4d15ae6b5a26b262d37c0a6f7530e6021ac2e"
+      },
+      {
+        "name": "Mark III",
+        "source_id": "src:4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b",
+        "admission_state": "R1_ADMITTED",
+        "conversion_classes": [
+          "R0_EXACT",
+          "R1_SEMANTIC_REVERSIBLE"
+        ],
+        "conversion_plan_sha256": "90db0c6a03047e606af8502952d4766850accdb75cbc32f9328c506f4b5593b2"
+      },
+      {
+        "name": "Payload Capsule",
+        "source_id": "src:9606755c4fff3d94ade1ed61ee41808e9a05237b6bdd857b09dcb067d6e0b61c",
+        "admission_state": "R1_ADMITTED",
+        "conversion_classes": [
+          "R0_EXACT",
+          "R1_SEMANTIC_REVERSIBLE"
+        ],
+        "conversion_plan_sha256": "f23796dd856ce158d993ef2f5fd50422e80b536372f27c3f7af8c3689d560501"
+      }
+    ],
+    "r2_boundary": "All priority receipts have semantic_target=null and admit only R0_EXACT + R1_SEMANTIC_REVERSIBLE. Format/source structure is proven; semantic reconstruction remains owner-mapped and Resolve/DBR gated."
   },
   "execution_boundary": {
     "independent_remote_structure_and_hash_discovery": "PASS",
-    "current_main_project_cgx_source_cli_on_real_local_files": "NOT_EXECUTED",
-    "reason": "BouwerBase disconnected after discovery; older installed LightSpeed worktrees observed before disconnect did not contain the current conformance CLI.",
-    "nonclaim": "This receipt does not claim a current-main CLI conformance PASS against the local files."
+    "current_main_project_cgx_source_cli_on_real_local_files": "PASS",
+    "corpus_scope": "57/57 FCStd/FCBak/OBJ/GLB/FCMacro files returned process RC 0 and PASS",
+    "source_mutation": "NONE",
+    "canonical_mutation": "NONE",
+    "generated_receipts": "transient machine-local conformance JSON outside Git; durable summary is this receipt",
+    "nonclaim": "R1 admission does not itself authorize R2 semantic promotion, geometry authority transfer, engineering interpretation, physical validation, manufacturing/certification or public release."
   },
   "handoff": {
     "route": "existing intake-to-canonical workflow / CGX-OBJ-001 lineage",
     "owner": "Romer",
     "audit": "Achilles",
     "next_actions": [
-      "When BouwerBase reconnects, create or reuse an isolated current-main worktree without overwriting the installed runtime.",
-      "Run scripts/project_cgx_source.py --with-plan against WatchTower authoritative source and derived WatchTower candidate first.",
-      "Run the same conformance path for SEQLD/M1, Mark III, Payload Capsule, Mark V, Luke IV and Free Flow families.",
-      "Compare adapter output to this independent discovery receipt.",
-      "Add only demonstrated FCStd-to-Romer R2 mappings; unresolved identity/topology/interface claims remain Frontier.",
-      "Do not copy native CAD into Git merely to perform semantic intake."
-    ]
+      "Use this corpus-level R0/R1 conformance receipt as the intake baseline; do not rerun format qualification absent source/adapter drift.",
+      "For WatchTower, reconcile authoritative source and standalone derived/configuration candidate through the existing WT-001 owner without replacing geometry authority.",
+      "For Mark III, define/review only the minimal FCStd-to-Romer R2 mapping supported by explicit source objects; keep three-appendage/interlock/Mark-V mating claims Frontier until independently evidenced.",
+      "For Payload Capsule, encode accepted parameter changes as stable Object_ID/cell changes plus DBR old-to-new provenance rather than a duplicate semantic master.",
+      "Progress SEQLD/M1, Mark V, Luke IV and Free Flow from their R1-admitted source envelopes under their existing Type1/CGX owners.",
+      "Achilles audits PR #74 against exact source IDs/plan hashes and current owner mappings before any merge/promotion."
+    ],
+    "smallest_remaining_gate": "R2 owner-mapping/admission review for specific objects/relations; no remaining generic file-format/source-envelope gate for the 57-file corpus."
   },
   "evidence_ceiling": "Digital source identity/structure/revision evidence only. No physical, manufacturing, structural, performance, certification, regulatory or deployment claim is promoted.",
   "architecture_impact": "No new master or parallel roadmap. One native source may have multiple projections/configurations; DBR records accepted state transitions; R3 representations remain derivative.",
