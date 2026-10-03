@@ -77,12 +77,20 @@ def main():
         first_file_migration_receipt=load("s92_first_file_migration_receipt_2026-10-01.json")
         source_envelope=load("source_envelope_contract.json")
         source_adapters=load("source_format_adapter_registry.json")
+        provider_notifications=load("provider_notification_evidence_contract.json")
     except Exception as e:
         print(json.dumps({"status":"FAIL","failures":[str(e)]}))
         return 1
 
     if domains.get("schema")!="CGX-DOMAIN-TEMPLATES/0.4":
         failures.append("domains schema is not 0.4")
+    if provider_notifications.get("schema")!="CGX-PROVIDER-NOTIFICATION-EVIDENCE/0.1":
+        failures.append("provider notification evidence contract schema mismatch")
+    if domains.get("shared_contracts",{}).get("provider_notification_evidence")!="provider_notification_evidence_contract.json":
+        failures.append("provider notification evidence contract not registered")
+    inv=set(provider_notifications.get("invariants") or [])
+    if "email-notification-alone-never-closes-or-promotes-canonical-defect-state" not in inv:
+        failures.append("provider notification contract lacks secondary-evidence boundary")
     if shell.get("schema")!="CGX-CORPUS-AWARE-BASE-SHELL/0.6":
         failures.append("base-shell contract is not 0.6")
     if domains.get("parent_filespace",{}).get("file")!="Cognigrex.cgx":
