@@ -21,6 +21,7 @@ import json
 from pathlib import Path
 import re
 import tempfile
+import uuid
 from typing import Any, Callable, Iterable
 
 from lightspeed_runtime.local_floor_runner import (
@@ -391,6 +392,8 @@ def run_supervised_workflow(
     )
 
     rows: list[dict[str, Any]] = []
+    handoffs: list[dict[str, Any]] = []
+    snapshot_root = supervisor_output_dir(contract) / "workflow_receipts" / uuid.uuid4().hex
     with tempfile.NamedTemporaryFile(
         mode="w",
         suffix=".json",
@@ -404,6 +407,8 @@ def run_supervised_workflow(
 
     try:
         for sequence, floor in enumerate(plan.floor_sequence, start=1):
+            overlay["workflow_handoffs"] = handoffs
+            overlay_path.write_text(json.dumps(overlay), encoding="utf-8")
             receipt = runner(
                 contract_path=overlay_path,
                 floor=floor,
@@ -423,6 +428,21 @@ def run_supervised_workflow(
                 ).get("execution_state"),
                 "elapsed_ms": receipt.get("elapsed_ms"),
             }
+            response = receipt.get("response_contract") or {}
+            handoffs.append({
+                "floor": floor,
+                "status": receipt.get("status"),
+                "receipt_id": receipt.get("receipt_id"),
+                "floor_summary": str(response.get("floor_summary") or "")[:700],
+                "blocker": str(response.get("blocker") or "")[:300],
+                "evidence_class": "model_proposal_requires_independent_review",
+            })
+            if not dry_run:
+                snapshot = snapshot_root / f"{sequence:02d}.json"
+                _atomic_write_json(snapshot, receipt)
+                row["snapshot_path"] = str(snapshot)
+                row["snapshot_sha256"] = hashlib.sha256(snapshot.read_bytes()).hexdigest()
+                row["response_validated"] = receipt.get("response_validated", False)
             rows.append(row)
             if stop_on_failure and receipt.get("status") in {"failed", "blocked"}:
                 break
@@ -456,6 +476,8 @@ def run_supervised_workflow(
         "primary_floors": list(plan.primary_floors),
         "floor_sequence": list(plan.floor_sequence),
         "floors": rows,
+        "handoffs_delivered": max(0, len(rows) - 1),
+        "semantic_acceptance": "requires_independent_review",
         "canonical_promotion_authorized": False,
         "public_publish_authorized": False,
         "de_sporte_content_ingest_authorized": False,

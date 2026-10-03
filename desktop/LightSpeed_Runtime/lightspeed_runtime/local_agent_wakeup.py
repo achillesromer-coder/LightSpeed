@@ -89,7 +89,10 @@ FLOOR_DIRECTIVES = {
 
 
 def default_assimilation_source_root(root: Path) -> Path:
-    return Path(root.anchor) / "To be assimilated"
+    agent_home = _read_json(Path(root) / "config" / "agent_home.json")
+    environment = agent_home.get("environment") or {}
+    configured = str(environment.get("assimilation_source_root") or "").strip()
+    return Path(configured) if configured else Path(root.anchor) / "To be assimilated"
 
 
 def default_shell_root(root: Path) -> Path:
@@ -135,6 +138,12 @@ def build_local_agent_wakeup_contract(
     if not installed_models:
         installed_models = [str(item) for item in neo_local_runtime.get("available_models") or [] if item]
 
+    # Read the existing operator configuration, not a previous generated contract.
+    # Inventory paths are discovery hints; only explicitly bound text is model input.
+    agent_home = _read_json(root / "config" / "agent_home.json")
+    execution = agent_home.get("local_execution") or {}
+    source_context = execution.get("source_context", [])
+
     source_inventory = build_assimilation_source_inventory(source_root, max_entries=max_scan_entries)
     floors = _build_floor_wakeup_rows(
         root=root,
@@ -166,8 +175,11 @@ def build_local_agent_wakeup_contract(
         "shell_root": str(shell_root),
         "source_root": str(source_root),
         "source_root_exists": source_root.exists(),
+        "source_context": source_context,
         "policy": {
             "local_only": True,
+            "strict_response_contract": execution.get("strict_response_contract", True),
+            "require_source_context": execution.get("require_source_context", True),
             "max_concurrent_ollama_sessions": 1,
             "load_models_concurrently": False,
             "recursive_ingest_enabled": False,
