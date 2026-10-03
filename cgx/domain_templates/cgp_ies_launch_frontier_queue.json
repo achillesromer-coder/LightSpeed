@@ -463,9 +463,44 @@
         "empirical requirements are never synthetically closed"
       ],
       "evidence_class": "REPEATED_RUN_RECEIPT"
+    },
+    {
+      "task_id": "CGX-FRONTIER-002",
+      "phase": "CONTINUOUS_FRONTIER",
+      "title": "Provider notification reconciliation",
+      "owner": "Achilles",
+      "audit": "Merovingian",
+      "execution_class": "READ_ONLY",
+      "cascade_class": "C0",
+      "state": "ACTIVE_MONITOR / CURRENT_SWEEP_RECONCILED",
+      "depends_on": [],
+      "action": "Ingest provider/email notifications as secondary evidence, deduplicate by provider event/head, and reconcile against live provider state before opening, closing or reactivating defects.",
+      "done_when": [
+        "notification classified under provider_notification_evidence_contract",
+        "live provider readback obtained for consequential state changes",
+        "stale failures retained as provenance rather than active defects",
+        "security/account events kept separate from code/runtime defects",
+        "Restricted mailbox/account identifiers excluded from public/source projections"
+      ],
+      "evidence_class": "SECONDARY_PROVIDER_NOTIFICATION_PLUS_LIVE_PROVIDER_READBACK",
+      "current_sweep": {
+        "date": "2026-10-04",
+        "mailbox_connection": "VERIFIED",
+        "historical_workflow_failure_notifications_reviewed": 51,
+        "live_defects_opened_from_mailbox": 0,
+        "reconciled": {
+          "merovingian_project_routing": "SUPERSEDED_BY_NEWER_PASS",
+          "lightspeed_surface_validation": "SUPERSEDED_BY_NEWER_PASS",
+          "mark_iii_multi_unit_screening": "SUPERSEDED_BY_EXACT_HEAD_PASS_AND_MERGE",
+          "digital_twin_type1_validation": "SUPERSEDED_BY_CURRENT_MAIN_PASS",
+          "emc2_governance_handoff": "CI_PASS / INTENTIONALLY_DRAFT_FOR_NON_CI_GATES"
+        },
+        "connector_security_event": "AUTHORIZED_RECONNECT / ACCOUNT_SECURITY_EVENT_ONLY",
+        "active_unrelated_launch_gate": "CGX-LAUNCH-005 durable child persistence/readback remains open"
+      }
     }
   ],
-  "last_reconciled": "2026-10-01",
+  "last_reconciled": "2026-10-04",
   "current_recovery_authority": {
     "state_id": "S92",
     "drive_id": "1ap1xHVQ0cDWeJDAVWxvY_VqMkSzwpG6i",
