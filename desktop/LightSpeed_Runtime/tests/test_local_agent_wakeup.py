@@ -113,3 +113,37 @@ def test_default_shell_root_uses_agent_home_operator_authority(tmp_path: Path) -
 
     assert Path(contract["shell_root"]) == canonical_app
     assert all(Path(item["floor_root"]).is_relative_to(canonical_app) for item in contract["floors"])
+
+
+def test_agent_home_configures_assimilation_root_and_grounding_policy(tmp_path: Path) -> None:
+    root = tmp_path / "LightSpeed" / "Core"
+    shell_root = tmp_path / "LightSpeed" / "App"
+    source_root = tmp_path / "Incoming"
+    source_root.mkdir(parents=True)
+    (source_root / "bound.md").write_text("bounded", encoding="utf-8")
+    config = root / "config" / "agent_home.json"
+    config.parent.mkdir(parents=True)
+    config.write_text(
+        json.dumps({
+            "environment": {
+                "desktop_shell_root": str(shell_root),
+                "assimilation_source_root": str(source_root),
+            },
+            "local_execution": {
+                "strict_response_contract": True,
+                "require_source_context": True,
+                "source_context": [{"path": str(source_root / "bound.md"), "sha256": "a" * 64}],
+            },
+        }),
+        encoding="utf-8",
+    )
+    contract = build_local_agent_wakeup_contract(
+        root,
+        realization_contract={"floors": []},
+        neo_local_runtime={"available_models": ["qwen2.5-coder:1.5b"]},
+        probe_ollama=False,
+    )
+    assert Path(contract["source_root"]) == source_root
+    assert contract["source_context"][0]["path"] == str(source_root / "bound.md")
+    assert contract["policy"]["strict_response_contract"] is True
+    assert contract["policy"]["require_source_context"] is True

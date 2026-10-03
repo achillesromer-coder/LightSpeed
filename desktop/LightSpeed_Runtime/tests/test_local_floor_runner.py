@@ -283,3 +283,64 @@ def test_canonical_loopback_endpoint_preserves_remote_hosts() -> None:
         _canonical_loopback_endpoint("https://models.example:11434")
         == "https://models.example:11434"
     )
+
+from lightspeed_runtime.local_floor_runner import (
+    _receipt_timestamp,
+    validate_grounded_response,
+    verified_source_context,
+)
+
+
+def test_verified_source_context_is_hash_bound_and_detects_change(tmp_path: Path) -> None:
+    source = tmp_path / "source.txt"
+    source.write_text("alpha grounded evidence", encoding="utf-8")
+    import hashlib
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    contract = {
+        "source_context": [{"path": str(source), "sha256": digest, "start_char": 0, "max_chars": 100}],
+        "policy": {"require_source_context": True},
+    }
+    evidence = verified_source_context(contract)
+    assert evidence[0]["sha256"] == digest
+    assert evidence[0]["excerpt"] == "alpha grounded evidence"
+    source.write_text("changed", encoding="utf-8")
+    try:
+        verified_source_context(contract)
+    except LocalFloorRunnerError as exc:
+        assert "bound source changed" in str(exc)
+    else:
+        raise AssertionError("hash mismatch must fail closed")
+
+
+def test_grounded_response_requires_exact_route_hash_and_quote(tmp_path: Path) -> None:
+    source = {
+        "path": str(tmp_path / "source.txt"),
+        "sha256": "a" * 64,
+        "excerpt": "LightSpeed proof token ALPHA-427.",
+    }
+    route = str(tmp_path / "receipt.json")
+    payload = {
+        "floor_summary": "The proof token is ALPHA-427.",
+        "safe_artifact_route": route,
+        "blocker": None,
+        "citations": [{"path": source["path"], "sha256": source["sha256"], "quote": "proof token ALPHA-427"}],
+    }
+    response = {"response": json.dumps(payload), "done": True}
+    assert validate_grounded_response(response, route, [source]) == []
+
+    payload["safe_artifact_route"] = str(tmp_path / "wrong.json")
+    payload["citations"][0]["quote"] = "invented quote"
+    errors = validate_grounded_response({"response": json.dumps(payload), "done": True}, route, [source])
+    assert "safe_artifact_route does not match the approved route" in errors
+    assert "citation is not present in the hash-bound excerpt" in errors
+
+
+def test_strict_request_schema_and_receipt_ids_are_bounded(tmp_path: Path) -> None:
+    contract_path = _contract(tmp_path)
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    contract["policy"]["strict_response_contract"] = True
+    floor = select_floor(contract, floor="Neo").floor
+    request = build_ollama_request(contract, floor, source_evidence=[])
+    assert request["format"]["type"] == "object"
+    assert "citations" in request["format"]["required"]
+    assert _receipt_timestamp() != _receipt_timestamp()
