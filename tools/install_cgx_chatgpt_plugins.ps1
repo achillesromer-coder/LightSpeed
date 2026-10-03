@@ -180,6 +180,13 @@ catch {
     throw
 }
 
+$SharedMcpInstaller = Join-Path $PSScriptRoot "install_cgx_shared_mcp.ps1"
+if (-not (Test-Path -LiteralPath $SharedMcpInstaller)) {
+    throw "Shared CGX MCP installer missing: $SharedMcpInstaller"
+}
+Write-Host "Verifying shared Cognigrex / LightSpeed MCP tool plane..."
+& $SharedMcpInstaller
+
 Write-Host ""
 Write-Host "Cognigrex chat plugin provisioning complete."
 Write-Host "User config: $UserConfig"

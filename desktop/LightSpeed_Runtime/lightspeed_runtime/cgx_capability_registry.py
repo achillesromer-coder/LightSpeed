@@ -6,6 +6,7 @@ from copy import deepcopy
 import json
 from pathlib import Path
 import re
+import unicodedata
 from typing import Any
 
 
@@ -91,6 +92,22 @@ def validate_selector_shortcalls(
             raise CapabilityRegistryError(f"unknown global route: {route_id}")
 
 
+def expand_route_dependencies(
+    route_ids: set[str], routes: dict[str, Any]
+) -> set[str]:
+    resolved: set[str] = set()
+    pending = list(route_ids)
+    while pending:
+        route_id = pending.pop()
+        if route_id in resolved:
+            continue
+        if route_id not in routes:
+            raise CapabilityRegistryError(f"capability dependency missing: {route_id}")
+        resolved.add(route_id)
+        pending.extend(str(item) for item in (routes[route_id].get("uses") or []))
+    return resolved
+
+
 def selector_profile(
     selector: str,
     *,
@@ -99,7 +116,9 @@ def selector_profile(
 ) -> dict[str, Any]:
     route_registry = routes or load_capability_routes()
     shortcall_registry = shortcalls or load_selector_shortcalls()
-    key = normalize_shortcall(selector.lstrip("@"))
+    selector_token = unicodedata.normalize("NFKD", str(selector or "").lstrip("@"))
+    selector_token = "".join(ch for ch in selector_token if not unicodedata.combining(ch))
+    key = normalize_shortcall(selector_token)
     profile = (shortcall_registry.get("selectors") or {}).get(key)
     if not isinstance(profile, dict):
         raise CapabilityRegistryError(f"unknown selector: {selector}")
@@ -107,6 +126,7 @@ def selector_profile(
     merged["selector"] = key
     merged["global_shortcalls"] = deepcopy(shortcall_registry.get("global") or {})
     referenced = set(merged["shortcalls"].values()) | set(merged["global_shortcalls"].values())
+    referenced = expand_route_dependencies(referenced, route_registry["routes"])
     merged["routes"] = {route_id: deepcopy(route_registry["routes"][route_id]) for route_id in sorted(referenced)}
     merged["gaps"] = deepcopy(route_registry.get("gaps") or [])
     merged["extension"] = deepcopy(route_registry.get("extension") or {})

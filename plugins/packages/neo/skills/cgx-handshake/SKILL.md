@@ -31,7 +31,7 @@ Use this skill whenever an Achilles, Neo, Athene, Raphael, Cognigrex, Römer-Gre
    - hard constraints,
    - requested output,
    - proof/assurance requirement.
-5. Resolve applicable domain/module/object and authority.
+5. Resolve applicable domain/module/object and authority. When a named current object/twin is present, use the shared `cgx.object_context` / `cgx_resolve_object` path so child-domain identity, Operations binding, source owner and representation boundary come from the same current lineage.
 6. Resolve live capabilities and skills.
 7. Run the minimum-sufficient-work decision before dispatch.
 8. Route to the smallest execution surface that can produce a valid answer or receipt.

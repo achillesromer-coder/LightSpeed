@@ -20,6 +20,7 @@ import uvicorn
 
 from lightspeed_runtime.corpus_test_orchestrator import CorpusTestPlanError, plan_cascade
 from lightspeed_runtime.cgx_conversion_planner import CGXConversionPlanError, compile_conversion_plan
+from lightspeed_runtime.cgx_object_context import CGXObjectContextError, resolve_object_context
 from lightspeed_runtime.project_artifact_store import stage_project_artifacts
 from lightspeed_runtime.owner_credentials import (
     CredentialAuthenticationFailed,
@@ -1536,7 +1537,35 @@ def create_app(root: Path | str) -> FastAPI:
                     "canonical_mutation": False,
                     "unsupported_structure": "Frontier",
                 },
+                "object_context": {
+                    "mode": "current_lineage_read_only",
+                    "endpoint": "/api/v1/object-context/{query}",
+                    "domains": ["romer", "eco"],
+                    "automatic_execution": False,
+                    "canonical_mutation": False,
+                    "authority_transfer": False,
+                },
                 "execution_boundary": "local queue, immutable named artifacts, receipts and review only; no public direct execution",
+            }
+        )
+
+    @app.get("/api/v1/object-context/{query}")
+    async def read_object_context(query: str, domain: str | None = None):
+        bounded_query = _bounded(query, maximum=160, required=True)
+        bounded_domain = _bounded(domain, maximum=32) if domain else None
+        try:
+            context = resolve_object_context(bounded_query, domain=bounded_domain)
+        except CGXObjectContextError as exc:
+            message = str(exc)
+            status_code = 409 if "ambiguous" in message.lower() else 404
+            raise HTTPException(status_code=status_code, detail=message) from exc
+        return JSONResponse(
+            {
+                "object_context": context,
+                "execution_performed": False,
+                "external_action_performed": False,
+                "canonical_mutation": False,
+                "authority_transfer": False,
             }
         )
 
