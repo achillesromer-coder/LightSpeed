@@ -1,0 +1,157 @@
+{
+  "schema": "CGX-3D-SOURCE-DISCOVERY-RECEIPT/0.1",
+  "receipt_id": "CGX-3D-INTAKE-DISCOVERY-2026-10-03",
+  "status": "DISCOVERY_VERIFIED / R0_R1_CANDIDATES_IDENTIFIED / R2_MAPPING_HELD / LOCAL_CURRENT_MAIN_EXECUTION_PENDING",
+  "recorded_at": "2026-10-03T18:41:00+10:00",
+  "source_control": {
+    "repository": "achillesromer-coder/LightSpeed",
+    "base_main_sha": "46ee9330ce2b6a487fcc030bfcbcdaca47727661",
+    "branch": "cgx/3d-intake-handoff-20261003"
+  },
+  "authority": {
+    "recovery_state": "S92",
+    "recovery_drive_id": "1ap1xHVQ0cDWeJDAVWxvY_VqMkSzwpG6i",
+    "romer_owner_workbook_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "native_source_rule": "Local owner CAD remains source-native authority. Derived semantic/mesh/view state cannot self-promote.",
+    "canonical_mutation": false,
+    "source_files_mutated": false
+  },
+  "local_source_inventory": {
+    "host": "BouwerBase",
+    "root": "3D Objects",
+    "path_privacy": "machine-local prefix intentionally omitted",
+    "counts": {
+      "fcstd_current": 26,
+      "fcbak_history": 25,
+      "obj": 4,
+      "glb": 1
+    },
+    "notes": [
+      "Current FCStd corpus is approximately 222 MB.",
+      "Historical FCBak revisions are retained as DBR/revision evidence, not competing semantic masters.",
+      "Mark1P.FCStd and Falcon Heavy Launch Tower.FCStd were observed as zero-object FreeCAD containers and must not be interpreted as valid geometry."
+    ]
+  },
+  "verified_candidates": [
+    {
+      "family": "WatchTower",
+      "current_authoritative_source": {
+        "relative_path": "First Run/InterSol - Watch Tower In Site Footprint.FCStd",
+        "sha256": "c476f9f2f9946ab8e99e58dd399aa7b02bac630c5d9336b80ef66f5f2a397321"
+      },
+      "derived_candidate": {
+        "relative_path": "WatchTower.FCStd",
+        "sha256": "625c877e75a1eed562a385ed1dc0e812d548b0bbbe3203ae3878b726423f349e"
+      },
+      "comparison": {
+        "source_object_count": 117,
+        "derived_object_count": 114,
+        "filtered_dimension_changes": 0,
+        "removed_helper_objects": ["Polygon", "Circle", "Circle001"],
+        "body_label_change": "Launch Tower -> Watch Tower Concrete",
+        "placement_change_observed": true,
+        "classification": "DERIVED_FROM / CONFIGURATION_VIEW_CANDIDATE",
+        "authority_transition": false
+      }
+    },
+    {
+      "family": "Mark III",
+      "relative_path": "First Run/Mark III.FCStd",
+      "sha256": "4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b",
+      "structure": {
+        "object_data_records": 474,
+        "partdesign_bodies": 17,
+        "pads": 90,
+        "sketches": 49,
+        "assemblies": 22
+      },
+      "semantic_labels_observed": [
+        "Skeletion/Frame",
+        "N Chamber",
+        "E Chamber",
+        "W Chamber",
+        "Arm Attachment",
+        "Battery Module",
+        "Sensor Module",
+        "Communications Module",
+        "Energy Conversion/Dampening",
+        "RFS Module"
+      ],
+      "classification": "NEW_SOURCE_REVISION_CANDIDATE",
+      "frontier": "The file does not independently prove three appendage instances or close exact interlock/Mark V mating CAD/ICD."
+    },
+    {
+      "family": "Payload Capsule",
+      "relative_path": "First Run/Payload Capsule.FCStd",
+      "sha256": "9606755c4fff3d94ade1ed61ee41808e9a05237b6bdd857b09dcb067d6e0b61c",
+      "historical_comparison": {
+        "filtered_property_changes": 9,
+        "examples": [
+          "Pad020.Length 20 -> 40",
+          "Pad017.Length 20 -> 30",
+          "Pad021.TaperAngle -80 -> -56",
+          "Pad015.Length 20 -> 30",
+          "Pad020.TaperAngle -66 -> -56",
+          "Pad021.Length 20 -> 75",
+          "Pad018.Length 20 -> 30",
+          "Pad019.Length 20 -> 40"
+        ],
+        "classification": "DBR_DELTA_FIXTURE",
+        "rule": "Preserve stable semantic identity; store old-to-new value transitions with exact source revision/provenance rather than create a duplicate semantic master."
+      }
+    }
+  ],
+  "representation_checks": {
+    "obj": [
+      {"name": "Mark III Simple.obj", "vertices": 40482, "faces": 80980, "raw_extent": [85.709, 74.226, 175.0]},
+      {"name": "Luke Simple.obj", "vertices": 60380, "faces": 120760, "raw_extent_approx": [31000.0, 31500.0, 4000.0]},
+      {"name": "Base Plate (Meshed).obj", "vertices": 24898, "faces": 49812, "raw_extent": [290.019, 294.499, 13.0]},
+      {"name": "Top Casing (Meshed).obj", "vertices": 90850, "faces": 181728, "raw_extent": [285.317, 291.519, 55.0]}
+    ],
+    "glb": {
+      "name": "Mag-Lev Comp..glb",
+      "gltf_version": 2,
+      "scenes": 1,
+      "nodes": 45,
+      "meshes": 44,
+      "materials": 9
+    },
+    "authority_limit": "Mesh/GLB structure and raw coordinate envelopes are bounded observations. Engineering units, materials, function and certification are not inferred from representation files alone."
+  },
+  "current_cgx_conformance": {
+    "implemented_adapters_confirmed_in_current_main": [
+      "freecad-fcstd-stdlib-v0.1",
+      "step-part21-stdlib-v0.1",
+      "obj-mesh-stdlib-v0.1",
+      "stl-mesh-stdlib-v0.1",
+      "gltf-stdlib-v0.1"
+    ],
+    "pipeline": ["R0_EXACT", "R1_SEMANTIC_REVERSIBLE", "R2_RECONSTRUCTED", "R3_GENERATIVE"],
+    "intake_default": "never-on-drop",
+    "r0_r1_assessment": "SUPPORTED_BY_CURRENT_CONTRACT",
+    "r2_assessment": "HOLD_MAPPING_REQUIRED for newly discovered FCStd sources until owning semantic mappings are explicitly reviewed.",
+    "r3_assessment": "Generated representations remain non-canonical."
+  },
+  "execution_boundary": {
+    "independent_remote_structure_and_hash_discovery": "PASS",
+    "current_main_project_cgx_source_cli_on_real_local_files": "NOT_EXECUTED",
+    "reason": "BouwerBase disconnected after discovery; older installed LightSpeed worktrees observed before disconnect did not contain the current conformance CLI.",
+    "nonclaim": "This receipt does not claim a current-main CLI conformance PASS against the local files."
+  },
+  "handoff": {
+    "route": "existing intake-to-canonical workflow / CGX-OBJ-001 lineage",
+    "owner": "Romer",
+    "audit": "Achilles",
+    "next_actions": [
+      "When BouwerBase reconnects, create or reuse an isolated current-main worktree without overwriting the installed runtime.",
+      "Run scripts/project_cgx_source.py --with-plan against WatchTower authoritative source and derived WatchTower candidate first.",
+      "Run the same conformance path for SEQLD/M1, Mark III, Payload Capsule, Mark V, Luke IV and Free Flow families.",
+      "Compare adapter output to this independent discovery receipt.",
+      "Add only demonstrated FCStd-to-Romer R2 mappings; unresolved identity/topology/interface claims remain Frontier.",
+      "Do not copy native CAD into Git merely to perform semantic intake."
+    ]
+  },
+  "evidence_ceiling": "Digital source identity/structure/revision evidence only. No physical, manufacturing, structural, performance, certification, regulatory or deployment claim is promoted.",
+  "architecture_impact": "No new master or parallel roadmap. One native source may have multiple projections/configurations; DBR records accepted state transitions; R3 representations remain derivative.",
+  "release_state": "INTERNAL_HANDOFF_ONLY"
+}
