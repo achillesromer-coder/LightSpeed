@@ -75,6 +75,7 @@ def main():
         first_file_conversion=load("first_file_conversion_registry.json")
         child_successor_receipt=load("s92_domain_children_successor_validation_receipt_2026-10-01.json")
         first_file_migration_receipt=load("s92_first_file_migration_receipt_2026-10-01.json")
+        child_persistence_verification=load("s92_domain_children_persistence_verification_2026-10-04.json")
         source_envelope=load("source_envelope_contract.json")
         source_adapters=load("source_format_adapter_registry.json")
         provider_notifications=load("provider_notification_evidence_contract.json")
@@ -355,6 +356,37 @@ def main():
             failures.append(f"S92 first-file migration verifier receipt not PASS: {domain}")
     if (migration_outputs.get("lightspeed") or {}).get("scientific_state_duplicated") is not False:
         failures.append("S92 LightSpeed migration must not duplicate EMASSC scientific state")
+
+    if child_persistence_verification.get("schema")!="CGX-S92-DOMAIN-CHILD-PERSISTENCE-VERIFICATION/0.1":
+        failures.append("S92 child persistence verification schema mismatch")
+    if "FRESH_ACCEPTANCE_OPEN" not in child_persistence_verification.get("status",""):
+        failures.append("S92 child persistence verification must remain pre-canonical pending fresh acceptance")
+    durable=child_persistence_verification.get("durable_package") or {}
+    if durable.get("drive_id")!="1zb36J4ZSd8Rt4BB_6vkx3X_eSWErFt0B":
+        failures.append("S92 child persistence durable Drive ID mismatch")
+    if durable.get("sha256")!="36349987fa34dc0f85e26c9658fbf8e3814010f7cc9f536b836920eab239a90d":
+        failures.append("S92 child persistence bundle hash mismatch")
+    if durable.get("refetch_sha256_match") is not True:
+        failures.append("S92 child persistence lacks direct Drive package readback match")
+    if (child_persistence_verification.get("authority") or {}).get("promotion_performed") is not False:
+        failures.append("S92 child persistence receipt must not self-promote child authority")
+    persisted_outputs=child_persistence_verification.get("outputs") or {}
+    expected_persisted={
+        "romer":("cgx:domain:romer","84cc84915661fec188d578eca1315f6e943f828424d4d54b9877e18903ac277f",96),
+        "eco":("cgx:domain:eco","d645fb3acb105379c3fc9dc2f263aa6bb49c78236929c7a2fca9fec998170937",103),
+        "emassc":("cgx:domain:emassc","167dbfccae5fd6bfa877eb3150ac4423b2cfc82970e38bc457ed116c126983f5",98),
+        "lightspeed":("cgx:domain:lightspeed","bd33c82b2c7f3f324b6e47f037ecf11d8b4353aedeebfd62b0f5df3c686d5bd0",67),
+    }
+    for domain,(semantic_id,sha256,tracked) in expected_persisted.items():
+        output=persisted_outputs.get(domain) or {}
+        if output.get("semantic_object_id")!=semantic_id:
+            failures.append(f"S92 persisted semantic identity mismatch: {domain}")
+        if output.get("sha256")!=sha256:
+            failures.append(f"S92 persisted carrier hash mismatch: {domain}")
+        if output.get("tracked_objects")!=tracked:
+            failures.append(f"S92 persisted tracked-object count mismatch: {domain}")
+        if output.get("verify")!="PASS" or output.get("packed_reopen_verify")!="PASS":
+            failures.append(f"S92 persisted verifier receipt not PASS: {domain}")
 
     shared=domains.get("shared_contracts",{})
     for key,name in shared.items():
