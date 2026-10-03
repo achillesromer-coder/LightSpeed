@@ -48,7 +48,7 @@ jobs:
       - name: Validate CGX templates
         run: python scripts/validate_cgx_domain_templates.py
       - name: Validate provider notification evidence classifier
-        run: python -m pytest -q tests/test_provider_notification_evidence.py
+        run: python tests/test_provider_notification_evidence.py
       - name: Validate CGP-IES extension fixtures
         run: python scripts/validate_cgp_ies_extension.py
       - name: Validate CGP-IES operational queue
