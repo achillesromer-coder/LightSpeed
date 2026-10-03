@@ -1,0 +1,4 @@
+-r requirements-core.txt
+# LS GO / local API bridge
+fastapi==0.121.2
+uvicorn==0.38.0

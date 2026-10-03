@@ -1,0 +1,2 @@
+# LightSpeed Runtime core — proven host baseline 2026-10-03
+pydantic==2.12.4
