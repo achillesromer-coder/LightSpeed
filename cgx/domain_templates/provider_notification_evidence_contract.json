@@ -1,0 +1,99 @@
+{
+  "schema": "CGX-PROVIDER-NOTIFICATION-EVIDENCE/0.1",
+  "status": "PUBLIC_SAFE_CONTRACT",
+  "source_target": "Cognigrex.cgx:/evidence/provider-notifications",
+  "purpose": "Convert email/provider notifications into bounded evidence inputs without allowing stale or secondary notifications to become canonical defect state by themselves.",
+  "evidence_precedence": [
+    "LIVE_PROVIDER_READBACK",
+    "SIGNED_OR_HASHED_PROVIDER_ARTIFACT",
+    "EMAIL_OR_NOTIFICATION",
+    "HUMAN_NOTE"
+  ],
+  "notification_classes": [
+    "WORKFLOW_FAILURE",
+    "WORKFLOW_SUCCESS",
+    "MERGE_OR_CLOSE",
+    "PERMISSION_OR_QUOTA",
+    "CONNECTOR_SECURITY",
+    "INFORMATIONAL"
+  ],
+  "dispositions": [
+    "OBSERVED_UNVERIFIED",
+    "PROVIDER_CONFIRMED_ACTIVE",
+    "PROVIDER_CONFIRMED_RESOLVED",
+    "SUPERSEDED_BY_NEWER_PASS",
+    "HISTORICAL_PROVENANCE",
+    "SECURITY_REVIEW_REQUIRED",
+    "AUTHORIZED_SECURITY_EVENT",
+    "INFORMATIONAL"
+  ],
+  "invariants": [
+    "email-notification-alone-never-closes-or-promotes-canonical-defect-state",
+    "workflow-failure-email-may-open-only-an-unverified-open-item-until-live-provider-readback",
+    "newer-success-on-the-same-or-successor-head-supersedes-stale-failure-notification",
+    "historical-failure-notifications-remain-provenance-after-resolution",
+    "merge-close-and-deployment-notifications-require-provider-readback-before-canonical-state-change",
+    "permission-quota-auth-and-security-events-remain-separate-from-code-correctness",
+    "connector-security-alert-is-not-auto-dismissed; user-intent-or-account-security-readback-is-required",
+    "provider-live-state-controls-over-email-ordering-or-mailbox-unread-state",
+    "notification-source-cannot-manufacture-authority-or-evidence"
+  ],
+  "dedupe_key": [
+    "provider",
+    "resource",
+    "event_type",
+    "provider_event_id_or_run_id",
+    "head_or_revision"
+  ],
+  "live_reconciliation": {
+    "workflow_failure": {
+      "if_later_success_on_same_or_successor_head": "SUPERSEDED_BY_NEWER_PASS",
+      "if_exact_or_current_provider_state_still_failed": "PROVIDER_CONFIRMED_ACTIVE",
+      "if_provider_state_unavailable": "OBSERVED_UNVERIFIED"
+    },
+    "merge_or_close": {
+      "if_provider_confirms_state": "PROVIDER_CONFIRMED_RESOLVED",
+      "otherwise": "OBSERVED_UNVERIFIED"
+    },
+    "permission_or_quota": {
+      "if_live_service_healthy": "PROVIDER_CONFIRMED_RESOLVED",
+      "if_live_service_still_blocked": "PROVIDER_CONFIRMED_ACTIVE",
+      "otherwise": "OBSERVED_UNVERIFIED"
+    },
+    "connector_security": {
+      "if_user_authorized": "AUTHORIZED_SECURITY_EVENT",
+      "if_not_authorized_or_unknown": "SECURITY_REVIEW_REQUIRED"
+    }
+  },
+  "release_boundary": {
+    "public_safe_fields": [
+      "provider",
+      "resource_class",
+      "event_type",
+      "provider_event_id_or_run_id",
+      "head_or_revision",
+      "disposition",
+      "provider_readback_state",
+      "observed_at"
+    ],
+    "restricted_fields": [
+      "account_email",
+      "mail_message_id",
+      "mail_thread_id",
+      "display_url",
+      "security_link",
+      "full_email_body"
+    ],
+    "rule": "Public/source receipts store only public-safe event metadata. Account identity and message-level references remain Internal/Restricted."
+  },
+  "cgx_effect": {
+    "OBSERVED_UNVERIFIED": "May create/narrow an OPEN evidence item only.",
+    "PROVIDER_CONFIRMED_ACTIVE": "May open or retain a DEFECT/RECOVER item with provider proof.",
+    "PROVIDER_CONFIRMED_RESOLVED": "May close provider-state defect if exact provider evidence and lineage match.",
+    "SUPERSEDED_BY_NEWER_PASS": "Keep original notification as historical provenance; do not reactivate the old defect.",
+    "HISTORICAL_PROVENANCE": "No live defect effect.",
+    "SECURITY_REVIEW_REQUIRED": "Open security/account review; do not conflate with application-code defect.",
+    "AUTHORIZED_SECURITY_EVENT": "Record account/connector authorization as expected security event.",
+    "INFORMATIONAL": "No canonical defect effect."
+  }
+}

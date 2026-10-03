@@ -9,6 +9,8 @@ on:
       - "scripts/validate_cgp_ies_extension.py"
       - "scripts/validate_cgp_ies_launch_frontier.py"
       - "scripts/validate_cgx_domain_templates.py"
+      - "scripts/classify_provider_notification.py"
+      - "tests/test_provider_notification_evidence.py"
       - "scripts/validate_cgx_execution_lease.py"
       - "scripts/build_cgp_ies_parent_candidate.py"
       - "scripts/build_cgx_domain_children.py"
@@ -45,6 +47,8 @@ jobs:
           python-version: "3.12"
       - name: Validate CGX templates
         run: python scripts/validate_cgx_domain_templates.py
+      - name: Validate provider notification evidence classifier
+        run: python tests/test_provider_notification_evidence.py
       - name: Validate CGP-IES extension fixtures
         run: python scripts/validate_cgp_ies_extension.py
       - name: Validate CGP-IES operational queue

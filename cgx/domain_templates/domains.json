@@ -142,7 +142,8 @@
     "residency",
     "licence",
     "custodial-extension",
-    "assurance"
+    "assurance",
+    "provider-notifications"
   ],
   "credential_policy": "secret-reference-only",
   "parent_filespace": {
@@ -163,7 +164,8 @@
       "file-conversion",
       "stable-domain-identity",
       "source-envelope",
-      "format-adapters"
+      "format-adapters",
+      "provider-notification-evidence"
     ]
   },
   "shared_contracts": {
@@ -209,7 +211,8 @@
     "s92_child_successor_validation": "s92_domain_children_successor_validation_receipt_2026-10-01.json",
     "s92_first_file_migration": "s92_first_file_migration_receipt_2026-10-01.json",
     "source_envelope": "source_envelope_contract.json",
-    "source_format_adapters": "source_format_adapter_registry.json"
+    "source_format_adapters": "source_format_adapter_registry.json",
+    "provider_notification_evidence": "provider_notification_evidence_contract.json"
   },
   "generation_policy": {
     "source_authority": "latest-durably-observed-Recovery-authority-only",
