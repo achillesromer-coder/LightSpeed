@@ -96,7 +96,7 @@ def test_dry_run_writes_neo_receipt_without_http(tmp_path: Path) -> None:
     receipt_path = Path(receipt["receipt_path"])
     assert receipt["status"] == "dry_run"
     assert receipt["dry_run"] is True
-    assert receipt["request_overrides"] == {"stream": False, "think": False, "num_predict": 512}
+    assert receipt["request_overrides"] == {"stream": False, "think": False, "num_predict": 512, "num_ctx": 8192}
     assert "Z+2_Neo" in str(receipt_path)
     assert receipt_path.exists()
 
@@ -344,3 +344,28 @@ def test_strict_request_schema_and_receipt_ids_are_bounded(tmp_path: Path) -> No
     assert request["format"]["type"] == "object"
     assert "citations" in request["format"]["required"]
     assert _receipt_timestamp() != _receipt_timestamp()
+
+
+def test_grounded_request_keeps_context_and_source_identities_bound(tmp_path: Path) -> None:
+    contract = json.loads(_contract(tmp_path).read_text(encoding="utf-8"))
+    contract["policy"]["strict_response_contract"] = True
+    floor = select_floor(contract, floor="Neo").floor
+    sources = [
+        {"path": str(tmp_path / "parent.json"), "sha256": "a" * 64, "excerpt": "parent promoted"},
+        {"path": str(tmp_path / "child.json"), "sha256": "b" * 64, "excerpt": "persistence open"},
+    ]
+    request = build_ollama_request(contract, floor, source_evidence=sources)
+    assert request["options"]["num_ctx"] == 8192
+    props = request["format"]["properties"]
+    route = props["safe_artifact_route"]["enum"][0]
+    assert route in request["prompt"]
+    alternatives = props["citations"]["items"]["anyOf"]
+    assert [(a["properties"]["path"]["enum"][0], a["properties"]["sha256"]["enum"][0])
+            for a in alternatives] == [(s["path"], s["sha256"]) for s in sources]
+    # Constrained generation does not replace the independent citation check.
+    swapped = {"floor_summary": "review", "safe_artifact_route": route, "blocker": None,
+               "citations": [{"path": sources[0]["path"], "sha256": sources[1]["sha256"],
+                              "quote": sources[0]["excerpt"]}]}
+    assert validate_grounded_response({"response": json.dumps(swapped), "done": True}, route, sources)
+    contract["policy"]["receipt_prompt_overrides"] = {"num_ctx": 999999}
+    assert build_ollama_request(contract, floor, source_evidence=sources)["options"]["num_ctx"] == 8192

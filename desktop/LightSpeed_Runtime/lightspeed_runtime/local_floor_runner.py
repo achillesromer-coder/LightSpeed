@@ -233,21 +233,25 @@ def build_ollama_request(
 
     bounded_num_predict = int(num_predict if num_predict is not None else overrides.get("num_predict", DEFAULT_NUM_PREDICT))
     bounded_num_predict = max(1, min(bounded_num_predict, MAX_NUM_PREDICT))
+    # Source excerpts and handoffs exceed Ollama's small implicit context on
+    # some hosts. Bound context explicitly so the task and route remain visible.
+    num_ctx = max(2048, min(_int_setting(overrides, "num_ctx", 8192), 8192))
+    sources = verified_source_context(contract) if source_evidence is None else source_evidence
 
     request = {
         "model": str(conn.get("model") or ""),
-        "prompt": build_floor_prompt(contract, floor, source_evidence=source_evidence),
+        "prompt": build_floor_prompt(contract, floor, source_evidence=sources),
         "stream": False,
         "think": False,
         "keep_alive": 0,
-        "options": {"num_predict": bounded_num_predict},
+        "options": {"num_predict": bounded_num_predict, "num_ctx": num_ctx},
     }
     if policy.get("strict_response_contract"):
         request["format"] = {
             "type": "object",
             "properties": {
                 "floor_summary": {"type": "string"},
-                "safe_artifact_route": {"type": "string"},
+                "safe_artifact_route": {"type": "string", "enum": [str(resolve_receipt_path(contract, floor))]},
                 "blocker": {"type": ["string", "null"]},
                 "citations": {"type": "array", "items": {
                     "type": "object", "properties": {
@@ -258,6 +262,18 @@ def build_ollama_request(
             },
             "required": ["floor_summary", "safe_artifact_route", "blocker", "citations"],
         }
+        if sources:
+            # The host owns source identities. The model selects evidence and
+            # quotes it; it must not invent paths or mix a path with another hash.
+            request["format"]["properties"]["citations"]["minItems"] = 1
+            request["format"]["properties"]["citations"]["items"] = {"anyOf": [
+                {"type": "object", "properties": {
+                    "path": {"type": "string", "enum": [source["path"]]},
+                    "sha256": {"type": "string", "enum": [source["sha256"]]},
+                    "quote": {"type": "string"},
+                }, "required": ["path", "sha256", "quote"], "additionalProperties": False}
+                for source in sources
+            ]}
     return request
 
 
@@ -430,6 +446,7 @@ def build_receipt(
             "stream": request_body.get("stream"),
             "think": request_body.get("think"),
             "num_predict": (request_body.get("options") or {}).get("num_predict"),
+            "num_ctx": (request_body.get("options") or {}).get("num_ctx"),
         },
         "prompt_sha256": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
         "prompt_preview": prompt[:600],
