@@ -114,8 +114,9 @@
         "units": "science.query",
         "query": "science.query",
         "cad": "cad.freecad",
-        "femm": "physics.femm",
-        "bom": "cad.freecad.bom"
+        "femm": "physics.femm.probe",
+        "bom": "cad.freecad.bom",
+        "gmat": "science.gmat.probe"
       }
     },
     "cognigrex": {
@@ -165,7 +166,9 @@
         "sweep": "science.rfs_emff_sweep",
         "route": "cgx.plan_query",
         "cad": "cad.freecad",
-        "bom": "cad.freecad.bom"
+        "bom": "cad.freecad.bom",
+        "gmat": "science.gmat.probe",
+        "mpl": "assurance.mpl.probe"
       }
     },
     "eco-grex": {

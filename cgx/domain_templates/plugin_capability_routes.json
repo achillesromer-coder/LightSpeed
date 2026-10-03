@@ -328,14 +328,35 @@
       "ro": true,
       "handler": "lightspeed_runtime.cgx_object_context:resolve_object_context",
       "limitation": "Read-only resolution of current object/twin lineage into child-domain identity, Operations binding, source owner and representation boundary; no object creation or authority promotion."
+    },
+    "science.gmat.probe": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.simulation_capability_probe:probe_gmat",
+      "limitation": "Probe only. No GMAT execution is exposed unless a verified GmatConsole executable and typed corpus packet are present."
+    },
+    "physics.femm.probe": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.simulation_capability_probe:probe_femm",
+      "limitation": "Probe only. FEMM solver execution remains unavailable until executable/model binding and typed adapter are proven."
+    },
+    "assurance.mpl.probe": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.simulation_capability_probe:probe_mpl",
+      "limitation": "Probe only. MPL remains bounded insurance/financial consequence screening and is not hazard or safety assurance."
     }
   },
   "gaps": [
     {
       "id": "femm-adapter",
-      "state": "missing",
+      "state": "probe_available_solver_missing",
       "priority": "high",
-      "note": "Add only after verified local installation/model contract."
+      "note": "Read-only environment probe is available; solver adapter remains blocked until executable/model contract is verified."
     },
     {
       "id": "eco-deterministic-engine",
@@ -384,7 +405,10 @@
       "cgx_run_local_work",
       "cgx_freecad_probe",
       "cgx_freecad_inspect",
-      "cgx_freecad_bom"
+      "cgx_freecad_bom",
+      "cgx_gmat_probe",
+      "cgx_femm_probe",
+      "cgx_mpl_probe"
     ],
     "execution_boundary": {
       "generic_shell": false,
