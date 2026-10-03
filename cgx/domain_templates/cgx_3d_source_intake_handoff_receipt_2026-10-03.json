@@ -1,0 +1,162 @@
+{
+  "schema": "CGX-3D-SOURCE-INTAKE-HANDOFF/0.1",
+  "status": "R0_R1_EVIDENCE_READY / R2_MAPPING_OPEN / LOCAL_RUNTIME_VERIFY_REQUIRED",
+  "handoff_at": "2026-10-03T18:41:00+10:00",
+  "source_root": "C:\\Users\\acc\\3D Objects",
+  "source_mode": "read-only discovery and independent structural extraction; no source CAD mutation",
+  "repository": {
+    "repository_full_name": "achillesromer-coder/LightSpeed",
+    "baseline_head": "46ee9330ce2b6a487fcc030bfcbcdaca47727661",
+    "branch": "cgx/3d-intake-handoff-20261003",
+    "native_preserving_contract": "CGX-FILE-CONVERSION-CONTRACT/0.1",
+    "source_envelope_contract": "CGX-SOURCE-ENVELOPE/0.1"
+  },
+  "inventory_summary": {
+    "fcstd_count": 26,
+    "fcbak_count": 25,
+    "obj_count": 4,
+    "glb_count": 1,
+    "current_fcstd_approx_mb": 221.4,
+    "historical_fcbak_approx_mb": 211.8
+  },
+  "verified_sources": [
+    {
+      "source_name": "First Run\\InterSol - Watch Tower In Site Footprint.FCStd",
+      "sha256": "c476f9f2f9946ab8e99e58dd399aa7b02bac630c5d9336b80ef66f5f2a397321",
+      "authority_state": "existing Type1 WT-001 source-locked geometry authority"
+    },
+    {
+      "source_name": "WatchTower.FCStd",
+      "sha256": "625c877e75a1eed562a385ed1dc0e812d548b0bbbe3203ae3878b726423f349e",
+      "authority_state": "candidate derived/core-tower representation; not an authority replacement"
+    },
+    {
+      "source_name": "First Run\\Mark III.FCStd",
+      "sha256": "4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b",
+      "authority_state": "new source-revision candidate; R0/R1 admissible, R2/current-topology promotion held"
+    },
+    {
+      "source_name": "First Run\\Payload Capsule.FCStd",
+      "sha256": "9606755c4fff3d94ade1ed61ee41808e9a05237b6bdd857b09dcb067d6e0b61c",
+      "authority_state": "new source-revision candidate with compact historical parameter delta"
+    }
+  ],
+  "structural_findings": {
+    "mark_iii": {
+      "object_data_records": 474,
+      "partdesign_bodies": 17,
+      "pads": 90,
+      "sketches": 49,
+      "assemblies": 22,
+      "embedded_meshes": 1,
+      "named_components": [
+        "Skeletion/Frame",
+        "N Chamber",
+        "E Chamber",
+        "W Chamber",
+        "Arm Attachment",
+        "Battery Module",
+        "Sensor Module",
+        "Communications Module",
+        "Energy Conversion/Dampening",
+        "RFS Module"
+      ],
+      "boundary": "Arm Attachment is explicitly named, but bounded XML inspection did not independently prove three distinct appendage instances or the current interlock/Mark-V mating ICD."
+    },
+    "watchtower_comparison": {
+      "source_object_count": 117,
+      "standalone_object_count": 114,
+      "common_filtered_dimension_changes": 0,
+      "removed_objects": [
+        "Polygon",
+        "Circle",
+        "Circle001"
+      ],
+      "body_label_change": [
+        "Launch Tower",
+        "Watch Tower Concrete"
+      ],
+      "relation": "DERIVED_FROM candidate with configuration/placement qualifiers; do not create a second semantic master."
+    },
+    "payload_revision_probe": {
+      "changed_scalar_count": 9,
+      "examples": [
+        [
+          "Pad020.Length",
+          20,
+          40
+        ],
+        [
+          "Pad017.Length",
+          20,
+          30
+        ],
+        [
+          "Pad021.TaperAngle",
+          -80,
+          -56
+        ],
+        [
+          "Pad015.Length",
+          20,
+          30
+        ],
+        [
+          "Pad020.TaperAngle",
+          -66,
+          -56
+        ],
+        [
+          "Pad021.Length",
+          20,
+          75
+        ],
+        [
+          "Pad018.Length",
+          20,
+          30
+        ],
+        [
+          "Pad019.Length",
+          20,
+          40
+        ]
+      ],
+      "intended_cgx_behavior": "stable object identity + changed cells + DBR old-to-new receipt; no duplicate semantic master"
+    },
+    "empty_fcstd_containers": [
+      "First Run\\Mark1P.FCStd",
+      "First Run\\Falcon Heavy Launch Tower.FCStd"
+    ]
+  },
+  "adapter_alignment": {
+    "fcstd": "freecad-fcstd-stdlib-v0.1",
+    "obj": "obj-mesh-stdlib-v0.1",
+    "glb": "gltf-stdlib-v0.1",
+    "intake_rule": "R0 exact source identity -> R1 bounded structure -> R2 only through registered mapping/Resolve/DBR gates -> R3 representation only"
+  },
+  "local_runtime_state": {
+    "installed_surfaces": "older than current main; project_cgx_source.py not found in the previously enumerated consolidated runtime/worktrees",
+    "attempted_action": "fresh current-main worktree creation via existing linked Git worktree",
+    "result": "remote Desktop Commander transport timed out and BouwerBase went offline before completion state could be verified",
+    "safety_rule": "VERIFY path/branch/worktree state before retry; do not issue force/reset or duplicate worktree creation blindly"
+  },
+  "promotion_boundary": {
+    "canonical_mutation": false,
+    "physical_validation": false,
+    "geometry_authority_transfer": false,
+    "r2_semantic_promotion": false,
+    "public_release": false
+  },
+  "handoff": {
+    "owner_lane": "Neo intake/routing -> Römer semantic owner -> Achilles independent audit",
+    "next_actions": [
+      "Reconnect BouwerBase and verify whether C:\\LightSpeed_Consolidated\\_worktrees\\LightSpeed-cgx-3d-intake-2026-10-03 and local branch cgx/3d-intake-20261003 were created.",
+      "Run the current project_cgx_source.py conformance CLI against P0 WatchTower, then SEQLD, Mark III, Payload Capsule, Mark V, Luke IV and Free Flow without mutating native sources.",
+      "Compare current-adapter R0/R1 receipts against the independent extraction recorded here.",
+      "Create only the minimal FCStd-to-Römer R2 mapping needed for accepted objects/relations; unresolved topology, units, interfaces and engineering interpretation stay Frontier.",
+      "Record accepted semantic deltas in Resolve/NEW KNOWN + DBR and retain generated OBJ/GLB/views as representations only."
+    ],
+    "smallest_remaining_gate": "restore/verify local current-main runtime execution, then obtain exact R0/R1 conformance receipts before any R2 admission"
+  }
+}
