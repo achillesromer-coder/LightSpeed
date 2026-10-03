@@ -1,0 +1,28 @@
+{
+  "schema": "CGX-PHYSICAL-FIELD-RUN/0.1",
+  "execution_id": "CGX-PHY-20260921-BNE-03",
+  "status": "PREPARED",
+  "authority": {
+    "object_id": "cgx:phase-a:42d99b46c0d322f08b59b7b7",
+    "state_id": "S88",
+    "release": "v1.58",
+    "carrier_sha256": "e901bb175152eed0b1ceb9cf69fc464bc433e4a37d725c01343cea42151d356f",
+    "physical_contract": "CGX-PHYSICAL-CONFORMANCE/0.1",
+    "field_contract": "CGX-FIELD-CONFORMANCE/0.1"
+  },
+  "test_plane": "direct-non-loopback-device-to-device",
+  "control_plane": "drive-chat-coordination-only",
+  "nodes": {
+    "node-a": {"physical_device": "PENDING", "endpoint": "PENDING", "device_instance_id": "PENDING", "receipt": "PENDING"},
+    "node-b": {"physical_device": "PENDING", "endpoint": "PENDING", "device_instance_id": "PENDING", "receipt": "PENDING"}
+  },
+  "acceptance": {
+    "two_distinct_physical_devices": false,
+    "direct_test_plane_transport": false,
+    "signed_pair_validation": false,
+    "final_root_convergence": false,
+    "sync_two_device_field_receipt_pass": false,
+    "network_discovery_field_receipt_pass": false,
+    "windows_field_receipt_pass": false
+  }
+}
