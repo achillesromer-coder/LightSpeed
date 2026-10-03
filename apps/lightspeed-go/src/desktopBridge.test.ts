@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   COMMAND_SCHEMA,
   createCommandEnvelope,
+  objectContextApiPath,
   projectFileApiPath,
   remoteAccessPresentation,
   resolveDesktopOrigin,
@@ -85,6 +86,13 @@ describe("LS GO desktop command routing", () => {
     expect(() => createCommandEnvelope({ instruction: "Run a bounded health check" })).toThrow(
       "Desktop authority contract is not available",
     );
+  });
+
+  it("encodes current object-context lookup without creating a second registry route", () => {
+    expect(objectContextApiPath("M1 Elevated Bypass", "romer")).toBe(
+      "/api/v1/object-context/M1%20Elevated%20Bypass?domain=romer",
+    );
+    expect(() => objectContextApiPath("   " )).toThrow("object query is required");
   });
 
   it("encodes project file routes segment-by-segment", () => {

@@ -208,6 +208,44 @@ export interface LocalResultOpenResponse {
   boundary: string;
 }
 
+export type ObjectContextDomain = "romer" | "eco" | "emassc" | "lightspeed";
+
+export interface CGXObjectContext {
+  schema: "CGX-OBJECT-CONTEXT/0.1";
+  query: string;
+  resolved_twin_id: string;
+  semantic_domain: string;
+  domain_identity: {
+    semantic_object_id?: string | null;
+    filespace?: string | null;
+    namespace?: string | null;
+  };
+  semantic_resolution: {
+    state: "exact_semantic_object" | "family_bound_only";
+    semantic_object_id?: string | null;
+    operations_current_object_id?: string | null;
+    rule: string;
+  };
+  operations_binding: Record<string, unknown>;
+  canonical_owner: Record<string, unknown>;
+  source_name?: string | null;
+  family_state?: string | null;
+  representation: Record<string, unknown>;
+  geometry_authority?: string | null;
+  lineage: Record<string, unknown>;
+  evidence_boundary: string;
+  automatic_execution: false;
+  canonical_mutation: false;
+}
+
+export interface ObjectContextResponse {
+  object_context: CGXObjectContext;
+  execution_performed: false;
+  external_action_performed: false;
+  canonical_mutation: false;
+  authority_transfer: false;
+}
+
 export interface ReviewRecord {
   review_id: string;
   created_utc?: string;
@@ -277,6 +315,14 @@ export interface DesktopStatus {
     result_policy?: string;
     dependency_gate?: string;
     execution_performed_by_status?: boolean;
+  };
+  object_context?: {
+    mode?: "current_lineage_read_only";
+    endpoint?: string;
+    domains?: string[];
+    automatic_execution?: boolean;
+    canonical_mutation?: boolean;
+    authority_transfer?: boolean;
   };
   authority_contract?: AuthorityContract;
 }
@@ -523,6 +569,27 @@ const withTimeout = async <T>(url: string, init: RequestInit, timeoutMs = 3500):
 
 export const readDesktopStatus = (origin = DEFAULT_DESKTOP_ORIGIN): Promise<DesktopStatus> =>
   withTimeout<DesktopStatus>(`${origin}/api/v1/status`, { method: "GET" }, 10000);
+
+export const objectContextApiPath = (
+  query: string,
+  domain?: ObjectContextDomain,
+): string => {
+  const objectQuery = normalize(query, 160);
+  if (!objectQuery) throw new TypeError("object query is required");
+  const params = domain ? "?domain=" + encodeURIComponent(domain) : "";
+  return "/api/v1/object-context/" + encodeURIComponent(objectQuery) + params;
+};
+
+export const resolveDesktopObjectContext = (
+  query: string,
+  domain?: ObjectContextDomain,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<ObjectContextResponse> =>
+  withTimeout<ObjectContextResponse>(
+    origin + objectContextApiPath(query, domain),
+    { method: "GET" },
+    10000,
+  );
 
 export const loginDesktopOwner = (
   username: string,

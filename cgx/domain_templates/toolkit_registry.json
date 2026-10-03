@@ -103,11 +103,17 @@
       "binding": "host",
       "capabilities": [
         "cad",
-        "step",
         "fcstd",
         "geometry",
-        "bom"
-      ]
+        "object-tree",
+        "derived-bom",
+        "read-only-inspection"
+      ],
+      "state": "available_read_only",
+      "executable_ref": "host:user-home/Desktop/Programs/FreeCAD 1.0/bin/freecadcmd.exe",
+      "observed_version": "FreeCAD 1.0.2 Revision: 39319 (Git)",
+      "write_operations": "not_exposed",
+      "override_ref": "env:FREECAD_BIN"
     },
     {
       "id": "web",
