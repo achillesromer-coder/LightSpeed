@@ -11,6 +11,8 @@ Apply this before tests, simulations, sweeps, searches over large corpora, CAD j
 
 1. **Exact reusable result**
    - Does a current, valid receipt/result already cover the requested subject, variables, constraints, method, and proof standard?
+   - If a target node/root already has an exact verified content hash and size, reuse that payload; do not retransmit bytes.
+   - If a compatible compute receipt already binds the same capability, input-manifest hash, assumptions and proof standard, reuse it; do not recompute.
    - If yes: retrieve it. Do not rerun.
 
 2. **Reconciliation**

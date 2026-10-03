@@ -22,6 +22,9 @@ import {
   logoutDesktopOwner,
   openDesktopProjectFile,
   openDesktopResult,
+  nodeExchangePresentation,
+  planNodeCompute,
+  planNodeTransfer,
   readDesktopStatus,
   readPendingCommands,
   remoteAccessPresentation,
@@ -203,6 +206,54 @@ app.innerHTML = `
         <div class="flow"><span>Blocked</span><i>→</i><span>Ready</span><i>→</i><span>Underway</span><i>→</i><span>Partial</span><i>→</i><span>Complete</span></div>
         <p class="muted" id="cascade-boundary">Corpus supplies verified inputs and dependency lineage. Results remain unknown until receipted execution; downstream propagation waits for proof, verified readback and commit.</p>
       </article>
+
+      <article class="panel" id="node-exchange-panel">
+        <div class="panel-head">
+          <div><p class="eyebrow">CGX node exchange</p><h2 id="node-exchange-node">Checking node identity</h2></div>
+          <span class="badge" id="node-exchange-peer">Peer compute unproven</span>
+        </div>
+        <div class="two-column">
+          <div><strong>Transfer</strong><p class="muted" id="node-exchange-transfer">Checking content-addressed transport.</p></div>
+          <div><strong>Compute</strong><p class="muted" id="node-exchange-compute">Checking leased compute capability.</p></div>
+        </div>
+        <p class="muted" id="node-exchange-boundary">Carrier readback and compute capability are verified independently. Copying data never transfers authority.</p>
+
+        <div class="two-column">
+          <details>
+            <summary>Plan content transfer</summary>
+            <form id="node-transfer-form">
+              <label class="field field-wide"><span>Source reference</span><input id="node-transfer-source-ref" placeholder="cgx://… or provider reference" required></label>
+              <label class="field field-wide"><span>SHA-256</span><input id="node-transfer-sha" minlength="64" maxlength="64" required></label>
+              <div class="form-grid">
+                <label class="field"><span>Bytes</span><input id="node-transfer-bytes" type="number" min="0" required></label>
+                <label class="field"><span>File name</span><input id="node-transfer-file" required></label>
+                <label class="field"><span>Source node</span><input id="node-transfer-source-node" value="bouwerbase" required></label>
+                <label class="field"><span>Target node</span><input id="node-transfer-target-node" required></label>
+                <label class="field"><span>Source root</span><input id="node-transfer-source-root" value="local-source" required></label>
+                <label class="field"><span>Target root</span><input id="node-transfer-target-root" value="node-staging" required></label>
+              </div>
+              <button class="primary" type="submit">Plan transfer</button>
+              <div id="node-transfer-result" class="result" aria-live="polite"></div>
+            </form>
+          </details>
+
+          <details>
+            <summary>Plan delegated compute</summary>
+            <form id="node-compute-form">
+              <label class="field field-wide"><span>Instruction</span><textarea id="node-compute-instruction" rows="4" required></textarea></label>
+              <div class="form-grid">
+                <label class="field"><span>Task ID</span><input id="node-compute-task" required></label>
+                <label class="field"><span>Run ID</span><input id="node-compute-run" required></label>
+                <label class="field"><span>Target node</span><input id="node-compute-target" value="bouwerbase" required></label>
+                <label class="field"><span>Capability</span><input id="node-compute-capability" value="cognigrex-supervised-workflow" required></label>
+                <label class="field field-wide"><span>Execution lease</span><input id="node-compute-lease" required></label>
+              </div>
+              <button class="primary" type="submit">Plan compute</button>
+              <div id="node-compute-result" class="result" aria-live="polite"></div>
+            </form>
+          </details>
+        </div>
+      </article>
     </section>
 
     <section class="view" id="view-sources">
@@ -329,6 +380,83 @@ byId<HTMLButtonElement>("owner-logout").addEventListener("click", async () => {
   byId<HTMLButtonElement>("owner-logout").hidden = true;
   byId("owner-auth-state").textContent = "Signed out";
   ownerAuthMessage("warn", "Owner session cleared from this page.");
+});
+
+const setNodePlanResult = (
+  id: "node-transfer-result" | "node-compute-result",
+  tone: "good" | "warn" | "bad",
+  message: string,
+): void => {
+  const mount = byId(id);
+  mount.dataset.tone = tone;
+  mount.textContent = message;
+};
+
+byId<HTMLFormElement>("node-transfer-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const session = requireOwnerSession();
+  if (!session) {
+    setNodePlanResult("node-transfer-result", "warn", "Owner sign-in is required to plan private transfer.");
+    return;
+  }
+  const sizeBytes = Number(byId<HTMLInputElement>("node-transfer-bytes").value);
+  try {
+    const response = await planNodeTransfer({
+      source_ref: byId<HTMLInputElement>("node-transfer-source-ref").value.trim(),
+      source_sha256: byId<HTMLInputElement>("node-transfer-sha").value.trim(),
+      size_bytes: sizeBytes,
+      file_name: byId<HTMLInputElement>("node-transfer-file").value.trim(),
+      source_node_id: byId<HTMLInputElement>("node-transfer-source-node").value.trim(),
+      target_node_id: byId<HTMLInputElement>("node-transfer-target-node").value.trim(),
+      source_root_id: byId<HTMLInputElement>("node-transfer-source-root").value.trim(),
+      target_root_id: byId<HTMLInputElement>("node-transfer-target-root").value.trim(),
+    }, session);
+    const transferId = String(response.plan?.transfer_id || "planned");
+    setNodePlanResult(
+      "node-transfer-result",
+      "good",
+      `${transferId} planned. DIGITAL_WRITE lease required; no bytes moved and no authority transferred.`,
+    );
+  } catch (error) {
+    setNodePlanResult(
+      "node-transfer-result",
+      "bad",
+      error instanceof Error ? error.message : "Transfer plan failed.",
+    );
+  }
+});
+
+byId<HTMLFormElement>("node-compute-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const session = requireOwnerSession();
+  if (!session) {
+    setNodePlanResult("node-compute-result", "warn", "Owner sign-in is required to plan private compute.");
+    return;
+  }
+  try {
+    const response = await planNodeCompute({
+      instruction: byId<HTMLTextAreaElement>("node-compute-instruction").value.trim(),
+      task_id: byId<HTMLInputElement>("node-compute-task").value.trim(),
+      run_id: byId<HTMLInputElement>("node-compute-run").value.trim(),
+      target_node_id: byId<HTMLInputElement>("node-compute-target").value.trim(),
+      capability_id: byId<HTMLInputElement>("node-compute-capability").value.trim(),
+      lease_ref: byId<HTMLInputElement>("node-compute-lease").value.trim(),
+      input_receipts: [],
+      resource_budget: { allow_heavy: false },
+    }, session);
+    const requestId = String(response.request?.request_id || "planned");
+    setNodePlanResult(
+      "node-compute-result",
+      "good",
+      `${requestId} planned. COMPUTE_ONLY lease must validate before the existing runtime executes anything.`,
+    );
+  } catch (error) {
+    setNodePlanResult(
+      "node-compute-result",
+      "bad",
+      error instanceof Error ? error.message : "Compute plan failed.",
+    );
+  }
 });
 
 const renderRoute = (): void => {
@@ -662,6 +790,24 @@ const refreshDesktop = async (): Promise<void> => {
       ? `Results unknown until execution · downstream gate: ${cascade.dependency_gate}.`
       : "Corpus inputs and dependency receipts remain required before governed execution.";
 
+    const nodeExchange = status.node_exchange;
+    const nodePresentation = nodeExchangePresentation(nodeExchange);
+    byId("node-exchange-node").textContent = nodeExchange?.node_id
+      ? `Node ${nodeExchange.node_id}`
+      : "Node identity unavailable";
+    byId("node-exchange-transfer").textContent = nodePresentation.transfer;
+    byId("node-exchange-compute").textContent = nodePresentation.compute;
+    byId("node-exchange-boundary").textContent = nodePresentation.boundary;
+    byId("node-exchange-peer").textContent = nodeExchange?.compute?.peer_compute_verified
+      ? "Peer compute verified"
+      : nodeExchange?.activation?.host_root_registry_ready
+        ? "Local root registry ready"
+        : "Root registry pending";
+    if (nodeExchange?.node_id) {
+      byId<HTMLInputElement>("node-transfer-source-node").value = nodeExchange.node_id;
+      byId<HTMLInputElement>("node-compute-target").value = nodeExchange.node_id;
+    }
+
     try {
       const tasks = await listDesktopTasks();
       tasksMount.innerHTML = tasks.length ? tasks.map((task) => `<article class="task-card"><div><strong>${escapeHtml(String(task.title || "Untitled task"))}</strong><span>${escapeHtml(String(task.status || "unknown"))} · ${escapeHtml(String(task.priority || "normal"))}</span><small>Task ${escapeHtml(String(task.id || ""))}</small></div></article>`).join("") : `<p class="muted">Desktop queue is clear.</p>`;
@@ -714,6 +860,11 @@ const refreshDesktop = async (): Promise<void> => {
     byId("cascade-mode").textContent = "Desktop offline";
     byId("cascade-activation").textContent = "Unavailable";
     byId("cascade-boundary").textContent = "Start the local Desktop bridge to read the corpus-cascade contract.";
+    byId("node-exchange-node").textContent = "Node exchange unavailable";
+    byId("node-exchange-peer").textContent = "Peer state unknown";
+    byId("node-exchange-transfer").textContent = "Desktop bridge is offline.";
+    byId("node-exchange-compute").textContent = "Desktop bridge is offline.";
+    byId("node-exchange-boundary").textContent = "Start the local Desktop bridge before planning transfer or compute.";
     byId("project-count").textContent = "0";
     tasksMount.innerHTML = `<p class="muted">Desktop is offline. Commands can still be saved, copied or downloaded.</p>`;
     byId("desktop-projects").innerHTML = `<p class="muted">Project registry unavailable while Desktop is offline.</p>`;
