@@ -1,0 +1,73 @@
+name: Runtime Productization Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "desktop/LightSpeed_Runtime/requirements-*.txt"
+      - "desktop/LightSpeed_Runtime/tests/test_runtime_productization.py"
+      - "tools/install_lightspeed_runtime.ps1"
+      - ".github/workflows/runtime-productization-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Clean install LightSpeed Runtime
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Set up Python 3.11
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.11"
+
+      - name: Install Runtime dev profile
+        shell: pwsh
+        run: |
+          $venv = Join-Path $env:RUNNER_TEMP "lightspeed-runtime"
+          $receipt = Join-Path $env:RUNNER_TEMP "runtime-install-receipt.json"
+          .\tools\install_lightspeed_runtime.ps1 -Profile dev -PythonCommand python -VenvPath $venv -ReceiptPath $receipt
+          "LS_RUNTIME_PY=$venv\Scripts\python.exe" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "LS_RUNTIME_RECEIPT=$receipt" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Verify installed dependency graph
+        shell: pwsh
+        run: |
+          & $env:LS_RUNTIME_PY -m pip check
+          & $env:LS_RUNTIME_PY -c "import lightspeed_runtime, fastapi, uvicorn, duckdb, pandas, pandera, openpyxl, PyPDF2, pydantic; print('RUNTIME_PROFILE_IMPORT_PASS')"
+      - name: Run bounded Runtime regressions
+        shell: pwsh
+        run: |
+          & $env:LS_RUNTIME_PY -m pytest -q `
+            desktop\LightSpeed_Runtime\tests\test_runtime_productization.py `
+            desktop\LightSpeed_Runtime\tests\test_cgx_capability_registry.py `
+            desktop\LightSpeed_Runtime\tests\test_cgx_capability_facades.py `
+            desktop\LightSpeed_Runtime\tests\test_cgx_conversion_planner.py `
+            desktop\LightSpeed_Runtime\tests\test_cgx_plugin_control.py `
+            desktop\LightSpeed_Runtime\tests\test_cgx_query_planner.py
+
+      - name: Validate CGX capability facade
+        shell: pwsh
+        run: |
+          & $env:LS_RUNTIME_PY scripts\validate_cgx_capability_facades_local.py
+
+      - name: Show install receipt
+        if: always()
+        shell: pwsh
+        run: |
+          if (Test-Path $env:LS_RUNTIME_RECEIPT) { Get-Content $env:LS_RUNTIME_RECEIPT }
+
+      - name: Upload install receipt
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: lightspeed-runtime-install-receipt
+          path: ${{ env.LS_RUNTIME_RECEIPT }}
+          if-no-files-found: error
+          retention-days: 14
