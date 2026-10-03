@@ -265,7 +265,14 @@
         "conversion_plan_sha256": "f23796dd856ce158d993ef2f5fd50422e80b536372f27c3f7af8c3689d560501"
       }
     ],
-    "r2_boundary": "All priority receipts have semantic_target=null and admit only R0_EXACT + R1_SEMANTIC_REVERSIBLE. Format/source structure is proven; semantic reconstruction remains owner-mapped and Resolve/DBR gated."
+    "r2_boundary": "All priority receipts have semantic_target=null and admit only R0_EXACT + R1_SEMANTIC_REVERSIBLE. Format/source structure is proven; semantic reconstruction remains owner-mapped and Resolve/DBR gated.",
+    "secondary_proof": {
+      "method": "independent Python hashlib.sha256 recomputation over each native local file, compared to the CGX receipt source_id suffix",
+      "matched": 57,
+      "total": 57,
+      "mismatches": [],
+      "result": "PASS"
+    }
   },
   "execution_boundary": {
     "independent_remote_structure_and_hash_discovery": "PASS",
@@ -288,7 +295,7 @@
       "Progress SEQLD/M1, Mark V, Luke IV and Free Flow from their R1-admitted source envelopes under their existing Type1/CGX owners.",
       "Achilles audits PR #74 against exact source IDs/plan hashes and current owner mappings before any merge/promotion."
     ],
-    "smallest_remaining_gate": "R2 owner-mapping/admission review for specific objects/relations; no remaining generic file-format/source-envelope gate for the 57-file corpus."
+    "smallest_remaining_gate": "R2 owner-mapping/admission review for specific objects/relations; R0/R1 source identity and structure plus independent hash parity are proven for the 57-file corpus."
   },
   "evidence_ceiling": "Digital source identity/structure/revision evidence only. No physical, manufacturing, structural, performance, certification, regulatory or deployment claim is promoted.",
   "architecture_impact": "No new master or parallel roadmap. One native source may have multiple projections/configurations; DBR records accepted state transitions; R3 representations remain derivative.",
