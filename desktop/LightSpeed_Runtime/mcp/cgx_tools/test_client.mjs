@@ -34,7 +34,10 @@ const expected = [
   "cgx_consequence_preflight",
   "cgx_freecad_bom",
   "cgx_freecad_inspect",
+  "cgx_femm_probe",
   "cgx_freecad_probe",
+  "cgx_gmat_probe",
+  "cgx_mpl_probe",
   "cgx_get_capabilities",
   "cgx_list_receipts",
   "cgx_open_receipt",
@@ -69,6 +72,26 @@ assert(watchtower.resolved_twin_id === "watchtower", "WatchTower twin resolution
 assert(watchtower.semantic_domain === "romer", "WatchTower domain resolution mismatch");
 assert(watchtower.semantic_resolution.semantic_object_id === "WT-001", "WatchTower semantic identity mismatch");
 assert(watchtower.operations_binding.current_record_id === "COM-1675", "WatchTower Operations binding mismatch");
+
+const gmat = parseText(await client.callTool({
+  name: "cgx_gmat_probe",
+  arguments: {},
+}));
+assert(gmat.state === "prepared_not_activated", "GMAT probe state mismatch");
+assert(gmat.execution_exposed === false, "GMAT execution must remain unexposed");
+
+const femm = parseText(await client.callTool({
+  name: "cgx_femm_probe",
+  arguments: {},
+}));
+assert(femm.solver_exposed === false, "FEMM solve must remain unexposed");
+
+const mpl = parseText(await client.callTool({
+  name: "cgx_mpl_probe",
+  arguments: {},
+}));
+assert(mpl.state === "prepared_not_activated", "MPL probe state mismatch");
+assert(mpl.execution_exposed === false, "MPL execution must remain unexposed");
 
 const freecad = parseText(await client.callTool({
   name: "cgx_freecad_probe",
@@ -122,6 +145,9 @@ console.log(JSON.stringify({
   watchtower_object: watchtower.semantic_resolution.semantic_object_id,
   cad_state: cad.route.state,
   freecad_version: freecad.version,
+  gmat_state: gmat.state,
+  femm_state: femm.state,
+  mpl_state: mpl.state,
   preflight_decision: preflight.decision,
   extension_decision: extension.decision,
   domainless_raphael: cross.preflight.state,

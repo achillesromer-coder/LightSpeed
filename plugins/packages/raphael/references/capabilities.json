@@ -42,8 +42,9 @@
       "units": "science.query",
       "query": "science.query",
       "cad": "cad.freecad",
-      "femm": "physics.femm",
-      "bom": "cad.freecad.bom"
+      "femm": "physics.femm.probe",
+      "bom": "cad.freecad.bom",
+      "gmat": "science.gmat.probe"
     }
   },
   "routes": {
@@ -230,11 +231,12 @@
       "open_world": true,
       "handler": "lightspeed_runtime.route_probe:build_route_probe_report"
     },
-    "physics.femm": {
-      "state": "missing",
-      "kind": "planned-tool",
-      "ro": false,
-      "limitation": "No FEMM toolkit entry or typed adapter was found."
+    "physics.femm.probe": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.simulation_capability_probe:probe_femm",
+      "limitation": "Probe only. FEMM solver execution remains unavailable until executable/model binding and typed adapter are proven."
     },
     "receipts.list": {
       "state": "available",
@@ -247,6 +249,13 @@
       "kind": "runtime",
       "ro": true,
       "handler": "lightspeed_runtime.result_receipt_browser:open_result_receipt"
+    },
+    "science.gmat.probe": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.simulation_capability_probe:probe_gmat",
+      "limitation": "Probe only. No GMAT execution is exposed unless a verified GmatConsole executable and typed corpus packet are present."
     },
     "science.mark3_simulate": {
       "state": "available",
@@ -283,9 +292,9 @@
   "gaps": [
     {
       "id": "femm-adapter",
-      "state": "missing",
+      "state": "probe_available_solver_missing",
       "priority": "high",
-      "note": "Add only after verified local installation/model contract."
+      "note": "Read-only environment probe is available; solver adapter remains blocked until executable/model contract is verified."
     },
     {
       "id": "eco-deterministic-engine",
@@ -335,7 +344,10 @@
       "cgx_run_local_work",
       "cgx_freecad_probe",
       "cgx_freecad_inspect",
-      "cgx_freecad_bom"
+      "cgx_freecad_bom",
+      "cgx_gmat_probe",
+      "cgx_femm_probe",
+      "cgx_mpl_probe"
     ],
     "execution_boundary": {
       "generic_shell": false,

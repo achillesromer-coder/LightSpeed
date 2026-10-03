@@ -261,9 +261,9 @@
   "gaps": [
     {
       "id": "femm-adapter",
-      "state": "missing",
+      "state": "probe_available_solver_missing",
       "priority": "high",
-      "note": "Add only after verified local installation/model contract."
+      "note": "Read-only environment probe is available; solver adapter remains blocked until executable/model contract is verified."
     },
     {
       "id": "eco-deterministic-engine",
@@ -313,7 +313,10 @@
       "cgx_run_local_work",
       "cgx_freecad_probe",
       "cgx_freecad_inspect",
-      "cgx_freecad_bom"
+      "cgx_freecad_bom",
+      "cgx_gmat_probe",
+      "cgx_femm_probe",
+      "cgx_mpl_probe"
     ],
     "execution_boundary": {
       "generic_shell": false,

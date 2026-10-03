@@ -150,6 +150,30 @@ server.registerTool("cgx_plan_tool_extension", {
   await runBridge("tool_plan", args)
 ));
 
+server.registerTool("cgx_gmat_probe", {
+  description: "Probe current GMAT runner/executable binding without running a simulation.",
+  inputSchema: {},
+  annotations: { title: "Probe GMAT", ...readOnly },
+}, async () => textResult(
+  await runBridge("gmat_probe")
+));
+
+server.registerTool("cgx_femm_probe", {
+  description: "Probe current FEMM executable/adapter binding without running a solve.",
+  inputSchema: {},
+  annotations: { title: "Probe FEMM", ...readOnly },
+}, async () => textResult(
+  await runBridge("femm_probe")
+));
+
+server.registerTool("cgx_mpl_probe", {
+  description: "Probe current MPL adapter/source readiness and assurance boundary without executing MPL.",
+  inputSchema: {},
+  annotations: { title: "Probe MPL", ...readOnly },
+}, async () => textResult(
+  await runBridge("mpl_probe")
+));
+
 server.registerTool("cgx_freecad_probe", {
   description: "Probe the registered local FreeCAD headless runtime and return version/availability without opening a document.",
   inputSchema: {},
