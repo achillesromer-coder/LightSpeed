@@ -31,13 +31,20 @@ Use this skill whenever an Achilles, Neo, Athene, Raphael, Cognigrex, Römer-Gre
    - hard constraints,
    - requested output,
    - proof/assurance requirement.
-5. Resolve applicable domain/module/object and authority.
+5. Resolve applicable domain/module/object and authority. When a named current object/twin is present, use the shared `cgx.object_context` / `cgx_resolve_object` path so child-domain identity, Operations binding, source owner and representation boundary come from the same current lineage.
 6. Resolve live capabilities and skills.
 7. Run the minimum-sufficient-work decision before dispatch.
 8. Route to the smallest execution surface that can produce a valid answer or receipt.
-9. Execute only within the resolved lease/gates.
-10. Return compact receipts/evidence. Keep raw logs and long local-model traces local unless requested.
-11. Send promotion-capable results through required review/LS GO gates.
+9. If data and execution resolve to different surfaces/nodes, apply the node-exchange handshake:
+   - resolve source/target node identity and registered capability independently,
+   - transfer only missing inputs by content hash,
+   - require exact receiver hash/size readback before dependent compute,
+   - never treat a storage carrier as proof of an independent compute node,
+   - never transfer semantic/governance/release authority with the bytes,
+   - require a current scoped COMPUTE_ONLY/DIGITAL_WRITE-or-stronger lease as applicable.
+10. Execute only through a registered capability in the existing runtime and within the resolved lease/gates. Arbitrary shell text is not a node capability.
+11. Return compact transfer/compute receipts and evidence refs. Keep raw logs, raw payloads and long local-model traces local unless requested.
+12. Send promotion-capable results through required review/LS GO gates.
 
 ## Query normalisation rule
 

@@ -9,7 +9,15 @@
     "status": "ops.health",
     "receipt": "receipts.list",
     "sources": "sources.envelope",
-    "extend": "extensions.tool"
+    "extend": "extensions.tool",
+    "exchange": "node.exchange.status",
+    "transfer": "node.transfer",
+    "compute": "node.compute",
+    "preflight": "consequence.preflight",
+    "tool-plan": "extensions.plan",
+    "open-receipt": "receipts.open",
+    "define": "definitions.search",
+    "object": "cgx.object_context"
   },
   "profile": {
     "floors": [
@@ -30,24 +38,85 @@
       "mission": "cgx.cross_analysis",
       "mark": "science.mark3_simulate",
       "luke": "cgx.cross_analysis",
-      "twin": "entities.build",
+      "twin": "cgx.object_context",
       "sweep": "science.rfs_emff_sweep",
-      "route": "cgx.plan_query"
+      "route": "cgx.plan_query",
+      "cad": "cad.freecad",
+      "bom": "cad.freecad.bom",
+      "gmat": "science.gmat.probe",
+      "mpl": "assurance.mpl.probe"
     }
   },
   "routes": {
-    "cgx.cross_analysis": {
-      "state": "workflow",
-      "kind": "composite",
+    "assurance.mpl.probe": {
+      "state": "available",
+      "kind": "runtime",
       "ro": true,
+      "handler": "lightspeed_runtime.simulation_capability_probe:probe_mpl",
+      "limitation": "Probe only. MPL remains bounded insurance/financial consequence screening and is not hazard or safety assurance."
+    },
+    "assurance.preflight": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.cgx_preflight:build_assurance_preflight",
+      "limitation": "Assurance clearance bounds method evidence only; it does not grant execution authority."
+    },
+    "cad.freecad": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.freecad_adapter:inspect_freecad_document",
+      "uses": [
+        "cad.freecad.probe"
+      ],
+      "limitation": "Read-only FCStd inspection within registered project roots; no save/export/write operation is exposed."
+    },
+    "cad.freecad.bom": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.freecad_adapter:extract_freecad_bom",
+      "uses": [
+        "cad.freecad.probe"
+      ],
+      "limitation": "Derived geometry/object summary only; not an approved manufacturing or procurement BOM."
+    },
+    "cad.freecad.probe": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.freecad_adapter:probe_freecad"
+    },
+    "cgx.cross_analysis": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.cgx_cross_analysis:build_cross_analysis_plan",
       "uses": [
         "cgx.resolve_context",
+        "cgx.object_context",
         "cgx.plan_query",
         "cgx.minimum_work",
+        "consequence.preflight",
         "science.query",
         "tests.plan",
         "local.supervise"
-      ]
+      ],
+      "limitation": "Plans bounded cross-analysis; it does not automatically execute tests/sweeps or promote results."
+    },
+    "cgx.minimum_work": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.cgx_plugin_control:decide_minimum_sufficient_work"
+    },
+    "cgx.object_context": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.cgx_object_context:resolve_object_context",
+      "limitation": "Read-only resolution of current object/twin lineage into child-domain identity, Operations binding, source owner and representation boundary; no object creation or authority promotion."
     },
     "cgx.plan_query": {
       "state": "available",
@@ -55,18 +124,52 @@
       "ro": true,
       "handler": "lightspeed_runtime.cgx_query_planner:compile_query_plan"
     },
-    "entities.build": {
+    "cgx.resolve_context": {
       "state": "available",
       "kind": "runtime",
       "ro": true,
-      "handler": "lightspeed_runtime.entity_registry:build_entity_registry"
+      "handler": "lightspeed_runtime.cgx_plugin_control:build_context_envelope"
+    },
+    "consequence.preflight": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.cgx_preflight:build_consequence_preflight",
+      "uses": [
+        "assurance.preflight",
+        "custodial.preflight"
+      ],
+      "limitation": "CLEARED_FOR_AUTHORITY_GATE is not execution permission."
+    },
+    "custodial.preflight": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.cgx_preflight:build_custodial_preflight",
+      "limitation": "Custodial checks may HOLD work but do not create semantic or execution authority."
+    },
+    "definitions.search": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.definition_library:search_it_dictionary"
+    },
+    "extensions.plan": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.cgx_extension_planner:plan_tool_extension",
+      "limitation": "Plans reuse/wrap/build decisions only; it does not install or expose tools."
     },
     "extensions.tool": {
       "state": "workflow",
       "kind": "skill",
       "ro": false,
       "skill": "cgx-tool-extension",
-      "gate": "implement/test/register before tool exposure"
+      "gate": "implement/test/register before tool exposure",
+      "uses": [
+        "extensions.plan"
+      ]
     },
     "interface.capabilities": {
       "state": "workflow",
@@ -80,11 +183,65 @@
       "ro": true,
       "skill": "cgx-capability-router"
     },
+    "local.supervise": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": false,
+      "handler": "lightspeed_runtime.cognigrex_supervisor:run_supervised_workflow",
+      "gate": "bounded local receipts; heavy=false unless explicit"
+    },
+    "node.compute": {
+      "state": "gated",
+      "kind": "runtime",
+      "ro": false,
+      "handler": "lightspeed_runtime.node_exchange:execute_local_compute",
+      "uses": [
+        "cgx.resolve_context",
+        "cgx.minimum_work",
+        "node.exchange.status"
+      ],
+      "gate": "Local delegated compute requires target_node_id to match the executing local node, a current COMPUTE_ONLY-or-stronger scoped lease, verified input receipts, a registered bounded runner, and heavy=false unless separately authorized.",
+      "limitation": "Canonical route currently binds local leased compute only. Off-device peer compute remains unproven until an independently connected compute node returns a receipted result.",
+      "authority_transfer": false
+    },
+    "node.exchange.status": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.node_exchange:build_exchange_status",
+      "uses": [
+        "ops.health",
+        "ops.route_probe",
+        "receipts.list"
+      ],
+      "limitation": "Reports local node-exchange readiness and proven carriers/peers from supplied runtime evidence. Mounted storage is not peer compute, and peer transport/compute remain unproven until independently exercised."
+    },
+    "node.transfer": {
+      "state": "gated",
+      "kind": "runtime",
+      "ro": false,
+      "handler": "lightspeed_runtime.node_exchange:execute_local_transfer",
+      "uses": [
+        "cgx.resolve_context",
+        "cgx.minimum_work",
+        "node.exchange.status"
+      ],
+      "gate": "Local transfer execution requires a registered allowlisted target root, a current DIGITAL_WRITE-or-stronger scoped lease, bounded relative target path, source hash/size verification, and exact receiver readback.",
+      "limitation": "Canonical route currently binds local verified transfer only. Authenticated off-device peer transport remains separately gated.",
+      "authority_transfer": false
+    },
     "ops.health": {
       "state": "available",
       "kind": "runtime",
       "ro": true,
       "handler": "lightspeed_runtime.bridge_health:build_bridge_health"
+    },
+    "ops.route_probe": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "open_world": true,
+      "handler": "lightspeed_runtime.route_probe:build_route_probe_report"
     },
     "receipts.list": {
       "state": "available",
@@ -92,11 +249,30 @@
       "ro": true,
       "handler": "lightspeed_runtime.result_receipt_browser:list_result_receipts"
     },
+    "receipts.open": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.result_receipt_browser:open_result_receipt"
+    },
+    "science.gmat.probe": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.simulation_capability_probe:probe_gmat",
+      "limitation": "Probe only. No GMAT execution is exposed unless a verified GmatConsole executable and typed corpus packet are present."
+    },
     "science.mark3_simulate": {
       "state": "available",
       "kind": "runtime",
       "ro": true,
       "handler": "lightspeed_runtime.mark3_multi_unit:simulate_scenario"
+    },
+    "science.query": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.scientific_query:execute_scientific_query"
     },
     "science.rfs_emff_sweep": {
       "state": "available",
@@ -110,26 +286,20 @@
       "kind": "runtime",
       "ro": true,
       "handler": "lightspeed_runtime.source_intake:build_source_envelope_from_path"
+    },
+    "tests.plan": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.corpus_test_orchestrator:plan_cascade"
     }
   },
   "gaps": [
     {
-      "id": "shared-mcp-tools",
-      "state": "missing",
-      "priority": "high",
-      "note": "Need one shared typed MCP plane for first-class ChatGPT tools; not nine servers."
-    },
-    {
-      "id": "freecad-adapter",
-      "state": "registered_unwrapped",
-      "priority": "high",
-      "note": "Wrap typed import/export/geometry/BOM operations."
-    },
-    {
       "id": "femm-adapter",
-      "state": "missing",
+      "state": "probe_available_solver_missing",
       "priority": "high",
-      "note": "Add only after verified local installation/model contract."
+      "note": "Read-only environment probe is available; solver adapter remains blocked until executable/model contract is verified."
     },
     {
       "id": "eco-deterministic-engine",
@@ -138,10 +308,10 @@
       "note": "Current ecology route is source/query/cross-analysis assisted."
     },
     {
-      "id": "portfolio-cross-analysis-facade",
-      "state": "partial",
+      "id": "node-exchange-runtime-promotion",
+      "state": "local_runtime_promoted_peer_activation_gated",
       "priority": "medium",
-      "note": "Current modules compose this workflow but lack one typed facade/receipt."
+      "note": "Canonical local transfer/compute runtime is now promoted. Authenticated off-device peer transport and independently proven peer compute remain gated; mounted storage does not satisfy peer-compute proof."
     }
   ],
   "extension": {
@@ -149,15 +319,63 @@
     "single_shared_tool_plane": true,
     "sequence": [
       "define goal",
+      "run extensions.plan",
       "search registry/runtime/toolkits",
-      "reuse or alias",
-      "implement smallest typed adapter",
+      "reuse or alias when sufficient",
+      "implement smallest typed adapter only when missing",
       "add tests/receipt",
-      "register route/shortcall",
+      "register route/shortcall once",
       "rebuild packages",
-      "expose through shared MCP after validation"
+      "expose validated operations individually through one shared MCP plane after transport validation"
     ]
   },
   "toolkit_registry": "cgx/domain_templates/toolkit_registry.json",
+  "shared_tool_plane": {
+    "state": "available_local",
+    "server": "lightspeed-cgx",
+    "transport": "stdio",
+    "scope": "one shared tool plane for all nine selectors",
+    "tools": [
+      "cgx_get_capabilities",
+      "cgx_resolve_shortcall",
+      "cgx_resolve_object",
+      "cgx_plan_cross_analysis",
+      "cgx_consequence_preflight",
+      "cgx_plan_tool_extension",
+      "cgx_bridge_health",
+      "cgx_list_receipts",
+      "cgx_open_receipt",
+      "cgx_plan_local_work",
+      "cgx_run_local_work",
+      "cgx_freecad_probe",
+      "cgx_freecad_inspect",
+      "cgx_freecad_bom",
+      "cgx_gmat_probe",
+      "cgx_femm_probe",
+      "cgx_mpl_probe"
+    ],
+    "execution_boundary": {
+      "generic_shell": false,
+      "arbitrary_python": false,
+      "arbitrary_path_open": false,
+      "heavy_execution": false,
+      "local_run_requires_confirmed_true": true,
+      "canonical_promotion": false,
+      "public_publish": false
+    },
+    "proof": {
+      "selftest": "D:\\LightSpeed\\State\\Review\\CGX_SHARED_MCP_20261003\\mcp_selftest_freecad2.txt",
+      "execution_proof": "D:\\LightSpeed\\State\\Review\\CGX_SHARED_MCP_20261003\\mcp_execute_proof.txt",
+      "freecad_mcp_proof": "D:\\LightSpeed\\State\\Review\\FreeCAD_ADAPTER_20261003\\mcp_freecad_proof.json"
+    },
+    "freecad_boundary": {
+      "state": "available_read_only",
+      "observed_version": "FreeCAD 1.0.2 Revision: 39319 (Git)",
+      "allowed_formats": [
+        ".FCStd"
+      ],
+      "writes_exports": "not_exposed"
+    }
+  },
   "authority_note": "Capability and toolkit bindings do not create authority. Resolve live CGX/Recovery state through cgx-handshake before execution."
 }

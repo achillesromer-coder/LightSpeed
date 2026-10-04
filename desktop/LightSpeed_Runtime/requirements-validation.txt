@@ -1,0 +1,3 @@
+-r requirements-data.txt
+# Optional strict dataframe/schema validation.
+pandera==0.33.1

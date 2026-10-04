@@ -52,6 +52,20 @@ def plugin_description(display: str) -> str:
     )
 
 
+def expand_route_ids(route_ids: set[str], routes: dict[str, Any]) -> set[str]:
+    resolved: set[str] = set()
+    pending = list(route_ids)
+    while pending:
+        route_id = pending.pop()
+        if route_id in resolved:
+            continue
+        if route_id not in routes:
+            raise ValueError(f"capability dependency missing: {route_id}")
+        resolved.add(route_id)
+        pending.extend(str(item) for item in (routes[route_id].get("uses") or []))
+    return resolved
+
+
 def build_capability_payload(
     package_name: str,
     selector_name: str,
@@ -64,13 +78,14 @@ def build_capability_payload(
         raise ValueError(f"shortcall profile missing: {selector_name}")
     global_calls = dict(shortcalls.get("global") or {})
     selector_calls = dict(profile.get("shortcalls") or {})
-    route_ids = set(global_calls.values()) | set(selector_calls.values())
+    direct_ids = set(global_calls.values()) | set(selector_calls.values())
     routes = capability_routes.get("routes") or {}
-    missing = sorted(route_id for route_id in route_ids if route_id not in routes)
+    missing = sorted(route_id for route_id in direct_ids if route_id not in routes)
     if missing:
         raise ValueError(
             f"capability routes missing for {selector_name}: {', '.join(missing)}"
         )
+    route_ids = expand_route_ids(direct_ids, routes)
     return {
         "schema": "CGX-PLUGIN-CAPABILITY-PROFILE/0.1",
         "package": package_name,
@@ -82,6 +97,7 @@ def build_capability_payload(
         "gaps": capability_routes.get("gaps") or [],
         "extension": capability_routes.get("extension") or {},
         "toolkit_registry": capability_routes.get("toolkit_registry"),
+        "shared_tool_plane": capability_routes.get("shared_tool_plane") or {},
         "authority_note": (
             "Capability and toolkit bindings do not create authority. Resolve "
             "live CGX/Recovery state through cgx-handshake before execution."

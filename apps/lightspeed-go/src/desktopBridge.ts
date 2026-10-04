@@ -208,6 +208,44 @@ export interface LocalResultOpenResponse {
   boundary: string;
 }
 
+export type ObjectContextDomain = "romer" | "eco" | "emassc" | "lightspeed";
+
+export interface CGXObjectContext {
+  schema: "CGX-OBJECT-CONTEXT/0.1";
+  query: string;
+  resolved_twin_id: string;
+  semantic_domain: string;
+  domain_identity: {
+    semantic_object_id?: string | null;
+    filespace?: string | null;
+    namespace?: string | null;
+  };
+  semantic_resolution: {
+    state: "exact_semantic_object" | "family_bound_only";
+    semantic_object_id?: string | null;
+    operations_current_object_id?: string | null;
+    rule: string;
+  };
+  operations_binding: Record<string, unknown>;
+  canonical_owner: Record<string, unknown>;
+  source_name?: string | null;
+  family_state?: string | null;
+  representation: Record<string, unknown>;
+  geometry_authority?: string | null;
+  lineage: Record<string, unknown>;
+  evidence_boundary: string;
+  automatic_execution: false;
+  canonical_mutation: false;
+}
+
+export interface ObjectContextResponse {
+  object_context: CGXObjectContext;
+  execution_performed: false;
+  external_action_performed: false;
+  canonical_mutation: false;
+  authority_transfer: false;
+}
+
 export interface ReviewRecord {
   review_id: string;
   created_utc?: string;
@@ -278,6 +316,15 @@ export interface DesktopStatus {
     dependency_gate?: string;
     execution_performed_by_status?: boolean;
   };
+  object_context?: {
+    mode?: "current_lineage_read_only";
+    endpoint?: string;
+    domains?: string[];
+    automatic_execution?: boolean;
+    canonical_mutation?: boolean;
+    authority_transfer?: boolean;
+  };
+  node_exchange?: NodeExchangeStatus;
   authority_contract?: AuthorityContract;
 }
 
@@ -299,6 +346,88 @@ export const remoteAccessPresentation = (
   return {
     label: "Local only",
     detail: "No private HTTPS relay origin is configured.",
+  };
+};
+
+export interface NodeExchangeStatus {
+  schema_version?: "cgx-node-exchange-status-v1";
+  node_id?: string;
+  transport?: {
+    mode?: string;
+    verified_carriers?: string[];
+    peer_transport_verified?: boolean;
+  };
+  compute?: {
+    local_ready?: boolean;
+    peer_nodes?: string[];
+    peer_compute_verified?: boolean;
+    lease_required?: boolean;
+    heavy_execution_default?: boolean;
+  };
+  activation?: {
+    host_root_registry_ready?: boolean;
+    typed_transfer_queue_ready?: boolean;
+    peer_compute_queue_ready?: boolean;
+  };
+  claim_boundary?: string;
+  authority_transfer?: boolean;
+  canonical_promotion_authorized?: boolean;
+  transfer_planning_endpoint?: string;
+  compute_planning_endpoint?: string;
+  execution_route?: string;
+}
+
+export interface NodeTransferPlanInput {
+  source_ref: string;
+  source_sha256: string;
+  size_bytes: number;
+  file_name: string;
+  source_node_id: string;
+  target_node_id: string;
+  source_root_id: string;
+  target_root_id: string;
+  object_id?: string;
+}
+
+export interface NodeComputePlanInput {
+  instruction: string;
+  task_id: string;
+  run_id: string;
+  project_id?: string;
+  target_node_id: string;
+  capability_id: string;
+  lease_ref: string;
+  input_receipts?: Record<string, unknown>[];
+  resource_budget?: Record<string, unknown>;
+}
+
+export interface NodeExchangePlanResponse {
+  execution_performed: false;
+  authority_transfer: false;
+  canonical_mutation: false;
+  required_execution_lease_class: "COMPUTE_ONLY" | "DIGITAL_WRITE";
+  activation_boundary: string;
+  plan?: Record<string, unknown>;
+  request?: Record<string, unknown>;
+}
+
+export const nodeExchangePresentation = (
+  exchange?: NodeExchangeStatus,
+): { transfer: string; compute: string; boundary: string } => {
+  const carriers = exchange?.transport?.verified_carriers?.length || 0;
+  const peers = exchange?.compute?.peer_nodes?.length || 0;
+  return {
+    transfer: exchange?.transport?.peer_transport_verified
+      ? `Peer transport verified · ${peers} peer node${peers === 1 ? "" : "s"}`
+      : carriers
+        ? `Carrier readback verified · ${carriers} carrier${carriers === 1 ? "" : "s"} · peer transport unproven`
+        : "No verified carrier or peer transport",
+    compute: exchange?.compute?.peer_compute_verified
+      ? `Peer compute verified · ${peers} peer node${peers === 1 ? "" : "s"}`
+      : exchange?.compute?.local_ready
+        ? "Local compute ready · peer compute unproven"
+        : "Compute unavailable or held",
+    boundary: exchange?.claim_boundary || "Node-exchange status is unavailable.",
   };
 };
 
@@ -524,6 +653,27 @@ const withTimeout = async <T>(url: string, init: RequestInit, timeoutMs = 3500):
 export const readDesktopStatus = (origin = DEFAULT_DESKTOP_ORIGIN): Promise<DesktopStatus> =>
   withTimeout<DesktopStatus>(`${origin}/api/v1/status`, { method: "GET" }, 10000);
 
+export const objectContextApiPath = (
+  query: string,
+  domain?: ObjectContextDomain,
+): string => {
+  const objectQuery = normalize(query, 160);
+  if (!objectQuery) throw new TypeError("object query is required");
+  const params = domain ? "?domain=" + encodeURIComponent(domain) : "";
+  return "/api/v1/object-context/" + encodeURIComponent(objectQuery) + params;
+};
+
+export const resolveDesktopObjectContext = (
+  query: string,
+  domain?: ObjectContextDomain,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<ObjectContextResponse> =>
+  withTimeout<ObjectContextResponse>(
+    origin + objectContextApiPath(query, domain),
+    { method: "GET" },
+    10000,
+  );
+
 export const loginDesktopOwner = (
   username: string,
   password: string,
@@ -564,6 +714,34 @@ export const logoutDesktopOwner = (
     method: "POST",
     headers: { "X-LightSpeed-Session": sessionToken.slice(0, 256) },
   }, 7000);
+
+export const planNodeTransfer = (
+  input: NodeTransferPlanInput,
+  ownerSession: string,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<NodeExchangePlanResponse> =>
+  withTimeout<NodeExchangePlanResponse>(`${origin}/api/v1/node-exchange/transfer/plan`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-LightSpeed-Session": ownerSession.slice(0, 256),
+    },
+    body: JSON.stringify(input),
+  }, 10000);
+
+export const planNodeCompute = (
+  input: NodeComputePlanInput,
+  ownerSession: string,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<NodeExchangePlanResponse> =>
+  withTimeout<NodeExchangePlanResponse>(`${origin}/api/v1/node-exchange/compute/plan`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-LightSpeed-Session": ownerSession.slice(0, 256),
+    },
+    body: JSON.stringify(input),
+  }, 10000);
 
 export const submitDesktopCommand = (
   command: CommandEnvelope,

@@ -66,6 +66,7 @@ def main():
         assurance_fixtures=load("assurance_fixture_scenarios.json")
         technology_stack=load("technology_stack_registry.json")
         agent_runtime=load("agent_runtime_contract.json")
+        node_exchange=load("node_exchange_contract.json")
         query_policy=load("query_normalisation_policy.json")
         corpus_test_policy=load("corpus_test_simulation_policy.json")
         corpus_test_caps=load("corpus_test_capability_registry.json")
@@ -75,14 +76,24 @@ def main():
         first_file_conversion=load("first_file_conversion_registry.json")
         child_successor_receipt=load("s92_domain_children_successor_validation_receipt_2026-10-01.json")
         first_file_migration_receipt=load("s92_first_file_migration_receipt_2026-10-01.json")
+        child_persistence_verification=load("s92_domain_children_persistence_verification_2026-10-04.json")
+        child_acceptance_audit=load("s92_domain_children_acceptance_audit_2026-10-04.json")
         source_envelope=load("source_envelope_contract.json")
         source_adapters=load("source_format_adapter_registry.json")
+        provider_notifications=load("provider_notification_evidence_contract.json")
     except Exception as e:
         print(json.dumps({"status":"FAIL","failures":[str(e)]}))
         return 1
 
     if domains.get("schema")!="CGX-DOMAIN-TEMPLATES/0.4":
         failures.append("domains schema is not 0.4")
+    if provider_notifications.get("schema")!="CGX-PROVIDER-NOTIFICATION-EVIDENCE/0.1":
+        failures.append("provider notification evidence contract schema mismatch")
+    if domains.get("shared_contracts",{}).get("provider_notification_evidence")!="provider_notification_evidence_contract.json":
+        failures.append("provider notification evidence contract not registered")
+    inv=set(provider_notifications.get("invariants") or [])
+    if "email-notification-alone-never-closes-or-promotes-canonical-defect-state" not in inv:
+        failures.append("provider notification contract lacks secondary-evidence boundary")
     if shell.get("schema")!="CGX-CORPUS-AWARE-BASE-SHELL/0.6":
         failures.append("base-shell contract is not 0.6")
     if domains.get("parent_filespace",{}).get("file")!="Cognigrex.cgx":
@@ -120,6 +131,30 @@ def main():
     sr=s92_promotion.get("recovery",{})
     if sr.get("sha256")!=expected_seed["sha256"] or sr.get("drive_id")!=gp.get("current_recovery_file_id"):
         failures.append("S92 promotion verification does not match current Recovery pointer")
+
+    if node_exchange.get("schema")!="CGX-NODE-EXCHANGE-CONTRACT/0.1":
+        failures.append("node-exchange contract schema mismatch")
+    node_invariants=set(node_exchange.get("invariants") or [])
+    for required in (
+        "no-second-runtime",
+        "no-authority-transfer-by-copy",
+        "no-compute-from-unverified-input",
+        "no-peer-claim-from-mounted-volume",
+        "no-free-form-shell-capability",
+        "no-public-direct-execution",
+        "no-canonical-promotion-from-runtime-receipt-alone",
+    ):
+        if required not in node_invariants:
+            failures.append(f"node-exchange invariant missing: {required}")
+    bindings=node_exchange.get("surface_bindings") or {}
+    for required_surface in ("desktop","web","mobile","chat","api","node"):
+        if required_surface not in bindings:
+            failures.append(f"node-exchange surface binding missing: {required_surface}")
+    activation=node_exchange.get("activation") or {}
+    if activation.get("host_root_registry") is None:
+        failures.append("node-exchange host-root registry activation boundary missing")
+    if activation.get("peer_compute") is None:
+        failures.append("node-exchange peer-compute activation boundary missing")
 
     if query_policy.get("schema")!="CGX-QUERY-NORMALISATION-POLICY/0.1":
         failures.append("query-normalisation policy schema mismatch")
@@ -347,6 +382,66 @@ def main():
             failures.append(f"S92 first-file migration verifier receipt not PASS: {domain}")
     if (migration_outputs.get("lightspeed") or {}).get("scientific_state_duplicated") is not False:
         failures.append("S92 LightSpeed migration must not duplicate EMASSC scientific state")
+
+    if child_persistence_verification.get("schema")!="CGX-S92-DOMAIN-CHILD-PERSISTENCE-VERIFICATION/0.1":
+        failures.append("S92 child persistence verification schema mismatch")
+    if "FRESH_ACCEPTANCE_OPEN" not in child_persistence_verification.get("status",""):
+        failures.append("S92 child persistence verification must remain pre-canonical pending fresh acceptance")
+    durable=child_persistence_verification.get("durable_package") or {}
+    if durable.get("drive_id")!="1zb36J4ZSd8Rt4BB_6vkx3X_eSWErFt0B":
+        failures.append("S92 child persistence durable Drive ID mismatch")
+    if durable.get("sha256")!="36349987fa34dc0f85e26c9658fbf8e3814010f7cc9f536b836920eab239a90d":
+        failures.append("S92 child persistence bundle hash mismatch")
+    if durable.get("refetch_sha256_match") is not True:
+        failures.append("S92 child persistence lacks direct Drive package readback match")
+    if (child_persistence_verification.get("authority") or {}).get("promotion_performed") is not False:
+        failures.append("S92 child persistence receipt must not self-promote child authority")
+
+    if child_acceptance_audit.get("schema")!="CGX-S92-DOMAIN-CHILD-ACCEPTANCE-AUDIT/0.1":
+        failures.append("S92 child acceptance audit schema mismatch")
+    if child_acceptance_audit.get("status")!="TECHNICAL_ACCEPTANCE_AUDIT_PASS / ROOT_AUTHORITY_DECISION_OPEN":
+        failures.append("S92 child acceptance audit status mismatch")
+    if child_acceptance_audit.get("authority_effect") is None or "does not accept" not in child_acceptance_audit.get("authority_effect",""):
+        failures.append("S92 child acceptance audit must explicitly preserve RootAuthority gate")
+    candidate=child_acceptance_audit.get("durable_candidate") or {}
+    if candidate.get("drive_id")!="1zb36J4ZSd8Rt4BB_6vkx3X_eSWErFt0B":
+        failures.append("S92 child acceptance audit Drive ID mismatch")
+    if candidate.get("package_sha256")!="36349987fa34dc0f85e26c9658fbf8e3814010f7cc9f536b836920eab239a90d":
+        failures.append("S92 child acceptance audit package hash mismatch")
+    if candidate.get("independent_drive_refetch") is not True or candidate.get("independent_package_hash_match") is not True:
+        failures.append("S92 child acceptance audit lacks independent provider readback proof")
+    if (child_acceptance_audit.get("recommendation") or {}).get("promotion_performed") is not False:
+        failures.append("S92 child acceptance audit must not promote child authority")
+    expected_audit_members={
+        "Romer.cgx":("cgx:domain:romer","84cc84915661fec188d578eca1315f6e943f828424d4d54b9877e18903ac277f"),
+        "Eco.cgx":("cgx:domain:eco","d645fb3acb105379c3fc9dc2f263aa6bb49c78236929c7a2fca9fec998170937"),
+        "EMASSC.cgx":("cgx:domain:emassc","167dbfccae5fd6bfa877eb3150ac4423b2cfc82970e38bc457ed116c126983f5"),
+        "LS.cgx":("cgx:domain:lightspeed","bd33c82b2c7f3f324b6e47f037ecf11d8b4353aedeebfd62b0f5df3c686d5bd0"),
+    }
+    audit_members=child_acceptance_audit.get("exact_members") or {}
+    for filename,(semantic_id,sha256) in expected_audit_members.items():
+        member=audit_members.get(filename) or {}
+        if member.get("semantic_object_id")!=semantic_id or member.get("sha256")!=sha256:
+            failures.append(f"S92 child acceptance audit exact-member mismatch: {filename}")
+        if member.get("authority_transfer") is not False or member.get("binding_mode")!="REFERENCE":
+            failures.append(f"S92 child acceptance audit authority boundary mismatch: {filename}")
+    persisted_outputs=child_persistence_verification.get("outputs") or {}
+    expected_persisted={
+        "romer":("cgx:domain:romer","84cc84915661fec188d578eca1315f6e943f828424d4d54b9877e18903ac277f",96),
+        "eco":("cgx:domain:eco","d645fb3acb105379c3fc9dc2f263aa6bb49c78236929c7a2fca9fec998170937",103),
+        "emassc":("cgx:domain:emassc","167dbfccae5fd6bfa877eb3150ac4423b2cfc82970e38bc457ed116c126983f5",98),
+        "lightspeed":("cgx:domain:lightspeed","bd33c82b2c7f3f324b6e47f037ecf11d8b4353aedeebfd62b0f5df3c686d5bd0",67),
+    }
+    for domain,(semantic_id,sha256,tracked) in expected_persisted.items():
+        output=persisted_outputs.get(domain) or {}
+        if output.get("semantic_object_id")!=semantic_id:
+            failures.append(f"S92 persisted semantic identity mismatch: {domain}")
+        if output.get("sha256")!=sha256:
+            failures.append(f"S92 persisted carrier hash mismatch: {domain}")
+        if output.get("tracked_objects")!=tracked:
+            failures.append(f"S92 persisted tracked-object count mismatch: {domain}")
+        if output.get("verify")!="PASS" or output.get("packed_reopen_verify")!="PASS":
+            failures.append(f"S92 persisted verifier receipt not PASS: {domain}")
 
     shared=domains.get("shared_contracts",{})
     for key,name in shared.items():

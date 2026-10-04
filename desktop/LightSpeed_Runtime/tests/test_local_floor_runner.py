@@ -96,7 +96,7 @@ def test_dry_run_writes_neo_receipt_without_http(tmp_path: Path) -> None:
     receipt_path = Path(receipt["receipt_path"])
     assert receipt["status"] == "dry_run"
     assert receipt["dry_run"] is True
-    assert receipt["request_overrides"] == {"stream": False, "think": False, "num_predict": 512}
+    assert receipt["request_overrides"] == {"stream": False, "think": False, "num_predict": 512, "num_ctx": 8192}
     assert "Z+2_Neo" in str(receipt_path)
     assert receipt_path.exists()
 
@@ -283,3 +283,104 @@ def test_canonical_loopback_endpoint_preserves_remote_hosts() -> None:
         _canonical_loopback_endpoint("https://models.example:11434")
         == "https://models.example:11434"
     )
+
+from lightspeed_runtime.local_floor_runner import (
+    _receipt_timestamp,
+    validate_grounded_response,
+    verified_source_context,
+)
+
+
+def test_verified_source_context_is_hash_bound_and_detects_change(tmp_path: Path) -> None:
+    source = tmp_path / "source.txt"
+    source.write_text("alpha grounded evidence", encoding="utf-8")
+    import hashlib
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    contract = {
+        "source_context": [{"path": str(source), "sha256": digest, "start_char": 0, "max_chars": 100}],
+        "policy": {"require_source_context": True},
+    }
+    evidence = verified_source_context(contract)
+    assert evidence[0]["sha256"] == digest
+    assert evidence[0]["excerpt"] == "alpha grounded evidence"
+    assert evidence[0]["citation_quotes"] == ["alpha grounded evidence"]
+    assert all(q in evidence[0]["excerpt"] for q in evidence[0]["citation_quotes"])
+    source.write_text("changed", encoding="utf-8")
+    try:
+        verified_source_context(contract)
+    except LocalFloorRunnerError as exc:
+        assert "bound source changed" in str(exc)
+    else:
+        raise AssertionError("hash mismatch must fail closed")
+
+
+def test_grounded_response_requires_exact_route_hash_and_quote(tmp_path: Path) -> None:
+    source = {
+        "path": str(tmp_path / "source.txt"),
+        "sha256": "a" * 64,
+        "excerpt": "LightSpeed proof token ALPHA-427.",
+    }
+    route = str(tmp_path / "receipt.json")
+    payload = {
+        "floor_summary": "The proof token is ALPHA-427.",
+        "safe_artifact_route": route,
+        "blocker": None,
+        "citations": [{"path": source["path"], "sha256": source["sha256"], "quote": "proof token ALPHA-427"}],
+    }
+    response = {"response": json.dumps(payload), "done": True}
+    assert validate_grounded_response(response, route, [source]) == []
+
+    payload["safe_artifact_route"] = str(tmp_path / "wrong.json")
+    payload["citations"][0]["quote"] = "invented quote"
+    errors = validate_grounded_response({"response": json.dumps(payload), "done": True}, route, [source])
+    assert "safe_artifact_route does not match the approved route" in errors
+    assert "citation is not present in the hash-bound excerpt" in errors
+
+
+def test_strict_request_schema_and_receipt_ids_are_bounded(tmp_path: Path) -> None:
+    contract_path = _contract(tmp_path)
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    contract["policy"]["strict_response_contract"] = True
+    floor = select_floor(contract, floor="Neo").floor
+    request = build_ollama_request(contract, floor, source_evidence=[])
+    assert request["format"]["type"] == "object"
+    assert "citations" in request["format"]["required"]
+    assert _receipt_timestamp() != _receipt_timestamp()
+
+
+def test_grounded_request_keeps_context_and_source_identities_bound(tmp_path: Path) -> None:
+    contract = json.loads(_contract(tmp_path).read_text(encoding="utf-8"))
+    contract["policy"]["strict_response_contract"] = True
+    floor = select_floor(contract, floor="Neo").floor
+    sources = [
+        {"path": str(tmp_path / "parent.json"), "sha256": "a" * 64, "excerpt": "parent promoted"},
+        {"path": str(tmp_path / "child.json"), "sha256": "b" * 64, "excerpt": "persistence open"},
+    ]
+    request = build_ollama_request(contract, floor, source_evidence=sources)
+    assert request["options"]["num_ctx"] == 8192
+    props = request["format"]["properties"]
+    route = props["safe_artifact_route"]["enum"][0]
+    assert route in request["prompt"]
+    alternatives = props["citations"]["items"]["anyOf"]
+    assert [(a["properties"]["path"]["enum"][0], a["properties"]["sha256"]["enum"][0])
+            for a in alternatives] == [(s["path"], s["sha256"]) for s in sources]
+    assert [a["properties"]["quote"]["enum"][0] for a in alternatives] == [
+        s["excerpt"] for s in sources
+    ]
+    # Constrained generation does not replace the independent citation check.
+    swapped = {"floor_summary": "review", "safe_artifact_route": route, "blocker": None,
+               "citations": [{"path": sources[0]["path"], "sha256": sources[1]["sha256"],
+                              "quote": sources[0]["excerpt"]}]}
+    assert validate_grounded_response({"response": json.dumps(swapped), "done": True}, route, sources)
+    contract["policy"]["receipt_prompt_overrides"] = {"num_ctx": 999999}
+    assert build_ollama_request(contract, floor, source_evidence=sources)["options"]["num_ctx"] == 8192
+
+
+def test_quote_selection_exposes_status_beyond_header_and_preserves_literals() -> None:
+    from lightspeed_runtime.local_floor_runner import _citation_quote_candidates
+    excerpt = '{\r\n  "schema": "review/v1",\r\n  "status": "DURABLE_PERSISTENCE_OPEN",\r\n  "note": "a \\\"quoted\\\" value"\r\n}'
+    options = _citation_quote_candidates(excerpt)
+    assert '"status": "DURABLE_PERSISTENCE_OPEN",' in options
+    assert any('quoted' in option for option in options)
+    assert all(option in excerpt for option in options)
+    assert len(_citation_quote_candidates('\n'.join(f'evidence passage {i}' for i in range(100)))) == 64

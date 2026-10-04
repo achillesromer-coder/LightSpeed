@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   COMMAND_SCHEMA,
   createCommandEnvelope,
+  nodeExchangePresentation,
+  objectContextApiPath,
   projectFileApiPath,
   remoteAccessPresentation,
   resolveDesktopOrigin,
@@ -56,6 +58,31 @@ describe("LS GO desktop command routing", () => {
     }).label).toBe("Verify off-device");
   });
 
+  it("keeps verified carriers distinct from peer compute", () => {
+    const view = nodeExchangePresentation({
+      node_id: "bouwerbase",
+      transport: {
+        mode: "content_addressed_verified_readback",
+        verified_carriers: ["E-volume"],
+        peer_transport_verified: false,
+      },
+      compute: {
+        local_ready: true,
+        peer_nodes: [],
+        peer_compute_verified: false,
+        lease_required: true,
+        heavy_execution_default: false,
+      },
+      claim_boundary: "Carrier readback is not peer compute.",
+      authority_transfer: false,
+      canonical_promotion_authorized: false,
+    });
+    expect(view.transfer).toContain("Carrier readback verified");
+    expect(view.transfer).toContain("peer transport unproven");
+    expect(view.compute).toBe("Local compute ready · peer compute unproven");
+    expect(view.boundary).toBe("Carrier readback is not peer compute.");
+  });
+
   it("routes implementation work to Smith", () => {
     expect(routeInstruction("Update the Git branch, run the build and return a commit receipt")).toBe("Smith");
   });
@@ -85,6 +112,13 @@ describe("LS GO desktop command routing", () => {
     expect(() => createCommandEnvelope({ instruction: "Run a bounded health check" })).toThrow(
       "Desktop authority contract is not available",
     );
+  });
+
+  it("encodes current object-context lookup without creating a second registry route", () => {
+    expect(objectContextApiPath("M1 Elevated Bypass", "romer")).toBe(
+      "/api/v1/object-context/M1%20Elevated%20Bypass?domain=romer",
+    );
+    expect(() => objectContextApiPath("   " )).toThrow("object query is required");
   });
 
   it("encodes project file routes segment-by-segment", () => {

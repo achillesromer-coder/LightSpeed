@@ -1,0 +1,116 @@
+{
+  "schema": "CGX-NODE-EXCHANGE-CONTRACT/0.1",
+  "status": "implementation contract / peer transport activation gated",
+  "location": "Cognigrex.cgx:/stack/node-exchange",
+  "purpose": "Bind content-addressed data transfer and delegated computation to existing CGX identity, execution leases, receipts and readback without creating a second runtime or transferring semantic authority.",
+  "schemas": {
+    "node_capability": "cgx-node-capability-v1",
+    "transfer_envelope": "cgx-node-transfer-envelope-v1",
+    "transfer_receipt": "cgx-node-transfer-receipt-v1",
+    "compute_request": "cgx-node-compute-request-v1",
+    "compute_receipt": "cgx-node-compute-receipt-v1"
+  },
+  "identity_rules": [
+    "node identity is distinct from agent identity and semantic authority",
+    "surface identity is not node identity",
+    "storage volume or carrier is not an independent compute node unless compute capability and independent process identity are proven",
+    "node capability claims require current readback evidence"
+  ],
+  "transfer_required": [
+    "transfer_id",
+    "source_node_id",
+    "target_node_id",
+    "source_ref",
+    "source_sha256",
+    "size_bytes",
+    "target_root_id",
+    "target_relative_path",
+    "created_utc"
+  ],
+  "transfer_rules": [
+    "transfer is content-addressed by source_sha256",
+    "source bytes remain authoritative until exact target readback verifies the same sha256 and size",
+    "copy or transport never transfers semantic, governance or release authority",
+    "target mutation requires DIGITAL_WRITE or stronger lease when execution is requested",
+    "existing identical payload may be reused without byte-for-byte retransmission",
+    "existing non-identical target is a conflict and must not be overwritten silently",
+    "partial transfer remains staging only and cannot satisfy downstream compute dependency",
+    "verified transfer receipt is operational evidence, not canonical promotion"
+  ],
+  "transfer_states": [
+    "planned",
+    "staged",
+    "transferring",
+    "verified",
+    "received",
+    "held",
+    "failed"
+  ],
+  "compute_required": [
+    "request_id",
+    "task_id",
+    "run_id",
+    "target_node_id",
+    "capability_id",
+    "instruction_sha256",
+    "input_manifest_sha256",
+    "lease_ref",
+    "resource_budget"
+  ],
+  "compute_rules": [
+    "delegated compute requires COMPUTE_ONLY or stronger current scoped execution lease",
+    "compute request may reference transferred inputs only after verified target readback",
+    "raw instruction is transport context and is not semantic authority",
+    "arbitrary shell execution is not a node capability",
+    "executor must be a registered deterministic tool, solver, simulation capability or existing Cognigrex/LightSpeed workflow",
+    "resource budget is a ceiling and heavy execution remains separately gated",
+    "result values remain unknown until receipted execution",
+    "compute receipt must identify node, capability, input manifest hash, result refs and execution provenance",
+    "compute output does not authorise canonical promotion, provider writes, publication or actuation"
+  ],
+  "resource_budget_fields": [
+    "max_wall_seconds",
+    "max_memory_mb",
+    "max_input_bytes",
+    "allow_heavy"
+  ],
+  "receipt_rules": [
+    "Task_ID and Run_ID lineage is preserved across transfer and compute",
+    "source and destination hashes are retained",
+    "receiver readback is explicit",
+    "authority_transfer is always false",
+    "canonical_promotion_authorized defaults false",
+    "public_publish_authorized defaults false",
+    "receipts are append-only evidence inputs"
+  ],
+  "surface_bindings": {
+    "desktop": "full local transfer/compute execution when current lease and tool policy allow",
+    "web": "bounded status, planning and receipt projection; node-exchange queue activation requires the host root registry; no direct public execution",
+    "mobile": "projection-lite status, owner review and planning; node-exchange queue activation requires the host root registry",
+    "chat": "intent, orchestration and review; local bytes move through node/runtime capability rather than conversation memory",
+    "api": "typed exchange envelopes only",
+    "node": "signed peer capability, verified transfer, leased compute and receipt return"
+  },
+  "activation": {
+    "local_compute": "may use existing LightSpeed/Cognigrex runtime when its current execution preflights pass",
+    "local_volume_transfer": "may be tested in isolated approved roots with exact hash readback",
+    "host_root_registry": "required before queued transfer activation; machine-local configuration maps stable root IDs to allowlisted paths and action payloads may not self-authorize filesystem paths",
+    "peer_transfer": "requires authenticated peer transport adapter and explicit target-node identity",
+    "peer_compute": "requires independently proven target compute node plus current lease",
+    "public_relay": "transport exposure is not execution authority; owner authentication and private HTTPS boundary remain required"
+  },
+  "current_claim_boundary": [
+    "BouwerBase local computation has independent operational receipts",
+    "a mounted secondary volume may prove carrier readback but does not by itself prove peer compute",
+    "off-device peer computation remains unproven until a second independently connected compute node is exercised"
+  ],
+  "invariants": [
+    "no-second-runtime",
+    "no-authority-transfer-by-copy",
+    "no-compute-from-unverified-input",
+    "no-peer-claim-from-mounted-volume",
+    "no-free-form-shell-capability",
+    "no-public-direct-execution",
+    "no-canonical-promotion-from-runtime-receipt-alone"
+  ]
+}

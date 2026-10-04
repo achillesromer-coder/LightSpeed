@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-SELECTOR-SHORTCALLS/0.1",
+  "schema": "CGX-SELECTOR-SHORTCALLS/0.3",
   "syntax": "@Selector /shortcall [object] [constraints...]",
   "global": {
     "help": "interface.help",
@@ -7,53 +7,250 @@
     "status": "ops.health",
     "receipt": "receipts.list",
     "sources": "sources.envelope",
-    "extend": "extensions.tool"
+    "extend": "extensions.tool",
+    "exchange": "node.exchange.status",
+    "transfer": "node.transfer",
+    "compute": "node.compute",
+    "preflight": "consequence.preflight",
+    "tool-plan": "extensions.plan",
+    "open-receipt": "receipts.open",
+    "define": "definitions.search",
+    "object": "cgx.object_context"
   },
   "selectors": {
     "achilles": {
-      "floors": ["Merovingian", "Oracle", "Morpheus", "Architect"],
-      "toolkits": ["cgx-core", "lightspeed", "google-drive", "github", "web"],
-      "shortcalls": {"audit":"cgx.cross_analysis","gate":"knowns.proof_queue","proof":"data.validate","knowns":"knowns.read","release":"ops.finalize","handoff":"protocols.build"}
+      "floors": [
+        "Merovingian",
+        "Oracle",
+        "Morpheus",
+        "Architect"
+      ],
+      "toolkits": [
+        "cgx-core",
+        "lightspeed",
+        "google-drive",
+        "github",
+        "web"
+      ],
+      "shortcalls": {
+        "audit": "cgx.cross_analysis",
+        "gate": "knowns.proof_queue",
+        "proof": "data.validate",
+        "knowns": "knowns.read",
+        "release": "ops.finalize",
+        "handoff": "protocols.build",
+        "assure": "assurance.preflight",
+        "custody": "custodial.preflight"
+      }
     },
     "neo": {
-      "floors": ["Neo", "Smith", "Merovingian", "Morpheus"],
-      "toolkits": ["cgx-core", "lightspeed", "local-llm", "python", "github", "google-drive"],
-      "shortcalls": {"route":"cgx.plan_query","plan":"cgx.minimum_work","run":"local.supervise","queue":"ops.queue","local":"local.supervise","resume":"receipts.list"}
+      "floors": [
+        "Neo",
+        "Smith",
+        "Merovingian",
+        "Morpheus"
+      ],
+      "toolkits": [
+        "cgx-core",
+        "lightspeed",
+        "local-llm",
+        "python",
+        "github",
+        "google-drive"
+      ],
+      "shortcalls": {
+        "route": "cgx.plan_query",
+        "plan": "cgx.minimum_work",
+        "run": "local.supervise",
+        "queue": "ops.queue",
+        "local": "local.supervise",
+        "resume": "receipts.list",
+        "probe": "ops.route_probe"
+      }
     },
     "athene": {
-      "floors": ["Oracle", "Morpheus", "Neo", "TheConstruct"],
-      "toolkits": ["cgx-core", "lightspeed", "google-drive", "web", "python"],
-      "shortcalls": {"eco":"eco.assess","impact":"eco.assess","evidence":"sources.envelope","corridor":"eco.assess","mitigate":"eco.assess","species":"eco.assess"}
+      "floors": [
+        "Oracle",
+        "Morpheus",
+        "Neo",
+        "TheConstruct"
+      ],
+      "toolkits": [
+        "cgx-core",
+        "lightspeed",
+        "google-drive",
+        "web",
+        "python"
+      ],
+      "shortcalls": {
+        "eco": "eco.assess",
+        "impact": "eco.assess",
+        "evidence": "sources.envelope",
+        "corridor": "eco.assess",
+        "mitigate": "eco.assess",
+        "species": "eco.assess"
+      }
     },
     "raphael": {
-      "floors": ["Morpheus", "TheConstruct", "Neo", "Oracle"],
-      "toolkits": ["cgx-core", "lightspeed", "python", "freecad", "local-llm"],
-      "shortcalls": {"prove":"tests.plan","test":"tests.plan","sweep":"science.rfs_emff_sweep","simulate":"science.mark3_simulate","falsify":"cgx.cross_analysis","units":"science.query"}
+      "floors": [
+        "Morpheus",
+        "TheConstruct",
+        "Neo",
+        "Oracle"
+      ],
+      "toolkits": [
+        "cgx-core",
+        "lightspeed",
+        "python",
+        "freecad",
+        "local-llm"
+      ],
+      "shortcalls": {
+        "prove": "tests.plan",
+        "test": "tests.plan",
+        "sweep": "science.rfs_emff_sweep",
+        "simulate": "science.mark3_simulate",
+        "falsify": "cgx.cross_analysis",
+        "units": "science.query",
+        "query": "science.query",
+        "cad": "cad.freecad",
+        "femm": "physics.femm.probe",
+        "bom": "cad.freecad.bom",
+        "gmat": "science.gmat.probe"
+      }
     },
     "cognigrex": {
-      "floors": ["Neo", "Oracle", "Morpheus", "Architect"],
-      "toolkits": ["cgx-core", "lightspeed", "local-llm", "google-drive", "github", "web"],
-      "shortcalls": {"resolve":"cgx.resolve_context","cross":"cgx.cross_analysis","hydrate":"cgx.resolve_context","reconcile":"cgx.minimum_work","gaps":"interface.capabilities","portfolio":"cgx.cross_analysis"}
+      "floors": [
+        "Neo",
+        "Oracle",
+        "Morpheus",
+        "Architect"
+      ],
+      "toolkits": [
+        "cgx-core",
+        "lightspeed",
+        "local-llm",
+        "google-drive",
+        "github",
+        "web"
+      ],
+      "shortcalls": {
+        "resolve": "cgx.resolve_context",
+        "cross": "cgx.cross_analysis",
+        "hydrate": "cgx.resolve_context",
+        "reconcile": "cgx.minimum_work",
+        "gaps": "interface.capabilities",
+        "portfolio": "cgx.cross_analysis"
+      }
     },
     "romer-grex": {
-      "floors": ["Neo", "Morpheus", "TheConstruct", "Oracle"],
-      "toolkits": ["cgx-core", "lightspeed", "python", "freecad", "github", "google-drive"],
-      "shortcalls": {"mission":"cgx.cross_analysis","mark":"science.mark3_simulate","luke":"cgx.cross_analysis","twin":"entities.build","sweep":"science.rfs_emff_sweep","route":"cgx.plan_query"}
+      "floors": [
+        "Neo",
+        "Morpheus",
+        "TheConstruct",
+        "Oracle"
+      ],
+      "toolkits": [
+        "cgx-core",
+        "lightspeed",
+        "python",
+        "freecad",
+        "github",
+        "google-drive"
+      ],
+      "shortcalls": {
+        "mission": "cgx.cross_analysis",
+        "mark": "science.mark3_simulate",
+        "luke": "cgx.cross_analysis",
+        "twin": "cgx.object_context",
+        "sweep": "science.rfs_emff_sweep",
+        "route": "cgx.plan_query",
+        "cad": "cad.freecad",
+        "bom": "cad.freecad.bom",
+        "gmat": "science.gmat.probe",
+        "mpl": "assurance.mpl.probe"
+      }
     },
     "eco-grex": {
-      "floors": ["Oracle", "Morpheus", "TheConstruct", "Neo"],
-      "toolkits": ["cgx-core", "lightspeed", "google-drive", "web", "python"],
-      "shortcalls": {"eco":"eco.assess","habitat":"eco.assess","species":"eco.assess","water":"eco.assess","carbon":"eco.assess","mitigate":"eco.assess"}
+      "floors": [
+        "Oracle",
+        "Morpheus",
+        "TheConstruct",
+        "Neo"
+      ],
+      "toolkits": [
+        "cgx-core",
+        "lightspeed",
+        "google-drive",
+        "web",
+        "python"
+      ],
+      "shortcalls": {
+        "eco": "eco.assess",
+        "habitat": "eco.assess",
+        "species": "eco.assess",
+        "water": "eco.assess",
+        "carbon": "eco.assess",
+        "mitigate": "eco.assess"
+      }
     },
     "emassc": {
-      "floors": ["Merovingian", "Oracle", "Morpheus", "Architect"],
-      "toolkits": ["cgx-core", "lightspeed", "google-drive", "github", "web"],
-      "shortcalls": {"govern":"governance.action_ledger","validate":"data.validate","ledger":"knowns.read","evidence":"sources.envelope","release":"ops.finalize","ip":"cgx.cross_analysis"}
+      "floors": [
+        "Merovingian",
+        "Oracle",
+        "Morpheus",
+        "Architect"
+      ],
+      "toolkits": [
+        "cgx-core",
+        "lightspeed",
+        "google-drive",
+        "github",
+        "web"
+      ],
+      "shortcalls": {
+        "govern": "governance.action_ledger",
+        "validate": "data.validate",
+        "ledger": "knowns.read",
+        "evidence": "sources.envelope",
+        "release": "ops.finalize",
+        "ip": "cgx.cross_analysis",
+        "assure": "assurance.preflight",
+        "custody": "custodial.preflight"
+      }
     },
     "lightspeed": {
-      "floors": ["Merovingian", "Neo", "Smith", "Trinity", "Oracle", "Morpheus", "Architect", "TheConstruct"],
-      "toolkits": ["lightspeed", "cgx-core", "local-llm", "python", "freecad", "github", "google-drive"],
-      "shortcalls": {"health":"ops.health","run":"local.supervise","queue":"ops.queue","receipt":"receipts.list","files":"files.list","compact":"ops.consolidate","bridge":"ops.route_probe","finalize":"ops.finalize"}
+      "floors": [
+        "Merovingian",
+        "Neo",
+        "Smith",
+        "Trinity",
+        "Oracle",
+        "Morpheus",
+        "Architect",
+        "TheConstruct"
+      ],
+      "toolkits": [
+        "lightspeed",
+        "cgx-core",
+        "local-llm",
+        "python",
+        "freecad",
+        "github",
+        "google-drive"
+      ],
+      "shortcalls": {
+        "health": "ops.health",
+        "run": "local.supervise",
+        "queue": "ops.queue",
+        "receipt": "receipts.list",
+        "files": "files.list",
+        "compact": "ops.consolidate",
+        "bridge": "ops.route_probe",
+        "finalize": "ops.finalize",
+        "open": "files.open",
+        "result": "receipts.open"
+      }
     }
   }
 }

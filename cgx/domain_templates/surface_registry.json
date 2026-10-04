@@ -101,6 +101,9 @@
         "sensors",
         "actuators",
         "peer-sync",
+        "content-addressed-transfer",
+        "leased-compute",
+        "verified-readback",
         "graceful-degradation"
       ]
     }

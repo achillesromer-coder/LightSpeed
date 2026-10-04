@@ -79,18 +79,27 @@ capability remains machine-bound.
 @Achilles audit this result against current authority and evidence.
 @Neo decompose and route this task using minimum sufficient work.
 @Raphael verify the physics and reuse existing tests where valid.
-@Römer-Grex resolve the current Mark V context.
+@Römer-Grex /twin WatchTower
+@Cognigrex /object M1 Elevated Bypass
+@Eco-Grex /object Bio Blocks
 @Eco-Grex assess this infrastructure component through the current ecology domain.
 @LightSpeed execute only the unresolved deterministic work and return a receipt.
 ```
 
 ## Runtime boundary
 
-Version 0.2.x remains intentionally **skills-first**. It can orchestrate
-currently available ChatGPT/Codex tools and connected plugins through its
-workflow skills, but it does not fabricate a local MCP endpoint. Heavy/local LS
-execution remains behind the existing LightSpeed runtime until a verified typed
-transport is registered.
+Version 0.3.x uses the same thin selector architecture plus one shared,
+validated local `lightspeed-cgx` MCP tool plane. The MCP server wraps existing
+LightSpeed runtime functions and receipts; it is not a second runtime or truth
+store.
 
-That later transport must wrap existing LightSpeed functions and receipts; it
-must not expose an arbitrary shell executor or create a second runtime.
+Current typed tools include capability/shortcall resolution, current object
+resolution, consequence preflight, cross-analysis planning, receipt access,
+bounded local planning/execution, and read-only FreeCAD inspection/BOM
+derivation. `cgx_resolve_object` joins the current twin lineage to its owning
+CGX child domain, Operations binding, source owner and representation boundary.
+
+The shared tool plane deliberately exposes no arbitrary shell, arbitrary Python,
+arbitrary filesystem open, automatic canonical promotion or public publishing.
+Heavy/local execution remains separately gated and `cgx_run_local_work`
+requires explicit confirmation with `heavy=false`.

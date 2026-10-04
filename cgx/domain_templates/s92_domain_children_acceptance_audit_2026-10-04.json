@@ -1,0 +1,87 @@
+{
+  "schema": "CGX-S92-DOMAIN-CHILD-ACCEPTANCE-AUDIT/0.1",
+  "status": "TECHNICAL_ACCEPTANCE_AUDIT_PASS / ROOT_AUTHORITY_DECISION_OPEN",
+  "audited_at": "2026-10-04",
+  "auditor": "Achilles",
+  "authority_effect": "None. This receipt recommends exact bytes for RootAuthority decision; it does not accept, promote, or mutate child authority.",
+  "parent_recovery": {
+    "state_id": "S92",
+    "drive_id": "1ap1xHVQ0cDWeJDAVWxvY_VqMkSzwpG6i",
+    "sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+    "readback": "VERIFIED"
+  },
+  "durable_candidate": {
+    "drive_id": "1zb36J4ZSd8Rt4BB_6vkx3X_eSWErFt0B",
+    "folder_drive_id": "1IToJYkQjDK0y3TqaKYg4V7EhFFFJ1Z8t",
+    "package_sha256": "36349987fa34dc0f85e26c9658fbf8e3814010f7cc9f536b836920eab239a90d",
+    "size_bytes": 540891,
+    "independent_drive_refetch": true,
+    "independent_package_hash_match": true,
+    "state": "PRE_CANONICAL"
+  },
+  "exact_members": {
+    "Romer.cgx": {
+      "sha256": "84cc84915661fec188d578eca1315f6e943f828424d4d54b9877e18903ac277f",
+      "semantic_object_id": "cgx:domain:romer",
+      "tracked_objects": 96,
+      "parent_semantic_object_id": "Cognigrex.cgx",
+      "authority_transfer": false,
+      "binding_mode": "REFERENCE"
+    },
+    "Eco.cgx": {
+      "sha256": "d645fb3acb105379c3fc9dc2f263aa6bb49c78236929c7a2fca9fec998170937",
+      "semantic_object_id": "cgx:domain:eco",
+      "tracked_objects": 103,
+      "parent_semantic_object_id": "Cognigrex.cgx",
+      "authority_transfer": false,
+      "binding_mode": "REFERENCE"
+    },
+    "EMASSC.cgx": {
+      "sha256": "167dbfccae5fd6bfa877eb3150ac4423b2cfc82970e38bc457ed116c126983f5",
+      "semantic_object_id": "cgx:domain:emassc",
+      "tracked_objects": 98,
+      "parent_semantic_object_id": "Cognigrex.cgx",
+      "authority_transfer": false,
+      "binding_mode": "REFERENCE"
+    },
+    "LS.cgx": {
+      "sha256": "bd33c82b2c7f3f324b6e47f037ecf11d8b4353aedeebfd62b0f5df3c686d5bd0",
+      "semantic_object_id": "cgx:domain:lightspeed",
+      "tracked_objects": 67,
+      "parent_semantic_object_id": "cgx:domain:emassc",
+      "authority_transfer": false,
+      "binding_mode": "REFERENCE",
+      "scientific_state_duplicated": false
+    }
+  },
+  "independent_checks": [
+    "Drive metadata identifies exact package ID, size and parent folder.",
+    "Fresh Drive binary refetch SHA-256 equals merged persistence receipt package SHA-256.",
+    "All four embedded carrier SHA-256 values equal merged persistence receipt exact member hashes.",
+    "Embedded PERSISTENCE_CANDIDATE_MANIFEST exact member hashes and sizes match independent byte reads.",
+    "Embedded first-file migration receipt exact carrier hashes match independent byte reads.",
+    "Each carrier is a readable CGX archive with internal manifest.",
+    "Stable semantic domain identity is preserved across regenerated carrier instances.",
+    "S92 source-master reference is exact in inspected carrier identity metadata.",
+    "CGP-IES extension binding is by REFERENCE and explicitly authority_transfer=false.",
+    "Assurance binding explicitly disclaims certification/risk-acceptance authority transfer.",
+    "LS parent semantic identity resolves to EMASSC and no scientific-state duplication is claimed."
+  ],
+  "historical_difference": {
+    "oct1_exact_carriers_recovered": false,
+    "reason": "Original Oct 1 selected carrier bytes were never durably persisted; fresh regeneration produces different carrier/DBR instance hashes while retaining stable semantic identities and bounded migrated semantics.",
+    "rule": "Do not treat historical Oct 1 hashes as promoted or equivalent exact bytes."
+  },
+  "recommendation": {
+    "decision": "ACCEPT_TECHNICAL_CANDIDATE_FOR_ROOT_AUTHORITY_DECISION",
+    "scope": "Only the exact durable package and four member hashes listed in this receipt.",
+    "root_authority_action_required": "Accept or reject exact package SHA-256 36349987fa34dc0f85e26c9658fbf8e3814010f7cc9f536b836920eab239a90d and exact four member hashes. If accepted, bind/promote only those exact bytes and perform post-promotion provider readback.",
+    "promotion_performed": false
+  },
+  "holds": [
+    "CGX-LAUNCH-007 physical multi-device/non-loopback proof remains empirical-open.",
+    "CGX-LAUNCH-008 platform keystore/revocation/recovery proof remains empirical-open.",
+    "CGX-LAUNCH-009 distributed governance promotion remains held.",
+    "No public/external/legal/financial/physical action is authorized by this receipt."
+  ]
+}

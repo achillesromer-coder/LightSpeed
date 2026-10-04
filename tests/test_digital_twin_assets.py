@@ -331,3 +331,35 @@ def test_ci_dependencies_and_actions_are_immutable():
     assert "--require-hashes --only-binary=:all:" in workflow
     assert 'branches: [main, "review/**"]' not in workflow
     assert lock.count("--hash=sha256:") == 8
+
+
+def test_twin_record_lineage_covers_current_16_object_manifest_and_operations():
+    manifest = json.loads(SOURCE_MANIFEST.read_text(encoding="utf-8"))
+    lineage_path = REPO_ROOT / "data" / "digital-twin" / "twin_record_source_lineage_2026-09-14.json"
+    lineage = json.loads(lineage_path.read_text(encoding="utf-8"))
+
+    manifest_by_id = {item["twin_id"]: item for item in manifest["assets"]}
+    lineage_by_id = {item["twin_id"]: item for item in lineage["records"]}
+
+    assert len(manifest_by_id) == len(lineage_by_id) == lineage["record_count"] == 16
+    assert manifest_by_id.keys() == lineage_by_id.keys()
+    assert lineage["operations_population"]["bound_records"] == 16
+
+    expected_counts = {}
+    for item in manifest["assets"]:
+        expected_counts[item["representation_class"]] = expected_counts.get(item["representation_class"], 0) + 1
+    assert lineage["representation_counts"] == expected_counts
+
+    for twin_id, record in lineage_by_id.items():
+        binding = record.get("operations_binding")
+        assert binding, f"missing Operations binding: {twin_id}"
+        assert binding["workbook_id"] == "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg"
+        assert binding.get("binding_state")
+        assert record["semantic_domain"] in {"romer", "eco"}
+        assert record["domain_semantic_object_id"] in {"cgx:domain:romer", "cgx:domain:eco"}
+        if twin_id in {"watchtower", "m1_elevated_bypass", "romer_spaceport"}:
+            assert record["representation_class"] == manifest_by_id[twin_id]["representation_class"]
+
+    assert lineage_by_id["watchtower"]["semantic_object_id"] == "WT-001"
+    assert lineage_by_id["m1_elevated_bypass"]["semantic_object_id"] == "T1-M1"
+    assert lineage_by_id["romer_spaceport"]["semantic_object_id"] == "INF-001"

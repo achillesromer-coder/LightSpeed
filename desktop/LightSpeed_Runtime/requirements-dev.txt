@@ -1,0 +1,4 @@
+-r requirements-api.txt
+-r requirements-validation.txt
+# Current Runtime regression runner.
+pytest==9.0.1

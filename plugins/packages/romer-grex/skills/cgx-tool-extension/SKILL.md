@@ -22,9 +22,10 @@ Read `references/capabilities.json` and the canonical `toolkit_registry.json` fi
    - define bounded inputs and structured output/receipt,
    - add tests and failure cases,
    - register it once in the shared capability/toolkit registry.
-5. If first-class ChatGPT/Codex tool discovery is required, expose the validated operation through the single shared CGX MCP tool plane. Do not create a separate MCP server per selector.
-6. Rebuild selector packages and validate marketplace/client state.
-7. Promotion remains subject to the existing Achilles/owner/LS GO gates.
+5. Run cgx_plan_tool_extension when the shared lightspeed-cgx MCP plane is available. Reuse/alias an existing route whenever it is sufficient.
+6. If first-class ChatGPT/Codex tool discovery is required, expose only the validated typed operation through the single shared CGX MCP tool plane. Do not create a separate MCP server per selector.
+7. Rebuild selector packages and validate marketplace/client state.
+8. Promotion remains subject to the existing Achilles/owner/LS GO gates.
 
 ## New skill rule
 

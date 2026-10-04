@@ -1,7 +1,8 @@
 {
   "schema": "achilles_twin_record_source_lineage_v1",
   "generated_date": "2026-09-14",
-  "scope": "record/provenance/model/test lineage for the thirteen E-class Type1 interaction-proxy twins",
+  "last_reconciled_date": "2026-10-03",
+  "scope": "record/provenance/model/test lineage for the complete current 16-object Atrium/Type1 digital-asset set",
   "render_contract": {
     "file": "data/digital-twin/complete_digital_asset_manifest_2026-09-12.json",
     "blob_sha": "edb05a7baa911cf6bedafb91105d4d417a21bc85",
@@ -9,20 +10,503 @@
   },
   "authority_rule": "Record-source binding strengthens identity, provenance and source/model/test context only. It is not geometry authority, physical validation, professional acceptance, site approval or public-release authority.",
   "records": [
-    {"twin_id":"solar_hull","canonical_owner":{"type":"drive_sheet_manifest","id":"1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko","sheet":"01_Source_Manifest"},"source_name":"Solar_Hull_Digital_Twin_v0_2.xlsx","sha256":"4faed8f6a9e808c7e629bbbb16db8187fd8610e72d0a023e9e0b0156748db4fb","family_state":"canonical_current","verified_raw_drive_id":"18U8yd0HFsfFB9oVGGE3qNna4rD21HMPc","geometry_authority":"NONE"},
-    {"twin_id":"free_flow_batteries","canonical_owner":{"type":"drive_sheet_manifest","id":"1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko","sheet":"01_Source_Manifest"},"source_name":"Free_Flow_Batteries_Digital_Twin_v0_1.xlsx","sha256":"c23b29e9e7dbd05cdac1edf2fb1981acd5a261a224d79477c92271b8a5de52e5","family_state":"canonical_current","verified_raw_drive_id":"1DzVG1xAJH_UHsFjUXGocbViJDNDn53Qo","geometry_authority":"NONE"},
-    {"twin_id":"free_flow_capacitors","canonical_owner":{"type":"drive_sheet_manifest","id":"1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko","sheet":"01_Source_Manifest"},"source_name":"Free_Flow_Capacitors_Digital_Twin_v0_1.xlsx","sha256":"01aa7c12f79444413496c436359309f8d69492e9e6f5f5a88c079e2f34f1c80f","family_state":"canonical_current","geometry_authority":"NONE"},
-    {"twin_id":"free_flow_solenoid_stack","canonical_owner":{"type":"drive_sheet_manifest","id":"1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko","sheet":"01_Source_Manifest"},"source_name":"Free_Flow_Solenoid_Stack_Digital_Twin_v0_1.xlsx","sha256":"f9a46cfce4df45cd51e21576118c9a1d5c1464cee9c60b68226607492b146c97","family_state":"canonical_current","geometry_authority":"NONE"},
-    {"twin_id":"rfs_emff","canonical_owner":{"type":"drive_sheet_manifest","id":"1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko","sheet":"01_Source_Manifest"},"source_name":"RFS_EMFF_Digital_Twin_Test_Sandbox_v0_1.xlsx","sha256":"1cc3f421ed128186b1ab018f7af8eda27bc30572b21bc8b8a1d2bada91c9a58f","family_state":"canonical_current","geometry_authority":"NONE"},
-    {"twin_id":"mark_1p","canonical_owner":{"type":"drive_sheet_manifest","id":"1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko","sheet":"01_Source_Manifest"},"source_name":"Mark_1P_Digital_Twin_v0_1.xlsx","sha256":"885bc40c3fd9dc67c53b9cdb0de18758b65e28b9dcb69bbfa5d7531fdd8c2263","family_state":"canonical_current","verified_raw_drive_id":"1WEqxlBfOi5SSLhmwSiIQAUkWeH2oKEXD","geometry_authority":"NONE"},
-    {"twin_id":"mark_i","canonical_owner":{"type":"drive_sheet_manifest","id":"1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko","sheet":"01_Source_Manifest"},"source_name":"Mark_I_Terrestrial_Test_Chamber_Digital_Twin_v0_1.xlsx","sha256":"3659dd69829b503ac44ee47e502171298bb1369f70f6dea9d363db10eb4747c8","family_state":"canonical_current","verified_raw_drive_id":"12TWqJ-Kh0twh7t582MPwL82MoHsuOWd_","geometry_authority":"NONE"},
-    {"twin_id":"mark_iii","canonical_owner":{"type":"drive_sheet_manifest","id":"1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko","sheet":"01_Source_Manifest"},"source_name":"Mark_III_Digital_Twin_v0_1.xlsx","sha256":"fab23970e80c016a2140ec0f87c1d0d7e15c365190fdacb5dc2ee2a1c2a81075","family_state":"canonical_current","geometry_authority":"NONE"},
-    {"twin_id":"luke_family","canonical_owner":{"type":"drive_sheet_manifest","id":"1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko","sheet":"01_Source_Manifest"},"source_name":"Luke_LukeII_Apostle_Toroidal_EMF_Digital_Twin_v0_1.xlsx","sha256":"fe8eaf488cc14bbf249e315f00c149504e7cb07e63b7b8f2e022ab3a89fef071","family_state":"canonical_current","verified_raw_drive_id":"1BGwPdfafqVKwh3AS5fwvkhIImBmfPdMU","geometry_authority":"NONE"},
-    {"twin_id":"maglev_luke_iv","canonical_owner":{"type":"drive_sheet_manifest","id":"1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko","sheet":"01_Source_Manifest"},"source_name":"MagLev_LukeIV_Digital_Twin_v0_1.xlsx","sha256":"44139771d34b193f54c5975ae0a228d2d34b664299385f6740a96bdec38b00cb","family_state":"canonical_current","verified_raw_drive_id":"1j1xu8MZF5MCDCGeVSDChvIMn6U21xJoJ","geometry_authority":"NONE"},
-    {"twin_id":"embedded_bio_blocks","canonical_owner":{"type":"drive_sheet_manifest","id":"1kWKbAfHH7ox5Wr8pK0eLXSzlEWdZ8SVqaHvZ-UXuXQU","sheet":"01_Source_Manifest"},"source_name":"Embedded_Bio_Blocks_Digital_Twin_v0_1.xlsx","sha256":"f1cf7a5d3a2e463881cd5389d265d0b70f1b56f849d87da70c57697b75b61d0b","family_state":"canonical_current","verified_raw_drive_id":"1wgUWkkr1mQIPMmmF1V7eaweToUAu8UxK","geometry_authority":"NONE"},
-    {"twin_id":"second_cycle","canonical_owner":{"type":"drive_sheet_manifest","id":"1kWKbAfHH7ox5Wr8pK0eLXSzlEWdZ8SVqaHvZ-UXuXQU","sheet":"01_Source_Manifest"},"source_name":"Second_Cycle_Digital_Twin_v0_1.xlsx","sha256":"0e3e7e878cca173f3799117f5f03cee8fbe924fd1051642d1d66202d0e35108d","family_state":"canonical_current","geometry_authority":"NONE"},
-    {"twin_id":"intersol","canonical_owner":{"type":"drive_sheet","id":"1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8","sheets":["116_INFRA_FINALIZATION_MATRIX_v0_1","154_INTERSOL_MASTER_READOUT_v0_1"]},"source_name":"Type 1 Romer Cognigrex structured InterSol canon","family_state":"canonical_current_structured_programme","geometry_authority":"NONE","whole_object_geometry_hash":null}
+    {
+      "twin_id": "solar_hull",
+      "canonical_owner": {
+        "type": "drive_sheet_manifest",
+        "id": "1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko",
+        "sheet": "01_Source_Manifest"
+      },
+      "source_name": "Solar_Hull_Digital_Twin_v0_2.xlsx",
+      "sha256": "4faed8f6a9e808c7e629bbbb16db8187fd8610e72d0a023e9e0b0156748db4fb",
+      "family_state": "canonical_current",
+      "verified_raw_drive_id": "18U8yd0HFsfFB9oVGGE3qNna4rD21HMPc",
+      "geometry_authority": "NONE",
+      "operations_binding": {
+        "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
+        "sheet": "Component Register",
+        "current_record_id": "COM-1666",
+        "current_object_id": "SF-01",
+        "lineage_record_ids": [
+          "COM-0428",
+          "COM-0430"
+        ],
+        "lineage_object_ids": [
+          "T1-ENERGY",
+          "ENERGY-02"
+        ],
+        "binding_state": "current energy family + Solar Hull R&D child"
+      },
+      "semantic_domain": "romer",
+      "domain_semantic_object_id": "cgx:domain:romer"
+    },
+    {
+      "twin_id": "free_flow_batteries",
+      "canonical_owner": {
+        "type": "drive_sheet_manifest",
+        "id": "1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko",
+        "sheet": "01_Source_Manifest"
+      },
+      "source_name": "Free_Flow_Batteries_Digital_Twin_v0_1.xlsx",
+      "sha256": "c23b29e9e7dbd05cdac1edf2fb1981acd5a261a224d79477c92271b8a5de52e5",
+      "family_state": "canonical_current",
+      "verified_raw_drive_id": "1DzVG1xAJH_UHsFjUXGocbViJDNDn53Qo",
+      "geometry_authority": "NONE",
+      "operations_binding": {
+        "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
+        "sheet": "Component Register",
+        "current_record_id": "COM-1666",
+        "current_object_id": "SF-01",
+        "lineage_record_ids": [
+          "COM-0428",
+          "COM-0433"
+        ],
+        "lineage_object_ids": [
+          "T1-ENERGY",
+          "ENERGY-05"
+        ],
+        "binding_state": "current energy family + Free Flow storage child; battery/capacitor split remains Systems-owned"
+      },
+      "semantic_domain": "romer",
+      "domain_semantic_object_id": "cgx:domain:romer"
+    },
+    {
+      "twin_id": "free_flow_capacitors",
+      "canonical_owner": {
+        "type": "drive_sheet_manifest",
+        "id": "1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko",
+        "sheet": "01_Source_Manifest"
+      },
+      "source_name": "Free_Flow_Capacitors_Digital_Twin_v0_1.xlsx",
+      "sha256": "01aa7c12f79444413496c436359309f8d69492e9e6f5f5a88c079e2f34f1c80f",
+      "family_state": "canonical_current",
+      "geometry_authority": "NONE",
+      "operations_binding": {
+        "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
+        "sheet": "Component Register",
+        "current_record_id": "COM-1666",
+        "current_object_id": "SF-01",
+        "lineage_record_ids": [
+          "COM-0428",
+          "COM-0433"
+        ],
+        "lineage_object_ids": [
+          "T1-ENERGY",
+          "ENERGY-05"
+        ],
+        "binding_state": "current energy family + Free Flow storage child; battery/capacitor split remains Systems-owned"
+      },
+      "semantic_domain": "romer",
+      "domain_semantic_object_id": "cgx:domain:romer"
+    },
+    {
+      "twin_id": "free_flow_solenoid_stack",
+      "canonical_owner": {
+        "type": "drive_sheet_manifest",
+        "id": "1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko",
+        "sheet": "01_Source_Manifest"
+      },
+      "source_name": "Free_Flow_Solenoid_Stack_Digital_Twin_v0_1.xlsx",
+      "sha256": "f9a46cfce4df45cd51e21576118c9a1d5c1464cee9c60b68226607492b146c97",
+      "family_state": "canonical_current",
+      "geometry_authority": "NONE",
+      "operations_binding": {
+        "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
+        "sheet": "Component Register",
+        "current_record_id": "COM-1666",
+        "current_object_id": "SF-01",
+        "lineage_record_ids": [
+          "COM-0428"
+        ],
+        "lineage_object_ids": [
+          "T1-ENERGY"
+        ],
+        "binding_state": "family bound; exact solenoid-stack child absent from Operations"
+      },
+      "semantic_domain": "romer",
+      "domain_semantic_object_id": "cgx:domain:romer"
+    },
+    {
+      "twin_id": "rfs_emff",
+      "canonical_owner": {
+        "type": "drive_sheet_manifest",
+        "id": "1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko",
+        "sheet": "01_Source_Manifest"
+      },
+      "source_name": "RFS_EMFF_Digital_Twin_Test_Sandbox_v0_1.xlsx",
+      "sha256": "1cc3f421ed128186b1ab018f7af8eda27bc30572b21bc8b8a1d2bada91c9a58f",
+      "family_state": "canonical_current",
+      "geometry_authority": "NONE",
+      "operations_binding": {
+        "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
+        "sheet": "Component Register",
+        "current_record_id": "COM-1668",
+        "current_object_id": "IP-01",
+        "lineage_record_ids": [
+          "COM-0443",
+          "COM-0449"
+        ],
+        "lineage_object_ids": [
+          "T1-SPACE",
+          "SPACE-06"
+        ],
+        "binding_state": "current interplanetary comparator + RFS/EMFF validation child"
+      },
+      "semantic_domain": "romer",
+      "domain_semantic_object_id": "cgx:domain:romer"
+    },
+    {
+      "twin_id": "mark_1p",
+      "canonical_owner": {
+        "type": "drive_sheet_manifest",
+        "id": "1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko",
+        "sheet": "01_Source_Manifest"
+      },
+      "source_name": "Mark_1P_Digital_Twin_v0_1.xlsx",
+      "sha256": "885bc40c3fd9dc67c53b9cdb0de18758b65e28b9dcb69bbfa5d7531fdd8c2263",
+      "family_state": "canonical_current",
+      "verified_raw_drive_id": "1WEqxlBfOi5SSLhmwSiIQAUkWeH2oKEXD",
+      "geometry_authority": "NONE",
+      "operations_binding": {
+        "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
+        "sheet": "Component Register",
+        "current_record_id": "COM-1668",
+        "current_object_id": "IP-01",
+        "lineage_record_ids": [
+          "COM-0090",
+          "COM-0443"
+        ],
+        "lineage_object_ids": [
+          "IP-01",
+          "T1-SPACE"
+        ],
+        "binding_state": "Mark family bound; exact Mark 1P child remains Systems/Romer-owned"
+      },
+      "semantic_domain": "romer",
+      "domain_semantic_object_id": "cgx:domain:romer"
+    },
+    {
+      "twin_id": "mark_i",
+      "canonical_owner": {
+        "type": "drive_sheet_manifest",
+        "id": "1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko",
+        "sheet": "01_Source_Manifest"
+      },
+      "source_name": "Mark_I_Terrestrial_Test_Chamber_Digital_Twin_v0_1.xlsx",
+      "sha256": "3659dd69829b503ac44ee47e502171298bb1369f70f6dea9d363db10eb4747c8",
+      "family_state": "canonical_current",
+      "verified_raw_drive_id": "12TWqJ-Kh0twh7t582MPwL82MoHsuOWd_",
+      "geometry_authority": "NONE",
+      "operations_binding": {
+        "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
+        "sheet": "Component Register",
+        "current_record_id": "COM-1668",
+        "current_object_id": "IP-01",
+        "lineage_record_ids": [
+          "COM-0443"
+        ],
+        "lineage_object_ids": [
+          "T1-SPACE"
+        ],
+        "binding_state": "Mark family bound; terrestrial Mark I chamber child absent from Operations"
+      },
+      "semantic_domain": "romer",
+      "domain_semantic_object_id": "cgx:domain:romer"
+    },
+    {
+      "twin_id": "mark_iii",
+      "canonical_owner": {
+        "type": "drive_sheet_manifest",
+        "id": "1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko",
+        "sheet": "01_Source_Manifest"
+      },
+      "source_name": "Mark_III_Digital_Twin_v0_1.xlsx",
+      "sha256": "fab23970e80c016a2140ec0f87c1d0d7e15c365190fdacb5dc2ee2a1c2a81075",
+      "family_state": "canonical_current",
+      "geometry_authority": "NONE",
+      "operations_binding": {
+        "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
+        "sheet": "Component Register",
+        "current_record_id": "COM-1668",
+        "current_object_id": "IP-01",
+        "lineage_record_ids": [
+          "COM-0443",
+          "COM-0444"
+        ],
+        "lineage_object_ids": [
+          "T1-SPACE",
+          "SPACE-01"
+        ],
+        "binding_state": "current interplanetary comparator + Mark III child"
+      },
+      "semantic_domain": "romer",
+      "domain_semantic_object_id": "cgx:domain:romer"
+    },
+    {
+      "twin_id": "luke_family",
+      "canonical_owner": {
+        "type": "drive_sheet_manifest",
+        "id": "1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko",
+        "sheet": "01_Source_Manifest"
+      },
+      "source_name": "Luke_LukeII_Apostle_Toroidal_EMF_Digital_Twin_v0_1.xlsx",
+      "sha256": "fe8eaf488cc14bbf249e315f00c149504e7cb07e63b7b8f2e022ab3a89fef071",
+      "family_state": "canonical_current",
+      "verified_raw_drive_id": "1BGwPdfafqVKwh3AS5fwvkhIImBmfPdMU",
+      "geometry_authority": "NONE",
+      "operations_binding": {
+        "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
+        "sheet": "Component Register",
+        "current_record_id": "COM-1668",
+        "current_object_id": "IP-01",
+        "lineage_record_ids": [
+          "COM-0443",
+          "COM-0446"
+        ],
+        "lineage_object_ids": [
+          "T1-SPACE",
+          "SPACE-03"
+        ],
+        "binding_state": "current interplanetary comparator + Luke orbital/return child"
+      },
+      "semantic_domain": "romer",
+      "domain_semantic_object_id": "cgx:domain:romer"
+    },
+    {
+      "twin_id": "maglev_luke_iv",
+      "canonical_owner": {
+        "type": "drive_sheet_manifest",
+        "id": "1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko",
+        "sheet": "01_Source_Manifest"
+      },
+      "source_name": "MagLev_LukeIV_Digital_Twin_v0_1.xlsx",
+      "sha256": "44139771d34b193f54c5975ae0a228d2d34b664299385f6740a96bdec38b00cb",
+      "family_state": "canonical_current",
+      "verified_raw_drive_id": "1j1xu8MZF5MCDCGeVSDChvIMn6U21xJoJ",
+      "geometry_authority": "NONE",
+      "operations_binding": {
+        "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
+        "sheet": "Component Register",
+        "current_record_id": "COM-1668",
+        "current_object_id": "IP-01",
+        "lineage_record_ids": [
+          "COM-0091",
+          "COM-0446"
+        ],
+        "lineage_object_ids": [
+          "IP-02",
+          "SPACE-03"
+        ],
+        "binding_state": "Luke family + logistics comparator; exact site/capture geometry remains unbound"
+      },
+      "semantic_domain": "romer",
+      "domain_semantic_object_id": "cgx:domain:romer"
+    },
+    {
+      "twin_id": "embedded_bio_blocks",
+      "canonical_owner": {
+        "type": "drive_sheet_manifest",
+        "id": "1kWKbAfHH7ox5Wr8pK0eLXSzlEWdZ8SVqaHvZ-UXuXQU",
+        "sheet": "01_Source_Manifest"
+      },
+      "source_name": "Embedded_Bio_Blocks_Digital_Twin_v0_1.xlsx",
+      "sha256": "f1cf7a5d3a2e463881cd5389d265d0b70f1b56f849d87da70c57697b75b61d0b",
+      "family_state": "canonical_current",
+      "verified_raw_drive_id": "1wgUWkkr1mQIPMmmF1V7eaweToUAu8UxK",
+      "geometry_authority": "NONE",
+      "operations_binding": {
+        "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
+        "sheet": "Component Register",
+        "current_record_id": "COM-1660",
+        "current_object_id": "EMB-01",
+        "lineage_record_ids": [
+          "COM-0005",
+          "COM-0107"
+        ],
+        "lineage_object_ids": [
+          "C002",
+          "EMB-01"
+        ],
+        "binding_state": "current Embedded bio-block family; ecology/site evidence remains Eco-owned"
+      },
+      "semantic_domain": "eco",
+      "domain_semantic_object_id": "cgx:domain:eco"
+    },
+    {
+      "twin_id": "second_cycle",
+      "canonical_owner": {
+        "type": "drive_sheet_manifest",
+        "id": "1kWKbAfHH7ox5Wr8pK0eLXSzlEWdZ8SVqaHvZ-UXuXQU",
+        "sheet": "01_Source_Manifest"
+      },
+      "source_name": "Second_Cycle_Digital_Twin_v0_1.xlsx",
+      "sha256": "0e3e7e878cca173f3799117f5f03cee8fbe924fd1051642d1d66202d0e35108d",
+      "family_state": "canonical_current",
+      "geometry_authority": "NONE",
+      "operations_binding": {
+        "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
+        "sheet": "Component Register",
+        "current_record_id": "COM-1662",
+        "current_object_id": "SC-01",
+        "lineage_record_ids": [
+          "COM-0007",
+          "COM-0036"
+        ],
+        "lineage_object_ids": [
+          "C004",
+          "SC-001"
+        ],
+        "binding_state": "current Second Cycle urban-soaking family; exact hydrology remains source/evidence gated"
+      },
+      "semantic_domain": "eco",
+      "domain_semantic_object_id": "cgx:domain:eco"
+    },
+    {
+      "twin_id": "intersol",
+      "canonical_owner": {
+        "type": "drive_sheet",
+        "id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+        "sheets": [
+          "116_INFRA_FINALIZATION_MATRIX_v0_1",
+          "154_INTERSOL_MASTER_READOUT_v0_1"
+        ]
+      },
+      "semantic_object_id": "INF-001",
+      "source_name": "Type 1 Romer Cognigrex structured InterSol canon",
+      "family_state": "canonical_current_structured_programme",
+      "geometry_authority": "NONE",
+      "whole_object_geometry_hash": null,
+      "operations_binding": {
+        "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
+        "sheet": "Component Register",
+        "current_record_id": "COM-1668",
+        "current_object_id": "IP-01",
+        "lineage_record_ids": [
+          "COM-0447",
+          "COM-1669",
+          "COM-1670",
+          "COM-1671",
+          "COM-1672",
+          "COM-1673",
+          "COM-1674"
+        ],
+        "lineage_object_ids": [
+          "SPACE-04",
+          "IS-WH-01",
+          "IS-LG-01",
+          "IS-RD-01",
+          "IS-MC-01",
+          "IS-AIR-01",
+          "IS-ECO-01"
+        ],
+        "binding_state": "InterSol programme bound to comparator child + facility subcomponents"
+      },
+      "semantic_domain": "romer",
+      "domain_semantic_object_id": "cgx:domain:romer"
+    },
+    {
+      "twin_id": "watchtower",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "canonical_owner": {
+        "type": "drive_sheet",
+        "id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+        "sheets": [
+          "104_WATCHTOWER_OBJECT_REG_v0_1",
+          "107_WATCHTOWER_FCSTD_EXTRACT_v0_1",
+          "114_WATCHTOWER_AC_FACE_FRAME_v0_1",
+          "118_WT_OPTIMIZATION_ENVELOPE_v0_1"
+        ]
+      },
+      "semantic_object_id": "WT-001",
+      "parent_object_id": "INF-001",
+      "source_name": "InterSol - Watch Tower In Site Footprint.FCStd",
+      "sha256": "c476f9f2f9946ab8e99e58dd399aa7b02bac630c5d9336b80ef66f5f2a397321",
+      "family_state": "canonical_current_source_derived",
+      "geometry_authority": "SRC-068_FCSTD_BREP",
+      "operations_binding": {
+        "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
+        "sheet": "Component Register",
+        "current_record_id": "COM-1675",
+        "current_object_id": "WT-001",
+        "parent_object_id": "INF-001",
+        "binding_state": "dedicated source-bound WatchTower operations row; engineering/site/material/cable semantics remain gated"
+      },
+      "semantic_domain": "romer",
+      "domain_semantic_object_id": "cgx:domain:romer"
+    },
+    {
+      "twin_id": "m1_elevated_bypass",
+      "representation_class": "SOURCE_DERIVED_GEOMETRY",
+      "canonical_owner": {
+        "type": "drive_sheet",
+        "id": "14gBPrvgI9XdLcm6FCHoGK9mfU5XFOJUyB3S_5DalqLY",
+        "sheet": "18_CAD_Base_Structure",
+        "source_file": "SEQLD Pilot Builds.FCStd"
+      },
+      "semantic_object_id": "T1-M1",
+      "source_name": "M1 Elevated Bypass Stage-0 source extract",
+      "family_state": "canonical_current_source_derived_stage0",
+      "geometry_authority": "SOURCE_EXTRACTED_STAGE0_MASSING_ONLY",
+      "operations_binding": {
+        "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
+        "sheet": "Component Register",
+        "record_id": "COM-0368",
+        "object_id": "T1-M1",
+        "binding_state": "existing canonical family"
+      },
+      "semantic_domain": "romer",
+      "domain_semantic_object_id": "cgx:domain:romer"
+    },
+    {
+      "twin_id": "romer_spaceport",
+      "representation_class": "SOURCE_DERIVED_PARTIAL",
+      "canonical_owner": {
+        "type": "drive_sheet",
+        "id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+        "sheet": "03_Full_Register_30Col",
+        "row": 11
+      },
+      "semantic_object_id": "INF-001",
+      "source_name": "Römer Spaceport / InterSol Hub partial facility representation",
+      "family_state": "canonical_current_partial_representation",
+      "geometry_authority": "PARTIAL_SOURCE_DERIVED_FACILITY_FORMS_ONLY",
+      "source_code_ref": "apps/lightspeed-go/src/spaceportTwin.ts",
+      "operations_binding": {
+        "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
+        "sheet": "Component Register",
+        "record_ids": [
+          "COM-1669",
+          "COM-1670",
+          "COM-1671",
+          "COM-1672",
+          "COM-1673",
+          "COM-1674"
+        ],
+        "object_id": "INF-001",
+        "binding_state": "InterSol facility subcomponents already populated"
+      },
+      "semantic_domain": "romer",
+      "domain_semantic_object_id": "cgx:domain:romer"
+    }
   ],
-  "record_count": 13,
-  "representation_invariant": "All thirteen corresponding OBJ/SVG packages remain INTERACTION_PROXY, E-ceiling review-only shells with no dimensional authority until qualified same-object geometry/domain evidence is separately bound and validated."
+  "record_count": 16,
+  "representation_counts": {
+    "INTERACTION_PROXY": 13,
+    "SOURCE_DERIVED_GEOMETRY": 2,
+    "SOURCE_DERIVED_PARTIAL": 1
+  },
+  "representation_invariant": "The current 16-object set remains 13 INTERACTION_PROXY + WatchTower and M1 SOURCE_DERIVED_GEOMETRY + Römer Spaceport SOURCE_DERIVED_PARTIAL. Record binding does not promote any proxy, partial representation or source-derived massing beyond its controlling source/evidence ceiling.",
+  "operations_population": {
+    "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
+    "sheet": "Component Register",
+    "bound_records": 16,
+    "rule": "Current consolidated Operations row routes active work; richer historical child IDs retain lineage. Missing exact child IDs remain explicit and do not create new semantic objects."
+  },
+  "domain_population": {
+    "rule": "semantic_domain names the child filespace that owns object meaning; source workbook/provider identity does not transfer semantic authority",
+    "domains": {
+      "romer": "cgx:domain:romer",
+      "eco": "cgx:domain:eco"
+    }
+  }
 }

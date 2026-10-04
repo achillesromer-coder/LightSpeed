@@ -43,9 +43,10 @@ def test_eco_shortcalls_are_explicitly_assisted_not_fake_runtime_tools():
     assert "deterministic ecology engine" in resolved["route"]["limitation"]
 
 
-def test_freecad_and_femm_gaps_are_visible():
+def test_freecad_readonly_available_and_femm_gap_visible():
     routes = load_capability_routes()["routes"]
-    assert routes["cad.freecad"]["state"] == "registered_unwrapped"
+    assert routes["cad.freecad"]["state"] == "available"
+    assert routes["cad.freecad"]["ro"] is True
     assert routes["physics.femm"]["state"] == "missing"
 
 
@@ -74,4 +75,59 @@ def test_selector_profile_embeds_only_referenced_routes_plus_gaps():
     assert profile["selector"] == "achilles"
     assert "audit" in profile["shortcalls"]
     assert "cgx.cross_analysis" in profile["routes"]
-    assert any(item["id"] == "shared-mcp-tools" for item in profile["gaps"])
+    assert not any(item["id"] == "shared-mcp-tools" for item in profile["gaps"])
+    assert load_capability_routes()["shared_tool_plane"]["state"] == "available_local"
+
+def test_all_selectors_inherit_node_exchange_handoff_shortcalls():
+    selectors = load_selector_shortcalls()["selectors"]
+    for selector in selectors:
+        calls = list_shortcalls(selector)
+        assert calls["exchange"] == "node.exchange.status"
+        assert calls["transfer"] == "node.transfer"
+        assert calls["compute"] == "node.compute"
+
+
+def test_node_exchange_routes_bind_promoted_local_runtime_without_peer_overclaim():
+    routes = load_capability_routes()["routes"]
+
+    status = routes["node.exchange.status"]
+    assert status["state"] == "available"
+    assert status["kind"] == "runtime"
+    assert status["ro"] is True
+    assert status["handler"].endswith(":build_exchange_status")
+    assert "Mounted storage is not peer compute" in status["limitation"]
+
+    transfer = routes["node.transfer"]
+    assert transfer["state"] == "gated"
+    assert transfer["kind"] == "runtime"
+    assert transfer["handler"].endswith(":execute_local_transfer")
+    assert "DIGITAL_WRITE" in transfer["gate"]
+    assert "off-device peer transport" in transfer["limitation"]
+    assert transfer["authority_transfer"] is False
+
+    compute = routes["node.compute"]
+    assert compute["state"] == "gated"
+    assert compute["kind"] == "runtime"
+    assert compute["handler"].endswith(":execute_local_compute")
+    assert "COMPUTE_ONLY" in compute["gate"]
+    assert "Off-device peer compute remains unproven" in compute["limitation"]
+    assert compute["authority_transfer"] is False
+
+
+def test_all_selectors_inherit_object_context_shortcall():
+    selectors = load_selector_shortcalls()["selectors"]
+    for selector in selectors:
+        calls = list_shortcalls(selector)
+        assert calls["object"] == "cgx.object_context"
+
+
+def test_romer_twin_shortcall_resolves_current_object_context_route():
+    resolved = resolve_shortcall("Römer-Grex", "/twin")
+    assert resolved["route_id"] == "cgx.object_context"
+    assert resolved["route"]["state"] == "available"
+    assert resolved["route"]["ro"] is True
+
+
+def test_shared_tool_plane_exposes_object_resolver():
+    routes = load_capability_routes()
+    assert "cgx_resolve_object" in routes["shared_tool_plane"]["tools"]
