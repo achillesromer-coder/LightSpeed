@@ -1,0 +1,121 @@
+{
+  "schema": "CGX-R2-OWNER-MAPPING-CANDIDATE/0.1",
+  "candidate_id": "WT-001-R2-CANDIDATE-2026-10-04",
+  "status": "CANDIDATE_PREPARED / OWNER_REVIEW_REQUIRED / NO_PROMOTION",
+  "source_head": "d84b5c72e9f12742c7d07eb9b3ad9eb27f04700f",
+  "semantic_identity": {
+    "semantic_domain": "romer",
+    "semantic_object_id": "WT-001",
+    "resolved_twin_id": "watchtower",
+    "operations_record_id": "COM-1675",
+    "parent_object_id": "INF-001",
+    "representation_class": "SOURCE_DERIVED_GEOMETRY",
+    "automatic_execution": false
+  },
+  "geometry_authority": {
+    "source_register_id": "SRC-068",
+    "source_relative_path": "First Run/InterSol - Watch Tower In Site Footprint.FCStd",
+    "source_id": "src:c476f9f2f9946ab8e99e58dd399aa7b02bac630c5d9336b80ef66f5f2a397321",
+    "source_sha256": "c476f9f2f9946ab8e99e58dd399aa7b02bac630c5d9336b80ef66f5f2a397321",
+    "source_geometry_root_id": "WT-ROOT",
+    "source_geometry_parent_id": "INF-003",
+    "source_geometry_state": "SOURCE_LOCKED BODY / SEMANTIC EDGE OPEN",
+    "source_envelope_m": [
+      51.449401,
+      75.923913,
+      81.529903
+    ],
+    "local_coordinates_are_geodetic": false,
+    "authority_rule": "FCStd/BREP remains exact geometry authority; derivatives cannot supersede it."
+  },
+  "derived_configuration_candidate": {
+    "source_relative_path": "WatchTower.FCStd",
+    "source_id": "src:625c877e75a1eed562a385ed1dc0e812d548b0bbbe3203ae3878b726423f349e",
+    "source_sha256": "625c877e75a1eed562a385ed1dc0e812d548b0bbbe3203ae3878b726423f349e",
+    "relation": "DERIVED_FROM / CONFIGURATION_VIEW_CANDIDATE",
+    "authority_transition": false,
+    "comparison": {
+      "source_object_count": 117,
+      "derived_object_count": 114,
+      "filtered_dimension_changes": 0,
+      "removed_helper_objects": [
+        "Polygon",
+        "Circle",
+        "Circle001"
+      ],
+      "body_label_change": "Launch Tower -> Watch Tower Concrete",
+      "placement_change_observed": true
+    }
+  },
+  "source_bound_geometry_evidence": {
+    "fcstd_extract": {
+      "root": "WT-FCSTD-ROOT",
+      "core": "WT-FCSTD-CORE",
+      "tower_shaft": "WT-FCSTD-TOWER",
+      "observation_head": "WT-FCSTD-OBS",
+      "wing_clusters": [
+        "WT-FCSTD-WING-NW",
+        "WT-FCSTD-WING-SE"
+      ],
+      "cable_solid_audit": "WT-FCSTD-CABLE-NULL"
+    },
+    "mesh_fidelity": {
+      "receipt_id": "WT-MESH-FIDELITY-001",
+      "source_glb_id": "WT-GLB-SOURCE-001",
+      "glb_sha256": "60fdbedb11868015d96b4c9e6692d4550e4987e59bbec60bfb0ead75762f3683",
+      "state": "SOURCE_TO_MESH_ENVELOPE_PARITY / FULL_TOPOLOGY+RAW_BINARY_RELOCALISATION OPEN"
+    },
+    "face_frame": {
+      "source_faces": [
+        "WT-T-SF1",
+        "WT-T-SF2",
+        "WT-T-SF3",
+        "WT-T-SF4",
+        "WT-T-SF5"
+      ],
+      "lower_node": "WT-A",
+      "upper_node": "WT-C",
+      "parametric_rule": "WT-AC-PARAM-001",
+      "binding_state": "OWNER_DECISION_PENDING / z,u UNBOUND",
+      "derivative_parity_receipt": "WT-FILE-FIDELITY-FACEFRAME-001"
+    }
+  },
+  "r2_mapping_proposed": {
+    "semantic_target": "WT-001",
+    "bind_source_geometry_root": "WT-ROOT",
+    "bind_operations_record": "COM-1675",
+    "bind_authoritative_source": "src:c476f9f2f9946ab8e99e58dd399aa7b02bac630c5d9336b80ef66f5f2a397321",
+    "bind_derived_configuration_as_reference": "src:625c877e75a1eed562a385ed1dc0e812d548b0bbbe3203ae3878b726423f349e",
+    "authority_transfer": false,
+    "canonical_promotion": false,
+    "owner_acceptance": false
+  },
+  "held_semantics": [
+    "final E label and E/L/R pole semantic assignment",
+    "final L/R wing assignment",
+    "A/C face selection, A.Z, C.Z and face-local u",
+    "A/C target pairing and cable endpoint/edge geometry",
+    "materials and structural adequacy",
+    "site/geodetic placement",
+    "living-twin biological loads/species/irrigation engineering",
+    "full source-to-derivative topology equivalence",
+    "manufacturing, certification, regulatory or public-release authority"
+  ],
+  "evidence_refs": {
+    "romer_workbook_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "owner_tabs": [
+      "104_WATCHTOWER_OBJECT_REG_v0_1",
+      "107_WATCHTOWER_FCSTD_EXTRACT_v0_1",
+      "110_WATCHTOWER_LIVING_TWIN_v0_1",
+      "114_WATCHTOWER_AC_FACE_FRAME_v0_1"
+    ],
+    "github_lineage": "data/digital-twin/twin_record_source_lineage_2026-09-14.json",
+    "r0_r1_replay_receipt_sha256": "76f3b06e32a7bc85fa1ffed77ef812b9da4f670a2a607bd2e26b1bbf68d2fdb7",
+    "pr": 74
+  },
+  "decision_required": {
+    "authority": "Römer semantic owner / applicable owner gate",
+    "decision": "ACCEPT / REVISE / REJECT this exact candidate mapping",
+    "acceptance_effect": "If explicitly accepted, a separate bounded mutation may bind the listed identities. Acceptance must not resolve any held semantic by implication."
+  }
+}
