@@ -1995,3 +1995,28 @@ def test_source_intake_payload_is_bound_to_existing_command_identity(tmp_path, m
     command['command_id'] = 'LSGO-INTAKE-INVALID'
     command['action_payload']['output_path'] = str(tmp_path / 'escape')
     assert client.post('/api/v1/ls-go/commands', json=command).status_code == 400
+
+def test_upload_staging_requires_owner_and_preserves_native_name(tmp_path, monkeypatch):
+    import hashlib
+    monkeypatch.setenv(ls_go_bridge.OWNER_CONFIRMATION_ENV, 'test-owner-token')
+    monkeypatch.setattr(ls_go_bridge, 'configured_intake_roots', lambda: [tmp_path])
+    client = TestClient(ls_go_bridge.create_app(tmp_path / 'App'))
+    data = b'{"known": "source assertion"}'
+    params = {'source_name': 'upload-receipt.json', 'source_sha256': hashlib.sha256(data).hexdigest()}
+    url = '/api/v1/source-intake/stage'
+    assert client.post(url, params=params, content=data).status_code == 403
+    assert not (tmp_path / '.lightspeed-intake').exists()
+    headers = {'X-LightSpeed-Owner-Confirmation': 'test-owner-token'}
+    response = client.post(url, params=params, content=data, headers=headers)
+    assert response.status_code == 200, response.text
+    receipt = response.json()
+    assert Path(receipt['source_path']).read_bytes() == data
+    assert Path(receipt['source_path']).name == 'upload-receipt.json'
+    assert receipt['queue_dispatched'] is False and receipt['canonical_mutation'] is False
+    repeated = client.post(url, params=params, content=data, headers=headers)
+    assert repeated.json() == receipt
+    assert client.post(url, params=params, content=b'changed', headers=headers).status_code == 400
+    for name in ('../outside.txt', 'AUX.txt', 'nested/file.json', 'bad:stream'):
+        assert client.post(url, params={**params, 'source_name': name}, content=data, headers=headers).status_code == 400
+    monkeypatch.setattr(ls_go_bridge, 'MAX_SOURCE_BYTES', 4)
+    assert client.post(url, params=params, content=data, headers=headers).status_code == 413
