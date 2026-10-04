@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { commandSubmissionIsUncertain, DesktopRequestError, createSourceIntakeCommand, stageDesktopSource, type StagedSource } from "./desktopBridge";
+import { commandSubmissionIsUncertain, DesktopRequestError, createSourceIntakeCommand, stageDesktopSource, submitSourceIntakeCommand, readPendingCommands, type StagedSource } from "./desktopBridge";
 
 const source: StagedSource = {
   state: "staged", source_name: "original.txt", source_path: "D:/sources/original.txt",
@@ -13,6 +13,30 @@ const authority = {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("native source intake", () => {
+  it("saves identity before dispatch and reuses it after a lost response", async () => {
+    let stored = "[]";
+    vi.stubGlobal("window", { setTimeout, clearTimeout });
+    vi.stubGlobal("localStorage", { getItem: () => stored, setItem: (_key: string, value: string) => { stored = value; } });
+    const command = createSourceIntakeCommand(source, authority);
+    const fetcher = vi.fn().mockImplementation(async () => {
+      expect(readPendingCommands()[0]).toEqual(command);
+      throw new TypeError("reply lost");
+    });
+    vi.stubGlobal("fetch", fetcher);
+    await expect(submitSourceIntakeCommand(command)).rejects.toThrow("reply lost");
+    expect(readPendingCommands()).toEqual([command]);
+    fetcher.mockResolvedValue({ ok: true, json: async () => ({ command_id: command.command_id, state: "queued" }) });
+    await submitSourceIntakeCommand(readPendingCommands()[0]);
+    expect(fetcher.mock.calls[0][1].body).toBe(fetcher.mock.calls[1][1].body);
+    expect(readPendingCommands()).toEqual([]);
+  });
+  it("does not dispatch when command identity cannot be saved", async () => {
+    vi.stubGlobal("localStorage", { getItem: () => "[]", setItem: () => { throw new Error("storage full"); } });
+    const fetcher = vi.fn();
+    vi.stubGlobal("fetch", fetcher);
+    await expect(submitSourceIntakeCommand(createSourceIntakeCommand(source, authority))).rejects.toThrow("storage full");
+    expect(fetcher).not.toHaveBeenCalled();
+  });
   it("retains command identity when a server failure could follow a queue write", () => {
     expect(commandSubmissionIsUncertain(new DesktopRequestError(500, "server failed"))).toBe(true);
     expect(commandSubmissionIsUncertain(new DesktopRequestError(504, "gateway timeout"))).toBe(true);

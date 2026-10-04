@@ -1007,6 +1007,24 @@ export const removePendingCommand = (commandId: string): CommandEnvelope[] => {
   return next;
 };
 
+export const submitSourceIntakeCommand = async (command: CommandEnvelope): Promise<CommandReceipt> => {
+  if (command.action_type !== "source_preserving_intake") throw new TypeError("Expected a source intake command");
+  const pending = readPendingCommands();
+  if (pending.length >= 30 && !pending.some(item => item.command_id === command.command_id)) {
+    throw new Error("Reconcile saved commands before queuing another source");
+  }
+  // Persist identity before sending, so a closed tab or lost reply cannot erase it.
+  storePendingCommand(command);
+  try {
+    const receipt = await submitDesktopCommand(command);
+    removePendingCommand(command.command_id);
+    return receipt;
+  } catch (error) {
+    if (!commandSubmissionIsUncertain(error)) removePendingCommand(command.command_id);
+    throw error;
+  }
+};
+
 export const downloadCommand = (command: CommandEnvelope): void => {
   const blob = new Blob([JSON.stringify(command, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);

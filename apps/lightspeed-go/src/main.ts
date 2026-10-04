@@ -6,6 +6,7 @@ import "./ownerAuth.css";
 import {
   createCommandEnvelope,
   createSourceIntakeCommand,
+  submitSourceIntakeCommand,
   commandSubmissionIsUncertain,
   stageDesktopSource,
   type StagedSource,
@@ -372,18 +373,18 @@ intakeQueue.addEventListener("click", async () => {
   intakeQueue.disabled = intakeStage.disabled = intakeFile.disabled = true;
   try {
     command = createSourceIntakeCommand(stagedSource, currentAuthorityContract);
-    const receipt = await submitDesktopCommand(command);
+    const receipt = await submitSourceIntakeCommand(command);
     intakeResult.textContent = `Desktop accepted ${command.command_id}. Task ${receipt.task_id ?? "created"}: ${receipt.state || "queued"}. Extraction and semantic review are not yet complete.`;
     stagedSource = null;
   } catch (error) {
-    const uncertain = command && commandSubmissionIsUncertain(error);
+    const uncertain = command && commandSubmissionIsUncertain(error)
+      && readPendingCommands().some(item => item.command_id === command!.command_id);
     if (uncertain) {
-      storePendingCommand(command!);
-      renderPending();
       stagedSource = null;
     }
     intakeResult.textContent = `${error instanceof Error ? error.message : "Submission failed."}${uncertain ? " Outcome unconfirmed. The same command was saved in the pending queue; reconcile it there before submitting again." : ""}`;
   } finally {
+    renderPending();
     intakeFile.disabled = intakeStage.disabled = false;
     intakeQueue.disabled = stagedSource === null;
   }
