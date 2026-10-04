@@ -46,7 +46,7 @@ export const FLOORS = [
 export type Floor = (typeof FLOORS)[number];
 export type Priority = "critical" | "high" | "normal" | "low";
 export type ExecutionMode = "review" | "queue";
-export type CommandAction = "cognigrex_workflow";
+export type CommandAction = "cognigrex_workflow" | "source_preserving_intake";
 export type ReviewDecision = "approve" | "hold" | "reject";
 export type RepresentationDecision =
   | "approve"
@@ -77,6 +77,7 @@ export interface CommandEnvelope {
   priority: Priority;
   execution_mode: ExecutionMode;
   action_type: CommandAction;
+  action_payload?: { source_path: string; source_sha256: string };
   proof_required: true;
   public_safe: true;
   canonical_gate_id: string;
@@ -742,6 +743,57 @@ export const planNodeCompute = (
     },
     body: JSON.stringify(input),
   }, 10000);
+
+export interface StagedSource {
+  state: "staged";
+  source_name: string;
+  source_path: string;
+  source_sha256: string;
+  byte_length: number;
+  queue_dispatched: false;
+  canonical_mutation: false;
+}
+
+const MAX_INTAKE_BYTES = 64 * 1024 * 1024;
+
+export const stageDesktopSource = async (
+  file: File, sessionToken: string, origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<StagedSource> => {
+  if (!sessionToken) throw new TypeError("Owner sign-in is required to stage a source");
+  if (file.size > MAX_INTAKE_BYTES) throw new TypeError("Choose a file no larger than 64 MiB");
+  const bytes = await file.arrayBuffer();
+  if (bytes.byteLength !== file.size) throw new TypeError("Selected file changed while reading");
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  const hash = Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, "0")).join("");
+  const query = new URLSearchParams({ source_name: file.name, source_sha256: hash });
+  const receipt = await withTimeout<StagedSource>(`${origin}/api/v1/source-intake/stage?${query}`, {
+    method: "POST", headers: { "Content-Type": "application/octet-stream", "X-LightSpeed-Session": sessionToken },
+    body: bytes,
+  }, 60000);
+  if (receipt.state !== "staged" || receipt.source_name !== file.name || receipt.source_sha256 !== hash
+      || receipt.byte_length !== bytes.byteLength || !receipt.source_path
+      || receipt.queue_dispatched !== false || receipt.canonical_mutation !== false) {
+    throw new TypeError("Desktop staging receipt did not match the selected source");
+  }
+  return receipt;
+};
+
+export const createSourceIntakeCommand = (
+  source: StagedSource, authorityContract: AuthorityContract | null,
+): CommandEnvelope => {
+  if (source.state !== "staged" || !/^[a-f0-9]{64}$/.test(source.source_sha256)
+      || !source.source_path || source.queue_dispatched !== false || source.canonical_mutation !== false) {
+    throw new TypeError("A verified staging receipt is required");
+  }
+  return {
+    ...createCommandEnvelope({
+      title: `Review source: ${source.source_name}`,
+      instruction: "Preserve the native source and extract an evidence envelope for independent semantic review. Do not promote or overwrite canonical facts.",
+      targetFloor: "Neo", executionMode: "queue", actionType: "source_preserving_intake", authorityContract,
+    }),
+    action_payload: { source_path: source.source_path, source_sha256: source.source_sha256 },
+  };
+};
 
 export const submitDesktopCommand = (
   command: CommandEnvelope,

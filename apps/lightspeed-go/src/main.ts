@@ -5,6 +5,9 @@ import "./resultReceipts.css";
 import "./ownerAuth.css";
 import {
   createCommandEnvelope,
+  createSourceIntakeCommand,
+  stageDesktopSource,
+  type StagedSource,
   changeDesktopOwnerPassword,
   decideDesktopReview,
   decideRepresentationReview,
@@ -257,6 +260,14 @@ app.innerHTML = `
     </section>
 
     <section class="view" id="view-sources">
+      <article class="panel">
+        <p class="eyebrow">Native source intake</p><h2>Prepare a source for review</h2>
+        <p>Choose a file up to 64 MiB. Prepare preserves its original bytes. Queue extraction creates evidence for review; accepted knowledge requires a separate review.</p>
+        <label for="intake-file">Source file</label><input id="intake-file" type="file" />
+        <button id="intake-stage" type="button">Prepare source</button>
+        <button id="intake-queue" type="button" disabled>Queue extraction for review</button>
+        <p id="intake-result" role="status" aria-live="polite">Select a file to begin. Owner sign-in is required.</p>
+      </article>
       <div class="source-grid">${sourceLinks.map(([name, url, role]) => `<a class="source-card" href="${url}" target="_blank" rel="noreferrer"><strong>${name}</strong><span>${role}</span><em>Open ↗</em></a>`).join("")}</div>
       <article class="panel"><p class="eyebrow">Authority order</p><h2>Where each truth lives</h2><div class="authority-grid"><div><strong>Drive</strong><span>evidence, workbooks and review receipts</span></div><div><strong>Git</strong><span>code, schemas, tests and implementation receipts</span></div><div><strong>Desktop</strong><span>projects, local execution, state and jobs</span></div><div><strong>LS GO</strong><span>owner commands, review and bounded decisions</span></div></div></article>
     </section>
@@ -323,6 +334,59 @@ const requireOwnerSession = (): string => {
   ownerAuthMessage("warn", "Sign in as NCNB before performing this owner-gated action.");
   return "";
 };
+
+let stagedSource: StagedSource | null = null;
+const intakeFile = byId<HTMLInputElement>("intake-file");
+const intakeStage = byId<HTMLButtonElement>("intake-stage");
+const intakeQueue = byId<HTMLButtonElement>("intake-queue");
+const intakeResult = byId("intake-result");
+intakeFile.addEventListener("change", () => {
+  stagedSource = null;
+  intakeQueue.disabled = true;
+  intakeResult.textContent = "Prepare the selected source before queuing extraction.";
+});
+intakeStage.addEventListener("click", async () => {
+  const session = requireOwnerSession();
+  const file = intakeFile.files?.[0];
+  if (!session || !file) {
+    intakeResult.textContent = "Select a file and sign in as owner first.";
+    return;
+  }
+  stagedSource = null;
+  intakeFile.disabled = intakeStage.disabled = intakeQueue.disabled = true;
+  intakeResult.textContent = "Preserving the source and checking its contents…";
+  try {
+    stagedSource = await stageDesktopSource(file, session);
+    intakeResult.textContent = `${stagedSource.source_name} prepared (${stagedSource.byte_length.toLocaleString()} bytes). Ready to queue extraction for review.`;
+    intakeQueue.disabled = false;
+  } catch (error) {
+    intakeResult.textContent = error instanceof Error ? error.message : "Source preparation failed.";
+  } finally {
+    intakeFile.disabled = intakeStage.disabled = false;
+  }
+});
+intakeQueue.addEventListener("click", async () => {
+  if (!stagedSource || !requireOwnerSession()) return;
+  let command: CommandEnvelope | null = null;
+  intakeQueue.disabled = intakeStage.disabled = intakeFile.disabled = true;
+  try {
+    command = createSourceIntakeCommand(stagedSource, currentAuthorityContract);
+    const receipt = await submitDesktopCommand(command);
+    intakeResult.textContent = `Desktop accepted ${command.command_id}. Task ${receipt.task_id ?? "created"}: ${receipt.state || "queued"}. Extraction and semantic review are not yet complete.`;
+    stagedSource = null;
+  } catch (error) {
+    const uncertain = command && !(error instanceof DesktopRequestError);
+    if (uncertain) {
+      storePendingCommand(command!);
+      renderPending();
+      stagedSource = null;
+    }
+    intakeResult.textContent = `${error instanceof Error ? error.message : "Submission failed."}${uncertain ? " Outcome unconfirmed. The same command was saved in the pending queue; reconcile it there before submitting again." : ""}`;
+  } finally {
+    intakeFile.disabled = intakeStage.disabled = false;
+    intakeQueue.disabled = stagedSource === null;
+  }
+});
 
 byId<HTMLFormElement>("owner-login-form").addEventListener("submit", async (event) => {
   event.preventDefault();
