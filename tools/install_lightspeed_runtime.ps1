@@ -48,7 +48,7 @@ if ($LASTEXITCODE -ne 0) { throw "Dependency installation failed for profile '$P
 
 $SitePackages = (& $Python -c "import site; print(site.getsitepackages()[0])").Trim()
 $PthPath = Join-Path $SitePackages "lightspeed_workspace.pth"
-@($RuntimeRoot) | Set-Content -LiteralPath $PthPath -Encoding UTF8
+[System.IO.File]::WriteAllText($PthPath, $RuntimeRoot + [Environment]::NewLine, [System.Text.UTF8Encoding]::new($false))
 
 & $Python -c "import lightspeed_runtime; from lightspeed_runtime.cgx_preflight import build_assurance_preflight; print('LIGHTSPEED_RUNTIME_IMPORT_PASS')"
 if ($LASTEXITCODE -ne 0) { throw "LightSpeed Runtime import/preflight probe failed." }

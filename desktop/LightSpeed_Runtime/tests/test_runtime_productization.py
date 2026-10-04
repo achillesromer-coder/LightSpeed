@@ -57,6 +57,8 @@ def test_installer_declares_workspace_and_external_host_boundaries() -> None:
         assert profile in installer
 
     assert "lightspeed_workspace.pth" in installer
+    assert "[System.Text.UTF8Encoding]::new($false)" in installer
+    assert "Set-Content -LiteralPath $PthPath -Encoding UTF8" not in installer
     assert "from lightspeed_runtime.cgx_preflight import build_assurance_preflight" in installer
     assert 'freecad = "external-host-capability-not-pip-managed"' in installer
     assert 'schema = "LIGHTSPEED-RUNTIME-INSTALL/0.1"' in installer
