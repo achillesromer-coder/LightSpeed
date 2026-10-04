@@ -319,7 +319,9 @@
         "receipts are independently audited"
       ],
       "evidence_class": "PHYSICAL_FIELD_EVIDENCE",
-      "synthetic_closure_forbidden": true
+      "synthetic_closure_forbidden": true,
+      "preflight_contract_ref": "launch_empirical_preflight_contract.json",
+      "preparation_state": "ONE_HOST_PREFLIGHT_AVAILABLE / DISTINCT_PEER_EVIDENCE_REQUIRED"
     },
     {
       "task_id": "CGX-LAUNCH-008",
@@ -341,7 +343,9 @@
         "assurance receipt records capability but not secret"
       ],
       "evidence_class": "HOST_SECURITY_EVIDENCE",
-      "synthetic_closure_forbidden": true
+      "synthetic_closure_forbidden": true,
+      "preflight_contract_ref": "launch_empirical_preflight_contract.json",
+      "preparation_state": "SYNTHETIC_HOST_CREDENTIAL_BOUNDARY_PREFLIGHT_AVAILABLE / PRODUCTION_INTEGRATION_AND_RECOVERY_REQUIRED"
     },
     {
       "task_id": "CGX-LAUNCH-009",
@@ -513,7 +517,7 @@
           "emc2_governance_handoff": "CI_PASS / INTENTIONALLY_DRAFT_FOR_NON_CI_GATES"
         },
         "connector_security_event": "AUTHORIZED_RECONNECT / ACCOUNT_SECURITY_EVENT_ONLY",
-        "active_unrelated_launch_gate": "CGX-LAUNCH-005 durable child persistence/readback remains open"
+        "active_unrelated_launch_gate": "CGX-LAUNCH-005 technical acceptance PASS / RootAuthority decision OPEN; CGX-LAUNCH-007 and 008 remain empirical-open; CGX-LAUNCH-009 remains held."
       }
     }
   ],

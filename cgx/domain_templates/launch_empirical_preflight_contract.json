@@ -1,0 +1,92 @@
+{
+  "schema": "CGX-LAUNCH-EMPIRICAL-PREFLIGHT-CONTRACT/0.1",
+  "status": "INTERNAL_REVERSIBLE_PREPARATION / EMPIRICAL_GATES_REMAIN_OPEN",
+  "source_target": "Cognigrex.cgx:/launch/empirical-preflight",
+  "purpose": "Standardize evidence capture for CGX-LAUNCH-007 and CGX-LAUNCH-008 without allowing a single-host or synthetic fixture to close physical, peer, production-keystore, recovery, or governance gates.",
+  "applies_to": [
+    "CGX-LAUNCH-007",
+    "CGX-LAUNCH-008"
+  ],
+  "invariants": [
+    "preflight evidence never promotes child or distributed authority",
+    "one physical host never satisfies the two-distinct-device predicate",
+    "mounted storage or a second path on one host never counts as a distinct compute node",
+    "loopback traffic never satisfies non-loopback peer transport",
+    "synthetic credential tests never prove production credential integration",
+    "raw machine identifiers, IP addresses, usernames, passwords, tokens, credential blobs and recovery secrets are excluded from receipts",
+    "only irreversible-hardened hashes or categorical host metadata may identify a host in portable receipts",
+    "credential probes use newly generated synthetic material and must clean it up before PASS",
+    "failure to clean up synthetic credential material is a failed preflight",
+    "revocation and degraded-mode receipts must demonstrate fail-closed authority behavior",
+    "empirical closure requires independent Achilles audit after provider/host readback"
+  ],
+  "launch_007": {
+    "preflight_may_prove": [
+      "one-host identity fingerprint without raw machine identifier",
+      "local runtime and node-exchange contract availability",
+      "non-loopback network capability exists on the host",
+      "receipt schema and negative-claim boundaries are ready"
+    ],
+    "closure_requires": [
+      "two genuinely distinct physical device fingerprints",
+      "authenticated non-loopback discovery and transfer between those devices",
+      "exact transfer readback on the receiver",
+      "identity and scoped execution-lease readback on both nodes",
+      "revocation/stop propagation across the peer boundary",
+      "partition/degraded-mode test showing no authority manufacture",
+      "independent audit of the complete evidence set"
+    ],
+    "single_host_state": "EMPIRICAL_OPEN_PREPARED"
+  },
+  "launch_008": {
+    "preflight_may_prove": [
+      "target host exposes an OS credential protection/storage boundary",
+      "synthetic secret can be written and read back without secret disclosure",
+      "synthetic credential can be revoked/deleted",
+      "post-revocation absence can be verified",
+      "receipt omits secret material"
+    ],
+    "closure_requires": [
+      "production-relevant LightSpeed/CGX credential integration uses the approved platform boundary",
+      "revocation is exercised through the production-relevant integration",
+      "recovery is exercised through the approved recovery path without exposing secret material",
+      "target host classes in scope are individually evidenced",
+      "no secret appears in Git, Drive, logs or portable receipts",
+      "independent audit of capability and cleanup"
+    ],
+    "synthetic_host_state": "EMPIRICAL_OPEN_PREPARED"
+  },
+  "receipt_rules": {
+    "portable_public_safe": [
+      "schema",
+      "generated_at_utc",
+      "source_head",
+      "host_class",
+      "node_fingerprint_sha256",
+      "non_loopback_ipv4_count",
+      "launch_007_state",
+      "launch_008_state",
+      "credential_provider",
+      "synthetic_write_readback_pass",
+      "synthetic_revocation_pass",
+      "synthetic_post_revocation_absent",
+      "cleanup_verified",
+      "claim_boundary"
+    ],
+    "restricted_or_forbidden": [
+      "raw_machine_guid",
+      "hostname",
+      "ip_address",
+      "mac_address",
+      "username",
+      "password",
+      "session_token",
+      "credential_blob",
+      "recovery_secret",
+      "private_key"
+    ],
+    "authority_transfer": false,
+    "canonical_promotion_authorized": false,
+    "public_publish_authorized": false
+  }
+}

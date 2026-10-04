@@ -9,6 +9,8 @@ on:
       - "scripts/validate_cgp_ies_extension.py"
       - "scripts/validate_cgp_ies_launch_frontier.py"
       - "scripts/validate_cgx_domain_templates.py"
+      - "scripts/probe_cgx_launch_empirical.py"
+      - "tests/test_launch_empirical_preflight.py"
       - "scripts/classify_provider_notification.py"
       - "tests/test_provider_notification_evidence.py"
       - "scripts/validate_cgx_execution_lease.py"
@@ -36,6 +38,8 @@ on:
       - "scripts/cgx_custodial_preflight.py"
       - "scripts/validate_cgp_ies_extension.py"
       - "scripts/validate_cgx_domain_templates.py"
+      - "scripts/probe_cgx_launch_empirical.py"
+      - "tests/test_launch_empirical_preflight.py"
 
 jobs:
   validate:
@@ -49,6 +53,10 @@ jobs:
         run: python scripts/validate_cgx_domain_templates.py
       - name: Validate provider notification evidence classifier
         run: python tests/test_provider_notification_evidence.py
+      - name: Validate launch empirical preflight contract
+        run: python tests/test_launch_empirical_preflight.py
+      - name: Compile host empirical preflight probe
+        run: python -m py_compile scripts/probe_cgx_launch_empirical.py
       - name: Validate CGP-IES extension fixtures
         run: python scripts/validate_cgp_ies_extension.py
       - name: Validate CGP-IES operational queue
