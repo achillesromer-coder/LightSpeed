@@ -1,12 +1,14 @@
 {
   "schema": "CGX-3D-SOURCE-DISCOVERY-RECEIPT/0.1",
   "receipt_id": "CGX-3D-INTAKE-DISCOVERY-2026-10-03",
-  "status": "DISCOVERY_VERIFIED / R0_R1_CORPUS_CONFORMANCE_PASS / R2_MAPPING_HELD / INTERNAL_HANDOFF",
+  "status": "DISCOVERY_VERIFIED / R0_R1_CURRENT_MAIN_REVALIDATED / R2_MAPPING_HELD / INTERNAL_HANDOFF",
   "recorded_at": "2026-10-03T18:41:00+10:00",
   "source_control": {
     "repository": "achillesromer-coder/LightSpeed",
     "base_main_sha": "46ee9330ce2b6a487fcc030bfcbcdaca47727661",
-    "branch": "cgx/3d-intake-handoff-20261003"
+    "branch": "cgx/3d-intake-handoff-20261003",
+    "current_main_revalidated_sha": "d84b5c72e9f12742c7d07eb9b3ad9eb27f04700f",
+    "current_main_revalidated_at": "2026-10-04"
   },
   "authority": {
     "recovery_state": "S92",
@@ -293,11 +295,85 @@
       "For Mark III, define/review only the minimal FCStd-to-Romer R2 mapping supported by explicit source objects; keep three-appendage/interlock/Mark-V mating claims Frontier until independently evidenced.",
       "For Payload Capsule, encode accepted parameter changes as stable Object_ID/cell changes plus DBR old-to-new provenance rather than a duplicate semantic master.",
       "Progress SEQLD/M1, Mark V, Luke IV and Free Flow from their R1-admitted source envelopes under their existing Type1/CGX owners.",
-      "Achilles audits PR #74 against exact source IDs/plan hashes and current owner mappings before any merge/promotion."
+      "Current-main source/adapter replay is independently complete with 57/57 PASS and no priority source/plan drift; proceed only to explicit R2 owner-mapping review for supported objects/relations."
     ],
-    "smallest_remaining_gate": "R2 owner-mapping/admission review for specific objects/relations; R0/R1 source identity and structure plus independent hash parity are proven for the 57-file corpus."
+    "smallest_remaining_gate": "R2 owner-mapping/admission review for specific objects/relations; current-main R0/R1 replay and source/plan drift audit are complete."
   },
   "evidence_ceiling": "Digital source identity/structure/revision evidence only. No physical, manufacturing, structural, performance, certification, regulatory or deployment claim is promoted.",
   "architecture_impact": "No new master or parallel roadmap. One native source may have multiple projections/configurations; DBR records accepted state transitions; R3 representations remain derivative.",
-  "release_state": "INTERNAL_HANDOFF_ONLY"
+  "release_state": "INTERNAL_HANDOFF_ONLY",
+  "current_main_revalidation": {
+    "schema": "CGX-3D-CURRENT-MAIN-REPLAY/0.1",
+    "source_head": "d84b5c72e9f12742c7d07eb9b3ad9eb27f04700f",
+    "local_receipt_sha256": "76f3b06e32a7bc85fa1ffed77ef812b9da4f670a2a607bd2e26b1bbf68d2fdb7",
+    "execution": {
+      "cli": "scripts/project_cgx_source.py <source> --with-plan --domain romer",
+      "python": "3.11",
+      "source_mutation": false,
+      "canonical_mutation": false
+    },
+    "corpus_result": {
+      "total_files_executed": 57,
+      "return_code_zero": 57,
+      "pass": 57,
+      "independent_hash_matches": 57,
+      "by_extension": {
+        "FCStd": 26,
+        "FCBak": 25,
+        "OBJ": 4,
+        "GLB": 1,
+        "FCMacro": 1
+      },
+      "by_adapter_admission": [
+        {
+          "adapter_id": "freecad-fcstd-stdlib-v0.1",
+          "admission_state": "R1_ADMITTED",
+          "status": "PASS",
+          "count": 26
+        },
+        {
+          "adapter_id": "obj-mesh-stdlib-v0.1",
+          "admission_state": "R1_ADMITTED",
+          "status": "PASS",
+          "count": 4
+        },
+        {
+          "adapter_id": "gltf-stdlib-v0.1",
+          "admission_state": "R1_ADMITTED",
+          "status": "PASS",
+          "count": 1
+        },
+        {
+          "adapter_id": "binary-reference-v1",
+          "admission_state": "R0_REFERENCE_ONLY",
+          "status": "PASS",
+          "count": 26
+        }
+      ]
+    },
+    "priority_drift_checks": {
+      "WatchTower authoritative": {
+        "source_match": true,
+        "plan_match": true,
+        "conversion_plan_sha256": "93704588fdc08b9621b7bbafc2f3c65394892c80dd680e31d7bc0b46d411c9a0"
+      },
+      "WatchTower derived candidate": {
+        "source_match": true,
+        "plan_match": true,
+        "conversion_plan_sha256": "053cdab7f1072e8da800cad8c1a4d15ae6b5a26b262d37c0a6f7530e6021ac2e"
+      },
+      "Mark III": {
+        "source_match": true,
+        "plan_match": true,
+        "conversion_plan_sha256": "90db0c6a03047e606af8502952d4766850accdb75cbc32f9328c506f4b5593b2"
+      },
+      "Payload Capsule": {
+        "source_match": true,
+        "plan_match": true,
+        "conversion_plan_sha256": "f23796dd856ce158d993ef2f5fd50422e80b536372f27c3f7af8c3689d560501"
+      }
+    },
+    "result": "PASS_NO_SOURCE_OR_ADAPTER_DRIFT",
+    "evidence_ceiling": "R0/R1 digital source identity, reversible structural admission and conversion-plan stability only. R2 semantics remain owner-mapped and held."
+  }
 }
