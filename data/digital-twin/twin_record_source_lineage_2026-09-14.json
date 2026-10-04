@@ -1,7 +1,7 @@
 {
   "schema": "achilles_twin_record_source_lineage_v1",
   "generated_date": "2026-09-14",
-  "last_reconciled_date": "2026-10-03",
+  "last_reconciled_date": "2026-10-05",
   "scope": "record/provenance/model/test lineage for the complete current 16-object Atrium/Type1 digital-asset set",
   "render_contract": {
     "file": "data/digital-twin/complete_digital_asset_manifest_2026-09-12.json",
@@ -223,7 +223,7 @@
       "source_name": "Mark_III_Digital_Twin_v0_1.xlsx",
       "sha256": "fab23970e80c016a2140ec0f87c1d0d7e15c365190fdacb5dc2ee2a1c2a81075",
       "family_state": "canonical_current",
-      "geometry_authority": "NONE",
+      "geometry_authority": "MARK3_FCSTD_NATIVE_SOURCE",
       "operations_binding": {
         "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
         "sheet": "Component Register",
@@ -237,10 +237,20 @@
           "T1-SPACE",
           "SPACE-01"
         ],
-        "binding_state": "current interplanetary comparator + Mark III child"
+        "binding_state": "current interplanetary comparator routes active work; Mark III semantic child SPACE-01 is source-bound to exact native FCStd while unresolved engineering claims remain gated",
+        "semantic_child_object_id": "SPACE-01",
+        "semantic_child_record_id": "COM-0444"
       },
       "semantic_domain": "romer",
-      "domain_semantic_object_id": "cgx:domain:romer"
+      "domain_semantic_object_id": "cgx:domain:romer",
+      "semantic_object_id": "SPACE-01",
+      "parent_object_id": "T1-SPACE",
+      "source_geometry_name": "Mark III.FCStd",
+      "source_geometry_sha256": "4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b",
+      "source_geometry_id": "src:4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b",
+      "first_file_mapping_id": "FF-MARK3-FCSTD-001",
+      "source_binding_state": "R2_SOURCE_IDENTITY_AND_EXPLICIT_LABELS_BOUND / INTERLOCK_AND_MATING_HELD",
+      "geometry_evidence_ceiling": "FCStd native-source authority plus bounded structural/object-label evidence only; no physical validation, exact interlock, Mark-V mating or certification claim"
     },
     {
       "twin_id": "luke_family",
@@ -432,7 +442,16 @@
         "binding_state": "dedicated source-bound WatchTower operations row; engineering/site/material/cable semantics remain gated"
       },
       "semantic_domain": "romer",
-      "domain_semantic_object_id": "cgx:domain:romer"
+      "domain_semantic_object_id": "cgx:domain:romer",
+      "first_file_mapping_id": "FF-WATCHTOWER-FCSTD-001",
+      "source_id": "src:c476f9f2f9946ab8e99e58dd399aa7b02bac630c5d9336b80ef66f5f2a397321",
+      "source_binding_state": "R2_SOURCE_IDENTITY_BOUND / HELD_SEMANTICS_PRESERVED",
+      "derived_configuration_reference": {
+        "source_name": "WatchTower.FCStd",
+        "source_id": "src:625c877e75a1eed562a385ed1dc0e812d548b0bbbe3203ae3878b726423f349e",
+        "relation": "DERIVED_FROM / CONFIGURATION_VIEW_CANDIDATE",
+        "authority_transition": false
+      }
     },
     {
       "twin_id": "m1_elevated_bypass",
