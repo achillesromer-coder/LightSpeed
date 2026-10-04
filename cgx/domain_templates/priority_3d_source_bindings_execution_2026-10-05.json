@@ -1,0 +1,56 @@
+{
+  "schema": "CGX-PRIORITY-3D-SOURCE-BINDINGS-EXECUTION/0.1",
+  "execution_id": "CGX-3D-PRIORITY-R2-2026-10-05",
+  "status": "EXECUTED / SOURCE_IDENTITIES_BOUND / ENGINEERING_SEMANTICS_HELD",
+  "source_baseline_sha": "f7c855d905dcf5e157a83d3a1de28240397cd625",
+  "operations_workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
+  "dbr_summary_ref": "remaining_3d_dbr_summary_2026-10-05.json",
+  "bindings": [
+    {
+      "semantic_object_id": "T1-M1",
+      "operations_record_id": "COM-0368",
+      "mapping_ids": [
+        "FF-M1-BASEKM-FCSTD-001",
+        "FF-M1-CENTRAL-A1-FCSTD-001",
+        "FF-M1-PILOT-BUILD-FCSTD-001"
+      ],
+      "state": "THREE_CURRENT_CONFIGURATION_SOURCES_BOUND / PRECEDENCE_HELD"
+    },
+    {
+      "semantic_object_id": "SPACE-02",
+      "operations_record_id": "COM-0445",
+      "mapping_ids": [
+        "FF-MARKV-FCSTD-001"
+      ],
+      "state": "CURRENT_SOURCE_AND_PREDECESSOR_BOUND / NORMALIZED_PARITY"
+    },
+    {
+      "semantic_object_id": "SPACE-03",
+      "operations_record_id": "COM-0446",
+      "mapping_ids": [
+        "FF-LUKE4-FCSTD-001",
+        "FF-LUKE4-SINGLE-NODE-FCSTD-001"
+      ],
+      "state": "FULL_AND_SINGLE_NODE_CURRENT_SOURCES_BOUND / EXACT_HIERARCHY_HELD"
+    },
+    {
+      "semantic_object_id": "SF-01",
+      "operations_record_id": "COM-1666",
+      "mapping_ids": [
+        "FF-FREEFLOW-BATTERY-FCSTD-001",
+        "FF-FREEFLOW-CAPACITORS-FCSTD-001",
+        "FF-FREEFLOW-SOLENOID-FCSTD-001"
+      ],
+      "state": "THREE_COMPONENT_SOURCES_BOUND / PERFORMANCE_HELD"
+    }
+  ],
+  "interpretation_rules": [
+    "hash drift with zero normalized Document.xml change is recorded as source/archive identity drift, not engineering geometry change",
+    "added/removed FreeCAD objects are structural source evidence until their functions are independently mapped",
+    "multiple current configurations may bind to one semantic family without silently selecting precedence",
+    "native-source binding does not promote physical, manufacturing, regulatory or certification authority"
+  ],
+  "physical_authority": false,
+  "manufacturing_authority": false,
+  "public_release_authorized": false
+}
