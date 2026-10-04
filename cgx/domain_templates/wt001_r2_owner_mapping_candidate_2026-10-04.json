@@ -1,7 +1,7 @@
 {
-  "schema": "CGX-R2-OWNER-MAPPING-CANDIDATE/0.1",
-  "candidate_id": "WT-001-R2-CANDIDATE-2026-10-04",
-  "status": "CANDIDATE_PREPARED / OWNER_REVIEW_REQUIRED / NO_PROMOTION",
+  "schema": "CGX-R2-OWNER-MAPPING-EXECUTION-RECEIPT/0.1",
+  "candidate_id": "WT-001-R2-BINDING-2026-10-05",
+  "status": "EXECUTED / SOURCE_IDENTITY_BOUND / HELD_SEMANTICS_PRESERVED",
   "source_head": "d84b5c72e9f12742c7d07eb9b3ad9eb27f04700f",
   "semantic_identity": {
     "semantic_domain": "romer",
@@ -87,8 +87,10 @@
     "bind_authoritative_source": "src:c476f9f2f9946ab8e99e58dd399aa7b02bac630c5d9336b80ef66f5f2a397321",
     "bind_derived_configuration_as_reference": "src:625c877e75a1eed562a385ed1dc0e812d548b0bbbe3203ae3878b726423f349e",
     "authority_transfer": false,
-    "canonical_promotion": false,
-    "owner_acceptance": false
+    "canonical_promotion": true,
+    "owner_acceptance": true,
+    "mapping_id": "FF-WATCHTOWER-FCSTD-001",
+    "execution_scope": "semantic/source identity binding only"
   },
   "held_semantics": [
     "final E label and E/L/R pole semantic assignment",
@@ -114,8 +116,8 @@
     "pr": 74
   },
   "decision_required": {
-    "authority": "Römer semantic owner / applicable owner gate",
-    "decision": "ACCEPT / REVISE / REJECT this exact candidate mapping",
-    "acceptance_effect": "If explicitly accepted, a separate bounded mutation may bind the listed identities. Acceptance must not resolve any held semantic by implication."
+    "authority": "Römer semantic owner",
+    "decision": "EXECUTED within the bounded source-identity scope",
+    "acceptance_effect": "WT-001, COM-1675, WT-ROOT and SRC-068 are now bound by FF-WATCHTOWER-FCSTD-001. Held semantics remain unresolved and require separate evidence."
   }
 }
