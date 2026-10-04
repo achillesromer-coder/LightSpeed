@@ -13,6 +13,41 @@ sys.path.insert(0, str(RUNTIME_ROOT))
 from lightspeed_runtime import ls_go_job_consumer
 
 
+def test_source_intake_consumer_persists_evidence_once(tmp_path, monkeypatch):
+    import hashlib
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    source = tmp_path / "source.md"
+    raw = b"# Source\nEvidence for review only.\n"
+    source.write_bytes(raw)
+    payload = {"source_path": str(source), "source_sha256": hashlib.sha256(raw).hexdigest()}
+    params = {"command_id": "LSGO-INTAKE-TEST", "action_type": "source_preserving_intake",
+              "action_payload": payload, "execution_mode": "queue", "execute": True, "allow_heavy": False}
+    write_command(shell, params["command_id"], schema_version="lightspeed-go-command-v2",
+                  action_type=params["action_type"], action_payload=payload)
+    original_read = ls_go_job_consumer._read_json
+    monkeypatch.setattr(ls_go_job_consumer, "_read_json", lambda p:
+                        {"environment": {"assimilation_source_root": str(tmp_path)}}
+                        if Path(p).name == "agent_home.json" else original_read(p))
+    db = configure_db(tmp_path / "intake.db")
+    now = datetime.now(UTC).isoformat(timespec="seconds")
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,updated_at,metadata_json) VALUES (501,'queued',?,'{}')", (now,))
+        conn.execute("""INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id,project_id,
+                     tool_key,z_context,created_at,updated_at)
+                     VALUES (502,'ls_go_command','pending',?,'{}',501,'LS-GO','ls_go_command','Neo',?,?)""",
+                     (json.dumps(params), now, now))
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    assert consumer.process_once()["results_written"] == 1
+    result = json.loads(ls_go_job_consumer.result_file_path(shell, params["command_id"]).read_text())
+    assert result["status"] == "completed"
+    assert result["intake"]["source_sha256"] == payload["source_sha256"]
+    assert result["intake"]["canonical_mutation"] is False
+    assert Path(result["intake"]["artifacts"][0]["path"]).read_bytes() == raw
+    assert source.read_bytes() == raw
+    assert consumer.process_once()["results_written"] == 0
+
+
 def test_consumer_does_not_resolve_operator_root(tmp_path: Path, monkeypatch):
     shell = tmp_path / "App"
     shell.mkdir()

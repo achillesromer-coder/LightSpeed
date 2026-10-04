@@ -4,6 +4,8 @@ import hmac
 import hashlib
 import importlib
 import json
+from lightspeed_runtime.source_intake_executor import validate_intake_payload
+from lightspeed_runtime.source_intake import SourceIntakeError
 import os
 import re
 from datetime import datetime, timezone
@@ -80,6 +82,7 @@ ALLOWED_FLOORS = {
 ALLOWED_PRIORITIES = {"critical", "high", "normal", "low"}
 ALLOWED_MODES = {"review", "queue"}
 ALLOWED_ACTIONS = {
+    "source_preserving_intake",
     "cognigrex_workflow",
     "local_agent_cycle",
     "local_floor_wakeup",
@@ -2241,10 +2244,17 @@ def create_app(root: Path | str) -> FastAPI:
                     detail="rfs_emff_sweep requires allow_heavy=false",
                 )
             action_payload = _validated_rfs_emff_action_payload(body.get("action_payload"))
+        elif action_type == "source_preserving_intake":
+            if target_floor != "Neo" or execution_mode != "queue" or body.get("allow_heavy", False) is not False:
+                raise HTTPException(status_code=400, detail="source_preserving_intake requires Neo, queue mode and allow_heavy=false")
+            try:
+                action_payload = validate_intake_payload(body.get("action_payload"))
+            except SourceIntakeError as exc:
+                raise HTTPException(status_code=400, detail=str(exc)) from exc
         elif "action_payload" in body:
             raise HTTPException(
                 status_code=400,
-                detail="action_payload is only registered for rfs_emff_sweep",
+                detail="action_payload is only registered for rfs_emff_sweep and source_preserving_intake",
             )
         if body.get("oversight_floor") != "Achilles":
             raise HTTPException(status_code=400, detail="Achilles oversight is required")

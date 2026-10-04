@@ -3297,9 +3297,9 @@
       "sha256": "8efc3372e032bcb1c156c93aa67b7fbe77a63ee696b77e021cd74be6a29a7f50"
     },
     {
-      "bytes": 95310,
+      "bytes": 96043,
       "path": "LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py",
-      "sha256": "2f2f00874bf269074ff743873ca42b16ef9eb524b15405e662777af9e9e883c6"
+      "sha256": "6f06d1acdbd177bdea53b15cdb1236ef23e8f425cc91d8f1f72ba9766f44644d"
     },
     {
       "bytes": 11584,
@@ -3507,9 +3507,9 @@
       "sha256": "0dd8802798ec34c6f90a7ea18da001d71da34603af67f1f651e2d4aeb9e57db0"
     },
     {
-      "bytes": 74240,
+      "bytes": 75761,
       "path": "LightSpeed_Runtime/tests/test_ls_go_bridge.py",
-      "sha256": "8d3e376d2e976da22511ea54fa1cd3d23327e2ec91efa23ac1623b63c05a35e9"
+      "sha256": "c372c8ba97c7a56927b424d27fa6c43349bf75622b1e93fe0e7b62a87eb56ae1"
     },
     {
       "bytes": 8601,
@@ -3530,6 +3530,11 @@
       "bytes": 27818,
       "path": "LightSpeed_Runtime/tests/test_source_intake.py",
       "sha256": "83a97ad9826728a8635d11b6d9fb7f44bcc2682034142bea31f23ad278c95ca6"
+    },
+    {
+      "bytes": 4819,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/source_intake_executor.py",
+      "sha256": "24f947777d44e3cdb6c739b1b8134c8e48cc1b398c93796acd11a14253fe7187"
     }
   ]
 }
