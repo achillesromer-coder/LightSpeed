@@ -2,434 +2,9 @@
   "schema_version": 1,
   "records": [
     {
-      "bytes": 6443,
-      "path": "Desktop_Hooks/LightSpeed/__main__.py",
-      "sha256": "06ee4a3ef7c59bfd02ed4ccd1965db4d57a664f9bd1dc28e7b65b8ad89859ed4"
-    },
-    {
-      "bytes": 1159,
-      "path": "Desktop_Hooks/LightSpeed/config/archives_policy.yaml",
-      "sha256": "61166603bece90a2cdf6ba4bf27c7c5311ca314fa0c39eb1c841b8f3e2ea4356"
-    },
-    {
-      "bytes": 21709,
-      "path": "Desktop_Hooks/LightSpeed/config/backend_frontend_build_contract.json",
-      "sha256": "6ed425974371cca1682ccbce1026eecd92be49aafae7244d838b7ccf5588c763"
-    },
-    {
-      "bytes": 2133,
-      "path": "Desktop_Hooks/LightSpeed/config/deployment_topology.json",
-      "sha256": "70dee42c3e7f179c70db660ede1de3575e285ecb9654b23f4c1a6f0b0a81ea47"
-    },
-    {
-      "bytes": 34339,
-      "path": "Desktop_Hooks/LightSpeed/config/floor_environment_realization_contract.json",
-      "sha256": "0885e45acd0e13f665a6fc9fb4755d2bae71293dc17d2f88f4d7743f3e2c41da"
-    },
-    {
-      "bytes": 22256,
-      "path": "Desktop_Hooks/LightSpeed/config/function_registry.json",
-      "sha256": "a5fda201c319de6ef8410f92549337ad08155faec639d9c66756b732e7b1d82b"
-    },
-    {
-      "bytes": 3051,
-      "path": "Desktop_Hooks/LightSpeed/config/host_runtime_policy.json",
-      "sha256": "d763d6fe4d04ecb34f81968ee7dab83a38d8e7224c62bdeb071b9be5f84d806f"
-    },
-    {
-      "bytes": 15246,
-      "path": "Desktop_Hooks/LightSpeed/config/input_staging_matrix.json",
-      "sha256": "d8560f8204cd062da33ce1031d366b57f5f90c906ae36bb691e4f9b2fcf852c1"
-    },
-    {
-      "bytes": 9101,
-      "path": "Desktop_Hooks/LightSpeed/config/premium_theme_config.json",
-      "sha256": "3f547bf5102650e6214047d0a5f0d1bffa50ac82db271cc13f4d90fc95c8d4ee"
-    },
-    {
-      "bytes": 7441,
-      "path": "Desktop_Hooks/LightSpeed/config/project_routing.json",
-      "sha256": "74065c0ba51d0ec93fc9ad2fb2012eda76fef5b2979249ecb96982393d71a68b"
-    },
-    {
-      "bytes": 1210,
-      "path": "Desktop_Hooks/LightSpeed/config/resource_closure_contract.json",
-      "sha256": "79b8e6d5d4dd0ed21533f0dc89f08a5ff7b705e8ca3c67a236df215cfa9bdd55"
-    },
-    {
-      "bytes": 5501,
-      "path": "Desktop_Hooks/LightSpeed/config/workspace_lanes.json",
-      "sha256": "10402aef42ec32218ed7f573df20759aa837037744440bb21d3abb30115113a7"
-    },
-    {
-      "bytes": 3157,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/02_MASTER_BUILD_SPEC_SHEET.md",
-      "sha256": "91432c93508e2c2cd6b0438f3704dc64550152eff9b0164bd76ecbd12061e007"
-    },
-    {
-      "bytes": 2232,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/04_Z_AXIS_CANONICAL_MAP.md",
-      "sha256": "6d9e30972d231120482869ec29b4e1f24a21ea1939b5efb6a5ed2feedf6914e5"
-    },
-    {
-      "bytes": 5522,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/06_FINALIZATION_BACKLOG_50.md",
-      "sha256": "bed388b6d77939a4f5d9696dd451b01c57d566f590813f1bf7fc7725c2a4f1d8"
-    },
-    {
-      "bytes": 3919,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/07_ROOT_CLASSIFICATION_MAP.md",
-      "sha256": "59734189bff78ddaa830687826bb6b019045373b452f0711fbba96cc6478445d"
-    },
-    {
-      "bytes": 1685,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/08_SMART_FLOOR_ASSIMILATION.md",
-      "sha256": "c8248bade145bef87e1670de250eaa4897b5b7a3b5f39c425a389837f6b0c824"
-    },
-    {
-      "bytes": 49216,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/09_FILE_OPTIMIZATION_MAP.md",
-      "sha256": "652da009df690e021ac976d8fe51e5689a8d3ba14ec9041b2871b3779fd55f12"
-    },
-    {
-      "bytes": 9538,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/10_3_AGENT_EXECUTION_MATRIX.md",
-      "sha256": "6741e2320911954832a47e8055225c9a1e5cd14cf4439405be848de649f5902c"
-    },
-    {
-      "bytes": 10872,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/11_FINAL_OPERATOR_OS_3X50_MATRIX.md",
-      "sha256": "cc44b19d3678e4d60db41665fba4217892dc01170c18c5b97416e74ef93a12b4"
-    },
-    {
-      "bytes": 4439,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/12_V010_PRE_WALKTHROUGH_TASKS.md",
-      "sha256": "5a30d59ef89375c29d4925d51f3bffe02e5af3ff87a8ceef4530d5f26491ff68"
-    },
-    {
-      "bytes": 7808,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/13_UX_AMALGAMATION_PASS.md",
-      "sha256": "3635e3aba56a1230674bbf8979ab9c51497f8198fffb531270d32aac4c1dc311"
-    },
-    {
-      "bytes": 6727,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/14_MISALIGNMENT_REGISTER.md",
-      "sha256": "edfc590f97d2125703ea695dab07b85b2b7f1457990454d096c90e5029f26e36"
-    },
-    {
-      "bytes": 741,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/15_COMPLETED_TASKS_DICTIONARY.md",
-      "sha256": "d447c792211c5cdc049dff054dc61cc3b2cce2f4c26de4ad4c888706a207ffb9"
-    },
-    {
-      "bytes": 550,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/15_COMPLETED_TASKS_PROJECT_WALL.md",
-      "sha256": "78e25f99b94d60007d9edc520f2aa4a17743cd7e2407d291f850a7b57f2a4512"
-    },
-    {
-      "bytes": 629,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/15_COMPLETED_TASKS_RELEASE.md",
-      "sha256": "7ac07576665754e6d3896558d5b1ee0dac01bf709b4ccc1692956dd3f519d444"
-    },
-    {
-      "bytes": 2462,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/16_RECURSIVE_ALIGNMENT_QUEUE.md",
-      "sha256": "bb69cc444e8c9e80575c02a452dba0700eecde945052a6b41dbf634f287f864d"
-    },
-    {
-      "bytes": 4527,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/17_3_AGENT_15_COMPLETE_35_QUEUE.md",
-      "sha256": "5ee393ee1350e0ed259d1cfc1b4000c3706231b3052a5ddf949c39c15b6b49d8"
-    },
-    {
-      "bytes": 1232,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/18_COMPLETED_BACKGROUND_DEPENDENCIES.md",
-      "sha256": "89e5ea5a44174aca2c0c636402cb191aaaeda5691abb3608757f89ca1b712568"
-    },
-    {
-      "bytes": 553,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/18_COMPLETED_LIVE_PROJECT_WALL_UI.md",
-      "sha256": "c9b657f9cd8283cd4396ffc6549192eb448e08be23a203c26f284287e06e3be0"
-    },
-    {
-      "bytes": 526,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/18_COMPLETED_PREVIEW_MODEL.md",
-      "sha256": "06708c9d3f6671766788156ff85a80b9211bc9c16035006df2c5d4f219029cac"
-    },
-    {
-      "bytes": 609,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/19_COMPLETED_LIVE_PROJECT_WALL_UI_2.md",
-      "sha256": "aacf7d216ceec1683e5624244d39e2af99b2ba3602167ae999d9af61b74abcdb"
-    },
-    {
-      "bytes": 600,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/19_COMPLETED_PROJECT_WALL_MODEL_2.md",
-      "sha256": "29f68703e6dfc84017432bcf1ffd12957e294b44dab5d70aba326d9f4438da00"
-    },
-    {
-      "bytes": 653,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/20_COMPLETED_FLOOR_WORKFLOW_DESCRIPTORS.md",
-      "sha256": "6b953e256d22e9e50ec414d59085000a30ddd02a38ae1d1f934813629914547b"
-    },
-    {
-      "bytes": 1237,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/20_COMPLETED_RELEASE_PUBLISH_CULL.md",
-      "sha256": "5ffe6b4af0ae21690641d0b3713ffa62d5db04d4a4cf6e32fd2ade2e70d23ddc"
-    },
-    {
-      "bytes": 4837,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/21_ROLLING_35_COMPLETE.md",
-      "sha256": "98709fe7f504ac9e70493d2d007f1d0bacb0c699f20595bfe3d251023bd396d3"
-    },
-    {
-      "bytes": 2048,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/22_SMART_FLOOR_VISUAL_ANALYSIS.md",
-      "sha256": "0506fffd8e2b9636e129595bb3bcefa9f69f9cbd4ebf3e4f0dcf582015a361b1"
-    },
-    {
-      "bytes": 1270,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/24_8AM_ORCHESTRATION_RUN.md",
-      "sha256": "e598de29482274556e50b9fcc2cb2cce9a80ea5edc9eca8d73bae8878a0ab214"
-    },
-    {
-      "bytes": 6957,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/25_CONSOLIDATION_REFINEMENT_PASS.md",
-      "sha256": "6c256cec88cbf798a37e0374feaaa108d89fa43f470722f1cd6ed1d30c4578b0"
-    },
-    {
-      "bytes": 1801,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/26_PROTOCOL_SEQUENCE_REFINEMENT.md",
-      "sha256": "3470cf29a4eb282a0cd5b70f5134d511d7dbbdc3c38376b89b08cdbe458fe19a"
-    },
-    {
-      "bytes": 2718,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/27_D_DRIVE_MIGRATION_STATUS.md",
-      "sha256": "be8143515c584ba4d966d090d6eb21c4adbedb9a00e95f7cb251c23b17b7d879"
-    },
-    {
-      "bytes": 3104,
-      "path": "Desktop_Hooks/LightSpeed/dataindex/tool_catalog.json",
-      "sha256": "c8b940d9a78a7303d7c08dd7169dd5b058f42c9ef846be098a691a39859e8b0d"
-    },
-    {
-      "bytes": 3790,
-      "path": "Desktop_Hooks/LightSpeed/launcher_exe.py",
-      "sha256": "6152357497504a8619b8c8d49bc203d8298a7aeb73a4384887ca35f5fcd2db34"
-    },
-    {
       "bytes": 379568,
       "path": "Desktop_Hooks/LightSpeed/N.py",
       "sha256": "408aac575f158c7a4fecda9ddf105ad65deec1c7013f7f42193fdba90b905f3c"
-    },
-    {
-      "bytes": 738,
-      "path": "Desktop_Hooks/LightSpeed/tests/__init__.py",
-      "sha256": "bfb44e1e8548deb5c02c3aead94b4b4e81c1b9818c4882042b7a42c37c3707cd"
-    },
-    {
-      "bytes": 12077,
-      "path": "Desktop_Hooks/LightSpeed/tests/conftest.py",
-      "sha256": "3aa577fb7f58740b5f20241497fe3211669b24a9dffb92bb3ef0a9bb8639194c"
-    },
-    {
-      "bytes": 13542,
-      "path": "Desktop_Hooks/LightSpeed/tests/run_all_tests.py",
-      "sha256": "7e9ea0e8240c07e00dd2a3e2bbc9725ea6ce3319534617bb89e82295d83678d3"
-    },
-    {
-      "bytes": 923,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_agentic_launch_queue.py",
-      "sha256": "7469b289158c2a74e50dfe9b9eef5ea2ad670990d1612ff02e0e1862e7e5b765"
-    },
-    {
-      "bytes": 1926,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_ai_orchestrator.py",
-      "sha256": "d3ddc6ab1b501af0052a1027bbe18ddb99b0b3b6687d2b7fd683b307e7722213"
-    },
-    {
-      "bytes": 2824,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_background_application.py",
-      "sha256": "4a7bae41cd43897196f1841d5a5227f0c6ef0285986570aaf22a35b573979304"
-    },
-    {
-      "bytes": 2187,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_cognigrex_render_policy.py",
-      "sha256": "db876112ffb045205eca2a05524534395afa56137d4880cee05b328ed64594ec"
-    },
-    {
-      "bytes": 3873,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_component_package_exports.py",
-      "sha256": "91c6e4f5a81bfe7553d162a90875b8dc21c63fbc2e6cdec876c06b73ea8e4ffc"
-    },
-    {
-      "bytes": 5609,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_config_contracts.py",
-      "sha256": "52ffacadfc4f968ada12aa2ea681d1628731530c300944bce2cb5cdebfe2ac06"
-    },
-    {
-      "bytes": 3485,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_consolidation_registry.py",
-      "sha256": "a032cb686bab15f56c08276c00cd8021339b57ab36d01cbeaacdd85a8338bdf4"
-    },
-    {
-      "bytes": 3380,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_definition_library.py",
-      "sha256": "d0ddc7735bd688b4efd7afe5b959ddc3962aa0a8563d150987a4b39cc910b46a"
-    },
-    {
-      "bytes": 3770,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_dependency_approvals.py",
-      "sha256": "82b3835d993124274eb79400de6dcaf129c5e370cfed705fae3ba0e25ba36267"
-    },
-    {
-      "bytes": 4109,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_entrypoint_contract.py",
-      "sha256": "13f00430b02eacefbb5f90e87cae46476cd79c99eb744cdd341b542f4f4e57e0"
-    },
-    {
-      "bytes": 4394,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_floor_workflow_descriptors.py",
-      "sha256": "0959e9e04c2182cae9c4bcc736f6b905c2559d36a1adbd18c80b344d0d1c7bf0"
-    },
-    {
-      "bytes": 1654,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_functions_hub_operator_surface.py",
-      "sha256": "2901e880f1581ee803dcab206b16a770da43a5a5147ada8f995fe66d0e3080af"
-    },
-    {
-      "bytes": 16802,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_health.py",
-      "sha256": "914ca4cb39d2ee712d5f6346612d3daaeead7b7f781e254e2d978ec37edf5996"
-    },
-    {
-      "bytes": 1554,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_launcher_exe.py",
-      "sha256": "ecc81316c7d28074a62fb75a54b445f011ceeb38f76f7657925b37c01bb8ec0d"
-    },
-    {
-      "bytes": 2461,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_local_floor_runner_request.py",
-      "sha256": "ba53cb32700917e6d1496ac572e9ed767338ab7cf3d527ddbeeb52e005224a11"
-    },
-    {
-      "bytes": 915,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_misalignment_register.py",
-      "sha256": "61005a3ec9bceed921e2d2ffb12b230651da514545f646fe69519e34f1cfc9d6"
-    },
-    {
-      "bytes": 9387,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_operational_store.py",
-      "sha256": "b51198411f7677063e8e1f397ebc298b219b0e506ca722c6cf82ebd95b28ce0b"
-    },
-    {
-      "bytes": 2758,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_operator_home_export_gates.py",
-      "sha256": "63fbecef3b35b231b928cd63d6a634394091c5144846469858bc0d7dbc206aaf"
-    },
-    {
-      "bytes": 13538,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_oracle_data_contracts.py",
-      "sha256": "605164d76bc10aa370a1e31ac8c47a8129cca90026fc7689a9b08a3df13b8574"
-    },
-    {
-      "bytes": 2480,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_orchestration_window.py",
-      "sha256": "20268d6391cdc9787b89d586050b76a04202e5401bc19f90a9788c5586453534"
-    },
-    {
-      "bytes": 6790,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_path_ownership_contracts.py",
-      "sha256": "5b9d5d02702ac4ea587fb5ce3db21c0401b63c5747c2e911a1c8e0761aed95de"
-    },
-    {
-      "bytes": 16006,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_project_component_wall.py",
-      "sha256": "9441ad25d6c93c89b7c287dcf69824412b4724bcf81bc19088503202bda407b4"
-    },
-    {
-      "bytes": 11798,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_project_workspace_contracts.py",
-      "sha256": "b862538b87db255c13b80ac87cb1f0900f6a6d6e3ad745dd983670de225916f1"
-    },
-    {
-      "bytes": 5411,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_protocol_sequence_registry.py",
-      "sha256": "366a9ec2e649a85466bb7cbfc913b0bd38fd7676b9cc75261d87bc8202f88f16"
-    },
-    {
-      "bytes": 1229,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_publish_snapshot.py",
-      "sha256": "32044fbcf5540ce7f427b8f6110994e7cb77da87836264041b98118b097aec59"
-    },
-    {
-      "bytes": 10093,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_release_clean.py",
-      "sha256": "d58a0149138e02ec28fc0fe9c7421407be6cafef54ffbad688a248c617e7d41e"
-    },
-    {
-      "bytes": 1146,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_reservoir_registry.py",
-      "sha256": "908d30d7257c67ad20982661c19dd1d25e7fa9adfc2222266b517f66a07b5b01"
-    },
-    {
-      "bytes": 127612,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_runtime_package.py",
-      "sha256": "d88e022760302e21a0fd96747993fe6bb2601a1b9796b8b37db50843476f56bd"
-    },
-    {
-      "bytes": 15202,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_scenarios.py",
-      "sha256": "c52167133abe6845557b85939dad3313f6b963f955a2e145989a50c6819b933b"
-    },
-    {
-      "bytes": 2680,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_shell_routes.py",
-      "sha256": "7e3275555f95b4f549258cbe65eb0cd8377bf943fe4d3c5ae926f9a132c48470"
-    },
-    {
-      "bytes": 17809,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_simulations.py",
-      "sha256": "54f5427912ed9b681d0130292edaf345ee5b5c85369c8b46b9abff83c305628b"
-    },
-    {
-      "bytes": 8302,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_smart_floor_visuals.py",
-      "sha256": "d5872b1764e351ab4573c090334636879091b43bf121b1f2a9ab364377942075"
-    },
-    {
-      "bytes": 7118,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_startup_options.py",
-      "sha256": "d84166a03283a9fa70d10f73df900b7767579a855855cd07436f584077d35cab"
-    },
-    {
-      "bytes": 6975,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_trinity_ui_contracts.py",
-      "sha256": "5940777633ebac8351cdee2238292f864c2598210e33bc44e2e729cd8123fd5f"
-    },
-    {
-      "bytes": 1459,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_websocket_server.py",
-      "sha256": "54197e975ff1e0185d0226e606bc3ad72d08ba4acde10e5d8c5022564af9f039"
-    },
-    {
-      "bytes": 3533,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_weekly_maintenance.py",
-      "sha256": "b7a68487f63093d71691617dad326bd5dbcf225dd64164ab52c6049aad24a399"
-    },
-    {
-      "bytes": 20924,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_z_axis_floors.py",
-      "sha256": "47d09975ac8ff4f9d59c6482f5699c2987fc983403cb76b04481b5345f426765"
-    },
-    {
-      "bytes": 16532,
-      "path": "Desktop_Hooks/LightSpeed/tests/test_z_direct.py",
-      "sha256": "bdb3ed12a42447e765f86adc9e96c9fa469f83f98b003c50ae01fec25e7bad21"
-    },
-    {
-      "bytes": 26655,
-      "path": "Desktop_Hooks/LightSpeed/verify_launch_ready.py",
-      "sha256": "5e4077fd27c1d98e105ea132d42aeb556cf43bac8236b0344fa8044251bc809f"
     },
     {
       "bytes": 6,
@@ -437,19 +12,9 @@
       "sha256": "0c9a9d43610d66f4cc3f42da08cae044483de25894a9daf9dc6a76ff75ca9327"
     },
     {
-      "bytes": 3518,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/__init__.py",
-      "sha256": "389c57b47760c5d316d80e29388867624432e27f6d9e2a4743fbb699c5124437"
-    },
-    {
       "bytes": 44381,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Architect.py",
       "sha256": "5f5b61104700fae0590e93a503e189e8cd834f7275b049726a5e29f2f88ae353"
-    },
-    {
-      "bytes": 4032,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/assets/icons/icon_manifest.json",
-      "sha256": "25c9033edbc58876866111a81a9e0b5497d6ab2c0f5d5f20755532070cb16cb3"
     },
     {
       "bytes": 11069,
@@ -492,14 +57,24 @@
       "sha256": "b4ba3ded834c27a7933331bbb21b943d9a05d91ca3935f33da9059d5553d640a"
     },
     {
-      "bytes": 315,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/__init__.py",
-      "sha256": "e1dda8f460e824c6107e575cd4cd3a1c7aa41e0ece55699eac9c597d7d4a60a9"
+      "bytes": 775,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/README.md",
+      "sha256": "ad547934fb864f26d9f66caadb04529c9a639e574b6fea19e07a82b0d027a515"
     },
     {
       "bytes": 5102,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/_FLOOR_MANIFEST.json",
       "sha256": "d9e12d295caa4a77a60bc1350c3cbc83957898d4671bee421516f1ba5e7ce533"
+    },
+    {
+      "bytes": 315,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/__init__.py",
+      "sha256": "e1dda8f460e824c6107e575cd4cd3a1c7aa41e0ece55699eac9c597d7d4a60a9"
+    },
+    {
+      "bytes": 16142,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/components/ArchitectCoreComponent.py",
+      "sha256": "9a3b07581fc9791bfe63c65db86a9b3c24244457cae6de05927679677528c62b"
     },
     {
       "bytes": 1612,
@@ -510,11 +85,6 @@
       "bytes": 38288,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/components/architect_portal_glass.py",
       "sha256": "af84c629b21859a7c7d0dabc5cf659afe74b53bc3e3e0509e23367f3a9f2db3f"
-    },
-    {
-      "bytes": 16142,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/components/ArchitectCoreComponent.py",
-      "sha256": "9a3b07581fc9791bfe63c65db86a9b3c24244457cae6de05927679677528c62b"
     },
     {
       "bytes": 29062,
@@ -537,11 +107,6 @@
       "sha256": "afefc468d7652eba010a12de8fe525bc87bdec41a5aa31ffcd97fb6356a8b287"
     },
     {
-      "bytes": 775,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/README.md",
-      "sha256": "ad547934fb864f26d9f66caadb04529c9a639e574b6fea19e07a82b0d027a515"
-    },
-    {
       "bytes": 372,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+1_Architect/tests/__init__.py",
       "sha256": "891a0c301ee777ae0063bf32cffa69478965805157da564517304f110d6c9475"
@@ -557,14 +122,19 @@
       "sha256": "36e43d991d51f0ec0bdd52f54a1647683639ac43029ccae11dd65ef061d5d38b"
     },
     {
-      "bytes": 306,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/__init__.py",
-      "sha256": "0616f365f85578eef3ba43b1190efcc1163678b772a794f66a48cf524b7f1bda"
+      "bytes": 775,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/README.md",
+      "sha256": "ae7a430c4dbaf3c1b5c7526be0b2942061448b6141028f2a35de0e7d2567b9f1"
     },
     {
       "bytes": 5695,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/_FLOOR_MANIFEST.json",
       "sha256": "7f3326d8ec605be755dacb82a89a4f1658ec5c6448229f5398c6475f2e52df75"
+    },
+    {
+      "bytes": 306,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/__init__.py",
+      "sha256": "0616f365f85578eef3ba43b1190efcc1163678b772a794f66a48cf524b7f1bda"
     },
     {
       "bytes": 24433,
@@ -607,6 +177,11 @@
       "sha256": "2c3483a119a38936b9a90423874dc193e9cc084e5665515b8212f5f62e77d7a8"
     },
     {
+      "bytes": 15970,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/NeoCoreComponent.py",
+      "sha256": "b84cbfd03fac96319f15dee1079cc0a6cc9f5e1cc83bfa23108a8c754cf723e5"
+    },
+    {
       "bytes": 2315,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/__init__.py",
       "sha256": "a1cf36875f8e2851fba1f0972758800fd4da9446716428dc5a80b74354fbe97e"
@@ -642,11 +217,6 @@
       "sha256": "675d932be0e5001a8117c6d690e69ee4c1863e221ae9f8522184331fd3943cc0"
     },
     {
-      "bytes": 15970,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/NeoCoreComponent.py",
-      "sha256": "b84cbfd03fac96319f15dee1079cc0a6cc9f5e1cc83bfa23108a8c754cf723e5"
-    },
-    {
       "bytes": 5088,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/romer_industries_connector.py",
       "sha256": "737fe06a405ac1c215d9310f19477ebbecb0ed565f287773faa74bf8948b0848"
@@ -655,11 +225,6 @@
       "bytes": 5604,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/components/romer_sync_panel.py",
       "sha256": "36ea27d7938831cb2add1b66620c1646613dc7c3792acc62ffe676c3dcdd873e"
-    },
-    {
-      "bytes": 775,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/README.md",
-      "sha256": "ae7a430c4dbaf3c1b5c7526be0b2942061448b6141028f2a35de0e7d2567b9f1"
     },
     {
       "bytes": 354,
@@ -672,14 +237,19 @@
       "sha256": "4336cc71f18107917f40c26c03e122fbacd972fe63098c26791eff92bf0082ff"
     },
     {
-      "bytes": 312,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/__init__.py",
-      "sha256": "2b1461fff81bbe1b6357d0fff7818e62d4db39faaf20802d6d30d6cd613fb7ba"
+      "bytes": 854,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/README.md",
+      "sha256": "bfcd6c72352b1b18f6c8e9e800e63e33b17d0dba5f29eb6ee8cd1a4bd73c8d23"
     },
     {
       "bytes": 7723,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/_FLOOR_MANIFEST.json",
       "sha256": "e57b9a1619c42f1eaf32a395d91cd64f0a1cb532f977e454eb4f05f140872e70"
+    },
+    {
+      "bytes": 312,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/__init__.py",
+      "sha256": "2b1461fff81bbe1b6357d0fff7818e62d4db39faaf20802d6d30d6cd613fb7ba"
     },
     {
       "bytes": 4050,
@@ -690,6 +260,11 @@
       "bytes": 39680,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/assets/ui_spec/UI_BASE_SPECIFICATION.md",
       "sha256": "43c884ce18323d961fdd334ee8945f1a6cc97850a4a39cd7c4069bbc4d1fbb63"
+    },
+    {
+      "bytes": 16014,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/TrinityCoreComponent.py",
+      "sha256": "2291a0944e51cdc50bdf4c3cb9f6cbd9720c213ec79b5f09c0e18a7c9c1fe018"
     },
     {
       "bytes": 2159,
@@ -767,11 +342,6 @@
       "sha256": "8fb74b6520a385b8d696e9e84c103d9428326c33983fb71109f870e18017348d"
     },
     {
-      "bytes": 16014,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/components/TrinityCoreComponent.py",
-      "sha256": "2291a0944e51cdc50bdf4c3cb9f6cbd9720c213ec79b5f09c0e18a7c9c1fe018"
-    },
-    {
       "bytes": 29939,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/diagnostics/complete_diagnostic_system.py",
       "sha256": "42b02ed32c728ce4fc39adcacb89c4ce460a538d0c735b7ad48d9563b9a539a4"
@@ -790,11 +360,6 @@
       "bytes": 476,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/portal_config/portals.json",
       "sha256": "718db9698b5017ae315ffbea4ad84126c84ead4d32286b1e287df3cafbb6e44e"
-    },
-    {
-      "bytes": 854,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/README.md",
-      "sha256": "bfcd6c72352b1b18f6c8e9e800e63e33b17d0dba5f29eb6ee8cd1a4bd73c8d23"
     },
     {
       "bytes": 250,
@@ -1077,14 +642,19 @@
       "sha256": "9f503aaeb15de9b83df3ce4f6f47c83bae9c2d866008498c5aef3a09c74a0124"
     },
     {
-      "bytes": 343,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-1_Morpheus/__init__.py",
-      "sha256": "09c4bead0c2aedf268de2f4374637abaf5990cc21b83de96a345f5cd3f836e1b"
+      "bytes": 1297,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-1_Morpheus/README.md",
+      "sha256": "8a3f53ff1580bf63200a25ebf3eb7853207056c18c21c04045fa367496ea3731"
     },
     {
       "bytes": 4589,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-1_Morpheus/_FLOOR_MANIFEST.json",
       "sha256": "13289be28e36212954d1eb691918cf3b6e1d82bf7965d3294b1a1d63b654e1ff"
+    },
+    {
+      "bytes": 343,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-1_Morpheus/__init__.py",
+      "sha256": "09c4bead0c2aedf268de2f4374637abaf5990cc21b83de96a345f5cd3f836e1b"
     },
     {
       "bytes": 15631,
@@ -1100,6 +670,11 @@
       "bytes": 12574,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-1_Morpheus/analysis/indexer.py",
       "sha256": "5ed197c27a5fc96576a5b6a9c73d313fe707bdeb51724f8cf7a3d9bfb6597ec7"
+    },
+    {
+      "bytes": 16076,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-1_Morpheus/components/MorpheusCoreComponent.py",
+      "sha256": "a78596d07128a44221e87ce48f6a91fab8860ef0264f63c5c5a1532e682f5fd3"
     },
     {
       "bytes": 1275,
@@ -1125,11 +700,6 @@
       "bytes": 5437,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-1_Morpheus/components/morpheus_portal_glass.py",
       "sha256": "8efd2a1e92cd6340ad8b2484a3d4baf99757504ed6abe42fdb86ccfbf2a15726"
-    },
-    {
-      "bytes": 16076,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-1_Morpheus/components/MorpheusCoreComponent.py",
-      "sha256": "a78596d07128a44221e87ce48f6a91fab8860ef0264f63c5c5a1532e682f5fd3"
     },
     {
       "bytes": 30292,
@@ -1212,11 +782,6 @@
       "sha256": "297b5f24e8ebc5faf2777c18d4c3241b7a5ae6779ef503fd6d0376d1e9bb85d9"
     },
     {
-      "bytes": 1297,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-1_Morpheus/README.md",
-      "sha256": "8a3f53ff1580bf63200a25ebf3eb7853207056c18c21c04045fa367496ea3731"
-    },
-    {
       "bytes": 370,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-1_Morpheus/tests/__init__.py",
       "sha256": "9af6b21f8152ec58ed8d6682a7df8fa1e7f9368df2d8f811c02d9f155488f494"
@@ -1232,14 +797,24 @@
       "sha256": "48ba1bc9e1bcd8978d803df81d42e73f71779b2ea4d11501adc9083c2522a3ba"
     },
     {
-      "bytes": 373,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-2_Oracle/__init__.py",
-      "sha256": "300807e52be8ef3a0062616672d36d53bc06306e69ee22aebd83fddd7f86dd19"
+      "bytes": 1559,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-2_Oracle/README.md",
+      "sha256": "407a3fc295c22ca8f5a018ac29568df97ebcc49418a8695f7a8ab9c45e7eca2c"
     },
     {
       "bytes": 4931,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-2_Oracle/_FLOOR_MANIFEST.json",
       "sha256": "fc7ec71c3e9307fdf0472ef32ad838fbff3d0bdf772b019e607a0af50df1f150"
+    },
+    {
+      "bytes": 373,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-2_Oracle/__init__.py",
+      "sha256": "300807e52be8ef3a0062616672d36d53bc06306e69ee22aebd83fddd7f86dd19"
+    },
+    {
+      "bytes": 15943,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-2_Oracle/components/OracleCoreComponent.py",
+      "sha256": "3d1d481df3328e4ecc8d7452bb0a90acea0e6f9cfea7c31cbd5990160e1fd029"
     },
     {
       "bytes": 1373,
@@ -1267,11 +842,6 @@
       "sha256": "0de03eb7ca5d9aa633b0dda1384ba88a4e08370431046a493485c0a659385ae7"
     },
     {
-      "bytes": 15943,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-2_Oracle/components/OracleCoreComponent.py",
-      "sha256": "3d1d481df3328e4ecc8d7452bb0a90acea0e6f9cfea7c31cbd5990160e1fd029"
-    },
-    {
       "bytes": 23023,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-2_Oracle/components/smart_floor_ingestion.py",
       "sha256": "3e1de385c535396eb72d003d31fe458e129f8d0e880694c187ae813868ad487b"
@@ -1295,11 +865,6 @@
       "bytes": 7344,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-2_Oracle/immersive_modules/immersive_modules/project_tree.py",
       "sha256": "da54267342223a11045466c599777b5f6bfc7e596ac96d552f5d4d88e1172df8"
-    },
-    {
-      "bytes": 1559,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-2_Oracle/README.md",
-      "sha256": "407a3fc295c22ca8f5a018ac29568df97ebcc49418a8695f7a8ab9c45e7eca2c"
     },
     {
       "bytes": 364,
@@ -1327,14 +892,24 @@
       "sha256": "03d97e4324465e94bdffd3ae3305817e4466e31d236cfce17964960251647ac4"
     },
     {
-      "bytes": 341,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/__init__.py",
-      "sha256": "0186f965e578f3d607f69e79a3d6215f1174f8486123fd01bd8657ea2a64f93f"
+      "bytes": 1323,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/README.md",
+      "sha256": "0fc5453da815b3c450a5dddcd24793df7616f45e7615169e955c76ff9382ae0f"
     },
     {
       "bytes": 7083,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/_FLOOR_MANIFEST.json",
       "sha256": "610187111414544c31a60a63aa2f340c2fa401ba1a3a9c81afb0320da8086335"
+    },
+    {
+      "bytes": 341,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/__init__.py",
+      "sha256": "0186f965e578f3d607f69e79a3d6215f1174f8486123fd01bd8657ea2a64f93f"
+    },
+    {
+      "bytes": 15876,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/components/SmithCoreComponent.py",
+      "sha256": "145734abf7dc4a02e1c3b4998d8092e62611b7956649dfc5dc5bb7f790fc9136"
     },
     {
       "bytes": 1635,
@@ -1357,11 +932,6 @@
       "sha256": "a395bf4d6fb9a0ed2984d3136b9242d70c6698c6e2d775bd678a80af1986f324"
     },
     {
-      "bytes": 15876,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/components/SmithCoreComponent.py",
-      "sha256": "145734abf7dc4a02e1c3b4998d8092e62611b7956649dfc5dc5bb7f790fc9136"
-    },
-    {
       "bytes": 19802,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/components/workflow_debugger.py",
       "sha256": "dd0811245297dfa003f6d5c1f0270bb3a84483f546face12b41c31c1db177d25"
@@ -1375,11 +945,6 @@
       "bytes": 20004,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/components/workflow_versioning.py",
       "sha256": "e902be7f8b84a258bbd9f4e65de36d966fd81c6e8ac5b435cb2a3ff83ad93cbb"
-    },
-    {
-      "bytes": 1323,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/README.md",
-      "sha256": "0fc5453da815b3c450a5dddcd24793df7616f45e7615169e955c76ff9382ae0f"
     },
     {
       "bytes": 3537,
@@ -1627,6 +1192,11 @@
       "sha256": "21e1348457e8dd3d954732a65b33f62aacbeccd17d425f03ba2cb12fbcd945fa"
     },
     {
+      "bytes": 19357,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/tools/z_axis_root_tools/LIGHTSPEED.py",
+      "sha256": "11244a1e1306c439235c1ba3e86a272aae53ea0123190645478b61bd907270db"
+    },
+    {
       "bytes": 9110,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/tools/z_axis_root_tools/analyze_floor_structure.py",
       "sha256": "e142aed12428b9007f4ec7ef5f07b0794ca58d826e11adae3a218fb397c468a4"
@@ -1657,11 +1227,6 @@
       "sha256": "de9860f31908bce4debf6cea4416523bedc92df72d4561c9c26b77b804f60699"
     },
     {
-      "bytes": 19357,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/tools/z_axis_root_tools/LIGHTSPEED.py",
-      "sha256": "11244a1e1306c439235c1ba3e86a272aae53ea0123190645478b61bd907270db"
-    },
-    {
       "bytes": 12213,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/tools/z_axis_root_tools/scan_and_create_missing_files.py",
       "sha256": "8af640f7f3d2c1e3c1782b964aff721ec64b49b62403fafd999ebf3422df4519"
@@ -1672,14 +1237,24 @@
       "sha256": "5e9892c0fba08a43f60b13422a569044bb9615218db7bfd5ebf9add6ea087532"
     },
     {
-      "bytes": 1190,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/__init__.py",
-      "sha256": "5d9680140ef333957c8a1662566665e84160e6dce73641fb2ce13e3c62f27317"
+      "bytes": 1489,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/README.md",
+      "sha256": "a4efbd4f2e3583424daf4d62a4fbbba1ac0f4831d01a79b9ecc0dafb61187610"
     },
     {
       "bytes": 8097,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/_FLOOR_MANIFEST.json",
       "sha256": "9a63e0693e1ca90c1e4a5161cdabcad0f3654ca7eaf8c26c210aaa53a78c36f4"
+    },
+    {
+      "bytes": 1190,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/__init__.py",
+      "sha256": "5d9680140ef333957c8a1662566665e84160e6dce73641fb2ce13e3c62f27317"
+    },
+    {
+      "bytes": 13981,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/components/MerovingianCoreComponent.py",
+      "sha256": "c8edb626c6ce89dde33d30088a1a24489abef55ad6755aa5cb3480ca3f8d0c5f"
     },
     {
       "bytes": 1113,
@@ -1705,11 +1280,6 @@
       "bytes": 34825,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/components/merovingian_portal_glass.py",
       "sha256": "99d1398cc01dee1b8d478348bc1ad8c09679479459d8456b2ce16caff69f63c2"
-    },
-    {
-      "bytes": 13981,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/components/MerovingianCoreComponent.py",
-      "sha256": "c8edb626c6ce89dde33d30088a1a24489abef55ad6755aa5cb3480ca3f8d0c5f"
     },
     {
       "bytes": 19764,
@@ -1840,6 +1410,121 @@
       "bytes": 15442,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael.py",
       "sha256": "1345f72e9fa878b7a6fcff6f212841f9f3b95a79ad6fbb1da13fa9325ef641fa"
+    },
+    {
+      "bytes": 4733,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Raphael - Visualization/raphael_visualization.py",
+      "sha256": "32ef4fd76166b36cf4e8388519a79ca7ab3244716d168bfd0e9e1c2b4ce1ca7e"
+    },
+    {
+      "bytes": 6723,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Raphael_Runner.py",
+      "sha256": "1825fde28dafb57ddb43ed97685293ee0c0726456846fcb74315157dbf674ad1"
+    },
+    {
+      "bytes": 15675,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Simulations/black_hole_pure.py",
+      "sha256": "41d071e4419627fa78aa2df856e5838ebd4809c1ff22d4d3088260532a6a19c2"
+    },
+    {
+      "bytes": 639,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Simulations/data_io.py",
+      "sha256": "fc1916e94713f6d1975201f81f592daf1cac8fb43b2b01ce748132e4bcb1d75a"
+    },
+    {
+      "bytes": 700,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Simulations/n.py",
+      "sha256": "91293ae62ace6fe3e6caf6dc65fd34631b4ce4652d9971dd79c7abbb33b78558"
+    },
+    {
+      "bytes": 1016,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Simulations/simulation_controller.py",
+      "sha256": "bdbfe536335f3d50160770f93954c2e2911186ecf905e7c94d255028d363bf30"
+    },
+    {
+      "bytes": 21773,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Simulations/simulation_master.py",
+      "sha256": "21b27986eb951d7d96473b5e9576c3c9eea5a5d3cb7a186d5209b97411783ee2"
+    },
+    {
+      "bytes": 14063,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Simulations/spacetime_curvature_pure.py",
+      "sha256": "9e0c8f6f098c181a747e32ee5d4ebf97a1a811e93a59309a05354e38afa63ee5"
+    },
+    {
+      "bytes": 891,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Simulations/system_interaction.py",
+      "sha256": "ee6aef3bdeb0c2d592907c4e8d7034ae79c1db28fc9fe764d96f98461f4ece2d"
+    },
+    {
+      "bytes": 1424,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Simulations/time_dynamics.py",
+      "sha256": "2f7311771aa6b6643be5b602d22cc73ec7c152965f04984c07bada74547ed6cc"
+    },
+    {
+      "bytes": 904,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Simulations/visualization_tools.py",
+      "sha256": "c3e5a0b0660ee5e6a02ea21e4ad499553c3e1f44fe22e4aeff073930876e9090"
+    },
+    {
+      "bytes": 5182,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Visualized/Base Systems Of Operation.py",
+      "sha256": "6ed3397fbaf09f8dfd9d21f0cea57c92906c7c9c1186562bc92a8f82f5562886"
+    },
+    {
+      "bytes": 0,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Visualized/Extraction.run/Extraction.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Visualized/Launch 2.run/Launch 2.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Visualized/Launch.Run/Launch.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 4692,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Visualized/Mark III.Run/Mark III.py",
+      "sha256": "1c9895845047af7fd19ab53abb14b51a0e65a0f595a831706b0ed31bb14f68ed"
+    },
+    {
+      "bytes": 0,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Visualized/Mark V.Run/Mark V.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3006,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Website Renders/Scen. 2.py",
+      "sha256": "55f36be3ebdc7cece20daffac82dbf628bdf0032c3d147fd6188fd6a84af632a"
+    },
+    {
+      "bytes": 1941,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Website Renders/Scenario_2_Raphael_Observer_Framework.py",
+      "sha256": "122656afb4b3671839aabdc58373b8b304e1931f30669a4e757b0a5853be89b0"
+    },
+    {
+      "bytes": 1853,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Website Renders/quantum foam dash.py",
+      "sha256": "9474dee6151e0ff4022f40877a33b0bf36ca673a21eaf025db6498f7219a346e"
+    },
+    {
+      "bytes": 2054,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Website Renders/quantum foam.py",
+      "sha256": "6d66f3e31bcea6ae4f19c809e49fde5afd7b92369e9e5123010de71ce2284532"
+    },
+    {
+      "bytes": 3074,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Website Renders/quantum_foam_simulation.py",
+      "sha256": "fca7304fa14356ab6b37112523c22ddcaf25a506e9f725d7d7409b96a223b4c8"
+    },
+    {
+      "bytes": 1680,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Website Renders/scenario_1_quantum_foam.py",
+      "sha256": "8f5a0f048979360f57918cda74d1a4dbad2a7cb883d4451dd70496b4cdb43793"
     },
     {
       "bytes": 2403,
@@ -2092,129 +1777,14 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "bytes": 4733,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Raphael - Visualization/raphael_visualization.py",
-      "sha256": "32ef4fd76166b36cf4e8388519a79ca7ab3244716d168bfd0e9e1c2b4ce1ca7e"
-    },
-    {
       "bytes": 1088,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/raphael_equations.py",
       "sha256": "73764d6dae3ed3d0e528698332766d5741f73034f7db9e563d1661fc8bfcd760"
     },
     {
-      "bytes": 6723,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Raphael_Runner.py",
-      "sha256": "1825fde28dafb57ddb43ed97685293ee0c0726456846fcb74315157dbf674ad1"
-    },
-    {
-      "bytes": 15675,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Simulations/black_hole_pure.py",
-      "sha256": "41d071e4419627fa78aa2df856e5838ebd4809c1ff22d4d3088260532a6a19c2"
-    },
-    {
-      "bytes": 639,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Simulations/data_io.py",
-      "sha256": "fc1916e94713f6d1975201f81f592daf1cac8fb43b2b01ce748132e4bcb1d75a"
-    },
-    {
-      "bytes": 700,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Simulations/n.py",
-      "sha256": "91293ae62ace6fe3e6caf6dc65fd34631b4ce4652d9971dd79c7abbb33b78558"
-    },
-    {
-      "bytes": 1016,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Simulations/simulation_controller.py",
-      "sha256": "bdbfe536335f3d50160770f93954c2e2911186ecf905e7c94d255028d363bf30"
-    },
-    {
-      "bytes": 21773,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Simulations/simulation_master.py",
-      "sha256": "21b27986eb951d7d96473b5e9576c3c9eea5a5d3cb7a186d5209b97411783ee2"
-    },
-    {
-      "bytes": 14063,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Simulations/spacetime_curvature_pure.py",
-      "sha256": "9e0c8f6f098c181a747e32ee5d4ebf97a1a811e93a59309a05354e38afa63ee5"
-    },
-    {
-      "bytes": 891,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Simulations/system_interaction.py",
-      "sha256": "ee6aef3bdeb0c2d592907c4e8d7034ae79c1db28fc9fe764d96f98461f4ece2d"
-    },
-    {
-      "bytes": 1424,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Simulations/time_dynamics.py",
-      "sha256": "2f7311771aa6b6643be5b602d22cc73ec7c152965f04984c07bada74547ed6cc"
-    },
-    {
-      "bytes": 904,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Simulations/visualization_tools.py",
-      "sha256": "c3e5a0b0660ee5e6a02ea21e4ad499553c3e1f44fe22e4aeff073930876e9090"
-    },
-    {
       "bytes": 2198,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/ui_rendering.py",
       "sha256": "6142ebc1af75b80ab7f25fda81f8e52a7f6ebe105d17826b9cb24792547d6a29"
-    },
-    {
-      "bytes": 5182,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Visualized/Base Systems Of Operation.py",
-      "sha256": "6ed3397fbaf09f8dfd9d21f0cea57c92906c7c9c1186562bc92a8f82f5562886"
-    },
-    {
-      "bytes": 0,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Visualized/Extraction.run/Extraction.py",
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    {
-      "bytes": 0,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Visualized/Launch 2.run/Launch 2.py",
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    {
-      "bytes": 0,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Visualized/Launch.Run/Launch.py",
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    {
-      "bytes": 4692,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Visualized/Mark III.Run/Mark III.py",
-      "sha256": "1c9895845047af7fd19ab53abb14b51a0e65a0f595a831706b0ed31bb14f68ed"
-    },
-    {
-      "bytes": 0,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Visualized/Mark V.Run/Mark V.py",
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    {
-      "bytes": 1853,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Website Renders/quantum foam dash.py",
-      "sha256": "9474dee6151e0ff4022f40877a33b0bf36ca673a21eaf025db6498f7219a346e"
-    },
-    {
-      "bytes": 2054,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Website Renders/quantum foam.py",
-      "sha256": "6d66f3e31bcea6ae4f19c809e49fde5afd7b92369e9e5123010de71ce2284532"
-    },
-    {
-      "bytes": 3074,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Website Renders/quantum_foam_simulation.py",
-      "sha256": "fca7304fa14356ab6b37112523c22ddcaf25a506e9f725d7d7409b96a223b4c8"
-    },
-    {
-      "bytes": 3006,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Website Renders/Scen. 2.py",
-      "sha256": "55f36be3ebdc7cece20daffac82dbf628bdf0032c3d147fd6188fd6a84af632a"
-    },
-    {
-      "bytes": 1680,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Website Renders/scenario_1_quantum_foam.py",
-      "sha256": "8f5a0f048979360f57918cda74d1a4dbad2a7cb883d4451dd70496b4cdb43793"
-    },
-    {
-      "bytes": 1941,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael/Website Renders/Scenario_2_Raphael_Observer_Framework.py",
-      "sha256": "122656afb4b3671839aabdc58373b8b304e1931f30669a4e757b0a5853be89b0"
     },
     {
       "bytes": 21546,
@@ -2617,11 +2187,6 @@
       "sha256": "a89f555afdfe83735f4ede8829c9814ab28764e78743d6c3163facb42ae08f49"
     },
     {
-      "bytes": 1489,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/README.md",
-      "sha256": "a4efbd4f2e3583424daf4d62a4fbbba1ac0f4831d01a79b9ecc0dafb61187610"
-    },
-    {
       "bytes": 2099,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/tests/test_data_integration.py",
       "sha256": "4a23bd74b0a88f68c9d19872a5ee855561eeeefd3b51f4dea424679d15399641"
@@ -2652,14 +2217,39 @@
       "sha256": "10e21917e4227fbefa658914ae93c3913e3488586aecaa296c2617683bea7a86"
     },
     {
-      "bytes": 404,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/__init__.py",
-      "sha256": "201054663aa5ba8f03cc8cabc29d889334d6e0690c3e75e496b7323095b0a474"
+      "bytes": 1347,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/Config/data_flows.json",
+      "sha256": "3c5c3f66ed3c2db60798ce0de7ae0655979904c6f309c4f158d1a06945309b50"
+    },
+    {
+      "bytes": 78,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/Config/event_bus.json",
+      "sha256": "2e809a60138e59f68a52b98d18cc91474b2a6ef7328d5bc0c951e3775c9242db"
+    },
+    {
+      "bytes": 9339,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/Config/service_registry.json",
+      "sha256": "b030b2181564835e9dfdcd5c164c02cdb3e316e52f85df29217d2bbed2128881"
+    },
+    {
+      "bytes": 1320,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/Config/startup.json",
+      "sha256": "34d8a6aab7d4ee93c80413994527861b356a9c600e66e7a957f07f270a59b41e"
+    },
+    {
+      "bytes": 1504,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/README.md",
+      "sha256": "2fcdd366013b4e8cae12366f21f373b96fb2f319cc3f45f75a05c396459dea6a"
     },
     {
       "bytes": 3327,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/_FLOOR_MANIFEST.json",
       "sha256": "776a2aa7766dcb20a2645895f0a365f6c84da0a0e99ae01f68c093f1c8036f58"
+    },
+    {
+      "bytes": 404,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/__init__.py",
+      "sha256": "201054663aa5ba8f03cc8cabc29d889334d6e0690c3e75e496b7323095b0a474"
     },
     {
       "bytes": 0,
@@ -2752,6 +2342,11 @@
       "sha256": "e188dfb478061f25cf8b6d01da8b1a37c5af4e9274cb00af5efc80180c0bd1ca"
     },
     {
+      "bytes": 16342,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/components/TheConstructCoreComponent.py",
+      "sha256": "0b9b1ddd3422af7e314a3c80ba94b45938613b264a09134e4f29ed8d66b1918a"
+    },
+    {
       "bytes": 1435,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/components/__init__.py",
       "sha256": "dc803e06ea3255d5c5f14b30d95f624112d574b3bdb15dd0bbf884d6cf9c3716"
@@ -2767,34 +2362,9 @@
       "sha256": "c0cc621bab9129e9f54cb7150460318dc6efd88ce122ff896e5bdb7748abbd68"
     },
     {
-      "bytes": 16342,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/components/TheConstructCoreComponent.py",
-      "sha256": "0b9b1ddd3422af7e314a3c80ba94b45938613b264a09134e4f29ed8d66b1918a"
-    },
-    {
       "bytes": 25155,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/components/visualization_3d.py",
       "sha256": "f2f4ce41b55e513df9c2f3471b568950702a9a5c40b31253f3873f561e491c6d"
-    },
-    {
-      "bytes": 1347,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/Config/data_flows.json",
-      "sha256": "3c5c3f66ed3c2db60798ce0de7ae0655979904c6f309c4f158d1a06945309b50"
-    },
-    {
-      "bytes": 78,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/Config/event_bus.json",
-      "sha256": "2e809a60138e59f68a52b98d18cc91474b2a6ef7328d5bc0c951e3775c9242db"
-    },
-    {
-      "bytes": 9339,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/Config/service_registry.json",
-      "sha256": "b030b2181564835e9dfdcd5c164c02cdb3e316e52f85df29217d2bbed2128881"
-    },
-    {
-      "bytes": 1320,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/Config/startup.json",
-      "sha256": "34d8a6aab7d4ee93c80413994527861b356a9c600e66e7a957f07f270a59b41e"
     },
     {
       "bytes": 0,
@@ -3002,11 +2572,6 @@
       "sha256": "1b6c75e933fcbbd2a0640131198e1c1d37a4af7ed322533d513a71f1e4a744b7"
     },
     {
-      "bytes": 1504,
-      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/README.md",
-      "sha256": "2fcdd366013b4e8cae12366f21f373b96fb2f319cc3f45f75a05c396459dea6a"
-    },
-    {
       "bytes": 269,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/render_engine/__init__.py",
       "sha256": "00d0a80d4c1926b2088ef9398dd027946846d2cbdbbc3c2b97072b0c47046f50"
@@ -3097,6 +2662,441 @@
       "sha256": "463f418690459be9eb504b899df171cc146e23af4d5059675b4e43013d16b51d"
     },
     {
+      "bytes": 3518,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/__init__.py",
+      "sha256": "389c57b47760c5d316d80e29388867624432e27f6d9e2a4743fbb699c5124437"
+    },
+    {
+      "bytes": 4032,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/assets/icons/icon_manifest.json",
+      "sha256": "25c9033edbc58876866111a81a9e0b5497d6ab2c0f5d5f20755532070cb16cb3"
+    },
+    {
+      "bytes": 6443,
+      "path": "Desktop_Hooks/LightSpeed/__main__.py",
+      "sha256": "06ee4a3ef7c59bfd02ed4ccd1965db4d57a664f9bd1dc28e7b65b8ad89859ed4"
+    },
+    {
+      "bytes": 1159,
+      "path": "Desktop_Hooks/LightSpeed/config/archives_policy.yaml",
+      "sha256": "61166603bece90a2cdf6ba4bf27c7c5311ca314fa0c39eb1c841b8f3e2ea4356"
+    },
+    {
+      "bytes": 21709,
+      "path": "Desktop_Hooks/LightSpeed/config/backend_frontend_build_contract.json",
+      "sha256": "6ed425974371cca1682ccbce1026eecd92be49aafae7244d838b7ccf5588c763"
+    },
+    {
+      "bytes": 2133,
+      "path": "Desktop_Hooks/LightSpeed/config/deployment_topology.json",
+      "sha256": "70dee42c3e7f179c70db660ede1de3575e285ecb9654b23f4c1a6f0b0a81ea47"
+    },
+    {
+      "bytes": 34339,
+      "path": "Desktop_Hooks/LightSpeed/config/floor_environment_realization_contract.json",
+      "sha256": "0885e45acd0e13f665a6fc9fb4755d2bae71293dc17d2f88f4d7743f3e2c41da"
+    },
+    {
+      "bytes": 22256,
+      "path": "Desktop_Hooks/LightSpeed/config/function_registry.json",
+      "sha256": "a5fda201c319de6ef8410f92549337ad08155faec639d9c66756b732e7b1d82b"
+    },
+    {
+      "bytes": 3051,
+      "path": "Desktop_Hooks/LightSpeed/config/host_runtime_policy.json",
+      "sha256": "d763d6fe4d04ecb34f81968ee7dab83a38d8e7224c62bdeb071b9be5f84d806f"
+    },
+    {
+      "bytes": 15246,
+      "path": "Desktop_Hooks/LightSpeed/config/input_staging_matrix.json",
+      "sha256": "d8560f8204cd062da33ce1031d366b57f5f90c906ae36bb691e4f9b2fcf852c1"
+    },
+    {
+      "bytes": 9101,
+      "path": "Desktop_Hooks/LightSpeed/config/premium_theme_config.json",
+      "sha256": "3f547bf5102650e6214047d0a5f0d1bffa50ac82db271cc13f4d90fc95c8d4ee"
+    },
+    {
+      "bytes": 7441,
+      "path": "Desktop_Hooks/LightSpeed/config/project_routing.json",
+      "sha256": "74065c0ba51d0ec93fc9ad2fb2012eda76fef5b2979249ecb96982393d71a68b"
+    },
+    {
+      "bytes": 1210,
+      "path": "Desktop_Hooks/LightSpeed/config/resource_closure_contract.json",
+      "sha256": "79b8e6d5d4dd0ed21533f0dc89f08a5ff7b705e8ca3c67a236df215cfa9bdd55"
+    },
+    {
+      "bytes": 5501,
+      "path": "Desktop_Hooks/LightSpeed/config/workspace_lanes.json",
+      "sha256": "10402aef42ec32218ed7f573df20759aa837037744440bb21d3abb30115113a7"
+    },
+    {
+      "bytes": 3157,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/02_MASTER_BUILD_SPEC_SHEET.md",
+      "sha256": "91432c93508e2c2cd6b0438f3704dc64550152eff9b0164bd76ecbd12061e007"
+    },
+    {
+      "bytes": 2232,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/04_Z_AXIS_CANONICAL_MAP.md",
+      "sha256": "6d9e30972d231120482869ec29b4e1f24a21ea1939b5efb6a5ed2feedf6914e5"
+    },
+    {
+      "bytes": 5522,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/06_FINALIZATION_BACKLOG_50.md",
+      "sha256": "bed388b6d77939a4f5d9696dd451b01c57d566f590813f1bf7fc7725c2a4f1d8"
+    },
+    {
+      "bytes": 3919,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/07_ROOT_CLASSIFICATION_MAP.md",
+      "sha256": "59734189bff78ddaa830687826bb6b019045373b452f0711fbba96cc6478445d"
+    },
+    {
+      "bytes": 1685,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/08_SMART_FLOOR_ASSIMILATION.md",
+      "sha256": "c8248bade145bef87e1670de250eaa4897b5b7a3b5f39c425a389837f6b0c824"
+    },
+    {
+      "bytes": 49216,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/09_FILE_OPTIMIZATION_MAP.md",
+      "sha256": "652da009df690e021ac976d8fe51e5689a8d3ba14ec9041b2871b3779fd55f12"
+    },
+    {
+      "bytes": 9538,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/10_3_AGENT_EXECUTION_MATRIX.md",
+      "sha256": "6741e2320911954832a47e8055225c9a1e5cd14cf4439405be848de649f5902c"
+    },
+    {
+      "bytes": 10872,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/11_FINAL_OPERATOR_OS_3X50_MATRIX.md",
+      "sha256": "cc44b19d3678e4d60db41665fba4217892dc01170c18c5b97416e74ef93a12b4"
+    },
+    {
+      "bytes": 4439,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/12_V010_PRE_WALKTHROUGH_TASKS.md",
+      "sha256": "5a30d59ef89375c29d4925d51f3bffe02e5af3ff87a8ceef4530d5f26491ff68"
+    },
+    {
+      "bytes": 7808,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/13_UX_AMALGAMATION_PASS.md",
+      "sha256": "3635e3aba56a1230674bbf8979ab9c51497f8198fffb531270d32aac4c1dc311"
+    },
+    {
+      "bytes": 6727,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/14_MISALIGNMENT_REGISTER.md",
+      "sha256": "edfc590f97d2125703ea695dab07b85b2b7f1457990454d096c90e5029f26e36"
+    },
+    {
+      "bytes": 741,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/15_COMPLETED_TASKS_DICTIONARY.md",
+      "sha256": "d447c792211c5cdc049dff054dc61cc3b2cce2f4c26de4ad4c888706a207ffb9"
+    },
+    {
+      "bytes": 550,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/15_COMPLETED_TASKS_PROJECT_WALL.md",
+      "sha256": "78e25f99b94d60007d9edc520f2aa4a17743cd7e2407d291f850a7b57f2a4512"
+    },
+    {
+      "bytes": 629,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/15_COMPLETED_TASKS_RELEASE.md",
+      "sha256": "7ac07576665754e6d3896558d5b1ee0dac01bf709b4ccc1692956dd3f519d444"
+    },
+    {
+      "bytes": 2462,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/16_RECURSIVE_ALIGNMENT_QUEUE.md",
+      "sha256": "bb69cc444e8c9e80575c02a452dba0700eecde945052a6b41dbf634f287f864d"
+    },
+    {
+      "bytes": 4527,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/17_3_AGENT_15_COMPLETE_35_QUEUE.md",
+      "sha256": "5ee393ee1350e0ed259d1cfc1b4000c3706231b3052a5ddf949c39c15b6b49d8"
+    },
+    {
+      "bytes": 1232,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/18_COMPLETED_BACKGROUND_DEPENDENCIES.md",
+      "sha256": "89e5ea5a44174aca2c0c636402cb191aaaeda5691abb3608757f89ca1b712568"
+    },
+    {
+      "bytes": 553,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/18_COMPLETED_LIVE_PROJECT_WALL_UI.md",
+      "sha256": "c9b657f9cd8283cd4396ffc6549192eb448e08be23a203c26f284287e06e3be0"
+    },
+    {
+      "bytes": 526,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/18_COMPLETED_PREVIEW_MODEL.md",
+      "sha256": "06708c9d3f6671766788156ff85a80b9211bc9c16035006df2c5d4f219029cac"
+    },
+    {
+      "bytes": 609,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/19_COMPLETED_LIVE_PROJECT_WALL_UI_2.md",
+      "sha256": "aacf7d216ceec1683e5624244d39e2af99b2ba3602167ae999d9af61b74abcdb"
+    },
+    {
+      "bytes": 600,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/19_COMPLETED_PROJECT_WALL_MODEL_2.md",
+      "sha256": "29f68703e6dfc84017432bcf1ffd12957e294b44dab5d70aba326d9f4438da00"
+    },
+    {
+      "bytes": 653,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/20_COMPLETED_FLOOR_WORKFLOW_DESCRIPTORS.md",
+      "sha256": "6b953e256d22e9e50ec414d59085000a30ddd02a38ae1d1f934813629914547b"
+    },
+    {
+      "bytes": 1237,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/20_COMPLETED_RELEASE_PUBLISH_CULL.md",
+      "sha256": "5ffe6b4af0ae21690641d0b3713ffa62d5db04d4a4cf6e32fd2ade2e70d23ddc"
+    },
+    {
+      "bytes": 4837,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/21_ROLLING_35_COMPLETE.md",
+      "sha256": "98709fe7f504ac9e70493d2d007f1d0bacb0c699f20595bfe3d251023bd396d3"
+    },
+    {
+      "bytes": 2048,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/22_SMART_FLOOR_VISUAL_ANALYSIS.md",
+      "sha256": "0506fffd8e2b9636e129595bb3bcefa9f69f9cbd4ebf3e4f0dcf582015a361b1"
+    },
+    {
+      "bytes": 1270,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/24_8AM_ORCHESTRATION_RUN.md",
+      "sha256": "e598de29482274556e50b9fcc2cb2cce9a80ea5edc9eca8d73bae8878a0ab214"
+    },
+    {
+      "bytes": 6957,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/25_CONSOLIDATION_REFINEMENT_PASS.md",
+      "sha256": "6c256cec88cbf798a37e0374feaaa108d89fa43f470722f1cd6ed1d30c4578b0"
+    },
+    {
+      "bytes": 1801,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/26_PROTOCOL_SEQUENCE_REFINEMENT.md",
+      "sha256": "3470cf29a4eb282a0cd5b70f5134d511d7dbbdc3c38376b89b08cdbe458fe19a"
+    },
+    {
+      "bytes": 2718,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/27_D_DRIVE_MIGRATION_STATUS.md",
+      "sha256": "be8143515c584ba4d966d090d6eb21c4adbedb9a00e95f7cb251c23b17b7d879"
+    },
+    {
+      "bytes": 3104,
+      "path": "Desktop_Hooks/LightSpeed/dataindex/tool_catalog.json",
+      "sha256": "c8b940d9a78a7303d7c08dd7169dd5b058f42c9ef846be098a691a39859e8b0d"
+    },
+    {
+      "bytes": 3790,
+      "path": "Desktop_Hooks/LightSpeed/launcher_exe.py",
+      "sha256": "6152357497504a8619b8c8d49bc203d8298a7aeb73a4384887ca35f5fcd2db34"
+    },
+    {
+      "bytes": 738,
+      "path": "Desktop_Hooks/LightSpeed/tests/__init__.py",
+      "sha256": "bfb44e1e8548deb5c02c3aead94b4b4e81c1b9818c4882042b7a42c37c3707cd"
+    },
+    {
+      "bytes": 12077,
+      "path": "Desktop_Hooks/LightSpeed/tests/conftest.py",
+      "sha256": "3aa577fb7f58740b5f20241497fe3211669b24a9dffb92bb3ef0a9bb8639194c"
+    },
+    {
+      "bytes": 13542,
+      "path": "Desktop_Hooks/LightSpeed/tests/run_all_tests.py",
+      "sha256": "7e9ea0e8240c07e00dd2a3e2bbc9725ea6ce3319534617bb89e82295d83678d3"
+    },
+    {
+      "bytes": 923,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_agentic_launch_queue.py",
+      "sha256": "7469b289158c2a74e50dfe9b9eef5ea2ad670990d1612ff02e0e1862e7e5b765"
+    },
+    {
+      "bytes": 1926,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_ai_orchestrator.py",
+      "sha256": "d3ddc6ab1b501af0052a1027bbe18ddb99b0b3b6687d2b7fd683b307e7722213"
+    },
+    {
+      "bytes": 2824,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_background_application.py",
+      "sha256": "4a7bae41cd43897196f1841d5a5227f0c6ef0285986570aaf22a35b573979304"
+    },
+    {
+      "bytes": 2187,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_cognigrex_render_policy.py",
+      "sha256": "db876112ffb045205eca2a05524534395afa56137d4880cee05b328ed64594ec"
+    },
+    {
+      "bytes": 3873,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_component_package_exports.py",
+      "sha256": "91c6e4f5a81bfe7553d162a90875b8dc21c63fbc2e6cdec876c06b73ea8e4ffc"
+    },
+    {
+      "bytes": 5609,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_config_contracts.py",
+      "sha256": "52ffacadfc4f968ada12aa2ea681d1628731530c300944bce2cb5cdebfe2ac06"
+    },
+    {
+      "bytes": 3485,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_consolidation_registry.py",
+      "sha256": "a032cb686bab15f56c08276c00cd8021339b57ab36d01cbeaacdd85a8338bdf4"
+    },
+    {
+      "bytes": 3380,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_definition_library.py",
+      "sha256": "d0ddc7735bd688b4efd7afe5b959ddc3962aa0a8563d150987a4b39cc910b46a"
+    },
+    {
+      "bytes": 3770,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_dependency_approvals.py",
+      "sha256": "82b3835d993124274eb79400de6dcaf129c5e370cfed705fae3ba0e25ba36267"
+    },
+    {
+      "bytes": 4109,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_entrypoint_contract.py",
+      "sha256": "13f00430b02eacefbb5f90e87cae46476cd79c99eb744cdd341b542f4f4e57e0"
+    },
+    {
+      "bytes": 4394,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_floor_workflow_descriptors.py",
+      "sha256": "0959e9e04c2182cae9c4bcc736f6b905c2559d36a1adbd18c80b344d0d1c7bf0"
+    },
+    {
+      "bytes": 1654,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_functions_hub_operator_surface.py",
+      "sha256": "2901e880f1581ee803dcab206b16a770da43a5a5147ada8f995fe66d0e3080af"
+    },
+    {
+      "bytes": 16802,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_health.py",
+      "sha256": "914ca4cb39d2ee712d5f6346612d3daaeead7b7f781e254e2d978ec37edf5996"
+    },
+    {
+      "bytes": 1554,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_launcher_exe.py",
+      "sha256": "ecc81316c7d28074a62fb75a54b445f011ceeb38f76f7657925b37c01bb8ec0d"
+    },
+    {
+      "bytes": 2461,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_local_floor_runner_request.py",
+      "sha256": "ba53cb32700917e6d1496ac572e9ed767338ab7cf3d527ddbeeb52e005224a11"
+    },
+    {
+      "bytes": 915,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_misalignment_register.py",
+      "sha256": "61005a3ec9bceed921e2d2ffb12b230651da514545f646fe69519e34f1cfc9d6"
+    },
+    {
+      "bytes": 9387,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_operational_store.py",
+      "sha256": "b51198411f7677063e8e1f397ebc298b219b0e506ca722c6cf82ebd95b28ce0b"
+    },
+    {
+      "bytes": 2758,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_operator_home_export_gates.py",
+      "sha256": "63fbecef3b35b231b928cd63d6a634394091c5144846469858bc0d7dbc206aaf"
+    },
+    {
+      "bytes": 13538,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_oracle_data_contracts.py",
+      "sha256": "605164d76bc10aa370a1e31ac8c47a8129cca90026fc7689a9b08a3df13b8574"
+    },
+    {
+      "bytes": 2480,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_orchestration_window.py",
+      "sha256": "20268d6391cdc9787b89d586050b76a04202e5401bc19f90a9788c5586453534"
+    },
+    {
+      "bytes": 6790,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_path_ownership_contracts.py",
+      "sha256": "5b9d5d02702ac4ea587fb5ce3db21c0401b63c5747c2e911a1c8e0761aed95de"
+    },
+    {
+      "bytes": 16006,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_project_component_wall.py",
+      "sha256": "9441ad25d6c93c89b7c287dcf69824412b4724bcf81bc19088503202bda407b4"
+    },
+    {
+      "bytes": 11798,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_project_workspace_contracts.py",
+      "sha256": "b862538b87db255c13b80ac87cb1f0900f6a6d6e3ad745dd983670de225916f1"
+    },
+    {
+      "bytes": 5411,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_protocol_sequence_registry.py",
+      "sha256": "366a9ec2e649a85466bb7cbfc913b0bd38fd7676b9cc75261d87bc8202f88f16"
+    },
+    {
+      "bytes": 1229,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_publish_snapshot.py",
+      "sha256": "32044fbcf5540ce7f427b8f6110994e7cb77da87836264041b98118b097aec59"
+    },
+    {
+      "bytes": 10093,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_release_clean.py",
+      "sha256": "d58a0149138e02ec28fc0fe9c7421407be6cafef54ffbad688a248c617e7d41e"
+    },
+    {
+      "bytes": 1146,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_reservoir_registry.py",
+      "sha256": "908d30d7257c67ad20982661c19dd1d25e7fa9adfc2222266b517f66a07b5b01"
+    },
+    {
+      "bytes": 127612,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_runtime_package.py",
+      "sha256": "d88e022760302e21a0fd96747993fe6bb2601a1b9796b8b37db50843476f56bd"
+    },
+    {
+      "bytes": 15202,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_scenarios.py",
+      "sha256": "c52167133abe6845557b85939dad3313f6b963f955a2e145989a50c6819b933b"
+    },
+    {
+      "bytes": 2680,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_shell_routes.py",
+      "sha256": "7e3275555f95b4f549258cbe65eb0cd8377bf943fe4d3c5ae926f9a132c48470"
+    },
+    {
+      "bytes": 17809,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_simulations.py",
+      "sha256": "54f5427912ed9b681d0130292edaf345ee5b5c85369c8b46b9abff83c305628b"
+    },
+    {
+      "bytes": 8302,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_smart_floor_visuals.py",
+      "sha256": "d5872b1764e351ab4573c090334636879091b43bf121b1f2a9ab364377942075"
+    },
+    {
+      "bytes": 7118,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_startup_options.py",
+      "sha256": "d84166a03283a9fa70d10f73df900b7767579a855855cd07436f584077d35cab"
+    },
+    {
+      "bytes": 6975,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_trinity_ui_contracts.py",
+      "sha256": "5940777633ebac8351cdee2238292f864c2598210e33bc44e2e729cd8123fd5f"
+    },
+    {
+      "bytes": 1459,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_websocket_server.py",
+      "sha256": "54197e975ff1e0185d0226e606bc3ad72d08ba4acde10e5d8c5022564af9f039"
+    },
+    {
+      "bytes": 3533,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_weekly_maintenance.py",
+      "sha256": "b7a68487f63093d71691617dad326bd5dbcf225dd64164ab52c6049aad24a399"
+    },
+    {
+      "bytes": 20924,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_z_axis_floors.py",
+      "sha256": "47d09975ac8ff4f9d59c6482f5699c2987fc983403cb76b04481b5345f426765"
+    },
+    {
+      "bytes": 16532,
+      "path": "Desktop_Hooks/LightSpeed/tests/test_z_direct.py",
+      "sha256": "bdb3ed12a42447e765f86adc9e96c9fa469f83f98b003c50ae01fec25e7bad21"
+    },
+    {
+      "bytes": 26655,
+      "path": "Desktop_Hooks/LightSpeed/verify_launch_ready.py",
+      "sha256": "5e4077fd27c1d98e105ea132d42aeb556cf43bac8236b0344fa8044251bc809f"
+    },
+    {
       "bytes": 1537,
       "path": "LightSpeed_Runtime/lightspeed_runtime/__init__.py",
       "sha256": "d94c52b0f6be473d29ee0283e035dd06ed856a5ede5d8b226447dfc9f704c8fe"
@@ -3152,6 +3152,16 @@
       "sha256": "b0a9988487e6fcd2f8a843be9bd4dd57c8027d60a7137cc78d055a47b9d64f67"
     },
     {
+      "bytes": 8601,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/cgx_conversion_planner.py",
+      "sha256": "35aa82f787b59a1940cc6ef50a9aae7d6ac0f892a7d7d035c88bc46f473a2e9e"
+    },
+    {
+      "bytes": 8171,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/cgx_query_planner.py",
+      "sha256": "6df990fd2754be0a4a5e5a08a17237a4163f9e43d96fcdc2664e59ca3adf35dc"
+    },
+    {
       "bytes": 6314,
       "path": "LightSpeed_Runtime/lightspeed_runtime/closure_readiness.py",
       "sha256": "148c0c1b78792ae3cdef7cac714705b848e34501b9d52ad4c1c83dd51418e9ee"
@@ -3165,6 +3175,11 @@
       "bytes": 11155,
       "path": "LightSpeed_Runtime/lightspeed_runtime/contracts.py",
       "sha256": "25782650b0733bcfdc9c2d172e1434b5a67a733cb783eb9ca56d64b8eb0f72db"
+    },
+    {
+      "bytes": 19008,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/corpus_test_orchestrator.py",
+      "sha256": "4f05bfd56a05a0d74b736baf7d5636a6d1a9743b93b9d47183490de5342d588d"
     },
     {
       "bytes": 7859,
@@ -3297,9 +3312,9 @@
       "sha256": "8efc3372e032bcb1c156c93aa67b7fbe77a63ee696b77e021cd74be6a29a7f50"
     },
     {
-      "bytes": 95310,
+      "bytes": 96043,
       "path": "LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py",
-      "sha256": "2f2f00874bf269074ff743873ca42b16ef9eb524b15405e662777af9e9e883c6"
+      "sha256": "6f06d1acdbd177bdea53b15cdb1236ef23e8f425cc91d8f1f72ba9766f44644d"
     },
     {
       "bytes": 11584,
@@ -3437,6 +3452,16 @@
       "sha256": "b0bfc2f3dd9d14d8c3aa7df34340eac050d095a880dcd541879a31a29c6b2b53"
     },
     {
+      "bytes": 65363,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/source_intake.py",
+      "sha256": "c6bfcad43aa530de01fa24a9559705bb0eabc66e06462006a9e7bc409b847b51"
+    },
+    {
+      "bytes": 4819,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/source_intake_executor.py",
+      "sha256": "24f947777d44e3cdb6c739b1b8134c8e48cc1b398c93796acd11a14253fe7187"
+    },
+    {
       "bytes": 21903,
       "path": "LightSpeed_Runtime/lightspeed_runtime/startup_options.py",
       "sha256": "758e429c7ac8777ddb026d00a5cf19881cbb5df3951644105489c5e9873c4c19"
@@ -3487,19 +3512,9 @@
       "sha256": "00ce8fbdd84ce2a30fde046cea59c5dd4f53a1ca071813a35b9f2df1488c9d1a"
     },
     {
-      "bytes": 8171,
-      "path": "LightSpeed_Runtime/lightspeed_runtime/cgx_query_planner.py",
-      "sha256": "6df990fd2754be0a4a5e5a08a17237a4163f9e43d96fcdc2664e59ca3adf35dc"
-    },
-    {
-      "bytes": 19008,
-      "path": "LightSpeed_Runtime/lightspeed_runtime/corpus_test_orchestrator.py",
-      "sha256": "4f05bfd56a05a0d74b736baf7d5636a6d1a9743b93b9d47183490de5342d588d"
-    },
-    {
-      "bytes": 8007,
-      "path": "LightSpeed_Runtime/tests/test_corpus_test_orchestrator.py",
-      "sha256": "4a242ac56fc627c7a9d575839885f2fbec85b6a56c6fbf4236c38095912cac9f"
+      "bytes": 3429,
+      "path": "LightSpeed_Runtime/tests/test_cgx_conversion_planner.py",
+      "sha256": "774f2dc6e8d5bfa81268c75bb5c4336000a933141defc0b9d1fdd3b4c0aaca4e"
     },
     {
       "bytes": 2579,
@@ -3507,24 +3522,14 @@
       "sha256": "0dd8802798ec34c6f90a7ea18da001d71da34603af67f1f651e2d4aeb9e57db0"
     },
     {
-      "bytes": 74240,
+      "bytes": 8007,
+      "path": "LightSpeed_Runtime/tests/test_corpus_test_orchestrator.py",
+      "sha256": "4a242ac56fc627c7a9d575839885f2fbec85b6a56c6fbf4236c38095912cac9f"
+    },
+    {
+      "bytes": 75761,
       "path": "LightSpeed_Runtime/tests/test_ls_go_bridge.py",
-      "sha256": "8d3e376d2e976da22511ea54fa1cd3d23327e2ec91efa23ac1623b63c05a35e9"
-    },
-    {
-      "bytes": 8601,
-      "path": "LightSpeed_Runtime/lightspeed_runtime/cgx_conversion_planner.py",
-      "sha256": "35aa82f787b59a1940cc6ef50a9aae7d6ac0f892a7d7d035c88bc46f473a2e9e"
-    },
-    {
-      "bytes": 3429,
-      "path": "LightSpeed_Runtime/tests/test_cgx_conversion_planner.py",
-      "sha256": "774f2dc6e8d5bfa81268c75bb5c4336000a933141defc0b9d1fdd3b4c0aaca4e"
-    },
-    {
-      "bytes": 65363,
-      "path": "LightSpeed_Runtime/lightspeed_runtime/source_intake.py",
-      "sha256": "c6bfcad43aa530de01fa24a9559705bb0eabc66e06462006a9e7bc409b847b51"
+      "sha256": "c372c8ba97c7a56927b424d27fa6c43349bf75622b1e93fe0e7b62a87eb56ae1"
     },
     {
       "bytes": 27818,
