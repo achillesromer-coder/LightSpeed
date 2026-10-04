@@ -1,7 +1,7 @@
 {
   "schema": "CGX-CGP-IES-LAUNCH-FRONTIER/0.1",
   "queue_id": "CGX-LAUNCH-FRONTIER-2026-09-30",
-  "status": "ACTIVE_PRE_LAUNCH / S92_RECOVERY_PROMOTED / CHILD_DURABLE_PRE_CANONICAL_PACKAGE_READBACK_VERIFIED / CHILD_ACCEPTANCE_AND_EMPIRICAL_GATES_OPEN",
+  "status": "ACTIVE_PRE_LAUNCH / S92_RECOVERY_PROMOTED / CHILD_TECHNICAL_ACCEPTANCE_AUDIT_PASS / ROOT_AUTHORITY_AND_EMPIRICAL_GATES_OPEN",
   "source_authority": {
     "recovery_state": "S91",
     "recovery_release": "v1.61",
@@ -202,7 +202,7 @@
       "audit": "Achilles",
       "execution_class": "DIGITAL_WRITE",
       "cascade_class": "C2",
-      "state": "DURABLE_PRE_CANONICAL_PACKAGE_READBACK_VERIFIED / FRESH_ACCEPTANCE_OPEN",
+      "state": "TECHNICAL_ACCEPTANCE_AUDIT_PASS / ROOT_AUTHORITY_DECISION_OPEN",
       "depends_on": [
         "CGX-LAUNCH-004"
       ],
@@ -216,20 +216,21 @@
         "exact selected successor bytes are durably persisted and re-fetched by Drive ID",
         "post-persistence SHA-256 and canonical verifier match the selected successor receipts"
       ],
-      "evidence_class": "DURABLE_DRIVE_PACKAGE_READBACK_PLUS_CANONICAL_VERIFIER / PRE_CANONICAL",
-      "release_reason": "The original Oct 1 selected child carriers were never durably persisted and are not recoverable. A fresh S92-derived, bounded-migration carrier set is now durably packaged in Drive, directly re-fetched, member-hash verified, and canonical-verifier PASS; exact-hash acceptance remains required before child promotion.",
+      "evidence_class": "DURABLE_DRIVE_PACKAGE_READBACK_PLUS_CANONICAL_VERIFIER_PLUS_INDEPENDENT_ACCEPTANCE_AUDIT / PRE_CANONICAL",
+      "release_reason": "Fresh S92-derived child package is durable and provider-readback verified. Achilles independently re-fetched and byte-audited the exact package and four carriers, verified stable semantic identities, S92 source binding and no authority transfer, and recommends the exact set for RootAuthority accept/reject decision. No promotion has occurred.",
       "evidence_ref": "s92_domain_children_validation_receipt_2026-10-01.json",
       "blocker": {
         "id": "CGX-S92-CHILD-ACCEPTANCE-002",
-        "description": "The exact Oct 1 selected child bytes are unavailable for exact promotion. The Oct 4 replacement set has different carrier hashes because regeneration creates new carrier/DBR instances, although stable semantic domain identities and proven bounded migration remain intact.",
-        "non_effect": "No child authority was promoted. S92 parent Recovery authority is unchanged; the prior Oct 1 failed transport receipt remains historical provenance.",
-        "closure": "Independently audit and accept/reject exact Drive package SHA-256 36349987fa34dc0f85e26c9658fbf8e3814010f7cc9f536b836920eab239a90d and its four member hashes. If accepted, bind/promote only those exact durable bytes and record post-promotion readback."
+        "description": "Technical acceptance audit passed for the exact durable PRE_CANONICAL package. RootAuthority accept/reject decision remains explicitly required before any child-authority promotion.",
+        "non_effect": "No child authority was promoted; S92 parent authority is unchanged and empirical/public/legal/physical gates remain open.",
+        "closure": "RootAuthority accepts or rejects exact package SHA-256 36349987fa34dc0f85e26c9658fbf8e3814010f7cc9f536b836920eab239a90d and exact four member hashes. If accepted, promote/bind only those exact durable bytes and independently re-fetch/read back post-promotion state."
       },
       "evidence_refs": [
         "s92_domain_children_validation_receipt_2026-10-01.json",
         "s92_domain_children_successor_validation_receipt_2026-10-01.json",
         "s92_first_file_migration_receipt_2026-10-01.json",
-        "s92_domain_children_persistence_verification_2026-10-04.json"
+        "s92_domain_children_persistence_verification_2026-10-04.json",
+        "s92_domain_children_acceptance_audit_2026-10-04.json"
       ],
       "evidence": {
         "semantic_identity_contract": "CGX-DOMAIN-CHILD-IDENTITY/0.1",
@@ -259,7 +260,12 @@
           "oct4_direct_drive_refetch": true,
           "oct4_member_hash_and_canonical_verifier": "PASS",
           "authority_state": "PRE_CANONICAL"
-        }
+        },
+        "durable_package_drive_id": "1zb36J4ZSd8Rt4BB_6vkx3X_eSWErFt0B",
+        "durable_package_sha256": "36349987fa34dc0f85e26c9658fbf8e3814010f7cc9f536b836920eab239a90d",
+        "independent_acceptance_audit": "PASS",
+        "acceptance_recommendation": "ACCEPT_TECHNICAL_CANDIDATE_FOR_ROOT_AUTHORITY_DECISION",
+        "promotion_performed": false
       }
     },
     {
