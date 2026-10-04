@@ -18,7 +18,7 @@ FIRST_FILES = json.loads((TEMPLATES / "first_file_conversion_registry.json").rea
 LINEAGE = json.loads((ROOT / "data" / "digital-twin" / "twin_record_source_lineage_2026-09-14.json").read_text(encoding="utf-8"))
 PAYLOAD_DBR = json.loads((TEMPLATES / "payload_capsule_dbr_2026-10-05.json").read_text(encoding="utf-8"))
 REMAINING_DBR = json.loads((TEMPLATES / "remaining_3d_dbr_summary_2026-10-05.json").read_text(encoding="utf-8"))
-PRIORITY_BINDINGS = json.loads((TEMPLATES / "priority_3d_source_bindings_execution_2026-10-05.json").read_text(encoding="utf-8"))
+PRIORITY_BINDINGS = json.loads((TEMPLATES / "priority_3d_source_bindings_execution_2026-10-05.json").read_text(encoding="utf-8"))\nM1_PRECEDENCE = json.loads((TEMPLATES / "m1_configuration_precedence_2026-10-05.json").read_text(encoding="utf-8"))
 
 
 def _plan(name: str, sha256: str, target: str):
@@ -213,3 +213,52 @@ def test_m1_and_free_flow_lineage_are_source_bound_without_overwriting_other_aut
         record = records[twin_id]
         assert record["mapping_id"] == mapping_id
         assert record["source_binding_state"] == "R2_NATIVE_GEOMETRY_SOURCE_BOUND / MEASURED_PERFORMANCE_HELD"
+
+
+def test_m1_configuration_precedence_is_scope_resolved_without_global_master():
+    assert M1_PRECEDENCE["status"] == "EXECUTED / PRECEDENCE_RESOLVED_BY_SCOPE / NO_SINGLE_GLOBAL_MASTER"
+    assert M1_PRECEDENCE["semantic_object_id"] == "T1-M1"
+    assert M1_PRECEDENCE["operations_record_id"] == "COM-0368"
+
+    proof = M1_PRECEDENCE["pairwise_proof"]
+    assert proof["base_vs_central"]["base_subset_central"] is True
+    assert proof["base_vs_central"]["intersection"] == 870
+    assert proof["base_vs_central"]["central_only"] == 14
+    assert proof["base_vs_pilot"]["base_subset_pilot"] is True
+    assert proof["base_vs_pilot"]["intersection"] == 870
+    assert proof["base_vs_pilot"]["pilot_only"] == 315
+    assert proof["central_vs_pilot"]["intersection"] == 879
+    assert proof["central_vs_pilot"]["neither_subset"] is True
+
+    resolution = M1_PRECEDENCE["resolution"]
+    assert resolution["common_geometry_authority"] == "FF-M1-BASEKM-FCSTD-001"
+    assert resolution["broad_pilot_scope"] == "FF-M1-PILOT-BUILD-FCSTD-001"
+    assert resolution["central_column_specialization_scope"] == "FF-M1-CENTRAL-A1-FCSTD-001"
+    assert resolution["global_master_selected"] is False
+    assert M1_PRECEDENCE["physical_authority"] is False
+    assert M1_PRECEDENCE["manufacturing_authority"] is False
+    assert M1_PRECEDENCE["public_release_authorized"] is False
+
+
+def test_m1_registry_and_lineage_encode_scoped_precedence():
+    mappings = {row["mapping_id"]: row for row in FIRST_FILES["mappings"]}
+    base = mappings["FF-M1-BASEKM-FCSTD-001"]
+    central = mappings["FF-M1-CENTRAL-A1-FCSTD-001"]
+    pilot = mappings["FF-M1-PILOT-BUILD-FCSTD-001"]
+    assert base["configuration_scope"] == "COMMON_BASELINE"
+    assert base["configuration_precedence"]["global_master"] is False
+    assert central["configuration_scope"] == "SPECIALIZED_CENTRAL_COLUMN_BRANCH"
+    assert central["configuration_precedence"]["common_baseline_mapping_id"] == "FF-M1-BASEKM-FCSTD-001"
+    assert pilot["configuration_scope"] == "BROAD_EXPANDED_PILOT_CONFIGURATION"
+    assert pilot["configuration_precedence"]["common_baseline_mapping_id"] == "FF-M1-BASEKM-FCSTD-001"
+
+    records = {record["twin_id"]: record for record in LINEAGE["records"]}
+    m1 = records["m1_elevated_bypass"]
+    assert m1["source_binding_state"] == "CURRENT_NATIVE_CONFIGURATION_SET_BOUND / PRECEDENCE_RESOLVED_BY_SCOPE"
+    assert m1["configuration_precedence"]["status"] == "RESOLVED_BY_SCOPE / NO_SINGLE_GLOBAL_MASTER"
+    assert m1["configuration_precedence"]["common_baseline"]["object_count"] == 870
+    assert m1["configuration_precedence"]["broad_expansion"]["added_over_baseline"] == 315
+    assert m1["configuration_precedence"]["specialized_branch"]["added_over_baseline"] == 14
+
+    by_id = {row["semantic_object_id"]: row for row in PRIORITY_BINDINGS["bindings"]}
+    assert by_id["T1-M1"]["state"] == "THREE_CURRENT_CONFIGURATION_SOURCES_BOUND / PRECEDENCE_RESOLVED_BY_SCOPE"
