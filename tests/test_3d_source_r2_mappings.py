@@ -17,6 +17,8 @@ CONTRACT = json.loads((TEMPLATES / "file_conversion_contract.json").read_text(en
 FIRST_FILES = json.loads((TEMPLATES / "first_file_conversion_registry.json").read_text(encoding="utf-8"))
 LINEAGE = json.loads((ROOT / "data" / "digital-twin" / "twin_record_source_lineage_2026-09-14.json").read_text(encoding="utf-8"))
 PAYLOAD_DBR = json.loads((TEMPLATES / "payload_capsule_dbr_2026-10-05.json").read_text(encoding="utf-8"))
+REMAINING_DBR = json.loads((TEMPLATES / "remaining_3d_dbr_summary_2026-10-05.json").read_text(encoding="utf-8"))
+PRIORITY_BINDINGS = json.loads((TEMPLATES / "priority_3d_source_bindings_execution_2026-10-05.json").read_text(encoding="utf-8"))
 
 
 def _plan(name: str, sha256: str, target: str):
@@ -131,3 +133,83 @@ def test_payload_capsule_dbr_preserves_exact_transition_and_nonclaims():
     assert dbr["canonical_effect"]["manufacturing_authority"] is False
     assert dbr["canonical_effect"]["certification_authority"] is False
     assert dbr["canonical_effect"]["public_release_authorized"] is False
+
+
+def test_remaining_priority_fcstd_sources_are_registered_to_existing_ids():
+    cases = [
+        ("SEQLD Pilot Base km Stretch.FCStd", "98865b2a2bc805f7faa4df45db94d67cc6ea82c83e0eea9885f4a82a5739746b", "/romer/m1/base-km", "FF-M1-BASEKM-FCSTD-001", "T1-M1", "COM-0368"),
+        ("SEQLD Pilot Build W Central Column A1.FCStd", "7878082116b0017cfe64e26a6f26e380b954e4f87f9f25e9ecfd9ccf4c990d68", "/romer/m1/central-a1", "FF-M1-CENTRAL-A1-FCSTD-001", "T1-M1", "COM-0368"),
+        ("SEQLD Pilot Build.FCStd", "b9fcb7093793c50ab4d97d2d95ce66bb18a23f6475fc16eb02e0a123e957e2ae", "/romer/m1/pilot-build", "FF-M1-PILOT-BUILD-FCSTD-001", "T1-M1", "COM-0368"),
+        ("MarkV.FCStd", "40bd51c0ce6fcad2f5a32894b15005d4383c73a378b9328185557549674346c5", "/romer/mark-v", "FF-MARKV-FCSTD-001", "SPACE-02", "COM-0445"),
+        ("Luke IV.FCStd", "88ca5a84fb65d29ecaf4ccd8ec975a6ccad8bb426a078851109b2e16db5af1d6", "/romer/luke-iv", "FF-LUKE4-FCSTD-001", "SPACE-03", "COM-0446"),
+        ("Luke IV Single Node.FCStd", "ae8f6a022bdbd436fd24ae05ee7f6c6f70496515f2ee81e4ec0dd1cb5b0c3f40", "/romer/luke-iv/single-node", "FF-LUKE4-SINGLE-NODE-FCSTD-001", "SPACE-03", "COM-0446"),
+        ("Free Flow Battery.FCStd", "8f2cda7ea111d8706e2bb0e0726c3cc0c0b7e7114a7e56875af5e3877c7df64c", "/romer/free-flow/battery", "FF-FREEFLOW-BATTERY-FCSTD-001", "SF-01", "COM-1666"),
+        ("Free Flow Capacitors.FCStd", "61dbb8fd31306920befd57ee5fd40de33588aad40f5d8cfb337cce829a93147f", "/romer/free-flow/capacitors", "FF-FREEFLOW-CAPACITORS-FCSTD-001", "SF-01", "COM-1666"),
+        ("Free Flow Solenoid.FCStd", "6ef10e499d36e2eb48aa45b824401459851b4a870b0b1b75b94f4c5bba111afb", "/romer/free-flow/solenoid", "FF-FREEFLOW-SOLENOID-FCSTD-001", "SF-01", "COM-1666"),
+    ]
+    for name, sha, target, mapping_id, object_id, operations_id in cases:
+        plan = _plan(name, sha, target)
+        mapping = plan["registered_mapping"]
+        assert plan["semantic_state"] == "mapping_ready"
+        assert mapping["mapping_id"] == mapping_id
+        assert mapping["semantic_object_id"] == object_id
+        assert mapping["operations_record_id"] == operations_id
+        assert plan["authority_transfer"] is False
+
+
+def test_remaining_dbr_summary_distinguishes_hash_drift_from_structural_change():
+    assert REMAINING_DBR["M1_CENTRAL_A1"]["old"]["object_count"] == 884
+    assert REMAINING_DBR["M1_CENTRAL_A1"]["new"]["object_count"] == 884
+    assert REMAINING_DBR["M1_CENTRAL_A1"]["normalized_change_count"] == 0
+
+    assert REMAINING_DBR["M1_PILOT_BUILD"]["old"]["object_count"] == 870
+    assert REMAINING_DBR["M1_PILOT_BUILD"]["new"]["object_count"] == 1185
+    assert len(REMAINING_DBR["M1_PILOT_BUILD"]["added_objects"]) == 315
+    assert REMAINING_DBR["M1_PILOT_BUILD"]["removed_objects"] == []
+    assert REMAINING_DBR["M1_PILOT_BUILD"]["normalized_change_count"] == 38
+
+    assert REMAINING_DBR["MARK_V"]["old"]["object_count"] == 62
+    assert REMAINING_DBR["MARK_V"]["new"]["object_count"] == 62
+    assert REMAINING_DBR["MARK_V"]["normalized_change_count"] == 0
+
+    assert REMAINING_DBR["LUKE_IV"]["old"]["object_count"] == 0
+    assert REMAINING_DBR["LUKE_IV"]["new"]["object_count"] == 46
+    assert len(REMAINING_DBR["LUKE_IV"]["added_objects"]) == 46
+
+    assert REMAINING_DBR["FREE_FLOW_BATTERY"]["normalized_change_count"] == 0
+    assert REMAINING_DBR["FREE_FLOW_CAPACITORS"]["old"]["object_count"] == 68
+    assert REMAINING_DBR["FREE_FLOW_CAPACITORS"]["new"]["object_count"] == 75
+    assert len(REMAINING_DBR["FREE_FLOW_CAPACITORS"]["added_objects"]) == 17
+    assert len(REMAINING_DBR["FREE_FLOW_CAPACITORS"]["removed_objects"]) == 10
+    assert REMAINING_DBR["FREE_FLOW_SOLENOID"]["old"]["object_count"] == 24
+    assert REMAINING_DBR["FREE_FLOW_SOLENOID"]["new"]["object_count"] == 30
+    assert len(REMAINING_DBR["FREE_FLOW_SOLENOID"]["added_objects"]) == 14
+    assert len(REMAINING_DBR["FREE_FLOW_SOLENOID"]["removed_objects"]) == 8
+
+
+def test_priority_binding_receipt_preserves_nonclaim_boundary():
+    by_id = {row["semantic_object_id"]: row for row in PRIORITY_BINDINGS["bindings"]}
+    assert by_id["T1-M1"]["operations_record_id"] == "COM-0368"
+    assert by_id["SPACE-02"]["operations_record_id"] == "COM-0445"
+    assert by_id["SPACE-03"]["operations_record_id"] == "COM-0446"
+    assert by_id["SF-01"]["operations_record_id"] == "COM-1666"
+    assert PRIORITY_BINDINGS["physical_authority"] is False
+    assert PRIORITY_BINDINGS["manufacturing_authority"] is False
+    assert PRIORITY_BINDINGS["public_release_authorized"] is False
+
+
+def test_m1_and_free_flow_lineage_are_source_bound_without_overwriting_other_authority():
+    records = {record["twin_id"]: record for record in LINEAGE["records"]}
+    m1 = records["m1_elevated_bypass"]
+    assert len(m1["native_source_bindings"]) == 3
+    assert m1["source_binding_state"] == "CURRENT_NATIVE_CONFIGURATION_SET_BOUND / CONFIGURATION_PRECEDENCE_HELD"
+
+    expected = {
+        "free_flow_batteries": "FF-FREEFLOW-BATTERY-FCSTD-001",
+        "free_flow_capacitors": "FF-FREEFLOW-CAPACITORS-FCSTD-001",
+        "free_flow_solenoid_stack": "FF-FREEFLOW-SOLENOID-FCSTD-001",
+    }
+    for twin_id, mapping_id in expected.items():
+        record = records[twin_id]
+        assert record["mapping_id"] == mapping_id
+        assert record["source_binding_state"] == "R2_NATIVE_GEOMETRY_SOURCE_BOUND / MEASURED_PERFORMANCE_HELD"

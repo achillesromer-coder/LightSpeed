@@ -324,6 +324,270 @@
         "R2_RECONSTRUCTED"
       ],
       "evidence_ceiling": "runtime binding proposal only; LS does not own or duplicate EMASSC scientific truth"
+    },
+    {
+      "mapping_id": "FF-M1-BASEKM-FCSTD-001",
+      "domain": "romer",
+      "semantic_object_id": "T1-M1",
+      "source_name": "SEQLD Pilot Base km Stretch.FCStd",
+      "source_sha256": "98865b2a2bc805f7faa4df45db94d67cc6ea82c83e0eea9885f4a82a5739746b",
+      "media_type": "application/x-freecad",
+      "semantic_target": "/romer/m1/base-km",
+      "owner": "Römer / SEQLD M1 / T1-M1",
+      "operations_record_id": "COM-0368",
+      "source_role": "BASE_KM_STRETCH_CONFIGURATION",
+      "classes": [
+        "R0_EXACT",
+        "R1_SEMANTIC_REVERSIBLE",
+        "R2_RECONSTRUCTED"
+      ],
+      "r2_families": [
+        "system",
+        "geometry-source",
+        "configuration-source"
+      ],
+      "evidence_ceiling": "exact current native configuration identity only; cross-configuration precedence, structural/site/road/geotechnical adequacy and certification remain gated",
+      "held_claims": [
+        "canonical precedence among M1 current configurations",
+        "structural adequacy",
+        "site/geotechnical adequacy",
+        "road safety/compliance",
+        "manufacturing/certification"
+      ],
+      "authority_transfer": false
+    },
+    {
+      "mapping_id": "FF-M1-CENTRAL-A1-FCSTD-001",
+      "domain": "romer",
+      "semantic_object_id": "T1-M1",
+      "source_name": "SEQLD Pilot Build W Central Column A1.FCStd",
+      "source_sha256": "7878082116b0017cfe64e26a6f26e380b954e4f87f9f25e9ecfd9ccf4c990d68",
+      "predecessor_source_sha256": "5a87e85f47965c62d2b0cbc15963c0d65a90c4d3f015ed896a1a23ea1df93389",
+      "media_type": "application/x-freecad",
+      "semantic_target": "/romer/m1/central-a1",
+      "owner": "Römer / SEQLD M1 / T1-M1",
+      "operations_record_id": "COM-0368",
+      "source_role": "CENTRAL_COLUMN_A1_CONFIGURATION",
+      "dbr_receipt": "remaining_3d_dbr_summary_2026-10-05.json#M1_CENTRAL_A1",
+      "dbr_state": "884_TO_884 / ZERO_NORMALIZED_DOCUMENT_CHANGE",
+      "classes": [
+        "R0_EXACT",
+        "R1_SEMANTIC_REVERSIBLE",
+        "R2_RECONSTRUCTED"
+      ],
+      "r2_families": [
+        "system",
+        "geometry-source",
+        "configuration-source",
+        "revision-transition"
+      ],
+      "evidence_ceiling": "source/archive identity plus normalized Document.xml parity; engineering adequacy and configuration precedence remain gated",
+      "authority_transfer": false
+    },
+    {
+      "mapping_id": "FF-M1-PILOT-BUILD-FCSTD-001",
+      "domain": "romer",
+      "semantic_object_id": "T1-M1",
+      "source_name": "SEQLD Pilot Build.FCStd",
+      "source_sha256": "b9fcb7093793c50ab4d97d2d95ce66bb18a23f6475fc16eb02e0a123e957e2ae",
+      "predecessor_source_sha256": "ac2ae6c5700e4412602432168cd54a846eeec6eadb0d6d15b20e736b655b1a43",
+      "media_type": "application/x-freecad",
+      "semantic_target": "/romer/m1/pilot-build",
+      "owner": "Römer / SEQLD M1 / T1-M1",
+      "operations_record_id": "COM-0368",
+      "source_role": "PILOT_BUILD_CONFIGURATION",
+      "dbr_receipt": "remaining_3d_dbr_summary_2026-10-05.json#M1_PILOT_BUILD",
+      "dbr_state": "870_TO_1185 / PLUS_315_OBJECTS / 38_NORMALIZED_COMMON_OBJECT_CHANGES",
+      "classes": [
+        "R0_EXACT",
+        "R1_SEMANTIC_REVERSIBLE",
+        "R2_RECONSTRUCTED"
+      ],
+      "r2_families": [
+        "system",
+        "geometry-source",
+        "configuration-source",
+        "revision-transition"
+      ],
+      "evidence_ceiling": "exact structural source expansion only; no automatic interpretation of added FreeCAD object function or engineering adequacy",
+      "held_claims": [
+        "semantic interpretation of 315 added objects",
+        "configuration precedence",
+        "structural/site/road safety",
+        "manufacturing/certification"
+      ],
+      "authority_transfer": false
+    },
+    {
+      "mapping_id": "FF-MARKV-FCSTD-001",
+      "domain": "romer",
+      "semantic_object_id": "SPACE-02",
+      "parent_object_id": "T1-SPACE",
+      "source_name": "MarkV.FCStd",
+      "source_sha256": "40bd51c0ce6fcad2f5a32894b15005d4383c73a378b9328185557549674346c5",
+      "predecessor_source_sha256": "f670e6b5b14d472413d782c537885cea6ba6483433dea376a507a4b799acfe24",
+      "media_type": "application/x-freecad",
+      "semantic_target": "/romer/mark-v",
+      "owner": "Römer / Mark V / SPACE-02",
+      "operations_record_id": "COM-0445",
+      "dbr_receipt": "remaining_3d_dbr_summary_2026-10-05.json#MARK_V",
+      "dbr_state": "62_TO_62 / ZERO_NORMALIZED_DOCUMENT_CHANGE",
+      "classes": [
+        "R0_EXACT",
+        "R1_SEMANTIC_REVERSIBLE",
+        "R2_RECONSTRUCTED"
+      ],
+      "r2_families": [
+        "system",
+        "geometry-source",
+        "revision-transition"
+      ],
+      "evidence_ceiling": "exact source identity plus normalized Document.xml parity; telemetry/performance/material/manufacturing/certification remain gated",
+      "authority_transfer": false
+    },
+    {
+      "mapping_id": "FF-LUKE4-FCSTD-001",
+      "domain": "romer",
+      "semantic_object_id": "SPACE-03",
+      "parent_object_id": "T1-SPACE",
+      "source_name": "Luke IV.FCStd",
+      "source_sha256": "88ca5a84fb65d29ecaf4ccd8ec975a6ccad8bb426a078851109b2e16db5af1d6",
+      "predecessor_source_sha256": "44d56af59d70d81843381c6df0c4398073a22f6e29ba5917aca83dc5546d116a",
+      "media_type": "application/x-freecad",
+      "semantic_target": "/romer/luke-iv",
+      "owner": "Römer / Luke IV / SPACE-03",
+      "operations_record_id": "COM-0446",
+      "source_role": "FULL_CURRENT_SOURCE",
+      "dbr_receipt": "remaining_3d_dbr_summary_2026-10-05.json#LUKE_IV",
+      "dbr_state": "ZERO_PROPERTY_OBJECT_PREDECESSOR_TO_46_CURRENT_OBJECTS",
+      "classes": [
+        "R0_EXACT",
+        "R1_SEMANTIC_REVERSIBLE",
+        "R2_RECONSTRUCTED"
+      ],
+      "r2_families": [
+        "system",
+        "geometry-source",
+        "revision-transition"
+      ],
+      "evidence_ceiling": "current native full-source structure and predecessor comparison only; EM/return performance, physical validation and certification remain gated",
+      "authority_transfer": false
+    },
+    {
+      "mapping_id": "FF-LUKE4-SINGLE-NODE-FCSTD-001",
+      "domain": "romer",
+      "semantic_object_id": "SPACE-03",
+      "parent_object_id": "T1-SPACE",
+      "source_name": "Luke IV Single Node.FCStd",
+      "source_sha256": "ae8f6a022bdbd436fd24ae05ee7f6c6f70496515f2ee81e4ec0dd1cb5b0c3f40",
+      "media_type": "application/x-freecad",
+      "semantic_target": "/romer/luke-iv/single-node",
+      "owner": "Römer / Luke IV / SPACE-03",
+      "operations_record_id": "COM-0446",
+      "source_role": "SINGLE_NODE_CONFIGURATION_SOURCE",
+      "classes": [
+        "R0_EXACT",
+        "R1_SEMANTIC_REVERSIBLE",
+        "R2_RECONSTRUCTED"
+      ],
+      "r2_families": [
+        "system",
+        "geometry-source",
+        "configuration-source"
+      ],
+      "evidence_ceiling": "exact single-node source identity only; exact hierarchy/derivation relation to full Luke IV source and physical performance remain gated",
+      "held_claims": [
+        "exact full↔single-node derivation relation",
+        "EM braking performance",
+        "controlled-return performance",
+        "structural adequacy",
+        "manufacturing/certification"
+      ],
+      "authority_transfer": false
+    },
+    {
+      "mapping_id": "FF-FREEFLOW-BATTERY-FCSTD-001",
+      "domain": "romer",
+      "semantic_object_id": "SF-01",
+      "source_name": "Free Flow Battery.FCStd",
+      "source_sha256": "8f2cda7ea111d8706e2bb0e0726c3cc0c0b7e7114a7e56875af5e3877c7df64c",
+      "predecessor_source_sha256": "04004e95a79495d22b78219b0abf01f56066fb1951e92a266d207bde860edae5",
+      "media_type": "application/x-freecad",
+      "semantic_target": "/romer/free-flow/battery",
+      "owner": "Römer / Solar Hull-Free Flow / SF-01",
+      "operations_record_id": "COM-1666",
+      "source_role": "BATTERY_GEOMETRY_SOURCE",
+      "dbr_receipt": "remaining_3d_dbr_summary_2026-10-05.json#FREE_FLOW_BATTERY",
+      "dbr_state": "168_TO_168 / ZERO_NORMALIZED_DOCUMENT_CHANGE",
+      "classes": [
+        "R0_EXACT",
+        "R1_SEMANTIC_REVERSIBLE",
+        "R2_RECONSTRUCTED"
+      ],
+      "r2_families": [
+        "system",
+        "geometry-source",
+        "component-source",
+        "revision-transition"
+      ],
+      "evidence_ceiling": "exact geometry source identity and normalized parity only; measured electrical/material/safety performance remains gated",
+      "authority_transfer": false
+    },
+    {
+      "mapping_id": "FF-FREEFLOW-CAPACITORS-FCSTD-001",
+      "domain": "romer",
+      "semantic_object_id": "SF-01",
+      "source_name": "Free Flow Capacitors.FCStd",
+      "source_sha256": "61dbb8fd31306920befd57ee5fd40de33588aad40f5d8cfb337cce829a93147f",
+      "predecessor_source_sha256": "46cdf2273dfc8c04dbe0833b53b5780c48ccb62e6f68cc954bde92eaa48292b3",
+      "media_type": "application/x-freecad",
+      "semantic_target": "/romer/free-flow/capacitors",
+      "owner": "Römer / Solar Hull-Free Flow / SF-01",
+      "operations_record_id": "COM-1666",
+      "source_role": "CAPACITOR_GEOMETRY_SOURCE",
+      "dbr_receipt": "remaining_3d_dbr_summary_2026-10-05.json#FREE_FLOW_CAPACITORS",
+      "dbr_state": "68_TO_75 / 17_ADDED / 10_REMOVED / 26_NORMALIZED_CHANGES",
+      "classes": [
+        "R0_EXACT",
+        "R1_SEMANTIC_REVERSIBLE",
+        "R2_RECONSTRUCTED"
+      ],
+      "r2_families": [
+        "system",
+        "geometry-source",
+        "component-source",
+        "revision-transition"
+      ],
+      "evidence_ceiling": "exact structural source revision only; electrical/material/performance/safety/manufacturing semantics remain gated",
+      "authority_transfer": false
+    },
+    {
+      "mapping_id": "FF-FREEFLOW-SOLENOID-FCSTD-001",
+      "domain": "romer",
+      "semantic_object_id": "SF-01",
+      "source_name": "Free Flow Solenoid.FCStd",
+      "source_sha256": "6ef10e499d36e2eb48aa45b824401459851b4a870b0b1b75b94f4c5bba111afb",
+      "predecessor_source_sha256": "e369f06be755c0c2193f6ffd124f967570ebe8755b6b13a79aff5e0dc0b2b153",
+      "media_type": "application/x-freecad",
+      "semantic_target": "/romer/free-flow/solenoid",
+      "owner": "Römer / Solar Hull-Free Flow / SF-01",
+      "operations_record_id": "COM-1666",
+      "source_role": "SOLENOID_GEOMETRY_SOURCE",
+      "dbr_receipt": "remaining_3d_dbr_summary_2026-10-05.json#FREE_FLOW_SOLENOID",
+      "dbr_state": "24_TO_30 / 14_ADDED / 8_REMOVED / 9_NORMALIZED_CHANGES",
+      "classes": [
+        "R0_EXACT",
+        "R1_SEMANTIC_REVERSIBLE",
+        "R2_RECONSTRUCTED"
+      ],
+      "r2_families": [
+        "system",
+        "geometry-source",
+        "component-source",
+        "revision-transition"
+      ],
+      "evidence_ceiling": "exact structural source revision only; electromagnetic/electrical/material/performance/safety/manufacturing semantics remain gated",
+      "authority_transfer": false
     }
   ],
   "successor_rule": "S92 migration must preserve source IDs/hashes and mapping IDs; compare semantic object/relation families and projection hashes against S91 proof, recording any schema-evolution delta rather than reinterpreting the whole workbook."
