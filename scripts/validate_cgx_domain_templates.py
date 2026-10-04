@@ -77,6 +77,7 @@ def main():
         child_successor_receipt=load("s92_domain_children_successor_validation_receipt_2026-10-01.json")
         first_file_migration_receipt=load("s92_first_file_migration_receipt_2026-10-01.json")
         child_persistence_verification=load("s92_domain_children_persistence_verification_2026-10-04.json")
+        child_acceptance_audit=load("s92_domain_children_acceptance_audit_2026-10-04.json")
         source_envelope=load("source_envelope_contract.json")
         source_adapters=load("source_format_adapter_registry.json")
         provider_notifications=load("provider_notification_evidence_contract.json")
@@ -395,6 +396,35 @@ def main():
         failures.append("S92 child persistence lacks direct Drive package readback match")
     if (child_persistence_verification.get("authority") or {}).get("promotion_performed") is not False:
         failures.append("S92 child persistence receipt must not self-promote child authority")
+
+    if child_acceptance_audit.get("schema")!="CGX-S92-DOMAIN-CHILD-ACCEPTANCE-AUDIT/0.1":
+        failures.append("S92 child acceptance audit schema mismatch")
+    if child_acceptance_audit.get("status")!="TECHNICAL_ACCEPTANCE_AUDIT_PASS / ROOT_AUTHORITY_DECISION_OPEN":
+        failures.append("S92 child acceptance audit status mismatch")
+    if child_acceptance_audit.get("authority_effect") is None or "does not accept" not in child_acceptance_audit.get("authority_effect",""):
+        failures.append("S92 child acceptance audit must explicitly preserve RootAuthority gate")
+    candidate=child_acceptance_audit.get("durable_candidate") or {}
+    if candidate.get("drive_id")!="1zb36J4ZSd8Rt4BB_6vkx3X_eSWErFt0B":
+        failures.append("S92 child acceptance audit Drive ID mismatch")
+    if candidate.get("package_sha256")!="36349987fa34dc0f85e26c9658fbf8e3814010f7cc9f536b836920eab239a90d":
+        failures.append("S92 child acceptance audit package hash mismatch")
+    if candidate.get("independent_drive_refetch") is not True or candidate.get("independent_package_hash_match") is not True:
+        failures.append("S92 child acceptance audit lacks independent provider readback proof")
+    if (child_acceptance_audit.get("recommendation") or {}).get("promotion_performed") is not False:
+        failures.append("S92 child acceptance audit must not promote child authority")
+    expected_audit_members={
+        "Romer.cgx":("cgx:domain:romer","84cc84915661fec188d578eca1315f6e943f828424d4d54b9877e18903ac277f"),
+        "Eco.cgx":("cgx:domain:eco","d645fb3acb105379c3fc9dc2f263aa6bb49c78236929c7a2fca9fec998170937"),
+        "EMASSC.cgx":("cgx:domain:emassc","167dbfccae5fd6bfa877eb3150ac4423b2cfc82970e38bc457ed116c126983f5"),
+        "LS.cgx":("cgx:domain:lightspeed","bd33c82b2c7f3f324b6e47f037ecf11d8b4353aedeebfd62b0f5df3c686d5bd0"),
+    }
+    audit_members=child_acceptance_audit.get("exact_members") or {}
+    for filename,(semantic_id,sha256) in expected_audit_members.items():
+        member=audit_members.get(filename) or {}
+        if member.get("semantic_object_id")!=semantic_id or member.get("sha256")!=sha256:
+            failures.append(f"S92 child acceptance audit exact-member mismatch: {filename}")
+        if member.get("authority_transfer") is not False or member.get("binding_mode")!="REFERENCE":
+            failures.append(f"S92 child acceptance audit authority boundary mismatch: {filename}")
     persisted_outputs=child_persistence_verification.get("outputs") or {}
     expected_persisted={
         "romer":("cgx:domain:romer","84cc84915661fec188d578eca1315f6e943f828424d4d54b9877e18903ac277f",96),
