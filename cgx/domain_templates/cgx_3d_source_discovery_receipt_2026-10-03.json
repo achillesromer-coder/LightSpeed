@@ -1,7 +1,7 @@
 {
   "schema": "CGX-3D-SOURCE-DISCOVERY-RECEIPT/0.1",
   "receipt_id": "CGX-3D-INTAKE-DISCOVERY-2026-10-03",
-  "status": "DISCOVERY_VERIFIED / R0_R1_CURRENT_MAIN_REVALIDATED / WATCHTOWER_MARK3_PAYLOAD_R2_EXECUTED / REMAINING_SEMANTICS_HELD",
+  "status": "DISCOVERY_VERIFIED / R0_R1_CURRENT_MAIN_REVALIDATED / PRIORITY_R2_SOURCE_BINDINGS_EXECUTED / ENGINEERING_SEMANTICS_HELD",
   "recorded_at": "2026-10-03T18:41:00+10:00",
   "source_control": {
     "repository": "achillesromer-coder/LightSpeed",
@@ -290,13 +290,14 @@
     "owner": "Romer",
     "audit": "Achilles",
     "next_actions": [
+      "Priority R2 native-source identity lane is executed for WatchTower, Mark III, Payload Capsule, M1, Mark V, Luke IV and Free Flow; do not reopen absent source/hash/schema drift.",
       "Payload Capsule SPACE-07 exact native-source binding and historical→current DBR are executed; do not reopen absent source/hash/schema drift.",
       "WT-001 and Mark III exact native-source R2 identity bindings are executed; do not reopen them absent source/hash/schema drift.",
       "Use this corpus-level R0/R1 conformance receipt as the intake baseline; do not rerun format qualification absent source/adapter drift.",
-      "Progress SEQLD/M1, Mark V, Luke IV and Free Flow from their R1-admitted source envelopes under their existing Type1/CGX owners.",
-      "Advance remaining R1-admitted source families: SEQLD/M1, Mark V, Luke IV and Free Flow under existing owners."
+      "Inventory and bind secondary retrievable FCStd families only where an existing semantic owner is recoverable; otherwise leave them R1-admitted rather than minting speculative identities.",
+      "Advance downstream engineering semantics, physical evidence and certification gates independently from completed source identity bindings."
     ],
-    "smallest_remaining_gate": "SEQLD/M1 source binding, followed by Mark V, Luke IV and Free Flow; unresolved engineering semantics stay evidence-gated."
+    "smallest_remaining_gate": "Secondary FCStd owner reconciliation plus downstream engineering semantics; the named priority source-binding queue is closed."
   },
   "evidence_ceiling": "Digital source identity/structure/revision evidence only. No physical, manufacturing, structural, performance, certification, regulatory or deployment claim is promoted.",
   "architecture_impact": "No new master or parallel roadmap. One native source may have multiple projections/configurations; DBR records accepted state transitions; R3 representations remain derivative.",
@@ -398,12 +399,84 @@
         "predecessor_source_sha256": "c5e69b673b6f01ee0a60e063f4a367c46057b6844f97d32c0a44ca3c8437c2c5",
         "dbr_receipt": "payload_capsule_dbr_2026-10-05.json",
         "state": "BOUND_WITH_DBR"
+      },
+      {
+        "mapping_id": "FF-M1-BASEKM-FCSTD-001",
+        "semantic_object_id": "T1-M1",
+        "operations_record_id": "COM-0368",
+        "source_sha256": "98865b2a2bc805f7faa4df45db94d67cc6ea82c83e0eea9885f4a82a5739746b",
+        "state": "BOUND_CURRENT_SOURCE_ONLY"
+      },
+      {
+        "mapping_id": "FF-M1-CENTRAL-A1-FCSTD-001",
+        "semantic_object_id": "T1-M1",
+        "operations_record_id": "COM-0368",
+        "source_sha256": "7878082116b0017cfe64e26a6f26e380b954e4f87f9f25e9ecfd9ccf4c990d68",
+        "predecessor_source_sha256": "5a87e85f47965c62d2b0cbc15963c0d65a90c4d3f015ed896a1a23ea1df93389",
+        "state": "BOUND_DBR_NORMALIZED_PARITY"
+      },
+      {
+        "mapping_id": "FF-M1-PILOT-BUILD-FCSTD-001",
+        "semantic_object_id": "T1-M1",
+        "operations_record_id": "COM-0368",
+        "source_sha256": "b9fcb7093793c50ab4d97d2d95ce66bb18a23f6475fc16eb02e0a123e957e2ae",
+        "predecessor_source_sha256": "ac2ae6c5700e4412602432168cd54a846eeec6eadb0d6d15b20e736b655b1a43",
+        "state": "BOUND_DBR_STRUCTURAL_EXPANSION"
+      },
+      {
+        "mapping_id": "FF-MARKV-FCSTD-001",
+        "semantic_object_id": "SPACE-02",
+        "operations_record_id": "COM-0445",
+        "source_sha256": "40bd51c0ce6fcad2f5a32894b15005d4383c73a378b9328185557549674346c5",
+        "predecessor_source_sha256": "f670e6b5b14d472413d782c537885cea6ba6483433dea376a507a4b799acfe24",
+        "state": "BOUND_DBR_NORMALIZED_PARITY"
+      },
+      {
+        "mapping_id": "FF-LUKE4-FCSTD-001",
+        "semantic_object_id": "SPACE-03",
+        "operations_record_id": "COM-0446",
+        "source_sha256": "88ca5a84fb65d29ecaf4ccd8ec975a6ccad8bb426a078851109b2e16db5af1d6",
+        "predecessor_source_sha256": "44d56af59d70d81843381c6df0c4398073a22f6e29ba5917aca83dc5546d116a",
+        "state": "BOUND_DBR_CURRENT_POPULATED"
+      },
+      {
+        "mapping_id": "FF-LUKE4-SINGLE-NODE-FCSTD-001",
+        "semantic_object_id": "SPACE-03",
+        "operations_record_id": "COM-0446",
+        "source_sha256": "ae8f6a022bdbd436fd24ae05ee7f6c6f70496515f2ee81e4ec0dd1cb5b0c3f40",
+        "state": "BOUND_CURRENT_CONFIGURATION"
+      },
+      {
+        "mapping_id": "FF-FREEFLOW-BATTERY-FCSTD-001",
+        "semantic_object_id": "SF-01",
+        "operations_record_id": "COM-1666",
+        "source_sha256": "8f2cda7ea111d8706e2bb0e0726c3cc0c0b7e7114a7e56875af5e3877c7df64c",
+        "predecessor_source_sha256": "04004e95a79495d22b78219b0abf01f56066fb1951e92a266d207bde860edae5",
+        "state": "BOUND_DBR_NORMALIZED_PARITY"
+      },
+      {
+        "mapping_id": "FF-FREEFLOW-CAPACITORS-FCSTD-001",
+        "semantic_object_id": "SF-01",
+        "operations_record_id": "COM-1666",
+        "source_sha256": "61dbb8fd31306920befd57ee5fd40de33588aad40f5d8cfb337cce829a93147f",
+        "predecessor_source_sha256": "46cdf2273dfc8c04dbe0833b53b5780c48ccb62e6f68cc954bde92eaa48292b3",
+        "state": "BOUND_DBR_STRUCTURAL_REVISION"
+      },
+      {
+        "mapping_id": "FF-FREEFLOW-SOLENOID-FCSTD-001",
+        "semantic_object_id": "SF-01",
+        "operations_record_id": "COM-1666",
+        "source_sha256": "6ef10e499d36e2eb48aa45b824401459851b4a870b0b1b75b94f4c5bba111afb",
+        "predecessor_source_sha256": "e369f06be755c0c2193f6ffd124f967570ebe8755b6b13a79aff5e0dc0b2b153",
+        "state": "BOUND_DBR_STRUCTURAL_REVISION"
       }
     ],
     "nonclaims": [
       "WT-001 held A/C, E/L/R, cable, structural, material, site and certification semantics remain open",
       "Mark III three-appendage multiplicity, exact interlock, Mark V mating, physical performance and certification remain open",
       "source binding does not authorize manufacturing or public release"
-    ]
+    ],
+    "dbr_summary_ref": "remaining_3d_dbr_summary_2026-10-05.json",
+    "priority_bindings_receipt": "priority_3d_source_bindings_execution_2026-10-05.json"
   }
 }
