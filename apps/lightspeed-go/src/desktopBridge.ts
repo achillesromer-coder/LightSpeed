@@ -754,6 +754,10 @@ export interface StagedSource {
   canonical_mutation: false;
 }
 
+// A server error can occur after a queue write. Retain identity until reconciled.
+export const commandSubmissionIsUncertain = (error: unknown): boolean =>
+  !(error instanceof DesktopRequestError) || error.status >= 500 || error.status === 408;
+
 const MAX_INTAKE_BYTES = 64 * 1024 * 1024;
 
 export const stageDesktopSource = async (

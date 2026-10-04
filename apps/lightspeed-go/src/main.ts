@@ -6,6 +6,7 @@ import "./ownerAuth.css";
 import {
   createCommandEnvelope,
   createSourceIntakeCommand,
+  commandSubmissionIsUncertain,
   stageDesktopSource,
   type StagedSource,
   changeDesktopOwnerPassword,
@@ -375,7 +376,7 @@ intakeQueue.addEventListener("click", async () => {
     intakeResult.textContent = `Desktop accepted ${command.command_id}. Task ${receipt.task_id ?? "created"}: ${receipt.state || "queued"}. Extraction and semantic review are not yet complete.`;
     stagedSource = null;
   } catch (error) {
-    const uncertain = command && !(error instanceof DesktopRequestError);
+    const uncertain = command && commandSubmissionIsUncertain(error);
     if (uncertain) {
       storePendingCommand(command!);
       renderPending();

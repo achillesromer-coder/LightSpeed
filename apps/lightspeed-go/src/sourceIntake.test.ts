@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createSourceIntakeCommand, stageDesktopSource, type StagedSource } from "./desktopBridge";
+import { commandSubmissionIsUncertain, DesktopRequestError, createSourceIntakeCommand, stageDesktopSource, type StagedSource } from "./desktopBridge";
 
 const source: StagedSource = {
   state: "staged", source_name: "original.txt", source_path: "D:/sources/original.txt",
@@ -13,6 +13,14 @@ const authority = {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("native source intake", () => {
+  it("retains command identity when a server failure could follow a queue write", () => {
+    expect(commandSubmissionIsUncertain(new DesktopRequestError(500, "server failed"))).toBe(true);
+    expect(commandSubmissionIsUncertain(new DesktopRequestError(504, "gateway timeout"))).toBe(true);
+    expect(commandSubmissionIsUncertain(new DesktopRequestError(408, "request timeout"))).toBe(true);
+    expect(commandSubmissionIsUncertain(new TypeError("network error"))).toBe(true);
+    expect(commandSubmissionIsUncertain(new DesktopRequestError(403, "held"))).toBe(false);
+    expect(commandSubmissionIsUncertain(new DesktopRequestError(400, "invalid"))).toBe(false);
+  });
   it("binds extraction to source identity and preserves authority gates", () => {
     const command = createSourceIntakeCommand(source, authority);
     expect(command.target_floor).toBe("Neo");
