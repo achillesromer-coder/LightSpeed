@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   COMMAND_SCHEMA,
   createCommandEnvelope,
+  nodeExchangePresentation,
   objectContextApiPath,
   projectFileApiPath,
   remoteAccessPresentation,
@@ -55,6 +56,31 @@ describe("LS GO desktop command routing", () => {
       state: "ready_for_private_relay_verification",
       off_device_verified: false,
     }).label).toBe("Verify off-device");
+  });
+
+  it("keeps verified carriers distinct from peer compute", () => {
+    const view = nodeExchangePresentation({
+      node_id: "bouwerbase",
+      transport: {
+        mode: "content_addressed_verified_readback",
+        verified_carriers: ["E-volume"],
+        peer_transport_verified: false,
+      },
+      compute: {
+        local_ready: true,
+        peer_nodes: [],
+        peer_compute_verified: false,
+        lease_required: true,
+        heavy_execution_default: false,
+      },
+      claim_boundary: "Carrier readback is not peer compute.",
+      authority_transfer: false,
+      canonical_promotion_authorized: false,
+    });
+    expect(view.transfer).toContain("Carrier readback verified");
+    expect(view.transfer).toContain("peer transport unproven");
+    expect(view.compute).toBe("Local compute ready · peer compute unproven");
+    expect(view.boundary).toBe("Carrier readback is not peer compute.");
   });
 
   it("routes implementation work to Smith", () => {

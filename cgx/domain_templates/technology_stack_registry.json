@@ -45,7 +45,9 @@
         "time",
         "power",
         "local inference",
-        "transport"
+        "transport",
+        "content-addressed transfer",
+        "compute delegation"
       ],
       "rule": "host capability is not semantic authority"
     },
