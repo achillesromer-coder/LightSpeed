@@ -14,12 +14,14 @@ from lightspeed_runtime.local_agent_cycle import run_cycle
 from lightspeed_runtime.local_floor_runner import run_floor
 from lightspeed_runtime.cognigrex_supervisor import run_supervised_workflow
 from lightspeed_runtime.storage_paths import neo_actions_root
+from lightspeed_runtime.source_intake_executor import execute_source_intake
 
 
 CONSUMER_SCHEMA = "lightspeed-ls-go-job-consumer-v1"
 RESULT_SCHEMA = "lightspeed-go-local-result-v1"
 POLL_SECONDS = 1.0
 SAFE_ACTIONS = {
+    "source_preserving_intake",
     "cognigrex_workflow",
     "transport_diagnostic",
     "local_agent_cycle",
@@ -485,6 +487,19 @@ class LSGoJobConsumer:
                 "workflow": workflow,
                 "next_action": "Achilles/ACR3 must review the aggregate and per-floor receipts before any canonical promotion or release.",
             }
+        if action_type == "source_preserving_intake":
+            if (str(job.get("z_context") or "") != "Neo" or params.get("execution_mode") != "queue"
+                    or params.get("execute") is not True or params.get("allow_heavy") is not False):
+                return {"status": "blocked", "action_type": action_type,
+                        "error": "intake requires Neo, explicit queue execution and allow_heavy=false"}
+            home = _read_json(Path(__file__).resolve().parents[1] / "config" / "agent_home.json")
+            configured = (home.get("environment") or {}).get("assimilation_source_root")
+            intake = execute_source_intake(params.get("action_payload"), command_id=command_id,
+                                          shell_root=self.shell_root,
+                                          allowed_roots=[Path(configured)] if configured else [])
+            return {"status": intake["status"], "action_type": action_type, "intake": intake,
+                    "summary": "Exact source snapshot and derived extraction persisted for review.",
+                    "next_action": "Review source ownership, extraction coverage and domain mapping before semantic ingestion."}
         if action_type == "rfs_emff_sweep":
             if str(job.get("z_context") or "") != "TheConstruct":
                 return {
