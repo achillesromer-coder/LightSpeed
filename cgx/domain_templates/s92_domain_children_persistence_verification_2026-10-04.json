@@ -1,0 +1,112 @@
+{
+  "schema": "CGX-S92-DOMAIN-CHILD-PERSISTENCE-VERIFICATION/0.1",
+  "status": "DURABLE_PRE_CANONICAL_PACKAGE_READBACK_VERIFIED / FRESH_ACCEPTANCE_OPEN",
+  "verified_at": "2026-10-04",
+  "authority": {
+    "parent_recovery_state": "S92",
+    "parent_drive_id": "1ap1xHVQ0cDWeJDAVWxvY_VqMkSzwpG6i",
+    "parent_sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+    "candidate_state": "PRE_CANONICAL",
+    "promotion_performed": false,
+    "fresh_acceptance_required": true,
+    "reason": "The exact Oct 1 locally selected child bytes were never durably written and are not recoverable from Drive/Library. A new S92-derived carrier set was regenerated from exact S92 Recovery, reviewed source artifact, and proven S91 semantic delta; it therefore requires acceptance by its new exact hashes."
+  },
+  "reviewed_build_source": {
+    "workflow_run_id": 36799814980,
+    "head_sha": "a1434ba6aeb95d4245de873061d372c5f4f9576a",
+    "source_artifact_id": 11134474263,
+    "source_artifact_digest": "sha256:4258804e28f4cf8cea948b774d5112d8c35fdf3678da16b0867a33040869ecc4"
+  },
+  "migration_sources": {
+    "s91_domain_children_drive_id": "1Ty-c4KpJtadOjIwaAH_2pdaxsNOyhUoJ",
+    "s91_first_file_intake_drive_id": "1zw8sqQslEO8WyDcp8sooXib9gZkWLQYB",
+    "bounded_semantic_delta_only": true
+  },
+  "historical_oct1_candidates": {
+    "recovered": false,
+    "persistence_folder_drive_id": "1R3PDW_R24mBSeAi8aT6k1OtmzM9675IO",
+    "persistence_folder_observed_empty": true,
+    "migrated_hashes": {
+      "romer": "d9447c32345c66589c723152fb618e026c9faef3f8739e0eb143e34c2ea7e6db",
+      "eco": "3acc6edf3b6ba86b45939659069e4a73d9677afe99163da2c2ec3dc4eb338f5c",
+      "emassc": "bfd9b54174db3d6922695f61e7564c63a65bdea0e442928c670ba046b0493a67",
+      "lightspeed": "3ca08ea1e4d7530a4d5d6275737f00af80075431b30c8708df4c88ad06e02672"
+    }
+  },
+  "durable_package": {
+    "drive_id": "1zb36J4ZSd8Rt4BB_6vkx3X_eSWErFt0B",
+    "folder_drive_id": "1IToJYkQjDK0y3TqaKYg4V7EhFFFJ1Z8t",
+    "drive_path": "/Google Drive/Nathaniel/CGX/Validation/S92_Domain_Children_2026-10-01/Rebuild_2026-10-04_PRE_CANONICAL/S92_Domain_Children_PRE_CANONICAL_Rebuild_2026-10-04.zip",
+    "size_bytes": 540891,
+    "sha256": "36349987fa34dc0f85e26c9658fbf8e3814010f7cc9f536b836920eab239a90d",
+    "direct_drive_refetch": true,
+    "refetch_sha256_match": true
+  },
+  "outputs": {
+    "romer": {
+      "member": "Romer.cgx",
+      "sha256": "84cc84915661fec188d578eca1315f6e943f828424d4d54b9877e18903ac277f",
+      "semantic_object_id": "cgx:domain:romer",
+      "carrier_instance_object_id": "cgx:local:136f5828ad0887a32c01a480",
+      "tracked_objects": 96,
+      "content_root": "cbde82b33b5311157cf6285ee26fe054c0238ab8f1526a0027124f5961461931",
+      "dbr_root": "9dd7c89aa8a86b86c9ed96e42c67454a5bf80d8f0d0017876a664befc9c8e7f0",
+      "topology_snapshot_hash": "1b5648607a2dfae095d2de468b6093866a1301133fdde41da6e79cf0526487fd",
+      "verify": "PASS",
+      "packed_reopen_verify": "PASS"
+    },
+    "eco": {
+      "member": "Eco.cgx",
+      "sha256": "d645fb3acb105379c3fc9dc2f263aa6bb49c78236929c7a2fca9fec998170937",
+      "semantic_object_id": "cgx:domain:eco",
+      "carrier_instance_object_id": "cgx:local:03819934839c3bed521ebf1b",
+      "tracked_objects": 103,
+      "content_root": "6b4602e40983947fc71bbf990406714ff8401c204ca7d5fc140674a88a3e51ff",
+      "dbr_root": "8f762bc7ecb02976a51dd8c929f7986ba91a89c4fab3b83eb0755f38d3f8430c",
+      "topology_snapshot_hash": "1f1daae90819d48560146217eec4f5fde095f9bda134c86105b4ccfea1cf09bb",
+      "verify": "PASS",
+      "packed_reopen_verify": "PASS"
+    },
+    "emassc": {
+      "member": "EMASSC.cgx",
+      "sha256": "167dbfccae5fd6bfa877eb3150ac4423b2cfc82970e38bc457ed116c126983f5",
+      "semantic_object_id": "cgx:domain:emassc",
+      "carrier_instance_object_id": "cgx:local:1bee1ce874d31bd931722329",
+      "tracked_objects": 98,
+      "content_root": "ef49840d49b9811f7d4bf612d7e7ac9d789a042474bcf9d8ef451154319c0698",
+      "dbr_root": "e777cbb08a2133a3e0f5356dbfe5f9b60ac497379fddafddbf87f819e07af4c7",
+      "topology_snapshot_hash": "3e428deae78ef56fd799d9a9432ac0abc743ef4d720c345920e2fb59eccee833",
+      "verify": "PASS",
+      "packed_reopen_verify": "PASS"
+    },
+    "lightspeed": {
+      "member": "LS.cgx",
+      "sha256": "bd33c82b2c7f3f324b6e47f037ecf11d8b4353aedeebfd62b0f5df3c686d5bd0",
+      "semantic_object_id": "cgx:domain:lightspeed",
+      "carrier_instance_object_id": "cgx:local:2c7777b71ec1b4b5d44c7c94",
+      "tracked_objects": 67,
+      "content_root": "170acbd956314e33f4cf693624d39bb29e09890e7c252a671ce78797bbb1978e",
+      "dbr_root": "146e56589fa4ee6db60de6721e7d42bb999c6be2ecff408f54c897ff61d20f66",
+      "topology_snapshot_hash": "4f5f8309a95cbfad675741863a46d15e297119defa9cac39600605d42be38c3b",
+      "verify": "PASS",
+      "packed_reopen_verify": "PASS",
+      "scientific_state_duplicated": false
+    }
+  },
+  "transport_resolution": {
+    "original_direct_container_to_drive": "FAILED / container_session_expired",
+    "file_reference_bundle_upload": "PASS",
+    "native_drive_metadata_readback": "PASS",
+    "native_drive_binary_refetch": "PASS",
+    "embedded_member_hash_readback": "PASS",
+    "prior_transport_blocker_resolved": true,
+    "authority_effect": "Transport proof only; no child promotion."
+  },
+  "next_gate": {
+    "id": "CGX-S92-CHILD-ACCEPTANCE-002",
+    "owner": "RootAuthority",
+    "audit": "Achilles",
+    "action": "Independently accept or reject the exact durable package hash and four member hashes; only an accepted exact set may become promoted child authority.",
+    "synthetic_closure_forbidden": true
+  }
+}
