@@ -16,6 +16,7 @@ TYPE_REGISTRY = json.loads((TEMPLATES / "file_type_conversion_registry.json").re
 CONTRACT = json.loads((TEMPLATES / "file_conversion_contract.json").read_text(encoding="utf-8"))
 FIRST_FILES = json.loads((TEMPLATES / "first_file_conversion_registry.json").read_text(encoding="utf-8"))
 LINEAGE = json.loads((ROOT / "data" / "digital-twin" / "twin_record_source_lineage_2026-09-14.json").read_text(encoding="utf-8"))
+PAYLOAD_DBR = json.loads((TEMPLATES / "payload_capsule_dbr_2026-10-05.json").read_text(encoding="utf-8"))
 
 
 def _plan(name: str, sha256: str, target: str):
@@ -88,3 +89,45 @@ def test_lineage_records_execute_source_binding_without_promoting_held_semantics
     assert mark3["operations_binding"]["current_object_id"] == "IP-01"
     assert mark3["operations_binding"]["semantic_child_record_id"] == "COM-0444"
     assert mark3["operations_binding"]["semantic_child_object_id"] == "SPACE-01"
+
+
+def test_payload_capsule_native_fcstd_is_bound_to_space_07_dbr():
+    plan = _plan(
+        "Payload Capsule.FCStd",
+        "9606755c4fff3d94ade1ed61ee41808e9a05237b6bdd857b09dcb067d6e0b61c",
+        "/romer/payload-capsule",
+    )
+    mapping = plan["registered_mapping"]
+    assert plan["semantic_state"] == "mapping_ready"
+    assert mapping["mapping_id"] == "FF-PAYLOAD-CAPSULE-FCSTD-001"
+    assert mapping["semantic_object_id"] == "SPACE-07"
+    assert mapping["parent_object_id"] == "T1-SPACE"
+    assert mapping["operations_record_id"] == "COM-1676"
+    assert mapping["predecessor_source_sha256"] == "c5e69b673b6f01ee0a60e063f4a367c46057b6844f97d32c0a44ca3c8437c2c5"
+    assert mapping["source_revision_summary"]["predecessor_objects"] == 55
+    assert mapping["source_revision_summary"]["current_objects"] == 58
+    assert mapping["source_revision_summary"]["engineering_scalar_changes"] == 9
+    assert plan["authority_transfer"] is False
+
+
+def test_payload_capsule_dbr_preserves_exact_transition_and_nonclaims():
+    dbr = PAYLOAD_DBR
+    assert dbr["semantic_object_id"] == "SPACE-07"
+    assert dbr["operations_record_id"] == "COM-1676"
+    assert dbr["source_authority"]["predecessor"]["sha256"] == "c5e69b673b6f01ee0a60e063f4a367c46057b6844f97d32c0a44ca3c8437c2c5"
+    assert dbr["source_authority"]["current"]["sha256"] == "9606755c4fff3d94ade1ed61ee41808e9a05237b6bdd857b09dcb067d6e0b61c"
+    transition = dbr["transition"]
+    assert transition["object_count_delta"] == 3
+    assert transition["added_objects"] == ["Pad022", "Pad023", "Pad024"]
+    assert transition["removed_objects"] == []
+    assert transition["normalized_property_change_count"] == 22
+    assert transition["operationally_relevant_change_count"] == 12
+    assert transition["engineering_scalar_change_count"] == 9
+    assert transition["body_transition"]["tip_old"] == "Pad021"
+    assert transition["body_transition"]["tip_new"] == "Pad024"
+    assert [row["object"] for row in transition["added_pad_chain"]] == ["Pad022", "Pad023", "Pad024"]
+    assert dbr["canonical_effect"]["semantic_binding_created"] is True
+    assert dbr["canonical_effect"]["physical_authority"] is False
+    assert dbr["canonical_effect"]["manufacturing_authority"] is False
+    assert dbr["canonical_effect"]["certification_authority"] is False
+    assert dbr["canonical_effect"]["public_release_authorized"] is False

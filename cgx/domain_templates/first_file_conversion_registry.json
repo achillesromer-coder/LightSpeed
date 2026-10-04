@@ -144,6 +144,61 @@
       "authority_transfer": false
     },
     {
+      "mapping_id": "FF-PAYLOAD-CAPSULE-FCSTD-001",
+      "domain": "romer",
+      "semantic_object_id": "SPACE-07",
+      "parent_object_id": "T1-SPACE",
+      "source_name": "Payload Capsule.FCStd",
+      "source_sha256": "9606755c4fff3d94ade1ed61ee41808e9a05237b6bdd857b09dcb067d6e0b61c",
+      "predecessor_source_name": "Payload Capsule.20260918-213212.FCBak",
+      "predecessor_source_sha256": "c5e69b673b6f01ee0a60e063f4a367c46057b6844f97d32c0a44ca3c8437c2c5",
+      "media_type": "application/x-freecad",
+      "semantic_target": "/romer/payload-capsule",
+      "owner": "Römer / Payload Capsule / SPACE-07",
+      "operations_record_id": "COM-1676",
+      "dbr_receipt": "payload_capsule_dbr_2026-10-05.json",
+      "classes": [
+        "R0_EXACT",
+        "R1_SEMANTIC_REVERSIBLE",
+        "R2_RECONSTRUCTED"
+      ],
+      "r2_families": [
+        "system",
+        "geometry-source",
+        "component",
+        "revision-transition",
+        "dbr-delta"
+      ],
+      "source_revision_summary": {
+        "predecessor_objects": 55,
+        "current_objects": 58,
+        "added_objects": [
+          "Pad022",
+          "Pad023",
+          "Pad024"
+        ],
+        "removed_objects": [],
+        "normalized_property_changes": 22,
+        "operationally_relevant_changes": 12,
+        "engineering_scalar_changes": 9
+      },
+      "evidence_ceiling": "exact native-source identity and historical-to-current FreeCAD DBR transition only; aerothermal, structural, material, mission, manufacturing and certification semantics remain gated",
+      "held_claims": [
+        "aerothermal performance",
+        "structural adequacy",
+        "material specification",
+        "mission qualification",
+        "manufacturing readiness",
+        "certification/regulatory approval"
+      ],
+      "required_relation_types": [
+        "DERIVED_FROM",
+        "PART_OF",
+        "PRECEDES"
+      ],
+      "authority_transfer": false
+    },
+    {
       "mapping_id": "FF-ECO-BIOBLOCK-XLSX-001",
       "domain": "eco",
       "semantic_object_id": "cgx:domain:eco",

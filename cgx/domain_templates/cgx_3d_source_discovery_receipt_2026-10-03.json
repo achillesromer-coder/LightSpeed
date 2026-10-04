@@ -1,7 +1,7 @@
 {
   "schema": "CGX-3D-SOURCE-DISCOVERY-RECEIPT/0.1",
   "receipt_id": "CGX-3D-INTAKE-DISCOVERY-2026-10-03",
-  "status": "DISCOVERY_VERIFIED / R0_R1_CURRENT_MAIN_REVALIDATED / R2_SOURCE_BINDINGS_EXECUTED / REMAINING_SEMANTICS_HELD",
+  "status": "DISCOVERY_VERIFIED / R0_R1_CURRENT_MAIN_REVALIDATED / WATCHTOWER_MARK3_PAYLOAD_R2_EXECUTED / REMAINING_SEMANTICS_HELD",
   "recorded_at": "2026-10-03T18:41:00+10:00",
   "source_control": {
     "repository": "achillesromer-coder/LightSpeed",
@@ -290,14 +290,13 @@
     "owner": "Romer",
     "audit": "Achilles",
     "next_actions": [
+      "Payload Capsule SPACE-07 exact native-source binding and historical→current DBR are executed; do not reopen absent source/hash/schema drift.",
       "WT-001 and Mark III exact native-source R2 identity bindings are executed; do not reopen them absent source/hash/schema drift.",
       "Use this corpus-level R0/R1 conformance receipt as the intake baseline; do not rerun format qualification absent source/adapter drift.",
-      "For Payload Capsule, encode accepted parameter changes as stable Object_ID/cell changes plus DBR old-to-new provenance rather than a duplicate semantic master.",
       "Progress SEQLD/M1, Mark V, Luke IV and Free Flow from their R1-admitted source envelopes under their existing Type1/CGX owners.",
-      "Current-main source/adapter replay is independently complete with 57/57 PASS and no priority source/plan drift; proceed only to explicit R2 owner-mapping review for supported objects/relations.",
-      "Advance next evidence-backed object mappings: Payload Capsule DBR deltas, then SEQLD/M1, Mark V, Luke IV and Free Flow."
+      "Advance remaining R1-admitted source families: SEQLD/M1, Mark V, Luke IV and Free Flow under existing owners."
     ],
-    "smallest_remaining_gate": "Payload Capsule DBR delta execution, followed by remaining source-bound object mappings; unresolved engineering semantics stay evidence-gated."
+    "smallest_remaining_gate": "SEQLD/M1 source binding, followed by Mark V, Luke IV and Free Flow; unresolved engineering semantics stay evidence-gated."
   },
   "evidence_ceiling": "Digital source identity/structure/revision evidence only. No physical, manufacturing, structural, performance, certification, regulatory or deployment claim is promoted.",
   "architecture_impact": "No new master or parallel roadmap. One native source may have multiple projections/configurations; DBR records accepted state transitions; R3 representations remain derivative.",
@@ -390,6 +389,15 @@
         "semantic_object_id": "SPACE-01",
         "source_sha256": "4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b",
         "state": "BOUND"
+      },
+      {
+        "mapping_id": "FF-PAYLOAD-CAPSULE-FCSTD-001",
+        "semantic_object_id": "SPACE-07",
+        "operations_record_id": "COM-1676",
+        "source_sha256": "9606755c4fff3d94ade1ed61ee41808e9a05237b6bdd857b09dcb067d6e0b61c",
+        "predecessor_source_sha256": "c5e69b673b6f01ee0a60e063f4a367c46057b6844f97d32c0a44ca3c8437c2c5",
+        "dbr_receipt": "payload_capsule_dbr_2026-10-05.json",
+        "state": "BOUND_WITH_DBR"
       }
     ],
     "nonclaims": [

@@ -1,0 +1,203 @@
+{
+  "schema": "CGX-DBR-TRANSITION/0.1",
+  "dbr_id": "DBR-PAYLOAD-CAPSULE-2026-10-05",
+  "status": "EXECUTED / EXACT_NATIVE_REVISION_BOUND / PHYSICAL_SEMANTICS_HELD",
+  "semantic_object_id": "SPACE-07",
+  "parent_object_id": "T1-SPACE",
+  "operations_record_id": "COM-1676",
+  "owner": "Römer / Payload Capsule",
+  "source_authority": {
+    "current": {
+      "source_name": "Payload Capsule.FCStd",
+      "source_id": "src:9606755c4fff3d94ade1ed61ee41808e9a05237b6bdd857b09dcb067d6e0b61c",
+      "sha256": "9606755c4fff3d94ade1ed61ee41808e9a05237b6bdd857b09dcb067d6e0b61c",
+      "document_xml_sha256": "6038bdfde128b565d8e3e9b989ec61c27ea9b0297e9cb92419feafa630d94ec9",
+      "document_xml_size_bytes": 374596,
+      "object_count": 58
+    },
+    "predecessor": {
+      "source_name": "Payload Capsule.20260918-213212.FCBak",
+      "source_id": "src:c5e69b673b6f01ee0a60e063f4a367c46057b6844f97d32c0a44ca3c8437c2c5",
+      "sha256": "c5e69b673b6f01ee0a60e063f4a367c46057b6844f97d32c0a44ca3c8437c2c5",
+      "document_xml_sha256": "6c3bcd0f7232373fdfa33939330bda91b694d484bd339087c59c6ab8f8bc1d92",
+      "document_xml_size_bytes": 356178,
+      "object_count": 55
+    },
+    "native_source_rule": "Current FCStd is native geometry/revision source authority. Historical FCBak is predecessor evidence and does not compete as current master."
+  },
+  "transition": {
+    "object_count_delta": 3,
+    "added_objects": [
+      "Pad022",
+      "Pad023",
+      "Pad024"
+    ],
+    "removed_objects": [],
+    "normalized_property_change_count": 22,
+    "operationally_relevant_change_count": 12,
+    "engineering_scalar_change_count": 9,
+    "body_transition": {
+      "object": "Body001",
+      "group_added": [
+        "Pad022",
+        "Pad023",
+        "Pad024"
+      ],
+      "tip_old": "Pad021",
+      "tip_new": "Pad024"
+    },
+    "prior_tip_visibility": {
+      "object": "Pad021",
+      "property": "Visibility",
+      "old": true,
+      "new": false
+    },
+    "engineering_scalar_changes": [
+      {
+        "object": "Pad015",
+        "property": "Length",
+        "old": 20,
+        "new": 30,
+        "delta": 10,
+        "ratio": 1.5
+      },
+      {
+        "object": "Pad016",
+        "property": "Length",
+        "old": 20,
+        "new": 30,
+        "delta": 10,
+        "ratio": 1.5
+      },
+      {
+        "object": "Pad017",
+        "property": "Length",
+        "old": 20,
+        "new": 30,
+        "delta": 10,
+        "ratio": 1.5
+      },
+      {
+        "object": "Pad018",
+        "property": "Length",
+        "old": 20,
+        "new": 30,
+        "delta": 10,
+        "ratio": 1.5
+      },
+      {
+        "object": "Pad019",
+        "property": "Length",
+        "old": 20,
+        "new": 40,
+        "delta": 20,
+        "ratio": 2
+      },
+      {
+        "object": "Pad020",
+        "property": "Length",
+        "old": 20,
+        "new": 40,
+        "delta": 20,
+        "ratio": 2
+      },
+      {
+        "object": "Pad020",
+        "property": "TaperAngle",
+        "old": -66,
+        "new": -56,
+        "delta": 10
+      },
+      {
+        "object": "Pad021",
+        "property": "Length",
+        "old": 20,
+        "new": 75,
+        "delta": 55,
+        "ratio": 3.75
+      },
+      {
+        "object": "Pad021",
+        "property": "TaperAngle",
+        "old": -80,
+        "new": -56,
+        "delta": 24
+      }
+    ],
+    "added_pad_chain": [
+      {
+        "object": "Pad022",
+        "base_feature": "Pad021",
+        "profile": "Pad021",
+        "length": 75,
+        "length2": 10,
+        "taper_angle": -45,
+        "refine": true,
+        "reversed": false,
+        "midplane": false,
+        "visibility": false
+      },
+      {
+        "object": "Pad023",
+        "base_feature": "Pad022",
+        "profile": "Pad022",
+        "length": 50,
+        "length2": 10,
+        "taper_angle": -55,
+        "refine": true,
+        "reversed": false,
+        "midplane": false,
+        "visibility": false
+      },
+      {
+        "object": "Pad024",
+        "base_feature": "Pad023",
+        "profile": "Pad023",
+        "length": 30,
+        "length2": 10,
+        "taper_angle": -45,
+        "refine": true,
+        "reversed": false,
+        "midplane": false,
+        "visibility": true
+      }
+    ],
+    "source_value_units": "native FreeCAD property values retained as recorded; no external unit reinterpretation is introduced by this DBR",
+    "uninterpreted_normalized_changes": {
+      "count": 10,
+      "classes": [
+        "Sketch AttacherEngine changes",
+        "Sketch006 Geometry change",
+        "XZ_Plane Placement changes"
+      ],
+      "rule": "Retained as exact source-level revision evidence but not assigned engineering semantics without a separate source-grounded interpretation."
+    }
+  },
+  "calculations": {
+    "object_count_growth_fraction": 0.05454545454545454,
+    "object_count_growth_percent": 5.454545454545454,
+    "pad_length_changes": {
+      "pad015_to_pad018_each_percent": 50,
+      "pad019_percent": 100,
+      "pad020_percent": 100,
+      "pad021_percent": 275
+    },
+    "note": "Percentages describe source-property revision deltas only; they are not system-level size, volume, mass or performance changes."
+  },
+  "canonical_effect": {
+    "first_file_mapping_id": "FF-PAYLOAD-CAPSULE-FCSTD-001",
+    "semantic_binding_created": true,
+    "current_geometry_source_bound": true,
+    "predecessor_preserved": true,
+    "physical_authority": false,
+    "manufacturing_authority": false,
+    "certification_authority": false,
+    "public_release_authorized": false
+  },
+  "evidence": {
+    "comparison_host": "BouwerBase",
+    "method": "Independent SHA-256 plus Document.xml object/property normalization over sole current FCStd and sole matching historical FCBak",
+    "matching_source_file_count": 2,
+    "local_full_diff_receipt": "D:/LightSpeed/State/Review/PAYLOAD_CAPSULE_DBR_DELTA_20261005.json"
+  }
+}
