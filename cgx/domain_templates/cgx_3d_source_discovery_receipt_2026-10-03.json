@@ -1,7 +1,7 @@
 {
   "schema": "CGX-3D-SOURCE-DISCOVERY-RECEIPT/0.1",
   "receipt_id": "CGX-3D-INTAKE-DISCOVERY-2026-10-03",
-  "status": "DISCOVERY_VERIFIED / R0_R1_CURRENT_MAIN_REVALIDATED / R2_MAPPING_HELD / INTERNAL_HANDOFF",
+  "status": "DISCOVERY_VERIFIED / R0_R1_CURRENT_MAIN_REVALIDATED / R2_SOURCE_BINDINGS_EXECUTED / REMAINING_SEMANTICS_HELD",
   "recorded_at": "2026-10-03T18:41:00+10:00",
   "source_control": {
     "repository": "achillesromer-coder/LightSpeed",
@@ -290,14 +290,14 @@
     "owner": "Romer",
     "audit": "Achilles",
     "next_actions": [
+      "WT-001 and Mark III exact native-source R2 identity bindings are executed; do not reopen them absent source/hash/schema drift.",
       "Use this corpus-level R0/R1 conformance receipt as the intake baseline; do not rerun format qualification absent source/adapter drift.",
-      "For WatchTower, reconcile authoritative source and standalone derived/configuration candidate through the existing WT-001 owner without replacing geometry authority.",
-      "For Mark III, define/review only the minimal FCStd-to-Romer R2 mapping supported by explicit source objects; keep three-appendage/interlock/Mark-V mating claims Frontier until independently evidenced.",
       "For Payload Capsule, encode accepted parameter changes as stable Object_ID/cell changes plus DBR old-to-new provenance rather than a duplicate semantic master.",
       "Progress SEQLD/M1, Mark V, Luke IV and Free Flow from their R1-admitted source envelopes under their existing Type1/CGX owners.",
-      "Current-main source/adapter replay is independently complete with 57/57 PASS and no priority source/plan drift; proceed only to explicit R2 owner-mapping review for supported objects/relations."
+      "Current-main source/adapter replay is independently complete with 57/57 PASS and no priority source/plan drift; proceed only to explicit R2 owner-mapping review for supported objects/relations.",
+      "Advance next evidence-backed object mappings: Payload Capsule DBR deltas, then SEQLD/M1, Mark V, Luke IV and Free Flow."
     ],
-    "smallest_remaining_gate": "R2 owner-mapping/admission review for specific objects/relations; current-main R0/R1 replay and source/plan drift audit are complete."
+    "smallest_remaining_gate": "Payload Capsule DBR delta execution, followed by remaining source-bound object mappings; unresolved engineering semantics stay evidence-gated."
   },
   "evidence_ceiling": "Digital source identity/structure/revision evidence only. No physical, manufacturing, structural, performance, certification, regulatory or deployment claim is promoted.",
   "architecture_impact": "No new master or parallel roadmap. One native source may have multiple projections/configurations; DBR records accepted state transitions; R3 representations remain derivative.",
@@ -375,5 +375,27 @@
     },
     "result": "PASS_NO_SOURCE_OR_ADAPTER_DRIFT",
     "evidence_ceiling": "R0/R1 digital source identity, reversible structural admission and conversion-plan stability only. R2 semantics remain owner-mapped and held."
+  },
+  "r2_execution": {
+    "executed_at": "2026-10-05",
+    "executed_mappings": [
+      {
+        "mapping_id": "FF-WATCHTOWER-FCSTD-001",
+        "semantic_object_id": "WT-001",
+        "source_sha256": "c476f9f2f9946ab8e99e58dd399aa7b02bac630c5d9336b80ef66f5f2a397321",
+        "state": "BOUND"
+      },
+      {
+        "mapping_id": "FF-MARK3-FCSTD-001",
+        "semantic_object_id": "SPACE-01",
+        "source_sha256": "4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b",
+        "state": "BOUND"
+      }
+    ],
+    "nonclaims": [
+      "WT-001 held A/C, E/L/R, cable, structural, material, site and certification semantics remain open",
+      "Mark III three-appendage multiplicity, exact interlock, Mark V mating, physical performance and certification remain open",
+      "source binding does not authorize manufacturing or public release"
+    ]
   }
 }
