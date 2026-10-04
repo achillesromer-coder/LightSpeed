@@ -1,0 +1,401 @@
+{
+  "schema": "CGX-3D-SOURCE-DISCOVERY-RECEIPT/0.1",
+  "receipt_id": "CGX-3D-INTAKE-DISCOVERY-2026-10-03",
+  "status": "DISCOVERY_VERIFIED / R0_R1_CURRENT_MAIN_REVALIDATED / R2_SOURCE_BINDINGS_EXECUTED / REMAINING_SEMANTICS_HELD",
+  "recorded_at": "2026-10-03T18:41:00+10:00",
+  "source_control": {
+    "repository": "achillesromer-coder/LightSpeed",
+    "base_main_sha": "46ee9330ce2b6a487fcc030bfcbcdaca47727661",
+    "branch": "cgx/3d-intake-handoff-20261003",
+    "current_main_revalidated_sha": "d84b5c72e9f12742c7d07eb9b3ad9eb27f04700f",
+    "current_main_revalidated_at": "2026-10-04"
+  },
+  "authority": {
+    "recovery_state": "S92",
+    "recovery_drive_id": "1ap1xHVQ0cDWeJDAVWxvY_VqMkSzwpG6i",
+    "romer_owner_workbook_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "native_source_rule": "Local owner CAD remains source-native authority. Derived semantic/mesh/view state cannot self-promote.",
+    "canonical_mutation": false,
+    "source_files_mutated": false
+  },
+  "local_source_inventory": {
+    "host": "BouwerBase",
+    "root": "3D Objects",
+    "path_privacy": "machine-local prefix intentionally omitted",
+    "counts": {
+      "fcstd_current": 26,
+      "fcbak_history": 25,
+      "obj": 4,
+      "glb": 1
+    },
+    "notes": [
+      "Current FCStd corpus is approximately 222 MB.",
+      "Historical FCBak revisions are retained as DBR/revision evidence, not competing semantic masters.",
+      "Mark1P.FCStd and Falcon Heavy Launch Tower.FCStd were observed as zero-object FreeCAD containers and must not be interpreted as valid geometry."
+    ]
+  },
+  "verified_candidates": [
+    {
+      "family": "WatchTower",
+      "current_authoritative_source": {
+        "relative_path": "First Run/InterSol - Watch Tower In Site Footprint.FCStd",
+        "sha256": "c476f9f2f9946ab8e99e58dd399aa7b02bac630c5d9336b80ef66f5f2a397321"
+      },
+      "derived_candidate": {
+        "relative_path": "WatchTower.FCStd",
+        "sha256": "625c877e75a1eed562a385ed1dc0e812d548b0bbbe3203ae3878b726423f349e"
+      },
+      "comparison": {
+        "source_object_count": 117,
+        "derived_object_count": 114,
+        "filtered_dimension_changes": 0,
+        "removed_helper_objects": [
+          "Polygon",
+          "Circle",
+          "Circle001"
+        ],
+        "body_label_change": "Launch Tower -> Watch Tower Concrete",
+        "placement_change_observed": true,
+        "classification": "DERIVED_FROM / CONFIGURATION_VIEW_CANDIDATE",
+        "authority_transition": false
+      }
+    },
+    {
+      "family": "Mark III",
+      "relative_path": "First Run/Mark III.FCStd",
+      "sha256": "4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b",
+      "structure": {
+        "object_data_records": 474,
+        "partdesign_bodies": 17,
+        "pads": 90,
+        "sketches": 49,
+        "assemblies": 22
+      },
+      "semantic_labels_observed": [
+        "Skeletion/Frame",
+        "N Chamber",
+        "E Chamber",
+        "W Chamber",
+        "Arm Attachment",
+        "Battery Module",
+        "Sensor Module",
+        "Communications Module",
+        "Energy Conversion/Dampening",
+        "RFS Module"
+      ],
+      "classification": "NEW_SOURCE_REVISION_CANDIDATE",
+      "frontier": "The file does not independently prove three appendage instances or close exact interlock/Mark V mating CAD/ICD."
+    },
+    {
+      "family": "Payload Capsule",
+      "relative_path": "First Run/Payload Capsule.FCStd",
+      "sha256": "9606755c4fff3d94ade1ed61ee41808e9a05237b6bdd857b09dcb067d6e0b61c",
+      "historical_comparison": {
+        "filtered_property_changes": 9,
+        "examples": [
+          "Pad020.Length 20 -> 40",
+          "Pad017.Length 20 -> 30",
+          "Pad021.TaperAngle -80 -> -56",
+          "Pad015.Length 20 -> 30",
+          "Pad020.TaperAngle -66 -> -56",
+          "Pad021.Length 20 -> 75",
+          "Pad018.Length 20 -> 30",
+          "Pad019.Length 20 -> 40"
+        ],
+        "classification": "DBR_DELTA_FIXTURE",
+        "rule": "Preserve stable semantic identity; store old-to-new value transitions with exact source revision/provenance rather than create a duplicate semantic master."
+      }
+    }
+  ],
+  "representation_checks": {
+    "obj": [
+      {
+        "name": "Mark III Simple.obj",
+        "vertices": 40482,
+        "faces": 80980,
+        "raw_extent": [
+          85.709,
+          74.226,
+          175
+        ]
+      },
+      {
+        "name": "Luke Simple.obj",
+        "vertices": 60380,
+        "faces": 120760,
+        "raw_extent_approx": [
+          31000,
+          31500,
+          4000
+        ]
+      },
+      {
+        "name": "Base Plate (Meshed).obj",
+        "vertices": 24898,
+        "faces": 49812,
+        "raw_extent": [
+          290.019,
+          294.499,
+          13
+        ]
+      },
+      {
+        "name": "Top Casing (Meshed).obj",
+        "vertices": 90850,
+        "faces": 181728,
+        "raw_extent": [
+          285.317,
+          291.519,
+          55
+        ]
+      }
+    ],
+    "glb": {
+      "name": "Mag-Lev Comp..glb",
+      "gltf_version": 2,
+      "scenes": 1,
+      "nodes": 45,
+      "meshes": 44,
+      "materials": 9
+    },
+    "authority_limit": "Mesh/GLB structure and raw coordinate envelopes are bounded observations. Engineering units, materials, function and certification are not inferred from representation files alone."
+  },
+  "current_cgx_conformance": {
+    "implemented_adapters_confirmed_in_current_main": [
+      "freecad-fcstd-stdlib-v0.1",
+      "step-part21-stdlib-v0.1",
+      "obj-mesh-stdlib-v0.1",
+      "stl-mesh-stdlib-v0.1",
+      "gltf-stdlib-v0.1"
+    ],
+    "pipeline": [
+      "R0_EXACT",
+      "R1_SEMANTIC_REVERSIBLE",
+      "R2_RECONSTRUCTED",
+      "R3_GENERATIVE"
+    ],
+    "intake_default": "never-on-drop",
+    "r0_r1_assessment": "SUPPORTED_BY_CURRENT_CONTRACT",
+    "r2_assessment": "HOLD_MAPPING_REQUIRED for newly discovered FCStd sources until owning semantic mappings are explicitly reviewed.",
+    "r3_assessment": "Generated representations remain non-canonical.",
+    "executed_on": {
+      "local_repository_head": "46ee9330ce2b6a487fcc030bfcbcdaca47727661",
+      "github_main_verified_same_head": true,
+      "python": "3.11.9",
+      "cli": "scripts/project_cgx_source.py --with-plan --domain romer",
+      "canonical_mutation": false,
+      "native_source_mutation": false
+    },
+    "corpus_result": {
+      "total_files_executed": 57,
+      "return_code_zero": 57,
+      "pass": 57,
+      "by_extension": {
+        "FCStd": 26,
+        "FCBak": 25,
+        "OBJ": 4,
+        "GLB": 1,
+        "FCMacro": 1
+      },
+      "by_adapter_admission": [
+        {
+          "adapter_id": "freecad-fcstd-stdlib-v0.1",
+          "admission_state": "R1_ADMITTED",
+          "status": "PASS",
+          "count": 26
+        },
+        {
+          "adapter_id": "obj-mesh-stdlib-v0.1",
+          "admission_state": "R1_ADMITTED",
+          "status": "PASS",
+          "count": 4
+        },
+        {
+          "adapter_id": "gltf-stdlib-v0.1",
+          "admission_state": "R1_ADMITTED",
+          "status": "PASS",
+          "count": 1
+        },
+        {
+          "adapter_id": "binary-reference-v1",
+          "admission_state": "R0_REFERENCE_ONLY",
+          "status": "PASS",
+          "count": 26
+        }
+      ],
+      "note": "The 26 binary-reference results are 25 historical .FCBak files plus 1 .FCMacro. R0 reference status preserves identity/provenance and does not infer CAD semantics."
+    },
+    "priority_receipts": [
+      {
+        "name": "WatchTower authoritative",
+        "source_id": "src:c476f9f2f9946ab8e99e58dd399aa7b02bac630c5d9336b80ef66f5f2a397321",
+        "admission_state": "R1_ADMITTED",
+        "conversion_classes": [
+          "R0_EXACT",
+          "R1_SEMANTIC_REVERSIBLE"
+        ],
+        "conversion_plan_sha256": "93704588fdc08b9621b7bbafc2f3c65394892c80dd680e31d7bc0b46d411c9a0"
+      },
+      {
+        "name": "WatchTower derived candidate",
+        "source_id": "src:625c877e75a1eed562a385ed1dc0e812d548b0bbbe3203ae3878b726423f349e",
+        "admission_state": "R1_ADMITTED",
+        "conversion_classes": [
+          "R0_EXACT",
+          "R1_SEMANTIC_REVERSIBLE"
+        ],
+        "conversion_plan_sha256": "053cdab7f1072e8da800cad8c1a4d15ae6b5a26b262d37c0a6f7530e6021ac2e"
+      },
+      {
+        "name": "Mark III",
+        "source_id": "src:4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b",
+        "admission_state": "R1_ADMITTED",
+        "conversion_classes": [
+          "R0_EXACT",
+          "R1_SEMANTIC_REVERSIBLE"
+        ],
+        "conversion_plan_sha256": "90db0c6a03047e606af8502952d4766850accdb75cbc32f9328c506f4b5593b2"
+      },
+      {
+        "name": "Payload Capsule",
+        "source_id": "src:9606755c4fff3d94ade1ed61ee41808e9a05237b6bdd857b09dcb067d6e0b61c",
+        "admission_state": "R1_ADMITTED",
+        "conversion_classes": [
+          "R0_EXACT",
+          "R1_SEMANTIC_REVERSIBLE"
+        ],
+        "conversion_plan_sha256": "f23796dd856ce158d993ef2f5fd50422e80b536372f27c3f7af8c3689d560501"
+      }
+    ],
+    "r2_boundary": "All priority receipts have semantic_target=null and admit only R0_EXACT + R1_SEMANTIC_REVERSIBLE. Format/source structure is proven; semantic reconstruction remains owner-mapped and Resolve/DBR gated.",
+    "secondary_proof": {
+      "method": "independent Python hashlib.sha256 recomputation over each native local file, compared to the CGX receipt source_id suffix",
+      "matched": 57,
+      "total": 57,
+      "mismatches": [],
+      "result": "PASS"
+    }
+  },
+  "execution_boundary": {
+    "independent_remote_structure_and_hash_discovery": "PASS",
+    "current_main_project_cgx_source_cli_on_real_local_files": "PASS",
+    "corpus_scope": "57/57 FCStd/FCBak/OBJ/GLB/FCMacro files returned process RC 0 and PASS",
+    "source_mutation": "NONE",
+    "canonical_mutation": "NONE",
+    "generated_receipts": "transient machine-local conformance JSON outside Git; durable summary is this receipt",
+    "nonclaim": "R1 admission does not itself authorize R2 semantic promotion, geometry authority transfer, engineering interpretation, physical validation, manufacturing/certification or public release."
+  },
+  "handoff": {
+    "route": "existing intake-to-canonical workflow / CGX-OBJ-001 lineage",
+    "owner": "Romer",
+    "audit": "Achilles",
+    "next_actions": [
+      "WT-001 and Mark III exact native-source R2 identity bindings are executed; do not reopen them absent source/hash/schema drift.",
+      "Use this corpus-level R0/R1 conformance receipt as the intake baseline; do not rerun format qualification absent source/adapter drift.",
+      "For Payload Capsule, encode accepted parameter changes as stable Object_ID/cell changes plus DBR old-to-new provenance rather than a duplicate semantic master.",
+      "Progress SEQLD/M1, Mark V, Luke IV and Free Flow from their R1-admitted source envelopes under their existing Type1/CGX owners.",
+      "Current-main source/adapter replay is independently complete with 57/57 PASS and no priority source/plan drift; proceed only to explicit R2 owner-mapping review for supported objects/relations.",
+      "Advance next evidence-backed object mappings: Payload Capsule DBR deltas, then SEQLD/M1, Mark V, Luke IV and Free Flow."
+    ],
+    "smallest_remaining_gate": "Payload Capsule DBR delta execution, followed by remaining source-bound object mappings; unresolved engineering semantics stay evidence-gated."
+  },
+  "evidence_ceiling": "Digital source identity/structure/revision evidence only. No physical, manufacturing, structural, performance, certification, regulatory or deployment claim is promoted.",
+  "architecture_impact": "No new master or parallel roadmap. One native source may have multiple projections/configurations; DBR records accepted state transitions; R3 representations remain derivative.",
+  "release_state": "INTERNAL_HANDOFF_ONLY",
+  "current_main_revalidation": {
+    "schema": "CGX-3D-CURRENT-MAIN-REPLAY/0.1",
+    "source_head": "d84b5c72e9f12742c7d07eb9b3ad9eb27f04700f",
+    "local_receipt_sha256": "76f3b06e32a7bc85fa1ffed77ef812b9da4f670a2a607bd2e26b1bbf68d2fdb7",
+    "execution": {
+      "cli": "scripts/project_cgx_source.py <source> --with-plan --domain romer",
+      "python": "3.11",
+      "source_mutation": false,
+      "canonical_mutation": false
+    },
+    "corpus_result": {
+      "total_files_executed": 57,
+      "return_code_zero": 57,
+      "pass": 57,
+      "independent_hash_matches": 57,
+      "by_extension": {
+        "FCStd": 26,
+        "FCBak": 25,
+        "OBJ": 4,
+        "GLB": 1,
+        "FCMacro": 1
+      },
+      "by_adapter_admission": [
+        {
+          "adapter_id": "freecad-fcstd-stdlib-v0.1",
+          "admission_state": "R1_ADMITTED",
+          "status": "PASS",
+          "count": 26
+        },
+        {
+          "adapter_id": "obj-mesh-stdlib-v0.1",
+          "admission_state": "R1_ADMITTED",
+          "status": "PASS",
+          "count": 4
+        },
+        {
+          "adapter_id": "gltf-stdlib-v0.1",
+          "admission_state": "R1_ADMITTED",
+          "status": "PASS",
+          "count": 1
+        },
+        {
+          "adapter_id": "binary-reference-v1",
+          "admission_state": "R0_REFERENCE_ONLY",
+          "status": "PASS",
+          "count": 26
+        }
+      ]
+    },
+    "priority_drift_checks": {
+      "WatchTower authoritative": {
+        "source_match": true,
+        "plan_match": true,
+        "conversion_plan_sha256": "93704588fdc08b9621b7bbafc2f3c65394892c80dd680e31d7bc0b46d411c9a0"
+      },
+      "WatchTower derived candidate": {
+        "source_match": true,
+        "plan_match": true,
+        "conversion_plan_sha256": "053cdab7f1072e8da800cad8c1a4d15ae6b5a26b262d37c0a6f7530e6021ac2e"
+      },
+      "Mark III": {
+        "source_match": true,
+        "plan_match": true,
+        "conversion_plan_sha256": "90db0c6a03047e606af8502952d4766850accdb75cbc32f9328c506f4b5593b2"
+      },
+      "Payload Capsule": {
+        "source_match": true,
+        "plan_match": true,
+        "conversion_plan_sha256": "f23796dd856ce158d993ef2f5fd50422e80b536372f27c3f7af8c3689d560501"
+      }
+    },
+    "result": "PASS_NO_SOURCE_OR_ADAPTER_DRIFT",
+    "evidence_ceiling": "R0/R1 digital source identity, reversible structural admission and conversion-plan stability only. R2 semantics remain owner-mapped and held."
+  },
+  "r2_execution": {
+    "executed_at": "2026-10-05",
+    "executed_mappings": [
+      {
+        "mapping_id": "FF-WATCHTOWER-FCSTD-001",
+        "semantic_object_id": "WT-001",
+        "source_sha256": "c476f9f2f9946ab8e99e58dd399aa7b02bac630c5d9336b80ef66f5f2a397321",
+        "state": "BOUND"
+      },
+      {
+        "mapping_id": "FF-MARK3-FCSTD-001",
+        "semantic_object_id": "SPACE-01",
+        "source_sha256": "4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b",
+        "state": "BOUND"
+      }
+    ],
+    "nonclaims": [
+      "WT-001 held A/C, E/L/R, cable, structural, material, site and certification semantics remain open",
+      "Mark III three-appendage multiplicity, exact interlock, Mark V mating, physical performance and certification remain open",
+      "source binding does not authorize manufacturing or public release"
+    ]
+  }
+}
