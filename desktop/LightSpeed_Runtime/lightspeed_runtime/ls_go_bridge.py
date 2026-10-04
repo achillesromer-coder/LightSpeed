@@ -4,7 +4,9 @@ import hmac
 import hashlib
 import importlib
 import json
-from lightspeed_runtime.source_intake_executor import validate_intake_payload
+from lightspeed_runtime.source_intake_executor import (
+    MAX_SOURCE_BYTES, configured_intake_roots, stage_source_bytes, validate_intake_payload, validate_upload_name,
+)
 from lightspeed_runtime.source_intake import SourceIntakeError
 import os
 import re
@@ -15,7 +17,7 @@ import threading
 from typing import Any, Optional
 from urllib.parse import urlsplit
 
-from fastapi import FastAPI, Header, HTTPException
+from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse
 import uvicorn
@@ -1644,6 +1646,33 @@ def create_app(root: Path | str) -> FastAPI:
                 "activation_boundary": "planning/status projection only; execution remains lease- and assurance-gated",
             }
         )
+
+    @app.post("/api/v1/source-intake/stage")
+    async def stage_intake_upload(
+        request: Request, source_name: str, source_sha256: str,
+        owner_confirmation: str | None = Header(default=None, alias="X-LightSpeed-Owner-Confirmation"),
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        _verified_owner_actor(owner_confirmation, session_token=owner_session,
+                              credential_store=credential_store, session_store=owner_sessions)
+        try:
+            validate_upload_name(source_name)
+            if not re.fullmatch(r"[a-f0-9]{64}", source_sha256):
+                raise SourceIntakeError("source_sha256 must be a lowercase SHA-256 digest")
+            roots = configured_intake_roots()
+            if not roots:
+                raise HTTPException(status_code=503, detail="No operator-configured intake root")
+            content = bytearray()
+            async for chunk in request.stream():
+                if len(content) + len(chunk) > MAX_SOURCE_BYTES:
+                    raise HTTPException(status_code=413, detail="Upload exceeds the 64 MiB staging limit")
+                content.extend(chunk)
+            receipt = stage_source_bytes(source_name, bytes(content), source_sha256, roots)
+        except SourceIntakeError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        except (OSError, json.JSONDecodeError) as exc:
+            raise HTTPException(status_code=503, detail="Intake storage is unavailable") from exc
+        return JSONResponse(receipt)
 
     @app.post("/api/v1/conversion/plan")
     async def plan_file_conversion(body: dict[str, Any]):

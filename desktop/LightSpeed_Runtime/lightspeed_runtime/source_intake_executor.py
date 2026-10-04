@@ -17,6 +17,61 @@ from lightspeed_runtime.storage_paths import neo_actions_root
 MAX_SOURCE_BYTES = 64 * 1024 * 1024
 
 
+def configured_intake_roots() -> list[Path]:
+    config = Path(__file__).resolve().parents[1] / "config" / "agent_home.json"
+    home = json.loads(config.read_text(encoding="utf-8"))
+    root = (home.get("environment") or {}).get("assimilation_source_root")
+    return [Path(root)] if isinstance(root, str) and Path(root).is_absolute() else []
+
+
+def validate_upload_name(name: str) -> str:
+    reserved = {"CON", "PRN", "AUX", "NUL"} | {f"{prefix}{n}" for prefix in ("COM", "LPT") for n in range(1, 10)}
+    if (not isinstance(name, str) or not 1 <= len(name) <= 180 or name != name.rstrip(" .")
+            or any(c in '<>:"/\\|?*' or ord(c) < 32 for c in name)
+            or name.split(".")[0].upper() in reserved or name in {".", ".."}):
+        raise SourceIntakeError("file name must be a portable basename")
+    return name
+
+
+def stage_source_bytes(name: str, data: bytes, expected_sha256: str, roots: list[Path]) -> dict[str, Any]:
+    """Persist an authenticated upload; staging grants no execution authority."""
+    name = validate_upload_name(name)
+    if not roots:
+        raise SourceIntakeError("no operator-configured intake root")
+    if len(data) > MAX_SOURCE_BYTES:
+        raise SourceIntakeError("source exceeds bounded staging budget")
+    digest = hashlib.sha256(data).hexdigest()
+    if digest != expected_sha256:
+        raise SourceIntakeError("uploaded bytes do not match the requested hash")
+    root = roots[0].resolve(strict=True)
+    parent = (root / ".lightspeed-intake").resolve()
+    if not root.is_dir() or not parent.is_relative_to(root):
+        raise SourceIntakeError("staging destination is outside the configured intake root")
+    parent.mkdir(exist_ok=True)
+    identity = hashlib.sha256((digest + "\0" + name).encode("utf-8")).hexdigest()
+    destination = parent / identity
+    path = destination / "native" / name
+    if destination.exists():
+        if not path.resolve().is_relative_to(root):
+            raise SourceIntakeError("existing staged source is outside the configured intake root")
+        with path.open("rb") as stream:
+            existing = stream.read(MAX_SOURCE_BYTES + 1)
+        if len(existing) > MAX_SOURCE_BYTES or hashlib.sha256(existing).hexdigest() != digest:
+            raise SourceIntakeError("existing staged source failed readback")
+        return {"state": "staged", "source_name": name, "source_path": str(path), "source_sha256": digest,
+                "byte_length": len(data), "queue_dispatched": False, "canonical_mutation": False}
+    stage = Path(tempfile.mkdtemp(prefix=".upload-", dir=parent))
+    (stage / "native").mkdir()
+    (stage / "native" / name).write_bytes(data)
+    if hashlib.sha256((stage / "native" / name).read_bytes()).hexdigest() != digest:
+        raise SourceIntakeError("staged source failed readback")
+    receipt = {"state": "staged", "source_name": name, "source_path": str(path), "source_sha256": digest,
+               "byte_length": len(data), "queue_dispatched": False, "canonical_mutation": False}
+    (stage / "upload-receipt.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
+    os.rename(stage, destination)
+    return receipt
+
+
 def validate_intake_payload(value: Any) -> dict[str, str]:
     if not isinstance(value, dict) or set(value) != {"source_path", "source_sha256"}:
         raise SourceIntakeError("intake requires only source_path and source_sha256")
