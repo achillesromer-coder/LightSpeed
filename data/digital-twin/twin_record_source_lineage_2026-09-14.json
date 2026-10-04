@@ -47,11 +47,11 @@
         "id": "1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko",
         "sheet": "01_Source_Manifest"
       },
-      "source_name": "Free_Flow_Batteries_Digital_Twin_v0_1.xlsx",
+      "source_name": "Free Flow Battery.FCStd",
       "sha256": "c23b29e9e7dbd05cdac1edf2fb1981acd5a261a224d79477c92271b8a5de52e5",
       "family_state": "canonical_current",
       "verified_raw_drive_id": "1DzVG1xAJH_UHsFjUXGocbViJDNDn53Qo",
-      "geometry_authority": "NONE",
+      "geometry_authority": "FREE_FLOW_BATTERY_FCSTD_NATIVE_SOURCE",
       "operations_binding": {
         "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
         "sheet": "Component Register",
@@ -65,10 +65,15 @@
           "T1-ENERGY",
           "ENERGY-05"
         ],
-        "binding_state": "current energy family + Free Flow storage child; battery/capacitor split remains Systems-owned"
+        "binding_state": "existing SF-01 family binding with exact native component source; functional/electrical/material/performance authority remains separately governed"
       },
       "semantic_domain": "romer",
-      "domain_semantic_object_id": "cgx:domain:romer"
+      "domain_semantic_object_id": "cgx:domain:romer",
+      "mapping_id": "FF-FREEFLOW-BATTERY-FCSTD-001",
+      "source_sha256": "8f2cda7ea111d8706e2bb0e0726c3cc0c0b7e7114a7e56875af5e3877c7df64c",
+      "dbr_state": "168_TO_168 / ZERO_NORMALIZED_DOCUMENT_CHANGE",
+      "source_binding_state": "R2_NATIVE_GEOMETRY_SOURCE_BOUND / MEASURED_PERFORMANCE_HELD",
+      "dbr_summary_ref": "cgx/domain_templates/remaining_3d_dbr_summary_2026-10-05.json"
     },
     {
       "twin_id": "free_flow_capacitors",
@@ -77,10 +82,10 @@
         "id": "1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko",
         "sheet": "01_Source_Manifest"
       },
-      "source_name": "Free_Flow_Capacitors_Digital_Twin_v0_1.xlsx",
+      "source_name": "Free Flow Capacitors.FCStd",
       "sha256": "01aa7c12f79444413496c436359309f8d69492e9e6f5f5a88c079e2f34f1c80f",
       "family_state": "canonical_current",
-      "geometry_authority": "NONE",
+      "geometry_authority": "FREE_FLOW_CAPACITORS_FCSTD_NATIVE_SOURCE",
       "operations_binding": {
         "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
         "sheet": "Component Register",
@@ -94,10 +99,15 @@
           "T1-ENERGY",
           "ENERGY-05"
         ],
-        "binding_state": "current energy family + Free Flow storage child; battery/capacitor split remains Systems-owned"
+        "binding_state": "existing SF-01 family binding with exact native component source; functional/electrical/material/performance authority remains separately governed"
       },
       "semantic_domain": "romer",
-      "domain_semantic_object_id": "cgx:domain:romer"
+      "domain_semantic_object_id": "cgx:domain:romer",
+      "mapping_id": "FF-FREEFLOW-CAPACITORS-FCSTD-001",
+      "source_sha256": "61dbb8fd31306920befd57ee5fd40de33588aad40f5d8cfb337cce829a93147f",
+      "dbr_state": "68_TO_75 / STRUCTURAL_SOURCE_REVISION",
+      "source_binding_state": "R2_NATIVE_GEOMETRY_SOURCE_BOUND / MEASURED_PERFORMANCE_HELD",
+      "dbr_summary_ref": "cgx/domain_templates/remaining_3d_dbr_summary_2026-10-05.json"
     },
     {
       "twin_id": "free_flow_solenoid_stack",
@@ -106,10 +116,10 @@
         "id": "1EhMo0zHROrRhQQJGLJKCRKIh6MXgJVl2cNLI9ofcVko",
         "sheet": "01_Source_Manifest"
       },
-      "source_name": "Free_Flow_Solenoid_Stack_Digital_Twin_v0_1.xlsx",
+      "source_name": "Free Flow Solenoid.FCStd",
       "sha256": "f9a46cfce4df45cd51e21576118c9a1d5c1464cee9c60b68226607492b146c97",
       "family_state": "canonical_current",
-      "geometry_authority": "NONE",
+      "geometry_authority": "FREE_FLOW_SOLENOID_FCSTD_NATIVE_SOURCE",
       "operations_binding": {
         "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
         "sheet": "Component Register",
@@ -121,10 +131,15 @@
         "lineage_object_ids": [
           "T1-ENERGY"
         ],
-        "binding_state": "family bound; exact solenoid-stack child absent from Operations"
+        "binding_state": "existing SF-01 family binding with exact native component source; functional/electrical/material/performance authority remains separately governed"
       },
       "semantic_domain": "romer",
-      "domain_semantic_object_id": "cgx:domain:romer"
+      "domain_semantic_object_id": "cgx:domain:romer",
+      "mapping_id": "FF-FREEFLOW-SOLENOID-FCSTD-001",
+      "source_sha256": "6ef10e499d36e2eb48aa45b824401459851b4a870b0b1b75b94f4c5bba111afb",
+      "dbr_state": "24_TO_30 / STRUCTURAL_SOURCE_REVISION",
+      "source_binding_state": "R2_NATIVE_GEOMETRY_SOURCE_BOUND / MEASURED_PERFORMANCE_HELD",
+      "dbr_summary_ref": "cgx/domain_templates/remaining_3d_dbr_summary_2026-10-05.json"
     },
     {
       "twin_id": "rfs_emff",
@@ -471,10 +486,32 @@
         "sheet": "Component Register",
         "record_id": "COM-0368",
         "object_id": "T1-M1",
-        "binding_state": "existing canonical family"
+        "binding_state": "existing canonical T1-M1 family; three retrievable native configurations are source-bound while current digital-twin Stage-0 representation and configuration precedence remain separately governed"
       },
       "semantic_domain": "romer",
-      "domain_semantic_object_id": "cgx:domain:romer"
+      "domain_semantic_object_id": "cgx:domain:romer",
+      "native_source_bindings": [
+        {
+          "mapping_id": "FF-M1-BASEKM-FCSTD-001",
+          "source_name": "SEQLD Pilot Base km Stretch.FCStd",
+          "source_sha256": "98865b2a2bc805f7faa4df45db94d67cc6ea82c83e0eea9885f4a82a5739746b",
+          "role": "BASE_KM_STRETCH_CONFIGURATION"
+        },
+        {
+          "mapping_id": "FF-M1-CENTRAL-A1-FCSTD-001",
+          "source_name": "SEQLD Pilot Build W Central Column A1.FCStd",
+          "source_sha256": "7878082116b0017cfe64e26a6f26e380b954e4f87f9f25e9ecfd9ccf4c990d68",
+          "role": "CENTRAL_COLUMN_A1_CONFIGURATION"
+        },
+        {
+          "mapping_id": "FF-M1-PILOT-BUILD-FCSTD-001",
+          "source_name": "SEQLD Pilot Build.FCStd",
+          "source_sha256": "b9fcb7093793c50ab4d97d2d95ce66bb18a23f6475fc16eb02e0a123e957e2ae",
+          "role": "PILOT_BUILD_CONFIGURATION"
+        }
+      ],
+      "source_binding_state": "CURRENT_NATIVE_CONFIGURATION_SET_BOUND / CONFIGURATION_PRECEDENCE_HELD",
+      "dbr_summary_ref": "cgx/domain_templates/remaining_3d_dbr_summary_2026-10-05.json"
     },
     {
       "twin_id": "romer_spaceport",
