@@ -1,0 +1,78 @@
+{
+  "schema": "CGX-M1-CONFIGURATION-PRECEDENCE/0.1",
+  "execution_id": "M1-CONFIG-PRECEDENCE-2026-10-05",
+  "status": "EXECUTED / PRECEDENCE_RESOLVED_BY_SCOPE / NO_SINGLE_GLOBAL_MASTER",
+  "semantic_object_id": "T1-M1",
+  "operations_record_id": "COM-0368",
+  "method": "Direct native FreeCAD Document.xml object-name and Label set comparison on BouwerBase, combined with existing DBR revision evidence.",
+  "sources": {
+    "base_km": {
+      "mapping_id": "FF-M1-BASEKM-FCSTD-001",
+      "sha256": "98865b2a2bc805f7faa4df45db94d67cc6ea82c83e0eea9885f4a82a5739746b",
+      "object_count": 870,
+      "role": "COMMON_BASELINE"
+    },
+    "central_a1": {
+      "mapping_id": "FF-M1-CENTRAL-A1-FCSTD-001",
+      "sha256": "7878082116b0017cfe64e26a6f26e380b954e4f87f9f25e9ecfd9ccf4c990d68",
+      "object_count": 884,
+      "role": "SPECIALIZED_CENTRAL_COLUMN_BRANCH"
+    },
+    "pilot_build": {
+      "mapping_id": "FF-M1-PILOT-BUILD-FCSTD-001",
+      "sha256": "b9fcb7093793c50ab4d97d2d95ce66bb18a23f6475fc16eb02e0a123e957e2ae",
+      "object_count": 1185,
+      "role": "BROAD_EXPANDED_PILOT_CONFIGURATION"
+    }
+  },
+  "pairwise_proof": {
+    "base_vs_central": {
+      "intersection": 870,
+      "base_only": 0,
+      "central_only": 14,
+      "jaccard": 0.9841628959276018,
+      "same_label_common": 870,
+      "base_subset_central": true
+    },
+    "base_vs_pilot": {
+      "intersection": 870,
+      "base_only": 0,
+      "pilot_only": 315,
+      "jaccard": 0.7341772151898734,
+      "same_label_common": 870,
+      "base_subset_pilot": true
+    },
+    "central_vs_pilot": {
+      "intersection": 879,
+      "central_only": 5,
+      "pilot_only": 306,
+      "jaccard": 0.738655462184874,
+      "same_label_common": 879,
+      "neither_subset": true
+    }
+  },
+  "resolution": {
+    "common_geometry_authority": "FF-M1-BASEKM-FCSTD-001",
+    "broad_pilot_scope": "FF-M1-PILOT-BUILD-FCSTD-001",
+    "central_column_specialization_scope": "FF-M1-CENTRAL-A1-FCSTD-001",
+    "global_master_selected": false,
+    "rationale": [
+      "Base-km's 870 named objects are a strict subset of both other current configurations and preserve identical labels.",
+      "Pilot-Build retains all Base-km objects and adds 315 objects, making it the broadest structural expansion represented by the current source set.",
+      "Central-A1 retains all Base-km objects and adds 14 objects, while also containing five objects not present in Pilot-Build; it is therefore a specialized sibling branch rather than a universal successor.",
+      "Scope-based precedence preserves all observed source information without destructive branch collapse."
+    ]
+  },
+  "still_held": [
+    "semantic function of branch-specific added objects except where separately owner-mapped",
+    "structural adequacy",
+    "geotechnical/site adequacy",
+    "road safety and regulatory compliance",
+    "manufacturing/certification",
+    "physical deployment authority"
+  ],
+  "authority_transfer": false,
+  "physical_authority": false,
+  "manufacturing_authority": false,
+  "public_release_authorized": false
+}

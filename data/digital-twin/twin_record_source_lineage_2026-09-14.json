@@ -486,7 +486,7 @@
         "sheet": "Component Register",
         "record_id": "COM-0368",
         "object_id": "T1-M1",
-        "binding_state": "existing canonical T1-M1 family; three retrievable native configurations are source-bound while current digital-twin Stage-0 representation and configuration precedence remain separately governed"
+        "binding_state": "existing canonical T1-M1 family; native CAD configuration roles are scope-resolved while structural/site/road/geotechnical adequacy remains separately governed"
       },
       "semantic_domain": "romer",
       "domain_semantic_object_id": "cgx:domain:romer",
@@ -510,8 +510,46 @@
           "role": "PILOT_BUILD_CONFIGURATION"
         }
       ],
-      "source_binding_state": "CURRENT_NATIVE_CONFIGURATION_SET_BOUND / CONFIGURATION_PRECEDENCE_HELD",
-      "dbr_summary_ref": "cgx/domain_templates/remaining_3d_dbr_summary_2026-10-05.json"
+      "source_binding_state": "CURRENT_NATIVE_CONFIGURATION_SET_BOUND / PRECEDENCE_RESOLVED_BY_SCOPE",
+      "dbr_summary_ref": "cgx/domain_templates/remaining_3d_dbr_summary_2026-10-05.json",
+      "configuration_precedence": {
+        "status": "RESOLVED_BY_SCOPE / NO_SINGLE_GLOBAL_MASTER",
+        "common_baseline": {
+          "mapping_id": "FF-M1-BASEKM-FCSTD-001",
+          "object_count": 870
+        },
+        "broad_expansion": {
+          "mapping_id": "FF-M1-PILOT-BUILD-FCSTD-001",
+          "object_count": 1185,
+          "added_over_baseline": 315
+        },
+        "specialized_branch": {
+          "mapping_id": "FF-M1-CENTRAL-A1-FCSTD-001",
+          "object_count": 884,
+          "added_over_baseline": 14
+        },
+        "pairwise_evidence": {
+          "base_to_central": {
+            "intersection": 870,
+            "base_only": 0,
+            "central_only": 14,
+            "same_label_common": 870
+          },
+          "base_to_pilot": {
+            "intersection": 870,
+            "base_only": 0,
+            "pilot_only": 315,
+            "same_label_common": 870
+          },
+          "central_to_pilot": {
+            "intersection": 879,
+            "central_only": 5,
+            "pilot_only": 306,
+            "same_label_common": 879
+          }
+        },
+        "selection_rule": "Use Base-km for common/shared geometry, Pilot-Build for broad expanded-pilot scope, and Central-A1 only for central-column specialization. Do not substitute one branch for another outside its proven scope."
+      }
     },
     {
       "twin_id": "romer_spaceport",

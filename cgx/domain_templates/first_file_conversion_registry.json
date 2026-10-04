@@ -346,15 +346,25 @@
         "geometry-source",
         "configuration-source"
       ],
-      "evidence_ceiling": "exact current native configuration identity only; cross-configuration precedence, structural/site/road/geotechnical adequacy and certification remain gated",
+      "evidence_ceiling": "exact current native common-baseline identity; proven 870-object/name/label subset of Central-A1 and Pilot-Build; structural/site/road/geotechnical adequacy and certification remain gated",
       "held_claims": [
-        "canonical precedence among M1 current configurations",
         "structural adequacy",
         "site/geotechnical adequacy",
         "road safety/compliance",
         "manufacturing/certification"
       ],
-      "authority_transfer": false
+      "authority_transfer": false,
+      "configuration_scope": "COMMON_BASELINE",
+      "configuration_precedence": {
+        "role": "COMMON_BASELINE",
+        "contains_object_count": 870,
+        "relation_to": [
+          "FF-M1-CENTRAL-A1-FCSTD-001",
+          "FF-M1-PILOT-BUILD-FCSTD-001"
+        ],
+        "relation_type": "STRICT_OBJECT_AND_LABEL_SUBSET_OF_BOTH",
+        "global_master": false
+      }
     },
     {
       "mapping_id": "FF-M1-CENTRAL-A1-FCSTD-001",
@@ -381,8 +391,18 @@
         "configuration-source",
         "revision-transition"
       ],
-      "evidence_ceiling": "source/archive identity plus normalized Document.xml parity; engineering adequacy and configuration precedence remain gated",
-      "authority_transfer": false
+      "evidence_ceiling": "source/archive identity plus normalized Document.xml parity and scope-resolved Central-A1 specialization; engineering adequacy remains gated",
+      "authority_transfer": false,
+      "configuration_scope": "SPECIALIZED_CENTRAL_COLUMN_BRANCH",
+      "configuration_precedence": {
+        "role": "SPECIALIZED_BRANCH",
+        "common_baseline_mapping_id": "FF-M1-BASEKM-FCSTD-001",
+        "object_count": 884,
+        "common_with_baseline": 870,
+        "branch_unique_objects": 14,
+        "relation_to_pilot_build": "SIBLING_CONFIGURATION_WITH_SHARED_879_OBJECT_LABEL_IDENTITIES",
+        "global_master": false
+      }
     },
     {
       "mapping_id": "FF-M1-PILOT-BUILD-FCSTD-001",
@@ -412,11 +432,21 @@
       "evidence_ceiling": "exact structural source expansion only; no automatic interpretation of added FreeCAD object function or engineering adequacy",
       "held_claims": [
         "semantic interpretation of 315 added objects",
-        "configuration precedence",
         "structural/site/road safety",
-        "manufacturing/certification"
+        "manufacturing/certification",
+        "semantic interpretation of branch-specific added objects beyond proven source structure"
       ],
-      "authority_transfer": false
+      "authority_transfer": false,
+      "configuration_scope": "BROAD_EXPANDED_PILOT_CONFIGURATION",
+      "configuration_precedence": {
+        "role": "BROAD_EXPANSION_BRANCH",
+        "common_baseline_mapping_id": "FF-M1-BASEKM-FCSTD-001",
+        "object_count": 1185,
+        "common_with_baseline": 870,
+        "branch_unique_objects": 315,
+        "relation_to_central_a1": "SIBLING_CONFIGURATION_WITH_SHARED_879_OBJECT_LABEL_IDENTITIES",
+        "global_master": false
+      }
     },
     {
       "mapping_id": "FF-MARKV-FCSTD-001",

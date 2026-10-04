@@ -14,7 +14,14 @@
         "FF-M1-CENTRAL-A1-FCSTD-001",
         "FF-M1-PILOT-BUILD-FCSTD-001"
       ],
-      "state": "THREE_CURRENT_CONFIGURATION_SOURCES_BOUND / PRECEDENCE_HELD"
+      "state": "THREE_CURRENT_CONFIGURATION_SOURCES_BOUND / PRECEDENCE_RESOLVED_BY_SCOPE",
+      "precedence_contract_ref": "m1_configuration_precedence_2026-10-05.json",
+      "precedence_summary": {
+        "common_baseline": "FF-M1-BASEKM-FCSTD-001",
+        "broad_pilot_branch": "FF-M1-PILOT-BUILD-FCSTD-001",
+        "specialized_central_branch": "FF-M1-CENTRAL-A1-FCSTD-001",
+        "global_master_selected": false
+      }
     },
     {
       "semantic_object_id": "SPACE-02",
@@ -47,8 +54,8 @@
   "interpretation_rules": [
     "hash drift with zero normalized Document.xml change is recorded as source/archive identity drift, not engineering geometry change",
     "added/removed FreeCAD objects are structural source evidence until their functions are independently mapped",
-    "multiple current configurations may bind to one semantic family without silently selecting precedence",
-    "native-source binding does not promote physical, manufacturing, regulatory or certification authority"
+    "native-source binding does not promote physical, manufacturing, regulatory or certification authority",
+    "M1 precedence is resolved by configuration scope: Base-km is the common baseline; Pilot-Build is the broad expansion; Central-A1 is a specialized sibling branch; no single global master is selected"
   ],
   "physical_authority": false,
   "manufacturing_authority": false,
