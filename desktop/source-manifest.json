@@ -1,10 +1,9 @@
 {
-  "schema_version": 1,
   "records": [
     {
-      "bytes": 6443,
+      "bytes": 7101,
       "path": "Desktop_Hooks/LightSpeed/__main__.py",
-      "sha256": "06ee4a3ef7c59bfd02ed4ccd1965db4d57a664f9bd1dc28e7b65b8ad89859ed4"
+      "sha256": "d57cf2813527866b4cebb06f0bcfa47cfa89c9488ab7f385c4690250ea90d3ae"
     },
     {
       "bytes": 1159,
@@ -217,9 +216,9 @@
       "sha256": "6152357497504a8619b8c8d49bc203d8298a7aeb73a4384887ca35f5fcd2db34"
     },
     {
-      "bytes": 379568,
+      "bytes": 379853,
       "path": "Desktop_Hooks/LightSpeed/N.py",
-      "sha256": "408aac575f158c7a4fecda9ddf105ad65deec1c7013f7f42193fdba90b905f3c"
+      "sha256": "569bb0f60a8d513a1ef2d23c6fbaca44fa9207ca655162bb4cfed79fd51e788b"
     },
     {
       "bytes": 738,
@@ -3536,5 +3535,6 @@
       "path": "LightSpeed_Runtime/lightspeed_runtime/source_intake_executor.py",
       "sha256": "24f947777d44e3cdb6c739b1b8134c8e48cc1b398c93796acd11a14253fe7187"
     }
-  ]
+  ],
+  "schema_version": 1
 }

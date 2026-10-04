@@ -16,10 +16,31 @@ from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 
 LIGHTSPEED_ROOT = Path(__file__).resolve().parent
-CANONICAL_RUNTIME_ROOT = (LIGHTSPEED_ROOT.parent.parent / "LightSpeed_Runtime").resolve()
+_CANONICAL_RUNTIME_CANDIDATES = [
+    LIGHTSPEED_ROOT.parent / "Core",
+    LIGHTSPEED_ROOT / "canonical_runtime",
+    LIGHTSPEED_ROOT.parent.parent / "LightSpeed_Runtime",
+]
+
+
+def _resolve_canonical_runtime_root() -> Path | None:
+    candidates = list(_CANONICAL_RUNTIME_CANDIDATES)
+    configured = os.environ.get("LIGHTSPEED_RUNTIME_ROOT", "").strip()
+    if configured and Path(configured).is_absolute():
+        candidates.insert(0, Path(configured))
+    for candidate in candidates:
+        try:
+            if (candidate / "lightspeed_runtime" / "__init__.py").is_file():
+                return candidate.resolve()
+        except Exception:
+            continue
+    return None
+
+
+CANONICAL_RUNTIME_ROOT = _resolve_canonical_runtime_root()
 N_ENTRYPOINT = LIGHTSPEED_ROOT / "N.py"
 
-if CANONICAL_RUNTIME_ROOT.exists():
+if CANONICAL_RUNTIME_ROOT is not None:
     canonical_runtime_path = str(CANONICAL_RUNTIME_ROOT)
     while canonical_runtime_path in sys.path:
         sys.path.remove(canonical_runtime_path)

@@ -124,15 +124,20 @@ _syspath_ensure(_TRINITY_ROOT, front=True)
 _syspath_ensure(_MEROVINGIAN_ROOT, front=False)
 
 _CANONICAL_RUNTIME_CANDIDATES = [
+    LIGHTSPEED_ROOT.parent / "Core",
     LIGHTSPEED_ROOT / "canonical_runtime",
     LIGHTSPEED_ROOT.parent.parent / "LightSpeed_Runtime",
 ]
 
 
 def _resolve_canonical_runtime_root() -> Optional[Path]:
-    for candidate in _CANONICAL_RUNTIME_CANDIDATES:
+    candidates = list(_CANONICAL_RUNTIME_CANDIDATES)
+    configured = os.environ.get("LIGHTSPEED_RUNTIME_ROOT", "").strip()
+    if configured and Path(configured).is_absolute():
+        candidates.insert(0, Path(configured))
+    for candidate in candidates:
         try:
-            if candidate.exists():
+            if (candidate / "lightspeed_runtime" / "__init__.py").is_file():
                 return candidate.resolve()
         except Exception:
             continue
