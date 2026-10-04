@@ -270,7 +270,7 @@ def build_ollama_request(
                 {"type": "object", "properties": {
                     "path": {"type": "string", "enum": [source["path"]]},
                     "sha256": {"type": "string", "enum": [source["sha256"]]},
-                    "quote": {"type": "string"},
+                    "quote": {"type": "string", "enum": _citation_quote_candidates(str(source.get("excerpt") or ""))},
                 }, "required": ["path", "sha256", "quote"], "additionalProperties": False}
                 for source in sources
             ]}
@@ -325,9 +325,33 @@ def verified_source_context(contract: dict[str, Any]) -> list[dict[str, Any]]:
         result.append({
             "path": str(path), "sha256": expected, "start_char": start,
             "excerpt": excerpt, "excerpt_sha256": hashlib.sha256(excerpt.encode("utf-8")).hexdigest(),
+            "citation_quotes": _citation_quote_candidates(excerpt),
             "truncated": start > 0 or start + limit < len(content), "total_chars": len(content),
         })
     return result
+
+
+def _citation_quote_candidates(excerpt: str) -> list[str]:
+    """Offer bounded literal passages; the model must select relevant evidence.
+
+    Literal selection prevents serialization errors but does not establish that
+    a selected passage supports the model's claim. Independent review still applies.
+    """
+    candidates = []
+    for line in excerpt.splitlines():
+        candidate = line.strip()
+        if len(candidate) >= 12 and any(character.isalnum() for character in candidate):
+            candidate = candidate[:240]
+            if candidate not in candidates:
+                candidates.append(candidate)
+            if len(candidates) == 64:
+                break
+    if candidates:
+        return candidates
+    fallback = excerpt.strip()
+    if not fallback:
+        raise LocalFloorRunnerError("bound source excerpt has no citable text")
+    return [fallback[:240]]
 
 
 def build_floor_prompt(
@@ -370,8 +394,11 @@ def build_floor_prompt(
             do_not_do or "- Do not run heavy/manual models or parallel sessions without approval.",
             "Keep the entire response under 90 words. Do not use Markdown fences.",
             "Return JSON with keys: floor_summary, safe_artifact_route, blocker, citations. "
-            "citations is a list of {path, sha256, quote}; cite at least one supplied source when present, "
-            "using its exact path, digest and a short verbatim excerpt. An empty list is valid only with no sources.",
+            "citations is a list of {path, sha256, quote}; cite at least one supplied source when present. "
+            "Choose a relevant passage from the source's citation_quotes that supports your finding, "
+            "and copy it exactly and unchanged into quote. Do not choose an unrelated schema/header as proof. Do not "
+            "combine lines, reformat JSON, add escapes manually, or paraphrase it. "
+            "Use the source's exact path and digest. An empty list is valid only with no sources.",
         ]
     )
 

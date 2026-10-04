@@ -303,6 +303,8 @@ def test_verified_source_context_is_hash_bound_and_detects_change(tmp_path: Path
     evidence = verified_source_context(contract)
     assert evidence[0]["sha256"] == digest
     assert evidence[0]["excerpt"] == "alpha grounded evidence"
+    assert evidence[0]["citation_quotes"] == ["alpha grounded evidence"]
+    assert all(q in evidence[0]["excerpt"] for q in evidence[0]["citation_quotes"])
     source.write_text("changed", encoding="utf-8")
     try:
         verified_source_context(contract)
@@ -362,6 +364,9 @@ def test_grounded_request_keeps_context_and_source_identities_bound(tmp_path: Pa
     alternatives = props["citations"]["items"]["anyOf"]
     assert [(a["properties"]["path"]["enum"][0], a["properties"]["sha256"]["enum"][0])
             for a in alternatives] == [(s["path"], s["sha256"]) for s in sources]
+    assert [a["properties"]["quote"]["enum"][0] for a in alternatives] == [
+        s["excerpt"] for s in sources
+    ]
     # Constrained generation does not replace the independent citation check.
     swapped = {"floor_summary": "review", "safe_artifact_route": route, "blocker": None,
                "citations": [{"path": sources[0]["path"], "sha256": sources[1]["sha256"],
@@ -369,3 +374,13 @@ def test_grounded_request_keeps_context_and_source_identities_bound(tmp_path: Pa
     assert validate_grounded_response({"response": json.dumps(swapped), "done": True}, route, sources)
     contract["policy"]["receipt_prompt_overrides"] = {"num_ctx": 999999}
     assert build_ollama_request(contract, floor, source_evidence=sources)["options"]["num_ctx"] == 8192
+
+
+def test_quote_selection_exposes_status_beyond_header_and_preserves_literals() -> None:
+    from lightspeed_runtime.local_floor_runner import _citation_quote_candidates
+    excerpt = '{\r\n  "schema": "review/v1",\r\n  "status": "DURABLE_PERSISTENCE_OPEN",\r\n  "note": "a \\\"quoted\\\" value"\r\n}'
+    options = _citation_quote_candidates(excerpt)
+    assert '"status": "DURABLE_PERSISTENCE_OPEN",' in options
+    assert any('quoted' in option for option in options)
+    assert all(option in excerpt for option in options)
+    assert len(_citation_quote_candidates('\n'.join(f'evidence passage {i}' for i in range(100)))) == 64
