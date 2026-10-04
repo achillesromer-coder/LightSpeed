@@ -240,38 +240,43 @@
       ]
     },
     "node.exchange.status": {
-      "state": "assisted",
-      "kind": "composite",
+      "state": "available",
+      "kind": "runtime",
       "ro": true,
+      "handler": "lightspeed_runtime.node_exchange:build_exchange_status",
       "uses": [
         "ops.health",
         "ops.route_probe",
         "receipts.list"
       ],
-      "limitation": "The cgx/node-exchange-2026-10-02 lane owns the transport/compute adapter. This capability-facade branch exposes status and handoff only until that adapter is promoted."
+      "limitation": "Reports local node-exchange readiness and proven carriers/peers from supplied runtime evidence. Mounted storage is not peer compute, and peer transport/compute remain unproven until independently exercised."
     },
     "node.transfer": {
       "state": "gated",
-      "kind": "composite",
+      "kind": "runtime",
       "ro": false,
+      "handler": "lightspeed_runtime.node_exchange:execute_local_transfer",
       "uses": [
         "cgx.resolve_context",
         "cgx.minimum_work",
         "node.exchange.status"
       ],
-      "gate": "Requires promoted node-exchange adapter, registered target root, DIGITAL_WRITE-or-stronger scoped lease, content hash verification, and exact receiver readback.",
+      "gate": "Local transfer execution requires a registered allowlisted target root, a current DIGITAL_WRITE-or-stronger scoped lease, bounded relative target path, source hash/size verification, and exact receiver readback.",
+      "limitation": "Canonical route currently binds local verified transfer only. Authenticated off-device peer transport remains separately gated.",
       "authority_transfer": false
     },
     "node.compute": {
       "state": "gated",
-      "kind": "composite",
+      "kind": "runtime",
       "ro": false,
+      "handler": "lightspeed_runtime.node_exchange:execute_local_compute",
       "uses": [
         "cgx.resolve_context",
         "cgx.minimum_work",
         "node.exchange.status"
       ],
-      "gate": "Requires promoted node-exchange adapter, independently proven target compute capability, COMPUTE_ONLY-or-stronger scoped lease, verified input receipts, and heavy=false unless separately authorized.",
+      "gate": "Local delegated compute requires target_node_id to match the executing local node, a current COMPUTE_ONLY-or-stronger scoped lease, verified input receipts, a registered bounded runner, and heavy=false unless separately authorized.",
+      "limitation": "Canonical route currently binds local leased compute only. Off-device peer compute remains unproven until an independently connected compute node returns a receipted result.",
       "authority_transfer": false
     },
     "assurance.preflight": {
@@ -366,9 +371,9 @@
     },
     {
       "id": "node-exchange-runtime-promotion",
-      "state": "partial",
-      "priority": "high",
-      "note": "Transport/compute mechanics are active in separate cgx/node-exchange-2026-10-02 lane; capability facade remains gated until that runtime contract is promoted/merged."
+      "state": "local_runtime_promoted_peer_activation_gated",
+      "priority": "medium",
+      "note": "Canonical local transfer/compute runtime is now promoted. Authenticated off-device peer transport and independently proven peer compute remain gated; mounted storage does not satisfy peer-compute proof."
     }
   ],
   "extension": {

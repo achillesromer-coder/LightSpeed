@@ -87,13 +87,31 @@ def test_all_selectors_inherit_node_exchange_handoff_shortcalls():
         assert calls["compute"] == "node.compute"
 
 
-def test_node_exchange_routes_are_truthfully_assisted_or_gated_until_runtime_merge():
+def test_node_exchange_routes_bind_promoted_local_runtime_without_peer_overclaim():
     routes = load_capability_routes()["routes"]
-    assert routes["node.exchange.status"]["state"] == "assisted"
-    assert routes["node.transfer"]["state"] == "gated"
-    assert routes["node.compute"]["state"] == "gated"
-    assert routes["node.transfer"]["authority_transfer"] is False
-    assert routes["node.compute"]["authority_transfer"] is False
+
+    status = routes["node.exchange.status"]
+    assert status["state"] == "available"
+    assert status["kind"] == "runtime"
+    assert status["ro"] is True
+    assert status["handler"].endswith(":build_exchange_status")
+    assert "Mounted storage is not peer compute" in status["limitation"]
+
+    transfer = routes["node.transfer"]
+    assert transfer["state"] == "gated"
+    assert transfer["kind"] == "runtime"
+    assert transfer["handler"].endswith(":execute_local_transfer")
+    assert "DIGITAL_WRITE" in transfer["gate"]
+    assert "off-device peer transport" in transfer["limitation"]
+    assert transfer["authority_transfer"] is False
+
+    compute = routes["node.compute"]
+    assert compute["state"] == "gated"
+    assert compute["kind"] == "runtime"
+    assert compute["handler"].endswith(":execute_local_compute")
+    assert "COMPUTE_ONLY" in compute["gate"]
+    assert "Off-device peer compute remains unproven" in compute["limitation"]
+    assert compute["authority_transfer"] is False
 
 
 def test_all_selectors_inherit_object_context_shortcall():
