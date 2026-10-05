@@ -1,0 +1,111 @@
+{
+  "schema": "CGX-FREE-FLOW-BATTERY-MODEL-CONSISTENCY/0.1",
+  "status": "EXECUTED / SYNTHETIC_MODEL_ARITHMETIC_CONSISTENT / PHYSICAL_VALIDATION_HELD",
+  "generated_date": "2026-10-05",
+  "source_main_sha": "b9f05a5d956e60fe9ff8f2f3713a50b258e7970b",
+  "canonical_drive": {
+    "file_id": "1DzVG1xAJH_UHsFjUXGocbViJDNDn53Qo",
+    "file_name": "Free_Flow_Batteries_Digital_Twin_v0_1.xlsx",
+    "twin_id": "FFB-DT-001",
+    "final_sha256": "65ef07b30efbf5783a77ef2c825aec3cad1152a9fd7563df9e45a8c889c964a1",
+    "same_id_replacement": true,
+    "unit_corrections": [
+      {
+        "cell": "01_Dashboard!C8",
+        "before": "%",
+        "after": "fraction",
+        "numeric_value_unchanged": 0.9773437500000001
+      },
+      {
+        "cell": "15_Test_Log!M4",
+        "before": "RTE %",
+        "after": "RTE fraction",
+        "synthetic_row_value_unchanged": 0.9773437500000001
+      },
+      {
+        "cell": "10_Electrical_Model!D17",
+        "before": "Loss compared with output",
+        "after": "Loss / (loss + output) = loss / nominal electrical power",
+        "formula_unchanged": "=IF(B15+B16>0,B15/(B15+B16),0)"
+      }
+    ]
+  },
+  "source_inputs": {
+    "cell_nominal_voltage_v": 3.2,
+    "cell_capacity_ah": 3,
+    "series_count": 4,
+    "parallel_count": 2,
+    "usable_depth_of_discharge_fraction": 0.8,
+    "system_efficiency_factor": 0.9,
+    "discharge_current_a": 5,
+    "charge_current_a": 2,
+    "cell_internal_resistance_ohm": 0.025,
+    "bus_contact_resistance_ohm": 0.008,
+    "cell_mass_kg": 0.08,
+    "housing_mass_kg": 0.25,
+    "thermal_resistance_c_per_w": 3,
+    "ambient_c": 25,
+    "max_surface_gate_c": 55,
+    "thermal_recovery_candidate_fraction": 0.03,
+    "capacitor_interface_pulse_current_a": 10,
+    "solenoid_support_duty_fraction": 0.1
+  },
+  "derived_identities": {
+    "cell_count": 8,
+    "pack_nominal_voltage_v": 12.8,
+    "pack_capacity_ah": 6,
+    "gross_pack_energy_wh": 76.80000000000001,
+    "usable_energy_wh": 55.296000000000014,
+    "usable_energy_fraction_of_gross": 0.72,
+    "pack_mass_kg": 0.89,
+    "usable_gravimetric_energy_density_wh_per_kg": 62.1303370786517,
+    "equivalent_cell_stack_resistance_ohm": 0.05,
+    "total_resistance_ohm": 0.058,
+    "voltage_sag_v_at_5a": 0.29000000000000004,
+    "terminal_voltage_v_at_5a": 12.510000000000002,
+    "electrical_loss_w_at_5a": 1.4500000000000002,
+    "output_power_w_at_5a": 62.55000000000001,
+    "nominal_electrical_power_w": 64.00000000000001,
+    "loss_fraction_of_nominal_power": 0.02265625,
+    "runtime_h_at_5a": 1.2,
+    "delivered_energy_wh": 75.06000000000002,
+    "charge_power_w_at_2a": 25.6,
+    "charge_time_h": 3,
+    "charge_energy_wh": 76.80000000000001,
+    "round_trip_efficiency_fraction": 0.9773437500000001,
+    "ohmic_heat_w": 1.4500000000000002,
+    "steady_thermal_delta_c": 4.3500000000000005,
+    "estimated_surface_c": 29.35,
+    "synthetic_thermal_margin_c": 25.65,
+    "candidate_recovery_w": 0.043500000000000004,
+    "net_heat_after_candidate_w": 1.4065,
+    "pulse_apparent_power_w": 125.10000000000002,
+    "average_solenoid_support_power_w": 12.510000000000003,
+    "average_power_margin_w": 50.040000000000006
+  },
+  "checks": [
+    "cell_count = series_count * parallel_count",
+    "pack_voltage = cell_voltage * series_count",
+    "pack_capacity = cell_capacity * parallel_count",
+    "gross_energy = pack_voltage * pack_capacity",
+    "usable_energy = gross_energy * DoD * system_efficiency",
+    "equivalent_stack_R = cell_R * series / parallel",
+    "total_R = stack_R + bus_R",
+    "voltage_sag = I * total_R",
+    "electrical_loss = I^2 * total_R",
+    "loss_fraction = loss / (loss + output)",
+    "round_trip_fraction = delivered_energy / charge_energy",
+    "thermal_delta = ohmic_heat * thermal_resistance",
+    "average_solenoid_support_power = terminal_voltage * pulse_current * duty"
+  ],
+  "conclusion": "All listed synthetic workbook arithmetic identities recompute to the canonical displayed values within floating-point representation. This proves internal arithmetic consistency only.",
+  "claim_boundary": "No cell chemistry, capacity, DCIR, thermal safety, round-trip efficiency, Free Flow storage performance, capacitor-buffer feasibility, solenoid feasibility, Mark III integration, certification or physical qualification is validated by this receipt.",
+  "next_empirical_gate": [
+    "bind a safe commercial/reference battery module as the first physical test article",
+    "record calibrated OCV, capacity, DCIR, thermal rise and charge/discharge energy with instrument IDs",
+    "record uncertainty and repeatability",
+    "compare measured round-trip energy with the synthetic model without treating model agreement as independent validation"
+  ],
+  "authority_transfer": false,
+  "public_publish_authorized": false
+}
