@@ -1,0 +1,69 @@
+{
+  "schema": "CGX-MARK3-RFS-LEGACY-SCREENING/0.1",
+  "status": "DERIVED_SCREENING_EXECUTED / PHYSICAL_VALIDATION_HELD",
+  "generated_date": "2026-10-05",
+  "source_main_sha": "344dba08ba165b12fe6189afda336e75cc50d918",
+  "source_refs": [
+    "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/simulations/mark3.py@main",
+    "desktop/LightSpeed_Runtime/lightspeed_runtime/rfs_emff_sweep.py@main",
+    "NIST/CODATA 2022: c = 299792458 m/s exact; h = 6.62607015e-34 J s exact"
+  ],
+  "source_value": {
+    "legacy_frequency_hz": 2400000000,
+    "evidence_state": "LEGACY_SIMULATION_CONSTANT_UNVALIDATED",
+    "interpretation": "historical simulator constant only; not accepted measured resonance"
+  },
+  "formulas": {
+    "period_s": "1/f",
+    "wavelength_vacuum_m": "c/f",
+    "quarter_wavelength_m": "c/(4f)",
+    "half_wavelength_m": "c/(2f)",
+    "angular_frequency_rad_s": "2*pi*f",
+    "photon_energy_j": "h*f"
+  },
+  "sensitivity_band": {
+    "rationale": "±10% around the legacy 2.4 GHz simulator constant; sensitivity only, not an operating tolerance",
+    "rows": [
+      {
+        "frequency_hz": 2160000000,
+        "period_s": 4.6296296296296294e-10,
+        "wavelength_vacuum_m": 0.13879280462962962,
+        "quarter_wavelength_m": 0.034698201157407405,
+        "half_wavelength_m": 0.06939640231481481,
+        "angular_frequency_rad_s": 13571680263.507906,
+        "photon_energy_j": 1.4312311524e-24
+      },
+      {
+        "frequency_hz": 2400000000,
+        "period_s": 4.166666666666667e-10,
+        "wavelength_vacuum_m": 0.12491352416666666,
+        "quarter_wavelength_m": 0.031228381041666666,
+        "half_wavelength_m": 0.06245676208333333,
+        "angular_frequency_rad_s": 15079644737.231007,
+        "photon_energy_j": 1.5902568359999999e-24
+      },
+      {
+        "frequency_hz": 2640000000,
+        "period_s": 3.787878787878788e-10,
+        "wavelength_vacuum_m": 0.11355774924242425,
+        "quarter_wavelength_m": 0.02838943731060606,
+        "half_wavelength_m": 0.05677887462121212,
+        "angular_frequency_rad_s": 16587609210.954107,
+        "photon_energy_j": 1.7492825196e-24
+      }
+    ]
+  },
+  "conclusions": [
+    "At the legacy 2.4 GHz simulator value, free-space wavelength is 0.12491352416666666 m and period is 4.166666666666667e-10 s.",
+    "These quantities follow directly from exact SI constants and the legacy frequency value; they do not validate that 2.4 GHz is a physical RFS resonance.",
+    "No extraction rate, purity, efficiency, equipment safety, optimal frequency, or hardware-readiness claim is promoted."
+  ],
+  "next_physical_evidence": [
+    "measured resonator/coil transfer response versus frequency with calibrated instrumentation",
+    "source-bound coil/resonator geometry and material properties",
+    "repeatable field/amplitude measurement and uncertainty budget",
+    "independent replication before any operational-frequency promotion"
+  ],
+  "authority_transfer": false,
+  "public_publish_authorized": false
+}
