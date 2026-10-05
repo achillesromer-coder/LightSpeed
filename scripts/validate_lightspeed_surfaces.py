@@ -102,6 +102,15 @@ def main() -> int:
                 f"expected={expected} actual={actual}"
             )
 
+    # Hashing listed files alone cannot detect modules omitted from a bundle.
+    runtime_root = DESKTOP / "LightSpeed_Runtime"
+    runtime_sources = list((runtime_root / "lightspeed_runtime").rglob("*.py"))
+    runtime_sources.extend(runtime_root.glob("requirements-*.txt"))
+    for source in runtime_sources:
+        relative_text = source.relative_to(DESKTOP).as_posix()
+        if not is_excluded(relative_text) and relative_text not in seen:
+            errors.append(f"Runtime source missing from manifest: {relative_text}")
+
     if len(records) < 10:
         warnings.append("Desktop source manifest contains fewer than 10 records")
 
