@@ -1,0 +1,46 @@
+{
+  "schema": "CGX-MARK3-INTERFACE-SEMANTIC-CORRECTION/0.1",
+  "execution_id": "MARK3-INTERFACE-SEMANTIC-CORRECTION-2026-10-05",
+  "status": "EXECUTED / SOURCE_SEMANTIC_CORRECTION / EXACT_CONNECTOR_GEOMETRY_HELD",
+  "semantic_object_id": "SPACE-01",
+  "parent_object_id": "T1-SPACE",
+  "operations_family_record_id": "COM-1668",
+  "operations_semantic_record_id": "COM-0444",
+  "source_geometry_sha256": "4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b",
+  "evidence": {
+    "current_owner_topology": "OD-050",
+    "controlled_historical_source": "SRC-097",
+    "controlled_handoff_document_id": "1yTmsjY_OkK9U-nNxvyV-3lfxTP0uI_Y5qB8s8xgIvNc",
+    "controlled_source_findings": [
+      "current appendage count is three",
+      "distal interlocking couplings are for two or more Mark III units to cooperatively surround/brace/work around a larger asteroid",
+      "exact connector geometry, materials, tolerances and qualification are not established",
+      "generated nominal connector dimensions including 72 mm-class concept values are illustrative/pre-production and not canonical authority"
+    ]
+  },
+  "executed_resolution": {
+    "appendage_count": 3,
+    "distal_interlock_peer_class": "Mark III",
+    "distal_interlock_function": "MARK_III_TO_MARK_III_MULTI_UNIT_COOPERATIVE_COUPLING",
+    "exact_connector_geometry_state": "OPEN_PRE_PRODUCTION",
+    "mark_v_mechanical_mating_requirement": "NO_CONTROLLED_REQUIREMENT_RECOVERED / REMOVED_AS_UNSUPPORTED_GATE"
+  },
+  "still_held": [
+    "exact interlock connector geometry",
+    "connector tolerances",
+    "connector load envelope",
+    "latch/release implementation",
+    "wear/misalignment/contamination/cyclic qualification",
+    "physical performance",
+    "manufacturing/certification"
+  ],
+  "nonclaims": [
+    "This correction does not prove a qualified connector design.",
+    "This correction does not prohibit a future Mark III-to-Mark V interface if a controlled requirement is deliberately added.",
+    "No generated nominal connector dimension is promoted by this receipt."
+  ],
+  "authority_transfer": false,
+  "physical_authority": false,
+  "manufacturing_authority": false,
+  "public_release_authorized": false
+}
