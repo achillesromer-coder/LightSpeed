@@ -23,8 +23,8 @@ class RaphaelConstants:
 
     # Electromagnetic
     c = 299792458  # Speed of light in vacuum (m/s)
-    epsilon_0 = 8.8541878128e-12  # Vacuum permittivity (F/m)
-    mu_0 = 1.25663706212e-6  # Vacuum permeability (H/m)
+    epsilon_0 = 8.8541878188e-12  # 2022 CODATA vacuum permittivity (F/m)
+    mu_0 = 1.25663706127e-6  # 2022 CODATA vacuum permeability (H/m)
 
     # Quantum
     h = 6.62607015e-34  # Planck constant (J⋅s)
