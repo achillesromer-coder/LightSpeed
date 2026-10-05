@@ -22,6 +22,7 @@ PRIORITY_BINDINGS = json.loads((TEMPLATES / "priority_3d_source_bindings_executi
 M1_PRECEDENCE = json.loads((TEMPLATES / "m1_configuration_precedence_2026-10-05.json").read_text(encoding="utf-8"))
 LUKE4_RELATION = json.loads((TEMPLATES / "luke4_configuration_relation_2026-10-05.json").read_text(encoding="utf-8"))
 SECONDARY_BINDINGS = json.loads((TEMPLATES / "secondary_3d_source_execution_2026-10-05.json").read_text(encoding="utf-8"))
+M1_MARK3_EXECUTION = json.loads((TEMPLATES / "m1_component_mark3_connector_execution_2026-10-05.json").read_text(encoding="utf-8"))
 
 
 def _plan(name: str, sha256: str, target: str):
@@ -380,3 +381,55 @@ def test_secondary_lineage_bindings_do_not_invent_missing_child_identities():
     assert luke1["object_count"] == 72
     assert luke1["current_configuration"] is False
     assert luke1["configuration_relation"] == "UNRESOLVED"
+
+
+def test_m1_base_pillar_component_sources_are_bound_without_master_promotion():
+    cases = [
+        ("Base pillar - Twist and Y branch.FCStd", "02b707a9e5b7c8ca32bb93d9943b2a3911c95a5ea837959ebecd17add55ff3be", "/romer/m1/components/base-pillar-twist-y", "FF-M1-BASE-PILLAR-TWIST-Y-FCSTD-001"),
+        ("Base pillar - Twist and Y branch (x2 scale).FCStd", "0dcb3618c6b1bc5de6eb218f8150702354677e69fb026fe7c7289b006ac59706", "/romer/m1/components/base-pillar-twist-y-x2", "FF-M1-BASE-PILLAR-TWIST-Y-X2-FCSTD-001"),
+    ]
+    for name, sha, target, mapping_id in cases:
+        plan = _plan(name, sha, target)
+        mapping = plan["registered_mapping"]
+        assert plan["semantic_state"] == "mapping_ready"
+        assert mapping["mapping_id"] == mapping_id
+        assert mapping["semantic_object_id"] == "T1-M1"
+        assert mapping["operations_record_id"] == "COM-0368"
+        assert mapping["configuration_master"] is False
+        assert mapping["structural_authority"] is False
+        assert mapping["authority_transfer"] is False
+        assert plan["authority_transfer"] is False
+
+
+def test_m1_lineage_contains_component_references_with_overlap_proof():
+    records = {record["twin_id"]: record for record in LINEAGE["records"]}
+    m1 = records["m1_elevated_bypass"]
+    refs = {row["mapping_id"]: row for row in m1["native_component_source_bindings"]}
+    assert refs["FF-M1-BASE-PILLAR-TWIST-Y-FCSTD-001"]["overlap_proof"]["raw_name_candidate_containment"] == 0.982301
+    assert refs["FF-M1-BASE-PILLAR-TWIST-Y-X2-FCSTD-001"]["overlap_proof"]["raw_name_candidate_containment"] == 1.0
+    assert refs["FF-M1-BASE-PILLAR-TWIST-Y-X2-FCSTD-001"]["configuration_master"] is False
+    assert "BASE_PILLAR_COMPONENT_REFERENCES_BOUND" in m1["source_binding_state"]
+
+
+def test_mark3_connector_source_audit_closes_source_search_without_inventing_geometry():
+    records = {record["twin_id"]: record for record in LINEAGE["records"]}
+    mark3 = records["mark_iii"]
+    audit = mark3["connector_source_audit"]
+    assert audit["status"] == "EXECUTED / AUTHORITATIVE_FCSTD_CONNECTOR_SOLID_ABSENT / EXTERNAL_SOURCE_LINK_NOT_RECOVERED"
+    assert audit["arm_attachment_object"] == "Assembly018"
+    assert audit["direct_group_members"] == ["Joints018"]
+    assert audit["dimensioned_body_or_solid_present"] is False
+    assert audit["external_arm_modules_fcstd_link_present"] is False
+    assert audit["external_joint_fcstd_link_present"] is False
+    assert "cannot be reconstructed" in audit["conclusion"]
+
+
+def test_m1_mark3_execution_receipt_preserves_claim_ceiling():
+    assert M1_MARK3_EXECUTION["status"] == "EXECUTED / M1_COMPONENT_BINDINGS_ADDED / MARK3_CONNECTOR_SOURCE_AUDIT_CLOSED_NEGATIVE"
+    assert len(M1_MARK3_EXECUTION["m1"]["component_bindings"]) == 2
+    assert M1_MARK3_EXECUTION["mark_iii"]["dimensioned_body_or_solid_present"] is False
+    assert M1_MARK3_EXECUTION["authority_transfer"] is False
+    assert M1_MARK3_EXECUTION["physical_authority"] is False
+    assert M1_MARK3_EXECUTION["manufacturing_authority"] is False
+    assert M1_MARK3_EXECUTION["certification_authority"] is False
+    assert M1_MARK3_EXECUTION["public_release_authorized"] is False
