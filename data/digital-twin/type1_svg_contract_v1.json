@@ -90,7 +90,7 @@
       "priority": "P3",
       "fidelity": "F2",
       "representation": "INTERACTION_PROXY_WITH_SOURCE_SUBOBJECTS",
-      "next_gate": "exact current Mark III↔Mark III interlock connector geometry/tolerance/load/release ICD; physical qualification",
+      "next_gate": "exact current Mark III-to-Mark III interlock connector geometry/tolerance/load/release ICD; physical qualification",
       "source_semantic_correction": {
         "appendage_count": 3,
         "distal_interlock_peer": "Mark III",
