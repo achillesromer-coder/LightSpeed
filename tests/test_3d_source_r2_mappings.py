@@ -18,7 +18,8 @@ FIRST_FILES = json.loads((TEMPLATES / "first_file_conversion_registry.json").rea
 LINEAGE = json.loads((ROOT / "data" / "digital-twin" / "twin_record_source_lineage_2026-09-14.json").read_text(encoding="utf-8"))
 PAYLOAD_DBR = json.loads((TEMPLATES / "payload_capsule_dbr_2026-10-05.json").read_text(encoding="utf-8"))
 REMAINING_DBR = json.loads((TEMPLATES / "remaining_3d_dbr_summary_2026-10-05.json").read_text(encoding="utf-8"))
-PRIORITY_BINDINGS = json.loads((TEMPLATES / "priority_3d_source_bindings_execution_2026-10-05.json").read_text(encoding="utf-8"))\nM1_PRECEDENCE = json.loads((TEMPLATES / "m1_configuration_precedence_2026-10-05.json").read_text(encoding="utf-8"))
+PRIORITY_BINDINGS = json.loads((TEMPLATES / "priority_3d_source_bindings_execution_2026-10-05.json").read_text(encoding="utf-8"))
+M1_PRECEDENCE = json.loads((TEMPLATES / "m1_configuration_precedence_2026-10-05.json").read_text(encoding="utf-8"))
 LUKE4_RELATION = json.loads((TEMPLATES / "luke4_configuration_relation_2026-10-05.json").read_text(encoding="utf-8"))
 
 
