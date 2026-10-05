@@ -36,3 +36,17 @@ not delete stale output. Review the manifest and Git diff before commit.
 Z-floor source may be added only as explicit files after secret and restricted
 classification. Never allowlist a complete `Data`, `archive`, `legacy`,
 `reservoirs`, or `vault` tree.
+
+## Desktop dependency environment
+
+From the repository root, use `tools/install_lightspeed_runtime.ps1 -Profile desktop`
+to prepare a Python 3.11 environment with the API, data and desktop launch
+dependencies. Supply `-VenvPath` and `-ReceiptPath` to keep a verification
+environment and its receipt separate from an installed runtime. Python must
+include Tcl/Tk; it is not installed through pip.
+
+The desktop profile imports the modules in `LAUNCH_CORE_MODULES`, checks
+Pillow's Tk bridge and creates a headless Tcl interpreter. It does not open the
+desktop, start services or run queued work. A successful receipt proves these
+dependency checks only. The environment links to this repository; it is not a
+standalone distributable, installer acceptance or proof of working UI flows.

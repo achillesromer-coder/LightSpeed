@@ -1,0 +1,44 @@
+name: Desktop Dependency Profile
+
+on:
+  pull_request:
+    paths:
+      - 'desktop/LightSpeed_Runtime/requirements-*.txt'
+      - 'desktop/LightSpeed_Runtime/lightspeed_runtime/startup_options.py'
+      - 'tools/install_lightspeed_runtime.ps1'
+      - '.github/workflows/desktop-dependencies.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'desktop/LightSpeed_Runtime/requirements-*.txt'
+      - 'desktop/LightSpeed_Runtime/lightspeed_runtime/startup_options.py'
+      - 'tools/install_lightspeed_runtime.ps1'
+      - '.github/workflows/desktop-dependencies.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  desktop-dependencies:
+    name: Verify isolated Windows desktop dependencies
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install and verify desktop dependency profile
+        shell: pwsh
+        run: |
+          ./tools/install_lightspeed_runtime.ps1 -Profile desktop `
+            -PythonCommand (Get-Command python).Source `
+            -VenvPath "$env:RUNNER_TEMP/desktop-profile/env" `
+            -ReceiptPath "$env:RUNNER_TEMP/desktop-profile/install-receipt.json"
+      - name: Retain dependency verification receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-dependency-receipt
+          path: ${{ runner.temp }}/desktop-profile/install-receipt.json
+          if-no-files-found: error

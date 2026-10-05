@@ -1,0 +1,6 @@
+-r requirements-api.txt
+-r requirements-data.txt
+# Desktop launch contract. Tkinter/Tcl/Tk must be provided by Python 3.11.
+numpy==1.26.4
+psutil==7.2.2
+Pillow==12.2.0

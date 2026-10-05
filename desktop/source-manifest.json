@@ -3649,6 +3649,11 @@
       "bytes": 88,
       "path": "LightSpeed_Runtime/requirements-validation.txt",
       "sha256": "3689197885927ea02280862780b1c381b27835050e12b4e708933e865b7c7b9b"
+    },
+    {
+      "bytes": 167,
+      "path": "LightSpeed_Runtime/requirements-desktop.txt",
+      "sha256": "932db67bc9bdc44f407fac5796491808f60b059cc5ed16ff26021b987cd3d6f9"
     }
   ],
   "schema_version": 1
