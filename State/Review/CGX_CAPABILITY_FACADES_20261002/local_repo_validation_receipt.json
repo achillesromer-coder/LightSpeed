@@ -1,0 +1,46 @@
+{
+  "schema": "CGX-CAPABILITY-FACADE-LOCAL-VALIDATION/0.1",
+  "tests": [
+    {
+      "name": "test_all_selectors_inherit_new_global_shortcalls_and_node_exchange_calls",
+      "status": "PASS"
+    },
+    {
+      "name": "test_builder_expands_transitive_dependencies",
+      "status": "PASS"
+    },
+    {
+      "name": "test_cross_analysis_carries_current_object_context_when_subject_resolves",
+      "status": "PASS"
+    },
+    {
+      "name": "test_cross_analysis_reuses_current_covering_receipt",
+      "status": "PASS"
+    },
+    {
+      "name": "test_domainless_raphael_consequential_plan_fails_closed_to_domain_required",
+      "status": "PASS"
+    },
+    {
+      "name": "test_extension_planner_reuses_existing_sweep",
+      "status": "PASS"
+    },
+    {
+      "name": "test_freecad_read_only_adapter_is_reused_not_reimplemented",
+      "status": "PASS"
+    },
+    {
+      "name": "test_object_context_resolves_cross_surface_watchtower_and_eco_objects",
+      "status": "PASS"
+    },
+    {
+      "name": "test_preflight_is_read_only_and_non_authoritative",
+      "status": "PASS"
+    },
+    {
+      "name": "test_selector_profile_contains_transitive_route_dependencies",
+      "status": "PASS"
+    }
+  ],
+  "passed": true
+}
