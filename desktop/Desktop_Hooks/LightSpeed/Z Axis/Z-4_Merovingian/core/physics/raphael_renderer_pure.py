@@ -70,11 +70,11 @@ class RaphaelConstants:
     # Fine structure constant (dimensionless)
     alpha = 7.2973525693e-3
 
-    # Vacuum permittivity (F/m)
-    epsilon_0 = 8.8541878128e-12
+    # Vacuum permittivity (F/m), 2022 CODATA
+    epsilon_0 = 8.8541878188e-12
 
-    # Vacuum permeability (H/m)
-    mu_0 = 1.25663706212e-6
+    # Vacuum permeability (H/m), 2022 CODATA
+    mu_0 = 1.25663706127e-6
 
 
 class RaphaelEquationComponents:
