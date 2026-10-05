@@ -278,7 +278,7 @@
       "sha256": "fe8eaf488cc14bbf249e315f00c149504e7cb07e63b7b8f2e022ab3a89fef071",
       "family_state": "canonical_current",
       "verified_raw_drive_id": "1BGwPdfafqVKwh3AS5fwvkhIImBmfPdMU",
-      "geometry_authority": "NONE",
+      "geometry_authority": "LUKE4_NATIVE_CONFIGURATION_SET",
       "operations_binding": {
         "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
         "sheet": "Component Register",
@@ -292,10 +292,49 @@
           "T1-SPACE",
           "SPACE-03"
         ],
-        "binding_state": "current interplanetary comparator + Luke orbital/return child"
+        "binding_state": "current interplanetary comparator + SPACE-03 Luke child; exact full/single source relation resolved as sibling configurations with shared core; physical performance remains separately governed",
+        "semantic_child_record_id": "COM-0446",
+        "semantic_child_object_id": "SPACE-03"
       },
       "semantic_domain": "romer",
-      "domain_semantic_object_id": "cgx:domain:romer"
+      "domain_semantic_object_id": "cgx:domain:romer",
+      "semantic_object_id": "SPACE-03",
+      "parent_object_id": "T1-SPACE",
+      "native_source_bindings": [
+        {
+          "mapping_id": "FF-LUKE4-FCSTD-001",
+          "source_name": "Luke IV.FCStd",
+          "source_sha256": "88ca5a84fb65d29ecaf4ccd8ec975a6ccad8bb426a078851109b2e16db5af1d6",
+          "role": "FULL_LUKE_IV_CONFIGURATION"
+        },
+        {
+          "mapping_id": "FF-LUKE4-SINGLE-NODE-FCSTD-001",
+          "source_name": "Luke IV Single Node.FCStd",
+          "source_sha256": "ae8f6a022bdbd436fd24ae05ee7f6c6f70496515f2ee81e4ec0dd1cb5b0c3f40",
+          "role": "SPECIALIZED_SINGLE_NODE_CONFIGURATION"
+        }
+      ],
+      "source_binding_state": "R2_NATIVE_CONFIGURATION_SET_BOUND / SIBLING_RELATION_RESOLVED / PERFORMANCE_HELD",
+      "configuration_relation": {
+        "status": "RESOLVED_AS_SIBLING_CONFIGURATIONS_WITH_SHARED_CORE",
+        "full": {
+          "mapping_id": "FF-LUKE4-FCSTD-001",
+          "object_count": 46
+        },
+        "single_node": {
+          "mapping_id": "FF-LUKE4-SINGLE-NODE-FCSTD-001",
+          "object_count": 31
+        },
+        "proof": {
+          "intersection": 28,
+          "full_only": 18,
+          "single_only": 3,
+          "same_label_common": 26,
+          "single_subset_full": false,
+          "full_subset_single": false
+        },
+        "selection_rule": "Use full Luke IV source for full-configuration geometry and Single Node source only for the specialized single-node configuration; neither source globally supersedes the other."
+      }
     },
     {
       "twin_id": "maglev_luke_iv",
