@@ -8,6 +8,9 @@ on:
       - "desktop/LightSpeed_Runtime/requirements-*.txt"
       - "desktop/LightSpeed_Runtime/tests/test_runtime_productization.py"
       - "tools/install_lightspeed_runtime.ps1"
+      - "tools/manage_lightspeed_runtime.ps1"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/runtime_productization.py"
+      - "desktop/LightSpeed_Runtime/tests/test_runtime_productization_manager.py"
       - ".github/workflows/runtime-productization-validation.yml"
   workflow_dispatch:
 
@@ -46,6 +49,7 @@ jobs:
         run: |
           & $env:LS_RUNTIME_PY -m pytest -q `
             desktop\LightSpeed_Runtime\tests\test_runtime_productization.py `
+            desktop\LightSpeed_Runtime\tests\test_runtime_productization_manager.py `
             desktop\LightSpeed_Runtime\tests\test_cgx_capability_registry.py `
             desktop\LightSpeed_Runtime\tests\test_cgx_capability_facades.py `
             desktop\LightSpeed_Runtime\tests\test_cgx_conversion_planner.py `
