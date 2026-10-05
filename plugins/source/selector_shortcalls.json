@@ -15,7 +15,8 @@
     "tool-plan": "extensions.plan",
     "open-receipt": "receipts.open",
     "define": "definitions.search",
-    "object": "cgx.object_context"
+    "object": "cgx.object_context",
+    "runtime": "runtime.productization"
   },
   "selectors": {
     "achilles": {
@@ -249,7 +250,12 @@
         "bridge": "ops.route_probe",
         "finalize": "ops.finalize",
         "open": "files.open",
-        "result": "receipts.open"
+        "result": "receipts.open",
+        "runtime": "runtime.productization",
+        "install": "runtime.productization",
+        "update": "runtime.productization",
+        "config": "runtime.productization",
+        "rollback": "runtime.productization"
       }
     }
   }

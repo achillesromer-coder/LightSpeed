@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "cognigrex",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Select Cognigrex as a thin Cognigrex routing surface. Resolve the current CGX context, capability route, minimum sufficient work, and existing LightSpeed/connector execution path without creating a second runtime or authority.",
   "author": {
     "name": "Römer Industries"
