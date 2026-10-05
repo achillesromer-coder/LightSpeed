@@ -1,6 +1,8 @@
 """Exercise path resolution without importing the desktop UI or starting services."""
 import ast
 import os
+import subprocess
+import sys
 from pathlib import Path
 from typing import Optional
 
@@ -57,3 +59,26 @@ def test_legacy_embedded_runtime_and_missing_layout(resolve):
     assert find() is None
     expected = package(app / "canonical_runtime")
     assert find() == expected
+
+
+def test_actual_entrypoint_import_resolves_relocated_core(tmp_path):
+    app = tmp_path / "Moved Suite" / "App"
+    app.mkdir(parents=True)
+    source = Path(__file__).resolve().parents[1] / "desktop/Desktop_Hooks/LightSpeed/__main__.py"
+    entrypoint = app / "__main__.py"
+    entrypoint.write_bytes(source.read_bytes())
+    core = package(app.parent / "Core")
+    environment = os.environ.copy()
+    environment.pop("LIGHTSPEED_RUNTIME_ROOT", None)
+    # Import the real entrypoint in a fresh isolated interpreter, without main().
+    script = """import importlib.util, runpy, sys
+from pathlib import Path
+loaded = runpy.run_path(sys.argv[1], run_name='layout_probe')
+expected = Path(sys.argv[2])
+assert loaded['CANONICAL_RUNTIME_ROOT'] == expected
+assert Path(importlib.util.find_spec('lightspeed_runtime').origin).parent == expected / 'lightspeed_runtime'
+assert 'lightspeed_n_entrypoint' not in sys.modules
+"""
+    result = subprocess.run([sys.executable, "-I", "-S", "-B", "-c", script, str(entrypoint), str(core)],
+                            capture_output=True, text=True, env=environment, timeout=20)
+    assert result.returncode == 0, result.stderr
