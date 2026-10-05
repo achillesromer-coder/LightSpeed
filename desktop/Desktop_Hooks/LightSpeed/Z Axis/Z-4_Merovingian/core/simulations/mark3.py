@@ -24,6 +24,14 @@ from ..services import get_db, EventBus
 from ..physics_modules import raphael_equations
 
 
+LEGACY_EVIDENCE_CLASS = 'legacy_synthetic_screening'
+LEGACY_CLAIM_BOUNDARY = (
+    'Heuristic legacy simulation only; outputs are not measured engineering performance, '
+    'structural qualification, thermal qualification, safety factors, extraction validation, '
+    'manufacturing readiness, certification, or mission readiness.'
+)
+
+
 class Mark3Simulator:
     """
     Simulates Mark III asteroid extraction unit.
@@ -128,6 +136,9 @@ class Mark3Simulator:
             'simulation_id': simulation_id,
             'type': 'Mark III',
             'status': 'completed',
+            'evidence_class': LEGACY_EVIDENCE_CLASS,
+            'physical_validation': False,
+            'claim_boundary': LEGACY_CLAIM_BOUNDARY,
             'parameters': {
                 'asteroid_mass_kg': asteroid_mass_kg,
                 'extraction_rate_kg_hr': extraction_rate_kg_hr,
@@ -137,6 +148,7 @@ class Mark3Simulator:
             },
             'results': {
                 'efficiency': round(efficiency, 4),
+                'efficiency_evidence_state': 'LEGACY_HEURISTIC_UNVALIDATED',
                 'total_extracted_kg': round(actual_extracted_kg, 2),
                 'extraction_fraction': round(extraction_fraction, 6),
                 'material_yield': {k: round(v, 2) for k, v in material_yield.items()},
@@ -150,7 +162,9 @@ class Mark3Simulator:
         self.event_bus.publish('simulation.mark3.completed', {
             'simulation_id': simulation_id,
             'efficiency': efficiency,
-            'success': efficiency > 0.7  # Success threshold
+            'success': efficiency > 0.7,  # Backward-compatible legacy simulation threshold only
+            'success_evidence_state': 'LEGACY_SIMULATION_THRESHOLD_ONLY',
+            'physical_validation': False
         })
 
         return results
@@ -177,22 +191,28 @@ class Mark3Simulator:
                 'claim_boundary': 'Derived simulation only; not measured RFS resonance, extraction performance, hardware readiness, or physical validation.'
             },
             'power_system': {
-                'status': 'nominal',
+                'status': 'simulated_unvalidated',
                 'output_kw': sim_data.get('power_output_kw', 0),
                 'reserves_percent': 85,
-                'battery_charge_percent': 92
+                'battery_charge_percent': 92,
+                'evidence_state': 'LEGACY_SYNTHETIC_STATE_UNVALIDATED',
+                'claim_boundary': LEGACY_CLAIM_BOUNDARY
             },
             'thermal_system': {
-                'status': 'nominal',
+                'status': 'simulated_unvalidated',
                 'core_temp_k': 320,
                 'radiator_temp_k': 280,
-                'cooling_efficiency': 0.92
+                'cooling_efficiency': 0.92,
+                'evidence_state': 'LEGACY_SYNTHETIC_STATE_UNVALIDATED',
+                'claim_boundary': LEGACY_CLAIM_BOUNDARY
             },
             'structural_integrity': {
-                'status': 'nominal',
+                'status': 'simulated_unvalidated',
                 'stress_level_percent': 35,
                 'fatigue_factor': 0.15,
-                'safety_margin': 2.5
+                'safety_margin': 2.5,
+                'evidence_state': 'LEGACY_SYNTHETIC_STATE_UNVALIDATED',
+                'claim_boundary': LEGACY_CLAIM_BOUNDARY
             }
         }
 
@@ -213,33 +233,41 @@ class Mark3Simulator:
         base_stress = extraction_rate / 100  # Simplified stress calculation
 
         return {
+            'evidence_class': LEGACY_EVIDENCE_CLASS,
+            'physical_validation': False,
+            'claim_boundary': LEGACY_CLAIM_BOUNDARY,
             'stress_map': {
                 'extraction_head': {
                     'stress_mpa': round(base_stress * 1.5, 2),
                     'safety_factor': 2.8,
-                    'status': 'nominal'
+                    'safety_factor_evidence_state': 'LEGACY_HEURISTIC_UNVALIDATED',
+                    'status': 'simulated_unvalidated'
                 },
                 'support_structure': {
                     'stress_mpa': round(base_stress * 0.8, 2),
                     'safety_factor': 3.2,
-                    'status': 'nominal'
+                    'safety_factor_evidence_state': 'LEGACY_HEURISTIC_UNVALIDATED',
+                    'status': 'simulated_unvalidated'
                 },
                 'power_conduit': {
                     'stress_mpa': round(base_stress * 0.3, 2),
                     'safety_factor': 4.5,
-                    'status': 'nominal'
+                    'safety_factor_evidence_state': 'LEGACY_HEURISTIC_UNVALIDATED',
+                    'status': 'simulated_unvalidated'
                 },
                 'attachment_points': {
                     'stress_mpa': round(base_stress * 1.2, 2),
                     'safety_factor': 2.5,
-                    'status': 'nominal'
+                    'safety_factor_evidence_state': 'LEGACY_HEURISTIC_UNVALIDATED',
+                    'status': 'simulated_unvalidated'
                 }
             },
             'thermal_map': {
-                'extraction_zone': 320,  # Kelvin
+                'extraction_zone': 320,  # Kelvin; legacy synthetic values
                 'power_systems': 310,
                 'radiators': 280,
-                'structural': 290
+                'structural': 290,
+                'evidence_state': 'LEGACY_SYNTHETIC_STATE_UNVALIDATED'
             }
         }
 
@@ -297,7 +325,10 @@ class Mark3Simulator:
             'extraction_stress': round(extraction_stress, 3),
             'fatigue_factor': round(duration_stress, 3),
             'safety_margin': round(3.0 - total_stress, 2),
-            'status': 'nominal' if total_stress < 2.5 else 'elevated'
+            'safety_margin_evidence_state': 'LEGACY_HEURISTIC_UNVALIDATED',
+            'status': 'simulated_screening_low' if total_stress < 2.5 else 'simulated_screening_elevated',
+            'physical_validation': False,
+            'claim_boundary': LEGACY_CLAIM_BOUNDARY
         }
 
     def _analyze_thermal_load(
@@ -318,7 +349,10 @@ class Mark3Simulator:
             'core_temp_k': round(300 + temp_rise_k, 1),
             'radiator_temp_k': round(280 + temp_rise_k * 0.6, 1),
             'cooling_required_kw': round(waste_heat_kw * 1.1, 2),
-            'thermal_status': 'nominal' if temp_rise_k < 50 else 'elevated'
+            'thermal_status': 'simulated_screening_low' if temp_rise_k < 50 else 'simulated_screening_elevated',
+            'temperature_model_evidence_state': 'LEGACY_HEURISTIC_UNVALIDATED',
+            'physical_validation': False,
+            'claim_boundary': LEGACY_CLAIM_BOUNDARY
         }
 
     def _store_simulation(self, data: Dict) -> int:
