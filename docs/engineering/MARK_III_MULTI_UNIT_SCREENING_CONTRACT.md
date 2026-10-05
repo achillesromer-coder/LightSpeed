@@ -4,9 +4,12 @@
 
 This runner extends the current Mark III owner topology without inventing
 missing engineering values. OD-050 controls the three-appendage count and
-abstract interlock roles. Exact appendage/interlock geometry, Mark V mating
-definition, mass/inertia, mechanism dynamics, propulsion architecture, and
-physical test evidence remain external-evidence-gated.
+SRC-097 establishes the Mark III-to-Mark III cooperative interlock function.
+Exact connector geometry/tolerance/load/latch/release, mass/inertia, mechanism
+dynamics, propulsion architecture, and physical test evidence remain
+external-evidence-gated. No controlled source currently establishes
+Mark III-to-Mark V mechanical mating as a required interface; do not treat it
+as a gate unless an owner/source requirement is added.
 
 Run:
 
@@ -47,7 +50,7 @@ selection.
 Before a project-specific result can be reviewed beyond screening, bind:
 
 1. exact three-appendage/interlock CAD and revision/hash;
-2. Mark V mating ICD and latch/release definition;
+2. source-bound Mark III-to-Mark III interlock connector geometry/tolerance/load/latch/release ICD;
 3. mass, centre-of-mass, inertia, propellant, tank, thruster and control model;
 4. appendage joint axes, limits, rates, torque curves, friction/damping and
    swept-volume envelopes;
