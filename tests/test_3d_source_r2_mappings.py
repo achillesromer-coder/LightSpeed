@@ -20,7 +20,7 @@ PAYLOAD_DBR = json.loads((TEMPLATES / "payload_capsule_dbr_2026-10-05.json").rea
 REMAINING_DBR = json.loads((TEMPLATES / "remaining_3d_dbr_summary_2026-10-05.json").read_text(encoding="utf-8"))
 PRIORITY_BINDINGS = json.loads((TEMPLATES / "priority_3d_source_bindings_execution_2026-10-05.json").read_text(encoding="utf-8"))
 M1_PRECEDENCE = json.loads((TEMPLATES / "m1_configuration_precedence_2026-10-05.json").read_text(encoding="utf-8"))
-LUKE4_RELATION = json.loads((TEMPLATES / "luke4_configuration_relation_2026-10-05.json").read_text(encoding="utf-8"))
+LUKE4_RELATION = json.loads((TEMPLATES / "luke4_configuration_relation_2026-10-05.json").read_text(encoding="utf-8"))\nSECONDARY_BINDINGS = json.loads((TEMPLATES / "secondary_3d_source_execution_2026-10-05.json").read_text(encoding="utf-8"))
 
 
 def _plan(name: str, sha256: str, target: str):
@@ -322,3 +322,60 @@ def test_mark_iii_correction_receipt_removes_unsupported_mark_v_gate():
     assert receipt["physical_authority"] is False
     assert receipt["manufacturing_authority"] is False
     assert receipt["public_release_authorized"] is False
+
+
+def test_intersol_native_fcstd_is_bound_as_reference_configuration_without_master_promotion():
+    plan = _plan(
+        "InterSol.FCStd",
+        "0a0c3d60792eea7d5fb7d5ef0d60436afad17b72ae448207f7bab8ccce1b66f5",
+        "/romer/intersol",
+    )
+    mapping = plan["registered_mapping"]
+    assert plan["semantic_state"] == "mapping_ready"
+    assert mapping["mapping_id"] == "FF-INTERSOL-FCSTD-001"
+    assert mapping["semantic_object_id"] == "INF-001"
+    assert mapping["source_structure"]["object_count"] == 418
+    assert mapping["configuration_scope"] == "REFERENCE_CONFIGURATION / NOT_GLOBAL_MASTER"
+    assert plan["authority_transfer"] is False
+
+
+def test_secondary_source_execution_preserves_family_and_zero_object_boundaries():
+    assert SECONDARY_BINDINGS["status"] == "EXECUTED / RECOVERABLE_BINDINGS_APPLIED / OWNERLESS_SOURCES_RETAINED_R1"
+    assert SECONDARY_BINDINGS["counts"] == {
+        "secondary_unbound_input": 14,
+        "r2_or_existing_derived_bound": 2,
+        "family_reference_bound": 3,
+        "zero_object_reference_only": 2,
+        "remaining_r1_owner_unresolved": 7,
+    }
+    executed = {row["source_name"]: row for row in SECONDARY_BINDINGS["executed"]}
+    assert executed["InterSol.FCStd"]["semantic_object_id"] == "INF-001"
+    assert executed["InterSol.FCStd"]["state"] == "R2_REFERENCE_CONFIGURATION_BOUND"
+    assert executed["InterSol.FCStd"]["current_geometry_master"] is False
+    assert executed["WatchTower.FCStd"]["semantic_object_id"] == "WT-001"
+    assert executed["Mark1P.FCStd"]["object_count"] == 0
+    assert "ZERO_OBJECT_CONTAINER" in executed["Mark1P.FCStd"]["state"]
+    assert executed["Luke I.FCStd"]["current_configuration"] is False
+    assert SECONDARY_BINDINGS["authority_transfer"] is False
+    assert SECONDARY_BINDINGS["physical_authority"] is False
+
+
+def test_secondary_lineage_bindings_do_not_invent_missing_child_identities():
+    records = {record["twin_id"]: record for record in LINEAGE["records"]}
+    intersol = records["intersol"]
+    assert intersol["semantic_object_id"] == "INF-001"
+    assert intersol["native_source_bindings"][0]["mapping_id"] == "FF-INTERSOL-FCSTD-001"
+    assert intersol["native_source_bindings"][0]["current_geometry_master"] is False
+
+    mark1p = records["mark_1p"]
+    refs = {row["source_name"]: row for row in mark1p["native_source_references"]}
+    assert refs["Mark1P (Bottom 2 Halves).FCStd"]["object_count"] == 122
+    assert refs["Mark1P (Top 2 Halves.FCStd"]["object_count"] == 176
+    assert refs["Mark1P.FCStd"]["object_count"] == 0
+    assert "EXACT_MARK1P_CHILD_IDENTITY_HELD" in mark1p["source_binding_state"]
+
+    luke = records["luke_family"]
+    luke1 = [row for row in luke["historical_source_references"] if row["source_name"] == "Luke I.FCStd"][0]
+    assert luke1["object_count"] == 72
+    assert luke1["current_configuration"] is False
+    assert luke1["configuration_relation"] == "UNRESOLVED"
