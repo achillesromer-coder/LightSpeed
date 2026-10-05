@@ -1,0 +1,46 @@
+{
+  "schema": "CGX-M1-COMPONENT-MARK3-CONNECTOR-EXECUTION/0.1",
+  "executed_at": "2026-10-05",
+  "source_head": "3b9a8654ac91eb49f0fe7aafd23a05df748eac99",
+  "status": "EXECUTED / M1_COMPONENT_BINDINGS_ADDED / MARK3_CONNECTOR_SOURCE_AUDIT_CLOSED_NEGATIVE",
+  "m1": {
+    "semantic_object_id": "T1-M1",
+    "operations_record_id": "COM-0368",
+    "parent_configuration_mapping_id": "FF-M1-PILOT-BUILD-FCSTD-001",
+    "component_bindings": [
+      {
+        "mapping_id": "FF-M1-BASE-PILLAR-TWIST-Y-FCSTD-001",
+        "source_sha256": "02b707a9e5b7c8ca32bb93d9943b2a3911c95a5ea837959ebecd17add55ff3be",
+        "raw_name_candidate_containment": 0.982301,
+        "raw_label_candidate_containment": 0.929825,
+        "configuration_master": false
+      },
+      {
+        "mapping_id": "FF-M1-BASE-PILLAR-TWIST-Y-X2-FCSTD-001",
+        "source_sha256": "0dcb3618c6b1bc5de6eb218f8150702354677e69fb026fe7c7289b006ac59706",
+        "raw_name_candidate_containment": 1,
+        "raw_label_candidate_containment": 0.946429,
+        "configuration_master": false
+      }
+    ],
+    "structural_authority": false
+  },
+  "mark_iii": {
+    "semantic_object_id": "SPACE-01",
+    "source_sha256": "4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b",
+    "arm_attachment_object": "Assembly018",
+    "direct_group_members": [
+      "Joints018"
+    ],
+    "dimensioned_body_or_solid_present": false,
+    "explicit_external_arm_modules_link": false,
+    "explicit_external_joint_link": false,
+    "result": "EXACT_CONNECTOR_GEOMETRY_NOT_RECOVERABLE_FROM_AUTHORITATIVE_MARK3_FCSTD",
+    "held_gate": "Attributable connector/arm/joint CAD source or explicit owner source binding"
+  },
+  "authority_transfer": false,
+  "physical_authority": false,
+  "manufacturing_authority": false,
+  "certification_authority": false,
+  "public_release_authorized": false
+}

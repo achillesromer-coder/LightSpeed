@@ -294,6 +294,22 @@
         "interlock_purpose": "multi-unit cooperative surround / brace / extraction",
         "mark_v_mechanical_mating_requirement": "NO_CONTROLLED_REQUIREMENT_RECOVERED",
         "exact_connector_geometry": "OPEN_PRE_PRODUCTION"
+      },
+      "connector_source_audit": {
+        "status": "EXECUTED / AUTHORITATIVE_FCSTD_CONNECTOR_SOLID_ABSENT / EXTERNAL_SOURCE_LINK_NOT_RECOVERED",
+        "source_geometry_sha256": "4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b",
+        "arm_attachment_object": "Assembly018",
+        "arm_attachment_label": "Arm Attachment",
+        "arm_attachment_type": "Assembly::AssemblyObject",
+        "direct_group_members": [
+          "Joints018"
+        ],
+        "dimensioned_body_or_solid_present": false,
+        "external_arm_modules_fcstd_link_present": false,
+        "external_joint_fcstd_link_present": false,
+        "conclusion": "Exact Mark III interlock/connector geometry cannot be reconstructed from the authoritative Mark III FCStd alone.",
+        "next_source_requirement": "Attributable connector/arm/joint CAD source or explicit owner binding of an external source file to the Mark III interlock interface.",
+        "authority_transfer": false
       }
     },
     {
@@ -640,7 +656,42 @@
           }
         },
         "selection_rule": "Use Base-km for common/shared geometry, Pilot-Build for broad expanded-pilot scope, and Central-A1 only for central-column specialization. Do not substitute one branch for another outside its proven scope."
-      }
+      },
+      "native_component_source_bindings": [
+        {
+          "mapping_id": "FF-M1-BASE-PILLAR-TWIST-Y-FCSTD-001",
+          "source_name": "Base pillar - Twist and Y branch.FCStd",
+          "source_sha256": "02b707a9e5b7c8ca32bb93d9943b2a3911c95a5ea837959ebecd17add55ff3be",
+          "role": "BASE_PILLAR_TWIST_Y_COMPONENT_REFERENCE",
+          "parent_configuration_mapping_id": "FF-M1-PILOT-BUILD-FCSTD-001",
+          "source_object_count": 226,
+          "configuration_master": false,
+          "structural_authority": false,
+          "authority_transfer": false,
+          "overlap_proof": {
+            "raw_name_candidate_containment": 0.982301,
+            "raw_label_candidate_containment": 0.929825,
+            "normalized_name_candidate_containment": 0.857143
+          }
+        },
+        {
+          "mapping_id": "FF-M1-BASE-PILLAR-TWIST-Y-X2-FCSTD-001",
+          "source_name": "Base pillar - Twist and Y branch (x2 scale).FCStd",
+          "source_sha256": "0dcb3618c6b1bc5de6eb218f8150702354677e69fb026fe7c7289b006ac59706",
+          "role": "BASE_PILLAR_TWIST_Y_X2_COMPONENT_REFERENCE",
+          "parent_configuration_mapping_id": "FF-M1-PILOT-BUILD-FCSTD-001",
+          "source_object_count": 222,
+          "configuration_master": false,
+          "structural_authority": false,
+          "authority_transfer": false,
+          "overlap_proof": {
+            "raw_name_candidate_containment": 1,
+            "raw_label_candidate_containment": 0.946429,
+            "normalized_name_candidate_containment": 1
+          }
+        }
+      ],
+      "component_source_binding_state": "BASE_PILLAR_COMPONENT_REFERENCES_BOUND / NOT_CONFIGURATION_MASTERS / STRUCTURAL_AUTHORITY_HELD"
     },
     {
       "twin_id": "romer_spaceport",

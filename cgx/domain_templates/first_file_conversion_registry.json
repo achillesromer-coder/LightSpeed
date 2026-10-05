@@ -691,6 +691,70 @@
         "public release"
       ],
       "authority_transfer": false
+    },
+    {
+      "mapping_id": "FF-M1-BASE-PILLAR-TWIST-Y-FCSTD-001",
+      "domain": "romer",
+      "semantic_object_id": "T1-M1",
+      "source_name": "Base pillar - Twist and Y branch.FCStd",
+      "source_sha256": "02b707a9e5b7c8ca32bb93d9943b2a3911c95a5ea837959ebecd17add55ff3be",
+      "media_type": "application/x-freecad",
+      "semantic_target": "/romer/m1/components/base-pillar-twist-y",
+      "owner": "Römer / SEQLD M1 / T1-M1",
+      "operations_record_id": "COM-0368",
+      "source_role": "BASE_PILLAR_TWIST_Y_COMPONENT_REFERENCE",
+      "classes": [
+        "R0_EXACT",
+        "R1_SEMANTIC_REVERSIBLE",
+        "R2_RECONSTRUCTED"
+      ],
+      "r2_families": [
+        "component",
+        "geometry-source",
+        "component-reference"
+      ],
+      "parent_configuration_mapping_id": "FF-M1-PILOT-BUILD-FCSTD-001",
+      "overlap_proof": {
+        "raw_name_candidate_containment": 0.982301,
+        "raw_label_candidate_containment": 0.929825,
+        "normalized_name_candidate_containment": 0.857143
+      },
+      "evidence_ceiling": "component-source identity and strong structural inclusion in current Pilot-Build source; structural adequacy, scale validity, site use, manufacturing and certification remain gated",
+      "configuration_master": false,
+      "structural_authority": false,
+      "authority_transfer": false
+    },
+    {
+      "mapping_id": "FF-M1-BASE-PILLAR-TWIST-Y-X2-FCSTD-001",
+      "domain": "romer",
+      "semantic_object_id": "T1-M1",
+      "source_name": "Base pillar - Twist and Y branch (x2 scale).FCStd",
+      "source_sha256": "0dcb3618c6b1bc5de6eb218f8150702354677e69fb026fe7c7289b006ac59706",
+      "media_type": "application/x-freecad",
+      "semantic_target": "/romer/m1/components/base-pillar-twist-y-x2",
+      "owner": "Römer / SEQLD M1 / T1-M1",
+      "operations_record_id": "COM-0368",
+      "source_role": "BASE_PILLAR_TWIST_Y_X2_COMPONENT_REFERENCE",
+      "classes": [
+        "R0_EXACT",
+        "R1_SEMANTIC_REVERSIBLE",
+        "R2_RECONSTRUCTED"
+      ],
+      "r2_families": [
+        "component",
+        "geometry-source",
+        "component-reference"
+      ],
+      "parent_configuration_mapping_id": "FF-M1-PILOT-BUILD-FCSTD-001",
+      "overlap_proof": {
+        "raw_name_candidate_containment": 1,
+        "raw_label_candidate_containment": 0.946429,
+        "normalized_name_candidate_containment": 1
+      },
+      "evidence_ceiling": "component-source identity and complete raw-name containment in current Pilot-Build source; x2 naming does not by itself validate engineering scale, structural adequacy, site use, manufacturing or certification",
+      "configuration_master": false,
+      "structural_authority": false,
+      "authority_transfer": false
     }
   ],
   "successor_rule": "S92 migration must preserve source IDs/hashes and mapping IDs; compare semantic object/relation families and projection hashes against S91 proof, recording any schema-evolution delta rather than reinterpreting the whole workbook."
