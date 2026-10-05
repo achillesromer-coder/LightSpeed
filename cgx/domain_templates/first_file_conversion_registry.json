@@ -99,11 +99,9 @@
         "Energy Conversion/Dampening",
         "RFS Module"
       ],
-      "evidence_ceiling": "native CAD source identity + explicit FCStd object/property/dependency structure and observed labels only; three-appendage multiplicity, exact interlock, Mark-V mating, physical performance and certification remain gated",
+      "evidence_ceiling": "native CAD source identity + explicit FCStd object/property/dependency structure + current three-appendage topology + source-backed Mark III↔Mark III cooperative interlock function; exact interlock geometry/tolerances, physical performance and certification remain gated",
       "held_claims": [
-        "three appendage instances",
         "exact interlock geometry",
-        "Mark V mating CAD/ICD",
         "physical performance",
         "manufacturing/certification"
       ],
@@ -111,7 +109,18 @@
         "COMPONENT_OF",
         "PART_OF"
       ],
-      "authority_transfer": false
+      "authority_transfer": false,
+      "source_backed_topology": {
+        "appendage_count": 3,
+        "appendage_count_authority": "OD-050 current owner configuration + SRC-097 controlled historical source",
+        "distal_interlock_function": "MARK_III_TO_MARK_III_MULTI_UNIT_COOPERATIVE_COUPLING",
+        "exact_interlock_geometry_state": "OPEN_PRE_PRODUCTION",
+        "mark_v_mechanical_mating_requirement": "NO_CONTROLLED_REQUIREMENT_RECOVERED"
+      },
+      "non_requirements": [
+        "Do not treat Mark III↔Mark V mechanical mating as a current required ICD unless a controlled owner/source requirement is added.",
+        "Do not promote generated nominal connector dimensions (including 72 mm-class concept values) into canonical CAD/BOM/tolerance authority."
+      ]
     },
     {
       "mapping_id": "FF-WATCHTOWER-FCSTD-001",

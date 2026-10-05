@@ -68,8 +68,12 @@ def test_mark_iii_native_fcstd_is_registered_to_space_01_with_claim_ceiling():
         "sketches": 49,
         "assemblies": 22,
     }
-    assert "three appendage instances" in mapping["held_claims"]
-    assert "Mark V mating CAD/ICD" in mapping["held_claims"]
+    assert mapping["source_backed_topology"]["appendage_count"] == 3
+    assert mapping["source_backed_topology"]["distal_interlock_function"] == "MARK_III_TO_MARK_III_MULTI_UNIT_COOPERATIVE_COUPLING"
+    assert mapping["source_backed_topology"]["mark_v_mechanical_mating_requirement"] == "NO_CONTROLLED_REQUIREMENT_RECOVERED"
+    assert "exact interlock geometry" in mapping["held_claims"]
+    assert "three appendage instances" not in mapping["held_claims"]
+    assert "Mark V mating CAD/ICD" not in mapping["held_claims"]
     assert plan["authority_transfer"] is False
 
 
@@ -87,7 +91,10 @@ def test_lineage_records_execute_source_binding_without_promoting_held_semantics
     assert mark3["geometry_authority"] == "MARK3_FCSTD_NATIVE_SOURCE"
     assert mark3["source_geometry_sha256"] == "4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b"
     assert mark3["first_file_mapping_id"] == "FF-MARK3-FCSTD-001"
-    assert "INTERLOCK_AND_MATING_HELD" in mark3["source_binding_state"]
+    assert mark3["source_binding_state"] == "R2_SOURCE_IDENTITY_AND_THREE_APPENDAGE_TOPOLOGY_BOUND / MARKIII_MULTI_UNIT_INTERLOCK_FUNCTION_BOUND / EXACT_INTERLOCK_GEOMETRY_HELD"
+    assert mark3["interface_semantics"]["current_appendage_count"] == 3
+    assert mark3["interface_semantics"]["distal_interlock_peer_class"] == "Mark III"
+    assert mark3["interface_semantics"]["mark_v_mechanical_mating_requirement"] == "NO_CONTROLLED_REQUIREMENT_RECOVERED"
     assert mark3["operations_binding"]["current_record_id"] == "COM-1668"
     assert mark3["operations_binding"]["current_object_id"] == "IP-01"
     assert mark3["operations_binding"]["semantic_child_record_id"] == "COM-0444"
@@ -302,3 +309,15 @@ def test_luke4_registry_lineage_and_priority_receipt_are_aligned():
 
     by_id = {row["semantic_object_id"]: row for row in PRIORITY_BINDINGS["bindings"]}
     assert by_id["SPACE-03"]["state"] == "FULL_AND_SINGLE_NODE_SOURCES_BOUND / SIBLING_CONFIGURATION_RELATION_RESOLVED"
+
+
+def test_mark_iii_correction_receipt_removes_unsupported_mark_v_gate():
+    receipt = json.loads((TEMPLATES / "mark3_interface_semantic_correction_2026-10-05.json").read_text(encoding="utf-8"))
+    assert receipt["status"] == "EXECUTED / SOURCE_SEMANTIC_CORRECTION / EXACT_CONNECTOR_GEOMETRY_HELD"
+    assert receipt["executed_resolution"]["appendage_count"] == 3
+    assert receipt["executed_resolution"]["distal_interlock_peer_class"] == "Mark III"
+    assert receipt["executed_resolution"]["distal_interlock_function"] == "MARK_III_TO_MARK_III_MULTI_UNIT_COOPERATIVE_COUPLING"
+    assert receipt["executed_resolution"]["mark_v_mechanical_mating_requirement"] == "NO_CONTROLLED_REQUIREMENT_RECOVERED / REMOVED_AS_UNSUPPORTED_GATE"
+    assert receipt["physical_authority"] is False
+    assert receipt["manufacturing_authority"] is False
+    assert receipt["public_release_authorized"] is False

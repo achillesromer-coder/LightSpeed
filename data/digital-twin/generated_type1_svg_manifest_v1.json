@@ -15,7 +15,7 @@
     },
     {
       "file": "data/digital-twin/type1_svg_contract_v1.json",
-      "normalized_lf_sha256": "bfe36993df6ee9c24657297431609099cc3c9a5b2b37c634671cb35f5c63667e"
+      "normalized_lf_sha256": "2e5cd4018a5c619b17d2fbe4651f1d7395a95dc47835dfda0458f51fd719d66d"
     },
     {
       "file": "data/digital-twin/generated_mesh_manifest_v1.json",
@@ -508,8 +508,8 @@
       "type1_complete": false,
       "release_eligible": false,
       "projection_input_obj_sha256": "43655a61ce070f0872b2822a69bf3cf4475648c1d680159a2cf012995ff1826e",
-      "size_bytes": 29863,
-      "sha256": "b8bf25e495c9ae1b3ef8e2b8c77ca2fc0d4fd9c02ac574ec2d8cbc4bfe1f5c76",
+      "size_bytes": 30011,
+      "sha256": "4692203b3719cf61292988688ec67683ce59dbc3156834ac8a49aa44f2ca44d0",
       "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
     },
     {
@@ -525,8 +525,8 @@
       "type1_complete": false,
       "release_eligible": false,
       "projection_input_obj_sha256": "43655a61ce070f0872b2822a69bf3cf4475648c1d680159a2cf012995ff1826e",
-      "size_bytes": 29884,
-      "sha256": "e7f40faabde1d8d6695e8f648e51b252d44030548ae142bea0e4b7d76090ca30",
+      "size_bytes": 30032,
+      "sha256": "d8cfbdce2ec22303940a913f1bd91971d5640cfa6b1df8196f443dab6c4ae59a",
       "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
     },
     {
@@ -542,8 +542,8 @@
       "type1_complete": false,
       "release_eligible": false,
       "projection_input_obj_sha256": "43655a61ce070f0872b2822a69bf3cf4475648c1d680159a2cf012995ff1826e",
-      "size_bytes": 14758,
-      "sha256": "ec92bdd0ae409ca01758b427bf21a9d61cb2c732b490a25bc6ed692673a1f172",
+      "size_bytes": 14906,
+      "sha256": "1baf30c424d59cebb524a65cede07f72b3964919ea593c7343209e8b63c1a13f",
       "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
     },
     {
@@ -559,8 +559,8 @@
       "type1_complete": false,
       "release_eligible": false,
       "projection_input_obj_sha256": "43655a61ce070f0872b2822a69bf3cf4475648c1d680159a2cf012995ff1826e",
-      "size_bytes": 14806,
-      "sha256": "4b23e4f77b33f41e7edcedb894a26fdc65ba60b0f74f4f655aa20a06b3095bc9",
+      "size_bytes": 14954,
+      "sha256": "65acb5dc14a02ae741b3689e0d90c3f23569e46ba3285a7defcf22fed4cc19f4",
       "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
     },
     {
@@ -576,8 +576,8 @@
       "type1_complete": false,
       "release_eligible": false,
       "projection_input_obj_sha256": "43655a61ce070f0872b2822a69bf3cf4475648c1d680159a2cf012995ff1826e",
-      "size_bytes": 14749,
-      "sha256": "411d13ac9771caf5031549dc76d777bef38e3e2994191e217edffa0dd70d8164",
+      "size_bytes": 14897,
+      "sha256": "fbbe10f706074395cde1a30f5a716ab1bde72e321699f0f2898d1b5812aa161d",
       "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
     },
     {
@@ -593,8 +593,8 @@
       "type1_complete": false,
       "release_eligible": false,
       "projection_input_obj_sha256": "43655a61ce070f0872b2822a69bf3cf4475648c1d680159a2cf012995ff1826e",
-      "size_bytes": 14770,
-      "sha256": "8e84c2c0a4ce8203b28c6265f2c7ab130b045eabecfebef3441d558d3d7ef552",
+      "size_bytes": 14918,
+      "sha256": "4616491716f43d997db68360045d137054691befd14936698e9ca94365f70e5e",
       "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
     },
     {
@@ -610,8 +610,8 @@
       "type1_complete": false,
       "release_eligible": false,
       "projection_input_obj_sha256": "43655a61ce070f0872b2822a69bf3cf4475648c1d680159a2cf012995ff1826e",
-      "size_bytes": 14830,
-      "sha256": "3b7d450c22e0064cf01abaf1c4c3bbf59f0b9cd83546fd438ce678815a15bd95",
+      "size_bytes": 14978,
+      "sha256": "44cff007e76924ac7d06d1ec69d67342636a3237c211ff72d9eca484ec17fef3",
       "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
     },
     {
@@ -627,8 +627,8 @@
       "type1_complete": false,
       "release_eligible": false,
       "projection_input_obj_sha256": "43655a61ce070f0872b2822a69bf3cf4475648c1d680159a2cf012995ff1826e",
-      "size_bytes": 14816,
-      "sha256": "ff186f3fccbaf021d71ef4ec3e4331085d25cef3f2430e8050dcff38673eb29c",
+      "size_bytes": 14964,
+      "sha256": "f49bd37e7f60e7552ebe6c9b9726381c3be4fe8bb69550ab7b3d25d6bbe0e9c1",
       "release_state": "REVIEW_ONLY_NOT_PUBLICLY_RELEASED"
     },
     {

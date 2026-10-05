@@ -2,7 +2,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="auto" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMin meet" role="img" aria-labelledby="MARK_III-T1-02-title MARK_III-T1-02-desc" data-twin-id="mark_iii" data-drawing-id="MARK_III-T1-02" data-representation-class="INTERACTION_PROXY" data-package-kind="INTERACTION_PROXY_REVIEW_SHELL" data-evidence-ceiling="E" data-source-binding-state="NONE_PROXY_ONLY" data-dimension-authority="NONE" data-type1-complete="false" data-release-eligible="false" data-release-state="REVIEW_ONLY_NOT_PUBLICLY_RELEASED">
 <title id="MARK_III-T1-02-title">Mark III T1-02 Type 1 review sheet</title>
 <desc id="MARK_III-T1-02-desc">Assembly / exploded / parts. E_CLASS_INCOMPLETE_REVIEW_SHELL. Review only; not engineering authority, physical validation or public release.</desc>
-<metadata>{"dimension_authority":"NONE","drawing_id":"MARK_III-T1-02","feature_addressability":"WHOLE_PROXY_ONLY","next_gate":"exact current three-appendage/interlock/Mark V mating CAD/ICD","package_evidence_ceiling":"E","package_kind":"INTERACTION_PROXY_REVIEW_SHELL","package_state":"E_CLASS_INCOMPLETE_REVIEW_SHELL","projection_input_obj":"assets/models/mark_iii.obj","projection_input_obj_sha256":"43655a61ce070f0872b2822a69bf3cf4475648c1d680159a2cf012995ff1826e","proxy_model_extents_m":[4.5,4.5,4.0],"purpose":"Assembly / exploded / parts","release_eligible":false,"release_state":"REVIEW_ONLY_NOT_PUBLICLY_RELEASED","representation_class":"INTERACTION_PROXY","sheet_domain_state":"UNBOUND","sheet_id":"T1-02","source_binding_state":"NONE_PROXY_ONLY","twin_id":"mark_iii","type1_complete":false,"units":"m"}</metadata>
+<metadata>{"dimension_authority":"NONE","drawing_id":"MARK_III-T1-02","feature_addressability":"WHOLE_PROXY_ONLY","next_gate":"exact current Mark III-to-Mark III interlock connector geometry/tolerance/load/release ICD; physical qualification","package_evidence_ceiling":"E","package_kind":"INTERACTION_PROXY_REVIEW_SHELL","package_state":"E_CLASS_INCOMPLETE_REVIEW_SHELL","projection_input_obj":"assets/models/mark_iii.obj","projection_input_obj_sha256":"43655a61ce070f0872b2822a69bf3cf4475648c1d680159a2cf012995ff1826e","proxy_model_extents_m":[4.5,4.5,4.0],"purpose":"Assembly / exploded / parts","release_eligible":false,"release_state":"REVIEW_ONLY_NOT_PUBLICLY_RELEASED","representation_class":"INTERACTION_PROXY","sheet_domain_state":"UNBOUND","sheet_id":"T1-02","source_binding_state":"NONE_PROXY_ONLY","twin_id":"mark_iii","type1_complete":false,"units":"m"}</metadata>
 <style>.sheet{fill:#fff;stroke:#111;stroke-width:2}.border,.viewbox{fill:none;stroke:#555;stroke-width:1}.geometry{stroke:#111;stroke-width:1;fill:none;vector-effect:non-scaling-stroke}.datum{stroke:#555;stroke-width:1;stroke-dasharray:8 5}.title{font:700 24px system-ui,sans-serif}.subtitle{font:16px system-ui,sans-serif;fill:#333}.section-title{font:700 13px system-ui,sans-serif}.body,.label{font:12px ui-monospace,monospace;fill:#222}.proxy-watermark{font:700 12px system-ui,sans-serif;fill:#111;letter-spacing:1.5px}.gate{fill:#111}.gate-text{font:700 12px system-ui,sans-serif;fill:#fff;letter-spacing:1px}</style>
 <g id="L00-SHEET" data-layer="L00-SHEET">
 <rect x="18" y="18" width="1564" height="964" class="sheet"/>
@@ -78,8 +78,9 @@
 </g>
 <g id="L91-UNKNOWNS" data-layer="L91-UNKNOWNS">
 <text x="800" y="130" class="section-title">OPEN GATE</text>
-<text x="800" y="152" class="body">exact current three-appendage/interlock/Mark V</text>
-<text x="800" y="170" class="body">mating CAD/ICD</text>
+<text x="800" y="152" class="body">exact current Mark III-to-Mark III interlock</text>
+<text x="800" y="170" class="body">connector geometry/tolerance/load/release ICD;</text>
+<text x="800" y="188" class="body">physical qualification</text>
 </g>
 <g id="L95-ANNOTATIONS" data-layer="L95-ANNOTATIONS">
 <text x="1160" y="130" class="section-title">SHEET LIMIT</text>

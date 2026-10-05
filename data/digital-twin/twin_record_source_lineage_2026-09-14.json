@@ -264,8 +264,16 @@
       "source_geometry_sha256": "4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b",
       "source_geometry_id": "src:4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b",
       "first_file_mapping_id": "FF-MARK3-FCSTD-001",
-      "source_binding_state": "R2_SOURCE_IDENTITY_AND_EXPLICIT_LABELS_BOUND / INTERLOCK_AND_MATING_HELD",
-      "geometry_evidence_ceiling": "FCStd native-source authority plus bounded structural/object-label evidence only; no physical validation, exact interlock, Mark-V mating or certification claim"
+      "source_binding_state": "R2_SOURCE_IDENTITY_AND_THREE_APPENDAGE_TOPOLOGY_BOUND / MARKIII_MULTI_UNIT_INTERLOCK_FUNCTION_BOUND / EXACT_INTERLOCK_GEOMETRY_HELD",
+      "geometry_evidence_ceiling": "FCStd native-source authority plus current three-appendage topology and bounded source-backed Mark III↔Mark III interlock function; no physical validation, exact connector geometry/tolerance, load qualification or certification claim",
+      "interface_semantics": {
+        "current_appendage_count": 3,
+        "appendage_authority": "OD-050 + SRC-097",
+        "distal_interlock_peer_class": "Mark III",
+        "interlock_purpose": "multi-unit cooperative surround / brace / extraction",
+        "mark_v_mechanical_mating_requirement": "NO_CONTROLLED_REQUIREMENT_RECOVERED",
+        "exact_connector_geometry": "OPEN_PRE_PRODUCTION"
+      }
     },
     {
       "twin_id": "luke_family",

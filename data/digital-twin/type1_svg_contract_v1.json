@@ -20,8 +20,35 @@
     "E": "INTERACTION_PROXY",
     "U": "UNKNOWN"
   },
-  "layer_tree": ["L00-SHEET","L10-CONTEXT","L20-AUTH-GEOMETRY","L21-DERIVED-GEOMETRY","L22-PROVISIONAL-GEOMETRY","L30-HIDDEN","L31-CENTRE-DATUM","L40-SECTIONS","L50-DIMENSIONS","L60-MATERIALS","L70-INTERFACES","L75-SENSORS","L80-SIMULATION","L90-EVIDENCE","L91-UNKNOWNS","L95-ANNOTATIONS","L99-CLAIM-GATE"],
-  "sheet_package": ["T1-00","T1-01","T1-02","T1-03","T1-04","T1-05","T1-06","T1-07"],
+  "layer_tree": [
+    "L00-SHEET",
+    "L10-CONTEXT",
+    "L20-AUTH-GEOMETRY",
+    "L21-DERIVED-GEOMETRY",
+    "L22-PROVISIONAL-GEOMETRY",
+    "L30-HIDDEN",
+    "L31-CENTRE-DATUM",
+    "L40-SECTIONS",
+    "L50-DIMENSIONS",
+    "L60-MATERIALS",
+    "L70-INTERFACES",
+    "L75-SENSORS",
+    "L80-SIMULATION",
+    "L90-EVIDENCE",
+    "L91-UNKNOWNS",
+    "L95-ANNOTATIONS",
+    "L99-CLAIM-GATE"
+  ],
+  "sheet_package": [
+    "T1-00",
+    "T1-01",
+    "T1-02",
+    "T1-03",
+    "T1-04",
+    "T1-05",
+    "T1-06",
+    "T1-07"
+  ],
   "release_score": {
     "geometry": 20,
     "assemblies_components": 10,
@@ -37,22 +64,124 @@
     "critical_domain_failure_allowed": false
   },
   "migration": [
-    {"twin_id":"watchtower","priority":"P0","fidelity":"F3","representation":"SOURCE_DERIVED_GEOMETRY","next_gate":"semantic A/C binding; source-linked materials/interfaces/discipline evidence; browser/provider acceptance"},
-    {"twin_id":"m1_elevated_bypass","priority":"P1","fidelity":"F3","representation":"SOURCE_DERIVED_GEOMETRY","next_gate":"native FCStd/provider topology parity; engineering/site/traffic/structural evidence"},
-    {"twin_id":"romer_spaceport","priority":"P2","fidelity":"F2/F3","representation":"SOURCE_DERIVED_PARTIAL","next_gate":"accepted current site/facility CAD/BREP/IFC or controlled parametric geometry"},
-    {"twin_id":"mark_iii","priority":"P3","fidelity":"F2","representation":"INTERACTION_PROXY_WITH_SOURCE_SUBOBJECTS","next_gate":"exact current three-appendage/interlock/Mark V mating CAD/ICD"},
-    {"twin_id":"luke_family","priority":"P4","fidelity":"F2","representation":"INTERACTION_PROXY","next_gate":"exact assembly CAD/GLB source revision/hash and physical ICD/BOD"},
-    {"twin_id":"free_flow_solenoid_stack","priority":"P5","fidelity":"F2","representation":"INTERACTION_PROXY_WITH_CENTRELINE_SOURCE","next_gate":"authoritative conductor cross-section/material/insulation/stack geometry"},
-    {"twin_id":"solar_hull","priority":"P6","fidelity":"F2","representation":"INTERACTION_PROXY","next_gate":"current layer geometry and qualified coupon/skin source"},
-    {"twin_id":"free_flow_batteries","priority":"P7","fidelity":"F2","representation":"INTERACTION_PROXY","next_gate":"safe reference-module geometry/BMS/enclosure plus measured evidence"},
-    {"twin_id":"free_flow_capacitors","priority":"P8","fidelity":"F2","representation":"INTERACTION_PROXY","next_gate":"authoritative module geometry plus ESR/EIS/pulse/thermal evidence"},
-    {"twin_id":"rfs_emff","priority":"P9","fidelity":"F2","representation":"INTERACTION_PROXY","next_gate":"as-built resonator/coil/network geometry plus calibrated sensors/raw controls"},
-    {"twin_id":"mark_1p","priority":"P10","fidelity":"F2","representation":"INTERACTION_PROXY","next_gate":"current apparatus CAD/BOM/ICD and test-article identity"},
-    {"twin_id":"mark_i","priority":"P11","fidelity":"F2","representation":"INTERACTION_PROXY","next_gate":"current chamber/feedthrough/pump/sensor geometry and containment/calibration evidence"},
-    {"twin_id":"maglev_luke_iv","priority":"P12","fidelity":"F2","representation":"INTERACTION_PROXY","next_gate":"current subsystem/source pack plus site/safety/deceleration evidence"},
-    {"twin_id":"embedded_bio_blocks","priority":"P13","fidelity":"F2","representation":"INTERACTION_PROXY","next_gate":"block geometry/recipe/batch/trial source plus local custodial/biosecurity evidence"},
-    {"twin_id":"second_cycle","priority":"P14","fidelity":"F2","representation":"INTERACTION_PROXY","next_gate":"bench/flume/mooring geometry plus droplet/WQ/mooring/permitting evidence"},
-    {"twin_id":"intersol","priority":"P15","fidelity":"F2","representation":"INTERACTION_PROXY","next_gate":"accepted site-neutral facility BIM/IFC/parametric room graph plus site/classification/discipline inputs"}
+    {
+      "twin_id": "watchtower",
+      "priority": "P0",
+      "fidelity": "F3",
+      "representation": "SOURCE_DERIVED_GEOMETRY",
+      "next_gate": "semantic A/C binding; source-linked materials/interfaces/discipline evidence; browser/provider acceptance"
+    },
+    {
+      "twin_id": "m1_elevated_bypass",
+      "priority": "P1",
+      "fidelity": "F3",
+      "representation": "SOURCE_DERIVED_GEOMETRY",
+      "next_gate": "native FCStd/provider topology parity; engineering/site/traffic/structural evidence"
+    },
+    {
+      "twin_id": "romer_spaceport",
+      "priority": "P2",
+      "fidelity": "F2/F3",
+      "representation": "SOURCE_DERIVED_PARTIAL",
+      "next_gate": "accepted current site/facility CAD/BREP/IFC or controlled parametric geometry"
+    },
+    {
+      "twin_id": "mark_iii",
+      "priority": "P3",
+      "fidelity": "F2",
+      "representation": "INTERACTION_PROXY_WITH_SOURCE_SUBOBJECTS",
+      "next_gate": "exact current Mark III-to-Mark III interlock connector geometry/tolerance/load/release ICD; physical qualification",
+      "source_semantic_correction": {
+        "appendage_count": 3,
+        "distal_interlock_peer": "Mark III",
+        "mark_v_mating_gate_removed": true,
+        "reason": "No controlled source recovered establishing Mark III↔Mark V mechanical mating as a current requirement."
+      }
+    },
+    {
+      "twin_id": "luke_family",
+      "priority": "P4",
+      "fidelity": "F2",
+      "representation": "INTERACTION_PROXY",
+      "next_gate": "exact assembly CAD/GLB source revision/hash and physical ICD/BOD"
+    },
+    {
+      "twin_id": "free_flow_solenoid_stack",
+      "priority": "P5",
+      "fidelity": "F2",
+      "representation": "INTERACTION_PROXY_WITH_CENTRELINE_SOURCE",
+      "next_gate": "authoritative conductor cross-section/material/insulation/stack geometry"
+    },
+    {
+      "twin_id": "solar_hull",
+      "priority": "P6",
+      "fidelity": "F2",
+      "representation": "INTERACTION_PROXY",
+      "next_gate": "current layer geometry and qualified coupon/skin source"
+    },
+    {
+      "twin_id": "free_flow_batteries",
+      "priority": "P7",
+      "fidelity": "F2",
+      "representation": "INTERACTION_PROXY",
+      "next_gate": "safe reference-module geometry/BMS/enclosure plus measured evidence"
+    },
+    {
+      "twin_id": "free_flow_capacitors",
+      "priority": "P8",
+      "fidelity": "F2",
+      "representation": "INTERACTION_PROXY",
+      "next_gate": "authoritative module geometry plus ESR/EIS/pulse/thermal evidence"
+    },
+    {
+      "twin_id": "rfs_emff",
+      "priority": "P9",
+      "fidelity": "F2",
+      "representation": "INTERACTION_PROXY",
+      "next_gate": "as-built resonator/coil/network geometry plus calibrated sensors/raw controls"
+    },
+    {
+      "twin_id": "mark_1p",
+      "priority": "P10",
+      "fidelity": "F2",
+      "representation": "INTERACTION_PROXY",
+      "next_gate": "current apparatus CAD/BOM/ICD and test-article identity"
+    },
+    {
+      "twin_id": "mark_i",
+      "priority": "P11",
+      "fidelity": "F2",
+      "representation": "INTERACTION_PROXY",
+      "next_gate": "current chamber/feedthrough/pump/sensor geometry and containment/calibration evidence"
+    },
+    {
+      "twin_id": "maglev_luke_iv",
+      "priority": "P12",
+      "fidelity": "F2",
+      "representation": "INTERACTION_PROXY",
+      "next_gate": "current subsystem/source pack plus site/safety/deceleration evidence"
+    },
+    {
+      "twin_id": "embedded_bio_blocks",
+      "priority": "P13",
+      "fidelity": "F2",
+      "representation": "INTERACTION_PROXY",
+      "next_gate": "block geometry/recipe/batch/trial source plus local custodial/biosecurity evidence"
+    },
+    {
+      "twin_id": "second_cycle",
+      "priority": "P14",
+      "fidelity": "F2",
+      "representation": "INTERACTION_PROXY",
+      "next_gate": "bench/flume/mooring geometry plus droplet/WQ/mooring/permitting evidence"
+    },
+    {
+      "twin_id": "intersol",
+      "priority": "P15",
+      "fidelity": "F2",
+      "representation": "INTERACTION_PROXY",
+      "next_gate": "accepted site-neutral facility BIM/IFC/parametric room graph plus site/classification/discipline inputs"
+    }
   ],
   "claim_boundary": "SVG completeness does not create engineering certification, physical validation, approval, deployment, commissioning or measured-performance authority."
 }
