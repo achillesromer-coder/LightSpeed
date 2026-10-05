@@ -617,7 +617,7 @@
           "role": "PILOT_BUILD_CONFIGURATION"
         }
       ],
-      "source_binding_state": "CURRENT_NATIVE_CONFIGURATION_SET_BOUND / PRECEDENCE_RESOLVED_BY_SCOPE / BASE_PILLAR_COMPONENT_REFERENCES_BOUND",
+      "source_binding_state": "CURRENT_NATIVE_CONFIGURATION_SET_BOUND / PRECEDENCE_RESOLVED_BY_SCOPE",
       "dbr_summary_ref": "cgx/domain_templates/remaining_3d_dbr_summary_2026-10-05.json",
       "configuration_precedence": {
         "status": "RESOLVED_BY_SCOPE / NO_SINGLE_GLOBAL_MASTER",
@@ -690,7 +690,8 @@
             "normalized_name_candidate_containment": 1
           }
         }
-      ]
+      ],
+      "component_source_binding_state": "BASE_PILLAR_COMPONENT_REFERENCES_BOUND / NOT_CONFIGURATION_MASTERS / STRUCTURAL_AUTHORITY_HELD"
     },
     {
       "twin_id": "romer_spaceport",
