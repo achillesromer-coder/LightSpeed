@@ -28,11 +28,11 @@ class Mark3Simulator:
     """
     Simulates Mark III asteroid extraction unit.
 
-    The Mark III is a small-scale extraction unit designed for:
-    - Asteroids up to 1e15 kg (1 trillion kg)
-    - Extraction rates: ~1000 kg/hr
-    - Power output: ~500 kW
-    - Primary extraction method: RFS (Resonance Field Systems)
+    Legacy simulation model for the Mark III concept. Historical values in this module
+    (including asteroid mass envelope, extraction rate, power and RFS frequency) are
+    simulation inputs/defaults only and are not validated hardware-performance claims.
+    Current source/canonical authority must be consulted before using any value outside
+    a derived screening calculation.
 
     Features:
     - Real-time physics simulation
@@ -168,10 +168,13 @@ class Mark3Simulator:
 
         return {
             'rfs_system': {
-                'status': 'operational',
-                'frequency_hz': 2.4e9,  # 2.4 GHz resonance
+                'status': 'simulated_unvalidated',
+                'frequency_hz': 2.4e9,
+                'frequency_evidence_state': 'LEGACY_SIMULATION_CONSTANT_UNVALIDATED',
+                'frequency_source_ref': 'mark3.py legacy simulator constant',
                 'power_draw_kw': sim_data.get('power_output_kw', 0) * 0.6,
-                'efficiency': sim_data.get('efficiency', 0)
+                'efficiency': sim_data.get('efficiency', 0),
+                'claim_boundary': 'Derived simulation only; not measured RFS resonance, extraction performance, hardware readiness, or physical validation.'
             },
             'power_system': {
                 'status': 'nominal',
