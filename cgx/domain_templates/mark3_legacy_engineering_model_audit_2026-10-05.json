@@ -1,0 +1,89 @@
+{
+  "schema": "CGX-MARK3-LEGACY-ENGINEERING-MODEL-AUDIT/0.1",
+  "status": "EXECUTED / LEGACY OUTPUT SEMANTICS CORRECTED / PHYSICAL VALIDATION HELD",
+  "generated_date": "2026-10-05",
+  "source_main_before_change": "54dd5d74a162f11b1cf7b00e49daff953d07f2a1",
+  "model_path": "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/simulations/mark3.py",
+  "evidence_class": "legacy_synthetic_screening",
+  "corrected_output_families": [
+    "simulation efficiency/yield",
+    "internal power reserve and battery state",
+    "internal thermal temperatures/cooling efficiency",
+    "structural integrity stress/fatigue/safety margin",
+    "x-ray stress values and safety factors",
+    "x-ray thermal map",
+    "derived structural stress status",
+    "derived thermal status",
+    "event-bus success threshold"
+  ],
+  "preserved_for_compatibility": [
+    "legacy numerical formulas and constants",
+    "existing output keys used by downstream consumers",
+    "completed execution status as computation/job status",
+    "legacy success boolean, now explicitly tagged as simulation-threshold-only"
+  ],
+  "semantic_corrections": {
+    "state_labels": "nominal/operational engineering implications replaced or supplemented by simulated_unvalidated / simulated_screening_*",
+    "evidence_state": "LEGACY_HEURISTIC_UNVALIDATED or LEGACY_SYNTHETIC_STATE_UNVALIDATED",
+    "physical_validation": false,
+    "claim_boundary": "No measured structural, thermal, safety-factor, extraction, manufacturing, certification or mission-readiness inference."
+  },
+  "known_heuristics": [
+    {
+      "name": "required_power_kw",
+      "formula": "extraction_rate_kg_hr * 0.3",
+      "status": "unvalidated legacy heuristic"
+    },
+    {
+      "name": "optimal_extraction_rate",
+      "value_kg_hr": 1000,
+      "status": "unvalidated legacy heuristic"
+    },
+    {
+      "name": "efficiency_cap",
+      "value": 0.95,
+      "status": "unvalidated legacy heuristic"
+    },
+    {
+      "name": "xray_base_stress",
+      "formula": "extraction_rate_kg_hr / 100",
+      "status": "unvalidated legacy heuristic"
+    },
+    {
+      "name": "xray_safety_factors",
+      "values": [
+        2.8,
+        3.2,
+        4.5,
+        2.5
+      ],
+      "status": "unvalidated legacy constants"
+    },
+    {
+      "name": "temperature_rise",
+      "formula": "waste_heat_kw * 0.5 K",
+      "status": "unvalidated legacy heuristic"
+    },
+    {
+      "name": "cooling_required",
+      "formula": "waste_heat_kw * 1.1",
+      "status": "unvalidated legacy heuristic"
+    },
+    {
+      "name": "internal_fixed_states",
+      "values": "85% reserve, 92% battery, 320/280 K thermal, 35% stress, 0.15 fatigue, 2.5 margin",
+      "status": "unvalidated synthetic display state"
+    }
+  ],
+  "next_evidence_to_replace_heuristics": [
+    "source-controlled mass/material/BOM and load paths",
+    "measured electrical input/output and thermal dissipation",
+    "calibrated RFS/EMFF field response",
+    "finite-element structural model with source-bound geometry/materials/loads",
+    "thermal model with conductivity, emissivity, contact, radiation and environment inputs",
+    "physical coupon/subsystem tests with uncertainty and repeatability",
+    "independent verification before engineering-status promotion"
+  ],
+  "authority_transfer": false,
+  "public_publish_authorized": false
+}
