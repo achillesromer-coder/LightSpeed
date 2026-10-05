@@ -11,7 +11,7 @@ from __future__ import annotations
 import math
 from typing import Any, Dict, Mapping
 
-MU0 = 4.0 * math.pi * 1e-7
+MU0 = 1.25663706127e-6  # 2022 CODATA, relative u = 1.6e-10
 
 
 class ValidationError(ValueError):

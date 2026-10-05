@@ -281,21 +281,21 @@ CONSTANTS = {
     'epsilon_0': PhysicalConstant(
         name='Vacuum permittivity',
         symbol='ε₀',
-        value=8.8541878128e-12,
+        value=8.8541878188e-12,
         unit='F/m',
         category='electromagnetic',
-        uncertainty=1.3e-10,
-        codata_year=2018
+        uncertainty=1.6e-10,  # Relative standard uncertainty, 2022 CODATA
+        codata_year=2022
     ),
 
     'mu_0': PhysicalConstant(
         name='Vacuum permeability',
         symbol='μ₀',
-        value=1.25663706212e-6,
+        value=1.25663706127e-6,
         unit='H/m',
         category='electromagnetic',
-        uncertainty=1.9e-10,
-        codata_year=2018
+        uncertainty=1.6e-10,  # Relative standard uncertainty, 2022 CODATA
+        codata_year=2022
     ),
 
     'R': PhysicalConstant(

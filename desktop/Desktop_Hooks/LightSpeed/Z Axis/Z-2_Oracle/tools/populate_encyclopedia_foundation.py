@@ -63,13 +63,13 @@ def populate_physical_constants(encyclopedia: EncyclopediaSystem):
         {
             'term': 'Vacuum Permittivity',
             'definition': 'Electric constant, permittivity of free space',
-            'data': {'symbol': 'ε_0', 'value': 8.8541878128e-12, 'unit': 'F/m',
+            'data': {'symbol': 'ε_0', 'value': 8.8541878188e-12, 'unit': 'F/m',
                     'derived_from': ['c', 'μ_0']}
         },
         {
             'term': 'Vacuum Permeability',
             'definition': 'Magnetic constant, permeability of free space',
-            'data': {'symbol': 'μ_0', 'value': 1.25663706212e-6, 'unit': 'N/A²',
+            'data': {'symbol': 'μ_0', 'value': 1.25663706127e-6, 'unit': 'N/A²',
                     'derived_from': ['c', 'ε_0']}
         },
 

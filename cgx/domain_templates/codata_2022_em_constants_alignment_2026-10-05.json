@@ -1,0 +1,43 @@
+{
+  "schema": "CGX-CODATA-EM-CONSTANTS-ALIGNMENT/0.1",
+  "status": "EXECUTED / 2022_CODATA_ALIGNED",
+  "generated_date": "2026-10-05",
+  "source": "NIST 2022 CODATA recommended values",
+  "source_url_reference": "https://physics.nist.gov/constants",
+  "constants": {
+    "vacuum_magnetic_permeability": {
+      "symbol": "mu_0",
+      "value": 0.00000125663706127,
+      "unit": "N A^-2",
+      "relative_standard_uncertainty": 1.6e-10,
+      "prior_solver_value": 0.0000012566370614359173,
+      "relative_change_vs_prior_solver": -1.320327422596978e-10
+    },
+    "vacuum_electric_permittivity": {
+      "symbol": "epsilon_0",
+      "value": 8.8541878188e-12,
+      "unit": "F m^-1",
+      "relative_standard_uncertainty": 1.6e-10,
+      "prior_shared_value": 8.8541878128e-12,
+      "relative_change_vs_prior_shared": 6.776454184598842e-10
+    }
+  },
+  "aligned_surfaces": [
+    "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/dimensions_library.py",
+    "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/physics_calculators.py",
+    "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-2_Oracle/tools/populate_encyclopedia_foundation.py",
+    "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/physics/raphael_renderer_pure.py",
+    "desktop/Desktop_Hooks/LightSpeed/tests/test_simulations.py",
+    "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/tools/rfs_emff_validation.py",
+    "desktop/LightSpeed_Runtime/lightspeed_runtime/rfs_emff_sweep.py"
+  ],
+  "interpretation": [
+    "The magnetic permeability correction is approximately 1.32e-10 relative to the previous 4*pi*1e-7 solver convention.",
+    "The electric permittivity correction is approximately 6.78e-10 relative to the prior shared value.",
+    "These changes are below the uncertainty or model-form error of the current RFS/EMFF screening models and do not materially alter feasibility conclusions.",
+    "The purpose is canonical agreement with the latest NIST CODATA values available, including the post-2019 fact that mu_0 is measured/derived rather than an exact defining constant."
+  ],
+  "claim_boundary": "Fundamental-constant provenance correction only; no RFS/EMFF physical validation, optimal-frequency, extraction, safety, efficiency, manufacturing, certification or mission-readiness claim.",
+  "authority_transfer": false,
+  "public_publish_authorized": false
+}

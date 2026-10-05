@@ -35,7 +35,7 @@ MAX_AXIS_VALUES = 32
 MAX_CASES = 256
 MAX_SOURCE_REFS = 32
 
-MU0 = 4.0 * math.pi * 1e-7
+MU0 = 1.25663706127e-6  # 2022 CODATA, relative u = 1.6e-10
 COMMAND_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,95}$")
 
 REQUIRED_ARTIFACT_NAMES = (
