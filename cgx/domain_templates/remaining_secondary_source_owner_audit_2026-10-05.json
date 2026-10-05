@@ -1,0 +1,60 @@
+{
+  "schema": "CGX-REMAINING-SECONDARY-SOURCE-OWNER-AUDIT/0.1",
+  "executed_at": "2026-10-05",
+  "status": "EXECUTED / FIVE_SOURCES_RETAINED_R1",
+  "results": [
+    {
+      "source_name": "Arm Modules.FCStd",
+      "sha256": "911894e43d8093df5d2b1381dcb116e2b771d0f1e3658b14ef237712b1378b66",
+      "candidate_owner": "SPACE-01",
+      "raw_name_candidate_containment": 0.844156,
+      "exact_property_match_fraction_of_candidate": 0.077922,
+      "explicit_link_from_authoritative_mark3": false,
+      "disposition": "R1_OWNER_RELATION_UNPROVEN"
+    },
+    {
+      "source_name": "Joint.FCStd",
+      "sha256": "e85a21256d4a7f2f20792494f1a30dfba7cbfedce779c286d7b76d17686ff561",
+      "candidate_owner": "SPACE-01",
+      "raw_name_candidate_containment": 0.733333,
+      "exact_property_match_fraction_of_candidate": 0.266667,
+      "explicit_link_from_authoritative_mark3": false,
+      "disposition": "R1_OWNER_RELATION_UNPROVEN"
+    },
+    {
+      "source_name": "Falcon Launch Tower.FCStd",
+      "sha256": "c73e0abb6d39c5a48f7ef733a2f6e96fe64cd9f4047636e250cc7b6c38fb8f08",
+      "candidate_owner": "INF-001",
+      "raw_name_candidate_containment": 0.827434,
+      "raw_label_candidate_containment": 0.810573,
+      "exact_property_match_fraction_of_candidate": 0.084071,
+      "direct_intersol_label_or_link": false,
+      "disposition": "R1_HISTORICAL_RELATION_UNPROVEN"
+    },
+    {
+      "source_name": "Falcon Landing.FCStd",
+      "sha256": "e6d5f00e4ce5bda7f524075183c82fda01530563d869402020adbe7dc7bd918a",
+      "candidate_owner": "INF-001",
+      "raw_name_candidate_containment": 0.680723,
+      "raw_label_candidate_containment": 0.664671,
+      "exact_property_match_fraction_of_candidate": 0.084337,
+      "direct_intersol_label_or_link": false,
+      "disposition": "R1_HISTORICAL_RELATION_UNPROVEN"
+    },
+    {
+      "source_name": "S.A.I Smart Home.FCStd",
+      "sha256": "428fdeed2e6d2082a4084dc788eb5f09209f333ffa073e27683c0993b2649497",
+      "candidate_owner": null,
+      "type1_systems_owner_search": "NO_EXACT_SMART_HOME_IDENTITY_FOUND",
+      "github_owner_search": "NO_MATCH",
+      "disposition": "R1_OWNER_UNRESOLVED"
+    }
+  ],
+  "conclusion": "Current evidence does not support exact semantic-owner binding for these five sources. They remain R1 without newly minted identities.",
+  "remaining_r1_count": 5,
+  "authority_transfer": false,
+  "physical_authority": false,
+  "manufacturing_authority": false,
+  "certification_authority": false,
+  "public_release_authorized": false
+}

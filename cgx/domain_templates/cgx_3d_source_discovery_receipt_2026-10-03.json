@@ -1,7 +1,7 @@
 {
   "schema": "CGX-3D-SOURCE-DISCOVERY-RECEIPT/0.1",
   "receipt_id": "CGX-3D-INTAKE-DISCOVERY-2026-10-03",
-  "status": "DISCOVERY_VERIFIED / PRIORITY_R2_EXECUTED / SECONDARY_SOURCE_CLASSIFICATION_EXECUTED / ENGINEERING_SEMANTICS_HELD",
+  "status": "DISCOVERY_VERIFIED / PRIORITY_R2_EXECUTED / SECONDARY_BINDINGS_EXECUTED / M1_SCALE_LINEAGE_RESOLVED / FIVE_R1_OWNER_GAPS_PROVEN",
   "recorded_at": "2026-10-03T18:41:00+10:00",
   "source_control": {
     "repository": "achillesromer-coder/LightSpeed",
@@ -290,13 +290,13 @@
     "owner": "Romer",
     "audit": "Achilles",
     "next_actions": [
-      "Priority R2 native-source identity lane is executed for WatchTower, Mark III, Payload Capsule, M1, Mark V, Luke IV and Free Flow; do not reopen absent source/hash/schema drift.",
-      "Secondary source classification is executed: InterSol.FCStd is bound to INF-001 as a non-master R2 reference configuration; WatchTower.FCStd remains a derived WT-001 reference; Mark1P top/bottom halves and Luke I are family references; zero-object containers are reference-only.",
-      "Seven secondary FCStd files remain R1 because no exact semantic owner relation is evidenced: Arm Modules, Joint, two Base-pillar variants, Falcon Landing, Falcon Launch Tower, and S.A.I Smart Home.",
-      "Do not mint semantic IDs for those seven from filename/project similarity; bind only when an existing owner is recovered at source/hash level.",
-      "Advance downstream engineering semantics, physical evidence and certification gates independently from completed source identity/classification work."
+      "Do not reopen priority R2 source bindings or M1 component-source bindings absent source/hash/schema drift.",
+      "M1 pillar scale lineage is resolved from native FCStd: normal source adds Compound(Body..Body004) plus Scale001 UniformScale=0.5; x2-named peer lacks that correction object while 852 shared non-zero numeric fields are identical.",
+      "Five sources remain R1 after completed owner audit: Arm Modules, Joint, Falcon Landing, Falcon Launch Tower, and S.A.I Smart Home.",
+      "Do not bind those five from naming or generic CAD-object overlap; exact property comparison and owner searches do not support current semantic promotion.",
+      "Advance engineering/physical validation gates using attributable source data rather than repeating source-owner discovery."
     ],
-    "smallest_remaining_gate": "Downstream engineering semantics plus exact-owner recovery for seven R1 secondary FCStd sources; priority and recoverable secondary identity work is executed."
+    "smallest_remaining_gate": "Engineering and physical evidence gates; source-owner reconciliation is exhausted to current evidence except five explicitly retained R1 sources."
   },
   "evidence_ceiling": "Digital source identity/structure/revision evidence only. No physical, manufacturing, structural, performance, certification, regulatory or deployment claim is promoted.",
   "architecture_impact": "No new master or parallel roadmap. One native source may have multiple projections/configurations; DBR records accepted state transitions; R3 representations remain derivative.",
@@ -478,5 +478,7 @@
     "dbr_summary_ref": "remaining_3d_dbr_summary_2026-10-05.json",
     "priority_bindings_receipt": "priority_3d_source_bindings_execution_2026-10-05.json"
   },
-  "secondary_source_execution_ref": "cgx/domain_templates/secondary_3d_source_execution_2026-10-05.json"
+  "secondary_source_execution_ref": "cgx/domain_templates/secondary_3d_source_execution_2026-10-05.json",
+  "remaining_secondary_owner_audit_ref": "cgx/domain_templates/remaining_secondary_source_owner_audit_2026-10-05.json",
+  "m1_pillar_scale_resolution_ref": "cgx/domain_templates/m1_pillar_scale_resolution_2026-10-05.json"
 }

@@ -662,7 +662,7 @@
           "mapping_id": "FF-M1-BASE-PILLAR-TWIST-Y-FCSTD-001",
           "source_name": "Base pillar - Twist and Y branch.FCStd",
           "source_sha256": "02b707a9e5b7c8ca32bb93d9943b2a3911c95a5ea837959ebecd17add55ff3be",
-          "role": "BASE_PILLAR_TWIST_Y_COMPONENT_REFERENCE",
+          "role": "BASE_PILLAR_TWIST_Y_CORRECTED_HALF_SCALE_DERIVATIVE_REFERENCE",
           "parent_configuration_mapping_id": "FF-M1-PILOT-BUILD-FCSTD-001",
           "source_object_count": 226,
           "configuration_master": false,
@@ -678,7 +678,7 @@
           "mapping_id": "FF-M1-BASE-PILLAR-TWIST-Y-X2-FCSTD-001",
           "source_name": "Base pillar - Twist and Y branch (x2 scale).FCStd",
           "source_sha256": "0dcb3618c6b1bc5de6eb218f8150702354677e69fb026fe7c7289b006ac59706",
-          "role": "BASE_PILLAR_TWIST_Y_X2_COMPONENT_REFERENCE",
+          "role": "BASE_PILLAR_TWIST_Y_UNCORRECTED_SCALE_REFERENCE",
           "parent_configuration_mapping_id": "FF-M1-PILOT-BUILD-FCSTD-001",
           "source_object_count": 222,
           "configuration_master": false,
@@ -691,7 +691,36 @@
           }
         }
       ],
-      "component_source_binding_state": "BASE_PILLAR_COMPONENT_REFERENCES_BOUND / NOT_CONFIGURATION_MASTERS / STRUCTURAL_AUTHORITY_HELD"
+      "component_source_binding_state": "BASE_PILLAR_COMPONENT_REFERENCES_BOUND / NOT_CONFIGURATION_MASTERS / STRUCTURAL_AUTHORITY_HELD",
+      "pillar_scale_resolution": {
+        "status": "RESOLVED_FROM_NATIVE_FCSTD_STRUCTURE",
+        "corrected_source_mapping_id": "FF-M1-BASE-PILLAR-TWIST-Y-FCSTD-001",
+        "uncorrected_peer_mapping_id": "FF-M1-BASE-PILLAR-TWIST-Y-X2-FCSTD-001",
+        "shared_body_set": [
+          "Body",
+          "Body001",
+          "Body002",
+          "Body003",
+          "Body004"
+        ],
+        "common_numeric_fields": 2208,
+        "shared_nonzero_numeric_fields_equal": 852,
+        "corrected_file_extra_objects": [
+          "Compound",
+          "Scale001"
+        ],
+        "compound_members": [
+          "Body",
+          "Body001",
+          "Body002",
+          "Body003",
+          "Body004"
+        ],
+        "scale_object": "Scale001",
+        "uniform_scale": 0.5,
+        "x2_file_scale_object_present": false,
+        "engineering_note": "Source-resolved scale lineage only; structural adequacy, final deployment dimensions and site use remain independently gated."
+      }
     },
     {
       "twin_id": "romer_spaceport",

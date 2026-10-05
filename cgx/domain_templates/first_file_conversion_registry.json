@@ -702,7 +702,7 @@
       "semantic_target": "/romer/m1/components/base-pillar-twist-y",
       "owner": "Römer / SEQLD M1 / T1-M1",
       "operations_record_id": "COM-0368",
-      "source_role": "BASE_PILLAR_TWIST_Y_COMPONENT_REFERENCE",
+      "source_role": "BASE_PILLAR_TWIST_Y_CORRECTED_HALF_SCALE_DERIVATIVE_REFERENCE",
       "classes": [
         "R0_EXACT",
         "R1_SEMANTIC_REVERSIBLE",
@@ -722,7 +722,24 @@
       "evidence_ceiling": "component-source identity and strong structural inclusion in current Pilot-Build source; structural adequacy, scale validity, site use, manufacturing and certification remain gated",
       "configuration_master": false,
       "structural_authority": false,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "scale_relation": {
+        "status": "SOURCE_RESOLVED",
+        "relation": "EXPLICIT_0_5_UNIFORM_SCALE_DERIVATIVE",
+        "compound_members": [
+          "Body",
+          "Body001",
+          "Body002",
+          "Body003",
+          "Body004"
+        ],
+        "base_object": "Compound",
+        "scale_object": "Scale001",
+        "uniform_scale": 0.5,
+        "shared_nonzero_numeric_fields_equal": 852,
+        "peer_mapping_id": "FF-M1-BASE-PILLAR-TWIST-Y-X2-FCSTD-001",
+        "configuration_master": false
+      }
     },
     {
       "mapping_id": "FF-M1-BASE-PILLAR-TWIST-Y-X2-FCSTD-001",
@@ -734,7 +751,7 @@
       "semantic_target": "/romer/m1/components/base-pillar-twist-y-x2",
       "owner": "Römer / SEQLD M1 / T1-M1",
       "operations_record_id": "COM-0368",
-      "source_role": "BASE_PILLAR_TWIST_Y_X2_COMPONENT_REFERENCE",
+      "source_role": "BASE_PILLAR_TWIST_Y_UNCORRECTED_SCALE_REFERENCE",
       "classes": [
         "R0_EXACT",
         "R1_SEMANTIC_REVERSIBLE",
@@ -754,7 +771,15 @@
       "evidence_ceiling": "component-source identity and complete raw-name containment in current Pilot-Build source; x2 naming does not by itself validate engineering scale, structural adequacy, site use, manufacturing or certification",
       "configuration_master": false,
       "structural_authority": false,
-      "authority_transfer": false
+      "authority_transfer": false,
+      "scale_relation": {
+        "status": "SOURCE_RESOLVED",
+        "relation": "SHARED_PARAMETRIC_BODY_SET_WITHOUT_SCALE001",
+        "scale_object_present": false,
+        "shared_nonzero_numeric_fields_equal": 852,
+        "peer_mapping_id": "FF-M1-BASE-PILLAR-TWIST-Y-FCSTD-001",
+        "configuration_master": false
+      }
     }
   ],
   "successor_rule": "S92 migration must preserve source IDs/hashes and mapping IDs; compare semantic object/relation families and projection hashes against S91 proof, recording any schema-evolution delta rather than reinterpreting the whole workbook."

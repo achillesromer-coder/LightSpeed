@@ -1,0 +1,37 @@
+{
+  "schema": "CGX-M1-PILLAR-SCALE-RESOLUTION/0.1",
+  "executed_at": "2026-10-05",
+  "status": "RESOLVED_FROM_NATIVE_SOURCE",
+  "normal_source": {
+    "name": "Base pillar - Twist and Y branch.FCStd",
+    "sha256": "02b707a9e5b7c8ca32bb93d9943b2a3911c95a5ea837959ebecd17add55ff3be",
+    "unique_objects": [
+      "Compound",
+      "Scale001"
+    ],
+    "scale_object": "Scale001",
+    "uniform_scale": 0.5,
+    "compound_members": [
+      "Body",
+      "Body001",
+      "Body002",
+      "Body003",
+      "Body004"
+    ]
+  },
+  "x2_source": {
+    "name": "Base pillar - Twist and Y branch (x2 scale).FCStd",
+    "sha256": "0dcb3618c6b1bc5de6eb218f8150702354677e69fb026fe7c7289b006ac59706",
+    "scale_object_present": false
+  },
+  "comparison": {
+    "common_numeric_fields": 2208,
+    "nonzero_comparable_fields": 852,
+    "exact_equal_nonzero_fields": 852,
+    "doubled_fields": 0,
+    "halved_fields": 0
+  },
+  "resolved_interpretation": "Both files share the same underlying parametric body values. The normal source adds Compound plus a uniform 0.5 Scale001 derivative; the x2-named source does not contain that correction object.",
+  "nonclaim": "This resolves source scale lineage only, not structural adequacy, deployment dimensions, manufacturing or certification.",
+  "authority_transfer": false
+}
