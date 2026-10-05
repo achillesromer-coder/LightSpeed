@@ -408,7 +408,7 @@ def test_m1_lineage_contains_component_references_with_overlap_proof():
     assert refs["FF-M1-BASE-PILLAR-TWIST-Y-FCSTD-001"]["overlap_proof"]["raw_name_candidate_containment"] == 0.982301
     assert refs["FF-M1-BASE-PILLAR-TWIST-Y-X2-FCSTD-001"]["overlap_proof"]["raw_name_candidate_containment"] == 1.0
     assert refs["FF-M1-BASE-PILLAR-TWIST-Y-X2-FCSTD-001"]["configuration_master"] is False
-    assert "BASE_PILLAR_COMPONENT_REFERENCES_BOUND" in m1["source_binding_state"]
+    assert m1["component_source_binding_state"] == "BASE_PILLAR_COMPONENT_REFERENCES_BOUND / NOT_CONFIGURATION_MASTERS / STRUCTURAL_AUTHORITY_HELD"
 
 
 def test_mark3_connector_source_audit_closes_source_search_without_inventing_geometry():
