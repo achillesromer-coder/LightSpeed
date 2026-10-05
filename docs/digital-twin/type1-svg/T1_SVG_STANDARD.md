@@ -76,7 +76,7 @@ Weighted completeness:
 1. **WT-001 WatchTower** — F3 / SOURCE_DERIVED_GEOMETRY; source FCStd/BREP and source GLB derivative exist; semantic A/C + discipline evidence remain gated.
 2. **M1 Elevated Bypass** — F3 / SOURCE_DERIVED_GEOMETRY; extracted `SEQLD Pilot Builds.FCStd` Stage-0 bodies exist; native-source topology/site/engineering gates remain.
 3. **Römer Spaceport** — F2/F3 / SOURCE_DERIVED_PARTIAL; current data contract/facility dimensions exist; complete accepted site/facility geometry remains partial.
-4. **Mark III** — F2 with source subobjects; exact current three-appendage/interlock/Mark V mating CAD/ICD remains open.
+4. **Mark III** — F2 with source subobjects; current three-appendage topology and Mark III-to-Mark III cooperative interlock function are source-bound. Exact connector geometry/tolerance/load/release ICD and physical qualification remain open; no Mark III-to-Mark V mechanical mating requirement is claimed absent a controlled owner/source requirement.
 5. Remaining formal/living twins — retain F1/F2 lineage/proxy state until attributable current whole-object geometry and evidence close their promotion gate.
 
 ## Claim boundary
