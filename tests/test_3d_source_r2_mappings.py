@@ -23,6 +23,8 @@ M1_PRECEDENCE = json.loads((TEMPLATES / "m1_configuration_precedence_2026-10-05.
 LUKE4_RELATION = json.loads((TEMPLATES / "luke4_configuration_relation_2026-10-05.json").read_text(encoding="utf-8"))
 SECONDARY_BINDINGS = json.loads((TEMPLATES / "secondary_3d_source_execution_2026-10-05.json").read_text(encoding="utf-8"))
 M1_MARK3_EXECUTION = json.loads((TEMPLATES / "m1_component_mark3_connector_execution_2026-10-05.json").read_text(encoding="utf-8"))
+M1_PILLAR_SCALE = json.loads((TEMPLATES / "m1_pillar_scale_resolution_2026-10-05.json").read_text(encoding="utf-8"))
+REMAINING_OWNER_AUDIT = json.loads((TEMPLATES / "remaining_secondary_source_owner_audit_2026-10-05.json").read_text(encoding="utf-8"))
 
 
 def _plan(name: str, sha256: str, target: str):
@@ -342,13 +344,13 @@ def test_intersol_native_fcstd_is_bound_as_reference_configuration_without_maste
 
 
 def test_secondary_source_execution_preserves_family_and_zero_object_boundaries():
-    assert SECONDARY_BINDINGS["status"] == "EXECUTED / RECOVERABLE_BINDINGS_APPLIED / OWNERLESS_SOURCES_RETAINED_R1"
+    assert SECONDARY_BINDINGS["status"] == "EXECUTED / RECOVERABLE_BINDINGS_APPLIED / M1_COMPONENT_BINDINGS_ADDED / FIVE_OWNER_UNRESOLVED_SOURCES_RETAINED_R1"
     assert SECONDARY_BINDINGS["counts"] == {
         "secondary_unbound_input": 14,
-        "r2_or_existing_derived_bound": 2,
+        "r2_or_existing_derived_bound": 4,
         "family_reference_bound": 3,
         "zero_object_reference_only": 2,
-        "remaining_r1_owner_unresolved": 7,
+        "remaining_r1_owner_unresolved": 5,
     }
     executed = {row["source_name"]: row for row in SECONDARY_BINDINGS["executed"]}
     assert executed["InterSol.FCStd"]["semantic_object_id"] == "INF-001"
@@ -433,3 +435,29 @@ def test_m1_mark3_execution_receipt_preserves_claim_ceiling():
     assert M1_MARK3_EXECUTION["manufacturing_authority"] is False
     assert M1_MARK3_EXECUTION["certification_authority"] is False
     assert M1_MARK3_EXECUTION["public_release_authorized"] is False
+
+
+def test_m1_pillar_scale_lineage_is_source_resolved():
+    assert M1_PILLAR_SCALE["status"] == "RESOLVED_FROM_NATIVE_SOURCE"
+    assert M1_PILLAR_SCALE["normal_source"]["scale_object"] == "Scale001"
+    assert M1_PILLAR_SCALE["normal_source"]["uniform_scale"] == 0.5
+    assert M1_PILLAR_SCALE["normal_source"]["compound_members"] == ["Body", "Body001", "Body002", "Body003", "Body004"]
+    assert M1_PILLAR_SCALE["x2_source"]["scale_object_present"] is False
+    assert M1_PILLAR_SCALE["comparison"]["common_numeric_fields"] == 2208
+    assert M1_PILLAR_SCALE["comparison"]["nonzero_comparable_fields"] == 852
+    assert M1_PILLAR_SCALE["comparison"]["exact_equal_nonzero_fields"] == 852
+    assert M1_PILLAR_SCALE["comparison"]["doubled_fields"] == 0
+    assert M1_PILLAR_SCALE["comparison"]["halved_fields"] == 0
+    assert M1_PILLAR_SCALE["authority_transfer"] is False
+
+
+def test_remaining_secondary_owner_audit_closes_current_reconciliation_frontier():
+    assert REMAINING_OWNER_AUDIT["status"] == "EXECUTED / FIVE_SOURCES_RETAINED_R1"
+    assert REMAINING_OWNER_AUDIT["remaining_r1_count"] == 5
+    rows = {row["source_name"]: row for row in REMAINING_OWNER_AUDIT["results"]}
+    assert rows["Arm Modules.FCStd"]["explicit_link_from_authoritative_mark3"] is False
+    assert rows["Joint.FCStd"]["explicit_link_from_authoritative_mark3"] is False
+    assert rows["Falcon Launch Tower.FCStd"]["direct_intersol_label_or_link"] is False
+    assert rows["Falcon Landing.FCStd"]["direct_intersol_label_or_link"] is False
+    assert rows["S.A.I Smart Home.FCStd"]["candidate_owner"] is None
+    assert REMAINING_OWNER_AUDIT["authority_transfer"] is False
