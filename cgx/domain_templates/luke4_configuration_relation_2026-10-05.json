@@ -1,0 +1,59 @@
+{
+  "schema": "CGX-LUKE4-CONFIGURATION-RELATION/0.1",
+  "execution_id": "LUKE4-CONFIG-RELATION-2026-10-05",
+  "status": "EXECUTED / SIBLING_CONFIGURATIONS_WITH_SHARED_CORE / PERFORMANCE_HELD",
+  "semantic_object_id": "SPACE-03",
+  "parent_object_id": "T1-SPACE",
+  "operations_record_id": "COM-0446",
+  "method": "Direct native FreeCAD Document.xml object-name and Label-set comparison on BouwerBase.",
+  "sources": {
+    "full": {
+      "mapping_id": "FF-LUKE4-FCSTD-001",
+      "sha256": "88ca5a84fb65d29ecaf4ccd8ec975a6ccad8bb426a078851109b2e16db5af1d6",
+      "object_count": 46
+    },
+    "single_node": {
+      "mapping_id": "FF-LUKE4-SINGLE-NODE-FCSTD-001",
+      "sha256": "ae8f6a022bdbd436fd24ae05ee7f6c6f70496515f2ee81e4ec0dd1cb5b0c3f40",
+      "object_count": 31
+    }
+  },
+  "pairwise_proof": {
+    "intersection": 28,
+    "full_only": 18,
+    "single_only": 3,
+    "same_label_common": 26,
+    "same_label_ratio_common": 0.9285714285714286,
+    "single_subset_full": false,
+    "full_subset_single": false,
+    "single_unique_objects": [
+      "Pad006",
+      "Pocket",
+      "Pocket001"
+    ]
+  },
+  "resolution": {
+    "relation_type": "SIBLING_CONFIGURATIONS_WITH_SHARED_CORE",
+    "strict_parent_child_derivation": false,
+    "full_scope": "FULL_LUKE_IV_CONFIGURATION",
+    "single_scope": "SPECIALIZED_SINGLE_NODE_CONFIGURATION",
+    "rationale": [
+      "The files share 28 named objects, 26 with identical labels, establishing a strong common source core.",
+      "The full file contains 18 objects absent from Single Node.",
+      "Single Node contains Pad006, Pocket and Pocket001 absent from the full file.",
+      "Because each file has unique source objects, neither can be represented truthfully as a strict object-set subset or universal successor."
+    ]
+  },
+  "still_held": [
+    "electromagnetic braking performance",
+    "controlled-return performance",
+    "structural adequacy",
+    "materials and manufacturing readiness",
+    "certification/regulatory approval",
+    "physical deployment authority"
+  ],
+  "authority_transfer": false,
+  "physical_authority": false,
+  "manufacturing_authority": false,
+  "public_release_authorized": false
+}
