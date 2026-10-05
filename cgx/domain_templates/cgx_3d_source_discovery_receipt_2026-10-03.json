@@ -1,7 +1,7 @@
 {
   "schema": "CGX-3D-SOURCE-DISCOVERY-RECEIPT/0.1",
   "receipt_id": "CGX-3D-INTAKE-DISCOVERY-2026-10-03",
-  "status": "DISCOVERY_VERIFIED / R0_R1_CURRENT_MAIN_REVALIDATED / PRIORITY_R2_SOURCE_BINDINGS_EXECUTED / ENGINEERING_SEMANTICS_HELD",
+  "status": "DISCOVERY_VERIFIED / PRIORITY_R2_EXECUTED / SECONDARY_SOURCE_CLASSIFICATION_EXECUTED / ENGINEERING_SEMANTICS_HELD",
   "recorded_at": "2026-10-03T18:41:00+10:00",
   "source_control": {
     "repository": "achillesromer-coder/LightSpeed",
@@ -291,13 +291,12 @@
     "audit": "Achilles",
     "next_actions": [
       "Priority R2 native-source identity lane is executed for WatchTower, Mark III, Payload Capsule, M1, Mark V, Luke IV and Free Flow; do not reopen absent source/hash/schema drift.",
-      "Payload Capsule SPACE-07 exact native-source binding and historical→current DBR are executed; do not reopen absent source/hash/schema drift.",
-      "WT-001 and Mark III exact native-source R2 identity bindings are executed; do not reopen them absent source/hash/schema drift.",
-      "Use this corpus-level R0/R1 conformance receipt as the intake baseline; do not rerun format qualification absent source/adapter drift.",
-      "Inventory and bind secondary retrievable FCStd families only where an existing semantic owner is recoverable; otherwise leave them R1-admitted rather than minting speculative identities.",
-      "Advance downstream engineering semantics, physical evidence and certification gates independently from completed source identity bindings."
+      "Secondary source classification is executed: InterSol.FCStd is bound to INF-001 as a non-master R2 reference configuration; WatchTower.FCStd remains a derived WT-001 reference; Mark1P top/bottom halves and Luke I are family references; zero-object containers are reference-only.",
+      "Seven secondary FCStd files remain R1 because no exact semantic owner relation is evidenced: Arm Modules, Joint, two Base-pillar variants, Falcon Landing, Falcon Launch Tower, and S.A.I Smart Home.",
+      "Do not mint semantic IDs for those seven from filename/project similarity; bind only when an existing owner is recovered at source/hash level.",
+      "Advance downstream engineering semantics, physical evidence and certification gates independently from completed source identity/classification work."
     ],
-    "smallest_remaining_gate": "Secondary FCStd owner reconciliation plus downstream engineering semantics; the named priority source-binding queue is closed."
+    "smallest_remaining_gate": "Downstream engineering semantics plus exact-owner recovery for seven R1 secondary FCStd sources; priority and recoverable secondary identity work is executed."
   },
   "evidence_ceiling": "Digital source identity/structure/revision evidence only. No physical, manufacturing, structural, performance, certification, regulatory or deployment claim is promoted.",
   "architecture_impact": "No new master or parallel roadmap. One native source may have multiple projections/configurations; DBR records accepted state transitions; R3 representations remain derivative.",
@@ -478,5 +477,6 @@
     ],
     "dbr_summary_ref": "remaining_3d_dbr_summary_2026-10-05.json",
     "priority_bindings_receipt": "priority_3d_source_bindings_execution_2026-10-05.json"
-  }
+  },
+  "secondary_source_execution_ref": "cgx/domain_templates/secondary_3d_source_execution_2026-10-05.json"
 }

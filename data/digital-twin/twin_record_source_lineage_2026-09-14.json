@@ -198,7 +198,28 @@
         "binding_state": "Mark family bound; exact Mark 1P child remains Systems/Romer-owned"
       },
       "semantic_domain": "romer",
-      "domain_semantic_object_id": "cgx:domain:romer"
+      "domain_semantic_object_id": "cgx:domain:romer",
+      "native_source_references": [
+        {
+          "source_name": "Mark1P (Bottom 2 Halves).FCStd",
+          "source_sha256": "d2a4d3c6d4db52cbc0035b76e0bc6125a9fbf77333cf7cdcefb13e9db146b9e8",
+          "object_count": 122,
+          "state": "R1_FAMILY_REFERENCE_BOUND / EXACT_CHILD_ID_HELD"
+        },
+        {
+          "source_name": "Mark1P (Top 2 Halves.FCStd",
+          "source_sha256": "263f8129f0db64d9879e6938ae39a0891d7edc4cc3fb96f1a21ddb0d8b948ef0",
+          "object_count": 176,
+          "state": "R1_FAMILY_REFERENCE_BOUND / EXACT_CHILD_ID_HELD"
+        },
+        {
+          "source_name": "Mark1P.FCStd",
+          "source_sha256": "9d3a18dad3bc038668112fc2aa99389ce618ef92fd1a72a98a8523cc56535a30",
+          "object_count": 0,
+          "state": "R0_REFERENCE_ONLY / ZERO_OBJECT_CONTAINER"
+        }
+      ],
+      "source_binding_state": "FAMILY_REFERENCE_SOURCES_BOUND / EXACT_MARK1P_CHILD_IDENTITY_HELD / NO_GEOMETRY_AUTHORITY_TRANSFER"
     },
     {
       "twin_id": "mark_i",
@@ -342,7 +363,18 @@
           "full_subset_single": false
         },
         "selection_rule": "Use full Luke IV source for full-configuration geometry and Single Node source only for the specialized single-node configuration; neither source globally supersedes the other."
-      }
+      },
+      "historical_source_references": [
+        {
+          "source_name": "Luke I.FCStd",
+          "source_sha256": "bdcbf8ca69ebd76f3fea31ff48ed19218572a7894e9f977973495ab54ea57680",
+          "object_count": 72,
+          "state": "R1_FAMILY_REFERENCE_BOUND / CONFIGURATION_RELATION_TO_CURRENT_LUKE_IV_UNRESOLVED",
+          "current_configuration": false,
+          "authority_transfer": false,
+          "configuration_relation": "UNRESOLVED"
+        }
+      ]
     },
     {
       "twin_id": "maglev_luke_iv",
@@ -446,7 +478,7 @@
       "semantic_object_id": "INF-001",
       "source_name": "Type 1 Romer Cognigrex structured InterSol canon",
       "family_state": "canonical_current_structured_programme",
-      "geometry_authority": "NONE",
+      "geometry_authority": "STRUCTURED_INTERSOL_CANON / INTERSOL_FCSTD_REFERENCE_CONFIGURATION_BOUND",
       "whole_object_geometry_hash": null,
       "operations_binding": {
         "workbook_id": "1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg",
@@ -474,7 +506,19 @@
         "binding_state": "InterSol programme bound to comparator child + facility subcomponents"
       },
       "semantic_domain": "romer",
-      "domain_semantic_object_id": "cgx:domain:romer"
+      "domain_semantic_object_id": "cgx:domain:romer",
+      "native_source_bindings": [
+        {
+          "mapping_id": "FF-INTERSOL-FCSTD-001",
+          "source_name": "InterSol.FCStd",
+          "source_sha256": "0a0c3d60792eea7d5fb7d5ef0d60436afad17b72ae448207f7bab8ccce1b66f5",
+          "role": "REFERENCE_CONFIGURATION",
+          "object_count": 418,
+          "current_geometry_master": false,
+          "authority_transfer": false
+        }
+      ],
+      "source_binding_state": "R2_NATIVE_REFERENCE_CONFIGURATION_BOUND / STRUCTURED_PROGRAMME_SEMANTIC_AUTHORITY_PRESERVED / CURRENT_GEOMETRY_MASTER_NOT_CLAIMED"
     },
     {
       "twin_id": "watchtower",

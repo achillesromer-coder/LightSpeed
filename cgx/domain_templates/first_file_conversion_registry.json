@@ -654,6 +654,43 @@
       ],
       "evidence_ceiling": "exact structural source revision only; electromagnetic/electrical/material/performance/safety/manufacturing semantics remain gated",
       "authority_transfer": false
+    },
+    {
+      "mapping_id": "FF-INTERSOL-FCSTD-001",
+      "domain": "romer",
+      "semantic_object_id": "INF-001",
+      "source_name": "InterSol.FCStd",
+      "source_sha256": "0a0c3d60792eea7d5fb7d5ef0d60436afad17b72ae448207f7bab8ccce1b66f5",
+      "media_type": "application/x-freecad",
+      "semantic_target": "/romer/intersol",
+      "owner": "Römer / InterSol / INF-001",
+      "source_authority": "LOCAL_NATIVE_FCSTD_REFERENCE_CONFIGURATION / STRUCTURED_INTERSOL_CANON_REMAINS_SEMANTIC_AUTHORITY",
+      "classes": [
+        "R0_EXACT",
+        "R1_SEMANTIC_REVERSIBLE",
+        "R2_RECONSTRUCTED"
+      ],
+      "r2_families": [
+        "system",
+        "geometry-source",
+        "reference-configuration-source"
+      ],
+      "source_structure": {
+        "object_count": 418,
+        "self_label": "InterSol",
+        "observed_child_label": "Watch Tower Concrete"
+      },
+      "configuration_scope": "REFERENCE_CONFIGURATION / NOT_GLOBAL_MASTER",
+      "evidence_ceiling": "exact native source identity and structural configuration bound to existing INF-001; current whole-facility geometry authority, site/geodetic placement, engineering adequacy, materials, interfaces, certification and public release remain gated",
+      "held_claims": [
+        "current whole-facility geometry master status",
+        "site/geodetic placement",
+        "engineering adequacy",
+        "materials and interfaces",
+        "manufacturing/certification",
+        "public release"
+      ],
+      "authority_transfer": false
     }
   ],
   "successor_rule": "S92 migration must preserve source IDs/hashes and mapping IDs; compare semantic object/relation families and projection hashes against S91 proof, recording any schema-evolution delta rather than reinterpreting the whole workbook."
