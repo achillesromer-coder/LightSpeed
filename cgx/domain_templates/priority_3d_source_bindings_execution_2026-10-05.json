@@ -38,7 +38,16 @@
         "FF-LUKE4-FCSTD-001",
         "FF-LUKE4-SINGLE-NODE-FCSTD-001"
       ],
-      "state": "FULL_AND_SINGLE_NODE_CURRENT_SOURCES_BOUND / EXACT_HIERARCHY_HELD"
+      "state": "FULL_AND_SINGLE_NODE_SOURCES_BOUND / SIBLING_CONFIGURATION_RELATION_RESOLVED",
+      "configuration_relation_ref": "luke4_configuration_relation_2026-10-05.json",
+      "configuration_relation_summary": {
+        "relation_type": "SIBLING_CONFIGURATIONS_WITH_SHARED_CORE",
+        "shared_object_names": 28,
+        "shared_name_and_label": 26,
+        "full_unique_objects": 18,
+        "single_unique_objects": 3,
+        "strict_subset_relation": false
+      }
     },
     {
       "semantic_object_id": "SF-01",
