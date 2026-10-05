@@ -388,7 +388,7 @@
     {
       "bytes": 17809,
       "path": "Desktop_Hooks/LightSpeed/tests/test_simulations.py",
-      "sha256": "54f5427912ed9b681d0130292edaf345ee5b5c85369c8b46b9abff83c305628b"
+      "sha256": "16172663d98dca5a458e0cbfbbe945955670c40f7e57bf97669dba780ec435cf"
     },
     {
       "bytes": 8302,
@@ -1318,7 +1318,7 @@
     {
       "bytes": 11532,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-2_Oracle/tools/populate_encyclopedia_foundation.py",
-      "sha256": "768628c64d7a38f0e243b64d6acf3d31268ba2e433c68d5a4cb2153a2b5b1f92"
+      "sha256": "d49c3d103cffa23888adad8cdf63eb2c790bd16bdb2c1d158dca84b1ae384607"
     },
     {
       "bytes": 2083,
@@ -2871,9 +2871,9 @@
       "sha256": "b7bf79b6c3704907d4cba6459c73163a90f4b5db4600406df30179a26503614e"
     },
     {
-      "bytes": 15217,
+      "bytes": 15309,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/dimensions_library.py",
-      "sha256": "0e5f68f5033fffabdcc3096333e7602f3e3bca624055d5509a8c0ddcfa09490e"
+      "sha256": "76513225d4ed1604c65a85ba2f77316e038580da19a5c0ffc4128069c28df41b"
     },
     {
       "bytes": 392,
@@ -2931,9 +2931,9 @@
       "sha256": "05dc6c4ec2161587d0b03decc60becb31ee71ee9aaed9e25d0a54a4495d8b78e"
     },
     {
-      "bytes": 17074,
+      "bytes": 17098,
       "path": "Desktop_Hooks/LightSpeed/Z Axis/Z0_TheConstruct/physics_calculators.py",
-      "sha256": "6667a7a508128032faa9a7c661c769f265506c853fa29baed917ff4d69703e55"
+      "sha256": "91b5bd2a4157d431ca96586341c59a399c06fafbd01efacd02e6be8a7668db9b"
     },
     {
       "bytes": 0,
