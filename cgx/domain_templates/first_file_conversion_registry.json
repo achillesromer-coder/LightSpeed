@@ -500,8 +500,19 @@
         "geometry-source",
         "revision-transition"
       ],
-      "evidence_ceiling": "current native full-source structure and predecessor comparison only; EM/return performance, physical validation and certification remain gated",
-      "authority_transfer": false
+      "evidence_ceiling": "current native full-source structure plus resolved sibling-configuration relation to Single Node; EM/return performance, structural adequacy, physical validation and certification remain gated",
+      "authority_transfer": false,
+      "configuration_scope": "FULL_LUKE_IV_CONFIGURATION",
+      "configuration_relation": {
+        "relation_type": "SIBLING_CONFIGURATIONS_WITH_SHARED_CORE",
+        "peer_mapping_id": "FF-LUKE4-SINGLE-NODE-FCSTD-001",
+        "object_count": 46,
+        "shared_object_names": 28,
+        "shared_name_and_label": 26,
+        "full_unique_objects": 18,
+        "peer_unique_objects": 3,
+        "strict_subset_relation": false
+      }
     },
     {
       "mapping_id": "FF-LUKE4-SINGLE-NODE-FCSTD-001",
@@ -525,15 +536,31 @@
         "geometry-source",
         "configuration-source"
       ],
-      "evidence_ceiling": "exact single-node source identity only; exact hierarchy/derivation relation to full Luke IV source and physical performance remain gated",
+      "evidence_ceiling": "exact single-node source identity plus resolved sibling-configuration relation to full Luke IV; EM braking, controlled-return, structural adequacy and manufacturing/certification remain gated",
       "held_claims": [
-        "exact full↔single-node derivation relation",
+        "no strict parent/subset derivation is claimed; configurations are sibling views with a shared source core",
         "EM braking performance",
         "controlled-return performance",
         "structural adequacy",
         "manufacturing/certification"
       ],
-      "authority_transfer": false
+      "authority_transfer": false,
+      "configuration_scope": "SPECIALIZED_SINGLE_NODE_CONFIGURATION",
+      "configuration_relation": {
+        "relation_type": "SIBLING_CONFIGURATIONS_WITH_SHARED_CORE",
+        "peer_mapping_id": "FF-LUKE4-FCSTD-001",
+        "object_count": 31,
+        "shared_object_names": 28,
+        "shared_name_and_label": 26,
+        "full_peer_unique_objects": 18,
+        "single_unique_objects": 3,
+        "single_unique_object_names": [
+          "Pad006",
+          "Pocket",
+          "Pocket001"
+        ],
+        "strict_subset_relation": false
+      }
     },
     {
       "mapping_id": "FF-FREEFLOW-BATTERY-FCSTD-001",
