@@ -19,6 +19,7 @@ LINEAGE = json.loads((ROOT / "data" / "digital-twin" / "twin_record_source_linea
 PAYLOAD_DBR = json.loads((TEMPLATES / "payload_capsule_dbr_2026-10-05.json").read_text(encoding="utf-8"))
 REMAINING_DBR = json.loads((TEMPLATES / "remaining_3d_dbr_summary_2026-10-05.json").read_text(encoding="utf-8"))
 PRIORITY_BINDINGS = json.loads((TEMPLATES / "priority_3d_source_bindings_execution_2026-10-05.json").read_text(encoding="utf-8"))\nM1_PRECEDENCE = json.loads((TEMPLATES / "m1_configuration_precedence_2026-10-05.json").read_text(encoding="utf-8"))
+LUKE4_RELATION = json.loads((TEMPLATES / "luke4_configuration_relation_2026-10-05.json").read_text(encoding="utf-8"))
 
 
 def _plan(name: str, sha256: str, target: str):
@@ -202,7 +203,7 @@ def test_m1_and_free_flow_lineage_are_source_bound_without_overwriting_other_aut
     records = {record["twin_id"]: record for record in LINEAGE["records"]}
     m1 = records["m1_elevated_bypass"]
     assert len(m1["native_source_bindings"]) == 3
-    assert m1["source_binding_state"] == "CURRENT_NATIVE_CONFIGURATION_SET_BOUND / CONFIGURATION_PRECEDENCE_HELD"
+    assert m1["source_binding_state"] == "CURRENT_NATIVE_CONFIGURATION_SET_BOUND / PRECEDENCE_RESOLVED_BY_SCOPE"
 
     expected = {
         "free_flow_batteries": "FF-FREEFLOW-BATTERY-FCSTD-001",
@@ -262,3 +263,42 @@ def test_m1_registry_and_lineage_encode_scoped_precedence():
 
     by_id = {row["semantic_object_id"]: row for row in PRIORITY_BINDINGS["bindings"]}
     assert by_id["T1-M1"]["state"] == "THREE_CURRENT_CONFIGURATION_SOURCES_BOUND / PRECEDENCE_RESOLVED_BY_SCOPE"
+
+
+def test_luke4_configuration_relation_is_resolved_as_sibling_sources():
+    assert LUKE4_RELATION["status"] == "EXECUTED / SIBLING_CONFIGURATIONS_WITH_SHARED_CORE / PERFORMANCE_HELD"
+    assert LUKE4_RELATION["semantic_object_id"] == "SPACE-03"
+    proof = LUKE4_RELATION["pairwise_proof"]
+    assert proof["intersection"] == 28
+    assert proof["full_only"] == 18
+    assert proof["single_only"] == 3
+    assert proof["same_label_common"] == 26
+    assert proof["single_subset_full"] is False
+    assert proof["full_subset_single"] is False
+    assert proof["single_unique_objects"] == ["Pad006", "Pocket", "Pocket001"]
+    assert LUKE4_RELATION["resolution"]["relation_type"] == "SIBLING_CONFIGURATIONS_WITH_SHARED_CORE"
+    assert LUKE4_RELATION["physical_authority"] is False
+    assert LUKE4_RELATION["manufacturing_authority"] is False
+    assert LUKE4_RELATION["public_release_authorized"] is False
+
+
+def test_luke4_registry_lineage_and_priority_receipt_are_aligned():
+    mappings = {row["mapping_id"]: row for row in FIRST_FILES["mappings"]}
+    full = mappings["FF-LUKE4-FCSTD-001"]
+    single = mappings["FF-LUKE4-SINGLE-NODE-FCSTD-001"]
+    assert full["configuration_scope"] == "FULL_LUKE_IV_CONFIGURATION"
+    assert single["configuration_scope"] == "SPECIALIZED_SINGLE_NODE_CONFIGURATION"
+    assert full["configuration_relation"]["relation_type"] == "SIBLING_CONFIGURATIONS_WITH_SHARED_CORE"
+    assert single["configuration_relation"]["strict_subset_relation"] is False
+
+    records = {record["twin_id"]: record for record in LINEAGE["records"]}
+    luke = records["luke_family"]
+    assert luke["semantic_object_id"] == "SPACE-03"
+    assert luke["parent_object_id"] == "T1-SPACE"
+    assert luke["geometry_authority"] == "LUKE4_NATIVE_CONFIGURATION_SET"
+    assert len(luke["native_source_bindings"]) == 2
+    assert luke["source_binding_state"] == "R2_NATIVE_CONFIGURATION_SET_BOUND / SIBLING_RELATION_RESOLVED / PERFORMANCE_HELD"
+    assert luke["configuration_relation"]["proof"]["intersection"] == 28
+
+    by_id = {row["semantic_object_id"]: row for row in PRIORITY_BINDINGS["bindings"]}
+    assert by_id["SPACE-03"]["state"] == "FULL_AND_SINGLE_NODE_SOURCES_BOUND / SIBLING_CONFIGURATION_RELATION_RESOLVED"
