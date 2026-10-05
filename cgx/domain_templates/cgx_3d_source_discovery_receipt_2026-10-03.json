@@ -84,7 +84,7 @@
         "RFS Module"
       ],
       "classification": "NEW_SOURCE_REVISION_CANDIDATE",
-      "frontier": "The file does not independently prove three appendage instances or close exact interlock/Mark V mating CAD/ICD."
+      "frontier": "The FCStd alone does not prove appendage multiplicity; OD-050 plus SRC-097 establish current appendage count = 3 and the Mark III-to-Mark III multi-unit cooperative interlock purpose. Exact connector geometry/tolerance/load/release remains held. No controlled Mark III-to-Mark V mechanical mating requirement was recovered."
     },
     {
       "family": "Payload Capsule",
@@ -473,7 +473,7 @@
     ],
     "nonclaims": [
       "WT-001 held A/C, E/L/R, cable, structural, material, site and certification semantics remain open",
-      "Mark III three-appendage multiplicity, exact interlock, Mark V mating, physical performance and certification remain open",
+      "Mark III appendage count = 3 and Mark III-to-Mark III cooperative interlock function are source/owner-bound; exact interlock geometry/tolerance/load/release, physical performance and certification remain open; no Mark III-to-Mark V mechanical mating requirement is claimed.",
       "source binding does not authorize manufacturing or public release"
     ],
     "dbr_summary_ref": "remaining_3d_dbr_summary_2026-10-05.json",
