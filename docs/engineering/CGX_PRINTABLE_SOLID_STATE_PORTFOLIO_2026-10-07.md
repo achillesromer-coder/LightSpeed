@@ -128,7 +128,7 @@ Geospatial feedback can alter inspection, heating, lighting, drainage or mainten
 The founder scenario is retained as a design case:
 
 - three Mark III units provide acquisition/resource-interaction redundancy;
-- a Mark V tagging/support role is **held pending owning-canon reconciliation**;
+- a Mark V registry/telemetry/tagging support role is corroborated by Type 1 Systems Solar Hull UC-005 at design stage (registry/telemetry casing and low-power support); ownership/yield claims remain prohibited;
 - a minimum John/UTP process-cell skeleton provides assay, feed preparation, printing and repair;
 - secure identity/comms/metrology plus specialist seed components establish the initial trusted base;
 - the node grows only through independently calibrated child modules;
@@ -172,4 +172,4 @@ Raphael may propose or compare novel relations, but standard physics/engineering
 5. Add a local-horizon compiler fixture using measured inventory and hard constraints.
 6. Select first low-consequence coupons: passive identity/antenna, conductive trace, simple sensor, functional coating and recovered-feed coupon.
 7. Progress structural-energy work only after separate material, electrical/electrochemical and structural tests exist.
-8. Keep Mark V role, debris actuation, biological resonance and mission operations behind explicit unresolved/owner gates.
+8. Keep Mark V claims beyond UC-005 registry/telemetry casing and low-power support, plus debris actuation, biological resonance and mission operations, behind explicit evidence/owner gates.
