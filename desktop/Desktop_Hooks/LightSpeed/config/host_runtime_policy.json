@@ -13,9 +13,12 @@
       "idle_persistence_percent_of_remaining_window": 80,
       "interaction_speed_factor": 0.8,
       "lightspeed_logged_in_percent": 48,
-      "mode": "low_sleep_persistent_companion",
+      "mode": "deferred_until_dedicated_device",
       "ready_waiting_share_of_remaining_window": 80,
-      "remaining_window_percent": 52
+      "remaining_window_percent": 52,
+      "prior_mode": "low_sleep_persistent_companion",
+      "allocation_status": "historical_weights_retained_while_deferred",
+      "resume_condition": "Separate dedicated device hosting before resumption, per owner direction."
     }
   },
   "firmware_follow_up": [

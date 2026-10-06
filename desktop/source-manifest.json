@@ -31,9 +31,9 @@
       "sha256": "a5fda201c319de6ef8410f92549337ad08155faec639d9c66756b732e7b1d82b"
     },
     {
-      "bytes": 3051,
+      "bytes": 3282,
       "path": "Desktop_Hooks/LightSpeed/config/host_runtime_policy.json",
-      "sha256": "d763d6fe4d04ecb34f81968ee7dab83a38d8e7224c62bdeb071b9be5f84d806f"
+      "sha256": "927779db7670aa07900758606a6bd9f98d1f47ee36d1461908ab6dc8a900be56"
     },
     {
       "bytes": 15246,
@@ -3116,9 +3116,9 @@
       "sha256": "147c6bbd93f2236f858dda823279d05ec1aca371f831b993804ceee9f0d1aad2"
     },
     {
-      "bytes": 74909,
+      "bytes": 75450,
       "path": "LightSpeed_Runtime/lightspeed_runtime/agent_home_bridge.py",
-      "sha256": "42a1bba05c6217e6188ab1e872a5876396a39376ae2b370a8838a340282437f7"
+      "sha256": "66505971e400765295bceefc42f16928bee4375f6b56ad3c1847045ac2a730e9"
     },
     {
       "bytes": 13474,
@@ -3191,9 +3191,9 @@
       "sha256": "1be2cfaf9e6e5aea59bc684c28cbea457fc0496e87c9a57aa48f823c644b8d50"
     },
     {
-      "bytes": 72092,
+      "bytes": 72176,
       "path": "LightSpeed_Runtime/lightspeed_runtime/desktop_adapters.py",
-      "sha256": "91399384d83933c3d9511e4892eaf6043ee66e3182b93dc1ac117b0b217caf0a"
+      "sha256": "a56fadecfdfcfa63641219cdbbc2bd84b0ada8df51c4e668ccd56e37ee887c41"
     },
     {
       "bytes": 6228,

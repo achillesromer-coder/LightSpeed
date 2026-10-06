@@ -59,6 +59,7 @@ on:
       - "tests/test_launcher_org_materialization.py"
       - "tests/test_packaged_runtime_discovery.py"
       - "tests/test_runtime_manifest_payload.py"
+      - "tests/test_deferred_host_policy.py"
       - "tests/test_merovingian_service_integration.py"
       - "tests/test_run_ls_go_bridge_layout.py"
       - "tools/run_ls_go_bridge.py"
@@ -111,6 +112,7 @@ on:
       - "tests/test_launcher_org_materialization.py"
       - "tests/test_packaged_runtime_discovery.py"
       - "tests/test_runtime_manifest_payload.py"
+      - "tests/test_deferred_host_policy.py"
       - "tests/test_merovingian_service_integration.py"
       - "tests/test_run_ls_go_bridge_layout.py"
       - "tools/run_ls_go_bridge.py"
@@ -192,6 +194,7 @@ jobs:
             tests/test_launcher_org_materialization.py \
             tests/test_packaged_runtime_discovery.py \
             tests/test_runtime_manifest_payload.py \
+            tests/test_deferred_host_policy.py \
             2>&1 | tee compile.log
 
       - name: Run static Merovingian contract check
