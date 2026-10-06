@@ -54,7 +54,7 @@ Write rollback evidence outside the deleted slot, then verify the slot no longer
 
 ## Profiles
 
-Supported profiles: core, api, data, validation, dev.
+Supported profiles: core, api, data, validation, dev, desktop. Desktop checks dependency imports and Tcl only; it does not prove standalone distribution or UI acceptance.
 
 Profiles remain pinned by the existing Runtime requirements files. FreeCAD is an external host capability and is not pip-managed.
 

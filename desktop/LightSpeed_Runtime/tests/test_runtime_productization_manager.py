@@ -57,8 +57,9 @@ def test_configure_writes_bounded_marker_and_config(monkeypatch, tmp_path: Path)
     assert config["authority"] == "digital-runtime-config-only"
 
 
+@pytest.mark.parametrize("profile", ["core", "desktop"])
 def test_install_update_and_rollback_use_managed_slot_only(
-    monkeypatch, tmp_path: Path
+    monkeypatch, tmp_path: Path, profile: str
 ) -> None:
     root = _set_root(monkeypatch, tmp_path)
     calls: list[tuple[str, str]] = []
@@ -84,14 +85,14 @@ def test_install_update_and_rollback_use_managed_slot_only(
     monkeypatch.setattr(rp, "_run_installer_process", fake_installer)
 
     installed = rp.manage_runtime_productization(
-        "install", slot="alpha", profile="core", confirmed=True
+        "install", slot="alpha", profile=profile, confirmed=True
     )
     assert installed["state"]["installed"] is True
-    assert calls == [("install", "core")]
+    assert calls == [("install", profile)]
 
     with pytest.raises(rp.RuntimeProductizationError, match="already installed"):
         rp.manage_runtime_productization(
-            "install", slot="alpha", profile="core", confirmed=True
+            "install", slot="alpha", profile=profile, confirmed=True
         )
 
     updated = rp.manage_runtime_productization(

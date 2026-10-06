@@ -155,7 +155,7 @@ server.registerTool("cgx_runtime_productization", {
   inputSchema: {
     action: z.enum(["status", "configure", "install", "update", "rollback"]),
     slot: z.string().min(1).max(48).default("default"),
-    profile: z.enum(["core", "api", "data", "validation", "dev"]).optional(),
+    profile: z.enum(["core", "api", "data", "validation", "dev", "desktop"]).optional(),
     confirmed: z.boolean().default(false),
   },
   annotations: {

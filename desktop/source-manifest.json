@@ -3651,9 +3651,14 @@
       "sha256": "3689197885927ea02280862780b1c381b27835050e12b4e708933e865b7c7b9b"
     },
     {
-      "bytes": 13187,
+      "bytes": 13198,
       "path": "LightSpeed_Runtime/lightspeed_runtime/runtime_productization.py",
-      "sha256": "e249c80f27a3eef2da34abb503b81c84dbfc1237aacc237efc19ef19f265b9ec"
+      "sha256": "6d6c8e4bfafabb802da9a99738ae292879d6440dbedeb8c042e40f4c5125fcb5"
+    },
+    {
+      "path": "LightSpeed_Runtime/requirements-desktop.txt",
+      "bytes": 167,
+      "sha256": "932db67bc9bdc44f407fac5796491808f60b059cc5ed16ff26021b987cd3d6f9"
     }
   ],
   "schema_version": 1

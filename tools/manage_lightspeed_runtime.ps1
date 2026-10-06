@@ -3,7 +3,7 @@ param(
     [ValidateSet("status", "configure", "install", "update", "rollback")]
     [string]$Action = "status",
     [string]$Slot = "default",
-    [ValidateSet("core", "api", "data", "validation", "dev")]
+    [ValidateSet("core", "api", "data", "validation", "dev", "desktop")]
     [string]$Profile = "",
     [switch]$Confirm,
     [string]$ManagedRoot = ""

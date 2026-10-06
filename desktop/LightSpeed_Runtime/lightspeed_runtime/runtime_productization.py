@@ -22,7 +22,7 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[3]
 INSTALLER = REPO_ROOT / "tools" / "install_lightspeed_runtime.ps1"
 DEFAULT_MANAGED_ROOT = REPO_ROOT / "State" / "Install" / "managed-runtime"
-PROFILES = {"core", "api", "data", "validation", "dev"}
+PROFILES = {"core", "api", "data", "validation", "dev", "desktop"}
 ACTIONS = {"status", "configure", "install", "update", "rollback"}
 SLOT_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,47}$")
 MARKER_NAME = ".lightspeed-managed-runtime.json"
