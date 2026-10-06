@@ -63,7 +63,7 @@
       "subject": "Bootstrap outpost scenario",
       "semantics": [
         "A minimum-skeleton outpost architecture should be evaluated in which imported seed hardware bootstraps assay, tagging, feed preparation, manufacturing, repair and local safeguard capability.",
-        "The founder-proposed three-Mark-III plus Mark-V tagging/support arrangement is a scenario assumption pending owning-canon reconciliation of Mark V function and full mission engineering.",
+        "The founder-proposed three-Mark-III plus Mark-V registry/telemetry/tagging support arrangement is corroborated by Type 1 Systems Solar Hull UC-005 at design stage: registry/telemetry node casing and low-power support. It still requires full mission engineering and must not be promoted to ownership/yield or flight-readiness claims.",
         "Resource return/value may remain an economic option but never outranks mission safety, debris stewardship, planetary/ecological constraints or evidence gates."
       ]
     },
@@ -98,10 +98,18 @@
     "no-graphene-universal-best-material-claim",
     "no-cleanup-feed-use-without-contamination-and-application-qualification",
     "no-biological-or-resonant-efficacy-claim-without-controlled-evidence",
-    "no-mark-v-tagging-role-promotion-before-owning-canon-reconciliation",
+    "no-mark-v-ownership-yield-or-mission-readiness-promotion-from-design-stage-uc-005",
     "no-autonomous-deorbit-deflection-or-extraction-authority-from-cgx-planning",
     "no-recursive-printing-equals-unbounded-self-replication-claim",
     "no-simulation-or-raphael-output-promotes-physical-capability"
   ],
-  "next_action": "Reconcile these semantics into the existing Drive-owned Post-Mix, Raphael printer/multiphysics and CGX Solid-State Catalogue records; mirror only implementation contracts and receipts into Git; advance physical claims solely through the existing evidence ladders."
+  "next_action": "Reconcile these semantics into the existing Drive-owned Post-Mix, Raphael printer/multiphysics and CGX Solid-State Catalogue records; mirror only implementation contracts and receipts into Git; advance physical claims solely through the existing evidence ladders.",
+  "resolved_owner_reference": {
+    "source": "Type 1 Systems Cognigrex",
+    "records": [
+      "SOLAR5A8A_10_Use_Cases / UC-005: Mark V — Registry/telemetry node energy support; design-stage; no ownership/yield claims",
+      "SOLAR4FAE_14_Use_Cases / UC-005: Mark V — Registry/telemetry node casing and low-power support; development pathway only"
+    ],
+    "resolution": "Mark V tagging is bounded here to registry/telemetry identity/support semantics; broader Mark V function and mission readiness remain configuration/evidence controlled."
+  }
 }
