@@ -1,6 +1,6 @@
 {
   "schema": "CGX-PLUGIN-PACKAGES/0.3",
-  "version": "0.4.1",
+  "version": "0.4.0",
   "description": "Thin Cognigrex selector packages generated from one source definition.",
   "author": {
     "name": "Römer Industries"
