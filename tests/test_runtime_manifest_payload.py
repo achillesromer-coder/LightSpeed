@@ -5,16 +5,20 @@ import json
 from pathlib import Path, PurePosixPath
 import subprocess
 import sys
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_missing_queue_consumer_is_rejected(tmp_path, monkeypatch, capsys):
+@pytest.mark.parametrize("omitted", [
+    "LightSpeed_Runtime/lightspeed_runtime/ls_go_job_consumer.py",
+    "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/secure_settings_hub.py",
+])
+def test_missing_runtime_module_is_rejected(tmp_path, monkeypatch, capsys, omitted):
     spec = importlib.util.spec_from_file_location("surface_check", ROOT / "scripts/validate_lightspeed_surfaces.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     manifest = json.loads(module.MANIFEST.read_text())
-    omitted = "LightSpeed_Runtime/lightspeed_runtime/ls_go_job_consumer.py"
     manifest["records"] = [r for r in manifest["records"] if r["path"] != omitted]
     altered = tmp_path / "manifest.json"
     altered.write_text(json.dumps(manifest), encoding="utf-8")
