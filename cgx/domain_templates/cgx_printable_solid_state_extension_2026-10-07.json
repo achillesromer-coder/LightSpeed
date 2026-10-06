@@ -178,10 +178,10 @@
     ]
   },
   "bootstrap_scenario": {
-    "state": "FOUNDER_SCENARIO_PENDING_OWNING_CANON_RECONCILIATION",
+    "state": "FOUNDER_SCENARIO_MARK_V_ROLE_CORROBORATED_PENDING_MISSION_ENGINEERING",
     "proposed_seed": [
       "3 x Mark III acquisition/resource-interaction units",
-      "Mark V tagging/support role (exact function unresolved here)",
+      "Mark V registry/telemetry/tagging support (Type 1 Systems Solar Hull UC-005; design-stage; casing/low-power support; no ownership/yield claim)",
       "UTP/John process-cell skeleton",
       "metrology + secure identity/comms + specialist process heads + spares"
     ],
@@ -197,8 +197,17 @@
       "not a flight manifest",
       "not a mission-readiness claim",
       "not a resource reserve/value claim",
-      "not autonomous extraction/deorbit authority"
-    ]
+      "not autonomous extraction/deorbit authority",
+      "not a Mark V ownership/yield claim"
+    ],
+    "owner_reference": {
+      "source": "Type 1 Systems Cognigrex",
+      "records": [
+        "SOLAR5A8A_10_Use_Cases/UC-005",
+        "SOLAR4FAE_14_Use_Cases/UC-005"
+      ],
+      "bounded_role": "registry/telemetry node casing, energy/low-power support and identity/tagging semantics only"
+    }
   },
   "portfolio_families": [
     {

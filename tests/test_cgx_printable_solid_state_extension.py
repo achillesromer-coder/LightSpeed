@@ -51,10 +51,10 @@ def test_energy_and_material_claim_guardrails_are_explicit() -> None:
 
 def test_bootstrap_scenario_is_not_promoted_to_mission_fact() -> None:
     scenario = EXTENSION["bootstrap_scenario"]
-    assert scenario["state"] == "FOUNDER_SCENARIO_PENDING_OWNING_CANON_RECONCILIATION"
-    assert any("Mark V" in item and "unresolved" in item for item in scenario["proposed_seed"])
+    assert scenario["state"] == "FOUNDER_SCENARIO_MARK_V_ROLE_CORROBORATED_PENDING_MISSION_ENGINEERING"
+    assert any("Mark V" in item and "UC-005" in item and "no ownership/yield claim" in item for item in scenario["proposed_seed"])
     assert "not a flight manifest" in scenario["non_claims"]
-    assert "no-mark-v-tagging-role-promotion-before-owning-canon-reconciliation" in DELTA["hard_guardrails"]
+    assert "no-mark-v-ownership-yield-or-mission-readiness-promotion-from-design-stage-uc-005" in DELTA["hard_guardrails"]
 
 
 def test_triplet_preserves_authority_separation() -> None:

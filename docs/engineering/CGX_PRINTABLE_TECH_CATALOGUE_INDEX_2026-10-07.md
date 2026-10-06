@@ -179,7 +179,7 @@ The AI helper should therefore choose a route by **capability + evidence + hazar
 - **PT-073** explicitly rejects free-space-as-energy-source interpretations.
 - **PT-074** requires contamination and application-specific qualification before recovered material becomes feed.
 - **PT-075** permits geospatial sensing/control research but not unvalidated biological/resonant efficacy claims.
-- **PT-077** captures the three-Mark-III + Mark-V-tagging/support arrangement as a founder scenario only; Mark V’s exact role remains owning-canon work.
+- **PT-077** captures the three-Mark-III + Mark-V registry/telemetry/tagging arrangement as a founder scenario; Type 1 Systems Solar Hull UC-005 corroborates Mark V registry/telemetry casing and low-power support at design stage, with no ownership/yield claim.
 - **PT-078** is tag/track/hazard-envelope infrastructure; deorbit/deflection remains a separately authorised orbital-dynamics problem.
 - The legacy catalogue column-N/header semantic mismatch remains a held schema-migration item; this derived view does not reinterpret that column.
 
