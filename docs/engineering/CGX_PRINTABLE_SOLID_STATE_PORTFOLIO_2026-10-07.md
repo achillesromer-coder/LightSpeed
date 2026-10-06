@@ -193,3 +193,48 @@ The catalogue can scale compositionally from material voxels and devices to infr
 
 ### Interstellar local horizons
 For far-horizon nodes, reuse the CGX identity/receipt grammar conceptually with stronger local repair closure, delayed-communications tolerance, provenance continuity and bounded safe-state autonomy. Propulsion, energy, biology and mission feasibility remain independent frontier problems.
+
+
+## 14. Physical-object .cgx lifecycle
+
+The operational registry now distinguishes the **printer node** from each **printed/hybrid physical object**. CGX-PHYSOBJ-001 gives an article its own durable object identity, parent printer/node lineage, geometry and layer-stack hashes, material-passport references, capability manifest, C0/C1/C2 compute profile, energy/safety envelope, calibration/service/repair state, source-feed lots, evidence ceiling, twin snapshot and DBR pointer.
+
+This is the key functional-equivalence boundary: a device can expose useful sensing, communication, storage, display, control or interface functions without embedding an iPhone-class system-on-chip. Deterministic safety/control stays local where needed; bounded edge state may remain on the object/node; heavier planning and model work can be delegated to authenticated Cognigrex/LightSpeed compute. Network-equivalent system function is not semiconductor-density equivalence.
+
+## 15. Printer/process-cell families
+
+The 81-item technology catalogue is not renumbered. The operational decomposition composes those technologies through seven reusable process-cell families:
+
+| Family ID | Process-cell family | Core role |
+|---|---|---|
+| UTP-PF-STRUCT-001 | Macro structural deposition | shells, beams, lattices, housings, habitat/infrastructure elements, large tooling |
+| UTP-PF-FUNC-001 | Precision functional / solid-state deposition | conductive, dielectric, resistive, optical, sensing, microfluidic and thin-film regions |
+| UTP-PF-FIBER-001 | Fiber / wire / coil placement | reinforcement, conductors, coils, antennas, heaters and continuous paths |
+| UTP-PF-HYBRID-001 | Hybrid seed-component assembly | place/join chips, bearings, cells, optics, precision sensors, connectors and certified subassemblies |
+| UTP-PF-FEED-001 | Eco-Grex feed conditioning / refinery | recovered/local stream -> decontaminated, assayed, formulated, coupon-tested feed passport or reject |
+| UTP-PF-METRO-001 | Metrology / finish / repair | inspect, compare to twin, finish/repair, retest and close DBR |
+| UTP-PF-MOBILE-001 | Mobile / roaming UTP | portable assay, feed preparation, fabrication, repair and metrology for field/outpost horizons |
+
+Macro and micro manufacturing therefore share one grammar—composition, interface, geometry, process, environment and proof—while using different process envelopes and metrology. Specialist seed components remain explicit imports until local reproduction is independently qualified.
+
+## 16. Function-to-stack compiler and assembly permissions
+
+CGX-COMPILER-001 converts a requested function into a bounded candidate stack: target function -> local horizon -> qualified materials/feeds -> layer/interface sequence -> geometry/topology -> process/environment sequence -> specialist seed components -> budgets -> failure modes -> acceptance/falsification tests -> evidence ceiling.
+
+The build helper applies ASM-PERMISSION-001 over the same graph. DIY/education views can expose current benign, passive and low-voltage routes; workshops and professional users can receive deeper calibrated process packets; government/infrastructure and outpost users add procurement, cybersecurity, standards, site/mission and authority gates. Hazardous, high-energy, high-pressure, reactive-chemistry, orbital or ecological-release routes are escalated rather than silently compiled into executable instructions.
+
+## 17. Bootstrap closure and local safeguard
+
+BOOTSTRAP-CLOSURE-001 searches for the minimum critical imported skeleton that can assay local resources, qualify feed, manufacture/repair useful articles and add independently calibrated child capability. The three-Mark-III plus Mark-V registry/telemetry support arrangement remains a founder frontier scenario; it is not a flight manifest, resource-return guarantee or mission-readiness claim.
+
+SAFEGUARD-LOCAL-001 makes local-zone stewardship a parallel capability-growth objective: detect -> identify -> track -> predict -> warn -> plan -> authority gate -> qualified action if any -> readback. Awareness, uncertainty reduction, avoidance and safe degraded states precede debris/resource intervention.
+
+## 18. Closure vector and unresolved RUVR label
+
+The operational registry records a non-collapsing closure vector: F_local = qualified local function coverage; M_local = qualified local-feed mass fraction; I_crit = critical imported dependency fraction; R_local = locally repairable failure-mode fraction; V = verification/evidence gate state; S = safe-state and N-1 coverage; E = ecological/contamination acceptance; A = authority/compliance closure; U = explicit uncertainty.
+
+These dimensions may support Pareto comparison after hard gates are applied. They must not be collapsed into a score that hides a failed safety, ecological, evidence or authority gate. No exact canonical definition of the referenced **RUVR** label was located in the reconciled corpus, so the implementation retains an alias hold rather than inventing an expansion or mapping.
+
+## 19. Owning-canon integration
+
+The operational decomposition is owned by Type 1 Romer Cognigrex -> 25_CGX_Node_Horizon_v0_1, rows 27–42 (A27:N42). Git mirrors the typed contracts, tests and portfolio narrative only. Existing PT/PMX/RIP records remain the engineering catalogue/process/interaction owners, and physical promotion still requires the exact configuration's empirical evidence.

@@ -79,3 +79,63 @@ def test_frontier_projections_are_present_but_not_capability_uplift() -> None:
     assert projections["TYPE_I_TO_II_SCENARIO"]["boundary"] == "Planning horizon only; no readiness uplift."
     assert "does not solve propulsion" in projections["INTERSTELLAR_LOCAL_HORIZON"]["boundary"]
     assert "never grants specialist authority" in EXTENSION["deployment_actor_model"]["rule"]
+
+
+def test_node_horizon_operational_registry_is_mirrored_without_pt_renumbering() -> None:
+    rows = EXTENSION["drive_rows"]["node_horizon"]
+    ids = [row["id"] for row in rows]
+    assert len(ids) == 16
+    assert len(ids) == len(set(ids))
+    assert "CGX-PHYSOBJ-001" in ids
+    assert "CGX-COMPILER-001" in ids
+    assert "METRIC-CGX-CLOSURE-001" in ids
+    assert len(EXTENSION["drive_rows"]["solid_state"]) == 11
+
+
+def test_physical_object_identity_uses_c0_c1_c2_without_authority_uplift() -> None:
+    ident = EXTENSION["physical_object_identity"]
+    assert "smartphone-class compute stack" in ident["principle"]
+    assert set(ident["compute_split"]) == {"C0", "C1", "C2"}
+    assert "never upgrades semantic" in ident["authority_boundary"]
+    assert "geometry_hash" in ident["required_fields"]
+    assert "material_passport_refs" in ident["required_fields"]
+
+
+def test_operational_printer_family_taxonomy_is_complete() -> None:
+    families = {row["id"]: row for row in EXTENSION["printer_families"]}
+    expected = {
+        "UTP-PF-STRUCT-001", "UTP-PF-FUNC-001", "UTP-PF-FIBER-001",
+        "UTP-PF-HYBRID-001", "UTP-PF-FEED-001", "UTP-PF-METRO-001",
+        "UTP-PF-MOBILE-001",
+    }
+    assert set(families) == expected
+    assert "chips" in families["UTP-PF-HYBRID-001"]["core"]
+    assert "material passport" in families["UTP-PF-FEED-001"]["core"]
+
+
+def test_function_stack_and_structural_energy_boundaries_are_explicit() -> None:
+    compiler = EXTENSION["function_to_stack_compiler"]
+    assert "never automatic build approval" in compiler["rule"]
+    energy = EXTENSION["structural_energy_region"]
+    assert "never an energy source" in energy["energy_boundary"]
+    assert "not a universal default" in energy["rule"]
+
+
+def test_closure_vector_keeps_hard_gates_and_ruvr_alias_unresolved() -> None:
+    metric = EXTENSION["closure_metrics"]
+    assert set(metric["dimensions"]) == {"F_local","M_local","I_crit","R_local","V","S","E","A","U"}
+    assert "never allow a composite score" in metric["rule"]
+    assert "No exact canonical RUVR definition" in metric["ruvr_alias_hold"]
+    assert "must not be relabelled RUVR" in metric["ruvr_alias_hold"]
+
+
+def test_bootstrap_safeguard_and_role_models_remain_bounded() -> None:
+    bootstrap = EXTENSION["bootstrap_closure"]
+    assert "no autonomous unlimited replication" in bootstrap["non_claims"]
+    assert "resource return is downstream optionality" in bootstrap["founder_case"]
+    safeguard = EXTENSION["local_safeguard_layer"]
+    assert "never itself authorises deorbit" in safeguard["boundary"]
+    public = EXTENSION["public_benefit_operating_model"]
+    assert "never inherits specialist" in public["rule"]
+    federation = EXTENSION["federation_model"]
+    assert "never creates supra-national ownership" in federation["rule"]

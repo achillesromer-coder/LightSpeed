@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-PRINTABLE-SOLID-STATE-EXTENSION/0.1",
+  "schema": "CGX-PRINTABLE-SOLID-STATE-EXTENSION/0.2",
   "date": "2026-10-07",
   "status": "IMPLEMENTATION_MIRROR_OF_DRIVE_OWNED_CANON",
   "authority": {
@@ -174,6 +174,88 @@
       {
         "id": "RIP-045",
         "name": "Seed module -> child process cell -> independently validated capability"
+      }
+    ],
+    "node_horizon": [
+      {
+        "id": "CGX-PHYSOBJ-001",
+        "name": "Physical object .cgx identity profile",
+        "role": "stable programmable/interconnectable identity and passport for each printed/hybrid object"
+      },
+      {
+        "id": "CGX-COMPILER-001",
+        "name": "Function-to-stack manufacturing compiler",
+        "role": "bounded function -> materials/layers/geometry/process/seed/test candidate"
+      },
+      {
+        "id": "CGX-STACK-ENERGY-001",
+        "name": "Structural shell / distributed energy region",
+        "role": "qualified multifunctional structure/thermal/shielding/storage architecture"
+      },
+      {
+        "id": "UTP-PF-STRUCT-001",
+        "name": "Macro structural deposition cell",
+        "role": "large structural/tooling deposition or forming family"
+      },
+      {
+        "id": "UTP-PF-FUNC-001",
+        "name": "Precision functional / solid-state deposition cell",
+        "role": "meso/micro functional materials, traces, sensors and thin-film regions"
+      },
+      {
+        "id": "UTP-PF-FIBER-001",
+        "name": "Fiber / wire / coil placement cell",
+        "role": "continuous reinforcement and electrical/electromagnetic path placement"
+      },
+      {
+        "id": "UTP-PF-HYBRID-001",
+        "name": "Hybrid seed-component assembly cell",
+        "role": "insert/attach high-value specialist components with provenance and interface tests"
+      },
+      {
+        "id": "UTP-PF-FEED-001",
+        "name": "Eco-Grex feed conditioning / refinery cell",
+        "role": "local/recovered stream -> qualified material passport or controlled reject"
+      },
+      {
+        "id": "UTP-PF-METRO-001",
+        "name": "Metrology / finish / repair cell",
+        "role": "inspection, calibration, finishing, repair and DBR closure"
+      },
+      {
+        "id": "UTP-PF-MOBILE-001",
+        "name": "Mobile / roaming UTP process cell",
+        "role": "field/off-world mobile assay, fabrication, repair and metrology family"
+      },
+      {
+        "id": "ASM-PERMISSION-001",
+        "name": "Audience-scaled build and permission ladder",
+        "role": "one build graph with DIY/workshop/pro/government/outpost permission envelopes"
+      },
+      {
+        "id": "BOOTSTRAP-CLOSURE-001",
+        "name": "Minimum skeleton capability-closure planner",
+        "role": "minimise critical seed imports while growing only verified child capability"
+      },
+      {
+        "id": "SAFEGUARD-LOCAL-001",
+        "name": "Local operating-zone stabilization and debris safeguard layer",
+        "role": "detect/identify/track/predict/warn/plan before separately gated actuation"
+      },
+      {
+        "id": "METRIC-CGX-CLOSURE-001",
+        "name": "Local-horizon capability / circularity / resilience vector",
+        "role": "non-collapsing closure vector with hard evidence/ecology/safety/authority gates"
+      },
+      {
+        "id": "ACTOR-PUBLIC-BENEFIT-001",
+        "name": "Small qualified core + distributed public-benefit network",
+        "role": "role-scoped cleanup/education/monitoring/benign fabrication participation"
+      },
+      {
+        "id": "FEDERATION-INTERSOL-001",
+        "name": "InterSol / international local-horizon federation",
+        "role": "federated identity/recipe/passport/evidence exchange with local jurisdiction retained"
       }
     ]
   },
@@ -420,5 +502,197 @@
       ],
       "boundary": "Delay-tolerant identity/repair/safe-state architecture does not solve propulsion, energy, biology or mission feasibility."
     }
-  ]
+  ],
+  "drive_owner_records": {
+    "workbook_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "node_horizon_sheet": "25_CGX_Node_Horizon_v0_1",
+    "node_horizon_range": "A27:N42",
+    "authority": "Drive owns engineering/evidence content; Git mirrors typed implementation and validation only."
+  },
+  "physical_object_identity": {
+    "id": "CGX-PHYSOBJ-001",
+    "principle": "Every printed or hybrid physical object may carry a stable .cgx identity, capability manifest and evidence-bound twin without carrying a smartphone-class compute stack.",
+    "required_fields": [
+      "object_id",
+      "parent_node_id",
+      "parent_printer_id",
+      "build_revision",
+      "geometry_hash",
+      "layer_stack_hash",
+      "material_passport_refs",
+      "capability_manifest",
+      "C0_C1_C2_compute_profile",
+      "energy_envelope",
+      "safety_envelope",
+      "calibration_state",
+      "service_state",
+      "repair_history",
+      "source_feed_lots",
+      "evidence_ceiling",
+      "twin_snapshot",
+      "dbr_pointer"
+    ],
+    "compute_split": {
+      "C0": "deterministic local machine/safety control",
+      "C1": "bounded local CGX edge state, validation and safe offline continuation",
+      "C2": "delegated Cognigrex/LightSpeed planning, optimisation, source retrieval and evidence reconciliation"
+    },
+    "lifecycle": "ENROL -> VERIFY_BUILD_HASH -> ADVERTISE_CAPABILITY -> STATE -> TASK -> EXECUTE -> READBACK -> DBR",
+    "authority_boundary": "Identity or capability never upgrades semantic, certification, release, mission, extraction or governance authority."
+  },
+  "function_to_stack_compiler": {
+    "id": "CGX-COMPILER-001",
+    "grammar": [
+      "target function",
+      "local horizon",
+      "qualified feed/material",
+      "layer/interface stack",
+      "geometry/topology",
+      "process/environment sequence",
+      "seed components",
+      "energy/mass/waste budget",
+      "failure modes",
+      "acceptance/falsification tests",
+      "evidence ceiling"
+    ],
+    "route": "requirements -> horizon -> candidates -> baseline physics -> Raphael comparative relations -> falsifiers -> build/test packet",
+    "rule": "Compiler output is a candidate route and verification plan, never automatic build approval; unsupported substitutions remain explicit experiments."
+  },
+  "structural_energy_region": {
+    "id": "CGX-STACK-ENERGY-001",
+    "functions": [
+      "structure",
+      "shielding",
+      "thermal control",
+      "qualified electrochemical/electrostatic storage",
+      "service/repair envelope"
+    ],
+    "rule": "Use the most appropriate qualified material for the build and horizon; graphene/carbon is one candidate family, not a universal default.",
+    "energy_boundary": "Void/free space may be geometry, insulation, field volume or working volume but is never an energy source."
+  },
+  "printer_families": [
+    {
+      "id": "UTP-PF-STRUCT-001",
+      "family": "macro structural deposition",
+      "scale": "macro",
+      "core": "shells, beams, lattices, housings, habitat/infrastructure elements and tooling"
+    },
+    {
+      "id": "UTP-PF-FUNC-001",
+      "family": "precision functional / solid-state deposition",
+      "scale": "meso/micro",
+      "core": "conductive, dielectric, resistive, optical, sensing, microfluidic and thin-film regions"
+    },
+    {
+      "id": "UTP-PF-FIBER-001",
+      "family": "fiber / wire / coil placement",
+      "scale": "cross-scale",
+      "core": "reinforcement, conductors, coils, antennas, heaters and continuous paths"
+    },
+    {
+      "id": "UTP-PF-HYBRID-001",
+      "family": "hybrid seed-component assembly",
+      "scale": "cross-scale",
+      "core": "chips, bearings, cells, optics, precision sensors, connectors and certified subassemblies"
+    },
+    {
+      "id": "UTP-PF-FEED-001",
+      "family": "Eco-Grex feed conditioning / refinery",
+      "scale": "feed/process",
+      "core": "collection, separation, decontamination, assay, formulation, coupon and material passport/reject"
+    },
+    {
+      "id": "UTP-PF-METRO-001",
+      "family": "metrology / finish / repair",
+      "scale": "cross-scale",
+      "core": "inspection, comparison to twin, finishing, repair, retest and DBR"
+    },
+    {
+      "id": "UTP-PF-MOBILE-001",
+      "family": "mobile / roaming UTP",
+      "scale": "field/outpost",
+      "core": "minimal assay, feed preparation, fabrication, repair and metrology tool bus"
+    }
+  ],
+  "assembly_permission_model": {
+    "id": "ASM-PERMISSION-001",
+    "audiences": [
+      "DIY/education",
+      "business/workshop",
+      "professional/research",
+      "government/infrastructure",
+      "nonprofit/public-benefit",
+      "outpost/mission"
+    ],
+    "principle": "One catalogue and build graph, multiple permission envelopes.",
+    "low_consequence": "Passive, benign-material and low-voltage tasks may be exposed through guided build packets when current evidence allows.",
+    "escalation": "Hazardous, high-energy, high-pressure, reactive-chemistry, orbital or ecological-release routes require qualified modules, deterministic interlocks and competent review."
+  },
+  "bootstrap_closure": {
+    "id": "BOOTSTRAP-CLOSURE-001",
+    "goal": "Find the smallest critical imported seed set that can assay local resources, qualify feeds, build/repair useful articles and grow capability through independently calibrated child modules.",
+    "cycle": "discover -> gap analysis -> minimise seed imports -> deploy -> qualify feed -> build child -> calibrate -> recompute closure",
+    "founder_case": "Three Mark III acquisition/resource-interaction units plus Mark V registry/telemetry support remain a frontier design case; resource return is downstream optionality.",
+    "non_claims": [
+      "no autonomous unlimited replication",
+      "no resource or ROI guarantee",
+      "no mission-readiness promotion",
+      "mission/extraction authority remains external"
+    ]
+  },
+  "local_safeguard_layer": {
+    "id": "SAFEGUARD-LOCAL-001",
+    "cycle": "detect -> identify -> track -> predict -> warn -> plan -> authority gate -> qualified actuation if any -> readback",
+    "priority": "Awareness, uncertainty, avoidance and safe degraded state precede intervention.",
+    "boundary": "CGX planning never itself authorises deorbit, deflection, capture, disposal or resource handling."
+  },
+  "closure_metrics": {
+    "id": "METRIC-CGX-CLOSURE-001",
+    "dimensions": {
+      "F_local": "qualified local function coverage",
+      "M_local": "qualified local-feed mass fraction",
+      "I_crit": "critical imported dependency fraction",
+      "R_local": "locally repairable failure-mode fraction",
+      "V": "verification/evidence gate state",
+      "S": "safe-state and N-1 coverage",
+      "E": "ecological/contamination acceptance",
+      "A": "authority/compliance closure",
+      "U": "explicit uncertainty"
+    },
+    "rule": "Measure dimensions independently, apply hard gates first, Pareto-compare viable candidates, and never allow a composite score to hide a failed safety, ecology, evidence or authority gate.",
+    "ruvr_alias_hold": "No exact canonical RUVR definition was located in the reconciled corpus. These are established-equivalent closure dimensions and must not be relabelled RUVR without an owner-defined mapping."
+  },
+  "public_benefit_operating_model": {
+    "id": "ACTOR-PUBLIC-BENEFIT-001",
+    "qualified_core": [
+      "engineering/process",
+      "QA/metrology",
+      "safety/ecology/biosecurity",
+      "CGX/data/cyber",
+      "governance/escalation"
+    ],
+    "distributed_roles": [
+      "cleanup/collection",
+      "observation/citizen science",
+      "education",
+      "benign assembly",
+      "field/logistics support"
+    ],
+    "rule": "Participation, employment or volunteer status never inherits specialist manufacturing, chemical, electrical, orbital, ecological-release or canonical authority."
+  },
+  "federation_model": {
+    "id": "FEDERATION-INTERSOL-001",
+    "scope": "InterSol and international local-horizon federation",
+    "preserve": [
+      "jurisdiction",
+      "data sovereignty",
+      "export/customs constraints",
+      "certification",
+      "safety",
+      "ecological stewardship",
+      "right-to-exit",
+      "provider substitution"
+    ],
+    "rule": "Interoperability never creates supra-national ownership, release or mission authority."
+  }
 }
