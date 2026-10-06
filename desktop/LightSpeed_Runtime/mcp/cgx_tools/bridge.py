@@ -24,6 +24,7 @@ from lightspeed_runtime.freecad_adapter import (
     probe_freecad,
 )
 from lightspeed_runtime.result_receipt_browser import list_result_receipts, open_result_receipt
+from lightspeed_runtime.runtime_productization import manage_runtime_productization
 from lightspeed_runtime.simulation_capability_probe import probe_femm, probe_gmat, probe_mpl
 
 CORE_ROOT = Path(os.environ.get("LIGHTSPEED_CORE_ROOT", r"D:\LightSpeed\Core"))
@@ -117,6 +118,17 @@ def dispatch(operation: str, args: dict[str, Any]) -> dict[str, Any]:
             required_capabilities=_strings(
                 args.get("required_capabilities"), "required_capabilities"
             ),
+        )
+
+    if operation == "runtime_productization":
+        profile = args.get("profile")
+        if profile is not None and not isinstance(profile, str):
+            raise BridgeInputError("profile must be a string when provided")
+        return manage_runtime_productization(
+            _required_str(args, "action"),
+            slot=str(args.get("slot") or "default"),
+            profile=profile,
+            confirmed=args.get("confirmed") is True,
         )
 
     if operation == "gmat_probe":

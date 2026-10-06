@@ -17,7 +17,8 @@
     "tool-plan": "extensions.plan",
     "open-receipt": "receipts.open",
     "define": "definitions.search",
-    "object": "cgx.object_context"
+    "object": "cgx.object_context",
+    "runtime": "runtime.productization"
   },
   "profile": {
     "floors": [
@@ -218,6 +219,16 @@
       "ro": true,
       "handler": "lightspeed_runtime.result_receipt_browser:open_result_receipt"
     },
+    "runtime.productization": {
+      "state": "gated",
+      "kind": "runtime",
+      "ro": false,
+      "handler": "lightspeed_runtime.runtime_productization:manage_runtime_productization",
+      "skill": "lightspeed-runtime-productization",
+      "gate": "status is read-only; configure/install/update/rollback require confirmed=true and managed-slot safety checks",
+      "limitation": "Manages named runtime slots only. No arbitrary shell/path deletion, active DB mutation, carrier rewrite, canonical promotion, or public release.",
+      "authority_transfer": false
+    },
     "science.query": {
       "state": "available",
       "kind": "runtime",
@@ -285,6 +296,7 @@
       "cgx_plan_cross_analysis",
       "cgx_consequence_preflight",
       "cgx_plan_tool_extension",
+      "cgx_runtime_productization",
       "cgx_bridge_health",
       "cgx_list_receipts",
       "cgx_open_receipt",

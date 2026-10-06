@@ -47,6 +47,7 @@ const expected = [
   "cgx_resolve_object",
   "cgx_resolve_shortcall",
   "cgx_run_local_work",
+  "cgx_runtime_productization",
 ].sort();
 assert(JSON.stringify(names) === JSON.stringify(expected), "unexpected tool surface");
 
@@ -131,6 +132,13 @@ const cross = parseText(await client.callTool({
 }));
 assert(cross.preflight.state === "domain_required", "Raphael cross-analysis guessed a domain");
 
+const runtimeProductization = parseText(await client.callTool({
+  name: "cgx_runtime_productization",
+  arguments: { action: "status", slot: "selftest" },
+}));
+assert(runtimeProductization.authority === "status-only", "runtime productization status crossed authority boundary");
+assert(runtimeProductization.slot === "selftest", "runtime productization slot mismatch");
+
 const receipts = parseText(await client.callTool({
   name: "cgx_list_receipts",
   arguments: { limit: 3 },
@@ -151,6 +159,7 @@ console.log(JSON.stringify({
   preflight_decision: preflight.decision,
   extension_decision: extension.decision,
   domainless_raphael: cross.preflight.state,
+  runtime_productization_slot: runtimeProductization.slot,
 }, null, 2));
 
 await client.close();

@@ -150,6 +150,25 @@ server.registerTool("cgx_plan_tool_extension", {
   await runBridge("tool_plan", args)
 ));
 
+server.registerTool("cgx_runtime_productization", {
+  description: "Manage a named LightSpeed Runtime slot through typed status/configure/install/update/rollback actions. Writes require confirmed=true; rollback is limited to a valid managed slot.",
+  inputSchema: {
+    action: z.enum(["status", "configure", "install", "update", "rollback"]),
+    slot: z.string().min(1).max(48).default("default"),
+    profile: z.enum(["core", "api", "data", "validation", "dev", "desktop"]).optional(),
+    confirmed: z.boolean().default(false),
+  },
+  annotations: {
+    title: "Manage LightSpeed Runtime",
+    readOnlyHint: false,
+    destructiveHint: true,
+    idempotentHint: false,
+    openWorldHint: false,
+  },
+}, async args => textResult(
+  await runBridge("runtime_productization", args, 900000)
+));
+
 server.registerTool("cgx_gmat_probe", {
   description: "Probe current GMAT runner/executable binding without running a simulation.",
   inputSchema: {},
