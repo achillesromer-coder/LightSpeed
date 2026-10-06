@@ -111,5 +111,56 @@
       "SOLAR4FAE_14_Use_Cases / UC-005: Mark V — Registry/telemetry node casing and low-power support; development pathway only"
     ],
     "resolution": "Mark V tagging is bounded here to registry/telemetry identity/support semantics; broader Mark V function and mission readiness remain configuration/evidence controlled."
-  }
+  },
+  "frontier_projections": [
+    {
+      "id": "CGX-FRONTIER-PUBLIC-BENEFIT",
+      "state": "DEPLOYMENT_MODEL / NOT A NEW DEVICE FAMILY",
+      "scope": "nonprofit/public-benefit cleanup, education, local fabrication and monitoring",
+      "semantics": [
+        "Use a small qualified front/back technical core for engineering, QA, safety, data, governance and escalation.",
+        "Allow a larger paid/benefit volunteer, citizen-science and field-operator population through role-scoped interfaces, training, receipts and safe task envelopes.",
+        "Volunteer participation never inherits specialist manufacturing, chemical, electrical, orbital, ecological-release or canonical authority."
+      ]
+    },
+    {
+      "id": "CGX-FRONTIER-INTERSOL-INTERNATIONAL",
+      "state": "FEDERATED DEPLOYMENT PROJECTION",
+      "scope": "InterSol and international interoperable nodes",
+      "semantics": [
+        "Reuse the same local-horizon compiler, node identity and evidence contracts across jurisdictions while retaining local law, data sovereignty, export/customs, safety and ecological controls.",
+        "InterSol may act as a terrestrial/space-logistics and manufacturing-support hub only to the extent supported by its owning configuration.",
+        "Interoperability does not create supra-national ownership, governance or release authority."
+      ]
+    },
+    {
+      "id": "CGX-FRONTIER-PLANETARY-RESTORATION",
+      "state": "LONG-HORIZON RESEARCH / NO DEPLOYMENT CLAIM",
+      "scope": "planetary restoration and terraforming research",
+      "semantics": [
+        "Treat atmosphere, hydrology, geochemistry, radiation, thermal balance, ecology, closed-loop habitat systems and material cycles as coupled state variables rather than as a single terraforming technology.",
+        "Apply the same material-passport, local-horizon, ecological externality, evidence and safe-state rules before any planetary-scale intervention concept can progress.",
+        "Planetary protection, irreversible change, biological release, governance and multi-generational externalities are hard gates."
+      ]
+    },
+    {
+      "id": "CGX-FRONTIER-TYPE-I-II",
+      "state": "CIVILISATION-SCALE SCENARIO",
+      "scope": "Type-I to Type-II transition planning",
+      "semantics": [
+        "Scale the same filespace/dataspace/physical contracts from devices to infrastructure, habitats, logistics, energy and resource networks.",
+        "Optimise for sufficiency, resilience, ecological health, recoverability and distributed capability rather than extraction or energy throughput alone.",
+        "Civilisation-scale framing is a systems-planning horizon and is not present technological readiness evidence."
+      ]
+    },
+    {
+      "id": "CGX-FRONTIER-INTERSTELLAR",
+      "state": "FAR-HORIZON ARCHITECTURE",
+      "scope": "interstellar local-horizon nodes",
+      "semantics": [
+        "Assume long communications delay, stronger local safe-state autonomy, provenance continuity, repair/manufacturing closure and bounded decision authority.",
+        "The same CGX identity/lease/receipt grammar may be reused conceptually, but transport, energy, biology and mission feasibility remain independent frontier problems."
+      ]
+    }
+  ]
 }

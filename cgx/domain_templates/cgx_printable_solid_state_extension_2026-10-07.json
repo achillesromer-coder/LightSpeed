@@ -339,5 +339,86 @@
     "coatings": "Geospatial sensor/control functions are testable; biological/resonant health effects are not presumed.",
     "recursion": "Recursive manufacturing means staged capability growth through qualified child modules, not autonomous unlimited self-replication.",
     "debris": "Tracking/tagging may inform safe action; deorbit/deflection needs separate orbital, regulatory and safety authority."
-  }
+  },
+  "deployment_actor_model": {
+    "qualified_core": [
+      "systems/material/process engineering",
+      "QA/metrology/calibration",
+      "safety/biosecurity/environment",
+      "data/Cyber/CGX administration",
+      "governance/legal/regulatory escalation"
+    ],
+    "distributed_participation": [
+      "cleanup/collection under accepted procedures",
+      "observation/citizen science",
+      "education and benign assembly",
+      "field maintenance within qualified task envelope",
+      "logistics/community support"
+    ],
+    "rule": "Privileges follow current competency, process capability, hazard and evidence gates; organisation type, employment status or volunteer status never grants specialist authority."
+  },
+  "frontier_projections": [
+    {
+      "id": "PUBLIC_BENEFIT_NETWORK",
+      "state": "DEPLOYMENT_MODEL",
+      "uses": [
+        "PT-074",
+        "PT-079",
+        "PT-080",
+        "Eco-Grex"
+      ],
+      "boundary": "Large distributed participation is permitted only through scoped safe tasks backed by a small qualified core."
+    },
+    {
+      "id": "INTERSOL_INTERNATIONAL_FEDERATION",
+      "state": "FEDERATED_DEPLOYMENT_PROJECTION",
+      "uses": [
+        "PT-076",
+        "PT-079",
+        "PT-080",
+        "PT-081",
+        "InterSol"
+      ],
+      "boundary": "Cross-jurisdiction interoperability preserves local law, data sovereignty, export/customs, safety and ecological authority."
+    },
+    {
+      "id": "PLANETARY_RESTORATION_TERRAFORMING_RESEARCH",
+      "state": "LONG_HORIZON_RESEARCH",
+      "uses": [
+        "PT-047",
+        "PT-050",
+        "PT-062",
+        "PT-064",
+        "PT-066",
+        "PT-074",
+        "PT-076",
+        "Eco-Grex"
+      ],
+      "boundary": "No planetary-scale intervention, biological release or irreversible environmental claim without planetary-protection, ecological, governance and empirical gates."
+    },
+    {
+      "id": "TYPE_I_TO_II_SCENARIO",
+      "state": "CIVILISATION_SCALE_SCENARIO",
+      "uses": [
+        "PT-076",
+        "PT-080",
+        "PT-081",
+        "Romer-Grex",
+        "Eco-Grex",
+        "Cognigrex"
+      ],
+      "boundary": "Planning horizon only; no readiness uplift."
+    },
+    {
+      "id": "INTERSTELLAR_LOCAL_HORIZON",
+      "state": "FAR_HORIZON_ARCHITECTURE",
+      "uses": [
+        "PT-071",
+        "PT-076",
+        "PT-080",
+        "PT-081"
+      ],
+      "boundary": "Delay-tolerant identity/repair/safe-state architecture does not solve propulsion, energy, biology or mission feasibility."
+    }
+  ]
 }

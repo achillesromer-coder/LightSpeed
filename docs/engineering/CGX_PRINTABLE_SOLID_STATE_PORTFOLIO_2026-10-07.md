@@ -173,3 +173,23 @@ Raphael may propose or compare novel relations, but standard physics/engineering
 6. Select first low-consequence coupons: passive identity/antenna, conductive trace, simple sensor, functional coating and recovered-feed coupon.
 7. Progress structural-energy work only after separate material, electrical/electrochemical and structural tests exist.
 8. Keep Mark V claims beyond UC-005 registry/telemetry casing and low-power support, plus debris actuation, biological resonance and mission operations, behind explicit evidence/owner gates.
+
+
+## 13. Frontier projections retained now
+
+These are downstream applications of the current PT/PMX/RIP stack, not new technology families or present capability claims.
+
+### Public-benefit / nonprofit network
+A credible operating model is a **small qualified technical front/back core** (engineering, QA, metrology, safety, ecology/biosecurity, data/CGX administration and governance escalation) supporting a much larger paid/benefit volunteer, citizen-science and community operator population. Distributed participants can collect, observe, learn, perform benign assembly and execute qualified field tasks. They do not inherit specialist manufacturing, chemical, high-voltage, orbital, ecological-release or canonical authority merely by participating.
+
+### InterSol + international federation
+The same node identity, local-horizon compiler and evidence contracts can federate across InterSol and international nodes. Cross-border operation must preserve jurisdiction, data sovereignty, export/customs constraints, certification, safety, ecological stewardship and local right-to-exit. Interoperability is not supra-national control.
+
+### Planetary restoration / terraforming research
+Terraforming is represented as a coupled long-horizon research system, not a single machine: atmosphere, hydrology, geochemistry, radiation, thermal balance, ecology, closed-loop habitat systems and material cycles each retain their own evidence and externality gates. Planetary protection, biological release, irreversible change, governance and multi-generational effects are hard constraints. Nothing in the printable catalogue currently proves planetary-scale intervention capability.
+
+### Type-I -> Type-II civilisation scale
+The catalogue can scale compositionally from material voxels and devices to infrastructure, habitats, logistics, resource networks and energy systems. The optimisation target remains sufficiency, resilience, ecological health, recoverability, plural/federated capability and safe degraded states—not raw extraction or energy throughput. The Type-I/II framing is therefore a systems-planning horizon, not a readiness metric.
+
+### Interstellar local horizons
+For far-horizon nodes, reuse the CGX identity/receipt grammar conceptually with stronger local repair closure, delayed-communications tolerance, provenance continuity and bounded safe-state autonomy. Propulsion, energy, biology and mission feasibility remain independent frontier problems.

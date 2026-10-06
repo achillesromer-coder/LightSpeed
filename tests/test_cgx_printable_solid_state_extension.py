@@ -69,3 +69,13 @@ def test_recursive_manufacturing_is_bounded() -> None:
     assert "not autonomous unlimited self-replication" in EXTENSION["scientific_guardrails"]["recursion"]
     solid = {row["id"]: row["name"] for row in EXTENSION["drive_rows"]["solid_state"]}
     assert solid["PT-081"] == "Recursive modular printer/tooling expansion"
+
+
+def test_frontier_projections_are_present_but_not_capability_uplift() -> None:
+    projections = {row["id"]: row for row in EXTENSION["frontier_projections"]}
+    assert projections["PUBLIC_BENEFIT_NETWORK"]["state"] == "DEPLOYMENT_MODEL"
+    assert projections["PLANETARY_RESTORATION_TERRAFORMING_RESEARCH"]["state"] == "LONG_HORIZON_RESEARCH"
+    assert "No planetary-scale intervention" in projections["PLANETARY_RESTORATION_TERRAFORMING_RESEARCH"]["boundary"]
+    assert projections["TYPE_I_TO_II_SCENARIO"]["boundary"] == "Planning horizon only; no readiness uplift."
+    assert "does not solve propulsion" in projections["INTERSTELLAR_LOCAL_HORIZON"]["boundary"]
+    assert "never grants specialist authority" in EXTENSION["deployment_actor_model"]["rule"]
