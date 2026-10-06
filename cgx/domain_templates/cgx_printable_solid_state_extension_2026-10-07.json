@@ -1,0 +1,334 @@
+{
+  "schema": "CGX-PRINTABLE-SOLID-STATE-EXTENSION/0.1",
+  "date": "2026-10-07",
+  "status": "IMPLEMENTATION_MIRROR_OF_DRIVE_OWNED_CANON",
+  "authority": {
+    "drive": "Current owning workbook remains canonical content/evidence authority.",
+    "git": "Implementation contract, machine-readable mirror and validation fixtures only.",
+    "physical": "All device/material/mission claims remain at their recorded evidence ceiling."
+  },
+  "identity_contract": {
+    "parent": "cgx/domain_templates/node_exchange_contract.json",
+    "pattern": "thin physical endpoint -> authenticated CGX identity/capability -> scoped lease -> registered deterministic compute -> readback/receipt",
+    "invariants": [
+      "node identity is not agent or semantic authority",
+      "delegated compute does not require smartphone-class onboard compute",
+      "unverified input cannot satisfy downstream compute",
+      "actuation requires explicit qualified capability and current authority",
+      "runtime receipt alone cannot promote canonical or physical claims"
+    ]
+  },
+  "triplet": {
+    "filespace": "identity, semantics, provenance, recipes, evidence pointers, configuration history",
+    "dataspace": "telemetry, live state, execution requests, solver results, alerts, receipts",
+    "solid_state": "material layers, geometry, interfaces, local physical state, sensing and actuation",
+    "binding": "snapshot -> hash -> handshake -> execute/test -> readback -> DBR -> reviewed promotion"
+  },
+  "horizon_classes": [
+    "TERR",
+    "OCEAN",
+    "ORBIT",
+    "LUNAR",
+    "MARS",
+    "ASTEROID",
+    "INTERPLANETARY",
+    "INTERSTELLAR"
+  ],
+  "local_horizon_objective": {
+    "objective_terms": [
+      "imported_mass",
+      "energy",
+      "waste",
+      "risk",
+      "irreversible_extraction",
+      "externality",
+      "single_point_dependency"
+    ],
+    "hard_constraints": [
+      "safety",
+      "ecology",
+      "rights",
+      "authority",
+      "evidence_ceiling",
+      "process_capability",
+      "environment",
+      "material_qualification"
+    ],
+    "output": [
+      "candidate_build_routes",
+      "minimum_seed_imports",
+      "blocked_capabilities",
+      "next_evidence",
+      "safe_fallback_state"
+    ]
+  },
+  "drive_rows": {
+    "solid_state": [
+      {
+        "id": "PT-071",
+        "name": "Thin .cgx identity endpoint",
+        "role": "self-identifying physical endpoint with delegated deterministic compute"
+      },
+      {
+        "id": "PT-072",
+        "name": "Function-as-geometry/material stack",
+        "role": "compile desired function into qualified layer/interface/process stack"
+      },
+      {
+        "id": "PT-073",
+        "name": "Structural energy shell + cavity",
+        "role": "multifunctional structure/energy candidate; void is not energy source"
+      },
+      {
+        "id": "PT-074",
+        "name": "Eco-Grex recovered functional-feed qualification loop",
+        "role": "cleanup stream to passported feed or controlled reject"
+      },
+      {
+        "id": "PT-075",
+        "name": "2–3+ layer functional road/building coating",
+        "role": "protective/reflective/conductive/heating/sensing/RF/optical surface stack"
+      },
+      {
+        "id": "PT-076",
+        "name": "Local-horizon capability and material compiler",
+        "role": "bounded local production planning and import minimisation"
+      },
+      {
+        "id": "PT-077",
+        "name": "Minimum-skeleton bootstrap production cell",
+        "role": "founder scenario for local capability growth; not mission-ready"
+      },
+      {
+        "id": "PT-078",
+        "name": "CGX debris tag / safeguard node",
+        "role": "identity, tracking, hazard map and safe-action envelope"
+      },
+      {
+        "id": "PT-079",
+        "name": "CGX DIY / professional build assistant",
+        "role": "evidence-governed human interface from DIY to specialist execution"
+      },
+      {
+        "id": "PT-080",
+        "name": "Filespace–Dataspace–Solid-state triplet bridge",
+        "role": "single lineage across representations without authority transfer"
+      },
+      {
+        "id": "PT-081",
+        "name": "Recursive modular printer/tooling expansion",
+        "role": "separately calibrated child capability growth"
+      }
+    ],
+    "postmix": [
+      {
+        "id": "PMX-021",
+        "name": "Local-horizon resource/capability snapshot"
+      },
+      {
+        "id": "PMX-022",
+        "name": "Recovered land/ocean material -> qualified functional feed"
+      },
+      {
+        "id": "PMX-023",
+        "name": "Desired function -> qualified stacked material/geometric recipe"
+      },
+      {
+        "id": "PMX-024",
+        "name": "Shell + distributed storage + cavity/void co-design"
+      },
+      {
+        "id": "PMX-025",
+        "name": "Functional coating / paint layer stack"
+      },
+      {
+        "id": "PMX-026",
+        "name": "Minimum imported skeleton + local capability growth scenario"
+      }
+    ],
+    "raphael_printer": [
+      {
+        "id": "RIP-039",
+        "name": "Thin physical endpoint <-> CGX node exchange"
+      },
+      {
+        "id": "RIP-040",
+        "name": "Desired function -> material/geometry/process stack"
+      },
+      {
+        "id": "RIP-041",
+        "name": "Structural energy shell / cavity co-design"
+      },
+      {
+        "id": "RIP-042",
+        "name": "Local-horizon capability closure / import minimisation"
+      },
+      {
+        "id": "RIP-043",
+        "name": "Functional coating + geospatial sensing/feedback loop"
+      },
+      {
+        "id": "RIP-044",
+        "name": "Debris tag / track / hazard-envelope operator"
+      },
+      {
+        "id": "RIP-045",
+        "name": "Seed module -> child process cell -> independently validated capability"
+      }
+    ]
+  },
+  "bootstrap_scenario": {
+    "state": "FOUNDER_SCENARIO_PENDING_OWNING_CANON_RECONCILIATION",
+    "proposed_seed": [
+      "3 x Mark III acquisition/resource-interaction units",
+      "Mark V tagging/support role (exact function unresolved here)",
+      "UTP/John process-cell skeleton",
+      "metrology + secure identity/comms + specialist process heads + spares"
+    ],
+    "progression": [
+      "establish authenticated node identities and safe operating envelope",
+      "characterise local resource lots and debris/object state",
+      "qualify first local feeds and benign coupons",
+      "manufacture fixtures, repair stock and child modules",
+      "expand only capabilities with independent calibration/readback",
+      "maintain debris/resource stewardship and reversible safe-state options"
+    ],
+    "non_claims": [
+      "not a flight manifest",
+      "not a mission-readiness claim",
+      "not a resource reserve/value claim",
+      "not autonomous extraction/deorbit authority"
+    ]
+  },
+  "portfolio_families": [
+    {
+      "family": "identity/comms",
+      "examples": [
+        "passive printed identity",
+        "RFID/NFC",
+        "secure hybrid identity",
+        "antenna/interconnect"
+      ]
+    },
+    {
+      "family": "structure",
+      "examples": [
+        "beam/lattice/shell",
+        "regolith/mineral structures",
+        "locally refined wire/truss",
+        "shielding/berms"
+      ]
+    },
+    {
+      "family": "energy",
+      "examples": [
+        "printed conductors",
+        "supercapacitor candidates",
+        "battery-cell hybrids",
+        "structural energy shells"
+      ]
+    },
+    {
+      "family": "sensing",
+      "examples": [
+        "temperature/strain/moisture",
+        "water-quality/electrochemical",
+        "field/optical",
+        "infrastructure condition"
+      ]
+    },
+    {
+      "family": "surfaces",
+      "examples": [
+        "protective/reflective coatings",
+        "resistive heating",
+        "conductive/sensor layers",
+        "RF/EM/optical patterned surfaces"
+      ]
+    },
+    {
+      "family": "fluid/chemical",
+      "examples": [
+        "channels",
+        "seals",
+        "microcells",
+        "local shrouds",
+        "reactive/solvent process envelopes"
+      ]
+    },
+    {
+      "family": "compute/control",
+      "examples": [
+        "printed passive/simple logic",
+        "memory candidates",
+        "hybrid compute islands",
+        "thin endpoints with delegated CGX compute"
+      ]
+    },
+    {
+      "family": "printers/process-cells",
+      "examples": [
+        "roaming UTP",
+        "modular child process heads",
+        "assay/feed preparation",
+        "recursive tooling expansion"
+      ]
+    },
+    {
+      "family": "circular-feed",
+      "examples": [
+        "recovered graphene/carbon",
+        "recovered metals",
+        "polymers",
+        "glass/mineral",
+        "bio-derived binders"
+      ]
+    },
+    {
+      "family": "space/outpost",
+      "examples": [
+        "Mark functional bodies",
+        "John/UTP manufacturing cells",
+        "Luke/InterSol support modules",
+        "debris safeguard nodes"
+      ]
+    }
+  ],
+  "validation_ladder": [
+    "L0 arithmetic/schema/identity validation",
+    "L1 deterministic simulation/digital falsifier",
+    "L2 benign feed and passive bench article",
+    "L3 material/process coupon and metrology",
+    "L4 functional device/subassembly",
+    "L5 coupled multiphysics + environment",
+    "L6 recursive/module interface validation",
+    "L7 macro/system integration and safe degraded state",
+    "L8 specialist high-consequence qualification",
+    "L9 mission/site/regulatory acceptance where applicable"
+  ],
+  "proof_requirements": {
+    "every_build": [
+      "stable object ID",
+      "configuration/revision",
+      "material passports",
+      "process envelope",
+      "geometry authority",
+      "solver inputs/versions",
+      "test plan",
+      "raw receipts",
+      "uncertainty",
+      "failure modes",
+      "promotion gate",
+      "readback/DBR"
+    ],
+    "physical_promotion": "Digital or Raphael results never uplift physical capability without attributable empirical evidence tied to the exact configuration."
+  },
+  "scientific_guardrails": {
+    "energy": "Free space/void can provide geometry, insulation, field volume or electrochemical working volume but is not an energy source.",
+    "graphene": "Graphene/carbon is a candidate conductor/electrode/feed family selected by measured performance, processability, safety, availability and lifecycle—not by default.",
+    "recovered_materials": "Recovered feed requires contamination and application-specific qualification.",
+    "coatings": "Geospatial sensor/control functions are testable; biological/resonant health effects are not presumed.",
+    "recursion": "Recursive manufacturing means staged capability growth through qualified child modules, not autonomous unlimited self-replication.",
+    "debris": "Tracking/tagging may inform safe action; deorbit/deflection needs separate orbital, regulatory and safety authority."
+  }
+}
