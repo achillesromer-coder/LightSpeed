@@ -158,6 +158,7 @@ def format_host_runtime_policy_focus(summary: dict) -> str:
     return "\n".join(
         [
             f"Host policy: {host.get('policy_id', 'unknown')}",
+            "Allocations describe the configured schedule, not measured activity.",
             (
                 f"CPU: {host.get('cpu', 'unknown')} | "
                 f"RAM: {host.get('ram_gb', 'n/a')} GB @ {host.get('ram_speed_mt_s', 'n/a')} MT/s | "

@@ -391,7 +391,12 @@ class AgentHomeBridge:
             de_sporte.get("active_interaction_percent_of_remaining_window"),
             20,
         )
-        runtime_total = lightspeed_share + de_sporte_idle_share + de_sporte_active_share
+        deferred = de_sporte.get("mode") == "deferred_until_dedicated_device"
+        unallocated_share = 0.0
+        if deferred:
+            unallocated_share = de_sporte_idle_share + de_sporte_active_share
+            de_sporte_idle_share = de_sporte_active_share = 0.0
+        runtime_total = lightspeed_share + de_sporte_idle_share + de_sporte_active_share + unallocated_share
         ram_gb = _positive_float(hardware.get("ram_gb"), 32.0)
         chrome_ram_gb = _positive_float(limits.get("chrome_reserved_ram_gb") or chrome.get("reserved_ram_gb"), 6.0)
         threads = _positive_float(hardware.get("threads"), 16.0)
@@ -421,14 +426,17 @@ class AgentHomeBridge:
             "interactive_browser": windows.get("interactive_browser"),
             "chrome_mode": chrome.get("mode"),
             "de_sporte_mode": de_sporte.get("mode"),
+            "de_sporte_resume_condition": de_sporte.get("resume_condition"),
             "firmware_action_count": len(firmware_follow_up),
             "resource_closure": {
                 "formula": "sum(normalized_shares) = 1.0",
+                "evidence_class": "configured_scheduling_weights_not_observed_utilisation",
                 "runtime_total": round(runtime_total, 6),
                 "runtime_shares": {
                     "lightspeed_resident": round(lightspeed_share, 6),
                     "de_sporte_idle_persistence": round(de_sporte_idle_share, 6),
                     "de_sporte_active_interaction": round(de_sporte_active_share, 6),
+                    "unallocated_while_deferred": round(unallocated_share, 6),
                 },
                 "ram_total": 1.0,
                 "ram_shares": {
