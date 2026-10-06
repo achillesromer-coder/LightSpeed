@@ -105,6 +105,8 @@ def main() -> int:
     # Hashing listed files alone cannot detect modules omitted from a bundle.
     runtime_root = DESKTOP / "LightSpeed_Runtime"
     runtime_sources = list((runtime_root / "lightspeed_runtime").rglob("*.py"))
+    services_root = DESKTOP / "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services"
+    runtime_sources.extend(services_root.rglob("*.py"))
     runtime_sources.extend(runtime_root.glob("requirements-*.txt"))
     for source in runtime_sources:
         relative_text = source.relative_to(DESKTOP).as_posix()

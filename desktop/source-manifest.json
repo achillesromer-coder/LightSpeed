@@ -3659,6 +3659,11 @@
       "path": "LightSpeed_Runtime/requirements-desktop.txt",
       "bytes": 167,
       "sha256": "932db67bc9bdc44f407fac5796491808f60b059cc5ed16ff26021b987cd3d6f9"
+    },
+    {
+      "bytes": 7970,
+      "path": "Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/secure_settings_hub.py",
+      "sha256": "b49613e8ea56e96afffe839649f072bec329efa715d7e109fa4ab8814d3d1b43"
     }
   ],
   "schema_version": 1
