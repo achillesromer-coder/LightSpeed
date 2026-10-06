@@ -38,15 +38,36 @@ from enum import Enum
 # CONFIGURATION
 # ============================================================================
 
-SCRIPT_DIR = Path(__file__).parent
+SCRIPT_DIR = Path(__file__).resolve().parent
 LIGHTSPEED_ROOT = SCRIPT_DIR
 Z_AXIS_ROOT = LIGHTSPEED_ROOT / "Z Axis"
-SPLIT_RUNTIME_ROOT = (LIGHTSPEED_ROOT.parent.parent / "LightSpeed_Runtime").resolve()
+_CANONICAL_RUNTIME_CANDIDATES = [
+    LIGHTSPEED_ROOT.parent / "Core",
+    LIGHTSPEED_ROOT / "canonical_runtime",
+    LIGHTSPEED_ROOT.parent.parent / "LightSpeed_Runtime",
+]
+
+
+def _resolve_canonical_runtime_root() -> Optional[Path]:
+    candidates = list(_CANONICAL_RUNTIME_CANDIDATES)
+    configured = os.environ.get("LIGHTSPEED_RUNTIME_ROOT", "").strip()
+    if configured and Path(configured).is_absolute():
+        candidates.insert(0, Path(configured))
+    for candidate in candidates:
+        try:
+            if (candidate / "lightspeed_runtime" / "__init__.py").is_file():
+                return candidate.resolve()
+        except Exception:
+            continue
+    return None
+
+
+CANONICAL_RUNTIME_ROOT = _resolve_canonical_runtime_root()
 
 # Add paths
 sys.path.insert(0, str(LIGHTSPEED_ROOT))
-if SPLIT_RUNTIME_ROOT.exists():
-    sys.path.insert(0, str(SPLIT_RUNTIME_ROOT))
+if CANONICAL_RUNTIME_ROOT is not None:
+    sys.path.insert(0, str(CANONICAL_RUNTIME_ROOT))
 
 from lightspeed_runtime.storage_paths import reports_root
 from lightspeed_runtime.startup_options import launch_runtime_report
