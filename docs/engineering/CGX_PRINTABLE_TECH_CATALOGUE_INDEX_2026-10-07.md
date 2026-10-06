@@ -201,3 +201,10 @@ For any requested build, return:
 12. safe fallback and recovery/recycling route.
 
 This keeps “print any technology” as a constrained engineering compiler problem rather than an unsupported universal-manufacturing claim.
+
+
+## Operational build-family registry
+
+PT-001…PT-081 remains the complete current **technology** index. Operational decomposition is intentionally separate so process-cell families do not masquerade as new technologies or inflate the PT count.
+
+The owning operational registry is Type 1 Romer Cognigrex -> 25_CGX_Node_Horizon_v0_1. Rows 27–42 add physical-object .cgx identity, the function-to-stack compiler, structural-energy architecture, seven printer/process-cell families, assembly permissions, bootstrap closure, local safeguard, closure metrics, public-benefit roles and InterSol/international federation. These records reference PT/PMX/RIP IDs rather than replacing them.
