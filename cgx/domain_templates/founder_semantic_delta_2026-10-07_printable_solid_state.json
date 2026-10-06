@@ -1,0 +1,107 @@
+{
+  "schema": "CGX-FOUNDER-SEMANTIC-DELTA/0.1",
+  "receipt_id": "CGX-FSD-2026-10-07-PRINTABLE-SOLID-STATE-001",
+  "date": "2026-10-07",
+  "status": "FOUNDER_DIRECTION_CAPTURED_PENDING_OWNING_CANON_RECONCILIATION",
+  "domain": "romer",
+  "target_filespaces": [
+    "Romer.cgx",
+    "Cognigrex.cgx",
+    "Eco.cgx"
+  ],
+  "source_kind": "founder-conversation",
+  "authority_boundary": "Founder intent and architecture semantics only. This receipt does not manufacture physical, empirical, mission-readiness, medical/biological, legal, regulatory, certification or publication evidence.",
+  "resolution_rule": "Overlay -> validate against current owning Drive/CGX records -> Resolve -> DBR/readback. Preserve existing IDs/owners and do not create a parallel master.",
+  "drive_owner_records": {
+    "romer_workbook": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "postmix_sheet": "20_PostMix_Material_Matrix_v0_1",
+    "raphael_printer_sheet": "23_Raphael_Interaction_Printer_v0_1",
+    "solid_state_catalogue_sheet": "24_CGX_Solid_State_Catalogue_v0_1"
+  },
+  "confirmed_direction": [
+    {
+      "subject": "Thin physical .cgx identity",
+      "semantics": [
+        "A printed or hybrid physical technology may carry its own stable CGX node/object identity and capability manifest without carrying the complete compute stack of a smartphone-class device.",
+        "Identity, local sensing/actuation and bounded state may be thin; registered deterministic compute may be delegated through the existing CGX node-exchange lease/readback contract.",
+        "Node identity never transfers semantic, governance, certification or release authority."
+      ]
+    },
+    {
+      "subject": "Function-as-material-and-geometry stack",
+      "semantics": [
+        "Printable technology is represented as qualified material layers, interfaces, geometry, process sequence and environment rather than as a monolithic device category.",
+        "Structural, conductive, dielectric, sensing, thermal, fluidic, optical, electromagnetic and energy-storage functions may be combined only where the constituent physics, manufacturing resolution, interfaces and evidence allow.",
+        "Recursive modular printing expands capability through separately calibrated child modules; it is not an unconstrained self-replication claim."
+      ]
+    },
+    {
+      "subject": "Structural energy shell",
+      "semantics": [
+        "External shells and internal cavities may be co-designed for structure, thermal control, shielding and electrochemical/electrostatic storage where qualified.",
+        "Graphene/carbon is a candidate feed family, not a universally preferred material.",
+        "Free space or void is geometry/working volume and is never itself an energy source."
+      ]
+    },
+    {
+      "subject": "Eco-Grex circular feed coupling",
+      "semantics": [
+        "Land/ocean cleanup streams may enter the manufacturing graph only through collection, sorting, decontamination, assay, material-passport and application-specific qualification.",
+        "Recovered plastic, carbon, metal, glass/mineral and bio-derived fractions may become local feed where contamination, leachate, corrosion, toxicity, microplastic, worker and ecological gates pass.",
+        "Cleanup benefit does not waive material or product qualification."
+      ]
+    },
+    {
+      "subject": "Local-horizon production",
+      "semantics": [
+        "Local horizon means the bounded resources, processes, energy, environment, evidence and authority available to a node: terrestrial, ocean, orbital, lunar, Martian, asteroid, interplanetary or later interstellar.",
+        "CGX may compile candidate local production routes and minimum-import seed lists under hard safety/ecology/rights/authority/evidence constraints.",
+        "Self-organisation means distributed planning, handshake and safe fallback; it does not imply autonomous governance or extraction authority."
+      ]
+    },
+    {
+      "subject": "Bootstrap outpost scenario",
+      "semantics": [
+        "A minimum-skeleton outpost architecture should be evaluated in which imported seed hardware bootstraps assay, tagging, feed preparation, manufacturing, repair and local safeguard capability.",
+        "The founder-proposed three-Mark-III plus Mark-V tagging/support arrangement is a scenario assumption pending owning-canon reconciliation of Mark V function and full mission engineering.",
+        "Resource return/value may remain an economic option but never outranks mission safety, debris stewardship, planetary/ecological constraints or evidence gates."
+      ]
+    },
+    {
+      "subject": "Filespace + dataspace + solid-state triplet",
+      "semantics": [
+        "Filespace holds identity, semantics, provenance, recipes and evidence references; dataspace holds live state, telemetry, execution and results; solid-state/physical space holds qualified material geometry and actuation.",
+        "One object lineage may bind all three through snapshot/hash/handshake/readback/DBR without confusing representation with authority.",
+        "The triplet is a portable typed contract ('new neutral') rather than a claim that all physical substrates are interchangeable."
+      ]
+    },
+    {
+      "subject": "Functional coatings and infrastructure feedback",
+      "semantics": [
+        "Road, building and habitat surfaces may be explored as two-, three- or multi-layer protective, reflective, conductive, heating, sensing, RF/EM or optical coating stacks.",
+        "Geospatial sensor feedback and adaptive infrastructure control are legitimate test targets.",
+        "Biological or resonant-health effects remain unvalidated hypotheses unless supported by controlled empirical evidence."
+      ]
+    },
+    {
+      "subject": "AI helper and portfolio rollout",
+      "semantics": [
+        "A CGX helper interface should scale the same evidence-governed build graph from individual/DIY use through businesses, governments and nonprofit/volunteer programmes.",
+        "The interface may guide assembly, recipe selection, qualification and troubleshooting but must refuse or escalate high-consequence actions outside current qualified capability.",
+        "As complexity rises, the same micro layer/interface model should compose into macro modules, facilities and supply-chain nodes."
+      ]
+    }
+  ],
+  "hard_guardrails": [
+    "no-smartphone-equivalence-claim-from-thin-endpoint-alone",
+    "no-free-space-energy-source-claim",
+    "no-graphene-universal-best-material-claim",
+    "no-cleanup-feed-use-without-contamination-and-application-qualification",
+    "no-biological-or-resonant-efficacy-claim-without-controlled-evidence",
+    "no-mark-v-tagging-role-promotion-before-owning-canon-reconciliation",
+    "no-autonomous-deorbit-deflection-or-extraction-authority-from-cgx-planning",
+    "no-recursive-printing-equals-unbounded-self-replication-claim",
+    "no-simulation-or-raphael-output-promotes-physical-capability"
+  ],
+  "next_action": "Reconcile these semantics into the existing Drive-owned Post-Mix, Raphael printer/multiphysics and CGX Solid-State Catalogue records; mirror only implementation contracts and receipts into Git; advance physical claims solely through the existing evidence ladders."
+}
