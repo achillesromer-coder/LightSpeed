@@ -190,3 +190,30 @@ def test_all_nine_selectors_have_extension_and_capability_shortcalls():
         calls = list_shortcalls(selector)
         assert calls["extend"] == "extensions.tool"
         assert calls["capabilities"] == "interface.capabilities"
+
+
+def test_printable_catalogue_skill_is_shared_and_selector_aliases_resolve():
+    from lightspeed_runtime.cgx_capability_registry import resolve_shortcall
+
+    expected = {
+        "achilles": "catalogue-review",
+        "neo": "build-plan",
+        "athene": "circular-feed",
+        "raphael": "utp",
+        "cognigrex": "catalogue",
+        "romer-grex": "printer",
+        "eco-grex": "cleanup-feed",
+        "emassc": "catalogue-review",
+        "lightspeed": "build-assist",
+    }
+    for selector, shortcall in expected.items():
+        resolved = resolve_shortcall(selector, shortcall)
+        assert resolved["route_id"] == "portfolio.printable_catalogue"
+        assert resolved["route"]["state"] == "workflow"
+        assert resolved["route"]["skill"] == "utp-portfolio-catalogue"
+
+    root = Path(__file__).resolve().parents[3]
+    for package in expected:
+        skill = root / "plugins" / "packages" / package / "skills" / "utp-portfolio-catalogue" / "SKILL.md"
+        assert skill.is_file(), skill
+

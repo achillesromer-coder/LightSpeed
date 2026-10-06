@@ -55,7 +55,9 @@
       "install": "runtime.productization",
       "update": "runtime.productization",
       "config": "runtime.productization",
-      "rollback": "runtime.productization"
+      "rollback": "runtime.productization",
+      "catalogue": "portfolio.printable_catalogue",
+      "build-assist": "portfolio.printable_catalogue"
     }
   },
   "routes": {
@@ -65,6 +67,23 @@
       "ro": true,
       "handler": "lightspeed_runtime.cgx_preflight:build_assurance_preflight",
       "limitation": "Assurance clearance bounds method evidence only; it does not grant execution authority."
+    },
+    "cgx.cross_analysis": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.cgx_cross_analysis:build_cross_analysis_plan",
+      "uses": [
+        "cgx.resolve_context",
+        "cgx.object_context",
+        "cgx.plan_query",
+        "cgx.minimum_work",
+        "consequence.preflight",
+        "science.query",
+        "tests.plan",
+        "local.supervise"
+      ],
+      "limitation": "Plans bounded cross-analysis; it does not automatically execute tests/sweeps or promote results."
     },
     "cgx.minimum_work": {
       "state": "available",
@@ -78,6 +97,12 @@
       "ro": true,
       "handler": "lightspeed_runtime.cgx_object_context:resolve_object_context",
       "limitation": "Read-only resolution of current object/twin lineage into child-domain identity, Operations binding, source owner and representation boundary; no object creation or authority promotion."
+    },
+    "cgx.plan_query": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.cgx_query_planner:compile_query_plan"
     },
     "cgx.resolve_context": {
       "state": "available",
@@ -229,6 +254,21 @@
       "open_world": true,
       "handler": "lightspeed_runtime.route_probe:build_route_probe_report"
     },
+    "portfolio.printable_catalogue": {
+      "state": "workflow",
+      "kind": "skill",
+      "ro": true,
+      "skill": "utp-portfolio-catalogue",
+      "uses": [
+        "cgx.resolve_context",
+        "cgx.object_context",
+        "cgx.cross_analysis",
+        "tests.plan",
+        "sources.envelope",
+        "consequence.preflight"
+      ],
+      "limitation": "Resolves existing printable/hybrid portfolio records into actor-, horizon-, resource- and evidence-aware build/help views. It does not create new semantic authority, physical readiness, build approval or execution permission."
+    },
     "receipts.list": {
       "state": "available",
       "kind": "runtime",
@@ -251,11 +291,23 @@
       "limitation": "Manages named runtime slots only. No arbitrary shell/path deletion, active DB mutation, carrier rewrite, canonical promotion, or public release.",
       "authority_transfer": false
     },
+    "science.query": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.scientific_query:execute_scientific_query"
+    },
     "sources.envelope": {
       "state": "available",
       "kind": "runtime",
       "ro": true,
       "handler": "lightspeed_runtime.source_intake:build_source_envelope_from_path"
+    },
+    "tests.plan": {
+      "state": "available",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.corpus_test_orchestrator:plan_cascade"
     }
   },
   "gaps": [

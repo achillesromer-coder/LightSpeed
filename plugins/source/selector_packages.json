@@ -107,7 +107,8 @@
     "cgx-minimum-sufficient-work",
     "cgx-capability-router",
     "cgx-tool-extension",
-    "lightspeed-runtime-productization"
+    "lightspeed-runtime-productization",
+    "utp-portfolio-catalogue"
   ],
   "mcp_policy": "Skills + capability-routing release. First-class callable tools must use one validated shared CGX MCP server; never emit per-selector MCP servers."
 }
