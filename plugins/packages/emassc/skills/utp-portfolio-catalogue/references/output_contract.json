@@ -1,0 +1,109 @@
+{
+  "schema": "CGX-UTP-PORTFOLIO-OUTPUT/0.1",
+  "purpose": "Structured output contract for the utp-portfolio-catalogue workflow; not semantic or physical authority.",
+  "required": [
+    "object_ids",
+    "request",
+    "capability_state",
+    "function_stack",
+    "cgx_identity",
+    "planes",
+    "local_resource_map",
+    "evidence",
+    "next_test",
+    "dbr",
+    "escalations"
+  ],
+  "actor_modes": [
+    "DIY",
+    "BUSINESS",
+    "GOVERNMENT",
+    "NONPROFIT",
+    "INTERNAL_RND"
+  ],
+  "horizons": [
+    "TERR",
+    "OCEAN",
+    "ORBIT",
+    "LUNAR",
+    "MARS",
+    "ASTEROID",
+    "INTERPLANETARY",
+    "INTERSTELLAR"
+  ],
+  "capability_states": [
+    "SUPPORTED",
+    "ARCHITECTURE",
+    "R&D",
+    "GATED",
+    "UNKNOWN"
+  ],
+  "cgx_identity": {
+    "fields": [
+      "object_id",
+      "revision",
+      "capability_manifest",
+      "local_state",
+      "sensor_io",
+      "actuator_io",
+      "delegated_compute_route",
+      "safe_state",
+      "source_owner"
+    ],
+    "invariant": "identity/capability binding never transfers semantic, execution, certification or release authority"
+  },
+  "planes": {
+    "filespace": [
+      "identity",
+      "semantics",
+      "configuration",
+      "recipes",
+      "geometry_refs",
+      "material_passports",
+      "provenance",
+      "evidence_refs",
+      "authority_ceiling"
+    ],
+    "dataspace": [
+      "live_state",
+      "telemetry",
+      "solver_io",
+      "alerts",
+      "execution_requests",
+      "leases",
+      "receipts"
+    ],
+    "printspace": [
+      "material_layers",
+      "geometry",
+      "interfaces",
+      "cavities",
+      "sensors",
+      "actuators",
+      "service_boundaries",
+      "qualification_state"
+    ]
+  },
+  "dbr": [
+    "snapshot",
+    "hash",
+    "handshake",
+    "execute_or_test",
+    "readback",
+    "receipt",
+    "reviewed_promotion"
+  ],
+  "source_precedence": [
+    "owning_drive",
+    "current_cgx_recovery_and_receipts",
+    "git_implementation_mirror",
+    "external_evidence_when_required"
+  ],
+  "non_claims": [
+    "not physical readiness by catalogue membership",
+    "not smartphone-class onboard compute by thin endpoint identity",
+    "not authority transfer across representation planes",
+    "not automatic local-material qualification",
+    "not unlimited recursive self-replication"
+  ]
+}

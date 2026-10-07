@@ -41,7 +41,8 @@
         "release": "ops.finalize",
         "handoff": "protocols.build",
         "assure": "assurance.preflight",
-        "custody": "custodial.preflight"
+        "custody": "custodial.preflight",
+        "catalogue-review": "portfolio.printable_catalogue"
       }
     },
     "neo": {
@@ -66,7 +67,8 @@
         "queue": "ops.queue",
         "local": "local.supervise",
         "resume": "receipts.list",
-        "probe": "ops.route_probe"
+        "probe": "ops.route_probe",
+        "build-plan": "portfolio.printable_catalogue"
       }
     },
     "athene": {
@@ -89,7 +91,8 @@
         "evidence": "sources.envelope",
         "corridor": "eco.assess",
         "mitigate": "eco.assess",
-        "species": "eco.assess"
+        "species": "eco.assess",
+        "circular-feed": "portfolio.printable_catalogue"
       }
     },
     "raphael": {
@@ -117,7 +120,9 @@
         "cad": "cad.freecad",
         "femm": "physics.femm.probe",
         "bom": "cad.freecad.bom",
-        "gmat": "science.gmat.probe"
+        "gmat": "science.gmat.probe",
+        "utp": "portfolio.printable_catalogue",
+        "print-physics": "portfolio.printable_catalogue"
       }
     },
     "cognigrex": {
@@ -141,7 +146,9 @@
         "hydrate": "cgx.resolve_context",
         "reconcile": "cgx.minimum_work",
         "gaps": "interface.capabilities",
-        "portfolio": "cgx.cross_analysis"
+        "portfolio": "cgx.cross_analysis",
+        "catalogue": "portfolio.printable_catalogue",
+        "printspace": "portfolio.printable_catalogue"
       }
     },
     "romer-grex": {
@@ -169,7 +176,9 @@
         "cad": "cad.freecad",
         "bom": "cad.freecad.bom",
         "gmat": "science.gmat.probe",
-        "mpl": "assurance.mpl.probe"
+        "mpl": "assurance.mpl.probe",
+        "printer": "portfolio.printable_catalogue",
+        "catalogue": "portfolio.printable_catalogue"
       }
     },
     "eco-grex": {
@@ -192,7 +201,9 @@
         "species": "eco.assess",
         "water": "eco.assess",
         "carbon": "eco.assess",
-        "mitigate": "eco.assess"
+        "mitigate": "eco.assess",
+        "circular-feed": "portfolio.printable_catalogue",
+        "cleanup-feed": "portfolio.printable_catalogue"
       }
     },
     "emassc": {
@@ -217,7 +228,8 @@
         "release": "ops.finalize",
         "ip": "cgx.cross_analysis",
         "assure": "assurance.preflight",
-        "custody": "custodial.preflight"
+        "custody": "custodial.preflight",
+        "catalogue-review": "portfolio.printable_catalogue"
       }
     },
     "lightspeed": {
@@ -255,7 +267,9 @@
         "install": "runtime.productization",
         "update": "runtime.productization",
         "config": "runtime.productization",
-        "rollback": "runtime.productization"
+        "rollback": "runtime.productization",
+        "catalogue": "portfolio.printable_catalogue",
+        "build-assist": "portfolio.printable_catalogue"
       }
     }
   }
