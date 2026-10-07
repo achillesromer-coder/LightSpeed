@@ -43,7 +43,7 @@ def test_4d_model_is_xyz_plus_time_with_frequency_as_view() -> None:
     rows = by_id(MRI)
     root = rows["MRI4D-000"]
     assert "x,y,z,t" in root["Coordinates / State"]
-    assert "frequency is transform/view of t" in root["Field / Property"]
+    assert "frequency is transform/view of t" in root["Coordinates / State"]
     assert "analogy only" in root["Notes"]
     exposure = rows["MRI4D-058"]
     assert "no biological" in exposure["Safety / Hard Gate"]
