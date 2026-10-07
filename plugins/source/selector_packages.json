@@ -104,6 +104,7 @@
   "shared_skills": [
     "cgx-selector",
     "cgx-handshake",
+    "cgx-mobile-node",
     "cgx-minimum-sufficient-work",
     "cgx-capability-router",
     "cgx-tool-extension",
