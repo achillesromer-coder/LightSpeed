@@ -1,0 +1,86 @@
+{
+  "schema": "CGX-PC01-PRODUCTION-EVENT/0.1",
+  "date": "2026-10-09",
+  "status": "DIGITAL_SCHEMA / APPEND_ONLY_SEMANTICS",
+  "authority": {
+    "drive_ref": "CGX-OBJECT-EVENT-001 / UTP-111 / 33_PC01_CGX_Operational_Matrix_v0_1"
+  },
+  "event_types": [
+    "FAMILY_CREATED",
+    "RELATION_ADDED",
+    "LOT_STARTED",
+    "PRODUCED",
+    "CREATE_OBJECT",
+    "BUILD_PLANNED",
+    "BUILD_READY",
+    "TEST_RESULT",
+    "REPAIR_STARTED",
+    "REPAIR_COMPLETED",
+    "REJECTED",
+    "QUARANTINED",
+    "SCRAPPED",
+    "SERVICE_HEALTH",
+    "SOFTWARE_MAINT",
+    "HARDWARE_MAINT",
+    "LEARNING_PROPOSAL",
+    "SIM_RUN",
+    "RENDERED_VIEW",
+    "REVIEW_DECISION",
+    "DBR_COMMIT",
+    "DEGRADED_MODE"
+  ],
+  "minimum_fields": [
+    "event_id",
+    "event_type",
+    "timestamp",
+    "actor_role",
+    "parent_printer_or_node",
+    "quantity",
+    "unit",
+    "evidence_state"
+  ],
+  "optional_fields": [
+    "object_id",
+    "lot_id",
+    "family_id",
+    "archetype_ref",
+    "instance_ref",
+    "build_packet_ref",
+    "configuration_hash",
+    "source_hashes",
+    "material_lots",
+    "test_refs",
+    "readback_receipt",
+    "dbr_pointer",
+    "notes"
+  ],
+  "rules": [
+    "Minimum event detail scales with consequence; trivial counts do not require a full engineering packet.",
+    "A production count never proves electrical/mechanical/thermal performance or qualification.",
+    "Corrections append/supersede; do not silently erase provenance.",
+    "Sensitive personal data is not required for ordinary production events."
+  ],
+  "examples": [
+    {
+      "event_id": "EXAMPLE-PC01-DIODE-001",
+      "event_type": "PRODUCED",
+      "timestamp": "DATE/TIME_AT_ENTRY",
+      "actor_role": "operator",
+      "parent_printer_or_node": "PC01-NODE-001",
+      "quantity": 1,
+      "unit": "each",
+      "archetype_ref": "CGA-D-* or exact diode instance if known",
+      "evidence_state": "PRODUCTION_COUNT_ONLY",
+      "notes": "Example only: '1 diode made today'. Attach build/test/lot refs only when available or required."
+    },
+    {
+      "event_id": "EXAMPLE-PC01-ROBOT-001",
+      "event_type": "CREATE_OBJECT",
+      "parent_printer_or_node": "PC01-NODE-001",
+      "quantity": 1,
+      "unit": "each",
+      "evidence_state": "REQUIRES_EXACT_BUILD_PACKET_AND_TEST",
+      "notes": "Complex robotic article should include child component lineage, safety envelope, compute profile, calibration and readback."
+    }
+  ]
+}
