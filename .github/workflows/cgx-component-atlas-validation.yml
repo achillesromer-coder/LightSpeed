@@ -1,0 +1,44 @@
+name: CGX Component Atlas Validation
+
+on:
+  pull_request:
+    paths:
+      - "cgx/component_atlas/**"
+      - "tests/test_cgx_component_atlas.py"
+      - "tests/test_cgx_component_instance_contract.py"
+      - "docs/engineering/CGX_COMPONENT_GEOMETRY_ATLAS_2026-10-08.md"
+      - ".github/workflows/cgx-component-atlas-validation.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "cgx/component_atlas/**"
+      - "tests/test_cgx_component_atlas.py"
+      - "tests/test_cgx_component_instance_contract.py"
+      - "docs/engineering/CGX_COMPONENT_GEOMETRY_ATLAS_2026-10-08.md"
+      - ".github/workflows/cgx-component-atlas-validation.yml"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install test dependency
+        run: python -m pip install pytest
+      - name: Validate component atlas
+        run: python -m pytest -q tests/test_cgx_component_atlas.py
+      - name: Validate component instance and proof contracts
+        run: python -m pytest -q tests/test_cgx_component_instance_contract.py
+      - name: Validate JSON syntax
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          base = Path("cgx/component_atlas")
+          for path in sorted(base.glob("*.json")):
+              json.loads(path.read_text(encoding="utf-8"))
+          print("CGX component atlas JSON validation PASS")
+          PY
