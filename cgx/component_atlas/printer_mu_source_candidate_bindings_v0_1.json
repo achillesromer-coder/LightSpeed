@@ -1,0 +1,135 @@
+{
+  "schema": "CGX-PRINTER-MU-SOURCE-CANDIDATES/0.1",
+  "artifact_id": "UTP-111",
+  "state": "ATTRIBUTABLE_SOURCE_CANDIDATES / PROCUREMENT_AND_PHYSICAL_QUALIFICATION_NOT_RUN",
+  "owner_sheet": "31_CGX_Component_Instance_Register_v0_1",
+  "rule": "A candidate source binds product/material identity and published source facts only. It does not prove local inventory, exact lot, process compatibility, machine selection, certification or physical performance.",
+  "candidates": [
+    {
+      "id": "SRC-PMU-CONDUCTOR-001",
+      "kind": "functional_material",
+      "name": "LOCTITE ECI 1010 E&C",
+      "manufacturer": "Henkel",
+      "sku_idh": "2022184",
+      "locator": "https://next.henkel-adhesives.com/us/en/products/industrial-coatings/central-pdp.html/loctite-eci-1010-e-c/SAP_IB-109970/variation/2022184.html",
+      "source_facts": [
+        "screen-printable conductive silver ink",
+        "typical sheet resistance about 7 mOhm/sq/25um",
+        "compatible with LOCTITE EDAG PF 455B E&C"
+      ],
+      "evidence": "SOURCE_RATED_TYPICAL",
+      "physical_state": "NOT_RUN"
+    },
+    {
+      "id": "SRC-PMU-DIELECTRIC-001",
+      "kind": "functional_material",
+      "name": "LOCTITE EDAG PF 455B E&C",
+      "manufacturer": "Henkel",
+      "sku_idh": "1263298",
+      "locator": "https://next.henkel-adhesives.com/us/en/products/industrial-coatings/central-pdp.html/loctite-edag-pf-455b-e-c/SAP_IB-78955.html",
+      "source_facts": [
+        "UV-curable screen-printable dielectric",
+        "adhesion to treated/untreated polyester foil",
+        "humidity-resistant"
+      ],
+      "evidence": "SOURCE_RATED_QUALITATIVE",
+      "physical_state": "NOT_RUN"
+    },
+    {
+      "id": "SRC-PMU-RESISTIVE-001",
+      "kind": "functional_material",
+      "name": "LOCTITE ECI 7004LR E&C",
+      "manufacturer": "Henkel",
+      "sku_idh": "2076923",
+      "locator": "https://next.henkel-adhesives.com/us/en/products/industrial-coatings/central-pdp.html/loctite-eci-7004lr-e-c/SAP_IB-112364.html",
+      "source_facts": [
+        "screen-printable carbon ink",
+        "with NCI 7002 blend family spans 50 to 5000 Ohm/sq/25um",
+        "printed resistor/heater/FSR candidate"
+      ],
+      "evidence": "SOURCE_RATED_FAMILY_RANGE",
+      "physical_state": "NOT_RUN"
+    },
+    {
+      "id": "SRC-PMU-SUBSTRATE-001",
+      "kind": "substrate_dielectric",
+      "name": "Kapton HN 25 um candidate",
+      "manufacturer": "DuPont",
+      "source_document": "EI-10206 (2024)",
+      "locator": "https://www.dupont.com/content/dam/dupont/amer/us/en/ei-transformation/public/documents/en/EI-10206-Kapton-HN-Data-Sheet.pdf",
+      "source_facts": [
+        "polyimide film",
+        "25 um nominal candidate gauge",
+        "typical dielectric constant 3.4 at 1 kHz in cited data sheet"
+      ],
+      "derived_example": {
+        "C_per_A_pF_per_mm2": 1.204144,
+        "class": "GEOMETRY_INFERRED_NOMINAL"
+      },
+      "evidence": "SOURCE_RATED_TYPICAL_PLUS_ENGINEERING_INFERENCE",
+      "physical_state": "NOT_RUN"
+    },
+    {
+      "id": "SRC-PMU-C0-001",
+      "kind": "controller_prototype",
+      "name": "NUCLEO-G474RE",
+      "manufacturer": "STMicroelectronics",
+      "locator": "https://www.st.com/en/evaluation-tools/nucleo-g474re.html",
+      "archetype": "CGA-IC-045",
+      "source_facts": [
+        "Active / volume production development board",
+        "STM32G474RE MCU"
+      ],
+      "evidence": "SOURCE_BOUND_EXACT_PRODUCT / PROTOTYPE_ONLY",
+      "physical_state": "NOT_RUN"
+    },
+    {
+      "id": "SRC-PMU-MOTION-001",
+      "kind": "motion_driver_seed",
+      "name": "TMC5160A-TA",
+      "manufacturer": "Analog Devices",
+      "locator": "https://www.analog.com/en/products/tmc5160.html",
+      "archetype": "CGA-PWR-017",
+      "source_facts": [
+        "Recommended for New Designs",
+        "Active",
+        "8 to 60 V motor supply",
+        "1 to 256 microsteps",
+        "external N-FET architecture"
+      ],
+      "evidence": "SOURCE_BOUND_EXACT_PART / SYSTEM_STAGE_UNBOUND",
+      "physical_state": "NOT_RUN"
+    },
+    {
+      "id": "SRC-PMU-ID-001",
+      "kind": "identity_seed",
+      "name": "NT3H2111 / NTAG I2C plus",
+      "manufacturer": "NXP",
+      "locator": "https://www.nxp.com/products/rfid-nfc/nfc-hf/connected-nfc-tags/ntag-ic-plus-2k-nfc-forum-type-2-tag-with-ic-interface%3ANTAG_I2C",
+      "archetype": "CGA-RF-041",
+      "source_facts": [
+        "Active product family",
+        "passive NFC plus I2C interface",
+        "password protection and originality signature"
+      ],
+      "evidence": "SOURCE_BOUND_IDENTITY_SEED / NO_AUTHORITY_TRANSFER",
+      "physical_state": "NOT_RUN"
+    },
+    {
+      "id": "SRC-PMU-LIGHT-001",
+      "kind": "visible_emitter_seed",
+      "name": "DURIS E 2835 GW JTLPS1.EM, order Q65113A9171",
+      "manufacturer": "ams OSRAM",
+      "locator": "https://ams-osram.com/products/leds/white-leds/osram-duris-e-2835-gw-jtlps1-em",
+      "archetype": "CGA-O-023",
+      "source_facts": [
+        "Full production order code candidate",
+        "2835 package family",
+        "exact optical requirement still use-case dependent"
+      ],
+      "evidence": "SOURCE_BOUND_EXACT_ORDER_CODE_CANDIDATE",
+      "physical_state": "NOT_RUN"
+    }
+  ],
+  "next": "Bind exact purchased lots/units, geometry, process windows, tools/calibration and use-case requirements before MATERIAL_BOUND/PROCESS_BOUND or physical execution."
+}
