@@ -1,0 +1,72 @@
+{
+  "schema": "CGX-UNIVERSAL-TYPE1-DIRECTIONAL-RESOLVER/0.1",
+  "date": "2026-10-09",
+  "status": "OWNER_MATRIX_IMPLEMENTED / 411_ROWS_X_60_FIELDS / GIT_CONTRACT_MIRROR / PHYSICAL_NOT_RUN",
+  "authority": {
+    "drive_workbook": "Type 1 Romer Cognigrex",
+    "spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "sheet": "32_CGX_Universal_Type1_Tech_Matrix_v0_1",
+    "directional_range": "AK:AZ",
+    "portfolio_id": "UTP-117",
+    "archetype_rows": 411,
+    "total_fields": 60,
+    "compiler_range": "BA:BH"
+  },
+  "directional_fields": [
+    "accepted_predecessor_classes",
+    "accepted_successor_classes",
+    "directionality_rule_x_to_y",
+    "interface_interlayer_requirement",
+    "environment_atmosphere_class",
+    "precondition_surface_prep",
+    "primary_deposition_assembly_operation",
+    "activation_cure_sinter_postprocess",
+    "prior_layer_damage_checks_envelope",
+    "differential_field_chemical_risk",
+    "encapsulation_preservation_step",
+    "handoff_transition_gate",
+    "4d_trigger_state_variables",
+    "4d_response_transfer_function",
+    "verification_readback_falsifier",
+    "alternate_fallback_route"
+  ],
+  "invariants": [
+    "X→Y compatibility never implies Y→X.",
+    "The 60-field owner matrix consists of the original 36 baseline fields + 16 directional/4D fields + 8 compiler/factorization fields; the eight compiler fields are derived planning metadata and do not raise evidence.",
+    "Generic archetype allowance never overrides exact UTP-106 source/material/process/tool evidence.",
+    "Every atmosphere transition and process exposure is an explicit build step.",
+    "Prior-layer thermal, chemical, mechanical, electrical, optical and contamination damage envelopes are checked before successor operations.",
+    "Sensitive layers CAN proceed through otherwise incompatible downstream operations only if a source-qualified protection, encapsulation, inert/vacuum hold, masking or alternate sequence closes the damage gate.",
+    "Raphael may compare bounded geometry/process candidates only after standard-physics baseline and equivalent material/environment constraints.",
+    "No architecture row grants physical, hazardous-process, certification, release or mission authority."
+  ],
+  "factorized_roles": [
+    "STRUCTURE / DATUM",
+    "DIELECTRIC / ISOLATION",
+    "CONDUCTOR / INTERCONNECT",
+    "PASSIVE / ENERGY",
+    "FIELD / RF",
+    "SENSOR / METROLOGY",
+    "ACTIVE / CONTROL",
+    "FLUID / THERMAL",
+    "OPTICAL",
+    "PROTECTION / SAFE-STATE",
+    "SERVICE / ACCESS"
+  ],
+  "corrected_semantic_cases": [
+    "CGA-C-001 parallel-plate capacitor -> CAPACITIVE/L4 with capacitance/electric-field/storage inference",
+    "CGA-O-014 beamsplitter -> optical Fresnel/transfer-matrix inference",
+    "CGA-O-016 waveplate -> optical retardance/polarization inference"
+  ],
+  "dense_pair_policy": "Use sheet30 high-value interactions and explicit instance exceptions instead of generating ~168k mostly redundant 411×411 pairs.",
+  "compiler_fields": [
+    "primitive_basis_class",
+    "equivalent_network_state_model",
+    "per_unit_geometry_law",
+    "instance_bound_numeric_derivation",
+    "voxel_packing_resolution_constraint",
+    "state_memory_hysteresis",
+    "cross_domain_coupling_terms",
+    "compiler_token_operation_class"
+  ]
+}

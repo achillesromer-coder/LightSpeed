@@ -1,0 +1,99 @@
+{
+  "schema": "CGX-MANUFACTURING-IR-CONTRACT/0.1",
+  "date": "2026-10-09",
+  "status": "DRIVE-OWNED-UTP-125..130 / GIT-IMPLEMENTATION-MIRROR / PHYSICAL-NOT-RUN",
+  "authority": {
+    "drive_workbook": "Type 1 Romer Cognigrex",
+    "portfolio": "UTP-125..130",
+    "node_horizon": [
+      "CGX-MFG-IR-001",
+      "CGX-ENV-SCOPE-001",
+      "CGX-RECIPE-001",
+      "CGX-SIM-REFINE-001",
+      "CGX-STACK-SCHED-001",
+      "CGX-MACHINE-ADAPTER-001"
+    ],
+    "queue_id": "BUILD-067",
+    "parent_contracts": [
+      "CGX-COMPILER-001",
+      "MRI4D-059",
+      "UTP-106",
+      "UTP-117",
+      "UTP-124"
+    ]
+  },
+  "namespace": {
+    "recipe": "cgx://manufacturing/recipe/<strategy>/<family>/<revision>",
+    "build": "cgx://manufacturing/build/<id>",
+    "run": "cgx://manufacturing/run/<id>",
+    "object": "cgx://object/<id>"
+  },
+  "layers": {
+    "filespace": [
+      "recipe identity",
+      "archetype/instance/source refs",
+      "parameter overrides",
+      "material/tool/environment/test contracts",
+      "configuration hashes",
+      "family/supersession",
+      "owner-synced instance binding progress"
+    ],
+    "dataspace": [
+      "compile decisions",
+      "scope rationale",
+      "solver receipts",
+      "schedule/run/test/repair events",
+      "telemetry/readbacks",
+      "DBR deltas"
+    ],
+    "solid_state": [
+      "geometry",
+      "materials",
+      "interfaces",
+      "seed components",
+      "service boundaries",
+      "actual machine/tool envelope"
+    ]
+  },
+  "anti_duplication": [
+    "one canonical parameterised recipe per process strategy/component family where possible",
+    "assemblies reference child recipe/build URIs and store only placement, interface, dependency and override deltas",
+    "machine dialect is generated late from a frozen manufacturing IR and current calibrated machine manifest",
+    "simulation refinement creates a new digital revision and never mutates prior reviewed evidence"
+  ],
+  "minimal_scope_rule": "Solve only dimensions that can materially change process feasibility, component state, acceptance or safety. Exact source/process evidence may add scopes; it may not silently remove a consequential one.",
+  "physical_boundary": "No compiler, simulation, schedule, render or generated program raises physical evidence or execution authority. Machine execution remains separately gated by BUILD_READY, exact machine/adapter/calibration identity, independent C0/interlocks and required owner/specialist authority.",
+  "deduplication_gate": {
+    "rule": "Before new sourcing or recipe creation, resolve the current CGXI instance and canonical recipe/build URI. Continue from its first unresolved consequential gate; do not repeat source selection already recorded by the Drive owner.",
+    "order": [
+      "resolve CGXI instance ID when one exists",
+      "read owner-synced source/material/process/tool state",
+      "reuse canonical recipe URI and current source candidates",
+      "identify first unresolved consequential field",
+      "search or create new evidence only for that field",
+      "append revision/receipt rather than overwrite prior evidence"
+    ],
+    "current_owner_state": "8 initial instances remain UNBOUND/NOT_RUN; 6 now carry attributable SOURCE-CANDIDATE BOUND evidence."
+  },
+  "type1_matrix_contract": {
+    "owner_sheet": "32_CGX_Universal_Type1_Tech_Matrix_v0_1",
+    "archetype_rows": 411,
+    "total_fields": 60,
+    "baseline_fields": 36,
+    "directional_4d_fields": 16,
+    "compiler_factorization_fields": 8,
+    "directional_range": "AK:AZ",
+    "compiler_range": "BA:BH",
+    "compiler_fields": [
+      "primitive_basis_class",
+      "equivalent_network_state_model",
+      "per_unit_geometry_law",
+      "instance_bound_numeric_derivation",
+      "voxel_packing_resolution_constraint",
+      "state_memory_hysteresis",
+      "cross_domain_coupling_terms",
+      "compiler_token_operation_class"
+    ],
+    "precedence": "Exact CGXI instance/source/material/process/tool/test evidence overrides generic matrix/compiler metadata."
+  }
+}
