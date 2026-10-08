@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import subprocess
+import sys
 
 import pytest
 
@@ -259,3 +261,26 @@ def test_six_owner_instances_are_source_candidate_bound_but_all_eight_remain_unb
     assert len(source_bound) == 6
     assert {row["binding_state"] for row in POPULATION["records"]} == {"UNBOUND"}
     assert {row["physical_state"] for row in POPULATION["records"]} == {"NOT_RUN"}
+
+def test_cli_can_compile_canonical_instance_id_without_manual_instance_file() -> None:
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts" / "compile_cgx_manufacturing.py"),
+            "component",
+            "--instance-id",
+            "CGXI-P1-TRACE-001",
+            "--build-id",
+            "cli-source-aware-trace",
+        ],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    compiled = json.loads(proc.stdout)
+    assert compiled["instance_ref"] == "CGXI-P1-TRACE-001"
+    assert compiled["archetype"]["id"] == "CGA-I-002"
+    assert compiled["binding_progress"] == "SOURCE_CANDIDATE_BOUND"
+    assert "LOCTITE ECI 1010" in compiled["filespace"]["source_locator_or_hash"]
+    assert compiled["execution_state"] == "HOLD"
