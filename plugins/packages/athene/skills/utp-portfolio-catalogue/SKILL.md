@@ -102,3 +102,38 @@ When a public-facing or outreach catalogue is requested, add a plain-language �
 ## Portfolio expansion rule
 
 A new PT/UTP child record is justified only when the requested object cannot be represented as a configuration/composition of existing primitives and interfaces. Prefer geometry/material/process configurations over multiplying technology categories.
+
+## PC01 / PrintCeptor operational mode
+
+When PC01, PrintCeptor, or a natural-language make/log/repair/review request is in scope, classify the interaction first as one of:
+
+- LOG — record a production, quantity, test, service, reject or maintenance event with the minimum sufficient event envelope;
+- BUILD — resolve an exact build packet and printer/tool/material route;
+- ENROL — attach or verify a .cgx physical-object identity and family relation;
+- REPAIR — isolate, diagnose, repair, retest and append service lineage;
+- REVIEW — open the source/twin/sequence/render/evidence package without implying physical qualification;
+- MAINTAIN — inspect software/hardware health and propose bounded updates with rollback/readback;
+- QUERY — return capability, family, state, source or evidence without mutation.
+
+Use `PC01-NODE-001`, `CGX-OBJECT-EVENT-001`, `CGX-FAMILY-LINEAGE-001`, `CGX-COMPUTE-DELEGATION-001`, `CGX-LEARNING-BOUND-001`, `CGX-MAINTENANCE-001`, `PC01-SIM-001`, `PC01-BUILD-CLOSURE-001`, and `UTP-110..116` when present in the current owner state.
+
+Keep low-friction events low-friction. “We made one diode today” can be an append-only quantity event; do not force a full engineering packet unless exact build/test traceability is required.
+
+For consequential build requests, require the normal UTP-106 source → geometry → material → process → tool/metrology → test → simulation/review → frozen-packet closure before BUILD_READY.
+
+Compute suitability is device- and consequence-specific:
+- C0 deterministic safety/control stays local when required;
+- C1 edge reasoning/state is optional and bounded;
+- C2 planning/simulation/retrieval is lease-bound delegated compute and transfers no authority;
+- child-oriented toys and simple consumer appliances do not receive unrestricted general-purpose agent/LLM runtimes by default;
+- industrial robots and machines may use richer C1/C2 functions only while independent C0/interlock safety remains intact.
+
+No claim of sentience is required or permitted as an evidence shortcut. Agentic/model behaviour remains replaceable software capability.
+
+A .cgx family is explicit lineage. Parent/child/lot/subassembly/variant relationships do not implicitly transfer evidence, certification, permissions or compute privilege.
+
+PC01 digital review should preserve: authoritative source revision, volumetric twin, longitudinal/transverse/section views, conventional baseline solve, bounded Raphael candidate comparison, process/collision checks, build/assembly sequence, high-fidelity render set, unresolved-field overlays, review decision and DBR/readback.
+
+Idle-time health work may inspect software versions, endpoint/runtime health, calibration age, hardware thermals/utilisation/errors and upgrade compatibility. Do not silently install software, firmware, models or hardware. Apply only supported, authorised changes with rollback and post-change verification.
+
+BUILD_READY is a pre-execution state. Never equate it with BUILT, MEASURED, REVIEWED_PROMOTION, release or certification.
