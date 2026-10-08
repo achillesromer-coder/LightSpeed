@@ -14,9 +14,14 @@ def test_owner_and_matrix_cardinality():
     assert d["owner"]["owner_row"] == "26_CGX_Portfolio_Delivery_v0_1!A75:P75"
     assert d["matrix_contract"] == {
         "archetype_count": 411,
-        "field_count": 52,
+        "field_count": 60,
         "directional_fields": 16,
+        "quantitative_factorization_fields": 8,
+        "primitive_basis_classes": 20,
     }
+    assert len(d["primitive_basis"]) == 20
+    assert "MAP_PRIMITIVE_BASIS_AND_EQUIVALENT_NETWORK" in d["compile_chain"]
+    assert "CHECK_VOXEL_PACKING_AND_PROCESS_RESOLUTION" in d["compile_chain"]
     assert "ORDER_DIRECTIONAL_X_TO_Y_STACK" in d["compile_chain"]
     assert "INFER_NUMERIC_OR_RETAIN_SYMBOLIC_OR_HOLD" in d["compile_chain"]
 
@@ -31,6 +36,12 @@ def test_capacitance_fixture_is_derived_not_measured():
     assert math.isclose(
         pF_per_mm2,
         fixture["derived"]["capacitance_density_pF_per_mm2"],
+        rel_tol=1e-12,
+    )
+    assert fixture["source_inputs"]["dielectric_thickness_um_nominal"] == 50
+    assert math.isclose(
+        fixture["derived"]["capacitance_density_pF_per_cm2"],
+        pF_per_mm2 * 100,
         rel_tol=1e-12,
     )
     assert "ENGINEERING_INFERENCE" in fixture["class"]

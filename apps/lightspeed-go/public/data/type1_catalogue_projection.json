@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-TYPE1-CATALOGUE-PROJECTION/0.1",
+  "schema": "CGX-TYPE1-CATALOGUE-PROJECTION/0.2",
   "generated_from": "Drive-owned Type 1 Romer Cognigrex + merged LightSpeed typed mirrors",
   "source_owner": {
     "spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
@@ -7,8 +7,10 @@
   },
   "metrics": {
     "archetypes": 411,
-    "universal_matrix_fields": 52,
-    "directional_4d_fields": 16
+    "universal_matrix_fields": 60,
+    "directional_4d_fields": 16,
+    "quantitative_factorization_fields": 8,
+    "primitive_basis_classes": 20
   },
   "surfaces": [
     {
@@ -24,12 +26,17 @@
     {
       "id": "32",
       "name": "Universal Type-I Tech Matrix",
-      "role": "directional volumetric stack + equations + 4D state"
+      "role": "60-field directional volumetric stack + equations + primitive/equivalent-network + 4D state"
     },
     {
       "id": "33",
       "name": "PC01 Operational Matrix",
       "role": "intent→route→review→build-ready operational grammar"
+    },
+    {
+      "id": "MFG-IR",
+      "name": "Manufacturing IR",
+      "role": "machine-neutral component-to-print operation DAG and blockers"
     }
   ],
   "contracts": [
@@ -37,14 +44,15 @@
     "UTP-117 directional/4D resolver",
     "UTP-118 source candidates",
     "UTP-119 circular-feed reference control",
-    "UTP-124 parametric stack/inference compiler"
+    "UTP-124 parametric stack/inference compiler",
+    "UTP-125 manufacturing IR compiler"
   ],
   "inference_example": {
     "label": "Ideal parallel-plate baseline",
     "equation": "C≈ε₀εᵣA/d",
-    "inputs": "Kapton HN candidate: εr≈3.4 @ 1 kHz; d≈25 µm nominal",
-    "result": "C/A≈1.204 pF/mm²",
+    "inputs": "UTP-106 PMU-CAND-005A Kapton HN: εr≈3.4 @ 1 kHz; d=50 µm",
+    "result": "C/A≈0.6020848 pF/mm² ≈60.2085 pF/cm²",
     "evidence": "engineering inference only; source/material/process/measurement corrections required"
   },
-  "boundary": "Read-only derived projection. Catalogue membership, equation evaluation or UI rendering does not establish physical readiness, certification, authority or release."
+  "boundary": "Read-only derived projection. Catalogue membership, primitive mapping, equation evaluation, compiler output or UI rendering does not establish physical readiness, certification, authority or release."
 }
