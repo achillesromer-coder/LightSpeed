@@ -69,7 +69,7 @@ def test_raphael_is_comparative_not_substitute_physics() -> None:
 def test_interaction_map_requires_residual_before_higher_order() -> None:
     rows = by_id(CIM)
     closure = rows["CIM-060"]
-    assert "pair/higher-order" in closure["Mechanism"]
+    assert "pairwise/higher-order" in closure["Mechanism"]
     raphael = rows["CIM-052"]
     assert "standard physics" in raphael["Mechanism"]
     assert "novelty bias" in raphael["Primary Conflict / Parasitic"]
