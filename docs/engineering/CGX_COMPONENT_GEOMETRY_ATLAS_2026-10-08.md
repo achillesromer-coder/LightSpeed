@@ -10,7 +10,7 @@ This package establishes a parameterized physical-component atlas beneath the ex
 
 Drive owner tabs:
 
-- `27_CGX_Component_Geometry_Atlas_v0_1`: 407 parameterized current-technology component archetypes across 15 domains and 21 family labels.
+- `27_CGX_Component_Geometry_Atlas_v0_1`: 411 parameterized current-technology component archetypes across 15 domains and 22 family labels.
 - `28_CGX_4D_Field_Slice_Model_v0_1`: 64 volumetric field/slice/operator records.
 - `29_Raphael_Component_Geometry_Search_v0_1`: 61 bounded geometry-search families.
 - `30_CGX_Component_Interaction_Map_v0_1`: 75 pair/coupling/parasitic/process/common-cause interaction records.
@@ -18,7 +18,13 @@ Drive owner tabs:
 
 ## Gap-closure population — v0.3
 
-The first-pass 266-archetype primitive library was expanded by 120 archetypes in v0.2 specifically where flat schematics hide important physical structure. v0.3 adds 21 explicit current control/interface archetypes that were previously only implicit combinations of lower-level primitives: CPU/SoC/DSP/ASIC packages, watchdog/supervisor, gate/current-sense/isolation interfaces, CAN/RS-485/USB/Ethernet physical interfaces, motor-control ICs, electromechanical contactor, thermal cutoff, solid-state relay, and BLDC/stepper/servo drive stages. The atlas now carries 407 archetypes while retaining exact commercial SKUs as instances rather than canonical rows.
+The first-pass 266-archetype primitive library was expanded by 120 archetypes in v0.2 specifically where flat schematics hide important physical structure. v0.3 adds 21 explicit current control/interface archetypes that were previously only implicit combinations of lower-level primitives: CPU/SoC/DSP/ASIC packages, watchdog/supervisor, gate/current-sense/isolation interfaces, CAN/RS-485/USB/Ethernet physical interfaces, motor-control ICs, electromechanical contactor, thermal cutoff, solid-state relay, and BLDC/stepper/servo drive stages. The atlas now carries 411 archetypes while retaining exact commercial SKUs as instances rather than canonical rows.
+
+## UTP universal-function gap closure — v0.4
+
+v0.4 adds four first-class archetypes required by the Printer-μ dependency graph rather than forcing them through neighbouring component classes: machine frame/datum network (CGA-M-029), printable dielectric/insulation layer (CGA-DIEL-001), visible semiconductor LED/RGB emitter package (CGA-O-023), and service bay/removable access interface (CGA-M-030). These close MU-001, MU-006, MU-011 and MU-020 at the archetype-ontology level only. Exact parts, materials, process windows, tolerances and physical qualification remain instance-level evidence.
+
+The dielectric archetype explicitly exposes the geometry-derived ideal relations C≈ε0εrA/d and E≈V/d only when εr, area and thickness are source-bound. These are engineering estimates, not substitutes for measured capacitance, leakage, loss tangent, breakdown, edge/fringing effects or process defects.
 
 ### v0.3 coverage rule
 
