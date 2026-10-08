@@ -18,7 +18,7 @@ def by_id(doc: dict) -> dict[str, dict]:
     return {row["ID"]: row for row in doc["records"]}
 
 def test_cardinality_and_unique_ids() -> None:
-    assert ATLAS["record_count"] == 386
+    assert ATLAS["record_count"] == 407
     assert MRI["record_count"] == 64
     assert RGS["record_count"] == 61
     assert CIM["record_count"] == 75
@@ -48,6 +48,13 @@ def test_atlas_covers_requested_current_component_classes() -> None:
         "Lead screw / nut",
         "Helmholtz resonator",
         "Electrolyzer cell",
+        "Microprocessor / CPU",
+        "System-on-chip (SoC)",
+        "Gate-driver IC",
+        "CAN / LIN transceiver IC",
+        "Electromechanical contactor",
+        "Thermal fuse / thermal cutoff",
+        "BLDC / PMSM motor-drive power stage",
     }
     assert required <= names
 
@@ -76,6 +83,9 @@ def test_interaction_map_requires_residual_before_higher_order() -> None:
 
 def test_advanced_components_are_not_falsely_marked_printable() -> None:
     rows = {row["Component Archetype"]: row for row in ATLAS["records"]}
+    assert "INSERT-SEED" in rows["Microprocessor / CPU"]["Current CGX Build Class"]
+    assert "INSERT-SEED" in rows["System-on-chip (SoC)"]["Current CGX Build Class"]
+    assert "INSERT-SEED" in rows["Electromechanical contactor"]["Current CGX Build Class"]
     assert "INSERT-SEED" in rows["Visible LED die"]["Current CGX Build Class"]
     assert "INSERT-SEED" in rows["Quartz crystal resonator"]["Current CGX Build Class"]
     assert "INSERT-SEED" in rows["MEMS accelerometer"]["Current CGX Build Class"]
@@ -122,3 +132,9 @@ def test_gap_closure_tracks_directional_process_and_delegated_compute_safety() -
     assert "directional" in rows["CIM-074"]["Interaction Type"]
     assert "later" in rows["CIM-074"]["Mechanism"]
     assert "local C0 safe state" in rows["CIM-075"]["Mitigation / Control"]
+
+
+def test_atlas_owner_range_and_cardinality_are_exact() -> None:
+    assert ATLAS["authority"]["drive_range"] == "A1:V408"
+    assert ATLAS["record_count"] == len(ATLAS["records"])
+    assert ATLAS["status"].endswith("GAP-CLOSURE-0.3")
