@@ -1,7 +1,7 @@
 {
   "schema": "CGX-COMPONENT-INSTANCE-BUILD-PACKET/0.1",
   "date": "2026-10-08",
-  "status": "DIGITAL_CONTRACT / INSTANCE_POPULATION_OPEN / PHYSICAL_NOT_RUN",
+  "status": "DIGITAL_CONTRACT / INSTANCE_POPULATION_OPEN / ATLAS_411_RECONCILED / PHYSICAL_NOT_RUN",
   "authority": {
     "drive_workbook": "Type 1 Romer Cognigrex",
     "drive_spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
@@ -19,8 +19,19 @@
     "raphael_geometry_search": "UTP-103",
     "interaction_graph": "UTP-104",
     "printer_mu_crosswalk": "UTP-105",
-    "atlas_drive_range": "27_CGX_Component_Geometry_Atlas_v0_1!A1:V408",
-    "atlas_archetype_count": 407
+    "atlas_drive_range": "27_CGX_Component_Geometry_Atlas_v0_1!A1:V412",
+    "atlas_archetype_count": 411,
+    "printer_mu_crosswalk_reconciliation": {
+      "state": "18_BOUND / 1_NEIGHBOUR / 1_INTENTIONALLY_NON_PHYSICAL",
+      "resolved_first_class_archetypes": [
+        "CGA-M-029",
+        "CGA-DIEL-001",
+        "CGA-O-023",
+        "CGA-M-030"
+      ],
+      "remaining_neighbour": "MU-003 structural deposition tool",
+      "remaining_non_physical_contract": "MU-018 C1/CGX identity/twin"
+    }
   },
   "instance_types": [
     "COMMERCIAL_SEED",

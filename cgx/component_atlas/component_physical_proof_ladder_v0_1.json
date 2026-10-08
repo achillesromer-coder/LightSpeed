@@ -1,7 +1,7 @@
 {
   "schema": "CGX-G1-COMPONENT-PROOF-LADDER/0.1",
   "date": "2026-10-08",
-  "status": "DIGITAL_LADDER_DEFINED / PHYSICAL_EXECUTION_NOT_RUN",
+  "status": "DIGITAL_LADDER_DEFINED / ATLAS_411_RECONCILED / PHYSICAL_EXECUTION_NOT_RUN",
   "authority": {
     "drive_workbook": "Type 1 Romer Cognigrex",
     "drive_spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
@@ -13,7 +13,7 @@
     "queue_id": "BUILD-064",
     "rule": "Drive owns engineering/evidence content. Git mirrors the staged proof contract."
   },
-  "purpose": "Prove a representative current-technology physical basis before dense 4D integration. The ladder samples fundamental functions; it does not physically qualify all 407 archetypes.",
+  "purpose": "Prove a representative current-technology physical basis before dense 4D integration. The ladder samples fundamental functions; it does not physically qualify all 411 archetypes.",
   "progression_rule": "Each stage is independently gated. Failure or unknown at one stage cannot be bypassed by a later integrated article.",
   "common_packet_requirements": [
     "stable coupon_or_article_id",
@@ -74,17 +74,18 @@
       "representative_refs": [
         "CGA-R-001",
         "CGA-C-001",
+        "CGA-DIEL-001",
         "CGA-L-001",
         "CGA-L-004"
       ],
-      "article": "Separate resistor, capacitor and air-core/planar inductor coupons before any dense co-print.",
+      "article": "Separate resistor, capacitor and air-core/planar inductor coupons before any dense co-print; capacitor evidence explicitly resolves the dedicated dielectric/insulation archetype without promoting it to an exact material/process.",
       "measure": [
         "R and TCR where relevant",
         "C and loss/leakage",
         "L/Q/DCR/field map",
         "dimensional repeatability"
       ],
-      "hard_gate": "Passives remain separate evidence objects; one passing passive cannot qualify the others.",
+      "hard_gate": "Passives remain separate evidence objects; one passing passive cannot qualify the others. CGA-DIEL-001 is supporting geometry/process ontology only until exact dielectric source, thickness/process window and test evidence are bound.",
       "physical_state": "NOT_RUN"
     },
     {
@@ -144,10 +145,11 @@
       "name": "Hybrid seed-component embedding",
       "representative_refs": [
         "CGA-D-009",
+        "CGA-O-023",
         "CGA-PWR-014",
         "UTP-106"
       ],
-      "article": "Visible LED seed integrated into printed conductors/thermal/identity structure.",
+      "article": "Visible semiconductor LED/RGB seed package integrated into printed conductors, thermal/optical coupling, identity and service structure.",
       "measure": [
         "continuity",
         "I-V-L or optical output as instrumented",
@@ -155,7 +157,7 @@
         "interface integrity",
         "identity/readback"
       ],
-      "hard_gate": "LED remains a seed component; successful embedding does not establish local semiconductor-die fabrication.",
+      "hard_gate": "CGA-O-023 and CGA-D-009 remain seed semiconductor archetypes; successful embedding does not establish local epitaxy/die fabrication or inherit untested package/thermal ratings.",
       "physical_state": "NOT_RUN"
     },
     {
@@ -217,9 +219,11 @@
         "UTP-102",
         "UTP-103",
         "UTP-104",
-        "UTP-106"
+        "UTP-106",
+        "CGA-M-029",
+        "CGA-M-030"
       ],
-      "article": "Integrated volumetric assembly using already qualified lower-stage functions, explicit interfaces, build order and service boundaries.",
+      "article": "Integrated volumetric assembly using already qualified lower-stage functions, explicit interfaces/build order, CGA-M-029 frame/datum geometry and CGA-M-030 removable service boundaries.",
       "measure": [
         "full field/state readback appropriate to the article",
         "parasitics/couplings",
@@ -227,7 +231,7 @@
         "fault/isolation behavior",
         "repair/readback"
       ],
-      "hard_gate": "Integration cannot raise the evidence ceiling of any child component; unresolved pairwise interactions block higher-order novelty claims.",
+      "hard_gate": "Integration cannot raise the evidence ceiling of any child component; unresolved pairwise interactions block higher-order novelty claims. Frame/datum and service-access archetypes do not establish machine tolerance, calibration or maintainability performance without measured evidence.",
       "physical_state": "NOT_RUN"
     }
   ],
