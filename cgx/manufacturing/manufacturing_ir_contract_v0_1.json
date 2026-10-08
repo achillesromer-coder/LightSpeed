@@ -74,5 +74,26 @@
       "append revision/receipt rather than overwrite prior evidence"
     ],
     "current_owner_state": "8 initial instances remain UNBOUND/NOT_RUN; 6 now carry attributable SOURCE-CANDIDATE BOUND evidence."
+  },
+  "type1_matrix_contract": {
+    "owner_sheet": "32_CGX_Universal_Type1_Tech_Matrix_v0_1",
+    "archetype_rows": 411,
+    "total_fields": 60,
+    "baseline_fields": 36,
+    "directional_4d_fields": 16,
+    "compiler_factorization_fields": 8,
+    "directional_range": "AK:AZ",
+    "compiler_range": "BA:BH",
+    "compiler_fields": [
+      "primitive_basis_class",
+      "equivalent_network_state_model",
+      "per_unit_geometry_law",
+      "instance_bound_numeric_derivation",
+      "voxel_packing_resolution_constraint",
+      "state_memory_hysteresis",
+      "cross_domain_coupling_terms",
+      "compiler_token_operation_class"
+    ],
+    "precedence": "Exact CGXI instance/source/material/process/tool/test evidence overrides generic matrix/compiler metadata."
   }
 }
