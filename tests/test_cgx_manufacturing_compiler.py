@@ -27,6 +27,9 @@ FIXTURES = json.loads(
 )
 ATLAS = load_default_atlas()
 POPULATION = load_default_instance_population()
+MANUFACTURING_CONTRACT = json.loads(
+    (ROOT / "cgx" / "manufacturing" / "manufacturing_ir_contract_v0_1.json").read_text(encoding="utf-8")
+)
 
 
 def _record_for_case(case: dict) -> dict:
@@ -294,3 +297,14 @@ def test_owner_language_not_yet_bound_is_a_real_blocker() -> None:
     assert "unresolved:source_locator_or_hash" not in compiled["blockers"]
     assert compiled["binding_progress"] == "SOURCE_CANDIDATE_BOUND"
     assert compiled["execution_state"] == "HOLD"
+
+def test_manufacturing_contract_tracks_materialized_60_field_owner_matrix() -> None:
+    matrix = MANUFACTURING_CONTRACT["type1_matrix_contract"]
+    assert matrix["archetype_rows"] == 411
+    assert matrix["total_fields"] == 60
+    assert matrix["baseline_fields"] == 36
+    assert matrix["directional_4d_fields"] == 16
+    assert matrix["compiler_factorization_fields"] == 8
+    assert matrix["compiler_range"] == "BA:BH"
+    assert len(matrix["compiler_fields"]) == 8
+    assert "Exact CGXI" in matrix["precedence"]
