@@ -1,0 +1,169 @@
+{
+  "schema": "CGX-UNIVERSAL-TYPE1-STACK-PROJECTION/0.1",
+  "artifact_id": "UTP-110",
+  "state": "DIGITAL_OWNER_PROJECTION / 411_ARCHETYPES / PHYSICAL_AUTHORITY_UNCHANGED",
+  "purpose": "Project the one Type-1 component evidence graph into a sequence-aware 4D stack matrix for printable/hybrid smart embedded systems without duplicating catalogue authority.",
+  "owner": {
+    "workbook": "Type 1 Romer Cognigrex",
+    "spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "archetypes_sheet": "27_CGX_Component_Geometry_Atlas_v0_1",
+    "instances_sheet": "31_CGX_Component_Instance_Register_v0_1",
+    "universal_matrix_sheet": "32_CGX_Universal_Type1_Tech_Matrix_v0_1",
+    "archetype_count": 411,
+    "matrix_column_count": 36
+  },
+  "git_mirrors": {
+    "atlas": "cgx/component_atlas/component_geometry_atlas_v0_1.json",
+    "instance_contract": "cgx/component_atlas/component_instance_build_packet_contract_v0_1.json",
+    "instance_population": "cgx/component_atlas/component_instance_population_v0_1.json",
+    "proof_ladder": "cgx/component_atlas/component_physical_proof_ladder_v0_1.json",
+    "source_bindings": "cgx/component_atlas/printer_mu_source_candidate_bindings_v0_1.json",
+    "circular_control": "cgx/component_atlas/circular_feed_reference_control_v0_1.json"
+  },
+  "stack_phases": [
+    {
+      "id": "L0",
+      "name": "DATUM_SUBSTRATE",
+      "rule": "structure, datum, substrate and load path before dependent functional geometry"
+    },
+    {
+      "id": "L1",
+      "name": "BARRIER_ADHESION",
+      "rule": "surface preparation, adhesion, chemical/moisture/galvanic barriers as required"
+    },
+    {
+      "id": "L2",
+      "name": "CONDUCTOR_REFERENCE",
+      "rule": "power/ground/reference conductors and planar interconnect"
+    },
+    {
+      "id": "L3",
+      "name": "DIELECTRIC_ISOLATION",
+      "rule": "dielectric, creepage/clearance and local field-control layers"
+    },
+    {
+      "id": "L4",
+      "name": "FUNCTIONAL_PASSIVE",
+      "rule": "resistive, capacitive, inductive, resonant, RF and other field geometry"
+    },
+    {
+      "id": "L5",
+      "name": "EMBEDDED_ACTIVE_SEED",
+      "rule": "insert source-bound semiconductor/optical/actuator/power seeds when local fabrication is not qualified"
+    },
+    {
+      "id": "L6",
+      "name": "VERTICAL_INTERCONNECT",
+      "rule": "vias, feedthroughs, transitions, terminations and cross-layer returns"
+    },
+    {
+      "id": "L7",
+      "name": "ENVIRONMENT_PROTECTION",
+      "rule": "encapsulation, hermetic/fluid/thermal/protection boundaries"
+    },
+    {
+      "id": "L8",
+      "name": "SENSOR_CALIBRATION",
+      "rule": "sensing/metrology/calibration geometry after disturbance-sensitive process steps"
+    },
+    {
+      "id": "L9",
+      "name": "SERVICE_IDENTITY",
+      "rule": "service bays, labels/identity, replacement paths and final readback"
+    }
+  ],
+  "state_vector": [
+    "x",
+    "y",
+    "z",
+    "t",
+    "V",
+    "I",
+    "J",
+    "E",
+    "H",
+    "B",
+    "T",
+    "stress",
+    "strain",
+    "pressure",
+    "flow",
+    "composition",
+    "optical_state",
+    "logic_state",
+    "calibration_state"
+  ],
+  "inference_classes": [
+    "SOURCE_RATED",
+    "GEOMETRY_INFERRED",
+    "SOLVER_INFERRED",
+    "MEASURED",
+    "CALIBRATION_REQUIRED",
+    "UNKNOWN"
+  ],
+  "equations": {
+    "resistance": "R=rho*L/A; thin-film/ink: R=Rs*(L/W)",
+    "capacitance": "C≈epsilon0*epsilon_r*A/d for ideal parallel plate; geometry-specific analytic/field solve otherwise",
+    "capacitor_energy": "U=0.5*C*V^2",
+    "inductance": "long-solenoid baseline L≈mu*N^2*A/l; planar/complex geometry uses established formula or EM solve",
+    "inductor_energy": "U=0.5*L*I^2",
+    "resonance": "f0≈1/(2*pi*sqrt(L*C)) only with explicitly bound effective L/C and parasitics",
+    "heating": "P=I^2*R=V^2/R",
+    "thermal": "Qdot=k*A*DeltaT/L; Rtheta=DeltaT/P under stated conduction/lumped assumptions",
+    "mechanics": "linear baseline sigma=E*epsilon; beam delta scales F*L^3/(E*I); thermal drift DeltaL=alpha*L*DeltaT",
+    "laminar_flow": "DeltaP=8*mu*L*Q/(pi*r^4) only for fully developed incompressible laminar circular flow",
+    "optics": "photon energy Eph=h*nu; device output remains exact-source/measurement governed",
+    "uncertainty": "first-order independent RSS may be used only when model is locally linear and covariance is negligible; otherwise propagate covariance/nonlinearity explicitly"
+  },
+  "numeric_rule": "No numeric inference may replace a missing material constant, tolerance, boundary condition, calibration or exact seed rating. Derived values retain their source inputs, equation, units and uncertainty.",
+  "capacitance_example": {
+    "status": "SOURCE-BOUND CANDIDATE EXAMPLE / NOT ARCHETYPE DEFAULT",
+    "dielectric": "DuPont Kapton HN 25 µm candidate",
+    "epsilon_r_at_1khz": 3.4,
+    "d_m": 0.000025,
+    "derived_C_per_A_F_per_m2": 0.000001204144,
+    "derived_C_per_A_pF_per_mm2": 1.204144,
+    "equation": "epsilon0*epsilon_r/d",
+    "limit": "Ideal parallel-plate normalized value only; actual overlap, fringing, humidity, temperature, thickness and process state require bound inputs/measurement. No breakdown/working-voltage rating inferred."
+  },
+  "ui_projection": {
+    "route": "portfolio.printable_catalogue",
+    "read_only": true,
+    "evidence_graph_manifest": "cgx/component_atlas/universal_type1_stack_projection_v0_1.json",
+    "actor_filters": [
+      "DIY",
+      "BUSINESS",
+      "GOVERNMENT",
+      "NONPROFIT",
+      "INTERNAL_RND"
+    ],
+    "horizon_filters": [
+      "TERR",
+      "OCEAN",
+      "ORBIT",
+      "LUNAR",
+      "MARS",
+      "ASTEROID",
+      "INTERPLANETARY",
+      "INTERSTELLAR"
+    ],
+    "required_fields": [
+      "stable IDs",
+      "function stack",
+      "build phase/order",
+      "source/instance binding",
+      "evidence ceiling",
+      "next test",
+      "DBR",
+      "safe state"
+    ],
+    "authority_transfer": false
+  },
+  "boundaries": [
+    "stack order is a compilation grammar, not universal process compatibility",
+    "X→Y compatibility is directional and must carry material/process evidence",
+    "geometry cannot create an absent active mechanism",
+    "seed components retain exact manufacturer and certification limits",
+    "physical, public, ecological, mission and carrier-promotion authorities remain separate"
+  ]
+}
