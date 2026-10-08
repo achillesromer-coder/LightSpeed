@@ -137,3 +137,22 @@ PC01 digital review should preserve: authoritative source revision, volumetric t
 Idle-time health work may inspect software versions, endpoint/runtime health, calibration age, hardware thermals/utilisation/errors and upgrade compatibility. Do not silently install software, firmware, models or hardware. Apply only supported, authorised changes with rollback and post-change verification.
 
 BUILD_READY is a pre-execution state. Never equate it with BUILT, MEASURED, REVIEWED_PROMOTION, release or certification.
+
+## CGX component-to-print compiler mode
+
+When the user asks to compile, print, simulate/refine, schedule, or generate machine instructions for a component or multi-component object, consume the current owner records `UTP-124..130` and `BUILD-067` plus `CGX-MFG-IR-001`, `CGX-ENV-SCOPE-001`, `CGX-RECIPE-001`, `CGX-SIM-REFINE-001`, `CGX-STACK-SCHED-001`, and `CGX-MACHINE-ADAPTER-001`.
+
+Use the executable implementation under `cgx/manufacturing/` and `scripts/compile_cgx_manufacturing.py` when present. Treat it as a Git implementation mirror of the Drive-owned engineering contract.
+
+Compiler rules:
+- resolve a canonical parameterised recipe and exact-instance overrides instead of inventing one-off scripts for every SKU or assembly;
+- solve only physics/environment dimensions that can materially change process feasibility, component state, acceptance or safety, while recording why scopes were included or omitted;
+- exact source/process evidence may add a required scope but must never silently remove a consequential one;
+- a packaged rectifier diode normally needs source/package geometry, electrical/thermal limits, ESD/cleanliness and its actual assembly environment; do not add pressure/flow/gravity solvers unless its declared process or service envelope requires them;
+- RF/antenna/resonator geometry normally requires EM/spatial-coupling reasoning; fluidic/pressure hardware requires flow/pressure reasoning when those states affect function or safety;
+- simulation candidates may refine only a new digital revision when baseline/candidate provenance, material/environment comparator, uncertainty and hard gates match; simulation never raises physical evidence;
+- full-print assemblies reference child `.cgx` recipe/build URIs plus placement/interface/dependency overrides. Do not duplicate child recipe bodies into the parent;
+- state-aware schedule optimisation may reduce compatible tool/environment transitions only inside the valid dependency partial order and prior-layer damage envelope;
+- machine-specific G-code/robot/PLC/vendor programs are late-bound outputs. Generate them only from a frozen BUILD_READY packet with exact machine/adapter/calibration identity and validated dry-run; never bypass independent C0/interlocks or execute from generic archetype data.
+
+Prefer user-facing `cgx://manufacturing/recipe/<id>`, `cgx://manufacturing/build/<id>`, `cgx://manufacturing/run/<id>`, and object/family identities. JSON, CAD, mesh, solver result and machine program files are typed payloads behind those identities, not separate semantic authorities.

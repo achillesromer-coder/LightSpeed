@@ -1,0 +1,110 @@
+{
+  "schema": "CGX-MANUFACTURING-MINIMAL-SCOPE-FIXTURES/0.1",
+  "date": "2026-10-09",
+  "status": "DIGITAL-VALIDATION-MATRIX / PHYSICAL-NOT-RUN",
+  "cases": [
+    {
+      "id": "DIODE-SEED",
+      "query": "PN rectifier diode",
+      "must_include": [
+        "electrical",
+        "thermal",
+        "esd",
+        "cleanliness"
+      ],
+      "must_omit": [
+        "pressure",
+        "fluid",
+        "gravity",
+        "radiation",
+        "optical"
+      ],
+      "strategy": "HYBRID_SEED"
+    },
+    {
+      "id": "LED-SEED",
+      "query": "Visible LED die",
+      "must_include": [
+        "electrical",
+        "thermal",
+        "esd",
+        "cleanliness",
+        "optical"
+      ],
+      "must_omit": [
+        "pressure",
+        "fluid",
+        "gravity"
+      ],
+      "strategy": "HYBRID_SEED"
+    },
+    {
+      "id": "CAPACITOR",
+      "query": "Parallel-plate capacitor",
+      "must_include": [
+        "electrical",
+        "electric_field",
+        "humidity_moisture"
+      ],
+      "must_omit": [
+        "pressure",
+        "fluid",
+        "gravity"
+      ],
+      "strategy": "PRINTED_FUNCTIONAL"
+    },
+    {
+      "id": "INDUCTOR",
+      "query": "Air-core solenoid inductor",
+      "must_include": [
+        "electrical",
+        "em_field"
+      ],
+      "must_omit": [
+        "pressure",
+        "fluid"
+      ],
+      "strategy": "PRINTED_FUNCTIONAL"
+    },
+    {
+      "id": "RF-LOOP",
+      "query": "loop antenna",
+      "must_include": [
+        "electrical",
+        "em_field",
+        "spatial_coupling"
+      ],
+      "must_omit": [
+        "pressure",
+        "fluid"
+      ],
+      "strategy": "PRINTED_FUNCTIONAL"
+    },
+    {
+      "id": "FLUID-VALVE",
+      "query_contains_domain": "Fluid/Thermal",
+      "query_contains_name": "valve",
+      "must_include": [
+        "fluid",
+        "pressure"
+      ],
+      "strategy": "FLUIDIC_PROCESS"
+    },
+    {
+      "id": "CONDUIT",
+      "query": "Electrical conduit / raceway",
+      "must_include": [
+        "geometry",
+        "material",
+        "process",
+        "mechanical"
+      ],
+      "must_omit": [
+        "pressure",
+        "fluid"
+      ],
+      "strategy": "STRUCTURAL_FORM"
+    }
+  ],
+  "rule": "Fixture PASS validates compiler semantics only. It is not evidence that any component was physically manufactured, qualified or safe for service."
+}
