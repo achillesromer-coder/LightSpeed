@@ -1,0 +1,173 @@
+{
+  "schema": "CGX-PC01-FAMILY-ROUTE-COMPILER/0.1",
+  "date": "2026-10-09",
+  "status": "DEFINED / OWNER_MATRIX_16_ROUTES / PHYSICAL_EXECUTION_OPEN",
+  "authority": {
+    "drive_workbook": "Type 1 Romer Cognigrex",
+    "operational_matrix": "33_PC01_CGX_Operational_Matrix_v0_1!A37:AD52",
+    "portfolio": [
+      "UTP-120",
+      "UTP-121"
+    ],
+    "queue_id": "BUILD-066"
+  },
+  "cross_lane_family_registry": {
+    "source_ref": "C:/Cognigrex/State/Frontier/PrintSpaceTransit_20261008/Raphael_PR6/CGX/PrintSpace/PRINTCEPTOR_FAMILY_PARAMETRIC_REGISTRY_v0_1.json",
+    "profile_count": 17,
+    "state": "REVIEWABLE_PRELIMINARY_DESIGN_NOT_AS_BUILT",
+    "rule": "Illustrative envelopes and candidate features are planning inputs only; exact machine dimensions, loads, process windows and safety limits require measured/source-bound evidence."
+  },
+  "printer_families": {
+    "STRUCT": "UTP-PF-STRUCT-001",
+    "FUNC": "UTP-PF-FUNC-001",
+    "FIBER": "UTP-PF-FIBER-001",
+    "HYBRID": "UTP-PF-HYBRID-001",
+    "FEED": "UTP-PF-FEED-001",
+    "METRO": "UTP-PF-METRO-001",
+    "MOBILE": "UTP-PF-MOBILE-001"
+  },
+  "routes": [
+    {
+      "id": "PC01-MX-036",
+      "name": "family registry intake",
+      "families": []
+    },
+    {
+      "id": "PC01-MX-037",
+      "name": "printer-family composition resolver",
+      "families": [
+        "task-dependent minimum set"
+      ]
+    },
+    {
+      "id": "PC01-MX-038",
+      "name": "sensorised robotic print",
+      "families": [
+        "STRUCT",
+        "FUNC",
+        "FIBER",
+        "HYBRID",
+        "METRO"
+      ]
+    },
+    {
+      "id": "PC01-MX-039",
+      "name": "minimal daily quantity ledger",
+      "families": []
+    },
+    {
+      "id": "PC01-MX-040",
+      "name": "LED/diode hybrid article",
+      "families": [
+        "STRUCT",
+        "FUNC",
+        "HYBRID",
+        "METRO"
+      ]
+    },
+    {
+      "id": "PC01-MX-041",
+      "name": "RFID/NFC/transponder article",
+      "families": [
+        "FUNC",
+        "FIBER",
+        "HYBRID",
+        "METRO"
+      ]
+    },
+    {
+      "id": "PC01-MX-042",
+      "name": "sensorised structural part",
+      "families": [
+        "STRUCT",
+        "FUNC",
+        "FIBER",
+        "HYBRID",
+        "METRO"
+      ]
+    },
+    {
+      "id": "PC01-MX-043",
+      "name": "Solar Hull / ambient-energy surface",
+      "families": [
+        "STRUCT",
+        "FUNC",
+        "FIBER",
+        "HYBRID",
+        "METRO"
+      ]
+    },
+    {
+      "id": "PC01-MX-044",
+      "name": "recovered-feed article",
+      "families": [
+        "FEED",
+        "STRUCT",
+        "METRO"
+      ]
+    },
+    {
+      "id": "PC01-MX-045",
+      "name": "repair/replace child",
+      "families": [
+        "METRO",
+        "HYBRID",
+        "STRUCT",
+        "FUNC"
+      ]
+    },
+    {
+      "id": "PC01-MX-046",
+      "name": "batch/lot/family roll-up",
+      "families": []
+    },
+    {
+      "id": "PC01-MX-047",
+      "name": "successor/fork/supersession",
+      "families": [
+        "re-resolved from delta"
+      ]
+    },
+    {
+      "id": "PC01-MX-048",
+      "name": "secure local host",
+      "families": []
+    },
+    {
+      "id": "PC01-MX-049",
+      "name": "source-bound simulation/render packet",
+      "families": [
+        "selected route representation only"
+      ]
+    },
+    {
+      "id": "PC01-MX-050",
+      "name": "first robotic article source-review candidate",
+      "families": [
+        "STRUCT",
+        "FUNC",
+        "FIBER",
+        "HYBRID",
+        "METRO"
+      ]
+    },
+    {
+      "id": "PC01-MX-051",
+      "name": "BUILD_READY packet freeze",
+      "families": [
+        "exact qualified route only"
+      ]
+    }
+  ],
+  "compiler_flow": [
+    "INTENT",
+    "RESOLVE_FUNCTIONS",
+    "DIRECTIONAL_STACK_RESOLVE",
+    "SELECT_MINIMUM_PRINTER_FAMILIES",
+    "BIND_EXACT_INSTANCE_SOURCE_MATERIAL_PROCESS_TOOL",
+    "INTERACTION_CHECK",
+    "SIMULATE_REVIEW",
+    "FREEZE_OR_HOLD"
+  ],
+  "evidence_rule": "Route compilation is digital planning. It never changes UNBOUND/NOT_RUN states, certifies a machine, or authorizes physical execution."
+}
