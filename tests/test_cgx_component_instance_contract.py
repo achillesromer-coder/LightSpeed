@@ -13,6 +13,7 @@ INSTANCE = load("component_instance_build_packet_contract_v0_1.json")
 LADDER = load("component_physical_proof_ladder_v0_1.json")
 ATLAS = load("component_geometry_atlas_v0_1.json")
 POPULATION = load("component_instance_population_v0_1.json")
+SOURCE_RECONCILIATION = load("component_source_binding_reconciliation_v0_1.json")
 
 def test_instance_contract_binds_current_atlas_without_uplift() -> None:
     assert INSTANCE["parents"]["atlas_archetype_count"] == 411
@@ -105,14 +106,49 @@ def test_initial_population_exposes_missing_binding_instead_of_guessing() -> Non
 
 def test_candidate_cross_lane_bindings_do_not_uplift_instance_state() -> None:
     assert POPULATION["authority"]["cross_lane_portfolio_id"] == "UTP-109"
-    assert "CANDIDATE_CROSSWALK" in POPULATION["status"]
+    assert "OWNER_SYNCED" in POPULATION["status"]
+    assert POPULATION["authority"]["drive_instance_range"].endswith("A1:AI9")
+    rows = {row["instance_id"]: row for row in POPULATION["records"]}
+    source_bound = {
+        "CGXI-P1-TRACE-001",
+        "CGXI-P1-VIA-001",
+        "CGXI-P2-R-001",
+        "CGXI-P2-C-001",
+        "CGXI-P2-L-001",
+        "CGXI-P3-LOOP-001",
+    }
+    assert {
+        row["instance_id"]
+        for row in POPULATION["records"]
+        if "SOURCE-CANDIDATE BOUND" in row["evidence_ceiling"]
+    } == source_bound
+    for instance_id in source_bound:
+        row = rows[instance_id]
+        assert row["exact_source_authority"].startswith("ATTRIBUTABLE CANDIDATE SOURCES BOUND")
+        assert "http" in row["source_locator_or_hash"]
+        assert "CANDIDATE" in row["material_stack_and_lots"]
     for row in POPULATION["records"]:
-        assert row["material_passport_refs"].startswith("CANDIDATE CLASS ONLY:")
         assert row["manufacturing_or_assembly_route"].startswith("Candidate route:")
         assert row["binding_state"] == "UNBOUND"
         assert row["physical_state"] == "NOT_RUN"
         assert row["configuration_hash"] == "UNRESOLVED"
         assert row["source_hashes"] == "UNRESOLVED"
+
+
+def test_source_reconciliation_resolves_kapton_variant_without_rating_uplift() -> None:
+    assert SOURCE_RECONCILIATION["state_counts"] == {
+        "total_instances": 8,
+        "binding_state_unbound": 8,
+        "source_candidate_bound": 6,
+        "physical_not_run": 8,
+    }
+    kapton = SOURCE_RECONCILIATION["source_candidates"]["kapton_hn"]
+    gauges = kapton["official_gauge_resolution"]
+    assert gauges["owner_selected_current_candidate_um"] == 25
+    assert gauges["retained_frontier_alternative_um"] == 50
+    assert gauges["dielectric_constant_at_1khz_23c_50rh"] == {"25um": 3.4, "50um": 3.4}
+    assert gauges["typical_dielectric_strength_v_per_um"]["25um"] == 303
+    assert "not an instance voltage rating" in kapton["boundary"]
 
 def test_atlas_411_reconciliation_threads_new_printer_mu_archetypes() -> None:
     rec = INSTANCE["parents"]["printer_mu_crosswalk_reconciliation"]
@@ -130,6 +166,6 @@ def test_atlas_411_reconciliation_threads_new_printer_mu_archetypes() -> None:
     assert {"CGA-M-029", "CGA-M-030"} <= set(stages["P10"]["representative_refs"])
 
     p2c = next(r for r in POPULATION["records"] if r["instance_id"] == "CGXI-P2-C-001")
-    assert "CGA-DIEL-001" in p2c["material_passport_refs"]
+    assert "CGA-DIEL-001" in p2c["new_neutral_or_interface_layers"]
     assert p2c["binding_state"] == "UNBOUND"
     assert p2c["physical_state"] == "NOT_RUN"

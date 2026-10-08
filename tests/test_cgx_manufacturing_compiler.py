@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import subprocess
+import sys
 
 import pytest
 
@@ -11,7 +13,9 @@ from cgx.manufacturing import (
     compile_component,
     emit_reference_gcode,
     find_archetype,
+    find_instance,
     load_default_atlas,
+    load_default_instance_population,
     validate_simulation_result,
 )
 
@@ -22,6 +26,7 @@ FIXTURES = json.loads(
     )
 )
 ATLAS = load_default_atlas()
+POPULATION = load_default_instance_population()
 
 
 def _record_for_case(case: dict) -> dict:
@@ -217,3 +222,65 @@ def test_reference_machine_adapter_emits_bounded_gcode_only_after_all_adapter_ga
     out_of_bounds["operations"][1]["params"]["x"] = 201
     with pytest.raises(AdapterError, match="workspace-exceeded"):
         emit_reference_gcode(out_of_bounds, machine)
+
+def test_owner_synced_instance_lookup_preserves_source_binding_progress() -> None:
+    cap_instance = find_instance(POPULATION, "CGXI-P2-C-001")
+    assert cap_instance["archetype_id"] == "CGA-C-001"
+    assert cap_instance["exact_source_authority"].startswith("ATTRIBUTABLE CANDIDATE SOURCES BOUND")
+    assert "LOCTITE ECI 1010" in cap_instance["source_locator_or_hash"]
+    assert "Kapton HN" in cap_instance["source_locator_or_hash"]
+    assert "25 µm" in cap_instance["material_stack_and_lots"]
+    assert cap_instance["binding_state"] == "UNBOUND"
+    assert cap_instance["physical_state"] == "NOT_RUN"
+
+
+def test_source_bound_instance_compiles_without_regressing_to_source_unknown() -> None:
+    cap_instance = find_instance(POPULATION, "CGXI-P2-C-001")
+    record = find_archetype(ATLAS, cap_instance["archetype_id"])
+    compiled = compile_component(record, instance=cap_instance, build_id="source-aware-cap")
+    assert compiled["binding_progress"] == "SOURCE_CANDIDATE_BOUND"
+    assert compiled["filespace"]["instance_source_authority"].startswith(
+        "ATTRIBUTABLE CANDIDATE SOURCES BOUND"
+    )
+    assert "LOCTITE ECI 1010" in compiled["filespace"]["source_locator_or_hash"]
+    assert "Kapton HN 25 µm" in compiled["filespace"]["material_stack_and_lots"]
+    assert "unresolved:source_locator_or_hash" not in compiled["blockers"]
+    assert "unresolved:geometry_revision" in compiled["blockers"]
+    assert "unresolved:dimensions_and_tolerances" in compiled["blockers"]
+    assert "unresolved:tool_and_calibration_refs" in compiled["blockers"]
+    assert compiled["execution_state"] == "HOLD"
+    assert compiled["physical_execution"] is False
+
+
+def test_six_owner_instances_are_source_candidate_bound_but_all_eight_remain_unbound() -> None:
+    assert len(POPULATION["records"]) == 8
+    source_bound = [
+        row for row in POPULATION["records"]
+        if "SOURCE-CANDIDATE BOUND" in row["evidence_ceiling"]
+    ]
+    assert len(source_bound) == 6
+    assert {row["binding_state"] for row in POPULATION["records"]} == {"UNBOUND"}
+    assert {row["physical_state"] for row in POPULATION["records"]} == {"NOT_RUN"}
+
+def test_cli_can_compile_canonical_instance_id_without_manual_instance_file() -> None:
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts" / "compile_cgx_manufacturing.py"),
+            "component",
+            "--instance-id",
+            "CGXI-P1-TRACE-001",
+            "--build-id",
+            "cli-source-aware-trace",
+        ],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    compiled = json.loads(proc.stdout)
+    assert compiled["instance_ref"] == "CGXI-P1-TRACE-001"
+    assert compiled["archetype"]["id"] == "CGA-I-002"
+    assert compiled["binding_progress"] == "SOURCE_CANDIDATE_BOUND"
+    assert "LOCTITE ECI 1010" in compiled["filespace"]["source_locator_or_hash"]
+    assert compiled["execution_state"] == "HOLD"

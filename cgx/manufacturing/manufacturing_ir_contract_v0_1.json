@@ -35,7 +35,8 @@
       "parameter overrides",
       "material/tool/environment/test contracts",
       "configuration hashes",
-      "family/supersession"
+      "family/supersession",
+      "owner-synced instance binding progress"
     ],
     "dataspace": [
       "compile decisions",
@@ -61,5 +62,17 @@
     "simulation refinement creates a new digital revision and never mutates prior reviewed evidence"
   ],
   "minimal_scope_rule": "Solve only dimensions that can materially change process feasibility, component state, acceptance or safety. Exact source/process evidence may add scopes; it may not silently remove a consequential one.",
-  "physical_boundary": "No compiler, simulation, schedule, render or generated program raises physical evidence or execution authority. Machine execution remains separately gated by BUILD_READY, exact machine/adapter/calibration identity, independent C0/interlocks and required owner/specialist authority."
+  "physical_boundary": "No compiler, simulation, schedule, render or generated program raises physical evidence or execution authority. Machine execution remains separately gated by BUILD_READY, exact machine/adapter/calibration identity, independent C0/interlocks and required owner/specialist authority.",
+  "deduplication_gate": {
+    "rule": "Before new sourcing or recipe creation, resolve the current CGXI instance and canonical recipe/build URI. Continue from its first unresolved consequential gate; do not repeat source selection already recorded by the Drive owner.",
+    "order": [
+      "resolve CGXI instance ID when one exists",
+      "read owner-synced source/material/process/tool state",
+      "reuse canonical recipe URI and current source candidates",
+      "identify first unresolved consequential field",
+      "search or create new evidence only for that field",
+      "append revision/receipt rather than overwrite prior evidence"
+    ],
+    "current_owner_state": "8 initial instances remain UNBOUND/NOT_RUN; 6 now carry attributable SOURCE-CANDIDATE BOUND evidence."
+  }
 }
