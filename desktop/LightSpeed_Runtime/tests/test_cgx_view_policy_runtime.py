@@ -2,7 +2,11 @@ from pathlib import Path
 
 import pytest
 
-from lightspeed_runtime.cgx_view_policy import CGXViewPolicyError
+from lightspeed_runtime.cgx_view_policy import (
+    CGXViewPolicyError,
+    load_runtime_view_contracts,
+    select_view_projection,
+)
 from lightspeed_runtime.runtime import LightSpeedRuntime
 from lightspeed_runtime.floor_bridges import TrinityShellBridge
 
@@ -49,6 +53,29 @@ def test_runtime_selector_is_deterministic_and_non_mutating():
     assert result["primary_view"] == "network-runtime"
     assert result["canonical_mutation"] is False
     assert result["evidence_ceiling"] == "derived-digital-verification"
+
+
+
+def test_review_blueprint_policy_cannot_execute():
+    policy, registry = load_runtime_view_contracts(RUNTIME_ROOT)
+    policy = dict(policy)
+    policy["status"] = "review-blueprint"
+    with pytest.raises(CGXViewPolicyError, match="not active"):
+        select_view_projection(
+            policy=policy,
+            registry=registry,
+            security_and_admission=lease(),
+            task_intent="runtime",
+            active_object_domain_and_type="lightspeed/runtime-node",
+            work_mode="operate",
+            device_hydration_capability="workstation",
+            role_or_audience="operator",
+            source_root_binding=SOURCE_ROOT,
+            selected_subgraph=[OBJECTS[0]],
+            saved_profile_preferences={},
+            session_override={},
+            interaction_capabilities=["inspect"],
+        )
 
 
 def test_security_and_scope_fail_closed():
