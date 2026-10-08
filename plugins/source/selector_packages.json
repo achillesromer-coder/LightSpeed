@@ -104,11 +104,13 @@
   "shared_skills": [
     "cgx-selector",
     "cgx-handshake",
+    "cgx-mobile-node",
     "cgx-minimum-sufficient-work",
     "cgx-capability-router",
     "cgx-tool-extension",
     "lightspeed-runtime-productization",
-    "lightspeed-standalone-ui-acceptance"
+    "lightspeed-standalone-ui-acceptance",
+    "utp-portfolio-catalogue"
   ],
   "mcp_policy": "Skills + capability-routing release. First-class callable tools must use one validated shared CGX MCP server; never emit per-selector MCP servers."
 }

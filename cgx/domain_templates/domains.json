@@ -163,6 +163,7 @@
       "corpus-test-cascade",
       "file-conversion",
       "node-exchange",
+      "mobile-node-binding",
       "stable-domain-identity",
       "source-envelope",
       "format-adapters",
@@ -216,7 +217,8 @@
     "source_format_adapters": "source_format_adapter_registry.json",
     "provider_notification_evidence": "provider_notification_evidence_contract.json",
     "s92_child_persistence_verification": "s92_domain_children_persistence_verification_2026-10-04.json",
-    "s92_child_acceptance_audit": "s92_domain_children_acceptance_audit_2026-10-04.json"
+    "s92_child_acceptance_audit": "s92_domain_children_acceptance_audit_2026-10-04.json",
+    "mobile_node_binding": "mobile_node_binding_contract.json"
   },
   "generation_policy": {
     "source_authority": "latest-durably-observed-Recovery-authority-only",

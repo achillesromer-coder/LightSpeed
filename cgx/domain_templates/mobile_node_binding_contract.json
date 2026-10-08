@@ -1,0 +1,102 @@
+{
+  "schema": "CGX-MOBILE-NODE-BINDING/0.1",
+  "status": "source contract / physical-device conformance required",
+  "location": "Cognigrex.cgx:/stack/mobile-node-binding",
+  "purpose": "Bind a secondary mobile device into the existing Cognigrex, LightSpeed GO and Achilles control plane through one verified CGX root handshake without creating a second runtime or transferring semantic authority.",
+  "entrypoint": {
+    "semantic_root": "cgx://cgx.cgx",
+    "lightspeed_namespace": "cgx://romer.industries/emassc/lightspeed",
+    "surface": "mobile",
+    "selectors": ["Cognigrex", "LightSpeed", "Achilles"],
+    "protocol_chain": [
+      "CGX-MOBILE-BOOTSTRAP/0.1",
+      "CGX-DEVICE-HANDSHAKE/0.1",
+      "CGX-NODE-EXCHANGE-CONTRACT/0.1"
+    ]
+  },
+  "bootstrap_sequence": [
+    "open or receive the CGX carrier/deep-link through the registered mobile Host",
+    "verify carrier structure and canonical content root before hydration",
+    "resolve the current accepted Recovery authority, topology and DBR state through the existing resolver",
+    "generate or restore the device node key in the OS keystore; never store a private key or provider secret inside the .cgx carrier",
+    "request only user-approved OS capabilities needed for the current task",
+    "emit a signed privacy-minimal device capability envelope",
+    "negotiate the smallest deterministic device profile and capability set",
+    "register the node through the existing host root/node registry and node-exchange contract",
+    "hydrate LightSpeed GO as the owner/operator surface and Achilles as the oversight/release gate",
+    "route all additional systems by existing CGX selectors and capability resolution rather than copying them onto the device",
+    "append registration/lease/action/readback receipts without canonical promotion by runtime receipt alone"
+  ],
+  "capability_policy": {
+    "discovery": "feature-and-limit negotiation; no raw device fingerprinting",
+    "default": "deny until present and explicitly granted by the OS/user",
+    "possible_mobile_capabilities": [
+      "selected-file-read",
+      "selected-file-write",
+      "camera-capture",
+      "microphone-capture",
+      "coarse-or-precise-location",
+      "notifications",
+      "network",
+      "bluetooth",
+      "nfc",
+      "usb-host",
+      "local-compute",
+      "background-sync"
+    ],
+    "rule": "platform presence and user permission are both required; absence degrades routing and never creates authority"
+  },
+  "fanout": {
+    "lightspeed_go": "mobile owner command, review, status, evidence capture and bounded editor projection",
+    "achilles_pa": "oversight, assurance, canonical/release gate and owner-facing reasoning",
+    "neo": "bounded routing/coordination through existing runtime contracts",
+    "drive": "existing provider connector; no Drive credential stored in the mobile carrier",
+    "git": "existing provider connector; no Git credential stored in the mobile carrier",
+    "bouwerbase": "peer node only when independently online, authenticated and capability-proven",
+    "mobile_local": "execute only capabilities registered for this node and permitted by the current lease",
+    "other_cgx_systems": "lazy-hydrate through selector/domain/capability resolution from cgx://cgx.cgx"
+  },
+  "authority_rules": [
+    "mobile device identity is not semantic, governance or release authority",
+    "LightSpeed GO is an operator surface and does not become a second runtime",
+    "Achilles oversight does not bypass current root-authority, assurance or custodial gates",
+    "copy, sync, install or device strength never transfers canonical authority",
+    "writes require the normal typed command, preflight, scoped lease, receipt and reconciliation path",
+    "consequential device actions require an applicable explicit user/owner grant and safe-state policy"
+  ],
+  "transport": {
+    "preferred": "authenticated private HTTPS/WSS or equivalent existing CGX transport adapter",
+    "local_peer": "authenticated LAN peer transport when present",
+    "envelopes": ["exchange", "transfer", "compute"],
+    "content_addressed_transfer": true,
+    "receiver_hash_readback_required": true,
+    "arbitrary_shell_capability": false
+  },
+  "activation_gates": [
+    "mobile Host/PWA/native handler is physically installed or registered",
+    "cgx/deep-link or share/open path is physically proven on the target Android device",
+    "OS-keystore-backed node identity is physically proven",
+    "current host root/node registry accepts the node",
+    "authenticated second-device handshake produces signed capability readback",
+    "owner authentication and applicable leases validate",
+    "end-to-end receipt returns to the current CGX/LSGO review path"
+  ],
+  "current_claim_boundary": [
+    "source contract does not claim Android Device Owner/MDM privileges",
+    "source contract does not claim arbitrary app-data, process or filesystem access",
+    "source contract does not claim physical mobile registration until exercised on the target device",
+    "source contract does not claim peer compute until this device executes an independently receipted registered capability"
+  ],
+  "invariants": [
+    "single-cgx-root",
+    "no-second-runtime",
+    "no-authority-by-device",
+    "no-secrets-in-carrier",
+    "least-capability-hydration",
+    "explicit-os-user-grants",
+    "lease-bound-mutation",
+    "content-addressed-transfer",
+    "verified-readback",
+    "receipt-before-promotion"
+  ]
+}
