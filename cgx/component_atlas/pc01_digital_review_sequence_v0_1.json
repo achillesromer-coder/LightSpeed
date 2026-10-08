@@ -1,0 +1,135 @@
+{
+  "schema": "CGX-PC01-DIGITAL-REVIEW-SEQUENCE/0.1",
+  "date": "2026-10-09",
+  "status": "DIGITAL_SEQUENCE / PC01_GEOMETRY_NOT_YET_BOUND",
+  "authority": {
+    "drive_ref": "PC01-SIM-001 / UTP-114 / BUILD-065"
+  },
+  "phases": [
+    {
+      "id": "DR-00",
+      "name": "Source intake",
+      "inputs": [
+        "authoritative geometry/CAD/BREP/mesh",
+        "revision/hash",
+        "unresolved-field list"
+      ],
+      "outputs": [
+        "source snapshot"
+      ],
+      "hard_gate": "Do not invent missing dimensions."
+    },
+    {
+      "id": "DR-01",
+      "name": "Volumetric twin",
+      "inputs": [
+        "geometry",
+        "materials",
+        "interfaces",
+        "component instances",
+        "service boundaries"
+      ],
+      "outputs": [
+        "4D twin"
+      ],
+      "hard_gate": "Unbound parts remain explicitly marked."
+    },
+    {
+      "id": "DR-02",
+      "name": "Slices and sections",
+      "inputs": [
+        "twin"
+      ],
+      "outputs": [
+        "longitudinal",
+        "transverse",
+        "arbitrary/interface-normal",
+        "exploded views"
+      ],
+      "hard_gate": "Views cannot change semantics."
+    },
+    {
+      "id": "DR-03",
+      "name": "Baseline solve",
+      "inputs": [
+        "equations",
+        "boundary conditions",
+        "materials",
+        "tool/process state"
+      ],
+      "outputs": [
+        "baseline solver results + uncertainty"
+      ],
+      "hard_gate": "Standard physics first."
+    },
+    {
+      "id": "DR-04",
+      "name": "Raphael candidate compare",
+      "inputs": [
+        "bounded geometry variables",
+        "same baseline/material/environment/objective"
+      ],
+      "outputs": [
+        "signed deltas + Pareto state"
+      ],
+      "hard_gate": "No candidate improvement claim before matched evidence."
+    },
+    {
+      "id": "DR-05",
+      "name": "Manufacturing/process checks",
+      "inputs": [
+        "tool envelopes",
+        "build order",
+        "handoffs",
+        "registration",
+        "thermal/process history"
+      ],
+      "outputs": [
+        "collision/process/damage blockers"
+      ],
+      "hard_gate": "Block unsafe or infeasible sequence."
+    },
+    {
+      "id": "DR-06",
+      "name": "Render set",
+      "inputs": [
+        "review twin",
+        "view presets"
+      ],
+      "outputs": [
+        "high-fidelity external",
+        "section",
+        "exploded",
+        "tool-path/sequence frames",
+        "uncertainty overlays"
+      ],
+      "hard_gate": "Attractive render is not engineering proof."
+    },
+    {
+      "id": "DR-07",
+      "name": "Review",
+      "inputs": [
+        "source hashes",
+        "blockers",
+        "renders",
+        "solver results"
+      ],
+      "outputs": [
+        "review decision/comments"
+      ],
+      "hard_gate": "Required owner/specialist gates remain explicit."
+    },
+    {
+      "id": "DR-08",
+      "name": "Freeze or return",
+      "inputs": [
+        "review decision"
+      ],
+      "outputs": [
+        "frozen digital revision or change request"
+      ],
+      "hard_gate": "Physical execution remains separate."
+    }
+  ],
+  "physical_execution": false
+}

@@ -1,0 +1,172 @@
+{
+  "schema": "CGX-PC01-PRINTCEPTOR-OPERATIONAL/0.1",
+  "date": "2026-10-09",
+  "status": "DIGITAL_CONTRACT / PHYSICAL_PC01_NOT_BUILT / BUILD_READY_OPEN",
+  "authority": {
+    "drive_workbook": "Type 1 Romer Cognigrex",
+    "drive_spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "node_horizon_range": "25_CGX_Node_Horizon_v0_1!A44:N51",
+    "portfolio_range": "26_CGX_Portfolio_Delivery_v0_1!A61:P67",
+    "operational_matrix_range": "33_PC01_CGX_Operational_Matrix_v0_1!A1:AD36",
+    "build_queue_range": "95_NEXT_BUILD_QUEUE_v1_0!A65:N65",
+    "queue_id": "BUILD-065",
+    "rule": "Drive owns engineering/evidence content. Git is a typed implementation mirror and cannot raise evidence or execution authority."
+  },
+  "identity": {
+    "node_id": "PC01-NODE-001",
+    "display_name": "PC01 PrintCeptor",
+    "parent": "cgx:root:cognigrex / Romer.cgx",
+    "object_identity": "CGX-PHYSOBJ-001",
+    "family_contract": "CGX-FAMILY-LINEAGE-001"
+  },
+  "intent_classes": [
+    "LOG",
+    "BUILD",
+    "ENROL",
+    "REPAIR",
+    "REVIEW",
+    "MAINTAIN",
+    "QUERY"
+  ],
+  "three_plane_contract": {
+    "filespace": [
+      "stable identity",
+      "family lineage",
+      "geometry/BOM/BOP",
+      "recipes",
+      "material passports",
+      "capability manifests",
+      "source/evidence refs",
+      "safety/authority envelopes",
+      "render/sequence specifications",
+      "supersession"
+    ],
+    "dataspace": [
+      "live state",
+      "task/queue state",
+      "leases",
+      "telemetry",
+      "production events",
+      "solver runs",
+      "review decisions",
+      "maintenance state",
+      "readbacks",
+      "receipts",
+      "DBR deltas"
+    ],
+    "solid_state": [
+      "materials",
+      "interfaces",
+      "voids/cavities",
+      "seed components",
+      "sensors/actuators",
+      "service boundaries",
+      "machine/tool envelope"
+    ]
+  },
+  "compute_profiles": {
+    "C0": {
+      "purpose": "deterministic local safety/control",
+      "network_required": false,
+      "authority": "machine/device safety only",
+      "learning": "no open-ended learning in safety loop"
+    },
+    "C1": {
+      "purpose": "optional local edge state/perception/inference",
+      "network_required": false,
+      "authority": "none beyond explicit local task envelope",
+      "rule": "C0 remains independent"
+    },
+    "C2": {
+      "purpose": "delegated planning/simulation/retrieval/optimisation",
+      "network_required": "task-dependent",
+      "authority": "none transferred by delegation",
+      "rule": "lease-bound minimum data + readback"
+    }
+  },
+  "device_suitability": {
+    "child_toy": {
+      "default": "C0-only or tiny bounded state",
+      "forbidden": [
+        "unrestricted agent/LLM runtime",
+        "hidden recording",
+        "self-authorised consequential control"
+      ],
+      "delegation": "caregiver/owner-approved external service only when appropriate"
+    },
+    "consumer_appliance": {
+      "default": "existing OEM safety/control remains independent",
+      "allowed": [
+        "identity",
+        "diagnostics",
+        "maintenance/scheduling recommendations"
+      ],
+      "forbidden": [
+        "unqualified retrofit actuation",
+        "safety-rating uplift"
+      ]
+    },
+    "industrial_robot": {
+      "default": "independent C0/PLC safety + optional C1/C2",
+      "required": [
+        "E-stop/interlocks",
+        "task leases",
+        "calibration",
+        "safe-stop on comms/model/integrity fault"
+      ]
+    },
+    "secure_host": {
+      "default": "local-first tools/models/storage as explicitly installed",
+      "required": [
+        "least privilege",
+        "root/recovery verification",
+        "supported secret storage",
+        "rollback",
+        "integrity/readback"
+      ]
+    }
+  },
+  "learning_policy": {
+    "rule": "Learning/adaptation may tune named parameters only inside declared constraints and cannot rewrite authority, independent interlocks, safety envelopes or evidence states.",
+    "flow": [
+      "OBSERVE",
+      "PROPOSE_UPDATE",
+      "SIMULATE_VALIDATE",
+      "BOUNDS_CHECK",
+      "OWNER_POLICY_GATE",
+      "APPLY",
+      "MONITOR",
+      "ROLLBACK_IF_NEEDED"
+    ],
+    "sentience_claim": false
+  },
+  "maintenance_policy": {
+    "local_first": true,
+    "idle_window_allowed": true,
+    "rule": "Diagnostics and maintenance proposals may run in idle windows; software/firmware/hardware changes require compatibility, rollback and post-change verification.",
+    "no_silent_upgrade": true,
+    "hardware_optimisation": "fit-for-purpose only; measured need + compatibility + post-change calibration/test"
+  },
+  "build_flow": [
+    "INTENT",
+    "RESOLVE_OBJECT_FUNCTION",
+    "CAPABILITY_DISCOVERY",
+    "SELECT_ARCHETYPES_INSTANCES",
+    "BIND_SOURCE_GEOMETRY_MATERIAL_PROCESS_TOOL_TEST",
+    "SIMULATE_REVIEW",
+    "FREEZE_PACKET",
+    "BUILD_READY",
+    "EXECUTE_IF_AUTHORISED",
+    "READBACK",
+    "LEDGER",
+    "DBR"
+  ],
+  "physical_state": "NOT_BUILT",
+  "evidence_boundaries": [
+    "BUILD_READY is not BUILT, MEASURED, RELEASED or CERTIFIED.",
+    "Simulation/render output is not empirical proof.",
+    "Delegated compute never transfers semantic, safety, certification or release authority.",
+    "Identity/family lineage never implies capability or evidence inheritance.",
+    "PC01 is an orchestration profile over current printer/tool families, not a universal physical process claim."
+  ]
+}
