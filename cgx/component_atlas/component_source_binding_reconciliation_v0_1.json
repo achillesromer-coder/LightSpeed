@@ -1,0 +1,86 @@
+{
+  "schema": "CGX-COMPONENT-SOURCE-BINDING-RECONCILIATION/0.1",
+  "date": "2026-10-09",
+  "status": "DRIVE_OWNER_ADVANCED / GIT_MIRROR_RECONCILED / PHYSICAL_NOT_RUN",
+  "authority": {
+    "drive_workbook": "Type 1 Romer Cognigrex",
+    "instance_range": "31_CGX_Component_Instance_Register_v0_1!A1:AI9",
+    "owner_rule": "Drive instance register is canonical for source/material/process binding state. This artifact records reconciliation and does not create physical qualification."
+  },
+  "owner_advanced_instances": [
+    "CGXI-P1-TRACE-001",
+    "CGXI-P1-VIA-001",
+    "CGXI-P2-R-001",
+    "CGXI-P2-C-001",
+    "CGXI-P2-L-001",
+    "CGXI-P3-LOOP-001"
+  ],
+  "source_candidates": {
+    "eci_1010": {
+      "product": "LOCTITE ECI 1010 E&C",
+      "idh": "2022184",
+      "official_url": "https://next.henkel-adhesives.com/us/en/products/industrial-coatings/central-pdp.html/loctite-eci-1010-e-c/SAP_IB-109970/variation/2022184.html",
+      "source_state": "ATTRIBUTABLE CANDIDATE SOURCE",
+      "source_facts": [
+        "~7 mOhm/sq at 25 um typical resistance level",
+        "screen-printable",
+        "compatible with LOCTITE EDAG PF 455B E&C"
+      ],
+      "boundary": "Typical source values are not cured coupon measurements, current ratings, process qualification or lot passport."
+    },
+    "eci_7004lr": {
+      "product": "LOCTITE ECI 7004LR E&C",
+      "idh": "2076923",
+      "official_url": "https://next.henkel-adhesives.com/us/en/products/industrial-coatings/central-pdp.html/loctite-eci-7004lr-e-c/SAP_IB-112364.html",
+      "source_state": "ATTRIBUTABLE CANDIDATE SOURCE",
+      "source_facts": [
+        "blendable with LOCTITE NCI 7002 for ~50-5,000 Ohm/sq/25 um range",
+        "screen-printable"
+      ],
+      "boundary": "Exact blend, cured sheet resistance, TCR, geometry, lot and thermal envelope remain measured-instance requirements."
+    },
+    "pf_455b": {
+      "product": "LOCTITE EDAG PF 455B E&C",
+      "idh": "1263298",
+      "official_url": "https://next.henkel-adhesives.com/us/en/products/industrial-coatings/central-pdp.html/loctite-edag-pf-455b-e-c/SAP_IB-78955.html",
+      "source_state": "ATTRIBUTABLE ALTERNATE DIELECTRIC SOURCE",
+      "source_facts": [
+        "UV-curable",
+        "screen-printable",
+        "dielectric",
+        "humidity resistant"
+      ],
+      "boundary": "No printed-layer thickness, breakdown rating or process qualification is inherited by a CGX instance without exact process/test evidence."
+    },
+    "kapton_hn": {
+      "product": "DuPont Kapton HN polyimide film",
+      "official_data_sheet": "https://www.dupont.com/content/dam/electronics/amer/us/en/electronics/public/documents/en/EI-10206-Kapton-HN-Data-Sheet.pdf",
+      "source_state": "ATTRIBUTABLE CANDIDATE SOURCE",
+      "official_gauge_resolution": {
+        "owner_selected_current_candidate_um": 25,
+        "retained_frontier_alternative_um": 50,
+        "dielectric_constant_at_1khz_23c_50rh": {
+          "25um": 3.4,
+          "50um": 3.4
+        },
+        "typical_dielectric_strength_v_per_um": {
+          "25um": 303,
+          "50um": 240
+        },
+        "typical_dissipation_factor_at_1khz": {
+          "25um": 0.0018,
+          "50um": 0.002
+        }
+      },
+      "resolution": "The older 50 um frontier record and current 25 um owner candidate are distinct supported Kapton HN gauges, not contradictory material facts. The current owner instance rows select 25 um for the digital inference fixture; 50 um remains an alternative until explicitly selected.",
+      "boundary": "Typical data-sheet dielectric strength is not an instance voltage rating; actual film lot, thickness, interfaces, defects, humidity/temperature and test method remain required."
+    }
+  },
+  "state_counts": {
+    "total_instances": 8,
+    "binding_state_unbound": 8,
+    "source_candidate_bound": 6,
+    "physical_not_run": 8
+  },
+  "next_gate": "Acquire/passport exact lots; bind process/tool/calibration and geometry; compute configuration/source hashes; only then assess BUILD_READY."
+}
