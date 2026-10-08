@@ -1,0 +1,50 @@
+{
+  "schema": "CGX-TYPE1-CATALOGUE-PROJECTION/0.1",
+  "generated_from": "Drive-owned Type 1 Romer Cognigrex + merged LightSpeed typed mirrors",
+  "source_owner": {
+    "spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "authority": "engineering/evidence owner"
+  },
+  "metrics": {
+    "archetypes": 411,
+    "universal_matrix_fields": 52,
+    "directional_4d_fields": 16
+  },
+  "surfaces": [
+    {
+      "id": "27",
+      "name": "Component Geometry Atlas",
+      "role": "411 parameterized component archetypes"
+    },
+    {
+      "id": "31",
+      "name": "Component Instance Register",
+      "role": "source/geometry/material/process/test binding"
+    },
+    {
+      "id": "32",
+      "name": "Universal Type-I Tech Matrix",
+      "role": "directional volumetric stack + equations + 4D state"
+    },
+    {
+      "id": "33",
+      "name": "PC01 Operational Matrix",
+      "role": "intent→route→review→build-ready operational grammar"
+    }
+  ],
+  "contracts": [
+    "UTP-106 exact instance contract",
+    "UTP-117 directional/4D resolver",
+    "UTP-118 source candidates",
+    "UTP-119 circular-feed reference control",
+    "UTP-124 parametric stack/inference compiler"
+  ],
+  "inference_example": {
+    "label": "Ideal parallel-plate baseline",
+    "equation": "C≈ε₀εᵣA/d",
+    "inputs": "Kapton HN candidate: εr≈3.4 @ 1 kHz; d≈25 µm nominal",
+    "result": "C/A≈1.204 pF/mm²",
+    "evidence": "engineering inference only; source/material/process/measurement corrections required"
+  },
+  "boundary": "Read-only derived projection. Catalogue membership, equation evaluation or UI rendering does not establish physical readiness, certification, authority or release."
+}

@@ -62,6 +62,7 @@ import {
   renderResultReceiptsError,
 } from "./resultReceipts";
 import { renderRepresentationGraphs } from "./representationGraphs";
+import { loadType1CatalogueProjection, type Type1CatalogueProjection } from "./utpCatalogue";
 import { sourceLinks } from "./sourceRegistry";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
 
@@ -186,6 +187,9 @@ app.innerHTML = `
         <div><p class="eyebrow">Canonical representation edge</p><h2>Identity, evidence, horizon, review</h2></div>
         <p>Three bounded local candidates prove the complete intake route. Drive becomes canonical only after owner decision, promotion, and exact readback.</p>
       </article>
+      <div id="type1-catalogue-projection" class="graph-stack">
+        <article class="panel"><p class="muted">Reading the bounded Type-I catalogue projection…</p></article>
+      </div>
       <div id="representation-graphs" class="graph-stack">
         <article class="panel"><p class="muted">Reading feature-gated object graphs from Desktop…</p></article>
       </div>
@@ -880,6 +884,17 @@ const refreshDesktop = async (): Promise<void> => {
 byId("refresh-desktop").addEventListener("click", () => void refreshDesktop());
 renderPending();
 void refreshDesktop();
+
+const type1CatalogueMount = byId("type1-catalogue-projection");
+const type1CatalogueUrl = new URL("./data/type1_catalogue_projection.json", document.baseURI).toString();
+void loadType1CatalogueProjection(async () => {
+  const response = await fetch(type1CatalogueUrl, { cache: "no-store" });
+  if (!response.ok) throw new Error(`Type-I catalogue projection returned HTTP ${response.status}`);
+  return (await response.json()) as Type1CatalogueProjection;
+}).then((html) => { type1CatalogueMount.innerHTML = html; }).catch((error) => {
+  const message = error instanceof Error ? error.message : "Type-I catalogue projection unavailable.";
+  type1CatalogueMount.innerHTML = `<article class="panel"><p class="eyebrow">Type-I PrintSpace</p><h2>Projection unavailable</h2><p class="muted">${escapeHtml(message)}</p></article>`;
+});
 
 const exchangeMount = byId("neo-exchange");
 const projectionUrl = new URL("./data/neo_exchange.json", document.baseURI).toString();

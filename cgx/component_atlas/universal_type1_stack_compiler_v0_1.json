@@ -1,0 +1,99 @@
+{
+  "schema": "CGX-UNIVERSAL-TYPE1-STACK-COMPILER/0.1",
+  "artifact_id": "UTP-124",
+  "title": "Universal Type-I Parametric Stack + Inference Compiler",
+  "owner": {
+    "drive_spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "owner_row": "26_CGX_Portfolio_Delivery_v0_1!A75:P75"
+  },
+  "inputs": {
+    "archetype_matrix": "32_CGX_Universal_Type1_Tech_Matrix_v0_1",
+    "component_instances": "31_CGX_Component_Instance_Register_v0_1",
+    "interactions": "30_CGX_Component_Interaction_Map_v0_1",
+    "operational_routes": "33_PC01_CGX_Operational_Matrix_v0_1"
+  },
+  "matrix_contract": {
+    "archetype_count": 411,
+    "field_count": 52,
+    "directional_fields": 16
+  },
+  "compile_chain": [
+    "INTENT",
+    "RESOLVE_ARCHETYPES_AND_INSTANCES",
+    "ORDER_DIRECTIONAL_X_TO_Y_STACK",
+    "CHECK_INTERFACES_AND_INTERLAYERS",
+    "CHECK_PROCESS_AND_ATMOSPHERE_TRANSITIONS",
+    "CHECK_PRIOR_LAYER_DAMAGE_AND_PRESERVATION",
+    "BIND_EQUATION_INPUTS",
+    "INFER_NUMERIC_OR_RETAIN_SYMBOLIC_OR_HOLD",
+    "FOUR_D_SOLVE_AND_REVIEW",
+    "DEFINE_TESTS_AND_FALSIFIERS",
+    "FREEZE_PC01_UTP106_PACKET",
+    "READBACK_DBR"
+  ],
+  "inference_policy": {
+    "numeric": "Allowed only when every required geometry/material/process/environment input is attributable to a source or measurement and the governing model is valid for that domain.",
+    "symbolic": "Required when the equation is known but one or more required inputs are unresolved.",
+    "hold": "HOLD required when model validity, directional compatibility, process damage, authority, safety or evidence is unresolved.",
+    "uncertainty": "Carry source, geometry, process and metrology uncertainty. Use RSS only for independent linear terms; use covariance/nonlinear propagation otherwise."
+  },
+  "directional_rule": "X→Y is allowed only when Y does not violate X's damage envelope and the required interface/interlayer and environment transitions are present. X→Y never implies Y→X.",
+  "four_d_state": "y(t)=F(geometry(t),material_state(t),environment(t),inputs(t),history), within the validated model domain.",
+  "inference_fixtures": [
+    {
+      "id": "INF-CAP-KAPTON-HN-25UM-001",
+      "class": "ENGINEERING_INFERENCE / SOURCE_MATERIAL_REQUIRED / PHYSICAL_NOT_RUN",
+      "archetype": "CGA-C-001",
+      "model": "C=epsilon0*epsilon_r*A/d",
+      "source_inputs": {
+        "epsilon_r_nominal": 3.4,
+        "epsilon_r_basis": "nominal Kapton HN at 1 kHz from current source-bound candidate record",
+        "dielectric_thickness_um_nominal": 25
+      },
+      "derived": {
+        "capacitance_density_pF_per_mm2": 1.2041695425408
+      },
+      "examples": [
+        {
+          "area_mm2": 100,
+          "ideal_capacitance_pF": 120.41695425408
+        },
+        {
+          "area_mm2": 400,
+          "ideal_capacitance_pF": 481.66781701632
+        },
+        {
+          "area_mm2": 2500,
+          "ideal_capacitance_nF": 3.010423856352
+        },
+        {
+          "area_mm2": 10000,
+          "ideal_capacitance_nF": 12.041695425408
+        }
+      ],
+      "exclusions": [
+        "no voltage rating",
+        "no breakdown rating",
+        "no leakage/loss value",
+        "no lifetime claim",
+        "no physical qualification"
+      ],
+      "corrections_required": [
+        "actual dielectric thickness",
+        "actual epsilon_r at frequency/temperature/humidity",
+        "electrode overlap and fringe",
+        "electrode/contact/process state",
+        "loss/leakage",
+        "defects/voids/pinholes"
+      ]
+    }
+  ],
+  "non_claims": [
+    "not a universal single-process printer",
+    "not physical readiness",
+    "not certification",
+    "not recursive-manufacturing authority",
+    "not permission to infer absent properties",
+    "advanced silicon, MEMS, precision optoelectronics and certified protection remain seed/hybrid unless separately qualified"
+  ]
+}

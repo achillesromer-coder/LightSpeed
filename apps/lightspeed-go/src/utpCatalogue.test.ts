@@ -1,0 +1,31 @@
+import { describe, expect, it } from "vitest";
+import { loadType1CatalogueProjection, renderType1CatalogueProjection, type Type1CatalogueProjection } from "./utpCatalogue";
+
+const fixture: Type1CatalogueProjection = {
+  schema: "CGX-TYPE1-CATALOGUE-PROJECTION/0.1",
+  generated_from: "owner",
+  source_owner: { spreadsheet_id: "sheet", authority: "owner" },
+  metrics: { archetypes: 411, universal_matrix_fields: 52, directional_4d_fields: 16 },
+  surfaces: [{ id: "32", name: "Universal <Matrix>", role: "directional stack" }],
+  contracts: ["UTP-117", "UTP-124"],
+  inference_example: { label: "Capacitance", equation: "C≈ε0εrA/d", inputs: "bound", result: "1.204 pF/mm²", evidence: "engineering inference only" },
+  boundary: "not physical readiness",
+};
+
+describe("Type-I catalogue projection", () => {
+  it("renders owner-derived matrix metrics without authority uplift", () => {
+    const html = renderType1CatalogueProjection(fixture);
+    expect(html).toContain("411 archetypes");
+    expect(html).toContain("52 fields");
+    expect(html).toContain("UTP-124");
+    expect(html).toContain("1.204 pF/mm²");
+    expect(html).toContain("not physical readiness");
+    expect(html).not.toContain("Universal <Matrix>");
+    expect(html).toContain("Universal &lt;Matrix&gt;");
+  });
+
+  it("supports bounded async loading", async () => {
+    const html = await loadType1CatalogueProjection(async () => fixture);
+    expect(html).toContain("READ ONLY");
+  });
+});
