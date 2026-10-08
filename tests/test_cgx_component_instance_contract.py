@@ -101,3 +101,14 @@ def test_initial_population_exposes_missing_binding_instead_of_guessing() -> Non
         assert row["evidence_ceiling"]
         assert "UNBOUND" in row["binding_state"]
         assert row["physical_state"] == "NOT_RUN"
+
+def test_candidate_cross_lane_bindings_do_not_uplift_instance_state() -> None:
+    assert POPULATION["authority"]["cross_lane_portfolio_id"] == "UTP-109"
+    assert "CANDIDATE_CROSSWALK" in POPULATION["status"]
+    for row in POPULATION["records"]:
+        assert row["material_passport_refs"].startswith("CANDIDATE CLASS ONLY:")
+        assert row["manufacturing_or_assembly_route"].startswith("Candidate route:")
+        assert row["binding_state"] == "UNBOUND"
+        assert row["physical_state"] == "NOT_RUN"
+        assert row["configuration_hash"] == "UNRESOLVED"
+        assert row["source_hashes"] == "UNRESOLVED"
