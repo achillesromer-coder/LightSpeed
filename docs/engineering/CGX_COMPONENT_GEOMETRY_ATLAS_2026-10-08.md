@@ -10,15 +10,19 @@ This package establishes a parameterized physical-component atlas beneath the ex
 
 Drive owner tabs:
 
-- `27_CGX_Component_Geometry_Atlas_v0_1`: 386 parameterized current-technology component archetypes across 15 domains and 21 family labels.
+- `27_CGX_Component_Geometry_Atlas_v0_1`: 407 parameterized current-technology component archetypes across 15 domains and 21 family labels.
 - `28_CGX_4D_Field_Slice_Model_v0_1`: 64 volumetric field/slice/operator records.
 - `29_Raphael_Component_Geometry_Search_v0_1`: 61 bounded geometry-search families.
 - `30_CGX_Component_Interaction_Map_v0_1`: 75 pair/coupling/parasitic/process/common-cause interaction records.
 - `26_CGX_Portfolio_Delivery_v0_1`: UTP-101..104 register the four layers in the existing delivery catalogue.
 
-## Gap-closure population — v0.2
+## Gap-closure population — v0.3
 
-The first-pass 266-archetype primitive library has been expanded by 120 archetypes specifically where flat schematics hide important physical structure: RF receiver/transmitter/transponder chains, power-conversion stages, PCB/package transitions, secondary sensing families, electromechanical and fluid-power actuators, filtration/separation/thermal-process components, photonic interfaces, mechanical transmission/service parts, acoustic structures and electrochemical process hardware.
+The first-pass 266-archetype primitive library was expanded by 120 archetypes in v0.2 specifically where flat schematics hide important physical structure. v0.3 adds 21 explicit current control/interface archetypes that were previously only implicit combinations of lower-level primitives: CPU/SoC/DSP/ASIC packages, watchdog/supervisor, gate/current-sense/isolation interfaces, CAN/RS-485/USB/Ethernet physical interfaces, motor-control ICs, electromechanical contactor, thermal cutoff, solid-state relay, and BLDC/stepper/servo drive stages. The atlas now carries 407 archetypes while retaining exact commercial SKUs as instances rather than canonical rows.
+
+### v0.3 coverage rule
+
+A commercial part or assembly is considered covered only when it can bind to an atlas archetype with exact geometry/material/rating/interface data, or when a new archetype is added. Composite functions may map to multiple archetypes, but common current assemblies such as receivers, transponders, compute packages and motor drives are kept explicit when their packaging, coupling or safety geometry materially affects the 4D twin.
 
 A specific component instance is represented as:
 
