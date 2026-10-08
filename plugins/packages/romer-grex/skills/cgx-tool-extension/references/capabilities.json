@@ -45,7 +45,9 @@
       "cad": "cad.freecad",
       "bom": "cad.freecad.bom",
       "gmat": "science.gmat.probe",
-      "mpl": "assurance.mpl.probe"
+      "mpl": "assurance.mpl.probe",
+      "printer": "portfolio.printable_catalogue",
+      "catalogue": "portfolio.printable_catalogue"
     }
   },
   "routes": {
@@ -243,6 +245,21 @@
       "ro": true,
       "open_world": true,
       "handler": "lightspeed_runtime.route_probe:build_route_probe_report"
+    },
+    "portfolio.printable_catalogue": {
+      "state": "workflow",
+      "kind": "skill",
+      "ro": true,
+      "skill": "utp-portfolio-catalogue",
+      "uses": [
+        "cgx.resolve_context",
+        "cgx.object_context",
+        "cgx.cross_analysis",
+        "tests.plan",
+        "sources.envelope",
+        "consequence.preflight"
+      ],
+      "limitation": "Resolves existing printable/hybrid portfolio records into actor-, horizon-, resource- and evidence-aware build/help views. It does not create new semantic authority, physical readiness, build approval or execution permission."
     },
     "receipts.list": {
       "state": "available",

@@ -45,7 +45,9 @@
       "cad": "cad.freecad",
       "femm": "physics.femm.probe",
       "bom": "cad.freecad.bom",
-      "gmat": "science.gmat.probe"
+      "gmat": "science.gmat.probe",
+      "utp": "portfolio.printable_catalogue",
+      "print-physics": "portfolio.printable_catalogue"
     }
   },
   "routes": {
@@ -243,6 +245,21 @@
       "ro": true,
       "handler": "lightspeed_runtime.simulation_capability_probe:probe_femm",
       "limitation": "Probe only. FEMM solver execution remains unavailable until executable/model binding and typed adapter are proven."
+    },
+    "portfolio.printable_catalogue": {
+      "state": "workflow",
+      "kind": "skill",
+      "ro": true,
+      "skill": "utp-portfolio-catalogue",
+      "uses": [
+        "cgx.resolve_context",
+        "cgx.object_context",
+        "cgx.cross_analysis",
+        "tests.plan",
+        "sources.envelope",
+        "consequence.preflight"
+      ],
+      "limitation": "Resolves existing printable/hybrid portfolio records into actor-, horizon-, resource- and evidence-aware build/help views. It does not create new semantic authority, physical readiness, build approval or execution permission."
     },
     "receipts.list": {
       "state": "available",

@@ -364,6 +364,21 @@
       "gate": "status is read-only; configure/install/update/rollback require confirmed=true and managed-slot safety checks",
       "limitation": "Manages named runtime slots only. No arbitrary shell/path deletion, active DB mutation, carrier rewrite, canonical promotion, or public release.",
       "authority_transfer": false
+    },
+    "portfolio.printable_catalogue": {
+      "state": "workflow",
+      "kind": "skill",
+      "ro": true,
+      "skill": "utp-portfolio-catalogue",
+      "uses": [
+        "cgx.resolve_context",
+        "cgx.object_context",
+        "cgx.cross_analysis",
+        "tests.plan",
+        "sources.envelope",
+        "consequence.preflight"
+      ],
+      "limitation": "Resolves existing printable/hybrid portfolio records into actor-, horizon-, resource- and evidence-aware build/help views. It does not create new semantic authority, physical readiness, build approval or execution permission."
     }
   },
   "gaps": [
