@@ -18,10 +18,10 @@ def by_id(doc: dict) -> dict[str, dict]:
     return {row["ID"]: row for row in doc["records"]}
 
 def test_cardinality_and_unique_ids() -> None:
-    assert ATLAS["record_count"] == 266
-    assert MRI["record_count"] == 54
-    assert RGS["record_count"] == 49
-    assert CIM["record_count"] == 60
+    assert ATLAS["record_count"] == 386
+    assert MRI["record_count"] == 64
+    assert RGS["record_count"] == 61
+    assert CIM["record_count"] == 75
     for doc in (ATLAS, MRI, RGS, CIM):
         ids = [row["ID"] for row in doc["records"]]
         assert len(ids) == len(set(ids))
@@ -36,6 +36,18 @@ def test_atlas_covers_requested_current_component_classes() -> None:
         "Electrical conduit / raceway",
         "RFID/NFC loop antenna",
         "Ambient RF energy harvester",
+        "Receiver front-end module",
+        "Transmitter front-end module",
+        "RFID/NFC transponder/tag assembly",
+        "Three-phase inverter bridge",
+        "Rigid PCB stack",
+        "Thermopile infrared sensor",
+        "Linear motor",
+        "Porous filter element",
+        "Photonic crystal / metasurface",
+        "Lead screw / nut",
+        "Helmholtz resonator",
+        "Electrolyzer cell",
     }
     assert required <= names
 
@@ -67,3 +79,46 @@ def test_advanced_components_are_not_falsely_marked_printable() -> None:
     assert "INSERT-SEED" in rows["Visible LED die"]["Current CGX Build Class"]
     assert "INSERT-SEED" in rows["Quartz crystal resonator"]["Current CGX Build Class"]
     assert "INSERT-SEED" in rows["MEMS accelerometer"]["Current CGX Build Class"]
+
+
+def test_every_archetype_has_geometry_material_physics_and_test_fields() -> None:
+    required = {
+        "Baseline Geometry",
+        "Geometric Parameters",
+        "Typical Material Stack",
+        "Primary Physics",
+        "Baseline Model / Equation",
+        "Ports / Interfaces",
+        "Current Manufacturing Route",
+        "Current CGX Build Class",
+        "Raphael Search Variables",
+        "Acceptance Tests",
+        "Failure Modes",
+        "Evidence State",
+    }
+    for row in ATLAS["records"]:
+        for key in required:
+            assert key in row
+            assert str(row[key]).strip(), (row["ID"], key)
+
+
+def test_gap_closure_adds_energy_process_emc_and_lineage_hard_gates() -> None:
+    rows = by_id(MRI)
+    assert "no output may exceed" in rows["MRI4D-063"]["Safety / Hard Gate"]
+    assert "later operation" in rows["MRI4D-067"]["Safety / Hard Gate"]
+    assert "simulation cannot substitute" in rows["MRI4D-066"]["Safety / Hard Gate"]
+    assert "no evidence or authority uplift" in rows["MRI4D-069"]["Safety / Hard Gate"]
+
+
+def test_gap_closure_raphael_keeps_conventional_physics_authoritative() -> None:
+    rows = by_id(RGS)
+    for key in ("RGS-049", "RGS-050", "RGS-060"):
+        assert "conventional physics" in rows[key]["Raphael Role"]
+        assert "standard physics solver" in rows[key]["Evaluation Sequence"]
+
+
+def test_gap_closure_tracks_directional_process_and_delegated_compute_safety() -> None:
+    rows = by_id(CIM)
+    assert "directional" in rows["CIM-074"]["Interaction Type"]
+    assert "later" in rows["CIM-074"]["Mechanism"]
+    assert "local C0 safe state" in rows["CIM-075"]["Mitigation / Control"]

@@ -10,11 +10,23 @@ This package establishes a parameterized physical-component atlas beneath the ex
 
 Drive owner tabs:
 
-- `27_CGX_Component_Geometry_Atlas_v0_1`: 266 component archetypes across 13 families.
-- `28_CGX_4D_Field_Slice_Model_v0_1`: 54 volumetric field/slice/operator records.
-- `29_Raphael_Component_Geometry_Search_v0_1`: 49 bounded geometry-search families.
-- `30_CGX_Component_Interaction_Map_v0_1`: 60 pair/coupling/parasitic/process/common-cause interaction records.
+- `27_CGX_Component_Geometry_Atlas_v0_1`: 386 parameterized current-technology component archetypes across 17 domains/families.
+- `28_CGX_4D_Field_Slice_Model_v0_1`: 64 volumetric field/slice/operator records.
+- `29_Raphael_Component_Geometry_Search_v0_1`: 61 bounded geometry-search families.
+- `30_CGX_Component_Interaction_Map_v0_1`: 75 pair/coupling/parasitic/process/common-cause interaction records.
 - `26_CGX_Portfolio_Delivery_v0_1`: UTP-101..104 register the four layers in the existing delivery catalogue.
+
+## Gap-closure population — v0.2
+
+The first-pass 266-archetype primitive library has been expanded by 120 archetypes specifically where flat schematics hide important physical structure: RF receiver/transmitter/transponder chains, power-conversion stages, PCB/package transitions, secondary sensing families, electromechanical and fluid-power actuators, filtration/separation/thermal-process components, photonic interfaces, mechanical transmission/service parts, acoustic structures and electrochemical process hardware.
+
+A specific component instance is represented as:
+
+`archetype + dimensions + materials + ratings + interfaces + process route + calibration/evidence + revision`.
+
+This keeps the atlas finite and reusable while preserving enough geometric/material information to instantiate an exact commercial part, printed coupon, hybrid module or mission build without creating one canonical row per manufacturer SKU.
+
+The 4D layer also closes spatial-netlist, interface/contact, return-current-loop, energy-conservation, control-state, tribology, EMC, process-exposure-history, aging and evidence-lineage fields. This is the minimum set needed to turn a logical schematic into a build-order-aware volumetric twin rather than merely extruding a 2D board layout.
 
 ## Engineering model
 
