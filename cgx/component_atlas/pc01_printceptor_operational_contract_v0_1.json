@@ -1,16 +1,17 @@
 {
   "schema": "CGX-PC01-PRINTCEPTOR-OPERATIONAL/0.1",
   "date": "2026-10-09",
-  "status": "DIGITAL_CONTRACT / PHYSICAL_PC01_NOT_BUILT / BUILD_READY_OPEN",
+  "status": "DIGITAL_CONTRACT / ROUTE_COMPILER_EXPANDED / PHYSICAL_PC01_NOT_BUILT / BUILD_READY_OPEN",
   "authority": {
     "drive_workbook": "Type 1 Romer Cognigrex",
     "drive_spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
     "node_horizon_range": "25_CGX_Node_Horizon_v0_1!A44:N51",
-    "portfolio_range": "26_CGX_Portfolio_Delivery_v0_1!A61:P67",
-    "operational_matrix_range": "33_PC01_CGX_Operational_Matrix_v0_1!A1:AD36",
-    "build_queue_range": "95_NEXT_BUILD_QUEUE_v1_0!A65:N65",
-    "queue_id": "BUILD-065",
-    "rule": "Drive owns engineering/evidence content. Git is a typed implementation mirror and cannot raise evidence or execution authority."
+    "portfolio_range": "26_CGX_Portfolio_Delivery_v0_1!A61:P74",
+    "operational_matrix_range": "33_PC01_CGX_Operational_Matrix_v0_1!A1:AD52",
+    "build_queue_range": "95_NEXT_BUILD_QUEUE_v1_0!A65:N66",
+    "queue_id": "BUILD-066",
+    "rule": "Drive owns engineering/evidence content. Git is a typed implementation mirror and cannot raise evidence or execution authority.",
+    "parent_queue_id": "BUILD-065"
   },
   "identity": {
     "node_id": "PC01-NODE-001",
@@ -168,5 +169,39 @@
     "Delegated compute never transfers semantic, safety, certification or release authority.",
     "Identity/family lineage never implies capability or evidence inheritance.",
     "PC01 is an orchestration profile over current printer/tool families, not a universal physical process claim."
-  ]
+  ],
+  "directional_resolver": {
+    "portfolio_id": "UTP-117",
+    "owner_range": "32_CGX_Universal_Type1_Tech_Matrix_v0_1!AK:AZ",
+    "archetype_rows": 411,
+    "total_fields": 52,
+    "rule": "ARCHITECTURE_ALLOW_IF only; X→Y never implies Y→X; exact UTP-106 instance/material/process evidence overrides generic role defaults."
+  },
+  "route_compiler": {
+    "portfolio_ids": [
+      "UTP-120",
+      "UTP-121"
+    ],
+    "matrix_ids": "PC01-MX-036..051",
+    "printer_families": [
+      "UTP-PF-STRUCT-001",
+      "UTP-PF-FUNC-001",
+      "UTP-PF-FIBER-001",
+      "UTP-PF-HYBRID-001",
+      "UTP-PF-FEED-001",
+      "UTP-PF-METRO-001",
+      "UTP-PF-MOBILE-001"
+    ],
+    "rule": "Compile the minimum qualified family combination per task; do not infer a monolithic universal machine."
+  },
+  "first_article": {
+    "portfolio_id": "UTP-122",
+    "current_state": "SOURCE_REVIEW_DIGITAL_NOT_PHYSICALLY_BUILT",
+    "rule": "Source rights, exact CAD/units/BOM, power/motion/safety and machine readiness must close before any derived physical build."
+  },
+  "secure_host": {
+    "portfolio_id": "UTP-123",
+    "profile_ref": "pc01_secure_host_profile_v0_1.json",
+    "rule": "Heavy local reasoning/simulation/render belongs on eligible secure hosts; do not propagate unrestricted agents to low-capability or child-oriented endpoints."
+  }
 }
