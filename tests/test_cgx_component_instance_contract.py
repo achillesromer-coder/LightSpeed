@@ -12,6 +12,7 @@ def load(name: str) -> dict:
 INSTANCE = load("component_instance_build_packet_contract_v0_1.json")
 LADDER = load("component_physical_proof_ladder_v0_1.json")
 ATLAS = load("component_geometry_atlas_v0_1.json")
+POPULATION = load("component_instance_population_v0_1.json")
 
 def test_instance_contract_binds_current_atlas_without_uplift() -> None:
     assert INSTANCE["parents"]["atlas_archetype_count"] == 407
@@ -62,3 +63,41 @@ def test_dense_integration_cannot_promote_child_evidence() -> None:
     by_id = {x["id"]: x for x in LADDER["stages"]}
     assert "cannot raise the evidence ceiling" in by_id["P10"]["hard_gate"]
     assert "pairwise interactions" in by_id["P10"]["hard_gate"]
+
+def test_initial_instance_population_matches_drive_owner_and_stays_unbound() -> None:
+    assert POPULATION["authority"]["portfolio_id"] == "UTP-108"
+    assert POPULATION["authority"]["drive_range"] == "A1:AI9"
+    assert POPULATION["record_count"] == 8
+    assert len(POPULATION["records"]) == 8
+    assert {x["binding_state"] for x in POPULATION["records"]} == {"UNBOUND"}
+    assert {x["physical_state"] for x in POPULATION["records"]} == {"NOT_RUN"}
+    assert {x["proof_stage"] for x in POPULATION["records"]} == {"P0", "P1", "P2", "P3"}
+
+def test_initial_population_ids_and_archetype_refs_are_stable() -> None:
+    rows = {x["instance_id"]: x for x in POPULATION["records"]}
+    expected = {
+        "CGXI-P0-SH01-ID-A",
+        "CGXI-P1-TRACE-001",
+        "CGXI-P1-VIA-001",
+        "CGXI-P2-R-001",
+        "CGXI-P2-C-001",
+        "CGXI-P2-L-001",
+        "CGXI-P3-LC-001",
+        "CGXI-P3-LOOP-001",
+    }
+    assert set(rows) == expected
+    atlas_ids = {x["ID"] for x in ATLAS["records"]}
+    for row in POPULATION["records"]:
+        if row["archetype_id"].startswith("CGA-"):
+            assert row["archetype_id"] in atlas_ids
+        assert row["configuration_hash"] == "UNRESOLVED"
+        assert row["source_hashes"] == "UNRESOLVED"
+        assert row["readback_receipt"] == "UNRESOLVED"
+        assert row["dbr_pointer"] == "UNRESOLVED"
+
+def test_initial_population_exposes_missing_binding_instead_of_guessing() -> None:
+    for row in POPULATION["records"]:
+        assert row["blocked_by_next_binding"]
+        assert row["evidence_ceiling"]
+        assert "UNBOUND" in row["binding_state"]
+        assert row["physical_state"] == "NOT_RUN"
