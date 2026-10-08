@@ -1,0 +1,46 @@
+{
+  "schema": "CGX-CIRCULAR-FEED-REFERENCE-CONTROL/0.1",
+  "artifact_id": "UTP-112",
+  "state": "DIGITAL_REFERENCE_CONTROL_PLAN / MATERIALS_UNBOUND / PHYSICAL_NOT_RUN",
+  "owner_instance": "CGXI-P8-RECOVERED-SPACER-CTRL-001",
+  "proof_stage": "P8",
+  "objective": "Qualify one known low-risk recovered material stream against a matched virgin/reference control while holding geometry and process as constant as practicable.",
+  "first_use": "non-safety-critical structural spacer/substrate coupon; no energized function in first route",
+  "sequence": [
+    "collection provenance",
+    "sort and segregate",
+    "decontaminate",
+    "identify chemistry/material family",
+    "assay contamination and application-relevant hazards",
+    "prepare recovered feed",
+    "bind matched virgin/reference feed",
+    "freeze identical coupon geometry",
+    "bind common process window or document unavoidable delta",
+    "fabricate paired coupons",
+    "condition consistently",
+    "measure geometry/mass/density and use-relevant mechanical/thermal properties",
+    "compare variance and failure modes",
+    "retain witness/feed samples",
+    "DBR receipt",
+    "review before any device/feed admission"
+  ],
+  "controls": {
+    "reference": "virgin/reference feed of same declared material family",
+    "geometry": "same nominal coupon geometry",
+    "process": "same tool/process when materially valid; differences must be explicit covariates",
+    "blinding": "use coded sample IDs where practical",
+    "replication": "sample count chosen from expected variability and measurement resolution; do not invent statistical power"
+  },
+  "acceptance_rule": "Application-specific equivalence/non-inferiority band must be declared before fabrication from benign intended use and measurement capability; no universal pass threshold.",
+  "hard_stops": [
+    "unknown material identity",
+    "unresolved hazardous contamination",
+    "process degradation producing unsafe emissions",
+    "control material mismatch",
+    "excessive or unexplained variance",
+    "attempt to relabel generic recovered carbon as graphene",
+    "attempt to promote benign coupon evidence into structural/safety/ecological certification"
+  ],
+  "evidence_ceiling": "A passing coupon may qualify that exact feed/process/application envelope for the declared benign use only; it does not certify all recovered feed or all applications.",
+  "authority_transfer": false
+}
