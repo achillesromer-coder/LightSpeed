@@ -15,8 +15,8 @@ ATLAS = load("component_geometry_atlas_v0_1.json")
 POPULATION = load("component_instance_population_v0_1.json")
 
 def test_instance_contract_binds_current_atlas_without_uplift() -> None:
-    assert INSTANCE["parents"]["atlas_archetype_count"] == 407
-    assert INSTANCE["parents"]["atlas_drive_range"].endswith("A1:V408")
+    assert INSTANCE["parents"]["atlas_archetype_count"] == 411
+    assert INSTANCE["parents"]["atlas_drive_range"].endswith("A1:V412")
     assert INSTANCE["authority"]["portfolio_id"] == "UTP-106"
     assert INSTANCE["authority"]["queue_id"] == "BUILD-064"
     assert "exact_source_authority" in INSTANCE["required_instance_fields"]
@@ -48,7 +48,8 @@ def test_proof_ladder_uses_existing_component_archetypes() -> None:
         "CGA-R-001", "CGA-C-001", "CGA-L-001", "CGA-L-004",
         "CGA-RF-001", "CGA-RF-012", "CGA-RF-020",
         "CGA-S-001", "CGA-S-023", "CGA-L-015",
-        "CGA-D-009", "CGA-PWR-014", "CGA-E-016", "CGA-E-018",
+        "CGA-D-009", "CGA-O-023", "CGA-PWR-014", "CGA-E-016", "CGA-E-018",
+        "CGA-DIEL-001", "CGA-M-029", "CGA-M-030",
     }
     assert required <= atlas_ids
 
@@ -101,3 +102,34 @@ def test_initial_population_exposes_missing_binding_instead_of_guessing() -> Non
         assert row["evidence_ceiling"]
         assert "UNBOUND" in row["binding_state"]
         assert row["physical_state"] == "NOT_RUN"
+
+def test_candidate_cross_lane_bindings_do_not_uplift_instance_state() -> None:
+    assert POPULATION["authority"]["cross_lane_portfolio_id"] == "UTP-109"
+    assert "CANDIDATE_CROSSWALK" in POPULATION["status"]
+    for row in POPULATION["records"]:
+        assert row["material_passport_refs"].startswith("CANDIDATE CLASS ONLY:")
+        assert row["manufacturing_or_assembly_route"].startswith("Candidate route:")
+        assert row["binding_state"] == "UNBOUND"
+        assert row["physical_state"] == "NOT_RUN"
+        assert row["configuration_hash"] == "UNRESOLVED"
+        assert row["source_hashes"] == "UNRESOLVED"
+
+def test_atlas_411_reconciliation_threads_new_printer_mu_archetypes() -> None:
+    rec = INSTANCE["parents"]["printer_mu_crosswalk_reconciliation"]
+    assert rec["state"] == "18_BOUND / 1_NEIGHBOUR / 1_INTENTIONALLY_NON_PHYSICAL"
+    assert set(rec["resolved_first_class_archetypes"]) == {
+        "CGA-M-029",
+        "CGA-DIEL-001",
+        "CGA-O-023",
+        "CGA-M-030",
+    }
+
+    stages = {row["id"]: row for row in LADDER["stages"]}
+    assert "CGA-DIEL-001" in stages["P2"]["representative_refs"]
+    assert "CGA-O-023" in stages["P6"]["representative_refs"]
+    assert {"CGA-M-029", "CGA-M-030"} <= set(stages["P10"]["representative_refs"])
+
+    p2c = next(r for r in POPULATION["records"] if r["instance_id"] == "CGXI-P2-C-001")
+    assert "CGA-DIEL-001" in p2c["material_passport_refs"]
+    assert p2c["binding_state"] == "UNBOUND"
+    assert p2c["physical_state"] == "NOT_RUN"
