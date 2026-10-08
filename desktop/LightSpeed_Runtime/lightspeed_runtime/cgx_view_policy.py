@@ -108,6 +108,8 @@ def select_view_projection(
 
     if policy.get("schema") != "CGX-VIEW-SELECTION-POLICY/0.1":
         raise CGXViewPolicyError("unsupported CGX view-selection policy schema")
+    if policy.get("status") != "active":
+        raise CGXViewPolicyError("CGX view-selection policy is not active")
     if policy.get("output", {}).get("canonical_mutation") is not False:
         raise CGXViewPolicyError("view policy permits canonical mutation")
     priority = policy.get("inputs_in_priority_order") or []
