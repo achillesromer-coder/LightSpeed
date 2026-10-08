@@ -10,7 +10,7 @@ This package establishes a parameterized physical-component atlas beneath the ex
 
 Drive owner tabs:
 
-- `27_CGX_Component_Geometry_Atlas_v0_1`: 386 parameterized current-technology component archetypes across 17 domains/families.
+- `27_CGX_Component_Geometry_Atlas_v0_1`: 386 parameterized current-technology component archetypes across 15 domains and 21 family labels.
 - `28_CGX_4D_Field_Slice_Model_v0_1`: 64 volumetric field/slice/operator records.
 - `29_Raphael_Component_Geometry_Search_v0_1`: 61 bounded geometry-search families.
 - `30_CGX_Component_Interaction_Map_v0_1`: 75 pair/coupling/parasitic/process/common-cause interaction records.
