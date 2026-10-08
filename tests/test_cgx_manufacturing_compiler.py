@@ -284,3 +284,13 @@ def test_cli_can_compile_canonical_instance_id_without_manual_instance_file() ->
     assert compiled["binding_progress"] == "SOURCE_CANDIDATE_BOUND"
     assert "LOCTITE ECI 1010" in compiled["filespace"]["source_locator_or_hash"]
     assert compiled["execution_state"] == "HOLD"
+
+def test_owner_language_not_yet_bound_is_a_real_blocker() -> None:
+    trace = find_instance(POPULATION, "CGXI-P1-TRACE-001")
+    assert "not yet bound" in trace["tool_and_calibration_refs"].lower()
+    record = find_archetype(ATLAS, trace["archetype_id"])
+    compiled = compile_component(record, instance=trace, build_id="trace-semantic-blocker")
+    assert "unresolved:tool_and_calibration_refs" in compiled["blockers"]
+    assert "unresolved:source_locator_or_hash" not in compiled["blockers"]
+    assert compiled["binding_progress"] == "SOURCE_CANDIDATE_BOUND"
+    assert compiled["execution_state"] == "HOLD"

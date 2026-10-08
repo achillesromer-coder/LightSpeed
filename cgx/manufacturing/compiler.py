@@ -371,6 +371,22 @@ def _operation_list(strategy: str, scopes: dict[str, Any]) -> list[dict[str, Any
     return out
 
 
+def _looks_unresolved_instance_value(value: Any) -> bool:
+    text = str(value or "").strip().upper()
+    if not text or text in {"UNRESOLVED", "UNKNOWN", "NONE", "TBD", "TBC"}:
+        return True
+    unresolved_markers = (
+        "UNRESOLVED",
+        "NOT YET BOUND",
+        "NOT BOUND",
+        "NOT YET SELECTED",
+        "NOT SELECTED",
+        "TO BE BOUND",
+        "TO BE SELECTED",
+    )
+    return any(marker in text for marker in unresolved_markers)
+
+
 def _instance_blockers(instance: dict[str, Any] | None) -> list[str]:
     if not instance:
         return ["exact-instance-not-bound"]
@@ -387,8 +403,7 @@ def _instance_blockers(instance: dict[str, Any] | None) -> list[str]:
         "configuration_hash",
         "source_hashes",
     ):
-        value = str(instance.get(field, "")).strip().upper()
-        if not value or value in {"UNRESOLVED", "UNKNOWN", "NONE"} or "UNRESOLVED" in value:
+        if _looks_unresolved_instance_value(instance.get(field, "")):
             blockers.append(f"unresolved:{field}")
     if instance.get("physical_state") not in {"NOT_RUN", "BUILT", "MEASURED", "REVIEWED_PROMOTION"}:
         blockers.append("invalid-physical-state")
