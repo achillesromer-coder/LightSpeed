@@ -5,7 +5,14 @@ import argparse
 import json
 from pathlib import Path
 
-from cgx.manufacturing import compile_component, emit_reference_gcode, find_archetype, load_default_atlas
+from cgx.manufacturing import (
+    compile_component,
+    emit_reference_gcode,
+    find_archetype,
+    find_instance,
+    load_default_atlas,
+    load_default_instance_population,
+)
 
 
 def load_optional(path: str | None):
@@ -27,8 +34,11 @@ def main() -> None:
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     comp = sub.add_parser("component")
-    comp.add_argument("--archetype", required=True, help="CGA ID or unique component-archetype substring")
-    comp.add_argument("--instance")
+    selector = comp.add_mutually_exclusive_group(required=True)
+    selector.add_argument("--archetype", help="CGA ID or unique component-archetype substring")
+    selector.add_argument("--instance-id", help="CGXI instance ID from the canonical component instance population")
+    comp.add_argument("--instance", help="Explicit standalone instance JSON. Prefer --instance-id for canonical CGX instances.")
+    comp.add_argument("--instance-population", help="Optional alternate instance-population JSON; canonical Git mirror is the default.")
     comp.add_argument("--simulation")
     comp.add_argument("--overrides")
     comp.add_argument("--horizon", default="H-TERR-SITE")
@@ -45,10 +55,21 @@ def main() -> None:
     args = ap.parse_args()
     if args.cmd == "component":
         atlas = load_default_atlas()
-        record = find_archetype(atlas, args.archetype)
+        explicit_instance = load_optional(args.instance)
+        if args.instance_id:
+            if explicit_instance is not None:
+                raise SystemExit("--instance-id and --instance cannot be used together")
+            population = load_optional(args.instance_population) or load_default_instance_population()
+            explicit_instance = find_instance(population, args.instance_id)
+            archetype_id = explicit_instance.get("archetype_id", "")
+            if not archetype_id.startswith("CGA-"):
+                raise SystemExit(f"instance {args.instance_id} does not resolve to a single CGA archetype: {archetype_id}")
+            record = find_archetype(atlas, archetype_id)
+        else:
+            record = find_archetype(atlas, args.archetype)
         out = compile_component(
             record,
-            instance=load_optional(args.instance),
+            instance=explicit_instance,
             simulation=load_optional(args.simulation),
             build_id=args.build_id,
             horizon=args.horizon,
