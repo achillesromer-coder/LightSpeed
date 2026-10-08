@@ -144,11 +144,13 @@ def test_source_reconciliation_resolves_kapton_variant_without_rating_uplift() -
     }
     kapton = SOURCE_RECONCILIATION["source_candidates"]["kapton_hn"]
     gauges = kapton["official_gauge_resolution"]
-    assert gauges["owner_selected_current_candidate_um"] == 25
-    assert gauges["retained_frontier_alternative_um"] == 50
+    assert gauges["p2_capacitor_instance_candidate_um"] == 25
+    assert gauges["utp124_generic_compiler_fixture_um"] == 50
+    assert gauges["frontier_pmu_candidate_um"] == 50
     assert gauges["dielectric_constant_at_1khz_23c_50rh"] == {"25um": 3.4, "50um": 3.4}
     assert gauges["typical_dielectric_strength_v_per_um"]["25um"] == 303
     assert "not an instance voltage rating" in kapton["boundary"]
+    assert "Do not coerce one into the other" in kapton["resolution"]
 
 def test_atlas_411_reconciliation_threads_new_printer_mu_archetypes() -> None:
     rec = INSTANCE["parents"]["printer_mu_crosswalk_reconciliation"]
