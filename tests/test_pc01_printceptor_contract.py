@@ -58,8 +58,12 @@ def test_build_ready_requires_all_hard_dimensions() -> None:
 
 def test_directional_type1_resolver_is_411_row_factorized_and_directional() -> None:
     assert DIRECTIONAL["authority"]["archetype_rows"] == 411
-    assert DIRECTIONAL["authority"]["total_fields"] == 52
+    assert DIRECTIONAL["authority"]["total_fields"] == 60
     assert len(DIRECTIONAL["directional_fields"]) == 16
+    assert len(DIRECTIONAL["compiler_fields"]) == 8
+    assert DIRECTIONAL["authority"]["compiler_range"] == "BA:BH"
+    assert PC01["directional_resolver"]["compiler_field_count"] == 8
+    assert PC01["directional_resolver"]["total_fields"] == 60
     assert any("X→Y compatibility never implies Y→X" in x for x in DIRECTIONAL["invariants"])
     assert "168k" in DIRECTIONAL["dense_pair_policy"]
 
