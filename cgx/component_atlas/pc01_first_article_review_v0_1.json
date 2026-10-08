@@ -1,0 +1,30 @@
+{
+  "schema": "CGX-PC01-FIRST-ARTICLE-REVIEW/0.1",
+  "date": "2026-10-09",
+  "status": "SOURCE_REVIEW_DIGITAL_NOT_PHYSICALLY_BUILT / HELD",
+  "authority": {
+    "portfolio_id": "UTP-122",
+    "queue_id": "BUILD-066"
+  },
+  "candidate": {
+    "name": "robotic demonstrator / Butter Bot source-review candidate",
+    "source_ref": "C:/Cognigrex/State/Frontier/PrintSpaceTransit_20261008/Raphael_PR6/CGX/PrintSpace/PRINTCEPTOR_FIRST_BUTTERBOT_ARTICLE_V0_1.json",
+    "exact_cad_readback": false,
+    "cad_units_and_scale": "UNRESOLVED",
+    "redistribution_or_commercial_license": "UNVERIFIED",
+    "character_rights": "UNVERIFIED",
+    "exact_bom_power_motion_thermal": "UNRESOLVED",
+    "physical_build": false
+  },
+  "gates": [
+    "Verify source files, exact units/scale and source hashes.",
+    "Verify licence/redistribution/commercial/character rights before publishing or distributing derivatives.",
+    "Create an authorised derivation root; preserve canonical source unchanged.",
+    "Bind exact BOM, motors/servos/controllers, power/current, torque/load, thermal and stability budgets.",
+    "Bind PC01 machine/tool/process capability and independent C0 safe-stop path.",
+    "Run source-bound twin, baseline solve, sequence, collision/process checks, render and review.",
+    "Only a frozen packet with every applicable hard readiness dimension PASS may become BUILD_READY."
+  ],
+  "first_physical_preference": "Benign P0/P1/P2 coupons should execute before a complex powered robotic article.",
+  "evidence_rule": "Publicly readable source is not automatically licensed open hardware; digital review is not physical qualification."
+}
