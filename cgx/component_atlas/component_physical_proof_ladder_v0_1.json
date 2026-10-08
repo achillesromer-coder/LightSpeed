@@ -1,0 +1,241 @@
+{
+  "schema": "CGX-G1-COMPONENT-PROOF-LADDER/0.1",
+  "date": "2026-10-08",
+  "status": "DIGITAL_LADDER_DEFINED / PHYSICAL_EXECUTION_NOT_RUN",
+  "authority": {
+    "drive_workbook": "Type 1 Romer Cognigrex",
+    "drive_spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "portfolio_sheet": "26_CGX_Portfolio_Delivery_v0_1",
+    "portfolio_range": "A58:P58",
+    "portfolio_id": "UTP-107",
+    "queue_sheet": "95_NEXT_BUILD_QUEUE_v1_0",
+    "queue_range": "A64:N64",
+    "queue_id": "BUILD-064",
+    "rule": "Drive owns engineering/evidence content. Git mirrors the staged proof contract."
+  },
+  "purpose": "Prove a representative current-technology physical basis before dense 4D integration. The ladder samples fundamental functions; it does not physically qualify all 407 archetypes.",
+  "progression_rule": "Each stage is independently gated. Failure or unknown at one stage cannot be bypassed by a later integrated article.",
+  "common_packet_requirements": [
+    "stable coupon_or_article_id",
+    "exact archetype_instance_refs",
+    "exact geometry_and_revision",
+    "material_lots_and_passports",
+    "directional process_or_assembly sequence",
+    "environment_profile",
+    "instrument_and_calibration_refs",
+    "conventional baseline",
+    "bounded Raphael candidate when applicable",
+    "acceptance_test_and_falsifier",
+    "raw_measurements_and_uncertainty",
+    "failure_readback",
+    "configuration_and_source_hashes",
+    "DBR"
+  ],
+  "stages": [
+    {
+      "id": "P0",
+      "name": "Passive .cgx identity and provenance",
+      "representative_refs": [
+        "SH01-ID-A",
+        "UTP-099",
+        "CGX-PHYSOBJ-001"
+      ],
+      "article": "Benign substrate with passive optical identity marker; no energized function required.",
+      "measure": [
+        "identity readability",
+        "manifest/hash resolution",
+        "source/revision match"
+      ],
+      "hard_gate": "Stop on identity, hash, source, revision or provenance mismatch.",
+      "physical_state": "NOT_RUN"
+    },
+    {
+      "id": "P1",
+      "name": "Conductor and interconnect geometry",
+      "representative_refs": [
+        "CGA-I-002",
+        "CGA-I-004",
+        "CGA-I-005"
+      ],
+      "article": "Printed trace / vertical interconnect / reference or ground region coupon.",
+      "measure": [
+        "continuity",
+        "resistance",
+        "geometry",
+        "adhesion",
+        "temperature response where applicable"
+      ],
+      "hard_gate": "Benign low-voltage measurement only; no current/power claim beyond the tested envelope.",
+      "physical_state": "NOT_RUN"
+    },
+    {
+      "id": "P2",
+      "name": "Printed passive R/C/L basis",
+      "representative_refs": [
+        "CGA-R-001",
+        "CGA-C-001",
+        "CGA-L-001",
+        "CGA-L-004"
+      ],
+      "article": "Separate resistor, capacitor and air-core/planar inductor coupons before any dense co-print.",
+      "measure": [
+        "R and TCR where relevant",
+        "C and loss/leakage",
+        "L/Q/DCR/field map",
+        "dimensional repeatability"
+      ],
+      "hard_gate": "Passives remain separate evidence objects; one passing passive cannot qualify the others.",
+      "physical_state": "NOT_RUN"
+    },
+    {
+      "id": "P3",
+      "name": "Resonator and antenna / field geometry",
+      "representative_refs": [
+        "CGA-RF-001",
+        "CGA-RF-012",
+        "CGA-RF-020"
+      ],
+      "article": "LC resonator and loop/NFC geometry with conventional comparator and bounded alternative geometry.",
+      "measure": [
+        "resonant frequency",
+        "Q",
+        "S-parameters or impedance",
+        "field/coupling map as available"
+      ],
+      "hard_gate": "No biological/natural-frequency claim; measured RF/EM exposure and regulatory limits remain separate.",
+      "physical_state": "NOT_RUN"
+    },
+    {
+      "id": "P4",
+      "name": "Simple sensing",
+      "representative_refs": [
+        "CGA-S-001",
+        "CGA-S-023"
+      ],
+      "article": "Thermocouple and/or conductivity sensor coupon using exact process/material calibration.",
+      "measure": [
+        "calibration curve",
+        "linearity/response",
+        "drift",
+        "cross-sensitivity where applicable"
+      ],
+      "hard_gate": "Sensor output is not a calibrated physical quantity until referenced against an appropriate standard.",
+      "physical_state": "NOT_RUN"
+    },
+    {
+      "id": "P5",
+      "name": "Low-voltage electromagnetic actuation",
+      "representative_refs": [
+        "CGA-L-015",
+        "CGA-L-001"
+      ],
+      "article": "Low-energy solenoid/coil-plunger or comparable actuator coupon.",
+      "measure": [
+        "force-stroke-current or field-current",
+        "response",
+        "coil resistance",
+        "temperature rise"
+      ],
+      "hard_gate": "Low-voltage benign fixture only; no pressure valve, mains switching or safety actuator substitution.",
+      "physical_state": "NOT_RUN"
+    },
+    {
+      "id": "P6",
+      "name": "Hybrid seed-component embedding",
+      "representative_refs": [
+        "CGA-D-009",
+        "CGA-PWR-014",
+        "UTP-106"
+      ],
+      "article": "Visible LED seed integrated into printed conductors/thermal/identity structure.",
+      "measure": [
+        "continuity",
+        "I-V-L or optical output as instrumented",
+        "temperature",
+        "interface integrity",
+        "identity/readback"
+      ],
+      "hard_gate": "LED remains a seed component; successful embedding does not establish local semiconductor-die fabrication.",
+      "physical_state": "NOT_RUN"
+    },
+    {
+      "id": "P7",
+      "name": "Measured ambient-energy handling and storage bus",
+      "representative_refs": [
+        "CGA-E-016",
+        "CGA-E-018"
+      ],
+      "article": "Ambient RF collector/rectifier/storage/load coupon using measured incident spectrum and explicit loss accounting.",
+      "measure": [
+        "incident spectrum/available power",
+        "harvested power",
+        "conversion efficiency",
+        "storage charge/discharge loss",
+        "load duty cycle"
+      ],
+      "hard_gate": "Energy conservation is non-negotiable; no free-energy, void-energy or unmeasured ambient-source claim.",
+      "physical_state": "NOT_RUN"
+    },
+    {
+      "id": "P8",
+      "name": "Eco-Grex recovered-feed material coupon",
+      "representative_refs": [
+        "PT-074",
+        "UTP-095"
+      ],
+      "article": "Low-risk article made only after provenance, cleaning, contamination/chemistry assay, formulation and reference coupon.",
+      "measure": [
+        "composition/contamination as applicable",
+        "mechanical/thermal/electrical property required by intended use",
+        "leachate/ecology gate where relevant"
+      ],
+      "hard_gate": "Recovered feed is not upgraded to graphene or another high-spec material without validated conversion and characterization.",
+      "physical_state": "NOT_RUN"
+    },
+    {
+      "id": "P9",
+      "name": "Multilayer functional surface",
+      "representative_refs": [
+        "PT-075",
+        "UTP-096"
+      ],
+      "article": "Protective base + optional functional layer + environmental topcoat, with explicit interface/new-neutral layers.",
+      "measure": [
+        "adhesion",
+        "wear",
+        "water ingress",
+        "electrical/thermal/sensing function as applicable",
+        "ecotoxicity/maintenance state"
+      ],
+      "hard_gate": "No safety-critical control or unmeasured biofeedback/resonance claim.",
+      "physical_state": "NOT_RUN"
+    },
+    {
+      "id": "P10",
+      "name": "Dense micro↔macro 4D integrated body",
+      "representative_refs": [
+        "UTP-102",
+        "UTP-103",
+        "UTP-104",
+        "UTP-106"
+      ],
+      "article": "Integrated volumetric assembly using already qualified lower-stage functions, explicit interfaces, build order and service boundaries.",
+      "measure": [
+        "full field/state readback appropriate to the article",
+        "parasitics/couplings",
+        "thermal/mechanical/process interactions",
+        "fault/isolation behavior",
+        "repair/readback"
+      ],
+      "hard_gate": "Integration cannot raise the evidence ceiling of any child component; unresolved pairwise interactions block higher-order novelty claims.",
+      "physical_state": "NOT_RUN"
+    }
+  ],
+  "raphael_rule": "For any candidate geometry: conventional baseline → bounded candidate set → standard physics solve → Raphael residual/comparison → hard gates/Pareto → matched physical test → DBR.",
+  "next_digital_population": [
+    "Instantiate P0 SH01-ID-A from its exact existing plan/source records.",
+    "Select and bind exact low-consequence materials/processes for P1 trace/interconnect.",
+    "Select exact P2 resistor/capacitor/inductor coupon geometries and test instruments without inventing performance targets.",
+    "Generate P3 resonator/loop conventional-vs-candidate geometry packets only after material/process/tool resolution."
+  ]
+}
