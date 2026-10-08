@@ -8,7 +8,8 @@ from pathlib import Path
 from typing import Any, Iterable
 
 ROOT = Path(__file__).resolve().parents[2]
-ATLAS_PATH = ROOT / "cgx" / "component_atlas" / "component_geometry_atlas_v0_1.json"\nINSTANCE_POPULATION_PATH = ROOT / "cgx" / "component_atlas" / "component_instance_population_v0_1.json"
+ATLAS_PATH = ROOT / "cgx" / "component_atlas" / "component_geometry_atlas_v0_1.json"
+INSTANCE_POPULATION_PATH = ROOT / "cgx" / "component_atlas" / "component_instance_population_v0_1.json"
 
 SCHEMA = "CGX-MANUFACTURING-IR/0.1"
 RECIPE_SCHEMA = "CGX-MANUFACTURING-RECIPE/0.1"
