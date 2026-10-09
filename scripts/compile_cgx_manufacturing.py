@@ -12,6 +12,9 @@ if str(ROOT) not in sys.path:
 
 from cgx.manufacturing import (
     compile_component,
+    compile_printable_catalogue,
+    compile_printable_component,
+    compile_printable_stack,
     emit_reference_gcode,
     find_archetype,
     find_instance,
@@ -63,6 +66,28 @@ def main() -> None:
     comp.add_argument("--process-condition", action="append", default=[])
     comp.add_argument("--build-id")
     comp.add_argument("--output")
+
+
+    pcomp = sub.add_parser("printable-component")
+    pselector = pcomp.add_mutually_exclusive_group(required=True)
+    pselector.add_argument("--archetype", help="CGA ID or unique component-archetype substring")
+    pselector.add_argument("--instance-id", help="CGXI instance ID from the canonical component instance population")
+    pcomp.add_argument("--instance-population")
+    pcomp.add_argument("--simulation")
+    pcomp.add_argument("--overrides")
+    pcomp.add_argument("--horizon", default="H-TERR-SITE")
+    pcomp.add_argument("--required-scope", action="append", default=[])
+    pcomp.add_argument("--process-condition", action="append", default=[])
+    pcomp.add_argument("--build-id")
+    pcomp.add_argument("--output")
+
+    pcat = sub.add_parser("printable-catalogue")
+    pcat.add_argument("--output")
+
+    pstack = sub.add_parser("printable-stack")
+    pstack.add_argument("--spec", required=True, help="JSON spec with stack_id, components and optional relations/horizon")
+    pstack.add_argument("--instance-population")
+    pstack.add_argument("--output")
 
     bind = sub.add_parser("binding")
     bind.add_argument("--instance-id")
@@ -117,6 +142,67 @@ def main() -> None:
             required_scopes=args.required_scope,
             process_conditions=args.process_condition,
             parameter_overrides=load_optional(args.overrides),
+        )
+        write_output(out, args.output)
+    elif args.cmd == "printable-component":
+        atlas = load_default_atlas()
+        population = load_optional(args.instance_population) or load_default_instance_population()
+        instance = None
+        if args.instance_id:
+            instance = find_instance(population, args.instance_id)
+            archetype_id = instance.get("archetype_id", "")
+            if not archetype_id.startswith("CGA-"):
+                raise SystemExit(f"instance {args.instance_id} does not resolve to a single CGA archetype: {archetype_id}")
+            record = find_archetype(atlas, archetype_id)
+        else:
+            record = find_archetype(atlas, args.archetype)
+        out = compile_printable_component(
+            record,
+            instance=instance,
+            simulation=load_optional(args.simulation),
+            build_id=args.build_id,
+            horizon=args.horizon,
+            required_scopes=args.required_scope,
+            process_conditions=args.process_condition,
+            parameter_overrides=load_optional(args.overrides),
+        )
+        write_output(out, args.output)
+    elif args.cmd == "printable-catalogue":
+        write_output(compile_printable_catalogue(load_default_atlas()), args.output)
+    elif args.cmd == "printable-stack":
+        spec = load_optional(args.spec)
+        atlas = load_default_atlas()
+        population = load_optional(args.instance_population) or load_default_instance_population()
+        component_specs = []
+        for index, item in enumerate(spec.get("components", []), start=1):
+            instance = None
+            if item.get("instance_id"):
+                instance = find_instance(population, item["instance_id"])
+                record = find_archetype(atlas, instance["archetype_id"])
+            elif item.get("archetype"):
+                record = find_archetype(atlas, item["archetype"])
+            else:
+                raise SystemExit(f"printable-stack component {index} requires archetype or instance_id")
+            component_specs.append(
+                {
+                    "record": record,
+                    "instance": instance,
+                    "build_id": item.get("build_id"),
+                    "horizon": item.get("horizon", spec.get("horizon", "H-TERR-SITE")),
+                    "required_scopes": item.get("required_scopes"),
+                    "process_conditions": item.get("process_conditions"),
+                    "parameter_overrides": item.get("parameter_overrides"),
+                    "simulation": item.get("simulation"),
+                }
+            )
+        stack_id = spec.get("stack_id")
+        if not stack_id:
+            raise SystemExit("printable-stack spec requires stack_id")
+        out = compile_printable_stack(
+            component_specs,
+            stack_id=stack_id,
+            relations=spec.get("relations"),
+            horizon=spec.get("horizon", "H-TERR-SITE"),
         )
         write_output(out, args.output)
     elif args.cmd == "binding":
