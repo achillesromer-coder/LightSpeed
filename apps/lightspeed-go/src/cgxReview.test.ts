@@ -14,6 +14,9 @@ describe("CGX internal review lens", () => {
     expect(projection.metrics.printable_4d_templates).toBe(411);
     expect(projection.metrics.quantitative_invariants).toBe(7);
     expect(projection.metrics.smart_stack_regions).toBe(12);
+    expect(projection.metrics.compound_decomposition_templates).toBe(9);
+    expect(projection.printable_4d.compound_decomposition.count).toBe(9);
+    expect(projection.printable_4d.compound_decomposition.parents).toHaveLength(9);
     expect(projection.quantitative_invariants.records).toHaveLength(7);
     expect(projection.dense_smart_stack.regions).toHaveLength(12);
     expect(projection.dense_smart_stack.coupled_kernel).toBe("VGK-036");
@@ -54,6 +57,9 @@ describe("CGX internal review lens", () => {
     expect(html).toContain("INV-CAP-DENSITY-001");
     expect(html).toContain("1.2041695 pF/mm²");
     expect(html).toContain("REG-SAFE");
+    expect(html).toContain("9 compound-parent grammars");
+    expect(html).toContain("CGA-RF-001 · LC resonator");
+    expect(html).toContain("CGA-I-023 · Rigid-flex transition");
     expect(html).toContain("411");
     expect(html).toContain("CGX-PRINTABLE-4D-COMPONENT/0.1");
     expect(html).toContain("VGK-036");
@@ -74,6 +80,7 @@ describe("CGX internal review lens", () => {
     expect(projection.quantitative_invariants.state).toContain("PHYSICAL_NOT_RUN");
     expect(projection.dense_smart_stack.regions.find((item) => item.id === "REG-SAFE")?.state).toBe("HOLD");
     expect(projection.dense_smart_stack.regions.find((item) => item.id === "REG-SEED")?.state).toBe("INSERT_SEED");
+    expect(projection.printable_4d.compound_decomposition.rule).toContain("Keep each parent on VGK-036");
   });
 
   it("keeps showcase-safe content free of owner credentials and local paths", () => {
