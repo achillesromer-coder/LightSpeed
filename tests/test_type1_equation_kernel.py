@@ -10,7 +10,7 @@ def load():
 
 def test_kernel_cardinality_and_unique_primitive_coverage():
     d = load()
-    assert d["artifact_id"] == "UTP-131"
+    assert d["artifact_id"] == "UTP-136"
     assert d["state"] == "DIGITAL ENGINEERING KERNEL / PHYSICAL_NOT_RUN"
     kernels = d["kernels"]
     assert len(kernels) == 20
