@@ -23,6 +23,7 @@ export type CgxReviewProjection = {
     next: string;
   }>;
   kernels: Array<{ kernel_id: string; primitive: string; model: string; gate: string }>;
+  volumetric_kernels: Array<{ kernel_id: string; primitive: string; topology: string; token: string; gate: string }>;
   pipeline: Array<{ id: string; label: string; contract: string; state: string }>;
   showcase: {
     publication_state: string;
@@ -51,6 +52,7 @@ const renderOverview = (p: CgxReviewProjection): string => `
       ${metric(p.metrics.archetypes, "archetypes")}
       ${metric(p.metrics.matrix_fields, "matrix fields")}
       ${metric(p.metrics.equation_kernels, "equation kernels")}
+      ${metric(p.metrics.volumetric_kernels, "volumetric kernels")}
       ${metric(p.metrics.initial_instances, "proof instances")}
       ${metric(p.metrics.requirement_targets_open, "open target gates")}
       ${metric(p.metrics.physical_tests_run, "physical tests complete")}
@@ -94,6 +96,18 @@ const renderKernels = (p: CgxReviewProjection): string => `
     </div>
   </section>`;
 
+const renderVolumetricKernels = (p: CgxReviewProjection): string => `
+  <section class="cgx-lens-panel" data-cgx-lens-panel="volumetric" hidden>
+    <div class="table-scroll">
+      <table class="graph-table">
+        <thead><tr><th>Kernel</th><th>Primitive</th><th>Topology / geometry</th><th>Compiler token</th><th>Numeric gate</th></tr></thead>
+        <tbody>
+          ${p.volumetric_kernels.map((k) => `<tr><td><strong>${esc(k.kernel_id)}</strong></td><td>${esc(k.primitive)}</td><td>${esc(k.topology)}</td><td><small class="cgx-uri">${esc(k.token)}</small></td><td>${esc(k.gate)}</td></tr>`).join("")}
+        </tbody>
+      </table>
+    </div>
+  </section>`;
+
 const renderShowcase = (p: CgxReviewProjection): string => `
   <section class="cgx-lens-panel" data-cgx-lens-panel="showcase" hidden>
     <div class="panel-head">
@@ -119,11 +133,13 @@ export const renderCgxReviewProjection = (p: CgxReviewProjection): string => `
       <button class="active" type="button" data-cgx-lens="overview">Overview</button>
       <button type="button" data-cgx-lens="instances">CGXI queue</button>
       <button type="button" data-cgx-lens="kernels">Equation kernels</button>
+      <button type="button" data-cgx-lens="volumetric">Volumetric kernels</button>
       <button type="button" data-cgx-lens="showcase">Showcase-safe</button>
     </div>
     ${renderOverview(p)}
     ${renderInstances(p)}
     ${renderKernels(p)}
+    ${renderVolumetricKernels(p)}
     ${renderShowcase(p)}
     <p class="muted">${esc(p.boundary)}</p>
   </article>`;
