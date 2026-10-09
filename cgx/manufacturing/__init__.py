@@ -28,6 +28,8 @@ from .printstack import (
     compile_printable_catalogue,
     compile_printable_component,
     compile_printable_stack,
+    load_compound_parent_decompositions,
+    resolve_compound_parent_decomposition,
 )
 from .binding import (
     create_witness_coupon_packet,
@@ -48,6 +50,8 @@ __all__ = [
     "compile_printable_catalogue",
     "compile_printable_component",
     "compile_printable_stack",
+    "load_compound_parent_decompositions",
+    "resolve_compound_parent_decomposition",
     "AdapterError",
     "emit_reference_gcode",
     "InvariantInputError",

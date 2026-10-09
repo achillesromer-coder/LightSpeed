@@ -1,6 +1,6 @@
 {
-  "schema": "CGX-INTERNAL-REVIEW-PROJECTION/0.5",
-  "generated_from": "Drive-owned Type 1 Romer Cognigrex + BUILD-071 UTP-139 quantitative invariants + retained BUILD-072 40-kernel topology coverage",
+  "schema": "CGX-INTERNAL-REVIEW-PROJECTION/0.6",
+  "generated_from": "Drive-owned Type 1 Romer Cognigrex + BUILD-071 UTP-139 + UTP-138 compound-parent decomposition extension + retained BUILD-072 topology coverage",
   "visibility": "INTERNAL_REVIEW_LOCAL",
   "authority": {
     "engineering_owner": "Type 1 Romer Cognigrex",
@@ -11,7 +11,7 @@
   "headline": {
     "title": "CGX Type-I build convergence",
     "state": "QUANTITATIVE INVARIANTS + DENSE SMART-STACK + PRINTABLE 4D",
-    "note": "The same 411-archetype graph now carries seven reusable source-bounded quantitative invariants and a 12-region dense smart-stack grammar over the existing 20 constitutive and 40 volumetric kernels. Numeric output remains NUMERIC_IF/SYMBOLIC/HOLD; physical execution remains NOT_RUN."
+    "note": "The same canonical graph now has 411 printable component templates, 40 volumetric kernels, seven quantitative invariants, a 12-region smart-stack reference, and child-role decomposition grammars for all nine intentionally generic compound RF/PCB parents. Parent topology remains VGK-036 until implementation binds child packets; physical execution remains NOT_RUN."
   },
   "metrics": {
     "archetypes": 411,
@@ -29,7 +29,8 @@
     "topology_specific_or_multi": 402,
     "generic_coupled_fallback": 9,
     "quantitative_invariants": 7,
-    "smart_stack_regions": 12
+    "smart_stack_regions": 12,
+    "compound_decomposition_templates": 9
   },
   "gate_counts": {
     "SOURCE_IDENTITY": 1,
@@ -373,6 +374,10 @@
       {
         "value": "0",
         "label": "physical tests represented as complete"
+      },
+      {
+        "value": "9",
+        "label": "compound-parent decomposition grammars"
       }
     ],
     "safe_points": [
@@ -385,7 +390,8 @@
       "A dense 4D smart-stack is represented as 12 functional regions coupled through VGK-036; it remains a reference grammar rather than a mandatory physical layout.",
       "Exact source, lot, process, tool and calibration evidence override generic archetype assumptions.",
       "Simulation refines digital candidates but does not become measurement.",
-      "Machine programs are generated only after a frozen BUILD_READY configuration and independent safety gates."
+      "Machine programs are generated only after a frozen BUILD_READY configuration and independent safety gates.",
+      "The nine intentionally generic RF/PCB parent archetypes now expose reusable child-role decomposition grammars while remaining VGK-036 at parent level until a concrete implementation selects the children."
     ],
     "excludes": [
       "owner credentials or private local paths",
@@ -395,7 +401,7 @@
       "claims of physical qualification where testing remains NOT_RUN"
     ]
   },
-  "boundary": "Internal read-only projection. BUILD-071 adds seven reusable quantitative invariants and a 12-region dense smart-stack grammar while retaining BUILD-072 topology coverage. Numeric results remain source/regime conditional; the projection does not mutate Drive evidence, invent lots/geometry/calibration, execute hardware, promote BUILD_READY, publish the corpus or change evidence ceilings.",
+  "boundary": "Internal read-only projection. Compound-parent decomposition closes practical stack planning for the nine intentional generic parents without forcing a false single topology or changing their evidence state. BUILD-071 invariants and BUILD-072 topology coverage remain retained; no exact values/lots/geometry/calibration, BUILD_READY, machine authority or physical execution are inferred.",
   "volumetric_kernels": [
     {
       "kernel_id": "VGK-001",
@@ -737,7 +743,24 @@
       "Only consequential optional scopes are solved. A rectifier diode does not gain generic pressure, gravity, fluid or spatial-coupling analysis unless exact function/process/horizon requires it.",
       "Parameter slots may remain open; missing values are never invented.",
       "Generated machine programs remain unavailable until exact BUILD_READY, machine/adapter/calibration parity and independent C0/safety gates all pass."
-    ]
+    ],
+    "compound_decomposition": {
+      "schema": "CGX-PRINTABLE-COMPOUND-DECOMPOSITION/0.1",
+      "count": 9,
+      "state": "DERIVED CHILD-ROLE GRAMMARS / IMPLEMENTATION SELECTION REQUIRED",
+      "parents": [
+        "CGA-RF-001 · LC resonator",
+        "CGA-RF-022 · RC low-pass/high-pass filter",
+        "CGA-RF-023 · LC ladder filter",
+        "CGA-RF-026 · Diplexer/duplexer",
+        "CGA-RF-029 · Impedance matching network",
+        "CGA-RF-043 · Antenna tuner / matching unit",
+        "CGA-I-021 · Rigid PCB stack",
+        "CGA-I-022 · Flexible PCB stack",
+        "CGA-I-023 · Rigid-flex transition"
+      ],
+      "rule": "Keep each parent on VGK-036 until implementation selects child packets. Decomposition defines child roles, allowed existing topology kernels, interfaces and verification only; it does not invent values, dimensions, lots or machine authority."
+    }
   },
   "topology_coverage": {
     "artifact_id": "UTP-140",

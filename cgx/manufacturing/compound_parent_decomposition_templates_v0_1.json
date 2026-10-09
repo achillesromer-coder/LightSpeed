@@ -1,0 +1,573 @@
+{
+  "schema": "CGX-PRINTABLE-COMPOUND-DECOMPOSITION/0.1",
+  "artifact_id": "UTP-138",
+  "role": "DERIVED_COMPOUND_PARENT_DECOMPOSITION",
+  "status": "DIGITAL_TEMPLATE / IMPLEMENTATION_SELECTION_REQUIRED / PHYSICAL_NOT_RUN",
+  "purpose": "Give the nine intentional generic-coupled parent archetypes reusable child-role grammars over existing UTP-138 packets and UTP-137/140 topology kernels. The parent remains generic until a concrete implementation selects child archetypes/instances, values, geometry and interfaces.",
+  "invariants": [
+    "do not force the parent generic-coupled topology count to zero",
+    "child packets remain canonical UTP-138 component packets; no recipe body is copied into the parent",
+    "a parent decomposition selects roles and allowable kernel families, not exact values, dimensions, materials or lots",
+    "full-stack execution still requires every child and interface gate plus exact machine/adapter/calibration and C0/safety authority",
+    "simulation or decomposition never uplifts physical evidence"
+  ],
+  "templates": [
+    {
+      "parent_id": "CGA-RF-001",
+      "parent_name": "LC resonator",
+      "parent_kernel": "VGK-036",
+      "implementation_state": "UPSTREAM_MEASURED_LC_REQUIRED_FOR_EXACT_CGXI_P3_LC_001",
+      "child_slots": [
+        {
+          "slot": "inductor",
+          "multiplicity": "1+",
+          "role": "energy storage / magnetic reactance",
+          "kernel_candidates": [
+            "VGK-008",
+            "VGK-009",
+            "VGK-010"
+          ],
+          "required": true
+        },
+        {
+          "slot": "capacitor",
+          "multiplicity": "1+",
+          "role": "electric-field reactance",
+          "kernel_candidates": [
+            "VGK-003",
+            "VGK-004",
+            "VGK-005",
+            "VGK-006",
+            "VGK-007"
+          ],
+          "required": true
+        },
+        {
+          "slot": "interconnect_port",
+          "multiplicity": "1+",
+          "role": "connect/couple the L/C network",
+          "kernel_candidates": [
+            "VGK-001",
+            "VGK-002",
+            "VGK-011",
+            "VGK-012"
+          ],
+          "required": true
+        }
+      ],
+      "parent_interfaces": [
+        "electrical connectivity",
+        "coupling/port definition",
+        "parasitic return path",
+        "thermal/material environment"
+      ],
+      "verification": [
+        "measured child L/C/DCR/loss first",
+        "f0/Q/impedance or S-parameters",
+        "compare resonance residual to uncertainty"
+      ],
+      "boundary": "CGXI-P3-LC-001 remains downstream of measured P2 L/C; decomposition is not permission to choose values independently."
+    },
+    {
+      "parent_id": "CGA-RF-022",
+      "parent_name": "RC low-pass/high-pass filter",
+      "parent_kernel": "VGK-036",
+      "implementation_state": "NETWORK_TOPOLOGY_AND_VALUES_REQUIRED",
+      "child_slots": [
+        {
+          "slot": "resistor",
+          "multiplicity": "1+",
+          "role": "resistive transfer element",
+          "kernel_candidates": [
+            "VGK-035"
+          ],
+          "required": true
+        },
+        {
+          "slot": "capacitor",
+          "multiplicity": "1+",
+          "role": "capacitive transfer element",
+          "kernel_candidates": [
+            "VGK-003",
+            "VGK-004",
+            "VGK-007"
+          ],
+          "required": true
+        },
+        {
+          "slot": "interconnect_port",
+          "multiplicity": "1+",
+          "role": "two-port connectivity and return path",
+          "kernel_candidates": [
+            "VGK-001",
+            "VGK-002",
+            "VGK-011"
+          ],
+          "required": true
+        }
+      ],
+      "parent_interfaces": [
+        "series/shunt network order",
+        "source/load impedance",
+        "ground/reference",
+        "layout parasitics"
+      ],
+      "verification": [
+        "child R/C measurement",
+        "transfer magnitude/phase",
+        "noise/drift/tolerance"
+      ],
+      "boundary": "Use lumped RC only where layout and frequency support it; distributed effects promote the interconnect to VGK-011/full field analysis."
+    },
+    {
+      "parent_id": "CGA-RF-023",
+      "parent_name": "LC ladder filter",
+      "parent_kernel": "VGK-036",
+      "implementation_state": "LADDER_ORDER_VALUES_AND_COUPLING_REQUIRED",
+      "child_slots": [
+        {
+          "slot": "series_or_shunt_inductor",
+          "multiplicity": "1+",
+          "role": "ladder magnetic branch",
+          "kernel_candidates": [
+            "VGK-008",
+            "VGK-009",
+            "VGK-010"
+          ],
+          "required": true
+        },
+        {
+          "slot": "series_or_shunt_capacitor",
+          "multiplicity": "1+",
+          "role": "ladder electric branch",
+          "kernel_candidates": [
+            "VGK-003",
+            "VGK-004",
+            "VGK-007"
+          ],
+          "required": true
+        },
+        {
+          "slot": "interconnect_port",
+          "multiplicity": "1+",
+          "role": "ladder connectivity/return",
+          "kernel_candidates": [
+            "VGK-001",
+            "VGK-002",
+            "VGK-011"
+          ],
+          "required": true
+        }
+      ],
+      "parent_interfaces": [
+        "ladder order",
+        "series/shunt assignment",
+        "mutual coupling",
+        "source/load ports"
+      ],
+      "verification": [
+        "measured child values/Q",
+        "S-parameters/transfer",
+        "coupling/parasitic residual"
+      ],
+      "boundary": "The ladder is a child network grammar; exact order and values are implementation inputs, not atlas defaults."
+    },
+    {
+      "parent_id": "CGA-RF-026",
+      "parent_name": "Diplexer/duplexer",
+      "parent_kernel": "VGK-036",
+      "implementation_state": "MULTI_FILTER_BRANCH_AND_JUNCTION_SELECTION_REQUIRED",
+      "child_slots": [
+        {
+          "slot": "filter_branch_a",
+          "multiplicity": "1",
+          "role": "first frequency-selective branch",
+          "kernel_candidates": [
+            "VGK-011",
+            "VGK-036"
+          ],
+          "required": true
+        },
+        {
+          "slot": "filter_branch_b",
+          "multiplicity": "1",
+          "role": "second frequency-selective branch",
+          "kernel_candidates": [
+            "VGK-011",
+            "VGK-036"
+          ],
+          "required": true
+        },
+        {
+          "slot": "junction",
+          "multiplicity": "1",
+          "role": "multiport combining/separation junction",
+          "kernel_candidates": [
+            "VGK-011",
+            "VGK-037"
+          ],
+          "required": true
+        },
+        {
+          "slot": "seed_resonator_if_required",
+          "multiplicity": "0+",
+          "role": "precision/active/seed resonator",
+          "kernel_candidates": [
+            "VGK-034",
+            "VGK-038"
+          ],
+          "required": false
+        }
+      ],
+      "parent_interfaces": [
+        "3+ calibrated RF ports",
+        "branch isolation",
+        "junction reference/ground",
+        "thermal/power boundaries"
+      ],
+      "verification": [
+        "insertion loss",
+        "return loss",
+        "interband isolation",
+        "power/thermal response"
+      ],
+      "boundary": "Branch implementation may be lumped, distributed, acoustic or hybrid; the parent does not predetermine the filter technology."
+    },
+    {
+      "parent_id": "CGA-RF-029",
+      "parent_name": "Impedance matching network",
+      "parent_kernel": "VGK-036",
+      "implementation_state": "MATCHING_TOPOLOGY_SOURCE_LOAD_AND_BAND_REQUIRED",
+      "child_slots": [
+        {
+          "slot": "lumped_reactance",
+          "multiplicity": "0+",
+          "role": "L/C matching element",
+          "kernel_candidates": [
+            "VGK-003",
+            "VGK-007",
+            "VGK-008",
+            "VGK-010"
+          ],
+          "required": false
+        },
+        {
+          "slot": "distributed_stub_or_line",
+          "multiplicity": "0+",
+          "role": "distributed impedance transformer",
+          "kernel_candidates": [
+            "VGK-011"
+          ],
+          "required": false
+        },
+        {
+          "slot": "transformer_or_coupled_coil",
+          "multiplicity": "0+",
+          "role": "magnetic impedance transformation",
+          "kernel_candidates": [
+            "VGK-010"
+          ],
+          "required": false
+        },
+        {
+          "slot": "tunable_seed_if_required",
+          "multiplicity": "0+",
+          "role": "varactor/MEMS/switch/tuner seed",
+          "kernel_candidates": [
+            "VGK-034"
+          ],
+          "required": false
+        },
+        {
+          "slot": "port_reference",
+          "multiplicity": "1+",
+          "role": "source/load/return definition",
+          "kernel_candidates": [
+            "VGK-001",
+            "VGK-011",
+            "VGK-037"
+          ],
+          "required": true
+        }
+      ],
+      "selection_rule": "At least one of lumped_reactance, distributed_stub_or_line, transformer_or_coupled_coil, or tunable_seed_if_required must be selected.",
+      "parent_interfaces": [
+        "source impedance",
+        "load impedance",
+        "band/bandwidth",
+        "reference plane",
+        "loss/Q"
+      ],
+      "verification": [
+        "S11/VSWR or impedance",
+        "efficiency/insertion loss",
+        "bandwidth",
+        "thermal drift"
+      ],
+      "boundary": "No matching values or topology are inferred without source/load/band and selected implementation."
+    },
+    {
+      "parent_id": "CGA-RF-043",
+      "parent_name": "Antenna tuner / matching unit",
+      "parent_kernel": "VGK-036",
+      "implementation_state": "MATCHING_NETWORK_PLUS_CONTROL_STATE_MAP_REQUIRED",
+      "child_slots": [
+        {
+          "slot": "matching_network",
+          "multiplicity": "1",
+          "role": "reconfigurable impedance transformation",
+          "kernel_candidates": [
+            "VGK-036"
+          ],
+          "required": true
+        },
+        {
+          "slot": "tuner_switch_seed",
+          "multiplicity": "1+",
+          "role": "switch/varactor/MEMS/tuner seed",
+          "kernel_candidates": [
+            "VGK-034"
+          ],
+          "required": true
+        },
+        {
+          "slot": "rf_feed",
+          "multiplicity": "1",
+          "role": "antenna/transceiver feed geometry",
+          "kernel_candidates": [
+            "VGK-011",
+            "VGK-037"
+          ],
+          "required": true
+        },
+        {
+          "slot": "control_state",
+          "multiplicity": "1",
+          "role": "bounded control/configuration state",
+          "kernel_candidates": [
+            "VGK-034",
+            "VGK-030"
+          ],
+          "required": true
+        }
+      ],
+      "parent_interfaces": [
+        "antenna/feed",
+        "RF source/load",
+        "control",
+        "safe-state/bypass if consequential"
+      ],
+      "verification": [
+        "state-by-state S11/impedance",
+        "loss/efficiency",
+        "thermal/power",
+        "state-map repeatability"
+      ],
+      "boundary": "Adaptive state selection does not authorize unrestricted learning in the consequential RF/control loop."
+    },
+    {
+      "parent_id": "CGA-I-021",
+      "parent_name": "Rigid PCB stack",
+      "parent_kernel": "VGK-036",
+      "implementation_state": "LAYER_COUNT_STACK_ORDER_AND_VIA_FIELD_REQUIRED",
+      "child_slots": [
+        {
+          "slot": "rigid_substrate_layer",
+          "multiplicity": "1+",
+          "role": "structural dielectric laminate",
+          "kernel_candidates": [
+            "VGK-018",
+            "VGK-040"
+          ],
+          "required": true
+        },
+        {
+          "slot": "conductor_plane_trace",
+          "multiplicity": "1+",
+          "role": "signal/power/reference conductor",
+          "kernel_candidates": [
+            "VGK-001",
+            "VGK-011"
+          ],
+          "required": true
+        },
+        {
+          "slot": "via",
+          "multiplicity": "0+",
+          "role": "interlayer conductor",
+          "kernel_candidates": [
+            "VGK-002"
+          ],
+          "required": false
+        },
+        {
+          "slot": "surface_finish_mask",
+          "multiplicity": "0+",
+          "role": "surface dielectric/barrier/finish",
+          "kernel_candidates": [
+            "VGK-040",
+            "VGK-025"
+          ],
+          "required": false
+        },
+        {
+          "slot": "thermal_region",
+          "multiplicity": "0+",
+          "role": "thermal spreading/break",
+          "kernel_candidates": [
+            "VGK-013",
+            "VGK-015"
+          ],
+          "required": false
+        }
+      ],
+      "parent_interfaces": [
+        "layer order",
+        "reference planes",
+        "via/antipad geometry",
+        "component pads/connectors",
+        "chassis/thermal boundary"
+      ],
+      "verification": [
+        "continuity/isolation",
+        "impedance if consequential",
+        "registration/section/CT",
+        "thermal/stress as applicable"
+      ],
+      "boundary": "Conventional laminate process remains a reference/hybrid route unless the exact additive build-up process is separately qualified."
+    },
+    {
+      "parent_id": "CGA-I-022",
+      "parent_name": "Flexible PCB stack",
+      "parent_kernel": "VGK-036",
+      "implementation_state": "FLEX_STACK_NEUTRAL_AXIS_AND_BEND_ZONE_REQUIRED",
+      "child_slots": [
+        {
+          "slot": "flex_dielectric",
+          "multiplicity": "1+",
+          "role": "polyimide/LCP flex substrate",
+          "kernel_candidates": [
+            "VGK-040",
+            "VGK-018"
+          ],
+          "required": true
+        },
+        {
+          "slot": "flex_conductor",
+          "multiplicity": "1+",
+          "role": "bend-tolerant conductor geometry",
+          "kernel_candidates": [
+            "VGK-001",
+            "VGK-011"
+          ],
+          "required": true
+        },
+        {
+          "slot": "coverlay_adhesive",
+          "multiplicity": "0+",
+          "role": "protective/bonding dielectric",
+          "kernel_candidates": [
+            "VGK-040",
+            "VGK-025"
+          ],
+          "required": false
+        },
+        {
+          "slot": "stiffener",
+          "multiplicity": "0+",
+          "role": "local rigid support",
+          "kernel_candidates": [
+            "VGK-018"
+          ],
+          "required": false
+        },
+        {
+          "slot": "bend_mechanics",
+          "multiplicity": "1",
+          "role": "neutral-axis/bend strain model",
+          "kernel_candidates": [
+            "VGK-017",
+            "VGK-018"
+          ],
+          "required": true
+        }
+      ],
+      "parent_interfaces": [
+        "bend radius",
+        "neutral axis",
+        "trace orientation",
+        "pad/tail connector transition",
+        "shield/reference"
+      ],
+      "verification": [
+        "continuity under bend cycling",
+        "strain/curvature",
+        "registration",
+        "impedance/shield if consequential"
+      ],
+      "boundary": "Flex life is process/material/geometry specific and cannot be inferred from nominal polyimide alone."
+    },
+    {
+      "parent_id": "CGA-I-023",
+      "parent_name": "Rigid-flex transition",
+      "parent_kernel": "VGK-036",
+      "implementation_state": "RIGID_FLEX_CHILD_STACKS_AND_TRANSITION_GEOMETRY_REQUIRED",
+      "child_slots": [
+        {
+          "slot": "rigid_stack",
+          "multiplicity": "1+",
+          "role": "rigid multilayer island",
+          "kernel_candidates": [
+            "VGK-036"
+          ],
+          "required": true
+        },
+        {
+          "slot": "flex_stack",
+          "multiplicity": "1+",
+          "role": "integrated flexible interconnect",
+          "kernel_candidates": [
+            "VGK-036"
+          ],
+          "required": true
+        },
+        {
+          "slot": "transition_structure",
+          "multiplicity": "1+",
+          "role": "taper/stiffener/coverlay/keepout transition",
+          "kernel_candidates": [
+            "VGK-017",
+            "VGK-018",
+            "VGK-029"
+          ],
+          "required": true
+        },
+        {
+          "slot": "conductor_continuity",
+          "multiplicity": "1+",
+          "role": "copper/printed conductor through transition",
+          "kernel_candidates": [
+            "VGK-001",
+            "VGK-002",
+            "VGK-011"
+          ],
+          "required": true
+        }
+      ],
+      "parent_interfaces": [
+        "rigid-to-flex stack order",
+        "neutral-axis transition",
+        "ground/reference continuity",
+        "component/service keepouts"
+      ],
+      "verification": [
+        "transition continuity",
+        "bend/strain cycling",
+        "section/registration",
+        "ground/impedance continuity if consequential"
+      ],
+      "boundary": "The rigid and flex child stacks are themselves decomposed UTP-138 parent templates; exact layer stacks remain implementation-specific."
+    }
+  ],
+  "authority_boundary": "These are decomposition templates only. They make compound parents printable as stack grammars without pretending each parent has one universal geometry. Exact child selection, values, source/lots, geometry, process, calibration and tests remain unresolved until an implementation binds them."
+}
