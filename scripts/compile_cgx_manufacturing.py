@@ -17,6 +17,11 @@ from cgx.manufacturing import (
     find_instance,
     load_default_atlas,
     load_default_instance_population,
+    resolve_binding_gate,
+    resolve_binding_queue,
+    validate_lot_passport,
+    validate_tool_manifest,
+    create_witness_coupon_packet,
 )
 
 
@@ -52,6 +57,30 @@ def main() -> None:
     comp.add_argument("--build-id")
     comp.add_argument("--output")
 
+    bind = sub.add_parser("binding")
+    bind.add_argument("--instance-id")
+    bind.add_argument("--queue", action="store_true")
+    bind.add_argument("--instance-population")
+    bind.add_argument("--output")
+
+    lot = sub.add_parser("lot-passport")
+    lot.add_argument("--passport", required=True)
+    lot.add_argument("--output")
+
+    tool = sub.add_parser("tool-manifest")
+    tool.add_argument("--manifest", required=True)
+    tool.add_argument("--output")
+
+    coupon = sub.add_parser("witness-packet")
+    coupon.add_argument("--instance-id", required=True)
+    coupon.add_argument("--instance-population")
+    coupon.add_argument("--geometry")
+    coupon.add_argument("--lot-refs")
+    coupon.add_argument("--process")
+    coupon.add_argument("--tool-manifest", action="append", default=[])
+    coupon.add_argument("--measurement-method")
+    coupon.add_argument("--output")
+
     gc = sub.add_parser("gcode")
     gc.add_argument("--toolpath", required=True)
     gc.add_argument("--machine", required=True)
@@ -81,6 +110,35 @@ def main() -> None:
             required_scopes=args.required_scope,
             process_conditions=args.process_condition,
             parameter_overrides=load_optional(args.overrides),
+        )
+        write_output(out, args.output)
+    elif args.cmd == "binding":
+        population = load_optional(args.instance_population) or load_default_instance_population()
+        if args.queue:
+            out = resolve_binding_queue(population)
+        else:
+            if not args.instance_id:
+                raise SystemExit("binding requires --instance-id or --queue")
+            out = resolve_binding_gate(find_instance(population, args.instance_id), population=population)
+        write_output(out, args.output)
+    elif args.cmd == "lot-passport":
+        write_output(validate_lot_passport(load_optional(args.passport)), args.output)
+    elif args.cmd == "tool-manifest":
+        write_output(validate_tool_manifest(load_optional(args.manifest)), args.output)
+    elif args.cmd == "witness-packet":
+        population = load_optional(args.instance_population) or load_default_instance_population()
+        instance = find_instance(population, args.instance_id)
+        lot_refs_payload = load_optional(args.lot_refs) if args.lot_refs else []
+        if isinstance(lot_refs_payload, dict):
+            lot_refs_payload = lot_refs_payload.get("lot_refs", [])
+        tools = [load_optional(p) for p in args.tool_manifest]
+        out = create_witness_coupon_packet(
+            instance,
+            geometry=load_optional(args.geometry),
+            lot_refs=lot_refs_payload,
+            process=load_optional(args.process),
+            tool_manifests=tools,
+            measurement_method=load_optional(args.measurement_method),
         )
         write_output(out, args.output)
     else:
