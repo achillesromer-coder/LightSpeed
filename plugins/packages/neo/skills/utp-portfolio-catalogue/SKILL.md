@@ -167,3 +167,20 @@ Before selecting a new material, source, component, recipe or test path for a co
 - Prefer `--instance-id` through the CGX manufacturing compiler where available so filespace/dataspace output carries the existing source/material state.
 - On conflict between older frontier candidates and a later owner-selected variant, preserve both as lineage and follow the current owner choice unless an explicit owner change supersedes it.
 - Never create a duplicate CGXI instance, source-selection record or recipe merely because another lane lacks the latest mirror; reconcile the mirror instead.
+
+### Exact-binding bridge / first-open-gate rule
+
+Before new sourcing, procurement research, geometry optimisation, simulation expansion, coupon design or machine-code work for an existing CGXI, resolve the current owner-synced instance through `BUILD-068 / UTP-131..135`.
+
+Preferred implementation when available:
+- `scripts/compile_cgx_manufacturing.py binding --instance-id <CGXI>` for one instance;
+- `scripts/compile_cgx_manufacturing.py binding --queue` for the dependency-ordered current queue.
+
+Rules:
+- preserve `SOURCE_CANDIDATE_BOUND` and other already-closed progress; do not restart supplier/source selection unless the current first-open gate actually requires a replacement source;
+- produce evidence only for the earliest consequential open gate: source identity, requirement target, exact lot/passport, process route, geometry, tool/calibration, test method, hash freeze, or upstream evidence;
+- exact lot/batch numbers, labels, calibration records and installed-device identities must come from observed/source evidence; never invent them;
+- source-only Printer-mu or Printception candidates are comparison inputs, not installed PC01 capability or approved BOM lines;
+- `CGXI-P3-LC-001` waits on measured P2 L/C evidence; do not bypass that dependency with a fresh resonator design;
+- a witness packet may become `DIGITAL_PACKET_READY` after its prerequisites are structurally bound, but physical execution remains a separate owner/safety/test gate;
+- after each new receipt, append/revise the existing CGXI/.cgx lineage and re-run the binding resolver rather than creating a parallel record.

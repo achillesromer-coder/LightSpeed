@@ -1,0 +1,72 @@
+{
+  "schema": "CGX-EXACT-BINDING-BRIDGE-CONTRACT/0.1",
+  "date": "2026-10-09",
+  "status": "DRIVE-OWNED-UTP-131..135 / BUILD-068 / GIT-IMPLEMENTATION-MIRROR / PHYSICAL-NOT-RUN",
+  "authority": {
+    "drive_workbook": "Type 1 Romer Cognigrex",
+    "node_horizon": [
+      "CGX-BIND-RESOLVER-001",
+      "CGX-LOT-PASSPORT-001",
+      "CGX-TOOL-CAP-001",
+      "CGX-WITNESS-COUPON-001",
+      "CGX-MACHINE-ENVELOPE-001"
+    ],
+    "portfolio": "UTP-131..135",
+    "queue_id": "BUILD-068",
+    "parent_contracts": [
+      "UTP-106",
+      "UTP-107",
+      "UTP-124..130",
+      "CGX-MFG-IR-001",
+      "PC01-BUILD-CLOSURE-001"
+    ]
+  },
+  "cross_lane_inputs": {
+    "owner_instances": "31_CGX_Component_Instance_Register_v0_1!A1:AI9",
+    "source_reconciliation": "cgx/component_atlas/component_source_binding_reconciliation_v0_1.json",
+    "printer_mu_candidates": "Cognigrex Frontier RaphaelUTP PMU-CAND-001..012; SOURCE_ONLY until actual selection",
+    "printception_circular": "internal frontier circular capability/metrology overlay; architecture candidate only",
+    "eco_rpet_coupon": "UTP-ECO-RPET-REF-001; digital test plan only"
+  },
+  "gate_classes": [
+    "SOURCE_IDENTITY",
+    "REQUIREMENT_TARGET",
+    "LOT_PASSPORT",
+    "GEOMETRY",
+    "PROCESS_ROUTE",
+    "TOOL_CALIBRATION",
+    "TEST_METHOD",
+    "HASH_FREEZE",
+    "UPSTREAM_EVIDENCE",
+    "TEST_EXECUTION",
+    "CLOSED"
+  ],
+  "initial_expected": {
+    "CGXI-P0-SH01-ID-A": "SOURCE_IDENTITY",
+    "CGXI-P1-TRACE-001": "LOT_PASSPORT",
+    "CGXI-P1-VIA-001": "PROCESS_ROUTE",
+    "CGXI-P2-R-001": "LOT_PASSPORT",
+    "CGXI-P2-C-001": "LOT_PASSPORT",
+    "CGXI-P2-L-001": "LOT_PASSPORT",
+    "CGXI-P3-LC-001": "UPSTREAM_EVIDENCE",
+    "CGXI-P3-LOOP-001": "LOT_PASSPORT"
+  },
+  "anti_duplication": "Resolve existing CGXI and source-candidate state first; generate evidence only for the first unresolved consequential gate; append receipts/revisions rather than restarting source selection.",
+  "physical_boundary": "No binding resolution, lot passport schema, tool manifest, machine envelope or witness packet constitutes physical execution, qualification, certification or BUILD_READY by itself.",
+  "owner_requirement_target_closures": {
+    "CGXI-P2-R-001": {
+      "state": "REVIEWED_REQUIREMENT_TARGET / PHYSICAL_NOT_RUN",
+      "target": "1.0 kΩ nominal passive printed-resistor first-proof coupon",
+      "acceptance_intent": "±20% after declared cure plus dimensional/adhesion pass",
+      "service": "H-TERR-SITE / lab ambient; no power-rating or application-certification claim",
+      "next_gate": "LOT_PASSPORT"
+    },
+    "CGXI-P3-LOOP-001": {
+      "state": "REVIEWED_REQUIREMENT_TARGET / PHYSICAL_NOT_RUN",
+      "target": "13.56 MHz passive near-field identity/coupling development loop",
+      "acceptance_intent": "resonant/coupling feature within ±5% in a declared nearby-body fixture",
+      "service": "receive/couple characterization only; no transmit-power/range/exposure/certification claim",
+      "next_gate": "LOT_PASSPORT"
+    }
+  }
+}

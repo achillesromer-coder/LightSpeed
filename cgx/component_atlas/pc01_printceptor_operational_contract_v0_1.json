@@ -1,17 +1,17 @@
 {
   "schema": "CGX-PC01-PRINTCEPTOR-OPERATIONAL/0.1",
   "date": "2026-10-09",
-  "status": "DIGITAL_CONTRACT / ROUTE_COMPILER_EXPANDED / PHYSICAL_PC01_NOT_BUILT / BUILD_READY_OPEN",
+  "status": "DIGITAL_CONTRACT / ROUTE+EXACT_BINDING_EXPANDED / PHYSICAL_PC01_NOT_BUILT / BUILD_READY_OPEN",
   "authority": {
     "drive_workbook": "Type 1 Romer Cognigrex",
     "drive_spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
-    "node_horizon_range": "25_CGX_Node_Horizon_v0_1!A44:N51",
-    "portfolio_range": "26_CGX_Portfolio_Delivery_v0_1!A61:P74",
-    "operational_matrix_range": "33_PC01_CGX_Operational_Matrix_v0_1!A1:AD52",
-    "build_queue_range": "95_NEXT_BUILD_QUEUE_v1_0!A65:N66",
-    "queue_id": "BUILD-066",
+    "node_horizon_range": "25_CGX_Node_Horizon_v0_1!A44:N62",
+    "portfolio_range": "26_CGX_Portfolio_Delivery_v0_1!A61:P86",
+    "operational_matrix_range": "33_PC01_CGX_Operational_Matrix_v0_1!A1:AD67",
+    "build_queue_range": "95_NEXT_BUILD_QUEUE_v1_0!A65:N68",
+    "queue_id": "BUILD-068",
     "rule": "Drive owns engineering/evidence content. Git is a typed implementation mirror and cannot raise evidence or execution authority.",
-    "parent_queue_id": "BUILD-065"
+    "parent_queue_id": "BUILD-067"
   },
   "identity": {
     "node_id": "PC01-NODE-001",
@@ -206,5 +206,24 @@
     "portfolio_id": "UTP-123",
     "profile_ref": "pc01_secure_host_profile_v0_1.json",
     "rule": "Heavy local reasoning/simulation/render belongs on eligible secure hosts; do not propagate unrestricted agents to low-capability or child-oriented endpoints."
+  },
+  "exact_binding_bridge": {
+    "portfolio_ids": [
+      "UTP-131",
+      "UTP-132",
+      "UTP-133",
+      "UTP-134",
+      "UTP-135"
+    ],
+    "matrix_ids": "PC01-MX-060..066",
+    "contracts": [
+      "CGX-BIND-RESOLVER-001",
+      "CGX-LOT-PASSPORT-001",
+      "CGX-TOOL-CAP-001",
+      "CGX-WITNESS-COUPON-001",
+      "CGX-MACHINE-ENVELOPE-001"
+    ],
+    "current_owner_state": "8 initial CGXI remain UNBOUND/NOT_RUN; 6 preserve SOURCE_CANDIDATE_BOUND progress.",
+    "rule": "Resolve the existing instance first and advance only its first unresolved consequential gate. Exact lots, process/tool/calibration and measurements remain observed-evidence requirements."
   }
 }
