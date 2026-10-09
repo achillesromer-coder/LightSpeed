@@ -150,6 +150,9 @@ class OwnerLoginAttemptLimiter:
 
     def retry_after_seconds(self) -> int:
         with self._lock:
+            # An unlocked counter must retain previous failures across requests.
+            if self._held_until <= 0:
+                return 0
             remaining = self._held_until - self._clock()
             if remaining <= 0:
                 self._held_until = 0.0
