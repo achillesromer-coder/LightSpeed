@@ -192,7 +192,7 @@ const renderPrintable4d = (p: CgxReviewProjection): string => `
       </div>
     </div>
     <div class="boundary"><strong>Compiler invariants</strong><span>${p.printable_4d.invariants.map(esc).join(" · ")}</span></div>
-    <div class="boundary"><strong>${esc(p.printable_4d.compound_decomposition.count)} compound-parent grammars</strong><span>${esc(p.printable_4d.compound_decomposition.state)} · ${p.printable_4d.compound_decomposition.parents.map(esc).join(" · ")}</span></div>
+    <div class="boundary"><strong>${String(p.printable_4d.compound_decomposition.count)} compound-parent grammars</strong><span>${esc(p.printable_4d.compound_decomposition.state)} · ${p.printable_4d.compound_decomposition.parents.map(esc).join(" · ")}</span></div>
     <p class="muted">${esc(p.printable_4d.compound_decomposition.rule)}</p>
   </section>`;
 
