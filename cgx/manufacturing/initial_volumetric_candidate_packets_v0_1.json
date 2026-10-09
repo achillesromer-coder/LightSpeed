@@ -1,0 +1,60 @@
+{
+  "schema": "CGX-INITIAL-VOLUMETRIC-CANDIDATE-PACKETS/0.1",
+  "date": "2026-10-09",
+  "queue_id": "BUILD-069",
+  "owner": "Type 1 Romer Cognigrex / UTP-137",
+  "state": "DIGITAL_TOPOLOGY_CANDIDATES / PHYSICAL_NOT_RUN",
+  "packets": [
+    {
+      "instance_id": "CGXI-P2-R-001",
+      "target": "1.0 kΩ nominal ±20% first-proof characterization intent",
+      "topology_kernel_ids": [
+        "VGK-035"
+      ],
+      "compiler_tokens": [
+        "VOL_HEATER_EMBEDDED"
+      ],
+      "state": "SYMBOLIC / HOLD_EXACT_LOT_PROCESS_GEOMETRY_TOOL",
+      "note": "Resistive-path geometry is selected at the topology-family level only. Exact blend, lot, cured sheet resistance/TCR, dimensions and process/tool remain open."
+    },
+    {
+      "instance_id": "CGXI-P2-C-001",
+      "target": "parallel-plate capacitor coupon using current 25 µm Kapton HN candidate",
+      "topology_kernel_ids": [
+        "VGK-003"
+      ],
+      "compiler_tokens": [
+        "VOL_CAP_PARALLEL_PLATE"
+      ],
+      "state": "SYMBOLIC / ENGINEERING_INFERENCE_ONLY / HOLD_EXACT_LOT_GEOMETRY_PROCESS_TEST",
+      "note": "Ideal source-candidate C/A≈1.2041695 pF/mm² at nominal 25 µm and εr≈3.4 is not measured instance capacitance, breakdown, leakage, loss or lifetime."
+    },
+    {
+      "instance_id": "CGXI-P2-L-001",
+      "target": "air-core inductive coupon with DCR/L/Q characterization",
+      "topology_kernel_ids": [
+        "VGK-008",
+        "VGK-010"
+      ],
+      "compiler_tokens": [
+        "VOL_IND_SOLENOID",
+        "VOL_IND_MATRIX"
+      ],
+      "state": "HOLD_TOPOLOGY_CHOICE / HOLD_EXACT_LOT_MACHINE_GEOMETRY_TOOL",
+      "note": "Do not select the long-solenoid approximation until actual geometry/regime supports it; otherwise use general 3D inductance matrix/field solve."
+    },
+    {
+      "instance_id": "CGXI-P3-LOOP-001",
+      "target": "13.56 MHz passive near-field coupling ±5% first-proof intent",
+      "topology_kernel_ids": [
+        "VGK-012"
+      ],
+      "compiler_tokens": [
+        "VOL_RF_LOOP"
+      ],
+      "state": "SYMBOLIC / HOLD_EXACT_LOT_GEOMETRY_FIXTURE",
+      "note": "Band/function is reviewed; exact loop dimensions, material state, nearby-body fixture, calibrated port and loss remain open. No transmit/range/exposure claim."
+    }
+  ],
+  "authority_boundary": "These packets resolve topology families only. They do not create lot passports, frozen geometry, machine capability, calibration, measured properties, BUILD_READY, physical execution or certification."
+}
