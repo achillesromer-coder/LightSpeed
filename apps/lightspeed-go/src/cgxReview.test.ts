@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import projection from "../public/data/cgx_internal_review_projection.json";
-import { renderCgxReviewProjection, type CgxReviewProjection } from "./cgxReview";
+import { renderCgxReviewProjection } from "./cgxReview";
 
 describe("CGX internal review lens", () => {
   it("projects the existing BUILD-068 queue without creating parallel state", () => {
@@ -30,7 +30,7 @@ describe("CGX internal review lens", () => {
   });
 
   it("renders internal and showcase-safe lenses with explicit publication boundary", () => {
-    const html = renderCgxReviewProjection(projection as CgxReviewProjection);
+    const html = renderCgxReviewProjection(projection);
     expect(html).toContain(".cgx interactive review lens");
     expect(html).toContain("CGXI queue");
     expect(html).toContain("Equation kernels");
