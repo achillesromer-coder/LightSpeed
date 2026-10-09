@@ -52,7 +52,7 @@
     "UTP-119 circular-feed reference control",
     "UTP-124 parametric stack/inference compiler",
     "UTP-125 manufacturing IR compiler",
-    "UTP-131 primitive equation/constitutive kernel"
+    "UTP-136 primitive equation/constitutive kernel"
   ],
   "inference_example": {
     "label": "Ideal parallel-plate baseline",
