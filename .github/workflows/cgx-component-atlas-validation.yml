@@ -4,18 +4,28 @@ on:
   pull_request:
     paths:
       - "cgx/component_atlas/**"
+      - "cgx/manufacturing/**"
       - "tests/test_cgx_component_atlas.py"
       - "tests/test_cgx_component_instance_contract.py"
+      - "tests/test_pc01_printceptor_contract.py"
+      - "tests/test_cgx_manufacturing_compiler.py"
+      - "scripts/compile_cgx_manufacturing.py"
       - "docs/engineering/CGX_COMPONENT_GEOMETRY_ATLAS_2026-10-08.md"
+      - "docs/engineering/PC01_PRINTCEPTOR_OPERATIONAL_CONVERGENCE_2026-10-09.md"
       - ".github/workflows/cgx-component-atlas-validation.yml"
   push:
     branches:
       - main
     paths:
       - "cgx/component_atlas/**"
+      - "cgx/manufacturing/**"
       - "tests/test_cgx_component_atlas.py"
       - "tests/test_cgx_component_instance_contract.py"
+      - "tests/test_pc01_printceptor_contract.py"
+      - "tests/test_cgx_manufacturing_compiler.py"
+      - "scripts/compile_cgx_manufacturing.py"
       - "docs/engineering/CGX_COMPONENT_GEOMETRY_ATLAS_2026-10-08.md"
+      - "docs/engineering/PC01_PRINTCEPTOR_OPERATIONAL_CONVERGENCE_2026-10-09.md"
       - ".github/workflows/cgx-component-atlas-validation.yml"
 
 jobs:
@@ -32,13 +42,17 @@ jobs:
         run: python -m pytest -q tests/test_cgx_component_atlas.py
       - name: Validate component instance and proof contracts
         run: python -m pytest -q tests/test_cgx_component_instance_contract.py
+      - name: Validate PC01 PrintCeptor contracts
+        run: python -m pytest -q tests/test_pc01_printceptor_contract.py
+      - name: Validate CGX manufacturing compiler
+        run: python -m pytest -q tests/test_cgx_manufacturing_compiler.py
       - name: Validate JSON syntax
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
-          base = Path("cgx/component_atlas")
-          for path in sorted(base.glob("*.json")):
-              json.loads(path.read_text(encoding="utf-8"))
-          print("CGX component atlas JSON validation PASS")
+          for base in (Path("cgx/component_atlas"), Path("cgx/manufacturing")):
+              for path in sorted(base.glob("*.json")):
+                  json.loads(path.read_text(encoding="utf-8"))
+          print("CGX component/manufacturing JSON validation PASS")
           PY

@@ -1,0 +1,52 @@
+{
+  "schema": "CGX-PC01-BUILD-READINESS/0.1",
+  "date": "2026-10-09",
+  "status": "DEFINED / CURRENT_PC01_NOT_BUILD_READY",
+  "authority": {
+    "drive_ref": "PC01-BUILD-CLOSURE-001 / UTP-115 / BUILD-065"
+  },
+  "states": [
+    "PLANNED",
+    "DIGITAL_REVIEWABLE",
+    "BUILD_READY",
+    "BUILT",
+    "MEASURED",
+    "REVIEWED_PROMOTION",
+    "FAILED_OR_HELD"
+  ],
+  "hard_dimensions": [
+    "source_closure",
+    "geometry_closure",
+    "material_closure",
+    "process_closure",
+    "tool_closure",
+    "metrology_closure",
+    "simulation_closure",
+    "safety_closure",
+    "compute_closure",
+    "authority_closure",
+    "service_closure"
+  ],
+  "per_dimension_values": [
+    "PASS",
+    "FAIL",
+    "UNRESOLVED",
+    "NOT_APPLICABLE"
+  ],
+  "current_pc01": {
+    "state": "PLANNED",
+    "source_closure": "PARTIAL",
+    "geometry_closure": "UNRESOLVED",
+    "material_closure": "UNRESOLVED",
+    "process_closure": "ARCHITECTURE_ONLY",
+    "tool_closure": "FAMILY_LEVEL_ONLY",
+    "metrology_closure": "ARCHITECTURE_ONLY",
+    "simulation_closure": "NOT_RUN",
+    "safety_closure": "POLICY_DEFINED / MACHINE_SPECIFIC_OPEN",
+    "compute_closure": "POLICY_DEFINED / HARDWARE_PROFILE_OPEN",
+    "authority_closure": "OWNER/ROLE MODEL_DEFINED / EXECUTION_OPEN",
+    "service_closure": "ARCHETYPE_DEFINED / PC01_DETAIL_OPEN",
+    "physical_state": "NOT_BUILT"
+  },
+  "promotion_rule": "BUILD_READY requires every applicable hard dimension PASS on one frozen configuration. No composite score or average may mask a FAIL or UNRESOLVED hard dependency."
+}
