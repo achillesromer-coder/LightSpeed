@@ -12,6 +12,11 @@ describe("CGX internal review lens", () => {
     expect(projection.volumetric_kernels).toHaveLength(40);
     expect(projection.metrics.volumetric_kernels).toBe(40);
     expect(projection.metrics.printable_4d_templates).toBe(411);
+    expect(projection.metrics.quantitative_invariants).toBe(7);
+    expect(projection.metrics.smart_stack_regions).toBe(12);
+    expect(projection.quantitative_invariants.records).toHaveLength(7);
+    expect(projection.dense_smart_stack.regions).toHaveLength(12);
+    expect(projection.dense_smart_stack.coupled_kernel).toBe("VGK-036");
     expect(projection.topology_coverage.baseline_generic_only).toBe(143);
     expect(projection.topology_coverage.final_generic_only).toBe(9);
     expect(projection.topology_coverage.specific_or_multi).toBe(402);
@@ -45,6 +50,10 @@ describe("CGX internal review lens", () => {
     expect(html).toContain("Equation kernels");
     expect(html).toContain("Volumetric kernels");
     expect(html).toContain("Printable 4D");
+    expect(html).toContain("Invariants + Smart Stack");
+    expect(html).toContain("INV-CAP-DENSITY-001");
+    expect(html).toContain("1.2041695 pF/mm²");
+    expect(html).toContain("REG-SAFE");
     expect(html).toContain("411");
     expect(html).toContain("CGX-PRINTABLE-4D-COMPONENT/0.1");
     expect(html).toContain("VGK-036");
@@ -62,6 +71,9 @@ describe("CGX internal review lens", () => {
     expect(projection.printable_4d.invariants.join(" ")).toContain("Parameter slots may remain open");
     expect(projection.printable_4d.invariants.join(" ")).toContain("machine programs remain unavailable");
     expect(projection.printable_4d.exact_examples.every((item) => item.state.includes("HOLD"))).toBe(true);
+    expect(projection.quantitative_invariants.state).toContain("PHYSICAL_NOT_RUN");
+    expect(projection.dense_smart_stack.regions.find((item) => item.id === "REG-SAFE")?.state).toBe("HOLD");
+    expect(projection.dense_smart_stack.regions.find((item) => item.id === "REG-SEED")?.state).toBe("INSERT_SEED");
   });
 
   it("keeps showcase-safe content free of owner credentials and local paths", () => {
