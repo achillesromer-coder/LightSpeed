@@ -11,34 +11,36 @@ export type ReviewObject = {
   stats?: { vertices: number; faces: number; extents: number[]; bytes: number };
 };
 
-export type PrintableCatalogueRow = {
-  archetype_id: string;
-  domain?: string;
-  family?: string;
-  name?: string;
-  print_path?: string;
-  packet_state?: string;
-  topology_kernel_ids?: string[];
-  topology_tokens?: string[];
-  geometry_parameter_slots?: string[];
-  candidate_material_stack?: string;
-  ports_interfaces?: string;
-  consequential_optional_scopes?: string[];
-  operation_sequence?: string[];
-  acceptance_tests?: string;
-  failure_modes?: string;
-  evidence_state?: string;
-  source_authority_class?: string;
-  physical_execution: false;
+export type ComponentAtlasRecord = {
+  ID: string;
+  Domain?: string;
+  Family?: string;
+  "Component Archetype"?: string;
+  "Primary Function"?: string;
+  "Baseline Geometry"?: string;
+  "Geometric Parameters"?: string;
+  "Typical Material Stack"?: string;
+  "Primary Physics"?: string;
+  "Baseline Model / Equation"?: string;
+  "Ports / Interfaces"?: string;
+  "Current Manufacturing Route"?: string;
+  "Current CGX Build Class"?: string;
+  "Scale Band"?: string;
+  "4D Fields"?: string;
+  "Raphael Search Variables"?: string;
+  "Acceptance Tests"?: string;
+  "Failure Modes"?: string;
+  "Evidence State"?: string;
+  "Source Authority Class"?: string;
+  "Existing CGX Links"?: string;
+  Notes?: string;
 };
 
-export type PrintableCatalogue = {
+export type ComponentAtlas = {
   schema: string;
-  artifact_id: string;
-  archetype_count: number;
-  compound_parent_decomposition_count: number;
-  records: PrintableCatalogueRow[];
-  authority_boundary: string;
+  status: string;
+  record_count: number;
+  records: ComponentAtlasRecord[];
 };
 
 export type ObjectReviewCatalogue = {
@@ -60,7 +62,7 @@ export type ObjectReviewCatalogue = {
   tiers: Array<{ id: string; label: string; description: string }>;
   micro_review_objects: ReviewObject[];
   macro_review_objects: ReviewObject[];
-  catalogue_ref: string;
+  atlas_ref: string;
   pending_owner_layers: string[];
   boundary: string;
 };
@@ -92,31 +94,31 @@ const card = (item: ReviewObject): string => `
     </div>
   </article>`;
 
-const printableTable = (catalogue: PrintableCatalogue): string => `
+const atlasTable = (atlas: ComponentAtlas): string => `
   <div class="object-catalogue-controls">
-    <input id="object-catalogue-filter" type="search" placeholder="Filter 411 printable components by ID, family, topology, print path…" />
-    <span class="badge" id="object-catalogue-count">${catalogue.records.length} / ${catalogue.records.length}</span>
+    <input id="object-catalogue-filter" type="search" placeholder="Filter 411 components by ID, family, geometry, route, physics…" />
+    <span class="badge" id="object-catalogue-count">${atlas.records.length} / ${atlas.records.length}</span>
   </div>
   <div class="table-scroll">
     <table class="graph-table object-catalogue-table">
-      <thead><tr><th>ID</th><th>Component</th><th>Print path</th><th>Topology</th><th>Geometry slots</th><th>Evidence</th></tr></thead>
+      <thead><tr><th>ID</th><th>Component</th><th>Build / route</th><th>Geometry</th><th>4D / physics</th><th>Evidence</th></tr></thead>
       <tbody>
-        ${catalogue.records.map((row) => `<tr data-printable-row data-search="${esc([
-          row.archetype_id,row.domain,row.family,row.name,row.print_path,
-          ...(row.topology_kernel_ids || []),...(row.topology_tokens || []),
+        ${atlas.records.map((row) => `<tr data-printable-row data-search="${esc([
+          row.ID,row.Domain,row.Family,row["Component Archetype"],row["Current CGX Build Class"],
+          row["Current Manufacturing Route"],row["Baseline Geometry"],row["Primary Physics"],row["4D Fields"],
         ].filter(Boolean).join(" ").toLowerCase())}">
-          <td><strong>${esc(row.archetype_id)}</strong><small>${esc(row.domain || "")}</small></td>
-          <td>${esc(row.name || "")}<small>${esc(row.family || "")}</small></td>
-          <td><span class="badge">${esc(row.print_path || "")}</span><small>${esc(row.packet_state || "")}</small></td>
-          <td>${(row.topology_kernel_ids || []).map((v) => `<span class="state-chip">${esc(v)}</span>`).join(" ")}<small>${(row.topology_tokens || []).map(esc).join(" · ")}</small></td>
-          <td>${(row.geometry_parameter_slots || []).map(esc).join(" · ") || "source/instance binding"}</td>
-          <td>${esc(row.evidence_state || "")}<small>${esc(row.source_authority_class || "")}</small></td>
+          <td><strong>${esc(row.ID)}</strong><small>${esc(row.Domain || "")}</small></td>
+          <td>${esc(row["Component Archetype"] || "")}<small>${esc(row.Family || "")} · ${esc(row["Primary Function"] || "")}</small></td>
+          <td><span class="badge">${esc(row["Current CGX Build Class"] || "")}</span><small>${esc(row["Current Manufacturing Route"] || "")}</small></td>
+          <td>${esc(row["Baseline Geometry"] || "")}<small>${esc(row["Geometric Parameters"] || "")}</small></td>
+          <td>${esc(row["Primary Physics"] || "")}<small>${esc(row["4D Fields"] || "")}</small></td>
+          <td>${esc(row["Evidence State"] || "")}<small>${esc(row["Source Authority Class"] || "")}</small></td>
         </tr>`).join("")}
       </tbody>
     </table>
   </div>`;
 
-export const renderObjectReview = (manifest: ObjectReviewCatalogue, catalogue: PrintableCatalogue): string => `
+export const renderObjectReview = (manifest: ObjectReviewCatalogue, atlas: ComponentAtlas): string => `
   <article class="panel object-review-panel">
     <div class="panel-head">
       <div><p class="eyebrow">CGX object review catalogue</p><h2>Component → stack → Luke / Mark / InterSol</h2></div>
@@ -124,9 +126,9 @@ export const renderObjectReview = (manifest: ObjectReviewCatalogue, catalogue: P
     </div>
     <p class="muted">${esc(manifest.authority)}</p>
     <div class="graph-summary">
-      ${metric(manifest.coverage.printable_4d_archetypes, "printable 4D archetypes")}
-      ${metric(manifest.coverage.symbolic_core_component_stack_plates, "CGX symbolic 4K plates")}
-      ${metric(manifest.coverage.macro_source_meshes, "source-mesh 4K plates")}
+      ${metric(manifest.coverage.printable_4d_archetypes, "component archetypes")}
+      ${metric(manifest.coverage.symbolic_core_component_stack_plates, "CGX vector review plates")}
+      ${metric(manifest.coverage.macro_source_meshes, "source-mesh vector plates")}
       ${metric(manifest.coverage.physical_tests_complete, "physical tests complete")}
     </div>
     <div class="flow">${manifest.tiers.map((t) => `<span title="${esc(t.description)}">${esc(t.id)} · ${esc(t.label)}</span>`).join("<i>→</i>")}</div>
@@ -134,8 +136,8 @@ export const renderObjectReview = (manifest: ObjectReviewCatalogue, catalogue: P
 
     <div class="cgx-lens-tabs object-review-tabs" role="tablist" aria-label="Object review catalogue">
       <button class="active" type="button" data-object-review-tab="gallery">Review plates</button>
-      <button type="button" data-object-review-tab="catalogue">411 printable components</button>
-      <button type="button" data-object-review-tab="frontier">Pending owner layers</button>
+      <button type="button" data-object-review-tab="catalogue">411 component catalogue</button>
+      <button type="button" data-object-review-tab="frontier">Current frontier</button>
     </div>
 
     <section data-object-review-panel="gallery">
@@ -147,8 +149,8 @@ export const renderObjectReview = (manifest: ObjectReviewCatalogue, catalogue: P
     </section>
 
     <section data-object-review-panel="catalogue" hidden>
-      <div class="boundary"><strong>${esc(catalogue.schema)}</strong><span>${esc(catalogue.authority_boundary)}</span></div>
-      ${printableTable(catalogue)}
+      <div class="boundary"><strong>${esc(atlas.schema)}</strong><span>Canonical component atlas exposed as a read-only LS GO projection. Printable-4D packet, topology and invariant semantics remain in the adjacent CGX lens rather than being duplicated here.</span></div>
+      ${atlasTable(atlas)}
     </section>
 
     <section data-object-review-panel="frontier" hidden>
@@ -176,11 +178,11 @@ export const bindObjectReview = (root: HTMLElement): void => {
     cards.forEach((item)=>item.hidden=!!q && !(item.dataset.search || "").includes(q));
   });
 
-  const printable=root.querySelector<HTMLInputElement>("#object-catalogue-filter");
+  const componentFilter=root.querySelector<HTMLInputElement>("#object-catalogue-filter");
   const rows=[...root.querySelectorAll<HTMLTableRowElement>("[data-printable-row]")];
   const count=root.querySelector<HTMLElement>("#object-catalogue-count");
-  printable?.addEventListener("input",()=>{
-    const q=(printable.value || "").trim().toLowerCase();
+  componentFilter?.addEventListener("input",()=>{
+    const q=(componentFilter.value || "").trim().toLowerCase();
     let visible=0;
     rows.forEach((row)=>{
       const show=!q || (row.dataset.search || "").includes(q);
@@ -193,8 +195,8 @@ export const bindObjectReview = (root: HTMLElement): void => {
 
 export const loadObjectReview = async (
   loadManifest: () => Promise<ObjectReviewCatalogue>,
-  loadCatalogue: () => Promise<PrintableCatalogue>,
-): Promise<{ manifest: ObjectReviewCatalogue; catalogue: PrintableCatalogue; html: string }> => {
-  const [manifest,catalogue]=await Promise.all([loadManifest(),loadCatalogue()]);
-  return {manifest,catalogue,html:renderObjectReview(manifest,catalogue)};
+  loadAtlas: () => Promise<ComponentAtlas>,
+): Promise<{ manifest: ObjectReviewCatalogue; atlas: ComponentAtlas; html: string }> => {
+  const [manifest,atlas]=await Promise.all([loadManifest(),loadAtlas()]);
+  return {manifest,atlas,html:renderObjectReview(manifest,atlas)};
 };
