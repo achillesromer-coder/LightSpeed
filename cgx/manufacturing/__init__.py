@@ -36,4 +36,12 @@ __all__ = [
     "validate_lot_passport",
     "validate_tool_manifest",
     "create_witness_coupon_packet",
+    "find_volumetric_kernel",
+    "load_volumetric_kernel",
+    "resolve_volumetric_topology",
 ]
+from .volumetric import (
+    find_volumetric_kernel,
+    load_volumetric_kernel,
+    resolve_volumetric_topology,
+)

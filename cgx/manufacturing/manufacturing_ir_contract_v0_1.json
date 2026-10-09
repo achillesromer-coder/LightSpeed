@@ -1,10 +1,10 @@
 {
   "schema": "CGX-MANUFACTURING-IR-CONTRACT/0.1",
   "date": "2026-10-09",
-  "status": "DRIVE-OWNED-UTP-125..135 / BUILD-068 / GIT-IMPLEMENTATION-MIRROR / PHYSICAL-NOT-RUN",
+  "status": "DRIVE-OWNED-UTP-125..137 / BUILD-069 / GIT-IMPLEMENTATION-MIRROR / PHYSICAL-NOT-RUN",
   "authority": {
     "drive_workbook": "Type 1 Romer Cognigrex",
-    "portfolio": "UTP-125..135",
+    "portfolio": "UTP-125..137",
     "node_horizon": [
       "CGX-MFG-IR-001",
       "CGX-ENV-SCOPE-001",
@@ -18,15 +18,16 @@
       "CGX-WITNESS-COUPON-001",
       "CGX-MACHINE-ENVELOPE-001"
     ],
-    "queue_id": "BUILD-068",
+    "queue_id": "BUILD-069",
     "parent_contracts": [
       "CGX-COMPILER-001",
       "MRI4D-059",
       "UTP-106",
       "UTP-117",
-      "UTP-124"
+      "UTP-124",
+      "UTP-137"
     ],
-    "parent_queue_id": "BUILD-067"
+    "parent_queue_id": "BUILD-068"
   },
   "namespace": {
     "recipe": "cgx://manufacturing/recipe/<strategy>/<family>/<revision>",
@@ -65,7 +66,8 @@
     "one canonical parameterised recipe per process strategy/component family where possible",
     "assemblies reference child recipe/build URIs and store only placement, interface, dependency and override deltas",
     "machine dialect is generated late from a frozen manufacturing IR and current calibrated machine manifest",
-    "simulation refinement creates a new digital revision and never mutates prior reviewed evidence"
+    "simulation refinement creates a new digital revision and never mutates prior reviewed evidence",
+    "one 36-record volumetric topology kernel factors reusable geometry/boundary forms beneath the 411 archetypes; do not create per-archetype duplicate equations or 411×411 topology pairs"
   ],
   "minimal_scope_rule": "Solve only dimensions that can materially change process feasibility, component state, acceptance or safety. Exact source/process evidence may add scopes; it may not silently remove a consequential one.",
   "physical_boundary": "No compiler, simulation, schedule, render or generated program raises physical evidence or execution authority. Machine execution remains separately gated by BUILD_READY, exact machine/adapter/calibration identity, independent C0/interlocks and required owner/specialist authority.",
@@ -112,5 +114,20 @@
       "RECOMPILE"
     ],
     "rule": "Source-candidate progress is retained; no source, lot, tool/calibration, geometry, test or upstream gate is silently skipped or invented."
+  },
+  "volumetric_topology": {
+    "contract": "cgx/component_atlas/type1_volumetric_kernel_v0_1.json",
+    "owner_sheet": "35_CGX_Type1_Volumetric_Kernel_v0_1",
+    "record_count": 36,
+    "flow": [
+      "RESOLVE_PRIMITIVE_KERNEL",
+      "RESOLVE_VOLUMETRIC_TOPOLOGY",
+      "RESOLVE_BOUNDARY_INTERFACE_GRAPH",
+      "CHECK_DIRECTIONAL_PROCESS",
+      "BIND_INPUTS",
+      "NUMERIC_IF_OR_SYMBOLIC_OR_HOLD",
+      "TEST_FALSIFIER_READBACK"
+    ],
+    "rule": "The volumetric kernel is a topology/boundary factor beneath the same 411×60 owner matrix, not a second component catalogue or universal solver. Exact CGXI/lot/process/tool/test state remains authoritative."
   }
 }

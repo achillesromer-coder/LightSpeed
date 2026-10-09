@@ -7,6 +7,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
+from .volumetric import resolve_volumetric_topology
+
 ROOT = Path(__file__).resolve().parents[2]
 ATLAS_PATH = ROOT / "cgx" / "component_atlas" / "component_geometry_atlas_v0_1.json"
 INSTANCE_POPULATION_PATH = ROOT / "cgx" / "component_atlas" / "component_instance_population_v0_1.json"
@@ -438,6 +440,7 @@ def compile_component(
     operations = _operation_list(strategy, scopes)
     exact_ref = instance.get("instance_id") if instance else None
     recipe_uri = _recipe_uri(record, strategy)
+    volumetric = resolve_volumetric_topology(record, instance=instance)
 
     out: dict[str, Any] = {
         "schema": SCHEMA,
@@ -461,6 +464,7 @@ def compile_component(
         "scope_decision": scopes,
         "operations": operations,
         "simulation_refinement": sim,
+        "volumetric_topology": volumetric,
         "acceptance_tests": record.get("Acceptance Tests"),
         "failure_modes": record.get("Failure Modes"),
         "ports_interfaces": record.get("Ports / Interfaces"),
@@ -484,6 +488,7 @@ def compile_component(
             "geometry": record.get("Baseline Geometry"),
             "materials": record.get("Typical Material Stack"),
             "interfaces": record.get("Ports / Interfaces"),
+            "volumetric_topology_tokens": volumetric.get("compiler_tokens", []),
         },
         "blockers": sorted(set(blockers)),
         "compile_state": "DIGITAL_PLAN",

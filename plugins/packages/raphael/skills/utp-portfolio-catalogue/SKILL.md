@@ -184,3 +184,17 @@ Rules:
 - `CGXI-P3-LC-001` waits on measured P2 L/C evidence; do not bypass that dependency with a fresh resonator design;
 - a witness packet may become `DIGITAL_PACKET_READY` after its prerequisites are structurally bound, but physical execution remains a separate owner/safety/test gate;
 - after each new receipt, append/revise the existing CGXI/.cgx lineage and re-run the binding resolver rather than creating a parallel record.
+
+### Volumetric topology / BUILD-069 rule
+
+For component, stack, voxel, dense embedded, 3D/4D, internal-cavity, field-geometry or full-print reasoning, consume `UTP-137 / 35_CGX_Type1_Volumetric_Kernel_v0_1` through the existing manufacturing compiler after primitive/equation resolution and before numeric solve or geometry optimisation.
+
+- Treat `UTP-136` as the reusable constitutive/domain-physics layer and `UTP-137` as the reusable topology/geometry/boundary/orientation layer. They factor the same 411×60 owner matrix and are not competing catalogues or solvers.
+- Prefer the current exact CGXI mapping from `cgx.manufacturing.resolve_volumetric_topology` when an instance exists. Do not invent a fresh geometry family if the owner instance already has a reviewed topology candidate.
+- Use canonical closed forms only when their geometry/regime assumptions actually hold. For general embedded 3D cases use the appropriate field/matrix/network requirement: Maxwell capacitance matrix, self/mutual inductance matrix, distributed R′L′G′C′, sparse thermal/mechanical/fluid state networks, or the relevant domain solver.
+- Preserve internal substrate, cavities, voids, barriers, service corridors, fault-containment zones and seed-component volumes as functional geometry; do not flatten them into schematic-only representations.
+- A topology choice can be `RESOLVED_SYMBOLIC`, `HOLD_TOPOLOGY_CHOICE` or `HOLD_UPSTREAM_EVIDENCE`. Topology resolution does not close lot, machine-envelope, process, tool/calibration, test or BUILD_READY gates.
+- Any consequential geometry/material/process/boundary revision invalidates stale topology-specific numeric inference or field matrices and requires recompile/readback.
+- Compose cross-domain 4D models sparsely through declared interfaces only. Unsupported couplings remain HOLD; `VGK-036` is an assembly contract, not a claim of one universal governing equation.
+- Current first-proof mappings include: P2 resistor→VGK-035; P2 capacitor→VGK-003; P2 inductor→VGK-008/VGK-010 pending topology choice; P3 passive loop→VGK-012; P3 LC remains upstream-evidence blocked.
+- Physical, high-voltage, RF-power, pressure, reactive-chemistry, safety-certification and mission execution remain separately gated regardless of topology/model completeness.

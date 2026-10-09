@@ -32,7 +32,14 @@ def load_optional(path: str | None):
 
 
 def write_output(value, path: str | None) -> None:
-    text = value if isinstance(value, str) else json.dumps(value, indent=2, ensure_ascii=False) + "\n"
+    if isinstance(value, str):
+        text = value
+    elif path:
+        text = json.dumps(value, indent=2, ensure_ascii=False) + "\n"
+    else:
+        # Keep CLI/stdout JSON portable across Windows console code pages while
+        # preserving Unicode semantics via JSON escapes. File outputs remain UTF-8.
+        text = json.dumps(value, indent=2, ensure_ascii=True) + "\n"
     if path:
         Path(path).write_text(text, encoding="utf-8")
     else:

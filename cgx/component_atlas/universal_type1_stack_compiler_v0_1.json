@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-UNIVERSAL-TYPE1-STACK-COMPILER/0.2",
+  "schema": "CGX-UNIVERSAL-TYPE1-STACK-COMPILER/0.3",
   "artifact_id": "UTP-124",
   "title": "Universal Type-I Parametric Stack + Inference Compiler",
   "owner": {
@@ -12,7 +12,8 @@
     "interactions": "30_CGX_Component_Interaction_Map_v0_1",
     "operational_routes": "33_PC01_CGX_Operational_Matrix_v0_1",
     "manufacturing_ir": "cgx/manufacturing/manufacturing_ir_contract_v0_1.json",
-    "equation_kernel": "cgx/component_atlas/type1_equation_kernel_v0_1.json"
+    "equation_kernel": "cgx/component_atlas/type1_equation_kernel_v0_1.json",
+    "volumetric_kernel": "cgx/component_atlas/type1_volumetric_kernel_v0_1.json"
   },
   "matrix_contract": {
     "archetype_count": 411,
@@ -20,13 +21,16 @@
     "directional_fields": 16,
     "quantitative_factorization_fields": 8,
     "primitive_basis_classes": 20,
-    "equation_kernel_records": 20
+    "equation_kernel_records": 20,
+    "volumetric_topology_kernels": 36
   },
   "compile_chain": [
     "INTENT",
     "RESOLVE_ARCHETYPES_AND_INSTANCES",
     "MAP_PRIMITIVE_BASIS_AND_EQUIVALENT_NETWORK",
     "RESOLVE_PRIMITIVE_EQUATION_KERNEL",
+    "RESOLVE_VOLUMETRIC_TOPOLOGY",
+    "RESOLVE_BOUNDARY_INTERFACE_GRAPH",
     "ORDER_DIRECTIONAL_X_TO_Y_STACK",
     "CHECK_INTERFACES_AND_INTERLAYERS",
     "CHECK_VOXEL_PACKING_AND_PROCESS_RESOLUTION",
@@ -208,5 +212,12 @@
     "not recursive-manufacturing authority",
     "not permission to infer absent properties",
     "advanced silicon, MEMS, precision optoelectronics and certified protection remain seed/hybrid unless separately qualified"
-  ]
+  ],
+  "volumetric_policy": {
+    "role": "Equation/constitutive kernels define domain physics; volumetric kernels define topology, geometry, boundaries, embedding/orientation and matrix/field/network form.",
+    "canonical_closed_form": "Use only when the exact topology and governing assumptions are attributable and valid.",
+    "general_3d": "Use Maxwell capacitance matrices, inductance matrices, distributed R'L'G'C', sparse thermal/mechanical/fluid networks or other domain field models rather than forcing a simpler geometry law.",
+    "revision_rule": "Any consequential geometry/material/process/boundary revision invalidates stale topology-specific numeric inference or field matrices.",
+    "coupling_rule": "Only declared interfaces/couplings enter the sparse 4D assembly. Unsupported terms remain HOLD."
+  }
 }
