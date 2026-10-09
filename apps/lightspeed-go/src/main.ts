@@ -64,7 +64,7 @@ import {
 import { renderRepresentationGraphs } from "./representationGraphs";
 import { loadType1CatalogueProjection, type Type1CatalogueProjection } from "./utpCatalogue";
 import { bindCgxReviewProjection, loadCgxReviewProjection, type CgxReviewProjection } from "./cgxReview";
-import { bindObjectReview, loadObjectReview, type ObjectReviewCatalogue, type PrintableCatalogue } from "./objectReview";
+import { bindObjectReview, loadObjectReview, type ComponentAtlas, type ObjectReviewCatalogue } from "./objectReview";
 import { sourceLinks } from "./sourceRegistry";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
 
@@ -895,7 +895,7 @@ void refreshDesktop();
 
 const objectReviewMount = byId("object-review-catalogue");
 const objectReviewUrl = new URL("./data/cgx_object_review_catalogue.json", document.baseURI).toString();
-const printableCatalogueUrl = new URL("./data/printable_4d_catalogue_full.json", document.baseURI).toString();
+const componentAtlasUrl = new URL("./data/component_geometry_atlas_public_review.json", document.baseURI).toString();
 void loadObjectReview(
   async () => {
     const response = await fetch(objectReviewUrl, { cache: "no-store" });
@@ -903,9 +903,9 @@ void loadObjectReview(
     return (await response.json()) as ObjectReviewCatalogue;
   },
   async () => {
-    const response = await fetch(printableCatalogueUrl, { cache: "no-store" });
-    if (!response.ok) throw new Error(`Printable 4D catalogue returned HTTP ${response.status}`);
-    return (await response.json()) as PrintableCatalogue;
+    const response = await fetch(componentAtlasUrl, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Component atlas review projection returned HTTP ${response.status}`);
+    return (await response.json()) as ComponentAtlas;
   },
 ).then(({ html }) => {
   objectReviewMount.innerHTML = html;
