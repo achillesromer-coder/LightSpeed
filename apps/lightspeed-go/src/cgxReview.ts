@@ -24,6 +24,19 @@ export type CgxReviewProjection = {
   }>;
   kernels: Array<{ kernel_id: string; primitive: string; model: string; gate: string }>;
   volumetric_kernels: Array<{ kernel_id: string; primitive: string; topology: string; token: string; gate: string }>;
+  printable_4d: {
+    artifact_id: string;
+    state: string;
+    packet_schema: string;
+    stack_schema: string;
+    catalogue_schema: string;
+    template_count: number;
+    exact_instance_inputs: number;
+    coupled_stack_kernel: string;
+    print_paths: Array<{ id: string; role: string }>;
+    exact_examples: Array<{ instance_id: string; state: string; topology: string; next_gate: string }>;
+    invariants: string[];
+  };
   pipeline: Array<{ id: string; label: string; contract: string; state: string }>;
   showcase: {
     publication_state: string;
@@ -53,6 +66,7 @@ const renderOverview = (p: CgxReviewProjection): string => `
       ${metric(p.metrics.matrix_fields, "matrix fields")}
       ${metric(p.metrics.equation_kernels, "equation kernels")}
       ${metric(p.metrics.volumetric_kernels, "volumetric kernels")}
+      ${metric(p.metrics.printable_4d_templates, "printable 4D templates")}
       ${metric(p.metrics.initial_instances, "proof instances")}
       ${metric(p.metrics.requirement_targets_open, "open target gates")}
       ${metric(p.metrics.physical_tests_run, "physical tests complete")}
@@ -108,6 +122,36 @@ const renderVolumetricKernels = (p: CgxReviewProjection): string => `
     </div>
   </section>`;
 
+const renderPrintable4d = (p: CgxReviewProjection): string => `
+  <section class="cgx-lens-panel" data-cgx-lens-panel="printable" hidden>
+    <div class="panel-head">
+      <div><p class="eyebrow">UTP-138 · BUILD-070</p><h3>Printable 4D component + stack packets</h3></div>
+      <span class="badge">${esc(p.printable_4d.state)}</span>
+    </div>
+    <div class="graph-summary">
+      ${metric(p.printable_4d.template_count, "derived catalogue templates")}
+      ${metric(p.printable_4d.exact_instance_inputs, "current exact-instance inputs")}
+      ${metric(p.printable_4d.coupled_stack_kernel, "coupled stack kernel")}
+      ${metric("READ ONLY", "no machine authority")}
+    </div>
+    <p class="muted">Schemas: ${esc(p.printable_4d.packet_schema)} · ${esc(p.printable_4d.stack_schema)} · ${esc(p.printable_4d.catalogue_schema)}</p>
+    <div class="two-column">
+      <div>
+        <strong>Print paths</strong>
+        <div class="stack-list">
+          ${p.printable_4d.print_paths.map((path) => `<article class="task-card"><div><strong>${esc(path.id)}</strong><small>${esc(path.role)}</small></div></article>`).join("")}
+        </div>
+      </div>
+      <div>
+        <strong>Exact packet examples</strong>
+        <div class="stack-list">
+          ${p.printable_4d.exact_examples.map((item) => `<article class="task-card"><div><strong>${esc(item.instance_id)}</strong><span>${esc(item.state)}</span><small>${esc(item.topology)} · next: ${esc(item.next_gate)}</small></div></article>`).join("")}
+        </div>
+      </div>
+    </div>
+    <div class="boundary"><strong>Compiler invariants</strong><span>${p.printable_4d.invariants.map(esc).join(" · ")}</span></div>
+  </section>`;
+
 const renderShowcase = (p: CgxReviewProjection): string => `
   <section class="cgx-lens-panel" data-cgx-lens-panel="showcase" hidden>
     <div class="panel-head">
@@ -134,12 +178,14 @@ export const renderCgxReviewProjection = (p: CgxReviewProjection): string => `
       <button type="button" data-cgx-lens="instances">CGXI queue</button>
       <button type="button" data-cgx-lens="kernels">Equation kernels</button>
       <button type="button" data-cgx-lens="volumetric">Volumetric kernels</button>
+      <button type="button" data-cgx-lens="printable">Printable 4D</button>
       <button type="button" data-cgx-lens="showcase">Showcase-safe</button>
     </div>
     ${renderOverview(p)}
     ${renderInstances(p)}
     ${renderKernels(p)}
     ${renderVolumetricKernels(p)}
+    ${renderPrintable4d(p)}
     ${renderShowcase(p)}
     <p class="muted">${esc(p.boundary)}</p>
   </article>`;
