@@ -18,7 +18,8 @@ describe("Type-I catalogue projection", () => {
     expect(html).toContain("411 archetypes");
     expect(html).toContain("60 fields");
     expect(html).toContain("quantitative compiler fields");
-    expect(html).toContain("primitive basis classes");\n    expect(html).toContain("equation / constitutive kernels");
+    expect(html).toContain("primitive basis classes");
+    expect(html).toContain("equation / constitutive kernels");
     expect(html).toContain("UTP-124/125");
     expect(html).toContain("0.6020848 pF/mm2");
     expect(html).toContain("not physical readiness");
