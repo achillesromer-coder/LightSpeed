@@ -1,0 +1,213 @@
+{
+  "schema": "CGX-TYPE1-QUANTITATIVE-INVARIANT-LIBRARY/0.1",
+  "artifact_id": "UTP-139",
+  "title": "Universal Type-I Quantitative Invariant Library",
+  "status": "DIGITAL_ENGINEERING / NUMERIC_IF_OR_SYMBOLIC_OR_HOLD / PHYSICAL_NOT_RUN",
+  "owner": {
+    "drive_spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "portfolio_row": "26_CGX_Portfolio_Delivery_v0_1!A90:P90",
+    "queue_id": "BUILD-071",
+    "parent_contracts": [
+      "UTP-106",
+      "UTP-124",
+      "UTP-136",
+      "UTP-137",
+      "UTP-138"
+    ]
+  },
+  "rule": "Keep one reusable calculation library beneath the 411 archetype matrix. Numeric output is permitted only from attributable source/measurement inputs in a valid regime; otherwise retain SYMBOLIC/HOLD. Per-unit or dimensionless invariants never uplift ratings, BUILD_READY, certification or physical evidence.",
+  "invariants": [
+    {
+      "id": "INV-CAP-DENSITY-001",
+      "class": "CAPACITIVE_ELECTROSTATIC",
+      "equation": "C/A = epsilon0 * epsilon_r / d",
+      "inputs": [
+        "epsilon_r",
+        "thickness_um"
+      ],
+      "outputs": [
+        "capacitance_density_pF_per_mm2",
+        "capacitance_density_pF_per_cm2"
+      ],
+      "numeric_gate": "epsilon_r and thickness must be attributable for the declared state/frequency/environment; fringe, loss, leakage and voltage authority remain separate",
+      "sources": [
+        "UTP-106 / DuPont Kapton HN candidate"
+      ],
+      "fixtures": [
+        {
+          "name": "Kapton HN 25um",
+          "epsilon_r": 3.4,
+          "thickness_um": 25,
+          "expected_pF_per_mm2": 1.2041695425408
+        },
+        {
+          "name": "Kapton HN 50um",
+          "epsilon_r": 3.4,
+          "thickness_um": 50,
+          "expected_pF_per_mm2": 0.6020847712704
+        }
+      ]
+    },
+    {
+      "id": "INV-SHEET-R-001",
+      "class": "CONDUCTOR_INTERCONNECT/RESISTIVE_HEATER",
+      "equation": "R = Rs * L/W",
+      "inputs": [
+        "sheet_resistance_ohm_per_sq",
+        "length_to_width_ratio"
+      ],
+      "outputs": [
+        "resistance_ohm"
+      ],
+      "numeric_gate": "sheet resistance must be source-bound or measured for the exact cured state; contacts and geometry tolerances remain separate",
+      "sources": [
+        "LOCTITE ECI 1010 candidate ~0.007 ohm/sq at 25um typical"
+      ],
+      "fixtures": [
+        {
+          "name": "ECI1010 one-square baseline",
+          "sheet_resistance_ohm_per_sq": 0.007,
+          "length_to_width_ratio": 1,
+          "expected_resistance_ohm": 0.007
+        }
+      ]
+    },
+    {
+      "id": "INV-R-SQUARES-001",
+      "class": "RESISTIVE_HEATER",
+      "equation": "N_squares = R_target / Rs",
+      "inputs": [
+        "target_resistance_ohm",
+        "sheet_resistance_ohm_per_sq"
+      ],
+      "outputs": [
+        "required_squares"
+      ],
+      "numeric_gate": "Rs must belong to the selected blend/process state; this yields geometry factor only, not tolerance/TCR/power rating",
+      "sources": [
+        "LOCTITE ECI 7004LR/NCI 7002 source family ~50-5000 ohm/sq/25um"
+      ],
+      "fixtures": [
+        {
+          "name": "1k target at 50 ohm/sq",
+          "target_resistance_ohm": 1000,
+          "sheet_resistance_ohm_per_sq": 50,
+          "expected_required_squares": 20
+        },
+        {
+          "name": "1k target at 5000 ohm/sq",
+          "target_resistance_ohm": 1000,
+          "sheet_resistance_ohm_per_sq": 5000,
+          "expected_required_squares": 0.2
+        }
+      ]
+    },
+    {
+      "id": "INV-RL-001",
+      "class": "INDUCTIVE_MAGNETIC/ACTUATOR_MOTION",
+      "equation": "tau_e = L/R ; P_cu = I^2 R",
+      "inputs": [
+        "inductance_h",
+        "resistance_ohm",
+        "current_a"
+      ],
+      "outputs": [
+        "electrical_time_constant_s",
+        "copper_loss_w"
+      ],
+      "numeric_gate": "source/device values provide winding baseline only; torque-speed, thermal rise, drive state and actual axis load remain separate",
+      "sources": [
+        "PKP243D08B2 source example: 10mH/phase, 5.4ohm/phase, 0.85A/phase"
+      ],
+      "fixtures": [
+        {
+          "name": "PKP243D08B2 phase baseline",
+          "inductance_h": 0.01,
+          "resistance_ohm": 5.4,
+          "current_a": 0.85,
+          "expected_tau_s": 0.0018518518518518517,
+          "expected_copper_loss_w": 3.9015
+        }
+      ]
+    },
+    {
+      "id": "INV-AXIS-FORCE-001",
+      "class": "ACTUATOR_MOTION/STRUCTURE_DATUM",
+      "equation": "F_required = m*a + F_process + F_losses + m*g_component",
+      "inputs": [
+        "moving_mass_kg",
+        "acceleration_m_s2",
+        "process_force_n",
+        "loss_force_n",
+        "gravity_component_m_s2"
+      ],
+      "outputs": [
+        "required_axis_force_n"
+      ],
+      "numeric_gate": "all terms must be bound to the actual machine envelope and orientation; motor holding torque or microstep increment alone cannot close the axis",
+      "sources": [
+        "BUILD-071 symbolic machine-envelope requirement"
+      ],
+      "fixtures": []
+    },
+    {
+      "id": "INV-UNC-RSS-001",
+      "class": "SENSOR_METROLOGY",
+      "equation": "u = sqrt(sum(u_i^2)) only for independent linear uncertainty terms",
+      "inputs": [
+        "independent_uncertainties"
+      ],
+      "outputs": [
+        "rss_uncertainty"
+      ],
+      "numeric_gate": "use covariance/nonlinear propagation when terms are correlated or nonlinear",
+      "sources": [
+        "UTP-124 uncertainty policy"
+      ],
+      "fixtures": [
+        {
+          "name": "3-4 independent example",
+          "independent_uncertainties": [
+            3,
+            4
+          ],
+          "expected_rss": 5
+        }
+      ]
+    },
+    {
+      "id": "INV-RETENTION-001",
+      "class": "SENSOR_METROLOGY/CIRCULAR_FEED",
+      "equation": "retention = recovered_value / control_value",
+      "inputs": [
+        "recovered_value",
+        "control_value"
+      ],
+      "outputs": [
+        "retention_ratio",
+        "retention_percent"
+      ],
+      "numeric_gate": "compare like-for-like declared test conditions and use envelopes per application; no universal pass percentage",
+      "sources": [
+        "UTP-139 recovered/control comparator rule"
+      ],
+      "fixtures": [
+        {
+          "name": "nominal comparator",
+          "recovered_value": 80,
+          "control_value": 100,
+          "expected_retention_ratio": 0.8
+        }
+      ]
+    }
+  ],
+  "boundaries": [
+    "source SKU is not observed lot",
+    "numeric inference is not coupon measurement",
+    "microstep command increment is not machine accuracy",
+    "encoder resolution is not machine accuracy",
+    "voltage/current/lifetime/certification are not inferred from per-unit geometry",
+    "active silicon, LED and certified protection remain seed/hybrid unless separately qualified",
+    "physical execution and C0/safety authority remain separate"
+  ]
+}
