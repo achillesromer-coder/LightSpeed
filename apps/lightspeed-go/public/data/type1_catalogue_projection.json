@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-TYPE1-CATALOGUE-PROJECTION/0.3",
+  "schema": "CGX-TYPE1-CATALOGUE-PROJECTION/0.4",
   "generated_from": "Drive-owned Type 1 Romer Cognigrex + merged LightSpeed typed mirrors",
   "source_owner": {
     "spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
@@ -12,7 +12,8 @@
     "quantitative_factorization_fields": 8,
     "primitive_basis_classes": 20,
     "equation_kernel_records": 20,
-    "volumetric_topology_kernels": 36
+    "volumetric_topology_kernels": 36,
+    "printable_4d_templates": 411
   },
   "surfaces": [
     {
@@ -49,6 +50,11 @@
       "id": "MFG-IR",
       "name": "Manufacturing IR",
       "role": "machine-neutral component-to-print operation DAG and blockers"
+    },
+    {
+      "id": "PRINT-4D",
+      "name": "Printable 4D Packet Compiler",
+      "role": "411 derived component templates + exact CGXI packet + full-stack DAG compilation without recipe duplication"
     }
   ],
   "contracts": [
@@ -59,7 +65,8 @@
     "UTP-124 parametric stack/inference compiler",
     "UTP-125 manufacturing IR compiler",
     "UTP-136 primitive equation/constitutive kernel",
-    "UTP-137 volumetric geometry / coupled-state kernel"
+    "UTP-137 volumetric geometry / coupled-state kernel",
+    "UTP-138 printable 4D component / stack packet"
   ],
   "inference_example": {
     "label": "Ideal parallel-plate baseline",
@@ -69,5 +76,5 @@
     "evidence": "engineering inference only; source/material/process/measurement corrections required",
     "instance_override": "CGXI-P2-C-001 Kapton HN 25 µm candidate: ideal C/A≈1.2041695 pF/mm² before measured/process corrections"
   },
-  "boundary": "Read-only derived projection. The 20 equation kernels define domain physics and the 36 volumetric kernels define topology/boundary form beneath the same Drive-owned 411×60 matrix. Catalogue membership, kernel resolution, compiler output or UI rendering does not establish physical readiness, certification, authority or release."
+  "boundary": "Read-only derived projection. The 20 equation kernels define domain physics, the 36 volumetric kernels define topology/boundary form, and UTP-138 compiles all 411 archetypes into derived printable templates beneath the same Drive-owned 411×60 matrix. Template/packet compilation does not establish exact materials, geometry, BUILD_READY, physical readiness, certification, authority or release."
 }

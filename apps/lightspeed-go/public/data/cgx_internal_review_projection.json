@@ -1,17 +1,17 @@
 {
-  "schema": "CGX-INTERNAL-REVIEW-PROJECTION/0.2",
-  "generated_from": "Drive-owned Type 1 Romer Cognigrex + BUILD-069 Git implementation mirror",
+  "schema": "CGX-INTERNAL-REVIEW-PROJECTION/0.3",
+  "generated_from": "Drive-owned Type 1 Romer Cognigrex + BUILD-070 merged printable-4D compiler",
   "visibility": "INTERNAL_REVIEW_LOCAL",
   "authority": {
     "engineering_owner": "Type 1 Romer Cognigrex",
     "implementation_mirror": "achillesromer-coder/LightSpeed",
-    "queue_id": "BUILD-069",
+    "queue_id": "BUILD-070",
     "physical_state": "PHYSICAL_NOT_RUN"
   },
   "headline": {
     "title": "CGX Type-I build convergence",
-    "state": "VOLUMETRIC KERNEL + EXACT-BINDING CONVERGENCE",
-    "note": "Review the same CGXI evidence graph through primitive physics, 3D topology/boundary resolution, first-open binding gates and the component→recipe→build→test path without creating parallel records."
+    "state": "PRINTABLE 4D COMPONENT + STACK CONVERGENCE",
+    "note": "Review the same owner evidence graph from archetype through primitive physics, volumetric topology and reusable printable 4D packet/stack scheduling. Template compilation is complete for all 411 archetypes; exact packets remain evidence-bounded and physical execution remains NOT_RUN."
   },
   "metrics": {
     "archetypes": 411,
@@ -23,7 +23,9 @@
     "source_candidate_bound": 6,
     "requirement_targets_open": 0,
     "physical_tests_run": 0,
-    "volumetric_kernels": 36
+    "volumetric_kernels": 36,
+    "printable_4d_templates": 411,
+    "exact_packet_inputs": 8
   },
   "gate_counts": {
     "SOURCE_IDENTITY": 1,
@@ -287,6 +289,12 @@
       "state": "ACTIVE"
     },
     {
+      "id": "packet",
+      "label": "Compile printable 4D component / stack packet",
+      "contract": "UTP-138 / BUILD-070",
+      "state": "ACTIVE"
+    },
+    {
       "id": "schedule",
       "label": "Compose child DAGs without recipe duplication",
       "contract": "UTP-127 / CGX-STACK-SCHED-001",
@@ -333,6 +341,10 @@
         "label": "volumetric topology kernels"
       },
       {
+        "value": "411",
+        "label": "derived printable 4D templates"
+      },
+      {
         "value": "8",
         "label": "initial P0–P3 proof instances"
       },
@@ -345,6 +357,7 @@
       "One canonical graph; views are projections, not duplicate catalogues.",
       "Only consequential physics are solved for each component and process.",
       "Constitutive physics and 3D topology are factored separately, so geometry can change without duplicating component identity or domain equations.",
+      "Printable packets reference canonical recipes/topology/evidence instead of duplicating per-component process files.",
       "Exact source, lot, process, tool and calibration evidence override generic archetype assumptions.",
       "Simulation refines digital candidates but does not become measurement.",
       "Machine programs are generated only after a frozen BUILD_READY configuration and independent safety gates."
@@ -357,7 +370,7 @@
       "claims of physical qualification where testing remains NOT_RUN"
     ]
   },
-  "boundary": "Internal read-only projection. BUILD-069 adds topology/geometry resolution but does not mutate Drive, execute hardware, create lots/calibration, promote BUILD_READY, publish the corpus or change evidence ceilings.",
+  "boundary": "Internal read-only projection. BUILD-070 adds derived printable component/stack packets and 411-template coverage but does not mutate Drive evidence, invent parameters, execute hardware, create lots/calibration, promote BUILD_READY, publish the corpus or change evidence ceilings.",
   "volumetric_kernels": [
     {
       "kernel_id": "VGK-001",
@@ -611,5 +624,66 @@
       "token": "VOL_COUPLED_STATE_ASSEMBLY",
       "gate": "NUMERIC_IF every participating kernel is individually valid and coupling terms are attributable; otherwise SYMBOLIC/HOLD"
     }
-  ]
+  ],
+  "printable_4d": {
+    "artifact_id": "UTP-138",
+    "state": "IMPLEMENTED / 411 CATALOGUE_TEMPLATES / EXACT PACKETS HOLD / PHYSICAL_NOT_RUN",
+    "packet_schema": "CGX-PRINTABLE-4D-COMPONENT/0.1",
+    "stack_schema": "CGX-PRINTABLE-4D-STACK/0.1",
+    "catalogue_schema": "CGX-PRINTABLE-4D-CATALOGUE/0.1",
+    "template_count": 411,
+    "exact_instance_inputs": 8,
+    "coupled_stack_kernel": "VGK-036",
+    "print_paths": [
+      {
+        "id": "DIRECT_OR_MULTI-MATERIAL_PRINT_PATH",
+        "role": "printed functional features and multi-material regions when process/material evidence permits"
+      },
+      {
+        "id": "PRINT_PLUS_SEED_INSERT_PATH",
+        "role": "printed carrier/interconnect plus qualified seed device or inserted functional element"
+      },
+      {
+        "id": "STRUCTURAL_FORM_OR_DEPOSITION_PATH",
+        "role": "structural body/rib/lattice/conduit and other form-first routes"
+      },
+      {
+        "id": "SEALED_FLUIDIC_OR_QUALIFIED_CHEMICAL_PATH",
+        "role": "fluidic/electrochemical routes only under their exact containment/process qualification"
+      }
+    ],
+    "exact_examples": [
+      {
+        "instance_id": "CGXI-P2-R-001",
+        "state": "PRINTABLE_PACKET_DRAFT_HOLD",
+        "topology": "VGK-035",
+        "next_gate": "LOT_PASSPORT"
+      },
+      {
+        "instance_id": "CGXI-P2-C-001",
+        "state": "PRINTABLE_PACKET_DRAFT_HOLD",
+        "topology": "VGK-003",
+        "next_gate": "LOT_PASSPORT"
+      },
+      {
+        "instance_id": "CGXI-P2-L-001",
+        "state": "HOLD_TOPOLOGY_OR_UPSTREAM",
+        "topology": "VGK-008 / VGK-010",
+        "next_gate": "LOT_PASSPORT + TOPOLOGY_CHOICE"
+      },
+      {
+        "instance_id": "CGXI-P3-LOOP-001",
+        "state": "PRINTABLE_PACKET_DRAFT_HOLD",
+        "topology": "VGK-012",
+        "next_gate": "LOT_PASSPORT"
+      }
+    ],
+    "invariants": [
+      "411 templates are derived from the canonical atlas/compiler; no second engineering catalogue or per-component recipe copy is created.",
+      "One component and a whole assembly use the same packet graph; a stack references child recipes and adds only dependencies/interfaces/couplings.",
+      "Only consequential optional scopes are solved. A rectifier diode does not gain generic pressure, gravity, fluid or spatial-coupling analysis unless exact function/process/horizon requires it.",
+      "Parameter slots may remain open; missing values are never invented.",
+      "Generated machine programs remain unavailable until exact BUILD_READY, machine/adapter/calibration parity and independent C0/safety gates all pass."
+    ]
+  }
 }
