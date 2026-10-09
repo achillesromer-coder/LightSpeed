@@ -13,6 +13,17 @@ from .compiler import (
     validate_simulation_result,
 )
 from .adapter import AdapterError, emit_reference_gcode
+from .invariants import (
+    InvariantInputError,
+    axis_force_budget,
+    capacitance_density,
+    evaluate_invariant,
+    retention_ratio,
+    resistor_squares,
+    rl_winding_baseline,
+    rss_uncertainty,
+    sheet_path_resistance,
+)
 from .printstack import (
     compile_printable_catalogue,
     compile_printable_component,
@@ -39,6 +50,15 @@ __all__ = [
     "compile_printable_stack",
     "AdapterError",
     "emit_reference_gcode",
+    "InvariantInputError",
+    "capacitance_density",
+    "sheet_path_resistance",
+    "resistor_squares",
+    "rl_winding_baseline",
+    "axis_force_budget",
+    "rss_uncertainty",
+    "retention_ratio",
+    "evaluate_invariant",
     "resolve_binding_gate",
     "resolve_binding_queue",
     "validate_lot_passport",
