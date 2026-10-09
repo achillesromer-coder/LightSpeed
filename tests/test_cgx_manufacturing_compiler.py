@@ -391,4 +391,3 @@ def test_reference_machine_adapter_rejects_fractional_or_nonfinite_integer_field
         packet = dict(base, operations=[{"opcode": "DWELL", "params": {"milliseconds": bad_ms}}])
         with pytest.raises(AdapterError, match="invalid-integer|nonfinite-number"):
             emit_reference_gcode(packet, machine)
-
