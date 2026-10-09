@@ -47,6 +47,13 @@ export type CgxReviewProjection = {
     print_paths: Array<{ id: string; role: string }>;
     exact_examples: Array<{ instance_id: string; state: string; topology: string; next_gate: string }>;
     invariants: string[];
+    compound_decomposition: {
+      schema: string;
+      count: number;
+      state: string;
+      parents: string[];
+      rule: string;
+    };
   };
   quantitative_invariants: {
     artifact_id: string;
@@ -94,6 +101,7 @@ const renderOverview = (p: CgxReviewProjection): string => `
       ${metric(p.metrics.printable_4d_templates, "printable 4D templates")}
       ${metric(p.metrics.quantitative_invariants, "quantitative invariants")}
       ${metric(p.metrics.smart_stack_regions, "smart-stack regions")}
+      ${metric(p.metrics.compound_decomposition_templates, "compound decompositions")}
       ${metric(p.metrics.initial_instances, "proof instances")}
       ${metric(p.metrics.requirement_targets_open, "open target gates")}
       ${metric(p.metrics.physical_tests_run, "physical tests complete")}
@@ -184,6 +192,8 @@ const renderPrintable4d = (p: CgxReviewProjection): string => `
       </div>
     </div>
     <div class="boundary"><strong>Compiler invariants</strong><span>${p.printable_4d.invariants.map(esc).join(" · ")}</span></div>
+    <div class="boundary"><strong>${esc(p.printable_4d.compound_decomposition.count)} compound-parent grammars</strong><span>${esc(p.printable_4d.compound_decomposition.state)} · ${p.printable_4d.compound_decomposition.parents.map(esc).join(" · ")}</span></div>
+    <p class="muted">${esc(p.printable_4d.compound_decomposition.rule)}</p>
   </section>`;
 
 const renderSmartStack = (p: CgxReviewProjection): string => `
