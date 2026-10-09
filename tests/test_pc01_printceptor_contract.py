@@ -19,8 +19,8 @@ FIRST_ARTICLE = load("pc01_first_article_review_v0_1.json")
 HOST = load("pc01_secure_host_profile_v0_1.json")
 
 def test_pc01_owner_and_physical_state_are_bounded() -> None:
-    assert PC01["authority"]["queue_id"] == "BUILD-066"
-    assert PC01["authority"]["operational_matrix_range"].endswith("A1:AD52")
+    assert PC01["authority"]["queue_id"] == "BUILD-068"
+    assert PC01["authority"]["operational_matrix_range"].endswith("A1:AD67")
     assert PC01["physical_state"] == "NOT_BUILT"
     assert "BUILD_READY is not BUILT" in PC01["evidence_boundaries"][0]
 
@@ -95,9 +95,22 @@ def test_secure_host_profile_is_measured_but_does_not_force_upgrade() -> None:
     assert "Do not replace hardware" in HOST["suitability"]["upgrade_rule"]
 
 def test_operational_contract_links_new_owner_records() -> None:
-    assert PC01["authority"]["portfolio_range"].endswith("A61:P74")
-    assert PC01["authority"]["parent_queue_id"] == "BUILD-065"
+    assert PC01["authority"]["portfolio_range"].endswith("A61:P86")
+    assert PC01["authority"]["parent_queue_id"] == "BUILD-067"
     assert PC01["directional_resolver"]["portfolio_id"] == "UTP-117"
     assert PC01["route_compiler"]["portfolio_ids"] == ["UTP-120", "UTP-121"]
     assert PC01["first_article"]["portfolio_id"] == "UTP-122"
     assert PC01["secure_host"]["portfolio_id"] == "UTP-123"
+
+def test_pc01_exact_binding_bridge_points_to_current_owner_contracts() -> None:
+    bridge = PC01["exact_binding_bridge"]
+    assert bridge["portfolio_ids"] == ["UTP-131", "UTP-132", "UTP-133", "UTP-134", "UTP-135"]
+    assert bridge["matrix_ids"] == "PC01-MX-060..066"
+    assert bridge["contracts"] == [
+        "CGX-BIND-RESOLVER-001",
+        "CGX-LOT-PASSPORT-001",
+        "CGX-TOOL-CAP-001",
+        "CGX-WITNESS-COUPON-001",
+        "CGX-MACHINE-ENVELOPE-001",
+    ]
+    assert "8 initial CGXI remain UNBOUND/NOT_RUN" in bridge["current_owner_state"]
