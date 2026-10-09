@@ -27,7 +27,7 @@
       "37_CGX_Type1_Witness_Evidence_Kernel_v0_1"
     ]
   },
-  "factorization": "Archetype × PrimitiveKernel × VolumetricKernel × InterfaceOperator × ProcessSequence × FunctionalVoxelState × WitnessEvidence",
+  "factorization": "Archetype ? PrimitiveKernel ? VolumetricKernel ? InterfaceOperator ? ProcessSequence ? FunctionalVoxelState ? SeedGraph ? FieldCoupling ? WitnessEvidence",
   "non_planar_rule": "A stack is a directed 3D region/interface graph with cavities, service corridors, nested/embedded volumes and optional inserted seeds. Z-order is only one possible geometry. Compilation orders process dependencies and preservation gates, not merely planar layers.",
   "voxel_contract": {
     "required_fields": [
@@ -453,5 +453,11 @@
     "identity/provenance does not grant execution/certification/release authority",
     "advanced silicon/MEMS/precision optoelectronics/certified protection remain seed/hybrid unless separately qualified"
   ],
-  "physical_execution": false
+  "physical_execution": false,
+  "seed_field_companion": {
+    "artifact_id": "UTP-144",
+    "build_id": "BUILD-077",
+    "path": "cgx/component_atlas/type1_seed_field_stack_matrix_v0_1.json",
+    "role": "Resolve zero/single/multi-seed implementation graphs plus 3D parasitic, near/far-field, radiative, thermal, mechanical, fluid, chemical and ionizing-radiation coupling without flattening the physical stack into a schematic."
+  }
 }
