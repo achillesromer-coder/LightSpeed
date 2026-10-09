@@ -39,7 +39,7 @@ def test_rectifier_diode_print_packet_omits_irrelevant_pressure_gravity_and_spat
     assert "fluid" not in scopes
     assert "spatial_coupling" not in scopes
     assert diode["print_path"] == "PRINT_PLUS_SEED_INSERT_PATH"
-    assert diode["physical_execution"] if "physical_execution" in diode else False is False
+    assert diode["physical_execution"] is False
 
 
 def test_exact_p2_capacitor_packet_reuses_parallel_plate_kernel_and_stays_hold() -> None:
@@ -94,7 +94,7 @@ def test_cli_can_emit_printable_component_and_full_catalogue() -> None:
     component = json.loads(comp.stdout)
     assert component["schema"] == "CGX-PRINTABLE-4D-COMPONENT/0.1"
     assert component["instance_id"] == "CGXI-P2-R-001"
-    assert component["physical_execution"] if "physical_execution" in component else False is False
+    assert component["physical_execution"] is False
 
     cat = subprocess.run(
         [
