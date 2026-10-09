@@ -16,6 +16,7 @@ from cgx.manufacturing import (
     compile_printable_component,
     compile_printable_stack,
     emit_reference_gcode,
+    evaluate_invariant,
     find_archetype,
     find_instance,
     load_default_atlas,
@@ -113,6 +114,14 @@ def main() -> None:
     coupon.add_argument("--measurement-method")
     coupon.add_argument("--output")
 
+    inv = sub.add_parser("invariant")
+    inv.add_argument("--id", required=True, help="Invariant ID such as INV-CAP-DENSITY-001")
+    inv.add_argument("--inputs", required=True, help="JSON input object")
+    inv.add_argument("--output")
+
+    smart = sub.add_parser("smart-stack-reference")
+    smart.add_argument("--output")
+
     gc = sub.add_parser("gcode")
     gc.add_argument("--toolpath", required=True)
     gc.add_argument("--machine", required=True)
@@ -205,6 +214,14 @@ def main() -> None:
             horizon=spec.get("horizon", "H-TERR-SITE"),
         )
         write_output(out, args.output)
+    elif args.cmd == "invariant":
+        inputs = load_optional(args.inputs)
+        if not isinstance(inputs, dict):
+            raise SystemExit("invariant --inputs must contain a JSON object")
+        write_output(evaluate_invariant(args.id, inputs), args.output)
+    elif args.cmd == "smart-stack-reference":
+        ref_path = ROOT / "cgx" / "manufacturing" / "dense_smart_stack_reference_v0_1.json"
+        write_output(json.loads(ref_path.read_text(encoding="utf-8")), args.output)
     elif args.cmd == "binding":
         population = load_optional(args.instance_population) or load_default_instance_population()
         if args.queue:
