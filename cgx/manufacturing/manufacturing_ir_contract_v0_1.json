@@ -79,7 +79,7 @@
       "search or create new evidence only for that field",
       "append revision/receipt rather than overwrite prior evidence"
     ],
-    "current_owner_state": "8 initial instances remain UNBOUND/NOT_RUN; 6 now carry attributable SOURCE-CANDIDATE BOUND evidence."
+    "current_owner_state": "8 initial instances remain UNBOUND/NOT_RUN; 6 carry attributable SOURCE-CANDIDATE BOUND evidence; P2-R and P3-LOOP now also carry reviewed first-proof requirement targets and advance to LOT_PASSPORT."
   },
   "type1_matrix_contract": {
     "owner_sheet": "32_CGX_Universal_Type1_Tech_Matrix_v0_1",
