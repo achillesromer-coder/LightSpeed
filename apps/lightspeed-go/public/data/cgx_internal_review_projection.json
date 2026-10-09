@@ -309,26 +309,26 @@
     "title": "Cognigrex Type-I Manufacturing Lens",
     "summary": "A single evidence graph maps component archetypes, reusable physical kernels and exact build-state gates into source-aware manufacturing plans without treating simulation, catalogue membership or generated code as physical qualification.",
     "metrics": [
-      [
-        "411",
-        "component archetypes"
-      ],
-      [
-        "60",
-        "universal matrix fields"
-      ],
-      [
-        "20",
-        "primitive equation kernels"
-      ],
-      [
-        "8",
-        "initial P0–P3 proof instances"
-      ],
-      [
-        "0",
-        "physical tests represented as complete"
-      ]
+      {
+        "value": "411",
+        "label": "component archetypes"
+      },
+      {
+        "value": "60",
+        "label": "universal matrix fields"
+      },
+      {
+        "value": "20",
+        "label": "primitive equation kernels"
+      },
+      {
+        "value": "8",
+        "label": "initial P0–P3 proof instances"
+      },
+      {
+        "value": "0",
+        "label": "physical tests represented as complete"
+      }
     ],
     "safe_points": [
       "One canonical graph; views are projections, not duplicate catalogues.",
