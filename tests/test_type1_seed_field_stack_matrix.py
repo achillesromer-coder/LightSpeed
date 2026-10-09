@@ -40,3 +40,16 @@ def test_functional_voxel_factorization_includes_seed_and_field_layers():
     assert "SeedGraph" in v["factorization"]
     assert "FieldCoupling" in v["factorization"]
     assert v["seed_field_companion"]["artifact_id"] == "UTP-144"
+
+
+def test_stack_compiler_consumes_seed_field_matrix_and_25um_cap_fixture():
+    c = load(ROOT / "cgx" / "component_atlas" / "universal_type1_stack_compiler_v0_1.json")
+    assert c["inputs"]["seed_field_stack_matrix"].endswith("type1_seed_field_stack_matrix_v0_1.json")
+    assert c["matrix_contract"]["seed_graph_classes"] == 3
+    assert c["matrix_contract"]["field_coupling_classes"] == 10
+    assert "EXTRACT_PARASITIC_AND_MUTUAL_COUPLINGS" in c["compile_chain"]
+    f = next(x for x in c["inference_fixtures"] if x["id"] == "INF-CAP-KAPTON-HN-25UM-001")
+    assert abs(f["derived"]["ideal_capacitance_pF"] - 120.41695425408) < 1e-9
+    sg0 = next(x for x in c["candidate_witness_stacks"] if x["id"] == "P2-SG0-RCL-CELL-001")
+    assert sg0["observed_lots"] == "UNRESOLVED"
+    assert sg0["physical_execution"] is False

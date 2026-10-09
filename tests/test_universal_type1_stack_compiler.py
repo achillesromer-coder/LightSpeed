@@ -20,6 +20,10 @@ def test_owner_and_matrix_cardinality():
         "primitive_basis_classes": 20,
         "equation_kernel_records": 20,
         "volumetric_topology_kernels": 36,
+        "functional_region_classes": 17,
+        "seed_graph_classes": 3,
+        "field_coupling_classes": 10,
+        "spatial_operator_classes": 10,
     }
     assert len(d["primitive_basis"]) == 20
     assert "MAP_PRIMITIVE_BASIS_AND_EQUIVALENT_NETWORK" in d["compile_chain"]
