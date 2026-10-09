@@ -156,3 +156,14 @@ Compiler rules:
 - machine-specific G-code/robot/PLC/vendor programs are late-bound outputs. Generate them only from a frozen BUILD_READY packet with exact machine/adapter/calibration identity and validated dry-run; never bypass independent C0/interlocks or execute from generic archetype data.
 
 Prefer user-facing `cgx://manufacturing/recipe/<id>`, `cgx://manufacturing/build/<id>`, `cgx://manufacturing/run/<id>`, and object/family identities. JSON, CAD, mesh, solver result and machine program files are typed payloads behind those identities, not separate semantic authorities.
+
+### Instance-first deduplication gate
+
+Before selecting a new material, source, component, recipe or test path for a component/build already represented in the CGX instance register, resolve the current `CGXI-*` instance first. Treat the Drive-owned instance register as canonical binding state and the Git population as its typed mirror.
+
+- If the instance already records attributable source candidates, do not restart sourcing. Continue from the first unresolved consequential field such as exact lot, geometry, process window, tool, calibration, acceptance threshold or physical test.
+- Preserve `SOURCE_CANDIDATE_BOUND` as meaningful progress even while the formal build binding remains `UNBOUND`.
+- Keep source candidate identity distinct from lot passport, process qualification, machine capability and physical evidence.
+- Prefer `--instance-id` through the CGX manufacturing compiler where available so filespace/dataspace output carries the existing source/material state.
+- On conflict between older frontier candidates and a later owner-selected variant, preserve both as lineage and follow the current owner choice unless an explicit owner change supersedes it.
+- Never create a duplicate CGXI instance, source-selection record or recipe merely because another lane lacks the latest mirror; reconcile the mirror instead.

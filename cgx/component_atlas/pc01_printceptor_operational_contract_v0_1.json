@@ -172,10 +172,13 @@
   ],
   "directional_resolver": {
     "portfolio_id": "UTP-117",
-    "owner_range": "32_CGX_Universal_Type1_Tech_Matrix_v0_1!AK:AZ",
+    "owner_range": "32_CGX_Universal_Type1_Tech_Matrix_v0_1!AK:BH",
     "archetype_rows": 411,
-    "total_fields": 52,
-    "rule": "ARCHITECTURE_ALLOW_IF only; X→Y never implies Y→X; exact UTP-106 instance/material/process evidence overrides generic role defaults."
+    "total_fields": 60,
+    "rule": "ARCHITECTURE_ALLOW_IF only; X→Y never implies Y→X; BA:BH compiler metadata is factorized planning state; exact UTP-106/CGXI instance/material/process evidence overrides generic role/default compiler values.",
+    "directional_range": "AK:AZ",
+    "compiler_range": "BA:BH",
+    "compiler_field_count": 8
   },
   "route_compiler": {
     "portfolio_ids": [

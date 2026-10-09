@@ -9,6 +9,7 @@ from typing import Any, Iterable
 
 ROOT = Path(__file__).resolve().parents[2]
 ATLAS_PATH = ROOT / "cgx" / "component_atlas" / "component_geometry_atlas_v0_1.json"
+INSTANCE_POPULATION_PATH = ROOT / "cgx" / "component_atlas" / "component_instance_population_v0_1.json"
 
 SCHEMA = "CGX-MANUFACTURING-IR/0.1"
 RECIPE_SCHEMA = "CGX-MANUFACTURING-RECIPE/0.1"
@@ -122,6 +123,43 @@ def _canonical_hash(value: Any) -> str:
 
 def load_default_atlas() -> dict[str, Any]:
     return json.loads(ATLAS_PATH.read_text(encoding="utf-8"))
+
+
+def load_default_instance_population() -> dict[str, Any]:
+    return json.loads(INSTANCE_POPULATION_PATH.read_text(encoding="utf-8"))
+
+
+def find_instance(population: dict[str, Any], query: str) -> dict[str, Any]:
+    exact = [r for r in population["records"] if r.get("instance_id") == query]
+    if exact:
+        return exact[0]
+    q = _norm(query)
+    matches = [
+        r for r in population["records"]
+        if q in _norm(r.get("instance_id"))
+        or q in _norm(r.get("archetype_id"))
+        or q in _norm(r.get("geometry_source_type"))
+    ]
+    if not matches:
+        raise KeyError(f"instance-not-found:{query}")
+    if len(matches) != 1:
+        raise KeyError(f"instance-ambiguous:{query}:{','.join(r['instance_id'] for r in matches[:12])}")
+    return matches[0]
+
+
+def _instance_binding_progress(instance: dict[str, Any] | None) -> str:
+    if not instance:
+        return "ARCHETYPE_ONLY"
+    if instance.get("binding_state") == "BUILD_READY":
+        return "BUILD_READY"
+    evidence = str(instance.get("evidence_ceiling", "")).upper()
+    source_auth = str(instance.get("exact_source_authority", "")).upper()
+    source_locator = str(instance.get("source_locator_or_hash", "")).upper()
+    if "SOURCE-CANDIDATE BOUND" in evidence or source_auth.startswith("ATTRIBUTABLE CANDIDATE SOURCES BOUND"):
+        return "SOURCE_CANDIDATE_BOUND"
+    if source_locator and "UNRESOLVED" not in source_locator and "NOT SELECTED" not in source_locator and "NOT YET BOUND" not in source_locator:
+        return "SOURCE_IDENTIFIED"
+    return "UNBOUND"
 
 
 def find_archetype(atlas: dict[str, Any], query: str) -> dict[str, Any]:
@@ -333,6 +371,22 @@ def _operation_list(strategy: str, scopes: dict[str, Any]) -> list[dict[str, Any
     return out
 
 
+def _looks_unresolved_instance_value(value: Any) -> bool:
+    text = str(value or "").strip().upper()
+    if not text or text in {"UNRESOLVED", "UNKNOWN", "NONE", "TBD", "TBC"}:
+        return True
+    unresolved_markers = (
+        "UNRESOLVED",
+        "NOT YET BOUND",
+        "NOT BOUND",
+        "NOT YET SELECTED",
+        "NOT SELECTED",
+        "TO BE BOUND",
+        "TO BE SELECTED",
+    )
+    return any(marker in text for marker in unresolved_markers)
+
+
 def _instance_blockers(instance: dict[str, Any] | None) -> list[str]:
     if not instance:
         return ["exact-instance-not-bound"]
@@ -349,8 +403,7 @@ def _instance_blockers(instance: dict[str, Any] | None) -> list[str]:
         "configuration_hash",
         "source_hashes",
     ):
-        value = str(instance.get(field, "")).strip().upper()
-        if not value or value in {"UNRESOLVED", "UNKNOWN", "NONE"} or "UNRESOLVED" in value:
+        if _looks_unresolved_instance_value(instance.get(field, "")):
             blockers.append(f"unresolved:{field}")
     if instance.get("physical_state") not in {"NOT_RUN", "BUILT", "MEASURED", "REVIEWED_PROMOTION"}:
         blockers.append("invalid-physical-state")
@@ -401,6 +454,7 @@ def compile_component(
             "evidence_state": record.get("Evidence State"),
         },
         "instance_ref": exact_ref,
+        "binding_progress": _instance_binding_progress(instance),
         "horizon": horizon,
         "process_strategy": strategy,
         "parameter_overrides": overrides,
@@ -414,6 +468,11 @@ def compile_component(
             "archetype_ref": record["ID"],
             "instance_ref": exact_ref,
             "source_authority_class": record.get("Source Authority Class"),
+            "instance_source_authority": instance.get("exact_source_authority") if instance else None,
+            "source_locator_or_hash": instance.get("source_locator_or_hash") if instance else None,
+            "material_stack_and_lots": instance.get("material_stack_and_lots") if instance else None,
+            "material_passport_refs": instance.get("material_passport_refs") if instance else None,
+            "tool_and_calibration_refs": instance.get("tool_and_calibration_refs") if instance else None,
             "recipe_ref": recipe_uri,
         },
         "dataspace": {

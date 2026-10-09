@@ -1,7 +1,7 @@
 {
   "schema": "CGX-UNIVERSAL-TYPE1-DIRECTIONAL-RESOLVER/0.1",
   "date": "2026-10-09",
-  "status": "OWNER_MATRIX_IMPLEMENTED / GIT_CONTRACT_MIRROR / PHYSICAL_NOT_RUN",
+  "status": "OWNER_MATRIX_IMPLEMENTED / 411_ROWS_X_60_FIELDS / GIT_CONTRACT_MIRROR / PHYSICAL_NOT_RUN",
   "authority": {
     "drive_workbook": "Type 1 Romer Cognigrex",
     "spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
@@ -9,7 +9,8 @@
     "directional_range": "AK:AZ",
     "portfolio_id": "UTP-117",
     "archetype_rows": 411,
-    "total_fields": 52
+    "total_fields": 60,
+    "compiler_range": "BA:BH"
   },
   "directional_fields": [
     "accepted_predecessor_classes",
@@ -31,6 +32,7 @@
   ],
   "invariants": [
     "X→Y compatibility never implies Y→X.",
+    "The 60-field owner matrix consists of the original 36 baseline fields + 16 directional/4D fields + 8 compiler/factorization fields; the eight compiler fields are derived planning metadata and do not raise evidence.",
     "Generic archetype allowance never overrides exact UTP-106 source/material/process/tool evidence.",
     "Every atmosphere transition and process exposure is an explicit build step.",
     "Prior-layer thermal, chemical, mechanical, electrical, optical and contamination damage envelopes are checked before successor operations.",
@@ -56,5 +58,15 @@
     "CGA-O-014 beamsplitter -> optical Fresnel/transfer-matrix inference",
     "CGA-O-016 waveplate -> optical retardance/polarization inference"
   ],
-  "dense_pair_policy": "Use sheet30 high-value interactions and explicit instance exceptions instead of generating ~168k mostly redundant 411×411 pairs."
+  "dense_pair_policy": "Use sheet30 high-value interactions and explicit instance exceptions instead of generating ~168k mostly redundant 411×411 pairs.",
+  "compiler_fields": [
+    "primitive_basis_class",
+    "equivalent_network_state_model",
+    "per_unit_geometry_law",
+    "instance_bound_numeric_derivation",
+    "voxel_packing_resolution_constraint",
+    "state_memory_hysteresis",
+    "cross_domain_coupling_terms",
+    "compiler_token_operation_class"
+  ]
 }
