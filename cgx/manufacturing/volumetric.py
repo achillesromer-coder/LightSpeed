@@ -110,10 +110,14 @@ def _generic_kernel_candidates(record: dict[str, Any]) -> list[str]:
             return ["VGK-011"]
         if any(x in name for x in (
             "dipole antenna", "monopole antenna", "helical antenna", "patch antenna",
-            "pifa", "slot antenna", "yagi", "horn antenna", "full-wave",
+            "pifa", "slot antenna", "yagi", "log-periodic", "horn antenna", "full-wave",
             "rf shielded resonant enclosure",
         )):
             return ["VGK-037"]
+        if any(x in name for x in ("ceramic resonator", "cavity resonator", "dielectric resonator")):
+            return ["VGK-037"]
+        if any(x in name for x in ("crystal filter", "saw filter", "baw filter", "fbar filter")):
+            return ["VGK-038"]
         if "rectenna" in name:
             return ["VGK-037", "VGK-034"]
         if "ferrite circulator" in name or "ferrite isolator" in name:
@@ -133,8 +137,14 @@ def _generic_kernel_candidates(record: dict[str, Any]) -> list[str]:
 
     # Distributed electrical packaging and conductors.
     if domain == "electrical/packaging":
-        if any(x in name for x in ("stripline", "coaxial line", "twisted pair", "twinax")):
+        if any(x in name for x in ("stripline", "microstrip", "coplanar waveguide", "coaxial line", "twisted pair", "twinax")):
             return ["VGK-011"]
+        if any(x in name for x in ("rectangular waveguide", "circular waveguide")):
+            return ["VGK-037"]
+        if any(x in name for x in ("round wire conductor", "printed trace", "busbar", "flexible printed interconnect", "wire bond")):
+            return ["VGK-001"]
+        if "printed dielectric" in name or "insulation layer" in name:
+            return ["VGK-040"]
         if "coaxial / rf connector" in name:
             return ["VGK-011", "VGK-029"]
         if any(x in name for x in ("ground plane", "contact pad", "land-grid")):
@@ -145,6 +155,10 @@ def _generic_kernel_candidates(record: dict[str, Any]) -> list[str]:
             return ["VGK-025", "VGK-029"]
         if "conduit" in name or "raceway" in name:
             return ["VGK-018", "VGK-029"]
+        if "hermetic electrical feedthrough" in name:
+            return ["VGK-025", "VGK-001"]
+        if "bga/csp" in name or "package interconnect" in name:
+            return ["VGK-001", "VGK-018"]
         if any(x in name for x in ("connector", "terminal block", "spring/contact")):
             return ["VGK-001", "VGK-029"]
         if any(x in name for x in ("solder joint", "conductive adhesive", "flip-chip bump")):
@@ -186,6 +200,16 @@ def _generic_kernel_candidates(record: dict[str, Any]) -> list[str]:
     # Sensors: map the primary transduction/field topology, retaining exact seed
     # boundaries where fabrication is not independently qualified.
     if domain == "sensing":
+        if "load cell" in name:
+            return ["VGK-035", "VGK-017"]
+        if "anisotropic magnetoresistive" in name:
+            return ["VGK-010", "VGK-034"]
+        if "dynamic speaker" in name:
+            return ["VGK-038"]
+        if "magnetic encoder" in name:
+            return ["VGK-010", "VGK-034"]
+        if "magnetic flowmeter" in name:
+            return ["VGK-039", "VGK-010", "VGK-001"]
         if any(x in name for x in ("accelerometer", "gyroscope")):
             return ["VGK-034", "VGK-017"]
         if any(x in name for x in ("magnetometer", "hall-effect", "inductive proximity", "fluxgate")):
@@ -210,6 +234,10 @@ def _generic_kernel_candidates(record: dict[str, Any]) -> list[str]:
             return ["VGK-022", "VGK-034"]
         if "radar sensor" in name:
             return ["VGK-037", "VGK-034"]
+        if "pir pyroelectric" in name:
+            return ["VGK-015", "VGK-034"]
+        if "reflective photoelectric" in name:
+            return ["VGK-022", "VGK-034"]
         if "geiger" in name:
             return ["VGK-034"]
         if "thermocouple" in name:
@@ -242,7 +270,7 @@ def _generic_kernel_candidates(record: dict[str, Any]) -> list[str]:
         if any(x in name for x in (
             "nozzle", "orifice", "venturi", "tesla valve", "check valve",
             "needle", "proportional valve", "pump", "manifold", "cyclone",
-            "droplet", "sparger", "diffuser",
+            "droplet", "sparger", "diffuser", "static mixer",
         )):
             return ["VGK-039"]
         return ["VGK-036"]
