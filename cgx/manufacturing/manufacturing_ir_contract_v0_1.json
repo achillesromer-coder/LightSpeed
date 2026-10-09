@@ -1,26 +1,32 @@
 {
   "schema": "CGX-MANUFACTURING-IR-CONTRACT/0.1",
   "date": "2026-10-09",
-  "status": "DRIVE-OWNED-UTP-125..130 / GIT-IMPLEMENTATION-MIRROR / PHYSICAL-NOT-RUN",
+  "status": "DRIVE-OWNED-UTP-125..135 / BUILD-068 / GIT-IMPLEMENTATION-MIRROR / PHYSICAL-NOT-RUN",
   "authority": {
     "drive_workbook": "Type 1 Romer Cognigrex",
-    "portfolio": "UTP-125..130",
+    "portfolio": "UTP-125..135",
     "node_horizon": [
       "CGX-MFG-IR-001",
       "CGX-ENV-SCOPE-001",
       "CGX-RECIPE-001",
       "CGX-SIM-REFINE-001",
       "CGX-STACK-SCHED-001",
-      "CGX-MACHINE-ADAPTER-001"
+      "CGX-MACHINE-ADAPTER-001",
+      "CGX-BIND-RESOLVER-001",
+      "CGX-LOT-PASSPORT-001",
+      "CGX-TOOL-CAP-001",
+      "CGX-WITNESS-COUPON-001",
+      "CGX-MACHINE-ENVELOPE-001"
     ],
-    "queue_id": "BUILD-067",
+    "queue_id": "BUILD-068",
     "parent_contracts": [
       "CGX-COMPILER-001",
       "MRI4D-059",
       "UTP-106",
       "UTP-117",
       "UTP-124"
-    ]
+    ],
+    "parent_queue_id": "BUILD-067"
   },
   "namespace": {
     "recipe": "cgx://manufacturing/recipe/<strategy>/<family>/<revision>",
@@ -95,5 +101,16 @@
       "compiler_token_operation_class"
     ],
     "precedence": "Exact CGXI instance/source/material/process/tool/test evidence overrides generic matrix/compiler metadata."
+  },
+  "exact_binding_bridge": {
+    "contract": "cgx/manufacturing/exact_binding_bridge_contract_v0_1.json",
+    "flow": [
+      "RESOLVE_CURRENT_CGXI",
+      "FIRST_OPEN_GATE",
+      "OBSERVED_EVIDENCE_ONLY",
+      "APPEND_RECEIPT",
+      "RECOMPILE"
+    ],
+    "rule": "Source-candidate progress is retained; no source, lot, tool/calibration, geometry, test or upstream gate is silently skipped or invented."
   }
 }
