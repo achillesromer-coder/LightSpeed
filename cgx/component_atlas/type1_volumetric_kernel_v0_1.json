@@ -5,7 +5,7 @@
   "owner": {
     "drive_spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
     "owner_sheet": "35_CGX_Type1_Volumetric_Kernel_v0_1",
-    "owner_range": "A1:P38",
+    "owner_range": "A1:P40",
     "parent_contracts": [
       "UTP-124",
       "UTP-125",
@@ -14,7 +14,7 @@
     ]
   },
   "state": "DIGITAL ENGINEERING TOPOLOGY KERNEL / PHYSICAL_NOT_RUN",
-  "record_count": 36,
+  "record_count": 39,
   "purpose": "Normalize 2D traces, 3D embedded structures and state/history-aware 4D assemblies into reusable geometry/topology kernels beneath the 411×60 owner matrix. Use canonical closed forms only in their valid regimes; otherwise require field/matrix/network solves and explicit boundary/interface state.",
   "headers": [
     "Kernel ID",
@@ -682,6 +682,60 @@
       "verification_falsifier": "domain residuals + conservation/balance + cross-domain measurements + DBR readback; falsify on unresolved residual or authority mismatch",
       "compiler_token": "VOL_COUPLED_STATE_ASSEMBLY",
       "evidence_current_example": "This is an assembly contract, not a claim of one universal equation or solver; intended basis for dense 4D embedded Type-I systems"
+    },
+    {
+      "kernel_id": "VGK-037",
+      "primitive_basis_class": "RF_WAVE",
+      "topology_geometry_family": "general 3D radiating / scattering electromagnetic cell",
+      "canonical_geometry_parameters": "conductor/dielectric volumes, ground/reference, feed/ports, open/radiation boundary, nearby bodies, polarization/orientation, mesh",
+      "governing_law_matrix_form": "∇×E=-∂B/∂t; ∇×H=J+∂D/∂t; solve full-wave Maxwell port/scattering/radiation problem; S-parameters and Poynting/near/far fields only in the declared regime",
+      "required_source_measured_inputs": "full 3D geometry; ε/μ/σ(f,T); feed/port/source/load; open/PML/radiation boundary; nearby-body/fixture model; mesh/domain convergence",
+      "inferable_outputs": "impedance/S-parameters, resonant modes, near/far field, coupling/scattering, radiation-efficiency/gain candidates within the solved fixture",
+      "embedding_orientation_rule": "arbitrary embedded/external radiators, apertures and shields; orientation/polarization explicit; nearby-body/loading geometry belongs to the model",
+      "boundary_interface_conditions": "feed/reference/ground, ports, open/radiation boundary, material interfaces/discontinuities, shields and service envelope",
+      "state_history_variables": "E/H/phase/current/charge/T/configuration/environment/history",
+      "cross_domain_couplings": "RF↔thermal↔mechanical/material↔control/sensing",
+      "numeric_inference_gate": "NUMERIC_IF exact geometry/material/ports/environment/boundaries are attributable and the full-wave solve is converged/calibrated; otherwise SYMBOLIC/HOLD",
+      "process_damage_preservation_gate": "adjacent metal/dielectric, encapsulation, feed and fixture changes can detune or reshape radiation; freeze/re-characterize the exact geometry/environment after consequential process changes",
+      "verification_falsifier": "calibrated VNA/S-parameters plus near/far-field or fixture readback as applicable; mesh/domain convergence; falsify residual beyond uncertainty",
+      "compiler_token": "VOL_RF_FULL_WAVE",
+      "evidence_current_example": "Closes the dipole/patch/PIFA/slot/Yagi/horn/rectenna/full-wave shielding topology gap. No RF compliance, range, gain, exposure or power-handling claim is created without source/measurement evidence"
+    },
+    {
+      "kernel_id": "VGK-038",
+      "primitive_basis_class": "STRUCTURE_DATUM",
+      "topology_geometry_family": "piezoelectric / acoustic resonator and transducer cell",
+      "canonical_geometry_parameters": "active material volume, electrodes/transducer geometry, acoustic path/cavity, boundaries, orientation/crystal axes, coupling/backing layer",
+      "governing_law_matrix_form": "coupled elastodynamic/piezoelectric model: ρu¨=∇·T+f; T=c:S−eᵀE; D=e:S+εE; acoustic wave/Helmholtz form only where its assumptions apply",
+      "required_source_measured_inputs": "elastic/piezoelectric/dielectric tensors versus frequency/temperature, density, damping/Q/loss, exact geometry/crystal orientation, electrodes, acoustic loading and boundaries",
+      "inferable_outputs": "resonant modes/frequency, impedance/admittance, displacement/pressure field, electromechanical coupling/Q and sensitivity candidates",
+      "embedding_orientation_rule": "wave direction and crystal/material orientation are explicit; surface/bulk modes, cavities and diaphragms are selected only when the actual topology/regime supports them",
+      "boundary_interface_conditions": "mechanical/acoustic terminations, electrodes, backing/loading, fluid/air interface, package and calibrated fixture",
+      "state_history_variables": "displacement/velocity/strain/stress/pressure/electric field/charge/T/configuration/aging history",
+      "cross_domain_couplings": "mechanical/acoustic↔electrical↔thermal↔fluid/sensor",
+      "numeric_inference_gate": "NUMERIC_IF exact material tensors/orientation/geometry/boundaries and a valid acoustic/piezoelectric regime are bound; exact seed-resonator/device data overrides the generic model",
+      "process_damage_preservation_gate": "bonding/cure/residual stress, encapsulation and acoustic loading can shift modes/Q; preserve or re-characterize crystal/surface/bond/fixture state after consequential transitions",
+      "verification_falsifier": "impedance/admittance, resonant frequency/Q, mode-shape/displacement/pressure calibration and fixture readback; falsify modal or transfer residual beyond uncertainty",
+      "compiler_token": "VOL_ACOUSTIC_PIEZO",
+      "evidence_current_example": "Closes quartz/piezo/microphone/buzzer/ultrasonic acoustic topology coverage. Precision SAW/BAW/FBAR fabrication remains seed/hybrid unless its process chain is independently qualified"
+    },
+    {
+      "kernel_id": "VGK-039",
+      "primitive_basis_class": "FLUIDIC_ENVIRONMENT",
+      "topology_geometry_family": "general 3D fluid / CFD flow body",
+      "canonical_geometry_parameters": "full 3D channel/nozzle/valve/impeller/manifold geometry, ports, moving boundaries, roughness, fluid regions; gravity/orientation only when consequential",
+      "governing_law_matrix_form": "continuity + regime-appropriate Navier–Stokes/compressible/multiphase form: ∂ρ/∂t+∇·(ρu)=0; ρ(∂u/∂t+u·∇u)=−∇p+∇·τ+ρg+f",
+      "required_source_measured_inputs": "exact geometry; fluid ρ/μ/EOS/surface tension versus state; inlet/outlet/pressure/flow; laminar/turbulent/compressible/multiphase regime; moving-wall/impeller/valve state; roughness",
+      "inferable_outputs": "pressure/velocity/flow/loss coefficient/shear/residence time/mixing plus cavitation or transport candidates when the selected regime supports them",
+      "embedding_orientation_rule": "arbitrary internal channels/nozzles/manifolds/pumps/valves; orientation/gravity enters only for free-surface, buoyancy, settling or other consequential effects",
+      "boundary_interface_conditions": "ports/walls/seals/moving surfaces, thermal/chemical boundaries, ambient/back-pressure and service interfaces",
+      "state_history_variables": "p,u,Q,T,species/phase fraction, wall/moving-body state, fouling/contamination/configuration history",
+      "cross_domain_couplings": "fluid↔thermal↔mechanical↔chemical/acoustic",
+      "numeric_inference_gate": "NUMERIC_IF fluid properties/regime/boundaries/geometry are attributable and solver mesh/conservation are converged; otherwise SYMBOLIC/HOLD",
+      "process_damage_preservation_gate": "debris, cure shrinkage, roughness, seal or moving-clearance changes alter flow; inspect/re-resolve channels/ports after downstream operations",
+      "verification_falsifier": "pressure-flow/velocity/temperature/leak/cavitation/flow-visualization as applicable plus mass/momentum residual and mesh convergence",
+      "compiler_token": "VOL_FLUID_GENERAL_3D",
+      "evidence_current_example": "Closes nozzle/Venturi/Tesla-valve/manifold/pump general-flow topology coverage. Shape alone never creates pressure rating, pump curve, cavitation margin or containment authority"
     }
   ],
   "boundaries": [
@@ -691,7 +745,7 @@
     "geometry/process revisions invalidate stale field matrices and topology-specific numeric inference",
     "physical/HV/RF/pressure/reactive execution remains separately gated"
   ],
-  "logical_universal_matrix": "archetype[411x60] ⊕ primitive equation kernel[20] ⊕ one-or-more volumetric topology kernels[36] ⊕ exact CGXI/passport/configuration ⊕ time/state history",
+  "logical_universal_matrix": "archetype[411x60] ⊕ primitive equation kernel[20] ⊕ one-or-more volumetric topology kernels[39] ⊕ exact CGXI/passport/configuration ⊕ time/state history",
   "capacitance_policy": {
     "canonical_forms": "Use parallel-plate, coaxial/cylindrical, concentric-spherical or explicit network forms only when their geometry assumptions are valid.",
     "general_3d": "For arbitrary embedded multi-conductor geometry use the Maxwell capacitance matrix Q_i = Σ_j C_ij V_j from an attributable electrostatic field model plus physical readback.",
@@ -709,5 +763,16 @@
     "interface": "E(z,p,t)·ż = F(z,u,p,t); optional local linearization E·δẋ=A·δx+B·δu, y=C·δx+D·δu",
     "meaning": "Assembly interface only. Each domain kernel retains its own governing physics and validity domain; unsupported cross-domain terms remain HOLD.",
     "topology": "sparse node/edge/face/volume graph or hypergraph with local coordinate frame, interfaces, boundary conditions and history attached to each physical region"
+  },
+  "coverage_extension": {
+    "artifact_id": "UTP-140",
+    "queue_id": "BUILD-072",
+    "purpose": "Close false generic VGK-036-only archetype mappings while retaining VGK-036 for genuine coupled assemblies.",
+    "baseline_vgk036_only": "143/411 (34.79%) before remapping",
+    "added_kernel_ids": [
+      "VGK-037",
+      "VGK-038",
+      "VGK-039"
+    ]
   }
 }
