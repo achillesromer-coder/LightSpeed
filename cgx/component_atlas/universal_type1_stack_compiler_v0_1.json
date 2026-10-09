@@ -1,0 +1,212 @@
+{
+  "schema": "CGX-UNIVERSAL-TYPE1-STACK-COMPILER/0.2",
+  "artifact_id": "UTP-124",
+  "title": "Universal Type-I Parametric Stack + Inference Compiler",
+  "owner": {
+    "drive_spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "owner_row": "26_CGX_Portfolio_Delivery_v0_1!A75:P75"
+  },
+  "inputs": {
+    "archetype_matrix": "32_CGX_Universal_Type1_Tech_Matrix_v0_1",
+    "component_instances": "31_CGX_Component_Instance_Register_v0_1",
+    "interactions": "30_CGX_Component_Interaction_Map_v0_1",
+    "operational_routes": "33_PC01_CGX_Operational_Matrix_v0_1",
+    "manufacturing_ir": "cgx/manufacturing/manufacturing_ir_contract_v0_1.json",
+    "equation_kernel": "cgx/component_atlas/type1_equation_kernel_v0_1.json"
+  },
+  "matrix_contract": {
+    "archetype_count": 411,
+    "field_count": 60,
+    "directional_fields": 16,
+    "quantitative_factorization_fields": 8,
+    "primitive_basis_classes": 20,
+    "equation_kernel_records": 20
+  },
+  "compile_chain": [
+    "INTENT",
+    "RESOLVE_ARCHETYPES_AND_INSTANCES",
+    "MAP_PRIMITIVE_BASIS_AND_EQUIVALENT_NETWORK",
+    "RESOLVE_PRIMITIVE_EQUATION_KERNEL",
+    "ORDER_DIRECTIONAL_X_TO_Y_STACK",
+    "CHECK_INTERFACES_AND_INTERLAYERS",
+    "CHECK_VOXEL_PACKING_AND_PROCESS_RESOLUTION",
+    "CHECK_PROCESS_AND_ATMOSPHERE_TRANSITIONS",
+    "CHECK_PRIOR_LAYER_DAMAGE_AND_PRESERVATION",
+    "BIND_EQUATION_INPUTS",
+    "INFER_NUMERIC_OR_RETAIN_SYMBOLIC_OR_HOLD",
+    "FOUR_D_SOLVE_AND_REVIEW",
+    "DEFINE_TESTS_AND_FALSIFIERS",
+    "FREEZE_PC01_UTP106_PACKET",
+    "READBACK_DBR"
+  ],
+  "inference_policy": {
+    "numeric": "Allowed only when every required geometry/material/process/environment input is attributable to a source or measurement and the governing model is valid for that domain.",
+    "symbolic": "Required when the equation is known but one or more required inputs are unresolved.",
+    "hold": "HOLD required when model validity, directional compatibility, process damage, packing/resolution, authority, safety or evidence is unresolved.",
+    "uncertainty": "Carry source, geometry, process and metrology uncertainty. Use RSS only for independent linear terms; use covariance/nonlinear propagation otherwise."
+  },
+  "directional_rule": "X→Y is allowed only when Y does not violate X's damage envelope and the required interface/interlayer, voxel/spacing constraint and environment transitions are present. X→Y never implies Y→X.",
+  "four_d_state": "y(t)=F(geometry(t),material_state(t),environment(t),inputs(t),history), within the validated model domain.",
+  "primitive_basis": [
+    {
+      "id": "STRUCTURE_DATUM",
+      "network": "M-K-C structural/contact state",
+      "law": "k≈EA/L; bending ∝EI; m=ρV"
+    },
+    {
+      "id": "CONDUCTOR_INTERCONNECT",
+      "network": "distributed R + contact R + parasitic L/C",
+      "law": "R=ρL/A; R□=ρ/t"
+    },
+    {
+      "id": "DIELECTRIC_ISOLATION",
+      "network": "distributed C || R_leak + dielectric loss",
+      "law": "C/A≈ε0εr/d; E≈V/d"
+    },
+    {
+      "id": "RESISTIVE_HEATER",
+      "network": "R(T,state)+contact R + thermal Rθ-Cθ",
+      "law": "R=ρL/A; P=I²R=V²/R"
+    },
+    {
+      "id": "CAPACITIVE_ELECTROSTATIC",
+      "network": "C(V,f,T,state)||R_leak+ESR+ESL",
+      "law": "C/A≈ε0εr/d; U=½CV²"
+    },
+    {
+      "id": "INDUCTIVE_MAGNETIC",
+      "network": "L+R_series+C_parasitic + magnetic field state",
+      "law": "Φ=LI; ℜ=l/(μA)"
+    },
+    {
+      "id": "RF_WAVE",
+      "network": "distributed Z/β/Γ/S-parameter/radiation state",
+      "law": "transmission-line / field solution by regime"
+    },
+    {
+      "id": "ENERGY_STORAGE",
+      "network": "SOC/SOH + ESR + thermal + chemistry/electrostatic model",
+      "law": "storage-model specific; U=½CV² only electrostatic"
+    },
+    {
+      "id": "OPTICAL_PHOTONIC",
+      "network": "ray/Jones/transfer-matrix/wave state",
+      "law": "OPL=nL; phase=2πnL/λ"
+    },
+    {
+      "id": "SENSOR_METROLOGY",
+      "network": "y=H(x,state,t)+bias+noise",
+      "law": "S=∂y/∂x from source/calibration"
+    },
+    {
+      "id": "ACTUATOR_MOTION",
+      "network": "electromechanical plant/state-space + losses",
+      "law": "τ=Jα+load/loss; exact field/source model"
+    },
+    {
+      "id": "FLUIDIC_ENVIRONMENT",
+      "network": "hydraulic R-L-C / flow/species state",
+      "law": "Δp/Q geometry-regime dependent"
+    },
+    {
+      "id": "THERMAL_CONTROL",
+      "network": "Rθ-Cθ + conduction/convection/radiation",
+      "law": "Rθ=L/(kA); Cθ=ρcpV"
+    },
+    {
+      "id": "ACTIVE_LOGIC_SEED",
+      "network": "nonlinear compact/source model + timing/power/thermal",
+      "law": "exact device model; no geometry-only semiconductor inference"
+    },
+    {
+      "id": "POWER_CONVERSION",
+      "network": "switched state-space + parasitic L/C/R + control",
+      "law": "P=VI plus topology/source switching model"
+    },
+    {
+      "id": "SAFE_STATE_PROTECTION",
+      "network": "discrete monitored trip/interlock state",
+      "law": "source-bound state/limit model"
+    },
+    {
+      "id": "BARRIER_HERMETIC_COMPLIANCE",
+      "network": "diffusion/permeation + seal/mechanical state",
+      "law": "J≈-D∇c where valid; seal mechanics source-bound"
+    },
+    {
+      "id": "SERVICE_ACCESS",
+      "network": "configuration + tolerance + wear/mate-cycle state",
+      "law": "clearance/tolerance/preload/cycle model"
+    },
+    {
+      "id": "IDENTITY_STATE_DBR",
+      "network": "identity/config/provenance/readback graph",
+      "law": "hash/config/source state-transition invariants"
+    },
+    {
+      "id": "CHEMICAL_ELECTROCHEMICAL",
+      "network": "reaction + transport + charge/species state",
+      "law": "Fick/Nernst/Butler-Volmer only in valid regimes"
+    }
+  ],
+  "inference_fixtures": [
+    {
+      "id": "INF-CAP-KAPTON-HN-50UM-001",
+      "class": "ENGINEERING_INFERENCE / SOURCE_MATERIAL_REQUIRED / PHYSICAL_NOT_RUN",
+      "archetype": "CGA-C-001",
+      "source_ref": "UTP-106 / PMU-CAND-005A",
+      "model": "C=epsilon0*epsilon_r*A/d",
+      "source_inputs": {
+        "epsilon_r_nominal": 3.4,
+        "epsilon_r_basis": "DuPont Kapton HN at 1 kHz from current source-bound candidate record",
+        "dielectric_thickness_um_nominal": 50
+      },
+      "derived": {
+        "capacitance_density_pF_per_mm2": 0.6020847712704,
+        "capacitance_density_pF_per_cm2": 60.20847712704
+      },
+      "examples": [
+        {
+          "area_mm2": 100,
+          "ideal_capacitance_pF": 60.20847712704
+        },
+        {
+          "area_mm2": 400,
+          "ideal_capacitance_pF": 240.83390850816
+        },
+        {
+          "area_mm2": 2500,
+          "ideal_capacitance_nF": 1.505211928176
+        },
+        {
+          "area_mm2": 10000,
+          "ideal_capacitance_nF": 6.020847712704
+        }
+      ],
+      "exclusions": [
+        "no voltage rating",
+        "no breakdown rating",
+        "no leakage/loss value",
+        "no lifetime claim",
+        "no physical qualification"
+      ],
+      "corrections_required": [
+        "actual dielectric thickness",
+        "actual epsilon_r at frequency/temperature/humidity",
+        "electrode overlap and fringe",
+        "electrode/contact/process state",
+        "adhesive/interlayer contribution",
+        "loss/leakage",
+        "defects/voids/pinholes"
+      ]
+    }
+  ],
+  "non_claims": [
+    "not a universal single-process printer",
+    "not physical readiness",
+    "not certification",
+    "not recursive-manufacturing authority",
+    "not permission to infer absent properties",
+    "advanced silicon, MEMS, precision optoelectronics and certified protection remain seed/hybrid unless separately qualified"
+  ]
+}
