@@ -91,7 +91,7 @@ def test_template_artifact_is_json_parseable_and_preserves_no_uplift_boundary() 
     raw = json.loads((ROOT / "cgx" / "manufacturing" / "compound_parent_decomposition_templates_v0_1.json").read_text(encoding="utf-8"))
     assert raw["schema"] == "CGX-PRINTABLE-COMPOUND-DECOMPOSITION/0.1"
     boundary = raw["authority_boundary"].lower()
-    assert "not a" not in boundary or True
+    assert "decomposition templates only" in boundary
     assert "exact child selection" in boundary
     assert "geometry" in boundary
     assert "calibration" in boundary
