@@ -3,14 +3,17 @@ import projection from "../public/data/cgx_internal_review_projection.json";
 import { renderCgxReviewProjection } from "./cgxReview";
 
 describe("CGX internal review lens", () => {
-  it("projects the existing BUILD-069 queue without creating parallel state", () => {
-    expect(projection.authority.queue_id).toBe("BUILD-069");
+  it("projects the existing BUILD-070 queue without creating parallel state", () => {
+    expect(projection.authority.queue_id).toBe("BUILD-070");
     expect(projection.instances).toHaveLength(8);
     expect(projection.metrics.archetypes).toBe(411);
     expect(projection.metrics.matrix_fields).toBe(60);
     expect(projection.kernels).toHaveLength(20);
     expect(projection.volumetric_kernels).toHaveLength(36);
     expect(projection.metrics.volumetric_kernels).toBe(36);
+    expect(projection.metrics.printable_4d_templates).toBe(411);
+    expect(projection.printable_4d.template_count).toBe(411);
+    expect(projection.printable_4d.coupled_stack_kernel).toBe("VGK-036");
     expect(projection.metrics.physical_tests_run).toBe(0);
     expect(projection.metrics.requirement_targets_open).toBe(0);
     expect(projection.gate_counts).toEqual({
@@ -37,10 +40,20 @@ describe("CGX internal review lens", () => {
     expect(html).toContain("CGXI queue");
     expect(html).toContain("Equation kernels");
     expect(html).toContain("Volumetric kernels");
+    expect(html).toContain("Printable 4D");
+    expect(html).toContain("411");
+    expect(html).toContain("CGX-PRINTABLE-4D-COMPONENT/0.1");
     expect(html).toContain("VGK-036");
     expect(html).toContain("Showcase-safe");
     expect(html).toContain("NOT_PUBLISHED");
     expect(html).toContain("read-only projection");
+  });
+
+  it("keeps printable 4D packets machine-neutral and nonduplicative", () => {
+    expect(projection.printable_4d.invariants.join(" ")).toContain("no second engineering catalogue");
+    expect(projection.printable_4d.invariants.join(" ")).toContain("Parameter slots may remain open");
+    expect(projection.printable_4d.invariants.join(" ")).toContain("machine programs remain unavailable");
+    expect(projection.printable_4d.exact_examples.every((item) => item.state.includes("HOLD"))).toBe(true);
   });
 
   it("keeps showcase-safe content free of owner credentials and local paths", () => {
