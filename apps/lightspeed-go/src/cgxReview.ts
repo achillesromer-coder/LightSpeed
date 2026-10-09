@@ -28,7 +28,7 @@ export type CgxReviewProjection = {
     publication_state: string;
     title: string;
     summary: string;
-    metrics: Array<[string, string]>;
+    metrics: Array<{ value: string; label: string }>;
     safe_points: string[];
     excludes: string[];
   };
@@ -101,7 +101,7 @@ const renderShowcase = (p: CgxReviewProjection): string => `
       <span class="badge">${esc(p.showcase.publication_state)}</span>
     </div>
     <p>${esc(p.showcase.summary)}</p>
-    <div class="graph-summary">${p.showcase.metrics.map(([value, label]) => metric(value, label)).join("")}</div>
+    <div class="graph-summary">${p.showcase.metrics.map(({ value, label }) => metric(value, label)).join("")}</div>
     <div class="two-column">
       <div><strong>Safe showcase points</strong><ul class="compact-list">${p.showcase.safe_points.map((v) => `<li>${esc(v)}</li>`).join("")}</ul></div>
       <div><strong>Excluded from publication</strong><ul class="compact-list">${p.showcase.excludes.map((v) => `<li>${esc(v)}</li>`).join("")}</ul></div>
