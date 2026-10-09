@@ -59,3 +59,24 @@ def test_stack_compiler_and_seed_matrix_consume_utp146():
     assert "CHECK_ENERGY_RECIPROCITY_PASSIVITY_CAUSALITY" in c["compile_chain"]
     s = load(SEED)
     assert s["radiative_transport_companion"]["artifact_id"] == "UTP-146"
+
+def test_interlayer_edge_contract_and_transfer_basis():
+    d = load(PATH)
+    edge = d["interlayer_edge_contract"]
+    assert "state_or_flux_transferred" in edge["required"]
+    assert "parasitic_mutual_terms" in edge["required"]
+    assert "predecessor_damage_gate" in edge["required"]
+    ilt = {x["id"]: x for x in d["interlayer_transfer_basis"]}
+    assert len(ilt) == 12
+    assert "Maxwell capacitance matrix" in ilt["ILT-002"]["mutual"]
+    assert "S-matrix" in ilt["ILT-004"]["mutual"]
+    assert "view-factor" in ilt["ILT-007"]["mutual"]
+    assert "common-mode dose" in ilt["ILT-012"]["mutual"]
+
+def test_sequence_preserves_embedded_and_service_regions():
+    d = load(PATH)
+    rules = " ".join(d["sequence_and_interlayer_rules"])
+    assert "qualified preservation/encapsulation barrier" in rules
+    assert "Do not close cavities/channels/voids" in rules
+    assert "discharge/isolation" in rules
+    assert "Process history is part of 4D state" in rules

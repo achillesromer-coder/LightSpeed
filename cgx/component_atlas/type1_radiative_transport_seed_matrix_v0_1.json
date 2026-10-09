@@ -307,6 +307,137 @@
       "no fringe/fixture/process correction unless modeled or measured"
     ]
   },
+  "interlayer_edge_contract": {
+    "required": [
+      "edge_id",
+      "region_from",
+      "region_to",
+      "seed_relation",
+      "interface_operator",
+      "field_transport_regime",
+      "state_or_flux_transferred",
+      "transfer_or_jump_law",
+      "reflection_blocking_or_return",
+      "parasitic_mutual_terms",
+      "process_direction",
+      "predecessor_damage_gate",
+      "preservation_action",
+      "state_history",
+      "witness",
+      "evidence_state"
+    ],
+    "rule": "No physical adjacency is ideal or invisible. A consequential transfer, reflection, return path, leakage, contact, coupling or damage mechanism that is not attributable remains HOLD rather than being set to zero."
+  },
+  "interlayer_transfer_basis": [
+    {
+      "id": "ILT-001",
+      "name": "electrical conduction/contact",
+      "field": "FTR-EQS",
+      "transfer": "normal/tangential current and potential relation from attributable conductor/contact state",
+      "return_block": "contact resistance, isolation, leakage or open boundary explicit",
+      "mutual": "R/contact-R plus C/L parasitics as geometry requires",
+      "witness": "4-wire/continuity/impedance with geometry and environment"
+    },
+    {
+      "id": "ILT-002",
+      "name": "dielectric displacement/capacitive",
+      "field": "FTR-EQS",
+      "transfer": "D-normal/E-tangential boundary relation; Q=C·V for arbitrary multi-conductor geometry",
+      "return_block": "dielectric/interface polarization, leakage and shields explicit",
+      "mutual": "Maxwell capacitance matrix including seed/package electrodes",
+      "witness": "calibrated C/complex impedance plus exact geometry/material state"
+    },
+    {
+      "id": "ILT-003",
+      "name": "magnetic flux/inductive",
+      "field": "FTR-MQS",
+      "transfer": "B/H boundary relation and flux linkage Phi=L·I",
+      "return_block": "air gap/core/shield/eddy-current return paths explicit",
+      "mutual": "self/mutual L, partial inductance, DCR and parasitic C",
+      "witness": "L/Q/coupling/field measurement in declared frequency regime"
+    },
+    {
+      "id": "ILT-004",
+      "name": "RF electromagnetic wave",
+      "field": "FTR-EM-NF/FTR-EM-FF",
+      "transfer": "full-wave Maxwell/S-Z-Y or RLGC only when distributed-line assumptions hold",
+      "return_block": "reflection, transmission, radiation, absorption, aperture/seam leakage and shield return explicit",
+      "mutual": "S-matrix/coupled ports/near-field seed susceptibility and package interconnect",
+      "witness": "VNA/field/antenna readback with near/far regime declared"
+    },
+    {
+      "id": "ILT-005",
+      "name": "optical/photonic wave",
+      "field": "FTR-OPT",
+      "transfer": "Fresnel/Snell or wave/FDTD/FEM only in the applicable interface/scale regime",
+      "return_block": "reflection, refraction, scattering, absorption and polarization conversion explicit",
+      "mutual": "optical coupling/crosstalk/scatter matrix where useful",
+      "witness": "spectrum/power/phase/imaging/alignment"
+    },
+    {
+      "id": "ILT-006",
+      "name": "thermal conduction/contact",
+      "field": "thermal companion to FTR-THERM-RAD",
+      "transfer": "heat-flux/temperature relation with attributable conductivity/contact resistance",
+      "return_block": "thermal break/interface resistance and anisotropy explicit",
+      "mutual": "thermal conductance/capacitance network or field model",
+      "witness": "calibrated transient temperature/heat-flow"
+    },
+    {
+      "id": "ILT-007",
+      "name": "thermal surface radiation",
+      "field": "FTR-THERM-RAD",
+      "transfer": "radiosity/view-factor model; epsilon*sigma*A*F*(T1^4-T2^4) only under valid gray/diffuse assumptions",
+      "return_block": "emissivity, reflection, occlusion and view factors explicit",
+      "mutual": "surface-to-surface view-factor/radiosity exchange matrix",
+      "witness": "temperature/heat-balance or source-bound optical/IR properties"
+    },
+    {
+      "id": "ILT-008",
+      "name": "mechanical traction/compliance",
+      "field": "FTR-ACOUSTIC / structural companion",
+      "transfer": "traction/displacement/velocity compatibility or contact law appropriate to bond/contact",
+      "return_block": "slip, gap, preload, damping and compliance explicit",
+      "mutual": "mass/stiffness/damping/contact matrices including seed masses",
+      "witness": "force/displacement/strain/modal readback"
+    },
+    {
+      "id": "ILT-009",
+      "name": "acoustic/elastic wave",
+      "field": "FTR-ACOUSTIC",
+      "transfer": "pressure/velocity or stress/particle-velocity continuity by medium/interface",
+      "return_block": "impedance mismatch, reflection, transmission and damping explicit",
+      "mutual": "modal/acoustic coupling between cavities/regions/seeds",
+      "witness": "frequency/impulse/modal/acoustic response"
+    },
+    {
+      "id": "ILT-010",
+      "name": "fluid/gas/species transport",
+      "field": "FTR-FLUID/FTR-SPECIES",
+      "transfer": "mass/momentum/species flux with interface/seal/porous law appropriate to regime",
+      "return_block": "seal resistance, valve state, permeation/leak and capillary effects explicit",
+      "mutual": "hydraulic/transport network and pressure-compliance coupling",
+      "witness": "pressure/flow/leak/species readback"
+    },
+    {
+      "id": "ILT-011",
+      "name": "chemical/electrochemical/ionic",
+      "field": "FTR-IONIC",
+      "transfer": "species/electrochemical flux only from validated chemistry and constitutive model",
+      "return_block": "barrier/selectivity/passivation/diffusion resistance explicit",
+      "mutual": "reaction-diffusion/impedance/thermal-gas-swelling couplings",
+      "witness": "chemistry-specific composition/current/impedance/thermal evidence"
+    },
+    {
+      "id": "ILT-012",
+      "name": "ionizing radiation transport",
+      "field": "FTR-IONIZING",
+      "transfer": "attenuation/transport/deposition bound to spectrum, material and geometry; transport/Monte-Carlo or measurement for consequential cases",
+      "return_block": "scattering, secondary production, shielding shadowing and gaps explicit",
+      "mutual": "common-mode dose/upset/aging across seed and polymer volumes",
+      "witness": "source/spectrum-bound dosimetry or qualified transport model"
+    }
+  ],
   "sequence_and_interlayer_rules": [
     "A 2D schematic/netlist fixes logical intended connectivity only.",
     "The 3D region graph fixes actual adjacency, overlap, separation, orientation, return/reference paths, cavities and seed package boundaries.",
@@ -314,7 +445,11 @@
     "SO-ENCAPSULATE may preserve a completed oxygen/moisture/chemical-sensitive region before incompatible later processing when a qualified barrier/process exists.",
     "Field voids and cavities are first-class regions; void geometry may shape fields/thermal/fluid/mechanical behavior but is never an energy source.",
     "Multiple seed sources may share a body only after mutual coupling, thermal path, power/reference integrity, fault containment and service constraints are compiled.",
-    "Any consequential geometry/material/process/boundary revision invalidates stale numeric matrices and requires solve/readback refresh."
+    "Any consequential geometry/material/process/boundary revision invalidates stale numeric matrices and requires solve/readback refresh.",
+    "Insert a seed only when all remaining process steps fit its exact package/process envelope or a qualified preservation/encapsulation barrier isolates it.",
+    "Do not close cavities/channels/voids before required dimensional, cleanliness, leak or internal-interface witness is complete.",
+    "Preserve service, metrology, discharge/isolation, thermal relief, pressure relief and safe-state paths as explicit functional regions.",
+    "Process history is part of 4D state: cure, anneal, magnetize/polarize, fill/evacuate/seal, preload and configuration events are not silent metadata."
   ],
   "witness_minimum": {
     "SG0": [
