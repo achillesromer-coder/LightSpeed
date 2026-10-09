@@ -10,7 +10,8 @@
     "universal_matrix_fields": 60,
     "directional_4d_fields": 16,
     "quantitative_factorization_fields": 8,
-    "primitive_basis_classes": 20
+    "primitive_basis_classes": 20,
+    "equation_kernel_records": 20
   },
   "surfaces": [
     {
@@ -34,6 +35,11 @@
       "role": "intent→route→review→build-ready operational grammar"
     },
     {
+      "id": "34",
+      "name": "Type-I Equation Kernel",
+      "role": "20 primitive constitutive/equation kernels + numeric/symbolic/HOLD inference gates"
+    },
+    {
       "id": "MFG-IR",
       "name": "Manufacturing IR",
       "role": "machine-neutral component-to-print operation DAG and blockers"
@@ -45,14 +51,16 @@
     "UTP-118 source candidates",
     "UTP-119 circular-feed reference control",
     "UTP-124 parametric stack/inference compiler",
-    "UTP-125 manufacturing IR compiler"
+    "UTP-125 manufacturing IR compiler",
+    "UTP-131 primitive equation/constitutive kernel"
   ],
   "inference_example": {
     "label": "Ideal parallel-plate baseline",
     "equation": "C≈ε₀εᵣA/d",
     "inputs": "UTP-106 PMU-CAND-005A Kapton HN: εr≈3.4 @ 1 kHz; d=50 µm",
     "result": "C/A≈0.6020848 pF/mm² ≈60.2085 pF/cm²",
-    "evidence": "engineering inference only; source/material/process/measurement corrections required"
+    "evidence": "engineering inference only; source/material/process/measurement corrections required",
+    "instance_override": "CGXI-P2-C-001 Kapton HN 25 µm candidate: ideal C/A≈1.2041695 pF/mm² before measured/process corrections"
   },
   "boundary": "Read-only derived projection. Catalogue membership, primitive mapping, equation evaluation, compiler output or UI rendering does not establish physical readiness, certification, authority or release."
 }
