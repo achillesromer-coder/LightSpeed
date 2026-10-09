@@ -6,6 +6,7 @@ import re
 from typing import Any
 
 from .compiler import compile_assembly, compile_component
+from .interfaces import compile_interface_graph
 
 SCHEMA = "CGX-PRINTABLE-4D-COMPONENT/0.1"
 STACK_SCHEMA = "CGX-PRINTABLE-4D-STACK/0.1"
@@ -261,6 +262,7 @@ def compile_printable_stack(
     *,
     stack_id: str,
     relations: list[dict[str, str]] | None = None,
+    interfaces: list[dict[str, Any]] | None = None,
     horizon: str = "H-TERR-SITE",
 ) -> dict[str, Any]:
     component_irs: list[dict[str, Any]] = []
@@ -296,6 +298,8 @@ def compile_printable_stack(
         )
 
     assembly = compile_assembly(component_irs, build_id=stack_id, relations=relations)
+    interface_graph = compile_interface_graph(interfaces)
+    interface_ready = interface_graph["state"] in {"NO_EXPLICIT_INTERFACES", "INTERFACES_BOUND_FOR_DIGITAL_COMPILE"}
     ready = all(packet["packet_state"] == "BUILD_READY_MACHINE_NEUTRAL" for packet in packets)
     stack = {
         "schema": STACK_SCHEMA,
@@ -307,13 +311,15 @@ def compile_printable_stack(
         "child_recipe_refs": assembly["child_recipe_refs"],
         "recipe_bodies_duplicated": False,
         "coupled_4d_kernel": "VGK-036",
+        "interface_operator_artifact": "UTP-141",
+        "interface_graph": interface_graph,
         "dependencies": assembly["dependencies"],
         "schedule": assembly["schedule"],
         "optimization": assembly["optimization"],
-        "stack_state": "BUILD_READY_MACHINE_NEUTRAL" if ready and assembly["execution_state"] == "BUILD_READY" else "HOLD",
+        "stack_state": "BUILD_READY_MACHINE_NEUTRAL" if ready and interface_ready and assembly["execution_state"] == "BUILD_READY" else "HOLD",
         "machine_program_state": "EMITTABLE_ONLY_AFTER_ALL_CHILD_AND_INTERFACE_GATES_PASS",
         "physical_execution": False,
-        "authority_boundary": "Whole-stack scheduling reuses child recipes and may optimize compatible tool/environment transitions, but it cannot bypass any child, interface, preservation, safety, evidence or owner gate.",
+        "authority_boundary": "Whole-stack scheduling reuses child recipes and may optimize compatible tool/environment transitions. Explicit UTP-141 edges preserve direction and hold the stack when interface evidence is unresolved; no child, interface, preservation, safety, evidence or owner gate may be bypassed.",
     }
     stack["stack_hash"] = _hash({k: v for k, v in stack.items() if k != "stack_hash"})
     return stack
