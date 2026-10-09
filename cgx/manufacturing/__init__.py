@@ -13,6 +13,11 @@ from .compiler import (
     validate_simulation_result,
 )
 from .adapter import AdapterError, emit_reference_gcode
+from .printstack import (
+    compile_printable_catalogue,
+    compile_printable_component,
+    compile_printable_stack,
+)
 from .binding import (
     create_witness_coupon_packet,
     resolve_binding_gate,
@@ -29,6 +34,9 @@ __all__ = [
     "load_default_atlas",
     "load_default_instance_population",
     "validate_simulation_result",
+    "compile_printable_catalogue",
+    "compile_printable_component",
+    "compile_printable_stack",
     "AdapterError",
     "emit_reference_gcode",
     "resolve_binding_gate",
