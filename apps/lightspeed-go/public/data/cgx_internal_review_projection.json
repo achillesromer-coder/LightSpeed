@@ -1,17 +1,17 @@
 {
-  "schema": "CGX-INTERNAL-REVIEW-PROJECTION/0.3",
-  "generated_from": "Drive-owned Type 1 Romer Cognigrex + BUILD-070 merged printable-4D compiler",
+  "schema": "CGX-INTERNAL-REVIEW-PROJECTION/0.4",
+  "generated_from": "Drive-owned Type 1 Romer Cognigrex + BUILD-072 merged 40-kernel topology coverage",
   "visibility": "INTERNAL_REVIEW_LOCAL",
   "authority": {
     "engineering_owner": "Type 1 Romer Cognigrex",
     "implementation_mirror": "achillesromer-coder/LightSpeed",
-    "queue_id": "BUILD-070",
+    "queue_id": "BUILD-072",
     "physical_state": "PHYSICAL_NOT_RUN"
   },
   "headline": {
     "title": "CGX Type-I build convergence",
-    "state": "PRINTABLE 4D COMPONENT + STACK CONVERGENCE",
-    "note": "Review the same owner evidence graph from archetype through primitive physics, volumetric topology and reusable printable 4D packet/stack scheduling. Template compilation is complete for all 411 archetypes; exact packets remain evidence-bounded and physical execution remains NOT_RUN."
+    "state": "40-KERNEL TOPOLOGY COVERAGE + PRINTABLE 4D",
+    "note": "The owner graph now resolves 402/411 archetypes to specific or explicit multi-kernel topology candidates; only nine implementation-dependent RF networks and PCB stacks remain generic-coupled at archetype level. Printable packet and exact-binding authority rules are unchanged; physical execution remains NOT_RUN."
   },
   "metrics": {
     "archetypes": 411,
@@ -23,9 +23,11 @@
     "source_candidate_bound": 6,
     "requirement_targets_open": 0,
     "physical_tests_run": 0,
-    "volumetric_kernels": 36,
+    "volumetric_kernels": 40,
     "printable_4d_templates": 411,
-    "exact_packet_inputs": 8
+    "exact_packet_inputs": 8,
+    "topology_specific_or_multi": 402,
+    "generic_coupled_fallback": 9
   },
   "gate_counts": {
     "SOURCE_IDENTITY": 1,
@@ -266,8 +268,8 @@
     },
     {
       "id": "topology",
-      "label": "Resolve volumetric topology + boundaries",
-      "contract": "UTP-137 / sheet35",
+      "label": "Resolve volumetric topology + coverage-specific kernel",
+      "contract": "UTP-137 / UTP-140 / sheet35",
       "state": "ACTIVE"
     },
     {
@@ -337,12 +339,16 @@
         "label": "primitive equation kernels"
       },
       {
-        "value": "36",
+        "value": "40",
         "label": "volumetric topology kernels"
       },
       {
         "value": "411",
         "label": "derived printable 4D templates"
+      },
+      {
+        "value": "9",
+        "label": "intentional generic-coupled archetypes"
       },
       {
         "value": "8",
@@ -357,6 +363,7 @@
       "One canonical graph; views are projections, not duplicate catalogues.",
       "Only consequential physics are solved for each component and process.",
       "Constitutive physics and 3D topology are factored separately, so geometry can change without duplicating component identity or domain equations.",
+      "Topology coverage resolves 402/411 archetypes to specific or explicit multi-kernel candidates; nine compound RF/PCB archetypes remain deliberately generic until exact decomposition.",
       "Printable packets reference canonical recipes/topology/evidence instead of duplicating per-component process files.",
       "Exact source, lot, process, tool and calibration evidence override generic archetype assumptions.",
       "Simulation refines digital candidates but does not become measurement.",
@@ -370,7 +377,7 @@
       "claims of physical qualification where testing remains NOT_RUN"
     ]
   },
-  "boundary": "Internal read-only projection. BUILD-070 adds derived printable component/stack packets and 411-template coverage but does not mutate Drive evidence, invent parameters, execute hardware, create lots/calibration, promote BUILD_READY, publish the corpus or change evidence ceilings.",
+  "boundary": "Internal read-only projection. BUILD-072 refines topology selection from 36 to 40 kernels and reduces false generic fallback from 143/411 to 9/411; it does not mutate Drive evidence, invent parameters, execute hardware, create lots/calibration, promote BUILD_READY, publish the corpus or change evidence ceilings.",
   "volumetric_kernels": [
     {
       "kernel_id": "VGK-001",
@@ -623,6 +630,34 @@
       "topology": "coupled sparse 4D state assembly",
       "token": "VOL_COUPLED_STATE_ASSEMBLY",
       "gate": "NUMERIC_IF every participating kernel is individually valid and coupling terms are attributable; otherwise SYMBOLIC/HOLD"
+    },
+    {
+      "kernel_id": "VGK-037",
+      "primitive": "RF_WAVE",
+      "topology": "general 3D radiating / scattering electromagnetic cell",
+      "token": "VOL_RF_FULL_WAVE",
+      "gate": "NUMERIC_IF exact geometry/material/ports/environment/boundaries are attributable and the full-wave solve is converged/calibrated; otherwise SYMBOLIC/HOLD"
+    },
+    {
+      "kernel_id": "VGK-038",
+      "primitive": "STRUCTURE_DATUM",
+      "topology": "piezoelectric / acoustic resonator and transducer cell",
+      "token": "VOL_ACOUSTIC_PIEZO",
+      "gate": "NUMERIC_IF exact material tensors/orientation/geometry/boundaries and a valid acoustic/piezoelectric regime are bound"
+    },
+    {
+      "kernel_id": "VGK-039",
+      "primitive": "FLUIDIC_ENVIRONMENT",
+      "topology": "general 3D fluid / CFD flow body",
+      "token": "VOL_FLUID_GENERAL_3D",
+      "gate": "NUMERIC_IF fluid properties/regime/boundaries/geometry are attributable and solver mesh/conservation are converged; otherwise SYMBOLIC/HOLD"
+    },
+    {
+      "kernel_id": "VGK-040",
+      "primitive": "DIELECTRIC_ISOLATION",
+      "topology": "general dielectric / electrical insulation volume",
+      "token": "VOL_DIELECTRIC_ISOLATION",
+      "gate": "NUMERIC_IF exact dielectric geometry/material/process/environment and electrical boundaries are attributable; breakdown/withstand/lifetime remain separate gates"
     }
   ],
   "printable_4d": {
@@ -685,5 +720,26 @@
       "Parameter slots may remain open; missing values are never invented.",
       "Generated machine programs remain unavailable until exact BUILD_READY, machine/adapter/calibration parity and independent C0/safety gates all pass."
     ]
+  },
+  "topology_coverage": {
+    "artifact_id": "UTP-140",
+    "queue_id": "BUILD-072",
+    "baseline_generic_only": 143,
+    "first_pass_generic_only": 35,
+    "final_generic_only": 9,
+    "specific_or_multi": 402,
+    "total_archetypes": 411,
+    "residual": [
+      "CGA-RF-001 · LC resonator",
+      "CGA-RF-022 · RC low-pass/high-pass filter",
+      "CGA-RF-023 · LC ladder filter",
+      "CGA-RF-026 · Diplexer/duplexer",
+      "CGA-RF-029 · Impedance matching network",
+      "CGA-RF-043 · Antenna tuner / matching unit",
+      "CGA-I-021 · Rigid PCB stack",
+      "CGA-I-022 · Flexible PCB stack",
+      "CGA-I-023 · Rigid-flex transition"
+    ],
+    "rule": "Residual fallback is intentional: exact implementation must decompose these multi-primitive networks/stacks before child kernels can be selected. Do not optimize the count to zero."
   }
 }

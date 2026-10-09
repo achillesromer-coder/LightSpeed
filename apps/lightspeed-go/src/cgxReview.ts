@@ -24,6 +24,17 @@ export type CgxReviewProjection = {
   }>;
   kernels: Array<{ kernel_id: string; primitive: string; model: string; gate: string }>;
   volumetric_kernels: Array<{ kernel_id: string; primitive: string; topology: string; token: string; gate: string }>;
+  topology_coverage: {
+    artifact_id: string;
+    queue_id: string;
+    baseline_generic_only: number;
+    first_pass_generic_only: number;
+    final_generic_only: number;
+    specific_or_multi: number;
+    total_archetypes: number;
+    residual: string[];
+    rule: string;
+  };
   printable_4d: {
     artifact_id: string;
     state: string;
@@ -112,6 +123,13 @@ const renderKernels = (p: CgxReviewProjection): string => `
 
 const renderVolumetricKernels = (p: CgxReviewProjection): string => `
   <section class="cgx-lens-panel" data-cgx-lens-panel="volumetric" hidden>
+    <div class="graph-summary">
+      ${metric(p.metrics.volumetric_kernels, "volumetric kernels")}
+      ${metric(p.topology_coverage.specific_or_multi, "specific / explicit multi-kernel archetypes")}
+      ${metric(p.topology_coverage.final_generic_only, "intentional generic-coupled archetypes")}
+      ${metric(`${p.topology_coverage.baseline_generic_only} → ${p.topology_coverage.final_generic_only}`, "generic fallback refinement")}
+    </div>
+    <div class="boundary"><strong>UTP-140 coverage closure</strong><span>${esc(p.topology_coverage.rule)} Residual: ${p.topology_coverage.residual.map(esc).join(" · ")}</span></div>
     <div class="table-scroll">
       <table class="graph-table">
         <thead><tr><th>Kernel</th><th>Primitive</th><th>Topology / geometry</th><th>Compiler token</th><th>Numeric gate</th></tr></thead>
