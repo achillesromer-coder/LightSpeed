@@ -13,6 +13,13 @@ from .compiler import (
     validate_simulation_result,
 )
 from .adapter import AdapterError, emit_reference_gcode
+from .binding import (
+    create_witness_coupon_packet,
+    resolve_binding_gate,
+    resolve_binding_queue,
+    validate_lot_passport,
+    validate_tool_manifest,
+)
 
 __all__ = [
     "compile_component",
@@ -24,4 +31,9 @@ __all__ = [
     "validate_simulation_result",
     "AdapterError",
     "emit_reference_gcode",
+    "resolve_binding_gate",
+    "resolve_binding_queue",
+    "validate_lot_passport",
+    "validate_tool_manifest",
+    "create_witness_coupon_packet",
 ]
