@@ -16,7 +16,8 @@
     "volumetric_kernel": "cgx/component_atlas/type1_volumetric_kernel_v0_1.json",
     "functional_voxel_basis": "cgx/component_atlas/type1_functional_voxel_field_basis_v0_1.json",
     "seed_field_stack_matrix": "cgx/component_atlas/type1_seed_field_stack_matrix_v0_1.json",
-    "p2_sg0_rcl_witness_packet": "cgx/manufacturing/p2_sg0_rcl_witness_packet_v0_1.json"
+    "p2_sg0_rcl_witness_packet": "cgx/manufacturing/p2_sg0_rcl_witness_packet_v0_1.json",
+    "radiative_transport_seed_matrix": "cgx/component_atlas/type1_radiative_transport_seed_matrix_v0_1.json"
   },
   "matrix_contract": {
     "archetype_count": 411,
@@ -29,7 +30,10 @@
     "functional_region_classes": 17,
     "seed_graph_classes": 3,
     "field_coupling_classes": 10,
-    "spatial_operator_classes": 10
+    "spatial_operator_classes": 10,
+    "field_transport_regimes": 12,
+    "radiative_region_roles": 10,
+    "radiative_coupling_operators": 16
   },
   "compile_chain": [
     "INTENT",
@@ -39,7 +43,9 @@
     "RESOLVE_VOLUMETRIC_TOPOLOGY",
     "RESOLVE_BOUNDARY_INTERFACE_GRAPH",
     "SELECT_FIELD_COUPLING_MODELS",
+    "RESOLVE_RADIATIVE_TRANSPORT_REGIME",
     "EXTRACT_PARASITIC_AND_MUTUAL_COUPLINGS",
+    "CHECK_ENERGY_RECIPROCITY_PASSIVITY_CAUSALITY",
     "PACK_FUNCTIONAL_VOXELS_AND_SPATIAL_OPERATORS",
     "SELECT_SEED_GRAPH_CLASS",
     "ORDER_DIRECTIONAL_X_TO_Y_STACK",
@@ -343,5 +349,13 @@
       "gate": "Select exact seed only after function, voltage/current, I/O, thermal, package, service and safety envelope are declared. No placeholder seed may be treated as capability.",
       "physical_execution": false
     }
-  ]
+  ],
+  "radiative_transport_policy": {
+    "companion": "UTP-146 / BUILD-079",
+    "graph": "source -> propagation/transport region -> interfaces -> coupling/scatter/absorption -> receiver/load -> loss/storage -> witness",
+    "seed_rule": "SG-0/SG-1/SG-N changes discrete source/receiver population, not the underlying physics or evidence rules.",
+    "regime_rule": "Electrostatic, magnetoquasistatic, EM near-field, EM far-field, optical, thermal radiation, acoustic, fluid, species, ionic/electrochemical, ionizing and inertial regimes remain distinct.",
+    "energy_rule": "Passive regions must close an input/stored/dissipated/exported energy balance within declared uncertainty; active gain requires an attributable source.",
+    "revision_rule": "Consequential geometry/material/process/boundary or seed revision invalidates stale field/mutual matrices and requires solve/readback refresh."
+  }
 }

@@ -460,5 +460,11 @@
     "Certified protection/isolation/semiconductor/MEMS/precision optoelectronics remain seed/hybrid unless their full process chain is independently qualified.",
     "Physical execution, release and durable .cgx promotion remain separately gated."
   ],
-  "physical_execution": false
+  "physical_execution": false,
+  "radiative_transport_companion": {
+    "artifact_id": "UTP-146",
+    "build_id": "BUILD-079",
+    "path": "cgx/component_atlas/type1_radiative_transport_seed_matrix_v0_1.json",
+    "role": "field/radiation/transport regime, source/receiver, energy/passivity and self/mutual-coupling closure across SG-0/SG-1/SG-N"
+  }
 }

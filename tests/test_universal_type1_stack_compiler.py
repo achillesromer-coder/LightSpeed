@@ -24,6 +24,9 @@ def test_owner_and_matrix_cardinality():
         "seed_graph_classes": 3,
         "field_coupling_classes": 10,
         "spatial_operator_classes": 10,
+        "field_transport_regimes": 12,
+        "radiative_region_roles": 10,
+        "radiative_coupling_operators": 16,
     }
     assert len(d["primitive_basis"]) == 20
     assert "MAP_PRIMITIVE_BASIS_AND_EQUIVALENT_NETWORK" in d["compile_chain"]
