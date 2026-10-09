@@ -90,3 +90,14 @@ def test_generic_archetype_projection_does_not_claim_exact_instance_binding() ->
     assert cap["resolution_state"] == "ARCHETYPE_TOPOLOGY_CANDIDATE"
     assert cap["blockers"] == ["exact-instance-not-bound"]
     assert cap["physical_execution"] is False
+
+def test_capacitance_policy_and_coupled_4d_summary_are_preserved() -> None:
+    data = load_volumetric_kernel()
+    policy = data["capacitance_policy"]
+    assert policy["kapton_HN_25um_ideal_pF_per_mm2"] == 2 * policy["kapton_HN_50um_ideal_pF_per_mm2"]
+    assert "Maxwell capacitance matrix" in policy["general_3d"]
+    assert "no voltage rating" in policy["exclusions"]
+    assembly = data["coupled_4d_assembly"]
+    assert "E(z,p,t)" in assembly["interface"]
+    assert "unsupported cross-domain terms remain HOLD" in assembly["meaning"]
+    assert "411x60" in data["logical_universal_matrix"]

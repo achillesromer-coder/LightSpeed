@@ -690,5 +690,24 @@
     "unsupported cross-domain coupling remains HOLD",
     "geometry/process revisions invalidate stale field matrices and topology-specific numeric inference",
     "physical/HV/RF/pressure/reactive execution remains separately gated"
-  ]
+  ],
+  "logical_universal_matrix": "archetype[411x60] ⊕ primitive equation kernel[20] ⊕ one-or-more volumetric topology kernels[36] ⊕ exact CGXI/passport/configuration ⊕ time/state history",
+  "capacitance_policy": {
+    "canonical_forms": "Use parallel-plate, coaxial/cylindrical, concentric-spherical or explicit network forms only when their geometry assumptions are valid.",
+    "general_3d": "For arbitrary embedded multi-conductor geometry use the Maxwell capacitance matrix Q_i = Σ_j C_ij V_j from an attributable electrostatic field model plus physical readback.",
+    "kapton_HN_50um_ideal_pF_per_mm2": 0.6020847712704,
+    "kapton_HN_25um_ideal_pF_per_mm2": 1.2041695425408,
+    "evidence": "ENGINEERING_INFERENCE / PHYSICAL_NOT_RUN",
+    "exclusions": [
+      "no voltage rating",
+      "no breakdown/lifetime inference",
+      "no leakage/loss without source/process evidence",
+      "no generic parallel-plate substitution for arbitrary 3D geometry"
+    ]
+  },
+  "coupled_4d_assembly": {
+    "interface": "E(z,p,t)·ż = F(z,u,p,t); optional local linearization E·δẋ=A·δx+B·δu, y=C·δx+D·δu",
+    "meaning": "Assembly interface only. Each domain kernel retains its own governing physics and validity domain; unsupported cross-domain terms remain HOLD.",
+    "topology": "sparse node/edge/face/volume graph or hypergraph with local coordinate frame, interfaces, boundary conditions and history attached to each physical region"
+  }
 }
