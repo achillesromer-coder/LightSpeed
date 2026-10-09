@@ -13,8 +13,8 @@
   "counts": {
     "total": 8,
     "SOURCE_IDENTITY": 1,
-    "REQUIREMENT_TARGET": 2,
-    "LOT_PASSPORT": 3,
+    "REQUIREMENT_TARGET": 0,
+    "LOT_PASSPORT": 5,
     "PROCESS_ROUTE": 1,
     "UPSTREAM_EVIDENCE": 1
   },
@@ -51,9 +51,9 @@
       "instance_id": "CGXI-P2-R-001",
       "proof_stage": "P2",
       "binding_progress": "SOURCE_CANDIDATE_BOUND",
-      "first_open_gate": "REQUIREMENT_TARGET",
+      "first_open_gate": "LOT_PASSPORT",
       "physical_state": "NOT_RUN",
-      "next": "Select target resistance/use case before exact blend, geometry and witness-coupon process."
+      "next": "Acquire/passport exact resistive ink/substrate/terminal lots; target is reviewed at 1.0 kΩ nominal ±20% first-proof intent."
     },
     {
       "order": 5,
@@ -91,9 +91,9 @@
       "instance_id": "CGXI-P3-LOOP-001",
       "proof_stage": "P3",
       "binding_progress": "SOURCE_CANDIDATE_BOUND",
-      "first_open_gate": "REQUIREMENT_TARGET",
+      "first_open_gate": "LOT_PASSPORT",
       "physical_state": "NOT_RUN",
-      "next": "Declare passive band/function and nearby-body environment before geometry/fixture optimisation."
+      "next": "Acquire/passport exact conductor/substrate lots; target is reviewed at 13.56 MHz passive near-field coupling with ±5% first-proof resonant/coupling intent."
     }
   ],
   "non_claims": [

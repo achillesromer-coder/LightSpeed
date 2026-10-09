@@ -45,12 +45,28 @@
     "CGXI-P0-SH01-ID-A": "SOURCE_IDENTITY",
     "CGXI-P1-TRACE-001": "LOT_PASSPORT",
     "CGXI-P1-VIA-001": "PROCESS_ROUTE",
-    "CGXI-P2-R-001": "REQUIREMENT_TARGET",
+    "CGXI-P2-R-001": "LOT_PASSPORT",
     "CGXI-P2-C-001": "LOT_PASSPORT",
     "CGXI-P2-L-001": "LOT_PASSPORT",
     "CGXI-P3-LC-001": "UPSTREAM_EVIDENCE",
-    "CGXI-P3-LOOP-001": "REQUIREMENT_TARGET"
+    "CGXI-P3-LOOP-001": "LOT_PASSPORT"
   },
   "anti_duplication": "Resolve existing CGXI and source-candidate state first; generate evidence only for the first unresolved consequential gate; append receipts/revisions rather than restarting source selection.",
-  "physical_boundary": "No binding resolution, lot passport schema, tool manifest, machine envelope or witness packet constitutes physical execution, qualification, certification or BUILD_READY by itself."
+  "physical_boundary": "No binding resolution, lot passport schema, tool manifest, machine envelope or witness packet constitutes physical execution, qualification, certification or BUILD_READY by itself.",
+  "owner_requirement_target_closures": {
+    "CGXI-P2-R-001": {
+      "state": "REVIEWED_REQUIREMENT_TARGET / PHYSICAL_NOT_RUN",
+      "target": "1.0 kΩ nominal passive printed-resistor first-proof coupon",
+      "acceptance_intent": "±20% after declared cure plus dimensional/adhesion pass",
+      "service": "H-TERR-SITE / lab ambient; no power-rating or application-certification claim",
+      "next_gate": "LOT_PASSPORT"
+    },
+    "CGXI-P3-LOOP-001": {
+      "state": "REVIEWED_REQUIREMENT_TARGET / PHYSICAL_NOT_RUN",
+      "target": "13.56 MHz passive near-field identity/coupling development loop",
+      "acceptance_intent": "resonant/coupling feature within ±5% in a declared nearby-body fixture",
+      "service": "receive/couple characterization only; no transmit-power/range/exposure/certification claim",
+      "next_gate": "LOT_PASSPORT"
+    }
+  }
 }

@@ -21,11 +21,11 @@ EXPECTED = {
     "CGXI-P0-SH01-ID-A": "SOURCE_IDENTITY",
     "CGXI-P1-TRACE-001": "LOT_PASSPORT",
     "CGXI-P1-VIA-001": "PROCESS_ROUTE",
-    "CGXI-P2-R-001": "REQUIREMENT_TARGET",
+    "CGXI-P2-R-001": "LOT_PASSPORT",
     "CGXI-P2-C-001": "LOT_PASSPORT",
     "CGXI-P2-L-001": "LOT_PASSPORT",
     "CGXI-P3-LC-001": "UPSTREAM_EVIDENCE",
-    "CGXI-P3-LOOP-001": "REQUIREMENT_TARGET",
+    "CGXI-P3-LOOP-001": "LOT_PASSPORT",
 }
 
 
@@ -195,9 +195,24 @@ def test_binding_queue_cli_returns_same_owner_state_without_mutation() -> None:
     )
     out = json.loads(proc.stdout)
     assert out["record_count"] == 8
-    assert out["counts_by_gate"]["LOT_PASSPORT"] == 3
-    assert out["counts_by_gate"]["REQUIREMENT_TARGET"] == 2
+    assert out["counts_by_gate"]["LOT_PASSPORT"] == 5
+    assert out["counts_by_gate"].get("REQUIREMENT_TARGET", 0) == 0
     assert out["counts_by_gate"]["SOURCE_IDENTITY"] == 1
     assert out["counts_by_gate"]["PROCESS_ROUTE"] == 1
     assert out["counts_by_gate"]["UPSTREAM_EVIDENCE"] == 1
     assert out["physical_execution"] is False
+
+def test_reviewed_requirement_targets_advance_without_physical_uplift() -> None:
+    resistor = find_instance(POP, "CGXI-P2-R-001")
+    loop = find_instance(POP, "CGXI-P3-LOOP-001")
+
+    assert "1.0 kΩ nominal" in resistor["electrical_mechanical_thermal_or_process_ratings"]
+    assert "±20%" in resistor["acceptance_tests"]
+    assert resolve_binding_gate(resistor, population=POP)["first_open_gate"] == "LOT_PASSPORT"
+
+    assert "13.56 MHz" in loop["electrical_mechanical_thermal_or_process_ratings"]
+    assert "±5%" in loop["acceptance_tests"]
+    assert resolve_binding_gate(loop, population=POP)["first_open_gate"] == "LOT_PASSPORT"
+
+    assert resistor["binding_state"] == loop["binding_state"] == "UNBOUND"
+    assert resistor["physical_state"] == loop["physical_state"] == "NOT_RUN"
