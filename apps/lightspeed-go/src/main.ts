@@ -64,6 +64,7 @@ import {
 import { renderRepresentationGraphs } from "./representationGraphs";
 import { loadType1CatalogueProjection, type Type1CatalogueProjection } from "./utpCatalogue";
 import { bindCgxReviewProjection, loadCgxReviewProjection, type CgxReviewProjection } from "./cgxReview";
+import { bindObjectReview, loadObjectReview, type ObjectReviewCatalogue, type PrintableCatalogue } from "./objectReview";
 import { sourceLinks } from "./sourceRegistry";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
 
@@ -188,6 +189,9 @@ app.innerHTML = `
         <div><p class="eyebrow">Canonical representation edge</p><h2>Identity, evidence, horizon, review</h2></div>
         <p>Three bounded local candidates prove the complete intake route. Drive becomes canonical only after owner decision, promotion, and exact readback.</p>
       </article>
+      <div id="object-review-catalogue" class="graph-stack">
+        <article class="panel"><p class="muted">Reading the CGX object review catalogue…</p></article>
+      </div>
       <div id="cgx-review-lens" class="graph-stack">
         <article class="panel"><p class="muted">Reading the internal .cgx review projection…</p></article>
       </div>
@@ -888,6 +892,28 @@ const refreshDesktop = async (): Promise<void> => {
 byId("refresh-desktop").addEventListener("click", () => void refreshDesktop());
 renderPending();
 void refreshDesktop();
+
+const objectReviewMount = byId("object-review-catalogue");
+const objectReviewUrl = new URL("./data/cgx_object_review_catalogue.json", document.baseURI).toString();
+const printableCatalogueUrl = new URL("./data/printable_4d_catalogue_full.json", document.baseURI).toString();
+void loadObjectReview(
+  async () => {
+    const response = await fetch(objectReviewUrl, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Object review catalogue returned HTTP ${response.status}`);
+    return (await response.json()) as ObjectReviewCatalogue;
+  },
+  async () => {
+    const response = await fetch(printableCatalogueUrl, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Printable 4D catalogue returned HTTP ${response.status}`);
+    return (await response.json()) as PrintableCatalogue;
+  },
+).then(({ html }) => {
+  objectReviewMount.innerHTML = html;
+  bindObjectReview(objectReviewMount);
+}).catch((error) => {
+  const message = error instanceof Error ? error.message : "CGX object review catalogue unavailable.";
+  objectReviewMount.innerHTML = `<article class="panel"><p class="eyebrow">CGX object review</p><h2>Catalogue unavailable</h2><p class="muted">${escapeHtml(message)}</p></article>`;
+});
 
 const cgxReviewMount = byId("cgx-review-lens");
 const cgxReviewUrl = new URL("./data/cgx_internal_review_projection.json", document.baseURI).toString();
