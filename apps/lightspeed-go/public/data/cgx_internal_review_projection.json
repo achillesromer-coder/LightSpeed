@@ -1,17 +1,17 @@
 {
-  "schema": "CGX-INTERNAL-REVIEW-PROJECTION/0.4",
-  "generated_from": "Drive-owned Type 1 Romer Cognigrex + BUILD-072 merged 40-kernel topology coverage",
+  "schema": "CGX-INTERNAL-REVIEW-PROJECTION/0.5",
+  "generated_from": "Drive-owned Type 1 Romer Cognigrex + BUILD-071 UTP-139 quantitative invariants + retained BUILD-072 40-kernel topology coverage",
   "visibility": "INTERNAL_REVIEW_LOCAL",
   "authority": {
     "engineering_owner": "Type 1 Romer Cognigrex",
     "implementation_mirror": "achillesromer-coder/LightSpeed",
-    "queue_id": "BUILD-072",
+    "queue_id": "BUILD-071",
     "physical_state": "PHYSICAL_NOT_RUN"
   },
   "headline": {
     "title": "CGX Type-I build convergence",
-    "state": "40-KERNEL TOPOLOGY COVERAGE + PRINTABLE 4D",
-    "note": "The owner graph now resolves 402/411 archetypes to specific or explicit multi-kernel topology candidates; only nine implementation-dependent RF networks and PCB stacks remain generic-coupled at archetype level. Printable packet and exact-binding authority rules are unchanged; physical execution remains NOT_RUN."
+    "state": "QUANTITATIVE INVARIANTS + DENSE SMART-STACK + PRINTABLE 4D",
+    "note": "The same 411-archetype graph now carries seven reusable source-bounded quantitative invariants and a 12-region dense smart-stack grammar over the existing 20 constitutive and 40 volumetric kernels. Numeric output remains NUMERIC_IF/SYMBOLIC/HOLD; physical execution remains NOT_RUN."
   },
   "metrics": {
     "archetypes": 411,
@@ -27,7 +27,9 @@
     "printable_4d_templates": 411,
     "exact_packet_inputs": 8,
     "topology_specific_or_multi": 402,
-    "generic_coupled_fallback": 9
+    "generic_coupled_fallback": 9,
+    "quantitative_invariants": 7,
+    "smart_stack_regions": 12
   },
   "gate_counts": {
     "SOURCE_IDENTITY": 1,
@@ -291,6 +293,12 @@
       "state": "ACTIVE"
     },
     {
+      "id": "invariants",
+      "label": "Evaluate reusable quantitative invariants",
+      "contract": "UTP-139 / BUILD-071",
+      "state": "ACTIVE"
+    },
+    {
       "id": "packet",
       "label": "Compile printable 4D component / stack packet",
       "contract": "UTP-138 / BUILD-070",
@@ -347,6 +355,14 @@
         "label": "derived printable 4D templates"
       },
       {
+        "value": "7",
+        "label": "reusable quantitative invariants"
+      },
+      {
+        "value": "12",
+        "label": "dense smart-stack regions"
+      },
+      {
         "value": "9",
         "label": "intentional generic-coupled archetypes"
       },
@@ -365,6 +381,8 @@
       "Constitutive physics and 3D topology are factored separately, so geometry can change without duplicating component identity or domain equations.",
       "Topology coverage resolves 402/411 archetypes to specific or explicit multi-kernel candidates; nine compound RF/PCB archetypes remain deliberately generic until exact decomposition.",
       "Printable packets reference canonical recipes/topology/evidence instead of duplicating per-component process files.",
+      "Reusable invariants factor attributable source/measurement facts into calculation-ready per-unit or dimensionless forms without creating new component records.",
+      "A dense 4D smart-stack is represented as 12 functional regions coupled through VGK-036; it remains a reference grammar rather than a mandatory physical layout.",
       "Exact source, lot, process, tool and calibration evidence override generic archetype assumptions.",
       "Simulation refines digital candidates but does not become measurement.",
       "Machine programs are generated only after a frozen BUILD_READY configuration and independent safety gates."
@@ -377,7 +395,7 @@
       "claims of physical qualification where testing remains NOT_RUN"
     ]
   },
-  "boundary": "Internal read-only projection. BUILD-072 refines topology selection from 36 to 40 kernels and reduces false generic fallback from 143/411 to 9/411; it does not mutate Drive evidence, invent parameters, execute hardware, create lots/calibration, promote BUILD_READY, publish the corpus or change evidence ceilings.",
+  "boundary": "Internal read-only projection. BUILD-071 adds seven reusable quantitative invariants and a 12-region dense smart-stack grammar while retaining BUILD-072 topology coverage. Numeric results remain source/regime conditional; the projection does not mutate Drive evidence, invent lots/geometry/calibration, execute hardware, promote BUILD_READY, publish the corpus or change evidence ceilings.",
   "volumetric_kernels": [
     {
       "kernel_id": "VGK-001",
@@ -741,5 +759,142 @@
       "CGA-I-023 · Rigid-flex transition"
     ],
     "rule": "Residual fallback is intentional: exact implementation must decompose these multi-primitive networks/stacks before child kernels can be selected. Do not optimize the count to zero."
+  },
+  "quantitative_invariants": {
+    "artifact_id": "UTP-139",
+    "state": "IMPLEMENTED / SOURCE-BOUNDED NUMERIC_IF + SYMBOLIC/HOLD / PHYSICAL_NOT_RUN",
+    "records": [
+      {
+        "id": "INV-CAP-DENSITY-001",
+        "role": "capacitance density",
+        "equation": "C/A = ε0 εr / d",
+        "example": "Kapton HN: 1.2041695 pF/mm² @ 25 µm; 0.6020848 pF/mm² @ 50 µm",
+        "gate": "exact εr/thickness/state attributable; voltage/loss/leakage remain separate"
+      },
+      {
+        "id": "INV-SHEET-R-001",
+        "role": "sheet-resistance geometry",
+        "equation": "R = Rs·L/W",
+        "example": "ECI 1010 source candidate ~0.007 Ω/sq @ 25 µm typical",
+        "gate": "exact cured Rs/process/contacts/geometry required for instance value"
+      },
+      {
+        "id": "INV-R-SQUARES-001",
+        "role": "resistor geometry factor",
+        "equation": "N = Rtarget/Rs",
+        "example": "1 kΩ target → 20 squares @ 50 Ω/sq or 0.2 squares @ 5 kΩ/sq",
+        "gate": "geometry factor only; no TCR/power/tolerance uplift"
+      },
+      {
+        "id": "INV-RL-001",
+        "role": "winding electrical baseline",
+        "equation": "τ=L/R; Pcu=I²R",
+        "example": "PKP243D08B2: τ≈1.852 ms; Pcu≈3.9015 W/phase @ 0.85 A",
+        "gate": "source winding baseline only; axis torque-speed/thermal/load still open"
+      },
+      {
+        "id": "INV-AXIS-FORCE-001",
+        "role": "machine-axis force budget",
+        "equation": "Freq=m·a+Fprocess+Floss+m·gcomponent",
+        "example": "symbolic until actual moving mass/acceleration/process/loss/orientation bind",
+        "gate": "microstep increment/holding torque alone never close machine accuracy or force"
+      },
+      {
+        "id": "INV-UNC-RSS-001",
+        "role": "independent linear uncertainty",
+        "equation": "u=sqrt(Σui²)",
+        "example": "3 and 4 units → 5 units",
+        "gate": "correlated/nonlinear terms require covariance/nonlinear propagation"
+      },
+      {
+        "id": "INV-RETENTION-001",
+        "role": "recovered/control comparator",
+        "equation": "retention=recovered/control",
+        "example": "80/100 → 0.8 / 80%",
+        "gate": "like-for-like test conditions; no universal pass percentage"
+      }
+    ],
+    "rule": "One reusable engineering-inference layer beneath the canonical catalogue. Source facts become bounded invariants; missing or invalid-regime inputs remain SYMBOLIC/HOLD and never become measurement."
+  },
+  "dense_smart_stack": {
+    "artifact_id": "UTP-139",
+    "cgx_uri": "cgx://manufacturing/smart-stack/type1-dense-reference-v0.1",
+    "state": "REFERENCE_GRAMMAR / DIGITAL_ONLY / PHYSICAL_NOT_RUN",
+    "coupled_kernel": "VGK-036",
+    "regions": [
+      {
+        "id": "REG-STRUCT",
+        "role": "structure/substrate",
+        "kernels": "VGK-018",
+        "state": "SYMBOLIC"
+      },
+      {
+        "id": "REG-REF",
+        "role": "reference/ground/conductor/via",
+        "kernels": "VGK-001 / VGK-002",
+        "state": "SYMBOLIC"
+      },
+      {
+        "id": "REG-R",
+        "role": "resistive/heater",
+        "kernels": "VGK-035",
+        "state": "SYMBOLIC"
+      },
+      {
+        "id": "REG-C",
+        "role": "dielectric/capacitive",
+        "kernels": "VGK-003 / VGK-007 / VGK-040",
+        "state": "SYMBOLIC"
+      },
+      {
+        "id": "REG-LRF",
+        "role": "inductive/RF",
+        "kernels": "VGK-010 / VGK-011 / VGK-012 / VGK-037",
+        "state": "SYMBOLIC"
+      },
+      {
+        "id": "REG-SENSE",
+        "role": "sensor/metrology",
+        "kernels": "VGK-026",
+        "state": "SYMBOLIC"
+      },
+      {
+        "id": "REG-SEED",
+        "role": "active/logic/emitter seed",
+        "kernels": "VGK-034",
+        "state": "INSERT_SEED"
+      },
+      {
+        "id": "REG-THERM",
+        "role": "thermal spreading/break",
+        "kernels": "VGK-013 / VGK-015",
+        "state": "SYMBOLIC"
+      },
+      {
+        "id": "REG-BARRIER",
+        "role": "chemical/hermetic/barrier",
+        "kernels": "VGK-025",
+        "state": "SYMBOLIC"
+      },
+      {
+        "id": "REG-SERVICE",
+        "role": "service/replaceability",
+        "kernels": "VGK-029",
+        "state": "SYMBOLIC"
+      },
+      {
+        "id": "REG-SAFE",
+        "role": "safe-state/fault containment",
+        "kernels": "VGK-031",
+        "state": "HOLD"
+      },
+      {
+        "id": "REG-ID",
+        "role": ".cgx identity/readback",
+        "kernels": "VGK-030",
+        "state": "SYMBOLIC"
+      }
+    ],
+    "rule": "The full stack references child UTP-138 packets and adds only interfaces, dependencies, preservation and declared coupling. It is a reusable grammar, not a fixed device layout."
   }
 }
