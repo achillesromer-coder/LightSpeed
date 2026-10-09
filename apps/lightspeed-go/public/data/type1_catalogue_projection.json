@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-TYPE1-CATALOGUE-PROJECTION/0.6",
+  "schema": "CGX-TYPE1-CATALOGUE-PROJECTION/0.7",
   "generated_from": "Drive-owned Type 1 Romer Cognigrex + merged LightSpeed typed mirrors",
   "source_owner": {
     "spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
@@ -16,7 +16,8 @@
     "printable_4d_templates": 411,
     "topology_generic_fallback": 9,
     "quantitative_invariants": 7,
-    "smart_stack_regions": 12
+    "smart_stack_regions": 12,
+    "compound_decomposition_templates": 9
   },
   "surfaces": [
     {
@@ -68,6 +69,11 @@
       "id": "SMART-STACK",
       "name": "Dense 4D Smart-Stack Reference",
       "role": "12 functional regions coupled by VGK-036 without duplicating child recipes"
+    },
+    {
+      "id": "COMPOUND-DECOMP",
+      "name": "Compound Parent Decomposition",
+      "role": "9 child-role grammars for implementation-dependent RF/PCB parents while parent topology remains VGK-036"
     }
   ],
   "contracts": [
@@ -91,5 +97,5 @@
     "evidence": "engineering inference only; source/material/process/measurement corrections required",
     "instance_override": "CGXI-P2-C-001 Kapton HN 25 µm candidate: ideal C/A≈1.2041695 pF/mm² before measured/process corrections"
   },
-  "boundary": "Read-only derived projection. The 20 equation kernels define domain physics, the 40 volumetric kernels define topology/boundary form, UTP-138 compiles all 411 archetypes into printable templates, and UTP-139 adds seven reusable quantitative invariants plus a 12-region dense smart-stack grammar beneath the same Drive-owned 411×60 matrix. Numeric inference remains source/regime conditional and does not establish exact lots, geometry, BUILD_READY, physical readiness, certification, authority or release."
+  "boundary": "Read-only derived projection. The canonical 411-archetype matrix is factored into 20 equation kernels, 40 volumetric kernels, 411 UTP-138 printable templates, seven UTP-139 invariants, a 12-region smart-stack reference and nine UTP-138 compound-parent decomposition grammars. The decomposition layer does not force the nine parent topologies out of VGK-036; exact child selection, values, lots, geometry, BUILD_READY, physical readiness, certification, authority and release remain separately gated."
 }
