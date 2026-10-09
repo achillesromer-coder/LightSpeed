@@ -99,8 +99,9 @@ def compile_printable_component(
     required_scopes: list[str] | None = None,
     process_conditions: list[str] | None = None,
     parameter_overrides: dict[str, Any] | None = None,
+    _component_ir: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    component_ir = compile_component(
+    component_ir = _component_ir or compile_component(
         record,
         instance=instance,
         simulation=simulation,
@@ -242,6 +243,7 @@ def compile_printable_component(
             "state": "EMITTABLE_ONLY_AFTER_BUILD_READY_AND_EXACT_MACHINE_BINDING",
             "physical_execution": False,
         },
+        "physical_execution": False,
         "evidence": {
             "catalogue_state": record.get("Evidence State"),
             "source_authority_class": record.get("Source Authority Class"),
@@ -289,6 +291,7 @@ def compile_printable_stack(
                 required_scopes=spec.get("required_scopes"),
                 process_conditions=spec.get("process_conditions"),
                 parameter_overrides=spec.get("parameter_overrides"),
+                _component_ir=ir,
             )
         )
 
