@@ -253,4 +253,3 @@ def test_build_ready_with_bound_digital_inputs_still_requires_physical_test_exec
     verified = dict(synthetic)
     verified["physical_state"] = "VERIFIED"
     assert resolve_binding_gate(verified, population={"records": [verified]})["first_open_gate"] == "CLOSED"
-
