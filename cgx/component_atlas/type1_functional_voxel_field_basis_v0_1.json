@@ -1,0 +1,457 @@
+{
+  "schema": "CGX-TYPE1-FUNCTIONAL-VOXEL-FIELD-BASIS/0.1",
+  "artifact_id": "UTP-143",
+  "build_id": "BUILD-076",
+  "title": "Universal Type-I Functional Voxel + Field Inference Basis",
+  "status": "OWNER_BOUND / DIGITAL_ENGINEERING / PHYSICAL_NOT_RUN",
+  "purpose": "Factor the 411-archetype Type-I technology matrix into reusable 3D functional regions whose geometry, material/process state, interfaces, field/topology kernels, 4D state and evidence can be composed into dense printed/hybrid systems without forcing a flat schematic or a single universal fabrication process.",
+  "owner": {
+    "drive_spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "sheet": "38_CGX_Type1_Functional_Voxel_Field_Basis_v0_1",
+    "parent_contracts": [
+      "UTP-124",
+      "UTP-136",
+      "UTP-137",
+      "UTP-138",
+      "UTP-139",
+      "UTP-140",
+      "UTP-141",
+      "UTP-142"
+    ],
+    "parent_sheets": [
+      "31_CGX_Component_Instance_Register_v0_1",
+      "32_CGX_Universal_Type1_Tech_Matrix_v0_1",
+      "34_CGX_Type1_Equation_Kernel_v0_1",
+      "35_CGX_Type1_Volumetric_Kernel_v0_1",
+      "36_CGX_Type1_Interface_Operator_Kernel_v0_1",
+      "37_CGX_Type1_Witness_Evidence_Kernel_v0_1"
+    ]
+  },
+  "factorization": "Archetype × PrimitiveKernel × VolumetricKernel × InterfaceOperator × ProcessSequence × FunctionalVoxelState × WitnessEvidence",
+  "non_planar_rule": "A stack is a directed 3D region/interface graph with cavities, service corridors, nested/embedded volumes and optional inserted seeds. Z-order is only one possible geometry. Compilation orders process dependencies and preservation gates, not merely planar layers.",
+  "voxel_contract": {
+    "required_fields": [
+      "voxel_or_region_id",
+      "object_revision",
+      "geometry_or_mesh_ref",
+      "orientation_frame",
+      "primitive_kernel_refs",
+      "volumetric_kernel_refs",
+      "interface_operator_refs",
+      "material_state_refs",
+      "process_history_ref",
+      "environment_state",
+      "boundary_conditions",
+      "state_vector",
+      "property_inputs",
+      "numeric_state",
+      "derived_quantities",
+      "uncertainty",
+      "damage_envelope",
+      "preservation_state",
+      "witness_refs",
+      "dbr_ref"
+    ],
+    "numeric_states": [
+      "NUMERIC_IF",
+      "SYMBOLIC",
+      "HOLD"
+    ],
+    "revision_rule": "Any consequential geometry, material, process, interface, boundary or environment revision invalidates dependent numeric matrices/results and triggers selective recompile/readback.",
+    "sparse_state_rule": "Store only consequential domains for a region; absent domains are omitted rather than zero-filled as fictitious physics."
+  },
+  "assembly": {
+    "local_residual_form": "R_k(z_k, zdot_k, u_k, p_k, t)=0 within each child-domain model and validity regime",
+    "interface_constraint_form": "g_ij(z_i,z_j,p_ij,t)=0 for declared UTP-141 interface operators",
+    "coupled_descriptor": "E(z,p,t)·zdot = F(z,u,p,t) is an assembly descriptor only; it is not a replacement for domain-specific governing physics.",
+    "state_vector_families": [
+      "electrical/EM",
+      "thermal",
+      "mechanical",
+      "fluid",
+      "optical",
+      "chemical/electrochemical",
+      "control/configuration",
+      "history/aging"
+    ],
+    "compile_chain": [
+      "INTENT",
+      "RESOLVE_ARCHETYPES_AND_EXACT_INSTANCES",
+      "DECOMPOSE_TO_FUNCTIONAL_REGIONS",
+      "PACK_3D_REGIONS_AND_SERVICE/SAFETY_VOIDS",
+      "SELECT_PRIMITIVE_AND_VOLUMETRIC_KERNELS",
+      "BUILD_INTERFACE_GRAPH",
+      "ORDER_DIRECTIONAL_PROCESS_DAG",
+      "CHECK_PRIOR_LAYER_DAMAGE_AND_PRESERVATION",
+      "BIND_SOURCE/MEASURED_INPUTS",
+      "INFER_NUMERIC_OR_RETAIN_SYMBOLIC/HOLD",
+      "ASSEMBLE_DECLARED_4D_COUPLINGS",
+      "DEFINE_WITNESSES_AND_FALSIFIERS",
+      "READBACK_DBR"
+    ]
+  },
+  "region_classes": [
+    {
+      "id": "REG-STRUCT",
+      "role": "structure/substrate/datum",
+      "kernels": [
+        "T1K-001"
+      ],
+      "topology": [
+        "VGK-018"
+      ],
+      "default_state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-REF",
+      "role": "reference/ground/conductor network",
+      "kernels": [
+        "T1K-002"
+      ],
+      "topology": [
+        "VGK-001",
+        "VGK-002"
+      ],
+      "default_state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-R",
+      "role": "resistive/heater zone",
+      "kernels": [
+        "T1K-004"
+      ],
+      "topology": [
+        "VGK-035"
+      ],
+      "default_state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-C",
+      "role": "dielectric/capacitive/electrostatic zone",
+      "kernels": [
+        "T1K-003",
+        "T1K-005"
+      ],
+      "topology": [
+        "VGK-003",
+        "VGK-007",
+        "VGK-040"
+      ],
+      "default_state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-LRF",
+      "role": "inductive/magnetic/RF zone",
+      "kernels": [
+        "T1K-006",
+        "T1K-007"
+      ],
+      "topology": [
+        "VGK-010",
+        "VGK-011",
+        "VGK-012",
+        "VGK-037"
+      ],
+      "default_state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-SENSE",
+      "role": "sensor/metrology zone",
+      "kernels": [
+        "T1K-010"
+      ],
+      "topology": [
+        "VGK-026"
+      ],
+      "default_state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-SEED",
+      "role": "active/logic/driver/emitter seed zone",
+      "kernels": [
+        "T1K-014"
+      ],
+      "topology": [
+        "VGK-034"
+      ],
+      "default_state": "INSERT_SEED"
+    },
+    {
+      "id": "REG-THERM",
+      "role": "thermal spreading/break/control zone",
+      "kernels": [
+        "T1K-013"
+      ],
+      "topology": [
+        "VGK-013",
+        "VGK-015"
+      ],
+      "default_state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-BARRIER",
+      "role": "chemical/hermetic/compliance barrier",
+      "kernels": [
+        "T1K-017"
+      ],
+      "topology": [
+        "VGK-025"
+      ],
+      "default_state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-SERVICE",
+      "role": "service/replaceability corridor",
+      "kernels": [
+        "T1K-018"
+      ],
+      "topology": [
+        "VGK-029"
+      ],
+      "default_state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-SAFE",
+      "role": "safe-state/fault-containment zone",
+      "kernels": [
+        "T1K-016"
+      ],
+      "topology": [
+        "VGK-031"
+      ],
+      "default_state": "HOLD"
+    },
+    {
+      "id": "REG-ID",
+      "role": ".cgx identity/readback/provenance zone",
+      "kernels": [
+        "T1K-019"
+      ],
+      "topology": [
+        "VGK-030"
+      ],
+      "default_state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-POWER",
+      "role": "energy storage/power conversion zone",
+      "kernels": [
+        "T1K-008",
+        "T1K-015"
+      ],
+      "topology": [
+        "RESOLVE_BY_EXACT_ARCHETYPE_OR_VGK-036_COMPOUND"
+      ],
+      "default_state": "HOLD"
+    },
+    {
+      "id": "REG-ACT",
+      "role": "actuator/motion zone",
+      "kernels": [
+        "T1K-011"
+      ],
+      "topology": [
+        "RESOLVE_BY_EXACT_ARCHETYPE"
+      ],
+      "default_state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-OPT",
+      "role": "optical/photonic zone",
+      "kernels": [
+        "T1K-009"
+      ],
+      "topology": [
+        "RESOLVE_BY_EXACT_ARCHETYPE"
+      ],
+      "default_state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-FLUID",
+      "role": "fluid/gas/environmental zone",
+      "kernels": [
+        "T1K-012"
+      ],
+      "topology": [
+        "VGK-039"
+      ],
+      "default_state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-CHEM",
+      "role": "chemical/electrochemical functional zone",
+      "kernels": [
+        "T1K-020"
+      ],
+      "topology": [
+        "RESOLVE_BY_EXACT_CHEMISTRY_OR_VGK-036_COMPOUND"
+      ],
+      "default_state": "HOLD"
+    }
+  ],
+  "capacitance_selector": {
+    "evidence_class": "ENGINEERING_INFERENCE until WIT-002 calibrated readback promotes an exact instance",
+    "epsilon0_F_per_m": 8.8541878128e-12,
+    "modes": [
+      {
+        "id": "CAP-PP",
+        "topology": "parallel plate / locally uniform field",
+        "law": "C = epsilon0*epsilon_r*A/d ; C/A = epsilon0*epsilon_r/d",
+        "numeric_gate": "exact electrode overlap, dielectric thickness/state and epsilon_r at declared frequency/T/RH; fringe negligible or corrected"
+      },
+      {
+        "id": "CAP-MULTILAYER-NORMAL",
+        "topology": "series dielectric layers normal to dominant field",
+        "law": "C/A = 1 / sum_i[d_i/(epsilon0*epsilon_r_i)]",
+        "numeric_gate": "common effective area, attributable layer thickness/permittivity and valid quasi-static approximation; interfaces/voids handled separately"
+      },
+      {
+        "id": "CAP-PARALLEL-CELLS",
+        "topology": "electrically parallel capacitor cells",
+        "law": "C_total = sum_i C_i",
+        "numeric_gate": "cells share the same two electrical nodes; parasitic/mutual coupling does not invalidate simple sum"
+      },
+      {
+        "id": "CAP-COAX",
+        "topology": "long concentric coaxial conductors",
+        "law": "C/L = 2*pi*epsilon/ln(b/a)",
+        "numeric_gate": "b>a>0, homogeneous/known dielectric and end effects negligible or corrected"
+      },
+      {
+        "id": "CAP-SPHERE",
+        "topology": "concentric spherical conductors",
+        "law": "C = 4*pi*epsilon*a*b/(b-a)",
+        "numeric_gate": "b>a>0 and dielectric/state attributable"
+      },
+      {
+        "id": "CAP-MAXWELL-3D",
+        "topology": "arbitrary multi-conductor 3D geometry",
+        "law": "Q_i = sum_j C_ij*V_j",
+        "numeric_gate": "electrostatic boundary-value solve with attributable geometry/material/interface state and declared reference convention"
+      },
+      {
+        "id": "CAP-RLGC-DISTRIBUTED",
+        "topology": "transmission-line/distributed interconnect",
+        "law": "use topology-valid per-unit-length C' within R'L'G'C' model",
+        "numeric_gate": "cross-section/material/boundary/frequency regime attributable; no forced lumped approximation"
+      },
+      {
+        "id": "CAP-FIELD-SOLVE-OR-MEASURE",
+        "topology": "interdigitated/fringing/conformal/irregular/deformable geometry",
+        "law": "no universal closed form; resolve electrostatic field/matrix or measure",
+        "numeric_gate": "HOLD numeric closed-form inference unless a validated geometry-specific approximation exists"
+      }
+    ],
+    "source_verified_fixtures": [
+      {
+        "material": "DuPont Kapton HN",
+        "source": "DuPont Kapton HN Data Sheet, typical electrical properties at 23 C, 50% RH, 1 kHz",
+        "source_url": "https://www.dupont.com/content/dam/dupont/amer/us/en/ei-transformation/public/documents/en/EI-10206-Kapton-HN-Data-Sheet.pdf",
+        "thickness_um": 25,
+        "epsilon_r": 3.4,
+        "inferred_pF_per_mm2": 1.2041695425408,
+        "evidence": "SOURCE_PROPERTY + ENGINEERING_INFERENCE / NOT_MEASURED"
+      },
+      {
+        "material": "DuPont Kapton HN",
+        "source": "DuPont Kapton HN Data Sheet, typical electrical properties at 23 C, 50% RH, 1 kHz",
+        "source_url": "https://www.dupont.com/content/dam/dupont/amer/us/en/ei-transformation/public/documents/en/EI-10206-Kapton-HN-Data-Sheet.pdf",
+        "thickness_um": 50,
+        "epsilon_r": 3.4,
+        "inferred_pF_per_mm2": 0.6020847712704,
+        "evidence": "SOURCE_PROPERTY + ENGINEERING_INFERENCE / NOT_MEASURED"
+      },
+      {
+        "material": "DuPont Kapton HN",
+        "source": "DuPont Kapton HN Data Sheet, typical electrical properties at 23 C, 50% RH, 1 kHz",
+        "source_url": "https://www.dupont.com/content/dam/dupont/amer/us/en/ei-transformation/public/documents/en/EI-10206-Kapton-HN-Data-Sheet.pdf",
+        "thickness_um": 75,
+        "epsilon_r": 3.5,
+        "inferred_pF_per_mm2": 0.4131954312640001,
+        "evidence": "SOURCE_PROPERTY + ENGINEERING_INFERENCE / NOT_MEASURED"
+      },
+      {
+        "material": "DuPont Kapton HN",
+        "source": "DuPont Kapton HN Data Sheet, typical electrical properties at 23 C, 50% RH, 1 kHz",
+        "source_url": "https://www.dupont.com/content/dam/dupont/amer/us/en/ei-transformation/public/documents/en/EI-10206-Kapton-HN-Data-Sheet.pdf",
+        "thickness_um": 125,
+        "epsilon_r": 3.5,
+        "inferred_pF_per_mm2": 0.2479172587584,
+        "evidence": "SOURCE_PROPERTY + ENGINEERING_INFERENCE / NOT_MEASURED"
+      }
+    ],
+    "boundaries": [
+      "dielectric strength is a separate source/test property and is not inferred from C",
+      "loss, leakage, ESR, ESL, breakdown, lifetime and certification are not inferred from geometry-only capacitance",
+      "measured C must retain frequency, amplitude/bias, fixture, T/RH and uncertainty",
+      "geometry/material/process revision invalidates stale capacitance inference"
+    ]
+  },
+  "reusable_per_unit_basis": [
+    {
+      "primitive": "STRUCTURE_DATUM",
+      "law": "m=rho*V ; k≈E*A/L ; DeltaL=alpha*L*DeltaT",
+      "gate": "declared geometry/material/boundary assumptions"
+    },
+    {
+      "primitive": "CONDUCTOR_INTERCONNECT",
+      "law": "R=rho*L/A or Rs*L/W ; P=I^2*R",
+      "gate": "exact cured/source electrical property + contacts + geometry"
+    },
+    {
+      "primitive": "RESISTIVE_HEATER",
+      "law": "R=Rs*L/W ; P=I^2*R=V^2/R ; tau≈Rtheta*Ctheta when lumped model valid",
+      "gate": "electrical/thermal properties and boundaries bound"
+    },
+    {
+      "primitive": "CAPACITIVE_ELECTROSTATIC",
+      "law": "topology-selected CAP-* mode",
+      "gate": "capacitance_selector numeric gate"
+    },
+    {
+      "primitive": "INDUCTIVE_MAGNETIC",
+      "law": "L≈mu*N^2*A/l only when topology/regime supports; Q≈omega*L/Rseries",
+      "gate": "exact geometry/material/frequency + parasitics"
+    },
+    {
+      "primitive": "THERMAL_CONTROL",
+      "law": "Rtheta≈L/(k*A) ; Ctheta=rho*cp*V ; tau≈Rtheta*Ctheta",
+      "gate": "material/interfaces/boundaries attributable"
+    },
+    {
+      "primitive": "ACTUATOR_MOTION",
+      "law": "tau=J*alpha+tau_load+tau_loss ; tau≈Kt*I only when source model applies",
+      "gate": "complete load/axis envelope + exact actuator model"
+    },
+    {
+      "primitive": "FLUIDIC_ENVIRONMENT",
+      "law": "DeltaP=8*mu*L*Q/(pi*r^4) only for fully developed laminar circular tube",
+      "gate": "regime/geometry/fluid/boundaries valid"
+    },
+    {
+      "primitive": "OPTICAL_PHOTONIC",
+      "law": "OPL=n*L ; phase=2*pi*n*L/lambda",
+      "gate": "n(lambda,T),geometry/interfaces/surface state attributable"
+    },
+    {
+      "primitive": "SENSOR_METROLOGY",
+      "law": "y=H(x,state,t)+bias+noise ; S=d y/d x from source/calibration",
+      "gate": "calibrated transfer function"
+    },
+    {
+      "primitive": "CHEMICAL_ELECTROCHEMICAL",
+      "law": "Fick/Nernst/Butler-Volmer only in validated chemistry/regimes",
+      "gate": "exact chemistry/process/calibrated inputs"
+    }
+  ],
+  "type1_system_rule": "Type-I scale is achieved by composing qualified local regions and serviceable modules into infrastructure, manufacturing, energy, sensing/control, transport, habitat/environmental and space-logistics systems. Scale does not relax component, interface, process, witness or safety evidence gates.",
+  "safety_invariants": [
+    "safe-state/fault-containment is explicit where consequence requires it",
+    "service and metrology access are engineered volumetric regions, not leftover space",
+    "trapped electrical/thermal/pressure/chemical energy must have a declared isolation/discharge/containment path before BUILD_READY",
+    "process ordering cannot cross predecessor damage envelopes",
+    "identity/provenance does not grant execution/certification/release authority",
+    "advanced silicon/MEMS/precision optoelectronics/certified protection remain seed/hybrid unless separately qualified"
+  ],
+  "physical_execution": false
+}
