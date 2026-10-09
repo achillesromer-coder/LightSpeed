@@ -40,3 +40,14 @@ def test_p3_requires_measured_p2():
     d=load()
     assert d["p3_dependency"]["blocked_instance"]=="CGXI-P3-LC-001"
     assert "Measured and accepted" in d["p3_dependency"]["release_condition"]
+
+
+def test_pre_run_authority_is_separate_from_post_run_process_and_measurement_evidence():
+    d=load()
+    pa=d["physical_authority"]
+    pre=" ".join(pa["pre_run_authorization_requires"])
+    post=" ".join(pa["post_run_evidence_requires"])
+    assert "G0-WIT007" in pre and "G1-WIT008" in pre and "G2-WIT006" in pre
+    assert "G3-WIT009" not in pre
+    assert "G3-WIT009" in post and "G4-WIT001-002-003" in post and "G5-READBACK-DBR" in post
+    assert "G3 is post-run actual process evidence" in pa["execution_requires"]

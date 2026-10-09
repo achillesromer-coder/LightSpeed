@@ -66,6 +66,10 @@ def test_interlayer_edge_contract_and_transfer_basis():
     assert "state_or_flux_transferred" in edge["required"]
     assert "parasitic_mutual_terms" in edge["required"]
     assert "predecessor_damage_gate" in edge["required"]
+    assert "preservation_action" in edge["required"]
+    assert "authority" in edge["required"]
+    assert "process_direction is explicit" in " ".join(edge["typed_edge_rules"])
+    assert "SOLVED/MEASURED" in " ".join(edge["typed_edge_rules"])
     ilt = {x["id"]: x for x in d["interlayer_transfer_basis"]}
     assert len(ilt) == 12
     assert "Maxwell capacitance matrix" in ilt["ILT-002"]["mutual"]

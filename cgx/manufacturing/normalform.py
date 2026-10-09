@@ -88,6 +88,7 @@ def compile_stack_normal_form(
     coupling_bindings: list[dict[str, Any]] | None = None,
     witness_refs: list[str] | None = None,
     relations: list[dict[str, str]] | None = None,
+    interlayer_edges: list[dict[str, Any]] | None = None,
     horizon: str = "H-TERR-SITE",
 ) -> dict[str, Any]:
     seed_refs = list(seed_refs or [])
@@ -96,6 +97,7 @@ def compile_stack_normal_form(
     reference_nodes = list(reference_nodes or [])
     coupling_bindings = list(coupling_bindings or [])
     witness_refs = list(witness_refs or [])
+    interlayer_edges = list(interlayer_edges or [])
 
     _validate_seed_graph(seed_graph_class, seed_refs)
 
@@ -115,7 +117,39 @@ def compile_stack_normal_form(
         state = row.get("state", "OPEN_SYMBOLIC")
         if state not in {"OPEN_SYMBOLIC", "SYMBOLIC", "SOLVED", "MEASURED", "HOLD"}:
             raise ValueError(f"invalid-coupling-state:{regime}:{state}")
+        if state in {"SOLVED", "MEASURED"}:
+            for key in ("model_or_measurement_ref", "matrix_or_result_ref", "validity_ref"):
+                if not str(row.get(key) or "").strip():
+                    raise ValueError(f"coupling-provenance-missing:{regime}:{state}:{key}")
         binding_by_regime[regime] = dict(row)
+
+    edge_contract = radiative["interlayer_edge_contract"]
+    edge_required = tuple(edge_contract["required"])
+    allowed_edge_states = set(edge_contract.get("evidence_states", []))
+    validated_edges: list[dict[str, Any]] = []
+    seen_edge_ids: set[str] = set()
+    for edge in interlayer_edges:
+        missing = [key for key in edge_required if key not in edge or edge.get(key) in (None, "")]
+        if missing:
+            raise ValueError(f"interlayer-edge-missing:{edge.get('edge_id','UNNAMED')}:{','.join(missing)}")
+        edge_id = str(edge["edge_id"])
+        if edge_id in seen_edge_ids:
+            raise ValueError(f"duplicate-interlayer-edge:{edge_id}")
+        seen_edge_ids.add(edge_id)
+        region_from = str(edge["region_from"])
+        region_to = str(edge["region_to"])
+        if region_from == region_to:
+            raise ValueError(f"interlayer-edge-self-loop:{edge_id}")
+        expected_direction = f"{region_from}->{region_to}"
+        if str(edge["process_direction"]).replace(" ", "") != expected_direction.replace(" ", ""):
+            raise ValueError(f"interlayer-direction-mismatch:{edge_id}:{edge['process_direction']}:{expected_direction}")
+        regime = str(edge["field_transport_regime"])
+        if regime not in known_regimes:
+            raise ValueError(f"unknown-interlayer-regime:{edge_id}:{regime}")
+        evidence_state = str(edge["evidence_state"])
+        if allowed_edge_states and evidence_state not in allowed_edge_states:
+            raise ValueError(f"invalid-interlayer-evidence-state:{edge_id}:{evidence_state}")
+        validated_edges.append(dict(edge))
 
     base_stack = compile_printable_stack(
         component_specs,
@@ -138,6 +172,11 @@ def compile_stack_normal_form(
         blockers.append("reference-node-unbound")
     if not witness_refs:
         blockers.append("witness-unbound")
+    if len(component_specs) > 1 and not validated_edges:
+        blockers.append("interlayer-edge-unbound")
+    for edge in validated_edges:
+        if edge["evidence_state"] not in {"SOLVED", "MEASURED", "QUALIFIED"}:
+            blockers.append(f"interlayer:{edge['edge_id']}:{edge['evidence_state']}")
 
     field_rows: list[dict[str, Any]] = []
     for regime in requested_regimes:
@@ -221,6 +260,12 @@ def compile_stack_normal_form(
             "regimes": field_rows,
             "distinct_regime_count": len(field_rows),
             "rule": "Distinct field/transport families are selected explicitly; no universal radiation equation is inferred.",
+        },
+        "interlayer_edges": {
+            "edges": validated_edges,
+            "edge_count": len(validated_edges),
+            "contract": edge_contract,
+            "rule": "X->Y and Y->X are separate typed edges. Missing damage, preservation, witness, evidence or authority remains HOLD.",
         },
         "self_mutual_coupling": {
             "bindings": coupling_bindings,

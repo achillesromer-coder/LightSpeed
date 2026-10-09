@@ -115,3 +115,78 @@ def test_absent_sources_references_witnesses_and_regime_stay_explicit_blockers()
     assert "reference-node-unbound" in output["blockers"]
     assert "witness-unbound" in output["blockers"]
     assert output["authority"]["physical_execution"] is False
+
+
+def _valid_edge():
+    return {
+        "edge_id": "EDGE-R-C",
+        "region_from": "REG-R",
+        "region_to": "REG-C",
+        "seed_relation": "SG-0",
+        "interface_operator": "IOP-DIELECTRIC",
+        "field_transport_regime": "FTR-EQS",
+        "state_or_flux_transferred": "potential/displacement/current leakage",
+        "transfer_or_jump_law": "source-bound electrostatic/contact relation",
+        "reflection_blocking_or_return": "dielectric barrier and return/reference explicit",
+        "parasitic_mutual_terms": "Maxwell capacitance matrix terms retained",
+        "process_direction": "REG-R->REG-C",
+        "predecessor_damage_gate": "PREDECESSOR-DAMAGE-CHECK-EXPLICIT",
+        "preservation_action": "PRESERVE-OR-HOLD",
+        "state_history": "REVISION-BOUND",
+        "witness": "WIT-EDGE-R-C",
+        "evidence_state": "SOURCE_BOUND",
+        "authority": "DIGITAL_ONLY",
+    }
+
+
+def test_solved_or_measured_coupling_requires_provenance_and_validity():
+    for state in ("SOLVED", "MEASURED"):
+        with pytest.raises(ValueError, match="coupling-provenance-missing:FTR-EQS"):
+            compile_stack_normal_form(
+                specs(),
+                stack_id=f"bad-{state.lower()}",
+                seed_graph_class="SG-0",
+                field_transport_regimes=["FTR-EQS"],
+                source_nodes=[{"id": "SRC", "kind": "external_test_source"}],
+                reference_nodes=[{"id": "REF", "kind": "ground"}],
+                witness_refs=["WIT"],
+                coupling_bindings=[{"regime_id": "FTR-EQS", "state": state}],
+                interlayer_edges=[_valid_edge()],
+            )
+
+
+def test_typed_interlayer_edge_is_directional_and_fail_closed():
+    edge = _valid_edge()
+    out = compile_stack_normal_form(
+        specs(),
+        stack_id="edge-source-bound",
+        seed_graph_class="SG-0",
+        field_transport_regimes=["FTR-EQS"],
+        source_nodes=[{"id": "SRC", "kind": "external_test_source"}],
+        reference_nodes=[{"id": "REF", "kind": "ground"}],
+        witness_refs=["WIT"],
+        interlayer_edges=[edge],
+    )
+    assert out["interlayer_edges"]["edge_count"] == 1
+    assert out["interlayer_edges"]["edges"][0]["process_direction"] == "REG-R->REG-C"
+    assert "interlayer:EDGE-R-C:SOURCE_BOUND" in out["blockers"]
+
+    reversed_bad = dict(edge)
+    reversed_bad["process_direction"] = "REG-C->REG-R"
+    with pytest.raises(ValueError, match="interlayer-direction-mismatch"):
+        compile_stack_normal_form(
+            specs(),
+            stack_id="edge-bad-direction",
+            seed_graph_class="SG-0",
+            interlayer_edges=[reversed_bad],
+        )
+
+    missing = dict(edge)
+    del missing["preservation_action"]
+    with pytest.raises(ValueError, match="interlayer-edge-missing"):
+        compile_stack_normal_form(
+            specs(),
+            stack_id="edge-missing-preservation",
+            seed_graph_class="SG-0",
+            interlayer_edges=[missing],
+        )

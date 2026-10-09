@@ -324,9 +324,26 @@
       "preservation_action",
       "state_history",
       "witness",
-      "evidence_state"
+      "evidence_state",
+      "authority"
     ],
-    "rule": "No physical adjacency is ideal or invisible. A consequential transfer, reflection, return path, leakage, contact, coupling or damage mechanism that is not attributable remains HOLD rather than being set to zero."
+    "rule": "No physical adjacency is ideal or invisible. A consequential transfer, reflection, return path, leakage, contact, coupling or damage mechanism that is not attributable remains HOLD rather than being set to zero.",
+    "typed_edge_rules": [
+      "Each edge instance binds one exact field_transport_regime ID; compound aliases are not accepted as solved edge provenance.",
+      "process_direction is explicit region_from->region_to; the reverse direction is a separate edge with its own damage, preservation, witness and evidence state.",
+      "predecessor_damage_gate and preservation_action are mandatory even when the value is an attributable NONE/NOT_REQUIRED result.",
+      "evidence_state and authority are explicit; geometry adjacency alone cannot promote SOURCE_BOUND/ARCHITECTURE state to SOLVED, MEASURED, QUALIFIED or executable.",
+      "SOLVED/MEASURED edge use requires source-bound model/measurement/result provenance at the normal-form coupling layer."
+    ],
+    "evidence_states": [
+      "ARCHITECTURE",
+      "SOURCE_BOUND",
+      "BENCH_REQUIRED",
+      "SOLVED",
+      "MEASURED",
+      "QUALIFIED",
+      "HOLD"
+    ]
   },
   "interlayer_transfer_basis": [
     {

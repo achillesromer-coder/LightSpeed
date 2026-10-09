@@ -335,6 +335,18 @@
       "machine actuation",
       "certification/release"
     ],
-    "execution_requires": "separate explicit applicable physical/safety authority after G0-G3 are satisfied"
+    "execution_requires": "Pre-run execution eligibility requires G0/G1/G2 plus an approved bounded plan and separate explicit physical/safety authority. G3 is post-run actual process evidence and cannot be a prerequisite for first actuation.",
+    "pre_run_authorization_requires": [
+      "G0-WIT007-LOT-PASSPORT PASS",
+      "G1-WIT008-MACHINE-TOOL-CAL PASS",
+      "G2-WIT006-GEOMETRY-FREEZE PASS",
+      "approved bounded execution plan",
+      "separate explicit applicable physical/safety authority"
+    ],
+    "post_run_evidence_requires": [
+      "G3-WIT009-PROCESS-HISTORY actual commanded/process/environment history",
+      "G4-WIT001-002-003 calibrated measurement evidence",
+      "G5-READBACK-DBR raw/calculation hashes and exact-instance readback"
+    ]
   }
 }

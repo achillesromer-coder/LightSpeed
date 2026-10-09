@@ -8,7 +8,15 @@
   "owner": {
     "spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
     "owner_sheet": "41_CGX_Type1_Universal_Stack_Normal_Form_v0_1",
-    "parent_artifacts": ["UTP-124", "UTP-138", "UTP-139", "UTP-143", "UTP-144", "UTP-145", "UTP-146"]
+    "parent_artifacts": [
+      "UTP-124",
+      "UTP-138",
+      "UTP-139",
+      "UTP-143",
+      "UTP-144",
+      "UTP-145",
+      "UTP-146"
+    ]
   },
   "canonical_sections": [
     "intent",
@@ -17,6 +25,7 @@
     "seed_graph",
     "sources_and_receivers",
     "field_transport",
+    "interlayer_edges",
     "self_mutual_coupling",
     "energy_passivity",
     "process_sequence",
@@ -34,7 +43,9 @@
     "Passive SG-0 cannot exhibit net active gain beyond attributable external input plus released stored energy within uncertainty.",
     "Process ordering reuses child recipes and may not cross child/interface/preservation/safety/evidence gates.",
     "Any consequential geometry/material/process/boundary/seed revision invalidates dependent numeric coupling state.",
-    "Normalization creates no physical execution, certification, release, public, carrier-promotion or high-consequence authority."
+    "Normalization creates no physical execution, certification, release, public, carrier-promotion or high-consequence authority.",
+    "Every consequential X->Y interlayer transfer is a typed directional edge with exact regime, damage gate, preservation action, witness, evidence state and authority; Y->X is separate.",
+    "SOLVED or MEASURED coupling is invalid without attributable model_or_measurement_ref, matrix_or_result_ref and validity_ref."
   ],
   "physical_execution": false
 }
