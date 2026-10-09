@@ -32,7 +32,7 @@ def load_optional(path: str | None):
 
 
 def write_output(value, path: str | None) -> None:
-    text = value if isinstance(value, str) else json.dumps(value, indent=2, ensure_ascii=False) + "\n"
+    text = value if isinstance(value, str) else json.dumps(value, indent=2, ensure_ascii=True) + "\n"
     if path:
         Path(path).write_text(text, encoding="utf-8")
     else:

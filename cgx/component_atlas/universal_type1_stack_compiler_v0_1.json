@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-UNIVERSAL-TYPE1-STACK-COMPILER/0.2",
+  "schema": "CGX-UNIVERSAL-TYPE1-STACK-COMPILER/0.3",
   "artifact_id": "UTP-124",
   "title": "Universal Type-I Parametric Stack + Inference Compiler",
   "owner": {
@@ -12,7 +12,8 @@
     "interactions": "30_CGX_Component_Interaction_Map_v0_1",
     "operational_routes": "33_PC01_CGX_Operational_Matrix_v0_1",
     "manufacturing_ir": "cgx/manufacturing/manufacturing_ir_contract_v0_1.json",
-    "equation_kernel": "cgx/component_atlas/type1_equation_kernel_v0_1.json"
+    "equation_kernel": "cgx/component_atlas/type1_equation_kernel_v0_1.json",
+    "volumetric_geometry_kernel": "cgx/component_atlas/type1_volumetric_geometry_kernel_v0_1.json"
   },
   "matrix_contract": {
     "archetype_count": 411,
@@ -20,20 +21,25 @@
     "directional_fields": 16,
     "quantitative_factorization_fields": 8,
     "primitive_basis_classes": 20,
-    "equation_kernel_records": 20
+    "equation_kernel_records": 20,
+    "volumetric_geometry_kernel_records": 36
   },
   "compile_chain": [
     "INTENT",
     "RESOLVE_ARCHETYPES_AND_INSTANCES",
     "MAP_PRIMITIVE_BASIS_AND_EQUIVALENT_NETWORK",
     "RESOLVE_PRIMITIVE_EQUATION_KERNEL",
+    "RESOLVE_VOLUMETRIC_GEOMETRY_TOPOLOGY",
+    "ASSEMBLE_BOUNDARY_INTERFACE_GRAPH",
     "ORDER_DIRECTIONAL_X_TO_Y_STACK",
     "CHECK_INTERFACES_AND_INTERLAYERS",
     "CHECK_VOXEL_PACKING_AND_PROCESS_RESOLUTION",
     "CHECK_PROCESS_AND_ATMOSPHERE_TRANSITIONS",
     "CHECK_PRIOR_LAYER_DAMAGE_AND_PRESERVATION",
     "BIND_EQUATION_INPUTS",
+    "BUILD_DOMAIN_NETWORK_OR_FIELD_MATRIX",
     "INFER_NUMERIC_OR_RETAIN_SYMBOLIC_OR_HOLD",
+    "ASSEMBLE_COUPLED_4D_STATE",
     "FOUR_D_SOLVE_AND_REVIEW",
     "DEFINE_TESTS_AND_FALSIFIERS",
     "FREEZE_PC01_UTP106_PACKET",
@@ -208,5 +214,11 @@
     "not recursive-manufacturing authority",
     "not permission to infer absent properties",
     "advanced silicon, MEMS, precision optoelectronics and certified protection remain seed/hybrid unless separately qualified"
-  ]
+  ],
+  "volumetric_policy": {
+    "normalized_join": "Do not duplicate a 411x411 pair matrix. Resolve each archetype row into primitive kernel + one-or-more topology kernels + exact instance/passport + current state/history.",
+    "geometry_selection": "Closed-form geometry kernels are used only in their stated validity regimes; arbitrary 3D electromagnetic/thermal/mechanical/fluid geometry becomes a field/network solve requirement rather than a forced 2D approximation.",
+    "capacitance": "Parallel-plate C=ε0εrA/d only when valid; coaxial C=2πεL/ln(b/a); concentric spherical C=4πεab/(b-a); arbitrary multi-conductor geometry uses Maxwell capacitance matrix from electrostatic solve.",
+    "sparse_assembly": "Coupled system assembly uses sparse domain state blocks and declared coupling interfaces; no implicit or invented cross-domain coupling."
+  }
 }

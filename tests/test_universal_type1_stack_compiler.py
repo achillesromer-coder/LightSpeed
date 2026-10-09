@@ -18,9 +18,18 @@ def test_owner_and_matrix_cardinality():
         "directional_fields": 16,
         "quantitative_factorization_fields": 8,
         "primitive_basis_classes": 20,
+        "equation_kernel_records": 20,
+        "volumetric_geometry_kernel_records": 36,
     }
     assert len(d["primitive_basis"]) == 20
-    assert "MAP_PRIMITIVE_BASIS_AND_EQUIVALENT_NETWORK" in d["compile_chain"]\n    assert "RESOLVE_PRIMITIVE_EQUATION_KERNEL" in d["compile_chain"]\n    assert d["inputs"]["equation_kernel"].endswith("type1_equation_kernel_v0_1.json")
+    assert "MAP_PRIMITIVE_BASIS_AND_EQUIVALENT_NETWORK" in d["compile_chain"]
+    assert "RESOLVE_PRIMITIVE_EQUATION_KERNEL" in d["compile_chain"]
+    assert "RESOLVE_VOLUMETRIC_GEOMETRY_TOPOLOGY" in d["compile_chain"]
+    assert "ASSEMBLE_BOUNDARY_INTERFACE_GRAPH" in d["compile_chain"]
+    assert "BUILD_DOMAIN_NETWORK_OR_FIELD_MATRIX" in d["compile_chain"]
+    assert "ASSEMBLE_COUPLED_4D_STATE" in d["compile_chain"]
+    assert d["inputs"]["equation_kernel"].endswith("type1_equation_kernel_v0_1.json")
+    assert d["inputs"]["volumetric_geometry_kernel"].endswith("type1_volumetric_geometry_kernel_v0_1.json")
     assert "CHECK_VOXEL_PACKING_AND_PROCESS_RESOLUTION" in d["compile_chain"]
     assert "ORDER_DIRECTIONAL_X_TO_Y_STACK" in d["compile_chain"]
     assert "INFER_NUMERIC_OR_RETAIN_SYMBOLIC_OR_HOLD" in d["compile_chain"]
@@ -52,6 +61,9 @@ def test_compiler_fails_closed_on_unknowns_and_authority():
     d = load()
     assert "Required when the equation is known but one or more required inputs are unresolved." in d["inference_policy"]["symbolic"]
     assert "HOLD" in d["inference_policy"]["hold"].upper()
+    assert "411x411" in d["volumetric_policy"]["normalized_join"]
+    assert "Maxwell capacitance matrix" in d["volumetric_policy"]["capacitance"]
+    assert "no implicit or invented cross-domain coupling" in d["volumetric_policy"]["sparse_assembly"]
     joined = " ".join(d["non_claims"]).lower()
     assert "not physical readiness" in joined
     assert "not certification" in joined
