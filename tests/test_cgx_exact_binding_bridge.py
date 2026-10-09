@@ -216,3 +216,41 @@ def test_reviewed_requirement_targets_advance_without_physical_uplift() -> None:
 
     assert resistor["binding_state"] == loop["binding_state"] == "UNBOUND"
     assert resistor["physical_state"] == loop["physical_state"] == "NOT_RUN"
+
+def test_build_ready_label_cannot_bypass_existing_owner_evidence_gate() -> None:
+    cap = dict(find_instance(POP, "CGXI-P2-C-001"))
+    cap["binding_state"] = "BUILD_READY"
+    resolved = resolve_binding_gate(cap, population=POP)
+    assert resolved["first_open_gate"] == "LOT_PASSPORT"
+    assert resolved["physical_state"] == "NOT_RUN"
+
+
+def test_build_ready_with_bound_digital_inputs_still_requires_physical_test_execution() -> None:
+    synthetic = {
+        "instance_id": "CGXI-SYNTH-BUILD-READY",
+        "proof_stage": "P2",
+        "binding_state": "BUILD_READY",
+        "physical_state": "NOT_RUN",
+        "source_locator_or_hash": "sha256:source-bound",
+        "material_stack_and_lots": "lot:SYNTH-LOT-001",
+        "material_passport_refs": "cgx://material/lot/SYNTH-LOT-001",
+        "uncertainty": "declared synthetic uncertainty",
+        "blocked_by_next_binding": "",
+        "electrical_mechanical_thermal_or_process_ratings": "synthetic declared target",
+        "geometry_revision": "SYNTH-GEO-v1",
+        "dimensions_and_tolerances": "1 mm x 1 mm +/- 0.1 mm",
+        "manufacturing_or_assembly_route": "synthetic print and cure route",
+        "tool_and_calibration_refs": "cgx://tool/synthetic/current",
+        "acceptance_tests": "synthetic measurement",
+        "falsifiers": "outside declared synthetic tolerance",
+        "source_hashes": "sha256:source",
+        "configuration_hash": "sha256:configuration",
+    }
+    resolved = resolve_binding_gate(synthetic, population={"records": [synthetic]})
+    assert resolved["first_open_gate"] == "TEST_EXECUTION"
+    assert resolved["physical_state"] == "NOT_RUN"
+
+    verified = dict(synthetic)
+    verified["physical_state"] = "VERIFIED"
+    assert resolve_binding_gate(verified, population={"records": [verified]})["first_open_gate"] == "CLOSED"
+
