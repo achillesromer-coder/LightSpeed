@@ -5,7 +5,7 @@
   "owner": {
     "drive_spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
     "owner_sheet": "35_CGX_Type1_Volumetric_Kernel_v0_1",
-    "owner_range": "A1:P40",
+    "owner_range": "A1:P41",
     "parent_contracts": [
       "UTP-124",
       "UTP-125",
@@ -14,7 +14,7 @@
     ]
   },
   "state": "DIGITAL ENGINEERING TOPOLOGY KERNEL / PHYSICAL_NOT_RUN",
-  "record_count": 39,
+  "record_count": 40,
   "purpose": "Normalize 2D traces, 3D embedded structures and state/history-aware 4D assemblies into reusable geometry/topology kernels beneath the 411×60 owner matrix. Use canonical closed forms only in their valid regimes; otherwise require field/matrix/network solves and explicit boundary/interface state.",
   "headers": [
     "Kernel ID",
@@ -736,6 +736,24 @@
       "verification_falsifier": "pressure-flow/velocity/temperature/leak/cavitation/flow-visualization as applicable plus mass/momentum residual and mesh convergence",
       "compiler_token": "VOL_FLUID_GENERAL_3D",
       "evidence_current_example": "Closes nozzle/Venturi/Tesla-valve/manifold/pump general-flow topology coverage. Shape alone never creates pressure rating, pump curve, cavitation margin or containment authority"
+    },
+    {
+      "kernel_id": "VGK-040",
+      "primitive_basis_class": "DIELECTRIC_ISOLATION",
+      "topology_geometry_family": "general dielectric / electrical insulation volume",
+      "canonical_geometry_parameters": "dielectric region geometry, thickness/gap, conductor boundaries, interfaces/voids, orientation/material tensor",
+      "governing_law_matrix_form": "∇·D=ρfree with D=εE; electrostatic field solution for arbitrary geometry; leakage/loss represented by attributable conductivity/loss model; E≈V/d only when the local uniform-field approximation is valid",
+      "required_source_measured_inputs": "full dielectric/conductor geometry; ε tensor/εr(f,T,RH); conductivity/leakage/loss; interfaces/voids/contamination; applied benign test potential and boundary conditions",
+      "inferable_outputs": "E-field/displacement field, capacitance/parasitic coupling candidate, leakage/loss and field-hotspot candidate within the declared benign model",
+      "embedding_orientation_rule": "arbitrary insulation layers, slots, barriers, coatings and embedded dielectric volumes; material orientation/anisotropy explicit where consequential",
+      "boundary_interface_conditions": "adjacent conductors/reference potential, dielectric interfaces, edges/voids, contamination/moisture and service/environment boundaries",
+      "state_history_variables": "V,E,D,Jleak,T,RH,polarization/material/defect/aging history",
+      "cross_domain_couplings": "electrostatic↔thermal↔mechanical/moisture/material",
+      "numeric_inference_gate": "NUMERIC_IF exact dielectric geometry/material/process/environment and electrical boundaries are attributable; breakdown/withstand/lifetime remain separate measured/source-rated gates",
+      "process_damage_preservation_gate": "later deposition, cure, machining, contamination, voiding or moisture ingress must not damage or bridge the insulation region; re-resolve after consequential geometry/material changes",
+      "verification_falsifier": "dimensional/void inspection, insulation resistance/leakage, dielectric loss/capacitance and benign field comparison as applicable; no destructive withstand implied",
+      "compiler_token": "VOL_DIELECTRIC_ISOLATION",
+      "evidence_current_example": "Closes standalone printed dielectric/insulation and isolation-slot topology coverage. Geometry or field inference does not create voltage, creepage/clearance, breakdown, lifetime or certification authority"
     }
   ],
   "boundaries": [
@@ -745,7 +763,7 @@
     "geometry/process revisions invalidate stale field matrices and topology-specific numeric inference",
     "physical/HV/RF/pressure/reactive execution remains separately gated"
   ],
-  "logical_universal_matrix": "archetype[411x60] ⊕ primitive equation kernel[20] ⊕ one-or-more volumetric topology kernels[39] ⊕ exact CGXI/passport/configuration ⊕ time/state history",
+  "logical_universal_matrix": "archetype[411x60] ⊕ primitive equation kernel[20] ⊕ one-or-more volumetric topology kernels[40] ⊕ exact CGXI/passport/configuration ⊕ time/state history",
   "capacitance_policy": {
     "canonical_forms": "Use parallel-plate, coaxial/cylindrical, concentric-spherical or explicit network forms only when their geometry assumptions are valid.",
     "general_3d": "For arbitrary embedded multi-conductor geometry use the Maxwell capacitance matrix Q_i = Σ_j C_ij V_j from an attributable electrostatic field model plus physical readback.",
@@ -769,10 +787,12 @@
     "queue_id": "BUILD-072",
     "purpose": "Close false generic VGK-036-only archetype mappings while retaining VGK-036 for genuine coupled assemblies.",
     "baseline_vgk036_only": "143/411 (34.79%) before remapping",
+    "first_pass_vgk036_only": "35/411 (8.52%) with VGK-037..039 before dielectric gap closure",
     "added_kernel_ids": [
       "VGK-037",
       "VGK-038",
-      "VGK-039"
+      "VGK-039",
+      "VGK-040"
     ]
   }
 }
