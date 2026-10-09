@@ -3,15 +3,19 @@ import projection from "../public/data/cgx_internal_review_projection.json";
 import { renderCgxReviewProjection } from "./cgxReview";
 
 describe("CGX internal review lens", () => {
-  it("projects the existing BUILD-070 queue without creating parallel state", () => {
-    expect(projection.authority.queue_id).toBe("BUILD-070");
+  it("projects the existing BUILD-072 queue without creating parallel state", () => {
+    expect(projection.authority.queue_id).toBe("BUILD-072");
     expect(projection.instances).toHaveLength(8);
     expect(projection.metrics.archetypes).toBe(411);
     expect(projection.metrics.matrix_fields).toBe(60);
     expect(projection.kernels).toHaveLength(20);
-    expect(projection.volumetric_kernels).toHaveLength(36);
-    expect(projection.metrics.volumetric_kernels).toBe(36);
+    expect(projection.volumetric_kernels).toHaveLength(40);
+    expect(projection.metrics.volumetric_kernels).toBe(40);
     expect(projection.metrics.printable_4d_templates).toBe(411);
+    expect(projection.topology_coverage.baseline_generic_only).toBe(143);
+    expect(projection.topology_coverage.final_generic_only).toBe(9);
+    expect(projection.topology_coverage.specific_or_multi).toBe(402);
+    expect(projection.topology_coverage.residual).toHaveLength(9);
     expect(projection.printable_4d.template_count).toBe(411);
     expect(projection.printable_4d.coupled_stack_kernel).toBe("VGK-036");
     expect(projection.metrics.physical_tests_run).toBe(0);
@@ -44,6 +48,10 @@ describe("CGX internal review lens", () => {
     expect(html).toContain("411");
     expect(html).toContain("CGX-PRINTABLE-4D-COMPONENT/0.1");
     expect(html).toContain("VGK-036");
+    expect(html).toContain("VGK-037");
+    expect(html).toContain("VGK-040");
+    expect(html).toContain("143 → 9");
+    expect(html).toContain("intentional generic-coupled archetypes");
     expect(html).toContain("Showcase-safe");
     expect(html).toContain("NOT_PUBLISHED");
     expect(html).toContain("read-only projection");
