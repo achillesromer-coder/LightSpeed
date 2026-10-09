@@ -3,8 +3,8 @@ import projection from "../public/data/cgx_internal_review_projection.json";
 import { renderCgxReviewProjection } from "./cgxReview";
 
 describe("CGX internal review lens", () => {
-  it("projects the existing BUILD-072 queue without creating parallel state", () => {
-    expect(projection.authority.queue_id).toBe("BUILD-072");
+  it("projects the active BUILD-071 queue while retaining BUILD-072 topology closure", () => {
+    expect(projection.authority.queue_id).toBe("BUILD-071");
     expect(projection.instances).toHaveLength(8);
     expect(projection.metrics.archetypes).toBe(411);
     expect(projection.metrics.matrix_fields).toBe(60);
