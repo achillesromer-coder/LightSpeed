@@ -1,0 +1,340 @@
+{
+  "schema": "CGX-P2-SG0-RCL-WITNESS-PACKET/0.1",
+  "artifact_id": "UTP-145",
+  "build_id": "BUILD-078",
+  "packet_id": "P2-SG0-RCL-WITNESS-001",
+  "title": "P2 SG-0 Passive R/C/L Physical Intake + Witness Packet",
+  "status": "DIGITAL_PACKET_READY / WIT-007+008 REQUIRED / PHYSICAL_NOT_RUN",
+  "purpose": "Convert the source-bound P2 resistor, capacitor and inductor candidate instances into one controlled first-article evidence path. Freeze actual material lots, machine/tool/calibration and as-built geometry before promoting any source/geometry inference to measured evidence.",
+  "owner_refs": {
+    "component_instances": [
+      "CGXI-P2-R-001",
+      "CGXI-P2-C-001",
+      "CGXI-P2-L-001"
+    ],
+    "seed_field_stack": "UTP-144 / SG-0",
+    "functional_voxel": "UTP-143",
+    "witness_kernel": "37_CGX_Type1_Witness_Evidence_Kernel_v0_1 / WIT-001,WIT-002,WIT-003,WIT-006,WIT-007,WIT-008,WIT-009",
+    "type1_owner": "Type 1 Romer Cognigrex",
+    "source_product_bindings": "component_instance_population_v0_1.json + component_source_binding_reconciliation_v0_1.json"
+  },
+  "source_candidates": {
+    "conductor": {
+      "product": "LOCTITE ECI 1010 E&C",
+      "idh": "2022184",
+      "role": [
+        "capacitor electrodes",
+        "inductor/conductor witness"
+      ],
+      "state": "SOURCE_CANDIDATE_BOUND / ACTUAL_LOT_UNRESOLVED"
+    },
+    "resistor": {
+      "product": "LOCTITE ECI 7004LR E&C",
+      "idh": "2076923",
+      "role": [
+        "resistor witness"
+      ],
+      "state": "SOURCE_CANDIDATE_BOUND / ACTUAL_BLEND_AND_LOT_UNRESOLVED"
+    },
+    "alternate_dielectric": {
+      "product": "LOCTITE EDAG PF 455B E&C",
+      "idh": "1263298",
+      "role": [
+        "alternate printed dielectric only"
+      ],
+      "state": "SOURCE_CANDIDATE_BOUND / NOT_PRIMARY_P2-C_ROUTE"
+    },
+    "dielectric": {
+      "product": "DuPont Kapton HN",
+      "nominal_gauge_um": 25,
+      "role": [
+        "P2-C dielectric",
+        "P2 R/L support candidate"
+      ],
+      "state": "SOURCE_CANDIDATE_BOUND / ACTUAL_LOT_AND_THICKNESS_UNRESOLVED"
+    }
+  },
+  "execution_gate_cascade": [
+    {
+      "gate": "G0-WIT007-LOT-PASSPORT",
+      "required": true,
+      "pass": "Exact supplier/product/lot-or-batch/source record captured for each material actually used; package/source identity conflicts resolved; material remains held if provenance is ambiguous.",
+      "fail_state": "HOLD"
+    },
+    {
+      "gate": "G1-WIT008-MACHINE-TOOL-CAL",
+      "required": true,
+      "pass": "Actual machine/tool/cure route and measurement instruments identified; calibration/readback valid at execution; relevant printable line/gap/thickness/registration envelope attributable.",
+      "fail_state": "HOLD"
+    },
+    {
+      "gate": "G2-WIT006-GEOMETRY-FREEZE",
+      "required": true,
+      "pass": "Coupon CAD/config revision frozen; consequential dimensions measurable with datum and uncertainty; configuration hash generated.",
+      "fail_state": "HOLD"
+    },
+    {
+      "gate": "G3-WIT009-PROCESS-HISTORY",
+      "required": true,
+      "pass": "Commanded and actual cure/process/environment history recorded without unresolved consequential excursion.",
+      "fail_state": "HOLD"
+    },
+    {
+      "gate": "G4-WIT001-002-003-MEASURE",
+      "required": true,
+      "pass": "Calibrated raw R/C/L observations captured with environment/fixture/configuration and uncertainty; no source/inferred number relabelled MEASURED.",
+      "fail_state": "HOLD"
+    },
+    {
+      "gate": "G5-READBACK-DBR",
+      "required": true,
+      "pass": "Raw-data hashes, calculation/model hashes, accept/reject/HOLD and DBR pointer bind the same exact instance revisions.",
+      "fail_state": "HOLD"
+    }
+  ],
+  "lot_passport_intake_schema": {
+    "required": [
+      "material_role",
+      "supplier",
+      "exact_product",
+      "product_id_or_sku",
+      "lot_or_batch_id",
+      "source_or_possession_record",
+      "package_or_sample_identity",
+      "received_or_identified_date",
+      "storage_condition_if_consequential",
+      "operator_readback",
+      "passport_hash"
+    ],
+    "optional_if_present": [
+      "manufacture_date",
+      "expiry_or_retest_date",
+      "quantity_or_mass",
+      "supplier_certificate_ref",
+      "photo_or_label_evidence_hash",
+      "sds_tds_revision"
+    ],
+    "rule": "Blank/unknown fields remain explicit UNKNOWN; do not invent lot, manufacture or expiry data."
+  },
+  "machine_tool_calibration_schema": {
+    "required": [
+      "machine_id",
+      "machine_revision_or_config_hash",
+      "deposition_or_forming_tool_id",
+      "cure_or_postprocess_route",
+      "metrology_tool_ids",
+      "electrical_instrument_ids",
+      "calibration_refs",
+      "calibration_validity_at_test",
+      "workspace_environment",
+      "safe_state_or_stop_path"
+    ],
+    "capability_fields": [
+      "minimum_reproducible_line_width",
+      "minimum_reproducible_gap",
+      "deposited_thickness_measurement_method",
+      "xy_registration_uncertainty",
+      "thickness_uncertainty",
+      "substrate_size_envelope",
+      "temperature_process_envelope",
+      "atmosphere_process_envelope"
+    ],
+    "rule": "Capability values remain UNKNOWN until source-bound or measured; component datasheets do not substitute for whole-machine capability."
+  },
+  "witness_geometry": {
+    "shared": {
+      "substrate_candidate": "Kapton HN 25 um nominal candidate",
+      "datum": "one declared coupon datum/frame shared by R/C/L regions",
+      "identity": "persistent coupon object/revision marker tied to geometry/process/readback",
+      "service": "probe/contact and dimensional-metrology access preserved",
+      "freeze_rule": "Exact dimensions are frozen only after G0/G1 resolve actual materials and machine capability."
+    },
+    "resistor": {
+      "instance_id": "CGXI-P2-R-001",
+      "target_first_proof_ohm": 1000,
+      "target_acceptance_intent": "+/-20% of 1.0 kOhm after declared cure and dimensional/adhesion pass",
+      "topology": "uniform or serpentine printed resistor with Kelvin/4-wire-compatible terminals",
+      "parameterization": {
+        "measured_sheet_resistance_symbol": "Rs_meas",
+        "square_count": "N_sq = R_target/Rs_meas",
+        "path_relation": "L/W = N_sq",
+        "geometry_rule": "Choose W >= measured machine/process minimum with margin; then L=N_sq*W. Do not freeze numeric L/W before Rs_meas and machine envelope."
+      },
+      "source_comparator": "ECI 7004LR/NCI7002 family source record spans approximately 50–5000 ohm/sq/25 um by blend; comparator only, exact blend/process unselected.",
+      "witness_refs": [
+        "WIT-001",
+        "WIT-006",
+        "WIT-007",
+        "WIT-008",
+        "WIT-009"
+      ]
+    },
+    "capacitor": {
+      "instance_id": "CGXI-P2-C-001",
+      "topology": "parallel-plate first comparator; two attributable conductor electrodes separated by exact measured HN film",
+      "nominal_geometry_for_freeze_after_gates": {
+        "overlap_x_mm": 10,
+        "overlap_y_mm": 10,
+        "nominal_dielectric_um": 25,
+        "guard_configuration": "NONE_FIRST_ARTICLE / fixture blank and edge-fringe comparator retained"
+      },
+      "source_property_comparator": {
+        "epsilon_r_nominal": 3.4,
+        "frequency_Hz": 1000,
+        "evidence": "DuPont HN source property / typical comparator"
+      },
+      "ideal_inference": {
+        "capacitance_density_pF_per_mm2": 1.2041695425408,
+        "overlap_area_mm2": 100,
+        "ideal_C_pF": 120.41695425408,
+        "evidence": "ENGINEERING_INFERENCE / NOT_MEASURED"
+      },
+      "model": "C=epsilon0*epsilon_r*A/d only as ideal parallel-plate comparator; measured C is primary. Fringe, electrode/process, fixture, loss, leakage, T/RH and actual thickness remain separate.",
+      "witness_refs": [
+        "WIT-002",
+        "WIT-006",
+        "WIT-007",
+        "WIT-008",
+        "WIT-009"
+      ]
+    },
+    "inductor": {
+      "instance_id": "CGXI-P2-L-001",
+      "topology": "machine-compatible air-core planar spiral/loop witness selected after G1; no core-dependent claim",
+      "parameterization": {
+        "variables": [
+          "turn_count_N",
+          "trace_width_w",
+          "trace_gap_s",
+          "outer_dimension_Dout",
+          "inner_dimension_Din",
+          "measured_conductor_thickness_t"
+        ],
+        "DCR_model": "DCR ~= Rs_meas * conductor_path_length/trace_width plus measured contact contribution where applicable",
+        "L_model": "Use topology-valid established geometry approximation or EM field solve only after geometry freeze; retain parasitic capacitance and nearby-body boundary state.",
+        "freeze_rule": "Do not invent N,w,s,Dout or target L before machine envelope and intended measurement range are declared."
+      },
+      "witness_refs": [
+        "WIT-003",
+        "WIT-006",
+        "WIT-007",
+        "WIT-008",
+        "WIT-009"
+      ]
+    }
+  },
+  "measurement_packet": {
+    "resistor": {
+      "raw_fields": [
+        "timestamp",
+        "instance_revision",
+        "instrument_id",
+        "calibration_ref",
+        "test_current_or_voltage",
+        "V_raw",
+        "I_raw",
+        "R_reading",
+        "temperature",
+        "geometry_readback",
+        "contact_configuration",
+        "replicate_id"
+      ],
+      "derived": [
+        "R_measured",
+        "Rs_measured_if_uniform_geometry_valid",
+        "uncertainty",
+        "target_residual"
+      ],
+      "promotion": "MEASURED only after exact lot/process/geometry/calibration/raw-data bindings and valid ohmic regime."
+    },
+    "capacitor": {
+      "required_comparator_point_Hz": 1000,
+      "raw_fields": [
+        "timestamp",
+        "instance_revision",
+        "instrument_id",
+        "fixture_calibration",
+        "frequency",
+        "AC_amplitude",
+        "DC_bias_if_any",
+        "C_or_complex_ZY_raw",
+        "fixture_blank",
+        "temperature",
+        "RH",
+        "actual_dielectric_thickness",
+        "actual_overlap_geometry",
+        "replicate_id"
+      ],
+      "derived": [
+        "C_measured_vs_frequency",
+        "capacitance_density_when_geometry_valid",
+        "loss_or_dissipation_if_measured",
+        "comparator_residual",
+        "uncertainty"
+      ],
+      "promotion": "Geometry/source inference remains ENGINEERING_INFERENCE; only calibrated electrical observation promotes C to MEASURED for the declared f/bias/T/RH/configuration."
+    },
+    "inductor": {
+      "raw_fields": [
+        "timestamp",
+        "instance_revision",
+        "instrument_id",
+        "fixture_or_reference_plane",
+        "frequency",
+        "amplitude_or_bias",
+        "complex_ZY_or_LQ_raw",
+        "DCR_raw",
+        "temperature",
+        "nearby_geometry_configuration",
+        "actual_coil_geometry",
+        "replicate_id"
+      ],
+      "derived": [
+        "L_vs_frequency",
+        "DCR",
+        "Q_if_supported",
+        "self_resonance_if_observed",
+        "model_fit_residual",
+        "uncertainty"
+      ],
+      "promotion": "MEASURED only over the declared frequency/configuration; no current/thermal/RF-power rating inferred."
+    }
+  },
+  "process_sequence": [
+    "PASS G0 lot/passport",
+    "PASS G1 machine/tool/calibration",
+    "resolve/freeze coupon datum and R/C/L geometry",
+    "hash geometry/config and bind source lots",
+    "prepare substrate within source/process envelope",
+    "deposit/form R/C/L regions in directional sequence that does not damage prior regions",
+    "record actual cure/process/environment history",
+    "perform WIT-006 dimensional readback",
+    "perform WIT-001 resistor measurement",
+    "perform WIT-002 capacitor measurement including 1 kHz comparator point",
+    "perform WIT-003 inductor DCR/L/Q sweep as instrumented",
+    "calculate uncertainties and comparator/model residuals",
+    "accept/reject/HOLD each exact instance independently",
+    "write raw/calculation hashes and DBR readback",
+    "only passed measured P2 outputs may feed P3 LC/RF derivation"
+  ],
+  "p3_dependency": {
+    "blocked_instance": "CGXI-P3-LC-001",
+    "release_condition": "Measured and accepted CGXI-P2-C-001 and CGXI-P2-L-001, plus attributable interconnect/fixture geometry and calibration.",
+    "rule": "f0=1/(2*pi*sqrt(L*C)) is a first comparator using measured P2 inputs; loss/parasitics/mutual coupling require actual 3D model and P3 network witness."
+  },
+  "physical_authority": {
+    "physical_execution": false,
+    "energized_state": "NOT_RUN",
+    "permitted_by_packet": "digital preparation, lot/tool/calibration intake, geometry freeze, test-plan/readback schema",
+    "not_permitted_by_packet": [
+      "fabrication",
+      "energized measurement",
+      "RF transmit",
+      "hazardous voltage",
+      "pressure/reactive chemistry",
+      "machine actuation",
+      "certification/release"
+    ],
+    "execution_requires": "separate explicit applicable physical/safety authority after G0-G3 are satisfied"
+  }
+}

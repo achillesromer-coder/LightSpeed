@@ -15,7 +15,8 @@
     "equation_kernel": "cgx/component_atlas/type1_equation_kernel_v0_1.json",
     "volumetric_kernel": "cgx/component_atlas/type1_volumetric_kernel_v0_1.json",
     "functional_voxel_basis": "cgx/component_atlas/type1_functional_voxel_field_basis_v0_1.json",
-    "seed_field_stack_matrix": "cgx/component_atlas/type1_seed_field_stack_matrix_v0_1.json"
+    "seed_field_stack_matrix": "cgx/component_atlas/type1_seed_field_stack_matrix_v0_1.json",
+    "p2_sg0_rcl_witness_packet": "cgx/manufacturing/p2_sg0_rcl_witness_packet_v0_1.json"
   },
   "matrix_contract": {
     "archetype_count": 411,
@@ -320,7 +321,8 @@
       "capacitance_inference_ref": "INF-CAP-KAPTON-HN-25UM-001",
       "resistor_rule": "For target R, required squares N=R_target/R_sheet. Numeric geometry remains HOLD until exact cured sheet-resistance blend/lot/process is bound.",
       "inductor_rule": "L/R/Q remain SYMBOLIC until exact conductor geometry, thickness/state, return environment and measurement/field model are bound.",
-      "physical_execution": false
+      "physical_execution": false,
+      "witness_packet_ref": "UTP-145 / cgx/manufacturing/p2_sg0_rcl_witness_packet_v0_1.json"
     },
     {
       "id": "P2-SG1-EMBEDDED-CELL-001",
