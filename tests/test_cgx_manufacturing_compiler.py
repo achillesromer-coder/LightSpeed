@@ -308,3 +308,87 @@ def test_manufacturing_contract_tracks_materialized_60_field_owner_matrix() -> N
     assert matrix["compiler_range"] == "BA:BH"
     assert len(matrix["compiler_fields"]) == 8
     assert "Exact CGXI" in matrix["precedence"]
+
+def test_reference_machine_adapter_rejects_nonfinite_emitted_scalars_and_bounds() -> None:
+    def base_machine() -> dict:
+        return {
+            "machine_id": "pc01-synthetic",
+            "calibration_hash": "cal-001",
+            "supported_ops": ["TOOL_SELECT", "MOVE", "DEPOSIT_LINE", "DWELL", "SET_TOOL_TEMP"],
+            "workspace_mm": {"x": [0, 200], "y": [0, 200], "z": [0, 200]},
+            "max_feed_mm_min": 3000,
+            "tool_temperature_c": [0, 300],
+        }
+
+    def base_packet() -> dict:
+        return {
+            "schema": "CGX-TOOLPATH/0.1",
+            "execution_state": "BUILD_READY",
+            "dry_run_validated": True,
+            "machine_id": "pc01-synthetic",
+            "calibration_hash": "cal-001",
+            "operations": [
+                {"opcode": "MOVE", "params": {"x": 10, "y": 10, "z": 1, "feed_mm_min": 1000}},
+                {"opcode": "DEPOSIT_LINE", "params": {"x": 20, "y": 10, "z": 1, "e": 0.5, "feed_mm_min": 600}},
+            ],
+        }
+
+    for bad in (float("nan"), float("inf"), float("-inf")):
+        machine = base_machine()
+        machine["max_feed_mm_min"] = bad
+        with pytest.raises(AdapterError, match="nonfinite-number"):
+            emit_reference_gcode(base_packet(), machine)
+
+        machine = base_machine()
+        machine["workspace_mm"]["x"][1] = bad
+        with pytest.raises(AdapterError, match="nonfinite-number"):
+            emit_reference_gcode(base_packet(), machine)
+
+        packet = base_packet()
+        packet["operations"][0]["params"]["x"] = bad
+        with pytest.raises(AdapterError, match="nonfinite-number"):
+            emit_reference_gcode(packet, base_machine())
+
+        packet = base_packet()
+        packet["operations"][0]["params"]["feed_mm_min"] = bad
+        with pytest.raises(AdapterError, match="nonfinite-number"):
+            emit_reference_gcode(packet, base_machine())
+
+        packet = base_packet()
+        packet["operations"][1]["params"]["e"] = bad
+        with pytest.raises(AdapterError, match="nonfinite-number"):
+            emit_reference_gcode(packet, base_machine())
+
+        packet = base_packet()
+        packet["operations"] = [{"opcode": "SET_TOOL_TEMP", "params": {"celsius": bad}}]
+        with pytest.raises(AdapterError, match="nonfinite-number"):
+            emit_reference_gcode(packet, base_machine())
+
+
+def test_reference_machine_adapter_rejects_fractional_or_nonfinite_integer_fields() -> None:
+    machine = {
+        "machine_id": "pc01-synthetic",
+        "calibration_hash": "cal-001",
+        "supported_ops": ["TOOL_SELECT", "DWELL"],
+        "workspace_mm": {"x": [0, 200], "y": [0, 200], "z": [0, 200]},
+        "max_feed_mm_min": 3000,
+        "tool_temperature_c": [0, 300],
+    }
+    base = {
+        "schema": "CGX-TOOLPATH/0.1",
+        "execution_state": "BUILD_READY",
+        "dry_run_validated": True,
+        "machine_id": "pc01-synthetic",
+        "calibration_hash": "cal-001",
+    }
+
+    for bad_tool in (1.5, float("nan"), float("inf")):
+        packet = dict(base, operations=[{"opcode": "TOOL_SELECT", "params": {"tool": bad_tool}}])
+        with pytest.raises(AdapterError, match="invalid-integer|nonfinite-number"):
+            emit_reference_gcode(packet, machine)
+
+    for bad_ms in (1.5, float("nan"), float("inf")):
+        packet = dict(base, operations=[{"opcode": "DWELL", "params": {"milliseconds": bad_ms}}])
+        with pytest.raises(AdapterError, match="invalid-integer|nonfinite-number"):
+            emit_reference_gcode(packet, machine)
+
