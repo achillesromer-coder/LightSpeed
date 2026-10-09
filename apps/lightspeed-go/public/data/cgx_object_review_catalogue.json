@@ -1,0 +1,558 @@
+{
+  "schema": "CGX-OBJECT-REVIEW-CATALOGUE/0.1",
+  "generated_from_git": "4dabcb4647825ab4e7d7cf67e53225a82ee3402c",
+  "status": "INTERNAL_REVIEW / VECTOR_RENDER_BASIS / PHYSICAL_NOT_RUN",
+  "authority": "Drive remains engineering/evidence authority; Git/LS GO is an internal review projection. Renders never uplift evidence.",
+  "visual_system": {
+    "palette": {
+      "background": "#071011",
+      "panel": "#0f1b1c",
+      "panel_alt": "#142426",
+      "text": "#f2ede7",
+      "muted": "#aab9b8",
+      "line": "#294043",
+      "teal": "#55d6cf",
+      "gold": "#c8a458",
+      "green": "#76d39b",
+      "red": "#e27e7e"
+    },
+    "rule": "Use corpus geometry and CGX state. Improve legibility, hierarchy and branding without inventing hidden geometry, material finish, performance, certification or as-built accuracy.",
+    "render_plate": "resolution-independent SVG engineering plate suitable for 4K/8K review"
+  },
+  "coverage": {
+    "printable_4d_archetypes": 411,
+    "macro_source_meshes": 16,
+    "symbolic_core_component_stack_plates": 6,
+    "physical_tests_complete": 0
+  },
+  "tiers": [
+    {
+      "id": "T0",
+      "label": "component",
+      "description": "411 component archetypes + exact CGXI proof instances"
+    },
+    {
+      "id": "T1",
+      "label": "functional stack",
+      "description": "printable 4D packets, dense smart stack, interfaces, voxel regions"
+    },
+    {
+      "id": "T2",
+      "label": "subsystem",
+      "description": "Free Flow / RFS-EMFF / Solar Hull / Luke functional assemblies"
+    },
+    {
+      "id": "T3",
+      "label": "mission module",
+      "description": "Mark family, Luke IV and InterSol"
+    },
+    {
+      "id": "T4",
+      "label": "facility / corridor",
+      "description": "spaceport, WatchTower and M1 elevated bypass"
+    }
+  ],
+  "micro_review_objects": [
+    {
+      "id": "cgx:diode_seed_carrier",
+      "label": "Diode seed + printable carrier",
+      "role": "CGA-D-001 / hybrid seed path",
+      "level": "component_or_stack",
+      "source": "CGX_DERIVED_SYMBOLIC",
+      "render": "/review/renders/diode_seed_carrier_review.svg",
+      "geometry_state": "SYMBOLIC_PARAMETRIC / EXACT DIMENSIONS OPEN",
+      "physical_state": "NOT_RUN",
+      "review_rules": [
+        "visual form illustrates topology and process intent only",
+        "exact source, lot, geometry, process, tool, calibration and witness data govern realization",
+        "numeric state remains NUMERIC_IF / SYMBOLIC / HOLD until its evidence gate closes"
+      ]
+    },
+    {
+      "id": "cgx:p2_resistor_coupon",
+      "label": "P2 resistor coupon",
+      "role": "CGXI-P2-R-001 / 1.0 kΩ ±20% first-proof intent",
+      "level": "component_or_stack",
+      "source": "CGX_DERIVED_SYMBOLIC",
+      "render": "/review/renders/p2_resistor_coupon_review.svg",
+      "geometry_state": "SYMBOLIC_PARAMETRIC / EXACT DIMENSIONS OPEN",
+      "physical_state": "NOT_RUN",
+      "review_rules": [
+        "visual form illustrates topology and process intent only",
+        "exact source, lot, geometry, process, tool, calibration and witness data govern realization",
+        "numeric state remains NUMERIC_IF / SYMBOLIC / HOLD until its evidence gate closes"
+      ]
+    },
+    {
+      "id": "cgx:p2_capacitor_coupon",
+      "label": "P2 capacitor coupon",
+      "role": "CGXI-P2-C-001 / parallel-plate candidate",
+      "level": "component_or_stack",
+      "source": "CGX_DERIVED_SYMBOLIC",
+      "render": "/review/renders/p2_capacitor_coupon_review.svg",
+      "geometry_state": "SYMBOLIC_PARAMETRIC / EXACT DIMENSIONS OPEN",
+      "physical_state": "NOT_RUN",
+      "review_rules": [
+        "visual form illustrates topology and process intent only",
+        "exact source, lot, geometry, process, tool, calibration and witness data govern realization",
+        "numeric state remains NUMERIC_IF / SYMBOLIC / HOLD until its evidence gate closes"
+      ]
+    },
+    {
+      "id": "cgx:p2_inductor_coupon",
+      "label": "P2 inductor coupon",
+      "role": "CGXI-P2-L-001 / inductive coupon",
+      "level": "component_or_stack",
+      "source": "CGX_DERIVED_SYMBOLIC",
+      "render": "/review/renders/p2_inductor_coupon_review.svg",
+      "geometry_state": "SYMBOLIC_PARAMETRIC / EXACT DIMENSIONS OPEN",
+      "physical_state": "NOT_RUN",
+      "review_rules": [
+        "visual form illustrates topology and process intent only",
+        "exact source, lot, geometry, process, tool, calibration and witness data govern realization",
+        "numeric state remains NUMERIC_IF / SYMBOLIC / HOLD until its evidence gate closes"
+      ]
+    },
+    {
+      "id": "cgx:p3_rf_loop",
+      "label": "P3 passive RF loop",
+      "role": "CGXI-P3-LOOP-001 / 13.56 MHz ±5% first-proof intent",
+      "level": "component_or_stack",
+      "source": "CGX_DERIVED_SYMBOLIC",
+      "render": "/review/renders/p3_rf_loop_review.svg",
+      "geometry_state": "SYMBOLIC_PARAMETRIC / EXACT DIMENSIONS OPEN",
+      "physical_state": "NOT_RUN",
+      "review_rules": [
+        "visual form illustrates topology and process intent only",
+        "exact source, lot, geometry, process, tool, calibration and witness data govern realization",
+        "numeric state remains NUMERIC_IF / SYMBOLIC / HOLD until its evidence gate closes"
+      ]
+    },
+    {
+      "id": "cgx:dense_smart_stack",
+      "label": "Dense 4D smart stack",
+      "role": "UTP-139 / 12-region reference grammar",
+      "level": "component_or_stack",
+      "source": "CGX_DERIVED_SYMBOLIC",
+      "render": "/review/renders/dense_smart_stack_review.svg",
+      "geometry_state": "SYMBOLIC_PARAMETRIC / EXACT DIMENSIONS OPEN",
+      "physical_state": "NOT_RUN",
+      "review_rules": [
+        "visual form illustrates topology and process intent only",
+        "exact source, lot, geometry, process, tool, calibration and witness data govern realization",
+        "numeric state remains NUMERIC_IF / SYMBOLIC / HOLD until its evidence gate closes"
+      ]
+    }
+  ],
+  "macro_review_objects": [
+    {
+      "id": "macro:embedded_bio_blocks",
+      "label": "Embedded bio blocks",
+      "role": "Eco-Grex / multifunctional bio-block reference",
+      "level": "facility_or_material_system",
+      "source": "repo:assets/models/embedded_bio_blocks.obj",
+      "render": "/review/renders/embedded_bio_blocks_review.svg",
+      "geometry_state": "CORPUS_SOURCE_MESH / REVIEW_GEOMETRY",
+      "physical_state": "NOT_AS_BUILT / REVIEW_ONLY",
+      "stats": {
+        "vertices": 48,
+        "faces": 72,
+        "extents": [
+          4.2,
+          3.6,
+          0.8
+        ],
+        "bytes": 2540
+      },
+      "review_rules": [
+        "render preserves source mesh geometry and does not add hidden engineering detail",
+        "mesh coordinate scale is not automatically a released physical dimension set",
+        "material, loads, tolerance, process, test and certification remain separate evidence"
+      ]
+    },
+    {
+      "id": "macro:free_flow_batteries",
+      "label": "Free Flow batteries",
+      "role": "Energy-storage architecture reference",
+      "level": "subsystem",
+      "source": "repo:assets/models/free_flow_batteries.obj",
+      "render": "/review/renders/free_flow_batteries_review.svg",
+      "geometry_state": "CORPUS_SOURCE_MESH / REVIEW_GEOMETRY",
+      "physical_state": "NOT_AS_BUILT / REVIEW_ONLY",
+      "stats": {
+        "vertices": 458,
+        "faces": 876,
+        "extents": [
+          5.2,
+          3.6,
+          2.2
+        ],
+        "bytes": 28378
+      },
+      "review_rules": [
+        "render preserves source mesh geometry and does not add hidden engineering detail",
+        "mesh coordinate scale is not automatically a released physical dimension set",
+        "material, loads, tolerance, process, test and certification remain separate evidence"
+      ]
+    },
+    {
+      "id": "macro:free_flow_capacitors",
+      "label": "Free Flow capacitors",
+      "role": "Electrostatic energy architecture reference",
+      "level": "subsystem",
+      "source": "repo:assets/models/free_flow_capacitors.obj",
+      "render": "/review/renders/free_flow_capacitors_review.svg",
+      "geometry_state": "CORPUS_SOURCE_MESH / REVIEW_GEOMETRY",
+      "physical_state": "NOT_AS_BUILT / REVIEW_ONLY",
+      "stats": {
+        "vertices": 208,
+        "faces": 396,
+        "extents": [
+          5.5,
+          3.2,
+          2.15
+        ],
+        "bytes": 12537
+      },
+      "review_rules": [
+        "render preserves source mesh geometry and does not add hidden engineering detail",
+        "mesh coordinate scale is not automatically a released physical dimension set",
+        "material, loads, tolerance, process, test and certification remain separate evidence"
+      ]
+    },
+    {
+      "id": "macro:free_flow_solenoid_stack",
+      "label": "Free Flow solenoid stack",
+      "role": "Inductive / field-stack architecture reference",
+      "level": "subsystem",
+      "source": "repo:assets/models/free_flow_solenoid_stack.obj",
+      "render": "/review/renders/free_flow_solenoid_stack_review.svg",
+      "geometry_state": "CORPUS_SOURCE_MESH / REVIEW_GEOMETRY",
+      "physical_state": "NOT_AS_BUILT / REVIEW_ONLY",
+      "stats": {
+        "vertices": 2210,
+        "faces": 4416,
+        "extents": [
+          3.96,
+          3.96,
+          4
+        ],
+        "bytes": 149031
+      },
+      "review_rules": [
+        "render preserves source mesh geometry and does not add hidden engineering detail",
+        "mesh coordinate scale is not automatically a released physical dimension set",
+        "material, loads, tolerance, process, test and certification remain separate evidence"
+      ]
+    },
+    {
+      "id": "macro:intersol",
+      "label": "InterSol",
+      "role": "Interplanetary relay / repair architecture reference",
+      "level": "mission_module",
+      "source": "repo:assets/models/intersol.obj",
+      "render": "/review/renders/intersol_review.svg",
+      "geometry_state": "CORPUS_SOURCE_MESH / REVIEW_GEOMETRY",
+      "physical_state": "NOT_AS_BUILT / REVIEW_ONLY",
+      "stats": {
+        "vertices": 384,
+        "faces": 576,
+        "extents": [
+          45.8,
+          28.2,
+          2.6
+        ],
+        "bytes": 21742
+      },
+      "review_rules": [
+        "render preserves source mesh geometry and does not add hidden engineering detail",
+        "mesh coordinate scale is not automatically a released physical dimension set",
+        "material, loads, tolerance, process, test and certification remain separate evidence"
+      ]
+    },
+    {
+      "id": "macro:luke_family",
+      "label": "Luke family",
+      "role": "Capture / braking family reference",
+      "level": "mission_subsystem",
+      "source": "repo:assets/models/luke_family.obj",
+      "render": "/review/renders/luke_family_review.svg",
+      "geometry_state": "CORPUS_SOURCE_MESH / REVIEW_GEOMETRY",
+      "physical_state": "NOT_AS_BUILT / REVIEW_ONLY",
+      "stats": {
+        "vertices": 914,
+        "faces": 1824,
+        "extents": [
+          6.7,
+          6.7,
+          2.2
+        ],
+        "bytes": 58185
+      },
+      "review_rules": [
+        "render preserves source mesh geometry and does not add hidden engineering detail",
+        "mesh coordinate scale is not automatically a released physical dimension set",
+        "material, loads, tolerance, process, test and certification remain separate evidence"
+      ]
+    },
+    {
+      "id": "macro:m1_elevated_bypass",
+      "label": "M1 elevated bypass",
+      "role": "Civil corridor reference geometry",
+      "level": "facility_or_corridor",
+      "source": "repo:assets/models/m1_elevated_bypass.obj",
+      "render": "/review/renders/m1_elevated_bypass_review.svg",
+      "geometry_state": "CORPUS_SOURCE_MESH / REVIEW_GEOMETRY",
+      "physical_state": "NOT_AS_BUILT / REVIEW_ONLY",
+      "stats": {
+        "vertices": 32,
+        "faces": 48,
+        "extents": [
+          1000,
+          57,
+          4.45
+        ],
+        "bytes": 1772
+      },
+      "review_rules": [
+        "render preserves source mesh geometry and does not add hidden engineering detail",
+        "mesh coordinate scale is not automatically a released physical dimension set",
+        "material, loads, tolerance, process, test and certification remain separate evidence"
+      ]
+    },
+    {
+      "id": "macro:maglev_luke_iv",
+      "label": "Luke IV maglev catch",
+      "role": "Terrestrial catch / maglev reference",
+      "level": "mission_subsystem",
+      "source": "repo:assets/models/maglev_luke_iv.obj",
+      "render": "/review/renders/maglev_luke_iv_review.svg",
+      "geometry_state": "CORPUS_SOURCE_MESH / REVIEW_GEOMETRY",
+      "physical_state": "NOT_AS_BUILT / REVIEW_ONLY",
+      "stats": {
+        "vertices": 906,
+        "faces": 1804,
+        "extents": [
+          11,
+          11,
+          3.55
+        ],
+        "bytes": 57248
+      },
+      "review_rules": [
+        "render preserves source mesh geometry and does not add hidden engineering detail",
+        "mesh coordinate scale is not automatically a released physical dimension set",
+        "material, loads, tolerance, process, test and certification remain separate evidence"
+      ]
+    },
+    {
+      "id": "macro:mark_1p",
+      "label": "Mark 1P",
+      "role": "Proof-of-concept Mark reference",
+      "level": "mission_module",
+      "source": "repo:assets/models/mark_1p.obj",
+      "render": "/review/renders/mark_1p_review.svg",
+      "geometry_state": "CORPUS_SOURCE_MESH / REVIEW_GEOMETRY",
+      "physical_state": "NOT_AS_BUILT / REVIEW_ONLY",
+      "stats": {
+        "vertices": 166,
+        "faces": 312,
+        "extents": [
+          5,
+          3,
+          3.2
+        ],
+        "bytes": 9771
+      },
+      "review_rules": [
+        "render preserves source mesh geometry and does not add hidden engineering detail",
+        "mesh coordinate scale is not automatically a released physical dimension set",
+        "material, loads, tolerance, process, test and certification remain separate evidence"
+      ]
+    },
+    {
+      "id": "macro:mark_i",
+      "label": "Mark I",
+      "role": "Mark family reference",
+      "level": "mission_module",
+      "source": "repo:assets/models/mark_i.obj",
+      "render": "/review/renders/mark_i_review.svg",
+      "geometry_state": "CORPUS_SOURCE_MESH / REVIEW_GEOMETRY",
+      "physical_state": "NOT_AS_BUILT / REVIEW_ONLY",
+      "stats": {
+        "vertices": 158,
+        "faces": 300,
+        "extents": [
+          5.5,
+          4,
+          5.6
+        ],
+        "bytes": 9341
+      },
+      "review_rules": [
+        "render preserves source mesh geometry and does not add hidden engineering detail",
+        "mesh coordinate scale is not automatically a released physical dimension set",
+        "material, loads, tolerance, process, test and certification remain separate evidence"
+      ]
+    },
+    {
+      "id": "macro:mark_iii",
+      "label": "Mark III",
+      "role": "Modular mission-unit reference",
+      "level": "mission_module",
+      "source": "repo:assets/models/mark_iii.obj",
+      "render": "/review/renders/mark_iii_review.svg",
+      "geometry_state": "CORPUS_SOURCE_MESH / REVIEW_GEOMETRY",
+      "physical_state": "NOT_AS_BUILT / REVIEW_ONLY",
+      "stats": {
+        "vertices": 74,
+        "faces": 132,
+        "extents": [
+          4.5,
+          4.5,
+          4
+        ],
+        "bytes": 4145
+      },
+      "review_rules": [
+        "render preserves source mesh geometry and does not add hidden engineering detail",
+        "mesh coordinate scale is not automatically a released physical dimension set",
+        "material, loads, tolerance, process, test and certification remain separate evidence"
+      ]
+    },
+    {
+      "id": "macro:rfs_emff",
+      "label": "RFS / EMFF",
+      "role": "Field / propulsion architecture reference",
+      "level": "subsystem",
+      "source": "repo:assets/models/rfs_emff.obj",
+      "render": "/review/renders/rfs_emff_review.svg",
+      "geometry_state": "CORPUS_SOURCE_MESH / REVIEW_GEOMETRY",
+      "physical_state": "NOT_AS_BUILT / REVIEW_ONLY",
+      "stats": {
+        "vertices": 922,
+        "faces": 1836,
+        "extents": [
+          4.5,
+          4.5,
+          5
+        ],
+        "bytes": 58704
+      },
+      "review_rules": [
+        "render preserves source mesh geometry and does not add hidden engineering detail",
+        "mesh coordinate scale is not automatically a released physical dimension set",
+        "material, loads, tolerance, process, test and certification remain separate evidence"
+      ]
+    },
+    {
+      "id": "macro:romer_spaceport",
+      "label": "Römer Spaceport",
+      "role": "Facility / operations envelope reference",
+      "level": "facility_or_corridor",
+      "source": "repo:assets/models/romer_spaceport.obj",
+      "render": "/review/renders/romer_spaceport_review.svg",
+      "geometry_state": "CORPUS_SOURCE_MESH / REVIEW_GEOMETRY",
+      "physical_state": "NOT_AS_BUILT / REVIEW_ONLY",
+      "stats": {
+        "vertices": 32,
+        "faces": 48,
+        "extents": [
+          240,
+          109.5,
+          24
+        ],
+        "bytes": 1740
+      },
+      "review_rules": [
+        "render preserves source mesh geometry and does not add hidden engineering detail",
+        "mesh coordinate scale is not automatically a released physical dimension set",
+        "material, loads, tolerance, process, test and certification remain separate evidence"
+      ]
+    },
+    {
+      "id": "macro:second_cycle",
+      "label": "Second Cycle",
+      "role": "Historical corpus reference mesh",
+      "level": "historical_reference",
+      "source": "repo:assets/models/second_cycle.obj",
+      "render": "/review/renders/second_cycle_review.svg",
+      "geometry_state": "CORPUS_SOURCE_MESH / REVIEW_GEOMETRY",
+      "physical_state": "NOT_AS_BUILT / REVIEW_ONLY",
+      "stats": {
+        "vertices": 304,
+        "faces": 576,
+        "extents": [
+          3,
+          3,
+          5.35
+        ],
+        "bytes": 18453
+      },
+      "review_rules": [
+        "render preserves source mesh geometry and does not add hidden engineering detail",
+        "mesh coordinate scale is not automatically a released physical dimension set",
+        "material, loads, tolerance, process, test and certification remain separate evidence"
+      ]
+    },
+    {
+      "id": "macro:solar_hull",
+      "label": "Solar Hull / Mark V",
+      "role": "Energy-surface / hull reference",
+      "level": "mission_module",
+      "source": "repo:assets/models/solar_hull.obj",
+      "render": "/review/renders/solar_hull_review.svg",
+      "geometry_state": "CORPUS_SOURCE_MESH / REVIEW_GEOMETRY",
+      "physical_state": "NOT_AS_BUILT / REVIEW_ONLY",
+      "stats": {
+        "vertices": 48,
+        "faces": 72,
+        "extents": [
+          5,
+          3,
+          0.7
+        ],
+        "bytes": 2540
+      },
+      "review_rules": [
+        "render preserves source mesh geometry and does not add hidden engineering detail",
+        "mesh coordinate scale is not automatically a released physical dimension set",
+        "material, loads, tolerance, process, test and certification remain separate evidence"
+      ]
+    },
+    {
+      "id": "macro:watchtower",
+      "label": "WatchTower",
+      "role": "Observation / review tower reference",
+      "level": "facility_or_corridor",
+      "source": "repo:assets/models/watchtower.obj",
+      "render": "/review/renders/watchtower_review.svg",
+      "geometry_state": "CORPUS_SOURCE_MESH / REVIEW_GEOMETRY",
+      "physical_state": "NOT_AS_BUILT / REVIEW_ONLY",
+      "stats": {
+        "vertices": 40,
+        "faces": 60,
+        "extents": [
+          51.339187,
+          75.828757,
+          81.52
+        ],
+        "bytes": 2172
+      },
+      "review_rules": [
+        "render preserves source mesh geometry and does not add hidden engineering detail",
+        "mesh coordinate scale is not automatically a released physical dimension set",
+        "material, loads, tolerance, process, test and certification remain separate evidence"
+      ]
+    }
+  ],
+  "atlas_ref": "/data/component_geometry_atlas_public_review.json",
+  "pending_owner_layers": [
+    "UTP-141 / BUILD-074 interface-operator kernel — PR #151 current-main candidate; provider CGX CI PASS, local exact-head pending",
+    "UTP-142 / BUILD-075 witness-evidence kernel — owner digital witness grammar; physical witnesses NOT_RUN",
+    "UTP-143 / BUILD-076 functional voxel + field inference — PR #155 current-head candidate with provider CI PASS",
+    "UTP-144 / UTP-145 are integrated in the current PR #155 branch; exact lots/tool/calibration/as-built witness evidence remains open",
+    "BUILD-073 execution-boundary hardening — PR #153 current-main candidate; provider CGX CI PASS"
+  ],
+  "boundary": "No render is physical proof. Source-mesh plates preserve only the geometry actually present in the OBJ; symbolic plates preserve topology intent only. Engineering release still follows CGXI source/lot/process/tool/calibration/interface/witness/safety gates."
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "CGX-OBJECT-REVIEW-QUEUE/0.1",
+  "state": "ACTIVE_INTERNAL_REVIEW / NONBLOCKING_SIDE_LANE",
+  "authority_boundary": "Review/render work must not preempt exact-binding, witness, safety or owner-release work. It consumes existing geometry and CGX contracts and never creates engineering authority.",
+  "source_git": "4dabcb4647825ab4e7d7cf67e53225a82ee3402c",
+  "render_command": "node scripts/generate_cgx_object_review.mjs",
+  "ui_surface": "LightSpeed GO → Objects → CGX object review catalogue",
+  "rules": [
+    "regenerate a plate when its source mesh hash/revision changes",
+    "do not add hidden geometry or material finishes solely for aesthetics",
+    "promote symbolic component geometry only when exact CGXI geometry/evidence binds",
+    "higher-fidelity/photoreal showcase renders remain downstream of engineering review and publication gate",
+    "open engineering/automation lanes continue independently; this queue is side-lane/local-heavy work"
+  ],
+  "tiers": [
+    "T0 component",
+    "T1 functional stack",
+    "T2 subsystem",
+    "T3 mission module",
+    "T4 facility/corridor"
+  ],
+  "current": {
+    "component_atlas": 411,
+    "cgx_symbolic_vector_plates": 6,
+    "macro_source_mesh_vector_plates": 16,
+    "physical_tests_complete": 0
+  },
+  "next_nonblocking": [
+    "consume UTP-141 interface operators when merged without duplicating stack edges",
+    "consume UTP-142 witness classes as evidence overlays",
+    "consume UTP-143 functional voxels when merged as region overlays",
+    "add cutaway/exploded review plates only where corpus geometry actually defines the hidden regions",
+    "prepare separate PUBLIC_SAFE showcase projection only after owner publication review"
+  ]
+}
