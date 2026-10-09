@@ -3,12 +3,14 @@ import projection from "../public/data/cgx_internal_review_projection.json";
 import { renderCgxReviewProjection } from "./cgxReview";
 
 describe("CGX internal review lens", () => {
-  it("projects the existing BUILD-068 queue without creating parallel state", () => {
-    expect(projection.authority.queue_id).toBe("BUILD-068");
+  it("projects the existing BUILD-069 queue without creating parallel state", () => {
+    expect(projection.authority.queue_id).toBe("BUILD-069");
     expect(projection.instances).toHaveLength(8);
     expect(projection.metrics.archetypes).toBe(411);
     expect(projection.metrics.matrix_fields).toBe(60);
     expect(projection.kernels).toHaveLength(20);
+    expect(projection.volumetric_kernels).toHaveLength(36);
+    expect(projection.metrics.volumetric_kernels).toBe(36);
     expect(projection.metrics.physical_tests_run).toBe(0);
     expect(projection.metrics.requirement_targets_open).toBe(0);
     expect(projection.gate_counts).toEqual({
@@ -34,6 +36,8 @@ describe("CGX internal review lens", () => {
     expect(html).toContain(".cgx interactive review lens");
     expect(html).toContain("CGXI queue");
     expect(html).toContain("Equation kernels");
+    expect(html).toContain("Volumetric kernels");
+    expect(html).toContain("VGK-036");
     expect(html).toContain("Showcase-safe");
     expect(html).toContain("NOT_PUBLISHED");
     expect(html).toContain("read-only projection");
