@@ -1,17 +1,17 @@
 {
-  "schema": "CGX-INTERNAL-REVIEW-PROJECTION/0.1",
-  "generated_from": "Drive-owned Type 1 Romer Cognigrex + Git main 7be550d54beb4a7d5da9fedd759184d58875ef71",
+  "schema": "CGX-INTERNAL-REVIEW-PROJECTION/0.2",
+  "generated_from": "Drive-owned Type 1 Romer Cognigrex + BUILD-069 Git implementation mirror",
   "visibility": "INTERNAL_REVIEW_LOCAL",
   "authority": {
     "engineering_owner": "Type 1 Romer Cognigrex",
     "implementation_mirror": "achillesromer-coder/LightSpeed",
-    "queue_id": "BUILD-068",
+    "queue_id": "BUILD-069",
     "physical_state": "PHYSICAL_NOT_RUN"
   },
   "headline": {
     "title": "CGX Type-I build convergence",
-    "state": "EXACT-BINDING + EQUATION KERNEL RECONCILED",
-    "note": "Review existing CGXI evidence, first-open gates, reusable physical kernels and the component→recipe→build→test path without creating parallel records."
+    "state": "VOLUMETRIC KERNEL + EXACT-BINDING CONVERGENCE",
+    "note": "Review the same CGXI evidence graph through primitive physics, 3D topology/boundary resolution, first-open binding gates and the component→recipe→build→test path without creating parallel records."
   },
   "metrics": {
     "archetypes": 411,
@@ -22,7 +22,8 @@
     "initial_instances": 8,
     "source_candidate_bound": 6,
     "requirement_targets_open": 0,
-    "physical_tests_run": 0
+    "physical_tests_run": 0,
+    "volumetric_kernels": 36
   },
   "gate_counts": {
     "SOURCE_IDENTITY": 1,
@@ -262,6 +263,12 @@
       "state": "ACTIVE"
     },
     {
+      "id": "topology",
+      "label": "Resolve volumetric topology + boundaries",
+      "contract": "UTP-137 / sheet35",
+      "state": "ACTIVE"
+    },
+    {
       "id": "recipe",
       "label": "Reuse canonical parameterised recipe",
       "contract": "UTP-125 / CGX-RECIPE-001",
@@ -276,7 +283,7 @@
     {
       "id": "solve",
       "label": "NUMERIC_IF / SYMBOLIC / HOLD",
-      "contract": "UTP-124 / UTP-136",
+      "contract": "UTP-124 / UTP-136 / UTP-137",
       "state": "ACTIVE"
     },
     {
@@ -307,7 +314,7 @@
   "showcase": {
     "publication_state": "NOT_PUBLISHED",
     "title": "Cognigrex Type-I Manufacturing Lens",
-    "summary": "A single evidence graph maps component archetypes, reusable physical kernels and exact build-state gates into source-aware manufacturing plans without treating simulation, catalogue membership or generated code as physical qualification.",
+    "summary": "A single evidence graph maps component archetypes through reusable constitutive physics and volumetric topology kernels into exact build-state gates and source-aware manufacturing plans, without treating simulation, geometry resolution, catalogue membership or generated code as physical qualification.",
     "metrics": [
       {
         "value": "411",
@@ -322,6 +329,10 @@
         "label": "primitive equation kernels"
       },
       {
+        "value": "36",
+        "label": "volumetric topology kernels"
+      },
+      {
         "value": "8",
         "label": "initial P0–P3 proof instances"
       },
@@ -333,6 +344,7 @@
     "safe_points": [
       "One canonical graph; views are projections, not duplicate catalogues.",
       "Only consequential physics are solved for each component and process.",
+      "Constitutive physics and 3D topology are factored separately, so geometry can change without duplicating component identity or domain equations.",
       "Exact source, lot, process, tool and calibration evidence override generic archetype assumptions.",
       "Simulation refines digital candidates but does not become measurement.",
       "Machine programs are generated only after a frozen BUILD_READY configuration and independent safety gates."
@@ -345,5 +357,259 @@
       "claims of physical qualification where testing remains NOT_RUN"
     ]
   },
-  "boundary": "Internal read-only projection. It does not mutate Drive, execute hardware, create lots/calibration, promote BUILD_READY, publish the corpus or change evidence ceilings."
+  "boundary": "Internal read-only projection. BUILD-069 adds topology/geometry resolution but does not mutate Drive, execute hardware, create lots/calibration, promote BUILD_READY, publish the corpus or change evidence ceilings.",
+  "volumetric_kernels": [
+    {
+      "kernel_id": "VGK-001",
+      "primitive": "CONDUCTOR_INTERCONNECT",
+      "topology": "planar strip / serpentine conductor",
+      "token": "VOL_CONDUCTOR_STRIP",
+      "gate": "NUMERIC_IF cured/source conductivity and actual geometry/contact state are attributable; distributed/RF behavior requires field model"
+    },
+    {
+      "kernel_id": "VGK-002",
+      "primitive": "CONDUCTOR_INTERCONNECT",
+      "topology": "cylindrical via / rod / pin",
+      "token": "VOL_CONDUCTOR_VIA",
+      "gate": "NUMERIC_IF material state and effective cross-section are measured/source-bound"
+    },
+    {
+      "kernel_id": "VGK-003",
+      "primitive": "CAPACITIVE_ELECTROSTATIC",
+      "topology": "parallel-plate capacitor",
+      "token": "VOL_CAP_PARALLEL_PLATE",
+      "gate": "NUMERIC_IF exact dielectric/electrode geometry and material state are bound; breakdown/lifetime separate"
+    },
+    {
+      "kernel_id": "VGK-004",
+      "primitive": "CAPACITIVE_ELECTROSTATIC",
+      "topology": "multilayer stacked capacitor network",
+      "token": "VOL_CAP_MULTILAYER",
+      "gate": "NUMERIC_IF every active layer and connectivity are bound; otherwise symbolic network"
+    },
+    {
+      "kernel_id": "VGK-005",
+      "primitive": "CAPACITIVE_ELECTROSTATIC",
+      "topology": "coaxial / cylindrical capacitor",
+      "token": "VOL_CAP_COAX",
+      "gate": "NUMERIC_IF coaxial assumptions and dimensions/material state are valid; ends require field solve"
+    },
+    {
+      "kernel_id": "VGK-006",
+      "primitive": "CAPACITIVE_ELECTROSTATIC",
+      "topology": "concentric spherical capacitor",
+      "token": "VOL_CAP_SPHERICAL",
+      "gate": "NUMERIC_IF concentric geometry and dielectric state are bound; nearby bodies may require 3D solve"
+    },
+    {
+      "kernel_id": "VGK-007",
+      "primitive": "CAPACITIVE_ELECTROSTATIC",
+      "topology": "general 3D multi-conductor electrostatic cell",
+      "token": "VOL_CAP_MAXWELL_MATRIX",
+      "gate": "NUMERIC_IF geometry/material/boundary model is attributable and converged; otherwise SYMBOLIC/HOLD"
+    },
+    {
+      "kernel_id": "VGK-008",
+      "primitive": "INDUCTIVE_MAGNETIC",
+      "topology": "long solenoid",
+      "token": "VOL_IND_SOLENOID",
+      "gate": "NUMERIC_IF geometry/material/frequency meet approximation; otherwise field solve"
+    },
+    {
+      "kernel_id": "VGK-009",
+      "primitive": "INDUCTIVE_MAGNETIC",
+      "topology": "toroidal magnetic path",
+      "token": "VOL_IND_TOROID",
+      "gate": "NUMERIC_IF core/material/path and operating regime are source-bound"
+    },
+    {
+      "kernel_id": "VGK-010",
+      "primitive": "INDUCTIVE_MAGNETIC",
+      "topology": "general 3D multi-coil magnetic cell",
+      "token": "VOL_IND_MATRIX",
+      "gate": "NUMERIC_IF model/material/boundaries are attributable and solver regime valid"
+    },
+    {
+      "kernel_id": "VGK-011",
+      "primitive": "RF_WAVE",
+      "topology": "distributed quasi-TEM transmission path",
+      "token": "VOL_RF_DISTRIBUTED",
+      "gate": "NUMERIC_IF band,ports,materials and boundaries declared; transitions/discontinuities may require full-wave solve"
+    },
+    {
+      "kernel_id": "VGK-012",
+      "primitive": "RF_WAVE",
+      "topology": "loop / near-field resonator",
+      "token": "VOL_RF_LOOP",
+      "gate": "NUMERIC_IF exact environment and equivalent model are validated; P3 LC uses measured P2 L/C only"
+    },
+    {
+      "kernel_id": "VGK-013",
+      "primitive": "THERMAL_CONTROL",
+      "topology": "planar / slab conduction path",
+      "token": "VOL_THERM_SLAB",
+      "gate": "NUMERIC_IF thermal properties/geometry/boundaries are attributable and Biot/lumped assumptions pass"
+    },
+    {
+      "kernel_id": "VGK-014",
+      "primitive": "THERMAL_CONTROL",
+      "topology": "radial cylindrical conduction",
+      "token": "VOL_THERM_CYL",
+      "gate": "NUMERIC_IF radial symmetry and k/boundaries valid"
+    },
+    {
+      "kernel_id": "VGK-015",
+      "primitive": "THERMAL_CONTROL",
+      "topology": "lumped thermal network / multi-node body",
+      "token": "VOL_THERM_NETWORK",
+      "gate": "NUMERIC_IF node reduction is validated against field solution/measurement"
+    },
+    {
+      "kernel_id": "VGK-016",
+      "primitive": "STRUCTURE_DATUM",
+      "topology": "axial member / strut",
+      "token": "VOL_STRUCT_AXIAL",
+      "gate": "NUMERIC_IF material,geometry,joints/load regime are attributable and linear assumptions valid"
+    },
+    {
+      "kernel_id": "VGK-017",
+      "primitive": "STRUCTURE_DATUM",
+      "topology": "beam / flexure bending",
+      "token": "VOL_STRUCT_BEAM",
+      "gate": "NUMERIC_IF exact boundary/load and beam regime valid; otherwise shell/solid FE"
+    },
+    {
+      "kernel_id": "VGK-018",
+      "primitive": "STRUCTURE_DATUM",
+      "topology": "plate / shell / lattice homogenized cell",
+      "token": "VOL_STRUCT_CONTINUUM",
+      "gate": "NUMERIC_IF effective model is validated for geometry/process; otherwise HOLD/explicit FE"
+    },
+    {
+      "kernel_id": "VGK-019",
+      "primitive": "FLUIDIC_ENVIRONMENT",
+      "topology": "circular laminar channel",
+      "token": "VOL_FLUID_CIRCULAR",
+      "gate": "NUMERIC_IF laminar/Newtonian/incompressible assumptions and geometry valid"
+    },
+    {
+      "kernel_id": "VGK-020",
+      "primitive": "FLUIDIC_ENVIRONMENT",
+      "topology": "porous medium / permeable lattice",
+      "token": "VOL_FLUID_POROUS",
+      "gate": "NUMERIC_IF permeability/regime are measured/validated; not inferred from nominal porosity alone"
+    },
+    {
+      "kernel_id": "VGK-021",
+      "primitive": "FLUIDIC_ENVIRONMENT",
+      "topology": "cavity / plenum / pneumatic compliance",
+      "token": "VOL_FLUID_CAVITY",
+      "gate": "NUMERIC_IF fluid/thermodynamic regime and wall/seal state are bound"
+    },
+    {
+      "kernel_id": "VGK-022",
+      "primitive": "OPTICAL_PHOTONIC",
+      "topology": "waveguide / optical path",
+      "token": "VOL_OPT_WAVEGUIDE",
+      "gate": "NUMERIC_IF n/geometry/λ and mode regime bound; otherwise field solve/HOLD"
+    },
+    {
+      "kernel_id": "VGK-023",
+      "primitive": "OPTICAL_PHOTONIC",
+      "topology": "thin-film multilayer optical stack",
+      "token": "VOL_OPT_MULTILAYER",
+      "gate": "NUMERIC_IF optical constants/layer geometry and regime are source-bound"
+    },
+    {
+      "kernel_id": "VGK-024",
+      "primitive": "CHEMICAL_ELECTROCHEMICAL",
+      "topology": "diffusion / reaction volume",
+      "token": "VOL_CHEM_DIFFUSION",
+      "gate": "NUMERIC_IF chemistry/model parameters and regime are validated; otherwise HOLD"
+    },
+    {
+      "kernel_id": "VGK-025",
+      "primitive": "BARRIER_HERMETIC_COMPLIANCE",
+      "topology": "permeation barrier / seal layer",
+      "token": "VOL_BARRIER_PERMEATION",
+      "gate": "NUMERIC_IF permeability/seal model and environment are source-bound"
+    },
+    {
+      "kernel_id": "VGK-026",
+      "primitive": "SENSOR_METROLOGY",
+      "topology": "variable-gap capacitive sensor",
+      "token": "VOL_SENSOR_CAP",
+      "gate": "NUMERIC_IF geometry/mechanical transfer and dielectric state are bound"
+    },
+    {
+      "kernel_id": "VGK-027",
+      "primitive": "ACTUATOR_MOTION",
+      "topology": "parallel-plate electrostatic actuator",
+      "token": "VOL_ACT_ELECTROSTATIC",
+      "gate": "NUMERIC_IF benign declared regime and coupled stability model valid; high-voltage authority separate"
+    },
+    {
+      "kernel_id": "VGK-028",
+      "primitive": "ACTUATOR_MOTION",
+      "topology": "electromagnetic coil / magnet actuator",
+      "token": "VOL_ACT_MAGNETIC",
+      "gate": "NUMERIC_IF magnetic/material/mechanical model is source-bound and calibrated"
+    },
+    {
+      "kernel_id": "VGK-029",
+      "primitive": "SERVICE_ACCESS",
+      "topology": "service corridor / keepout / replaceable module volume",
+      "token": "VOL_SERVICE_KEEP_OUT",
+      "gate": "NUMERIC_IF actual service geometry/tolerances are bound; otherwise symbolic keepout"
+    },
+    {
+      "kernel_id": "VGK-030",
+      "primitive": "IDENTITY_STATE_DBR",
+      "topology": "embedded identity / readback region",
+      "token": "VOL_IDENTITY_REGION",
+      "gate": "NUMERIC only for readability/coupling metrics when measured; authority remains discrete governance"
+    },
+    {
+      "kernel_id": "VGK-031",
+      "primitive": "SAFE_STATE_PROTECTION",
+      "topology": "fault-containment / isolation cell",
+      "token": "VOL_SAFE_CELL",
+      "gate": "HOLD unless exact applicable safety architecture and source/standard evidence are bound"
+    },
+    {
+      "kernel_id": "VGK-032",
+      "primitive": "ENERGY_STORAGE",
+      "topology": "electrochemical layered cell / storage volume",
+      "token": "VOL_ENERGY_ECHEM",
+      "gate": "HOLD for geometry-only capacity claims; numeric only from exact chemistry/process evidence"
+    },
+    {
+      "kernel_id": "VGK-033",
+      "primitive": "POWER_CONVERSION",
+      "topology": "embedded switched-power cell",
+      "token": "VOL_POWER_CELL",
+      "gate": "NUMERIC_IF exact topology/devices/parasitics/control/boundaries are source-bound"
+    },
+    {
+      "kernel_id": "VGK-034",
+      "primitive": "ACTIVE_LOGIC_SEED",
+      "topology": "embedded IC / compute seed cell",
+      "token": "VOL_ACTIVE_SEED",
+      "gate": "NUMERIC_IF exact device models and package/interconnect geometry bound"
+    },
+    {
+      "kernel_id": "VGK-035",
+      "primitive": "RESISTIVE_HEATER",
+      "topology": "embedded volumetric / serpentine heater",
+      "token": "VOL_HEATER_EMBEDDED",
+      "gate": "NUMERIC_IF measured/source R/TCR and thermal stack bound"
+    },
+    {
+      "kernel_id": "VGK-036",
+      "primitive": "MULTI-PRIMITIVE ASSEMBLY",
+      "topology": "coupled sparse 4D state assembly",
+      "token": "VOL_COUPLED_STATE_ASSEMBLY",
+      "gate": "NUMERIC_IF every participating kernel is individually valid and coupling terms are attributable; otherwise SYMBOLIC/HOLD"
+    }
+  ]
 }
