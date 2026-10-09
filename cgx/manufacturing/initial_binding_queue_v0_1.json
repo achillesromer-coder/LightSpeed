@@ -1,0 +1,105 @@
+{
+  "schema": "CGX-INSTANCE-BINDING-QUEUE-SNAPSHOT/0.1",
+  "date": "2026-10-09",
+  "status": "OWNER-SYNCED-SNAPSHOT / REFRESH-ON-OWNER-CHANGE / PHYSICAL-NOT-RUN",
+  "authority": {
+    "drive_workbook": "Type 1 Romer Cognigrex",
+    "spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "owner_sheet": "31_CGX_Component_Instance_Register_v0_1",
+    "owner_range": "A1:AI9",
+    "queue_id": "BUILD-068",
+    "rule": "This file is a typed queue projection only. Drive instance records remain canonical and any owner change requires regeneration."
+  },
+  "counts": {
+    "total": 8,
+    "SOURCE_IDENTITY": 1,
+    "REQUIREMENT_TARGET": 2,
+    "LOT_PASSPORT": 3,
+    "PROCESS_ROUTE": 1,
+    "UPSTREAM_EVIDENCE": 1
+  },
+  "queue": [
+    {
+      "order": 1,
+      "instance_id": "CGXI-P0-SH01-ID-A",
+      "proof_stage": "P0",
+      "binding_progress": "UNBOUND",
+      "first_open_gate": "SOURCE_IDENTITY",
+      "physical_state": "NOT_RUN",
+      "next": "Bind exact benign substrate/marker source or observed on-hand identity before geometry/process freeze."
+    },
+    {
+      "order": 2,
+      "instance_id": "CGXI-P1-TRACE-001",
+      "proof_stage": "P1",
+      "binding_progress": "SOURCE_CANDIDATE_BOUND",
+      "first_open_gate": "LOT_PASSPORT",
+      "physical_state": "NOT_RUN",
+      "next": "Acquire or positively identify/passport exact ECI 1010 + substrate lots; do not repeat candidate sourcing."
+    },
+    {
+      "order": 3,
+      "instance_id": "CGXI-P1-VIA-001",
+      "proof_stage": "P1",
+      "binding_progress": "SOURCE_CANDIDATE_BOUND",
+      "first_open_gate": "PROCESS_ROUTE",
+      "physical_state": "NOT_RUN",
+      "next": "Bind via-forming/fill route and then exact lots/tool/metrology; source families already exist."
+    },
+    {
+      "order": 4,
+      "instance_id": "CGXI-P2-R-001",
+      "proof_stage": "P2",
+      "binding_progress": "SOURCE_CANDIDATE_BOUND",
+      "first_open_gate": "REQUIREMENT_TARGET",
+      "physical_state": "NOT_RUN",
+      "next": "Select target resistance/use case before exact blend, geometry and witness-coupon process."
+    },
+    {
+      "order": 5,
+      "instance_id": "CGXI-P2-C-001",
+      "proof_stage": "P2",
+      "binding_progress": "SOURCE_CANDIDATE_BOUND",
+      "first_open_gate": "LOT_PASSPORT",
+      "physical_state": "NOT_RUN",
+      "next": "Passport exact conductor/dielectric lots before freezing overlap/guard geometry and test packet."
+    },
+    {
+      "order": 6,
+      "instance_id": "CGXI-P2-L-001",
+      "proof_stage": "P2",
+      "binding_progress": "SOURCE_CANDIDATE_BOUND",
+      "first_open_gate": "LOT_PASSPORT",
+      "physical_state": "NOT_RUN",
+      "next": "Passport exact conductor/substrate lots before selecting planar/solenoid geometry and L/Q/DCR fixture."
+    },
+    {
+      "order": 7,
+      "instance_id": "CGXI-P3-LC-001",
+      "proof_stage": "P3",
+      "binding_progress": "UNBOUND",
+      "first_open_gate": "UPSTREAM_EVIDENCE",
+      "physical_state": "NOT_RUN",
+      "dependencies": [
+        "CGXI-P2-L-001",
+        "CGXI-P2-C-001"
+      ],
+      "next": "Consume measured P2 L/C values first; do not independently resource/optimise the LC resonator yet."
+    },
+    {
+      "order": 8,
+      "instance_id": "CGXI-P3-LOOP-001",
+      "proof_stage": "P3",
+      "binding_progress": "SOURCE_CANDIDATE_BOUND",
+      "first_open_gate": "REQUIREMENT_TARGET",
+      "physical_state": "NOT_RUN",
+      "next": "Declare passive band/function and nearby-body environment before geometry/fixture optimisation."
+    }
+  ],
+  "non_claims": [
+    "No lot has been acquired or observed by this snapshot.",
+    "No manufacturing endpoint has been qualified by this snapshot.",
+    "No coupon has been physically executed.",
+    "No BUILD_READY promotion is implied."
+  ]
+}
