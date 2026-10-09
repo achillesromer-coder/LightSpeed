@@ -1,0 +1,349 @@
+{
+  "schema": "CGX-INTERNAL-REVIEW-PROJECTION/0.1",
+  "generated_from": "Drive-owned Type 1 Romer Cognigrex + Git main 7be550d54beb4a7d5da9fedd759184d58875ef71",
+  "visibility": "INTERNAL_REVIEW_LOCAL",
+  "authority": {
+    "engineering_owner": "Type 1 Romer Cognigrex",
+    "implementation_mirror": "achillesromer-coder/LightSpeed",
+    "queue_id": "BUILD-068",
+    "physical_state": "PHYSICAL_NOT_RUN"
+  },
+  "headline": {
+    "title": "CGX Type-I build convergence",
+    "state": "EXACT-BINDING + EQUATION KERNEL RECONCILED",
+    "note": "Review existing CGXI evidence, first-open gates, reusable physical kernels and the component→recipe→build→test path without creating parallel records."
+  },
+  "metrics": {
+    "archetypes": 411,
+    "matrix_fields": 60,
+    "directional_4d_fields": 16,
+    "compiler_factorization_fields": 8,
+    "equation_kernels": 20,
+    "initial_instances": 8,
+    "source_candidate_bound": 6,
+    "requirement_targets_open": 0,
+    "physical_tests_run": 0
+  },
+  "gate_counts": {
+    "SOURCE_IDENTITY": 1,
+    "LOT_PASSPORT": 5,
+    "PROCESS_ROUTE": 1,
+    "UPSTREAM_EVIDENCE": 1
+  },
+  "instances": [
+    {
+      "instance_id": "CGXI-P0-SH01-ID-A",
+      "proof_stage": "P0",
+      "archetype": "SH01-ID-A / CGX-PHYSOBJ-001",
+      "binding_progress": "UNBOUND",
+      "first_open_gate": "SOURCE_IDENTITY",
+      "physical_state": "NOT_RUN",
+      "binding_uri": "cgx://manufacturing/binding/CGXI-P0-SH01-ID-A",
+      "target": "Passive identity/readback coupon.",
+      "next": "Bind exact benign substrate, passive marker medium/process, reader method and immutable manifest source."
+    },
+    {
+      "instance_id": "CGXI-P1-TRACE-001",
+      "proof_stage": "P1",
+      "archetype": "CGA-I-002",
+      "binding_progress": "SOURCE_CANDIDATE_BOUND",
+      "first_open_gate": "LOT_PASSPORT",
+      "physical_state": "NOT_RUN",
+      "binding_uri": "cgx://manufacturing/binding/CGXI-P1-TRACE-001",
+      "target": "Printed conductor trace coupon; continuity, geometry, four-wire resistance and adhesion.",
+      "next": "Passport exact conductive-ink and substrate lots; then bind process/cure, geometry and metrology."
+    },
+    {
+      "instance_id": "CGXI-P1-VIA-001",
+      "proof_stage": "P1",
+      "archetype": "CGA-I-004",
+      "binding_progress": "SOURCE_CANDIDATE_BOUND",
+      "first_open_gate": "PROCESS_ROUTE",
+      "physical_state": "NOT_RUN",
+      "binding_uri": "cgx://manufacturing/binding/CGXI-P1-VIA-001",
+      "target": "Vertical interconnect coupon using existing conductive/dielectric candidate families.",
+      "next": "Bind the exact via-forming/fill sequence and damage checks before lot/tool/geometry freeze."
+    },
+    {
+      "instance_id": "CGXI-P2-R-001",
+      "proof_stage": "P2",
+      "archetype": "CGA-R-001",
+      "binding_progress": "SOURCE_CANDIDATE_BOUND",
+      "first_open_gate": "LOT_PASSPORT",
+      "physical_state": "NOT_RUN",
+      "binding_uri": "cgx://manufacturing/binding/CGXI-P2-R-001",
+      "target": "1.0 kΩ nominal passive resistor first-proof coupon; ±20% characterization intent after declared cure.",
+      "next": "Passport exact resistive-ink/substrate/terminal lots; then select blend/process and freeze coupon geometry."
+    },
+    {
+      "instance_id": "CGXI-P2-C-001",
+      "proof_stage": "P2",
+      "archetype": "CGA-C-001",
+      "binding_progress": "SOURCE_CANDIDATE_BOUND",
+      "first_open_gate": "LOT_PASSPORT",
+      "physical_state": "NOT_RUN",
+      "binding_uri": "cgx://manufacturing/binding/CGXI-P2-C-001",
+      "target": "Parallel-plate capacitor coupon using the current 25 µm Kapton HN instance candidate.",
+      "next": "Passport exact conductor/dielectric lots; then freeze overlap/guard geometry and benign LCR/leakage test."
+    },
+    {
+      "instance_id": "CGXI-P2-L-001",
+      "proof_stage": "P2",
+      "archetype": "CGA-L-001",
+      "binding_progress": "SOURCE_CANDIDATE_BOUND",
+      "first_open_gate": "LOT_PASSPORT",
+      "physical_state": "NOT_RUN",
+      "binding_uri": "cgx://manufacturing/binding/CGXI-P2-L-001",
+      "target": "Printed/placed air-core inductive coupon with DCR, L and Q/self-resonance characterization.",
+      "next": "Passport exact conductor/substrate lots; then choose geometry and calibrated LCR/VNA fixture."
+    },
+    {
+      "instance_id": "CGXI-P3-LC-001",
+      "proof_stage": "P3",
+      "archetype": "CGA-RF-001",
+      "binding_progress": "UNBOUND",
+      "first_open_gate": "UPSTREAM_EVIDENCE",
+      "physical_state": "NOT_RUN",
+      "binding_uri": "cgx://manufacturing/binding/CGXI-P3-LC-001",
+      "target": "LC resonator assembled only from separately measured P2 L/C instances.",
+      "next": "Consume measured P2-L and P2-C values with uncertainty before topology or Raphael optimization."
+    },
+    {
+      "instance_id": "CGXI-P3-LOOP-001",
+      "proof_stage": "P3",
+      "archetype": "CGA-RF-012",
+      "binding_progress": "SOURCE_CANDIDATE_BOUND",
+      "first_open_gate": "LOT_PASSPORT",
+      "physical_state": "NOT_RUN",
+      "binding_uri": "cgx://manufacturing/binding/CGXI-P3-LOOP-001",
+      "target": "13.56 MHz passive near-field identity/coupling loop; ±5% first-proof resonant/coupling intent.",
+      "next": "Passport exact conductor/substrate lots; then freeze loop/feed geometry and calibrated passive coupling fixture."
+    }
+  ],
+  "kernels": [
+    {
+      "kernel_id": "T1K-001",
+      "primitive": "STRUCTURE_DATUM",
+      "model": "linear elasticity / beam / plate / modal",
+      "gate": "NUMERIC_IF exact geometry, materials, joints and boundaries bind"
+    },
+    {
+      "kernel_id": "T1K-002",
+      "primitive": "CONDUCTOR_INTERCONNECT",
+      "model": "DC conduction / contact / parasitic RLC",
+      "gate": "NUMERIC_IF cured/source electrical properties plus actual geometry/contact state bind"
+    },
+    {
+      "kernel_id": "T1K-003",
+      "primitive": "DIELECTRIC_ISOLATION",
+      "model": "electrostatics / leakage / loss / field stress",
+      "gate": "NUMERIC_IF dielectric/process/environment and geometry bind; voltage authority remains separate"
+    },
+    {
+      "kernel_id": "T1K-004",
+      "primitive": "RESISTIVE_HEATER",
+      "model": "R(T,state) + thermal RC",
+      "gate": "NUMERIC_IF electrical/thermal properties and boundaries bind"
+    },
+    {
+      "kernel_id": "T1K-005",
+      "primitive": "CAPACITIVE_ELECTROSTATIC",
+      "model": "C + ESR/ESL/leakage/loss",
+      "gate": "NUMERIC_IF exact dielectric/electrode geometry and state bind"
+    },
+    {
+      "kernel_id": "T1K-006",
+      "primitive": "INDUCTIVE_MAGNETIC",
+      "model": "magnetostatic/quasi-static + parasitic R/C",
+      "gate": "NUMERIC_IF geometry/material/frequency bind and the approximation is valid"
+    },
+    {
+      "kernel_id": "T1K-007",
+      "primitive": "RF_WAVE",
+      "model": "transmission-line / Maxwell / S-parameters",
+      "gate": "NUMERIC_IF band, ports, materials and boundaries are declared"
+    },
+    {
+      "kernel_id": "T1K-008",
+      "primitive": "ENERGY_STORAGE",
+      "model": "mechanism-specific electrostatic/electrochemical state",
+      "gate": "HOLD unless the actual storage mechanism and its model inputs bind"
+    },
+    {
+      "kernel_id": "T1K-009",
+      "primitive": "OPTICAL_PHOTONIC",
+      "model": "ray / Fresnel-Jones / transfer-matrix / wave optics",
+      "gate": "NUMERIC_IF scale/coherence regime and exact materials/source bind"
+    },
+    {
+      "kernel_id": "T1K-010",
+      "primitive": "SENSOR_METROLOGY",
+      "model": "transfer function + calibration + uncertainty",
+      "gate": "NUMERIC_IF traceable calibration/source characterization binds"
+    },
+    {
+      "kernel_id": "T1K-011",
+      "primitive": "ACTUATOR_MOTION",
+      "model": "rigid-body/state-space + electromechanical drive",
+      "gate": "NUMERIC_IF full axis/load/transmission/thermal envelope binds"
+    },
+    {
+      "kernel_id": "T1K-012",
+      "primitive": "FLUIDIC_ENVIRONMENT",
+      "model": "continuity / pressure-flow / transport",
+      "gate": "NUMERIC_IF geometry, fluid properties and flow regime bind"
+    },
+    {
+      "kernel_id": "T1K-013",
+      "primitive": "THERMAL_CONTROL",
+      "model": "conduction / thermal RC / convection-radiation",
+      "gate": "NUMERIC_IF interfaces and thermal boundaries bind"
+    },
+    {
+      "kernel_id": "T1K-014",
+      "primitive": "ACTIVE_LOGIC_SEED",
+      "model": "vendor device model / timing / power / thermal",
+      "gate": "INSERT-SEED unless semiconductor fabrication is independently qualified"
+    },
+    {
+      "kernel_id": "T1K-015",
+      "primitive": "POWER_CONVERSION",
+      "model": "switched state-space / loss / parasitic / control",
+      "gate": "NUMERIC_IF exact topology, devices and operating point bind"
+    },
+    {
+      "kernel_id": "T1K-016",
+      "primitive": "SAFE_STATE_PROTECTION",
+      "model": "deterministic monitored state machine",
+      "gate": "HOLD for safety claims until system-level risk design and evidence bind"
+    },
+    {
+      "kernel_id": "T1K-017",
+      "primitive": "BARRIER_HERMETIC_COMPLIANCE",
+      "model": "diffusion / permeation / seal mechanics",
+      "gate": "NUMERIC_IF barrier/seal materials, geometry and environment bind"
+    },
+    {
+      "kernel_id": "T1K-018",
+      "primitive": "SERVICE_ACCESS",
+      "model": "tolerance / kinematic access / mate-cycle state",
+      "gate": "NUMERIC_IF service envelope and tolerances bind"
+    },
+    {
+      "kernel_id": "T1K-019",
+      "primitive": "IDENTITY_STATE_DBR",
+      "model": "typed identity/config/provenance transitions",
+      "gate": "Identity resolves lineage only; it never creates physical authority"
+    },
+    {
+      "kernel_id": "T1K-020",
+      "primitive": "CHEMICAL_ELECTROCHEMICAL",
+      "model": "transport / equilibrium / kinetics / charge transfer",
+      "gate": "NUMERIC_IF chemistry-specific model and regime inputs bind"
+    }
+  ],
+  "pipeline": [
+    {
+      "id": "resolve",
+      "label": "Resolve current CGXI",
+      "contract": "UTP-129 / CGX-BIND-RESOLVER-001",
+      "state": "ACTIVE"
+    },
+    {
+      "id": "gate",
+      "label": "First unresolved consequential gate",
+      "contract": "UTP-131",
+      "state": "ACTIVE"
+    },
+    {
+      "id": "kernel",
+      "label": "Map only relevant primitive kernel(s)",
+      "contract": "UTP-136",
+      "state": "ACTIVE"
+    },
+    {
+      "id": "recipe",
+      "label": "Reuse canonical parameterised recipe",
+      "contract": "UTP-125 / CGX-RECIPE-001",
+      "state": "ACTIVE"
+    },
+    {
+      "id": "scope",
+      "label": "Minimal physics/environment scope",
+      "contract": "CGX-ENV-SCOPE-001",
+      "state": "ACTIVE"
+    },
+    {
+      "id": "solve",
+      "label": "NUMERIC_IF / SYMBOLIC / HOLD",
+      "contract": "UTP-124 / UTP-136",
+      "state": "ACTIVE"
+    },
+    {
+      "id": "schedule",
+      "label": "Compose child DAGs without recipe duplication",
+      "contract": "UTP-127 / CGX-STACK-SCHED-001",
+      "state": "ACTIVE"
+    },
+    {
+      "id": "bind",
+      "label": "Bind exact lot / process / tool / calibration",
+      "contract": "UTP-132..135",
+      "state": "OPEN"
+    },
+    {
+      "id": "witness",
+      "label": "Freeze witness packet",
+      "contract": "UTP-134",
+      "state": "OPEN"
+    },
+    {
+      "id": "execute",
+      "label": "Physical execution + raw readback",
+      "contract": "DBR / owner execution gate",
+      "state": "NOT_RUN"
+    }
+  ],
+  "showcase": {
+    "publication_state": "NOT_PUBLISHED",
+    "title": "Cognigrex Type-I Manufacturing Lens",
+    "summary": "A single evidence graph maps component archetypes, reusable physical kernels and exact build-state gates into source-aware manufacturing plans without treating simulation, catalogue membership or generated code as physical qualification.",
+    "metrics": [
+      {
+        "value": "411",
+        "label": "component archetypes"
+      },
+      {
+        "value": "60",
+        "label": "universal matrix fields"
+      },
+      {
+        "value": "20",
+        "label": "primitive equation kernels"
+      },
+      {
+        "value": "8",
+        "label": "initial P0–P3 proof instances"
+      },
+      {
+        "value": "0",
+        "label": "physical tests represented as complete"
+      }
+    ],
+    "safe_points": [
+      "One canonical graph; views are projections, not duplicate catalogues.",
+      "Only consequential physics are solved for each component and process.",
+      "Exact source, lot, process, tool and calibration evidence override generic archetype assumptions.",
+      "Simulation refines digital candidates but does not become measurement.",
+      "Machine programs are generated only after a frozen BUILD_READY configuration and independent safety gates."
+    ],
+    "excludes": [
+      "owner credentials or private local paths",
+      "unreviewed provider/source payloads",
+      "machine-control authority",
+      "private receipts or sensitive project files",
+      "claims of physical qualification where testing remains NOT_RUN"
+    ]
+  },
+  "boundary": "Internal read-only projection. It does not mutate Drive, execute hardware, create lots/calibration, promote BUILD_READY, publish the corpus or change evidence ceilings."
+}
