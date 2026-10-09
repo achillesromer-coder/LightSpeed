@@ -63,6 +63,7 @@ import {
 } from "./resultReceipts";
 import { renderRepresentationGraphs } from "./representationGraphs";
 import { loadType1CatalogueProjection, type Type1CatalogueProjection } from "./utpCatalogue";
+import { bindCgxReviewProjection, loadCgxReviewProjection, type CgxReviewProjection } from "./cgxReview";
 import { sourceLinks } from "./sourceRegistry";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
 
@@ -187,6 +188,9 @@ app.innerHTML = `
         <div><p class="eyebrow">Canonical representation edge</p><h2>Identity, evidence, horizon, review</h2></div>
         <p>Three bounded local candidates prove the complete intake route. Drive becomes canonical only after owner decision, promotion, and exact readback.</p>
       </article>
+      <div id="cgx-review-lens" class="graph-stack">
+        <article class="panel"><p class="muted">Reading the internal .cgx review projection…</p></article>
+      </div>
       <div id="type1-catalogue-projection" class="graph-stack">
         <article class="panel"><p class="muted">Reading the bounded Type-I catalogue projection…</p></article>
       </div>
@@ -885,6 +889,20 @@ byId("refresh-desktop").addEventListener("click", () => void refreshDesktop());
 renderPending();
 void refreshDesktop();
 
+const cgxReviewMount = byId("cgx-review-lens");
+const cgxReviewUrl = new URL("./data/cgx_internal_review_projection.json", document.baseURI).toString();
+void loadCgxReviewProjection(async () => {
+  const response = await fetch(cgxReviewUrl, { cache: "no-store" });
+  if (!response.ok) throw new Error(`CGX review projection returned HTTP ${response.status}`);
+  return (await response.json()) as CgxReviewProjection;
+}).then(({ html }) => {
+  cgxReviewMount.innerHTML = html;
+  bindCgxReviewProjection(cgxReviewMount);
+}).catch((error) => {
+  const message = error instanceof Error ? error.message : "CGX review projection unavailable.";
+  cgxReviewMount.innerHTML = `<article class="panel"><p class="eyebrow">.cgx review lens</p><h2>Projection unavailable</h2><p class="muted">${escapeHtml(message)}</p></article>`;
+});
+
 const type1CatalogueMount = byId("type1-catalogue-projection");
 const type1CatalogueUrl = new URL("./data/type1_catalogue_projection.json", document.baseURI).toString();
 void loadType1CatalogueProjection(async () => {
@@ -904,9 +922,22 @@ void loadNeoExchange(async () => {
   return response.json();
 }).then((exchange) => { exchangeMount.innerHTML = renderExchangePanel(exchange); });
 
-document.querySelectorAll<HTMLButtonElement>(".tab").forEach((button) => button.addEventListener("click", () => {
+const activateView = (view: string): void => {
+  const target = document.querySelector<HTMLButtonElement>(`.tab[data-view="${view}"]`)
+    ? view
+    : "command";
   document.querySelectorAll(".tab").forEach((item) => item.classList.remove("active"));
   document.querySelectorAll(".view").forEach((item) => item.classList.remove("active"));
-  button.classList.add("active");
-  byId(`view-${button.dataset.view}`).classList.add("active");
+  document.querySelector<HTMLButtonElement>(`.tab[data-view="${target}"]`)?.classList.add("active");
+  byId(`view-${target}`).classList.add("active");
+};
+
+document.querySelectorAll<HTMLButtonElement>(".tab").forEach((button) => button.addEventListener("click", () => {
+  const view = button.dataset.view || "command";
+  activateView(view);
+  const nextHash = view === "command" ? "" : `#${view}`;
+  if (window.location.hash !== nextHash) window.history.replaceState(null, "", nextHash || window.location.pathname + window.location.search);
 }));
+
+window.addEventListener("hashchange", () => activateView(window.location.hash.replace(/^#/, "") || "command"));
+activateView(window.location.hash.replace(/^#/, "") || "command");
