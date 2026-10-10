@@ -17,11 +17,26 @@ def load_fixture(path: Path):
 def dependency_children(nodes):
     children = defaultdict(set)
     kinds = {}
+    node_ids = set()
+
     for node in nodes:
         node_id = node["id"]
+        if not isinstance(node_id, str) or not node_id:
+            raise ValueError("Every maturity node requires a non-empty string id")
+        if node_id in node_ids:
+            raise ValueError(f"Duplicate maturity node id: {node_id}")
+        node_ids.add(node_id)
         kinds[node_id] = node["kind"]
+
+    for node in nodes:
+        node_id = node["id"]
         for parent in node.get("depends_on", []):
+            if parent not in node_ids:
+                raise ValueError(
+                    f"Dangling maturity dependency: {node_id} depends on unknown node {parent}"
+                )
             children[parent].add(node_id)
+
     return children, kinds
 
 
@@ -29,9 +44,19 @@ def affected_descendants(nodes, changed_nodes, traversal_exclusions=None):
     children, kinds = dependency_children(nodes)
     exclusions = set(traversal_exclusions or [])
     changed = set(changed_nodes)
+
+    if not changed:
+        raise ValueError("Invalidation event requires at least one changed node")
+
+    unknown_changed = sorted(changed - set(kinds))
+    if unknown_changed:
+        raise ValueError(
+            "Unknown changed maturity node(s): " + ", ".join(unknown_changed)
+        )
+
     stale = set()
-    queue = deque(changed_nodes)
-    seen = set(changed_nodes)
+    queue = deque(sorted(changed))
+    seen = set(changed)
     while queue:
         parent = queue.popleft()
         for child in sorted(children.get(parent, ())):
