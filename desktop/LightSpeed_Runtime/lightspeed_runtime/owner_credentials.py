@@ -19,7 +19,8 @@ PASSWORD_ALGORITHM = "pbkdf2_sha256"
 PASSWORD_ITERATIONS = 600_000
 REMINDER_DAYS = 90
 MANDATORY_DAYS = 365
-MINIMUM_PASSWORD_LENGTH = 12
+MINIMUM_PASSWORD_LENGTH = 4
+RECOMMENDED_PASSWORD_LENGTH = 6
 USERNAME_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$")
 
 
@@ -77,20 +78,6 @@ def validate_new_password(password: str, *, username: str = "") -> None:
         raise CredentialError(
             f"New passwords must contain at least {MINIMUM_PASSWORD_LENGTH} characters"
         )
-    if username and username.casefold() in value.casefold():
-        raise CredentialError("New passwords must not contain the username")
-    classes = sum(
-        (
-            any(character.islower() for character in value),
-            any(character.isupper() for character in value),
-            any(character.isdigit() for character in value),
-            any(not character.isalnum() for character in value),
-        )
-    )
-    if classes < 3:
-        raise CredentialError(
-            "New passwords must use at least three of lowercase, uppercase, digits, and symbols"
-        )
 
 
 def create_password_record(
@@ -103,11 +90,10 @@ def create_password_record(
     now: datetime | None = None,
 ) -> dict[str, Any]:
     bounded_username = validate_username(username)
-    if bootstrap:
-        if not str(password or ""):
-            raise CredentialError("A non-empty bootstrap password is required")
-    else:
-        validate_new_password(password, username=bounded_username)
+    # Bootstrap and first-login rotation share the same PIN/passphrase policy.
+    # A PIN may be numeric-only. Short-PIN exposure requires the bridge's
+    # login-attempt controls and a local/trusted session boundary.
+    validate_new_password(password, username=bounded_username)
 
     changed = _as_utc(now)
     salt = secrets.token_bytes(16)
@@ -198,6 +184,9 @@ def credential_status(
             "reminder_days": REMINDER_DAYS,
             "mandatory_days": MANDATORY_DAYS,
             "minimum_password_length": MINIMUM_PASSWORD_LENGTH,
+            "recommended_password_length": RECOMMENDED_PASSWORD_LENGTH,
+            "numeric_pin_allowed": True,
+            "character_classes_required": False,
         },
     }
 

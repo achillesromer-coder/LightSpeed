@@ -126,13 +126,54 @@ def test_store_preserves_preferences_and_rotates_key(tmp_path):
     assert "Stronger-Rotation-2026!" not in json.dumps(credential_rows)
 
 
-def test_new_password_policy_rejects_short_password(tmp_path):
+def test_pin_policy_four_minimum_six_recommended_without_character_rules(tmp_path):
     database = StubDatabase(tmp_path / "auth.db")
     store = CredentialStore(database)
-    store.bootstrap("NCNB", "temporary-fixture")
 
-    with pytest.raises(CredentialError, match="at least 12"):
-        store.change_password("NCNB", "temporary-fixture", "short")
+    with pytest.raises(CredentialError, match="at least 4"):
+        store.bootstrap("NCNB", "123")
+
+    store.bootstrap("NCNB", "temporary-fixture")
+    with pytest.raises(CredentialError, match="at least 4"):
+        store.change_password("NCNB", "temporary-fixture", "123")
+
+    # A numeric PIN is sufficient; no letter, symbol or character-class rule.
+    result = store.change_password("NCNB", "temporary-fixture", "8642")
+    assert result["must_change"] is False
+    assert result["policy"]["minimum_password_length"] == 4
+    assert result["policy"]["recommended_password_length"] == 6
+    assert result["policy"]["numeric_pin_allowed"] is True
+    assert result["policy"]["character_classes_required"] is False
+    assert store.authenticate("NCNB", "8642")["configured"] is True
+    assert "8642" not in json.dumps(database.execute_query("SELECT * FROM auth_credentials"))
+
+
+def test_owner_login_attempts_limited_then_expire():
+    current = [100.0]
+    gate = ls_go_bridge.OwnerLoginAttemptLimiter(clock=lambda: current[0])
+    for i in range(5):
+        assert gate.retry_after_seconds() == 0
+        gate.note_failure()
+    assert gate.retry_after_seconds() == 900
+    current[0] += 899
+    assert gate.retry_after_seconds() == 1
+    current[0] += 1
+    assert gate.retry_after_seconds() == 0
+    gate.note_failure()
+    gate.note_success()
+    assert gate.retry_after_seconds() == 0
+
+
+def test_bridge_login_blocks_repeated_failures_before_correct_pin(tmp_path, monkeypatch):
+    database = StubDatabase(tmp_path / "auth.db")
+    CredentialStore(database).bootstrap("NCNB", "8642")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (database, object()))
+    client = TestClient(ls_go_bridge.create_app(tmp_path / "App"))
+    for _ in range(5):
+        assert client.post("/api/v1/auth/login", json={"username": "NCNB", "password": "wrong"}).status_code == 401
+    blocked = client.post("/api/v1/auth/login", json={"username": "NCNB", "password": "8642"})
+    assert blocked.status_code == 429
+    assert int(blocked.headers["retry-after"]) > 0
 
 
 def test_sessions_are_memory_only_and_expire():

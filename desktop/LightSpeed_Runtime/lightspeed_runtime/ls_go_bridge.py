@@ -12,7 +12,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 import sys
 import threading
-from typing import Any, Optional
+import time
+from typing import Any, Callable, Optional
 from urllib.parse import urlsplit
 
 from fastapi import FastAPI, Header, HTTPException
@@ -123,6 +124,55 @@ _QUEUE_TAIL_MAX_LINE_BYTES = 256 * 1024
 _LEGACY_COMMAND_LOOKUP_LIMIT = 64
 _COMMAND_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,95}$")
 _ACTION_PAYLOAD_MAX_BYTES = 64 * 1024
+
+
+class OwnerLoginAttemptLimiter:
+    """Bounded in-process login throttle for a single configured owner account.
+
+    This is defence in depth for the locally bound bridge; it is not a substitute
+    for a trusted device, a network perimeter or a remotely enforced second factor.
+    Failure counters are intentionally never exported to account receipts.
+    """
+
+    def __init__(
+        self,
+        *,
+        max_failures: int = 5,
+        cooldown_seconds: int = 15 * 60,
+        clock: Callable[[], float] = time.monotonic,
+    ):
+        self.max_failures = max_failures
+        self.cooldown_seconds = cooldown_seconds
+        self._clock = clock
+        self._lock = threading.Lock()
+        self._failed = 0
+        self._held_until = 0.0
+
+    def retry_after_seconds(self) -> int:
+        with self._lock:
+            # An unlocked counter must retain previous failures across requests.
+            if self._held_until <= 0:
+                return 0
+            remaining = self._held_until - self._clock()
+            if remaining <= 0:
+                self._held_until = 0.0
+                self._failed = 0
+                return 0
+            return max(1, int(remaining + 0.999))
+
+    def note_failure(self) -> None:
+        with self._lock:
+            if self._held_until > self._clock():
+                return
+            self._failed += 1
+            if self._failed >= self.max_failures:
+                self._held_until = self._clock() + self.cooldown_seconds
+
+    def note_success(self) -> None:
+        with self._lock:
+            self._failed = 0
+            self._held_until = 0.0
+
 
 
 def _load_conversion_contracts(shell_root: Path) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
@@ -1392,6 +1442,7 @@ def create_app(root: Path | str) -> FastAPI:
         else None
     )
     owner_sessions = OwnerSessionStore()
+    login_attempts = OwnerLoginAttemptLimiter()
     owner_username = os.environ.get(OWNER_USERNAME_ENV, "NCNB").strip() or "NCNB"
 
     def current_credential_status() -> dict[str, Any]:
@@ -1787,16 +1838,26 @@ def create_app(root: Path | str) -> FastAPI:
     async def owner_login(body: dict[str, Any]):
         if credential_store is None:
             raise HTTPException(status_code=503, detail="Owner credential database is unavailable")
+        retry_after = login_attempts.retry_after_seconds()
+        if retry_after:
+            raise HTTPException(
+                status_code=429,
+                detail="Login temporarily unavailable; retry after the cooldown",
+                headers={"Retry-After": str(retry_after)},
+            )
         username = str(body.get("username") or "").strip()
         password = body.get("password")
         if not isinstance(password, str) or len(password) > 1024:
+            login_attempts.note_failure()
             raise HTTPException(status_code=400, detail="A bounded password is required")
         try:
             status = credential_store.authenticate(username, password)
         except CredentialAuthenticationFailed as exc:
+            login_attempts.note_failure()
             raise HTTPException(status_code=401, detail=str(exc)) from exc
         except (CredentialError, CredentialUnavailable) as exc:
             raise HTTPException(status_code=503, detail=str(exc)) from exc
+        login_attempts.note_success()
         scope = "password_change" if status.get("must_change") else "owner"
         token, expires_utc = owner_sessions.issue(
             username=str(status.get("username") or username),
