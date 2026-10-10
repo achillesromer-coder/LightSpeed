@@ -7,12 +7,16 @@ const manifest: ObjectReviewCatalogue = {
   status: "INTERNAL_REVIEW",
   authority: "Drive owner + Git mirror",
   visual_system: { palette: {}, rule: "Do not invent geometry.", render_plate: "resolution-independent SVG" },
-  coverage: { printable_4d_archetypes: 411, macro_source_meshes: 1, symbolic_core_component_stack_plates: 1, physical_tests_complete: 0 },
+  coverage: { printable_4d_archetypes: 411, macro_source_meshes: 1, symbolic_core_component_stack_plates: 1, symbolic_system_lineage_plates: 1, physical_tests_complete: 0 },
   tiers: [{ id: "T0", label: "component", description: "component review" }],
   micro_review_objects: [{
     id:"cgx:diode",label:"Diode",role:"hybrid seed",level:"component",source:"CGX",
     render:"/review/renders/diode.svg",geometry_state:"SYMBOLIC",physical_state:"NOT_RUN",
     review_rules:["not as-built"],
+  }],
+  bridge_review_objects: [{
+    id:"cgx:pc01",label:"PC01 / PrintCeptor",role:"manufacturing root",level:"manufacturing_system",source:"Drive owner",
+    render:"/review/renders/pc01.svg",geometry_state:"DIGITAL ROOT",physical_state:"NOT_BUILT / REVIEW_ONLY",review_rules:["symbolic only"],
   }],
   macro_review_objects: [{
     id:"macro:luke",label:"Luke",role:"system",level:"system",source:"repo mesh",
@@ -44,6 +48,8 @@ describe("CGX object review catalogue", () => {
     expect(html).toContain("Component → stack → Luke / Mark / InterSol");
     expect(html).toContain("Diode");
     expect(html).toContain("Luke");
+    expect(html).toContain("PC01 / PrintCeptor");
+    expect(html).toContain("System lineage / bridge plates");
     expect(html).toContain("NOT_RUN");
     expect(html).toContain("NOT_AS_BUILT");
     expect(html).toContain("4K hero");
@@ -59,5 +65,13 @@ describe("CGX object review catalogue", () => {
     expect(html).toContain("INSERT-SEED");
     expect(html).toContain("seed package on carrier");
     expect(html).toContain("adjacent CGX lens");
+  });
+});
+
+describe("CGX bridge review semantics", () => {
+  it("keeps lineage-only systems visibly non-physical", () => {
+    const html=renderObjectReview(manifest,atlas);
+    expect(html).toContain("NOT_BUILT / REVIEW_ONLY");
+    expect(html).toContain("DIGITAL ROOT");
   });
 });
