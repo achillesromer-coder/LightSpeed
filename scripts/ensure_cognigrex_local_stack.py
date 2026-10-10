@@ -249,7 +249,7 @@ def process_command_running(fragment: str) -> bool:
 
 def _read_json(path: Path) -> dict[str, Any]:
     try:
-        value = json.loads(path.read_text(encoding="utf-8"))
+        value = json.loads(path.read_text(encoding="utf-8-sig"))
         return value if isinstance(value, dict) else {}
     except (OSError, UnicodeDecodeError, json.JSONDecodeError):
         return {}
