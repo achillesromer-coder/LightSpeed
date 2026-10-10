@@ -12,6 +12,7 @@ if str(ROOT) not in sys.path:
 
 from cgx.manufacturing import (
     compile_component,
+    compile_circular_feed_reference_packet,
     compile_printable_catalogue,
     compile_printable_component,
     compile_printable_stack,
@@ -122,6 +123,10 @@ def main() -> None:
     smart = sub.add_parser("smart-stack-reference")
     smart.add_argument("--output")
 
+    circular = sub.add_parser("circular-feed-reference")
+    circular.add_argument("--spec", required=True, help="UTP-119 recovered/control packet JSON")
+    circular.add_argument("--output")
+
     gc = sub.add_parser("gcode")
     gc.add_argument("--toolpath", required=True)
     gc.add_argument("--machine", required=True)
@@ -222,6 +227,11 @@ def main() -> None:
     elif args.cmd == "smart-stack-reference":
         ref_path = ROOT / "cgx" / "manufacturing" / "dense_smart_stack_reference_v0_1.json"
         write_output(json.loads(ref_path.read_text(encoding="utf-8")), args.output)
+    elif args.cmd == "circular-feed-reference":
+        spec = load_optional(args.spec)
+        if not isinstance(spec, dict):
+            raise SystemExit("circular-feed-reference --spec must contain a JSON object")
+        write_output(compile_circular_feed_reference_packet(spec), args.output)
     elif args.cmd == "binding":
         population = load_optional(args.instance_population) or load_default_instance_population()
         if args.queue:
