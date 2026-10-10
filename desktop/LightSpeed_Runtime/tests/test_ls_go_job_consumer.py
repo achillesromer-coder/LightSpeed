@@ -48,6 +48,49 @@ def test_source_intake_consumer_persists_evidence_once(tmp_path, monkeypatch):
     assert consumer.process_once()["results_written"] == 0
 
 
+def test_write_json_retries_transient_windows_replace_error(tmp_path: Path, monkeypatch):
+    path = tmp_path / "heartbeat.json"
+    original_replace = Path.replace
+    attempts = {"count": 0}
+
+    def flaky_replace(self, target):
+        if Path(target) == path:
+            attempts["count"] += 1
+            if attempts["count"] < 3:
+                raise PermissionError("simulated transient Windows replace contention")
+        return original_replace(self, target)
+
+    monkeypatch.setattr(Path, "replace", flaky_replace)
+    monkeypatch.setattr(ls_go_job_consumer.time, "sleep", lambda _seconds: None)
+
+    ls_go_job_consumer._write_json(path, {"state": "ready"})
+
+    assert json.loads(path.read_text(encoding="utf-8"))["state"] == "ready"
+    assert attempts["count"] == 3
+
+
+def test_run_forever_fails_closed_and_records_heartbeat_error(tmp_path: Path, monkeypatch):
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=object())
+    monkeypatch.setattr(consumer, "process_once", lambda: {"state": "ready"})
+
+    def fail_heartbeat(_state):
+        raise PermissionError("simulated persistent heartbeat write failure")
+
+    monkeypatch.setattr(consumer, "_heartbeat", fail_heartbeat)
+
+    consumer.run_forever(poll_seconds=0.01)
+
+    receipt = json.loads(
+        ls_go_job_consumer.status_receipt_path(shell).read_text(encoding="utf-8")
+    )
+    assert receipt["state"] == "fatal_heartbeat_error:PermissionError"
+    assert "persistent heartbeat write failure" in receipt["error"]
+    assert consumer._stop.is_set()
+    assert not ls_go_job_consumer.heartbeat_path(shell).exists()
+
+
 def test_consumer_does_not_resolve_operator_root(tmp_path: Path, monkeypatch):
     shell = tmp_path / "App"
     shell.mkdir()

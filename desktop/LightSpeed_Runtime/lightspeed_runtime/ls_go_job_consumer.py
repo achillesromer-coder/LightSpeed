@@ -20,6 +20,8 @@ from lightspeed_runtime.source_intake_executor import execute_source_intake
 CONSUMER_SCHEMA = "lightspeed-ls-go-job-consumer-v1"
 RESULT_SCHEMA = "lightspeed-go-local-result-v1"
 POLL_SECONDS = 1.0
+JSON_REPLACE_RETRIES = 4
+JSON_REPLACE_RETRY_SECONDS = 0.05
 SAFE_ACTIONS = {
     "source_preserving_intake",
     "cognigrex_workflow",
@@ -90,7 +92,14 @@ def _write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + f".tmp.{os.getpid()}")
     temporary.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    temporary.replace(path)
+    for attempt in range(JSON_REPLACE_RETRIES):
+        try:
+            temporary.replace(path)
+            return
+        except PermissionError:
+            if attempt + 1 >= JSON_REPLACE_RETRIES:
+                raise
+            time.sleep(JSON_REPLACE_RETRY_SECONDS)
 
 
 def _append_jsonl(path: Path, payload: dict[str, Any]) -> None:
@@ -787,7 +796,26 @@ class LSGoJobConsumer:
                             "public_publish_authorized": False,
                         },
                     )
-                self._heartbeat(state)
+                try:
+                    self._heartbeat(state)
+                except Exception as exc:
+                    failure_state = f"fatal_heartbeat_error:{type(exc).__name__}"
+                    try:
+                        _write_json(
+                            status_receipt_path(self.shell_root),
+                            {
+                                "schema_version": CONSUMER_SCHEMA,
+                                "checked_utc": utc_now_iso(),
+                                "state": failure_state,
+                                "error": str(exc),
+                                "shell_root": str(self.shell_root),
+                                "public_publish_authorized": False,
+                            },
+                        )
+                    except Exception:
+                        pass
+                    self._stop.set()
+                    break
                 self._stop.wait(max(0.25, float(poll_seconds)))
         finally:
             try:
