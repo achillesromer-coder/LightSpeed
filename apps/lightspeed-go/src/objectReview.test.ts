@@ -16,7 +16,10 @@ const manifest: ObjectReviewCatalogue = {
   }],
   macro_review_objects: [{
     id:"macro:luke",label:"Luke",role:"system",level:"system",source:"repo mesh",
-    render:"/review/renders/luke.svg",geometry_state:"CONCEPT_REFERENCE_MESH",physical_state:"NOT_AS_BUILT / REVIEW_ONLY",
+    render:"/review/renders/luke.svg",hero_render:"/review/renders/luke_hero.svg",
+    mesh_data:"/review/mesh/luke.json",source_sha256:"abcdef1234567890abcdef1234567890",
+    render_state:"SOURCE_HASHED / 4K HERO + FOUR-VIEW PLATE + INTERACTIVE ORBIT",
+    geometry_state:"CONCEPT_REFERENCE_MESH",physical_state:"NOT_AS_BUILT / REVIEW_ONLY",
     review_rules:["review only"],stats:{vertices:10,faces:12,extents:[1,2,3],bytes:42},
   }],
   atlas_ref:"/data/component_geometry_atlas_public_review.json",
@@ -43,6 +46,9 @@ describe("CGX object review catalogue", () => {
     expect(html).toContain("Luke");
     expect(html).toContain("NOT_RUN");
     expect(html).toContain("NOT_AS_BUILT");
+    expect(html).toContain("4K hero");
+    expect(html).toContain("Interactive 3D");
+    expect(html).toContain("source SHA-256");
     expect(html).toContain("No render is physical proof");
   });
 

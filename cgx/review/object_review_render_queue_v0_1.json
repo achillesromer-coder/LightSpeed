@@ -1,16 +1,19 @@
 {
-  "schema": "CGX-OBJECT-REVIEW-QUEUE/0.1",
-  "state": "ACTIVE_INTERNAL_REVIEW / NONBLOCKING_SIDE_LANE",
+  "schema": "CGX-OBJECT-REVIEW-QUEUE/0.2",
+  "state": "ACTIVE_INTERNAL_REVIEW / LOCAL_HEAVY / NONBLOCKING_SIDE_LANE",
   "authority_boundary": "Review/render work must not preempt exact-binding, witness, safety or owner-release work. It consumes existing geometry and CGX contracts and never creates engineering authority.",
-  "source_git": "4dabcb4647825ab4e7d7cf67e53225a82ee3402c",
+  "source_git": "0884a000e25a7b002c67d863fa4825a143fb0b3a",
   "render_command": "node scripts/generate_cgx_object_review.mjs",
   "ui_surface": "LightSpeed GO → Objects → CGX object review catalogue",
+  "art_direction_ref": "cgx/review/object_review_art_direction_v0_1.json",
   "rules": [
-    "regenerate a plate when its source mesh hash/revision changes",
+    "regenerate derived plate/hero/mesh payload whenever the source mesh hash/revision changes",
     "do not add hidden geometry or material finishes solely for aesthetics",
+    "hero lighting/shading is display-only and cannot imply actual material finish or performance",
     "promote symbolic component geometry only when exact CGXI geometry/evidence binds",
-    "higher-fidelity/photoreal showcase renders remain downstream of engineering review and publication gate",
-    "open engineering/automation lanes continue independently; this queue is side-lane/local-heavy work"
+    "cutaway/exploded views require corpus-defined internal regions; never invent internals",
+    "public-safe showcase remains downstream of engineering review and explicit publication gate",
+    "open engineering/automation lanes continue independently; this queue is local-heavy and nonblocking"
   ],
   "tiers": [
     "T0 component",
@@ -22,14 +25,31 @@
   "current": {
     "component_atlas": 411,
     "cgx_symbolic_vector_plates": 6,
-    "macro_source_mesh_vector_plates": 16,
+    "macro_source_mesh_engineering_plates": 16,
+    "macro_source_mesh_4k_hero_views": 16,
+    "macro_source_mesh_interactive_views": 16,
+    "source_meshes_hashed": 16,
     "physical_tests_complete": 0
   },
+  "completed_this_pass": [
+    "source-hashed derived mesh payload for every current corpus OBJ",
+    "3840×2160 branded hero SVG for every current corpus OBJ",
+    "refreshed four-view engineering SVGs with source hash traceability",
+    "LS GO card actions for 4K hero / engineering plate / interactive orbit review",
+    "corpus art-direction contract defining brand, camera, composition, evidence overlay and hard vetoes"
+  ],
+  "current_owner_overlays": [
+    "UTP-141 / BUILD-074 interface operators — owner+Git implemented in draft/current engineering lane",
+    "UTP-142 / BUILD-075 witness/evidence kernel — owner digital grammar; physical witnesses NOT_RUN",
+    "UTP-143 / BUILD-076 functional voxel basis — PR #155 draft lane CI pass",
+    "UTP-144 / BUILD-077 seed-field stack matrix — PR #155 draft lane CI pass",
+    "UTP-145 / BUILD-078 P2 SG-0 passive witness packet — exact lot/tool/calibration/as-built evidence open"
+  ],
   "next_nonblocking": [
-    "consume UTP-141 interface operators when merged without duplicating stack edges",
-    "consume UTP-142 witness classes as evidence overlays",
-    "consume UTP-143 functional voxels when merged as region overlays",
-    "add cutaway/exploded review plates only where corpus geometry actually defines the hidden regions",
-    "prepare separate PUBLIC_SAFE showcase projection only after owner publication review"
+    "add functional-voxel/interface/witness overlays after their owning engineering lanes merge or expose stable owner projection payloads",
+    "add corpus-defined cutaway/exploded views only where hidden regions are explicitly defined",
+    "promote symbolic T0/T1 packets to geometry-specific hero views when exact dimensions bind",
+    "prepare separate PUBLIC_SAFE showcase projection only after owner publication review",
+    "keep 4K/interactive rendering refresh automated from source hashes during idle/local-heavy windows"
   ]
 }
