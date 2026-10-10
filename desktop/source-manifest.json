@@ -3586,9 +3586,9 @@
       "sha256": "69df9d049cd5291503dc60db207b598978879d8b6ef835a91efa745ad6a74d19"
     },
     {
-      "bytes": 33606,
+      "bytes": 34775,
       "path": "LightSpeed_Runtime/lightspeed_runtime/ls_go_job_consumer.py",
-      "sha256": "a844e6c56ccc74d14a4ef065c1ecccfe46bbddf1c998e9894ddd388c8a805ebb"
+      "sha256": "9c2db85edff5dfc7e25a4462b26c235bc478306e4f6e56c6b05b68cb562be5a3"
     },
     {
       "bytes": 19385,
@@ -3656,8 +3656,8 @@
       "sha256": "6d6c8e4bfafabb802da9a99738ae292879d6440dbedeb8c042e40f4c5125fcb5"
     },
     {
-      "path": "LightSpeed_Runtime/requirements-desktop.txt",
       "bytes": 167,
+      "path": "LightSpeed_Runtime/requirements-desktop.txt",
       "sha256": "932db67bc9bdc44f407fac5796491808f60b059cc5ed16ff26021b987cd3d6f9"
     },
     {
