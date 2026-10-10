@@ -1,0 +1,179 @@
+{
+  "schema_version": "0.1.0",
+  "handoff_id": "ACR3-EMC2-DECENTRALISED-20260914",
+  "prepared_date": "2026-09-14",
+  "state": "PREPUBLISH_DESIGN",
+  "economic_activation": false,
+  "authority": {
+    "drive_is_canonical": true,
+    "acr3_id": "1AgAhLPNtrO91C_-ea7EdOkOsyXrCCYvFVvmDSGq8uls",
+    "type1_romer_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "owner_decision": "OD-032",
+    "drive_handoff_doc_id": "1bAc2Ezj4DGlBJA8NPW2-gARpFOKHIHSQsFuVFpCT-cI",
+    "git_role": "bounded_implementation_review_mirror"
+  },
+  "emc2": {
+    "name": "Light Speed / EMC²",
+    "supply_candidate": 100000000,
+    "supply_policy": "fixed_supply_candidate",
+    "allocation_candidate": [
+      {
+        "bucket": "equity_backed_reserve",
+        "amount": 50000000,
+        "percent": 50,
+        "state": "DESIGN_CANDIDATE"
+      },
+      {
+        "bucket": "public_institutional",
+        "amount": 20000000,
+        "percent": 20,
+        "state": "DESIGN_CANDIDATE"
+      },
+      {
+        "bucket": "ecosystem_reserve",
+        "amount": 20000000,
+        "percent": 20,
+        "state": "DESIGN_CANDIDATE"
+      },
+      {
+        "bucket": "founders_advisors_rd",
+        "amount": 5000000,
+        "percent": 5,
+        "state": "DESIGN_CANDIDATE"
+      },
+      {
+        "bucket": "dao_treasury",
+        "amount": 5000000,
+        "percent": 5,
+        "state": "DESIGN_CANDIDATE"
+      }
+    ],
+    "historical_allocation_conflict": {
+      "present": true,
+      "alternate_percentages": {
+        "reserve": 50,
+        "public": 20,
+        "ecosystem": 20,
+        "founders_rd": 10
+      },
+      "required_resolution": "owner_and_legal_ratification_before_contract_encoding"
+    },
+    "equity_linkage": {
+      "source_proposal_percent_romer_equity": 10,
+      "state": "PROPOSAL_NOT_EXECUTED_RIGHT",
+      "required_resolution": [
+        "executed_legal_instrument",
+        "valuation_method",
+        "beneficial_rights",
+        "transfer_restrictions",
+        "insolvency_treatment",
+        "disclosure_and_enforceability"
+      ]
+    }
+  },
+  "layers": [
+    {
+      "layer": 1,
+      "name": "EMC2_CORE",
+      "state": "DESIGN_CANDIDATE"
+    },
+    {
+      "layer": 2,
+      "name": "ASSET_TWIN_NFTS",
+      "classes": [
+        "asteroid_prospect",
+        "extracted_resource_batch",
+        "deployed_hardware",
+        "eco_x_project"
+      ],
+      "state": "NON_FINANCIAL_PROVENANCE_FIRST"
+    },
+    {
+      "layer": 3,
+      "name": "SMART_LICENSING_RIGHTS",
+      "state": "SANDBOX_ONLY_UNTIL_GATED"
+    },
+    {
+      "layer": 4,
+      "name": "MSD_ORACLE_PROVENANCE",
+      "state": "EVIDENCE_TRANSPORT_NOT_EVIDENCE_CREATION"
+    }
+  ],
+  "iat": {
+    "name": "Intermediary Asset Token",
+    "state": "DISABLED_DESIGN_CANDIDATE",
+    "required_before_activation": [
+      "underlying_asset_rights",
+      "financial_product_classification",
+      "custody",
+      "valuation",
+      "disclosure",
+      "transfer_rules",
+      "tax_treatment"
+    ]
+  },
+  "governance": {
+    "model": "staged_dual_governance",
+    "stages": [
+      "controlled_bootstrap",
+      "bounded_participatory_governance",
+      "progressive_decentralisation"
+    ],
+    "quadratic_or_capped_voting": "candidate_only",
+    "guardian_multisig": "candidate_only",
+    "live_dao": false
+  },
+  "evidence_pipeline": [
+    "SOURCE",
+    "CONFIGURATION",
+    "RUN_OR_EVENT",
+    "RAW_OR_PRIMARY_EVIDENCE",
+    "DERIVED_RESULT",
+    "REVIEW_OR_APPROVAL",
+    "REGISTRY_STATE",
+    "OPTIONAL_ECONOMIC_ACTION"
+  ],
+  "required_gates": [
+    "owner_allocation_decision",
+    "rights_matrix",
+    "financial_product_and_licensing_classification",
+    "aml_ctf_kyc_sanctions",
+    "tax_analysis",
+    "corporate_equity_linkage_analysis",
+    "ip_and_asset_rights_enforceability",
+    "space_resource_mission_rights_analysis",
+    "privacy_cybersecurity_custody_key_management",
+    "smart_contract_threat_model",
+    "independent_smart_contract_audit",
+    "oracle_integrity",
+    "consumer_investor_disclosure_and_dispute_process",
+    "accounting_audit_reserve_controls",
+    "explicit_owner_launch_approval"
+  ],
+  "no_go_without_separate_authorisation": [
+    "live_mint",
+    "value_wallet_or_custody_setup",
+    "token_sale",
+    "price_or_guaranteed_valuation",
+    "staking_yield",
+    "liquidity_pool",
+    "transferability_activation",
+    "equity_or_security_claim",
+    "asteroid_or_resource_title_grant",
+    "revenue_share_entitlement",
+    "carbon_credit_entitlement",
+    "tax_instrument",
+    "financial_settlement",
+    "public_launch",
+    "main_merge_or_deployment"
+  ],
+  "next_actions": [
+    "resolve_allocation_conflict",
+    "resolve_equity_linkage_legal_status",
+    "build_rights_and_negative_rights_matrix",
+    "refresh_legal_aml_ctf_tax_analysis",
+    "specify_sandbox_contract_and_oracle_schemas",
+    "run_independent_security_and_governance_review",
+    "prepare_mint_ready_dossier_only_after_gates"
+  ]
+}
