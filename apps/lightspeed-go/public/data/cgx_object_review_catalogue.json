@@ -1,7 +1,7 @@
 {
-  "schema": "CGX-OBJECT-REVIEW-CATALOGUE/0.1",
-  "generated_from_git": "4dabcb4647825ab4e7d7cf67e53225a82ee3402c",
-  "status": "INTERNAL_REVIEW / VECTOR_RENDER_BASIS / PHYSICAL_NOT_RUN",
+  "schema": "CGX-OBJECT-REVIEW-CATALOGUE/0.2",
+  "generated_from_git": "0884a000e25a7b002c67d863fa4825a143fb0b3a",
+  "status": "INTERNAL_REVIEW / 4K_VECTOR_HERO + ENGINEERING_PLATE + INTERACTIVE_SOURCE_MESH / PHYSICAL_NOT_RUN",
   "authority": "Drive remains engineering/evidence authority; Git/LS GO is an internal review projection. Renders never uplift evidence.",
   "visual_system": {
     "palette": {
@@ -17,13 +17,20 @@
       "red": "#e27e7e"
     },
     "rule": "Use corpus geometry and CGX state. Improve legibility, hierarchy and branding without inventing hidden geometry, material finish, performance, certification or as-built accuracy.",
-    "render_plate": "resolution-independent SVG engineering plate suitable for 4K/8K review"
+    "render_plate": "resolution-independent SVG engineering plate suitable for 4K/8K review",
+    "brand_lockup": "RÖMER / COGNIGREX text lockup only; no invented emblem",
+    "hero_render": "3840×2160 resolution-independent SVG derived from source mesh with display-only three-point technical lighting",
+    "interactive_mesh": "source-hashed derived geometry payload for local orbit review; no geometry edits",
+    "material_policy": "display shading only; never infer actual finish/material from visual treatment",
+    "composition": "single hero focal object, 6–8% safety margin, dark technical field, restrained teal/gold/green accents by tier"
   },
   "coverage": {
     "printable_4d_archetypes": 411,
     "macro_source_meshes": 16,
     "symbolic_core_component_stack_plates": 6,
-    "physical_tests_complete": 0
+    "physical_tests_complete": 0,
+    "source_mesh_interactive_views": 16,
+    "source_mesh_4k_hero_views": 16
   },
   "tiers": [
     {
@@ -168,7 +175,11 @@
         "render preserves source mesh geometry and does not add hidden engineering detail",
         "mesh coordinate scale is not automatically a released physical dimension set",
         "material, loads, tolerance, process, test and certification remain separate evidence"
-      ]
+      ],
+      "hero_render": "/review/renders/embedded_bio_blocks_hero.svg",
+      "mesh_data": "/review/mesh/embedded_bio_blocks.json",
+      "source_sha256": "52ded48cca93f1cde1fd71c799ef7ea26591f6a577703df8e69efc7e40e9389d",
+      "render_state": "SOURCE_HASHED / 4K HERO + FOUR-VIEW PLATE + INTERACTIVE ORBIT"
     },
     {
       "id": "macro:free_flow_batteries",
@@ -193,7 +204,11 @@
         "render preserves source mesh geometry and does not add hidden engineering detail",
         "mesh coordinate scale is not automatically a released physical dimension set",
         "material, loads, tolerance, process, test and certification remain separate evidence"
-      ]
+      ],
+      "hero_render": "/review/renders/free_flow_batteries_hero.svg",
+      "mesh_data": "/review/mesh/free_flow_batteries.json",
+      "source_sha256": "42542651d030f8fedf347444b5513365eb29f2ac1dabe4b83501681ab92e0055",
+      "render_state": "SOURCE_HASHED / 4K HERO + FOUR-VIEW PLATE + INTERACTIVE ORBIT"
     },
     {
       "id": "macro:free_flow_capacitors",
@@ -218,7 +233,11 @@
         "render preserves source mesh geometry and does not add hidden engineering detail",
         "mesh coordinate scale is not automatically a released physical dimension set",
         "material, loads, tolerance, process, test and certification remain separate evidence"
-      ]
+      ],
+      "hero_render": "/review/renders/free_flow_capacitors_hero.svg",
+      "mesh_data": "/review/mesh/free_flow_capacitors.json",
+      "source_sha256": "169386443e9944d6ba764a940e33dc048c932c09c827f9a3231af3236e861c99",
+      "render_state": "SOURCE_HASHED / 4K HERO + FOUR-VIEW PLATE + INTERACTIVE ORBIT"
     },
     {
       "id": "macro:free_flow_solenoid_stack",
@@ -243,7 +262,11 @@
         "render preserves source mesh geometry and does not add hidden engineering detail",
         "mesh coordinate scale is not automatically a released physical dimension set",
         "material, loads, tolerance, process, test and certification remain separate evidence"
-      ]
+      ],
+      "hero_render": "/review/renders/free_flow_solenoid_stack_hero.svg",
+      "mesh_data": "/review/mesh/free_flow_solenoid_stack.json",
+      "source_sha256": "be82322fe84fb75fe050d7edcdea887a5708b5e957ab7790b5a445cbc3454982",
+      "render_state": "SOURCE_HASHED / 4K HERO + FOUR-VIEW PLATE + INTERACTIVE ORBIT"
     },
     {
       "id": "macro:intersol",
@@ -268,7 +291,11 @@
         "render preserves source mesh geometry and does not add hidden engineering detail",
         "mesh coordinate scale is not automatically a released physical dimension set",
         "material, loads, tolerance, process, test and certification remain separate evidence"
-      ]
+      ],
+      "hero_render": "/review/renders/intersol_hero.svg",
+      "mesh_data": "/review/mesh/intersol.json",
+      "source_sha256": "a2f3f7f0d5707206be4cfc1ad87f8914279a7c326fdf520a8e74e7fda47130c4",
+      "render_state": "SOURCE_HASHED / 4K HERO + FOUR-VIEW PLATE + INTERACTIVE ORBIT"
     },
     {
       "id": "macro:luke_family",
@@ -293,7 +320,11 @@
         "render preserves source mesh geometry and does not add hidden engineering detail",
         "mesh coordinate scale is not automatically a released physical dimension set",
         "material, loads, tolerance, process, test and certification remain separate evidence"
-      ]
+      ],
+      "hero_render": "/review/renders/luke_family_hero.svg",
+      "mesh_data": "/review/mesh/luke_family.json",
+      "source_sha256": "f7668c80dfc37568f3d622cd5dfea1387e25cc36df425773b9054734f53f5faa",
+      "render_state": "SOURCE_HASHED / 4K HERO + FOUR-VIEW PLATE + INTERACTIVE ORBIT"
     },
     {
       "id": "macro:m1_elevated_bypass",
@@ -318,7 +349,11 @@
         "render preserves source mesh geometry and does not add hidden engineering detail",
         "mesh coordinate scale is not automatically a released physical dimension set",
         "material, loads, tolerance, process, test and certification remain separate evidence"
-      ]
+      ],
+      "hero_render": "/review/renders/m1_elevated_bypass_hero.svg",
+      "mesh_data": "/review/mesh/m1_elevated_bypass.json",
+      "source_sha256": "f53534e89f197efa0e79df80fe8dd3472b24ca2b682ffcc9e3417153aa10d19c",
+      "render_state": "SOURCE_HASHED / 4K HERO + FOUR-VIEW PLATE + INTERACTIVE ORBIT"
     },
     {
       "id": "macro:maglev_luke_iv",
@@ -343,7 +378,11 @@
         "render preserves source mesh geometry and does not add hidden engineering detail",
         "mesh coordinate scale is not automatically a released physical dimension set",
         "material, loads, tolerance, process, test and certification remain separate evidence"
-      ]
+      ],
+      "hero_render": "/review/renders/maglev_luke_iv_hero.svg",
+      "mesh_data": "/review/mesh/maglev_luke_iv.json",
+      "source_sha256": "e1262a100563553fae6b8eae9652a2f251b0f5a0fa67ef3c4bc7d1968bef7daf",
+      "render_state": "SOURCE_HASHED / 4K HERO + FOUR-VIEW PLATE + INTERACTIVE ORBIT"
     },
     {
       "id": "macro:mark_1p",
@@ -368,7 +407,11 @@
         "render preserves source mesh geometry and does not add hidden engineering detail",
         "mesh coordinate scale is not automatically a released physical dimension set",
         "material, loads, tolerance, process, test and certification remain separate evidence"
-      ]
+      ],
+      "hero_render": "/review/renders/mark_1p_hero.svg",
+      "mesh_data": "/review/mesh/mark_1p.json",
+      "source_sha256": "71223ddf1438205bac677d34d18196c97b02f42b4b50ebaf3add8601c9b1445e",
+      "render_state": "SOURCE_HASHED / 4K HERO + FOUR-VIEW PLATE + INTERACTIVE ORBIT"
     },
     {
       "id": "macro:mark_i",
@@ -393,7 +436,11 @@
         "render preserves source mesh geometry and does not add hidden engineering detail",
         "mesh coordinate scale is not automatically a released physical dimension set",
         "material, loads, tolerance, process, test and certification remain separate evidence"
-      ]
+      ],
+      "hero_render": "/review/renders/mark_i_hero.svg",
+      "mesh_data": "/review/mesh/mark_i.json",
+      "source_sha256": "06798255333872cfbf09bcb623e0153f4fe0eb5f133a2a5c5cc43cb86ce74bb9",
+      "render_state": "SOURCE_HASHED / 4K HERO + FOUR-VIEW PLATE + INTERACTIVE ORBIT"
     },
     {
       "id": "macro:mark_iii",
@@ -418,7 +465,11 @@
         "render preserves source mesh geometry and does not add hidden engineering detail",
         "mesh coordinate scale is not automatically a released physical dimension set",
         "material, loads, tolerance, process, test and certification remain separate evidence"
-      ]
+      ],
+      "hero_render": "/review/renders/mark_iii_hero.svg",
+      "mesh_data": "/review/mesh/mark_iii.json",
+      "source_sha256": "43655a61ce070f0872b2822a69bf3cf4475648c1d680159a2cf012995ff1826e",
+      "render_state": "SOURCE_HASHED / 4K HERO + FOUR-VIEW PLATE + INTERACTIVE ORBIT"
     },
     {
       "id": "macro:rfs_emff",
@@ -443,7 +494,11 @@
         "render preserves source mesh geometry and does not add hidden engineering detail",
         "mesh coordinate scale is not automatically a released physical dimension set",
         "material, loads, tolerance, process, test and certification remain separate evidence"
-      ]
+      ],
+      "hero_render": "/review/renders/rfs_emff_hero.svg",
+      "mesh_data": "/review/mesh/rfs_emff.json",
+      "source_sha256": "8d97815088182a3ad496ffffaf43ff29bdc459795a3fe79fa7b485c9fef99a45",
+      "render_state": "SOURCE_HASHED / 4K HERO + FOUR-VIEW PLATE + INTERACTIVE ORBIT"
     },
     {
       "id": "macro:romer_spaceport",
@@ -468,7 +523,11 @@
         "render preserves source mesh geometry and does not add hidden engineering detail",
         "mesh coordinate scale is not automatically a released physical dimension set",
         "material, loads, tolerance, process, test and certification remain separate evidence"
-      ]
+      ],
+      "hero_render": "/review/renders/romer_spaceport_hero.svg",
+      "mesh_data": "/review/mesh/romer_spaceport.json",
+      "source_sha256": "a9f7dd4cbc2077e4ac4fbe18a58003b44589f2964e8e4242c4e157e76b284fd4",
+      "render_state": "SOURCE_HASHED / 4K HERO + FOUR-VIEW PLATE + INTERACTIVE ORBIT"
     },
     {
       "id": "macro:second_cycle",
@@ -493,7 +552,11 @@
         "render preserves source mesh geometry and does not add hidden engineering detail",
         "mesh coordinate scale is not automatically a released physical dimension set",
         "material, loads, tolerance, process, test and certification remain separate evidence"
-      ]
+      ],
+      "hero_render": "/review/renders/second_cycle_hero.svg",
+      "mesh_data": "/review/mesh/second_cycle.json",
+      "source_sha256": "3c09c2bbf10c138ac5cd1c201ea2df4b93e046f0af3e904f706fb6569e46ad6f",
+      "render_state": "SOURCE_HASHED / 4K HERO + FOUR-VIEW PLATE + INTERACTIVE ORBIT"
     },
     {
       "id": "macro:solar_hull",
@@ -518,7 +581,11 @@
         "render preserves source mesh geometry and does not add hidden engineering detail",
         "mesh coordinate scale is not automatically a released physical dimension set",
         "material, loads, tolerance, process, test and certification remain separate evidence"
-      ]
+      ],
+      "hero_render": "/review/renders/solar_hull_hero.svg",
+      "mesh_data": "/review/mesh/solar_hull.json",
+      "source_sha256": "7a79547a8c2b6210b49ba9bb79b46a716e6a4f1b5efcdfe618a27807e003fe1e",
+      "render_state": "SOURCE_HASHED / 4K HERO + FOUR-VIEW PLATE + INTERACTIVE ORBIT"
     },
     {
       "id": "macro:watchtower",
@@ -543,16 +610,20 @@
         "render preserves source mesh geometry and does not add hidden engineering detail",
         "mesh coordinate scale is not automatically a released physical dimension set",
         "material, loads, tolerance, process, test and certification remain separate evidence"
-      ]
+      ],
+      "hero_render": "/review/renders/watchtower_hero.svg",
+      "mesh_data": "/review/mesh/watchtower.json",
+      "source_sha256": "8053c0310de21986d0e93cfb591da57abd871f424e50d22b5dd8956028583614",
+      "render_state": "SOURCE_HASHED / 4K HERO + FOUR-VIEW PLATE + INTERACTIVE ORBIT"
     }
   ],
   "atlas_ref": "/data/component_geometry_atlas_public_review.json",
   "pending_owner_layers": [
-    "UTP-141 / BUILD-074 interface-operator kernel — PR #151 current-main candidate; provider CGX CI PASS, local exact-head pending",
-    "UTP-142 / BUILD-075 witness-evidence kernel — owner digital witness grammar; physical witnesses NOT_RUN",
-    "UTP-143 / BUILD-076 functional voxel + field inference — PR #155 current-head candidate with provider CI PASS",
-    "UTP-144 / UTP-145 are integrated in the current PR #155 branch; exact lots/tool/calibration/as-built witness evidence remains open",
-    "BUILD-073 execution-boundary hardening — PR #153 current-main candidate; provider CGX CI PASS"
+    "UTP-141 / BUILD-074 — 16 interface operators; provider CI pass, draft engineering lane remains independent",
+    "UTP-142 / BUILD-075 — witness/evidence kernel owner contract; physical witnesses NOT_RUN",
+    "UTP-143 / BUILD-076 — 17 functional voxel regions; PR #155 draft lane CI pass",
+    "UTP-144 / BUILD-077 — SG-0/1/N seed-field stack matrix; PR #155 draft lane CI pass",
+    "UTP-145 / BUILD-078 — first P2 R/C/L witness packet; pre-run gates G0/G1/G2 remain evidence-bound"
   ],
   "boundary": "No render is physical proof. Source-mesh plates preserve only the geometry actually present in the OBJ; symbolic plates preserve topology intent only. Engineering release still follows CGXI source/lot/process/tool/calibration/interface/witness/safety gates."
 }
