@@ -56,7 +56,7 @@
     "max_concurrent_ollama_jobs": 1,
     "max_floor_boot_parallelism": 2,
     "merovingian_interval_seconds": 120,
-    "watchdog_interval_minutes": 10
+    "watchdog_interval_minutes": 5
   },
   "storage_topology": {
     "ollama_model_root": "D:\\LightSpeed\\Models",
@@ -84,5 +84,21 @@
       "Teams",
       "vendor_updaters"
     ]
+  },
+  "local_automation_assurance": {
+    "schema": "CGX-LOCAL-AUTOMATION-ASSURANCE/0.1",
+    "health_cadence_minutes": 5,
+    "source_check": "local HEAD/origin-main/worktree only; no automatic network fetch",
+    "consumer_heartbeat_required_for_pass": true,
+    "installed_source_mismatch": "HOLD upgrade/install; bounded recovery may reuse existing installed stack",
+    "founder_register": "read-only; no auto-approval",
+    "root_and_carriers": "read-only; no automatic promotion",
+    "automatic_source_sync": false,
+    "automatic_install_or_upgrade": false,
+    "automatic_public_export": false,
+    "automatic_physical_actuation": false,
+    "automatic_credential_export": false,
+    "no_new_scheduler": true,
+    "resource_policy": "one Ollama job; one background queue worker; one heavy floor"
   }
 }
