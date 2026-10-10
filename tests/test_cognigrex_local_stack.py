@@ -342,6 +342,7 @@ def test_watchdog_observes_healthy_stack_without_repair(
             "merovingian_heartbeat": True,
             "go_interface": True,
             "desktop": True,
+            "assurance": {"consumer": {"heartbeat_fresh": True}},
         },
     )
 
@@ -394,8 +395,8 @@ def test_watchdog_repairs_missing_go_surface_without_stack_restart(
 ) -> None:
     observations = iter(
         [
-            {"bridge": True, "bridge_tcp": True, "merovingian_heartbeat": True, "go_interface": False, "desktop": True},
-            {"bridge": True, "bridge_tcp": True, "merovingian_heartbeat": True, "go_interface": True, "desktop": True},
+            {"bridge": True, "bridge_tcp": True, "merovingian_heartbeat": True, "go_interface": False, "desktop": True, "assurance": {"consumer": {"heartbeat_fresh": True}}},
+            {"bridge": True, "bridge_tcp": True, "merovingian_heartbeat": True, "go_interface": True, "desktop": True, "assurance": {"consumer": {"heartbeat_fresh": True}}},
         ]
     )
     monkeypatch.setattr(watchdog_module, "observe", lambda *_args, **_kwargs: next(observations))
