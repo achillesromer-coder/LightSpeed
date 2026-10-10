@@ -85,6 +85,31 @@ const bridgeMetadata = {
       "Seed ratings do not transfer to printed surroundings; cavities and voids may shape fields but are not energy sources.",
     ],
   },
+  utp_150_ingest_maturation: {
+    id: "cgx:utp_150_ingest_maturation",
+    label: "UTP-150 — ingest → maturity orchestration",
+    role: "Attributable source mutation, bounded dependency invalidation, contradiction retention and next-witness routing",
+    level: "evidence_orchestration_contract",
+    tier: "T1",
+    source: "Type1:UTP-150 / BUILD-083 / ART-080 / LightSpeed PR #167",
+    geometry_state: "SYMBOLIC INGEST / DEPENDENCY / MATURITY GRAPH",
+    physical_state: "DIGITAL ONLY / PHYSICAL_NOT_RUN",
+    status: "OWNER-BOUND / FAIL-CLOSED / PROVIDER-GREEN DIGITAL CONTRACT",
+    nodes: [
+      ["INGEST", "bytes / observation / hash / owner"],
+      ["RESOLVE", "object revision + evidence + authority"],
+      ["INVALIDATE", "dependent derived state only"],
+      ["RECOMPILE", "UTP-149 + UTP-147 + scoped tests"],
+      ["MATURE", "10-axis delta + contradiction state"],
+      ["WITNESS", "next proof / HOLD + DBR readback"],
+    ],
+    edges: [[0,1],[1,2],[2,3],[3,4],[4,5]],
+    callouts: [
+      "Evidence is appended with source identity and revision; contradictory branches are retained rather than silently overwritten.",
+      "Numeric inference requires attributable inputs and a valid model regime; otherwise the state remains SYMBOLIC or HOLD.",
+      "Digital ingest, CI, simulation and rendering cannot advance physical evidence beyond BUILD_READY/M6 or create execution authority.",
+    ],
+  },
   mark_ii_staged: {
     id: "cgx:mark_ii_staged",
     label: "Mark II — staged / excluded",
@@ -432,6 +457,24 @@ if(fs.existsSync(cataloguePath)){
     composition:"single hero focal object, 6–8% safety margin, dark technical field, restrained teal/gold/green accents by tier",
   };
   catalogue.coverage={...catalogue.coverage,source_mesh_interactive_views:stats.records.length,source_mesh_4k_hero_views:stats.records.length,symbolic_system_lineage_plates:Object.keys(bridgeMetadata).length};
+  const maturityContractPath=path.join(repo,"cgx","component_atlas","type1_ingest_maturation_contract_v0_1.json");
+  const maturityFixturePath=path.join(repo,"cgx","component_atlas","type1_maturity_invalidation_fixture_v0_1.json");
+  if(fs.existsSync(maturityContractPath)){
+    const maturity=JSON.parse(fs.readFileSync(maturityContractPath,"utf8"));
+    const fixture=fs.existsSync(maturityFixturePath)?JSON.parse(fs.readFileSync(maturityFixturePath,"utf8")):null;
+    catalogue.maturity_projection={
+      artifact_id:maturity.artifact_id,
+      status:maturity.status,
+      physical_state:"DIGITAL ONLY / PHYSICAL_NOT_RUN",
+      maturity_axes:maturity.maturity_delta_record?.required_axes||[],
+      contradiction_states:maturity.contradiction_policy?.states||[],
+      invalidation_triggers:maturity.invalidation_triggers||[],
+      numeric_routes:maturity.numeric_inference_policy?.state_routes||[],
+      next_witness_ladder:maturity.next_witness_policy?.default_physical_ladder||[],
+      proof_fixture_count:fixture?.events?.length??maturity.initial_proof_fixtures?.length??0,
+      authority_boundary:(maturity.hard_boundaries||[]).join(" · "),
+    };
+  }
   catalogue.bridge_review_objects=Object.entries(bridgeMetadata).map(([stem,item])=>({
     id:item.id,label:item.label,role:item.role,level:item.level,source:item.source,
     render:"/review/renders/"+stem+"_review.svg",
@@ -462,7 +505,8 @@ if(fs.existsSync(cataloguePath)){
     "UTP-146 / BUILD-079 — radiative/transport/interlayer coupling owner; unresolved mutuals remain OPEN/HOLD",
     "UTP-147 / BUILD-080 — universal stack normal form; build-ready digital never equals physical-ready",
     "UTP-148 / BUILD-081 — fail-closed evidence maturity/invalidation graph; physical evidence ceiling unchanged",
-    "UTP-149 / BUILD-082 — 2D→3D→4D composition matrix; 20 primitives + CAP-1..7; physical NOT_RUN"
+    "UTP-149 / BUILD-082 — 2D→3D→4D composition matrix; 20 primitives + CAP-1..7; physical NOT_RUN",
+    "UTP-150 / BUILD-083 / ART-080 — ingest-to-maturity orchestration; append/invalidate/recompile/next-witness contract; physical NOT_RUN"
   ];
   fs.writeFileSync(cataloguePath,JSON.stringify(catalogue,null,2)+"\n");
 }
