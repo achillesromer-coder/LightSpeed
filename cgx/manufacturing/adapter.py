@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from typing import Any
 
 
@@ -9,9 +10,28 @@ class AdapterError(ValueError):
 
 def _f(value: Any) -> float:
     try:
-        return float(value)
-    except (TypeError, ValueError) as exc:
+        number = float(value)
+    except (TypeError, ValueError, OverflowError) as exc:
         raise AdapterError(f"invalid-number:{value}") from exc
+    if not math.isfinite(number):
+        raise AdapterError(f"nonfinite-number:{value}")
+    return number
+
+
+def _range_bounds(value: Any, label: str) -> tuple[float, float]:
+    if not isinstance(value, (list, tuple)) or len(value) != 2:
+        raise AdapterError(f"invalid-range:{label}")
+    lo, hi = _f(value[0]), _f(value[1])
+    if lo > hi:
+        raise AdapterError(f"invalid-range:{label}:{lo}>{hi}")
+    return lo, hi
+
+
+def _nonnegative_int(value: Any, label: str) -> int:
+    number = _f(value)
+    if number < 0 or not number.is_integer():
+        raise AdapterError(f"invalid-integer:{label}:{number}")
+    return int(number)
 
 
 def _check_xyz(params: dict[str, Any], workspace: dict[str, list[float]]) -> None:
@@ -19,8 +39,8 @@ def _check_xyz(params: dict[str, Any], workspace: dict[str, list[float]]) -> Non
         if axis not in params:
             continue
         value = _f(params[axis])
-        lo, hi = workspace[axis]
-        if not (float(lo) <= value <= float(hi)):
+        lo, hi = _range_bounds(workspace[axis], f"workspace-{axis}")
+        if not (lo <= value <= hi):
             raise AdapterError(f"workspace-exceeded:{axis}:{value}")
 
 
@@ -64,7 +84,7 @@ def emit_reference_gcode(toolpath_packet: dict[str, Any], machine_manifest: dict
         p = op.get("params", {})
         _check_xyz(p, workspace)
         if opcode == "TOOL_SELECT":
-            lines.append(f"T{int(p['tool'])}")
+            lines.append(f"T{_nonnegative_int(p['tool'], 'tool')}")
         elif opcode == "MOVE":
             feed = _f(p.get("feed_mm_min", max_feed))
             if feed <= 0 or feed > max_feed:
@@ -79,20 +99,18 @@ def emit_reference_gcode(toolpath_packet: dict[str, Any], machine_manifest: dict
             e = _f(p["e"])
             lines.append(f"G1 {axes} E{e:.5f} F{feed:.3f}".strip())
         elif opcode == "DWELL":
-            ms = int(p["milliseconds"])
-            if ms < 0:
-                raise AdapterError("negative-dwell")
+            ms = _nonnegative_int(p["milliseconds"], "dwell-milliseconds")
             lines.append(f"G4 P{ms}")
         elif opcode == "SET_TOOL_TEMP":
             temp = _f(p["celsius"])
-            lo, hi = machine_manifest.get("tool_temperature_c", [0, 0])
-            if not (float(lo) <= temp <= float(hi)):
+            lo, hi = _range_bounds(machine_manifest.get("tool_temperature_c"), "tool-temperature")
+            if not (lo <= temp <= hi):
                 raise AdapterError(f"temperature-out-of-range:{temp}")
             lines.append(f"M104 S{temp:.2f}")
         elif opcode == "WAIT_TOOL_TEMP":
             temp = _f(p["celsius"])
-            lo, hi = machine_manifest.get("tool_temperature_c", [0, 0])
-            if not (float(lo) <= temp <= float(hi)):
+            lo, hi = _range_bounds(machine_manifest.get("tool_temperature_c"), "tool-temperature")
+            if not (lo <= temp <= hi):
                 raise AdapterError(f"temperature-out-of-range:{temp}")
             lines.append(f"M109 S{temp:.2f}")
         else:
