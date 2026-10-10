@@ -1,0 +1,246 @@
+{
+  "schema": "CGX-OBJECT-MESH-STATS/0.2",
+  "generated_by": "scripts/generate_cgx_object_review.mjs",
+  "records": [
+    {
+      "id": "embedded_bio_blocks",
+      "source": "assets/models/embedded_bio_blocks.obj",
+      "source_sha256": "52ded48cca93f1cde1fd71c799ef7ea26591f6a577703df8e69efc7e40e9389d",
+      "render": "apps/lightspeed-go/public/review/renders/embedded_bio_blocks_review.svg",
+      "hero_render": "apps/lightspeed-go/public/review/renders/embedded_bio_blocks_hero.svg",
+      "mesh_data": "apps/lightspeed-go/public/review/mesh/embedded_bio_blocks.json",
+      "vertices": 48,
+      "faces": 72,
+      "extents": [
+        4.2,
+        3.6,
+        0.8
+      ]
+    },
+    {
+      "id": "free_flow_batteries",
+      "source": "assets/models/free_flow_batteries.obj",
+      "source_sha256": "42542651d030f8fedf347444b5513365eb29f2ac1dabe4b83501681ab92e0055",
+      "render": "apps/lightspeed-go/public/review/renders/free_flow_batteries_review.svg",
+      "hero_render": "apps/lightspeed-go/public/review/renders/free_flow_batteries_hero.svg",
+      "mesh_data": "apps/lightspeed-go/public/review/mesh/free_flow_batteries.json",
+      "vertices": 458,
+      "faces": 876,
+      "extents": [
+        5.2,
+        3.6,
+        2.2
+      ]
+    },
+    {
+      "id": "free_flow_capacitors",
+      "source": "assets/models/free_flow_capacitors.obj",
+      "source_sha256": "169386443e9944d6ba764a940e33dc048c932c09c827f9a3231af3236e861c99",
+      "render": "apps/lightspeed-go/public/review/renders/free_flow_capacitors_review.svg",
+      "hero_render": "apps/lightspeed-go/public/review/renders/free_flow_capacitors_hero.svg",
+      "mesh_data": "apps/lightspeed-go/public/review/mesh/free_flow_capacitors.json",
+      "vertices": 208,
+      "faces": 396,
+      "extents": [
+        5.5,
+        3.2,
+        2.15
+      ]
+    },
+    {
+      "id": "free_flow_solenoid_stack",
+      "source": "assets/models/free_flow_solenoid_stack.obj",
+      "source_sha256": "be82322fe84fb75fe050d7edcdea887a5708b5e957ab7790b5a445cbc3454982",
+      "render": "apps/lightspeed-go/public/review/renders/free_flow_solenoid_stack_review.svg",
+      "hero_render": "apps/lightspeed-go/public/review/renders/free_flow_solenoid_stack_hero.svg",
+      "mesh_data": "apps/lightspeed-go/public/review/mesh/free_flow_solenoid_stack.json",
+      "vertices": 2210,
+      "faces": 4416,
+      "extents": [
+        3.96,
+        3.96,
+        4
+      ]
+    },
+    {
+      "id": "intersol",
+      "source": "assets/models/intersol.obj",
+      "source_sha256": "a2f3f7f0d5707206be4cfc1ad87f8914279a7c326fdf520a8e74e7fda47130c4",
+      "render": "apps/lightspeed-go/public/review/renders/intersol_review.svg",
+      "hero_render": "apps/lightspeed-go/public/review/renders/intersol_hero.svg",
+      "mesh_data": "apps/lightspeed-go/public/review/mesh/intersol.json",
+      "vertices": 384,
+      "faces": 576,
+      "extents": [
+        45.8,
+        28.2,
+        2.6
+      ]
+    },
+    {
+      "id": "luke_family",
+      "source": "assets/models/luke_family.obj",
+      "source_sha256": "f7668c80dfc37568f3d622cd5dfea1387e25cc36df425773b9054734f53f5faa",
+      "render": "apps/lightspeed-go/public/review/renders/luke_family_review.svg",
+      "hero_render": "apps/lightspeed-go/public/review/renders/luke_family_hero.svg",
+      "mesh_data": "apps/lightspeed-go/public/review/mesh/luke_family.json",
+      "vertices": 914,
+      "faces": 1824,
+      "extents": [
+        6.7,
+        6.7,
+        2.2
+      ]
+    },
+    {
+      "id": "m1_elevated_bypass",
+      "source": "assets/models/m1_elevated_bypass.obj",
+      "source_sha256": "f53534e89f197efa0e79df80fe8dd3472b24ca2b682ffcc9e3417153aa10d19c",
+      "render": "apps/lightspeed-go/public/review/renders/m1_elevated_bypass_review.svg",
+      "hero_render": "apps/lightspeed-go/public/review/renders/m1_elevated_bypass_hero.svg",
+      "mesh_data": "apps/lightspeed-go/public/review/mesh/m1_elevated_bypass.json",
+      "vertices": 32,
+      "faces": 48,
+      "extents": [
+        1000,
+        57,
+        4.45
+      ]
+    },
+    {
+      "id": "maglev_luke_iv",
+      "source": "assets/models/maglev_luke_iv.obj",
+      "source_sha256": "e1262a100563553fae6b8eae9652a2f251b0f5a0fa67ef3c4bc7d1968bef7daf",
+      "render": "apps/lightspeed-go/public/review/renders/maglev_luke_iv_review.svg",
+      "hero_render": "apps/lightspeed-go/public/review/renders/maglev_luke_iv_hero.svg",
+      "mesh_data": "apps/lightspeed-go/public/review/mesh/maglev_luke_iv.json",
+      "vertices": 906,
+      "faces": 1804,
+      "extents": [
+        11,
+        11,
+        3.55
+      ]
+    },
+    {
+      "id": "mark_1p",
+      "source": "assets/models/mark_1p.obj",
+      "source_sha256": "71223ddf1438205bac677d34d18196c97b02f42b4b50ebaf3add8601c9b1445e",
+      "render": "apps/lightspeed-go/public/review/renders/mark_1p_review.svg",
+      "hero_render": "apps/lightspeed-go/public/review/renders/mark_1p_hero.svg",
+      "mesh_data": "apps/lightspeed-go/public/review/mesh/mark_1p.json",
+      "vertices": 166,
+      "faces": 312,
+      "extents": [
+        5,
+        3,
+        3.2
+      ]
+    },
+    {
+      "id": "mark_i",
+      "source": "assets/models/mark_i.obj",
+      "source_sha256": "06798255333872cfbf09bcb623e0153f4fe0eb5f133a2a5c5cc43cb86ce74bb9",
+      "render": "apps/lightspeed-go/public/review/renders/mark_i_review.svg",
+      "hero_render": "apps/lightspeed-go/public/review/renders/mark_i_hero.svg",
+      "mesh_data": "apps/lightspeed-go/public/review/mesh/mark_i.json",
+      "vertices": 158,
+      "faces": 300,
+      "extents": [
+        5.5,
+        4,
+        5.6
+      ]
+    },
+    {
+      "id": "mark_iii",
+      "source": "assets/models/mark_iii.obj",
+      "source_sha256": "43655a61ce070f0872b2822a69bf3cf4475648c1d680159a2cf012995ff1826e",
+      "render": "apps/lightspeed-go/public/review/renders/mark_iii_review.svg",
+      "hero_render": "apps/lightspeed-go/public/review/renders/mark_iii_hero.svg",
+      "mesh_data": "apps/lightspeed-go/public/review/mesh/mark_iii.json",
+      "vertices": 74,
+      "faces": 132,
+      "extents": [
+        4.5,
+        4.5,
+        4
+      ]
+    },
+    {
+      "id": "rfs_emff",
+      "source": "assets/models/rfs_emff.obj",
+      "source_sha256": "8d97815088182a3ad496ffffaf43ff29bdc459795a3fe79fa7b485c9fef99a45",
+      "render": "apps/lightspeed-go/public/review/renders/rfs_emff_review.svg",
+      "hero_render": "apps/lightspeed-go/public/review/renders/rfs_emff_hero.svg",
+      "mesh_data": "apps/lightspeed-go/public/review/mesh/rfs_emff.json",
+      "vertices": 922,
+      "faces": 1836,
+      "extents": [
+        4.5,
+        4.5,
+        5
+      ]
+    },
+    {
+      "id": "romer_spaceport",
+      "source": "assets/models/romer_spaceport.obj",
+      "source_sha256": "a9f7dd4cbc2077e4ac4fbe18a58003b44589f2964e8e4242c4e157e76b284fd4",
+      "render": "apps/lightspeed-go/public/review/renders/romer_spaceport_review.svg",
+      "hero_render": "apps/lightspeed-go/public/review/renders/romer_spaceport_hero.svg",
+      "mesh_data": "apps/lightspeed-go/public/review/mesh/romer_spaceport.json",
+      "vertices": 32,
+      "faces": 48,
+      "extents": [
+        240,
+        109.5,
+        24
+      ]
+    },
+    {
+      "id": "second_cycle",
+      "source": "assets/models/second_cycle.obj",
+      "source_sha256": "3c09c2bbf10c138ac5cd1c201ea2df4b93e046f0af3e904f706fb6569e46ad6f",
+      "render": "apps/lightspeed-go/public/review/renders/second_cycle_review.svg",
+      "hero_render": "apps/lightspeed-go/public/review/renders/second_cycle_hero.svg",
+      "mesh_data": "apps/lightspeed-go/public/review/mesh/second_cycle.json",
+      "vertices": 304,
+      "faces": 576,
+      "extents": [
+        3,
+        3,
+        5.35
+      ]
+    },
+    {
+      "id": "solar_hull",
+      "source": "assets/models/solar_hull.obj",
+      "source_sha256": "7a79547a8c2b6210b49ba9bb79b46a716e6a4f1b5efcdfe618a27807e003fe1e",
+      "render": "apps/lightspeed-go/public/review/renders/solar_hull_review.svg",
+      "hero_render": "apps/lightspeed-go/public/review/renders/solar_hull_hero.svg",
+      "mesh_data": "apps/lightspeed-go/public/review/mesh/solar_hull.json",
+      "vertices": 48,
+      "faces": 72,
+      "extents": [
+        5,
+        3,
+        0.7
+      ]
+    },
+    {
+      "id": "watchtower",
+      "source": "assets/models/watchtower.obj",
+      "source_sha256": "8053c0310de21986d0e93cfb591da57abd871f424e50d22b5dd8956028583614",
+      "render": "apps/lightspeed-go/public/review/renders/watchtower_review.svg",
+      "hero_render": "apps/lightspeed-go/public/review/renders/watchtower_hero.svg",
+      "mesh_data": "apps/lightspeed-go/public/review/mesh/watchtower.json",
+      "vertices": 40,
+      "faces": 60,
+      "extents": [
+        51.339186999999995,
+        75.828757,
+        81.52000000000001
+      ]
+    }
+  ]
+}
