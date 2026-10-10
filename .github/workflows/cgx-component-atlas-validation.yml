@@ -23,6 +23,7 @@ on:
       - "scripts/project_type1_4d_composition.py"
       - "scripts/compile_cgx_manufacturing.py"
       - "docs/engineering/CGX_COMPONENT_GEOMETRY_ATLAS_2026-10-08.md"
+      - "docs/engineering/CGX_TYPE1_4D_COMPOSITION_MATRIX_2026-10-11.md"
       - "docs/engineering/PC01_PRINTCEPTOR_OPERATIONAL_CONVERGENCE_2026-10-09.md"
       - ".github/workflows/cgx-component-atlas-validation.yml"
   push:
@@ -46,6 +47,7 @@ on:
       - "scripts/project_type1_4d_composition.py"
       - "scripts/compile_cgx_manufacturing.py"
       - "docs/engineering/CGX_COMPONENT_GEOMETRY_ATLAS_2026-10-08.md"
+      - "docs/engineering/CGX_TYPE1_4D_COMPOSITION_MATRIX_2026-10-11.md"
       - "docs/engineering/PC01_PRINTCEPTOR_OPERATIONAL_CONVERGENCE_2026-10-09.md"
       - ".github/workflows/cgx-component-atlas-validation.yml"
 
