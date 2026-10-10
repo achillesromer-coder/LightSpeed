@@ -1,4 +1,5 @@
-import { bindMeshViewerTriggers, meshViewerButtonMarkup } from "./meshViewer";\nimport { bindComponentPlateTriggers, componentPlateButtonMarkup } from "./componentVisualizer";
+import { bindMeshViewerTriggers, meshViewerButtonMarkup } from "./meshViewer";
+import { bindComponentPlateTriggers, componentPlateButtonMarkup } from "./componentVisualizer";
 
 export type ReviewObject = {
   id: string;
