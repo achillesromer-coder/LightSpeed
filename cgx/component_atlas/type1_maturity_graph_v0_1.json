@@ -1,6 +1,6 @@
 {
   "schema": "CGX-TYPE1-MATURITY-GRAPH/0.1",
-  "artifact_id": "UTP-146",
+  "artifact_id": "UTP-148",
   "title": "Type-I CGX Evidence Maturity and Invalidation Graph",
   "date": "2026-10-10",
   "status": "DIGITAL_CONTRACT / SOURCE_MAIN_E75884A / PHYSICAL_NOT_RUN",
