@@ -421,7 +421,7 @@ fs.writeFileSync(statsPath,JSON.stringify(stats,null,2)+"\n");
 if(fs.existsSync(cataloguePath)){
   const catalogue=JSON.parse(fs.readFileSync(cataloguePath,"utf8"));
   catalogue.schema="CGX-OBJECT-REVIEW-CATALOGUE/0.2";
-  catalogue.generated_from_git=process.env.CGX_SOURCE_HEAD || process.env.GITHUB_SHA || catalogue.generated_from_git;
+  catalogue.generated_from_git=process.env.CGX_SOURCE_HEAD || catalogue.generated_from_git;
   catalogue.status="INTERNAL_REVIEW / 4K_VECTOR_HERO + ENGINEERING_PLATE + INTERACTIVE_SOURCE_MESH / PHYSICAL_NOT_RUN";
   catalogue.visual_system={
     ...catalogue.visual_system,
