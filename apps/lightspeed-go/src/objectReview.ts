@@ -71,11 +71,13 @@ export type ObjectReviewCatalogue = {
     symbolic_core_component_stack_plates: number;
     source_mesh_interactive_views?: number;
     source_mesh_4k_hero_views?: number;
+    symbolic_system_lineage_plates?: number;
     physical_tests_complete: number;
   };
   tiers: Array<{ id: string; label: string; description: string }>;
   micro_review_objects: ReviewObject[];
   macro_review_objects: ReviewObject[];
+  bridge_review_objects?: ReviewObject[];
   atlas_ref: string;
   pending_owner_layers: string[];
   boundary: string;
@@ -161,6 +163,7 @@ export const renderObjectReview = (manifest: ObjectReviewCatalogue, atlas: Compo
       ${metric(manifest.coverage.symbolic_core_component_stack_plates, "CGX symbolic plates")}
       ${metric(manifest.coverage.source_mesh_4k_hero_views ?? manifest.coverage.macro_source_meshes, "4K source-mesh heroes")}
       ${metric(manifest.coverage.source_mesh_interactive_views ?? manifest.coverage.macro_source_meshes, "interactive source meshes")}
+      ${metric(manifest.coverage.symbolic_system_lineage_plates ?? 0, "system lineage plates")}
       ${metric(manifest.coverage.physical_tests_complete, "physical tests complete")}
     </div>
     <div class="flow">${manifest.tiers.map((t) => `<span title="${esc(t.description)}">${esc(t.id)} · ${esc(t.label)}</span>`).join("<i>→</i>")}</div>
@@ -176,6 +179,8 @@ export const renderObjectReview = (manifest: ObjectReviewCatalogue, atlas: Compo
       <div class="object-review-search"><input id="object-review-filter" type="search" placeholder="Filter review plates…" /></div>
       <h3>CGX-derived component / stack plates</h3>
       <div class="object-review-grid">${manifest.micro_review_objects.map(card).join("")}</div>
+      <h3>System lineage / bridge plates</h3>
+      <div class="object-review-grid">${(manifest.bridge_review_objects || []).map(card).join("")}</div>
       <h3>Corpus source meshes</h3>
       <div class="object-review-grid">${manifest.macro_review_objects.map(card).join("")}</div>
     </section>
