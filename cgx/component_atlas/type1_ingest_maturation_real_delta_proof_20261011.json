@@ -1,0 +1,71 @@
+{
+  "schema": "CGX-TYPE1-INGEST-MATURATION-REAL-DELTA-PROOF/0.1",
+  "artifact_id": "UTP-150-PROOF-001",
+  "event_id": "TYPE1-ATLAS-407-TO-411-20261011",
+  "status": "PASS / REAL_SOURCE_DELTA_REPLAYED_DIGITALLY / PHYSICAL_UNCHANGED",
+  "owner_contract": "UTP-150",
+  "ingest_class": "SOURCE_DOCUMENT_OR_DATASHEET",
+  "evidence_class": "SOURCE_FACT",
+  "trigger": "source_revision_or_hash_changed",
+  "source_owner": "Type 1 Romer Cognigrex / component geometry atlas owner lane",
+  "source_before": {
+    "git_commit": "03ee347aa9d3236b2660b5e4f91e99f6f8788be5",
+    "git_blob_sha": "ec0177ef3d0389507f5012c8703adab60a19e537",
+    "record_count": 407,
+    "status": "CURRENT-TECH-BASELINE / GAP-CLOSURE-0.3"
+  },
+  "source_after": {
+    "git_commit": "99716d6b6c687aca2a6a9a85cea239cc7b8fb95f",
+    "git_blob_sha": "049b58731afb7633e16e0a36fafa011c77fedd36",
+    "record_count": 411,
+    "status": "CURRENT-TECH-BASELINE / GAP-CLOSURE-0.4"
+  },
+  "dependency_closure": {
+    "historical_preserved": [
+      "raw 407-record source revision retained by Git lineage",
+      "prior source status GAP-CLOSURE-0.3 retained as historical comparator"
+    ],
+    "superseded_derived_state": [
+      "component atlas record_count=407",
+      "current-tech baseline status GAP-CLOSURE-0.3"
+    ],
+    "recompiled_current_state": [
+      {
+        "artifact": "apps/lightspeed-go/public/data/cgx_object_review_catalogue.json",
+        "git_blob_sha": "8855fcdbcc0f449b2daf816d8bfd8948d3cbbe07",
+        "result": "coverage.printable_4d_archetypes=411; UTP-150 maturity projection present"
+      },
+      {
+        "artifact": "apps/lightspeed-go/public/data/type1_catalogue_projection.json",
+        "git_blob_sha": "46e35ee3fbfdf40de2783c8c8ad6ec3d94b8a2fc",
+        "result": "CGX-TYPE1-CATALOGUE-PROJECTION/0.8 current projection"
+      }
+    ]
+  },
+  "maturity_delta": {
+    "identity_provenance": "ADVANCED / exact before+after Git identities bound",
+    "source_authority": "UNCHANGED / owner source lane retained",
+    "geometry": "NO AUTOMATIC UPLIFT / four added archetypes are digital records, not as-built geometry",
+    "material": "UNCHANGED",
+    "process": "UNCHANGED",
+    "model": "ADVANCED / current projections recompiled to 411-record source",
+    "test_metrology": "DIGITAL REGRESSION ONLY",
+    "physical_evidence": "UNCHANGED / PHYSICAL_NOT_RUN",
+    "integration_coupling": "ADVANCED DIGITALLY / LS GO projection consumes 411 count",
+    "authority_release": "UNCHANGED / NO RELEASE AUTHORITY"
+  },
+  "contradiction_state": "SUPERSEDED_WITH_LINEAGE",
+  "numeric_route": "NUMERIC",
+  "numeric_basis": "record counts and exact Git object identities only; no inferred physical performance",
+  "tests_and_falsifiers": [
+    "current atlas record_count must equal 411",
+    "current object-review printable_4d_archetypes must equal current atlas record_count",
+    "before and after source Git blob identities must differ",
+    "proof must preserve PHYSICAL_NOT_RUN and authority ceiling"
+  ],
+  "next_witness_or_hold": "P0_IDENTITY remains the next physical witness; this proof closes a digital source-ingest/readback example only",
+  "authority_ceiling": "DIGITAL_EVIDENCE / BUILD_READY_MAX / PHYSICAL_NOT_RUN",
+  "carriers_changed": false,
+  "public_release": false,
+  "physical_execution": false
+}
