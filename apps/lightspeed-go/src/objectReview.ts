@@ -193,7 +193,7 @@ export const renderObjectReview = (manifest: ObjectReviewCatalogue, atlas: Compo
     </section>
   </article>`;
 
-export const bindObjectReview = (root: HTMLElement): void => {
+export const bindObjectReview = (root: HTMLElement, atlas: ComponentAtlas): void => {
   const tabs=[...root.querySelectorAll<HTMLButtonElement>("[data-object-review-tab]")];
   const panels=[...root.querySelectorAll<HTMLElement>("[data-object-review-panel]")];
   const activate=(name:string):void=>{
