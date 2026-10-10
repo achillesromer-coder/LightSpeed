@@ -1,0 +1,148 @@
+{
+  "schema": "CGX-OBJECT-REVIEW-ART-DIRECTION/0.1",
+  "date": "2026-10-10",
+  "status": "INTERNAL REVIEW SYSTEM / DISPLAY STYLING ONLY / NO ENGINEERING UPLIFT",
+  "objective": "Make the complete CGX/Römer technology stack reviewable as one coherent product/engineering family from component and printable 4D stack through subsystem, mission module and facility while preserving source geometry and evidence boundaries.",
+  "authority_order": [
+    "exact user/corpus geometry and object identity",
+    "Drive engineering/evidence owner state",
+    "source mesh / parametric packet / CGXI state",
+    "safety and publication boundary",
+    "visual hierarchy and brand continuity",
+    "decorative finish"
+  ],
+  "brand": {
+    "lockup": "RÖMER / COGNIGREX",
+    "logo_policy": "Text lockup only until an approved vector emblem/logo is present in canon; never invent or distort a mark.",
+    "palette": {
+      "background": "#071011",
+      "panel": "#0f1b1c",
+      "panel_alt": "#142426",
+      "text": "#f2ede7",
+      "muted": "#aab9b8",
+      "line": "#294043",
+      "teal": "#55d6cf",
+      "gold": "#c8a458",
+      "green": "#76d39b",
+      "red": "#e27e7e"
+    },
+    "specificity": "Dark technical field + teal corpus/data accent + restrained gold/green hierarchy. Object identity and evidence state remain more prominent than decorative effects."
+  },
+  "render_tiers": {
+    "engineering_plate": {
+      "master": "resolution-independent 3840×2160 SVG",
+      "views": [
+        "perspective",
+        "top",
+        "front",
+        "side"
+      ],
+      "use": "geometry review, extents, source/hash traceability"
+    },
+    "hero": {
+      "master": "resolution-independent 3840×2160 SVG",
+      "camera": "three-quarter technical product view; approximately normal/55 mm visual perspective without aggressive wide-angle distortion",
+      "lighting": "display-only three-point technical lighting: cool key, restrained fill, subtle rim; no claimed physical material response",
+      "composition": "one primary focal object; 6–8% safe margins; active negative space for object name/evidence badge",
+      "use": "internal design review and later showcase candidate after publication gate"
+    },
+    "interactive": {
+      "geometry": "source-hashed derived mesh payload; orbit/zoom only",
+      "styling": "same display-only shaded palette as hero",
+      "interactions": [
+        "drag orbit",
+        "wheel zoom",
+        "double-click reset"
+      ],
+      "use": "internal geometry/twin inspection; no editing or machine authority"
+    }
+  },
+  "tiers": [
+    {
+      "id": "T0",
+      "name": "component",
+      "accent": "teal",
+      "examples": [
+        "diode seed/carrier",
+        "P2 R/C/L",
+        "RF loop"
+      ]
+    },
+    {
+      "id": "T1",
+      "name": "functional stack",
+      "accent": "teal/gold",
+      "examples": [
+        "dense smart stack",
+        "functional voxels",
+        "seed-field stack"
+      ]
+    },
+    {
+      "id": "T2",
+      "name": "subsystem",
+      "accent": "teal/green",
+      "examples": [
+        "Free Flow",
+        "RFS/EMFF",
+        "Solar Hull functional systems"
+      ]
+    },
+    {
+      "id": "T3",
+      "name": "mission module",
+      "accent": "green",
+      "examples": [
+        "Mark family",
+        "Luke family",
+        "InterSol"
+      ]
+    },
+    {
+      "id": "T4",
+      "name": "facility/corridor",
+      "accent": "gold",
+      "examples": [
+        "Römer Spaceport",
+        "WatchTower",
+        "M1 elevated bypass"
+      ]
+    }
+  ],
+  "evidence_overlay": {
+    "required": [
+      "geometry state",
+      "physical state",
+      "source or CGX identity",
+      "source hash where mesh-backed"
+    ],
+    "labels": {
+      "source_mesh": "CORPUS SOURCE MESH / REVIEW ONLY",
+      "symbolic": "SYMBOLIC PARAMETRIC / EXACT DIMENSIONS OPEN",
+      "physical_not_run": "PHYSICAL NOT_RUN",
+      "not_as_built": "NOT_AS_BUILT / REVIEW_ONLY"
+    }
+  },
+  "material_policy": [
+    "visual shading is a display treatment only",
+    "do not infer metallic, composite, ceramic, glass, coating or surface finish from display shading",
+    "where exact material stack is source-bound, show it as text/evidence overlay before considering physically faithful material rendering"
+  ],
+  "hard_vetoes": [
+    "hidden geometry added solely for aesthetics",
+    "source silhouette or proportions materially changed",
+    "physical completion implied by render quality",
+    "performance, safety, certification or mission readiness inferred from appearance",
+    "unapproved emblem/logo invented",
+    "showcase publication before owner publication gate"
+  ],
+  "qa": [
+    "thumbnail silhouette remains distinct",
+    "single primary focal object",
+    "grayscale value separation remains legible",
+    "source-vs-render geometry check passes",
+    "evidence badge readable at review resolution",
+    "brand-off test: Römer/Cognigrex palette/evidence grammar remains specific even without a logo",
+    "AI-slop veto: no ornamental pipes, seams, vents, fasteners or panels unless present in source/corpus geometry"
+  ]
+}
