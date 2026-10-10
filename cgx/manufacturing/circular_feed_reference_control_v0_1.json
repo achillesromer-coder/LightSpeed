@@ -1,0 +1,92 @@
+{
+  "schema": "CGX-CIRCULAR-FEED-REFERENCE-CONTROL/0.1",
+  "artifact_id": "UTP-119",
+  "title": "Recovered PET → virgin-PET reference/control qualification packet",
+  "state": "DIGITAL_TEST_PLAN / PHYSICAL_NOT_RUN",
+  "owner": {
+    "workbook": "Type 1 Romer Cognigrex",
+    "spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "sheet": "26_CGX_Portfolio_Delivery_v0_1",
+    "owner_row": 70,
+    "horizon": "H-TERR-SITE"
+  },
+  "purpose": "Project the existing UTP-119 owner plan into a deterministic paired-coupon packet. Compare a traceable recovered clear-PET lot against a source-bound virgin-PET control of the same declared polymer class without promoting material identity, processability or performance by name alone.",
+  "required_bindings": {
+    "recovered": [
+      "lot_id",
+      "source_ref",
+      "polymer_class",
+      "identity_evidence_ref",
+      "sort_contamination_record_ref"
+    ],
+    "control": [
+      "lot_id",
+      "source_ref",
+      "polymer_class",
+      "identity_evidence_ref"
+    ],
+    "process": [
+      "decontamination_sop_ref",
+      "drying_condition_ref",
+      "coupon_fabrication_route_ref",
+      "conditioning_ref"
+    ],
+    "coupon": [
+      "geometry_ref",
+      "geometry_hash"
+    ],
+    "tests": [
+      "test_id",
+      "method_ref",
+      "units",
+      "comparison_mode",
+      "test_conditions_ref"
+    ]
+  },
+  "sequence": [
+    "SOURCE_BIND",
+    "SORT_AND_IDENTITY",
+    "APPROVED_DECONTAMINATION",
+    "DRY_AND_MOISTURE_RECORD",
+    "DSC_OR_EQUIVALENT_IDENTITY_THERMAL_CHECK",
+    "FLOW_OR_PROCESSABILITY_CHECK",
+    "FREEZE_CONTROL_AND_RECOVERED_COUPON_GEOMETRY",
+    "DIMENSIONAL_AND_MECHANICAL_TEST",
+    "OPTIONAL_APPLICATION_SPECIFIC_INSULATION_TEST",
+    "COMPARE_WITH_UNCERTAINTY",
+    "OWNER_REVIEW",
+    "PASSPORT_OR_REJECT",
+    "DBR"
+  ],
+  "comparison_rules": {
+    "like_for_like": "Recovered and control values may be ratio-compared only when method, units, declared conditioning/test conditions and coupon geometry are shared or explicitly proven equivalent.",
+    "ratio": "Use INV-RETENTION-001 / retention_ratio only with a non-zero control value.",
+    "difference": "Absolute-difference comparison is permitted when ratio is not physically meaningful and the owner supplied the acceptance bound.",
+    "thresholds": "No default retention, tensile, flow, dimensional or electrical threshold is invented. Acceptance bounds are application-specific owner/test inputs.",
+    "uncertainty": "Record attributable uncertainty with every measured comparison where consequential. A ratio without uncertainty does not establish qualification."
+  },
+  "disposition_states": [
+    "HOLD_BINDING",
+    "HOLD_MEASUREMENTS",
+    "MEASURED_REVIEW_REQUIRED",
+    "READY_FOR_OWNER_REVIEW",
+    "REJECT_OR_REPROCESS"
+  ],
+  "physical_boundary": {
+    "physical_execution": false,
+    "material_qualification": false,
+    "certification": false,
+    "printer_admission": false,
+    "public_release": false,
+    "rule": "A digitally complete packet or favorable comparison is not physical qualification. Qualified feed requires actual lot/process/coupon evidence and owner acceptance for the declared application."
+  },
+  "rejection_rules": [
+    "unknown or mixed polymer identity",
+    "PETG/PLA/PVC/other polymer accepted as PET by appearance alone",
+    "missing traceable recovered or control lot",
+    "unapproved decontamination or missing contamination record",
+    "non-like-for-like comparison presented as retention",
+    "failed owner-supplied application acceptance bound",
+    "attempt to infer graphene/conductive-carbon functionality from recovered PET classification"
+  ]
+}
