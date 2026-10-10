@@ -30,7 +30,8 @@
     "symbolic_core_component_stack_plates": 6,
     "physical_tests_complete": 0,
     "source_mesh_interactive_views": 16,
-    "source_mesh_4k_hero_views": 16
+    "source_mesh_4k_hero_views": 16,
+    "symbolic_system_lineage_plates": 5
   },
   "tiers": [
     {
@@ -625,5 +626,87 @@
     "UTP-144 / BUILD-077 — SG-0/1/N seed-field stack matrix; PR #155 draft lane CI pass",
     "UTP-145 / BUILD-078 — first P2 R/C/L witness packet; pre-run gates G0/G1/G2 remain evidence-bound"
   ],
-  "boundary": "No render is physical proof. Source-mesh plates preserve only the geometry actually present in the OBJ; symbolic plates preserve topology intent only. Engineering release still follows CGXI source/lot/process/tool/calibration/interface/witness/safety gates."
+  "boundary": "No render is physical proof. Source-mesh plates preserve only the geometry actually present in the OBJ; symbolic plates preserve topology intent only. Engineering release still follows CGXI source/lot/process/tool/calibration/interface/witness/safety gates.",
+  "bridge_review_objects": [
+    {
+      "id": "cgx:pc01_printceptor",
+      "label": "PC01 / PrintCeptor",
+      "role": "CGX manufacturing orchestrator / 17-family planning root",
+      "level": "manufacturing_system",
+      "source": "Drive:33_PC01_CGX_Operational_Matrix_v0_1 / PC01-MX-001,036",
+      "render": "/review/renders/pc01_printceptor_review.svg",
+      "geometry_state": "DIGITAL ROOT / UNBUILT TWIN UNTIL MACHINE GEOMETRY BINDS",
+      "physical_state": "NOT_BUILT / REVIEW_ONLY",
+      "render_state": "CORPUS-GROUNDED SYMBOLIC SYSTEM / LINEAGE PLATE",
+      "review_rules": [
+        "plate expresses source-backed system relationship, status and evidence boundary rather than hidden physical geometry",
+        "existing source-mesh assets remain the geometry review authority where available; this plate does not duplicate them",
+        "promotion requires the owning CGX/source/CAD/evidence lane to close its independent gates"
+      ]
+    },
+    {
+      "id": "cgx:mark_ii_staged",
+      "label": "Mark II — staged / excluded",
+      "role": "Lineage placeholder retained without active hardware promotion",
+      "level": "lineage_gate",
+      "source": "Mark 1P + Mark I twin owner sequence",
+      "render": "/review/renders/mark_ii_staged_review.svg",
+      "geometry_state": "NO CURRENT RELEASED GEOMETRY / DO NOT INVENT",
+      "physical_state": "STAGED / EXCLUDED PENDING EVIDENCE",
+      "render_state": "CORPUS-GROUNDED SYMBOLIC SYSTEM / LINEAGE PLATE",
+      "review_rules": [
+        "plate expresses source-backed system relationship, status and evidence boundary rather than hidden physical geometry",
+        "existing source-mesh assets remain the geometry review authority where available; this plate does not duplicate them",
+        "promotion requires the owning CGX/source/CAD/evidence lane to close its independent gates"
+      ]
+    },
+    {
+      "id": "cgx:mark_iv_future",
+      "label": "Mark IV — future successor only",
+      "role": "Future Mark-family successor placeholder",
+      "level": "lineage_gate",
+      "source": "Römer comprehensive portfolio owner taxonomy",
+      "render": "/review/renders/mark_iv_future_review.svg",
+      "geometry_state": "NO RELEASED GEOMETRY / FUTURE SUCCESSOR",
+      "physical_state": "FUTURE / NOT_AS_BUILT",
+      "render_state": "CORPUS-GROUNDED SYMBOLIC SYSTEM / LINEAGE PLATE",
+      "review_rules": [
+        "plate expresses source-backed system relationship, status and evidence boundary rather than hidden physical geometry",
+        "existing source-mesh assets remain the geometry review authority where available; this plate does not duplicate them",
+        "promotion requires the owning CGX/source/CAD/evidence lane to close its independent gates"
+      ]
+    },
+    {
+      "id": "cgx:luke_ii_geo_interface",
+      "label": "Luke II / geostationary interface",
+      "role": "Orbital deceleration / tracking / custody-handoff reference",
+      "level": "mission_subsystem",
+      "source": "Drive:ROMER7E05_10_MagLev_Luke + Luke II canonical-execution handoff / PR #30",
+      "render": "/review/renders/luke_ii_geo_interface_review.svg",
+      "geometry_state": "REPOSITORY-QUALIFIED DIGITAL REFERENCE / OWNER-CAD ACCEPTANCE OPEN",
+      "physical_state": "NOT_FLIGHT_QUALIFIED / REVIEW_ONLY",
+      "render_state": "CORPUS-GROUNDED SYMBOLIC SYSTEM / LINEAGE PLATE",
+      "review_rules": [
+        "plate expresses source-backed system relationship, status and evidence boundary rather than hidden physical geometry",
+        "existing source-mesh assets remain the geometry review authority where available; this plate does not duplicate them",
+        "promotion requires the owning CGX/source/CAD/evidence lane to close its independent gates"
+      ]
+    },
+    {
+      "id": "cgx:mission_1_program",
+      "label": "Mission 1 — programme composition",
+      "role": "Launch / deployment / trajectory / evidence and return-analysis spine",
+      "level": "mission_program",
+      "source": "Römer portfolio + Mark III Visualized handoff / Mission 1 analytical lane",
+      "render": "/review/renders/mission_1_program_review.svg",
+      "geometry_state": "PROGRAM / TWIN COMPOSITION — NO SINGLE RELEASED VEHICLE GEOMETRY",
+      "physical_state": "MISSION ANALYTICAL LANE / NOT_DEPLOYED",
+      "render_state": "CORPUS-GROUNDED SYMBOLIC SYSTEM / LINEAGE PLATE",
+      "review_rules": [
+        "plate expresses source-backed system relationship, status and evidence boundary rather than hidden physical geometry",
+        "existing source-mesh assets remain the geometry review authority where available; this plate does not duplicate them",
+        "promotion requires the owning CGX/source/CAD/evidence lane to close its independent gates"
+      ]
+    }
+  ]
 }

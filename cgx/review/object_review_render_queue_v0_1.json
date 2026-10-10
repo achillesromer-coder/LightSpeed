@@ -2,7 +2,7 @@
   "schema": "CGX-OBJECT-REVIEW-QUEUE/0.2",
   "state": "ACTIVE_INTERNAL_REVIEW / LOCAL_HEAVY / NONBLOCKING_SIDE_LANE",
   "authority_boundary": "Review/render work must not preempt exact-binding, witness, safety or owner-release work. It consumes existing geometry and CGX contracts and never creates engineering authority.",
-  "source_git": "0884a000e25a7b002c67d863fa4825a143fb0b3a",
+  "source_git": "e75884a9553c2c08f3209091c5da479e0fce66ce",
   "render_command": "node scripts/generate_cgx_object_review.mjs",
   "ui_surface": "LightSpeed GO → Objects → CGX object review catalogue",
   "art_direction_ref": "cgx/review/object_review_art_direction_v0_1.json",
@@ -29,14 +29,19 @@
     "macro_source_mesh_4k_hero_views": 16,
     "macro_source_mesh_interactive_views": 16,
     "source_meshes_hashed": 16,
-    "physical_tests_complete": 0
+    "physical_tests_complete": 0,
+    "symbolic_system_lineage_plates": 5
   },
   "completed_this_pass": [
     "source-hashed derived mesh payload for every current corpus OBJ",
     "3840×2160 branded hero SVG for every current corpus OBJ",
     "refreshed four-view engineering SVGs with source hash traceability",
     "LS GO card actions for 4K hero / engineering plate / interactive orbit review",
-    "corpus art-direction contract defining brand, camera, composition, evidence overlay and hard vetoes"
+    "corpus art-direction contract defining brand, camera, composition, evidence overlay and hard vetoes",
+    "five corpus-grounded symbolic system/lineage plates for PC01/PrintCeptor, Mark II staged lineage, Mark IV future successor, Luke II geostationary interface and Mission 1 programme composition",
+    "Mark II corrected to staged/excluded owner sequence rather than invented routing hardware",
+    "Mark IV corrected to future-successor-only owner taxonomy rather than invented current geometry",
+    "Mission 1 kept as programme/twin composition without asserting unreconciled unit counts, economics or vehicle geometry"
   ],
   "current_owner_overlays": [
     "UTP-141 / BUILD-074 interface operators — owner+Git implemented in draft/current engineering lane",
@@ -46,6 +51,8 @@
     "UTP-145 / BUILD-078 P2 SG-0 passive witness packet — exact lot/tool/calibration/as-built evidence open"
   ],
   "next_nonblocking": [
+    "continue consuming current BUILD-071/073/074+ owner overlays without duplicating their engineering contracts",
+    "add source-controlled Luke II/Mark III engineering meshes only when their owning draft/reference branches are accepted into the current geometry authority",
     "add functional-voxel/interface/witness overlays after their owning engineering lanes merge or expose stable owner projection payloads",
     "add corpus-defined cutaway/exploded views only where hidden regions are explicitly defined",
     "promote symbolic T0/T1 packets to geometry-specific hero views when exact dimensions bind",
