@@ -2,6 +2,8 @@ import importlib.util
 import json
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE_PATH = ROOT / "cgx" / "component_atlas" / "type1_maturity_invalidation_fixture_v0_1.json"
 SCRIPT_PATH = ROOT / "scripts" / "evaluate_type1_maturity_invalidation.py"
@@ -62,3 +64,46 @@ def test_seed_revision_does_not_erase_independent_structure():
 
     assert result["stale"] == ["DER-SEED-TIMING"]
     assert "STRUCTURE-SHELL" not in result["stale"]
+
+
+def test_unknown_changed_node_fails_closed():
+    module = load_script()
+    fixture = load_fixture()
+    event = {
+        "id": "EV-UNKNOWN-NEGATIVE",
+        "trigger": "synthetic_unknown_node",
+        "changed_nodes": ["UNKNOWN-NODE"],
+        "expected_stale": [],
+        "expected_preserved": [],
+    }
+
+    with pytest.raises(ValueError, match="Unknown changed maturity node"):
+        module.evaluate_event(fixture, event)
+
+
+def test_dangling_dependency_reference_fails_closed():
+    module = load_script()
+    fixture = load_fixture()
+    fixture["nodes"] = [dict(node) for node in fixture["nodes"]]
+    fixture["nodes"][0] = dict(fixture["nodes"][0])
+    fixture["nodes"][0]["depends_on"] = ["UNKNOWN-PARENT"]
+
+    with pytest.raises(ValueError, match="Dangling maturity dependency"):
+        module.dependency_children(fixture["nodes"])
+
+
+def test_duplicate_node_id_fails_closed():
+    module = load_script()
+    fixture = load_fixture()
+    fixture["nodes"] = list(fixture["nodes"]) + [dict(fixture["nodes"][0])]
+
+    with pytest.raises(ValueError, match="Duplicate maturity node id"):
+        module.dependency_children(fixture["nodes"])
+
+
+def test_empty_changed_node_set_fails_closed():
+    module = load_script()
+    fixture = load_fixture()
+
+    with pytest.raises(ValueError, match="requires at least one changed node"):
+        module.affected_descendants(fixture["nodes"], [])
