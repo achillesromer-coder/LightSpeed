@@ -1,3 +1,6 @@
+import { bindMeshViewerTriggers, meshViewerButtonMarkup } from "./meshViewer";
+import { bindComponentPlateTriggers, componentPlateButtonMarkup } from "./componentVisualizer";
+
 export type ReviewObject = {
   id: string;
   label: string;
@@ -5,6 +8,10 @@ export type ReviewObject = {
   level: string;
   source: string;
   render: string;
+  hero_render?: string;
+  mesh_data?: string;
+  source_sha256?: string;
+  render_state?: string;
   geometry_state: string;
   physical_state: string;
   review_rules: string[];
@@ -52,11 +59,18 @@ export type ObjectReviewCatalogue = {
     palette: Record<string, string>;
     rule: string;
     render_plate: string;
+    brand_lockup?: string;
+    hero_render?: string;
+    interactive_mesh?: string;
+    material_policy?: string;
+    composition?: string;
   };
   coverage: {
     printable_4d_archetypes: number;
     macro_source_meshes: number;
     symbolic_core_component_stack_plates: number;
+    source_mesh_interactive_views?: number;
+    source_mesh_4k_hero_views?: number;
     physical_tests_complete: number;
   };
   tiers: Array<{ id: string; label: string; description: string }>;
@@ -74,12 +88,25 @@ const esc = (value: string): string => value
 const metric = (value: number | string, label: string): string =>
   `<div><strong>${esc(String(value))}</strong><span>${esc(label)}</span></div>`;
 
-const card = (item: ReviewObject): string => `
+const card = (item: ReviewObject): string => {
+  const preview=item.hero_render || item.render;
+  const actions=[
+    item.hero_render ? `<a class="button-secondary" href="${esc(item.hero_render)}" target="_blank" rel="noreferrer">4K hero</a>` : "",
+    `<a class="button-secondary" href="${esc(item.render)}" target="_blank" rel="noreferrer">Engineering plate</a>`,
+    item.mesh_data ? meshViewerButtonMarkup({
+      url:item.mesh_data,
+      label:item.label,
+      source:item.source,
+      sourceHash:item.source_sha256,
+      physicalState:item.physical_state,
+    }) : "",
+  ].filter(Boolean).join("");
+  return `
   <article class="object-review-card" data-review-object data-search="${esc([
     item.id, item.label, item.role, item.level, item.geometry_state, item.physical_state,
   ].join(" ").toLowerCase())}">
-    <a href="${esc(item.render)}" target="_blank" rel="noreferrer">
-      <img src="${esc(item.render)}" loading="lazy" alt="${esc(item.label)} engineering review plate" />
+    <a href="${esc(preview)}" target="_blank" rel="noreferrer">
+      <img src="${esc(preview)}" loading="lazy" alt="${esc(item.label)} source-faithful review render" />
     </a>
     <div class="object-review-copy">
       <div class="panel-head">
@@ -89,10 +116,14 @@ const card = (item: ReviewObject): string => `
       <p>${esc(item.role)}</p>
       <small class="cgx-uri">${esc(item.source)}</small>
       <div class="object-review-state"><strong>${esc(item.geometry_state)}</strong></div>
+      ${item.render_state ? `<small>${esc(item.render_state)}</small>` : ""}
       ${item.stats ? `<small>${item.stats.vertices.toLocaleString()} vertices · ${item.stats.faces.toLocaleString()} triangles</small>` : ""}
+      ${item.source_sha256 ? `<small class="cgx-uri">source SHA-256 ${esc(item.source_sha256.slice(0,24))}…</small>` : ""}
+      <div class="object-review-actions">${actions}</div>
       <ul class="compact-list">${item.review_rules.map((v) => `<li>${esc(v)}</li>`).join("")}</ul>
     </div>
   </article>`;
+};
 
 const atlasTable = (atlas: ComponentAtlas): string => `
   <div class="object-catalogue-controls">
@@ -107,7 +138,7 @@ const atlasTable = (atlas: ComponentAtlas): string => `
           row.ID,row.Domain,row.Family,row["Component Archetype"],row["Current CGX Build Class"],
           row["Current Manufacturing Route"],row["Baseline Geometry"],row["Primary Physics"],row["4D Fields"],
         ].filter(Boolean).join(" ").toLowerCase())}">
-          <td><strong>${esc(row.ID)}</strong><small>${esc(row.Domain || "")}</small></td>
+          <td><strong>${esc(row.ID)}</strong><small>${esc(row.Domain || "")}</small>${componentPlateButtonMarkup(row.ID)}</td>
           <td>${esc(row["Component Archetype"] || "")}<small>${esc(row.Family || "")} · ${esc(row["Primary Function"] || "")}</small></td>
           <td><span class="badge">${esc(row["Current CGX Build Class"] || "")}</span><small>${esc(row["Current Manufacturing Route"] || "")}</small></td>
           <td>${esc(row["Baseline Geometry"] || "")}<small>${esc(row["Geometric Parameters"] || "")}</small></td>
@@ -127,8 +158,9 @@ export const renderObjectReview = (manifest: ObjectReviewCatalogue, atlas: Compo
     <p class="muted">${esc(manifest.authority)}</p>
     <div class="graph-summary">
       ${metric(manifest.coverage.printable_4d_archetypes, "component archetypes")}
-      ${metric(manifest.coverage.symbolic_core_component_stack_plates, "CGX vector review plates")}
-      ${metric(manifest.coverage.macro_source_meshes, "source-mesh vector plates")}
+      ${metric(manifest.coverage.symbolic_core_component_stack_plates, "CGX symbolic plates")}
+      ${metric(manifest.coverage.source_mesh_4k_hero_views ?? manifest.coverage.macro_source_meshes, "4K source-mesh heroes")}
+      ${metric(manifest.coverage.source_mesh_interactive_views ?? manifest.coverage.macro_source_meshes, "interactive source meshes")}
       ${metric(manifest.coverage.physical_tests_complete, "physical tests complete")}
     </div>
     <div class="flow">${manifest.tiers.map((t) => `<span title="${esc(t.description)}">${esc(t.id)} · ${esc(t.label)}</span>`).join("<i>→</i>")}</div>
@@ -161,7 +193,7 @@ export const renderObjectReview = (manifest: ObjectReviewCatalogue, atlas: Compo
     </section>
   </article>`;
 
-export const bindObjectReview = (root: HTMLElement): void => {
+export const bindObjectReview = (root: HTMLElement, atlas: ComponentAtlas): void => {
   const tabs=[...root.querySelectorAll<HTMLButtonElement>("[data-object-review-tab]")];
   const panels=[...root.querySelectorAll<HTMLElement>("[data-object-review-panel]")];
   const activate=(name:string):void=>{
@@ -191,6 +223,9 @@ export const bindObjectReview = (root: HTMLElement): void => {
     });
     if(count) count.textContent=`${visible} / ${rows.length}`;
   });
+
+  bindMeshViewerTriggers(root);
+  bindComponentPlateTriggers(root, atlas.records);
 };
 
 export const loadObjectReview = async (

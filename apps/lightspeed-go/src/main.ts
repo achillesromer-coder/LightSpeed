@@ -907,9 +907,9 @@ void loadObjectReview(
     if (!response.ok) throw new Error(`Component atlas review projection returned HTTP ${response.status}`);
     return (await response.json()) as ComponentAtlas;
   },
-).then(({ html }) => {
+).then(({ html, atlas }) => {
   objectReviewMount.innerHTML = html;
-  bindObjectReview(objectReviewMount);
+  bindObjectReview(objectReviewMount, atlas);
 }).catch((error) => {
   const message = error instanceof Error ? error.message : "CGX object review catalogue unavailable.";
   objectReviewMount.innerHTML = `<article class="panel"><p class="eyebrow">CGX object review</p><h2>Catalogue unavailable</h2><p class="muted">${escapeHtml(message)}</p></article>`;
