@@ -1,6 +1,6 @@
 {
   "schema": "CGX-OBJECT-REVIEW-CATALOGUE/0.2",
-  "generated_from_git": "0884a000e25a7b002c67d863fa4825a143fb0b3a",
+  "generated_from_git": "75029c03d9de6eb19f03c610ddf5ae16aa0ea533",
   "status": "INTERNAL_REVIEW / 4K_VECTOR_HERO + ENGINEERING_PLATE + INTERACTIVE_SOURCE_MESH / PHYSICAL_NOT_RUN",
   "authority": "Drive remains engineering/evidence authority; Git/LS GO is an internal review projection. Renders never uplift evidence.",
   "visual_system": {
@@ -31,7 +31,7 @@
     "physical_tests_complete": 0,
     "source_mesh_interactive_views": 16,
     "source_mesh_4k_hero_views": 16,
-    "symbolic_system_lineage_plates": 5
+    "symbolic_system_lineage_plates": 7
   },
   "tiers": [
     {
@@ -620,11 +620,15 @@
   ],
   "atlas_ref": "/data/component_geometry_atlas_public_review.json",
   "pending_owner_layers": [
-    "UTP-141 / BUILD-074 — 16 interface operators; provider CI pass, draft engineering lane remains independent",
-    "UTP-142 / BUILD-075 — witness/evidence kernel owner contract; physical witnesses NOT_RUN",
-    "UTP-143 / BUILD-076 — 17 functional voxel regions; PR #155 draft lane CI pass",
-    "UTP-144 / BUILD-077 — SG-0/1/N seed-field stack matrix; PR #155 draft lane CI pass",
-    "UTP-145 / BUILD-078 — first P2 R/C/L witness packet; pre-run gates G0/G1/G2 remain evidence-bound"
+    "UTP-141 / BUILD-074 — interface operators; digital owner contract; physical witnesses separately gated",
+    "UTP-142 / BUILD-075 — witness/evidence kernel; physical witnesses NOT_RUN",
+    "UTP-143 / BUILD-076 — functional voxel basis; PR #155 owner payload stacked into downstream maturation branch",
+    "UTP-144 / BUILD-077 — SG-0/1/N seed-field stack matrix; PR #155 owner lane",
+    "UTP-145 / BUILD-078 — first P2 R/C/L witness packet; pre-run G0/G1/G2 gates remain open",
+    "UTP-146 / BUILD-079 — radiative/transport/interlayer coupling owner; unresolved mutuals OPEN/HOLD",
+    "UTP-147 / BUILD-080 — universal stack normal form; build-ready digital != physical-ready",
+    "UTP-148 / BUILD-081 — fail-closed evidence maturity/invalidation; physical evidence ceiling unchanged",
+    "UTP-149 / BUILD-082 — 2D→3D→4D composition; 20 primitives + CAP-1..7; physical NOT_RUN"
   ],
   "boundary": "No render is physical proof. Source-mesh plates preserve only the geometry actually present in the OBJ; symbolic plates preserve topology intent only. Engineering release still follows CGXI source/lot/process/tool/calibration/interface/witness/safety gates.",
   "bridge_review_objects": [
@@ -706,6 +710,38 @@
         "plate expresses source-backed system relationship, status and evidence boundary rather than hidden physical geometry",
         "existing source-mesh assets remain the geometry review authority where available; this plate does not duplicate them",
         "promotion requires the owning CGX/source/CAD/evidence lane to close its independent gates"
+      ]
+    },
+    {
+      "id": "cgx:utp_148_maturity",
+      "label": "UTP-148 — evidence maturity / invalidation",
+      "role": "Fail-closed CGX evidence ingestion, dependency invalidation and next-witness state",
+      "level": "evidence_state_machine",
+      "source": "Type1:UTP-148 / BUILD-081 / LightSpeed PR #167",
+      "render": "/review/renders/utp_148_maturity_review.svg",
+      "geometry_state": "SYMBOLIC DEPENDENCY GRAPH / NO PHYSICAL GEOMETRY",
+      "physical_state": "DIGITAL ONLY / PHYSICAL_NOT_RUN",
+      "render_state": "CORPUS-GROUNDED SYMBOLIC SYSTEM / LINEAGE PLATE",
+      "review_rules": [
+        "plate expresses source-backed system relationship, status and evidence boundary rather than hidden physical geometry",
+        "existing owner matrices/kernels remain engineering authority; this plate does not duplicate them",
+        "promotion requires the owning CGX/source/evidence lane to close its independent gates"
+      ]
+    },
+    {
+      "id": "cgx:utp_149_4d_composition",
+      "label": "UTP-149 — 2D → 3D → 4D composition",
+      "role": "20-primitive composition / SG-0, SG-1, SG-N / field-model and witness routing",
+      "level": "functional_stack_compiler",
+      "source": "Type1:UTP-149 / BUILD-082 / sheet42 / LightSpeed PR #167",
+      "render": "/review/renders/utp_149_4d_composition_review.svg",
+      "geometry_state": "SYMBOLIC REGION / INTERFACE GRAPH / EXACT INSTANCE GEOMETRY OPEN",
+      "physical_state": "DIGITAL ONLY / PHYSICAL_NOT_RUN",
+      "render_state": "CORPUS-GROUNDED SYMBOLIC SYSTEM / LINEAGE PLATE",
+      "review_rules": [
+        "plate expresses source-backed system relationship, status and evidence boundary rather than hidden physical geometry",
+        "existing owner matrices/kernels remain engineering authority; this plate does not duplicate them",
+        "promotion requires the owning CGX/source/evidence lane to close its independent gates"
       ]
     }
   ]
