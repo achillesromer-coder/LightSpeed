@@ -1,0 +1,430 @@
+{
+  "schema": "CGX-TYPE1-4D-COMPOSITION-MATRIX/0.1",
+  "artifact_id": "UTP-149",
+  "title": "Universal Type-I 2D→3D→4D Composition + Seed Graph Matrix",
+  "date": "2026-10-11",
+  "status": "DIGITAL_DERIVED_COMPOSITION / PHYSICAL_NOT_RUN",
+  "owner": {
+    "drive_spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "owner_sheet": "42_CGX_Type1_4D_Composition_Matrix_v0_1",
+    "build_queue": "BUILD-082",
+    "parent_contracts": [
+      "UTP-124",
+      "UTP-136",
+      "UTP-137",
+      "UTP-146",
+      "UTP-147",
+      "UTP-148"
+    ],
+    "rule": "Composition/projection layer only; it does not replace the 411×60 archetype matrix, component-instance register, UTP-146 radiative/transport owner, UTP-147 stack normal form or UTP-148 maturity/invalidation graph."
+  },
+  "purpose": "Map 2D functional intent into non-planar 3D regions/interfaces and then into 4D state/history under seedless, single-seed and multi-seed topologies so PrintSpace/CGX can compile, ingest, invalidate and mature evidence without promoting unsupported physical capability.",
+  "semantics": {
+    "2d": "Schematic/net/function intent only; symbols do not imply dimensions, process compatibility or ratings.",
+    "3d": "Directed region/interface graph of solids, films, cavities, voids, conductors, dielectrics, references, barriers, interlayers, seed packages, service volumes and local frames.",
+    "4d": "Time/state/history of the same 3D article across electrical, thermal, mechanical, magnetic, optical, fluidic, chemical/electrochemical, logic, calibration, health and uncertainty. Frequency/phase/modal views are derived, not extra spatial dimensions.",
+    "evidence": "NUMERIC only when all consequential inputs are attributable and the selected model/regime is valid; otherwise SYMBOLIC or HOLD.",
+    "authority": "No record creates machine-program, physical execution, certification, public release, legal/financial, extraction/orbital or high-consequence authority."
+  },
+  "seed_graphs": {
+    "SG-0": "No imported specialist seed supplies the declared function; all mechanisms require locally qualified material/process/test evidence.",
+    "SG-1": "One exact seed supplies a bounded mechanism; printed/hybrid surroundings retain their own evidence ceiling.",
+    "SG-N": "Multiple seeds require explicit directed coupling/failure edges; system evidence is bounded by the weakest required node/edge."
+  },
+  "compile_chain": [
+    "INTENT_2D",
+    "RESOLVE_ARCHETYPE_INSTANCE_KERNEL",
+    "EXPAND_3D_REGION_INTERFACE_GRAPH",
+    "BIND_REFERENCE_NODES_LOCAL_FRAMES",
+    "ASSIGN_SG_0_1_N",
+    "ORDER_DIRECTIONAL_PROCESS_X_TO_Y",
+    "CHECK_INTERLAYERS_ATMOSPHERE_PRIOR_LAYER_DAMAGE",
+    "SELECT_FIELD_TRANSPORT_REGIME",
+    "BIND_EQUATION_VOLUMETRIC_MUTUAL_MODELS",
+    "NUMERIC_OR_SYMBOLIC_OR_HOLD",
+    "COMPILE_4D_STATE_SAFE_STATE",
+    "APPLY_UTP148_INVALIDATION_MATURITY",
+    "SELECT_NEXT_WITNESS",
+    "WRITE_NORMAL_FORM_HASH_DBR_REVIEW"
+  ],
+  "capacitance_inference_ladder": [
+    {
+      "id": "CAP-1",
+      "topology": "uniform parallel plate",
+      "equation": "C≈ε0·εr·A/d",
+      "gate": "Uniform-field approximation, geometry and εr state attributable; fringe/guard corrections where consequential."
+    },
+    {
+      "id": "CAP-2",
+      "topology": "layered dielectrics in field direction",
+      "equation": "C/A≈ε0 /(Σ_i d_i/εr_i)",
+      "gate": "Each thickness, εr(f,T,RH), interface/void state and overlap bound."
+    },
+    {
+      "id": "CAP-3",
+      "topology": "coaxial/cylindrical pair",
+      "equation": "C'≈2π·ε/ln(b/a)",
+      "gate": "Concentric long-cylinder approximation; end effects negligible or corrected."
+    },
+    {
+      "id": "CAP-4",
+      "topology": "concentric spherical pair",
+      "equation": "C≈4π·ε·a·b/(b-a)",
+      "gate": "Concentric-sphere assumptions/material state valid; other boundaries use their own model."
+    },
+    {
+      "id": "CAP-5",
+      "topology": "arbitrary multi-conductor 3D",
+      "equation": "Q=C_M·V; U=1/2 V^T C_M V",
+      "gate": "Maxwell capacitance matrix from attributable field solve/measurement; never force parallel-plate law."
+    },
+    {
+      "id": "CAP-6",
+      "topology": "distributed/high-frequency",
+      "equation": "Use C' in R'L'G'C' or full-wave field solution",
+      "gate": "Frequency/geometry justify distributed model; dispersion/loss/ports/boundaries bound."
+    },
+    {
+      "id": "CAP-7",
+      "topology": "time-varying/nonlinear dielectric or moving geometry",
+      "equation": "C=C(x,state,t)",
+      "gate": "State dependence/hysteresis/motion and energy accounting explicit; no static-C extrapolation."
+    }
+  ],
+  "radiative_transport_regimes": [
+    "ELECTROSTATIC_QUASI_STATIC",
+    "MAGNETOSTATIC_QUASI_STATIC",
+    "LUMPED_SUBWAVELENGTH_RLC",
+    "DISTRIBUTED_TRANSMISSION_LINE",
+    "NEAR_FIELD_REACTIVE_EM",
+    "RADIATIVE_FAR_FIELD_EM",
+    "OPTICAL_RAY_JONES_TRANSFER_MATRIX",
+    "FULL_WAVE_OPTICAL_RF",
+    "THERMAL_CONDUCTION",
+    "THERMAL_CONVECTION_WHERE_MEDIUM_EXISTS",
+    "THERMAL_RADIATION",
+    "ACOUSTIC_ELASTIC_WAVE",
+    "FLUID_FLOW",
+    "SPECIES_DIFFUSION_ADVECTION",
+    "IONIC_ELECTROCHEMICAL",
+    "INERTIAL_GRAVITY_CONTACT"
+  ],
+  "process_operator_refs": [
+    "ADD",
+    "MIX",
+    "DILUTE",
+    "GRADIENT",
+    "INFILTRATE",
+    "EVAPORATE_DEGAS",
+    "CURE",
+    "SINTER_ANNEAL",
+    "PLATE_DEPOSIT_FILM",
+    "REMOVE_PATTERN",
+    "DOPE_FUNCTIONALIZE",
+    "STRETCH_PRELOAD",
+    "POLARIZE_MAGNETIZE",
+    "FILL",
+    "EVACUATE",
+    "SEAL",
+    "TEST",
+    "REPAIR"
+  ],
+  "records": [
+    {
+      "primitive_basis_class": "STRUCTURE_DATUM",
+      "schematic_2d_intent": "datum/constraint/load path",
+      "geometry_3d": "solid shell; rib/lattice; datum boss; joint/contact; keepout",
+      "state_history_4d": "x,v,stress,strain,T,creep/fatigue,contact",
+      "seed_routes": {
+        "SG_0": "printed structure with measured material/process",
+        "SG_1": "inserted bearing/fastener/reference artifact + printed seat/load path",
+        "SG_N": "multiple joints/bearings/sensors with explicit load-transfer edges"
+      },
+      "engineering_model_route": "elasticity/beam/plate/contact/modal within stated assumptions; otherwise FEA",
+      "verification": "dimensional; static load/deflection; modal; thermal drift",
+      "fail_closed": "unknown material/joint/load/boundary; postprocess outside damage envelope"
+    },
+    {
+      "primitive_basis_class": "CONDUCTOR_INTERCONNECT",
+      "schematic_2d_intent": "net/bus/ground/reference",
+      "geometry_3d": "trace; serpentine; via/rod; busbar; shield/return; contact",
+      "state_history_4d": "I,V,T,contact-R,aging",
+      "seed_routes": {
+        "SG_0": "qualified local conductor + contacts",
+        "SG_1": "printed interconnect to one exact seed",
+        "SG_N": "distributed bus among multiple seeds with parasitic/thermal edges"
+      },
+      "engineering_model_route": "R=ρL/A or sheet form for DC; distributed R'L'G'C'/field extraction when required",
+      "verification": "4-wire R; continuity; geometry; adhesion; thermal rise",
+      "fail_closed": "unknown cured conductivity/contact; RF forced lumped; later oxidation/remelt/contamination"
+    },
+    {
+      "primitive_basis_class": "DIELECTRIC_ISOLATION",
+      "schematic_2d_intent": "insulation/barrier/capacitive spacing",
+      "geometry_3d": "planar/conformal dielectric; spacer; slot/gap; guard; encapsulation",
+      "state_history_4d": "E,polarization,T,RH,leakage,aging",
+      "seed_routes": {
+        "SG_0": "qualified dielectric provides separation",
+        "SG_1": "dielectric interfaces one seed/package",
+        "SG_N": "multiple isolation domains with explicit creepage/interface edges"
+      },
+      "engineering_model_route": "C/A≈ε0εr/d and E≈V/d only when topology valid; arbitrary geometry→electrostatic/Maxwell solve",
+      "verification": "thickness; void/pinhole; C; leakage/loss",
+      "fail_closed": "unknown lot/process/void state; voltage or breakdown inferred from geometry; dispersion ignored"
+    },
+    {
+      "primitive_basis_class": "RESISTIVE_HEATER",
+      "schematic_2d_intent": "resistor/heater/thermal source",
+      "geometry_3d": "serpentine film; embedded path; foil/mesh; zoned heater",
+      "state_history_4d": "R,I,V,T,TCR,thermal history,adhesion",
+      "seed_routes": {
+        "SG_0": "printed resistive mechanism",
+        "SG_1": "printed heater conditions one seed",
+        "SG_N": "zoned heaters around multiple seeds with mutual thermal edges"
+      },
+      "engineering_model_route": "R=ρL/A or Rs·L/W; P=I²R; thermal RC/field solve",
+      "verification": "4-wire R; TCR; T-field; adhesion; cycling",
+      "fail_closed": "unknown resistivity/TCR/boundary; hotspot outside envelope; power rating inferred"
+    },
+    {
+      "primitive_basis_class": "CAPACITIVE_ELECTROSTATIC",
+      "schematic_2d_intent": "capacitor/electrode/sense plate",
+      "geometry_3d": "parallel plate; interdigitated; coaxial; concentric shell; curved embedded; multi-conductor",
+      "state_history_4d": "Q,V,E,polarization,T,RH,loss/leakage",
+      "seed_routes": {
+        "SG_0": "qualified geometry+dielectric/electrodes",
+        "SG_1": "printed C/electrode network conditions one seed",
+        "SG_N": "multi-electrode network with explicit mutual capacitances"
+      },
+      "engineering_model_route": "closed form only for attributable topology; layered C/A=ε0/(Σd_i/εri); arbitrary 3D→Maxwell C matrix Q=C·V; nonlinear/time-varying→state model",
+      "verification": "geometry/thickness; LCR; loss/leakage; field/guard where needed",
+      "fail_closed": "missing εr/thickness/state; arbitrary 3D forced parallel-plate; voltage/breakdown/lifetime inferred from C"
+    },
+    {
+      "primitive_basis_class": "INDUCTIVE_MAGNETIC",
+      "schematic_2d_intent": "inductor/coil/transformer/magnetic actuator winding",
+      "geometry_3d": "planar spiral; solenoid; toroid; embedded 3D coil; core/return; coupled coils",
+      "state_history_4d": "I,Φ,B/H,T,magnetic history,force/vibration",
+      "seed_routes": {
+        "SG_0": "local coil + qualified air/core path",
+        "SG_1": "printed coil couples one core/magnetic seed",
+        "SG_N": "multiple coils/seeds with mutual L/coupling matrix + thermal/EMC edges"
+      },
+      "engineering_model_route": "closed forms only in valid geometry; otherwise magnetic/full-wave field solve with L matrix + parasitic C/R/core model",
+      "verification": "DCR; L/Q vs f; field; T-rise; force if actuator",
+      "fail_closed": "unknown μ/core loss/turn insulation; mutual coupling omitted; self-resonance ignored"
+    },
+    {
+      "primitive_basis_class": "RF_WAVE",
+      "schematic_2d_intent": "transmission line/antenna/coupler/resonator/port",
+      "geometry_3d": "microstrip/stripline; coax; slot/patch/loop; cavity/waveguide; near-field coupler; 3D antenna; shield",
+      "state_history_4d": "E/H,phase,I/Q,T,alignment,environment,f-response",
+      "seed_routes": {
+        "SG_0": "passive printed RF geometry",
+        "SG_1": "printed antenna/feed/matching around one RF seed",
+        "SG_N": "multiple RF seeds/ports with S/mutual matrix + isolation"
+      },
+      "engineering_model_route": "TL where valid; near/far/full-wave Maxwell as required; power bounded by source/loss/aperture/coupling",
+      "verification": "S11/S21/Z/Q; field/coupling; radiated power only with calibrated setup",
+      "fail_closed": "band/ports unresolved; near/far conflation; unmeasured ambient energy; biological efficacy inferred"
+    },
+    {
+      "primitive_basis_class": "ENERGY_STORAGE",
+      "schematic_2d_intent": "capacitor/cell/storage bus/SOC source",
+      "geometry_3d": "electrostatic/EDLC/electrochemical stack; module cavity; containment",
+      "state_history_4d": "SOC,SOH,V,I,T,pressure,chemistry,cycle history",
+      "seed_routes": {
+        "SG_0": "only if complete local storage mechanism/process qualified",
+        "SG_1": "one inserted cell/supercap + printed bus/thermal/service",
+        "SG_N": "multi-cell/seed pack with balancing, thermal, protection, propagation edges"
+      },
+      "engineering_model_route": "mechanism-specific circuit/electrochemistry; U=½CV² only electrostatic",
+      "verification": "capacity/C; ESR/impedance; leakage/self-discharge; T; cycling",
+      "fail_closed": "chemistry/process/containment unresolved; battery inferred from carbon/void/geometry"
+    },
+    {
+      "primitive_basis_class": "OPTICAL_PHOTONIC",
+      "schematic_2d_intent": "source/path/splitter/filter/detector/port",
+      "geometry_3d": "waveguide; free-space channel; lens/mirror; thin-film; light pipe; source/detector pocket",
+      "state_history_4d": "field,phase,polarization,spectrum,T,alignment,aging",
+      "seed_routes": {
+        "SG_0": "passive optical geometry/material",
+        "SG_1": "one emitter/detector seed + printed optics/thermal/alignment",
+        "SG_N": "multiple optical seeds/ports with crosstalk/timing/calibration edges"
+      },
+      "engineering_model_route": "ray/Fresnel/Jones/transfer-matrix/wave model selected by scale/coherence",
+      "verification": "T/R spectrum; power; alignment; polarization/phase; thermal drift",
+      "fail_closed": "n(λ,T)/surface tolerance unresolved; passive geometry treated as active emitter/detector"
+    },
+    {
+      "primitive_basis_class": "SENSOR_METROLOGY",
+      "schematic_2d_intent": "sensor/transducer/measurement/reference",
+      "geometry_3d": "sensing film; strain/thermal/electrode geometry; reference cavity; target; calibration feature",
+      "state_history_4d": "measurand,bias,scale,noise,T,drift,hysteresis,cal history",
+      "seed_routes": {
+        "SG_0": "printed mechanism with traceable calibration",
+        "SG_1": "one sensor seed + printed interface",
+        "SG_N": "array/fusion network with independent calibration/correlation edges"
+      },
+      "engineering_model_route": "y=H(x,state,t)+bias+noise; uncertainty/covariance retained",
+      "verification": "reference comparison; linearity; noise; drift; repeatability; cross-sensitivity",
+      "fail_closed": "uncalibrated output treated as quantity; expired calibration not invalidating acceptance; raw overwritten"
+    },
+    {
+      "primitive_basis_class": "ACTUATOR_MOTION",
+      "schematic_2d_intent": "motor/solenoid/piezo/drive-to-force/displacement",
+      "geometry_3d": "coil/field; flexure; plunger/slider; motor seat; transmission; compliant mechanism",
+      "state_history_4d": "q,qdot,qdd,force/torque,I,T,contact/friction,wear",
+      "seed_routes": {
+        "SG_0": "local actuator only after mechanism/process qualified",
+        "SG_1": "one exact motor/piezo/actuator seed + printed structure/transmission",
+        "SG_N": "multiple actuators with kinematic/power/collision/fault-safe edges"
+      },
+      "engineering_model_route": "rigid-body/state-space + mechanism-specific electromechanics; source constants when seeded",
+      "verification": "position/force/torque; current; T; repeatability; safe stop",
+      "fail_closed": "load/inertia/transmission or safe-state unresolved; seed rating uplifted"
+    },
+    {
+      "primitive_basis_class": "FLUIDIC_ENVIRONMENT",
+      "schematic_2d_intent": "channel/valve/pump/reservoir/gas-liquid path",
+      "geometry_3d": "microchannel; manifold; reservoir; porous region; nozzle; valve seat; vacuum/gas cavity",
+      "state_history_4d": "P,Q,T,species,phase/void,contamination,wetting history",
+      "seed_routes": {
+        "SG_0": "passive printed channel/reservoir + qualified fluid interaction",
+        "SG_1": "one pump/valve/sensor seed + printed manifold",
+        "SG_N": "network with hydraulic impedance, contamination and fault-isolation edges"
+      },
+      "engineering_model_route": "continuity/Navier-Stokes or reduced hydraulic network in valid regime; species transport as applicable",
+      "verification": "leak; P-Q curve; transport; contamination",
+      "fail_closed": "regime or compatibility unresolved; pressure/vacuum authority absent; vacuum≠damping"
+    },
+    {
+      "primitive_basis_class": "THERMAL_CONTROL",
+      "schematic_2d_intent": "heat path/sink/spreader/break/radiator",
+      "geometry_3d": "spreader; thermal via; break; radiator; cooling channel; phase-change pocket",
+      "state_history_4d": "T,heat flux,Rθ,Cθ,phase,ambient/boundary history",
+      "seed_routes": {
+        "SG_0": "printed passive thermal function",
+        "SG_1": "thermal structure services one heat seed",
+        "SG_N": "distributed network with mutual heating/shared sink/radiation"
+      },
+      "engineering_model_route": "conduction/RC; convection with medium; radiation εσA(T⁴−Tenv⁴); general geometry→field/network",
+      "verification": "Rθ; time response; T-field; interface stability",
+      "fail_closed": "contact/boundary/emissivity unresolved; child temperature envelope exceeded"
+    },
+    {
+      "primitive_basis_class": "ACTIVE_LOGIC_SEED",
+      "schematic_2d_intent": "logic/compute/control/ADC/DAC/comms block",
+      "geometry_3d": "seed pocket; package/interposer; power/ground; signal escape; thermal spreader; shield",
+      "state_history_4d": "logic/fw,timing,V/I,T,error/config revision",
+      "seed_routes": {
+        "SG_0": "HOLD unless local active-device process separately qualified",
+        "SG_1": "one exact active seed + printed/hybrid interfaces",
+        "SG_N": "multiple compute/control seeds with clocks,buses,power,isolation,thermal,fault edges"
+      },
+      "engineering_model_route": "exact vendor/source models + timing/state + SI/PI/thermal; no geometry-only semiconductor inference",
+      "verification": "functional vectors; timing; power; T; I/O; reset/fault",
+      "fail_closed": "exact part/fw unknown; local silicon fabrication or safety certification inferred"
+    },
+    {
+      "primitive_basis_class": "POWER_CONVERSION",
+      "schematic_2d_intent": "converter/inverter/driver/regulator/power stage",
+      "geometry_3d": "switch loop; DC-link; gate loop; magnetics/passives; busbar; thermal stack; isolated control",
+      "state_history_4d": "V,I,switch,T,control,fault,aging",
+      "seed_routes": {
+        "SG_0": "only if switches/control/passives locally qualified",
+        "SG_1": "one module/regulator seed + printed bus/thermal/filter",
+        "SG_N": "multiple switches/modules with commutation,isolation,control,EMI,thermal edges"
+      },
+      "engineering_model_route": "topology-specific switched state-space + parasitic RLC/control/thermal; source models govern seeds",
+      "verification": "ratio; efficiency; ripple; waveforms; T; fault shutdown",
+      "fail_closed": "creepage/clearance/parasitics unresolved; isolation rating uplift; high-energy execution ungated"
+    },
+    {
+      "primitive_basis_class": "SAFE_STATE_PROTECTION",
+      "schematic_2d_intent": "fuse/interlock/watchdog/trip/limit",
+      "geometry_3d": "separated path; fuse/PTC seat; stop; isolated sense; watchdog island; containment",
+      "state_history_4d": "trip/latched/fault history,T/I/position limit,diagnostic health",
+      "seed_routes": {
+        "SG_0": "simple passive safe-state only if behavior qualified",
+        "SG_1": "one certified/qualified protection seed without scope uplift",
+        "SG_N": "multiple independent/redundant channels with common-cause/diagnostic edges"
+      },
+      "engineering_model_route": "source-bound thresholds/timing/energy + deterministic state machine; certification separate",
+      "verification": "trip threshold/timing; independence; diagnostics; safe recovery",
+      "fail_closed": "AI/supervisor treated as sole safety path; certification inherited; common cause unresolved"
+    },
+    {
+      "primitive_basis_class": "BARRIER_HERMETIC_COMPLIANCE",
+      "schematic_2d_intent": "seal/barrier/membrane/flexure/compliance",
+      "geometry_3d": "coating; seam; gasket seat; membrane; flexure; chemical/galvanic barrier",
+      "state_history_4d": "strain,seal/leak,permeation/species,T,RH,cycle/wear",
+      "seed_routes": {
+        "SG_0": "printed/formed barrier/compliant mechanism",
+        "SG_1": "barrier/seal interfaces one seed/sensitive region",
+        "SG_N": "multiple sealed domains with leak/permeation/mechanical coupling"
+      },
+      "engineering_model_route": "mechanics + permeation/diffusion where valid; seal/contact source/process specific",
+      "verification": "leak/permeation; adhesion; flexure; cycling",
+      "fail_closed": "hermeticity/pressure inferred from geometry; compatibility/process unbound"
+    },
+    {
+      "primitive_basis_class": "SERVICE_ACCESS",
+      "schematic_2d_intent": "connector/fastener/access/test point/replaceable module",
+      "geometry_3d": "connector pocket; insert seat; hatch; pad; tool clearance; wear surface",
+      "state_history_4d": "mate cycles,wear,preload,alignment,config,maintenance history",
+      "seed_routes": {
+        "SG_0": "printed service feature",
+        "SG_1": "one replaceable seed/module + printed access",
+        "SG_N": "multiple serviceable modules with keyed config/isolation/dependency graph"
+      },
+      "engineering_model_route": "tolerance/clearance/preload/wear; source ratings for connectors/fasteners",
+      "verification": "fit/clearance; cycles; interface quality; config readback",
+      "fail_closed": "access/isolation absent; maintenance not updating identity; printed connector/thread rating inferred"
+    },
+    {
+      "primitive_basis_class": "IDENTITY_STATE_DBR",
+      "schematic_2d_intent": "object ID/config/provenance/state transition",
+      "geometry_3d": "optical marker; passive tag/antenna; secure-element pocket; readback surface",
+      "state_history_4d": "revision,config,provenance,lease/state,health,evidence/maturity history",
+      "seed_routes": {
+        "SG_0": "passive optical/material identity + external resolution",
+        "SG_1": "one secure/tag/edge seed augments identity without authority transfer",
+        "SG_N": "multiple identity/security/state seeds with explicit root/sync graph"
+      },
+      "engineering_model_route": "hash/config/source invariants + state machine; crypto assurance only from real crypto mechanism",
+      "verification": "readability; hash/config; provenance; transition audit",
+      "fail_closed": "ambiguous identity/hash mismatch; passive marker called crypto-secure; identity treated as execution/certification authority"
+    },
+    {
+      "primitive_basis_class": "CHEMICAL_ELECTROCHEMICAL",
+      "schematic_2d_intent": "reaction/ion/species/electrode/electrolyte path",
+      "geometry_3d": "porous electrode; electrolyte; membrane; reaction surface; microreactor; exchange boundary",
+      "state_history_4d": "species,potential,current,T,pH/chemistry,P,degradation/history",
+      "seed_routes": {
+        "SG_0": "only after materials/emissions/reaction controls qualified",
+        "SG_1": "one cartridge/cell/catalyst/sensor seed + printed containment/flow/electrical",
+        "SG_N": "multiple cells/reactors/seeds with species,thermal,electrical,propagation edges"
+      },
+      "engineering_model_route": "mass/charge conservation + Fick/Nernst/Butler-Volmer only in valid regimes; empirical kinetics where required",
+      "verification": "composition; impedance/I-V; species/flow; T; containment/emissions",
+      "fail_closed": "unknown products/compatibility; reactive execution ungated; behavior inferred from generic carbon/metal geometry"
+    }
+  ],
+  "global_invariants": [
+    "X→Y process compatibility is directional; X→Y never implies Y→X.",
+    "A cavity/void may shape fields, flow, thermal resistance, compliance or access but is not an energy source.",
+    "Geometry only couples/stores/dissipates energy through a present physical mechanism.",
+    "Seed certification/rating never transfers to printed surroundings.",
+    "Unsupported pair/hyperedge coupling remains OPEN/HOLD and cannot be filled by AI consensus.",
+    "Consequential source/geometry/material/process/calibration/seed/environment changes route through UTP-148 before dependent results are reused.",
+    "Dense P10 integration cannot bypass required P0-P9 child/interface evidence.",
+    "Recovered/local material remains a candidate until identity, cleaning, characterization, process compatibility and coupon evidence pass."
+  ],
+  "proof_binding": {
+    "digital": "20/20 primitive coverage + SG-0/1/N + 2D/3D/4D fields + capacitance ladder + fail-closed lookup.",
+    "physical": "P0-P10 remains the physical owner; first witnesses remain P0 identity, P1 conductor, P2 separate R/C/L, then P3 resonator/field.",
+    "maturity": "UTP-148 advances only proven axes and invalidates dependent results on changed evidence.",
+    "no_promotion": "Digital composition cannot advance physical evidence beyond BUILD_READY."
+  }
+}

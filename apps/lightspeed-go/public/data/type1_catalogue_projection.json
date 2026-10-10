@@ -1,5 +1,5 @@
 {
-  "schema": "CGX-TYPE1-CATALOGUE-PROJECTION/0.7",
+  "schema": "CGX-TYPE1-CATALOGUE-PROJECTION/0.8",
   "generated_from": "Drive-owned Type 1 Romer Cognigrex + merged LightSpeed typed mirrors",
   "source_owner": {
     "spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
@@ -17,7 +17,11 @@
     "topology_generic_fallback": 9,
     "quantitative_invariants": 7,
     "smart_stack_regions": 12,
-    "compound_decomposition_templates": 9
+    "compound_decomposition_templates": 9,
+    "functional_voxel_regions": 17,
+    "seed_graph_classes": 3,
+    "field_coupling_classes": 10,
+    "spatial_operator_classes": 10
   },
   "surfaces": [
     {
@@ -74,6 +78,26 @@
       "id": "COMPOUND-DECOMP",
       "name": "Compound Parent Decomposition",
       "role": "9 child-role grammars for implementation-dependent RF/PCB parents while parent topology remains VGK-036"
+    },
+    {
+      "id": "36",
+      "name": "Type-I Interface Operator Kernel",
+      "role": "directional cross-region boundary operators and conservation/jump constraints"
+    },
+    {
+      "id": "37",
+      "name": "Type-I Witness / Evidence Kernel",
+      "role": "raw observation?calibrated measured evidence + uncertainty/DBR bridge"
+    },
+    {
+      "id": "38",
+      "name": "Type-I Functional Voxel Field Basis",
+      "role": "17 reusable 3D functional regions spanning all 20 primitive kernels"
+    },
+    {
+      "id": "39",
+      "name": "Type-I Seed / Field Smart-Stack Matrix",
+      "role": "SG-0/SG-1/SG-N seed topology + 10 field-coupling families + 10 spatial operators"
     }
   ],
   "contracts": [
@@ -87,15 +111,20 @@
     "UTP-137 volumetric geometry / coupled-state kernel",
     "UTP-138 printable 4D component / stack packet",
     "UTP-140 printable topology coverage closure",
-    "UTP-139 quantitative invariants / dense smart-stack reference"
+    "UTP-139 quantitative invariants / dense smart-stack reference",
+    "UTP-141 interface operator kernel",
+    "UTP-142 witness/evidence kernel",
+    "UTP-143 functional voxel / field inference basis",
+    "UTP-144 seed / field / 3D smart-stack matrix",
+    "UTP-145 P2 SG-0 passive R/C/L witness packet"
   ],
   "inference_example": {
-    "label": "Ideal parallel-plate baseline",
-    "equation": "C≈ε₀εᵣA/d",
-    "inputs": "UTP-106 PMU-CAND-005A Kapton HN: εr≈3.4 @ 1 kHz; d=50 µm",
-    "result": "C/A≈0.6020848 pF/mm² ≈60.2085 pF/cm²",
-    "evidence": "engineering inference only; source/material/process/measurement corrections required",
-    "instance_override": "CGXI-P2-C-001 Kapton HN 25 µm candidate: ideal C/A≈1.2041695 pF/mm² before measured/process corrections"
+    "label": "25 um HN ideal parallel-plate witness baseline",
+    "equation": "C?????A/d",
+    "inputs": "CGXI-P2-C-001 candidate: Kapton HN ?r?3.4 @ 1 kHz; d=25 ?m; overlap=10?10 mm",
+    "result": "C/A?1.2041695 pF/mm?; ideal C?120.4169543 pF for 100 mm?",
+    "evidence": "source property + engineering inference only; exact lot/process/fringe/loss/fixture corrections and WIT-002 measurement required",
+    "instance_override": "No voltage/breakdown/leakage/lifetime/certification inferred."
   },
-  "boundary": "Read-only derived projection. The canonical 411-archetype matrix is factored into 20 equation kernels, 40 volumetric kernels, 411 UTP-138 printable templates, seven UTP-139 invariants, a 12-region smart-stack reference and nine UTP-138 compound-parent decomposition grammars. The decomposition layer does not force the nine parent topologies out of VGK-036; exact child selection, values, lots, geometry, BUILD_READY, physical readiness, certification, authority and release remain separately gated."
+  "boundary": "Read-only derived projection. The canonical 411-archetype matrix is factored through 20 primitive kernels, 40 volumetric kernels, 16 interface operators, witness/evidence bindings, 17 functional voxel regions, three seed-graph classes, ten field-coupling families, ten spatial operators and the UTP-138 printable-stack compiler. A 2D schematic is connectivity intent; 3D as-built geometry governs parasitic/mutual coupling. Exact lots, machine/process state, measured witnesses, BUILD_READY, physical readiness, certification, authority and release remain separately gated. P2 execution now additionally requires UTP-145 WIT-007 lot/passport, WIT-008 machine/calibration, WIT-006 geometry and WIT-009 process-history gates before WIT-001/002/003 measurement."
 }

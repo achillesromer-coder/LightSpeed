@@ -74,6 +74,18 @@ export type ObjectReviewCatalogue = {
     symbolic_system_lineage_plates?: number;
     physical_tests_complete: number;
   };
+  maturity_projection?: {
+    artifact_id: string;
+    status: string;
+    physical_state: string;
+    maturity_axes: string[];
+    contradiction_states: string[];
+    invalidation_triggers: string[];
+    numeric_routes: string[];
+    next_witness_ladder: string[];
+    proof_fixture_count: number;
+    authority_boundary: string;
+  };
   tiers: Array<{ id: string; label: string; description: string }>;
   micro_review_objects: ReviewObject[];
   macro_review_objects: ReviewObject[];
@@ -172,6 +184,7 @@ export const renderObjectReview = (manifest: ObjectReviewCatalogue, atlas: Compo
     <div class="cgx-lens-tabs object-review-tabs" role="tablist" aria-label="Object review catalogue">
       <button class="active" type="button" data-object-review-tab="gallery">Review plates</button>
       <button type="button" data-object-review-tab="catalogue">411 component catalogue</button>
+      <button type="button" data-object-review-tab="maturity">Maturity / ingest</button>
       <button type="button" data-object-review-tab="frontier">Current frontier</button>
     </div>
 
@@ -188,6 +201,27 @@ export const renderObjectReview = (manifest: ObjectReviewCatalogue, atlas: Compo
     <section data-object-review-panel="catalogue" hidden>
       <div class="boundary"><strong>${esc(atlas.schema)}</strong><span>Canonical component atlas exposed as a read-only LS GO projection. Printable-4D packet, topology and invariant semantics remain in the adjacent CGX lens rather than being duplicated here.</span></div>
       ${atlasTable(atlas)}
+    </section>
+
+    <section data-object-review-panel="maturity" hidden>
+      ${manifest.maturity_projection ? `
+        <div class="panel-head"><div><p class="eyebrow">${esc(manifest.maturity_projection.artifact_id)}</p><h3>Evidence maturation / ingest projection</h3></div><span class="badge">${esc(manifest.maturity_projection.physical_state)}</span></div>
+        <p class="muted">${esc(manifest.maturity_projection.status)}</p>
+        <div class="graph-summary">
+          ${metric(manifest.maturity_projection.maturity_axes.length, "independent maturity axes")}
+          ${metric(manifest.maturity_projection.contradiction_states.length, "contradiction states")}
+          ${metric(manifest.maturity_projection.invalidation_triggers.length, "invalidation triggers")}
+          ${metric(manifest.maturity_projection.proof_fixture_count, "bounded proof fixtures")}
+        </div>
+        <div class="boundary"><strong>Numeric routing</strong><span>${esc(manifest.maturity_projection.numeric_routes.join(" · "))}</span></div>
+        <div class="stack-list">
+          <article class="task-card"><div><strong>Maturity vector</strong><small>${esc(manifest.maturity_projection.maturity_axes.join(" → "))}</small></div></article>
+          <article class="task-card"><div><strong>Contradiction states</strong><small>${esc(manifest.maturity_projection.contradiction_states.join(" · "))}</small></div></article>
+          <article class="task-card"><div><strong>Invalidation triggers</strong><small>${esc(manifest.maturity_projection.invalidation_triggers.join(" · "))}</small></div></article>
+          <article class="task-card"><div><strong>Next witness ladder</strong><small>${esc(manifest.maturity_projection.next_witness_ladder.join(" → "))}</small></div></article>
+        </div>
+        <div class="boundary"><strong>Authority boundary</strong><span>${esc(manifest.maturity_projection.authority_boundary)}</span></div>
+      ` : `<div class="boundary"><strong>Maturity projection</strong><span>Not present in this generated review packet.</span></div>`}
     </section>
 
     <section data-object-review-panel="frontier" hidden>

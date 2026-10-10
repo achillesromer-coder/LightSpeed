@@ -1,0 +1,51 @@
+{
+  "schema": "CGX-UNIVERSAL-STACK-NORMAL-FORM-CONTRACT/0.1",
+  "artifact_id": "UTP-147",
+  "build_id": "BUILD-080",
+  "title": "Universal Type-I Stack Normal Form",
+  "status": "DIGITAL_COMPILER_CONTRACT / PHYSICAL_NOT_RUN",
+  "purpose": "Normalize any bounded printable/hybrid Type-I stack into one deterministic evidence-bearing packet without replacing child recipes or collapsing distinct physical regimes.",
+  "owner": {
+    "spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "owner_sheet": "41_CGX_Type1_Universal_Stack_Normal_Form_v0_1",
+    "parent_artifacts": [
+      "UTP-124",
+      "UTP-138",
+      "UTP-139",
+      "UTP-143",
+      "UTP-144",
+      "UTP-145",
+      "UTP-146"
+    ]
+  },
+  "canonical_sections": [
+    "intent",
+    "children_and_regions",
+    "reference_nodes",
+    "seed_graph",
+    "sources_and_receivers",
+    "field_transport",
+    "interlayer_edges",
+    "self_mutual_coupling",
+    "energy_passivity",
+    "process_sequence",
+    "preservation_revision",
+    "witness_evidence",
+    "authority"
+  ],
+  "rules": [
+    "2D intent is logical connectivity/function, not as-built geometry.",
+    "3D region/interface geometry controls actual adjacency, parasitics, mutual coupling, transport paths and seed boundaries.",
+    "4D state stores only consequential time/history/environment/configuration variables.",
+    "SG-0 requires zero discrete seed references; SG-1 exactly one; SG-N at least two.",
+    "Field/transport regimes are explicitly declared from UTP-146 and are never silently merged into a universal equation.",
+    "Self/mutual coupling slots remain OPEN_SYMBOLIC, SYMBOLIC, SOLVED, MEASURED or HOLD; absent data are never treated as zero.",
+    "Passive SG-0 cannot exhibit net active gain beyond attributable external input plus released stored energy within uncertainty.",
+    "Process ordering reuses child recipes and may not cross child/interface/preservation/safety/evidence gates.",
+    "Any consequential geometry/material/process/boundary/seed revision invalidates dependent numeric coupling state.",
+    "Normalization creates no physical execution, certification, release, public, carrier-promotion or high-consequence authority.",
+    "Every consequential X->Y interlayer transfer is a typed directional edge with exact regime, damage gate, preservation action, witness, evidence state and authority; Y->X is separate.",
+    "SOLVED or MEASURED coupling is invalid without attributable model_or_measurement_ref, matrix_or_result_ref and validity_ref."
+  ],
+  "physical_execution": false
+}
