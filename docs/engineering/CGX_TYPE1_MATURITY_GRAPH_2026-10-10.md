@@ -1,4 +1,4 @@
-# CGX Type-I Evidence Maturity Graph — UTP-146
+# CGX Type-I Evidence Maturity Graph — UTP-148
 
 ## Purpose
 
@@ -12,7 +12,7 @@ The existing instance contract already defines the authoritative sequence:
 
 `UNBOUND → SOURCE_BOUND → GEOMETRY_BOUND → MATERIAL_BOUND → PROCESS_BOUND → TEST_DEFINED → BUILD_READY → BUILT → MEASURED → REVIEWED_PROMOTION`.
 
-UTP-146 maps those states to M0–M9 for projection and analysis only. It does not replace the source contract.
+UTP-148 maps those states to M0–M9 for projection and analysis only. It does not replace the source contract.
 
 The maturity vector is:
 
@@ -78,6 +78,6 @@ The rule is not “most components passed.” Every critical node, coupling edge
 
 ## Immediate engineering effect
 
-UTP-146 converts the current corpus from a large engineering catalogue into a **living evidence graph** that can accept future measured evidence without confusing source facts, inference, simulation, render quality, physical tests, certification or release authority.
+UTP-148 converts the current corpus from a large engineering catalogue into a **living evidence graph** that can accept future measured evidence without confusing source facts, inference, simulation, render quality, physical tests, certification or release authority.
 
 The next physical evidence remains P0–P3: identity/provenance, conductor/interconnect, separate R/C/L witnesses, then resonator/loop behavior derived only from measured P2 values.
