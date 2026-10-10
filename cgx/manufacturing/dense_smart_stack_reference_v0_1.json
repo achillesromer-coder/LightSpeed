@@ -1,0 +1,188 @@
+{
+  "schema": "CGX-DENSE-SMART-STACK-REFERENCE/0.1",
+  "artifact_id": "UTP-139",
+  "cgx_uri": "cgx://manufacturing/smart-stack/type1-dense-reference-v0.1",
+  "status": "REFERENCE_GRAMMAR / DIGITAL_ONLY / PHYSICAL_NOT_RUN",
+  "purpose": "Demonstrate one dense volumetric 4D object grammar by composing existing UTP-138 packet roles and UTP-137 topology kernels without creating duplicate component recipes or asserting a single mandatory physical layout.",
+  "regions": [
+    {
+      "id": "REG-STRUCT",
+      "role": "structure/substrate",
+      "topology_refs": [
+        "VGK-018"
+      ],
+      "required": [
+        "mechanical datum",
+        "process-compatible substrate"
+      ],
+      "state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-REF",
+      "role": "reference/ground/conductor network",
+      "topology_refs": [
+        "VGK-001",
+        "VGK-002"
+      ],
+      "required": [
+        "exact conductor state",
+        "return/reference geometry"
+      ],
+      "state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-R",
+      "role": "resistive/heater zone",
+      "topology_refs": [
+        "VGK-035"
+      ],
+      "required": [
+        "Rs/TCR/process state",
+        "geometry"
+      ],
+      "state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-C",
+      "role": "dielectric/capacitive zone",
+      "topology_refs": [
+        "VGK-003",
+        "VGK-007",
+        "VGK-040"
+      ],
+      "required": [
+        "epsilon/state",
+        "electrode geometry",
+        "interfaces"
+      ],
+      "state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-LRF",
+      "role": "inductive/RF zone",
+      "topology_refs": [
+        "VGK-010",
+        "VGK-011",
+        "VGK-012",
+        "VGK-037"
+      ],
+      "required": [
+        "exact topology/band/material/ports"
+      ],
+      "state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-SENSE",
+      "role": "sensor/metrology zone",
+      "topology_refs": [
+        "VGK-026"
+      ],
+      "required": [
+        "transfer function",
+        "calibration/readback"
+      ],
+      "state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-SEED",
+      "role": "active/logic/emitter seed zone",
+      "topology_refs": [
+        "VGK-034"
+      ],
+      "required": [
+        "exact seed device/package",
+        "PDN/I-O/thermal/assembly limits"
+      ],
+      "state": "INSERT_SEED"
+    },
+    {
+      "id": "REG-THERM",
+      "role": "thermal spreading/break zone",
+      "topology_refs": [
+        "VGK-013",
+        "VGK-015"
+      ],
+      "required": [
+        "k/rho/cp/interfaces/boundaries"
+      ],
+      "state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-BARRIER",
+      "role": "chemical/hermetic/barrier zone",
+      "topology_refs": [
+        "VGK-025"
+      ],
+      "required": [
+        "barrier/seal/material/environment evidence"
+      ],
+      "state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-SERVICE",
+      "role": "service/replaceability corridor",
+      "topology_refs": [
+        "VGK-029"
+      ],
+      "required": [
+        "tool/removal envelope",
+        "clearance/tolerance"
+      ],
+      "state": "SYMBOLIC"
+    },
+    {
+      "id": "REG-SAFE",
+      "role": "safe-state/fault-containment zone",
+      "topology_refs": [
+        "VGK-031"
+      ],
+      "required": [
+        "hazard-specific architecture/source/standard evidence"
+      ],
+      "state": "HOLD"
+    },
+    {
+      "id": "REG-ID",
+      "role": ".cgx identity/readback zone",
+      "topology_refs": [
+        "VGK-030"
+      ],
+      "required": [
+        "identity source/hash",
+        "reader/readback route"
+      ],
+      "state": "SYMBOLIC"
+    }
+  ],
+  "assembly": {
+    "coupled_kernel": "VGK-036",
+    "ordering_rule": "Use UTP-117 X→Y directionality and UTP-138 child packet process DAGs. Add only interfaces, dependencies, preservation steps and declared couplings at stack level.",
+    "coupling_rule": "No implicit coupling. Each cross-domain edge must reference an attributable interface and valid child-domain kernel.",
+    "optimization_objective": "Minimize compatible tool/environment transitions and inaccessible service states without crossing child damage, safety, evidence or authority gates.",
+    "physical_execution": false
+  },
+  "four_d_state": {
+    "state_vector": [
+      "electrical/EM",
+      "thermal",
+      "mechanical",
+      "fluid if present",
+      "optical if present",
+      "chemical if present",
+      "control/configuration",
+      "history/aging"
+    ],
+    "rule": "Store only consequential states for each region. A missing domain is omitted rather than zero-filled as fictitious physics.",
+    "update": "Any geometry/material/process revision invalidates dependent numeric matrices and triggers selective recompile/readback."
+  },
+  "invariant_refs": [
+    "INV-CAP-DENSITY-001",
+    "INV-SHEET-R-001",
+    "INV-R-SQUARES-001",
+    "INV-RL-001",
+    "INV-AXIS-FORCE-001",
+    "INV-UNC-RSS-001",
+    "INV-RETENTION-001"
+  ],
+  "authority_boundary": "This is a reusable volumetric grammar, not a device design, certified stack, fixed spatial layout or permission to manufacture. Exact instances/lots/geometry/process/tool/calibration/test evidence govern any realized stack."
+}

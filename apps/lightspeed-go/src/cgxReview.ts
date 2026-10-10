@@ -24,6 +24,17 @@ export type CgxReviewProjection = {
   }>;
   kernels: Array<{ kernel_id: string; primitive: string; model: string; gate: string }>;
   volumetric_kernels: Array<{ kernel_id: string; primitive: string; topology: string; token: string; gate: string }>;
+  topology_coverage: {
+    artifact_id: string;
+    queue_id: string;
+    baseline_generic_only: number;
+    first_pass_generic_only: number;
+    final_generic_only: number;
+    specific_or_multi: number;
+    total_archetypes: number;
+    residual: string[];
+    rule: string;
+  };
   printable_4d: {
     artifact_id: string;
     state: string;
@@ -36,6 +47,27 @@ export type CgxReviewProjection = {
     print_paths: Array<{ id: string; role: string }>;
     exact_examples: Array<{ instance_id: string; state: string; topology: string; next_gate: string }>;
     invariants: string[];
+    compound_decomposition: {
+      schema: string;
+      count: number;
+      state: string;
+      parents: string[];
+      rule: string;
+    };
+  };
+  quantitative_invariants: {
+    artifact_id: string;
+    state: string;
+    records: Array<{ id: string; role: string; equation: string; example: string; gate: string }>;
+    rule: string;
+  };
+  dense_smart_stack: {
+    artifact_id: string;
+    cgx_uri: string;
+    state: string;
+    coupled_kernel: string;
+    regions: Array<{ id: string; role: string; kernels: string; state: string }>;
+    rule: string;
   };
   pipeline: Array<{ id: string; label: string; contract: string; state: string }>;
   showcase: {
@@ -67,6 +99,9 @@ const renderOverview = (p: CgxReviewProjection): string => `
       ${metric(p.metrics.equation_kernels, "equation kernels")}
       ${metric(p.metrics.volumetric_kernels, "volumetric kernels")}
       ${metric(p.metrics.printable_4d_templates, "printable 4D templates")}
+      ${metric(p.metrics.quantitative_invariants, "quantitative invariants")}
+      ${metric(p.metrics.smart_stack_regions, "smart-stack regions")}
+      ${metric(p.metrics.compound_decomposition_templates, "compound decompositions")}
       ${metric(p.metrics.initial_instances, "proof instances")}
       ${metric(p.metrics.requirement_targets_open, "open target gates")}
       ${metric(p.metrics.physical_tests_run, "physical tests complete")}
@@ -112,6 +147,13 @@ const renderKernels = (p: CgxReviewProjection): string => `
 
 const renderVolumetricKernels = (p: CgxReviewProjection): string => `
   <section class="cgx-lens-panel" data-cgx-lens-panel="volumetric" hidden>
+    <div class="graph-summary">
+      ${metric(p.metrics.volumetric_kernels, "volumetric kernels")}
+      ${metric(p.topology_coverage.specific_or_multi, "specific / explicit multi-kernel archetypes")}
+      ${metric(p.topology_coverage.final_generic_only, "intentional generic-coupled archetypes")}
+      ${metric(`${p.topology_coverage.baseline_generic_only} → ${p.topology_coverage.final_generic_only}`, "generic fallback refinement")}
+    </div>
+    <div class="boundary"><strong>UTP-140 coverage closure</strong><span>${esc(p.topology_coverage.rule)} Residual: ${p.topology_coverage.residual.map(esc).join(" · ")}</span></div>
     <div class="table-scroll">
       <table class="graph-table">
         <thead><tr><th>Kernel</th><th>Primitive</th><th>Topology / geometry</th><th>Compiler token</th><th>Numeric gate</th></tr></thead>
@@ -150,6 +192,41 @@ const renderPrintable4d = (p: CgxReviewProjection): string => `
       </div>
     </div>
     <div class="boundary"><strong>Compiler invariants</strong><span>${p.printable_4d.invariants.map(esc).join(" · ")}</span></div>
+    <div class="boundary"><strong>${String(p.printable_4d.compound_decomposition.count)} compound-parent grammars</strong><span>${esc(p.printable_4d.compound_decomposition.state)} · ${p.printable_4d.compound_decomposition.parents.map(esc).join(" · ")}</span></div>
+    <p class="muted">${esc(p.printable_4d.compound_decomposition.rule)}</p>
+  </section>`;
+
+const renderSmartStack = (p: CgxReviewProjection): string => `
+  <section class="cgx-lens-panel" data-cgx-lens-panel="smartstack" hidden>
+    <div class="panel-head">
+      <div><p class="eyebrow">UTP-139 · BUILD-071</p><h3>Quantitative invariants + dense 4D smart stack</h3></div>
+      <span class="badge">${esc(p.quantitative_invariants.state)}</span>
+    </div>
+    <div class="graph-summary">
+      ${metric(p.metrics.quantitative_invariants, "reusable invariants")}
+      ${metric(p.metrics.smart_stack_regions, "smart-stack regions")}
+      ${metric(p.dense_smart_stack.coupled_kernel, "coupled assembly kernel")}
+      ${metric("NUMERIC_IF", "evidence/regime conditional")}
+    </div>
+    <div class="table-scroll">
+      <table class="graph-table">
+        <thead><tr><th>Invariant</th><th>Role</th><th>Equation</th><th>Current bounded example</th><th>Gate</th></tr></thead>
+        <tbody>
+          ${p.quantitative_invariants.records.map((item) => `<tr><td><strong>${esc(item.id)}</strong></td><td>${esc(item.role)}</td><td><small class="cgx-uri">${esc(item.equation)}</small></td><td>${esc(item.example)}</td><td>${esc(item.gate)}</td></tr>`).join("")}
+        </tbody>
+      </table>
+    </div>
+    <div class="boundary"><strong>Invariant rule</strong><span>${esc(p.quantitative_invariants.rule)}</span></div>
+    <p class="muted"><strong>Smart-stack:</strong> <span class="cgx-uri">${esc(p.dense_smart_stack.cgx_uri)}</span> · ${esc(p.dense_smart_stack.state)}</p>
+    <div class="table-scroll">
+      <table class="graph-table">
+        <thead><tr><th>Region</th><th>Functional role</th><th>Topology kernels</th><th>State</th></tr></thead>
+        <tbody>
+          ${p.dense_smart_stack.regions.map((item) => `<tr><td><strong>${esc(item.id)}</strong></td><td>${esc(item.role)}</td><td><small class="cgx-uri">${esc(item.kernels)}</small></td><td><span class="badge">${esc(item.state)}</span></td></tr>`).join("")}
+        </tbody>
+      </table>
+    </div>
+    <div class="boundary"><strong>Stack rule</strong><span>${esc(p.dense_smart_stack.rule)}</span></div>
   </section>`;
 
 const renderShowcase = (p: CgxReviewProjection): string => `
@@ -179,6 +256,7 @@ export const renderCgxReviewProjection = (p: CgxReviewProjection): string => `
       <button type="button" data-cgx-lens="kernels">Equation kernels</button>
       <button type="button" data-cgx-lens="volumetric">Volumetric kernels</button>
       <button type="button" data-cgx-lens="printable">Printable 4D</button>
+      <button type="button" data-cgx-lens="smartstack">Invariants + Smart Stack</button>
       <button type="button" data-cgx-lens="showcase">Showcase-safe</button>
     </div>
     ${renderOverview(p)}
@@ -186,6 +264,7 @@ export const renderCgxReviewProjection = (p: CgxReviewProjection): string => `
     ${renderKernels(p)}
     ${renderVolumetricKernels(p)}
     ${renderPrintable4d(p)}
+    ${renderSmartStack(p)}
     ${renderShowcase(p)}
     <p class="muted">${esc(p.boundary)}</p>
   </article>`;

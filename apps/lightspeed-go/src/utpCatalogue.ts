@@ -2,7 +2,7 @@ export type Type1CatalogueProjection = {
   schema: string;
   generated_from: string;
   source_owner: { spreadsheet_id: string; authority: string };
-  metrics: { archetypes: number; universal_matrix_fields: number; directional_4d_fields: number; quantitative_factorization_fields: number; primitive_basis_classes: number; equation_kernel_records: number; volumetric_topology_kernels: number; printable_4d_templates: number };
+  metrics: { archetypes: number; universal_matrix_fields: number; directional_4d_fields: number; quantitative_factorization_fields: number; primitive_basis_classes: number; equation_kernel_records: number; volumetric_topology_kernels: number; topology_generic_fallback: number; printable_4d_templates: number; quantitative_invariants: number; smart_stack_regions: number; compound_decomposition_templates: number };
   surfaces: Array<{ id: string; name: string; role: string }>;
   contracts: string[];
   inference_example: { label: string; equation: string; inputs: string; result: string; evidence: string };
@@ -29,8 +29,12 @@ export const renderType1CatalogueProjection = (p: Type1CatalogueProjection): str
       <div><strong>${p.metrics.quantitative_factorization_fields}</strong><span>quantitative compiler fields</span></div>
       <div><strong>${p.metrics.primitive_basis_classes}</strong><span>primitive basis classes</span></div>\n      <div><strong>${p.metrics.equation_kernel_records}</strong><span>equation / constitutive kernels</span></div>
       <div><strong>${p.metrics.volumetric_topology_kernels}</strong><span>volumetric topology kernels</span></div>
+      <div><strong>${p.metrics.topology_generic_fallback}</strong><span>intentional generic-coupled archetypes</span></div>
       <div><strong>${p.metrics.printable_4d_templates}</strong><span>derived printable 4D templates</span></div>
-      <div><strong>UTP-124/125/138</strong><span>stack + manufacturing + print-packet compiler</span></div>
+      <div><strong>${p.metrics.quantitative_invariants}</strong><span>quantitative invariants</span></div>
+      <div><strong>${p.metrics.smart_stack_regions}</strong><span>dense smart-stack regions</span></div>
+      <div><strong>${p.metrics.compound_decomposition_templates}</strong><span>compound-parent decomposition grammars</span></div>
+      <div><strong>UTP-124/125/138/139</strong><span>stack + manufacturing + print-packet compiler</span></div>
       <div><strong>READ ONLY</strong><span>owner matrix remains Drive</span></div>
     </div>
     <div class="table-scroll"><table class="graph-table"><thead><tr><th>Surface</th><th>Role</th></tr></thead><tbody>

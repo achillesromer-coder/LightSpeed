@@ -1,0 +1,105 @@
+{
+  "schema": "CGX-TYPE1-TOPOLOGY-COVERAGE-AUDIT/0.1",
+  "artifact_id": "UTP-140",
+  "queue_id": "BUILD-072",
+  "source_catalogue": "CGA / 411 archetypes",
+  "owner_kernel_sheet": "35_CGX_Type1_Volumetric_Kernel_v0_1",
+  "baseline": {
+    "volumetric_kernel_count": 36,
+    "vgk036_only_count": 143,
+    "vgk036_only_fraction": 0.34793187347931875,
+    "multi_topology_count": 64
+  },
+  "first_pass": {
+    "volumetric_kernel_count": 39,
+    "vgk036_only_count": 35,
+    "vgk036_only_fraction": 0.0851581508515815,
+    "note": "VGK-037 full-wave EM, VGK-038 acoustic/piezo and VGK-039 general 3D fluid plus family remapping; audit exposed standalone dielectric/insulation as one additional atomic gap."
+  },
+  "final": {
+    "volumetric_kernel_count": 40,
+    "vgk036_only_count": 9,
+    "vgk036_only_fraction": 0.021897810218978103,
+    "specific_or_multi_kernel_count": 402,
+    "residual_generic_only": [
+      {
+        "archetype_id": "CGA-RF-001",
+        "domain": "RF/Communications",
+        "name": "LC resonator",
+        "reason": "implementation-dependent multi-primitive network/stack; exact instance geometry and component decomposition must resolve child kernels"
+      },
+      {
+        "archetype_id": "CGA-RF-022",
+        "domain": "RF/Communications",
+        "name": "RC low-pass/high-pass filter",
+        "reason": "implementation-dependent multi-primitive network/stack; exact instance geometry and component decomposition must resolve child kernels"
+      },
+      {
+        "archetype_id": "CGA-RF-023",
+        "domain": "RF/Communications",
+        "name": "LC ladder filter",
+        "reason": "implementation-dependent multi-primitive network/stack; exact instance geometry and component decomposition must resolve child kernels"
+      },
+      {
+        "archetype_id": "CGA-RF-026",
+        "domain": "RF/Communications",
+        "name": "Diplexer/duplexer",
+        "reason": "implementation-dependent multi-primitive network/stack; exact instance geometry and component decomposition must resolve child kernels"
+      },
+      {
+        "archetype_id": "CGA-RF-029",
+        "domain": "RF/Communications",
+        "name": "Impedance matching network",
+        "reason": "implementation-dependent multi-primitive network/stack; exact instance geometry and component decomposition must resolve child kernels"
+      },
+      {
+        "archetype_id": "CGA-RF-043",
+        "domain": "RF/Communications",
+        "name": "Antenna tuner / matching unit",
+        "reason": "implementation-dependent multi-primitive network/stack; exact instance geometry and component decomposition must resolve child kernels"
+      },
+      {
+        "archetype_id": "CGA-I-021",
+        "domain": "Electrical/Packaging",
+        "name": "Rigid PCB stack",
+        "reason": "implementation-dependent multi-primitive network/stack; exact instance geometry and component decomposition must resolve child kernels"
+      },
+      {
+        "archetype_id": "CGA-I-022",
+        "domain": "Electrical/Packaging",
+        "name": "Flexible PCB stack",
+        "reason": "implementation-dependent multi-primitive network/stack; exact instance geometry and component decomposition must resolve child kernels"
+      },
+      {
+        "archetype_id": "CGA-I-023",
+        "domain": "Electrical/Packaging",
+        "name": "Rigid-flex transition",
+        "reason": "implementation-dependent multi-primitive network/stack; exact instance geometry and component decomposition must resolve child kernels"
+      }
+    ],
+    "rule": "Do not optimize residual generic fallback to zero. VGK-036 is the correct archetype-level representation when the component is genuinely an implementation-dependent multi-primitive network/stack."
+  },
+  "added_kernels": [
+    {
+      "kernel_id": "VGK-037",
+      "compiler_token": "VOL_RF_FULL_WAVE",
+      "role": "general full-wave radiating/scattering EM"
+    },
+    {
+      "kernel_id": "VGK-038",
+      "compiler_token": "VOL_ACOUSTIC_PIEZO",
+      "role": "piezoelectric/acoustic resonator and transducer"
+    },
+    {
+      "kernel_id": "VGK-039",
+      "compiler_token": "VOL_FLUID_GENERAL_3D",
+      "role": "general 3D fluid/CFD body"
+    },
+    {
+      "kernel_id": "VGK-040",
+      "compiler_token": "VOL_DIELECTRIC_ISOLATION",
+      "role": "standalone dielectric/electrical-insulation volume"
+    }
+  ],
+  "evidence_boundary": "Coverage refinement changes only digital topology model selection. It creates no exact dimensions, materials, lots, ratings, qualification, BUILD_READY, certification or physical execution."
+}

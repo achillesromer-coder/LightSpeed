@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from pathlib import Path
 from typing import Any
 
 from .compiler import compile_assembly, compile_component
@@ -10,6 +11,8 @@ from .compiler import compile_assembly, compile_component
 SCHEMA = "CGX-PRINTABLE-4D-COMPONENT/0.1"
 STACK_SCHEMA = "CGX-PRINTABLE-4D-STACK/0.1"
 CATALOGUE_SCHEMA = "CGX-PRINTABLE-4D-CATALOGUE/0.1"
+COMPOUND_SCHEMA = "CGX-PRINTABLE-COMPOUND-DECOMPOSITION/0.1"
+COMPOUND_TEMPLATE_PATH = Path(__file__).with_name("compound_parent_decomposition_templates_v0_1.json")
 
 BASE_SCOPE_KEYS = {
     "geometry",
@@ -89,6 +92,36 @@ def _binding_slots(instance: dict[str, Any] | None) -> list[dict[str, Any]]:
     return out
 
 
+
+def load_compound_parent_decompositions() -> dict[str, Any]:
+    doc = json.loads(COMPOUND_TEMPLATE_PATH.read_text(encoding="utf-8"))
+    if doc.get("schema") != COMPOUND_SCHEMA:
+        raise ValueError(f"compound-decomposition-schema-mismatch:{doc.get('schema')}")
+    return doc
+
+
+def resolve_compound_parent_decomposition(record: dict[str, Any]) -> dict[str, Any] | None:
+    doc = load_compound_parent_decompositions()
+    matches = [row for row in doc.get("templates", []) if row.get("parent_id") == record.get("ID")]
+    if not matches:
+        return None
+    if len(matches) != 1:
+        raise ValueError(f"compound-decomposition-ambiguous:{record.get('ID')}")
+    row = matches[0]
+    return {
+        "schema": doc["schema"],
+        "artifact_id": doc["artifact_id"],
+        "state": row["implementation_state"],
+        "parent_kernel": row["parent_kernel"],
+        "child_slots": row["child_slots"],
+        "selection_rule": row.get("selection_rule"),
+        "parent_interfaces": row["parent_interfaces"],
+        "verification": row["verification"],
+        "boundary": row["boundary"],
+        "recipe_bodies_duplicated": False,
+        "physical_execution": False,
+    }
+
 def compile_printable_component(
     record: dict[str, Any],
     *,
@@ -114,6 +147,7 @@ def compile_printable_component(
     topology = component_ir["volumetric_topology"]
     iid = instance.get("instance_id") if instance else None
     packet_id = _slug(iid or build_id or record["ID"])
+    compound_decomposition = resolve_compound_parent_decomposition(record)
 
     geometry_slots = [
         {
@@ -200,6 +234,7 @@ def compile_printable_component(
                 for row in topologies
             ],
         },
+        "compound_decomposition": compound_decomposition,
         "geometry": {
             "baseline": record.get("Baseline Geometry"),
             "parameter_slots": geometry_slots,
@@ -342,6 +377,8 @@ def compile_printable_catalogue(atlas: dict[str, Any]) -> dict[str, Any]:
                 "failure_modes": packet["verification"]["failure_modes"],
                 "evidence_state": packet["evidence"]["catalogue_state"],
                 "source_authority_class": packet["evidence"]["source_authority_class"],
+                "compound_decomposition_state": packet["compound_decomposition"]["state"] if packet["compound_decomposition"] else None,
+                "compound_child_roles": [slot["slot"] for slot in packet["compound_decomposition"]["child_slots"]] if packet["compound_decomposition"] else [],
                 "physical_execution": False,
             }
         )
@@ -351,6 +388,7 @@ def compile_printable_catalogue(atlas: dict[str, Any]) -> dict[str, Any]:
         "artifact_id": "UTP-138",
         "source_catalogue": "CGA / 27_CGX_Component_Geometry_Atlas_v0_1",
         "archetype_count": len(rows),
+        "compound_parent_decomposition_count": sum(1 for row in rows if row["compound_decomposition_state"]),
         "rule": "This is a derived projection over the canonical component atlas and shared compiler. It is not a second engineering/evidence catalogue.",
         "records": rows,
         "authority_boundary": "Catalogue-template compilation creates no exact instance, lot, geometry, calibration, physical execution or certification.",
