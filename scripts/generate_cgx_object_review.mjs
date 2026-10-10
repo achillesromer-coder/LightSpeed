@@ -12,6 +12,127 @@ const cataloguePath = path.join(publicDir, "data", "cgx_object_review_catalogue.
 fs.mkdirSync(outDir, { recursive: true });
 fs.mkdirSync(meshDir, { recursive: true });
 
+const bridgeMetadata = {
+  pc01_printceptor: {
+    id: "cgx:pc01_printceptor",
+    label: "PC01 / PrintCeptor",
+    role: "CGX manufacturing orchestrator / 17-family planning root",
+    level: "manufacturing_system",
+    tier: "T2",
+    source: "Drive:33_PC01_CGX_Operational_Matrix_v0_1 / PC01-MX-001,036",
+    geometry_state: "DIGITAL ROOT / UNBUILT TWIN UNTIL MACHINE GEOMETRY BINDS",
+    physical_state: "NOT_BUILT / REVIEW_ONLY",
+    status: "DEFINED / DIGITAL",
+    nodes: [
+      ["INTENT", "cgx:// object / recipe / build"],
+      ["PC01", "capability + safety + machine manifests"],
+      ["UTP-PF", "STRUCT · FUNC · FIBER · HYBRID · FEED · METRO"],
+      ["BUILD", "exact packet → review → execute"],
+      ["DBR", "readback / evidence / lineage"],
+    ],
+    edges: [[0,1],[1,2],[2,3],[3,4]],
+    callouts: [
+      "17 PrintCeptor family profiles are planning profiles, not certified SKUs.",
+      "Actual tool volume, calibration, feed, safety and machine limits remain dynamic evidence.",
+      "C0 interlocks remain independent of delegated planning or simulation.",
+    ],
+  },
+  mark_ii_staged: {
+    id: "cgx:mark_ii_staged",
+    label: "Mark II — staged / excluded",
+    role: "Lineage placeholder retained without active hardware promotion",
+    level: "lineage_gate",
+    tier: "T3",
+    source: "Mark 1P + Mark I twin owner sequence",
+    geometry_state: "NO CURRENT RELEASED GEOMETRY / DO NOT INVENT",
+    physical_state: "STAGED / EXCLUDED PENDING EVIDENCE",
+    status: "NOT IN ACTIVE BUILD SEQUENCE",
+    nodes: [
+      ["MARK 1P", "bench / promotional demonstrator"],
+      ["MARK I", "controlled terrestrial test chamber"],
+      ["MARK II", "STAGED / EXCLUDED"],
+      ["MARK III", "modular platform / current next engineering family"],
+    ],
+    edges: [[0,1],[1,3]],
+    blocked_edges: [[1,2],[2,3]],
+    callouts: [
+      "Current owner twins explicitly stage/exclude Mark II pending an evidence gap.",
+      "Active development sequence bypasses Mark II: Mark 1P → Mark I → Mark III.",
+      "This card preserves lineage only and creates no routing-machine claim.",
+    ],
+  },
+  mark_iv_future: {
+    id: "cgx:mark_iv_future",
+    label: "Mark IV — future successor only",
+    role: "Future Mark-family successor placeholder",
+    level: "lineage_gate",
+    tier: "T3",
+    source: "Römer comprehensive portfolio owner taxonomy",
+    geometry_state: "NO RELEASED GEOMETRY / FUTURE SUCCESSOR",
+    physical_state: "FUTURE / NOT_AS_BUILT",
+    status: "FUTURE SUCCESSOR ONLY",
+    nodes: [
+      ["MARK III", "current modular reference family"],
+      ["MARK IV", "future successor only"],
+      ["OWNER GATE", "requirements / geometry / evidence before promotion"],
+    ],
+    edges: [[0,1],[1,2]],
+    callouts: [
+      "Portfolio taxonomy explicitly classifies Mark IV as future successor only.",
+      "No hidden geometry, performance or manufacturing sequence is inferred.",
+      "A future source-controlled design may supersede this placeholder through normal CGX lineage.",
+    ],
+  },
+  luke_ii_geo_interface: {
+    id: "cgx:luke_ii_geo_interface",
+    label: "Luke II / geostationary interface",
+    role: "Orbital deceleration / tracking / custody-handoff reference",
+    level: "mission_subsystem",
+    tier: "T3",
+    source: "Drive:ROMER7E05_10_MagLev_Luke + Luke II canonical-execution handoff / PR #30",
+    geometry_state: "REPOSITORY-QUALIFIED DIGITAL REFERENCE / OWNER-CAD ACCEPTANCE OPEN",
+    physical_state: "NOT_FLIGHT_QUALIFIED / REVIEW_ONLY",
+    status: "DIGITAL REFERENCE / PR #30 DRAFT LINEAGE",
+    nodes: [
+      ["INCOMING", "payload state · trajectory · registry"],
+      ["LUKE II", "deceleration / tracking / orbital storage concept"],
+      ["CUSTODY", "controlled handoff / registry event"],
+      ["RETURN", "route to terrestrial Luke / InterSol chain"],
+    ],
+    edges: [[0,1],[1,2],[2,3]],
+    callouts: [
+      "Repository reference has automated geometry/serviceability evidence but remains draft/unreleased.",
+      "No flight, human-rating, pressure-vessel, payload-capture or deployment qualification is implied.",
+      "Treat treaty/orbital-traffic/safety review as independent external gates.",
+    ],
+  },
+  mission_1_program: {
+    id: "cgx:mission_1_program",
+    label: "Mission 1 — programme composition",
+    role: "Launch / deployment / trajectory / evidence and return-analysis spine",
+    level: "mission_program",
+    tier: "T3",
+    source: "Römer portfolio + Mark III Visualized handoff / Mission 1 analytical lane",
+    geometry_state: "PROGRAM / TWIN COMPOSITION — NO SINGLE RELEASED VEHICLE GEOMETRY",
+    physical_state: "MISSION ANALYTICAL LANE / NOT_DEPLOYED",
+    status: "OPEN ANALYTICAL + EVIDENCE GATES",
+    nodes: [
+      ["SOURCE", "target / launch / payload assumptions"],
+      ["MARK / ENERGY", "reviewed subsystem identities"],
+      ["LAUNCH", "deployment / trajectory scenario"],
+      ["MISSION", "operations / extraction or survey scenario"],
+      ["RETURN", "Luke / InterSol / evidence pathway"],
+      ["DBR", "cost · risk · measurement · provenance"],
+    ],
+    edges: [[0,1],[1,2],[2,3],[3,4],[4,5]],
+    callouts: [
+      "Mission 1 is a current programme/twin family; historical ROI assumptions conflict and remain unreconciled.",
+      "This plate does not assert a fixed unit count, payload mass, launch provider, target yield or return value.",
+      "Mission architecture freezes only after one assumptions register and source/evidence reconciliation.",
+    ],
+  },
+};
+
 const metadata = {
   embedded_bio_blocks: ["Embedded bio blocks", "Eco-Grex / multifunctional bio-block reference", "T2"],
   free_flow_batteries: ["Free Flow batteries", "Energy-storage architecture reference", "T2"],
@@ -119,6 +240,48 @@ const heroFaceData=(vertices,faces)=>{
   return {rv,rows};
 };
 
+const wrapText=(text,max=52)=>{
+  const words=String(text).split(/\s+/),out=[];let line="";
+  for(const word of words){const next=(line+" "+word).trim();if(next.length>max&&line){out.push(line);line=word;}else line=next;}
+  if(line)out.push(line);return out;
+};
+
+const renderBridgePlate=(stem,item)=>{
+  const w=3840,h=2160;
+  const accent=item.tier==="T4"?palette.gold:item.tier==="T3"?palette.green:palette.teal;
+  const n=item.nodes.length, left=360, right=3480, y=960, gap=n>1?(right-left)/(n-1):0;
+  const nodePositions=item.nodes.map((_,i)=>[left+i*gap,y]);
+  const blocked=new Set((item.blocked_edges||[]).map(([a,b])=>`${a}:${b}`));
+  let edges="";
+  for(const [a,b] of item.edges||[]){
+    const A=nodePositions[a],B=nodePositions[b];
+    edges+=`<path d="M${A[0]+155} ${A[1]} L${B[0]-155} ${B[1]}" stroke="${blocked.has(`${a}:${b}`)?palette.red:accent}" stroke-width="12" ${blocked.has(`${a}:${b}`)?'stroke-dasharray="30 24"':""} marker-end="url(#arrow)"/>`;
+  }
+  let blockedEdges="";
+  for(const [a,b] of item.blocked_edges||[]){
+    const A=nodePositions[a],B=nodePositions[b];
+    blockedEdges+=`<path d="M${A[0]+155} ${A[1]+90} L${B[0]-155} ${B[1]+90}" stroke="${palette.red}" stroke-width="9" stroke-dasharray="28 22"/>`;
+  }
+  const nodes=item.nodes.map(([title,sub],i)=>{
+    const [x,ny]=nodePositions[i], lines=wrapText(sub,22).slice(0,3);
+    const warn=/STAGED|EXCLUDED|FUTURE|OWNER GATE/.test(title);
+    return `<g transform="translate(${x-150} ${ny-120})"><rect width="300" height="240" rx="38" fill="${palette.panel}" stroke="${warn?palette.red:accent}" stroke-width="8"/><text x="150" y="72" text-anchor="middle" fill="${warn?palette.red:palette.text}" font-family="Segoe UI,Arial" font-size="30" font-weight="700">${esc(title)}</text>${lines.map((line,j)=>`<text x="150" y="${125+j*32}" text-anchor="middle" fill="${palette.muted}" font-family="Segoe UI,Arial" font-size="22">${esc(line)}</text>`).join("")}</g>`;
+  }).join("");
+  const callouts=item.callouts.map((c,i)=>`<g transform="translate(250 ${1410+i*150})"><circle cx="18" cy="-7" r="9" fill="${accent}"/><text x="48" y="0" fill="${palette.text}" font-family="Segoe UI,Arial" font-size="28">${wrapText(c,108).map((line,j)=>`<tspan x="48" dy="${j?36:0}">${esc(line)}</tspan>`).join("")}</text></g>`).join("");
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+  <defs><radialGradient id="bg" cx="55%" cy="42%" r="78%"><stop offset="0" stop-color="#173033"/><stop offset=".55" stop-color="#0c191b"/><stop offset="1" stop-color="#050a0b"/></radialGradient><marker id="arrow" markerWidth="14" markerHeight="14" refX="11" refY="5" orient="auto"><path d="M0 0L12 5L0 10z" fill="${accent}"/></marker><pattern id="grid" width="90" height="90" patternUnits="userSpaceOnUse"><path d="M90 0H0V90" fill="none" stroke="#294043" stroke-width="1" opacity=".2"/></pattern></defs>
+  <rect width="${w}" height="${h}" fill="url(#bg)"/><rect width="${w}" height="${h}" fill="url(#grid)"/>
+  <text x="180" y="160" fill="${palette.muted}" font-family="Segoe UI,Arial" font-size="27" font-weight="700" letter-spacing="5">RÖMER / COGNIGREX · CGX LINEAGE / SYSTEM REVIEW</text>
+  <text x="180" y="285" fill="${palette.text}" font-family="Segoe UI,Arial" font-size="82" font-weight="700">${esc(item.label)}</text>
+  <text x="183" y="355" fill="${palette.muted}" font-family="Segoe UI,Arial" font-size="31">${esc(item.role)}</text>
+  <g transform="translate(2800 112)"><rect width="860" height="104" rx="52" fill="${palette.panel}" stroke="${accent}" stroke-width="3"/><text x="430" y="65" text-anchor="middle" fill="${accent}" font-family="Segoe UI,Arial" font-size="24" font-weight="700">SYMBOLIC SYSTEM PLATE · REVIEW ONLY</text></g>
+  <rect x="180" y="470" width="3480" height="120" rx="28" fill="${palette.panel}" stroke="${palette.line}" stroke-width="3"/><text x="225" y="520" fill="${accent}" font-family="Segoe UI,Arial" font-size="24" font-weight="700">CURRENT STATE</text><text x="225" y="565" fill="${palette.text}" font-family="Segoe UI,Arial" font-size="28">${esc(item.status)} · ${esc(item.geometry_state)} · ${esc(item.physical_state)}</text>
+  ${edges}${blockedEdges}${nodes}
+  <line x1="180" y1="1290" x2="3660" y2="1290" stroke="${palette.line}" stroke-width="3"/>${callouts}
+  <text x="180" y="2070" fill="${palette.muted}" font-family="Segoe UI,Arial" font-size="22">SOURCE: ${esc(item.source)} · symbolic topology/lineage only; exact owner source, CAD, lots, tests and release gates control realization.</text>
+  </svg>`;
+};
+
 const renderHero=(stem,label,role,tier,vertices,faces,sourceHash)=>{
   const {rv,rows}=heroFaceData(vertices,faces);
   let minx=Infinity,maxx=-Infinity,miny=Infinity,maxy=-Infinity,minz=Infinity,maxz=-Infinity;
@@ -200,6 +363,11 @@ for(const [stem,[label,role,tier]] of Object.entries(metadata)){
     extents:bounds.extents,
   });
 }
+for(const [stem,item] of Object.entries(bridgeMetadata)){
+  const renderPath=path.join(outDir,stem+"_review.svg");
+  fs.writeFileSync(renderPath,renderBridgePlate(stem,item));
+}
+
 fs.writeFileSync(statsPath,JSON.stringify(stats,null,2)+"\n");
 
 if(fs.existsSync(cataloguePath)){
@@ -215,7 +383,18 @@ if(fs.existsSync(cataloguePath)){
     material_policy:"display shading only; never infer actual finish/material from visual treatment",
     composition:"single hero focal object, 6–8% safety margin, dark technical field, restrained teal/gold/green accents by tier",
   };
-  catalogue.coverage={...catalogue.coverage,source_mesh_interactive_views:stats.records.length,source_mesh_4k_hero_views:stats.records.length};
+  catalogue.coverage={...catalogue.coverage,source_mesh_interactive_views:stats.records.length,source_mesh_4k_hero_views:stats.records.length,symbolic_system_lineage_plates:Object.keys(bridgeMetadata).length};
+  catalogue.bridge_review_objects=Object.entries(bridgeMetadata).map(([stem,item])=>({
+    id:item.id,label:item.label,role:item.role,level:item.level,source:item.source,
+    render:"/review/renders/"+stem+"_review.svg",
+    geometry_state:item.geometry_state,physical_state:item.physical_state,
+    render_state:"CORPUS-GROUNDED SYMBOLIC SYSTEM / LINEAGE PLATE",
+    review_rules:[
+      "plate expresses source-backed system relationship, status and evidence boundary rather than hidden physical geometry",
+      "existing source-mesh assets remain the geometry review authority where available; this plate does not duplicate them",
+      "promotion requires the owning CGX/source/CAD/evidence lane to close its independent gates"
+    ]
+  }));
   const byId=new Map(stats.records.map((r)=>[r.id,r]));
   for(const item of catalogue.macro_review_objects||[]){
     const stem=String(item.source||"").split("/").at(-1)?.replace(/\.obj$/,"");
@@ -235,4 +414,4 @@ if(fs.existsSync(cataloguePath)){
   ];
   fs.writeFileSync(cataloguePath,JSON.stringify(catalogue,null,2)+"\n");
 }
-console.log(`Rendered ${stats.records.length} source meshes to 4K hero + engineering SVGs and interactive mesh payloads.`);
+console.log(`Rendered ${stats.records.length} source meshes plus ${Object.keys(bridgeMetadata).length} symbolic system/lineage plates.`);
