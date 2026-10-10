@@ -1,4 +1,4 @@
-import { bindMeshViewerTriggers, meshViewerButtonMarkup } from "./meshViewer";
+import { bindMeshViewerTriggers, meshViewerButtonMarkup } from "./meshViewer";\nimport { bindComponentPlateTriggers, componentPlateButtonMarkup } from "./componentVisualizer";
 
 export type ReviewObject = {
   id: string;
@@ -137,7 +137,7 @@ const atlasTable = (atlas: ComponentAtlas): string => `
           row.ID,row.Domain,row.Family,row["Component Archetype"],row["Current CGX Build Class"],
           row["Current Manufacturing Route"],row["Baseline Geometry"],row["Primary Physics"],row["4D Fields"],
         ].filter(Boolean).join(" ").toLowerCase())}">
-          <td><strong>${esc(row.ID)}</strong><small>${esc(row.Domain || "")}</small></td>
+          <td><strong>${esc(row.ID)}</strong><small>${esc(row.Domain || "")}</small>${componentPlateButtonMarkup(row.ID)}</td>
           <td>${esc(row["Component Archetype"] || "")}<small>${esc(row.Family || "")} · ${esc(row["Primary Function"] || "")}</small></td>
           <td><span class="badge">${esc(row["Current CGX Build Class"] || "")}</span><small>${esc(row["Current Manufacturing Route"] || "")}</small></td>
           <td>${esc(row["Baseline Geometry"] || "")}<small>${esc(row["Geometric Parameters"] || "")}</small></td>
