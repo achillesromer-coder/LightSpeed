@@ -3306,6 +3306,11 @@
       "sha256": "e798214e02eb2f79d546e26df0aefb89c89785b47b0c3a570355cbcfe0083375"
     },
     {
+      "bytes": 12961,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/ls_go_visitor_migration.py",
+      "sha256": "d370b41a1557e46975c5c1cbf18192e07b28ee33eda59b9325d848383b20ced3"
+    },
+    {
       "bytes": 11584,
       "path": "LightSpeed_Runtime/lightspeed_runtime/maintenance.py",
       "sha256": "1f6ef46c3c00f0b7f2079e411b77c20e2a38d6ae26c16ee869a2c921e38d20f0"
