@@ -6,10 +6,16 @@ const banner='<header><small>LIGHTSPEED GO / CGX</small><h1>External review</h1>
 const invite=new URLSearchParams(location.hash.slice(1)).get("invite");
 let lens:CgxLens="achilles",busy=false;
 function workspace(name:string){
- root.innerHTML=banner+`<div class="v-grid"><aside><h2>${escapeText(name)}</h2><p>Select a lens</p>${Object.entries(LENSES).map(([id,n])=>`<button data-lens="${id}">${escapeText(n)}</button>`).join("")}</aside>
+ root.innerHTML=banner+`<div class="v-grid"><aside><h2>${escapeText(name)}</h2><p>Select a lens</p><button id="v-logout" class="v-muted">End session</button>${Object.entries(LENSES).map(([id,n])=>`<button data-lens="${id}">${escapeText(n)}</button>`).join("")}</aside>
  <section><h2 id="v-lens">${escapeText(LENSES[lens])}</h2><div id="v-log" role="log">Ask about CGX, challenge a claim or request a source-backed 3D model.</div>
  <form id="v-talk"><textarea maxlength="2000" required aria-label="Your question"></textarea><select aria-label="Request type"><option value="question">Question</option><option value="model_request">3D model</option><option value="feedback">Feedback</option></select><button>Submit</button></form><p id="v-result" role="status"></p></section>
  <aside><h2>Source and evidence</h2><p>Concept → Source-backed → Simulated → Measured → Independently accepted → Publicly released.</p><p>Unadmitted models are not generated. Visitor requests cannot mutate sources or execute commands.</p></aside></div>`;
+ document.getElementById("v-logout")!.addEventListener("click",async()=>{
+   try{await visitorRequest("/api/v1/visitor/logout",{});}
+   finally{
+      setVisitorSession("");root.innerHTML=banner+"<main><h2>Signed out</h2><p>Review receipts remain available to the authorised owner. A fresh invitation is needed for a new session.</p></main>";
+   }
+ });
  document.querySelectorAll<HTMLButtonElement>("[data-lens]").forEach(b=>b.onclick=async()=>{
    lens=b.dataset.lens as CgxLens;document.getElementById("v-lens")!.textContent=LENSES[lens];
    try{await visitorRequest("/api/v1/visitor/interaction",{kind:"selection",lens,text:"Selected lens"});}
@@ -45,6 +51,7 @@ else{
     const r=await visitorRequest<{visitor_session:string;profile:{name:string;lens:CgxLens}}>("/api/v1/visitor/enroll",{
       ...fields,invite_token:invite,consent:fields.consent==="on"});
     setVisitorSession(r.visitor_session);lens=r.profile.lens;
+    document.body.dataset.vTheme=String(fields.theme||"orbit");
     history.replaceState(null,"",location.pathname);workspace(r.profile.name);
   }catch(err){document.getElementById("v-result")!.textContent=String(err);}
   finally{busy=false;}
