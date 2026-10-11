@@ -107,6 +107,26 @@ def test_reissue_retains_seat_and_revokes_prior_unused_invite(client):
     assert response.status_code == 403
 
 
+def test_linked_url_is_unverified_and_never_retrieved(client):
+    invite = client.post("/api/v1/visitor/invites", json={}, headers={"X-LightSpeed-Session": "OWNER"}).json()
+    account = client.post("/api/v1/visitor/enroll", json={
+        "invite_token": invite["invite_token"], "name":"A reviewer",
+        "theme":"orbit", "lens":"alexandria", "consent":True}).json()
+    head = {"X-LightSpeed-Visitor-Session": account["visitor_session"]}
+    for bad in ("http://example.org/profile","https://127.0.0.1/profile",
+                "https://internal.local/account", "https://example.org/profile?token=secret"):
+        response = client.post("/api/v1/visitor/interaction", json={
+            "kind":"linked_url", "lens":"alexandria", "provider":"github", "text":bad}, headers=head)
+        assert response.status_code == 400
+    accepted = client.post("/api/v1/visitor/interaction", json={
+        "kind":"linked_url", "lens":"alexandria", "provider":"github",
+        "text":"https://github.com/example"}, headers=head)
+    assert accepted.status_code == 200
+    assert accepted.json()["link_verification_state"] == "LINK_SUBMITTED_UNVERIFIED"
+    assert accepted.json()["answer"] is None
+    assert accepted.json()["model"] is None
+
+
 def test_missing_signing_key_fails_closed(monkeypatch):
     monkeypatch.setenv("LIGHTSPEED_VISITOR_REVIEW_ENABLED", "1")
     monkeypatch.delenv("LIGHTSPEED_VISITOR_RECEIPT_KEY", raising=False)
