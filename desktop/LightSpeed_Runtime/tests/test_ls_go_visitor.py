@@ -78,6 +78,35 @@ def test_bounded_four_seats_and_consent(client):
     assert client.get("/api/v1/visitor/me", headers=session).status_code == 401
 
 
+def test_privacy_withdrawal_revokes_session_and_records_request(client):
+    invitation = client.post("/api/v1/visitor/invites", json={}, headers={"X-LightSpeed-Session": "OWNER"}).json()
+    enrollment = client.post("/api/v1/visitor/enroll", json={
+        "invite_token": invitation["invite_token"], "name": "A reviewer",
+        "consent": True, "theme": "orbit", "lens": "alexandria",
+    }).json()
+    headers = {"X-LightSpeed-Visitor-Session": enrollment["visitor_session"]}
+    wrong = client.post("/api/v1/visitor/privacy-request", json={"action": "nothing"}, headers=headers)
+    assert wrong.status_code == 400
+    copy = client.post("/api/v1/visitor/privacy-request", json={"action": "export"}, headers=headers)
+    assert copy.status_code == 200
+    assert copy.json()["state"] == "OWNER_REVIEW_REQUIRED"
+    assert copy.json()["automated_deletion_performed"] is False
+    withdraw = client.post("/api/v1/visitor/privacy-request", json={"action": "withdraw_consent"}, headers=headers)
+    assert withdraw.status_code == 200
+    assert client.get("/api/v1/visitor/me", headers=headers).status_code == 401
+    review = client.get("/api/v1/visitor/owner-review", headers={"X-LightSpeed-Session": "OWNER"}).json()
+    assert review["chain_verified"] is True
+    assert any(event["event_type"] == "privacy_request" for event in review["events"])
+
+
+def test_reissue_retains_seat_and_revokes_prior_unused_invite(client):
+    original = client.post("/api/v1/visitor/invites", json={"reviewer_id":"RV-A"}, headers={"X-LightSpeed-Session":"OWNER"}).json()
+    newer = client.post("/api/v1/visitor/invites", json={"reviewer_id":"RV-A"}, headers={"X-LightSpeed-Session":"OWNER"}).json()
+    assert newer["reviewer_id"] == original["reviewer_id"]
+    response = client.post("/api/v1/visitor/enroll", json={"invite_token":original["invite_token"],"name":"A reviewer","theme":"orbit","lens":"neo","consent":True})
+    assert response.status_code == 403
+
+
 def test_missing_signing_key_fails_closed(monkeypatch):
     monkeypatch.setenv("LIGHTSPEED_VISITOR_REVIEW_ENABLED", "1")
     monkeypatch.delenv("LIGHTSPEED_VISITOR_RECEIPT_KEY", raising=False)
