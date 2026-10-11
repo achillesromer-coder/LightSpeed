@@ -382,3 +382,179 @@ def test_rolling_observer_bad_roots_and_phase_change_rejected() -> None:
         project_rolling_observer_window(
             **_OBSERVER_ARGS, samples=[], phase_slots=(0,) * 9
         )
+
+
+# N-node configuration is a facet of the existing node-exchange test suite.
+from hashlib import sha256
+
+from lightspeed_runtime.node_exchange import (
+    DATASPACE_PROFILE_FACET,
+    apply_dataspace_delta_candidate,
+    build_dataspace_delta_candidate,
+    validate_dataspace_profile,
+)
+
+
+def _dp_hash(value):
+    return sha256(json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode()).hexdigest()
+
+
+def _dp_fixture():
+    old = {"signal": 0, "drift": -1}
+    root = "d" * 64
+    profile = {
+        "schema_version": DATASPACE_PROFILE_FACET,
+        "object_id": "cgx:lab:test",
+        "geometry_root": root,
+        "semantic_root": root,
+        "model_root": root,
+        "state_root": _dp_hash(old),
+        "nodes": [
+            {"id": "a", "visibility": "public", "owner_ref": "research:A", "access_policy_ref": "scope:A"},
+            {"id": "b", "visibility": "private", "owner_ref": "research:B", "access_policy_ref": "scope:B"},
+            {"id": "c", "visibility": "restricted", "owner_ref": "research:C", "access_policy_ref": "scope:C"},
+        ],
+        "selection": {"include": ["a", "b"], "exclude": ["c"]},
+        "interfaces": [
+            {"id": "ab", "kind": "electromagnetic", "nodes": ["a", "b"], "model_ref": "model:ab"}
+        ],
+        "derivables": [
+            {"id": "signal", "inputs": ["ab"], "function_ref": "fn:signal", "unit": "trit"},
+            {"id": "drift", "inputs": ["ab"], "function_ref": "fn:drift", "unit": "trit"},
+        ],
+        "relationships": [
+            {"id": "r1", "kind": "OBSERVES", "source": "node:a", "target": "interface:ab", "evidence_ref": "evidence:a"},
+        ],
+        "semantic_lenses": [
+            {"id": "first", "derivable_id": "signal", "registered_view_ref": "lens:state"},
+            {"id": "second", "derivable_id": "drift", "registered_view_ref": "lens:transition"},
+        ],
+        "transports": [
+            {"id": "wired", "kind": "wired", "throughput_bps": 1000000,
+             "spectral_bandwidth_hz": 0, "observed_occupancy_fraction": 0.25,
+             "transmit_permission": "NOT_VERIFIED"},
+        ],
+        "cadence": {"window_ms": 60000, "sample_ms": 1000, "phase_ms": 5000},
+        "expected_counts": {"nodes": 3, "selected_nodes": 2, "interfaces": 1,
+                            "derivables": 2, "relationships": 1, "semantic_lenses": 2,
+                            "transports": 1},
+    }
+    return profile, old
+
+
+def test_dataspace_profile_selection_and_sparse_delta():
+    profile, old = _dp_fixture()
+    result = validate_dataspace_profile(profile)
+    assert result["count_summary"]["selected_nodes"] == 2
+    assert result["access_authority_verified"] is False
+    new = {"signal": 1, "drift": -1}
+    candidate = build_dataspace_delta_candidate(
+        profile=profile, prior_state=old, new_state=new, sequence=1, window_end_ms=60000
+    )
+    assert candidate["updates"] == [{"id": "signal", "state": 1}]
+    assert candidate["wire_ready"] is False
+    assert "nodes" not in candidate and "geometry" not in candidate
+    reconstructed = apply_dataspace_delta_candidate(
+        profile=profile, prior_state=old, candidate=candidate, expected_sequence=1
+    )
+    assert reconstructed["candidate_state"] == new
+    assert reconstructed["status"] == "RECONSTRUCTED_UNTRUSTED_CANDIDATE"
+
+
+def test_dataspace_configured_counts_and_selection_fail_closed():
+    profile, _ = _dp_fixture()
+    profile["expected_counts"]["selected_nodes"] = 3
+    with pytest.raises(NodeExchangeError, match="declared counts"):
+        validate_dataspace_profile(profile)
+    profile, _ = _dp_fixture()
+    profile["selection"]["exclude"] = ["b", "c"]
+    with pytest.raises(NodeExchangeError, match="partition"):
+        validate_dataspace_profile(profile)
+
+
+def test_dataspace_private_selection_needs_access_policy_reference():
+    profile, _ = _dp_fixture()
+    profile["nodes"][1]["access_policy_ref"] = None
+    with pytest.raises(NodeExchangeError, match="access policy"):
+        validate_dataspace_profile(profile)
+
+
+def test_dataspace_geometry_must_reference_included_nodes():
+    profile, _ = _dp_fixture()
+    profile["interfaces"][0]["nodes"] = ["a", "c"]
+    with pytest.raises(NodeExchangeError, match="authorised selected nodes"):
+        validate_dataspace_profile(profile)
+
+
+def test_dataspace_derivable_requires_registered_function():
+    profile, _ = _dp_fixture()
+    profile["derivables"][0]["function_ref"] = ""
+    with pytest.raises(NodeExchangeError, match="registered function"):
+        validate_dataspace_profile(profile)
+
+
+def test_dataspace_relationship_requires_evidence():
+    profile, _ = _dp_fixture()
+    profile["relationships"][0]["target"] = "node:ghost"
+    with pytest.raises(NodeExchangeError, match="typed endpoints"):
+        validate_dataspace_profile(profile)
+
+
+def test_dataspace_bandwidth_occupancy_and_licence_distinct():
+    profile, _ = _dp_fixture()
+    profile["transports"][0]["observed_occupancy_fraction"] = 1.1
+    with pytest.raises(NodeExchangeError, match="occupancy"):
+        validate_dataspace_profile(profile)
+    profile, _ = _dp_fixture()
+    profile["transports"][0]["transmit_permission"] = "EXTERNALLY_QUALIFIED"
+    with pytest.raises(NodeExchangeError, match="licensing"):
+        validate_dataspace_profile(profile)
+    profile["transports"][0]["licence_or_class_ref"] = "external-class-ref"
+    assert validate_dataspace_profile(profile)["transmit_authorised_by_this_function"] is False
+
+
+def test_dataspace_profile_root_mismatch_rejects_replay_context():
+    profile, old = _dp_fixture()
+    candidate = build_dataspace_delta_candidate(
+        profile=profile, prior_state=old, new_state={"signal": 1, "drift": -1},
+        sequence=4, window_end_ms=60000,
+    )
+    with pytest.raises(NodeExchangeError, match="sequence/replay"):
+        apply_dataspace_delta_candidate(
+            profile=profile, prior_state=old, candidate=candidate, expected_sequence=5
+        )
+    profile["semantic_lenses"][0]["registered_view_ref"] = "lens:another"
+    with pytest.raises(NodeExchangeError, match="context mismatch"):
+        apply_dataspace_delta_candidate(
+            profile=profile, prior_state=old, candidate=candidate, expected_sequence=4
+        )
+
+
+def test_dataspace_missing_state_not_unchanged_and_root_preserved():
+    profile, old = _dp_fixture()
+    candidate = build_dataspace_delta_candidate(
+        profile=profile, prior_state=old, new_state={"signal": None, "drift": -1},
+        sequence=2, window_end_ms=61000,
+    )
+    assert candidate["updates"] == [{"id": "signal", "state": None}]
+    result = apply_dataspace_delta_candidate(
+        profile=profile, prior_state=old, candidate=candidate, expected_sequence=2
+    )
+    assert result["candidate_state"]["signal"] is None
+    candidate["updates"][0]["state"] = 0
+    with pytest.raises(NodeExchangeError, match="resulting state root"):
+        apply_dataspace_delta_candidate(
+            profile=profile, prior_state=old, candidate=candidate, expected_sequence=2
+        )
+
+
+def test_dataspace_plaintext_candidate_does_not_claim_auth():
+    profile, old = _dp_fixture()
+    candidate = build_dataspace_delta_candidate(
+        profile=profile, prior_state=old, new_state=old,
+        sequence=1, window_end_ms=60000,
+    )
+    assert candidate["updates"] == []
+    assert candidate["cryptographically_authenticated"] is False
+    assert candidate["publication_authorised"] is False
+    assert candidate["canonical_promotion_authorized"] is False
