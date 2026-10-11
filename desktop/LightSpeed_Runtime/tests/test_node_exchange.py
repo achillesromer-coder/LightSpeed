@@ -558,3 +558,53 @@ def test_dataspace_plaintext_candidate_does_not_claim_auth():
     assert candidate["cryptographically_authenticated"] is False
     assert candidate["publication_authorised"] is False
     assert candidate["canonical_promotion_authorized"] is False
+
+
+def test_sai_aus_capacity_existing_cgx_crosswalk() -> None:
+    """Governance topology proof: no extra root, runtime or system authority."""
+    base = Path(__file__).resolve().parents[3] / "cgx" / "domain_templates"
+    topology = json.loads((base / "cognigrex_parent_topology.json").read_text(encoding="utf-8"))
+    corpus = json.loads((base / "corpus_inclusion_registry.json").read_text(encoding="utf-8"))
+    nx = json.loads((base / "node_exchange_contract.json").read_text(encoding="utf-8"))
+
+    assert topology["root"]["file"] == "Cognigrex.cgx"
+    assert {x["id"] for x in topology["root"]["children"]} == {"romer", "eco", "emassc"}
+    crosswalk = topology["programme_authority_crosswalk"]
+    ids = [x["id"] for x in crosswalk["hierarchy"]]
+    assert ids == ["SYS-AUS-CAP", "PROD-SAI", "CGX-ROOT"]
+    assert crosswalk["hierarchy"][1]["parent"] == "SYS-AUS-CAP"
+    assert crosswalk["release_status"] == "REVIEW_HOLD"
+    existing = next(x for x in corpus["first_class_domains"] if x["id"] == "australian-capacity")
+    assert existing["parent"] == "romer"
+    assert existing["children"] == ["sai"]
+    assert existing["semantic_authority_binding"]["programme_id"] == "SYS-AUS-CAP"
+    assert existing["semantic_authority_binding"]["product_child_id"] == "PROD-SAI"
+    assert existing["semantic_authority_binding"]["new_identity_created"] is False
+    assert corpus["current_cgx_authority"]["state_id"] == "S92"
+    sai = nx["sai_aus_capacity_application"]
+    assert sai["programme"] == "SYS-AUS-CAP"
+    assert sai["service"] == "PROD-SAI"
+    assert sai["no_canonical_promotion"] is True
+    assert sai["no_public_auto_release"] is True
+    funcs = sai["functions"]
+    assert len(funcs) == len({row["id"] for row in funcs}) == 12
+    assert any(row["id"] == "PS-PRINT" and row["gate"].startswith("measured")
+               for row in funcs)
+    assert {p["status"] for p in sai["proof_chain"]} >= {
+        "SOURCE-RECONCILED", "HOLD", "NOT-RUN", "SPECIFICATION-ONLY"
+    }
+
+
+def test_sai_aus_capacity_emergency_and_node_scope_not_automatic_authority() -> None:
+    base = Path(__file__).resolve().parents[3] / "cgx" / "domain_templates"
+    nx = json.loads((base / "node_exchange_contract.json").read_text(encoding="utf-8"))
+    model = nx["sai_aus_capacity_application"]
+    assert "no public" not in model["status"].lower() or model["no_public_auto_release"]
+    assert model["no_public_auto_release"] is True
+    assert nx["configurable_n_dataspace_facet"]["canonical_promotion_authorized"] is False
+    assert nx["rolling_observer_facet"]["public_publish_authorized"] is False
+    rules = model["critical_separations"]
+    assert any("government" in text.lower() or "national emergency" in text.lower() for text in rules)
+    assert any("LLM" in text or "deterministic" in text for text in rules)
+    assert any("4d_printing" in text.lower() or "actual_4d_printing" in str(model["proof_chain"]).lower()
+               for text in ["actual_4d_printing"])
