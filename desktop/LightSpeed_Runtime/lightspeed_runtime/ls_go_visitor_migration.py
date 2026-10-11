@@ -283,7 +283,7 @@ def apply_visitor_schema_migration(
 
     receipt = {
         "schema": "LS-GO-VISITOR-MIGRATION-RECEIPT/0.1",
-        "state": "APPLIED_ADDATIVE_SCHEMA_WITH_BACKUP",
+        "state": "APPLIED_ADDITIVE_SCHEMA_WITH_BACKUP",
         "applied_utc": _utc(),
         "owner_decision_ref": owner_decision_ref,
         "database_path": str(database_path),
