@@ -291,6 +291,25 @@
         "semantic_authority": false,
         "execution_authority": false
       }
+    },
+    "configurable_n_dataspace": {
+      "status": "opt_in_local_view_candidate",
+      "basis": "single canonical FileSpace model, sparse DataSpace observations and exact prior/context-root references",
+      "selectable_dimensions": [
+        "included/excluded observer nodes (N)",
+        "visibility and authorised source scope",
+        "geometric interfaces",
+        "derivable functions",
+        "typed evidence relationships",
+        "registered semantic lenses",
+        "time-phase rules",
+        "qualified transport candidates"
+      ],
+      "interpretation": "locally select task-appropriate views; one observation may feed many applications but cannot convey new independent information without new evidence",
+      "geometric_disposition": "coordinate frame, displacement, phase, geometry, quantiser baseline and model assumptions are attributes of source-governed geometry/model roots, not encryption secrets",
+      "public_scope": "do not expose private node rosters, sensitive geometry, internal roots or non-public source metadata",
+      "procedural_binding": "node_exchange.validate_dataspace_profile and build_dataspace_delta_candidate, no new render engine or object store",
+      "no_canonical_promotion": true
     }
   }
 }
