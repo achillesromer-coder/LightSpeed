@@ -482,3 +482,156 @@ __all__ = [
     "execute_local_transfer",
     "sha256_file",
 ]
+
+
+# Optional read-only Psi-DataSpace observation facet; not a transport or a new runtime.
+ROLLING_OBSERVER_FACET = "cgx-node-exchange-rolling-observer-facet-v1"
+ROLLING_OBSERVER_LENSES = (
+    "state", "transition", "persistence", "stability", "activity",
+    "oscillation", "spatial_corroboration", "evidence_quality", "release_projection",
+)
+
+
+def project_rolling_observer_window(
+    *, object_id: str, geometry_root: str, semantic_root: str, model_root: str,
+    prior_state_root: str, selected_nodes: list[str],
+    samples: list[dict], end_ms: int,
+    phase_slots: tuple[int, ...] = (0, 1, 3, 4, 6, 7, 9, 10, 11),
+) -> dict:
+    """Project nine non-authoritative lenses from a bounded 60-second observation window.
+
+    Caller must obtain sensor states from authenticated/calibrated receipt adapters.
+    Receipt markers are prerequisites, never cryptographic verification by this
+    function. Three agreeing origins do not prove physical independence.
+    Missing samples are unknown, not zero and not an unchanged state.
+    """
+    if not isinstance(object_id, str) or not object_id.strip() or len(object_id) > 160:
+        raise NodeExchangeError("rolling observer requires bounded object_id")
+    roots = (geometry_root, semantic_root, model_root, prior_state_root)
+    if any(not isinstance(r, str) or len(r) != 64 or any(c not in "0123456789abcdef" for c in r) for r in roots):
+        raise NodeExchangeError("rolling observer requires lowercase SHA-256 context roots")
+    if (not isinstance(selected_nodes, list) or not 3 <= len(selected_nodes) <= 16 or
+            any(not isinstance(n, str) or not n.strip() or len(n) > 96 for n in selected_nodes) or
+            len(selected_nodes) != len(set(selected_nodes))):
+        raise NodeExchangeError("selected observer roster must contain 3..16 unique bounded nodes")
+    if (not isinstance(phase_slots, tuple) or len(phase_slots) != 9 or
+            len(set(phase_slots)) != 9 or
+            any(type(s) is not int or s < 0 or s >= 12 for s in phase_slots)):
+        raise NodeExchangeError("nine distinct five-second phase slots required")
+    if type(end_ms) is not int or end_ms < 60000 or end_ms % 1000:
+        raise NodeExchangeError("end_ms requires aligned one-second grid and complete window")
+    if not isinstance(samples, list) or len(samples) > 4096:
+        raise NodeExchangeError("rolling window sample list exceeds bounded size")
+    start_ms = end_ms - 60000
+    node_set = set(selected_nodes)
+    by_time = {}
+    seen = set()
+    for row in samples:
+        if not isinstance(row, dict):
+            raise NodeExchangeError("sample must be a record")
+        node = row.get("observer_id")
+        time = row.get("timestamp_ms")
+        state = row.get("state")
+        group = row.get("independence_group")
+        if node not in node_set or type(time) is not int or not start_ms <= time <= end_ms or time % 1000:
+            raise NodeExchangeError("sample node/time outside negotiated observer window")
+        if state is not None and (type(state) is not int or state not in (-1, 0, 1)):
+            raise NodeExchangeError("invalid ternary state; erasure must be null")
+        if not isinstance(group, str) or not group.strip() or len(group) > 96:
+            raise NodeExchangeError("sample needs a bounded provenance independence group")
+        if row.get("receipt_verified") is not True:
+            raise NodeExchangeError("sample lacks adapter-verified receipt")
+        key = (node, time)
+        if key in seen:
+            raise NodeExchangeError("duplicate node/time sample")
+        seen.add(key)
+        by_time.setdefault(time, []).append((node, state, group))
+    trajectory = []
+    conflict_times = []
+    agreeing = 0
+    for t in range(start_ms, end_ms + 1, 1000):
+        rows = by_time.get(t, [])
+        known = [(n, s, g) for n, s, g in rows if s is not None]
+        groups = [g for _, _, g in known]
+        unique_groups = len(set(groups)) == len(groups)
+        signs = {s for _, s, _ in known}
+        if len(signs) > 1:
+            conflict_times.append(t)
+        quorum = len(known) >= 3 and unique_groups and len(signs) == 1
+        value = next(iter(signs)) if quorum else None
+        if quorum:
+            agreeing += 1
+        trajectory.append(value)
+    changes, flips = 0, 0
+    prev = None
+    for state in trajectory:
+        if state is None:
+            prev = None
+            continue
+        if prev is not None and state != prev:
+            changes += 1
+            if state * prev == -1:
+                flips += 1
+        prev = state
+    current = trajectory[-1]
+    previous = trajectory[-2]
+    persistence = 0
+    if current is not None:
+        for state in reversed(trajectory):
+            if state != current:
+                break
+            persistence += 1
+    known_states = [state for state in trajectory if state is not None]
+    transition = ("UNKNOWN" if current is None or previous is None else
+                  "SAME" if current == previous else f"{previous}->{current}")
+    lens_values = {
+        "state": current,
+        "transition": transition,
+        "persistence": {"samples": persistence, "minimum_ms": max(0, persistence - 1) * 1000},
+        "stability": ("UNKNOWN" if len(known_states) < 2 or len(known_states) != len(trajectory)
+                      else "STABLE" if len(set(known_states)) == 1 else "VARIED"),
+        "activity": {"changes": changes},
+        "oscillation": {"direct_sign_flips": flips},
+        "spatial_corroboration": {
+            "agreement_ticks": agreeing, "conflicts": len(conflict_times), "independence_validated": False,
+        },
+        "evidence_quality": {
+            "observed_rows": len(samples), "resolved_ticks": len(known_states),
+            "possible_ticks": 61, "unknown_ticks": 61 - len(known_states),
+        },
+        "release_projection": {"status": "WITHHELD", "publication_authorised": False},
+    }
+    if tuple(lens_values) != ROLLING_OBSERVER_LENSES:
+        raise NodeExchangeError("lens ordering mismatch")
+    slot = (end_ms % 60000) // 5000
+    return {
+        "schema_version": ROLLING_OBSERVER_FACET,
+        "object_id": object_id,
+        "geometry_root": geometry_root,
+        "semantic_root": semantic_root,
+        "model_root": model_root,
+        "prior_state_root": prior_state_root,
+        "selected_nodes": selected_nodes,
+        "window_ms": 60000,
+        "fast_step_ms": 1000,
+        "slow_step_ms": 5000,
+        "end_ms": end_ms,
+        "phase_slots": list(phase_slots),
+        "active_phase_index": phase_slots.index(slot) if slot in phase_slots else None,
+        "sample_digest": _canonical_json_sha256(samples),
+        "lenses": lens_values,
+        "trajectory": trajectory,  # Local-only projection; not a transport wire frame.
+        "epistemic_status": "OBSERVATIONAL_CANDIDATE",
+        "cryptographically_authenticated_by_this_function": False,
+        "authority_transfer": False,
+        "canonical_promotion_authorized": False,
+        "public_publish_authorized": False,
+        "physical_actuation_authorized": False,
+    }
+
+
+__all__.extend((
+    "ROLLING_OBSERVER_FACET",
+    "ROLLING_OBSERVER_LENSES",
+    "project_rolling_observer_window",
+))
