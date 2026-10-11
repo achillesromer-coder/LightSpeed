@@ -20,13 +20,15 @@ export function installOwnerVisitorReview(getToken:()=>string):void{
  if(!mount)return;
  mount.innerHTML=`<div class="panel-head"><div><p class="eyebrow">Cognigrex · LS GO</p><h2>External reviewer receipts</h2></div><span class="badge">Owner only</span></div>
  <p class="muted">Four visitor seats, stored handshake preferences and scoped review events. No automatic CGX DBR promotion.</p>
- <div class="actions"><button type="button" id="visitor-owner-refresh">Read receipts</button><button type="button" id="visitor-owner-invite">Issue one private invitation</button></div>
+ <div class="actions"><button type="button" id="visitor-owner-refresh">Read receipts</button><button type="button" id="visitor-owner-export">Export verified JSON</button><button type="button" id="visitor-owner-invite">Issue one private invitation</button></div>
  <p id="visitor-owner-status" role="status"></p><div id="visitor-owner-list"></div>`;
  const status=document.getElementById("visitor-owner-status")!;
  const list=document.getElementById("visitor-owner-list")!;
+ let latest:Snapshot|null=null;
  const refresh=async()=>{
    try{
      const data=await ownerFetch<Snapshot>("/api/v1/visitor/owner-review",getToken());
+     latest=data.chain_verified?data:null;
      status.textContent=`${data.profiles.length} reviewer profiles · ${data.events.length} receipts · Chain ${data.chain_verified ? "VERIFIED" : "FAILED"} · ${data.proof_scope} · not canonical CGX DBR`;
      list.innerHTML=data.profiles.map(p=>{
       const events=data.events.filter(e=>e.reviewer_id===p.reviewer_id);
@@ -53,6 +55,15 @@ export function installOwnerVisitorReview(getToken:()=>string):void{
    }catch(e){status.textContent=e instanceof Error?e.message:"Review readback unavailable";}
  };
  document.getElementById("visitor-owner-refresh")!.addEventListener("click",()=>void refresh());
+ document.getElementById("visitor-owner-export")!.addEventListener("click",()=>{
+  if(!latest||!getToken()){status.textContent="Fresh authenticated readback with valid receipt chain is required before export.";return;}
+  const report={...latest,exported_utc:new Date().toISOString(),export_boundary:"PRIVATE_OWNER_REVIEW_NOT_CGX_DBROOT"};
+  const bytes=JSON.stringify(report,null,2);
+  const file=new Blob([bytes],{type:"application/json"});
+  const url=URL.createObjectURL(file);
+  const link=document.createElement("a");link.href=url;link.download="ls-go-cgx-review-receipts.json";link.click();URL.revokeObjectURL(url);
+  status.textContent="Private reviewer receipts exported locally; retain under owner-controlled storage only.";
+ });
  document.getElementById("visitor-owner-invite")!.addEventListener("click",async()=>{
   try{
    const configured=String(import.meta.env.VITE_LIGHTSPEED_REVIEW_ORIGIN || "").trim();
