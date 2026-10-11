@@ -269,3 +269,116 @@ def test_status_does_not_treat_carrier_as_peer_compute() -> None:
     assert status["transport"]["verified_carriers"] == ["E-volume"]
     assert status["transport"]["peer_transport_verified"] is False
     assert status["compute"]["peer_compute_verified"] is False
+
+
+# DataSpace observer facet: read-only deterministic candidate projection.
+from lightspeed_runtime.node_exchange import project_rolling_observer_window
+
+_OBSERVER_ROOT = "a" * 64
+_OBSERVER_ARGS = {
+    "object_id": "cgx:lab:fixture",
+    "geometry_root": _OBSERVER_ROOT,
+    "semantic_root": _OBSERVER_ROOT,
+    "model_root": _OBSERVER_ROOT,
+    "prior_state_root": _OBSERVER_ROOT,
+    "selected_nodes": ["a", "b", "c", "d", "e"],
+    "end_ms": 60000,
+}
+
+
+def _observer_samples(timestamp_ms: int, state: int | None) -> list[dict]:
+    return [
+        {
+            "observer_id": node,
+            "independence_group": group,
+            "timestamp_ms": timestamp_ms,
+            "state": state,
+            "receipt_verified": True,
+        }
+        for node, group in zip(("a", "b", "c"), ("ga", "gb", "gc"))
+    ]
+
+
+def test_rolling_observer_three_distinct_and_nine_views() -> None:
+    result = project_rolling_observer_window(
+        **_OBSERVER_ARGS, samples=_observer_samples(60000, 1)
+    )
+    assert len(result["lenses"]) == 9
+    assert result["lenses"]["state"] == 1
+    assert result["epistemic_status"] == "OBSERVATIONAL_CANDIDATE"
+    assert not result["cryptographically_authenticated_by_this_function"]
+    assert not result["canonical_promotion_authorized"]
+    assert not result["physical_actuation_authorized"]
+
+
+def test_rolling_observer_two_readings_not_quorum() -> None:
+    result = project_rolling_observer_window(
+        **_OBSERVER_ARGS, samples=_observer_samples(60000, 0)[:2]
+    )
+    assert result["lenses"]["state"] is None
+
+
+def test_rolling_observer_group_not_independent() -> None:
+    samples = _observer_samples(60000, 1)
+    for sample in samples:
+        sample["independence_group"] = "one"
+    result = project_rolling_observer_window(**_OBSERVER_ARGS, samples=samples)
+    assert result["lenses"]["state"] is None
+
+
+def test_rolling_observer_contradiction_retained() -> None:
+    samples = _observer_samples(60000, 1)
+    samples[-1]["state"] = -1
+    result = project_rolling_observer_window(**_OBSERVER_ARGS, samples=samples)
+    assert result["lenses"]["state"] is None
+    assert result["lenses"]["spatial_corroboration"]["conflicts"] == 1
+
+
+def test_rolling_observer_short_event_survives_baseline_return() -> None:
+    samples = (
+        _observer_samples(57000, 0)
+        + _observer_samples(58000, 1)
+        + _observer_samples(59000, 0)
+        + _observer_samples(60000, 0)
+    )
+    result = project_rolling_observer_window(**_OBSERVER_ARGS, samples=samples)
+    assert result["trajectory"][-4:] == [0, 1, 0, 0]
+    assert result["lenses"]["activity"]["changes"] == 2
+
+
+def test_rolling_observer_erasure_is_not_zero() -> None:
+    samples = _observer_samples(59000, None) + _observer_samples(60000, -1)
+    result = project_rolling_observer_window(**_OBSERVER_ARGS, samples=samples)
+    assert result["trajectory"][-2:] == [None, -1]
+    assert result["lenses"]["transition"] == "UNKNOWN"
+
+
+def test_rolling_observer_unverified_receipt_rejected() -> None:
+    samples = _observer_samples(60000, 1)
+    samples[0]["receipt_verified"] = False
+    with pytest.raises(NodeExchangeError, match="adapter-verified"):
+        project_rolling_observer_window(**_OBSERVER_ARGS, samples=samples)
+
+
+def test_rolling_observer_unknown_and_boolean_rejected() -> None:
+    samples = _observer_samples(60000, 1)
+    samples[0]["state"] = True
+    with pytest.raises(NodeExchangeError, match="ternary"):
+        project_rolling_observer_window(**_OBSERVER_ARGS, samples=samples)
+
+
+def test_rolling_observer_duplicates_rejected() -> None:
+    samples = _observer_samples(60000, 1)
+    with pytest.raises(NodeExchangeError, match="duplicate"):
+        project_rolling_observer_window(**_OBSERVER_ARGS, samples=samples + [samples[0]])
+
+
+def test_rolling_observer_bad_roots_and_phase_change_rejected() -> None:
+    with pytest.raises(NodeExchangeError, match="SHA-256"):
+        project_rolling_observer_window(
+            **{**_OBSERVER_ARGS, "geometry_root": "bad"}, samples=[]
+        )
+    with pytest.raises(NodeExchangeError, match="nine distinct"):
+        project_rolling_observer_window(
+            **_OBSERVER_ARGS, samples=[], phase_slots=(0,) * 9
+        )
