@@ -10,6 +10,7 @@ import os
 import secrets
 import threading
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from urllib.parse import urlsplit
 from typing import Any, Callable
 
@@ -19,6 +20,20 @@ SCHEMA = "LS-GO-CGX-VISITOR/0.1"
 LENSES = {"neo", "athene", "achilles", "alexandria"}
 THEMES = {"orbit", "forest", "blueprint", "dawn"}
 EVENT_KINDS = {"question", "model_request", "selection", "feedback", "session_start", "linked_url"}
+PROJECTION_SET_SCHEMA = "CGX-LS-GO-PUBLIC-PROJECTION-SET/0.1"
+PROJECTION_PAYLOAD_KEYS = {"title", "summary", "evidence_stage", "limitations", "citations", "model"}
+PROJECTION_RELEASE_KEYS = {
+    "release_class", "target_visibility", "release_approval_state",
+    "source_release_classes", "contains_restricted_material", "release_receipt_ref",
+}
+PROJECTION_KEYS = {
+    "projection_id", "object_id", "lens", "source_sha256", "source_revision",
+    "projection_sha256", "release", "payload",
+}
+EVIDENCE_STAGES = {
+    "CONCEPT", "SOURCE_BACKED", "SIMULATED", "MEASURED",
+    "INDEPENDENTLY_ACCEPTED", "PUBLICLY_RELEASED",
+}
 LOCK = threading.RLock()
 
 
@@ -36,12 +51,160 @@ def bound(value: Any, limit: int) -> str:
     return value.strip()[:limit]
 
 
+def _canonical_payload_sha(value: dict) -> str:
+    packed = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(packed.encode("utf-8")).hexdigest()
+
+
+def _is_sha256(value: Any) -> bool:
+    if not isinstance(value, str) or len(value) != 64:
+        return False
+    return all(c in "0123456789abcdefABCDEF" for c in value)
+
+
+def _safe_https_url(value: Any) -> bool:
+    if not isinstance(value, str) or len(value) > 500:
+        return False
+    try:
+        parsed = urlsplit(value)
+        host = (parsed.hostname or "").lower()
+        return (
+            parsed.scheme == "https"
+            and bool(host) and "." in host
+            and host not in {"localhost", "127.0.0.1", "0.0.0.0"}
+            and not host.endswith((".local", ".internal", ".localhost"))
+            and parsed.port in {None, 443}
+            and not parsed.username and not parsed.password
+            and not parsed.query and not parsed.fragment
+            and not host.replace(".", "").isdigit()
+        )
+    except ValueError:
+        return False
+
+
+def _projection_payload_is_public(payload: Any) -> bool:
+    if not isinstance(payload, dict) or not {"title", "summary", "evidence_stage", "limitations"} <= set(payload):
+        return False
+    if set(payload) - PROJECTION_PAYLOAD_KEYS:
+        return False
+    if not 1 <= len(bound(payload.get("title"), 160)) <= 160:
+        return False
+    if not 1 <= len(bound(payload.get("summary"), 4000)) <= 4000:
+        return False
+    if payload.get("evidence_stage") not in EVIDENCE_STAGES:
+        return False
+    limitations = payload.get("limitations")
+    if not isinstance(limitations, list) or len(limitations) > 20 or any(
+        not isinstance(item, str) or not item.strip() or len(item) > 500 for item in limitations
+    ):
+        return False
+    citations = payload.get("citations", [])
+    if not isinstance(citations, list) or len(citations) > 20:
+        return False
+    for citation in citations:
+        if not isinstance(citation, dict) or set(citation) != {"label", "url", "source_sha256", "revision"}:
+            return False
+        if not bound(citation.get("label"), 160) or not bound(citation.get("revision"), 160):
+            return False
+        if not _safe_https_url(citation.get("url")) or not _is_sha256(citation.get("source_sha256")):
+            return False
+    model = payload.get("model")
+    if model is not None:
+        required = {"kind", "url", "sha256", "media_type", "representation_class"}
+        if not isinstance(model, dict) or set(model) != required:
+            return False
+        if model.get("kind") not in {"mesh", "render", "diagram", "model"}:
+            return False
+        if model.get("media_type") not in {
+            "model/gltf-binary", "model/gltf+json", "image/svg+xml", "image/png", "image/webp"
+        }:
+            return False
+        if not _safe_https_url(model.get("url")) or not _is_sha256(model.get("sha256")):
+            return False
+        if not bound(model.get("representation_class"), 120):
+            return False
+    serialized = json.dumps(payload, ensure_ascii=False)
+    forbidden = (
+        "Cognigrex.cgx", "LightSpeed_Runtime", "cgx_object_review_catalogue",
+        "cgx_internal_review_projection", "review/renders/", "file://",
+    )
+    if any(marker.lower() in serialized.lower() for marker in forbidden):
+        return False
+    if any(f"{letter}:\\" in serialized for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"):
+        return False
+    return True
+
+
+def _load_public_projection(manifest_path: str, object_id: str, lens: str) -> dict | None:
+    if not manifest_path or not object_id or lens not in LENSES:
+        return None
+    try:
+        source = Path(manifest_path)
+        if source.suffix.lower() != ".json" or not source.is_file():
+            return None
+        manifest = json.loads(source.read_text(encoding="utf-8"))
+    except (OSError, ValueError, json.JSONDecodeError):
+        return None
+    if not isinstance(manifest, dict):
+        return None
+    if manifest.get("schema") != PROJECTION_SET_SCHEMA or manifest.get("state") != "OWNER_SUPPLIED_PUBLIC_SAFE_PROJECTION_SET":
+        return None
+    projections = manifest.get("projections")
+    if not isinstance(projections, list):
+        return None
+    matches = [
+        item for item in projections
+        if isinstance(item, dict) and item.get("object_id") == object_id and item.get("lens") == lens
+    ]
+    if len(matches) != 1:
+        return None
+    item = matches[0]
+    if set(item) != PROJECTION_KEYS:
+        return None
+    if not bound(item.get("projection_id"), 160) or not bound(item.get("source_revision"), 160):
+        return None
+    if not _is_sha256(item.get("source_sha256")) or not _is_sha256(item.get("projection_sha256")):
+        return None
+    release = item.get("release")
+    if not isinstance(release, dict) or set(release) != PROJECTION_RELEASE_KEYS:
+        return None
+    source_classes = release.get("source_release_classes")
+    release_ref = release.get("release_receipt_ref")
+    if (
+        release.get("release_class") != "Public"
+        or release.get("target_visibility") != "public"
+        or release.get("release_approval_state") != "APPROVED"
+        or not isinstance(source_classes, list) or not source_classes
+        or any(value != "Public" for value in source_classes)
+        or release.get("contains_restricted_material") is not False
+        or not isinstance(release_ref, str) or not release_ref.strip() or len(release_ref) > 240
+        or "\\" in release_ref or release_ref.lower().startswith("file:")
+    ):
+        return None
+    payload = item.get("payload")
+    if not _projection_payload_is_public(payload):
+        return None
+    if not hmac.compare_digest(_canonical_payload_sha(payload), str(item["projection_sha256"]).lower()):
+        return None
+    return {
+        "projection_id": item["projection_id"],
+        "object_id": object_id,
+        "lens": lens,
+        "source_sha256": str(item["source_sha256"]).lower(),
+        "source_revision": item["source_revision"],
+        "projection_sha256": str(item["projection_sha256"]).lower(),
+        "release_receipt_ref": release_ref,
+        "payload": payload,
+    }
+
+
 def register_visitor_routes(
     app: FastAPI, database: Any, owner_guard: Callable[[str | None], str],
 ) -> None:
     """Install in the existing LS GO bridge, fail closed until the approved schema is present."""
     enabled = os.environ.get("LIGHTSPEED_VISITOR_REVIEW_ENABLED") == "1"
     signing_key = os.environ.get("LIGHTSPEED_VISITOR_RECEIPT_KEY", "")
+    projection_manifest_path = os.environ.get("LIGHTSPEED_VISITOR_PUBLIC_PROJECTION_MANIFEST", "").strip()
 
     def ready() -> None:
         if not enabled or database is None or len(signing_key) < 32:
@@ -109,9 +272,11 @@ def register_visitor_routes(
             "roles": ["visitor"], "lenses": sorted(LENSES), "themes": sorted(THEMES),
             "identity_assurance": "INVITATION_POSSESSION_ONLY",
             "public_cgx_url": "https://romer.industries/cgx",
-            "resolver_state": "NOT_ADMITTED", "public_model_state": "NOT_ADMITTED",
+            "resolver_state": "PREAPPROVED_PUBLIC_PROJECTION_ONLY",
+            "projection_manifest_configured": bool(projection_manifest_path),
+            "public_model_state": "PREAPPROVED_METADATA_ONLY",
             "source_mutation": False, "machine_execution": False,
-            "canonical_cgx_ingestion": False,
+            "remote_source_fetch": False, "canonical_cgx_ingestion": False,
         }
 
     @app.post("/api/v1/visitor/invites")
@@ -216,16 +381,45 @@ def register_visitor_routes(
                 raise HTTPException(400, "Only safe HTTPS profile URLs without query, credentials or fragments are accepted")
             linked = {"provider": provider, "verification_state": "LINK_SUBMITTED_UNVERIFIED",
                       "external_login_performed": False, "url_fetch_performed": False}
-        # No private read, tool execution, object hydration or AI answer is implied.
-        result = {"kind": kind, "lens": lens, "text": content,
-                  "object_id": object_id, "status": "PENDING_PUBLIC_SAFE_RESOLVER",
-                  "evidence_stage": "CONCEPT", "public_safe": False,
-                  "source_mutation": False, "model_generated": False, **linked}
+        # Resolve only exact, already-approved Public derived projections. No private hydration,
+        # arbitrary fetch, tool execution, on-demand AI answer or model generation is implied.
+        projection = (
+            _load_public_projection(projection_manifest_path, object_id, lens)
+            if kind in {"question", "model_request"} and object_id else None
+        )
+        if projection:
+            payload = projection["payload"]
+            result = {
+                "kind": kind, "lens": lens, "text": content, "object_id": object_id,
+                "status": "PUBLIC_SAFE_PROJECTION", "evidence_stage": payload["evidence_stage"],
+                "public_safe": True, "source_mutation": False, "model_generated": False,
+                "projection_id": projection["projection_id"],
+                "projection_sha256": projection["projection_sha256"],
+                "source_sha256": projection["source_sha256"],
+                "source_revision": projection["source_revision"],
+                "release_receipt_ref": projection["release_receipt_ref"],
+                **linked,
+            }
+            answer = payload["summary"] if kind == "question" else None
+            model = payload.get("model") if kind == "model_request" else None
+            limitations = payload["limitations"]
+            citations = payload.get("citations", [])
+        else:
+            result = {"kind": kind, "lens": lens, "text": content,
+                      "object_id": object_id, "status": "PENDING_PUBLIC_SAFE_RESOLVER",
+                      "evidence_stage": "CONCEPT", "public_safe": False,
+                      "source_mutation": False, "model_generated": False, **linked}
+            answer, model, limitations, citations = None, None, [], []
         event = receipt(p["reviewer_id"], kind, result)
         if lens != p["lens"] and kind == "selection":
             write("UPDATE ls_go_visitor_profiles SET lens=? WHERE reviewer_id=?", (lens, p["reviewer_id"]))
         return {"schema": SCHEMA, "status": result["status"], "receipt": event,
-                "answer": None, "model": None, "evidence_stage": "CONCEPT",
+                "answer": answer, "model": model, "evidence_stage": result["evidence_stage"],
+                "public_safe": result["public_safe"], "limitations": limitations, "citations": citations,
+                "projection_id": result.get("projection_id"),
+                "projection_sha256": result.get("projection_sha256"),
+                "source_sha256": result.get("source_sha256"),
+                "release_receipt_ref": result.get("release_receipt_ref"),
                 "link_verification_state": linked.get("verification_state")}
 
     @app.post("/api/v1/visitor/privacy-request")
