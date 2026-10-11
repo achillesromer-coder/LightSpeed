@@ -338,7 +338,7 @@ def test_visitor_schema_apply_requires_owner_hash_and_verified_backup(tmp_path):
     assert result["backup"]["quick_check"] == "ok"
     assert backup.exists() and receipt.exists()
     with gzip.open(backup, "rb") as source:
-        assert source.read(16) == b"SQLite format 3\\x00"
+        assert source.read(16) == b"SQLite format 3\x00"
     with sqlite3.connect(database) as connection:
         assert connection.execute("SELECT value FROM existing_state").fetchone()[0] == "preserve"
         for table in (
