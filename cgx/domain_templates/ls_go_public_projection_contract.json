@@ -1,0 +1,97 @@
+{
+  "schema": "CGX-LS-GO-PUBLIC-PROJECTION/0.1",
+  "date": "2026-10-11",
+  "state": "SOURCE_CONTRACT / NO_ADMITTED_PROJECTIONS",
+  "purpose": "Validate and expose only an already-authored, explicitly Public CGX/FileSpace derived projection through the existing LS GO visitor adapter.",
+  "architecture": {
+    "canonical_identity": "CGX = FileSpace; this contract is a derived view adapter and never a second object store, resolver authority, DBR root, runtime or scheduler.",
+    "runtime_binding": "Existing LS GO FastAPI visitor adapter only.",
+    "authority_transfer": false,
+    "canonical_mutation": false,
+    "generation": false,
+    "remote_source_fetch": false
+  },
+  "parent_contracts": [
+    "CGX-CGP-IES-RELEASE-VISIBILITY/0.1",
+    "CGX-CGP-IES-DECISION-RECEIPT/0.1",
+    "CGX-UNIVERSAL-OBJECT-EXTENSION/0.1",
+    "CGX-SOURCE-ENVELOPE/0.1",
+    "CGX-VIEW-SELECTION-POLICY/0.1",
+    "CGX-LS-GO-ACCESS-CONTRACT/0.1"
+  ],
+  "manifest": {
+    "schema": "CGX-LS-GO-PUBLIC-PROJECTION-SET/0.1",
+    "required": [
+      "schema",
+      "state",
+      "projections"
+    ],
+    "admitted_state": "OWNER_SUPPLIED_PUBLIC_SAFE_PROJECTION_SET",
+    "default_if_missing_or_invalid": "PENDING_PUBLIC_SAFE_RESOLVER",
+    "runtime_source": "Owner-configured local manifest reference; path is not returned to visitors and manifest is not copied into dist-review."
+  },
+  "projection_required": [
+    "projection_id",
+    "object_id",
+    "lens",
+    "source_sha256",
+    "source_revision",
+    "projection_sha256",
+    "release",
+    "payload"
+  ],
+  "release_required": {
+    "release_class": "Public",
+    "target_visibility": "public",
+    "release_approval_state": "APPROVED",
+    "source_release_classes": "non-empty and every value Public",
+    "contains_restricted_material": false,
+    "release_receipt_ref": "required non-secret stable reference"
+  },
+  "payload_allow": [
+    "title",
+    "summary",
+    "evidence_stage",
+    "limitations",
+    "citations",
+    "model"
+  ],
+  "citation_allow": [
+    "label",
+    "url",
+    "source_sha256",
+    "revision"
+  ],
+  "model_allow": [
+    "kind",
+    "url",
+    "sha256",
+    "media_type",
+    "representation_class"
+  ],
+  "proof_rules": [
+    "projection_sha256 is SHA-256 of canonical JSON payload (sorted keys, compact separators, UTF-8)",
+    "source_sha256 and any model/citation SHA-256 are exact 64-hex content identities",
+    "object_id and lens must exactly match the visitor request",
+    "model URL, when present, is pre-approved HTTPS metadata only; LS GO does not fetch or transform it",
+    "release receipt is necessary but does not transfer source/canonical authority",
+    "unknown or malformed fields fail closed rather than being stripped and served"
+  ],
+  "forbidden_public_material": [
+    "local/private filesystem paths",
+    "internal source locator/path metadata",
+    "detailed root-authority topology",
+    "credentials, keys, tokens or override mechanics",
+    "Internal/Restricted/Secret source material",
+    "unapproved CAD/mesh/model bytes",
+    "runtime command/execution capability"
+  ],
+  "visitor_result": {
+    "admitted_status": "PUBLIC_SAFE_PROJECTION",
+    "unresolved_status": "PENDING_PUBLIC_SAFE_RESOLVER",
+    "answer_semantics": "pre-approved projection summary only; never represented as model-generated AI output",
+    "model_semantics": "pre-approved model metadata only when exact hash + HTTPS URL exist",
+    "source_mutation": false,
+    "canonical_cgx_ingestion": false
+  }
+}
