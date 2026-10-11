@@ -71,7 +71,7 @@
     "PUBLICLY_RELEASED"
   ],
   "visitor_event": "LS-GO-CGX-VISITOR/0.1 receipt in existing DB; promote to CGX DBR only on owner accepted reconciliation",
-  "generation": "Default PENDING_PUBLIC_SAFE_RESOLVER. Never claim real 3D, external LLM, measurements, proof, releases or object hydration absent admitted adapter/receipt",
+  "generation": "Default PENDING_PUBLIC_SAFE_RESOLVER. An already-approved public projection may be returned only through ls_go_public_projection_contract.json; no on-demand AI/CAD generation, private source discovery, measurement inference or authority promotion.",
   "admission_requirements": [
     "owner approved migration and signing key",
     "verified TLS and CORS",
@@ -84,5 +84,26 @@
   "related_issues": [
     "LightSpeed#158",
     "LightSpeed#161"
-  ]
+  ],
+  "public_projection_adapter": {
+    "contract": "ls_go_public_projection_contract.json",
+    "authority": "derived Public projection only; never canonical/source authority",
+    "source": "owner-configured local manifest reference outside dist-review",
+    "admission": [
+      "object_id exact match",
+      "lens exact match",
+      "release_class=Public",
+      "target_visibility=public",
+      "release_approval_state=APPROVED",
+      "all source_release_classes=Public",
+      "contains_restricted_material=false",
+      "release_receipt_ref present",
+      "source_sha256 and projection_sha256 verified",
+      "payload matches strict public allowlist"
+    ],
+    "fail_state": "PENDING_PUBLIC_SAFE_RESOLVER",
+    "generation": false,
+    "remote_fetch": false,
+    "canonical_mutation": false
+  }
 }
