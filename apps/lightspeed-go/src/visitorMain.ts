@@ -10,7 +10,7 @@ let lens:CgxLens="achilles",busy=false;
 function workspace(name:string){
  root.innerHTML=banner+`<div class="v-grid"><aside><h2>${escapeText(name)}</h2><p>Select a lens</p><button id="v-logout" class="v-muted">End session</button><p><small>Your profile and review text are retained for owner review. You may request a copy, erasure, or withdrawal.</small></p><button data-privacy="export">Request data copy</button><button data-privacy="erasure">Request erasure</button><button data-privacy="withdraw_consent">Withdraw consent</button>${Object.entries(LENSES).map(([id,n])=>`<button data-lens="${id}">${escapeText(n)}</button>`).join("")}</aside>
  <section><h2 id="v-lens">${escapeText(LENSES[lens])}</h2><div id="v-log" role="log">Ask about CGX, challenge a claim or request a source-backed 3D model.</div>
- <form id="v-talk"><textarea maxlength="2000" required aria-label="Your question"></textarea><select aria-label="Request type"><option value="question">Question</option><option value="model_request">3D model</option><option value="feedback">Feedback</option></select><button>Submit</button></form><p id="v-result" role="status"></p></section>
+ <form id="v-talk"><textarea maxlength="2000" required aria-label="Your question"></textarea><select aria-label="Request type"><option value="question">Question</option><option value="model_request">3D model</option><option value="feedback">Feedback</option><option value="linked_url">Submit profile URL for verification</option></select><select aria-label="Profile provider" name="provider"><option value="github">GitHub</option><option value="google">Google</option><option value="microsoft">Microsoft</option><option value="linkedin">LinkedIn</option><option value="canva">Canva</option><option value="other">Other</option></select><button>Submit</button></form><p id="v-result" role="status"></p></section>
  <aside><h2>Source and evidence</h2><p>Concept → Source-backed → Simulated → Measured → Independently accepted → Publicly released.</p><p>Unadmitted models are not generated. Visitor requests cannot mutate sources or execute commands.</p></aside></div>`;
  document.getElementById("v-logout")!.addEventListener("click",async()=>{
    try{await visitorRequest("/api/v1/visitor/logout",{});}
@@ -37,8 +37,9 @@ function workspace(name:string){
  form.onsubmit=async e=>{
   e.preventDefault();if(busy)return;busy=true;
   const q=form.querySelector("textarea")!,kind=form.querySelector("select")!.value,text=q.value.trim();
+  const provider=form.querySelector<HTMLSelectElement>("[name=provider]")!.value;
   try{
-   const r=await visitorRequest<{status:string;receipt:{event_id:string}}>("/api/v1/visitor/interaction",{kind,lens,text});
+   const r=await visitorRequest<{status:string;receipt:{event_id:string}}>("/api/v1/visitor/interaction",{kind,lens,text,provider});
    const p=document.createElement("p");p.textContent=`${text} → ${r.status} · Receipt ${r.receipt.event_id}`;
    document.getElementById("v-log")!.append(p);q.value="";
   }catch(err){document.getElementById("v-result")!.textContent=String(err);}
