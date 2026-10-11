@@ -35,3 +35,5 @@ jobs:
       - run: npm run check
       - run: npm test
       - run: npm run build
+      - run: npm run build:visitor
+      - run: node scripts/check_public_reviewer_artifact.mjs
