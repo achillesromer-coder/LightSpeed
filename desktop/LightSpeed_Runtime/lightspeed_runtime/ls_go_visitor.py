@@ -197,6 +197,21 @@ def register_visitor_routes(
         return {"schema": SCHEMA, "status": result["status"], "receipt": event,
                 "answer": None, "model": None, "evidence_stage": "CONCEPT"}
 
+    @app.post("/api/v1/visitor/privacy-request")
+    async def privacy_request(body: dict, x_lightspeed_visitor_session: str | None = Header(None)):
+        p = visitor(x_lightspeed_visitor_session)
+        action = body.get("action")
+        if action not in {"export", "erasure", "withdraw_consent"}:
+            raise HTTPException(400, "Privacy request must be export, erasure, or withdraw_consent")
+        record = receipt(p["reviewer_id"], "privacy_request",
+                         {"action": action, "status": "OWNER_REVIEW_REQUIRED"})
+        if action == "withdraw_consent":
+            write("UPDATE ls_go_visitor_sessions SET revoked_utc=? WHERE reviewer_id=? AND revoked_utc IS NULL",
+                  (utc(), p["reviewer_id"]))
+            write("UPDATE ls_go_visitor_invites SET revoked_utc=? WHERE reviewer_id=? AND redeemed_utc IS NULL AND revoked_utc IS NULL",
+                  (utc(), p["reviewer_id"]))
+        return {"schema": SCHEMA, "request": action, "state": "OWNER_REVIEW_REQUIRED",
+                "receipt": record, "automated_deletion_performed": False}
     @app.post("/api/v1/visitor/logout")
     async def logout(x_lightspeed_visitor_session: str | None = Header(None)):
         visitor(x_lightspeed_visitor_session)
