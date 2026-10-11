@@ -105,5 +105,19 @@
     "generation": false,
     "remote_fetch": false,
     "canonical_mutation": false
+  },
+  "privacy_admission": {
+    "authority": "Owner policy acceptance is external to code; LS GO verifies only the presence of an explicit bounded acceptance reference.",
+    "required_for_new_admission": [
+      "LIGHTSPEED_VISITOR_PRIVACY_POLICY_ACCEPTED=1",
+      "LIGHTSPEED_VISITOR_PRIVACY_POLICY_REF is a bounded owner-policy: reference or safe HTTPS reference"
+    ],
+    "admission_effect": "New invite issuance and invite redemption are held when the acceptance reference is absent or invalid.",
+    "existing_reviewer_safety": "Existing valid sessions continue under the ordinary storage/signing gate so profile access, privacy requests, consent withdrawal, logout, owner revocation and owner audit are not disabled by an admission hold.",
+    "retention_period": "NOT_DEFINED_BY_CODE / OWNER_POLICY_REQUIRED",
+    "automated_erasure": "NOT_IMPLEMENTED / OWNER_REVIEW_REQUIRED",
+    "public_capabilities": "Expose only admission_enabled and privacy policy state; never expose the policy reference itself.",
+    "fail_state": "OWNER_ACCEPTANCE_REQUIRED",
+    "authority_transfer": false
   }
 }
