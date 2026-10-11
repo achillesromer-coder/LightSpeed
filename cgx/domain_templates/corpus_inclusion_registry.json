@@ -48,7 +48,10 @@
     "test-results-do-not-enter-corpus-before-execution-proof-readback-and-commit",
     "native-source-bytes-and-source-identity-remain-authoritative-over-derived-projections",
     "format-specific-projections-do-not-flatten-workbooks-cad-images-or-binary-artifacts-into-generic-documents",
-    "unsupported-source-structure-remains-explicit-frontier-not-guessed-content"
+    "unsupported-source-structure-remains-explicit-frontier-not-guessed-content",
+    "sai-is-programme-child-of-sys-aus-cap-not-new-cgx-root",
+    "national-operator-data-rights-not-implied-by-sai-programme-name",
+    "emergency-discovery-is-not-government-distress-or-public-safety-authority"
   ],
   "first_class_domains": [
     {
@@ -83,7 +86,31 @@
       "children": [
         "sai"
       ],
-      "mode": "semantic-domain"
+      "mode": "semantic-domain",
+      "semantic_authority_binding": {
+        "programme_id": "SYS-AUS-CAP",
+        "programme_title": "Australian Sovereign Capacity — Complete Infrastructure Framework",
+        "product_child_id": "PROD-SAI",
+        "product_title": "Shared Australian Intelligence",
+        "parent_owner": "romer",
+        "file_space_root": "Cognigrex.cgx",
+        "child_domain_ref": "romer/australian-capacity/sai",
+        "primary_owner_workbook_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+        "sai_owner_sheet_id": "1BKPZYNfU5UHbTQTwsOT-EtS6l_cm9B2w2XUxBWtkpWw",
+        "institutional_pack_id": "14MHe8ZlbcEm16R_MDIY-kl4-KNm7xWuKSMEBofDpbuQ",
+        "legacy_parent_candidate_id": "1QtPNIn4dDsEI0PVCZDnWAOE_twbKLJPeeFMHIALD23s",
+        "source_lineage": "SAI historic parent description retained as supersession proposal; later Aus Capacity product-child hierarchy governs review-only crosswalk",
+        "gates": [
+          "existing CGX owner issue #161",
+          "LS GO private assets #158",
+          "auth #154",
+          "PrintSpace physical qualification",
+          "institutional/sovereign and emergency authority",
+          "source and public release"
+        ],
+        "evidence_ceiling": "DIGITAL_REVIEW_ONLY",
+        "new_identity_created": false
+      }
     },
     {
       "id": "asteroid-mission",
