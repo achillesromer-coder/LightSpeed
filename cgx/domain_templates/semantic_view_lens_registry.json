@@ -260,6 +260,37 @@
     ],
     "must_be_reproducible": true,
     "may_be_host_local": true,
-    "canonical_mutation_requires_separate_command": true
+    "canonical_mutation_requires_separate_command": true,
+    "read_only_facets": {
+      "rolling_observer": {
+        "source": "existing CGX DataSpace observation window; no separate source authority",
+        "required_context": [
+          "Object_ID",
+          "geometry_root",
+          "semantic_root",
+          "model_root",
+          "prior_state_root",
+          "selected_nodes",
+          "window_end_ms"
+        ],
+        "nine_local_semantics": [
+          "state",
+          "transition",
+          "persistence",
+          "stability",
+          "activity",
+          "oscillation",
+          "spatial_corroboration",
+          "evidence_quality",
+          "release_projection"
+        ],
+        "output": "single shared observation produces nine local projections; no nine-fold independent-information claim",
+        "operation": "opt-in; 1s sampling, 5s phase, 60s rolling reconciliation, no required per-second RF transmit",
+        "privacy": "release_projection stays WITHHELD until distinct owner-approved publication policy and authorisation",
+        "epistemic": "OBSERVATIONAL_CANDIDATE; independent corroboration and physical model proof external to view",
+        "semantic_authority": false,
+        "execution_authority": false
+      }
+    }
   }
 }
