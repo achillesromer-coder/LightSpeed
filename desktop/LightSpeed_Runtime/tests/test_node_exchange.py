@@ -599,12 +599,11 @@ def test_sai_aus_capacity_emergency_and_node_scope_not_automatic_authority() -> 
     base = Path(__file__).resolve().parents[3] / "cgx" / "domain_templates"
     nx = json.loads((base / "node_exchange_contract.json").read_text(encoding="utf-8"))
     model = nx["sai_aus_capacity_application"]
-    assert "no public" not in model["status"].lower() or model["no_public_auto_release"]
     assert model["no_public_auto_release"] is True
     assert nx["configurable_n_dataspace_facet"]["canonical_promotion_authorized"] is False
     assert nx["rolling_observer_facet"]["public_publish_authorized"] is False
     rules = model["critical_separations"]
     assert any("government" in text.lower() or "national emergency" in text.lower() for text in rules)
     assert any("LLM" in text or "deterministic" in text for text in rules)
-    assert any("4d_printing" in text.lower() or "actual_4d_printing" in str(model["proof_chain"]).lower()
-               for text in ["actual_4d_printing"])
+    assert any(row["proof"] == "actual_4d_printing_equipment" and row["status"] == "NOT-RUN"
+               for row in model["proof_chain"])
