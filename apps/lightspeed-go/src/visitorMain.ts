@@ -8,7 +8,7 @@ const sessionKey="ls-go-review-session";
 const savedToken=sessionStorage.getItem(sessionKey)||"";
 let lens:CgxLens="achilles",busy=false;
 function workspace(name:string){
- root.innerHTML=banner+`<div class="v-grid"><aside><h2>${escapeText(name)}</h2><p>Select a lens</p><button id="v-logout" class="v-muted">End session</button>${Object.entries(LENSES).map(([id,n])=>`<button data-lens="${id}">${escapeText(n)}</button>`).join("")}</aside>
+ root.innerHTML=banner+`<div class="v-grid"><aside><h2>${escapeText(name)}</h2><p>Select a lens</p><button id="v-logout" class="v-muted">End session</button><p><small>Your profile and review text are retained for owner review. You may request a copy, erasure, or withdrawal.</small></p><button data-privacy="export">Request data copy</button><button data-privacy="erasure">Request erasure</button><button data-privacy="withdraw_consent">Withdraw consent</button>${Object.entries(LENSES).map(([id,n])=>`<button data-lens="${id}">${escapeText(n)}</button>`).join("")}</aside>
  <section><h2 id="v-lens">${escapeText(LENSES[lens])}</h2><div id="v-log" role="log">Ask about CGX, challenge a claim or request a source-backed 3D model.</div>
  <form id="v-talk"><textarea maxlength="2000" required aria-label="Your question"></textarea><select aria-label="Request type"><option value="question">Question</option><option value="model_request">3D model</option><option value="feedback">Feedback</option></select><button>Submit</button></form><p id="v-result" role="status"></p></section>
  <aside><h2>Source and evidence</h2><p>Concept → Source-backed → Simulated → Measured → Independently accepted → Publicly released.</p><p>Unadmitted models are not generated. Visitor requests cannot mutate sources or execute commands.</p></aside></div>`;
@@ -18,6 +18,16 @@ function workspace(name:string){
       sessionStorage.removeItem(sessionKey);setVisitorSession("");root.innerHTML=banner+"<main><h2>Signed out</h2><p>Review receipts remain available to the authorised owner. A fresh invitation is needed for a new session.</p></main>";
    }
  });
+ document.querySelectorAll<HTMLButtonElement>("[data-privacy]").forEach(b=>b.addEventListener("click",async()=>{
+   const action=b.dataset.privacy;
+   if(action==="withdraw_consent" && !window.confirm("Withdraw consent and revoke your current reviewer session?"))return;
+   try{
+     const response=await visitorRequest<{state:string;receipt:{event_id:string}}>("/api/v1/visitor/privacy-request",{action});
+     const message="Privacy request recorded: "+response.receipt.event_id+" · "+response.state+". Deletion/export requires owner review.";
+     if(action==="withdraw_consent"){sessionStorage.removeItem(sessionKey);setVisitorSession("");root.innerHTML=banner+"<main><h2>Consent withdrawn</h2><p>"+escapeText(message)+"</p></main>";}
+     else document.getElementById("v-result")!.textContent=message;
+   }catch(err){document.getElementById("v-result")!.textContent=String(err);}
+ }));
  document.querySelectorAll<HTMLButtonElement>("[data-lens]").forEach(b=>b.onclick=async()=>{
    lens=b.dataset.lens as CgxLens;document.getElementById("v-lens")!.textContent=LENSES[lens];
    try{await visitorRequest("/api/v1/visitor/interaction",{kind:"selection",lens,text:"Selected lens"});}
