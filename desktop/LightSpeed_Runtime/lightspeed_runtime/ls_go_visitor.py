@@ -10,6 +10,7 @@ import os
 import secrets
 import threading
 from datetime import datetime, timedelta, timezone
+from urllib.parse import urlsplit
 from typing import Any, Callable
 
 from fastapi import FastAPI, Header, HTTPException
@@ -17,7 +18,7 @@ from fastapi import FastAPI, Header, HTTPException
 SCHEMA = "LS-GO-CGX-VISITOR/0.1"
 LENSES = {"neo", "athene", "achilles", "alexandria"}
 THEMES = {"orbit", "forest", "blueprint", "dawn"}
-EVENT_KINDS = {"question", "model_request", "selection", "feedback", "session_start"}
+EVENT_KINDS = {"question", "model_request", "selection", "feedback", "session_start", "linked_url"}
 LOCK = threading.RLock()
 
 
@@ -192,11 +193,34 @@ def register_visitor_routes(
                      (p["reviewer_id"],))
         if int(count[0]["n"]) >= 200:
             raise HTTPException(429, "Review interaction limit reached; owner review required")
+        linked = {}
+        if kind == "linked_url":
+            raw_url = bound(body.get("text"), 500)
+            try:
+                parsed_url = urlsplit(raw_url)
+                host = (parsed_url.hostname or "").lower()
+                allowed = (
+                    parsed_url.scheme == "https"
+                    and bool(host) and "." in host
+                    and host not in {"localhost", "127.0.0.1", "0.0.0.0"}
+                    and not host.endswith((".local", ".internal", ".localhost"))
+                    and parsed_url.port in {None, 443}
+                    and not parsed_url.username and not parsed_url.password
+                    and not parsed_url.query and not parsed_url.fragment
+                    and not host.replace(".", "").isdigit()
+                )
+            except ValueError:
+                allowed = False
+            provider = bound(body.get("provider"), 32).lower()
+            if not allowed or provider not in {"github", "google", "microsoft", "canva", "linkedin", "other"}:
+                raise HTTPException(400, "Only safe HTTPS profile URLs without query, credentials or fragments are accepted")
+            linked = {"provider": provider, "verification_state": "LINK_SUBMITTED_UNVERIFIED",
+                      "external_login_performed": False, "url_fetch_performed": False}
         # No private read, tool execution, object hydration or AI answer is implied.
         result = {"kind": kind, "lens": lens, "text": content,
                   "object_id": object_id, "status": "PENDING_PUBLIC_SAFE_RESOLVER",
                   "evidence_stage": "CONCEPT", "public_safe": False,
-                  "source_mutation": False, "model_generated": False}
+                  "source_mutation": False, "model_generated": False, **linked}
         event = receipt(p["reviewer_id"], kind, result)
         if lens != p["lens"] and kind == "selection":
             write("UPDATE ls_go_visitor_profiles SET lens=? WHERE reviewer_id=?", (lens, p["reviewer_id"]))
