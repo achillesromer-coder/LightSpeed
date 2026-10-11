@@ -290,5 +290,152 @@
     "canonical_promotion_authorized": false,
     "public_publish_authorized": false,
     "physical_actuation_authorized": false
+  },
+  "sai_aus_capacity_application": {
+    "status": "SOURCE-RECONCILED / REVIEW-ONLY / NOT LIVE NATIONAL NETWORK",
+    "programme": "SYS-AUS-CAP",
+    "service": "PROD-SAI",
+    "technical_core": "Cognigrex.cgx existing FileSpace / DataSpace node exchange / qualified PrintSpace",
+    "owner_documents": [
+      "https://docs.google.com/document/d/14MHe8ZlbcEm16R_MDIY-kl4-KNm7xWuKSMEBofDpbuQ/edit",
+      "https://docs.google.com/spreadsheets/d/1BKPZYNfU5UHbTQTwsOT-EtS6l_cm9B2w2XUxBWtkpWw/edit",
+      "https://docs.google.com/document/d/1ZyPusNt3IJqHFUU0tbua75qcJeX_rxoIoqaO-4yV7Rg/edit"
+    ],
+    "functions": [
+      {
+        "id": "FS-IDENTITY",
+        "role": "one source-preserving Object_ID, state/DBR roots, geometry and semantic provider rights",
+        "owner": "CGX/child FileSpace",
+        "evidence": "SOURCE-CONTRACT",
+        "gate": "native source readback #161"
+      },
+      {
+        "id": "DS-NODES",
+        "role": "N-node roster and explicit include/exclude with owner and access policy references",
+        "owner": "existing node_exchange profile",
+        "evidence": "SOFTWARE-TESTED",
+        "gate": "upstream device identity and lease verification"
+      },
+      {
+        "id": "DS-GEOMETRY",
+        "role": "geometric interfaces, registered derivables, units and evidence-linked relationships",
+        "owner": "CGX graph + DataSpace projection",
+        "evidence": "SOFTWARE-TESTED",
+        "gate": "empirical observability and independent source model"
+      },
+      {
+        "id": "DS-OBS",
+        "role": "1s/5s/60s ternary observation, unknown/erasure, quorum, nine local lenses",
+        "owner": "node_exchange rolling observer facet",
+        "evidence": "SOFTWARE-TESTED",
+        "gate": "calibrated clock/sensor/receipts"
+      },
+      {
+        "id": "DS-DELTA",
+        "role": "exact profile/prior/result roots, sequence, changed-state-only candidate, mismatch fail closed",
+        "owner": "node_exchange delta facet",
+        "evidence": "SOFTWARE-TESTED",
+        "gate": "auth peer and AEAD plus tested recovery #161"
+      },
+      {
+        "id": "DS-DELIVERY",
+        "role": "registered transport, backpressure, caching, channel occupancy, offline fallback and receipts",
+        "owner": "LightSpeed transport/lease adapters",
+        "evidence": "DESIGN",
+        "gate": "real peer/readback and operator RF/network permission"
+      },
+      {
+        "id": "SAI-UTILITY",
+        "role": "local essential service priority, federated surplus capacity, distinct N-node and security classifications",
+        "owner": "PROD-SAI under SYS-AUS-CAP",
+        "evidence": "SOURCE-DOCTRINE",
+        "gate": "operational service-level and installation proof"
+      },
+      {
+        "id": "SAI-PUBLIC",
+        "role": "L0 origin/discovery, L1 independent issuer identity, L2 released human/machine knowledge, L3 authenticated interpretation",
+        "owner": "SAI/CGX publications",
+        "evidence": "SPECIFICATION-ONLY",
+        "gate": "public/legal/privacy/issuer and no official warning impersonation"
+      },
+      {
+        "id": "SAI-EMERGENCY",
+        "role": "self-reported node health separated from genuine government/agency-issued public safety alerts",
+        "owner": "independent research node + statutory authority",
+        "evidence": "SPECIFICATION-ONLY",
+        "gate": "official external emergency integration/consent; no SOS by default"
+      },
+      {
+        "id": "SAI-API",
+        "role": "evidence-grounded interpretation via existing CGX views and optional bounded AI tools",
+        "owner": "CGX registered capability + LS GO",
+        "evidence": "DESIGN",
+        "gate": "access, prompt/tool isolation, source attribution and negative tests"
+      },
+      {
+        "id": "PS-PRINT",
+        "role": "material/process/digital recipes, physical endpoint manufacture, metrology and maintenance returns",
+        "owner": "Raphael specialist PrintSpace/UTP + Römer/EMASSC/Eco owners",
+        "evidence": "SOURCE-CONTRACT",
+        "gate": "measured material/tool/lot and safety/interlocks; no 4D qualification from CAD"
+      },
+      {
+        "id": "AUS-CAPACITY",
+        "role": "industry capability chain, domestic build/repair/test depth, ecological and public-benefit outcome",
+        "owner": "SYS-AUS-CAP programme",
+        "evidence": "INSTITUTIONAL-REVIEW-CANDIDATE",
+        "gate": "independent institutions/professional review and sourced capability metrics"
+      }
+    ],
+    "critical_separations": [
+      "Capacity metric is not security classification; grid apparent power (MVA) is not electrical capacitance (F).",
+      "3-of-5 observational agreement is not 3-of-5 threshold recovery, geometric observability, causal identification or cryptographic authentication.",
+      "Nine semantic views do not encode nine independent new state measurements.",
+      "No data is recoverable solely from the absence of an instrumented storage/channel.",
+      "Discovery of government/utility infrastructure does not confer owner permission, rights to use RF carriers or national emergency authority.",
+      "Public identity must identify independent Australian origin, not purport to represent Australia or any agency.",
+      "LLM interpretation is optional and evidence-attributed; local deterministic safety/OT remains independent.",
+      "State reconstruction is non-authoritative until current cryptographic transport, lease, readback, source and owner gates pass."
+    ],
+    "proof_chain": [
+      {
+        "proof": "programme_identity_crosswalk",
+        "status": "SOURCE-RECONCILED",
+        "artifact": "cognigrex_parent_topology.json / corpus_inclusion_registry.json"
+      },
+      {
+        "proof": "n_node_configuration_and_sparse_state",
+        "status": "SOURCE-CI-TESTED",
+        "artifact": "node_exchange.py + existing test_node_exchange.py"
+      },
+      {
+        "proof": "cgx_ci_workflows",
+        "status": "LAST-KNOWN-PASS",
+        "artifact": "PR #173; latest provider readback required after current branch changes"
+      },
+      {
+        "proof": "real_two_node_interoperability",
+        "status": "HOLD",
+        "artifact": "owner issue #161 DS-01..DS-08"
+      },
+      {
+        "proof": "physically_calibrated_inference_and_backscatter",
+        "status": "NOT-RUN",
+        "artifact": "lab/third-party approved metrology, not CI"
+      },
+      {
+        "proof": "actual_4d_printing_equipment",
+        "status": "NOT-RUN",
+        "artifact": "material route, process and machine evidence"
+      },
+      {
+        "proof": "public_emergency_discovery",
+        "status": "SPECIFICATION-ONLY",
+        "artifact": "national approval/telecom release gate"
+      }
+    ],
+    "no_canonical_promotion": true,
+    "no_public_auto_release": true,
+    "no_evidence_by_source_presence": true
   }
 }
