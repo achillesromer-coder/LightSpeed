@@ -1,0 +1,37 @@
+name: LS GO CGX visitor contract validation
+on:
+  push:
+    paths:
+      - "apps/lightspeed-go/**"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_visitor*"
+      - "desktop/LightSpeed_Runtime/tests/test_ls_go_visitor.py"
+      - ".github/workflows/ls-go-visitor-validation.yml"
+  pull_request:
+    paths:
+      - "apps/lightspeed-go/**"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_visitor*"
+      - "desktop/LightSpeed_Runtime/tests/test_ls_go_visitor.py"
+      - ".github/workflows/ls-go-visitor-validation.yml"
+jobs:
+  bridge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install fastapi httpx pytest
+      - run: python -m pytest desktop/LightSpeed_Runtime/tests/test_ls_go_visitor.py -q
+        env:
+          PYTHONPATH: desktop/LightSpeed_Runtime
+  ui:
+    runs-on: ubuntu-latest
+    defaults:
+      run: {working-directory: apps/lightspeed-go}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: "22", cache: "npm", cache-dependency-path: "apps/lightspeed-go/package-lock.json"}
+      - run: npm ci
+      - run: npm run check
+      - run: npm test
+      - run: npm run build
