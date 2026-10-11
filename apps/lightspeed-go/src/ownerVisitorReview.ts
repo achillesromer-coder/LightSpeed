@@ -27,10 +27,10 @@ export function installOwnerVisitorReview(getToken:()=>string):void{
  const refresh=async()=>{
    try{
      const data=await ownerFetch<Snapshot>("/api/v1/visitor/owner-review",getToken());
-     status.textContent=`${data.profiles.length} reviewer profiles · ${data.events.length} receipts · ${data.proof_scope} · not canonical CGX DBR`;
+     status.textContent=`${data.profiles.length} reviewer profiles · ${data.events.length} receipts · Chain ${data.chain_verified ? "VERIFIED" : "FAILED"} · ${data.proof_scope} · not canonical CGX DBR`;
      list.innerHTML=data.profiles.map(p=>{
       const events=data.events.filter(e=>e.reviewer_id===p.reviewer_id);
-      return `<article class="task-card"><div><strong>${safe(p.name)}</strong><span>${safe(p.reviewer_id)} · ${safe(p.theme)} · ${safe(p.lens)}</span><small>Consent: ${safe(p.consent_utc)} · ${events.length} events</small></div></article>`;
+      return `<article class="task-card"><div><strong>${safe(p.name)}</strong><span>${safe(p.reviewer_id)} · ${safe(p.theme)} · ${safe(p.lens)}</span><small>Consent: ${safe(p.consent_utc)} · ${events.length} events</small><details><summary>Inspect receipt lineage</summary>${events.map(e=>"<p>"+safe(e.event_type)+" · "+safe(e.recorded_utc)+" · "+safe(e.event_hash.slice(0,20))+"…<br/><small>"+safe(e.payload_json.slice(0,400))+"</small></p>").join("")}</details></div></article>`;
      }).join("")||"<p class='muted'>No reviewer profiles enrolled.</p>";
    }catch(e){status.textContent=e instanceof Error?e.message:"Review readback unavailable";}
  };
