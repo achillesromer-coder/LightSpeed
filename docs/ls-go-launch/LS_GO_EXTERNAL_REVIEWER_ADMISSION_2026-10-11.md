@@ -72,3 +72,21 @@ The exact manifest validator invocation must be checked against repository usage
 7. No external reviewers sent a link until the above has independent PASS receipts. Dates are planning checkpoints, not release authority.
 
 Related owner source: PR #172; security #158; FileSpace/DataSpace #161.
+
+## Provider HTTPS acceptance probe
+
+Source-only preparation now includes `scripts/verify_ls_go_visitor_https_release.py`. It performs **read-only** HTTPS checks against an explicitly supplied public origin and emits a JSON receipt; it does not deploy, issue invites, mutate CGX/DBR state, or persist session secrets. CI validates only Python compilation and `--help`; CI does **not** contact a deployment target.
+
+Use only after an owner-controlled provider origin exists:
+
+```bash
+python scripts/verify_ls_go_visitor_https_release.py \
+  --origin https://REVIEWER-HOST.example \
+  --expected-review-sha256 EXPECTED_DIST_REVIEW_HTML_SHA256 \
+  --output provider-review-acceptance.json
+```
+
+The probe verifies public `/review.html` and visitor capabilities, required no-store/referrer/CSP headers, exact reviewer HTML hash binding, fail-closed authority flags, invitation-possession identity wording, and 403/404 non-disclosure for owner/private API and known internal static paths. Optional valid/revoked-session proofs are read from `LIGHTSPEED_VISITOR_PROBE_VALID_SESSION` and `LIGHTSPEED_VISITOR_PROBE_REVOKED_SESSION`; token values are never written to the receipt. Absence of either session proof or of the expected artifact hash yields PARTIAL rather than PASS. Any private-route disclosure, unsafe capability state, header failure or hash mismatch yields FAIL.
+
+This probe advances only deployment **readiness**. Until executed against the real provider-managed HTTPS ingress with owner-controlled sessions, issue #158 remains open and PR #172 remains DRAFT / NO PUBLIC DEPLOY.
+
