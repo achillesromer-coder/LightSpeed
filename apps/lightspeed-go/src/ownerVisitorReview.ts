@@ -2,7 +2,7 @@ import {DEFAULT_DESKTOP_ORIGIN} from "./desktopBridge";
 const safe=(s:string)=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]||c));
 type RecordRow={reviewer_id:string;name:string;theme:string;lens:string;handshake_json:string;consent_utc:string};
 type EventRow={event_id:string;reviewer_id:string;event_type:string;recorded_utc:string;event_hash:string;previous_hash:string;payload_json:string};
-type Snapshot={schema:string;profiles:RecordRow[];events:EventRow[];canonical_cgx_ingestion:false;proof_scope:string};
+type Snapshot={schema:string;profiles:RecordRow[];events:EventRow[];canonical_cgx_ingestion:false;chain_verified:boolean;proof_scope:string};
 async function ownerFetch<T>(path:string,token:string,data?:unknown):Promise<T>{
  if(!token)throw Error("Owner sign-in required. Use the Activity workspace.");
  const r=await fetch(DEFAULT_DESKTOP_ORIGIN+path,{
