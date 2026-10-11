@@ -1,0 +1,88 @@
+{
+  "schema": "CGX-LS-GO-ACCESS-CONTRACT/0.1",
+  "date": "2026-10-11",
+  "state": "SOURCE_CANDIDATE / NO_PUBLIC_RELEASE",
+  "canonical_identity": "CGX = FileSpace; Cognigrex.cgx is parent; DataSpace is permissioned exchange, not a second master",
+  "host": "Existing LS GO application and existing LS GO bridge, not new reviewer service",
+  "audiences": [
+    "owner",
+    "operator",
+    "collaborator",
+    "visitor"
+  ],
+  "visitor_seats": 4,
+  "visitor_identity": "Invitation link possession is a bounded enrollment proof, not verified legal identity; future external identity provider needs owner approval",
+  "handshake": {
+    "retain": [
+      "consent_utc",
+      "display_name",
+      "theme",
+      "selected_lens",
+      "volunteered_background",
+      "stated_interest",
+      "session_profile",
+      "object_selection",
+      "evidence/feedback receipts"
+    ],
+    "do_not_retention": [
+      "raw_invitation_token",
+      "plaintext_password",
+      "oauth_access_token",
+      "unapproved_private_source_text",
+      "silent_device_fingerprint"
+    ]
+  },
+  "visitor_lenses": [
+    {
+      "id": "neo",
+      "name": "Römer-Grex",
+      "scope": "public-approved portfolio, plans, reviewed 3D"
+    },
+    {
+      "id": "athene",
+      "name": "Eco-Grex",
+      "scope": "public-approved environment, topology and SAI"
+    },
+    {
+      "id": "achilles",
+      "name": "Cognigrex",
+      "scope": "public-approved FileSpace/DataSpace/PrintSpace and portfolio"
+    },
+    {
+      "id": "alexandria",
+      "name": "Evidence",
+      "scope": "public provenance, citations, limitations, methodological review"
+    }
+  ],
+  "visitor_permissions": {
+    "read": "PUBLIC_SAFE source-filtered projections only",
+    "interact": "chat/intake, view/model requests and feedback",
+    "mutate_canonical": false,
+    "run_desktop": false,
+    "read_private_files": false,
+    "review_release": false
+  },
+  "evidence_ladder": [
+    "CONCEPT",
+    "SOURCE_BACKED",
+    "SIMULATED",
+    "MEASURED",
+    "INDEPENDENTLY_ACCEPTED",
+    "PUBLICLY_RELEASED"
+  ],
+  "visitor_event": "LS-GO-CGX-VISITOR/0.1 receipt in existing DB; promote to CGX DBR only on owner accepted reconciliation",
+  "generation": "Default PENDING_PUBLIC_SAFE_RESOLVER. Never claim real 3D, external LLM, measurements, proof, releases or object hydration absent admitted adapter/receipt",
+  "admission_requirements": [
+    "owner approved migration and signing key",
+    "verified TLS and CORS",
+    "public-safe manifest and source licence",
+    "reviewer opt-in, privacy and retention",
+    "off-device authenticated tests",
+    "deny static asset exposures per LS GO issue 158"
+  ],
+  "frontdoor": "Squarespace /cgx orientation remains separate and public read-only",
+  "related_issues": [
+    "LightSpeed#158",
+    "LightSpeed#161"
+  ]
+}
