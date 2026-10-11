@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import gzip
 import hashlib
 import json
 import sqlite3
@@ -10,7 +11,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
 
 from lightspeed_runtime.ls_go_visitor import register_visitor_routes
-
+from lightspeed_runtime.ls_go_visitor_migration import (\n    apply_visitor_schema_migration,\n    assess_visitor_schema,\n)\n
 
 class LocalDatabase:
     def __init__(self):
@@ -274,3 +275,72 @@ def test_public_projection_requires_exact_public_release_and_hash(monkeypatch, t
     }, headers=head)
     assert ambiguous.json()["status"] == "PENDING_PUBLIC_SAFE_RESOLVER"
     assert ambiguous.json()["answer"] is None
+
+
+def test_visitor_schema_migration_preflight_is_non_mutating(tmp_path):
+    database = tmp_path / "existing.db"
+    with sqlite3.connect(database) as connection:
+        connection.execute("CREATE TABLE existing_state(id INTEGER PRIMARY KEY, value TEXT)")
+        connection.execute("INSERT INTO existing_state(value) VALUES ('preserve')")
+    schema = Path(__file__).resolve().parents[1] / "lightspeed_runtime" / "ls_go_visitor_schema.sql"
+
+    preflight = assess_visitor_schema(database, schema)
+    assert preflight["state"] == "DRY_RUN_COMPATIBLE"
+    assert preflight["mutation_performed"] is False
+    assert preflight["clone_preflight"]["before_quick_check"] == "ok"
+    assert preflight["clone_preflight"]["after_quick_check"] == "ok"
+    assert set(preflight["clone_preflight"]["post_schema"]["tables"]) == {
+        "ls_go_visitor_invites", "ls_go_visitor_profiles",
+        "ls_go_visitor_sessions", "ls_go_visitor_events",
+    }
+    with sqlite3.connect(database) as connection:
+        assert connection.execute("SELECT value FROM existing_state").fetchone()[0] == "preserve"
+        assert connection.execute(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name LIKE 'ls_go_visitor_%'"
+        ).fetchone()[0] == 0
+
+    destructive = tmp_path / "destructive.sql"
+    destructive.write_text("DROP TABLE existing_state;", encoding="utf-8")
+    with pytest.raises(ValueError, match="non-additive"):
+        assess_visitor_schema(database, destructive)
+
+
+def test_visitor_schema_apply_requires_owner_hash_and_verified_backup(tmp_path):
+    database = tmp_path / "existing.db"
+    with sqlite3.connect(database) as connection:
+        connection.execute("CREATE TABLE existing_state(id INTEGER PRIMARY KEY, value TEXT)")
+        connection.execute("INSERT INTO existing_state(value) VALUES ('preserve')")
+    schema = Path(__file__).resolve().parents[1] / "lightspeed_runtime" / "ls_go_visitor_schema.sql"
+    preflight = assess_visitor_schema(database, schema)
+    backup = tmp_path / "visitor-pre-migration.db.gz"
+    receipt = tmp_path / "visitor-migration-receipt.json"
+
+    with pytest.raises(ValueError, match="database changed"):
+        apply_visitor_schema_migration(
+            database, schema, backup, receipt,
+            owner_decision_ref="OWNER:fixture-001",
+            expected_database_sha256="0" * 64,
+        )
+    assert not backup.exists()
+    assert not receipt.exists()
+
+    result = apply_visitor_schema_migration(
+        database, schema, backup, receipt,
+        owner_decision_ref="OWNER:fixture-001",
+        expected_database_sha256=preflight["database_sha256"],
+    )
+    assert result["state"] == "APPLIED_ADDITIVE_SCHEMA_WITH_BACKUP"
+    assert result["owner_decision_ref"] == "OWNER:fixture-001"
+    assert result["backup"]["quick_check"] == "ok"
+    assert backup.exists() and receipt.exists()
+    with gzip.open(backup, "rb") as source:
+        assert source.read(16) == b"SQLite format 3\\x00"
+    with sqlite3.connect(database) as connection:
+        assert connection.execute("SELECT value FROM existing_state").fetchone()[0] == "preserve"
+        for table in (
+            "ls_go_visitor_invites", "ls_go_visitor_profiles",
+            "ls_go_visitor_sessions", "ls_go_visitor_events",
+        ):
+            assert connection.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,)
+            ).fetchone() is not None
