@@ -225,7 +225,8 @@ def register_visitor_routes(
         if lens != p["lens"] and kind == "selection":
             write("UPDATE ls_go_visitor_profiles SET lens=? WHERE reviewer_id=?", (lens, p["reviewer_id"]))
         return {"schema": SCHEMA, "status": result["status"], "receipt": event,
-                "answer": None, "model": None, "evidence_stage": "CONCEPT"}
+                "answer": None, "model": None, "evidence_stage": "CONCEPT",
+                "link_verification_state": linked.get("verification_state")}
 
     @app.post("/api/v1/visitor/privacy-request")
     async def privacy_request(body: dict, x_lightspeed_visitor_session: str | None = Header(None)):
