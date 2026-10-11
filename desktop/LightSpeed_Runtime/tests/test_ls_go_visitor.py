@@ -73,6 +73,9 @@ def test_bounded_four_seats_and_consent(client):
     assert owner.status_code == 200
     assert owner.json()["canonical_cgx_ingestion"] is False
     assert len(owner.json()["events"]) == 2
+    assert owner.json()["chain_verified"] is True
+    assert client.post("/api/v1/visitor/logout", headers=session).status_code == 200
+    assert client.get("/api/v1/visitor/me", headers=session).status_code == 401
 
 
 def test_missing_signing_key_fails_closed(monkeypatch):
