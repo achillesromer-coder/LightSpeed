@@ -11,7 +11,11 @@ from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
 
 from lightspeed_runtime.ls_go_visitor import register_visitor_routes
-from lightspeed_runtime.ls_go_visitor_migration import (\n    apply_visitor_schema_migration,\n    assess_visitor_schema,\n)\n
+from lightspeed_runtime.ls_go_visitor_migration import (
+    apply_visitor_schema_migration,
+    assess_visitor_schema,
+)
+
 
 class LocalDatabase:
     def __init__(self):
