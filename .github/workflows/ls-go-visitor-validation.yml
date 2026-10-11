@@ -5,6 +5,7 @@ on:
       - "apps/lightspeed-go/**"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_visitor*"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_visitor.py"
+      - "scripts/verify_ls_go_visitor_https_release.py"
       - ".github/workflows/ls-go-visitor-validation.yml"
   pull_request:
     paths:
@@ -23,6 +24,8 @@ jobs:
       - run: python -m pytest desktop/LightSpeed_Runtime/tests/test_ls_go_visitor.py -q
         env:
           PYTHONPATH: desktop/LightSpeed_Runtime
+      - run: python -m py_compile scripts/verify_ls_go_visitor_https_release.py
+      - run: python scripts/verify_ls_go_visitor_https_release.py --help
   ui:
     runs-on: ubuntu-latest
     defaults:
