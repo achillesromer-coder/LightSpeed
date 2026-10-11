@@ -36,6 +36,8 @@ class LocalDatabase:
 def client(monkeypatch):
     monkeypatch.setenv("LIGHTSPEED_VISITOR_REVIEW_ENABLED", "1")
     monkeypatch.setenv("LIGHTSPEED_VISITOR_RECEIPT_KEY", "A" * 48)
+    monkeypatch.setenv("LIGHTSPEED_VISITOR_PRIVACY_POLICY_ACCEPTED", "1")
+    monkeypatch.setenv("LIGHTSPEED_VISITOR_PRIVACY_POLICY_REF", "owner-policy:test-fixture")
     app = FastAPI()
     register_visitor_routes(app, LocalDatabase(), lambda token: "NCNB" if token == "OWNER" else (_ for _ in ()).throw(HTTPException(403, "owner session missing")))
     return TestClient(app)
@@ -195,6 +197,8 @@ def test_public_projection_requires_exact_public_release_and_hash(monkeypatch, t
     write_manifest([projection])
     monkeypatch.setenv("LIGHTSPEED_VISITOR_REVIEW_ENABLED", "1")
     monkeypatch.setenv("LIGHTSPEED_VISITOR_RECEIPT_KEY", "A" * 48)
+    monkeypatch.setenv("LIGHTSPEED_VISITOR_PRIVACY_POLICY_ACCEPTED", "1")
+    monkeypatch.setenv("LIGHTSPEED_VISITOR_PRIVACY_POLICY_REF", "owner-policy:projection-fixture")
     monkeypatch.setenv("LIGHTSPEED_VISITOR_PUBLIC_PROJECTION_MANIFEST", str(manifest))
     app = FastAPI()
     register_visitor_routes(
@@ -348,3 +352,68 @@ def test_visitor_schema_apply_requires_owner_hash_and_verified_backup(tmp_path):
             assert connection.execute(
                 "SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,)
             ).fetchone() is not None
+
+
+def test_privacy_policy_gate_blocks_new_admission_but_preserves_existing_safety_exits(monkeypatch):
+    monkeypatch.setenv("LIGHTSPEED_VISITOR_REVIEW_ENABLED", "1")
+    monkeypatch.setenv("LIGHTSPEED_VISITOR_RECEIPT_KEY", "A" * 48)
+    monkeypatch.setenv("LIGHTSPEED_VISITOR_PRIVACY_POLICY_ACCEPTED", "1")
+    monkeypatch.setenv("LIGHTSPEED_VISITOR_PRIVACY_POLICY_REF", "owner-policy:accepted-before-restart")
+    database = LocalDatabase()
+
+    admitted_app = FastAPI()
+    register_visitor_routes(
+        admitted_app,
+        database,
+        lambda token: "NCNB" if token == "OWNER" else (_ for _ in ()).throw(
+            HTTPException(403, "owner session missing")
+        ),
+    )
+    admitted = TestClient(admitted_app)
+    invitation = admitted.post(
+        "/api/v1/visitor/invites", json={}, headers={"X-LightSpeed-Session": "OWNER"}
+    ).json()
+    enrollment = admitted.post("/api/v1/visitor/enroll", json={
+        "invite_token": invitation["invite_token"],
+        "name": "Existing Reviewer",
+        "theme": "orbit",
+        "lens": "achilles",
+        "consent": True,
+    }).json()
+    existing_session = enrollment["visitor_session"]
+
+    monkeypatch.delenv("LIGHTSPEED_VISITOR_PRIVACY_POLICY_ACCEPTED", raising=False)
+    monkeypatch.delenv("LIGHTSPEED_VISITOR_PRIVACY_POLICY_REF", raising=False)
+    held_app = FastAPI()
+    register_visitor_routes(
+        held_app,
+        database,
+        lambda token: "NCNB" if token == "OWNER" else (_ for _ in ()).throw(
+            HTTPException(403, "owner session missing")
+        ),
+    )
+    held = TestClient(held_app)
+
+    capabilities = held.get("/api/v1/visitor/capabilities")
+    assert capabilities.status_code == 200
+    assert capabilities.json()["enabled"] is True
+    assert capabilities.json()["admission_enabled"] is False
+    assert capabilities.json()["privacy_policy_state"] == "OWNER_ACCEPTANCE_REQUIRED"
+    assert "accepted-before-restart" not in capabilities.text
+
+    new_invite = held.post(
+        "/api/v1/visitor/invites", json={}, headers={"X-LightSpeed-Session": "OWNER"}
+    )
+    assert new_invite.status_code == 503
+    assert "privacy policy" in new_invite.text.lower()
+
+    headers = {"X-LightSpeed-Visitor-Session": existing_session}
+    assert held.get("/api/v1/visitor/me", headers=headers).status_code == 200
+    privacy = held.post(
+        "/api/v1/visitor/privacy-request", json={"action": "export"}, headers=headers
+    )
+    assert privacy.status_code == 200
+    assert privacy.json()["state"] == "OWNER_REVIEW_REQUIRED"
+    logout = held.post("/api/v1/visitor/logout", headers=headers)
+    assert logout.status_code == 200
+    assert held.get("/api/v1/visitor/me", headers=headers).status_code == 401
