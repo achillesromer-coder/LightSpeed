@@ -97,9 +97,14 @@ def register_visitor_routes(
 
     @app.get("/api/v1/visitor/capabilities")
     async def capabilities():
-        # Public orientation only; absence of a source resolver is explicitly visible.
+        # Public orientation only; actual storage/signing readiness is checked.
+        try:
+            ready()
+            available = True
+        except HTTPException:
+            available = False
         return {
-            "schema": SCHEMA, "enabled": enabled and len(signing_key) >= 32,
+            "schema": SCHEMA, "enabled": available,
             "roles": ["visitor"], "lenses": sorted(LENSES), "themes": sorted(THEMES),
             "identity_assurance": "INVITATION_POSSESSION_ONLY",
             "public_cgx_url": "https://romer.industries/cgx",
