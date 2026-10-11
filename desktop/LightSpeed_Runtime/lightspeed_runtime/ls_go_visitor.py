@@ -87,9 +87,10 @@ def _projection_payload_is_public(payload: Any) -> bool:
         return False
     if set(payload) - PROJECTION_PAYLOAD_KEYS:
         return False
-    if not 1 <= len(bound(payload.get("title"), 160)) <= 160:
+    title, summary = payload.get("title"), payload.get("summary")
+    if not isinstance(title, str) or not title.strip() or len(title) > 160:
         return False
-    if not 1 <= len(bound(payload.get("summary"), 4000)) <= 4000:
+    if not isinstance(summary, str) or not summary.strip() or len(summary) > 4000:
         return False
     if payload.get("evidence_stage") not in EVIDENCE_STAGES:
         return False
@@ -179,6 +180,10 @@ def _load_public_projection(manifest_path: str, object_id: str, lens: str) -> di
         or release.get("contains_restricted_material") is not False
         or not isinstance(release_ref, str) or not release_ref.strip() or len(release_ref) > 240
         or "\\" in release_ref or release_ref.lower().startswith("file:")
+        or not (
+            release_ref.startswith("public-receipt:")
+            or (release_ref.startswith("https://") and _safe_https_url(release_ref))
+        )
     ):
         return None
     payload = item.get("payload")
