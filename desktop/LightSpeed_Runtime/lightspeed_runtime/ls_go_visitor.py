@@ -210,6 +210,18 @@ def register_visitor_routes(
     enabled = os.environ.get("LIGHTSPEED_VISITOR_REVIEW_ENABLED") == "1"
     signing_key = os.environ.get("LIGHTSPEED_VISITOR_RECEIPT_KEY", "")
     projection_manifest_path = os.environ.get("LIGHTSPEED_VISITOR_PUBLIC_PROJECTION_MANIFEST", "").strip()
+    privacy_policy_accepted = os.environ.get("LIGHTSPEED_VISITOR_PRIVACY_POLICY_ACCEPTED") == "1"
+    privacy_policy_ref = os.environ.get("LIGHTSPEED_VISITOR_PRIVACY_POLICY_REF", "").strip()
+
+    def _privacy_policy_ref_valid() -> bool:
+        if not privacy_policy_ref or len(privacy_policy_ref) > 240:
+            return False
+        if "\\" in privacy_policy_ref or privacy_policy_ref.lower().startswith("file:"):
+            return False
+        return (
+            privacy_policy_ref.startswith("owner-policy:")
+            or (privacy_policy_ref.startswith("https://") and _safe_https_url(privacy_policy_ref))
+        )
 
     def ready() -> None:
         if not enabled or database is None or len(signing_key) < 32:
@@ -220,6 +232,14 @@ def register_visitor_routes(
             database.execute_query("SELECT event_id FROM ls_go_visitor_events LIMIT 0")
         except Exception as exc:
             raise HTTPException(503, "Visitor schema migration not accepted") from exc
+
+    def admission_ready() -> None:
+        ready()
+        if not privacy_policy_accepted or not _privacy_policy_ref_valid():
+            raise HTTPException(
+                503,
+                "Visitor admission is held pending explicit owner-accepted privacy policy reference",
+            )
 
     def rows(query: str, params: tuple = ()) -> list[dict]:
         return [dict(r) for r in database.execute_query(query, params)]
@@ -272,8 +292,19 @@ def register_visitor_routes(
             available = True
         except HTTPException:
             available = False
+        try:
+            admission_ready()
+            admission_available = True
+        except HTTPException:
+            admission_available = False
         return {
             "schema": SCHEMA, "enabled": available,
+            "admission_enabled": admission_available,
+            "privacy_policy_state": (
+                "OWNER_ACCEPTED_REFERENCE_PRESENT"
+                if privacy_policy_accepted and _privacy_policy_ref_valid()
+                else "OWNER_ACCEPTANCE_REQUIRED"
+            ),
             "roles": ["visitor"], "lenses": sorted(LENSES), "themes": sorted(THEMES),
             "identity_assurance": "INVITATION_POSSESSION_ONLY",
             "public_cgx_url": "https://romer.industries/cgx",
@@ -286,7 +317,7 @@ def register_visitor_routes(
 
     @app.post("/api/v1/visitor/invites")
     async def issue_invite(body: dict, x_lightspeed_session: str | None = Header(None)):
-        ready()
+        admission_ready()
         owner_guard(x_lightspeed_session)
         reviewer_id = bound(body.get("reviewer_id"), 90) or "RV-" + secrets.token_hex(7)
         # A finite owner-approved four-place panel; renew an existing seat without minting a fifth.
@@ -307,7 +338,7 @@ def register_visitor_routes(
 
     @app.post("/api/v1/visitor/enroll")
     async def enroll(body: dict):
-        ready()
+        admission_ready()
         raw = bound(body.get("invite_token"), 200)
         name = bound(body.get("name"), 72)
         theme = body.get("theme")
