@@ -4,7 +4,7 @@ import sqlite3
 from pathlib import Path
 
 import pytest
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
 
 from lightspeed_runtime.ls_go_visitor import register_visitor_routes
@@ -30,7 +30,7 @@ def client(monkeypatch):
     monkeypatch.setenv("LIGHTSPEED_VISITOR_REVIEW_ENABLED", "1")
     monkeypatch.setenv("LIGHTSPEED_VISITOR_RECEIPT_KEY", "A" * 48)
     app = FastAPI()
-    register_visitor_routes(app, LocalDatabase(), lambda token: "NCNB" if token == "OWNER" else (_ for _ in ()).throw(ValueError("owner session missing")))
+    register_visitor_routes(app, LocalDatabase(), lambda token: "NCNB" if token == "OWNER" else (_ for _ in ()).throw(HTTPException(403, "owner session missing")))
     return TestClient(app)
 
 
