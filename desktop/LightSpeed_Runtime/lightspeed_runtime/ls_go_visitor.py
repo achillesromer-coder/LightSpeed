@@ -192,11 +192,55 @@ def register_visitor_routes(
         return {"schema": SCHEMA, "status": result["status"], "receipt": event,
                 "answer": None, "model": None, "evidence_stage": "CONCEPT"}
 
+    @app.post("/api/v1/visitor/logout")
+    async def logout(x_lightspeed_visitor_session: str | None = Header(None)):
+        visitor(x_lightspeed_visitor_session)
+        write("UPDATE ls_go_visitor_sessions SET revoked_utc=? WHERE session_sha256=?",
+              (utc(), sha(x_lightspeed_visitor_session or "")))
+        return {"schema": SCHEMA, "session_active": False}
+
+    @app.post("/api/v1/visitor/revoke")
+    async def revoke_reviewer(body: dict, x_lightspeed_session: str | None = Header(None)):
+        ready()
+        owner_guard(x_lightspeed_session)
+        reviewer_id = bound(body.get("reviewer_id"), 90)
+        if not reviewer_id:
+            raise HTTPException(400, "Reviewer ID required")
+        write("UPDATE ls_go_visitor_sessions SET revoked_utc=? WHERE reviewer_id=? AND revoked_utc IS NULL",
+              (utc(), reviewer_id))
+        write("UPDATE ls_go_visitor_invites SET revoked_utc=? WHERE reviewer_id=? AND redeemed_utc IS NULL AND revoked_utc IS NULL",
+              (utc(), reviewer_id))
+        return {"schema": SCHEMA, "reviewer_id": reviewer_id, "revoked": True}
+
     @app.get("/api/v1/visitor/owner-review")
     async def owner_review(x_lightspeed_session: str | None = Header(None)):
         ready()
         owner_guard(x_lightspeed_session)
         profiles = rows("SELECT reviewer_id,name,theme,lens,handshake_json,consent_utc FROM ls_go_visitor_profiles ORDER BY reviewer_id")
         events = rows("SELECT sequence,event_id,reviewer_id,event_type,recorded_utc,payload_json,previous_hash,event_hash,event_hmac FROM ls_go_visitor_events ORDER BY sequence")
+        chain_verified = True
+        last_hash: dict[str, str] = {}
+        for item in events:
+            reviewer = item["reviewer_id"]
+            previous = last_hash.get(reviewer, "GENESIS")
+            try:
+                data = json.loads(item["payload_json"])
+                value = {
+                    "schema": SCHEMA, "reviewer_id": reviewer,
+                    "event_type": item["event_type"],
+                    "recorded_utc": item["recorded_utc"],
+                    "previous_hash": item["previous_hash"],
+                    "payload": data,
+                }
+                packed = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+                computed = sha(packed)
+                expected_hmac = hmac.new(signing_key.encode(), computed.encode(), hashlib.sha256).hexdigest()
+                if (item["previous_hash"] != previous or computed != item["event_hash"] or
+                        not hmac.compare_digest(expected_hmac, item["event_hmac"])):
+                    chain_verified = False
+            except (KeyError, TypeError, ValueError, json.JSONDecodeError):
+                chain_verified = False
+            last_hash[reviewer] = item["event_hash"]
         return {"schema": SCHEMA, "profiles": profiles, "events": events,
+                "chain_verified": chain_verified,
                 "canonical_cgx_ingestion": False, "proof_scope": "LS_GO_VISITOR_RECEIPT_ONLY"}
