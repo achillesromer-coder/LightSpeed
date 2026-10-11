@@ -24,6 +24,8 @@ on:
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_floor_runner.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/mark3_multi_unit.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/representation_edge.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/node_exchange.py"
+      - "desktop/LightSpeed_Runtime/tests/test_node_exchange.py"
       - "desktop/LightSpeed_Runtime/tests/test_cognigrex_supervisor.py"
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
@@ -89,6 +91,8 @@ on:
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_floor_runner.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/mark3_multi_unit.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/representation_edge.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/node_exchange.py"
+      - "desktop/LightSpeed_Runtime/tests/test_node_exchange.py"
       - "desktop/LightSpeed_Runtime/tests/test_cognigrex_supervisor.py"
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
@@ -165,6 +169,7 @@ jobs:
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/__init__.py" \
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/__init__.py" \
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/secure_settings_hub.py" \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/node_exchange.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/cognigrex_supervisor.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_query_planner.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_conversion_planner.py \
@@ -237,6 +242,7 @@ jobs:
             desktop/Desktop_Hooks/LightSpeed/tests/test_launcher_exe.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_functions_hub_operator_surface.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_operator_home_export_gates.py \
+            desktop/LightSpeed_Runtime/tests/test_node_exchange.py \
             desktop/LightSpeed_Runtime/tests/test_cognigrex_supervisor.py \
             desktop/LightSpeed_Runtime/tests/test_cgx_query_planner.py \
             desktop/LightSpeed_Runtime/tests/test_cgx_conversion_planner.py \
