@@ -1,0 +1,334 @@
+{
+  "schema_version": "luke-ii-serviceable-reference-v1.3",
+  "artifact_status": "SOURCE_RECONCILED_SERVICEABLE_REFERENCE_NOT_ENGINEERING_RELEASE",
+  "canonical_target": "Luke II orbital EMF distribution / telemetry / refinement node",
+  "generated_at_utc": "2026-08-04T07:50:00Z",
+  "units": "SI unless export scale states otherwise",
+  "source_parameters": {
+    "major_radius_m": {
+      "value": 12.0,
+      "state": "LEGACY_SURROGATE_SOURCE",
+      "source": "LightSpeed/Z0_TheConstruct/orbital/luke_master_runs.py Toroid.major_R_m"
+    },
+    "body_minor_radius_m": {
+      "value": 2.0,
+      "state": "LEGACY_SURROGATE_SOURCE",
+      "source": "LightSpeed/Z0_TheConstruct/orbital/luke_master_runs.py Toroid.minor_a_m"
+    },
+    "field_sector_count": {
+      "value": 16,
+      "state": "LEGACY_SURROGATE_SOURCE",
+      "source": "LightSpeed/Z0_TheConstruct/orbital/luke_master_runs.py Toroid.sectors"
+    },
+    "payload_mass_range_kg": {
+      "value": [
+        500.0,
+        2500.0
+      ],
+      "state": "SOURCE_LABEL_INTERPRETED_AS_TONNES",
+      "source": "Canva Luke / II: 0.5-2.5T Deposit"
+    },
+    "payload_nominal_mass_kg": {
+      "value": 1500.0,
+      "state": "DERIVED_MIDPOINT",
+      "source": "midpoint of Canva 0.5-2.5 tonne range"
+    },
+    "payload_reference_radius_m": {
+      "value": 0.45,
+      "state": "LEGACY_SURROGATE_SOURCE",
+      "source": "LightSpeed luke_master_runs.py Deposit.radius_m"
+    }
+  },
+  "derived_geometry": {
+    "outer_diameter_m": 28.0,
+    "central_aperture_diameter_m": 20.0,
+    "axial_thickness_m": 4.0,
+    "centerline_circumference_m": 75.39822368615503,
+    "sector_arc_length_m": 4.71238898038469,
+    "structural_shell_thickness_m": {
+      "value": 0.25,
+      "state": "PROVISIONAL_REFERENCE",
+      "reason": "needed to create a printable and inspectable reference shell; not source validated"
+    }
+  },
+  "habitation": {
+    "crew": 3,
+    "iss_habitable_volume_m3": 388.0,
+    "iss_reference_crew": 7,
+    "iss_scaled_baseline_m3": 166.28571428571428,
+    "deep_space_study_volume_m3_for_4_crew": 268.0,
+    "deep_space_linear_3_crew_comparator_m3": 201.0,
+    "reserved_sector_count": 5,
+    "clear_minor_radius_m": 1.65,
+    "modelled_habitable_volume_m3": 201.5249848647433,
+    "state": "DERIVED_TARGET",
+    "warning": "ISS and NASA deep-space volumes are analogues, not a certified Luke II human-factors requirement.",
+    "gross_clear_volume_m3": 201.5249848647433,
+    "pressure_liner_clear_minor_radius_m": 1.55,
+    "pressure_liner_clear_volume_m3": 177.8379343021289,
+    "service_allocated_clear_minor_radius_m": 1.35,
+    "service_allocated_reference_volume_m3": 134.90515515739017,
+    "volume_revision_state": "DERIVED_SERVICEABILITY_ALLOCATION_NOT_HUMAN_RATED",
+    "volume_revision_note": "The prior 1.65 m clear-radius volume is retained as a gross planning envelope. The 1.55 m pressure-liner clearance and 1.35 m service-allocated envelope reserve wall, window, cable, access and maintainability volume and are not certified habitable volumes."
+  },
+  "functional_zones": [
+    {
+      "id": "HAB-01",
+      "name": "Command / telemetry / field-control watchstation",
+      "state": "DERIVED_FUNCTIONAL_LAYOUT"
+    },
+    {
+      "id": "HAB-02",
+      "name": "Wardroom / galley / common work area",
+      "state": "DERIVED_FUNCTIONAL_LAYOUT"
+    },
+    {
+      "id": "HAB-03",
+      "name": "Three crew sleep stations",
+      "state": "DERIVED_FUNCTIONAL_LAYOUT"
+    },
+    {
+      "id": "HAB-04",
+      "name": "Hygiene / waste / exercise",
+      "state": "DERIVED_FUNCTIONAL_LAYOUT"
+    },
+    {
+      "id": "HAB-05",
+      "name": "ECLSS / medical safe-haven / stores",
+      "state": "DERIVED_FUNCTIONAL_LAYOUT"
+    },
+    {
+      "id": "SYS-01",
+      "name": "Sixteen segmented toroidal field modules",
+      "state": "SOURCE_ALIGNED_TOPOLOGY"
+    },
+    {
+      "id": "SYS-02",
+      "name": "Frequency-generator and resonator bays",
+      "state": "SOURCE_ALIGNED_TOPOLOGY"
+    },
+    {
+      "id": "SYS-03",
+      "name": "Battery / Free Flow capacitor pulse bays",
+      "state": "SOURCE_ALIGNED_TOPOLOGY"
+    },
+    {
+      "id": "SYS-04",
+      "name": "Field, current, voltage, thermal, EMI and vibration sensor network",
+      "state": "SOURCE_ALIGNED_TOPOLOGY"
+    },
+    {
+      "id": "SYS-05",
+      "name": "Xenon/argon damping chamber placeholders",
+      "state": "CONCEPTUAL_SPECIALIST_REVIEW"
+    },
+    {
+      "id": "INT-01",
+      "name": "Two radial service/docking collars",
+      "state": "PROVISIONAL_INTERFACE"
+    },
+    {
+      "id": "INT-02",
+      "name": "Central contact-free payload transit aperture",
+      "state": "SOURCE_ALIGNED_TOPOLOGY"
+    }
+  ],
+  "operational_sequence": [
+    "INCOMING",
+    "SLOW_CORRECT",
+    "GLIDE_CONTACT_FREE",
+    "SEND_REDISTRIBUTE"
+  ],
+  "claim_gates": [
+    "No payload capture or controlled-return performance claim.",
+    "No orbital readiness or crew-safety certification claim.",
+    "No safe high-current, shielding, pressure-vessel or gas-handling claim.",
+    "All coil, field, thermal and human-rating values require measured evidence and independent engineering review."
+  ],
+  "legacy_simulation_quarantine": {
+    "turns": 2500,
+    "current_max_a": 1000000,
+    "field_cap_t": 5.0,
+    "state": "QUARANTINED_UNVERIFIED_NOT_USED_FOR_GEOMETRY_OR_CAPABILITY"
+  },
+  "exports": {
+    "reference_model_scale": "1:1 metres in GLB",
+    "print_model_scale": "1:100, coordinates in millimetres in STL"
+  },
+  "source_reconciliation": {
+    "current_task_issue": "https://github.com/achillesromer-coder/LightSpeed/issues/31",
+    "draft_pr": "https://github.com/achillesromer-coder/LightSpeed/pull/30",
+    "visual_reference": {
+      "state": "OWNER_SUPPLIED_EXTERNAL_FORM_REFERENCE",
+      "files": [
+        "1A.JPG",
+        "1B.JPG",
+        "1c(1).JPG",
+        "1D.JPG"
+      ],
+      "interpretation": "flattened toroidal body with stepped/panelled solar-hull exterior and central aperture"
+    },
+    "drive_sources": [
+      {
+        "id": "1BGwPdfafqVKwh3AS5fwvkhIImBmfPdMU",
+        "title": "Luke_LukeII_Apostle_Toroidal_EMF_Digital_Twin_v0_1.xlsx",
+        "role": "canonical Luke/Luke II/Apostle Twin"
+      },
+      {
+        "id": "18U8yd0HFsfFB9oVGGE3qNna4rD21HMPc",
+        "title": "Solar_Hull_Digital_Twin_v0_2.xlsx",
+        "role": "panel skin/layer inheritance"
+      },
+      {
+        "id": "1vxWhIHsIPIpkGn6Y_OjOxhpGkB43Q1tw",
+        "title": "Free_Flow_Solenoid_Stack_Digital_Twin_v0_1.xlsx",
+        "role": "solenoid/field-module inheritance"
+      },
+      {
+        "id": "1DzVG1xAJH_UHsFjUXGocbViJDNDn53Qo",
+        "title": "Free_Flow_Batteries_Digital_Twin_v0_1.xlsx",
+        "role": "battery/BMS module inheritance"
+      },
+      {
+        "id": "12IelrmiuDE06-5IdalimdO7FFNBaJixL",
+        "title": "Free_Flow_Capacitors_Digital_Twin_v0_1.xlsx",
+        "role": "capacitor/pulse module inheritance"
+      },
+      {
+        "id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2",
+        "title": "Mark_III_Digital_Twin_v0_1.xlsx",
+        "role": "upstream modular coupling/arm interface context only"
+      }
+    ]
+  },
+  "closure_revision": {
+    "revision": "v1.3",
+    "task_state": "CURRENT_NEXT_TASK_LUKE_CLOSURE_BEFORE_MARK_III",
+    "owner_directive": {
+      "state": "OWNER_DEFINED_DESIGN_DIRECTION",
+      "requirements": [
+        "panelled solar-hull exterior suitable for distributed assembly",
+        "curved living-quarter window bands from 8L/4R waist reference to 11L/1R raised-arm reference",
+        "connected walkways between habitation sectors",
+        "internal compartments with repair access and removable panels",
+        "physical attachments for represented components",
+        "cable and wire routing volume including bend radius, connectors and strain relief",
+        "joint and arm component decomposition at the Mark III handoff",
+        "interactive component/layer review before Mark III execution"
+      ]
+    },
+    "panelisation": {
+      "major_sector_count": 16,
+      "minor_band_count": 12,
+      "major_seam_gap_rad": 0.012,
+      "minor_seam_gap_rad": 0.018,
+      "outer_panel_outer_radius_m": 2.0,
+      "outer_panel_inner_radius_m": 1.92,
+      "panel_step_inset_max_m": 0.06,
+      "state": "DERIVED_PANELISED_REFERENCE",
+      "source_basis": "owner visual reference plus Solar Hull modular skin inheritance"
+    },
+    "pressure_and_service_layers": {
+      "pressure_liner_outer_radius_m": 1.72,
+      "pressure_liner_inner_radius_m": 1.55,
+      "service_bay_radial_depth_m": 0.2,
+      "service_lining_inner_radius_m": 1.35,
+      "state": "PROVISIONAL_SPATIAL_RESERVATION",
+      "guardrail": "No pressure rating, material or proof-pressure claim"
+    },
+    "windows": {
+      "habitat_sector_indices_zero_based": [
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "clock_ranges": {
+        "right": [
+          1,
+          4
+        ],
+        "left": [
+          8,
+          11
+        ]
+      },
+      "minor_band_indices": [
+        0,
+        1,
+        4,
+        5,
+        6,
+        11
+      ],
+      "outer_layer_thickness_m": 0.025,
+      "interlayer_gap_m": 0.015,
+      "inner_layer_thickness_m": 0.025,
+      "frame_depth_m": 0.12,
+      "state": "OWNER_DEFINED_LOCATION_PROVISIONAL_PRESSURE_LAYER_REFERENCE",
+      "guardrail": "Window geometry is a visual/spatial pressure-control reference, not a qualified transparent pressure vessel"
+    },
+    "habitat_access": {
+      "walkway_width_m": 1.1,
+      "walkway_deck_thickness_m": 0.08,
+      "walkway_segment_count": 25,
+      "door_clear_width_m": 0.82,
+      "door_clear_height_m": 1.9,
+      "service_corridor_width_m": 0.55,
+      "removable_lining_depth_m": 0.08,
+      "state": "DERIVED_SERVICEABLE_LAYOUT",
+      "guardrail": "Ergonomic and emergency-egress validation remains open"
+    },
+    "serviceability": {
+      "component_service_clearance_m": 0.55,
+      "connector_access_m": 0.18,
+      "cable_tray_width_m": 0.24,
+      "cable_tray_height_m": 0.12,
+      "minimum_bend_radius_m": 0.2,
+      "strain_relief_length_m": 0.18,
+      "removal_path_length_m": 0.8,
+      "state": "PROVISIONAL_MAINTAINABILITY_RESERVATION",
+      "guardrail": "Clearances are configuration placeholders pending component datasheets and maintenance analysis"
+    },
+    "mark_iii_interface_arm": {
+      "base_yaw_radius_m": 0.42,
+      "base_yaw_depth_m": 0.24,
+      "shoulder_pitch_radius_m": 0.28,
+      "upper_link_length_m": 1.65,
+      "fore_link_length_m": 1.3,
+      "link_section_m": [
+        0.22,
+        0.18
+      ],
+      "elbow_radius_m": 0.24,
+      "wrist_radius_m": 0.18,
+      "end_effector_length_m": 0.42,
+      "actuator_housing_radius_m": 0.16,
+      "cable_chain_clearance_m": 0.12,
+      "state": "PROVISIONAL_INTERFACE_DECOMPOSITION_FROM_MARK_III_TWIN",
+      "guardrail": "No load, torque, deployment, capture or manufacturing claim"
+    },
+    "print_references": {
+      "full_assembly_scale": "1:100",
+      "representative_panel_scale": "1:20",
+      "window_frame_scale": "1:20",
+      "mark_iii_interface_arm_scale": "1:20",
+      "state": "DISPLAY_AND_ASSEMBLY_REVIEW_ONLY_NOT_MANUFACTURING_RELEASE"
+    }
+  },
+  "open_engineering_gaps": [
+    "pressure shell materials, thickness, seals and proof pressure",
+    "transparent pressure-window laminate, frame, seal and impact qualification",
+    "radiation and micrometeoroid protection",
+    "service-bay thermal rejection and fire zoning",
+    "cable gauge, insulation, connector family, EMI separation and bend limits",
+    "component mass properties, attachment loads and launch restraints",
+    "walkway, door, emergency egress and safe-haven human-factors validation",
+    "ECLSS mass, capacity, redundancy and maintenance paths",
+    "validated coil geometry, current, insulation and cooling",
+    "docking/Mark III interface standard, arm loads, actuation and controls",
+    "panel fasteners, tolerance stack, seal strategy and on-site assembly sequence",
+    "printer/material/process capability for any proposed physical segment"
+  ]
+}
