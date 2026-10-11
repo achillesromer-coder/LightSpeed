@@ -2,7 +2,7 @@ import { routeInstruction, type Floor } from "./desktopBridge";
 
 export const SHELL_SCHEMA = "lightspeed-cognigrex-os-shell-v0.1" as const;
 
-export const SHELL_VIEWS = ["command", "activity", "objects", "system", "sources"] as const;
+export const SHELL_VIEWS = ["command", "activity", "review", "objects", "system", "sources"] as const;
 export type ShellView = (typeof SHELL_VIEWS)[number];
 
 export type WorkflowStageId =
