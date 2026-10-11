@@ -112,5 +112,84 @@
     "no-free-form-shell-capability",
     "no-public-direct-execution",
     "no-canonical-promotion-from-runtime-receipt-alone"
-  ]
+  ],
+  "rolling_observer_facet": {
+    "schema": "cgx-node-exchange-rolling-observer-facet-v1",
+    "status": "opt-in read-only candidate / live peer, calibration and publication gates remain held",
+    "owner": "existing CGX FileSpace/DataSpace contract; not a separate InterSpace, runtime, database, scheduler, security system or canonical state",
+    "code_path": "desktop/LightSpeed_Runtime/lightspeed_runtime/node_exchange.py::project_rolling_observer_window",
+    "requires_existing_capability_lease": true,
+    "prerequisite": "upstream trusted adapter validates device identity, receipts, sensor calibration and time; boolean receipt_verified is only a precondition marker, never a cryptographic proof",
+    "cadence": {
+      "window_ms": 60000,
+      "fast_step_ms": 1000,
+      "slow_step_ms": 5000,
+      "observed_timestamps_max": 61,
+      "phase_slots": [
+        0,
+        1,
+        3,
+        4,
+        6,
+        7,
+        9,
+        10,
+        11
+      ]
+    },
+    "reference_roots": [
+      "object_id",
+      "geometry_root",
+      "semantic_root",
+      "model_root",
+      "prior_state_root"
+    ],
+    "observer_selection": {
+      "min_nodes": 3,
+      "max_nodes": 16,
+      "unique_node_ids": true,
+      "unique_annotated_groups_for_candidate_quorum": true,
+      "physical_independence_not_proven_by_labels": true,
+      "unknown_on_insufficient_or_conflicting_inputs": true
+    },
+    "raw_state_alphabet": [
+      "-1",
+      "0",
+      "+1",
+      "null=unknown/erasure"
+    ],
+    "nine_local_lenses": [
+      "state",
+      "transition",
+      "persistence",
+      "stability",
+      "activity",
+      "oscillation",
+      "spatial_corroboration",
+      "evidence_quality",
+      "release_projection"
+    ],
+    "distribution_rules": [
+      "Do not ship entire local trajectory to peers by default; this projection is local-only and not a wire frame.",
+      "Public or external delivery uses existing approved signed/authenticated transport and explicit release gates.",
+      "Context roots and chosen observer/phase set are authenticated context, not encryption keys.",
+      "Transport energy/frequency/ambient-backscatter selection requires authorised device and spectrum qualification.",
+      "No unchanged-state assumption on missing packet; short 0→+1→0 events must be preserved when relevant.",
+      "Models, semantic views, source data and associated rights remain with their canonical owner.",
+      "No physical inference promoted by observation quorum alone; withhold on disagreement or unresolved model."
+    ],
+    "operation_binding": {
+      "file_space": "single stable Cognigrex.cgx object/geometry/state/DBR identity",
+      "data_space": "bounded event/state projection and preexisting node_exchange root/receipt/lease rules",
+      "print_space": "qualified sensor/tag devices supply real receipts; manufacturing and physical controls unchanged",
+      "runtime": "existing LightSpeed, no second scheduler/agent/router",
+      "operator": "existing LS GO/Achilles authenticated review only"
+    },
+    "authority_transfer": false,
+    "canonical_promotion_authorized": false,
+    "public_publish_authorized": false,
+    "physical_actuation_authorized": false,
+    "acceptance_owner": "existing owner review issue #161; internal review protection issue #158",
+    "evidence_state": "synthetic/offline only"
+  }
 }
