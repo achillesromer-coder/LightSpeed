@@ -4,6 +4,8 @@ const root=document.getElementById("visitor-app")!;
 const escapeText=(s:string)=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]||c));
 const banner='<header><small>LIGHTSPEED GO / CGX</small><h1>External review</h1><a href="https://romer.industries/cgx">Public orientation ↗</a></header>';
 const invite=new URLSearchParams(location.hash.slice(1)).get("invite");
+const sessionKey="ls-go-review-session";
+const savedToken=sessionStorage.getItem(sessionKey)||"";
 let lens:CgxLens="achilles",busy=false;
 function workspace(name:string){
  root.innerHTML=banner+`<div class="v-grid"><aside><h2>${escapeText(name)}</h2><p>Select a lens</p><button id="v-logout" class="v-muted">End session</button>${Object.entries(LENSES).map(([id,n])=>`<button data-lens="${id}">${escapeText(n)}</button>`).join("")}</aside>
@@ -13,7 +15,7 @@ function workspace(name:string){
  document.getElementById("v-logout")!.addEventListener("click",async()=>{
    try{await visitorRequest("/api/v1/visitor/logout",{});}
    finally{
-      setVisitorSession("");root.innerHTML=banner+"<main><h2>Signed out</h2><p>Review receipts remain available to the authorised owner. A fresh invitation is needed for a new session.</p></main>";
+      sessionStorage.removeItem(sessionKey);setVisitorSession("");root.innerHTML=banner+"<main><h2>Signed out</h2><p>Review receipts remain available to the authorised owner. A fresh invitation is needed for a new session.</p></main>";
    }
  });
  document.querySelectorAll<HTMLButtonElement>("[data-lens]").forEach(b=>b.onclick=async()=>{
@@ -33,7 +35,16 @@ function workspace(name:string){
   finally{busy=false;}
  };
 }
-if(!invite)root.innerHTML=banner+"<main><h2>Invitation required</h2><p>Request a private LS GO reviewer link from the owner.</p></main>";
+if(!invite && savedToken){
+ setVisitorSession(savedToken);
+ root.innerHTML=banner+"<main><h2>Restoring your review</h2><p>Verifying session and preferences.</p></main>";
+ void visitorRequest<{name:string;theme:string;lens:CgxLens}>("/api/v1/visitor/me").then(me=>{
+   lens=me.lens;document.body.dataset.vTheme=me.theme;workspace(me.name);
+ }).catch(()=>{
+   sessionStorage.removeItem(sessionKey);setVisitorSession("");
+   root.innerHTML=banner+"<main><h2>Session expired</h2><p>Request a new invitation to reopen your saved reviewer profile.</p></main>";
+ });
+}else if(!invite)root.innerHTML=banner+"<main><h2>Invitation required</h2><p>Request a private LS GO reviewer link from the owner.</p></main>";
 else{
  root.innerHTML=banner+`<main><h2>Welcome to CGX</h2><p>Invitation-scoped review · choose a background and lens.</p>
  <form id="v-enroll"><label>Name <input name="name" maxlength="72" required></label>
@@ -50,7 +61,7 @@ else{
   try{
     const r=await visitorRequest<{visitor_session:string;profile:{name:string;lens:CgxLens}}>("/api/v1/visitor/enroll",{
       ...fields,invite_token:invite,consent:fields.consent==="on"});
-    setVisitorSession(r.visitor_session);lens=r.profile.lens;
+    setVisitorSession(r.visitor_session);sessionStorage.setItem(sessionKey,r.visitor_session);lens=r.profile.lens;
     document.body.dataset.vTheme=String(fields.theme||"orbit");
     history.replaceState(null,"",location.pathname);workspace(r.profile.name);
   }catch(err){document.getElementById("v-result")!.textContent=String(err);}
