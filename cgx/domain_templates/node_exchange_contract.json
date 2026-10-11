@@ -191,5 +191,104 @@
     "physical_actuation_authorized": false,
     "acceptance_owner": "existing owner review issue #161; internal review protection issue #158",
     "evidence_state": "synthetic/offline only"
+  },
+  "configurable_n_dataspace_facet": {
+    "schema": "cgx-dataspace-config-facet-v1",
+    "candidate_delta_schema": "cgx-dataspace-compact-delta-candidate-v1",
+    "status": "review_only / locally computed candidate; not transport, cryptography, physical authority or separate datastore",
+    "owner": "Cognigrex.cgx FileSpace Object_ID + geometry/semantic/model/state roots; inherits existing DataSpace node exchange",
+    "code_binding": "desktop/LightSpeed_Runtime/lightspeed_runtime/node_exchange.py",
+    "existing_functions": [
+      "validate_dataspace_profile",
+      "build_dataspace_delta_candidate",
+      "apply_dataspace_delta_candidate"
+    ],
+    "configurable_counts": {
+      "nodes": "1..128",
+      "selected_nodes": "1..128",
+      "geometric_interfaces": "0..128",
+      "derivables": "1..128",
+      "relations": "0..256",
+      "semantic_lenses": "1..64",
+      "transports": "0..16"
+    },
+    "topology": {
+      "nodes": "ids, ownership evidence references, public/restricted/private visibility, external access policy refs",
+      "selection": "include/exclude partition of all declared nodes; no silent substitution of unavailable nodes",
+      "interfaces": "kind, 1..16 included node IDs, registered geometric/frame/displacement/measurement model reference",
+      "derivables": "registered deterministic function reference, input interface IDs, units; no automatic inference",
+      "relationships": "typed known endpoints, evidence provenance; physical links require independent verification",
+      "semantic_lenses": "existing registered view references bound to derivables; subjective/local interpretation never becomes fact",
+      "current_profiles": "one profile per authorised FileSpace scope; profile edits change the context root and force renegotiation"
+    },
+    "context": {
+      "required_roots": [
+        "object_id",
+        "geometry_root",
+        "semantic_root",
+        "model_root",
+        "state_root"
+      ],
+      "profile_fingerprint": "canonical SHA-256 of local scoped profile; treat as potentially revealing and keep behind authenticated access",
+      "version_rule": "both ends reconcile exact profile root and prior state root before compact delta",
+      "no_plaintext_secrets": "no keys, passwords, recovery tokens or private catalogue material in profile, logs or public routing",
+      "dns_boundary": "domain control proof is namespace discovery, not device permission, data rights or spectrum access",
+      "authority": "signed identity, scoped leases, source licence and state/DBR authority stay external owner gates"
+    },
+    "delta": {
+      "alphabet": [
+        "-1",
+        "0",
+        "+1",
+        "null=unknown; never substitute zero or unchanged"
+      ],
+      "changes_only": true,
+      "transaction": "sequence + window timestamp + Object_ID + exact profile/prior/result roots",
+      "receiver": "reject mismatched prior/profile roots, replay sequence, duplicate keys, malformed symbols and changed-state hash",
+      "intermediate_events": "window-to-window compression does not substitute for required event history; preserve 0,+1,0 when consequential",
+      "no_claims": [
+        "not wire format",
+        "not encrypted",
+        "not signed",
+        "not peer accepted",
+        "not canonical promotion"
+      ]
+    },
+    "physical_transport": {
+      "distinct_fields": [
+        "throughput_bps",
+        "spectral_bandwidth_hz",
+        "observed_occupancy_fraction"
+      ],
+      "options": [
+        "offline",
+        "wired",
+        "ip",
+        "wifi",
+        "lpwan",
+        "ambient_backscatter",
+        "optical",
+        "delay_tolerant"
+      ],
+      "authorization_class": [
+        "NOT_VERIFIED",
+        "LISTEN_ONLY",
+        "EXTERNALLY_QUALIFIED"
+      ],
+      "rule": "An observed idle channel, DNS namespace or compliant band alone does not authorise using another operator's infrastructure. External licences/equipment/test evidence and the existing lease gates remain mandatory.",
+      "separation": "RF sampling ≠ transmission cadence; channel observation ≠ a message; receiver context ≠ cryptographic secrecy."
+    },
+    "receipt_boundary": "Functions only validate typed structures and exact deterministic state projection; boolean receipt markers/authority references MUST come from verified upstream adapters and do not themselves verify signatures.",
+    "privacy": "No private node roster, geometry selection, source evidence or inner state in a public discovery packet. Authenticated per-scope projection, metadata-minimising opaque reference where possible.",
+    "gates": [
+      "existing owner #161 two-node end-to-end",
+      "existing #158 private asset and LS GO access control",
+      "site-specific radio/device permissions",
+      "PrintSpace sensor/actuator qualification"
+    ],
+    "node_exchange_invariants_preserved": true,
+    "canonical_promotion_authorized": false,
+    "public_publish_authorized": false,
+    "physical_actuation_authorized": false
   }
 }
