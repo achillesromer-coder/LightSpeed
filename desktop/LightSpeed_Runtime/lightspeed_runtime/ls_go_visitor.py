@@ -124,6 +124,8 @@ def register_visitor_routes(
             count = rows("SELECT COUNT(DISTINCT reviewer_id) AS n FROM ls_go_visitor_invites")[0]["n"]
             if not existing and int(count) >= 4:
                 raise HTTPException(409, "Four reviewer seats already provisioned")
+            write("UPDATE ls_go_visitor_invites SET revoked_utc=? WHERE reviewer_id=? AND redeemed_utc IS NULL AND revoked_utc IS NULL",
+                  (utc(), reviewer_id))
             raw = secrets.token_urlsafe(32)
             invite_id = "INV-" + secrets.token_hex(8)
             expiry = (datetime.now(timezone.utc) + timedelta(days=14)).isoformat(timespec="seconds")
@@ -186,6 +188,10 @@ def register_visitor_routes(
         object_id = bound(body.get("object_id"), 120)
         if kind not in EVENT_KINDS or lens not in LENSES or (not content and kind != "selection"):
             raise HTTPException(400, "Invalid visitor interaction")
+        count = rows("SELECT COUNT(*) AS n FROM ls_go_visitor_events WHERE reviewer_id=? AND event_type IN ('question','model_request','feedback')",
+                     (p["reviewer_id"],))
+        if int(count[0]["n"]) >= 200:
+            raise HTTPException(429, "Review interaction limit reached; owner review required")
         # No private read, tool execution, object hydration or AI answer is implied.
         result = {"kind": kind, "lens": lens, "text": content,
                   "object_id": object_id, "status": "PENDING_PUBLIC_SAFE_RESOLVER",
