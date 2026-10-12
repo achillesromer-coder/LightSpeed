@@ -38,6 +38,19 @@ jobs:
         run: |
           python -m unittest -v test_drive_readback_candidate.py
           python -m py_compile drive_readback_candidate.py
+      - name: Validate source-owned Neutral Beings FileSpace index and safe public boundary
+        working-directory: benchmarks/cgx_unispace_geometric_shorthand
+        run: |
+          python -m py_compile neutral_beings_filespace.py test_neutral_beings_filespace.py
+          python -m unittest -v test_neutral_beings_filespace.py
+          python neutral_beings_filespace.py neutral_beings_source_index.json --html neutral_beings_owner_review.html
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('neutral_beings_owner_review.html')
+          assert p.is_file() and p.stat().st_size<200000
+          assert 'Source-owner review' in p.read_text()
+          print('NEUTRAL_BEINGS_SOURCE_BOUND_HOLD_PASS',p.stat().st_size)
+          PY
       - name: Reconstruct a full byte stream, then a baseline-root sparse update
         working-directory: benchmarks/cgx_unispace_geometric_shorthand
         run: |
@@ -84,5 +97,6 @@ jobs:
           name: cgx-unispace-r0-shorthand-validation
           path: |
             benchmarks/cgx_unispace_geometric_shorthand/benchmark_results.json
+            benchmarks/cgx_unispace_geometric_shorthand/neutral_beings_owner_review.html
           if-no-files-found: warn
           retention-days: 14
