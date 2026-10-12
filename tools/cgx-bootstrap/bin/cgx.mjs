@@ -3,7 +3,7 @@
 import { open, realpath } from "node:fs/promises";
 import { basename, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
-import { publicSkeleton, discoverLocal, observeLocal } from "../src/handshake.mjs";
+import { publicSkeleton, discoverCgx, observeLocal } from "../src/handshake.mjs";
 
 const help = [
   "CGX public bootstrap (source candidate; npm registry release NOT published)",
@@ -65,7 +65,7 @@ export async function main(args = process.argv.slice(2)) {
     case "doctor": {
       if (flags.length !== 0) throw new Error("discover takes no options");
       return print({ schema_version: "cgx-minimum-discovery-v1",
-        ...await discoverLocal(), public_skeleton_schema: publicSkeleton().schema_version });
+        ...await discoverCgx(), public_skeleton_schema: publicSkeleton().schema_version });
     }
     case "observe": {
       const samples = integerOption(flags, "--samples", 3);
