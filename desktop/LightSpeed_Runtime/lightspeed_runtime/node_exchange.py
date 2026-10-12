@@ -875,3 +875,226 @@ __all__.extend((
     "validate_dataspace_profile", "build_dataspace_delta_candidate",
     "apply_dataspace_delta_candidate",
 ))
+
+
+# CGX prism: locally negotiated interpretations over ONE existing FileSpace source.
+# No active transport, device attestation, licence validation, executable loading,
+# new canonical objects, WAD decoding or out-of-band DataSpace authority.
+PRISM_SLICE_FACET = "cgx-prism-static-slice-facet-v1"
+PRISM_HANDSHAKE_FACET = "cgx-prism-local-handshake-candidate-v1"
+_PRISM_RENDER_KINDS = {"text", "metric", "table", "graph", "spatial", "3d"}
+_PRISM_DEVICE_TYPES = {"unknown", "desktop_browser", "android_touch", "mobile_touch", "microcontroller"}
+_PRISM_OPERATIONS = {"identity", "sum", "difference", "ratio", "span", "count"}
+
+
+def validate_prism_slice_profile(profile: dict) -> dict:
+    """Validate locally supplied source-bound static graph; refs are NOT verified assets."""
+    if not isinstance(profile, dict) or profile.get("schema_version") != PRISM_SLICE_FACET:
+        raise NodeExchangeError("CGX prism schema unsupported")
+    object_id = profile.get("object_id")
+    if not isinstance(object_id, str) or not 1 <= len(object_id) <= 160:
+        raise NodeExchangeError("CGX prism requires canonical Object_ID")
+    for name in ("source_root", "geometry_root", "semantic_root", "model_root"):
+        _dataspace_check_root(profile.get(name), "prism " + name)
+    layers = _dataspace_index(profile.get("layers"), "prism layers", 1, 128)
+    views = _dataspace_index(profile.get("interpretations"), "prism interpretations", 1, 256)
+    for key, item in layers.items():
+        if item.get("visibility") not in _DATASPACE_VISIBILITY:
+            raise NodeExchangeError("CGX prism layer visibility invalid")
+        for field in ("source_ref", "geometry_ref", "owner_ref"):
+            if not isinstance(item.get(field), str) or not 1 <= len(item[field]) <= 160:
+                raise NodeExchangeError("CGX prism layer requires source and geometry owners")
+        _dataspace_check_root(item.get("content_root"), "prism content_root")
+        parent = item.get("parent_id")
+        if parent is not None and (parent not in layers or parent == key):
+            raise NodeExchangeError("CGX prism invalid parent layer")
+    # A layer is a slice of the existing graph, not a new root. Reject cycles.
+    for key in layers:
+        cursor, visited = key, set()
+        while cursor is not None:
+            if cursor in visited:
+                raise NodeExchangeError("CGX prism cyclic parent graph")
+            visited.add(cursor)
+            cursor = layers[cursor].get("parent_id")
+    for item in views.values():
+        if item.get("layer_id") not in layers:
+            raise NodeExchangeError("CGX prism interpretation has missing layer")
+        if item.get("render_kind") not in _PRISM_RENDER_KINDS:
+            raise NodeExchangeError("CGX prism unsupported rendering type")
+        for field in ("registered_view_ref", "language_ref"):
+            if not isinstance(item.get(field), str) or not 1 <= len(item[field]) <= 160:
+                raise NodeExchangeError("CGX prism needs registered interpretation references")
+        if item.get("operation") not in _PRISM_OPERATIONS:
+            raise NodeExchangeError("CGX prism operation is not in read-only safe list")
+        keys = item.get("input_keys")
+        expected = {"identity": 1, "difference": 2, "ratio": 2, "span": 2}
+        if (not isinstance(keys, list) or len(keys) > 16 or
+                any(not isinstance(k, str) or not 1 <= len(k) <= 96 for k in keys) or
+                len(set(keys)) != len(keys) or
+                (item["operation"] in expected and len(keys) != expected[item["operation"]]))):
+            raise NodeExchangeError("CGX prism input grammar invalid")
+        if item.get("operation") == "sum" and not keys:
+            raise NodeExchangeError("CGX prism sum needs inputs")
+        if not isinstance(item.get("unit"), str) or len(item["unit"]) > 48:
+            raise NodeExchangeError("CGX prism unit must be explicit")
+    return {
+        "schema_version": PRISM_SLICE_FACET,
+        "object_id": object_id,
+        "static_profile_root": _canonical_json_sha256(profile),
+        "layer_count": len(layers),
+        "interpretation_count": len(views),
+        "read_only": True,
+        "asset_bytes_verified": False,
+        "source_rights_verified": False,
+        "canonical_promotion_authorized": False,
+    }
+
+
+def negotiate_prism_device_candidate(*, profile: dict, device_offer: dict) -> dict:
+    """Automatic LOCAL capability matching, not authentication or a network handshake.
+
+    A user-agent or touch capability changes view selection, NEVER access rights.
+    Protected layer names and existence are not disclosed through returned status.
+    """
+    info = validate_prism_slice_profile(profile)
+    if not isinstance(device_offer, dict) or device_offer.get("device_type") not in _PRISM_DEVICE_TYPES:
+        raise NodeExchangeError("CGX prism device type invalid")
+    kinds = device_offer.get("render_kinds")
+    requested = device_offer.get("requested_interpretations")
+    cached = device_offer.get("cached_content_roots")
+    max_layers = device_offer.get("max_layers")
+    if (not isinstance(kinds, list) or not kinds or len(kinds) > 6 or
+            any(k not in _PRISM_RENDER_KINDS for k in kinds) or len(set(kinds)) != len(kinds)):
+        raise NodeExchangeError("CGX prism render capabilities invalid")
+    if (not isinstance(requested, list) or len(requested) > 256 or
+            any(not isinstance(x, str) or not x or len(x) > 96 for x in requested) or
+            len(set(requested)) != len(requested)):
+        raise NodeExchangeError("CGX prism requested interpretations invalid")
+    if (not isinstance(cached, list) or len(cached) > 128 or
+            len(set(cached)) != len(cached)):
+        raise NodeExchangeError("CGX prism cache declaration invalid")
+    for root in cached:
+        _dataspace_check_root(root, "prism cached root")
+    if type(max_layers) is not int or not 1 <= max_layers <= 128:
+        raise NodeExchangeError("CGX prism device layer capacity invalid")
+    context = device_offer.get("static_profile_root")
+    _dataspace_check_root(context, "prism device context")
+    layers = {row["id"]: row for row in profile["layers"]}
+    interpretations = {row["id"]: row for row in profile["interpretations"]}
+    seen = set(cached)
+    entries = []
+    if context != info["static_profile_root"]:
+        for _ in requested:
+            entries.append({"status": "RECONCILE_REQUIRED"})
+    else:
+        for ident in requested:
+            view = interpretations.get(ident)
+            if view is None:
+                entries.append({"status": "NOT_AVAILABLE"})
+                continue
+            layer = layers[view["layer_id"]]
+            if layer["visibility"] != "public":
+                entries.append({"status": "NOT_AVAILABLE"})
+                continue
+            # Ancestors are part of the same already-known interpretation path.
+            chain = []
+            pointer = view["layer_id"]
+            while pointer is not None:
+                chain.append(layers[pointer])
+                pointer = layers[pointer].get("parent_id")
+            if len(chain) > max_layers or any(x["content_root"] not in seen for x in chain):
+                status = "NOT_CACHED"
+            elif view["render_kind"] not in kinds:
+                status = "UNSUPPORTED_RENDERER"
+            else:
+                status = "RESOLVABLE_CANDIDATE"
+            entries.append({"id": ident, "status": status} if status != "NOT_CACHED" else
+                           {"id": ident, "status": status, "requires_source_hydration": True})
+    return {
+        "schema_version": PRISM_HANDSHAKE_FACET,
+        "object_id": info["object_id"],
+        "static_profile_root": info["static_profile_root"],
+        "device_type_hint": device_offer["device_type"],
+        "input_hint": "touch" if device_offer["device_type"] in
+                       {"android_touch", "mobile_touch"} else "keyboard_or_machine",
+        "requested_count": len(requested),
+        "resolution": entries,
+        "local_candidate_only": True,
+        "device_identity_verified": False,
+        "cache_bytes_verified": False,
+        "entitlement_verified": False,
+        "wire_ready": False,
+        "canonical_promotion_authorized": False,
+    }
+
+
+def resolve_prism_interpretation_candidate(
+    *, profile: dict, handshake: dict, interpretation_id: str, inputs: dict,
+) -> dict:
+    """Pure numeric evaluation; never eval() a supplied equation or execute code."""
+    info = validate_prism_slice_profile(profile)
+    if (not isinstance(handshake, dict) or
+            handshake.get("schema_version") != PRISM_HANDSHAKE_FACET or
+            handshake.get("static_profile_root") != info["static_profile_root"] or
+            handshake.get("object_id") != info["object_id"]):
+        raise NodeExchangeError("CGX prism prior handshake/profile mismatch")
+    interpretations = {row["id"]: row for row in profile["interpretations"]}
+    views = handshake.get("resolution")
+    if not isinstance(views, list):
+        raise NodeExchangeError("CGX prism handshake results invalid")
+    allowed = any(row.get("id") == interpretation_id and
+                  row.get("status") == "RESOLVABLE_CANDIDATE"
+                  for row in views if isinstance(row, dict))
+    item = interpretations.get(interpretation_id)
+    if not allowed or item is None:
+        return {"status": "NOT_AVAILABLE", "canonical_promotion_authorized": False}
+    layer = next(row for row in profile["layers"] if row["id"] == item["layer_id"])
+    if layer["visibility"] != "public":
+        return {"status": "NOT_AVAILABLE", "canonical_promotion_authorized": False}
+    if not isinstance(inputs, dict) or len(inputs) > 32:
+        raise NodeExchangeError("CGX prism numeric inputs invalid")
+    values = []
+    for key in item["input_keys"]:
+        if key not in inputs or inputs[key] is None:
+            return {"status": "UNKNOWN_INPUT", "canonical_promotion_authorized": False}
+        value = inputs[key]
+        if type(value) not in (int, float) or value != value or abs(value) > 1e12:
+            raise NodeExchangeError("CGX prism input must be bounded finite number")
+        values.append(value)
+    op = item["operation"]
+    if op == "ratio" and values[1] == 0:
+        return {"status": "UNDEFINED_OPERATION", "canonical_promotion_authorized": False}
+    result = {
+        "identity": lambda: values[0],
+        "sum": lambda: sum(values),
+        "difference": lambda: values[0] - values[1],
+        "ratio": lambda: values[0] / values[1],
+        "span": lambda: abs(values[0] - values[1]),
+        "count": lambda: len(values),
+    }[op]()
+    if result != result or abs(result) > 1e12:
+        return {"status": "UNDEFINED_OPERATION", "canonical_promotion_authorized": False}
+    return {
+        "status": "DERIVED_LOCAL_CANDIDATE",
+        "object_id": info["object_id"],
+        "static_profile_root": info["static_profile_root"],
+        "slice_id": layer["id"],
+        "registered_view_ref": item["registered_view_ref"],
+        "geometry_ref": layer["geometry_ref"],
+        "language_ref": item["language_ref"],
+        "operation": op,
+        "unit": item["unit"],
+        "value": result,
+        "evidence_class": "SIMULATED_NUMERIC",
+        "source_verified": False,
+        "authenticated": False,
+        "canonical_promotion_authorized": False,
+    }
+
+
+__all__.extend((
+    "PRISM_SLICE_FACET", "PRISM_HANDSHAKE_FACET",
+    "validate_prism_slice_profile",
+    "negotiate_prism_device_candidate",
+    "resolve_prism_interpretation_candidate",
+))
