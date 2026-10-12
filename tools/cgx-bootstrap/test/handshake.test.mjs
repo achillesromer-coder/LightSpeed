@@ -269,3 +269,19 @@ test("native CGX bootstrap rejects partial or created HTTP responses even with v
     assert.equal(result.consumer_verified, false);
   }
 });
+
+test("observeLocal retains local phase and timestamp against untrusted discovery fields", async () => {
+  const result = await observeLocal({
+    samples: 2, intervalMs: 0,
+    discover: async () => ({ state: "CGX_PUBLIC_BOOTSTRAP_CANDIDATE", phase: 99,
+      observed_utc: "2099-01-01T00:00:00.000Z", authenticated: false }),
+    sleep: async () => {},
+    now: () => "2026-10-13T05:33:00.000Z",
+  });
+  assert.deepEqual(result.observations.map(o => o.phase), [0, 1]);
+  assert.deepEqual(result.observations.map(o => o.observed_utc), [
+    "2026-10-13T05:33:00.000Z", "2026-10-13T05:33:00.000Z",
+  ]);
+  assert.equal(result.session_restored, false);
+  assert.equal(result.device_pairing_performed, false);
+});

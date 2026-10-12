@@ -218,7 +218,7 @@ export async function observeLocal({
   for (let i = 0; i < samples; i++) {
     if (i) await sleep(intervalMs);
     const result = await discover();
-    observations.push({ phase: i, observed_utc: now(), ...result });
+    observations.push({ ...result, phase: i, observed_utc: now() });
   }
   return {
     schema_version: "cgx-minimum-observation-sequence-v1",
