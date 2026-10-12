@@ -53,7 +53,12 @@ def build(src:Path,dst:Path,n:int):
  prep+='<script id="cgx-manifest" type="application/json">'+json.dumps(manifest,separators=(',',':'))+'</script>\n'
  html=html.replace('<script>\n(function () {',prep+'<script>\n(function () {',1)
  source=re.sub(r'</script',r'<\\/script',engine.decode(),flags=re.I)
- html=html.replace('</body>','<script>'+source+'</script>\n</body>',1)
+ licenses=(src/"COPYING").read_text(errors="replace") + "\n---- FREEDOOM LICENSE ----\n" + (src/"FREEDOOM-COPYING.txt").read_text(errors="replace")
+ licenses+= "\n---- ENGINE CORRESPONDING SOURCE ----\nhttps://github.com/Saketh-Chandra/doom-wasm-pwa/tree/a77edfd8bbc7\n"
+ licenses+= "---- FREEDOOM ORIGINAL GAME DATA ----\nhttps://freedoom.github.io/\n"
+ licenses=licenses.replace("-->","-- >").replace("<","&lt;")
+ html=html.replace('</body>','<!-- CGX ONE-FILE SOURCE LICENSES / ATTRIBUTION BEGIN\\n'+licenses+'\\nCGX ONE-FILE SOURCE LICENSES END -->\\n</body>',1)
+ html=html.replace('</body>','<script>'+source+'</script>\\n</body>',1)
  assert 'id="cgx-wad"' in html and 'window.Module.wasmBinary' in html
  whole=html.encode()
  compressed=gzip.compress(whole,compresslevel=9,mtime=0)
@@ -82,7 +87,7 @@ document.open();document.write(t);document.close();
  "Download and double-click CGX_FREEDOOM_ONE_CLICK_OFFLINE.html in a modern browser, then click TAP TO START. "
  "This contains actual open-source Chocolate Doom WebAssembly and the full Freedoom 0.13.0 Phase 1 IWAD.\n\n"
  "Runtime: https://github.com/danborden1/doom-web/tree/e0ba81004e27e7d66141925dfebb091a558e2fe8 ; engine GNU GPL-2.0, corresponding source https://github.com/Saketh-Chandra/doom-wasm-pwa/tree/a77edfd8bbc7 ; Freedoom BSD-3-Clause https://freedoom.github.io/ .\n"
- "Full text licences COPYING and FREEDOOM-COPYING.txt from engine source should accompany further public redistribution.\n\n"
+ "The one-file HTML includes the complete upstream GPL-2.0 and Freedoom BSD-3-Clause notices and corresponding-source references.\n\n"
  "The shared N-layer graph references actual IWAD lump slices. It does not make game bytes appear out of a key. "
  "One-file first download and later 119-byte recorded tic-delta are different measurements; the 119-byte record cannot by itself play the game. "
  "Browser gameplay remains to be observed on a real independent device.\n")
