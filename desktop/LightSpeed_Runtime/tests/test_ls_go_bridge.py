@@ -24,6 +24,26 @@ from lightspeed_runtime.project_pipeline import ProjectPipeline
 from lightspeed_runtime.representation_edge import FEATURE_FLAG, RepresentationEdgeStore
 
 
+def test_cgx_public_bootstrap_is_non_authoritative_and_non_enumerating(tmp_path):
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    response = client.get("/api/v1/cgx/bootstrap")
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["schema_version"] == "cgx-bootstrap-advertisement-v1"
+    assert payload["namespace_candidate"] == "cgx://CGX.cgx"
+    assert payload["geometry"]["vertex_count"] == 20
+    assert payload["geometry"]["edge_count"] == 30
+    assert payload["geometry"]["face_count"] == 12
+    assert payload["security"]["device_authenticated"] is False
+    assert payload["security"]["consumer_receipt_verified"] is False
+    assert payload["security"]["commands_allowed"] is False
+    assert payload["semantics"]["source_root"] is None
+    encoded = response.text
+    assert str(tmp_path) not in encoded
+    assert "password" not in encoded.lower()
+    assert "session_token" not in encoded
+    assert "private" not in str(payload["geometry"]).lower()
+
 def test_legacy_agent_surface_redirects_to_integrated_system_view(tmp_path):
     client = TestClient(ls_go_bridge.create_app(tmp_path))
 
