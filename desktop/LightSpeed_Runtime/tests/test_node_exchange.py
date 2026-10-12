@@ -607,3 +607,183 @@ def test_sai_aus_capacity_emergency_and_node_scope_not_automatic_authority() -> 
     assert any("LLM" in text or "deterministic" in text for text in rules)
     assert any(row["proof"] == "actual_4d_printing_equipment" and row["status"] == "NOT-RUN"
                for row in model["proof_chain"])
+
+
+
+from lightspeed_runtime.node_exchange import (
+    PRISM_SLICE_FACET,
+    PRISM_HANDSHAKE_FACET,
+    validate_prism_slice_profile,
+    negotiate_prism_device_candidate,
+    resolve_prism_interpretation_candidate,
+)
+
+
+def _prism_fixture():
+    import hashlib
+
+    def h(value: str) -> str:
+        return hashlib.sha256(value.encode()).hexdigest()
+
+    return {
+        "schema_version": PRISM_SLICE_FACET,
+        "object_id": "CGX/DOOM/TEST/PRISM",
+        "source_root": h("freedoom/source"),
+        "geometry_root": h("freedoom/geometry"),
+        "semantic_root": h("freedoom/semantics"),
+        "model_root": h("freedoom/model"),
+        "layers": [
+            {"id": "whole", "parent_id": None, "visibility": "public",
+             "source_ref": "freedoom-verified-iwad", "geometry_ref": "wad-lump-tree",
+             "owner_ref": "freedoom-upstream", "content_root": h("whole")},
+            {"id": "slice", "parent_id": "whole", "visibility": "public",
+             "source_ref": "freedoom-static-shard", "geometry_ref": "geometry-2d-slice",
+             "owner_ref": "freedoom-upstream", "content_root": h("slice")},
+            {"id": "private", "parent_id": "whole", "visibility": "private",
+             "source_ref": "private-model", "geometry_ref": "private-geometry",
+             "owner_ref": "external-owner", "content_root": h("private")},
+        ],
+        "interpretations": [
+            {"id": "text", "layer_id": "slice", "render_kind": "text",
+             "registered_view_ref": "filespace-tree", "language_ref": "en-AU",
+             "operation": "identity", "input_keys": ["symbol"], "unit": "unitless"},
+            {"id": "metric", "layer_id": "slice", "render_kind": "metric",
+             "registered_view_ref": "evidence-claim", "language_ref": "en-AU",
+             "operation": "span", "input_keys": ["a", "b"], "unit": "m"},
+            {"id": "ratio", "layer_id": "slice", "render_kind": "graph",
+             "registered_view_ref": "topology-graph", "language_ref": "en-AU",
+             "operation": "ratio", "input_keys": ["a", "b"], "unit": "ratio"},
+            {"id": "restricted", "layer_id": "private", "render_kind": "text",
+             "registered_view_ref": "evidence-claim", "language_ref": "en-AU",
+             "operation": "identity", "input_keys": ["symbol"], "unit": "none"},
+        ],
+    }
+
+
+def _prism_device(profile: dict, **overrides):
+    import hashlib
+
+    cache = [r["content_root"] for r in profile["layers"][:2]]
+    offer = {
+        "device_type": "android_touch",
+        "render_kinds": ["text", "metric"],
+        "requested_interpretations": ["text", "metric", "ratio", "restricted", "unknown"],
+        "cached_content_roots": cache,
+        "max_layers": 15,
+        "static_profile_root": validate_prism_slice_profile(profile)["static_profile_root"],
+    }
+    offer.update(overrides)
+    return offer
+
+
+def test_prism_multi_layer_mobile_and_desktop():
+    p = _prism_fixture()
+    result = validate_prism_slice_profile(p)
+    assert result["layer_count"] == 3 and result["interpretation_count"] == 4
+    mobile = negotiate_prism_device_candidate(profile=p, device_offer=_prism_device(p))
+    assert mobile["schema_version"] == PRISM_HANDSHAKE_FACET
+    assert mobile["input_hint"] == "touch"
+    assert [x["status"] for x in mobile["resolution"]] == [
+        "RESOLVABLE_CANDIDATE", "RESOLVABLE_CANDIDATE",
+        "UNSUPPORTED_RENDERER", "NOT_AVAILABLE", "NOT_AVAILABLE",
+    ]
+    assert mobile["entitlement_verified"] is False
+    desktop = negotiate_prism_device_candidate(
+        profile=p, device_offer=_prism_device(
+            p, device_type="desktop_browser", render_kinds=["text", "graph"],
+            requested_interpretations=["ratio", "text"]))
+    assert desktop["input_hint"] == "keyboard_or_machine"
+    assert [x["status"] for x in desktop["resolution"]] == [
+        "RESOLVABLE_CANDIDATE", "RESOLVABLE_CANDIDATE"
+    ]
+    assert mobile["static_profile_root"] == desktop["static_profile_root"]
+
+
+def test_prism_interpretation_deterministic_and_unknown():
+    p = _prism_fixture()
+    handshake = negotiate_prism_device_candidate(profile=p, device_offer=_prism_device(p))
+    a = resolve_prism_interpretation_candidate(
+        profile=p, handshake=handshake, interpretation_id="metric",
+        inputs={"a": 21, "b": 6})
+    assert a["value"] == 15 and a["unit"] == "m"
+    assert a["status"] == "DERIVED_LOCAL_CANDIDATE"
+    assert a["authenticated"] is False and a["source_verified"] is False
+    missing = resolve_prism_interpretation_candidate(
+        profile=p, handshake=handshake, interpretation_id="metric", inputs={"a": 3})
+    assert missing["status"] == "UNKNOWN_INPUT"
+    denied = resolve_prism_interpretation_candidate(
+        profile=p, handshake=handshake, interpretation_id="restricted", inputs={"symbol": 2})
+    absent = resolve_prism_interpretation_candidate(
+        profile=p, handshake=handshake, interpretation_id="unknown", inputs={})
+    assert denied == absent == {
+        "status": "NOT_AVAILABLE", "canonical_promotion_authorized": False
+    }
+
+
+def test_prism_context_mismatch_and_missing_static_asset():
+    p = _prism_fixture()
+    bad = _prism_device(p, static_profile_root="0" * 64)
+    result = negotiate_prism_device_candidate(profile=p, device_offer=bad)
+    assert all(x == {"status": "RECONCILE_REQUIRED"} for x in result["resolution"])
+    no_cache = _prism_device(p, cached_content_roots=[])
+    result = negotiate_prism_device_candidate(profile=p, device_offer=no_cache)
+    assert result["resolution"][0]["status"] == "NOT_CACHED"
+    assert result["resolution"][0]["requires_source_hydration"] is True
+    with pytest.raises(NodeExchangeError, match="prior handshake"):
+        resolve_prism_interpretation_candidate(
+            profile=p, handshake={**result, "static_profile_root": "0" * 64},
+            interpretation_id="text", inputs={"symbol": 2})
+
+
+def test_prism_parent_cycle_or_unregistered_operation_rejected():
+    p = _prism_fixture()
+    p["layers"][0]["parent_id"] = "slice"
+    with pytest.raises(NodeExchangeError, match="cyclic"):
+        validate_prism_slice_profile(p)
+    p = _prism_fixture()
+    p["interpretations"][0]["operation"] = "eval"
+    with pytest.raises(NodeExchangeError, match="safe list"):
+        validate_prism_slice_profile(p)
+
+
+@pytest.mark.parametrize("n", [1, 3, 15, 52, 128])
+def test_prism_n_layers_are_not_forced_to_nine(n):
+    p = _prism_fixture()
+    # Retain one public root and N-1 children, with one interpretation per layer.
+    import hashlib
+    public = p["layers"][0]
+    layers = [public]
+    for i in range(1, n):
+        layers.append({
+            "id": f"slice-{i}", "parent_id": "whole", "visibility": "public",
+            "source_ref": "source", "geometry_ref": "prism-frame",
+            "owner_ref": "registered-owner",
+            "content_root": hashlib.sha256(f"slice-{i}".encode()).hexdigest(),
+        })
+    p["layers"] = layers
+    p["interpretations"] = [
+        {"id": "view", "layer_id": layers[-1]["id"], "render_kind": "text",
+         "registered_view_ref": "filespace-tree", "language_ref": "en-AU",
+         "operation": "identity", "input_keys": ["v"], "unit": "unitless"},
+    ]
+    info = validate_prism_slice_profile(p)
+    assert info["layer_count"] == n
+    handshake = negotiate_prism_device_candidate(
+        profile=p, device_offer=_prism_device(
+            p, requested_interpretations=["view"],
+            cached_content_roots=[r["content_root"] for r in layers],
+            max_layers=n))
+    assert handshake["resolution"][0]["status"] == "RESOLVABLE_CANDIDATE"
+
+
+def test_prism_ratio_zero_is_undefined_not_encoded_message():
+    p = _prism_fixture()
+    hs = negotiate_prism_device_candidate(
+        profile=p, device_offer=_prism_device(
+            p, render_kinds=["graph"], requested_interpretations=["ratio"]))
+    assert resolve_prism_interpretation_candidate(
+        profile=p, handshake=hs, interpretation_id="ratio", inputs={"a": 52, "b": 0}
+    )["status"] == "UNDEFINED_OPERATION"
+    assert resolve_prism_interpretation_candidate(
+        profile=p, handshake=hs, interpretation_id="ratio", inputs={"a": 52, "b": 4}
+    )["value"] == 13
