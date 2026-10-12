@@ -203,6 +203,55 @@ export async function discoverCgx({ fetchImpl = globalThis.fetch, timeoutMs = 20
   }
 }
 
+/**
+ * Whitelist discovery diagnostics for public sampled readback.
+ * The discovery callback is not an identity provider and cannot assert consumer,
+ * cryptographic, queue or release authority by supplying arbitrary object fields.
+ */
+export function projectPublicObservation(result) {
+  const allowedStates = new Set([
+    "CGX_PUBLIC_BOOTSTRAP_CANDIDATE",
+    "BRIDGE_RESPONSIVE_ONLY",
+    "BRIDGE_PRESENT_DEGRADED",
+    "LOCAL_BOOTSTRAP_UNREACHABLE_OR_UNTRUSTED",
+    "LOCAL_BRIDGE_UNREACHABLE_OR_UNTRUSTED",
+    "LOCAL_BRIDGE_HTTP_ERROR",
+    "CGX_BOOTSTRAP_HTTP_ERROR",
+    "UNRECOGNISED_CGX_ADVERTISEMENT",
+    "UNRECOGNISED_LOCAL_SERVICE",
+  ]);
+  const state = result && typeof result === "object" &&
+    typeof result.state === "string" && allowedStates.has(result.state)
+    ? result.state : "UNRECOGNISED_LOCAL_SERVICE";
+  const output = {
+    state,
+    diagnostic_only: true,
+    authenticated: false,
+    consumer_verified: false,
+    bridge_verified: false,
+    device_identity_verified: false,
+    session_restored: false,
+    remote_transport_connected: false,
+    queue_execution_state: "UNVERIFIED",
+    public_skeleton_available: true,
+    local_host_offline_inferred: false,
+  };
+  if (state === "CGX_PUBLIC_BOOTSTRAP_CANDIDATE") {
+    output.protocol = "cgx-bootstrap-advertisement-v1";
+    output.namespace_candidate = "cgx://CGX.cgx";
+    output.geometric_reference = { vertices: 20, edges: 30, faces: 12 };
+  } else if (state === "BRIDGE_RESPONSIVE_ONLY" || state === "BRIDGE_PRESENT_DEGRADED") {
+    output.bridge_candidate = "ls-go";
+    output.consumer_state = "UNVERIFIED_NO_SIGNED_RECEIPT";
+  }
+  if ((state === "LOCAL_BRIDGE_HTTP_ERROR" || state === "CGX_BOOTSTRAP_HTTP_ERROR") &&
+      Number.isInteger(result.http_status) && result.http_status >= 100 &&
+      result.http_status <= 599) {
+    output.http_status = result.http_status;
+  }
+  return output;
+}
+
 export async function observeLocal({
   samples = 3, intervalMs = 1000, discover = discoverCgx,
   sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms)),
@@ -218,7 +267,7 @@ export async function observeLocal({
   for (let i = 0; i < samples; i++) {
     if (i) await sleep(intervalMs);
     const result = await discover();
-    observations.push({ ...result, phase: i, observed_utc: now() });
+    observations.push({ ...projectPublicObservation(result), phase: i, observed_utc: now() });
   }
   return {
     schema_version: "cgx-minimum-observation-sequence-v1",
