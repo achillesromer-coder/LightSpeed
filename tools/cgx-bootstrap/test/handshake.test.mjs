@@ -6,8 +6,8 @@ import { join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import {
-  LOCAL_STATUS_URL, MAX_STATUS_BYTES,
-  classifyStatus, discoverLocal, observeLocal, publicSkeleton,
+  LOCAL_STATUS_URL, LOCAL_BOOTSTRAP_URL, MAX_STATUS_BYTES,
+  classifyStatus, discoverLocal, discoverCgx, observeLocal, publicSkeleton,
 } from "../src/handshake.mjs";
 
 const cli = fileURLToPath(new URL("../bin/cgx.mjs", import.meta.url));
@@ -150,4 +150,69 @@ test("CLI seed write is exclusive and cannot traverse or touch Documents", async
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
+});
+
+
+test("CGX-native advertisement is a public, unauthenticated candidate only", async () => {
+  const advertised = {
+    schema_version: "cgx-bootstrap-advertisement-v1",
+    namespace_candidate: "cgx://CGX.cgx",
+    geometry: { vertex_count: 20, edge_count: 30, face_count: 12 },
+    security: {
+      device_authenticated: false,
+      consumer_receipt_verified: false,
+      commands_allowed: false,
+    },
+    semantics: { source_root: null },
+    secret: "SECRET_MUST_NOT_PRINT",
+  };
+  let count = 0;
+  const actual = await discoverCgx({ fetchImpl: async (url, options) => {
+    count++;
+    assert.equal(url, LOCAL_BOOTSTRAP_URL);
+    assert.equal(options.redirect, "error");
+    return {
+      ok: true, status: 200, headers: { get: () => null },
+      text: async () => JSON.stringify(advertised),
+    };
+  } });
+  assert.equal(count, 1);
+  assert.equal(actual.state, "CGX_PUBLIC_BOOTSTRAP_CANDIDATE");
+  assert.equal(actual.consumer_verified, false);
+  assert.equal(actual.authenticated, false);
+  assert.equal(actual.session_restored, false);
+  assert.ok(!JSON.stringify(actual).includes("SECRET_MUST_NOT_PRINT"));
+});
+
+test("CGX-native discovery falls back only to read-only legacy status", async () => {
+  const calls = [];
+  const result = await discoverCgx({ fetchImpl: async url => {
+    calls.push(url);
+    if (url === LOCAL_BOOTSTRAP_URL) return { ok: false, status: 404 };
+    return {
+      ok: true, status: 200, headers: { get: () => null },
+      text: async () => JSON.stringify(healthy),
+    };
+  } });
+  assert.deepEqual(calls, [LOCAL_BOOTSTRAP_URL, LOCAL_STATUS_URL]);
+  assert.equal(result.state, "BRIDGE_RESPONSIVE_ONLY");
+  assert.equal(result.protocol, "LEGACY_LIGHTSPEED_STATUS_FALLBACK");
+  assert.equal(result.consumer_state, "UNVERIFIED_NO_SIGNED_RECEIPT");
+});
+
+test("CGX fake advertisement cannot promote source root or authentication", async () => {
+  const forged = {
+    schema_version: "cgx-bootstrap-advertisement-v1",
+    namespace_candidate: "cgx://CGX.cgx",
+    geometry: { vertex_count: 20, edge_count: 30, face_count: 12 },
+    security: { device_authenticated: true, consumer_receipt_verified: true, commands_allowed: true },
+    semantics: { source_root: "fake-private-root" },
+  };
+  const result = await discoverCgx({ fetchImpl: async () => ({
+    ok: true, status: 200, headers: { get: () => null },
+    text: async () => JSON.stringify(forged),
+  }) });
+  assert.equal(result.state, "UNRECOGNISED_CGX_ADVERTISEMENT");
+  assert.equal(result.authenticated, false);
+  assert.equal(result.consumer_verified, false);
 });
