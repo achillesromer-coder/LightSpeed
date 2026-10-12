@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
+import hashlib
 import importlib
 import json
 import os
@@ -114,8 +115,21 @@ def result_id_for(command_id: str) -> str:
     return "LSGO-RESULT-" + _safe_id(command_id)
 
 
-def result_file_path(shell_root: Path, command_id: str) -> Path:
+def _legacy_result_file_path(shell_root: Path, command_id: str) -> Path:
+    """Historical lossy filename; read-only compatibility for exact identity."""
     return neo_actions_root(shell_root) / "results" / f"{_safe_id(result_id_for(command_id))}.json"
+
+
+def result_file_path(shell_root: Path, command_id: str) -> Path:
+    """Bind the receipt filename to the *entire original* command identity.
+
+    The readable prefix is not injective; the digest prevents distinct command
+    IDs such as 'a/b' and 'a_b' from sharing the same receipt path.
+    """
+    identity = str(command_id)
+    digest = hashlib.sha256(identity.encode("utf-8")).hexdigest()
+    label = _safe_id(result_id_for(identity))[:72]
+    return neo_actions_root(shell_root) / "results" / f"{label}-{digest}.json"
 
 
 def result_queue_path(shell_root: Path) -> Path:
@@ -392,7 +406,7 @@ class LSGoJobConsumer:
             )
 
     def _persist_result(self, receipt: dict[str, Any]) -> dict[str, Any]:
-        command_id = str(receipt.get("command_id") or "unknown")
+        command_id = str(receipt.get("command_id") or f"MISSING-JOB-{receipt.get('job_id') or 'UNKNOWN'}")
         path = result_file_path(self.shell_root, command_id)
         receipt["receipt_path"] = str(path)
         _write_json(path, receipt)
@@ -400,11 +414,14 @@ class LSGoJobConsumer:
         return receipt
 
     def _existing_result(self, command_id: str) -> dict[str, Any]:
-        path = result_file_path(self.shell_root, command_id)
-        payload = _read_json(path)
-        if payload and payload.get("command_id") == command_id:
-            payload.setdefault("receipt_path", str(path))
-            return payload
+        for path in (
+            result_file_path(self.shell_root, command_id),
+            _legacy_result_file_path(self.shell_root, command_id),
+        ):
+            payload = _read_json(path)
+            if payload and payload.get("command_id") == command_id:
+                payload.setdefault("receipt_path", str(path))
+                return payload
         return {}
 
     def _transport_diagnostic(
