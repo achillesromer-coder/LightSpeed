@@ -437,5 +437,52 @@
     "no_canonical_promotion": true,
     "no_public_auto_release": true,
     "no_evidence_by_source_presence": true
+  },
+  "prism_slice_handshake_facet": {
+    "schema": "cgx-prism-static-slice-facet-v1",
+    "device_schema": "cgx-prism-local-handshake-candidate-v1",
+    "status": "SIMULATED_OPT_IN_READ_ONLY; NOT network handshake, actual device attestation, signed capability, new datastore or deployed UI",
+    "owner": "Existing Cognigrex.cgx FileSpace source/Object_ID/geometry/semantic/model roots and node_exchange contract",
+    "procedural_binding": "desktop/LightSpeed_Runtime/lightspeed_runtime/node_exchange.py:validate_prism_slice_profile, negotiate_prism_device_candidate, resolve_prism_interpretation_candidate",
+    "origin": "Real Freedoom single-file full engine user acceptance and simulated independent 15-byte-shard WAD hydration; does not imply CGX is currently used by production DOOM engine for multiplayer",
+    "n_capacity": {
+      "layers": "1..128",
+      "parent_linkage": "acyclic rooted or grouped slices",
+      "interpretations": "1..256",
+      "render_types": "text, metric, table, graph, spatial, 3d",
+      "numeric_operations": "identity, sum, difference, ratio, span, count"
+    },
+    "three_keys": {
+      "language": "registered language_ref, interpretation-specific; device user preferences are display hints",
+      "geometry": "source-bound geometry_ref, content_root, parent_id and canonical geometry_root",
+      "equation": "bounded named operation plus explicit input_keys, unit and registered_view_ref; never eval dynamic code"
+    },
+    "device_types": [
+      "desktop_browser",
+      "android_touch",
+      "mobile_touch",
+      "microcontroller",
+      "unknown"
+    ],
+    "automatic_handshake": "Local deterministic intersection of offered renderer capabilities, cached static roots, max layer budget and requested view IDs; device type only chooses presentation and never grants access",
+    "status_semantics": {
+      "RESOLVABLE_CANDIDATE": "all required cached roots claimed, local registered rendering supported, no proof of bytes or rights",
+      "NOT_CACHED": "required static source or ancestor absent from local cache advertisement; source hydration needed",
+      "NOT_AVAILABLE": "unknown or protected interpretation; non-disclosing, no roster enumeration",
+      "UNSUPPORTED_RENDERER": "public interpretation exists but claimed device render capability absent",
+      "RECONCILE_REQUIRED": "static profile root mismatch; cannot use a delta against incompatible definitions",
+      "UNKNOWN_INPUT": "no numeric measured input; never substitute 0",
+      "UNDEFINED_OPERATION": "division by zero, invalid bounds or undefined equation",
+      "DERIVED_LOCAL_CANDIDATE": "local numeric interpretation only; not canonical truth or independent empirical proof"
+    },
+    "stack_or_single": "One registered CGX Object_ID may contain one or N slices; one slice may have many view interpretations with no duplicate original content. Layers represent source-bound graph composition, not parallel data stores",
+    "privacy": "No public root fingerprint or non-public contents; restricted/private views give same NOT_AVAILABLE as absent; session rights never inferred from app licence text, device type or cache declaration",
+    "receipt_boundary": "This simulator produces neither signed DBR receipts nor encrypted/network payloads. Actual CGX handshake external trust, permission, device identity, version and signed asset verification are separate gates",
+    "tests": "existing desktop/LightSpeed_Runtime/tests/test_node_exchange.py",
+    "independent_acceptance": "Existing CGX issue #161 plus original DOOM full-engine benchmark; no public release/LS GO integration until owner review",
+    "no_source_mutation": true,
+    "wire_ready": false,
+    "canonical_promotion_authorized": false,
+    "physical_actuation_authorized": false
   }
 }
