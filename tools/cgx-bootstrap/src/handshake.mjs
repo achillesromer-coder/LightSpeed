@@ -159,7 +159,7 @@ export async function discoverCgx({ fetchImpl = globalThis.fetch, timeoutMs = 20
       return { ...(await discoverLocal({ fetchImpl, timeoutMs })),
         protocol: "LEGACY_LIGHTSPEED_STATUS_FALLBACK" };
     }
-    if (!response.ok) {
+    if (response.status !== 200 || !response.ok) {
       return { state: "CGX_BOOTSTRAP_HTTP_ERROR", http_status: response.status,
         authenticated: false, consumer_verified: false };
     }

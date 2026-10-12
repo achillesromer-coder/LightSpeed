@@ -216,3 +216,28 @@ test("CGX fake advertisement cannot promote source root or authentication", asyn
   assert.equal(result.authenticated, false);
   assert.equal(result.consumer_verified, false);
 });
+
+
+test("native CGX bootstrap rejects partial or created HTTP responses even with valid JSON", async () => {
+  const advertised = {
+    schema_version: "cgx-bootstrap-advertisement-v1",
+    namespace_candidate: "cgx://CGX.cgx",
+    geometry: { vertex_count: 20, edge_count: 30, face_count: 12 },
+    security: { device_authenticated: false, consumer_receipt_verified: false, commands_allowed: false },
+    semantics: { source_root: null },
+  };
+  for (const status of [201, 206]) {
+    const result = await discoverCgx({ fetchImpl: async (url, options) => {
+      assert.equal(url, LOCAL_BOOTSTRAP_URL);
+      assert.equal(options.redirect, "error");
+      return {
+        ok: true, status, headers: { get: () => null },
+        text: async () => JSON.stringify(advertised),
+      };
+    } });
+    assert.equal(result.state, "CGX_BOOTSTRAP_HTTP_ERROR");
+    assert.equal(result.http_status, status);
+    assert.equal(result.authenticated, false);
+    assert.equal(result.consumer_verified, false);
+  }
+});
