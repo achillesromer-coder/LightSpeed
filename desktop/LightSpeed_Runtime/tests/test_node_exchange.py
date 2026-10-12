@@ -787,3 +787,20 @@ def test_prism_ratio_zero_is_undefined_not_encoded_message():
     assert resolve_prism_interpretation_candidate(
         profile=p, handshake=hs, interpretation_id="ratio", inputs={"a": 52, "b": 4}
     )["value"] == 13
+
+
+
+def test_prism_rejects_public_child_of_private_parent_and_malformed_cache():
+    p = _prism_fixture()
+    p["layers"][1]["parent_id"] = "private"
+    with pytest.raises(NodeExchangeError, match="protected parent"):
+        validate_prism_slice_profile(p)
+    p = _prism_fixture()
+    with pytest.raises(NodeExchangeError, match="cache declaration"):
+        negotiate_prism_device_candidate(
+            profile=p, device_offer=_prism_device(p, cached_content_roots=[{}])
+        )
+    with pytest.raises(NodeExchangeError, match="render capabilities"):
+        negotiate_prism_device_candidate(
+            profile=p, device_offer=_prism_device(p, render_kinds=[{}])
+        )
