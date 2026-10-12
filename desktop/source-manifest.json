@@ -3586,9 +3586,9 @@
       "sha256": "69df9d049cd5291503dc60db207b598978879d8b6ef835a91efa745ad6a74d19"
     },
     {
-      "bytes": 34775,
+      "bytes": 35561,
       "path": "LightSpeed_Runtime/lightspeed_runtime/ls_go_job_consumer.py",
-      "sha256": "9c2db85edff5dfc7e25a4462b26c235bc478306e4f6e56c6b05b68cb562be5a3"
+      "sha256": "ebf7c7a13ae924dfa3320ec03ddbf4ad030035aa004de6eabef9853f9b068267"
     },
     {
       "bytes": 19385,
