@@ -28,6 +28,11 @@ jobs:
       - name: Run reversible, adversarial, cache and null tests
         working-directory: benchmarks/cgx_unispace_geometric_shorthand
         run: python -m unittest -v test_cgx_geo.py
+      - name: Test FileSpace byte-cost adapter with actual current Node Exchange planner
+        working-directory: benchmarks/cgx_unispace_geometric_shorthand
+        run: |
+          PYTHONPATH=.:../../desktop/LightSpeed_Runtime python -m unittest -v test_node_exchange_r0_adapter.py
+          echo NATIVE_NODE_EXCHANGE_R0_PLAN_GATE_PASS
       - name: Reconstruct a full byte stream, then a baseline-root sparse update
         working-directory: benchmarks/cgx_unispace_geometric_shorthand
         run: |
