@@ -884,7 +884,7 @@ def test_cgx_geometric_press_edits_state_held_and_reversible():
     assert amended["geometry_root"] != base["geometry_root"]
     assert amended["cell_states"]["child-c"] == "UNKNOWN"
     assert amended["cell_states"]["child-d"] == "WITHHELD"
-    assert amended["authenticated"] if "authenticated" in amended else not amended["authentication_authorized"]
+    assert amended["authentication_authorized"] is False
     roundtrip = build_geometric_cell_candidate(
         object_id=amended["object_id"], sides=amended["side_count"],
         vertices=amended["vertices"], cell_states=amended["cell_states"]
@@ -897,7 +897,7 @@ def test_cgx_geometric_press_edits_state_held_and_reversible():
     ({"sides": True}, "3..128"),
     ({"vertices": [[0, 0], [1, 1], [0, 1], [1, 0]]}, "self-intersection"),
     ({"vertices": [[0, 0], [1, 0], [1, 0], [0, 1]]}, "zero-length"),
-    ({"vertices": [[0, 0], [1, 0], [2, 0], [3, 0]]}, "degenerate"),
+    ({"sides": 3, "vertices": [[0, 0], [1, 0], [2, 0]]}, "degenerate"),
     ({"vertices": [[0, 0], [1, 0], [1, 1]]}, "count"),
     ({"extrusion_depth": 0}, "positive"),
     ({"cell_states": {"child": "WITHHELD_AS_EMPTY"}}, "state/identifier"),
