@@ -24,7 +24,7 @@ jobs:
         run: |
           node --check apps/lightspeed-go/public/cgx/assets/core.js
           node --check apps/lightspeed-go/public/cgx/assets/viewer.js
-          (cd apps/lightspeed-go && node --test tests/unispace-public.test.mjs)
+          (cd apps/lightspeed-go && npm ci --silent && npm test -- --run tests/unispace-public.test.mjs)
           python - <<'PY'
           from pathlib import Path
           root=Path('apps/lightspeed-go/public/cgx')
