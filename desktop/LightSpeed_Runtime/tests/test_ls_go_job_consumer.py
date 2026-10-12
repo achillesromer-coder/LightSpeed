@@ -540,3 +540,43 @@ def test_rfs_emff_dispatch_uses_executor_validator_and_command_identity(
     assert seen["job_id"] == 401
     assert seen["shell_root"] == tmp_path
     assert seen["allow_heavy"] is False
+
+
+def test_smith_receipt_paths_are_injective_for_colliding_labels(tmp_path: Path) -> None:
+    from hashlib import sha256
+
+    shell = tmp_path / "App"
+    values = ["CMD/a", "CMD_a", "CMD?a", "CMD a", "CMD/a_", "GO-TASK/a",
+              "GO-TASK_a", "GO-TASK?a", "Ω", "unknown", "a" * 200]
+    paths = [ls_go_job_consumer.result_file_path(shell, command_id) for command_id in values]
+    assert len(paths) == len(set(paths))
+    assert all(path.name.endswith(".json") and len(path.name) < 160 for path in paths)
+    for command_id, path in zip(values, paths):
+        assert sha256(command_id.encode("utf-8")).hexdigest() in path.name
+        assert path.parent.name == "results"
+
+
+def test_smith_existing_receipt_legacy_read_is_exact_identity_only(tmp_path: Path) -> None:
+    shell = tmp_path / "App"
+    smith = ls_go_job_consumer.LSGoJobConsumer(shell)
+    older = ls_go_job_consumer._legacy_result_file_path(shell, "CMD/a")
+    older.parent.mkdir(parents=True, exist_ok=True)
+    older.write_text(json.dumps({"command_id": "CMD/a", "status": "completed"}),
+                     encoding="utf-8")
+    assert smith._existing_result("CMD/a")["status"] == "completed"
+    # Two different source IDs sharing an old safe name must never reuse a receipt.
+    assert smith._existing_result("CMD_a") == {}
+
+    newer = ls_go_job_consumer.result_file_path(shell, "CMD/a")
+    newer.write_text(json.dumps({"command_id": "CMD/a", "status": "held"}),
+                     encoding="utf-8")
+    assert smith._existing_result("CMD/a")["status"] == "held"
+
+
+def test_smith_missing_command_id_receipts_are_job_specific(tmp_path: Path) -> None:
+    smith = ls_go_job_consumer.LSGoJobConsumer(tmp_path / "App")
+    first = smith._persist_result({"command_id": None, "job_id": 101, "status": "held"})
+    second = smith._persist_result({"command_id": None, "job_id": 102, "status": "held"})
+    assert first["receipt_path"] != second["receipt_path"]
+    assert json.loads(Path(first["receipt_path"]).read_text(encoding="utf-8"))["job_id"] == 101
+    assert json.loads(Path(second["receipt_path"]).read_text(encoding="utf-8"))["job_id"] == 102
