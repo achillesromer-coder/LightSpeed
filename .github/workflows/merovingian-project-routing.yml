@@ -277,6 +277,7 @@ jobs:
           npm run check 2>&1 | tee ../../cgx-bootstrap-check.log
           npm test 2>&1 | tee ../../cgx-bootstrap-tests.log
           node bin/cgx.mjs seed > ../../cgx-bootstrap-public-seed.cgx
+          cmp ../../cgx-bootstrap-public-seed.cgx ../../cgx/public_skeletons/alexandria.public.cgx
 
       - name: Install LS GO dependencies
         id: npm_install
