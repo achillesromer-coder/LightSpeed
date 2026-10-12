@@ -439,5 +439,85 @@
         "canonical_promotion_authorized": false
       }
     }
+  },
+  "hydration_scatter_projection": {
+    "schema": "CGX-HYDRATION-SCATTER-PROJECTION/1",
+    "owner": "existing semantic_view_lens_registry; no new semantic state",
+    "rule": "A lens requests the minimum hydration planes and receives source-bound FKC references or safe unresolved states. It may scatter one admitted object into several views but cannot mint source, state, authority or witness.",
+    "plane_to_projection": {
+      "H0_IDENTITY": [
+        "filespace-tree",
+        "active-object-inspector",
+        "topology-graph"
+      ],
+      "H1_SOURCE": [
+        "active-object-inspector",
+        "binary/hex",
+        "native-app-sandbox"
+      ],
+      "H2_STRUCTURE": [
+        "filespace-tree",
+        "topology-graph",
+        "twin-3d",
+        "matrix"
+      ],
+      "H3_SEMANTICS": [
+        "active-object-inspector",
+        "matrix",
+        "evidence-claim"
+      ],
+      "H4_RELATIONS": [
+        "topology-graph",
+        "matrix",
+        "evidence-claim"
+      ],
+      "H5_LENS": [
+        "all registered lenses subject to view_selection_policy"
+      ],
+      "H6_STATE": [
+        "timeline-dbr",
+        "network-runtime",
+        "active-object-inspector"
+      ],
+      "H7_CAPABILITY": [
+        "network-runtime",
+        "active-object-inspector"
+      ],
+      "H8_EXECUTION": [
+        "network-runtime",
+        "timeline-dbr",
+        "evidence-claim"
+      ],
+      "H9_WITNESS": [
+        "evidence-claim",
+        "timeline-dbr",
+        "active-object-inspector"
+      ]
+    },
+    "scatter_dimensions": [
+      "domain owner",
+      "hydration plane",
+      "structural layer/fragment",
+      "semantic relation",
+      "lens/view",
+      "device capability",
+      "DataSpace node/observer",
+      "runtime execution surface",
+      "evidence/witness class"
+    ],
+    "fract_key_display": {
+      "default": "internal diagnostic/reference only",
+      "public": "do not expose private source/root fingerprints; use approved public projection IDs",
+      "editable": false,
+      "semantic_authority": false,
+      "execution_authority": false
+    },
+    "orthogonality": [
+      "semantic XY/Z/T is not LightSpeed runtime Z-floor",
+      "FKC hydration plane is not a geometry dimension",
+      "Morton3 chunk address is not a semantic layer",
+      "N layers, N lenses, N nodes and N devices are independently selected counts"
+    ],
+    "canonical_mutation": false
   }
 }
