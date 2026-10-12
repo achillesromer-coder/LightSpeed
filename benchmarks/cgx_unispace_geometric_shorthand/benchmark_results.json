@@ -1,0 +1,215 @@
+{
+  "date": "2026-10-12",
+  "codecs": [
+    "CGXS-raw/zlib/ref",
+    "ordinary ZIP-DEFLATE"
+  ],
+  "preservation": "R0_EXACT",
+  "not_measured": [
+    "energy_joules",
+    "live_network_transfer",
+    "real_device_cpu",
+    "semantic_equivalence",
+    "remote_access",
+    "application_execution"
+  ],
+  "cases": [
+    {
+      "dataset": "structured-JSON",
+      "source": "generated reproducible structured semantics",
+      "original_bytes": 39210,
+      "source_sha256": "d6048ff6e8025f426ae3aed904d244a099e6c2471137c5b9fed39c7db17df094",
+      "cgxs_bytes": 2795,
+      "standard_zip_bytes": 2100,
+      "cgxs_encode_ms": 0.5,
+      "cgxs_decode_ms": 0.289,
+      "zip_encode_ms": 0.377,
+      "cgxs_chunk_modes": {
+        "ref": 0,
+        "zlib": 1,
+        "raw": 0
+      },
+      "candidate_choose_by_byte_equiv_per_ms": {
+        "0": "zip",
+        "1000": "zip",
+        "10000": "zip"
+      },
+      "cold_start_minimum_in_three": "zip",
+      "cost_warning": "Wall-clock from one shared local runner only; do not extrapolate to a PC/mobile or energy Joules"
+    },
+    {
+      "dataset": "small-script",
+      "source": "CGX local codec code",
+      "original_bytes": 20077,
+      "source_sha256": "62d9f9eafa3005139ba696c0a1f268c74821682a894939f178337ff486a43482",
+      "cgxs_bytes": 7520,
+      "standard_zip_bytes": 6233,
+      "cgxs_encode_ms": 0.46,
+      "cgxs_decode_ms": 0.227,
+      "zip_encode_ms": 0.529,
+      "cgxs_chunk_modes": {
+        "ref": 0,
+        "zlib": 1,
+        "raw": 0
+      },
+      "candidate_choose_by_byte_equiv_per_ms": {
+        "0": "zip",
+        "1000": "zip",
+        "10000": "zip"
+      },
+      "cold_start_minimum_in_three": "zip",
+      "cost_warning": "Wall-clock from one shared local runner only; do not extrapolate to a PC/mobile or energy Joules"
+    },
+    {
+      "dataset": "random-binary",
+      "source": "seeded high-entropy source",
+      "original_bytes": 262144,
+      "source_sha256": "c6ed0701f7633f9ae9b7a116fee6649e780a9914fdfda10f6ed8e324f910787a",
+      "cgxs_bytes": 262920,
+      "standard_zip_bytes": 262356,
+      "cgxs_encode_ms": 8.236,
+      "cgxs_decode_ms": 1.148,
+      "zip_encode_ms": 7.388,
+      "cgxs_chunk_modes": {
+        "ref": 0,
+        "zlib": 0,
+        "raw": 4
+      },
+      "candidate_choose_by_byte_equiv_per_ms": {
+        "0": "raw",
+        "1000": "raw",
+        "10000": "raw"
+      },
+      "cold_start_minimum_in_three": "raw",
+      "cost_warning": "Wall-clock from one shared local runner only; do not extrapolate to a PC/mobile or energy Joules"
+    },
+    {
+      "dataset": "CGX-Prism-HTML",
+      "source": "source synthetic CGX prism demonstration",
+      "original_bytes": 12126,
+      "source_sha256": "6d3d4740b431096b4f42e7736caafc2c3dc2a0779b1cfc3fd8efb86efeedc89b",
+      "cgxs_bytes": 6068,
+      "standard_zip_bytes": 5315,
+      "cgxs_encode_ms": 0.507,
+      "cgxs_decode_ms": 0.183,
+      "zip_encode_ms": 0.419,
+      "cgxs_chunk_modes": {
+        "ref": 0,
+        "zlib": 1,
+        "raw": 0
+      },
+      "candidate_choose_by_byte_equiv_per_ms": {
+        "0": "zip",
+        "1000": "zip",
+        "10000": "zip"
+      },
+      "cold_start_minimum_in_three": "zip",
+      "cost_warning": "Wall-clock from one shared local runner only; do not extrapolate to a PC/mobile or energy Joules"
+    },
+    {
+      "dataset": "ZIP-already-compressed",
+      "source": "existing CGX DOOM starter ZIP",
+      "original_bytes": 25244,
+      "source_sha256": "21b0c7f1f771ca098e621e95b28e7d33a5c32a91992f9d986a71657ea9e85add",
+      "cgxs_bytes": 24363,
+      "standard_zip_bytes": 23811,
+      "cgxs_encode_ms": 1.034,
+      "cgxs_decode_ms": 0.291,
+      "zip_encode_ms": 1.228,
+      "cgxs_chunk_modes": {
+        "ref": 0,
+        "zlib": 1,
+        "raw": 0
+      },
+      "candidate_choose_by_byte_equiv_per_ms": {
+        "0": "zip",
+        "1000": "zip",
+        "10000": "raw"
+      },
+      "cold_start_minimum_in_three": "zip",
+      "cost_warning": "Wall-clock from one shared local runner only; do not extrapolate to a PC/mobile or energy Joules"
+    },
+    {
+      "dataset": "real-Freedoom-WAD",
+      "source": "source-verified real Freedoom Phase 1 0.13.0",
+      "original_bytes": 28795076,
+      "source_sha256": "7323bcc168c5a45ff10749b339960e98314740a734c30d4b9f3337001f9e703d",
+      "cgxs_bytes": 11575325,
+      "standard_zip_bytes": 10305057,
+      "cgxs_encode_ms": 613.976,
+      "cgxs_decode_ms": 292.462,
+      "zip_encode_ms": 1660.65,
+      "cgxs_chunk_modes": {
+        "ref": 0,
+        "zlib": 440,
+        "raw": 0
+      },
+      "candidate_choose_by_byte_equiv_per_ms": {
+        "0": "zip",
+        "1000": "zip",
+        "10000": "cgxs"
+      },
+      "cold_start_minimum_in_three": "zip",
+      "cost_warning": "Wall-clock from one shared local runner only; do not extrapolate to a PC/mobile or energy Joules"
+    },
+    {
+      "dataset": "playable-DOOM-HTML",
+      "source": "verified full-game onefile HTML",
+      "original_bytes": 22018509,
+      "source_sha256": "bf4142ce818e41eb6b323dce163de5772fe2788f5622f9ba169da356cce6a8b2",
+      "cgxs_bytes": 16881865,
+      "standard_zip_bytes": 16588054,
+      "cgxs_encode_ms": 762.861,
+      "cgxs_decode_ms": 238.657,
+      "zip_encode_ms": 938.84,
+      "cgxs_chunk_modes": {
+        "ref": 0,
+        "zlib": 336,
+        "raw": 0
+      },
+      "candidate_choose_by_byte_equiv_per_ms": {
+        "0": "zip",
+        "1000": "zip",
+        "10000": "raw"
+      },
+      "cold_start_minimum_in_three": "zip",
+      "cost_warning": "Wall-clock from one shared local runner only; do not extrapolate to a PC/mobile or energy Joules"
+    }
+  ],
+  "updates": [
+    {
+      "dataset": "real-Freedoom-WAD",
+      "known_source_bytes": 28795076,
+      "delta_bytes": 36505,
+      "single_baseline_key_patch_bytes": 544,
+      "patch_selection": "ROOT_REFERENCE_SPARSE_PATCH",
+      "patch_encode_ms": 61.726,
+      "patch_receiver_without_base": "CodecError: NOT_CACHED: exact prior source required",
+      "delta_to_full_source_ratio": 0.001268,
+      "reused_chunks": 439,
+      "changed_chunks": 1,
+      "cache_sha256": "7323bcc168c5a45ff10749b339960e98314740a734c30d4b9f3337001f9e703d",
+      "edited_sha256": "61bcb51312d0e98e7ef4786123fe32659592384dc3a9e3b8934bacc80971a177",
+      "receiver_without_prior_source": "CodecError: NOT_CACHED: referenced content unavailable",
+      "reference_requires_existing_exact_local_bytes": true,
+      "not_measured": "real network/cryptographic auth/streaming/late join or executable validation"
+    },
+    {
+      "dataset": "playable-DOOM-HTML",
+      "known_source_bytes": 22018509,
+      "delta_bytes": 65134,
+      "single_baseline_key_patch_bytes": 547,
+      "patch_selection": "ROOT_REFERENCE_SPARSE_PATCH",
+      "patch_encode_ms": 47.351,
+      "patch_receiver_without_base": "CodecError: NOT_CACHED: exact prior source required",
+      "delta_to_full_source_ratio": 0.002958,
+      "reused_chunks": 335,
+      "changed_chunks": 1,
+      "cache_sha256": "bf4142ce818e41eb6b323dce163de5772fe2788f5622f9ba169da356cce6a8b2",
+      "edited_sha256": "6d33f8d2cd0c056973abb14f0dbc544b7d087497b225d9019b6e53718cc8f828",
+      "receiver_without_prior_source": "CodecError: NOT_CACHED: referenced content unavailable",
+      "reference_requires_existing_exact_local_bytes": true,
+      "not_measured": "real network/cryptographic auth/streaming/late join or executable validation"
+    }
+  ]
+}
