@@ -24,8 +24,7 @@ Do not use `npx @cognigrex/cgx@latest` until its release and scope ownership are
 
 ## Discovery contract
 
-`discover` makes exactly one GET to `http://127.0.0.1:8765/api/v1/status`.
-It uses loopback only, a fixed 2-second timeout, no redirects and a 64 KiB response cap.
+`discover` first makes a read-only GET to the existing bridge's native `http://127.0.0.1:8765/api/v1/cgx/bootstrap` public advertisement. If that endpoint explicitly returns 404, it falls back to the older `http://127.0.0.1:8765/api/v1/status` for backward-compatible detection. It uses loopback only, a fixed 2-second timeout per bounded probe, no redirects and a 64 KiB response cap. A returned advertisement is never a signed device admission or restored session.
 Returned information excludes local filesystem paths, usernames and credentials.
 
 - `BRIDGE_RESPONSIVE_ONLY`: status candidate, **not** Smith consumer/queue execution proof.
