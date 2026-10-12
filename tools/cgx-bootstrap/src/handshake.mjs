@@ -125,7 +125,7 @@ export async function discoverLocal({ fetchImpl = globalThis.fetch, timeoutMs = 
       headers: { Accept: "application/json" },
       signal: AbortSignal.timeout(timeoutMs),
     });
-    if (!response.ok) {
+    if (response.status !== 200 || !response.ok) {
       return { state: "LOCAL_BRIDGE_HTTP_ERROR", http_status: response.status,
         consumer_verified: false, authenticated: false };
     }

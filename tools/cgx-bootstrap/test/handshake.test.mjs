@@ -44,7 +44,7 @@ test("healthy HTTP bridge is NOT mistaken for consumer/job execution", async () 
       assert.equal(options.redirect, "error");
       assert.equal(options.signal.aborted, false);
       return {
-        ok: true, headers: { get: () => null }, body: null,
+        ok: true, status: 200, headers: { get: () => null }, body: null,
         text: async () => JSON.stringify(healthy),
       };
     },
@@ -68,7 +68,7 @@ test("unhealthy source is candidate not proof", () => {
 test("spurious service and malformed JSON never produce a session", async () => {
   assert.equal(classifyStatus({ bridge: "not-cgx" }).state, "UNRECOGNISED_LOCAL_SERVICE");
   const r = await discoverLocal({ fetchImpl: async () => ({
-    ok: true, headers: { get: () => null }, body: null,
+    ok: true, status: 200, headers: { get: () => null }, body: null,
     text: async () => "{broken",
   }) });
   assert.equal(r.state, "UNRECOGNISED_LOCAL_SERVICE");
@@ -91,10 +91,38 @@ test("discovery rejects redirects, non-200 and large responses", async () => {
   const notFound = await discoverLocal({ fetchImpl: async () => ({ ok: false, status: 404 }) });
   assert.equal(notFound.state, "LOCAL_BRIDGE_HTTP_ERROR");
   const tooLarge = await discoverLocal({ fetchImpl: async () => ({
-    ok: true, headers: { get: () => String(MAX_STATUS_BYTES + 1) },
+    ok: true, status: 200, headers: { get: () => String(MAX_STATUS_BYTES + 1) },
     text: async () => JSON.stringify(healthy),
   }) });
   assert.equal(tooLarge.state, "LOCAL_BRIDGE_UNREACHABLE_OR_UNTRUSTED");
+});
+
+test("legacy status accepts only HTTP 200, including native 404 fallback", async () => {
+  for (const status of [201, 206]) {
+    const direct = await discoverLocal({ fetchImpl: async () => ({
+      ok: true, status, headers: { get: () => null }, body: null,
+      text: async () => JSON.stringify(healthy),
+    }) });
+    assert.equal(direct.state, "LOCAL_BRIDGE_HTTP_ERROR");
+    assert.equal(direct.http_status, status);
+    assert.equal(direct.authenticated, false);
+    assert.equal(direct.consumer_verified, false);
+    const fallback = await discoverCgx({ fetchImpl: async url =>
+      url === LOCAL_BOOTSTRAP_URL ? { ok: false, status: 404 } : {
+        ok: true, status, headers: { get: () => null }, body: null,
+        text: async () => JSON.stringify(healthy),
+      },
+    });
+    assert.equal(fallback.state, "LOCAL_BRIDGE_HTTP_ERROR");
+    assert.equal(fallback.protocol, "LEGACY_LIGHTSPEED_STATUS_FALLBACK");
+    assert.equal(fallback.authenticated, false);
+  }
+  const accepted = await discoverLocal({ fetchImpl: async () => ({
+    ok: true, status: 200, headers: { get: () => null }, body: null,
+    text: async () => JSON.stringify(healthy),
+  }) });
+  assert.equal(accepted.state, "BRIDGE_RESPONSIVE_ONLY");
+  assert.equal(accepted.authenticated, false);
 });
 
 test("bounded periodic sampling is read-only and never restores authentication", async () => {
