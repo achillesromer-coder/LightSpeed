@@ -71,7 +71,15 @@ jobs:
                   page.wait_for_timeout(6000)
                   log=page.locator('#log').inner_text(timeout=5000)
                   result['log_tail']=log[-3500:]
-                  result["status"]="ENGINE_START_PASSED" if '[main] returned' in log or '[main] callMain' in log and not 'threw:' in log and not 'EXCEPTION' in log else "ENGINE_START_FAILED"
+                  canvas=page.locator('#canvas')
+                  frame_before=canvas.evaluate('(c)=>c.toDataURL()')
+                  page.keyboard.down('ArrowUp')
+                  page.wait_for_timeout(1000)
+                  page.keyboard.up('ArrowUp')
+                  page.wait_for_timeout(400)
+                  frame_after=canvas.evaluate('(c)=>c.toDataURL()')
+                  result['input_changes_game_frame']=(frame_before!=frame_after)
+                  result['status']='ENGINE_START_PASSED' if '[main] returned' in log and result['input_changes_game_frame'] and 'EXCEPTION' not in log and 'threw:' not in log else 'ENGINE_START_FAILED'
                   result["canvas_present"]=page.locator('#canvas').count()==1
                   page.screenshot(path="out/HEADLESS_LAUNCH.png")
               except Exception as exc:
