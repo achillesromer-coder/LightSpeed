@@ -27,8 +27,37 @@ export const resolveDesktopOrigin = (configuredOrigin?: string): string => {
   return parsed.origin;
 };
 
-export const DEFAULT_DESKTOP_ORIGIN = resolveDesktopOrigin(
+// Only the operator-selected relay URL is retained. Owner tokens remain in memory.
+export const MOBILE_LINK_ORIGIN_KEY = "lightspeed-go-private-origin-v1";
+
+export const resolveActiveDesktopOrigin = (
+  savedOrigin: string | null,
+  compiledOrigin?: string,
+  pageHostname = "localhost",
+): string => {
+  const fallback = resolveDesktopOrigin(compiledOrigin);
+  if (!savedOrigin?.trim()) return fallback;
+  try {
+    const origin = resolveDesktopOrigin(savedOrigin);
+    const isLocalPage = new Set(["localhost", "127.0.0.1", "::1", "[::1]"]).has(pageHostname.toLowerCase());
+    return isLocalPage || origin.startsWith("https://") ? origin : fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+const savedMobileOrigin = (): string | null => {
+  try {
+    return typeof localStorage === "undefined" ? null : localStorage.getItem(MOBILE_LINK_ORIGIN_KEY);
+  } catch {
+    return null;
+  }
+};
+
+export const DEFAULT_DESKTOP_ORIGIN = resolveActiveDesktopOrigin(
+  savedMobileOrigin(),
   import.meta.env.VITE_LIGHTSPEED_DESKTOP_ORIGIN,
+  typeof window === "undefined" ? "localhost" : window.location.hostname,
 );
 
 export const FLOORS = [
