@@ -804,3 +804,105 @@ def test_prism_rejects_public_child_of_private_parent_and_malformed_cache():
         negotiate_prism_device_candidate(
             profile=p, device_offer=_prism_device(p, render_kinds=[{}])
         )
+
+
+from lightspeed_runtime.node_exchange import (
+    ALEXANDRIA_FRAME_SCHEMA,
+    CGX_GEOMETRIC_CELL_SCHEMA,
+    build_geometric_cell_candidate,
+    build_alexandria_dodecahedron_candidate,
+)
+
+
+def test_alexandria_dodecahedron_has_closed_dual_topology():
+    first = build_alexandria_dodecahedron_candidate(object_id="CGX/UNISPACE/ALEXANDRIA")
+    second = build_alexandria_dodecahedron_candidate(object_id="CGX/UNISPACE/ALEXANDRIA")
+    assert first == second
+    assert first["schema_version"] == ALEXANDRIA_FRAME_SCHEMA
+    assert (first["vertex_count"], first["edge_count"], first["face_count"]) == (20, 30, 12)
+    assert first["topology_euler"] == 2
+    assert first["triangulated_surface_candidate_count"] == 36
+    assert len(first["vertices"]) == 20 and len(first["faces"]) == 12
+    assert len({tuple(e) for e in first["edges"]}) == 30
+    assert all(len(face) == 5 and len(set(face)) == 5 for face in first["faces"])
+    edge_incidence = {}
+    for face in first["faces"]:
+        for idx in range(5):
+            edge = tuple(sorted((face[idx], face[(idx + 1) % 5])))
+            edge_incidence[edge] = edge_incidence.get(edge, 0) + 1
+    assert len(edge_incidence) == 30
+    assert all(count == 2 for count in edge_incidence.values())
+    assert set(edge_incidence) == {tuple(e) for e in first["edges"]}
+    assert len(first["cells"]) == 12
+    assert {item["state"] for item in first["cells"]} == {"NEUTRAL_UNBOUND"}
+    assert first["source_items_present"] == 0
+    assert first["reference_radius_physical_m"] is None
+    assert first["authenticated"] is False
+
+
+def test_cgx_geometric_press_square_is_planar_until_extruded():
+    square = build_geometric_cell_candidate(object_id="CGX/PERSONAL/FOUR", sides=4, edge_length=2)
+    assert square["schema_version"] == CGX_GEOMETRIC_CELL_SCHEMA
+    assert square["vertices"] == [[0.0, 0.0], [2.0, 0.0], [2.0, 2.0], [0.0, 2.0]]
+    assert square["area_m2"] == 4
+    assert square["perimeter_m"] == 8
+    assert square["volume_m3"] is None
+    assert square["observed_capacity"] is None
+    assert square["canonical_promotion_authorized"] is False
+    assert build_geometric_cell_candidate(
+        object_id="CGX/PERSONAL/FOUR", sides=4, edge_length=2
+    )["geometry_root"] == square["geometry_root"]
+    extruded = build_geometric_cell_candidate(
+        object_id="CGX/PERSONAL/FOUR", sides=4, edge_length=2, extrusion_depth=3
+    )
+    assert extruded["volume_m3"] == 12
+    assert extruded["geometry_root"] != square["geometry_root"]
+
+
+@pytest.mark.parametrize("sides", [3, 4, 5, 8, 12, 128])
+def test_cgx_geometric_press_regular_n_polygon(sides):
+    import math
+
+    profile = build_geometric_cell_candidate(
+        object_id=f"CGX/PRESS/{sides}", sides=sides, edge_length=1
+    )
+    assert profile["side_count"] == sides
+    assert len(profile["vertices"]) == sides
+    assert profile["area_m2"] == pytest.approx(sides / (4 * math.tan(math.pi / sides)))
+    assert profile["volume_m3"] is None
+
+
+def test_cgx_geometric_press_edits_state_held_and_reversible():
+    base = build_geometric_cell_candidate(object_id="CGX/FOUR")
+    amended = build_geometric_cell_candidate(
+        object_id="CGX/FOUR", vertices=[[0, 0], [3, 0], [3, 1], [0, 1]],
+        cell_states={"child-a": "OCCUPIED", "child-b": "NEUTRAL_UNBOUND",
+                     "child-c": "UNKNOWN", "child-d": "WITHHELD"},
+    )
+    assert amended["area_m2"] == 3
+    assert amended["perimeter_m"] == 8
+    assert amended["geometry_root"] != base["geometry_root"]
+    assert amended["cell_states"]["child-c"] == "UNKNOWN"
+    assert amended["cell_states"]["child-d"] == "WITHHELD"
+    assert amended["authenticated"] if "authenticated" in amended else not amended["authentication_authorized"]
+    roundtrip = build_geometric_cell_candidate(
+        object_id=amended["object_id"], sides=amended["side_count"],
+        vertices=amended["vertices"], cell_states=amended["cell_states"]
+    )
+    assert roundtrip["geometry_root"] == amended["geometry_root"]
+
+
+@pytest.mark.parametrize("kwargs,match", [
+    ({"sides": 2}, "3..128"),
+    ({"sides": True}, "3..128"),
+    ({"vertices": [[0, 0], [1, 1], [0, 1], [1, 0]]}, "self-intersection"),
+    ({"vertices": [[0, 0], [1, 0], [1, 0], [0, 1]]}, "zero-length"),
+    ({"vertices": [[0, 0], [1, 0], [2, 0], [3, 0]]}, "degenerate"),
+    ({"vertices": [[0, 0], [1, 0], [1, 1]]}, "count"),
+    ({"extrusion_depth": 0}, "positive"),
+    ({"cell_states": {"child": "WITHHELD_AS_EMPTY"}}, "state/identifier"),
+    ({"edge_length": float("inf")}, "finite"),
+])
+def test_cgx_geometric_press_rejects_invalid_and_private_state_confusion(kwargs, match):
+    with pytest.raises(NodeExchangeError, match=match):
+        build_geometric_cell_candidate(object_id="CGX/PRESS/NEGATIVE", **kwargs)
