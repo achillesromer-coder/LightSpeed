@@ -1,4 +1,4 @@
-import test from "node:test";
+import {test} from "vitest";
 import assert from "node:assert/strict";
 import {PUBLIC_OBJECT,DOOM_PROOF,selectRoute,walkSlice,handshake,applySparseDelta,evaluatePrint,numericSlice} from "../public/cgx/assets/core.js";
 test("five public routes resolve without internal fallback",()=>{
