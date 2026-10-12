@@ -1,0 +1,25 @@
+{
+  "name": "@cognigrex/cgx",
+  "version": "0.0.0",
+  "private": true,
+  "description": "CGX local-first, read-only bootstrap for the existing LightSpeed and Alexandria stack",
+  "type": "module",
+  "bin": {
+    "cgx": "./bin/cgx.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test test/handshake.test.mjs",
+    "check": "node --check src/handshake.mjs && node --check bin/cgx.mjs",
+    "seed": "node bin/cgx.mjs seed",
+    "discover": "node bin/cgx.mjs discover"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "README.md"
+  ],
+  "dependencies": {}
+}
