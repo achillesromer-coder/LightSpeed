@@ -1,6 +1,7 @@
 /** CGX R0 public bootstrap. No device admission, network listener or execution path. */
 export const PUBLIC_SCHEMA = "cgx-public-bootstrap-v1";
 export const LOCAL_STATUS_URL = "http://127.0.0.1:8765/api/v1/status";
+export const LOCAL_BOOTSTRAP_URL = "http://127.0.0.1:8765/api/v1/cgx/bootstrap";
 export const MAX_STATUS_BYTES = 65536;
 
 export function publicSkeleton() {
@@ -141,8 +142,69 @@ export async function discoverLocal({ fetchImpl = globalThis.fetch, timeoutMs = 
   }
 }
 
+
+/** Discover the CGX-specific public advertisement before the legacy status fallback. */
+export async function discoverCgx({ fetchImpl = globalThis.fetch, timeoutMs = 2000 } = {}) {
+  if (typeof fetchImpl !== "function") throw new TypeError("CGX requires fetch");
+  if (!Number.isInteger(timeoutMs) || timeoutMs < 100 || timeoutMs > 5000) {
+    throw new RangeError("timeoutMs must be between 100 and 5000");
+  }
+  try {
+    const response = await fetchImpl(LOCAL_BOOTSTRAP_URL, {
+      method: "GET", redirect: "error", cache: "no-store",
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+    if (response.status === 404) {
+      return { ...(await discoverLocal({ fetchImpl, timeoutMs })),
+        protocol: "LEGACY_LIGHTSPEED_STATUS_FALLBACK" };
+    }
+    if (!response.ok) {
+      return { state: "CGX_BOOTSTRAP_HTTP_ERROR", http_status: response.status,
+        authenticated: false, consumer_verified: false };
+    }
+    let info;
+    try { info = JSON.parse(await boundedResponseText(response)); }
+    catch {
+      return { state: "UNRECOGNISED_CGX_ADVERTISEMENT",
+        authenticated: false, consumer_verified: false };
+    }
+    if (info?.schema_version !== "cgx-bootstrap-advertisement-v1" ||
+        info.namespace_candidate !== "cgx://CGX.cgx" ||
+        info.geometry?.vertex_count !== 20 ||
+        info.geometry?.edge_count !== 30 ||
+        info.geometry?.face_count !== 12 ||
+        info.security?.device_authenticated !== false ||
+        info.security?.consumer_receipt_verified !== false ||
+        info.security?.commands_allowed !== false ||
+        info.semantics?.source_root !== null) {
+      return { state: "UNRECOGNISED_CGX_ADVERTISEMENT",
+        authenticated: false, consumer_verified: false };
+    }
+    return {
+      state: "CGX_PUBLIC_BOOTSTRAP_CANDIDATE",
+      protocol: info.schema_version,
+      namespace_candidate: info.namespace_candidate,
+      geometric_reference: { vertices: 20, edges: 30, faces: 12 },
+      public_skeleton_available: true,
+      device_identity_verified: false,
+      consumer_verified: false,
+      session_restored: false,
+      remote_transport_connected: false,
+      authenticated: false,
+    };
+  } catch {
+    return {
+      state: "LOCAL_BOOTSTRAP_UNREACHABLE_OR_UNTRUSTED",
+      consumer_verified: false, authenticated: false,
+      public_skeleton_available: true,
+      local_host_offline_inferred: false,
+    };
+  }
+}
+
 export async function observeLocal({
-  samples = 3, intervalMs = 1000, discover = discoverLocal,
+  samples = 3, intervalMs = 1000, discover = discoverCgx,
   sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms)),
   now = () => new Date().toISOString(),
 } = {}) {
