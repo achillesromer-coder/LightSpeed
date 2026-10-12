@@ -33,6 +33,11 @@ jobs:
         run: |
           PYTHONPATH=.:../../desktop/LightSpeed_Runtime python -m unittest -v test_node_exchange_r0_adapter.py
           echo NATIVE_NODE_EXCHANGE_R0_PLAN_GATE_PASS
+      - name: Classify minimum Drive handoff key without activating the local runtime
+        working-directory: benchmarks/cgx_unispace_geometric_shorthand
+        run: |
+          python -m unittest -v test_drive_readback_candidate.py
+          python -m py_compile drive_readback_candidate.py
       - name: Reconstruct a full byte stream, then a baseline-root sparse update
         working-directory: benchmarks/cgx_unispace_geometric_shorthand
         run: |
