@@ -69,7 +69,8 @@ jobs:
           url=Path('out/CGX_FREEDOOM_N15_OFFLINE_SHARDED.html').absolute().as_uri()
           with sync_playwright() as p:
               browser=p.chromium.launch(headless=True,args=['--no-sandbox'])
-              page=browser.new_page(viewport={"width":960,"height":720})
+              context=browser.new_context(viewport={"width":960,"height":720},has_touch=True)
+              page=context.new_page()
               page.goto(url,wait_until='domcontentloaded',timeout=60000)
               page.context.set_offline(True)
               result['transport_offline_after_local_file_open']=True
@@ -82,6 +83,7 @@ jobs:
                   result['log_tail']=log[-3500:]
                   result['n_layers_reconstructed']=('15 independently addressed static layers' in log)
                   canvas=page.locator('#canvas')
+                  result['touch_buttons_visible']=not page.locator('#pad').evaluate('(el)=>el.classList.contains("hidden")')
                   frame_before=canvas.evaluate('(c)=>c.toDataURL()')
                   page.locator('#canvas').focus()
                   page.locator('.btn[data-key="ArrowUp"]').dispatch_event('mousedown')
@@ -90,7 +92,7 @@ jobs:
                   page.wait_for_timeout(400)
                   frame_after=canvas.evaluate('(c)=>c.toDataURL()')
                   result['input_changes_game_frame']=(frame_before!=frame_after)
-                  result['status']='ENGINE_START_PASSED' if '[main] returned' in log and result['n_layers_reconstructed'] and result['input_changes_game_frame'] and 'EXCEPTION' not in log and 'threw:' not in log else 'ENGINE_START_FAILED'
+                  result['status']='ENGINE_START_PASSED' if '[main] returned' in log and result['n_layers_reconstructed'] and result['input_changes_game_frame'] and result['touch_buttons_visible'] and 'EXCEPTION' not in log and 'threw:' not in log else 'ENGINE_START_FAILED'
                   result["canvas_present"]=page.locator('#canvas').count()==1
                   page.screenshot(path="out/HEADLESS_LAUNCH.png")
               except Exception as exc:
