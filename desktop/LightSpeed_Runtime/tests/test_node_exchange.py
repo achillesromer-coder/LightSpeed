@@ -906,3 +906,61 @@ def test_cgx_geometric_press_edits_state_held_and_reversible():
 def test_cgx_geometric_press_rejects_invalid_and_private_state_confusion(kwargs, match):
     with pytest.raises(NodeExchangeError, match=match):
         build_geometric_cell_candidate(object_id="CGX/PRESS/NEGATIVE", **kwargs)
+
+
+def test_hydration_fract_key_contract_maps_existing_layers_without_new_authority():
+    repo_root = Path(__file__).resolve().parents[3]
+    depth = json.loads((repo_root / "cgx/domain_templates/depth_profiles.json").read_text(encoding="utf-8"))
+    exchange = json.loads((repo_root / "cgx/domain_templates/node_exchange_contract.json").read_text(encoding="utf-8"))
+    lenses = json.loads((repo_root / "cgx/domain_templates/semantic_view_lens_registry.json").read_text(encoding="utf-8"))
+
+    plane_ids = [row["id"] for row in depth["hydration_planes"]]
+    assert plane_ids == [
+        "H0_IDENTITY", "H1_SOURCE", "H2_STRUCTURE", "H3_SEMANTICS",
+        "H4_RELATIONS", "H5_LENS", "H6_STATE", "H7_CAPABILITY",
+        "H8_EXECUTION", "H9_WITNESS",
+    ]
+    contract = exchange["hydration_and_fract_key_contract"]
+    assert contract["plane_order"] == plane_ids
+    assert set(contract["layer_mapping"]) == set(plane_ids)
+    assert contract["canonical_mutation"] is False
+    assert contract["public_release"] is False
+    assert contract["physical_authority"] is False
+
+    fkc = contract["fract_key"]
+    assert fkc["code_prefix"] == "FK1"
+    assert fkc["acronym"] == "FKC"
+    assert "Object_ID" in fkc["locator_fields"]
+    assert "morton3_chunk" in fkc["address_kinds"]
+    joined = " ".join(fkc["invariants"]).lower()
+    assert "never a replacement object_id" in joined
+    assert "cryptographic key" in joined
+    assert "legacy random fractal" in joined
+
+    projection = lenses["hydration_scatter_projection"]
+    assert set(projection["plane_to_projection"]) == set(plane_ids)
+    assert projection["canonical_mutation"] is False
+    assert projection["fract_key_display"]["semantic_authority"] is False
+    assert projection["fract_key_display"]["execution_authority"] is False
+    assert any("runtime z-floor" in item.lower() for item in projection["orthogonality"])
+    assert any("morton3" in item.lower() for item in projection["orthogonality"])
+
+
+def test_hydration_terms_keep_unknown_withheld_zero_and_inference_distinct():
+    repo_root = Path(__file__).resolve().parents[3]
+    depth = json.loads((repo_root / "cgx/domain_templates/depth_profiles.json").read_text(encoding="utf-8"))
+    exchange = json.loads((repo_root / "cgx/domain_templates/node_exchange_contract.json").read_text(encoding="utf-8"))
+
+    terms = depth["hydration_terms"]
+    for required in (
+        "hydrate", "rehydrate", "lazy_hydration", "selective_hydration",
+        "progressive_hydration", "source_hydration", "semantic_hydration",
+        "state_hydration", "capability_hydration", "execution_hydration",
+        "witness_hydration", "scatter", "gather", "reconstruct", "infer",
+        "resolve", "project",
+    ):
+        assert required in terms
+    assert "never hydration" in terms["infer"].lower()
+    scatter = exchange["hydration_and_fract_key_contract"]["scatter_gather"]
+    assert "UNKNOWN, NOT_CACHED, WITHHELD and ZERO" in scatter["unknown_rule"]
+    assert any("cache possession" in item for item in scatter["prohibited_collapses"])
