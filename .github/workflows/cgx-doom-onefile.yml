@@ -1,0 +1,93 @@
+name: CGX DOOM onefile isolated benchmark
+on:
+  push:
+    branches:
+      - benchmark/cgx-doom-onefile-20261012
+    paths:
+      - "benchmarks/cgx_doom_onefile/**"
+      - ".github/workflows/cgx-doom-onefile.yml"
+permissions:
+  contents: read
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch pinned public open-source engine and WAD
+        shell: bash
+        run: |
+          git clone --depth=1 https://github.com/danborden1/doom-web.git /tmp/doom-web
+          test "$(git -C /tmp/doom-web rev-parse HEAD)" = "e0ba81004e27e7d66141925dfebb091a558e2fe8"
+          sha256sum /tmp/doom-web/freedoom1.wad
+          printf '%s  %s\n' "7323bcc168c5a45ff10749b339960e98314740a734c30d4b9f3337001f9e703d" /tmp/doom-web/freedoom1.wad | sha256sum --check -
+          test -s /tmp/doom-web/websockets-doom.js
+          test -s /tmp/doom-web/websockets-doom.wasm
+      - name: Build N=15 self-contained HTML and compare downloaded sizes
+        run: python benchmarks/cgx_doom_onefile/build.py --source /tmp/doom-web --output out --layers 15
+      - name: Verify one-file offline shell and asset integrity
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, pathlib, re, base64, gzip, hashlib, struct
+          root=pathlib.Path('out')
+          size=json.loads((root/'CGX_SIZE_AND_PROOF.json').read_text())
+          html=(root/'CGX_FREEDOOM_ONE_CLICK_OFFLINE.html').read_text()
+          b=re.search(r'<script type="application/octet-stream" id="cgx-gzip">([^<]+)</script>',html)
+          assert b, 'missing inline payload'
+          decoded=gzip.decompress(base64.b64decode(b.group(1)))
+          assert b'<script id="cgx-wad"' in decoded and b'<script id="cgx-wasm"' in decoded
+          assert b'websockets-doom.wasm' in decoded
+          assert b'freedoom1.wad' in decoded
+          assert b'window.Module.wasmBinary' in decoded
+          assert b'CGXB64(' in decoded
+          for word in (b"src='websockets-doom.js'", b'src="websockets-doom.js"'):
+              assert word not in decoded
+          manifest=json.loads((root/'CGX_N_LAYER_PROFILE.json').read_text())
+          assert len(manifest['families'])==15
+          assert manifest['wad_sha256']==size['original_wad_sha256']
+          assert sum(r['lump_count'] for r in manifest['families'])==3163
+          print('ONEFILE_STATIC_RECONSTRUCTION_PASS')
+          PY
+      - name: Browser runtime check (failure does not become a false pass)
+        shell: bash
+        run: |
+          python -m pip install -q playwright
+          python -m playwright install chromium
+          python - <<'PY'
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          import json
+          result={"check":"headless Chromium independent file launch","status":"NOT_RUN"}
+          url=Path('out/CGX_FREEDOOM_ONE_CLICK_OFFLINE.html').absolute().as_uri()
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=True,args=['--no-sandbox'])
+              page=browser.new_page(viewport={"width":960,"height":720})
+              page.goto(url,wait_until='domcontentloaded',timeout=60000)
+              try:
+                  page.get_by_text('TAP TO START').wait_for(timeout=80000)
+                  result["loader"]="READY"
+                  page.locator('#bootBtn').click(timeout=5000)
+                  page.wait_for_timeout(6000)
+                  log=page.locator('#log').inner_text(timeout=5000)
+                  result['log_tail']=log[-3500:]
+                  result["status"]="ENGINE_START_PASSED" if '[main] returned' in log or '[main] callMain' in log and not 'threw:' in log and not 'EXCEPTION' in log else "ENGINE_START_FAILED"
+                  result["canvas_present"]=page.locator('#canvas').count()==1
+                  page.screenshot(path="out/HEADLESS_LAUNCH.png")
+              except Exception as exc:
+                  result["status"]="ENGINE_START_FAILED"
+                  result["exception"]=str(exc)[:300]
+                  page.screenshot(path="out/HEADLESS_LAUNCH.png")
+              browser.close()
+          Path('out/BROWSER_RUNTIME_CHECK.json').write_text(json.dumps(result,indent=2))
+          print(json.dumps(result,indent=2))
+          assert result['status']=='ENGINE_START_PASSED', 'Real headless Chocolate Doom did not start'
+          PY
+      - name: Upload benchmark proof and runnable file
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CGX_FREEDOOM_OFFLINE_ONEFILE
+          path: out/
+          retention-days: 14
+          if-no-files-found: error
