@@ -310,6 +310,134 @@
       "public_scope": "do not expose private node rosters, sensitive geometry, internal roots or non-public source metadata",
       "procedural_binding": "node_exchange.validate_dataspace_profile and build_dataspace_delta_candidate, no new render engine or object store",
       "no_canonical_promotion": true
+    },
+    "geometric_press_capacity_facet": {
+      "status": "REVIEW_ONLY_ADDITIVE_CONTRACT_NO_INSTALLED_UI_OR_STORAGE_MUTATION",
+      "purpose": "Extend the existing UniSpace/CGX geometric Press and semantic projections to model occupied, reserved, neutral and expandable typed cells; reuse one FileSpace source graph, not a second datastore, application, print controller or master.",
+      "input_sources": [
+        "current Object_ID / typed classes, aliases, parent-child relationships and source hash",
+        "authoritative geometry_root, source unit, coordinate frame and valid 2D polygon or 3D closed mesh",
+        "explicit user scope, preferred licensed lenses, current permissions and device rendering capabilities",
+        "measured utilization, estimated demand, environment constraints and uncertainty when actually sourced",
+        "scoped observer identities and independently supported observations (not derived public symbol keys)"
+      ],
+      "user_interaction": {
+        "entry": "existing desktop Web2 Press/no-publish or existing LS GO view; source-to-executable match required before activation",
+        "geometric_seed": "user chooses 3..128 sides; n=4 regular seed is an exact square, not a volume",
+        "operations": [
+          "left-click or touch add/select typed cell",
+          "edit vertex, edge or angle with explicit selected constraints",
+          "undo/redo reversible geometry delta",
+          "inspect occupied/reserved/free/unknown frontier",
+          "choose data imprint layers and family-owned semantic lenses",
+          "preview before storing a proposed source-bound delta",
+          "export or share only a classified projection with a separate release receipt"
+        ],
+        "validation": [
+          "closed consistent polygon",
+          "positive signed area for expected winding",
+          "no self-intersections or degenerate zero-length edges",
+          "explicit m / m2 / m3 and frame where physical",
+          "depth>0 or closed orientable 3D boundary before computing physical volume",
+          "collision/adjacency and allocation bounds",
+          "lossless serialization of declared geometry fields",
+          "source root/permission and provenance retained"
+        ],
+        "display_symbols": "base-2..36 numerals, letters and glyphs are optional encodings/aliases; not cryptographic keys, physical constants or new independent observations",
+        "calculations": "logarithm base b is a declared numerical-model choice with b>0 and b!=1; independent of number of sides"
+      },
+      "cell_states": {
+        "OCCUPIED": "committed source-backed object footprint and access scope",
+        "RESERVED": "bounded allocation with reason, owner, expiry and estimated utilization",
+        "FREE": "measured geometry with no current allocation; not automatically authorized for publication or execution",
+        "GROWTH_CANDIDATE": "modelled demand buffer, not yet physically or canonically assigned",
+        "NEUTRAL_UNBOUND": "valid neutral placeholder awaiting class, material, capability or owner decision",
+        "UNKNOWN": "absent or incompatible evidence; must not be interpreted as empty/free/zero",
+        "WITHHELD": "known existence or relationships may be non-disclosable; return non-enumerating safe view",
+        "CONFLICT": "concurrent geometry/source/allocation revisions disagree; no silent overwrite"
+      },
+      "allocation_and_allometry": {
+        "method": "derive effective occupied capacity and resource costs from exact geometry plus independently sourced task/resource constraints, then propose selective local cell splitting, adjacency and boundary reflow without changing original source bytes",
+        "model": "y=k*x^alpha may be used ONLY for a specified domain, measured/calibrated k and alpha, comparable units, valid size interval and confidence interval; otherwise UNSUPPORTED_MODEL and deterministic bounded scenario sweep",
+        "costs": [
+          "reflow geometry movement",
+          "inter-cell interfaces and graph edge updates",
+          "latency/bytes and caching",
+          "compute/energy and local memory",
+          "privacy boundary",
+          "retained slack for expected demand",
+          "failure-domain independence"
+        ],
+        "objective": "minimize weighted reflow + transfer + execution + risk cost subject to geometry validity, hard permissions, pinned source/revision constraints and reserve limits; compare with no-reflow baseline",
+        "evidence_ceiling": "forecasts/allometric analogy do not prove biological law, astrophysical relation, material compatibility or physical machinery readiness",
+        "replanning_triggers": [
+          "source hash or geometry root changed",
+          "observed utilization exceeds validated threshold",
+          "lease/owner/resource constraint changed",
+          "independent measurement invalidates scaling fit",
+          "dependent object/child inheritance invalidated"
+        ],
+        "replication": "DNA-like templating is an analogy for source-hashed reusable recipes and reversible graph forks: no overwrite of parent, duplicate secret, clone of physical material, or lineage deletion",
+        "deduplication": "same source sha256 may reuse immutable bytes and cache; distinct Object_ID authority, licence, history, physical state and child provenance remain separate; merge views by reference only"
+      },
+      "family_profiles": {
+        "Cognigrex": "FileSpace source/custodial grammar, DataSpace semantic resolver, content-addressed root and typed class hierarchy",
+        "Eco-Grex": "habitat, ecological corridor, monitoring-series, network interaction, environmental provenance and local uncertainty",
+        "Römer-Grex": "geometry, CAD, production interfaces, corridor/Mark/Luke, orbit/field models with distinct physical witness gates",
+        "EMASSC": "source-owned experimental evidence, IP rights, protocol/test-run and engineering authority review",
+        "SAI": "Shared Australian Intelligence public/private consented utility, scoped national and local-first projection with no government authority implied",
+        "LightSpeed": "existing leased local/runtime execution and queued progress receipts; never a second source root",
+        "International": "consented individually named federated sources only, with per-source rights and jurisdiction; no automatic access or sovereign claims"
+      },
+      "storage_placement_intent": {
+        "authority": "do not move, rename, overwrite or recursively absorb native .cgx carriers until host filesystem manifest, backups, links, free space, rights and cross-drive references are verified",
+        "existing_host_roots_to_preserve": [
+          "C:\\Cognigrex",
+          "D:\\LightSpeed"
+        ],
+        "user_requested_logical_roles": {
+          "C:": "Römer-Grex projection",
+          "D:": "Eco-Grex projection",
+          "E:": "small public-safe UniSpace/EMASSC kitset staging"
+        },
+        "mapping_rule": "logical CGX mount/namespace first, physical volume mapping after existing root conflict checks and operator-approved exact move manifest; do not assume E: exists",
+        "protected_paths": [
+          "C:/Documents",
+          "C:\\Users\\acc\\Documents",
+          "all configured user Documents locations"
+        ],
+        "publication": "public-safe kitset by explicit object/field/IP/privacy approval, reproducible source snapshot, license, hashes, negative static leak check and rollback; no private 605-object catalogue, 411-geometry atlas, 16 internal 4K assets or credentials by default"
+      },
+      "mesh_and_render_projection": {
+        "source": "existing CGX atlas, 2D/3D renderer, 4D state and PR173 geometric observer selection; reuse current Press and LS GO rather than adding new renderer",
+        "keys": [
+          "Object_ID",
+          "source_sha256",
+          "geometry_root",
+          "renderer_version",
+          "selected_view_lenses",
+          "unit_frame",
+          "ACL_release_class"
+        ],
+        "recomputation": "invalidate only impacted descendants, regenerate changed authorized view meshes and render-cache entries; do not imply every child has a real 3D asset",
+        "printspace": "directional X_to_Y process, environment, curing, encapsulation, native material witness and safe-state explicitly independent from semantic shape selection",
+        "side_effects": "all changes default preview-only, no installed app patch, physical machine action, external outreach send or release from this contract"
+      },
+      "distributed_observation": {
+        "offered": "n scoped nodes/lenses, default candidate 3-of-5 only when five independent admitted observations are actually available",
+        "safeguards": "correlated/common-source observations count only as supported evidence; signed device identity, ACL, current lease, replay protection and verified prior root are separate mandatory controls",
+        "status": "SIMULATED_LOCAL_CANDIDATE; two physical authorized nodes and node_exchange DS-01..08 remain independent acceptance gates"
+      },
+      "readiness": {
+        "source_contract": "STAGED_FOR_REVIEW",
+        "desktop_press_executable": "UNIDENTIFIED",
+        "host_online": "NOT_VERIFIED",
+        "user_keys": "NOT_MINTED",
+        "drive_to_host_ack": "NOT_VERIFIED",
+        "n_node_real_handshake": "NOT_PROVEN",
+        "public_safe_family_kitsets": "PER_OBJECT_CLASSIFICATION_PENDING",
+        "canonical_promotion_authorized": false
+      }
     }
   }
 }
