@@ -11,14 +11,61 @@
     "CGX-SEMANTIC-VIEW-LENS-REGISTRY/0.1"
   ],
   "facets": {
-    "identity": ["Object_ID", "native source provider ID", "source SHA256", "owner", "source revision", "access scope"],
-    "topology": ["Morton3 coordinate from chunk ordinal", "configurable layer assignment", "parent dependency graph", "independent T state"],
-    "byte_storage": ["R0_RAW", "R0_ZLIB", "R0_CACHED_REFERENCE", "R0_BASELINE_ROOT_PATCH"],
-    "language": ["native bytes always retained", "optional UTF8 text", "source-registered dictionary only", "unknown if no dictionary"],
-    "equation": ["bounded registered pure kernel", "units/basis mandatory for dimensional data", "derived ≠ measured"],
-    "read_views": ["filespace-tree", "topology-graph", "binary/hex", "UTF8", "JSON", "archive index", "document preview", "CAD/3D with qualified adapter", "native app sandbox"],
-    "transport": ["source root negotiation", "capability lease", "payload hash/size readback", "offline conflict preservation"],
-    "governance": ["owner ACL", "licence", "source/DBR roots", "readback", "physical qualification separate"]
+    "identity": [
+      "Object_ID",
+      "native source provider ID",
+      "source SHA256",
+      "owner",
+      "source revision",
+      "access scope"
+    ],
+    "topology": [
+      "Morton3 coordinate from chunk ordinal",
+      "configurable layer assignment",
+      "parent dependency graph",
+      "independent T state"
+    ],
+    "byte_storage": [
+      "R0_RAW",
+      "R0_ZLIB",
+      "R0_CACHED_REFERENCE",
+      "R0_BASELINE_ROOT_PATCH"
+    ],
+    "language": [
+      "native bytes always retained",
+      "optional UTF8 text",
+      "source-registered dictionary only",
+      "unknown if no dictionary"
+    ],
+    "equation": [
+      "bounded registered pure kernel",
+      "units/basis mandatory for dimensional data",
+      "derived ≠ measured"
+    ],
+    "read_views": [
+      "filespace-tree",
+      "topology-graph",
+      "binary/hex",
+      "UTF8",
+      "JSON",
+      "archive index",
+      "document preview",
+      "CAD/3D with qualified adapter",
+      "native app sandbox"
+    ],
+    "transport": [
+      "source root negotiation",
+      "capability lease",
+      "payload hash/size readback",
+      "offline conflict preservation"
+    ],
+    "governance": [
+      "owner ACL",
+      "licence",
+      "source/DBR roots",
+      "readback",
+      "physical qualification separate"
+    ]
   },
   "orthogonality": {
     "x_y_z": "Physical carrier Morton3 chunk lattice only. Semantic XY/Z/T graph remains the existing CGX authority and can be mapped using a registered lens.",
@@ -60,6 +107,31 @@
     "data_space": "Root negotiation and delta readback only under existing authenticated node lease",
     "print_space": "Only registered material/CAD/process adapters, never compile bytes directly into machine motion",
     "public_unispace": "Show read-only source-bound costs and synthetic examples; no public upload of private customer data",
-    "owner_gates": ["Test real native source adapter and provider revision", "Authenticated 2-device byte transfer", "Signed Source/State/DBR and version conflict", "Measured device energy and CPU", "Owner-approved release"]
+    "owner_gates": [
+      "Test real native source adapter and provider revision",
+      "Authenticated 2-device byte transfer",
+      "Signed Source/State/DBR and version conflict",
+      "Measured device energy and CPU",
+      "Owner-approved release"
+    ],
+    "source_node_adapter": "benchmarks/cgx_unispace_geometric_shorthand/node_exchange_r0_adapter.py",
+    "native_envelope_binding": "lightspeed_runtime.node_exchange.build_transfer_envelope (staged candidate source, planned state ONLY)",
+    "verified_functional_cases": [
+      "R0 exact source root readback for raw/ZIP/CGXS cold",
+      "R0 prior-root patch, no-change, cache-missing and context mismatch",
+      "existing native Node Exchange envelope builder on staged carrier",
+      "foreign/unknown ZIP layout, malicious path, size bounds rejected"
+    ],
+    "unproven_and_held": [
+      "native cloud provider ACL/revision attestation",
+      "authenticated remote peer and DIGITIAL_WRITE execution lease",
+      "source-owner approved DBR mutation",
+      "real two-device transport + target energy cost",
+      "universal semantic equivalence or application runtime"
+    ],
+    "current_proof": "GitHub CI 38214420691: 30 Python tests, R0 CLI roundtrip and cost checks PASS; local source corpus in NATIVE_INTEGRATION_PROOF.md",
+    "public_execution_allowed": false,
+    "active_transfer_allowed": false,
+    "canonical_mutation_allowed": false
   }
 }
