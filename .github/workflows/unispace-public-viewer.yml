@@ -24,18 +24,21 @@ jobs:
         run: |
           node --check apps/lightspeed-go/public/cgx/assets/core.js
           node --check apps/lightspeed-go/public/cgx/assets/viewer.js
-          (cd apps/lightspeed-go && npm ci --silent && npm test -- --run tests/unispace-public.test.mjs)
+          node --check apps/lightspeed-go/public/cgx/assets/domain-overviews.js
+          node --check apps/lightspeed-go/public/cgx/assets/domain-viewer.js
+          (cd apps/lightspeed-go && npm ci --silent && npm test -- --run tests/unispace-public.test.mjs tests/unispace-domains.test.mjs)
           python - <<'PY'
           from pathlib import Path
           root=Path('apps/lightspeed-go/public/cgx')
-          routes=['', 'fs/', 'ds/', 'ps/', 'doom/']
-          files=[root/'assets/core.js',root/'assets/viewer.js',root/'assets/viewer.css']
+          routes=['', 'fs/', 'ds/', 'ps/', 'doom/', 'romer/', 'eco/']
+          files=[root/'assets/core.js',root/'assets/viewer.js',root/'assets/viewer.css',root/'assets/domain-overviews.js',root/'assets/domain-viewer.js']
           assert all(x.is_file() for x in files)
           for route in routes:
               item=root/route/'index.html'
               text=item.read_text()
               assert 'ownerAuth' not in text and 'desktopBridge' not in text
-              assert 'viewer.js' in text and 'viewer.css' in text
+              assert 'viewer.css' in text
+              assert ('domain-viewer.js' if route in ('romer/','eco/') else 'viewer.js') in text
           combined='\n'.join(x.read_text() for x in files)
           for blocked in ('owner-password','cgx_internal_review_projection','component_geometry_atlas_public_review',
               'localhost:8765','localhost:4173','/api/v1/','/api/owner','NCNB'):
@@ -58,7 +61,7 @@ jobs:
               page=browser.new_page(viewport={"width":1024,"height":820})
               errors=[]
               page.on("pageerror",lambda e: errors.append(str(e)))
-              for route,heading in (("", "Universal Operating Model"),("fs/","FileSpace"),("ds/","DataSpace"),("ps/","PrintSpace"),("doom/","DOOM benchmark")):
+              for route,heading in (("", "Universal Operating Model"),("fs/","FileSpace"),("ds/","DataSpace"),("ps/","PrintSpace"),("doom/","DOOM benchmark"),("romer/","Römer-Grex"),("eco/","Eco-Grex")):
                   page.goto("http://127.0.0.1:8179/cgx/"+route,wait_until="networkidle",timeout=60000)
                   page.locator("h1").get_by_text(heading).wait_for()
                   proof["routes"][route or "overview"]="PASS"
