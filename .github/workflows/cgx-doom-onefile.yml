@@ -25,6 +25,8 @@ jobs:
           test -s /tmp/doom-web/websockets-doom.wasm
       - name: Build N=15 self-contained HTML and compare downloaded sizes
         run: python benchmarks/cgx_doom_onefile/build.py --source /tmp/doom-web --output out --layers 15
+      - name: Assemble 15 genuinely addressable static layers
+        run: python benchmarks/cgx_doom_onefile/build_layered.py
       - name: Verify one-file offline shell and asset integrity
         shell: bash
         run: |
@@ -47,6 +49,11 @@ jobs:
           assert len(manifest['families'])==15
           assert manifest['wad_sha256']==size['original_wad_sha256']
           assert sum(r['lump_count'] for r in manifest['families'])==3163
+          layered=(root/'CGX_FREEDOOM_N15_OFFLINE_SHARDED.html').read_text()
+          z=re.search(r'<script type="application/octet-stream" id="cgx-gzip">([^<]+)</script>',layered)
+          a=gzip.decompress(base64.b64decode(z.group(1)))
+          assert a.count(b'id="cgx-shard-')==15
+          assert b'CGX incomplete geometry' in a
           print('ONEFILE_STATIC_RECONSTRUCTION_PASS')
           PY
       - name: Browser runtime check (failure does not become a false pass)
@@ -59,11 +66,13 @@ jobs:
           from playwright.sync_api import sync_playwright
           import json
           result={"check":"headless Chromium independent file launch","status":"NOT_RUN"}
-          url=Path('out/CGX_FREEDOOM_ONE_CLICK_OFFLINE.html').absolute().as_uri()
+          url=Path('out/CGX_FREEDOOM_N15_OFFLINE_SHARDED.html').absolute().as_uri()
           with sync_playwright() as p:
               browser=p.chromium.launch(headless=True,args=['--no-sandbox'])
               page=browser.new_page(viewport={"width":960,"height":720})
               page.goto(url,wait_until='domcontentloaded',timeout=60000)
+              page.context.set_offline(True)
+              result['transport_offline_after_local_file_open']=True
               try:
                   page.get_by_text('TAP TO START').wait_for(timeout=80000)
                   result["loader"]="READY"
@@ -71,6 +80,7 @@ jobs:
                   page.wait_for_timeout(6000)
                   log=page.locator('#log').inner_text(timeout=5000)
                   result['log_tail']=log[-3500:]
+                  result['n_layers_reconstructed']=('15 independently addressed static layers' in log)
                   canvas=page.locator('#canvas')
                   frame_before=canvas.evaluate('(c)=>c.toDataURL()')
                   page.locator('#canvas').focus()
@@ -80,7 +90,7 @@ jobs:
                   page.wait_for_timeout(400)
                   frame_after=canvas.evaluate('(c)=>c.toDataURL()')
                   result['input_changes_game_frame']=(frame_before!=frame_after)
-                  result['status']='ENGINE_START_PASSED' if '[main] returned' in log and result['input_changes_game_frame'] and 'EXCEPTION' not in log and 'threw:' not in log else 'ENGINE_START_FAILED'
+                  result['status']='ENGINE_START_PASSED' if '[main] returned' in log and result['n_layers_reconstructed'] and result['input_changes_game_frame'] and 'EXCEPTION' not in log and 'threw:' not in log else 'ENGINE_START_FAILED'
                   result["canvas_present"]=page.locator('#canvas').count()==1
                   page.screenshot(path="out/HEADLESS_LAUNCH.png")
               except Exception as exc:
