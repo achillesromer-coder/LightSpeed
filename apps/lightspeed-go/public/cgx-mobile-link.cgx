@@ -1,6 +1,6 @@
 {
   "schema": "cgx.ls-go.mobile-link/1",
-  "purpose": "Bounded mobile-to-desktop bootstrap, not a CGX runtime",
+  "purpose": "Bounded CGX roaming-node discovery and handoff, not a separate CGX runtime",
   "operator_ui": "https://lightspeed-go.nathaniel-b.chatgpt.site/",
   "mobile_role": "roaming_operator",
   "host_node": "bouwerbase",
@@ -17,7 +17,26 @@
     "commands": "existing_achilles_gated_ls_go_envelopes",
     "results": "existing_desktop_receipts",
     "source_code": "github_lightspeed",
-    "durable_evidence": "drive_core_asynchronous"
+    "durable_evidence": "drive_core_asynchronous",
+    "transport_priority": [
+      "authenticated_existing_lightspeed_bridge",
+      "owner_authorised_drive_mailbox_on_bridge_failure"
+    ],
+    "intake": "bounded_cgx_request_envelope_v1",
+    "capability_assessment": "bouwerbase_declared_capability_and_dependency_match",
+    "assessment_states": [
+      "can_do",
+      "can_do_when_ready",
+      "unsupported",
+      "held"
+    ],
+    "assessment_receipt": "typed_local_readback_with_capability_id_missing_dependencies_and_authority_state",
+    "action_rule": "can_do_means_capable_only; execution requires a current scoped lease or owner-approved authority",
+    "command_execution": "existing_achilles_gated_ls_go_envelopes_via_local_runtime",
+    "fallback": "drive_mailbox_is_an_untrusted_transport_not_execution_authority",
+    "local_dbr": "primary_authoritative_execution_receipt_on_bouwerbase",
+    "drive_dbr": "asynchronous_backup_only_after_hash_and_identity_readback",
+    "change_detection": "compare_object_revision_and_sha256; only transfer changed_identifiers_or_approved_payloads"
   },
   "constraints": {
     "embedded_credentials": false,
@@ -25,7 +44,14 @@
     "automatic_owner_approval": false,
     "new_backend": false,
     "cgx_backscatter": false,
-    "fail_closed_on_missing_relay_or_auth": true
+    "fail_closed_on_missing_relay_or_auth": true,
+    "drive_write_grants_local_execution": false,
+    "capability_match_grants_local_execution": false,
+    "preserve_local_owner_gates": true,
+    "allow_scoped_preapproved_local_work": true,
+    "no_automatic_replay_of_unacknowledged_jobs": true,
+    "idempotent_envelopes_by_request_id": true,
+    "no_unauthorised_local_path_resolution": true
   },
-  "release_gate": "require_verified_phone_to_private_relay_to_live_desktop_receipt"
+  "release_gate": "source_only_until_bouwerbase_capability_assessment_authorised_action_and_exact_dbr_readback_verified"
 }
