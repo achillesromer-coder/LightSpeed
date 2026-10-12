@@ -916,6 +916,13 @@ def validate_prism_slice_profile(profile: dict) -> dict:
                 raise NodeExchangeError("CGX prism cyclic parent graph")
             visited.add(cursor)
             cursor = layers[cursor].get("parent_id")
+    for key, item in layers.items():
+        if item["visibility"] == "public":
+            parent = item.get("parent_id")
+            while parent is not None:
+                if layers[parent]["visibility"] != "public":
+                    raise NodeExchangeError("CGX prism public child cannot inherit protected parent")
+                parent = layers[parent].get("parent_id")
     for item in views.values():
         if item.get("layer_id") not in layers:
             raise NodeExchangeError("CGX prism interpretation has missing layer")
@@ -964,13 +971,14 @@ def negotiate_prism_device_candidate(*, profile: dict, device_offer: dict) -> di
     cached = device_offer.get("cached_content_roots")
     max_layers = device_offer.get("max_layers")
     if (not isinstance(kinds, list) or not kinds or len(kinds) > 6 or
-            any(k not in _PRISM_RENDER_KINDS for k in kinds) or len(set(kinds)) != len(kinds)):
+            any(not isinstance(k, str) or k not in _PRISM_RENDER_KINDS for k in kinds) or len(set(kinds)) != len(kinds)):
         raise NodeExchangeError("CGX prism render capabilities invalid")
     if (not isinstance(requested, list) or len(requested) > 256 or
             any(not isinstance(x, str) or not x or len(x) > 96 for x in requested) or
             len(set(requested)) != len(requested)):
         raise NodeExchangeError("CGX prism requested interpretations invalid")
     if (not isinstance(cached, list) or len(cached) > 128 or
+            any(not isinstance(root, str) for root in cached) or
             len(set(cached)) != len(cached)):
         raise NodeExchangeError("CGX prism cache declaration invalid")
     for root in cached:
