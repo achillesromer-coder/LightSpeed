@@ -9,6 +9,7 @@ Network/peer adapters must call these bounded contracts and return receipts.
 from datetime import UTC, datetime
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import shutil
@@ -1105,4 +1106,223 @@ __all__.extend((
     "validate_prism_slice_profile",
     "negotiate_prism_device_candidate",
     "resolve_prism_interpretation_candidate",
+))
+
+
+# UniSpace/Alexandria geometry is an opt-in projection of FileSpace sources.
+# It is not a peer admission, physical build, authority grant, or new store.
+ALEXANDRIA_FRAME_SCHEMA = "cgx-alexandria-dodecahedron-candidate-v1"
+CGX_GEOMETRIC_CELL_SCHEMA = "cgx-geometric-cell-candidate-v1"
+_CGX_CELL_STATES = frozenset((
+    "OCCUPIED", "RESERVED", "FREE", "GROWTH_CANDIDATE",
+    "NEUTRAL_UNBOUND", "UNKNOWN", "WITHHELD", "CONFLICT",
+))
+
+
+def _cgx_finite_coordinate(value: Any) -> float:
+    if type(value) not in (float, int) or not math.isfinite(value) or abs(value) > 1e9:
+        raise NodeExchangeError("CGX geometry coordinate must be finite and bounded")
+    return float(value)
+
+
+def _cgx_segments_intersect(a: tuple, b: tuple, c: tuple, d: tuple) -> bool:
+    """Reject crossing or coincident non-neighbour edges, including touching."""
+    def cross(p: tuple, q: tuple, r: tuple) -> float:
+        return (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0])
+
+    def on_edge(p: tuple, q: tuple, r: tuple) -> bool:
+        return min(p[0], q[0]) <= r[0] <= max(p[0], q[0]) and (
+            min(p[1], q[1]) <= r[1] <= max(p[1], q[1])
+        )
+
+    u, v = cross(a, b, c), cross(a, b, d)
+    w, z = cross(c, d, a), cross(c, d, b)
+    if (u > 0) != (v > 0) and (w > 0) != (z > 0) and u * v < 0 and w * z < 0:
+        return True
+    return (
+        (u == 0 and on_edge(a, b, c)) or (v == 0 and on_edge(a, b, d)) or
+        (w == 0 and on_edge(c, d, a)) or (z == 0 and on_edge(c, d, b))
+    )
+
+
+def build_geometric_cell_candidate(
+    *,
+    object_id: str,
+    sides: int = 4,
+    edge_length: float = 1.0,
+    vertices: list | None = None,
+    extrusion_depth: float | None = None,
+    cell_states: dict | None = None,
+) -> dict[str, Any]:
+    """Pure Press draft: polygon, typed occupancy and optional prism, never a key.
+
+    Cells are metadata assignments (not storage or capacity measurements).
+    Caller-supplied vertices retain exact input order; no silent geometric repair.
+    """
+    if not isinstance(object_id, str) or not 1 <= len(object_id) <= 160:
+        raise NodeExchangeError("CGX geometric cell needs bounded Object_ID")
+    if type(sides) is not int or not 3 <= sides <= 128:
+        raise NodeExchangeError("CGX geometric sides must be integer 3..128")
+    edge = _cgx_finite_coordinate(edge_length)
+    if not 0 < edge <= 1e6:
+        raise NodeExchangeError("CGX geometric seed edge must be positive")
+    if vertices is None:
+        if sides == 4:
+            pts = [(0.0, 0.0), (edge, 0.0), (edge, edge), (0.0, edge)]
+        else:
+            radius = edge / (2 * math.sin(math.pi / sides))
+            pts = [(radius * math.cos(2 * math.pi * i / sides),
+                    radius * math.sin(2 * math.pi * i / sides))
+                   for i in range(sides)]
+    else:
+        if not isinstance(vertices, list) or len(vertices) != sides:
+            raise NodeExchangeError("CGX geometric vertex count must match sides")
+        if any(not isinstance(p, (list, tuple)) or len(p) != 2 for p in vertices):
+            raise NodeExchangeError("CGX geometric vertices require 2D pairs")
+        pts = [(_cgx_finite_coordinate(p[0]), _cgx_finite_coordinate(p[1]))
+               for p in vertices]
+    segments = list(zip(pts, pts[1:] + pts[:1]))
+    lengths = [math.dist(a, b) for a, b in segments]
+    if any(length <= 1e-9 for length in lengths):
+        raise NodeExchangeError("CGX geometric zero-length edge")
+    for i, (a, b) in enumerate(segments):
+        for j in range(i + 1, sides):
+            if j == i + 1 or (i == 0 and j == sides - 1):
+                continue
+            c, d = segments[j]
+            if _cgx_segments_intersect(a, b, c, d):
+                raise NodeExchangeError("CGX geometric self-intersection")
+    signed_area = sum(
+        a[0] * b[1] - b[0] * a[1] for a, b in segments
+    ) / 2
+    if abs(signed_area) <= 1e-9:
+        raise NodeExchangeError("CGX geometric degenerate polygon")
+    if extrusion_depth is None:
+        depth = None
+        volume = None
+    else:
+        depth = _cgx_finite_coordinate(extrusion_depth)
+        if depth <= 0:
+            raise NodeExchangeError("CGX geometric extrusion depth must be positive")
+        volume = abs(signed_area) * depth
+    if cell_states is None:
+        states = {}
+    else:
+        if not isinstance(cell_states, dict) or len(cell_states) > 128:
+            raise NodeExchangeError("CGX geometric cell state map invalid")
+        states = {}
+        for cell_id, state in cell_states.items():
+            if (not isinstance(cell_id, str) or not 1 <= len(cell_id) <= 96 or
+                    not isinstance(state, str) or state not in _CGX_CELL_STATES):
+                raise NodeExchangeError("CGX geometric state/identifier invalid")
+            states[cell_id] = state
+    geometry = {
+        "object_id": object_id, "unit": "m", "frame": "local_planar_candidate",
+        "vertices": [[x, y] for x, y in pts],
+        "extrusion_depth_m": depth, "cell_states": states,
+    }
+    return {
+        "schema_version": CGX_GEOMETRIC_CELL_SCHEMA,
+        **geometry,
+        "side_count": sides,
+        "signed_area_m2": signed_area,
+        "area_m2": abs(signed_area),
+        "perimeter_m": sum(lengths),
+        "volume_m3": volume,
+        "geometry_root": _canonical_json_sha256(geometry),
+        "evidence_class": "SYNTHETIC_GEOMETRY",
+        "occupied_source_bytes": None,
+        "observed_capacity": None,
+        "device_identity_verified": False,
+        "authentication_authorized": False,
+        "canonical_promotion_authorized": False,
+    }
+
+
+def build_alexandria_dodecahedron_candidate(*, object_id: str) -> dict[str, Any]:
+    """Produce a deterministic regular dodecahedron by dualising an icosahedron.
+
+    No astrophysical radius, memory allocation or physical scaling is implied.
+    The 12 faces are reference cells; additional functions are typed graph edges.
+    """
+    if not isinstance(object_id, str) or not 1 <= len(object_id) <= 160:
+        raise NodeExchangeError("CGX Alexandria needs bounded Object_ID")
+    phi = (1 + math.sqrt(5)) / 2
+    icosahedron = []
+    for a in (-1.0, 1.0):
+        for b in (-1.0, 1.0):
+            icosahedron.extend(((0.0, a, b * phi),
+                                (a, b * phi, 0.0),
+                                (b * phi, 0.0, a)))
+    edge_set = {
+        (i, j) for i in range(12) for j in range(i + 1, 12)
+        if abs(sum((icosahedron[i][k] - icosahedron[j][k]) ** 2
+                   for k in range(3)) - 4.0) < 1e-8
+    }
+    ico_faces = [
+        (i, j, k) for i in range(12) for j in range(i + 1, 12)
+        for k in range(j + 1, 12)
+        if (i, j) in edge_set and (i, k) in edge_set and (j, k) in edge_set
+    ]
+    if len(edge_set) != 30 or len(ico_faces) != 20:
+        raise NodeExchangeError("CGX Alexandria dual source topology invalid")
+    centroids = [
+        tuple(sum(icosahedron[k][axis] for k in tri) / 3 for axis in range(3))
+        for tri in ico_faces
+    ]
+    norm = math.sqrt(sum(x * x for x in centroids[0]))
+    vertex_positions = [
+        [round(x / norm, 12) for x in c] for c in centroids
+    ]
+    def dot(u: tuple, v: tuple) -> float:
+        return sum(x * y for x, y in zip(u, v))
+    def cross(u: tuple, v: tuple) -> tuple:
+        return (u[1] * v[2] - u[2] * v[1],
+                u[2] * v[0] - u[0] * v[2],
+                u[0] * v[1] - u[1] * v[0])
+    faces = []
+    for apex in icosahedron:
+        mag = math.sqrt(dot(apex, apex))
+        normal = tuple(x / mag for x in apex)
+        anchor = (0.0, 0.0, 1.0) if abs(normal[2]) < 0.9 else (1.0, 0.0, 0.0)
+        tangent = cross(anchor, normal)
+        mag = math.sqrt(dot(tangent, tangent))
+        tangent = tuple(x / mag for x in tangent)
+        bitangent = cross(normal, tangent)
+        incident = [i for i, tri in enumerate(ico_faces)
+                    if icosahedron.index(apex) in tri]
+        faces.append(sorted(incident, key=lambda i: math.atan2(
+            dot(centroids[i], bitangent), dot(centroids[i], tangent)
+        )))
+    dodeca_edges = sorted({
+        tuple(sorted((face[k], face[(k + 1) % 5])))
+        for face in faces for k in range(5)
+    })
+    if (len(faces) != 12 or any(len(f) != 5 for f in faces) or
+            len(dodeca_edges) != 30 or 20 - len(dodeca_edges) + len(faces) != 2):
+        raise NodeExchangeError("CGX Alexandria dodecahedron invariant failed")
+    content = {
+        "object_id": object_id, "frame": "dimensionless_dodecahedron_reference",
+        "vertices": vertex_positions, "edges": [list(e) for e in dodeca_edges],
+        "faces": faces,
+    }
+    return {
+        "schema_version": ALEXANDRIA_FRAME_SCHEMA, **content,
+        "vertex_count": 20, "edge_count": 30, "face_count": 12,
+        "topology_euler": 2,
+        "triangulated_surface_candidate_count": 36,
+        "geometry_root": _canonical_json_sha256(content),
+        "cells": [{"id": f"face-{i}", "state": "NEUTRAL_UNBOUND"}
+                  for i in range(12)],
+        "source_items_present": 0,
+        "observed_capacity": None,
+        "reference_radius_physical_m": None,
+        "source_verified": False, "authenticated": False,
+        "canonical_promotion_authorized": False,
+    }
+
+
+__all__.extend((
+    "ALEXANDRIA_FRAME_SCHEMA", "CGX_GEOMETRIC_CELL_SCHEMA",
+    "build_geometric_cell_candidate", "build_alexandria_dodecahedron_candidate",
 ))
