@@ -484,5 +484,133 @@
     "wire_ready": false,
     "canonical_promotion_authorized": false,
     "physical_actuation_authorized": false
+  },
+  "hydration_and_fract_key_contract": {
+    "schema": "CGX-HYDRATION-FRACT-KEY/1",
+    "status": "review-contract / additive mapping inside existing FileSpace and node_exchange",
+    "hydration_owner": "Cognigrex.cgx FileSpace identity/roots; child semantic owners retain meaning; node_exchange transports only admitted fragments",
+    "plane_order": [
+      "H0_IDENTITY",
+      "H1_SOURCE",
+      "H2_STRUCTURE",
+      "H3_SEMANTICS",
+      "H4_RELATIONS",
+      "H5_LENS",
+      "H6_STATE",
+      "H7_CAPABILITY",
+      "H8_EXECUTION",
+      "H9_WITNESS"
+    ],
+    "progressive_rule": "RAW INTENT -> resolve security/authority -> H0 identity -> hydrate only missing H1..H9 discriminants -> resolve/project/execute under existing gate -> readback -> receipt -> retain remaining HOLD/UNKNOWN.",
+    "fract_key": {
+      "name": "Fract Key Code",
+      "acronym": "FKC",
+      "meaning": "Deterministic non-secret locator for one source-bound fragment/facet at one hydration plane. 'Fract' means fragment/facet addressing shorthand here; it does not assert mathematical fractal structure.",
+      "code_prefix": "FK1",
+      "canonical_form": "FK1:<H-plane>:<sha256(canonical locator fields)>",
+      "locator_fields": [
+        "Object_ID",
+        "revision_or_source_root",
+        "hydration_plane",
+        "address_kind",
+        "address_value",
+        "layer_or_fragment_ref",
+        "lens_or_relation_ref",
+        "state_context_root"
+      ],
+      "optional_fields": [
+        "domain_owner_ref",
+        "evidence_class",
+        "visibility_class"
+      ],
+      "address_kinds": [
+        "native_path",
+        "provider_object",
+        "byte_range",
+        "chunk_ordinal",
+        "morton3_chunk",
+        "container_member",
+        "geometry_ref",
+        "semantic_path",
+        "relation_id",
+        "lens_id",
+        "state_symbol",
+        "capability_ref",
+        "receipt_ref",
+        "witness_ref"
+      ],
+      "invariants": [
+        "FKC is an alias/locator, never a replacement Object_ID, DBR root, state root, cryptographic key, credential, lease or authority token.",
+        "Same source fragment may have several FKC projections across planes/lenses; all retain the same owning Object_ID and revision/root lineage.",
+        "FKC digest equality only proves equality of canonical locator fields, not equality of underlying bytes unless H1 source hash/readback also matches.",
+        "Private/root fingerprints are not exposed through public projections; public releases use separately approved projection identifiers.",
+        "morton3_chunk is permitted only as an optional H1/H2 geometric byte address when an exact source/chunk root and decoder are already verified.",
+        "Legacy random fractal visualisation modules are not FKC authority, key derivation or hydration logic."
+      ]
+    },
+    "scatter_gather": {
+      "scatter_definition": "Distribute references or authorised fragment bytes to selected layers/nodes/lenses without copying semantic authority.",
+      "gather_definition": "Recompose only when required FKC records, source/profile/prior roots, sequence and permissions reconcile; otherwise HOLD/CONFLICT/NOT_CACHED.",
+      "allowed_scatter_axes": [
+        "source fragment",
+        "structural layer",
+        "semantic domain reference",
+        "relation/dependency edge",
+        "view lens",
+        "DataSpace observer/node",
+        "runtime capability",
+        "evidence/witness reference"
+      ],
+      "prohibited_collapses": [
+        "runtime Z-floor == semantic Z-depth",
+        "Morton coordinate == semantic meaning",
+        "layer count == node count == lens count",
+        "cache possession == source permission",
+        "three matching labels == three independent witnesses",
+        "digital reconstruction == physical qualification"
+      ],
+      "unknown_rule": "UNKNOWN, NOT_CACHED, WITHHELD and ZERO are distinct states and must never be collapsed during scatter/gather."
+    },
+    "layer_mapping": {
+      "H0_IDENTITY": "Object_ID, source/provider ID, revision/hash, owner, ACL/licence and canonical root references.",
+      "H1_SOURCE": "Native bytes or verified cached/reference bytes; PR175 R0 geometric shorthand may address chunks but does not own source identity.",
+      "H2_STRUCTURE": "Manifest/container/topology/geometry/chunk/layer structure including optional Morton3 address.",
+      "H3_SEMANTICS": "Registered type/unit/dictionary/equation semantics under source evidence ceiling.",
+      "H4_RELATIONS": "Typed dependency/cross-domain/invalidation edges by stable reference.",
+      "H5_LENS": "semantic_view_lens_registry + view_selection_policy projections.",
+      "H6_STATE": "DataSpace profile/prior/result roots, sparse delta, DBR/history/conflict lineage.",
+      "H7_CAPABILITY": "node/root registry, declared adapter/model/transport/renderer/compute capability and lease state.",
+      "H8_EXECUTION": "Existing transfer/compute/queue action packet and exact readback/receipt.",
+      "H9_WITNESS": "PrintSpace/empirical/provider/professional witness references only after real receipt; never synthesized by node_exchange."
+    },
+    "pr175_relation": {
+      "role": "Optional H1/H2 reversible byte-address adapter under FileSpace/node_exchange.",
+      "geometric_index": "Morton3 is deterministic indexing only, not entropy, semantics, encryption or universal geometry.",
+      "cold_share_rule": "Raw/ZIP may be preferable; FKC does not require CGXS or geometric encoding.",
+      "authority": "PR175 candidate remains subordinate/review-only until its existing #161/#158 gates close."
+    },
+    "request_minimum_fields": [
+      "Object_ID",
+      "task_intent",
+      "required_hydration_planes",
+      "current_source_or_state_roots",
+      "security_scope",
+      "evidence_ceiling",
+      "requested_lenses_or_action"
+    ],
+    "result_states": [
+      "READY",
+      "PARTIAL",
+      "NOT_CACHED",
+      "UNKNOWN",
+      "WITHHELD",
+      "CONFLICT",
+      "UNSUPPORTED_VIEW",
+      "EXTERNAL_GATE",
+      "NON_RESOLUTION"
+    ],
+    "canonical_mutation": false,
+    "public_release": false,
+    "physical_authority": false
   }
 }
