@@ -7,7 +7,7 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import {
   LOCAL_STATUS_URL, LOCAL_BOOTSTRAP_URL, MAX_STATUS_BYTES,
-  classifyStatus, discoverLocal, discoverCgx, observeLocal, publicSkeleton,
+  classifyStatus, discoverLocal, discoverCgx, observeLocal, projectPublicObservation, publicSkeleton,
 } from "../src/handshake.mjs";
 
 const cli = fileURLToPath(new URL("../bin/cgx.mjs", import.meta.url));
@@ -284,4 +284,63 @@ test("observeLocal retains local phase and timestamp against untrusted discovery
   ]);
   assert.equal(result.session_restored, false);
   assert.equal(result.device_pairing_performed, false);
+});
+
+test("observation sampling excludes forged authority and private callback payloads", async () => {
+  const result = await observeLocal({
+    samples: 2, intervalMs: 0,
+    discover: async () => ({
+      state: "CGX_PUBLIC_BOOTSTRAP_CANDIDATE",
+      phase: 444, observed_utc: "2099-01-01T00:00:00Z",
+      authenticated: true, consumer_verified: true, bridge_verified: true,
+      device_identity_verified: true, session_restored: true,
+      remote_transport_connected: true, queue_execution_state: "COMPLETE",
+      commands_allowed: true, credential: "PRIVATE_TEST_CREDENTIAL",
+      source_root: "PRIVATE_TEST_ROOT", private_objects: ["DO_NOT_DISCLOSE"],
+      __proto__: { administrative: true },
+    }),
+    sleep: async () => {},
+    now: () => "2026-10-13T07:00:00.000Z",
+  });
+  assert.equal(result.observations.length, 2);
+  for (const [index, record] of result.observations.entries()) {
+    assert.equal(record.phase, index);
+    assert.equal(record.observed_utc, "2026-10-13T07:00:00.000Z");
+    assert.equal(record.state, "CGX_PUBLIC_BOOTSTRAP_CANDIDATE");
+    assert.equal(record.authenticated, false);
+    assert.equal(record.consumer_verified, false);
+    assert.equal(record.bridge_verified, false);
+    assert.equal(record.device_identity_verified, false);
+    assert.equal(record.session_restored, false);
+    assert.equal(record.remote_transport_connected, false);
+    assert.equal(record.queue_execution_state, "UNVERIFIED");
+    assert.equal(record.namespace_candidate, "cgx://CGX.cgx");
+    assert.equal(record.commands_allowed, undefined);
+    assert.equal(record.source_root, undefined);
+    assert.equal(record.credential, undefined);
+    assert.equal(record.private_objects, undefined);
+    assert.equal(record.administrative, undefined);
+    assert.ok(!JSON.stringify(record).includes("PRIVATE_TEST_"));
+  }
+  assert.equal(result.session_restored, false);
+  assert.equal(result.device_pairing_performed, false);
+});
+
+test("public projection permits only bounded literal diagnostics and no unknown state", () => {
+  const unknown = projectPublicObservation({
+    state: "JOB_EXECUTED", authenticated: true, http_status: 9999,
+    secret: "PRIVATE_NEVER_COPY",
+  });
+  assert.equal(unknown.state, "UNRECOGNISED_LOCAL_SERVICE");
+  assert.equal(unknown.authenticated, false);
+  assert.ok(!JSON.stringify(unknown).includes("PRIVATE_NEVER_COPY"));
+  const status = projectPublicObservation({
+    state: "LOCAL_BRIDGE_HTTP_ERROR", http_status: 503,
+    consumer_verified: true, root: "C:\\private", private_data: "NO_COPY",
+  });
+  assert.equal(status.http_status, 503);
+  assert.equal(status.consumer_verified, false);
+  assert.equal(status.root, undefined);
+  assert.equal(status.private_data, undefined);
+  assert.equal(projectPublicObservation(null).state, "UNRECOGNISED_LOCAL_SERVICE");
 });
