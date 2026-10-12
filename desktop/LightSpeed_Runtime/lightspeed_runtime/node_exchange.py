@@ -931,7 +931,7 @@ def validate_prism_slice_profile(profile: dict) -> dict:
         if (not isinstance(keys, list) or len(keys) > 16 or
                 any(not isinstance(k, str) or not 1 <= len(k) <= 96 for k in keys) or
                 len(set(keys)) != len(keys) or
-                (item["operation"] in expected and len(keys) != expected[item["operation"]]))):
+                (item["operation"] in expected and len(keys) != expected[item["operation"]])):
             raise NodeExchangeError("CGX prism input grammar invalid")
         if item.get("operation") == "sum" and not keys:
             raise NodeExchangeError("CGX prism sum needs inputs")
