@@ -8,6 +8,7 @@ on:
       - "agent/**"
     paths:
       - "apps/lightspeed-go/**"
+      - "tools/cgx-bootstrap/**"
       - "cgx/domain_templates/**"
       - "Launcher/services/org.py"
       - "Launcher/Z Axis/Neo.py"
@@ -267,6 +268,16 @@ jobs:
           cache: npm
           cache-dependency-path: apps/lightspeed-go/package-lock.json
 
+      - name: Validate CGX minimal bootstrap
+        id: cgx_bootstrap
+        continue-on-error: true
+        working-directory: tools/cgx-bootstrap
+        run: |
+          set -o pipefail
+          npm run check 2>&1 | tee ../../cgx-bootstrap-check.log
+          npm test 2>&1 | tee ../../cgx-bootstrap-tests.log
+          node bin/cgx.mjs seed > ../../cgx-bootstrap-public-seed.cgx
+
       - name: Install LS GO dependencies
         id: npm_install
         continue-on-error: true
@@ -311,6 +322,9 @@ jobs:
             cgx-policy-validation.log
             python-tests.log
             npm-install.log
+            cgx-bootstrap-check.log
+            cgx-bootstrap-tests.log
+            cgx-bootstrap-public-seed.cgx
             npm-test.log
             npm-check.log
             npm-build.log
@@ -326,13 +340,14 @@ jobs:
           CGX_POLICY: ${{ steps.cgx_policy.outcome }}
           PYTHON_TESTS: ${{ steps.python_tests.outcome }}
           NPM_INSTALL: ${{ steps.npm_install.outcome }}
+          CGX_BOOTSTRAP: ${{ steps.cgx_bootstrap.outcome }}
           NPM_TEST: ${{ steps.npm_test.outcome }}
           NPM_CHECK: ${{ steps.npm_check.outcome }}
           NPM_BUILD: ${{ steps.npm_build.outcome }}
         shell: bash
         run: |
           failed=0
-          for value in "$COMPILE" "$STATIC" "$SURFACE" "$CGX_POLICY" "$PYTHON_TESTS" "$NPM_INSTALL" "$NPM_TEST" "$NPM_CHECK" "$NPM_BUILD"; do
+          for value in "$COMPILE" "$STATIC" "$SURFACE" "$CGX_POLICY" "$PYTHON_TESTS" "$NPM_INSTALL" "$CGX_BOOTSTRAP" "$NPM_TEST" "$NPM_CHECK" "$NPM_BUILD"; do
             if [ "$value" != "success" ]; then
               failed=1
             fi
