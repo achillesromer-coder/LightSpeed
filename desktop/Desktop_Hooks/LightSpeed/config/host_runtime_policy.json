@@ -41,7 +41,7 @@
   "policy_id": "host_runtime_2026_05_21",
   "runtime_limits": {
     "active_operating_profile": "cognigrex_half_speed",
-    "background_poll_interval_multiplier": 2.0,
+    "background_poll_interval_multiplier": 2,
     "background_process_priority": "below_normal",
     "chrome_reserved_ram_gb": 6,
     "chrome_reserved_threads": 4,
@@ -56,7 +56,15 @@
     "max_concurrent_ollama_jobs": 1,
     "max_floor_boot_parallelism": 2,
     "merovingian_interval_seconds": 120,
-    "watchdog_interval_minutes": 10
+    "watchdog_interval_minutes": 10,
+    "aggregate_cgx_cpu_budget_percent": 80,
+    "cpu_reserved_for_os_and_interactive_percent": 20,
+    "cpu_ceiling_contract": "HOST_WIDE_HEADROOM_AND_CGX_AGGREGATE_BUDGET; NOT_WINDOWS_PROCESSOR_MAXIMUM_STATE",
+    "cpu_budget_enforcement_state": "PENDING_NATIVE_SAMPLING_LEASE_AND_CANCEL_READBACK",
+    "mobile_device_required": false,
+    "mobile_device_availability": "UNAVAILABLE_REPLACEMENT_PENDING",
+    "local_execution_when_cpu_guard_unverified": "READ_ONLY_AND_EXISTING_SAFE_WORKERS_ONLY",
+    "consumer_heartbeat_requirement": "SAME_INSTALLED_PID_FRESH_PROGRESS_AND_INCREMENTING_RESULT_RECEIPTS"
   },
   "storage_topology": {
     "ollama_model_root": "D:\\LightSpeed\\Models",
