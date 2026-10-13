@@ -74,6 +74,60 @@ Do not treat source CI as installed-host or tunnel proof.
 Official tunnel-client quickstart and access requirements:
 https://developers.openai.com/api/docs/guides/secure-mcp-tunnels
 
+## BouwerBase guided PowerShell setup
+
+Download the trusted Windows `tunnel-client` binary using the link in
+[OpenAI Platform tunnel settings](https://platform.openai.com/settings/organization/tunnels)
+or the official [openai/tunnel-client latest release](https://github.com/openai/tunnel-client/releases/latest).
+Do not download an unverified binary from a chat, mirrored website or a random
+third-party package. Make `tunnel-client` available on PATH or pass
+`-TunnelClientPath <reviewed absolute executable path>`.
+
+Keep the checked-out repository in an **existing dedicated review worktree**;
+do not run this against the live `D:\LightSpeed\App` tree or recreate
+`Cognigrex.cgx`. Fetch PR #173 into that worktree through the owner's
+existing GitHub Desktop/Git workflow. Ensure its branch has the exact reviewed
+and CI-approved commit; a later concurrent PR update requires fresh review
+and a new `-ApprovedHeadSha` value.
+
+Run in PowerShell from the reviewed **repository root**:
+
+```powershell
+# Read-only; no tunnel config, process start, or npm install.
+.\tools\setup_cgx_web_tunnel.ps1
+
+# After creating a tunnel in Platform and copying its REAL tunnel ID:
+$approved = "<paste exact reviewed PR173 HEAD SHA, 40 hex digits>"
+$tunnelId = "<paste actual tunnel_... ID>"
+.\tools\setup_cgx_web_tunnel.ps1 -Configure -TunnelId $tunnelId -ApprovedHeadSha $approved
+
+# This checks the local read-only tool boundary again and runs only tunnel-client.
+.\tools\setup_cgx_web_tunnel.ps1 -Start -ApprovedHeadSha $approved
+```
+
+The setup validates canonical Git origin/clean branch/exact SHA, uses the
+repository's existing `package-lock.json` with `npm ci --ignore-scripts`,
+runs the web-only MCP negative-privilege test, and calls the official
+`tunnel-client init --sample sample_mcp_stdio_local ... --mcp-command`
+and `doctor` commands. It does not install an OS service, copy keys to Git,
+start the LightSpeed bridge/Smith consumer, or grant file/commit permission.
+Only `-Start` invokes the long-running tunnel process. The runtime API key
+is requested with hidden input if `CONTROL_PLANE_API_KEY` was not already
+provided in the current PowerShell process.
+
+In ChatGPT web select **Plugins → + → Add custom MCP server → Tunnel**,
+choose the tunnel, complete the connection review and create the plugin.
+This needs an approved ChatGPT workspace and the tunnel's Platform
+**Tunnels Read + Use** access. The explicit expected MCP tool list is exactly
+`cgx_web_handshake`. Calling it must show no authenticated owner/Smith/commit
+claim. A healthy bootstrap candidate is only a diagnostic.
+
+If any test fails, keep the existing local service running without changes,
+inspect the error, and do not reconnect through an unreviewed HTTP or shell
+fallback. The private tunnel can be stopped with Ctrl+C. To remove access,
+disconnect the custom MCP plugin and revoke the tunnel/key through Platform
+settings. The setup does not touch Desktop Commander.
+
 ## Native write/commit gateway — outstanding owner gate
 
 The target is a **separate tool action** on this same MCP server and same local
