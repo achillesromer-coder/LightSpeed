@@ -196,7 +196,7 @@ def test_neo_operator_approval_forwards_authority_contract() -> None:
     assert observed["kwargs"]["authority_contract"] == authority
 
 
-def test_half_speed_host_profile_bounds_background_work() -> None:
+def test_80pct_cpu_profile_preserves_singleton_background_work() -> None:
     policy_path = (
         RUNTIME_ROOT.parent
         / "Desktop_Hooks"
@@ -206,7 +206,11 @@ def test_half_speed_host_profile_bounds_background_work() -> None:
     )
     limits = json.loads(policy_path.read_text(encoding="utf-8"))["runtime_limits"]
 
-    assert limits["cognigrex_speed_percent"] == 50
+    assert limits["cognigrex_speed_percent"] == 80
+    assert limits["max_total_host_cpu_percent"] == 80
+    assert limits["cpu_dispatch_resume_percent"] == 70
+    assert limits["mobile_handoff_required"] is False
+    assert limits["cpu_limit_authority"] == "ADMISSION_ONLY_UNTIL_WINDOWS_PROCESS_GROUP_HARD_CAP_VERIFIED"
     assert limits["max_background_queue_workers"] == 1
     assert limits["max_concurrent_ollama_jobs"] == 1
     assert limits["max_floor_boot_parallelism"] == 2
