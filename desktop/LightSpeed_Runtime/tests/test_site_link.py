@@ -37,4 +37,3 @@ def test_hash_mismatch_fails_without_second_submission():
 def test_outbound_destination_is_the_existing_sites_origin(origin):
     with pytest.raises(ValueError,match="existing HTTPS"):
         m.exchange_status(origin,"token",local_status={"ok":True})
-

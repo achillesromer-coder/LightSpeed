@@ -43,4 +43,3 @@ def exchange_status(site_origin, service_token, *, local_status=None, transport=
     return {"schema":"cgx-site-status-exchange-receipt/1","host_node":"bouwerbase","site_origin":site_origin.rstrip("/"),
         "sha256":sha,"generated_at":now,"status_exchange_verified":True,"execution_authorized":False,
         "device_enrollment_verified":False,"credential_persisted":False}
-
