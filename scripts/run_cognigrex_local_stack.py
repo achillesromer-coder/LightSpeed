@@ -698,6 +698,13 @@ def main(argv: list[str] | None = None) -> int:
     operating_profile = {
         "name": runtime_limits.get("active_operating_profile", "default"),
         "speed_percent": cognigrex_speed_percent,
+        # A speed knob does not enforce host-wide or child-process CPU utilisation.
+        "aggregate_cgx_cpu_budget_percent": max(1, min(80, int(runtime_limits.get("aggregate_cgx_cpu_budget_percent", 80)))),
+        "cpu_reserved_for_os_and_interactive_percent": max(20, int(runtime_limits.get("cpu_reserved_for_os_and_interactive_percent", 20))),
+        "cpu_budget_enforced": False,
+        "cpu_budget_gate": "PENDING_NATIVE_SAMPLING_LEASE_AND_CANCEL_READBACK",
+        "mobile_device_required": False,
+        "mobile_fallback": "OWNER_DESKTOP_OR_PREAUTHORIZED_EXISTING_LOCAL_RECEIPT",
         "background_process_priority": runtime_limits.get(
             "background_process_priority", "below_normal"
         ),
