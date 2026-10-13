@@ -132,6 +132,13 @@ def result_file_path(shell_root: Path, command_id: str) -> Path:
     return neo_actions_root(shell_root) / "results" / f"{label}-{digest}.json"
 
 
+def identity_hold_file_path(shell_root: Path, command_id: str, job_id: int, task_id: Any) -> Path:
+    """Keep a conflicting job's hold separate from the original command receipt."""
+    identity = json.dumps([command_id, job_id, task_id], ensure_ascii=False, separators=(",", ":"))
+    digest = hashlib.sha256(identity.encode("utf-8")).hexdigest()
+    return neo_actions_root(shell_root) / "results" / f"LSGO-IDENTITY-HOLD-{digest}.json"
+
+
 def result_queue_path(shell_root: Path) -> Path:
     return neo_actions_root(shell_root) / "ls_go_result_queue.jsonl"
 
@@ -424,6 +431,47 @@ class LSGoJobConsumer:
                 return payload
         return {}
 
+    def _identity_hold(self, command_id: str, job_id: int, task_id: Any,
+                       existing: dict[str, Any]) -> dict[str, Any] | None:
+        path = identity_hold_file_path(self.shell_root, command_id, job_id, task_id)
+        receipt = _read_json(path)
+        if path.exists() and (
+            not receipt
+            or receipt.get("command_id") != command_id
+            or type(receipt.get("job_id")) is not type(job_id)
+            or receipt.get("job_id") != job_id
+            or type(receipt.get("task_id")) is not type(task_id)
+            or receipt.get("task_id") != task_id
+            or receipt.get("status") != "held"
+        ):
+            raise ValueError("existing identity-hold receipt failed exact readback")
+        if not self._claim_job(job_id):
+            return None
+        if not receipt:
+            receipt = {
+                "schema_version": RESULT_SCHEMA,
+                "result_id": f"LSGO-IDENTITY-HOLD-{job_id}",
+                "created_utc": utc_now_iso(),
+                "command_id": command_id,
+                "job_id": job_id,
+                "task_id": task_id,
+                "status": "held",
+                "error": "command receipt does not match exact job/task identity or terminal status",
+                "conflicting_receipt_path": existing.get("receipt_path"),
+                "conflicting_job_id": existing.get("job_id"),
+                "conflicting_task_id": existing.get("task_id"),
+                "drive_write_executed": False,
+                "public_publish_authorized": False,
+                "receipt_path": str(path),
+            }
+            _write_json(path, receipt)
+            _append_jsonl(result_queue_path(self.shell_root), receipt)
+        self._update_job(job_id, status="held", result=receipt)
+        # A duplicate job may point at the original task. Do not regress it.
+        if task_id != existing.get("task_id"):
+            self._update_task(task_id, status="held", receipt=receipt)
+        return receipt
+
     def _transport_diagnostic(
         self,
         *,
@@ -661,8 +709,21 @@ class LSGoJobConsumer:
         existing = self._existing_result(command_id)
         if existing:
             # Crash-safe reconciliation: if a receipt was durably written before
-            # the DB status update, consume the receipt rather than re-executing.
-            final_status = str(existing.get("status") or "held")
+            # the DB status update, reconcile only the *same* claimed work item.
+            task_id = job.get("task_id")
+            exact_identity = (
+                task_id is not None
+                and type(existing.get("job_id")) is type(job_id)
+                and existing.get("job_id") == job_id
+                and type(existing.get("task_id")) is type(task_id)
+                and existing.get("task_id") == task_id
+                and existing.get("status") in {"completed", "blocked", "held"}
+            )
+            if not exact_identity:
+                return self._identity_hold(command_id, job_id, task_id, existing)
+            if not self._claim_job(job_id):
+                return None
+            final_status = str(existing["status"])
             self._update_job(job_id, status=final_status, result=existing)
             self._update_task(job.get("task_id"), status=final_status, receipt=existing)
             return existing

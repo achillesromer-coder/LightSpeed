@@ -580,3 +580,71 @@ def test_smith_missing_command_id_receipts_are_job_specific(tmp_path: Path) -> N
     assert first["receipt_path"] != second["receipt_path"]
     assert json.loads(Path(first["receipt_path"]).read_text(encoding="utf-8"))["job_id"] == 101
     assert json.loads(Path(second["receipt_path"]).read_text(encoding="utf-8"))["job_id"] == 102
+
+
+def test_smith_reconciles_only_the_exact_job_and_task_after_receipt_first_crash(
+    tmp_path: Path, monkeypatch
+) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    command_id = "GO-TASK-CRASH-RECOVERY"
+    params = json.dumps({"command_id": command_id})
+    with sqlite3.connect(db.path) as conn:
+        conn.executemany(
+            "INSERT INTO tasks (id,status,metadata_json) VALUES (?,?, '{}')",
+            [(501, "queued"), (502, "queued")],
+        )
+        conn.executemany(
+            "INSERT INTO jobs (id,job_type,status,params_json,task_id) "
+            "VALUES (?,'ls_go_command','pending',?,?)",
+            [(601, params, 501), (602, params, 502)],
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    original = consumer._persist_result({
+        "command_id": command_id, "job_id": 601, "task_id": 501,
+        "result_id": "GO-RESULT-CRASH-RECOVERY", "status": "completed",
+    })
+    monkeypatch.setattr(consumer, "_execute_action", lambda **_kw: (_ for _ in ()).throw(
+        AssertionError("receipt reconciliation must not execute an action")))
+
+    assert consumer.process_once()["results_written"] == 2
+    assert db.execute_query("SELECT status FROM jobs WHERE id=601")[0]["status"] == "completed"
+    assert db.execute_query("SELECT status FROM tasks WHERE id=501")[0]["status"] == "completed"
+    assert db.execute_query("SELECT status FROM jobs WHERE id=602")[0]["status"] == "held"
+    assert db.execute_query("SELECT status FROM tasks WHERE id=502")[0]["status"] == "held"
+    assert json.loads(Path(original["receipt_path"]).read_text())["job_id"] == 601
+    hold_path = ls_go_job_consumer.identity_hold_file_path(shell, command_id, 602, 502)
+    assert json.loads(hold_path.read_text())["status"] == "held"
+    assert len(ls_go_job_consumer.result_queue_path(shell).read_text().splitlines()) == 2
+    assert consumer.process_once()["results_written"] == 0
+    assert len(ls_go_job_consumer.result_queue_path(shell).read_text().splitlines()) == 2
+    # Simulate a crash after the hold receipt but before the DB status landed.
+    db.execute_update("UPDATE jobs SET status='pending' WHERE id=602")
+    assert consumer.process_once()["results_written"] == 1
+    assert db.execute_query("SELECT status FROM jobs WHERE id=602")[0]["status"] == "held"
+    assert len(ls_go_job_consumer.result_queue_path(shell).read_text().splitlines()) == 2
+
+
+def test_smith_duplicate_job_cannot_regress_original_task(tmp_path: Path) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    command_id = "GO-TASK-SHARED-TASK"
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'completed','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,task_id) "
+            "VALUES (602,'ls_go_command','pending',?,501)",
+            (json.dumps({"command_id": command_id}),),
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    original = consumer._persist_result({
+        "command_id": command_id, "job_id": 601, "task_id": 501,
+        "status": "completed", "result_id": "GO-RESULT-SHARED-TASK",
+    })
+
+    assert consumer.process_once()["results_written"] == 1
+    assert db.execute_query("SELECT status FROM jobs WHERE id=602")[0]["status"] == "held"
+    assert db.execute_query("SELECT status FROM tasks WHERE id=501")[0]["status"] == "completed"
+    assert json.loads(Path(original["receipt_path"]).read_text())["job_id"] == 601
