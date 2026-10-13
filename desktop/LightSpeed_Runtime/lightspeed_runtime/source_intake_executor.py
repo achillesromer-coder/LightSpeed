@@ -104,7 +104,18 @@ def readback_source_intake(
     except (OSError, ValueError) as exc:
         raise SourceIntakeError("existing intake envelope is unreadable") from exc
     native = envelope.get("native_preservation") if isinstance(envelope, dict) else None
+    if isinstance(envelope, dict):
+        envelope_body = dict(envelope)
+        declared_envelope_sha256 = envelope_body.pop("envelope_sha256", None)
+        actual_envelope_sha256 = hashlib.sha256(
+            json.dumps(envelope_body, sort_keys=True, separators=(",", ":"),
+                       ensure_ascii=False).encode("utf-8")
+        ).hexdigest()
+    else:
+        declared_envelope_sha256 = None
+        actual_envelope_sha256 = None
     if not isinstance(native, dict) or any((
+        declared_envelope_sha256 != actual_envelope_sha256,
         envelope.get("source_id") != f"src:{request['source_sha256']}",
         envelope.get("sha256") != request["source_sha256"],
         envelope.get("byte_length") != len(source_bytes),
