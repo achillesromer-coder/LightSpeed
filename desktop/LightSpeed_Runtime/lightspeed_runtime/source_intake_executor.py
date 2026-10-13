@@ -39,6 +39,85 @@ def _bounded_archive(data: bytes) -> None:
             raise SourceIntakeError("encrypted archive requires a specialist intake lane")
 
 
+def readback_source_intake(
+    payload: Any, *, command_id: str, shell_root: Path, allowed_roots: list[Path],
+) -> dict[str, Any] | None:
+    """Recover an already published intake bundle after an outer-receipt gap.
+
+    This never repairs or rewrites a bundle. An incomplete or changed bundle is
+    an error, so the consumer cannot rerun the action over uncertain output.
+    """
+    request = validate_intake_payload(payload)
+    destination = (neo_actions_root(shell_root) / "intake"
+                   / hashlib.sha256(command_id.encode("utf-8")).hexdigest())
+    if not destination.exists():
+        return None
+    if destination.is_symlink() or not destination.is_dir():
+        raise SourceIntakeError("existing intake destination is not an immutable directory")
+    source = Path(request["source_path"]).resolve(strict=True)
+    roots = [Path(root).resolve(strict=True) for root in allowed_roots]
+    if not roots or not source.is_file() or not any(source.is_relative_to(root) for root in roots):
+        raise SourceIntakeError("source is outside the configured intake roots")
+    with source.open("rb") as stream:
+        source_bytes = stream.read(MAX_SOURCE_BYTES + 1)
+    if len(source_bytes) > MAX_SOURCE_BYTES or hashlib.sha256(source_bytes).hexdigest() != request["source_sha256"]:
+        raise SourceIntakeError("source changed or exceeds the bounded intake budget")
+
+    receipt_path = destination / "receipt.json"
+    if receipt_path.is_symlink() or not receipt_path.is_file() or receipt_path.stat().st_size > 64 * 1024:
+        raise SourceIntakeError("existing intake receipt is missing or unbounded")
+    try:
+        receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise SourceIntakeError("existing intake receipt is unreadable") from exc
+    if not isinstance(receipt, dict) or any((
+        receipt.get("schema") != "lightspeed-source-intake-receipt-v1",
+        receipt.get("command_id") != command_id,
+        receipt.get("status") != "completed",
+        receipt.get("source_path") != str(source),
+        receipt.get("source_sha256") != request["source_sha256"],
+        receipt.get("receipt_path") != str(receipt_path),
+        receipt.get("source_modified") is not False,
+        receipt.get("canonical_mutation") is not False,
+        receipt.get("semantic_acceptance") != "requires_independent_review",
+    )):
+        raise SourceIntakeError("existing intake receipt identity or scope mismatch")
+    artifacts = receipt.get("artifacts")
+    if not isinstance(artifacts, list) or len(artifacts) != 2:
+        raise SourceIntakeError("existing intake artifact manifest is incomplete")
+    by_name = {Path(str(item.get("path"))).name: item for item in artifacts if isinstance(item, dict)}
+    if set(by_name) != {"source.native", "source-envelope.json"}:
+        raise SourceIntakeError("existing intake artifact names differ")
+    for name, item in by_name.items():
+        path = destination / name
+        if (item.get("path") != str(path) or path.is_symlink() or not path.is_file()
+                or type(item.get("bytes")) is not int or not 0 <= item["bytes"] <= MAX_SOURCE_BYTES * 2
+                or path.stat().st_size != item["bytes"]):
+            raise SourceIntakeError("existing intake artifact path or size mismatch")
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        if digest != item.get("sha256"):
+            raise SourceIntakeError("existing intake artifact hash mismatch")
+        if name == "source.native" and digest != request["source_sha256"]:
+            raise SourceIntakeError("existing native source differs from requested source")
+    try:
+        envelope = json.loads((destination / "source-envelope.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise SourceIntakeError("existing intake envelope is unreadable") from exc
+    native = envelope.get("native_preservation") if isinstance(envelope, dict) else None
+    if not isinstance(native, dict) or any((
+        envelope.get("source_id") != f"src:{request['source_sha256']}",
+        envelope.get("sha256") != request["source_sha256"],
+        envelope.get("byte_length") != len(source_bytes),
+        envelope.get("source_name") != source.name,
+        native.get("source_ref") != str(source),
+        native.get("source_sha256") != request["source_sha256"],
+        receipt.get("source_id") != envelope.get("source_id"),
+        receipt.get("adapter_id") != envelope.get("adapter_id"),
+    )):
+        raise SourceIntakeError("existing intake envelope lineage mismatch")
+    return receipt
+
+
 def execute_source_intake(
     payload: Any, *, command_id: str, shell_root: Path, allowed_roots: list[Path],
 ) -> dict[str, Any]:
