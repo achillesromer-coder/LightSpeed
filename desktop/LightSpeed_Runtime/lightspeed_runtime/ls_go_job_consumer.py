@@ -278,6 +278,67 @@ def _try_get_db(shell_root: Path):
         return None
 
 
+def host_cpu_admission(shell_root: Path | str, *,
+                       observed_percent: float | None = None,
+                       previous_hold: bool = False) -> dict[str, Any]:
+    """Advisory aggregate CPU gate for *new jobs*, not a hard Windows CPU cap.
+
+    Keep worker/heartbeat responsive. Windows Job Object CPU-rate limits for
+    all LS children, machine thermal controls and actual 80% physical cap
+    require a separate LOCAL signed witness. Synthetic injected samples are
+    allowed only for unit tests; ordinary production samples use psutil.
+    """
+    import math
+
+    policy = _read_json(Path(shell_root) / "config" / "host_runtime_policy.json")
+    raw = policy.get("runtime_limits")
+    limits = raw if isinstance(raw, dict) else {}
+    ceiling = limits.get("max_total_host_cpu_percent", 80)
+    resume = limits.get("cpu_dispatch_resume_percent", 70)
+    interval = limits.get("cpu_sampling_interval_seconds", 0.25)
+    if (type(ceiling) not in (int, float) or type(resume) not in (int, float)
+            or isinstance(ceiling, bool) or isinstance(resume, bool)
+            or not (0 < float(resume) < float(ceiling) <= 80)
+            or type(interval) not in (int, float) or isinstance(interval, bool)
+            or not (0.05 <= float(interval) <= 1.0)):
+        return {
+            "state": "cpu_policy_invalid", "allow_new_jobs": False,
+            "aggregate_cpu_hard_cap_verified": False,
+            "measured_total_cpu_percent": None,
+        }
+    if observed_percent is None:
+        try:
+            import psutil
+            measured = psutil.cpu_percent(interval=float(interval))
+        except (ImportError, OSError, RuntimeError, ValueError):
+            measured = None
+    else:
+        measured = observed_percent
+    if (type(measured) not in (int, float) or isinstance(measured, bool)
+            or not math.isfinite(float(measured))
+            or not (0 <= float(measured) <= 100)):
+        return {
+            "state": "cpu_monitor_unavailable", "allow_new_jobs": False,
+            "aggregate_cpu_hard_cap_verified": False,
+            "measured_total_cpu_percent": None,
+            "max_total_host_cpu_percent": float(ceiling),
+        }
+    reading = float(measured)
+    cpu_hold = reading >= float(ceiling) or (
+        previous_hold and reading > float(resume)
+    )
+    return {
+        "state": "paused_cpu_pressure" if cpu_hold else "ready",
+        "allow_new_jobs": not cpu_hold,
+        "aggregate_cpu_hard_cap_verified": False,
+        "measured_total_cpu_percent": reading,
+        "max_total_host_cpu_percent": float(ceiling),
+        "resume_cpu_percent": float(resume),
+        "mobile_device_required": False,
+        "cpu_control_scope": "DISPATCH_ADMISSION_ONLY",
+    }
+
+
 class LSGoJobConsumer:
     """Smith-owned durable consumer for DB-backed LS GO jobs.
 
@@ -295,6 +356,7 @@ class LSGoJobConsumer:
         self._stop = threading.Event()
         self._job_columns_cache: set[str] | None = None
         self._task_columns_cache: set[str] | None = None
+        self._cpu_pressure_hold = False
 
     def _columns(self, table: str) -> set[str]:
         cache_name = "_job_columns_cache" if table == "jobs" else "_task_columns_cache"
@@ -859,8 +921,27 @@ class LSGoJobConsumer:
             while not self._stop.is_set():
                 state = "polling"
                 try:
-                    summary = self.process_once()
-                    state = str(summary.get("state") or "ready")
+                    cpu_gate = host_cpu_admission(
+                        self.shell_root,
+                        previous_hold=self._cpu_pressure_hold,
+                    )
+                    if cpu_gate["allow_new_jobs"]:
+                        self._cpu_pressure_hold = False
+                        summary = self.process_once()
+                        state = str(summary.get("state") or "ready")
+                    else:
+                        self._cpu_pressure_hold = True
+                        state = str(cpu_gate["state"])
+                        _write_json(status_receipt_path(self.shell_root), {
+                            "schema_version": CONSUMER_SCHEMA,
+                            "checked_utc": utc_now_iso(),
+                            "state": state,
+                            "shell_root": str(self.shell_root),
+                            "cpu_gate": cpu_gate,
+                            "pending_jobs_untouched": True,
+                            "results_written": 0,
+                            "public_publish_authorized": False,
+                        })
                 except Exception as exc:
                     state = f"error:{type(exc).__name__}"
                     _write_json(
