@@ -3221,9 +3221,9 @@
       "sha256": "25782650b0733bcfdc9c2d172e1434b5a67a733cb783eb9ca56d64b8eb0f72db"
     },
     {
-      "bytes": 19008,
+      "bytes": 25870,
       "path": "LightSpeed_Runtime/lightspeed_runtime/corpus_test_orchestrator.py",
-      "sha256": "4f05bfd56a05a0d74b736baf7d5636a6d1a9743b93b9d47183490de5342d588d"
+      "sha256": "20d4d81605ddb0eb511e9afe92addd062d70f38d885b988ddcadef299231b095"
     },
     {
       "bytes": 7859,
@@ -3661,9 +3661,9 @@
       "sha256": "0dd8802798ec34c6f90a7ea18da001d71da34603af67f1f651e2d4aeb9e57db0"
     },
     {
-      "bytes": 8007,
+      "bytes": 10909,
       "path": "LightSpeed_Runtime/tests/test_corpus_test_orchestrator.py",
-      "sha256": "4a242ac56fc627c7a9d575839885f2fbec85b6a56c6fbf4236c38095912cac9f"
+      "sha256": "e2a0c87e27fc1ba55ee40cc18fd36560d5a4283d28d5af7e7dd417f30e3a6e80"
     },
     {
       "bytes": 76776,
