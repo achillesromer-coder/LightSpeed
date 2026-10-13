@@ -6,6 +6,7 @@ import pytest
 
 from lightspeed_runtime.corpus_test_orchestrator import (
     CorpusTestPlanError,
+    assess_frontier_unit,
     PACKET_SCHEMA,
     RECEIPT_SCHEMA,
     compile_test_packet,
@@ -211,3 +212,52 @@ def test_literal_scientific_input_is_not_an_allowed_binding_source() -> None:
     spec["input_bindings"]["frequency_hz"] = {"source": "literal", "value": 123.0}
     with pytest.raises(CorpusTestPlanError, match="corpus or dependency"):
         compile_test_packet(spec, corpus_snapshot())
+
+
+def _frontier_request(**kw):
+    obj={"domain":"COGNIGREX","object_id":"cgx://RFS-001","source_sha256":"a"*64,
+         "owner":"COGNIGREX","operation":"admit_and_test","acceptance_version":"v1",
+         "evidence_class":"COMPUTED","source_changed":True,"dependencies_changed":False,
+         "limits":{"max_elapsed_s":600,"max_tokens":8000,"max_tool_calls":12,"max_retries":1,"max_cost_usd":0.25},
+         "usage":{"elapsed_s":0,"tokens":0,"tool_calls":0,"retries":0,"cost_usd":0.0}}
+    obj.update(kw)
+    return obj
+
+
+def test_frontier_admission_idempotent_and_source_changed():
+    first=assess_frontier_unit(_frontier_request())
+    assert first["verdict"]=="READY_FOR_BOUNDED_WORK"
+    receipt={"work_key":first["work_key"],"terminal_state":"COMPLETE",
+             "source_sha256":"a"*64,"readback_verified":True,
+             "independent_proof_verified":True}
+    same=assess_frontier_unit(_frontier_request(source_changed=False),accepted_receipt=receipt)
+    assert same["verdict"]=="NO_CHANGE"
+    assert not same["writes_authorized"] and same["historical_ACR3_is_read_only"]
+    changed=assess_frontier_unit(_frontier_request(source_sha256="b"*64),accepted_receipt=receipt)
+    assert changed["verdict"]=="READY_FOR_BOUNDED_WORK"
+    assert changed["work_key"]!=first["work_key"]
+
+
+def test_frontier_resource_ceiling_blocks_and_does_not_claim_enforcement():
+    for field,number,why in [("elapsed_s",600,"WALL_CLOCK_CEILING"),
+                             ("tokens",8000,"TOKEN_CEILING"),
+                             ("tool_calls",12,"TOOL_CEILING"),
+                             ("retries",2,"RETRY_CEILING"),
+                             ("cost_usd",0.25,"COST_CEILING")]:
+        usage={**_frontier_request()["usage"],field:number}
+        result=assess_frontier_unit(_frontier_request(usage=usage))
+        assert (result["verdict"],result["reason"])==("HOLD",why)
+        assert result["resource_ceiling_enforced_by_this_function"] is False
+
+
+def test_frontier_missing_or_invalid_inputs_fail_closed():
+    for bad in ["ACR3","DUPLICATE_MASTER",""]:
+        with pytest.raises(CorpusTestPlanError):
+            assess_frontier_unit(_frontier_request(domain=bad))
+    for field,invalid in [("tokens",True),("elapsed_s",-1),("tool_calls",1.2)]:
+        with pytest.raises(CorpusTestPlanError):
+            assess_frontier_unit(_frontier_request(usage={**_frontier_request()["usage"],field:invalid}))
+    with pytest.raises(CorpusTestPlanError):
+        assess_frontier_unit(_frontier_request(evidence_class="PHYSICALLY_PROVEN_BY_AI"))
+    with pytest.raises(CorpusTestPlanError):
+        assess_frontier_unit(_frontier_request(source_sha256="NOT_SHA"))
