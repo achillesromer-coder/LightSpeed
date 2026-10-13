@@ -142,7 +142,7 @@ try {
     if ($Start) {
         # Guard against duplicate starts initiated through this helper.
         # This cannot attest or replace unrelated external supervisors.
-        $mutexName = "Local\\CGXWebTunnel_" + $Profile
+        $mutexName = "Local\CGXWebTunnel_" + $Profile
         $tunnelMutex = [System.Threading.Mutex]::new($false, $mutexName)
         $acquired = $false
         try {
