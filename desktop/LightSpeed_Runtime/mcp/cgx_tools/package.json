@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "test": "node test_client.mjs && node test_web_tunnel.mjs"
+    "test": "node test_client.mjs && node test_web_tunnel.mjs",
+    "test:web": "node test_web_tunnel.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.31.0",
