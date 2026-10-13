@@ -407,6 +407,55 @@ def semantic_state(
     return "blocked"
 
 
+def _known_unknown_frontier(items: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    """Project a bounded G0-G3 source/dependency view from the existing plan.
+
+    This view is a review aid. It does not admit work, execute a test, or
+    promote any result. Deeper and excess nodes remain visible as omissions.
+    """
+    max_depth = 3
+    max_nodes = 32
+    in_depth = [item for item in items if item["dependency_layer"] <= max_depth]
+    selected = in_depth[:max_nodes]
+    nodes: list[dict[str, Any]] = []
+    for item in selected:
+        packet = item["packet"]
+        lineage = packet["input_lineage"]
+        original_refs = sorted({
+            detail["source_ref"] for detail in lineage.values()
+            if detail["source"] == "corpus" and detail.get("source_ref")
+        })
+        derived_refs = sorted({
+            detail["result_sha256"] for detail in lineage.values()
+            if detail["source"] == "dependency" and detail.get("result_sha256")
+        })
+        nodes.append({
+            "generation": f"G{item['dependency_layer']}",
+            "test_id": item["test_id"],
+            "depends_on": list(item["depends_on"]),
+            "input_packet_sha256": packet["input_packet_sha256"],
+            "corpus_snapshot_sha256": packet["corpus_snapshot_sha256"],
+            "original_source_refs": original_refs,
+            "derived_result_sha256": derived_refs,
+            "unresolved_inputs": list(packet["unresolved_inputs"]),
+            "semantic_state": item["semantic_state"],
+            "receipt_rejection": item["receipt_rejection"],
+            "result_evidence_class": "UNVERIFIED",
+        })
+    return {
+        "schema": "CGX-KNOWN-UNKNOWN-FRONTIER/0.1",
+        "max_generation": "G3",
+        "max_nodes": max_nodes,
+        "nodes": nodes,
+        "omitted_beyond_G3": sum(item["dependency_layer"] > max_depth for item in items),
+        "omitted_within_G3_at_node_limit": len(in_depth) - len(selected),
+        "original_inputs_are_not_results": True,
+        "result_evidence_class_rule": "UNVERIFIED until an independent result receipt is classified and read back",
+        "execution_authorized": False,
+        "canonical_mutation": False,
+    }
+
+
 def plan_cascade(
     specs: Sequence[Mapping[str, Any]],
     corpus_snapshot: Mapping[str, Any],
@@ -418,16 +467,29 @@ def plan_cascade(
 
     items: list[dict[str, Any]] = []
     layer_by_id: dict[str, int] = {}
+    verified_receipts: dict[str, Mapping[str, Any]] = {}
     for sequence_index, spec in enumerate(order, start=1):
         layer = 0
         if spec["depends_on"]:
             layer = max(layer_by_id[dep] for dep in spec["depends_on"]) + 1
         layer_by_id[spec["test_id"]] = layer
-        packet = compile_test_packet(spec, corpus, receipts)
+        packet = compile_test_packet(spec, corpus, verified_receipts)
+        supplied_receipt = receipts.get(spec["test_id"])
+        receipt_rejection = None
+        current_receipt = None
+        if supplied_receipt is not None:
+            normalized_receipt = validate_receipt(
+                supplied_receipt, expected_test_id=spec["test_id"]
+            )
+            if normalized_receipt["input_packet_sha256"] == packet["input_packet_sha256"]:
+                current_receipt = supplied_receipt
+                verified_receipts[spec["test_id"]] = supplied_receipt
+            else:
+                receipt_rejection = "INPUT_PACKET_SHA256_MISMATCH"
         state = semantic_state(
             packet,
-            receipts.get(spec["test_id"]),
-            dependency_receipts=receipts,
+            current_receipt,
+            dependency_receipts=verified_receipts,
         )
         items.append(
             {
@@ -439,6 +501,7 @@ def plan_cascade(
                 "depends_on": spec["depends_on"],
                 "complexity_rank": spec["complexity_rank"],
                 "semantic_state": state,
+                "receipt_rejection": receipt_rejection,
                 "packet": packet,
             }
         )
@@ -475,6 +538,7 @@ def plan_cascade(
         "overall_state": overall,
         "state_counts": dict(sorted(counts.items())),
         "tests": items,
+        "known_unknown_frontier": _known_unknown_frontier(items),
         "activation_ready": overall in {"ready", "partial", "underway", "complete"},
         "automatic_activation": False,
         "canonical_mutation": False,

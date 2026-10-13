@@ -485,7 +485,7 @@ class LSGoJobConsumer:
                 "action_type": action_type,
                 "summary": "Neo-supervised Cognigrex workflow returned durable per-floor and aggregate receipts.",
                 "workflow": workflow,
-                "next_action": "Achilles/ACR3 must review the aggregate and per-floor receipts before any canonical promotion or release.",
+                "next_action": "Achilles must review the aggregate and per-floor receipts before any canonical promotion or release; ACR3 remains read-only historical evidence.",
             }
         if action_type == "source_preserving_intake":
             if (str(job.get("z_context") or "") != "Neo" or params.get("execution_mode") != "queue"
