@@ -39,6 +39,9 @@ def test_local_agent_wakeup_contract_routes_source_files_to_floor_packets(tmp_pa
     )
 
     assert contract["summary"]["floor_count"] == 8
+    assert contract["policy"]["resource_guard"]["max_host_cpu_percent"] == 80.0
+    assert contract["policy"]["resource_guard"]["is_continuous_process_cpu_hard_cap"] is False
+    assert contract["policy"]["resource_guard"]["mobile_device_required"] is False
     assert contract["summary"]["ollama_enabled_floor_count"] == 8
     assert contract["summary"]["source_file_sample_count"] == 3
     assert contract["summary"]["chat_ready_floor_count"] == 8
