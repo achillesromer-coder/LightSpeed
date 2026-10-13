@@ -48,11 +48,14 @@ Do not treat source CI as installed-host or tunnel proof.
 2. Provision an official OpenAI Secure MCP Tunnel with the appropriate workspace,
    Platform permissions and credential injection in a secure local secret store.
    Keep keys out of Git, launch arguments, receipts, chats and logs.
-3. Configure the tunnel's **stdio** target to execute the reviewed
-   `node <verified-absolute-server.mjs>` with the process environment
-   `CGX_MCP_EXPOSURE=web-readonly`. The `tunnel-client` profile should
-   never invoke a general shell on request; it simply launches the approved MCP
-   server.
+3. Configure the tunnel's **stdio** target to execute
+   `node <verified-absolute-tools/run_cgx_web_readonly_mcp.mjs>`. This exact
+   wrapper forces `CGX_MCP_EXPOSURE=web-readonly` before loading the existing
+   `server.mjs`, even if the caller's environment requests `local`.
+   **Do not** point the tunnel directly at `server.mjs` (which retains the
+   original local-tools default for already installed Codex sessions).
+   The `tunnel-client` profile should never invoke a general shell on request;
+   it simply launches this reviewed MCP wrapper.
 4. Run `tunnel-client doctor` using its actual configured profile; run and
    confirm tunnel-client in the host's existing managed service environment.
    Do **not** register a second worker, open firewall ports or start a parallel
