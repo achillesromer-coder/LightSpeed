@@ -41,7 +41,7 @@
   "policy_id": "host_runtime_2026_05_21",
   "runtime_limits": {
     "active_operating_profile": "cognigrex_half_speed",
-    "background_poll_interval_multiplier": 2,
+    "background_poll_interval_multiplier": 2.0,
     "background_process_priority": "below_normal",
     "chrome_reserved_ram_gb": 6,
     "chrome_reserved_threads": 4,
