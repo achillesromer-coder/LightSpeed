@@ -94,17 +94,33 @@ if (WEB_READONLY) {
         signal: AbortSignal.timeout(2000),
       });
       if (response.status === 200 && response.ok) {
-        const bytes = await response.arrayBuffer();
-        if (bytes.byteLength <= 65536) {
-          const body = JSON.parse(new TextDecoder().decode(bytes));
-          if (body?.schema_version === "cgx-bootstrap-advertisement-v1" &&
-              body?.namespace_candidate === "cgx://CGX.cgx" &&
-              body?.security?.commands_allowed === false &&
-              body?.security?.device_authenticated === false &&
-              body?.security?.consumer_receipt_verified === false &&
-              body?.semantics?.source_root === null) {
-            bridge = "PUBLIC_BOOTSTRAP_CANDIDATE";
+        const contentLength = Number(response.headers.get("content-length") ?? 0);
+        if (!Number.isFinite(contentLength) || contentLength > 65536) {
+          throw new Error("CGX_PUBLIC_BOOTSTRAP_TOO_LARGE");
+        }
+        const reader = response.body?.getReader?.();
+        if (!reader) throw new Error("CGX_PUBLIC_BOOTSTRAP_BODY_MISSING");
+        const chunks = [];
+        let total = 0;
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            total += value.byteLength;
+            if (total > 65536) throw new Error("CGX_PUBLIC_BOOTSTRAP_TOO_LARGE");
+            chunks.push(Buffer.from(value));
           }
+        } finally {
+          await reader.cancel().catch(() => {});
+        }
+        const body = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+        if (body?.schema_version === "cgx-bootstrap-advertisement-v1" &&
+            body?.namespace_candidate === "cgx://CGX.cgx" &&
+            body?.security?.commands_allowed === false &&
+            body?.security?.device_authenticated === false &&
+            body?.security?.consumer_receipt_verified === false &&
+            body?.semantics?.source_root === null) {
+          bridge = "PUBLIC_BOOTSTRAP_CANDIDATE";
         }
       }
     } catch {
