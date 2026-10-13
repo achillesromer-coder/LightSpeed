@@ -238,6 +238,9 @@ def test_frontier_admission_idempotent_and_source_changed():
     assert changed["work_key"]!=first["work_key"]
     dependency_changed=assess_frontier_unit(_frontier_request(source_changed=False,dependencies_changed=True),accepted_receipt=receipt)
     assert dependency_changed["verdict"]=="READY_FOR_BOUNDED_WORK"
+    owner_changed=assess_frontier_unit(_frontier_request(owner="ECO_GREX",source_changed=False),accepted_receipt=receipt)
+    assert owner_changed["work_key"]!=first["work_key"]
+    assert owner_changed["verdict"]=="HOLD"
 
 
 

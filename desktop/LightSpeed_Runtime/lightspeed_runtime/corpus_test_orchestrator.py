@@ -574,7 +574,7 @@ def assess_frontier_unit(
     else:
         cost = 0
     identity = _sha256({
-        "domain":domain, "object_id":object_id,
+        "domain":domain, "object_id":object_id, "owner":owner,
         "source_sha256":source, "operation":operation,
         "acceptance_version":version
     })
@@ -604,7 +604,7 @@ def assess_frontier_unit(
     if verdict == "READY_FOR_BOUNDED_WORK" and not request["source_changed"] and \
             not request["dependencies_changed"]:
         verdict="HOLD"
-        reason="NO_CHANGED_SOURCE_OR_DEPENDENCY_AND_NO_ACCEPTED_RECEIPT"
+        reason="NO_CHANGED_SOURCE_OR_DEPENDENCY_AND_NO_MATCHING_ACCEPTED_RECEIPT"
     return {
         "schema": FRONTIER_GATE_SCHEMA, "domain":domain,
         "object_id":object_id, "owner":owner,
