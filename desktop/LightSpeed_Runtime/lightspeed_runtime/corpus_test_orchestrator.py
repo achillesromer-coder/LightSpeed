@@ -479,3 +479,146 @@ def plan_cascade(
         "automatic_activation": False,
         "canonical_mutation": False,
     }
+
+
+# Source/semantic frontier admission is a PURE decision function. Local consumers
+# must call this before undertaking expensive work and enforce real resource
+# limits at the process/tool boundary. A planner's PASS is not a lease or commit.
+FRONTIER_GATE_SCHEMA = "CGX-FRONTIER-ADMISSION/0.1"
+FRONTIER_DOMAINS = frozenset({
+    "COGNIGREX", "ROMER_GREX", "ECO_GREX", "UNISPACE", "EVIDENCE_FRONTIER"
+})
+FRONTIER_TERMINAL = frozenset({"COMPLETE", "HOLD", "NO_CHANGE", "FAILED"})
+FRONTIER_EVIDENCE = frozenset({
+    "ARCHIVED_ORIGINAL", "COMPUTED", "SIMULATED", "SOURCE_CI",
+    "INSTALLED_RUNTIME", "INDEPENDENT_PHYSICAL", "UNVERIFIED"
+})
+
+
+def _frontier_identifier(value: Any, name: str, *, max_length: int = 160) -> str:
+    text = _text(value, name)
+    if len(text) > max_length or any(ord(c) < 32 for c in text):
+        raise CorpusTestPlanError(f"{name} invalid or too long")
+    return text
+
+
+def assess_frontier_unit(
+    request: Mapping[str, Any],
+    *,
+    accepted_receipt: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Check one original-source frontier unit without rereading or writing it.
+
+    The caller MUST separately enforce wall-clock, token, tool and monetary
+    limits; this pure projection neither invokes agents nor permits writes.
+    Terminal means all IN-SCOPE tests for this one unit, NOT civilization or
+    the entire Grex corpus. Archived ACR3 is evidence, never a live domain.
+    """
+    if not isinstance(request, Mapping):
+        raise CorpusTestPlanError("frontier request must be a mapping")
+    required = {
+        "domain", "object_id", "source_sha256", "owner",
+        "operation", "acceptance_version", "evidence_class",
+        "source_changed", "dependencies_changed",
+        "limits", "usage"
+    }
+    if not required.issubset(request):
+        raise CorpusTestPlanError("missing frontier admission inputs")
+    domain = _frontier_identifier(request["domain"], "domain")
+    if domain not in FRONTIER_DOMAINS:
+        raise CorpusTestPlanError("unregistered or retired frontier domain")
+    object_id = _frontier_identifier(request["object_id"], "object_id")
+    owner = _frontier_identifier(request["owner"], "owner")
+    operation = _frontier_identifier(request["operation"], "operation")
+    version = _frontier_identifier(request["acceptance_version"], "acceptance_version")
+    source = request["source_sha256"]
+    if not isinstance(source, str) or len(source) != 64 or any(
+            c not in "0123456789abcdef" for c in source):
+        raise CorpusTestPlanError("source_sha256 must be exact lowercase SHA256")
+    evidence = request["evidence_class"]
+    if evidence not in FRONTIER_EVIDENCE:
+        raise CorpusTestPlanError("unknown evidence class")
+    for name in ("source_changed", "dependencies_changed"):
+        if type(request[name]) is not bool:
+            raise CorpusTestPlanError(f"{name} must be boolean")
+    limits = request["limits"]
+    usage = request["usage"]
+    keys = {"max_elapsed_s", "max_tokens", "max_tool_calls", "max_retries"}
+    if not isinstance(limits, Mapping) or not keys.issubset(limits):
+        raise CorpusTestPlanError("missing enforced execution ceilings")
+    if not isinstance(usage, Mapping) or not {"elapsed_s", "tokens", "tool_calls", "retries"}.issubset(usage):
+        raise CorpusTestPlanError("missing measured usage")
+    numbers = {
+        "max_elapsed_s":(1,3600),
+        "max_tokens":(1,200000),
+        "max_tool_calls":(1,500),
+        "max_retries":(0,5),
+        "elapsed_s":(0,360000),
+        "tokens":(0,100000000),
+        "tool_calls":(0,1000000),
+        "retries":(0,10000),
+    }
+    for field,(lo,hi) in numbers.items():
+        raw = (limits if field.startswith("max_") else usage)[field]
+        if type(raw) is not int or raw < lo or raw > hi:
+            raise CorpusTestPlanError(f"{field} must be a bounded integer")
+    if "max_cost_usd" in limits:
+        value = limits["max_cost_usd"]
+        if isinstance(value, bool) or not isinstance(value, (int,float)) or not 0 <= value <= 10000:
+            raise CorpusTestPlanError("invalid cost ceiling")
+        if "cost_usd" not in usage:
+            raise CorpusTestPlanError("cost usage required if cost ceiling provided")
+        cost = usage["cost_usd"]
+        if isinstance(cost, bool) or not isinstance(cost, (int,float)) or not 0 <= cost <= 100000:
+            raise CorpusTestPlanError("invalid actual cost usage")
+    else:
+        cost = 0
+    identity = _sha256({
+        "domain":domain, "object_id":object_id,
+        "source_sha256":source, "operation":operation,
+        "acceptance_version":version
+    })
+    verdict="READY_FOR_BOUNDED_WORK"
+    reason="source-bound unit is unresolved; external owner permits only planned, scoped work"
+    ceilings = [
+        (usage["elapsed_s"] >= limits["max_elapsed_s"], "WALL_CLOCK_CEILING"),
+        (usage["tokens"] >= limits["max_tokens"], "TOKEN_CEILING"),
+        (usage["tool_calls"] >= limits["max_tool_calls"], "TOOL_CEILING"),
+        (usage["retries"] > limits["max_retries"], "RETRY_CEILING"),
+    ]
+    if "max_cost_usd" in limits:
+        ceilings.append((cost >= limits["max_cost_usd"], "COST_CEILING"))
+    if any(hit for hit,_ in ceilings):
+        verdict="HOLD"
+        reason=next(text for hit,text in ceilings if hit)
+    elif accepted_receipt is not None:
+        if not isinstance(accepted_receipt, Mapping):
+            raise CorpusTestPlanError("accepted receipt must be a mapping")
+        if accepted_receipt.get("work_key") == identity and \
+                accepted_receipt.get("terminal_state") == "COMPLETE" and \
+                accepted_receipt.get("source_sha256") == source and \
+                accepted_receipt.get("readback_verified") is True and \
+                accepted_receipt.get("independent_proof_verified") is True:
+            verdict="NO_CHANGE"
+            reason="identical exact-identity unit already independently accepted"
+    if verdict == "READY_FOR_BOUNDED_WORK" and not request["source_changed"] and \
+            not request["dependencies_changed"]:
+        verdict="HOLD"
+        reason="NO_CHANGED_SOURCE_OR_DEPENDENCY_AND_NO_ACCEPTED_RECEIPT"
+    return {
+        "schema": FRONTIER_GATE_SCHEMA, "domain":domain,
+        "object_id":object_id, "owner":owner,
+        "source_sha256":source,
+        "work_key":identity,
+        "acceptance_version":version,
+        "evidence_class":evidence,
+        "verdict":verdict,
+        "reason":reason,
+        "resource_ceiling_enforced_by_this_function":False,
+        "writes_authorized":False,
+        "root_promotion_authorized":False,
+        "public_release_authorized":False,
+        "hardware_actuation_authorized":False,
+        "historical_ACR3_is_read_only":True,
+        "completion_scope":"CURRENT_ADMITTED_OBJECT_OPERATION_ONLY",
+    }
