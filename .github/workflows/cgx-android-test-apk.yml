@@ -32,13 +32,15 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install Android SDK 35 platform
+      - name: Verify preinstalled Android SDK and install SDK 35 platform
         shell: bash
         run: |
-          sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+          set -euo pipefail
+          echo "Android home: ${ANDROID_HOME:-unset}"
+          SDK_BASE="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          SDKMGR="$(find "$SDK_BASE/cmdline-tools" -path '*/bin/sdkmanager' -type f | sort -V | tail -1)"
+          test -n "$SDKMGR"
+          "$SDKMGR" 'platforms;android-35' 'build-tools;35.0.0'
 
       - name: Build debug-signed CGX Link APK
         shell: bash
