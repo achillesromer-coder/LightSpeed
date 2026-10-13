@@ -1,0 +1,37 @@
+name: CGX Native Web MCP Safety
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "desktop/LightSpeed_Runtime/mcp/cgx_tools/**"
+      - ".github/workflows/cgx-native-web-mcp.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cgx-web-mcp-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bounded_web_entry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Node 22
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "22"
+      - name: Install pinned CGX MCP runtime dependencies
+        working-directory: desktop/LightSpeed_Runtime/mcp/cgx_tools
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Validate web tool exposure and negative privileges
+        working-directory: desktop/LightSpeed_Runtime/mcp/cgx_tools
+        env:
+          CGX_MCP_EXPOSURE: web-readonly
+        run: |
+          node --check server.mjs
+          npm run test:web
