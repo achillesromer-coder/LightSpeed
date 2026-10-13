@@ -5,6 +5,13 @@ on:
     paths:
       - "desktop/LightSpeed_Runtime/mcp/cgx_tools/**"
       - ".github/workflows/cgx-native-web-mcp.yml"
+  push:
+    branches:
+      - "cgx/dataspace-rolling-observer-facet-20261012"
+    paths:
+      - "desktop/LightSpeed_Runtime/mcp/cgx_tools/**"
+      - "tools/run_cgx_web_readonly_mcp.mjs"
+      - ".github/workflows/cgx-native-web-mcp.yml"
   workflow_dispatch:
 
 permissions:
