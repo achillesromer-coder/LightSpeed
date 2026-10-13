@@ -102,8 +102,10 @@ $tunnelId = "<paste actual tunnel_... ID>"
 .\tools\setup_cgx_web_tunnel.ps1 -Configure -TunnelId $tunnelId -ApprovedHeadSha $approved
 
 # This checks the local read-only tool boundary again and runs only tunnel-client.
-.\tools\setup_cgx_web_tunnel.ps1 -Start -ApprovedHeadSha $approved
+.\tools\setup_cgx_web_tunnel.ps1 -Start -TunnelId $tunnelId -ApprovedHeadSha $approved
 ```
+
+Both `-Configure` and `-Start` require the actual same tunnel ID. Every `doctor` and `run` call explicitly overrides the named profile with `--control-plane.tunnel-id` and `--mcp.command` bound to the reviewed web-only wrapper, so a stale profile cannot silently change the host's MCP tool exposure. If the installed CLI refuses these flags, setup fails closed. Do not fall back to an unpinned profile.
 
 The setup validates canonical Git origin/clean branch/exact SHA, uses the
 repository's existing `package-lock.json` with `npm ci --ignore-scripts`,
