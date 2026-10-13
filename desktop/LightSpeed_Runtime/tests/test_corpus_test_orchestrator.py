@@ -236,6 +236,9 @@ def test_frontier_admission_idempotent_and_source_changed():
     changed=assess_frontier_unit(_frontier_request(source_sha256="b"*64),accepted_receipt=receipt)
     assert changed["verdict"]=="READY_FOR_BOUNDED_WORK"
     assert changed["work_key"]!=first["work_key"]
+    dependency_changed=assess_frontier_unit(_frontier_request(source_changed=False,dependencies_changed=True),accepted_receipt=receipt)
+    assert dependency_changed["verdict"]=="READY_FOR_BOUNDED_WORK"
+
 
 
 def test_frontier_resource_ceiling_blocks_and_does_not_claim_enforcement():
