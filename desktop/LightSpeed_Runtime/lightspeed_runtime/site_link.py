@@ -7,19 +7,32 @@ from datetime import datetime, timezone
 import hashlib
 import json
 from urllib.parse import urlsplit
-from urllib.request import Request, urlopen
+from urllib.request import HTTPRedirectHandler, Request, build_opener
+
+MAX_RESPONSE_BYTES = 65536
+
+class _NoRedirects(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        # Never forward the Sites service credential to a redirected target.
+        raise ValueError("Site exchange redirects are not allowed")
 
 def _request(url, token="", payload=None):
     headers={"Accept":"application/json"}
     if token: headers["OAI-Sites-Authorization"]="Bearer "+token
     if payload is not None: headers["Content-Type"]="application/json"
     data=None if payload is None else json.dumps(payload,separators=(",",":"),ensure_ascii=False).encode()
-    with urlopen(Request(url,data=data,headers=headers),timeout=15) as response:
-        return json.load(response)
+    with build_opener(_NoRedirects()).open(Request(url,data=data,headers=headers),timeout=15) as response:
+        body = response.read(MAX_RESPONSE_BYTES + 1)
+        if len(body) > MAX_RESPONSE_BYTES:
+            raise ValueError("Site exchange response exceeds the bound")
+        result = json.loads(body)
+        if not isinstance(result, dict):
+            raise ValueError("Site exchange response must be an object")
+        return result
 
 def exchange_status(site_origin, service_token, *, local_status=None, transport=_request):
     target=urlsplit(site_origin)
-    if target.scheme!="https" or not target.hostname or not target.hostname.endswith(".chatgpt.site") or target.username or target.password or target.query or target.fragment or target.path not in ("","/"):
+    if target.scheme!="https" or not target.hostname or not target.hostname.endswith(".chatgpt.site") or target.port not in (None,443) or target.username or target.password or target.query or target.fragment or target.path not in ("","/"):
         raise ValueError("Use the exact existing HTTPS LS GO Site origin")
     if not service_token or len(service_token)>4096:
         raise ValueError("Current supported Sites service access required")
