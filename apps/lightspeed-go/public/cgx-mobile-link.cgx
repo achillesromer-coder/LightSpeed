@@ -51,7 +51,19 @@
     "allow_scoped_preapproved_local_work": true,
     "no_automatic_replay_of_unacknowledged_jobs": true,
     "idempotent_envelopes_by_request_id": true,
-    "no_unauthorised_local_path_resolution": true
+    "no_unauthorised_local_path_resolution": true,
+    "new_mobile_runtime": false,
+    "authority_by_device": false,
+    "transfer_full_corpus_on_open": false,
+    "drive_write_grants_execution": false
   },
-  "release_gate": "source_only_until_bouwerbase_capability_assessment_authorised_action_and_exact_dbr_readback_verified"
+  "release_gate": "source_only_until_bouwerbase_capability_assessment_authorised_action_and_exact_dbr_readback_verified",
+  "semantic_root": "cgx://cgx.cgx",
+  "kind": "CGX-MOBILE-BOOTSTRAP/0.1",
+  "binding": "CGX-MOBILE-NODE-BINDING/0.1",
+  "protocol_chain": [
+    "CGX-MOBILE-BOOTSTRAP/0.1",
+    "CGX-DEVICE-HANDSHAKE/0.1",
+    "CGX-NODE-EXCHANGE-CONTRACT/0.1"
+  ]
 }
