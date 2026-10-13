@@ -594,7 +594,7 @@ def assess_frontier_unit(
     elif accepted_receipt is not None:
         if not isinstance(accepted_receipt, Mapping):
             raise CorpusTestPlanError("accepted receipt must be a mapping")
-        if accepted_receipt.get("work_key") == identity and \
+        if request["dependencies_changed"] is False and accepted_receipt.get("work_key") == identity and \
                 accepted_receipt.get("terminal_state") == "COMPLETE" and \
                 accepted_receipt.get("source_sha256") == source and \
                 accepted_receipt.get("readback_verified") is True and \
