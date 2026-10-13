@@ -648,3 +648,69 @@ def test_smith_duplicate_job_cannot_regress_original_task(tmp_path: Path) -> Non
     assert db.execute_query("SELECT status FROM jobs WHERE id=602")[0]["status"] == "held"
     assert db.execute_query("SELECT status FROM tasks WHERE id=501")[0]["status"] == "completed"
     assert json.loads(Path(original["receipt_path"]).read_text())["job_id"] == 601
+
+
+
+def test_host_cpu_dispatch_gate_hysteresis(tmp_path):
+    root = tmp_path / "App"
+    (root / "config").mkdir(parents=True)
+    (root / "config" / "host_runtime_policy.json").write_text(
+        json.dumps({"runtime_limits": {
+            "max_total_host_cpu_percent": 80,
+            "cpu_dispatch_resume_percent": 70,
+            "cpu_sampling_interval_seconds": 0.25,
+            "max_background_queue_workers": 1,
+        }}), encoding="utf-8")
+    gate = ls_go_job_consumer.host_cpu_admission
+    assert gate(root, observed_percent=60)["allow_new_jobs"] is True
+    high=gate(root, observed_percent=80)
+    assert high["state"] == "paused_cpu_pressure"
+    assert high["allow_new_jobs"] is False
+    assert high["aggregate_cpu_hard_cap_verified"] is False
+    assert gate(root, observed_percent=75, previous_hold=True)["allow_new_jobs"] is False
+    assert gate(root, observed_percent=70, previous_hold=True)["allow_new_jobs"] is True
+    assert gate(root, observed_percent=79.9, previous_hold=False)["allow_new_jobs"] is True
+
+
+def test_host_cpu_dispatch_missing_monitor_invalid_policy_and_no_mobile(tmp_path):
+    root=tmp_path / "App"
+    (root / "config").mkdir(parents=True)
+    (root / "config" / "host_runtime_policy.json").write_text(
+        json.dumps({"runtime_limits": {"max_total_host_cpu_percent": 80,
+                                      "cpu_dispatch_resume_percent": 70}}),
+        encoding="utf-8")
+    gate=ls_go_job_consumer.host_cpu_admission
+    import math
+    for val in [float("nan"),-1,120,True]:
+        assert gate(root,observed_percent=val)["state"] == "cpu_monitor_unavailable"
+    sample=gate(root,observed_percent=55)
+    assert sample["mobile_device_required"] is False
+    assert sample["cpu_control_scope"]=="DISPATCH_ADMISSION_ONLY"
+    assert not sample["aggregate_cpu_hard_cap_verified"]
+    (root / "config" / "host_runtime_policy.json").write_text(
+        json.dumps({"runtime_limits": {"max_total_host_cpu_percent": 100,
+                                      "cpu_dispatch_resume_percent": 75}}),
+        encoding="utf-8")
+    assert gate(root,observed_percent=12)["state"]=="cpu_policy_invalid"
+
+
+def test_live_consumer_keeps_heartbeat_without_claiming_at_high_cpu(tmp_path, monkeypatch):
+    root=tmp_path / "App"
+    consumer=ls_go_job_consumer.LSGoJobConsumer(root, db=None)
+    samples = iter([80, 74, 70])
+    calls={"job":0,"heartbeat":[],"wait":0}
+    monkeypatch.setattr(ls_go_job_consumer,"host_cpu_admission",
+        lambda _root, previous_hold=False: ls_go_job_consumer.host_cpu_admission.__wrapped__(_root)
+        if False else {
+            "allow_new_jobs": (v:=next(samples)) <= 70,
+            "state": "paused_cpu_pressure" if v>70 else "ready",
+            "measured_total_cpu_percent": v, "aggregate_cpu_hard_cap_verified": False,
+        })
+    monkeypatch.setattr(consumer,"_acquire_heartbeat_lock",lambda: None)
+    monkeypatch.setattr(consumer,"process_once",lambda: calls.__setitem__("job",calls["job"]+1) or {"state":"ready"})
+    monkeypatch.setattr(consumer,"_heartbeat",lambda state: calls["heartbeat"].append(state))
+    monkeypatch.setattr(consumer._stop,"wait",lambda _s: calls.__setitem__("wait",calls["wait"]+1) or (consumer.stop() if calls["wait"]>=3 else None))
+    consumer.run_forever(poll_seconds=0.25)
+    assert calls["job"]==1
+    assert calls["heartbeat"]==["paused_cpu_pressure","paused_cpu_pressure","ready"]
+    assert (ls_go_job_consumer.status_receipt_path(root)).exists()
