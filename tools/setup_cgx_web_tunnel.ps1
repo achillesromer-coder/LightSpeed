@@ -140,9 +140,27 @@ try {
 
     Invoke-NoSecrets $tunnel (@("doctor", "--profile", $Profile) + $pinnedTarget + @("--explain")) "Tunnel diagnostic"
     if ($Start) {
-        Write-Host "Starting outbound-only CGX web tunnel. Press Ctrl+C to stop."
-        Write-Host "Next: ChatGPT web > Plugins > Add custom MCP server > Tunnel."
-        Invoke-NoSecrets $tunnel (@("run", "--profile", $Profile) + $pinnedTarget) "Run CGX tunnel"
+        # Guard against duplicate starts initiated through this helper.
+        # This cannot attest or replace unrelated external supervisors.
+        $mutexName = "Local\\CGXWebTunnel_" + $Profile
+        $tunnelMutex = [System.Threading.Mutex]::new($false, $mutexName)
+        $acquired = $false
+        try {
+            try {
+                $acquired = $tunnelMutex.WaitOne(0)
+            } catch [System.Threading.AbandonedMutexException] {
+                $acquired = $true
+            }
+            if (-not $acquired) {
+                throw "CGX tunnel profile is already started through this helper: $Profile"
+            }
+            Write-Host "Starting outbound-only CGX web tunnel. Press Ctrl+C to stop."
+            Write-Host "Next: ChatGPT web > Plugins > Add custom MCP server > Tunnel."
+            Invoke-NoSecrets $tunnel (@("run", "--profile", $Profile) + $pinnedTarget) "Run CGX tunnel"
+        } finally {
+            if ($acquired) { $tunnelMutex.ReleaseMutex() }
+            $tunnelMutex.Dispose()
+        }
     } else {
         Write-Host "Configuration and diagnostics complete. Not running a long-lived process."
         Write-Host "To connect, rerun with -Start -TunnelId $TunnelId -ApprovedHeadSha $actualHead"
