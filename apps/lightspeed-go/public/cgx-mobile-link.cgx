@@ -5,13 +5,12 @@
   "mobile_role": "roaming_operator",
   "host_node": "bouwerbase",
   "bridge": {
-    "source": "existing_lightspeed_go_desktop_bridge",
-    "origin_config": "VITE_LIGHTSPEED_DESKTOP_ORIGIN",
+    "source": "existing_owner_private_ls_go_site",
     "local_only_origin": "http://127.0.0.1:8765",
-    "remote_transport": "owner_selected_private_https_relay",
-    "discovery": "configured_origin_only",
+    "remote_transport": "existing_owner_private_ls_go_site",
+    "discovery": "existing_site_same_origin",
     "probe": "GET /api/v1/status",
-    "owner_sign_in": "POST /api/v1/auth/login"
+    "owner_sign_in": "existing_site_owner_auth"
   },
   "exchange": {
     "commands": "existing_achilles_gated_ls_go_envelopes",
@@ -19,7 +18,7 @@
     "source_code": "github_lightspeed",
     "durable_evidence": "drive_core_asynchronous",
     "transport_priority": [
-      "authenticated_existing_lightspeed_bridge",
+      "existing_owner_private_ls_go_site",
       "owner_authorised_drive_mailbox_on_bridge_failure"
     ],
     "intake": "bounded_cgx_request_envelope_v1",
@@ -36,7 +35,8 @@
     "fallback": "drive_mailbox_is_an_untrusted_transport_not_execution_authority",
     "local_dbr": "primary_authoritative_execution_receipt_on_bouwerbase",
     "drive_dbr": "asynchronous_backup_only_after_hash_and_identity_readback",
-    "change_detection": "compare_object_revision_and_sha256; only transfer changed_identifiers_or_approved_payloads"
+    "change_detection": "compare_object_revision_and_sha256; only transfer changed_identifiers_or_approved_payloads",
+    "site_transport": "bounded_host_report_and_untrusted_owner_intent_only; local acceptance/session/lease/result remain separate"
   },
   "constraints": {
     "embedded_credentials": false,

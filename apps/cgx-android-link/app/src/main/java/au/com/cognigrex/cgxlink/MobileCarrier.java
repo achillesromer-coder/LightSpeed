@@ -34,10 +34,14 @@ public final class MobileCarrier {
         }
         JSONObject bridge = c.optJSONObject("bridge");
         if (bridge == null) throw new IllegalArgumentException("Bridge contract missing");
-        require(bridge, "remote_transport", "owner_selected_private_https_relay");
-        require(bridge, "discovery", "configured_origin_only");
+        boolean privateProfile = "owner_selected_private_https_relay".equals(bridge.opt("remote_transport"))
+            && "configured_origin_only".equals(bridge.opt("discovery"))
+            && "POST /api/v1/auth/login".equals(bridge.opt("owner_sign_in"));
+        boolean siteProfile = "existing_owner_private_ls_go_site".equals(bridge.opt("remote_transport"))
+            && "existing_site_same_origin".equals(bridge.opt("discovery"))
+            && "existing_site_owner_auth".equals(bridge.opt("owner_sign_in"));
+        if (!privateProfile && !siteProfile) throw new IllegalArgumentException("Bridge profile rejected");
         require(bridge, "probe", "GET /api/v1/status");
-        require(bridge, "owner_sign_in", "POST /api/v1/auth/login");
         JSONObject flags = c.optJSONObject("constraints");
         if (flags == null) throw new IllegalArgumentException("Constraints missing");
         String[] denied = {"embedded_credentials", "public_direct_execution", "automatic_owner_approval",

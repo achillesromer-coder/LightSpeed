@@ -31,6 +31,16 @@ const valid = {
 };
 
 describe("CGX mobile bootstrap (no mobile runtime)", () => {
+  it("recognizes the existing owner-private Site without importing authority or endpoints", () => {
+    const bridge = { remote_transport: "existing_owner_private_ls_go_site", discovery: "existing_site_same_origin",
+      probe: "GET /api/v1/status", owner_sign_in: "existing_site_owner_auth", origin: "https://attacker.test" };
+    const result = readMobileManifest({ ...valid, bridge, authenticated: true });
+    expect(result.bridge.remote_transport).toBe("existing_owner_private_ls_go_site");
+    expect(result.bridge).not.toHaveProperty("origin");
+    expect(result).not.toHaveProperty("authenticated");
+    expect(() => readMobileManifest({ ...valid, bridge: { ...bridge, owner_sign_in: valid.bridge.owner_sign_in } })).toThrow();
+    expect(() => readMobileManifest({ ...valid, bridge: { ...valid.bridge, discovery: bridge.discovery } })).toThrow();
+  });
   it("accepts only the bounded host/transport and fails closed on altered authority", () => {
     expect(readMobileManifest(valid).host_node).toBe("bouwerbase");
     expect(() => readMobileManifest({ ...valid, host_node: "random-host" })).toThrow("unsafe");

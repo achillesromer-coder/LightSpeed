@@ -36,6 +36,10 @@ export function readMobileManifest(value: unknown): MobileLinkManifest {
   const manifest = value as Partial<MobileLinkManifest>;
   const bridge = manifest.bridge;
   const policy = manifest.constraints;
+  const privateProfile = bridge?.remote_transport === "owner_selected_private_https_relay" &&
+    bridge.discovery === "configured_origin_only" && bridge.owner_sign_in === "POST /api/v1/auth/login";
+  const siteProfile = bridge?.remote_transport === "existing_owner_private_ls_go_site" &&
+    bridge.discovery === "existing_site_same_origin" && bridge.owner_sign_in === "existing_site_owner_auth";
   if (manifest.schema !== "cgx.ls-go.mobile-link/1" ||
       manifest.semantic_root !== "cgx://cgx.cgx" ||
       manifest.kind !== "CGX-MOBILE-BOOTSTRAP/0.1" ||
@@ -46,10 +50,8 @@ export function readMobileManifest(value: unknown): MobileLinkManifest {
         "CGX-MOBILE-BOOTSTRAP/0.1", "CGX-DEVICE-HANDSHAKE/0.1", "CGX-NODE-EXCHANGE-CONTRACT/0.1",
       ]) ||
       manifest.host_node !== "bouwerbase" ||
-      bridge?.remote_transport !== "owner_selected_private_https_relay" ||
-      bridge.discovery !== "configured_origin_only" ||
+      !bridge || !(privateProfile || siteProfile) ||
       bridge.probe !== "GET /api/v1/status" ||
-      bridge.owner_sign_in !== "POST /api/v1/auth/login" ||
       policy?.embedded_credentials !== false ||
       policy.public_direct_execution !== false ||
       policy.automatic_owner_approval !== false ||

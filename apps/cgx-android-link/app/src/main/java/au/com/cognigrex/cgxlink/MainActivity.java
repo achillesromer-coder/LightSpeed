@@ -24,6 +24,7 @@ public final class MainActivity extends Activity {
     private static final int PICK_CGX = 3001;
     private static final int MAX_BYTES = 65536;
     private static final String ROOT = "cgx://cgx.cgx";
+    private static final String SITE_UI = "https://lightspeed-go.nathaniel-b.chatgpt.site/";
     private static final String PUBLIC_UI = "https://lightspeed-go.nathaniel-b.chatgpt.site/";
     private TextView status;
     private EditText origin;
@@ -62,7 +63,8 @@ public final class MainActivity extends Activity {
             startActivityForResult(pick, PICK_CGX);
         });
         TextView urlLabel = new TextView(this);
-        urlLabel.setText("Authenticated private HTTPS origin of BouwerBase (UI + /api/v1 proxy):");
+        addButton(body, "Open LS GO and sign in with ChatGPT", () -> browse(SITE_UI));
+        urlLabel.setText("Optional legacy direct-host HTTPS origin (not required for the LS GO Site):");
         body.addView(urlLabel);
         origin = new EditText(this);
         origin.setSingleLine(true);
@@ -81,7 +83,7 @@ public final class MainActivity extends Activity {
         addButton(body, "Open owner sign-in and DBR results in LS GO", () -> openPrivate("/"));
         addButton(body, "Open existing LightSpeed GO web interface", () -> browse(PUBLIC_UI));
         TextView note = new TextView(this);
-        note.setText("A recognized CGX file does not prove the host is reachable. The phone must have an authenticated private route over mobile data; 127.0.0.1 refers to the phone. Drive fallback and execution remain with the existing host.");
+        note.setText("Use the existing owner-private LS GO Site over mobile data and sign in with ChatGPT. The PC exchanges bounded reports outbound to that same Site. A recognized carrier or host report does not prove device enrollment or execution. 127.0.0.1 refers to this phone.");
         note.setPadding(0, margin, 0, 0); body.addView(note);
         setContentView(scroll);
     }
@@ -152,7 +154,7 @@ public final class MainActivity extends Activity {
             verifiedContract = true;
             show("Mobile CGX schema recognized locally: CGX-MOBILE-BOOTSTRAP/0.1" +
                  "\nRoot: " + ROOT + "\nHost: BouwerBase" +
-                 "\nConnection: NOT verified. Configure the approved HTTPS origin to test.");
+                 "\nConnection: NOT verified. Open the existing LS GO Site and sign in. Legacy direct-host origin is optional.");
         } catch (Exception ex) {
             show("CGX file rejected: " + ex.getMessage());
         }

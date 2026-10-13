@@ -1,5 +1,20 @@
 # Existing LS GO Site and GPT tunnel boundaries
 
+The shipped mobile carrier now selects `existing_owner_private_ls_go_site`,
+`existing_site_same_origin` and `existing_site_owner_auth`. The phone opens
+`https://lightspeed-go.nathaniel-b.chatgpt.site/` and uses the existing owner
+ChatGPT sign-in. No private host origin is required for that Site route.
+The Android source offers that fixed Site URL directly; it never imports a URL,
+credential or authority from an untrusted carrier. Legacy direct-host carriers
+remain recognizable as a separate complete profile; mixed profiles are rejected.
+
+Local GPT setup is source-verified at PR #173 commit
+`91dd835850033952dda38c78fe2e701828d4a241`, superseding the earlier setup
+checkpoint below. Its helper requires a real tunnel ID on configure and start,
+pins the reviewed read-only MCP entrypoint on each invocation and guards its own
+profile starts with a Windows mutex. A real tunnel ID, protected runtime key and
+authenticated ChatGPT-web call are still required for connection acceptance.
+
 LS GO is the existing owner-private mobile/web control surface. Its same-origin
 Site exchange stores bounded host reports and untrusted owner intents in the
 existing `sync_cycles` table. It does not start a worker, issue a lease, accept a

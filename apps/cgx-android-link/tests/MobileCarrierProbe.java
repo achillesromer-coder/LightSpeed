@@ -17,6 +17,18 @@ public final class MobileCarrierProbe {
     public static void main(String[] args) throws Exception {
         byte[] fixture = Files.readAllBytes(Paths.get(args[0]));
         MobileCarrier.validate(fixture); checks++;
+        JSONObject site = new JSONObject(new String(fixture, StandardCharsets.UTF_8));
+        site.getJSONObject("bridge").put("remote_transport", "existing_owner_private_ls_go_site")
+            .put("discovery", "existing_site_same_origin").put("owner_sign_in", "existing_site_owner_auth");
+        MobileCarrier.validate(bytes(site)); checks++;
+        JSONObject legacy = new JSONObject(new String(fixture, StandardCharsets.UTF_8));
+        legacy.getJSONObject("bridge").put("remote_transport", "owner_selected_private_https_relay")
+            .put("discovery", "configured_origin_only").put("owner_sign_in", "POST /api/v1/auth/login");
+        MobileCarrier.validate(bytes(legacy)); checks++;
+        site.getJSONObject("bridge").put("owner_sign_in", "POST /api/v1/auth/login");
+        rejects(() -> MobileCarrier.validate(bytes(site)));
+        legacy.getJSONObject("bridge").put("discovery", "existing_site_same_origin");
+        rejects(() -> MobileCarrier.validate(bytes(legacy)));
         JSONObject c = new JSONObject(new String(fixture, StandardCharsets.UTF_8));
         c.put("semantic_root", "cgx://other");
         rejects(() -> MobileCarrier.validate(bytes(c)));
