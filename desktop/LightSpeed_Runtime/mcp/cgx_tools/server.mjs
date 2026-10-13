@@ -64,6 +64,69 @@ const server = new McpServer({
   version: "0.1.0",
 });
 
+
+/*
+ * Explicit ChatGPT-web tunnel discovery profile, NOT a separate runtime.
+ * In this profile none of the local/private tool registrations is exported.
+ * The tunnel/client association is transport authentication only; it is not an
+ * LS GO owner session, a lease, a repository writer, or physical permission.
+ */
+const WEB_READONLY = process.env.CGX_MCP_EXPOSURE === "web-readonly";
+
+function localTool(name, config, handler) {
+  if (!WEB_READONLY) server.registerTool(name, config, handler);
+}
+
+if (WEB_READONLY) {
+  server.registerTool("cgx_web_handshake", {
+    description: "Inspect public-safe CGX loopback bootstrap without identifying devices, opening files, granting authority or executing commands.",
+    inputSchema: {},
+    annotations: {
+      title: "CGX Web Bootstrap",
+      readOnlyHint: true, destructiveHint: false,
+      idempotentHint: true, openWorldHint: false,
+    },
+  }, async () => {
+    let bridge = "UNVERIFIED";
+    try {
+      const response = await fetch("http://127.0.0.1:8765/api/v1/cgx/bootstrap", {
+        method: "GET", redirect: "error", cache: "no-store",
+        signal: AbortSignal.timeout(2000),
+      });
+      if (response.status === 200 && response.ok) {
+        const bytes = await response.arrayBuffer();
+        if (bytes.byteLength <= 65536) {
+          const body = JSON.parse(new TextDecoder().decode(bytes));
+          if (body?.schema_version === "cgx-bootstrap-advertisement-v1" &&
+              body?.namespace_candidate === "cgx://CGX.cgx" &&
+              body?.security?.commands_allowed === false &&
+              body?.security?.device_authenticated === false &&
+              body?.security?.consumer_receipt_verified === false &&
+              body?.semantics?.source_root === null) {
+            bridge = "PUBLIC_BOOTSTRAP_CANDIDATE";
+          }
+        }
+      }
+    } catch {
+      // A failed loopback probe does not prove that the computer is offline.
+    }
+    return textResult({
+      schema_version: "cgx-web-tunnel-handshake-v1",
+      parent_filespace: "Cognigrex.cgx",
+      transport: "EXISTING_MCP_STDIO_PRIVATE_TUNNEL",
+      local_bridge: bridge,
+      read_only: true,
+      owner_session_verified: false,
+      consumer_receipt_verified: false,
+      device_identity_verified: false,
+      canonical_write_authorized: false,
+      git_commit_authorized: false,
+      host_offline_inferred: false,
+      permitted_next_step: "OWNER_REGISTERED_SESSION_AND_EXPLICIT_SCOPED_LEASE",
+    });
+  });
+}
+
 const readOnly = {
   readOnlyHint: true,
   destructiveHint: false,
@@ -71,7 +134,7 @@ const readOnly = {
   openWorldHint: false,
 };
 
-server.registerTool("cgx_get_capabilities", {
+localTool("cgx_get_capabilities", {
   description: "Return the real registered capability/shortcall state for one of the nine CGX selectors.",
   inputSchema: {
     selector: z.string().min(1).describe("Selector name, e.g. Raphael or Römer-Grex"),
@@ -81,7 +144,7 @@ server.registerTool("cgx_get_capabilities", {
   await runBridge("capabilities", { selector })
 ));
 
-server.registerTool("cgx_resolve_shortcall", {
+localTool("cgx_resolve_shortcall", {
   description: "Resolve a selector shortcall to its typed route, state, floors and toolkits without executing it.",
   inputSchema: {
     selector: z.string().min(1),
@@ -92,7 +155,7 @@ server.registerTool("cgx_resolve_shortcall", {
   await runBridge("resolve_shortcall", { selector, shortcall })
 ));
 
-server.registerTool("cgx_resolve_object", {
+localTool("cgx_resolve_object", {
   description: "Resolve a current CGX object/twin into child-domain identity, Operations binding, source owner and representation/evidence boundary. Read-only.",
   inputSchema: {
     query: z.string().min(1).describe("Object name, twin_id, semantic Object_ID, or known Operations object ID"),
@@ -103,7 +166,7 @@ server.registerTool("cgx_resolve_object", {
   await runBridge("object_context", { query, domain })
 ));
 
-server.registerTool("cgx_plan_cross_analysis", {
+localTool("cgx_plan_cross_analysis", {
   description: "Build a bounded cross-analysis plan using context, minimum-sufficient-work and consequence preflight. Does not run tests or promote results.",
   inputSchema: {
     selector: z.string().min(1),
@@ -121,7 +184,7 @@ server.registerTool("cgx_plan_cross_analysis", {
   await runBridge("cross_analysis", args)
 ));
 
-server.registerTool("cgx_consequence_preflight", {
+localTool("cgx_consequence_preflight", {
   description: "Run typed assurance + custodial preflight for a declared domain/depth. Clearance is not execution permission.",
   inputSchema: {
     domain: z.enum(["romer", "eco", "emassc", "lightspeed"]),
@@ -136,7 +199,7 @@ server.registerTool("cgx_consequence_preflight", {
 }, async args => textResult(
   await runBridge("preflight", args)
 ));
-server.registerTool("cgx_plan_tool_extension", {
+localTool("cgx_plan_tool_extension", {
   description: "Determine whether a requested capability should reuse, alias, wrap, or implement the smallest typed adapter. Never installs automatically.",
   inputSchema: {
     selector: z.string().min(1),
@@ -150,7 +213,7 @@ server.registerTool("cgx_plan_tool_extension", {
   await runBridge("tool_plan", args)
 ));
 
-server.registerTool("cgx_runtime_productization", {
+localTool("cgx_runtime_productization", {
   description: "Manage a named LightSpeed Runtime slot through typed status/configure/install/update/rollback actions. Writes require confirmed=true; rollback is limited to a valid managed slot.",
   inputSchema: {
     action: z.enum(["status", "configure", "install", "update", "rollback"]),
@@ -169,7 +232,7 @@ server.registerTool("cgx_runtime_productization", {
   await runBridge("runtime_productization", args, 900000)
 ));
 
-server.registerTool("cgx_gmat_probe", {
+localTool("cgx_gmat_probe", {
   description: "Probe current GMAT runner/executable binding without running a simulation.",
   inputSchema: {},
   annotations: { title: "Probe GMAT", ...readOnly },
@@ -177,7 +240,7 @@ server.registerTool("cgx_gmat_probe", {
   await runBridge("gmat_probe")
 ));
 
-server.registerTool("cgx_femm_probe", {
+localTool("cgx_femm_probe", {
   description: "Probe current FEMM executable/adapter binding without running a solve.",
   inputSchema: {},
   annotations: { title: "Probe FEMM", ...readOnly },
@@ -185,7 +248,7 @@ server.registerTool("cgx_femm_probe", {
   await runBridge("femm_probe")
 ));
 
-server.registerTool("cgx_mpl_probe", {
+localTool("cgx_mpl_probe", {
   description: "Probe current MPL adapter/source readiness and assurance boundary without executing MPL.",
   inputSchema: {},
   annotations: { title: "Probe MPL", ...readOnly },
@@ -193,7 +256,7 @@ server.registerTool("cgx_mpl_probe", {
   await runBridge("mpl_probe")
 ));
 
-server.registerTool("cgx_freecad_probe", {
+localTool("cgx_freecad_probe", {
   description: "Probe the registered local FreeCAD headless runtime and return version/availability without opening a document.",
   inputSchema: {},
   annotations: { title: "Probe FreeCAD", ...readOnly },
@@ -201,7 +264,7 @@ server.registerTool("cgx_freecad_probe", {
   await runBridge("freecad_probe")
 ));
 
-server.registerTool("cgx_freecad_inspect", {
+localTool("cgx_freecad_inspect", {
   description: "Read an FCStd document from registered project roots and return object tree, dimensions, placements and derived shape metadata. Read-only.",
   inputSchema: {
     path: z.string().min(1).describe("FCStd path inside D:/LightSpeed or the current user's Desktop"),
@@ -211,7 +274,7 @@ server.registerTool("cgx_freecad_inspect", {
   await runBridge("freecad_inspect", { path }, 120000)
 ));
 
-server.registerTool("cgx_freecad_bom", {
+localTool("cgx_freecad_bom", {
   description: "Return a derived read-only object/BOM summary from an FCStd document. Not an approved manufacturing/procurement BOM.",
   inputSchema: {
     path: z.string().min(1).describe("FCStd path inside registered project roots"),
@@ -221,7 +284,7 @@ server.registerTool("cgx_freecad_bom", {
   await runBridge("freecad_bom", { path }, 120000)
 ));
 
-server.registerTool("cgx_bridge_health", {
+localTool("cgx_bridge_health", {
   description: "Read the current LightSpeed bridge-health report from the existing local runtime.",
   inputSchema: {},
   annotations: { title: "LightSpeed Bridge Health", ...readOnly },
@@ -229,7 +292,7 @@ server.registerTool("cgx_bridge_health", {
   await runBridge("health")
 ));
 
-server.registerTool("cgx_list_receipts", {
+localTool("cgx_list_receipts", {
   description: "List bounded LightSpeed result receipts from the registered Neo temp-shell result store.",
   inputSchema: {
     limit: z.number().int().min(1).max(100).default(50),
@@ -239,7 +302,7 @@ server.registerTool("cgx_list_receipts", {
   await runBridge("receipts_list", { limit })
 ));
 
-server.registerTool("cgx_open_receipt", {
+localTool("cgx_open_receipt", {
   description: "Open one LightSpeed result receipt by result_id; no arbitrary filesystem path is accepted.",
   inputSchema: {
     result_id: z.string().min(1),
@@ -249,7 +312,7 @@ server.registerTool("cgx_open_receipt", {
   await runBridge("receipt_open", { result_id })
 ));
 
-server.registerTool("cgx_plan_local_work", {
+localTool("cgx_plan_local_work", {
   description: "Dry-run the existing supervised local workflow with heavy execution disabled. May create normal runtime planning receipts.",
   inputSchema: {
     instruction: z.string().min(1),
@@ -268,7 +331,7 @@ server.registerTool("cgx_plan_local_work", {
   await runBridge("local_plan", args, 180000)
 ));
 
-server.registerTool("cgx_run_local_work", {
+localTool("cgx_run_local_work", {
   description: "Execute the existing supervised local LightSpeed/Ollama workflow with heavy=false. Requires confirmed=true and never grants canonical/public authority.",
   inputSchema: {
     instruction: z.string().min(1),
