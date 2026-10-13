@@ -47,6 +47,17 @@ jobs:
         run: |
           gradle -p apps/cgx-android-link --no-daemon --stacktrace :app:assembleDebug
 
+      - name: Verify APK signing and package identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK_BASE="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          APK="apps/cgx-android-link/app/build/outputs/apk/debug/app-debug.apk"
+          "$SDK_BASE/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK" | tee SIGNATURE-INFO.txt
+          "$SDK_BASE/build-tools/35.0.0/aapt" dump badging "$APK" | head -n 5 | tee PACKAGE-INFO.txt
+          grep -q 'Verified using v2 scheme (APK Signature Scheme v2): true' SIGNATURE-INFO.txt
+          grep -q "package: name='au.com.cognigrex.cgxlink'" PACKAGE-INFO.txt
+
       - name: Record APK checksum and provenance
         shell: bash
         run: |
@@ -56,6 +67,7 @@ jobs:
           cp apps/cgx-android-link/app/build/outputs/apk/debug/app-debug.apk cgx-android-apk-output/CGX-Link-Android-Test.apk
           cd cgx-android-apk-output
           sha256sum CGX-Link-Android-Test.apk > SHA256SUMS.txt
+          cp ../SIGNATURE-INFO.txt ../PACKAGE-INFO.txt .
           printf 'Source SHA: %s\nVariant: debug; test only, not production\nPackage: au.com.cognigrex.cgxlink\n' "$GITHUB_SHA" > BUILD-INFO.txt
           ls -lh CGX-Link-Android-Test.apk
 
