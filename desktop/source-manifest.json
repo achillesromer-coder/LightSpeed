@@ -3611,9 +3611,9 @@
       "sha256": "10655b6424ee8b6a1068d875bc3e96f104ec22b24cde1a5573bec7912c403fdb"
     },
     {
-      "bytes": 10806,
+      "bytes": 12387,
       "path": "LightSpeed_Runtime/lightspeed_runtime/result_receipt_browser.py",
-      "sha256": "fc207ec4ca427771bab717e7cce1db3d010aa6c3823a8870631d1c2f1ba9df18"
+      "sha256": "0015ae1eb51e1045182c2861d95e5c1a7641532ef9808b7353ba1f303853c47b"
     },
     {
       "bytes": 38117,
