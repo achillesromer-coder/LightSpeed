@@ -107,10 +107,15 @@ try {
         throw "Missing CONTROL_PLANE_API_KEY; no tunnel operation attempted."
     }
 
-    # Install only the exact checked-in package lock; suppress npm lifecycle scripts.
+    # First configuration installs the pinned lockfile; later starts never
+    # reinstall dependencies or overwrite an existing running service.
     Push-Location $mcpDirectory
     try {
-        Invoke-NoSecrets $npm @("ci", "--ignore-scripts", "--no-audit", "--no-fund") "Pinned npm ci"
+        if ($Configure) {
+            Invoke-NoSecrets $npm @("ci", "--ignore-scripts", "--no-audit", "--no-fund") "Pinned npm ci"
+        } elseif (-not (Test-Path -LiteralPath (Join-Path $mcpDirectory "node_modules") -PathType Container)) {
+            throw "MCP dependencies missing. First run -Configure in a reviewed checkout."
+        }
         Invoke-NoSecrets $npm @("run", "test:web") "CGX web-only negative privilege test"
     } finally {
         Pop-Location
