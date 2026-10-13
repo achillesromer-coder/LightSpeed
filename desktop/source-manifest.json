@@ -2706,9 +2706,9 @@
       "sha256": "a5fda201c319de6ef8410f92549337ad08155faec639d9c66756b732e7b1d82b"
     },
     {
-      "bytes": 3887,
+      "bytes": 3280,
       "path": "Desktop_Hooks/LightSpeed/config/host_runtime_policy.json",
-      "sha256": "4aefa02afc43d45e10cefcee2f6f875a31ab4518cf4bf6358453ae719f055874"
+      "sha256": "927779db7670aa07900758606a6bd9f98d1f47ee36d1461908ab6dc8a900be56"
     },
     {
       "bytes": 15246,
@@ -3666,9 +3666,9 @@
       "sha256": "b5eb1f84b35c7b0ed1c6eb7724372dc08b45478d08268aec53d145540f0f3321"
     },
     {
-      "bytes": 77259,
+      "bytes": 76776,
       "path": "LightSpeed_Runtime/tests/test_ls_go_bridge.py",
-      "sha256": "b02e5b54ee326abf92200a9e17755f638e5722a9af76632ba7ed3382a6f25de0"
+      "sha256": "7347e39effc59c5aa54db4220a31a438fa61af1e1f45931c8b0637f69a7082fe"
     },
     {
       "bytes": 27818,
