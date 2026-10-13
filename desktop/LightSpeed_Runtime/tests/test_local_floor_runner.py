@@ -384,3 +384,81 @@ def test_quote_selection_exposes_status_beyond_header_and_preserves_literals() -
     assert any('quoted' in option for option in options)
     assert all(option in excerpt for option in options)
     assert len(_citation_quote_candidates('\n'.join(f'evidence passage {i}' for i in range(100)))) == 64
+
+
+def test_host_cpu_preflight_fails_closed_above_eighty_percent(tmp_path: Path) -> None:
+    path=_contract(tmp_path)
+    obj=json.loads(path.read_text(encoding="utf-8"))
+    obj["policy"]["resource_guard"]={"max_host_cpu_percent":80}
+    path.write_text(json.dumps(obj),encoding="utf-8")
+
+    def forbidden_http(*args):
+        raise AssertionError("host CPU guard cannot start Ollama at >80%")
+
+    receipt=run_floor(
+        contract_path=path,floor="Neo",dry_run=False,
+        cpu_snapshot=lambda:81.5,
+        memory_snapshot=lambda:(32*1024**3,16*1024**3),
+        http_post=forbidden_http,lock=False)
+    guard=receipt["resource_preflight"]
+    assert receipt["status"]=="blocked"
+    assert guard["execution_state"]=="stop"
+    assert guard["cpu"]["state"]=="stop"
+    assert guard["cpu"]["max_host_cpu_percent"]==80
+    assert guard["cpu"]["is_continuous_process_cpu_hard_cap"] is False
+    assert "host CPU 81.50%" in receipt["blocked_reason"]
+
+
+def test_host_cpu_probe_unavailable_blocks_new_ollama_session(tmp_path: Path) -> None:
+    path=_contract(tmp_path)
+    obj=json.loads(path.read_text(encoding="utf-8"))
+    obj["policy"]["resource_guard"]={"max_host_cpu_percent":80}
+    path.write_text(json.dumps(obj),encoding="utf-8")
+
+    def cpu_missing():
+        raise OSError("no psutil sampler")
+
+    def forbidden_http(*args):
+        raise AssertionError("unmeasured host CPU cannot start a new session")
+
+    result=run_floor(contract_path=path,floor="Neo",dry_run=False,
+                     cpu_snapshot=cpu_missing,memory_snapshot=lambda:(32*1024**3,16*1024**3),
+                     http_post=forbidden_http,lock=False)
+    assert result["status"]=="blocked"
+    assert result["resource_preflight"]["cpu"]["state"]=="unavailable"
+    assert "host CPU measurement unavailable" in result["blocked_reason"]
+
+
+def test_cpu_preflight_below_ceiling_allows_existing_bounded_floor(tmp_path: Path) -> None:
+    path=_contract(tmp_path)
+    obj=json.loads(path.read_text(encoding="utf-8"))
+    obj["policy"]["resource_guard"]={"max_host_cpu_percent":80}
+    path.write_text(json.dumps(obj),encoding="utf-8")
+    called=[]
+    def fake_http(*args):
+        called.append(1)
+        return {"response":"ok","done":True}
+    result=run_floor(contract_path=path,floor="Neo",dry_run=False,
+                     cpu_snapshot=lambda:58.1,memory_snapshot=lambda:(32*1024**3,16*1024**3),
+                     ollama_status_probe=lambda *args:{"state":"available","loaded_model_count":0,
+                                                       "loaded_models":[]},
+                     http_post=fake_http,lock=False)
+    assert result["status"]=="completed"
+    assert called==[1]
+    assert result["resource_preflight"]["cpu"]["state"]=="ready"
+    assert result["resource_preflight"]["cpu"]["observed_percent"]==58.1
+
+
+def test_invalid_cpu_policy_cannot_grant_more_than_80_percent(tmp_path: Path) -> None:
+    path=_contract(tmp_path)
+    obj=json.loads(path.read_text(encoding="utf-8"))
+    obj["policy"]["resource_guard"]={"max_host_cpu_percent":95}
+    path.write_text(json.dumps(obj),encoding="utf-8")
+    def forbidden_http(*args):
+        raise AssertionError("CPU >80% policy must fail closed")
+    result=run_floor(contract_path=path,floor="Neo",dry_run=False,
+                     memory_snapshot=lambda:(32*1024**3,16*1024**3),
+                     http_post=forbidden_http,lock=False)
+    assert result["status"]=="blocked"
+    assert result["resource_preflight"]["cpu"]["state"]=="invalid_policy"
+
