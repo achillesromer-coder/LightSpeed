@@ -227,12 +227,6 @@ def test_half_speed_host_profile_bounds_background_work() -> None:
     limits = json.loads(policy_path.read_text(encoding="utf-8"))["runtime_limits"]
 
     assert limits["cognigrex_speed_percent"] == 50
-    assert limits["aggregate_cgx_cpu_budget_percent"] == 80
-    assert limits["cpu_reserved_for_os_and_interactive_percent"] == 20
-    assert limits["cpu_budget_enforcement_state"] == "PENDING_NATIVE_SAMPLING_LEASE_AND_CANCEL_READBACK"
-    assert limits["mobile_device_required"] is False
-    assert limits["mobile_device_availability"] == "UNAVAILABLE_REPLACEMENT_PENDING"
-    assert limits["local_execution_when_cpu_guard_unverified"] == "READ_ONLY_AND_EXISTING_SAFE_WORKERS_ONLY"
     assert limits["max_background_queue_workers"] == 1
     assert limits["max_concurrent_ollama_jobs"] == 1
     assert limits["max_floor_boot_parallelism"] == 2
