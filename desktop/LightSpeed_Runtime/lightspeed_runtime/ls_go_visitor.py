@@ -477,7 +477,8 @@ def register_visitor_routes(
             not isinstance(object_id, str)
             or not 1 <= len(object_id) <= 120
             or not all(c.isalnum() or c in "._:-" for c in object_id)
-            or lens not in LENSES or view_id not in valid_views
+            or not isinstance(lens, str) or lens not in LENSES
+            or not isinstance(view_id, str) or view_id not in valid_views
         ):
             raise HTTPException(400, "Invalid exact object, lens or view selection")
         if body.get("requested_valid_at") is not None or body.get("requested_recorded_at") is not None:
