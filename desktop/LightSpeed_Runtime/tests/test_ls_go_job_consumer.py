@@ -91,6 +91,33 @@ def test_run_forever_fails_closed_and_records_heartbeat_error(tmp_path: Path, mo
     assert not ls_go_job_consumer.heartbeat_path(shell).exists()
 
 
+def test_restart_holds_before_claiming_when_prior_job_is_running(tmp_path: Path, monkeypatch):
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    with sqlite3.connect(db.path) as conn:
+        conn.executemany(
+            "INSERT INTO jobs (id,job_type,status,params_json) VALUES (?,'ls_go_command',?,'{}')",
+            [(701, "running"), (702, "pending")],
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    monkeypatch.setattr(consumer, "process_once", lambda: (_ for _ in ()).throw(
+        AssertionError("unknown prior execution must hold fresh queued work")))
+
+    consumer.run_forever(poll_seconds=0.01)
+
+    receipt = json.loads(
+        ls_go_job_consumer.status_receipt_path(shell).read_text(encoding="utf-8")
+    )
+    assert receipt["state"] == "recovery_hold_unresolved_running"
+    assert receipt["unresolved_job_ids_sample"] == [701]
+    assert receipt["unresolved_job_ids_truncated"] is False
+    assert receipt["pending_jobs_untouched"] is True
+    assert db.execute_query("SELECT status FROM jobs WHERE id=701")[0]["status"] == "running"
+    assert db.execute_query("SELECT status FROM jobs WHERE id=702")[0]["status"] == "pending"
+    assert not ls_go_job_consumer.heartbeat_path(shell).exists()
+
+
 def test_consumer_does_not_resolve_operator_root(tmp_path: Path, monkeypatch):
     shell = tmp_path / "App"
     shell.mkdir()

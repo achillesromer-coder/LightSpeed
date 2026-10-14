@@ -406,6 +406,22 @@ class LSGoJobConsumer:
         )
         return self.db.execute_query(query, ("ls_go_command", max(1, min(int(limit), 100))))
 
+    def unresolved_running_job_ids(self) -> list[int]:
+        """Detect prior in-flight work before this singleton claims new jobs.
+
+        A prior process may have executed an action before losing its durable
+        result. Such work cannot safely be replayed or assumed complete here.
+        """
+        if self.db is None or not callable(getattr(self.db, "execute_query", None)):
+            return []
+        if not {"id", "job_type", "status"}.issubset(self._columns("jobs")):
+            return []
+        rows = self.db.execute_query(
+            "SELECT id FROM jobs WHERE job_type = ? AND status = ? ORDER BY id ASC LIMIT 101",
+            ("ls_go_command", "running"),
+        )
+        return [int(row["id"]) for row in rows]
+
     def _claim_job(self, job_id: int) -> bool:
         cols = self._columns("jobs")
         now = utc_now_iso()
@@ -923,6 +939,22 @@ class LSGoJobConsumer:
     def run_forever(self, *, poll_seconds: float = POLL_SECONDS) -> None:
         self._acquire_heartbeat_lock()
         try:
+            unresolved = self.unresolved_running_job_ids()
+            if unresolved:
+                _write_json(status_receipt_path(self.shell_root), {
+                    "schema_version": CONSUMER_SCHEMA,
+                    "checked_utc": utc_now_iso(),
+                    "state": "recovery_hold_unresolved_running",
+                    "shell_root": str(self.shell_root),
+                    "unresolved_job_ids_sample": unresolved[:100],
+                    "unresolved_job_ids_truncated": len(unresolved) > 100,
+                    "pending_jobs_untouched": True,
+                    "results_written": 0,
+                    "public_publish_authorized": False,
+                    "next_action": "Reconcile each job against its exact durable receipt before restarting; never replay unknown work.",
+                })
+                self._stop.set()
+                return
             while not self._stop.is_set():
                 state = "polling"
                 try:
