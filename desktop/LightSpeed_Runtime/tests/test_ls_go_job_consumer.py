@@ -515,15 +515,100 @@ def test_floor_usage_is_retained_in_existing_job_result(tmp_path: Path, monkeypa
         "ollama_generate_attempts": 1, "tool_calls": None,
         "cost_usd": None, "budget_enforced": False,
     }
-    monkeypatch.setattr(ls_go_job_consumer, "run_floor", lambda **_kw: {
+    monkeypatch.setattr(ls_go_job_consumer.LSGoJobConsumer, "_run_floor_supervised", lambda self, **_kw: {
         "status": "completed", "receipt_id": "floor-proof-1", "usage_accounting": usage,
     })
     consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
     assert consumer.process_once()["results_written"] == 1
     result = json.loads(db.execute_query("SELECT result_json FROM jobs WHERE id=601")[0]["result_json"])
     assert result["floor_receipt"]["usage_accounting"] == usage
+    assert result["floor_supervision"] == {
+        "client_wall_deadline_seconds": 185,
+        "requested_completion_token_cap": 1024,
+        "server_cancellation_verified": False,
+    }
     assert result["action_wall_elapsed_ms"] >= 0
     assert result["action_wall_clock_budget_enforced"] is False
+
+
+@pytest.mark.parametrize("reason", ["revoked", "deadline", "shutdown"])
+def test_supervised_floor_stops_worker_before_another_job(tmp_path: Path, monkeypatch, reason: str) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=object())
+
+    class Child:
+        terminated = False
+        returncode = None
+
+        def communicate(self, timeout=None):
+            if not self.terminated:
+                raise ls_go_job_consumer.subprocess.TimeoutExpired("floor", timeout)
+            self.returncode = -15
+            return ("", None)
+
+        def terminate(self):
+            self.terminated = True
+
+    child = Child()
+    def start(*_args, **_kwargs):
+        if reason == "shutdown":
+            consumer._stop.set()
+        return child
+
+    monkeypatch.setattr(ls_go_job_consumer.subprocess, "Popen", start)
+    if reason == "revoked":
+        checks = 0
+
+        def check(_job_id):
+            nonlocal checks
+            checks += 1
+            if checks == 2:
+                raise RuntimeError("claim revoked")
+
+        monkeypatch.setattr(consumer, "_require_live_claim", check)
+        expected = RuntimeError
+    elif reason == "deadline":
+        monkeypatch.setattr(consumer, "_require_live_claim", lambda _job_id: None)
+        ticks = iter([0.0, 186.0])
+        monkeypatch.setattr(ls_go_job_consumer.time, "monotonic", lambda: next(ticks))
+        expected = TimeoutError
+    else:
+        monkeypatch.setattr(consumer, "_require_live_claim", lambda _job_id: None)
+        expected = RuntimeError
+    with pytest.raises(expected):
+        consumer._run_floor_supervised(job_id=601, floor="Neo", allow_heavy=False, receipt_target="neo")
+    assert child.terminated
+    assert consumer._stop.is_set()
+
+
+def test_supervised_floor_reads_exact_child_receipt(tmp_path: Path, monkeypatch) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=object())
+    monkeypatch.setattr(consumer, "_require_live_claim", lambda _job_id: None)
+    receipt_path = tmp_path / "floor.json"
+    receipt = {"status": "completed", "floor": "Neo", "receipt_path": str(receipt_path),
+               "usage_accounting": {"total_tokens": 22, "budget_enforced": False}}
+    receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+    commands = []
+
+    class Child:
+        returncode = 0
+
+        def communicate(self, timeout=None):
+            return (json.dumps({"status": "completed", "receipt_path": str(receipt_path)}), None)
+
+    def start(command, **_kwargs):
+        commands.append(command)
+        return Child()
+
+    monkeypatch.setattr(ls_go_job_consumer.subprocess, "Popen", start)
+    result = consumer._run_floor_supervised(job_id=601, floor="Neo", allow_heavy=False, receipt_target="neo")
+    assert result == receipt
+    assert "--execute" in commands[0]
+    assert "--num-predict" in commands[0]
+    assert "--allow-heavy" not in commands[0]
 
 
 def configure_shell(root: Path) -> None:

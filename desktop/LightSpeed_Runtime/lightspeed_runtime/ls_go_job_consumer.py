@@ -7,6 +7,8 @@ import json
 import os
 from pathlib import Path
 import re
+import subprocess
+import sys
 import threading
 import time
 from typing import Any
@@ -803,6 +805,61 @@ class LSGoJobConsumer:
                 != claim["claim_id"]):
             raise RuntimeError("source intake execution claim was revoked or changed")
 
+    def _run_floor_supervised(self, *, job_id: int, floor: str,
+                              allow_heavy: bool, receipt_target: str) -> dict[str, Any]:
+        """Bound one existing floor runner call; stop this worker on uncertain cancellation."""
+        if receipt_target not in {"neo", "floor"}:
+            raise ValueError("unsupported floor receipt target")
+        self._require_live_claim(job_id)
+        command = [
+            sys.executable, "-m", "lightspeed_runtime.local_floor_runner",
+            "--floor", floor, "--execute", "--receipt-target", receipt_target,
+            "--timeout-seconds", "180", "--num-predict", "1024",
+        ]
+        if allow_heavy:
+            command.append("--allow-heavy")
+        child = subprocess.Popen(
+            command, cwd=Path(__file__).resolve().parents[1],
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+        )
+        deadline = time.monotonic() + 185
+        while True:
+            try:
+                if self._stop.is_set():
+                    raise RuntimeError("floor cancelled by consumer shutdown")
+                self._require_live_claim(job_id)
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise TimeoutError("floor exceeded supervised 185-second deadline")
+                output, _ = child.communicate(timeout=min(0.25, remaining))
+                break
+            except subprocess.TimeoutExpired:
+                continue
+            except Exception:
+                # The Ollama server may still be finishing a disconnected request.
+                # Do not start another queue item or replay this claim on restart.
+                self._stop.set()
+                child.terminate()
+                try:
+                    child.communicate(timeout=5)
+                except subprocess.TimeoutExpired:
+                    child.kill()
+                    child.communicate(timeout=5)
+                raise
+        if child.returncode != 0:
+            raise RuntimeError(f"floor runner exited {child.returncode}: {output[-500:]}")
+        try:
+            summary = json.loads(output)
+            path = Path(summary["receipt_path"])
+            receipt = json.loads(path.read_text(encoding="utf-8"))
+        except (KeyError, OSError, ValueError, TypeError) as exc:
+            raise RuntimeError("floor runner did not return a readable receipt") from exc
+        if (not path.is_absolute() or receipt.get("receipt_path") != str(path)
+                or str(receipt.get("floor") or "").casefold() != floor.casefold()
+                or receipt.get("status") != summary.get("status")):
+            raise RuntimeError("floor runner receipt identity does not match the request")
+        return receipt
+
     def _execute_action(
         self,
         *,
@@ -943,17 +1000,28 @@ class LSGoJobConsumer:
                     "error": "typed local_floor_wakeup requires floor",
                     "next_action": "Supply an explicit canonical floor identity.",
                 }
-            floor_receipt = run_floor(
-                floor=floor,
-                dry_run=not bool(params.get("execute", True)),
-                allow_heavy=bool(params.get("allow_heavy", False)),
-                receipt_target=str(params.get("receipt_target") or "neo"),
-            )
+            if bool(params.get("execute", True)):
+                floor_receipt = self._run_floor_supervised(
+                    job_id=job["id"], floor=floor,
+                    allow_heavy=bool(params.get("allow_heavy", False)),
+                    receipt_target=str(params.get("receipt_target") or "neo"),
+                )
+            else:
+                floor_receipt = run_floor(
+                    floor=floor, dry_run=True,
+                    allow_heavy=bool(params.get("allow_heavy", False)),
+                    receipt_target=str(params.get("receipt_target") or "neo"),
+                )
             return {
                 "status": "completed" if floor_receipt.get("status") == "completed" else "blocked",
                 "action_type": action_type,
                 "summary": f"Bounded local floor wake-up returned for {floor}.",
                 "floor_receipt": floor_receipt,
+                "floor_supervision": {
+                    "client_wall_deadline_seconds": 185 if bool(params.get("execute", True)) else None,
+                    "requested_completion_token_cap": 1024 if bool(params.get("execute", True)) else None,
+                    "server_cancellation_verified": False,
+                },
                 "next_action": "Reconcile the floor receipt through Neo/Achilles before any promotion.",
             }
         return {
@@ -1090,6 +1158,8 @@ class LSGoJobConsumer:
         jobs = self.pending_jobs(limit=limit)
         results: list[dict[str, Any]] = []
         for job in jobs:
+            if self._stop.is_set():
+                break
             receipt = self.process_job(job)
             if receipt:
                 results.append(receipt)
