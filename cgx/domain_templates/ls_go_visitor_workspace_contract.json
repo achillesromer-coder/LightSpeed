@@ -119,5 +119,57 @@
     "public_capabilities": "Expose only admission_enabled and privacy policy state; never expose the policy reference itself.",
     "fail_state": "OWNER_ACCEPTANCE_REQUIRED",
     "authority_transfer": false
+  },
+  "reusable_surface_window": {
+    "status": "REVIEW_ONLY_SOURCE; NO_PUBLIC_HOST_ADMITTED",
+    "source": "apps/lightspeed-go/src/cgxSurfaceWindow.ts",
+    "embed_selector": "CGX-SURFACE/UNISPACE-REVIEW",
+    "embed_selector_is_authentication": false,
+    "host_entry": "Existing apps/lightspeed-go/review.html only, within dist-review",
+    "backend": "Existing LS GO FastAPI bridge: POST /api/v1/visitor/surface",
+    "identity": "Exact CGX Object_ID supplied by caller; only owner-admitted public manifest is served",
+    "lens_ids": [
+      "neo",
+      "athene",
+      "achilles",
+      "alexandria"
+    ],
+    "surfaces": {
+      "overview": "released summary/evidence/citations; no model bytes",
+      "evidence": "released evidence stage/limits/citations; no private sources",
+      "model": "approved HTTPS representation URL metadata only; user initiated navigation",
+      "map": "SURFACE_NOT_RELEASED until owner-signed spatial projection exists",
+      "timeline": "SURFACE_NOT_RELEASED until bitemporal source/epoch proof exists"
+    },
+    "historical_selector": "requested_valid_at / requested_recorded_at returns 409 until admitted bitemporal public manifest",
+    "public_routes": [
+      "/cgx",
+      "/operations/w1",
+      "/operations/w2",
+      "/operations/w3",
+      "/operations/w4",
+      "/operations/w5",
+      "/operations/w6",
+      "/gmat"
+    ],
+    "public_route_rule": "optional visual mount to approved reviewer origin only; public route never receives invite token or session secret; legacy content remains unchanged",
+    "secure_host_requirements": [
+      "approved HTTPS origin and exact reverse-proxy route permit-list",
+      "CSP frame-ancestors limited to approved web embedding origins",
+      "no-store, no-referrer",
+      "owner admission and #158/#161 external acceptance",
+      "distinct public-only artifact, never private operator dist"
+    ],
+    "forbidden": [
+      "no new server, database, canonical root or compute scheduler",
+      "no client embed API key/visitor session/invite",
+      "no private source or raw geometry in static bundle",
+      "no public claim upgrade or machine execution"
+    ],
+    "related_source_branches": [
+      "LightSpeed PR #172 visitor",
+      "LightSpeed PR #173 spatial/temporal candidate",
+      "LightSpeed PR #175 UniSpace shorthand candidate"
+    ]
   }
 }
