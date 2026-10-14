@@ -335,6 +335,25 @@ def test_claim_binds_exact_work_and_rejects_replay_after_status_reset(tmp_path: 
     assert db.execute_query("SELECT status FROM jobs WHERE id=601")[0]["status"] == "pending"
 
 
+def test_source_intake_live_claim_check_rejects_cancelled_job(tmp_path: Path) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    params_json = json.dumps({"command_id": "GO-TASK-INTAKE-LEASE", "action_type": "source_preserving_intake"})
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status) VALUES (501,'queued')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id) "
+            "VALUES (601,'ls_go_command','pending',?,'{}',501)", (params_json,),
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    assert consumer._claim_job(601, expected_job=consumer.pending_jobs()[0])
+    consumer._require_live_claim(601)
+    db.execute_update("UPDATE jobs SET status='held' WHERE id=601")
+    with pytest.raises(RuntimeError, match="revoked or changed"):
+        consumer._require_live_claim(601)
+
+
 def test_claim_holds_when_selected_job_identity_changes(tmp_path: Path) -> None:
     shell = tmp_path / "App"
     configure_shell(shell)

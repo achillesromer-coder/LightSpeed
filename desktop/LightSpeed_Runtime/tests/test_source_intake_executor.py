@@ -54,3 +54,25 @@ def test_archive_expansion_budget_is_checked_before_parsing(tmp_path, monkeypatc
     with pytest.raises(SourceIntakeError, match="archive exceeds"):
         execute_source_intake({"source_path": str(source), "source_sha256": hashlib.sha256(data.getvalue()).hexdigest()},
                               command_id="test-archive", shell_root=tmp_path / "App", allowed_roots=[tmp_path])
+
+
+def test_intake_stops_when_claim_is_revoked_during_source_read(tmp_path):
+    source = tmp_path / "source.bin"
+    raw = b"x" * (2 * 1024 * 1024)
+    source.write_bytes(raw)
+    checks = 0
+
+    def check_active():
+        nonlocal checks
+        checks += 1
+        if checks == 3:
+            raise RuntimeError("claim revoked")
+
+    with pytest.raises(RuntimeError, match="claim revoked"):
+        execute_source_intake(
+            {"source_path": str(source), "source_sha256": hashlib.sha256(raw).hexdigest()},
+            command_id="cancelled-intake", shell_root=tmp_path / "App",
+            allowed_roots=[tmp_path], check_active=check_active,
+        )
+    assert source.read_bytes() == raw
+    assert not (tmp_path / "App").exists()

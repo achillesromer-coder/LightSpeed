@@ -787,6 +787,22 @@ class LSGoJobConsumer:
             ),
         }
 
+    def _require_live_claim(self, job_id: int) -> None:
+        """Stop cooperative native work when its exact DB lease is revoked."""
+        claim = self._execution_claims[job_id]
+        with self.db.get_connection() as conn:
+            row = conn.execute(
+                "SELECT status,params_json,metadata_json,task_id FROM jobs "
+                "WHERE id = ? AND job_type = ?", (job_id, "ls_go_command"),
+            ).fetchone()
+        if (row is None or row["status"] != "running"
+                or row["task_id"] != claim["task_id"]
+                or hashlib.sha256(row["params_json"].encode("utf-8")).hexdigest()
+                != claim["job_params_sha256"]
+                or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("claim_id")
+                != claim["claim_id"]):
+            raise RuntimeError("source intake execution claim was revoked or changed")
+
     def _execute_action(
         self,
         *,
@@ -839,7 +855,8 @@ class LSGoJobConsumer:
             configured = (home.get("environment") or {}).get("assimilation_source_root")
             intake = execute_source_intake(params.get("action_payload"), command_id=command_id,
                                           shell_root=self.shell_root,
-                                          allowed_roots=[Path(configured)] if configured else [])
+                                          allowed_roots=[Path(configured)] if configured else [],
+                                          check_active=lambda: self._require_live_claim(job["id"]))
             return {"status": intake["status"], "action_type": action_type, "intake": intake,
                     "summary": "Exact source snapshot and derived extraction persisted for review.",
                     "next_action": "Review source ownership, extraction coverage and domain mapping before semantic ingestion."}

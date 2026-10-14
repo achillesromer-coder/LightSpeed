@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 import re
 import tempfile
-from typing import Any
+from typing import Any, Callable
 import zipfile
 
 from lightspeed_runtime.source_intake import SourceIntakeError, build_source_envelope
@@ -41,6 +41,7 @@ def _bounded_archive(data: bytes) -> None:
 
 def execute_source_intake(
     payload: Any, *, command_id: str, shell_root: Path, allowed_roots: list[Path],
+    check_active: Callable[[], None] | None = None,
 ) -> dict[str, Any]:
     """Preserve one exact byte snapshot and derived envelope; never modify a carrier.
 
@@ -52,15 +53,33 @@ def execute_source_intake(
     roots = [Path(root).resolve(strict=True) for root in allowed_roots]
     if not roots or not source.is_file() or not any(source.is_relative_to(root) for root in roots):
         raise SourceIntakeError("source is outside the configured intake roots")
+    def active() -> None:
+        if check_active is not None:
+            check_active()
+
+    active()
+    chunks = []
+    size = 0
     with source.open("rb") as stream:
-        data = stream.read(MAX_SOURCE_BYTES + 1)
+        while True:
+            active()
+            chunk = stream.read(min(1024 * 1024, MAX_SOURCE_BYTES + 1 - size))
+            if not chunk:
+                break
+            chunks.append(chunk)
+            size += len(chunk)
+            if size > MAX_SOURCE_BYTES:
+                raise SourceIntakeError("source exceeds bounded extraction budget")
+    data = b"".join(chunks)
     if len(data) > MAX_SOURCE_BYTES:
         raise SourceIntakeError("source exceeds bounded extraction budget")
     digest = hashlib.sha256(data).hexdigest()
     if digest != request["source_sha256"]:
         raise SourceIntakeError("source changed or does not match the requested hash")
     _bounded_archive(data)
+    active()
     envelope = build_source_envelope(source_name=source.name, data=data, source_ref=str(source))
+    active()
     envelope_bytes = (json.dumps(envelope, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
     parent = neo_actions_root(shell_root) / "intake"
     destination = parent / hashlib.sha256(command_id.encode("utf-8")).hexdigest()
@@ -70,6 +89,7 @@ def execute_source_intake(
     stage = Path(tempfile.mkdtemp(prefix=".intake-", dir=parent))
     artifacts = []
     for name, content in (("source.native", data), ("source-envelope.json", envelope_bytes)):
+        active()
         path = stage / name
         path.write_bytes(content)
         actual = hashlib.sha256(path.read_bytes()).hexdigest()
@@ -88,5 +108,6 @@ def execute_source_intake(
     }
     (stage / "receipt.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
     # Publish the complete bundle together. On failure retain staging for inspection.
+    active()
     os.rename(stage, destination)
     return json.loads((destination / "receipt.json").read_text(encoding="utf-8"))
