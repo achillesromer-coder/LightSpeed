@@ -418,6 +418,50 @@ def test_canonical_loopback_endpoint_preserves_remote_hosts() -> None:
         == "https://models.example:11434"
     )
 
+
+@pytest.mark.parametrize("endpoint", [
+    "https://models.example:11434", "https://localhost:11434",
+    "http://127.0.0.1:11434/other", "http://127.0.0.1:11434@models.example",
+    "http://user:pass@localhost:11434", "http://127.0.0.1", "http://[::1",
+])
+def test_nonlocal_or_malformed_floor_endpoint_never_posts(
+    tmp_path: Path, endpoint: str,
+) -> None:
+    contract_path = _contract(tmp_path)
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    contract["floors"][0]["ollama_connection"]["endpoint"] = endpoint
+    contract_path.write_text(json.dumps(contract), encoding="utf-8")
+
+    def forbidden_http(*_args):
+        raise AssertionError("nonlocal floor endpoint must not post")
+
+    receipt = run_floor(
+        contract_path=contract_path, floor="Neo", dry_run=False,
+        allow_heavy=True, http_post=forbidden_http, lock=False,
+    )
+    assert receipt["status"] == "blocked"
+    assert "Ollama endpoint" in receipt["blocked_reason"]
+    assert receipt["usage_accounting"]["ollama_generate_attempts"] == 0
+    assert receipt["endpoint_policy"] == "loopback_http_only"
+
+
+def test_cloud_named_floor_model_stays_blocked_with_heavy_flag(tmp_path: Path) -> None:
+    contract_path = _contract(tmp_path)
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    contract["floors"][0]["ollama_connection"]["model"] = "remote-model:cloud"
+    contract_path.write_text(json.dumps(contract), encoding="utf-8")
+
+    def forbidden_http(*_args):
+        raise AssertionError("cloud-named model must not post")
+
+    receipt = run_floor(
+        contract_path=contract_path, floor="Neo", dry_run=False,
+        allow_heavy=True, http_post=forbidden_http, lock=False,
+    )
+    assert receipt["status"] == "blocked"
+    assert "cloud model blocked" in receipt["blocked_reason"]
+    assert receipt["usage_accounting"]["ollama_generate_attempts"] == 0
+
 from lightspeed_runtime.local_floor_runner import (
     _receipt_timestamp,
     validate_grounded_response,

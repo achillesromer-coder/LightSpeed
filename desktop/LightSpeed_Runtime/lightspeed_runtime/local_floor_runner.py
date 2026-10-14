@@ -165,7 +165,10 @@ def run_floor(
         source_error = str(exc)
         request_body = {"model": model, "prompt": "", "stream": False, "think": False}
 
-    blocked_reason = source_error or _blocked_heavy_reason(floor_row, model, allow_heavy=allow_heavy)
+    blocked_reason = (
+        source_error or _nonlocal_endpoint_reason(endpoint)
+        or _blocked_heavy_reason(floor_row, model, allow_heavy=allow_heavy)
+    )
     if not blocked_reason and max_prompt_utf8_bytes is not None and (
             len(str(request_body.get("prompt") or "").encode("utf-8")) > max_prompt_utf8_bytes):
         blocked_reason = "prompt exceeds claimed UTF-8 byte ceiling"
@@ -316,12 +319,17 @@ def build_ollama_request(
 
 def _canonical_loopback_endpoint(endpoint: str) -> str:
     """Route local model work to the model-bearing IPv4 singleton."""
-    parsed = urlparse(endpoint)
-    if parsed.hostname != "localhost":
+    try:
+        parsed = urlparse(endpoint)
+        host = parsed.hostname
+        port = parsed.port
+    except ValueError:
+        return endpoint
+    if host != "localhost" or parsed.username is not None or parsed.password is not None:
         return endpoint
     host = "127.0.0.1"
-    if parsed.port is not None:
-        host = f"{host}:{parsed.port}"
+    if port is not None:
+        host = f"{host}:{port}"
     return parsed._replace(netloc=host).geturl()
 
 
@@ -516,6 +524,7 @@ def build_receipt(
         "activation_mode": (floor.get("activation") or {}).get("mode"),
         "model": request_body.get("model"),
         "endpoint": (floor.get("ollama_connection") or {}).get("endpoint") or (contract.get("ollama") or {}).get("endpoint"),
+        "endpoint_policy": "loopback_http_only",
         "receipt_path": str(receipt_path),
         "session_policy": "one_floor_prompt_at_a_time",
         "manual_heavy_allowed": not bool(blocked_reason) and _is_heavy_or_manual(floor, str(request_body.get("model") or "")),
@@ -789,7 +798,10 @@ def build_resource_preflight(
                 cpu_status["error"] = str(exc)
                 stop_reasons.append("host CPU measurement unavailable; no new local Ollama session")
 
-    endpoint_host = (urlparse(endpoint).hostname or "").casefold()
+    try:
+        endpoint_host = (urlparse(endpoint).hostname or "").casefold()
+    except ValueError:
+        endpoint_host = ""
     local_endpoint = endpoint_host in {"localhost", "127.0.0.1", "::1"}
     if stop_reasons:
         ollama = {
@@ -961,10 +973,28 @@ def normalize_receipt_file(path: Path) -> dict[str, Any]:
 
 
 def _blocked_heavy_reason(floor: dict[str, Any], model: str, *, allow_heavy: bool) -> str | None:
+    if "cloud" in model.casefold():
+        return "cloud model blocked; local floor work requires an installed local model"
     if allow_heavy:
         return None
     if _is_heavy_or_manual(floor, model):
         return "manual/heavy floor model blocked; pass allow_heavy=True or --allow-heavy to run"
+    return None
+
+
+def _nonlocal_endpoint_reason(endpoint: str) -> str | None:
+    try:
+        parsed = urlparse(endpoint)
+        host = parsed.hostname
+        port = parsed.port
+    except ValueError:
+        return "Ollama endpoint is malformed"
+    if (parsed.scheme != "http" or host not in {"127.0.0.1", "::1"}
+            or parsed.username is not None or parsed.password is not None
+            or parsed.path not in {"", "/"} or parsed.query or parsed.fragment):
+        return "Ollama endpoint must be loopback HTTP without credentials or extra path"
+    if port is None:
+        return "Ollama endpoint requires an explicit local port"
     return None
 
 
