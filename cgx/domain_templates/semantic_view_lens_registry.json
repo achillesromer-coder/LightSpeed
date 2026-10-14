@@ -262,6 +262,120 @@
     "may_be_host_local": true,
     "canonical_mutation_requires_separate_command": true,
     "read_only_facets": {
+      "cross_surface_spatiotemporal": {
+        "status": "REVIEW_ONLY_CONTRACT / NO_INSTALLED_OR_PUBLIC_RUNTIME_ACTIVATION",
+        "purpose": "One existing Cognigrex.cgx Object_ID selected from Chat, Maps, MPL globe, GMAT mission view, LS GO or workspace/dataspace resolves into a permission-checked, time-bound read-only projection; no parallel map store, mission master, public relay or runtime.",
+        "existing_lenses": [
+          "map-spatial",
+          "timeline-dbr",
+          "active-object-inspector",
+          "chat-generative",
+          "twin-3d",
+          "evidence-claim",
+          "network-runtime"
+        ],
+        "owner_issue": "LightSpeed#161",
+        "privacy_release_gate": "LightSpeed#158",
+        "canonical_selection_fields": [
+          "Object_ID",
+          "domain_id",
+          "type_id",
+          "source_revision",
+          "source_sha256",
+          "state_root",
+          "DBR_root",
+          "geometry_ref",
+          "geometry_root",
+          "evidence_class",
+          "source_owner",
+          "rights_acl_ref"
+        ],
+        "selector_context_fields": [
+          "requested_lens",
+          "audience",
+          "viewer_role",
+          "capability_lease_ref",
+          "scenario_run_id",
+          "requested_valid_at",
+          "requested_recorded_at",
+          "device_capabilities"
+        ],
+        "spatial_contract": {
+          "required_if_geometric": [
+            "coordinate_reference_system",
+            "datum",
+            "coordinate_axis_order",
+            "linear_or_angular_units",
+            "geometry_source_ref",
+            "geometry_source_hash",
+            "source_resolution_or_tolerance"
+          ],
+          "conditional_if_vertical_or_dynamic": [
+            "height_datum",
+            "vertical_units",
+            "frame_origin",
+            "reference_body",
+            "epoch_time_scale",
+            "transform_method_and_source",
+            "position_uncertainty"
+          ],
+          "constraint": "Map coordinates and basemap imagery are visual context. Reproject/transform with source- and accuracy-qualified methods before engineering decisions. Geometry adjacency does not imply network connectivity, elevation equivalence or permission."
+        },
+        "temporal_contract": {
+          "valid_at": "physical, simulated or domain-valid epoch",
+          "recorded_at": "time observation/source revision became known to CGX",
+          "resolved_at": "time an owner-reviewed interpretation or decision was accepted; may be absent",
+          "rules": [
+            "Never silently replace a historical valid-time view with the latest recorded state.",
+            "Retain contradictory, superseded and unknown temporal states with provenance.",
+            "Require explicit time scale/frame/epoch for GMAT exports and time-bearing terrestrial sensors.",
+            "A timestamp alone does not verify signature, clock calibration, measurement independence or physical truth."
+          ]
+        },
+        "authority_and_flow": {
+          "map": "Discovery and 2D geographic representation; not GIS survey authority, owned persistence, mission propagation, risk method or physical transmitter.",
+          "mpl": "Romer-MPL owns PRE_RELEASE Maximum Probable Loss screening and its documented heuristic/external hazard-geometry limitations; no regulatory approval by visual overlay.",
+          "gmat": "Native GMAT owns named scenario, force model, frame, time system, propagation/event/state-vector receipt; browser animation or a labelled scenario is not a native GMAT run.",
+          "cgx": "Existing FileSpace owns object/root and source identity; DataSpace transports only authorised verified deltas under existing leases/readbacks.",
+          "lightspeed": "Existing installed Smith/LightSpeed executor owns typed queues and receipts; host-offline state cannot be inferred as a successful run.",
+          "guest": "Existing #172 reviewer and #174 synthetic-only public presentation; no direct private API, host file path, unrestricted source/mesh, private content hash or canonical mutation.",
+          "interaction_steps": [
+            "resolve exact Object_ID from selection",
+            "verify existing source/root and viewer authority server-side",
+            "select explicit spatial frame and valid/recorded epoch",
+            "project allowlisted existing lens and admitted evidence",
+            "return unknown/withheld/no-data where evidence absent",
+            "capture attributable reviewer question/hold/overlay suggestion",
+            "route any approved write to separate owner Resolve and append-only DBR receipt"
+          ]
+        },
+        "public_projection_constraints": [
+          "Client-provided role, permission flag, release class, approved receipt or model hash never substitutes for trusted server-side verification.",
+          "Only owner-approved Public projections with attributable source rights, released content hash and current approval receipt may be served.",
+          "Response on withheld objects is non-enumerating; private roots, geometry, node roster and metadata are not disclosed through static assets.",
+          "No public execution, live network exchange, automatic GMAT/MPL calculation, deployment or root promotion is authorised by this facet."
+        ],
+        "alexandria_physical_boundary": {
+          "semantic_graph": "Dual-dodecahedral metaphor may organise concepts and relations; does not establish a geodetic or RF coverage mesh.",
+          "candidate_sites": "Global capitals are possible research/administrative anchors, not measured backbone, powered nodes or legal spectrum rights.",
+          "australias_contingency": "Australian sovereign primary and independent fallback domains are a resilience design objective, not demonstrated geographic coverage.",
+          "unverified": "Biosphere resonant electromagnetic boundary, worldwide backscatter handshake and lone-node bridging remain physical hypotheses requiring approved sensors, RF link budgets, calibration, propagation measurements and independent tests."
+        },
+        "acceptance_gates": [
+          "JSON/lens registry and source-contract regression PASS at exact branch head",
+          "one owner-approved object selected consistently across two authorised views without root drift or private leakage",
+          "native GMAT run receipt with scenario/forces/frame/epoch and independent benchmark before claiming orbit accuracy",
+          "MPL current-source risk/browser receipt and independent required hazard geometry before regulatory parity",
+          "private static-asset negative tests, revoked guest tests and four-seat reviewer policy approvals under #158/#172",
+          "two separately authenticated devices with peer lease/sequence/replay/delta exact readback under #161",
+          "no physical radio/backscatter qualification until separately instrumented and legally authorised"
+        ],
+        "semantic_authority": false,
+        "execution_authority": false,
+        "canonical_mutation_authorized": false,
+        "public_publish_authorized": false,
+        "physical_transmission_authorized": false
+      },
       "rolling_observer": {
         "source": "existing CGX DataSpace observation window; no separate source authority",
         "required_context": [
