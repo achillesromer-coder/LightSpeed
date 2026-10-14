@@ -31,6 +31,7 @@ LAST_RECEIPT_TAIL_BYTES = 64 * 1024
 HttpPost = Callable[[str, dict[str, Any], float], dict[str, Any]]
 OllamaStatusProbe = Callable[[str, float], dict[str, Any]]
 MemorySnapshot = Callable[[], tuple[int, int]]
+CpuSnapshot = Callable[[], float]
 
 
 class LocalFloorRunnerError(RuntimeError):
@@ -119,6 +120,7 @@ def run_floor(
     http_post: HttpPost | None = None,
     ollama_status_probe: OllamaStatusProbe | None = None,
     memory_snapshot: MemorySnapshot | None = None,
+    cpu_snapshot: CpuSnapshot | None = None,
     lock: bool = True,
 ) -> dict[str, Any]:
     contract = load_contract(contract_path)
@@ -155,6 +157,7 @@ def run_floor(
         timeout_seconds=min(max(float(timeout_seconds), 0.1), 5.0),
         ollama_status_probe=ollama_status_probe,
         memory_snapshot=memory_snapshot,
+        cpu_snapshot=cpu_snapshot,
     )
     if not blocked_reason and not dry_run and resource_status["execution_state"] == "stop":
         blocked_reason = "resource stop threshold reached: " + "; ".join(resource_status["stop_reasons"])
@@ -215,6 +218,7 @@ def run_floor(
         elapsed_ms=elapsed_ms,
         resource_status=resource_status,
         source_evidence=source_evidence,
+        ollama_generate_attempted=True,
     )
     write_receipt(contract, receipt_path, receipt)
     return receipt
@@ -451,6 +455,7 @@ def build_receipt(
     elapsed_ms: int | None = None,
     resource_status: dict[str, Any] | None = None,
     source_evidence: list[dict[str, Any]] | None = None,
+    ollama_generate_attempted: bool = False,
 ) -> dict[str, Any]:
     prompt = str(request_body.get("prompt") or "")
     safe_floor = re.sub(r"[^A-Za-z0-9_.-]+", "_", str(floor.get("floor") or "floor")).strip("_")
@@ -484,6 +489,9 @@ def build_receipt(
         "semantic_acceptance": "requires_independent_review",
         "source_binding_state": "verified" if source_evidence else "not_supplied",
         "response_validated": False,
+        "usage_accounting": _ollama_usage_accounting(
+            response, ollama_generate_attempted=ollama_generate_attempted,
+        ),
     }
     if blocked_reason:
         receipt["blocked_reason"] = blocked_reason
@@ -512,6 +520,30 @@ def build_receipt(
     if elapsed_ms is not None:
         receipt["elapsed_ms"] = elapsed_ms
     return receipt
+
+
+def _ollama_usage_accounting(
+    response: dict[str, Any] | None, *, ollama_generate_attempted: bool = False,
+) -> dict[str, Any]:
+    """Retain only measured Ollama counters; absent counters are not zero use."""
+    payload = response if isinstance(response, dict) else {}
+    prompt = payload.get("prompt_eval_count")
+    completion = payload.get("eval_count")
+    valid = (
+        payload.get("done") is True
+        and type(prompt) is int and prompt >= 0
+        and type(completion) is int and completion >= 0
+    )
+    return {
+        "state": "MEASURED_OLLAMA_RESPONSE" if valid else "UNKNOWN",
+        "prompt_tokens": prompt if valid else None,
+        "completion_tokens": completion if valid else None,
+        "total_tokens": prompt + completion if valid else None,
+        "ollama_generate_attempts": int(ollama_generate_attempted),
+        "tool_calls": None,
+        "cost_usd": None,
+        "budget_enforced": False,
+    }
 
 
 def validate_grounded_response(
@@ -605,8 +637,9 @@ def build_resource_preflight(
     timeout_seconds: float = 2.0,
     ollama_status_probe: OllamaStatusProbe | None = None,
     memory_snapshot: MemorySnapshot | None = None,
+    cpu_snapshot: CpuSnapshot | None = None,
 ) -> dict[str, Any]:
-    """Build the bounded, read-only resource signal recorded before each floor run."""
+    """Check memory and observed host CPU before starting a new local floor task."""
     policy = contract.get("policy") if isinstance(contract.get("policy"), dict) else {}
     guard = policy.get("resource_guard") if isinstance(policy.get("resource_guard"), dict) else {}
     warning_percent = _float_setting(
@@ -657,6 +690,37 @@ def build_resource_preflight(
             "error": str(exc),
         }
 
+    # System-wide CPU pressure is a *start gate*, not a hard quota for all
+    # CGX processes already running. A separate native Job Object/lease service
+    # must enforce the aggregate 80% ceiling continuously; do not claim it here.
+    cpu_limit = guard.get("max_host_cpu_percent")
+    cpu_status: dict[str, Any] = {"state": "not_configured",
+                                  "observed_percent": None,
+                                  "max_host_cpu_percent": None,
+                                  "is_continuous_process_cpu_hard_cap": False}
+    if cpu_limit is not None:
+        if type(cpu_limit) not in (int, float) or not 1 <= cpu_limit <= 80:
+            stop_reasons.append("invalid host CPU ceiling policy")
+            cpu_status["state"] = "invalid_policy"
+        elif stop_reasons:
+            cpu_status.update({"state": "not_probed", "max_host_cpu_percent": cpu_limit})
+        else:
+            cpu_status["max_host_cpu_percent"] = float(cpu_limit)
+            try:
+                observed = float((cpu_snapshot or _host_cpu_snapshot)())
+                if not 0 <= observed <= 100:
+                    raise ValueError("host CPU probe returned non-percent value")
+                cpu_status["observed_percent"] = round(observed, 2)
+                cpu_status["state"] = "ready" if observed < float(cpu_limit) else "stop"
+                if cpu_status["state"] == "stop":
+                    stop_reasons.append(
+                        f"host CPU {observed:.2f}% is at or above {float(cpu_limit):.2f}%"
+                    )
+            except (ImportError, OSError, ValueError, TypeError) as exc:
+                cpu_status["state"] = "unavailable"
+                cpu_status["error"] = str(exc)
+                stop_reasons.append("host CPU measurement unavailable; no new local Ollama session")
+
     endpoint_host = (urlparse(endpoint).hostname or "").casefold()
     local_endpoint = endpoint_host in {"localhost", "127.0.0.1", "::1"}
     if stop_reasons:
@@ -702,9 +766,19 @@ def build_resource_preflight(
             "minimum_free_memory_bytes": minimum_free_bytes,
         },
         "memory": memory,
+        "cpu": cpu_status,
         "ollama": ollama,
         "last_receipt": _last_receipt_summary(contract),
     }
+
+
+def _host_cpu_snapshot() -> float:
+    """Bounded sampling of overall host pressure; NEVER a process entitlement."""
+    try:
+        import psutil
+    except ImportError as exc:
+        raise OSError("psutil CPU sampler unavailable") from exc
+    return float(psutil.cpu_percent(interval=0.2))
 
 
 def _memory_snapshot() -> tuple[int, int]:

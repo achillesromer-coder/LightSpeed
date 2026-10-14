@@ -477,6 +477,36 @@ def test_invalid_frontier_request_is_durably_held_without_action(tmp_path: Path,
     assert decision["reason"].startswith("INVALID_FRONTIER_REQUEST:")
 
 
+def test_floor_usage_is_retained_in_existing_job_result(tmp_path: Path, monkeypatch) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    command_id = "GO-TASK-FLOOR-USAGE"
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id) "
+            "VALUES (601,'ls_go_command','pending',?,'{}',501)",
+            (json.dumps({"command_id": command_id, "action_type": "local_floor_wakeup",
+                         "floor": "Neo"}),),
+        )
+    usage = {
+        "state": "MEASURED_OLLAMA_RESPONSE", "prompt_tokens": 17,
+        "completion_tokens": 5, "total_tokens": 22,
+        "ollama_generate_attempts": 1, "tool_calls": None,
+        "cost_usd": None, "budget_enforced": False,
+    }
+    monkeypatch.setattr(ls_go_job_consumer, "run_floor", lambda **_kw: {
+        "status": "completed", "receipt_id": "floor-proof-1", "usage_accounting": usage,
+    })
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    assert consumer.process_once()["results_written"] == 1
+    result = json.loads(db.execute_query("SELECT result_json FROM jobs WHERE id=601")[0]["result_json"])
+    assert result["floor_receipt"]["usage_accounting"] == usage
+    assert result["action_wall_elapsed_ms"] >= 0
+    assert result["action_wall_clock_budget_enforced"] is False
+
+
 def configure_shell(root: Path) -> None:
     root.mkdir(parents=True, exist_ok=True)
     (root / "N.py").write_text("# test shell\n", encoding="utf-8")

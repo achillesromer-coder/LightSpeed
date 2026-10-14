@@ -9,6 +9,7 @@ if str(RUNTIME_ROOT) not in sys.path:
     sys.path.insert(0, str(RUNTIME_ROOT))
 
 from lightspeed_runtime.local_floor_runner import (
+    _ollama_usage_accounting,
     _canonical_loopback_endpoint,
     LocalFloorRunnerError,
     build_ollama_request,
@@ -123,6 +124,7 @@ def test_manual_heavy_floor_is_blocked_without_allow_flag(tmp_path: Path) -> Non
 
     assert receipt["status"] == "blocked"
     assert "manual/heavy" in receipt["blocked_reason"]
+    assert receipt["usage_accounting"]["ollama_generate_attempts"] == 0
     assert Path(receipt["receipt_path"]).exists()
 
 
@@ -132,7 +134,8 @@ def test_execute_uses_mocked_http_and_writes_floor_receipt(tmp_path: Path) -> No
 
     def fake_http(url: str, payload: dict[str, object], timeout: float) -> dict[str, object]:
         calls.append((url, payload, timeout))
-        return {"response": "{\"floor_summary\":\"ok\"}", "done": True}
+        return {"response": "{\"floor_summary\":\"ok\"}", "done": True,
+                "prompt_eval_count": 17, "eval_count": 5}
 
     receipt = run_floor(
         contract_path=contract_path,
@@ -160,6 +163,25 @@ def test_execute_uses_mocked_http_and_writes_floor_receipt(tmp_path: Path) -> No
     assert "TheConstruct" in str(receipt["receipt_path"])
     assert receipt["resource_preflight"]["execution_state"] == "ready"
     assert receipt["resource_preflight"]["ollama"]["loaded_model_count"] == 1
+    assert receipt["usage_accounting"] == {
+        "state": "MEASURED_OLLAMA_RESPONSE", "prompt_tokens": 17,
+        "completion_tokens": 5, "total_tokens": 22,
+        "ollama_generate_attempts": 1,
+        "tool_calls": None, "cost_usd": None, "budget_enforced": False,
+    }
+
+
+def test_ollama_usage_does_not_invent_missing_or_malformed_counters() -> None:
+    for response in (None, {"done": True},
+                     {"done": True, "prompt_eval_count": True, "eval_count": 5},
+                     {"done": False, "prompt_eval_count": 17, "eval_count": 5}):
+        usage = _ollama_usage_accounting(response)
+        assert usage["state"] == "UNKNOWN"
+        assert usage["total_tokens"] is None
+        assert usage["ollama_generate_attempts"] == 0
+        assert usage["cost_usd"] is None
+        assert usage["tool_calls"] is None
+        assert usage["budget_enforced"] is False
 
 
 def test_resource_preflight_is_bounded_and_reports_last_receipt(tmp_path: Path) -> None:
@@ -384,3 +406,80 @@ def test_quote_selection_exposes_status_beyond_header_and_preserves_literals() -
     assert any('quoted' in option for option in options)
     assert all(option in excerpt for option in options)
     assert len(_citation_quote_candidates('\n'.join(f'evidence passage {i}' for i in range(100)))) == 64
+
+
+def test_host_cpu_preflight_fails_closed_above_eighty_percent(tmp_path: Path) -> None:
+    path=_contract(tmp_path)
+    obj=json.loads(path.read_text(encoding="utf-8"))
+    obj["policy"]["resource_guard"]={"max_host_cpu_percent":80}
+    path.write_text(json.dumps(obj),encoding="utf-8")
+
+    def forbidden_http(*args):
+        raise AssertionError("host CPU guard cannot start Ollama at >80%")
+
+    receipt=run_floor(
+        contract_path=path,floor="Neo",dry_run=False,
+        cpu_snapshot=lambda:81.5,
+        memory_snapshot=lambda:(32*1024**3,16*1024**3),
+        http_post=forbidden_http,lock=False)
+    guard=receipt["resource_preflight"]
+    assert receipt["status"]=="blocked"
+    assert guard["execution_state"]=="stop"
+    assert guard["cpu"]["state"]=="stop"
+    assert guard["cpu"]["max_host_cpu_percent"]==80
+    assert guard["cpu"]["is_continuous_process_cpu_hard_cap"] is False
+    assert "host CPU 81.50%" in receipt["blocked_reason"]
+
+
+def test_host_cpu_probe_unavailable_blocks_new_ollama_session(tmp_path: Path) -> None:
+    path=_contract(tmp_path)
+    obj=json.loads(path.read_text(encoding="utf-8"))
+    obj["policy"]["resource_guard"]={"max_host_cpu_percent":80}
+    path.write_text(json.dumps(obj),encoding="utf-8")
+
+    def cpu_missing():
+        raise OSError("no psutil sampler")
+
+    def forbidden_http(*args):
+        raise AssertionError("unmeasured host CPU cannot start a new session")
+
+    result=run_floor(contract_path=path,floor="Neo",dry_run=False,
+                     cpu_snapshot=cpu_missing,memory_snapshot=lambda:(32*1024**3,16*1024**3),
+                     http_post=forbidden_http,lock=False)
+    assert result["status"]=="blocked"
+    assert result["resource_preflight"]["cpu"]["state"]=="unavailable"
+    assert "host CPU measurement unavailable" in result["blocked_reason"]
+
+
+def test_cpu_preflight_below_ceiling_allows_existing_bounded_floor(tmp_path: Path) -> None:
+    path=_contract(tmp_path)
+    obj=json.loads(path.read_text(encoding="utf-8"))
+    obj["policy"]["resource_guard"]={"max_host_cpu_percent":80}
+    path.write_text(json.dumps(obj),encoding="utf-8")
+    called=[]
+    def fake_http(*args):
+        called.append(1)
+        return {"response":"ok","done":True}
+    result=run_floor(contract_path=path,floor="Neo",dry_run=False,
+                     cpu_snapshot=lambda:58.1,memory_snapshot=lambda:(32*1024**3,16*1024**3),
+                     ollama_status_probe=lambda *args:{"state":"available","loaded_model_count":0,
+                                                       "loaded_models":[]},
+                     http_post=fake_http,lock=False)
+    assert result["status"]=="completed"
+    assert called==[1]
+    assert result["resource_preflight"]["cpu"]["state"]=="ready"
+    assert result["resource_preflight"]["cpu"]["observed_percent"]==58.1
+
+
+def test_invalid_cpu_policy_cannot_grant_more_than_80_percent(tmp_path: Path) -> None:
+    path=_contract(tmp_path)
+    obj=json.loads(path.read_text(encoding="utf-8"))
+    obj["policy"]["resource_guard"]={"max_host_cpu_percent":95}
+    path.write_text(json.dumps(obj),encoding="utf-8")
+    def forbidden_http(*args):
+        raise AssertionError("CPU >80% policy must fail closed")
+    result=run_floor(contract_path=path,floor="Neo",dry_run=False,
+                     memory_snapshot=lambda:(32*1024**3,16*1024**3),
+                     http_post=forbidden_http,lock=False)
+    assert result["status"]=="blocked"
+    assert result["resource_preflight"]["cpu"]["state"]=="invalid_policy"
