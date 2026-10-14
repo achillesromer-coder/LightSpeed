@@ -579,6 +579,8 @@ def test_floor_usage_is_retained_in_existing_job_result(tmp_path: Path, monkeypa
         "client_wall_deadline_seconds": 185,
         "requested_completion_token_cap": 1024,
         "total_token_postflight_ceiling": 2048,
+        "source_excerpt_char_cap": 600,
+        "prompt_utf8_byte_ceiling": 7000,
         "server_cancellation_verified": False,
     }
     assert result["action_wall_elapsed_ms"] >= 0
@@ -808,6 +810,11 @@ def test_supervised_floor_reads_exact_child_receipt(tmp_path: Path, monkeypatch)
     receipt_path = tmp_path / "floor.json"
     receipt = {"status": "completed", "floor": "Neo", "receipt_path": str(receipt_path),
                "execution_claim_id": "a" * 32,
+               "source_excerpt_char_cap": 600,
+               "prompt_preflight": {
+                   "utf8_bytes": 5500, "ceiling": 7000,
+                   "state": "within_ceiling", "hard_token_limit": False,
+               },
                "usage_accounting": {
                    "state": "MEASURED_OLLAMA_RESPONSE", "prompt_tokens": 17,
                    "completion_tokens": 5, "total_tokens": 22,
@@ -841,8 +848,15 @@ def test_supervised_floor_reads_exact_child_receipt(tmp_path: Path, monkeypatch)
     assert "--execute" in commands[0]
     assert "--num-predict" in commands[0]
     assert commands[0][commands[0].index("--max-total-tokens") + 1] == "2048"
+    assert commands[0][commands[0].index("--max-source-excerpt-chars") + 1] == "600"
+    assert commands[0][commands[0].index("--max-prompt-utf8-bytes") + 1] == "7000"
     assert commands[0][-2:] == ["--execution-claim-id", "a" * 32]
     assert "--allow-heavy" not in commands[0]
+    receipt["prompt_preflight"]["utf8_bytes"] = 7001
+    receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+    with pytest.raises(RuntimeError, match="claimed prompt preflight proof"):
+        consumer._run_floor_supervised(job_id=601, floor="Neo", allow_heavy=False, receipt_target="neo")
+    receipt["prompt_preflight"]["utf8_bytes"] = 5500
     receipt["usage_accounting"]["tool_calls"] = 1
     receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
     with pytest.raises(RuntimeError, match="consistent measured usage"):

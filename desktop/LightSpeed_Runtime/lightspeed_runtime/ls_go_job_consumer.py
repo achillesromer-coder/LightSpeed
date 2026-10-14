@@ -38,6 +38,8 @@ FLOOR_NATIVE_BUDGET = {
     "ollama_timeout_seconds": 180,
     "requested_completion_token_cap": 1024,
     "total_token_postflight_ceiling": 2048,
+    "source_excerpt_char_cap": 600,
+    "prompt_utf8_byte_ceiling": 7000,
     "model_function_tool_calls": 0,
     "cost_usd": None,
 }
@@ -931,6 +933,8 @@ class LSGoJobConsumer:
             "--timeout-seconds", str(budget["ollama_timeout_seconds"]),
             "--num-predict", str(budget["requested_completion_token_cap"]),
             "--max-total-tokens", str(budget["total_token_postflight_ceiling"]),
+            "--max-source-excerpt-chars", str(budget["source_excerpt_char_cap"]),
+            "--max-prompt-utf8-bytes", str(budget["prompt_utf8_byte_ceiling"]),
             "--execution-claim-id", claim_id,
         ]
         if allow_heavy:
@@ -993,6 +997,15 @@ class LSGoJobConsumer:
                     and receipt.get("server_outcome_uncertain") is not False)):
             self._hold_floor_uncertain(job_id, "ollama_server_outcome_unverified")
         if receipt.get("status") == "completed":
+            prompt_preflight = receipt.get("prompt_preflight")
+            if (not isinstance(prompt_preflight, dict)
+                    or type(prompt_preflight.get("utf8_bytes")) is not int
+                    or not 0 < prompt_preflight["utf8_bytes"] <= budget["prompt_utf8_byte_ceiling"]
+                    or prompt_preflight.get("ceiling") != budget["prompt_utf8_byte_ceiling"]
+                    or prompt_preflight.get("state") != "within_ceiling"
+                    or prompt_preflight.get("hard_token_limit") is not False
+                    or receipt.get("source_excerpt_char_cap") != budget["source_excerpt_char_cap"]):
+                raise RuntimeError("floor runner receipt lacks claimed prompt preflight proof")
             usage = receipt.get("usage_accounting")
             if not isinstance(usage, dict):
                 raise RuntimeError("floor runner receipt lacks measured token counters")
@@ -1183,6 +1196,12 @@ class LSGoJobConsumer:
                         if bool(params.get("execute", True)) else None),
                     "total_token_postflight_ceiling": (
                         self._execution_claims[job["id"]]["native_budget"]["total_token_postflight_ceiling"]
+                        if bool(params.get("execute", True)) else None),
+                    "source_excerpt_char_cap": (
+                        self._execution_claims[job["id"]]["native_budget"]["source_excerpt_char_cap"]
+                        if bool(params.get("execute", True)) else None),
+                    "prompt_utf8_byte_ceiling": (
+                        self._execution_claims[job["id"]]["native_budget"]["prompt_utf8_byte_ceiling"]
                         if bool(params.get("execute", True)) else None),
                     "server_cancellation_verified": False,
                 },

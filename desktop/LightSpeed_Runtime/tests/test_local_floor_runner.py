@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 from pathlib import Path
 import sys
 import pytest
@@ -233,6 +234,45 @@ def test_total_token_postflight_blocks_unmeasured_or_excess_use(
 def test_total_token_ceiling_rejects_invalid_values(tmp_path: Path) -> None:
     with pytest.raises(LocalFloorRunnerError, match="positive integer"):
         run_floor(contract_path=_contract(tmp_path), floor="Neo", max_total_tokens=0)
+
+
+def test_prompt_byte_preflight_blocks_before_ollama(tmp_path: Path) -> None:
+    contract_path = _contract(tmp_path)
+
+    def forbidden_http(_url: str, _payload: dict[str, object], _timeout: float) -> dict[str, object]:
+        raise AssertionError("oversize prompt must not reach Ollama")
+
+    receipt = run_floor(
+        contract_path=contract_path, floor="Neo", dry_run=False,
+        max_prompt_utf8_bytes=100, http_post=forbidden_http, lock=False,
+    )
+    assert receipt["status"] == "blocked"
+    assert receipt["prompt_preflight"]["state"] == "exceeded"
+    assert receipt["prompt_preflight"]["utf8_bytes"] > 100
+    assert receipt["usage_accounting"]["ollama_generate_attempts"] == 0
+
+
+def test_excerpt_cap_retains_full_source_identity(tmp_path: Path) -> None:
+    contract_path = _contract(tmp_path)
+    source = tmp_path / "source.txt"
+    source.write_text("Source facts remain distinct from model output. " * 30, encoding="utf-8")
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    contract["source_context"] = [{
+        "path": str(source), "sha256": digest, "max_chars": 1000,
+    }]
+    contract_path.write_text(json.dumps(contract), encoding="utf-8")
+    receipt = run_floor(
+        contract_path=contract_path, floor="Neo",
+        max_source_excerpt_chars=20, max_prompt_utf8_bytes=7000,
+    )
+    evidence = receipt["source_evidence"][0]
+    assert evidence["sha256"] == digest
+    assert len(evidence["excerpt"]) == 20
+    assert evidence["excerpt_sha256"] == hashlib.sha256(evidence["excerpt"].encode()).hexdigest()
+    assert evidence["truncated"] is True
+    assert receipt["source_excerpt_char_cap"] == 20
+    assert receipt["prompt_preflight"]["state"] == "within_ceiling"
 
 
 def test_lost_ollama_response_marks_server_outcome_uncertain(tmp_path: Path) -> None:

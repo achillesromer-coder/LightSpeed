@@ -119,6 +119,8 @@ def run_floor(
     num_predict: int | None = None,
     execution_claim_id: str | None = None,
     max_total_tokens: int | None = None,
+    max_source_excerpt_chars: int | None = None,
+    max_prompt_utf8_bytes: int | None = None,
     http_post: HttpPost | None = None,
     ollama_status_probe: OllamaStatusProbe | None = None,
     memory_snapshot: MemorySnapshot | None = None,
@@ -129,6 +131,12 @@ def run_floor(
         raise LocalFloorRunnerError("execution claim id is invalid")
     if max_total_tokens is not None and (type(max_total_tokens) is not int or max_total_tokens < 1):
         raise LocalFloorRunnerError("total token ceiling must be a positive integer")
+    if max_source_excerpt_chars is not None and (
+            type(max_source_excerpt_chars) is not int or not 1 <= max_source_excerpt_chars <= 8000):
+        raise LocalFloorRunnerError("source excerpt ceiling must be 1-8000 characters")
+    if max_prompt_utf8_bytes is not None and (
+            type(max_prompt_utf8_bytes) is not int or not 1 <= max_prompt_utf8_bytes <= 65536):
+        raise LocalFloorRunnerError("prompt byte ceiling must be 1-65536")
     contract = load_contract(contract_path)
     selection = select_floor(contract, floor=floor, order=order)
     floor_row = selection.floor
@@ -147,7 +155,9 @@ def run_floor(
     source_evidence: list[dict[str, Any]] = []
     source_error = None
     try:
-        source_evidence = verified_source_context(contract)
+        source_evidence = verified_source_context(
+            contract, max_excerpt_chars=max_source_excerpt_chars,
+        )
         request_body = build_ollama_request(
             contract, floor_row, num_predict=num_predict, source_evidence=source_evidence,
         )
@@ -156,6 +166,9 @@ def run_floor(
         request_body = {"model": model, "prompt": "", "stream": False, "think": False}
 
     blocked_reason = source_error or _blocked_heavy_reason(floor_row, model, allow_heavy=allow_heavy)
+    if not blocked_reason and max_prompt_utf8_bytes is not None and (
+            len(str(request_body.get("prompt") or "").encode("utf-8")) > max_prompt_utf8_bytes):
+        blocked_reason = "prompt exceeds claimed UTF-8 byte ceiling"
     resource_status = build_resource_preflight(
         contract,
         endpoint=endpoint,
@@ -180,6 +193,8 @@ def run_floor(
             resource_status=resource_status,
             source_evidence=source_evidence,
             execution_claim_id=execution_claim_id,
+            max_prompt_utf8_bytes=max_prompt_utf8_bytes,
+            max_source_excerpt_chars=max_source_excerpt_chars,
         )
         write_receipt(contract, receipt_path, receipt)
         return receipt
@@ -196,6 +211,8 @@ def run_floor(
             resource_status=resource_status,
             source_evidence=source_evidence,
             execution_claim_id=execution_claim_id,
+            max_prompt_utf8_bytes=max_prompt_utf8_bytes,
+            max_source_excerpt_chars=max_source_excerpt_chars,
         )
         write_receipt(contract, receipt_path, receipt)
         return receipt
@@ -232,6 +249,8 @@ def run_floor(
         ollama_generate_attempted=True,
         execution_claim_id=execution_claim_id,
         max_total_tokens=max_total_tokens,
+        max_prompt_utf8_bytes=max_prompt_utf8_bytes,
+        max_source_excerpt_chars=max_source_excerpt_chars,
         server_outcome_uncertain=server_outcome_uncertain,
     )
     write_receipt(contract, receipt_path, receipt)
@@ -306,7 +325,9 @@ def _canonical_loopback_endpoint(endpoint: str) -> str:
     return parsed._replace(netloc=host).geturl()
 
 
-def verified_source_context(contract: dict[str, Any]) -> list[dict[str, Any]]:
+def verified_source_context(
+    contract: dict[str, Any], *, max_excerpt_chars: int | None = None,
+) -> list[dict[str, Any]]:
     """Read only explicit text bindings; hash the same bytes supplied to the model."""
     bindings = contract.get("source_context", [])
     if not isinstance(bindings, list) or len(bindings) > 4:
@@ -327,6 +348,8 @@ def verified_source_context(contract: dict[str, Any]) -> list[dict[str, Any]]:
         limit = binding.get("max_chars", 4000)
         if type(start) is not int or start < 0 or type(limit) is not int or not 1 <= limit <= 8000:
             raise LocalFloorRunnerError("source excerpt range is invalid")
+        if max_excerpt_chars is not None:
+            limit = min(limit, max_excerpt_chars)
         try:
             with path.open("rb") as handle:
                 raw = handle.read(1024 * 1024 + 1)
@@ -472,9 +495,13 @@ def build_receipt(
     ollama_generate_attempted: bool = False,
     execution_claim_id: str | None = None,
     max_total_tokens: int | None = None,
+    max_prompt_utf8_bytes: int | None = None,
+    max_source_excerpt_chars: int | None = None,
     server_outcome_uncertain: bool = False,
 ) -> dict[str, Any]:
     prompt = str(request_body.get("prompt") or "")
+    prompt_bytes = prompt.encode("utf-8")
+    prompt_size = len(prompt_bytes)
     safe_floor = re.sub(r"[^A-Za-z0-9_.-]+", "_", str(floor.get("floor") or "floor")).strip("_")
     receipt: dict[str, Any] = {
         "receipt_id": f"local_floor_runner_receipt_{safe_floor}_{_receipt_timestamp()}",
@@ -498,8 +525,16 @@ def build_receipt(
             "num_predict": (request_body.get("options") or {}).get("num_predict"),
             "num_ctx": (request_body.get("options") or {}).get("num_ctx"),
         },
-        "prompt_sha256": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
+        "prompt_sha256": hashlib.sha256(prompt_bytes).hexdigest(),
         "prompt_preview": prompt[:600],
+        "prompt_preflight": ({
+            "utf8_bytes": prompt_size,
+            "ceiling": max_prompt_utf8_bytes,
+            "state": "within_ceiling" if prompt_size <= max_prompt_utf8_bytes
+            else "exceeded",
+            "hard_token_limit": False,
+        } if max_prompt_utf8_bytes is not None else None),
+        "source_excerpt_char_cap": max_source_excerpt_chars,
         "resource_preflight": resource_status or {},
         "source_evidence": source_evidence or [],
         "workflow_handoffs": contract.get("workflow_handoffs") or [],
@@ -1006,6 +1041,8 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--num-predict", type=int, default=None)
     parser.add_argument("--execution-claim-id", default=None)
     parser.add_argument("--max-total-tokens", type=int, default=None)
+    parser.add_argument("--max-source-excerpt-chars", type=int, default=None)
+    parser.add_argument("--max-prompt-utf8-bytes", type=int, default=None)
     return parser
 
 
@@ -1023,6 +1060,8 @@ def main(argv: list[str] | None = None) -> int:
             num_predict=args.num_predict,
             execution_claim_id=args.execution_claim_id,
             max_total_tokens=args.max_total_tokens,
+            max_source_excerpt_chars=args.max_source_excerpt_chars,
+            max_prompt_utf8_bytes=args.max_prompt_utf8_bytes,
         )
     except LocalFloorRunnerError as exc:
         print(f"local_floor_runner: {exc}")
