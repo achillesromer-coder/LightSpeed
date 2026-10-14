@@ -549,7 +549,7 @@ def build_receipt(
 def _ollama_usage_accounting(
     response: dict[str, Any] | None, *, ollama_generate_attempted: bool = False,
 ) -> dict[str, Any]:
-    """Retain only measured Ollama counters; absent counters are not zero use."""
+    """Retain measured tokens and the configured no-tools boundary."""
     payload = response if isinstance(response, dict) else {}
     prompt = payload.get("prompt_eval_count")
     completion = payload.get("eval_count")
@@ -564,7 +564,8 @@ def _ollama_usage_accounting(
         "completion_tokens": completion if valid else None,
         "total_tokens": prompt + completion if valid else None,
         "ollama_generate_attempts": int(ollama_generate_attempted),
-        "tool_calls": None,
+        "tool_calls": 0,
+        "tool_call_scope": "model_function_tools_not_exposed_by_local_generate",
         "cost_usd": None,
         "budget_enforced": False,
     }

@@ -560,7 +560,8 @@ def test_floor_usage_is_retained_in_existing_job_result(tmp_path: Path, monkeypa
     usage = {
         "state": "MEASURED_OLLAMA_RESPONSE", "prompt_tokens": 17,
         "completion_tokens": 5, "total_tokens": 22,
-        "ollama_generate_attempts": 1, "tool_calls": None,
+        "ollama_generate_attempts": 1, "tool_calls": 0,
+        "tool_call_scope": "model_function_tools_not_exposed_by_local_generate",
         "cost_usd": None, "budget_enforced": False,
     }
     monkeypatch.setattr(ls_go_job_consumer.LSGoJobConsumer, "_run_floor_supervised", lambda self, **_kw: {
@@ -693,6 +694,8 @@ def test_supervised_floor_reads_exact_child_receipt(tmp_path: Path, monkeypatch)
                    "state": "MEASURED_OLLAMA_RESPONSE", "prompt_tokens": 17,
                    "completion_tokens": 5, "total_tokens": 22,
                    "ollama_generate_attempts": 1, "budget_enforced": False,
+                   "tool_calls": 0,
+                   "tool_call_scope": "model_function_tools_not_exposed_by_local_generate",
                },
                "total_token_postflight": {
                    "ceiling": 2048, "state": "within_ceiling", "hard_generation_limit": False,
@@ -718,16 +721,21 @@ def test_supervised_floor_reads_exact_child_receipt(tmp_path: Path, monkeypatch)
     assert commands[0][commands[0].index("--max-total-tokens") + 1] == "2048"
     assert commands[0][-2:] == ["--execution-claim-id", "a" * 32]
     assert "--allow-heavy" not in commands[0]
+    receipt["usage_accounting"]["tool_calls"] = 1
+    receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+    with pytest.raises(RuntimeError, match="consistent measured usage"):
+        consumer._run_floor_supervised(job_id=601, floor="Neo", allow_heavy=False, receipt_target="neo")
+    receipt["usage_accounting"]["tool_calls"] = 0
     receipt["usage_accounting"]["total_tokens"] = 21
     receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
-    with pytest.raises(RuntimeError, match="consistent measured token counters"):
+    with pytest.raises(RuntimeError, match="consistent measured usage"):
         consumer._run_floor_supervised(job_id=601, floor="Neo", allow_heavy=False, receipt_target="neo")
     receipt["usage_accounting"]["total_tokens"] = 22
     receipt["usage_accounting"].update(
         prompt_tokens=2048, completion_tokens=1, total_tokens=2049,
     )
     receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
-    with pytest.raises(RuntimeError, match="consistent measured token counters"):
+    with pytest.raises(RuntimeError, match="consistent measured usage"):
         consumer._run_floor_supervised(job_id=601, floor="Neo", allow_heavy=False, receipt_target="neo")
     receipt["usage_accounting"].update(
         prompt_tokens=17, completion_tokens=5, total_tokens=22,

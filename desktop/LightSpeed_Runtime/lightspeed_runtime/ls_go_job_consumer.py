@@ -964,8 +964,11 @@ class LSGoJobConsumer:
                     or type(prompt) is not int or prompt < 0
                     or type(completion) is not int or completion < 0
                     or type(total) is not int or total != prompt + completion
-                    or total > 2048 or usage.get("ollama_generate_attempts") != 1):
-                raise RuntimeError("floor runner receipt lacks consistent measured token counters")
+                    or total > 2048 or usage.get("ollama_generate_attempts") != 1
+                    or type(usage.get("tool_calls")) is not int or usage["tool_calls"] != 0
+                    or usage.get("tool_call_scope")
+                    != "model_function_tools_not_exposed_by_local_generate"):
+                raise RuntimeError("floor runner receipt lacks consistent measured usage or no-tools proof")
             if receipt.get("total_token_postflight") != {
                 "ceiling": 2048, "state": "within_ceiling", "hard_generation_limit": False,
             }:

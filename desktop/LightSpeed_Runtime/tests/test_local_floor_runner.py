@@ -178,7 +178,9 @@ def test_execute_uses_mocked_http_and_writes_floor_receipt(tmp_path: Path) -> No
         "state": "MEASURED_OLLAMA_RESPONSE", "prompt_tokens": 17,
         "completion_tokens": 5, "total_tokens": 22,
         "ollama_generate_attempts": 1,
-        "tool_calls": None, "cost_usd": None, "budget_enforced": False,
+        "tool_calls": 0,
+        "tool_call_scope": "model_function_tools_not_exposed_by_local_generate",
+        "cost_usd": None, "budget_enforced": False,
     }
 
 
@@ -191,7 +193,8 @@ def test_ollama_usage_does_not_invent_missing_or_malformed_counters() -> None:
         assert usage["total_tokens"] is None
         assert usage["ollama_generate_attempts"] == 0
         assert usage["cost_usd"] is None
-        assert usage["tool_calls"] is None
+        assert usage["tool_calls"] == 0
+        assert usage["tool_call_scope"] == "model_function_tools_not_exposed_by_local_generate"
         assert usage["budget_enforced"] is False
 
 
