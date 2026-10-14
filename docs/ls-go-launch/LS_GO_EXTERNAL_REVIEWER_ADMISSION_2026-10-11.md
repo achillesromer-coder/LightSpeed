@@ -20,12 +20,13 @@ The public reviewer HTTPS ingress MUST expose only these endpoints, never unrest
 | `/api/v1/visitor/enroll` | POST | One-time invite, consent and bounded profile |
 | `/api/v1/visitor/me` | GET | Own profile, valid visitor bearer |
 | `/api/v1/visitor/interaction` | POST | Attributable bounded review event, NO PRIVATE RESOLVER |
+| `/api/v1/visitor/surface` | POST | Read exact Object_ID/lens/view from strictly preapproved Public projection, visitor bearer required; no source enumeration |
 | `/api/v1/visitor/privacy-request` | POST | Own export/erasure/withdrawal request |
 | `/api/v1/visitor/logout` | POST | Revoke own bearer |
 
 Public 404/403 for `/api/v1/visitor/invites`, `/api/v1/visitor/revoke`, `/api/v1/visitor/owner-review`, `/api/v1/command*`, `/api/v1/projects*`, `/api/v1/results*`, `/api/v1/node*`, `/api/v1/representation*`, and ALL internal source, media and Desktop endpoints. These owner routes stay reachable only through the existing authenticated private operator path.
 
-**Deployment template (not a command to deploy):** serve `dist-review` on an owner-controlled HTTPS origin. Configure explicit exact-path proxy rules for the six approved visitor endpoints, and deny all other /api paths; reverse proxy to the already authenticated LS GO bridge over a protected host connection, never expose local port 8765 directly. Preserve origin allowlists, enforce small request bodies, 403/404 on forbidden paths, per-IP rate limiting, TLS, no-store responses and `Referrer-Policy: no-referrer`. Browser CSP should restrict script/style/connect sources to the intended first party. Do not generate a site-wide `proxy_pass` for `/api/v1/visitor/` because that prefix includes privileged owner endpoints.
+**Deployment template (not a command to deploy):** serve `dist-review` on an owner-controlled HTTPS origin. Configure explicit exact-path proxy rules for the seven approved visitor endpoints, and deny all other /api paths; reverse proxy to the already authenticated LS GO bridge over a protected host connection, never expose local port 8765 directly. Preserve origin allowlists, enforce small request bodies, 403/404 on forbidden paths, per-IP rate limiting, TLS, no-store responses and `Referrer-Policy: no-referrer`. Browser CSP should restrict script/style/connect sources to the intended first party. Do not generate a site-wide `proxy_pass` for `/api/v1/visitor/` because that prefix includes privileged owner endpoints.
 
 ## Privacy and identity acceptance
 
@@ -90,3 +91,15 @@ The probe verifies public `/review.html` and visitor capabilities, required no-s
 
 This probe advances only deployment **readiness**. Until executed against the real provider-managed HTTPS ingress with owner-controlled sessions, issue #158 remains open and PR #172 remains DRAFT / NO PUBLIC DEPLOY.
 
+
+## 15 October 2026 — reusable CGX / UniSpace object window
+
+**SOURCE REVIEW ONLY; no public deployment or release authority.**
+
+An existing reviewer `review.html` now contains a reusable dialog-based object lens backed by the same FastAPI LS GO bridge at `POST /api/v1/visitor/surface`. It uses only the existing owner-admitted Public manifest. Exact object ID and lens binding, approved payload hash, source revision, rights class and release receipt remain mandatory. Unknown/malformed/duplicated/unreleased sources fail closed. Map and historical modes remain held until independently verified public spatial and bitemporal projections exist; a requested valid-at or recorded-at date yields 409, never silently resolves to current.
+
+Copy-ready compact Squarespace block: `docs/romer-web-hooks/CGX_UNISPACE_REUSABLE_SURFACE_EMBED_2026-10-15.html`. Its `CGX-SURFACE/UNISPACE-REVIEW` attribute is a non-secret UI selector, not an API key or authentication. Only set `data-review-origin` to a verified HTTPS reviewer host after separate acceptance. Never embed a private invitation fragment, browser session bearer, signing key, owner token or local bridge endpoint in page HTML.
+
+The seventh external route requires an **exact POST reverse-proxy allowlist**, not an `/api/v1/*` wildcard. Enforce visitor bearer admission; no-store, no-referrer, CSP and origin allowlists. Verify CSP `frame-ancestors` permits the intended `https://romer.industries` embedding origin, and keep the standalone opening option if third-party browser storage is blocked.
+
+Current `/cgx`, legacy `/operations/w1..w6`, `/gmat` and other Squarespace pages are optional **hosts** of this compact iframe, not copies of the backend or canonical files. They are not updated by this Git source change. PR #173 spatial/temporal and PR #175 UniSpace shorthand remain separate draft source candidates, not assumed merged. Security issue #158, native source/runtime issue #161 and owner privacy/public approval remain blocking.
