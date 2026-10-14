@@ -641,7 +641,11 @@ def test_supervised_floor_reads_exact_child_receipt(tmp_path: Path, monkeypatch)
     receipt_path = tmp_path / "floor.json"
     receipt = {"status": "completed", "floor": "Neo", "receipt_path": str(receipt_path),
                "execution_claim_id": "a" * 32,
-               "usage_accounting": {"total_tokens": 22, "budget_enforced": False},
+               "usage_accounting": {
+                   "state": "MEASURED_OLLAMA_RESPONSE", "prompt_tokens": 17,
+                   "completion_tokens": 5, "total_tokens": 22,
+                   "ollama_generate_attempts": 1, "budget_enforced": False,
+               },
                "total_token_postflight": {
                    "ceiling": 2048, "state": "within_ceiling", "hard_generation_limit": False,
                }}
@@ -666,6 +670,20 @@ def test_supervised_floor_reads_exact_child_receipt(tmp_path: Path, monkeypatch)
     assert commands[0][commands[0].index("--max-total-tokens") + 1] == "2048"
     assert commands[0][-2:] == ["--execution-claim-id", "a" * 32]
     assert "--allow-heavy" not in commands[0]
+    receipt["usage_accounting"]["total_tokens"] = 21
+    receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+    with pytest.raises(RuntimeError, match="consistent measured token counters"):
+        consumer._run_floor_supervised(job_id=601, floor="Neo", allow_heavy=False, receipt_target="neo")
+    receipt["usage_accounting"]["total_tokens"] = 22
+    receipt["usage_accounting"].update(
+        prompt_tokens=2048, completion_tokens=1, total_tokens=2049,
+    )
+    receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+    with pytest.raises(RuntimeError, match="consistent measured token counters"):
+        consumer._run_floor_supervised(job_id=601, floor="Neo", allow_heavy=False, receipt_target="neo")
+    receipt["usage_accounting"].update(
+        prompt_tokens=17, completion_tokens=5, total_tokens=22,
+    )
     receipt["total_token_postflight"]["state"] = "unmeasured"
     receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
     with pytest.raises(RuntimeError, match="measured total token ceiling proof"):

@@ -905,10 +905,23 @@ class LSGoJobConsumer:
                 or receipt.get("execution_claim_id") != claim_id
                 or receipt.get("status") != summary.get("status")):
             raise RuntimeError("floor runner receipt identity does not match the request")
-        if receipt.get("status") == "completed" and receipt.get("total_token_postflight") != {
-            "ceiling": 2048, "state": "within_ceiling", "hard_generation_limit": False,
-        }:
-            raise RuntimeError("floor runner receipt lacks measured total token ceiling proof")
+        if receipt.get("status") == "completed":
+            usage = receipt.get("usage_accounting")
+            if not isinstance(usage, dict):
+                raise RuntimeError("floor runner receipt lacks measured token counters")
+            prompt = usage.get("prompt_tokens")
+            completion = usage.get("completion_tokens")
+            total = usage.get("total_tokens")
+            if (usage.get("state") != "MEASURED_OLLAMA_RESPONSE"
+                    or type(prompt) is not int or prompt < 0
+                    or type(completion) is not int or completion < 0
+                    or type(total) is not int or total != prompt + completion
+                    or total > 2048 or usage.get("ollama_generate_attempts") != 1):
+                raise RuntimeError("floor runner receipt lacks consistent measured token counters")
+            if receipt.get("total_token_postflight") != {
+                "ceiling": 2048, "state": "within_ceiling", "hard_generation_limit": False,
+            }:
+                raise RuntimeError("floor runner receipt lacks measured total token ceiling proof")
         return receipt
 
     def _execute_action(
