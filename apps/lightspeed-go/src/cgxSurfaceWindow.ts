@@ -68,13 +68,13 @@ export function installCgxSurfaceWindow(mount: HTMLElement, currentLens: () => C
     const option = document.createElement("option");
     option.value = id; option.textContent = name; lensInput.add(option);
   }
-  if (queryLens in LENSES) lensInput.value = queryLens;
+  if (Object.prototype.hasOwnProperty.call(LENSES, queryLens)) lensInput.value = queryLens;
   if (validId(queryId)) {
     idInput.value = queryId; selected.textContent = queryId + " · visitor read-only";
     onObjectSelected(queryId);
   }
   mount.querySelector<HTMLButtonElement>("[data-cgx-open]")!.onclick = () => {
-    lensInput.value = (queryLens in LENSES ? queryLens : currentLens());
+    lensInput.value = (Object.prototype.hasOwnProperty.call(LENSES, queryLens) ? queryLens : currentLens());
     dialog.showModal(); idInput.focus();
   };
   mount.querySelector<HTMLButtonElement>("[data-cgx-close]")!.onclick = () => dialog.close();
@@ -84,7 +84,7 @@ export function installCgxSurfaceWindow(mount: HTMLElement, currentLens: () => C
     const object_id = idInput.value.trim(), lens = lensInput.value as CgxLens;
     const view_id = viewInput.value as CgxView;
     result.replaceChildren();
-    if (!validId(object_id) || !(lens in LENSES)) {
+    if (!validId(object_id) || !Object.prototype.hasOwnProperty.call(LENSES, lens)) {
       write(result, "p", "Use an exact CGX object ID and a permitted lens."); return;
     }
     selected.textContent = object_id + " · visitor read-only";
