@@ -12,7 +12,7 @@
 
 | Minute | Lane | Enabled | Permitted work |
 |---|---|---|---|
-| :00 | Cognigrex | YES | Semantics/identity/cross-domain source roots and one bounded branch candidate; 15:00 founder-ready ledger, 21:00 source close |
+| :00 | Cognigrex | YES | Semantics/identity/cross-domain source roots and one bounded branch candidate; 15:00 founder-ready source ledger, ~19:00 owner-oriented human review, 21:00 source close |
 | :11 | Römer-Grex | YES, source-only | Original engineering/physics equations, measured vs synthetic, GMAT/MPL owner boundaries |
 | :22 | Eco-Grex | YES | Habitat/watershed/materials/observation lineage and ecological source rights |
 | :33 | UniSpace | NO | Native-gated; remain paused pending host/CPU/consumer receipt and #158/#161 |
@@ -42,4 +42,4 @@ At 15:00, the web lanes produce a REVIEW CANDIDATE, not an executable local `.cg
 
 **PASS:** owner-source discovery, S92 carrier bytes/CRC, draft source CI where exact HEAD verified. **PARTIAL:** historical science source-to-Object_ID crosswalk. **HOLD:** local D-drive scan, C-drive, installed runtimes, full native `.cgx` hydration, owner permissions/public reviewer, two-device, independent physical tests. Founder's first decision is to accept or reject D Phase 3 inventory proposal *after* exact native digest readback; otherwise hold and use this packet for manual review of unbound sources.
 
-Related Git: LightSpeed draft PRs #159, #172, #173, #174 and #175, owner issues #158/#161. Original S92 receipt Drive-private, do not copy its restricted details to public web embeddings. ACR3 is archive-only.
+Related Git: LightSpeed draft PRs #159, #172, #173, #174, #175, #176 (mobile adapter) and #177 (exact Object_ID), owner issues #158/#161. Original S92 receipt Drive-private, do not copy its restricted details to public web embeddings. ACR3 is archive-only.
