@@ -32,6 +32,15 @@ JSON_REPLACE_RETRIES = 4
 JSON_REPLACE_RETRY_SECONDS = 0.05
 CLAIM_LEASE_SECONDS = 900
 CLAIM_LEASE_SCHEMA = "LSGO-CLAIM-LEASE/0.1"
+FLOOR_NATIVE_BUDGET = {
+    "schema": "LSGO-FLOOR-NATIVE-BUDGET/0.1",
+    "client_wall_deadline_seconds": 185,
+    "ollama_timeout_seconds": 180,
+    "requested_completion_token_cap": 1024,
+    "total_token_postflight_ceiling": 2048,
+    "model_function_tool_calls": 0,
+    "cost_usd": None,
+}
 
 
 class FloorExecutionUncertain(RuntimeError):
@@ -614,6 +623,7 @@ class LSGoJobConsumer:
             now = utc_now_iso()
             params_hash = hashlib.sha256(row["params_json"].encode("utf-8")).hexdigest()
             command_id = str(params.get("command_id") or "").strip() or None
+            action_type, _action_source = resolve_action(command_id or "", params)
             claim = metadata.get("ls_go_execution_claim")
             if claim is not None:
                 receipt_claim = (durable_receipt or {}).get("execution_claim")
@@ -641,6 +651,9 @@ class LSGoJobConsumer:
                     "task_id": row["task_id"],
                     "command_id": command_id,
                     "job_params_sha256": params_hash,
+                    **({"native_budget": dict(FLOOR_NATIVE_BUDGET)}
+                       if purpose == "execute" and action_type == "local_floor_wakeup"
+                       and bool(params.get("execute", True)) else {}),
                     **({"frontier_admission": frontier_admission} if frontier_admission is not None else {}),
                     "started_utc": now,
                     "lease_expires_utc": (
@@ -692,6 +705,7 @@ class LSGoJobConsumer:
             if (not isinstance(persisted_claim, dict)
                     or persisted_claim.get("claim_id") != claim["claim_id"]
                     or persisted_claim.get("lease_expires_utc") != claim.get("lease_expires_utc")
+                    or persisted_claim.get("native_budget") != claim.get("native_budget")
                     or raw_job["task_id"] != claim["task_id"]
                     or hashlib.sha256(raw_job["params_json"].encode("utf-8")).hexdigest()
                     != claim["job_params_sha256"]):
@@ -858,7 +872,9 @@ class LSGoJobConsumer:
                 or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("claim_id")
                 != claim["claim_id"]
                 or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("lease_expires_utc")
-                != claim.get("lease_expires_utc")):
+                != claim.get("lease_expires_utc")
+                or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("native_budget")
+                != claim.get("native_budget")):
             raise RuntimeError("source intake execution claim was revoked or changed")
         if not _claim_lease_live(_json_dict(row["metadata_json"]).get("ls_go_execution_claim", {})):
             raise RuntimeError("source intake execution claim lease expired")
@@ -891,12 +907,17 @@ class LSGoJobConsumer:
         if receipt_target not in {"neo", "floor"}:
             raise ValueError("unsupported floor receipt target")
         self._require_live_claim(job_id)
-        claim_id = self._execution_claims[job_id]["claim_id"]
+        claim = self._execution_claims[job_id]
+        claim_id = claim["claim_id"]
+        budget = claim.get("native_budget")
+        if budget != FLOOR_NATIVE_BUDGET:
+            raise RuntimeError("floor execution requires exact durable native budget")
         command = [
             sys.executable, "-m", "lightspeed_runtime.local_floor_runner",
             "--floor", floor, "--execute", "--receipt-target", receipt_target,
-            "--timeout-seconds", "180", "--num-predict", "1024",
-            "--max-total-tokens", "2048",
+            "--timeout-seconds", str(budget["ollama_timeout_seconds"]),
+            "--num-predict", str(budget["requested_completion_token_cap"]),
+            "--max-total-tokens", str(budget["total_token_postflight_ceiling"]),
             "--execution-claim-id", claim_id,
         ]
         if allow_heavy:
@@ -905,7 +926,7 @@ class LSGoJobConsumer:
             command, cwd=Path(__file__).resolve().parents[1],
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
         )
-        deadline = time.monotonic() + 185
+        deadline = time.monotonic() + budget["client_wall_deadline_seconds"]
         while True:
             try:
                 if self._stop.is_set():
@@ -913,7 +934,7 @@ class LSGoJobConsumer:
                 self._require_live_claim(job_id)
                 remaining = deadline - time.monotonic()
                 if remaining <= 0:
-                    raise TimeoutError("floor exceeded supervised 185-second deadline")
+                    raise TimeoutError("floor exceeded claimed supervised deadline")
                 output, _ = child.communicate(timeout=min(0.25, remaining))
                 break
             except subprocess.TimeoutExpired:
@@ -964,13 +985,16 @@ class LSGoJobConsumer:
                     or type(prompt) is not int or prompt < 0
                     or type(completion) is not int or completion < 0
                     or type(total) is not int or total != prompt + completion
-                    or total > 2048 or usage.get("ollama_generate_attempts") != 1
-                    or type(usage.get("tool_calls")) is not int or usage["tool_calls"] != 0
+                    or total > budget["total_token_postflight_ceiling"]
+                    or usage.get("ollama_generate_attempts") != 1
+                    or type(usage.get("tool_calls")) is not int
+                    or usage["tool_calls"] != budget["model_function_tool_calls"]
                     or usage.get("tool_call_scope")
                     != "model_function_tools_not_exposed_by_local_generate"):
                 raise RuntimeError("floor runner receipt lacks consistent measured usage or no-tools proof")
             if receipt.get("total_token_postflight") != {
-                "ceiling": 2048, "state": "within_ceiling", "hard_generation_limit": False,
+                "ceiling": budget["total_token_postflight_ceiling"],
+                "state": "within_ceiling", "hard_generation_limit": False,
             }:
                 raise RuntimeError("floor runner receipt lacks measured total token ceiling proof")
         return receipt
@@ -1133,9 +1157,15 @@ class LSGoJobConsumer:
                 "summary": f"Bounded local floor wake-up returned for {floor}.",
                 "floor_receipt": floor_receipt,
                 "floor_supervision": {
-                    "client_wall_deadline_seconds": 185 if bool(params.get("execute", True)) else None,
-                    "requested_completion_token_cap": 1024 if bool(params.get("execute", True)) else None,
-                    "total_token_postflight_ceiling": 2048 if bool(params.get("execute", True)) else None,
+                    "client_wall_deadline_seconds": (
+                        self._execution_claims[job["id"]]["native_budget"]["client_wall_deadline_seconds"]
+                        if bool(params.get("execute", True)) else None),
+                    "requested_completion_token_cap": (
+                        self._execution_claims[job["id"]]["native_budget"]["requested_completion_token_cap"]
+                        if bool(params.get("execute", True)) else None),
+                    "total_token_postflight_ceiling": (
+                        self._execution_claims[job["id"]]["native_budget"]["total_token_postflight_ceiling"]
+                        if bool(params.get("execute", True)) else None),
                     "server_cancellation_verified": False,
                 },
                 "next_action": "Reconcile the floor receipt through Neo/Achilles before any promotion.",

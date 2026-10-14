@@ -571,6 +571,10 @@ def test_floor_usage_is_retained_in_existing_job_result(tmp_path: Path, monkeypa
     assert consumer.process_once()["results_written"] == 1
     result = json.loads(db.execute_query("SELECT result_json FROM jobs WHERE id=601")[0]["result_json"])
     assert result["floor_receipt"]["usage_accounting"] == usage
+    persisted_claim = json.loads(db.execute_query(
+        "SELECT metadata_json FROM jobs WHERE id=601")[0]["metadata_json"])["ls_go_execution_claim"]
+    assert persisted_claim["native_budget"] == ls_go_job_consumer.FLOOR_NATIVE_BUDGET
+    assert result["execution_claim"]["native_budget"] == persisted_claim["native_budget"]
     assert result["floor_supervision"] == {
         "client_wall_deadline_seconds": 185,
         "requested_completion_token_cap": 1024,
@@ -581,12 +585,37 @@ def test_floor_usage_is_retained_in_existing_job_result(tmp_path: Path, monkeypa
     assert result["action_wall_clock_budget_enforced"] is False
 
 
+def test_persisted_floor_budget_change_revokes_execution_claim(tmp_path: Path) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    params = {"command_id": "GO-TASK-FLOOR-BUDGET", "action_type": "local_floor_wakeup",
+              "floor": "Neo"}
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id) "
+            "VALUES (601,'ls_go_command','pending',?,'{}',501)", (json.dumps(params),),
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    assert consumer._claim_job(601, expected_job=consumer.pending_jobs()[0])
+    consumer._require_live_claim(601)
+    metadata = json.loads(db.execute_query(
+        "SELECT metadata_json FROM jobs WHERE id=601")[0]["metadata_json"])
+    metadata["ls_go_execution_claim"]["native_budget"]["total_token_postflight_ceiling"] = 4096
+    db.execute_update("UPDATE jobs SET metadata_json=? WHERE id=601", (json.dumps(metadata),))
+    with pytest.raises(RuntimeError, match="revoked or changed"):
+        consumer._require_live_claim(601)
+
+
 @pytest.mark.parametrize("reason", ["revoked", "deadline", "shutdown"])
 def test_supervised_floor_stops_worker_before_another_job(tmp_path: Path, monkeypatch, reason: str) -> None:
     shell = tmp_path / "App"
     configure_shell(shell)
     consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=object())
-    consumer._execution_claims[601] = {"claim_id": "a" * 32}
+    consumer._execution_claims[601] = {
+        "claim_id": "a" * 32, "native_budget": dict(ls_go_job_consumer.FLOOR_NATIVE_BUDGET),
+    }
 
     class Child:
         terminated = False
@@ -685,7 +714,9 @@ def test_supervised_floor_reads_exact_child_receipt(tmp_path: Path, monkeypatch)
     shell = tmp_path / "App"
     configure_shell(shell)
     consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=object())
-    consumer._execution_claims[601] = {"claim_id": "a" * 32}
+    consumer._execution_claims[601] = {
+        "claim_id": "a" * 32, "native_budget": dict(ls_go_job_consumer.FLOOR_NATIVE_BUDGET),
+    }
     monkeypatch.setattr(consumer, "_require_live_claim", lambda _job_id: None)
     receipt_path = tmp_path / "floor.json"
     receipt = {"status": "completed", "floor": "Neo", "receipt_path": str(receipt_path),
@@ -716,6 +747,10 @@ def test_supervised_floor_reads_exact_child_receipt(tmp_path: Path, monkeypatch)
     monkeypatch.setattr(ls_go_job_consumer.subprocess, "Popen", start)
     result = consumer._run_floor_supervised(job_id=601, floor="Neo", allow_heavy=False, receipt_target="neo")
     assert result == receipt
+    consumer._execution_claims[601]["native_budget"]["total_token_postflight_ceiling"] = 4096
+    with pytest.raises(RuntimeError, match="exact durable native budget"):
+        consumer._run_floor_supervised(job_id=601, floor="Neo", allow_heavy=False, receipt_target="neo")
+    consumer._execution_claims[601]["native_budget"] = dict(ls_go_job_consumer.FLOOR_NATIVE_BUDGET)
     assert "--execute" in commands[0]
     assert "--num-predict" in commands[0]
     assert commands[0][commands[0].index("--max-total-tokens") + 1] == "2048"
