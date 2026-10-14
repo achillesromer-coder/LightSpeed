@@ -10,6 +10,7 @@ import re
 import threading
 import time
 from typing import Any
+from uuid import uuid4
 
 from lightspeed_runtime.local_agent_cycle import run_cycle
 from lightspeed_runtime.local_floor_runner import run_floor
@@ -357,6 +358,7 @@ class LSGoJobConsumer:
         self._job_columns_cache: set[str] | None = None
         self._task_columns_cache: set[str] | None = None
         self._cpu_pressure_hold = False
+        self._execution_claims: dict[int, dict[str, Any]] = {}
 
     def _columns(self, table: str) -> set[str]:
         cache_name = "_job_columns_cache" if table == "jobs" else "_task_columns_cache"
@@ -488,21 +490,72 @@ class LSGoJobConsumer:
                 raise RuntimeError("running result job changed during reconciliation")
         return True
 
-    def _claim_job(self, job_id: int) -> bool:
-        cols = self._columns("jobs")
-        now = utc_now_iso()
-        if "updated_at" in cols:
-            count = self.db.execute_update(
-                "UPDATE jobs SET status = ?, updated_at = ? "
-                "WHERE id = ? AND status IN ('pending','queued','review')",
-                ("running", now, job_id),
+    def _claim_job(self, job_id: int, *, expected_job: dict[str, Any],
+                   purpose: str = "execute", durable_receipt: dict[str, Any] | None = None) -> bool:
+        """Bind one selected DB work item to a durable, single-use claim."""
+        if purpose not in {"execute", "reconcile", "hold"}:
+            raise ValueError("unsupported claim purpose")
+        connection = getattr(self.db, "get_connection", None)
+        if not callable(connection) or not {"metadata_json", "updated_at", "task_id"}.issubset(self._columns("jobs")):
+            raise RuntimeError("durable job claim requires transactional DB and identity columns")
+        with connection() as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            row = conn.execute(
+                "SELECT job_type,status,params_json,metadata_json,task_id FROM jobs WHERE id = ?",
+                (job_id,),
+            ).fetchone()
+            if row is None or row["job_type"] != "ls_go_command" or row["status"] not in {
+                "pending", "queued", "review",
+            }:
+                return False
+            if (row["params_json"] != expected_job.get("params_json")
+                    or row["task_id"] != expected_job.get("task_id")):
+                raise RuntimeError("queued job identity changed before claim")
+            metadata = _json_dict(row["metadata_json"])
+            params = _json_dict(row["params_json"])
+            now = utc_now_iso()
+            params_hash = hashlib.sha256(row["params_json"].encode("utf-8")).hexdigest()
+            command_id = str(params.get("command_id") or "").strip() or None
+            claim = metadata.get("ls_go_execution_claim")
+            if claim is not None:
+                receipt_claim = (durable_receipt or {}).get("execution_claim")
+                exact_prior_claim = (
+                    purpose != "execute" and durable_receipt is not None
+                    and isinstance(claim, dict)
+                    and claim.get("job_id") == job_id
+                    and claim.get("task_id") == row["task_id"]
+                    and claim.get("command_id") == command_id
+                    and claim.get("job_params_sha256") == params_hash
+                    and (
+                        (isinstance(receipt_claim, dict)
+                         and receipt_claim.get("claim_id") == claim.get("claim_id"))
+                        or (claim.get("purpose") == "reconcile" and receipt_claim is None)
+                    )
+                )
+                if not exact_prior_claim:
+                    raise RuntimeError("queued job retains prior execution claim; reconcile before retry")
+            else:
+                claim = {
+                    "claim_id": uuid4().hex,
+                    "purpose": purpose,
+                    "job_id": job_id,
+                    "task_id": row["task_id"],
+                    "command_id": command_id,
+                    "job_params_sha256": params_hash,
+                    "started_utc": now,
+                    "pid": os.getpid(),
+                }
+            metadata["ls_go_execution_claim"] = claim
+            updated = conn.execute(
+                "UPDATE jobs SET status = ?, metadata_json = ?, updated_at = ? "
+                "WHERE id = ? AND job_type = ? AND status = ? AND params_json = ? AND task_id IS ?",
+                ("running", json.dumps(metadata, ensure_ascii=False), now, job_id,
+                 "ls_go_command", row["status"], row["params_json"], row["task_id"]),
             )
-        else:
-            count = self.db.execute_update(
-                "UPDATE jobs SET status = ? WHERE id = ? AND status IN ('pending','queued','review')",
-                ("running", job_id),
-            )
-        return int(count or 0) == 1
+            if updated.rowcount != 1:
+                raise RuntimeError("queued job changed during transactional claim")
+        self._execution_claims[job_id] = claim
+        return True
 
     def _update_job(self, job_id: int, *, status: str, result: dict[str, Any]) -> None:
         cols = self._columns("jobs")
@@ -578,7 +631,7 @@ class LSGoJobConsumer:
         return {}
 
     def _identity_hold(self, command_id: str, job_id: int, task_id: Any,
-                       existing: dict[str, Any]) -> dict[str, Any] | None:
+                       existing: dict[str, Any], job: dict[str, Any]) -> dict[str, Any] | None:
         path = identity_hold_file_path(self.shell_root, command_id, job_id, task_id)
         receipt = _read_json(path)
         if path.exists() and (
@@ -591,7 +644,8 @@ class LSGoJobConsumer:
             or receipt.get("status") != "held"
         ):
             raise ValueError("existing identity-hold receipt failed exact readback")
-        if not self._claim_job(job_id):
+        if not self._claim_job(job_id, expected_job=job, purpose="hold",
+                               durable_receipt=receipt or None):
             return None
         if not receipt:
             receipt = {
@@ -601,6 +655,7 @@ class LSGoJobConsumer:
                 "command_id": command_id,
                 "job_id": job_id,
                 "task_id": task_id,
+                "execution_claim": self._execution_claims[job_id],
                 "status": "held",
                 "error": "command receipt does not match exact job/task identity or terminal status",
                 "conflicting_receipt_path": existing.get("receipt_path"),
@@ -832,7 +887,7 @@ class LSGoJobConsumer:
         params = _json_dict(job.get("params_json"))
         command_id = str(params.get("command_id") or "").strip()
         if not command_id:
-            if self._claim_job(job_id):
+            if self._claim_job(job_id, expected_job=job, purpose="hold"):
                 receipt = self._persist_result(
                     {
                         "schema_version": RESULT_SCHEMA,
@@ -866,15 +921,16 @@ class LSGoJobConsumer:
                 and existing.get("status") in {"completed", "blocked", "held"}
             )
             if not exact_identity:
-                return self._identity_hold(command_id, job_id, task_id, existing)
-            if not self._claim_job(job_id):
+                return self._identity_hold(command_id, job_id, task_id, existing, job)
+            if not self._claim_job(job_id, expected_job=job, purpose="reconcile",
+                                   durable_receipt=existing):
                 return None
             final_status = str(existing["status"])
             self._update_job(job_id, status=final_status, result=existing)
             self._update_task(job.get("task_id"), status=final_status, receipt=existing)
             return existing
 
-        if not self._claim_job(job_id):
+        if not self._claim_job(job_id, expected_job=job):
             return None
 
         envelope, envelope_count = find_command_envelope(self.shell_root, command_id)
@@ -931,6 +987,7 @@ class LSGoJobConsumer:
             "drive_write_executed": False,
             "public_publish_authorized": False,
             **action_result,
+            "execution_claim": self._execution_claims[job_id],
         }
         receipt = self._persist_result(receipt)
         final_status = str(receipt.get("status") or "held")

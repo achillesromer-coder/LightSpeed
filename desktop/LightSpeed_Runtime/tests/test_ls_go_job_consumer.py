@@ -7,6 +7,8 @@ import os
 from pathlib import Path
 import sqlite3
 import sys
+import hashlib
+import pytest
 
 RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RUNTIME_ROOT))
@@ -42,6 +44,9 @@ def test_source_intake_consumer_persists_evidence_once(tmp_path, monkeypatch):
     assert consumer.process_once()["results_written"] == 1
     result = json.loads(ls_go_job_consumer.result_file_path(shell, params["command_id"]).read_text())
     assert result["status"] == "completed"
+    persisted_claim = json.loads(db.execute_query("SELECT metadata_json FROM jobs WHERE id=502")[0]["metadata_json"])["ls_go_execution_claim"]
+    assert result["execution_claim"] == persisted_claim
+    assert persisted_claim["purpose"] == "execute"
     assert result["intake"]["source_sha256"] == payload["source_sha256"]
     assert result["intake"]["canonical_mutation"] is False
     assert Path(result["intake"]["artifacts"][0]["path"]).read_bytes() == raw
@@ -267,6 +272,53 @@ def configure_db(path: Path) -> SQLiteDB:
             """
         )
     return SQLiteDB(path)
+
+
+def test_claim_binds_exact_work_and_rejects_replay_after_status_reset(tmp_path: Path) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    params_json = json.dumps({"command_id": "GO-TASK-CLAIM", "action_type": "review_only"})
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status) VALUES (501,'queued')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id) "
+            "VALUES (601,'ls_go_command','pending',?,'{}',501)",
+            (params_json,),
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    selected = consumer.pending_jobs()[0]
+    assert consumer._claim_job(601, expected_job=selected)
+    stored = db.execute_query("SELECT status,metadata_json FROM jobs WHERE id=601")[0]
+    claim = json.loads(stored["metadata_json"])["ls_go_execution_claim"]
+    assert stored["status"] == "running"
+    assert claim["claim_id"] == consumer._execution_claims[601]["claim_id"]
+    assert claim["job_id"] == 601 and claim["task_id"] == 501
+    assert claim["command_id"] == "GO-TASK-CLAIM"
+    assert claim["job_params_sha256"] == hashlib.sha256(params_json.encode()).hexdigest()
+    assert not consumer._claim_job(601, expected_job=selected)
+    db.execute_update("UPDATE jobs SET status='pending' WHERE id=601")
+    with pytest.raises(RuntimeError, match="prior execution claim"):
+        consumer._claim_job(601, expected_job=selected)
+    assert db.execute_query("SELECT status FROM jobs WHERE id=601")[0]["status"] == "pending"
+
+
+def test_claim_holds_when_selected_job_identity_changes(tmp_path: Path) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    with sqlite3.connect(db.path) as conn:
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id) "
+            "VALUES (601,'ls_go_command','pending','{}','{}',501)"
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    selected = consumer.pending_jobs()[0]
+    db.execute_update("UPDATE jobs SET task_id=502 WHERE id=601")
+    with pytest.raises(RuntimeError, match="identity changed"):
+        consumer._claim_job(601, expected_job=selected)
+    stored = db.execute_query("SELECT status,metadata_json FROM jobs WHERE id=601")[0]
+    assert stored == {"status": "pending", "metadata_json": "{}"}
 
 
 def configure_shell(root: Path) -> None:
