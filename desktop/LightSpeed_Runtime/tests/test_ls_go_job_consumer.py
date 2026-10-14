@@ -296,7 +296,7 @@ def test_untyped_free_form_job_is_held_not_executed(tmp_path: Path):
     assert db.execute_query("SELECT status FROM tasks WHERE id = 999")[0]["status"] == "held"
 
 
-def test_typed_review_only_job_executes_without_source_mutation(tmp_path: Path):
+def test_typed_review_only_job_executes_without_source_mutation(tmp_path: Path, monkeypatch):
     shell = tmp_path / "App"
     configure_shell(shell)
     write_command(shell, "GO-TASK-0100")
@@ -322,6 +322,8 @@ def test_typed_review_only_job_executes_without_source_mutation(tmp_path: Path):
         )
         conn.commit()
 
+    ticks = iter((1_000_000_000, 2_234_567_890))
+    monkeypatch.setattr(ls_go_job_consumer.time, "monotonic_ns", lambda: next(ticks))
     consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
     summary = consumer.process_once()
 
@@ -332,7 +334,13 @@ def test_typed_review_only_job_executes_without_source_mutation(tmp_path: Path):
     assert receipt["status"] == "completed"
     assert receipt["action_type"] == "review_only"
     assert receipt["action_source"] == "typed_action"
+    assert receipt["action_wall_elapsed_ms"] == 1234
+    assert receipt["action_wall_clock_budget_enforced"] is False
     assert receipt["public_publish_authorized"] is False
+    assert consumer.process_once()["results_written"] == 0
+    assert json.loads(ls_go_job_consumer.result_file_path(shell, "GO-TASK-0100").read_text())[
+        "action_wall_elapsed_ms"
+    ] == 1234
 
 
 def test_typed_cognigrex_workflow_routes_to_supervisor(tmp_path: Path, monkeypatch):

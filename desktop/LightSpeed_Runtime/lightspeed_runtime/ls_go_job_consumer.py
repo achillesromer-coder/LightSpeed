@@ -796,6 +796,7 @@ class LSGoJobConsumer:
         envelope, envelope_count = find_command_envelope(self.shell_root, command_id)
         action_type, action_source = resolve_action(command_id, params)
         started = utc_now_iso()
+        action_started_ns = time.monotonic_ns()
         if action_type is None:
             action_result = {
                 "status": "held",
@@ -823,6 +824,7 @@ class LSGoJobConsumer:
                     "next_action": "Repair the typed action/runtime prerequisite; do not substitute a new command identity unless required by the contract.",
                 }
 
+        action_elapsed_ns = time.monotonic_ns() - action_started_ns
         receipt = {
             "schema_version": RESULT_SCHEMA,
             "result_id": result_id_for(command_id),
@@ -835,6 +837,9 @@ class LSGoJobConsumer:
             "task_id": job.get("task_id"),
             "target_floor": job.get("z_context") or (envelope or {}).get("target_floor"),
             "action_source": action_source,
+            "action_wall_elapsed_ms": action_elapsed_ns // 1_000_000,
+            "action_wall_clock_source": "time.monotonic_ns; excludes durable receipt persistence",
+            "action_wall_clock_budget_enforced": False,
             "shell_root": str(self.shell_root),
             "queue_identity_count": envelope_count,
             "proof_required": bool((envelope or {}).get("proof_required", True)),
