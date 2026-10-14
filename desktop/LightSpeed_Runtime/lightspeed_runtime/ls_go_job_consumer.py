@@ -12,6 +12,10 @@ import time
 from typing import Any
 from uuid import uuid4
 
+from lightspeed_runtime.corpus_test_orchestrator import (
+    CorpusTestPlanError,
+    assess_frontier_unit,
+)
 from lightspeed_runtime.local_agent_cycle import run_cycle
 from lightspeed_runtime.local_floor_runner import run_floor
 from lightspeed_runtime.cognigrex_supervisor import run_supervised_workflow
@@ -531,6 +535,33 @@ class LSGoJobConsumer:
                 raise RuntimeError("queued job identity changed before claim")
             metadata = _json_dict(row["metadata_json"])
             params = _json_dict(row["params_json"])
+            action_payload = params.get("action_payload")
+            frontier_admission = None
+            if isinstance(action_payload, dict) and "frontier_request" in action_payload:
+                try:
+                    decision = assess_frontier_unit(action_payload["frontier_request"])
+                    frontier_admission = {
+                        "schema": decision["schema"],
+                        "domain": decision["domain"],
+                        "object_id": decision["object_id"],
+                        "owner": decision["owner"],
+                        "work_key": decision["work_key"],
+                        "source_sha256": decision["source_sha256"],
+                        "evidence_class": decision["evidence_class"],
+                        "verdict": decision["verdict"],
+                        "reason": decision["reason"],
+                        "reported_usage_is_unverified": True,
+                        "resource_ceiling_enforced_by_this_function": False,
+                        "native_execution_authorized": False,
+                    }
+                except CorpusTestPlanError as exc:
+                    frontier_admission = {
+                        "schema": "CGX-FRONTIER-ADMISSION/0.1",
+                        "work_key": None,
+                        "verdict": "HOLD",
+                        "reason": f"INVALID_FRONTIER_REQUEST:{exc}",
+                        "native_execution_authorized": False,
+                    }
             now = utc_now_iso()
             params_hash = hashlib.sha256(row["params_json"].encode("utf-8")).hexdigest()
             command_id = str(params.get("command_id") or "").strip() or None
@@ -560,6 +591,7 @@ class LSGoJobConsumer:
                     "task_id": row["task_id"],
                     "command_id": command_id,
                     "job_params_sha256": params_hash,
+                    **({"frontier_admission": frontier_admission} if frontier_admission is not None else {}),
                     "started_utc": now,
                     "pid": os.getpid(),
                 }
@@ -971,7 +1003,17 @@ class LSGoJobConsumer:
         action_type, action_source = resolve_action(command_id, params)
         started = utc_now_iso()
         action_started_ns = time.monotonic_ns()
-        if action_type is None:
+        frontier_admission = self._execution_claims[job_id].get("frontier_admission")
+        if frontier_admission is not None:
+            action_result = {
+                "status": "held",
+                "action_type": action_type,
+                "frontier_admission": frontier_admission,
+                "error": "frontier work requires installed native budget and cancellation enforcement",
+                "summary": "Source-addressed frontier decision is bound to this job claim; no action was run.",
+                "next_action": "Review the exact claim and enable native limits through the existing owner gate before a new accepted work identity.",
+            }
+        elif action_type is None:
             action_result = {
                 "status": "held",
                 "action_type": None,

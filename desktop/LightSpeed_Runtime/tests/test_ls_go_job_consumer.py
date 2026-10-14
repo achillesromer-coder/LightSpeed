@@ -410,6 +410,73 @@ def test_task_write_failure_rolls_back_claimed_job_commit(tmp_path: Path) -> Non
     assert db.execute_query("SELECT status FROM tasks WHERE id=501")[0]["status"] == "queued"
 
 
+def test_frontier_admission_binds_claim_but_holds_unenforced_action(tmp_path: Path, monkeypatch) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    request = {
+        "domain": "COGNIGREX", "object_id": "cgx://RFS-001", "owner": "COGNIGREX",
+        "source_sha256": "a" * 64, "operation": "admit_and_test",
+        "acceptance_version": "v1", "evidence_class": "COMPUTED",
+        "source_changed": True, "dependencies_changed": False,
+        "limits": {"max_elapsed_s": 600, "max_tokens": 8000,
+                   "max_tool_calls": 12, "max_retries": 1, "max_cost_usd": 0.25},
+        "usage": {"elapsed_s": 0, "tokens": 0, "tool_calls": 0,
+                  "retries": 0, "cost_usd": 0.0},
+    }
+    params = {
+        "command_id": "GO-TASK-FRONTIER-CLAIM", "action_type": "review_only",
+        "action_payload": {"frontier_request": request},
+    }
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id) "
+            "VALUES (601,'ls_go_command','pending',?,'{}',501)",
+            (json.dumps(params),),
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    monkeypatch.setattr(consumer, "_execute_action", lambda **_kw: (_ for _ in ()).throw(
+        AssertionError("unmetered frontier action must not execute")))
+    assert consumer.process_once()["results_written"] == 1
+    job = db.execute_query("SELECT status,metadata_json,result_json FROM jobs WHERE id=601")[0]
+    claim = json.loads(job["metadata_json"])["ls_go_execution_claim"]
+    result = json.loads(job["result_json"])
+    assert job["status"] == "held"
+    assert result["execution_claim"] == claim
+    assert claim["frontier_admission"]["verdict"] == "READY_FOR_BOUNDED_WORK"
+    assert claim["frontier_admission"]["work_key"]
+    assert result["frontier_admission"]["native_execution_authorized"] is False
+    assert db.execute_query("SELECT status FROM tasks WHERE id=501")[0]["status"] == "held"
+
+
+def test_invalid_frontier_request_is_durably_held_without_action(tmp_path: Path, monkeypatch) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    params = {
+        "command_id": "GO-TASK-FRONTIER-INVALID", "action_type": "review_only",
+        "action_payload": {"frontier_request": {"source_sha256": "invalid"}},
+    }
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id) "
+            "VALUES (601,'ls_go_command','pending',?,'{}',501)",
+            (json.dumps(params),),
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    monkeypatch.setattr(consumer, "_execute_action", lambda **_kw: (_ for _ in ()).throw(
+        AssertionError("invalid frontier action must not execute")))
+    assert consumer.process_once()["results_written"] == 1
+    job = db.execute_query("SELECT status,metadata_json FROM jobs WHERE id=601")[0]
+    decision = json.loads(job["metadata_json"])["ls_go_execution_claim"]["frontier_admission"]
+    assert job["status"] == "held"
+    assert decision["verdict"] == "HOLD"
+    assert decision["work_key"] is None
+    assert decision["reason"].startswith("INVALID_FRONTIER_REQUEST:")
+
+
 def configure_shell(root: Path) -> None:
     root.mkdir(parents=True, exist_ok=True)
     (root / "N.py").write_text("# test shell\n", encoding="utf-8")
