@@ -240,6 +240,41 @@ def test_public_projection_requires_exact_public_release_and_hash(monkeypatch, t
     assert answer.json()["answer"] == payload["summary"]
     assert answer.json()["model"] is None
 
+    # Reusable read-only object facet uses the SAME exact Public manifest/rights gate.
+    assert local.post("/api/v1/visitor/surface", json={
+        "object_id": "cgx:test:public-object", "lens": "achilles",
+        "view_id": "overview",
+    }).status_code == 401
+    surface = local.post("/api/v1/visitor/surface", json={
+        "object_id": "cgx:test:public-object", "lens": "achilles",
+        "view_id": "overview",
+    }, headers=head)
+    assert surface.status_code == 200
+    assert surface.json()["status"] == "PUBLIC_SAFE_PROJECTION"
+    assert surface.json()["payload"]["title"] == "Public CGX object"
+    assert surface.json()["payload"].get("model") is None
+    assert surface.json()["canonical_cgx_ingestion"] is False
+    model_surface = local.post("/api/v1/visitor/surface", json={
+        "object_id": "cgx:test:public-object", "lens": "achilles",
+        "view_id": "model",
+    }, headers=head)
+    assert model_surface.json()["payload"]["model"]["sha256"] == "b" * 64
+    for view in ("map", "timeline"):
+        held_view = local.post("/api/v1/visitor/surface", json={
+            "object_id": "cgx:test:public-object", "lens": "achilles",
+            "view_id": view,
+        }, headers=head)
+        assert held_view.json()["status"] == "SURFACE_NOT_RELEASED"
+        assert held_view.json()["payload"] is None
+    assert local.post("/api/v1/visitor/surface", json={
+        "object_id": "cgx:test:public-object", "lens": "achilles",
+        "requested_valid_at": "2024-01-01T00:00:00Z",
+    }, headers=head).status_code == 409
+    assert local.post("/api/v1/visitor/surface", json={
+        "object_id": "cgx:test:public-object", "lens": "achilles",
+        "unexpected": "private-source-request",
+    }, headers=head).status_code == 400
+
     internal = json.loads(json.dumps(projection))
     internal["release"]["release_class"] = "Internal"
     internal["release"]["source_release_classes"] = ["Internal"]
@@ -250,6 +285,9 @@ def test_public_projection_requires_exact_public_release_and_hash(monkeypatch, t
     }, headers=head)
     assert held.status_code == 200
     assert held.json()["status"] == "PENDING_PUBLIC_SAFE_RESOLVER"
+    held_surface = local.post("/api/v1/visitor/surface", json={"object_id": "cgx:test:public-object", "lens": "achilles", "view_id": "overview"}, headers=head)
+    assert held_surface.json()["payload"] is None
+    assert held_surface.json()["public_safe"] is False
     assert held.json()["answer"] is None
     assert held.json()["public_safe"] is False
 
