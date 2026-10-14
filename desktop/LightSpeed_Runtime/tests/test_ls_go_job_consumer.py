@@ -213,7 +213,8 @@ def test_restart_rejects_receipt_from_different_claim(tmp_path: Path) -> None:
     consumer._persist_result({
         "command_id": command_id, "job_id": 601, "task_id": 501,
         "result_id": ls_go_job_consumer.result_id_for(command_id),
-        "status": "completed", "execution_claim": {"claim_id": "other-attempt"},
+        "status": "completed", "completed_utc": ls_go_job_consumer.utc_now_iso(),
+        "execution_claim": {"claim_id": "other-attempt"},
     })
     assert consumer._reconcile_running_job_receipt(601) is False
     assert db.execute_query("SELECT status FROM jobs WHERE id=601")[0]["status"] == "running"
@@ -221,7 +222,8 @@ def test_restart_rejects_receipt_from_different_claim(tmp_path: Path) -> None:
     consumer._persist_result({
         "command_id": command_id, "job_id": 601, "task_id": 501,
         "result_id": ls_go_job_consumer.result_id_for(command_id),
-        "status": "completed", "execution_claim": consumer._execution_claims[601],
+        "status": "completed", "completed_utc": ls_go_job_consumer.utc_now_iso(),
+        "execution_claim": consumer._execution_claims[601],
     })
     assert consumer._reconcile_running_job_receipt(601) is True
     assert db.execute_query("SELECT status FROM jobs WHERE id=601")[0]["status"] == "completed"
@@ -327,7 +329,11 @@ def test_claim_binds_exact_work_and_rejects_replay_after_status_reset(tmp_path: 
     assert claim["claim_id"] == consumer._execution_claims[601]["claim_id"]
     assert claim["job_id"] == 601 and claim["task_id"] == 501
     assert claim["command_id"] == "GO-TASK-CLAIM"
+    assert claim["lease_schema"] == "LSGO-CLAIM-LEASE/0.1"
     assert claim["job_params_sha256"] == hashlib.sha256(params_json.encode()).hexdigest()
+    assert datetime.fromisoformat(claim["started_utc"]) < datetime.fromisoformat(claim["lease_expires_utc"])
+    assert (datetime.fromisoformat(claim["lease_expires_utc"])
+            - datetime.fromisoformat(claim["started_utc"])).total_seconds() == 900
     assert not consumer._claim_job(601, expected_job=selected)
     db.execute_update("UPDATE jobs SET status='pending' WHERE id=601")
     with pytest.raises(RuntimeError, match="prior execution claim"):
@@ -352,6 +358,48 @@ def test_source_intake_live_claim_check_rejects_cancelled_job(tmp_path: Path) ->
     db.execute_update("UPDATE jobs SET status='held' WHERE id=601")
     with pytest.raises(RuntimeError, match="revoked or changed"):
         consumer._require_live_claim(601)
+
+
+def test_expired_claim_blocks_work_terminal_write_and_restart_reconciliation(tmp_path: Path) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    command_id = "GO-TASK-EXPIRED-LEASE"
+    params_json = json.dumps({"command_id": command_id, "action_type": "review_only"})
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id) "
+            "VALUES (601,'ls_go_command','pending',?,'{}',501)", (params_json,),
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    assert consumer._claim_job(601, expected_job=consumer.pending_jobs()[0])
+    claim = consumer._execution_claims[601]
+    changed = dict(claim, lease_expires_utc="2099-01-01T00:00:00+00:00")
+    db.execute_update(
+        "UPDATE jobs SET metadata_json=? WHERE id=601",
+        (json.dumps({"ls_go_execution_claim": changed}),),
+    )
+    with pytest.raises(RuntimeError, match="revoked or changed"):
+        consumer._require_live_claim(601)
+    claim["lease_expires_utc"] = "2000-01-01T00:00:00+00:00"
+    db.execute_update(
+        "UPDATE jobs SET metadata_json=? WHERE id=601",
+        (json.dumps({"ls_go_execution_claim": claim}),),
+    )
+    with pytest.raises(RuntimeError, match="lease expired"):
+        consumer._require_live_claim(601)
+    receipt = {
+        "command_id": command_id, "job_id": 601, "task_id": 501,
+        "result_id": ls_go_job_consumer.result_id_for(command_id),
+        "status": "completed", "completed_utc": ls_go_job_consumer.utc_now_iso(),
+        "execution_claim": claim,
+    }
+    with pytest.raises(RuntimeError, match="lease expired"):
+        consumer._finish_claimed_job(601, receipt=receipt)
+    consumer._persist_result(receipt)
+    assert consumer._reconcile_running_job_receipt(601) is False
+    assert db.execute_query("SELECT status FROM jobs WHERE id=601")[0]["status"] == "running"
 
 
 def test_claim_holds_when_selected_job_identity_changes(tmp_path: Path) -> None:

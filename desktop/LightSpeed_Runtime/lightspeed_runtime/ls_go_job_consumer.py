@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 import hashlib
 import importlib
 import json
@@ -30,6 +30,8 @@ RESULT_SCHEMA = "lightspeed-go-local-result-v1"
 POLL_SECONDS = 1.0
 JSON_REPLACE_RETRIES = 4
 JSON_REPLACE_RETRY_SECONDS = 0.05
+CLAIM_LEASE_SECONDS = 900
+CLAIM_LEASE_SCHEMA = "LSGO-CLAIM-LEASE/0.1"
 
 
 class FloorExecutionUncertain(RuntimeError):
@@ -55,6 +57,25 @@ COMPATIBILITY_ACTIONS = {
 
 def utc_now_iso() -> str:
     return datetime.now(UTC).isoformat(timespec="seconds")
+
+
+def _claim_lease_live(claim: dict[str, Any], *, at: datetime | None = None) -> bool:
+    """Treat missing, malformed, or expired new execution leases as revoked."""
+    expires = claim.get("lease_expires_utc")
+    started = claim.get("started_utc")
+    if not isinstance(expires, str) or not isinstance(started, str):
+        return False
+    try:
+        deadline = datetime.fromisoformat(expires)
+        began = datetime.fromisoformat(started)
+    except ValueError:
+        return False
+    instant = datetime.now(UTC) if at is None else at
+    return (
+        began.tzinfo is not None and deadline.tzinfo is not None and instant.tzinfo is not None
+        and began <= instant < deadline
+        and deadline - began <= timedelta(seconds=CLAIM_LEASE_SECONDS)
+    )
 
 
 def _safe_id(value: Any) -> str:
@@ -475,6 +496,22 @@ class LSGoJobConsumer:
             prior_claim = _json_dict(job.get("metadata_json")).get("ls_go_execution_claim")
             if prior_claim is not None:
                 receipt_claim = result.get("execution_claim")
+                if (isinstance(prior_claim, dict) and prior_claim.get("purpose") == "execute"
+                        and (prior_claim.get("lease_schema") == CLAIM_LEASE_SCHEMA
+                             or isinstance(receipt_claim, dict)
+                             and receipt_claim.get("lease_schema") == CLAIM_LEASE_SCHEMA)):
+                    completed = result.get("completed_utc")
+                    try:
+                        completed_at = datetime.fromisoformat(completed) if isinstance(completed, str) else None
+                    except ValueError:
+                        completed_at = None
+                    if (completed_at is None or prior_claim.get("lease_schema") != CLAIM_LEASE_SCHEMA
+                            or not isinstance(receipt_claim, dict)
+                            or receipt_claim.get("lease_schema") != CLAIM_LEASE_SCHEMA
+                            or receipt_claim.get("started_utc") != prior_claim.get("started_utc")
+                            or receipt_claim.get("lease_expires_utc") != prior_claim.get("lease_expires_utc")
+                            or not _claim_lease_live(prior_claim, at=completed_at)):
+                        return False
                 if not (
                     isinstance(prior_claim, dict)
                     and prior_claim.get("job_id") == job_id
@@ -598,6 +635,7 @@ class LSGoJobConsumer:
             else:
                 claim = {
                     "claim_id": uuid4().hex,
+                    "lease_schema": CLAIM_LEASE_SCHEMA,
                     "purpose": purpose,
                     "job_id": job_id,
                     "task_id": row["task_id"],
@@ -605,6 +643,9 @@ class LSGoJobConsumer:
                     "job_params_sha256": params_hash,
                     **({"frontier_admission": frontier_admission} if frontier_admission is not None else {}),
                     "started_utc": now,
+                    "lease_expires_utc": (
+                        datetime.fromisoformat(now) + timedelta(seconds=CLAIM_LEASE_SECONDS)
+                    ).isoformat(timespec="seconds"),
                     "pid": os.getpid(),
                 }
             metadata["ls_go_execution_claim"] = claim
@@ -650,10 +691,13 @@ class LSGoJobConsumer:
             persisted_claim = _json_dict(raw_job["metadata_json"]).get("ls_go_execution_claim")
             if (not isinstance(persisted_claim, dict)
                     or persisted_claim.get("claim_id") != claim["claim_id"]
+                    or persisted_claim.get("lease_expires_utc") != claim.get("lease_expires_utc")
                     or raw_job["task_id"] != claim["task_id"]
                     or hashlib.sha256(raw_job["params_json"].encode("utf-8")).hexdigest()
                     != claim["job_params_sha256"]):
                 raise RuntimeError("persisted work claim changed; terminal write fenced")
+            if claim["purpose"] == "execute" and not _claim_lease_live(persisted_claim):
+                raise RuntimeError("execution claim lease expired; terminal write fenced")
             task_id = claim["task_id"]
             task = None
             if update_task and task_id is not None:
@@ -812,8 +856,12 @@ class LSGoJobConsumer:
                 or hashlib.sha256(row["params_json"].encode("utf-8")).hexdigest()
                 != claim["job_params_sha256"]
                 or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("claim_id")
-                != claim["claim_id"]):
+                != claim["claim_id"]
+                or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("lease_expires_utc")
+                != claim.get("lease_expires_utc")):
             raise RuntimeError("source intake execution claim was revoked or changed")
+        if not _claim_lease_live(_json_dict(row["metadata_json"]).get("ls_go_execution_claim", {})):
+            raise RuntimeError("source intake execution claim lease expired")
 
     def _mark_floor_uncertain(self, job_id: int, reason: str) -> None:
         """Retain a DB recovery hold even if an external cancel changed status."""
