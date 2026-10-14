@@ -195,6 +195,43 @@ def test_ollama_usage_does_not_invent_missing_or_malformed_counters() -> None:
         assert usage["budget_enforced"] is False
 
 
+@pytest.mark.parametrize(
+    ("response", "expected_status", "expected_state"),
+    [
+        ({"response": "ok", "done": True, "prompt_eval_count": 17, "eval_count": 5},
+         "completed", "within_ceiling"),
+        ({"response": "ok", "done": True, "prompt_eval_count": 19, "eval_count": 5},
+         "blocked", "exceeded"),
+        ({"response": "ok", "done": True}, "blocked", "unmeasured"),
+    ],
+)
+def test_total_token_postflight_blocks_unmeasured_or_excess_use(
+    tmp_path: Path, response: dict[str, object], expected_status: str, expected_state: str,
+) -> None:
+    contract_path = _contract(tmp_path)
+    receipt = run_floor(
+        contract_path=contract_path, floor="Neo", dry_run=False, max_total_tokens=22,
+        http_post=lambda _url, _payload, _timeout: response,
+        ollama_status_probe=lambda _endpoint, _timeout: {
+            "state": "available", "loaded_model_count": 1,
+            "loaded_models": [{"name": "qwen3:8b"}],
+        },
+        memory_snapshot=lambda: (32 * 1024**3, 16 * 1024**3),
+        lock=False,
+    )
+    assert receipt["status"] == expected_status
+    assert receipt["total_token_postflight"] == {
+        "ceiling": 22, "state": expected_state, "hard_generation_limit": False,
+    }
+    assert receipt["usage_accounting"]["budget_enforced"] is False
+    assert json.loads(Path(receipt["receipt_path"]).read_text())["status"] == expected_status
+
+
+def test_total_token_ceiling_rejects_invalid_values(tmp_path: Path) -> None:
+    with pytest.raises(LocalFloorRunnerError, match="positive integer"):
+        run_floor(contract_path=_contract(tmp_path), floor="Neo", max_total_tokens=0)
+
+
 def test_resource_preflight_is_bounded_and_reports_last_receipt(tmp_path: Path) -> None:
     contract_path = _contract(tmp_path)
     contract = json.loads(contract_path.read_text(encoding="utf-8"))

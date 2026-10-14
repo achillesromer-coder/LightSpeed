@@ -118,6 +118,7 @@ def run_floor(
     timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS,
     num_predict: int | None = None,
     execution_claim_id: str | None = None,
+    max_total_tokens: int | None = None,
     http_post: HttpPost | None = None,
     ollama_status_probe: OllamaStatusProbe | None = None,
     memory_snapshot: MemorySnapshot | None = None,
@@ -126,6 +127,8 @@ def run_floor(
 ) -> dict[str, Any]:
     if execution_claim_id is not None and not re.fullmatch(r"[0-9a-f]{32}", execution_claim_id):
         raise LocalFloorRunnerError("execution claim id is invalid")
+    if max_total_tokens is not None and (type(max_total_tokens) is not int or max_total_tokens < 1):
+        raise LocalFloorRunnerError("total token ceiling must be a positive integer")
     contract = load_contract(contract_path)
     selection = select_floor(contract, floor=floor, order=order)
     floor_row = selection.floor
@@ -225,6 +228,7 @@ def run_floor(
         source_evidence=source_evidence,
         ollama_generate_attempted=True,
         execution_claim_id=execution_claim_id,
+        max_total_tokens=max_total_tokens,
     )
     write_receipt(contract, receipt_path, receipt)
     return receipt
@@ -463,6 +467,7 @@ def build_receipt(
     source_evidence: list[dict[str, Any]] | None = None,
     ollama_generate_attempted: bool = False,
     execution_claim_id: str | None = None,
+    max_total_tokens: int | None = None,
 ) -> dict[str, Any]:
     prompt = str(request_body.get("prompt") or "")
     safe_floor = re.sub(r"[^A-Za-z0-9_.-]+", "_", str(floor.get("floor") or "floor")).strip("_")
@@ -501,6 +506,14 @@ def build_receipt(
             response, ollama_generate_attempted=ollama_generate_attempted,
         ),
     }
+    if max_total_tokens is not None:
+        total = receipt["usage_accounting"]["total_tokens"]
+        receipt["total_token_postflight"] = {
+            "ceiling": max_total_tokens,
+            "state": "within_ceiling" if total is not None and total <= max_total_tokens
+            else "exceeded" if total is not None else "unmeasured",
+            "hard_generation_limit": False,
+        }
     if blocked_reason:
         receipt["blocked_reason"] = blocked_reason
     if response is not None:
@@ -512,11 +525,14 @@ def build_receipt(
                 expected_route=str(receipt_path),
             )
     if status == "completed":
+        if max_total_tokens is not None and receipt["total_token_postflight"]["state"] != "within_ceiling":
+            receipt["status"] = "blocked"
+            error = "total token postflight ceiling exceeded or Ollama counters are unavailable"
         response_text = (response or {}).get("response")
-        if not isinstance(response_text, str) or not response_text.strip() or (response or {}).get("done") is not True:
+        if receipt["status"] == "completed" and (not isinstance(response_text, str) or not response_text.strip() or (response or {}).get("done") is not True):
             receipt["status"] = "failed"
             error = "model response is empty or incomplete"
-        elif (contract.get("policy") or {}).get("strict_response_contract"):
+        elif receipt["status"] == "completed" and (contract.get("policy") or {}).get("strict_response_contract"):
             issues = validate_grounded_response(response or {}, str(receipt_path), source_evidence or [])
             receipt["response_validation_errors"] = issues
             receipt["response_validated"] = not issues
@@ -980,6 +996,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--timeout-seconds", type=float, default=DEFAULT_TIMEOUT_SECONDS)
     parser.add_argument("--num-predict", type=int, default=None)
     parser.add_argument("--execution-claim-id", default=None)
+    parser.add_argument("--max-total-tokens", type=int, default=None)
     return parser
 
 
@@ -996,6 +1013,7 @@ def main(argv: list[str] | None = None) -> int:
             timeout_seconds=args.timeout_seconds,
             num_predict=args.num_predict,
             execution_claim_id=args.execution_claim_id,
+            max_total_tokens=args.max_total_tokens,
         )
     except LocalFloorRunnerError as exc:
         print(f"local_floor_runner: {exc}")

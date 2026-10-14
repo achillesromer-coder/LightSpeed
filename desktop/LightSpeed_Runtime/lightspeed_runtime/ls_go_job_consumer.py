@@ -848,6 +848,7 @@ class LSGoJobConsumer:
             sys.executable, "-m", "lightspeed_runtime.local_floor_runner",
             "--floor", floor, "--execute", "--receipt-target", receipt_target,
             "--timeout-seconds", "180", "--num-predict", "1024",
+            "--max-total-tokens", "2048",
             "--execution-claim-id", claim_id,
         ]
         if allow_heavy:
@@ -904,6 +905,10 @@ class LSGoJobConsumer:
                 or receipt.get("execution_claim_id") != claim_id
                 or receipt.get("status") != summary.get("status")):
             raise RuntimeError("floor runner receipt identity does not match the request")
+        if receipt.get("status") == "completed" and receipt.get("total_token_postflight") != {
+            "ceiling": 2048, "state": "within_ceiling", "hard_generation_limit": False,
+        }:
+            raise RuntimeError("floor runner receipt lacks measured total token ceiling proof")
         return receipt
 
     def _execute_action(
@@ -1066,6 +1071,7 @@ class LSGoJobConsumer:
                 "floor_supervision": {
                     "client_wall_deadline_seconds": 185 if bool(params.get("execute", True)) else None,
                     "requested_completion_token_cap": 1024 if bool(params.get("execute", True)) else None,
+                    "total_token_postflight_ceiling": 2048 if bool(params.get("execute", True)) else None,
                     "server_cancellation_verified": False,
                 },
                 "next_action": "Reconcile the floor receipt through Neo/Achilles before any promotion.",
