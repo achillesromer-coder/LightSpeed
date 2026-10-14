@@ -31,7 +31,10 @@ const link = (root: HTMLElement, label: string, href: string): void => {
 };
 export function installCgxSurfaceWindow(mount: HTMLElement, currentLens: () => CgxLens,
                                         onObjectSelected: (id: string) => void): void {
-  const queryId = new URLSearchParams(window.location.search).get("object_id") || "";
+  const query = new URLSearchParams(window.location.search);
+  const queryId = query.get("object_id") || "";
+  const queryLens = query.get("lens") || "";
+  const queryView = query.get("view") || "";
   mount.innerHTML = [
     '<div class="cgx-surface-launch"><button type="button" data-cgx-open>Open CGX object window</button>',
     '<small data-cgx-selection>Object not selected · read-only visitor lens</small></div>',
@@ -59,16 +62,19 @@ export function installCgxSurfaceWindow(mount: HTMLElement, currentLens: () => C
   const viewInput = form.elements.namedItem("view_id") as HTMLSelectElement;
   const result = mount.querySelector<HTMLElement>("[data-cgx-result]")!;
   const selected = mount.querySelector<HTMLElement>("[data-cgx-selection]")!;
+  if (queryView && ["overview", "evidence", "model", "map", "timeline"].includes(queryView))
+    viewInput.value = queryView;
   for (const [id, name] of Object.entries(LENSES)) {
     const option = document.createElement("option");
     option.value = id; option.textContent = name; lensInput.add(option);
   }
+  if (queryLens in LENSES) lensInput.value = queryLens;
   if (validId(queryId)) {
     idInput.value = queryId; selected.textContent = queryId + " · visitor read-only";
     onObjectSelected(queryId);
   }
   mount.querySelector<HTMLButtonElement>("[data-cgx-open]")!.onclick = () => {
-    lensInput.value = currentLens();
+    lensInput.value = (queryLens in LENSES ? queryLens : currentLens());
     dialog.showModal(); idInput.focus();
   };
   mount.querySelector<HTMLButtonElement>("[data-cgx-close]")!.onclick = () => dialog.close();
