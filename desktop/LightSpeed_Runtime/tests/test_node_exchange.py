@@ -964,3 +964,48 @@ def test_hydration_terms_keep_unknown_withheld_zero_and_inference_distinct():
     scatter = exchange["hydration_and_fract_key_contract"]["scatter_gather"]
     assert "UNKNOWN, NOT_CACHED, WITHHELD and ZERO" in scatter["unknown_rule"]
     assert any("cache possession" in item for item in scatter["prohibited_collapses"])
+
+
+def test_existing_cgx_lenses_bind_maps_mpl_gmat_and_historical_selection_without_authority():
+    """Contract-only regression: no new host, viewer, object root or release claim."""
+    repo_root = Path(__file__).resolve().parents[3]
+    registry = json.loads(
+        (repo_root / "cgx/domain_templates/semantic_view_lens_registry.json")
+        .read_text(encoding="utf-8")
+    )
+    existing_lens_ids = {row["id"] for row in registry["shared_view_families"]}
+    facet = registry["projection_contract"]["read_only_facets"][
+        "cross_surface_spatiotemporal"
+    ]
+
+    assert set(facet["existing_lenses"]).issubset(existing_lens_ids)
+    assert {"map-spatial", "timeline-dbr", "chat-generative", "active-object-inspector"}.issubset(
+        facet["existing_lenses"]
+    )
+    assert facet["status"].startswith("REVIEW_ONLY")
+    assert facet["owner_issue"] == "LightSpeed#161"
+    assert facet["privacy_release_gate"] == "LightSpeed#158"
+    assert {"Object_ID", "state_root", "DBR_root", "source_sha256", "rights_acl_ref"}.issubset(
+        facet["canonical_selection_fields"]
+    )
+    assert {"requested_valid_at", "requested_recorded_at", "capability_lease_ref"}.issubset(
+        facet["selector_context_fields"]
+    )
+    assert {"coordinate_reference_system", "datum", "coordinate_axis_order"}.issubset(
+        facet["spatial_contract"]["required_if_geometric"]
+    )
+    assert {"valid_at", "recorded_at", "resolved_at"}.issubset(
+        facet["temporal_contract"]
+    )
+    assert "browser animation" in facet["authority_and_flow"]["gmat"].lower()
+    assert "PRE_RELEASE" in facet["authority_and_flow"]["mpl"]
+    assert "non-enumerating" in " ".join(facet["public_projection_constraints"])
+    assert "hypotheses" in facet["alexandria_physical_boundary"]["unverified"]
+    for claim in (
+        "semantic_authority",
+        "execution_authority",
+        "canonical_mutation_authorized",
+        "public_publish_authorized",
+        "physical_transmission_authorized",
+    ):
+        assert facet[claim] is False
