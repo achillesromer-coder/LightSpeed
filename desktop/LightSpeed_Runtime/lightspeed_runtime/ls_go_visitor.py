@@ -458,6 +458,66 @@ def register_visitor_routes(
                 "release_receipt_ref": result.get("release_receipt_ref"),
                 "link_verification_state": linked.get("verification_state")}
 
+    @app.post("/api/v1/visitor/surface")
+    async def read_surface(body: dict, x_lightspeed_visitor_session: str | None = Header(None)):
+        """One public-safe CGX object facet, for reusable visitor windows and web embeds.
+
+        Uses the EXISTING owner-approved projection manifest, not a new object,
+        cache, renderer, FileSpace resolver, DBR root, or execution service.
+        """
+        visitor(x_lightspeed_visitor_session)
+        permitted_fields = {"object_id", "lens", "view_id", "requested_valid_at", "requested_recorded_at"}
+        if not isinstance(body, dict) or set(body) - permitted_fields:
+            raise HTTPException(400, "Unsupported surface selector")
+        object_id = body.get("object_id")
+        lens = body.get("lens")
+        view_id = body.get("view_id", "overview")
+        valid_views = {"overview", "evidence", "model", "map", "timeline"}
+        if (
+            not isinstance(object_id, str)
+            or not 1 <= len(object_id) <= 120
+            or not all(c.isalnum() or c in "._:-" for c in object_id)
+            or lens not in LENSES or view_id not in valid_views
+        ):
+            raise HTTPException(400, "Invalid exact object, lens or view selection")
+        if body.get("requested_valid_at") is not None or body.get("requested_recorded_at") is not None:
+            raise HTTPException(409, "Historic snapshot held: no admitted bitemporal public manifest")
+        if view_id in {"map", "timeline"}:
+            return {
+                "schema": SCHEMA, "status": "SURFACE_NOT_RELEASED",
+                "view_id": view_id, "public_safe": False, "payload": None,
+                "canonical_cgx_ingestion": False, "machine_execution": False,
+            }
+        projection = _load_public_projection(projection_manifest_path, object_id, lens)
+        if projection is None:
+            return {
+                "schema": SCHEMA, "status": "PENDING_PUBLIC_SAFE_RESOLVER",
+                "view_id": view_id, "public_safe": False, "payload": None,
+                "canonical_cgx_ingestion": False, "machine_execution": False,
+            }
+        approved = projection["payload"]
+        if view_id == "model" and not approved.get("model"):
+            return {
+                "schema": SCHEMA, "status": "SURFACE_NOT_RELEASED",
+                "view_id": view_id, "public_safe": False, "payload": None,
+                "canonical_cgx_ingestion": False, "machine_execution": False,
+            }
+        visible_fields = {"title", "summary", "evidence_stage", "limitations", "citations"}
+        if view_id == "model":
+            visible_fields.add("model")
+        projection_payload = {key: value for key, value in approved.items() if key in visible_fields}
+        return {
+            "schema": SCHEMA, "status": "PUBLIC_SAFE_PROJECTION",
+            "view_id": view_id, "object_id": object_id, "lens": lens,
+            "public_safe": True, "payload": projection_payload,
+            "projection_id": projection["projection_id"],
+            "projection_sha256": projection["projection_sha256"],
+            "source_sha256": projection["source_sha256"],
+            "source_revision": projection["source_revision"],
+            "release_receipt_ref": projection["release_receipt_ref"],
+            "canonical_cgx_ingestion": False, "machine_execution": False,
+        }
+
     @app.post("/api/v1/visitor/privacy-request")
     async def privacy_request(body: dict, x_lightspeed_visitor_session: str | None = Header(None)):
         p = visitor(x_lightspeed_visitor_session)
