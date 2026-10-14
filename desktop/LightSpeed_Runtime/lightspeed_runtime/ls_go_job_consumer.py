@@ -901,6 +901,19 @@ class LSGoJobConsumer:
                 (json.dumps(metadata, ensure_ascii=False), utc_now_iso(), job_id),
             )
 
+    def _hold_floor_uncertain(self, job_id: int, reason: str) -> None:
+        """Fence further queue work after a child may have reached Ollama."""
+        self._stop.set()
+        try:
+            self._mark_floor_uncertain(job_id, reason)
+        except Exception as exc:
+            raise FloorExecutionUncertain(
+                "floor outcome unverified and recovery marker could not be persisted"
+            ) from exc
+        raise FloorExecutionUncertain(
+            "floor outcome unverified; retain running claim until independent reconciliation"
+        )
+
     def _run_floor_supervised(self, *, job_id: int, floor: str,
                               allow_heavy: bool, receipt_target: str) -> dict[str, Any]:
         """Bound one existing floor runner call; stop this worker on uncertain cancellation."""
@@ -962,31 +975,23 @@ class LSGoJobConsumer:
                     "floor client stopped; Ollama server outcome unverified; retain running claim for recovery"
                 ) from exc
         if child.returncode != 0:
-            raise RuntimeError(f"floor runner exited {child.returncode}: {output[-500:]}")
+            self._hold_floor_uncertain(job_id, "floor_child_nonzero_exit")
         try:
             summary = json.loads(output)
             path = Path(summary["receipt_path"])
             receipt = json.loads(path.read_text(encoding="utf-8"))
-        except (KeyError, OSError, ValueError, TypeError) as exc:
-            raise RuntimeError("floor runner did not return a readable receipt") from exc
-        if (not path.is_absolute() or receipt.get("receipt_path") != str(path)
+        except (KeyError, OSError, ValueError, TypeError):
+            self._hold_floor_uncertain(job_id, "floor_receipt_unreadable")
+        if (not isinstance(summary, dict) or not isinstance(receipt, dict)
+                or not path.is_absolute() or receipt.get("receipt_path") != str(path)
                 or str(receipt.get("floor") or "").casefold() != floor.casefold()
                 or receipt.get("execution_claim_id") != claim_id
                 or receipt.get("status") != summary.get("status")):
-            raise RuntimeError("floor runner receipt identity does not match the request")
+            self._hold_floor_uncertain(job_id, "floor_receipt_identity_mismatch")
         if (receipt.get("server_outcome_uncertain") is True
                 or (receipt.get("status") == "failed"
                     and receipt.get("server_outcome_uncertain") is not False)):
-            self._stop.set()
-            try:
-                self._mark_floor_uncertain(job_id, "ollama_server_outcome_unverified")
-            except Exception as exc:
-                raise FloorExecutionUncertain(
-                    "floor response was lost and recovery marker could not be persisted"
-                ) from exc
-            raise FloorExecutionUncertain(
-                "floor response was lost; retain running claim until server outcome is reconciled"
-            )
+            self._hold_floor_uncertain(job_id, "ollama_server_outcome_unverified")
         if receipt.get("status") == "completed":
             usage = receipt.get("usage_accounting")
             if not isinstance(usage, dict):

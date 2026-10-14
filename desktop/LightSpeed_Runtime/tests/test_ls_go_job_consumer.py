@@ -738,6 +738,44 @@ def test_lost_floor_http_response_keeps_running_claim_and_stops_queue(
     assert not ls_go_job_consumer.result_file_path(shell, command_id).exists()
 
 
+@pytest.mark.parametrize(
+    ("returncode", "output", "reason"),
+    [(2, "floor runner failed before receipt", "floor_child_nonzero_exit"),
+     (0, "not a receipt summary", "floor_receipt_unreadable")],
+)
+def test_floor_child_without_receipt_keeps_running_claim(
+    tmp_path: Path, monkeypatch, returncode: int, output: str, reason: str,
+) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    command_id = f"GO-TASK-CHILD-{returncode}"
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id) "
+            "VALUES (601,'ls_go_command','pending',?,'{}',501)",
+            (json.dumps({"command_id": command_id, "action_type": "local_floor_wakeup",
+                         "floor": "Neo"}),),
+        )
+
+    class Child:
+        def communicate(self, timeout=None):
+            return (output, None)
+
+    child = Child()
+    child.returncode = returncode
+    monkeypatch.setattr(ls_go_job_consumer.subprocess, "Popen", lambda *_args, **_kw: child)
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    with pytest.raises(ls_go_job_consumer.FloorExecutionUncertain):
+        consumer.process_once()
+    row = db.execute_query("SELECT status,result_json,metadata_json FROM jobs WHERE id=601")[0]
+    assert row["status"] == "running" and row["result_json"] is None
+    assert json.loads(row["metadata_json"])["ls_go_execution_uncertain"]["reason"] == reason
+    assert consumer._stop.is_set()
+    assert not ls_go_job_consumer.result_file_path(shell, command_id).exists()
+
+
 def test_cancelled_floor_metadata_keeps_recovery_hold_after_status_change(tmp_path: Path) -> None:
     shell = tmp_path / "App"
     configure_shell(shell)
@@ -831,8 +869,12 @@ def test_supervised_floor_reads_exact_child_receipt(tmp_path: Path, monkeypatch)
     receipt["total_token_postflight"]["state"] = "within_ceiling"
     receipt["execution_claim_id"] = "b" * 32
     receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
-    with pytest.raises(RuntimeError, match="identity does not match"):
+    marks = []
+    monkeypatch.setattr(consumer, "_mark_floor_uncertain", lambda _job_id, reason: marks.append(reason))
+    with pytest.raises(ls_go_job_consumer.FloorExecutionUncertain, match="outcome unverified"):
         consumer._run_floor_supervised(job_id=601, floor="Neo", allow_heavy=False, receipt_target="neo")
+    assert marks == ["floor_receipt_identity_mismatch"]
+    assert consumer._stop.is_set()
 
 
 def configure_shell(root: Path) -> None:
