@@ -436,7 +436,7 @@ class LSGoJobConsumer:
         with connection() as conn:
             conn.execute("BEGIN IMMEDIATE")
             raw_job = conn.execute(
-                "SELECT id, status, params_json, task_id FROM jobs "
+                "SELECT id, status, params_json, metadata_json, task_id FROM jobs "
                 "WHERE id = ? AND job_type = ?", (job_id, "ls_go_command"),
             ).fetchone()
             if raw_job is None:
@@ -456,6 +456,24 @@ class LSGoJobConsumer:
                 and result.get("result_id") == result_id_for(command_id)
             ):
                 return False
+            prior_claim = _json_dict(job.get("metadata_json")).get("ls_go_execution_claim")
+            if prior_claim is not None:
+                receipt_claim = result.get("execution_claim")
+                if not (
+                    isinstance(prior_claim, dict)
+                    and prior_claim.get("job_id") == job_id
+                    and prior_claim.get("task_id") == task_id
+                    and prior_claim.get("command_id") == command_id
+                    and prior_claim.get("job_params_sha256") == hashlib.sha256(
+                        job["params_json"].encode("utf-8")
+                    ).hexdigest()
+                    and (
+                        (isinstance(receipt_claim, dict)
+                         and receipt_claim.get("claim_id") == prior_claim.get("claim_id"))
+                        or (prior_claim.get("purpose") == "reconcile" and receipt_claim is None)
+                    )
+                ):
+                    return False
             raw_task = conn.execute(
                 "SELECT status, metadata_json FROM tasks WHERE id = ?", (task_id,)
             ).fetchone()
@@ -557,57 +575,76 @@ class LSGoJobConsumer:
         self._execution_claims[job_id] = claim
         return True
 
-    def _update_job(self, job_id: int, *, status: str, result: dict[str, Any]) -> None:
-        cols = self._columns("jobs")
-        assignments: list[str] = []
-        values: list[Any] = []
-        for column, value in (
-            ("status", status),
-            ("result_json", json.dumps(result, ensure_ascii=False)),
-            ("error", result.get("error")),
-            ("completed_at", utc_now_iso() if status in {"completed", "blocked", "held"} else None),
-            ("updated_at", utc_now_iso()),
-        ):
-            if column in cols and (value is not None or column == "error"):
-                assignments.append(f"{column} = ?")
-                values.append(value)
-        if not assignments:
-            return
-        values.append(job_id)
-        self.db.execute_update(
-            f"UPDATE jobs SET {', '.join(assignments)} WHERE id = ?",
-            tuple(values),
-        )
-
-    def _update_task(self, task_id: Any, *, status: str, receipt: dict[str, Any]) -> None:
-        if self.db is None or not task_id:
-            return
-        cols = self._columns("tasks")
-        assignments: list[str] = []
-        values: list[Any] = []
-        if "status" in cols:
-            assignments.append("status = ?")
-            values.append(status)
-        if "updated_at" in cols:
-            assignments.append("updated_at = ?")
-            values.append(utc_now_iso())
-        if "metadata_json" in cols:
-            rows = self.db.execute_query("SELECT metadata_json FROM tasks WHERE id = ?", (int(task_id),))
-            metadata = _json_dict(rows[0].get("metadata_json") if rows else None)
-            metadata["ls_go_local_result"] = {
-                "result_id": receipt.get("result_id"),
-                "receipt_path": receipt.get("receipt_path"),
-                "job_id": receipt.get("job_id"),
-                "status": receipt.get("status"),
-            }
-            assignments.append("metadata_json = ?")
-            values.append(json.dumps(metadata, ensure_ascii=False))
-        if assignments:
-            values.append(int(task_id))
-            self.db.execute_update(
-                f"UPDATE tasks SET {', '.join(assignments)} WHERE id = ?",
-                tuple(values),
+    def _finish_claimed_job(self, job_id: int, *, receipt: dict[str, Any],
+                            update_task: bool = True) -> None:
+        """Fence and atomically commit the exact claimed job/task result."""
+        claim = self._execution_claims.get(job_id)
+        if claim is None:
+            raise RuntimeError("terminal result has no local execution claim")
+        status = receipt.get("status")
+        if status not in {"completed", "blocked", "held"}:
+            raise RuntimeError("terminal result has invalid status")
+        receipt_claim = receipt.get("execution_claim")
+        if receipt_claim is not None:
+            if not isinstance(receipt_claim, dict) or receipt_claim.get("claim_id") != claim["claim_id"]:
+                raise RuntimeError("terminal receipt claim differs from active claim")
+        elif claim["purpose"] == "execute":
+            raise RuntimeError("executed result lacks its durable claim")
+        if (type(receipt.get("job_id")) is not int or receipt["job_id"] != job_id
+                or type(receipt.get("task_id")) is not type(claim["task_id"])
+                or receipt.get("task_id") != claim["task_id"]
+                or receipt.get("command_id") != claim["command_id"]):
+            raise RuntimeError("terminal receipt differs from claimed work identity")
+        with self.db.get_connection() as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            raw_job = conn.execute(
+                "SELECT status,params_json,metadata_json,task_id FROM jobs "
+                "WHERE id = ? AND job_type = ?", (job_id, "ls_go_command"),
+            ).fetchone()
+            if raw_job is None or raw_job["status"] != "running":
+                raise RuntimeError("claimed job no longer running; terminal write fenced")
+            persisted_claim = _json_dict(raw_job["metadata_json"]).get("ls_go_execution_claim")
+            if (not isinstance(persisted_claim, dict)
+                    or persisted_claim.get("claim_id") != claim["claim_id"]
+                    or raw_job["task_id"] != claim["task_id"]
+                    or hashlib.sha256(raw_job["params_json"].encode("utf-8")).hexdigest()
+                    != claim["job_params_sha256"]):
+                raise RuntimeError("persisted work claim changed; terminal write fenced")
+            task_id = claim["task_id"]
+            task = None
+            if update_task and task_id is not None:
+                raw_task = conn.execute(
+                    "SELECT status,metadata_json FROM tasks WHERE id = ?", (task_id,),
+                ).fetchone()
+                if raw_task is None:
+                    raise RuntimeError("claimed task missing; terminal write fenced")
+                task = dict(raw_task)
+                if task["status"] in {"completed", "blocked", "held"} and task["status"] != status:
+                    raise RuntimeError("claimed task has conflicting terminal state")
+            now = utc_now_iso()
+            updated = conn.execute(
+                "UPDATE jobs SET status = ?, result_json = ?, error = ?, completed_at = ?, updated_at = ? "
+                "WHERE id = ? AND job_type = ? AND status = ? AND params_json = ? AND task_id IS ?",
+                (status, json.dumps(receipt, ensure_ascii=False), receipt.get("error"), now, now,
+                 job_id, "ls_go_command", "running", raw_job["params_json"], task_id),
             )
+            if updated.rowcount != 1:
+                raise RuntimeError("claimed job changed during terminal commit")
+            if task is not None:
+                metadata = _json_dict(task.get("metadata_json"))
+                metadata["ls_go_local_result"] = {
+                    "result_id": receipt.get("result_id"),
+                    "receipt_path": receipt.get("receipt_path"),
+                    "job_id": job_id,
+                    "status": status,
+                }
+                updated = conn.execute(
+                    "UPDATE tasks SET status = ?, updated_at = ?, metadata_json = ? "
+                    "WHERE id = ? AND status = ?",
+                    (status, now, json.dumps(metadata, ensure_ascii=False), task_id, task["status"]),
+                )
+                if updated.rowcount != 1:
+                    raise RuntimeError("claimed task changed during terminal commit")
 
     def _persist_result(self, receipt: dict[str, Any]) -> dict[str, Any]:
         command_id = str(receipt.get("command_id") or f"MISSING-JOB-{receipt.get('job_id') or 'UNKNOWN'}")
@@ -667,10 +704,9 @@ class LSGoJobConsumer:
             }
             _write_json(path, receipt)
             _append_jsonl(result_queue_path(self.shell_root), receipt)
-        self._update_job(job_id, status="held", result=receipt)
         # A duplicate job may point at the original task. Do not regress it.
-        if task_id != existing.get("task_id"):
-            self._update_task(task_id, status="held", receipt=receipt)
+        self._finish_claimed_job(job_id, receipt=receipt,
+                                 update_task=task_id != existing.get("task_id"))
         return receipt
 
     def _transport_diagnostic(
@@ -896,14 +932,14 @@ class LSGoJobConsumer:
                         "job_id": job_id,
                         "task_id": job.get("task_id"),
                         "command_id": None,
+                        "execution_claim": self._execution_claims[job_id],
                         "status": "held",
                         "error": "ls_go_command job has no command_id",
                         "public_publish_authorized": False,
                         "drive_write_executed": False,
                     }
                 )
-                self._update_job(job_id, status="held", result=receipt)
-                self._update_task(job.get("task_id"), status="held", receipt=receipt)
+                self._finish_claimed_job(job_id, receipt=receipt)
                 return receipt
             return None
 
@@ -925,9 +961,7 @@ class LSGoJobConsumer:
             if not self._claim_job(job_id, expected_job=job, purpose="reconcile",
                                    durable_receipt=existing):
                 return None
-            final_status = str(existing["status"])
-            self._update_job(job_id, status=final_status, result=existing)
-            self._update_task(job.get("task_id"), status=final_status, receipt=existing)
+            self._finish_claimed_job(job_id, receipt=existing)
             return existing
 
         if not self._claim_job(job_id, expected_job=job):
@@ -990,9 +1024,7 @@ class LSGoJobConsumer:
             "execution_claim": self._execution_claims[job_id],
         }
         receipt = self._persist_result(receipt)
-        final_status = str(receipt.get("status") or "held")
-        self._update_job(job_id, status=final_status, result=receipt)
-        self._update_task(job.get("task_id"), status=final_status, receipt=receipt)
+        self._finish_claimed_job(job_id, receipt=receipt)
         return receipt
 
     def process_once(self, limit: int = 8) -> dict[str, Any]:

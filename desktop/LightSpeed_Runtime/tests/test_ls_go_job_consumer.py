@@ -196,6 +196,38 @@ def test_restart_keeps_conflicting_receipt_running_and_holds_queue(tmp_path: Pat
     assert status["unresolved_job_ids_sample"] == [601]
 
 
+def test_restart_rejects_receipt_from_different_claim(tmp_path: Path) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    command_id = "GO-TASK-CLAIM-MISMATCH"
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id) "
+            "VALUES (601,'ls_go_command','pending',?,'{}',501)",
+            (json.dumps({"command_id": command_id}),),
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    assert consumer._claim_job(601, expected_job=consumer.pending_jobs()[0])
+    consumer._persist_result({
+        "command_id": command_id, "job_id": 601, "task_id": 501,
+        "result_id": ls_go_job_consumer.result_id_for(command_id),
+        "status": "completed", "execution_claim": {"claim_id": "other-attempt"},
+    })
+    assert consumer._reconcile_running_job_receipt(601) is False
+    assert db.execute_query("SELECT status FROM jobs WHERE id=601")[0]["status"] == "running"
+    assert db.execute_query("SELECT status FROM tasks WHERE id=501")[0]["status"] == "queued"
+    consumer._persist_result({
+        "command_id": command_id, "job_id": 601, "task_id": 501,
+        "result_id": ls_go_job_consumer.result_id_for(command_id),
+        "status": "completed", "execution_claim": consumer._execution_claims[601],
+    })
+    assert consumer._reconcile_running_job_receipt(601) is True
+    assert db.execute_query("SELECT status FROM jobs WHERE id=601")[0]["status"] == "completed"
+    assert db.execute_query("SELECT status FROM tasks WHERE id=501")[0]["status"] == "completed"
+
+
 def test_consumer_does_not_resolve_operator_root(tmp_path: Path, monkeypatch):
     shell = tmp_path / "App"
     shell.mkdir()
@@ -319,6 +351,63 @@ def test_claim_holds_when_selected_job_identity_changes(tmp_path: Path) -> None:
         consumer._claim_job(601, expected_job=selected)
     stored = db.execute_query("SELECT status,metadata_json FROM jobs WHERE id=601")[0]
     assert stored == {"status": "pending", "metadata_json": "{}"}
+
+
+def test_cancelled_job_fences_terminal_receipt_and_preserves_task(tmp_path: Path, monkeypatch) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    command_id = "GO-TASK-CANCEL-FENCE"
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id) "
+            "VALUES (601,'ls_go_command','pending',?,'{}',501)",
+            (json.dumps({"command_id": command_id, "action_type": "review_only"}),),
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+
+    def cancel_while_action_runs(**_kwargs):
+        db.execute_update("UPDATE jobs SET status='cancelled' WHERE id=601")
+        return {"status": "completed", "action_type": "review_only"}
+
+    monkeypatch.setattr(consumer, "_execute_action", cancel_while_action_runs)
+    with pytest.raises(RuntimeError, match="terminal write fenced"):
+        consumer.process_once()
+    assert db.execute_query("SELECT status,result_json FROM jobs WHERE id=601")[0] == {
+        "status": "cancelled", "result_json": None,
+    }
+    assert db.execute_query("SELECT status FROM tasks WHERE id=501")[0]["status"] == "queued"
+
+
+def test_task_write_failure_rolls_back_claimed_job_commit(tmp_path: Path) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    params = json.dumps({"command_id": "GO-TASK-ATOMIC"})
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id) "
+            "VALUES (601,'ls_go_command','pending',?,'{}',501)", (params,),
+        )
+        conn.execute(
+            "CREATE TRIGGER reject_task_terminal BEFORE UPDATE OF status ON tasks "
+            "BEGIN SELECT RAISE(ABORT, 'task write failed'); END"
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    assert consumer._claim_job(601, expected_job=consumer.pending_jobs()[0])
+    receipt = {
+        "job_id": 601, "task_id": 501, "command_id": "GO-TASK-ATOMIC",
+        "status": "completed", "result_id": "GO-RESULT-ATOMIC",
+        "execution_claim": consumer._execution_claims[601],
+    }
+    with pytest.raises(sqlite3.IntegrityError, match="task write failed"):
+        consumer._finish_claimed_job(601, receipt=receipt)
+    assert db.execute_query("SELECT status,result_json FROM jobs WHERE id=601")[0] == {
+        "status": "running", "result_json": None,
+    }
+    assert db.execute_query("SELECT status FROM tasks WHERE id=501")[0]["status"] == "queued"
 
 
 def configure_shell(root: Path) -> None:
