@@ -487,6 +487,7 @@ def build_receipt(
         "semantic_acceptance": "requires_independent_review",
         "source_binding_state": "verified" if source_evidence else "not_supplied",
         "response_validated": False,
+        "usage_accounting": _ollama_usage_accounting(response),
     }
     if blocked_reason:
         receipt["blocked_reason"] = blocked_reason
@@ -515,6 +516,27 @@ def build_receipt(
     if elapsed_ms is not None:
         receipt["elapsed_ms"] = elapsed_ms
     return receipt
+
+
+def _ollama_usage_accounting(response: dict[str, Any] | None) -> dict[str, Any]:
+    """Retain only measured Ollama counters; absent counters are not zero use."""
+    payload = response if isinstance(response, dict) else {}
+    prompt = payload.get("prompt_eval_count")
+    completion = payload.get("eval_count")
+    valid = (
+        payload.get("done") is True
+        and type(prompt) is int and prompt >= 0
+        and type(completion) is int and completion >= 0
+    )
+    return {
+        "state": "MEASURED_OLLAMA_RESPONSE" if valid else "UNKNOWN",
+        "prompt_tokens": prompt if valid else None,
+        "completion_tokens": completion if valid else None,
+        "total_tokens": prompt + completion if valid else None,
+        "tool_calls": None,
+        "cost_usd": None,
+        "budget_enforced": False,
+    }
 
 
 def validate_grounded_response(

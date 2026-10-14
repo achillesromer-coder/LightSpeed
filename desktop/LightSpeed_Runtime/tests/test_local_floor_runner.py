@@ -9,6 +9,7 @@ if str(RUNTIME_ROOT) not in sys.path:
     sys.path.insert(0, str(RUNTIME_ROOT))
 
 from lightspeed_runtime.local_floor_runner import (
+    _ollama_usage_accounting,
     _canonical_loopback_endpoint,
     LocalFloorRunnerError,
     build_ollama_request,
@@ -132,7 +133,8 @@ def test_execute_uses_mocked_http_and_writes_floor_receipt(tmp_path: Path) -> No
 
     def fake_http(url: str, payload: dict[str, object], timeout: float) -> dict[str, object]:
         calls.append((url, payload, timeout))
-        return {"response": "{\"floor_summary\":\"ok\"}", "done": True}
+        return {"response": "{\"floor_summary\":\"ok\"}", "done": True,
+                "prompt_eval_count": 17, "eval_count": 5}
 
     receipt = run_floor(
         contract_path=contract_path,
@@ -160,6 +162,23 @@ def test_execute_uses_mocked_http_and_writes_floor_receipt(tmp_path: Path) -> No
     assert "TheConstruct" in str(receipt["receipt_path"])
     assert receipt["resource_preflight"]["execution_state"] == "ready"
     assert receipt["resource_preflight"]["ollama"]["loaded_model_count"] == 1
+    assert receipt["usage_accounting"] == {
+        "state": "MEASURED_OLLAMA_RESPONSE", "prompt_tokens": 17,
+        "completion_tokens": 5, "total_tokens": 22,
+        "tool_calls": None, "cost_usd": None, "budget_enforced": False,
+    }
+
+
+def test_ollama_usage_does_not_invent_missing_or_malformed_counters() -> None:
+    for response in (None, {"done": True},
+                     {"done": True, "prompt_eval_count": True, "eval_count": 5},
+                     {"done": False, "prompt_eval_count": 17, "eval_count": 5}):
+        usage = _ollama_usage_accounting(response)
+        assert usage["state"] == "UNKNOWN"
+        assert usage["total_tokens"] is None
+        assert usage["cost_usd"] is None
+        assert usage["tool_calls"] is None
+        assert usage["budget_enforced"] is False
 
 
 def test_resource_preflight_is_bounded_and_reports_last_receipt(tmp_path: Path) -> None:
