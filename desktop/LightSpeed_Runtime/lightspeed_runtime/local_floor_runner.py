@@ -202,6 +202,7 @@ def run_floor(
 
     post = http_post or post_ollama_generate
     started = time.monotonic()
+    server_outcome_uncertain = False
     with SingleSessionLock(lock_path, enabled=lock):
         try:
             response = post(f"{endpoint.rstrip('/')}/api/generate", request_body, timeout_seconds)
@@ -211,6 +212,8 @@ def run_floor(
             response = {}
             status = "failed"
             error = str(exc)
+            # The request may have reached Ollama even when its response was lost.
+            server_outcome_uncertain = True
     elapsed_ms = int((time.monotonic() - started) * 1000)
 
     receipt = build_receipt(
@@ -229,6 +232,7 @@ def run_floor(
         ollama_generate_attempted=True,
         execution_claim_id=execution_claim_id,
         max_total_tokens=max_total_tokens,
+        server_outcome_uncertain=server_outcome_uncertain,
     )
     write_receipt(contract, receipt_path, receipt)
     return receipt
@@ -468,6 +472,7 @@ def build_receipt(
     ollama_generate_attempted: bool = False,
     execution_claim_id: str | None = None,
     max_total_tokens: int | None = None,
+    server_outcome_uncertain: bool = False,
 ) -> dict[str, Any]:
     prompt = str(request_body.get("prompt") or "")
     safe_floor = re.sub(r"[^A-Za-z0-9_.-]+", "_", str(floor.get("floor") or "floor")).strip("_")
@@ -505,6 +510,7 @@ def build_receipt(
         "usage_accounting": _ollama_usage_accounting(
             response, ollama_generate_attempted=ollama_generate_attempted,
         ),
+        "server_outcome_uncertain": server_outcome_uncertain,
     }
     if max_total_tokens is not None:
         total = receipt["usage_accounting"]["total_tokens"]
@@ -532,6 +538,8 @@ def build_receipt(
         if receipt["status"] == "completed" and (not isinstance(response_text, str) or not response_text.strip() or (response or {}).get("done") is not True):
             receipt["status"] = "failed"
             error = "model response is empty or incomplete"
+            if (response or {}).get("done") is not True:
+                receipt["server_outcome_uncertain"] = True
         elif receipt["status"] == "completed" and (contract.get("policy") or {}).get("strict_response_contract"):
             issues = validate_grounded_response(response or {}, str(receipt_path), source_evidence or [])
             receipt["response_validation_errors"] = issues

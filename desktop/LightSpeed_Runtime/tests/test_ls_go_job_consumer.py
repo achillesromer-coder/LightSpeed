@@ -689,6 +689,55 @@ def test_uncertain_floor_cancellation_retains_running_claim_for_restart(tmp_path
     assert consumer.unresolved_running_job_ids() == [601]
 
 
+def test_lost_floor_http_response_keeps_running_claim_and_stops_queue(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    command_id = "GO-TASK-LOST-FLOOR-HTTP"
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id) "
+            "VALUES (601,'ls_go_command','pending',?,'{}',501)",
+            (json.dumps({"command_id": command_id, "action_type": "local_floor_wakeup",
+                         "floor": "Neo"}),),
+        )
+    floor_path = tmp_path / "floor-failed.json"
+
+    class Child:
+        returncode = 0
+
+        def communicate(self, timeout=None):
+            return (json.dumps({"status": "failed", "receipt_path": str(floor_path)}), None)
+
+    monkeypatch.setattr(ls_go_job_consumer.subprocess, "Popen", lambda *_args, **_kw: Child())
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    original_claim = consumer._claim_job
+
+    def claim_and_write(job_id, **kwargs):
+        claimed = original_claim(job_id, **kwargs)
+        if claimed:
+            floor_path.write_text(json.dumps({
+                "status": "failed", "floor": "Neo", "receipt_path": str(floor_path),
+                "execution_claim_id": consumer._execution_claims[job_id]["claim_id"],
+                "server_outcome_uncertain": True,
+            }), encoding="utf-8")
+        return claimed
+
+    monkeypatch.setattr(consumer, "_claim_job", claim_and_write)
+    with pytest.raises(ls_go_job_consumer.FloorExecutionUncertain):
+        consumer.process_once()
+    row = db.execute_query("SELECT status,result_json,metadata_json FROM jobs WHERE id=601")[0]
+    assert row["status"] == "running" and row["result_json"] is None
+    assert json.loads(row["metadata_json"])["ls_go_execution_uncertain"]["reason"] == (
+        "ollama_server_outcome_unverified")
+    assert consumer._stop.is_set()
+    assert consumer.unresolved_running_job_ids() == [601]
+    assert not ls_go_job_consumer.result_file_path(shell, command_id).exists()
+
+
 def test_cancelled_floor_metadata_keeps_recovery_hold_after_status_change(tmp_path: Path) -> None:
     shell = tmp_path / "App"
     configure_shell(shell)

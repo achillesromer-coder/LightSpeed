@@ -235,6 +235,27 @@ def test_total_token_ceiling_rejects_invalid_values(tmp_path: Path) -> None:
         run_floor(contract_path=_contract(tmp_path), floor="Neo", max_total_tokens=0)
 
 
+def test_lost_ollama_response_marks_server_outcome_uncertain(tmp_path: Path) -> None:
+    contract_path = _contract(tmp_path)
+
+    def lost_response(_url: str, _payload: dict[str, object], _timeout: float) -> dict[str, object]:
+        raise TimeoutError("Ollama response deadline")
+
+    receipt = run_floor(
+        contract_path=contract_path, floor="Neo", dry_run=False,
+        http_post=lost_response,
+        ollama_status_probe=lambda _endpoint, _timeout: {
+            "state": "available", "loaded_model_count": 1, "loaded_models": [],
+        },
+        memory_snapshot=lambda: (32 * 1024**3, 16 * 1024**3),
+        lock=False,
+    )
+    assert receipt["status"] == "failed"
+    assert receipt["server_outcome_uncertain"] is True
+    assert receipt["usage_accounting"]["state"] == "UNKNOWN"
+    assert json.loads(Path(receipt["receipt_path"]).read_text())["server_outcome_uncertain"] is True
+
+
 def test_resource_preflight_is_bounded_and_reports_last_receipt(tmp_path: Path) -> None:
     contract_path = _contract(tmp_path)
     contract = json.loads(contract_path.read_text(encoding="utf-8"))

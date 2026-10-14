@@ -974,6 +974,19 @@ class LSGoJobConsumer:
                 or receipt.get("execution_claim_id") != claim_id
                 or receipt.get("status") != summary.get("status")):
             raise RuntimeError("floor runner receipt identity does not match the request")
+        if (receipt.get("server_outcome_uncertain") is True
+                or (receipt.get("status") == "failed"
+                    and receipt.get("server_outcome_uncertain") is not False)):
+            self._stop.set()
+            try:
+                self._mark_floor_uncertain(job_id, "ollama_server_outcome_unverified")
+            except Exception as exc:
+                raise FloorExecutionUncertain(
+                    "floor response was lost and recovery marker could not be persisted"
+                ) from exc
+            raise FloorExecutionUncertain(
+                "floor response was lost; retain running claim until server outcome is reconciled"
+            )
         if receipt.get("status") == "completed":
             usage = receipt.get("usage_accounting")
             if not isinstance(usage, dict):
