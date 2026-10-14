@@ -567,19 +567,67 @@ def test_supervised_floor_stops_worker_before_another_job(tmp_path: Path, monkey
                 raise RuntimeError("claim revoked")
 
         monkeypatch.setattr(consumer, "_require_live_claim", check)
-        expected = RuntimeError
+        expected = ls_go_job_consumer.FloorExecutionUncertain
     elif reason == "deadline":
         monkeypatch.setattr(consumer, "_require_live_claim", lambda _job_id: None)
         ticks = iter([0.0, 186.0])
         monkeypatch.setattr(ls_go_job_consumer.time, "monotonic", lambda: next(ticks))
-        expected = TimeoutError
+        expected = ls_go_job_consumer.FloorExecutionUncertain
     else:
         monkeypatch.setattr(consumer, "_require_live_claim", lambda _job_id: None)
-        expected = RuntimeError
+        expected = ls_go_job_consumer.FloorExecutionUncertain
     with pytest.raises(expected):
         consumer._run_floor_supervised(job_id=601, floor="Neo", allow_heavy=False, receipt_target="neo")
     assert child.terminated
     assert consumer._stop.is_set()
+
+
+def test_uncertain_floor_cancellation_retains_running_claim_for_restart(tmp_path: Path, monkeypatch) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    command_id = "GO-TASK-UNCERTAIN-FLOOR"
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id) "
+            "VALUES (601,'ls_go_command','pending',?,'{}',501)",
+            (json.dumps({"command_id": command_id, "action_type": "local_floor_wakeup", "floor": "Neo"}),),
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+
+    def uncertain(**_kwargs):
+        consumer._stop.set()
+        raise ls_go_job_consumer.FloorExecutionUncertain("server outcome unknown")
+
+    monkeypatch.setattr(consumer, "_run_floor_supervised", uncertain)
+    with pytest.raises(ls_go_job_consumer.FloorExecutionUncertain):
+        consumer.process_once()
+    job = db.execute_query("SELECT status,result_json FROM jobs WHERE id=601")[0]
+    assert job["status"] == "running" and job["result_json"] is None
+    assert not ls_go_job_consumer.result_file_path(shell, command_id).exists()
+    assert consumer.unresolved_running_job_ids() == [601]
+
+
+def test_cancelled_floor_metadata_keeps_recovery_hold_after_status_change(tmp_path: Path) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    params_json = json.dumps({"command_id": "GO-TASK-REVOKED-FLOOR", "action_type": "local_floor_wakeup"})
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id) "
+            "VALUES (601,'ls_go_command','pending',?,'{}',501)", (params_json,),
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    assert consumer._claim_job(601, expected_job=consumer.pending_jobs()[0])
+    db.execute_update("UPDATE jobs SET status='held' WHERE id=601")
+    consumer._mark_floor_uncertain(601, "cancelled")
+    metadata = json.loads(db.execute_query("SELECT metadata_json FROM jobs WHERE id=601")[0]["metadata_json"])
+    assert metadata["ls_go_execution_uncertain"]["server_cancellation_verified"] is False
+    assert consumer.unresolved_running_job_ids() == [601]
+    assert consumer._reconcile_running_job_receipt(601) is False
 
 
 def test_supervised_floor_reads_exact_child_receipt(tmp_path: Path, monkeypatch) -> None:

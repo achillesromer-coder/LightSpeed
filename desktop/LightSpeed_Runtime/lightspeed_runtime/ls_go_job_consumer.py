@@ -30,6 +30,12 @@ RESULT_SCHEMA = "lightspeed-go-local-result-v1"
 POLL_SECONDS = 1.0
 JSON_REPLACE_RETRIES = 4
 JSON_REPLACE_RETRY_SECONDS = 0.05
+
+
+class FloorExecutionUncertain(RuntimeError):
+    """The client was stopped, but server completion/cancellation is unknown."""
+
+
 SAFE_ACTIONS = {
     "source_preserving_intake",
     "cognigrex_workflow",
@@ -422,13 +428,15 @@ class LSGoJobConsumer:
         """
         if self.db is None or not callable(getattr(self.db, "execute_query", None)):
             return []
-        if not {"id", "job_type", "status"}.issubset(self._columns("jobs")):
+        if not {"id", "job_type", "status", "metadata_json"}.issubset(self._columns("jobs")):
             return []
         rows = self.db.execute_query(
-            "SELECT id FROM jobs WHERE job_type = ? AND status = ? ORDER BY id ASC LIMIT 101",
-            ("ls_go_command", "running"),
+            "SELECT id,status,metadata_json FROM jobs WHERE job_type = ? "
+            "AND (status = ? OR metadata_json LIKE ?) ORDER BY id ASC LIMIT 101",
+            ("ls_go_command", "running", '%ls_go_execution_uncertain%'),
         )
-        return [int(row["id"]) for row in rows]
+        return [int(row["id"]) for row in rows if row["status"] == "running"
+                or bool(_json_dict(row["metadata_json"]).get("ls_go_execution_uncertain"))]
 
     def _reconcile_running_job_receipt(self, job_id: int) -> bool:
         """Atomically finish only a prior run with an exact durable result.
@@ -448,6 +456,8 @@ class LSGoJobConsumer:
             if raw_job is None:
                 return False
             job = dict(raw_job)
+            if _json_dict(job["metadata_json"]).get("ls_go_execution_uncertain"):
+                return False
             if job["status"] != "running" or type(job.get("task_id")) is not int:
                 return False
             command_id = str(_json_dict(job.get("params_json")).get("command_id") or "").strip()
@@ -805,6 +815,28 @@ class LSGoJobConsumer:
                 != claim["claim_id"]):
             raise RuntimeError("source intake execution claim was revoked or changed")
 
+    def _mark_floor_uncertain(self, job_id: int, reason: str) -> None:
+        """Retain a DB recovery hold even if an external cancel changed status."""
+        claim = self._execution_claims[job_id]
+        with self.db.get_connection() as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            row = conn.execute(
+                "SELECT metadata_json FROM jobs WHERE id = ? AND job_type = ?",
+                (job_id, "ls_go_command"),
+            ).fetchone()
+            metadata = _json_dict(row["metadata_json"]) if row is not None else {}
+            persisted = metadata.get("ls_go_execution_claim")
+            if not isinstance(persisted, dict) or persisted.get("claim_id") != claim["claim_id"]:
+                raise RuntimeError("cannot durably mark uncertain floor: claim identity changed")
+            metadata["ls_go_execution_uncertain"] = {
+                "claim_id": claim["claim_id"], "observed_utc": utc_now_iso(),
+                "reason": reason, "server_cancellation_verified": False,
+            }
+            conn.execute(
+                "UPDATE jobs SET metadata_json = ?, updated_at = ? WHERE id = ?",
+                (json.dumps(metadata, ensure_ascii=False), utc_now_iso(), job_id),
+            )
+
     def _run_floor_supervised(self, *, job_id: int, floor: str,
                               allow_heavy: bool, receipt_target: str) -> dict[str, Any]:
         """Bound one existing floor runner call; stop this worker on uncertain cancellation."""
@@ -835,17 +867,28 @@ class LSGoJobConsumer:
                 break
             except subprocess.TimeoutExpired:
                 continue
-            except Exception:
+            except Exception as exc:
                 # The Ollama server may still be finishing a disconnected request.
                 # Do not start another queue item or replay this claim on restart.
                 self._stop.set()
-                child.terminate()
                 try:
-                    child.communicate(timeout=5)
-                except subprocess.TimeoutExpired:
-                    child.kill()
-                    child.communicate(timeout=5)
-                raise
+                    child.terminate()
+                    try:
+                        child.communicate(timeout=5)
+                    except subprocess.TimeoutExpired:
+                        child.kill()
+                        child.communicate(timeout=5)
+                except Exception:
+                    pass
+                try:
+                    self._mark_floor_uncertain(job_id, type(exc).__name__)
+                except Exception as mark_exc:
+                    raise FloorExecutionUncertain(
+                        "floor client stopped, but uncertain recovery marker could not be persisted"
+                    ) from mark_exc
+                raise FloorExecutionUncertain(
+                    "floor client stopped; Ollama server outcome unverified; retain running claim for recovery"
+                ) from exc
         if child.returncode != 0:
             raise RuntimeError(f"floor runner exited {child.returncode}: {output[-500:]}")
         try:
@@ -1116,6 +1159,9 @@ class LSGoJobConsumer:
                     envelope=envelope,
                     envelope_count=envelope_count,
                 )
+            except FloorExecutionUncertain:
+                # No terminal receipt: restart must hold the unresolved running claim.
+                raise
             except Exception as exc:
                 action_result = {
                     "status": "blocked",
