@@ -3301,9 +3301,9 @@
       "sha256": "f0a454117d349f61b2921d84737992e6ce81661600c1933d24233f171639cc15"
     },
     {
-      "bytes": 27740,
+      "bytes": 31163,
       "path": "LightSpeed_Runtime/lightspeed_runtime/ls_go_visitor.py",
-      "sha256": "b7c05e58be4cc1166621c7c6b8bb754781e7b012cc747404e667afa76c2a813d"
+      "sha256": "01195f3db7e929412f202d70b1733365aa39a4cdaedf12b1d8d14d465a5dcc69"
     },
     {
       "bytes": 12961,
