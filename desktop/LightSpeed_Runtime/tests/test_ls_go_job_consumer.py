@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
+from contextlib import contextmanager
 import json
 import os
 from pathlib import Path
@@ -118,6 +119,78 @@ def test_restart_holds_before_claiming_when_prior_job_is_running(tmp_path: Path,
     assert not ls_go_job_consumer.heartbeat_path(shell).exists()
 
 
+def test_restart_reconciles_only_exact_durable_result_without_replay(tmp_path: Path, monkeypatch):
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    command_id = "GO-TASK-RESTART-EXACT"
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'running','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,task_id) "
+            "VALUES (601,'ls_go_command','running',?,501)",
+            (json.dumps({"command_id": command_id}),),
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    original = consumer._persist_result({
+        "command_id": command_id, "job_id": 601, "task_id": 501,
+        "result_id": ls_go_job_consumer.result_id_for(command_id),
+        "status": "completed",
+    })
+    stored = json.loads(Path(original["receipt_path"]).read_text())
+    stored["receipt_path"] = str(tmp_path / "unrelated.json")
+    Path(original["receipt_path"]).write_text(json.dumps(stored), encoding="utf-8")
+    calls = []
+
+    def no_replay():
+        calls.append("poll")
+        consumer.stop()
+        return {"state": "ready"}
+
+    monkeypatch.setattr(consumer, "process_once", no_replay)
+    monkeypatch.setattr(consumer, "_execute_action", lambda **_kw: (_ for _ in ()).throw(
+        AssertionError("restart reconciliation must not execute")))
+    consumer.run_forever(poll_seconds=0.01)
+
+    assert calls == ["poll"]
+    job = db.execute_query("SELECT status,result_json FROM jobs WHERE id=601")[0]
+    task = db.execute_query("SELECT status,metadata_json FROM tasks WHERE id=501")[0]
+    assert job["status"] == task["status"] == "completed"
+    assert json.loads(job["result_json"])["receipt_path"] == original["receipt_path"]
+    assert json.loads(task["metadata_json"])["ls_go_local_result"]["job_id"] == 601
+    assert len(ls_go_job_consumer.result_queue_path(shell).read_text().splitlines()) == 1
+    assert not ls_go_job_consumer.heartbeat_path(shell).exists()
+
+
+def test_restart_keeps_conflicting_receipt_running_and_holds_queue(tmp_path: Path, monkeypatch):
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    command_id = "GO-TASK-RESTART-CONFLICT"
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'running','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,task_id) "
+            "VALUES (601,'ls_go_command','running',?,501)",
+            (json.dumps({"command_id": command_id}),),
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    consumer._persist_result({
+        "command_id": command_id, "job_id": 601, "task_id": 999,
+        "result_id": ls_go_job_consumer.result_id_for(command_id),
+        "status": "completed",
+    })
+    monkeypatch.setattr(consumer, "process_once", lambda: (_ for _ in ()).throw(
+        AssertionError("conflicting receipt must hold fresh work")))
+    consumer.run_forever(poll_seconds=0.01)
+
+    assert db.execute_query("SELECT status FROM jobs WHERE id=601")[0]["status"] == "running"
+    assert db.execute_query("SELECT status FROM tasks WHERE id=501")[0]["status"] == "running"
+    status = json.loads(ls_go_job_consumer.status_receipt_path(shell).read_text())
+    assert status["state"] == "recovery_hold_unresolved_running"
+    assert status["unresolved_job_ids_sample"] == [601]
+
+
 def test_consumer_does_not_resolve_operator_root(tmp_path: Path, monkeypatch):
     shell = tmp_path / "App"
     shell.mkdir()
@@ -139,6 +212,18 @@ class SQLiteDB:
         conn = sqlite3.connect(self.path)
         conn.row_factory = sqlite3.Row
         return conn
+
+    @contextmanager
+    def get_connection(self):
+        conn = self._connect()
+        try:
+            yield conn
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            conn.close()
 
     def execute_query(self, query: str, params: tuple = ()):
         with self._connect() as conn:

@@ -422,6 +422,72 @@ class LSGoJobConsumer:
         )
         return [int(row["id"]) for row in rows]
 
+    def _reconcile_running_job_receipt(self, job_id: int) -> bool:
+        """Atomically finish only a prior run with an exact durable result.
+
+        Unknown execution remains running for the startup hold. This route
+        never calls an action or creates a replacement result receipt.
+        """
+        connection = getattr(self.db, "get_connection", None)
+        if not callable(connection):
+            return False
+        with connection() as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            raw_job = conn.execute(
+                "SELECT id, status, params_json, task_id FROM jobs "
+                "WHERE id = ? AND job_type = ?", (job_id, "ls_go_command"),
+            ).fetchone()
+            if raw_job is None:
+                return False
+            job = dict(raw_job)
+            if job["status"] != "running" or type(job.get("task_id")) is not int:
+                return False
+            command_id = str(_json_dict(job.get("params_json")).get("command_id") or "").strip()
+            if not command_id:
+                return False
+            result = self._existing_result(command_id)
+            task_id = job["task_id"]
+            if not (
+                type(result.get("job_id")) is int and result.get("job_id") == job_id
+                and type(result.get("task_id")) is int and result.get("task_id") == task_id
+                and result.get("status") in {"completed", "blocked", "held"}
+                and result.get("result_id") == result_id_for(command_id)
+            ):
+                return False
+            raw_task = conn.execute(
+                "SELECT status, metadata_json FROM tasks WHERE id = ?", (task_id,)
+            ).fetchone()
+            if raw_task is None:
+                return False
+            task = dict(raw_task)
+            final_status = str(result["status"])
+            if task["status"] in {"completed", "blocked", "held"} and task["status"] != final_status:
+                return False
+            metadata = _json_dict(task.get("metadata_json"))
+            metadata["ls_go_local_result"] = {
+                "result_id": result["result_id"],
+                "receipt_path": result["receipt_path"],
+                "job_id": job_id,
+                "status": final_status,
+            }
+            now = utc_now_iso()
+            task_update = conn.execute(
+                "UPDATE tasks SET status = ?, updated_at = ?, metadata_json = ? "
+                "WHERE id = ? AND status = ?",
+                (final_status, now, json.dumps(metadata, ensure_ascii=False), task_id, task["status"]),
+            )
+            if task_update.rowcount != 1:
+                raise RuntimeError("running result task changed during reconciliation")
+            job_update = conn.execute(
+                "UPDATE jobs SET status = ?, result_json = ?, error = ?, completed_at = ?, updated_at = ? "
+                "WHERE id = ? AND job_type = ? AND status = ? AND params_json = ? AND task_id = ?",
+                (final_status, json.dumps(result, ensure_ascii=False), result.get("error"), now, now,
+                 job_id, "ls_go_command", "running", job["params_json"], task_id),
+            )
+            if job_update.rowcount != 1:
+                raise RuntimeError("running result job changed during reconciliation")
+        return True
+
     def _claim_job(self, job_id: int) -> bool:
         cols = self._columns("jobs")
         now = utc_now_iso()
@@ -505,7 +571,9 @@ class LSGoJobConsumer:
         ):
             payload = _read_json(path)
             if payload and payload.get("command_id") == command_id:
-                payload.setdefault("receipt_path", str(path))
+                # The durable file actually read is the result source; an
+                # embedded path must not redirect recovery evidence elsewhere.
+                payload["receipt_path"] = str(path)
                 return payload
         return {}
 
@@ -940,6 +1008,12 @@ class LSGoJobConsumer:
         self._acquire_heartbeat_lock()
         try:
             unresolved = self.unresolved_running_job_ids()
+            if unresolved:
+                if len(unresolved) <= 100:
+                    unresolved = [
+                        job_id for job_id in unresolved
+                        if not self._reconcile_running_job_receipt(job_id)
+                    ]
             if unresolved:
                 _write_json(status_receipt_path(self.shell_root), {
                     "schema_version": CONSUMER_SCHEMA,
