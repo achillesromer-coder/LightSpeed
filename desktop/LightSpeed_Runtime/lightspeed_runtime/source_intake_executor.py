@@ -91,8 +91,19 @@ def execute_source_intake(
     for name, content in (("source.native", data), ("source-envelope.json", envelope_bytes)):
         active()
         path = stage / name
-        path.write_bytes(content)
-        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        with path.open("wb") as output:
+            for offset in range(0, len(content), 1024 * 1024):
+                active()
+                output.write(content[offset:offset + 1024 * 1024])
+        readback = hashlib.sha256()
+        with path.open("rb") as persisted:
+            while True:
+                active()
+                chunk = persisted.read(1024 * 1024)
+                if not chunk:
+                    break
+                readback.update(chunk)
+        actual = readback.hexdigest()
         if actual != hashlib.sha256(content).hexdigest():
             raise SourceIntakeError("persisted intake artifact failed readback")
         artifacts.append({"path": str(destination / name), "sha256": actual, "bytes": len(content)})

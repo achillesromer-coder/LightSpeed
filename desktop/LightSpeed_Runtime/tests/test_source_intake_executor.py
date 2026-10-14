@@ -9,6 +9,7 @@ import pytest
 
 from lightspeed_runtime.source_intake import SourceIntakeError
 from lightspeed_runtime.source_intake_executor import execute_source_intake
+from lightspeed_runtime.storage_paths import neo_actions_root
 
 
 def test_intake_preserves_native_bytes_and_exposes_derived_output(tmp_path):
@@ -76,3 +77,29 @@ def test_intake_stops_when_claim_is_revoked_during_source_read(tmp_path):
         )
     assert source.read_bytes() == raw
     assert not (tmp_path / "App").exists()
+
+
+def test_intake_does_not_publish_when_claim_is_revoked_during_write(tmp_path):
+    source = tmp_path / "source.txt"
+    raw = b"evidence\n" * 240000
+    source.write_bytes(raw)
+    checks = 0
+
+    def check_active():
+        nonlocal checks
+        checks += 1
+        # Permit source read, envelope generation, and the first output chunk.
+        if checks == 9:
+            raise RuntimeError("claim revoked")
+
+    command_id = "cancelled-during-write"
+    shell = tmp_path / "App"
+    with pytest.raises(RuntimeError, match="claim revoked"):
+        execute_source_intake(
+            {"source_path": str(source), "source_sha256": hashlib.sha256(raw).hexdigest()},
+            command_id=command_id, shell_root=shell,
+            allowed_roots=[tmp_path], check_active=check_active,
+        )
+    destination = neo_actions_root(shell) / "intake" / hashlib.sha256(command_id.encode()).hexdigest()
+    assert not destination.exists()
+    assert source.read_bytes() == raw
