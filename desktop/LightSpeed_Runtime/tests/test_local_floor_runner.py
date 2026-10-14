@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import sys
+import pytest
 
 RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 if str(RUNTIME_ROOT) not in sys.path:
@@ -100,6 +101,16 @@ def test_dry_run_writes_neo_receipt_without_http(tmp_path: Path) -> None:
     assert receipt["request_overrides"] == {"stream": False, "think": False, "num_predict": 512, "num_ctx": 8192}
     assert "Z+2_Neo" in str(receipt_path)
     assert receipt_path.exists()
+
+
+def test_floor_receipt_preserves_exact_execution_claim(tmp_path: Path) -> None:
+    contract_path = _contract(tmp_path)
+    claim_id = "a" * 32
+    receipt = run_floor(contract_path=contract_path, floor="Neo", execution_claim_id=claim_id)
+    assert receipt["execution_claim_id"] == claim_id
+    assert json.loads(Path(receipt["receipt_path"]).read_text())["execution_claim_id"] == claim_id
+    with pytest.raises(LocalFloorRunnerError, match="claim id is invalid"):
+        run_floor(contract_path=contract_path, floor="Neo", execution_claim_id="unbound")
 
 
 def test_request_overrides_force_safe_values_and_bound_num_predict(tmp_path: Path) -> None:

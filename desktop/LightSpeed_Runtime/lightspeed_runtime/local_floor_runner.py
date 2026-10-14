@@ -117,12 +117,15 @@ def run_floor(
     receipt_target: str = "neo",
     timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS,
     num_predict: int | None = None,
+    execution_claim_id: str | None = None,
     http_post: HttpPost | None = None,
     ollama_status_probe: OllamaStatusProbe | None = None,
     memory_snapshot: MemorySnapshot | None = None,
     cpu_snapshot: CpuSnapshot | None = None,
     lock: bool = True,
 ) -> dict[str, Any]:
+    if execution_claim_id is not None and not re.fullmatch(r"[0-9a-f]{32}", execution_claim_id):
+        raise LocalFloorRunnerError("execution claim id is invalid")
     contract = load_contract(contract_path)
     selection = select_floor(contract, floor=floor, order=order)
     floor_row = selection.floor
@@ -173,6 +176,7 @@ def run_floor(
             blocked_reason=blocked_reason,
             resource_status=resource_status,
             source_evidence=source_evidence,
+            execution_claim_id=execution_claim_id,
         )
         write_receipt(contract, receipt_path, receipt)
         return receipt
@@ -188,6 +192,7 @@ def run_floor(
             request_body=request_body,
             resource_status=resource_status,
             source_evidence=source_evidence,
+            execution_claim_id=execution_claim_id,
         )
         write_receipt(contract, receipt_path, receipt)
         return receipt
@@ -219,6 +224,7 @@ def run_floor(
         resource_status=resource_status,
         source_evidence=source_evidence,
         ollama_generate_attempted=True,
+        execution_claim_id=execution_claim_id,
     )
     write_receipt(contract, receipt_path, receipt)
     return receipt
@@ -456,11 +462,13 @@ def build_receipt(
     resource_status: dict[str, Any] | None = None,
     source_evidence: list[dict[str, Any]] | None = None,
     ollama_generate_attempted: bool = False,
+    execution_claim_id: str | None = None,
 ) -> dict[str, Any]:
     prompt = str(request_body.get("prompt") or "")
     safe_floor = re.sub(r"[^A-Za-z0-9_.-]+", "_", str(floor.get("floor") or "floor")).strip("_")
     receipt: dict[str, Any] = {
         "receipt_id": f"local_floor_runner_receipt_{safe_floor}_{_receipt_timestamp()}",
+        "execution_claim_id": execution_claim_id,
         "created_at": _utc_now_iso(),
         "status": status,
         "dry_run": dry_run,
@@ -971,6 +979,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--receipt-target", choices=["neo", "floor"], default="neo")
     parser.add_argument("--timeout-seconds", type=float, default=DEFAULT_TIMEOUT_SECONDS)
     parser.add_argument("--num-predict", type=int, default=None)
+    parser.add_argument("--execution-claim-id", default=None)
     return parser
 
 
@@ -986,6 +995,7 @@ def main(argv: list[str] | None = None) -> int:
             receipt_target=args.receipt_target,
             timeout_seconds=args.timeout_seconds,
             num_predict=args.num_predict,
+            execution_claim_id=args.execution_claim_id,
         )
     except LocalFloorRunnerError as exc:
         print(f"local_floor_runner: {exc}")

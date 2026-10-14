@@ -843,10 +843,12 @@ class LSGoJobConsumer:
         if receipt_target not in {"neo", "floor"}:
             raise ValueError("unsupported floor receipt target")
         self._require_live_claim(job_id)
+        claim_id = self._execution_claims[job_id]["claim_id"]
         command = [
             sys.executable, "-m", "lightspeed_runtime.local_floor_runner",
             "--floor", floor, "--execute", "--receipt-target", receipt_target,
             "--timeout-seconds", "180", "--num-predict", "1024",
+            "--execution-claim-id", claim_id,
         ]
         if allow_heavy:
             command.append("--allow-heavy")
@@ -899,6 +901,7 @@ class LSGoJobConsumer:
             raise RuntimeError("floor runner did not return a readable receipt") from exc
         if (not path.is_absolute() or receipt.get("receipt_path") != str(path)
                 or str(receipt.get("floor") or "").casefold() != floor.casefold()
+                or receipt.get("execution_claim_id") != claim_id
                 or receipt.get("status") != summary.get("status")):
             raise RuntimeError("floor runner receipt identity does not match the request")
         return receipt

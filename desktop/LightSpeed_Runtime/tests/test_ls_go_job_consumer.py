@@ -536,6 +536,7 @@ def test_supervised_floor_stops_worker_before_another_job(tmp_path: Path, monkey
     shell = tmp_path / "App"
     configure_shell(shell)
     consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=object())
+    consumer._execution_claims[601] = {"claim_id": "a" * 32}
 
     class Child:
         terminated = False
@@ -634,9 +635,11 @@ def test_supervised_floor_reads_exact_child_receipt(tmp_path: Path, monkeypatch)
     shell = tmp_path / "App"
     configure_shell(shell)
     consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=object())
+    consumer._execution_claims[601] = {"claim_id": "a" * 32}
     monkeypatch.setattr(consumer, "_require_live_claim", lambda _job_id: None)
     receipt_path = tmp_path / "floor.json"
     receipt = {"status": "completed", "floor": "Neo", "receipt_path": str(receipt_path),
+               "execution_claim_id": "a" * 32,
                "usage_accounting": {"total_tokens": 22, "budget_enforced": False}}
     receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
     commands = []
@@ -656,7 +659,12 @@ def test_supervised_floor_reads_exact_child_receipt(tmp_path: Path, monkeypatch)
     assert result == receipt
     assert "--execute" in commands[0]
     assert "--num-predict" in commands[0]
+    assert commands[0][-2:] == ["--execution-claim-id", "a" * 32]
     assert "--allow-heavy" not in commands[0]
+    receipt["execution_claim_id"] = "b" * 32
+    receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+    with pytest.raises(RuntimeError, match="identity does not match"):
+        consumer._run_floor_supervised(job_id=601, floor="Neo", allow_heavy=False, receipt_target="neo")
 
 
 def configure_shell(root: Path) -> None:
