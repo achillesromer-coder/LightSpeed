@@ -195,3 +195,22 @@ def test_published_intake_detects_postpublish_tampering(tmp_path, tamper):
     assert source.read_bytes() == raw
     assert original["canonical_mutation"] is False
     assert original["semantic_acceptance"] == "requires_independent_review"
+
+
+def test_generic_intake_holds_multimember_cgx_carrier_for_specialist(tmp_path):
+    """A large .cgx ZIP carrier cannot silently bypass the generic 256-member gate."""
+    import zipfile
+
+    original = tmp_path / "archived-carrier.cgx"
+    with zipfile.ZipFile(original, "w", compression=zipfile.ZIP_STORED) as archive:
+        for index in range(257):
+            archive.writestr(f"cgx/fixtures/object-{index:03d}.json", "{}")
+    raw = original.read_bytes()
+    with pytest.raises(SourceIntakeError, match="archive exceeds bounded extraction budget"):
+        execute_source_intake(
+            {"source_path": str(original), "source_sha256": hashlib.sha256(raw).hexdigest()},
+            command_id="hold-large-cgx-carrier", shell_root=tmp_path / "App",
+            allowed_roots=[tmp_path],
+        )
+    assert original.read_bytes() == raw
+    assert not (tmp_path / "App").exists()
