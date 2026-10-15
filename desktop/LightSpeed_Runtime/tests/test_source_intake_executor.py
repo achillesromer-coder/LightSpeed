@@ -8,7 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import pytest
 
 from lightspeed_runtime.source_intake import SourceIntakeError
-from lightspeed_runtime.source_intake_executor import execute_source_intake
+from lightspeed_runtime.source_intake_executor import execute_source_intake, verify_source_intake_readback
 from lightspeed_runtime.storage_paths import neo_actions_root
 
 
@@ -154,3 +154,44 @@ def test_frontier_intake_elapsed_ceiling_blocks_publication_after_extraction(tmp
     destination = neo_actions_root(shell) / "intake" / hashlib.sha256(command_id.encode()).hexdigest()
     assert not destination.exists()
     assert source.read_bytes() == raw
+
+
+@pytest.mark.parametrize("tamper", ["native_bytes", "envelope_bytes", "receipt_bytes", "receipt_claim"])
+def test_published_intake_detects_postpublish_tampering(tmp_path, tamper):
+    """Terminal completion is conditional on immutable exact-byte readback, not a cached success."""
+    source = tmp_path / "original-source.csv"
+    raw = b"part,dimension_mm\\nA,12\\n"
+    source.write_bytes(raw)
+    digest = hashlib.sha256(raw).hexdigest()
+    command_id = "signed-intake-verification"
+    shell = tmp_path / "App"
+    receipt = execute_source_intake(
+        {"source_path": str(source), "source_sha256": digest},
+        command_id=command_id, shell_root=shell, allowed_roots=[tmp_path],
+    )
+    verify_source_intake_readback(
+        receipt, command_id=command_id, shell_root=shell, source_sha256=digest,
+    )
+    original = json.loads(json.dumps(receipt))
+    if tamper == "native_bytes":
+        target = Path(receipt["artifacts"][0]["path"])
+        data = target.read_bytes()
+        target.write_bytes(b"X" + data[1:])
+    elif tamper == "envelope_bytes":
+        target = Path(receipt["artifacts"][1]["path"])
+        data = target.read_bytes()
+        target.write_bytes(b"X" + data[1:])
+    elif tamper == "receipt_bytes":
+        target = Path(receipt["receipt_path"])
+        stored = json.loads(target.read_text(encoding="utf-8"))
+        stored["canonical_mutation"] = True
+        target.write_text(json.dumps(stored), encoding="utf-8")
+    else:
+        receipt["artifacts"][0]["bytes"] += 1
+    with pytest.raises(SourceIntakeError, match="artifact|receipt|identity|hash"):
+        verify_source_intake_readback(
+            receipt, command_id=command_id, shell_root=shell, source_sha256=digest,
+        )
+    assert source.read_bytes() == raw
+    assert original["canonical_mutation"] is False
+    assert original["semantic_acceptance"] == "requires_independent_review"
