@@ -708,6 +708,7 @@ class LSGoJobConsumer:
                     or persisted_claim.get("claim_id") != claim["claim_id"]
                     or persisted_claim.get("lease_expires_utc") != claim.get("lease_expires_utc")
                     or persisted_claim.get("native_budget") != claim.get("native_budget")
+                    or persisted_claim.get("frontier_admission") != claim.get("frontier_admission")
                     or raw_job["task_id"] != claim["task_id"]
                     or hashlib.sha256(raw_job["params_json"].encode("utf-8")).hexdigest()
                     != claim["job_params_sha256"]):
@@ -876,7 +877,9 @@ class LSGoJobConsumer:
                 or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("lease_expires_utc")
                 != claim.get("lease_expires_utc")
                 or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("native_budget")
-                != claim.get("native_budget")):
+                != claim.get("native_budget")
+                or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("frontier_admission")
+                != claim.get("frontier_admission")):
             raise RuntimeError("source intake execution claim was revoked or changed")
         if not _claim_lease_live(_json_dict(row["metadata_json"]).get("ls_go_execution_claim", {})):
             raise RuntimeError("source intake execution claim lease expired")

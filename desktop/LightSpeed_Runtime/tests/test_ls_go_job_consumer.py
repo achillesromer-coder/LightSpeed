@@ -544,6 +544,51 @@ def test_invalid_frontier_request_is_durably_held_without_action(tmp_path: Path,
     assert decision["reason"].startswith("INVALID_FRONTIER_REQUEST:")
 
 
+def test_changed_persisted_frontier_work_key_fences_live_and_terminal_claim(tmp_path: Path) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    request = {
+        "domain": "COGNIGREX", "object_id": "cgx://RFS-001", "owner": "COGNIGREX",
+        "source_sha256": "a" * 64, "operation": "admit_and_test",
+        "acceptance_version": "v1", "evidence_class": "COMPUTED",
+        "source_changed": True, "dependencies_changed": False,
+        "limits": {"max_elapsed_s": 600, "max_tokens": 8000,
+                   "max_tool_calls": 12, "max_retries": 1, "max_cost_usd": 0.25},
+        "usage": {"elapsed_s": 0, "tokens": 0, "tool_calls": 0,
+                  "retries": 0, "cost_usd": 0.0},
+    }
+    params = {
+        "command_id": "GO-TASK-FRONTIER-FENCE", "action_type": "review_only",
+        "action_payload": {"frontier_request": request},
+    }
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id) "
+            "VALUES (601,'ls_go_command','pending',?,'{}',501)", (json.dumps(params),),
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    assert consumer._claim_job(601, expected_job=consumer.pending_jobs()[0])
+    consumer._require_live_claim(601)
+    metadata = json.loads(db.execute_query(
+        "SELECT metadata_json FROM jobs WHERE id=601")[0]["metadata_json"])
+    metadata["ls_go_execution_claim"]["frontier_admission"]["work_key"] = "b" * 64
+    db.execute_update("UPDATE jobs SET metadata_json=? WHERE id=601", (json.dumps(metadata),))
+    with pytest.raises(RuntimeError, match="revoked or changed"):
+        consumer._require_live_claim(601)
+    receipt = {
+        "job_id": 601, "task_id": 501, "command_id": params["command_id"],
+        "status": "held", "execution_claim": consumer._execution_claims[601],
+    }
+    with pytest.raises(RuntimeError, match="persisted work claim changed"):
+        consumer._finish_claimed_job(601, receipt=receipt)
+    assert db.execute_query("SELECT status,result_json FROM jobs WHERE id=601")[0] == {
+        "status": "running", "result_json": None,
+    }
+    assert db.execute_query("SELECT status FROM tasks WHERE id=501")[0]["status"] == "queued"
+
+
 def test_floor_usage_is_retained_in_existing_job_result(tmp_path: Path, monkeypatch) -> None:
     shell = tmp_path / "App"
     configure_shell(shell)
