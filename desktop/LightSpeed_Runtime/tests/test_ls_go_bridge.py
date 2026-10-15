@@ -1999,3 +1999,42 @@ def test_source_intake_payload_is_bound_to_existing_command_identity(tmp_path, m
     command['command_id'] = 'LSGO-INTAKE-INVALID'
     command['action_payload']['output_path'] = str(tmp_path / 'escape')
     assert client.post('/api/v1/ls-go/commands', json=command).status_code == 400
+
+
+def test_frontier_intake_identity_is_bounded_in_existing_command_and_job(tmp_path, monkeypatch):
+    database = CommandFixtureDatabase(tmp_path / 'frontier-intake.db')
+    monkeypatch.setattr(ls_go_bridge, '_try_get_services', lambda _root: (database, object()))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    source = {'source_path': str(tmp_path / 'source.md'), 'source_sha256': 'a' * 64}
+    frontier = {
+        'domain': 'COGNIGREX', 'object_id': 'cgx://source/example', 'owner': 'COGNIGREX',
+        'source_sha256': source['source_sha256'], 'operation': 'source_preserving_intake',
+        'acceptance_version': 'v1', 'evidence_class': 'UNVERIFIED',
+        'source_changed': True, 'dependencies_changed': False,
+        'limits': {'max_elapsed_s': 60, 'max_tokens': 1, 'max_tool_calls': 1,
+                   'max_retries': 0, 'max_cost_usd': 0.25},
+        'usage': {'elapsed_s': 0, 'tokens': 0, 'tool_calls': 0,
+                  'retries': 0, 'cost_usd': 0},
+    }
+    command = command_payload(schema_version='lightspeed-go-command-v2',
+                              command_id='LSGO-FRONTIER-INTAKE-TEST',
+                              action_type='source_preserving_intake', action_payload=source,
+                              frontier_request=frontier, target_floor='Neo', execution_mode='queue',
+                              authorised_scope='all floors; private local queue',
+                              requested_scope='Neo private local queue')
+    response = client.post('/api/v1/ls-go/commands', json=command)
+    assert response.status_code == 200, response.text
+    with database.get_connection() as connection:
+        task = json.loads(connection.execute('SELECT metadata_json FROM tasks').fetchone()[0])
+        job = json.loads(connection.execute('SELECT params_json FROM jobs').fetchone()[0])
+    assert task['frontier_request'] == frontier
+    assert job['frontier_request'] == frontier
+    assert job['action_payload'] == source
+    command['frontier_request']['acceptance_version'] = 'v2'
+    assert client.post('/api/v1/ls-go/commands', json=command).status_code == 409
+    command['command_id'] = 'LSGO-FRONTIER-MISMATCH'
+    command['frontier_request']['source_sha256'] = 'b' * 64
+    assert client.post('/api/v1/ls-go/commands', json=command).status_code == 400
+    command['frontier_request']['source_sha256'] = 'a' * 64
+    command['frontier_request']['usage']['tool_calls'] = 1
+    assert client.post('/api/v1/ls-go/commands', json=command).status_code == 400

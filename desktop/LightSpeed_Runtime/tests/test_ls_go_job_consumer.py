@@ -480,7 +480,10 @@ def test_task_write_failure_rolls_back_claimed_job_commit(tmp_path: Path) -> Non
     assert db.execute_query("SELECT status FROM tasks WHERE id=501")[0]["status"] == "queued"
 
 
-def test_frontier_admission_binds_claim_but_holds_unenforced_action(tmp_path: Path, monkeypatch) -> None:
+@pytest.mark.parametrize("location", ["nested", "top_level"])
+def test_frontier_admission_binds_claim_but_holds_unenforced_action(
+    tmp_path: Path, monkeypatch, location: str,
+) -> None:
     shell = tmp_path / "App"
     configure_shell(shell)
     db = configure_db(tmp_path / "work.db")
@@ -496,7 +499,8 @@ def test_frontier_admission_binds_claim_but_holds_unenforced_action(tmp_path: Pa
     }
     params = {
         "command_id": "GO-TASK-FRONTIER-CLAIM", "action_type": "review_only",
-        "action_payload": {"frontier_request": request},
+        **({"frontier_request": request} if location == "top_level"
+           else {"action_payload": {"frontier_request": request}}),
     }
     with sqlite3.connect(db.path) as conn:
         conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")

@@ -597,9 +597,15 @@ class LSGoJobConsumer:
             params = _json_dict(row["params_json"])
             action_payload = params.get("action_payload")
             frontier_admission = None
-            if isinstance(action_payload, dict) and "frontier_request" in action_payload:
+            top_level_frontier = "frontier_request" in params
+            nested_frontier = isinstance(action_payload, dict) and "frontier_request" in action_payload
+            if top_level_frontier or nested_frontier:
                 try:
-                    decision = assess_frontier_unit(action_payload["frontier_request"])
+                    if top_level_frontier and nested_frontier:
+                        raise CorpusTestPlanError("ambiguous frontier request locations")
+                    request = (params["frontier_request"] if top_level_frontier
+                               else action_payload["frontier_request"])
+                    decision = assess_frontier_unit(request)
                     frontier_admission = {
                         "schema": decision["schema"],
                         "domain": decision["domain"],
