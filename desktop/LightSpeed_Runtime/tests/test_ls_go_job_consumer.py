@@ -155,6 +155,9 @@ def test_restart_reconciles_only_exact_durable_result_without_replay(tmp_path: P
     monkeypatch.setattr(consumer, "process_once", no_replay)
     monkeypatch.setattr(consumer, "_execute_action", lambda **_kw: (_ for _ in ()).throw(
         AssertionError("restart reconciliation must not execute")))
+    monkeypatch.setattr(ls_go_job_consumer, "host_cpu_admission", lambda *_args, **_kwargs: {
+        "allow_new_jobs": True, "state": "ready",
+    })
     consumer.run_forever(poll_seconds=0.01)
 
     assert calls == ["poll"]
