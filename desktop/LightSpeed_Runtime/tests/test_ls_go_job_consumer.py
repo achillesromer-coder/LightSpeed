@@ -596,6 +596,88 @@ def test_changed_persisted_frontier_work_key_fences_live_and_terminal_claim(tmp_
     assert db.execute_query("SELECT status FROM tasks WHERE id=501")[0]["status"] == "queued"
 
 
+def test_frontier_intake_budget_is_bound_and_fenced_before_execution(tmp_path: Path) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    request = {
+        "domain": "COGNIGREX", "object_id": "cgx://source/example", "owner": "COGNIGREX",
+        "source_sha256": "a" * 64, "operation": "source_preserving_intake",
+        "acceptance_version": "v1", "evidence_class": "UNVERIFIED",
+        "source_changed": True, "dependencies_changed": False,
+        "limits": {"max_elapsed_s": 60, "max_tokens": 1, "max_tool_calls": 1,
+                   "max_retries": 0, "max_cost_usd": 0.25},
+        "usage": {"elapsed_s": 0, "tokens": 0, "tool_calls": 0,
+                  "retries": 0, "cost_usd": 0},
+    }
+    params = {
+        "command_id": "GO-TASK-FRONTIER-BUDGET", "action_type": "source_preserving_intake",
+        "action_payload": {"source_path": str(tmp_path / "source.md"),
+                           "source_sha256": request["source_sha256"]},
+        "frontier_request": request, "execution_mode": "queue",
+        "execute": True, "allow_heavy": False,
+    }
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id,z_context) "
+            "VALUES (601,'ls_go_command','pending',?,'{}',501,'Neo')", (json.dumps(params),),
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    assert consumer._claim_job(601, expected_job=consumer.pending_jobs()[0])
+    claim = consumer._execution_claims[601]
+    assert claim["frontier_budget"] == request["limits"]
+    assert claim["frontier_admission"]["native_preflight_ready"] is True
+    assert claim["frontier_admission"]["native_execution_authorized"] is False
+    consumer._require_live_claim(601)
+    metadata = json.loads(db.execute_query(
+        "SELECT metadata_json FROM jobs WHERE id=601")[0]["metadata_json"])
+    metadata["ls_go_execution_claim"]["frontier_budget"]["max_tool_calls"] = 2
+    db.execute_update("UPDATE jobs SET metadata_json=? WHERE id=601", (json.dumps(metadata),))
+    with pytest.raises(RuntimeError, match="revoked or changed"):
+        consumer._require_live_claim(601)
+    receipt = {
+        "job_id": 601, "task_id": 501, "command_id": params["command_id"],
+        "status": "held", "execution_claim": claim,
+    }
+    with pytest.raises(RuntimeError, match="persisted work claim changed"):
+        consumer._finish_claimed_job(601, receipt=receipt)
+
+
+def test_frontier_intake_mismatched_source_hash_has_no_native_budget(tmp_path: Path) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    db = configure_db(tmp_path / "work.db")
+    request = {
+        "domain": "COGNIGREX", "object_id": "cgx://source/example", "owner": "COGNIGREX",
+        "source_sha256": "a" * 64, "operation": "source_preserving_intake",
+        "acceptance_version": "v1", "evidence_class": "UNVERIFIED",
+        "source_changed": True, "dependencies_changed": False,
+        "limits": {"max_elapsed_s": 60, "max_tokens": 1,
+                   "max_tool_calls": 1, "max_retries": 0},
+        "usage": {"elapsed_s": 0, "tokens": 0, "tool_calls": 0, "retries": 0},
+    }
+    params = {
+        "command_id": "GO-TASK-FRONTIER-MISMATCH", "action_type": "source_preserving_intake",
+        "action_payload": {"source_path": str(tmp_path / "source.md"),
+                           "source_sha256": "b" * 64},
+        "frontier_request": request, "execution_mode": "queue",
+        "execute": True, "allow_heavy": False,
+    }
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id,z_context) "
+            "VALUES (601,'ls_go_command','pending',?,'{}',501,'Neo')", (json.dumps(params),),
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    assert consumer._claim_job(601, expected_job=consumer.pending_jobs()[0])
+    claim = consumer._execution_claims[601]
+    assert claim["frontier_admission"]["verdict"] == "HOLD"
+    assert claim["frontier_admission"]["reason"] == "FRONTIER_INTAKE_SOURCE_OR_NATIVE_PRECONDITION_MISMATCH"
+    assert "frontier_budget" not in claim
+
+
 def test_floor_usage_is_retained_in_existing_job_result(tmp_path: Path, monkeypatch) -> None:
     shell = tmp_path / "App"
     configure_shell(shell)

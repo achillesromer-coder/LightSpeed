@@ -632,6 +632,36 @@ class LSGoJobConsumer:
             params_hash = hashlib.sha256(row["params_json"].encode("utf-8")).hexdigest()
             command_id = str(params.get("command_id") or "").strip() or None
             action_type, _action_source = resolve_action(command_id or "", params)
+            frontier_budget = None
+            if (frontier_admission is not None
+                    and frontier_admission["verdict"] == "READY_FOR_BOUNDED_WORK"
+                    and "frontier_request" in params
+                    and action_type == "source_preserving_intake"
+                    and isinstance(action_payload, dict)):
+                request = params["frontier_request"]
+                source_matches = (
+                    request["operation"] == "source_preserving_intake"
+                    and action_payload.get("source_sha256") == frontier_admission["source_sha256"]
+                    and params.get("execution_mode") == "queue"
+                    and params.get("execute") is True
+                    and params.get("allow_heavy") is False
+                    and expected_job.get("z_context") == "Neo"
+                )
+                usage = request["usage"]
+                zero_initial_usage = (all(usage[field] == 0 for field in (
+                    "elapsed_s", "tokens", "tool_calls", "retries",
+                )) and usage.get("cost_usd", 0) == 0)
+                if source_matches and zero_initial_usage:
+                    limits = request["limits"]
+                    frontier_budget = {field: limits[field] for field in (
+                        "max_elapsed_s", "max_tokens", "max_tool_calls", "max_retries",
+                    )}
+                    if "max_cost_usd" in limits:
+                        frontier_budget["max_cost_usd"] = limits["max_cost_usd"]
+                    frontier_admission["native_preflight_ready"] = True
+                else:
+                    frontier_admission["verdict"] = "HOLD"
+                    frontier_admission["reason"] = "FRONTIER_INTAKE_SOURCE_OR_NATIVE_PRECONDITION_MISMATCH"
             claim = metadata.get("ls_go_execution_claim")
             if claim is not None:
                 receipt_claim = (durable_receipt or {}).get("execution_claim")
@@ -663,6 +693,7 @@ class LSGoJobConsumer:
                        if purpose == "execute" and action_type == "local_floor_wakeup"
                        and bool(params.get("execute", True)) else {}),
                     **({"frontier_admission": frontier_admission} if frontier_admission is not None else {}),
+                    **({"frontier_budget": frontier_budget} if frontier_budget is not None else {}),
                     "started_utc": now,
                     "lease_expires_utc": (
                         datetime.fromisoformat(now) + timedelta(seconds=CLAIM_LEASE_SECONDS)
@@ -715,6 +746,7 @@ class LSGoJobConsumer:
                     or persisted_claim.get("lease_expires_utc") != claim.get("lease_expires_utc")
                     or persisted_claim.get("native_budget") != claim.get("native_budget")
                     or persisted_claim.get("frontier_admission") != claim.get("frontier_admission")
+                    or persisted_claim.get("frontier_budget") != claim.get("frontier_budget")
                     or raw_job["task_id"] != claim["task_id"]
                     or hashlib.sha256(raw_job["params_json"].encode("utf-8")).hexdigest()
                     != claim["job_params_sha256"]):
@@ -885,7 +917,9 @@ class LSGoJobConsumer:
                 or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("native_budget")
                 != claim.get("native_budget")
                 or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("frontier_admission")
-                != claim.get("frontier_admission")):
+                != claim.get("frontier_admission")
+                or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("frontier_budget")
+                != claim.get("frontier_budget")):
             raise RuntimeError("source intake execution claim was revoked or changed")
         if not _claim_lease_live(_json_dict(row["metadata_json"]).get("ls_go_execution_claim", {})):
             raise RuntimeError("source intake execution claim lease expired")
