@@ -54,6 +54,47 @@ def test_source_intake_consumer_persists_evidence_once(tmp_path, monkeypatch):
     assert consumer.process_once()["results_written"] == 0
 
 
+def test_intake_crash_recovery_requires_exact_snapshot_readback(tmp_path: Path) -> None:
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    source = tmp_path / "source.md"
+    raw = b"original source evidence\n"
+    source.write_bytes(raw)
+    command_id = "GO-TASK-INTAKE-READBACK"
+    payload = {"source_path": str(source), "source_sha256": hashlib.sha256(raw).hexdigest()}
+    params = {"command_id": command_id, "action_type": "source_preserving_intake",
+              "action_payload": payload, "execution_mode": "queue", "execute": True,
+              "allow_heavy": False}
+    db = configure_db(tmp_path / "work.db")
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id) "
+            "VALUES (601,'ls_go_command','pending',?,'{}',501)", (json.dumps(params),),
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    assert consumer._claim_job(601, expected_job=consumer.pending_jobs()[0])
+    intake = ls_go_job_consumer.execute_source_intake(
+        payload, command_id=command_id, shell_root=shell, allowed_roots=[tmp_path],
+    )
+    result = consumer._persist_result({
+        "command_id": command_id, "job_id": 601, "task_id": 501,
+        "result_id": ls_go_job_consumer.result_id_for(command_id),
+        "status": "completed", "action_type": "source_preserving_intake",
+        "completed_utc": ls_go_job_consumer.utc_now_iso(),
+        "execution_claim": consumer._execution_claims[601], "intake": intake,
+    })
+    snapshot = Path(intake["artifacts"][0]["path"])
+    snapshot.write_bytes(b"tampered source evidence\n")
+    with pytest.raises(ls_go_job_consumer.SourceIntakeError, match="artifact"):
+        consumer._finish_claimed_job(601, receipt=result)
+    assert consumer._reconcile_running_job_receipt(601) is False
+    assert db.execute_query("SELECT status FROM jobs WHERE id=601")[0]["status"] == "running"
+    snapshot.write_bytes(raw)
+    assert consumer._reconcile_running_job_receipt(601) is True
+    assert db.execute_query("SELECT status FROM jobs WHERE id=601")[0]["status"] == "completed"
+
+
 def test_write_json_retries_transient_windows_replace_error(tmp_path: Path, monkeypatch):
     path = tmp_path / "heartbeat.json"
     original_replace = Path.replace

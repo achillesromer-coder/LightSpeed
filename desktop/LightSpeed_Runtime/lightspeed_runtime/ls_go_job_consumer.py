@@ -22,7 +22,10 @@ from lightspeed_runtime.local_agent_cycle import run_cycle
 from lightspeed_runtime.local_floor_runner import run_floor
 from lightspeed_runtime.cognigrex_supervisor import run_supervised_workflow
 from lightspeed_runtime.storage_paths import neo_actions_root
-from lightspeed_runtime.source_intake_executor import execute_source_intake
+from lightspeed_runtime.source_intake import SourceIntakeError
+from lightspeed_runtime.source_intake_executor import (
+    execute_source_intake, validate_intake_payload, verify_source_intake_readback,
+)
 
 
 CONSUMER_SCHEMA = "lightspeed-ls-go-job-consumer-v1"
@@ -470,6 +473,20 @@ class LSGoJobConsumer:
         return [int(row["id"]) for row in rows if row["status"] == "running"
                 or bool(_json_dict(row["metadata_json"]).get("ls_go_execution_uncertain"))]
 
+    def _verify_completed_intake_result(self, result: dict[str, Any],
+                                        params: dict[str, Any]) -> None:
+        command_id = str(params.get("command_id") or "").strip()
+        action_type, _source = resolve_action(command_id, params)
+        if action_type != "source_preserving_intake" or result.get("status") != "completed":
+            return
+        if result.get("action_type") != action_type:
+            raise SourceIntakeError("completed intake action identity differs")
+        request = validate_intake_payload(params.get("action_payload"))
+        verify_source_intake_readback(
+            result.get("intake"), command_id=command_id, shell_root=self.shell_root,
+            source_sha256=request["source_sha256"],
+        )
+
     def _reconcile_running_job_receipt(self, job_id: int) -> bool:
         """Atomically finish only a prior run with an exact durable result.
 
@@ -538,6 +555,10 @@ class LSGoJobConsumer:
                     )
                 ):
                     return False
+            try:
+                self._verify_completed_intake_result(result, _json_dict(job["params_json"]))
+            except (SourceIntakeError, OSError, TypeError, ValueError):
+                return False
             raw_task = conn.execute(
                 "SELECT status, metadata_json FROM tasks WHERE id = ?", (task_id,)
             ).fetchone()
@@ -753,6 +774,7 @@ class LSGoJobConsumer:
                     or hashlib.sha256(raw_job["params_json"].encode("utf-8")).hexdigest()
                     != claim["job_params_sha256"]):
                 raise RuntimeError("persisted work claim changed; terminal write fenced")
+            self._verify_completed_intake_result(receipt, _json_dict(raw_job["params_json"]))
             if claim["purpose"] == "execute" and not _claim_lease_live(persisted_claim):
                 raise RuntimeError("execution claim lease expired; terminal write fenced")
             task_id = claim["task_id"]

@@ -152,3 +152,48 @@ def execute_source_intake(
     active()
     os.rename(stage, destination)
     return json.loads((destination / "receipt.json").read_text(encoding="utf-8"))
+
+
+def verify_source_intake_readback(
+    intake: Any, *, command_id: str, shell_root: Path, source_sha256: str,
+) -> None:
+    """Reread the exact immutable bundle before accepting a terminal intake result."""
+    if not isinstance(intake, dict) or intake.get("status") != "completed":
+        raise SourceIntakeError("completed intake receipt is missing")
+    destination = neo_actions_root(shell_root) / "intake" / hashlib.sha256(
+        command_id.encode("utf-8")
+    ).hexdigest()
+    if destination.is_symlink() or not destination.is_dir():
+        raise SourceIntakeError("immutable intake bundle is missing or redirected")
+    receipt_path = destination / "receipt.json"
+    if (receipt_path.is_symlink() or not receipt_path.is_file()
+            or receipt_path.stat().st_size > 1024 * 1024
+            or Path(str(intake.get("receipt_path") or "")) != receipt_path):
+        raise SourceIntakeError("immutable intake receipt path is invalid")
+    try:
+        persisted = json.loads(receipt_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise SourceIntakeError("immutable intake receipt cannot be read") from exc
+    if persisted != intake or intake.get("command_id") != command_id:
+        raise SourceIntakeError("immutable intake receipt differs from terminal result")
+    if intake.get("source_sha256") != source_sha256:
+        raise SourceIntakeError("immutable intake source hash differs from job request")
+    artifacts = intake.get("artifacts")
+    if not isinstance(artifacts, list) or len(artifacts) != 2:
+        raise SourceIntakeError("immutable intake artifact list is incomplete")
+    for index, name in enumerate(("source.native", "source-envelope.json")):
+        item = artifacts[index]
+        path = destination / name
+        if (not isinstance(item, dict) or path.is_symlink() or not path.is_file()
+                or Path(str(item.get("path") or "")) != path
+                or type(item.get("bytes")) is not int or item["bytes"] < 0
+                or path.stat().st_size != item["bytes"]):
+            raise SourceIntakeError("immutable intake artifact identity differs")
+        digest = hashlib.sha256()
+        with path.open("rb") as stream:
+            for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(chunk)
+        if digest.hexdigest() != item.get("sha256"):
+            raise SourceIntakeError("immutable intake artifact failed hash readback")
+        if index == 0 and digest.hexdigest() != source_sha256:
+            raise SourceIntakeError("immutable native source failed requested hash readback")
