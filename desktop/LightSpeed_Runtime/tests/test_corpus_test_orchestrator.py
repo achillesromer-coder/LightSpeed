@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import copy
+import json
+from pathlib import Path
 
 import pytest
 
@@ -313,3 +315,51 @@ def test_changed_source_rejects_old_receipt_before_dependency_propagation():
     assert plan["tests"][1]["semantic_state"] == "blocked"
     assert plan["tests"][1]["packet"]["unresolved_inputs"]
     assert plan["known_unknown_frontier"]["nodes"][0]["receipt_rejection"] == "INPUT_PACKET_SHA256_MISMATCH"
+
+
+
+def _historical_intent_coverage_registry() -> dict:
+    repo_root = Path(__file__).resolve().parents[3]
+    path = repo_root / "cgx" / "domain_templates" / "corpus_test_capability_registry.json"
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def test_frontier_historical_intent_coverage_is_explicit_non_authoritative() -> None:
+    registry = _historical_intent_coverage_registry()
+    coverage = registry["historical_intent_coverage"]
+    assert registry["schema"] == "CGX-CORPUS-TEST-CAPABILITY-REGISTRY/0.1"
+    assert registry["default_activation_state"] == "prepared_not_activated"
+    assert len(registry["capabilities"]) == 4  # no new tool was silently activated
+    assert coverage["state"] == "NON_AUTHORITATIVE_RECONCILIATION_CANDIDATE"
+    assert coverage["coverage_completeness"].startswith("PARTIAL_BY_DESIGN")
+    assert len(coverage["entries"]) == 27
+    ids = [entry["intent_id"] for entry in coverage["entries"]]
+    assert len(set(ids)) == len(ids)
+    assert len({entry["scoped_owner"] for entry in coverage["entries"]}) == 5
+    assert "LightSpeed#158" in coverage["existing_operational_gate_issues"]
+    assert "LightSpeed#161" in coverage["existing_operational_gate_issues"]
+
+
+def test_frontier_coverage_prevents_unreviewed_or_inferred_results_becoming_execution() -> None:
+    coverage = _historical_intent_coverage_registry()["historical_intent_coverage"]
+    repo_root = Path(__file__).resolve().parents[3]
+    supported_origins = {
+        "existing_contract", "historical_owner_intent_to_reconcile",
+        "inferred_follow_on_owner_review",
+    }
+    for intent in coverage["entries"]:
+        assert intent["intent_origin"] in supported_origins
+        assert intent["source_binding"] == "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH"
+        assert intent["execution_status"] == "NOT_ATTESTED_FOR_THIS_INTENT"
+        assert intent["physical_status"] == "NOT_CLAIMED"
+        assert intent["method_candidates"]
+        assert intent["next_required_evidence"]
+        assert intent["owner_source_candidates"]
+        for ref in intent["owner_source_candidates"]:
+            path = repo_root / ref
+            assert ref.startswith("cgx/domain_templates/")
+            assert path.is_file(), f"{intent['intent_id']}: missing source candidate {ref}"
+        if intent["intent_origin"] == "inferred_follow_on_owner_review":
+            assert intent["plan_state"] == "REQUIRES_OWNER_REVIEW"
+        else:
+            assert intent["plan_state"] == "REVIEW_CANDIDATE_NOT_SCHEDULED"
