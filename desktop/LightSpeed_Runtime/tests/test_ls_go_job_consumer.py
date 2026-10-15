@@ -616,6 +616,7 @@ def test_frontier_intake_budget_is_bound_and_fenced_before_execution(tmp_path: P
                            "source_sha256": request["source_sha256"]},
         "frontier_request": request, "execution_mode": "queue",
         "execute": True, "allow_heavy": False,
+        "frontier_authenticated_actor": "NCNB",
     }
     with sqlite3.connect(db.path) as conn:
         conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")
@@ -663,6 +664,7 @@ def test_frontier_intake_mismatched_source_hash_has_no_native_budget(tmp_path: P
                            "source_sha256": "b" * 64},
         "frontier_request": request, "execution_mode": "queue",
         "execute": True, "allow_heavy": False,
+        "frontier_authenticated_actor": "NCNB",
     }
     with sqlite3.connect(db.path) as conn:
         conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")

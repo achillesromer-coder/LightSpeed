@@ -604,6 +604,7 @@ def _command_contract(payload: dict[str, Any]) -> dict[str, Any]:
         contract["action_payload"] = payload.get("action_payload")
     if "frontier_request" in payload:
         contract["frontier_request"] = payload.get("frontier_request")
+        contract["frontier_authenticated_actor"] = payload.get("frontier_authenticated_actor")
     return contract
 
 
@@ -1154,6 +1155,8 @@ def _create_command_task(
             ),
             **({"frontier_request": accepted["frontier_request"]}
                if "frontier_request" in accepted else {}),
+            **({"frontier_authenticated_actor": accepted["frontier_authenticated_actor"]}
+               if "frontier_authenticated_actor" in accepted else {}),
             "proof_required": True,
             "public_safe": True,
             "canonical_gate_id": accepted["canonical_gate_id"],
@@ -1214,6 +1217,8 @@ def _create_command_job(
             ),
             **({"frontier_request": accepted["frontier_request"]}
                if "frontier_request" in accepted else {}),
+            **({"frontier_authenticated_actor": accepted["frontier_authenticated_actor"]}
+               if "frontier_authenticated_actor" in accepted else {}),
             "execute": accepted["execution_mode"] == "queue",
             "allow_heavy": False,
             "canonical_gate_id": accepted["canonical_gate_id"],
@@ -2224,7 +2229,18 @@ def create_app(root: Path | str) -> FastAPI:
         )
 
     @app.post("/api/v1/ls-go/commands")
-    async def accept_command(body: dict[str, Any]):
+    async def accept_command(
+        body: dict[str, Any],
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        frontier_actor = None
+        if "frontier_request" in body:
+            if not owner_session:
+                raise HTTPException(status_code=401, detail="Frontier intake requires an owner session")
+            frontier_actor = _verified_owner_actor(
+                None, session_token=owner_session,
+                credential_store=credential_store, session_store=owner_sessions,
+            )
         schema_version = _bounded(body.get("schema_version"), maximum=64, required=True)
         if schema_version not in COMMAND_SCHEMAS:
             raise HTTPException(status_code=400, detail="Unsupported command schema")
@@ -2315,6 +2331,7 @@ def create_app(root: Path | str) -> FastAPI:
             "action_type": action_type or None,
             **({"action_payload": action_payload} if action_payload is not None else {}),
             **({"frontier_request": frontier_request} if frontier_request is not None else {}),
+            **({"frontier_authenticated_actor": frontier_actor} if frontier_actor is not None else {}),
             "state": "review" if execution_mode == "review" else "queued",
             "proof_required": True,
             "public_safe": True,

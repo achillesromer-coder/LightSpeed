@@ -646,6 +646,8 @@ class LSGoJobConsumer:
                     and params.get("execute") is True
                     and params.get("allow_heavy") is False
                     and expected_job.get("z_context") == "Neo"
+                    and isinstance(params.get("frontier_authenticated_actor"), str)
+                    and bool(params["frontier_authenticated_actor"].strip())
                 )
                 usage = request["usage"]
                 zero_initial_usage = (all(usage[field] == 0 for field in (
