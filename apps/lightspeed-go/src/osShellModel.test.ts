@@ -84,7 +84,7 @@ describe("CGX family/type landing bindings", () => {
   it("prepares but never dispatches a heavy workload or unfamiliar component type", () => {
     const draft = cgxDraftInstruction("romer", "unknown", "heavy-review", "models");
     expect(draft).toContain("engineering");
-    expect(draft).toContain("Heavy");
+    expect(draft).toContain("heavy-compute");
     expect(draft).toContain("do not launch a job");
     expect(draft).toContain("Object_ID");
     expect(draft).not.toContain("unknown");
