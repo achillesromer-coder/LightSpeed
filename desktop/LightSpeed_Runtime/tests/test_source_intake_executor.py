@@ -103,3 +103,54 @@ def test_intake_does_not_publish_when_claim_is_revoked_during_write(tmp_path):
     destination = neo_actions_root(shell) / "intake" / hashlib.sha256(command_id.encode()).hexdigest()
     assert not destination.exists()
     assert source.read_bytes() == raw
+
+
+def test_frontier_intake_records_deterministic_prepublish_use(tmp_path):
+    source = tmp_path / "source.txt"
+    raw = b"bounded original\n"
+    source.write_bytes(raw)
+    receipt = execute_source_intake(
+        {"source_path": str(source), "source_sha256": hashlib.sha256(raw).hexdigest()},
+        command_id="metered-intake", shell_root=tmp_path / "App",
+        allowed_roots=[tmp_path], frontier_budget={
+            "max_elapsed_s": 10, "max_tokens": 1,
+            "max_tool_calls": 1, "max_retries": 0, "max_cost_usd": 1,
+        },
+    )
+    usage = receipt["frontier_usage"]
+    assert 0 <= usage["prepublish_elapsed_ms"] < 10_000
+    assert {key: usage[key] for key in ("tokens", "tool_calls", "retries", "cost_usd")} == {
+        "tokens": 0, "tool_calls": 1, "retries": 0, "cost_usd": 0,
+    }
+    assert usage["wall_clock_enforcement"] == "cooperative_checkpoints_before_publish"
+    assert source.read_bytes() == raw
+    assert json.loads(Path(receipt["receipt_path"]).read_text())["frontier_usage"] == usage
+
+
+def test_frontier_intake_elapsed_ceiling_blocks_publication_after_extraction(tmp_path, monkeypatch):
+    from lightspeed_runtime import source_intake_executor as executor
+    source = tmp_path / "source.txt"
+    raw = b"original evidence\n"
+    source.write_bytes(raw)
+    now = [0]
+    original_build = executor.build_source_envelope
+
+    def elapsed_build(**kwargs):
+        result = original_build(**kwargs)
+        now[0] = 1_000_000_000
+        return result
+
+    monkeypatch.setattr(executor.time, "monotonic_ns", lambda: now[0])
+    monkeypatch.setattr(executor, "build_source_envelope", elapsed_build)
+    command_id = "elapsed-intake"
+    shell = tmp_path / "App"
+    with pytest.raises(SourceIntakeError, match="wall-clock ceiling"):
+        execute_source_intake(
+            {"source_path": str(source), "source_sha256": hashlib.sha256(raw).hexdigest()},
+            command_id=command_id, shell_root=shell, allowed_roots=[tmp_path],
+            frontier_budget={"max_elapsed_s": 1, "max_tokens": 1,
+                             "max_tool_calls": 1, "max_retries": 0},
+        )
+    destination = neo_actions_root(shell) / "intake" / hashlib.sha256(command_id.encode()).hexdigest()
+    assert not destination.exists()
+    assert source.read_bytes() == raw

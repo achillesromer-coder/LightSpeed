@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import re
 import tempfile
+import time
 from typing import Any, Callable
 import zipfile
 
@@ -42,12 +43,27 @@ def _bounded_archive(data: bytes) -> None:
 def execute_source_intake(
     payload: Any, *, command_id: str, shell_root: Path, allowed_roots: list[Path],
     check_active: Callable[[], None] | None = None,
+    frontier_budget: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Preserve one exact byte snapshot and derived envelope; never modify a carrier.
 
     Allowed roots are operator configuration, never fields supplied by the job.
     The consumer owns replay detection. Existing output directories are immutable.
     """
+    started_ns = time.monotonic_ns()
+    if frontier_budget is not None:
+        required = {"max_elapsed_s", "max_tokens", "max_tool_calls", "max_retries"}
+        if (not isinstance(frontier_budget, dict) or not required.issubset(frontier_budget)
+                or any(type(frontier_budget[key]) is not int or frontier_budget[key] < 0
+                       for key in required)
+                or frontier_budget["max_elapsed_s"] < 1
+                or frontier_budget["max_tokens"] < 1
+                or frontier_budget["max_tool_calls"] < 1
+                or ("max_cost_usd" in frontier_budget
+                    and (isinstance(frontier_budget["max_cost_usd"], bool)
+                         or not isinstance(frontier_budget["max_cost_usd"], (int, float))
+                         or frontier_budget["max_cost_usd"] <= 0))):
+            raise SourceIntakeError("frontier intake budget is invalid")
     request = validate_intake_payload(payload)
     source = Path(request["source_path"]).resolve(strict=True)
     roots = [Path(root).resolve(strict=True) for root in allowed_roots]
@@ -56,6 +72,9 @@ def execute_source_intake(
     def active() -> None:
         if check_active is not None:
             check_active()
+        if (frontier_budget is not None
+                and time.monotonic_ns() - started_ns >= frontier_budget["max_elapsed_s"] * 1_000_000_000):
+            raise SourceIntakeError("frontier intake wall-clock ceiling reached")
 
     active()
     chunks = []
@@ -107,6 +126,16 @@ def execute_source_intake(
         if actual != hashlib.sha256(content).hexdigest():
             raise SourceIntakeError("persisted intake artifact failed readback")
         artifacts.append({"path": str(destination / name), "sha256": actual, "bytes": len(content)})
+    active()
+    frontier_usage = None
+    if frontier_budget is not None:
+        elapsed_ns = time.monotonic_ns() - started_ns
+        frontier_usage = {
+            "prepublish_elapsed_ms": (elapsed_ns + 999_999) // 1_000_000,
+            "tokens": 0, "tool_calls": 1, "retries": 0, "cost_usd": 0,
+            "metering": "local_monotonic_clock_and_one_deterministic_intake_call",
+            "wall_clock_enforcement": "cooperative_checkpoints_before_publish",
+        }
     receipt = {
         "schema": "lightspeed-source-intake-receipt-v1", "command_id": command_id,
         "status": "completed", "source_path": str(source), "source_sha256": digest,
@@ -115,6 +144,7 @@ def execute_source_intake(
         "warnings": envelope["warnings"], "unresolved": envelope["unresolved"],
         "evidence_class": "derived_extraction", "semantic_acceptance": "requires_independent_review",
         "source_modified": False, "canonical_mutation": False, "external_action_performed": False,
+        **({"frontier_usage": frontier_usage} if frontier_usage is not None else {}),
         "receipt_path": str(destination / "receipt.json"),
     }
     (stage / "receipt.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")

@@ -902,6 +902,8 @@ class LSGoJobConsumer:
 
     def _require_live_claim(self, job_id: int) -> None:
         """Stop cooperative native work when its exact DB lease is revoked."""
+        if self._stop.is_set():
+            raise RuntimeError("source intake cancelled by consumer shutdown")
         claim = self._execution_claims[job_id]
         with self.db.get_connection() as conn:
             row = conn.execute(
@@ -1128,7 +1130,8 @@ class LSGoJobConsumer:
             intake = execute_source_intake(params.get("action_payload"), command_id=command_id,
                                           shell_root=self.shell_root,
                                           allowed_roots=[Path(configured)] if configured else [],
-                                          check_active=lambda: self._require_live_claim(job["id"]))
+                                          check_active=lambda: self._require_live_claim(job["id"]),
+                                          frontier_budget=self._execution_claims[job["id"]].get("frontier_budget"))
             return {"status": intake["status"], "action_type": action_type, "intake": intake,
                     "summary": "Exact source snapshot and derived extraction persisted for review.",
                     "next_action": "Review source ownership, extraction coverage and domain mapping before semantic ingestion."}
