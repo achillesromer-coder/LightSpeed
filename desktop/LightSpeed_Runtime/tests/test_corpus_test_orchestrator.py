@@ -99,6 +99,28 @@ def test_missing_or_unverified_corpus_input_blocks_instead_of_guessing() -> None
     assert any(item["reason"] == "SOURCE_VERIFICATION_REQUIRED" for item in packet["unresolved_inputs"])
 
 
+def test_corpus_unit_mismatch_is_blocked_without_silent_conversion() -> None:
+    """Source-bound numbers are not interchangeable across different units."""
+    baseline = compile_test_packet(base_spec(), corpus_snapshot())
+    assert baseline["execution_state"] == "ready"
+    for bad_unit in ("kHz", None, "rad/s"):
+        snapshot = corpus_snapshot()
+        snapshot["values"]["rfs.frequency_hz"]["units"] = bad_unit
+        packet = compile_test_packet(base_spec(), snapshot)
+        assert packet["execution_state"] == "blocked"
+        assert "frequency_hz" not in packet["resolved_inputs"]
+        mismatch = next(
+            (row for row in packet["unresolved_inputs"] if row["input"] == "frequency_hz"),
+            None,
+        )
+        assert mismatch is not None
+        assert mismatch["reason"] == "SOURCE_VERIFICATION_REQUIRED"
+        assert mismatch["unit_check"] == "mismatch"
+        assert mismatch["expected_units"] == "Hz"
+        assert mismatch["source_units"] == bad_unit
+        assert packet["canonical_mutation"] is False
+
+
 def test_dependency_output_propagates_only_after_proof_readback_and_commit() -> None:
     first = base_spec("SWEEP-01")
     first_packet = compile_test_packet(first, corpus_snapshot())
