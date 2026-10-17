@@ -273,6 +273,22 @@ def compile_test_packet(
                         }
                     )
                 continue
+            # An input declared in SI (or other exact) units must never receive
+            # a numerically unchanged source value expressed in different units.
+            # Conversions require an explicit, separately source-bound transform.
+            if binding["units"] is not None and entry["units"] != binding["units"]:
+                if binding["required"]:
+                    unresolved.append(
+                        {
+                            "input": input_name,
+                            "reason": "SOURCE_VERIFICATION_REQUIRED",
+                            "source_key": binding["source_key"],
+                            "unit_check": "mismatch",
+                            "expected_units": binding["units"],
+                            "source_units": entry["units"],
+                        }
+                    )
+                continue
             resolved[input_name] = entry["value"]
             input_lineage[input_name] = {
                 "source": "corpus",
