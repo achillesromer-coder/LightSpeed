@@ -40,12 +40,12 @@
   },
   "policy_id": "host_runtime_2026_05_21",
   "runtime_limits": {
-    "active_operating_profile": "cognigrex_half_speed",
-    "background_poll_interval_multiplier": 2.0,
+    "active_operating_profile": "cognigrex_80pct_cpu_ceiling",
+    "background_poll_interval_multiplier": 2,
     "background_process_priority": "below_normal",
     "chrome_reserved_ram_gb": 6,
     "chrome_reserved_threads": 4,
-    "cognigrex_speed_percent": 50,
+    "cognigrex_speed_percent": 80,
     "construct_texture_panel_budget": 8,
     "construct_widget_budget": 36,
     "cpu_scheduler_strategy": "bounded_parallelism_over_global_autostart",
@@ -56,7 +56,13 @@
     "max_concurrent_ollama_jobs": 1,
     "max_floor_boot_parallelism": 2,
     "merovingian_interval_seconds": 120,
-    "watchdog_interval_minutes": 10
+    "watchdog_interval_minutes": 10,
+    "max_total_host_cpu_percent": 80,
+    "cpu_dispatch_resume_percent": 70,
+    "cpu_sampling_interval_seconds": 0.25,
+    "cpu_limit_authority": "ADMISSION_ONLY_UNTIL_WINDOWS_PROCESS_GROUP_HARD_CAP_VERIFIED",
+    "mobile_handoff_required": false,
+    "mobile_device_status": "UNAVAILABLE_AWAITING_REPLACEMENT"
   },
   "storage_topology": {
     "ollama_model_root": "D:\\LightSpeed\\Models",
