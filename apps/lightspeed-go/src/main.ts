@@ -9,6 +9,7 @@ import {
   decideDesktopReview,
   decideRepresentationReview,
   DEFAULT_DESKTOP_ORIGIN,
+  DESKTOP_EXPLICITLY_DISCONNECTED,
   DesktopRequestError,
   downloadCommand,
   FLOORS,
@@ -67,6 +68,10 @@ import { bindCgxReviewProjection, loadCgxReviewProjection, type CgxReviewProject
 import { bindObjectReview, loadObjectReview, type ComponentAtlas, type ObjectReviewCatalogue } from "./objectReview";
 import { sourceLinks } from "./sourceRegistry";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
+import {
+  MAX_MOBILE_CARRIER_BYTES, disconnectMobileConnection, linkStateFromStatus, linkStateText,
+  parseMobileCarrier, saveMobileConnection,
+} from "./mobileLink";
 
 const app = document.getElementById("app");
 if (!app) throw new Error("LightSpeed Go mount node #app not found.");
@@ -96,6 +101,22 @@ app.innerHTML = `
         <div><strong>Desktop</strong><small id="desktop-pill-text">checking local runtime</small></div>
       </div>
     </header>
+
+    <details class="panel mobile-link-panel" id="mobile-link-panel" open>
+      <summary>CGX mobile connection</summary>
+      <p class="muted">Use your approved private route to BouwerBase. Credentials stay in the current page session.</p>
+      <form id="mobile-connect-form" class="owner-auth-form">
+        <label class="field field-wide"><span>Private HTTPS origin</span><input id="mobile-origin" type="url" autocomplete="off" placeholder="https://your-private-host.example" required></label>
+        <button class="primary" type="submit" id="mobile-connect">Connect / resume</button>
+        <button type="button" id="mobile-disconnect">Disconnect</button>
+        <button type="button" id="mobile-signin">Owner sign-in</button>
+      </form>
+      <label class="field"><span>Open a mobile .cgx carrier (optional)</span><input id="mobile-carrier" type="file" accept=".cgx,application/vnd.cgx+json,application/json"></label>
+      <p id="mobile-carrier-state" class="muted">Checking bundled CGX bootstrap…</p>
+      <p id="mobile-link-state" role="status" aria-live="polite">Private route not verified.</p>
+      <div class="two-column"><p id="mobile-auth-state">Owner session: not established.</p><p>Device identity: enrollment not verified.</p></div>
+      <p class="muted">Execution and phone DBR verification require separate receipts. Reconnect never resubmits pending commands. Drive fallback remains an approved manual handoff; no automatic upload or execution.</p>
+    </details>
 
     <nav class="tabs" aria-label="LS GO views">
       <button class="tab active" data-view="command">Command</button>
@@ -294,6 +315,93 @@ let currentRepresentationGraphs: RepresentationGraph[] = [];
 let ownerSessionToken = "";
 let ownerPasswordChangeToken = "";
 let ownerUsername = "NCNB";
+let mobileCarrierRecognized = false;
+let mobileReachable = false;
+let mobileAuthConfigured = false;
+let mobileChangeRequired = false;
+let mobileHealthy = false;
+let mobileDisconnecting = false;
+
+const updateMobileLink = (): void => {
+  const state = DESKTOP_EXPLICITLY_DISCONNECTED ? "disconnected" : !DEFAULT_DESKTOP_ORIGIN ? "needs_relay" : linkStateFromStatus(
+    mobileReachable, mobileAuthConfigured, mobileChangeRequired, Boolean(ownerSessionToken), mobileHealthy,
+  );
+  byId("mobile-link-state").textContent = linkStateText(state);
+  byId("mobile-auth-state").textContent = ownerSessionToken
+    ? "Owner session: established for this origin. Device enrollment and execution remain separate."
+    : "Owner session: not established.";
+};
+
+byId<HTMLInputElement>("mobile-origin").value = DEFAULT_DESKTOP_ORIGIN;
+byId<HTMLButtonElement>("mobile-connect").disabled = true;
+void fetch(new URL("./cgx-mobile-link.cgx", document.baseURI), { cache: "no-store" }).then(async (response) => {
+  if (!response.ok) throw new Error("Bundled mobile CGX carrier is unavailable");
+  parseMobileCarrier(await response.text(), "cgx-mobile-link.cgx");
+  mobileCarrierRecognized = true;
+  byId("mobile-carrier-state").textContent = "Bundled mobile CGX schema recognized; canonical root and host identity require independent readback.";
+  byId<HTMLButtonElement>("mobile-connect").disabled = false;
+}).catch((error: unknown) => {
+  byId("mobile-carrier-state").textContent = error instanceof Error ? error.message : "CGX carrier unavailable.";
+});
+
+byId<HTMLInputElement>("mobile-carrier").addEventListener("change", async (event) => {
+  mobileCarrierRecognized = false;
+  byId<HTMLButtonElement>("mobile-connect").disabled = true;
+  const file = (event.target as HTMLInputElement).files?.[0];
+  try {
+    if (!file) throw new Error("No carrier selected");
+    if (file.size > MAX_MOBILE_CARRIER_BYTES) throw new Error("CGX carrier exceeds 64 KiB");
+    parseMobileCarrier(await file.text(), file.name);
+    const digest = await crypto.subtle.digest("SHA-256", await file.arrayBuffer());
+    const hash = Array.from(new Uint8Array(digest), (value) => value.toString(16).padStart(2, "0")).join("");
+    mobileCarrierRecognized = true;
+    byId<HTMLButtonElement>("mobile-connect").disabled = false;
+    byId("mobile-carrier-state").textContent = `Mobile CGX schema recognized · SHA-256 ${hash}. No host authorization or command was imported.`;
+  } catch (error) {
+    byId("mobile-carrier-state").textContent = error instanceof Error ? error.message : "CGX carrier rejected.";
+  }
+});
+
+byId<HTMLFormElement>("mobile-connect-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!mobileCarrierRecognized || mobileDisconnecting) return;
+  const token = ownerSessionToken;
+  try {
+    // Persist only validated origin. Reload clears tokens, in-flight reads and old-root UI state.
+    saveMobileConnection(localStorage, byId<HTMLInputElement>("mobile-origin").value, window.location.hostname);
+    ownerSessionToken = "";
+    ownerPasswordChangeToken = "";
+    mobileDisconnecting = true;
+    if (token) { try { await logoutDesktopOwner(token); } catch { /* Never replay a failed logout. */ } }
+    window.location.reload();
+  } catch (error) {
+    byId("mobile-link-state").textContent = error instanceof Error ? error.message : "Connection preference could not be saved.";
+  }
+});
+
+byId("mobile-disconnect").addEventListener("click", async () => {
+  if (mobileDisconnecting) return;
+  const token = ownerSessionToken;
+  ownerSessionToken = "";
+  ownerPasswordChangeToken = "";
+  currentAuthorityContract = null;
+  mobileDisconnecting = true;
+  try {
+    disconnectMobileConnection(localStorage);
+    if (token) { try { await logoutDesktopOwner(token); } catch { /* Session is cleared locally regardless. */ } }
+    window.location.reload();
+  } catch (error) {
+    // Navigation destroys in-memory credentials even if browser preference storage is denied.
+    byId("mobile-link-state").textContent = error instanceof Error ? error.message : "Disconnect preference could not be saved.";
+    window.location.replace("about:blank");
+  }
+});
+
+byId("mobile-signin").addEventListener("click", () => {
+  document.querySelector<HTMLButtonElement>('[data-view="activity"]')?.click();
+  byId<HTMLInputElement>("owner-password").focus();
+});
+updateMobileLink();
 
 const ownerAuthMessage = (tone: "good" | "warn" | "bad", message: string): void => {
   const mount = byId("owner-auth-result");
@@ -309,6 +417,7 @@ const applyOwnerAuth = (response: OwnerAuthResponse): void => {
   ownerSessionToken = response.session_token || "";
   ownerPasswordChangeToken = response.password_change_token || "";
   byId<HTMLInputElement>("owner-password").value = "";
+  updateMobileLink();
   if (response.authenticated && ownerSessionToken) {
     changeForm.hidden = true;
     logoutButton.hidden = false;
@@ -392,6 +501,7 @@ byId<HTMLButtonElement>("owner-logout").addEventListener("click", async () => {
   byId<HTMLButtonElement>("owner-logout").hidden = true;
   byId("owner-auth-state").textContent = "Signed out";
   ownerAuthMessage("warn", "Owner session cleared from this page.");
+  updateMobileLink();
 });
 
 const setNodePlanResult = (
@@ -753,6 +863,13 @@ byId("copy-command").addEventListener("click", async () => {
 });
 
 const refreshDesktop = async (): Promise<void> => {
+  if (!DEFAULT_DESKTOP_ORIGIN || mobileDisconnecting) {
+    updateMobileLink();
+    byId("desktop-pill").dataset.state = "offline";
+    byId("desktop-pill-text").textContent = "select your approved private route";
+    byId("owner-auth-state").textContent = "Disconnected";
+    return;
+  }
   const pill = byId("desktop-pill");
   const desktopState = byId("desktop-state");
   const merovingianState = byId("merovingian-state");
@@ -768,6 +885,11 @@ const refreshDesktop = async (): Promise<void> => {
   remoteAccessDetail.textContent = "private relay gate";
   try {
     const status = await readDesktopStatus();
+    mobileReachable = status.ok === true;
+    mobileAuthConfigured = status.auth?.configured === true;
+    mobileChangeRequired = status.auth?.must_change === true;
+    mobileHealthy = status.merovingian?.status === "pass";
+    updateMobileLink();
     currentAuthorityContract = status.authority_contract || null;
     ownerUsername = status.auth?.username || ownerUsername;
     byId<HTMLInputElement>("owner-username").value = ownerUsername;
@@ -783,7 +905,7 @@ const refreshDesktop = async (): Promise<void> => {
     }
     renderRoute();
     pill.dataset.state = status.ok ? "online" : "degraded";
-    pillText.textContent = status.ok ? "local runtime connected" : "runtime connected; health needs review";
+    pillText.textContent = status.ok ? "bridge responds; consumer proof separate" : "bridge responds; health needs review";
     desktopState.textContent = "Online";
     merovingianState.textContent = status.merovingian?.status === "pass" ? "Healthy" : "Degraded";
     const remoteAccess = remoteAccessPresentation(status.remote_access);
@@ -861,6 +983,8 @@ const refreshDesktop = async (): Promise<void> => {
       byId("representation-graphs").innerHTML = `<article class="panel"><p class="eyebrow">Objects unavailable</p><h2>Feature-gated, not empty</h2><p class="muted">${escapeHtml(reason)}</p></article>`;
     }
   } catch {
+    mobileReachable = false;
+    updateMobileLink();
     currentAuthorityContract = null;
     renderRoute();
     pill.dataset.state = "offline";

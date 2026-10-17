@@ -26,6 +26,14 @@
   overflow-wrap: anywhere;
 }
 
+.mobile-link-panel p {
+  overflow-wrap: anywhere;
+}
+
+.mobile-link-panel input[type="file"] {
+  max-width: 100%;
+}
+
 @media (max-width: 540px) {
   body {
     overflow-x: hidden;
