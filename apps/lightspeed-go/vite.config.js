@@ -1,9 +1,23 @@
 import { realpathSync } from "node:fs";
+import { resolve } from "node:path";
 import { defineConfig } from "vite";
 
-// Windows junctions preserve D:\LightSpeed as the operator namespace while
-// resolving source files to their physical C: backing path. Give Vite one
-// physical root so emitted asset names remain relative and portable.
-export default defineConfig({
-  root: realpathSync(process.cwd()),
+// Keep the original Windows junction / physical source-root convergence.
+// A visitor-only build uses the SAME LS GO codebase but never copies its private public/ assets.
+export default defineConfig(({ mode }) => {
+  const root = realpathSync(process.cwd());
+  const reviewer = mode === "visitor";
+  return {
+    root,
+    publicDir: reviewer ? false : "public",
+    build: {
+      outDir: reviewer ? "dist-review" : "dist",
+      emptyOutDir: true,
+      rollupOptions: {
+        input: reviewer
+          ? { reviewer: resolve(root, "review.html") }
+          : { operator: resolve(root, "index.html"), reviewer: resolve(root, "review.html") },
+      },
+    },
+  };
 });

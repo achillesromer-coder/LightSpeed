@@ -66,6 +66,7 @@ import { loadType1CatalogueProjection, type Type1CatalogueProjection } from "./u
 import { bindCgxReviewProjection, loadCgxReviewProjection, type CgxReviewProjection } from "./cgxReview";
 import { bindObjectReview, loadObjectReview, type ComponentAtlas, type ObjectReviewCatalogue } from "./objectReview";
 import { sourceLinks } from "./sourceRegistry";
+import { installOwnerVisitorReview } from "./ownerVisitorReview";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
 
 const app = document.getElementById("app");
@@ -100,6 +101,7 @@ app.innerHTML = `
     <nav class="tabs" aria-label="LS GO views">
       <button class="tab active" data-view="command">Command</button>
       <button class="tab" data-view="activity">Activity</button>
+      <button class="tab" data-view="review">Review</button>
       <button class="tab" data-view="objects">Objects</button>
       <button class="tab" data-view="system">System</button>
       <button class="tab" data-view="sources">Sources</button>
@@ -142,6 +144,10 @@ app.innerHTML = `
           <div class="boundary"><strong>No destructive autonomy.</strong><span>Cleanup is evidence-gated; Web, publication, payments and direct public execution remain outside this loop.</span></div>
         </aside>
       </div>
+    </section>
+
+    <section class="view" id="view-review">
+      <article class="panel" id="visitor-owner-review"></article>
     </section>
 
     <section class="view" id="view-activity">
@@ -292,6 +298,7 @@ let currentAuthorityContract: AuthorityContract | null = null;
 let currentReviews: ReviewRecord[] = [];
 let currentRepresentationGraphs: RepresentationGraph[] = [];
 let ownerSessionToken = "";
+installOwnerVisitorReview(() => ownerSessionToken);
 let ownerPasswordChangeToken = "";
 let ownerUsername = "NCNB";
 

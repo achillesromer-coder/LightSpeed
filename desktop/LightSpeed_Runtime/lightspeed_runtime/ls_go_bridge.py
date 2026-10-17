@@ -64,6 +64,7 @@ from lightspeed_runtime.result_receipt_browser import (
     open_result_receipt,
 )
 from lightspeed_runtime.storage_paths import neo_actions_root
+from lightspeed_runtime.ls_go_visitor import register_visitor_routes
 
 LEGACY_COMMAND_SCHEMA = "lightspeed-go-command-v1"
 COMMAND_SCHEMA = "lightspeed-go-command-v2"
@@ -1469,6 +1470,7 @@ def create_app(root: Path | str) -> FastAPI:
             "X-LightSpeed-Owner-Confirmation",
             "X-LightSpeed-Session",
             "X-LightSpeed-Password-Change",
+            "X-LightSpeed-Visitor-Session",
         ],
         max_age=600,
     )
@@ -2319,6 +2321,18 @@ def create_app(root: Path | str) -> FastAPI:
             )
         return JSONResponse(result)
 
+    # Additive visitor projection: same LS GO FastAPI service, same Merovingian DB.
+    # No independent listener, schedule, command authority or canonical CGX store.
+    register_visitor_routes(
+        app,
+        db,
+        lambda session: _verified_owner_actor(
+            None,
+            session_token=session,
+            credential_store=credential_store,
+            session_store=owner_sessions,
+        ),
+    )
     return app
 
 
