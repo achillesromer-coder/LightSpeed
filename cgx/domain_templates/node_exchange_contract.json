@@ -112,5 +112,505 @@
     "no-free-form-shell-capability",
     "no-public-direct-execution",
     "no-canonical-promotion-from-runtime-receipt-alone"
-  ]
+  ],
+  "rolling_observer_facet": {
+    "schema": "cgx-node-exchange-rolling-observer-facet-v1",
+    "status": "opt-in read-only candidate / live peer, calibration and publication gates remain held",
+    "owner": "existing CGX FileSpace/DataSpace contract; not a separate InterSpace, runtime, database, scheduler, security system or canonical state",
+    "code_path": "desktop/LightSpeed_Runtime/lightspeed_runtime/node_exchange.py::project_rolling_observer_window",
+    "requires_existing_capability_lease": true,
+    "prerequisite": "upstream trusted adapter validates device identity, receipts, sensor calibration and time; boolean receipt_verified is only a precondition marker, never a cryptographic proof",
+    "cadence": {
+      "window_ms": 60000,
+      "fast_step_ms": 1000,
+      "slow_step_ms": 5000,
+      "observed_timestamps_max": 61,
+      "phase_slots": [
+        0,
+        1,
+        3,
+        4,
+        6,
+        7,
+        9,
+        10,
+        11
+      ]
+    },
+    "reference_roots": [
+      "object_id",
+      "geometry_root",
+      "semantic_root",
+      "model_root",
+      "prior_state_root"
+    ],
+    "observer_selection": {
+      "min_nodes": 3,
+      "max_nodes": 16,
+      "unique_node_ids": true,
+      "unique_annotated_groups_for_candidate_quorum": true,
+      "physical_independence_not_proven_by_labels": true,
+      "unknown_on_insufficient_or_conflicting_inputs": true
+    },
+    "raw_state_alphabet": [
+      "-1",
+      "0",
+      "+1",
+      "null=unknown/erasure"
+    ],
+    "nine_local_lenses": [
+      "state",
+      "transition",
+      "persistence",
+      "stability",
+      "activity",
+      "oscillation",
+      "spatial_corroboration",
+      "evidence_quality",
+      "release_projection"
+    ],
+    "distribution_rules": [
+      "Do not ship entire local trajectory to peers by default; this projection is local-only and not a wire frame.",
+      "Public or external delivery uses existing approved signed/authenticated transport and explicit release gates.",
+      "Context roots and chosen observer/phase set are authenticated context, not encryption keys.",
+      "Transport energy/frequency/ambient-backscatter selection requires authorised device and spectrum qualification.",
+      "No unchanged-state assumption on missing packet; short 0→+1→0 events must be preserved when relevant.",
+      "Models, semantic views, source data and associated rights remain with their canonical owner.",
+      "No physical inference promoted by observation quorum alone; withhold on disagreement or unresolved model."
+    ],
+    "operation_binding": {
+      "file_space": "single stable Cognigrex.cgx object/geometry/state/DBR identity",
+      "data_space": "bounded event/state projection and preexisting node_exchange root/receipt/lease rules",
+      "print_space": "qualified sensor/tag devices supply real receipts; manufacturing and physical controls unchanged",
+      "runtime": "existing LightSpeed, no second scheduler/agent/router",
+      "operator": "existing LS GO/Achilles authenticated review only"
+    },
+    "authority_transfer": false,
+    "canonical_promotion_authorized": false,
+    "public_publish_authorized": false,
+    "physical_actuation_authorized": false,
+    "acceptance_owner": "existing owner review issue #161; internal review protection issue #158",
+    "evidence_state": "synthetic/offline only"
+  },
+  "configurable_n_dataspace_facet": {
+    "schema": "cgx-dataspace-config-facet-v1",
+    "candidate_delta_schema": "cgx-dataspace-compact-delta-candidate-v1",
+    "status": "review_only / locally computed candidate; not transport, cryptography, physical authority or separate datastore",
+    "owner": "Cognigrex.cgx FileSpace Object_ID + geometry/semantic/model/state roots; inherits existing DataSpace node exchange",
+    "code_binding": "desktop/LightSpeed_Runtime/lightspeed_runtime/node_exchange.py",
+    "existing_functions": [
+      "validate_dataspace_profile",
+      "build_dataspace_delta_candidate",
+      "apply_dataspace_delta_candidate"
+    ],
+    "configurable_counts": {
+      "nodes": "1..128",
+      "selected_nodes": "1..128",
+      "geometric_interfaces": "0..128",
+      "derivables": "1..128",
+      "relations": "0..256",
+      "semantic_lenses": "1..64",
+      "transports": "0..16"
+    },
+    "topology": {
+      "nodes": "ids, ownership evidence references, public/restricted/private visibility, external access policy refs",
+      "selection": "include/exclude partition of all declared nodes; no silent substitution of unavailable nodes",
+      "interfaces": "kind, 1..16 included node IDs, registered geometric/frame/displacement/measurement model reference",
+      "derivables": "registered deterministic function reference, input interface IDs, units; no automatic inference",
+      "relationships": "typed known endpoints, evidence provenance; physical links require independent verification",
+      "semantic_lenses": "existing registered view references bound to derivables; subjective/local interpretation never becomes fact",
+      "current_profiles": "one profile per authorised FileSpace scope; profile edits change the context root and force renegotiation"
+    },
+    "context": {
+      "required_roots": [
+        "object_id",
+        "geometry_root",
+        "semantic_root",
+        "model_root",
+        "state_root"
+      ],
+      "profile_fingerprint": "canonical SHA-256 of local scoped profile; treat as potentially revealing and keep behind authenticated access",
+      "version_rule": "both ends reconcile exact profile root and prior state root before compact delta",
+      "no_plaintext_secrets": "no keys, passwords, recovery tokens or private catalogue material in profile, logs or public routing",
+      "dns_boundary": "domain control proof is namespace discovery, not device permission, data rights or spectrum access",
+      "authority": "signed identity, scoped leases, source licence and state/DBR authority stay external owner gates"
+    },
+    "delta": {
+      "alphabet": [
+        "-1",
+        "0",
+        "+1",
+        "null=unknown; never substitute zero or unchanged"
+      ],
+      "changes_only": true,
+      "transaction": "sequence + window timestamp + Object_ID + exact profile/prior/result roots",
+      "receiver": "reject mismatched prior/profile roots, replay sequence, duplicate keys, malformed symbols and changed-state hash",
+      "intermediate_events": "window-to-window compression does not substitute for required event history; preserve 0,+1,0 when consequential",
+      "no_claims": [
+        "not wire format",
+        "not encrypted",
+        "not signed",
+        "not peer accepted",
+        "not canonical promotion"
+      ]
+    },
+    "physical_transport": {
+      "distinct_fields": [
+        "throughput_bps",
+        "spectral_bandwidth_hz",
+        "observed_occupancy_fraction"
+      ],
+      "options": [
+        "offline",
+        "wired",
+        "ip",
+        "wifi",
+        "lpwan",
+        "ambient_backscatter",
+        "optical",
+        "delay_tolerant"
+      ],
+      "authorization_class": [
+        "NOT_VERIFIED",
+        "LISTEN_ONLY",
+        "EXTERNALLY_QUALIFIED"
+      ],
+      "rule": "An observed idle channel, DNS namespace or compliant band alone does not authorise using another operator's infrastructure. External licences/equipment/test evidence and the existing lease gates remain mandatory.",
+      "separation": "RF sampling ≠ transmission cadence; channel observation ≠ a message; receiver context ≠ cryptographic secrecy."
+    },
+    "receipt_boundary": "Functions only validate typed structures and exact deterministic state projection; boolean receipt markers/authority references MUST come from verified upstream adapters and do not themselves verify signatures.",
+    "privacy": "No private node roster, geometry selection, source evidence or inner state in a public discovery packet. Authenticated per-scope projection, metadata-minimising opaque reference where possible.",
+    "gates": [
+      "existing owner #161 two-node end-to-end",
+      "existing #158 private asset and LS GO access control",
+      "site-specific radio/device permissions",
+      "PrintSpace sensor/actuator qualification"
+    ],
+    "node_exchange_invariants_preserved": true,
+    "canonical_promotion_authorized": false,
+    "public_publish_authorized": false,
+    "physical_actuation_authorized": false
+  },
+  "sai_aus_capacity_application": {
+    "status": "SOURCE-RECONCILED / REVIEW-ONLY / NOT LIVE NATIONAL NETWORK",
+    "programme": "SYS-AUS-CAP",
+    "service": "PROD-SAI",
+    "technical_core": "Cognigrex.cgx existing FileSpace / DataSpace node exchange / qualified PrintSpace",
+    "owner_documents": [
+      "https://docs.google.com/document/d/14MHe8ZlbcEm16R_MDIY-kl4-KNm7xWuKSMEBofDpbuQ/edit",
+      "https://docs.google.com/spreadsheets/d/1BKPZYNfU5UHbTQTwsOT-EtS6l_cm9B2w2XUxBWtkpWw/edit",
+      "https://docs.google.com/document/d/1ZyPusNt3IJqHFUU0tbua75qcJeX_rxoIoqaO-4yV7Rg/edit"
+    ],
+    "functions": [
+      {
+        "id": "FS-IDENTITY",
+        "role": "one source-preserving Object_ID, state/DBR roots, geometry and semantic provider rights",
+        "owner": "CGX/child FileSpace",
+        "evidence": "SOURCE-CONTRACT",
+        "gate": "native source readback #161"
+      },
+      {
+        "id": "DS-NODES",
+        "role": "N-node roster and explicit include/exclude with owner and access policy references",
+        "owner": "existing node_exchange profile",
+        "evidence": "SOFTWARE-TESTED",
+        "gate": "upstream device identity and lease verification"
+      },
+      {
+        "id": "DS-GEOMETRY",
+        "role": "geometric interfaces, registered derivables, units and evidence-linked relationships",
+        "owner": "CGX graph + DataSpace projection",
+        "evidence": "SOFTWARE-TESTED",
+        "gate": "empirical observability and independent source model"
+      },
+      {
+        "id": "DS-OBS",
+        "role": "1s/5s/60s ternary observation, unknown/erasure, quorum, nine local lenses",
+        "owner": "node_exchange rolling observer facet",
+        "evidence": "SOFTWARE-TESTED",
+        "gate": "calibrated clock/sensor/receipts"
+      },
+      {
+        "id": "DS-DELTA",
+        "role": "exact profile/prior/result roots, sequence, changed-state-only candidate, mismatch fail closed",
+        "owner": "node_exchange delta facet",
+        "evidence": "SOFTWARE-TESTED",
+        "gate": "auth peer and AEAD plus tested recovery #161"
+      },
+      {
+        "id": "DS-DELIVERY",
+        "role": "registered transport, backpressure, caching, channel occupancy, offline fallback and receipts",
+        "owner": "LightSpeed transport/lease adapters",
+        "evidence": "DESIGN",
+        "gate": "real peer/readback and operator RF/network permission"
+      },
+      {
+        "id": "SAI-UTILITY",
+        "role": "local essential service priority, federated surplus capacity, distinct N-node and security classifications",
+        "owner": "PROD-SAI under SYS-AUS-CAP",
+        "evidence": "SOURCE-DOCTRINE",
+        "gate": "operational service-level and installation proof"
+      },
+      {
+        "id": "SAI-PUBLIC",
+        "role": "L0 origin/discovery, L1 independent issuer identity, L2 released human/machine knowledge, L3 authenticated interpretation",
+        "owner": "SAI/CGX publications",
+        "evidence": "SPECIFICATION-ONLY",
+        "gate": "public/legal/privacy/issuer and no official warning impersonation"
+      },
+      {
+        "id": "SAI-EMERGENCY",
+        "role": "self-reported node health separated from genuine government/agency-issued public safety alerts",
+        "owner": "independent research node + statutory authority",
+        "evidence": "SPECIFICATION-ONLY",
+        "gate": "official external emergency integration/consent; no SOS by default"
+      },
+      {
+        "id": "SAI-API",
+        "role": "evidence-grounded interpretation via existing CGX views and optional bounded AI tools",
+        "owner": "CGX registered capability + LS GO",
+        "evidence": "DESIGN",
+        "gate": "access, prompt/tool isolation, source attribution and negative tests"
+      },
+      {
+        "id": "PS-PRINT",
+        "role": "material/process/digital recipes, physical endpoint manufacture, metrology and maintenance returns",
+        "owner": "Raphael specialist PrintSpace/UTP + Römer/EMASSC/Eco owners",
+        "evidence": "SOURCE-CONTRACT",
+        "gate": "measured material/tool/lot and safety/interlocks; no 4D qualification from CAD"
+      },
+      {
+        "id": "AUS-CAPACITY",
+        "role": "industry capability chain, domestic build/repair/test depth, ecological and public-benefit outcome",
+        "owner": "SYS-AUS-CAP programme",
+        "evidence": "INSTITUTIONAL-REVIEW-CANDIDATE",
+        "gate": "independent institutions/professional review and sourced capability metrics"
+      }
+    ],
+    "critical_separations": [
+      "Capacity metric is not security classification; grid apparent power (MVA) is not electrical capacitance (F).",
+      "3-of-5 observational agreement is not 3-of-5 threshold recovery, geometric observability, causal identification or cryptographic authentication.",
+      "Nine semantic views do not encode nine independent new state measurements.",
+      "No data is recoverable solely from the absence of an instrumented storage/channel.",
+      "Discovery of government/utility infrastructure does not confer owner permission, rights to use RF carriers or national emergency authority.",
+      "Public identity must identify independent Australian origin, not purport to represent Australia or any agency.",
+      "LLM interpretation is optional and evidence-attributed; local deterministic safety/OT remains independent.",
+      "State reconstruction is non-authoritative until current cryptographic transport, lease, readback, source and owner gates pass."
+    ],
+    "proof_chain": [
+      {
+        "proof": "programme_identity_crosswalk",
+        "status": "SOURCE-RECONCILED",
+        "artifact": "cognigrex_parent_topology.json / corpus_inclusion_registry.json"
+      },
+      {
+        "proof": "n_node_configuration_and_sparse_state",
+        "status": "SOURCE-CI-TESTED",
+        "artifact": "node_exchange.py + existing test_node_exchange.py"
+      },
+      {
+        "proof": "cgx_ci_workflows",
+        "status": "LAST-KNOWN-PASS",
+        "artifact": "PR #173; latest provider readback required after current branch changes"
+      },
+      {
+        "proof": "real_two_node_interoperability",
+        "status": "HOLD",
+        "artifact": "owner issue #161 DS-01..DS-08"
+      },
+      {
+        "proof": "physically_calibrated_inference_and_backscatter",
+        "status": "NOT-RUN",
+        "artifact": "lab/third-party approved metrology, not CI"
+      },
+      {
+        "proof": "actual_4d_printing_equipment",
+        "status": "NOT-RUN",
+        "artifact": "material route, process and machine evidence"
+      },
+      {
+        "proof": "public_emergency_discovery",
+        "status": "SPECIFICATION-ONLY",
+        "artifact": "national approval/telecom release gate"
+      }
+    ],
+    "no_canonical_promotion": true,
+    "no_public_auto_release": true,
+    "no_evidence_by_source_presence": true
+  },
+  "prism_slice_handshake_facet": {
+    "schema": "cgx-prism-static-slice-facet-v1",
+    "device_schema": "cgx-prism-local-handshake-candidate-v1",
+    "status": "SIMULATED_OPT_IN_READ_ONLY; NOT network handshake, actual device attestation, signed capability, new datastore or deployed UI",
+    "owner": "Existing Cognigrex.cgx FileSpace source/Object_ID/geometry/semantic/model roots and node_exchange contract",
+    "procedural_binding": "desktop/LightSpeed_Runtime/lightspeed_runtime/node_exchange.py:validate_prism_slice_profile, negotiate_prism_device_candidate, resolve_prism_interpretation_candidate",
+    "origin": "Real Freedoom single-file full engine user acceptance and simulated independent 15-byte-shard WAD hydration; does not imply CGX is currently used by production DOOM engine for multiplayer",
+    "n_capacity": {
+      "layers": "1..128",
+      "parent_linkage": "acyclic rooted or grouped slices",
+      "interpretations": "1..256",
+      "render_types": "text, metric, table, graph, spatial, 3d",
+      "numeric_operations": "identity, sum, difference, ratio, span, count"
+    },
+    "three_keys": {
+      "language": "registered language_ref, interpretation-specific; device user preferences are display hints",
+      "geometry": "source-bound geometry_ref, content_root, parent_id and canonical geometry_root",
+      "equation": "bounded named operation plus explicit input_keys, unit and registered_view_ref; never eval dynamic code"
+    },
+    "device_types": [
+      "desktop_browser",
+      "android_touch",
+      "mobile_touch",
+      "microcontroller",
+      "unknown"
+    ],
+    "automatic_handshake": "Local deterministic intersection of offered renderer capabilities, cached static roots, max layer budget and requested view IDs; device type only chooses presentation and never grants access",
+    "status_semantics": {
+      "RESOLVABLE_CANDIDATE": "all required cached roots claimed, local registered rendering supported, no proof of bytes or rights",
+      "NOT_CACHED": "required static source or ancestor absent from local cache advertisement; source hydration needed",
+      "NOT_AVAILABLE": "unknown or protected interpretation; non-disclosing, no roster enumeration",
+      "UNSUPPORTED_RENDERER": "public interpretation exists but claimed device render capability absent",
+      "RECONCILE_REQUIRED": "static profile root mismatch; cannot use a delta against incompatible definitions",
+      "UNKNOWN_INPUT": "no numeric measured input; never substitute 0",
+      "UNDEFINED_OPERATION": "division by zero, invalid bounds or undefined equation",
+      "DERIVED_LOCAL_CANDIDATE": "local numeric interpretation only; not canonical truth or independent empirical proof"
+    },
+    "stack_or_single": "One registered CGX Object_ID may contain one or N slices; one slice may have many view interpretations with no duplicate original content. Layers represent source-bound graph composition, not parallel data stores",
+    "privacy": "No public root fingerprint or non-public contents; restricted/private views give same NOT_AVAILABLE as absent; session rights never inferred from app licence text, device type or cache declaration",
+    "receipt_boundary": "This simulator produces neither signed DBR receipts nor encrypted/network payloads. Actual CGX handshake external trust, permission, device identity, version and signed asset verification are separate gates",
+    "tests": "existing desktop/LightSpeed_Runtime/tests/test_node_exchange.py",
+    "independent_acceptance": "Existing CGX issue #161 plus original DOOM full-engine benchmark; no public release/LS GO integration until owner review",
+    "no_source_mutation": true,
+    "wire_ready": false,
+    "canonical_promotion_authorized": false,
+    "physical_actuation_authorized": false
+  },
+  "hydration_and_fract_key_contract": {
+    "schema": "CGX-HYDRATION-FRACT-KEY/1",
+    "status": "review-contract / additive mapping inside existing FileSpace and node_exchange",
+    "hydration_owner": "Cognigrex.cgx FileSpace identity/roots; child semantic owners retain meaning; node_exchange transports only admitted fragments",
+    "plane_order": [
+      "H0_IDENTITY",
+      "H1_SOURCE",
+      "H2_STRUCTURE",
+      "H3_SEMANTICS",
+      "H4_RELATIONS",
+      "H5_LENS",
+      "H6_STATE",
+      "H7_CAPABILITY",
+      "H8_EXECUTION",
+      "H9_WITNESS"
+    ],
+    "progressive_rule": "RAW INTENT -> resolve security/authority -> H0 identity -> hydrate only missing H1..H9 discriminants -> resolve/project/execute under existing gate -> readback -> receipt -> retain remaining HOLD/UNKNOWN.",
+    "fract_key": {
+      "name": "Fract Key Code",
+      "acronym": "FKC",
+      "meaning": "Deterministic non-secret locator for one source-bound fragment/facet at one hydration plane. 'Fract' means fragment/facet addressing shorthand here; it does not assert mathematical fractal structure.",
+      "code_prefix": "FK1",
+      "canonical_form": "FK1:<H-plane>:<sha256(canonical locator fields)>",
+      "locator_fields": [
+        "Object_ID",
+        "revision_or_source_root",
+        "hydration_plane",
+        "address_kind",
+        "address_value",
+        "layer_or_fragment_ref",
+        "lens_or_relation_ref",
+        "state_context_root"
+      ],
+      "optional_fields": [
+        "domain_owner_ref",
+        "evidence_class",
+        "visibility_class"
+      ],
+      "address_kinds": [
+        "native_path",
+        "provider_object",
+        "byte_range",
+        "chunk_ordinal",
+        "morton3_chunk",
+        "container_member",
+        "geometry_ref",
+        "semantic_path",
+        "relation_id",
+        "lens_id",
+        "state_symbol",
+        "capability_ref",
+        "receipt_ref",
+        "witness_ref"
+      ],
+      "invariants": [
+        "FKC is an alias/locator, never a replacement Object_ID, DBR root, state root, cryptographic key, credential, lease or authority token.",
+        "Same source fragment may have several FKC projections across planes/lenses; all retain the same owning Object_ID and revision/root lineage.",
+        "FKC digest equality only proves equality of canonical locator fields, not equality of underlying bytes unless H1 source hash/readback also matches.",
+        "Private/root fingerprints are not exposed through public projections; public releases use separately approved projection identifiers.",
+        "morton3_chunk is permitted only as an optional H1/H2 geometric byte address when an exact source/chunk root and decoder are already verified.",
+        "Legacy random fractal visualisation modules are not FKC authority, key derivation or hydration logic."
+      ]
+    },
+    "scatter_gather": {
+      "scatter_definition": "Distribute references or authorised fragment bytes to selected layers/nodes/lenses without copying semantic authority.",
+      "gather_definition": "Recompose only when required FKC records, source/profile/prior roots, sequence and permissions reconcile; otherwise HOLD/CONFLICT/NOT_CACHED.",
+      "allowed_scatter_axes": [
+        "source fragment",
+        "structural layer",
+        "semantic domain reference",
+        "relation/dependency edge",
+        "view lens",
+        "DataSpace observer/node",
+        "runtime capability",
+        "evidence/witness reference"
+      ],
+      "prohibited_collapses": [
+        "runtime Z-floor == semantic Z-depth",
+        "Morton coordinate == semantic meaning",
+        "layer count == node count == lens count",
+        "cache possession == source permission",
+        "three matching labels == three independent witnesses",
+        "digital reconstruction == physical qualification"
+      ],
+      "unknown_rule": "UNKNOWN, NOT_CACHED, WITHHELD and ZERO are distinct states and must never be collapsed during scatter/gather."
+    },
+    "layer_mapping": {
+      "H0_IDENTITY": "Object_ID, source/provider ID, revision/hash, owner, ACL/licence and canonical root references.",
+      "H1_SOURCE": "Native bytes or verified cached/reference bytes; PR175 R0 geometric shorthand may address chunks but does not own source identity.",
+      "H2_STRUCTURE": "Manifest/container/topology/geometry/chunk/layer structure including optional Morton3 address.",
+      "H3_SEMANTICS": "Registered type/unit/dictionary/equation semantics under source evidence ceiling.",
+      "H4_RELATIONS": "Typed dependency/cross-domain/invalidation edges by stable reference.",
+      "H5_LENS": "semantic_view_lens_registry + view_selection_policy projections.",
+      "H6_STATE": "DataSpace profile/prior/result roots, sparse delta, DBR/history/conflict lineage.",
+      "H7_CAPABILITY": "node/root registry, declared adapter/model/transport/renderer/compute capability and lease state.",
+      "H8_EXECUTION": "Existing transfer/compute/queue action packet and exact readback/receipt.",
+      "H9_WITNESS": "PrintSpace/empirical/provider/professional witness references only after real receipt; never synthesized by node_exchange."
+    },
+    "pr175_relation": {
+      "role": "Optional H1/H2 reversible byte-address adapter under FileSpace/node_exchange.",
+      "geometric_index": "Morton3 is deterministic indexing only, not entropy, semantics, encryption or universal geometry.",
+      "cold_share_rule": "Raw/ZIP may be preferable; FKC does not require CGXS or geometric encoding.",
+      "authority": "PR175 candidate remains subordinate/review-only until its existing #161/#158 gates close."
+    },
+    "request_minimum_fields": [
+      "Object_ID",
+      "task_intent",
+      "required_hydration_planes",
+      "current_source_or_state_roots",
+      "security_scope",
+      "evidence_ceiling",
+      "requested_lenses_or_action"
+    ],
+    "result_states": [
+      "READY",
+      "PARTIAL",
+      "NOT_CACHED",
+      "UNKNOWN",
+      "WITHHELD",
+      "CONFLICT",
+      "UNSUPPORTED_VIEW",
+      "EXTERNAL_GATE",
+      "NON_RESOLUTION"
+    ],
+    "canonical_mutation": false,
+    "public_release": false,
+    "physical_authority": false
+  }
 }

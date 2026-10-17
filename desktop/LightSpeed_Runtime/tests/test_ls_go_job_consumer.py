@@ -7,6 +7,8 @@ from pathlib import Path
 import sqlite3
 import sys
 
+import pytest
+
 RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RUNTIME_ROOT))
 
@@ -45,6 +47,57 @@ def test_source_intake_consumer_persists_evidence_once(tmp_path, monkeypatch):
     assert result["intake"]["canonical_mutation"] is False
     assert Path(result["intake"]["artifacts"][0]["path"]).read_bytes() == raw
     assert source.read_bytes() == raw
+    assert consumer.process_once()["results_written"] == 0
+
+
+@pytest.mark.parametrize("tamper", [False, True])
+def test_source_intake_consumer_recovers_published_bundle_after_outer_receipt_gap(
+    tmp_path, monkeypatch, tamper
+):
+    import hashlib
+    from lightspeed_runtime.source_intake_executor import execute_source_intake
+
+    shell = tmp_path / "App"
+    configure_shell(shell)
+    source = tmp_path / "source.md"
+    source.write_bytes(b"# Exact original\n")
+    payload = {"source_path": str(source), "source_sha256": hashlib.sha256(source.read_bytes()).hexdigest()}
+    command_id = "LSGO-INTAKE-RECOVERY"
+    bundle = execute_source_intake(payload, command_id=command_id, shell_root=shell,
+                                   allowed_roots=[tmp_path])
+    if tamper:
+        artifact = Path(bundle["artifacts"][1]["path"])
+        artifact.write_bytes(b"x" * artifact.stat().st_size)
+    original_read = ls_go_job_consumer._read_json
+    monkeypatch.setattr(ls_go_job_consumer, "_read_json", lambda p:
+                        {"environment": {"assimilation_source_root": str(tmp_path)}}
+                        if Path(p).name == "agent_home.json" else original_read(p))
+    monkeypatch.setattr(ls_go_job_consumer, "execute_source_intake", lambda *_a, **_kw:
+                        (_ for _ in ()).throw(AssertionError("must read back, not re-execute")))
+    db = configure_db(tmp_path / "recovery.db")
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO tasks (id,status,metadata_json) VALUES (501,'queued','{}')")
+        conn.execute(
+            "INSERT INTO jobs (id,job_type,status,params_json,task_id,z_context) "
+            "VALUES (502,'ls_go_command','pending',?,501,'Neo')",
+            (json.dumps({"command_id": command_id, "action_type": "source_preserving_intake",
+                         "action_payload": payload, "execution_mode": "queue", "execute": True,
+                         "allow_heavy": False}),),
+        )
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=db)
+    result = consumer.process_once()
+    assert result["results_written"] == 1
+    outer = json.loads(ls_go_job_consumer.result_file_path(shell, command_id).read_text())
+    assert outer["status"] == ("blocked" if tamper else "completed")
+    if tamper:
+        assert "artifact" in outer["error"] and "mismatch" in outer["error"]
+        assert Path(bundle["artifacts"][1]["path"]).read_bytes() == (
+            b"x" * bundle["artifacts"][1]["bytes"]
+        )
+    else:
+        assert outer["recovered_from_intake_bundle"] is True
+        assert outer["intake"] == bundle
+    assert db.execute_query("SELECT status FROM jobs WHERE id=502")[0]["status"] == outer["status"]
     assert consumer.process_once()["results_written"] == 0
 
 

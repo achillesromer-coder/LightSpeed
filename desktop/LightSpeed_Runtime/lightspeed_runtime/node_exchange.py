@@ -9,6 +9,7 @@ Network/peer adapters must call these bounded contracts and return receipts.
 from datetime import UTC, datetime
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import shutil
@@ -482,3 +483,846 @@ __all__ = [
     "execute_local_transfer",
     "sha256_file",
 ]
+
+
+# Optional read-only Psi-DataSpace observation facet; not a transport or a new runtime.
+ROLLING_OBSERVER_FACET = "cgx-node-exchange-rolling-observer-facet-v1"
+ROLLING_OBSERVER_LENSES = (
+    "state", "transition", "persistence", "stability", "activity",
+    "oscillation", "spatial_corroboration", "evidence_quality", "release_projection",
+)
+
+
+def project_rolling_observer_window(
+    *, object_id: str, geometry_root: str, semantic_root: str, model_root: str,
+    prior_state_root: str, selected_nodes: list[str],
+    samples: list[dict], end_ms: int,
+    phase_slots: tuple[int, ...] = (0, 1, 3, 4, 6, 7, 9, 10, 11),
+) -> dict:
+    """Project nine non-authoritative lenses from a bounded 60-second observation window.
+
+    Caller must obtain sensor states from authenticated/calibrated receipt adapters.
+    Receipt markers are prerequisites, never cryptographic verification by this
+    function. Three agreeing origins do not prove physical independence.
+    Missing samples are unknown, not zero and not an unchanged state.
+    """
+    if not isinstance(object_id, str) or not object_id.strip() or len(object_id) > 160:
+        raise NodeExchangeError("rolling observer requires bounded object_id")
+    roots = (geometry_root, semantic_root, model_root, prior_state_root)
+    if any(not isinstance(r, str) or len(r) != 64 or any(c not in "0123456789abcdef" for c in r) for r in roots):
+        raise NodeExchangeError("rolling observer requires lowercase SHA-256 context roots")
+    if (not isinstance(selected_nodes, list) or not 3 <= len(selected_nodes) <= 16 or
+            any(not isinstance(n, str) or not n.strip() or len(n) > 96 for n in selected_nodes) or
+            len(selected_nodes) != len(set(selected_nodes))):
+        raise NodeExchangeError("selected observer roster must contain 3..16 unique bounded nodes")
+    if (not isinstance(phase_slots, tuple) or len(phase_slots) != 9 or
+            len(set(phase_slots)) != 9 or
+            any(type(s) is not int or s < 0 or s >= 12 for s in phase_slots)):
+        raise NodeExchangeError("nine distinct five-second phase slots required")
+    if type(end_ms) is not int or end_ms < 60000 or end_ms % 1000:
+        raise NodeExchangeError("end_ms requires aligned one-second grid and complete window")
+    if not isinstance(samples, list) or len(samples) > 4096:
+        raise NodeExchangeError("rolling window sample list exceeds bounded size")
+    start_ms = end_ms - 60000
+    node_set = set(selected_nodes)
+    by_time = {}
+    seen = set()
+    for row in samples:
+        if not isinstance(row, dict):
+            raise NodeExchangeError("sample must be a record")
+        node = row.get("observer_id")
+        time = row.get("timestamp_ms")
+        state = row.get("state")
+        group = row.get("independence_group")
+        if node not in node_set or type(time) is not int or not start_ms <= time <= end_ms or time % 1000:
+            raise NodeExchangeError("sample node/time outside negotiated observer window")
+        if state is not None and (type(state) is not int or state not in (-1, 0, 1)):
+            raise NodeExchangeError("invalid ternary state; erasure must be null")
+        if not isinstance(group, str) or not group.strip() or len(group) > 96:
+            raise NodeExchangeError("sample needs a bounded provenance independence group")
+        if row.get("receipt_verified") is not True:
+            raise NodeExchangeError("sample lacks adapter-verified receipt")
+        key = (node, time)
+        if key in seen:
+            raise NodeExchangeError("duplicate node/time sample")
+        seen.add(key)
+        by_time.setdefault(time, []).append((node, state, group))
+    trajectory = []
+    conflict_times = []
+    agreeing = 0
+    for t in range(start_ms, end_ms + 1, 1000):
+        rows = by_time.get(t, [])
+        known = [(n, s, g) for n, s, g in rows if s is not None]
+        groups = [g for _, _, g in known]
+        unique_groups = len(set(groups)) == len(groups)
+        signs = {s for _, s, _ in known}
+        if len(signs) > 1:
+            conflict_times.append(t)
+        quorum = len(known) >= 3 and unique_groups and len(signs) == 1
+        value = next(iter(signs)) if quorum else None
+        if quorum:
+            agreeing += 1
+        trajectory.append(value)
+    changes, flips = 0, 0
+    prev = None
+    for state in trajectory:
+        if state is None:
+            prev = None
+            continue
+        if prev is not None and state != prev:
+            changes += 1
+            if state * prev == -1:
+                flips += 1
+        prev = state
+    current = trajectory[-1]
+    previous = trajectory[-2]
+    persistence = 0
+    if current is not None:
+        for state in reversed(trajectory):
+            if state != current:
+                break
+            persistence += 1
+    known_states = [state for state in trajectory if state is not None]
+    transition = ("UNKNOWN" if current is None or previous is None else
+                  "SAME" if current == previous else f"{previous}->{current}")
+    lens_values = {
+        "state": current,
+        "transition": transition,
+        "persistence": {"samples": persistence, "minimum_ms": max(0, persistence - 1) * 1000},
+        "stability": ("UNKNOWN" if len(known_states) < 2 or len(known_states) != len(trajectory)
+                      else "STABLE" if len(set(known_states)) == 1 else "VARIED"),
+        "activity": {"changes": changes},
+        "oscillation": {"direct_sign_flips": flips},
+        "spatial_corroboration": {
+            "agreement_ticks": agreeing, "conflicts": len(conflict_times), "independence_validated": False,
+        },
+        "evidence_quality": {
+            "observed_rows": len(samples), "resolved_ticks": len(known_states),
+            "possible_ticks": 61, "unknown_ticks": 61 - len(known_states),
+        },
+        "release_projection": {"status": "WITHHELD", "publication_authorised": False},
+    }
+    if tuple(lens_values) != ROLLING_OBSERVER_LENSES:
+        raise NodeExchangeError("lens ordering mismatch")
+    slot = (end_ms % 60000) // 5000
+    return {
+        "schema_version": ROLLING_OBSERVER_FACET,
+        "object_id": object_id,
+        "geometry_root": geometry_root,
+        "semantic_root": semantic_root,
+        "model_root": model_root,
+        "prior_state_root": prior_state_root,
+        "selected_nodes": selected_nodes,
+        "window_ms": 60000,
+        "fast_step_ms": 1000,
+        "slow_step_ms": 5000,
+        "end_ms": end_ms,
+        "phase_slots": list(phase_slots),
+        "active_phase_index": phase_slots.index(slot) if slot in phase_slots else None,
+        "sample_digest": _canonical_json_sha256(samples),
+        "lenses": lens_values,
+        "trajectory": trajectory,  # Local-only projection; not a transport wire frame.
+        "epistemic_status": "OBSERVATIONAL_CANDIDATE",
+        "cryptographically_authenticated_by_this_function": False,
+        "authority_transfer": False,
+        "canonical_promotion_authorized": False,
+        "public_publish_authorized": False,
+        "physical_actuation_authorized": False,
+    }
+
+
+__all__.extend((
+    "ROLLING_OBSERVER_FACET",
+    "ROLLING_OBSERVER_LENSES",
+    "project_rolling_observer_window",
+))
+
+
+# Configurable N-node DataSpace profiles are read-only projections of existing CGX.
+DATASPACE_PROFILE_FACET = "cgx-dataspace-config-facet-v1"
+DATASPACE_DELTA_FACET = "cgx-dataspace-compact-delta-candidate-v1"
+_DATASPACE_VISIBILITY = {"public", "restricted", "private"}
+_DATASPACE_KINDS = {"spatial", "temporal", "electrical", "electromagnetic", "acoustic", "logical"}
+_DATASPACE_TRANSPORTS = {
+    "offline", "wired", "ip", "wifi", "lpwan", "ambient_backscatter",
+    "optical", "delay_tolerant",
+}
+_DATASPACE_RELATIONS = {"OBSERVES", "DEPENDS_ON", "INTERPRETS", "CORRELATES", "MEASURED_LINK"}
+
+
+def _dataspace_sha256_root(value: object) -> str:
+    return _canonical_json_sha256(value)
+
+
+def _dataspace_check_root(value: object, label: str) -> None:
+    if (not isinstance(value, str) or len(value) != 64 or
+            any(ch not in "0123456789abcdef" for ch in value)):
+        raise NodeExchangeError(f"{label} must be a lowercase SHA-256 root")
+
+
+def _dataspace_index(rows: object, kind: str, minimum: int, maximum: int) -> dict:
+    if not isinstance(rows, list) or not minimum <= len(rows) <= maximum:
+        raise NodeExchangeError(f"DataSpace {kind} count outside supported bounds")
+    indexed = {}
+    for row in rows:
+        if not isinstance(row, dict):
+            raise NodeExchangeError(f"DataSpace {kind} item must be a record")
+        ident = row.get("id")
+        if (not isinstance(ident, str) or not ident or len(ident) > 96 or
+                ident in indexed):
+            raise NodeExchangeError(f"DataSpace {kind} identifiers must be unique and bounded")
+        indexed[ident] = row
+    return indexed
+
+
+def validate_dataspace_profile(profile: dict) -> dict:
+    """Validate one *local* CGX DataSpace profile, not access permission or RF rights.
+
+    Profiles contain private node identifiers and MUST NOT be published, logged to
+    public status, transmitted in cleartext or treated as encryption keys.
+    """
+    if not isinstance(profile, dict) or profile.get("schema_version") != DATASPACE_PROFILE_FACET:
+        raise NodeExchangeError("unsupported DataSpace profile schema")
+    if not isinstance(profile.get("object_id"), str) or not 1 <= len(profile["object_id"]) <= 160:
+        raise NodeExchangeError("DataSpace profile requires bounded canonical Object_ID")
+    for key in ("geometry_root", "semantic_root", "model_root", "state_root"):
+        _dataspace_check_root(profile.get(key), key)
+    nodes = _dataspace_index(profile.get("nodes"), "nodes", 1, 128)
+    interfaces = _dataspace_index(profile.get("interfaces"), "interfaces", 0, 128)
+    derivables = _dataspace_index(profile.get("derivables"), "derivables", 1, 128)
+    relationships = _dataspace_index(profile.get("relationships"), "relationships", 0, 256)
+    lenses = _dataspace_index(profile.get("semantic_lenses"), "semantic_lenses", 1, 64)
+    transports = _dataspace_index(profile.get("transports"), "transports", 0, 16)
+    chosen = profile.get("selection")
+    if not isinstance(chosen, dict):
+        raise NodeExchangeError("DataSpace profile requires node selection")
+    includes, excludes = chosen.get("include"), chosen.get("exclude")
+    if (not isinstance(includes, list) or not isinstance(excludes, list) or
+            any(not isinstance(i, str) for i in includes + excludes) or
+            len(set(includes)) != len(includes) or len(set(excludes)) != len(excludes) or
+            set(includes) & set(excludes) or
+            (set(includes) | set(excludes)) != set(nodes) or not includes):
+        raise NodeExchangeError("DataSpace include/exclude nodes must form a disjoint complete partition")
+    expected = profile.get("expected_counts")
+    count_map = {
+        "nodes": len(nodes), "selected_nodes": len(includes),
+        "interfaces": len(interfaces), "derivables": len(derivables),
+        "relationships": len(relationships), "semantic_lenses": len(lenses),
+        "transports": len(transports),
+    }
+    if (not isinstance(expected, dict) or set(expected) != set(count_map) or
+            any(type(expected[k]) is not int or expected[k] != count_map[k] for k in count_map)):
+        raise NodeExchangeError("DataSpace declared counts must exactly match configured objects")
+    for nid, row in nodes.items():
+        if row.get("visibility") not in _DATASPACE_VISIBILITY:
+            raise NodeExchangeError("node visibility invalid")
+        if not isinstance(row.get("owner_ref"), str) or not row["owner_ref"]:
+            raise NodeExchangeError("node owner reference required, even for public data")
+        if nid in includes and (not isinstance(row.get("access_policy_ref"), str)
+                                or not row["access_policy_ref"]):
+            raise NodeExchangeError("selected nodes need an external access policy reference")
+    for iid, row in interfaces.items():
+        selected = row.get("nodes")
+        if (row.get("kind") not in _DATASPACE_KINDS or
+                not isinstance(selected, list) or not 1 <= len(selected) <= 16 or
+                len(selected) != len(set(selected)) or any(n not in includes for n in selected) or
+                not isinstance(row.get("model_ref"), str) or not row["model_ref"]):
+            raise NodeExchangeError("interface geometry must reference authorised selected nodes and model")
+    for did, row in derivables.items():
+        inputs = row.get("inputs")
+        if (not isinstance(inputs, list) or not inputs or
+                len(inputs) > 32 or any(i not in interfaces for i in inputs) or
+                not isinstance(row.get("function_ref"), str) or not row["function_ref"] or
+                not isinstance(row.get("unit"), str) or not row["unit"]):
+            raise NodeExchangeError("derivable requires registered function, unit and known interfaces")
+    typed = ({f"node:{n}" for n in nodes} |
+             {f"interface:{n}" for n in interfaces} |
+             {f"derivable:{n}" for n in derivables})
+    for row in relationships.values():
+        if (row.get("kind") not in _DATASPACE_RELATIONS or
+                row.get("source") not in typed or row.get("target") not in typed or
+                row["source"] == row["target"] or
+                not isinstance(row.get("evidence_ref"), str) or not row["evidence_ref"]):
+            raise NodeExchangeError("relationship requires typed endpoints, category and evidence")
+    for row in lenses.values():
+        if (row.get("derivable_id") not in derivables or
+                not isinstance(row.get("registered_view_ref"), str) or not row["registered_view_ref"]):
+            raise NodeExchangeError("semantic lens must bind a derivable and an existing registered view")
+    for row in transports.values():
+        if row.get("kind") not in _DATASPACE_TRANSPORTS:
+            raise NodeExchangeError("invalid transport kind")
+        for key in ("throughput_bps", "spectral_bandwidth_hz"):
+            v = row.get(key)
+            if type(v) not in (int, float) or not 0 <= v <= 1000000000000 or v != v:
+                raise NodeExchangeError("transport requires finite bounded throughput and spectral bandwidth")
+        occupancy = row.get("observed_occupancy_fraction")
+        if type(occupancy) not in (int, float) or not 0 <= occupancy <= 1:
+            raise NodeExchangeError("transport occupancy must be in [0,1]")
+        if row.get("transmit_permission") not in ("NOT_VERIFIED", "LISTEN_ONLY", "EXTERNALLY_QUALIFIED"):
+            raise NodeExchangeError("transmit permission must be expressly classified")
+        if (row["transmit_permission"] == "EXTERNALLY_QUALIFIED" and
+                (not isinstance(row.get("licence_or_class_ref"), str) or
+                 not row.get("licence_or_class_ref"))):
+            raise NodeExchangeError("qualified transport needs external licensing evidence reference")
+    cadence = profile.get("cadence")
+    if (not isinstance(cadence, dict) or cadence.get("window_ms") != 60000 or
+            cadence.get("sample_ms") not in (1000, 5000) or
+            cadence.get("phase_ms") != 5000):
+        raise NodeExchangeError("rolling cadence must use negotiated 60s/1s-or-5s/5s profile")
+    return {
+        "schema_version": DATASPACE_PROFILE_FACET,
+        "profile_root": _dataspace_sha256_root(profile),
+        "object_id": profile["object_id"],
+        "count_summary": count_map,
+        "privacy": "LOCAL_ONLY",
+        "access_authority_verified": False,
+        "transmit_authorised_by_this_function": False,
+        "canonical_promotion_authorized": False,
+    }
+
+
+def _dataspace_validate_state(state: object, derivables: set[str]) -> None:
+    if not isinstance(state, dict) or set(state) != derivables:
+        raise NodeExchangeError("DataSpace state must include exact derivable IDs")
+    for value in state.values():
+        if value is not None and (type(value) is not int or value not in (-1, 0, 1)):
+            raise NodeExchangeError("DataSpace state values must be ternary or erasure")
+
+
+def build_dataspace_delta_candidate(
+    *, profile: dict, prior_state: dict, new_state: dict, sequence: int,
+    window_end_ms: int,
+) -> dict:
+    """Prepare a deterministic change candidate for an EXISTING secure adapter.
+
+    It is neither a wire transport nor authentication, key exchange, sensor proof,
+    a publishing policy or a permission to access selected private nodes.
+    """
+    info = validate_dataspace_profile(profile)
+    ids = set(row["id"] for row in profile["derivables"])
+    _dataspace_validate_state(prior_state, ids)
+    _dataspace_validate_state(new_state, ids)
+    prior_root = _dataspace_sha256_root(prior_state)
+    if prior_root != profile["state_root"]:
+        raise NodeExchangeError("DataSpace prior state does not match negotiated state root")
+    if type(sequence) is not int or sequence < 1 or sequence >= 2**63:
+        raise NodeExchangeError("DataSpace sequence out of range")
+    if type(window_end_ms) is not int or window_end_ms < 60000 or window_end_ms % 1000:
+        raise NodeExchangeError("DataSpace window_end_ms invalid")
+    updates = [{"id": key, "state": new_state[key]} for key in sorted(ids)
+               if prior_state[key] != new_state[key]]
+    return {
+        "schema_version": DATASPACE_DELTA_FACET,
+        "object_id": info["object_id"],
+        "profile_root": info["profile_root"],
+        "prior_state_root": prior_root,
+        "result_state_root": _dataspace_sha256_root(new_state),
+        "sequence": sequence,
+        "window_end_ms": window_end_ms,
+        "updates": updates,
+        "wire_ready": False,
+        "cryptographically_authenticated": False,
+        "publication_authorised": False,
+        "canonical_promotion_authorized": False,
+    }
+
+
+def apply_dataspace_delta_candidate(
+    *, profile: dict, prior_state: dict, candidate: dict,
+    expected_sequence: int,
+) -> dict:
+    """Local, bounded reconstruction; caller enforces authenticated lease/nonce."""
+    info = validate_dataspace_profile(profile)
+    ids = set(row["id"] for row in profile["derivables"])
+    _dataspace_validate_state(prior_state, ids)
+    if not isinstance(candidate, dict) or candidate.get("schema_version") != DATASPACE_DELTA_FACET:
+        raise NodeExchangeError("DataSpace delta schema mismatch")
+    if candidate.get("profile_root") != info["profile_root"] or candidate.get("object_id") != profile["object_id"]:
+        raise NodeExchangeError("DataSpace context mismatch; reconcile profile before delta")
+    if (type(expected_sequence) is not int or
+            type(candidate.get("sequence")) is not int or
+            candidate["sequence"] != expected_sequence):
+        raise NodeExchangeError("DataSpace sequence/replay mismatch")
+    if candidate.get("prior_state_root") != _dataspace_sha256_root(prior_state):
+        raise NodeExchangeError("DataSpace prior root mismatch")
+    update_rows = candidate.get("updates")
+    if not isinstance(update_rows, list) or len(update_rows) > len(ids):
+        raise NodeExchangeError("DataSpace delta updates invalid")
+    out = dict(prior_state)
+    seen = set()
+    for row in update_rows:
+        if not isinstance(row, dict) or set(row) != {"id", "state"}:
+            raise NodeExchangeError("DataSpace invalid delta entry")
+        key = row["id"]
+        if key not in ids or key in seen:
+            raise NodeExchangeError("DataSpace unknown or duplicate delta identifier")
+        seen.add(key)
+        if row["state"] is not None and (type(row["state"]) is not int or row["state"] not in (-1, 0, 1)):
+            raise NodeExchangeError("DataSpace invalid ternary delta value")
+        out[key] = row["state"]
+    if _dataspace_sha256_root(out) != candidate.get("result_state_root"):
+        raise NodeExchangeError("DataSpace resulting state root mismatch")
+    return {
+        "candidate_state": out,
+        "candidate_state_root": candidate["result_state_root"],
+        "status": "RECONSTRUCTED_UNTRUSTED_CANDIDATE",
+        "verified_transport": False,
+        "canonical_promotion_authorized": False,
+    }
+
+
+__all__.extend((
+    "DATASPACE_PROFILE_FACET", "DATASPACE_DELTA_FACET",
+    "validate_dataspace_profile", "build_dataspace_delta_candidate",
+    "apply_dataspace_delta_candidate",
+))
+
+
+# CGX prism: locally negotiated interpretations over ONE existing FileSpace source.
+# No active transport, device attestation, licence validation, executable loading,
+# new canonical objects, WAD decoding or out-of-band DataSpace authority.
+PRISM_SLICE_FACET = "cgx-prism-static-slice-facet-v1"
+PRISM_HANDSHAKE_FACET = "cgx-prism-local-handshake-candidate-v1"
+_PRISM_RENDER_KINDS = {"text", "metric", "table", "graph", "spatial", "3d"}
+_PRISM_DEVICE_TYPES = {"unknown", "desktop_browser", "android_touch", "mobile_touch", "microcontroller"}
+_PRISM_OPERATIONS = {"identity", "sum", "difference", "ratio", "span", "count"}
+
+
+def validate_prism_slice_profile(profile: dict) -> dict:
+    """Validate locally supplied source-bound static graph; refs are NOT verified assets."""
+    if not isinstance(profile, dict) or profile.get("schema_version") != PRISM_SLICE_FACET:
+        raise NodeExchangeError("CGX prism schema unsupported")
+    object_id = profile.get("object_id")
+    if not isinstance(object_id, str) or not 1 <= len(object_id) <= 160:
+        raise NodeExchangeError("CGX prism requires canonical Object_ID")
+    for name in ("source_root", "geometry_root", "semantic_root", "model_root"):
+        _dataspace_check_root(profile.get(name), "prism " + name)
+    layers = _dataspace_index(profile.get("layers"), "prism layers", 1, 128)
+    views = _dataspace_index(profile.get("interpretations"), "prism interpretations", 1, 256)
+    for key, item in layers.items():
+        if item.get("visibility") not in _DATASPACE_VISIBILITY:
+            raise NodeExchangeError("CGX prism layer visibility invalid")
+        for field in ("source_ref", "geometry_ref", "owner_ref"):
+            if not isinstance(item.get(field), str) or not 1 <= len(item[field]) <= 160:
+                raise NodeExchangeError("CGX prism layer requires source and geometry owners")
+        _dataspace_check_root(item.get("content_root"), "prism content_root")
+        parent = item.get("parent_id")
+        if parent is not None and (parent not in layers or parent == key):
+            raise NodeExchangeError("CGX prism invalid parent layer")
+    # A layer is a slice of the existing graph, not a new root. Reject cycles.
+    for key in layers:
+        cursor, visited = key, set()
+        while cursor is not None:
+            if cursor in visited:
+                raise NodeExchangeError("CGX prism cyclic parent graph")
+            visited.add(cursor)
+            cursor = layers[cursor].get("parent_id")
+    for key, item in layers.items():
+        if item["visibility"] == "public":
+            parent = item.get("parent_id")
+            while parent is not None:
+                if layers[parent]["visibility"] != "public":
+                    raise NodeExchangeError("CGX prism public child cannot inherit protected parent")
+                parent = layers[parent].get("parent_id")
+    for item in views.values():
+        if item.get("layer_id") not in layers:
+            raise NodeExchangeError("CGX prism interpretation has missing layer")
+        if item.get("render_kind") not in _PRISM_RENDER_KINDS:
+            raise NodeExchangeError("CGX prism unsupported rendering type")
+        for field in ("registered_view_ref", "language_ref"):
+            if not isinstance(item.get(field), str) or not 1 <= len(item[field]) <= 160:
+                raise NodeExchangeError("CGX prism needs registered interpretation references")
+        if item.get("operation") not in _PRISM_OPERATIONS:
+            raise NodeExchangeError("CGX prism operation is not in read-only safe list")
+        keys = item.get("input_keys")
+        expected = {"identity": 1, "difference": 2, "ratio": 2, "span": 2}
+        if (not isinstance(keys, list) or len(keys) > 16 or
+                any(not isinstance(k, str) or not 1 <= len(k) <= 96 for k in keys) or
+                len(set(keys)) != len(keys) or
+                (item["operation"] in expected and len(keys) != expected[item["operation"]])):
+            raise NodeExchangeError("CGX prism input grammar invalid")
+        if item.get("operation") == "sum" and not keys:
+            raise NodeExchangeError("CGX prism sum needs inputs")
+        if not isinstance(item.get("unit"), str) or len(item["unit"]) > 48:
+            raise NodeExchangeError("CGX prism unit must be explicit")
+    return {
+        "schema_version": PRISM_SLICE_FACET,
+        "object_id": object_id,
+        "static_profile_root": _canonical_json_sha256(profile),
+        "layer_count": len(layers),
+        "interpretation_count": len(views),
+        "read_only": True,
+        "asset_bytes_verified": False,
+        "source_rights_verified": False,
+        "canonical_promotion_authorized": False,
+    }
+
+
+def negotiate_prism_device_candidate(*, profile: dict, device_offer: dict) -> dict:
+    """Automatic LOCAL capability matching, not authentication or a network handshake.
+
+    A user-agent or touch capability changes view selection, NEVER access rights.
+    Protected layer names and existence are not disclosed through returned status.
+    """
+    info = validate_prism_slice_profile(profile)
+    if not isinstance(device_offer, dict) or device_offer.get("device_type") not in _PRISM_DEVICE_TYPES:
+        raise NodeExchangeError("CGX prism device type invalid")
+    kinds = device_offer.get("render_kinds")
+    requested = device_offer.get("requested_interpretations")
+    cached = device_offer.get("cached_content_roots")
+    max_layers = device_offer.get("max_layers")
+    if (not isinstance(kinds, list) or not kinds or len(kinds) > 6 or
+            any(not isinstance(k, str) or k not in _PRISM_RENDER_KINDS for k in kinds) or len(set(kinds)) != len(kinds)):
+        raise NodeExchangeError("CGX prism render capabilities invalid")
+    if (not isinstance(requested, list) or len(requested) > 256 or
+            any(not isinstance(x, str) or not x or len(x) > 96 for x in requested) or
+            len(set(requested)) != len(requested)):
+        raise NodeExchangeError("CGX prism requested interpretations invalid")
+    if (not isinstance(cached, list) or len(cached) > 128 or
+            any(not isinstance(root, str) for root in cached) or
+            len(set(cached)) != len(cached)):
+        raise NodeExchangeError("CGX prism cache declaration invalid")
+    for root in cached:
+        _dataspace_check_root(root, "prism cached root")
+    if type(max_layers) is not int or not 1 <= max_layers <= 128:
+        raise NodeExchangeError("CGX prism device layer capacity invalid")
+    context = device_offer.get("static_profile_root")
+    _dataspace_check_root(context, "prism device context")
+    layers = {row["id"]: row for row in profile["layers"]}
+    interpretations = {row["id"]: row for row in profile["interpretations"]}
+    seen = set(cached)
+    entries = []
+    if context != info["static_profile_root"]:
+        for _ in requested:
+            entries.append({"status": "RECONCILE_REQUIRED"})
+    else:
+        for ident in requested:
+            view = interpretations.get(ident)
+            if view is None:
+                entries.append({"status": "NOT_AVAILABLE"})
+                continue
+            layer = layers[view["layer_id"]]
+            if layer["visibility"] != "public":
+                entries.append({"status": "NOT_AVAILABLE"})
+                continue
+            # Ancestors are part of the same already-known interpretation path.
+            chain = []
+            pointer = view["layer_id"]
+            while pointer is not None:
+                chain.append(layers[pointer])
+                pointer = layers[pointer].get("parent_id")
+            if len(chain) > max_layers or any(x["content_root"] not in seen for x in chain):
+                status = "NOT_CACHED"
+            elif view["render_kind"] not in kinds:
+                status = "UNSUPPORTED_RENDERER"
+            else:
+                status = "RESOLVABLE_CANDIDATE"
+            entries.append({"id": ident, "status": status} if status != "NOT_CACHED" else
+                           {"id": ident, "status": status, "requires_source_hydration": True})
+    return {
+        "schema_version": PRISM_HANDSHAKE_FACET,
+        "object_id": info["object_id"],
+        "static_profile_root": info["static_profile_root"],
+        "device_type_hint": device_offer["device_type"],
+        "input_hint": "touch" if device_offer["device_type"] in
+                       {"android_touch", "mobile_touch"} else "keyboard_or_machine",
+        "requested_count": len(requested),
+        "resolution": entries,
+        "local_candidate_only": True,
+        "device_identity_verified": False,
+        "cache_bytes_verified": False,
+        "entitlement_verified": False,
+        "wire_ready": False,
+        "canonical_promotion_authorized": False,
+    }
+
+
+def resolve_prism_interpretation_candidate(
+    *, profile: dict, handshake: dict, interpretation_id: str, inputs: dict,
+) -> dict:
+    """Pure numeric evaluation; never eval() a supplied equation or execute code."""
+    info = validate_prism_slice_profile(profile)
+    if (not isinstance(handshake, dict) or
+            handshake.get("schema_version") != PRISM_HANDSHAKE_FACET or
+            handshake.get("static_profile_root") != info["static_profile_root"] or
+            handshake.get("object_id") != info["object_id"]):
+        raise NodeExchangeError("CGX prism prior handshake/profile mismatch")
+    interpretations = {row["id"]: row for row in profile["interpretations"]}
+    views = handshake.get("resolution")
+    if not isinstance(views, list):
+        raise NodeExchangeError("CGX prism handshake results invalid")
+    allowed = any(row.get("id") == interpretation_id and
+                  row.get("status") == "RESOLVABLE_CANDIDATE"
+                  for row in views if isinstance(row, dict))
+    item = interpretations.get(interpretation_id)
+    if not allowed or item is None:
+        return {"status": "NOT_AVAILABLE", "canonical_promotion_authorized": False}
+    layer = next(row for row in profile["layers"] if row["id"] == item["layer_id"])
+    if layer["visibility"] != "public":
+        return {"status": "NOT_AVAILABLE", "canonical_promotion_authorized": False}
+    if not isinstance(inputs, dict) or len(inputs) > 32:
+        raise NodeExchangeError("CGX prism numeric inputs invalid")
+    values = []
+    for key in item["input_keys"]:
+        if key not in inputs or inputs[key] is None:
+            return {"status": "UNKNOWN_INPUT", "canonical_promotion_authorized": False}
+        value = inputs[key]
+        if type(value) not in (int, float) or value != value or abs(value) > 1e12:
+            raise NodeExchangeError("CGX prism input must be bounded finite number")
+        values.append(value)
+    op = item["operation"]
+    if op == "ratio" and values[1] == 0:
+        return {"status": "UNDEFINED_OPERATION", "canonical_promotion_authorized": False}
+    result = {
+        "identity": lambda: values[0],
+        "sum": lambda: sum(values),
+        "difference": lambda: values[0] - values[1],
+        "ratio": lambda: values[0] / values[1],
+        "span": lambda: abs(values[0] - values[1]),
+        "count": lambda: len(values),
+    }[op]()
+    if result != result or abs(result) > 1e12:
+        return {"status": "UNDEFINED_OPERATION", "canonical_promotion_authorized": False}
+    return {
+        "status": "DERIVED_LOCAL_CANDIDATE",
+        "object_id": info["object_id"],
+        "static_profile_root": info["static_profile_root"],
+        "slice_id": layer["id"],
+        "registered_view_ref": item["registered_view_ref"],
+        "geometry_ref": layer["geometry_ref"],
+        "language_ref": item["language_ref"],
+        "operation": op,
+        "unit": item["unit"],
+        "value": result,
+        "evidence_class": "SIMULATED_NUMERIC",
+        "source_verified": False,
+        "authenticated": False,
+        "canonical_promotion_authorized": False,
+    }
+
+
+__all__.extend((
+    "PRISM_SLICE_FACET", "PRISM_HANDSHAKE_FACET",
+    "validate_prism_slice_profile",
+    "negotiate_prism_device_candidate",
+    "resolve_prism_interpretation_candidate",
+))
+
+
+# UniSpace/Alexandria geometry is an opt-in projection of FileSpace sources.
+# It is not a peer admission, physical build, authority grant, or new store.
+ALEXANDRIA_FRAME_SCHEMA = "cgx-alexandria-dodecahedron-candidate-v1"
+CGX_GEOMETRIC_CELL_SCHEMA = "cgx-geometric-cell-candidate-v1"
+_CGX_CELL_STATES = frozenset((
+    "OCCUPIED", "RESERVED", "FREE", "GROWTH_CANDIDATE",
+    "NEUTRAL_UNBOUND", "UNKNOWN", "WITHHELD", "CONFLICT",
+))
+
+
+def _cgx_finite_coordinate(value: Any) -> float:
+    if type(value) not in (float, int) or not math.isfinite(value) or abs(value) > 1e9:
+        raise NodeExchangeError("CGX geometry coordinate must be finite and bounded")
+    return float(value)
+
+
+def _cgx_segments_intersect(a: tuple, b: tuple, c: tuple, d: tuple) -> bool:
+    """Reject crossing or coincident non-neighbour edges, including touching."""
+    def cross(p: tuple, q: tuple, r: tuple) -> float:
+        return (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0])
+
+    def on_edge(p: tuple, q: tuple, r: tuple) -> bool:
+        return min(p[0], q[0]) <= r[0] <= max(p[0], q[0]) and (
+            min(p[1], q[1]) <= r[1] <= max(p[1], q[1])
+        )
+
+    u, v = cross(a, b, c), cross(a, b, d)
+    w, z = cross(c, d, a), cross(c, d, b)
+    if (u > 0) != (v > 0) and (w > 0) != (z > 0) and u * v < 0 and w * z < 0:
+        return True
+    return (
+        (u == 0 and on_edge(a, b, c)) or (v == 0 and on_edge(a, b, d)) or
+        (w == 0 and on_edge(c, d, a)) or (z == 0 and on_edge(c, d, b))
+    )
+
+
+def build_geometric_cell_candidate(
+    *,
+    object_id: str,
+    sides: int = 4,
+    edge_length: float = 1.0,
+    vertices: list | None = None,
+    extrusion_depth: float | None = None,
+    cell_states: dict | None = None,
+) -> dict[str, Any]:
+    """Pure Press draft: polygon, typed occupancy and optional prism, never a key.
+
+    Cells are metadata assignments (not storage or capacity measurements).
+    Caller-supplied vertices retain exact input order; no silent geometric repair.
+    """
+    if not isinstance(object_id, str) or not 1 <= len(object_id) <= 160:
+        raise NodeExchangeError("CGX geometric cell needs bounded Object_ID")
+    if type(sides) is not int or not 3 <= sides <= 128:
+        raise NodeExchangeError("CGX geometric sides must be integer 3..128")
+    edge = _cgx_finite_coordinate(edge_length)
+    if not 0 < edge <= 1e6:
+        raise NodeExchangeError("CGX geometric seed edge must be positive")
+    if vertices is None:
+        if sides == 4:
+            pts = [(0.0, 0.0), (edge, 0.0), (edge, edge), (0.0, edge)]
+        else:
+            radius = edge / (2 * math.sin(math.pi / sides))
+            pts = [(radius * math.cos(2 * math.pi * i / sides),
+                    radius * math.sin(2 * math.pi * i / sides))
+                   for i in range(sides)]
+    else:
+        if not isinstance(vertices, list) or len(vertices) != sides:
+            raise NodeExchangeError("CGX geometric vertex count must match sides")
+        if any(not isinstance(p, (list, tuple)) or len(p) != 2 for p in vertices):
+            raise NodeExchangeError("CGX geometric vertices require 2D pairs")
+        pts = [(_cgx_finite_coordinate(p[0]), _cgx_finite_coordinate(p[1]))
+               for p in vertices]
+    segments = list(zip(pts, pts[1:] + pts[:1]))
+    lengths = [math.dist(a, b) for a, b in segments]
+    if any(length <= 1e-9 for length in lengths):
+        raise NodeExchangeError("CGX geometric zero-length edge")
+    for i, (a, b) in enumerate(segments):
+        for j in range(i + 1, sides):
+            if j == i + 1 or (i == 0 and j == sides - 1):
+                continue
+            c, d = segments[j]
+            if _cgx_segments_intersect(a, b, c, d):
+                raise NodeExchangeError("CGX geometric self-intersection")
+    signed_area = sum(
+        a[0] * b[1] - b[0] * a[1] for a, b in segments
+    ) / 2
+    if abs(signed_area) <= 1e-9:
+        raise NodeExchangeError("CGX geometric degenerate polygon")
+    if extrusion_depth is None:
+        depth = None
+        volume = None
+    else:
+        depth = _cgx_finite_coordinate(extrusion_depth)
+        if depth <= 0:
+            raise NodeExchangeError("CGX geometric extrusion depth must be positive")
+        volume = abs(signed_area) * depth
+    if cell_states is None:
+        states = {}
+    else:
+        if not isinstance(cell_states, dict) or len(cell_states) > 128:
+            raise NodeExchangeError("CGX geometric cell state map invalid")
+        states = {}
+        for cell_id, state in cell_states.items():
+            if (not isinstance(cell_id, str) or not 1 <= len(cell_id) <= 96 or
+                    not isinstance(state, str) or state not in _CGX_CELL_STATES):
+                raise NodeExchangeError("CGX geometric state/identifier invalid")
+            states[cell_id] = state
+    geometry = {
+        "object_id": object_id, "unit": "m", "frame": "local_planar_candidate",
+        "vertices": [[x, y] for x, y in pts],
+        "extrusion_depth_m": depth, "cell_states": states,
+    }
+    return {
+        "schema_version": CGX_GEOMETRIC_CELL_SCHEMA,
+        **geometry,
+        "side_count": sides,
+        "signed_area_m2": signed_area,
+        "area_m2": abs(signed_area),
+        "perimeter_m": sum(lengths),
+        "volume_m3": volume,
+        "geometry_root": _canonical_json_sha256(geometry),
+        "evidence_class": "SYNTHETIC_GEOMETRY",
+        "occupied_source_bytes": None,
+        "observed_capacity": None,
+        "device_identity_verified": False,
+        "authentication_authorized": False,
+        "canonical_promotion_authorized": False,
+    }
+
+
+def build_alexandria_dodecahedron_candidate(*, object_id: str) -> dict[str, Any]:
+    """Produce a deterministic regular dodecahedron by dualising an icosahedron.
+
+    No astrophysical radius, memory allocation or physical scaling is implied.
+    The 12 faces are reference cells; additional functions are typed graph edges.
+    """
+    if not isinstance(object_id, str) or not 1 <= len(object_id) <= 160:
+        raise NodeExchangeError("CGX Alexandria needs bounded Object_ID")
+    phi = (1 + math.sqrt(5)) / 2
+    icosahedron = []
+    for a in (-1.0, 1.0):
+        for b in (-1.0, 1.0):
+            icosahedron.extend(((0.0, a, b * phi),
+                                (a, b * phi, 0.0),
+                                (b * phi, 0.0, a)))
+    edge_set = {
+        (i, j) for i in range(12) for j in range(i + 1, 12)
+        if abs(sum((icosahedron[i][k] - icosahedron[j][k]) ** 2
+                   for k in range(3)) - 4.0) < 1e-8
+    }
+    ico_faces = [
+        (i, j, k) for i in range(12) for j in range(i + 1, 12)
+        for k in range(j + 1, 12)
+        if (i, j) in edge_set and (i, k) in edge_set and (j, k) in edge_set
+    ]
+    if len(edge_set) != 30 or len(ico_faces) != 20:
+        raise NodeExchangeError("CGX Alexandria dual source topology invalid")
+    centroids = [
+        tuple(sum(icosahedron[k][axis] for k in tri) / 3 for axis in range(3))
+        for tri in ico_faces
+    ]
+    norm = math.sqrt(sum(x * x for x in centroids[0]))
+    vertex_positions = [
+        [round(x / norm, 12) for x in c] for c in centroids
+    ]
+    def dot(u: tuple, v: tuple) -> float:
+        return sum(x * y for x, y in zip(u, v))
+    def cross(u: tuple, v: tuple) -> tuple:
+        return (u[1] * v[2] - u[2] * v[1],
+                u[2] * v[0] - u[0] * v[2],
+                u[0] * v[1] - u[1] * v[0])
+    faces = []
+    for apex in icosahedron:
+        mag = math.sqrt(dot(apex, apex))
+        normal = tuple(x / mag for x in apex)
+        anchor = (0.0, 0.0, 1.0) if abs(normal[2]) < 0.9 else (1.0, 0.0, 0.0)
+        tangent = cross(anchor, normal)
+        mag = math.sqrt(dot(tangent, tangent))
+        tangent = tuple(x / mag for x in tangent)
+        bitangent = cross(normal, tangent)
+        incident = [i for i, tri in enumerate(ico_faces)
+                    if icosahedron.index(apex) in tri]
+        faces.append(sorted(incident, key=lambda i: math.atan2(
+            dot(centroids[i], bitangent), dot(centroids[i], tangent)
+        )))
+    dodeca_edges = sorted({
+        tuple(sorted((face[k], face[(k + 1) % 5])))
+        for face in faces for k in range(5)
+    })
+    if (len(faces) != 12 or any(len(f) != 5 for f in faces) or
+            len(dodeca_edges) != 30 or 20 - len(dodeca_edges) + len(faces) != 2):
+        raise NodeExchangeError("CGX Alexandria dodecahedron invariant failed")
+    content = {
+        "object_id": object_id, "frame": "dimensionless_dodecahedron_reference",
+        "vertices": vertex_positions, "edges": [list(e) for e in dodeca_edges],
+        "faces": faces,
+    }
+    return {
+        "schema_version": ALEXANDRIA_FRAME_SCHEMA, **content,
+        "vertex_count": 20, "edge_count": 30, "face_count": 12,
+        "topology_euler": 2,
+        "triangulated_surface_candidate_count": 36,
+        "geometry_root": _canonical_json_sha256(content),
+        "cells": [{"id": f"face-{i}", "state": "NEUTRAL_UNBOUND"}
+                  for i in range(12)],
+        "source_items_present": 0,
+        "observed_capacity": None,
+        "reference_radius_physical_m": None,
+        "source_verified": False, "authenticated": False,
+        "canonical_promotion_authorized": False,
+    }
+
+
+__all__.extend((
+    "ALEXANDRIA_FRAME_SCHEMA", "CGX_GEOMETRIC_CELL_SCHEMA",
+    "build_geometric_cell_candidate", "build_alexandria_dodecahedron_candidate",
+))

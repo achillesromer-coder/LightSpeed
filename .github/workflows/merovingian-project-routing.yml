@@ -8,6 +8,7 @@ on:
       - "agent/**"
     paths:
       - "apps/lightspeed-go/**"
+      - "tools/cgx-bootstrap/**"
       - "cgx/domain_templates/**"
       - "Launcher/services/org.py"
       - "Launcher/Z Axis/Neo.py"
@@ -24,6 +25,8 @@ on:
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_floor_runner.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/mark3_multi_unit.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/representation_edge.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/node_exchange.py"
+      - "desktop/LightSpeed_Runtime/tests/test_node_exchange.py"
       - "desktop/LightSpeed_Runtime/tests/test_cognigrex_supervisor.py"
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
@@ -89,6 +92,8 @@ on:
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_floor_runner.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/mark3_multi_unit.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/representation_edge.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/node_exchange.py"
+      - "desktop/LightSpeed_Runtime/tests/test_node_exchange.py"
       - "desktop/LightSpeed_Runtime/tests/test_cognigrex_supervisor.py"
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
@@ -165,6 +170,7 @@ jobs:
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/__init__.py" \
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/__init__.py" \
             "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/services/secure_settings_hub.py" \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/node_exchange.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/cognigrex_supervisor.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_query_planner.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_conversion_planner.py \
@@ -237,6 +243,7 @@ jobs:
             desktop/Desktop_Hooks/LightSpeed/tests/test_launcher_exe.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_functions_hub_operator_surface.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_operator_home_export_gates.py \
+            desktop/LightSpeed_Runtime/tests/test_node_exchange.py \
             desktop/LightSpeed_Runtime/tests/test_cognigrex_supervisor.py \
             desktop/LightSpeed_Runtime/tests/test_cgx_query_planner.py \
             desktop/LightSpeed_Runtime/tests/test_cgx_conversion_planner.py \
@@ -260,6 +267,17 @@ jobs:
           node-version: "22"
           cache: npm
           cache-dependency-path: apps/lightspeed-go/package-lock.json
+
+      - name: Validate CGX minimal bootstrap
+        id: cgx_bootstrap
+        continue-on-error: true
+        working-directory: tools/cgx-bootstrap
+        run: |
+          set -o pipefail
+          npm run check 2>&1 | tee ../../cgx-bootstrap-check.log
+          npm test 2>&1 | tee ../../cgx-bootstrap-tests.log
+          node bin/cgx.mjs seed > ../../cgx-bootstrap-public-seed.cgx
+          cmp ../../cgx-bootstrap-public-seed.cgx ../../cgx/public_skeletons/alexandria.public.cgx
 
       - name: Install LS GO dependencies
         id: npm_install
@@ -305,6 +323,9 @@ jobs:
             cgx-policy-validation.log
             python-tests.log
             npm-install.log
+            cgx-bootstrap-check.log
+            cgx-bootstrap-tests.log
+            cgx-bootstrap-public-seed.cgx
             npm-test.log
             npm-check.log
             npm-build.log
@@ -320,13 +341,14 @@ jobs:
           CGX_POLICY: ${{ steps.cgx_policy.outcome }}
           PYTHON_TESTS: ${{ steps.python_tests.outcome }}
           NPM_INSTALL: ${{ steps.npm_install.outcome }}
+          CGX_BOOTSTRAP: ${{ steps.cgx_bootstrap.outcome }}
           NPM_TEST: ${{ steps.npm_test.outcome }}
           NPM_CHECK: ${{ steps.npm_check.outcome }}
           NPM_BUILD: ${{ steps.npm_build.outcome }}
         shell: bash
         run: |
           failed=0
-          for value in "$COMPILE" "$STATIC" "$SURFACE" "$CGX_POLICY" "$PYTHON_TESTS" "$NPM_INSTALL" "$NPM_TEST" "$NPM_CHECK" "$NPM_BUILD"; do
+          for value in "$COMPILE" "$STATIC" "$SURFACE" "$CGX_POLICY" "$PYTHON_TESTS" "$NPM_INSTALL" "$CGX_BOOTSTRAP" "$NPM_TEST" "$NPM_CHECK" "$NPM_BUILD"; do
             if [ "$value" != "success" ]; then
               failed=1
             fi

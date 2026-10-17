@@ -8,7 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import pytest
 
 from lightspeed_runtime.source_intake import SourceIntakeError
-from lightspeed_runtime.source_intake_executor import execute_source_intake
+from lightspeed_runtime.source_intake_executor import execute_source_intake, readback_source_intake
 
 
 def test_intake_preserves_native_bytes_and_exposes_derived_output(tmp_path):
@@ -25,8 +25,43 @@ def test_intake_preserves_native_bytes_and_exposes_derived_output(tmp_path):
         assert hashlib.sha256(Path(artifact["path"]).read_bytes()).hexdigest() == artifact["sha256"]
     envelope = json.loads(Path(receipt["artifacts"][1]["path"]).read_text())
     assert envelope["projections"][0]["rows"][1] == ["A", "12"]
+    assert readback_source_intake(payload, command_id="test-intake", shell_root=tmp_path / "App",
+                                  allowed_roots=[tmp_path]) == receipt
     with pytest.raises(SourceIntakeError, match="already exist"):
         execute_source_intake(payload, command_id="test-intake", shell_root=tmp_path / "App", allowed_roots=[tmp_path])
+
+
+def test_intake_recovery_rejects_changed_bundle_without_overwriting_it(tmp_path):
+    source = tmp_path / "source.csv"
+    source.write_bytes(b"a,b\n1,2\n")
+    payload = {"source_path": str(source), "source_sha256": hashlib.sha256(source.read_bytes()).hexdigest()}
+    receipt = execute_source_intake(payload, command_id="test-intake", shell_root=tmp_path / "App",
+                                    allowed_roots=[tmp_path])
+    artifact = Path(receipt["artifacts"][1]["path"])
+    tampered = b"x" * artifact.stat().st_size
+    artifact.write_bytes(tampered)
+    with pytest.raises(SourceIntakeError, match="artifact .* mismatch"):
+        readback_source_intake(payload, command_id="test-intake", shell_root=tmp_path / "App",
+                               allowed_roots=[tmp_path])
+    assert artifact.read_bytes() == tampered
+
+
+def test_intake_recovery_checks_envelope_digest_independently_of_artifact_manifest(tmp_path):
+    source = tmp_path / "source.csv"
+    source.write_bytes(b"a,b\n1,2\n")
+    payload = {"source_path": str(source), "source_sha256": hashlib.sha256(source.read_bytes()).hexdigest()}
+    receipt = execute_source_intake(payload, command_id="test-intake", shell_root=tmp_path / "App",
+                                    allowed_roots=[tmp_path])
+    envelope_path = Path(receipt["artifacts"][1]["path"])
+    envelope = json.loads(envelope_path.read_text(encoding="utf-8"))
+    envelope["warnings"].append("fabricated")
+    envelope_path.write_text(json.dumps(envelope), encoding="utf-8")
+    receipt["artifacts"][1]["bytes"] = envelope_path.stat().st_size
+    receipt["artifacts"][1]["sha256"] = hashlib.sha256(envelope_path.read_bytes()).hexdigest()
+    Path(receipt["receipt_path"]).write_text(json.dumps(receipt), encoding="utf-8")
+    with pytest.raises(SourceIntakeError, match="envelope lineage mismatch"):
+        readback_source_intake(payload, command_id="test-intake", shell_root=tmp_path / "App",
+                               allowed_roots=[tmp_path])
 
 
 @pytest.mark.parametrize("reason", ["outside", "hash"])

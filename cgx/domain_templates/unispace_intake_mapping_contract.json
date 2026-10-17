@@ -1,0 +1,107 @@
+{
+  "schema": "CGX-UNISPACE-INTAKE-MAPPING-CONTRACT/1",
+  "status": "SOURCE_ONLY_REVIEW_CANDIDATE_NOT_CANONICAL",
+  "owner_issue": "achillesromer-coder/LightSpeed#161",
+  "security_issue": "achillesromer-coder/LightSpeed#158",
+  "authority": "Cognigrex.cgx / existing FileSpace+Node Exchange+semantic lens registries",
+  "code_binding": "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_intake_projection.py",
+  "native_keys": [
+    "Object_ID",
+    "File_ID",
+    "Provider_Revision",
+    "Source_SHA256",
+    "State_Root",
+    "Geometry_Root",
+    "Semantic_Root",
+    "Model_Root",
+    "DBR_Root",
+    "Source_Owner",
+    "ACL_Ref",
+    "Licence",
+    "Evidence_Class",
+    "Uncertainty",
+    "Capability_ID",
+    "Node_ID",
+    "Lease_ID",
+    "Task_ID",
+    "Run_ID",
+    "Hour_ID",
+    "Queue_ID"
+  ],
+  "stages": {
+    "R0": "SHA256 source byte identity",
+    "R1": "bounded format recognition",
+    "R2": "typed source assertions pending validation",
+    "R3": "geometry and relationships from registered adapters only",
+    "R4": "state, physics and rules only with evidence",
+    "R5": "reconstruction proof",
+    "R6": "independent falsifier/test/DBR readback",
+    "R7": "actual signed device/node transfer"
+  },
+  "owners": [
+    {
+      "id": "cgx",
+      "root": "Cognigrex.cgx",
+      "role": "authority, grammar, provenance, evidence and DBR"
+    },
+    {
+      "id": "romer",
+      "root": "Romer.cgx",
+      "agent": "Neo",
+      "role": "Mark, Luke, Solar Hull, RFS/EMFF, SEQLD corridor"
+    },
+    {
+      "id": "eco",
+      "root": "Eco.cgx",
+      "agent": "Athene",
+      "role": "ecology, restoration, fauna/site evidence, bio-blocks"
+    },
+    {
+      "id": "emassc",
+      "root": "EMASSC.cgx",
+      "agent": "Achilles",
+      "role": "science, IP custody, governance"
+    },
+    {
+      "id": "lightspeed",
+      "root": "LS.cgx",
+      "parent": "emassc",
+      "role": "neutral runtime, GO UI and execution capability, not semantic master"
+    }
+  ],
+  "device_plan": {
+    "desktop": {
+      "device_kind": "desktop_host",
+      "real_signed_identity": "HOLD"
+    },
+    "phone": {
+      "device_kind": "mobile_touch",
+      "real_signed_identity": "HOLD"
+    },
+    "invariants": [
+      "independent keystore-backed node ID",
+      "scoped signed leases",
+      "revocation",
+      "anti-replay",
+      "interrupted resume",
+      "SHA+size readback",
+      "state-root and DBR-root equality",
+      "offline conflict preservation",
+      "independent receiving device receipt",
+      "no auto physical/canonical/public action"
+    ]
+  },
+  "public_release": {
+    "romer": "owner-reviewed PUBLIC_SAFE projection only",
+    "eco": "owner-reviewed PUBLIC_SAFE projection only",
+    "source_internal_catalogue": "HOLD per #158",
+    "project_public_preview": "UNPUBLISHED_PREVIEW_ONLY"
+  },
+  "claims": {
+    "peer_transport_verified": false,
+    "authenticated_phone": false,
+    "public_publish_authorized": false,
+    "canonical_promotion_authorized": false,
+    "physical_qualification": false
+  }
+}

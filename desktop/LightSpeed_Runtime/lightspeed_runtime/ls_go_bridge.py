@@ -1473,6 +1473,42 @@ def create_app(root: Path | str) -> FastAPI:
         max_age=600,
     )
 
+    @app.get("/api/v1/cgx/bootstrap")
+    async def cgx_public_bootstrap():
+        """Untrusted, read-only CGX advertisement, not an admission handshake.
+
+        This fixed skeleton intentionally reads no local auth, machine identity,
+        mounted roots, private source objects, caches, sessions or job receipts.
+        A remote transport must be separately configured and authenticated.
+        """
+        return JSONResponse({
+            "schema_version": "cgx-bootstrap-advertisement-v1",
+            "namespace_candidate": "cgx://CGX.cgx",
+            "geometry": {
+                "kind": "dodecahedron_reference",
+                "vertex_count": 20, "edge_count": 30, "face_count": 12,
+                "occupied_objects": 0, "actual_geometry_attested": False,
+            },
+            "semantics": {
+                "source_root": None,
+                "dictionary_version": "requires_registered_FileSpace_source",
+                "unknown_not_empty": True,
+                "private_objects_enumerated": False,
+            },
+            "phases": [
+                "PUBLIC_SKELETON", "AUTHENTICATE_OWNER", "VERIFY_NODE_ID",
+                "NEGOTIATE_SOURCE_ROOT", "LEASED_RECEIPT",
+            ],
+            "security": {
+                "device_authenticated": False,
+                "consumer_receipt_verified": False,
+                "remote_peer_admission_enabled": False,
+                "commands_allowed": False,
+                "network_scan_enabled": False,
+                "location_enabled": False,
+            },
+        })
+
     @app.get("/api/v1/status")
     async def status():
         # Merovingian materializes these receipts on its own interval. A health
