@@ -2,8 +2,48 @@ import { routeInstruction, type Floor } from "./desktopBridge";
 
 export const SHELL_SCHEMA = "lightspeed-cognigrex-os-shell-v0.1" as const;
 
-export const SHELL_VIEWS = ["command", "activity", "objects", "system", "sources"] as const;
+export const SHELL_VIEWS = ["command", "activity", "review", "objects", "system", "sources"] as const;
 export type ShellView = (typeof SHELL_VIEWS)[number];
+
+/** Presentation profiles only. Provider Object_ID, ACL and signed root remain authoritative. */
+export const CGX_FAMILY_TEMPLATES = [
+  { id: "cognigrex", label: "Cognigrex", focus: "FileSpace, CCC and cross-family topology", types: ["overview", "semantic", "review"] },
+  { id: "romer", label: "Römer-Grex", focus: "Engineering, missions, corridors and hardware", types: ["engineering", "mission", "manufacture"] },
+  { id: "eco", label: "Eco-Grex", focus: "Habitat, ecology, watershed and living systems", types: ["ecology", "observation", "restoration"] },
+  { id: "emassc", label: "EMASSC", focus: "IP, experiment, scientific proof and rights", types: ["evidence", "experiment", "governance"] },
+  { id: "lightspeed", label: "LightSpeed", focus: "Operator runtime, jobs, receipts and recovery", types: ["runtime", "build", "review"] },
+  { id: "sai", label: "SAI", focus: "Shared Australian Intelligence and capacity research", types: ["research", "resilience", "review"] },
+] as const;
+
+export type CgxFamilyId = (typeof CGX_FAMILY_TEMPLATES)[number]["id"];
+export type CgxWorkload = "guided" | "heavy-review";
+export const normalizeCgxFamily = (value: unknown): CgxFamilyId =>
+  CGX_FAMILY_TEMPLATES.find((family) => family.id === value)?.id ?? "cognigrex";
+export const cgxFamilyTemplate = (value: unknown) =>
+  CGX_FAMILY_TEMPLATES.find((family) => family.id === normalizeCgxFamily(value))!;
+
+/** Existing LS GO workspaces; no new route, endpoint or execution capability. */
+export const CGX_WORKSPACE_ACTIONS: readonly { id: string; label: string; view: ShellView; scope: string }[] = [
+  { id: "landing", label: "Landing / AI", view: "command", scope: "Draft through Neo" },
+  { id: "messages", label: "Messages / receipts", view: "activity", scope: "Existing activity" },
+  { id: "directories", label: "Directories", view: "sources", scope: "Existing scoped source view" },
+  { id: "models", label: "3D / object lenses", view: "objects", scope: "Evidence-gated review" },
+  { id: "build", label: "Build / venv", view: "system", scope: "Status only; no shell execution" },
+  { id: "audit", label: "Review / CCC", view: "review", scope: "Owner-gated review" },
+];
+
+export const cgxDraftInstruction = (
+  familyId: unknown, type: string, workload: CgxWorkload, section: string,
+): string => {
+  const family = cgxFamilyTemplate(familyId);
+  const safeType = family.types.find((value) => value === type) ?? family.types[0];
+  const safeSection = CGX_WORKSPACE_ACTIONS.find((item) => item.id === section)?.label ?? "Landing / AI";
+  const plan = workload === "heavy-review"
+    ? "Prepare a bounded heavy-compute plan for owner review; do not launch a job."
+    : "Prepare a source-grounded guided plan; do not launch a job.";
+  return `Family: ${family.label}; component type: ${safeType}; section: ${safeSection}. ${plan} Preserve Object_ID, source rights, ACL, evidence and DBR roots. Use only existing authorised LightSpeed capabilities.`;
+};
+
 
 export type WorkflowStageId =
   | "intake"

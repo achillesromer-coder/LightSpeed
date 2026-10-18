@@ -1,0 +1,175 @@
+{
+  "schema": "CGX-LS-GO-ACCESS-CONTRACT/0.1",
+  "date": "2026-10-11",
+  "state": "SOURCE_CANDIDATE / NO_PUBLIC_RELEASE",
+  "canonical_identity": "CGX = FileSpace; Cognigrex.cgx is parent; DataSpace is permissioned exchange, not a second master",
+  "host": "Existing LS GO application and existing LS GO bridge, not new reviewer service",
+  "audiences": [
+    "owner",
+    "operator",
+    "collaborator",
+    "visitor"
+  ],
+  "visitor_seats": 4,
+  "visitor_identity": "Invitation link possession is a bounded enrollment proof, not verified legal identity; future external identity provider needs owner approval",
+  "handshake": {
+    "retain": [
+      "consent_utc",
+      "display_name",
+      "theme",
+      "selected_lens",
+      "volunteered_background",
+      "stated_interest",
+      "session_profile",
+      "object_selection",
+      "evidence/feedback receipts"
+    ],
+    "do_not_retention": [
+      "raw_invitation_token",
+      "plaintext_password",
+      "oauth_access_token",
+      "unapproved_private_source_text",
+      "silent_device_fingerprint"
+    ]
+  },
+  "visitor_lenses": [
+    {
+      "id": "neo",
+      "name": "Römer-Grex",
+      "scope": "public-approved portfolio, plans, reviewed 3D"
+    },
+    {
+      "id": "athene",
+      "name": "Eco-Grex",
+      "scope": "public-approved environment, topology and SAI"
+    },
+    {
+      "id": "achilles",
+      "name": "Cognigrex",
+      "scope": "public-approved FileSpace/DataSpace/PrintSpace and portfolio"
+    },
+    {
+      "id": "alexandria",
+      "name": "Evidence",
+      "scope": "public provenance, citations, limitations, methodological review"
+    }
+  ],
+  "visitor_permissions": {
+    "read": "PUBLIC_SAFE source-filtered projections only",
+    "interact": "chat/intake, view/model requests and feedback",
+    "mutate_canonical": false,
+    "run_desktop": false,
+    "read_private_files": false,
+    "review_release": false
+  },
+  "evidence_ladder": [
+    "CONCEPT",
+    "SOURCE_BACKED",
+    "SIMULATED",
+    "MEASURED",
+    "INDEPENDENTLY_ACCEPTED",
+    "PUBLICLY_RELEASED"
+  ],
+  "visitor_event": "LS-GO-CGX-VISITOR/0.1 receipt in existing DB; promote to CGX DBR only on owner accepted reconciliation",
+  "generation": "Default PENDING_PUBLIC_SAFE_RESOLVER. An already-approved public projection may be returned only through ls_go_public_projection_contract.json; no on-demand AI/CAD generation, private source discovery, measurement inference or authority promotion.",
+  "admission_requirements": [
+    "owner approved migration and signing key",
+    "verified TLS and CORS",
+    "public-safe manifest and source licence",
+    "reviewer opt-in, privacy and retention",
+    "off-device authenticated tests",
+    "deny static asset exposures per LS GO issue 158"
+  ],
+  "frontdoor": "Squarespace /cgx orientation remains separate and public read-only",
+  "related_issues": [
+    "LightSpeed#158",
+    "LightSpeed#161"
+  ],
+  "public_projection_adapter": {
+    "contract": "ls_go_public_projection_contract.json",
+    "authority": "derived Public projection only; never canonical/source authority",
+    "source": "owner-configured local manifest reference outside dist-review",
+    "admission": [
+      "object_id exact match",
+      "lens exact match",
+      "release_class=Public",
+      "target_visibility=public",
+      "release_approval_state=APPROVED",
+      "all source_release_classes=Public",
+      "contains_restricted_material=false",
+      "release_receipt_ref present",
+      "source_sha256 and projection_sha256 verified",
+      "payload matches strict public allowlist"
+    ],
+    "fail_state": "PENDING_PUBLIC_SAFE_RESOLVER",
+    "generation": false,
+    "remote_fetch": false,
+    "canonical_mutation": false
+  },
+  "privacy_admission": {
+    "authority": "Owner policy acceptance is external to code; LS GO verifies only the presence of an explicit bounded acceptance reference.",
+    "required_for_new_admission": [
+      "LIGHTSPEED_VISITOR_PRIVACY_POLICY_ACCEPTED=1",
+      "LIGHTSPEED_VISITOR_PRIVACY_POLICY_REF is a bounded owner-policy: reference or safe HTTPS reference"
+    ],
+    "admission_effect": "New invite issuance and invite redemption are held when the acceptance reference is absent or invalid.",
+    "existing_reviewer_safety": "Existing valid sessions continue under the ordinary storage/signing gate so profile access, privacy requests, consent withdrawal, logout, owner revocation and owner audit are not disabled by an admission hold.",
+    "retention_period": "NOT_DEFINED_BY_CODE / OWNER_POLICY_REQUIRED",
+    "automated_erasure": "NOT_IMPLEMENTED / OWNER_REVIEW_REQUIRED",
+    "public_capabilities": "Expose only admission_enabled and privacy policy state; never expose the policy reference itself.",
+    "fail_state": "OWNER_ACCEPTANCE_REQUIRED",
+    "authority_transfer": false
+  },
+  "reusable_surface_window": {
+    "status": "REVIEW_ONLY_SOURCE; NO_PUBLIC_HOST_ADMITTED",
+    "source": "apps/lightspeed-go/src/cgxSurfaceWindow.ts",
+    "embed_selector": "CGX-SURFACE/UNISPACE-REVIEW",
+    "embed_selector_is_authentication": false,
+    "host_entry": "Existing apps/lightspeed-go/review.html only, within dist-review",
+    "backend": "Existing LS GO FastAPI bridge: POST /api/v1/visitor/surface",
+    "identity": "Exact CGX Object_ID supplied by caller; only owner-admitted public manifest is served",
+    "lens_ids": [
+      "neo",
+      "athene",
+      "achilles",
+      "alexandria"
+    ],
+    "surfaces": {
+      "overview": "released summary/evidence/citations; no model bytes",
+      "evidence": "released evidence stage/limits/citations; no private sources",
+      "model": "approved HTTPS representation URL metadata only; user initiated navigation",
+      "map": "SURFACE_NOT_RELEASED until owner-signed spatial projection exists",
+      "timeline": "SURFACE_NOT_RELEASED until bitemporal source/epoch proof exists"
+    },
+    "historical_selector": "requested_valid_at / requested_recorded_at returns 409 until admitted bitemporal public manifest",
+    "public_routes": [
+      "/cgx",
+      "/operations/w1",
+      "/operations/w2",
+      "/operations/w3",
+      "/operations/w4",
+      "/operations/w5",
+      "/operations/w6",
+      "/gmat"
+    ],
+    "public_route_rule": "optional visual mount to approved reviewer origin only; public route never receives invite token or session secret; legacy content remains unchanged",
+    "secure_host_requirements": [
+      "approved HTTPS origin and exact reverse-proxy route permit-list",
+      "CSP frame-ancestors limited to approved web embedding origins",
+      "no-store, no-referrer",
+      "owner admission and #158/#161 external acceptance",
+      "distinct public-only artifact, never private operator dist"
+    ],
+    "forbidden": [
+      "no new server, database, canonical root or compute scheduler",
+      "no client embed API key/visitor session/invite",
+      "no private source or raw geometry in static bundle",
+      "no public claim upgrade or machine execution"
+    ],
+    "related_source_branches": [
+      "LightSpeed PR #172 visitor",
+      "LightSpeed PR #173 spatial/temporal candidate",
+      "LightSpeed PR #175 UniSpace shorthand candidate"
+    ]
+  }
+}

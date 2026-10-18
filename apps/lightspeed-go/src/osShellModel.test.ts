@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   AGENT_ROLES,
+  CGX_FAMILY_TEMPLATES,
+  CGX_WORKSPACE_ACTIONS,
+  cgxDraftInstruction,
+  cgxFamilyTemplate,
+  normalizeCgxFamily,
   inferWorkflowStage,
   normalizeShellView,
   routeOperationalFloor,
@@ -52,5 +57,36 @@ describe("Cognigrex OS shell model", () => {
     expect(shellViewFromSearch("?view=system", "activity")).toBe("system");
     expect(shellViewFromSearch("view=not-a-view", "activity")).toBe("command");
     expect(shellViewFromSearch("", "activity")).toBe("activity");
+  });
+});
+
+
+describe("CGX family/type landing bindings", () => {
+  it("reuses six existing LS GO workspace routes and preserves single authority", () => {
+    expect(CGX_WORKSPACE_ACTIONS.map((action) => action.view)).toEqual([
+      "command", "activity", "sources", "objects", "system", "review",
+    ]);
+    expect(new Set(CGX_WORKSPACE_ACTIONS.map((action) => action.id)).size).toBe(CGX_WORKSPACE_ACTIONS.length);
+    expect(CGX_WORKSPACE_ACTIONS.every((action) => action.view in Object.fromEntries(
+      ["command", "activity", "review", "objects", "system", "sources"].map((id) => [id, true]),
+    ))).toBe(true);
+  });
+
+  it("keeps domain profiles scoped and fails closed to parent on unknown family", () => {
+    expect(CGX_FAMILY_TEMPLATES.map((family) => family.id)).toEqual([
+      "cognigrex", "romer", "eco", "emassc", "lightspeed", "sai",
+    ]);
+    expect(normalizeCgxFamily("other")).toBe("cognigrex");
+    expect(cgxFamilyTemplate("eco").types).toContain("ecology");
+    expect(cgxFamilyTemplate("sai").focus).toContain("Shared Australian Intelligence");
+  });
+
+  it("prepares but never dispatches a heavy workload or unfamiliar component type", () => {
+    const draft = cgxDraftInstruction("romer", "unknown", "heavy-review", "models");
+    expect(draft).toContain("engineering");
+    expect(draft).toContain("heavy-compute");
+    expect(draft).toContain("do not launch a job");
+    expect(draft).toContain("Object_ID");
+    expect(draft).not.toContain("unknown");
   });
 });

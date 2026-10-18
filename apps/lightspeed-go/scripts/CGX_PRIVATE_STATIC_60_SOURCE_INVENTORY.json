@@ -1,0 +1,380 @@
+{
+  "schema": "CGX-PRIVATE-STATIC-60-SOURCE-INVENTORY/1",
+  "status": "OWNER_CLASSIFICATION_PENDING_RELEASE_HOLD",
+  "source_repo": "achillesromer-coder/LightSpeed",
+  "source_pr": 172,
+  "source_commit": "a5c26961c6c5c03f5d0f28062670a9936be4db81",
+  "source_tree_sha1": "",
+  "source_asset_count": 60,
+  "source_groups": {
+    "render": 43,
+    "mesh": 16,
+    "catalogue": 1
+  },
+  "meaning": "Source paths and Git blob identities only. Neither a PUBLIC_SAFE licence nor deployed denial/authorization proof.",
+  "public_safe_approved": false,
+  "owner_signatures": [],
+  "deployed_negative_receipts": [],
+  "assets": [
+    {
+      "source_path": "apps/lightspeed-go/public/data/cgx_object_review_catalogue.json",
+      "git_blob_sha1": "e05b728562fc5c67a3fe5b283d03e28b8a375ca6",
+      "source_bytes": 31230,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/mesh/embedded_bio_blocks.json",
+      "git_blob_sha1": "4cf1f8e79f49e63c3b9da9cee856fbd689656a9e",
+      "source_bytes": 1919,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/mesh/free_flow_batteries.json",
+      "git_blob_sha1": "4dc168782010e6951a16d9442e618aa9933cb1e4",
+      "source_bytes": 23210,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/mesh/free_flow_capacitors.json",
+      "git_blob_sha1": "04d32e5bbc6cf56d0ba3fbf7e6ddd5996bf3eaee",
+      "source_bytes": 9723,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/mesh/free_flow_solenoid_stack.json",
+      "git_blob_sha1": "8b9148c7c92851080959ab88cc509fe60e35a53f",
+      "source_bytes": 129283,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/mesh/intersol.json",
+      "git_blob_sha1": "3b4f79c5add552089182cf23e9a8d7af3df20bc3",
+      "source_bytes": 13658,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/mesh/luke_family.json",
+      "git_blob_sha1": "6caf885ee2acf1f75bbdac33c3e50bed9e6c0479",
+      "source_bytes": 50333,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/mesh/m1_elevated_bypass.json",
+      "git_blob_sha1": "f0dcbce366ca63d8ec33278b28dee3f81d1ae3ab",
+      "source_bytes": 1400,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/mesh/maglev_luke_iv.json",
+      "git_blob_sha1": "c178ca9f4745e5e68db4f6931bd28a4853f33000",
+      "source_bytes": 49761,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/mesh/mark_1p.json",
+      "git_blob_sha1": "dbbd5a7de80b02eeb5058c168b05aaba71e2fa4f",
+      "source_bytes": 7827,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/mesh/mark_i.json",
+      "git_blob_sha1": "ee5caa08874924ec0388b9df9b59aa87358bf325",
+      "source_bytes": 7555,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/mesh/mark_iii.json",
+      "git_blob_sha1": "be15bec7c26333064cdaaa659d5c58fc74598055",
+      "source_bytes": 3228,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/mesh/rfs_emff.json",
+      "git_blob_sha1": "9b74e3ac60739124ff0dba60e57b4fd8e5c063fa",
+      "source_bytes": 50541,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/mesh/romer_spaceport.json",
+      "git_blob_sha1": "c69cfd41457f8d3ccc82648e01006dbbb1afa3c6",
+      "source_bytes": 1268,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/mesh/second_cycle.json",
+      "git_blob_sha1": "d7da3ba1f33c6be691c2aa1fb3717a02480cf9ed",
+      "source_bytes": 15613,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/mesh/solar_hull.json",
+      "git_blob_sha1": "2c2d80b2bf565eff56845ca672bfa8311cb8a192",
+      "source_bytes": 1963,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/mesh/watchtower.json",
+      "git_blob_sha1": "68bd94701d2a09f1ed959cd99fb0edcc3713c232",
+      "source_bytes": 2142,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/dense_smart_stack_review.svg",
+      "git_blob_sha1": "bf7b87e25d197bf21c8ad3d6e750d6233e0eb6b4",
+      "source_bytes": 3792,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/diode_seed_carrier_review.svg",
+      "git_blob_sha1": "f9a6237b01021c6ef53f7f6af3452c9f7ecd9d08",
+      "source_bytes": 1906,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/embedded_bio_blocks_hero.svg",
+      "git_blob_sha1": "9aabbece9debfbc62049bfa1c6770ead92e01f5e",
+      "source_bytes": 12239,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/embedded_bio_blocks_review.svg",
+      "git_blob_sha1": "29dfd4fe2f00f2be52790767983f3ddec4f04d7d",
+      "source_bytes": 39770,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/free_flow_batteries_hero.svg",
+      "git_blob_sha1": "ac77d2a66a2edcbd2575066129fff00c5d949c79",
+      "source_bytes": 123873,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/free_flow_batteries_review.svg",
+      "git_blob_sha1": "87506dba5146d5823bfec46022943bd8af5d9465",
+      "source_bytes": 463217,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/free_flow_capacitors_hero.svg",
+      "git_blob_sha1": "55523ed5829f269de9d22f7d220a38bd686dc48e",
+      "source_bytes": 57357,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/free_flow_capacitors_review.svg",
+      "git_blob_sha1": "6c0394ae3963658e784e733bcd0adfda64c7e3fb",
+      "source_bytes": 210808,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/free_flow_solenoid_stack_hero.svg",
+      "git_blob_sha1": "dbbcfa1726785f60b71ea0d857ff1971c1eb0ea7",
+      "source_bytes": 614643,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/free_flow_solenoid_stack_review.svg",
+      "git_blob_sha1": "8c3f071a435537044e8fbde5eccaf197bce053eb",
+      "source_bytes": 583513,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/intersol_hero.svg",
+      "git_blob_sha1": "007841f5e132ae52730862efd82aea95d4525d40",
+      "source_bytes": 82251,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/intersol_review.svg",
+      "git_blob_sha1": "9f45f7a18a87e1f53c94126196baa5c9a0ca6b48",
+      "source_bytes": 305170,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/luke_family_hero.svg",
+      "git_blob_sha1": "426c33d31f70b75713b6262fb3d5e3719d84deac",
+      "source_bytes": 255191,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/luke_family_review.svg",
+      "git_blob_sha1": "3d4027a48fa02ea43216e4b7d13a7b62fd9d9651",
+      "source_bytes": 482314,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/luke_ii_geo_interface_review.svg",
+      "git_blob_sha1": "ebda7c3211b3b140052e0d218808b4ee44df054f",
+      "source_bytes": 5598,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/m1_elevated_bypass_hero.svg",
+      "git_blob_sha1": "379d71ee6657a20669f6d0bff59a79562d1d8cea",
+      "source_bytes": 8872,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/m1_elevated_bypass_review.svg",
+      "git_blob_sha1": "5aabed84f002ead61ae8fa431e191b84253d56f2",
+      "source_bytes": 27133,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/maglev_luke_iv_hero.svg",
+      "git_blob_sha1": "9a4d35d00f0699771ed48a083aaba88f38253d5f",
+      "source_bytes": 253116,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/maglev_luke_iv_review.svg",
+      "git_blob_sha1": "5296c9133e33b6b9ac1c96e1e5b1ddb9b0d4e37d",
+      "source_bytes": 476982,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/mark_1p_hero.svg",
+      "git_blob_sha1": "61b487b7011e0946e0e7dddd475bb844d4119ed2",
+      "source_bytes": 45721,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/mark_1p_review.svg",
+      "git_blob_sha1": "746579fc9254586bc558d7df161fec9fb6908690",
+      "source_bytes": 166423,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/mark_i_hero.svg",
+      "git_blob_sha1": "01704b5f762c067249399eba848ff2e77ff8997b",
+      "source_bytes": 43940,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/mark_i_review.svg",
+      "git_blob_sha1": "25cee065d515be7f4fdc292be83dea18928f3b8d",
+      "source_bytes": 159796,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/mark_ii_staged_review.svg",
+      "git_blob_sha1": "ddb3c95724847bf7844685e3d40f5c6c1fbe02ca",
+      "source_bytes": 5433,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/mark_iii_hero.svg",
+      "git_blob_sha1": "1b74dee566dc1564ef847778f90f23d87c11c3db",
+      "source_bytes": 20584,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/mark_iii_review.svg",
+      "git_blob_sha1": "54da50fcb45f6f00852edcedfc380745708b2ff7",
+      "source_bytes": 71389,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/mark_iv_future_review.svg",
+      "git_blob_sha1": "ea48be90526b618902be94bf1f629cd3f940a2eb",
+      "source_bytes": 4722,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/mission_1_program_review.svg",
+      "git_blob_sha1": "7186812a558463a280d017b93136a94d7878b5a0",
+      "source_bytes": 6944,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/p2_capacitor_coupon_review.svg",
+      "git_blob_sha1": "b3ff4057e6afe15c66cb17fbb48791f5b9e52d46",
+      "source_bytes": 1540,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/p2_inductor_coupon_review.svg",
+      "git_blob_sha1": "ec54e8fb177157d6afa0e95e5abe018d49f49ddf",
+      "source_bytes": 1544,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/p2_resistor_coupon_review.svg",
+      "git_blob_sha1": "da6903e221ce631d43c1ab99335d932682a5ff1f",
+      "source_bytes": 1641,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/p3_rf_loop_review.svg",
+      "git_blob_sha1": "04d872074ca41ec462c763bb5d47f2a27aec9979",
+      "source_bytes": 1585,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/pc01_printceptor_review.svg",
+      "git_blob_sha1": "c3a9bdcaeb294a05c2e3e585ac89f582c15060aa",
+      "source_bytes": 6057,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/rfs_emff_hero.svg",
+      "git_blob_sha1": "e779ca85c510e90cf76816245e1d2e24fabf7c97",
+      "source_bytes": 258445,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/rfs_emff_review.svg",
+      "git_blob_sha1": "722bdcdc9676bd9b9e01cd1049a32190405bf7cc",
+      "source_bytes": 485660,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/romer_spaceport_hero.svg",
+      "git_blob_sha1": "3df5cc21886ee45c963efa834fac006a756a5f23",
+      "source_bytes": 8928,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/romer_spaceport_review.svg",
+      "git_blob_sha1": "e668643b905164146e0d7f100857f62c405533f9",
+      "source_bytes": 27109,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/second_cycle_hero.svg",
+      "git_blob_sha1": "04743a2fb9e257ee8bd7b2a4a69c99a133a47665",
+      "source_bytes": 82075,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/second_cycle_review.svg",
+      "git_blob_sha1": "3f1491b5558cb3dddf2e55831659ee45d657a336",
+      "source_bytes": 305222,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/solar_hull_hero.svg",
+      "git_blob_sha1": "9f6334566d45afbeed1c1509218c887d60de0e55",
+      "source_bytes": 12241,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/solar_hull_review.svg",
+      "git_blob_sha1": "f48cb76537ed00f9dd0323e1b7ca01da5007bdcf",
+      "source_bytes": 39791,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/watchtower_hero.svg",
+      "git_blob_sha1": "863800ecd211bb599588daf8337e2ca0d94273a7",
+      "source_bytes": 10575,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    },
+    {
+      "source_path": "apps/lightspeed-go/public/review/renders/watchtower_review.svg",
+      "git_blob_sha1": "8fba0a4d986bbc6d798e6f6f1ab447f7af86d296",
+      "source_bytes": 33354,
+      "public_safe_status": "UNREVIEWED_HOLD"
+    }
+  ]
+}

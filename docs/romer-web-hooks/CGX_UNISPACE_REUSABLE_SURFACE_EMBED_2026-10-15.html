@@ -1,0 +1,65 @@
+<!-- CGX / UniSpace reusable review surface. HTML data-key is a NON-SECRET selector. -->
+<!-- Enter the independently verified reviewer-only HTTPS origin after owner release. Never put invite/session keys here. -->
+<div class="cgx-host-window" data-cgx-embed="CGX-SURFACE/UNISPACE-REVIEW"
+     data-review-origin=""
+     data-object-id=""
+     data-lens="achilles"
+     data-view="overview">
+  <p>CGX object workspace · Permission-scoped review</p>
+</div>
+<style>
+.cgx-host-window{box-sizing:border-box;margin:1.2rem auto;padding:1rem;max-width:1100px;background:#0a191b;color:#e7f4ee;border:1px solid #366660;border-radius:14px;font:15px/1.5 system-ui,sans-serif}
+.cgx-host-window button,.cgx-host-window a{display:inline-block;margin:.4rem .6rem .4rem 0;padding:.65rem .95rem;border:1px solid #53bbb1;border-radius:9px;background:#103431;color:#d8f7ee;text-decoration:none;cursor:pointer;font:inherit}
+.cgx-host-window small{display:block;color:#accac4}
+.cgx-host-window iframe{display:block;width:100%;height:min(78vh,840px);min-height:480px;border:1px solid #3d6663;border-radius:10px;margin-top:1rem;background:#081517}
+@media(max-width:650px){.cgx-host-window iframe{height:76vh;min-height:560px}}
+</style>
+<script>
+(function () {
+  "use strict";
+  var mounts=document.querySelectorAll('[data-cgx-embed="CGX-SURFACE/UNISPACE-REVIEW"]:not([data-cgx-mounted])');
+  mounts.forEach(function (el) {
+    el.setAttribute("data-cgx-mounted","1");
+    var origin=(el.getAttribute("data-review-origin")||"").trim();
+    var id=(el.getAttribute("data-object-id")||"").trim();
+    var lens=(el.getAttribute("data-lens")||"achilles").trim();
+    var view=(el.getAttribute("data-view")||"overview").trim();
+    var text=document.createElement("small");
+    var safeOrigin=null;
+    try {
+      var u=new URL(origin);
+      if(u.protocol==="https:" && u.username==="" && u.password==="" && u.pathname==="/" &&
+         u.search==="" && u.hash==="" && u.hostname.indexOf(".")>0 &&
+         !u.hostname.endsWith(".example") && !u.hostname.endsWith(".local"))
+        safeOrigin=u.origin;
+    } catch (_) {}
+    if (!/^[A-Za-z0-9._:-]{0,120}$/.test(id)) id="";
+    if (["neo","athene","achilles","alexandria"].indexOf(lens)===-1) lens="achilles";
+    if (["overview","evidence","model","map","timeline"].indexOf(view)===-1) view="overview";
+    if (!safeOrigin) {
+      text.textContent="Reviewer host not approved/configured. This shell contains no private data.";
+      el.appendChild(text); return;
+    }
+    var url=new URL("/review.html",safeOrigin);
+    if(id)url.searchParams.set("object_id",id);
+    url.searchParams.set("lens",lens);url.searchParams.set("view",view);
+    text.textContent="Invite/consent required · read-only projection · public data only after release.";
+    el.appendChild(text);
+    var launch=document.createElement("button");
+    launch.type="button";launch.textContent="Open CGX window";
+    var open=document.createElement("a");
+    open.href=url.href;open.target="_blank";open.rel="noopener noreferrer";
+    open.textContent="Open separately ↗";
+    el.appendChild(launch);el.appendChild(open);
+    launch.addEventListener("click",function(){
+      var prior=el.querySelector("iframe");
+      if(prior){prior.remove();launch.textContent="Open CGX window";return;}
+      var frame=document.createElement("iframe");
+      frame.title="CGX permission-scoped UniSpace object window";
+      frame.src=url.href;frame.loading="lazy";frame.referrerPolicy="no-referrer";
+      frame.setAttribute("sandbox","allow-scripts allow-same-origin allow-forms allow-popups");
+      el.appendChild(frame);launch.textContent="Close CGX window";
+    });
+  });
+})();
+</script>

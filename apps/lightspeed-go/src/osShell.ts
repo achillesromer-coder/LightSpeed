@@ -2,6 +2,13 @@ import "./osShell.css";
 import { DEFAULT_DESKTOP_ORIGIN, readDesktopStatus, type Floor } from "./desktopBridge";
 import {
   AGENT_ROLES,
+  CGX_FAMILY_TEMPLATES,
+  CGX_WORKSPACE_ACTIONS,
+  cgxDraftInstruction,
+  cgxFamilyTemplate,
+  normalizeCgxFamily,
+  type CgxFamilyId,
+  type CgxWorkload,
   inferWorkflowStage,
   normalizeShellView,
   routeOperationalFloor,
@@ -20,12 +27,18 @@ interface ShellState {
   activeView: ShellView;
   activeAgent: Floor;
   focusMode: boolean;
+  activeFamily: CgxFamilyId;
+  componentType: string;
+  workload: CgxWorkload;
 }
 
 const defaultState: ShellState = {
   activeView: "command",
   activeAgent: "Neo",
   focusMode: false,
+  activeFamily: "cognigrex",
+  componentType: "overview",
+  workload: "guided",
 };
 
 const readState = (): ShellState => {
@@ -38,6 +51,9 @@ const readState = (): ShellState => {
       activeView: shellViewFromSearch(window.location.search, parsed.activeView),
       activeAgent: floor,
       focusMode: Boolean(parsed.focusMode),
+      activeFamily: normalizeCgxFamily(parsed.activeFamily),
+      componentType: typeof parsed.componentType === "string" ? parsed.componentType : "overview",
+      workload: parsed.workload === "heavy-review" ? "heavy-review" : "guided",
     };
   } catch {
     return { ...defaultState };
@@ -132,6 +148,85 @@ const makeStatusStrip = (): HTMLElement => {
     <button type="button" id="ls-os-palette-open" title="Open command palette (Ctrl/Cmd+K)">⌘K</button>
   `;
   return strip;
+};
+
+
+/** Reusable family/type landing selector, using existing LS GO workspaces only. */
+const makeFamilyWorkspace = (): HTMLElement => {
+  const panel = document.createElement("section");
+  panel.className = "ls-os-family-workspace";
+  panel.setAttribute("aria-label", "CGX family and component workspace");
+  panel.innerHTML = `
+    <div class="ls-os-family-head">
+      <div><small>FileSpace / CCC · Local view preference only</small><h2>Family workspace</h2></div>
+      <label>Family
+        <select id="ls-os-cgx-family">
+          ${CGX_FAMILY_TEMPLATES.map((family) => `<option value="${family.id}">${escapeText(family.label)}</option>`).join("")}
+        </select>
+      </label>
+      <label>Component type<select id="ls-os-cgx-type"></select></label>
+      <label>AI / compute
+        <select id="ls-os-cgx-workload">
+          <option value="guided">Guided · source-first</option>
+          <option value="heavy-review">Heavy · plan only</option>
+        </select>
+      </label>
+    </div>
+    <p id="ls-os-cgx-family-focus" class="ls-os-family-description"></p>
+    <div class="ls-os-family-actions" aria-label="Existing LightSpeed workspaces">
+      ${CGX_WORKSPACE_ACTIONS.map((action) => `
+        <button type="button" data-cgx-workspace="${action.view}" title="${escapeText(action.scope)}">
+          <strong>${escapeText(action.label)}</strong><small>${escapeText(action.scope)}</small>
+        </button>
+      `).join("")}
+    </div>
+    <details class="ls-os-family-settings">
+      <summary>Section variables and action settings</summary>
+      <p>These selectors prepare view/draft context, not device authority, model execution or canonical updates. Conditional sections and embeds remain subject to the registered view/ACL gates.</p>
+      <button type="button" id="ls-os-cgx-prepare">Prepare a bounded AI request</button>
+      <span id="ls-os-cgx-plan-state" role="status">Nothing dispatched · owner review required for consequential work.</span>
+    </details>`;
+  const familyInput = panel.querySelector<HTMLSelectElement>("#ls-os-cgx-family")!;
+  const typeInput = panel.querySelector<HTMLSelectElement>("#ls-os-cgx-type")!;
+  const workloadInput = panel.querySelector<HTMLSelectElement>("#ls-os-cgx-workload")!;
+  const focus = panel.querySelector<HTMLElement>("#ls-os-cgx-family-focus")!;
+  familyInput.value = state.activeFamily;
+  workloadInput.value = state.workload;
+  const refreshFamily = (preferType?: string): void => {
+    const family = cgxFamilyTemplate(familyInput.value);
+    const requested = preferType ?? typeInput.value;
+    const selectedType = family.types.some((type) => type === requested) ? requested : family.types[0];
+    typeInput.replaceChildren(...family.types.map((type) => {
+      const option = document.createElement("option");
+      option.value = type;
+      option.textContent = type.replace(/-/g, " ");
+      return option;
+    }));
+    typeInput.value = selectedType;
+    focus.textContent = `${family.focus}. Sections are existing LS GO routes, not separate masters. Active family: ${family.label} / ${selectedType}.`;
+    document.body.dataset.cgxFamily = family.id;
+    writeState({ activeFamily: family.id, componentType: selectedType, workload: workloadInput.value === "heavy-review" ? "heavy-review" : "guided" });
+  };
+  familyInput.addEventListener("change", () => refreshFamily());
+  typeInput.addEventListener("change", () => refreshFamily(typeInput.value));
+  workloadInput.addEventListener("change", () => refreshFamily(typeInput.value));
+  panel.querySelectorAll<HTMLButtonElement>("[data-cgx-workspace]").forEach((button) => {
+    button.addEventListener("click", () => setActiveView(normalizeShellView(button.dataset.cgxWorkspace)));
+  });
+  panel.querySelector<HTMLButtonElement>("#ls-os-cgx-prepare")?.addEventListener("click", () => {
+    const instruction = document.getElementById("instruction") as HTMLTextAreaElement | null;
+    if (!instruction) {
+      panel.querySelector<HTMLElement>("#ls-os-cgx-plan-state")!.textContent = "Command workspace is not mounted; request not prepared.";
+      return;
+    }
+    instruction.value = cgxDraftInstruction(familyInput.value, typeInput.value, workloadInput.value as CgxWorkload, "landing");
+    instruction.dispatchEvent(new Event("input", { bubbles: true }));
+    setActiveView("command");
+    instruction.focus();
+    panel.querySelector<HTMLElement>("#ls-os-cgx-plan-state")!.textContent = "Request drafted for review; nothing submitted.";
+  });
+  refreshFamily(state.componentType);
+  return panel;
 };
 
 const makeWorkflow = (): HTMLElement => {
@@ -327,6 +422,7 @@ const installShell = (): void => {
   document.body.prepend(makeAgentRail());
   shell.prepend(makeWorkflow());
   shell.prepend(makeStatusStrip());
+  shell.insertBefore(makeFamilyWorkspace(), shell.querySelector(".ls-os-workflow"));
   document.body.append(makePalette());
 
   const heading = shell.querySelector(".topbar h1");
