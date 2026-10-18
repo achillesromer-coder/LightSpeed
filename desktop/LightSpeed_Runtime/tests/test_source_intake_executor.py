@@ -89,3 +89,61 @@ def test_archive_expansion_budget_is_checked_before_parsing(tmp_path, monkeypatc
     with pytest.raises(SourceIntakeError, match="archive exceeds"):
         execute_source_intake({"source_path": str(source), "source_sha256": hashlib.sha256(data.getvalue()).hexdigest()},
                               command_id="test-archive", shell_root=tmp_path / "App", allowed_roots=[tmp_path])
+
+
+def test_filespace_candidate_is_private_source_bound_and_unpromoted(tmp_path):
+    source = tmp_path / "source.csv"
+    source.write_bytes(b"a,b\n1,2\n")
+    payload = {"source_path": str(source), "source_sha256": hashlib.sha256(source.read_bytes()).hexdigest()}
+    receipt = execute_source_intake(payload, command_id="candidate", shell_root=tmp_path / "App", allowed_roots=[tmp_path])
+    assert receipt["schema"] == "lightspeed-source-intake-receipt-v2"
+    candidate = json.loads(Path(receipt["artifacts"][2]["path"]).read_text())
+    assert candidate["identity"]["source_sha256"] == payload["source_sha256"]
+    assert candidate["identity"]["object_id"] is None
+    assert candidate["security"]["visibility"] == "PRIVATE"
+    assert candidate["custody"]["source_owner_verified"] is False
+    assert candidate["canonical_promotion_authorized"] is False
+    assert candidate["public_publish_authorized"] is False
+    assert candidate["layers"]["R1_admission"] == "REQUIRES_SEPARATE_CONVERSION_PLAN"
+    assert readback_source_intake(payload, command_id="candidate", shell_root=tmp_path / "App", allowed_roots=[tmp_path]) == receipt
+
+
+@pytest.mark.parametrize("tamper", ["missing", "hash", "identity", "public", "promotion"])
+def test_filespace_recovery_rejects_tampering_even_with_rehashed_manifest(tmp_path, tamper):
+    source = tmp_path / "source.md"
+    source.write_bytes(b"# Evidence\n")
+    payload = {"source_path": str(source), "source_sha256": hashlib.sha256(source.read_bytes()).hexdigest()}
+    receipt = execute_source_intake(payload, command_id="candidate", shell_root=tmp_path / "App", allowed_roots=[tmp_path])
+    item = receipt["artifacts"][2]
+    path = Path(item["path"])
+    candidate = json.loads(path.read_text())
+    if tamper == "missing":
+        path.unlink()
+    elif tamper == "hash":
+        path.write_text("{}")
+    else:
+        if tamper == "identity":
+            candidate["identity"]["object_id"] = "unapproved-object"
+        elif tamper == "public":
+            candidate["security"]["visibility"] = "PUBLIC_SAFE"
+        else:
+            candidate["canonical_promotion_authorized"] = True
+        path.write_text(json.dumps(candidate))
+        item["bytes"] = path.stat().st_size
+        item["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+        Path(receipt["receipt_path"]).write_text(json.dumps(receipt))
+    with pytest.raises(SourceIntakeError, match="artifact|candidate lineage"):
+        readback_source_intake(payload, command_id="candidate", shell_root=tmp_path / "App", allowed_roots=[tmp_path])
+
+
+def test_legacy_two_artifact_bundle_readback_does_not_backfill(tmp_path):
+    source = tmp_path / "source.txt"
+    source.write_bytes(b"historical source")
+    payload = {"source_path": str(source), "source_sha256": hashlib.sha256(source.read_bytes()).hexdigest()}
+    receipt = execute_source_intake(payload, command_id="legacy", shell_root=tmp_path / "App", allowed_roots=[tmp_path])
+    Path(receipt["artifacts"].pop()["path"]).unlink()
+    receipt["schema"] = "lightspeed-source-intake-receipt-v1"
+    Path(receipt["receipt_path"]).write_text(json.dumps(receipt))
+    before = {p.name: p.read_bytes() for p in Path(receipt["receipt_path"]).parent.iterdir()}
+    assert readback_source_intake(payload, command_id="legacy", shell_root=tmp_path / "App", allowed_roots=[tmp_path]) == receipt
+    assert {p.name: p.read_bytes() for p in Path(receipt["receipt_path"]).parent.iterdir()} == before

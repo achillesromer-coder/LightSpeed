@@ -46,11 +46,15 @@ def test_source_intake_consumer_persists_evidence_once(tmp_path, monkeypatch):
     assert result["intake"]["source_sha256"] == payload["source_sha256"]
     assert result["intake"]["canonical_mutation"] is False
     assert Path(result["intake"]["artifacts"][0]["path"]).read_bytes() == raw
+    candidate = json.loads(Path(result["intake"]["artifacts"][2]["path"]).read_text())
+    assert candidate["identity"]["source_sha256"] == payload["source_sha256"]
+    assert candidate["native_envelope_binding"]["source_rights_verified"] is False
+    assert candidate["gates"]["canonical_dbr_commit"] == "HOLD"
     assert source.read_bytes() == raw
     assert consumer.process_once()["results_written"] == 0
 
 
-@pytest.mark.parametrize("tamper", [False, True])
+@pytest.mark.parametrize("tamper", [False, True, "filespace"])
 def test_source_intake_consumer_recovers_published_bundle_after_outer_receipt_gap(
     tmp_path, monkeypatch, tamper
 ):
@@ -66,7 +70,7 @@ def test_source_intake_consumer_recovers_published_bundle_after_outer_receipt_ga
     bundle = execute_source_intake(payload, command_id=command_id, shell_root=shell,
                                    allowed_roots=[tmp_path])
     if tamper:
-        artifact = Path(bundle["artifacts"][1]["path"])
+        artifact = Path(bundle["artifacts"][2 if tamper == "filespace" else 1]["path"])
         artifact.write_bytes(b"x" * artifact.stat().st_size)
     original_read = ls_go_job_consumer._read_json
     monkeypatch.setattr(ls_go_job_consumer, "_read_json", lambda p:
@@ -91,9 +95,7 @@ def test_source_intake_consumer_recovers_published_bundle_after_outer_receipt_ga
     assert outer["status"] == ("blocked" if tamper else "completed")
     if tamper:
         assert "artifact" in outer["error"] and "mismatch" in outer["error"]
-        assert Path(bundle["artifacts"][1]["path"]).read_bytes() == (
-            b"x" * bundle["artifacts"][1]["bytes"]
-        )
+        assert artifact.read_bytes() == b"x" * artifact.stat().st_size
     else:
         assert outer["recovered_from_intake_bundle"] is True
         assert outer["intake"] == bundle

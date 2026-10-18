@@ -12,9 +12,31 @@ from typing import Any
 import zipfile
 
 from lightspeed_runtime.source_intake import SourceIntakeError, build_source_envelope
+from lightspeed_runtime.cgx_intake_projection import IntakeError, project_native_envelope_candidate
 from lightspeed_runtime.storage_paths import neo_actions_root
 
 MAX_SOURCE_BYTES = 64 * 1024 * 1024
+
+
+def _filespace_candidate(data: bytes, envelope: dict[str, Any], source: Path) -> dict[str, Any]:
+    """Project local custody only; a snapshot digest is not a provider revision proof."""
+    digest = hashlib.sha256(data).hexdigest()
+    try:
+        candidate = project_native_envelope_candidate(data, envelope, {
+            "provider": "local-filesystem", "provider_file_id": str(source),
+            "provider_revision": "sha256:" + digest, "source_name": source.name,
+            "source_ref": str(source), "owner_domain": "cgx",
+            "licence": "UNKNOWN_REQUIRES_OWNER_REVIEW", "visibility": "PRIVATE",
+            "expected_sha256": digest,
+        })
+    except IntakeError as exc:
+        raise SourceIntakeError(str(exc)) from exc
+    candidate["custody"] = {
+        "domain_assignment": "CGX_STAGING_ONLY_NOT_SOURCE_OWNERSHIP",
+        "provider_revision_kind": "LOCAL_BYTE_SNAPSHOT_NOT_PROVIDER_VERSION",
+        "source_owner_verified": False,
+    }
+    return candidate
 
 
 def validate_intake_payload(value: Any) -> dict[str, str]:
@@ -71,7 +93,7 @@ def readback_source_intake(
     except (OSError, ValueError) as exc:
         raise SourceIntakeError("existing intake receipt is unreadable") from exc
     if not isinstance(receipt, dict) or any((
-        receipt.get("schema") != "lightspeed-source-intake-receipt-v1",
+        receipt.get("schema") not in ("lightspeed-source-intake-receipt-v1", "lightspeed-source-intake-receipt-v2"),
         receipt.get("command_id") != command_id,
         receipt.get("status") != "completed",
         receipt.get("source_path") != str(source),
@@ -83,10 +105,14 @@ def readback_source_intake(
     )):
         raise SourceIntakeError("existing intake receipt identity or scope mismatch")
     artifacts = receipt.get("artifacts")
-    if not isinstance(artifacts, list) or len(artifacts) != 2:
+    has_projection = receipt["schema"] == "lightspeed-source-intake-receipt-v2"
+    expected_names = {"source.native", "source-envelope.json"}
+    if has_projection:
+        expected_names.add("filespace-candidate.json")
+    if not isinstance(artifacts, list) or len(artifacts) != len(expected_names):
         raise SourceIntakeError("existing intake artifact manifest is incomplete")
     by_name = {Path(str(item.get("path"))).name: item for item in artifacts if isinstance(item, dict)}
-    if set(by_name) != {"source.native", "source-envelope.json"}:
+    if set(by_name) != expected_names:
         raise SourceIntakeError("existing intake artifact names differ")
     for name, item in by_name.items():
         path = destination / name
@@ -126,6 +152,13 @@ def readback_source_intake(
         receipt.get("adapter_id") != envelope.get("adapter_id"),
     )):
         raise SourceIntakeError("existing intake envelope lineage mismatch")
+    if has_projection:
+        try:
+            candidate = json.loads((destination / "filespace-candidate.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            raise SourceIntakeError("existing FileSpace candidate is unreadable") from exc
+        if candidate != _filespace_candidate(source_bytes, envelope, source):
+            raise SourceIntakeError("existing FileSpace candidate lineage mismatch")
     return receipt
 
 
@@ -152,6 +185,8 @@ def execute_source_intake(
     _bounded_archive(data)
     envelope = build_source_envelope(source_name=source.name, data=data, source_ref=str(source))
     envelope_bytes = (json.dumps(envelope, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
+    candidate = _filespace_candidate(data, envelope, source)
+    candidate_bytes = (json.dumps(candidate, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
     parent = neo_actions_root(shell_root) / "intake"
     destination = parent / hashlib.sha256(command_id.encode("utf-8")).hexdigest()
     parent.mkdir(parents=True, exist_ok=True)
@@ -159,7 +194,8 @@ def execute_source_intake(
         raise SourceIntakeError("immutable intake outputs already exist; reconcile the existing receipt")
     stage = Path(tempfile.mkdtemp(prefix=".intake-", dir=parent))
     artifacts = []
-    for name, content in (("source.native", data), ("source-envelope.json", envelope_bytes)):
+    for name, content in (("source.native", data), ("source-envelope.json", envelope_bytes),
+                          ("filespace-candidate.json", candidate_bytes)):
         path = stage / name
         path.write_bytes(content)
         actual = hashlib.sha256(path.read_bytes()).hexdigest()
@@ -167,7 +203,7 @@ def execute_source_intake(
             raise SourceIntakeError("persisted intake artifact failed readback")
         artifacts.append({"path": str(destination / name), "sha256": actual, "bytes": len(content)})
     receipt = {
-        "schema": "lightspeed-source-intake-receipt-v1", "command_id": command_id,
+        "schema": "lightspeed-source-intake-receipt-v2", "command_id": command_id,
         "status": "completed", "source_path": str(source), "source_sha256": digest,
         "source_name": source.name, "source_id": envelope["source_id"],
         "adapter_id": envelope["adapter_id"], "artifacts": artifacts,

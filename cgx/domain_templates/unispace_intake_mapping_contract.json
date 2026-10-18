@@ -5,6 +5,15 @@
   "security_issue": "achillesromer-coder/LightSpeed#158",
   "authority": "Cognigrex.cgx / existing FileSpace+Node Exchange+semantic lens registries",
   "code_binding": "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_intake_projection.py",
+  "queued_native_intake_binding": {
+    "executor": "desktop/LightSpeed_Runtime/lightspeed_runtime/source_intake_executor.py",
+    "existing_action_type": "source_preserving_intake",
+    "receipt_schema": "lightspeed-source-intake-receipt-v2",
+    "artifacts": ["source.native", "source-envelope.json", "filespace-candidate.json"],
+    "recovery": "Rehash artifacts and reproduce the private candidate from original bytes and envelope before accepting v2 readback; v1 remains readable without backfill.",
+    "identity": "No Object_ID allocated; local path and byte snapshot only, pending canonical identity and source-owner review.",
+    "authority": "CGX staging custody only; unknown licence; private; no provider revision proof, R1 admission, DBR promotion or publication."
+  },
   "native_keys": [
     "Object_ID",
     "File_ID",
