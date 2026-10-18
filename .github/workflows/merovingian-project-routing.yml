@@ -248,6 +248,7 @@ jobs:
             desktop/LightSpeed_Runtime/tests/test_cgx_query_planner.py \
             desktop/LightSpeed_Runtime/tests/test_cgx_conversion_planner.py \
             desktop/LightSpeed_Runtime/tests/test_source_intake.py \
+            desktop/LightSpeed_Runtime/tests/test_source_intake_executor.py \
             desktop/LightSpeed_Runtime/tests/test_cgx_intake_projection.py \
             desktop/LightSpeed_Runtime/tests/test_corpus_test_orchestrator.py \
             desktop/LightSpeed_Runtime/tests/test_project_pipeline.py \
