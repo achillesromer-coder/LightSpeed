@@ -181,7 +181,7 @@ def test_native_r1_plan_connects_existing_registered_adapter_but_not_acceptance(
     assert result["identity"]["source_id"] == env["source_id"]
     assert result["identity"]["plan_sha256"] == result["conversion_plan"]["plan_sha256"]
     for flag in ("independent_r1_round_trip_verified", "provider_revision_verified",
-                 "source_rights_verified", "r2_semantics_admitted", "dbR_receipt_issued",
+                 "source_rights_verified", "r2_semantics_admitted", "dbr_receipt_issued",
                  "signed_peer_verified", "owner_approval_verified", "canonical_mutation",
                  "public_release_authorized", "physical_qualification"):
         assert result[flag] is False
