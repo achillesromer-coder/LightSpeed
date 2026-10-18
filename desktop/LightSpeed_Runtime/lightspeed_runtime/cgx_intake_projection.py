@@ -388,7 +388,7 @@ def plan_native_r1_review(
         "provider_revision_verified": False,
         "source_rights_verified": False,
         "r2_semantics_admitted": False,
-        "dbR_receipt_issued": False,
+        "dbr_receipt_issued": False,
         "signed_peer_verified": False,
         "owner_approval_verified": False,
         "canonical_mutation": False,
