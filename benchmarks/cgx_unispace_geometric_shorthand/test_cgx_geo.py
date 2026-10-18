@@ -145,6 +145,44 @@ class ArchimedeanSectionTests(unittest.TestCase):
   self.view(vertices=v,edges=e)
   self.assertEqual((v,e),original)
 
+
+class SectionSVGPreviewTests(unittest.TestCase):
+ def view(self):
+  return {'kind':'POLYGON','mode':'section',
+          'points_2d':[[0,0],[2,0],[2,1],[0,1]],
+          'source_ref':'<script>alert(1)</script>',
+          'owner_acl_verified':False}
+ def test_preview_requires_explicit_caller_authorisation(self):
+  from read_lenses import section_svg_preview
+  with self.assertRaisesRegex(ValueError,'permission'):
+   section_svg_preview(self.view())
+  with self.assertRaisesRegex(ValueError,'permission'):
+   section_svg_preview(self.view(),preview_authorised=1)
+ def test_inert_svg_does_not_inject_source_labels(self):
+  from read_lenses import section_svg_preview
+  output=section_svg_preview(self.view(),preview_authorised=True,canvas=512)
+  self.assertTrue(output.startswith('<svg '))
+  self.assertIn('<path ',output)
+  self.assertNotIn('<script',output)
+  self.assertNotIn('alert(1)',output)
+  self.assertNotIn('http://',output.replace('http://www.w3.org/2000/svg',''))
+  self.assertEqual(output.count('<svg'),1)
+ def test_reject_nonfinite_points_and_overlarge_view(self):
+  from read_lenses import section_svg_preview
+  d=self.view();d['points_2d'][0][0]=float('nan')
+  with self.assertRaisesRegex(ValueError,'Nonfinite'):
+   section_svg_preview(d,preview_authorised=True)
+  d=self.view();d['points_2d']=[[1,1]]*513
+  with self.assertRaisesRegex(ValueError,'oversized'):
+   section_svg_preview(d,preview_authorised=True)
+ def test_empty_and_point_preview(self):
+  from read_lenses import section_svg_preview
+  d={'kind':'EMPTY','mode':'section','points_2d':[]}
+  x=section_svg_preview(d,preview_authorised=True)
+  self.assertNotIn('<path',x)
+  d={'kind':'POINT','mode':'section','points_2d':[[0,0]]}
+  self.assertIn('<circle',section_svg_preview(d,preview_authorised=True))
+
 if __name__=='__main__':unittest.main()
 
 class RootDeltaTests(unittest.TestCase):
