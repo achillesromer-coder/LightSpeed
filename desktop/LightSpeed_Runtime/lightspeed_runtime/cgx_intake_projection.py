@@ -305,3 +305,93 @@ def project_native_envelope_candidate(
     record["layers"]["R1_admission"] = "REQUIRES_SEPARATE_CONVERSION_PLAN"
     record["gates"]["native_source_adapter"] = "R0_ENVELOPE_CONSISTENCY_VERIFIED"
     return record
+
+def plan_native_r1_review(
+    content: bytes,
+    envelope: Mapping[str, Any],
+    source: Mapping[str, Any],
+    *,
+    type_registry: Mapping[str, Any],
+    conversion_contract: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Connect verified local R0 envelope to EXISTING conversion planner.
+
+    The output is a private candidate, not R1 execution, source-provider
+    attestation, structural round-trip proof, semantic promotion or a DBR.
+    Unregistered/adaptor-mismatched/failed deep projections are held.
+    """
+    from .cgx_conversion_planner import (
+        CGXConversionPlanError, compile_conversion_plan,
+    )
+
+    r0 = project_native_envelope_candidate(content, envelope, source)
+    if not isinstance(type_registry, Mapping) or not isinstance(conversion_contract, Mapping):
+        raise IntakeError("explicit owner conversion registries required")
+    warnings = envelope.get("warnings")
+    unresolved = envelope.get("unresolved")
+    if not isinstance(warnings, list) or not isinstance(unresolved, list):
+        raise IntakeError("native projection diagnostics must be lists")
+    if any(not isinstance(x, str) for x in warnings + unresolved):
+        raise IntakeError("native projection diagnostics must be strings")
+    try:
+        plan = compile_conversion_plan(
+            file_name=r0["source"]["source_name"],
+            source_sha256=r0["identity"]["source_sha256"],
+            source_ref=r0["source"]["source_ref"],
+            media_type=r0["recognition"]["format_hint"],
+            domain=r0["identity"]["owner_domain"],
+            type_registry=type_registry,
+            conversion_contract=conversion_contract,
+            # R2 intentionally excluded: source-owner mapping admission is separate.
+        )
+    except CGXConversionPlanError as exc:
+        raise IntakeError(f"registered conversion plan rejected: {exc}") from exc
+
+    profile = plan.get("type_profile")
+    adapter = envelope.get("adapter_id")
+    registered_adapter = (
+        profile.get("adapter") or profile.get("handler")
+        if isinstance(profile, Mapping) else None
+    )
+    if not profile or not profile.get("r1"):
+        state = "HOLD_UNREGISTERED_R1_ADAPTER"
+    elif not isinstance(adapter, str) or adapter != registered_adapter:
+        state = "HOLD_ADAPTER_IDENTITY_MISMATCH"
+    elif warnings or unresolved:
+        state = "HOLD_NATIVE_PROJECTION_UNRESOLVED"
+    elif profile.get("status") in ("capability-gated", "specialist-adapter-required"):
+        state = "HOLD_SPECIALIST_CAPABILITY"
+    elif envelope["native_preservation"].get("round_trip_claim") not in (
+        "LOSSLESS_FOR_DECLARED_FIELDS", "STRUCTURE_PRESERVED"
+    ):
+        state = "HOLD_REVERSIBLE_SCOPE_UNPROVEN"
+    else:
+        state = "R1_PLAN_READY_INDEPENDENT_RECONSTRUCTION_REQUIRED"
+
+    return {
+        "schema": "cgx.unispace.native-r1-review/1",
+        "state": state,
+        "r0_candidate": r0,
+        "conversion_plan": plan,
+        "identity": {
+            "source_id": r0["native_envelope_binding"]["source_id"],
+            "source_sha256": r0["identity"]["source_sha256"],
+            "envelope_sha256": r0["native_envelope_binding"]["envelope_sha256"],
+            "provider_file_id": r0["source"]["provider_file_id"],
+            "provider_revision_claim": r0["source"]["provider_revision"],
+            "plan_sha256": plan["plan_sha256"],
+        },
+        "registered_adapter": registered_adapter,
+        "native_adapter": adapter,
+        "native_diagnostics": {"warnings": warnings, "unresolved": unresolved},
+        "independent_r1_round_trip_verified": False,
+        "provider_revision_verified": False,
+        "source_rights_verified": False,
+        "r2_semantics_admitted": False,
+        "dbR_receipt_issued": False,
+        "signed_peer_verified": False,
+        "owner_approval_verified": False,
+        "canonical_mutation": False,
+        "public_release_authorized": False,
+        "physical_qualification": False,
+    }
