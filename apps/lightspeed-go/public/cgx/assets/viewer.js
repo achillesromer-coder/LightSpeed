@@ -1,4 +1,4 @@
-import {PUBLIC_OBJECT,DOOM_PROOF,selectRoute,walkSlice,handshake,applySparseDelta,evaluatePrint,numericSlice,PUBLIC_SCHEMA} from "./core.js";
+import {PUBLIC_OBJECT,DOOM_PROOF,SYNTHETIC_CUBE,sectionConvexMesh,selectRoute,walkSlice,handshake,applySparseDelta,evaluatePrint,numericSlice,PUBLIC_SCHEMA} from "./core.js";
 const route=selectRoute(document.body.dataset.space||location.pathname);
 const labels={overview:"Universal Operating Model",fs:"FileSpace",ds:"DataSpace",ps:"PrintSpace",doom:"DOOM benchmark"};
 const $=id=>document.getElementById(id);
@@ -30,9 +30,24 @@ $("surface").innerHTML='<div class="cards">'+[
 ].map(x=>'<a class="tile" href="/cgx/'+x[0]+'/"><span class="eyebrow">'+x[0].toUpperCase()+'</span><h2>'+x[1]+'</h2><p>'+x[2]+'</p><strong>Explore →</strong></a>').join("")+'</div>'+prism()+panel("Current proof boundary",'<p>In-browser demonstrations are local simulations. DOOM has separate real-engine test evidence, but a public CGX handshake, signed transport and physical printing are not established by this page.</p>');
 bindPrism();
 }
+function planeSectionPanel(){
+return panel("Exact 2D cut of a synthetic 3D vertex mesh",'<p>Finite indexed vertices and edges; this is a geometric derivation, not compression, source evidence, or a licensed Archimedean template.</p><label for="cut-axis">Plane normal</label><select id="cut-axis"><option value="z">XY (z constant)</option><option value="x">YZ (x constant)</option><option value="y">XZ (y constant)</option></select><label for="cut-offset">Plane offset (m)</label><input id="cut-offset" type="number" value="0" step="0.25"><pre class="output" id="cut-result"></pre>');
+}
+function bindPlaneSection(){
+ const render=()=>{
+  const axis=$("cut-axis").value,normal=axis==="z"?[0,0,1]:axis==="x"?[1,0,0]:[0,1,0];
+  const offset=Number($("cut-offset").value);
+  const result=sectionConvexMesh(SYNTHETIC_CUBE,{normal,offset});
+  $("cut-result").textContent=JSON.stringify(result,null,2);
+ };
+ $("cut-axis").addEventListener("change",render);
+ $("cut-offset").addEventListener("input",render);
+ render();
+}
 function fs(){
-$("surface").innerHTML=prism()+panel("Native FileSpace object view",'<p>The same canonical identity is exposed as a folder-like tree, geometry slice or provenance lens. No secondary database or owner is created.</p><div class="tree">'+PUBLIC_OBJECT.slices.map(x=>'<button type="button" data-slice="'+x.id+'">'+(x.parent?"└ ":"▣ ")+esc(x.label)+'</button>').join("")+'</div><pre class="output" id="filesrc"></pre>'+button("copy","Copy public fixture JSON"));
+$("surface").innerHTML=prism()+planeSectionPanel()+panel("Native FileSpace object view",'<p>The same canonical identity is exposed as a folder-like tree, geometry slice or provenance lens. No secondary database or owner is created.</p><div class="tree">'+PUBLIC_OBJECT.slices.map(x=>'<button type="button" data-slice="'+x.id+'">'+(x.parent?"└ ":"▣ ")+esc(x.label)+'</button>').join("")+'</div><pre class="output" id="filesrc"></pre>'+button("copy","Copy public fixture JSON"));
 bindPrism();
+bindPlaneSection();
 $("filesrc").textContent=JSON.stringify({object_id:PUBLIC_OBJECT.object_id,source_root:PUBLIC_OBJECT.roots.source,licence:PUBLIC_OBJECT.licence,evidence:PUBLIC_OBJECT.evidence},null,2);
 document.querySelectorAll("[data-slice]").forEach(x=>x.addEventListener("click",()=>{$("slice").value=x.dataset.slice;$("slice").dispatchEvent(new Event("change"))}));
 $("copy").addEventListener("click",async()=>{try{await navigator.clipboard.writeText($("filesrc").textContent);$("copy").textContent="Copied"}catch{$("copy").textContent="Select text manually"}});
