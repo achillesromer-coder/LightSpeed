@@ -153,3 +153,79 @@ def test_native_envelope_visibility_does_not_escalate_to_public_release():
     )
     assert preview_only["public_publish_authorized"] is False
     assert preview_only["gates"]["public_release"] == "HOLD"
+
+def _r1_fixture(raw=b"a,b\\n1,2\\n", name="test.csv"):
+    from lightspeed_runtime.source_intake import build_source_envelope
+    meta = {**SRC, "source_name": name}
+    env = build_source_envelope(source_name=name, data=raw, source_ref=meta["source_ref"])
+    profiles = {
+        "schema": "CGX-FILE-TYPE-CONVERSION-REGISTRY/0.1",
+        "types": [
+            {"id": "text/csv", "extensions": ["csv"], "r1": "table", "adapter": "csv-stdlib-v0.1", "status": "supported"},
+            {"id": "application/json", "extensions": ["json"], "r1": "JSON tree", "adapter": "json-stdlib-v0.1", "status": "supported"},
+            {"id": "model/step", "extensions": ["step"], "r1": None, "adapter": "step-part21-stdlib-v0.1", "status": "specialist-adapter-required"},
+        ],
+    }
+    contract = {"schema": "CGX-FILE-CONVERSION-CONTRACT/0.1"}
+    return raw, env, meta, profiles, contract
+
+
+def test_native_r1_plan_connects_existing_registered_adapter_but_not_acceptance():
+    from lightspeed_runtime.cgx_intake_projection import plan_native_r1_review
+    raw, env, meta, types, contract = _r1_fixture()
+    result = plan_native_r1_review(raw, env, meta, type_registry=types, conversion_contract=contract)
+    assert result["state"] == "R1_PLAN_READY_INDEPENDENT_RECONSTRUCTION_REQUIRED"
+    assert result["conversion_plan"]["stages"][0]["class"] == "R0_EXACT"
+    assert result["conversion_plan"]["stages"][1]["class"] == "R1_SEMANTIC_REVERSIBLE"
+    assert result["conversion_plan"]["execution_performed"] is False
+    assert result["identity"]["source_id"] == env["source_id"]
+    assert result["identity"]["plan_sha256"] == result["conversion_plan"]["plan_sha256"]
+    for flag in ("independent_r1_round_trip_verified", "provider_revision_verified",
+                 "source_rights_verified", "r2_semantics_admitted", "dbR_receipt_issued",
+                 "signed_peer_verified", "owner_approval_verified", "canonical_mutation",
+                 "public_release_authorized", "physical_qualification"):
+        assert result[flag] is False
+    assert not any(stage["class"] == "R2_RECONSTRUCTED" for stage in result["conversion_plan"]["stages"])
+
+
+def test_native_r1_plan_holds_mismatched_adapter_and_unregistered_type():
+    from lightspeed_runtime.cgx_intake_projection import plan_native_r1_review
+    raw, env, meta, types, contract = _r1_fixture()
+    types["types"][0]["adapter"] = "unverified-parallel-csv"
+    result = plan_native_r1_review(raw, env, meta, type_registry=types, conversion_contract=contract)
+    assert result["state"] == "HOLD_ADAPTER_IDENTITY_MISMATCH"
+    types["types"] = []
+    result = plan_native_r1_review(raw, env, meta, type_registry=types, conversion_contract=contract)
+    assert result["state"] == "HOLD_UNREGISTERED_R1_ADAPTER"
+
+
+def test_native_r1_plan_holds_malformed_json_even_with_registered_adapter():
+    from lightspeed_runtime.cgx_intake_projection import plan_native_r1_review
+    raw, env, meta, types, contract = _r1_fixture(b'{"bad": NaN,', "source.json")
+    assert env["warnings"] or env["unresolved"]
+    result = plan_native_r1_review(raw, env, meta, type_registry=types, conversion_contract=contract)
+    assert result["state"] == "HOLD_NATIVE_PROJECTION_UNRESOLVED"
+    assert result["canonical_mutation"] is False
+
+
+def test_native_r1_plan_requires_consistent_source_hash_and_explicit_registries():
+    from lightspeed_runtime.cgx_intake_projection import plan_native_r1_review
+    raw, env, meta, types, contract = _r1_fixture()
+    with pytest.raises(IntakeError):
+        plan_native_r1_review(raw + b"x", env, meta, type_registry=types, conversion_contract=contract)
+    with pytest.raises(IntakeError):
+        plan_native_r1_review(raw, env, meta, type_registry=None, conversion_contract=contract)
+    with pytest.raises(IntakeError):
+        plan_native_r1_review(raw, env, meta, type_registry=types,
+                              conversion_contract={"schema": "UNKNOWN"})
+
+
+def test_native_r1_plan_preserves_original_source_authority_when_reading_cad():
+    from lightspeed_runtime.cgx_intake_projection import plan_native_r1_review
+    raw, env, meta, types, contract = _r1_fixture(
+        b"ISO-10303-21;\\nHEADER;\\nENDSEC;\\nDATA;\\nENDSEC;\\nEND-ISO-10303-21;", "test.step",
+    )
+    result = plan_native_r1_review(raw, env, meta, type_registry=types, conversion_contract=contract)
+    assert result["state"] == "HOLD_UNREGISTERED_R1_ADAPTER"
+    assert result["r0_candidate"]["identity"]["source_sha256"] == env["sha256"]
+    assert result["public_release_authorized"] is False
