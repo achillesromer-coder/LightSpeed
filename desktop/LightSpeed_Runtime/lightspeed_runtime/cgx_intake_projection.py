@@ -235,3 +235,73 @@ def project_public_preview(
         "published": False, "source_owner_validation": "NOT_PERFORMED",
         "release_receipt": None, "canonical_promotion_authorized": False,
     }
+
+
+def project_native_envelope_candidate(
+    content: bytes, envelope: Mapping[str, Any], source: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Bind existing native source-envelope bytes to an R0-only FileSpace candidate.
+
+    Verifies internal envelope consistency and original bytes, NOT provider
+    identity, rights, a conversion-plan admission, owner authority or DBR.
+    Neither a hash-matched envelope nor a PUBLIC_SAFE label publishes content.
+    """
+    if not isinstance(content, bytes) or not isinstance(envelope, Mapping):
+        raise IntakeError("native envelope requires bytes and mapping")
+    if not isinstance(source, Mapping):
+        raise IntakeError("native envelope requires explicit provider metadata")
+    if envelope.get("schema") != "CGX-SOURCE-ENVELOPE/0.1":
+        raise IntakeError("source envelope schema mismatch")
+    native = envelope.get("native_preservation")
+    lineage = envelope.get("lineage")
+    if not isinstance(native, Mapping) or not isinstance(lineage, Mapping):
+        raise IntakeError("native preservation and lineage are required")
+    if lineage.get("canonical_mutation") is not False or lineage.get("projection_only") is not True:
+        raise IntakeError("source envelope cannot assert canonical mutation or authority")
+    digest = hashlib.sha256(content).hexdigest()
+    if (envelope.get("sha256") != digest
+            or envelope.get("source_id") != "src:" + digest
+            or native.get("source_sha256") != digest
+            or type(envelope.get("byte_length")) is not int
+            or envelope["byte_length"] != len(content)
+            or type(native.get("source_byte_length")) is not int
+            or native["source_byte_length"] != len(content)):
+        raise IntakeError("native source byte identity mismatch")
+    source_ref = required_text(source.get("source_ref"), "source_ref", 1024)
+    source_name = required_text(source.get("source_name"), "source_name")
+    if (envelope.get("source_name") != source_name
+            or native.get("source_ref") != source_ref):
+        raise IntakeError("native envelope source reference mismatch")
+    declared = envelope.get("envelope_sha256")
+    if not isinstance(declared, str) or len(declared) != 64:
+        raise IntakeError("native envelope digest missing")
+    try:
+        body = {key: value for key, value in envelope.items()
+                if key != "envelope_sha256"}
+        actual = hashlib.sha256(json.dumps(
+            body, sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+        ).encode("utf-8")).hexdigest()
+    except (TypeError, ValueError) as exc:
+        raise IntakeError("native envelope not canonically serializable") from exc
+    if actual != declared:
+        raise IntakeError("native envelope digest mismatch")
+    if (source.get("visibility") == "PUBLIC_SAFE"
+            and str(envelope.get("release_class", "")).casefold()
+            not in {"public", "public_safe"}):
+        raise IntakeError("internal source envelope cannot become PUBLIC_SAFE")
+    record = project_intake(content, source)
+    record["native_envelope_binding"] = {
+        "source_id": envelope["source_id"],
+        "envelope_sha256": declared,
+        "adapter_id": native.get("adapter_version"),
+        "round_trip_claim": native.get("round_trip_claim"),
+        "evidence_state": envelope.get("evidence_state"),
+        "release_class": envelope.get("release_class"),
+        "verification": "LOCAL_BYTES_AND_ENVELOPE_CONSISTENCY_ONLY",
+        "provider_revision_verified": False,
+        "source_rights_verified": False,
+    }
+    record["layers"]["R0_bytes"] = "SOURCE_ENVELOPE_BYTE_HASH_MATCH"
+    record["layers"]["R1_admission"] = "REQUIRES_SEPARATE_CONVERSION_PLAN"
+    record["gates"]["native_source_adapter"] = "R0_ENVELOPE_CONSISTENCY_VERIFIED"
+    return record
