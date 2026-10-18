@@ -359,8 +359,12 @@ def plan_native_r1_review(
         state = "HOLD_ADAPTER_IDENTITY_MISMATCH"
     elif warnings or unresolved:
         state = "HOLD_NATIVE_PROJECTION_UNRESOLVED"
-    elif profile.get("status") in ("capability-gated", "specialist-adapter-required"):
-        state = "HOLD_SPECIALIST_CAPABILITY"
+    elif profile.get("id") != r0["recognition"]["format_hint"]:
+        state = "HOLD_MEDIA_TYPE_REGISTRY_MISMATCH"
+    elif profile.get("status") not in (
+        "supported", "supported-preferred", "supported-structure-only", "supported-metadata-only"
+    ):
+        state = "HOLD_UNVERIFIED_ADAPTER_STATUS"
     elif envelope["native_preservation"].get("round_trip_claim") not in (
         "LOSSLESS_FOR_DECLARED_FIELDS", "STRUCTURE_PRESERVED"
     ):
