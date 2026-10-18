@@ -76,3 +76,70 @@ export function numericSlice(id,override) {
   if(!Number.isFinite(value))return {status:"UNKNOWN_INPUT"};
   return {status:"DERIVED_LOCAL_CANDIDATE",value,unit:item.unit,geometry_ref:item.ref,evidence:"SYNTHETIC"};
 }
+
+/** Convex polyhedron plane-section DEMO. Original geometry/identity are never mutated.
+ * A caller must independently certify topology, provider rights and source-root.
+ */
+export const SYNTHETIC_CUBE = Object.freeze({
+  object_id:PUBLIC_OBJECT.object_id,
+  geometry_root:"synthetic-unit-cube-r1",frame:"synthetic-cartesian-XYZ",
+  epoch:"synthetic-static",unit:"m",convex:true,
+  vertices:[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],
+            [-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]],
+  edges:[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],
+         [0,4],[1,5],[2,6],[3,7]],
+});
+export function sectionConvexMesh(mesh,plane){
+  const hold=(status)=>({status,published:false,authoritative:false,physical_proof:false});
+  if(!mesh || mesh.convex!==true || !Array.isArray(mesh.vertices) ||
+     !Array.isArray(mesh.edges) || !mesh.vertices.length ||
+     mesh.vertices.length>4096 || mesh.edges.length>8192 ||
+     mesh.edges.length===0) return hold("HOLD_INVALID_GEOMETRY");
+  if(![mesh.object_id,mesh.geometry_root,mesh.frame,mesh.epoch,mesh.unit].every(
+    x=>typeof x==="string" && !!x.trim())) return hold("HOLD_SOURCE_FRAME_OR_UNITS");
+  if(mesh.vertices.some(p=>!Array.isArray(p)||p.length!==3||
+     p.some(v=>typeof v!=="number"||!Number.isFinite(v))))return hold("HOLD_INVALID_VERTEX");
+  if(mesh.edges.some(e=>!Array.isArray(e)||e.length!==2||
+     e.some(i=>!Number.isInteger(i)||i<0||i>=mesh.vertices.length)||
+     e[0]===e[1]))return hold("HOLD_INVALID_EDGE");
+  if(!plane || !Array.isArray(plane.normal) || plane.normal.length!==3 ||
+     plane.normal.some(x=>typeof x!=="number"||!Number.isFinite(x)) ||
+     typeof plane.offset!=="number"||!Number.isFinite(plane.offset))
+     return hold("HOLD_INVALID_PLANE");
+  const len=Math.hypot(...plane.normal);
+  if(!Number.isFinite(len)||len<1e-12)return hold("HOLD_DEGENERATE_NORMAL");
+  const n=plane.normal.map(v=>v/len), tolerance=1e-9;
+  const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+  const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+  const points=[];
+  const add=p=>{if(!points.some(q=>Math.hypot(...p.map((v,i)=>v-q[i]))<=tolerance))points.push(p);};
+  for(const [ia,ib] of mesh.edges){
+    const a=mesh.vertices[ia],b=mesh.vertices[ib],da=dot(a,n)-plane.offset,db=dot(b,n)-plane.offset;
+    if(Math.abs(da)<=tolerance)add([...a]);
+    if(Math.abs(db)<=tolerance)add([...b]);
+    if((da>tolerance&&db< -tolerance)||(db>tolerance&&da< -tolerance)){
+      const t=da/(da-db);add(a.map((v,i)=>v+t*(b[i]-v)));
+    }
+  }
+  const basisSeed=Math.abs(n[0])<0.85?[1,0,0]:[0,1,0];
+  let u=cross(basisSeed,n);const uLen=Math.hypot(...u);
+  u=u.map(v=>v/uLen);const v=cross(n,u);
+  const center=[0,0,0];for(const p of points)for(let i=0;i<3;i++)center[i]+=p[i];
+  if(points.length)for(let i=0;i<3;i++)center[i]/=points.length;
+  const ordered=points.map(p=>{
+    const delta=p.map((x,i)=>x-center[i]);
+    return {xy:[dot(delta,u),dot(delta,v)],point:p};
+  }).sort((a,b)=>Math.atan2(a.xy[1],a.xy[0])-Math.atan2(b.xy[1],b.xy[0]));
+  let twiceArea=0;
+  for(let i=0;i<ordered.length;i++){
+    const a=ordered[i].xy,b=ordered[(i+1)%ordered.length].xy;
+    twiceArea+=a[0]*b[1]-a[1]*b[0];
+  }
+  const area=Math.abs(twiceArea)/2;
+  const status=points.length===0?"NO_INTERSECTION":points.length<3||area<=tolerance?"DEGENERATE_SECTION":"DERIVED_PLANE_SECTION";
+  return {status,object_id:mesh.object_id,geometry_root:mesh.geometry_root,
+          frame:mesh.frame,epoch:mesh.epoch,unit:mesh.unit,
+          plane:{normal:n,offset:plane.offset},vertices_2d:status==="DERIVED_PLANE_SECTION"?ordered.map(p=>p.xy):[],
+          area:status==="DERIVED_PLANE_SECTION"?area:null,area_unit:mesh.unit+"^2",
+          evidence:"SYNTHETIC_GEOMETRY_ONLY",published:false,authoritative:false,physical_proof:false};
+}
