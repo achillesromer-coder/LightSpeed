@@ -197,6 +197,18 @@
       "print_job_created": false,
       "physical_printing_authorised": false,
       "downstream": "Future PrintSpace page preview/convert/queue only through separately authorised printer bridge and job receipt"
+    },
+    "print_job_draft": {
+      "adapter": "benchmarks/cgx_unispace_geometric_shorthand/read_lenses.py:plan_static_print_candidate",
+      "state": "DRAFT_NOT_SUBMITTED_OR_HELD_UNSUPPORTED_FORMAT",
+      "job_identity": "SHA256 native source + SVG preview + device intent + paper_mm + copies",
+      "preview_requires_caller_authorisation": true,
+      "capability_snapshot_requires_native_attestation": true,
+      "unsupported_mime": "HOLD_NOT_SUBMIT",
+      "print_provider_or_spooler": "NONE",
+      "physical_output": false,
+      "source_acl_db_receipt_and_owner_review": "UNVERIFIED",
+      "next_adapter": "Existing LightSpeed/PrintSpace permissioned local printer connector when installed, no native driver inferred"
     }
   }
 }
