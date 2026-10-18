@@ -83,6 +83,68 @@ class GeometricCarrierTests(unittest.TestCase):
   self.assertGreater(stats['raw_chunks'],0)
   self.assertEqual(decode_bytes(fast)[0],decode_bytes(slow)[0])
 
+
+class ArchimedeanSectionTests(unittest.TestCase):
+ def fixture(self):
+  from itertools import permutations,product
+  from math import dist,sqrt
+  v=sorted({tuple(p) for a,b in product((-1,1),repeat=2)
+            for p in permutations((0,a,2*b))})
+  edges=[(i,j) for i in range(len(v)) for j in range(i+1,len(v))
+         if abs(dist(v[i],v[j])-sqrt(2))<1e-10]
+  self.assertEqual((len(v),len(edges)),(24,36))
+  return v,edges
+ def view(self,**kwargs):
+  from cgx_geo import convex_polyhedron_2d_view
+  v,e=self.fixture()
+  settings=dict(vertices=v,edges=e,plane_origin=(0,0,0),
+                plane_normal=(0,0,1),source_ref='TEST-ONLY-R0',
+                coordinate_frame='synthetic-local',unit='model-unit',
+                template='truncated-octahedron')
+  settings.update(kwargs)
+  return convex_polyhedron_2d_view(**settings)
+ def test_finite_solids_and_defaults(self):
+  from cgx_geo import ARCHIMEDEAN_TEMPLATES,UNISPACE_DEFAULT_TEMPLATES
+  self.assertEqual(len(ARCHIMEDEAN_TEMPLATES),13)
+  self.assertEqual(len(set(ARCHIMEDEAN_TEMPLATES)),13)
+  self.assertEqual(len(UNISPACE_DEFAULT_TEMPLATES),3)
+  self.assertTrue(set(UNISPACE_DEFAULT_TEMPLATES).issubset(ARCHIMEDEAN_TEMPLATES))
+ def test_exact_octagon_section_and_symmetry(self):
+  z=self.view()
+  x=self.view(plane_normal=(1,0,0))
+  self.assertEqual((z['kind'],len(z['points_2d'])),('POLYGON',8))
+  self.assertAlmostEqual(z['area_in_unit_squared'],14.0,places=7)
+  self.assertAlmostEqual(z['area_in_unit_squared'],x['area_in_unit_squared'],places=7)
+  self.assertFalse(z['source_topology_and_convexity_verified'])
+  self.assertFalse(z['source_owner_or_acl_verified'])
+  self.assertFalse(z['dbr_promoted'])
+ def test_oblique_and_tangent_and_empty(self):
+  self.assertEqual(self.view(plane_normal=(1,1,1))['kind'],'POLYGON')
+  top=self.view(plane_origin=(0,0,2))
+  self.assertEqual((len(top['points_2d']),round(top['area_in_unit_squared'])),(4,2))
+  self.assertEqual(self.view(plane_origin=(0,0,3))['kind'],'EMPTY')
+ def test_projection_is_silhouette_not_source_face(self):
+  p=self.view(mode='projection')
+  self.assertEqual((p['kind'],len(p['points_2d'])),('POLYGON',8))
+  self.assertAlmostEqual(p['area_in_unit_squared'],14.,places=7)
+  self.assertEqual(p['mode'],'projection')
+ def test_explicit_units_source_and_topology_required(self):
+  from cgx_geo import CodecError
+  with self.assertRaises(CodecError):self.view(unit='')
+  with self.assertRaises(CodecError):self.view(source_ref='')
+  with self.assertRaises(CodecError):self.view(coordinate_frame='')
+  with self.assertRaises(CodecError):self.view(plane_normal=(0,0,0))
+  with self.assertRaises(CodecError):self.view(template='invented-solid')
+  with self.assertRaises(CodecError):self.view(edges=[(0,999)])
+  with self.assertRaises(CodecError):self.view(edges=[])
+  with self.assertRaises(CodecError):self.view(edges=[(0,1),(1,0)])
+  with self.assertRaises(CodecError):self.view(vertices=[(0,float('nan'),0)])
+ def test_original_vertex_data_is_unmodified(self):
+  v,e=self.fixture()
+  original=(list(v),list(e))
+  self.view(vertices=v,edges=e)
+  self.assertEqual((v,e),original)
+
 if __name__=='__main__':unittest.main()
 
 class RootDeltaTests(unittest.TestCase):
