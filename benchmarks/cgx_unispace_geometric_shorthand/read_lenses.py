@@ -71,3 +71,61 @@ def probe(source: bytes,filename: str='source.bin')->dict:
         'evidence':evidence,'preservation':loss,
         'semantic_identity_inferred':False,'application_execution_authorized':False,
         'licence_or_owner_verified':False,'source_bytes_needed_for_R0':True}
+
+
+def section_svg_preview(view: dict, *, preview_authorised: bool = False,
+                        canvas: int = 800, padding: int = 32) -> str:
+    """Bounded *static* SVG preview from an upstream 2D section/silhouette.
+
+    Caller must enforce original FileSpace ACL, rights, permitted visibility
+    and source/DBR checks. No source metadata is embedded in the output.
+    This neither talks to a printer nor authorises publication or toolpaths.
+    """
+    import math
+    if preview_authorised is not True:
+        raise ValueError('Independent caller preview permission required')
+    if type(canvas) is not int or not 128 <= canvas <= 4096:
+        raise ValueError('Invalid SVG canvas')
+    if type(padding) is not int or not 0 <= padding < canvas//3:
+        raise ValueError('Invalid SVG padding')
+    if not isinstance(view,dict) or view.get('kind') not in (
+        'EMPTY','POINT','SEGMENT','POLYGON'
+    ) or view.get('mode') not in ('section','projection'):
+        raise ValueError('Invalid geometry view for static preview')
+    xy=view.get('points_2d')
+    if not isinstance(xy,(list,tuple)) or len(xy)>512:
+        raise ValueError('Invalid or oversized 2D polygon')
+    points=[]
+    for pt in xy:
+        if not isinstance(pt,(tuple,list)) or len(pt)!=2 or any(
+            type(v) not in (int,float) or not math.isfinite(v) for v in pt
+        ):
+            raise ValueError('Nonfinite 2D point')
+        points.append((float(pt[0]),float(pt[1])))
+    expected={'EMPTY':0,'POINT':1,'SEGMENT':2}
+    if view['kind'] in expected and len(points)!=expected[view['kind']]:
+        raise ValueError('Geometry cardinality mismatch')
+    if view['kind']=='POLYGON' and len(points)<3:
+        raise ValueError('Polygon needs at least 3 points')
+    head=(f'<svg xmlns="http://www.w3.org/2000/svg" '
+          f'width="{canvas}" height="{canvas}" viewBox="0 0 {canvas} {canvas}" '
+          f'role="img" aria-label="Bounded geometric preview">')
+    foot='</svg>'
+    if not points:
+        return head+foot
+    minx,maxx=min(p[0] for p in points),max(p[0] for p in points)
+    miny,maxy=min(p[1] for p in points),max(p[1] for p in points)
+    span=max(maxx-minx,maxy-miny,1e-12)
+    scale=(canvas-2*padding)/span
+    coords=[(canvas/2+(x-(minx+maxx)/2)*scale,
+             canvas/2-(y-(miny+maxy)/2)*scale) for x,y in points]
+    d='M '+' L '.join(f'{x:.6f},{y:.6f}' for x,y in coords)
+    if view['kind']=='POLYGON':
+        d+=' Z'
+    if view['kind']=='POINT':
+        x,y=coords[0]
+        glyph=(f'<circle cx="{x:.6f}" cy="{y:.6f}" r="3" fill="#222222"/>')
+    else:
+        glyph=(f'<path d="{d}" fill="none" stroke="#222222" '
+               f'stroke-width="1.5" stroke-linejoin="round"/>')
+    return head+glyph+foot
