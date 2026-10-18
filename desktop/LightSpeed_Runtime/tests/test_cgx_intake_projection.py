@@ -229,3 +229,14 @@ def test_native_r1_plan_preserves_original_source_authority_when_reading_cad():
     assert result["state"] == "HOLD_UNREGISTERED_R1_ADAPTER"
     assert result["r0_candidate"]["identity"]["source_sha256"] == env["sha256"]
     assert result["public_release_authorized"] is False
+
+def test_native_r1_plan_rejects_unapproved_registry_state_and_mime_alias():
+    from lightspeed_runtime.cgx_intake_projection import plan_native_r1_review
+    raw, env, meta, types, contract = _r1_fixture()
+    types["types"][0]["status"] = "provisional"
+    result = plan_native_r1_review(raw, env, meta, type_registry=types, conversion_contract=contract)
+    assert result["state"] == "HOLD_UNVERIFIED_ADAPTER_STATUS"
+    types["types"][0]["status"] = "supported"
+    types["types"][0]["id"] = "text/markdown"
+    result = plan_native_r1_review(raw, env, meta, type_registry=types, conversion_contract=contract)
+    assert result["state"] == "HOLD_MEDIA_TYPE_REGISTRY_MISMATCH"
