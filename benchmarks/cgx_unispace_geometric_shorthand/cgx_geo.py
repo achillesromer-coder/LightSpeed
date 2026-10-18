@@ -308,6 +308,116 @@ def decode_delta_bytes(carrier:bytes,prior:bytes|None)->tuple[bytes,dict]:
         'source_sha256':h(output),'patch_runs':len(runs),
         'same_baseline_confirmed':True,'signed':False,'semantic_equivalence_verified':False}
 
+
+# Display-only geometry over separately verified source vertices/topology.
+ARCHIMEDEAN_TEMPLATES = (
+ 'truncated-tetrahedron','cuboctahedron','truncated-cube','truncated-octahedron',
+ 'rhombicuboctahedron','truncated-cuboctahedron','snub-cube',
+ 'icosidodecahedron','truncated-dodecahedron','truncated-icosahedron',
+ 'rhombicosidodecahedron','truncated-icosidodecahedron','snub-dodecahedron',
+)
+UNISPACE_DEFAULT_TEMPLATES = ('truncated-octahedron','cuboctahedron','truncated-icosahedron')
+SUPPORTED_GEOMETRY_TEMPLATES = frozenset(ARCHIMEDEAN_TEMPLATES) | {
+ 'legacy-regular-dodecahedron','custom-convex-polyhedron',
+}
+
+def convex_polyhedron_2d_view(vertices, edges, *, plane_origin, plane_normal,
+    source_ref, coordinate_frame, unit, template='custom-convex-polyhedron',
+    mode='section', tolerance=1e-9):
+    """Pure 2D section or orthographic convex silhouette of source-owned geometry.
+
+    Coordinates must already share the specified reference frame and units.
+    Original mesh validity, convexity, source rights, DBR and ACL are NOT proven.
+    """
+    if template not in SUPPORTED_GEOMETRY_TEMPLATES: raise CodecError('Unknown template')
+    if mode not in ('section','projection'):raise CodecError('Invalid 2D view mode')
+    if any(not isinstance(x,str) or not x.strip() or len(x)>256
+           for x in (source_ref,coordinate_frame,unit)):
+        raise CodecError('Source, frame and units required')
+    if type(tolerance) not in (int,float) or not math.isfinite(tolerance) or tolerance<=0:
+        raise CodecError('Invalid tolerance')
+    if not isinstance(vertices,(list,tuple)) or not 1<=len(vertices)<=4096:
+        raise CodecError('Invalid vertex count')
+    if not isinstance(edges,(list,tuple)) or len(edges)>16384:
+        raise CodecError('Invalid edge count')
+    def vector(p):
+        if not isinstance(p,(list,tuple)) or len(p)!=3 or any(
+                type(x) not in (int,float) or not math.isfinite(x) for x in p):
+            raise CodecError('Finite 3-vector required')
+        return tuple(float(x) for x in p)
+    def sub(a,b):return tuple(a[i]-b[i] for i in range(3))
+    def dot(a,b):return sum(a[i]*b[i] for i in range(3))
+    def cross(a,b):
+        return (a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],
+                a[0]*b[1]-a[1]*b[0])
+    points=[vector(p) for p in vertices]
+    origin,normal=vector(plane_origin),vector(plane_normal)
+    length=math.sqrt(dot(normal,normal))
+    if not math.isfinite(length) or length<=tolerance:
+        raise CodecError('Degenerate plane normal')
+    normal=tuple(x/length for x in normal)
+    pairset=set()
+    for edge in edges:
+        if not isinstance(edge,(tuple,list)) or len(edge)!=2 or any(
+                type(i) is not int or not 0<=i<len(points) for i in edge) or edge[0]==edge[1]:
+            raise CodecError('Invalid edge')
+        key=tuple(sorted(edge))
+        if key in pairset or math.dist(points[key[0]],points[key[1]])<=tolerance:
+            raise CodecError('Duplicate or zero-length edge')
+        pairset.add(key)
+    if mode=='section' and not pairset:raise CodecError('Section needs real edges')
+    index=min(range(3),key=lambda i:(abs(normal[i]),i))
+    guide=tuple(float(i==index) for i in range(3))
+    u=cross(normal,guide);size=math.sqrt(dot(u,u))
+    u=tuple(x/size for x in u);v=cross(normal,u)
+    raw=points if mode=='projection' else []
+    if mode=='section':
+        distances=[dot(sub(p,origin),normal) for p in points]
+        for a,b in sorted(pairset):
+            d1,d2=distances[a],distances[b]
+            if abs(d1)<=tolerance:raw.append(points[a])
+            if abs(d2)<=tolerance:raw.append(points[b])
+            if (d1>tolerance and d2< -tolerance) or (d1< -tolerance and d2>tolerance):
+                ratio=d1/(d1-d2)
+                raw.append(tuple(points[a][k]+ratio*(points[b][k]-points[a][k])
+                                 for k in range(3)))
+    projected=[]
+    for p in raw:
+        d=sub(p,origin);xy=(dot(d,u),dot(d,v))
+        if not all(math.isfinite(t) for t in xy):raise CodecError('Nonfinite projection')
+        if not any(math.dist(xy,old[0])<=tolerance for old in projected):
+            projected.append((xy,p))
+    projected.sort(key=lambda pair:pair[0])
+    def ccw(a,b,c):
+        x,y,z=a[0],b[0],c[0]
+        return (y[0]-x[0])*(z[1]-x[1])-(y[1]-x[1])*(z[0]-x[0])
+    if len(projected)>=3:
+        lo=[];hi=[]
+        for item in projected:
+            while len(lo)>=2 and ccw(lo[-2],lo[-1],item)<=tolerance:lo.pop()
+            lo.append(item)
+        for item in reversed(projected):
+            while len(hi)>=2 and ccw(hi[-2],hi[-1],item)<=tolerance:hi.pop()
+            hi.append(item)
+        hull=lo[:-1]+hi[:-1]
+    else:hull=projected
+    area=abs(sum(hull[i][0][0]*hull[(i+1)%len(hull)][0][1]
+                 -hull[(i+1)%len(hull)][0][0]*hull[i][0][1]
+                 for i in range(len(hull))))/2 if len(hull)>=3 else 0.
+    return {
+        'kind':'EMPTY' if not hull else 'POINT' if len(hull)==1 else 'SEGMENT' if len(hull)==2 else 'POLYGON',
+        'mode':mode,'template':template,'source_ref':source_ref,
+        'coordinate_frame':coordinate_frame,'unit':unit,'tolerance':tolerance,
+        'points_2d':[list(p[0]) for p in hull],
+        'points_3d':[list(p[1]) for p in hull],
+        'plane_normal':list(normal),'basis_u':list(u),'basis_v':list(v),
+        'area_in_unit_squared':area,'source_vertex_count':len(points),
+        'source_edge_count':len(pairset),
+        'source_topology_and_convexity_verified':False,
+        'source_owner_or_acl_verified':False,'dbr_promoted':False,
+        'evidence':'SYNTHETIC_GEOMETRIC_VIEW_NOT_SEMANTIC_AUTHORITY',
+    }
+
 def main() -> int:
     p=argparse.ArgumentParser(description='CGX candidate geometric source byte carrier')
     sub=p.add_subparsers(dest='op',required=True)
