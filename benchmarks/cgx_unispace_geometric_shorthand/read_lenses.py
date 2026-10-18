@@ -129,3 +129,50 @@ def section_svg_preview(view: dict, *, preview_authorised: bool = False,
         glyph=(f'<path d="{d}" fill="none" stroke="#222222" '
                f'stroke-width="1.5" stroke-linejoin="round"/>')
     return head+glyph+foot
+
+
+def plan_static_print_candidate(view, *, source_sha256, capability_snapshot,
+                                paper_mm, copies=1, preview_authorised=False):
+    """Draft-only print plan: no device discovery, submission or authority."""
+    import hashlib
+    import json
+    import math
+    if not isinstance(source_sha256,str) or len(source_sha256)!=64 or any(
+        c not in '0123456789abcdef' for c in source_sha256
+    ):
+        raise ValueError('Valid native source SHA256 required')
+    if not isinstance(capability_snapshot,dict):
+        raise ValueError('Device capability declaration required')
+    device=capability_snapshot.get('device_ref')
+    formats=capability_snapshot.get('supported_mime')
+    if not isinstance(device,str) or not 0<len(device)<=128:
+        raise ValueError('Invalid device reference')
+    if not isinstance(formats,(list,tuple)) or len(formats)>32 or any(
+        not isinstance(x,str) or not 0<len(x)<=128 for x in formats
+    ):
+        raise ValueError('Invalid printer format declaration')
+    if type(copies) is not int or not 1<=copies<=100:
+        raise ValueError('Invalid copy count')
+    if not isinstance(paper_mm,(list,tuple)) or len(paper_mm)!=2 or any(
+        type(x) not in (int,float) or not math.isfinite(x) or not 10<=x<=2000 for x in paper_mm
+    ):
+        raise ValueError('Explicit paper width/height in mm required')
+    # The caller must independently check ACL and consent first.
+    svg=section_svg_preview(view,preview_authorised=preview_authorised)
+    svg_sha256=hashlib.sha256(svg.encode('utf-8')).hexdigest()
+    context={'source_sha256':source_sha256,'preview_sha256':svg_sha256,
+             'device_ref':device,'paper_mm':list(map(float,paper_mm)),
+             'copies':copies,'mime':'image/svg+xml'}
+    fingerprint=hashlib.sha256(json.dumps(
+        context,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+    supported='image/svg+xml' in formats
+    return {
+        'job_id':'CGX-PRINT-DRAFT-'+fingerprint[:24],
+        'status':'DRAFT_NOT_SUBMITTED' if supported else 'HELD_UNSUPPORTED_FORMAT',
+        'preview_svg':svg, 'context':context,
+        'capability_snapshot_attested':False,
+        'source_owner_and_acl_verified':False,
+        'consent_to_submit':False,'spooler_job_id':None,
+        'db_receipt_verified':False,'physical_output_verified':False,
+        'source_mutated':False,
+    }
