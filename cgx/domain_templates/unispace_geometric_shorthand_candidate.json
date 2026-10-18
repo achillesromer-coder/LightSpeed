@@ -183,6 +183,20 @@
     "signed_peer_verified": false,
     "dbr_promoted": false,
     "acl_verified": false,
-    "public_release_authorized": false
+    "public_release_authorized": false,
+    "svg_preview": {
+      "adapter": "benchmarks/cgx_unispace_geometric_shorthand/read_lenses.py:section_svg_preview",
+      "output": "static inline SVG no script no external assets no source labels",
+      "input": "bounded typed 2D section or projection from same FileSpace Object_ID",
+      "default_permission": "DENY",
+      "required_scope": "independently verified caller-controlled preview authorisation",
+      "strict_limits": "512 points, finite coordinates, 128..4096 pixel canvas; unit/DPI not inferred",
+      "output_only": true,
+      "source_acl_lease_and_rights_verified_by_adapter": false,
+      "device_discovery": false,
+      "print_job_created": false,
+      "physical_printing_authorised": false,
+      "downstream": "Future PrintSpace page preview/convert/queue only through separately authorised printer bridge and job receipt"
+    }
   }
 }
