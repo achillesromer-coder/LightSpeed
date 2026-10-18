@@ -133,5 +133,56 @@
     "public_execution_allowed": false,
     "active_transfer_allowed": false,
     "canonical_mutation_allowed": false
+  },
+  "convex_2d_view_candidate": {
+    "status": "SOURCE_TESTED_NONAUTHORITATIVE_CANDIDATE",
+    "implementation": "benchmarks/cgx_unispace_geometric_shorthand/cgx_geo.py:convex_polyhedron_2d_view",
+    "tests": "benchmarks/cgx_unispace_geometric_shorthand/test_cgx_geo.py:ArchimedeanSectionTests",
+    "templates": {
+      "finite_library_count": 13,
+      "defaults": [
+        "truncated-octahedron",
+        "cuboctahedron",
+        "truncated-icosahedron"
+      ],
+      "legacy_reference": "legacy-regular-dodecahedron",
+      "mesh_status": "REQUIRES_INDEPENDENT_NATIVE_SOURCE_VERTICES_AND_EDGES"
+    },
+    "modes": [
+      "section",
+      "projection"
+    ],
+    "primitives": [
+      "original transformed vertex coordinates",
+      "original edge indices",
+      "plane origin",
+      "plane normal",
+      "source reference",
+      "coordinate frame",
+      "units",
+      "tolerance"
+    ],
+    "output_contract": [
+      "empty/point/segment/polygon",
+      "ordered 2D points",
+      "source plane 3D coordinates",
+      "deterministic basis",
+      "area in squared input units"
+    ],
+    "valid_domain": "SOURCE_ASSERTED_CONVEX_POLYHEDRA_ONLY_NO_TOPOLOGY_PROOF",
+    "warnings": [
+      "not finite storage miracle",
+      "not source/semantic authority",
+      "projection returns silhouette not cross section",
+      "untrusted source coordinate frame not verified",
+      "not a GMAT/geodesy/magnetic positioning solver",
+      "does not validate hidden edges or nonconvex topology"
+    ],
+    "original_source_unchanged": true,
+    "source_owner_verified": false,
+    "signed_peer_verified": false,
+    "dbr_promoted": false,
+    "acl_verified": false,
+    "public_release_authorized": false
   }
 }
