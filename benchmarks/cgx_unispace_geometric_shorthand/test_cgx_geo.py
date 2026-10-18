@@ -183,6 +183,39 @@ class SectionSVGPreviewTests(unittest.TestCase):
   d={'kind':'POINT','mode':'section','points_2d':[[0,0]]}
   self.assertIn('<circle',section_svg_preview(d,preview_authorised=True))
 
+
+class DraftPrintJobTests(unittest.TestCase):
+ def preview(self):
+  return {'kind':'POLYGON','mode':'section','points_2d':[[0,0],[2,0],[2,1],[0,1]]}
+ def device(self):
+  return {'device_ref':'LOCAL-DEVICE-CANDIDATE-1','supported_mime':['image/svg+xml']}
+ def test_hashed_draft_is_deterministic_and_never_submitted(self):
+  from read_lenses import plan_static_print_candidate
+  args=dict(view=self.preview(),source_sha256='a'*64,capability_snapshot=self.device(),
+            paper_mm=(210,297),copies=2,preview_authorised=True)
+  first=plan_static_print_candidate(**args);second=plan_static_print_candidate(**args)
+  self.assertEqual(first['job_id'],second['job_id'])
+  self.assertEqual(first['status'],'DRAFT_NOT_SUBMITTED')
+  self.assertIsNone(first['spooler_job_id'])
+  self.assertFalse(first['db_receipt_verified'])
+  self.assertFalse(first['source_owner_and_acl_verified'])
+  self.assertFalse(first['physical_output_verified'])
+ def test_unsupported_format_is_held_not_submitted(self):
+  from read_lenses import plan_static_print_candidate
+  caps={'device_ref':'UNKNOWN','supported_mime':['application/pdf']}
+  x=plan_static_print_candidate(self.preview(),source_sha256='b'*64,
+      capability_snapshot=caps,paper_mm=(210,297),preview_authorised=True)
+  self.assertEqual(x['status'],'HELD_UNSUPPORTED_FORMAT')
+  self.assertIsNone(x['spooler_job_id'])
+ def test_missing_acl_source_and_settings_refuse_draft(self):
+  from read_lenses import plan_static_print_candidate
+  kw=dict(view=self.preview(),source_sha256='a'*64,capability_snapshot=self.device(),
+          paper_mm=(210,297),preview_authorised=True)
+  with self.assertRaises(ValueError):plan_static_print_candidate(**{**kw,'preview_authorised':False})
+  with self.assertRaises(ValueError):plan_static_print_candidate(**{**kw,'source_sha256':'fake'})
+  with self.assertRaises(ValueError):plan_static_print_candidate(**{**kw,'paper_mm':(0,297)})
+  with self.assertRaises(ValueError):plan_static_print_candidate(**{**kw,'copies':0})
+
 if __name__=='__main__':unittest.main()
 
 class RootDeltaTests(unittest.TestCase):
