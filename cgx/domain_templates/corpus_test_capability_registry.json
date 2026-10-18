@@ -50,5 +50,715 @@
       "activation_state": "prepared_not_activated"
     }
   ],
-  "routing_rule": "Use the capability for its verified designed function. An LLM may compile, explain or reconcile the packet, but it does not inherit the solver's mathematical authority or the physical test's evidentiary status."
+  "routing_rule": "Use the capability for its verified designed function. An LLM may compile, explain or reconcile the packet, but it does not inherit the solver's mathematical authority or the physical test's evidentiary status.",
+  "historical_intent_coverage": {
+    "schema": "CGX-INTENT-TO-EVIDENCE-CROSSWALK/0.1",
+    "review_date": "2026-10-16",
+    "state": "NON_AUTHORITATIVE_RECONCILIATION_CANDIDATE",
+    "purpose": "Recover and trace historical, explicitly outlined next, and inferred follow-on work across sweep/emulation/simulation/analysis/visualization, rather than miscount only completed or cadence-triggered tasks.",
+    "authority": "Existing Object_ID, original source hashes, specialist owners, DBR/Reason Log, execution leases and owner gates; this is not another master work queue.",
+    "coverage_completeness": "PARTIAL_BY_DESIGN: bounded seed list only; unknown historical sources remain FRONTIER, not counted as absent.",
+    "evidence_distinctions": [
+      "historical intent",
+      "candidate source mapping",
+      "source-tested software",
+      "source-only numerical result",
+      "emulated fault",
+      "simulated model",
+      "instrument-measured result",
+      "physical qualification",
+      "approved release"
+    ],
+    "required_linkage_for_each_intent": [
+      "stable Object_ID",
+      "original intent/source pointer and revision/hash",
+      "domain owner and rights",
+      "explicit/inferred/repeated provenance",
+      "question and falsifiable output",
+      "model, assumptions, units, frame and uncertainty",
+      "method/adapter capability and version",
+      "dependencies and final upstream receipts",
+      "execution lease, CPU/cost/time controls",
+      "parameter sweep plus negative/sensitivity cases",
+      "result artifacts and content hashes",
+      "independent numerical/empirical proof",
+      "temporal readback and contradiction/supersession",
+      "viewer lens, view hash, ACL, evidence label",
+      "next smallest authorised work unit and terminal status"
+    ],
+    "result_stack": [
+      "exact preserved source",
+      "bounded baseline fixture and known model",
+      "deterministic sweep/sensitivity and unit checks",
+      "isolated emulation/fault cases",
+      "typed independent simulation or digital twin",
+      "residual/statistical/uncertainty and contradiction analysis",
+      "access-controlled multi-view visualisation",
+      "bench/field/host conformance when required",
+      "independent receipt/readback then scoped proposed semantic delta"
+    ],
+    "scheduling_rule": "Existing :00/:22/:44 source-checks discover and dedupe relevant changed-source intents by (Object_ID, source hash, scoped owner, method); :11 and :33 remain paused. No new timer, queue worker or physical start. Inferred next remains human-review candidate until explicit source/dependency admission.",
+    "execution_rule": "Do NOT treat these intents as executable capabilities; only existing verified adapters in 'capabilities' may be selected under the corpus-test policy. An intent is not COMPLETE without upstream final receipts, actual execution, independent proof, source/result hash readback and accepted owner scope.",
+    "precedence": [
+      "review original intents and aliases before classifying missing",
+      "reconcile newer owner source revisions/S92 without de-authorising S91 silently",
+      "bind proven smallest dependency first",
+      "follow source-change events instead of re-running unchanged outputs",
+      "complete source numerical proofs before bench/field owner-approved acts",
+      "publish only after private/public negative security and claim-rights audit"
+    ],
+    "discovery_roots": [
+      "cgx/domain_templates/corpus_inclusion_registry.json",
+      "cgx/domain_templates/cgp_ies_launch_frontier_queue.json",
+      "cgx/domain_templates/semantic_view_lens_registry.json",
+      "cgx/domain_templates/assurance_fixture_scenarios.json",
+      "external owner Raphael PrintSpace PR6 (requires rights/source audit)",
+      "external owner Romer-MPL GMAT and MPL (requires separate run proof)",
+      "external JPL priority data owner repo (raw captures not dynamics proof)",
+      "Drive/Achilles P.A owner reason and D-drive logs (source receipts, not installed proof)",
+      "older conversations and archives (not yet exhaustive)"
+    ],
+    "existing_operational_gate_issues": [
+      "LightSpeed#158",
+      "LightSpeed#161"
+    ],
+    "hold_conditions": [
+      "BouwerBase native installed readback absent",
+      "D-drive full original-byte inventory and proof absent",
+      "S92/current Recovery pointer status inconsistency requires owner source audit",
+      "real signed two-distinct-node test absent",
+      "sustained local CPU<=80% process-group proof absent",
+      "empirical/physical qualification absent",
+      "private/public negative proof not complete"
+    ],
+    "entries": [
+      {
+        "intent_id": "F-01",
+        "scoped_owner": "cognigrex",
+        "scope": "Full original corpus and obsolete alias sweeps",
+        "intent_origin": "historical_owner_intent_to_reconcile",
+        "owner_source_candidates": [
+          "cgx/domain_templates/corpus_inclusion_registry.json",
+          "cgx/domain_templates/corpus_aware_base_shell_contract.json",
+          "cgx/domain_templates/migration_policy.json"
+        ],
+        "method_candidates": [
+          "source-digest-sweep",
+          "supersession-parity",
+          "contradiction-analysis"
+        ],
+        "next_required_evidence": "source_mapping",
+        "preferred_lens": "filespace-tree",
+        "priority": "P0",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-02",
+        "scoped_owner": "cognigrex",
+        "scope": "Dependency cascade and proof-driven result propagation",
+        "intent_origin": "existing_contract",
+        "owner_source_candidates": [
+          "cgx/domain_templates/corpus_test_simulation_policy.json",
+          "cgx/domain_templates/execution_lease_contract.json"
+        ],
+        "method_candidates": [
+          "parameter-sweep",
+          "DAG-toposort",
+          "receipt-gate-negative-test",
+          "stacked-comparison"
+        ],
+        "next_required_evidence": "capability_packet",
+        "preferred_lens": "matrix",
+        "priority": "P0",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-03",
+        "scoped_owner": "lightspeed",
+        "scope": "Smith queue, heartbeat, lease, reboot and fault emulation",
+        "intent_origin": "existing_contract",
+        "owner_source_candidates": [
+          "cgx/domain_templates/agent_runtime_contract.json",
+          "cgx/domain_templates/technology_stack_registry.json"
+        ],
+        "method_candidates": [
+          "restart-emulation",
+          "lease-replay-tests",
+          "queue-ACK",
+          "receipt-hash-readback"
+        ],
+        "next_required_evidence": "native_runtime",
+        "preferred_lens": "network-runtime",
+        "priority": "P0",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-04",
+        "scoped_owner": "lightspeed",
+        "scope": "Sustained host-group CPU, tokens, memory and cost controls",
+        "intent_origin": "historical_owner_intent_to_reconcile",
+        "owner_source_candidates": [
+          "cgx/domain_templates/execution_lease_contract.json",
+          "cgx/domain_templates/technology_stack_registry.json"
+        ],
+        "method_candidates": [
+          "resource-load-sweep",
+          "admission-vs-hard-cap-comparison",
+          "cancellation-fault-injection"
+        ],
+        "next_required_evidence": "native_runtime",
+        "preferred_lens": "network-runtime",
+        "priority": "P0",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-05",
+        "scoped_owner": "cognigrex",
+        "scope": "Signed N-node sparse FileSpace/DataSpace sync",
+        "intent_origin": "existing_contract",
+        "owner_source_candidates": [
+          "cgx/domain_templates/node_exchange_contract.json",
+          "cgx/domain_templates/source_envelope_contract.json"
+        ],
+        "method_candidates": [
+          "network-emulation",
+          "lease-anti-replay",
+          "delta-reconstruction",
+          "offline-conflict-tests"
+        ],
+        "next_required_evidence": "two_distinct_nodes",
+        "preferred_lens": "topology-graph",
+        "priority": "P0",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-06",
+        "scoped_owner": "lightspeed",
+        "scope": "Private/public release, ACL, embed and hostile input",
+        "intent_origin": "historical_owner_intent_to_reconcile",
+        "owner_source_candidates": [
+          "cgx/domain_templates/view_selection_policy.json",
+          "cgx/domain_templates/cgp_ies_release_visibility_policy.json"
+        ],
+        "method_candidates": [
+          "negative-security-tests",
+          "HTTPS-cross-device-probe",
+          "public-bundle-inventory"
+        ],
+        "next_required_evidence": "negative_release_security",
+        "preferred_lens": "publication",
+        "priority": "P0",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-07",
+        "scoped_owner": "cognigrex",
+        "scope": "CCC family/type conditional UI and semantic traversal",
+        "intent_origin": "historical_owner_intent_to_reconcile",
+        "owner_source_candidates": [
+          "cgx/domain_templates/semantic_view_lens_registry.json",
+          "cgx/domain_templates/view_selection_policy.json",
+          "cgx/domain_templates/cross_domain_bridge_registry.json"
+        ],
+        "method_candidates": [
+          "IF-THEN-fixture",
+          "Object_ID-traversal",
+          "conditional-visibility-tests",
+          "render-hash"
+        ],
+        "next_required_evidence": "source_mapping",
+        "preferred_lens": "hybrid-canonical-cells",
+        "priority": "P1",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-08",
+        "scoped_owner": "romer",
+        "scope": "RFS and EMFF quartz/coil resonator screening and measured response",
+        "intent_origin": "existing_contract",
+        "owner_source_candidates": [
+          "cgx/domain_templates/mark3_rfs_legacy_screening_2026-10-05.json",
+          "cgx/domain_templates/corpus_test_capability_registry.json"
+        ],
+        "method_candidates": [
+          "parameter-sweep",
+          "solver-cross-check",
+          "uncertainty-sensitivity",
+          "bench-measurement"
+        ],
+        "next_required_evidence": "calibrated_physical",
+        "preferred_lens": "twin-3d",
+        "priority": "P1",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-09",
+        "scoped_owner": "romer",
+        "scope": "Solar Hull Cu-Bi-Si tile energy and environmental tests",
+        "intent_origin": "historical_owner_intent_to_reconcile",
+        "owner_source_candidates": [
+          "cgx/domain_templates/romer_semantic_library.json",
+          "cgx/domain_templates/romer_type_registry.json"
+        ],
+        "method_candidates": [
+          "electrical-simulation",
+          "temperature-light-sweep",
+          "metered-tile-test",
+          "lifecycle-comparison"
+        ],
+        "next_required_evidence": "calibrated_physical",
+        "preferred_lens": "evidence-claim",
+        "priority": "P1",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-10",
+        "scoped_owner": "romer",
+        "scope": "Free Flow graphene storage, cap and pulsed-load cycles",
+        "intent_origin": "existing_contract",
+        "owner_source_candidates": [
+          "cgx/domain_templates/free_flow_battery_model_consistency_2026-10-05.json",
+          "cgx/domain_templates/romer_semantic_library.json"
+        ],
+        "method_candidates": [
+          "circuit-emulation",
+          "load-cycle",
+          "thermal-sensitivity",
+          "instrument-readback"
+        ],
+        "next_required_evidence": "calibrated_physical",
+        "preferred_lens": "matrix",
+        "priority": "P1",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-11",
+        "scoped_owner": "romer",
+        "scope": "Mark 1P, III, V and capsule source-CAD/assembly interfaces",
+        "intent_origin": "existing_contract",
+        "owner_source_candidates": [
+          "cgx/domain_templates/mark3_interface_semantic_correction_2026-10-05.json",
+          "cgx/domain_templates/cgx_3d_source_discovery_receipt_2026-10-03.json",
+          "cgx/domain_templates/priority_3d_source_bindings_execution_2026-10-05.json"
+        ],
+        "method_candidates": [
+          "CAD-tree-parity",
+          "BOM-derivation",
+          "tolerance-sweep",
+          "assembly-collision"
+        ],
+        "next_required_evidence": "geometry_and_tolerance",
+        "preferred_lens": "twin-3d",
+        "priority": "P1",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-12",
+        "scoped_owner": "romer",
+        "scope": "Luke II GEO braking and Luke IV terrestrial catch/maglev",
+        "intent_origin": "historical_owner_intent_to_reconcile",
+        "owner_source_candidates": [
+          "cgx/domain_templates/luke4_configuration_relation_2026-10-05.json",
+          "cgx/domain_templates/romer_semantic_library.json"
+        ],
+        "method_candidates": [
+          "field-simulation",
+          "kinematic-sweep",
+          "structural-load-cases",
+          "safe-state-fault-injection"
+        ],
+        "next_required_evidence": "source_mapping",
+        "preferred_lens": "twin-3d",
+        "priority": "P1",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-13",
+        "scoped_owner": "romer",
+        "scope": "M1 raised corridor modules, river crossings, supports and traffic",
+        "intent_origin": "existing_contract",
+        "owner_source_candidates": [
+          "cgx/domain_templates/m1_pillar_scale_resolution_2026-10-05.json",
+          "cgx/domain_templates/m1_configuration_precedence_2026-10-05.json",
+          "cgx/domain_templates/m1_component_mark3_connector_execution_2026-10-05.json"
+        ],
+        "method_candidates": [
+          "geometry-parameter-sweep",
+          "structural-load-cases",
+          "traffic-scenario-simulation",
+          "river-crossing-visualisation"
+        ],
+        "next_required_evidence": "engineering_source_assurance",
+        "preferred_lens": "map-spatial",
+        "priority": "P1",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-14",
+        "scoped_owner": "romer",
+        "scope": "Asteroid priority, ephemeris, GMAT missions and independent MPL",
+        "intent_origin": "existing_contract",
+        "owner_source_candidates": [
+          "cgx/domain_templates/mpl_assurance_adapter.json",
+          "cgx/domain_templates/romer_type_registry.json"
+        ],
+        "method_candidates": [
+          "JPL-source-epoch-comparison",
+          "GMAT-state-propagation",
+          "covariance-sensitivity",
+          "MPL-risk-screening"
+        ],
+        "next_required_evidence": "mission_dynamics_and_uncertainty",
+        "preferred_lens": "map-spatial",
+        "priority": "P1",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-15",
+        "scoped_owner": "romer",
+        "scope": "InterSol, WatchTower and logistics/site lifecycle twins",
+        "intent_origin": "existing_contract",
+        "owner_source_candidates": [
+          "cgx/domain_templates/cgx_3d_source_discovery_receipt_2026-10-03.json",
+          "cgx/domain_templates/cgp_ies_launch_frontier_queue.json"
+        ],
+        "method_candidates": [
+          "CAD-source-parity",
+          "site-constraint-matrix",
+          "thermal-power-load-scenario",
+          "logistics-routing"
+        ],
+        "next_required_evidence": "engineering_source_assurance",
+        "preferred_lens": "twin-3d",
+        "priority": "P1",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-16",
+        "scoped_owner": "emassc",
+        "scope": "Raphael N3 versus EML#F versus source-native RFS/EMFF equations",
+        "intent_origin": "historical_owner_intent_to_reconcile",
+        "owner_source_candidates": [
+          "cgx/domain_templates/assurance_fixture_scenarios.json",
+          "cgx/domain_templates/source_envelope_contract.json"
+        ],
+        "method_candidates": [
+          "symbol-dimension-audit",
+          "alternative-hypothesis-falsification",
+          "independent-numeric-proof",
+          "historic-runner-comparison"
+        ],
+        "next_required_evidence": "original_equation_rights",
+        "preferred_lens": "evidence-claim",
+        "priority": "P0",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-17",
+        "scoped_owner": "emassc",
+        "scope": "Vacuum/inert terrestrial versus microgravity apparatus conditions",
+        "intent_origin": "historical_owner_intent_to_reconcile",
+        "owner_source_candidates": [
+          "cgx/domain_templates/technology_stack_registry.json",
+          "cgx/domain_templates/assurance_fixture_scenarios.json"
+        ],
+        "method_candidates": [
+          "environment-transition-emulation",
+          "pressure-thermal-sweep",
+          "material-interface-model",
+          "benchtop-qualification"
+        ],
+        "next_required_evidence": "physical_safety_and_instruments",
+        "preferred_lens": "protocol-apparatus",
+        "priority": "P1",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-18",
+        "scoped_owner": "emassc",
+        "scope": "PrintCeptor PC01, BB1–BB3 staged multi-material 4D process",
+        "intent_origin": "historical_owner_intent_to_reconcile",
+        "owner_source_candidates": [
+          "cgx/domain_templates/cgx_printable_solid_state_extension_2026-10-07.json",
+          "cgx/domain_templates/cgp_ies_domain_adapter_registry.json"
+        ],
+        "method_candidates": [
+          "material-X-to-Y-matrix",
+          "sequencing-simulation",
+          "cure-and-damage-test",
+          "metrology-coupon"
+        ],
+        "next_required_evidence": "printer_machine_and_materials",
+        "preferred_lens": "twin-3d",
+        "priority": "P1",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-19",
+        "scoped_owner": "emassc",
+        "scope": "Printception micro-bays, dual arms, tool paths and robot control",
+        "intent_origin": "historical_owner_intent_to_reconcile",
+        "owner_source_candidates": [
+          "cgx/domain_templates/cgx_printable_solid_state_extension_2026-10-07.json",
+          "cgx/domain_templates/semantic_view_lens_registry.json"
+        ],
+        "method_candidates": [
+          "robot-path-emulation",
+          "collision-detection",
+          "multi-head-scheduling",
+          "sealed-session-tests"
+        ],
+        "next_required_evidence": "printer_machine_and_materials",
+        "preferred_lens": "twin-3d",
+        "priority": "P1",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-20",
+        "scoped_owner": "emassc",
+        "scope": "Self-contained modular electrical/receiver/responder/battery print stack",
+        "intent_origin": "inferred_follow_on_owner_review",
+        "owner_source_candidates": [
+          "cgx/domain_templates/cgx_printable_solid_state_extension_2026-10-07.json",
+          "cgx/domain_templates/technology_stack_registry.json"
+        ],
+        "method_candidates": [
+          "component-library-sweep",
+          "interface-test",
+          "circuit-simulation",
+          "assembly-metrology"
+        ],
+        "next_required_evidence": "physical_safety_and_instruments",
+        "preferred_lens": "matrix",
+        "priority": "P2",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REQUIRES_OWNER_REVIEW"
+      },
+      {
+        "intent_id": "F-21",
+        "scoped_owner": "eco",
+        "scope": "Bio-block feeds, material interaction, viability and degradation",
+        "intent_origin": "existing_contract",
+        "owner_source_candidates": [
+          "cgx/domain_templates/eco_semantic_library.json",
+          "cgx/domain_templates/eco_type_registry.json",
+          "cgx/domain_templates/assurance_fixture_scenarios.json"
+        ],
+        "method_candidates": [
+          "compatibility-matrix",
+          "leachate-toxicity-protocol",
+          "material-strength-cycle",
+          "ecological-readback"
+        ],
+        "next_required_evidence": "ecological_field_protocol",
+        "preferred_lens": "evidence-claim",
+        "priority": "P1",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-22",
+        "scoped_owner": "eco",
+        "scope": "Watershed, marine remediation, biodiversity and ecological offsets",
+        "intent_origin": "historical_owner_intent_to_reconcile",
+        "owner_source_candidates": [
+          "cgx/domain_templates/eco_relation_registry.json",
+          "cgx/domain_templates/eco_semantic_library.json",
+          "cgx/domain_templates/semantic_view_lens_registry.json"
+        ],
+        "method_candidates": [
+          "habitat-baseline",
+          "flow-and-catchment-simulation",
+          "spatiotemporal-observation",
+          "intervention-response"
+        ],
+        "next_required_evidence": "ecological_field_protocol",
+        "preferred_lens": "map-spatial",
+        "priority": "P1",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-23",
+        "scoped_owner": "lightspeed",
+        "scope": "CGX semantic visual QA, 3D build grid, maps and temporal replay",
+        "intent_origin": "existing_contract",
+        "owner_source_candidates": [
+          "cgx/domain_templates/semantic_view_lens_registry.json",
+          "cgx/domain_templates/view_selection_policy.json",
+          "cgx/domain_templates/cgx_3d_source_discovery_receipt_2026-10-03.json"
+        ],
+        "method_candidates": [
+          "geometry-unit-parity",
+          "frame-CRS-hash",
+          "viewer-interaction-tests",
+          "time-travel-comparison"
+        ],
+        "next_required_evidence": "installed_viewer_and_source",
+        "preferred_lens": "topology-graph",
+        "priority": "P1",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-24",
+        "scoped_owner": "lightspeed",
+        "scope": "DOOM/media delta transport and FileSpace semantic equivalence",
+        "intent_origin": "historical_owner_intent_to_reconcile",
+        "owner_source_candidates": [
+          "cgx/domain_templates/node_exchange_contract.json",
+          "cgx/domain_templates/technology_stack_registry.json"
+        ],
+        "method_candidates": [
+          "binary-reconstruction",
+          "reference-byte-compare",
+          "replay-faults",
+          "semantic-equivalence-probe"
+        ],
+        "next_required_evidence": "two_distinct_nodes",
+        "preferred_lens": "network-runtime",
+        "priority": "P2",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-25",
+        "scoped_owner": "cognigrex",
+        "scope": "Alexandria dual-topology and multi-lens mission/map/globe/CCC link",
+        "intent_origin": "inferred_follow_on_owner_review",
+        "owner_source_candidates": [
+          "cgx/domain_templates/semantic_view_lens_registry.json",
+          "cgx/domain_templates/cross_domain_bridge_registry.json"
+        ],
+        "method_candidates": [
+          "graph-fingerprint",
+          "temporal-multi-view-parity",
+          "geometric-topology-test",
+          "bitemporal-replay"
+        ],
+        "next_required_evidence": "source_mapping",
+        "preferred_lens": "topology-graph",
+        "priority": "P2",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REQUIRES_OWNER_REVIEW"
+      },
+      {
+        "intent_id": "F-26",
+        "scoped_owner": "cognigrex",
+        "scope": "Publication/outreach/educational experience source and claims parity",
+        "intent_origin": "historical_owner_intent_to_reconcile",
+        "owner_source_candidates": [
+          "cgx/domain_templates/cgp_ies_release_visibility_policy.json",
+          "cgx/domain_templates/view_selection_policy.json",
+          "cgx/domain_templates/assurance_method_registry.json"
+        ],
+        "method_candidates": [
+          "claim-source-parity",
+          "negative-private-payload-test",
+          "responsive-visual-QA",
+          "audience-accessibility"
+        ],
+        "next_required_evidence": "negative_release_security",
+        "preferred_lens": "publication",
+        "priority": "P2",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REVIEW_CANDIDATE_NOT_SCHEDULED"
+      },
+      {
+        "intent_id": "F-27",
+        "scoped_owner": "cognigrex",
+        "scope": "Result stack cross-evaluation of contradictory models and supersession",
+        "intent_origin": "inferred_follow_on_owner_review",
+        "owner_source_candidates": [
+          "cgx/domain_templates/corpus_test_simulation_policy.json",
+          "cgx/domain_templates/unified_assurance_object_schema.json",
+          "cgx/domain_templates/relation_qualifier_contract.json"
+        ],
+        "method_candidates": [
+          "dimensional-cross-check",
+          "uncertainty-propagation",
+          "multi-model-residuals",
+          "contradiction-trace"
+        ],
+        "next_required_evidence": "independent_analysis",
+        "preferred_lens": "matrix",
+        "priority": "P1",
+        "source_binding": "RECONCILE_ORIGINAL_OWNER_OBJECT_AND_HASH",
+        "execution_status": "NOT_ATTESTED_FOR_THIS_INTENT",
+        "physical_status": "NOT_CLAIMED",
+        "plan_state": "REQUIRES_OWNER_REVIEW"
+      }
+    ]
+  }
 }

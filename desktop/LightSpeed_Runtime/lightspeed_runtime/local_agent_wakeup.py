@@ -181,6 +181,12 @@ def build_local_agent_wakeup_contract(
             "strict_response_contract": execution.get("strict_response_contract", True),
             "require_source_context": execution.get("require_source_context", True),
             "max_concurrent_ollama_sessions": 1,
+            "resource_guard": {
+                "max_host_cpu_percent": 80.0,
+                "on_cpu_probe_unavailable": "stop_before_new_ollama_work",
+                "is_continuous_process_cpu_hard_cap": False,
+                "mobile_device_required": False,
+            },
             "load_models_concurrently": False,
             "recursive_ingest_enabled": False,
             "heavy_models_manual_only": True,

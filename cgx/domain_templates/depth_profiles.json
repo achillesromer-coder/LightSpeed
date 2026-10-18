@@ -1,14 +1,218 @@
 {
-  "schema_version": "0.1",
+  "schema_version": "0.2",
   "dimensions_independent": true,
   "reasoning_depths": [
-    {"id":"glance","goal":"minimal answer/status","source_pull":"minimum"},
-    {"id":"standard","goal":"normal working analysis","source_pull":"bounded"},
-    {"id":"deep","goal":"cross-source reasoning and trade-offs","source_pull":"expanded"},
-    {"id":"audit","goal":"provenance, contradiction and gate inspection","source_pull":"evidence-first"},
-    {"id":"raw","goal":"direct source/native data inspection","source_pull":"exact-source"}
+    {
+      "id": "glance",
+      "goal": "minimal answer/status",
+      "source_pull": "minimum"
+    },
+    {
+      "id": "standard",
+      "goal": "normal working analysis",
+      "source_pull": "bounded"
+    },
+    {
+      "id": "deep",
+      "goal": "cross-source reasoning and trade-offs",
+      "source_pull": "expanded"
+    },
+    {
+      "id": "audit",
+      "goal": "provenance, contradiction and gate inspection",
+      "source_pull": "evidence-first"
+    },
+    {
+      "id": "raw",
+      "goal": "direct source/native data inspection",
+      "source_pull": "exact-source"
+    }
   ],
-  "execution_depths":["inspect","propose","simulate","execute","build","publish"],
-  "device_hydration_profiles":["projection-lite","reader","editor","workstation","distributed"],
-  "rule":"Reasoning depth, execution depth and device hydration are orthogonal configuration dimensions."
+  "execution_depths": [
+    "inspect",
+    "propose",
+    "simulate",
+    "execute",
+    "build",
+    "publish"
+  ],
+  "device_hydration_profiles": [
+    "projection-lite",
+    "reader",
+    "editor",
+    "workstation",
+    "distributed"
+  ],
+  "rule": "Reasoning depth, execution depth and device hydration are orthogonal configuration dimensions.",
+  "hydration_contract_version": "CGX-HYDRATION-TERMS/1",
+  "hydration_definition": "Hydration is the bounded acquisition or resolution of the minimum missing source, structure, semantics, relations, view context, state, capability, execution context or external witness needed for a declared task. Hydration never by itself promotes authority, evidence, release status or physical truth.",
+  "hydration_terms": {
+    "hydrate": "Resolve a declared missing dependency into the current authorised working projection with source/root/readback binding.",
+    "dehydrated": "Required information or capability is intentionally absent from the current projection; absence is not zero, false or deletion.",
+    "rehydrate": "Repeat hydration against a newer verified revision/root or after cache loss while preserving prior DBR lineage.",
+    "lazy_hydration": "Defer hydration until a requested view/action proves the dependency is actually needed.",
+    "selective_hydration": "Hydrate only explicitly required planes/fragments rather than the whole object or corpus.",
+    "progressive_hydration": "PQH: begin from the smallest sufficient packet and add one discriminating plane at a time only when insufficiency remains.",
+    "source_hydration": "Acquire or verify exact native bytes/provider reference under source identity, revision/hash, ACL/licence and owner constraints.",
+    "cache_hydration": "Resolve a content-addressed reference from already verified local bytes; a cache hit is not provider or authority proof.",
+    "structural_hydration": "Resolve container/manifest/topology/geometry structure without inventing semantics.",
+    "semantic_hydration": "Apply only registered typed adapters/dictionaries/units/relations to source-bound structure; unsupported meaning remains UNKNOWN.",
+    "dependency_hydration": "Resolve parent/child, relation, invalidation and cross-domain dependency closure by stable references.",
+    "lens_hydration": "Select a deterministic policy-constrained projection over already admitted semantics; a lens does not create facts.",
+    "state_hydration": "Resolve prior/current state roots, sparse deltas, DBR/history and conflict branches without timestamp-wins overwrite.",
+    "capability_hydration": "Resolve available installed tools/adapters/models/device capabilities and scoped leases; capability availability is not execution authority.",
+    "execution_hydration": "Bind exact inputs, capability, lease, rollback and receipt requirements for a bounded action; planning is not execution.",
+    "witness_hydration": "Attach attributable measured/calibrated/professional/external evidence to the graph. It cannot be synthesized from digital inference.",
+    "scatter": "Fan out source-bound references or permitted bytes across layers/nodes/lenses while retaining one owning Object_ID/root lineage and explicit scope.",
+    "gather": "Recompose scattered fragments only when manifest/context/prior roots and permissions reconcile exactly; conflicts remain explicit.",
+    "reconstruct": "Rebuild a declared representation from admitted fragments. Reconstruction quality/state must remain labelled and is not source identity unless bitwise proof exists.",
+    "infer": "Derive a new model/AI result from admitted inputs. Inference is never hydration of missing source truth.",
+    "resolve": "Choose or compute the bounded interpretation/action allowed by existing contracts after hydration; unresolved ambiguity remains HOLD/UNKNOWN.",
+    "project": "Render a view/representation from admitted state under a lens and evidence/security ceiling; projection is non-authoritative by generation alone."
+  },
+  "hydration_planes": [
+    {
+      "id": "H0_IDENTITY",
+      "purpose": "Stable object/source/owner/revision/hash/ACL/licence/root identity needed before any other hydration.",
+      "minimum": [
+        "Object_ID",
+        "source_or_provider_ref",
+        "revision_or_content_root",
+        "owner_ref",
+        "access_scope"
+      ],
+      "may_not_infer": [
+        "semantic meaning",
+        "execution authority"
+      ]
+    },
+    {
+      "id": "H1_SOURCE",
+      "purpose": "Exact native bytes or content-addressed verified references.",
+      "minimum": [
+        "source_sha256",
+        "byte_size",
+        "readback_state"
+      ],
+      "may_not_infer": [
+        "format semantics",
+        "licence rights from filename"
+      ]
+    },
+    {
+      "id": "H2_STRUCTURE",
+      "purpose": "Manifest, container, topology, geometry, section/chunk and parent structure.",
+      "minimum": [
+        "structure_schema_or_adapter",
+        "structural_root"
+      ],
+      "may_not_infer": [
+        "domain meaning",
+        "physical validity"
+      ]
+    },
+    {
+      "id": "H3_SEMANTICS",
+      "purpose": "Registered types, units, dictionaries, equations and source-bound semantic fields.",
+      "minimum": [
+        "registered_adapter_or_dictionary",
+        "semantic_root",
+        "evidence_class"
+      ],
+      "may_not_infer": [
+        "unsupported ontology",
+        "measured truth"
+      ]
+    },
+    {
+      "id": "H4_RELATIONS",
+      "purpose": "Typed edges, dependency closure, inheritance, bridges and invalidation dependencies.",
+      "minimum": [
+        "relation_registry",
+        "relation_owner",
+        "dependency_closure"
+      ],
+      "may_not_infer": [
+        "authority transfer",
+        "cross-domain ownership"
+      ]
+    },
+    {
+      "id": "H5_LENS",
+      "purpose": "Task/device/audience/role projection chosen after security and evidence constraints.",
+      "minimum": [
+        "lens_id",
+        "view_policy",
+        "selected_subgraph"
+      ],
+      "may_not_infer": [
+        "new state",
+        "higher evidence ceiling"
+      ]
+    },
+    {
+      "id": "H6_STATE",
+      "purpose": "Prior/current state, DBR history, sparse deltas, contradictions and replay context.",
+      "minimum": [
+        "prior_state_root",
+        "state_or_result_root",
+        "sequence_or_revision",
+        "DBR_or_receipt_ref"
+      ],
+      "may_not_infer": [
+        "last-write-wins truth",
+        "conflict deletion"
+      ]
+    },
+    {
+      "id": "H7_CAPABILITY",
+      "purpose": "Installed/local/peer adapter, model, compute, renderer and transport capability plus scoped lease.",
+      "minimum": [
+        "capability_id",
+        "capability_state",
+        "lease_or_admission_state"
+      ],
+      "may_not_infer": [
+        "semantic authority",
+        "device independence",
+        "permission from availability"
+      ]
+    },
+    {
+      "id": "H8_EXECUTION",
+      "purpose": "Bounded action packet with verified inputs, target, lease, rollback and readback/receipt contract.",
+      "minimum": [
+        "action_id",
+        "input_roots",
+        "target_scope",
+        "rollback",
+        "receipt_requirement"
+      ],
+      "may_not_infer": [
+        "successful execution before receipt",
+        "public or physical permission"
+      ]
+    },
+    {
+      "id": "H9_WITNESS",
+      "purpose": "Measured/calibrated/professional/external evidence returned by authorised real-world or provider process.",
+      "minimum": [
+        "witness_id",
+        "method_or_provider",
+        "raw_or_provider_ref",
+        "uncertainty_or_review_state",
+        "receipt_hash"
+      ],
+      "may_not_infer": [
+        "physical qualification from CI/simulation",
+        "regulatory acceptance from internal review"
+      ]
+    }
+  ],
+  "hydration_orthogonality": [
+    "H0-H9 are dependency planes, not runtime Z-floor numbers and not semantic Z-depth labels.",
+    "Device hydration profile controls delivery/fidelity and may reduce a requested plane; it cannot widen authority.",
+    "Reasoning depth, execution depth, device hydration, semantic XY/Z/T, Morton byte indexing, domain ownership and evidence maturity remain distinct axes.",
+    "A task may hydrate multiple planes but should stop at the minimum sufficient closure for that task."
+  ]
 }

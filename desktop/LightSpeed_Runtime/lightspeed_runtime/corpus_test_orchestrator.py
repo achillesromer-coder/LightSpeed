@@ -273,6 +273,22 @@ def compile_test_packet(
                         }
                     )
                 continue
+            # An input declared in SI (or other exact) units must never receive
+            # a numerically unchanged source value expressed in different units.
+            # Conversions require an explicit, separately source-bound transform.
+            if binding["units"] is not None and entry["units"] != binding["units"]:
+                if binding["required"]:
+                    unresolved.append(
+                        {
+                            "input": input_name,
+                            "reason": "SOURCE_VERIFICATION_REQUIRED",
+                            "source_key": binding["source_key"],
+                            "unit_check": "mismatch",
+                            "expected_units": binding["units"],
+                            "source_units": entry["units"],
+                        }
+                    )
+                continue
             resolved[input_name] = entry["value"]
             input_lineage[input_name] = {
                 "source": "corpus",
@@ -407,6 +423,55 @@ def semantic_state(
     return "blocked"
 
 
+def _known_unknown_frontier(items: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    """Project a bounded G0-G3 source/dependency view from the existing plan.
+
+    This view is a review aid. It does not admit work, execute a test, or
+    promote any result. Deeper and excess nodes remain visible as omissions.
+    """
+    max_depth = 3
+    max_nodes = 32
+    in_depth = [item for item in items if item["dependency_layer"] <= max_depth]
+    selected = in_depth[:max_nodes]
+    nodes: list[dict[str, Any]] = []
+    for item in selected:
+        packet = item["packet"]
+        lineage = packet["input_lineage"]
+        original_refs = sorted({
+            detail["source_ref"] for detail in lineage.values()
+            if detail["source"] == "corpus" and detail.get("source_ref")
+        })
+        derived_refs = sorted({
+            detail["result_sha256"] for detail in lineage.values()
+            if detail["source"] == "dependency" and detail.get("result_sha256")
+        })
+        nodes.append({
+            "generation": f"G{item['dependency_layer']}",
+            "test_id": item["test_id"],
+            "depends_on": list(item["depends_on"]),
+            "input_packet_sha256": packet["input_packet_sha256"],
+            "corpus_snapshot_sha256": packet["corpus_snapshot_sha256"],
+            "original_source_refs": original_refs,
+            "derived_result_sha256": derived_refs,
+            "unresolved_inputs": list(packet["unresolved_inputs"]),
+            "semantic_state": item["semantic_state"],
+            "receipt_rejection": item["receipt_rejection"],
+            "result_evidence_class": "UNVERIFIED",
+        })
+    return {
+        "schema": "CGX-KNOWN-UNKNOWN-FRONTIER/0.1",
+        "max_generation": "G3",
+        "max_nodes": max_nodes,
+        "nodes": nodes,
+        "omitted_beyond_G3": sum(item["dependency_layer"] > max_depth for item in items),
+        "omitted_within_G3_at_node_limit": len(in_depth) - len(selected),
+        "original_inputs_are_not_results": True,
+        "result_evidence_class_rule": "UNVERIFIED until an independent result receipt is classified and read back",
+        "execution_authorized": False,
+        "canonical_mutation": False,
+    }
+
+
 def plan_cascade(
     specs: Sequence[Mapping[str, Any]],
     corpus_snapshot: Mapping[str, Any],
@@ -418,16 +483,29 @@ def plan_cascade(
 
     items: list[dict[str, Any]] = []
     layer_by_id: dict[str, int] = {}
+    verified_receipts: dict[str, Mapping[str, Any]] = {}
     for sequence_index, spec in enumerate(order, start=1):
         layer = 0
         if spec["depends_on"]:
             layer = max(layer_by_id[dep] for dep in spec["depends_on"]) + 1
         layer_by_id[spec["test_id"]] = layer
-        packet = compile_test_packet(spec, corpus, receipts)
+        packet = compile_test_packet(spec, corpus, verified_receipts)
+        supplied_receipt = receipts.get(spec["test_id"])
+        receipt_rejection = None
+        current_receipt = None
+        if supplied_receipt is not None:
+            normalized_receipt = validate_receipt(
+                supplied_receipt, expected_test_id=spec["test_id"]
+            )
+            if normalized_receipt["input_packet_sha256"] == packet["input_packet_sha256"]:
+                current_receipt = supplied_receipt
+                verified_receipts[spec["test_id"]] = supplied_receipt
+            else:
+                receipt_rejection = "INPUT_PACKET_SHA256_MISMATCH"
         state = semantic_state(
             packet,
-            receipts.get(spec["test_id"]),
-            dependency_receipts=receipts,
+            current_receipt,
+            dependency_receipts=verified_receipts,
         )
         items.append(
             {
@@ -439,6 +517,7 @@ def plan_cascade(
                 "depends_on": spec["depends_on"],
                 "complexity_rank": spec["complexity_rank"],
                 "semantic_state": state,
+                "receipt_rejection": receipt_rejection,
                 "packet": packet,
             }
         )
@@ -475,7 +554,151 @@ def plan_cascade(
         "overall_state": overall,
         "state_counts": dict(sorted(counts.items())),
         "tests": items,
+        "known_unknown_frontier": _known_unknown_frontier(items),
         "activation_ready": overall in {"ready", "partial", "underway", "complete"},
         "automatic_activation": False,
         "canonical_mutation": False,
+    }
+
+
+# Source/semantic frontier admission is a PURE decision function. Local consumers
+# must call this before undertaking expensive work and enforce real resource
+# limits at the process/tool boundary. A planner's PASS is not a lease or commit.
+FRONTIER_GATE_SCHEMA = "CGX-FRONTIER-ADMISSION/0.1"
+FRONTIER_DOMAINS = frozenset({
+    "COGNIGREX", "ROMER_GREX", "ECO_GREX", "UNISPACE", "EVIDENCE_FRONTIER"
+})
+FRONTIER_TERMINAL = frozenset({"COMPLETE", "HOLD", "NO_CHANGE", "FAILED"})
+FRONTIER_EVIDENCE = frozenset({
+    "ARCHIVED_ORIGINAL", "COMPUTED", "SIMULATED", "SOURCE_CI",
+    "INSTALLED_RUNTIME", "INDEPENDENT_PHYSICAL", "UNVERIFIED"
+})
+
+
+def _frontier_identifier(value: Any, name: str, *, max_length: int = 160) -> str:
+    text = _text(value, name)
+    if len(text) > max_length or any(ord(c) < 32 for c in text):
+        raise CorpusTestPlanError(f"{name} invalid or too long")
+    return text
+
+
+def assess_frontier_unit(
+    request: Mapping[str, Any],
+    *,
+    accepted_receipt: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Check one original-source frontier unit without rereading or writing it.
+
+    The caller MUST separately enforce wall-clock, token, tool and monetary
+    limits; this pure projection neither invokes agents nor permits writes.
+    Terminal means all IN-SCOPE tests for this one unit, NOT civilization or
+    the entire Grex corpus. Archived ACR3 is evidence, never a live domain.
+    """
+    if not isinstance(request, Mapping):
+        raise CorpusTestPlanError("frontier request must be a mapping")
+    required = {
+        "domain", "object_id", "source_sha256", "owner",
+        "operation", "acceptance_version", "evidence_class",
+        "source_changed", "dependencies_changed",
+        "limits", "usage"
+    }
+    if not required.issubset(request):
+        raise CorpusTestPlanError("missing frontier admission inputs")
+    domain = _frontier_identifier(request["domain"], "domain")
+    if domain not in FRONTIER_DOMAINS:
+        raise CorpusTestPlanError("unregistered or retired frontier domain")
+    object_id = _frontier_identifier(request["object_id"], "object_id")
+    owner = _frontier_identifier(request["owner"], "owner")
+    operation = _frontier_identifier(request["operation"], "operation")
+    version = _frontier_identifier(request["acceptance_version"], "acceptance_version")
+    source = request["source_sha256"]
+    if not isinstance(source, str) or len(source) != 64 or any(
+            c not in "0123456789abcdef" for c in source):
+        raise CorpusTestPlanError("source_sha256 must be exact lowercase SHA256")
+    evidence = request["evidence_class"]
+    if evidence not in FRONTIER_EVIDENCE:
+        raise CorpusTestPlanError("unknown evidence class")
+    for name in ("source_changed", "dependencies_changed"):
+        if type(request[name]) is not bool:
+            raise CorpusTestPlanError(f"{name} must be boolean")
+    limits = request["limits"]
+    usage = request["usage"]
+    keys = {"max_elapsed_s", "max_tokens", "max_tool_calls", "max_retries"}
+    if not isinstance(limits, Mapping) or not keys.issubset(limits):
+        raise CorpusTestPlanError("missing enforced execution ceilings")
+    if not isinstance(usage, Mapping) or not {"elapsed_s", "tokens", "tool_calls", "retries"}.issubset(usage):
+        raise CorpusTestPlanError("missing measured usage")
+    numbers = {
+        "max_elapsed_s":(1,3600),
+        "max_tokens":(1,200000),
+        "max_tool_calls":(1,500),
+        "max_retries":(0,5),
+        "elapsed_s":(0,360000),
+        "tokens":(0,100000000),
+        "tool_calls":(0,1000000),
+        "retries":(0,10000),
+    }
+    for field,(lo,hi) in numbers.items():
+        raw = (limits if field.startswith("max_") else usage)[field]
+        if type(raw) is not int or raw < lo or raw > hi:
+            raise CorpusTestPlanError(f"{field} must be a bounded integer")
+    if "max_cost_usd" in limits:
+        value = limits["max_cost_usd"]
+        if isinstance(value, bool) or not isinstance(value, (int,float)) or not 0 <= value <= 10000:
+            raise CorpusTestPlanError("invalid cost ceiling")
+        if "cost_usd" not in usage:
+            raise CorpusTestPlanError("cost usage required if cost ceiling provided")
+        cost = usage["cost_usd"]
+        if isinstance(cost, bool) or not isinstance(cost, (int,float)) or not 0 <= cost <= 100000:
+            raise CorpusTestPlanError("invalid actual cost usage")
+    else:
+        cost = 0
+    identity = _sha256({
+        "domain":domain, "object_id":object_id, "owner":owner,
+        "source_sha256":source, "operation":operation,
+        "acceptance_version":version
+    })
+    verdict="READY_FOR_BOUNDED_WORK"
+    reason="source-bound unit is unresolved; external owner permits only planned, scoped work"
+    ceilings = [
+        (usage["elapsed_s"] >= limits["max_elapsed_s"], "WALL_CLOCK_CEILING"),
+        (usage["tokens"] >= limits["max_tokens"], "TOKEN_CEILING"),
+        (usage["tool_calls"] >= limits["max_tool_calls"], "TOOL_CEILING"),
+        (usage["retries"] > limits["max_retries"], "RETRY_CEILING"),
+    ]
+    if "max_cost_usd" in limits:
+        ceilings.append((cost >= limits["max_cost_usd"], "COST_CEILING"))
+    if any(hit for hit,_ in ceilings):
+        verdict="HOLD"
+        reason=next(text for hit,text in ceilings if hit)
+    elif accepted_receipt is not None:
+        if not isinstance(accepted_receipt, Mapping):
+            raise CorpusTestPlanError("accepted receipt must be a mapping")
+        if request["dependencies_changed"] is False and accepted_receipt.get("work_key") == identity and \
+                accepted_receipt.get("terminal_state") == "COMPLETE" and \
+                accepted_receipt.get("source_sha256") == source and \
+                accepted_receipt.get("readback_verified") is True and \
+                accepted_receipt.get("independent_proof_verified") is True:
+            verdict="NO_CHANGE"
+            reason="identical exact-identity unit already independently accepted"
+    if verdict == "READY_FOR_BOUNDED_WORK" and not request["source_changed"] and \
+            not request["dependencies_changed"]:
+        verdict="HOLD"
+        reason="NO_CHANGED_SOURCE_OR_DEPENDENCY_AND_NO_MATCHING_ACCEPTED_RECEIPT"
+    return {
+        "schema": FRONTIER_GATE_SCHEMA, "domain":domain,
+        "object_id":object_id, "owner":owner,
+        "source_sha256":source,
+        "work_key":identity,
+        "acceptance_version":version,
+        "evidence_class":evidence,
+        "verdict":verdict,
+        "reason":reason,
+        "resource_ceiling_enforced_by_this_function":False,
+        "writes_authorized":False,
+        "root_promotion_authorized":False,
+        "public_release_authorized":False,
+        "hardware_actuation_authorized":False,
+        "historical_ACR3_is_read_only":True,
+        "completion_scope":"CURRENT_ADMITTED_OBJECT_OPERATION_ONLY",
     }

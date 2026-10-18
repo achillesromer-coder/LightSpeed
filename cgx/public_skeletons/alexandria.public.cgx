@@ -1,0 +1,133 @@
+{
+  "schema_version": "cgx-public-bootstrap-v1",
+  "namespace": "cgx://CGX.cgx",
+  "publication_state": "PUBLIC_SAFE_TEMPLATE_NOT_DEPLOYED",
+  "root_authority": "UNASSIGNED",
+  "format": {
+    "media_type": "application/json",
+    "encoding": "utf-8",
+    "source": "versioned_open_dictionary"
+  },
+  "object": {
+    "object_id": "CGX/PUBLIC/ALEXANDRIA/EMPTY",
+    "source_sha256": null,
+    "geometry_root": null,
+    "semantic_class": "dodecahedral_reference_frame",
+    "evidence_class": "TEMPLATE_ONLY"
+  },
+  "geometry": {
+    "frame": "dimensionless_reference",
+    "vertex_count": 20,
+    "edge_count": 30,
+    "face_count": 12,
+    "euler_characteristic": 2,
+    "face_kind": "pentagon",
+    "cells": [
+      {
+        "id": "face-0",
+        "state": "NEUTRAL_UNBOUND",
+        "source_ref": null
+      },
+      {
+        "id": "face-1",
+        "state": "NEUTRAL_UNBOUND",
+        "source_ref": null
+      },
+      {
+        "id": "face-2",
+        "state": "NEUTRAL_UNBOUND",
+        "source_ref": null
+      },
+      {
+        "id": "face-3",
+        "state": "NEUTRAL_UNBOUND",
+        "source_ref": null
+      },
+      {
+        "id": "face-4",
+        "state": "NEUTRAL_UNBOUND",
+        "source_ref": null
+      },
+      {
+        "id": "face-5",
+        "state": "NEUTRAL_UNBOUND",
+        "source_ref": null
+      },
+      {
+        "id": "face-6",
+        "state": "NEUTRAL_UNBOUND",
+        "source_ref": null
+      },
+      {
+        "id": "face-7",
+        "state": "NEUTRAL_UNBOUND",
+        "source_ref": null
+      },
+      {
+        "id": "face-8",
+        "state": "NEUTRAL_UNBOUND",
+        "source_ref": null
+      },
+      {
+        "id": "face-9",
+        "state": "NEUTRAL_UNBOUND",
+        "source_ref": null
+      },
+      {
+        "id": "face-10",
+        "state": "NEUTRAL_UNBOUND",
+        "source_ref": null
+      },
+      {
+        "id": "face-11",
+        "state": "NEUTRAL_UNBOUND",
+        "source_ref": null
+      }
+    ],
+    "occupied_object_count": 0,
+    "physical_volume_m3": null
+  },
+  "semantics": {
+    "known_states": [
+      "OCCUPIED",
+      "RESERVED",
+      "FREE",
+      "GROWTH_CANDIDATE",
+      "NEUTRAL_UNBOUND",
+      "UNKNOWN",
+      "WITHHELD",
+      "CONFLICT"
+    ],
+    "distinction": "EMPTY_NOT_UNKNOWN_OR_WITHHELD",
+    "canonical_library": "existing_FileSpace_source_registry",
+    "projection": "local_lenses_from_authorised_content_roots",
+    "resolver": "requires_registered_schema_and_source_not_included"
+  },
+  "network": {
+    "scope": "LOCAL_ONLY_BY_DEFAULT",
+    "transport": "EXISTING_LIGHTSPEED_LOOPBACK_CANDIDATE",
+    "remote_admission": "NOT_CONFIGURED",
+    "network_scan": false,
+    "gps": false,
+    "location_tracking": false,
+    "vpn": false,
+    "backscatter": false,
+    "telemetry": false,
+    "opt_in_required": true,
+    "initial_discovery_is_authentication": false
+  },
+  "phases": {
+    "initial": "PUBLIC_SKELETON_AND_LOOPBACK_STATUS",
+    "identity": "EXISTING_OWNER_SESSION_AND_DEVICE_SIGNING_REQUIRED",
+    "transfer": "SIGNED_PRIOR_ROOT_AND_CAPABILITY_NEGOTIATION_REQUIRED",
+    "execution": "AUTHORISED_QUEUE_LEASE_AND_RESULT_RECEIPT_REQUIRED",
+    "recheck": "SOURCE_ROOT_AND_CONSUMER_HEARTBEAT_READBACK_REQUIRED"
+  },
+  "safety": {
+    "public_symbol_is_secret": false,
+    "script_execution": false,
+    "file_system_mutation": false,
+    "device_identity_verified": false,
+    "canonical_promotion_authorised": false
+  }
+}
