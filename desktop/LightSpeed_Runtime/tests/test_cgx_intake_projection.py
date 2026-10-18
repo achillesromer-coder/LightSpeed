@@ -81,3 +81,75 @@ def test_bounds_and_no_source_rights_fabrication():
         project_intake("string not bytes", SRC)
     with pytest.raises(IntakeError):
         project_intake(b"data", {**SRC, "licence": ""})
+
+
+def test_native_source_envelope_to_filespace_candidate_keeps_r0_boundary():
+    from lightspeed_runtime.source_intake import build_source_envelope
+    raw = b"mass_kg,value\n12,unknown\n"
+    env = build_source_envelope(
+        source_name=SRC["source_name"], data=raw, source_ref=SRC["source_ref"],
+        release_class="Internal",
+    )
+    from lightspeed_runtime.cgx_intake_projection import project_native_envelope_candidate
+    result = project_native_envelope_candidate(raw, env, SRC)
+    assert result["identity"]["source_sha256"] == env["sha256"]
+    assert result["native_envelope_binding"]["envelope_sha256"] == env["envelope_sha256"]
+    assert result["native_envelope_binding"]["provider_revision_verified"] is False
+    assert result["layers"]["R1_admission"] == "REQUIRES_SEPARATE_CONVERSION_PLAN"
+    assert result["gates"]["canonical_dbr_commit"] == "HOLD"
+    assert result["gates"]["public_release"] == "HOLD"
+    assert "projections" not in result["native_envelope_binding"]
+
+
+@pytest.mark.parametrize("change", ["different_bytes", "changed_name", "changed_ref",
+                                    "changed_sha", "changed_size", "tampered_envelope",
+                                    "mutating_lineage", "missing_lineage", "wrong_schema"])
+def test_native_source_envelope_rejects_unbound_or_modified_inputs(change):
+    from lightspeed_runtime.source_intake import build_source_envelope
+    from lightspeed_runtime.cgx_intake_projection import project_native_envelope_candidate
+    raw = b"original,1\n"
+    env = build_source_envelope(
+        source_name=SRC["source_name"], data=raw, source_ref=SRC["source_ref"],
+    )
+    data, metadata = raw, dict(SRC)
+    if change == "different_bytes":
+        data += b"x"
+    elif change == "changed_name":
+        metadata["source_name"] = "new.csv"
+    elif change == "changed_ref":
+        metadata["source_ref"] = "provider://moved"
+    elif change == "changed_sha":
+        env["native_preservation"]["source_sha256"] = "0" * 64
+    elif change == "changed_size":
+        env["byte_length"] += 1
+    elif change == "tampered_envelope":
+        env["evidence_state"] = "EMPIRICAL"
+    elif change == "mutating_lineage":
+        env["lineage"]["canonical_mutation"] = True
+    elif change == "missing_lineage":
+        env.pop("lineage")
+    else:
+        env["schema"] = "untrusted"
+    with pytest.raises(IntakeError):
+        project_native_envelope_candidate(data, env, metadata)
+
+
+def test_native_envelope_visibility_does_not_escalate_to_public_release():
+    from lightspeed_runtime.source_intake import build_source_envelope
+    from lightspeed_runtime.cgx_intake_projection import project_native_envelope_candidate
+    raw = b"private"
+    env = build_source_envelope(
+        source_name=SRC["source_name"], data=raw, source_ref=SRC["source_ref"],
+        release_class="Internal",
+    )
+    with pytest.raises(IntakeError):
+        project_native_envelope_candidate(raw, env, {**SRC, "visibility": "PUBLIC_SAFE"})
+    public_env = build_source_envelope(
+        source_name=SRC["source_name"], data=raw, source_ref=SRC["source_ref"],
+        release_class="Public",
+    )
+    preview_only = project_native_envelope_candidate(
+        raw, public_env, {**SRC, "visibility": "PUBLIC_SAFE"},
+    )
+    assert preview_only["public_publish_authorized"] is False
+    assert preview_only["gates"]["public_release"] == "HOLD"
