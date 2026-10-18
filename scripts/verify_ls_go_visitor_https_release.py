@@ -33,7 +33,13 @@ NEGATIVE_PATHS = (
     "/api/v1/node",
     "/api/v1/representation",
     "/data/cgx_object_review_catalogue.json",
+    "/data/component_geometry_atlas_public_review.json",
     "/review/renders/",
+    "/review/renders/mark_iii_review.svg",
+    "/review/renders/rfs_emff_review.svg",
+    "/review/mesh/",
+    "/review/mesh/mark_iii.json",
+    "/review/mesh/intersol.json",
 )
 FORBIDDEN_MARKERS = (
     "cgx_object_review_catalogue",
