@@ -20,7 +20,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse
 import uvicorn
 
-from lightspeed_runtime.corpus_test_orchestrator import CorpusTestPlanError, plan_cascade
+from lightspeed_runtime.corpus_test_orchestrator import (
+    CorpusTestPlanError, assess_frontier_unit, plan_cascade,
+)
 from lightspeed_runtime.cgx_conversion_planner import CGXConversionPlanError, compile_conversion_plan
 from lightspeed_runtime.cgx_object_context import CGXObjectContextError, resolve_object_context
 from lightspeed_runtime.project_artifact_store import stage_project_artifacts
@@ -557,6 +559,24 @@ def _validated_rfs_emff_action_payload(value: Any) -> dict[str, Any]:
     return _canonical_json_clone(normalized, maximum_bytes=_ACTION_PAYLOAD_MAX_BYTES)
 
 
+def _validated_intake_frontier_request(value: Any, *, source_sha256: str) -> dict[str, Any]:
+    candidate = _canonical_json_clone(value, maximum_bytes=_ACTION_PAYLOAD_MAX_BYTES)
+    try:
+        decision = assess_frontier_unit(candidate)
+    except CorpusTestPlanError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)[:500]) from exc
+    if (candidate.get("operation") != "source_preserving_intake"
+            or decision["source_sha256"] != source_sha256):
+        raise HTTPException(status_code=400, detail="frontier request differs from intake source identity")
+    usage = candidate["usage"]
+    if (any(usage[field] != 0 for field in ("elapsed_s", "tokens", "tool_calls", "retries"))
+            or usage.get("cost_usd", 0) != 0):
+        raise HTTPException(status_code=400, detail="new frontier work requires zero initial usage")
+    if decision["verdict"] != "READY_FOR_BOUNDED_WORK":
+        raise HTTPException(status_code=400, detail="frontier unit is not ready for bounded work")
+    return candidate
+
+
 def _command_contract(payload: dict[str, Any]) -> dict[str, Any]:
     """Return the immutable LS GO command content, excluding transport timestamps."""
     contract = {
@@ -582,6 +602,9 @@ def _command_contract(payload: dict[str, Any]) -> dict[str, Any]:
     }
     if "action_payload" in payload:
         contract["action_payload"] = payload.get("action_payload")
+    if "frontier_request" in payload:
+        contract["frontier_request"] = payload.get("frontier_request")
+        contract["frontier_authenticated_actor"] = payload.get("frontier_authenticated_actor")
     return contract
 
 
@@ -1130,6 +1153,10 @@ def _create_command_task(
                 if "action_payload" in accepted
                 else {}
             ),
+            **({"frontier_request": accepted["frontier_request"]}
+               if "frontier_request" in accepted else {}),
+            **({"frontier_authenticated_actor": accepted["frontier_authenticated_actor"]}
+               if "frontier_authenticated_actor" in accepted else {}),
             "proof_required": True,
             "public_safe": True,
             "canonical_gate_id": accepted["canonical_gate_id"],
@@ -1188,6 +1215,10 @@ def _create_command_job(
                 if "action_payload" in accepted
                 else {}
             ),
+            **({"frontier_request": accepted["frontier_request"]}
+               if "frontier_request" in accepted else {}),
+            **({"frontier_authenticated_actor": accepted["frontier_authenticated_actor"]}
+               if "frontier_authenticated_actor" in accepted else {}),
             "execute": accepted["execution_mode"] == "queue",
             "allow_heavy": False,
             "canonical_gate_id": accepted["canonical_gate_id"],
@@ -2198,7 +2229,18 @@ def create_app(root: Path | str) -> FastAPI:
         )
 
     @app.post("/api/v1/ls-go/commands")
-    async def accept_command(body: dict[str, Any]):
+    async def accept_command(
+        body: dict[str, Any],
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        frontier_actor = None
+        if "frontier_request" in body:
+            if not owner_session:
+                raise HTTPException(status_code=401, detail="Frontier intake requires an owner session")
+            frontier_actor = _verified_owner_actor(
+                None, session_token=owner_session,
+                credential_store=credential_store, session_store=owner_sessions,
+            )
         schema_version = _bounded(body.get("schema_version"), maximum=64, required=True)
         if schema_version not in COMMAND_SCHEMAS:
             raise HTTPException(status_code=400, detail="Unsupported command schema")
@@ -2227,6 +2269,7 @@ def create_app(root: Path | str) -> FastAPI:
         if schema_version == LEGACY_COMMAND_SCHEMA and action_type:
             raise HTTPException(status_code=400, detail="Typed actions require the v2 command schema")
         action_payload: dict[str, Any] | None = None
+        frontier_request: dict[str, Any] | None = None
         if action_type == "rfs_emff_sweep":
             if target_floor != "TheConstruct":
                 raise HTTPException(
@@ -2251,11 +2294,17 @@ def create_app(root: Path | str) -> FastAPI:
                 action_payload = validate_intake_payload(body.get("action_payload"))
             except SourceIntakeError as exc:
                 raise HTTPException(status_code=400, detail=str(exc)) from exc
+            if "frontier_request" in body:
+                frontier_request = _validated_intake_frontier_request(
+                    body["frontier_request"], source_sha256=action_payload["source_sha256"],
+                )
         elif "action_payload" in body:
             raise HTTPException(
                 status_code=400,
                 detail="action_payload is only registered for rfs_emff_sweep and source_preserving_intake",
             )
+        if "frontier_request" in body and frontier_request is None:
+            raise HTTPException(status_code=400, detail="frontier request requires source_preserving_intake")
         if body.get("oversight_floor") != "Achilles":
             raise HTTPException(status_code=400, detail="Achilles oversight is required")
         if body.get("proof_required") is not True or body.get("public_safe") is not True:
@@ -2281,6 +2330,8 @@ def create_app(root: Path | str) -> FastAPI:
             "execution_mode": execution_mode,
             "action_type": action_type or None,
             **({"action_payload": action_payload} if action_payload is not None else {}),
+            **({"frontier_request": frontier_request} if frontier_request is not None else {}),
+            **({"frontier_authenticated_actor": frontier_actor} if frontier_actor is not None else {}),
             "state": "review" if execution_mode == "review" else "queued",
             "proof_required": True,
             "public_safe": True,
