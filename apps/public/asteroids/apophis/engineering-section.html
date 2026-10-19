@@ -1,0 +1,40 @@
+
+<section class="section eng-section" id="engineering" aria-labelledby="eng-title">
+  <div class="section-head"><div><p class="overline">01 — DERIVED ENGINEERING / SENSITIVITY</p><h2 id="eng-title">Physics before<br><em>hardware claims.</em></h2></div>
+    <p class="section-intro">A bounded, reproducible first-order gravitational and tidal analysis based on the dated JPL flyby record and the master workbook’s unmeasured density proxy. Select an assumed density and a measured flyby sample. The display never estimates ore zones or asserts an Apophis mission.</p></div>
+  <div class="eng-header"><div><span class="status-dot"></span> CGX / JPL:SBDB:99942 <span class="eng-muted">PHYSICS AUDIT</span></div><div class="eng-head-right">GEOMETRY: SPHERE EQUIVALENT · TIME: TDB · READ ONLY</div></div>
+  <div class="eng-surface">
+    <div class="eng-plot-zone">
+      <div class="eng-topline"><span>TIDAL GRADIENT ÷ SELF GRAVITY</span><span id="eng-trace-label">ρ = 2,700 kg/m³</span></div>
+      <svg id="eng-plot" viewBox="0 0 850 350" aria-label="Tidal acceleration divided by ideal uniform-sphere surface gravity through the JPL 2029 ten-minute flyby samples" role="img">
+        <g id="eng-grid"></g><path id="eng-trace" fill="none" stroke="#e0ae7b" stroke-width="3" stroke-linejoin="round"/><circle id="eng-marker" cx="420" cy="180" r="8" fill="#f5cc99" stroke="#fff4dc" stroke-width="2"/>
+        <g fill="#9eb6c0" font-family="Arial,sans-serif" font-size="12"><text x="45" y="325">21:40</text><text x="416" y="325">21:46</text><text x="751" y="325">21:50 TDB</text><text x="44" y="44">RATIO / %</text></g>
+      </svg>
+      <div class="eng-caption" id="eng-caption">21 Horizons state samples at 30-second cadence. Time is TDB; model calculations do not integrate asteroid dynamics.</div>
+    </div>
+    <div class="eng-controls">
+      <p class="overline">MODEL INPUTS — NOT MEASUREMENTS</p>
+      <div class="eng-ctrl-top"><label for="eng-density">Bulk density hypothesis</label><strong id="eng-density-val">2,700 kg/m³</strong></div>
+      <input type="range" id="eng-density" min="1000" max="4500" step="50" value="2700" disabled/>
+      <div class="eng-scale"><span>1,000</span><span>2,700 · workbook proxy</span><span>4,500 kg/m³</span></div>
+      <div class="eng-ctrl-top eng-time"><label for="eng-time">JPL encounter sample</label><strong id="eng-time-val">21:46:00 TDB</strong></div>
+      <input type="range" id="eng-time" min="0" max="20" step="1" value="12" disabled/>
+      <div class="eng-scale"><span>21:40</span><span>TCA ~ 21:46:13</span><span>21:50</span></div>
+      <div class="eng-presets"><button type="button" data-eng-density="1000" disabled>Low-density scenario</button><button type="button" data-eng-density="2700" disabled>Workbook proxy</button><button type="button" data-eng-density="4500" disabled>High-density scenario</button></div>
+      <div class="eng-alert"><b>Cannot infer material locations.</b> Equivalent-sphere self-gravity, differential tide, escape speed and mass sensitivity do not determine cohesion, rotation response, surface failures, interior deposits or resource yields.</div>
+    </div>
+  </div>
+  <div class="eng-results" aria-live="polite">
+    <div><small>GEOCENTRIC DISTANCE</small><strong id="eng-distance">—</strong><span>JPL observed/model state sample</span></div>
+    <div><small>SPHERE MASS PROXY</small><strong id="eng-mass">—</strong><span>Assumed uniform density</span></div>
+    <div><small>MODEL SELF GRAVITY</small><strong id="eng-gravity">—</strong><span>At R = 170 m</span></div>
+    <div><small>MODEL ESCAPE SPEED</small><strong id="eng-escape">—</strong><span>Does not include rotation</span></div>
+    <div><small>EARTH TIDAL GRADIENT</small><strong id="eng-tide">—</strong><span>Half-span, Earthward axis</span></div>
+    <div><small>TIDE / SELF GRAVITY</small><strong id="eng-ratio">—</strong><span>Instantaneous proxy, not failure risk</span></div>
+  </div>
+  <div class="eng-audit">
+    <div><p class="overline">CROSS-PROOF / KNOWN UNKNOWNS</p><h3>Independent physical checks</h3><p>At the reference nominal encounter, Earth two-body hyperbolic-excess velocity is recovered from the independently recorded relative speed and centre-to-centre range. A different approximation calculates the spherical-proxy mass from gravitational acceleration rather than from volume alone.</p></div>
+    <div class="eng-audit-values"><div><span>EARTH TWO-BODY V∞</span><b id="eng-vinf">—</b></div><div><span>SBDB V∞ CHECK</span><b>5.84135590 km/s</b></div><div><span>SPHERE MASS CROSS-CHECK</span><b id="eng-proof">—</b></div><div><span>MODEL QUALIFICATION</span><b class="eng-held">H0 / SENSITIVITY ONLY</b></div></div>
+  </div>
+  <div class="eng-summary"><span id="eng-state" role="status">Loading integrity-checked source projections…</span><a href="https://github.com/achillesromer-coder/LightSpeed/blob/main/apps/public/asteroids/apophis/data/engineering-derived.json" target="_blank" rel="noopener noreferrer">REPRODUCIBLE ENGINEERING DATA ↗</a></div>
+</section>
