@@ -1,0 +1,34 @@
+name: Apophis source and physics regression
+on:
+  push:
+    paths:
+      - "apps/public/asteroids/apophis/**"
+      - ".github/workflows/apophis-physics-qa.yml"
+  pull_request:
+    paths:
+      - "apps/public/asteroids/apophis/**"
+      - ".github/workflows/apophis-physics-qa.yml"
+permissions:
+  contents: read
+jobs:
+  source-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify source-projected Apophis physics
+        run: python3 apps/public/asteroids/apophis/tools/verify_engineering.py
+      - name: Check frontend syntax
+        run: |
+          node --check apps/public/asteroids/apophis/app.js
+          node --check apps/public/asteroids/apophis/type1-console.js
+          node --check apps/public/asteroids/apophis/engineering.js
+      - name: Verify public manifests parse
+        run: |
+          python3 -c "import json,pathlib; p=pathlib.Path('apps/public/asteroids/apophis/data'); [json.loads(x.read_text()) for x in p.glob('*.json')]; print('Public JSON manifests parse')"
