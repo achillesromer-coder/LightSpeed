@@ -34,3 +34,10 @@ This directory is a read-only public educational projection from existing Römer
 
 ## Publishing
 Project: existing `romer-unispace-apophis` Vercel; serves `https://romer-unispace-apophis.vercel.app/`. Parent UniSpace remains `https://romer-unispace-public.vercel.app/cgx/`. Public child link goes to parent; parent navigation insertion is separate publisher work.
+
+
+## Engineering sensitivity module (19 October 2026)
+
+The existing public object now includes `engineering.js`, `engineering.css`, and `data/engineering-derived.json`. These provide uniform-sphere gravitational and tidal sensitivity calculations driven by the frozen 21-sample Horizons record. Validate source parity with `python3 apps/public/asteroids/apophis/tools/verify_engineering.py`.
+
+`data/engineering-interface-gates.json` preserves ten source-bound holds and existing owner functions, including the Mark III screening contract, PrintCeptor PC01 route compiler and GMAT precondition contract. `tools/inspect_pds_bundle.py` can inspect a locally downloaded official PDS archive, but does not establish mesh qualification. All plotted interior layers remain hypothetical. The corrected Operations capacity series is 3/7/11 m³ of active capture interface volume for M1/M2/M3, not proven collection throughput.
