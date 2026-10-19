@@ -1,0 +1,134 @@
+{
+  "id": "APOPHIS-ENG-INTERFACE-2026-10-19",
+  "object_id": "JPL:SBDB:99942",
+  "status": "source_bound_engineering_review_not_mission_or_build_approval",
+  "upstream_authorities": [
+    {
+      "subject": "Apophis external shape",
+      "ref": "NASA PDS 10.26033/ydyq-5756",
+      "status": "released, mesh not ingested in CGX",
+      "require": "exact mesh file bytes, PDS label, units, frame, spin state, uncertainty"
+    },
+    {
+      "subject": "Apophis encounter dynamics",
+      "ref": "Data/data/jpl/horizons/events/apophis-2029",
+      "status": "captured, source-vectors compared",
+      "require": "GMAT separately receipted for mission geometry; no orbit/extraction control from this public app"
+    },
+    {
+      "subject": "Mark III multi-unit",
+      "ref": "docs/engineering/MARK_III_MULTI_UNIT_SCREENING_CONTRACT.md; desktop/LightSpeed_Runtime/lightspeed_runtime/mark3_multi_unit.py",
+      "status": "screening runner defined; flight not qualified",
+      "require": "3 appendages, source-bound connector CAD, masses/inertia, Isp, active unit definitions, interlocks, load/torque, contact/FMEA, tests"
+    },
+    {
+      "subject": "PrintCeptor PC01",
+      "ref": "cgx/component_atlas/pc01_family_route_compiler_v0_1.json; pc01_first_article_review_v0_1.json",
+      "status": "family route compiler digital only; first article physical build HELD",
+      "require": "material/process qualification, safe-stop, BOM, capacity, CAD, rights, metrology, raw tests"
+    },
+    {
+      "subject": "GMAT runner",
+      "ref": "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-3_Smith/tools/gmat_capabilities.json",
+      "status": "tool stub / prepared_not_activated",
+      "require": "actual installed GMAT execution, input schema, controlled orbit packet, signed run receipt"
+    },
+    {
+      "subject": "Active mission planning volume",
+      "ref": "Data/docs/capacity_model_unit_count_correction.md; Operations/Mining Capacity Model",
+      "status": "current operating spreadsheet model",
+      "require": "M1 3m3, M2 7m3, M3 11m3 active interface volumes; physical rate/throughput never inferred"
+    }
+  ],
+  "workstream_gates": [
+    {
+      "id": "APX-E01",
+      "scope": "Body shape",
+      "can_if": "Official PDS geometry is downloaded, parsed with correct vertex units and coordinate frame and validated against PDS label and checksum",
+      "current": "HOLD",
+      "next": "Run inspect_pds_bundle.py on licensed official zip; verify faces/winding/watertightness and radial sizes; create frame-correct 3D glTF only after qualification",
+      "evidence_class": "SOURCE_MESH_UNVERIFIED"
+    },
+    {
+      "id": "APX-E02",
+      "scope": "Interior field",
+      "can_if": "Actual body-tomography or resolved subsurface survey with localization uncertainties exists",
+      "current": "HOLD",
+      "next": "No deposit annotations; maintain only taxonomy-informed hypotheses",
+      "evidence_class": "NO_INTERIOR_MEASUREMENTS"
+    },
+    {
+      "id": "APX-E03",
+      "scope": "Microgravity interaction",
+      "can_if": "Shape/spin, soil cohesion/friction, surface normal, tool force, anchoring and units have source or bench evidence",
+      "current": "SCREENING_ONLY",
+      "next": "Input mass/density/shape sweeps; separate frictional/adhesive/anchors models and instrumented tests",
+      "evidence_class": "MODELLED"
+    },
+    {
+      "id": "APX-E04",
+      "scope": "Mark III docking",
+      "can_if": "Exact connector ICD + mass/inertia/actuation/bounds + relative approach + contact model + fail-safe are bound",
+      "current": "HOLD",
+      "next": "Use existing Mark III multi-unit screening, without invented payload or appendage loads",
+      "evidence_class": "INPUTS_MISSING"
+    },
+    {
+      "id": "APX-E05",
+      "scope": "Mark V and Solar Hull",
+      "can_if": "Verified electrical/thermal/structural coupons, irradiance/orientation and degradation data exist",
+      "current": "HOLD",
+      "next": "Link source-qualified bench tests; do not assume power delivery at Apophis",
+      "evidence_class": "TEST_PENDING"
+    },
+    {
+      "id": "APX-E06",
+      "scope": "PC01 print pathway",
+      "can_if": "PC01 route family is selected and all source/machine/process/material/rights and C0 safe-stop gates pass",
+      "current": "HOLD",
+      "next": "Prioritize low-risk measured material coupons and metrology; no claims of fully printed functional hardware",
+      "evidence_class": "PHYSICAL_TEST_PENDING"
+    },
+    {
+      "id": "APX-E07",
+      "scope": "RFS/EMFF/Free Flow",
+      "can_if": "Controlled and independently replicated force/energy measurements exceed apparatus error and satisfy conservation tests",
+      "current": "HOLD",
+      "next": "Bench qualification and electromagnetic compatibility before any extraction or braking scenario",
+      "evidence_class": "CONCEPTUAL"
+    },
+    {
+      "id": "APX-E08",
+      "scope": "Mission window/route",
+      "can_if": "Owner selects route and binds launch site, vehicle, ephemerides, trajectory GMAT receipt and independent MPL analysis",
+      "current": "HOLD",
+      "next": "Keep Apophis strategic support branch, M1–M3 scenario not selected",
+      "evidence_class": "SCENARIO_ONLY"
+    },
+    {
+      "id": "APX-E09",
+      "scope": "Luke and InterSol",
+      "can_if": "Infrastructure design, kinetic load/thermal/power/regulatory and site/space qualification are independently validated",
+      "current": "HOLD",
+      "next": "Treat Luke IV as terrestrial infrastructure, not Mark IV; avoid asserting GEO retrieval/braking functions",
+      "evidence_class": "FUTURE_INFRASTRUCTURE"
+    },
+    {
+      "id": "APX-E10",
+      "scope": "Public CGX",
+      "can_if": "Object ID, source hashes, normalized units, ACL, no private fields, JS QA and browser/mobile review pass",
+      "current": "SOURCE_BOUND_RELEASE",
+      "next": "Production remains public read-only; formal browser rendering and user acceptance still pending",
+      "evidence_class": "PUBLIC_PROJECTION"
+    }
+  ],
+  "explicit_non_derivables": [
+    "No real bulk density from taxonomic classification",
+    "No material deposit location or mass percent from S-type spectral class",
+    "No validated surface gravity map without PDS mesh and mass",
+    "No touchdown or excavation loads without instrumented geology and dynamics",
+    "No GMAT trajectory or spacecraft delta-v from asteroid flyby alone",
+    "No power/storage cycle from conceptual resonators, Free Flow or Solar Hull without tests",
+    "No legitimate legal ownership of celestial resources from internal registry"
+  ]
+}
