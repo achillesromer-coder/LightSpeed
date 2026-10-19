@@ -1,0 +1,332 @@
+{
+  "schema": "cgx.apophis.engineering.spherical-sensitivity.v1",
+  "object_id": "JPL:SBDB:99942",
+  "scope": "First-order local analytic sensitivity only; no source-validated shape, interior, strength, spin or trajectory propagation",
+  "source_roots": {
+    "ephemeris_sha": "20313cafa8c71b3514a2c97872056dfd42d4b2d0e1947cde2c76cb3cae4a96dc",
+    "ephemeris_bundle": "data/ephemeris-2029-30s.json",
+    "contract": "data/object-public-contract.json",
+    "sbdb_nominal_tca": "2029-04-13T21:46",
+    "physical_basis": "Asteroid Master diameter=340 m, density missing; 2700 kg/m3 taxonomic screening proxy"
+  },
+  "constants": {
+    "gravitational_constant_m3_kg_s2": 6.6743e-11,
+    "earth_mu_m3_s2": 398600441800000,
+    "earth_equatorial_radius_m": 6378137,
+    "astronomical_unit_m": 149597870700,
+    "source_notes": "CODATA G, approximate geocentric Earth GM and WGS84 equatorial radius; audit constants documented, not source-specific Earth ellipsoid surface elevation"
+  },
+  "spherical_geometry": {
+    "equivalent_radius_m": 170,
+    "equivalent_volume_m3": 20579526.276115537,
+    "volume_formula": "4*pi/3*(mean_diameter_m/2)^3",
+    "not_shape_mesh_volume": true
+  },
+  "nominal_encounter": {
+    "range_center_km": 38011.45916295157,
+    "altitude_over_equatorial_sphere_km": 31633.322162951572,
+    "relative_speed_km_s": 7.42253895678452,
+    "earth_local_escape_speed_km_s": 4.579590175383892,
+    "v_infinity_two_body_km_s": 5.841355869189206,
+    "earth_center_gravity_m_s2": 0.2758726794012943,
+    "model_tidal_acceleration_half_span_m_s2": 0.0000024675903809517628,
+    "source_v_infinity_km_s": 5.84135589753103
+  },
+  "density_sweep": [
+    {
+      "bulk_density_kg_m3": 1000,
+      "sphere_mass_kg": 20579526276.115536,
+      "sphere_surface_g_m_s2": 0.000047527312188469867,
+      "sphere_escape_speed_m_s": 0.12711918086614526,
+      "tide_g_ratio_at_nominal_tca": 0.051919417853181285
+    },
+    {
+      "bulk_density_kg_m3": 1500,
+      "sphere_mass_kg": 30869289414.173306,
+      "sphere_surface_g_m_s2": 0.0000712909682827048,
+      "sphere_escape_speed_m_s": 0.15568856482131124,
+      "tide_g_ratio_at_nominal_tca": 0.03461294523545419
+    },
+    {
+      "bulk_density_kg_m3": 2000,
+      "sphere_mass_kg": 41159052552.23107,
+      "sphere_surface_g_m_s2": 0.00009505462437693973,
+      "sphere_escape_speed_m_s": 0.1797736696186611,
+      "tide_g_ratio_at_nominal_tca": 0.025959708926590642
+    },
+    {
+      "bulk_density_kg_m3": 2700,
+      "sphere_mass_kg": 55564720945.51195,
+      "sphere_surface_g_m_s2": 0.00012832374290886863,
+      "sphere_escape_speed_m_s": 0.2088781285559006,
+      "tide_g_ratio_at_nominal_tca": 0.019229414019696772
+    },
+    {
+      "bulk_density_kg_m3": 3500,
+      "sphere_mass_kg": 72028341966.40437,
+      "sphere_surface_g_m_s2": 0.0001663455926596445,
+      "sphere_escape_speed_m_s": 0.23781821104423256,
+      "tide_g_ratio_at_nominal_tca": 0.014834119386623226
+    },
+    {
+      "bulk_density_kg_m3": 4500,
+      "sphere_mass_kg": 92607868242.51991,
+      "sphere_surface_g_m_s2": 0.0002138729048481144,
+      "sphere_escape_speed_m_s": 0.26966050442799167,
+      "tide_g_ratio_at_nominal_tca": 0.011537648411818063
+    }
+  ],
+  "timeseries": [
+    {
+      "time_tdb": "21:40:00",
+      "range_km": 38092.77316816245,
+      "radial_velocity_km_s": -0.4364174065003568,
+      "earth_center_gravity_m_s2": 0.2746961638433768,
+      "tidal_acceleration_per_half_span_m_s2": 0.0000024518219058098953,
+      "differential_across_diameter_m_s2": 0.000004903643811619791,
+      "tidal_to_spherical_self_gravity_at_2700": 0.019106533601900157,
+      "velocity_magnitude_km_s": 7.419525287361959,
+      "vector_range_residual_m": 0
+    },
+    {
+      "time_tdb": "21:40:30",
+      "range_km": 38080.205275754866,
+      "radial_velocity_km_s": -0.40143542246065955,
+      "earth_center_gravity_m_s2": 0.27487751378671804,
+      "tidal_acceleration_per_half_span_m_s2": 0.000002454250285961241,
+      "differential_across_diameter_m_s2": 0.000004908500571922482,
+      "tidal_to_spherical_self_gravity_at_2700": 0.019125457458828724,
+      "velocity_magnitude_km_s": 7.419990521985839,
+      "vector_range_residual_m": -7.275957614183426e-9
+    },
+    {
+      "time_tdb": "21:41:00",
+      "range_km": 38068.687394725544,
+      "radial_velocity_km_s": -0.36641764623190465,
+      "earth_center_gravity_m_s2": 0.2750438702157976,
+      "tidal_acceleration_per_half_span_m_s2": 0.00000245647859890036,
+      "differential_across_diameter_m_s2": 0.00000491295719780072,
+      "tidal_to_spherical_self_gravity_at_2700": 0.019142822233956122,
+      "velocity_magnitude_km_s": 7.420417114656598,
+      "vector_range_residual_m": 0
+    },
+    {
+      "time_tdb": "21:41:30",
+      "range_km": 38058.22054558906,
+      "radial_velocity_km_s": -0.33136714000553713,
+      "earth_center_gravity_m_s2": 0.2751951772672978,
+      "tidal_acceleration_per_half_span_m_s2": 0.0000024585059135594708,
+      "differential_across_diameter_m_s2": 0.0000049170118271189415,
+      "tidal_to_spherical_self_gravity_at_2700": 0.019158620671666522,
+      "velocity_magnitude_km_s": 7.4208049638853195,
+      "vector_range_residual_m": 7.275957614183426e-9
+    },
+    {
+      "time_tdb": "21:42:00",
+      "range_km": 38048.805663854764,
+      "radial_velocity_km_s": -0.29628700092895305,
+      "earth_center_gravity_m_s2": 0.2753313839395114,
+      "tidal_acceleration_per_half_span_m_s2": 0.0000024603313798194485,
+      "differential_across_diameter_m_s2": 0.000004920662759638897,
+      "tidal_to_spherical_self_gravity_at_2700": 0.01917284614715997,
+      "velocity_magnitude_km_s": 7.421153976997684,
+      "vector_range_residual_m": 1.4551915228366852e-8
+    },
+    {
+      "time_tdb": "21:42:30",
+      "range_km": 38040.44359182723,
+      "radial_velocity_km_s": -0.261180338915109,
+      "earth_center_gravity_m_s2": 0.27545244424782916,
+      "tidal_acceleration_per_half_span_m_s2": 0.0000024619542308487407,
+      "differential_across_diameter_m_s2": 0.000004923908461697481,
+      "tidal_to_spherical_self_gravity_at_2700": 0.0191854926846791,
+      "velocity_magnitude_km_s": 7.421464070485261,
+      "vector_range_residual_m": 7.275957614183426e-9
+    },
+    {
+      "time_tdb": "21:43:00",
+      "range_km": 38033.13507845617,
+      "radial_velocity_km_s": -0.22605027537300135,
+      "earth_center_gravity_m_s2": 0.27555831726054403,
+      "tidal_acceleration_per_half_span_m_s2": 0.000002463373783815562,
+      "differential_across_diameter_m_s2": 0.000004926747567631124,
+      "tidal_to_spherical_self_gravity_at_2700": 0.0191965549630591,
+      "velocity_magnitude_km_s": 7.4217351700620116,
+      "vector_range_residual_m": -1.4551915228366852e-8
+    },
+    {
+      "time_tdb": "21:43:30",
+      "range_km": 38026.880778817635,
+      "radial_velocity_km_s": -0.1908999418254435,
+      "earth_center_gravity_m_s2": 0.2756489671363663,
+      "tidal_acceleration_per_half_span_m_s2": 0.0000024645894405983033,
+      "differential_across_diameter_m_s2": 0.000004929178881196607,
+      "tidal_to_spherical_self_gravity_at_2700": 0.019206028321263783,
+      "velocity_magnitude_km_s": 7.421967210714615,
+      "vector_range_residual_m": 7.275957614183426e-9
+    },
+    {
+      "time_tdb": "21:44:00",
+      "range_km": 38021.68125392275,
+      "radial_velocity_km_s": -0.15573247860163916,
+      "earth_center_gravity_m_s2": 0.2757243631535212,
+      "tidal_acceleration_per_half_span_m_s2": 0.000002465600688357917,
+      "differential_across_diameter_m_s2": 0.000004931201376715834,
+      "tidal_to_spherical_self_gravity_at_2700": 0.019213908762846066,
+      "velocity_magnitude_km_s": 7.422160136746674,
+      "vector_range_residual_m": 7.275957614183426e-9
+    },
+    {
+      "time_tdb": "21:44:30",
+      "range_km": 38017.53697046929,
+      "radial_velocity_km_s": -0.12055103346874042,
+      "earth_center_gravity_m_s2": 0.27578447973595344,
+      "tidal_acceleration_per_half_span_m_s2": 0.0000024664071000459318,
+      "differential_across_diameter_m_s2": 0.0000049328142000918635,
+      "tidal_to_spherical_self_gravity_at_2700": 0.01922019295990684,
+      "velocity_magnitude_km_s": 7.422313901816585,
+      "vector_range_residual_m": -7.275957614183426e-9
+    },
+    {
+      "time_tdb": "21:45:00",
+      "range_km": 38014.448300630625,
+      "radial_velocity_km_s": -0.08535876025684766,
+      "earth_center_gravity_m_s2": 0.2758292964752321,
+      "tidal_acceleration_per_half_span_m_s2": 0.0000024670083348289215,
+      "differential_across_diameter_m_s2": 0.000004934016669657843,
+      "tidal_to_spherical_self_gravity_at_2700": 0.019224878256402723,
+      "velocity_magnitude_km_s": 7.422428468969065,
+      "vector_range_residual_m": -7.275957614183426e-9
+    },
+    {
+      "time_tdb": "21:45:30",
+      "range_km": 38012.41552186407,
+      "radial_velocity_km_s": -0.05015881750993068,
+      "earth_center_gravity_m_s2": 0.27585879814838604,
+      "tidal_acceleration_per_half_span_m_s2": 0.0000024674041384321853,
+      "differential_across_diameter_m_s2": 0.0000049348082768643706,
+      "tidal_to_spherical_self_gravity_at_2700": 0.01922796267082434,
+      "velocity_magnitude_km_s": 7.422503810660383,
+      "vector_range_residual_m": -7.275957614183426e-9
+    },
+    {
+      "time_tdb": "21:46:00",
+      "range_km": 38011.438816840346,
+      "radial_velocity_km_s": -0.014954367120377713,
+      "earth_center_gravity_m_s2": 0.2758729747301688,
+      "tidal_acceleration_per_half_span_m_s2": 0.000002467594343382294,
+      "differential_across_diameter_m_s2": 0.000004935188686764588,
+      "tidal_to_spherical_self_gravity_at_2700": 0.019229444898086395,
+      "velocity_magnitude_km_s": 7.422539908776942,
+      "vector_range_residual_m": 7.275957614183426e-9
+    },
+    {
+      "time_tdb": "21:46:30",
+      "range_km": 38011.518273332054,
+      "radial_velocity_km_s": 0.020251427070594297,
+      "earth_center_gravity_m_s2": 0.2758718214020821,
+      "tidal_acceleration_per_half_span_m_s2": 0.000002467578869179587,
+      "differential_across_diameter_m_s2": 0.000004935157738359174,
+      "tidal_to_spherical_self_gravity_at_2700": 0.019229324310871928,
+      "velocity_magnitude_km_s": 7.422536754647915,
+      "vector_range_residual_m": -7.275957614183426e-9
+    },
+    {
+      "time_tdb": "21:47:00",
+      "range_km": 38012.653884197745,
+      "radial_velocity_km_s": 0.055455400624565936,
+      "earth_center_gravity_m_s2": 0.2758553385561708,
+      "tidal_acceleration_per_half_span_m_s2": 0.000002467357722373809,
+      "differential_across_diameter_m_s2": 0.000004934715444747618,
+      "tidal_to_spherical_self_gravity_at_2700": 0.01922760096022173,
+      "velocity_magnitude_km_s": 7.4224943490509485,
+      "vector_range_residual_m": 7.275957614183426e-9
+    },
+    {
+      "time_tdb": "21:47:30",
+      "range_km": 38014.8455473161,
+      "radial_velocity_km_s": 0.09065438991593378,
+      "earth_center_gravity_m_s2": 0.2758235317956864,
+      "tidal_acceleration_per_half_span_m_s2": 0.000002466930996571006,
+      "differential_across_diameter_m_s2": 0.000004933861993142012,
+      "tidal_to_spherical_self_gravity_at_2700": 0.01922427557558807,
+      "velocity_magnitude_km_s": 7.422412702211596,
+      "vector_range_residual_m": 7.275957614183426e-9
+    },
+    {
+      "time_tdb": "21:48:00",
+      "range_km": 38018.0930657942,
+      "radial_velocity_km_s": 0.12584523345733842,
+      "earth_center_gravity_m_s2": 0.27577641192792474,
+      "tidal_acceleration_per_half_span_m_s2": 0.000002466298872308673,
+      "differential_across_diameter_m_s2": 0.000004932597744617346,
+      "tidal_to_spherical_self_gravity_at_2700": 0.01921934956386176,
+      "velocity_magnitude_km_s": 7.422291833796632,
+      "vector_range_residual_m": -2.1827872842550278e-8
+    },
+    {
+      "time_tdb": "21:48:30",
+      "range_km": 38022.39614783362,
+      "radial_velocity_km_s": 0.16102477333349705,
+      "earth_center_gravity_m_s2": 0.2757139949581833,
+      "tidal_acceleration_per_half_span_m_s2": 0.0000024654616169192544,
+      "differential_across_diameter_m_s2": 0.000004930923233838509,
+      "tidal_to_spherical_self_gravity_at_2700": 0.019212825008308444,
+      "velocity_magnitude_km_s": 7.42213177290016,
+      "vector_range_residual_m": 7.275957614183426e-9
+    },
+    {
+      "time_tdb": "21:49:00",
+      "range_km": 38027.754407053355,
+      "radial_velocity_km_s": 0.19618985652179066,
+      "earth_center_gravity_m_s2": 0.27563630207326056,
+      "tidal_acceleration_per_half_span_m_s2": 0.0000024644195842267816,
+      "differential_across_diameter_m_s2": 0.000004928839168453563,
+      "tidal_to_spherical_self_gravity_at_2700": 0.019204704666204542,
+      "velocity_magnitude_km_s": 7.421932558024026,
+      "vector_range_residual_m": 7.275957614183426e-9
+    },
+    {
+      "time_tdb": "21:49:30",
+      "range_km": 38034.16736250976,
+      "radial_velocity_km_s": 0.2313373362998552,
+      "earth_center_gravity_m_s2": 0.2755433596255393,
+      "tidal_acceleration_per_half_span_m_s2": 0.000002463173214224963,
+      "differential_across_diameter_m_s2": 0.000004926346428449926,
+      "tidal_to_spherical_self_gravity_at_2700": 0.019194991966328703,
+      "velocity_magnitude_km_s": 7.421694237051474,
+      "vector_range_residual_m": 1.4551915228366852e-8
+    },
+    {
+      "time_tdb": "21:50:00",
+      "range_km": 38041.63444386257,
+      "radial_velocity_km_s": 0.2664640945029264,
+      "earth_center_gravity_m_s2": 0.2754351990387594,
+      "tidal_acceleration_per_half_span_m_s2": 0.0000024617230316792254,
+      "differential_across_diameter_m_s2": 0.000004923446063358451,
+      "tidal_to_spherical_self_gravity_at_2700": 0.019183690998067767,
+      "velocity_magnitude_km_s": 7.421416867037587,
+      "vector_range_residual_m": 0
+    }
+  ],
+  "assumptions": [
+    "Uniform-density sphere of 340m equivalent diameter is a proxy, not true shape or density",
+    "Earth tidal acceleration is first-order (2*GM_E*R/r^3), only instantaneous linear-gradient amplitude along Earth line",
+    "Uniform free-fall Earth-center acceleration is not equivalent to locally disruptive tidal gradient",
+    "Ignore spin, cohesion, friction, topography, contact mechanics, deformation, non-principal-axis state and resonances",
+    "Tidal/self gravity ratio does not predict displacement, landslide, fracturing, extraction safety, yield or accessibility",
+    "v_inf estimate assumes Earth-centered two-body energy using JPL nominal relative v and distance; not a mission trajectory",
+    "Altitude is relative to Earth equatorial reference sphere, not geodetic ground altitude",
+    "Time grid is 30s source-sampled, no extrapolation outside 21:40–21:50 TDB",
+    "Taxonomic metallic proxy is not mass fraction proven and not used to allocate ore deposits"
+  ],
+  "quality_checks": {
+    "object_identity_match": true,
+    "sample_count": 21,
+    "max_vector_range_residual_m": 2.1827872842550278e-8,
+    "nominal_v_inf_abs_delta_vs_sbdb_km_s": 2.834182399880092e-8,
+    "source_nominal_range_minus_nearest_sample_m": 20.346111225080676,
+    "volume_difference_against_workbook_m3": -0.0038844645023345947,
+    "mass_difference_against_workbook_kg": -0.4880523681640625
+  }
+}
