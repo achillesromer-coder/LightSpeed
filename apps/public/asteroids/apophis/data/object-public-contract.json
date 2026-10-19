@@ -1,0 +1,127 @@
+{
+  "schema": "cgx.public_projection.apophis.object.v1",
+  "object_id": "JPL:SBDB:99942",
+  "candidate_id": "candidate:asteroid:apophis",
+  "designation": 99942,
+  "name": "Apophis",
+  "status": "STRATEGIC TAG/SUPPORT, NOT MINE-FIRST",
+  "captured_at": "2026-10-19",
+  "master_epoch_jd": 2461000.5,
+  "master": {
+    "dynamical_class": "NEA>Aten>PHA",
+    "a_au": 0.92238,
+    "e": 0.19116634,
+    "i_deg": 3.340955,
+    "q_au": 0.74605199,
+    "Q_au": 1.09870801,
+    "mean_diameter_m": 340,
+    "albedo": 0.3838,
+    "taxonomy": "S",
+    "measured_bulk_density_kg_m3": null
+  },
+  "proxy": {
+    "taxonomy_bulk_density_kg_m3": 2700,
+    "taxonomy_metal_fraction": 0.45,
+    "classification_volume_m3": 20579526.28,
+    "classification_mass_kg": 55564720946,
+    "status": "HEURISTIC ONLY — no mineral volume, ore grade, reserves or deposits"
+  },
+  "encounter": {
+    "nominal_tca_tdb": "2029-04-13T21:46",
+    "nominal_distance_au": 0.000254090910419299,
+    "relative_speed_km_s": 7.42253895678452,
+    "bplane_semimajor_1s_km": 1.155424483252,
+    "bplane_semiminor_1s_km": 0.47487903837977,
+    "min_distance_3s_au": 0.000254068999976389,
+    "max_distance_3s_au": 0.000254112821017663
+  },
+  "shape": {
+    "pds_doi": "10.26033/ydyq-5756",
+    "description": "Preliminary 3D radar-derived shape and spin solution",
+    "mesh_local": "NOT MATERIALIZED/QUALIFIED",
+    "interior_observations": false
+  },
+  "operations": {
+    "role": "2029 timed strategic observation and source comparison",
+    "mission_windows": [
+      {
+        "id": "MGW-001",
+        "date": "2027-06-01",
+        "state": "GMAT NOT_TRIGGERED / MPL INPUTS_OPEN"
+      },
+      {
+        "id": "MGW-007",
+        "date": "2028-01-01",
+        "state": "GMAT NOT_TRIGGERED / MPL INPUTS_OPEN"
+      },
+      {
+        "id": "MGW-013",
+        "date": "2028-08-01",
+        "state": "GMAT NOT_TRIGGERED / MPL INPUTS_OPEN"
+      }
+    ],
+    "m1_m2_m3_allocation_m3": [
+      3,
+      7,
+      11
+    ],
+    "hardware": [
+      "Mark III conceptual",
+      "Mark V conceptual"
+    ]
+  },
+  "lineage": [
+    {
+      "role": "asteroid_master",
+      "url": "https://docs.google.com/spreadsheets/d/148UObDgK_YsqHDbIkJo89yDvyDcgySTE4wQMEVGwga8/edit#gid=2101927502",
+      "range": "Asteroid Master!A3:Z3",
+      "authority": "Curated source seed, density missing"
+    },
+    {
+      "role": "taxonomy_proxy",
+      "url": "https://docs.google.com/spreadsheets/d/148UObDgK_YsqHDbIkJo89yDvyDcgySTE4wQMEVGwga8/edit#gid=883089090",
+      "range": "Taxonomy Map!A6:E7",
+      "authority": "Heuristic only"
+    },
+    {
+      "role": "operations_evidence",
+      "url": "https://docs.google.com/spreadsheets/d/1Uy04F5gtf2mXf9tDmAyIvNrsCn1kn4Csa2oc-skSZxY/edit#gid=301000025",
+      "range": "Asteroid Evidence Register!A8:P8",
+      "authority": "Object/shape/role boundary"
+    },
+    {
+      "role": "operations_windows",
+      "url": "https://docs.google.com/spreadsheets/d/1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg/edit#gid=302000001",
+      "range": "MPL GMAT Windows!A3:T21",
+      "authority": "Pointer slots only, no run results"
+    },
+    {
+      "role": "gmat_contract",
+      "url": "https://docs.google.com/spreadsheets/d/1M3nBDHw85S0YV2U3r97GwJ9YyH8w4P42HA-HvpOMhKg/edit#gid=302000002",
+      "range": "MPL GMAT Contract!A3:J25",
+      "authority": "Run gates/field contract; no receipt"
+    },
+    {
+      "role": "jpl_event",
+      "url": "https://github.com/achillesromer-coder/Data/blob/main/data/jpl/horizons/events/apophis-2029/event.json",
+      "authority": "No-intervention encounter control"
+    },
+    {
+      "role": "pds_shape",
+      "url": "https://sbn.psi.edu/pds/resource/doi/apophis_shape_1.0.html",
+      "authority": "Derived radar shape, not subsurface"
+    },
+    {
+      "role": "nasa_facts",
+      "url": "https://science.nasa.gov/solar-system/asteroids/apophis-facts/",
+      "authority": "General physical/mission facts"
+    }
+  ],
+  "guards": [
+    "No private Drive records embedded beyond approved summary fields",
+    "No actuator, trajectory, or GMAT endpoint",
+    "No mineral coordinates or proven ore grade",
+    "Cross-section is a hypothesis",
+    "Ephemeris UTC label is not UTC: samples are TDB"
+  ]
+}
