@@ -41,10 +41,10 @@ def assemble_cgx_public(source: Path, output: Path) -> dict:
     output = Path(output).absolute()
     if not source.is_dir() or source.is_symlink():
         raise ValueError("CGX public source directory unavailable or linked")
-    if output.exists() or output.is_symlink():
-        raise ValueError("Refusing to replace an existing release directory")
     if _resolved_within(output, source) or _resolved_within(source, output):
         raise ValueError("Release output must be separate from the source tree")
+    if output.exists() or output.is_symlink():
+        raise ValueError("Refusing to replace an existing release directory")
     required = [Path(name) for name in PUBLIC_FILES]
     policy_relative = Path("deployment/vercel.json")
     contents = {}
