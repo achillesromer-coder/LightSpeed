@@ -1,0 +1,212 @@
+{
+  "schema": "CGX-UNISPACE-INTAKE-MAPPING-CONTRACT/1",
+  "status": "SOURCE_ONLY_REVIEW_CANDIDATE_NOT_CANONICAL",
+  "owner_issue": "achillesromer-coder/LightSpeed#161",
+  "security_issue": "achillesromer-coder/LightSpeed#158",
+  "authority": "Cognigrex.cgx / existing FileSpace+Node Exchange+semantic lens registries",
+  "code_binding": "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_intake_projection.py",
+  "queued_native_intake_binding": {
+    "executor": "desktop/LightSpeed_Runtime/lightspeed_runtime/source_intake_executor.py",
+    "existing_action_type": "source_preserving_intake",
+    "receipt_schema": "lightspeed-source-intake-receipt-v2",
+    "artifacts": [
+      "source.native",
+      "source-envelope.json",
+      "filespace-candidate.json"
+    ],
+    "recovery": "Rehash artifacts and reproduce the private candidate from original bytes and envelope before accepting v2 readback; v1 remains readable without backfill.",
+    "identity": "No Object_ID allocated; local path and byte snapshot only, pending canonical identity and source-owner review.",
+    "authority": "CGX staging custody only; unknown licence; private; no provider revision proof, R1 admission, DBR promotion or publication."
+  },
+  "native_keys": [
+    "Object_ID",
+    "File_ID",
+    "Provider_Revision",
+    "Source_SHA256",
+    "State_Root",
+    "Geometry_Root",
+    "Semantic_Root",
+    "Model_Root",
+    "DBR_Root",
+    "Source_Owner",
+    "ACL_Ref",
+    "Licence",
+    "Evidence_Class",
+    "Uncertainty",
+    "Capability_ID",
+    "Node_ID",
+    "Lease_ID",
+    "Task_ID",
+    "Run_ID",
+    "Hour_ID",
+    "Queue_ID"
+  ],
+  "stages": {
+    "R0": "SHA256 source byte identity",
+    "R1": "bounded format recognition",
+    "R2": "typed source assertions pending validation",
+    "R3": "geometry and relationships from registered adapters only",
+    "R4": "state, physics and rules only with evidence",
+    "R5": "reconstruction proof",
+    "R6": "independent falsifier/test/DBR readback",
+    "R7": "actual signed device/node transfer"
+  },
+  "owners": [
+    {
+      "id": "cgx",
+      "root": "Cognigrex.cgx",
+      "role": "authority, grammar, provenance, evidence and DBR"
+    },
+    {
+      "id": "romer",
+      "root": "Romer.cgx",
+      "agent": "Neo",
+      "role": "Mark, Luke, Solar Hull, RFS/EMFF, SEQLD corridor"
+    },
+    {
+      "id": "eco",
+      "root": "Eco.cgx",
+      "agent": "Athene",
+      "role": "ecology, restoration, fauna/site evidence, bio-blocks"
+    },
+    {
+      "id": "emassc",
+      "root": "EMASSC.cgx",
+      "agent": "Achilles",
+      "role": "science, IP custody, governance"
+    },
+    {
+      "id": "lightspeed",
+      "root": "LS.cgx",
+      "parent": "emassc",
+      "role": "neutral runtime, GO UI and execution capability, not semantic master"
+    }
+  ],
+  "device_plan": {
+    "desktop": {
+      "device_kind": "desktop_host",
+      "real_signed_identity": "HOLD"
+    },
+    "phone": {
+      "device_kind": "mobile_touch",
+      "real_signed_identity": "HOLD"
+    },
+    "invariants": [
+      "independent keystore-backed node ID",
+      "scoped signed leases",
+      "revocation",
+      "anti-replay",
+      "interrupted resume",
+      "SHA+size readback",
+      "state-root and DBR-root equality",
+      "offline conflict preservation",
+      "independent receiving device receipt",
+      "no auto physical/canonical/public action"
+    ]
+  },
+  "public_release": {
+    "romer": "owner-reviewed PUBLIC_SAFE projection only",
+    "eco": "owner-reviewed PUBLIC_SAFE projection only",
+    "source_internal_catalogue": "HOLD per #158",
+    "project_public_preview": "UNPUBLISHED_PREVIEW_ONLY"
+  },
+  "claims": {
+    "peer_transport_verified": false,
+    "authenticated_phone": false,
+    "public_publish_authorized": false,
+    "canonical_promotion_authorized": false,
+    "physical_qualification": false
+  },
+  "geometry_section_projection": {
+    "status": "SOURCE_CONTRACT_ONLY_NOT_NATIVE_ADMITTED",
+    "existing_lenses": [
+      "filespace-tree",
+      "twin-3d",
+      "map-spatial",
+      "active-object-inspector",
+      "publication"
+    ],
+    "implementation_review_link": "achillesromer-coder/LightSpeed#174",
+    "synthetic_source_head": "317156f2b4ad9dddbc9ce5c2137407f726818d5c",
+    "synthetic_evidence": "12 targeted public JS tests PASS and browser smoke no page errors; local synthetic cube only, not 13 solid CAD metrology",
+    "geometry_templates": {
+      "family": "finite Archimedean convex solids",
+      "expected_count": 13,
+      "default_keys": [
+        "truncated_octahedron",
+        "cuboctahedron",
+        "truncated_icosahedron"
+      ],
+      "registry_expected": [
+        "truncated_tetrahedron",
+        "cuboctahedron",
+        "truncated_cube",
+        "truncated_octahedron",
+        "rhombicuboctahedron",
+        "truncated_cuboctahedron",
+        "snub_cube",
+        "icosidodecahedron",
+        "truncated_dodecahedron",
+        "truncated_icosahedron",
+        "rhombicosidodecahedron",
+        "truncated_icosidodecahedron",
+        "snub_dodecahedron"
+      ],
+      "finite_geometry_import": "REQUIRES_ORIGINAL_SOURCE_REFERENCED_VERTICES_FACES_EDGES",
+      "status": "TEMPLATES_NOT_ALL_IMPLEMENTED",
+      "legacy_overlay": "regular dodecahedron: Platonic, separate 12/30/20 Alexandria scaffold, not a fourteenth Archimedean"
+    },
+    "view_modes": [
+      "true_plane_section",
+      "orthographic_projection",
+      "face_local_2d"
+    ],
+    "required_source_bindings": [
+      "Object_ID",
+      "Source_SHA256",
+      "Provider_Revision",
+      "Source_Owner",
+      "ACL_Ref",
+      "Licence",
+      "Geometry_Root",
+      "coordinate_frame",
+      "units",
+      "epoch",
+      "transformation_chain",
+      "plane_normal",
+      "plane_offset",
+      "symmetric_group_if_claimed",
+      "view_root",
+      "source_readback"
+    ],
+    "section_invariants": [
+      "Project original source-backed geometry via separately verified frame transformation without overwriting vertices or source hashes",
+      "For a true plane section, compute signed distances of each transformed vertex to normalized plane and interpolate only bounded crossing edges",
+      "Deduplicate coincident section intersections within declared tolerance, sort in a stable on-plane orthonormal basis, preserve points and area units",
+      "Projection and face-local view modes are distinct from a true cross-section; no shared evidence label without checked converter",
+      "Return NO_INTERSECTION, DEGENERATE_SECTION, INVALID_GEOMETRY and UNKNOWN_FRAME_OR_UNIT as separate outcomes rather than zero",
+      "Object_ID and roots must bind to original FileSpace; a visual lens never grants semantic, owner, ACL, lease, peer or measured-physics authority"
+    ],
+    "negative_falsifiers": [
+      "missing R0 original/provider revision/rights",
+      "stale Geometry_Root",
+      "zero normal/NaN/non-finite vertices",
+      "invalid face/edge indices",
+      "nonconvex or self-intersecting source without suitable algorithm",
+      "plane tangent to edge/vertex",
+      "inconsistent frame or units",
+      "lossy symmetry fold without reverse map",
+      "unlicensed/private data exposed in public static build",
+      "revoked role or missing signed peer"
+    ],
+    "promotion_state": {
+      "r0_source": "INDEPENDENT_PROVIDER_IDENTITY_REVIEW_REQUIRED",
+      "r1_conversion": "REVERSIBLE_PLAN_TEST_REQUIRED",
+      "r2_semantics": "INDEPENDENT_OWNER_DBR_REQUIRED",
+      "r3_view": "PRIVATE_AUTHENTICATED_OR_PUBLIC_SAFE_ONLY",
+      "host_e2e_verified": false,
+      "canonical_mutation_authorized": false,
+      "public_release_authorized": false
+    }
+  }
+}
