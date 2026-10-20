@@ -69,6 +69,25 @@ class AlexandriaReferenceProjectionTests(unittest.TestCase):
             with self.subTest(i=i),self.assertRaises(ValueError):
                 module.compile_reference_index(payload)
 
+    def test_independent_upstream_catalogue_receipt_is_not_project_admission(self):
+        receipt_path=ROOT/"cgx"/"review"/"alexandria_pinned_catalogue_readback_20261020.json"
+        receipt=json.loads(receipt_path.read_text(encoding="utf-8"))
+        families={g["origin"]["name"]:g for g in intake()["groups"]}
+        self.assertEqual(receipt["totals"]["matched_line_source_urls"],207)
+        self.assertEqual(receipt["totals"]["matched_line_titles"],207)
+        self.assertEqual(receipt["totals"]["external_projects_r0_verified"],0)
+        self.assertFalse(receipt["canonical_admission"])
+        self.assertFalse(receipt["release_ready"])
+        for item in receipt["roots"]:
+            group=families[item["origin"]]
+            self.assertEqual(item["commit"],group["origin"]["commit"])
+            self.assertEqual(item["readme_git_blob"],group["origin"]["readme_blob"])
+            self.assertEqual(item["indexed_entries"],group["source_lines"])
+            self.assertEqual(item["matched_line_titles"],item["indexed_entries"])
+            self.assertEqual(item["matched_line_source_urls"],item["indexed_entries"])
+            self.assertEqual(item["license_git_blob"],"0e259d42c996742e9e3cba14c677129b2c1b6311")
+            self.assertEqual(item["linked_project_license"],"UNVERIFIED")
+
     def test_archival_history_not_upgraded_to_redistributable_content(self):
         rows=module.compile_reference_index(intake())["components"]
         history=[r for r in rows if r["candidate_kind"]=="ARCHIVE_DISCOVERY"]
