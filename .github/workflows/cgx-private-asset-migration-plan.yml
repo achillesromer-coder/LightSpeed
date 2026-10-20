@@ -1,0 +1,57 @@
+name: CGX private Objects source migration planning
+on:
+  pull_request:
+    paths:
+      - "cgx/review/private_object_asset_migration.py"
+      - "tests/test_cgx_private_review_asset_migration.py"
+      - ".github/workflows/cgx-private-asset-migration-plan.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  read-only-plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test synthetic owner opt-in and source retention invariants
+        run: python -m unittest discover -s tests -p 'test_cgx_private_review_asset_migration.py' -v
+      - name: Create SOURCE-ONLY hash plan for existing held Vite assets
+        run: |
+          python cgx/review/private_object_asset_migration.py --root . > /tmp/private-review-source-plan.json
+          python - <<'PY'
+          import json
+          plan=json.load(open('/tmp/private-review-source-plan.json'))
+          assert plan['schema']=='CGX-PRIVATE-REVIEW-ASSET-MIGRATION-PLAN/0.1'
+          assert plan['count']==61
+          assert plan['source_originals_retained']
+          assert not plan['owner_approval_recorded']
+          assert not plan['public_release_authorised']
+          assert len(plan['records'])==61
+          assert len(plan['plan_sha256'])==64
+          print('Source-only review assets:',plan['count'])
+          print('Plan checksum:',plan['plan_sha256'])
+          print('Owner stage not performed; public release HOLD')
+          PY
+      - name: Recheck current static disclosure gate is still blocked
+        run: |
+          set +e
+          node apps/lightspeed-go/scripts/checkPublicRelease.mjs --phase source > /tmp/held_public_assets.json
+          status=$?
+          set -e
+          test "$status" -eq 2
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/held_public_assets.json'))
+          assert r['held_count']==61
+          assert not r['public_release_authorised']
+          print('Still held from public distribution:',r['held_count'])
+          PY
+      - name: Do not publish source hashes or private engineering data as public artifact
+        run: |
+          test -s /tmp/private-review-source-plan.json
+          test -s /tmp/held_public_assets.json
+          echo "Source evidence remains only within this non-deploying workflow; no artifact upload or staging."
