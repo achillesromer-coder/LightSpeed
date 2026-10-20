@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[2]
 CATALOGUES = {
     "legacy_games_engines": "cgx/review/alexandria_external_reference_intake_20261020.json",
     "curated_upstream": "cgx/review/alexandria_curated_upstream_tools_20261020.json",
+    "official_references": "cgx/review/alexandria_official_reference_roots_20261020.json",
 }
 
 def github_repo_identity(url: str) -> str | None:
@@ -48,9 +49,11 @@ def _read(root: Path, rel: str) -> tuple[dict,dict]:
 def project_alexandria_index(root: Path=ROOT) -> dict:
     old,orig=_read(root,CATALOGUES["legacy_games_engines"])
     new,added=_read(root,CATALOGUES["curated_upstream"])
+    official,official_source=_read(root,CATALOGUES["official_references"])
     records=new.get("repositories")
+    official_records=official.get("official_references")
     groups=old.get("groups")
-    if not isinstance(records,list) or not isinstance(groups,list):
+    if not isinstance(records,list) or not isinstance(groups,list) or not isinstance(official_records,list):
         raise ValueError("expected upstream catalogue entries")
     if any(x.get("admission")!="REFERENCE_ONLY_HOLD"
            or x.get("redistribution_authorised") is not False
@@ -93,6 +96,10 @@ def project_alexandria_index(root: Path=ROOT) -> dict:
                 if key in {r["repository"].lower() for r in records}:
                     matched.add(key)
     if len(index)>10_000: raise ValueError("excessive indices")
+    if any(x.get("public_kit_inclusion")!="REFERENCE_ONLY_HOLD" or x.get("rights_verified_for_pack") is not False or x.get("content_downloaded") is not False for x in official_records):
+        raise ValueError("unverified official source cannot be embedded")
+    if len({x.get("url") for x in official_records}) != len(official_records):
+        raise ValueError("duplicate official source reference")
     for track in new.get("learning_tracks",[]):
         for r in track.get("repos",[]):
             if r.lower() not in index: raise ValueError("learning track has missing source: "+r)
@@ -100,10 +107,11 @@ def project_alexandria_index(root: Path=ROOT) -> dict:
         "schema":"CGX-ALEXANDRIA-INTERDOMAIN-INDEX-PROJECTION/0.1",
         "status":"DERIVED_DISCOVERY_ONLY_NO_PROVIDER_EXECUTION",
         "semantic_parent":"Cognigrex.cgx",
-        "source_roots":{"legacy_games_engines":orig,"curated_upstream":added},
+        "source_roots":{"legacy_games_engines":orig,"curated_upstream":added,"official_references":official_source},
         "counts":{
             "legacy_list_entries":sum(len(g["records"]) for g in groups),
             "curated_repository_entries":len(records),
+            "official_reference_roots":len(official_records),
             "raw_external_source_links":legacy_links,
             "qualified_github_homepages":legacy_homepages,
             "non_homepage_source_links":legacy_unknown,
@@ -112,12 +120,13 @@ def project_alexandria_index(root: Path=ROOT) -> dict:
             "learning_tracks":len(new.get("learning_tracks",[]))
         },
         "domain_counts":dict(sorted(domains.items())),
+        "official_domains":dict(sorted(Counter(x["domain"] for x in official_records).items())),
         "cross_catalogue_links":sorted(matched),
         "source_identity_reference_count":sum(len(x["sources"]) for x in index.values()),
         "all_upstreams_without_release_grants":True,
         "all_upstreams_without_runtime_acceptance":True,
         "identity_policy":"Normalized repository is only a source-location candidate. Exact commit/blob digests and semantic identity remain separate.",
-        "download_policy":"No software binaries, assets, model weights or archived media copied.",
+        "download_policy":"No software binaries, official datasets, textbook bodies, assets, model weights or archived media copied.",
         "qualification_backlog":[
             "Resolve upstream LICENSE/COPYING/NOTICE and asset/data/weight licences independently",
             "Pin exact commit/tree/blob plus dependencies and ABI before reuse",
