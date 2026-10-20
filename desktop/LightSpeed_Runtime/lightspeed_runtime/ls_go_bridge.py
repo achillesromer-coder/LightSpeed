@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import hmac
 import hashlib
+import base64
+import binascii
 import importlib
 import json
 from lightspeed_runtime.source_intake_executor import validate_intake_payload
@@ -1947,6 +1949,79 @@ def create_app(root: Path | str) -> FastAPI:
         except ResultReceiptUnavailable as exc:
             raise HTTPException(status_code=503, detail=str(exc))
         return JSONResponse(result)
+
+    @app.post("/api/v1/alexandria/catalogue/hydrate")
+    async def owner_hydrate_alexandria_catalogue(
+        body: dict[str, Any],
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        """Read-only R0/R1 view. No client-provided ACL, packet, path or source root.
+
+        A real owner session is mandatory even when a legacy confirmation
+        environment variable happens to be configured.
+        """
+        if not owner_session or credential_store is None:
+            raise HTTPException(status_code=403, detail="Current owner session is required")
+        _verified_owner_actor(
+            None,
+            session_token=owner_session,
+            credential_store=credential_store,
+            session_store=owner_sessions,
+        )
+        if set(body) - {"candidate_ref", "source_base64"}:
+            raise HTTPException(status_code=400, detail="Unsupported source hydration fields")
+        candidate_ref = body.get("candidate_ref")
+        if not isinstance(candidate_ref, str) or len(candidate_ref) > 256:
+            raise HTTPException(status_code=400, detail="Bounded catalogue reference required")
+        # The caller may submit user-selected bytes, never a local file path or
+        # a claimed digest. The trusted R1 packet is loaded by fixed repo path.
+        supplied = body.get("source_base64")
+        if supplied is not None and (not isinstance(supplied, str) or len(supplied) > 24_000):
+            raise HTTPException(status_code=413, detail="Bounded source payload required")
+        if supplied is None:
+            raw = None
+        else:
+            try:
+                raw = base64.b64decode(supplied, validate=True)
+            except (ValueError, binascii.Error) as exc:
+                raise HTTPException(status_code=400, detail="Malformed source encoding") from exc
+            if len(raw) > 16_384:
+                raise HTTPException(status_code=413, detail="Source too large for this pinned catalogue")
+        repo_root = Path(__file__).resolve().parents[3]
+        receipt_path = (
+            repo_root / "cgx" / "review"
+            / "alexandria_engine_catalogue_real_source_envelope_20261020.json"
+        )
+        adapter_path = (
+            repo_root / "cgx" / "portable_node"
+            / "pinned_catalogue_source_intake.py"
+        )
+        if not receipt_path.is_file() or not adapter_path.is_file():
+            raise HTTPException(status_code=503, detail="Trusted Alexandria catalogue is unavailable")
+        try:
+            packet = json.loads(receipt_path.read_text(encoding="utf-8"))
+            if (packet.get("schema")
+                != "CGX-ALEXANDRIA-REAL-R0R1-UPSTREAM-CATALOGUE-RECEIPT/0.1"
+                or packet.get("source_envelope", {}).get("sha256")
+                != "075c794da0482a7bff6f46d67956ef2e62486a1914fc78cda3d239bbf3a54a92"):
+                raise ValueError("Untrusted catalogue receipt")
+            # Source adapter is from this exact checked-out repository root;
+            # never import or execute a client-selected module/path.
+            if str(repo_root) not in sys.path:
+                sys.path.insert(0, str(repo_root))
+            from cgx.portable_node.pinned_catalogue_source_intake import hydrate_catalogue_selection
+            result = hydrate_catalogue_selection(
+                packet,
+                candidate_ref,
+                source_bytes=raw,
+                access_granted=True,
+                audience="PRIVATE_OWNER",
+            )
+        except (ValueError, KeyError, TypeError, OSError, ImportError) as exc:
+            raise HTTPException(status_code=503, detail="Trusted Alexandria source gate unavailable") from exc
+        # The source-lens result intentionally retains authenticated=False:
+        # it is a data projection, not a transferable authentication token.
+        return JSONResponse(result, headers={"Cache-Control": "no-store"})
 
     @app.get("/api/v1/projects")
     async def list_projects():
