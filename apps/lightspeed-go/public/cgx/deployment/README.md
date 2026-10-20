@@ -3,7 +3,19 @@
 **Brand:** UniSpace is the front-facing Universal Operating Model; CGX is the native recursive FileSpace/DataSpace/PrintSpace grammar. No new graph master, runtime, owner or rights are created.
 
 ## Deployment
-A separate public static-only Vercel project named romer-unispace-public hosts approved demonstration files from apps/lightspeed-go/public/cgx. The site does NOT include the private LS GO entrypoint, owner sign-in, desktop command bridge, internal object review or private catalogue. The earlier romer-cgx-doom deployment was not modified.
+**Mandatory isolated publication boundary:** The LS GO `apps/lightspeed-go/public/` tree ALSO includes `data/`, `review/`, `ls-go/` and other review or operational files. Never publish that whole tree, the default Vite build `dist/`, or repository roots to Squarespace/Vercel as the CGX public viewer.
+
+Prepare the existing separate public/static Vercel project from the reviewed, explicitly allowlisted CGX subset only:
+
+```bash
+python apps/lightspeed-go/scripts/assemble_cgx_public_site.py --output cgx-isolated-site
+```
+
+The output contains exactly 12 approved CGX static files under `cgx/`, `vercel.json` at the site root for the CSP/frame policy, and `cgx-public-integrity.json` with exact asset SHA-256 hashes. The builder refuses symlinks, source/output overlap, pre-existing outputs and operational/private identifier patterns; no unrelated `public/data`, `public/review` or `public/ls-go` content is copied. Deploy **the contents of `cgx-isolated-site/` as the static site root**, never `apps/lightspeed-go/public` or `apps/lightspeed-go/dist`. Publishing this candidate still requires issue #158 owner review and independent live GET/iframe testing.
+
+GitHub CI `UniSpace CGX Public Viewer Validation` builds this exact isolated output, tests the five forbidden URL paths for HTTP 404, checks all seven site routes in Chromium and records browser/manifest proof artifacts. This is a source-level acceptance test, not a claim that the production Vercel project has been updated.
+
+The existing proposed public viewer origin is `romer-unispace-public.vercel.app`; the separate older DOOM deployment must not be modified by CGX release packaging.
 
 Vercel production alias (deployment READY):
 - https://romer-unispace-public.vercel.app/cgx/
