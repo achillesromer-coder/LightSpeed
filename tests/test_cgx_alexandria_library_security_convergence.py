@@ -25,6 +25,7 @@ class AlexandriaLibraryReviewTests(unittest.TestCase):
     def test_curated_and_legacy_catalogues_are_source_bound(self):
         p=al.project_alexandria_index(ROOT)
         self.assertEqual(p["counts"]["curated_repository_entries"],31)
+        self.assertEqual(p["counts"]["official_reference_roots"],13)
         self.assertEqual(p["counts"]["legacy_list_entries"],207)
         self.assertEqual(p["counts"]["learning_tracks"],6)
         self.assertTrue(p["all_upstreams_without_release_grants"])
