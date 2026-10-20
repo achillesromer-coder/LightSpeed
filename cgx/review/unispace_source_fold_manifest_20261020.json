@@ -1,0 +1,137 @@
+{
+  "schema": "CGX-UNISPACE-SOURCE-FOLD-RECEIPT/0.1",
+  "status": "INTEGRATION_STAGING_NOT_CANONICAL_NOT_PRODUCTION",
+  "source_prs": [
+    179,
+    180,
+    181
+  ],
+  "source_branch_heads": {
+    "179": "9a1c93c7e38725d10764c29979d51a06e162dbc2",
+    "180": "4ea28b73a7bef5b3b7994957d7905f78e6654c11",
+    "181": "bd2117d3975cc4db10dfe763ce92d9b1ad623814"
+  },
+  "base_branch": "main",
+  "method": "Start at PR181 exact commit, add PR179 and PR180 UTF-8 file contents unchanged. Independently verify Git blob SHA1 for all 22 carried source files.",
+  "original_prs": "OPEN_DRAFT_PRESERVED",
+  "release_gates": [
+    "#158 static private-asset segregation",
+    "#161 authenticated two-peer FS/DS proof",
+    "owner review",
+    "signed public manifest and licence acceptance",
+    "native/device/physical domain acceptance"
+  ],
+  "files": [
+    {
+      "source_pr": 179,
+      "path": ".github/workflows/unispace-passive-edge-candidate.yml",
+      "git_blob_sha1": "9f7c441f01bdb11f4b212b41fd12f5ed137dc60e"
+    },
+    {
+      "source_pr": 179,
+      "path": "cgx/domain_templates/passive_edge_profile_registry.json",
+      "git_blob_sha1": "437e8cff2b7c33991929d1859736529a2425e346"
+    },
+    {
+      "source_pr": 179,
+      "path": "cgx/portable_node/passive_node_plan.py",
+      "git_blob_sha1": "d073f12fed931f3c32163471acdf76c0c061ef15"
+    },
+    {
+      "source_pr": 179,
+      "path": "docs/ls-go-launch/CGX_UNISPACE_PASSIVE_EDGE_CONVERGENCE_2026-10-20.md",
+      "git_blob_sha1": "aa5ab70541e3a63d6ffbf8a0eba60261a949e775"
+    },
+    {
+      "source_pr": 179,
+      "path": "tests/test_cgx_passive_node_plan.py",
+      "git_blob_sha1": "0fd855712738f3009ea0462fbca94aa0b46d1986"
+    },
+    {
+      "source_pr": 180,
+      "path": ".github/workflows/alexandria-keyed-publication-candidate.yml",
+      "git_blob_sha1": "49b9b96d8365b60f704d50493da26ed6077a367a"
+    },
+    {
+      "source_pr": 180,
+      "path": "cgx/portable_node/archive_claim_reconciliation_plan.py",
+      "git_blob_sha1": "d87b791372e77642cf76fec724360acd53d546ec"
+    },
+    {
+      "source_pr": 180,
+      "path": "cgx/portable_node/keyed_fileset_plan.py",
+      "git_blob_sha1": "3d380b8f83a28bd9e4374b8848f610a368f8bc6a"
+    },
+    {
+      "source_pr": 180,
+      "path": "cgx/review/alexandria_external_reference_intake_20261020.json",
+      "git_blob_sha1": "80a234b69beb8d589b5db174dc70186136cc6634"
+    },
+    {
+      "source_pr": 180,
+      "path": "cgx/review/unispace_keyed_publication_candidate_20261020.json",
+      "git_blob_sha1": "7a861cfbfa8a26be05cae2e641a0b96996353e3c"
+    },
+    {
+      "source_pr": 180,
+      "path": "docs/ls-go-launch/UNISPACE_ALEXANDRIA_KEYED_PUBLISHING_AND_GLOBAL_DEPLOYMENT_2026-10-20.md",
+      "git_blob_sha1": "57e652456f63b77ee9373cbb1cd175ae6f5e3c42"
+    },
+    {
+      "source_pr": 180,
+      "path": "tests/test_cgx_archive_claim_reconciliation.py",
+      "git_blob_sha1": "7e7c1a9921dbe99f20a85f9e9347e414098c8d81"
+    },
+    {
+      "source_pr": 180,
+      "path": "tests/test_cgx_keyed_alexandria_review.py",
+      "git_blob_sha1": "5c9cbdbed98663aa89f817edc72d8ad32e1ba3e"
+    },
+    {
+      "source_pr": 181,
+      "path": ".github/workflows/cgx-modular-facility-review.yml",
+      "git_blob_sha1": "bb486b849ad1ff87d8298017691a9dff5f1a50fb"
+    },
+    {
+      "source_pr": 181,
+      "path": "cgx/manufacturing/fixtures/five_unit_relief_synthetic_v0_1.json",
+      "git_blob_sha1": "c89fcbcef5bcc390c5b1a0823abddee70fb29571"
+    },
+    {
+      "source_pr": 181,
+      "path": "cgx/manufacturing/modular_deployment_logistics.py",
+      "git_blob_sha1": "a49ad45f37aa078bd1f33087b61017c493e2c245"
+    },
+    {
+      "source_pr": 181,
+      "path": "cgx/manufacturing/modular_facility_packing.py",
+      "git_blob_sha1": "cb4d1c41a5dd58d7a5d290119d8df33c14c2bfdb"
+    },
+    {
+      "source_pr": 181,
+      "path": "cgx/manufacturing/modular_facility_projection.py",
+      "git_blob_sha1": "824cfbb8befa8f6eb6efa7641a79b7ec90b9d4af"
+    },
+    {
+      "source_pr": 181,
+      "path": "docs/engineering/UNISPACE_CGX_MODULAR_FACILITY_COMPOSITION_2026-10-20.md",
+      "git_blob_sha1": "b02f48aa02ffbf152ba7450b674a745e2cc902be"
+    },
+    {
+      "source_pr": 181,
+      "path": "tests/test_cgx_modular_deployment_logistics.py",
+      "git_blob_sha1": "cbe4203f7c30817c97419db7b8caad8d1e237b0f"
+    },
+    {
+      "source_pr": 181,
+      "path": "tests/test_cgx_modular_facility_packing.py",
+      "git_blob_sha1": "cfccf0ce42a802dd02d4b8025c40e8b4ccf77bbb"
+    },
+    {
+      "source_pr": 181,
+      "path": "tests/test_cgx_modular_facility_projection.py",
+      "git_blob_sha1": "4f68b1ea14215b0952be17be7846e3691f82b104"
+    }
+  ],
+  "note": "This is source folding, not an authorisation to deploy, pair devices, sell third party assets, commission physical hardware, or merge old divergent branches. No copied source is promoted to canonical by staging."
+}
