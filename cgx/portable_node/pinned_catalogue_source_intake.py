@@ -136,7 +136,7 @@ def stage_pinned_catalogue(
         "authority": "ORIGINAL_UPSTREAM_PROVIDER", "evidence_state": "R0_VERIFIED_R1_CANDIDATE",
         "release_class": "INTERNAL_REVIEW_NOT_PUBLISHED",
         "projections": [structure],
-        "warnings": ["CC0 covers the source catalogue only, not linked projects or executable engines.",
+        "warnings": ["CC0 covers this source index only; licenses for linked software and assets remain unverified.",
                      "Unselected lines, formatting and original bytes require the source provider for full retrieval."],
         "unresolved": [{"kind": "UPSTREAM_PROJECT_RIGHTS", "count": len(selected)},
                        {"kind": "CATALOGUE_UNSELECTED_LINES", "count": len(lines)-len(selected)}],
