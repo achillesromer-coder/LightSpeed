@@ -43,6 +43,7 @@ def build_offline_reference_html() -> str:
     curated,curated_hash=_source("alexandria_curated_upstream_tools_20261020.json")
     legacy,legacy_hash=_source("alexandria_external_reference_intake_20261020.json")
     official,official_hash=_source("alexandria_official_reference_roots_20261020.json")
+    learning,learning_hash=_source("alexandria_foundation_learning_modules_v0_1.json")
     if any(r.get("redistribution_authorised") is not False for r in curated["repositories"]):
         raise ValueError("curated source unexpectedly authorised for redistribution")
     rows=[]
@@ -73,9 +74,19 @@ def build_offline_reference_html() -> str:
         rows.append('<tr data-entry="official" data-search="'+_e((ref["name"]+" "+ref["domain"]+" "+ref["kind"]).lower())+'">'+row+'</tr>')
     tracks=[]
     for tr in curated["learning_tracks"]:
+        exercises=[m for m in learning["modules"] if m.get("track")==tr["id"]]
+        if len(exercises)!=3 or any(m.get("module_state")!="UNEXECUTED_SOURCE_LINKED_EDUCATION" for m in exercises):
+            raise ValueError("each training track requires three unexecuted source-linked exercises")
+        detail=[]
+        for lesson in exercises:
+            detail.append('<li><strong>'+_e(lesson["title"])+'</strong> — '+
+                          _e(lesson["instruction"])+
+                          '<small>Expected: '+_e(lesson["expected_artifact"])+
+                          ' · Hold: '+_e(lesson["qualification_hold"])+
+                          ' · Sources: '+_e(", ".join(lesson["repository_sources"]))+'</small></li>')
         tracks.append('<li><strong>'+_e(tr["id"].replace("-"," ").title())+'</strong> — '+
                       _e("; ".join(tr["outputs"]))+
-                      '<small>Qualification: '+_e(tr["hold"])+'</small></li>')
+                      '<small>Qualification: '+_e(tr["hold"])+'</small><ol>'+"".join(detail)+'</ol></li>')
     entries=len(curated["repositories"])+sum(len(g["records"]) for g in legacy["groups"])+len(official["official_references"])
     if entries!=len(rows):raise ValueError("entry mismatch")
     css="""
@@ -125,6 +136,7 @@ q.addEventListener('input',refresh);filter.addEventListener('change',refresh);re
         '<p>Curated source SHA-256: <code>'+curated_hash+'</code></p>'
         '<p>Original games/engines source SHA-256: <code>'+legacy_hash+'</code></p>'
         '<p>Official references SHA-256: <code>'+official_hash+'</code></p>'
+        '<p>Learning modules SHA-256: <code>'+learning_hash+'</code></p>'
         '<p>No internet is needed to browse this file; opening any external source link does require a connection.</p></div>'
         '<h2>Learning pathways</h2><div class="panel"><ol>'+"".join(tracks)+'</ol></div>'
         '<h2>Library index</h2><div class="controls panel">'
