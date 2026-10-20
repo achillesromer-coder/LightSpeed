@@ -1,0 +1,84 @@
+{
+  "canonical_object_id": null,
+  "capability_evidence": {
+    "build_target_declared": "libsrtp2 VERSION 2.8.0 LANGUAGES C",
+    "category": "C_SRTP_TRANSPORT_CRYPTO_LIBRARY",
+    "cgx_network_transport_registered": false,
+    "compiled_or_executed": false,
+    "cryptography_validated": false,
+    "description_from": "README_ONLY",
+    "network_interoperability_tested": false
+  },
+  "complete_repository_acquired": false,
+  "frontier": [
+    "AUDIT_FULL_TREE_AND_THIRD_PARTY_FILE_LICENSES",
+    "QUALIFY_SELECTED_OPENSSL_NSS_BACKEND_LICENSES",
+    "TEST_CRYPTO_AND_SRTP_WITH_APPROVED_BUILD_MATRIX",
+    "REPRODUCE_FULL_SOURCE_DEPENDENCY_CLOSURE",
+    "OWNER_APPROVED_SIGNED_NATIVE_CGX_DBR_READBACK"
+  ],
+  "licence_scopes": {
+    "all_source_files_reviewed": false,
+    "distribution_approved": false,
+    "nonendorsement_condition": true,
+    "optional_openssl_nss_backend_rights": "UNQUALIFIED",
+    "original_license_text_verified": true,
+    "repository_notice": "CISCO_BSD_THREE_CONDITION_STYLE",
+    "required_notice_reproduction": true,
+    "spdx_identification_authoritative": false,
+    "two_internal_code_headers_verified": true,
+    "whole_tree_third_party_rights": "UNQUALIFIED"
+  },
+  "native_dbr_verified": false,
+  "original_file_count": 5,
+  "original_file_proofs": [
+    {
+      "bytes": 15426,
+      "bytes_embedded_in_r1": false,
+      "git_blob_sha1": "01f007fd3196f54f11f43143fec7479dbf9ee6b6",
+      "original_r0_fixture": true,
+      "path": "CMakeLists.txt",
+      "sha256": "61aa8924679314612012e6512b690a899a309cc9f3fc7d66ed196d6d3da6d708"
+    },
+    {
+      "bytes": 1614,
+      "bytes_embedded_in_r1": false,
+      "git_blob_sha1": "af0a2ac312708a0f9d15aa68472e6863de0156ff",
+      "original_r0_fixture": true,
+      "path": "LICENSE",
+      "sha256": "8e19d42a1eec9561f3f347253ddf2e385c55f392f025bb0fd41b88dbf38db5ae"
+    },
+    {
+      "bytes": 24588,
+      "bytes_embedded_in_r1": false,
+      "git_blob_sha1": "66a0013072f74dfd5303fc52334475d6e788ab42",
+      "original_r0_fixture": true,
+      "path": "README.md",
+      "sha256": "62b2d8688ecdd6782c2eedac738ac6ba0b77593dadbad9b01e1f92618d3ef25f"
+    },
+    {
+      "bytes": 9627,
+      "bytes_embedded_in_r1": false,
+      "git_blob_sha1": "43d453e6fe5460f2907a1fac9c687d555c8772c5",
+      "original_r0_fixture": true,
+      "path": "crypto/include/cipher.h",
+      "sha256": "ef9c72510f261dfba03f8213ed7399128bf23e50f48218ece93626ae09cead97"
+    },
+    {
+      "bytes": 9808,
+      "bytes_embedded_in_r1": false,
+      "git_blob_sha1": "ee20d63c4f35fb45a2ea6b41a6d2b1a1e42a3d7b",
+      "original_r0_fixture": true,
+      "path": "include/srtp_priv.h",
+      "sha256": "623e02bc74f75cc6cd9f6e7e40b02711b18181d90eef0a238efe03f796bf0370"
+    }
+  ],
+  "parent_gitlink_path": "deps/libsrtp",
+  "parent_source_root": "git:paullouisageneau/libdatachannel@6b1e2e620f1e37f0eafeee702eaea0043cb305fd",
+  "schema": "CGX-ALEXANDRIA-LIBSRTP-SOURCE-SCOPE/0.1",
+  "source_bytes_embedded": false,
+  "source_root": "git:cisco/libsrtp@24b3bf8f19b6f5ab4cd2bcceb4f4064efca86fd5",
+  "status": "FIVE_PINNED_R0_BLOBS_FOUR_GIT_TREES_PARTIAL_RIGHTS",
+  "third_party_dependencies_qualified": false,
+  "upstream_root_git_tree_sha1": "e49fe9508826d56c4932cacabc491e37fbcc37bb"
+}
