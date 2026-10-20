@@ -17,13 +17,16 @@ from urllib.parse import urlsplit
 
 from fastapi import FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse, Response
 import uvicorn
 
 from lightspeed_runtime.corpus_test_orchestrator import CorpusTestPlanError, plan_cascade
 from lightspeed_runtime.cgx_conversion_planner import CGXConversionPlanError, compile_conversion_plan
 from lightspeed_runtime.cgx_object_context import CGXObjectContextError, resolve_object_context
 from lightspeed_runtime.project_artifact_store import stage_project_artifacts
+from lightspeed_runtime.private_review_assets import (
+    PrivateReviewAssetError, private_review_root, read_private_review_asset,
+)
 from lightspeed_runtime.node_exchange import (
     NodeExchangeError,
     build_compute_request,
@@ -1472,6 +1475,43 @@ def create_app(root: Path | str) -> FastAPI:
         ],
         max_age=600,
     )
+
+    @app.get("/api/v1/private-object-review/{category}/{asset_name}")
+    async def read_owner_object_review_asset(
+        category: str,
+        asset_name: str,
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        # There is deliberately no confirmation-header fallback for review bytes.
+        # The browser's owner-session token is required on each individual file.
+        if not owner_session:
+            raise HTTPException(status_code=403, detail="Owner session is required")
+        _verified_owner_actor(
+            None,
+            session_token=owner_session,
+            credential_store=credential_store,
+            session_store=owner_sessions,
+        )
+        try:
+            asset = read_private_review_asset(
+                private_review_root(), category, asset_name
+            )
+        except PrivateReviewAssetError as exc:
+            if str(exc).startswith("PRIVATE_REVIEW_ROOT"):
+                raise HTTPException(status_code=503, detail="Private review source is not available") from exc
+            raise HTTPException(status_code=404, detail="Review asset not available") from exc
+        return Response(
+            content=asset["content"],
+            media_type=asset["media_type"],
+            headers={
+                "Cache-Control": "no-store, private",
+                "Pragma": "no-cache",
+                "X-Content-Type-Options": "nosniff",
+                "X-Frame-Options": "DENY",
+                "Content-Security-Policy": "default-src 'none'; sandbox",
+                "X-CGX-Source-SHA256": asset["sha256"],
+            },
+        )
 
     @app.get("/api/v1/status")
     async def status():
