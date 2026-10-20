@@ -27,16 +27,18 @@ def _git_blob_sha1(value: bytes) -> str:
 
 def _text_lines(original: bytes) -> list[tuple[int, int, str]]:
     # Decode-only; never evaluates Markdown, embedded scripts or link targets.
-    text = original.decode("utf-8", errors="strict")
     offsets = []
     start = 0
-    for line in text.splitlines(keepends=True):
-        encoded = line.encode("utf-8")
+    for encoded in original.splitlines(keepends=True):
+        line = encoded.decode("utf-8", errors="strict")
         end = start + len(encoded)
         offsets.append((start, end, line.rstrip("\r\n")))
         start = end
     if start != len(original):
         raise ValueError("unable to cover all original source bytes")
+    if original.endswith((b"\n", b"\r")):
+        # Preserve the terminal empty line as an addressable source locator.
+        offsets.append((start, start, ""))
     return offsets
 
 
