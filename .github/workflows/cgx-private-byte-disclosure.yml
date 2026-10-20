@@ -1,0 +1,67 @@
+name: CGX private-byte public distribution assurance
+on:
+  pull_request:
+    paths:
+      - "cgx/review/private_source_byte_disclosure_gate.py"
+      - "tests/test_cgx_private_source_byte_disclosure_gate.py"
+      - ".github/workflows/cgx-private-byte-disclosure.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-and-compiled-negative:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Exercise exact, embedded, base64 and JSON private-data negative cases
+        run: |
+          python -m unittest discover -s tests -p 'test_cgx_private_source_byte_disclosure_gate.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_private_review_asset_migration.py' -v
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/lightspeed-go/package-lock.json
+      - name: Install pinned site dependencies without running scripts
+        working-directory: apps/lightspeed-go
+        run: npm ci --ignore-scripts
+      - name: Produce non-published internal fixture build in CI only
+        working-directory: apps/lightspeed-go
+        run: npm run build:internal
+      - name: Assert compiled static tree remains blocked by original private bytes
+        run: |
+          set +e
+          python cgx/review/private_source_byte_disclosure_gate.py --root . --scan-root apps/lightspeed-go/dist > /tmp/cgx_disclosure_check.json
+          status=$?
+          set -e
+          test "$status" -eq 2
+          python - <<'PY'
+          import json
+          j=json.load(open('/tmp/cgx_disclosure_check.json'))
+          assert j["state"]=="HOLD_PRIVATE_SOURCE_BYTES_PRESENT"
+          assert j["source_items_verified"]==61
+          assert j["private_byte_matches"]>=61
+          assert not j["public_release_authorised"]
+          assert not j["owner_acl_verified"]
+          assert j["live_http_negative_tests"]=="NOT_PERFORMED"
+          print("HOLD: compiled output carries",j["private_byte_matches"],"matches to source-private review bytes")
+          print("No downloadable dist, source bytes, private path listing or fingerprints uploaded")
+          PY
+      - name: Assert original Vite path-based release protection remains active
+        run: |
+          set +e
+          node apps/lightspeed-go/scripts/checkPublicRelease.mjs --phase source > /tmp/cgx_static_gate.json
+          status=$?
+          set -e
+          test "$status" -eq 2
+          python - <<'PY'
+          import json
+          report=json.load(open('/tmp/cgx_static_gate.json'))
+          assert report["held_count"]==61
+          assert not report["public_release_authorised"]
+          print("Source public release remains HOLD")
+          PY
