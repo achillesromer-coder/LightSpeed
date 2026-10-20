@@ -65,7 +65,7 @@ class AlexandriaLibraryReviewTests(unittest.TestCase):
     def test_learning_tracks_reference_only_real_catalogue_ids(self):
         p=al.project_alexandria_index(ROOT)
         self.assertGreaterEqual(p["counts"]["unique_normalized_upstream_repo_candidates"],31)
-        self.assertEqual(len(p["domain_counts"]),10)
+        self.assertEqual(len(p["domain_counts"]),11)
         self.assertEqual(sum(p["domain_counts"].values()),31)
 
     def test_original_cgx_registers_stay_distinct_and_unqualified(self):
