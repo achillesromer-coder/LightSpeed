@@ -69,18 +69,39 @@ class SelectiveAlexandriaSourceFold(unittest.TestCase):
     def test_actual_r0_source_edges_are_exposed_as_unadmitted_index_samples(self):
         from cgx.review.alexandria_library_projection import project_alexandria_index
         result=project_alexandria_index(ROOT)
-        self.assertEqual(result["counts"]["original_source_samples"],2)
-        self.assertEqual(result["counts"]["verified_original_sample_files"],9)
+        self.assertEqual(result["counts"]["original_source_samples"],3)
+        self.assertEqual(result["counts"]["verified_original_sample_files"],14)
         self.assertEqual(result["counts"]["legacy_list_entries"],207)
         self.assertEqual(result["counts"]["curated_repository_entries"],31)
         self.assertEqual(result["counts"]["official_reference_roots"],13)
         samples=result["source_qualified_samples"]
         self.assertEqual(samples[1]["parent_source_root"],samples[0]["source_root"])
+        self.assertEqual(samples[2]["parent_source_root"],samples[1]["source_root"])
         for sample in samples:
             self.assertFalse(sample["public_distribution"])
             self.assertFalse(sample["executable"])
             self.assertFalse(sample["canonical_promotion"])
         self.assertTrue(result["all_upstreams_without_release_grants"])
+
+    def test_new_libjuice_scope_is_exact_original_source_and_not_live_capability(self):
+        fold=self.m["incremental_pr180_fold"]
+        self.assertEqual(fold["source_head"],"dfc925e03d2200eb35103e98829f41c47bc4385e")
+        self.assertEqual(len(fold["files"]),3)
+        for row in fold["files"]:
+            self.assertEqual(blob((ROOT/row["path"]).read_bytes()),row["blob_sha1"])
+        self.assertFalse(fold["distribution_approved"])
+        self.assertFalse(fold["native_execution"])
+        self.assertFalse(fold["canonical_promotion"])
+        from cgx.portable_node.libjuice_source_scope import compile_libjuice_scope, BLOBS
+        parent=json.loads((ROOT/"cgx/review/alexandria_libdatachannel_source_scope_20261021.json").read_text())
+        raw=ROOT/"tests/fixtures/alexandria_libjuice"
+        trees=json.loads((raw/"git_tree_chain.json").read_text())
+        originals={name:(raw/name).read_bytes() for name in BLOBS}
+        actual=compile_libjuice_scope(parent,trees,originals)
+        saved=json.loads((ROOT/"cgx/review/alexandria_libjuice_source_scope_20261021.json").read_text())
+        self.assertEqual(actual,saved)
+        self.assertFalse(saved["license_scopes"]["distribution_approved"])
+        self.assertFalse(saved["capability_descriptor"]["operational_transport_registered"])
 
     def test_original_upstream_libjuice_header_now_matches_pinned_git_tree(self):
         file=ROOT/"tests/fixtures/alexandria_libjuice/include/juice/juice.h"
