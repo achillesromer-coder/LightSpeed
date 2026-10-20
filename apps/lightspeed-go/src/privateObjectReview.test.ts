@@ -81,6 +81,27 @@ describe("private CGX Objects access", () => {
     for(let i=0;i<3;i++)await expect(session.read("/data/cgx_object_review_catalogue.json")).rejects.toThrow();
     session.revoke();
   });
+  it("creates a verified temporary SVG Blob URL and revokes it on owner logout", async () => {
+    const path="/review/renders/diode_review.svg";
+    const payload=new TextEncoder().encode('<svg xmlns="http://www.w3.org/2000/svg"></svg>');
+    const digest=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",payload)),
+      x=>x.toString(16).padStart(2,"0")).join("");
+    const fetcher=vi.fn(async()=>new Response(payload,{status:200,headers:{
+      "Content-Type":"image/svg+xml","X-CGX-Source-SHA256":digest
+    }}));
+    vi.stubGlobal("fetch",fetcher);
+    const create=vi.spyOn(URL,"createObjectURL").mockReturnValue("blob:owner-review-test");
+    const revoke=vi.spyOn(URL,"revokeObjectURL").mockImplementation(()=>{});
+    const session=new PrivateObjectReviewSession("owner","http://127.0.0.1:8765");
+    expect(await session.blobUrl(path)).toBe("blob:owner-review-test");
+    expect(await session.blobUrl(path)).toBe("blob:owner-review-test");
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(create).toHaveBeenCalledTimes(1);
+    session.revoke();
+    expect(revoke).toHaveBeenCalledExactlyOnceWith("blob:owner-review-test");
+    await expect(session.blobUrl(path)).rejects.toThrow("closed");
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
   it("aborts in-flight private request on logout before data is hydrated", async()=>{
     let captured:AbortSignal|undefined;
     vi.stubGlobal("fetch",vi.fn(async (_url:string,init:RequestInit)=>{
