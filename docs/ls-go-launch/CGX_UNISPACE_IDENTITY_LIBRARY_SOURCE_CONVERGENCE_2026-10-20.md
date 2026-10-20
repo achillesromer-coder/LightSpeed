@@ -20,6 +20,9 @@ Git comparison found that the desktop source-manifest changes only `LightSpeed_R
 6. `corpus_inclusion_registry.json` → 54 semantic classes and 21 durable source owner families; preserve owner boundaries.
 7. `alexandria_external_reference_intake_20261020.json` → 207 external source-linked game and engine list entries, **no game assets, no upstream licences inferred**.
 8. `passive_edge_profile_registry.json` and `unispace_keyed_publication_candidate_20261020.json` → device tiers/rights and release gates, not installed nodes.
+9. `first_file_conversion_registry.json` → 19 historic source conversion mappings, not independently re-proven functional R1 in this scan.
+10. `type1_volumetric_kernel_v0_1.json` → 40 symbolic physical/topology kernels, not measured load/fit qualification.
+11. `component_instance_build_packet_contract_v0_1.json` → 5 physical instance classes, pending exact supplier/instance validation.
 
 Output is reproducible JSON including SHA-256 and size for each input registry, the registered type and route names, source owner references, unresolved frontiers, rights and release notes. It is a transient snapshot to power **existing** Creator/Press file, library, module and lens inspectors. The projection is explicitly not a new authority registry, inventory executor, semantic promotion, signed package or public API.
 
