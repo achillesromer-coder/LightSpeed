@@ -9,13 +9,19 @@
   "upstream_draft_update": {
     "pr": 180,
     "head": "e14448852e05d84262a72ef50ac2230cfa4a6b8f",
-    "status": "SELECTIVE_29_R0_SOURCE_BLOBS_FOLDED_NOT_FULL_UPSTREAM",
-    "specific_unfolded": [
-      "tests/fixtures/alexandria_libjuice/include/juice/juice.h"
-    ],
-    "warning": "29 exactly pinned source/test blobs now in review stack; original #180 still includes additional Wikidata/engine/owner bridge material that is NOT copied; libjuice header fetch 404, dependent sources, notices, full game/media rights, compile and native DBR remain HOLD. Never replace newer UI/bridge.",
+    "status": "SELECTIVE_29_PR180_BLOBS_PLUS_1_PINNED_UPSTREAM_FILE_NOT_FULL_DEPENDENCIES",
+    "specific_unfolded": [],
+    "warning": "29 unchanged source/test blobs copied from original PR #180 and one original libjuice header independently fetched from the immutable upstream git commit and verified against pinned tree SHA. This is partial original-source R0, not complete upstream repository, executable, licence or network qualification. Avoid bulk old UI/bridge/manifest changes.",
     "frozen_fold_record": "cgx/review/alexandria_source_subset_fold_20261021.json",
-    "carried_git_blob_count": 29
+    "carried_git_blob_count": 29,
+    "fresh_direct_upstream_file_count": 1,
+    "unresolved_qualification": [
+      "ALL_LIBJUICE_FILES_AND_DEPENDENCIES",
+      "ALL_GAME_ART_MEDIA_FONTS_RIGHTS",
+      "LIBDATACHANNEL_AND_GAME_BUILD_ABI",
+      "INDEPENDENT_NATIVE_TRANSPORT_AUTHENTICATION",
+      "CANONICAL_OWNER_DBR"
+    ]
   },
   "source_heads": {
     "PR180": "e14448852e05d84262a72ef50ac2230cfa4a6b8f",
