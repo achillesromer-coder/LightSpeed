@@ -69,6 +69,15 @@ class LibSrtpSourceTests(unittest.TestCase):
             self.assertEqual(item["sha256"], hashlib.sha256(value).hexdigest())
             self.assertFalse(item["bytes_embedded_in_r1"])
 
+    def test_committed_source_free_receipt_rebuilds_exactly_from_R0(self):
+        saved=ROOT/"cgx"/"review"/"alexandria_libsrtp_source_scope_20261021.json"
+        persisted=json.loads(saved.read_text(encoding="utf-8"))
+        rebuilt=compile_libsrtp_scope(*inputs())
+        self.assertEqual(persisted,rebuilt)
+        self.assertFalse(persisted["licence_scopes"]["distribution_approved"])
+        self.assertFalse(persisted["capability_evidence"]["cryptography_validated"])
+        self.assertFalse(persisted["native_dbr_verified"])
+
     def test_modified_file_or_unknown_extra_file_refused(self):
         p, t, raw = inputs()
         for name in BLOBS:
