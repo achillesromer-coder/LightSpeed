@@ -41,10 +41,10 @@ def classify_claim_pair(left: dict, right: dict) -> dict:
         kind, reason = "UNIT_CONVERSION_FRONTIER", "Dimension/basis and qualified conversion required before comparison"
     elif same_value and a["sha256"] == b["sha256"] and date_a == date_b:
         kind, reason = "EXACT_SOURCE_CLAIM_CANDIDATE", "Same source bytes and typed claim fields; preserve independent references"
+    elif date_a and date_b and date_a != date_b:
+        kind, reason = "TEMPORAL_VARIANT", "Distinct effective dates take precedence over matching numeric values; retain both observations in a time series"
     elif same_value:
         kind, reason = "CORROBORATION_CANDIDATE", "Matching claim value is not proof of independent confirmation"
-    elif date_a and date_b and date_a != date_b:
-        kind, reason = "TEMPORAL_VARIANT", "Distinct effective dates; retain both versions pending domain chronology review"
     else:
         kind, reason = "CONTRADICTORY_HOLD", "Same referent/field/unit has incompatible values without sufficient temporal separation"
     receipt = {
