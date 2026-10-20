@@ -1,0 +1,176 @@
+{
+  "schema": "CGX-UNISPACE-KEYED-PUBLICATION-CANDIDATE/0.1",
+  "status": "OWNER_REVIEW_ONLY_NOT_WIRE_STANDARD_NOT_DEPLOYED",
+  "date": "2026-10-20",
+  "root": "Cognigrex.cgx",
+  "register_at": "Cognigrex.cgx:/ccc (review proposal only)",
+  "reuses": [
+    "CGX-SOURCE-ENVELOPE/0.1",
+    "CGX-NODE-EXCHANGE-CONTRACT/0.1",
+    "CGX-MOBILE-NODE-BINDING/0.1",
+    "CGX-FILE-CONVERSION-CONTRACT/0.1",
+    "CGX-COGNIGREX-PARENT-TOPOLOGY/0.2"
+  ],
+  "purpose": "Key-addressed source-preserving package publication and offline/online rights-aware hydration over existing FileSpace/DataSpace/CCC and LS runtime, with no blockchain dependency.",
+  "key_types": {
+    "fileset_key": "Public/nonsecret locator for a versioned manifest, never proof of access.",
+    "content_key": "Full SHA-256 and byte count for exact source blob; object identity distinct.",
+    "object_id": "Authoritative domain-owned referent, not derived from content key.",
+    "profile_ref": "Opaque user/project binding in permissioned directory; never embed personal identity in shareable public manifest.",
+    "grant_ref": "Server-verified signed/short-lived entitlement, revocable and separate from fileset key; never embedded in public kit.",
+    "namespace_key": "Signed owner-resolved domain/subfamily namespace, never a first-come name claim without policy."
+  },
+  "manifest_required": [
+    "schema_version",
+    "fileset_id",
+    "publisher_owner_ref",
+    "recovery_root_ref",
+    "revision",
+    "source_envelopes",
+    "component_dependencies",
+    "representation_receipts",
+    "rights_policy_ref",
+    "audience_class",
+    "capability_requirements",
+    "transport_profile",
+    "content_admission_receipts",
+    "release_gate"
+  ],
+  "delivery_modes": [
+    "REFERENCES_ONLY",
+    "PUBLIC_OFFLINE_PACK",
+    "PRIVATE_OFFLINE_PACK",
+    "CONNECTED_HYDRATION",
+    "VERIFIED_DELTA"
+  ],
+  "exchange_rules": [
+    "Receiver must prove same base root before applying sparse delta.",
+    "Missing content must be fetched from authorised provider or explicitly marked NOT_CACHED.",
+    "Encrypted private packet requires authenticated key exchange and client verification; key locator alone is never decryption or authorisation.",
+    "Profile linking must not disclose other subscribers of the same object.",
+    "Revoke grants for future access but never claim to remotely erase already exported unencrypted public bytes.",
+    "Source transforms R1 reversible only where exact inverse is tested; R2/R3 synthetic or interpretive output remains derivative.",
+    "Use standard digests and digital signatures, do not invent geometry-based cryptography.",
+    "Publication root is versioned, signed, and must undergo source/rights/private-asset review before public exposure.",
+    "Offline entitlement/accessibility must be decided at packaging time; offline cannot contact an auth server.",
+    "Signed proof and permission scopes gate privileged writes; server has final authority."
+  ],
+  "public_bandwidth_reserve": {
+    "id": "CGX-PUBLIC-RESERVE-CANDIDATE",
+    "kind": "APP_QOS_POLICY_NOT_RF_CHANNEL",
+    "name_qualification": "If prior notes mean Schumann resonances, they are not an assignable networking band.",
+    "intent": "Reserve measurable quotas for public-basic and emergency/offline access on actual provisioned transports.",
+    "priority_classes": [
+      "public_basic",
+      "emergency_offline_assistance",
+      "private_paid",
+      "institutional"
+    ],
+    "rules": [
+      "Publish measured effective usable bytes and admission queues per transport.",
+      "Emergency life-safety priority is scoped, publicly documented and revocable with human oversight.",
+      "No hidden political-viewpoint weighting or public knowledge suppression.",
+      "Paid tier cannot silently starve the guaranteed public baseline.",
+      "Wireless spectrum allocation or cable capacity requires separate operator/regulatory permission."
+    ]
+  },
+  "audience_and_jurisdiction": {
+    "classes": [
+      "PUBLIC",
+      "REGISTERED_USER",
+      "COLLABORATOR",
+      "INSTITUTIONAL",
+      "PRIVATE_OWNER",
+      "RESTRICTED"
+    ],
+    "policy_layers": [
+      "rights_and_source",
+      "legal_jurisdiction",
+      "age_and_safety",
+      "owner_opt_in",
+      "data_residency",
+      "device_acl",
+      "publication_review"
+    ],
+    "rules": [
+      "Country-aware jurisdiction metadata and locale/language adaptation are not a replacement for legitimate legal review.",
+      "Avoid automatic surveillance, content censorship or irreversible suppression based solely on geolocation or government purchaser.",
+      "Keep public source references and transparent notices of legally restricted availability where lawful.",
+      "Users need notice, correction/appeal pathway, independent oversight and accessible portability.",
+      "Private or health-related records do not enter public packages without specific informed consent.",
+      "Institutional and public governance licences must not transfer EMASSC/Romer/Eco-Grex IP by inference.",
+      "Regional data storage requires actual contracted host regions and compliance readback; a geo label is not physical data sovereignty."
+    ]
+  },
+  "merge_and_knowns": {
+    "states": [
+      "EXACT_SAME_CONTENT",
+      "SAME_REFERENT_CANDIDATE",
+      "REPRESENTATION_LINK",
+      "SEMANTIC_CONFLICT",
+      "INCOMPATIBLE_RUNTIME",
+      "RIGHTS_CONFLICT",
+      "NEW_FRONTIER"
+    ],
+    "resolution": [
+      "Preserve original hash/source/revision, distinguish same-byte vs same-referent.",
+      "Use typed relation and review; do not silently overwrite contested claims.",
+      "Store payoff log with evidence delta, alternative and owner decision.",
+      "Record R0/R1/R2/R3/F independently; AI inference is source-marked R3 until independent validation.",
+      "Keep older source accessible and allow revised understanding to supersede via dated claim links, not rewrite history."
+    ]
+  },
+  "domains": [
+    "Alexandria",
+    "Cognigrex",
+    "Create-Your-Collective",
+    "Romer-Grex",
+    "Eco-Grex",
+    "EMASSC",
+    "LightSpeed",
+    "PrintSpace",
+    "SAI-lens"
+  ],
+  "deployment_kits": {
+    "free_alexandria": [
+      "offline-static-shell",
+      "signed-pack-manifest",
+      "source-citation-index",
+      "local searchable data when bundled",
+      "accessible text/SVG",
+      "export and backup",
+      "offline-limited fallbacks"
+    ],
+    "professional": [
+      "creator",
+      "Press",
+      "revision tools",
+      "licensed specialist adaptors"
+    ],
+    "institutional": [
+      "audited authenticated multi-tenant collaboration",
+      "jurisdiction policy overlays",
+      "receipted hosting",
+      "owner/ACL"
+    ],
+    "humanitarian_candidate": [
+      "power-and-comms",
+      "water-and-sanitation",
+      "shelter-and-safe-point",
+      "health-and-first-response",
+      "fabrication-and-learning"
+    ],
+    "humanitarian_note": "Five proposed module roles are a conceptual allocation, not verified container counts, site/engineering design, emergency certification or deliverable kit."
+  },
+  "activation_gates": [
+    "ISSUE_158_PUBLIC_PRIVATE_ASSET_BOUNDARY",
+    "ISSUE_161_SIGNED_TWO_NODE_FS_DS_CONFORMANCE",
+    "SIGNED_MANIFEST_VERIFICATION",
+    "PUBLIC_LICENSE_AND_SOURCE_AUDIT",
+    "INDEPENDENT_OFFLINE_REOPEN_TEST",
+    "NO_COVERT_GEO_CONTENT_CONTROL",
+    "NETWORK_QOS_MEASURED_AND_AUTHORIZED",
+    "FOUNDATION_HUMANITARIAN_SAFETY_CERTIFICATION"
+  ],
+  "boundary": "Review-only schema; no deployments, keys, credentials, public end-user URLs, host operations, publication transactions, physical networks, biometric/health ingestion or canonical source mutation."
+}
