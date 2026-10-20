@@ -62,6 +62,22 @@ class SelectiveAlexandriaSourceFold(unittest.TestCase):
         self.assertFalse(b["all_project_source_acquired"])
         self.assertFalse(b["capability_claims"]["compiled"])
         self.assertFalse(b["capability_claims"]["network_interoperability_tested"])
+    def test_actual_r0_source_edges_are_exposed_as_unadmitted_index_samples(self):
+        from cgx.review.alexandria_library_projection import project_alexandria_index
+        result=project_alexandria_index(ROOT)
+        self.assertEqual(result["counts"]["original_source_samples"],2)
+        self.assertEqual(result["counts"]["verified_original_sample_files"],9)
+        self.assertEqual(result["counts"]["legacy_list_entries"],207)
+        self.assertEqual(result["counts"]["curated_repository_entries"],31)
+        self.assertEqual(result["counts"]["official_reference_roots"],13)
+        samples=result["source_qualified_samples"]
+        self.assertEqual(samples[1]["parent_source_root"],samples[0]["source_root"])
+        for sample in samples:
+            self.assertFalse(sample["public_distribution"])
+            self.assertFalse(sample["executable"])
+            self.assertFalse(sample["canonical_promotion"])
+        self.assertTrue(result["all_upstreams_without_release_grants"])
+
     def test_missing_requested_libjuice_header_not_silently_reconstructed(self):
         held=self.m["held_paths"][0]["path"]
         self.assertFalse((ROOT/held).exists())
