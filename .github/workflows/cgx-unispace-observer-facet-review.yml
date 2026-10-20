@@ -5,6 +5,7 @@ on:
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/node_exchange.py"
       - "desktop/LightSpeed_Runtime/tests/test_node_exchange.py"
       - "desktop/source-manifest.json"
+      - "tests/test_cgx_observer_facet_source_fold.py"
       - "cgx/domain_templates/node_exchange_contract.json"
       - "cgx/domain_templates/semantic_view_lens_registry.json"
       - "cgx/domain_templates/cognigrex_parent_topology.json"

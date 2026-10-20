@@ -1,0 +1,60 @@
+name: CGX private object review gateway candidate
+on:
+  pull_request:
+    paths:
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/private_review_assets.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/tests/test_private_review_assets.py"
+      - "desktop/LightSpeed_Runtime/tests/test_private_review_gateway.py"
+      - "desktop/source-manifest.json"
+      - ".github/workflows/cgx-private-review-gateway.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  authenticated-source-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install minimum existing desktop bridge and test dependencies
+        run: |
+          python -m pip install -r desktop/LightSpeed_Runtime/requirements-api.txt
+          python -m pip install pytest==9.0.1 httpx==0.28.1
+      - name: Check exact source-manifest hashes for the gateway and retained identity
+        run: |
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          d=json.loads(Path("desktop/source-manifest.json").read_text())
+          m={x["path"]:x for x in d["records"]}
+          assert len(m)==736
+          paths=[
+            "LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py",
+            "LightSpeed_Runtime/lightspeed_runtime/private_review_assets.py",
+            "LightSpeed_Runtime/lightspeed_runtime/cgx_object_context.py",
+            "LightSpeed_Runtime/lightspeed_runtime/cgx_intake_projection.py",
+            "LightSpeed_Runtime/lightspeed_runtime/node_exchange.py",
+          ]
+          for path in paths:
+            src=Path("desktop")/path
+            raw=src.read_bytes()
+            assert m[path]["sha256"]==hashlib.sha256(raw).hexdigest(),path
+            assert m[path]["bytes"]==len(raw),path
+          print("Desktop manifest exact-source proofs:",len(paths))
+          PY
+      - name: Test private file boundary and authenticated route negative paths
+        run: |
+          PYTHONPATH=desktop/LightSpeed_Runtime python -m pytest -q desktop/LightSpeed_Runtime/tests/test_private_review_assets.py desktop/LightSpeed_Runtime/tests/test_private_review_gateway.py
+      - name: Preserve blocking public gate and no hidden promotion
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path("apps/lightspeed-go/public")
+          assert (p/"data/cgx_object_review_catalogue.json").exists()
+          assert (p/"data/component_geometry_atlas_public_review.json").exists()
+          print("Source still requires owner-approved private relocation: HOLD")
+          PY
