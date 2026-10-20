@@ -674,6 +674,48 @@ export const resolveDesktopObjectContext = (
     10000,
   );
 
+export interface AlexandriaSourceLensResult {
+  schema: "CGX-ALEXANDRIA-SOURCE-LENS/0.1";
+  status: string;
+  title?: string;
+  candidate_ref?: string;
+  source_ref?: string;
+  source_sha256?: string;
+  source_line?: number;
+  upstream_reference_urls?: string[];
+  licence?: string;
+  linked_project_licence?: string;
+  canonical_admission: false;
+  authenticated: false;
+  published: false;
+}
+
+export const openDesktopAlexandriaCatalogueLine = (
+  candidateRef: string,
+  sourceBase64: string | null,
+  ownerSession: string,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<AlexandriaSourceLensResult> => {
+  if (!ownerSession || !/^[a-zA-Z0-9._:-]{20,256}$/.test(candidateRef)) {
+    throw new TypeError("A current owner session and bounded catalogue reference are required");
+  }
+  if (sourceBase64 !== null && sourceBase64.length > 24000) {
+    throw new TypeError("Selected source exceeds the bounded catalogue limit");
+  }
+  return withTimeout<AlexandriaSourceLensResult>(
+    `${origin}/api/v1/alexandria/catalogue/hydrate`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-LightSpeed-Session": ownerSession.slice(0, 256),
+      },
+      body: JSON.stringify({ candidate_ref: candidateRef, source_base64: sourceBase64 }),
+    },
+    12000,
+  );
+};
+
 export const loginDesktopOwner = (
   username: string,
   password: string,
