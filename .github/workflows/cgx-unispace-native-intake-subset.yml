@@ -1,0 +1,38 @@
+name: CGX UniSpace native intake subset
+on:
+  pull_request:
+    paths:
+      - "cgx/domain_templates/unispace_intake_mapping_contract.json"
+      - "cgx/review/native_intake_subset_fold_20261020.json"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_intake_projection.py"
+      - "desktop/LightSpeed_Runtime/tests/test_cgx_intake_projection.py"
+      - "desktop/source-manifest.json"
+      - "tests/test_cgx_native_intake_subset_convergence.py"
+      - ".github/workflows/cgx-unispace-native-intake-subset.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline-source-conformance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install offline unit test runner
+        run: python -m pip install 'pytest==8.4.2'
+      - name: Validate contract and preserved native source envelope
+        run: |
+          python -m json.tool cgx/domain_templates/unispace_intake_mapping_contract.json > /dev/null
+          python -m json.tool cgx/review/native_intake_subset_fold_20261020.json > /dev/null
+          python -m pytest -q desktop/LightSpeed_Runtime/tests/test_cgx_intake_projection.py
+      - name: Verify exact upstream Git blobs and integration proof boundaries
+        run: |
+          python -m unittest discover -s tests -p 'test_cgx_native_intake_subset_convergence.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_library_identity_convergence.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_r0_subset_source_fold.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_unispace_source_folding.py' -v
+      - name: Preserve exact-identity regression from PR177
+        run: python -m pytest -q desktop/LightSpeed_Runtime/tests/test_cgx_object_identity.py
