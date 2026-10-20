@@ -192,10 +192,11 @@ app.innerHTML = `
       </article>
       <article class="panel" id="alexandria-source-inspector">
         <div class="panel-head"><div><p class="eyebrow">Alexandria · owner only · source-backed</p><h2>Verified catalogue line</h2></div><span class="badge">R0/R1 · not canonical</span></div>
-        <p class="muted">Sign in as owner and explicitly select the original pinned open-source-engines README.md. The server verifies the source and pinned receipt before returning a line. No file path, raw source or authentication token is stored in this page.</p>
+        <p class="muted">Owner sign-in and an explicitly selected original CC0 catalogue README are required. Games and engines have separate pinned source roots; linked games, engines and assets retain unverified individual rights. No original source or token is stored in this page.</p>
         <form id="alexandria-source-form">
+          <label class="field"><span>Original catalogue</span><select id="alexandria-source-family"><option value="engines">Engines · 46 index records</option><option value="games">Games · 161 index records</option></select></label>
           <label class="field"><span>Catalogue README.md</span><input id="alexandria-source-file" type="file" accept=".md,.txt,text/markdown,text/plain"></label>
-          <label class="field"><span>Pinned source line (e.g. 21 = raylib)</span><input id="alexandria-source-line" type="number" min="1" max="143" step="1" value="21"></label>
+          <label class="field"><span>Original source line (21 = raylib for engines; 28 = Hypersomnia for games)</span><input id="alexandria-source-line" type="number" min="1" max="143" step="1" value="21"></label>
           <button type="submit" class="button" id="alexandria-source-verify">Verify selected source line</button>
         </form>
         <pre class="output" id="alexandria-source-result" aria-live="polite">Owner session and original selected file required. No background source fetch.</pre>
@@ -406,6 +407,15 @@ byId<HTMLButtonElement>("owner-logout").addEventListener("click", async () => {
 });
 
 const alexandriaSourceMount = byId<HTMLElement>("alexandria-source-result");
+byId<HTMLSelectElement>("alexandria-source-family").addEventListener("change", () => {
+  const lineInput = byId<HTMLInputElement>("alexandria-source-line");
+  const game = byId<HTMLSelectElement>("alexandria-source-family").value === "games";
+  lineInput.max = String(game ? 459 : 143);
+  lineInput.value = game ? "28" : "21";
+  byId<HTMLInputElement>("alexandria-source-file").value = "";
+  alexandriaSourceMount.textContent = "NOT_CACHED · Select the original " +
+    (game ? "open-source-games" : "open-source-engines") + " README and a source line.";
+});
 byId<HTMLFormElement>("alexandria-source-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   const session = requireOwnerSession();
@@ -415,9 +425,17 @@ byId<HTMLFormElement>("alexandria-source-form").addEventListener("submit", async
   }
   const sourceInput = byId<HTMLInputElement>("alexandria-source-file");
   const lineInput = byId<HTMLInputElement>("alexandria-source-line");
+  const catalogue = byId<HTMLSelectElement>("alexandria-source-family").value;
+  const game = catalogue === "games";
+  const engine = catalogue === "engines";
+  const maxBytes = game ? 37285 : 7891;
+  const maxLine = game ? 459 : 143;
+  const sourceCommit = game
+    ? "3a9ab8fc892a2cdadf8989a72ba7624a11e39cec"
+    : "4d54f3995140e64beebef6575760996bf14324ec";
   const file = sourceInput.files?.[0];
   const line = Number(lineInput.value);
-  if (!file || file.size <= 0 || file.size > 16384 || !Number.isInteger(line) || line < 1 || line > 143) {
+  if (!engine && !game || !file || file.size !== maxBytes || !Number.isInteger(line) || line < 1 || line > maxLine) {
     alexandriaSourceMount.textContent = "NOT_CACHED · Select the bounded original README.md and a source line.";
     return;
   }
@@ -432,7 +450,7 @@ byId<HTMLFormElement>("alexandria-source-form").addEventListener("submit", async
       return;
     }
     const b64 = btoa(Array.from(bytes, (x) => String.fromCharCode(x)).join(""));
-    const ref = "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:" + line;
+    const ref = "alexandria:external:index:" + sourceCommit + ":" + line;
     const result = await openDesktopAlexandriaCatalogueLine(ref, b64, session);
     if (ownerSessionToken !== session) {
       alexandriaSourceMount.textContent = "WITHHELD · Session changed before result display.";
