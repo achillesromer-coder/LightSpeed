@@ -65,6 +65,16 @@ class HypersomniaSourceScopeTests(unittest.TestCase):
             self.assertFalse(x["source_bytes_acquired"])
             self.assertIsNone(x["pinned_submodule_git_commit"])
 
+    def test_committed_r1_project_scope_is_reproducible_from_original_bytes(self):
+        receipt_path=ROOT/"cgx"/"review"/"alexandria_hypersomnia_project_source_scope_20261021.json"
+        persisted=json.loads(receipt_path.read_text(encoding="utf-8"))
+        derived=compile_project_source_candidate(inputs(),packet())
+        self.assertEqual(persisted,derived)
+        self.assertEqual(len(persisted["source_files"]),4)
+        self.assertEqual(persisted["declared_submodule_count"],11)
+        self.assertFalse(persisted["licence_release_approved"])
+        self.assertFalse(persisted["all_assets_acquired"])
+
     def test_source_record_sha256_is_byte_exact_and_order_independent(self):
         sources=inputs()
         receipt=compile_project_source_candidate(sources,packet())
