@@ -82,7 +82,7 @@ def propose_fileset(spec: dict, *, proven_local_hashes=()) -> dict[str, Any]:
             "byte_length": size,
             "redistribution": rights,
             "present_in_receiver": False,
-            "source_locator": item.get("source_locator") if mode == "REFERENCES_ONLY" else None
+            "source_locator": None  # issuer-approved source resolution occurs outside a shareable key packet
         })
     out = {
         "schema": "CGX-KEYED-FILESET-PLAN/0.1", "status": "SOURCE_ONLY_NOT_PUBLISHED",
