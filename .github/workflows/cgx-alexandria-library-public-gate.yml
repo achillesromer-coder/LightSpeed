@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - "cgx/review/alexandria_curated_upstream_tools_20261020.json"
+      - "cgx/review/alexandria_official_reference_roots_20261020.json"
       - "cgx/review/alexandria_library_projection.py"
       - "cgx/review/unispace_public_asset_boundary.py"
       - "tests/test_cgx_alexandria_library_security_convergence.py"
@@ -22,7 +23,9 @@ jobs:
         with:
           python-version: '3.12'
       - name: Validate additive catalogue
-        run: python -m json.tool cgx/review/alexandria_curated_upstream_tools_20261020.json > /dev/null
+        run: |
+          python -m json.tool cgx/review/alexandria_curated_upstream_tools_20261020.json > /dev/null
+          python -m json.tool cgx/review/alexandria_official_reference_roots_20261020.json > /dev/null
       - name: Test rights-held cross-domain references and static privacy safeguards
         run: |
           python -m unittest discover -s tests -p 'test_cgx_alexandria_library_security_convergence.py' -v
