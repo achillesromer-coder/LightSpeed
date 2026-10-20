@@ -1,0 +1,415 @@
+{
+  "schema": "CGX-LIBSRTP-PINNED-GIT-TREES/0.1",
+  "repo": "cisco/libsrtp",
+  "commit": "24b3bf8f19b6f5ab4cd2bcceb4f4064efca86fd5",
+  "root_tree_sha": "e49fe9508826d56c4932cacabc491e37fbcc37bb",
+  "root": {
+    "sha": "e49fe9508826d56c4932cacabc491e37fbcc37bb",
+    "truncated": false,
+    "entries": [
+      {
+        "path": ".clang-format",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "358e22272c9a7c904b6f6fe2bc1790bc08d5bb42"
+      },
+      {
+        "path": ".github",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "6fb2ce3957c6f8279778c97cc2800bb45eca2f0d"
+      },
+      {
+        "path": ".gitignore",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "270bd9e2b1d2085777a140ac375e2f7b5c69a49c"
+      },
+      {
+        "path": "CHANGES",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "55c90861f3468d6194b1f06984e8af3c52afcc1b"
+      },
+      {
+        "path": "CMakeLists.txt",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "01f007fd3196f54f11f43143fec7479dbf9ee6b6"
+      },
+      {
+        "path": "CODEOWNERS",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "79fbd2c8c06d6f7d9488bea4230f9f27d2c9df50"
+      },
+      {
+        "path": "Config.cmake.in",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "0ad9b1777948f10a9c32ba75efa995ce9fddfc90"
+      },
+      {
+        "path": "LICENSE",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "af0a2ac312708a0f9d15aa68472e6863de0156ff"
+      },
+      {
+        "path": "Makefile.in",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "69922cf9335be3544db1c68ba938a2f7c126678b"
+      },
+      {
+        "path": "README.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "66a0013072f74dfd5303fc52334475d6e788ab42"
+      },
+      {
+        "path": "cmake",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "d269237bf4eb1dd36d13deca67e766c55b7fd56c"
+      },
+      {
+        "path": "config.guess",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "c4bd827a7bedcf6f78866a27bf01d896c047b516"
+      },
+      {
+        "path": "config.sub",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "6d86a1e2f77b3f89d0ce8efa7741c611aa2d6edf"
+      },
+      {
+        "path": "config_in.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ee5393c48584e74dbe1d81796852b262fa2aa73f"
+      },
+      {
+        "path": "config_in_cmake.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4a198dcfdce6caac4255df392282998904694195"
+      },
+      {
+        "path": "configure",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "dabab8db97efa33c3dfd4da83232f85b7cbd5ec2"
+      },
+      {
+        "path": "configure.ac",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "5ab95f733950b1142ab5b27f3e1207c5188f8b26"
+      },
+      {
+        "path": "crypto",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "74293701bd1f0e98b4969702cc73fcdd8c44edef"
+      },
+      {
+        "path": "doc",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "f39c92caa464f2cc4b95011645cbebb59a160ba2"
+      },
+      {
+        "path": "format.sh",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "ec3e64a724a4296caac2631521045a8563beb885"
+      },
+      {
+        "path": "fuzzer",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "fae14db90ebd4150954aeb2bb1af55e429695b54"
+      },
+      {
+        "path": "include",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "c6e12fc8d411e7979d9c468b1653df4684797a02"
+      },
+      {
+        "path": "install-sh",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "0b0fdcbba69ab6dd05ca162a5328828d46ab1d54"
+      },
+      {
+        "path": "libsrtp2.pc.in",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "f2097a3a2dd68483bf3da9f746c5b4a6bb7e0ffd"
+      },
+      {
+        "path": "meson.build",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ff8a21009913ae44e3c19e837d72c19f982ddc9e"
+      },
+      {
+        "path": "meson_options.txt",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "8ff987d8ef5a66d995a116b651f0e1303dce982a"
+      },
+      {
+        "path": "srtp.def",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c9e95c5b9f052623f10c3e79c5eede7ab8f63be1"
+      },
+      {
+        "path": "srtp",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "3c5169a473065337847dbb64d409941328a0a4f4"
+      },
+      {
+        "path": "test",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "bd02364055573f223f77e01f7d93975e62a8da8c"
+      },
+      {
+        "path": "timing",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "66b00c452e833829c49ea1682222f27bfe51975f"
+      },
+      {
+        "path": "update.sh",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "595b647f3ded657f5e25e17dd153212ef6925b85"
+      }
+    ]
+  },
+  "include": {
+    "sha": "c6e12fc8d411e7979d9c468b1653df4684797a02",
+    "truncated": false,
+    "entries": [
+      {
+        "path": "srtp.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3f5a5247599ca22da114b0a2114ff89efd6766ab"
+      },
+      {
+        "path": "srtp2",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "5ce7d6160758eaf02eb84a1cbebf927c59ea9638"
+      },
+      {
+        "path": "srtp_priv.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ee20d63c4f35fb45a2ea6b41a6d2b1a1e42a3d7b"
+      },
+      {
+        "path": "stream_list_priv.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b61af188e963a27972bdd8356fe66164763fbd95"
+      }
+    ]
+  },
+  "crypto": {
+    "sha": "74293701bd1f0e98b4969702cc73fcdd8c44edef",
+    "truncated": false,
+    "entries": [
+      {
+        "path": "Makefile.in",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "8c2c4fabef95acc0bcc59fc12faf9865b488e6f8"
+      },
+      {
+        "path": "cipher",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "41a63689b6915fd556d4cd089797bbc0e3bbdbc9"
+      },
+      {
+        "path": "hash",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "5313ce70d7373d241936c6038824cb900446bf24"
+      },
+      {
+        "path": "include",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "5aafe1669fe85bc58b73a56f71629baa72ae1e21"
+      },
+      {
+        "path": "kernel",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "7b8b77e7cdc491cc10ca36b832236a3fdf0b3aa4"
+      },
+      {
+        "path": "math",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "b515d57f5c6e62cd9195f6fbbdc3c42289fa00d6"
+      },
+      {
+        "path": "replay",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "1df17b414b55cc3240edd2d393dfbf9075c7918e"
+      },
+      {
+        "path": "test",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "4265d1b9febce5408531ffed987f7a88956398bd"
+      }
+    ]
+  },
+  "crypto_include": {
+    "sha": "5aafe1669fe85bc58b73a56f71629baa72ae1e21",
+    "truncated": false,
+    "entries": [
+      {
+        "path": "aes.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "779c3ac744ffa0129a35acb0934bc3731b402d41"
+      },
+      {
+        "path": "aes_gcm.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "cd0dceed3eecfbff710381a79ebdcf7563865238"
+      },
+      {
+        "path": "aes_icm.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "8ded156a2969c4fa1d6d1b05e186080138b56302"
+      },
+      {
+        "path": "aes_icm_ext.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "5b21c95dded15e408d90f8d005e689ec436d5fd4"
+      },
+      {
+        "path": "alloc.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "1fc041014d8f8c5e0a7bf6d624df88d5878d3fd2"
+      },
+      {
+        "path": "auth.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "774ea1687bb8dee025b78211400cfdbae43d832e"
+      },
+      {
+        "path": "cipher.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "43d453e6fe5460f2907a1fac9c687d555c8772c5"
+      },
+      {
+        "path": "cipher_priv.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "46848ea7c642e6fb01c0f2cf2b225566b778abfc"
+      },
+      {
+        "path": "cipher_types.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "28250d1624fa43445f7f6451fbbf0c5ad24976cc"
+      },
+      {
+        "path": "crypto_kernel.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "1f8dfa77128effa01dc1c717c67d703e87108161"
+      },
+      {
+        "path": "crypto_types.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7fd3178b0b04d2d560110673d23138dd49da0936"
+      },
+      {
+        "path": "datatypes.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "696defb355964104eeeaaaea5458c0f4a3afb763"
+      },
+      {
+        "path": "err.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "6624d018f23428f167bfdca9d0c34050775835ff"
+      },
+      {
+        "path": "hmac.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "148818122c2386d45a1bd9d6e9581e373ab0b937"
+      },
+      {
+        "path": "integers.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "f2cd7c064d719dbbc4a6c0ef0e4c4da0b98d6a5b"
+      },
+      {
+        "path": "key.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4164722c7cc698f8e3f9662a4c377b4401ba9be6"
+      },
+      {
+        "path": "null_auth.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "0e57d67061647d33df8b8f424514fb8a27d319cf"
+      },
+      {
+        "path": "null_cipher.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "5e8c91c1349139a004b533ab3bafe0a40aba012e"
+      },
+      {
+        "path": "rdb.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "208dff3ff10dc63aacab2b30b1d448fcb0b6511a"
+      },
+      {
+        "path": "rdbx.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "2194178ee2ab3f4cc980a0af81c375d32879ce88"
+      },
+      {
+        "path": "sha1.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c9bf592dff357181542fd7ea3d3f9c868a53acbb"
+      }
+    ]
+  },
+  "all_repo_source_acquired": false
+}
