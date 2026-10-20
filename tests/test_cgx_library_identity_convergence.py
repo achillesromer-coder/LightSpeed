@@ -32,6 +32,9 @@ class LibraryIdentityConvergenceTests(unittest.TestCase):
         self.assertEqual(c["durable_source_families"],21)
         self.assertEqual(c["external_index_entries"],207)
         self.assertEqual(c["passive_edge_profiles"],5)
+        self.assertEqual(c["first_file_mappings"],19)
+        self.assertEqual(c["volumetric_kernels"],40)
+        self.assertEqual(c["physical_instance_classes"],5)
     def test_no_public_or_runtime_claims_are_implicitly_promoted(self):
         p=catalogue.build_library_coverage(ROOT)
         self.assertEqual(p["status"],"DERIVED_READ_ONLY_NOT_AUTHORITY_NOT_LIVE_CAPABILITY_PROOF")
@@ -47,6 +50,9 @@ class LibraryIdentityConvergenceTests(unittest.TestCase):
                             for x in p["file_type_declarations"]["types"]))
         self.assertIn("filespace-tree",p["lens_catalogue"])
         self.assertIn("topology-graph",p["lens_catalogue"])
+        self.assertEqual(len(p["conversion_mapping_catalogue"]),19)
+        self.assertTrue(all(not m["independently_retested"] for m in p["conversion_mapping_catalogue"]))
+        self.assertTrue(all(k["evidence_ceiling"]=="SYMBOLIC_TOPOLOGY_NOT_PHYSICAL_QUALIFICATION" for k in p["geometry_kernel_catalogue"]))
     def test_provenance_is_pinned_to_file_content_digest(self):
         p=catalogue.build_library_coverage(ROOT)
         for item in p["source_roots"].values():
