@@ -66,6 +66,16 @@ class PinnedGitlinkSourceTests(unittest.TestCase):
         self.assertFalse(candidate["canonical_promotion"])
         self.assertFalse(candidate["source_bytes_embedded"])
 
+    def test_persisted_source_free_submodule_receipt_matches_full_recompile(self):
+        saved=ROOT/"cgx"/"review"/"alexandria_hypersomnia_gitlinks_openal_scope_20261021.json"
+        persisted=json.loads(saved.read_text(encoding="utf-8"))
+        current=derive()
+        self.assertEqual(persisted,current)
+        self.assertEqual(persisted["verified_gitlink_count"],11)
+        self.assertFalse(persisted["all_11_dependency_licences_qualified"])
+        self.assertFalse(persisted["native_dbr_verified"])
+        self.assertFalse(persisted["source_bytes_embedded"])
+
     def test_openal_three_real_git_blobs_keep_pffft_notice_distinct(self):
         candidate=derive()
         documents={p:raw for p,raw in sources()[2].items()}
