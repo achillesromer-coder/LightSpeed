@@ -42,6 +42,7 @@ def _e(text):
 def build_offline_reference_html() -> str:
     curated,curated_hash=_source("alexandria_curated_upstream_tools_20261020.json")
     legacy,legacy_hash=_source("alexandria_external_reference_intake_20261020.json")
+    official,official_hash=_source("alexandria_official_reference_roots_20261020.json")
     if any(r.get("redistribution_authorised") is not False for r in curated["repositories"]):
         raise ValueError("curated source unexpectedly authorised for redistribution")
     rows=[]
@@ -63,12 +64,19 @@ def build_offline_reference_html() -> str:
             title=_e(item.get("title") or "Untitled source")
             row=f'<td><strong>{title}</strong><small>Line {_e(item.get("line","?"))} · {_e(category)}</small></td><td>{_e(item.get("category") or category)}</td><td>Unverified upstream rights</td><td>{" ".join(links) if links else "Review source"}</td>'
             rows.append(f'<tr data-entry="{_e(category)}" data-search="{_e((str(item.get("title",""))+" "+str(item.get("category",""))+" "+category).lower())}">{row}</tr>')
+    for ref in official["official_references"]:
+        if ref.get("public_kit_inclusion")!="REFERENCE_ONLY_HOLD":
+            raise ValueError("official source unexpectedly promoted into offline asset")
+        url=safe_external_reference(ref["url"])
+        links=('<a target="_blank" rel="noopener noreferrer" href="'+_e(url)+'">Documentation ↗</a>') if url else "Review official URL"
+        row='<td><strong>'+_e(ref["name"])+'</strong><small>'+_e(ref["kind"])+'</small></td><td>'+_e(ref["domain"])+'</td><td>Rights review required<small>'+_e(ref["limitations"])+'</small></td><td>'+links+'</td>'
+        rows.append('<tr data-entry="official" data-search="'+_e((ref["name"]+" "+ref["domain"]+" "+ref["kind"]).lower())+'">'+row+'</tr>')
     tracks=[]
     for tr in curated["learning_tracks"]:
         tracks.append('<li><strong>'+_e(tr["id"].replace("-"," ").title())+'</strong> — '+
                       _e("; ".join(tr["outputs"]))+
                       '<small>Qualification: '+_e(tr["hold"])+'</small></li>')
-    entries=len(curated["repositories"])+sum(len(g["records"]) for g in legacy["groups"])
+    entries=len(curated["repositories"])+sum(len(g["records"]) for g in legacy["groups"])+len(official["official_references"])
     if entries!=len(rows):raise ValueError("entry mismatch")
     css="""
 :root{color-scheme:light dark;font:15px system-ui,-apple-system,Segoe UI,sans-serif}
@@ -116,12 +124,14 @@ q.addEventListener('input',refresh);filter.addEventListener('change',refresh);re
         '<div class="panel"><span class="tag">Review-only</span> <strong>'+str(entries)+' source references</strong>'
         '<p>Curated source SHA-256: <code>'+curated_hash+'</code></p>'
         '<p>Original games/engines source SHA-256: <code>'+legacy_hash+'</code></p>'
+        '<p>Official references SHA-256: <code>'+official_hash+'</code></p>'
         '<p>No internet is needed to browse this file; opening any external source link does require a connection.</p></div>'
         '<h2>Learning pathways</h2><div class="panel"><ol>'+"".join(tracks)+'</ol></div>'
         '<h2>Library index</h2><div class="controls panel">'
         '<label>Search references<input id="search" type="search" placeholder="engine, CAD, NASA, ecology…"></label>'
         '<label>Source<select id="kind"><option value="all">All sources</option>'
         '<option value="curated">Cross-domain curated tools</option>'
+        '<option value="official">Official science and standards</option>'
         '<option value="bobeff/open-source-games">Game index</option>'
         '<option value="bobeff/open-source-engines">Engine index</option></select></label>'
         '<span id="counter" role="status" aria-live="polite">'+str(entries)+' references shown</span></div>'
