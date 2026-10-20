@@ -1,0 +1,39 @@
+name: CGX finish-line evidence and source-fold hold checks
+on:
+  pull_request:
+    paths:
+      - "cgx/review/cgx_unispace_finishline_evidence_20261021.json"
+      - "tests/test_cgx_unispace_finishline_evidence.py"
+      - "cgx/review/video_r0_intake_candidate.py"
+      - "tests/test_cgx_video_r0_intake_candidate.py"
+      - ".github/workflows/cgx-unispace-finishline-map.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate evidence snapshot and all conservative milestone gates
+        run: |
+          python -m json.tool cgx/review/cgx_unispace_finishline_evidence_20261021.json > /dev/null
+          python -m unittest discover -s tests -p 'test_cgx_unispace_finishline_evidence.py' -v
+      - name: Verify R0 video source-only hold gates and negative fixtures
+        run: python -m unittest discover -s tests -p 'test_cgx_video_r0_intake_candidate.py' -v
+      - name: Read milestone coverage without claiming a full program percentage
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("cgx/review/cgx_unispace_finishline_evidence_20261021.json").read_text())
+          a=x["acceptance_summary"]
+          assert (a["milestones_pass"],a["milestones_total"],a["checkpoint_coverage_percent"])==(21,45,47)
+          assert (a["public_releases_approved"],a["native_two_node_acceptances_verified"],a["physical_build_qualifications_verified"])==(0,0,0)
+          print("SOURCE CHECKPOINT COVERAGE ONLY: 21/45 (47%)")
+          print("PUBLIC #158, TWO-NODE #161, PHYSICAL: HOLD")
+          PY

@@ -1,0 +1,473 @@
+{
+  "schema": "CGX-UNISPACE-FINISHLINE-EVIDENCE-SNAPSHOT/0.1",
+  "date": "2026-10-21",
+  "root": "Cognigrex.cgx",
+  "release_state": "HOLD_PUBLIC_158_AND_NATIVE_161",
+  "metric_definition": "Five equal-weight, explicitly named evidence milestones per domain; PASS means cited source or CI proof exists, NOT deployment/production. Do not extrapolate the ratio to time, engineering maturity, historical corpus completion, costs or safety.",
+  "source_branch_base_pr": 195,
+  "source_branch_base_head": "3bf4a2f30330013e7eaddb9f1b48bf62865c42e4",
+  "upstream_draft_update": {
+    "pr": 180,
+    "head": "16c71130b09848b740413b81744df7c5e6069484",
+    "status": "SOURCE_ONLY_NEW_R0_FILES_NOT_FULLY_FOLDED",
+    "specific_unfolded": [
+      "cgx/review/alexandria_hypersomnia_project_source_scope_20261021.json",
+      "cgx/review/alexandria_libdatachannel_source_scope_20261021.json",
+      "cgx/portable_node/individual_game_source_scope.py",
+      "cgx/portable_node/libdatachannel_source_scope.py"
+    ],
+    "warning": "Source intake is partial; dependencies/assets/licences/execution and signed DBR remain HOLD. Avoid bulk copying PR180 bridge, main.ts or desktop manifest onto security fold."
+  },
+  "source_heads": {
+    "PR180": "16c71130b09848b740413b81744df7c5e6069484",
+    "PR181": "bd2117d3975cc4db10dfe763ce92d9b1ad623814",
+    "PR182": "db147fae3a77654bf544da870a4c897216389012",
+    "PR184": "127979f04243333884ba33a23d04c7addce5e457",
+    "PR185": "bf49bd448e3779bbff2db97a905fde79363341ae",
+    "PR186": "aedab4729c7c9c95b7185eb446eff76e145904ae",
+    "PR187": "ea8cb10b3060b01428504a0e613557baa99813be",
+    "PR189": "1c61d07d64ad9eeea68315a8b439e082c2119819",
+    "PR190": "e1d1d71c08197600fc505927368ba695a13d9ea9",
+    "PR191": "65ed3fe56ab12b4bb47f503dd29efbce8ab4d408",
+    "PR192": "fff2a69516300d14537408383702115662742403",
+    "PR193": "15d8c588395b656144fc8e0e341e194a0ea6d560",
+    "PR194": "0eb89172cb8ad503abc77598e98e57df70a9f2b4",
+    "PR195": "3bf4a2f30330013e7eaddb9f1b48bf62865c42e4"
+  },
+  "acceptance_summary": {
+    "milestones_pass": 21,
+    "milestones_total": 45,
+    "checkpoint_coverage_percent": 47,
+    "public_releases_approved": 0,
+    "native_two_node_acceptances_verified": 0,
+    "physical_build_qualifications_verified": 0
+  },
+  "domains": [
+    {
+      "id": "source",
+      "name": "CGX source lineage and Object_ID",
+      "lane": "A/E",
+      "gates": [
+        {
+          "label": "Root-source family ancestry",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR182"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "Exact object query and source manifest tests",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR184"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "Cross-family offline integration checks",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR187",
+            "PR195"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "Drive and host durable canonical readback",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Independent owner Drive+local readback at same Object_ID/root"
+        },
+        {
+          "label": "Owner-approved DBR promotion and production authority",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Signed owner receipt, permissions and accepted promotion"
+        }
+      ]
+    },
+    {
+      "id": "alexandria",
+      "name": "Alexandria sources and rights",
+      "lane": "D",
+      "gates": [
+        {
+          "label": "207 historical references indexed with origin boundaries",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR180",
+            "PR189"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "31 upstream projects and 13 official roots catalogued",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR189"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "251-entry offline preview, ZIP and 18 lessons tested",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR190"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "Exact latest #180 R0 project/dependency delta folded to review stack",
+          "status": "HOLD",
+          "evidence_refs": [
+            "PR180"
+          ],
+          "acceptance_needed": "Selectively reconcile new Hypersomnia/libdatachannel files and source blobs; do not overwrite site/bridge"
+        },
+        {
+          "label": "Upstream licences, whole assets and real executable runs qualified",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Original LICENCE/NOTICE/dependency checks and capability acceptance; release rights"
+        }
+      ]
+    },
+    {
+      "id": "creator",
+      "name": "UniSpace Creator, Press and conversion",
+      "lane": "A",
+      "gates": [
+        {
+          "label": "Format/profile and CCC conversion registries documented",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR184"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "R0 candidate exact-byte reconstruction tests",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR185"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "R1/R2 typed multi-format semantic/structural round trips",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Independent real sample acceptance with declared losses and no fabricated fidelity"
+        },
+        {
+          "label": "Creator/Press wired to permissioned converter execution",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Real user-driven source-ID hydration and adapter tests"
+        },
+        {
+          "label": "Cross-platform publisher accepted for public and private scopes",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Reviewer tests, rights, signed source receipts"
+        }
+      ]
+    },
+    {
+      "id": "site",
+      "name": "LightSpeed GO private/public review security",
+      "lane": "C/E",
+      "gates": [
+        {
+          "label": "61 private-static source assets enumerated with fingerprints",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR193"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "Existing owner gateway and private Objects client wired",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR191",
+            "PR192"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "Path, source-byte, staging/readback CI refusal tests",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR190",
+            "PR194",
+            "PR195"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "61 files moved to approved nonpublic root with owner readback",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Real owner approval, exact source copy, ACL, verified local browser"
+        },
+        {
+          "label": "Dist/CDN cleanup and denied anonymous/revoked HTTP acceptance",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Independent actual public host 401/403 and no stale bytes; issue #158"
+        }
+      ]
+    },
+    {
+      "id": "native",
+      "name": "Native FileSpace/DataSpace and N-node exchange",
+      "lane": "E",
+      "gates": [
+        {
+          "label": "R0 reversible source carrier staged",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR185"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "Source-qualified native intake projection tested",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR186"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "Read-only observer/hydration and delta candidates tested",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR187"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "Independent owner-authenticated second physical device exchange",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Real 2-node cold/warm source SHA and peer admission #161"
+        },
+        {
+          "label": "Signed lease/CAS/replay/ACL plus DBR roots independently accepted",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Revoked/unauthorised peer denial and signed receipt under #161"
+        }
+      ]
+    },
+    {
+      "id": "spatial",
+      "name": "3D geometry, facility and modular logistics",
+      "lane": "B",
+      "gates": [
+        {
+          "label": "Original InterSol/geometry relationships source-mapped",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR181"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "Five-unit synthetic AABB, reserved volumes and BOM tests",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR181"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "Deterministic review SVG and interconnect candidate",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR181"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "Measured vendor/CAD instance geometry and gross masses",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Physical measurements, COG, actual interior fit and load/freight bounds"
+        },
+        {
+          "label": "Independent site/structural/fire/transport/commissioning qualifications",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Approved real-world engineering and regulatory evidence"
+        }
+      ]
+    },
+    {
+      "id": "printspace",
+      "name": "PrintSpace multimaterial and robotics R&D",
+      "lane": "B",
+      "gates": [
+        {
+          "label": "Capability-first design/part families and directional compatibility documented",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR181"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "Measured material X→Y process and head/arm kinematic tests",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Material/process samples, tolerances and independent fixture data"
+        },
+        {
+          "label": "Verified prototype and exact calibration/vision readback",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Physical hardware bench, measurements and source trace"
+        },
+        {
+          "label": "Vacuum/inert/high-energy/process safety approval",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Competent inspection and hazardous-system controls"
+        },
+        {
+          "label": "Validated operating product/qualification and owner release",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Repeatable print, manufacturing and release receipts"
+        }
+      ]
+    },
+    {
+      "id": "operations",
+      "name": "Römer/EMASSC/InterSol mission and deployment",
+      "lane": "B/D/E",
+      "gates": [
+        {
+          "label": "Engineering/workbook mission concepts and source scope recorded",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR181"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "Authoritative independently checked GMAT/MPL scenario execution",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Pinned inputs, dynamics provenance, comparison and repeatability"
+        },
+        {
+          "label": "Prototype hardware/test site operational qualification",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Measured RFS/EMFF/Solar Hull/Mark/Luke data"
+        },
+        {
+          "label": "Funding/IP/legal and external licence gates signed",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Custodian authority, external contracts and regulatory approvals"
+        },
+        {
+          "label": "Mission/field operations accepted and deployed",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Live demonstration under approved safety and custody"
+        }
+      ]
+    },
+    {
+      "id": "coordination",
+      "name": "Five-lane automation and local/Drive integration",
+      "lane": "A–E",
+      "gates": [
+        {
+          "label": "Five original staggered lanes enabled without duplicate scheduler",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR195"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "GitHub issue #40 and gate receipts circulated",
+          "status": "PASS",
+          "evidence_refs": [
+            "PR195"
+          ],
+          "acceptance_needed": null
+        },
+        {
+          "label": "Fresh per-lane evidence from latest live runs",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Current hourly receipts and verified unresolved lane handoffs"
+        },
+        {
+          "label": "Real private host and Google Drive durable corpus parity",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Owner-scoped independent host C:/D: and Drive hash readback"
+        },
+        {
+          "label": "Cross-lane accepted production operations and alarms",
+          "status": "HOLD",
+          "evidence_refs": [],
+          "acceptance_needed": "Owner review, no-overlap logs, end-to-end outcomes"
+        }
+      ]
+    }
+  ],
+  "controls": {
+    "protected_issues": [
+      158,
+      161
+    ],
+    "control_issue": 40,
+    "do_not_merge_main": true,
+    "do_not_rewrite_drive_or_host": true,
+    "do_not_reclassify_index_licenses": true,
+    "authorization": "OWNER_DECISION_REQUIRED",
+    "known_public_review_assets_held": 61
+  },
+  "next_queue": [
+    {
+      "priority": "P0",
+      "lane": "C/E",
+      "action": "Owner approve copy root, stage 61 with source digest, verify private HTTP; preserve old source until safe removal",
+      "blocked_by": "actual owner private root and session"
+    },
+    {
+      "priority": "P0",
+      "lane": "C",
+      "action": "After approved migration rebuild, scan entire dist including complete private bytes, independently deny anonymous/revoked/cross-owner/CDN",
+      "blocked_by": "#158"
+    },
+    {
+      "priority": "P0",
+      "lane": "E",
+      "action": "Independently authenticated second-device signed source/State_Root/DBR proof with negative replay/CAS",
+      "blocked_by": "#161"
+    },
+    {
+      "priority": "P1",
+      "lane": "D",
+      "action": "Selective exact-blob intake of current PR180 project source/dependency updates, not bulk UI/bridge merge",
+      "blocked_by": "upstream rights and dependency source"
+    },
+    {
+      "priority": "P1",
+      "lane": "A/B",
+      "action": "Real format round-trip and 3D manufactured/host-measured conformance proofs",
+      "blocked_by": "source-authorized real fixture/units"
+    }
+  ]
+}
