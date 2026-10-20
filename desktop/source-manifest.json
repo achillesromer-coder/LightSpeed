@@ -3521,6 +3521,11 @@
       "sha256": "774f2dc6e8d5bfa81268c75bb5c4336000a933141defc0b9d1fdd3b4c0aaca4e"
     },
     {
+      "bytes": 12612,
+      "path": "LightSpeed_Runtime/tests/test_cgx_intake_projection.py",
+      "sha256": "1ff9fa119cc71b315fae528f08d76a5cfef8e9c3db9ead3f9e49f40227b5eb10"
+    },
+    {
       "bytes": 65363,
       "path": "LightSpeed_Runtime/lightspeed_runtime/source_intake.py",
       "sha256": "c6bfcad43aa530de01fa24a9559705bb0eabc66e06462006a9e7bc409b847b51"
@@ -3549,6 +3554,11 @@
       "bytes": 7462,
       "path": "LightSpeed_Runtime/lightspeed_runtime/cgx_extension_planner.py",
       "sha256": "5558ca28757e4714e790c294de34d31cece6ec5183197cd57009d4cf927419f0"
+    },
+    {
+      "bytes": 18940,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/cgx_intake_projection.py",
+      "sha256": "bd2f1b6548ba24b3c14d888a1f82df8628c9a52d4cc1edb631dccd2681bc05e8"
     },
     {
       "bytes": 9632,
