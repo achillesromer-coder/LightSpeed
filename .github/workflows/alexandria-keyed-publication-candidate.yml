@@ -22,6 +22,7 @@ on:
       - "cgx/portable_node/individual_game_source_scope.py"
       - "tests/test_cgx_real_hypersomnia_project_source.py"
       - "tests/fixtures/alexandria_hypersomnia_project/**"
+      - "cgx/review/alexandria_hypersomnia_project_source_scope_20261021.json"
       - "tests/fixtures/alexandria_game_catalogue/**"
       - "cgx/review/alexandria_game_catalogue_real_source_envelope_20261021.json"
       - "tests/fixtures/alexandria_engine_catalogue/**"
@@ -47,6 +48,7 @@ jobs:
           python -m json.tool cgx/review/alexandria_external_reference_intake_20261020.json > /dev/null
           python -m json.tool cgx/review/alexandria_engine_catalogue_real_source_envelope_20261020.json > /dev/null
           python -m json.tool cgx/review/alexandria_game_catalogue_real_source_envelope_20261021.json > /dev/null
+          python -m json.tool cgx/review/alexandria_hypersomnia_project_source_scope_20261021.json > /dev/null
           python -m json.tool cgx/review/alexandria_pinned_catalogue_readback_20261020.json > /dev/null
           python -m unittest discover -s tests -p 'test_cgx_keyed_alexandria_review.py' -v
           python -m unittest discover -s tests -p 'test_cgx_archive_claim_reconciliation.py' -v
