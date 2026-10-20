@@ -6,6 +6,8 @@ on:
       - "cgx/review/alexandria_library_projection.py"
       - "cgx/review/unispace_public_asset_boundary.py"
       - "tests/test_cgx_alexandria_library_security_convergence.py"
+      - "cgx/review/alexandria_offline_reference_preview.py"
+      - "tests/test_cgx_alexandria_offline_reference_preview.py"
       - ".github/workflows/cgx-alexandria-library-public-gate.yml"
   workflow_dispatch:
 permissions:
@@ -22,11 +24,18 @@ jobs:
       - name: Validate additive catalogue
         run: python -m json.tool cgx/review/alexandria_curated_upstream_tools_20261020.json > /dev/null
       - name: Test rights-held cross-domain references and static privacy safeguards
-        run: python -m unittest discover -s tests -p 'test_cgx_alexandria_library_security_convergence.py' -v
+        run: |
+          python -m unittest discover -s tests -p 'test_cgx_alexandria_library_security_convergence.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_alexandria_offline_reference_preview.py' -v
       - name: Produce deterministic source-only coverage projection
         run: |
           python cgx/review/alexandria_library_projection.py > /tmp/cgx_alexandria_discovery_only.json
           python -m json.tool /tmp/cgx_alexandria_discovery_only.json > /dev/null
+      - name: Generate purely offline source-reference preview into temporary workspace
+        run: |
+          python cgx/review/alexandria_offline_reference_preview.py --output /tmp/alexandria_offline_reference_candidate.html
+          test -s /tmp/alexandria_offline_reference_candidate.html
+          ! grep -q '<script src=' /tmp/alexandria_offline_reference_candidate.html
       - name: Audit current Vite public paths but do not infer release clearance
         run: |
           python cgx/review/unispace_public_asset_boundary.py > /tmp/cgx_internal_static_risk_report.json
