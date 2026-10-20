@@ -7,6 +7,8 @@ on:
       - "tests/test_cgx_modular_facility_packing.py"
       - "cgx/manufacturing/modular_deployment_logistics.py"
       - "tests/test_cgx_modular_deployment_logistics.py"
+      - "cgx/manufacturing/modular_facility_projection.py"
+      - "tests/test_cgx_modular_facility_projection.py"
       - ".github/workflows/cgx-modular-facility-review.yml"
   workflow_dispatch:
 permissions:
@@ -25,3 +27,4 @@ jobs:
           python -m json.tool cgx/manufacturing/fixtures/five_unit_relief_synthetic_v0_1.json > /dev/null
           python -m unittest discover -s tests -p 'test_cgx_modular_facility_packing.py' -v
           python -m unittest discover -s tests -p 'test_cgx_modular_deployment_logistics.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_modular_facility_projection.py' -v
