@@ -1,0 +1,52 @@
+{
+  "schema": "CGX-UNISPACE-NATIVE-INTAKE-SUBSET-FOLD/0.1",
+  "status": "SOURCE_ONLY_REVIEW_NOT_EXECUTION_NOT_CANON",
+  "stacked_on_pr": 185,
+  "source_pr": 173,
+  "source_head": "03448282109278aef1f2745086b5176cdb615159",
+  "carried_source_files": [
+    {
+      "path": "cgx/domain_templates/unispace_intake_mapping_contract.json",
+      "git_blob_sha1": "b6f77692665846ce206906fd22df0e59ce2c8d1a"
+    },
+    {
+      "path": "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_intake_projection.py",
+      "git_blob_sha1": "2ba58d210f727eadba614f601f68636cbfea1320"
+    },
+    {
+      "path": "desktop/LightSpeed_Runtime/tests/test_cgx_intake_projection.py",
+      "git_blob_sha1": "31b0a4ea9ccb0a16dc18afed5500c5bde0d67cba"
+    }
+  ],
+  "deliberately_excluded_from_this_fold": [
+    "desktop/LightSpeed_Runtime/lightspeed_runtime/node_exchange.py",
+    "desktop/LightSpeed_Runtime/lightspeed_runtime/source_intake_executor.py",
+    "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_job_consumer.py",
+    "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py",
+    "desktop/LightSpeed_Runtime/mcp/cgx_tools/server.mjs",
+    "cgx/public_skeletons/alexandria.public.cgx",
+    "desktop/source-manifest.json"
+  ],
+  "compatibility_basis": "Existing main node_exchange.build_transfer_envelope_from_manifest API already accepts the intake projection's proposed arguments; candidate does not use new rolling observer methods.",
+  "bounds": [
+    "Provider ID and revision are claimant metadata, not independently authenticated.",
+    "Source byte hash is verified locally but does not establish rights or public admissibility.",
+    "Two-node envelope is only a plan; a supplied authenticated:true assertion cannot upgrade authority.",
+    "Native runtime, source intake executor, receiver, phone, server and real transport not installed or modified.",
+    "Preserve distinct R0/R1/R2/R3/F transform-evidence definitions; intake R0-R7 are local stages not replacement global semver."
+  ],
+  "issues_held": [
+    158,
+    161
+  ],
+  "source_folding_only": true,
+  "original_pr_open": true,
+  "proof_required": [
+    "Source file blob exactness",
+    "Native envelope local byte parity",
+    "Typed import hold for unsupported converters",
+    "Public/private negative path",
+    "No peer, lease, or canonical claims",
+    "Independent node/device test before #161 closure"
+  ]
+}
