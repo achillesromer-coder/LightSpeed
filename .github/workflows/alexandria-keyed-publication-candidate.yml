@@ -13,6 +13,7 @@ on:
       - "tests/test_cgx_alexandria_reference_projection.py"
       - "cgx/portable_node/pinned_catalogue_source_intake.py"
       - "tests/test_cgx_pinned_catalogue_source_intake.py"
+      - "cgx/review/alexandria_engine_catalogue_real_source_envelope_20261020.json"
       - ".github/workflows/alexandria-keyed-publication-candidate.yml"
   workflow_dispatch:
 permissions:
@@ -30,6 +31,7 @@ jobs:
         run: |
           python -m json.tool cgx/review/unispace_keyed_publication_candidate_20261020.json > /dev/null
           python -m json.tool cgx/review/alexandria_external_reference_intake_20261020.json > /dev/null
+          python -m json.tool cgx/review/alexandria_engine_catalogue_real_source_envelope_20261020.json > /dev/null
           python -m json.tool cgx/review/alexandria_pinned_catalogue_readback_20261020.json > /dev/null
           python -m unittest discover -s tests -p 'test_cgx_keyed_alexandria_review.py' -v
           python -m unittest discover -s tests -p 'test_cgx_archive_claim_reconciliation.py' -v
