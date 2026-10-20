@@ -1467,6 +1467,7 @@ def create_app(root: Path | str) -> FastAPI:
         allow_origins=_allowed_origins(),
         allow_credentials=False,
         allow_methods=["GET", "POST", "OPTIONS"],
+        expose_headers=["X-CGX-Source-SHA256", "Content-Length", "Content-Type"],
         allow_headers=[
             "Content-Type",
             "X-LightSpeed-Owner-Confirmation",

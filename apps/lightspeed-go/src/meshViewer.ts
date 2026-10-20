@@ -10,7 +10,7 @@ export type MeshReviewGeometry = {
   faces: number[][];
 };
 
-type MeshViewerOptions = {
+export type MeshViewerOptions = {
   url: string;
   label: string;
   source: string;
@@ -139,7 +139,9 @@ const ensureModal=():HTMLElement=>{
   return modal;
 };
 
-export const openMeshViewer=async(options:MeshViewerOptions):Promise<void>=>{
+export type MeshReviewLoader = (url: string, signal: AbortSignal) => Promise<MeshReviewGeometry>;
+export const closeMeshViewer=():void=>{abort?.abort();abort=null;if(modal) modal.hidden=true;document.body.classList.remove("mesh-viewer-open");};
+export const openMeshViewer=async(options:MeshViewerOptions, loadPrivateMesh?:MeshReviewLoader):Promise<void>=>{
   const host=ensureModal();
   abort?.abort();abort=new AbortController();
   host.hidden=false;document.body.classList.add("mesh-viewer-open");
@@ -157,9 +159,13 @@ export const openMeshViewer=async(options:MeshViewerOptions):Promise<void>=>{
 
   let mesh:MeshReviewGeometry;
   try{
-    const response=await fetch(options.url,{cache:"no-store",signal:abort.signal});
-    if(!response.ok) throw new Error(`mesh payload HTTP ${response.status}`);
-    mesh=await response.json() as MeshReviewGeometry;
+    if(loadPrivateMesh){
+      mesh=await loadPrivateMesh(options.url,abort.signal);
+    }else{
+      const response=await fetch(options.url,{cache:"no-store",signal:abort.signal});
+      if(!response.ok) throw new Error(`mesh payload HTTP ${response.status}`);
+      mesh=await response.json() as MeshReviewGeometry;
+    }
   }catch(error){
     if((error as Error).name==="AbortError") return;
     if(ctx){ctx.fillStyle="#e27e7e";ctx.font="16px sans-serif";ctx.fillText("Interactive mesh unavailable.",20,36);}
@@ -191,7 +197,7 @@ export const meshViewerButtonMarkup=(options:MeshViewerOptions):string=>`
     data-mesh-hash="${esc(options.sourceHash || "")}"
     data-mesh-state="${esc(options.physicalState)}">Interactive 3D</button>`;
 
-export const bindMeshViewerTriggers=(root:HTMLElement):void=>{
+export const bindMeshViewerTriggers=(root:HTMLElement,loadPrivateMesh?:MeshReviewLoader):void=>{
   root.querySelectorAll<HTMLButtonElement>(".mesh-viewer-trigger").forEach((button)=>{
     button.addEventListener("click",()=>void openMeshViewer({
       url:button.dataset.meshUrl || "",
@@ -199,6 +205,6 @@ export const bindMeshViewerTriggers=(root:HTMLElement):void=>{
       source:button.dataset.meshSource || "",
       sourceHash:button.dataset.meshHash || "",
       physicalState:button.dataset.meshState || "REVIEW ONLY",
-    }));
+    },loadPrivateMesh));
   });
 };

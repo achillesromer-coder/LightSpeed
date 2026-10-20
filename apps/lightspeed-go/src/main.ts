@@ -65,6 +65,8 @@ import { renderRepresentationGraphs } from "./representationGraphs";
 import { loadType1CatalogueProjection, type Type1CatalogueProjection } from "./utpCatalogue";
 import { bindCgxReviewProjection, loadCgxReviewProjection, type CgxReviewProjection } from "./cgxReview";
 import { bindObjectReview, loadObjectReview, type ComponentAtlas, type ObjectReviewCatalogue } from "./objectReview";
+import { bindPrivateReviewMedia, PrivateObjectReviewSession } from "./privateObjectReview";
+import { closeMeshViewer, type MeshReviewGeometry } from "./meshViewer";
 import { sourceLinks } from "./sourceRegistry";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
 
@@ -294,6 +296,46 @@ let currentRepresentationGraphs: RepresentationGraph[] = [];
 let ownerSessionToken = "";
 let ownerPasswordChangeToken = "";
 let ownerUsername = "NCNB";
+const objectReviewMount = byId("object-review-catalogue");
+let privateReviewGeneration = 0;
+let privateReviewSession: PrivateObjectReviewSession | null = null;
+let clearPrivateMedia: (() => void) | null = null;
+const clearPrivateObjectReview = (): void => {
+  privateReviewGeneration += 1;
+  closeMeshViewer();
+  clearPrivateMedia?.();
+  clearPrivateMedia = null;
+  privateReviewSession?.revoke();
+  privateReviewSession = null;
+  objectReviewMount.replaceChildren();
+  objectReviewMount.textContent = "CGX Objects review locked. Sign in with an owner session to load private source assets.";
+};
+const loadPrivateObjectReview = async (): Promise<void> => {
+  clearPrivateObjectReview();
+  const sessionToken = ownerSessionToken;
+  if (!sessionToken) return;
+  const generation = privateReviewGeneration;
+  const privateSession = new PrivateObjectReviewSession(sessionToken);
+  privateReviewSession = privateSession;
+  objectReviewMount.textContent = "Loading private CGX Objects through the Desktop owner gate…";
+  try {
+    const {html,atlas} = await loadObjectReview(
+      () => privateSession.readJson<ObjectReviewCatalogue>("/data/cgx_object_review_catalogue.json"),
+      () => privateSession.readJson<ComponentAtlas>("/data/component_geometry_atlas_public_review.json"),
+      true,
+    );
+    if (privateReviewGeneration !== generation || ownerSessionToken !== sessionToken || !privateSession.isActive) return;
+    objectReviewMount.innerHTML = html;
+    clearPrivateMedia = bindPrivateReviewMedia(objectReviewMount, privateSession);
+    bindObjectReview(objectReviewMount, atlas, (path: string, signal: AbortSignal) =>
+      privateSession.readJson<MeshReviewGeometry>(path, signal));
+  } catch (_error) {
+    if (privateReviewGeneration === generation) {
+      clearPrivateObjectReview();
+      objectReviewMount.textContent = "Private CGX Objects unavailable. Verify your owner session and configured private source root; public fallback is disabled.";
+    }
+  }
+};
 
 const ownerAuthMessage = (tone: "good" | "warn" | "bad", message: string): void => {
   const mount = byId("owner-auth-result");
@@ -302,6 +344,7 @@ const ownerAuthMessage = (tone: "good" | "warn" | "bad", message: string): void 
 };
 
 const applyOwnerAuth = (response: OwnerAuthResponse): void => {
+  clearPrivateObjectReview();
   const loginForm = byId<HTMLFormElement>("owner-login-form");
   const changeForm = byId<HTMLFormElement>("owner-change-form");
   const logoutButton = byId<HTMLButtonElement>("owner-logout");
@@ -314,6 +357,7 @@ const applyOwnerAuth = (response: OwnerAuthResponse): void => {
     logoutButton.hidden = false;
     byId("owner-auth-state").textContent = `${ownerUsername} signed in`;
     ownerAuthMessage("good", `Owner session active until ${response.expires_utc || "page close"}.`);
+    void loadPrivateObjectReview();
     return;
   }
   logoutButton.hidden = true;
@@ -386,6 +430,7 @@ byId<HTMLButtonElement>("owner-logout").addEventListener("click", async () => {
   const token = ownerSessionToken;
   ownerSessionToken = "";
   ownerPasswordChangeToken = "";
+  clearPrivateObjectReview();
   if (token) {
     try { await logoutDesktopOwner(token); } catch { /* The local session is already cleared. */ }
   }
@@ -893,27 +938,9 @@ byId("refresh-desktop").addEventListener("click", () => void refreshDesktop());
 renderPending();
 void refreshDesktop();
 
-const objectReviewMount = byId("object-review-catalogue");
-const objectReviewUrl = new URL("./data/cgx_object_review_catalogue.json", document.baseURI).toString();
-const componentAtlasUrl = new URL("./data/component_geometry_atlas_public_review.json", document.baseURI).toString();
-void loadObjectReview(
-  async () => {
-    const response = await fetch(objectReviewUrl, { cache: "no-store" });
-    if (!response.ok) throw new Error(`Object review catalogue returned HTTP ${response.status}`);
-    return (await response.json()) as ObjectReviewCatalogue;
-  },
-  async () => {
-    const response = await fetch(componentAtlasUrl, { cache: "no-store" });
-    if (!response.ok) throw new Error(`Component atlas review projection returned HTTP ${response.status}`);
-    return (await response.json()) as ComponentAtlas;
-  },
-).then(({ html, atlas }) => {
-  objectReviewMount.innerHTML = html;
-  bindObjectReview(objectReviewMount, atlas);
-}).catch((error) => {
-  const message = error instanceof Error ? error.message : "CGX object review catalogue unavailable.";
-  objectReviewMount.innerHTML = `<article class="panel"><p class="eyebrow">CGX object review</p><h2>Catalogue unavailable</h2><p class="muted">${escapeHtml(message)}</p></article>`;
-});
+// Private Objects are loaded only after an authenticated owner session.
+// No static-site catalogue, render or mesh fallback is permitted.
+clearPrivateObjectReview();
 
 const cgxReviewMount = byId("cgx-review-lens");
 const cgxReviewUrl = new URL("./data/cgx_internal_review_projection.json", document.baseURI).toString();
