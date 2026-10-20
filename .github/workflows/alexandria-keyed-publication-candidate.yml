@@ -4,6 +4,7 @@ on:
     paths:
       - "cgx/review/unispace_keyed_publication_candidate_20261020.json"
       - "cgx/review/alexandria_external_reference_intake_20261020.json"
+      - "cgx/review/alexandria_pinned_catalogue_readback_20261020.json"
       - "cgx/portable_node/keyed_fileset_plan.py"
       - "tests/test_cgx_keyed_alexandria_review.py"
       - "cgx/portable_node/archive_claim_reconciliation_plan.py"
@@ -27,6 +28,7 @@ jobs:
         run: |
           python -m json.tool cgx/review/unispace_keyed_publication_candidate_20261020.json > /dev/null
           python -m json.tool cgx/review/alexandria_external_reference_intake_20261020.json > /dev/null
+          python -m json.tool cgx/review/alexandria_pinned_catalogue_readback_20261020.json > /dev/null
           python -m unittest discover -s tests -p 'test_cgx_keyed_alexandria_review.py' -v
           python -m unittest discover -s tests -p 'test_cgx_archive_claim_reconciliation.py' -v
           python -m unittest discover -s tests -p 'test_cgx_alexandria_reference_projection.py' -v
