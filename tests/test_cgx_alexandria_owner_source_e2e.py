@@ -132,8 +132,9 @@ def test_actual_owner_session_hydrates_real_source_then_revocation_blocks(tmp_pa
     assert data["canonical_admission"] is False
     assert data["executable_capability"] is False
     assert data["published"] is False
-    assert "source_base64" not in json.dumps(data)
-    assert "source_bytes" not in json.dumps(data)
+    assert "source_base64" not in data
+    assert "source_bytes" not in data
+    assert data["source_bytes_embedded"] is False
 
     # Same authenticated user with no source cache or wrong source root.
     missing=client.post(endpoint,json={"candidate_ref":REF},headers=headers)
