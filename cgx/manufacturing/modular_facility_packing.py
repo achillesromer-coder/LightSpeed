@@ -24,6 +24,13 @@ def _lengths(value, count=3, *, positive=False):
         raise ValueError("required finite SI dimensions are missing/invalid")
     return tuple(float(x) for x in value)
 
+def _signed_coordinates(value):
+    if not isinstance(value, (list, tuple)) or len(value) != 3 or any(
+        isinstance(x, bool) or not isinstance(x, (int,float)) or not math.isfinite(x) for x in value
+    ):
+        raise ValueError("invalid finite site frame origin")
+    return tuple(float(x) for x in value)
+
 def _box(data):
     if not isinstance(data, (list, tuple)) or len(data) != 6:
         raise ValueError("AABB must be [x,y,z,dx,dy,dz] in metres")
@@ -92,7 +99,7 @@ def compile_facility(source: dict[str, Any]) -> dict[str, Any]:
         state = unit.get("geometry_evidence")
         if state not in GEOMETRY_STATES:
             raise ValueError("unit geometry evidence class required")
-        origin = _lengths(unit.get("origin_m", [0, 0, 0]))
+        origin = _signed_coordinates(unit.get("origin_m", [0, 0, 0]))
         envelope = unit.get("internal_envelope_m")
         bounds = _lengths(envelope, positive=True) if envelope is not None else None
         placements = unit.get("placements", [])
@@ -254,7 +261,7 @@ def compile_facility(source: dict[str, Any]) -> dict[str, Any]:
         holds.append(f"LINK-{idx}:HOLD_ACTUAL_PIPE_CABLE_HOSE_ROUTING_AND_COMMISSIONING")
         edge_summaries.append({"a":a,"b":b,"medium":aa["medium"],"port_distance_m":distance,
                                "alignment_tolerance_m":tol,"physical_mating_qualified":False})
-    if source.get("site") is None:
+    if not isinstance(source.get("site"),dict) or source["site"].get("site_id") in (None,"UNBOUND") or source["site"].get("geometry_evidence") not in ("SOURCE_VERIFIED","BOUNDED_ASSUMPTION"):
         holds.append("HOLD_SITE_TOPOGRAPHY_ENVIRONMENT_RIGHTS")
     for domain in ("structural","lifting","fire","potable_water","electrical","sanitation","clinical",
                    "transport","accessibility","weather","commissioning"):
