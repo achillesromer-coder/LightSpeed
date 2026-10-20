@@ -3551,9 +3551,9 @@
       "sha256": "5558ca28757e4714e790c294de34d31cece6ec5183197cd57009d4cf927419f0"
     },
     {
-      "bytes": 9233,
+      "bytes": 9632,
       "path": "LightSpeed_Runtime/lightspeed_runtime/cgx_object_context.py",
-      "sha256": "1af0cab9ed16a705406968b50989a5e6b6cbdf822116a8766e17191efaa23e17"
+      "sha256": "53d20ae79ea593440e39f2244c90cbf83035b3c5da3bcffada6922377e113a39"
     },
     {
       "bytes": 13402,
