@@ -1,0 +1,49 @@
+name: UniSpace public CGX deny-by-default bundle
+on:
+  pull_request:
+    paths:
+      - "apps/lightspeed-go/public/cgx/**"
+      - "apps/lightspeed-go/scripts/cgx_public_bundle_guard.py"
+      - "apps/lightspeed-go/tests/unispace-*.test.mjs"
+      - "tests/test_cgx_public_bundle_guard.py"
+      - ".github/workflows/cgx-public-bundle-allowlist.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build-public-candidate-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/lightspeed-go/package-lock.json
+      - name: Validate private-source denial and allowlisted public content
+        run: python -m unittest discover -s tests -p "test_cgx_public_bundle_guard.py" -v
+      - name: Exact public synthetic semantics, no live native permissions
+        working-directory: apps/lightspeed-go
+        run: |
+          npm ci --silent
+          npm test -- --run tests/unispace-public.test.mjs tests/unispace-domains.test.mjs
+      - name: Build isolated nonproduction public-only candidate
+        run: |
+          python apps/lightspeed-go/scripts/cgx_public_bundle_guard.py --output "$RUNNER_TEMP/unispace-cgx-review" > "$RUNNER_TEMP/unispace-review.json"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          dest=Path(os.environ["RUNNER_TEMP"])/"unispace-cgx-review"
+          receipt=json.loads((dest/"cgx-package-review.json").read_text())
+          assert receipt["file_count"]==12
+          assert receipt["operator_source_included"] is False
+          assert receipt["external_host_live_verified"] is False
+          assert not (dest/"data").exists()
+          assert not (dest/"review").exists()
+          print("PUBLIC_SAFE_CGX_SOURCE_CANDIDATE_ONLY")
+          print("ISSUE_158_LS_GO_INTERNAL_STATIC_GATE_REMAINS_OPEN")
+          PY
