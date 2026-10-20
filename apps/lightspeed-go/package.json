@@ -8,7 +8,7 @@
     "build": "node ./scripts/checkPublicRelease.mjs --phase source && npm run build:internal && node ./scripts/checkPublicRelease.mjs --phase dist",
     "preview": "vite preview --host 127.0.0.1",
     "check": "tsc --noEmit",
-    "test": "vitest run --pool=threads --maxWorkers=1 --no-file-parallelism",
+    "test": "vitest run src --pool=threads --maxWorkers=1 --no-file-parallelism",
     "build:internal": "tsc --noEmit && vite build",
     "build:public": "npm run build",
     "test:release": "node --test ./scripts/checkPublicRelease.test.mjs"
