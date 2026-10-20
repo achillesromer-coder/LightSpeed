@@ -159,3 +159,64 @@ def test_actual_owner_session_hydrates_real_source_then_revocation_blocks(tmp_pa
     assert revoked.status_code==403
     assert "raylib" not in revoked.text
     assert EXPECTED_SOURCE_SHA not in revoked.text
+
+
+def test_authenticated_game_catalogue_hydrates_real_37kb_source_with_fixed_root(tmp_path,monkeypatch):
+    """The existing owner route must NOT silently remain engine-only."""
+    db=TestDB(tmp_path/"game-auth.db")
+    store=CredentialStore(db)
+    store.bootstrap("test-owner","temporary-test-secret")
+    store.change_password("test-owner","temporary-test-secret","Rotated-Test-Password-2026!")
+    monkeypatch.setattr(ls_go_bridge,"_try_get_services",lambda _: (db,object()))
+    client=TestClient(ls_go_bridge.create_app(tmp_path/"App"))
+    endpoint="/api/v1/alexandria/catalogue/hydrate"
+    game_commit="3a9ab8fc892a2cdadf8989a72ba7624a11e39cec"
+    ref=f"alexandria:external:index:{game_commit}:28"
+    games=(ROOT/"tests"/"fixtures"/"alexandria_game_catalogue"/"README.md").read_bytes()
+    assert len(games)==37285
+    assert hashlib.sha256(games).hexdigest()=="b7c21b00b2dc88634a4a4dcbac773d01b6e72508c023600e0dd5e2bbd02a199f"
+    payload={"candidate_ref":ref,"source_base64":base64.b64encode(games).decode("ascii")}
+
+    anonymous=client.post(endpoint,json=payload)
+    assert anonymous.status_code==403
+    assert "Hypersomnia" not in anonymous.text
+
+    login=client.post("/api/v1/auth/login",json={
+        "username":"test-owner","password":"Rotated-Test-Password-2026!"})
+    assert login.status_code==200
+    headers={"X-LightSpeed-Session":login.json()["session_token"]}
+    result=client.post(endpoint,json=payload,headers=headers)
+    assert result.status_code==200,result.text
+    assert result.headers["cache-control"]=="no-store"
+    obj=result.json()
+    assert obj["status"]=="SOURCE_PROVEN_R1_VIEW_CANDIDATE"
+    assert obj["title"]=="Hypersomnia"
+    assert obj["source_line"]==28
+    assert obj["upstream_reference_urls"]==["https://github.com/TeamHypersomnia/Hypersomnia"]
+    assert obj["linked_project_licence"]=="UNVERIFIED"
+    assert obj["licence"]=="CC0-1.0"
+    assert obj["canonical_admission"] is False
+    assert obj["source_bytes_embedded"] is False
+    assert obj["authenticated"] is False
+    assert "source_base64" not in obj
+    assert "source_bytes" not in obj
+
+    unknown={"candidate_ref":"alexandria:external:index:"+("f"*40)+":28",
+             "source_base64":payload["source_base64"]}
+    reject=client.post(endpoint,json=unknown,headers=headers)
+    assert reject.status_code==400
+    assert "Hypersomnia" not in reject.text
+    engine_ref="alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:21"
+    wrong_root=client.post(endpoint,json={
+        "candidate_ref":engine_ref,"source_base64":payload["source_base64"]},headers=headers)
+    assert wrong_root.status_code==200
+    assert wrong_root.json()["status"]=="SOURCE_MISMATCH"
+    assert "title" not in wrong_root.json()
+    no_cache=client.post(endpoint,json={"candidate_ref":ref},headers=headers)
+    assert no_cache.status_code==200
+    assert no_cache.json()["status"]=="NOT_CACHED"
+
+    assert client.post("/api/v1/auth/logout",headers=headers).status_code==200
+    expired=client.post(endpoint,json=payload,headers=headers)
+    assert expired.status_code==403
+    assert "Hypersomnia" not in expired.text
