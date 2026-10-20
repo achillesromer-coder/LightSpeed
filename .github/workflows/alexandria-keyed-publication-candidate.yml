@@ -30,6 +30,9 @@ on:
       - "cgx/portable_node/libdatachannel_source_scope.py"
       - "tests/test_cgx_real_libdatachannel_scope.py"
       - "cgx/review/alexandria_libdatachannel_source_scope_20261021.json"
+      - "cgx/portable_node/libjuice_source_scope.py"
+      - "tests/test_cgx_real_libjuice_scope.py"
+      - "tests/fixtures/alexandria_libjuice/**"
       - "cgx/review/alexandria_hypersomnia_gitlinks_openal_scope_20261021.json"
       - "tests/fixtures/alexandria_game_catalogue/**"
       - "cgx/review/alexandria_game_catalogue_real_source_envelope_20261021.json"
@@ -70,6 +73,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_cgx_real_hypersomnia_project_source.py' -v
           python -m unittest discover -s tests -p 'test_cgx_hypersomnia_gitlinks_openal.py' -v
           python -m unittest discover -s tests -p 'test_cgx_real_libdatachannel_scope.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_real_libjuice_scope.py' -v
       - name: Emit reproducible four-file source-only project receipt
         run: |
           python - <<'PY'
