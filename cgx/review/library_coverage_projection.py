@@ -23,7 +23,10 @@ REGISTRIES = {
     "corpus": "cgx/domain_templates/corpus_inclusion_registry.json",
     "alexandria": "cgx/review/alexandria_external_reference_intake_20261020.json",
     "passive_edge": "cgx/domain_templates/passive_edge_profile_registry.json",
-    "keyed_publication": "cgx/review/unispace_keyed_publication_candidate_20261020.json"
+    "keyed_publication": "cgx/review/unispace_keyed_publication_candidate_20261020.json",
+    "first_file_mappings": "cgx/domain_templates/first_file_conversion_registry.json",
+    "volumetric_kernel": "cgx/component_atlas/type1_volumetric_kernel_v0_1.json",
+    "physical_instance_contract": "cgx/component_atlas/component_instance_build_packet_contract_v0_1.json"
 }
 
 def _load(root: Path, relative: str) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -62,6 +65,9 @@ def build_library_coverage(root: Path = ROOT) -> dict[str, Any]:
     providers = d["corpus"]["durable_source_families"]
     external = d["alexandria"]["groups"]
     profiles = d["passive_edge"]["profiles"]
+    first_file = d["first_file_mappings"]["mappings"]
+    volumetric = d["volumetric_kernel"]["records"]
+    instance_classes = d["physical_instance_contract"]["instance_types"]
 
     for seq in (types,shared,eco,romer,emassc,bridges,toolkits,semantic,providers,profiles):
         _unique_ids(seq, key="id")
@@ -81,6 +87,9 @@ def build_library_coverage(root: Path = ROOT) -> dict[str, Any]:
 
     all_lens_names = [x["id"] for x in shared] + eco + romer + emassc
     _unique_ids(all_lens_names)
+    _unique_ids(first_file, key="mapping_id")
+    _unique_ids(volumetric, key="kernel_id")
+    _unique_ids(instance_classes)
     type_statuses = dict(sorted(Counter(t["status"] for t in types).items()))
     route_states = dict(sorted(Counter(r.get("state", "UNCLASSIFIED") for r in routes.values()).items()))
     groups = [{
@@ -107,7 +116,10 @@ def build_library_coverage(root: Path = ROOT) -> dict[str, Any]:
             "semantic_classes": len(semantic),
             "durable_source_families": len(providers),
             "external_index_entries": sum(x["entry_count"] for x in groups),
-            "passive_edge_profiles": len(profiles)
+            "passive_edge_profiles": len(profiles),
+            "first_file_mappings": len(first_file),
+            "volumetric_kernels": len(volumetric),
+            "physical_instance_classes": len(instance_classes)
         },
         "file_type_declarations": {
             "status_counts": type_statuses,
@@ -118,6 +130,15 @@ def build_library_coverage(root: Path = ROOT) -> dict[str, Any]:
                 "execution_test": "NOT_PERFORMED_BY_COVERAGE_PROJECTION"
             } for t in types]
         },
+        "conversion_mapping_catalogue": [{"mapping_id": m["mapping_id"],
+                                         "domain": m.get("domain"),
+                                         "declared_status": d["first_file_mappings"].get("status"),
+                                         "independently_retested": False}
+                                        for m in first_file],
+        "geometry_kernel_catalogue": [{"kernel_id": k["kernel_id"],
+                                       "evidence_ceiling": "SYMBOLIC_TOPOLOGY_NOT_PHYSICAL_QUALIFICATION"}
+                                      for k in volumetric],
+        "physical_instance_classes": instance_classes,
         "lens_catalogue": all_lens_names,
         "bridge_catalogue": [b["id"] for b in bridges],
         "toolkit_catalogue": [t["id"] for t in toolkits],
@@ -142,6 +163,8 @@ def build_library_coverage(root: Path = ROOT) -> dict[str, Any]:
             "Runtime route 'available' is a declaration; this scan does not call tools or verify host process.",
             "A game/engine link is discovery only; no third-party game bytes acquired, used or licensed by this scan.",
             "Actual functionality requires host/device execution, source readback, rights and release scope.",
+            "Volumetric kernels are symbolic topology families, not qualified CAD, supplier dimensions or component instances.",
+            "First-file source mappings and reported historic fixtures are not newly independently tested by this coverage view.",
             "No duplicate object master, file rewriter, release grant, app, private index or supplier inventory is created."
         ]
     }
