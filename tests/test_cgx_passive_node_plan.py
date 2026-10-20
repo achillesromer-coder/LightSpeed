@@ -78,5 +78,70 @@ class PassiveEdgeContractTests(unittest.TestCase):
             self.assertIsNone(p["lease_ref"])
             self.assertNotIn("token",json.dumps(p).lower().replace("auth_tokens","")) 
 
+
+    def test_squarespace_is_never_authority_or_private_node(self):
+        p=mod.plan_unispace_surface("SQUARESPACE_PUBLIC",origin="https://romer.industries")
+        self.assertEqual(p["transport_state"],"PUBLIC_EMBED_READ_ONLY")
+        self.assertIsNone(p["selected_https_origin"])
+        self.assertEqual(p["device_profile"],"WEB_OFFLINE")
+        self.assertFalse(p["authenticated"])
+        self.assertFalse(p["connection_established"])
+        self.assertFalse(p["public_publish_authorized"])
+        self.assertFalse(p["contains_credentials"])
+
+    def test_sai_region_alone_does_not_activate(self):
+        variants=[
+            ({"jurisdiction":"AU"},"HOLD_EXPLICIT_SAI_OPT_IN"),
+            ({"jurisdiction":"OTHER","sai_opt_in":True},"HOLD_AU_JURISDICTION_NOT_ESTABLISHED"),
+            ({"jurisdiction":"AU","sai_opt_in":True},"HOLD_TRUSTED_AU_ELIGIBILITY_PROOF"),
+            ({"jurisdiction":"AU","sai_opt_in":True,"jurisdiction_attested":True},
+             "SAI_REVIEW_BY_AUTHENTICATED_SERVER")
+        ]
+        for params,status in variants:
+            with self.subTest(params=params):
+                p=mod.plan_unispace_surface("UNISPACE_APP",intelligence="SAI",**params)
+                self.assertEqual(p["intelligence_eligibility"],status)
+                self.assertFalse(p["sai_activated"])
+                self.assertFalse(p["jurisdiction_verified_by_planner"])
+                self.assertFalse(p["canonical_promotion"])
+        public=mod.plan_unispace_surface("SQUARESPACE_PUBLIC",intelligence="SAI",
+                                        jurisdiction="AU",jurisdiction_attested=True,sai_opt_in=True)
+        self.assertEqual(public["intelligence_eligibility"],"HOLD_AUTHENTICATED_APP_REQUIRED")
+
+    def test_natural_network_is_unproved_even_if_client_asserts_receipt(self):
+        for proof in (False,True):
+            p=mod.plan_unispace_surface("CGX_OWNER",transport="NATURAL_CANDIDATE",
+                        natural_transport_attested=proof,
+                        server_session_attested=True,origin="https://cgx.example.org")
+            self.assertEqual(p["transport_state"],
+                 "HOLD_NATURAL_PEER_READBACK" if proof
+                 else "HOLD_NATURAL_TRANSPORT_PROTOCOL_AND_EVIDENCE")
+            self.assertEqual(p["fallback_transport"],"LOCAL_OFFLINE_OR_EXPLICIT_HTTPS")
+            self.assertFalse(p["natural_transport_established"])
+            self.assertFalse(p["authenticated"])
+            self.assertFalse(p["connection_established"])
+            self.assertFalse(p["sai_activated"])
+
+    def test_current_https_and_offline_preserve_capability_boundary(self):
+        connected=mod.plan_unispace_surface("UNISPACE_APP",
+                    origin="https://cgx.example.org",server_session_attested=True)
+        self.assertEqual(connected["selected_https_origin"],"https://cgx.example.org")
+        self.assertEqual(connected["transport_state"],"HOLD_SERVER_AUTH_AND_ACL")
+        self.assertEqual(connected["device_profile"],"WEB_CONNECTED")
+        offline=mod.plan_unispace_surface("UNISPACE_APP",transport="OFFLINE")
+        self.assertEqual(offline["transport_state"],"LOCAL_OFFLINE_ONLY")
+        self.assertIsNone(offline["selected_https_origin"])
+        self.assertFalse(offline["source_bytes_embedded"])
+
+    def test_invalid_scope_or_host_rejected(self):
+        for args in ({"surface":"NATURAL_MASTER"},{"transport":"AUTO_DISCOVER_LAN"},
+                     {"intelligence":"GOVERNMENT_ADMIN"},{"jurisdiction":"AUTO_GEOIP"},
+                     {"origin":"http://localhost:8765"},
+                     {"origin":"https://192.168.0.1"},
+                     {"sai_opt_in":"yes"}):
+            with self.subTest(args=args),self.assertRaises(ValueError):
+                mod.plan_unispace_surface(**args)
+
+
 if __name__=="__main__":
     unittest.main()
