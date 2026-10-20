@@ -1,0 +1,397 @@
+{
+  "schema": "CGX-LIBJUICE-PINNED-GIT-TREES/0.1",
+  "repo": "paullouisageneau/libjuice",
+  "commit": "b89c792e3612faf2f12cf35bcc56857313a06be3",
+  "root_tree_sha": "3fced355fcfc050641cf2723cb7e2b6a392de4a2",
+  "root": {
+    "sha": "3fced355fcfc050641cf2723cb7e2b6a392de4a2",
+    "truncated": false,
+    "entries": [
+      {
+        "path": ".clang-format",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ce57268c23564c6ff92cd0fc4f9feeea212e9874"
+      },
+      {
+        "path": ".clang-tidy",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "e9a5ec5833d84e95a2234ceb7ada6265cbeb858c"
+      },
+      {
+        "path": ".editorconfig",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "d080c5fff281efb8ef45e4e609f7f44f1e3155c0"
+      },
+      {
+        "path": ".github",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "6f39bff5485a365157098c3c40f51832804a246b"
+      },
+      {
+        "path": ".gitignore",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "d855c3d38bf642b6cdfb428869f2416fb1a97525"
+      },
+      {
+        "path": "CMakeLists.txt",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "26d8f5e27fdc19491900668e3cf8851f86210722"
+      },
+      {
+        "path": "CONTRIBUTING.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "8a3be7929a78609a5b99c786c5546b4d3d7dbc17"
+      },
+      {
+        "path": "LICENSE",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "14e2f777f6c395e7e04ab4aa306bbcc4b0c1120e"
+      },
+      {
+        "path": "Makefile",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "cd0c4e7781fbdcd59930b790192a8db0ec419795"
+      },
+      {
+        "path": "README.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b48490661ec71856e2764014f3b0b94e189495c9"
+      },
+      {
+        "path": "cmake",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "7ad90e2a338666e26b1722dff5694cbc4fe99340"
+      },
+      {
+        "path": "fuzzer",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "2fd7d79b6b59ba036136cebaf0500db471dc8314"
+      },
+      {
+        "path": "include",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "c46653674cf1957af2a2b58f2f7fce326dda4386"
+      },
+      {
+        "path": "src",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "490314e3db6d1f49c7c2209f0407e36dd408c48a"
+      },
+      {
+        "path": "test",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "12bfd58db64add08adbef35acc62df99313558aa"
+      }
+    ]
+  },
+  "src": {
+    "sha": "490314e3db6d1f49c7c2209f0407e36dd408c48a",
+    "truncated": false,
+    "entries": [
+      {
+        "path": "addr.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "0a6993d2e4d07f3ed240d97478fd3c6b9433b4cf"
+      },
+      {
+        "path": "addr.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "2cef8b63050cfe1c770a126fb77b9bcd03e61a68"
+      },
+      {
+        "path": "agent.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "6d1dcf29314d8fd53dda67d8bf642fd73a2244f9"
+      },
+      {
+        "path": "agent.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bccdde3e96c0b425e783f0b7e204512885c4006d"
+      },
+      {
+        "path": "base64.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "206cc6a05448674b70b816143bfe35afdc1c48c5"
+      },
+      {
+        "path": "base64.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "21ebf2083489a8e5190d09d54ade91e3051b62a6"
+      },
+      {
+        "path": "conn.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "831d2d5c0306c2131eb9e1202971e33ca545b6ef"
+      },
+      {
+        "path": "conn.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7ad62058bc3bfc81e1d368f7cf7b75be6cf817c7"
+      },
+      {
+        "path": "conn_mux.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "6af88336dcc8d13e904086149463fc0016dbc856"
+      },
+      {
+        "path": "conn_mux.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bfd65010f087363bda4014029acef49b4a3effcb"
+      },
+      {
+        "path": "conn_poll.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "244f24373e7f0effc7d08ad5c0c85756fe537feb"
+      },
+      {
+        "path": "conn_poll.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b8500893331f0768f389ecf5e42ed21161ac9f4f"
+      },
+      {
+        "path": "conn_thread.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "1b0545805181cb0ffa53118519f5113ba279729b"
+      },
+      {
+        "path": "conn_thread.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ceb23a4c511eb9ff67fbd60014916e2974ddf58a"
+      },
+      {
+        "path": "const_time.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "5529ca2d05d3e8061fe6f0b084998e27dcb22b07"
+      },
+      {
+        "path": "const_time.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "d654a7309623098ca48e836ebbe6238b30845748"
+      },
+      {
+        "path": "crc32.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "35dff81046e8e05211d5e3cf0fb88b36cd8edd27"
+      },
+      {
+        "path": "crc32.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "9567209a46e45645a146a29c2ff27c13cf38d34c"
+      },
+      {
+        "path": "hash.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "1191f6103a6c89d86249133abc93ae647b4b6002"
+      },
+      {
+        "path": "hash.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "eac70a9c6efdd9c92b79c98919039c6ed42dc294"
+      },
+      {
+        "path": "hmac.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "cb913e7b20f23b3e9679506441ff14109c2813df"
+      },
+      {
+        "path": "hmac.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "2eedfc058f7f43300282b20dbb4c12dd1aed8662"
+      },
+      {
+        "path": "ice.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "caf27bbacc63e83e0d2dee0760055adfc66d021c"
+      },
+      {
+        "path": "ice.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "1165a486adf3ccfe993388be17a3146109df1896"
+      },
+      {
+        "path": "juice.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "074823c86386c1d3946b8dc87a51cd0bf9267f2d"
+      },
+      {
+        "path": "log.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "2d650296660add46d4974fede82b99572974fc49"
+      },
+      {
+        "path": "log.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4ac34a689695ecfe79830c8ee564613681d9d6e8"
+      },
+      {
+        "path": "picohash.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4fda232f12087204a2deab67444569890289c709"
+      },
+      {
+        "path": "random.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "46bd8f85d9d2303d66b2e0d37a7f41188f2e0509"
+      },
+      {
+        "path": "random.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "2985d87106beba9f8b3495cca85b0c8b49565155"
+      },
+      {
+        "path": "server.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "8ba4fd9cd07f1c6244c045dff2fedb0577e54085"
+      },
+      {
+        "path": "server.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a7adf1046d17cafcac63600a0ca274645687c918"
+      },
+      {
+        "path": "socket.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "93899f560413a0aa21930fb6c33816053c5b64f5"
+      },
+      {
+        "path": "stun.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "e6d46d085d49fb05040049a4a36106d96afcdf92"
+      },
+      {
+        "path": "stun.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "398bfb052fa325a1dbaddcaaca1b52d7dbe72496"
+      },
+      {
+        "path": "tcp.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "1c6beea74a7c5e50d6365f0cb03fc221c651d80b"
+      },
+      {
+        "path": "tcp.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "664a143fcab161aca9034ce1175d83238b28b2d7"
+      },
+      {
+        "path": "thread.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "8d3595858972bb63e0dd7fdb55199c5e58e8d779"
+      },
+      {
+        "path": "timestamp.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "efe765527e24e522633f768b8c69692873420506"
+      },
+      {
+        "path": "timestamp.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "fabc8bbab99844591d753eb863769f3818bb48dc"
+      },
+      {
+        "path": "turn.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7b8c4b894d73ac87f19bf39a6627bee83757567f"
+      },
+      {
+        "path": "turn.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c4e9fc6041c8e9f8687ad26635a63995d932005e"
+      },
+      {
+        "path": "udp.c",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "fddd773b39afbc24e713aa2256236bf42b26e1d9"
+      },
+      {
+        "path": "udp.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c318eec0376b66a3ebaa067aa7b3f96bbba6bc41"
+      }
+    ]
+  },
+  "include": {
+    "sha": "c46653674cf1957af2a2b58f2f7fce326dda4386",
+    "truncated": false,
+    "entries": [
+      {
+        "path": "juice",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "e90728a05764c184ba357fc7c47312a8087bcbd0"
+      }
+    ]
+  },
+  "include_juice": {
+    "sha": "e90728a05764c184ba357fc7c47312a8087bcbd0",
+    "truncated": false,
+    "entries": [
+      {
+        "path": "juice.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "e43db6cbe98687db79f6be0e89b109c2381b5177"
+      }
+    ]
+  },
+  "fully_acquired_repository": false
+}
