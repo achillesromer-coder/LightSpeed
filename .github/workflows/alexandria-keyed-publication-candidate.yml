@@ -37,6 +37,7 @@ on:
       - "tests/fixtures/alexandria_libsrtp/**"
       - "cgx/portable_node/libsrtp_source_scope.py"
       - "tests/test_cgx_real_libsrtp_scope.py"
+      - "cgx/review/alexandria_libsrtp_source_scope_20261021.json"
       - "cgx/review/alexandria_hypersomnia_gitlinks_openal_scope_20261021.json"
       - "tests/fixtures/alexandria_game_catalogue/**"
       - "cgx/review/alexandria_game_catalogue_real_source_envelope_20261021.json"
@@ -67,6 +68,7 @@ jobs:
           python -m json.tool cgx/review/alexandria_hypersomnia_gitlinks_openal_scope_20261021.json > /dev/null
           python -m json.tool cgx/review/alexandria_libdatachannel_source_scope_20261021.json > /dev/null
           python -m json.tool cgx/review/alexandria_libjuice_source_scope_20261021.json > /dev/null
+          python -m json.tool cgx/review/alexandria_libsrtp_source_scope_20261021.json > /dev/null
           python -m json.tool cgx/review/alexandria_pinned_catalogue_readback_20261020.json > /dev/null
           python -m unittest discover -s tests -p 'test_cgx_keyed_alexandria_review.py' -v
           python -m unittest discover -s tests -p 'test_cgx_archive_claim_reconciliation.py' -v
