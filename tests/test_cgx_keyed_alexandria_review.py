@@ -67,6 +67,28 @@ class KeyedFilesetReviewTests(unittest.TestCase):
         with self.assertRaises(ValueError):mod.propose_fileset(x)
         x=example();x["audience"]="FALSE_INSTITUTION"
         with self.assertRaises(ValueError):mod.propose_fileset(x)
+    def test_public_source_identity_rejects_locator_and_private_namespaces(self):
+        prohibited = [
+            "https://host.example/private?token=abc", "C:\\\\Users\\\\Operator\\\\secrets",
+            "/home/user/private/project", "file:///home/user/private.json",
+            "private:founder:notes", "internal:host:receipt",
+            "user:alice:email", "s3:private:bucket", "public:..:escape",
+            "person@example.com", "external:object?credential=abc",
+        ]
+        for source_id in prohibited:
+            with self.subTest(source_id=source_id):
+                x=example(); x["components"][0]["source_id"]=source_id
+                with self.assertRaises(ValueError):
+                    mod.propose_fileset(x)
+
+    def test_public_ref_keeps_valid_opaque_catalogue_id_and_release_hold(self):
+        x=example(); x["components"][0]["source_id"]="external:game-catalogue:entry-123"
+        p=mod.propose_fileset(x)
+        self.assertEqual(p["components"][0]["source_id"], "external:game-catalogue:entry-123")
+        self.assertFalse(p["delivery_ready"])
+        self.assertFalse(p["trusted_issuer_verified"])
+        self.assertEqual(p["release_gate"],"HOLD_ISSUES_158_161")
+
     def test_untrusted_source_digest_rejected(self):
         x=example();x["components"][0]["sha256"]="inadequate"
         with self.assertRaises(ValueError):mod.propose_fileset(x)
