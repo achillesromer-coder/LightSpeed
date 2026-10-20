@@ -13,6 +13,10 @@ from .compiler import (
     validate_simulation_result,
 )
 from .adapter import AdapterError, emit_reference_gcode
+from .circular_feed import (
+    CircularFeedInputError,
+    compile_circular_feed_reference_packet,
+)
 from .invariants import (
     InvariantInputError,
     axis_force_budget,
@@ -54,6 +58,8 @@ __all__ = [
     "resolve_compound_parent_decomposition",
     "AdapterError",
     "emit_reference_gcode",
+    "CircularFeedInputError",
+    "compile_circular_feed_reference_packet",
     "InvariantInputError",
     "capacitance_density",
     "sheet_path_resistance",
