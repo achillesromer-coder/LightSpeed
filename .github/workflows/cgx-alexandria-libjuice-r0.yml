@@ -1,0 +1,46 @@
+name: CGX Alexandria third-level libjuice R0 exact proof
+on:
+  pull_request:
+    paths:
+      - "cgx/portable_node/libjuice_source_scope.py"
+      - "cgx/review/alexandria_libjuice_source_scope_20261021.json"
+      - "cgx/review/alexandria_library_projection.py"
+      - "cgx/review/alexandria_source_subset_fold_20261021.json"
+      - "cgx/review/cgx_unispace_finishline_evidence_20261021.json"
+      - "tests/test_cgx_real_libjuice_scope.py"
+      - "tests/test_cgx_alexandria_selective_source_fold.py"
+      - ".github/workflows/cgx-alexandria-libjuice-r0.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  exact-r0-and-rights-held:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test first-party original libjuice Git trees, MPL and picohash boundaries
+        run: python -m unittest discover -s tests -p 'test_cgx_real_libjuice_scope.py' -v
+      - name: Check cross-family source links, digests and unadmitted rights
+        run: |
+          python -m unittest discover -s tests -p 'test_cgx_alexandria_selective_source_fold.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_alexandria_library_security_convergence.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_unispace_finishline_evidence.py' -v
+      - name: No release, signed native transport, or physical product promotion
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("cgx/review/cgx_unispace_finishline_evidence_20261021.json").read_text())
+          s=json.loads(Path("cgx/review/alexandria_libjuice_source_scope_20261021.json").read_text())
+          a=d["acceptance_summary"]
+          assert (a["milestones_pass"],a["milestones_total"])==(21,45)
+          assert not a["public_releases_approved"] and not a["native_two_node_acceptances_verified"]
+          assert s["canonical_object_id"] is None and not s["native_dbr_verified"]
+          assert not s["license_scopes"]["distribution_approved"]
+          assert not s["capability_descriptor"]["network_connection_tested"]
+          print("Source samples qualified, no publish or native peer acceptance")
+          PY
