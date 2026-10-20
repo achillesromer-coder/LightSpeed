@@ -3,9 +3,14 @@
 
 ## What was consolidated
 - Original **207 list entries** from two bobeff game/engine indexes remain in `cgx/review/alexandria_external_reference_intake_20261020.json`, pinned to their original README commit hashes.
+- **13 official source roots** for SI/CODATA, JPL astronomy, NASA/NAIF, GBIF, SPDX/RO-Crate, OpenStax and archival/discovery services are in `cgx/review/alexandria_official_reference_roots_20261020.json`, with individual usage/rights/temporal gates; no API response or textbook data copied.
 - **31 independently discovered source repositories** across 11 domain categories now reside in `cgx/review/alexandria_curated_upstream_tools_20261020.json`. Eight selected GitHub upstream branch-head commits were captured as *observations*, not downloaded/approved builds. One proposed `gmsh/gmsh` repository path returned 404 and was excluded instead of guessed.
 - `cgx/review/alexandria_library_projection.py` merges reference identities conservatively: exact GitHub repository homepage match **may** avoid duplicate link registration; code blobs, provider revisions, source Object_ID, engines, assets, model weights, scientific evidence and individual rights remain independent. Extra path/branch URLs are **not** assumed identical full repos.
 - Existing 33 file profiles, 34 UI lenses, 12 toolkit families, 49 declared routes, 19 mapping candidates, 40 symbolic volumetric kernels and owner authority still come from the original `cgx/review/library_coverage_projection.py`; no replacement owner registry is created.
+
+## First offline Alexandria review preview
+
+`cgx/review/alexandria_offline_reference_preview.py` deterministically generates a self-contained HTML library that lists the 207 historical game/engine entries, 31 curated tools and 13 official source roots (**251 reference entries**). The search/filter interface operates entirely in the browser; external links require a network connection, but no third-party code, model weights, academic articles, textbooks, game binaries or private engineering packets are bundled. This candidate can be generated in CI and preserved as a 7-day owner-review Actions artifact, not Vite public/static deployment. The HTML includes SHA-256 fingerprints for all three source registries, no remote script/assets and a restrictive no-network CSP. Its offline reopen is tested at source/HTML generation level; physical-browser functional acceptance is still outstanding.
 
 ## Training and learning maps, not model-weight training or unrestricted content copying
 
