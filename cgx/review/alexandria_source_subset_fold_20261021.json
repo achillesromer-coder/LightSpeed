@@ -135,13 +135,7 @@
     "network_handshake_verified": false,
     "canonical_promotion": false
   },
-  "held_paths": [
-    {
-      "path": "tests/fixtures/alexandria_libjuice/include/juice/juice.h",
-      "reason": "PRESENT_IN_PR_CHANGED_FILENAME_LIST_BUT_FETCH_404_AT_PINNED_SOURCE_HEAD",
-      "status": "SOURCE_FETCH_UNRESOLVED"
-    }
-  ],
+  "held_paths": [],
   "excluded_conflicts": [
     "apps/lightspeed-go/src/main.ts",
     "apps/lightspeed-go/src/desktopBridge.ts",
@@ -149,5 +143,20 @@
     "desktop/source-manifest.json",
     "desktop/LightSpeed_Runtime/tests/test_owner_credentials.py"
   ],
-  "acceptance": "SOURCE_TEXT_GIT_BLOBS_AND_ORIGINAL_SCOPED_REGRESSIONS_ONLY_NOT_A_GAME_OR_ENGINE_INSTALL"
+  "acceptance": "29_ORIGINAL_PR180_GIT_BLOBS_PLUS_ONE_PINNED_DIRECT_UPSTREAM_HEADER_ONLY_NOT_A_GAME_OR_ENGINE_INSTALL",
+  "additional_direct_upstream_blobs": [
+    {
+      "path": "tests/fixtures/alexandria_libjuice/include/juice/juice.h",
+      "repository": "paullouisageneau/libjuice",
+      "commit": "b89c792e3612faf2f12cf35bcc56857313a06be3",
+      "blob_sha1": "e43db6cbe98687db79f6be0e89b109c2381b5177",
+      "source": "IMMUTABLE_UPSTREAM_GIT_COMMIT_NOT_PR180_COPY",
+      "licence": "MPL-2.0_HEADER_NOTICE_FIRST_PARTY_SCOPE_ONLY"
+    }
+  ],
+  "further_holds": [
+    "libjuice full repository and remaining third-party dependency source not acquired",
+    "licence/NOTICE of all nested libraries and game assets not complete",
+    "No engine binary compilation, network interoperability or native CGX peer proof"
+  ]
 }
