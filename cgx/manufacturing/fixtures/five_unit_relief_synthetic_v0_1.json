@@ -1,0 +1,646 @@
+{
+  "schema": "CGX-MODULAR-FACILITY-PACKING-CANDIDATE/0.1",
+  "status": "SYNTHETIC_REVIEW_FIXTURE_NO_PHYSICAL_DIMENSION_AUTHORITY",
+  "release_intent": "REVIEW_ONLY",
+  "project_id": "cgx:review:five-unit-example",
+  "source_context": [
+    "InterSol planned facility twin (site→room→assembly→component→service)",
+    "CGX Type1 2D sheets T1-00..T1-07",
+    "CGX component geometry atlas 411 templates"
+  ],
+  "units": [
+    {
+      "id": "unit-1",
+      "function": "power-comms",
+      "display_name": "Power and communications",
+      "geometry_evidence": "SYNTHETIC_TEST_ONLY",
+      "origin_m": [
+        0,
+        0,
+        0
+      ],
+      "internal_envelope_m": [
+        6,
+        2.4,
+        2.5
+      ],
+      "tare_kg": null,
+      "max_gross_kg": null,
+      "shipping_envelope_m": null,
+      "placements": [
+        {
+          "id": "asset-1-1",
+          "type_id": "inverter-control",
+          "mass_kg": null,
+          "box_m": [
+            0.45,
+            0.25,
+            0.25,
+            1,
+            0.8,
+            1
+          ],
+          "depends_on": []
+        },
+        {
+          "id": "asset-1-2",
+          "type_id": "data-gateway",
+          "mass_kg": null,
+          "box_m": [
+            2.15,
+            0.25,
+            0.25,
+            1,
+            0.8,
+            1
+          ],
+          "depends_on": []
+        }
+      ],
+      "reserves": [
+        {
+          "id": "expansion-1",
+          "kind": "expansion",
+          "box_m": [
+            4.1,
+            0.25,
+            0.25,
+            1.1,
+            0.9,
+            1.5
+          ]
+        },
+        {
+          "id": "circulation-1",
+          "kind": "circulation",
+          "box_m": [
+            0,
+            1.45,
+            0,
+            6,
+            0.95,
+            2.5
+          ]
+        },
+        {
+          "id": "service-bay-1",
+          "kind": "service_access",
+          "box_m": [
+            0,
+            0.1,
+            2,
+            6,
+            1.1,
+            0.4
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "id": "data-out",
+          "face": "x+",
+          "local_xyz_m": [
+            6,
+            1.2,
+            1.2
+          ],
+          "medium": "data",
+          "family": "ethernet_candidate",
+          "direction": "OUT",
+          "standard_ref": "CGX-SERVICE-DATA-PORT-CANDIDATE/0.1"
+        }
+      ]
+    },
+    {
+      "id": "unit-2",
+      "function": "water-sanitation",
+      "display_name": "Water and sanitation",
+      "geometry_evidence": "SYNTHETIC_TEST_ONLY",
+      "origin_m": [
+        6,
+        0,
+        0
+      ],
+      "internal_envelope_m": [
+        6,
+        2.4,
+        2.5
+      ],
+      "tare_kg": null,
+      "max_gross_kg": null,
+      "shipping_envelope_m": null,
+      "placements": [
+        {
+          "id": "asset-2-1",
+          "type_id": "pump-module",
+          "mass_kg": null,
+          "box_m": [
+            0.45,
+            0.25,
+            0.25,
+            1,
+            0.8,
+            1
+          ],
+          "depends_on": []
+        },
+        {
+          "id": "asset-2-2",
+          "type_id": "sensor-board",
+          "mass_kg": null,
+          "box_m": [
+            2.15,
+            0.25,
+            0.25,
+            1,
+            0.8,
+            1
+          ],
+          "depends_on": []
+        }
+      ],
+      "reserves": [
+        {
+          "id": "expansion-2",
+          "kind": "expansion",
+          "box_m": [
+            4.1,
+            0.25,
+            0.25,
+            1.1,
+            0.9,
+            1.5
+          ]
+        },
+        {
+          "id": "circulation-2",
+          "kind": "circulation",
+          "box_m": [
+            0,
+            1.45,
+            0,
+            6,
+            0.95,
+            2.5
+          ]
+        },
+        {
+          "id": "service-bay-2",
+          "kind": "service_access",
+          "box_m": [
+            0,
+            0.1,
+            2,
+            6,
+            1.1,
+            0.4
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "id": "data-in",
+          "face": "x-",
+          "local_xyz_m": [
+            0,
+            1.2,
+            1.2
+          ],
+          "medium": "data",
+          "family": "ethernet_candidate",
+          "direction": "IN",
+          "standard_ref": "CGX-SERVICE-DATA-PORT-CANDIDATE/0.1"
+        },
+        {
+          "id": "data-out",
+          "face": "x+",
+          "local_xyz_m": [
+            6,
+            1.2,
+            1.2
+          ],
+          "medium": "data",
+          "family": "ethernet_candidate",
+          "direction": "OUT",
+          "standard_ref": "CGX-SERVICE-DATA-PORT-CANDIDATE/0.1"
+        }
+      ]
+    },
+    {
+      "id": "unit-3",
+      "function": "shelter-logistics",
+      "display_name": "Shelter and logistics",
+      "geometry_evidence": "SYNTHETIC_TEST_ONLY",
+      "origin_m": [
+        12,
+        0,
+        0
+      ],
+      "internal_envelope_m": [
+        6,
+        2.4,
+        2.5
+      ],
+      "tare_kg": null,
+      "max_gross_kg": null,
+      "shipping_envelope_m": null,
+      "placements": [
+        {
+          "id": "asset-3-1",
+          "type_id": "storage-rack",
+          "mass_kg": null,
+          "box_m": [
+            0.45,
+            0.25,
+            0.25,
+            1,
+            0.8,
+            1
+          ],
+          "depends_on": []
+        },
+        {
+          "id": "asset-3-2",
+          "type_id": "sensor-board",
+          "mass_kg": null,
+          "box_m": [
+            2.15,
+            0.25,
+            0.25,
+            1,
+            0.8,
+            1
+          ],
+          "depends_on": []
+        }
+      ],
+      "reserves": [
+        {
+          "id": "expansion-3",
+          "kind": "expansion",
+          "box_m": [
+            4.1,
+            0.25,
+            0.25,
+            1.1,
+            0.9,
+            1.5
+          ]
+        },
+        {
+          "id": "circulation-3",
+          "kind": "circulation",
+          "box_m": [
+            0,
+            1.45,
+            0,
+            6,
+            0.95,
+            2.5
+          ]
+        },
+        {
+          "id": "service-bay-3",
+          "kind": "service_access",
+          "box_m": [
+            0,
+            0.1,
+            2,
+            6,
+            1.1,
+            0.4
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "id": "data-in",
+          "face": "x-",
+          "local_xyz_m": [
+            0,
+            1.2,
+            1.2
+          ],
+          "medium": "data",
+          "family": "ethernet_candidate",
+          "direction": "IN",
+          "standard_ref": "CGX-SERVICE-DATA-PORT-CANDIDATE/0.1"
+        },
+        {
+          "id": "data-out",
+          "face": "x+",
+          "local_xyz_m": [
+            6,
+            1.2,
+            1.2
+          ],
+          "medium": "data",
+          "family": "ethernet_candidate",
+          "direction": "OUT",
+          "standard_ref": "CGX-SERVICE-DATA-PORT-CANDIDATE/0.1"
+        }
+      ]
+    },
+    {
+      "id": "unit-4",
+      "function": "first-response",
+      "display_name": "First response",
+      "geometry_evidence": "SYNTHETIC_TEST_ONLY",
+      "origin_m": [
+        18,
+        0,
+        0
+      ],
+      "internal_envelope_m": [
+        6,
+        2.4,
+        2.5
+      ],
+      "tare_kg": null,
+      "max_gross_kg": null,
+      "shipping_envelope_m": null,
+      "placements": [
+        {
+          "id": "asset-4-1",
+          "type_id": "inspection-cabinet",
+          "mass_kg": null,
+          "box_m": [
+            0.45,
+            0.25,
+            0.25,
+            1,
+            0.8,
+            1
+          ],
+          "depends_on": []
+        },
+        {
+          "id": "asset-4-2",
+          "type_id": "data-gateway",
+          "mass_kg": null,
+          "box_m": [
+            2.15,
+            0.25,
+            0.25,
+            1,
+            0.8,
+            1
+          ],
+          "depends_on": []
+        }
+      ],
+      "reserves": [
+        {
+          "id": "expansion-4",
+          "kind": "expansion",
+          "box_m": [
+            4.1,
+            0.25,
+            0.25,
+            1.1,
+            0.9,
+            1.5
+          ]
+        },
+        {
+          "id": "circulation-4",
+          "kind": "circulation",
+          "box_m": [
+            0,
+            1.45,
+            0,
+            6,
+            0.95,
+            2.5
+          ]
+        },
+        {
+          "id": "service-bay-4",
+          "kind": "service_access",
+          "box_m": [
+            0,
+            0.1,
+            2,
+            6,
+            1.1,
+            0.4
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "id": "data-in",
+          "face": "x-",
+          "local_xyz_m": [
+            0,
+            1.2,
+            1.2
+          ],
+          "medium": "data",
+          "family": "ethernet_candidate",
+          "direction": "IN",
+          "standard_ref": "CGX-SERVICE-DATA-PORT-CANDIDATE/0.1"
+        },
+        {
+          "id": "data-out",
+          "face": "x+",
+          "local_xyz_m": [
+            6,
+            1.2,
+            1.2
+          ],
+          "medium": "data",
+          "family": "ethernet_candidate",
+          "direction": "OUT",
+          "standard_ref": "CGX-SERVICE-DATA-PORT-CANDIDATE/0.1"
+        }
+      ]
+    },
+    {
+      "id": "unit-5",
+      "function": "fabrication-learning",
+      "display_name": "Fabrication and learning",
+      "geometry_evidence": "SYNTHETIC_TEST_ONLY",
+      "origin_m": [
+        24,
+        0,
+        0
+      ],
+      "internal_envelope_m": [
+        6,
+        2.4,
+        2.5
+      ],
+      "tare_kg": null,
+      "max_gross_kg": null,
+      "shipping_envelope_m": null,
+      "placements": [
+        {
+          "id": "asset-5-1",
+          "type_id": "training-bench",
+          "mass_kg": null,
+          "box_m": [
+            0.45,
+            0.25,
+            0.25,
+            1,
+            0.8,
+            1
+          ],
+          "depends_on": []
+        },
+        {
+          "id": "asset-5-2",
+          "type_id": "sensor-board",
+          "mass_kg": null,
+          "box_m": [
+            2.15,
+            0.25,
+            0.25,
+            1,
+            0.8,
+            1
+          ],
+          "depends_on": []
+        }
+      ],
+      "reserves": [
+        {
+          "id": "expansion-5",
+          "kind": "expansion",
+          "box_m": [
+            4.1,
+            0.25,
+            0.25,
+            1.1,
+            0.9,
+            1.5
+          ]
+        },
+        {
+          "id": "circulation-5",
+          "kind": "circulation",
+          "box_m": [
+            0,
+            1.45,
+            0,
+            6,
+            0.95,
+            2.5
+          ]
+        },
+        {
+          "id": "service-bay-5",
+          "kind": "service_access",
+          "box_m": [
+            0,
+            0.1,
+            2,
+            6,
+            1.1,
+            0.4
+          ]
+        }
+      ],
+      "ports": [
+        {
+          "id": "data-in",
+          "face": "x-",
+          "local_xyz_m": [
+            0,
+            1.2,
+            1.2
+          ],
+          "medium": "data",
+          "family": "ethernet_candidate",
+          "direction": "IN",
+          "standard_ref": "CGX-SERVICE-DATA-PORT-CANDIDATE/0.1"
+        }
+      ]
+    }
+  ],
+  "component_types": [
+    {
+      "id": "inverter-control",
+      "source_ref": "CGX-CGA-REF:ELECTRICAL-POWER-INSTANCE",
+      "qualification": "SYNTHETIC_TEST_ONLY",
+      "source_notice": "TYPE-CLASS-PLACEHOLDER; not a verified part number, CAD or supplier"
+    },
+    {
+      "id": "data-gateway",
+      "source_ref": "CGX-CGA-REF:COMMUNICATIONS-INSTANCE",
+      "qualification": "SYNTHETIC_TEST_ONLY",
+      "source_notice": "TYPE-CLASS-PLACEHOLDER; not a verified part number, CAD or supplier"
+    },
+    {
+      "id": "pump-module",
+      "source_ref": "CGX-CGA-REF:FLUID-INSTANCE",
+      "qualification": "SYNTHETIC_TEST_ONLY",
+      "source_notice": "TYPE-CLASS-PLACEHOLDER; not a verified part number, CAD or supplier"
+    },
+    {
+      "id": "sensor-board",
+      "source_ref": "CGX-CGA-REF:MEASUREMENT-INSTANCE",
+      "qualification": "SYNTHETIC_TEST_ONLY",
+      "source_notice": "TYPE-CLASS-PLACEHOLDER; not a verified part number, CAD or supplier"
+    },
+    {
+      "id": "storage-rack",
+      "source_ref": "CGX-CGA-REF:STRUCTURAL-INSTANCE",
+      "qualification": "SYNTHETIC_TEST_ONLY",
+      "source_notice": "TYPE-CLASS-PLACEHOLDER; not a verified part number, CAD or supplier"
+    },
+    {
+      "id": "inspection-cabinet",
+      "source_ref": "CGX-CGA-REF:SERVICE-INTERFACE-INSTANCE",
+      "qualification": "SYNTHETIC_TEST_ONLY",
+      "source_notice": "TYPE-CLASS-PLACEHOLDER; not a verified part number, CAD or supplier"
+    },
+    {
+      "id": "training-bench",
+      "source_ref": "CGX-CGA-REF:FABRICATION-INSTANCE",
+      "qualification": "SYNTHETIC_TEST_ONLY",
+      "source_notice": "TYPE-CLASS-PLACEHOLDER; not a verified part number, CAD or supplier"
+    }
+  ],
+  "connections": [
+    {
+      "a": "unit-1/data-out",
+      "b": "unit-2/data-in",
+      "alignment_tolerance_m": 0,
+      "service_test_status": "NOT_PERFORMED"
+    },
+    {
+      "a": "unit-2/data-out",
+      "b": "unit-3/data-in",
+      "alignment_tolerance_m": 0,
+      "service_test_status": "NOT_PERFORMED"
+    },
+    {
+      "a": "unit-3/data-out",
+      "b": "unit-4/data-in",
+      "alignment_tolerance_m": 0,
+      "service_test_status": "NOT_PERFORMED"
+    },
+    {
+      "a": "unit-4/data-out",
+      "b": "unit-5/data-in",
+      "alignment_tolerance_m": 0,
+      "service_test_status": "NOT_PERFORMED"
+    }
+  ],
+  "site": {
+    "site_id": "UNBOUND",
+    "geometry_evidence": "UNKNOWN",
+    "geology": "UNKNOWN",
+    "access": "UNKNOWN"
+  },
+  "domain_owner_refs": [
+    "Cognigrex.cgx:/ccc",
+    "Romer.cgx",
+    "Eco.cgx",
+    "EMASSC.cgx",
+    "LS.cgx"
+  ],
+  "numeric_values_notice": "All 6×2.4×2.5 m internal envelopes, 1.0×0.8×1.0 m boxes and 6m origins are arbitrary synthetic fixture coordinates for regression only; not actual shipping-container usable dimensions, compliant transport clearances or measured assets. Reserved service access z=2.0..2.4m is a notional isolated void."
+}
