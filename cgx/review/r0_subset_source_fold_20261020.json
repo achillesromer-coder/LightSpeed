@@ -1,0 +1,50 @@
+{
+  "schema": "CGX-R0-SUBSET-FOLD-RECEIPT/0.1",
+  "status": "REVIEW_ONLY_NO_NATIVE_ACTIVATION",
+  "parent_pr": 184,
+  "source_pr": 175,
+  "owner_gate": 161,
+  "source_ref": "feature/cgx-unispace-r0-shorthand-20261012",
+  "method": "Exact UTF8 copy of six general-purpose R0 codec/adapter/test/contract files. Excludes owner-restricted Neutral Beings index, Drive readback key, and derived HTML outputs.",
+  "carried_source_files": [
+    {
+      "path": "benchmarks/cgx_unispace_geometric_shorthand/cgx_geo.py",
+      "git_blob_sha1": "d00c5526b80e3dfeb783384043ba8669dae57e13"
+    },
+    {
+      "path": "benchmarks/cgx_unispace_geometric_shorthand/test_cgx_geo.py",
+      "git_blob_sha1": "9d48035a401b08bce3dd88c46605e2d38c4b9a8b"
+    },
+    {
+      "path": "benchmarks/cgx_unispace_geometric_shorthand/node_exchange_r0_adapter.py",
+      "git_blob_sha1": "1093a883b96e5fbe35db2380d0a9f282c02589c2"
+    },
+    {
+      "path": "benchmarks/cgx_unispace_geometric_shorthand/test_node_exchange_r0_adapter.py",
+      "git_blob_sha1": "cf9a84d7b11f770cd1d5621e8b6f7f7f6c3df350"
+    },
+    {
+      "path": "benchmarks/cgx_unispace_geometric_shorthand/read_lenses.py",
+      "git_blob_sha1": "de0ccd9b69204d097cd4e7347e0983c1a0591cd7"
+    },
+    {
+      "path": "cgx/domain_templates/unispace_geometric_shorthand_candidate.json",
+      "git_blob_sha1": "6a3fcb851a2ad33bffb4ab4fbd3696e8e759391b"
+    }
+  ],
+  "excluded_owner_sources": [
+    "benchmarks/cgx_unispace_geometric_shorthand/neutral_beings_source_index.json",
+    "benchmarks/cgx_unispace_geometric_shorthand/neutral_beings_filespace.py",
+    "benchmarks/cgx_unispace_geometric_shorthand/drive_readback_candidate.py"
+  ],
+  "limits": [
+    "EXACT R0 carrier and synthetic warm-delta tests only",
+    "not a native source owner, no OAuth/ACL",
+    "prior cache hash claim not proof a peer possesses bytes",
+    "source root readback required",
+    "ZIP often smaller on cold transmission; never promise compression superiority",
+    "without physical energy instrumentation no Joule claim",
+    "no external source index publication",
+    "no real two-device transport or permissions"
+  ]
+}
