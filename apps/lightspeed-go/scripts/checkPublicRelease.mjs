@@ -1,9 +1,9 @@
-"""CGX UniSpace public-static distribution guard.
+/*CGX UniSpace public-static distribution guard.
 
 This intentionally checks known internal-review source routes in both Vite's
 public/ source and compiled dist/. It does NOT authenticate user sessions,
 qualify any catalogue as public, or prove all other assets are non-sensitive.
-"""
+*/
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
