@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import posixpath
 import re
 import shutil
 from pathlib import Path
@@ -35,13 +36,25 @@ BLOCKED = {
     "private assets path": re.compile(r"(?<![a-z])/review/(?:mesh|renders)|/data/(?:cgx|component_geometry)",re.I),
     "native owner APIs": re.compile(r"/api/(?:v1|owner)|https?://(?:127\.0\.0\.1|localhost)(?::\d+)?/",re.I),
     "credential syntax": re.compile(r"(?:sk-proj-|ghp_[A-Za-z0-9]{20,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)",re.I),
-    "root escape": re.compile(r"(?:^|[/'\"])\.\.[\\/]",re.M),
 }
 MAX_FILE_BYTES=250_000
 MAX_BYTES=1_000_000
 
 class BundleHold(ValueError):
     pass
+
+def _validate_static_reference(relative:str,uri:str) -> None:
+    # A parent-relative link is permitted only when the resolved target
+    # still names one of the exact CGX public package assets.
+    addr=uri.split("#",1)[0].split("?",1)[0]
+    if addr.startswith("/cgx/"):
+        target=posixpath.normpath(addr.removeprefix("/cgx/"))
+    elif addr.startswith("/") or "://" in addr or addr.startswith("//"):
+        raise BundleHold(f"reference leaves public site boundary: {relative}")
+    else:
+        target=posixpath.normpath(posixpath.join(posixpath.dirname(relative),addr))
+    if target not in APPROVED:
+        raise BundleHold(f"reference not in exact CGX public allowlist: {relative} => {target}")
 
 def _source_files(root:Path) -> dict[str,Path]:
     if not root.is_dir() or root.is_symlink():
@@ -80,8 +93,12 @@ def inspect_public_bundle(source:Path=SOURCE)->dict[str,Any]:
         # An HTML page or ESM file may reference only local peer assets or preapproved
         # route names. No network fetch of private data permitted in static examples.
         for uri in re.findall(r"""(?:import\s*(?:[^;]*?\s+from\s*)?|from\s*)['"]([^'"]+)['"]""",text):
-            if uri.startswith(("/", "..")) or "://" in uri:
-                raise BundleHold(f"external/module boundary: {relative}")
+            _validate_static_reference(relative,uri)
+        if relative.endswith(".html"):
+            for uri in re.findall(r"""<(?:script|link)\b[^>]*?\b(?:src|href)\s*=\s*['"]([^'"]+)['"]""",text,re.I):
+                _validate_static_reference(relative,uri)
+        if relative.endswith(".css") and re.search(r"@import\b",text,re.I):
+            raise BundleHold(f"unreviewed CSS import: {relative}")
         all_text.append(text)
         file_index.append({
             "path":"cgx/"+relative,
