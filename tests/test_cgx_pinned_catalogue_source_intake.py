@@ -121,6 +121,45 @@ class CatalogueSourceIntakeTests(unittest.TestCase):
         self.assertTrue(set(contract["required_envelope_fields"])<=set(payload["source_envelope"]))
         self.assertTrue(set(conversion["required_receipt_fields"])<=set(payload["conversion_receipt"]))
 
+    def test_actual_upstream_engine_index_source_receipt(self):
+        import json
+        source_path=ROOT/"cgx"/"review"/"alexandria_engine_catalogue_real_source_envelope_20261020.json"
+        index_path=ROOT/"cgx"/"review"/"alexandria_external_reference_intake_20261020.json"
+        receipt=json.loads(source_path.read_text(encoding="utf-8"))
+        groups=json.loads(index_path.read_text(encoding="utf-8"))["groups"]
+        group=next(g for g in groups if g["origin"]["name"]=="bobeff/open-source-engines")
+        envelope=receipt["source_envelope"]
+        projection=envelope["projections"][0]
+        conversion=receipt["conversion_receipt"]
+        self.assertEqual(envelope["schema"],"CGX-SOURCE-ENVELOPE/0.1")
+        self.assertEqual(conversion["schema"],"CGX-FILE-CONVERSION-RECEIPT/0.1")
+        self.assertEqual(envelope["sha256"],"075c794da0482a7bff6f46d67956ef2e62486a1914fc78cda3d239bbf3a54a92")
+        self.assertEqual(envelope["byte_length"],7891)
+        self.assertEqual(envelope["lineage"]["license_sha256"],"a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499")
+        self.assertEqual(envelope["lineage"]["pinned_readme_git_blob"],group["origin"]["readme_blob"])
+        self.assertEqual(envelope["lineage"]["license_git_blob"],"0e259d42c996742e9e3cba14c677129b2c1b6311")
+        self.assertEqual(projection["indexed_entries"],46)
+        self.assertEqual(len(projection["entries"]),46)
+        self.assertEqual(projection["total_lines"],143)
+        self.assertFalse(envelope["native_preservation"]["source_bytes_embedded"])
+        self.assertFalse(conversion["native_dbr_verified"])
+        self.assertFalse(conversion["source_bytes_persisted_by_this_adapter"])
+        self.assertEqual(receipt["upstream_project_bytes_acquired"],0)
+        self.assertEqual(conversion["authority_state"],"NONCANONICAL_REVIEW_ONLY")
+        self.assertEqual(conversion["output_hashes"]["r1_structure_sha256"],
+                         sha(json.dumps(projection,sort_keys=True,ensure_ascii=False,
+                                        separators=(",",":")).encode("utf-8")))
+        source_rows={r["line"]:r for r in group["records"]}
+        for row in projection["entries"]:
+            original=source_rows[row["source_line"]]
+            self.assertEqual(row["label"],original["title"])
+            self.assertEqual(row["source_links"],original["sources"])
+            self.assertEqual(row["upstream_rights"],"UNVERIFIED")
+            self.assertIsNone(row["object_id"])
+            self.assertFalse(row["project_bytes_acquired"])
+            self.assertTrue(0<=row["source_byte_start"]<row["source_byte_end"]<=7891)
+            self.assertEqual(len(row["raw_line_sha256"]),64)
+
     def test_licence_byte_identity_and_rights_boundary(self):
         record=run()["source_envelope"]["lineage"]
         self.assertEqual(record["license_sha256"],sha(LICENSE))
