@@ -88,10 +88,10 @@
           "box_m": [
             0,
             0.1,
-            1.65,
+            2,
             6,
             1.1,
-            0.5
+            0.4
           ]
         }
       ],
@@ -190,10 +190,10 @@
           "box_m": [
             0,
             0.1,
-            1.65,
+            2,
             6,
             1.1,
-            0.5
+            0.4
           ]
         }
       ],
@@ -305,10 +305,10 @@
           "box_m": [
             0,
             0.1,
-            1.65,
+            2,
             6,
             1.1,
-            0.5
+            0.4
           ]
         }
       ],
@@ -420,10 +420,10 @@
           "box_m": [
             0,
             0.1,
-            1.65,
+            2,
             6,
             1.1,
-            0.5
+            0.4
           ]
         }
       ],
@@ -535,10 +535,10 @@
           "box_m": [
             0,
             0.1,
-            1.65,
+            2,
             6,
             1.1,
-            0.5
+            0.4
           ]
         }
       ],
@@ -642,5 +642,5 @@
     "EMASSC.cgx",
     "LS.cgx"
   ],
-  "numeric_values_notice": "All 6×2.4×2.5 m internal envelopes, 1.0×0.8×1.0 m boxes and 6m origins are arbitrary synthetic fixture coordinates for regression only; not actual shipping-container usable dimensions, compliant transport clearances or measured assets."
+  "numeric_values_notice": "All 6×2.4×2.5 m internal envelopes, 1.0×0.8×1.0 m boxes and 6m origins are arbitrary synthetic fixture coordinates for regression only; not actual shipping-container usable dimensions, compliant transport clearances or measured assets. Reserved service access z=2.0..2.4m is a notional isolated void."
 }
