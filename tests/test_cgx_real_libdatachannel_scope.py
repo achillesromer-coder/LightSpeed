@@ -56,6 +56,15 @@ class LibdatachannelSourceScopeTests(unittest.TestCase):
             self.assertFalse(x["licence_verified"])
             self.assertEqual(len(x["pinned_commit_sha1"]),40)
 
+    def test_persisted_r1_is_exactly_recompiled_from_pinned_r0(self):
+        saved=ROOT/"cgx"/"review"/"alexandria_libdatachannel_source_scope_20261021.json"
+        persisted=json.loads(saved.read_text(encoding="utf-8"))
+        current=compile_libdatachannel_scope(*inputs())
+        self.assertEqual(persisted,current)
+        self.assertFalse(persisted["all_project_source_acquired"])
+        self.assertFalse(persisted["first_party_licensing"]["release_rights_approved"])
+        self.assertFalse(persisted["native_dbr_verified"])
+
     def test_corrupt_licensed_source_or_false_ancestor_is_rejected(self):
         p,t,b=inputs()
         altered=dict(b)
