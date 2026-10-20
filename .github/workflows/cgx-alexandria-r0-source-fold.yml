@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - "cgx/portable_node/individual_game_source_scope.py"
+      - "cgx/review/alexandria_library_projection.py"
       - "cgx/portable_node/project_gitlink_evidence.py"
       - "cgx/portable_node/libdatachannel_source_scope.py"
       - "cgx/review/alexandria_*_scope_20261021.json"
@@ -32,6 +33,7 @@ jobs:
       - name: Verify complete carried Git-blobs and conflicting runtime exclusion
         run: |
           python -m unittest discover -s tests -p 'test_cgx_alexandria_selective_source_fold.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_alexandria_library_security_convergence.py' -v
       - name: Original Hypersomnia project and dependency Git tree proof
         run: |
           python -m unittest discover -s tests -p 'test_cgx_real_hypersomnia_project_source.py' -v
