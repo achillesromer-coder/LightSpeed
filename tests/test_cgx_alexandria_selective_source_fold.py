@@ -86,7 +86,8 @@ class SelectiveAlexandriaSourceFold(unittest.TestCase):
         file=ROOT/"tests/fixtures/alexandria_libjuice/include/juice/juice.h"
         self.assertTrue(file.is_file())
         self.assertEqual(blob(file.read_bytes()),"e43db6cbe98687db79f6be0e89b109c2381b5177")
-        self.assertIn(b"Mozilla Public\\n * License, v. 2.0.",file.read_bytes())
+        self.assertIn(b"Mozilla Public",file.read_bytes())
+        self.assertIn(b"License, v. 2.0.",file.read_bytes())
         self.assertFalse(self.m["rights"]["redistribution_approved"])
         self.assertFalse(self.m["rights"]["network_handshake_verified"])
 if __name__=="__main__":
