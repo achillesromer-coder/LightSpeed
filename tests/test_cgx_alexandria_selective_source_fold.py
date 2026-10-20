@@ -35,8 +35,12 @@ class SelectiveAlexandriaSourceFold(unittest.TestCase):
                   "redistribution_approved","compiled","network_handshake_verified",
                   "canonical_promotion"):
             self.assertIs(r[k],False,k)
-        self.assertEqual(len(m["held_paths"]),1)
-        self.assertEqual(m["held_paths"][0]["status"],"SOURCE_FETCH_UNRESOLVED")
+        self.assertEqual(m["held_paths"],[])
+        self.assertEqual(len(m["additional_direct_upstream_blobs"]),1)
+        for item in m["additional_direct_upstream_blobs"]:
+            self.assertEqual(blob((ROOT/item["path"]).read_bytes()),item["blob_sha1"])
+            self.assertEqual(item["commit"],"b89c792e3612faf2f12cf35bcc56857313a06be3")
+        self.assertTrue(m["further_holds"])
     def test_existing_private_review_source_and_identity_are_unchanged(self):
         for path in ("apps/lightspeed-go/src/privateObjectReview.ts",
                      "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py",
@@ -78,9 +82,12 @@ class SelectiveAlexandriaSourceFold(unittest.TestCase):
             self.assertFalse(sample["canonical_promotion"])
         self.assertTrue(result["all_upstreams_without_release_grants"])
 
-    def test_missing_requested_libjuice_header_not_silently_reconstructed(self):
-        held=self.m["held_paths"][0]["path"]
-        self.assertFalse((ROOT/held).exists())
-        self.assertIn("fetch",self.m["held_paths"][0]["reason"].lower())
+    def test_original_upstream_libjuice_header_now_matches_pinned_git_tree(self):
+        file=ROOT/"tests/fixtures/alexandria_libjuice/include/juice/juice.h"
+        self.assertTrue(file.is_file())
+        self.assertEqual(blob(file.read_bytes()),"e43db6cbe98687db79f6be0e89b109c2381b5177")
+        self.assertIn(b"Mozilla Public License",file.read_bytes())
+        self.assertFalse(self.m["rights"]["redistribution_approved"])
+        self.assertFalse(self.m["rights"]["network_handshake_verified"])
 if __name__=="__main__":
     unittest.main()
