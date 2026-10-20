@@ -1,0 +1,330 @@
+{
+  "schema": "ALEXANDRIA-FOUNDATION-LEARNING-MODULES/0.1",
+  "date": "2026-10-20",
+  "status": "SOURCE_LINKED_CURRICULUM_NOT_EXECUTED",
+  "canonical_root": "Cognigrex.cgx",
+  "tracks": [
+    "engineering-geometry",
+    "geospatial-ecology",
+    "space-physics",
+    "shared-game-runtime",
+    "model-and-data",
+    "archival-and-research-provenance"
+  ],
+  "modules": [
+    {
+      "id": "engineering-geometry-L1",
+      "track": "engineering-geometry",
+      "stage": "inspect",
+      "title": "Inspect native geometry identity",
+      "instruction": "Map synthetic source volume, CAD object ID, mesh representation and explicit unit frame.",
+      "expected_artifact": "source-root and coordinate frame record",
+      "qualification_hold": "Unit conversion and native CAD source authenticity remain unverified",
+      "repository_sources": [
+        "FreeCAD/FreeCAD",
+        "KhronosGroup/glTF"
+      ],
+      "exercise_inputs": "SYNTHETIC_USER_AUTHORED_ONLY",
+      "module_state": "UNEXECUTED_SOURCE_LINKED_EDUCATION",
+      "autonomous_promotion": false,
+      "third_party_bytes_included": false
+    },
+    {
+      "id": "engineering-geometry-L2",
+      "track": "engineering-geometry",
+      "stage": "transform",
+      "title": "Prove geometry transformation loss",
+      "instruction": "Generate a synthetic cube triangle mesh and compare with a parametric box constraint model.",
+      "expected_artifact": "R0 original and transformation loss map",
+      "qualification_hold": "Triangle geometry is not proof of original parametric intent",
+      "repository_sources": [
+        "openscad/openscad",
+        "blender/blender"
+      ],
+      "exercise_inputs": "SYNTHETIC_USER_AUTHORED_ONLY",
+      "module_state": "UNEXECUTED_SOURCE_LINKED_EDUCATION",
+      "autonomous_promotion": false,
+      "third_party_bytes_included": false
+    },
+    {
+      "id": "engineering-geometry-L3",
+      "track": "engineering-geometry",
+      "stage": "verify",
+      "title": "Compose five container digital fixture",
+      "instruction": "Reuse the CGX five-unit synthetic facility layout, reserving circulation, service and future expansion volumes.",
+      "expected_artifact": "collision matrix, held logistics BOM and unallocated volume",
+      "qualification_hold": "No shipping, structural or site qualification",
+      "repository_sources": [
+        "FreeCAD/FreeCAD",
+        "openscad/openscad"
+      ],
+      "exercise_inputs": "SYNTHETIC_USER_AUTHORED_ONLY",
+      "module_state": "UNEXECUTED_SOURCE_LINKED_EDUCATION",
+      "autonomous_promotion": false,
+      "third_party_bytes_included": false
+    },
+    {
+      "id": "geospatial-ecology-L1",
+      "track": "geospatial-ecology",
+      "stage": "inspect",
+      "title": "Separate taxon, occurrence and game representation",
+      "instruction": "Create distinct records for a birch taxon, actual specimen and a game-tree asset.",
+      "expected_artifact": "typed representation links; no false Object_ID merge",
+      "qualification_hold": "No live sensitive species coordinates",
+      "repository_sources": [
+        "gbif/pygbif",
+        "geopandas/geopandas"
+      ],
+      "exercise_inputs": "SYNTHETIC_USER_AUTHORED_ONLY",
+      "module_state": "UNEXECUTED_SOURCE_LINKED_EDUCATION",
+      "autonomous_promotion": false,
+      "third_party_bytes_included": false
+    },
+    {
+      "id": "geospatial-ecology-L2",
+      "track": "geospatial-ecology",
+      "stage": "transform",
+      "title": "Verify geodetic frames",
+      "instruction": "Project small synthetic site polygons between declared coordinate reference systems.",
+      "expected_artifact": "round-trip coordinate and CRS evidence",
+      "qualification_hold": "Actual map basemap rights and accuracy separately assessed",
+      "repository_sources": [
+        "OSGeo/gdal",
+        "qgis/QGIS"
+      ],
+      "exercise_inputs": "SYNTHETIC_USER_AUTHORED_ONLY",
+      "module_state": "UNEXECUTED_SOURCE_LINKED_EDUCATION",
+      "autonomous_promotion": false,
+      "third_party_bytes_included": false
+    },
+    {
+      "id": "geospatial-ecology-L3",
+      "track": "geospatial-ecology",
+      "stage": "verify",
+      "title": "Derive habitat intervention review",
+      "instruction": "Overlay a synthetic M1 corridor geometry with clearly labelled mock species observations.",
+      "expected_artifact": "evidence-linked impact matrix and unknowns ledger",
+      "qualification_hold": "No environmental approval or biodiversity assertion",
+      "repository_sources": [
+        "qgis/QGIS",
+        "gbif/pygbif"
+      ],
+      "exercise_inputs": "SYNTHETIC_USER_AUTHORED_ONLY",
+      "module_state": "UNEXECUTED_SOURCE_LINKED_EDUCATION",
+      "autonomous_promotion": false,
+      "third_party_bytes_included": false
+    },
+    {
+      "id": "space-physics-L1",
+      "track": "space-physics",
+      "stage": "inspect",
+      "title": "Compare software and scientific authority",
+      "instruction": "Distinguish a spacecraft runtime, telemetry view, orbit propagator and mission approval authority.",
+      "expected_artifact": "method provenance and role matrix",
+      "qualification_hold": "A public simulator is not a flight-qualified mission system",
+      "repository_sources": [
+        "nasa/fprime",
+        "nasa/openmct"
+      ],
+      "exercise_inputs": "SYNTHETIC_USER_AUTHORED_ONLY",
+      "module_state": "UNEXECUTED_SOURCE_LINKED_EDUCATION",
+      "autonomous_promotion": false,
+      "third_party_bytes_included": false
+    },
+    {
+      "id": "space-physics-L2",
+      "track": "space-physics",
+      "stage": "transform",
+      "title": "Attach epoch and frame to ephemeris",
+      "instruction": "Use a fabricated sample position table with explicit time scale, coordinate frame and units.",
+      "expected_artifact": "frame-aware parsed sample and validation gates",
+      "qualification_hold": "No current real JPL ephemeris fetched or verified",
+      "repository_sources": [
+        "AVSLab/basilisk",
+        "numpy/numpy"
+      ],
+      "exercise_inputs": "SYNTHETIC_USER_AUTHORED_ONLY",
+      "module_state": "UNEXECUTED_SOURCE_LINKED_EDUCATION",
+      "autonomous_promotion": false,
+      "third_party_bytes_included": false
+    },
+    {
+      "id": "space-physics-L3",
+      "track": "space-physics",
+      "stage": "verify",
+      "title": "Qualify a computational fluid or FEM result",
+      "instruction": "Trace a synthetic solver output from mesh/settings to numerical error and physical assumptions.",
+      "expected_artifact": "model-input and uncertainty/verification receipt",
+      "qualification_hold": "No physical flight, fluid, structural or thermal certification",
+      "repository_sources": [
+        "su2code/SU2",
+        "FEniCS/dolfinx"
+      ],
+      "exercise_inputs": "SYNTHETIC_USER_AUTHORED_ONLY",
+      "module_state": "UNEXECUTED_SOURCE_LINKED_EDUCATION",
+      "autonomous_promotion": false,
+      "third_party_bytes_included": false
+    },
+    {
+      "id": "shared-game-runtime-L1",
+      "track": "shared-game-runtime",
+      "stage": "inspect",
+      "title": "Separate engine from game asset",
+      "instruction": "Represent an engine candidate and two rights-distinct game asset packages.",
+      "expected_artifact": "engine package key, per-game manifest and licence review",
+      "qualification_hold": "Index CC0 is not licence for game art or binaries",
+      "repository_sources": [
+        "godotengine/godot",
+        "freedoom/freedoom"
+      ],
+      "exercise_inputs": "SYNTHETIC_USER_AUTHORED_ONLY",
+      "module_state": "UNEXECUTED_SOURCE_LINKED_EDUCATION",
+      "autonomous_promotion": false,
+      "third_party_bytes_included": false
+    },
+    {
+      "id": "shared-game-runtime-L2",
+      "track": "shared-game-runtime",
+      "stage": "transform",
+      "title": "Deduplicate shared dependency references",
+      "instruction": "Model two synthetic cartridges with one exact engine SHA-256 and distinct source roots.",
+      "expected_artifact": "single cached dependency and cold/warm byte accounting",
+      "qualification_hold": "ABI and runtime compatibility must still be established",
+      "repository_sources": [
+        "OpenRA/OpenRA",
+        "godotengine/godot"
+      ],
+      "exercise_inputs": "SYNTHETIC_USER_AUTHORED_ONLY",
+      "module_state": "UNEXECUTED_SOURCE_LINKED_EDUCATION",
+      "autonomous_promotion": false,
+      "third_party_bytes_included": false
+    },
+    {
+      "id": "shared-game-runtime-L3",
+      "track": "shared-game-runtime",
+      "stage": "verify",
+      "title": "Evaluate replay and portability",
+      "instruction": "Define deterministic input/output playback for a hypothetical compatible game pair.",
+      "expected_artifact": "cross-device behaviour equivalence checklist",
+      "qualification_hold": "Do not claim successful playback without executable rights and tests",
+      "repository_sources": [
+        "scummvm/scummvm",
+        "OpenTTD/OpenTTD"
+      ],
+      "exercise_inputs": "SYNTHETIC_USER_AUTHORED_ONLY",
+      "module_state": "UNEXECUTED_SOURCE_LINKED_EDUCATION",
+      "autonomous_promotion": false,
+      "third_party_bytes_included": false
+    },
+    {
+      "id": "model-and-data-L1",
+      "track": "model-and-data",
+      "stage": "inspect",
+      "title": "Understand typed numeric and tabular data",
+      "instruction": "Apply a small synthetic conversion across scalar, vector and table records with units.",
+      "expected_artifact": "dimension-aware matrix and source-preserving JSON/CSV",
+      "qualification_hold": "Numerical type equivalence is not semantic identity",
+      "repository_sources": [
+        "numpy/numpy",
+        "pandas-dev/pandas"
+      ],
+      "exercise_inputs": "SYNTHETIC_USER_AUTHORED_ONLY",
+      "module_state": "UNEXECUTED_SOURCE_LINKED_EDUCATION",
+      "autonomous_promotion": false,
+      "third_party_bytes_included": false
+    },
+    {
+      "id": "model-and-data-L2",
+      "track": "model-and-data",
+      "stage": "transform",
+      "title": "Identify model/runtime dependency boundaries",
+      "instruction": "Record model architecture, weights, tokenizer, serving runtime and licence as separate objects.",
+      "expected_artifact": "model package dependency and ACL matrix",
+      "qualification_hold": "Never infer rights to model weights from a Python library licence",
+      "repository_sources": [
+        "huggingface/transformers",
+        "ollama/ollama"
+      ],
+      "exercise_inputs": "SYNTHETIC_USER_AUTHORED_ONLY",
+      "module_state": "UNEXECUTED_SOURCE_LINKED_EDUCATION",
+      "autonomous_promotion": false,
+      "third_party_bytes_included": false
+    },
+    {
+      "id": "model-and-data-L3",
+      "track": "model-and-data",
+      "stage": "verify",
+      "title": "Evaluate a claim with independent fixtures",
+      "instruction": "Run a designed test suite comparing synthetic model claims with controlled reference outputs.",
+      "expected_artifact": "falsifier cases and evidence/evaluation provenance",
+      "qualification_hold": "No autonomous canonical promotion or unseen real-world validity",
+      "repository_sources": [
+        "onnx/onnx",
+        "pydata/xarray"
+      ],
+      "exercise_inputs": "SYNTHETIC_USER_AUTHORED_ONLY",
+      "module_state": "UNEXECUTED_SOURCE_LINKED_EDUCATION",
+      "autonomous_promotion": false,
+      "third_party_bytes_included": false
+    },
+    {
+      "id": "archival-and-research-provenance-L1",
+      "track": "archival-and-research-provenance",
+      "stage": "inspect",
+      "title": "Inspect upstream software licence boundaries",
+      "instruction": "Compare an SPDX licence declaration with actual missing game asset and dataset rights.",
+      "expected_artifact": "SPDX expression, dependency and distribution decision hold",
+      "qualification_hold": "External repository metadata is not full redistribution clearance",
+      "repository_sources": [
+        "spdx/license-list-data",
+        "ResearchObject/ro-crate"
+      ],
+      "exercise_inputs": "SYNTHETIC_USER_AUTHORED_ONLY",
+      "module_state": "UNEXECUTED_SOURCE_LINKED_EDUCATION",
+      "autonomous_promotion": false,
+      "third_party_bytes_included": false
+    },
+    {
+      "id": "archival-and-research-provenance-L2",
+      "track": "archival-and-research-provenance",
+      "stage": "transform",
+      "title": "Separate archive capture from playable preservation",
+      "instruction": "Catalogue synthetic historical web snapshots and runtime candidate without embedding media.",
+      "expected_artifact": "archive time/source list, survivability and reproduction unknowns",
+      "qualification_hold": "Wayback captures do not automatically license games or expose binaries",
+      "repository_sources": [
+        "internetarchive/wayback",
+        "ruffle-rs/ruffle"
+      ],
+      "exercise_inputs": "SYNTHETIC_USER_AUTHORED_ONLY",
+      "module_state": "UNEXECUTED_SOURCE_LINKED_EDUCATION",
+      "autonomous_promotion": false,
+      "third_party_bytes_included": false
+    },
+    {
+      "id": "archival-and-research-provenance-L3",
+      "track": "archival-and-research-provenance",
+      "stage": "verify",
+      "title": "Build a source-cited offline kit candidate",
+      "instruction": "Create an OCI-like source descriptor and RO-Crate-inspired metadata over permitted synthetic documents.",
+      "expected_artifact": "portable index, exact SHA-256, attribution and offline reopen receipt",
+      "qualification_hold": "No claim of formal standard conformance or live public rights acceptance",
+      "repository_sources": [
+        "opencontainers/image-spec",
+        "ResearchObject/ro-crate"
+      ],
+      "exercise_inputs": "SYNTHETIC_USER_AUTHORED_ONLY",
+      "module_state": "UNEXECUTED_SOURCE_LINKED_EDUCATION",
+      "autonomous_promotion": false,
+      "third_party_bytes_included": false
+    }
+  ],
+  "invariants": [
+    "Use only synthetic fixtures or independently rights-cleared sources until licence and site gates pass.",
+    "All exercises preserve distinct source, semantic object, representation, adapter, execution and evidence identities.",
+    "A lesson does not qualify hardware, trained ML model, mission software, engine ABI or published content.",
+    "Do not connect public offline kit to private credentials, user accounts or unverified source media.",
+    "Require owner review, measured conformance and DBR before any claimed operational or physical acceptance."
+  ],
+  "no_training_data_ingested": true
+}
