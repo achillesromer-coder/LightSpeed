@@ -112,7 +112,9 @@ def inspect_public_bundle(source:Path=SOURCE)->dict[str,Any]:
 def make_public_bundle(dest:Path,source:Path=SOURCE)->dict[str,Any]:
     src=Path(source).resolve()
     dst=Path(dest).resolve()
-    if dst==src or src in dst.parents or dst==ROOT.resolve() or dst==ROOT.resolve()/"apps/lightspeed-go/public":
+    operator_public=(ROOT/"apps/lightspeed-go/public").resolve()
+    if (dst==src or src in dst.parents or dst==ROOT.resolve() or
+        dst==operator_public or operator_public in dst.parents):
         raise BundleHold("output cannot overlap source or operator static root")
     if dst.exists():
         raise BundleHold("refuse overwrite of prior release candidate")
