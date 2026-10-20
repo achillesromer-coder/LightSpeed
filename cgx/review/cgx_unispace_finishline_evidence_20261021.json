@@ -19,6 +19,8 @@
     "warning": "Source intake is partial; dependencies/assets/licences/execution and signed DBR remain HOLD. Avoid bulk copying PR180 bridge, main.ts or desktop manifest onto security fold."
   },
   "source_heads": {
+    "PR180": "16c71130b09848b740413b81744df7c5e6069484",
+    "PR181": "bd2117d3975cc4db10dfe763ce92d9b1ad623814",
     "PR182": "db147fae3a77654bf544da870a4c897216389012",
     "PR184": "127979f04243333884ba33a23d04c7addce5e457",
     "PR185": "bf49bd448e3779bbff2db97a905fde79363341ae",
@@ -30,8 +32,7 @@
     "PR192": "fff2a69516300d14537408383702115662742403",
     "PR193": "15d8c588395b656144fc8e0e341e194a0ea6d560",
     "PR194": "0eb89172cb8ad503abc77598e98e57df70a9f2b4",
-    "PR195": "3bf4a2f30330013e7eaddb9f1b48bf62865c42e4",
-    "PR180": "16c71130b09848b740413b81744df7c5e6069484"
+    "PR195": "3bf4a2f30330013e7eaddb9f1b48bf62865c42e4"
   },
   "acceptance_summary": {
     "milestones_pass": 21,
