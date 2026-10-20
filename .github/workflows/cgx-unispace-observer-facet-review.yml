@@ -1,0 +1,43 @@
+name: CGX staged read-only observer and hydration facets
+on:
+  pull_request:
+    paths:
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/node_exchange.py"
+      - "desktop/LightSpeed_Runtime/tests/test_node_exchange.py"
+      - "desktop/source-manifest.json"
+      - "cgx/domain_templates/node_exchange_contract.json"
+      - "cgx/domain_templates/semantic_view_lens_registry.json"
+      - "cgx/domain_templates/cognigrex_parent_topology.json"
+      - "cgx/domain_templates/corpus_inclusion_registry.json"
+      - "cgx/domain_templates/depth_profiles.json"
+      - "cgx/review/observer_facet_subset_fold_20261020.json"
+      - "tests/test_cgx_observer_facet_source_fold.py"
+      - ".github/workflows/cgx-unispace-observer-facet-review.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-pure-facets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install test runner
+        run: python -m pip install 'pytest==8.4.2'
+      - name: Validate source contracts
+        run: |
+          python -m json.tool cgx/domain_templates/node_exchange_contract.json > /dev/null
+          python -m json.tool cgx/domain_templates/semantic_view_lens_registry.json > /dev/null
+          python -m json.tool cgx/domain_templates/depth_profiles.json > /dev/null
+          python -m json.tool cgx/review/observer_facet_subset_fold_20261020.json > /dev/null
+      - name: Existing Node Exchange and all PR173 read-only facet tests
+        run: python -m pytest -q desktop/LightSpeed_Runtime/tests/test_node_exchange.py
+      - name: Staged node identity + intake + observer integration
+        run: |
+          python -m unittest discover -s tests -p 'test_cgx_observer_facet_source_fold.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_library_identity_convergence.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_native_intake_subset_convergence.py' -v
+          python -m pytest -q desktop/LightSpeed_Runtime/tests/test_cgx_object_identity.py desktop/LightSpeed_Runtime/tests/test_cgx_intake_projection.py
