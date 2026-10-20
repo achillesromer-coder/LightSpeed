@@ -24,7 +24,7 @@ class ObserverFacetConvergenceTests(unittest.TestCase):
     def test_current_desktop_source_manifest_keeps_intake_identity_and_observer(self):
         d=get("desktop/source-manifest.json")
         m={x["path"]:x for x in d["records"]}
-        self.assertEqual(len(m),735)
+        self.assertGreaterEqual(len(m),735)  # preserve all prior source entries when adding reviewed families
         for path in [
             "LightSpeed_Runtime/lightspeed_runtime/cgx_object_context.py",
             "LightSpeed_Runtime/lightspeed_runtime/cgx_intake_projection.py",
