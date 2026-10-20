@@ -15,6 +15,15 @@ mod=importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(mod)
 
 class PublicBundleTests(unittest.TestCase):
+    def test_exact_pr174_source_blobs_are_preserved(self):
+        receipt=json.loads((ROOT/"cgx/review/unispace_public_source_fold_20261020.json").read_text(encoding="utf-8"))
+        self.assertEqual(receipt["source_pr"],174)
+        self.assertEqual(len(receipt["carried_source_files"]),18)
+        for item in receipt["carried_source_files"]:
+            raw=(ROOT/item["path"]).read_bytes()
+            blob=hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\\0"+raw).hexdigest()
+            self.assertEqual(blob,item["git_blob_sha1"],item["path"])
+
     def test_existing_cgx_tree_exact_allowlist(self):
         report=mod.inspect_public_bundle()
         self.assertEqual(report["file_count"],12)
