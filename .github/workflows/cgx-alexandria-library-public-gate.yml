@@ -1,0 +1,40 @@
+name: Alexandria indexed libraries and public asset safety review
+on:
+  pull_request:
+    paths:
+      - "cgx/review/alexandria_curated_upstream_tools_20261020.json"
+      - "cgx/review/alexandria_library_projection.py"
+      - "cgx/review/unispace_public_asset_boundary.py"
+      - "tests/test_cgx_alexandria_library_security_convergence.py"
+      - ".github/workflows/cgx-alexandria-library-public-gate.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  read-only-library-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate additive catalogue
+        run: python -m json.tool cgx/review/alexandria_curated_upstream_tools_20261020.json > /dev/null
+      - name: Test rights-held cross-domain references and static privacy safeguards
+        run: python -m unittest discover -s tests -p 'test_cgx_alexandria_library_security_convergence.py' -v
+      - name: Produce deterministic source-only coverage projection
+        run: |
+          python cgx/review/alexandria_library_projection.py > /tmp/cgx_alexandria_discovery_only.json
+          python -m json.tool /tmp/cgx_alexandria_discovery_only.json > /dev/null
+      - name: Audit current Vite public paths but do not infer release clearance
+        run: |
+          python cgx/review/unispace_public_asset_boundary.py > /tmp/cgx_internal_static_risk_report.json
+          python -m json.tool /tmp/cgx_internal_static_risk_report.json > /dev/null
+          python - <<'PY'
+          import json
+          j=json.load(open('/tmp/cgx_internal_static_risk_report.json'))
+          assert j['release_authorised'] is False
+          print('Known internal-static risk paths:',j['known_internal_static_file_count'])
+          print('Gate state:',j['state'])
+          PY
