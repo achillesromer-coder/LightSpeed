@@ -291,6 +291,10 @@ class TrinityShellBridge:
     def workspace_status(self, workspace_id: str, project_id: str, *, active_floor: str = "Architect") -> dict:
         return self.runtime.workspace_state(workspace_id, project_id, active_floor=active_floor)
 
+    def select_workspace_projection(self, **view_request: Any) -> dict:
+        """Apply canonical CGX view policy without widening authority."""
+        return self.runtime.select_cgx_view(**view_request)
+
     def launch_lab_run(
         self,
         workspace_id: str,

@@ -1,6 +1,6 @@
 {
   "schema": "CGX-VIEW-SELECTION-POLICY/0.1",
-  "status": "review-blueprint",
+  "status": "active",
   "base_contracts": [
     "CGX-Lens/0.1",
     "CGX-MultiView-Workspace/0.1",

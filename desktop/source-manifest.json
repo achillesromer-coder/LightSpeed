@@ -3151,6 +3151,11 @@
       "sha256": "b0a9988487e6fcd2f8a843be9bd4dd57c8027d60a7137cc78d055a47b9d64f67"
     },
     {
+      "path": "LightSpeed_Runtime/lightspeed_runtime/cgx_view_policy.py",
+      "bytes": 10660,
+      "sha256": "bdcc134f25b4ed7b0ce23c7e3f7d0ca30c6784cec3346197c42adb8c592ce59b"
+    },
+    {
       "bytes": 6314,
       "path": "LightSpeed_Runtime/lightspeed_runtime/closure_readiness.py",
       "sha256": "148c0c1b78792ae3cdef7cac714705b848e34501b9d52ad4c1c83dd51418e9ee"
@@ -3226,9 +3231,9 @@
       "sha256": "7e6e9f4f49ec0755845b783a0bc051e540471c5a1eda5444e15355194ef44db2"
     },
     {
-      "bytes": 21634,
       "path": "LightSpeed_Runtime/lightspeed_runtime/floor_bridges.py",
-      "sha256": "0bb7b7ae8d9fc5a4662bd2bedaeb7bb56a053bcab1ca89fdec2d97646f9b8b3c"
+      "bytes": 21841,
+      "sha256": "1a6a53f3672db96030106762c32fefcc3be1b8f13c2207743ef09827c167b5a6"
     },
     {
       "bytes": 11556,
@@ -3406,9 +3411,9 @@
       "sha256": "d1b83611f91ae6f129d160b876638420a8ef48275d7157e9b01f937ad49c6ca3"
     },
     {
-      "bytes": 143942,
       "path": "LightSpeed_Runtime/lightspeed_runtime/runtime.py",
-      "sha256": "2f3b03745496d9706bc329dec2275c58212b52640b3959dcf1ae1f0c99146028"
+      "bytes": 145568,
+      "sha256": "75e3dc560031c9926753176990770223093d0d83a6647250e8ec14fb5e9bcc81"
     },
     {
       "bytes": 15369,
