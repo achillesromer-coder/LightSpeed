@@ -28,6 +28,19 @@ class ArchiveReconciliationTests(unittest.TestCase):
     def test_different_dates_retained(self):
         r=m.classify_claim_pair(claim(),claim(value=2.3,effective_date="2026-09-01"))
         self.assertEqual(r["classification"],"TEMPORAL_VARIANT")
+    def test_same_value_distinct_dates_is_temporal_not_corroboration(self):
+        first=claim(value=2.0,effective_date="2026-08-01",sha256="a"*64)
+        second=claim(value=2.0,effective_date="2026-09-01",sha256="b"*64,source_ref="provider:doc:2")
+        r=m.classify_claim_pair(first,second)
+        self.assertEqual(r["classification"],"TEMPORAL_VARIANT")
+        self.assertTrue(r["preserve_originals"])
+        self.assertFalse(r["promote_canon"])
+
+    def test_identical_blob_but_distinct_observation_dates_is_temporal(self):
+        r=m.classify_claim_pair(claim(),claim(claim_id="later",effective_date="2026-09-01"))
+        self.assertEqual(r["classification"],"TEMPORAL_VARIANT")
+        self.assertEqual(len(r["source_claims"]),2)
+
     def test_same_date_disagreement_is_hold(self):
         r=m.classify_claim_pair(claim(),claim(value=3.8))
         self.assertEqual(r["classification"],"CONTRADICTORY_HOLD")
