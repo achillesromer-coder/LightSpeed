@@ -5,12 +5,16 @@ on:
     paths:
       - "apps/lightspeed-go/public/cgx/**"
       - "apps/lightspeed-go/tests/unispace-public.test.mjs"
+      - "apps/lightspeed-go/scripts/assemble_cgx_public_site.py"
+      - "tests/test_cgx_public_site_isolation.py"
       - ".github/workflows/unispace-public-viewer.yml"
   pull_request:
     branches: [main]
     paths:
       - "apps/lightspeed-go/public/cgx/**"
       - "apps/lightspeed-go/tests/unispace-public.test.mjs"
+      - "apps/lightspeed-go/scripts/assemble_cgx_public_site.py"
+      - "tests/test_cgx_public_site_isolation.py"
       - ".github/workflows/unispace-public-viewer.yml"
 permissions:
   contents: read
@@ -27,6 +31,8 @@ jobs:
           node --check apps/lightspeed-go/public/cgx/assets/domain-overviews.js
           node --check apps/lightspeed-go/public/cgx/assets/domain-viewer.js
           (cd apps/lightspeed-go && npm ci --silent && npm test -- --run tests/unispace-public.test.mjs tests/unispace-domains.test.mjs)
+          python -m unittest discover -s tests -p 'test_cgx_public_site_isolation.py' -v
+          python apps/lightspeed-go/scripts/assemble_cgx_public_site.py --output cgx-isolated-site > cgx-public-manifest.json
           python - <<'PY'
           from pathlib import Path
           root=Path('apps/lightspeed-go/public/cgx')
@@ -50,7 +56,7 @@ jobs:
         run: |
           python -m pip install -q playwright
           python -m playwright install chromium
-          python -m http.server 8179 --bind 127.0.0.1 --directory apps/lightspeed-go/public > /tmp/unispace-static.log 2>&1 &
+          python -m http.server 8179 --bind 127.0.0.1 --directory cgx-isolated-site > /tmp/unispace-static.log 2>&1 &
           python - <<'PY'
           from playwright.sync_api import sync_playwright
           from pathlib import Path
@@ -88,6 +94,14 @@ jobs:
               page.screenshot(path="unispace-public-mobile.png",full_page=True)
               proof["mobile_nonoverflow"]=page.evaluate("document.documentElement.scrollWidth <= window.innerWidth+2")
               assert proof["mobile_nonoverflow"]
+              for blocked in ("data/cgx_internal_review_projection.json",
+                              "data/component_geometry_atlas_public_review.json",
+                              "review/cgx_internal_review_projection.json",
+                              "ls-go/index.html",
+                              "physical-operations-seed.json"):
+                  response=page.request.get("http://127.0.0.1:8179/"+blocked)
+                  assert response.status==404,(blocked,response.status)
+              proof["disallowed_paths_404"]=5
               proof["page_errors"]=errors
               assert not errors, errors
               proof["status"]="PUBLIC_VIEWER_SIMULATION_PASS"
@@ -103,5 +117,7 @@ jobs:
           path: |
             unispace-public-browser-proof.json
             unispace-public-mobile.png
+            cgx-public-manifest.json
+            cgx-isolated-site/cgx-public-integrity.json
           if-no-files-found: warn
           retention-days: 14
