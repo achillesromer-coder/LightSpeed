@@ -90,11 +90,15 @@ const esc = (value: string): string => value
 const metric = (value: number | string, label: string): string =>
   `<div><strong>${esc(String(value))}</strong><span>${esc(label)}</span></div>`;
 
-const card = (item: ReviewObject): string => {
+const card = (item: ReviewObject, privateMedia = false): string => {
   const preview=item.hero_render || item.render;
+  const plateLink = (path: string, label: string): string =>
+    privateMedia
+      ? `<button class="button-secondary" type="button" data-private-open="${esc(path)}">${esc(label)}</button>`
+      : `<a class="button-secondary" href="${esc(path)}" target="_blank" rel="noreferrer">${esc(label)}</a>`;
   const actions=[
-    item.hero_render ? `<a class="button-secondary" href="${esc(item.hero_render)}" target="_blank" rel="noreferrer">4K hero</a>` : "",
-    `<a class="button-secondary" href="${esc(item.render)}" target="_blank" rel="noreferrer">Engineering plate</a>`,
+    item.hero_render ? plateLink(item.hero_render, "4K hero") : "",
+    plateLink(item.render, "Engineering plate"),
     item.mesh_data ? meshViewerButtonMarkup({
       url:item.mesh_data,
       label:item.label,
@@ -107,9 +111,9 @@ const card = (item: ReviewObject): string => {
   <article class="object-review-card" data-review-object data-search="${esc([
     item.id, item.label, item.role, item.level, item.geometry_state, item.physical_state,
   ].join(" ").toLowerCase())}">
-    <a href="${esc(preview)}" target="_blank" rel="noreferrer">
-      <img src="${esc(preview)}" loading="lazy" alt="${esc(item.label)} source-faithful review render" />
-    </a>
+    ${privateMedia
+      ? `<img data-private-render="${esc(preview)}" loading="lazy" alt="${esc(item.label)} private review render; requires owner session" />`
+      : `<a href="${esc(preview)}" target="_blank" rel="noreferrer"><img src="${esc(preview)}" loading="lazy" alt="${esc(item.label)} source-faithful review render" /></a>`}
     <div class="object-review-copy">
       <div class="panel-head">
         <div><p class="eyebrow">${esc(item.level)}</p><h3>${esc(item.label)}</h3></div>
@@ -151,7 +155,7 @@ const atlasTable = (atlas: ComponentAtlas): string => `
     </table>
   </div>`;
 
-export const renderObjectReview = (manifest: ObjectReviewCatalogue, atlas: ComponentAtlas): string => `
+export const renderObjectReview = (manifest: ObjectReviewCatalogue, atlas: ComponentAtlas, privateMedia = false): string => `
   <article class="panel object-review-panel">
     <div class="panel-head">
       <div><p class="eyebrow">CGX object review catalogue</p><h2>Component → stack → Luke / Mark / InterSol</h2></div>
@@ -178,11 +182,11 @@ export const renderObjectReview = (manifest: ObjectReviewCatalogue, atlas: Compo
     <section data-object-review-panel="gallery">
       <div class="object-review-search"><input id="object-review-filter" type="search" placeholder="Filter review plates…" /></div>
       <h3>CGX-derived component / stack plates</h3>
-      <div class="object-review-grid">${manifest.micro_review_objects.map(card).join("")}</div>
+      <div class="object-review-grid">${manifest.micro_review_objects.map((item) => card(item, privateMedia)).join("")}</div>
       <h3>System lineage / bridge plates</h3>
-      <div class="object-review-grid">${(manifest.bridge_review_objects || []).map(card).join("")}</div>
+      <div class="object-review-grid">${(manifest.bridge_review_objects || []).map((item) => card(item, privateMedia)).join("")}</div>
       <h3>Corpus source meshes</h3>
-      <div class="object-review-grid">${manifest.macro_review_objects.map(card).join("")}</div>
+      <div class="object-review-grid">${manifest.macro_review_objects.map((item) => card(item, privateMedia)).join("")}</div>
     </section>
 
     <section data-object-review-panel="catalogue" hidden>
@@ -198,7 +202,7 @@ export const renderObjectReview = (manifest: ObjectReviewCatalogue, atlas: Compo
     </section>
   </article>`;
 
-export const bindObjectReview = (root: HTMLElement, atlas: ComponentAtlas): void => {
+export const bindObjectReview = (root: HTMLElement, atlas: ComponentAtlas, meshLoader?: (url: string, signal: AbortSignal) => Promise<import("./meshViewer").MeshReviewGeometry>): void => {
   const tabs=[...root.querySelectorAll<HTMLButtonElement>("[data-object-review-tab]")];
   const panels=[...root.querySelectorAll<HTMLElement>("[data-object-review-panel]")];
   const activate=(name:string):void=>{
@@ -229,14 +233,15 @@ export const bindObjectReview = (root: HTMLElement, atlas: ComponentAtlas): void
     if(count) count.textContent=`${visible} / ${rows.length}`;
   });
 
-  bindMeshViewerTriggers(root);
+  bindMeshViewerTriggers(root, meshLoader);
   bindComponentPlateTriggers(root, atlas.records);
 };
 
 export const loadObjectReview = async (
   loadManifest: () => Promise<ObjectReviewCatalogue>,
   loadAtlas: () => Promise<ComponentAtlas>,
+  privateMedia = false,
 ): Promise<{ manifest: ObjectReviewCatalogue; atlas: ComponentAtlas; html: string }> => {
   const [manifest,atlas]=await Promise.all([loadManifest(),loadAtlas()]);
-  return {manifest,atlas,html:renderObjectReview(manifest,atlas)};
+  return {manifest,atlas,html:renderObjectReview(manifest,atlas,privateMedia)};
 };
