@@ -1,0 +1,214 @@
+{
+  "schema": "CGX-UNISPACE-GEOMETRIC-SHORTHAND-CANDIDATE/1",
+  "status": "ISOLATED_VALIDATED_BYTE_CODEC_REVIEW_ONLY",
+  "date": "2026-10-12",
+  "authority": "EXISTING Cognigrex.cgx and owner source roots only; this is a compatible subordinate carrier and not a new master format",
+  "base_contracts": [
+    "CGX-IR/0.1",
+    "cgx.topology.xyzt.v1",
+    "CGX-UNIVERSAL-OBJECT-EXTENSION/0.1",
+    "CGX-NODE-EXCHANGE-CONTRACT/0.1",
+    "CGX-SEMANTIC-VIEW-LENS-REGISTRY/0.1"
+  ],
+  "facets": {
+    "identity": [
+      "Object_ID",
+      "native source provider ID",
+      "source SHA256",
+      "owner",
+      "source revision",
+      "access scope"
+    ],
+    "topology": [
+      "Morton3 coordinate from chunk ordinal",
+      "configurable layer assignment",
+      "parent dependency graph",
+      "independent T state"
+    ],
+    "byte_storage": [
+      "R0_RAW",
+      "R0_ZLIB",
+      "R0_CACHED_REFERENCE",
+      "R0_BASELINE_ROOT_PATCH"
+    ],
+    "language": [
+      "native bytes always retained",
+      "optional UTF8 text",
+      "source-registered dictionary only",
+      "unknown if no dictionary"
+    ],
+    "equation": [
+      "bounded registered pure kernel",
+      "units/basis mandatory for dimensional data",
+      "derived ≠ measured"
+    ],
+    "read_views": [
+      "filespace-tree",
+      "topology-graph",
+      "binary/hex",
+      "UTF8",
+      "JSON",
+      "archive index",
+      "document preview",
+      "CAD/3D with qualified adapter",
+      "native app sandbox"
+    ],
+    "transport": [
+      "source root negotiation",
+      "capability lease",
+      "payload hash/size readback",
+      "offline conflict preservation"
+    ],
+    "governance": [
+      "owner ACL",
+      "licence",
+      "source/DBR roots",
+      "readback",
+      "physical qualification separate"
+    ]
+  },
+  "orthogonality": {
+    "x_y_z": "Physical carrier Morton3 chunk lattice only. Semantic XY/Z/T graph remains the existing CGX authority and can be mapped using a registered lens.",
+    "layer_id": "Ordinal modulo variable N; labels are not discovered meaning.",
+    "t": "State root, history or revision is external to geometry address, never inferred from byte position.",
+    "n": "N is 1..128 in demonstration implementation, not a universal physical or philosophical constant.",
+    "small_key": "Single root/reference can replace previously shared content only when recipient already has exact bytes and decoder; key is not encryption or an authority lease."
+  },
+  "read_variation_states": {
+    "R0_EXACT": "Bitwise-reversible byte carrier or referenced full byte stream",
+    "R1_SEMANTIC_REVERSIBLE": "ONLY when a separately validated typed adapter and reverse transformer prove semantic recovery",
+    "R2_STRUCTURAL_RECONSTRUCTED": "Rebuilt format/structure; original byte identity not claimed",
+    "R3_GENERATIVE_INFERRED": "AI or algorithm generated/inferred; source identity not claimed",
+    "NOT_CACHED": "Missing required exact source root or chunk",
+    "UNKNOWN_SEMANTICS": "No registered interpretation dictionary or context",
+    "UNSUPPORTED_VIEW": "Reader capability not declared or installed",
+    "WITHHELD": "Known but not available through current owner/permission scope",
+    "NO_CHANGE": "Verified identity to prior State_Root; not necessarily a transmitted payload",
+    "ZERO": "Measured/derived numeric zero with explicit evidence; never a null"
+  },
+  "fuel_fuel": {
+    "primary_proof": "Compare complete initial transfer, repeat transfer, conditional root+delta, compressed source, decode CPU, memory, latency and actual target device energy when measured",
+    "selection": "Choose minimal validated effective cost; bypass CGX envelope when raw/ZIP is more efficient for cold share; preserve source-root identity out of band",
+    "cost_equation": "C = a*B_wire + b*T_cpu_ms + c*B_storage + d*Latency_ms + e*Risk; a..e are context weights; NOT physical joules unless calibrated",
+    "unknown_cost": "Return unknown/HOLD or bounded exploration; do not claim benefit without measured target hardware",
+    "break_even": "A warm-key delta only saves transmission when the exact full source/decoder are already present; initial cache cost must be amortised."
+  },
+  "security": {
+    "codec_authenticated": false,
+    "licence_attested": false,
+    "arbitrary_app_execution": false,
+    "device_admission": false,
+    "canonical_promotion_authorised": false,
+    "limits": "128 MiB source, 4096 chunks, 8 MiB decompressed manifest, 128 layers; validation rejects corruption, oversized payloads, mismatched bases, invalid geometry and unexpected overwrites"
+  },
+  "integration_proposal": {
+    "owner": "CGX FileSpace / LightSpeed Node Exchange",
+    "entry": "Optional R0 byte-carrier adapter behind existing source-native open/read/verify; not a replacement for CGX-IR",
+    "data_space": "Root negotiation and delta readback only under existing authenticated node lease",
+    "print_space": "Only registered material/CAD/process adapters, never compile bytes directly into machine motion",
+    "public_unispace": "Show read-only source-bound costs and synthetic examples; no public upload of private customer data",
+    "owner_gates": [
+      "Test real native source adapter and provider revision",
+      "Authenticated 2-device byte transfer",
+      "Signed Source/State/DBR and version conflict",
+      "Measured device energy and CPU",
+      "Owner-approved release"
+    ],
+    "source_node_adapter": "benchmarks/cgx_unispace_geometric_shorthand/node_exchange_r0_adapter.py",
+    "native_envelope_binding": "lightspeed_runtime.node_exchange.build_transfer_envelope (staged candidate source, planned state ONLY)",
+    "verified_functional_cases": [
+      "R0 exact source root readback for raw/ZIP/CGXS cold",
+      "R0 prior-root patch, no-change, cache-missing and context mismatch",
+      "existing native Node Exchange envelope builder on staged carrier",
+      "foreign/unknown ZIP layout, malicious path, size bounds rejected"
+    ],
+    "unproven_and_held": [
+      "native cloud provider ACL/revision attestation",
+      "authenticated remote peer and DIGITIAL_WRITE execution lease",
+      "source-owner approved DBR mutation",
+      "real two-device transport + target energy cost",
+      "universal semantic equivalence or application runtime"
+    ],
+    "current_proof": "GitHub CI 38214420691: 30 Python tests, R0 CLI roundtrip and cost checks PASS; local source corpus in NATIVE_INTEGRATION_PROOF.md",
+    "public_execution_allowed": false,
+    "active_transfer_allowed": false,
+    "canonical_mutation_allowed": false
+  },
+  "convex_2d_view_candidate": {
+    "status": "SOURCE_TESTED_NONAUTHORITATIVE_CANDIDATE",
+    "implementation": "benchmarks/cgx_unispace_geometric_shorthand/cgx_geo.py:convex_polyhedron_2d_view",
+    "tests": "benchmarks/cgx_unispace_geometric_shorthand/test_cgx_geo.py:ArchimedeanSectionTests",
+    "templates": {
+      "finite_library_count": 13,
+      "defaults": [
+        "truncated-octahedron",
+        "cuboctahedron",
+        "truncated-icosahedron"
+      ],
+      "legacy_reference": "legacy-regular-dodecahedron",
+      "mesh_status": "REQUIRES_INDEPENDENT_NATIVE_SOURCE_VERTICES_AND_EDGES"
+    },
+    "modes": [
+      "section",
+      "projection"
+    ],
+    "primitives": [
+      "original transformed vertex coordinates",
+      "original edge indices",
+      "plane origin",
+      "plane normal",
+      "source reference",
+      "coordinate frame",
+      "units",
+      "tolerance"
+    ],
+    "output_contract": [
+      "empty/point/segment/polygon",
+      "ordered 2D points",
+      "source plane 3D coordinates",
+      "deterministic basis",
+      "area in squared input units"
+    ],
+    "valid_domain": "SOURCE_ASSERTED_CONVEX_POLYHEDRA_ONLY_NO_TOPOLOGY_PROOF",
+    "warnings": [
+      "not finite storage miracle",
+      "not source/semantic authority",
+      "projection returns silhouette not cross section",
+      "untrusted source coordinate frame not verified",
+      "not a GMAT/geodesy/magnetic positioning solver",
+      "does not validate hidden edges or nonconvex topology"
+    ],
+    "original_source_unchanged": true,
+    "source_owner_verified": false,
+    "signed_peer_verified": false,
+    "dbr_promoted": false,
+    "acl_verified": false,
+    "public_release_authorized": false,
+    "svg_preview": {
+      "adapter": "benchmarks/cgx_unispace_geometric_shorthand/read_lenses.py:section_svg_preview",
+      "output": "static inline SVG no script no external assets no source labels",
+      "input": "bounded typed 2D section or projection from same FileSpace Object_ID",
+      "default_permission": "DENY",
+      "required_scope": "independently verified caller-controlled preview authorisation",
+      "strict_limits": "512 points, finite coordinates, 128..4096 pixel canvas; unit/DPI not inferred",
+      "output_only": true,
+      "source_acl_lease_and_rights_verified_by_adapter": false,
+      "device_discovery": false,
+      "print_job_created": false,
+      "physical_printing_authorised": false,
+      "downstream": "Future PrintSpace page preview/convert/queue only through separately authorised printer bridge and job receipt"
+    },
+    "print_job_draft": {
+      "adapter": "benchmarks/cgx_unispace_geometric_shorthand/read_lenses.py:plan_static_print_candidate",
+      "state": "DRAFT_NOT_SUBMITTED_OR_HELD_UNSUPPORTED_FORMAT",
+      "job_identity": "SHA256 native source + SVG preview + device intent + paper_mm + copies",
+      "preview_requires_caller_authorisation": true,
+      "capability_snapshot_requires_native_attestation": true,
+      "unsupported_mime": "HOLD_NOT_SUBMIT",
+      "print_provider_or_spooler": "NONE",
+      "physical_output": false,
+      "source_acl_db_receipt_and_owner_review": "UNVERIFIED",
+      "next_adapter": "Existing LightSpeed/PrintSpace permissioned local printer connector when installed, no native driver inferred"
+    }
+  }
+}
