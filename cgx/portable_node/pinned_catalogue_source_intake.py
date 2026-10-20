@@ -46,6 +46,7 @@ def stage_pinned_catalogue(
     *,
     expected_source_sha256: str,
     expected_license_sha256: str,
+    expected_license_git_blob: str,
 ) -> dict[str, Any]:
     if not isinstance(readme, bytes) or not isinstance(license_bytes, bytes):
         raise ValueError("exact raw bytes must be supplied")
@@ -62,7 +63,7 @@ def stage_pinned_catalogue(
         or _sha256(license_bytes) != expected_license_sha256):
         raise ValueError("original-source SHA-256 mismatch")
     if (_git_blob_sha1(readme) != origin.get("readme_blob")
-        or _git_blob_sha1(license_bytes) != origin.get("license_git_blob")):
+        or _git_blob_sha1(license_bytes) != expected_license_git_blob):
         raise ValueError("declared pinned Git blob identity mismatch")
     if not isinstance(origin.get("commit"), str) or len(origin["commit"]) != 40:
         raise ValueError("pinned commit required")
@@ -136,7 +137,7 @@ def stage_pinned_catalogue(
                        {"kind": "CATALOGUE_UNSELECTED_LINES", "count": len(lines)-len(selected)}],
         "lineage": {"pinned_commit": origin["commit"], "pinned_readme_git_blob": origin["readme_blob"],
                     "license_source": f"git:{origin['name']}@{origin['commit']}:LICENSE",
-                    "license_sha256": expected_license_sha256, "license_git_blob": origin["license_git_blob"],
+                    "license_sha256": expected_license_sha256, "license_git_blob": expected_license_git_blob,
                     "catalogue_license": "CC0-1.0", "upstream_project_license": "UNVERIFIED"},
     }
     projection_hash = _sha256(json.dumps(structure, sort_keys=True,
