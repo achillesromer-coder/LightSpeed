@@ -21,7 +21,7 @@ class PublicBundleTests(unittest.TestCase):
         self.assertEqual(len(receipt["carried_source_files"]),18)
         for item in receipt["carried_source_files"]:
             raw=(ROOT/item["path"]).read_bytes()
-            blob=hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\\0"+raw).hexdigest()
+            blob=hashlib.sha1(b"blob "+str(len(raw)).encode()+bytes([0])+raw).hexdigest()
             self.assertEqual(blob,item["git_blob_sha1"],item["path"])
 
     def test_existing_cgx_tree_exact_allowlist(self):
