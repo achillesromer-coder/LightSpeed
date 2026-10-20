@@ -1,0 +1,626 @@
+{
+  "schema": "CGX-UPSTREAM-PINNED-GIT-TREES-FIXTURE/0.1",
+  "source_repository": "TeamHypersomnia/Hypersomnia",
+  "source_commit": "ca177a1a9a73e9e4bf5bb00a00ff1a1905483bee",
+  "root_tree_sha": "fa8072faa28931a0940ce3599d4cfdfea529f88a",
+  "root": {
+    "sha": "fa8072faa28931a0940ce3599d4cfdfea529f88a",
+    "truncated": false,
+    "entries": [
+      {
+        "path": ".claude",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "ecce463aa7fe4fa438044e6759e8a88c0dccfe8e"
+      },
+      {
+        "path": ".editorconfig",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "0569684ac1da57376adcf4e12ed843670aae0e91"
+      },
+      {
+        "path": ".gitattributes",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4c779177040890771ae8d0741b7647e35f77079e"
+      },
+      {
+        "path": ".github",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "77af2fa9dc8fdaa1f447959bcf4d357c6a4804ca"
+      },
+      {
+        "path": ".gitignore",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "5400c7cea28ed0f6ff24c44fa37940ea21513607"
+      },
+      {
+        "path": ".gitmodules",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3c24be734f5fa84409787a4b332dc76f4877b86a"
+      },
+      {
+        "path": ".mcp.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "111ebd95e61dc67d05e720a8f504906e17095902"
+      },
+      {
+        "path": "BUILDING.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c96c23abf5608ca7da27f34c32129d787eb5e418"
+      },
+      {
+        "path": "CHANGELOG.md",
+        "mode": "120000",
+        "type": "blob",
+        "sha": "7bd3555ea91b07c76446f40f7585fd1d10a0a829"
+      },
+      {
+        "path": "CLAUDE.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "8a1aab5c2063d24e204055dc6441e524f46f5519"
+      },
+      {
+        "path": "CMakeLists.txt",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b789ff0054bef9bc4078a008098685c68381df7c"
+      },
+      {
+        "path": "Dockerfile",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "036e7e2be59b3af9fd572f100d51a67777e65597"
+      },
+      {
+        "path": "GUIDE.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bfa37da572468c8816a73f563111fee19ca98da5"
+      },
+      {
+        "path": "LICENSE.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "dbbe3558157f5861bff35dcb37b328b679b0ccfd"
+      },
+      {
+        "path": "README.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "aa0b39e83d1c3bc017d8ea81ab2e7e2550b7777f"
+      },
+      {
+        "path": "README_SERVER.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7b629ac4e342f8c9097d82c263a436325050ddbc"
+      },
+      {
+        "path": "cmake",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "997bc5b4668585868c4c42077e6974a0509c0c48"
+      },
+      {
+        "path": "docker-compose.yaml",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4486ca5c6509db4e868127ce52c6db28c5b59030"
+      },
+      {
+        "path": "docs",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "2b6b69ac5f0c50c7e949e8fedc0a78bb2d045f83"
+      },
+      {
+        "path": "hypersomnia",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "93a2cf4b229bcf88a310602dfdc936de3184e9eb"
+      },
+      {
+        "path": "src",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "9b3d096e1c795d421fe9dc838cf56fb7ef0b445a"
+      }
+    ]
+  },
+  "src": {
+    "sha": "9b3d096e1c795d421fe9dc838cf56fb7ef0b445a",
+    "truncated": false,
+    "entries": [
+      {
+        "path": "3rdparty",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "ceb62751b5aac1a7cec108f807f1f9721d9cce82"
+      },
+      {
+        "path": "all_paths.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bce16b2123d32e1b688ce5454dae44f7e1fbddae"
+      },
+      {
+        "path": "application",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "c23edfece6a56767128160d56d8054b86a791501"
+      },
+      {
+        "path": "augs",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "634f6afe21f5b77de334c48f194706d48c2295eb"
+      },
+      {
+        "path": "build_info.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "928a44ded8654443d2971ba559ba4ceffa56c8a3"
+      },
+      {
+        "path": "build_info.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "0c028852bd24ca31e76f4d3a79ae4c507a9cb5ce"
+      },
+      {
+        "path": "cmd_line_params.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "9695abac0cdf399e4026d4ca1aa18f0685ec5f2e"
+      },
+      {
+        "path": "developer_keys.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "e0988170c1c3df764839cfe38e253b4d54c7e708"
+      },
+      {
+        "path": "fp_consistency_tests.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "73824eb4a93337ef71f82d97636c15276894954e"
+      },
+      {
+        "path": "fp_consistency_tests.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "8e4bd77af532f7e428f0af820edae9e3318b3a30"
+      },
+      {
+        "path": "game",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "752c3c9f49add31fe74d8dfe35a6252647370d76"
+      },
+      {
+        "path": "hypersomnia_version.cpp.in",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4d3bcfb25389ef510972bb6af5b8abec500171be"
+      },
+      {
+        "path": "hypersomnia_version.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "73ee7604e7245aabb37a36c4198e848d03fd13e1"
+      },
+      {
+        "path": "introspector_generator_input.cfg.in",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3bf97300e2495a5b5531f31328a046a07b656dcc"
+      },
+      {
+        "path": "main.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b697675c15ee4c0f1383674de85a9f4a1fa195c8"
+      },
+      {
+        "path": "make_canon_config.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "6b0690295435fbc75371e7a8bcca6fd8fadde508"
+      },
+      {
+        "path": "signing_keys.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "92d197a6375abf5fcf9ef6a015e0a535de75ebba"
+      },
+      {
+        "path": "test_scenes",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "68fdb47447838a658c59be2721048006bc39adee"
+      },
+      {
+        "path": "view",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "3e38209249b23039f413a6ebb6e3835e381f4058"
+      },
+      {
+        "path": "work.cpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c42377837467c872a5dd785d143713650b43052b"
+      },
+      {
+        "path": "work_result.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "eb8f7ff2452128a8e342d80194c7ed5b3d802c3c"
+      }
+    ]
+  },
+  "cmake": {
+    "sha": "997bc5b4668585868c4c42077e6974a0509c0c48",
+    "truncated": false,
+    "entries": [
+      {
+        "path": "AppRun",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b55d4ab9b450c25850131775f24c7d1530f5d15f"
+      },
+      {
+        "path": "Hypersomnia.desktop",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b3519c4c5bb6cd4bdd8d5e81dc387895aac12ed2"
+      },
+      {
+        "path": "Hypersomnia.rc",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "363ca9fdf506b2c34898256290a05fb509ceea81"
+      },
+      {
+        "path": "Introspector-generator",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "1b1a47226589a0b185da560b1a44835ac407278d"
+      },
+      {
+        "path": "add_include_dirs_of.cmake",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "40d74ddd7891306698cbd35f84999a28aa412550"
+      },
+      {
+        "path": "appimage_builder.sh",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "ad17317055bf86f5036408c24f12312a0528f2d7"
+      },
+      {
+        "path": "asset_scripts",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "1d4ab0d5d0ce8042af843cd0ca94d14d1d491829"
+      },
+      {
+        "path": "build.sh",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "24b569d0235c8ae6e8f18b6ffe89f132e8751072"
+      },
+      {
+        "path": "build_nonsteam_integration.sh",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "a605238fbfbe9a9219234dbd046a0c0453e44b18"
+      },
+      {
+        "path": "build_steam_integration.sh",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "bd4660b3a188e2b6f5b309dc53eafdb72d3f6146"
+      },
+      {
+        "path": "clean.sh",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "4dce9fabdc9e296aaadb9b77c777b9bb5c3f6aa4"
+      },
+      {
+        "path": "configure_runtime_library.cmake",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "82ec303d3ccee513734eecbe8b6a26bb7fe2ae3d"
+      },
+      {
+        "path": "diff_columns.py",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7f3c8d8f478bd3270cdaeeff7e2a84e617112295"
+      },
+      {
+        "path": "dove.ico",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "707201a9c52960d2654ffcca7a22876e7d71eb6d"
+      },
+      {
+        "path": "extra-cmake-modules",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "7fd75d32fb3ad1f086eb9709c6aa3c6ddd5460fb"
+      },
+      {
+        "path": "fix_headers.py",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bf04e2e550d527864eae20a3e7d4b5693cb49b3f"
+      },
+      {
+        "path": "generate_archives.sh",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "6d0127e6f1b5c7d8dccb415f15664e81ff8e7818"
+      },
+      {
+        "path": "get_build_times.sh",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "09c1ba0aaf607060a64a93dd404e981506446e94"
+      },
+      {
+        "path": "hypersomnia.ico",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "74d53df4c3f9b576ebde06d60c0a73a23dc19795"
+      },
+      {
+        "path": "linux_actions",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "ea608af0bd3318ef0e2b3bbbbec519d70ee2b7a0"
+      },
+      {
+        "path": "linux_launcher.sh",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "eccf53ac63f57535ea950e036bd81d7dd85db692"
+      },
+      {
+        "path": "linux_launcher_install.sh",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7565f5e6553ae8d3ab9ebf7173fcc7314f1f9ab4"
+      },
+      {
+        "path": "macos_contents",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "4d84528492183f43242c6b95d82858670d0d07ad"
+      },
+      {
+        "path": "mcp_build_server.py",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "5b57061b6f9b954ce6c435e7264d8d864d1e1b70"
+      },
+      {
+        "path": "print_bt_if_core_found.sh",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "fb0d543f4561dbba0d378565fed07e912526bb6f"
+      },
+      {
+        "path": "push_tag.sh",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "9be91ceb6817285c4f36d12b9435a297f10bc22c"
+      },
+      {
+        "path": "steam_integration",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "367b288310ee9eacdef7346ef460362d706c778d"
+      },
+      {
+        "path": "test_pack_upload.ps1",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "dc018fe8a1eb9e480782aa48bd32a1dbf54d740c"
+      },
+      {
+        "path": "tsan_suppressions.txt",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "1bf00ae821c7f6b13d681236245a9270fb26779e"
+      },
+      {
+        "path": "version_file_generator",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "981badd3849076db091918f78a03fd2d55da8f4f"
+      },
+      {
+        "path": "web",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "49c824592eae6654a215b3b69da113aae1302efd"
+      }
+    ]
+  },
+  "src_3rdparty": {
+    "sha": "ceb62751b5aac1a7cec108f807f1f9721d9cce82",
+    "truncated": false,
+    "entries": [
+      {
+        "path": "Box2D",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "8b1eda90e94458e15568a16cffe1a21167a754f0"
+      },
+      {
+        "path": "Catch",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "d71b4617e9935f8589870af211f5b7552d743654"
+      },
+      {
+        "path": "alphanum.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "16778ccc2e9e9b98516e168a28a3636fde804d1d"
+      },
+      {
+        "path": "blake3",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "4dc19edba5fda7ba93f6f5c6d447bf27fdd3a7ec"
+      },
+      {
+        "path": "cpp-httplib",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "d1145349bd216983a89b1ffdad6bc279777aa377"
+      },
+      {
+        "path": "crc32",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "9c5ccc93f88580d7af028bc057eaacab16938e64"
+      },
+      {
+        "path": "datachannel-wasm",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "f9200eb942f66ddbfecf088ce7122d095aca1c3e"
+      },
+      {
+        "path": "date",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "ba6ea50a9180da362c45dacf80aa4392b7e327e5"
+      },
+      {
+        "path": "emscripten_browser_clipboard.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "9e77261d755018a440ca53b6d4f7da0fa343925e"
+      },
+      {
+        "path": "freetype2",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "52f11fed7ec0d015d997177b649d4cc756920476"
+      },
+      {
+        "path": "glad",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "72e377100fb6df7291eee91462f49966b4dfbb5e"
+      },
+      {
+        "path": "glfw",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "d3a08ee87fda5475e2ef7e68e4c71023ea04154c"
+      },
+      {
+        "path": "imconfig.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3f59c932d39b02caf58f2abac65bdd9246f0a7da"
+      },
+      {
+        "path": "imgui",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "d7153a8dd5608be7a2e05d1b4c57e5eb179f48ad"
+      },
+      {
+        "path": "include_httplib.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "5d64255e5c85444e8a1231a82ad65675222c0507"
+      },
+      {
+        "path": "libdatachannel",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "6b1e2e620f1e37f0eafeee702eaea0043cb305fd"
+      },
+      {
+        "path": "libsodium",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "baf885fb562a43091f4f56efba8eddb4cbb7c8d3"
+      },
+      {
+        "path": "lodepng",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "18964554bc769255401942e0e6dfd09f2fab2093"
+      },
+      {
+        "path": "lz4",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "2c28edc648e4a889e08a001b376e4e03c5b9ccf5"
+      },
+      {
+        "path": "openal-soft",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "b2c48f7718ef3fcf67921a8b6534c4914e328970"
+      },
+      {
+        "path": "polypartition",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "4921a9ba4d1f9948508dfe5fc36ff64773ab1416"
+      },
+      {
+        "path": "rapidjson",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "083f359f5c36198accc2b9360ce1e32a333231d9"
+      },
+      {
+        "path": "rectpack2D",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "bbc9d0ec05b9b508f6c781667fec718bf9e78d21"
+      },
+      {
+        "path": "stb",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "72266e650cafc395a0ba36f669edf4495610a0e9"
+      },
+      {
+        "path": "streflop",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "75e9643767c084eaaffb770c70f7099ffd0ebbbc"
+      },
+      {
+        "path": "yojimbo",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "f2fbf717c3db6b4688fd3cc3883c70a09cab6e03"
+      }
+    ]
+  },
+  "source_access": "github_git_trees_api",
+  "candidate_only": true
+}
