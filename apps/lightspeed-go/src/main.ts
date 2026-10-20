@@ -22,6 +22,7 @@ import {
   logoutDesktopOwner,
   openDesktopProjectFile,
   openDesktopResult,
+  openDesktopAlexandriaCatalogueLine,
   nodeExchangePresentation,
   planNodeCompute,
   planNodeTransfer,
@@ -188,6 +189,16 @@ app.innerHTML = `
       <article class="panel definition">
         <div><p class="eyebrow">Canonical representation edge</p><h2>Identity, evidence, horizon, review</h2></div>
         <p>Three bounded local candidates prove the complete intake route. Drive becomes canonical only after owner decision, promotion, and exact readback.</p>
+      </article>
+      <article class="panel" id="alexandria-source-inspector">
+        <div class="panel-head"><div><p class="eyebrow">Alexandria · owner only · source-backed</p><h2>Verified catalogue line</h2></div><span class="badge">R0/R1 · not canonical</span></div>
+        <p class="muted">Sign in as owner and explicitly select the original pinned open-source-engines README.md. The server verifies the source and pinned receipt before returning a line. No file path, raw source or authentication token is stored in this page.</p>
+        <form id="alexandria-source-form">
+          <label class="field"><span>Catalogue README.md</span><input id="alexandria-source-file" type="file" accept=".md,.txt,text/markdown,text/plain"></label>
+          <label class="field"><span>Pinned source line (e.g. 21 = raylib)</span><input id="alexandria-source-line" type="number" min="1" max="143" step="1" value="21"></label>
+          <button type="submit" class="button" id="alexandria-source-verify">Verify selected source line</button>
+        </form>
+        <pre class="output" id="alexandria-source-result" aria-live="polite">Owner session and original selected file required. No background source fetch.</pre>
       </article>
       <div id="object-review-catalogue" class="graph-stack">
         <article class="panel"><p class="muted">Reading the CGX object review catalogue…</p></article>
@@ -392,6 +403,48 @@ byId<HTMLButtonElement>("owner-logout").addEventListener("click", async () => {
   byId<HTMLButtonElement>("owner-logout").hidden = true;
   byId("owner-auth-state").textContent = "Signed out";
   ownerAuthMessage("warn", "Owner session cleared from this page.");
+});
+
+const alexandriaSourceMount = byId<HTMLElement>("alexandria-source-result");
+byId<HTMLFormElement>("alexandria-source-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const session = requireOwnerSession();
+  if (!session) {
+    alexandriaSourceMount.textContent = "WITHHELD · Sign in to the owner session before source lookup.";
+    return;
+  }
+  const sourceInput = byId<HTMLInputElement>("alexandria-source-file");
+  const lineInput = byId<HTMLInputElement>("alexandria-source-line");
+  const file = sourceInput.files?.[0];
+  const line = Number(lineInput.value);
+  if (!file || file.size <= 0 || file.size > 16384 || !Number.isInteger(line) || line < 1 || line > 143) {
+    alexandriaSourceMount.textContent = "NOT_CACHED · Select the bounded original README.md and a source line.";
+    return;
+  }
+  const button = byId<HTMLButtonElement>("alexandria-source-verify");
+  button.disabled = true;
+  alexandriaSourceMount.textContent = "Verifying selected source against pinned readback…";
+  try {
+    // A user gesture supplies bytes only to the existing authenticated Desktop bridge.
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    if (ownerSessionToken !== session) {
+      alexandriaSourceMount.textContent = "WITHHELD · Owner session changed; source was not sent.";
+      return;
+    }
+    const b64 = btoa(Array.from(bytes, (x) => String.fromCharCode(x)).join(""));
+    const ref = "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:" + line;
+    const result = await openDesktopAlexandriaCatalogueLine(ref, b64, session);
+    if (ownerSessionToken !== session) {
+      alexandriaSourceMount.textContent = "WITHHELD · Session changed before result display.";
+      return;
+    }
+    alexandriaSourceMount.textContent = JSON.stringify(result, null, 2);
+  } catch (error) {
+    alexandriaSourceMount.textContent = "HELD · " + (error instanceof Error ? error.message : "Source verification unavailable");
+  } finally {
+    sourceInput.value = "";
+    button.disabled = false;
+  }
 });
 
 const setNodePlanResult = (
