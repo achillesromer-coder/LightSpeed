@@ -1,0 +1,34 @@
+name: CGX R0 transport subset from PR175
+on:
+  pull_request:
+    paths:
+      - "benchmarks/cgx_unispace_geometric_shorthand/**"
+      - "cgx/domain_templates/unispace_geometric_shorthand_candidate.json"
+      - "cgx/review/r0_subset_source_fold_20261020.json"
+      - "tests/test_cgx_r0_subset_source_fold.py"
+      - ".github/workflows/cgx-unispace-r0-subset.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify source subset and ownership holds
+        run: |
+          python -m json.tool cgx/review/r0_subset_source_fold_20261020.json > /dev/null
+          python -m unittest discover -s tests -p 'test_cgx_r0_subset_source_fold.py' -v
+      - name: Reversible bytes, corruption and cache-negative tests
+        working-directory: benchmarks/cgx_unispace_geometric_shorthand
+        run: |
+          python -m unittest -v test_cgx_geo.py
+          PYTHONPATH=.:../../desktop/LightSpeed_Runtime python -m unittest -v test_node_exchange_r0_adapter.py
+      - name: Keep source owner scope visible
+        run: |
+          test ! -e benchmarks/cgx_unispace_geometric_shorthand/neutral_beings_source_index.json
+          test ! -e benchmarks/cgx_unispace_geometric_shorthand/neutral_beings_filespace.py
