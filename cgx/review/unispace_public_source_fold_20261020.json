@@ -1,0 +1,96 @@
+{
+  "schema": "CGX-UNISPACE-PUBLIC-SOURCE-FOLD/0.1",
+  "status": "REVIEW_ONLY_PRIVATE_GO_STATIC_GATE_OPEN",
+  "source_pr": 174,
+  "source_head": "317156f2b4ad9dddbc9ce5c2137407f726818d5c",
+  "base": "integration/unispace-cgx-observer-facets-20261020",
+  "carried_source_files": [
+    {
+      "path": ".github/workflows/unispace-public-viewer.yml",
+      "git_blob_sha1": "e5c5694741cb49c56f94289ea81c9afcd4b0866a"
+    },
+    {
+      "path": "apps/lightspeed-go/public/cgx/assets/core.js",
+      "git_blob_sha1": "ffa759963ad3252b52987048f82ea1c3c15393f3"
+    },
+    {
+      "path": "apps/lightspeed-go/public/cgx/assets/domain-overviews.js",
+      "git_blob_sha1": "0e552e99fb16f5b44f1886336a440ff66340632d"
+    },
+    {
+      "path": "apps/lightspeed-go/public/cgx/assets/domain-viewer.js",
+      "git_blob_sha1": "2c42e50ef06b40125845361bd3f5132be3109f02"
+    },
+    {
+      "path": "apps/lightspeed-go/public/cgx/assets/viewer.css",
+      "git_blob_sha1": "29cd55cd83ec425b513edcd3412ad6623cb5d6b3"
+    },
+    {
+      "path": "apps/lightspeed-go/public/cgx/assets/viewer.js",
+      "git_blob_sha1": "67847cf55eddc7cc607c65923c01271d6f1d97bc"
+    },
+    {
+      "path": "apps/lightspeed-go/public/cgx/deployment/README.md",
+      "git_blob_sha1": "245dc0144a2e1f56412c17b8a94c965ef1c7ebb2"
+    },
+    {
+      "path": "apps/lightspeed-go/public/cgx/deployment/SQUARESPACE_CGX_EMBED.html",
+      "git_blob_sha1": "579efe73bb85235856820f2fdb7845d5c7b794d3"
+    },
+    {
+      "path": "apps/lightspeed-go/public/cgx/deployment/vercel.json",
+      "git_blob_sha1": "9f4dcff4a709ecce0628785ae1e811c0f82299a5"
+    },
+    {
+      "path": "apps/lightspeed-go/public/cgx/doom/index.html",
+      "git_blob_sha1": "bca04b032423ae9be44f06c541309cd57f81e49c"
+    },
+    {
+      "path": "apps/lightspeed-go/public/cgx/ds/index.html",
+      "git_blob_sha1": "0166b0b2885998a9a38840d1e730543b9e2ebb17"
+    },
+    {
+      "path": "apps/lightspeed-go/public/cgx/eco/index.html",
+      "git_blob_sha1": "70db1f6810361a8f405af1663bd95f1a26a991c4"
+    },
+    {
+      "path": "apps/lightspeed-go/public/cgx/fs/index.html",
+      "git_blob_sha1": "e081b36941f458b1f894bbcaff33c04b1d0365e8"
+    },
+    {
+      "path": "apps/lightspeed-go/public/cgx/index.html",
+      "git_blob_sha1": "f074bcff0d465a0f50e2d4e5f521907a0af74534"
+    },
+    {
+      "path": "apps/lightspeed-go/public/cgx/ps/index.html",
+      "git_blob_sha1": "ece8c67c13c2b81d4c0a4b784ec565e1e1edee69"
+    },
+    {
+      "path": "apps/lightspeed-go/public/cgx/romer/index.html",
+      "git_blob_sha1": "5d65725c35a57e29af58969ab62dbbb31d8b27ad"
+    },
+    {
+      "path": "apps/lightspeed-go/tests/unispace-domains.test.mjs",
+      "git_blob_sha1": "dd962dfa80dde4f790c25840ec30c6bb8dc4c162"
+    },
+    {
+      "path": "apps/lightspeed-go/tests/unispace-public.test.mjs",
+      "git_blob_sha1": "b2ace45c6ed4637de56a59f273beee24802148fb"
+    }
+  ],
+  "publication_filter": {
+    "allowlist_files": 12,
+    "skip": "No wildcard from apps/lightspeed-go/public or dist",
+    "builder": "apps/lightspeed-go/scripts/cgx_public_bundle_guard.py",
+    "package_output": "fresh reviewed cgx/ subtree plus policy and unsigned candidate receipt"
+  },
+  "holds": [
+    "No new deployed URL or remote HTTP acceptance",
+    "No Squarespace modification or SDK activation",
+    "No private LS GO static catalogue release (issue #158)",
+    "No real FS/DS signed native peer (issue #161)",
+    "No owner/legal review of additional external content, rights or direct binaries",
+    "No production merge or automatic promotion"
+  ],
+  "behavior": "Copy only original PR174 synthetic public-viewer assets. Builder refuses extra/missing files, symlinks, credential/operator references, unsafe module paths, missing CSP and source races. Existing LS GO public/data and public/review remain outside the bundle; those source-level exposures remain separate #158 remediation."
+}
