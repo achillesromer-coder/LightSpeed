@@ -47,3 +47,13 @@ jobs:
           print('Known internal-static risk paths:',j['known_internal_static_file_count'])
           print('Gate state:',j['state'])
           PY
+      - name: Keep source-only Alexandria candidate as an owner-review artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: alexandria-offline-review
+          retention-days: 7
+          if-no-files-found: error
+          path: |
+            /tmp/alexandria_offline_reference_candidate.html
+            /tmp/cgx_alexandria_discovery_only.json
+            /tmp/cgx_internal_static_risk_report.json
