@@ -21,7 +21,7 @@ def _sha256(value: bytes) -> str:
 
 
 def _git_blob_sha1(value: bytes) -> str:
-    return hashlib.sha1(b"blob " + str(len(value)).encode("ascii") + b"\\0" + value).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(value)).encode("ascii") + b"\0" + value).hexdigest()
 
 
 def _text_lines(original: bytes) -> list[tuple[int, int, str]]:
@@ -32,7 +32,7 @@ def _text_lines(original: bytes) -> list[tuple[int, int, str]]:
     for line in text.splitlines(keepends=True):
         encoded = line.encode("utf-8")
         end = start + len(encoded)
-        offsets.append((start, end, line.rstrip("\\r\\n")))
+        offsets.append((start, end, line.rstrip("\r\n")))
         start = end
     if start != len(original):
         raise ValueError("unable to cover all original source bytes")
