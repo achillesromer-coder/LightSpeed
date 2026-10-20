@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 from typing import Any
+from cgx.portable_node.alexandria_reference_projection import _public_reference_url
 
 SOURCE_ENVELOPE_SCHEMA = "CGX-SOURCE-ENVELOPE/0.1"
 CONVERSION_RECEIPT_SCHEMA = "CGX-FILE-CONVERSION-RECEIPT/0.1"
@@ -92,6 +93,8 @@ def stage_pinned_catalogue(
                 or not source_urls
                 or any(not isinstance(u, str) or u not in raw_line for u in source_urls)):
             raise ValueError("source line does not prove declared catalogue title and URLs")
+        for url in source_urls:
+            _public_reference_url(url)
         if record.get("rights") != "UPSTREAM_LICENSE_UNVERIFIED" or record.get("state") != "DISCOVERY_REFERENCE_ONLY":
             raise ValueError("linked projects cannot be implicitly promoted")
         selected.append({
