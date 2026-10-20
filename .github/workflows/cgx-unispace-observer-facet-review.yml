@@ -34,7 +34,7 @@ jobs:
           python -m json.tool cgx/domain_templates/depth_profiles.json > /dev/null
           python -m json.tool cgx/review/observer_facet_subset_fold_20261020.json > /dev/null
       - name: Existing Node Exchange and all PR173 read-only facet tests
-        run: python -m pytest -q desktop/LightSpeed_Runtime/tests/test_node_exchange.py
+        run: PYTHONPATH=desktop/LightSpeed_Runtime python -m pytest -q desktop/LightSpeed_Runtime/tests/test_node_exchange.py
       - name: Staged node identity + intake + observer integration
         run: |
           python -m unittest discover -s tests -p 'test_cgx_observer_facet_source_fold.py' -v
