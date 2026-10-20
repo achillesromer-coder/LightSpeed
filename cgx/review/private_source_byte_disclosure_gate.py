@@ -15,6 +15,7 @@ import json
 from pathlib import Path
 import re
 import sys
+from urllib.parse import quote_from_bytes
 
 ROOT=Path(__file__).resolve().parents[2]
 MIGRATION=Path(__file__).with_name("private_object_asset_migration.py")
@@ -22,6 +23,7 @@ MAX_MANIFEST=256*1024
 MAX_SCAN_FILES=50_000
 MAX_SCAN_BYTES=256*1024*1024
 MIN_EMBED_BYTES=64
+MAX_URL_PERCENT_SOURCE_BYTES=256*1024  # Bounded complete-source URL-encoding probe, not exhaustive
 DIGEST_RE=re.compile(r"[0-9a-f]{64}\Z")
 
 class DisclosureHold(ValueError):
@@ -132,6 +134,12 @@ def _encoded_signatures(data:bytes) -> tuple[bytes,...]:
     for ascii_flag in (True,False):
         fragment=json.dumps(text,ensure_ascii=ascii_flag)[1:-1].encode("utf-8")
         if fragment not in result: result.append(fragment)
+    # URL-escaped COMPLETE copies can otherwise evade raw/base64/JSON checks.
+    # Limit the extra expansion; absence of a match is never release approval.
+    if len(data)<=MAX_URL_PERCENT_SOURCE_BYTES:
+        percent=quote_from_bytes(data,safe="").encode("ascii")
+        for variant in (percent,re.sub(rb"%[0-9A-F]{2}",lambda m:m.group().lower(),percent)):
+            if variant not in result: result.append(variant)
     return tuple(result)
 
 def scan_public_distribution(*,repository_root:Path=ROOT,
@@ -174,7 +182,7 @@ def scan_public_distribution(*,repository_root:Path=ROOT,
         "public_release_authorised":False,
         "owner_acl_verified":False,
         "live_http_negative_tests":"NOT_PERFORMED",
-        "limitations":["Complete files, raw embedded blobs, base64, and JSON-escaped complete text only",
+        "limitations":["Complete files, raw embedded blobs, base64, JSON-escaped text, and bounded complete URL-percent-encoded text only",
                        "Not an exhaustive detector of partial, transformed, compressed, encrypted or rendered leaks",
                        "No rights, permission, CDN cache or live deployment approval"],
     }
