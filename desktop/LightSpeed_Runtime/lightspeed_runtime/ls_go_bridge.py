@@ -1973,10 +1973,31 @@ def create_app(root: Path | str) -> FastAPI:
         candidate_ref = body.get("candidate_ref")
         if not isinstance(candidate_ref, str) or len(candidate_ref) > 256:
             raise HTTPException(status_code=400, detail="Bounded catalogue reference required")
+        # Dispatch solely to audited immutable source roots, never client paths.
+        match = re.fullmatch(
+            r"alexandria:external:index:([0-9a-f]{40}):([1-9][0-9]{0,6})",
+            candidate_ref,
+        )
+        catalogues = {
+            "4d54f3995140e64beebef6575760996bf14324ec": (
+                "alexandria_engine_catalogue_real_source_envelope_20261020.json",
+                "075c794da0482a7bff6f46d67956ef2e62486a1914fc78cda3d239bbf3a54a92",
+                7891,
+            ),
+            "3a9ab8fc892a2cdadf8989a72ba7624a11e39cec": (
+                "alexandria_game_catalogue_real_source_envelope_20261021.json",
+                "b7c21b00b2dc88634a4a4dcbac773d01b6e72508c023600e0dd5e2bbd02a199f",
+                37285,
+            ),
+        }
+        if not match or match.group(1) not in catalogues:
+            raise HTTPException(status_code=400, detail="Unsupported catalogue reference")
+        source_commit = match.group(1)
+        receipt_name, trusted_sha256, trusted_size = catalogues[source_commit]
         # The caller may submit user-selected bytes, never a local file path or
         # a claimed digest. The trusted R1 packet is loaded by fixed repo path.
         supplied = body.get("source_base64")
-        if supplied is not None and (not isinstance(supplied, str) or len(supplied) > 24_000):
+        if supplied is not None and (not isinstance(supplied, str) or len(supplied) > 100_000):
             raise HTTPException(status_code=413, detail="Bounded source payload required")
         if supplied is None:
             raw = None
@@ -1985,13 +2006,10 @@ def create_app(root: Path | str) -> FastAPI:
                 raw = base64.b64decode(supplied, validate=True)
             except (ValueError, binascii.Error) as exc:
                 raise HTTPException(status_code=400, detail="Malformed source encoding") from exc
-            if len(raw) > 16_384:
-                raise HTTPException(status_code=413, detail="Source too large for this pinned catalogue")
+            if len(raw) > 65_536:
+                raise HTTPException(status_code=413, detail="Source too large for the allowlisted catalogue")
         repo_root = Path(__file__).resolve().parents[3]
-        receipt_path = (
-            repo_root / "cgx" / "review"
-            / "alexandria_engine_catalogue_real_source_envelope_20261020.json"
-        )
+        receipt_path = repo_root / "cgx" / "review" / receipt_name
         adapter_path = (
             repo_root / "cgx" / "portable_node"
             / "pinned_catalogue_source_intake.py"
@@ -2000,10 +2018,14 @@ def create_app(root: Path | str) -> FastAPI:
             raise HTTPException(status_code=503, detail="Trusted Alexandria catalogue is unavailable")
         try:
             packet = json.loads(receipt_path.read_text(encoding="utf-8"))
+            envelope = packet.get("source_envelope", {})
             if (packet.get("schema")
                 != "CGX-ALEXANDRIA-REAL-R0R1-UPSTREAM-CATALOGUE-RECEIPT/0.1"
-                or packet.get("source_envelope", {}).get("sha256")
-                != "075c794da0482a7bff6f46d67956ef2e62486a1914fc78cda3d239bbf3a54a92"):
+                or not isinstance(envelope, dict)
+                or envelope.get("sha256") != trusted_sha256
+                or envelope.get("byte_length") != trusted_size
+                or packet.get("source_proof", {}).get("readme_git_blob_verifies") is not True
+                or envelope.get("lineage", {}).get("pinned_commit") != source_commit):
                 raise ValueError("Untrusted catalogue receipt")
             # Source adapter is from this exact checked-out repository root;
             # never import or execute a client-selected module/path.
