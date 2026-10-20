@@ -77,6 +77,11 @@ def _record_aliases(record: dict[str, Any], asset: dict[str, Any]) -> list[str]:
 
 
 def _score(query: str, aliases: list[str]) -> tuple[int, int]:
+    # Identity lookups must never degrade to a source-name token match.
+    # For example an unknown CGX root shares 'Cognigrex' with InterSol's
+    # source label, but that label is not a binding of the requested root.
+    if re.fullmatch(r"(?:cgx:[^\s]+|[A-Z]{1,8}-\d+(?:-[A-Z0-9]+)*)", query, re.IGNORECASE):
+        return (1000, 0) if any(query.casefold() == alias.casefold() for alias in aliases) else (0, 0)
     qn = _norm(query)
     qt = _tokens(query)
     best_exact = 0
@@ -167,7 +172,7 @@ def resolve_object_context(
     if len(candidates) > 1:
         a = (top["exact_score"], top["overlap_score"])
         b = (candidates[1]["exact_score"], candidates[1]["overlap_score"])
-        if a == b and a[0] < 1000:
+        if a == b:
             raise CGXObjectContextError(
                 "ambiguous object query; use a twin_id, semantic Object_ID, or more specific name"
             )
