@@ -1,0 +1,65 @@
+{
+  "schema": "CGX-UNISPACE-OBSERVER-FACET-SOURCE-FOLD/0.1",
+  "state": "DRAFT_SOURCE_ONLY_NOT_REMOTE_TRANSPORT",
+  "parent_review_branch": "integration/unispace-cgx-native-intake-20261020",
+  "source_pr": 173,
+  "source_head": "03448282109278aef1f2745086b5176cdb615159",
+  "carried_source_files": [
+    {
+      "path": "desktop/LightSpeed_Runtime/lightspeed_runtime/node_exchange.py",
+      "git_blob_sha1": "e7af9133c7e4f3dab3a450bcf0784e12e3854c09"
+    },
+    {
+      "path": "desktop/LightSpeed_Runtime/tests/test_node_exchange.py",
+      "git_blob_sha1": "d08184ef9925e8555c392a657bdf3ba9ecbb5173"
+    },
+    {
+      "path": "cgx/domain_templates/node_exchange_contract.json",
+      "git_blob_sha1": "f52e0f8d8931515256003691615670774e3eb7aa"
+    },
+    {
+      "path": "cgx/domain_templates/semantic_view_lens_registry.json",
+      "git_blob_sha1": "78a8c294a5eb778fd4b08266f0dfc9d9e130783b"
+    },
+    {
+      "path": "cgx/domain_templates/cognigrex_parent_topology.json",
+      "git_blob_sha1": "d3d62233d7f088738a4be9a541d2a66e57329a81"
+    },
+    {
+      "path": "cgx/domain_templates/corpus_inclusion_registry.json",
+      "git_blob_sha1": "8b43868751448ca7911fa9c92b37782a10bc65a0"
+    },
+    {
+      "path": "cgx/domain_templates/depth_profiles.json",
+      "git_blob_sha1": "127777c2580ab0f598b929bf78c7554111b7db03"
+    }
+  ],
+  "desktop_source_manifest_delta": "Only existing node_exchange.py SHA-256/size updated; retained all 734 other source-manifest entries, including PR177 exact identity and PR186 native intake.",
+  "maturity": {
+    "rolling_observer": "READ_ONLY_SYNTHETIC_SOURCE_TEST",
+    "dataspace_n_node": "CONFIGURABLE_PURE_DELTA_CANDIDATE",
+    "prism_slice": "LOCAL_PREVIEW_NO_LIVE_NATIVE_ENROLLMENT",
+    "geometric_cell": "MATHEMATICAL_PROJECTION_NOT_VERIFIED_PHYSICAL_CAD",
+    "hydration_fract_key": "NON_SECRET_SOURCE_LOCATOR_CONTRACT",
+    "sai_application": "CONTRACT_REVIEW_NOT_LEGAL_GOVERNMENT_AUTHORITY"
+  },
+  "excluded": [
+    "ls_go_job_consumer.py",
+    "ls_go_bridge.py",
+    "source_intake_executor.py",
+    "mcp/cgx_tools/server.mjs",
+    "local_floor_runner.py",
+    "local_agent_wakeup.py",
+    "cgx/public_skeletons/alexandria.public.cgx",
+    "hardware-and-OS-device-plugins"
+  ],
+  "holds": [
+    "#158 private/static segregation",
+    "#161 signed authentic peers, independent witness and hash readback",
+    "Source root, semantic owner and DBR authority cannot be inferred by N observers",
+    "R0 byte geometry is not H3 semantic geometry",
+    "FKC is a locator not cryptographic grant",
+    "No government surveillance or secret public suppression",
+    "No physical device/printing or production authorization"
+  ]
+}

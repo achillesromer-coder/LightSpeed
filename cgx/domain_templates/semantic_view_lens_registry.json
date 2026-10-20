@@ -260,6 +260,378 @@
     ],
     "must_be_reproducible": true,
     "may_be_host_local": true,
-    "canonical_mutation_requires_separate_command": true
+    "canonical_mutation_requires_separate_command": true,
+    "read_only_facets": {
+      "cross_surface_spatiotemporal": {
+        "status": "REVIEW_ONLY_CONTRACT / NO_INSTALLED_OR_PUBLIC_RUNTIME_ACTIVATION",
+        "purpose": "One existing Cognigrex.cgx Object_ID selected from Chat, Maps, MPL globe, GMAT mission view, LS GO or workspace/dataspace resolves into a permission-checked, time-bound read-only projection; no parallel map store, mission master, public relay or runtime.",
+        "existing_lenses": [
+          "map-spatial",
+          "timeline-dbr",
+          "active-object-inspector",
+          "chat-generative",
+          "twin-3d",
+          "evidence-claim",
+          "network-runtime"
+        ],
+        "owner_issue": "LightSpeed#161",
+        "privacy_release_gate": "LightSpeed#158",
+        "canonical_selection_fields": [
+          "Object_ID",
+          "domain_id",
+          "type_id",
+          "source_revision",
+          "source_sha256",
+          "state_root",
+          "DBR_root",
+          "geometry_ref",
+          "geometry_root",
+          "evidence_class",
+          "source_owner",
+          "rights_acl_ref"
+        ],
+        "selector_context_fields": [
+          "requested_lens",
+          "audience",
+          "viewer_role",
+          "capability_lease_ref",
+          "scenario_run_id",
+          "requested_valid_at",
+          "requested_recorded_at",
+          "device_capabilities"
+        ],
+        "spatial_contract": {
+          "required_if_geometric": [
+            "coordinate_reference_system",
+            "datum",
+            "coordinate_axis_order",
+            "linear_or_angular_units",
+            "geometry_source_ref",
+            "geometry_source_hash",
+            "source_resolution_or_tolerance"
+          ],
+          "conditional_if_vertical_or_dynamic": [
+            "height_datum",
+            "vertical_units",
+            "frame_origin",
+            "reference_body",
+            "epoch_time_scale",
+            "transform_method_and_source",
+            "position_uncertainty"
+          ],
+          "constraint": "Map coordinates and basemap imagery are visual context. Reproject/transform with source- and accuracy-qualified methods before engineering decisions. Geometry adjacency does not imply network connectivity, elevation equivalence or permission."
+        },
+        "temporal_contract": {
+          "valid_at": "physical, simulated or domain-valid epoch",
+          "recorded_at": "time observation/source revision became known to CGX",
+          "resolved_at": "time an owner-reviewed interpretation or decision was accepted; may be absent",
+          "rules": [
+            "Never silently replace a historical valid-time view with the latest recorded state.",
+            "Retain contradictory, superseded and unknown temporal states with provenance.",
+            "Require explicit time scale/frame/epoch for GMAT exports and time-bearing terrestrial sensors.",
+            "A timestamp alone does not verify signature, clock calibration, measurement independence or physical truth."
+          ]
+        },
+        "authority_and_flow": {
+          "map": "Discovery and 2D geographic representation; not GIS survey authority, owned persistence, mission propagation, risk method or physical transmitter.",
+          "mpl": "Romer-MPL owns PRE_RELEASE Maximum Probable Loss screening and its documented heuristic/external hazard-geometry limitations; no regulatory approval by visual overlay.",
+          "gmat": "Native GMAT owns named scenario, force model, frame, time system, propagation/event/state-vector receipt; browser animation or a labelled scenario is not a native GMAT run.",
+          "cgx": "Existing FileSpace owns object/root and source identity; DataSpace transports only authorised verified deltas under existing leases/readbacks.",
+          "lightspeed": "Existing installed Smith/LightSpeed executor owns typed queues and receipts; host-offline state cannot be inferred as a successful run.",
+          "guest": "Existing #172 reviewer and #174 synthetic-only public presentation; no direct private API, host file path, unrestricted source/mesh, private content hash or canonical mutation.",
+          "interaction_steps": [
+            "resolve exact Object_ID from selection",
+            "verify existing source/root and viewer authority server-side",
+            "select explicit spatial frame and valid/recorded epoch",
+            "project allowlisted existing lens and admitted evidence",
+            "return unknown/withheld/no-data where evidence absent",
+            "capture attributable reviewer question/hold/overlay suggestion",
+            "route any approved write to separate owner Resolve and append-only DBR receipt"
+          ]
+        },
+        "public_projection_constraints": [
+          "Client-provided role, permission flag, release class, approved receipt or model hash never substitutes for trusted server-side verification.",
+          "Only owner-approved Public projections with attributable source rights, released content hash and current approval receipt may be served.",
+          "Response on withheld objects is non-enumerating; private roots, geometry, node roster and metadata are not disclosed through static assets.",
+          "No public execution, live network exchange, automatic GMAT/MPL calculation, deployment or root promotion is authorised by this facet."
+        ],
+        "alexandria_physical_boundary": {
+          "semantic_graph": "Dual-dodecahedral metaphor may organise concepts and relations; does not establish a geodetic or RF coverage mesh.",
+          "candidate_sites": "Global capitals are possible research/administrative anchors, not measured backbone, powered nodes or legal spectrum rights.",
+          "australias_contingency": "Australian sovereign primary and independent fallback domains are a resilience design objective, not demonstrated geographic coverage.",
+          "unverified": "Biosphere resonant electromagnetic boundary, worldwide backscatter handshake and lone-node bridging remain physical hypotheses requiring approved sensors, RF link budgets, calibration, propagation measurements and independent tests."
+        },
+        "acceptance_gates": [
+          "JSON/lens registry and source-contract regression PASS at exact branch head",
+          "one owner-approved object selected consistently across two authorised views without root drift or private leakage",
+          "native GMAT run receipt with scenario/forces/frame/epoch and independent benchmark before claiming orbit accuracy",
+          "MPL current-source risk/browser receipt and independent required hazard geometry before regulatory parity",
+          "private static-asset negative tests, revoked guest tests and four-seat reviewer policy approvals under #158/#172",
+          "two separately authenticated devices with peer lease/sequence/replay/delta exact readback under #161",
+          "no physical radio/backscatter qualification until separately instrumented and legally authorised"
+        ],
+        "semantic_authority": false,
+        "execution_authority": false,
+        "canonical_mutation_authorized": false,
+        "public_publish_authorized": false,
+        "physical_transmission_authorized": false
+      },
+      "rolling_observer": {
+        "source": "existing CGX DataSpace observation window; no separate source authority",
+        "required_context": [
+          "Object_ID",
+          "geometry_root",
+          "semantic_root",
+          "model_root",
+          "prior_state_root",
+          "selected_nodes",
+          "window_end_ms"
+        ],
+        "nine_local_semantics": [
+          "state",
+          "transition",
+          "persistence",
+          "stability",
+          "activity",
+          "oscillation",
+          "spatial_corroboration",
+          "evidence_quality",
+          "release_projection"
+        ],
+        "output": "single shared observation produces nine local projections; no nine-fold independent-information claim",
+        "operation": "opt-in; 1s sampling, 5s phase, 60s rolling reconciliation, no required per-second RF transmit",
+        "privacy": "release_projection stays WITHHELD until distinct owner-approved publication policy and authorisation",
+        "epistemic": "OBSERVATIONAL_CANDIDATE; independent corroboration and physical model proof external to view",
+        "semantic_authority": false,
+        "execution_authority": false
+      }
+    },
+    "configurable_n_dataspace": {
+      "status": "opt_in_local_view_candidate",
+      "basis": "single canonical FileSpace model, sparse DataSpace observations and exact prior/context-root references",
+      "selectable_dimensions": [
+        "included/excluded observer nodes (N)",
+        "visibility and authorised source scope",
+        "geometric interfaces",
+        "derivable functions",
+        "typed evidence relationships",
+        "registered semantic lenses",
+        "time-phase rules",
+        "qualified transport candidates"
+      ],
+      "interpretation": "locally select task-appropriate views; one observation may feed many applications but cannot convey new independent information without new evidence",
+      "geometric_disposition": "coordinate frame, displacement, phase, geometry, quantiser baseline and model assumptions are attributes of source-governed geometry/model roots, not encryption secrets",
+      "public_scope": "do not expose private node rosters, sensitive geometry, internal roots or non-public source metadata",
+      "procedural_binding": "node_exchange.validate_dataspace_profile and build_dataspace_delta_candidate, no new render engine or object store",
+      "no_canonical_promotion": true
+    },
+    "geometric_press_capacity_facet": {
+      "status": "REVIEW_ONLY_ADDITIVE_CONTRACT_NO_INSTALLED_UI_OR_STORAGE_MUTATION",
+      "purpose": "Extend the existing UniSpace/CGX geometric Press and semantic projections to model occupied, reserved, neutral and expandable typed cells; reuse one FileSpace source graph, not a second datastore, application, print controller or master.",
+      "input_sources": [
+        "current Object_ID / typed classes, aliases, parent-child relationships and source hash",
+        "authoritative geometry_root, source unit, coordinate frame and valid 2D polygon or 3D closed mesh",
+        "explicit user scope, preferred licensed lenses, current permissions and device rendering capabilities",
+        "measured utilization, estimated demand, environment constraints and uncertainty when actually sourced",
+        "scoped observer identities and independently supported observations (not derived public symbol keys)"
+      ],
+      "user_interaction": {
+        "entry": "existing desktop Web2 Press/no-publish or existing LS GO view; source-to-executable match required before activation",
+        "geometric_seed": "user chooses 3..128 sides; n=4 regular seed is an exact square, not a volume",
+        "operations": [
+          "left-click or touch add/select typed cell",
+          "edit vertex, edge or angle with explicit selected constraints",
+          "undo/redo reversible geometry delta",
+          "inspect occupied/reserved/free/unknown frontier",
+          "choose data imprint layers and family-owned semantic lenses",
+          "preview before storing a proposed source-bound delta",
+          "export or share only a classified projection with a separate release receipt"
+        ],
+        "validation": [
+          "closed consistent polygon",
+          "positive signed area for expected winding",
+          "no self-intersections or degenerate zero-length edges",
+          "explicit m / m2 / m3 and frame where physical",
+          "depth>0 or closed orientable 3D boundary before computing physical volume",
+          "collision/adjacency and allocation bounds",
+          "lossless serialization of declared geometry fields",
+          "source root/permission and provenance retained"
+        ],
+        "display_symbols": "base-2..36 numerals, letters and glyphs are optional encodings/aliases; not cryptographic keys, physical constants or new independent observations",
+        "calculations": "logarithm base b is a declared numerical-model choice with b>0 and b!=1; independent of number of sides"
+      },
+      "cell_states": {
+        "OCCUPIED": "committed source-backed object footprint and access scope",
+        "RESERVED": "bounded allocation with reason, owner, expiry and estimated utilization",
+        "FREE": "measured geometry with no current allocation; not automatically authorized for publication or execution",
+        "GROWTH_CANDIDATE": "modelled demand buffer, not yet physically or canonically assigned",
+        "NEUTRAL_UNBOUND": "valid neutral placeholder awaiting class, material, capability or owner decision",
+        "UNKNOWN": "absent or incompatible evidence; must not be interpreted as empty/free/zero",
+        "WITHHELD": "known existence or relationships may be non-disclosable; return non-enumerating safe view",
+        "CONFLICT": "concurrent geometry/source/allocation revisions disagree; no silent overwrite"
+      },
+      "allocation_and_allometry": {
+        "method": "derive effective occupied capacity and resource costs from exact geometry plus independently sourced task/resource constraints, then propose selective local cell splitting, adjacency and boundary reflow without changing original source bytes",
+        "model": "y=k*x^alpha may be used ONLY for a specified domain, measured/calibrated k and alpha, comparable units, valid size interval and confidence interval; otherwise UNSUPPORTED_MODEL and deterministic bounded scenario sweep",
+        "costs": [
+          "reflow geometry movement",
+          "inter-cell interfaces and graph edge updates",
+          "latency/bytes and caching",
+          "compute/energy and local memory",
+          "privacy boundary",
+          "retained slack for expected demand",
+          "failure-domain independence"
+        ],
+        "objective": "minimize weighted reflow + transfer + execution + risk cost subject to geometry validity, hard permissions, pinned source/revision constraints and reserve limits; compare with no-reflow baseline",
+        "evidence_ceiling": "forecasts/allometric analogy do not prove biological law, astrophysical relation, material compatibility or physical machinery readiness",
+        "replanning_triggers": [
+          "source hash or geometry root changed",
+          "observed utilization exceeds validated threshold",
+          "lease/owner/resource constraint changed",
+          "independent measurement invalidates scaling fit",
+          "dependent object/child inheritance invalidated"
+        ],
+        "replication": "DNA-like templating is an analogy for source-hashed reusable recipes and reversible graph forks: no overwrite of parent, duplicate secret, clone of physical material, or lineage deletion",
+        "deduplication": "same source sha256 may reuse immutable bytes and cache; distinct Object_ID authority, licence, history, physical state and child provenance remain separate; merge views by reference only"
+      },
+      "family_profiles": {
+        "Cognigrex": "FileSpace source/custodial grammar, DataSpace semantic resolver, content-addressed root and typed class hierarchy",
+        "Eco-Grex": "habitat, ecological corridor, monitoring-series, network interaction, environmental provenance and local uncertainty",
+        "Römer-Grex": "geometry, CAD, production interfaces, corridor/Mark/Luke, orbit/field models with distinct physical witness gates",
+        "EMASSC": "source-owned experimental evidence, IP rights, protocol/test-run and engineering authority review",
+        "SAI": "Shared Australian Intelligence public/private consented utility, scoped national and local-first projection with no government authority implied",
+        "LightSpeed": "existing leased local/runtime execution and queued progress receipts; never a second source root",
+        "International": "consented individually named federated sources only, with per-source rights and jurisdiction; no automatic access or sovereign claims"
+      },
+      "storage_placement_intent": {
+        "authority": "do not move, rename, overwrite or recursively absorb native .cgx carriers until host filesystem manifest, backups, links, free space, rights and cross-drive references are verified",
+        "existing_host_roots_to_preserve": [
+          "C:\\Cognigrex",
+          "D:\\LightSpeed"
+        ],
+        "user_requested_logical_roles": {
+          "C:": "Römer-Grex projection",
+          "D:": "Eco-Grex projection",
+          "E:": "small public-safe UniSpace/EMASSC kitset staging"
+        },
+        "mapping_rule": "logical CGX mount/namespace first, physical volume mapping after existing root conflict checks and operator-approved exact move manifest; do not assume E: exists",
+        "protected_paths": [
+          "C:/Documents",
+          "C:\\Users\\acc\\Documents",
+          "all configured user Documents locations"
+        ],
+        "publication": "public-safe kitset by explicit object/field/IP/privacy approval, reproducible source snapshot, license, hashes, negative static leak check and rollback; no private 605-object catalogue, 411-geometry atlas, 16 internal 4K assets or credentials by default"
+      },
+      "mesh_and_render_projection": {
+        "source": "existing CGX atlas, 2D/3D renderer, 4D state and PR173 geometric observer selection; reuse current Press and LS GO rather than adding new renderer",
+        "keys": [
+          "Object_ID",
+          "source_sha256",
+          "geometry_root",
+          "renderer_version",
+          "selected_view_lenses",
+          "unit_frame",
+          "ACL_release_class"
+        ],
+        "recomputation": "invalidate only impacted descendants, regenerate changed authorized view meshes and render-cache entries; do not imply every child has a real 3D asset",
+        "printspace": "directional X_to_Y process, environment, curing, encapsulation, native material witness and safe-state explicitly independent from semantic shape selection",
+        "side_effects": "all changes default preview-only, no installed app patch, physical machine action, external outreach send or release from this contract"
+      },
+      "distributed_observation": {
+        "offered": "n scoped nodes/lenses, default candidate 3-of-5 only when five independent admitted observations are actually available",
+        "safeguards": "correlated/common-source observations count only as supported evidence; signed device identity, ACL, current lease, replay protection and verified prior root are separate mandatory controls",
+        "status": "SIMULATED_LOCAL_CANDIDATE; two physical authorized nodes and node_exchange DS-01..08 remain independent acceptance gates"
+      },
+      "readiness": {
+        "source_contract": "STAGED_FOR_REVIEW",
+        "desktop_press_executable": "UNIDENTIFIED",
+        "host_online": "NOT_VERIFIED",
+        "user_keys": "NOT_MINTED",
+        "drive_to_host_ack": "NOT_VERIFIED",
+        "n_node_real_handshake": "NOT_PROVEN",
+        "public_safe_family_kitsets": "PER_OBJECT_CLASSIFICATION_PENDING",
+        "canonical_promotion_authorized": false
+      }
+    }
+  },
+  "hydration_scatter_projection": {
+    "schema": "CGX-HYDRATION-SCATTER-PROJECTION/1",
+    "owner": "existing semantic_view_lens_registry; no new semantic state",
+    "rule": "A lens requests the minimum hydration planes and receives source-bound FKC references or safe unresolved states. It may scatter one admitted object into several views but cannot mint source, state, authority or witness.",
+    "plane_to_projection": {
+      "H0_IDENTITY": [
+        "filespace-tree",
+        "active-object-inspector",
+        "topology-graph"
+      ],
+      "H1_SOURCE": [
+        "active-object-inspector",
+        "binary/hex",
+        "native-app-sandbox"
+      ],
+      "H2_STRUCTURE": [
+        "filespace-tree",
+        "topology-graph",
+        "twin-3d",
+        "matrix"
+      ],
+      "H3_SEMANTICS": [
+        "active-object-inspector",
+        "matrix",
+        "evidence-claim"
+      ],
+      "H4_RELATIONS": [
+        "topology-graph",
+        "matrix",
+        "evidence-claim"
+      ],
+      "H5_LENS": [
+        "all registered lenses subject to view_selection_policy"
+      ],
+      "H6_STATE": [
+        "timeline-dbr",
+        "network-runtime",
+        "active-object-inspector"
+      ],
+      "H7_CAPABILITY": [
+        "network-runtime",
+        "active-object-inspector"
+      ],
+      "H8_EXECUTION": [
+        "network-runtime",
+        "timeline-dbr",
+        "evidence-claim"
+      ],
+      "H9_WITNESS": [
+        "evidence-claim",
+        "timeline-dbr",
+        "active-object-inspector"
+      ]
+    },
+    "scatter_dimensions": [
+      "domain owner",
+      "hydration plane",
+      "structural layer/fragment",
+      "semantic relation",
+      "lens/view",
+      "device capability",
+      "DataSpace node/observer",
+      "runtime execution surface",
+      "evidence/witness class"
+    ],
+    "fract_key_display": {
+      "default": "internal diagnostic/reference only",
+      "public": "do not expose private source/root fingerprints; use approved public projection IDs",
+      "editable": false,
+      "semantic_authority": false,
+      "execution_authority": false
+    },
+    "orthogonality": [
+      "semantic XY/Z/T is not LightSpeed runtime Z-floor",
+      "FKC hydration plane is not a geometry dimension",
+      "Morton3 chunk address is not a semantic layer",
+      "N layers, N lenses, N nodes and N devices are independently selected counts"
+    ],
+    "canonical_mutation": false
   }
 }
