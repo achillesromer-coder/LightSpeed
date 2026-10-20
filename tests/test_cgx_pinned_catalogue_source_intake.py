@@ -160,6 +160,65 @@ class CatalogueSourceIntakeTests(unittest.TestCase):
             self.assertTrue(0<=row["source_byte_start"]<row["source_byte_end"]<=7891)
             self.assertEqual(len(row["raw_line_sha256"]),64)
 
+    def test_hydrate_selected_line_only_after_independent_access_and_exact_cache(self):
+        staged=run()
+        selected=staged["source_envelope"]["projections"][0]["entries"][0]["candidate_ref"]
+        view=module.hydrate_catalogue_selection(staged,selected,source_bytes=README,access_granted=True)
+        self.assertEqual(view["status"],"SOURCE_PROVEN_R1_VIEW_CANDIDATE")
+        self.assertEqual(view["title"],"Demo Engine")
+        self.assertEqual(view["source_line"],3)
+        self.assertEqual(view["source_sha256"],sha(README))
+        self.assertEqual(view["upstream_reference_urls"],["https://github.com/example/demo"])
+        self.assertEqual(view["licence"],"CC0-1.0")
+        self.assertEqual(view["linked_project_licence"],"UNVERIFIED")
+        self.assertIsNone(view["object_id"])
+        for flag in ("canonical_admission","authenticated","source_bytes_embedded",
+                     "executable_capability","published"):
+            self.assertFalse(view[flag])
+
+    def test_hydration_withheld_before_content_validation(self):
+        staged=run()
+        selected=staged["source_envelope"]["projections"][0]["entries"][0]["candidate_ref"]
+        denied=module.hydrate_catalogue_selection(staged,selected,source_bytes=README,
+                                                  access_granted=False)
+        self.assertEqual(denied["status"],"WITHHELD")
+        self.assertNotIn("source_sha256",denied)
+        self.assertNotIn("title",denied)
+        denied_public=module.hydrate_catalogue_selection(staged,selected,
+                            source_bytes=README,access_granted=True,audience="PUBLIC")
+        self.assertEqual(denied_public["status"],"WITHHELD")
+        self.assertNotIn("candidate_ref",denied_public)
+
+    def test_hydration_missing_source_and_wrong_bytes_fail_closed(self):
+        staged=run()
+        selected=staged["source_envelope"]["projections"][0]["entries"][0]["candidate_ref"]
+        self.assertEqual(module.hydrate_catalogue_selection(
+            staged,selected,access_granted=True)["status"],"NOT_CACHED")
+        wrong=module.hydrate_catalogue_selection(
+            staged,selected,source_bytes=README+b"X",access_granted=True)
+        self.assertEqual(wrong["status"],"SOURCE_MISMATCH")
+        self.assertNotIn("title",wrong)
+        badline=copy.deepcopy(staged)
+        badline["source_envelope"]["projections"][0]["entries"][0]["raw_line_sha256"]="b"*64
+        mismatch=module.hydrate_catalogue_selection(
+            badline,selected,source_bytes=README,access_granted=True)
+        self.assertEqual(mismatch["status"],"PROJECTION_MISMATCH")
+
+    def test_hydration_unknown_selection_or_source_substitution(self):
+        staged=run()
+        self.assertEqual(module.hydrate_catalogue_selection(
+            staged,"another:unknown",source_bytes=README,access_granted=True)["status"],
+            "UNRESOLVED_SELECTION")
+        second=staged["source_envelope"]["projections"][0]["entries"][1]["candidate_ref"]
+        view=module.hydrate_catalogue_selection(
+            staged,second,source_bytes=README,access_granted=True)
+        self.assertEqual(view["title"],"Second Engine")
+        altered=copy.deepcopy(staged)
+        altered["conversion_receipt"]["source_sha256"]="c"*64
+        self.assertEqual(module.hydrate_catalogue_selection(
+            altered,second,source_bytes=README,access_granted=True)["status"],
+            "INVALID_ENVELOPE")
+
     def test_licence_byte_identity_and_rights_boundary(self):
         record=run()["source_envelope"]["lineage"]
         self.assertEqual(record["license_sha256"],sha(LICENSE))
