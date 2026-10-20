@@ -1,0 +1,56 @@
+name: UniSpace public release gate and Alexandria Basic offline kit
+on:
+  pull_request:
+    paths:
+      - "apps/lightspeed-go/package.json"
+      - "apps/lightspeed-go/scripts/checkPublicRelease.mjs"
+      - "apps/lightspeed-go/scripts/checkPublicRelease.test.mjs"
+      - "cgx/review/alexandria_basic_offline_kit.py"
+      - "tests/test_cgx_alexandria_basic_offline_kit.py"
+      - ".github/workflows/cgx-public-release-offline-kit.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test source and distribution static boundaries
+        run: node --test apps/lightspeed-go/scripts/checkPublicRelease.test.mjs
+      - name: Prove currently held public build fails closed without reading asset bytes
+        run: |
+          set +e
+          node apps/lightspeed-go/scripts/checkPublicRelease.mjs --phase source > /tmp/cgx_public_gate.json
+          status=$?
+          set -e
+          test "$status" -eq 2
+          python - <<'PY'
+          import json
+          p=json.load(open('/tmp/cgx_public_gate.json'))
+          assert p['state']=='HOLD_KNOWN_STATIC_DISCLOSURE'
+          assert p['held_count']>0
+          assert not p['public_release_authorised']
+          print('Held known paths:',p['held_count'])
+          PY
+      - name: Test deterministic Alexandria Basic package and learning receipts
+        run: |
+          python -m unittest discover -s tests -p 'test_cgx_alexandria_basic_offline_kit.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_alexandria_offline_reference_preview.py' -v
+          python cgx/review/alexandria_basic_offline_kit.py --output /tmp/Alexandria_Basic_Review_2026-10-20.zip
+      - name: Preserve bounded owner-review ZIP and gate receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: alexandria-basic-public-gate-review
+          retention-days: 7
+          if-no-files-found: error
+          path: |
+            /tmp/Alexandria_Basic_Review_2026-10-20.zip
+            /tmp/cgx_public_gate.json
