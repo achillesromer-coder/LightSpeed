@@ -115,5 +115,51 @@
     "EMASSC.cgx/test method -> executed_by -> LS.cgx/Python or device capability",
     "Eco.cgx/field observation -> acquired_by -> LS.cgx/device/sensor runtime",
     "LS.cgx/result receipt -> evidences -> child-domain claim without becoming that domain's semantic owner"
-  ]
+  ],
+  "programme_authority_crosswalk": {
+    "status": "review-only source reconciliation / not a new canonical owner, filespace child, store or namespace",
+    "hierarchy": [
+      {
+        "id": "SYS-AUS-CAP",
+        "display": "Australian Sovereign Capacity — Complete Infrastructure Framework",
+        "location": "Romer.cgx/australian-capacity",
+        "role": "national engineering, supply-chain, energy, ecological, resilience, industry and workforce capability programme",
+        "authority_source": "https://docs.google.com/document/d/14MHe8ZlbcEm16R_MDIY-kl4-KNm7xWuKSMEBofDpbuQ/edit",
+        "scope": "Australian-origin research programme, not governmental authority"
+      },
+      {
+        "id": "PROD-SAI",
+        "display": "SAI — Shared Australian Intelligence",
+        "parent": "SYS-AUS-CAP",
+        "location": "Romer.cgx/australian-capacity/sai",
+        "role": "local-first, opt-in distributed intelligence and digital utility deployment; national ambition, no measured national deployment",
+        "authority_source": "https://docs.google.com/spreadsheets/d/1BKPZYNfU5UHbTQTwsOT-EtS6l_cm9B2w2XUxBWtkpWw/edit",
+        "implementation_contract": "node_exchange_contract.json"
+      },
+      {
+        "id": "CGX-ROOT",
+        "display": "Cognigrex.cgx / CGX FileSpace",
+        "role": "universal identity, FileSpace geometry, semantic/evidence policy and DataSpace interoperability across authorised child filespaces",
+        "relationship": "technical foundation referenced by, not programme-owned by, SYS-AUS-CAP or PROD-SAI",
+        "source": "https://docs.google.com/document/d/1ZyPusNt3IJqHFUU0tbua75qcJeX_rxoIoqaO-4yV7Rg/edit"
+      }
+    ],
+    "supersession_frontier": {
+      "source": "SAI parent workbook 2026-08",
+      "conflict": "Earlier Australian Intelligence parent wording predates the September national-framework hierarchy.",
+      "rule": "preserve original as source provenance; propose SAI-under-SYS-AUS-CAP semantic reconciliation for owner approval without rewriting history",
+      "release_effect": "none / no auto canonical promotion"
+    },
+    "bridging_rules": [
+      "Programme child identity is not independent CGX root, public authority, transport privilege or agency endorsement.",
+      "FileSpace owns stable Object_ID, source rights, model and geometry roots and DBR; DataSpace is authorised sparse interoperation; PrintSpace is qualified physical manufacturing and measured-return evidence.",
+      "SAI node capacities and security classes are independent; vital deterministic OT and local essential services take precedence over discretionary AI/federation.",
+      "Römer owns the programme engineering domain; Eco-Grex ecological qualification, EMASSC research/IP custody, Raphael scientific/PrintSpace evidence and LS runtime preserve scoped owner authority.",
+      "One static context may produce many local semantic projections, but cannot convey unknown information without evidence, caching or a permitted retrieval path.",
+      "National public research discovery must not impersonate Australian authorities or use SOS/public emergency alert pathways except via specifically authorised systems.",
+      "No public route, private node roster, site-sensitive geometry, radio access, real peer exchange, model truth or material readiness implied by this crosswalk."
+    ],
+    "release_status": "REVIEW_HOLD",
+    "source_proof": "Drive owner text read and compared with current Git owner contracts; no physical or institutional acceptance inferred"
+  }
 }
