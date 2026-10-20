@@ -31,6 +31,12 @@ from .printstack import (
     load_compound_parent_decompositions,
     resolve_compound_parent_decomposition,
 )
+from .interfaces import (
+    compile_interface_binding,
+    compile_interface_graph,
+    find_interface_operator,
+    load_interface_operator_library,
+)
 from .binding import (
     create_witness_coupon_packet,
     resolve_binding_gate,
@@ -52,6 +58,10 @@ __all__ = [
     "compile_printable_stack",
     "load_compound_parent_decompositions",
     "resolve_compound_parent_decomposition",
+    "compile_interface_binding",
+    "compile_interface_graph",
+    "find_interface_operator",
+    "load_interface_operator_library",
     "AdapterError",
     "emit_reference_gcode",
     "InvariantInputError",

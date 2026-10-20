@@ -211,6 +211,7 @@ def main() -> None:
             component_specs,
             stack_id=stack_id,
             relations=spec.get("relations"),
+            interfaces=spec.get("interfaces"),
             horizon=spec.get("horizon", "H-TERR-SITE"),
         )
         write_output(out, args.output)
