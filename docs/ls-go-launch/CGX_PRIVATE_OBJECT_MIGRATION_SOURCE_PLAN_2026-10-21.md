@@ -23,6 +23,21 @@ python cgx/review/private_object_asset_migration.py --root /path/to/LightSpeed \
 ```
 This is not a command automatically executed by automation. It requires a matching plan digest and count, pre-existing absolute target root, non-static/non-repo placement and no existing target file. Exact sources are copied with a temporary file then non-overwriting atomic hardlink, re-read and SHA-256 verified; source originals are retained. Any new source mutation changes the plan digest and requires reapproval. If hardlinks are unsupported on the destination volume, staging fails instead of falling back to a possibly unsafe overwrite.
 
+## Independent post-stage byte-parity verification (new follow-on)
+
+The staged destination is now independently rescanned by `verify_staged_private_copy` after an approved copy; it fails if a source byte/root has changed, if any expected private file is absent, if an extra/unapproved file exists inside `data/`, `review/renders/` or `review/mesh/`, or if a nested/symlink/oversized/unexpected file appears. The staging receipt now includes `post_stage_local_readback: LOCAL_BYTES_MATCH_SOURCE_NOT_AUTHORITY`, only after all 61 source records are re-read and matched. This is a byte-parity result, **not** a permission grant or server/peer acceptance.
+
+Independent, **read-only** operator verification after owner-approved staging:
+
+```sh
+python cgx/review/private_object_asset_migration.py \
+  --root /path/to/LightSpeed \
+  --verify-staged --private-root /existing/owner-approved/private-review \
+  --approved-plan-sha256 <reviewed-plan-sha256> --expected-count 61
+```
+
+This must run before static source removal while the original hash-authoritative files are still available. It never deletes originals, rewrites destination files, starts a node, authenticates a remote owner, or licenses private assets. Existing unknown files *outside the three staged review subdirectories* are not enumerated by this bounded proof and require separate host security review. If the public files are removed after approval, readback against the prior signed root/receipt must replace this original-source-dependent verifier; it is not sufficient to promote a new canonical root.
+
 **Rollback:** no source delete is part of staging. On mismatch/error, stop and retain the source. Any newly staged target files require independent owner inspection before cleanup; this script does not delete those copies or automatically reattempt a partial stage.
 
 ## Release progression and evidence
