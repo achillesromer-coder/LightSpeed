@@ -1,0 +1,141 @@
+{
+  "all_11_dependency_licences_qualified": false,
+  "all_11_dependency_sources_acquired": false,
+  "all_game_assets_rights_qualified": false,
+  "canonical_promotion": false,
+  "frontier": [
+    "AUDIT_OPENAL_CODE_FILE_HEADERS_AND_REMAINING_NOTICES",
+    "RESOLVE_OTHER_10_SUBMODULE_RIGHTS_AT_PINNED_COMMITS",
+    "QUALIFY_GAME_ART_AUDIO_MAPS_FONTS_RIGHTS",
+    "BUILD_IN_ISOLATED_TOOLCHAIN_AND_MEASURE",
+    "NATIVE_SIGNED_OWNER_SOURCE_DBR_READBACK"
+  ],
+  "live_build_executed": false,
+  "native_dbr_verified": false,
+  "openal_licensing": {
+    "bundled_copying_text": "GNU Library General Public License version 2",
+    "distribution_approved": false,
+    "exact_source_code_licence_for_every_file": "UNVERIFIED",
+    "other_third_party_licences_and_artwork": "UNVERIFIED",
+    "readme_claim": "LGPL-licensed OpenAL Soft implementation",
+    "separate_pffft_notice": "redistribution-with-notice-conditions"
+  },
+  "openal_notice_originals": [
+    {
+      "byte_length": 23330,
+      "git_blob_sha1": "8d5d0000656d57b6fc8118c1078aa3172b7c02ec",
+      "path": "COPYING",
+      "sha256": "d808ce217e5b611854da622b57ec29fe545584c48bc5352fae72a4b6e5074a15"
+    },
+    {
+      "byte_length": 1669,
+      "git_blob_sha1": "5f1a8493f23e2823e9f27f05215954da158b760c",
+      "path": "LICENSE-pffft",
+      "sha256": "64056328b3e7bc104e24ef96accc1a7abead156f0c02d1b87c97e3f3a28030de"
+    },
+    {
+      "byte_length": 5358,
+      "git_blob_sha1": "09f9ec24d909c2fe10b4aacff6c87bd3a7aeda68",
+      "path": "README.md",
+      "sha256": "b7d8113e4cff86a1447b8fb514bc58f492e51797b6cb105d1f5e57c6b7ae9d39"
+    }
+  ],
+  "openal_source_ref": "git:kcat/openal-soft@b2c48f7718ef3fcf67921a8b6534c4914e328970",
+  "openal_upstream_tree_pointer": "6db1a18dffdcd9a7022c979354f99417581e5dd0",
+  "pinned_project_tree": "fa8072faa28931a0940ce3599d4cfdfea529f88a",
+  "resolved_gitlinks": [
+    {
+      "declared_path": "cmake/Introspector-generator",
+      "licence_release_approved": false,
+      "pinned_gitlink_commit": "1b1a47226589a0b185da560b1a44835ac407278d",
+      "proof": "PARENT_ROOT_TO_SUBTREE_TO_GITLINK_SHA1_VERIFIED",
+      "source_url": "https://github.com/TeamHypersomnia/Introspector-generator.git",
+      "third_party_source_complete": false
+    },
+    {
+      "declared_path": "src/3rdparty/Catch",
+      "licence_release_approved": false,
+      "pinned_gitlink_commit": "d71b4617e9935f8589870af211f5b7552d743654",
+      "proof": "PARENT_ROOT_TO_SUBTREE_TO_GITLINK_SHA1_VERIFIED",
+      "source_url": "https://github.com/philsquared/Catch.git",
+      "third_party_source_complete": false
+    },
+    {
+      "declared_path": "src/3rdparty/datachannel-wasm",
+      "licence_release_approved": false,
+      "pinned_gitlink_commit": "f9200eb942f66ddbfecf088ce7122d095aca1c3e",
+      "proof": "PARENT_ROOT_TO_SUBTREE_TO_GITLINK_SHA1_VERIFIED",
+      "source_url": "https://github.com/paullouisageneau/datachannel-wasm.git",
+      "third_party_source_complete": false
+    },
+    {
+      "declared_path": "src/3rdparty/imgui",
+      "licence_release_approved": false,
+      "pinned_gitlink_commit": "d7153a8dd5608be7a2e05d1b4c57e5eb179f48ad",
+      "proof": "PARENT_ROOT_TO_SUBTREE_TO_GITLINK_SHA1_VERIFIED",
+      "source_url": "https://github.com/TeamHypersomnia/imgui",
+      "third_party_source_complete": false
+    },
+    {
+      "declared_path": "src/3rdparty/libdatachannel",
+      "licence_release_approved": false,
+      "pinned_gitlink_commit": "6b1e2e620f1e37f0eafeee702eaea0043cb305fd",
+      "proof": "PARENT_ROOT_TO_SUBTREE_TO_GITLINK_SHA1_VERIFIED",
+      "source_url": "https://github.com/paullouisageneau/libdatachannel.git",
+      "third_party_source_complete": false
+    },
+    {
+      "declared_path": "src/3rdparty/lodepng",
+      "licence_release_approved": false,
+      "pinned_gitlink_commit": "18964554bc769255401942e0e6dfd09f2fab2093",
+      "proof": "PARENT_ROOT_TO_SUBTREE_TO_GITLINK_SHA1_VERIFIED",
+      "source_url": "https://github.com/lvandeve/lodepng.git",
+      "third_party_source_complete": false
+    },
+    {
+      "declared_path": "src/3rdparty/openal-soft",
+      "licence_release_approved": false,
+      "pinned_gitlink_commit": "b2c48f7718ef3fcf67921a8b6534c4914e328970",
+      "proof": "PARENT_ROOT_TO_SUBTREE_TO_GITLINK_SHA1_VERIFIED",
+      "source_url": "https://github.com/kcat/openal-soft.git",
+      "third_party_source_complete": false
+    },
+    {
+      "declared_path": "src/3rdparty/polypartition",
+      "licence_release_approved": false,
+      "pinned_gitlink_commit": "4921a9ba4d1f9948508dfe5fc36ff64773ab1416",
+      "proof": "PARENT_ROOT_TO_SUBTREE_TO_GITLINK_SHA1_VERIFIED",
+      "source_url": "https://github.com/ivanfratric/polypartition.git",
+      "third_party_source_complete": false
+    },
+    {
+      "declared_path": "src/3rdparty/rapidjson",
+      "licence_release_approved": false,
+      "pinned_gitlink_commit": "083f359f5c36198accc2b9360ce1e32a333231d9",
+      "proof": "PARENT_ROOT_TO_SUBTREE_TO_GITLINK_SHA1_VERIFIED",
+      "source_url": "https://github.com/Tencent/rapidjson",
+      "third_party_source_complete": false
+    },
+    {
+      "declared_path": "src/3rdparty/rectpack2D",
+      "licence_release_approved": false,
+      "pinned_gitlink_commit": "bbc9d0ec05b9b508f6c781667fec718bf9e78d21",
+      "proof": "PARENT_ROOT_TO_SUBTREE_TO_GITLINK_SHA1_VERIFIED",
+      "source_url": "https://github.com/TeamHypersomnia/rectpack2D.git",
+      "third_party_source_complete": false
+    },
+    {
+      "declared_path": "src/3rdparty/yojimbo",
+      "licence_release_approved": false,
+      "pinned_gitlink_commit": "f2fbf717c3db6b4688fd3cc3883c70a09cab6e03",
+      "proof": "PARENT_ROOT_TO_SUBTREE_TO_GITLINK_SHA1_VERIFIED",
+      "source_url": "https://github.com/TeamHypersomnia/yojimbo.git",
+      "third_party_source_complete": false
+    }
+  ],
+  "schema": "CGX-ALEXANDRIA-PINNED-GITLINK-EVIDENCE/0.1",
+  "source_bytes_embedded": false,
+  "source_project_root": "git:TeamHypersomnia/Hypersomnia@ca177a1a9a73e9e4bf5bb00a00ff1a1905483bee",
+  "status": "PARENT_GITLINKS_VERIFIED_OPENAL_NOTICES_PARTIAL",
+  "verified_gitlink_count": 11
+}

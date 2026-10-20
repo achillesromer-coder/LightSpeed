@@ -8,18 +8,23 @@
   "source_branch_base_head": "3bf4a2f30330013e7eaddb9f1b48bf62865c42e4",
   "upstream_draft_update": {
     "pr": 180,
-    "head": "16c71130b09848b740413b81744df7c5e6069484",
-    "status": "SOURCE_ONLY_NEW_R0_FILES_NOT_FULLY_FOLDED",
-    "specific_unfolded": [
-      "cgx/review/alexandria_hypersomnia_project_source_scope_20261021.json",
-      "cgx/review/alexandria_libdatachannel_source_scope_20261021.json",
-      "cgx/portable_node/individual_game_source_scope.py",
-      "cgx/portable_node/libdatachannel_source_scope.py"
-    ],
-    "warning": "Source intake is partial; dependencies/assets/licences/execution and signed DBR remain HOLD. Avoid bulk copying PR180 bridge, main.ts or desktop manifest onto security fold."
+    "head": "e14448852e05d84262a72ef50ac2230cfa4a6b8f",
+    "status": "SELECTIVE_29_PR180_BLOBS_PLUS_1_PINNED_UPSTREAM_FILE_NOT_FULL_DEPENDENCIES",
+    "specific_unfolded": [],
+    "warning": "29 unchanged source/test blobs copied from original PR #180 and one original libjuice header independently fetched from the immutable upstream git commit and verified against pinned tree SHA. This is partial original-source R0, not complete upstream repository, executable, licence or network qualification. Avoid bulk old UI/bridge/manifest changes.",
+    "frozen_fold_record": "cgx/review/alexandria_source_subset_fold_20261021.json",
+    "carried_git_blob_count": 29,
+    "fresh_direct_upstream_file_count": 1,
+    "unresolved_qualification": [
+      "ALL_LIBJUICE_FILES_AND_DEPENDENCIES",
+      "ALL_GAME_ART_MEDIA_FONTS_RIGHTS",
+      "LIBDATACHANNEL_AND_GAME_BUILD_ABI",
+      "INDEPENDENT_NATIVE_TRANSPORT_AUTHENTICATION",
+      "CANONICAL_OWNER_DBR"
+    ]
   },
   "source_heads": {
-    "PR180": "16c71130b09848b740413b81744df7c5e6069484",
+    "PR180": "e14448852e05d84262a72ef50ac2230cfa4a6b8f",
     "PR181": "bd2117d3975cc4db10dfe763ce92d9b1ad623814",
     "PR182": "db147fae3a77654bf544da870a4c897216389012",
     "PR184": "127979f04243333884ba33a23d04c7addce5e457",

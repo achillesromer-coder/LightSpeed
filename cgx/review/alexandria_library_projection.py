@@ -50,6 +50,8 @@ def project_alexandria_index(root: Path=ROOT) -> dict:
     old,orig=_read(root,CATALOGUES["legacy_games_engines"])
     new,added=_read(root,CATALOGUES["curated_upstream"])
     official,official_source=_read(root,CATALOGUES["official_references"])
+    project,project_file=_read(root,"cgx/review/alexandria_hypersomnia_project_source_scope_20261021.json")
+    channel,channel_file=_read(root,"cgx/review/alexandria_libdatachannel_source_scope_20261021.json")
     records=new.get("repositories")
     official_records=official.get("official_references")
     groups=old.get("groups")
@@ -103,15 +105,43 @@ def project_alexandria_index(root: Path=ROOT) -> dict:
     for track in new.get("learning_tracks",[]):
         for r in track.get("repos",[]):
             if r.lower() not in index: raise ValueError("learning track has missing source: "+r)
+    if (project.get("canonical_object_id") is not None
+        or project.get("canon_admitted") is not False
+        or project.get("all_assets_acquired") is not False
+        or project.get("licence_release_approved") is not False
+        or project.get("source_file_count") != 4
+        or not project.get("related_game_index_ref", "").startswith("alexandria:external:index:")):
+        raise ValueError("project scope improperly upgraded or loses pinned source")
+    if (channel.get("canonical_object_id") is not None
+        or channel.get("parent_source_root") != project.get("source_root")
+        or channel.get("original_file_count") != 5
+        or channel.get("all_project_source_acquired") is not False
+        or channel.get("native_dbr_verified") is not False
+        or channel.get("capability_claims",{}).get("network_interoperability_tested") is not False):
+        raise ValueError("network dependency sample cannot become native accepted peer")
+    samples = [
+        {"domain":"Games","source_root":project["source_root"],
+         "index_reference":project["related_game_index_ref"],
+         "status":project["status"],"source_files_proved":4,
+         "authority":"PARTIAL_R0_SAMPLE_ONLY","public_distribution":False,
+         "executable":False,"canonical_promotion":False},
+        {"domain":"Native peer transport","source_root":channel["source_root"],
+         "parent_source_root":channel["parent_source_root"],
+         "status":channel["status"],"source_files_proved":5,
+         "authority":"PARTIAL_DEPENDENCY_SOURCE_ONLY","public_distribution":False,
+         "executable":False,"canonical_promotion":False}
+    ]
     return {
         "schema":"CGX-ALEXANDRIA-INTERDOMAIN-INDEX-PROJECTION/0.1",
         "status":"DERIVED_DISCOVERY_ONLY_NO_PROVIDER_EXECUTION",
         "semantic_parent":"Cognigrex.cgx",
-        "source_roots":{"legacy_games_engines":orig,"curated_upstream":added,"official_references":official_source},
+        "source_roots":{"legacy_games_engines":orig,"curated_upstream":added,"official_references":official_source,"hypersomnia_sample":project_file,"libdatachannel_sample":channel_file},
         "counts":{
             "legacy_list_entries":sum(len(g["records"]) for g in groups),
             "curated_repository_entries":len(records),
             "official_reference_roots":len(official_records),
+            "original_source_samples":len(samples),
+            "verified_original_sample_files":sum(x["source_files_proved"] for x in samples),
             "raw_external_source_links":legacy_links,
             "qualified_github_homepages":legacy_homepages,
             "non_homepage_source_links":legacy_unknown,
@@ -122,6 +152,7 @@ def project_alexandria_index(root: Path=ROOT) -> dict:
         "domain_counts":dict(sorted(domains.items())),
         "official_domains":dict(sorted(Counter(x["domain"] for x in official_records).items())),
         "cross_catalogue_links":sorted(matched),
+        "source_qualified_samples":samples,
         "source_identity_reference_count":sum(len(x["sources"]) for x in index.values()),
         "all_upstreams_without_release_grants":True,
         "all_upstreams_without_runtime_acceptance":True,

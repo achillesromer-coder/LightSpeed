@@ -1,0 +1,171 @@
+{
+  "all_assets_acquired": false,
+  "all_dependencies_acquired": false,
+  "canon_admitted": false,
+  "canonical_object_id": null,
+  "declared_submodule_count": 11,
+  "declared_submodules": [
+    {
+      "declared_path": "src/3rdparty/polypartition",
+      "evidence": "DECLARED_SUBMODULE_LINK_ONLY",
+      "licence_verified": false,
+      "pinned_submodule_git_commit": null,
+      "source_bytes_acquired": false,
+      "source_url": "https://github.com/ivanfratric/polypartition.git"
+    },
+    {
+      "declared_path": "src/3rdparty/rectpack2D",
+      "evidence": "DECLARED_SUBMODULE_LINK_ONLY",
+      "licence_verified": false,
+      "pinned_submodule_git_commit": null,
+      "source_bytes_acquired": false,
+      "source_url": "https://github.com/TeamHypersomnia/rectpack2D.git"
+    },
+    {
+      "declared_path": "src/3rdparty/openal-soft",
+      "evidence": "DECLARED_SUBMODULE_LINK_ONLY",
+      "licence_verified": false,
+      "pinned_submodule_git_commit": null,
+      "source_bytes_acquired": false,
+      "source_url": "https://github.com/kcat/openal-soft.git"
+    },
+    {
+      "declared_path": "src/3rdparty/lodepng",
+      "evidence": "DECLARED_SUBMODULE_LINK_ONLY",
+      "licence_verified": false,
+      "pinned_submodule_git_commit": null,
+      "source_bytes_acquired": false,
+      "source_url": "https://github.com/lvandeve/lodepng.git"
+    },
+    {
+      "declared_path": "src/3rdparty/Catch",
+      "evidence": "DECLARED_SUBMODULE_LINK_ONLY",
+      "licence_verified": false,
+      "pinned_submodule_git_commit": null,
+      "source_bytes_acquired": false,
+      "source_url": "https://github.com/philsquared/Catch.git"
+    },
+    {
+      "declared_path": "cmake/Introspector-generator",
+      "evidence": "DECLARED_SUBMODULE_LINK_ONLY",
+      "licence_verified": false,
+      "pinned_submodule_git_commit": null,
+      "source_bytes_acquired": false,
+      "source_url": "https://github.com/TeamHypersomnia/Introspector-generator.git"
+    },
+    {
+      "declared_path": "src/3rdparty/imgui",
+      "evidence": "DECLARED_SUBMODULE_LINK_ONLY",
+      "licence_verified": false,
+      "pinned_submodule_git_commit": null,
+      "source_bytes_acquired": false,
+      "source_url": "https://github.com/TeamHypersomnia/imgui"
+    },
+    {
+      "declared_path": "src/3rdparty/yojimbo",
+      "evidence": "DECLARED_SUBMODULE_LINK_ONLY",
+      "licence_verified": false,
+      "pinned_submodule_git_commit": null,
+      "source_bytes_acquired": false,
+      "source_url": "https://github.com/TeamHypersomnia/yojimbo.git"
+    },
+    {
+      "declared_path": "src/3rdparty/rapidjson",
+      "evidence": "DECLARED_SUBMODULE_LINK_ONLY",
+      "licence_verified": false,
+      "pinned_submodule_git_commit": null,
+      "source_bytes_acquired": false,
+      "source_url": "https://github.com/Tencent/rapidjson"
+    },
+    {
+      "declared_path": "src/3rdparty/libdatachannel",
+      "evidence": "DECLARED_SUBMODULE_LINK_ONLY",
+      "licence_verified": false,
+      "pinned_submodule_git_commit": null,
+      "source_bytes_acquired": false,
+      "source_url": "https://github.com/paullouisageneau/libdatachannel.git"
+    },
+    {
+      "declared_path": "src/3rdparty/datachannel-wasm",
+      "evidence": "DECLARED_SUBMODULE_LINK_ONLY",
+      "licence_verified": false,
+      "pinned_submodule_git_commit": null,
+      "source_bytes_acquired": false,
+      "source_url": "https://github.com/paullouisageneau/datachannel-wasm.git"
+    }
+  ],
+  "external_source_authority": "PINNED_UPSTREAM_GIT_COMMIT_NOT_LOCAL_FILE_NAME",
+  "frontier": [
+    "READ_GIT_TREE_FOR_SUBMODULE_GITLINK_SHA",
+    "VERIFY_INDIVIDUAL_SOURCE_AND_DEPENDENCY_LICENCES",
+    "VERIFY_ARTWORK_AUDIO_MAPS_FONTS_AND_THIRD_PARTY_ASSETS",
+    "QUALIFY_ENGINE_BUILD_AND_RUNTIME",
+    "RECEIPTED_OWNER_DB_R_READBACK"
+  ],
+  "function_evidence": [
+    {
+      "compiled": false,
+      "evidence_file": "git:TeamHypersomnia/Hypersomnia@ca177a1a9a73e9e4bf5bb00a00ff1a1905483bee:src/main.cpp",
+      "executed": false,
+      "functional_capability_admitted": false,
+      "kind": "CPP_PROGRAM_ENTRYPOINT_CANDIDATE",
+      "physics_or_gameplay_verified": false,
+      "textual_evidence": "int main("
+    }
+  ],
+  "git_commit": "ca177a1a9a73e9e4bf5bb00a00ff1a1905483bee",
+  "licence_release_approved": false,
+  "native_dbr_verified": false,
+  "project_licence": {
+    "art_media_licensing": "UNVERIFIED",
+    "code_licence_attribution_review_required": true,
+    "distribution_and_network_copyleft_review": "REQUIRED",
+    "licence_text_source": "git:TeamHypersomnia/Hypersomnia@ca177a1a9a73e9e4bf5bb00a00ff1a1905483bee:LICENSE.md",
+    "readme_evidence_source": "git:TeamHypersomnia/Hypersomnia@ca177a1a9a73e9e4bf5bb00a00ff1a1905483bee:README.md",
+    "repository_declared": "AGPL-3.0",
+    "third_party_dependency_licences": "UNVERIFIED"
+  },
+  "related_game_index_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:28",
+  "repository": "TeamHypersomnia/Hypersomnia",
+  "schema": "CGX-ALEXANDRIA-PROJECT-SOURCE-SCOPE/0.1",
+  "source_bytes_embedded": false,
+  "source_file_count": 4,
+  "source_files": [
+    {
+      "byte_length": 1350,
+      "exact_original_available_in_test_fixture": true,
+      "path": ".gitmodules",
+      "sha256": "1b701e2f59cb2d9fa08735eccc4d15e14a44eeae04f761021f3cf71a6c58413b",
+      "source_bytes_in_compact_projection": false,
+      "upstream_git_blob_sha1": "3c24be734f5fa84409787a4b332dc76f4877b86a"
+    },
+    {
+      "byte_length": 34520,
+      "exact_original_available_in_test_fixture": true,
+      "path": "LICENSE.md",
+      "sha256": "76a97c878c9c7a8321bb395c2b44d3fe2f8d81314d219b20138ed0e2dddd5182",
+      "source_bytes_in_compact_projection": false,
+      "upstream_git_blob_sha1": "dbbe3558157f5861bff35dcb37b328b679b0ccfd"
+    },
+    {
+      "byte_length": 28003,
+      "exact_original_available_in_test_fixture": true,
+      "path": "README.md",
+      "sha256": "d8ced64f55c00ea3703fd9e594016b68cd7a45d192db5c492e4431b03cfa56eb",
+      "source_bytes_in_compact_projection": false,
+      "upstream_git_blob_sha1": "aa0b39e83d1c3bc017d8ea81ab2e7e2550b7777f"
+    },
+    {
+      "byte_length": 8410,
+      "exact_original_available_in_test_fixture": true,
+      "path": "src/main.cpp",
+      "sha256": "140fa683d07d30a7cf24bbee4aa0ca1731737ac33d793bb38c3046de5921153b",
+      "source_bytes_in_compact_projection": false,
+      "upstream_git_blob_sha1": "b697675c15ee4c0f1383674de85a9f4a1fa195c8"
+    }
+  ],
+  "source_root": "git:TeamHypersomnia/Hypersomnia@ca177a1a9a73e9e4bf5bb00a00ff1a1905483bee",
+  "status": "PINNED_FOUR_FILE_R0_SOURCE_VERIFIED_R1_CANDIDATE",
+  "upstream_git_tree_sha1": "fa8072faa28931a0940ce3599d4cfdfea529f88a",
+  "whole_repository_acquired": false
+}

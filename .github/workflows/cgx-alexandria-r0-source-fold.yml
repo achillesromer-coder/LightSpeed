@@ -1,0 +1,54 @@
+name: CGX Alexandria pinned R0 selective source fold
+on:
+  pull_request:
+    paths:
+      - "cgx/portable_node/individual_game_source_scope.py"
+      - "cgx/review/alexandria_library_projection.py"
+      - "cgx/portable_node/project_gitlink_evidence.py"
+      - "cgx/portable_node/libdatachannel_source_scope.py"
+      - "cgx/review/alexandria_*_scope_20261021.json"
+      - "cgx/review/alexandria_source_subset_fold_20261021.json"
+      - "cgx/review/cgx_unispace_finishline_evidence_20261021.json"
+      - "tests/fixtures/alexandria_hypersomnia_project/**"
+      - "tests/fixtures/alexandria_hypersomnia_openal/**"
+      - "tests/fixtures/alexandria_libdatachannel/**"
+      - "tests/fixtures/alexandria_libjuice/**"
+      - "tests/test_cgx_real_hypersomnia_project_source.py"
+      - "tests/test_cgx_hypersomnia_gitlinks_openal.py"
+      - "tests/test_cgx_real_libdatachannel_scope.py"
+      - "tests/test_cgx_alexandria_selective_source_fold.py"
+      - ".github/workflows/cgx-alexandria-r0-source-fold.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  exact-source-and-rights-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify complete carried Git-blobs and conflicting runtime exclusion
+        run: |
+          python -m unittest discover -s tests -p 'test_cgx_alexandria_selective_source_fold.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_alexandria_library_security_convergence.py' -v
+      - name: Original Hypersomnia project and dependency Git tree proof
+        run: |
+          python -m unittest discover -s tests -p 'test_cgx_real_hypersomnia_project_source.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_hypersomnia_gitlinks_openal.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_real_libdatachannel_scope.py' -v
+      - name: Preserve prior finish-line source and release holds
+        run: |
+          python -m unittest discover -s tests -p 'test_cgx_unispace_finishline_evidence.py' -v
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          j=json.loads(Path("cgx/review/cgx_unispace_finishline_evidence_20261021.json").read_text())
+          assert j["acceptance_summary"]["checkpoint_coverage_percent"]==47
+          assert j["acceptance_summary"]["public_releases_approved"]==0
+          assert j["acceptance_summary"]["native_two_node_acceptances_verified"]==0
+          assert j["upstream_draft_update"]["carried_git_blob_count"]==29
+          print("Source-only fold evidence accepted; 98% publish-ready NOT demonstrated")
+          PY

@@ -1,0 +1,2694 @@
+{
+  "schema": "CGX-ALEXANDRIA-REAL-R0R1-UPSTREAM-CATALOGUE-RECEIPT/0.1",
+  "verification_date": "2026-10-21",
+  "verification_method": "Exact upstream source Git commit and blob identity, separately computed UTF-8 source SHA-256, 161 per-line byte ranges and SHA-256; source-specific software rights remain unverified.",
+  "source_envelope": {
+    "schema": "CGX-SOURCE-ENVELOPE/0.1",
+    "source_id": "git:bobeff/open-source-games@3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:README.md",
+    "sha256": "b7c21b00b2dc88634a4a4dcbac773d01b6e72508c023600e0dd5e2bbd02a199f",
+    "byte_length": 37285,
+    "source_name": "README.md",
+    "media_type": "text/markdown",
+    "extension": ".md",
+    "adapter_id": "catalogue-readme-stdlib-v0.1",
+    "native_preservation": {
+      "source_ref": "git:bobeff/open-source-games@3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:README.md",
+      "source_sha256": "b7c21b00b2dc88634a4a4dcbac773d01b6e72508c023600e0dd5e2bbd02a199f",
+      "source_byte_length": 37285,
+      "adapter_version": "catalogue-readme-stdlib-v0.1",
+      "round_trip_claim": "LOSSLESS_FOR_DECLARED_FIELDS",
+      "source_bytes_embedded": false,
+      "original_source_locator_required_for_full_roundtrip": true
+    },
+    "authority": "ORIGINAL_UPSTREAM_PROVIDER",
+    "evidence_state": "R0_VERIFIED_R1_CANDIDATE",
+    "release_class": "INTERNAL_REVIEW_NOT_PUBLISHED",
+    "projections": [
+      {
+        "kind": "structure",
+        "status": "R1_LINE_LOCATORS_CANDIDATE",
+        "indexed_entries": 161,
+        "total_lines": 459,
+        "entries": [
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:28",
+            "source_line": 28,
+            "source_byte_start": 871,
+            "source_byte_end": 1083,
+            "raw_line_sha256": "bf5f3f7d55cf12518c333f49b27f0a2854012bd8f14c7332deaaa41b54b088e6",
+            "label": "Hypersomnia",
+            "source_links": [
+              "https://github.com/TeamHypersomnia/Hypersomnia"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:32",
+            "source_line": 32,
+            "source_byte_start": 1104,
+            "source_byte_end": 1261,
+            "raw_line_sha256": "6aa09e0d94354295f9af1d2150e18c82fdf6a4e75876f69e76355d39cadc67eb",
+            "label": "Dead Ascend",
+            "source_links": [
+              "https://github.com/larpon/DeadAscend"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:34",
+            "source_line": 34,
+            "source_byte_start": 1262,
+            "source_byte_end": 1415,
+            "raw_line_sha256": "da3e24a468fbbeb53ffd8a3dfe16f97305ec10c0ebc7a9dac444bd44bacc469d",
+            "label": "Endless Sky",
+            "source_links": [
+              "https://github.com/endless-sky/endless-sky"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:36",
+            "source_line": 36,
+            "source_byte_start": 1416,
+            "source_byte_end": 1592,
+            "raw_line_sha256": "f64d8c0133f369ac5252e68b3e2a558b6bf15ebd3450b1ba17b7ab43aabe95dc",
+            "label": "Pioneer",
+            "source_links": [
+              "https://github.com/pioneerspacesim/pioneer"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:38",
+            "source_line": 38,
+            "source_byte_start": 1593,
+            "source_byte_end": 1777,
+            "raw_line_sha256": "c4419be4196760faf1ee419e2fd3ba73a26aa9f872d8f9d92ee6a48a79451bcb",
+            "label": "ScummVM",
+            "source_links": [
+              "https://github.com/scummvm/scummvm"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:40",
+            "source_line": 40,
+            "source_byte_start": 1778,
+            "source_byte_end": 2073,
+            "raw_line_sha256": "d654423e54b82caf7b4f0524be26784b8e55bbe53c540572d3583f641544804d",
+            "label": "The Legend of Zelda: Twilight Princess",
+            "source_links": [
+              "https://github.com/zeldaret/tp"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:42",
+            "source_line": 42,
+            "source_byte_start": 2074,
+            "source_byte_end": 2282,
+            "raw_line_sha256": "f0a5baf1158e70c6c25367322b062e8798f17693bc2cb54faf1bb5872c712981",
+            "label": "Zelda 3",
+            "source_links": [
+              "https://github.com/snesrev/zelda3"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:46",
+            "source_line": 46,
+            "source_byte_start": 2313,
+            "source_byte_end": 2488,
+            "raw_line_sha256": "913fec03d81669b4c6ffd4db5098fdeeb6486f10cf6998bdb0daab1772dfef2b",
+            "label": "CorsixTH",
+            "source_links": [
+              "https://github.com/CorsixTH/CorsixTH"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:48",
+            "source_line": 48,
+            "source_byte_start": 2489,
+            "source_byte_end": 2640,
+            "raw_line_sha256": "f5bdfd0a44cc0291210722c1914ed8a0ddc572299563490b3d4c1ad15688ac15",
+            "label": "Hurry Curry!",
+            "source_links": [
+              "https://codeberg.org/hurrycurry/hurrycurry"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:50",
+            "source_line": 50,
+            "source_byte_start": 2641,
+            "source_byte_end": 2900,
+            "raw_line_sha256": "18f14020bee1998f7f3f9ca49618460f9853f1be9926e300d3145c24219b15f9",
+            "label": "OpenLoco",
+            "source_links": [
+              "https://github.com/OpenLoco/OpenLoco"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:52",
+            "source_line": 52,
+            "source_byte_start": 2901,
+            "source_byte_end": 3109,
+            "raw_line_sha256": "6bc6abf47d345d863becb99a0185718b4f285127cd144639235b2209623dc3d0",
+            "label": "OpenRCT2",
+            "source_links": [
+              "https://github.com/OpenRCT2/OpenRCT2"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:54",
+            "source_line": 54,
+            "source_byte_start": 3110,
+            "source_byte_end": 3319,
+            "raw_line_sha256": "d47f138345efd79d365a624a87a46020b0a0baea2d12ead3c5efbbc42a3866d7",
+            "label": "OpenTTD",
+            "source_links": [
+              "https://github.com/OpenTTD/OpenTTD"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:58",
+            "source_line": 58,
+            "source_byte_start": 3344,
+            "source_byte_end": 3695,
+            "raw_line_sha256": "e2545355ac1572ea7bad824551740d1f2942d6303faed5a9afec85879dc1cdc7",
+            "label": "Akhenaten",
+            "source_links": [
+              "https://github.com/dalerank/Akhenaten"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:60",
+            "source_line": 60,
+            "source_byte_start": 3696,
+            "source_byte_end": 3948,
+            "raw_line_sha256": "44a83f177d265e29aad6ea1c5c6b111150c5ffc27ce8886927cee0dd6a6ee321",
+            "label": "Citybound",
+            "source_links": [
+              "https://github.com/citybound/citybound"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:62",
+            "source_line": 62,
+            "source_byte_start": 3949,
+            "source_byte_end": 4107,
+            "raw_line_sha256": "4cbff317dd589c747de89dbaf94618d5324327cc9295b670cecc0cb365d29dd3",
+            "label": "Cytopia",
+            "source_links": [
+              "https://github.com/CytopiaTeam/Cytopia"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:64",
+            "source_line": 64,
+            "source_byte_start": 4108,
+            "source_byte_end": 4301,
+            "raw_line_sha256": "84dd22b6502ebce3e5743b8400dee1445282d95400b7f4a868d52caa977beb18",
+            "label": "Egregoria",
+            "source_links": [
+              "https://github.com/Uriopass/Egregoria"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:66",
+            "source_line": 66,
+            "source_byte_start": 4302,
+            "source_byte_end": 4483,
+            "raw_line_sha256": "ac92ee027cdc838aff6f6caed5057d736d4aec60e39ecde06e3f46b516a051cf",
+            "label": "IsoCity",
+            "source_links": [
+              "https://github.com/amilich/isometric-city"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:68",
+            "source_line": 68,
+            "source_byte_start": 4484,
+            "source_byte_end": 4640,
+            "raw_line_sha256": "c8757f01924668b2924148a97511c579b478e06671192d1ec3bca5eabae44810",
+            "label": "Julius",
+            "source_links": [
+              "https://github.com/bvschaik/julius"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:70",
+            "source_line": 70,
+            "source_byte_start": 4641,
+            "source_byte_end": 4874,
+            "raw_line_sha256": "0c4840c7f9ea7eab069a7ab52e9103f46510d7271e1ea503bb87ccc11165b6ef",
+            "label": "micropolisJS",
+            "source_links": [
+              "https://github.com/graememcc/micropolisJS"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:74",
+            "source_line": 74,
+            "source_byte_start": 5014,
+            "source_byte_end": 5195,
+            "raw_line_sha256": "b9a1f572ee12764d081b9a4bd9b44ace3223f188156f7a0868a1b54080839641",
+            "label": "Original:",
+            "source_links": [
+              "https://github.com/unknown-horizons/unknown-horizons",
+              "https://github.com/fifengine/fifengine"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:76",
+            "source_line": 76,
+            "source_byte_start": 5196,
+            "source_byte_end": 5369,
+            "raw_line_sha256": "76a6c136459664483bc01f88328edd2a40231816dae1a4ddf97775f35136b2c8",
+            "label": "Godot port:",
+            "source_links": [
+              "https://github.com/unknown-horizons/godot-port",
+              "https://github.com/godotengine/godot"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:80",
+            "source_line": 80,
+            "source_byte_start": 5393,
+            "source_byte_end": 5830,
+            "raw_line_sha256": "5bbd97368f633fdeb3dde4d9d7169288b29fd1d8f7a409b4d4d711303d6a47a4",
+            "label": ".kkrieger",
+            "source_links": [
+              "https://github.com/farbrausch/fr_public/tree/master/werkkzeug3_kkrieger"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:82",
+            "source_line": 82,
+            "source_byte_start": 5831,
+            "source_byte_end": 5995,
+            "raw_line_sha256": "457d9bde229dbc9a388508298ac322e9ca172e0ee763505b032013b5131821bb",
+            "label": "Anarch",
+            "source_links": [
+              "https://gitlab.com/drummyfish/anarch"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:84",
+            "source_line": 84,
+            "source_byte_start": 5996,
+            "source_byte_end": 6227,
+            "raw_line_sha256": "c63fd29895e651f11b954ce0cf7060ec041bc9f6c0930dee90c92d2a2fa25479",
+            "label": "AssaultCube",
+            "source_links": [
+              "https://github.com/assaultcube/AC",
+              "https://github.com/bsegovia/cube"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:86",
+            "source_line": 86,
+            "source_byte_start": 6228,
+            "source_byte_end": 6487,
+            "raw_line_sha256": "d5e6496186cbae7f5c2501b817617a10725643c95ba67024fb1b0bc13c90f447",
+            "label": "Cube 2: Sauerbraten",
+            "source_links": [
+              "https://sourceforge.net/projects/sauerbraten",
+              "https://github.com/bsegovia/cube"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:88",
+            "source_line": 88,
+            "source_byte_start": 6488,
+            "source_byte_end": 6637,
+            "raw_line_sha256": "81ada0c4668d1e795b42846bf8beed28321ea20004830b6f21d9f60b7ac58437",
+            "label": "Descent 3",
+            "source_links": [
+              "https://github.com/kevinbentley/Descent3"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:90",
+            "source_line": 90,
+            "source_byte_start": 6638,
+            "source_byte_end": 6907,
+            "raw_line_sha256": "f7e223e23b6874810e14996101b2ef09706009093b4e28280fcecb8342adf501",
+            "label": "Liblast",
+            "source_links": [
+              "https://codeberg.org/liblast/liblast",
+              "https://github.com/godotengine/godot"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:92",
+            "source_line": 92,
+            "source_byte_start": 6908,
+            "source_byte_end": 7145,
+            "raw_line_sha256": "04d43b19882b5dc1581de64d4acad3671173a9fe6cdce92854f77c5049d5f34a",
+            "label": "Red Eclipse",
+            "source_links": [
+              "https://github.com/redeclipse/base",
+              "https://github.com/bsegovia/cube"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:94",
+            "source_line": 94,
+            "source_byte_start": 7146,
+            "source_byte_end": 7316,
+            "raw_line_sha256": "c4447313ee0284d810b2a6f14cb780b6d887242b101024e3839325bc029a93af",
+            "label": "Surreal Engine",
+            "source_links": [
+              "https://github.com/dpjudas/SurrealEngine"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:96",
+            "source_line": 96,
+            "source_byte_start": 7317,
+            "source_byte_end": 7473,
+            "raw_line_sha256": "3e05ba7087f549d39c514b394639eece58cf6d7a0c7cd28b548ad0a05bc7b5a2",
+            "label": "The Dark Mod",
+            "source_links": [
+              "https://svn.thedarkmod.com/publicsvn/darkmod_src/trunk"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:98",
+            "source_line": 98,
+            "source_byte_start": 7474,
+            "source_byte_end": 7655,
+            "raw_line_sha256": "2c8e0a5ef819995d3fb7a4dd54d53df32b6957fa49f5fe3b911ecee8a9c3c755",
+            "label": "Xonotic",
+            "source_links": [
+              "https://gitlab.com/xonotic/xonotic"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:102",
+            "source_line": 102,
+            "source_byte_start": 7778,
+            "source_byte_end": 7947,
+            "raw_line_sha256": "10600cdea7669e7cd12e43e3d59ace429cf0559e3cbb88e0381b15555f03b052",
+            "label": "AvP Forever",
+            "source_links": [
+              "https://github.com/dreamer/avp-forever"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:104",
+            "source_line": 104,
+            "source_byte_start": 7948,
+            "source_byte_end": 8092,
+            "raw_line_sha256": "4398e188f3f0c9cab6f8bcd5124f70b48220c95f3e536e74f5222e554e086e78",
+            "label": "avpmp",
+            "source_links": [
+              "https://github.com/mbait/avpmp"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:106",
+            "source_line": 106,
+            "source_byte_start": 8093,
+            "source_byte_end": 8358,
+            "raw_line_sha256": "caf2981e4fad6beecd068c56a2596402981cc81234d735add0d194311bc04511",
+            "label": "NakedAVP",
+            "source_links": [
+              "https://github.com/libsdl-org/SDL",
+              "https://github.com/atsb/NakedAVP"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:110",
+            "source_line": 110,
+            "source_byte_start": 8488,
+            "source_byte_end": 8698,
+            "raw_line_sha256": "a2eff0dca4e287f8d4d1dc6b068a8c5915d7fbc9796a736600b9a3625a7a4bb8",
+            "label": "Duke Nukem 3D",
+            "source_links": [
+              "https://github.com/videogamepreservation/dukenukem3d"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:112",
+            "source_line": 112,
+            "source_byte_start": 8699,
+            "source_byte_end": 8886,
+            "raw_line_sha256": "feaf919ee55edf241d25506b3fd61faf2ce0407d7d2949877fa0cb9155555ac2",
+            "label": "Shadow Warrior",
+            "source_links": [
+              "https://github.com/Azarien/shadow-warrior"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:116",
+            "source_line": 116,
+            "source_byte_start": 8931,
+            "source_byte_end": 8998,
+            "raw_line_sha256": "9fb34f20ac0436269d3a1b1ded9a7a5a51576caaa8a423a621913282e06c7c66",
+            "label": "BuildGDX",
+            "source_links": [
+              "https://github.com/vogonsorg/BuildGDX"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:120",
+            "source_line": 120,
+            "source_byte_start": 9248,
+            "source_byte_end": 9478,
+            "raw_line_sha256": "918dde50e77d43fed031512ba7ffa7fdcceaef0e7ab65053cd48ba6153ad41e6",
+            "label": "JFDuke3D",
+            "source_links": [
+              "https://github.com/jonof/jfduke3d"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:124",
+            "source_line": 124,
+            "source_byte_start": 9688,
+            "source_byte_end": 9912,
+            "raw_line_sha256": "f65e01836d98de20bc6af66de555f15b7a23ae7e4a21e415b90a262c31514fe0",
+            "label": "NBlood",
+            "source_links": [
+              "https://github.com/NBlood/NBlood"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:126",
+            "source_line": 126,
+            "source_byte_start": 9913,
+            "source_byte_end": 10049,
+            "raw_line_sha256": "ee86c1f7c1061689ff2613f71de36c2c5ad30474d82c2206020cb2efed574f73",
+            "label": "NuBuildGDX",
+            "source_links": [
+              "https://github.com/atsb/NuBuildGDX"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:132",
+            "source_line": 132,
+            "source_byte_start": 10563,
+            "source_byte_end": 10680,
+            "raw_line_sha256": "def78b89c86dce1c3beed103befd508519ed2a7e177f3ff1395e747fdb3408de",
+            "label": "Doom",
+            "source_links": [
+              "https://github.com/id-Software/DOOM"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:134",
+            "source_line": 134,
+            "source_byte_start": 10681,
+            "source_byte_end": 10831,
+            "raw_line_sha256": "ab40665fdcf6dadfd583b93e6e585074c456134b55bfa85d77b99230311cc7c3",
+            "label": "DOOM64-RE",
+            "source_links": [
+              "https://github.com/Erick194/DOOM64-RE"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:136",
+            "source_line": 136,
+            "source_byte_start": 10832,
+            "source_byte_end": 10953,
+            "raw_line_sha256": "aef4055a2567cc5f5806e30874ed4484fa78be3490520174929302046c869722",
+            "label": "Doom 3",
+            "source_links": [
+              "https://github.com/id-Software/DOOM-3-BFG"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:138",
+            "source_line": 138,
+            "source_byte_start": 10954,
+            "source_byte_end": 11069,
+            "raw_line_sha256": "d88f7cf85911c237719c4a94e6ff165ceaa3828dccea0c489bb4873bc12ffb64",
+            "label": "Quake",
+            "source_links": [
+              "https://github.com/id-Software/Quake"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:140",
+            "source_line": 140,
+            "source_byte_start": 11070,
+            "source_byte_end": 11180,
+            "raw_line_sha256": "a211cc64d3769afb5f23f4bc0afde0c3fa2ff74d16bbc858e324fd89b13ec377",
+            "label": "Quake II",
+            "source_links": [
+              "https://github.com/id-Software/Quake-2"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:142",
+            "source_line": 142,
+            "source_byte_start": 11181,
+            "source_byte_end": 11313,
+            "raw_line_sha256": "3e0da4f66a365d527da0a26e33904e1bbd7ea20f64ec66e7c52698b7e0285316",
+            "label": "Quake III Arena",
+            "source_links": [
+              "https://github.com/id-Software/Quake-III-Arena"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:144",
+            "source_line": 144,
+            "source_byte_start": 11314,
+            "source_byte_end": 11435,
+            "raw_line_sha256": "db16cad1c8b234c9fc93d122d32f4c2e14bbbe9a00cfa75849cc828aee57beb7",
+            "label": "Wolfenstein 3D",
+            "source_links": [
+              "https://github.com/id-Software/wolf3d"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:150",
+            "source_line": 150,
+            "source_byte_start": 11546,
+            "source_byte_end": 11685,
+            "raw_line_sha256": "369d0efbbe86d15596d0f69f06523ac900d5db6d36af683aa771063d5db9006a",
+            "label": "CatacombGL",
+            "source_links": [
+              "https://github.com/ArnoAnsems/CatacombGL"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:154",
+            "source_line": 154,
+            "source_byte_start": 11754,
+            "source_byte_end": 11974,
+            "raw_line_sha256": "81265c73bc5e82628bddb8490af43bd0384c107f24fcc884c8b11faa5341d71b",
+            "label": "Chocolate Doom",
+            "source_links": [
+              "https://github.com/chocolate-doom/chocolate-doom"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:156",
+            "source_line": 156,
+            "source_byte_start": 11975,
+            "source_byte_end": 12107,
+            "raw_line_sha256": "e62d7f67a2c3f9a4b3bed74109790a42b5e60c90485020a907010e59f525851c",
+            "label": "ZDoom",
+            "source_links": [
+              "https://github.com/UZDoom/UZDoom"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:160",
+            "source_line": 160,
+            "source_byte_start": 12173,
+            "source_byte_end": 12348,
+            "raw_line_sha256": "e97456b866571cf7712a1fec397787edd87abecf23546979bee850093cbf0365",
+            "label": "Chocolate Quake",
+            "source_links": [
+              "https://github.com/Henrique194/chocolate-quake"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:162",
+            "source_line": 162,
+            "source_byte_start": 12349,
+            "source_byte_end": 12496,
+            "raw_line_sha256": "dd9893d08681efa31e3ce057fb161b2a81037854cc59aaca845f2b3449dfe016",
+            "label": "FTEQW",
+            "source_links": [
+              "https://github.com/fte-team/fteqw"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:166",
+            "source_line": 166,
+            "source_byte_start": 12567,
+            "source_byte_end": 12687,
+            "raw_line_sha256": "4feec95e829cfab74483e819b7c93e02640efc26731253c666e04e5f06b0db57",
+            "label": "ECWolf",
+            "source_links": [
+              "https://bitbucket.org/ecwolf/ecwolf"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:168",
+            "source_line": 168,
+            "source_byte_start": 12688,
+            "source_byte_end": 12879,
+            "raw_line_sha256": "fcf208e6dd36719a550308544ea746eedb93b58edf0116ad249556e2cca35514",
+            "label": "Wolf4SDL",
+            "source_links": [
+              "https://github.com/lazd/wolf4sdl"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:179",
+            "source_line": 179,
+            "source_byte_start": 13287,
+            "source_byte_end": 13500,
+            "raw_line_sha256": "2903e8a9de9cdeae969f685b766c42585e77ae1443946e9423113f06628c34f6",
+            "label": "Commander Keen in Keen Dreams",
+            "source_links": [
+              "https://github.com/keendreams/keen"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:181",
+            "source_line": 181,
+            "source_byte_start": 13501,
+            "source_byte_end": 13705,
+            "raw_line_sha256": "33e730f0039ff8817a609daf901d2d5a68440f120af41a08a783e274461b7dbe",
+            "label": "Omnispeak",
+            "source_links": [
+              "https://github.com/sulix/omnispeak"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:183",
+            "source_line": 183,
+            "source_byte_start": 13706,
+            "source_byte_end": 13825,
+            "raw_line_sha256": "1e0dfa39234bf3c94bd17d4e1c3687822f23fb0b71a943295c8c732a984f4b25",
+            "label": "DDraceNetwork",
+            "source_links": [
+              "https://github.com/ddnet/ddnet"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:187",
+            "source_line": 187,
+            "source_byte_start": 13873,
+            "source_byte_end": 14079,
+            "raw_line_sha256": "7510e6e6ab274966bc6f482676329791e57d442c8e3a577dcdca785c5816c669",
+            "label": "Jumpy",
+            "source_links": [
+              "https://github.com/fishfolk/jumpy",
+              "https://github.com/bevyengine/bevy"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:189",
+            "source_line": 189,
+            "source_byte_start": 14080,
+            "source_byte_end": 14265,
+            "raw_line_sha256": "f8b93b0d8b7de4bb3b94ca92bd31380ae7d66431caad96a321a25a54f9fbaf52",
+            "label": "Punchy",
+            "source_links": [
+              "https://github.com/bevyengine/bevy"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:191",
+            "source_line": 191,
+            "source_byte_start": 14266,
+            "source_byte_end": 14505,
+            "raw_line_sha256": "0e9d9c54245993179d9b0370c39a1869224dca1fd1b1c36e997865a0b10b7fd2",
+            "label": "Frogatto & Friends",
+            "source_links": [
+              "https://github.com/frogatto/frogatto",
+              "https://github.com/anura-engine/anura"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:193",
+            "source_line": 193,
+            "source_byte_start": 14506,
+            "source_byte_end": 14698,
+            "raw_line_sha256": "58c327a2cfdcf750ab1487fcc484657d14d8b78c3fe8058168a80c99be722b18",
+            "label": "OpenGOAL",
+            "source_links": [
+              "https://github.com/water111/jak-project"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:195",
+            "source_line": 195,
+            "source_byte_start": 14699,
+            "source_byte_end": 14946,
+            "raw_line_sha256": "0aa2e0ff6c95e00b6c84790a29409b714b6fa198c99a5209ca43a75c69a8fe51",
+            "label": "Rigel Engine",
+            "source_links": [
+              "https://github.com/lethal-guitar/RigelEngine"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:197",
+            "source_line": 197,
+            "source_byte_start": 14947,
+            "source_byte_end": 15103,
+            "raw_line_sha256": "881fa83808d29a31df319797eb9e1c29543a64719827a678853bff787610c7f2",
+            "label": "Sonic Robo Blast 2",
+            "source_links": [
+              "https://git.do.srb2.org/STJr/SRB2"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:199",
+            "source_line": 199,
+            "source_byte_start": 15104,
+            "source_byte_end": 15261,
+            "raw_line_sha256": "0f444cc49fcfaa1a721bc46bcdcf8e940356126a75e1b2df9c2398250c2a7433",
+            "label": "Super Mario 64",
+            "source_links": [
+              "https://github.com/n64decomp/sm64"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:201",
+            "source_line": 201,
+            "source_byte_start": 15262,
+            "source_byte_end": 15361,
+            "raw_line_sha256": "39d310a351c54faf46516d35ce94aafa8e7732f270c7daca4b461fd21378f55d",
+            "label": "VVVVVV",
+            "source_links": [
+              "https://github.com/TerryCavanagh/VVVVVV"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:205",
+            "source_line": 205,
+            "source_byte_start": 15379,
+            "source_byte_end": 15611,
+            "raw_line_sha256": "940669e71ca4cda0355c1ac701cccb957cce6fc383bf49a817ed74208f565ced",
+            "label": "BlockOut II",
+            "source_links": [
+              "https://sourceforge.net/projects/blockout/files/blockout/BlockOut%202.5"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:207",
+            "source_line": 207,
+            "source_byte_start": 15612,
+            "source_byte_end": 15813,
+            "raw_line_sha256": "1c6b4ec5a3e36609ea11225286addf21005ffec7730cfb0314fe7a2085764f5f",
+            "label": "Portal64",
+            "source_links": [
+              "https://github.com/mwpenny/portal64-still-alive"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:209",
+            "source_line": 209,
+            "source_byte_start": 15814,
+            "source_byte_end": 15906,
+            "raw_line_sha256": "4bae6bc40547283fcf91aed8807b6f2f09ae36f44d3db98c2d58b055b256860f",
+            "label": "Whatajong",
+            "source_links": [
+              "https://github.com/masylum/whatajong"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:213",
+            "source_line": 213,
+            "source_byte_start": 15924,
+            "source_byte_end": 16099,
+            "raw_line_sha256": "17a6fc764b1ecf7a1e74d48c51d67c941b10e0389e46c72226f7d92d0ae6ea29",
+            "label": "Dust Racing 2D",
+            "source_links": [
+              "https://github.com/cflavio/yorg"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:215",
+            "source_line": 215,
+            "source_byte_start": 16100,
+            "source_byte_end": 16448,
+            "raw_line_sha256": "7d8aa6beece783713a36cf292cbf4445a752d318d4bc495e8d5f954a01488540",
+            "label": "ManiaDrive",
+            "source_links": [
+              "http://maniadrive.raydium.org/index.php?downloads=yes",
+              "https://raydium.org/data.php"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:217",
+            "source_line": 217,
+            "source_byte_start": 16449,
+            "source_byte_end": 16850,
+            "raw_line_sha256": "57c1413c24a81938f5a7e9a680cda5739fb9df38969256c264b172129145a200",
+            "label": "Rigs of Rods",
+            "source_links": [
+              "https://github.com/RigsOfRods/rigs-of-rods",
+              "https://github.com/OGRECave",
+              "https://github.com/ocornut/imgui"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:219",
+            "source_line": 219,
+            "source_byte_start": 16851,
+            "source_byte_end": 17059,
+            "raw_line_sha256": "42d8f31a1d301b488fa0d61d81074fe3cf801a81800e6d7982e058311d8b0669",
+            "label": "RVGL",
+            "source_links": [
+              "https://gitlab.com/re-volt"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:221",
+            "source_line": 221,
+            "source_byte_start": 17060,
+            "source_byte_end": 17217,
+            "raw_line_sha256": "2de9541ec6c246aafa04052336ed7a95814e01e17a3e0595f1cd654e94de2117",
+            "label": "Speed Dreams",
+            "source_links": [
+              "https://forge.a-lec.org/xavi/speed-dreams-code"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:223",
+            "source_line": 223,
+            "source_byte_start": 17218,
+            "source_byte_end": 17386,
+            "raw_line_sha256": "d57c3680f6a4e545533e2b742cbc91ad9ce9735fdeb0b4f95aad2b69a91cbca1",
+            "label": "Stunt Rally",
+            "source_links": [
+              "https://github.com/stuntrally/stuntrally3"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:225",
+            "source_line": 225,
+            "source_byte_start": 17387,
+            "source_byte_end": 17567,
+            "raw_line_sha256": "6c6df80c24a154e549418e72034d97026a921664aace837a3f83f76f376103ba",
+            "label": "SuperTuxKart",
+            "source_links": [
+              "https://github.com/supertuxkart/stk-code"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:227",
+            "source_line": 227,
+            "source_byte_start": 17568,
+            "source_byte_end": 17838,
+            "raw_line_sha256": "0281c269dafeb849f9b3894ff13133648dd6486b6c90a9a8d9fc9a7042dbb889",
+            "label": "TORCS - The Open Racing Car Simulator",
+            "source_links": [
+              "https://sourceforge.net/projects/torcs"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:229",
+            "source_line": 229,
+            "source_byte_start": 17839,
+            "source_byte_end": 18022,
+            "raw_line_sha256": "c67feb70021f66dfd98a769f3558d4c66115873f22eaa6da0562f2525b3ec674",
+            "label": "Trigger Rally",
+            "source_links": [
+              "https://sourceforge.net/projects/trigger-rally"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:231",
+            "source_line": 231,
+            "source_byte_start": 18023,
+            "source_byte_end": 18186,
+            "raw_line_sha256": "6872c141ee59645f18d003744273f95c02fbe3d7658c2cd816155bb131ff4384",
+            "label": "VDrift",
+            "source_links": [
+              "https://github.com/VDrift/vdrift"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:233",
+            "source_line": 233,
+            "source_byte_start": 18187,
+            "source_byte_end": 18493,
+            "raw_line_sha256": "9f536e414cd988140738d743bf6e381011f682e42e01d100ab17a79baddcbd5f",
+            "label": "Yorg",
+            "source_links": [
+              "https://github.com/cflavio/yorg",
+              "https://github.com/panda3d/panda3d"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:235",
+            "source_line": 235,
+            "source_byte_start": 18494,
+            "source_byte_end": 18734,
+            "raw_line_sha256": "b01c4aa521e6d46406a46e14e19bb501bd84837320166e38a46f30d099330a02",
+            "label": "wipEout",
+            "source_links": [
+              "https://github.com/phoboslab/wipeout-rewrite"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:239",
+            "source_line": 239,
+            "source_byte_start": 18760,
+            "source_byte_end": 18896,
+            "raw_line_sha256": "d901cf2d4a46bea68bae6aeb24bb3c2cd244653051d560524287492a5dbcab28",
+            "label": "0 A.D.",
+            "source_links": [
+              "https://gitea.wildfiregames.com/0ad/0ad"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:241",
+            "source_line": 241,
+            "source_byte_start": 18897,
+            "source_byte_end": 19120,
+            "raw_line_sha256": "1f39f5ddecb46f93cffeec914e73024700b883ad626e01973a0e93b539d26196",
+            "label": "BAR",
+            "source_links": [
+              "https://github.com/beyond-all-reason/Beyond-All-Reason",
+              "https://github.com/spring/spring"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:243",
+            "source_line": 243,
+            "source_byte_start": 19121,
+            "source_byte_end": 19270,
+            "raw_line_sha256": "4f69b27e71bc94ccbe1b9650880e2e83919927e466959b561e259abb61559fe9",
+            "label": "Dune II The Maker",
+            "source_links": [
+              "https://github.com/stefanhendriks/Dune-II---The-Maker"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:245",
+            "source_line": 245,
+            "source_byte_start": 19271,
+            "source_byte_end": 19503,
+            "raw_line_sha256": "7db0a6bb19513c3a263b5db57546b0933223a16b3e371ff99e810ec1415333e7",
+            "label": "Freeserf.net",
+            "source_links": [
+              "https://github.com/Pyrdacor/freeserf.net"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:247",
+            "source_line": 247,
+            "source_byte_start": 19504,
+            "source_byte_end": 19700,
+            "raw_line_sha256": "db17432f823120d7003fa8a9c7b59d9ae2709e9614a941fee4bf7047a20a63f0",
+            "label": "Keeper FX",
+            "source_links": [
+              "https://github.com/dkfans/keeperfx"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:249",
+            "source_line": 249,
+            "source_byte_start": 19701,
+            "source_byte_end": 19832,
+            "raw_line_sha256": "d3d40675c5afbef301ec4ac2428b892266af4522df6b5c6688e6ad2f2e7826c6",
+            "label": "Mindustry",
+            "source_links": [
+              "https://github.com/Anuken/Mindustry"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:251",
+            "source_line": 251,
+            "source_byte_start": 19833,
+            "source_byte_end": 20071,
+            "raw_line_sha256": "59f26ee3053ae6d5e00302922b8ee93486a92586312805f2cacbfad953a1ed2b",
+            "label": "OpenAge",
+            "source_links": [
+              "https://github.com/SFTtech/openage"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:253",
+            "source_line": 253,
+            "source_byte_start": 20072,
+            "source_byte_end": 20223,
+            "raw_line_sha256": "846f5a8775d8c2f4e4fc626b8ffee372e998f114227201559189cb971a016b69",
+            "label": "OpenHV",
+            "source_links": [
+              "https://github.com/OpenHV/OpenHV"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:255",
+            "source_line": 255,
+            "source_byte_start": 20224,
+            "source_byte_end": 20541,
+            "raw_line_sha256": "0756961ce0502a99c5fa9c83bcfca701e1372fb794c519afdbfdf0ef8021788b",
+            "label": "OpenRA",
+            "source_links": [
+              "https://github.com/OpenRA/OpenRA"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:257",
+            "source_line": 257,
+            "source_byte_start": 20542,
+            "source_byte_end": 20693,
+            "raw_line_sha256": "41233c1c09537c88724c964bed450172f963bd73792fd20e64316e6de3f69011",
+            "label": "Permafrost Engine",
+            "source_links": [
+              "https://github.com/eduard-permyakov/permafrost-engine"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:259",
+            "source_line": 259,
+            "source_byte_start": 20694,
+            "source_byte_end": 20865,
+            "raw_line_sha256": "5dc0e2069a74422c4654ffdd038df3fa267cb3656b86003d1bec78fde6de25c9",
+            "label": "Standard Of Iron",
+            "source_links": [
+              "https://github.com/djeada/Standard-of-Iron"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:261",
+            "source_line": 261,
+            "source_byte_start": 20866,
+            "source_byte_end": 21106,
+            "raw_line_sha256": "f406b928b4cbd7d909146174e7a5d36694fe275929c029b32d5818b817e2d93e",
+            "label": "Warzone 2100",
+            "source_links": [
+              "https://github.com/Warzone2100/warzone2100"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:263",
+            "source_line": 263,
+            "source_byte_start": 21107,
+            "source_byte_end": 21250,
+            "raw_line_sha256": "82eec04429e70bc4470d7a75fcf73549364dd3a7604691c00a86145e24a91054",
+            "label": "Widelands",
+            "source_links": [
+              "https://github.com/widelands/widelands"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:270",
+            "source_line": 270,
+            "source_byte_start": 21606,
+            "source_byte_end": 21790,
+            "raw_line_sha256": "6d66a3b85ff4b44c7545c9de24e8edb6c8fc7346a7519a2651a2ee0f7a70fa14",
+            "label": "OpenBW",
+            "source_links": [
+              "https://github.com/OpenBW/openbw",
+              "https://github.com/OpenBW/bwapi"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:272",
+            "source_line": 272,
+            "source_byte_start": 21791,
+            "source_byte_end": 21893,
+            "raw_line_sha256": "e1879298d2b3bf7e974970b10209f1db52accbbcecf4c40475d479297f6c3058",
+            "label": "Strategus",
+            "source_links": [
+              "https://github.com/Wargus/stratagus"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:274",
+            "source_line": 274,
+            "source_byte_start": 21894,
+            "source_byte_end": 22147,
+            "raw_line_sha256": "f94765f4c18817a15d4560112ab807126371b323169867193795aaac960ff5cf",
+            "label": "War1gus",
+            "source_links": [
+              "https://github.com/Wargus/war1gus"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:276",
+            "source_line": 276,
+            "source_byte_start": 22148,
+            "source_byte_end": 22482,
+            "raw_line_sha256": "e808bcdb6694c6e911223d400490122f9c3d2f35f629019f6a11d6839628bfb9",
+            "label": "Wargus",
+            "source_links": [
+              "https://github.com/Wargus/wargus"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:278",
+            "source_line": 278,
+            "source_byte_start": 22483,
+            "source_byte_end": 22656,
+            "raw_line_sha256": "8c2f8555c1d85140e8be3faed6bb7cd9c81cf8bc36b9407a85a0c77fdf49e2bc",
+            "label": "Wyrmsun",
+            "source_links": [
+              "https://github.com/Andrettin/Wyrmsun"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:280",
+            "source_line": 280,
+            "source_byte_start": 22657,
+            "source_byte_end": 22840,
+            "raw_line_sha256": "98d0cb9fab275a49bfcd1cb0d4de1bb546044a4acfe02c7f33227d651d750c89",
+            "label": "Stargus",
+            "source_links": [
+              "https://github.com/Wargus/stargus"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:282",
+            "source_line": 282,
+            "source_byte_start": 22841,
+            "source_byte_end": 23064,
+            "raw_line_sha256": "1aaa7610c7c6b7f78c016eddcb9d3eaf1093978bc2e606ece2cc66af879c6809",
+            "label": "Warsmash Mod Engine",
+            "source_links": [
+              "https://github.com/Retera/WarsmashModEngine",
+              "https://github.com/libgdx/libgdx"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:286",
+            "source_line": 286,
+            "source_byte_start": 23284,
+            "source_byte_end": 23578,
+            "raw_line_sha256": "00906151690ddcdf6404553c827fb71e0ceddd70f5df8c5235833b0e55098d5b",
+            "label": "Command & Conquer Remastered Collection",
+            "source_links": [
+              "https://github.com/electronicarts/CnC_Remastered_Collection"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:288",
+            "source_line": 288,
+            "source_byte_start": 23579,
+            "source_byte_end": 23873,
+            "raw_line_sha256": "e6758c098f7cfa1eaf6a4e986bae1e391567eab4ca0f395fa2ab79632db9c5de",
+            "label": "Generals",
+            "source_links": [
+              "https://github.com/electronicarts/CnC_Generals_Zero_Hour"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:290",
+            "source_line": 290,
+            "source_byte_start": 23874,
+            "source_byte_end": 24016,
+            "raw_line_sha256": "892c65ec77b82eb72890d825478093a17088536aaefd22ddbae484675ebd4d72",
+            "label": "Red Alert",
+            "source_links": [
+              "https://github.com/electronicarts/CnC_Red_Alert"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:292",
+            "source_line": 292,
+            "source_byte_start": 24017,
+            "source_byte_end": 24174,
+            "raw_line_sha256": "14dc4549dfd7f8c1efc92fe8d718ed6f671a715957c9fe6ca6436e0d04bdc27c",
+            "label": "Tiberian Dawn",
+            "source_links": [
+              "https://github.com/electronicarts/CnC_Tiberian_Dawn"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:296",
+            "source_line": 296,
+            "source_byte_start": 24190,
+            "source_byte_end": 24446,
+            "raw_line_sha256": "0f270c9c54e8a8404d846bc9183658b1683d830851f437abf6d6d8b1d3875709",
+            "label": "Brogue CE",
+            "source_links": [
+              "https://github.com/tmewett/BrogueCE"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:298",
+            "source_line": 298,
+            "source_byte_start": 24447,
+            "source_byte_end": 24627,
+            "raw_line_sha256": "09036a0b71290b76f1da94e4661c1272588b8d944f73cd411c37817c61c5ad97",
+            "label": "Cataclysm: Dark Days Ahead",
+            "source_links": [
+              "https://github.com/CleverRaven/Cataclysm-DDA"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:300",
+            "source_line": 300,
+            "source_byte_start": 24628,
+            "source_byte_end": 24872,
+            "raw_line_sha256": "96421ed8bf3a9e4c7566adfc038f0ba6c06be87fd30ff52cbbed2b58bc83ab9e",
+            "label": "Dungeon Crawl Stone Soup",
+            "source_links": [
+              "https://github.com/crawl/crawl"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:302",
+            "source_line": 302,
+            "source_byte_start": 24873,
+            "source_byte_end": 24999,
+            "raw_line_sha256": "e6082b08f8d06dba2dd29ba0cad74d73026dae2a2991381c0c0880c0c357efa2",
+            "label": "NetHack",
+            "source_links": [
+              "https://github.com/NetHack/NetHack"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:304",
+            "source_line": 304,
+            "source_byte_start": 25000,
+            "source_byte_end": 25135,
+            "raw_line_sha256": "f30fe6acb5a8eb82aa57ad0519d5f6e5ce7b0be0000312faf212aa85d821783a",
+            "label": "Meritous",
+            "source_links": [
+              "https://github.com/Patashu/Meritous"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:306",
+            "source_line": 306,
+            "source_byte_start": 25136,
+            "source_byte_end": 25323,
+            "raw_line_sha256": "48167741e9248fdc39ff92f492005c915151bba9bc49e7586d2a5731571df0a5",
+            "label": "OpenNefia",
+            "source_links": [
+              "https://github.com/OpenNefia/OpenNefia"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:308",
+            "source_line": 308,
+            "source_byte_start": 25324,
+            "source_byte_end": 25580,
+            "raw_line_sha256": "640d0363b704d1f2cd52f0304cbada213823754df9507650d09e766035a4cffd",
+            "label": "Shattered Pixel Dungeon",
+            "source_links": [
+              "https://github.com/00-Evan/shattered-pixel-dungeon"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:312",
+            "source_line": 312,
+            "source_byte_start": 25604,
+            "source_byte_end": 25793,
+            "raw_line_sha256": "0a2b36925a6e9eaaa129d1cc09e93294d1c3e6e2c8ae66c32829d735ec346cd1",
+            "label": "Ambermoon.net",
+            "source_links": [
+              "https://github.com/Pyrdacor/Ambermoon.net"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:314",
+            "source_line": 314,
+            "source_byte_start": 25794,
+            "source_byte_end": 26035,
+            "raw_line_sha256": "d5a0c22808eeff1da51477b326b00a01d80c1945ab15dc5983ba77488bc0bcb4",
+            "label": "Daggerfall Unity",
+            "source_links": [
+              "https://github.com/Interkarma/daggerfall-unity"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:316",
+            "source_line": 316,
+            "source_byte_start": 26036,
+            "source_byte_end": 26248,
+            "raw_line_sha256": "69a29e765b6a48202cb91d267f1de7d1c73f6c4fd2910a7e500f7483261b0cfa",
+            "label": "Exult",
+            "source_links": [
+              "https://github.com/exult/exult"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:318",
+            "source_line": 318,
+            "source_byte_start": 26249,
+            "source_byte_end": 26438,
+            "raw_line_sha256": "c4af4e42a61e3606cf67d800ae2393d0692c2a116ec6f7866daedd86c9847a60",
+            "label": "Fallout Community Edition",
+            "source_links": [
+              "https://github.com/alexbatalov/fallout1-ce"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:320",
+            "source_line": 320,
+            "source_byte_start": 26439,
+            "source_byte_end": 26621,
+            "raw_line_sha256": "759c4a3fd01a2eea04b7fa7da4b856aca8cf4e42665b4eb9861145f40628b57c",
+            "label": "Fallout 2 Community Edition",
+            "source_links": [
+              "https://github.com/alexbatalov/fallout2-ce"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:322",
+            "source_line": 322,
+            "source_byte_start": 26622,
+            "source_byte_end": 26833,
+            "raw_line_sha256": "2c427e826b8986f64ebd9a6cee9f9029abfe5d652a348fdeb2a48e0e5427154d",
+            "label": "GemRB",
+            "source_links": [
+              "https://en.wikipedia.org/wiki/Infinity_Engine"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:336",
+            "source_line": 336,
+            "source_byte_start": 27259,
+            "source_byte_end": 27488,
+            "raw_line_sha256": "f2e5a5e813a817328078d8032751f11a7311eaa45d1a25357f028fb9a0f6e567",
+            "label": "Kandria",
+            "source_links": [
+              "https://codeberg.org/shirakumo/kandria",
+              "https://codeberg.org/shirakumo/trial"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:338",
+            "source_line": 338,
+            "source_byte_start": 27489,
+            "source_byte_end": 27659,
+            "raw_line_sha256": "82bc85a6ee90a52a2151559e08d65fdd67db401a31da55e84af789f179d564b8",
+            "label": "Naev",
+            "source_links": [
+              "https://codeberg.org/naev/naev"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:340",
+            "source_line": 340,
+            "source_byte_start": 27660,
+            "source_byte_end": 27783,
+            "raw_line_sha256": "355a86871add4e6740137f7784d0356c20f2ba0fbafba09290cf660214f10a5f",
+            "label": "Oolite",
+            "source_links": [
+              "https://github.com/OoliteProject/oolite"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:342",
+            "source_line": 342,
+            "source_byte_start": 27784,
+            "source_byte_end": 27971,
+            "raw_line_sha256": "f4ff7b6929e4c8f5bef2513cd52de81316a300130968c15b043782fa7b6b40e4",
+            "label": "OpenEnroth",
+            "source_links": [
+              "https://github.com/OpenEnroth/OpenEnroth"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:344",
+            "source_line": 344,
+            "source_byte_start": 27972,
+            "source_byte_end": 28287,
+            "raw_line_sha256": "bced12f59ef0ed5e849d4b0ae62a89cc154c839c178d1bbd429642dd56be843b",
+            "label": "OpenMW",
+            "source_links": [
+              "https://github.com/OpenMW/openmw"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:346",
+            "source_line": 346,
+            "source_byte_start": 28288,
+            "source_byte_end": 28429,
+            "raw_line_sha256": "5812036a0c1d2fbc7a4c4de3409040c59e93d0953fcf734e64ce90c5e359dd5a",
+            "label": "OpenNox",
+            "source_links": [
+              "https://github.com/noxworld-dev/opennox"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:348",
+            "source_line": 348,
+            "source_byte_start": 28430,
+            "source_byte_end": 28780,
+            "raw_line_sha256": "b157310761780a8112454186bcf8d121da8276339362c3a8a47aca2ac21447c5",
+            "label": "reone",
+            "source_links": [
+              "https://github.com/seedhartha/reone"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:350",
+            "source_line": 350,
+            "source_byte_start": 28781,
+            "source_byte_end": 29079,
+            "raw_line_sha256": "d930c62ead6086e2a678fe672062bc13732d692443861d57312dcd6111f7788f",
+            "label": "Severed Chains",
+            "source_links": [
+              "https://github.com/Legend-of-Dragoon-Modding/Severed-Chains"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:352",
+            "source_line": 352,
+            "source_byte_start": 29080,
+            "source_byte_end": 29289,
+            "raw_line_sha256": "546aa5982319b29660de4e5d2246022c7bdc6b178668d899dd93235851ab0370",
+            "label": "Space Station 14",
+            "source_links": [
+              "https://github.com/space-wizards/space-station-14"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:354",
+            "source_line": 354,
+            "source_byte_start": 29290,
+            "source_byte_end": 29573,
+            "raw_line_sha256": "9640a7f3f1dfb8cc07d17c1ead5b75dde84923db299be5ccb09ecb9b59027268",
+            "label": "Ultima VII: Revisited",
+            "source_links": [
+              "https://github.com/ViridianGames/U7Revisited"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:356",
+            "source_line": 356,
+            "source_byte_start": 29574,
+            "source_byte_end": 29704,
+            "raw_line_sha256": "baf91644a03183df389e79231d68b2a50331f93865dff3b7b046876b3854edcc",
+            "label": "Veloren",
+            "source_links": [
+              "https://github.com/veloren/veloren"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:360",
+            "source_line": 360,
+            "source_byte_start": 29787,
+            "source_byte_end": 29961,
+            "raw_line_sha256": "eaae4517e16e6fd806b4587457bfda08d2ac7533f553467d7de14f82d597edc6",
+            "label": "Abyss Engine",
+            "source_links": [
+              "https://github.com/AbyssEngine/AbyssEngine"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:362",
+            "source_line": 362,
+            "source_byte_start": 29962,
+            "source_byte_end": 30336,
+            "raw_line_sha256": "5dc7766449e099ee49aef60315b61b2da33c0934edb84527acef06d13c66c174",
+            "label": "DevilutionX",
+            "source_links": [
+              "https://github.com/diasurgical/devilutionX"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:364",
+            "source_line": 364,
+            "source_byte_start": 30337,
+            "source_byte_end": 30557,
+            "raw_line_sha256": "03ab5206999503d6d5f1a99fdaa6f1b02202caf3d11592154bdc85293f775f01",
+            "label": "Freeablo",
+            "source_links": [
+              "https://github.com/wheybags/freeablo"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:366",
+            "source_line": 366,
+            "source_byte_start": 30558,
+            "source_byte_end": 30725,
+            "raw_line_sha256": "1bef9c8a8b7c5a80210581b707a0ec5182923d084c704a9e4acf0d266f05d612",
+            "label": "Open Diablo II",
+            "source_links": [
+              "https://github.com/OpenDiablo2/OpenDiablo2"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:370",
+            "source_line": 370,
+            "source_byte_start": 30781,
+            "source_byte_end": 30958,
+            "raw_line_sha256": "58c11559f305f47e01ee1a119dcec9769e1073199487dac258d40e4f87bf063f",
+            "label": "OpenKO",
+            "source_links": [
+              "https://github.com/Open-KO/KnightOnline"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:372",
+            "source_line": 372,
+            "source_byte_start": 30959,
+            "source_byte_end": 31147,
+            "raw_line_sha256": "70a2f56897b3e4e84f69aa64cd149d12f82adbabc58c7fb4d10d45a6c3e2f02d",
+            "label": "OpenKore",
+            "source_links": [
+              "https://github.com/OpenKore/openkore"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:376",
+            "source_line": 376,
+            "source_byte_start": 31166,
+            "source_byte_end": 31362,
+            "raw_line_sha256": "6df1a1f4bf31dd3a5f1dff0f4c855dee7105f21012663fca8dedc5737cf89c39",
+            "label": "Minosoft",
+            "source_links": [
+              "https://github.com/bixilon/minosoft",
+              "https://gitlab.bixilon.de/bixilon/minosoft"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:380",
+            "source_line": 380,
+            "source_byte_start": 31386,
+            "source_byte_end": 31609,
+            "raw_line_sha256": "4ad2745bc29ae06e1453c7c64a251d634cd4600f49d1da219aa9b109db8f4a62",
+            "label": "SDL Sopwith",
+            "source_links": [
+              "https://github.com/fragglet/sdl-sopwith"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:382",
+            "source_line": 382,
+            "source_byte_start": 31610,
+            "source_byte_end": 31853,
+            "raw_line_sha256": "8e3a285d2034308ad0bc83bbde33d9a9c564eba93a7de8cbc4dbb5c38be2e9e6",
+            "label": "Taisei Project",
+            "source_links": [
+              "https://github.com/taisei-project/taisei"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:386",
+            "source_line": 386,
+            "source_byte_start": 31870,
+            "source_byte_end": 32025,
+            "raw_line_sha256": "2d84c62a0d6d9fe64d78ab4aeabc2d866e85582a14131d3a0b3442406979085b",
+            "label": "Open Golf",
+            "source_links": [
+              "https://github.com/mgerdes/Open-Golf"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:388",
+            "source_line": 388,
+            "source_byte_start": 32026,
+            "source_byte_end": 32185,
+            "raw_line_sha256": "0d641ca0910bbf4184f344e4c332c395ffc32ecd27485b5c04aafceac17dfc2d",
+            "label": "Pooltool",
+            "source_links": [
+              "https://github.com/ekiefl/pooltool"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:392",
+            "source_line": 392,
+            "source_byte_start": 32209,
+            "source_byte_end": 32366,
+            "raw_line_sha256": "20315f431dbb026ef75287ae1b10b5a066a8732d13084ec6deb3cb862f5a5158",
+            "label": "Command & Conquer Renegade",
+            "source_links": [
+              "https://github.com/electronicarts/CnC_Renegade"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:394",
+            "source_line": 394,
+            "source_byte_start": 32367,
+            "source_byte_end": 32549,
+            "raw_line_sha256": "ce95b6be3481bfcaa32c865ed50576f3a7e01059cad98dbf2adc4afdb804ceab",
+            "label": "CroftEngine",
+            "source_links": [
+              "https://github.com/stohrendorf/CroftEngine"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:396",
+            "source_line": 396,
+            "source_byte_start": 32550,
+            "source_byte_end": 32712,
+            "raw_line_sha256": "72334d710f68e310841565be0514988a473c68fb949537bb436aca81e3ba03f0",
+            "label": "Lugaru: The Rabbit's Foot",
+            "source_links": [
+              "https://github.com/WolfireGames/lugaru"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:398",
+            "source_line": 398,
+            "source_byte_start": 32713,
+            "source_byte_end": 32859,
+            "raw_line_sha256": "7dc5270c68d466c147777ab1be5a5567a79d67757d07ccc03dcfbe06ace5f74d",
+            "label": "OpenLara",
+            "source_links": [
+              "https://github.com/XProger/OpenLara"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:400",
+            "source_line": 400,
+            "source_byte_start": 32860,
+            "source_byte_end": 33040,
+            "raw_line_sha256": "a1a491b0f27dbcd84d07b947d3641e5a6d5b1e911ceaa359130a2da23ce057b3",
+            "label": "OpenRW",
+            "source_links": [
+              "https://github.com/rwengine/openrw"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:402",
+            "source_line": 402,
+            "source_byte_start": 33041,
+            "source_byte_end": 33171,
+            "raw_line_sha256": "1179f6751a699a325b05032fd68832e83dd191b0652e901d6ef780fb6c8cae28",
+            "label": "Overgrowth",
+            "source_links": [
+              "https://github.com/WolfireGames/overgrowth"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:404",
+            "source_line": 404,
+            "source_byte_start": 33172,
+            "source_byte_end": 33418,
+            "raw_line_sha256": "a5c57b0dfbdbafbddbcaaf0a309f137f2417725da30f91d841ba42a9ac7d001d",
+            "label": "RE3",
+            "source_links": [
+              "https://github.com/VideogameSources/gta3-decomp-alt"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:406",
+            "source_line": 406,
+            "source_byte_start": 33419,
+            "source_byte_end": 33645,
+            "raw_line_sha256": "1b094e41145e54bf0f14e9d259984708ff54e83fb7a8de0a47b91309ee91eea6",
+            "label": "Tomb Engine",
+            "source_links": [
+              "https://github.com/TombEngine/TombEngine"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:410",
+            "source_line": 410,
+            "source_byte_start": 33670,
+            "source_byte_end": 33900,
+            "raw_line_sha256": "bd0ebd62a23d4bb0a5f85bb6d8fcc9929b3aadd45248982aad4aa8aa1615a282",
+            "label": "Server Survival",
+            "source_links": [
+              "https://github.com/pshenok/server-survival"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:414",
+            "source_line": 414,
+            "source_byte_start": 33927,
+            "source_byte_end": 34107,
+            "raw_line_sha256": "e78d6c62f38b69f052af9a6a6166ce058551be5e94b0c25e955476ffc2086d4b",
+            "label": "Ancient Beast",
+            "source_links": [
+              "https://github.com/FreezingMoon/AncientBeast"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:416",
+            "source_line": 416,
+            "source_byte_start": 34108,
+            "source_byte_end": 34263,
+            "raw_line_sha256": "704a989b8d85aff1ba01158d850d86444f3ed933a2567c7b79be384a32e39eeb",
+            "label": "Athena Crisis",
+            "source_links": [
+              "https://github.com/nkzw-tech/athena-crisis"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:418",
+            "source_line": 418,
+            "source_byte_start": 34264,
+            "source_byte_end": 34389,
+            "raw_line_sha256": "5afe7270a317770bfc3382df2f7a7f8e6283dc6826ff8052901c38505fb0f564",
+            "label": "C-evo",
+            "source_links": [
+              "http://c-evo.org/files/files.php"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:420",
+            "source_line": 420,
+            "source_byte_start": 34390,
+            "source_byte_end": 34609,
+            "raw_line_sha256": "3be2c18068adc94693309a76dcf81c52f5cdd79d831709b7dba3d7b7b13f7ba2",
+            "label": "fheroes2",
+            "source_links": [
+              "https://github.com/ihhub/fheroes2"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:422",
+            "source_line": 422,
+            "source_byte_start": 34610,
+            "source_byte_end": 34911,
+            "raw_line_sha256": "51a576dedd5c09243df7b96bba02655900bdf5f978e8420555f7c344686ddd2d",
+            "label": "FreeCol",
+            "source_links": [
+              "https://github.com/FreeCol/freecol"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:424",
+            "source_line": 424,
+            "source_byte_start": 34912,
+            "source_byte_end": 35056,
+            "raw_line_sha256": "cabe0885742b90dfe8535716386ffc396036e363b675192c56fec627af5991cf",
+            "label": "Freeciv",
+            "source_links": [
+              "https://github.com/freeciv/freeciv"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:426",
+            "source_line": 426,
+            "source_byte_start": 35057,
+            "source_byte_end": 35262,
+            "raw_line_sha256": "7fba7875218cd36d3241157181b65278f3270467d117f888fa6d3c3be467e869",
+            "label": "FreeOrion",
+            "source_links": [
+              "https://github.com/freeorion/freeorion"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:428",
+            "source_line": 428,
+            "source_byte_start": 35263,
+            "source_byte_end": 35414,
+            "raw_line_sha256": "52b04a62698886dbb293a5ce771f066a4862238342bc5b204261022af5edcaf0",
+            "label": "Hnefatafl",
+            "source_links": [
+              "https://github.com/dcampbell24/hnefatafl"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:430",
+            "source_line": 430,
+            "source_byte_start": 35415,
+            "source_byte_end": 35634,
+            "raw_line_sha256": "05b5448219da56289dbe81442016060bda23dd312be0318b1110e664c26106d5",
+            "label": "OpenPanzer",
+            "source_links": [
+              "https://github.com/nicupavel/openpanzer"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:432",
+            "source_line": 432,
+            "source_byte_start": 35635,
+            "source_byte_end": 35996,
+            "raw_line_sha256": "59c195ff5156b952722cc9a5145405f33b745adc4b7fe22909b167acbc519985",
+            "label": "OpenXcom",
+            "source_links": [
+              "https://github.com/OpenXcom/OpenXcom"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:434",
+            "source_line": 434,
+            "source_byte_start": 35997,
+            "source_byte_end": 36157,
+            "raw_line_sha256": "16a49c45b9ea387e03d05a90895e72f0e9787e7be01d689d5749ae0dfdd619d4",
+            "label": "The Battle for Wesnoth",
+            "source_links": [
+              "https://github.com/wesnoth/wesnoth"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:436",
+            "source_line": 436,
+            "source_byte_start": 36158,
+            "source_byte_end": 36354,
+            "raw_line_sha256": "e535fbfe35acfb77f5e49a77d0117b7b5848e6137651115ad77d3c33d4a5f119",
+            "label": "Unciv",
+            "source_links": [
+              "https://github.com/yairm210/Unciv"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:438",
+            "source_line": 438,
+            "source_byte_start": 36355,
+            "source_byte_end": 36553,
+            "raw_line_sha256": "3c5117cf230faff7f2a3db80308bbb5d487b1b4dcb175a874ddbd1b1ceba7806",
+            "label": "VCMI Project",
+            "source_links": [
+              "https://github.com/vcmi/vcmi"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          }
+        ],
+        "unselected_source_lines": 298
+      }
+    ],
+    "warnings": [
+      "CC0 covers this source index only; licenses for linked software and assets remain unverified.",
+      "Unselected lines, formatting and original bytes require the source provider for full retrieval."
+    ],
+    "unresolved": [
+      {
+        "kind": "UPSTREAM_PROJECT_RIGHTS",
+        "count": 161
+      },
+      {
+        "kind": "CATALOGUE_UNSELECTED_LINES",
+        "count": 298
+      }
+    ],
+    "lineage": {
+      "pinned_commit": "3a9ab8fc892a2cdadf8989a72ba7624a11e39cec",
+      "pinned_readme_git_blob": "0a54e0898d52ffa31f83f843b66aee458c5a49b8",
+      "license_source": "git:bobeff/open-source-games@3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:LICENSE",
+      "license_sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499",
+      "license_git_blob": "0e259d42c996742e9e3cba14c677129b2c1b6311",
+      "catalogue_license": "CC0-1.0",
+      "upstream_project_license": "UNVERIFIED"
+    }
+  },
+  "conversion_receipt": {
+    "schema": "CGX-FILE-CONVERSION-RECEIPT/0.1",
+    "source_ref": "git:bobeff/open-source-games@3a9ab8fc892a2cdadf8989a72ba7624a11e39cec:README.md",
+    "source_sha256": "b7c21b00b2dc88634a4a4dcbac773d01b6e72508c023600e0dd5e2bbd02a199f",
+    "media_type": "text/markdown",
+    "adapter_or_capability": "catalogue-readme-stdlib-v0.1",
+    "conversion_classes_used": [
+      "R0_EXACT",
+      "R1_SEMANTIC_REVERSIBLE"
+    ],
+    "semantic_target": "Alexandria external source-index line graph; no project objects admitted",
+    "loss_map": [
+      {
+        "scope": "unselected original source lines and formatting",
+        "action": "retain provider R0; no full-source reconstruction from R1"
+      }
+    ],
+    "frontier_items": [
+      "UPSTREAM_PROJECT_RIGHTS",
+      "UPSTREAM_PROJECT_SOURCE_BYTES",
+      "NATIVE_DBR_READBACK",
+      "CANONICAL_OBJECT_ID"
+    ],
+    "output_hashes": {
+      "r1_structure_sha256": "e5dd3fcd80464114913a6c0d4e2b64c6fdd261999c4d81806ae708a7cda6835c"
+    },
+    "authority_state": "NONCANONICAL_REVIEW_ONLY",
+    "source_bytes_persisted_by_this_adapter": false,
+    "native_dbr_verified": false,
+    "owner_approval_required": true
+  },
+  "source_proof": {
+    "readme_git_blob_verifies": true,
+    "license_git_blob_verifies": true,
+    "selected_lines_verified": 161,
+    "unselected_lines": 298
+  },
+  "publication_status": "INTERNAL_REVIEW_SOURCE_FREE_NOT_PUBLISHED",
+  "upstream_project_bytes_acquired": 0
+}
