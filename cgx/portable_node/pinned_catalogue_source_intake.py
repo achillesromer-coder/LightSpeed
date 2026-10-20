@@ -165,5 +165,101 @@ def stage_pinned_catalogue(
     return {"source_envelope": envelope, "conversion_receipt": receipt}
 
 
+def hydrate_catalogue_selection(
+    packet: dict[str, Any],
+    candidate_ref: str,
+    *,
+    source_bytes: bytes | None = None,
+    access_granted: bool = False,
+    audience: str = "PRIVATE_OWNER",
+) -> dict[str, Any]:
+    """Resolve one permitted R1 catalogue line against exact provider-supplied R0 bytes.
+
+    This is a read-only lens input, not an access-control verifier or network client.
+    access_granted must be supplied only after an independent authenticated ACL
+    decision; caller-provided True cannot itself establish authorisation.
+    """
+    boundary = {"schema": "CGX-ALEXANDRIA-SOURCE-LENS/0.1",
+                "status": "WITHHELD", "canonical_admission": False,
+                "authenticated": False, "source_bytes_embedded": False,
+                "executable_capability": False, "published": False}
+    if type(access_granted) is not bool or not access_granted:
+        return boundary
+    if not isinstance(packet, dict):
+        return {**boundary, "status": "INVALID_ENVELOPE"}
+    envelope = packet.get("source_envelope")
+    receipt = packet.get("conversion_receipt")
+    if not isinstance(envelope, dict) or not isinstance(receipt, dict):
+        return {**boundary, "status": "INVALID_ENVELOPE"}
+    if (envelope.get("schema") != SOURCE_ENVELOPE_SCHEMA
+        or receipt.get("schema") != CONVERSION_RECEIPT_SCHEMA
+        or receipt.get("authority_state") != "NONCANONICAL_REVIEW_ONLY"
+        or envelope.get("evidence_state") != "R0_VERIFIED_R1_CANDIDATE"
+        or envelope.get("sha256") != receipt.get("source_sha256")
+        or envelope.get("source_id") != receipt.get("source_ref")):
+        return {**boundary, "status": "INVALID_ENVELOPE"}
+    if audience == "PUBLIC" and envelope.get("release_class") != "PUBLIC_SAFE_APPROVED":
+        return boundary
+    if audience not in ("PRIVATE_OWNER", "COLLABORATOR", "INSTITUTIONAL", "PUBLIC"):
+        return boundary
+    if not isinstance(candidate_ref, str) or not candidate_ref or len(candidate_ref) > 256:
+        return {**boundary, "status": "UNRESOLVED_SELECTION"}
+    native = envelope.get("native_preservation", {})
+    if (not isinstance(native, dict) or native.get("source_sha256") != envelope["sha256"]
+        or native.get("source_byte_length") != envelope.get("byte_length")
+        or native.get("source_ref") != envelope["source_id"]):
+        return {**boundary, "status": "INVALID_ENVELOPE"}
+    projections = envelope.get("projections")
+    if not isinstance(projections, list) or len(projections) != 1 or not isinstance(projections[0], dict):
+        return {**boundary, "status": "INVALID_ENVELOPE"}
+    structure = projections[0]
+    actual_projection_hash = _sha256(json.dumps(structure, sort_keys=True,
+        ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
+    hashes = receipt.get("output_hashes", {})
+    if not isinstance(hashes, dict) or actual_projection_hash != hashes.get("r1_structure_sha256"):
+        return {**boundary, "status": "PROJECTION_MISMATCH"}
+    rows = structure.get("entries")
+    if not isinstance(rows, list) or len(rows) > MAX_CATALOGUE_RECORDS:
+        return {**boundary, "status": "INVALID_ENVELOPE"}
+    matches = [row for row in rows if isinstance(row, dict)
+               and row.get("candidate_ref") == candidate_ref]
+    if len(matches) != 1:
+        return {**boundary, "status": "UNRESOLVED_SELECTION"}
+    if source_bytes is None:
+        return {**boundary, "status": "NOT_CACHED"}
+    if type(source_bytes) is not bytes:
+        return {**boundary, "status": "SOURCE_MISMATCH"}
+    if len(source_bytes) != envelope.get("byte_length") or _sha256(source_bytes) != envelope["sha256"]:
+        return {**boundary, "status": "SOURCE_MISMATCH"}
+    row = matches[0]
+    start, end = row.get("source_byte_start"), row.get("source_byte_end")
+    if (type(start) is not int or type(end) is not int
+        or not (0 <= start < end <= len(source_bytes))
+        or _sha256(source_bytes[start:end]) != row.get("raw_line_sha256")):
+        return {**boundary, "status": "SOURCE_MISMATCH"}
+    try:
+        source_line = source_bytes[start:end].decode("utf-8", errors="strict")
+    except UnicodeError:
+        return {**boundary, "status": "SOURCE_MISMATCH"}
+    title, links = row.get("label"), row.get("source_links")
+    if (not isinstance(title, str) or title not in source_line
+        or not isinstance(links, list) or not links
+        or any(not isinstance(link, str) or link not in source_line for link in links)):
+        return {**boundary, "status": "SOURCE_MISMATCH"}
+    for link in links:
+        _public_reference_url(link)
+    return {**boundary, "status": "SOURCE_PROVEN_R1_VIEW_CANDIDATE",
+            "candidate_ref": candidate_ref, "title": title,
+            "upstream_reference_urls": list(links),
+            "source_ref": envelope["source_id"],
+            "source_sha256": envelope["sha256"],
+            "source_line": row["source_line"],
+            "source_byte_range": [start, end],
+            "licence": envelope.get("lineage", {}).get("catalogue_license", "UNVERIFIED"),
+            "linked_project_licence": "UNVERIFIED",
+            "object_id": None, "evidence": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "canonical_admission": False, "authenticated": False}
+
+
 if __name__ == "__main__":
     raise SystemExit("Import stage_pinned_catalogue; provider-supplied source bytes are mandatory")
