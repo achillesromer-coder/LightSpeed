@@ -120,6 +120,63 @@ def _check_private_root(repository_root: Path,target_root: Path) -> Path:
         raise MigrationHold("REPO_TREE_TARGET_FORBIDDEN")
     return final
 
+def verify_staged_private_copy(repository_root:Path,target_root:Path,
+                               approved_plan_sha256:str,expected_count:int) -> dict:
+    """Re-read every private destination byte, reject unknown extras, grant no release.
+
+    Intended after authorised staging and BEFORE removing static originals.
+    This is a local source-parity check only, not an owner/ACL/network witness.
+    """
+    plan=private_review_source_plan(repository_root)
+    if plan["count"]!=expected_count or expected_count<2:
+        raise MigrationHold("OWNER_FILE_COUNT_REVIEW_REQUIRED")
+    if plan["plan_sha256"]!=approved_plan_sha256:
+        raise MigrationHold("SOURCE_PLAN_CHANGED_REAPPROVAL_REQUIRED")
+    root=_check_private_root(repository_root,target_root)
+    allowed={r["source_relative_path"] for r in plan["records"]}
+    found=set()
+    # Constrain verification to the exact staged review folders. An unrelated
+    # private root file is not a release grant or reason to crawl the host.
+    for folder in ("data","review/renders","review/mesh"):
+        base=root/folder
+        if not base.is_dir() or base.is_symlink():
+            raise MigrationHold("DESTINATION_DIRECTORY_MISSING_OR_SYMLINK")
+        if any(parent.is_symlink() for parent in (base.parent,base.parent.parent)
+               if parent!=root.parent):
+            raise MigrationHold("DESTINATION_PARENT_SYMLINK_REFUSED")
+        for candidate in base.iterdir():
+            if candidate.is_symlink() or not candidate.is_file():
+                raise MigrationHold("DESTINATION_NONREGULAR_OR_NESTED_REFUSED")
+            relative=candidate.relative_to(root).as_posix()
+            if relative not in allowed:
+                raise MigrationHold("DESTINATION_UNAPPROVED_EXTRA_ASSET")
+            found.add(relative)
+            if len(found)>MAX_FILES:
+                raise MigrationHold("DESTINATION_FILE_COUNT_BOUND")
+    if found!=allowed:
+        raise MigrationHold("DESTINATION_MISSING_ASSETS")
+    for record in plan["records"]:
+        path=root/record["source_relative_path"]
+        if any(parent.is_symlink() for parent in (path.parent,path.parent.parent)):
+            raise MigrationHold("DESTINATION_PARENT_SYMLINK_REFUSED")
+        raw,_=_read_exact(path)
+        if len(raw)!=record["bytes"] or hashlib.sha256(raw).hexdigest()!=record["sha256"]:
+            raise MigrationHold("DESTINATION_READBACK_MISMATCH")
+    return {
+        "schema":"CGX-PRIVATE-REVIEW-DESTINATION-READBACK/0.1",
+        "status":"LOCAL_BYTES_MATCH_SOURCE_NOT_AUTHORITY",
+        "plan_sha256":plan["plan_sha256"],
+        "verified_files":len(found),
+        "destination_sha256_parity":True,
+        "no_unapproved_review_files":True,
+        "source_originals_retained":True,
+        "owner_acl_verified":False,
+        "runtime_owner_session_verified":False,
+        "two_node_signed_readback":False,
+        "public_static_exposure_resolved":False,
+        "public_release_authorised":False,
+    }
+
 def stage_approved_private_copy(repository_root:Path,target_root:Path,
                                 approved_plan_sha256:str,expected_count:int) -> dict:
     plan=private_review_source_plan(repository_root)
@@ -162,8 +219,12 @@ def stage_approved_private_copy(repository_root:Path,target_root:Path,
         finally:
             if os.path.exists(temp):
                 os.unlink(temp)
+    check=verify_staged_private_copy(
+        repository_root,target_root,approved_plan_sha256,expected_count
+    )
     return {"schema":"CGX-PRIVATE-REVIEW-ASSET-STAGING-RECEIPT/0.1",
             "plan_sha256":plan["plan_sha256"],"copied_count":len(copied),
+            "post_stage_local_readback":check["status"],
             "all_source_originals_retained":True,
             "destination_sha256_readback":True,
             "static_source_still_present":True,
@@ -175,11 +236,19 @@ if __name__=="__main__":
     p=argparse.ArgumentParser()
     p.add_argument("--root",type=Path,default=ROOT)
     p.add_argument("--stage",action="store_true")
+    p.add_argument("--verify-staged",action="store_true",
+                   help="Read-only destination parity check; never lifts #158 or #161")
     p.add_argument("--private-root",type=Path)
     p.add_argument("--approved-plan-sha256")
     p.add_argument("--expected-count",type=int)
     a=p.parse_args()
-    if a.stage:
+    if a.stage and a.verify_staged:
+        raise SystemExit("HOLD: choose --stage or --verify-staged, not both")
+    if a.verify_staged:
+        if not a.private_root or not a.approved_plan_sha256 or a.expected_count is None:
+            raise SystemExit("HOLD: --verify-staged requires --private-root, --approved-plan-sha256 and --expected-count")
+        result=verify_staged_private_copy(a.root,a.private_root,a.approved_plan_sha256,a.expected_count)
+    elif a.stage:
         if not a.private_root or not a.approved_plan_sha256 or a.expected_count is None:
             raise SystemExit("HOLD: --stage requires pre-existing --private-root, --approved-plan-sha256 and --expected-count")
         result=stage_approved_private_copy(a.root,a.private_root,a.approved_plan_sha256,a.expected_count)
