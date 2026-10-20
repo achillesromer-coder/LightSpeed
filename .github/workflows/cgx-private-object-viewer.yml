@@ -1,0 +1,78 @@
+name: CGX authenticated Objects viewer and privacy regression
+on:
+  pull_request:
+    paths:
+      - "apps/lightspeed-go/src/main.ts"
+      - "apps/lightspeed-go/src/privateObjectReview.ts"
+      - "apps/lightspeed-go/src/privateObjectReview.test.ts"
+      - "apps/lightspeed-go/src/objectReview.ts"
+      - "apps/lightspeed-go/src/meshViewer.ts"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
+      - "desktop/source-manifest.json"
+      - ".github/workflows/cgx-private-object-viewer.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser-source-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: apps/lightspeed-go/package-lock.json
+      - name: Install exact site dependencies
+        working-directory: apps/lightspeed-go
+        run: npm ci --ignore-scripts
+      - name: Typecheck current source and owner-only private viewer
+        working-directory: apps/lightspeed-go
+        run: npm run check
+      - name: Run all existing site Vitest cases
+        working-directory: apps/lightspeed-go
+        run: npm test
+      - name: Test safe static source and built distributable gate
+        working-directory: apps/lightspeed-go
+        run: |
+          npm run test:release
+          if npm run build; then
+            echo "ERROR: static build should be held while private assets remain"
+            exit 1
+          fi
+      - name: Check old public-review fetch is absent from GUI
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          src=Path("apps/lightspeed-go/src/main.ts").read_text()
+          assert "fetch(objectReviewUrl" not in src
+          assert "fetch(componentAtlasUrl" not in src
+          assert 'readJson<ObjectReviewCatalogue>' in src
+          assert 'clearPrivateObjectReview();' in src
+          print("No public Objects catalogue loader; session invalidation present")
+          PY
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify unchanged desktop owner authority manifest
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          j=json.loads(Path("desktop/source-manifest.json").read_text())
+          assert len(j["records"])==736
+          m={v["path"]:v for v in j["records"]}
+          paths=[
+            "LightSpeed_Runtime/lightspeed_runtime/cgx_object_context.py",
+            "LightSpeed_Runtime/lightspeed_runtime/cgx_intake_projection.py",
+            "LightSpeed_Runtime/lightspeed_runtime/node_exchange.py",
+            "LightSpeed_Runtime/lightspeed_runtime/private_review_assets.py",
+            "LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
+          ]
+          for p in paths:
+            raw=(Path("desktop")/p).read_bytes()
+            assert m[p]["sha256"]==hashlib.sha256(raw).hexdigest(),p
+            assert m[p]["bytes"]==len(raw),p
+          print("Manifest source hashes verified:",len(paths))
+          PY
