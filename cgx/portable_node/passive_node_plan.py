@@ -106,6 +106,115 @@ def plan_passive_node(
         "server_note": "Trusted endpoint must independently verify DNS/redirects, TLS, identity, consent, ACL, leases, source roots and signed receipts."
     }
 
+
+SURFACE_KINDS = {"SQUARESPACE_PUBLIC", "UNISPACE_APP", "CGX_OWNER"}
+TRANSPORT_PREFERENCES = {"CURRENT_HTTPS", "OFFLINE", "NATURAL_CANDIDATE"}
+INTELLIGENCE_CONTEXTS = {"CGX", "SAI"}
+
+
+def plan_unispace_surface(
+    surface: str = "SQUARESPACE_PUBLIC", *,
+    transport: str = "CURRENT_HTTPS",
+    intelligence: str = "CGX",
+    jurisdiction: str = "UNVERIFIED",
+    jurisdiction_attested: bool = False,
+    sai_opt_in: bool = False,
+    server_session_attested: bool = False,
+    natural_transport_attested: bool = False,
+    origin: str = "",
+) -> dict:
+    """Review-only view and transport selection over Cognigrex/CCC.
+
+    Inputs describing attestations are caller assertions and NEVER create an
+    authenticated session, network transport, regional authority or node lease.
+    The true server-side resolver must independently verify the actual proofs.
+    """
+    if surface not in SURFACE_KINDS:
+        raise ValueError("unknown existing user surface")
+    if transport not in TRANSPORT_PREFERENCES:
+        raise ValueError("unknown transport preference")
+    if intelligence not in INTELLIGENCE_CONTEXTS:
+        raise ValueError("unknown intelligence context")
+    if jurisdiction not in ("AU", "OTHER", "UNVERIFIED"):
+        raise ValueError("unknown declared jurisdiction")
+    for name, flag in (("jurisdiction_attested", jurisdiction_attested),
+                       ("sai_opt_in", sai_opt_in),
+                       ("server_session_attested", server_session_attested),
+                       ("natural_transport_attested", natural_transport_attested)):
+        if type(flag) is not bool:
+            raise ValueError(name + " must be boolean")
+    chosen_origin = https_origin(origin)
+    if surface == "SQUARESPACE_PUBLIC" and intelligence == "SAI":
+        context_state = "HOLD_AUTHENTICATED_APP_REQUIRED"
+    elif intelligence == "SAI" and not sai_opt_in:
+        context_state = "HOLD_EXPLICIT_SAI_OPT_IN"
+    elif intelligence == "SAI" and jurisdiction != "AU":
+        context_state = "HOLD_AU_JURISDICTION_NOT_ESTABLISHED"
+    elif intelligence == "SAI" and not jurisdiction_attested:
+        context_state = "HOLD_TRUSTED_AU_ELIGIBILITY_PROOF"
+    elif intelligence == "SAI":
+        context_state = "SAI_REVIEW_BY_AUTHENTICATED_SERVER"
+    else:
+        context_state = "CGX_BASELINE_REVIEW"
+
+    if transport == "OFFLINE":
+        network_state = "LOCAL_OFFLINE_ONLY"
+        profile = "WEB_OFFLINE"
+        selected_origin = None
+    elif transport == "NATURAL_CANDIDATE":
+        # No physical/protocol endpoint or independently signed peer proof is
+        # established by the planner, even when a caller asserts an attestation.
+        network_state = ("HOLD_NATURAL_PEER_READBACK"
+                         if natural_transport_attested
+                         else "HOLD_NATURAL_TRANSPORT_PROTOCOL_AND_EVIDENCE")
+        profile = "WEB_CONNECTED" if chosen_origin else "WEB_OFFLINE"
+        selected_origin = chosen_origin or None
+    else:
+        network_state = ("HOLD_SERVER_AUTH_AND_ACL"
+                         if chosen_origin else "HOLD_EXPLICIT_HTTPS_ORIGIN")
+        profile = "WEB_CONNECTED" if chosen_origin else "WEB_OFFLINE"
+        selected_origin = chosen_origin or None
+    if surface == "SQUARESPACE_PUBLIC":
+        network_state = ("PUBLIC_EMBED_READ_ONLY" if transport == "CURRENT_HTTPS"
+                         else network_state)
+        profile = "WEB_OFFLINE"
+        selected_origin = None  # static iframe never discovers a private host
+    return {
+        "schema": "CGX-UNISPACE-SURFACE-ACCESS-PLAN/0.1",
+        "status": "CANDIDATE_NOT_EXECUTED",
+        "parent_root": "Cognigrex.cgx",
+        "shared_capability_root": "Cognigrex.cgx:/ccc",
+        "surface": surface,
+        "requested_intelligence": intelligence,
+        "intelligence_eligibility": context_state,
+        "jurisdiction_declared": jurisdiction,
+        "jurisdiction_verified_by_planner": False,
+        "transport_preference": transport,
+        "transport_state": network_state,
+        "fallback_transport": "LOCAL_OFFLINE_OR_EXPLICIT_HTTPS",
+        "device_profile": profile,
+        "selected_https_origin": selected_origin,
+        "connection_established": False,
+        "natural_transport_established": False,
+        "sai_activated": False,
+        "authenticated": False,
+        "contains_credentials": False,
+        "source_bytes_embedded": False,
+        "node_id": None,
+        "lease_ref": None,
+        "canonical_promotion": False,
+        "public_publish_authorized": False,
+        "owner_gates": ["ISSUE_158_PUBLIC_PRIVATE_BOUNDARY",
+                        "ISSUE_161_NATIVE_TWO_NODE_READBACK",
+                        "SIGNED_SESSION_ACL_AND_JURISDICTION",
+                        "INDEPENDENT_NATURAL_TRANSPORT_QUALIFICATION"],
+        "next_action": ("Use existing authenticated LS GO/UniSpace session and CGX "
+                        "node-exchange after owner-approved server-side attestation. "
+                        "Squarespace remains a static shell; no ambient region or "
+                        "network signal grants authority."),
+    }
+
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
