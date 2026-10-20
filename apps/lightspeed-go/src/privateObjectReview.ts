@@ -104,7 +104,9 @@ export class PrivateObjectReviewSession {
     if (cached) return cached;
     const promise = this.read(sourcePath).then((bytes) => {
       if (!this.active) throw new Error("Owner review session closed");
-      const url = URL.createObjectURL(new Blob([bytes], { type: "image/svg+xml" }));
+      const isolated = new Uint8Array(bytes.byteLength);
+      isolated.set(bytes);
+      const url = URL.createObjectURL(new Blob([isolated.buffer], { type: "image/svg+xml" }));
       if (!this.active) { URL.revokeObjectURL(url); throw new Error("Owner review session closed"); }
       this.blobUrls.add(url);
       return url;
