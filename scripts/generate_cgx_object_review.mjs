@@ -37,6 +37,79 @@ const bridgeMetadata = {
       "C0 interlocks remain independent of delegated planning or simulation.",
     ],
   },
+  utp_148_maturity: {
+    id: "cgx:utp_148_maturity",
+    label: "UTP-148 — evidence maturity / invalidation",
+    role: "Fail-closed CGX evidence ingestion, dependency invalidation and next-witness state",
+    level: "evidence_state_machine",
+    tier: "T1",
+    source: "Type1:UTP-148 / BUILD-081 / LightSpeed PR #167",
+    geometry_state: "SYMBOLIC DEPENDENCY GRAPH / NO PHYSICAL GEOMETRY",
+    physical_state: "DIGITAL ONLY / PHYSICAL_NOT_RUN",
+    status: "FAIL-CLOSED INVALIDATION / PROVIDER-PROVEN DIGITAL CONTRACT",
+    nodes: [
+      ["INTAKE", "hash / classify / resolve object revision"],
+      ["BIND", "source · geometry · material · process · calibration"],
+      ["INVALIDATE", "dependent derived state only"],
+      ["RECOMPILE", "stack / 4D / scoped tests"],
+      ["WITNESS", "next proof → DBR / review or HOLD"],
+    ],
+    edges: [[0,1],[1,2],[2,3],[3,4]],
+    callouts: [
+      "Unknown changed nodes, dangling dependencies, duplicate node IDs and empty mutation sets fail closed.",
+      "Raw and historical evidence are preserved while only dependent inference is marked stale.",
+      "Digital maturation cannot promote physical evidence beyond BUILD_READY or create execution authority.",
+    ],
+  },
+  utp_149_4d_composition: {
+    id: "cgx:utp_149_4d_composition",
+    label: "UTP-149 — 2D → 3D → 4D composition",
+    role: "20-primitive composition / SG-0, SG-1, SG-N / field-model and witness routing",
+    level: "functional_stack_compiler",
+    tier: "T1",
+    source: "Type1:UTP-149 / BUILD-082 / sheet42 / LightSpeed PR #167",
+    geometry_state: "SYMBOLIC REGION / INTERFACE GRAPH / EXACT INSTANCE GEOMETRY OPEN",
+    physical_state: "DIGITAL ONLY / PHYSICAL_NOT_RUN",
+    status: "20/20 PRIMITIVES + CAP-1..7 / PROVIDER-PROVEN DIGITAL CONTRACT",
+    nodes: [
+      ["2D INTENT", "schematic / function / net intent"],
+      ["3D REGIONS", "non-planar solids · films · cavities · interfaces"],
+      ["SG-0/1/N", "seedless · single seed · multi-seed graph"],
+      ["4D STATE", "field / transport / history / safe-state"],
+      ["DBR", "maturity → next witness → review or HOLD"],
+    ],
+    edges: [[0,1],[1,2],[2,3],[3,4]],
+    callouts: [
+      "X→Y process compatibility is directional; interlayers, atmosphere transitions and prior-layer preservation remain explicit.",
+      "Arbitrary multi-conductor capacitance routes to an attributable Maxwell capacitance matrix / field solve, not a forced plate equation.",
+      "Seed ratings do not transfer to printed surroundings; cavities and voids may shape fields but are not energy sources.",
+    ],
+  },
+  utp_150_ingest_maturation: {
+    id: "cgx:utp_150_ingest_maturation",
+    label: "UTP-150 — ingest → maturity orchestration",
+    role: "Attributable source mutation, bounded dependency invalidation, contradiction retention and next-witness routing",
+    level: "evidence_orchestration_contract",
+    tier: "T1",
+    source: "Type1:UTP-150 / BUILD-083 / ART-080 / LightSpeed PR #167",
+    geometry_state: "SYMBOLIC INGEST / DEPENDENCY / MATURITY GRAPH",
+    physical_state: "DIGITAL ONLY / PHYSICAL_NOT_RUN",
+    status: "OWNER-BOUND / FAIL-CLOSED / PROVIDER-GREEN DIGITAL CONTRACT",
+    nodes: [
+      ["INGEST", "bytes / observation / hash / owner"],
+      ["RESOLVE", "object revision + evidence + authority"],
+      ["INVALIDATE", "dependent derived state only"],
+      ["RECOMPILE", "UTP-149 + UTP-147 + scoped tests"],
+      ["MATURE", "10-axis delta + contradiction state"],
+      ["WITNESS", "next proof / HOLD + DBR readback"],
+    ],
+    edges: [[0,1],[1,2],[2,3],[3,4],[4,5]],
+    callouts: [
+      "Evidence is appended with source identity and revision; contradictory branches are retained rather than silently overwritten.",
+      "Numeric inference requires attributable inputs and a valid model regime; otherwise the state remains SYMBOLIC or HOLD.",
+      "Digital ingest, CI, simulation and rendering cannot advance physical evidence beyond BUILD_READY/M6 or create execution authority.",
+    ],
+  },
   mark_ii_staged: {
     id: "cgx:mark_ii_staged",
     label: "Mark II — staged / excluded",
@@ -373,7 +446,7 @@ fs.writeFileSync(statsPath,JSON.stringify(stats,null,2)+"\n");
 if(fs.existsSync(cataloguePath)){
   const catalogue=JSON.parse(fs.readFileSync(cataloguePath,"utf8"));
   catalogue.schema="CGX-OBJECT-REVIEW-CATALOGUE/0.2";
-  catalogue.generated_from_git="0884a000e25a7b002c67d863fa4825a143fb0b3a";
+  catalogue.generated_from_git=process.env.CGX_SOURCE_HEAD || catalogue.generated_from_git;
   catalogue.status="INTERNAL_REVIEW / 4K_VECTOR_HERO + ENGINEERING_PLATE + INTERACTIVE_SOURCE_MESH / PHYSICAL_NOT_RUN";
   catalogue.visual_system={
     ...catalogue.visual_system,
@@ -384,6 +457,24 @@ if(fs.existsSync(cataloguePath)){
     composition:"single hero focal object, 6–8% safety margin, dark technical field, restrained teal/gold/green accents by tier",
   };
   catalogue.coverage={...catalogue.coverage,source_mesh_interactive_views:stats.records.length,source_mesh_4k_hero_views:stats.records.length,symbolic_system_lineage_plates:Object.keys(bridgeMetadata).length};
+  const maturityContractPath=path.join(repo,"cgx","component_atlas","type1_ingest_maturation_contract_v0_1.json");
+  const maturityFixturePath=path.join(repo,"cgx","component_atlas","type1_maturity_invalidation_fixture_v0_1.json");
+  if(fs.existsSync(maturityContractPath)){
+    const maturity=JSON.parse(fs.readFileSync(maturityContractPath,"utf8"));
+    const fixture=fs.existsSync(maturityFixturePath)?JSON.parse(fs.readFileSync(maturityFixturePath,"utf8")):null;
+    catalogue.maturity_projection={
+      artifact_id:maturity.artifact_id,
+      status:maturity.status,
+      physical_state:"DIGITAL ONLY / PHYSICAL_NOT_RUN",
+      maturity_axes:maturity.maturity_delta_record?.required_axes||[],
+      contradiction_states:maturity.contradiction_policy?.states||[],
+      invalidation_triggers:maturity.invalidation_triggers||[],
+      numeric_routes:maturity.numeric_inference_policy?.state_routes||[],
+      next_witness_ladder:maturity.next_witness_policy?.default_physical_ladder||[],
+      proof_fixture_count:fixture?.events?.length??maturity.initial_proof_fixtures?.length??0,
+      authority_boundary:(maturity.hard_boundaries||[]).join(" · "),
+    };
+  }
   catalogue.bridge_review_objects=Object.entries(bridgeMetadata).map(([stem,item])=>({
     id:item.id,label:item.label,role:item.role,level:item.level,source:item.source,
     render:"/review/renders/"+stem+"_review.svg",
@@ -406,11 +497,16 @@ if(fs.existsSync(cataloguePath)){
     item.render_state="SOURCE_HASHED / 4K HERO + FOUR-VIEW PLATE + INTERACTIVE ORBIT";
   }
   catalogue.pending_owner_layers=[
-    "UTP-141 / BUILD-074 — 16 interface operators; provider CI pass, draft engineering lane remains independent",
+    "UTP-141 / BUILD-074 — 16 interface operators; digital owner contract; physical witnesses separately gated",
     "UTP-142 / BUILD-075 — witness/evidence kernel owner contract; physical witnesses NOT_RUN",
-    "UTP-143 / BUILD-076 — 17 functional voxel regions; PR #155 draft lane CI pass",
-    "UTP-144 / BUILD-077 — SG-0/1/N seed-field stack matrix; PR #155 draft lane CI pass",
-    "UTP-145 / BUILD-078 — first P2 R/C/L witness packet; pre-run gates G0/G1/G2 remain evidence-bound"
+    "UTP-143 / BUILD-076 — functional voxel basis; PR #155 owner lane stacked into downstream maturation branch",
+    "UTP-144 / BUILD-077 — SG-0/1/N seed-field stack matrix; PR #155 owner lane",
+    "UTP-145 / BUILD-078 — first P2 R/C/L witness packet; pre-run G0/G1/G2 evidence gates remain open",
+    "UTP-146 / BUILD-079 — radiative/transport/interlayer coupling owner; unresolved mutuals remain OPEN/HOLD",
+    "UTP-147 / BUILD-080 — universal stack normal form; build-ready digital never equals physical-ready",
+    "UTP-148 / BUILD-081 — fail-closed evidence maturity/invalidation graph; physical evidence ceiling unchanged",
+    "UTP-149 / BUILD-082 — 2D→3D→4D composition matrix; 20 primitives + CAP-1..7; physical NOT_RUN",
+    "UTP-150 / BUILD-083 / ART-080 — ingest-to-maturity orchestration; append/invalidate/recompile/next-witness contract; physical NOT_RUN"
   ];
   fs.writeFileSync(cataloguePath,JSON.stringify(catalogue,null,2)+"\n");
 }

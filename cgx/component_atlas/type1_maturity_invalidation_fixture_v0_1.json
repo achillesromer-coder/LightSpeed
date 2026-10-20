@@ -1,0 +1,177 @@
+{
+  "schema": "CGX-TYPE1-MATURITY-INVALIDATION-FIXTURES/0.1",
+  "artifact_id": "UTP-148-FIXTURE-001",
+  "status": "DIGITAL_REGRESSION_FIXTURE / NO_PHYSICAL_EVIDENCE",
+  "purpose": "Regression examples proving that evidence changes stale only dependent derived/review state while preserving unrelated and historical evidence.",
+  "nodes": [
+    {
+      "id": "SRC-KAPTON-ER",
+      "kind": "SOURCE_FACT",
+      "depends_on": [],
+      "state": "VALID"
+    },
+    {
+      "id": "GEOM-P2-C-DIELECTRIC",
+      "kind": "GEOMETRY",
+      "depends_on": [],
+      "state": "VALID"
+    },
+    {
+      "id": "DER-CAP-DENSITY",
+      "kind": "DERIVED_NUMERIC",
+      "depends_on": [
+        "SRC-KAPTON-ER",
+        "GEOM-P2-C-DIELECTRIC"
+      ],
+      "state": "VALID"
+    },
+    {
+      "id": "DER-CAP-100MM2",
+      "kind": "DERIVED_NUMERIC",
+      "depends_on": [
+        "DER-CAP-DENSITY"
+      ],
+      "state": "VALID"
+    },
+    {
+      "id": "STACK-P2-C-NUMERIC",
+      "kind": "STACK_DERIVATION",
+      "depends_on": [
+        "DER-CAP-100MM2"
+      ],
+      "state": "VALID"
+    },
+    {
+      "id": "SRC-ECI7004LR",
+      "kind": "SOURCE_FACT",
+      "depends_on": [],
+      "state": "VALID"
+    },
+    {
+      "id": "DER-R-SQUARES",
+      "kind": "DERIVED_NUMERIC",
+      "depends_on": [
+        "SRC-ECI7004LR"
+      ],
+      "state": "VALID"
+    },
+    {
+      "id": "SRC-PKP-L",
+      "kind": "SOURCE_FACT",
+      "depends_on": [],
+      "state": "VALID"
+    },
+    {
+      "id": "DER-MOTOR-TAU",
+      "kind": "DERIVED_NUMERIC",
+      "depends_on": [
+        "SRC-PKP-L"
+      ],
+      "state": "VALID"
+    },
+    {
+      "id": "CAL-LCR-METER",
+      "kind": "CALIBRATION",
+      "depends_on": [],
+      "state": "VALID"
+    },
+    {
+      "id": "RAW-P2-C-MEASUREMENT",
+      "kind": "RAW_OBSERVATION",
+      "depends_on": [
+        "CAL-LCR-METER"
+      ],
+      "state": "HISTORICAL_RAW"
+    },
+    {
+      "id": "ACC-P2-C-MEASUREMENT",
+      "kind": "ACCEPTANCE_RESULT",
+      "depends_on": [
+        "RAW-P2-C-MEASUREMENT",
+        "CAL-LCR-METER"
+      ],
+      "state": "VALID"
+    },
+    {
+      "id": "SEED-MCU-FW",
+      "kind": "SEED_REVISION",
+      "depends_on": [],
+      "state": "VALID"
+    },
+    {
+      "id": "DER-SEED-TIMING",
+      "kind": "SYSTEM_DERIVATION",
+      "depends_on": [
+        "SEED-MCU-FW"
+      ],
+      "state": "VALID"
+    },
+    {
+      "id": "STRUCTURE-SHELL",
+      "kind": "PHYSICAL_CHILD_EVIDENCE",
+      "depends_on": [],
+      "state": "VALID"
+    }
+  ],
+  "events": [
+    {
+      "id": "EV-GEOM-001",
+      "trigger": "geometry_revision_changed",
+      "changed_nodes": [
+        "GEOM-P2-C-DIELECTRIC"
+      ],
+      "expected_stale": [
+        "DER-CAP-DENSITY",
+        "DER-CAP-100MM2",
+        "STACK-P2-C-NUMERIC"
+      ],
+      "expected_preserved": [
+        "SRC-KAPTON-ER",
+        "SRC-ECI7004LR",
+        "DER-R-SQUARES",
+        "SRC-PKP-L",
+        "DER-MOTOR-TAU",
+        "RAW-P2-C-MEASUREMENT",
+        "STRUCTURE-SHELL"
+      ],
+      "interpretation": "A dielectric geometry revision reopens topology-specific capacitance and dependent stack inference but does not erase unrelated resistor/inductor/source evidence or historical raw observations."
+    },
+    {
+      "id": "EV-CAL-001",
+      "trigger": "instrument_calibration_expired_or_changed",
+      "changed_nodes": [
+        "CAL-LCR-METER"
+      ],
+      "expected_stale": [
+        "ACC-P2-C-MEASUREMENT"
+      ],
+      "expected_preserved": [
+        "RAW-P2-C-MEASUREMENT",
+        "SRC-KAPTON-ER",
+        "GEOM-P2-C-DIELECTRIC",
+        "STRUCTURE-SHELL"
+      ],
+      "traversal_exclusions": [
+        "RAW_OBSERVATION"
+      ],
+      "interpretation": "Calibration status can invalidate acceptance/uncertainty claims while the immutable raw observation remains retained with its historical calibration context."
+    },
+    {
+      "id": "EV-SEED-001",
+      "trigger": "seed_part_or_firmware_revision_changed",
+      "changed_nodes": [
+        "SEED-MCU-FW"
+      ],
+      "expected_stale": [
+        "DER-SEED-TIMING"
+      ],
+      "expected_preserved": [
+        "STRUCTURE-SHELL",
+        "SRC-KAPTON-ER",
+        "DER-R-SQUARES"
+      ],
+      "interpretation": "A seed firmware revision reopens dependent timing/system evidence but does not erase independent printed structure/material evidence."
+    }
+  ],
+  "rule": "Affected closure follows declared dependency edges. Changed roots themselves become CURRENT_CHANGED, not STALE; descendants are STALE unless their evidence kind is explicitly preserved by the event policy. History is never deleted."
+}

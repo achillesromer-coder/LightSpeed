@@ -1,0 +1,470 @@
+{
+  "schema": "CGX-TYPE1-SEED-FIELD-STACK-MATRIX/0.1",
+  "artifact_id": "UTP-144",
+  "build_id": "BUILD-077",
+  "title": "Universal Type-I Seed / Field / 3D Smart-Stack Matrix",
+  "status": "DIGITAL_ENGINEERING / SOURCE_AND_INFERENCE_BOUNDED / PHYSICAL_NOT_RUN",
+  "purpose": "Extend the Type-I functional-voxel basis from schematic-equivalent functions into seed-aware 3D embedded smart systems. Compile zero-, single- and multi-seed implementations as directed volumetric region/interface graphs with explicit electric, magnetic, electromagnetic/radiative, optical, thermal, mechanical/acoustic, fluid/pressure, chemical/electrochemical, ionizing-radiation and inertial/environmental coupling.",
+  "parents": {
+    "functional_voxel": "UTP-143",
+    "directional_stack": "UTP-138",
+    "equation_kernel": "UTP-136",
+    "volumetric_kernel": "UTP-137",
+    "interface_operator": "UTP-141",
+    "witness_kernel": "UTP-142"
+  },
+  "factorization": "Archetype × PrimitiveKernel × VolumetricKernel × InterfaceOperator × ProcessSequence × FunctionalVoxelState × SeedGraph × FieldCoupling × WitnessEvidence",
+  "seed_graph_contract": {
+    "seed_definition": "A seed is an inserted discrete component, certified/proprietary element, precision element, active die/device, or other externally fabricated object whose warranted function is not created by the surrounding printed geometry/material process.",
+    "classes": [
+      {
+        "id": "SG-0",
+        "seed_count": "0",
+        "name": "seedless/material-geometry implementation",
+        "rule": "All claimed function must arise from qualified printed/deposited/formed materials, geometry, interfaces and process history. Passive R/C/L, antennas, waveguides, heaters, structural/thermal/fluidic functions and some sensors may fit. Active switching, semiconductor gain, certified isolation/protection or precision emitters remain HOLD unless the corresponding printed active/material process is itself separately qualified.",
+        "compute": "PASSIVE_OR_PRINTED_FUNCTION_ONLY"
+      },
+      {
+        "id": "SG-1",
+        "seed_count": "1",
+        "name": "single-seed embedded implementation",
+        "rule": "One inserted seed supplies the irreducible active/certified/precision function; the surrounding 3D stack may provide interconnect, impedance shaping, sensing electrodes, thermal spreading, shielding, antenna/optics, fluid routing, enclosure, service path and identity. Seed package/pads become explicit conductor/thermal/mechanical boundary nodes.",
+        "compute": "LOCAL_SEED_OR_DELEGATED"
+      },
+      {
+        "id": "SG-N",
+        "seed_count": "2+",
+        "name": "multi-seed distributed implementation",
+        "rule": "Multiple inserted seeds form a coupled network. Compile mutual electrical/EM/thermal/mechanical interactions, clocks/timing, power integrity, fault domains, synchronization, serviceability and common-cause failure paths. Do not approximate as independent single-seed cells when mutual terms are consequential.",
+        "compute": "DISTRIBUTED_LOCAL_AND_OR_DELEGATED"
+      }
+    ],
+    "external_compute_rule": "Delegated Cognigrex/LightSpeed compute is a network service relation, not an onboard seed-equivalence claim.",
+    "transition_rule": "A design may move SG-N→SG-1→SG-0 only when each removed seed's function is replaced by separately qualified material/process/geometry capability with equivalent acceptance evidence."
+  },
+  "field_coupling_basis": [
+    {
+      "id": "FC-EQS",
+      "domain": "quasi-static electric/electrostatic",
+      "state": [
+        "V",
+        "E",
+        "D",
+        "Q"
+      ],
+      "geometry": [
+        "conductor surfaces",
+        "dielectric volumes",
+        "gaps",
+        "interfaces"
+      ],
+      "models": [
+        "Poisson/Laplace",
+        "Maxwell capacitance matrix Q_i=sum_j C_ij V_j"
+      ],
+      "cross": [
+        "electrostriction if evidenced",
+        "dielectric loss/heating",
+        "sensor coupling"
+      ],
+      "witness": "capacitance/field solve + calibrated C/leakage as applicable"
+    },
+    {
+      "id": "FC-MQS",
+      "domain": "quasi-static magnetic/inductive",
+      "state": [
+        "I",
+        "B",
+        "H",
+        "flux"
+      ],
+      "geometry": [
+        "loops",
+        "turns",
+        "cores",
+        "return paths",
+        "shields"
+      ],
+      "models": [
+        "magnetostatic/quasi-static field",
+        "flux linkage matrix Phi_i=sum_j L_ij I_j"
+      ],
+      "cross": [
+        "eddy-current heating",
+        "force/torque",
+        "sensor coupling"
+      ],
+      "witness": "L/Q/coupling/field probe within declared frequency regime"
+    },
+    {
+      "id": "FC-RF",
+      "domain": "electromagnetic wave / RF radiation",
+      "state": [
+        "E",
+        "H",
+        "phase",
+        "power",
+        "S-parameters"
+      ],
+      "geometry": [
+        "antenna current paths",
+        "grounds",
+        "cavities",
+        "waveguides",
+        "shields"
+      ],
+      "models": [
+        "full-wave Maxwell",
+        "S/Z/Y matrices",
+        "RLGC where distributed-line approximation is valid"
+      ],
+      "cross": [
+        "dielectric/conductor loss→heat",
+        "EMI/EMC",
+        "coupling into seeds/sensors"
+      ],
+      "witness": "VNA/field/antenna measurement or validated full-wave solve; near/far-field regime declared"
+    },
+    {
+      "id": "FC-OPT",
+      "domain": "optical/photonic",
+      "state": [
+        "wavelength",
+        "phase",
+        "polarization",
+        "intensity"
+      ],
+      "geometry": [
+        "waveguides",
+        "interfaces",
+        "gratings",
+        "lenses",
+        "cavities"
+      ],
+      "models": [
+        "ray/eikonal only when valid",
+        "wave/FDTD/FEM where wavelength-scale geometry matters"
+      ],
+      "cross": [
+        "photothermal",
+        "photoelectric only with qualified material/seed",
+        "radiation pressure where consequential"
+      ],
+      "witness": "spectral/optical power/phase or imaging readback"
+    },
+    {
+      "id": "FC-THERM",
+      "domain": "thermal conduction/convection/radiation",
+      "state": [
+        "T",
+        "heat flux",
+        "thermal energy"
+      ],
+      "geometry": [
+        "spreader",
+        "thermal vias",
+        "interfaces",
+        "surface view factors",
+        "fluid channels"
+      ],
+      "models": [
+        "heat equation",
+        "contact/interface resistance",
+        "convection correlations in valid regime",
+        "q_rad=epsilon*sigma*A*F*(T1^4-T2^4) only with declared emissivity/view-factor assumptions"
+      ],
+      "cross": [
+        "property drift",
+        "thermal expansion/stress",
+        "electrical resistance/loss",
+        "chemical kinetics"
+      ],
+      "witness": "temperature/heat-flow transient + calibrated sensors"
+    },
+    {
+      "id": "FC-MECH",
+      "domain": "mechanical / acoustic / elastic wave",
+      "state": [
+        "displacement",
+        "strain",
+        "stress",
+        "velocity",
+        "pressure-wave state"
+      ],
+      "geometry": [
+        "load paths",
+        "compliance layers",
+        "resonators",
+        "acoustic cavities"
+      ],
+      "models": [
+        "elasticity/dynamics",
+        "modal/wave model appropriate to scale/frequency"
+      ],
+      "cross": [
+        "piezo/piezoresistive only if material route qualified",
+        "microphonics",
+        "fatigue"
+      ],
+      "witness": "displacement/strain/modal/acoustic response"
+    },
+    {
+      "id": "FC-FLUID",
+      "domain": "fluid/gas/pressure transport",
+      "state": [
+        "p",
+        "velocity",
+        "flow",
+        "density",
+        "species"
+      ],
+      "geometry": [
+        "channels",
+        "valves",
+        "porous regions",
+        "cavities"
+      ],
+      "models": [
+        "continuity/Navier-Stokes",
+        "Poiseuille only under its laminar geometry assumptions"
+      ],
+      "cross": [
+        "convective heat",
+        "pressure deformation",
+        "species transport"
+      ],
+      "witness": "pressure/flow/leak/readback"
+    },
+    {
+      "id": "FC-CHEM",
+      "domain": "chemical/electrochemical/material-state transport",
+      "state": [
+        "concentration",
+        "potential",
+        "reaction state",
+        "SOC if applicable"
+      ],
+      "geometry": [
+        "electrodes",
+        "electrolyte",
+        "barriers",
+        "diffusion paths"
+      ],
+      "models": [
+        "Fick/Nernst/Butler-Volmer only in validated chemistry/regime",
+        "reaction-diffusion as attributable"
+      ],
+      "cross": [
+        "heat",
+        "gas generation",
+        "swelling",
+        "electrical impedance"
+      ],
+      "witness": "chemistry-specific calibrated test; no generic battery authority"
+    },
+    {
+      "id": "FC-ION",
+      "domain": "ionizing-radiation exposure/shielding",
+      "state": [
+        "spectrum",
+        "fluence",
+        "dose",
+        "LET where applicable"
+      ],
+      "geometry": [
+        "shield thickness",
+        "graded-Z layers",
+        "sensitive volumes",
+        "gaps"
+      ],
+      "models": [
+        "attenuation law only in valid narrow-beam/material regime",
+        "transport/Monte-Carlo or measured qualification for consequential space/radiation effects"
+      ],
+      "cross": [
+        "semiconductor upset/degradation",
+        "polymer aging",
+        "charging",
+        "thermal deposition"
+      ],
+      "witness": "source/spectrum-bound dosimetry or qualified transport model"
+    },
+    {
+      "id": "FC-INERTIAL",
+      "domain": "gravity/inertial/kinematic environment",
+      "state": [
+        "g-vector",
+        "acceleration",
+        "jerk",
+        "rotation"
+      ],
+      "geometry": [
+        "mass distribution",
+        "support/anchor",
+        "fluid free surface",
+        "moving assemblies"
+      ],
+      "models": [
+        "rigid/flexible-body dynamics as applicable"
+      ],
+      "cross": [
+        "fluid redistribution",
+        "contact loads",
+        "sensor bias",
+        "mechanical strain"
+      ],
+      "witness": "mass properties + motion/load measurement"
+    }
+  ],
+  "spatial_operators": [
+    {
+      "id": "SO-EMBED",
+      "action": "place a seed or functional region inside a host volume with explicit clearance, interface and extraction/service path"
+    },
+    {
+      "id": "SO-NEST",
+      "action": "nest one functional shell/volume inside another without assuming planar Z-order"
+    },
+    {
+      "id": "SO-VIA",
+      "action": "connect conductor/thermal/fluid/reference networks through 3D depth"
+    },
+    {
+      "id": "SO-WRAP",
+      "action": "wrap conductor, dielectric, shield, heater or sensor geometry around a curved/volumetric surface"
+    },
+    {
+      "id": "SO-CAVITY",
+      "action": "reserve controlled void/cavity for field shaping, optics, gas/fluid, compliance, thermal isolation or service"
+    },
+    {
+      "id": "SO-SHIELD",
+      "action": "create electric/magnetic/RF/optical/ionizing-radiation shielding only to the evidence ceiling of its material and geometry"
+    },
+    {
+      "id": "SO-CHANNEL",
+      "action": "route fluid, gas, fibre, wire, waveguide or service corridor through the body"
+    },
+    {
+      "id": "SO-GRADIENT",
+      "action": "vary composition/property spatially with a traceable material/process law"
+    },
+    {
+      "id": "SO-ENCAPSULATE",
+      "action": "preserve a completed region against later atmosphere/chemistry/temperature/process exposure"
+    },
+    {
+      "id": "SO-REGISTER",
+      "action": "establish metrology/datum/coordinate relation between regions and inserted seeds"
+    }
+  ],
+  "parasitic_and_coupling_extraction": {
+    "principle": "The schematic supplies intended connectivity; the 3D as-built geometry supplies parasitic and mutual connectivity.",
+    "electrical": {
+      "capacitance": "Use closed form only for topology-valid cases. For arbitrary multi-conductor geometry solve/measure Maxwell C matrix; include mutual terms and package/seed pads as conductor nodes.",
+      "inductance": "Use topology-valid closed form only where justified; otherwise solve/measure self and mutual L matrix/partial inductance and return-path coupling.",
+      "resistance": "Extract volume/sheet/contact resistance from attributable material state and geometry; interfaces/contact resistance are separate elements.",
+      "distributed": "Promote to RLGC/transmission-line/full-wave representation when electrical length/frequency invalidates lumped abstraction."
+    },
+    "thermal": "Build thermal conductance/capacitance network or field model from geometry/material/interfaces; include seed junction/package paths, convection boundaries and radiative view factors when consequential.",
+    "mechanical": "Assemble mass/stiffness/damping/contact matrices or nonlinear continuum model as regime requires; package/seed masses and compliant interfaces are explicit.",
+    "multi_seed": "SG-N requires off-diagonal mutual terms where consequential; zeroing mutual C/L/thermal/mechanical coupling requires a justified approximation.",
+    "uncertainty": "Every inferred matrix retains geometry/material/property/environment source, solver/model revision and uncertainty/sensitivity; measured readback can calibrate but not retroactively validate unrelated regimes."
+  },
+  "four_d_state_contract": {
+    "state": "x(t)={electrical,EM,thermal,mechanical,fluid,optical,chemical,control,environment,history}",
+    "geometry": "G(t) may change through motion, deformation, swelling, wear, phase change or commanded reconfiguration; topology changes require event/state transition, not silent parameter drift.",
+    "descriptor": "E(x,p,t)*xdot=F(x,u,p,t) is an assembly interface only; child domains retain their governing PDE/ODE/algebraic models.",
+    "triggers": [
+      "temperature",
+      "voltage/current/field",
+      "pressure/flow",
+      "strain/stress",
+      "light/RF input",
+      "chemical state",
+      "radiation dose",
+      "time/aging",
+      "software/configuration"
+    ],
+    "smart_rule": "A smart embedded system exists only when sensed state, deterministic control/safe-state path and actuator/output relation are attributable. Geometry alone does not imply intelligence."
+  },
+  "seed_count_examples": [
+    {
+      "id": "EX-SG0-PASSIVE-SMART-SKIN",
+      "seed_graph": "SG-0",
+      "stack": [
+        "substrate/structure",
+        "printed conductor/reference",
+        "R/heater",
+        "dielectric/C",
+        "L/antenna",
+        "passive sensor geometry",
+        "barrier/encapsulation",
+        "identity marker"
+      ],
+      "capability": "passive sensing/harvesting/resonance/heating only within qualified material/process and external interrogation/energy boundaries",
+      "hold": "no autonomous logic/control unless printed active process is separately qualified"
+    },
+    {
+      "id": "EX-SG1-EDGE-CELL",
+      "seed_graph": "SG-1",
+      "stack": [
+        "3D structure",
+        "power/reference/interconnect",
+        "one active/sensor/controller seed",
+        "printed R/C/L/filter/antenna",
+        "thermal spread/shield",
+        "service/identity"
+      ],
+      "capability": "one inserted seed supplies active function while surrounding printed geometry performs support/passive/field-management functions",
+      "hold": "seed ratings/certification and package parasitics remain exact-instance authority"
+    },
+    {
+      "id": "EX-SGN-DISTRIBUTED-MODULE",
+      "seed_graph": "SG-N",
+      "stack": [
+        "power distribution",
+        "multiple compute/driver/sensor/protection seeds",
+        "3D passives/interconnect",
+        "RF/optical/fluid/thermal regions",
+        "fault containment/service/identity"
+      ],
+      "capability": "distributed embedded subsystem with explicit mutual coupling, timing, fault domains and network state",
+      "hold": "system safety/reliability/certification requires system-level evidence; component ratings do not automatically compose"
+    }
+  ],
+  "sequence_compiler": [
+    "RESOLVE_OBJECT_FUNCTIONS_AND_CONSEQUENCE",
+    "SELECT_SEED_GRAPH_CLASS",
+    "DECOMPOSE_TO_3D_FUNCTIONAL_REGIONS",
+    "BIND_EXACT_OR_ARCHETYPE_MATERIAL/SEED SOURCES",
+    "PACK_REGIONS_WITH_SERVICE_SAFETY_AND_FIELD_VOIDS",
+    "BUILD_INTENDED_CONNECTIVITY_GRAPH",
+    "EXTRACT_OR_DECLARE_PARASITIC/MUTUAL COUPLINGS",
+    "SELECT_FIELD_MODELS_BY_REGIME",
+    "ORDER_PROCESS_DAG_WITH_X_TO_Y_DIRECTIONALITY",
+    "CHECK_PREDECESSOR_DAMAGE/ATMOSPHERE/THERMAL/CHEMICAL_ENVELOPES",
+    "ENCAPSULATE_OR_PRESERVE_WHERE_REQUIRED",
+    "COMPILE_4D_STATE/TRIGGERS/SAFE_STATE",
+    "DEFINE_WITNESSES/FALSIFIERS/UNCERTAINTY",
+    "FABRICATE_OR_RETAIN_PHYSICAL_NOT_RUN",
+    "READBACK/DBR/REVISION_INVALIDATION"
+  ],
+  "engineering_boundaries": [
+    "2D schematic symbols are logical intent, not sufficient physical geometry.",
+    "3D geometry can create intended passive function and can also create unintended parasitic coupling; both are compiled.",
+    "No seed count confers authority. Zero seeds does not imply fully autonomous or semiconductor-capable fabrication.",
+    "Capacitance does not establish dielectric strength, leakage, loss, ESR/ESL, lifetime or certification.",
+    "RF/optical/thermal/ionizing-radiation models are distinct and must not be conflated.",
+    "Near-field and far-field RF behavior must be declared from geometry/frequency regime; do not force a far-field model.",
+    "Certified protection/isolation/semiconductor/MEMS/precision optoelectronics remain seed/hybrid unless their full process chain is independently qualified.",
+    "Physical execution, release and durable .cgx promotion remain separately gated."
+  ],
+  "physical_execution": false,
+  "radiative_transport_companion": {
+    "artifact_id": "UTP-146",
+    "build_id": "BUILD-079",
+    "path": "cgx/component_atlas/type1_radiative_transport_seed_matrix_v0_1.json",
+    "role": "field/radiation/transport regime, source/receiver, energy/passivity and self/mutual-coupling closure across SG-0/SG-1/SG-N"
+  }
+}
