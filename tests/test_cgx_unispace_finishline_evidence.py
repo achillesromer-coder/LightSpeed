@@ -57,7 +57,9 @@ class FinishlineEvidenceTests(unittest.TestCase):
     def test_new_alexandria_source_updates_are_not_silently_marked_installed(self):
         d=self.data["upstream_draft_update"]
         self.assertEqual(d["pr"],180)
-        self.assertEqual(d["status"],"SELECTIVE_29_R0_SOURCE_BLOBS_FOLDED_NOT_FULL_UPSTREAM")
+        self.assertEqual(d["status"],"SELECTIVE_29_PR180_BLOBS_PLUS_1_PINNED_UPSTREAM_FILE_NOT_FULL_DEPENDENCIES")
+        self.assertEqual(d["fresh_direct_upstream_file_count"],1)
+        self.assertTrue(d["unresolved_qualification"])
         self.assertEqual(d["head"],self.data["source_heads"]["PR180"])
         self.assertEqual(d["carried_git_blob_count"],29)
         self.assertTrue((ROOT/d["frozen_fold_record"]).is_file())
