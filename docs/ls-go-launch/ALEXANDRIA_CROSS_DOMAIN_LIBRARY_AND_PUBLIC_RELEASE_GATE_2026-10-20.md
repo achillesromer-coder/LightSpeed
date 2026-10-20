@@ -12,6 +12,10 @@
 
 `cgx/review/alexandria_offline_reference_preview.py` deterministically generates a self-contained HTML library that lists the 207 historical game/engine entries, 31 curated tools and 13 official source roots (**251 reference entries**). The search/filter interface operates entirely in the browser; external links require a network connection, but no third-party code, model weights, academic articles, textbooks, game binaries or private engineering packets are bundled. This candidate can be generated in CI and preserved as a 7-day owner-review Actions artifact, not Vite public/static deployment. The HTML includes SHA-256 fingerprints for all three source registries, no remote script/assets and a restrictive no-network CSP. Its offline reopen is tested at source/HTML generation level; physical-browser functional acceptance is still outstanding.
 
+## Learning modules with verifiable expectations
+
+`cgx/review/alexandria_foundation_learning_modules_v0_1.json` defines **18 offline-first educational exercises across six tracks**: source identity, geometry transformation, container space reservation, taxonomic/CRS handling, solver provenance, game-engine deduplication, numerical/model evaluation, and historical/licence reconstruction. Each lesson has named upstream source references, a synthetic or owner-authored input constraint, expected review artifact, qualification HOLD and an explicit unexecuted state. The offline preview displays these lessons directly. The curriculum can train people and evaluate candidate software only after installing rights-cleared dependencies; it does not itself train AI weights, operate physical equipment or validate scientific results.
+
 ## Training and learning maps, not model-weight training or unrestricted content copying
 
 | Knowledge track | Candidate examples | CGX learning artifact and proof |
