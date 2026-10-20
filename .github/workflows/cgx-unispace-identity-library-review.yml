@@ -1,0 +1,33 @@
+name: CGX exact identity and library source convergence
+on:
+  pull_request:
+    paths:
+      - "cgx/review/library_coverage_projection.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_object_context.py"
+      - "desktop/LightSpeed_Runtime/tests/test_cgx_object_identity.py"
+      - "desktop/source-manifest.json"
+      - "tests/test_cgx_library_identity_convergence.py"
+      - ".github/workflows/cgx-unispace-identity-library-review.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  bounded-source-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install isolated test dependency
+        run: python -m pip install 'pytest==8.4.2'
+      - name: Run source-derived inventory and exact identity acceptance
+        run: |
+          python -m unittest discover -s tests -p 'test_cgx_library_identity_convergence.py' -v
+          python -m pytest -q desktop/LightSpeed_Runtime/tests/test_cgx_object_identity.py
+          python -m unittest discover -s tests -p 'test_cgx_unispace_source_folding.py' -v
+      - name: Render generated inventory without checking into canonical master
+        run: |
+          python cgx/review/library_coverage_projection.py > /tmp/cgx_unispace_derived_coverage.json
+          python -m json.tool /tmp/cgx_unispace_derived_coverage.json > /dev/null
