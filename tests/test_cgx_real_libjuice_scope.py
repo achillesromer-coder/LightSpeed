@@ -66,6 +66,15 @@ class LibjuiceSourceScopeTests(unittest.TestCase):
             self.assertEqual(row["git_blob_sha1"],_git_blob(data))
             self.assertFalse(row["embedded_in_r1"])
 
+    def test_committed_r1_receipt_reproduces_exactly_from_pinned_r0(self):
+        stored=ROOT/"cgx"/"review"/"alexandria_libjuice_source_scope_20261021.json"
+        persisted=json.loads(stored.read_text(encoding="utf-8"))
+        current=compile_libjuice_scope(*inputs())
+        self.assertEqual(persisted,current)
+        self.assertFalse(persisted["license_scopes"]["distribution_approved"])
+        self.assertFalse(persisted["complete_repository_acquired"])
+        self.assertFalse(persisted["native_dbr_verified"])
+
     def test_mutated_picohash_or_main_source_blob_fails_closed(self):
         p,t,originals=inputs()
         for name in ("src/picohash.h","src/juice.c","LICENSE"):
