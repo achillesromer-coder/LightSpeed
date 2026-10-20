@@ -52,6 +52,22 @@ class OfflineReferenceTests(unittest.TestCase):
             self.assertNotIn('src="https:',data)
             self.assertNotIn("HOLD_PUBLIC_RELEASE</",data)
             self.assertIn("Review-only",data)
+    def test_eighteen_learning_exercises_are_source_linked_and_unexecuted(self):
+        import json
+        data=json.loads((ROOT/"cgx/review/alexandria_foundation_learning_modules_v0_1.json").read_text())
+        self.assertEqual(len(data["tracks"]),6)
+        self.assertEqual(len(data["modules"]),18)
+        known=json.loads((ROOT/"cgx/review/alexandria_curated_upstream_tools_20261020.json").read_text())
+        source_ids={x["repository"] for x in known["repositories"]}
+        self.assertTrue(all(module["module_state"]=="UNEXECUTED_SOURCE_LINKED_EDUCATION"
+                            and not module["autonomous_promotion"]
+                            and not module["third_party_bytes_included"]
+                            and set(module["repository_sources"]).issubset(source_ids)
+                            for module in data["modules"]))
+        html=m.build_offline_reference_html()
+        for module in data["modules"]:
+            self.assertIn(m._e(module["title"]),html)
+
     def test_no_automatic_public_release_claim(self):
         h=m.build_offline_reference_html()
         self.assertIn("not an authorised public release of UniSpace",h)
