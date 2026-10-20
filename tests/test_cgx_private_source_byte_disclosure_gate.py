@@ -8,6 +8,8 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from urllib.parse import quote_from_bytes
+import re
 
 ROOT=Path(__file__).resolve().parents[1]
 SOURCE=ROOT/"cgx/review/private_source_byte_disclosure_gate.py"
@@ -67,6 +69,34 @@ class PrivateByteReleaseTests(unittest.TestCase):
         self.write_dist("assets/chunks.js",b'window.x="'+base64.b64encode(self.fixture["review/renders/test.svg"])+b'";')
         out=self.scan()
         self.assertTrue(any(m["match"]=="ENCODED_COMPLETE_SOURCE" for m in out["matches"]))
+
+    def test_complete_url_percent_escaped_private_text_blocks(self):
+        raw=self.fixture["review/renders/test.svg"]
+        encoded=quote_from_bytes(raw,safe="").encode("ascii")
+        self.assertNotIn(raw,encoded)
+        self.write_dist("assets/repacked-index.js",b'const payload="'+encoded+b'";')
+        out=self.scan()
+        self.assertEqual(out["private_byte_matches"],1)
+        self.assertEqual(out["matches"][0]["match"],"ENCODED_COMPLETE_SOURCE")
+        self.assertFalse(out["public_release_authorised"])
+        self.assertNotIn("Private/source-only",json.dumps(out))
+
+    def test_lowercase_hex_url_percent_escaped_source_blocks(self):
+        raw=self.fixture["review/renders/test.svg"]
+        encoded=quote_from_bytes(raw,safe="").encode("ascii")
+        encoded=re.sub(rb"%[0-9A-F]{2}",lambda m:m.group().lower(),encoded)
+        self.assertNotIn(raw,encoded)
+        self.write_dist("assets/other-chunk.js",encoded)
+        out=self.scan()
+        self.assertEqual(out["private_byte_matches"],1)
+        self.assertEqual(out["matches"][0]["match"],"ENCODED_COMPLETE_SOURCE")
+
+    def test_url_percent_probe_does_not_grant_release_from_no_match(self):
+        self.write_dist("assets/harmless.js",b"window.safe=true;")
+        out=self.scan()
+        self.assertEqual(out["private_byte_matches"],0)
+        self.assertFalse(out["public_release_authorised"])
+        self.assertFalse(out["owner_acl_verified"])
 
     def test_json_escaped_complete_source_blocks(self):
         source=self.fixture["data/cgx_object_review_catalogue.json"].decode("utf-8")
