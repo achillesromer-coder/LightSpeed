@@ -211,7 +211,7 @@ def test_half_speed_host_profile_bounds_background_work() -> None:
     assert limits["max_concurrent_ollama_jobs"] == 1
     assert limits["max_floor_boot_parallelism"] == 2
     assert limits["merovingian_interval_seconds"] == 120
-    assert limits["watchdog_interval_minutes"] == 10
+    assert limits["watchdog_interval_minutes"] == 5
 
 
 def test_watchdog_accepts_canonical_junction_alias(monkeypatch) -> None:
