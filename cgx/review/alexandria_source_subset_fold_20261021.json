@@ -1,0 +1,153 @@
+{
+  "schema": "CGX-ALEXANDRIA-SELECTIVE-R0-FOLD/0.1",
+  "date": "2026-10-21",
+  "parent": "Cognigrex.cgx",
+  "source_pr": 180,
+  "source_head": "e14448852e05d84262a72ef50ac2230cfa4a6b8f",
+  "base_pr": 196,
+  "exact_git_blobs": [
+    {
+      "path": "cgx/portable_node/individual_game_source_scope.py",
+      "blob_sha1": "627e3ef2109895a979775050c89a507716d68105"
+    },
+    {
+      "path": "cgx/portable_node/project_gitlink_evidence.py",
+      "blob_sha1": "3e1d5a9b01df94d2f3f87e9ab6337f5f17a1ef09"
+    },
+    {
+      "path": "cgx/portable_node/libdatachannel_source_scope.py",
+      "blob_sha1": "ed81728891cd3551c730c352f7329277d3c8e330"
+    },
+    {
+      "path": "cgx/review/alexandria_game_catalogue_real_source_envelope_20261021.json",
+      "blob_sha1": "ff03c95fe0bfeb00ff2d28ee08c5b5d11f81f62f"
+    },
+    {
+      "path": "cgx/review/alexandria_hypersomnia_project_source_scope_20261021.json",
+      "blob_sha1": "371653087ecd7b81bf2ca8dd3201e673f8953a98"
+    },
+    {
+      "path": "cgx/review/alexandria_hypersomnia_gitlinks_openal_scope_20261021.json",
+      "blob_sha1": "992710c912666c3cc5f1e38d4ae5ea404391e3c0"
+    },
+    {
+      "path": "cgx/review/alexandria_libdatachannel_source_scope_20261021.json",
+      "blob_sha1": "19cc9ba04a81e07dc4a2308192e2a8c1e3c905c3"
+    },
+    {
+      "path": "tests/fixtures/alexandria_hypersomnia_project/.gitmodules",
+      "blob_sha1": "3c24be734f5fa84409787a4b332dc76f4877b86a"
+    },
+    {
+      "path": "tests/fixtures/alexandria_hypersomnia_project/LICENSE.md",
+      "blob_sha1": "dbbe3558157f5861bff35dcb37b328b679b0ccfd"
+    },
+    {
+      "path": "tests/fixtures/alexandria_hypersomnia_project/README.md",
+      "blob_sha1": "aa0b39e83d1c3bc017d8ea81ab2e7e2550b7777f"
+    },
+    {
+      "path": "tests/fixtures/alexandria_hypersomnia_project/pinned_tree_chain.json",
+      "blob_sha1": "c29cdeadd13307ebd4761fb5d0776ae81d9abc9b"
+    },
+    {
+      "path": "tests/fixtures/alexandria_hypersomnia_project/src/main.cpp",
+      "blob_sha1": "b697675c15ee4c0f1383674de85a9f4a1fa195c8"
+    },
+    {
+      "path": "tests/fixtures/alexandria_hypersomnia_openal/COPYING",
+      "blob_sha1": "8d5d0000656d57b6fc8118c1078aa3172b7c02ec"
+    },
+    {
+      "path": "tests/fixtures/alexandria_hypersomnia_openal/LICENSE-pffft",
+      "blob_sha1": "5f1a8493f23e2823e9f27f05215954da158b760c"
+    },
+    {
+      "path": "tests/fixtures/alexandria_hypersomnia_openal/README.md",
+      "blob_sha1": "09f9ec24d909c2fe10b4aacff6c87bd3a7aeda68"
+    },
+    {
+      "path": "tests/fixtures/alexandria_libdatachannel/.gitmodules",
+      "blob_sha1": "b7604c2fae62db7046edfd688cefc273dd31bd86"
+    },
+    {
+      "path": "tests/fixtures/alexandria_libdatachannel/LICENSE",
+      "blob_sha1": "14e2f777f6c395e7e04ab4aa306bbcc4b0c1120e"
+    },
+    {
+      "path": "tests/fixtures/alexandria_libdatachannel/README.md",
+      "blob_sha1": "a9f3af9e81791cf3d8be495ba13222b1cd842c2d"
+    },
+    {
+      "path": "tests/fixtures/alexandria_libdatachannel/git_tree_chain.json",
+      "blob_sha1": "52ba90ceeaf1d4da1642b62a8dccb4df0b1b2e33"
+    },
+    {
+      "path": "tests/fixtures/alexandria_libdatachannel/include/rtc/rtc.hpp",
+      "blob_sha1": "7f97941dec316f9405aa9732d28aa162dbe1c881"
+    },
+    {
+      "path": "tests/fixtures/alexandria_libdatachannel/src/peerconnection.cpp",
+      "blob_sha1": "135f4585b4a59879fc19ecd85e9b85709ee0ace8"
+    },
+    {
+      "path": "tests/fixtures/alexandria_libjuice/LICENSE",
+      "blob_sha1": "14e2f777f6c395e7e04ab4aa306bbcc4b0c1120e"
+    },
+    {
+      "path": "tests/fixtures/alexandria_libjuice/README.md",
+      "blob_sha1": "b48490661ec71856e2764014f3b0b94e189495c9"
+    },
+    {
+      "path": "tests/fixtures/alexandria_libjuice/git_tree_chain.json",
+      "blob_sha1": "836b724a9ee71167818b883494b13a8c1bfad133"
+    },
+    {
+      "path": "tests/fixtures/alexandria_libjuice/src/juice.c",
+      "blob_sha1": "074823c86386c1d3946b8dc87a51cd0bf9267f2d"
+    },
+    {
+      "path": "tests/fixtures/alexandria_libjuice/src/picohash.h",
+      "blob_sha1": "4fda232f12087204a2deab67444569890289c709"
+    },
+    {
+      "path": "tests/test_cgx_real_hypersomnia_project_source.py",
+      "blob_sha1": "2d417aa9cf5010087b283d88e06f17033fdae7f3"
+    },
+    {
+      "path": "tests/test_cgx_hypersomnia_gitlinks_openal.py",
+      "blob_sha1": "374255c6d63ef4f1e2a766cfb9f48728b92375a6"
+    },
+    {
+      "path": "tests/test_cgx_real_libdatachannel_scope.py",
+      "blob_sha1": "270a4ed9157125b09277b35fe1a34ed9db2b7390"
+    }
+  ],
+  "rights": {
+    "game_code": "AGPL-3.0_SAMPLE_ONLY_REVIEW",
+    "libdatachannel": "MPL-2.0_PARTIAL_NOTICE_REVIEW",
+    "libjuice": "UPSTREAM_LICENSE_NOTICE_SAMPLED_ONLY",
+    "openal": "THIRD_PARTY_COMPONENTS_REQUIRE_INDEPENDENT_REVIEW",
+    "all_dependencies_complete": false,
+    "all_assets_relicensed": false,
+    "redistribution_approved": false,
+    "compiled": false,
+    "network_handshake_verified": false,
+    "canonical_promotion": false
+  },
+  "held_paths": [
+    {
+      "path": "tests/fixtures/alexandria_libjuice/include/juice/juice.h",
+      "reason": "PRESENT_IN_PR_CHANGED_FILENAME_LIST_BUT_FETCH_404_AT_PINNED_SOURCE_HEAD",
+      "status": "SOURCE_FETCH_UNRESOLVED"
+    }
+  ],
+  "excluded_conflicts": [
+    "apps/lightspeed-go/src/main.ts",
+    "apps/lightspeed-go/src/desktopBridge.ts",
+    "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py",
+    "desktop/source-manifest.json",
+    "desktop/LightSpeed_Runtime/tests/test_owner_credentials.py"
+  ],
+  "acceptance": "SOURCE_TEXT_GIT_BLOBS_AND_ORIGINAL_SCOPED_REGRESSIONS_ONLY_NOT_A_GAME_OR_ENGINE_INSTALL"
+}
