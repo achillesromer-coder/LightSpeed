@@ -4,6 +4,8 @@ on:
     paths:
       - "cgx/review/cgx_unispace_finishline_evidence_20261021.json"
       - "tests/test_cgx_unispace_finishline_evidence.py"
+      - "cgx/review/video_r0_intake_candidate.py"
+      - "tests/test_cgx_video_r0_intake_candidate.py"
       - ".github/workflows/cgx-unispace-finishline-map.yml"
   workflow_dispatch:
 permissions:
@@ -21,6 +23,8 @@ jobs:
         run: |
           python -m json.tool cgx/review/cgx_unispace_finishline_evidence_20261021.json > /dev/null
           python -m unittest discover -s tests -p 'test_cgx_unispace_finishline_evidence.py' -v
+      - name: Verify R0 video source-only hold gates and negative fixtures
+        run: python -m unittest discover -s tests -p 'test_cgx_video_r0_intake_candidate.py' -v
       - name: Read milestone coverage without claiming a full program percentage
         run: |
           python - <<'PY'
