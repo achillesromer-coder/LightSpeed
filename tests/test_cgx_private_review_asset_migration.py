@@ -84,6 +84,66 @@ class PrivateAssetMigrationTests(unittest.TestCase):
             return
         with self.assertRaisesRegex(module.MigrationHold,"NONREGULAR_REFUSED"):
             module.private_review_source_plan(self.repo)
+    def test_staged_destination_all_bytes_reverified_without_release_authority(self):
+        plan=module.private_review_source_plan(self.repo)
+        receipt=module.stage_approved_private_copy(self.repo,self.private,plan["plan_sha256"],4)
+        self.assertEqual(receipt["post_stage_local_readback"],"LOCAL_BYTES_MATCH_SOURCE_NOT_AUTHORITY")
+        report=module.verify_staged_private_copy(self.repo,self.private,plan["plan_sha256"],4)
+        self.assertEqual(report["verified_files"],4)
+        self.assertTrue(report["destination_sha256_parity"])
+        self.assertFalse(report["public_release_authorised"])
+        self.assertFalse(report["owner_acl_verified"])
+        self.assertFalse(report["runtime_owner_session_verified"])
+        self.assertFalse(report["public_static_exposure_resolved"])
+
+    def test_modified_missing_and_extra_destinations_each_hold(self):
+        plan=module.private_review_source_plan(self.repo)
+        module.stage_approved_private_copy(self.repo,self.private,plan["plan_sha256"],4)
+        target=self.private/"review/mesh/diode.json"
+        original=target.read_bytes()
+        target.write_bytes(b'{"vertices":"tampered"}')
+        with self.assertRaisesRegex(module.MigrationHold,"DESTINATION_READBACK_MISMATCH"):
+            module.verify_staged_private_copy(self.repo,self.private,plan["plan_sha256"],4)
+        target.write_bytes(original)
+        target.unlink()
+        with self.assertRaisesRegex(module.MigrationHold,"DESTINATION_MISSING_ASSETS"):
+            module.verify_staged_private_copy(self.repo,self.private,plan["plan_sha256"],4)
+        target.write_bytes(original)
+        rogue=self.private/"review/renders/unapproved.svg"
+        rogue.write_bytes(b'<svg/>')
+        with self.assertRaisesRegex(module.MigrationHold,"DESTINATION_UNAPPROVED_EXTRA_ASSET"):
+            module.verify_staged_private_copy(self.repo,self.private,plan["plan_sha256"],4)
+
+    def test_private_destination_rejects_symlinks_and_nested_directories(self):
+        plan=module.private_review_source_plan(self.repo)
+        module.stage_approved_private_copy(self.repo,self.private,plan["plan_sha256"],4)
+        nested=self.private/"review/mesh/additional"
+        nested.mkdir()
+        with self.assertRaisesRegex(module.MigrationHold,"DESTINATION_NONREGULAR_OR_NESTED_REFUSED"):
+            module.verify_staged_private_copy(self.repo,self.private,plan["plan_sha256"],4)
+        nested.rmdir()
+        target=self.private/"review/mesh/diode.json"
+        target.unlink()
+        try:
+            target.symlink_to(self.private/"data/cgx_object_review_catalogue.json")
+        except (OSError,NotImplementedError):
+            return
+        with self.assertRaisesRegex(module.MigrationHold,"DESTINATION_NONREGULAR_OR_NESTED_REFUSED"):
+            module.verify_staged_private_copy(self.repo,self.private,plan["plan_sha256"],4)
+
+    def test_destination_verifier_requires_reapproved_exact_source_root(self):
+        plan=module.private_review_source_plan(self.repo)
+        module.stage_approved_private_copy(self.repo,self.private,plan["plan_sha256"],4)
+        with self.assertRaisesRegex(module.MigrationHold,"SOURCE_PLAN_CHANGED"):
+            module.verify_staged_private_copy(self.repo,self.private,"0"*64,4)
+        with self.assertRaisesRegex(module.MigrationHold,"OWNER_FILE_COUNT"):
+            module.verify_staged_private_copy(self.repo,self.private,plan["plan_sha256"],3)
+        original=self.pub/"review/mesh/diode.json"
+        original.write_bytes(b'{"different":"source"}')
+        with self.assertRaisesRegex(module.MigrationHold,"SOURCE_PLAN_CHANGED"):
+            module.verify_staged_private_copy(self.repo,self.private,plan["plan_sha256"],4)
+        self.assertTrue((self.private/"review/mesh/diode.json").exists())
+
     def test_oversize_payload_denied(self):
         p=self.pub/"review/mesh/diode.json"
         with p.open("wb") as out:
