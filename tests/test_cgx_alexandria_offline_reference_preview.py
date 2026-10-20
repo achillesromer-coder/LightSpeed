@@ -20,10 +20,10 @@ class CountRows(HTMLParser):
             self.entries+=1
 
 class OfflineReferenceTests(unittest.TestCase):
-    def test_all_238_source_entries_are_source_only(self):
+    def test_all_251_source_entries_are_source_only(self):
         h=m.build_offline_reference_html()
         parser=CountRows();parser.feed(h)
-        self.assertEqual(parser.entries,238)
+        self.assertEqual(parser.entries,251)
         self.assertIn("Learning pathways",h)
         self.assertIn("Content-Security-Policy",h)
         self.assertIn("connect-src &#x27;none&#x27;",h)
