@@ -57,8 +57,10 @@ class FinishlineEvidenceTests(unittest.TestCase):
     def test_new_alexandria_source_updates_are_not_silently_marked_installed(self):
         d=self.data["upstream_draft_update"]
         self.assertEqual(d["pr"],180)
-        self.assertEqual(d["status"],"SOURCE_ONLY_NEW_R0_FILES_NOT_FULLY_FOLDED")
+        self.assertEqual(d["status"],"SELECTIVE_29_R0_SOURCE_BLOBS_FOLDED_NOT_FULL_UPSTREAM")
         self.assertEqual(d["head"],self.data["source_heads"]["PR180"])
+        self.assertEqual(d["carried_git_blob_count"],29)
+        self.assertTrue((ROOT/d["frozen_fold_record"]).is_file())
         for p in d["specific_unfolded"]:
             self.assertFalse((ROOT/p).exists(),p)
     def test_existing_migration_scanner_and_kit_remain_in_stack(self):
