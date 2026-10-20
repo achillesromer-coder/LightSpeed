@@ -1,0 +1,169 @@
+{
+  "schema": "CGX-LIBDATACHANNEL-PINNED-GIT-TREES/0.1",
+  "repo": "paullouisageneau/libdatachannel",
+  "commit": "6b1e2e620f1e37f0eafeee702eaea0043cb305fd",
+  "root_tree_sha": "5c8e8876492dde5196e2fc9e40e82a0d2f737f7c",
+  "root": {
+    "sha": "5c8e8876492dde5196e2fc9e40e82a0d2f737f7c",
+    "truncated": false,
+    "entries": [
+      {
+        "path": ".clang-format",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "7278f7dd16965714a187379553097546528f068d"
+      },
+      {
+        "path": ".editorconfig",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "5f189c75da667cda43f74b0c5fb1c844badf8a50"
+      },
+      {
+        "path": ".github",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "b8e6a797df142b11c6eff8e3689d076627ca036f"
+      },
+      {
+        "path": ".gitignore",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "dfec4bd656d649b4c5a5fce17c7987c60399fb83"
+      },
+      {
+        "path": ".gitmodules",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "b7604c2fae62db7046edfd688cefc273dd31bd86"
+      },
+      {
+        "path": ".travis.yml",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "def8a42e5e3b9bd7f7b4aba78e4cc978a7ebd2db"
+      },
+      {
+        "path": "BUILDING.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "d07a36759fbf89fc649d73920eb517d678314132"
+      },
+      {
+        "path": "CMakeLists.txt",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ac304a4dd84418b210b0535fb07edd579cbd2ad7"
+      },
+      {
+        "path": "DOC.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c7e2cda73587b7ddc08a096bdbad4105a80a9032"
+      },
+      {
+        "path": "Jamfile",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "9c740467672ec24fbfa932630ee4d221539afde6"
+      },
+      {
+        "path": "LICENSE",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "14e2f777f6c395e7e04ab4aa306bbcc4b0c1120e"
+      },
+      {
+        "path": "Makefile",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "91365fb5b72c6f14a49cd0560464d656a74f0341"
+      },
+      {
+        "path": "README.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a9f3af9e81791cf3d8be495ba13222b1cd842c2d"
+      },
+      {
+        "path": "cmake",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "33eb339f13fbc0fe96abf8a936b6819dffeda5b7"
+      },
+      {
+        "path": "deps",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "66c5f5feb1a0257f561f5112dbc6cfb36d2f6fe0"
+      },
+      {
+        "path": "examples",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "d88d1abb5e498dc7d8377f827b44aeaee6ac3a43"
+      },
+      {
+        "path": "include",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "666a63224d1fca40ca3caf9a1638fb733918646c"
+      },
+      {
+        "path": "pages",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "5752f8c7c3495d04ac6c8b0989b630b0e9d3f521"
+      },
+      {
+        "path": "src",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "aa13212851b8eb34676075996cdb521cf5f81393"
+      },
+      {
+        "path": "test",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "d9fbefab64d791e83bd13eb7d539abe926229bcf"
+      }
+    ]
+  },
+  "deps": {
+    "sha": "66c5f5feb1a0257f561f5112dbc6cfb36d2f6fe0",
+    "truncated": false,
+    "entries": [
+      {
+        "path": "json",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "55f93686c01528224f448c19128836e7df245f72"
+      },
+      {
+        "path": "libjuice",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "b89c792e3612faf2f12cf35bcc56857313a06be3"
+      },
+      {
+        "path": "libsrtp",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "24b3bf8f19b6f5ab4cd2bcceb4f4064efca86fd5"
+      },
+      {
+        "path": "plog",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "94899e0b926ac1b0f4750bfbd495167b4a6ae9ef"
+      },
+      {
+        "path": "usrsctp",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "fec583d54493f879d2ae44a743423bf8a04371ab"
+      }
+    ]
+  },
+  "source_complete": false
+}
