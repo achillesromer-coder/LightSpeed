@@ -11,6 +11,11 @@ from typing import Any
 
 HASH = re.compile(r"^[a-f0-9]{64}$")
 FILESET = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9.:_/-]{2,191}$")
+# Shareable reference identifiers cannot carry URLs, credentials, local paths or
+# internal/private namespace labels. This is syntax hygiene, NOT publication approval.
+PUBLIC_SOURCE_ID = re.compile(r"^[a-zA-Z][a-zA-Z0-9._:-]{0,191}$")
+NONPUBLIC_PREFIXES = ("private:", "internal:", "secret:", "credential:", "profile:",
+                      "person:", "user:", "http:", "https:", "file:", "s3:")
 MAX_COMPONENTS = 512
 MAX_TOTAL_BYTES = 2**40
 AUDIENCES = {"PUBLIC", "REGISTERED_USER", "COLLABORATOR", "INSTITUTIONAL", "PRIVATE_OWNER", "RESTRICTED"}
@@ -57,6 +62,13 @@ def propose_fileset(spec: dict, *, proven_local_hashes=()) -> dict[str, Any]:
         source_id, digest, size = item.get("source_id"), item.get("sha256"), item.get("byte_length")
         if not isinstance(source_id, str) or not source_id or len(source_id) > 256:
             raise ValueError("missing source identity")
+        if audience == "PUBLIC" and (
+            not PUBLIC_SOURCE_ID.fullmatch(source_id)
+            or ".." in source_id
+            or source_id.casefold().startswith(NONPUBLIC_PREFIXES)
+            or (len(source_id) >= 2 and source_id[1] == ":")
+        ):
+            raise ValueError("public source identifier must be an approved opaque reference, not a private locator")
         if not isinstance(digest, str) or not HASH.fullmatch(digest):
             raise ValueError("full SHA-256 source digest required")
         if type(size) is not int or not (0 <= size <= MAX_TOTAL_BYTES):
