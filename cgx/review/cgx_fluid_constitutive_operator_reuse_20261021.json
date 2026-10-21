@@ -1,0 +1,179 @@
+{
+  "schema": "CGX-RAPHAEL-CONSTITUTIVE-TRANSPORT-REUSE/0.1",
+  "date": "2026-10-21",
+  "authority": "REVIEW_ONLY_EXISTING_OWNER_OPERATORS",
+  "canonical_parent": "Cognigrex.cgx",
+  "novel_solver_created": false,
+  "physical_validation_performed": false,
+  "upstream_kernel_references": [
+    {
+      "artifact": "UTP-136",
+      "kernel": "T1K-012",
+      "source": "cgx/component_atlas/type1_equation_kernel_v0_1.json",
+      "role": "fluidic environment equation/source kernel"
+    },
+    {
+      "artifact": "UTP-137",
+      "kernel": "VGK-019",
+      "source": "cgx/component_atlas/type1_volumetric_kernel_v0_1.json",
+      "role": "circular laminar channel geometry+pressure/flow"
+    },
+    {
+      "artifact": "UTP-137",
+      "kernel": "VGK-020",
+      "source": "cgx/component_atlas/type1_volumetric_kernel_v0_1.json",
+      "role": "porous medium / anisotropic permeability; not circular channel"
+    },
+    {
+      "artifact": "CIM-024/026/027",
+      "kernel": "fluid interactions",
+      "source": "cgx/component_atlas/component_interaction_map_v0_1.json",
+      "role": "mechanical, thermal and species transport coupling gates"
+    }
+  ],
+  "constitutive_core": {
+    "law": "Newtonian scalar tau=mu*gamma_dot; tube Δp=8 mu L Q/(pi r^4) ONLY in screened regime",
+    "quantities": [
+      {
+        "name": "dynamic viscosity μ",
+        "unit": "Pa*s",
+        "dimension": "M L^-1 T^-1"
+      },
+      {
+        "name": "density ρ",
+        "unit": "kg/m^3",
+        "dimension": "M L^-3"
+      },
+      {
+        "name": "kinematic viscosity ν=μ/ρ",
+        "unit": "m^2/s",
+        "dimension": "L^2 T^-1"
+      },
+      {
+        "name": "shear rate",
+        "unit": "1/s",
+        "dimension": "T^-1"
+      },
+      {
+        "name": "pressure drop Δp",
+        "unit": "Pa",
+        "dimension": "M L^-1 T^-2"
+      },
+      {
+        "name": "volumetric flow Q",
+        "unit": "m^3/s",
+        "dimension": "L^3 T^-1"
+      },
+      {
+        "name": "Re=2rho Q/(pi mu r)",
+        "unit": "1",
+        "dimension": "dimensionless"
+      }
+    ],
+    "flow_source": "UTP-136/T1K-012 and UTP-137/VGK-019",
+    "evidence_grade": "SOURCE_QUALIFIED_MATH_AND_SYNTHETIC_FIXTURE_ONLY",
+    "numeric_screen_premises": [
+      "steady",
+      "single phase",
+      "incompressible",
+      "Newtonian constant μ",
+      "continuum",
+      "fully developed at inlet",
+      "straight circular geometry",
+      "rigid no-slip wall",
+      "slender L>=20r",
+      "conservative laminar screen Re<2000"
+    ],
+    "not_fully_qualified": [
+      "entrance/exit and minor losses",
+      "wall roughness",
+      "transition/turbulence",
+      "temperature/shear-dependent rheology",
+      "cavitation",
+      "flexible/compliant wall",
+      "porous transport"
+    ]
+  },
+  "domain_lenses": [
+    {
+      "id": "PRINTSPACE-RESIN",
+      "family": "PrintSpace",
+      "candidate_if": "single-phase Newtonian constant-viscosity straight microchannel sample with measured mu(T) and geometry",
+      "rejects": "UV-curing resin shear thinning, heating, phase transition, free-surface deposition or cure/gel kinetics",
+      "extra_proof": "rheometer vs shear rate/T; cure, flow-pressure, surface-wetting and material sequence X->Y"
+    },
+    {
+      "id": "M1-MISTING",
+      "family": "Römer/M1",
+      "candidate_if": "only single-phase closed liquid feed channel with inlet development proof",
+      "rejects": "droplets entrainment, air-water two-phase mist, aerosol dispersion, unsteady wind",
+      "extra_proof": "nozzle droplet sizes, aerosol/deposition, weather, public safety and water chemistry"
+    },
+    {
+      "id": "SPACE-PROP",
+      "family": "Römer/EMASSC",
+      "candidate_if": "sealed incompressible liquid line in supported acceleration and inlet regime only",
+      "rejects": "gas-liquid interface, cavitation, propellant settling and microgravity free-surface/slosh",
+      "extra_proof": "accelerations, capillarity, wetting, thermal state, verified propulsion engineering"
+    },
+    {
+      "id": "ECOSYSTEM-DARCY",
+      "family": "Eco-Grex",
+      "candidate_if": "use existing VGK-020 Darcy permeability tensor with independent measured k, not VGK-019",
+      "rejects": "substitution of pipe Poiseuille for aquifer/porous vadose flow or species reaction",
+      "extra_proof": "saturation, medium heterogeneity, anisotropy, boundary/geospatial sources and independent observations"
+    },
+    {
+      "id": "AERODYNAMICS",
+      "family": "Römer/physical",
+      "candidate_if": "reuse viscosity property and momentum-conservation source operator only",
+      "rejects": "using circular channel Δp law for compressible external aerodynamic drag or turbulent boundary layers",
+      "extra_proof": "Mach, Reynolds, Knudsen, boundary layer, gas properties, body frame and CFD/wind-tunnel validation"
+    }
+  ],
+  "counterexamples": [
+    {
+      "input": "same mu,r,L,Q but shear-thinning liquid",
+      "expected": "REGIME_HOLD_CONSTITUTIVE_LAW",
+      "why": "mu varies with shear history and wall stress is not Newtonian"
+    },
+    {
+      "input": "same rho,mu but Re>=2000",
+      "expected": "REYNOLDS_REGIME_HOLD",
+      "why": "Poiseuille model candidate screening not safe outside laminar regime"
+    },
+    {
+      "input": "same flow but external aerodynamics",
+      "expected": "REGIME_HOLD_GEOMETRY",
+      "why": "no enclosed straight circular channel"
+    },
+    {
+      "input": "air+liquid droplet mist",
+      "expected": "REGIME_HOLD_CONTINUITY",
+      "why": "single-phase mass/transport approximation not applicable"
+    },
+    {
+      "input": "porous Darcy bed",
+      "expected": "REGIME_HOLD_GEOMETRY",
+      "why": "permeability and saturation data belong to VGK-020"
+    }
+  ],
+  "projector": "cgx/review/fluid_transport_regime_adapter.py",
+  "optional_view": "Alexandria/LightSpeed existing source-graded operator detail; no new UI/page published",
+  "owner_actions": [
+    "verify original kernel source+owner",
+    "select actual material/regime and sample measurement",
+    "approve licensed numerical provider only after ABI/version review",
+    "independently calibrate and falsify physical predictions",
+    "review ACL/DBR before any execution or public render"
+  ],
+  "holds": [
+    "no real PrintSpace fluid experiment",
+    "no real M1 aerosol simulation",
+    "no real orbital qualification",
+    "no real physical flow/pressure acceptance",
+    "no unrestricted source rights",
+    "issue #158 release HOLD",
+    "issue #161 real native signed peer HOLD"
+  ]
+}
