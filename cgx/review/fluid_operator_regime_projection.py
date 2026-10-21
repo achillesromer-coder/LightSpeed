@@ -159,6 +159,8 @@ def screen_pipe_baseline(params: dict[str, object], root: Path = ROOT) -> dict[s
     Q = _positive_si(params["volume_flow_m3_s"], "volume_flow_m3_s")
     r = _positive_si(params["radius_m"], "radius_m")
     L = _positive_si(params["length_m"], "length_m")
+    if r < 1e-9 or L < 1e-9 or mu < 1e-12 or rho < 1e-9 or Q < 1e-20:
+        raise ValueError("OUTSIDE_SAFE_SYNTHETIC_NUMERICAL_SCALE")
     conditions = params["conditions"]
     if not isinstance(conditions, dict) or set(conditions) != set(ASSUMPTIONS):
         raise ValueError("EXACT_CONDITION_FLAGS_REQUIRED")
