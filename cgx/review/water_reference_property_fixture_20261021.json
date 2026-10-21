@@ -1,0 +1,33 @@
+{
+  "schema": "CGX-FLUID-REFERENCE-PROPERTY-TRANSCRIPTION/0.1",
+  "state": "PUBLISHED_CORRELATION_CHECK_VALUE_NOT_MEASUREMENT",
+  "reference_id": "nist-liquid-water-0p1mpa-table8-298p15k",
+  "source": {
+    "organization": "NIST / Journal of Research correlation paper",
+    "publication": "Reference Correlations for Thermophysical Properties of Liquid Water at 0.1 MPa",
+    "table": "Table 8, sample points for computer-program verification, 298.15 K column",
+    "url": "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=832373",
+    "overview": "https://www.nist.gov/publications/reference-correlations-thermophysical-properties-liquid-water-01-mpa",
+    "published_year": 2009,
+    "original_document_sha256": null,
+    "original_source_bytes_retrieved": false,
+    "source_rights_for_redistribution_verified": false
+  },
+  "fluid": "ordinary liquid water",
+  "state_point": {
+    "temperature_kelvin": "298.15",
+    "pressure_pa": "100000",
+    "density_kg_per_m3": "997.047013",
+    "viscosity_micro_pa_s": "889.996774"
+  },
+  "conversion": {
+    "viscosity_pa_s": "0.000889996774",
+    "rule": "multiply reported microPa*s by 1e-6, exactly as a decimal"
+  },
+  "scope": "one fixed reference-check state point only, not a water property estimator",
+  "evidence_ceiling": "PUBLISHED_REFERENCE_CORRELATION_POINT",
+  "instrument_measured_here": false,
+  "native_cgx_admitted": false,
+  "owner_dbr_verified": false,
+  "public_release_authorised": false
+}
