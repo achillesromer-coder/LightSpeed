@@ -150,7 +150,7 @@ def compile_nlohmann_source_scope(parent: dict, tree_packet: dict,
         "repository_licence_declaration": "MIT",
         "scoped_reuse_declarations": [
             {"source_glob": pattern, "licence_declared": licence,
-             "file_contents_qualified": pattern == "*"}
+             "file_contents_qualified": False}
             for pattern, licence in notice_patterns],
         "licensing_review": {
             "first_party_mit_original_and_two_headers_verified": True,
