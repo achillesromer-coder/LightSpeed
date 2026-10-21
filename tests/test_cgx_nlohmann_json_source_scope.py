@@ -88,6 +88,16 @@ class OriginalNlohmannSourceTests(unittest.TestCase):
             self.assertEqual(record["original_git_blob_sha1"],_git_blob(data))
             self.assertFalse(record["source_bytes_in_projection"])
 
+    def test_persisted_r1_json_matches_original_byte_recompilation(self):
+        path=ROOT/"cgx"/"review"/"alexandria_nlohmann_json_source_scope_20261021.json"
+        persisted=json.loads(path.read_text(encoding="utf-8"))
+        calculated=derive()
+        self.assertEqual(persisted,calculated)
+        self.assertEqual(persisted["selected_original_file_count"],7)
+        self.assertFalse(persisted["licensing_review"]["distribution_approved"])
+        self.assertFalse(persisted["capability"]["compiled"])
+        self.assertFalse(persisted["native_dbr_verified"])
+
     def test_corruption_missing_extra_originals_fail_closed(self):
         parent,trees,original=originals()
         bad=dict(original)
