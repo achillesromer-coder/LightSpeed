@@ -130,5 +130,29 @@ class SourceOverlayTests(unittest.TestCase):
         self.assertIn("passive RF",names)
         self.assertIn("Schumann",names)
         self.assertIn("no derived sensing coverage",op["falsifier"])
+    def test_two_body_elliptic_sign_is_not_safe_capture(self):
+        x=mod.two_body_specific_orbital_energy(
+            speed_m_s=0, orbital_radius_m=7e6, central_mu_m3_s2=3.986004418e14)
+        self.assertLess(x["specific_energy_m2_s2"],0)
+        self.assertTrue(x["ideal_two_body_negative_energy"])
+        self.assertFalse(x["safe_rendezvous_or_capture_demonstrated"])
+        self.assertFalse(x["passive_regolith_or_ice_absorption_demonstrated"])
+        self.assertEqual(x["conjunction_debris_environmental_qualification"],"HOLD")
+
+    def test_two_body_hyperbolic_energy_is_not_capture(self):
+        x=mod.two_body_specific_orbital_energy(
+            speed_m_s=17000, orbital_radius_m=7e6, central_mu_m3_s2=3.986004418e14)
+        self.assertGreater(x["specific_energy_m2_s2"],0)
+        self.assertFalse(x["ideal_two_body_negative_energy"])
+        self.assertFalse(x["safe_rendezvous_or_capture_demonstrated"])
+
+    def test_two_body_invalid_orbit_inputs_fail_closed(self):
+        for speed,radius,mu in ((0,0,3.986e14),(0,7e6,0),
+                                 (-1,7e6,3.986e14),(float("nan"),7e6,3.986e14),
+                                 (True,7e6,3.986e14),(float("inf"),7e6,3.986e14)):
+            with self.assertRaises(mod.OperatorHold):
+                mod.two_body_specific_orbital_energy(
+                    speed_m_s=speed, orbital_radius_m=radius, central_mu_m3_s2=mu)
+
 if __name__=="__main__":
     unittest.main()
