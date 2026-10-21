@@ -35,6 +35,7 @@ on:
       - "cgx/portable_node/plog_source_scope.py"
       - "tests/test_cgx_plog_source_scope.py"
       - "tests/fixtures/alexandria_plog/**"
+      - "cgx/review/alexandria_plog_source_scope_20261021.json"
       - "tests/fixtures/alexandria_libjuice/**"
       - "cgx/review/alexandria_libjuice_source_scope_20261021.json"
       - "tests/fixtures/alexandria_libsrtp/**"
@@ -71,6 +72,7 @@ jobs:
           python -m json.tool cgx/review/alexandria_hypersomnia_gitlinks_openal_scope_20261021.json > /dev/null
           python -m json.tool cgx/review/alexandria_libdatachannel_source_scope_20261021.json > /dev/null
           python -m json.tool cgx/review/alexandria_libjuice_source_scope_20261021.json > /dev/null
+          python -m json.tool cgx/review/alexandria_plog_source_scope_20261021.json > /dev/null
           python -m json.tool cgx/review/alexandria_libsrtp_source_scope_20261021.json > /dev/null
           python -m json.tool cgx/review/alexandria_pinned_catalogue_readback_20261020.json > /dev/null
           python -m unittest discover -s tests -p 'test_cgx_keyed_alexandria_review.py' -v
