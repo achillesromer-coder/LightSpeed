@@ -1,0 +1,535 @@
+{
+  "schema": "CGX-USRSCTP-PINNED-SOURCE-TREE-CHAIN/0.1",
+  "origin": "paullouisageneau/usrsctp",
+  "pinned_commit": "fec583d54493f879d2ae44a743423bf8a04371ab",
+  "root_tree_sha": "7da97207e08e03af2b152f378f78e46f17f17e82",
+  "root": {
+    "sha": "7da97207e08e03af2b152f378f78e46f17f17e82",
+    "truncated": false,
+    "entries": [
+      {
+        "path": ".github",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "71f7648389af7c539217fccb3d13d876db236b50"
+      },
+      {
+        "path": ".gitignore",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "9e2d1a2a371f3dd02e571a4c18e038d205d34540"
+      },
+      {
+        "path": "CMakeLists.txt",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c3467f27d01af4d25caddf197be590ab2f8137a4"
+      },
+      {
+        "path": "LICENSE.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a2d1f989cffa9e6e672c0a38ecf89c762c475322"
+      },
+      {
+        "path": "Makefile.am",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4bd998fbe70ad6085b4927c911f84fcc8cc83ca5"
+      },
+      {
+        "path": "Makefile.nmake",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "6f9d701478498ed2fb41c29ed52120f73824c192"
+      },
+      {
+        "path": "Manual.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "e7eb6e04a390d23a496e1f6cc89c9159511197b5"
+      },
+      {
+        "path": "Manual.tex",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "0ddc08106fa247bb0c568fb3e18112a075184e82"
+      },
+      {
+        "path": "README.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "3d5ba38f3514f34ec7f283e36dd6685d90971820"
+      },
+      {
+        "path": "bootstrap",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "89c7bbabd9039092f65cd50bf49414124da4b1b7"
+      },
+      {
+        "path": "cmake",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "01f2deb73ff86e859972c5da83b52de4910aba5c"
+      },
+      {
+        "path": "configure.ac",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "55f00991f94cd5d2d773c63f333505e0e9f18bdb"
+      },
+      {
+        "path": "fuzzer",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "3fc83125ff3e0a55a86e060fc688050c05c3dd7d"
+      },
+      {
+        "path": "gen-def.py",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "55c02854428be9097c4e700fb665e6f6acfe0413"
+      },
+      {
+        "path": "meson.build",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "51a4a435e4e539cd1532ae34be7057d008cdd6fd"
+      },
+      {
+        "path": "meson_options.txt",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "56d950612156f46740161af9951299c3a251247b"
+      },
+      {
+        "path": "programs",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "d9c10104696d7ee6597ca30cde380885d2c6a8a1"
+      },
+      {
+        "path": "usrsctp.pc.in",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "20c4631550a188608473fe21c1089fa88e3f9ec1"
+      },
+      {
+        "path": "usrsctplib",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "2f0482c056c7ec0bf7fe525e9a08388fcfd4bd53"
+      }
+    ]
+  },
+  "usrsctplib": {
+    "sha": "2f0482c056c7ec0bf7fe525e9a08388fcfd4bd53",
+    "truncated": false,
+    "entries": [
+      {
+        "path": "CMakeLists.txt",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "93f6f4dde7241e8b79d3541e29468c4a624d7257"
+      },
+      {
+        "path": "Makefile.am",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "dc07c6e17fbcb49b4244a55d5e91a29437d2ab42"
+      },
+      {
+        "path": "Makefile.nmake",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "afcda6d915db8c45681d3a497648a77456d1fd9f"
+      },
+      {
+        "path": "meson.build",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c1a6656f1da9b35b8981c4401adc8b80d8a19c06"
+      },
+      {
+        "path": "netinet",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "74f9c8c35bd664c04012d57197e600c8fd051952"
+      },
+      {
+        "path": "netinet6",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "5912eb63bae91c8e08a7ad0b0578162be147eabc"
+      },
+      {
+        "path": "user_atomic.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "6a59587efc500a331bb2bc7af09763370d4291d7"
+      },
+      {
+        "path": "user_environment.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "ea52f0ada743c606e52c9f52dfd6a486a71a8b5f"
+      },
+      {
+        "path": "user_environment.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "a545accba0791f25aa9ef20ae4a103f8cc8e1474"
+      },
+      {
+        "path": "user_inpcb.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "2e6e9334ea5b2c8e73b217719d257f38bb3050f9"
+      },
+      {
+        "path": "user_ip6_var.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "b970fb8fa5dedef355cf0d1fcb08296046a12aed"
+      },
+      {
+        "path": "user_ip_icmp.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "a993411a17a2bba102fd4372f54d7197f5fcd200"
+      },
+      {
+        "path": "user_malloc.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "c588e094afacf84feb805e3ef12517aca6309231"
+      },
+      {
+        "path": "user_mbuf.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "85badc0fa520fc84a8d1aad03736469cd245084b"
+      },
+      {
+        "path": "user_mbuf.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "268988f9127653f14a1474ff4fbba2a2a9a038d3"
+      },
+      {
+        "path": "user_queue.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "fcd368bdd267b419caee5d77eaea553b0d8197ff"
+      },
+      {
+        "path": "user_recv_thread.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "75c9076c7bba36d582678d9b475772e542159f37"
+      },
+      {
+        "path": "user_recv_thread.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "61cdf172112c51ac0fe3bcaff8b4855cf7a60acf"
+      },
+      {
+        "path": "user_route.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "4abf2eac980f424d9b6297a726b0fbf24827fa2d"
+      },
+      {
+        "path": "user_socket.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "d1e091a8f3426bfe1688cdfc9b1310abcfaed149"
+      },
+      {
+        "path": "user_socketvar.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "04c806a88f331bdf72d2c294fb387749c055eccf"
+      },
+      {
+        "path": "user_uma.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "59d71fff42c3efb133441c178589ff8a9b861300"
+      },
+      {
+        "path": "usrsctp.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "93e89b386c3f791c82bdc4857c49be9234db4a4c"
+      }
+    ]
+  },
+  "netinet": {
+    "sha": "74f9c8c35bd664c04012d57197e600c8fd051952",
+    "truncated": false,
+    "entries": [
+      {
+        "path": "meson.build",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4a86615bcd4d2085d1b00e07114a301f42f0817a"
+      },
+      {
+        "path": "sctp.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "6129e77f9684d84e1939670f8c6a54f56b982558"
+      },
+      {
+        "path": "sctp_asconf.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "d1825e73edf94ecfecbc4e59291849117ce3fc31"
+      },
+      {
+        "path": "sctp_asconf.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "a7429aeca4a1320322ba67e18134518fbadd22f6"
+      },
+      {
+        "path": "sctp_auth.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "6fc3807cc16cc8adc0c597935f3058f60aa326b9"
+      },
+      {
+        "path": "sctp_auth.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "00682ae78e240f60e4fad5caa595fa7317196e99"
+      },
+      {
+        "path": "sctp_bsd_addr.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "3e0df08f1354484eb698a2cc4b8bce9350838007"
+      },
+      {
+        "path": "sctp_bsd_addr.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "5e8549eec577f301dc330f40f6a3feb0d0946d9b"
+      },
+      {
+        "path": "sctp_callout.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "ee6cd4cddd00b906cf7a3cd46b4f0689ff9ec050"
+      },
+      {
+        "path": "sctp_callout.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "2a78e414fb0e28f55213733a643d1ed84b9448d7"
+      },
+      {
+        "path": "sctp_cc_functions.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "176338a05e718f5535a0eb3fa689d8e5d0f849be"
+      },
+      {
+        "path": "sctp_constants.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "69953e9b9ee2ec4e674290652741628a34f54cf6"
+      },
+      {
+        "path": "sctp_crc32.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "0370fb1381f230ca0e784df7984c2e69683f9fe4"
+      },
+      {
+        "path": "sctp_crc32.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "e8315dc3456ef8199a47ef07c363359d9d27de0a"
+      },
+      {
+        "path": "sctp_header.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "7a5ab643c0b48212fbc33036985e249e28b5f174"
+      },
+      {
+        "path": "sctp_indata.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "115ec1d763e22a6280eb3e4d95477019c6d36079"
+      },
+      {
+        "path": "sctp_indata.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "523d4f6d34152dbbe0d1a34df2290181db4c1284"
+      },
+      {
+        "path": "sctp_input.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "a3c1476f5b399e34dd28af6581ef7ad3ec7bd35d"
+      },
+      {
+        "path": "sctp_input.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "acb209731667deab8eef0975f9c5093374334669"
+      },
+      {
+        "path": "sctp_lock_userspace.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "16c4a339792f04634d5a0b89d5ceae59d17ffe79"
+      },
+      {
+        "path": "sctp_os.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "0a12db9bcbe5f6688bc9e4f8273bf17ffaf3fac9"
+      },
+      {
+        "path": "sctp_os_userspace.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "066fd402fd5bfdf4bbb87295b1ecef0d1fa917a2"
+      },
+      {
+        "path": "sctp_output.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "0a3453b768047a84055bff1c4bd94da5575ec5d1"
+      },
+      {
+        "path": "sctp_output.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "a51a92a85e43f3eee3cc8668a9ef704ee53cc144"
+      },
+      {
+        "path": "sctp_pcb.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "e8ef38ec37ddbfbac95d9de6ba0cbc01cf9a4d76"
+      },
+      {
+        "path": "sctp_pcb.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "3d893bc43671bf0f1ba81f0f9233617f29307a22"
+      },
+      {
+        "path": "sctp_peeloff.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "2e74db048b1d27649e83c83e16ee69a74be00918"
+      },
+      {
+        "path": "sctp_peeloff.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "3011fa35177ccea9249cbfd1799b220a531fc004"
+      },
+      {
+        "path": "sctp_process_lock.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "feaa2c6acd33a1013f7f01b8f059901a07fbdd14"
+      },
+      {
+        "path": "sctp_sha1.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "db0e7533ff6ab764f051790c006d2ad15d49fbd1"
+      },
+      {
+        "path": "sctp_sha1.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "8e136045f6c26c574ab45af7dc2d45ebcaef58c9"
+      },
+      {
+        "path": "sctp_ss_functions.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "07060c3806666bb95b6a2fa8d7296d8e6bc5a384"
+      },
+      {
+        "path": "sctp_structs.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "894137ae5d0a669949d6ce9f3eda036e5f0e6143"
+      },
+      {
+        "path": "sctp_sysctl.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "f1fc2acff7800530284e171ee20b92f7097e4803"
+      },
+      {
+        "path": "sctp_sysctl.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "fb77a3aeb52b777fc64ab731b5444d764b0d80ae"
+      },
+      {
+        "path": "sctp_timer.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "497f2f0bdbaf9b965f0baae9ff5bce08e607ba97"
+      },
+      {
+        "path": "sctp_timer.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "166e86620f470e89a631d17a944aace25ac2f3b3"
+      },
+      {
+        "path": "sctp_uio.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "053d1cb16b314ce335da5414449fe0633e1a7fe4"
+      },
+      {
+        "path": "sctp_userspace.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "71888901fec3ed4e38bcf4b7c4a1d1625210f3a4"
+      },
+      {
+        "path": "sctp_usrreq.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "53aeaa1d45108a9818c4c351508d5ad53bdad293"
+      },
+      {
+        "path": "sctp_var.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "ab67402219d67fe690b6b60f6714b538a7f50077"
+      },
+      {
+        "path": "sctputil.c",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "b772183feeb1614ccb445d31c845f6c95f022b53"
+      },
+      {
+        "path": "sctputil.h",
+        "mode": "100755",
+        "type": "blob",
+        "sha": "5e0fc81f9a6270d40d459a08f971097cd36ed5c0"
+      }
+    ]
+  },
+  "status": "SOURCE_TREE_CANDIDATE_NONCANONICAL"
+}
