@@ -1,0 +1,115 @@
+{
+  "canonical_object_id": null,
+  "capability": {
+    "canonical_capability_admitted": false,
+    "compiled": false,
+    "descriptor": "C++ JSON parsing/serialization library",
+    "evidence": "SOURCE_HEADER_AND_CMAKE_DECLARATION_ONLY",
+    "parsed_json_tested": false,
+    "runtime_interoperability_verified": false
+  },
+  "frontier": [
+    "RECONCILE_REUSE_HEDLEY_PATH_VS_ORIGINAL_SOURCE_HEADERS",
+    "QUALIFY_ALL_THIRD_PARTY_SOURCE_AND_TOOLING_LICENSES",
+    "TEST_REAL_CXX_TOOLCHAIN_BUILD_AND_JSON_ROUNDTRIP",
+    "VERIFY_NATIVE_SIGNED_OWNER_DBR_READBACK"
+  ],
+  "licensing_review": {
+    "all_files_and_asset_licences_qualified": false,
+    "distribution_approved": false,
+    "first_party_mit_original_and_two_headers_verified": true,
+    "third_party_hedley_manifest_path_consistency_verified": false,
+    "tooling_and_test_file_licenses_qualified": false
+  },
+  "native_dbr_verified": false,
+  "parent_gitlink_path": "deps/json",
+  "parent_source_root": "git:paullouisageneau/libdatachannel@6b1e2e620f1e37f0eafeee702eaea0043cb305fd",
+  "repository_licence_declaration": "MIT",
+  "schema": "CGX-ALEXANDRIA-NLOHMANN-SOURCE-SCOPE/0.1",
+  "scoped_reuse_declarations": [
+    {
+      "file_contents_qualified": false,
+      "licence_declared": "MIT",
+      "source_glob": "*"
+    },
+    {
+      "file_contents_qualified": false,
+      "licence_declared": "CC0",
+      "source_glob": "include/nlohmann/thirdparty/hedley.hpp"
+    },
+    {
+      "file_contents_qualified": false,
+      "licence_declared": "Apache-2.0",
+      "source_glob": "tests/thirdparty/Fuzzer/*"
+    },
+    {
+      "file_contents_qualified": false,
+      "licence_declared": "GPL-3.0-only",
+      "source_glob": "tests/thirdparty/imapdl/*"
+    },
+    {
+      "file_contents_qualified": false,
+      "licence_declared": "BSD-3-Clause",
+      "source_glob": "tools/amalgamate/*"
+    }
+  ],
+  "selected_original_file_count": 7,
+  "selected_original_files": [
+    {
+      "bytes": 946,
+      "original_git_blob_sha1": "06b1d37c1b2026bc363ae399a7a99bddec685ac6",
+      "path": ".reuse/dep5",
+      "sha256": "31743525fa874afd4fe7c4d9dfb63b2bf829b5aac437c6e111738c0c4162303e",
+      "source_bytes_in_projection": false
+    },
+    {
+      "bytes": 410,
+      "original_git_blob_sha1": "8a70c17bc295dbe59ed2e717e87f47364959629c",
+      "path": "CITATION.cff",
+      "sha256": "7aae215c2a901cfef2c31d996b0cbafadebdd0fb5c236663b8ed14c3a3b86a7f",
+      "source_bytes_in_projection": false
+    },
+    {
+      "bytes": 7890,
+      "original_git_blob_sha1": "88ef6f6617caabe54da1db240fb307678c5158ba",
+      "path": "CMakeLists.txt",
+      "sha256": "b8e2b0eb6cefff4691460580650ba8506af8d7f8e991d9c18630ea15b959d1c0",
+      "source_bytes_in_projection": false
+    },
+    {
+      "bytes": 1076,
+      "original_git_blob_sha1": "a1dacc8dbbd907c4b622ff1f08e279c27465dcbc",
+      "path": "LICENSE.MIT",
+      "sha256": "46a65cffd1ea955132d95a8dd921640714a8d6b537d2e4e482d31145ae95b603",
+      "source_bytes_in_projection": false
+    },
+    {
+      "bytes": 1460,
+      "original_git_blob_sha1": "ea890afbc70c94011b765722a95e2c8c7d4f1233",
+      "path": "LICENSES/BSD-3-Clause.txt",
+      "sha256": "5a93d5831e1297ab10fe643e1a631e83be392896da14ee2951285a79012df69d",
+      "source_bytes_in_projection": false
+    },
+    {
+      "bytes": 17196,
+      "original_git_blob_sha1": "ead45665f1be4c7dad58216210783b4ba03efe2a",
+      "path": "include/nlohmann/detail/conversions/to_json.hpp",
+      "sha256": "46429c1b87ea71962ffb68dcb0a7e7811a3ebf5f102bcf318688e48ff1f6b73e",
+      "source_bytes_in_projection": false
+    },
+    {
+      "bytes": 2543,
+      "original_git_blob_sha1": "a595ae4abf56705f609a654f4fa3a692dd45ced0",
+      "path": "include/nlohmann/json_fwd.hpp",
+      "sha256": "8777a878c20a412dd04c8011c87c3d72d74e48a4dda5e52f7948e26dd2168931",
+      "source_bytes_in_projection": false
+    }
+  ],
+  "source_bytes_embedded": false,
+  "source_git_root_tree_sha1": "1eb780542e829bf1615828ed0d5f407497bbce7b",
+  "source_root": "git:nlohmann/json@55f93686c01528224f448c19128836e7df245f72",
+  "source_tree_ancestor_sha_verified": true,
+  "status": "SEVEN_ORIGINAL_R0_FILES_PINNED_R1_CANDIDATE",
+  "version_declared": "3.12.0",
+  "whole_repository_source_acquired": false
+}
