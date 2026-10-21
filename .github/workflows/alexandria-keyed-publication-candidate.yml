@@ -41,6 +41,7 @@ on:
       - "cgx/portable_node/usrsctp_source_scope.py"
       - "tests/test_cgx_real_usrsctp_source_scope.py"
       - "tests/fixtures/alexandria_usrsctp/**"
+      - "cgx/review/alexandria_usrsctp_source_scope_20261021.json"
       - "tests/fixtures/alexandria_plog/**"
       - "cgx/review/alexandria_plog_source_scope_20261021.json"
       - "tests/fixtures/alexandria_libjuice/**"
@@ -81,6 +82,7 @@ jobs:
           python -m json.tool cgx/review/alexandria_libjuice_source_scope_20261021.json > /dev/null
           python -m json.tool cgx/review/alexandria_plog_source_scope_20261021.json > /dev/null
           python -m json.tool cgx/review/alexandria_nlohmann_json_source_scope_20261021.json > /dev/null
+          python -m json.tool cgx/review/alexandria_usrsctp_source_scope_20261021.json > /dev/null
           python -m json.tool cgx/review/alexandria_libsrtp_source_scope_20261021.json > /dev/null
           python -m json.tool cgx/review/alexandria_pinned_catalogue_readback_20261020.json > /dev/null
           python -m unittest discover -s tests -p 'test_cgx_keyed_alexandria_review.py' -v
