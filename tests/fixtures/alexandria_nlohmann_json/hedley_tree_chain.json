@@ -1,0 +1,37 @@
+{
+  "schema": "CGX-NLOHMANN-HEDLEY-PINNED-TREE/0.1",
+  "source_repo": "nlohmann/json",
+  "commit": "55f93686c01528224f448c19128836e7df245f72",
+  "upstream_root_git_tree_sha1": "1eb780542e829bf1615828ed0d5f407497bbce7b",
+  "ancestry_source": "tests/fixtures/alexandria_nlohmann_json/tree_chain.json",
+  "thirdparty": {
+    "sha": "f7fa48b51f9c60f824ca358da5078d93fa672c1e",
+    "truncated": false,
+    "entries": [
+      {
+        "path": "hedley",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "d3804e2faaf3e564a130281b081944c32449f15e"
+      }
+    ]
+  },
+  "hedley": {
+    "sha": "d3804e2faaf3e564a130281b081944c32449f15e",
+    "truncated": false,
+    "entries": [
+      {
+        "path": "hedley.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "fb0b073b0c65ff2651e2fdab03006c47cb67ef31"
+      },
+      {
+        "path": "hedley_undef.hpp",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ad86d11f22cc2ffbddb872f7caeb0a13896ad7ca"
+      }
+    ]
+  }
+}

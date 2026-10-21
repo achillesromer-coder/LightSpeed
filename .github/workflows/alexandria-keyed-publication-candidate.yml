@@ -1,0 +1,272 @@
+name: Alexandria keyed publication source candidate
+on:
+  pull_request:
+    paths:
+      - "cgx/review/unispace_keyed_publication_candidate_20261020.json"
+      - "cgx/review/alexandria_external_reference_intake_20261020.json"
+      - "cgx/review/alexandria_pinned_catalogue_readback_20261020.json"
+      - "cgx/portable_node/keyed_fileset_plan.py"
+      - "tests/test_cgx_keyed_alexandria_review.py"
+      - "cgx/portable_node/archive_claim_reconciliation_plan.py"
+      - "tests/test_cgx_archive_claim_reconciliation.py"
+      - "cgx/portable_node/alexandria_reference_projection.py"
+      - "tests/test_cgx_alexandria_reference_projection.py"
+      - "cgx/portable_node/pinned_catalogue_source_intake.py"
+      - "tests/test_cgx_pinned_catalogue_source_intake.py"
+      - "tests/test_cgx_alexandria_owner_source_e2e.py"
+      - "cgx/portable_node/wikimedia_revision_pair.py"
+      - "tests/test_cgx_wikimedia_revision_pair.py"
+      - "scripts/acquire_wikimedia_revision_pair.py"
+      - "tests/test_cgx_wikimedia_acquire_plan.py"
+      - "tests/test_cgx_real_game_catalogue_intake.py"
+      - "cgx/portable_node/individual_game_source_scope.py"
+      - "tests/test_cgx_real_hypersomnia_project_source.py"
+      - "tests/fixtures/alexandria_hypersomnia_project/**"
+      - "cgx/review/alexandria_hypersomnia_project_source_scope_20261021.json"
+      - "cgx/portable_node/project_gitlink_evidence.py"
+      - "tests/test_cgx_hypersomnia_gitlinks_openal.py"
+      - "tests/fixtures/alexandria_hypersomnia_openal/**"
+      - "tests/fixtures/alexandria_libdatachannel/**"
+      - "cgx/portable_node/libdatachannel_source_scope.py"
+      - "tests/test_cgx_real_libdatachannel_scope.py"
+      - "cgx/review/alexandria_libdatachannel_source_scope_20261021.json"
+      - "cgx/portable_node/libjuice_source_scope.py"
+      - "tests/test_cgx_real_libjuice_scope.py"
+      - "cgx/portable_node/plog_source_scope.py"
+      - "tests/test_cgx_plog_source_scope.py"
+      - "cgx/portable_node/nlohmann_json_source_scope.py"
+      - "tests/test_cgx_nlohmann_json_source_scope.py"
+      - "cgx/portable_node/nlohmann_hedley_notice_reconciliation.py"
+      - "tests/test_cgx_nlohmann_hedley_notice_reconciliation.py"
+      - "cgx/review/alexandria_nlohmann_hedley_notice_reconciliation_20261021.json"
+      - "tests/fixtures/alexandria_nlohmann_json/**"
+      - "cgx/review/alexandria_nlohmann_json_source_scope_20261021.json"
+      - "cgx/portable_node/usrsctp_source_scope.py"
+      - "tests/test_cgx_real_usrsctp_source_scope.py"
+      - "tests/fixtures/alexandria_usrsctp/**"
+      - "cgx/review/alexandria_usrsctp_source_scope_20261021.json"
+      - "tests/fixtures/alexandria_plog/**"
+      - "cgx/review/alexandria_plog_source_scope_20261021.json"
+      - "tests/fixtures/alexandria_libjuice/**"
+      - "cgx/review/alexandria_libjuice_source_scope_20261021.json"
+      - "tests/fixtures/alexandria_libsrtp/**"
+      - "cgx/portable_node/libsrtp_source_scope.py"
+      - "cgx/portable_node/dependency_source_coverage.py"
+      - "tests/test_cgx_dependency_source_coverage.py"
+      - "cgx/review/alexandria_nested_dependency_coverage_20261021.json"
+      - "tests/test_cgx_real_libsrtp_scope.py"
+      - "cgx/review/alexandria_libsrtp_source_scope_20261021.json"
+      - "cgx/review/alexandria_hypersomnia_gitlinks_openal_scope_20261021.json"
+      - "tests/fixtures/alexandria_game_catalogue/**"
+      - "cgx/review/alexandria_game_catalogue_real_source_envelope_20261021.json"
+      - "tests/fixtures/alexandria_engine_catalogue/**"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/owner_credentials.py"
+      - "cgx/review/alexandria_engine_catalogue_real_source_envelope_20261020.json"
+      - ".github/workflows/alexandria-keyed-publication-candidate.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Derive and compare noncanonical five-gitlink source-coverage ledger
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from cgx.portable_node.dependency_source_coverage import (
+              SCOPE_PATHS, consolidate_dependency_source_samples
+          )
+          parent=json.loads(Path('cgx/review/alexandria_libdatachannel_source_scope_20261021.json').read_text())
+          children={name:json.loads(Path(path).read_text()) for name,path in SCOPE_PATHS.items()}
+          ledger=consolidate_dependency_source_samples(parent,children)
+          saved=Path('cgx/review/alexandria_nested_dependency_coverage_20261021.json')
+          if saved.exists():
+              if json.loads(saved.read_text()) != ledger:
+                  raise SystemExit('ERROR: persisted dependency source ledger drifted')
+          else:
+              saved.write_text(json.dumps(ledger,sort_keys=True,indent=2)+'\n')
+          print('DEPENDENCY_COVERAGE_RECEIPT_BEGIN')
+          print(json.dumps(ledger,sort_keys=True,separators=(',',':')))
+          print('DEPENDENCY_COVERAGE_RECEIPT_END')
+          PY
+      - name: Validate source-only contracts and run regression tests
+        run: |
+          python -m json.tool cgx/review/unispace_keyed_publication_candidate_20261020.json > /dev/null
+          python -m json.tool cgx/review/alexandria_external_reference_intake_20261020.json > /dev/null
+          python -m json.tool cgx/review/alexandria_engine_catalogue_real_source_envelope_20261020.json > /dev/null
+          python -m json.tool cgx/review/alexandria_game_catalogue_real_source_envelope_20261021.json > /dev/null
+          python -m json.tool cgx/review/alexandria_hypersomnia_project_source_scope_20261021.json > /dev/null
+          python -m json.tool cgx/review/alexandria_hypersomnia_gitlinks_openal_scope_20261021.json > /dev/null
+          python -m json.tool cgx/review/alexandria_libdatachannel_source_scope_20261021.json > /dev/null
+          python -m json.tool cgx/review/alexandria_libjuice_source_scope_20261021.json > /dev/null
+          python -m json.tool cgx/review/alexandria_plog_source_scope_20261021.json > /dev/null
+          python -m json.tool cgx/review/alexandria_nlohmann_json_source_scope_20261021.json > /dev/null
+          python -m json.tool cgx/review/alexandria_nlohmann_hedley_notice_reconciliation_20261021.json > /dev/null
+          python -m json.tool cgx/review/alexandria_usrsctp_source_scope_20261021.json > /dev/null
+          python -m json.tool cgx/review/alexandria_libsrtp_source_scope_20261021.json > /dev/null
+          python -m json.tool cgx/review/alexandria_pinned_catalogue_readback_20261020.json > /dev/null
+          python -m unittest discover -s tests -p 'test_cgx_keyed_alexandria_review.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_archive_claim_reconciliation.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_alexandria_reference_projection.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_pinned_catalogue_source_intake.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_wikimedia_revision_pair.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_wikimedia_acquire_plan.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_real_game_catalogue_intake.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_real_hypersomnia_project_source.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_hypersomnia_gitlinks_openal.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_real_libdatachannel_scope.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_real_libjuice_scope.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_plog_source_scope.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_nlohmann_json_source_scope.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_nlohmann_hedley_notice_reconciliation.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_real_libsrtp_scope.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_dependency_source_coverage.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_real_usrsctp_source_scope.py' -v
+      - name: Emit reproducible four-file source-only project receipt
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from cgx.portable_node.individual_game_source_scope import BLOBS, compile_project_source_candidate
+          root=Path('tests/fixtures/alexandria_hypersomnia_project')
+          original={name:(root/name).read_bytes() for name in BLOBS}
+          index=json.loads(Path('cgx/review/alexandria_game_catalogue_real_source_envelope_20261021.json').read_text())
+          receipt=compile_project_source_candidate(original,index)
+          print('SOURCE_RECEIPT_BEGIN')
+          print(json.dumps(receipt,sort_keys=True,separators=(',',':')))
+          print('SOURCE_RECEIPT_END')
+          PY
+      - name: Emit original Git-tree-derived submodule notice receipt
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from cgx.portable_node.project_gitlink_evidence import OPENAL_BLOBS, compile_submodule_scope
+          root=Path('tests/fixtures/alexandria_hypersomnia_project')
+          sub=Path('tests/fixtures/alexandria_hypersomnia_openal')
+          tree=json.loads((root/'pinned_tree_chain.json').read_text())
+          parent=json.loads(Path('cgx/review/alexandria_hypersomnia_project_source_scope_20261021.json').read_text())
+          docs={name:(sub/name).read_bytes() for name in OPENAL_BLOBS}
+          result=compile_submodule_scope(tree,(root/'.gitmodules').read_bytes(),docs,parent)
+          print('SUBMODULE_RECEIPT_BEGIN')
+          print(json.dumps(result,sort_keys=True,separators=(',',':')))
+          print('SUBMODULE_RECEIPT_END')
+          PY
+      - name: Emit verified pinned libdatachannel source-rights receipt
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from cgx.portable_node.libdatachannel_source_scope import BLOBS, compile_libdatachannel_scope
+          fixture=Path('tests/fixtures/alexandria_libdatachannel')
+          parent=json.loads(Path('cgx/review/alexandria_hypersomnia_gitlinks_openal_scope_20261021.json').read_text())
+          trees=json.loads((fixture/'git_tree_chain.json').read_text())
+          raws={name:(fixture/name).read_bytes() for name in BLOBS}
+          receipt=compile_libdatachannel_scope(parent,trees,raws)
+          print('LIBDATACHANNEL_RECEIPT_BEGIN')
+          print(json.dumps(receipt,sort_keys=True,separators=(',',':')))
+          print('LIBDATACHANNEL_RECEIPT_END')
+          PY
+      - name: Emit original-pinned libjuice source-rights receipt
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from cgx.portable_node.libjuice_source_scope import BLOBS, compile_libjuice_scope
+          root=Path('tests/fixtures/alexandria_libjuice')
+          parent=json.loads(Path('cgx/review/alexandria_libdatachannel_source_scope_20261021.json').read_text())
+          trees=json.loads((root/'git_tree_chain.json').read_text())
+          raws={name:(root/name).read_bytes() for name in BLOBS}
+          result=compile_libjuice_scope(parent,trees,raws)
+          print('LIBJUICE_RECEIPT_BEGIN')
+          print(json.dumps(result,sort_keys=True,separators=(',',':')))
+          print('LIBJUICE_RECEIPT_END')
+          PY
+      - name: Emit exact libsrtp source and licence candidate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from cgx.portable_node.libsrtp_source_scope import BLOBS, compile_libsrtp_scope
+          root=Path('tests/fixtures/alexandria_libsrtp')
+          parent=json.loads(Path('cgx/review/alexandria_libdatachannel_source_scope_20261021.json').read_text())
+          trees=json.loads((root/'git_tree_chain.json').read_text())
+          sources={name:(root/name).read_bytes() for name in BLOBS}
+          result=compile_libsrtp_scope(parent,trees,sources)
+          print('LIBSRTP_RECEIPT_BEGIN')
+          print(json.dumps(result,sort_keys=True,separators=(',',':')))
+          print('LIBSRTP_RECEIPT_END')
+          PY
+      - name: Emit pinned plog original-source receipt
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from cgx.portable_node.plog_source_scope import BLOBS, compile_plog_scope
+          fixture=Path('tests/fixtures/alexandria_plog')
+          parent=json.loads(Path('cgx/review/alexandria_libdatachannel_source_scope_20261021.json').read_text())
+          trees=json.loads((fixture/'git_tree_chain.json').read_text())
+          data={p:(fixture/p).read_bytes() for p in BLOBS}
+          result=compile_plog_scope(parent,trees,data)
+          print('PLOG_RECEIPT_BEGIN')
+          print(json.dumps(result,sort_keys=True,separators=(',',':')))
+          print('PLOG_RECEIPT_END')
+          PY
+      - name: Emit source-pinned nlohmann JSON and file-scope rights candidate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from cgx.portable_node.nlohmann_json_source_scope import BLOBS, compile_nlohmann_source_scope
+          fixture=Path('tests/fixtures/alexandria_nlohmann_json')
+          source=json.loads(Path('cgx/review/alexandria_libdatachannel_source_scope_20261021.json').read_text())
+          trees=json.loads((fixture/'tree_chain.json').read_text())
+          originals={path:(fixture/path).read_bytes() for path in BLOBS}
+          receipt=compile_nlohmann_source_scope(source,trees,originals)
+          print('NLOHMANN_SOURCE_RECEIPT_BEGIN')
+          print(json.dumps(receipt,sort_keys=True,separators=(',',':')))
+          print('NLOHMANN_SOURCE_RECEIPT_END')
+          PY
+      - name: Emit source-pinned Hedley REUSE/SPDX discrepancy receipt
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from cgx.portable_node.nlohmann_hedley_notice_reconciliation import HEADERS, resolve_hedley_notice
+          base=Path('tests/fixtures/alexandria_nlohmann_json')
+          scope=json.loads(Path('cgx/review/alexandria_nlohmann_json_source_scope_20261021.json').read_text())
+          ancestry=json.loads((base/'tree_chain.json').read_text())
+          new=json.loads((base/'hedley_tree_chain.json').read_text())
+          headers={p:(base/p).read_bytes() for p in HEADERS}
+          result=resolve_hedley_notice(scope,ancestry,new,(base/'.reuse/dep5').read_bytes(),headers)
+          print('HEDLEY_NOTICE_RECEIPT_BEGIN')
+          print(json.dumps(result,sort_keys=True,separators=(',',':')))
+          print('HEDLEY_NOTICE_RECEIPT_END')
+          PY
+      - name: Emit pinned usrsctp source and file-scope BSD notices
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from cgx.portable_node.usrsctp_source_scope import BLOBS, compile_usrsctp_source_scope
+          fixture=Path('tests/fixtures/alexandria_usrsctp')
+          parent=json.loads(Path('cgx/review/alexandria_libdatachannel_source_scope_20261021.json').read_text())
+          trees=json.loads((fixture/'pinned_tree_chain.json').read_text())
+          sources={name:(fixture/name).read_bytes() for name in BLOBS}
+          result=compile_usrsctp_source_scope(parent,trees,sources)
+          print('USRSCTP_RECEIPT_BEGIN')
+          print(json.dumps(result,sort_keys=True,separators=(',',':')))
+          print('USRSCTP_RECEIPT_END')
+          PY
+      - name: Authenticate and hydrate exact offline CC0 source fixture at owner endpoint
+        run: |
+          python -m pip install -q -r desktop/LightSpeed_Runtime/requirements-api.txt 'pytest==9.0.1' 'httpx>=0.27,<0.29'
+          python -m pytest -q tests/test_cgx_alexandria_owner_source_e2e.py

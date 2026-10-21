@@ -250,3 +250,82 @@ def test_desktop_and_migration_keep_auth_fail_closed_and_separate_from_tailoring
     assert "Continuing without password persistence" not in desktop_source
     assert "CREATE TABLE IF NOT EXISTS auth_credentials" in migration_source
     assert "user_preferences" not in credential_source
+
+
+def test_alexandria_owner_catalogue_bridge_is_session_only_and_source_safe(tmp_path, monkeypatch):
+    """Signed-in owner may request a read-only source lens; anonymous clients cannot."""
+    import base64
+    database = StubDatabase(tmp_path / "auth.db")
+    credential_store = CredentialStore(database)
+    credential_store.bootstrap("NCNB", "temporary-fixture")
+    credential_store.change_password("NCNB", "temporary-fixture", "Stronger-Rotation-2026!")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (database, object()))
+    monkeypatch.setenv(ls_go_bridge.OWNER_CONFIRMATION_ENV, "legacy-fixture")
+    client = TestClient(ls_go_bridge.create_app(tmp_path / "App"))
+    url = "/api/v1/alexandria/catalogue/hydrate"
+    reference = "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:21"
+
+    anonymous = client.post(url, json={"candidate_ref": reference})
+    assert anonymous.status_code == 403
+    assert "source_sha256" not in anonymous.text
+    # Even a legacy confirmation header is insufficient for this endpoint.
+    legacy = client.post(url, headers={"X-LightSpeed-Owner-Confirmation": "legacy-fixture"},
+                         json={"candidate_ref": reference})
+    assert legacy.status_code == 403
+
+    login = client.post("/api/v1/auth/login",
+                        json={"username": "NCNB", "password": "Stronger-Rotation-2026!"})
+    assert login.status_code == 200
+    assert login.json()["authenticated"] is True
+    token = login.json()["session_token"]
+    headers = {"X-LightSpeed-Session": token}
+
+    missing = client.post(url, headers=headers, json={"candidate_ref": reference})
+    assert missing.status_code == 200
+    assert missing.headers["cache-control"] == "no-store"
+    assert missing.json()["status"] == "NOT_CACHED"
+    assert missing.json()["canonical_admission"] is False
+    assert missing.json()["authenticated"] is False
+    assert "title" not in missing.json()
+
+    wrong_bytes = client.post(url, headers=headers, json={
+        "candidate_ref": reference,
+        "source_base64": base64.b64encode(b"not the pinned engine index").decode("ascii"),
+    })
+    assert wrong_bytes.status_code == 200
+    assert wrong_bytes.json()["status"] == "SOURCE_MISMATCH"
+    assert "upstream_reference_urls" not in wrong_bytes.json()
+
+    malformed = client.post(url, headers=headers, json={
+        "candidate_ref": reference, "source_base64": "/invalid!base64",
+    })
+    assert malformed.status_code == 400
+    injected = client.post(url, headers=headers, json={
+        "candidate_ref": reference, "source_path": "C:/Documents/private.json",
+    })
+    assert injected.status_code == 400
+
+    logout = client.post("/api/v1/auth/logout", headers=headers)
+    assert logout.status_code == 200
+    revoked = client.post(url, headers=headers, json={"candidate_ref": reference})
+    assert revoked.status_code == 403
+    assert "source_sha256" not in revoked.text
+
+
+def test_alexandria_owner_catalogue_rejects_password_change_token(tmp_path, monkeypatch):
+    database = StubDatabase(tmp_path / "auth.db")
+    CredentialStore(database).bootstrap("NCNB", "temporary-fixture")
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (database, object()))
+    client = TestClient(ls_go_bridge.create_app(tmp_path / "App"))
+    login = client.post("/api/v1/auth/login", json={
+        "username": "NCNB", "password": "temporary-fixture",
+    })
+    assert login.status_code == 200
+    assert login.json()["change_required"] is True
+    token = login.json()["password_change_token"]
+    response = client.post(
+        "/api/v1/alexandria/catalogue/hydrate",
+        headers={"X-LightSpeed-Session": token},
+        json={"candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:21"},
+    )
+    assert response.status_code == 403

@@ -1,0 +1,836 @@
+{
+  "schema": "CGX-ALEXANDRIA-REAL-R0R1-UPSTREAM-CATALOGUE-RECEIPT/0.1",
+  "verification_date": "2026-10-20",
+  "verification_method": "Exact GitHub fetch at immutable commit, calculated SHA-256 and independently recomputed Git blob SHA-1; line/UTF-8 byte-range proof against original README.",
+  "source_envelope": {
+    "schema": "CGX-SOURCE-ENVELOPE/0.1",
+    "source_id": "git:bobeff/open-source-engines@4d54f3995140e64beebef6575760996bf14324ec:README.md",
+    "sha256": "075c794da0482a7bff6f46d67956ef2e62486a1914fc78cda3d239bbf3a54a92",
+    "byte_length": 7891,
+    "source_name": "README.md",
+    "media_type": "text/markdown",
+    "extension": ".md",
+    "adapter_id": "catalogue-readme-stdlib-v0.1",
+    "native_preservation": {
+      "source_ref": "git:bobeff/open-source-engines@4d54f3995140e64beebef6575760996bf14324ec:README.md",
+      "source_sha256": "075c794da0482a7bff6f46d67956ef2e62486a1914fc78cda3d239bbf3a54a92",
+      "source_byte_length": 7891,
+      "adapter_version": "catalogue-readme-stdlib-v0.1",
+      "round_trip_claim": "LOSSLESS_FOR_DECLARED_FIELDS",
+      "source_bytes_embedded": false,
+      "original_source_locator_required_for_full_roundtrip": true
+    },
+    "authority": "ORIGINAL_UPSTREAM_PROVIDER",
+    "evidence_state": "R0_VERIFIED_R1_CANDIDATE",
+    "release_class": "INTERNAL_REVIEW_NOT_PUBLISHED",
+    "projections": [
+      {
+        "kind": "structure",
+        "status": "R1_LINE_LOCATORS_CANDIDATE",
+        "indexed_entries": 46,
+        "total_lines": 143,
+        "entries": [
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:21",
+            "source_line": 21,
+            "source_byte_start": 293,
+            "source_byte_end": 447,
+            "raw_line_sha256": "05899ce620af5de1b90a8612f7bc10d6792aa1189daf57465985833cd288366c",
+            "label": "raylib",
+            "source_links": [
+              "https://github.com/raysan5/raylib"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:23",
+            "source_line": 23,
+            "source_byte_start": 448,
+            "source_byte_end": 603,
+            "raw_line_sha256": "48c72b97d15de196eb165b31cd6de034c5d80d1d5a0b3ff86268735cb82d72dd",
+            "label": "SGDK",
+            "source_links": [
+              "https://github.com/Stephane-D/SGDK"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:25",
+            "source_line": 25,
+            "source_byte_start": 604,
+            "source_byte_end": 850,
+            "raw_line_sha256": "e010a3bd16bace9580711aff7cda9f465f6a0f36b131c82eb3ee7bc0f9a28f6a",
+            "label": "Simple DirectMedia Layer",
+            "source_links": [
+              "https://github.com/libsdl-org/SDL"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:27",
+            "source_line": 27,
+            "source_byte_start": 851,
+            "source_byte_end": 1080,
+            "raw_line_sha256": "0500caef66205554b6de4d772e539606517cdc1b8d804bf2e012d71d02343288",
+            "label": "Xash3D FWGS Engine",
+            "source_links": [
+              "https://github.com/FWGS/xash3d-fwgs"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:34",
+            "source_line": 34,
+            "source_byte_start": 1257,
+            "source_byte_end": 1352,
+            "raw_line_sha256": "b93e4ad0d5138fd15e4a27bb35a1bb3e186130e932c501b0900f4acea19ed536",
+            "label": "Murder",
+            "source_links": [
+              "https://github.com/isadorasophia/murder"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:36",
+            "source_line": 36,
+            "source_byte_start": 1353,
+            "source_byte_end": 1518,
+            "raw_line_sha256": "bfa88b13bf1096681ae5e3a872271f4c58451ed531a6f8f6f7e57c4ad434fa44",
+            "label": "NeoAxis",
+            "source_links": [
+              "https://github.com/NeoAxis/NeoAxisEngine"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:38",
+            "source_line": 38,
+            "source_byte_start": 1519,
+            "source_byte_end": 1677,
+            "raw_line_sha256": "24dd29397d3a40b11d4b3810c0f08ee017cc3626148fc8d3240c36cb4b150bfa",
+            "label": "s&box",
+            "source_links": [
+              "https://github.com/Facepunch/sbox-public"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:40",
+            "source_line": 40,
+            "source_byte_start": 1678,
+            "source_byte_end": 1803,
+            "raw_line_sha256": "e9647fb4ee1895762cea40b1d97bdb144148a7f34fe850b40f8ebcf17d18d9b6",
+            "label": "Stride",
+            "source_links": [
+              "https://github.com/stride3d/stride"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:44",
+            "source_line": 44,
+            "source_byte_start": 1828,
+            "source_byte_end": 2000,
+            "raw_line_sha256": "b66c16ec3119751ce3f23fea6002b4335884ff7d8b95b130ee80eab25997c5c8",
+            "label": "Cafu",
+            "source_links": [
+              "https://bitbucket.org/cafu/cafu/src/master"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:46",
+            "source_line": 46,
+            "source_byte_start": 2001,
+            "source_byte_end": 2143,
+            "raw_line_sha256": "03eb4e10a77dc9298e743950b283f287caf9f34d147995ec9257f62d19c55999",
+            "label": "Carimbo",
+            "source_links": [
+              "https://github.com/willtobyte/carimbo"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:48",
+            "source_line": 48,
+            "source_byte_start": 2144,
+            "source_byte_end": 2304,
+            "raw_line_sha256": "755ebb8bf0ba5fb49050c38daa7ea6d6d9849f7d458d02ce96e0655ab4c96bea",
+            "label": "Cocos2d-x",
+            "source_links": [
+              "https://github.com/cocos2d/cocos2d-x"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:50",
+            "source_line": 50,
+            "source_byte_start": 2305,
+            "source_byte_end": 2491,
+            "raw_line_sha256": "ee2ddca3fa4271e596fe4335e1c74b3f90299dd53911a312d328eebffbaea04c",
+            "label": "Cute Framework",
+            "source_links": [
+              "https://github.com/RandyGaul/cute_framework"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:52",
+            "source_line": 52,
+            "source_byte_start": 2492,
+            "source_byte_end": 2633,
+            "raw_line_sha256": "6705c5dea1a9f543d7425d67493ecb95d417b4c209b14b39f6fdddc25c1a6d5e",
+            "label": "Defold",
+            "source_links": [
+              "https://github.com/defold/defold"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:54",
+            "source_line": 54,
+            "source_byte_start": 2634,
+            "source_byte_end": 2797,
+            "raw_line_sha256": "df11e675b946e7d639f20b69e6484f2130f8b850993604039848eb88adeb737c",
+            "label": "Esoterica Engine",
+            "source_links": [
+              "https://github.com/BobbyAnguelov/Esoterica"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:56",
+            "source_line": 56,
+            "source_byte_start": 2798,
+            "source_byte_end": 2939,
+            "raw_line_sha256": "72f86b684bd0d2fe157d1eed10f7b97f2da1edef82310b0f89d6a03787967e9a",
+            "label": "FIFE",
+            "source_links": [
+              "https://github.com/fifengine/fifengine"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:58",
+            "source_line": 58,
+            "source_byte_start": 2940,
+            "source_byte_end": 3103,
+            "raw_line_sha256": "356c339bb55bf747fc8c0c0f6783a8ccb1423810b9a277da634a612b181dbeef",
+            "label": "JNGL - Just a Neat Game Library",
+            "source_links": [
+              "https://github.com/jhasse/jngl"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:60",
+            "source_line": 60,
+            "source_byte_start": 3104,
+            "source_byte_end": 3295,
+            "raw_line_sha256": "7849f73dffc0f8be2e43c354ede78232c01f86f5dff100f1b25a24b17ad1945a",
+            "label": "Godot",
+            "source_links": [
+              "https://github.com/godotengine/godot"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:62",
+            "source_line": 62,
+            "source_byte_start": 3296,
+            "source_byte_end": 3428,
+            "raw_line_sha256": "c504bf9782fa5fc6fe77a2b50abd4037cd076e5b5082a8eec3e2b80657aac338",
+            "label": "Irrlicht",
+            "source_links": [
+              "https://github.com/zaki/irrlicht"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:64",
+            "source_line": 64,
+            "source_byte_start": 3429,
+            "source_byte_end": 3602,
+            "raw_line_sha256": "0a95854fad2d30dd933513d7583137381ba8888a20a7da10db5296c175415d9f",
+            "label": "Librebox",
+            "source_links": [
+              "https://github.com/librebox-devs/librebox-demo"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:66",
+            "source_line": 66,
+            "source_byte_start": 3603,
+            "source_byte_end": 3728,
+            "raw_line_sha256": "462da7c92a739e2a6fb04f13f0343d22635cf97ba05374679d6b5eab1012a088",
+            "label": "Luanti",
+            "source_links": [
+              "https://github.com/luanti-org/luanti"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:68",
+            "source_line": 68,
+            "source_byte_start": 3729,
+            "source_byte_end": 3844,
+            "raw_line_sha256": "72e0ed72fc61576266559f97b97450ddd6d01b280dc7aeaa4fb94e2d0fee1c89",
+            "label": "Nebula",
+            "source_links": [
+              "https://github.com/gscept/nebula"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:70",
+            "source_line": 70,
+            "source_byte_start": 3845,
+            "source_byte_end": 3957,
+            "raw_line_sha256": "87882f9f79fccff5fb0e80404c80cdaa5aa995641b4f700f3d4a07ab0d07e747",
+            "label": "O3DE",
+            "source_links": [
+              "https://github.com/o3de/o3de"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:72",
+            "source_line": 72,
+            "source_byte_start": 3958,
+            "source_byte_end": 4106,
+            "raw_line_sha256": "9a85fd49209c32e0d4e8f2a2cb143fbf39f070c563316a5d0f58412f60915cd0",
+            "label": "Ogre",
+            "source_links": [
+              "https://github.com/OGRECave/ogre"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:74",
+            "source_line": 74,
+            "source_byte_start": 4107,
+            "source_byte_end": 4309,
+            "raw_line_sha256": "7884759fcaa1e854b6055262c73b8d52a8922cd099732ce25af3fdfaaafe6a98",
+            "label": "SFML",
+            "source_links": [
+              "https://github.com/SFML/SFML"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:76",
+            "source_line": 76,
+            "source_byte_start": 4310,
+            "source_byte_end": 4401,
+            "raw_line_sha256": "4d1b75ffb80cedfe813602d18c52faa8648c465ec47062d20851b566ce8099e1",
+            "label": "Serious Engine v.1.10",
+            "source_links": [
+              "https://github.com/Croteam-official/Serious-Engine"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:80",
+            "source_line": 80,
+            "source_byte_start": 4573,
+            "source_byte_end": 4682,
+            "raw_line_sha256": "44c97c1019ba197a39f62db97793e137b3a694c3457bd752fdf7f0ee1640c535",
+            "label": "Spring",
+            "source_links": [
+              "https://github.com/spring/spring"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:82",
+            "source_line": 82,
+            "source_byte_start": 4683,
+            "source_byte_end": 4815,
+            "raw_line_sha256": "7e1740d7b788375f32edcad3e2beb088fa5de46378cadb958cb777237a6bd48f",
+            "label": "Torque",
+            "source_links": [
+              "https://github.com/TorqueGameEngines"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:90",
+            "source_line": 90,
+            "source_byte_start": 4971,
+            "source_byte_end": 5070,
+            "raw_line_sha256": "4a13722476fb9b82a57286a4a015634adcb23d4b1d7031bb1bf951329e2b5f4e",
+            "label": "Trial",
+            "source_links": [
+              "https://github.com/Shirakumo/trial"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:94",
+            "source_line": 94,
+            "source_byte_start": 5098,
+            "source_byte_end": 5169,
+            "raw_line_sha256": "02aa412ea4aafc74924b4188a27e6b756de8de59e595e05f0ed89dc86c2cddac",
+            "label": "Nu",
+            "source_links": [
+              "https://github.com/bryanedds/Nu"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:98",
+            "source_line": 98,
+            "source_byte_start": 5177,
+            "source_byte_end": 5309,
+            "raw_line_sha256": "4dcb8812e4df757fb3555190878c2a181ee9d05b5473b6d704d1c5a9c57332db",
+            "label": "Ebitengine",
+            "source_links": [
+              "https://github.com/hajimehoshi/ebiten"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:102",
+            "source_line": 102,
+            "source_byte_start": 5319,
+            "source_byte_end": 5451,
+            "raw_line_sha256": "3af9d87473e65685fd08a12b2d761e07545077634bf67b51d939a548896d5bb2",
+            "label": "libJDX",
+            "source_links": [
+              "https://github.com/libgdx/libgdx"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:106",
+            "source_line": 106,
+            "source_byte_start": 5467,
+            "source_byte_end": 5614,
+            "raw_line_sha256": "77acd3362c2d7a3fcf5bfc4d732cc4bb19235126c677edb52a123f9a39385364",
+            "label": "Kaplay",
+            "source_links": [
+              "https://github.com/kaplayjs/kaplay"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:108",
+            "source_line": 108,
+            "source_byte_start": 5615,
+            "source_byte_end": 5796,
+            "raw_line_sha256": "8b4812b60efbe2681b07eeb6359c14fd1dc23f1a27a7a58c09cad5c816732ff2",
+            "label": "Phaser",
+            "source_links": [
+              "https://github.com/photonstorm/phaser"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:110",
+            "source_line": 110,
+            "source_byte_start": 5797,
+            "source_byte_end": 5957,
+            "raw_line_sha256": "afa9386af9ad67556c5f4c145d4da0aa2161a8630b0ad704ace69c1a8cf51cf8",
+            "label": "Three.js",
+            "source_links": [
+              "https://github.com/mrdoob/three.js"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:114",
+            "source_line": 114,
+            "source_byte_start": 5966,
+            "source_byte_end": 6211,
+            "raw_line_sha256": "a397786d52b4c5efabf33d2076d05f328839347069623cd014b5e7afcd0661ec",
+            "label": "Gideros",
+            "source_links": [
+              "https://github.com/gideros/gideros"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:116",
+            "source_line": 116,
+            "source_byte_start": 6212,
+            "source_byte_end": 6351,
+            "raw_line_sha256": "2baeb6e0a18a66624bf1bac2cd360e0bf32bb3b26935c6b0530e7e542c88aa88",
+            "label": "LÖVE",
+            "source_links": [
+              "https://github.com/love2d/love"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:118",
+            "source_line": 118,
+            "source_byte_start": 6352,
+            "source_byte_end": 6505,
+            "raw_line_sha256": "232b34fffc9aca86358ef1c6ff20fd99e27aaaebd21e71a3052c10d9561f3df6",
+            "label": "LÖVR",
+            "source_links": [
+              "https://github.com/bjornbytes/lovr"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:120",
+            "source_line": 120,
+            "source_byte_start": 6506,
+            "source_byte_end": 6662,
+            "raw_line_sha256": "5272ef2593c946c53a1ded81bcb50de943371c5717b43c6cea550bade26c67a0",
+            "label": "Solar2D",
+            "source_links": [
+              "https://github.com/coronalabs/corona"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:124",
+            "source_line": 124,
+            "source_byte_start": 6674,
+            "source_byte_end": 6853,
+            "raw_line_sha256": "9285393ae19bdbcfaa0d9225d5d63bb9784bd91202dae3cd0395e3df371b9bbb",
+            "label": "Castle Game Engine",
+            "source_links": [
+              "https://github.com/castle-engine/castle-engine"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:128",
+            "source_line": 128,
+            "source_byte_start": 6865,
+            "source_byte_end": 7075,
+            "raw_line_sha256": "26842e32615388c6502023678c40918f3747472955c01c2a85c7dec26af101f4",
+            "label": "Pygame",
+            "source_links": [
+              "https://github.com/pygame/pygame"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:130",
+            "source_line": 130,
+            "source_byte_start": 7076,
+            "source_byte_end": 7196,
+            "raw_line_sha256": "9c4b95fde73e0f04e52e13265bce287893e3a3b4ff55bc85ea8d914842e56649",
+            "label": "Pyxel",
+            "source_links": [
+              "https://github.com/kitao/pyxel"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:134",
+            "source_line": 134,
+            "source_byte_start": 7206,
+            "source_byte_end": 7336,
+            "raw_line_sha256": "0c17773b1522d8ab7e1f282b61fb61a871058a0d4dda481fb551e9b2349637a7",
+            "label": "Amethyst",
+            "source_links": [
+              "https://github.com/amethyst/amethyst"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:136",
+            "source_line": 136,
+            "source_byte_start": 7337,
+            "source_byte_end": 7484,
+            "raw_line_sha256": "8fa2ab194ed9f37dc2af56ab7a47712c2ec5574d5d2dffc369b07efb81f169f9",
+            "label": "Bevy",
+            "source_links": [
+              "https://github.com/bevyengine/bevy"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:138",
+            "source_line": 138,
+            "source_byte_start": 7485,
+            "source_byte_end": 7609,
+            "raw_line_sha256": "2c86e2229ef56cfac444904b07dc647ee0ab0882cd4f74e28871f44b87785742",
+            "label": "Comfy",
+            "source_links": [
+              "https://github.com/darthdeus/comfy"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:140",
+            "source_line": 140,
+            "source_byte_start": 7610,
+            "source_byte_end": 7732,
+            "raw_line_sha256": "c9826dc4d46b73e92576ab8dbefd4a05f25c27caf7e18ddd239b90ef1bde4414",
+            "label": "Fyrox",
+            "source_links": [
+              "https://github.com/FyroxEngine/Fyrox"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          },
+          {
+            "candidate_ref": "alexandria:external:index:4d54f3995140e64beebef6575760996bf14324ec:142",
+            "source_line": 142,
+            "source_byte_start": 7733,
+            "source_byte_end": 7891,
+            "raw_line_sha256": "f54108b04bf6d28449030fcdf86aec726f1fd3f3c3ac7e6f2dfcf05ec5baf3c3",
+            "label": "Macroquad",
+            "source_links": [
+              "https://github.com/not-fl3/macroquad"
+            ],
+            "upstream_rights": "UNVERIFIED",
+            "evidence_state": "CATALOGUE_LINE_VERIFIED_ONLY",
+            "project_content_hash": null,
+            "project_bytes_acquired": false,
+            "object_id": null
+          }
+        ],
+        "unselected_source_lines": 97
+      }
+    ],
+    "warnings": [
+      "CC0 covers this catalogue index, not upstream linked project source files.",
+      "Original raw README remains with provider; no bytes carried in this projection."
+    ],
+    "unresolved": [
+      {
+        "kind": "UPSTREAM_PROJECT_RIGHTS",
+        "count": 46
+      },
+      {
+        "kind": "CATALOGUE_UNSELECTED_LINES",
+        "count": 97
+      }
+    ],
+    "lineage": {
+      "pinned_commit": "4d54f3995140e64beebef6575760996bf14324ec",
+      "pinned_readme_git_blob": "f315c4b33c4369db78cda7c6dbf8c407342f64f7",
+      "license_source": "git:bobeff/open-source-engines@4d54f3995140e64beebef6575760996bf14324ec:LICENSE",
+      "license_sha256": "a2010f343487d3f7618affe54f789f5487602331c0a8d03f49e9a7c547cf0499",
+      "license_git_blob": "0e259d42c996742e9e3cba14c677129b2c1b6311",
+      "catalogue_license": "CC0-1.0",
+      "upstream_project_license": "UNVERIFIED"
+    }
+  },
+  "conversion_receipt": {
+    "schema": "CGX-FILE-CONVERSION-RECEIPT/0.1",
+    "source_ref": "git:bobeff/open-source-engines@4d54f3995140e64beebef6575760996bf14324ec:README.md",
+    "source_sha256": "075c794da0482a7bff6f46d67956ef2e62486a1914fc78cda3d239bbf3a54a92",
+    "media_type": "text/markdown",
+    "adapter_or_capability": "catalogue-readme-stdlib-v0.1",
+    "conversion_classes_used": [
+      "R0_EXACT",
+      "R1_SEMANTIC_REVERSIBLE"
+    ],
+    "semantic_target": "Alexandria external source-index line graph only; no project object admission",
+    "loss_map": [
+      {
+        "scope": "unselected original source lines and formatting",
+        "action": "retain provider R0; no full-source reconstruction from R1"
+      }
+    ],
+    "frontier_items": [
+      "UPSTREAM_PROJECT_RIGHTS",
+      "UPSTREAM_PROJECT_SOURCE_BYTES",
+      "NATIVE_DBR_READBACK",
+      "CANONICAL_OBJECT_ID"
+    ],
+    "output_hashes": {
+      "r1_structure_sha256": "8c496b993c05c6ea60c80f2aaff19c65bcaab3f35671221cc464eb7418d46ecf"
+    },
+    "authority_state": "NONCANONICAL_REVIEW_ONLY",
+    "native_dbr_verified": false,
+    "source_bytes_persisted_by_this_adapter": false,
+    "owner_approval_required": true
+  },
+  "source_proof": {
+    "readme_git_blob_verifies": true,
+    "license_git_blob_verifies": true,
+    "selected_lines_verified": 46,
+    "unselected_lines": 97
+  },
+  "publication_status": "INTERNAL_REVIEW_SOURCE_FREE_NOT_PUBLISHED",
+  "upstream_project_bytes_acquired": 0
+}

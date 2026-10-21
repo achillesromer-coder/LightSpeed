@@ -1,0 +1,80 @@
+{
+  "canonical_object_id": null,
+  "capability": {
+    "CGX_Natural_Network_activated": false,
+    "compiled": false,
+    "described": "userland SCTP stack",
+    "protocol_interoperability_tested": false,
+    "real_node_binding": false
+  },
+  "frontier": [
+    "VERIFY_ALL_USRSCTP_SOURCE_LICENSE_HEADERS_AND_THIRD_PARTY_NOTICES",
+    "QUALIFY_REMAINING_SOURCE_FILES_AND_PLATFORM_TARGETS",
+    "TEST_REAL_SCTP_PROTOCOL_WITH_SIGNED_NODES",
+    "OWNER_DB_R_READBACK_REQUIRED",
+    "RECONCILE_MPL_LIBDATACHANNEL_AND_UPSTREAM_BSD_FILE_OBLIGATIONS"
+  ],
+  "git_commit": "fec583d54493f879d2ae44a743423bf8a04371ab",
+  "git_root_tree_sha1": "7da97207e08e03af2b152f378f78e46f17f17e82",
+  "native_dbr_verified": false,
+  "parent_gitlink": "deps/usrsctp",
+  "parent_source_ref": "git:paullouisageneau/libdatachannel@6b1e2e620f1e37f0eafeee702eaea0043cb305fd",
+  "public_release_approved": false,
+  "repository_source_complete": false,
+  "rights": {
+    "all_project_assets_cleared": false,
+    "full_redistribution_review_complete": false,
+    "repository_licence_statement": "BSD-3-Clause-style with no-endorsement condition",
+    "selected_netinet_sctp_header": "SPDX BSD-3-Clause and notice",
+    "selected_user_environment_source": "BSD-2-Clause-style source header",
+    "source_notice_coverage_complete": false
+  },
+  "schema": "CGX-ALEXANDRIA-USRSCTP-SOURCE-SCOPE/0.1",
+  "source_bytes_embedded": false,
+  "source_files": [
+    {
+      "git_blob_sha1": "c3467f27d01af4d25caddf197be590ab2f8137a4",
+      "notice_scope": "BSD_3_CLAUSE_STYLE_FILE_HEADER",
+      "path": "CMakeLists.txt",
+      "raw_bytes_in_projection": false,
+      "sha256": "19dcc1429d0627e7f4de99dbff75c668f0ba7e088eb33962a6db9f70e1e63ba1",
+      "size_bytes": 9701
+    },
+    {
+      "git_blob_sha1": "a2d1f989cffa9e6e672c0a38ecf89c762c475322",
+      "notice_scope": "BSD_3_CLAUSE_STYLE_REPOSITORY_NOTICE",
+      "path": "LICENSE.md",
+      "raw_bytes_in_projection": false,
+      "sha256": "fa53711b25af4b9a9b8dadfea3cb38166ec4b96760c8d62b284055554537d9ef",
+      "size_bytes": 1500
+    },
+    {
+      "git_blob_sha1": "3d5ba38f3514f34ec7f283e36dd6685d90971820",
+      "notice_scope": "PROJECT_DESCRIPTION_NOT_LICENSE_PROOF",
+      "path": "README.md",
+      "raw_bytes_in_projection": false,
+      "sha256": "c806f0e28ecf83cf7ada12a60f3dcee157ecb83084bc532f737faf9cd57e2a16",
+      "size_bytes": 530
+    },
+    {
+      "git_blob_sha1": "6129e77f9684d84e1939670f8c6a54f56b982558",
+      "notice_scope": "BSD_3_CLAUSE_SPDX_AND_FILE_HEADER",
+      "path": "usrsctplib/netinet/sctp.h",
+      "raw_bytes_in_projection": false,
+      "sha256": "ec8ed1d63757652700b1f6ab76a5254b74aecab9cdc9f334091613718eaf4539",
+      "size_bytes": 24495
+    },
+    {
+      "git_blob_sha1": "ea52f0ada743c606e52c9f52dfd6a486a71a8b5f",
+      "notice_scope": "BSD_2_CLAUSE_STYLE_FILE_HEADER",
+      "path": "usrsctplib/user_environment.c",
+      "raw_bytes_in_projection": false,
+      "sha256": "06159d0127b1f1c520d9ddcb5e9113aee09a355510efff09ed4514035ed5e8bc",
+      "size_bytes": 7730
+    }
+  ],
+  "source_root": "git:paullouisageneau/usrsctp@fec583d54493f879d2ae44a743423bf8a04371ab",
+  "status": "FIVE_ORIGINAL_R0_FILES_AND_THREE_GIT_TREES_VERIFIED",
+  "verified_git_tree_count": 3,
+  "verified_original_file_count": 5
+}

@@ -1,0 +1,49 @@
+{
+  "schema": "CGX-ALEXANDRIA-PINNED-CATALOGUE-READBACK/0.1",
+  "date": "2026-10-20",
+  "status": "SOURCE_LINKAGE_VERIFIED_CATALOGUE_ONLY",
+  "method": "Independent GitHub fetch_file at exact upstream commit; match declared README Git blob and parse corresponding README lines. Project title and all declared source URLs must appear on that exact line.",
+  "disclaimer": "Git blob SHA matches upstream source; not an original-byte SHA-256 admission receipt for full external games or engines. No linked software source downloaded, no game executables, no native CCC admission.",
+  "roots": [
+    {
+      "origin": "bobeff/open-source-games",
+      "commit": "3a9ab8fc892a2cdadf8989a72ba7624a11e39cec",
+      "readme_git_blob": "0a54e0898d52ffa31f83f843b66aee458c5a49b8",
+      "readme_lines_observed": 459,
+      "readme_text_characters_observed": 37268,
+      "indexed_entries": 161,
+      "matched_line_titles": 161,
+      "matched_line_source_urls": 161,
+      "unlinked_index_lines": 25,
+      "license_git_blob": "0e259d42c996742e9e3cba14c677129b2c1b6311",
+      "index_license": "CC0-1.0",
+      "linked_project_license": "UNVERIFIED"
+    },
+    {
+      "origin": "bobeff/open-source-engines",
+      "commit": "4d54f3995140e64beebef6575760996bf14324ec",
+      "readme_git_blob": "f315c4b33c4369db78cda7c6dbf8c407342f64f7",
+      "readme_lines_observed": 143,
+      "readme_text_characters_observed": 7886,
+      "indexed_entries": 46,
+      "matched_line_titles": 46,
+      "matched_line_source_urls": 46,
+      "unlinked_index_lines": 2,
+      "license_git_blob": "0e259d42c996742e9e3cba14c677129b2c1b6311",
+      "index_license": "CC0-1.0",
+      "linked_project_license": "UNVERIFIED"
+    }
+  ],
+  "totals": {
+    "indexed_entries": 207,
+    "matched_line_titles": 207,
+    "matched_line_source_urls": 207,
+    "unlinked_index_lines": 27,
+    "external_projects_r0_verified": 0,
+    "qualified_playable_projects": 0
+  },
+  "owner_approval_required": true,
+  "rights_status": "CATALOGUE_INDEX_ONLY_CC0__UPSTREAM_PROJECT_RIGHTS_UNVERIFIED",
+  "canonical_admission": false,
+  "release_ready": false
+}

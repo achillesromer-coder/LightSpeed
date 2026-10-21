@@ -1,0 +1,48 @@
+{
+  "actual_header_paths_and_claims": [
+    {
+      "bytes": 86072,
+      "original_git_blob_sha1": "fb0b073b0c65ff2651e2fdab03006c47cb67ef31",
+      "path": "include/nlohmann/thirdparty/hedley/hedley.hpp",
+      "sha256": "1547b367895f8be9f8283ae21f583182db572ad990236220002b632a15238712",
+      "source_bytes_embedded": false,
+      "spdx_in_source_header": "MIT"
+    },
+    {
+      "bytes": 5502,
+      "original_git_blob_sha1": "ad86d11f22cc2ffbddb872f7caeb0a13896ad7ca",
+      "path": "include/nlohmann/thirdparty/hedley/hedley_undef.hpp",
+      "sha256": "ddf06784ca9448b4899db96a409ec1cbc65a0f682db9c966c011f00b77ae75c4",
+      "source_bytes_embedded": false,
+      "spdx_in_source_header": "MIT"
+    }
+  ],
+  "canonical_object_id": null,
+  "conflict": {
+    "claimed_cc0_applied_to_real_files": false,
+    "dep5_source_claim": "CC0",
+    "effective_legal_relicensing_conclusion": "NOT_DETERMINED",
+    "kind": "NONMATCHING_DEP5_FILE_PATH_VS_REAL_HEADER_PATH_AND_SPDX",
+    "real_header_spdx_claim": "MIT",
+    "requires_source_owner_or_legal_review": true
+  },
+  "dep5_exact_path_exists_in_pinned_tree": false,
+  "dep5_path_declared_as_cc0": "include/nlohmann/thirdparty/hedley.hpp",
+  "distribution_approved": false,
+  "frontier": [
+    "CONFIRM_HEDLEY_REUSE_DEP5_PATH_CORRECTION_WITH_UPSTREAM",
+    "AUDIT_ADDITIONAL_HEDLEY_AND_THIRD_PARTY_LICENCE_PROVENANCE",
+    "DO_NOT_RELICENSE_OR_PUBLISH_BASED_ON_STALE_DEP5_CLAIM",
+    "NATIVE_OWNER_SOURCE_ROOT_DBR_READBACK"
+  ],
+  "native_dbr_verified": false,
+  "related_original_nlohmann_scope": "git:nlohmann/json@55f93686c01528224f448c19128836e7df245f72",
+  "root_git_tree_sha1": "1eb780542e829bf1615828ed0d5f407497bbce7b",
+  "schema": "CGX-ALEXANDRIA-HEDLEY-NOTICE-RECONCILIATION/0.1",
+  "source_bytes_embedded": false,
+  "source_dep5_git_blob_sha1": "06b1d37c1b2026bc363ae399a7a99bddec685ac6",
+  "source_dep5_sha256": "31743525fa874afd4fe7c4d9dfb63b2bf829b5aac437c6e111738c0c4162303e",
+  "source_root": "git:nlohmann/json@55f93686c01528224f448c19128836e7df245f72",
+  "status": "REUSE_PATH_MISMATCH_AND_SOURCE_SPDX_CONFLICT_CONFIRMED",
+  "whole_repository_licence_audit_complete": false
+}

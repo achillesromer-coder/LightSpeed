@@ -1,0 +1,117 @@
+{
+  "all_project_source_acquired": false,
+  "canonical_object_id": null,
+  "capability_claims": {
+    "canonical_capability_admitted": false,
+    "compiled": false,
+    "described": "WebRTC/Data Channels, media transport and WebSockets",
+    "evidence": "README_ONLY",
+    "network_interoperability_tested": false
+  },
+  "first_party_licensing": {
+    "all_source_file_headers_verified": false,
+    "declared": "MPL-2.0",
+    "original_text_verified": true,
+    "release_rights_approved": false,
+    "third_party_licences_verified": false,
+    "two_source_file_headers_verified": true
+  },
+  "frontier": [
+    "CHECK_ALL_FIRST_PARTY_CODE_HEADERS_AND_NOTICE_FILES",
+    "RESOLVE_NESTED_FIVE_DEPENDENCY_SOURCE_AND_LICENCES",
+    "CHECK_MPL_NOTICE_COPYRIGHT_FILE_LEVEL_OBLIGATIONS",
+    "BUILD_AND_TEST_REAL_WEBRTC_WITH_APPROVED_TOOLCHAIN",
+    "NATIVE_SIGNED_OWNER_DBR_READBACK"
+  ],
+  "media_assets_qualified": false,
+  "native_dbr_verified": false,
+  "nested_dependencies_acquired": false,
+  "nested_gitlink_count": 5,
+  "nested_gitlinks": [
+    {
+      "licence_verified": false,
+      "path": "deps/json",
+      "pinned_commit_sha1": "55f93686c01528224f448c19128836e7df245f72",
+      "source_acquired": false,
+      "source_url": "https://github.com/nlohmann/json.git"
+    },
+    {
+      "licence_verified": false,
+      "path": "deps/libjuice",
+      "pinned_commit_sha1": "b89c792e3612faf2f12cf35bcc56857313a06be3",
+      "source_acquired": false,
+      "source_url": "https://github.com/paullouisageneau/libjuice.git"
+    },
+    {
+      "licence_verified": false,
+      "path": "deps/libsrtp",
+      "pinned_commit_sha1": "24b3bf8f19b6f5ab4cd2bcceb4f4064efca86fd5",
+      "source_acquired": false,
+      "source_url": "https://github.com/cisco/libsrtp.git"
+    },
+    {
+      "licence_verified": false,
+      "path": "deps/plog",
+      "pinned_commit_sha1": "94899e0b926ac1b0f4750bfbd495167b4a6ae9ef",
+      "source_acquired": false,
+      "source_url": "https://github.com/SergiusTheBest/plog.git"
+    },
+    {
+      "licence_verified": false,
+      "path": "deps/usrsctp",
+      "pinned_commit_sha1": "fec583d54493f879d2ae44a743423bf8a04371ab",
+      "source_acquired": false,
+      "source_url": "https://github.com/paullouisageneau/usrsctp.git"
+    }
+  ],
+  "original_file_count": 5,
+  "original_file_proofs": [
+    {
+      "bytes": 543,
+      "embedded_in_r1": false,
+      "git_blob_sha1": "b7604c2fae62db7046edfd688cefc273dd31bd86",
+      "original_available_as_r0_fixture": true,
+      "path": ".gitmodules",
+      "sha256": "d1742482db766587aa72e40eb76655a3b2dbab13a005438302ff7cd038944827"
+    },
+    {
+      "bytes": 16726,
+      "embedded_in_r1": false,
+      "git_blob_sha1": "14e2f777f6c395e7e04ab4aa306bbcc4b0c1120e",
+      "original_available_as_r0_fixture": true,
+      "path": "LICENSE",
+      "sha256": "fab3dd6bdab226f1c08630b1dd917e11fcb4ec5e1e020e2c16f83a0a13863e85"
+    },
+    {
+      "bytes": 10442,
+      "embedded_in_r1": false,
+      "git_blob_sha1": "a9f3af9e81791cf3d8be495ba13222b1cd842c2d",
+      "original_available_as_r0_fixture": true,
+      "path": "README.md",
+      "sha256": "700626013b032696c57ac2ba071bfd56894160967dd264f9801158b5a9c0cf01"
+    },
+    {
+      "bytes": 1113,
+      "embedded_in_r1": false,
+      "git_blob_sha1": "7f97941dec316f9405aa9732d28aa162dbe1c881",
+      "original_available_as_r0_fixture": true,
+      "path": "include/rtc/rtc.hpp",
+      "sha256": "7e35eaf3fbe2cb83890d557a6f310d43fa4bc703571b13f07cea23edabec52d2"
+    },
+    {
+      "bytes": 15597,
+      "embedded_in_r1": false,
+      "git_blob_sha1": "135f4585b4a59879fc19ecd85e9b85709ee0ace8",
+      "original_available_as_r0_fixture": true,
+      "path": "src/peerconnection.cpp",
+      "sha256": "67f18f3fae5eb291b2ba515b491a56347d3bfb82cee849d0b7f117a50aa707d3"
+    }
+  ],
+  "parent_gitlink_path": "src/3rdparty/libdatachannel",
+  "parent_source_root": "git:TeamHypersomnia/Hypersomnia@ca177a1a9a73e9e4bf5bb00a00ff1a1905483bee",
+  "schema": "CGX-ALEXANDRIA-LIBDATACHANNEL-SOURCE-SCOPE/0.1",
+  "source_bytes_embedded": false,
+  "source_root": "git:paullouisageneau/libdatachannel@6b1e2e620f1e37f0eafeee702eaea0043cb305fd",
+  "status": "FIVE_R0_FILES_AND_FIVE_NESTED_GITLINKS_VERIFIED",
+  "upstream_root_git_tree_sha1": "5c8e8876492dde5196e2fc9e40e82a0d2f737f7c"
+}
