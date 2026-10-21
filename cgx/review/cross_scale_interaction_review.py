@@ -239,8 +239,13 @@ def screen_passive_bistatic_inputs(*, reference: dict | None,
         out["epoch_utc"] = instant(obj["epoch_utc"])
         for key in ("center_hz", "bandwidth_hz", "sampling_hz"):
             out[key] = positive(obj[key], name + "." + key)
-        out["noise_floor_dbm"] = Decimal(str(obj["noise_floor_dbm"]))
-        if isinstance(obj["noise_floor_dbm"], bool) or not out["noise_floor_dbm"].is_finite():
+        if isinstance(obj["noise_floor_dbm"], bool):
+            raise ValueError("Invalid asserted noise-floor metadata")
+        try:
+            out["noise_floor_dbm"] = Decimal(str(obj["noise_floor_dbm"]))
+        except (InvalidOperation, ValueError, TypeError) as exc:
+            raise ValueError("Invalid asserted noise-floor metadata") from exc
+        if not out["noise_floor_dbm"].is_finite():
             raise ValueError("Invalid asserted noise-floor metadata")
         if out["bandwidth_hz"] >= out["sampling_hz"]:
             holds.append(name.upper() + "_BANDWIDTH_NOT_BELOW_SAMPLE_RATE")
@@ -249,7 +254,7 @@ def screen_passive_bistatic_inputs(*, reference: dict | None,
     b = channel("surveillance", surveillance)
     delay = None
     if a is not None and b is not None:
-        if a["channel_id"] == b["channel_id"] or a["source_locator"] == b["source_locator"]:
+        if a["channel_id"] == b["channel_id"]:
             holds.append("INDEPENDENT_CHANNEL_IDENTITIES_REQUIRED")
         if a["epoch_utc"] != b["epoch_utc"] or a["timebase_id"] != b["timebase_id"]:
             holds.append("COMMON_TIMEBASE_NOT_DECLARED")
