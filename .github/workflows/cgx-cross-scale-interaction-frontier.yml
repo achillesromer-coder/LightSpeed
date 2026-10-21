@@ -1,0 +1,42 @@
+name: CGX Alexandria cross-scale operator reuse and falsification
+on:
+  pull_request:
+    paths:
+      - "cgx/review/alexandria_cross_scale_interaction_projection_20261021.json"
+      - "cgx/review/alexandria_cross_scale_interaction_validation.py"
+      - "tests/test_cgx_alexandria_cross_scale_interaction.py"
+      - ".github/workflows/cgx-cross-scale-interaction-frontier.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify existing CGX fluid and EM operator identities
+        run: |
+          python -m unittest discover -s tests -p 'test_cgx_alexandria_cross_scale_interaction.py' -v
+      - name: Preserve inherited evidence progress and release holds
+        run: |
+          python -m unittest discover -s tests -p 'test_cgx_unispace_finishline_evidence.py' -v
+          python - <<'PY'
+          import importlib.util
+          import json
+          from pathlib import Path
+          file=Path("cgx/review/alexandria_cross_scale_interaction_validation.py")
+          s=importlib.util.spec_from_file_location("operator_review",file)
+          m=importlib.util.module_from_spec(s)
+          s.loader.exec_module(m)
+          x=m.qualified_projection(Path("."))
+          assert not x["public_release_authorised"]
+          assert not x["native_signed_peer_verified"]
+          assert not x["model_execution_performed"]
+          prior=json.loads(Path("cgx/review/cgx_unispace_finishline_evidence_20261021.json").read_text())
+          assert prior["acceptance_summary"]["checkpoint_coverage_percent"]==47
+          print("Reused 5 original atlas kernels; 6 unqualified frontiers; issue #158/#161 unchanged.")
+          PY
