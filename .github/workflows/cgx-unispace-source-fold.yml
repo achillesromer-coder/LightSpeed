@@ -8,6 +8,7 @@ on:
       - "cgx/review/water_reference_fluid_kernel_fixture.py"
       - "cgx/review/water_reference_property_fixture_20261021.json"
       - "tests/test_cgx_cross_domain_fluid_state_bridge.py"
+      - "tests/test_cgx_cross_lane_water_consistency.py"
       - "cgx/manufacturing/**"
       - "cgx/review/unispace_source_fold_manifest_20261020.json"
       - "cgx/review/alexandria_external_reference_intake_20261020.json"
@@ -42,3 +43,4 @@ jobs:
           python -m unittest discover -s tests -p 'test_cgx_unispace_source_folding.py' -v
           python -m unittest discover -s tests -p 'test_cgx_cross_domain_method_lens.py' -v
           python -m unittest discover -s tests -p 'test_cgx_cross_domain_fluid_state_bridge.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_cross_lane_water_consistency.py' -v
