@@ -106,6 +106,15 @@ class UsrsctpSourceScopeTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"original Git source bytes mismatch"):
             compile_usrsctp_source_scope(parent,tree,altered)
 
+    def test_persisted_compact_receipt_matches_exact_original_r0(self):
+        persisted_path=ROOT/"cgx"/"review"/"alexandria_usrsctp_source_scope_20261021.json"
+        persisted=json.loads(persisted_path.read_text(encoding="utf-8"))
+        self.assertEqual(persisted,compile_usrsctp_source_scope(*sources()))
+        self.assertEqual(persisted["verified_original_file_count"],5)
+        self.assertFalse(persisted["rights"]["full_redistribution_review_complete"])
+        self.assertFalse(persisted["capability"]["CGX_Natural_Network_activated"])
+        self.assertIsNone(persisted["canonical_object_id"])
+
     def test_source_of_capability_is_description_not_live_qualification(self):
         result=compile_usrsctp_source_scope(*sources())
         self.assertEqual(result["capability"]["described"],"userland SCTP stack")
