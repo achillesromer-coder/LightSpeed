@@ -184,6 +184,124 @@ def screen_passive_power(*, incident_w_m2: Any, area_m2: Any, efficiency: Any,
     }
 
 
+
+def screen_passive_bistatic_inputs(*, reference: dict | None,
+                                  surveillance: dict | None,
+                                  geometry: dict | None) -> dict:
+    """Metadata-only passive bistatic sensing screen; NO signal processing.
+
+    The synthetic 'candidate' geometry is a hypothesis, not a located target.
+    All supplied provenance/calibration identifiers are caller assertions:
+    original bytes, instrument calibration, rights and measurements are
+    NEVER independently verified by this function.
+    """
+    from decimal import Decimal
+    from datetime import datetime, timezone
+    c_m_s = Decimal("299792458")
+    required_channel = {
+        "channel_id", "source_locator", "center_hz", "bandwidth_hz",
+        "sampling_hz", "epoch_utc", "timebase_id", "calibration_id",
+        "noise_floor_dbm",
+    }
+    required_geometry = {
+        "frame_id", "epoch_utc", "tx_rx_m",
+        "tx_to_hypothesis_m", "hypothesis_to_rx_m",
+    }
+    holds: list[str] = []
+    def ident(v: object, label: str) -> str:
+        if not isinstance(v, str) or not v.strip() or len(v) > 256:
+            raise ValueError("Invalid typed identifier: " + label)
+        return v.strip()
+    def instant(v: object) -> str:
+        s = ident(v, "epoch_utc")
+        if not s.endswith("Z"):
+            raise ValueError("Explicit UTC epoch required")
+        try:
+            parsed = datetime.fromisoformat(s.replace("Z", "+00:00"))
+        except ValueError as e:
+            raise ValueError("Invalid UTC epoch") from e
+        if parsed.utcoffset() != timezone.utc.utcoffset(None):
+            raise ValueError("Invalid UTC offset")
+        return parsed.isoformat()
+    def positive(v: object, label: str) -> Decimal:
+        d = _nonnegative_number(v)
+        if d == 0 or d > Decimal("1e15"):
+            raise ValueError("Invalid positive physical input: " + label)
+        return d
+    def channel(name: str, obj: dict | None) -> dict | None:
+        if obj is None:
+            holds.append("MISSING_" + name.upper() + "_CHANNEL")
+            return None
+        if not isinstance(obj, dict) or set(obj) != required_channel:
+            raise ValueError("Exact " + name + " channel schema required")
+        out = {k: ident(obj[k], name + "." + k) for k in
+               ("channel_id", "source_locator", "timebase_id", "calibration_id")}
+        out["epoch_utc"] = instant(obj["epoch_utc"])
+        for key in ("center_hz", "bandwidth_hz", "sampling_hz"):
+            out[key] = positive(obj[key], name + "." + key)
+        out["noise_floor_dbm"] = Decimal(str(obj["noise_floor_dbm"]))
+        if isinstance(obj["noise_floor_dbm"], bool) or not out["noise_floor_dbm"].is_finite():
+            raise ValueError("Invalid asserted noise-floor metadata")
+        if out["bandwidth_hz"] >= out["sampling_hz"]:
+            holds.append(name.upper() + "_BANDWIDTH_NOT_BELOW_SAMPLE_RATE")
+        return out
+    a = channel("reference", reference)
+    b = channel("surveillance", surveillance)
+    delay = None
+    if a is not None and b is not None:
+        if a["channel_id"] == b["channel_id"] or a["source_locator"] == b["source_locator"]:
+            holds.append("INDEPENDENT_CHANNEL_IDENTITIES_REQUIRED")
+        if a["epoch_utc"] != b["epoch_utc"] or a["timebase_id"] != b["timebase_id"]:
+            holds.append("COMMON_TIMEBASE_NOT_DECLARED")
+        low = max(a["center_hz"] - a["bandwidth_hz"]/2,
+                  b["center_hz"] - b["bandwidth_hz"]/2)
+        high = min(a["center_hz"] + a["bandwidth_hz"]/2,
+                   b["center_hz"] + b["bandwidth_hz"]/2)
+        if high <= low:
+            holds.append("NO_SHARED_DECLARED_RF_BAND")
+    if geometry is None:
+        holds.append("MISSING_BISTATIC_GEOMETRY")
+    else:
+        if not isinstance(geometry, dict) or set(geometry) != required_geometry:
+            raise ValueError("Exact hypothetical bistatic geometry required")
+        ident(geometry["frame_id"], "geometry.frame_id")
+        epoch = instant(geometry["epoch_utc"])
+        if (a is not None and epoch != a["epoch_utc"] or
+            b is not None and epoch != b["epoch_utc"]):
+            holds.append("GEOMETRY_EPOCH_MISMATCH")
+        direct = positive(geometry["tx_rx_m"], "tx_rx_m")
+        d1 = positive(geometry["tx_to_hypothesis_m"], "tx_to_hypothesis_m")
+        d2 = positive(geometry["hypothesis_to_rx_m"], "hypothesis_to_rx_m")
+        if d1+d2 < direct or d1+direct < d2 or d2+direct < d1:
+            holds.append("GEOMETRIC_TRIANGLE_INCONSISTENT")
+        else:
+            delay = (d1 + d2 - direct) / c_m_s
+    return {
+        "schema": "CGX-PASSIVE-BISTATIC-INPUT-REVIEW/0.1",
+        "status": ("HOLD_MISSING_OR_INCOMPATIBLE_INPUTS" if holds
+                   else "SYNTHETIC_METADATA_SHAPE_COMPLETE_ONLY"),
+        "holds": sorted(set(holds)),
+        "hypothetical_excess_path_delay_s": str(delay) if delay is not None else None,
+        "physical_source_class": "EXTERNAL_ILLUMINATOR_OF_OPPORTUNITY",
+        "existing_profile": "AMBIENT_BISTATIC_RADAR",
+        "original_source_bytes_verified": False,
+        "calibration_independently_verified": False,
+        "measured_signal_processed": False,
+        "target_detected_or_tracked": False,
+        "transmitter_activated": False,
+        "right_to_publish": False,
+        "owner_dbr_verified": False,
+        "sai_or_country_network_enabled": False,
+        "remaining_gates": [
+            "original two-channel bytes/source hashes and lawful rights",
+            "coherent timebase and independently calibrated receiver/noise",
+            "real geometry/epoch and error covariance",
+            "actual measured delay-Doppler processing and false-alarm controls",
+            "owner ACL/native DBR and release approvals",
+        ],
+    }
+
+
 def load_and_review(root: Path | None = None) -> dict:
     base = root or HERE
     corpus = json.loads((base / REVIEW_PATH.name).read_text(encoding="utf-8"))
