@@ -136,5 +136,126 @@ class CrossScaleReviewTests(unittest.TestCase):
             review_cross_scale(bad,registry)
 
 
+
+class PassiveBistaticInputReviewTests(unittest.TestCase):
+    """Source-only metadata and denial paths; zero sensing or capture claims."""
+    def sample(self):
+        channel = {
+            "channel_id": "ref-01",
+            "source_locator": "synthetic://reference-channel-01",
+            "center_hz": 100_000_000,
+            "bandwidth_hz": 1_000_000,
+            "sampling_hz": 2_500_000,
+            "epoch_utc": "2026-10-21T00:00:00Z",
+            "timebase_id": "synthetic-clock-01",
+            "calibration_id": "unverified-calibration-reference",
+            "noise_floor_dbm": -90,
+        }
+        surveillance = {
+            **channel, "channel_id": "surveillance-02",
+            "source_locator": "synthetic://surveillance-channel-02",
+            "calibration_id": "unverified-calibration-surveillance",
+        }
+        geometry = {
+            "frame_id": "synthetic-local-cartesian",
+            "epoch_utc": channel["epoch_utc"],
+            "tx_rx_m": 3000,
+            "tx_to_hypothesis_m": 5000,
+            "hypothesis_to_rx_m": 4000,
+        }
+        return channel, surveillance, geometry
+
+    def review(self, a, b, g):
+        from cgx.review.cross_scale_interaction_review import screen_passive_bistatic_inputs
+        return screen_passive_bistatic_inputs(reference=a, surveillance=b, geometry=g)
+
+    def test_complete_synthetic_input_is_never_detection_or_rights_proof(self):
+        a,b,g=self.sample()
+        v=self.review(a,b,g)
+        self.assertEqual(v["status"],"SYNTHETIC_METADATA_SHAPE_COMPLETE_ONLY")
+        self.assertEqual(v["holds"],[])
+        self.assertEqual(v["existing_profile"],"AMBIENT_BISTATIC_RADAR")
+        self.assertAlmostEqual(float(v["hypothetical_excess_path_delay_s"]),
+                               6000/299792458,places=14)
+        for field in ("original_source_bytes_verified","calibration_independently_verified",
+                      "measured_signal_processed","target_detected_or_tracked",
+                      "transmitter_activated","right_to_publish","owner_dbr_verified",
+                      "sai_or_country_network_enabled"):
+            self.assertIs(v[field],False,field)
+
+    def test_no_reference_is_hold(self):
+        a,b,g=self.sample()
+        v=self.review(None,b,g)
+        self.assertIn("MISSING_REFERENCE_CHANNEL",v["holds"])
+        self.assertEqual(v["status"],"HOLD_MISSING_OR_INCOMPATIBLE_INPUTS")
+
+    def test_no_surveillance_is_hold(self):
+        a,b,g=self.sample()
+        v=self.review(a,None,g)
+        self.assertIn("MISSING_SURVEILLANCE_CHANNEL",v["holds"])
+
+    def test_two_channels_must_be_independent(self):
+        a,b,g=self.sample()
+        b["source_locator"]=a["source_locator"]
+        b["channel_id"]=a["channel_id"]
+        self.assertIn("INDEPENDENT_CHANNEL_IDENTITIES_REQUIRED",self.review(a,b,g)["holds"])
+
+    def test_center_bands_must_overlap(self):
+        a,b,g=self.sample()
+        b["center_hz"]=120_000_000
+        self.assertIn("NO_SHARED_DECLARED_RF_BAND",self.review(a,b,g)["holds"])
+
+    def test_unqualified_timebase_and_epoch_fail_closed(self):
+        a,b,g=self.sample()
+        b["timebase_id"]="other-clock"
+        self.assertIn("COMMON_TIMEBASE_NOT_DECLARED",self.review(a,b,g)["holds"])
+        b["timebase_id"]=a["timebase_id"]
+        g["epoch_utc"]="2026-10-21T00:01:00Z"
+        self.assertIn("GEOMETRY_EPOCH_MISMATCH",self.review(a,b,g)["holds"])
+
+    def test_impossible_bistatic_triangle_is_rejected(self):
+        a,b,g=self.sample()
+        g["tx_to_hypothesis_m"]=800
+        g["hypothesis_to_rx_m"]=1000
+        v=self.review(a,b,g)
+        self.assertIn("GEOMETRIC_TRIANGLE_INCONSISTENT",v["holds"])
+        self.assertIsNone(v["hypothetical_excess_path_delay_s"])
+
+    def test_missing_geometry_never_implies_range_or_location(self):
+        a,b,_=self.sample()
+        v=self.review(a,b,None)
+        self.assertIn("MISSING_BISTATIC_GEOMETRY",v["holds"])
+        self.assertIsNone(v["hypothetical_excess_path_delay_s"])
+        self.assertFalse(v["target_detected_or_tracked"])
+
+    def test_bandwidth_without_sufficient_sampling_flags_hold(self):
+        a,b,g=self.sample()
+        a["sampling_hz"]=900_000
+        self.assertIn("REFERENCE_BANDWIDTH_NOT_BELOW_SAMPLE_RATE",self.review(a,b,g)["holds"])
+
+    def test_nonfinite_and_boolean_numbers_rejected(self):
+        a,b,g=self.sample()
+        for value in (False, float("nan"),float("inf"), -1,0):
+            a0=dict(a);a0["center_hz"]=value
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                self.review(a0,b,g)
+
+    def test_malformed_timestamps_and_injected_rights_rejected(self):
+        a,b,g=self.sample()
+        a["epoch_utc"]="2026-10-21T00:00:00"
+        with self.assertRaises(ValueError):
+            self.review(a,b,g)
+        a,b,g=self.sample()
+        a["rights_attested"]=True
+        with self.assertRaisesRegex(ValueError,"Exact reference channel schema"):
+            self.review(a,b,g)
+
+    def test_unverified_claims_rejected_for_any_channel(self):
+        a,b,g=self.sample()
+        b["native_dbr_accepted"]=True
+        with self.assertRaises(ValueError):
+            self.review(a,b,g)
+
+
 if __name__=="__main__":
     unittest.main()
