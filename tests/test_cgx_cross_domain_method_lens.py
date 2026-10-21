@@ -33,7 +33,7 @@ class CrossDomainMethodLensTests(unittest.TestCase):
                    law_id="NEWTONIAN_VISCOUS_SHEAR",
                    quantity_name="mu_dynamic_viscosity",si_dimension=dims)
             self.assertEqual(p["status"],"PROPOSED_METHOD_REUSE_ONLY")
-            self.assertIn("non-Newtonian", " ".join(p["non_equivalence"]).lower() if domain=="cgx_printspace" else "non-Newtonian")
+            self.assertIn("non-newtonian", " ".join(p["non_equivalence"]).lower())
             self.assertFalse(p["physical_model_validated"])
             self.assertFalse(p["canonical_promotion"])
             self.assertIsNone(p["object_id"])
