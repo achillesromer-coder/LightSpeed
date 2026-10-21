@@ -80,7 +80,7 @@
       "domain_specific": [
         "phase and cure history",
         "Re and We and Mach where relevant",
-        "material properties measured under temperature/shear",
+        "measured viscosity/rheology under temperature and shear history",
         "gravity and capillary regime"
       ],
       "physical_status": "SYMBOLIC_ONLY"
