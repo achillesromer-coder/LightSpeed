@@ -1,0 +1,76 @@
+{
+  "canonical_object_id": null,
+  "capability": {
+    "canon_admitted": false,
+    "category": "CXX_LOGGING_HEADER_LIBRARY_CANDIDATE",
+    "operationally_verified": false
+  },
+  "frontier": [
+    "REVIEW_ALL_REMAINING_PLOG_HEADERS",
+    "QUALIFY_ALL_THIRD_PARTY_NOTICES",
+    "RUN_APPROVED_CXX_BUILD_TEST",
+    "VERIFY_NATIVE_SIGNED_CGX_DBR_READBACK"
+  ],
+  "licensing": {
+    "all_headers_and_third_party_notices_verified": false,
+    "distribution_approved": false,
+    "one_header_notice_verified": true,
+    "original_text_verified": true,
+    "permission_and_copyright_notice_retention_required": true,
+    "repository_declared": "MIT"
+  },
+  "native_dbr_verified": false,
+  "original_file_count": 5,
+  "original_file_proofs": [
+    {
+      "bytes": 2505,
+      "git_blob_sha1": "aac6bf573481f3b56926e711bee741221dd0a1d4",
+      "path": "CMakeLists.txt",
+      "sha256": "547b3edce7dc8da685d8fe520d3e9c610fa6ea30254dbc97f895f9b7094b8062",
+      "source_bytes_embedded": false
+    },
+    {
+      "bytes": 1071,
+      "git_blob_sha1": "8a91a0aeeb54dded3f8ee9f8e105f07100ff67fc",
+      "path": "LICENSE",
+      "sha256": "e4d01796524cbc13b1571a1f0914823c6a23b316ba039e7014f47a4eef7fd4c3",
+      "source_bytes_embedded": false
+    },
+    {
+      "bytes": 11648,
+      "git_blob_sha1": "138d92f5fe47f35d50b296b21e0a093350aa6258",
+      "path": "include/plog/Log.h",
+      "sha256": "50749d89555132d3860186b5a7e91824d13b117f88a6fbc2d0a79c47ede39a9c",
+      "source_bytes_embedded": false
+    },
+    {
+      "bytes": 2033,
+      "git_blob_sha1": "0e116e4c6bb847892df91f258c37d3dc01d1a0f0",
+      "path": "include/plog/Logger.h",
+      "sha256": "c34af2a5187e2a5a0708fe597764f3994ca0b74b418bf80a32f34f2ff395bb51",
+      "source_bytes_embedded": false
+    },
+    {
+      "bytes": 1387,
+      "git_blob_sha1": "bdb2ea2a52f38b5f00332721c890a0f85287c9ed",
+      "path": "library.json",
+      "sha256": "37679e8a840810dfabfc06ade3a8138931338e299a945f57ffa4969c1bea4a63",
+      "source_bytes_embedded": false
+    }
+  ],
+  "packaging": {
+    "cmake_version_claim": "1.1.10",
+    "compiled": false,
+    "header_interface_library_declared": true,
+    "package_tested": false,
+    "platformio_license_claim": "MIT"
+  },
+  "parent_gitlink_path": "deps/plog",
+  "parent_source_root": "git:paullouisageneau/libdatachannel@6b1e2e620f1e37f0eafeee702eaea0043cb305fd",
+  "pinned_tree_sha1": "efd55db485576861edede33a8ed2adfc019fe5d7",
+  "schema": "CGX-ALEXANDRIA-PLOG-SOURCE-SCOPE/0.1",
+  "source_bytes_embedded": false,
+  "source_root": "git:SergiusTheBest/plog@94899e0b926ac1b0f4750bfbd495167b4a6ae9ef",
+  "status": "PINNED_FIVE_ORIGINAL_FILES_MIT_NOTICE_CANDIDATE",
+  "whole_repository_acquired": false
+}
