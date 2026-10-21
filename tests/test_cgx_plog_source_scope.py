@@ -52,6 +52,14 @@ class PlogSourceScopeTests(unittest.TestCase):
             self.assertEqual(proof["sha256"],hashlib.sha256(b).hexdigest())
             self.assertEqual(proof["bytes"],len(b))
 
+    def test_persisted_noncanonical_receipt_exactly_recompiles(self):
+        saved=ROOT/"cgx"/"review"/"alexandria_plog_source_scope_20261021.json"
+        actual=json.loads(saved.read_text(encoding="utf-8"))
+        self.assertEqual(actual,compile_plog_scope(*original()))
+        self.assertFalse(actual["licensing"]["distribution_approved"])
+        self.assertFalse(actual["native_dbr_verified"])
+        self.assertFalse(actual["whole_repository_acquired"])
+
     def test_source_mutation_and_extra_file_are_rejected(self):
         parent,trees,raw=original()
         for key in ("LICENSE","include/plog/Log.h","library.json"):
