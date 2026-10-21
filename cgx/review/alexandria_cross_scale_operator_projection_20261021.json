@@ -1,0 +1,393 @@
+{
+  "schema": "CGX-ALEXANDRIA-CROSS-SCALE-OPERATOR-PROJECTION/0.1",
+  "source_date": "2026-10-21",
+  "root": "Cognigrex.cgx",
+  "kind": "NONCANONICAL_SOURCE_LINKED_FRONTIER_READ_MODEL",
+  "status": "REVIEW_ONLY_NO_NATIVE_EXECUTION_NO_PHYSICAL_QUALIFICATION",
+  "design_rule": "Extend existing Type-I VGK/CIM kernels with reusable typed domain associations; never replace original owner workbook, Object_ID, source bytes, model parameter qualification or signed DBR.",
+  "source_anchors": [
+    {
+      "path": "cgx/component_atlas/type1_volumetric_kernel_v0_1.json",
+      "git_blob_sha1": "c5e92038495a15a66fb6008925a1bb3e92d7bd8b",
+      "authority": "existing owner Type-I VGK workbook mirrored source"
+    },
+    {
+      "path": "cgx/component_atlas/component_interaction_map_v0_1.json",
+      "git_blob_sha1": "d0d9ff20d2361201eeb5cbd2f1ad344384b69b44",
+      "authority": "existing owner component interaction map mirrored source"
+    },
+    {
+      "path": "cgx/domain_templates/universal_object_extension_contract.json",
+      "git_blob_sha1": "69987e35d5556361d620c46fc23c34616df12e9b",
+      "authority": "noncanonical CGX-IR object extension"
+    },
+    {
+      "path": "cgx/domain_templates/assurance_method_registry.json",
+      "git_blob_sha1": "8938693f51b83bc2883de59841378f6073251168",
+      "authority": "existing safety method registry"
+    }
+  ],
+  "semantic_contract": {
+    "identity": "Existing Object_ID belongs to custodian, not inferred from shared operator, name or frequency",
+    "relations": [
+      "shares_governing_law",
+      "has_constitutive_model",
+      "requires_environment",
+      "uses_existing_kernel",
+      "is_hypothesis_until_tested",
+      "satisfies_balance_if_measured"
+    ],
+    "requirements": [
+      "original R0 source ref and hash",
+      "permissions/owner/rights",
+      "coordinate/time/units and material state",
+      "regime + uncertainties",
+      "separately executed provider/solver",
+      "loss ledger and independent falsifier"
+    ],
+    "view_lens": "Existing Generative UI and Alexandria source lens; only ACL-qualified objects hydrated; show Source / Equation / Regime / Limit / Consequence / Required Test / Verdict",
+    "fractal_rule": "Typed repeated motifs and reusable graph edges may reduce duplicated schemas; no claim of physically higher dimensions, universal lossless semantic compression, new energy source or automatically trained model."
+  },
+  "operators": [
+    {
+      "id": "TR-01",
+      "name": "Mass/momentum transport and constitutive viscosity",
+      "existing": [
+        "VGK-019",
+        "VGK-020",
+        "VGK-039",
+        "CIM-026"
+      ],
+      "governing": "Continuity, momentum conservation, constitutive stress; Poiseuille only for fully developed Newtonian steady incompressible laminar circular flow",
+      "dimensions": {
+        "density": "kg/m^3",
+        "dynamic_viscosity": "Pa*s",
+        "kinematic_viscosity": "m^2/s",
+        "mass_flux": "kg/s",
+        "pressure": "Pa"
+      },
+      "domains": [
+        {
+          "name": "PrintSpace feed or resin",
+          "qualification": "viscosity vs temperature/shear/cure, wall/thermal/chemical stage, pressure and bubble limits"
+        },
+        {
+          "name": "M1 corridor mist and environmental flow",
+          "qualification": "two-phase droplet size, wind, deposition, public/environment safety and local CFD/measurement"
+        },
+        {
+          "name": "hydrology and ecological remediation",
+          "qualification": "sediment/contaminant transport, chemistry, ecological/erosion response and data fidelity"
+        },
+        {
+          "name": "microgravity fluid storage",
+          "qualification": "wetting, free surface/capillary/buoyancy balance; terrestrial pressure-flow calibration not an orbital test"
+        }
+      ],
+      "numeric_profile": "CAN_IF_MATERIAL_GEOMETRY_RE_AND_BC_VALIDATED",
+      "falsifier": "Re regime, measured pressure-flow mismatch, non-Newtonian shear or compressibility invalidates reduced law"
+    },
+    {
+      "id": "TR-02",
+      "name": "Passive electromagnetic scattering, spectroscopy and intercepted energy",
+      "existing": [
+        "VGK-037",
+        "CIM-009",
+        "CIM-043"
+      ],
+      "governing": "Maxwell fields, antenna effective aperture, radiative scattering and Poynting energy balance",
+      "dimensions": {
+        "spectral_flux": "W/(m^2*Hz)",
+        "integrated_irradiance": "W/m^2",
+        "effective_area": "m^2",
+        "harvested_power": "W",
+        "frequency": "Hz"
+      },
+      "domains": [
+        {
+          "name": "passive environmental and solar-spectrum sensing",
+          "qualification": "radiometric calibration, spectral sensitivity, range/attenuation, polarization and line-of-sight"
+        },
+        {
+          "name": "RF rectenna or resonator",
+          "qualification": "incident site spectrum, effective aperture, rectification efficiency, matching and calibrated input-output"
+        },
+        {
+          "name": "remote backscatter/echo",
+          "qualification": "illumination source, radar/sonar link budget, target cross-section, noise and receiver sensitivity"
+        }
+      ],
+      "numeric_profile": "CAN_IF_MEASURED_INCIDENT_FLUX_AREA_AND_EFFICIENCY",
+      "falsifier": "Any passive load power exceeding intercepted incident power invalid; echo does not mean energy travelling outward is globally captured"
+    },
+    {
+      "id": "TR-03",
+      "name": "Acoustic and electromagnetic observation vs actuation",
+      "existing": [
+        "VGK-038",
+        "CIM-031",
+        "VGK-037"
+      ],
+      "governing": "Wave propagation/scattering with finite transmitter/ambient illumination and receiver noise; acoustic vs EM media must not be conflated",
+      "dimensions": {
+        "frequency": "Hz",
+        "signal_power": "W",
+        "range": "m",
+        "received_snr": "dimensionless"
+      },
+      "domains": [
+        {
+          "name": "sonar in supported physical medium",
+          "qualification": "acoustic impedance, sound speed/attenuation, medium temperature, scattering geometry and Doppler"
+        },
+        {
+          "name": "passive RF observation",
+          "qualification": "external transmitter/solar/natural ambient illumination, antenna chain, calibration and spectral attribution"
+        },
+        {
+          "name": "Schumann resonance studies",
+          "qualification": "very-low-frequency cavity modes of Earth-ionosphere, antenna and field measurement; not a proven broadband communication or harvest backbone"
+        }
+      ],
+      "numeric_profile": "SOURCE_ONLY_UNTIL_FIELD_CALIBRATION",
+      "falsifier": "No medium-specific wave speed, calibrated source/illumination or SNR budget means no derived sensing coverage"
+    },
+    {
+      "id": "TR-04",
+      "name": "Particle, debris and orbital transfer with environmental custody",
+      "existing": [
+        "VGK-039",
+        "VGK-024",
+        "CIM-048",
+        "CIM-049"
+      ],
+      "governing": "Mass/momentum/kinetic-energy conservation with orbit dynamics, collision probability, deposition and chemical/thermal fate as independent submodels",
+      "dimensions": {
+        "mass": "kg",
+        "relative_speed": "m/s",
+        "relative_kinetic_energy": "J",
+        "delta_v": "m/s",
+        "mass_flux": "kg/s"
+      },
+      "domains": [
+        {
+          "name": "orbital debris Luke II mitigation concept",
+          "qualification": "conjunction risk, navigation/trajectory, momentum exchanges, capture or disposal physics, debris safety and regulatory review"
+        },
+        {
+          "name": "asteroid regolith / resource separation",
+          "qualification": "particle size/composition/surface binding/thermal energy, dust loss and controlled recovery"
+        },
+        {
+          "name": "tailored celestial body or ice deposition",
+          "qualification": "very-long-horizon hypothesis: orbital capture/delta-v, impact heating/fragmentation, volatile sublimation, tidal/gravity, contamination and environmental regime; no passive self-absorption assumption"
+        }
+      ],
+      "numeric_profile": "SOURCE_ONLY_HAZARD_AND_MISSION_DYNAMICS_HOLD",
+      "falsifier": "Nonzero relative impact energy, unbound trajectory, high dispersion or uncontrolled debris invalidates passive aggregation story"
+    },
+    {
+      "id": "TR-05",
+      "name": "Micro-macro geometry and assembly interfaces",
+      "existing": [
+        "CIM-048",
+        "CIM-049",
+        "VGK-036",
+        "VGK-029"
+      ],
+      "governing": "Scale-dependent geometry/topology graph and independently defined port, material and state transitions; conservation does not imply material identity",
+      "dimensions": {
+        "length": "m",
+        "volume": "m^3",
+        "mass": "kg",
+        "energy": "J",
+        "information": "bit",
+        "interface_load": "N"
+      },
+      "domains": [
+        {
+          "name": "PrintSpace three-head 4D seed assembly",
+          "qualification": "collision swept volume, material X→Y sequence, cure, atmosphere and encapsulation"
+        },
+        {
+          "name": "CGX modular node/robotic chain",
+          "qualification": "source-qualified interface/port identity, kinematics, stiffness, heat transfer and power budget"
+        },
+        {
+          "name": "interplanetary chain resource nodes",
+          "qualification": "orbital frame, freight/delta-v, custody, independent connector and thermal/structural evidence"
+        }
+      ],
+      "numeric_profile": "CAN_IF_BOUNDARY_AND_INTERFACE_TESTED",
+      "falsifier": "Bit, joule, kilogram and component identity are not convertible as one conserved quantity or same physical entity"
+    },
+    {
+      "id": "TR-06",
+      "name": "Loss, residual and evidence-grade ledger for cross-domain adapters",
+      "existing": [
+        "VGK-036",
+        "VGK-024",
+        "CIM-048",
+        "CIM-049"
+      ],
+      "governing": "Explicit balance of domain-specific conserved quantities, uncertainties, source/sink terms and unobserved losses",
+      "dimensions": {
+        "mass_residual": "kg",
+        "energy_residual": "J",
+        "momentum_residual": "kg*m/s",
+        "charge_residual": "C"
+      },
+      "domains": [
+        {
+          "name": "environmental ecology and waste",
+          "qualification": "material composition toxicity/mobility, ecological flux boundary, assay uncertainty and response"
+        },
+        {
+          "name": "energy/storage/communications",
+          "qualification": "P_in, P_out, storage/heat/radiation losses, time integration and receiver SNR"
+        },
+        {
+          "name": "CGX retrieval, semantic and GenUI",
+          "qualification": "R0 content hash/rights/ACL preserved; R1/R2 inference, lossy compression and human acceptance recorded separately"
+        }
+      ],
+      "numeric_profile": "CAN_IF_CONSERVED_BASIS_AND_UNCERTAINTY_DEFINED",
+      "falsifier": "A residual cannot be claimed zero without measurement/source receipts, and loss in information is not equivalent to joule loss"
+    }
+  ],
+  "bounded_test_contracts": [
+    {
+      "id": "T-001",
+      "operator": "TR-01",
+      "check": "Newtonian cylindrical laminar law pressure delta and Reynolds dimensionless bound; independent non-Newtonian regime rejection"
+    },
+    {
+      "id": "T-002",
+      "operator": "TR-02",
+      "check": "Intercepted passive RF power no greater than incident irradiance times effective aperture and efficiencies ≤1"
+    },
+    {
+      "id": "T-003",
+      "operator": "TR-04",
+      "check": "Nonzero debris encounter energy for relative speed; cannot assert zero-energy orbital capture"
+    },
+    {
+      "id": "T-004",
+      "operator": "TR-06",
+      "check": "Balance residual nonzero when supplied loss is excluded; do not automatically claim measured efficiency"
+    },
+    {
+      "id": "T-005",
+      "operator": "TR-05",
+      "check": "Conserved physical dimensions remain distinct from bit-count and type labels"
+    }
+  ],
+  "candidate_provider_adapters": [
+    {
+      "role": "parametric CAD/geometry",
+      "candidates": [
+        "FreeCAD",
+        "Blender"
+      ],
+      "status": "REFERENCE_ONLY_LICENSE_PLATFORM_ABI_AND_TEST_REQUIRED"
+    },
+    {
+      "role": "numerics/dimensional verification",
+      "candidates": [
+        "NumPy",
+        "SciPy",
+        "SymPy",
+        "xarray"
+      ],
+      "status": "SOURCE_CANDIDATES_NOT_ASSUMED_INSTALLED"
+    },
+    {
+      "role": "CFD/transport",
+      "candidates": [
+        "SU2",
+        "OpenFOAM",
+        "FEniCS"
+      ],
+      "status": "MODEL_AND_MESH_VERIFICATION_REQUIRED"
+    },
+    {
+      "role": "orbit/space",
+      "candidates": [
+        "GMAT",
+        "NAIF SPICE"
+      ],
+      "status": "RECEIPTED_SOLVER_INPUT_FRAME_TIME_AND_EXECUTION_REQUIRED"
+    },
+    {
+      "role": "ecology/geospatial",
+      "candidates": [
+        "GDAL",
+        "QGIS",
+        "GBIF"
+      ],
+      "status": "DATA_SOURCE_RIGHTS_CRS_AND_TEMPORAL_QUALITY_REQUIRED"
+    },
+    {
+      "role": "source provenance",
+      "candidates": [
+        "SPDX",
+        "RO-Crate"
+      ],
+      "status": "CANDIDATE_REUSE_RIGHTS_VERIFICATION_REQUIRED"
+    }
+  ],
+  "frontier_held": [
+    {
+      "candidate": "Tailored bodies via regolith/ice deposition",
+      "status": "PHYSICAL_DYNAMICS_ENVIRONMENTAL_HOLD",
+      "next": "GMAT/other orbital dynamics + impact/thermal + capture and safety receipts before any feasibility claim"
+    },
+    {
+      "candidate": "Ambient EM 'counterwave' recovery",
+      "status": "ENERGY_LINK_BUDGET_HOLD",
+      "next": "Measure incident spectral flux and antenna/polarisation/rectifier to establish physically available power"
+    },
+    {
+      "candidate": "Schumann/resonant ambient network",
+      "status": "SIGNAL_AND_CHANNEL_HOLD",
+      "next": "Actual spectral/SNR/propagation/throughput/power measurements, no global data-service inference"
+    },
+    {
+      "candidate": "Radio/sonar passive remote sensing",
+      "status": "ILLUMINATION_RECEIVER_CALIBRATION_HOLD",
+      "next": "Separately prove active source or passive illumination, path loss, atmospheric/medium response and SNR"
+    },
+    {
+      "candidate": "Type-I scale equivalence between bit, joule, resource node",
+      "status": "ONTOLOGY_ANALOGY_ONLY",
+      "next": "Keep mathematical graph analogy separate from dimensional conservation and material device qualification"
+    },
+    {
+      "candidate": "Australia-first SAI network",
+      "status": "REGIONAL_POLICY_AND_NATIVE_AUTH_HOLD",
+      "next": "Actual opt-in owner and lawful authority, accepted native peers and #161; no other country access automatically granted"
+    }
+  ],
+  "protected_issues": [
+    158,
+    161
+  ],
+  "owner_stage": "HOLD_NO_SOURCE_MOVE_NO_PUBLIC_RELEASE_NO_LIVE_ACTUATION",
+  "reference_roots": [
+    {
+      "url": "https://orbitaldebris.jsc.nasa.gov/mitigation/",
+      "kind": "official_guidance",
+      "admission": "REFERENCE_LINK_ONLY"
+    },
+    {
+      "url": "https://nodis3.gsfc.nasa.gov/displayDir.cfm?Internal_ID=N_PR_8715_006E_&page_name=Chapter3",
+      "kind": "official_NASA_requirements",
+      "admission": "REFERENCE_LINK_ONLY"
+    },
+    {
+      "url": "https://planetaryprotection.jpl.nasa.gov/mission-implementation",
+      "kind": "official_planetary_protection",
+      "admission": "REFERENCE_LINK_ONLY"
+    }
+  ]
+}

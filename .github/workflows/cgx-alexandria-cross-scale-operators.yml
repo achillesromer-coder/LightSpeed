@@ -1,0 +1,39 @@
+name: Alexandria cross-scale interaction operator review
+on:
+  pull_request:
+    paths:
+      - "cgx/review/alexandria_cross_scale_operator_projection_20261021.json"
+      - "cgx/review/alexandria_cross_scale_operator_check.py"
+      - "tests/test_cgx_alexandria_cross_scale_operators.py"
+      - ".github/workflows/cgx-alexandria-cross-scale-operators.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-regime-and-conservation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate original owner source blobs and six existing VGK/CIM-linked families
+        run: |
+          python -m json.tool cgx/review/alexandria_cross_scale_operator_projection_20261021.json >/dev/null
+          python cgx/review/alexandria_cross_scale_operator_check.py
+      - name: Test physical regime, conservation and unsupported-promotion negatives
+        run: python -m unittest discover -s tests -p 'test_cgx_alexandria_cross_scale_operators.py' -v
+      - name: Preserve no-public/no-native/no-planetary-qualification authority
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          j=json.loads(Path("cgx/review/alexandria_cross_scale_operator_projection_20261021.json").read_text())
+          assert j["root"]=="Cognigrex.cgx"
+          assert j["protected_issues"]==[158,161]
+          assert len(j["operators"])==6
+          assert j["owner_stage"].startswith("HOLD")
+          assert all(not x["status"].startswith("ACCEPTED") for x in j["frontier_held"])
+          print("Six source-qualified shared operators; all unverified physical, peer and release claims HOLD")
+          PY
