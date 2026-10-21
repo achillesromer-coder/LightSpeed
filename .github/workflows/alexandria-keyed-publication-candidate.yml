@@ -34,6 +34,9 @@ on:
       - "tests/test_cgx_real_libjuice_scope.py"
       - "cgx/portable_node/plog_source_scope.py"
       - "tests/test_cgx_plog_source_scope.py"
+      - "cgx/portable_node/nlohmann_json_source_scope.py"
+      - "tests/test_cgx_nlohmann_json_source_scope.py"
+      - "tests/fixtures/alexandria_nlohmann_json/**"
       - "tests/fixtures/alexandria_plog/**"
       - "cgx/review/alexandria_plog_source_scope_20261021.json"
       - "tests/fixtures/alexandria_libjuice/**"
@@ -87,6 +90,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_cgx_real_libdatachannel_scope.py' -v
           python -m unittest discover -s tests -p 'test_cgx_real_libjuice_scope.py' -v
           python -m unittest discover -s tests -p 'test_cgx_plog_source_scope.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_nlohmann_json_source_scope.py' -v
           python -m unittest discover -s tests -p 'test_cgx_real_libsrtp_scope.py' -v
       - name: Emit reproducible four-file source-only project receipt
         run: |
@@ -177,6 +181,21 @@ jobs:
           print('PLOG_RECEIPT_BEGIN')
           print(json.dumps(result,sort_keys=True,separators=(',',':')))
           print('PLOG_RECEIPT_END')
+          PY
+      - name: Emit source-pinned nlohmann JSON and file-scope rights candidate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from cgx.portable_node.nlohmann_json_source_scope import BLOBS, compile_nlohmann_source_scope
+          fixture=Path('tests/fixtures/alexandria_nlohmann_json')
+          source=json.loads(Path('cgx/review/alexandria_libdatachannel_source_scope_20261021.json').read_text())
+          trees=json.loads((fixture/'tree_chain.json').read_text())
+          originals={path:(fixture/path).read_bytes() for path in BLOBS}
+          receipt=compile_nlohmann_source_scope(source,trees,originals)
+          print('NLOHMANN_SOURCE_RECEIPT_BEGIN')
+          print(json.dumps(receipt,sort_keys=True,separators=(',',':')))
+          print('NLOHMANN_SOURCE_RECEIPT_END')
           PY
       - name: Authenticate and hydrate exact offline CC0 source fixture at owner endpoint
         run: |
