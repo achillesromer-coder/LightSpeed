@@ -51,6 +51,9 @@ on:
       - "cgx/review/alexandria_libjuice_source_scope_20261021.json"
       - "tests/fixtures/alexandria_libsrtp/**"
       - "cgx/portable_node/libsrtp_source_scope.py"
+      - "cgx/portable_node/dependency_source_coverage.py"
+      - "tests/test_cgx_dependency_source_coverage.py"
+      - "cgx/review/alexandria_nested_dependency_coverage_20261021.json"
       - "tests/test_cgx_real_libsrtp_scope.py"
       - "cgx/review/alexandria_libsrtp_source_scope_20261021.json"
       - "cgx/review/alexandria_hypersomnia_gitlinks_openal_scope_20261021.json"
@@ -73,6 +76,27 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Derive and compare noncanonical five-gitlink source-coverage ledger
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from cgx.portable_node.dependency_source_coverage import (
+              SCOPE_PATHS, consolidate_dependency_source_samples
+          )
+          parent=json.loads(Path('cgx/review/alexandria_libdatachannel_source_scope_20261021.json').read_text())
+          children={name:json.loads(Path(path).read_text()) for name,path in SCOPE_PATHS.items()}
+          ledger=consolidate_dependency_source_samples(parent,children)
+          saved=Path('cgx/review/alexandria_nested_dependency_coverage_20261021.json')
+          if saved.exists():
+              if json.loads(saved.read_text()) != ledger:
+                  raise SystemExit('ERROR: persisted dependency source ledger drifted')
+          else:
+              saved.write_text(json.dumps(ledger,sort_keys=True,indent=2)+'\\n')
+          print('DEPENDENCY_COVERAGE_RECEIPT_BEGIN')
+          print(json.dumps(ledger,sort_keys=True,separators=(',',':')))
+          print('DEPENDENCY_COVERAGE_RECEIPT_END')
+          PY
       - name: Validate source-only contracts and run regression tests
         run: |
           python -m json.tool cgx/review/unispace_keyed_publication_candidate_20261020.json > /dev/null
@@ -104,6 +128,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_cgx_nlohmann_json_source_scope.py' -v
           python -m unittest discover -s tests -p 'test_cgx_nlohmann_hedley_notice_reconciliation.py' -v
           python -m unittest discover -s tests -p 'test_cgx_real_libsrtp_scope.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_dependency_source_coverage.py' -v
           python -m unittest discover -s tests -p 'test_cgx_real_usrsctp_source_scope.py' -v
       - name: Emit reproducible four-file source-only project receipt
         run: |
