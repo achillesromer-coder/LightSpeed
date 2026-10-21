@@ -1,0 +1,235 @@
+{
+  "schema": "CGX-INTERSOL-SITE-COMMUNITY-PROFILE/0.1",
+  "status": "review-blueprint",
+  "authority": {
+    "semantic_owner": "Type 1 Romer Cognigrex",
+    "spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "owner_decisions": [
+      "OD-060",
+      "OD-062",
+      "OD-064",
+      "OD-066",
+      "OD-067",
+      "OD-070",
+      "OD-071"
+    ],
+    "rule": "GitHub implements machine-readable contracts and runtime consumers; Drive owner canon remains controlling for programme intent."
+  },
+  "reference_site": {
+    "site_id": "REFERENCE-SITE-A",
+    "pair": [
+      "IS001",
+      "ML001"
+    ],
+    "region": "Queensland, Australia",
+    "earth_project_id": "1gQwwAPYKHDO0V-eSu5c_u-ZCQY4P6MYC",
+    "status": "reference-model-only",
+    "reserve_candidates": [
+      "IS002",
+      "ML002",
+      "future evidence-qualified open-cut-mine candidates"
+    ]
+  },
+  "spatial_policy": {
+    "exclusion_radius_m": 10000,
+    "managed_eco_corridor_width_m": 1000,
+    "outer_planning_radius_m": 11000,
+    "zones": [
+      {
+        "id": "Z0_EXCLUSION_RESTORATION",
+        "radial_range_m": [
+          0,
+          10000
+        ],
+        "primary_use": [
+          "ecological restoration",
+          "walkable trails",
+          "semi-managed landscape"
+        ],
+        "secondary_permanent_facilities": false,
+        "allowed_infrastructure": "minimal reversible/safety/ecological/access/service infrastructure only when evidence and approvals permit"
+      },
+      {
+        "id": "Z1_MANAGED_ECO_SECONDARY_BAND",
+        "radial_range_m": [
+          10000,
+          11000
+        ],
+        "primary_use": [
+          "actively managed ecological corridor",
+          "restoration",
+          "community/open-space interfaces"
+        ],
+        "secondary_facility_policy": "preferred band for compatible secondary buildings/facilities where ecology, safety, planning and site evidence permit"
+      }
+    ],
+    "invariants": [
+      "10000 m is the exclusion radius",
+      "1000 m is a separate managed ecological corridor width",
+      "11000 m is the derived outer envelope, not an exclusion radius",
+      "site-specific QRA, ecology, cultural, planning and regulatory evidence may impose stricter geometry"
+    ]
+  },
+  "build_lifecycle": {
+    "permanent_facility_pattern": "site/facility parent -> building child -> room/module -> assembly/part",
+    "demountables": {
+      "role": "temporary enabling accommodation/support assets during staged foundations and permanent-building construction",
+      "mobility": "relocate around site as construction horizons advance",
+      "second_life": [
+        "community support",
+        "staff support",
+        "landscape support",
+        "utilities oversight",
+        "lower-hazard operations support"
+      ],
+      "forbidden_shortcut": "do not relabel a demountable into a higher-hazard laboratory without new fit-out, classification and acceptance"
+    },
+    "retirement_paths": [
+      "retain",
+      "relocate",
+      "repurpose",
+      "refurbish",
+      "upcycle",
+      "recycle",
+      "recompose",
+      "mothball/hibernate",
+      "decommission"
+    ]
+  },
+  "fleet_policy": {
+    "missions_1_to_16": "learning/validation ramp",
+    "mission_3_additional_callable_units": {
+      "count": 3,
+      "beyond": "mission-active and ordinary QA/spare units",
+      "roles": [
+        "showcase",
+        "PR/demo",
+        "facility/lab test"
+      ],
+      "source_rule": "build when test outcomes plus costed/expected excess material and manufacturing capacity justify it",
+      "callable_rule": "role assignment may change only after readiness/configuration evidence; reserve status does not prove mission or deflection capability"
+    },
+    "post_m16": "scale dynamically from observed mission cadence, turnaround, failures, repair demand, node bandwidth and redundancy need"
+  },
+  "workforce_community": {
+    "core_role_planning_scenarios": {
+      "general_hours_per_week": 25,
+      "hospitality_service_hours_per_week": 30,
+      "status": "planning scenarios, not employment terms"
+    },
+    "living_support": {
+      "housing": "self-contained role-linked onsite accommodation by default",
+      "food_and_housing_benefit": "intended free or subsidised according to future lawful operating/benefit structure",
+      "social_participation_required": false
+    },
+    "community_contribution": {
+      "participation": "optional/recommended",
+      "recommended_paid_hours_per_week": 15,
+      "purpose": "paid socialisation, cross-discipline community formation, stewardship and enjoyable non-core-work contribution",
+      "examples": [
+        "run bingo/social night",
+        "plan community hiking",
+        "guided hikes",
+        "landscaping/lawns",
+        "paint-and-sip",
+        "clubs",
+        "education",
+        "resident-proposed recreation or community support"
+      ],
+      "no_penalty_for_nonparticipation": true,
+      "family_and_resident_access": "activities may be open to residents/families and others in the community subject to capacity/safety",
+      "capacity_rule": "available activities grow with population, skills, demand, organisers and operating capacity",
+      "credit_model": {
+        "status": "concept/legal-accounting-gated",
+        "ledger": "track approved paid community contribution separately from core-role hours",
+        "candidate_settlement": [
+          "ordinary paid compensation",
+          "approved recreation/specialist benefit credit",
+          "cash-out/settlement on moving or leaving where lawfully structured"
+        ],
+        "rule": "no unpaid compulsory upkeep and no automatic conversion into employment terms"
+      }
+    },
+    "required_external_gates": [
+      "employment/award law",
+      "tax/fringe benefits",
+      "WHS/fatigue",
+      "insurance",
+      "housing/tenancy",
+      "accessibility",
+      "privacy/consent",
+      "family/minor safeguarding where applicable",
+      "community governance"
+    ]
+  },
+  "personal_sai_profile": {
+    "platform_identity": "Shared Australian Intelligence / Cognigrex fabric",
+    "per_user_instance": {
+      "required": true,
+      "display_alias_renamable": true,
+      "tailoring": [
+        "preferences",
+        "interests",
+        "OKRs",
+        "Quest/task views",
+        "calendar",
+        "community interests",
+        "interaction style",
+        "avatar/profile choices"
+      ],
+      "rule": "renaming the user-facing companion does not change the underlying platform identity or authority"
+    },
+    "universal_avatar": {
+      "representations": [
+        "user-uploaded image",
+        "provider avatar reference",
+        "hybrid/composite representation",
+        "platform-native generated/selected avatar"
+      ],
+      "example_provider_sources": [
+        "Snapchat",
+        "Meta",
+        "Roblox",
+        "future connected providers"
+      ],
+      "canonical_rule": "store normalized avatar/profile metadata and provider references in .CGX; do not copy provider credentials",
+      "sync_default": "off",
+      "sync_scope": "explicit opt-in per provider, per field and per direction"
+    },
+    "privacy_security": [
+      "credentials/tokens/private keys stay outside portable .CGX",
+      "connected account does not imply permission to publish or write back",
+      "private employment/housing data is not exposed to community views by default",
+      "profile/avatar/image rights and provider terms must be respected",
+      "identity resolution and retention are explicit user-controlled policies"
+    ]
+  },
+  "lightspeed_surfaces": {
+    "integrate": [
+      "Quests",
+      "OKR matrices",
+      "calendar",
+      "personal profile",
+      "community opportunities",
+      "community contribution ledger",
+      "avatar/profile settings",
+      "provider permission adapters"
+    ],
+    "principle": "one profile/OKR graph feeds work, life and optional community views without duplicating canonical identity",
+    "maturity": "contract defined; full runtime/UI/provider-sync implementation remains future work"
+  },
+  "cross_domain_bridges": [
+    "Romer.cgx/InterSol facility and workforce state -> Eco.cgx/restoration and corridor evidence",
+    "Romer.cgx/community opportunities -> LS.cgx/Quest, OKR and calendar surfaces",
+    "LS.cgx/personal SAI profile receipt -> Cognigrex identity/preferences without becoming employment or site authority",
+    "Eco.cgx/site observation -> InterSol site-adapter evidence",
+    "Mark fleet state -> LS.cgx/operations/readiness receipts"
+  ],
+  "evidence_boundaries": [
+    "reference site is not land or approval authority",
+    "planning geometry is not regulatory/QRA proof",
+    "community hours and benefits are not current employment terms",
+    "universal avatar sync is not implemented merely because this contract exists",
+    "reserve units are not flight-ready or emergency-ready without independent evidence"
+  ]
+}
