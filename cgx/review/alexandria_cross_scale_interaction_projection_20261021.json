@@ -1,0 +1,284 @@
+{
+  "schema": "CGX-ALEXANDRIA-CROSS-SCALE-INTERACTION-PROJECTION/0.1",
+  "date": "2026-10-21",
+  "classification": "SOURCE_ONLY_REVIEW_NOT_CANONICAL",
+  "parent": "Cognigrex.cgx",
+  "purpose": "Bind already-declared VGK kernels and existing operator/receipt roles to transfer and observation use cases without duplicating solvers or upgrading hypothetical planetary/debris/energy technology to qualified execution.",
+  "existing_kernel_source": "cgx/component_atlas/type1_volumetric_kernel_v0_1.json",
+  "reused_kernel_ids": [
+    "VGK-019",
+    "VGK-020",
+    "VGK-021",
+    "VGK-037",
+    "VGK-039"
+  ],
+  "invariant_contracts": [
+    {
+      "id": "conservation",
+      "expression": "mass and total energy flow budgets require measured inputs and explicit loss/outflow; reference signals do not supply unbounded useful energy",
+      "units": [
+        "kg",
+        "J",
+        "W"
+      ],
+      "negative": "outputs exceed independently metered inputs without a separately verified source"
+    },
+    {
+      "id": "material_regime",
+      "expression": "viscosity and stress law are constitutive inputs within regime-appropriate fluid balance",
+      "units": [
+        "Pa*s",
+        "kg/m^3",
+        "m/s"
+      ],
+      "negative": "infer porous or non-Newtonian or turbulent behaviour from a Newtonian laminar case"
+    },
+    {
+      "id": "geometry_dynamics",
+      "expression": "object size/shape similarity is not orbit/velocity/state similarity; orbital capture requires relative trajectory and dissipative mechanism",
+      "units": [
+        "m",
+        "kg",
+        "m/s",
+        "s"
+      ],
+      "negative": "assert passive gravitational accretion solely because material is nearby or ahead in an orbit"
+    },
+    {
+      "id": "em_observability",
+      "expression": "passive sensing requires usable ambient illumination, reference/surveillance geometry, propagation and sufficient receiver SNR",
+      "units": [
+        "Hz",
+        "W",
+        "m",
+        "s"
+      ],
+      "negative": "call narrowband low-SNR or uncalibrated ambient observation a resolved target track"
+    },
+    {
+      "id": "qualification",
+      "expression": "source-only operator link never confers physical proof, complete content licence or public/network authority",
+      "units": [],
+      "negative": "claim host, peer, orbital, ecological or commercial qualification from a JSON reference or geometric resemblance"
+    }
+  ],
+  "families": [
+    {
+      "family": "FLUID_TRANSPORT",
+      "existing_kernels": [
+        "VGK-019",
+        "VGK-020",
+        "VGK-021",
+        "VGK-039"
+      ],
+      "reuse": "continuity, stress/viscosity constitutive model and boundary-aware flux",
+      "candidate_facets": [
+        "polymer deposition",
+        "porous filtration",
+        "surface or atmospheric flow"
+      ],
+      "domain_specific": [
+        "phase and cure history",
+        "Re and We and Mach where relevant",
+        "material properties measured under temperature/shear",
+        "gravity and capillary regime"
+      ],
+      "physical_status": "SYMBOLIC_ONLY"
+    },
+    {
+      "family": "FIELD_SCATTERING_AND_OBSERVATION",
+      "existing_kernels": [
+        "VGK-037"
+      ],
+      "reuse": "Maxwell propagation/scattering with source-defined spectra and receiver geometry",
+      "candidate_facets": [
+        "passive reference sensing",
+        "RF boundary and shielding",
+        "material spectroscopy"
+      ],
+      "domain_specific": [
+        "illumination bandwidth and coherence",
+        "path loss and SNR",
+        "frequency-dependent absorption and scattering",
+        "calibration, regulatory spectrum rights"
+      ],
+      "physical_status": "SOURCE_LINKED_NOT_TESTED"
+    },
+    {
+      "family": "TRANSFER_GEOMETRY_AND_STATE",
+      "existing_kernels": [],
+      "reuse": "existing CGX kinematics/frames, source graph and GMAT/MPL authority for their separately receipted scenarios",
+      "candidate_facets": [
+        "orbital debris assessment",
+        "material transfer envelope",
+        "scale-specific interfaces"
+      ],
+      "domain_specific": [
+        "ephemeris epoch and frames",
+        "relative velocity and collision probability",
+        "momentum exchange and capture mechanism",
+        "contamination and planetary protection"
+      ],
+      "physical_status": "HYPOTHESIS_MODEL_ONLY"
+    },
+    {
+      "family": "ENERGY_MATERIAL_ACCOUNTING",
+      "existing_kernels": [
+        "VGK-037"
+      ],
+      "reuse": "explicit mass, power and heat ledgers with conversion efficiencies and named sources/sinks",
+      "candidate_facets": [
+        "passive scattering",
+        "RF harvesting candidate",
+        "thermal dissipation",
+        "solar conversion"
+      ],
+      "domain_specific": [
+        "measured spectral radiance/irradiance",
+        "antenna/aperture and coupling efficiency",
+        "thermodynamic heat loss",
+        "no assumption of net gain from cancellation"
+      ],
+      "physical_status": "SYMBOLIC_ONLY"
+    },
+    {
+      "family": "PERMISSIONED_KNOWLEDGE_AND_UI",
+      "existing_kernels": [],
+      "reuse": "existing source R0→typed R1→R2 hypotheses, provenance and ACL hydration, not new database",
+      "candidate_facets": [
+        "Alexandria ontology",
+        "CGX/SAI interface policy review",
+        "accessible Generative UI"
+      ],
+      "domain_specific": [
+        "Australia-first is a policy proposal and not verified network activation",
+        "per-jurisdiction identity and bid require owner and regulatory grants",
+        "personal privacy, use permissions and rights",
+        "accessible source-labeled low-cost baseline"
+      ],
+      "physical_status": "SOURCE_AND_POLICY_REVIEW_ONLY"
+    }
+  ],
+  "frontier_records": [
+    {
+      "id": "FT-X01",
+      "claim": "relative position of natural ice or regolith payload can cause controlled accretion onto target",
+      "grade": "SPECULATIVE_UNPROVEN",
+      "requires": [
+        "N-body/orbital frame propagation",
+        "initial relative velocity",
+        "capture or impact energy dissipation",
+        "particle-size radiation pressure",
+        "collision/contamination risk"
+      ],
+      "hold": "NO_RELEASE_OR_PHYSICAL_ACTION"
+    },
+    {
+      "id": "FT-X02",
+      "claim": "ambient illumination and reflected spectra may reduce dedicated sensor transmission under suitable SNR/geometry",
+      "grade": "KNOWN_PRINCIPLE_HYPOTHESIS_FOR_LOCAL_IMPLEMENTATION",
+      "requires": [
+        "reference and surveillance signals",
+        "cross-ambiguity or calibrated spectroscopy",
+        "false alarm and bandwidth test",
+        "licensed receiver hardware/radio compliance"
+      ],
+      "hold": "NO_UNQUALIFIED_TARGET_TRACK"
+    },
+    {
+      "id": "FT-X03",
+      "claim": "counter-phased emitted fields can convert unrestricted ambient propagating energy into useful stored energy",
+      "grade": "SPECULATIVE_UNPROVEN_AS_STATED",
+      "requires": [
+        "metered supplied power",
+        "scattering and absorption measurement",
+        "thermal output",
+        "net energy balance",
+        "coherence and causal timing"
+      ],
+      "hold": "NO_FREE_ENERGY_OR_BROADBAND_CANCELLATION_CLAIM"
+    },
+    {
+      "id": "FT-X04",
+      "claim": "Schumann resonance is a terrestrial lightning-excited ionosphere-cavity mode usable as universal solar communication or power source",
+      "grade": "DOMAIN_MISMATCH_UNPROVEN",
+      "requires": [
+        "actual received spectral field",
+        "noise level and antenna coupling",
+        "channel capacity and link budget",
+        "Earth-specific cavity regime"
+      ],
+      "hold": "NO_GLOBAL_COMMUNICATION_OR_POWER_CLAIM"
+    },
+    {
+      "id": "FT-X05",
+      "claim": "scale-similar nodes automatically deliver functionally equivalent atomic, printer and orbital transfer mechanisms",
+      "grade": "GEOMETRIC_ANALOGY_ONLY",
+      "requires": [
+        "dimensionless similarity groups",
+        "relevant constitutive law and control authority",
+        "capacity, process and interface tolerances",
+        "independent scale-specific falsifier"
+      ],
+      "hold": "NO_SEMANTIC_TO_PHYSICAL_AUTO_PROMOTION"
+    },
+    {
+      "id": "FT-X06",
+      "claim": "planned debris recovery and material selection can create sustainable engineered extraterrestrial ecologies",
+      "grade": "PROGRAMME_VISION_UNPROVEN",
+      "requires": [
+        "planetary protection",
+        "debris ownership and mitigation",
+        "orbital trajectory safety",
+        "material toxicology and contaminant fate",
+        "ecological lifecycle and legal approvals"
+      ],
+      "hold": "NO_ORBITAL_RELEASE_OR_ECOLOGICAL_DEPLOYMENT"
+    }
+  ],
+  "authority_gates": {
+    "public_issue": 158,
+    "native_peer_issue": 161,
+    "physical_validation": "HOLD",
+    "licence": "ITEM_SPECIFIC_HOLD",
+    "australian_network_enabled": false,
+    "other_countries_enabled": false,
+    "region": "AU_FIRST_POLICY_CANDIDATE",
+    "data_distribution": "OWNER_APPROVAL_REQUIRED",
+    "public_release_authorised": false,
+    "canonical_promotion": false
+  },
+  "external_grounding": [
+    {
+      "name": "NASA orbital debris mitigation",
+      "url": "https://orbitaldebris.jsc.nasa.gov/mitigation/",
+      "type": "OFFICIAL_GUIDANCE_NOT_LOCAL_PERMISSION"
+    },
+    {
+      "name": "NASA orbital debris remediation",
+      "url": "https://orbitaldebris.jsc.nasa.gov/remediation/",
+      "type": "OFFICIAL_BACKGROUND"
+    },
+    {
+      "name": "NASA planetary protection standard",
+      "url": "https://standards.nasa.gov/node/3103",
+      "type": "OFFICIAL_REQUIREMENT_REFERENCE"
+    },
+    {
+      "name": "NASA total and spectral solar irradiance",
+      "url": "https://science.nasa.gov/mission/tsis-1/",
+      "type": "OFFICIAL_OBSERVATION_REFERENCE"
+    },
+    {
+      "name": "NASA Schumann resonance science visualization",
+      "url": "https://svs.gsfc.nasa.gov/10985",
+      "type": "OFFICIAL_PHENOMENON_REFERENCE"
+    },
+    {
+      "name": "Passive bistatic radar source paper",
+      "url": "https://doi.org/10.1049/rsn2.12263",
+      "type": "RESEARCH_REFERENCE"
+    }
+  ],
+  "source_status": "NO_PROVIDER_DATASETS_DOWNLOADED_NO_SCENARIOS_EXECUTED_NO_NOVEL_PHYSICS_VALIDATED"
+}
