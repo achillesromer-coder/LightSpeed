@@ -1,0 +1,41 @@
+name: Alexandria cross-scale operator evidence review
+on:
+  pull_request:
+    paths:
+      - "cgx/review/alexandria_cross_scale_interaction_overlay_20261021.json"
+      - "cgx/review/alexandria_cross_scale_interaction_projection.py"
+      - "tests/test_cgx_alexandria_cross_scale_interaction.py"
+      - ".github/workflows/cgx-alexandria-cross-scale-operator.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate-source-and-physics-holds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify read-only original CGX source blobs and 7 linked operator families
+        run: python cgx/review/alexandria_cross_scale_interaction_projection.py
+      - name: Run independent synthetic invariant and denial cases
+        run: |
+          python -m unittest discover -s tests -p 'test_cgx_alexandria_cross_scale_interaction.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_unispace_finishline_evidence.py' -v
+      - name: Refuse source-as-physical, public, or network promotion
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          p=json.loads(Path("cgx/review/alexandria_cross_scale_interaction_overlay_20261021.json").read_text())
+          assert p["parent"]=="Cognigrex.cgx"
+          assert p["surface"]=="READ_ONLY_FRONTIER_PROJECTION_NOT_CANONICAL"
+          assert p["status"]["public_release_issue_158"]=="HOLD"
+          assert p["status"]["native_peer_issue_161"]=="HOLD"
+          assert not p["status"]["SAI_AU_network_enabled_by_this_overlay"]
+          assert not p["status"]["non_AU_network_enabled"]
+          assert not p["status"]["physically_qualified"]
+          print("CROSS-SCALE INTERACTION: source-safe review ONLY; never a release or experiment")
+          PY
