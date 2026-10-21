@@ -135,13 +135,16 @@ def poiseuille_channel_candidate(spec: dict[str, Any], root: Path = ROOT) -> dic
         raise RegimeHold("SLENDER_CHANNEL_ASSUMPTION_HOLD")
     # For a circular channel: D=2r, U=Q/(pi*r^2),
     # Re=rho*U*D/mu=2*rho*Q/(pi*mu*r).
-    re = 2.0*rho*Q/(math.pi*mu*r)
-    if not math.isfinite(re) or re >= MAX_SCREEN_RE:
-        raise RegimeHold("REYNOLDS_REGIME_HOLD")
-    # Existing exact owner VGK-019 and T1K-012, not a novel solver.
-    dp = 8.0*mu*L*Q/(math.pi*r**4)
-    resistance = dp/Q
-    shear = 4.0*mu*Q/(math.pi*r**3)
+    try:
+        re = 2.0*rho*Q/(math.pi*mu*r)
+        if not math.isfinite(re) or re >= MAX_SCREEN_RE:
+            raise RegimeHold("REYNOLDS_REGIME_HOLD")
+        # Existing exact owner VGK-019 and T1K-012, not a novel solver.
+        dp = 8.0*mu*L*Q/(math.pi*r**4)
+        resistance = dp/Q
+        shear = 4.0*mu*Q/(math.pi*r**3)
+    except (OverflowError, ZeroDivisionError) as exc:
+        raise RegimeHold("NUMERICAL_PRECISION_OR_RANGE_HOLD") from exc
     if not all(math.isfinite(v) for v in (dp, resistance, shear)):
         raise RegimeHold("NUMERICAL_OVERFLOW_HOLD")
     original_roots = _validate_source_family(root)
