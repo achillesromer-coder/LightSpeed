@@ -1,0 +1,507 @@
+{
+  "schema": "CGX-ALEXANDRIA-CROSS-SCALE-INTERACTION-REVIEW/0.1",
+  "status": "OWNER_REVIEW_NONCANONICAL",
+  "created_utc": "2026-10-21",
+  "parent": "Cognigrex.cgx",
+  "extends_existing": [
+    "CGX-CROSS-DOMAIN-BRIDGE-REGISTRY/0.1",
+    "CGX-SOURCE-ENVELOPE/0.1",
+    "CGX-UNIVERSAL-OBJECT-EXTENSION/0.1"
+  ],
+  "bridge_location": "Cognigrex.cgx:/graph/bridges",
+  "identity_rule": "No new authoritative Object_ID, store, network, engine or new source authority",
+  "unit_basis": [
+    "kg",
+    "m",
+    "s",
+    "K",
+    "A",
+    "mol",
+    "cd"
+  ],
+  "operators": [
+    {
+      "id": "mass_energy_interface",
+      "shared": "control-volume flux/inventory + phase/chemical/mechanical work",
+      "authority": "mathematical pattern only",
+      "not_equal": "identical material or ecological model"
+    },
+    {
+      "id": "momentum_transfer",
+      "shared": "frame-specific linear and angular impulse, reaction forces and transfer",
+      "authority": "conservation bookkeeping only",
+      "not_equal": "self-propulsion or orbital capture"
+    },
+    {
+      "id": "maxwell_boundary",
+      "shared": "Maxwell field boundary response, superposition and Poynting accounting",
+      "authority": "field theory pattern only",
+      "not_equal": "practical universal radiation cancellation"
+    },
+    {
+      "id": "wave_propagation",
+      "shared": "frequency-dependent propagation, receiver transfer function, spectral noise",
+      "authority": "wave/signal operator pattern only",
+      "not_equal": "same ambient frequency or free usable power"
+    },
+    {
+      "id": "typed_information_flow",
+      "shared": "input/output typed mapping, loss/provenance and authorization",
+      "authority": "software governance analogy only",
+      "not_equal": "physical conservation equivalence"
+    }
+  ],
+  "cross_scale_records": [
+    {
+      "id": "PRINTSPACE_4D",
+      "owner_domain": "emassc",
+      "subfamily": "printspace",
+      "operator_ref": "mass_energy_interface",
+      "evidence_state": "PROPOSED_ENGINEERING",
+      "intent": "Feed sequencing, X→Y interface, cure, encapsulation and thermal history",
+      "exchange_carriers": [
+        "material composition",
+        "heat/chemical work",
+        "gas flow"
+      ],
+      "required_qualification": [
+        "validated feed X/Y matrix",
+        "inert/vacuum state",
+        "layer adhesion",
+        "cure and electrical tests"
+      ],
+      "non_equivalence": "No co-print compatibility inferred from a shared interface",
+      "source_state": "SOURCE_POINTERS_ONLY_PENDING_ITEMIZED_LINKAGE",
+      "object_id": null,
+      "canonical": false,
+      "executable": false,
+      "rights_clearance": false
+    },
+    {
+      "id": "MARK_III_MOTION",
+      "owner_domain": "romer",
+      "subfamily": "orbital_robotics",
+      "operator_ref": "momentum_transfer",
+      "evidence_state": "DESIGN_REFERENCE_NOT_FLIGHT_VALIDATED",
+      "intent": "Linked arm and node momentum, angular motion and control",
+      "exchange_carriers": [
+        "linear and angular momentum",
+        "power"
+      ],
+      "required_qualification": [
+        "inertia tensors",
+        "frame",
+        "joints",
+        "torque",
+        "structural limits",
+        "measured/GMAT-compatible dynamics"
+      ],
+      "non_equivalence": "Swing coupling cannot create momentum without equal reaction",
+      "source_state": "SOURCE_POINTERS_ONLY_PENDING_ITEMIZED_LINKAGE",
+      "object_id": null,
+      "canonical": false,
+      "executable": false,
+      "rights_clearance": false
+    },
+    {
+      "id": "LUKE_II_EM_BOUNDARY",
+      "owner_domain": "romer",
+      "subfamily": "electromagnetic",
+      "operator_ref": "maxwell_boundary",
+      "evidence_state": "DESIGN_REFERENCE_NOT_FLIGHT_VALIDATED",
+      "intent": "Electromagnetic braking and boundary field interaction",
+      "exchange_carriers": [
+        "field energy",
+        "momentum",
+        "charge",
+        "heat"
+      ],
+      "required_qualification": [
+        "field geometry",
+        "B/I/J",
+        "material response",
+        "reaction impulse",
+        "coil dissipation",
+        "spacecraft attitude"
+      ],
+      "non_equivalence": "A prescribed EM field is not proven net orbital braking",
+      "source_state": "SOURCE_POINTERS_ONLY_PENDING_ITEMIZED_LINKAGE",
+      "object_id": null,
+      "canonical": false,
+      "executable": false,
+      "rights_clearance": false
+    },
+    {
+      "id": "ASTEROID_SPACEJUNK_CAPTURE",
+      "owner_domain": "romer",
+      "subfamily": "orbital_debris",
+      "operator_ref": "momentum_transfer",
+      "evidence_state": "CONCEPT_NOT_VALIDATED",
+      "intent": "Orbit-relative approach, debris sorting and capture",
+      "exchange_carriers": [
+        "mass",
+        "impulse",
+        "thermal flux"
+      ],
+      "required_qualification": [
+        "relative v",
+        "orbit covariance",
+        "fragmentation risk",
+        "collision law",
+        "authorization",
+        "Δv and disposal"
+      ],
+      "non_equivalence": "Do not treat phase lead or passive orbit offset as autonomous safe capture",
+      "source_state": "SOURCE_POINTERS_ONLY_PENDING_ITEMIZED_LINKAGE",
+      "object_id": null,
+      "canonical": false,
+      "executable": false,
+      "rights_clearance": false
+    },
+    {
+      "id": "ICE_REGOLITH_PLANETARY_COMPOSITION",
+      "owner_domain": "romer",
+      "subfamily": "isru_planetary",
+      "operator_ref": "mass_energy_interface",
+      "evidence_state": "SPECULATIVE_PLANETARY_ARCHITECTURE",
+      "intent": "Resource-controlled shell/body/habitat composition including volatiles",
+      "exchange_carriers": [
+        "mass",
+        "gravity",
+        "heat",
+        "latent phase",
+        "momentum"
+      ],
+      "required_qualification": [
+        "escape speed",
+        "bulk binding",
+        "rotation",
+        "temperature",
+        "volatile retention",
+        "orbital mechanics",
+        "lifecycle ecology"
+      ],
+      "non_equivalence": "Icy particles do not inevitably accrete into a stable body",
+      "source_state": "SOURCE_POINTERS_ONLY_PENDING_ITEMIZED_LINKAGE",
+      "object_id": null,
+      "canonical": false,
+      "executable": false,
+      "rights_clearance": false
+    },
+    {
+      "id": "POLLUTANT_ECOLOGICAL_REHAB",
+      "owner_domain": "eco",
+      "subfamily": "ecological_chemistry",
+      "operator_ref": "mass_energy_interface",
+      "evidence_state": "DESIGN_HYPOTHESIS",
+      "intent": "Retain/separate/transform metals and contaminants in closed-loop stewardship",
+      "exchange_carriers": [
+        "species mass",
+        "reaction",
+        "ecological exposure",
+        "waste heat"
+      ],
+      "required_qualification": [
+        "speciation",
+        "sorption",
+        "redox",
+        "exposure",
+        "mass-balance",
+        "disposal route",
+        "independent ecological assay"
+      ],
+      "non_equivalence": "Removal from one reservoir must not silently externalize pollutants",
+      "source_state": "SOURCE_POINTERS_ONLY_PENDING_ITEMIZED_LINKAGE",
+      "object_id": null,
+      "canonical": false,
+      "executable": false,
+      "rights_clearance": false
+    },
+    {
+      "id": "SOLAR_SPECTROSCOPY",
+      "owner_domain": "emassc",
+      "subfamily": "spectral_sensing",
+      "operator_ref": "wave_propagation",
+      "evidence_state": "PHYSICS_KNOWN_APPLICATION_UNTESTED",
+      "intent": "Passive spectral identification using incident sunlight and signatures",
+      "exchange_carriers": [
+        "radiation spectral irradiance",
+        "detector noise"
+      ],
+      "required_qualification": [
+        "illumination flux",
+        "wavelength",
+        "geometry",
+        "absorption",
+        "calibration",
+        "detection floor"
+      ],
+      "non_equivalence": "Solar spectrum is broadband/variable, not one universally usable frequency",
+      "source_state": "SOURCE_POINTERS_ONLY_PENDING_ITEMIZED_LINKAGE",
+      "object_id": null,
+      "canonical": false,
+      "executable": false,
+      "rights_clearance": false
+    },
+    {
+      "id": "AMBIENT_BISTATIC_RADAR",
+      "owner_domain": "emassc",
+      "subfamily": "spectral_sensing",
+      "operator_ref": "wave_propagation",
+      "evidence_state": "PHYSICS_KNOWN_APPLICATION_UNTESTED",
+      "intent": "Illuminators of opportunity and bistatic sensing",
+      "exchange_carriers": [
+        "EM wave and scattered power",
+        "information"
+      ],
+      "required_qualification": [
+        "transmitter reference",
+        "delay/Doppler",
+        "SNR",
+        "coherence",
+        "aperture",
+        "geometry",
+        "legal bands"
+      ],
+      "non_equivalence": "Ambient waveforms may not support required resolution",
+      "source_state": "SOURCE_POINTERS_ONLY_PENDING_ITEMIZED_LINKAGE",
+      "object_id": null,
+      "canonical": false,
+      "executable": false,
+      "rights_clearance": false
+    },
+    {
+      "id": "APOSTLES_EM_COUNTERFIELD",
+      "owner_domain": "romer",
+      "subfamily": "electromagnetic",
+      "operator_ref": "maxwell_boundary",
+      "evidence_state": "UNVERIFIED_ACTIVE_SHIELD_HYPOTHESIS",
+      "intent": "Controlled local field superposition and electromagnetic boundary response",
+      "exchange_carriers": [
+        "EM power",
+        "Poynting flux",
+        "charge",
+        "thermal losses"
+      ],
+      "required_qualification": [
+        "Maxwell boundary conditions",
+        "source phase",
+        "antenna geometry",
+        "reactive power",
+        "exposure and EMC"
+      ],
+      "non_equivalence": "Local cancellation does not stop radiation throughout space or yield free energy",
+      "source_state": "SOURCE_POINTERS_ONLY_PENDING_ITEMIZED_LINKAGE",
+      "object_id": null,
+      "canonical": false,
+      "executable": false,
+      "rights_clearance": false
+    },
+    {
+      "id": "SCHUMANN_ELF_MEASUREMENT",
+      "owner_domain": "eco",
+      "subfamily": "terrestrial_elf",
+      "operator_ref": "wave_propagation",
+      "evidence_state": "OBSERVED_EARTH_PHENOMENON_APPLICATION_UNTESTED",
+      "intent": "Atmosphere–ionosphere ELF cavity sensing as environmental data lens",
+      "exchange_carriers": [
+        "ELF EM signal",
+        "time series"
+      ],
+      "required_qualification": [
+        "Earth/ionosphere cavity",
+        "lightning drivers",
+        "high-noise detection",
+        "antenna practicality"
+      ],
+      "non_equivalence": "Schumann mode is not a general high-throughput or interplanetary network",
+      "source_state": "SOURCE_POINTERS_ONLY_PENDING_ITEMIZED_LINKAGE",
+      "object_id": null,
+      "canonical": false,
+      "executable": false,
+      "rights_clearance": false
+    },
+    {
+      "id": "CGX_DATA_EXCHANGE",
+      "owner_domain": "lightspeed",
+      "subfamily": "information_transfer",
+      "operator_ref": "typed_information_flow",
+      "evidence_state": "SOFTWARE_CONTRACT_SOURCE_ONLY",
+      "intent": "Source-qualified R0→R1→view, signed peer and DBR exchange",
+      "exchange_carriers": [
+        "bytes",
+        "typed relations",
+        "permissioned events"
+      ],
+      "required_qualification": [
+        "source hash",
+        "Object_ID",
+        "ACL",
+        "replay prevention",
+        "node lease",
+        "receiver readback"
+      ],
+      "non_equivalence": "Information provenance is a bookkeeping analogy, not a physical mass law",
+      "source_state": "SOURCE_POINTERS_ONLY_PENDING_ITEMIZED_LINKAGE",
+      "object_id": null,
+      "canonical": false,
+      "executable": false,
+      "rights_clearance": false
+    },
+    {
+      "id": "SAI_AU_REGION",
+      "owner_domain": "emassc",
+      "subfamily": "regional_governance",
+      "operator_ref": "typed_information_flow",
+      "evidence_state": "POLICY_CANDIDATE_NOT_ENABLED",
+      "intent": "Opt-in Australian Shared Australian Intelligence lens and approved network services",
+      "exchange_carriers": [
+        "credentials",
+        "typed policies",
+        "governed data"
+      ],
+      "required_qualification": [
+        "trusted jurisdiction",
+        "consent",
+        "entitlement",
+        "audited separate regions",
+        "pricing and public-benefit review"
+      ],
+      "non_equivalence": "Australian presence or language does not authenticate or activate sovereign authority",
+      "source_state": "SOURCE_POINTERS_ONLY_PENDING_ITEMIZED_LINKAGE",
+      "object_id": null,
+      "canonical": false,
+      "executable": false,
+      "rights_clearance": false
+    }
+  ],
+  "analogies": [
+    {
+      "id": "PRINT_LAYER_TO_ORBITAL_NODE",
+      "a": "PRINTSPACE_4D",
+      "b": "ASTEROID_SPACEJUNK_CAPTURE",
+      "relation": "STRUCTURAL_ANALOGY_ONLY",
+      "overlap": "composable interfaces and transfer constraints",
+      "distinct": "molecular adhesion vs gravitational orbital capture"
+    },
+    {
+      "id": "PRINT_TOOL_TO_MARK_ARM",
+      "a": "PRINTSPACE_4D",
+      "b": "MARK_III_MOTION",
+      "relation": "REUSE_KINEMATIC_METHOD_WITH_CONDITIONS",
+      "overlap": "joint pose, workspace reach, collision avoidance",
+      "distinct": "real torque, stiffness, material deposition and microgravity"
+    },
+    {
+      "id": "DEBRIS_TO_ISRU",
+      "a": "ASTEROID_SPACEJUNK_CAPTURE",
+      "b": "ICE_REGOLITH_PLANETARY_COMPOSITION",
+      "relation": "SHARED_MASS_MOMENTUM_BOOKKEEPING",
+      "overlap": "mass and encounter/retention constraints",
+      "distinct": "orbit dynamics vs bulk accretion, phase transitions and escape"
+    },
+    {
+      "id": "SOLAR_TO_PASSIVE_RADAR",
+      "a": "SOLAR_SPECTROSCOPY",
+      "b": "AMBIENT_BISTATIC_RADAR",
+      "relation": "REUSE_SPECTRAL_METHOD_WITH_CONDITIONS",
+      "overlap": "illumination, scattering, measurement, noise",
+      "distinct": "incoherent solar light vs RF reference waveform"
+    },
+    {
+      "id": "APOSTLE_TO_LUKEII",
+      "a": "APOSTLES_EM_COUNTERFIELD",
+      "b": "LUKE_II_EM_BOUNDARY",
+      "relation": "SHARED_MAXWELL_OPERATOR_NOT_DEVICE_VALIDATION",
+      "overlap": "surface current, field, reaction and power accounting",
+      "distinct": "shield superposition vs orbital Δv/impulse"
+    },
+    {
+      "id": "SCHUMANN_TO_NETWORK",
+      "a": "SCHUMANN_ELF_MEASUREMENT",
+      "b": "CGX_DATA_EXCHANGE",
+      "relation": "METAPHOR_ONLY",
+      "overlap": "network/cavity model as conceptual data lens",
+      "distinct": "physical low-frequency cavity resonance vs authenticated data throughput"
+    },
+    {
+      "id": "ECO_TO_ISRU",
+      "a": "POLLUTANT_ECOLOGICAL_REHAB",
+      "b": "ICE_REGOLITH_PLANETARY_COMPOSITION",
+      "relation": "SHARED_MATERIAL_ACCOUNTING_NOT_ECO_EQUIVALENCE",
+      "overlap": "selective separation and waste disposition",
+      "distinct": "planetary habitat self-sufficiency requires biological and chemical validation"
+    },
+    {
+      "id": "SAI_TO_CGX",
+      "a": "SAI_AU_REGION",
+      "b": "CGX_DATA_EXCHANGE",
+      "relation": "POLICY_BINDING_NOT_NETWORK_ACTIVATION",
+      "overlap": "typed access, partition and secure readback",
+      "distinct": "AU service eligibility not location detection"
+    }
+  ],
+  "conservation_ledgers": {
+    "mass_kg": "delta_stored_kg = incoming_kg - outgoing_kg; explicit species and uncertain flux required",
+    "energy_J": "delta_stored_J = incoming_J - outgoing_J, counting waste heat and work crossing boundary; no free energy",
+    "momentum_kg_m_s": "delta_p = external_impulse + mass_flux_momentum; select inertial frame",
+    "charge_C": "delta_Q = net_charge_flux; electric boundary and currents",
+    "spectral_W": "harvested_W <= incident_irradiance_W_m2 * effective_area_m2 * efficiency <= incident_power_W",
+    "signal": "receiver output conditional on incident spectrum, transfer function, SNR and bandwidth",
+    "information": "R0 original byte digest retained; projection lossy unless explicitly reversible for specified fields"
+  },
+  "evidence_references": [
+    {
+      "url": "https://www.nasa.gov/overview-in-situ-resource-utilization/",
+      "scope": "actual ISRU and regolith materials research"
+    },
+    {
+      "url": "https://orbitaldebris.jsc.nasa.gov/mitigation/",
+      "scope": "debris collision and mitigation constraints"
+    },
+    {
+      "url": "https://science.nasa.gov/exoplanets/how-do-planets-form/",
+      "scope": "accretion only under appropriate dynamics"
+    },
+    {
+      "url": "https://earth.gsfc.nasa.gov/climate/projects/solar-irradiance/about",
+      "scope": "solar spectral power and variability"
+    },
+    {
+      "url": "https://svs.gsfc.nasa.gov/10891",
+      "scope": "Schumann Earth cavity and lightning"
+    },
+    {
+      "url": "https://www.nasa.gov/general/what-are-passive-and-active-sensors/",
+      "scope": "passive natural radiometry"
+    }
+  ],
+  "validation_gates": [
+    "G0 original R0 and licence",
+    "G1 typed dimensional consistency",
+    "G2 regime boundaries and transport/chemistry",
+    "G3 falsifying numeric bounds and independent models",
+    "G4 empirical bench/field evidence",
+    "G5 native DBR, ACL and owner",
+    "G6 publication, jurisdiction and licence"
+  ],
+  "authority_flags": {
+    "new_physical_solver": false,
+    "verified_planet_manufacture": false,
+    "verified_orbital_capture": false,
+    "net_energy_gain_from_ambient": false,
+    "verified_elf_broadband_network": false,
+    "SAI_enabled": false,
+    "cross_country_network_enabled": false,
+    "public_release_authorized": false,
+    "native_dbr_accepted": false
+  },
+  "frontier": [
+    "quantify proposed icy particle mass/phase-space distribution, gravitational binding and collision timescale",
+    "derive measured Luke II/Apostles Maxwell geometry, current, transfer/power and orbital reaction",
+    "derive spectrally resolved radiometry, phase/coherence, interference/thermal budgets for passive sensing",
+    "qualify 4D X→Y asymmetric interfaces and thermal/chemical side effects",
+    "measure risk of source/environment externalized pollutants and ecology outcomes",
+    "quantify site/region independent SAI entitlement and network transport, not ambient resonance"
+  ]
+}
