@@ -1,0 +1,37 @@
+name: CGX shared fluid operator and regime falsification
+on:
+  pull_request:
+    paths:
+      - "cgx/review/fluid_operator_regime_projection.py"
+      - "tests/test_cgx_fluid_operator_regime_projection.py"
+      - ".github/workflows/cgx-fluid-operator-regime-review.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-bound-operator-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Exact source, dimensional proof and adversarial conditions
+        run: python -m unittest discover -s tests -p 'test_cgx_fluid_operator_regime_projection.py' -v
+      - name: Install pinned test-only validator
+        run: python -m pip install pytest==8.4.2
+      - name: Owner volumetric kernels remain unchanged
+        run: python -m pytest -q tests/test_cgx_volumetric_kernel.py
+      - name: Hard release and peer holds stay independent
+        run: |
+          python - <<'PY'
+          from cgx.review.fluid_operator_regime_projection import project_fluid_reuse
+          p=project_fluid_reuse()
+          assert p["state"]=="REVIEW_ONLY_NOT_A_SOLVER_OR_NEW_CGX_FAMILY"
+          assert p["issues_held"]==[158,161]
+          assert not any(p[x] for x in ("independent_evidence","physical_validation",
+                                      "new_solver_installed","public_release_authorised",
+                                      "native_two_node_accepted","owner_dbr_promoted"))
+          print("PASS source model only; no owner DBR or public/native qualification")
+          PY
