@@ -38,6 +38,9 @@ on:
       - "tests/test_cgx_nlohmann_json_source_scope.py"
       - "tests/fixtures/alexandria_nlohmann_json/**"
       - "cgx/review/alexandria_nlohmann_json_source_scope_20261021.json"
+      - "cgx/portable_node/usrsctp_source_scope.py"
+      - "tests/test_cgx_real_usrsctp_source_scope.py"
+      - "tests/fixtures/alexandria_usrsctp/**"
       - "tests/fixtures/alexandria_plog/**"
       - "cgx/review/alexandria_plog_source_scope_20261021.json"
       - "tests/fixtures/alexandria_libjuice/**"
@@ -94,6 +97,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_cgx_plog_source_scope.py' -v
           python -m unittest discover -s tests -p 'test_cgx_nlohmann_json_source_scope.py' -v
           python -m unittest discover -s tests -p 'test_cgx_real_libsrtp_scope.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_real_usrsctp_source_scope.py' -v
       - name: Emit reproducible four-file source-only project receipt
         run: |
           python - <<'PY'
@@ -198,6 +202,21 @@ jobs:
           print('NLOHMANN_SOURCE_RECEIPT_BEGIN')
           print(json.dumps(receipt,sort_keys=True,separators=(',',':')))
           print('NLOHMANN_SOURCE_RECEIPT_END')
+          PY
+      - name: Emit pinned usrsctp source and file-scope BSD notices
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from cgx.portable_node.usrsctp_source_scope import BLOBS, compile_usrsctp_source_scope
+          fixture=Path('tests/fixtures/alexandria_usrsctp')
+          parent=json.loads(Path('cgx/review/alexandria_libdatachannel_source_scope_20261021.json').read_text())
+          trees=json.loads((fixture/'pinned_tree_chain.json').read_text())
+          sources={name:(fixture/name).read_bytes() for name in BLOBS}
+          result=compile_usrsctp_source_scope(parent,trees,sources)
+          print('USRSCTP_RECEIPT_BEGIN')
+          print(json.dumps(result,sort_keys=True,separators=(',',':')))
+          print('USRSCTP_RECEIPT_END')
           PY
       - name: Authenticate and hydrate exact offline CC0 source fixture at owner endpoint
         run: |
