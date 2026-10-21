@@ -1,0 +1,38 @@
+name: CGX Raphael existing fluid-constitutive operator reuse
+on:
+  pull_request:
+    paths:
+      - "cgx/review/fluid_transport_regime_adapter.py"
+      - "cgx/review/cgx_fluid_constitutive_operator_reuse_20261021.json"
+      - "tests/test_cgx_fluid_constitutive_reuse.py"
+      - ".github/workflows/cgx-fluid-constitutive-regime.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-and-dimensional-regime-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate source-bound shared operator, SI, negative and falsifier tests
+        run: |
+          python -m json.tool cgx/review/cgx_fluid_constitutive_operator_reuse_20261021.json > /dev/null
+          python -m unittest discover -s tests -p 'test_cgx_fluid_constitutive_reuse.py' -v
+      - name: Assert issue 158 and 161 still require real owner and peer acceptance
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("cgx/review/cgx_fluid_constitutive_operator_reuse_20261021.json").read_text())
+          a=json.loads(Path("cgx/review/cgx_unispace_finishline_evidence_20261021.json").read_text())
+          assert not m["physical_validation_performed"] and not m["novel_solver_created"]
+          assert a["release_state"]=="HOLD_PUBLIC_158_AND_NATIVE_161"
+          assert not a["acceptance_summary"]["public_releases_approved"]
+          assert not a["acceptance_summary"]["native_two_node_acceptances_verified"]
+          assert a["acceptance_summary"]["checkpoint_coverage_percent"]==47
+          print("Source-qualified reuse only; cross-domain physical claim and public/native release remain HOLD")
+          PY
