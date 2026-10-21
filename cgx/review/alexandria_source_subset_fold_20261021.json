@@ -155,8 +155,30 @@
     }
   ],
   "further_holds": [
-    "libjuice full repository and remaining third-party dependency source not acquired",
-    "licence/NOTICE of all nested libraries and game assets not complete",
-    "No engine binary compilation, network interoperability or native CGX peer proof"
-  ]
+    "Remaining full libjuice repository, bundled third-party rights and build dependencies not qualified",
+    "Nested libdatachannel/game dependencies, game artwork/audio/map/font rights and runtime ABI unverified",
+    "No independently signed physical two-device native CGX peer, no owner DBR, no public release approval"
+  ],
+  "incremental_pr180_fold": {
+    "source_head": "dfc925e03d2200eb35103e98829f41c47bc4385e",
+    "files": [
+      {
+        "path": "cgx/portable_node/libjuice_source_scope.py",
+        "blob_sha1": "06b9fed60f51b9f334e498449e1b3d65bf493c09"
+      },
+      {
+        "path": "cgx/review/alexandria_libjuice_source_scope_20261021.json",
+        "blob_sha1": "0578067ea21440b98acef32aafcc2a98476d3b18"
+      },
+      {
+        "path": "tests/test_cgx_real_libjuice_scope.py",
+        "blob_sha1": "b61c6ae814dd5bf17749558d4b539026e59ed9c8"
+      }
+    ],
+    "source_code_and_test_only": true,
+    "upstream_licence_and_partial_originals": "MPL-2.0_FIRST_PARTY_ONLY_WITH_DISTINCT_PICOHASH_AUTHOR_ASSERTION",
+    "native_execution": false,
+    "canonical_promotion": false,
+    "distribution_approved": false
+  }
 }

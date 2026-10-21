@@ -8,10 +8,10 @@
   "source_branch_base_head": "3bf4a2f30330013e7eaddb9f1b48bf62865c42e4",
   "upstream_draft_update": {
     "pr": 180,
-    "head": "e14448852e05d84262a72ef50ac2230cfa4a6b8f",
-    "status": "SELECTIVE_29_PR180_BLOBS_PLUS_1_PINNED_UPSTREAM_FILE_NOT_FULL_DEPENDENCIES",
+    "head": "dfc925e03d2200eb35103e98829f41c47bc4385e",
+    "status": "THREE_SOURCE_SCOPES_PINNED_R0_PARTIAL_LIBJUICE_FULL_REPOSITORY_HOLD",
     "specific_unfolded": [],
-    "warning": "29 unchanged source/test blobs copied from original PR #180 and one original libjuice header independently fetched from the immutable upstream git commit and verified against pinned tree SHA. This is partial original-source R0, not complete upstream repository, executable, licence or network qualification. Avoid bulk old UI/bridge/manifest changes.",
+    "warning": "Original Hypersomnia (4), libdatachannel (5), libjuice (5) sample bytes+tree verified, but full upstream dependencies, code and per-asset licences, ABI, builds, network peer, signed DBR, static release and owner approval remain HOLD. Three latest PR180 modules copied byte-identically; no old UI/bridge/security overwrites.",
     "frozen_fold_record": "cgx/review/alexandria_source_subset_fold_20261021.json",
     "carried_git_blob_count": 29,
     "fresh_direct_upstream_file_count": 1,
@@ -21,10 +21,17 @@
       "LIBDATACHANNEL_AND_GAME_BUILD_ABI",
       "INDEPENDENT_NATIVE_TRANSPORT_AUTHENTICATION",
       "CANONICAL_OWNER_DBR"
-    ]
+    ],
+    "incremental_libjuice_sources": [
+      "cgx/portable_node/libjuice_source_scope.py",
+      "cgx/review/alexandria_libjuice_source_scope_20261021.json",
+      "tests/test_cgx_real_libjuice_scope.py"
+    ],
+    "source_qualified_sample_count": 3,
+    "source_qualified_original_file_count": 14
   },
   "source_heads": {
-    "PR180": "e14448852e05d84262a72ef50ac2230cfa4a6b8f",
+    "PR180": "dfc925e03d2200eb35103e98829f41c47bc4385e",
     "PR181": "bd2117d3975cc4db10dfe763ce92d9b1ad623814",
     "PR182": "db147fae3a77654bf544da870a4c897216389012",
     "PR184": "127979f04243333884ba33a23d04c7addce5e457",

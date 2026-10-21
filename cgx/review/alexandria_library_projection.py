@@ -52,6 +52,7 @@ def project_alexandria_index(root: Path=ROOT) -> dict:
     official,official_source=_read(root,CATALOGUES["official_references"])
     project,project_file=_read(root,"cgx/review/alexandria_hypersomnia_project_source_scope_20261021.json")
     channel,channel_file=_read(root,"cgx/review/alexandria_libdatachannel_source_scope_20261021.json")
+    juice,juice_file=_read(root,"cgx/review/alexandria_libjuice_source_scope_20261021.json")
     records=new.get("repositories")
     official_records=official.get("official_references")
     groups=old.get("groups")
@@ -119,6 +120,15 @@ def project_alexandria_index(root: Path=ROOT) -> dict:
         or channel.get("native_dbr_verified") is not False
         or channel.get("capability_claims",{}).get("network_interoperability_tested") is not False):
         raise ValueError("network dependency sample cannot become native accepted peer")
+    if (juice.get("canonical_object_id") is not None
+        or juice.get("parent_source_root") != channel.get("source_root")
+        or juice.get("original_file_count") != 5
+        or juice.get("complete_repository_acquired") is not False
+        or juice.get("native_dbr_verified") is not False
+        or juice.get("license_scopes",{}).get("distribution_approved") is not False
+        or juice.get("capability_descriptor",{}).get("network_connection_tested") is not False
+        or juice.get("capability_descriptor",{}).get("operational_transport_registered") is not False):
+        raise ValueError("libjuice source-only evidence cannot be promoted to networking or redistribution")
     samples = [
         {"domain":"Games","source_root":project["source_root"],
          "index_reference":project["related_game_index_ref"],
@@ -129,13 +139,18 @@ def project_alexandria_index(root: Path=ROOT) -> dict:
          "parent_source_root":channel["parent_source_root"],
          "status":channel["status"],"source_files_proved":5,
          "authority":"PARTIAL_DEPENDENCY_SOURCE_ONLY","public_distribution":False,
+         "executable":False,"canonical_promotion":False},
+        {"domain":"Native transport dependency","source_root":juice["source_root"],
+         "parent_source_root":juice["parent_source_root"],
+         "status":juice["status"],"source_files_proved":5,
+         "authority":"PARTIAL_DEPENDENCY_SOURCE_ONLY","public_distribution":False,
          "executable":False,"canonical_promotion":False}
     ]
     return {
         "schema":"CGX-ALEXANDRIA-INTERDOMAIN-INDEX-PROJECTION/0.1",
         "status":"DERIVED_DISCOVERY_ONLY_NO_PROVIDER_EXECUTION",
         "semantic_parent":"Cognigrex.cgx",
-        "source_roots":{"legacy_games_engines":orig,"curated_upstream":added,"official_references":official_source,"hypersomnia_sample":project_file,"libdatachannel_sample":channel_file},
+        "source_roots":{"legacy_games_engines":orig,"curated_upstream":added,"official_references":official_source,"hypersomnia_sample":project_file,"libdatachannel_sample":channel_file,"libjuice_sample":juice_file},
         "counts":{
             "legacy_list_entries":sum(len(g["records"]) for g in groups),
             "curated_repository_entries":len(records),
