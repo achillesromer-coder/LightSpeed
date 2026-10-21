@@ -1,0 +1,361 @@
+{
+  "schema": "CGX-ALEXANDRIA-CROSS-SCALE-OPERATOR-OVERLAY/0.1",
+  "date": "2026-10-21",
+  "parent": "Cognigrex.cgx",
+  "surface": "READ_ONLY_FRONTIER_PROJECTION_NOT_CANONICAL",
+  "source_state": "MODELLING_CANDIDATE_WITH_REFERENCED_ESTABLISHED_PHYSICS",
+  "source_roots": [
+    {
+      "path": "cgx/domain_templates/assurance_method_registry.json",
+      "git_blob_sha1": "8938693f51b83bc2883de59841378f6073251168",
+      "role": "domain hazard/assurance gates"
+    },
+    {
+      "path": "cgx/component_atlas/raphael_component_geometry_search_v0_1.json",
+      "git_blob_sha1": "fd18ea0d1d966f74e980592070396fd6208f10a0",
+      "role": "source-qualified candidate geometric operators"
+    },
+    {
+      "path": "cgx/domain_templates/cgx_printable_solid_state_extension_2026-10-07.json",
+      "git_blob_sha1": "17f6be96c78c2816d5997aaf19cfe5481fc0382f",
+      "role": "existing capability-first material and horizon distinctions"
+    }
+  ],
+  "reference_roots": [
+    {
+      "name": "NASA active/passive remote sensing",
+      "url": "https://science.nasa.gov/learn/basics-of-space-flight/chapter12-1/",
+      "claim": "Passive collects natural signals; active emits energy and measures response",
+      "claim_grade": "REFERENCE_NOT_TEST"
+    },
+    {
+      "name": "NASA solar spectrum",
+      "url": "https://science.nasa.gov/learn/heat/big-ideas/big-idea-2-3/",
+      "claim": "Solar emission spans electromagnetic spectrum, not a single stable frequency",
+      "claim_grade": "REFERENCE_NOT_TEST"
+    },
+    {
+      "name": "NASA orbital debris NPR 8715.6E",
+      "url": "https://nodis3.gsfc.nasa.gov/displayDir.cfm?Internal_ID=N_PR_8715_006E_&page_name=Chapter1",
+      "claim": "Debris generation, collisions, orbital lifetime and reentry risk require explicit mitigation",
+      "claim_grade": "REFERENCE_NOT_COMPLIANCE"
+    },
+    {
+      "name": "NASA CARA",
+      "url": "https://www.nasa.gov/conjunction-assessment/",
+      "claim": "Conjunction assessment and collision avoidance are independent operational safety analyses",
+      "claim_grade": "REFERENCE_NOT_COMPLIANCE"
+    },
+    {
+      "name": "ACMA spectrum plan",
+      "url": "https://www.acma.gov.au/australian-radiofrequency-spectrum-plan",
+      "claim": "Spectrum use has allocations and interference obligations in Australia",
+      "claim_grade": "REFERENCE_NOT_LICENCE"
+    }
+  ],
+  "reuse_rule": "Attach typed governing operators to existing Alexandria/CCC/Raphael capabilities; never duplicate owners, solvers, physical authority, source files or global inventories.",
+  "operator_families": [
+    {
+      "id": "XSO-01",
+      "key": "transport_and_conservation",
+      "kernel": "d(rho)/dt + div(rho*u)=source; flux and storage close by boundary",
+      "dimensions": [
+        "kg",
+        "s",
+        "m",
+        "J"
+      ],
+      "reused_in": [
+        "PrintSpace feed/material balance",
+        "Eco water/contaminant transport",
+        "orbital debris inventory",
+        "regolith/ice resource flows"
+      ],
+      "counterexamples": [
+        "Tracking a fragment is not capturing it",
+        "Reusing mass-flow graph cannot assume equal phase or chemistry"
+      ]
+    },
+    {
+      "id": "XSO-02",
+      "key": "constitutive_viscosity_and_regimes",
+      "kernel": "mu: Pa s; nu=mu/rho; Re=rho*U*L/mu",
+      "dimensions": [
+        "kg/m/s",
+        "kg/m^3",
+        "m/s",
+        "m"
+      ],
+      "reused_in": [
+        "resin print nozzle",
+        "aerodynamic boundary layer",
+        "river hydraulic channel",
+        "propellant tank"
+      ],
+      "counterexamples": [
+        "Non-Newtonian resin cannot be modelled from one Newtonian mu",
+        "Knudsen rarefaction and Mach compressibility break ordinary liquid-flow assumptions"
+      ]
+    },
+    {
+      "id": "XSO-03",
+      "key": "geometry_dynamics_and_orbital_transfer",
+      "kernel": "r,v in inertial/reference frame; two-body epsilon=v²/2-GM/r; intervention requires force/delta-v and conserved momentum",
+      "dimensions": [
+        "m",
+        "m/s",
+        "m^3/s^2",
+        "m^2/s^2"
+      ],
+      "reused_in": [
+        "Luke II debris disposition",
+        "inter-sol orbital capture review",
+        "robot arm collision/kinematics",
+        "4D printer docking geometry"
+      ],
+      "counterexamples": [
+        "Geometric alignment does not grant capture",
+        "Putting ice ahead of a target in orbit does not cause passive stable deposition"
+      ]
+    },
+    {
+      "id": "XSO-04",
+      "key": "electromagnetic_radiometry",
+      "kernel": "incident + supplied + released-stored power = received/harvested + outgoing + dissipated + delta-storage",
+      "dimensions": [
+        "W",
+        "Hz",
+        "J",
+        "m"
+      ],
+      "reused_in": [
+        "passive sunlight/radio observation",
+        "radar/sonar analogical measurement",
+        "resonant RF/circuit harvest",
+        "surface backscatter spectroscopy"
+      ],
+      "counterexamples": [
+        "Backscatter does not recapture all escaping radiation or generate net energy",
+        "Sunlight is broadband; no solar universal frequency",
+        "Schumann resonances cannot substitute for a high-bandwidth communications channel"
+      ]
+    },
+    {
+      "id": "XSO-05",
+      "key": "gradient_and_multiphase_interfaces",
+      "kernel": "transport depends on field, boundary, phase, permeability, equilibrium and controlled gradients",
+      "dimensions": [
+        "Pa",
+        "K",
+        "kg/m^3",
+        "mol/m^3"
+      ],
+      "reused_in": [
+        "ice/regolith separation",
+        "emissions capture",
+        "PrintSpace sequential interfaces",
+        "ecology/habitat gradients"
+      ],
+      "counterexamples": [
+        "A small controlled gradient cannot guarantee stable ecological system",
+        "particle capture mechanisms differ across metal/dust/chemical pollutants"
+      ]
+    },
+    {
+      "id": "XSO-06",
+      "key": "information_graph_and_source",
+      "kernel": "source evidence + typed relation + right/ACL + time/coordinate qualifiers",
+      "dimensions": [
+        "bit",
+        "s",
+        "object_id"
+      ],
+      "reused_in": [
+        "Alexandria embeddings and source graphs",
+        "SAI approved network discovery",
+        "visual Generative UI lens",
+        "component QR/sensor identities"
+      ],
+      "counterexamples": [
+        "A bit is not a joule",
+        "semantic equivalence is not conservation-law or physical identity",
+        "lossy summary must not replace original R0 source"
+      ]
+    },
+    {
+      "id": "XSO-07",
+      "key": "assurance_and_qualified_execution",
+      "kernel": "source -> conditions -> independent test -> owner ACL and receipt -> accepted scope",
+      "dimensions": [
+        "rights",
+        "evidence",
+        "risk"
+      ],
+      "reused_in": [
+        "CGX-CCC capability plan",
+        "AU opt-in regional deployment",
+        "external bid/onboarding",
+        "physical release and scientific publication"
+      ],
+      "counterexamples": [
+        "AU location does not grant SAI authority",
+        "A verified upstream Git blob does not authorise redistribution or deployment"
+      ]
+    }
+  ],
+  "scenario_links": [
+    {
+      "id": "XSC-01",
+      "label": "4D PrintSpace multimaterial nozzle/encapsulation",
+      "operators": [
+        "XSO-01",
+        "XSO-02",
+        "XSO-05",
+        "XSO-07"
+      ],
+      "grade": "SYNTHETIC_MODEL_ONLY",
+      "qualification": [
+        "actual feed viscosity vs shear and temperature",
+        "process atmosphere and directional X→Y",
+        "pressure/cure and bounded robotic kinematics"
+      ]
+    },
+    {
+      "id": "XSC-02",
+      "label": "Luke II active debris review",
+      "operators": [
+        "XSO-01",
+        "XSO-03",
+        "XSO-07"
+      ],
+      "grade": "CONCEPT_NOT_MISSION_VERIFIED",
+      "qualification": [
+        "ephemeris, covariance, source/owner and conjunction risk",
+        "delta-v and momentum budget",
+        "regulatory permission and debris externalities"
+      ]
+    },
+    {
+      "id": "XSC-03",
+      "label": "Regolith/water resource management",
+      "operators": [
+        "XSO-01",
+        "XSO-03",
+        "XSO-05",
+        "XSO-07"
+      ],
+      "grade": "FRONTIER_HYPOTHESIS",
+      "qualification": [
+        "actual source composition and gravity field",
+        "mass deposition and capture trajectory",
+        "biosphere/ecology and contamination modelling",
+        "planetary protection and legal review"
+      ]
+    },
+    {
+      "id": "XSC-04",
+      "label": "Passive RF solar/Schumann observation",
+      "operators": [
+        "XSO-04",
+        "XSO-06",
+        "XSO-07"
+      ],
+      "grade": "PASSIVE_OBSERVATION_CANDIDATE",
+      "qualification": [
+        "antenna/sensor noise floor and calibration",
+        "spectrum and interference",
+        "real information capacity/observability; no new unbounded energy"
+      ]
+    },
+    {
+      "id": "XSC-05",
+      "label": "Apostles and eco/space sensor relays",
+      "operators": [
+        "XSO-04",
+        "XSO-06",
+        "XSO-07"
+      ],
+      "grade": "FRONTIER_HYPOTHESIS",
+      "qualification": [
+        "what hardware and signal waveform concretely is meant",
+        "link budget, trust and timing",
+        "actual receiver readback and authority"
+      ]
+    },
+    {
+      "id": "XSC-06",
+      "label": "Australian SAI regional deployment and guest profiles",
+      "operators": [
+        "XSO-06",
+        "XSO-07"
+      ],
+      "grade": "POLICY_CANDIDATE",
+      "qualification": [
+        "explicit authenticated AU consent and source ACL",
+        "operator/legal/capability agreements and pricing",
+        "no country network enabled by description alone"
+      ]
+    },
+    {
+      "id": "XSC-07",
+      "label": "M1 corridor misting and ecological contaminant transport",
+      "operators": [
+        "XSO-01",
+        "XSO-02",
+        "XSO-05",
+        "XSO-07"
+      ],
+      "grade": "SIMULATION_CANDIDATE",
+      "qualification": [
+        "field-specific turbulent airflow/humidity/droplet size",
+        "road and human safety",
+        "species/chemical exposure and environmental assessment"
+      ]
+    }
+  ],
+  "prohibited_promotions": [
+    "Do not label arbitrary space debris/ice orbital collision as safe natural absorption or stable capture",
+    "Do not imply offset regolith deposition alone manufactures a planet or biosphere",
+    "Do not identify information bits with joules or material particles without a physical encoding/cost model",
+    "Do not imply passive EM reflections can cancel all escaping radiation or return harvested energy without a source and link budget",
+    "Do not replace broadband Internet/verified radio link with Schumann/ambient noise resonance analogy",
+    "Do not auto-enable Australian SAI, foreign networks, autonomous missions or physical actuation based on a semantic graph"
+  ],
+  "minimum_admission_fields": [
+    "source_root",
+    "Object_ID_or_unresolved",
+    "owner",
+    "licence",
+    "ACL",
+    "frame",
+    "epoch",
+    "units",
+    "environment",
+    "regime",
+    "input_measurements",
+    "uncertainty",
+    "conservation_residual",
+    "alternative_hypothesis",
+    "negative_test",
+    "upstream_dependencies",
+    "qualifying_runtime",
+    "DBR_or_HOLD"
+  ],
+  "status": {
+    "public_release_issue_158": "HOLD",
+    "native_peer_issue_161": "HOLD",
+    "physically_qualified": false,
+    "installer_or_runtime_added": false,
+    "source_bytes_copied": false,
+    "governing_equation_unification_proved": false,
+    "SAI_AU_network_enabled_by_this_overlay": false,
+    "non_AU_network_enabled": false
+  },
+  "handoff": {
+    "A": "typed adapter and R0/R1 loss classification",
+    "B": "governing equations, regimes, dimensional and counterexample tests",
+    "C": "source-safe UI lens, privacy, release gate",
+    "D": "reference licences, curated datasets, unresolved provenance",
+    "E": "peer/session authenticity, source root and DBR"
+  }
+}
