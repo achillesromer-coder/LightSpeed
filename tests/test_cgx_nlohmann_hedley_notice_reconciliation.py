@@ -70,6 +70,16 @@ class HedleyNoticeReconciliationTests(unittest.TestCase):
             self.assertEqual(item["bytes"],len(raw))
             self.assertFalse(item["source_bytes_embedded"])
 
+    def test_persisted_discrepancy_receipt_exact_recompile_and_non_authority(self):
+        source=ROOT/"cgx"/"review"/"alexandria_nlohmann_hedley_notice_reconciliation_20261021.json"
+        saved=json.loads(source.read_text(encoding="utf-8"))
+        self.assertEqual(saved,derive())
+        self.assertFalse(saved["conflict"]["claimed_cc0_applied_to_real_files"])
+        self.assertEqual(saved["conflict"]["effective_legal_relicensing_conclusion"],"NOT_DETERMINED")
+        self.assertFalse(saved["distribution_approved"])
+        self.assertFalse(saved["native_dbr_verified"])
+        self.assertIsNone(saved["canonical_object_id"])
+
     def test_tampered_header_reuse_and_tree_hold(self):
         old,oldtree,new,dep,original=input_sources()
         forged=dict(original)
