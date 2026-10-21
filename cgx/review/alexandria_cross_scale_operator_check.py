@@ -138,5 +138,32 @@ def power_balance(*, incident_power_w: float, useful_power_w: float,
             "closed_within_declared_tolerance": abs(residual) <= tolerance,
             "status": "ACCOUNTING_IDENTITY_NOT_EXPERIMENTAL_EFFICIENCY"}
 
+def two_body_specific_orbital_energy(*, speed_m_s: float,
+                                     orbital_radius_m: float,
+                                     central_mu_m3_s2: float) -> dict:
+    """Only the instantaneous ideal two-body specific-energy diagnostic.
+
+    Negative epsilon implies an elliptic conic under strict point-mass,
+    Keplerian two-body assumptions. It does NOT establish impact avoidance,
+    capture following a maneuver, ice deposition, stable storage, collision
+    probability, compliance, or a receipted orbit/mission.
+    """
+    speed = _positive("speed", speed_m_s, zero=True)
+    radius = _positive("orbital_radius", orbital_radius_m)
+    mu = _positive("central_mu", central_mu_m3_s2)
+    eps = 0.5 * speed*speed - mu/radius
+    if not math.isfinite(eps):
+        raise OperatorHold("INVALID_TWO_BODY_SPECIFIC_ENERGY")
+    return {
+        "specific_energy_m2_s2": eps,
+        "ideal_two_body_negative_energy": eps < 0,
+        "orbit_and_target_frames_verified": False,
+        "safe_rendezvous_or_capture_demonstrated": False,
+        "passive_regolith_or_ice_absorption_demonstrated": False,
+        "conjunction_debris_environmental_qualification": "HOLD",
+        "status": "SYNTHETIC_KEPLERIAN_DIAGNOSTIC_NOT_MISSION_OR_CAPTURE_PROOF"
+    }
+
+
 if __name__ == "__main__":
     print(json.dumps(validate_source_projection(), indent=2, sort_keys=True))
