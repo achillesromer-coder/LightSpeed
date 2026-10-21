@@ -153,5 +153,45 @@ class CgxFluidSharedOperatorTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"SOURCE_MISSING"):
                 project_fluid_reuse(root)
 
+    def test_darcy_tensor_orientation_falsifies_scalar_pipe_substitution(self):
+        """Synthetic anisotropy falsifier; no measured K, CFD, or physical authority."""
+        import json
+        review = project_fluid_reuse()
+        porous = review["domain_bindings"]["porous_or_wicking_flow"]
+        self.assertEqual(porous["numeric_state"], "SOURCE_ONLY_UNMEASURED_PERMEABILITY")
+        self.assertIn("measured permeability tensor", porous["domain_dependencies"])
+        self.assertNotIn("VGK-019", porous["kernels"])
+        owner = json.loads((ROOT / SOURCE).read_text(encoding="utf-8"))
+        row = next(r for r in owner["records"] if r["kernel_id"] == "VGK-020")
+        self.assertIn("permeability tensor", row["canonical_geometry_parameters"])
+        self.assertIn("measured/source permeability", row["required_source_measured_inputs"])
+        self.assertIn("not inferred from nominal porosity", row["numeric_inference_gate"])
+        self.assertIn("permeability/pressure-flow", row["verification_falsifier"])
+
+        # K [m^2] and grad(p) [Pa/m] yield Darcy velocity [m/s].
+        k_dim = vector(DIMENSIONS["length_m"], DIMENSIONS["length_m"])
+        pressure_gradient_dim = vector(DIMENSIONS["pressure_Pa"],
+                                       inverse(DIMENSIONS["length_m"]))
+        superficial_velocity_dim = vector(
+            k_dim, pressure_gradient_dim,
+            inverse(DIMENSIONS["dynamic_viscosity_Pa_s"]))
+        self.assertEqual(superficial_velocity_dim, DIMENSIONS["velocity_m_s"])
+
+        # Independent counterexample: rotate the SAME anisotropic synthetic
+        # tensor 90 degrees relative to a fixed world-X pressure gradient.
+        # A single scalar k or VGK-019 pipe law cannot preserve both flows.
+        k_parallel_m2, k_transverse_m2 = 1e-12, 1e-14
+        mu_pa_s, grad_p_x_pa_per_m = 1e-3, 1e3
+        theta = math.pi / 2
+        k_xx_rotated_m2 = (k_parallel_m2 * math.cos(theta)**2
+                          + k_transverse_m2 * math.sin(theta)**2)
+        vx_original_m_s = -k_parallel_m2 * grad_p_x_pa_per_m / mu_pa_s
+        vx_rotated_m_s = -k_xx_rotated_m2 * grad_p_x_pa_per_m / mu_pa_s
+        self.assertAlmostEqual(abs(vx_original_m_s / vx_rotated_m_s), 100.0, places=9)
+        self.assertNotAlmostEqual(vx_original_m_s, vx_rotated_m_s, places=12)
+        self.assertFalse(review["physical_validation"])
+        self.assertFalse(review["material_licence_granted"])
+        self.assertFalse(review["owner_dbr_promoted"])
+
 if __name__=="__main__":
     unittest.main()
