@@ -200,6 +200,20 @@ class PassiveBistaticInputReviewTests(unittest.TestCase):
         b["channel_id"]=a["channel_id"]
         self.assertIn("INDEPENDENT_CHANNEL_IDENTITIES_REQUIRED",self.review(a,b,g)["holds"])
 
+    def test_same_multichannel_source_file_can_hold_distinct_stream_ids(self):
+        a,b,g=self.sample()
+        b["source_locator"]=a["source_locator"]
+        v=self.review(a,b,g)
+        self.assertEqual(v["status"],"SYNTHETIC_METADATA_SHAPE_COMPLETE_ONLY")
+        self.assertFalse(v["original_source_bytes_verified"])
+
+    def test_bad_noise_floor_is_not_calibration_evidence(self):
+        a,b,g=self.sample()
+        for value in (True, None, float("nan"), float("inf"), "not a reading"):
+            ref=dict(a); ref["noise_floor_dbm"]=value
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                self.review(ref,b,g)
+
     def test_center_bands_must_overlap(self):
         a,b,g=self.sample()
         b["center_hz"]=120_000_000
