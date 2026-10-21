@@ -1,0 +1,133 @@
+{
+  "authority": "NONCANONICAL_READ_ONLY_PROJECTION_OF_EXISTING_RECEIPTS",
+  "canonical_promotion": false,
+  "child_original_file_proofs_total": 27,
+  "direct_gitlinks_total": 5,
+  "direct_gitlinks_whole_repository_acquired": 0,
+  "direct_gitlinks_with_bounded_r0_samples": 5,
+  "full_dependency_and_licence_closure": false,
+  "native_signed_two_node_readback": false,
+  "network_transport_qualified": false,
+  "next_gates": [
+    "REVIEW_FULL_CODE_TREE_AND_3RD_PARTY_ASSETS_PER_DEPENDENCY",
+    "RESOLVE_HEDLEY_AND_PICOHASH_FILE_LEVEL_LICENCES",
+    "BUILD_AND_TEST_SELECTED_DEPENDENCIES_IN_ISOLATED_TOOLCHAIN",
+    "VERIFY_CGX_SIGNED_NODE_EXCHANGE_WITH_REAL_TWO_NODE_READBACK",
+    "VERIFY_PUBLIC_PRIVATE_SEPARATION_BEFORE_SITE_RELEASE"
+  ],
+  "original_source_file_proofs_across_distinct_roots": 32,
+  "owner_release_authorized": false,
+  "parent_existing_receipt_path": "cgx/review/alexandria_libdatachannel_source_scope_20261021.json",
+  "parent_original_file_proofs_total": 5,
+  "parent_receipt_projection_sha256": "9799614ff3dc7fbc8a840140005bd262136ff657625a6b2e79a76788a017673c",
+  "parent_source_root": "git:paullouisageneau/libdatachannel@6b1e2e620f1e37f0eafeee702eaea0043cb305fd",
+  "sai_service_activated": false,
+  "schema": "CGX-ALEXANDRIA-NESTED-SOURCE-COVERAGE-LEDGER/0.1",
+  "source_bytes_embedded": false,
+  "source_dependency_edges": [
+    {
+      "canonical_object_id": null,
+      "dependency_rights_proven": false,
+      "existing_receipt_path": "cgx/review/alexandria_nlohmann_json_source_scope_20261021.json",
+      "frontier": [
+        "QUALIFY_ALL_THIRD_PARTY_SOURCE_AND_TOOLING_LICENSES",
+        "RECONCILE_REUSE_HEDLEY_PATH_VS_ORIGINAL_SOURCE_HEADERS",
+        "TEST_REAL_CXX_TOOLCHAIN_BUILD_AND_JSON_ROUNDTRIP",
+        "VERIFY_NATIVE_SIGNED_OWNER_DBR_READBACK"
+      ],
+      "functional_network_capability_proven": false,
+      "gitlink_path": "deps/json",
+      "original_files_with_byte_proofs": 7,
+      "pinned_commit_sha1": "55f93686c01528224f448c19128836e7df245f72",
+      "receipt_projection_sha256": "49341063fc8d6d22aca8fd8a819ee29b47bdff1e369df58794b093ffeffde246",
+      "source_file_sample_complete": true,
+      "source_licence_scope": "PARTIAL_NOT_RELEASE_APPROVED",
+      "source_root": "git:nlohmann/json@55f93686c01528224f448c19128836e7df245f72",
+      "whole_repository_source_complete": false
+    },
+    {
+      "canonical_object_id": null,
+      "dependency_rights_proven": false,
+      "existing_receipt_path": "cgx/review/alexandria_libjuice_source_scope_20261021.json",
+      "frontier": [
+        "RECEIPTED_OWNER_SIGNED_CGX_NODE_READBACK",
+        "REVIEW_LIBJUICE_ALL_SOURCE_NOTICE_HEADERS",
+        "REVIEW_OPTIONAL_NETTLE_DEPENDENCY_AND_PLATFORM_LICENSES",
+        "SANDBOX_BUILD_AND_TEST_ICE_STUN_TURN_INTEROPERABILITY",
+        "VALIDATE_PICOHASH_PUBLIC_DOMAIN_STATEMENTS_BY_JURISDICTION"
+      ],
+      "functional_network_capability_proven": false,
+      "gitlink_path": "deps/libjuice",
+      "original_files_with_byte_proofs": 5,
+      "pinned_commit_sha1": "b89c792e3612faf2f12cf35bcc56857313a06be3",
+      "receipt_projection_sha256": "6af39c77b062bd579f3fa7ed728f3a675972fe5c732dcc07a8eab3e8c8aac674",
+      "source_file_sample_complete": true,
+      "source_licence_scope": "PARTIAL_NOT_RELEASE_APPROVED",
+      "source_root": "git:paullouisageneau/libjuice@b89c792e3612faf2f12cf35bcc56857313a06be3",
+      "whole_repository_source_complete": false
+    },
+    {
+      "canonical_object_id": null,
+      "dependency_rights_proven": false,
+      "existing_receipt_path": "cgx/review/alexandria_libsrtp_source_scope_20261021.json",
+      "frontier": [
+        "AUDIT_FULL_TREE_AND_THIRD_PARTY_FILE_LICENSES",
+        "OWNER_APPROVED_SIGNED_NATIVE_CGX_DBR_READBACK",
+        "QUALIFY_SELECTED_OPENSSL_NSS_BACKEND_LICENSES",
+        "REPRODUCE_FULL_SOURCE_DEPENDENCY_CLOSURE",
+        "TEST_CRYPTO_AND_SRTP_WITH_APPROVED_BUILD_MATRIX"
+      ],
+      "functional_network_capability_proven": false,
+      "gitlink_path": "deps/libsrtp",
+      "original_files_with_byte_proofs": 5,
+      "pinned_commit_sha1": "24b3bf8f19b6f5ab4cd2bcceb4f4064efca86fd5",
+      "receipt_projection_sha256": "69c2c151aa355f06c261758c09953a6be62f5638c079d8b33d5784a1f5656836",
+      "source_file_sample_complete": true,
+      "source_licence_scope": "PARTIAL_NOT_RELEASE_APPROVED",
+      "source_root": "git:cisco/libsrtp@24b3bf8f19b6f5ab4cd2bcceb4f4064efca86fd5",
+      "whole_repository_source_complete": false
+    },
+    {
+      "canonical_object_id": null,
+      "dependency_rights_proven": false,
+      "existing_receipt_path": "cgx/review/alexandria_plog_source_scope_20261021.json",
+      "frontier": [
+        "QUALIFY_ALL_THIRD_PARTY_NOTICES",
+        "REVIEW_ALL_REMAINING_PLOG_HEADERS",
+        "RUN_APPROVED_CXX_BUILD_TEST",
+        "VERIFY_NATIVE_SIGNED_CGX_DBR_READBACK"
+      ],
+      "functional_network_capability_proven": false,
+      "gitlink_path": "deps/plog",
+      "original_files_with_byte_proofs": 5,
+      "pinned_commit_sha1": "94899e0b926ac1b0f4750bfbd495167b4a6ae9ef",
+      "receipt_projection_sha256": "f2a0721b21d63b4156ee897b72e590dff126d60ca23c4f1785ec065e6314798c",
+      "source_file_sample_complete": true,
+      "source_licence_scope": "PARTIAL_NOT_RELEASE_APPROVED",
+      "source_root": "git:SergiusTheBest/plog@94899e0b926ac1b0f4750bfbd495167b4a6ae9ef",
+      "whole_repository_source_complete": false
+    },
+    {
+      "canonical_object_id": null,
+      "dependency_rights_proven": false,
+      "existing_receipt_path": "cgx/review/alexandria_usrsctp_source_scope_20261021.json",
+      "frontier": [
+        "OWNER_DB_R_READBACK_REQUIRED",
+        "QUALIFY_REMAINING_SOURCE_FILES_AND_PLATFORM_TARGETS",
+        "RECONCILE_MPL_LIBDATACHANNEL_AND_UPSTREAM_BSD_FILE_OBLIGATIONS",
+        "TEST_REAL_SCTP_PROTOCOL_WITH_SIGNED_NODES",
+        "VERIFY_ALL_USRSCTP_SOURCE_LICENSE_HEADERS_AND_THIRD_PARTY_NOTICES"
+      ],
+      "functional_network_capability_proven": false,
+      "gitlink_path": "deps/usrsctp",
+      "original_files_with_byte_proofs": 5,
+      "pinned_commit_sha1": "fec583d54493f879d2ae44a743423bf8a04371ab",
+      "receipt_projection_sha256": "2f245f3235a8d4fc1109fcb5af2546de5da89609b595da7169232fb0cc5e09d7",
+      "source_file_sample_complete": true,
+      "source_licence_scope": "PARTIAL_NOT_RELEASE_APPROVED",
+      "source_root": "git:paullouisageneau/usrsctp@fec583d54493f879d2ae44a743423bf8a04371ab",
+      "whole_repository_source_complete": false
+    }
+  ],
+  "status": "ALL_FIVE_GITLINKS_HAVE_PARTIAL_ORIGINAL_SOURCE_EVIDENCE"
+}
