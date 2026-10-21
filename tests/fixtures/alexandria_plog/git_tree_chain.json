@@ -1,0 +1,198 @@
+{
+  "schema": "CGX-PLOG-PINNED-GIT-TREES/0.1",
+  "repo": "SergiusTheBest/plog",
+  "commit": "94899e0b926ac1b0f4750bfbd495167b4a6ae9ef",
+  "root_tree_sha": "efd55db485576861edede33a8ed2adfc019fe5d7",
+  "root": {
+    "sha": "efd55db485576861edede33a8ed2adfc019fe5d7",
+    "truncated": false,
+    "entries": [
+      {
+        "path": ".appveyor.yml",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "979a929afbec5f1cbb796cca17ed1d3cc3b89f08"
+      },
+      {
+        "path": ".circleci",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "1b1bf808f50fd1003c6245f69b030a74f6a1c10d"
+      },
+      {
+        "path": ".cirrus.yml",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "2f173417d4c0addd422232082b4411071154bd91"
+      },
+      {
+        "path": ".editorconfig",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "a6f06d2c1cfc33427e5ff7ddc84fec1d55f08fb2"
+      },
+      {
+        "path": ".github",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "5694a6cc7f1bb50b208f2063941a4e8dc98bc98c"
+      },
+      {
+        "path": ".gitignore",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "5acb669bb2a93ebb6c70495b24dc12b068a03d4c"
+      },
+      {
+        "path": "CMakeLists.txt",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "aac6bf573481f3b56926e711bee741221dd0a1d4"
+      },
+      {
+        "path": "LICENSE",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "8a91a0aeeb54dded3f8ee9f8e105f07100ff67fc"
+      },
+      {
+        "path": "README.md",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "68b60df1c1efe356cabc2e92f6a7ea916674c62b"
+      },
+      {
+        "path": "doc",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "b2c806cd56f773ecf9b6997a7600184e517dd543"
+      },
+      {
+        "path": "include",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "af612e227c063cc762dfa68b78e2b0f1de6ac0e9"
+      },
+      {
+        "path": "library.json",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "bdb2ea2a52f38b5f00332721c890a0f85287c9ed"
+      },
+      {
+        "path": "plog.nuspec",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "4784c13ebca520d323484eef0fbb9c368423d3be"
+      },
+      {
+        "path": "plog.targets",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "f59cabe66e3a5ed76240f3e8e0c45317fe231fdb"
+      },
+      {
+        "path": "samples",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "d208e715124ae7f3d725ec11ddde21f981bfb0a2"
+      },
+      {
+        "path": "test",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "2e43637b68b5a7ccb63adc068e24c22f52f1f55c"
+      }
+    ]
+  },
+  "include": {
+    "sha": "af612e227c063cc762dfa68b78e2b0f1de6ac0e9",
+    "truncated": false,
+    "entries": [
+      {
+        "path": "plog",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "1afa069521d41050a16f76d4b595ced57cc60734"
+      }
+    ]
+  },
+  "include_plog": {
+    "sha": "1afa069521d41050a16f76d4b595ced57cc60734",
+    "truncated": false,
+    "entries": [
+      {
+        "path": "Appenders",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "7ff4c946a04a3776cdf149173f66af162b84b5e4"
+      },
+      {
+        "path": "Converters",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "ec5ad56e2452f1c2f6a31af229746b4581b9f905"
+      },
+      {
+        "path": "Formatters",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "ebc55d7bcb9e706fccba4a904aeea1ce05b6c315"
+      },
+      {
+        "path": "Helpers",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "91d2b2d6de1184047cf8b56e90b8ef20376d7b29"
+      },
+      {
+        "path": "Init.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "615c41d6cdf2eef915a68efcfbd88fd23c40668e"
+      },
+      {
+        "path": "Initializers",
+        "mode": "040000",
+        "type": "tree",
+        "sha": "779d29ef6d97d0d9310d6ec1b08f78004794cf0b"
+      },
+      {
+        "path": "Log.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "138d92f5fe47f35d50b296b21e0a093350aa6258"
+      },
+      {
+        "path": "Logger.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "0e116e4c6bb847892df91f258c37d3dc01d1a0f0"
+      },
+      {
+        "path": "Record.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "c919e3aa6083fca8a79d36732b271f12c52a1272"
+      },
+      {
+        "path": "Severity.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "446768e8ff19e5459cbeae19f46bde19d062869a"
+      },
+      {
+        "path": "Util.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ec319a10cd8a9c2850177a7ded2f7ac42360d04b"
+      },
+      {
+        "path": "WinApi.h",
+        "mode": "100644",
+        "type": "blob",
+        "sha": "ccf44af0a2244ce1deb36548a091b3c93f04cf63"
+      }
+    ]
+  }
+}
