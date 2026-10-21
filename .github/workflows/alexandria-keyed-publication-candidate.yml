@@ -36,6 +36,8 @@ on:
       - "tests/test_cgx_plog_source_scope.py"
       - "cgx/portable_node/nlohmann_json_source_scope.py"
       - "tests/test_cgx_nlohmann_json_source_scope.py"
+      - "cgx/portable_node/nlohmann_hedley_notice_reconciliation.py"
+      - "tests/test_cgx_nlohmann_hedley_notice_reconciliation.py"
       - "tests/fixtures/alexandria_nlohmann_json/**"
       - "cgx/review/alexandria_nlohmann_json_source_scope_20261021.json"
       - "cgx/portable_node/usrsctp_source_scope.py"
@@ -98,6 +100,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_cgx_real_libjuice_scope.py' -v
           python -m unittest discover -s tests -p 'test_cgx_plog_source_scope.py' -v
           python -m unittest discover -s tests -p 'test_cgx_nlohmann_json_source_scope.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_nlohmann_hedley_notice_reconciliation.py' -v
           python -m unittest discover -s tests -p 'test_cgx_real_libsrtp_scope.py' -v
           python -m unittest discover -s tests -p 'test_cgx_real_usrsctp_source_scope.py' -v
       - name: Emit reproducible four-file source-only project receipt
@@ -204,6 +207,22 @@ jobs:
           print('NLOHMANN_SOURCE_RECEIPT_BEGIN')
           print(json.dumps(receipt,sort_keys=True,separators=(',',':')))
           print('NLOHMANN_SOURCE_RECEIPT_END')
+          PY
+      - name: Emit source-pinned Hedley REUSE/SPDX discrepancy receipt
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from cgx.portable_node.nlohmann_hedley_notice_reconciliation import HEADERS, resolve_hedley_notice
+          base=Path('tests/fixtures/alexandria_nlohmann_json')
+          scope=json.loads(Path('cgx/review/alexandria_nlohmann_json_source_scope_20261021.json').read_text())
+          ancestry=json.loads((base/'tree_chain.json').read_text())
+          new=json.loads((base/'hedley_tree_chain.json').read_text())
+          headers={p:(base/p).read_bytes() for p in HEADERS}
+          result=resolve_hedley_notice(scope,ancestry,new,(base/'.reuse/dep5').read_bytes(),headers)
+          print('HEDLEY_NOTICE_RECEIPT_BEGIN')
+          print(json.dumps(result,sort_keys=True,separators=(',',':')))
+          print('HEDLEY_NOTICE_RECEIPT_END')
           PY
       - name: Emit pinned usrsctp source and file-scope BSD notices
         run: |
