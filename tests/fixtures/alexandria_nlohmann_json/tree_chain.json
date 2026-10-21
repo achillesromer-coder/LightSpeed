@@ -1,0 +1,398 @@
+{
+  "schema": "CGX-NLOHMANN-PINNED-GIT-TREE/0.1",
+  "source_repo": "nlohmann/json",
+  "commit": "55f93686c01528224f448c19128836e7df245f72",
+  "root_sha": "1eb780542e829bf1615828ed0d5f407497bbce7b",
+  "trees": {
+    "root": {
+      "sha": "1eb780542e829bf1615828ed0d5f407497bbce7b",
+      "truncated": false,
+      "entries": [
+        {
+          "path": ".cirrus.yml",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "be63315062882b794a1cf237c3817bb679a91270"
+        },
+        {
+          "path": ".clang-tidy",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "c3a1244c31015e12670e6cf9c8995b6cce5b0092"
+        },
+        {
+          "path": ".github",
+          "mode": "040000",
+          "type": "tree",
+          "sha": "16bfb52bc53b54654d7e0274ed40061f841e5659"
+        },
+        {
+          "path": ".gitignore",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "03fe8147e6f96036f6b88433991a5f2aeff48977"
+        },
+        {
+          "path": ".reuse",
+          "mode": "040000",
+          "type": "tree",
+          "sha": "c4a931c61e6320769a256191447992885c1a8af2"
+        },
+        {
+          "path": "BUILD.bazel",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "de0ff7145d08947303da46b58c00d1d2d0b08599"
+        },
+        {
+          "path": "CITATION.cff",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "8a70c17bc295dbe59ed2e717e87f47364959629c"
+        },
+        {
+          "path": "CMakeLists.txt",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "88ef6f6617caabe54da1db240fb307678c5158ba"
+        },
+        {
+          "path": "ChangeLog.md",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "2274fb455fb6cc7b532f4de1c3ac98d41cfd05ea"
+        },
+        {
+          "path": "FILES.md",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "a7a35f7f235c3877344d1fa5e21b34e9a51b70b3"
+        },
+        {
+          "path": "LICENSE.MIT",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "a1dacc8dbbd907c4b622ff1f08e279c27465dcbc"
+        },
+        {
+          "path": "LICENSES",
+          "mode": "040000",
+          "type": "tree",
+          "sha": "676361a7abc7800e0a087345f83070b2ab928e00"
+        },
+        {
+          "path": "MODULE.bazel",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "51754e7a3ae35662081e1c2ef944ea6625374d3f"
+        },
+        {
+          "path": "Makefile",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "9e1c6d78e41e0008ce1e0ad08c94375a631113b2"
+        },
+        {
+          "path": "Package.swift",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "2f1e654a2c91b7b57efd26a147d46c77fbb9d781"
+        },
+        {
+          "path": "README.md",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "f97afeb412f35ede01dbc111037e5e2fd7037b45"
+        },
+        {
+          "path": "cmake",
+          "mode": "040000",
+          "type": "tree",
+          "sha": "525268249966f72b51d6ef36460e1b77db77484a"
+        },
+        {
+          "path": "docs",
+          "mode": "040000",
+          "type": "tree",
+          "sha": "6624e512b0b2831288ea0757bbd6bef09228784b"
+        },
+        {
+          "path": "include",
+          "mode": "040000",
+          "type": "tree",
+          "sha": "f8086f701157f621799cdb458a1a01c9f3134155"
+        },
+        {
+          "path": "meson.build",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "a2d6e31a251c8c5e7886e16ba4ea902876b664d8"
+        },
+        {
+          "path": "nlohmann_json.natvis",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "09a46d67d8529d7369c9a6d7fec0c6f4cfdf1dad"
+        },
+        {
+          "path": "single_include",
+          "mode": "040000",
+          "type": "tree",
+          "sha": "800adae0ace7eeaadafc86d5fab84d6131bd3c04"
+        },
+        {
+          "path": "tests",
+          "mode": "040000",
+          "type": "tree",
+          "sha": "bc4a60be3b0516b2e97e4f5bf0aba483f89b5156"
+        },
+        {
+          "path": "tools",
+          "mode": "040000",
+          "type": "tree",
+          "sha": "dd02bb36df05588c841126ed0a02e09363407b2b"
+        }
+      ]
+    },
+    "include": {
+      "sha": "f8086f701157f621799cdb458a1a01c9f3134155",
+      "truncated": false,
+      "entries": [
+        {
+          "path": "nlohmann",
+          "mode": "040000",
+          "type": "tree",
+          "sha": "dac45ebdad919a94071601f427038b1456da1cbc"
+        }
+      ]
+    },
+    "include_nlohmann": {
+      "sha": "dac45ebdad919a94071601f427038b1456da1cbc",
+      "truncated": false,
+      "entries": [
+        {
+          "path": "adl_serializer.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "5df1af3de914f0cef0361b8a61345271962f88a2"
+        },
+        {
+          "path": "byte_container_with_subtype.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "d6398e6266f0eb39e63222c45aadfb40b1280d20"
+        },
+        {
+          "path": "detail",
+          "mode": "040000",
+          "type": "tree",
+          "sha": "e273919faf804f0220d179a5336f12acd7399f88"
+        },
+        {
+          "path": "json.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "ed51cd544748c4b8ebabbd5bf32fd0bb1ef89738"
+        },
+        {
+          "path": "json_fwd.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "a595ae4abf56705f609a654f4fa3a692dd45ced0"
+        },
+        {
+          "path": "ordered_map.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "d830c6d7e8d0a6bc99c6c66ae45740e529fbefec"
+        },
+        {
+          "path": "thirdparty",
+          "mode": "040000",
+          "type": "tree",
+          "sha": "f7fa48b51f9c60f824ca358da5078d93fa672c1e"
+        }
+      ]
+    },
+    "include_nlohmann_detail": {
+      "sha": "e273919faf804f0220d179a5336f12acd7399f88",
+      "truncated": false,
+      "entries": [
+        {
+          "path": "abi_macros.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "76cf336fcd14d3249b85c2e9cbfae926fe22562f"
+        },
+        {
+          "path": "conversions",
+          "mode": "040000",
+          "type": "tree",
+          "sha": "adda65df6045b1995b60d50132887da5dbb077bb"
+        },
+        {
+          "path": "exceptions.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "5ebfb657876e76993b79577fb2eb6ba163b9fbb5"
+        },
+        {
+          "path": "hash.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "973943ec26686fdc68707fdd5a8f6469cd8874cf"
+        },
+        {
+          "path": "input",
+          "mode": "040000",
+          "type": "tree",
+          "sha": "18feb9712b87d621347d307a2bdbc0c69a90a5d0"
+        },
+        {
+          "path": "iterators",
+          "mode": "040000",
+          "type": "tree",
+          "sha": "08afee4fb870db44f9fbd8f1b394bdfeeae15d38"
+        },
+        {
+          "path": "json_custom_base_class.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "91e0c80bc079ade3e09fb778230396f959597121"
+        },
+        {
+          "path": "json_pointer.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "1f764979e3ad4a3bbd0ed74eee7d0b22c309bd96"
+        },
+        {
+          "path": "json_ref.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "a9a68d9b346e42cc9a436e04db513dd47f8743c4"
+        },
+        {
+          "path": "macro_scope.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "d1c6b1be3ab4ae0a24e4c68e53bb240acab5c372"
+        },
+        {
+          "path": "macro_unscope.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "2edb1686d3ff374ad7210d0522aa3df3ed0f9d55"
+        },
+        {
+          "path": "meta",
+          "mode": "040000",
+          "type": "tree",
+          "sha": "3738b5fe665ad98119e3e19950e83eedfa631258"
+        },
+        {
+          "path": "output",
+          "mode": "040000",
+          "type": "tree",
+          "sha": "72c2edbe34b31bcfea8ee9bae96e5ed35f8eb2d6"
+        },
+        {
+          "path": "string_concat.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "78569a8ad30b933adb4723abb2ab1e9e2e63bcde"
+        },
+        {
+          "path": "string_escape.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "7f0231819391855df50fc0c965a071d7b95509cb"
+        },
+        {
+          "path": "string_utils.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "d8ecc0cba4c43b41df574cd617cf9273e778d415"
+        },
+        {
+          "path": "value_t.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "4bd87abd27d8289ed8102fa40f3e4493ea8d29c5"
+        }
+      ]
+    },
+    "include_nlohmann_detail_conversions": {
+      "sha": "adda65df6045b1995b60d50132887da5dbb077bb",
+      "truncated": false,
+      "entries": [
+        {
+          "path": "from_json.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "d647d742399a50684c05a70f790fcd310c98a347"
+        },
+        {
+          "path": "to_chars.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "743104174dc06aefe2fbf4a8456d469e38afa953"
+        },
+        {
+          "path": "to_json.hpp",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "ead45665f1be4c7dad58216210783b4ba03efe2a"
+        }
+      ]
+    },
+    "reuse": {
+      "sha": "c4a931c61e6320769a256191447992885c1a8af2",
+      "truncated": false,
+      "entries": [
+        {
+          "path": "dep5",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "06b1d37c1b2026bc363ae399a7a99bddec685ac6"
+        },
+        {
+          "path": "templates",
+          "mode": "040000",
+          "type": "tree",
+          "sha": "630366d8e931fa3a0f03123ba0031fd746ce0c4b"
+        }
+      ]
+    },
+    "licenses": {
+      "sha": "676361a7abc7800e0a087345f83070b2ab928e00",
+      "truncated": false,
+      "entries": [
+        {
+          "path": "Apache-2.0.txt",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "137069b823873b8bcf42979bcf8e9371052d26a2"
+        },
+        {
+          "path": "BSD-3-Clause.txt",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "ea890afbc70c94011b765722a95e2c8c7d4f1233"
+        },
+        {
+          "path": "GPL-3.0-only.txt",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "d41c0bd98feb776ef7d81efbc1b5447e0284a187"
+        },
+        {
+          "path": "MIT.txt",
+          "mode": "100644",
+          "type": "blob",
+          "sha": "2071b23b0e08594ea6bc99ac71129ef992abf498"
+        }
+      ]
+    }
+  }
+}
