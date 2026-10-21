@@ -23,7 +23,7 @@
     },
     {
       "path": "cgx/domain_templates/assurance_method_registry.json",
-      "git_blob_sha1": "8938693f51b3c7867a48e979f6073251168",
+      "git_blob_sha1": "8938693f51b83bc2883de59841378f6073251168",
       "authority": "existing safety method registry"
     }
   ],
