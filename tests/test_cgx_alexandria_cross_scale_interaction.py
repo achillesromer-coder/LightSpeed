@@ -118,7 +118,6 @@ class CrossScaleOperatorTests(unittest.TestCase):
         data=json.loads((ROOT/mod.REVIEW).read_text())
         v={x["id"]:x for x in data["frontier_records"]}
         self.assertEqual(v["FT-X05"]["grade"],"GEOMETRIC_ANALOGY_ONLY")
-        self.assertIn("counter",str(data["invariant_contracts"]).lower()) if False else None
         self.assertIn("NO_ORBITAL_RELEASE",v["FT-X06"]["hold"])
         self.assertTrue(all(x["requires"] for x in v.values()))
         self.assertFalse(data["authority_gates"]["canonical_promotion"])
