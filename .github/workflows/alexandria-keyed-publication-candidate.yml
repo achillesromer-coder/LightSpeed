@@ -92,7 +92,7 @@ jobs:
               if json.loads(saved.read_text()) != ledger:
                   raise SystemExit('ERROR: persisted dependency source ledger drifted')
           else:
-              saved.write_text(json.dumps(ledger,sort_keys=True,indent=2)+'\\n')
+              saved.write_text(json.dumps(ledger,sort_keys=True,indent=2)+'\n')
           print('DEPENDENCY_COVERAGE_RECEIPT_BEGIN')
           print(json.dumps(ledger,sort_keys=True,separators=(',',':')))
           print('DEPENDENCY_COVERAGE_RECEIPT_END')
