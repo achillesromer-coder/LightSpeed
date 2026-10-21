@@ -128,7 +128,7 @@ class CgxFluidSharedOperatorTests(unittest.TestCase):
             ("dynamic_viscosity_Pa_s",True),
         ]:
             s=sample();s[key]=value
-            with self.assertRaises(ValueError,key):
+            with self.assertRaises(ValueError, msg=key):
                 screen_pipe_baseline(s)
         s=sample();s["conditions"]["newtonian"]="true"
         with self.assertRaisesRegex(ValueError,"BOOLEAN"):
