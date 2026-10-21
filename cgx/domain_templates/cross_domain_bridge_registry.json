@@ -80,6 +80,353 @@
     "consequential bidirectional claims should use counterparty review or dual acceptance",
     "parent Cognigrex resolves and projects bridges but does not silently edit child state",
     "a bridge may carry security/admission policy stronger than either public endpoint view",
-    "if relation placement/authority is uncertain create Frontier rather than duplicate objects"
-  ]
+    "if relation placement/authority is uncertain create Frontier rather than duplicate objects",
+    "method-level operator reuse preserves distinction among identical SI dimensions, constitutive-law equivalence, analogy and validated applicability",
+    "no method crosswalk grants functional execution, canonical Object_ID, source-rights redistribution or physics certainty without counterparty-review and independent proof"
+  ],
+  "operator_family_crosswalk": {
+    "status": "PROPOSED_METHOD_REUSE_NOT_PHYSICAL_EQUIVALENCE",
+    "source_ontology": "same existing Cognigrex.cgx:/graph/bridges; method-level overlays over child-owned Object_ID",
+    "dimension_order": [
+      "kg",
+      "m",
+      "s",
+      "K",
+      "A",
+      "mol",
+      "cd"
+    ],
+    "evidence_rule": "Only dimensional, operator or algorithmic patterns may be shared from this review registry. Constitutive law, calibration, domain-specific closure, licence, ACL, proof receipt and solver authority remain independent.",
+    "operators": [
+      {
+        "id": "GRADIENT_FLUX",
+        "kind": "reusable_discretization_pattern",
+        "derived_physics_claim": false,
+        "required_qualifiers": [
+          "gradient quantity and dimensions",
+          "flux orientation/sign",
+          "boundary and initial conditions",
+          "coefficient tensor/scalar and material regime",
+          "source units/time/frame",
+          "mesh and numerical residual"
+        ]
+      },
+      {
+        "id": "CONTROL_VOLUME_CONSERVATION",
+        "kind": "reusable_balance_pattern",
+        "derived_physics_claim": false,
+        "required_qualifiers": [
+          "what is conserved",
+          "local source/sink",
+          "frame and control volume",
+          "face flux definition",
+          "discretization conservation residual",
+          "validity of continuum approximation"
+        ]
+      },
+      {
+        "id": "RIGID_AND_ARTICULATED_TRANSFORMS",
+        "kind": "geometry_method_candidate",
+        "derived_physics_claim": false,
+        "required_qualifiers": [
+          "reference frame and handedness",
+          "units and scale",
+          "SE(3) pose/temporal epoch",
+          "kinematic constraints",
+          "independent dynamic forces",
+          "tolerance and error"
+        ]
+      },
+      {
+        "id": "MULTIPHYSICS_INTERFACE",
+        "kind": "conditional_boundary_coupling_pattern",
+        "derived_physics_claim": false,
+        "required_qualifiers": [
+          "transfer quantity",
+          "conserved interface flux",
+          "stability and convergence",
+          "material transitions",
+          "solver error",
+          "time-scale coupling"
+        ]
+      }
+    ],
+    "constitutive_examples": [
+      {
+        "id": "NEWTONIAN_VISCOUS_SHEAR",
+        "operator": "GRADIENT_FLUX",
+        "equation": "tau_deviatoric = 2 * mu * D",
+        "conditions": [
+          "Newtonian, isotropic fluid",
+          "incompressible deviatoric example",
+          "D symmetric strain-rate tensor; not velocity alone"
+        ],
+        "quantities": [
+          {
+            "name": "mu_dynamic_viscosity",
+            "si_dimension": [
+              1,
+              -1,
+              -1,
+              0,
+              0,
+              0,
+              0
+            ],
+            "unit": "Pa*s"
+          },
+          {
+            "name": "strain_rate",
+            "si_dimension": [
+              0,
+              0,
+              -1,
+              0,
+              0,
+              0,
+              0
+            ],
+            "unit": "1/s"
+          },
+          {
+            "name": "deviatoric_stress",
+            "si_dimension": [
+              1,
+              -1,
+              -2,
+              0,
+              0,
+              0,
+              0
+            ],
+            "unit": "Pa"
+          }
+        ],
+        "applicability": [
+          "air boundary-layer model conditional on governing flow regime",
+          "aqueous ecological transport conditional on phase and rheology",
+          "PrintSpace resin only if Newtonian material evidence"
+        ],
+        "non_equivalence": [
+          "viscosity alone is not aerodynamics",
+          "non-Newtonian curing resin cannot inherit a Newtonian constitutive law",
+          "turbulence/compressibility/boundary layer require extra closures"
+        ],
+        "admission": "proposed"
+      },
+      {
+        "id": "KINEMATIC_VISCOSITY_CONVERSION",
+        "operator": "GRADIENT_FLUX",
+        "equation": "nu = mu / rho",
+        "conditions": [
+          "same fluid and thermodynamic state",
+          "rho is positive mass density"
+        ],
+        "quantities": [
+          {
+            "name": "mu_dynamic_viscosity",
+            "si_dimension": [
+              1,
+              -1,
+              -1,
+              0,
+              0,
+              0,
+              0
+            ],
+            "unit": "Pa*s"
+          },
+          {
+            "name": "rho_density",
+            "si_dimension": [
+              1,
+              -3,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "unit": "kg/m^3"
+          },
+          {
+            "name": "nu_kinematic_viscosity",
+            "si_dimension": [
+              0,
+              2,
+              -1,
+              0,
+              0,
+              0,
+              0
+            ],
+            "unit": "m^2/s"
+          }
+        ],
+        "non_equivalence": [
+          "nu and thermal diffusivity may have same dimension without being same quantity"
+        ],
+        "admission": "proposed"
+      },
+      {
+        "id": "FOURIER_CONDUCTION",
+        "operator": "GRADIENT_FLUX",
+        "equation": "heat_flux = -k * grad(T)",
+        "conditions": [
+          "Fourier local conduction model",
+          "constant scalar coefficient only for isotropic simple case"
+        ],
+        "quantities": [
+          {
+            "name": "k_conductivity",
+            "si_dimension": [
+              1,
+              1,
+              -3,
+              -1,
+              0,
+              0,
+              0
+            ],
+            "unit": "W/(m*K)"
+          },
+          {
+            "name": "temperature_gradient",
+            "si_dimension": [
+              0,
+              -1,
+              0,
+              1,
+              0,
+              0,
+              0
+            ],
+            "unit": "K/m"
+          },
+          {
+            "name": "heat_flux",
+            "si_dimension": [
+              1,
+              0,
+              -3,
+              0,
+              0,
+              0,
+              0
+            ],
+            "unit": "W/m^2"
+          }
+        ],
+        "non_equivalence": [
+          "heat flux is not mass flux",
+          "anisotropic/radiative/phase-change transport needs separate model"
+        ],
+        "admission": "proposed"
+      },
+      {
+        "id": "FICK_DIFFUSION",
+        "operator": "GRADIENT_FLUX",
+        "equation": "species_flux = -diffusivity * grad(concentration)",
+        "conditions": [
+          "Fickian transport approximation",
+          "declared concentration in mol/m^3"
+        ],
+        "quantities": [
+          {
+            "name": "species_diffusivity",
+            "si_dimension": [
+              0,
+              2,
+              -1,
+              0,
+              0,
+              0,
+              0
+            ],
+            "unit": "m^2/s"
+          },
+          {
+            "name": "concentration_gradient",
+            "si_dimension": [
+              0,
+              -4,
+              0,
+              0,
+              0,
+              1,
+              0
+            ],
+            "unit": "mol/m^4"
+          },
+          {
+            "name": "species_flux",
+            "si_dimension": [
+              0,
+              -2,
+              -1,
+              0,
+              0,
+              1,
+              0
+            ],
+            "unit": "mol/(m^2*s)"
+          }
+        ],
+        "non_equivalence": [
+          "same gradient solver does not equate species to thermal/electrical quantities",
+          "chemical reactions and multicomponent diffusion require new closure"
+        ],
+        "admission": "proposed"
+      }
+    ],
+    "cross_domain_application_candidates": [
+      {
+        "domain": "romer",
+        "example": "corridor aerodynamic and drainage models",
+        "relationship": "METHOD_APPLIES_TO",
+        "operator_ids": [
+          "CONTROL_VOLUME_CONSERVATION",
+          "GRADIENT_FLUX"
+        ],
+        "status": "proposed"
+      },
+      {
+        "domain": "eco",
+        "example": "water, sediment and air transport",
+        "relationship": "METHOD_APPLIES_TO",
+        "operator_ids": [
+          "CONTROL_VOLUME_CONSERVATION",
+          "GRADIENT_FLUX"
+        ],
+        "status": "proposed"
+      },
+      {
+        "domain": "emassc",
+        "example": "Mark III dynamics and thermal/electromagnetic screens",
+        "relationship": "METHOD_APPLIES_TO",
+        "operator_ids": [
+          "RIGID_AND_ARTICULATED_TRANSFORMS",
+          "MULTIPHYSICS_INTERFACE"
+        ],
+        "status": "proposed"
+      },
+      {
+        "domain": "cgx_printspace",
+        "example": "feedstock shear, polymer flow and thermal cure",
+        "relationship": "METHOD_APPLIES_TO",
+        "operator_ids": [
+          "GRADIENT_FLUX",
+          "MULTIPHYSICS_INTERFACE"
+        ],
+        "status": "proposed"
+      }
+    ],
+    "open_frontier": [
+      "non-Newtonian or temperature-dependent resin constitutive data not measured",
+      "validated aerodynamic closure/regime and turbulence models not established",
+      "Eco water/sediment source-specific coefficients and boundaries not admitted",
+      "Mark III/PrintSpace geometry and force-law sources require owner-private validation",
+      "unverified numerics are not a production solver"
+    ]
+  }
 }
