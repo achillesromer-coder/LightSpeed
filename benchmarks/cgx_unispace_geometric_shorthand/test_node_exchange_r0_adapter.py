@@ -107,5 +107,69 @@ class R0FileSpaceBridgeTests(unittest.TestCase):
             self.assertEqual(result["status"],"NO_PAYLOAD_PLAN")
             self.assertIsNone(result["envelope"])
             self.assertEqual(result["requires_receiver_prior"],h(data))
+
+    def test_three_native_formats_synthetic_r0_roundtrip_without_semantic_or_device_claims(self):
+        """I01/DS review fixture: exact R0 preservation; NOT native application reopening,
+        provider ACL attestation, a real two-node transfer, CAD parsing or fabrication.
+        """
+        notes = "Repair fixture | length_mm=25\\nVerified only as source bytes.\\n".encode("utf-8")
+        sheet = io.BytesIO()
+        # Tiny synthetic OOXML container: transport coverage, NOT spreadsheet semantics.
+        with zipfile.ZipFile(sheet, "w", compression=zipfile.ZIP_DEFLATED) as z:
+            z.writestr("[Content_Types].xml",
+                       '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+                       '<Default Extension="xml" ContentType="application/xml"/>'
+                       '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>'
+                       '<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>'
+                       '</Types>')
+            z.writestr("xl/workbook.xml",
+                       '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"/>')
+            z.writestr("xl/worksheets/sheet1.xml",
+                       '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"/>')
+        step = (b"ISO-10303-21;\\nHEADER;\\n"
+                b"FILE_DESCRIPTION(('Synthetic transport fixture'),'2;1');\\n"
+                b"ENDSEC;\\nDATA;\\nENDSEC;\\nEND-ISO-10303-21;\\n")
+        cases = {"notes.txt": notes, "measurements.xlsx": sheet.getvalue(),
+                 "shape.step": step}
+        with tempfile.TemporaryDirectory() as folder:
+            for name, data in cases.items():
+                with self.subTest(native_name=name):
+                    record = native(data, revision="source-revision-1")
+                    carrier, plan = candidate(data, native=record)
+                    staged = Path(folder) / (name + ".carrier")
+                    staged.write_bytes(carrier)
+                    envelope = native_node_transfer_plan(
+                        staged_carrier=staged, plan=plan,
+                        source_node_id="FIXTURE-SOURCE",
+                        target_node_id="FIXTURE-RECEIVER",
+                        source_root_id="UNATTESTED-SOURCE-ROOT",
+                        target_root_id="UNATTESTED-TARGET-ROOT")
+                    actual, receipt = reconstruct(staged.read_bytes(), plan)
+                    self.assertEqual(actual, data)
+                    self.assertEqual(receipt["source_sha256"], h(data))
+                    self.assertEqual(receipt["status"], "R0_EXACT_LOCAL_READBACK")
+                    self.assertFalse(receipt["source_attested"])
+                    self.assertFalse(receipt["peer_transport_verified"])
+                    self.assertFalse(receipt["lease_validated"])
+                    self.assertFalse(receipt["canonical_promotion_authorized"])
+                    self.assertEqual(envelope["status"],
+                                     "NATIVE_NODE_EXCHANGE_ENVELOPE_PLANNED")
+                    self.assertEqual(envelope["envelope"]["source_sha256"], h(carrier))
+                    self.assertEqual(envelope["original_source_sha256"], h(data))
+                    self.assertFalse(envelope["peer_transport_verified"])
+                    self.assertFalse(envelope["authority_transfer"])
+                    self.assertFalse(plan["public_publish_authorized"])
+                    self.assertFalse(plan["physical_actuation_authorized"])
+                    # Staged-carrier tampering is detected before any exchange plan.
+                    staged.write_bytes(carrier + b"tampered")
+                    with self.assertRaisesRegex(BridgeError,
+                                                "STAGED_CARRIER_READBACK_MISMATCH"):
+                        native_node_transfer_plan(
+                            staged_carrier=staged, plan=plan,
+                            source_node_id="FIXTURE-SOURCE",
+                            target_node_id="FIXTURE-RECEIVER",
+                            source_root_id="UNATTESTED-SOURCE-ROOT",
+                            target_root_id="UNATTESTED-TARGET-ROOT")
+
 if __name__=="__main__":
     unittest.main()
