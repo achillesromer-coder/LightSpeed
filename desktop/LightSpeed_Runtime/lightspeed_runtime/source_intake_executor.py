@@ -18,14 +18,24 @@ MAX_SOURCE_BYTES = 64 * 1024 * 1024
 
 
 def validate_intake_payload(value: Any) -> dict[str, str]:
-    if not isinstance(value, dict) or set(value) != {"source_path", "source_sha256"}:
-        raise SourceIntakeError("intake requires only source_path and source_sha256")
+    required = {"source_path", "source_sha256"}
+    if not isinstance(value, dict) or not required.issubset(value) or set(value) - required - {"declared_source_name"}:
+        raise SourceIntakeError("intake requires source_path and source_sha256; only declared_source_name is optional")
     path, digest = value["source_path"], value["source_sha256"]
     if not isinstance(path, str) or not 1 <= len(path) <= 2048 or not Path(path).is_absolute():
         raise SourceIntakeError("source_path must be a bounded absolute path")
     if not isinstance(digest, str) or not re.fullmatch(r"[a-f0-9]{64}", digest):
         raise SourceIntakeError("source_sha256 must be a lowercase SHA-256 digest")
-    return {"source_path": path, "source_sha256": digest}
+    request = {"source_path": path, "source_sha256": digest}
+    if "declared_source_name" in value:
+        name = value["declared_source_name"]
+        if (not isinstance(name, str) or not 1 <= len(name) <= 255
+                or name in {".", ".."} or name.endswith((".", " "))
+                or any(ord(char) < 32 or char in '/\\:<>"|?*' for char in name)
+                or not Path(name).suffix):
+            raise SourceIntakeError("declared_source_name must be a bounded filename, not a path")
+        request["declared_source_name"] = name
+    return request
 
 
 def _bounded_archive(data: bytes) -> None:
@@ -52,6 +62,9 @@ def execute_source_intake(
     roots = [Path(root).resolve(strict=True) for root in allowed_roots]
     if not roots or not source.is_file() or not any(source.is_relative_to(root) for root in roots):
         raise SourceIntakeError("source is outside the configured intake roots")
+    extraction_name = request.get("declared_source_name", source.name)
+    if extraction_name != source.name and source.suffix.lower() not in {".dat", ".bin"}:
+        raise SourceIntakeError("declared source name may only reinterpret an opaque .dat or .bin wrapper")
     with source.open("rb") as stream:
         data = stream.read(MAX_SOURCE_BYTES + 1)
     if len(data) > MAX_SOURCE_BYTES:
@@ -60,7 +73,7 @@ def execute_source_intake(
     if digest != request["source_sha256"]:
         raise SourceIntakeError("source changed or does not match the requested hash")
     _bounded_archive(data)
-    envelope = build_source_envelope(source_name=source.name, data=data, source_ref=str(source))
+    envelope = build_source_envelope(source_name=extraction_name, data=data, source_ref=str(source))
     envelope_bytes = (json.dumps(envelope, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
     parent = neo_actions_root(shell_root) / "intake"
     destination = parent / hashlib.sha256(command_id.encode("utf-8")).hexdigest()
@@ -80,6 +93,9 @@ def execute_source_intake(
         "schema": "lightspeed-source-intake-receipt-v1", "command_id": command_id,
         "status": "completed", "source_path": str(source), "source_sha256": digest,
         "source_name": source.name, "source_id": envelope["source_id"],
+        "extraction_source_name": extraction_name,
+        "name_provenance": "CALLER_DECLARED_UNVERIFIED" if "declared_source_name" in request else "NATIVE_FILENAME",
+        "name_authority_boundary": "Format selection hint only; does not prove source type, ownership, rights or semantic acceptance.",
         "adapter_id": envelope["adapter_id"], "artifacts": artifacts,
         "warnings": envelope["warnings"], "unresolved": envelope["unresolved"],
         "evidence_class": "derived_extraction", "semantic_acceptance": "requires_independent_review",

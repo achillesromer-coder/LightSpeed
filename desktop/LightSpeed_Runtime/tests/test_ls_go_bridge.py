@@ -1975,11 +1975,15 @@ def test_node_exchange_status_reads_host_root_registry_without_activating_peer_c
     assert exchange["activation"]["peer_compute_queue_ready"] is False
     assert exchange["compute"]["peer_compute_verified"] is False
 
-def test_source_intake_payload_is_bound_to_existing_command_identity(tmp_path, monkeypatch):
+@pytest.mark.parametrize("declared", [False, True])
+def test_source_intake_payload_is_bound_to_existing_command_identity(tmp_path, monkeypatch, declared):
     database = CommandFixtureDatabase(tmp_path / 'intake.db')
     monkeypatch.setattr(ls_go_bridge, '_try_get_services', lambda _root: (database, object()))
     client = TestClient(ls_go_bridge.create_app(tmp_path))
     payload = {'source_path': str(tmp_path / 'source.md'), 'source_sha256': 'a' * 64}
+    if declared:
+        payload['source_path'] = str(tmp_path / 'source.dat')
+        payload['declared_source_name'] = 'source.md'
     command = command_payload(schema_version='lightspeed-go-command-v2', command_id='LSGO-INTAKE-TEST',
                               action_type='source_preserving_intake', action_payload=payload,
                               target_floor='Neo', execution_mode='queue',
@@ -1990,7 +1994,10 @@ def test_source_intake_payload_is_bound_to_existing_command_identity(tmp_path, m
         params = json.loads(connection.execute('SELECT params_json FROM jobs').fetchone()[0])
     assert params['action_payload'] == payload
     assert params['execute'] is True and params['allow_heavy'] is False
-    command['action_payload']['source_sha256'] = 'b' * 64
+    if declared:
+        command['action_payload']['declared_source_name'] = 'changed.csv'
+    else:
+        command['action_payload']['source_sha256'] = 'b' * 64
     assert client.post('/api/v1/ls-go/commands', json=command).status_code == 409
     command['command_id'] = 'LSGO-INTAKE-INVALID'
     command['action_payload']['output_path'] = str(tmp_path / 'escape')

@@ -69,7 +69,7 @@ import { sourceLinks } from "./sourceRegistry";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
 
 const app = document.getElementById("app");
-if (!app) throw new Error("LightSpeed Go mount node #app not found.");
+if (!app) throw new Error("UniSpace mount node #app not found.");
 
 const agentRows = [
   ["Achilles", "governance, proof and release"],
@@ -87,8 +87,8 @@ app.innerHTML = `
   <main class="shell">
     <header class="topbar">
       <div>
-        <p class="eyebrow">LightSpeed GO</p>
-        <h1>Command Centre</h1>
+        <p class="eyebrow">Cognigrex · powered by LightSpeed</p>
+        <h1>UniSpace</h1>
         <p class="lede">Achilles-governed commands, Desktop execution, project visibility, review receipts and source continuity.</p>
       </div>
       <div class="connection-pill" id="desktop-pill" data-state="checking">
@@ -97,7 +97,7 @@ app.innerHTML = `
       </div>
     </header>
 
-    <nav class="tabs" aria-label="LS GO views">
+    <nav class="tabs" aria-label="UniSpace views">
       <button class="tab active" data-view="command">Command</button>
       <button class="tab" data-view="activity">Activity</button>
       <button class="tab" data-view="objects">Objects</button>
@@ -204,13 +204,14 @@ app.innerHTML = `
     </section>
 
     <section class="view" id="view-system">
+      <article class="panel"><p class="eyebrow">Application and toolkit</p><h2>UniSpace on LightSpeed</h2><p>UniSpace brings your Cognigrex workspace together. LightSpeed provides the local tools, agent routing and runtime services; .cgx carries object identity, provenance and evidence.</p><p class="muted">Connections and capabilities are reported below from the active runtime. A listed tool or plugin is usable only when its connection and permissions are ready.</p></article>
       <article class="panel definition">
         <div><p class="eyebrow">cognigrex</p><h2>Common goal, distinct agents</h2></div>
         <p>The system coordinates GO, Desktop, Git, Drive, agents and human oversight while retaining separate authority, resource limits and reviewable receipts.</p>
       </article>
       <div class="agent-grid">${agentRows.map(([name, role]) => `<article class="agent"><strong>${name}</strong><span>${role}</span></article>`).join("")}</div>
       <div class="two-column">
-        <article class="panel"><p class="eyebrow">Execution path</p><h2>One project, one receipt chain</h2><div class="flow"><span>LS GO</span><i>→</i><span>Achilles</span><i>→</i><span>Neo + floor</span><i>→</i><span>Desktop project</span><i>→</i><span>Drive receipt</span><i>→</i><span>GO decision</span></div></article>
+        <article class="panel"><p class="eyebrow">Execution path</p><h2>One project, one receipt chain</h2><div class="flow"><span>UniSpace</span><i>→</i><span>Achilles</span><i>→</i><span>Neo + floor</span><i>→</i><span>Desktop project</span><i>→</i><span>Drive receipt</span><i>→</i><span>GO decision</span></div></article>
         <article class="panel"><p class="eyebrow">Existing twin context</p><h2>Spaceport contract retained</h2><p class="muted">${twinZones.length} zones · ${facilityRecords.length} facility records · ${workbookTabs.length} workbook tabs. The twin remains bounded context, not the command-centre homepage.</p></article>
       </div>
       <article class="panel">
@@ -270,7 +271,7 @@ app.innerHTML = `
 
     <section class="view" id="view-sources">
       <div class="source-grid">${sourceLinks.map(([name, url, role]) => `<a class="source-card" href="${url}" target="_blank" rel="noreferrer"><strong>${name}</strong><span>${role}</span><em>Open ↗</em></a>`).join("")}</div>
-      <article class="panel"><p class="eyebrow">Authority order</p><h2>Where each truth lives</h2><div class="authority-grid"><div><strong>Drive</strong><span>evidence, workbooks and review receipts</span></div><div><strong>Git</strong><span>code, schemas, tests and implementation receipts</span></div><div><strong>Desktop</strong><span>projects, local execution, state and jobs</span></div><div><strong>LS GO</strong><span>owner commands, review and bounded decisions</span></div></div></article>
+      <article class="panel"><p class="eyebrow">Authority order</p><h2>Where each truth lives</h2><div class="authority-grid"><div><strong>Drive</strong><span>evidence, workbooks and review receipts</span></div><div><strong>Git</strong><span>code, schemas, tests and implementation receipts</span></div><div><strong>Desktop</strong><span>projects, local execution, state and jobs</span></div><div><strong>UniSpace</strong><span>owner commands, review and bounded decisions</span></div></div></article>
     </section>
   </main>
 `;

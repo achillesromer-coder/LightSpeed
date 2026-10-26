@@ -186,7 +186,7 @@ export const renderObjectReview = (manifest: ObjectReviewCatalogue, atlas: Compo
     </section>
 
     <section data-object-review-panel="catalogue" hidden>
-      <div class="boundary"><strong>${esc(atlas.schema)}</strong><span>Canonical component atlas exposed as a read-only LS GO projection. Printable-4D packet, topology and invariant semantics remain in the adjacent CGX lens rather than being duplicated here.</span></div>
+      <div class="boundary"><strong>${esc(atlas.schema)}</strong><span>Canonical component atlas exposed as a read-only UniSpace projection. Printable-4D packet, topology and invariant semantics remain in the adjacent CGX lens rather than being duplicated here.</span></div>
       ${atlasTable(atlas)}
     </section>
 

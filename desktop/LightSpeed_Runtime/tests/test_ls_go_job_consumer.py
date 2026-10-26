@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import sqlite3
 import sys
+import pytest
 
 RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RUNTIME_ROOT))
@@ -13,14 +14,17 @@ sys.path.insert(0, str(RUNTIME_ROOT))
 from lightspeed_runtime import ls_go_job_consumer
 
 
-def test_source_intake_consumer_persists_evidence_once(tmp_path, monkeypatch):
+@pytest.mark.parametrize("declared", [False, True])
+def test_source_intake_consumer_persists_evidence_once(tmp_path, monkeypatch, declared):
     import hashlib
     shell = tmp_path / "App"
     configure_shell(shell)
-    source = tmp_path / "source.md"
+    source = tmp_path / ("source.dat" if declared else "source.md")
     raw = b"# Source\nEvidence for review only.\n"
     source.write_bytes(raw)
     payload = {"source_path": str(source), "source_sha256": hashlib.sha256(raw).hexdigest()}
+    if declared:
+        payload["declared_source_name"] = "source.md"
     params = {"command_id": "LSGO-INTAKE-TEST", "action_type": "source_preserving_intake",
               "action_payload": payload, "execution_mode": "queue", "execute": True, "allow_heavy": False}
     write_command(shell, params["command_id"], schema_version="lightspeed-go-command-v2",
@@ -43,6 +47,8 @@ def test_source_intake_consumer_persists_evidence_once(tmp_path, monkeypatch):
     assert result["status"] == "completed"
     assert result["intake"]["source_sha256"] == payload["source_sha256"]
     assert result["intake"]["canonical_mutation"] is False
+    assert result["intake"]["adapter_id"] == "text-stdlib-v0.1"
+    assert result["intake"]["source_name"] == source.name
     assert Path(result["intake"]["artifacts"][0]["path"]).read_bytes() == raw
     assert source.read_bytes() == raw
     assert consumer.process_once()["results_written"] == 0

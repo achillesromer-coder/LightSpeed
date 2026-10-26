@@ -133,7 +133,7 @@ def _text_projection(data: bytes) -> dict[str, Any]:
         "character_count": len(text),
         "headings": headings,
         "text": text,
-        "truncated": len(data) >= _MAX_TEXT_BYTES,
+        "truncated": False,  # The envelope records any input-byte truncation.
     }
 
 
@@ -199,12 +199,15 @@ def _json_projection(data: bytes, extension: str) -> dict[str, Any]:
     return {"kind": "structure", "encoding": encoding, "jsonl": False, "value": value}
 
 
-def _delimited_projection(data: bytes, delimiter: str) -> dict[str, Any]:
+def _delimited_projection(data: bytes, delimiter: str, max_rows: int | None = None) -> dict[str, Any]:
     text, encoding = _decode_text(data)
     reader = csv.reader(io.StringIO(text), delimiter=delimiter)
     rows = []
+    limit = _MAX_ROWS if max_rows is None else max_rows
+    truncated = False
     for index, row in enumerate(reader):
-        if index >= _MAX_ROWS:
+        if index >= limit:
+            truncated = True
             break
         rows.append(row)
     width = max((len(row) for row in rows), default=0)
@@ -215,7 +218,7 @@ def _delimited_projection(data: bytes, delimiter: str) -> dict[str, Any]:
         "row_count_sampled": len(rows),
         "column_count_max": width,
         "rows": rows,
-        "truncated": len(rows) >= _MAX_ROWS,
+        "truncated": truncated,
     }
 
 
@@ -254,7 +257,7 @@ def _docx_projection(data: bytes) -> dict[str, Any]:
     }
 
 
-def _xlsx_projection(data: bytes) -> dict[str, Any]:
+def _xlsx_projection(data: bytes, max_cells: int = 20000) -> dict[str, Any]:
     zf, names = _safe_zip_names(data)
     ns = {
         "m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
@@ -271,13 +274,17 @@ def _xlsx_projection(data: bytes) -> dict[str, Any]:
         cells = []
         formulas = []
         merges = [x.attrib.get("ref") for x in root.findall(".//m:mergeCell", ns) if x.attrib.get("ref")]
-        for cell in root.findall(".//m:c", ns):
+        source_cells = root.findall(".//m:c", ns)
+        for cell in source_cells[:max_cells]:
             ref = cell.attrib.get("r")
             cell_type = cell.attrib.get("t")
             formula = cell.find("m:f", ns)
             value = cell.find("m:v", ns)
             raw_value = value.text if value is not None else None
             display = raw_value
+            if cell_type == "inlineStr":
+                inline = cell.find("m:is", ns)
+                display = "".join(t.text or "" for t in inline.findall(".//m:t", ns)) if inline is not None else ""
             if cell_type == "s" and raw_value is not None:
                 try:
                     display = shared_strings[int(raw_value)]
@@ -286,11 +293,11 @@ def _xlsx_projection(data: bytes) -> dict[str, Any]:
             cells.append({"ref": ref, "type": cell_type, "value": display})
             if formula is not None:
                 formulas.append({"ref": ref, "formula": formula.text or ""})
-            if len(cells) >= 20000:
-                break
         sheets.append({
             "part": name,
             "cell_count_sampled": len(cells),
+            "source_cell_count": len(source_cells),
+            "truncated": len(source_cells) > max_cells,
             "cells": cells,
             "formulas": formulas,
             "merged_ranges": merges,
@@ -1485,6 +1492,45 @@ def _reference_projection(family: str, data: bytes) -> dict[str, Any]:
     return projection
 
 
+def _pdf_text_projection(data: bytes, max_pages: int, max_characters: int) -> dict[str, Any]:
+    """Optional local text extraction; never execute PDF actions or unlock documents."""
+    try:
+        import pypdf
+    except ImportError as exc:
+        raise SourceIntakeError("pdf_text_dependency_unavailable") from exc
+    if len(data) > 32 * 1024 * 1024:
+        raise SourceIntakeError("pdf_text_source_byte_limit_exceeded")
+    try:
+        reader = pypdf.PdfReader(io.BytesIO(data), strict=True)
+        if reader.is_encrypted:
+            raise SourceIntakeError("encrypted_pdf_requires_owner_workflow")
+        page_count = len(reader.pages)
+        pages = []
+        characters = 0
+        truncated = page_count > max_pages
+        for number in range(min(page_count, max_pages)):
+            text = reader.pages[number].extract_text() or ""
+            remaining = max_characters - characters
+            if len(text) > remaining:
+                text = text[:remaining]
+                truncated = True
+            pages.append({"page": number + 1, "text": text})
+            characters += len(text)
+            if characters >= max_characters:
+                truncated = truncated or number + 1 < page_count
+                break
+        return {"kind": "pdf_text", "parser_version": pypdf.__version__,
+                "page_count": page_count, "pages_sampled": len(pages), "pages": pages,
+                "character_count": characters, "truncated": truncated,
+                "ocr_performed": False, "scripts_executed": False,
+                "layout_fidelity": "NOT_VALIDATED"}
+    except SourceIntakeError:
+        raise
+    except Exception as exc:
+        # Do not leak document content from parser exception messages.
+        raise SourceIntakeError(f"pdf_text_parse_failed:{type(exc).__name__}") from exc
+
+
 def build_source_envelope(
     *,
     source_name: str,
@@ -1493,10 +1539,25 @@ def build_source_envelope(
     authority: str = "source",
     evidence_state: str = "OBSERVED",
     release_class: str = "Internal",
+    extraction_limits: dict[str, int] | None = None,
+    extract_pdf_text: bool = False,
 ) -> dict[str, Any]:
     if not isinstance(data, (bytes, bytearray)):
         raise SourceIntakeError("data must be bytes")
     raw = bytes(data)
+    if type(extract_pdf_text) is not bool:
+        raise SourceIntakeError("extract_pdf_text must be Boolean")
+    limits = {"text_bytes": _MAX_TEXT_BYTES, "table_rows": _MAX_ROWS, "workbook_cells_per_sheet": 20000,
+              "pdf_pages": 32, "pdf_characters": 500000}
+    ceilings = {"text_bytes": 64 * 1024 * 1024, "table_rows": 250000, "workbook_cells_per_sheet": 250000,
+                "pdf_pages": 128, "pdf_characters": 2000000}
+    if extraction_limits is not None:
+        if not isinstance(extraction_limits, dict) or set(extraction_limits) - set(limits):
+            raise SourceIntakeError("unknown extraction limit")
+        for key, value in extraction_limits.items():
+            if type(value) is not int or not 1 <= value <= ceilings[key]:
+                raise SourceIntakeError("extraction limit outside bounded review ceiling")
+            limits[key] = value
     extension = Path(source_name).suffix.lower()
     adapter_id, family = _adapter_for(extension)
     sha = hashlib.sha256(raw).hexdigest()
@@ -1507,23 +1568,23 @@ def build_source_envelope(
 
     try:
         if adapter_id == "text-stdlib-v0.1":
-            projections = [_text_projection(raw[:_MAX_TEXT_BYTES])]
+            projections = [_text_projection(raw[:limits["text_bytes"]])]
         elif adapter_id == "toml-stdlib-v0.1":
-            projections = [_toml_projection(raw[:_MAX_TEXT_BYTES])]
+            projections = [_toml_projection(raw[:limits["text_bytes"]])]
         elif adapter_id == "html-stdlib-v0.1":
-            projections = [_html_projection(raw[:_MAX_TEXT_BYTES])]
+            projections = [_html_projection(raw[:limits["text_bytes"]])]
         elif adapter_id == "json-stdlib-v0.1":
-            projections = [_json_projection(raw[:_MAX_TEXT_BYTES], extension)]
+            projections = [_json_projection(raw[:limits["text_bytes"]], extension)]
         elif adapter_id == "csv-stdlib-v0.1":
-            projections = [_delimited_projection(raw[:_MAX_TEXT_BYTES], "\t" if extension == ".tsv" else ",")]
+            projections = [_delimited_projection(raw[:limits["text_bytes"]], "\t" if extension == ".tsv" else ",", limits["table_rows"])]
         elif adapter_id == "docx-ooxml-stdlib-v0.1":
             projections = [_docx_projection(raw)]
         elif adapter_id == "xlsx-ooxml-stdlib-v0.1":
-            projections = [_xlsx_projection(raw)]
+            projections = [_xlsx_projection(raw, limits["workbook_cells_per_sheet"])]
         elif adapter_id == "pptx-ooxml-stdlib-v0.1":
             projections = [_pptx_projection(raw)]
         elif adapter_id == "xml-stdlib-v0.1":
-            projections = [_xml_projection(raw[:_MAX_TEXT_BYTES])]
+            projections = [_xml_projection(raw[:limits["text_bytes"]])]
         elif adapter_id == "zip-stdlib-v0.1":
             projections = [_zip_projection(raw)]
         elif adapter_id == "odf-stdlib-v0.1":
@@ -1536,7 +1597,7 @@ def build_source_envelope(
             projections = [_reference_projection(family, raw)]
             unresolved.append("registered_specialist_capability_not_bound_in_generic_source_intake")
         elif adapter_id == "svg-xml-stdlib-v0.1":
-            projections = [_svg_projection(raw[:_MAX_TEXT_BYTES])]
+            projections = [_svg_projection(raw[:limits["text_bytes"]])]
         elif adapter_id == "image-metadata-stdlib-v0.1":
             projections = [_image_metadata_projection(raw)]
         elif adapter_id == "gltf-stdlib-v0.1":
@@ -1546,8 +1607,14 @@ def build_source_envelope(
         elif adapter_id == "freecad-fcstd-stdlib-v0.1":
             projections = [_freecad_fcstd_projection(raw)]
         elif adapter_id == "pdf-pypdf-v0.1":
-            projections = [_reference_projection(family, raw)]
-            unresolved.append("registered_pdf_capability_not_bound_in_generic_source_intake")
+            if extract_pdf_text:
+                projections = [_pdf_text_projection(raw, limits["pdf_pages"], limits["pdf_characters"])]
+                unresolved.append("pdf_text_requires_layout_image_and_semantic_review")
+                if projections[0]["character_count"] == 0:
+                    unresolved.append("pdf_has_no_extractable_text_ocr_not_performed")
+            else:
+                projections = [_reference_projection(family, raw)]
+                unresolved.append("registered_pdf_capability_not_bound_in_generic_source_intake")
         elif adapter_id == "obj-mesh-stdlib-v0.1":
             projections = [_obj_projection(raw)]
         elif adapter_id == "stl-mesh-stdlib-v0.1":
@@ -1588,8 +1655,35 @@ def build_source_envelope(
         "3mf-stdlib-v0.1": "STRUCTURE_PRESERVED",
     }.get(adapter_id, "IDENTITY_REFERENCE_ONLY")
 
+    # Parser success does not mean that every source field was translated.
+    # Keep native identity intact while making bounded extraction loss explicit.
+    limited_text_adapters = {
+        "text-stdlib-v0.1", "toml-stdlib-v0.1", "html-stdlib-v0.1",
+        "json-stdlib-v0.1", "csv-stdlib-v0.1", "xml-stdlib-v0.1", "svg-xml-stdlib-v0.1",
+    }
+    if adapter_id in limited_text_adapters and len(raw) > limits["text_bytes"]:
+        unresolved.append("source_projection_byte_limit_reached")
+        for projection in projections:
+            projection["truncated"] = True
+    if any(projection.get("truncated") for projection in projections):
+        unresolved.append("source_projection_structure_limit_reached")
+    if adapter_id == "docx-ooxml-stdlib-v0.1" and any(
+        p.get("paragraph_count", 0) > len(p.get("paragraphs", [])) for p in projections
+    ):
+        unresolved.append("source_projection_structure_limit_reached")
+    if adapter_id == "xlsx-ooxml-stdlib-v0.1" and any(
+        p.get("sheet_count", 0) >= 256 or any(s.get("truncated", False) for s in p.get("sheets", []))
+        for p in projections
+    ):
+        unresolved.append("source_projection_structure_limit_requires_review")
+    if any(item.startswith("source_projection_") for item in unresolved):
+        round_trip = "PARTIAL_PROJECTION_ONLY"
+    elif adapter_id == "pdf-pypdf-v0.1" and projections[0].get("kind") == "pdf_text":
+        round_trip = "TEXT_PROJECTION_ONLY_LAYOUT_NOT_PRESERVED"
+
     envelope = {
         "schema": SCHEMA,
+        "extraction_limits": limits,
         "source_id": source_id,
         "sha256": sha,
         "byte_length": len(raw),
@@ -1691,6 +1785,13 @@ def bind_envelope_to_conversion_plan(
         bound["unresolved"] = list(bound.get("unresolved") or []) + [
             f"adapter_mismatch:expected={expected_adapter}:actual={envelope.get('adapter_id')}"
         ]
+        return bound
+
+    if envelope.get("unresolved") or envelope.get("warnings"):
+        bound["admission_state"] = "BLOCKED_PROJECTION_REVIEW"
+        for projection in bound.get("projections") or []:
+            if isinstance(projection, dict):
+                projection["admitted_semantic_class"] = None
         return bound
 
     bound["admission_state"] = "R1_ADMITTED"

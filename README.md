@@ -1,4 +1,15 @@
-# LightSpeed
+# UniSpace application / LightSpeed toolkit
+
+UniSpace is the Cognigrex application and packaged product identity. LightSpeed
+remains the underlying CGX/CC toolkit, runtime and integration components. The
+application works with the existing `.cgx` carriers and preserves their authority.
+This source-stage rename does not claim a complete packaged distribution, plugin
+installation, native-host acceptance or DBR promotion.
+
+Compatibility identifiers (`lightspeed-go`, LS GO command provenance, storage
+keys, routes, Python modules and installation paths) remain stable. Product naming
+does not migrate data, grant agent permissions or activate unavailable adapters.
+
 
 LightSpeed is the local Cognigrex desktop control plane and its approved
 inter-platform contracts. `D:\LightSpeed` is the stable operator and launch
