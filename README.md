@@ -1,5 +1,10 @@
 # UniSpace application / LightSpeed toolkit
 
+The product entry folder is [UniSpace](UniSpace/README.md), including the exact
+owner-authorized public `CGX.cgx` reference and its non-executing verifier.
+Application and toolkit sources remain at their existing paths, connected by
+`UniSpace/product.json`. Host-local operational data is not part of that package.
+
 UniSpace is the Cognigrex application and packaged product identity. LightSpeed
 remains the underlying CGX/CC toolkit, runtime and integration components. The
 application works with the existing `.cgx` carriers and preserves their authority.
