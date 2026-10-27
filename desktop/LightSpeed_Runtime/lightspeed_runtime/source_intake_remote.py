@@ -13,6 +13,43 @@ from lightspeed_runtime.source_intake import SourceIntakeError
 from lightspeed_runtime.source_intake_executor import MAX_SOURCE_BYTES, validate_intake_payload
 
 
+def reconcile_drive_batch(items: list[dict], *, allowed_roots: list[Path]) -> dict:
+    """Prepare at most 16 candidates from already fetched connector snapshots.
+
+    A failed item does not authorize the remaining files or erase its failure.
+    This is a finite preflight; queue submission remains the existing consumer's
+    responsibility. No filenames or credentials from failed rows are echoed.
+    """
+    if not isinstance(items, list) or not 1 <= len(items) <= 16:
+        raise SourceIntakeError("Drive batch requires 1 to 16 items")
+    total = 0
+    for item in items:
+        if not isinstance(item, dict) or not isinstance(item.get("downloaded"), bytes):
+            raise SourceIntakeError("Drive batch requires fetched bytes")
+        total += len(item["downloaded"])
+    if total > MAX_SOURCE_BYTES:
+        raise SourceIntakeError("Drive batch byte budget exceeded")
+    results = []
+    seen = set()
+    for index, item in enumerate(items):
+        try:
+            result = reconcile_drive_source(
+                metadata=item.get("metadata", {}), downloaded=item["downloaded"],
+                local_source=item.get("local_source"), allowed_roots=allowed_roots,
+                declared_source_name=item.get("declared_source_name"))
+            identity = (result["provider_file_id"], result["source_sha256"],
+                        result["intake_payload"].get("declared_source_name"))
+            duplicate = identity in seen
+            seen.add(identity)
+            results.append({"index": index, "status": "DUPLICATE_IN_BATCH" if duplicate else "REVIEW_CANDIDATE",
+                            "reconciliation": result})
+        except (SourceIntakeError, OSError, TypeError, ValueError):
+            results.append({"index": index, "status": "RECONCILIATION_REQUIRED"})
+    return {"schema": "lightspeed-drive-batch-preflight-v1", "results": results,
+            "fetched_bytes": total, "queue_dispatched": False,
+            "canonical_mutation": False, "deletion_eligible": False}
+
+
 def reconcile_drive_source(*, metadata: dict, downloaded: bytes, local_source: Path,
                            allowed_roots: list[Path], declared_source_name: str | None = None) -> dict:
     """Verify exact bytes and retain only non-secret provenance fields.
@@ -21,6 +58,8 @@ def reconcile_drive_source(*, metadata: dict, downloaded: bytes, local_source: P
     not inferred when the connector omits it. Reuse requires full byte identity;
     names, MIME types and sizes alone never authorize deduplication or deletion.
     """
+    if not isinstance(metadata, dict) or not isinstance(downloaded, bytes):
+        raise SourceIntakeError("Drive reconciliation requires metadata and fetched bytes")
     file_id = metadata.get("id")
     if not isinstance(file_id, str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,200}", file_id):
         raise SourceIntakeError("invalid Drive file identity")
