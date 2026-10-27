@@ -31,6 +31,7 @@ LAST_RECEIPT_TAIL_BYTES = 64 * 1024
 HttpPost = Callable[[str, dict[str, Any], float], dict[str, Any]]
 OllamaStatusProbe = Callable[[str, float], dict[str, Any]]
 MemorySnapshot = Callable[[], tuple[int, int]]
+CpuSnapshot = Callable[[], float]
 
 
 class LocalFloorRunnerError(RuntimeError):
@@ -116,11 +117,26 @@ def run_floor(
     receipt_target: str = "neo",
     timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS,
     num_predict: int | None = None,
+    execution_claim_id: str | None = None,
+    max_total_tokens: int | None = None,
+    max_source_excerpt_chars: int | None = None,
+    max_prompt_utf8_bytes: int | None = None,
     http_post: HttpPost | None = None,
     ollama_status_probe: OllamaStatusProbe | None = None,
     memory_snapshot: MemorySnapshot | None = None,
+    cpu_snapshot: CpuSnapshot | None = None,
     lock: bool = True,
 ) -> dict[str, Any]:
+    if execution_claim_id is not None and not re.fullmatch(r"[0-9a-f]{32}", execution_claim_id):
+        raise LocalFloorRunnerError("execution claim id is invalid")
+    if max_total_tokens is not None and (type(max_total_tokens) is not int or max_total_tokens < 1):
+        raise LocalFloorRunnerError("total token ceiling must be a positive integer")
+    if max_source_excerpt_chars is not None and (
+            type(max_source_excerpt_chars) is not int or not 1 <= max_source_excerpt_chars <= 8000):
+        raise LocalFloorRunnerError("source excerpt ceiling must be 1-8000 characters")
+    if max_prompt_utf8_bytes is not None and (
+            type(max_prompt_utf8_bytes) is not int or not 1 <= max_prompt_utf8_bytes <= 65536):
+        raise LocalFloorRunnerError("prompt byte ceiling must be 1-65536")
     contract = load_contract(contract_path)
     selection = select_floor(contract, floor=floor, order=order)
     floor_row = selection.floor
@@ -139,7 +155,9 @@ def run_floor(
     source_evidence: list[dict[str, Any]] = []
     source_error = None
     try:
-        source_evidence = verified_source_context(contract)
+        source_evidence = verified_source_context(
+            contract, max_excerpt_chars=max_source_excerpt_chars,
+        )
         request_body = build_ollama_request(
             contract, floor_row, num_predict=num_predict, source_evidence=source_evidence,
         )
@@ -147,7 +165,13 @@ def run_floor(
         source_error = str(exc)
         request_body = {"model": model, "prompt": "", "stream": False, "think": False}
 
-    blocked_reason = source_error or _blocked_heavy_reason(floor_row, model, allow_heavy=allow_heavy)
+    blocked_reason = (
+        source_error or _nonlocal_endpoint_reason(endpoint)
+        or _blocked_heavy_reason(floor_row, model, allow_heavy=allow_heavy)
+    )
+    if not blocked_reason and max_prompt_utf8_bytes is not None and (
+            len(str(request_body.get("prompt") or "").encode("utf-8")) > max_prompt_utf8_bytes):
+        blocked_reason = "prompt exceeds claimed UTF-8 byte ceiling"
     resource_status = build_resource_preflight(
         contract,
         endpoint=endpoint,
@@ -155,6 +179,7 @@ def run_floor(
         timeout_seconds=min(max(float(timeout_seconds), 0.1), 5.0),
         ollama_status_probe=ollama_status_probe,
         memory_snapshot=memory_snapshot,
+        cpu_snapshot=cpu_snapshot,
     )
     if not blocked_reason and not dry_run and resource_status["execution_state"] == "stop":
         blocked_reason = "resource stop threshold reached: " + "; ".join(resource_status["stop_reasons"])
@@ -170,6 +195,9 @@ def run_floor(
             blocked_reason=blocked_reason,
             resource_status=resource_status,
             source_evidence=source_evidence,
+            execution_claim_id=execution_claim_id,
+            max_prompt_utf8_bytes=max_prompt_utf8_bytes,
+            max_source_excerpt_chars=max_source_excerpt_chars,
         )
         write_receipt(contract, receipt_path, receipt)
         return receipt
@@ -185,12 +213,16 @@ def run_floor(
             request_body=request_body,
             resource_status=resource_status,
             source_evidence=source_evidence,
+            execution_claim_id=execution_claim_id,
+            max_prompt_utf8_bytes=max_prompt_utf8_bytes,
+            max_source_excerpt_chars=max_source_excerpt_chars,
         )
         write_receipt(contract, receipt_path, receipt)
         return receipt
 
     post = http_post or post_ollama_generate
     started = time.monotonic()
+    server_outcome_uncertain = False
     with SingleSessionLock(lock_path, enabled=lock):
         try:
             response = post(f"{endpoint.rstrip('/')}/api/generate", request_body, timeout_seconds)
@@ -200,6 +232,8 @@ def run_floor(
             response = {}
             status = "failed"
             error = str(exc)
+            # The request may have reached Ollama even when its response was lost.
+            server_outcome_uncertain = True
     elapsed_ms = int((time.monotonic() - started) * 1000)
 
     receipt = build_receipt(
@@ -215,6 +249,12 @@ def run_floor(
         elapsed_ms=elapsed_ms,
         resource_status=resource_status,
         source_evidence=source_evidence,
+        ollama_generate_attempted=True,
+        execution_claim_id=execution_claim_id,
+        max_total_tokens=max_total_tokens,
+        max_prompt_utf8_bytes=max_prompt_utf8_bytes,
+        max_source_excerpt_chars=max_source_excerpt_chars,
+        server_outcome_uncertain=server_outcome_uncertain,
     )
     write_receipt(contract, receipt_path, receipt)
     return receipt
@@ -279,16 +319,23 @@ def build_ollama_request(
 
 def _canonical_loopback_endpoint(endpoint: str) -> str:
     """Route local model work to the model-bearing IPv4 singleton."""
-    parsed = urlparse(endpoint)
-    if parsed.hostname != "localhost":
+    try:
+        parsed = urlparse(endpoint)
+        host = parsed.hostname
+        port = parsed.port
+    except ValueError:
+        return endpoint
+    if host != "localhost" or parsed.username is not None or parsed.password is not None:
         return endpoint
     host = "127.0.0.1"
-    if parsed.port is not None:
-        host = f"{host}:{parsed.port}"
+    if port is not None:
+        host = f"{host}:{port}"
     return parsed._replace(netloc=host).geturl()
 
 
-def verified_source_context(contract: dict[str, Any]) -> list[dict[str, Any]]:
+def verified_source_context(
+    contract: dict[str, Any], *, max_excerpt_chars: int | None = None,
+) -> list[dict[str, Any]]:
     """Read only explicit text bindings; hash the same bytes supplied to the model."""
     bindings = contract.get("source_context", [])
     if not isinstance(bindings, list) or len(bindings) > 4:
@@ -309,6 +356,8 @@ def verified_source_context(contract: dict[str, Any]) -> list[dict[str, Any]]:
         limit = binding.get("max_chars", 4000)
         if type(start) is not int or start < 0 or type(limit) is not int or not 1 <= limit <= 8000:
             raise LocalFloorRunnerError("source excerpt range is invalid")
+        if max_excerpt_chars is not None:
+            limit = min(limit, max_excerpt_chars)
         try:
             with path.open("rb") as handle:
                 raw = handle.read(1024 * 1024 + 1)
@@ -451,11 +500,20 @@ def build_receipt(
     elapsed_ms: int | None = None,
     resource_status: dict[str, Any] | None = None,
     source_evidence: list[dict[str, Any]] | None = None,
+    ollama_generate_attempted: bool = False,
+    execution_claim_id: str | None = None,
+    max_total_tokens: int | None = None,
+    max_prompt_utf8_bytes: int | None = None,
+    max_source_excerpt_chars: int | None = None,
+    server_outcome_uncertain: bool = False,
 ) -> dict[str, Any]:
     prompt = str(request_body.get("prompt") or "")
+    prompt_bytes = prompt.encode("utf-8")
+    prompt_size = len(prompt_bytes)
     safe_floor = re.sub(r"[^A-Za-z0-9_.-]+", "_", str(floor.get("floor") or "floor")).strip("_")
     receipt: dict[str, Any] = {
         "receipt_id": f"local_floor_runner_receipt_{safe_floor}_{_receipt_timestamp()}",
+        "execution_claim_id": execution_claim_id,
         "created_at": _utc_now_iso(),
         "status": status,
         "dry_run": dry_run,
@@ -466,6 +524,7 @@ def build_receipt(
         "activation_mode": (floor.get("activation") or {}).get("mode"),
         "model": request_body.get("model"),
         "endpoint": (floor.get("ollama_connection") or {}).get("endpoint") or (contract.get("ollama") or {}).get("endpoint"),
+        "endpoint_policy": "loopback_http_only",
         "receipt_path": str(receipt_path),
         "session_policy": "one_floor_prompt_at_a_time",
         "manual_heavy_allowed": not bool(blocked_reason) and _is_heavy_or_manual(floor, str(request_body.get("model") or "")),
@@ -475,8 +534,16 @@ def build_receipt(
             "num_predict": (request_body.get("options") or {}).get("num_predict"),
             "num_ctx": (request_body.get("options") or {}).get("num_ctx"),
         },
-        "prompt_sha256": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
+        "prompt_sha256": hashlib.sha256(prompt_bytes).hexdigest(),
         "prompt_preview": prompt[:600],
+        "prompt_preflight": ({
+            "utf8_bytes": prompt_size,
+            "ceiling": max_prompt_utf8_bytes,
+            "state": "within_ceiling" if prompt_size <= max_prompt_utf8_bytes
+            else "exceeded",
+            "hard_token_limit": False,
+        } if max_prompt_utf8_bytes is not None else None),
+        "source_excerpt_char_cap": max_source_excerpt_chars,
         "resource_preflight": resource_status or {},
         "source_evidence": source_evidence or [],
         "workflow_handoffs": contract.get("workflow_handoffs") or [],
@@ -484,7 +551,19 @@ def build_receipt(
         "semantic_acceptance": "requires_independent_review",
         "source_binding_state": "verified" if source_evidence else "not_supplied",
         "response_validated": False,
+        "usage_accounting": _ollama_usage_accounting(
+            response, ollama_generate_attempted=ollama_generate_attempted,
+        ),
+        "server_outcome_uncertain": server_outcome_uncertain,
     }
+    if max_total_tokens is not None:
+        total = receipt["usage_accounting"]["total_tokens"]
+        receipt["total_token_postflight"] = {
+            "ceiling": max_total_tokens,
+            "state": "within_ceiling" if total is not None and total <= max_total_tokens
+            else "exceeded" if total is not None else "unmeasured",
+            "hard_generation_limit": False,
+        }
     if blocked_reason:
         receipt["blocked_reason"] = blocked_reason
     if response is not None:
@@ -496,11 +575,16 @@ def build_receipt(
                 expected_route=str(receipt_path),
             )
     if status == "completed":
+        if max_total_tokens is not None and receipt["total_token_postflight"]["state"] != "within_ceiling":
+            receipt["status"] = "blocked"
+            error = "total token postflight ceiling exceeded or Ollama counters are unavailable"
         response_text = (response or {}).get("response")
-        if not isinstance(response_text, str) or not response_text.strip() or (response or {}).get("done") is not True:
+        if receipt["status"] == "completed" and (not isinstance(response_text, str) or not response_text.strip() or (response or {}).get("done") is not True):
             receipt["status"] = "failed"
             error = "model response is empty or incomplete"
-        elif (contract.get("policy") or {}).get("strict_response_contract"):
+            if (response or {}).get("done") is not True:
+                receipt["server_outcome_uncertain"] = True
+        elif receipt["status"] == "completed" and (contract.get("policy") or {}).get("strict_response_contract"):
             issues = validate_grounded_response(response or {}, str(receipt_path), source_evidence or [])
             receipt["response_validation_errors"] = issues
             receipt["response_validated"] = not issues
@@ -512,6 +596,31 @@ def build_receipt(
     if elapsed_ms is not None:
         receipt["elapsed_ms"] = elapsed_ms
     return receipt
+
+
+def _ollama_usage_accounting(
+    response: dict[str, Any] | None, *, ollama_generate_attempted: bool = False,
+) -> dict[str, Any]:
+    """Retain measured tokens and the configured no-tools boundary."""
+    payload = response if isinstance(response, dict) else {}
+    prompt = payload.get("prompt_eval_count")
+    completion = payload.get("eval_count")
+    valid = (
+        payload.get("done") is True
+        and type(prompt) is int and prompt >= 0
+        and type(completion) is int and completion >= 0
+    )
+    return {
+        "state": "MEASURED_OLLAMA_RESPONSE" if valid else "UNKNOWN",
+        "prompt_tokens": prompt if valid else None,
+        "completion_tokens": completion if valid else None,
+        "total_tokens": prompt + completion if valid else None,
+        "ollama_generate_attempts": int(ollama_generate_attempted),
+        "tool_calls": 0,
+        "tool_call_scope": "model_function_tools_not_exposed_by_local_generate",
+        "cost_usd": None,
+        "budget_enforced": False,
+    }
 
 
 def validate_grounded_response(
@@ -605,8 +714,9 @@ def build_resource_preflight(
     timeout_seconds: float = 2.0,
     ollama_status_probe: OllamaStatusProbe | None = None,
     memory_snapshot: MemorySnapshot | None = None,
+    cpu_snapshot: CpuSnapshot | None = None,
 ) -> dict[str, Any]:
-    """Build the bounded, read-only resource signal recorded before each floor run."""
+    """Check memory and observed host CPU before starting a new local floor task."""
     policy = contract.get("policy") if isinstance(contract.get("policy"), dict) else {}
     guard = policy.get("resource_guard") if isinstance(policy.get("resource_guard"), dict) else {}
     warning_percent = _float_setting(
@@ -657,7 +767,41 @@ def build_resource_preflight(
             "error": str(exc),
         }
 
-    endpoint_host = (urlparse(endpoint).hostname or "").casefold()
+    # System-wide CPU pressure is a *start gate*, not a hard quota for all
+    # CGX processes already running. A separate native Job Object/lease service
+    # must enforce the aggregate 80% ceiling continuously; do not claim it here.
+    cpu_limit = guard.get("max_host_cpu_percent")
+    cpu_status: dict[str, Any] = {"state": "not_configured",
+                                  "observed_percent": None,
+                                  "max_host_cpu_percent": None,
+                                  "is_continuous_process_cpu_hard_cap": False}
+    if cpu_limit is not None:
+        if type(cpu_limit) not in (int, float) or not 1 <= cpu_limit <= 80:
+            stop_reasons.append("invalid host CPU ceiling policy")
+            cpu_status["state"] = "invalid_policy"
+        elif stop_reasons:
+            cpu_status.update({"state": "not_probed", "max_host_cpu_percent": cpu_limit})
+        else:
+            cpu_status["max_host_cpu_percent"] = float(cpu_limit)
+            try:
+                observed = float((cpu_snapshot or _host_cpu_snapshot)())
+                if not 0 <= observed <= 100:
+                    raise ValueError("host CPU probe returned non-percent value")
+                cpu_status["observed_percent"] = round(observed, 2)
+                cpu_status["state"] = "ready" if observed < float(cpu_limit) else "stop"
+                if cpu_status["state"] == "stop":
+                    stop_reasons.append(
+                        f"host CPU {observed:.2f}% is at or above {float(cpu_limit):.2f}%"
+                    )
+            except (ImportError, OSError, ValueError, TypeError) as exc:
+                cpu_status["state"] = "unavailable"
+                cpu_status["error"] = str(exc)
+                stop_reasons.append("host CPU measurement unavailable; no new local Ollama session")
+
+    try:
+        endpoint_host = (urlparse(endpoint).hostname or "").casefold()
+    except ValueError:
+        endpoint_host = ""
     local_endpoint = endpoint_host in {"localhost", "127.0.0.1", "::1"}
     if stop_reasons:
         ollama = {
@@ -702,9 +846,19 @@ def build_resource_preflight(
             "minimum_free_memory_bytes": minimum_free_bytes,
         },
         "memory": memory,
+        "cpu": cpu_status,
         "ollama": ollama,
         "last_receipt": _last_receipt_summary(contract),
     }
+
+
+def _host_cpu_snapshot() -> float:
+    """Bounded sampling of overall host pressure; NEVER a process entitlement."""
+    try:
+        import psutil
+    except ImportError as exc:
+        raise OSError("psutil CPU sampler unavailable") from exc
+    return float(psutil.cpu_percent(interval=0.2))
 
 
 def _memory_snapshot() -> tuple[int, int]:
@@ -819,10 +973,28 @@ def normalize_receipt_file(path: Path) -> dict[str, Any]:
 
 
 def _blocked_heavy_reason(floor: dict[str, Any], model: str, *, allow_heavy: bool) -> str | None:
+    if "cloud" in model.casefold():
+        return "cloud model blocked; local floor work requires an installed local model"
     if allow_heavy:
         return None
     if _is_heavy_or_manual(floor, model):
         return "manual/heavy floor model blocked; pass allow_heavy=True or --allow-heavy to run"
+    return None
+
+
+def _nonlocal_endpoint_reason(endpoint: str) -> str | None:
+    try:
+        parsed = urlparse(endpoint)
+        host = parsed.hostname
+        port = parsed.port
+    except ValueError:
+        return "Ollama endpoint is malformed"
+    if (parsed.scheme != "http" or host not in {"127.0.0.1", "::1"}
+            or parsed.username is not None or parsed.password is not None
+            or parsed.path not in {"", "/"} or parsed.query or parsed.fragment):
+        return "Ollama endpoint must be loopback HTTP without credentials or extra path"
+    if port is None:
+        return "Ollama endpoint requires an explicit local port"
     return None
 
 
@@ -897,6 +1069,10 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--receipt-target", choices=["neo", "floor"], default="neo")
     parser.add_argument("--timeout-seconds", type=float, default=DEFAULT_TIMEOUT_SECONDS)
     parser.add_argument("--num-predict", type=int, default=None)
+    parser.add_argument("--execution-claim-id", default=None)
+    parser.add_argument("--max-total-tokens", type=int, default=None)
+    parser.add_argument("--max-source-excerpt-chars", type=int, default=None)
+    parser.add_argument("--max-prompt-utf8-bytes", type=int, default=None)
     return parser
 
 
@@ -912,6 +1088,10 @@ def main(argv: list[str] | None = None) -> int:
             receipt_target=args.receipt_target,
             timeout_seconds=args.timeout_seconds,
             num_predict=args.num_predict,
+            execution_claim_id=args.execution_claim_id,
+            max_total_tokens=args.max_total_tokens,
+            max_source_excerpt_chars=args.max_source_excerpt_chars,
+            max_prompt_utf8_bytes=args.max_prompt_utf8_bytes,
         )
     except LocalFloorRunnerError as exc:
         print(f"local_floor_runner: {exc}")
