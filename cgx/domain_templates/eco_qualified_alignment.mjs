@@ -12,6 +12,22 @@ const EVIDENCE=new Set(["observed","simulated","source_asserted","hypothesised",
 const ECO_TYPES=new Set(["taxon","species","specimen","population","ecological_observation","sensor_reading","site","habitat","intervention","experiment","ecological_state_estimate"]);
 const IDENTITY=["taxon_id","specimen_id","population_id","site_id","station_id","subject_kind","subject_id"];
 const OBSERVATIONS=new Set(["ecological_observation","sensor_reading"]);
+// Validate absolute ISO timestamp and actual calendar date before aligning observations.
+function validObservedAt(v){
+ if(!good(v))return false;
+ const m=/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,9})?(Z|[+-](\d{2}):(\d{2}))$/.exec(v);
+ if(!m)return false;
+ const [year,month,day,hour,minute,second]=m.slice(1,7).map(Number);
+ const leap=year%4===0&&(year%100!==0||year%400===0);
+ const days=[31,leap?29:28,31,30,31,30,31,31,30,31,30,31];
+ if(year<1||month<1||month>12||day<1||day>days[month-1]||hour>23||minute>59||second>59)return false;
+ if(m[7]!=="Z"){
+  const h=Number(m[8]),mm=Number(m[9]);
+  if(h>14||mm>59||(h===14&&mm!==0))return false;
+ }
+ return true;
+}
+
 function validateConcept(x){
  if(!obj(x)||!ECO_TYPES.has(x.semantic_type)||!stringList(x.source_refs))throw Error("INVALID_ECO_CONCEPT");
  if(x.object_id!==undefined&&!good(x.object_id))throw Error("INVALID_OBJECT_ID");
@@ -72,6 +88,7 @@ function completeness(x,checks){
  if(x.measurement&&good(x.unit)&&x.unit!==x.measurement.unit)add(checks,"MEASUREMENT_UNIT_CONFLICT");
  if(OBSERVATIONS.has(x.semantic_type)){
   if(!good(x.observed_at))add(checks,"OBSERVATION_TIME_REQUIRED");
+  else if(!validObservedAt(x.observed_at))add(checks,"OBSERVATION_TIMESTAMP_INVALID_OR_UNZONED");
   if(!good(x.method_id))add(checks,"METHOD_REQUIRED");
   if(!good(x.subject_kind)||!good(x.subject_id))add(checks,"SUBJECT_IDENTITY_REQUIRED");
   if(!good(x.site_id)&&!good(x.station_id)&&!x.geometry)add(checks,"SPATIAL_CONTEXT_REQUIRED");
