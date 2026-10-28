@@ -24,7 +24,7 @@ All outputs are source-only. A typed alignment candidate never means the objects
 node --test cgx/domain_templates/eco_qualified_alignment.test.mjs
 ~~~
 
-Twenty-seven declared Node regression cases cover distinct taxon/specimen/coordinates/evidence/time/method/environment/units, missing observation metadata, invalid coordinates, 3D vertical datum, permissions, duplicate IDs and no automatic native promotion. All 27 committed regression test bodies passed in an isolated V8 compatibility harness against the exact read-back module; this is **not a Node CI run or host acceptance**. A same-ID proof-priority regression was detected and corrected before the final passing run. These are **source-level negative tests**, not host, DBR, field or two-node tests.
+Forty declared Node regression cases cover distinct taxon/specimen/coordinates/evidence/time/method/environment/units, missing observation metadata, invalid coordinates, 3D vertical datum, permissions, duplicate IDs and no automatic native promotion. All 40 committed primary regression test bodies passed in an isolated V8 compatibility harness against the exact read-back module; this is **not a Node CI run or host acceptance**. A same-ID proof-priority regression was detected and corrected before the final passing run. These are **source-level negative tests**, not host, DBR, field or two-node tests.
 
 ## Native integration holds
 
@@ -32,4 +32,8 @@ Source rights/ACL and exact original byte hashes; GPT shard and manual-intake re
 
 ## 2026-10-28 additional review gate
 
-A declared observation timestamp such as `2026-02-29T12:00:00Z` (invalid calendar date), `2026-10-01T12:00:00` (no timezone) or an impossible UTC offset now yields `OBSERVATION_TIMESTAMP_INVALID_OR_UNZONED`. Valid leap dates with explicit offsets remain candidates. This is a conservative R1/R2 timestamp qualification, not a conversion or native timestamp resolver. The 27 fixtures passed in an isolated V8 compatibility harness; Node CI and host/DBR acceptance must be checked separately.
+A declared observation timestamp such as `2026-02-29T12:00:00Z` (invalid calendar date), `2026-10-01T12:00:00` (no timezone) or an impossible UTC offset now yields `OBSERVATION_TIMESTAMP_INVALID_OR_UNZONED`. Valid leap dates with explicit offsets remain candidates. This is a conservative R1/R2 timestamp qualification, not a conversion or native timestamp resolver. The 40 primary fixtures passed in an isolated V8 compatibility harness; Node CI and host/DBR acceptance must be checked separately.
+
+## Coordinate-frame and unexecuted-QA qualification
+
+A source-declared point geometry CRS and separately declared coordinate frame that disagree require `FRAME_CRS_RECONCILIATION_REQUIRED` until an explicit, source-backed transform relationship is reviewed; this adapter does not transform coordinates. An observation marked `Not run`, `untested` or `pending` cannot pass observation QA simply because values and identifiers are present. One pre-existing measurement-scope fixture incorrectly expected no differences despite deliberately disjoint source references; its positive fixture now uses an overlapping authorised source while separate disjoint-lineage tests remain intact. The complete proposed source-only suite contains **49 synthetic tests** (40 primary + 9 measurement scope). These are compatibility checks, not field evidence or native admission.
