@@ -57,7 +57,13 @@ export function planScopedLoad(registry,{fileSpace,owner,objectId=null,kind="all
  if(!safeTerm(fileSpace)||!safeTerm(owner))throw Error("INVALID_TARGET");
  if(objectId!=null&&!safeTerm(objectId))throw Error("INVALID_OBJECT_ID");
  if(include!=null&&!Array.isArray(include))throw Error("INVALID_SELECTOR");
- const selected=registry.records.filter(r=>!include||include.includes(r.category));
+ // Universal LOAD remains searchable; child-equipping references only its own source mappings.
+ // Do not derive semantic ownership from arbitrary filename substrings.
+ const domainByFileSpace={"Romer.cgx":"romer","Eco.cgx":"eco","EMASSC.cgx":"emassc","LS.cgx":"lightspeed"};
+ const scopedDomain=Object.hasOwn(domainByFileSpace,fileSpace)?domainByFileSpace[fileSpace]:null;
+ const permittedCrossFamily=fileSpace==="Cognigrex.cgx"||fileSpace==="LOAD.cgx";
+ const selected=registry.records.filter(r=>(!include||include.includes(r.category))&&
+   (r.category!=="conversion_source" || permittedCrossFamily || (scopedDomain!==null&&r.owner_domain===scopedDomain)));
  const frontier=new Set(registry.frontier.flatMap(f=>f.mapping_refs??[]));
  const blocked=selected.filter(r=>frontier.has(r.source_key)).map(r=>r.source_key);
  return {schema:"LOAD-SCOPED-FILESPACE-PLAN/0.1",state:objectId?"HOST_PREFLIGHT_REQUIRED":"EXACT_ID_REQUIRED",
