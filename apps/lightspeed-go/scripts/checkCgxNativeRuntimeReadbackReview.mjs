@@ -74,7 +74,7 @@ test('mismatched slot and invalid runtime source hash fail closed',()=>{
  denied(x=>{x.runtime_status.source_head='unverified';},'RUNTIME_STATUS_SHAPE_INVALID');
 });
 test('status receipt paths are references only and cannot smuggle authority',()=>{
- const x=fixture();x.runtime_status.recent_receipts=['D:/review/_receipts/neo-review-status-20261028T100000Z.json'];
+ const x=fixture();x.runtime_status.recent_receipts=['D:/review/_receipts/neo-review-configure-20261028T100000Z.json'];
  assert.equal(review(x).dbr_readback_verified,false);
  denied(x=>{x.runtime_status.signed_lease=true;},'RUNTIME_STATUS_SHAPE_INVALID');
 });
@@ -237,7 +237,7 @@ test('review bounds job count independently of native runtime claims',()=>{
 
 test('Windows ADS and illegal receipt filename characters are rejected before host review',()=>{
  const valid=fixture();
- valid.runtime_status.recent_receipts=['D:/review/_receipts/neo-review-status-20261028.json'];
+ valid.runtime_status.recent_receipts=['D:/review/_receipts/neo-review-configure-20261028T100000Z.json'];
  assert.equal(review(valid).state,'AUTHENTICATED_HOST_READBACK_REQUIRED');
  for(const bad of [
   'D:/review/_receipts/neo-review-status:forged.json',
@@ -318,4 +318,19 @@ test('POSIX backslashes cannot alias distinct runtime or startup paths',()=>{
    [k,v.replace('D:/LightSpeed/App/','/tmp/app/')]));
  y.startup_profile.source_files.settings='/tmp/app/config\\settings.json';
  assert.equal(review(y).hold_code,'STARTUP_PROFILE_SHAPE_INVALID');
+});
+
+
+test('Python operator receipt action and UTC timestamp contract fail closed',()=>{
+ for(const action of ['configure','install','install-installer','update','update-installer','rollback']){
+  const x=fixture();x.runtime_status.recent_receipts=[`D:/review/_receipts/neo-review-${action}-20261028T100000Z.json`];
+  assert.equal(review(x).state,'AUTHENTICATED_HOST_READBACK_REQUIRED',action);
+ }
+ for(const bad of ['status-20261028T100000Z.json',
+  'native-admitted-20261028T100000Z.json','install-receipt.json',
+  'rollback-20261028T250000Z.json','install-20261328T100000Z.json',
+  'install-20261028T100000Z.txt']){
+  denied(x=>{x.runtime_status.recent_receipts=[`D:/review/_receipts/neo-review-${bad}`];},
+   'RUNTIME_STATUS_SHAPE_INVALID');
+ }
 });
