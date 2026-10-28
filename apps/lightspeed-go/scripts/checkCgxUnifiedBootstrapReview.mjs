@@ -8,8 +8,8 @@ const steps=['discover','resume','identity','sources','load','tools','runtime',
 function fixture(){
  return {
   source_pin:{repository:'achillesromer-coder/LightSpeed',pr:206,
-   head_sha:'34f45718c13a1667bdb49fb6aea6736f4bf703eb',
-   bootstrap_blob_sha:'dde0600c354799dbb428183c83ece7403b933b45',
+   head_sha:'f331ce56a70018550b92b9b4ce9dbebbf05a719d',
+   bootstrap_blob_sha:'0d9bb63fa5d300e96150589f6bb01666f0bd8442',
    provider_verified:false,native_admitted:false},
   bootstrap_plan:{schema:'CGX-UNIFIED-BOOTSTRAP-PLAN/0.1',state:'REVIEW_ONLY',
    family:'LS.cgx',existing_runtime:{
@@ -93,4 +93,9 @@ test('secret-bearing fields are rejected without echo',()=>{
 test('no fake native admission or source-body copy',()=>{
  denied(x=>{x.semantic_review.native_admitted=true;},'SEMANTIC_HOST_REVIEW_UNQUALIFIED');
  denied(x=>{x.semantic_review.source_bytes_copied=1;},'SEMANTIC_HOST_REVIEW_UNQUALIFIED');
+});
+
+test('superseded historical bootstrap pins are rejected despite valid SHA syntax',()=>{
+ denied(x=>{x.source_pin.head_sha='34f45718c13a1667bdb49fb6aea6736f4bf703eb';},'BOOTSTRAP_SOURCE_PIN_UNQUALIFIED');
+ denied(x=>{x.source_pin.bootstrap_blob_sha='dde0600c354799dbb428183c83ece7403b933b45';},'BOOTSTRAP_SOURCE_PIN_UNQUALIFIED');
 });
