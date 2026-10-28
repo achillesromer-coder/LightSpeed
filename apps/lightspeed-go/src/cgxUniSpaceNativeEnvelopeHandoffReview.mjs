@@ -9,6 +9,14 @@
 export const SCHEMA = "UNISPACE-NATIVE-ENVELOPE-HANDOFF-REVIEW/0.1";
 const PARENT = "Cognigrex.cgx";
 const CHILDREN = new Set(["Romer.cgx", "Eco.cgx", "EMASSC.cgx", "LS.cgx"]);
+// Native source_intake.py::_adapter_for extension mapping; declarative only.
+const NATIVE_ADAPTER_BY_EXTENSION = Object.freeze({
+  txt:"text-stdlib-v0.1",md:"text-stdlib-v0.1",csv:"csv-stdlib-v0.1",json:"json-stdlib-v0.1",
+  pdf:"pdf-pypdf-v0.1",png:"image-metadata-stdlib-v0.1",
+  jpg:"image-metadata-stdlib-v0.1",jpeg:"image-metadata-stdlib-v0.1",
+  webp:"image-reference-v0.1",obj:"obj-mesh-stdlib-v0.1",
+  stl:"stl-mesh-stdlib-v0.1",glb:"gltf-stdlib-v0.1",gltf:"gltf-stdlib-v0.1"
+});
 const SHA256 = /^[0-9a-f]{64}$/i;
 const SHA1 = /^[0-9a-f]{40}$/i;
 const MAX_BYTES = 60 * 1024 * 1024;
@@ -75,6 +83,7 @@ export function reviewNativeEnvelopeHandoff(input = {}) {
       typeof e.source_name !== "string" || !e.source_name ||
       typeof e.media_type !== "string" || !e.media_type ||
       typeof e.adapter_id !== "string" || !e.adapter_id ||
+      e.adapter_id !== NATIVE_ADAPTER_BY_EXTENSION[p.file_type] ||
       typeof e.authority !== "string" || !e.authority ||
       typeof e.evidence_state !== "string" || !e.evidence_state ||
       typeof e.release_class !== "string" || !e.release_class ||
