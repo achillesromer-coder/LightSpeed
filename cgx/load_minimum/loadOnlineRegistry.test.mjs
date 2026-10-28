@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {validateRegistry,searchLoad,resolveLoad,planScopedLoad} from './loadOnlineRegistry.mjs';
 const data=JSON.parse(readFileSync(new URL('./online_registry_projection_2026-10-28.json',import.meta.url),'utf8'));
 const copy=x=>JSON.parse(JSON.stringify(x));
-test('Git catalogue is valid and source linked',()=>assert.equal(validateRegistry(data).reference_count,128));
+test('Git catalogue is valid and source linked',()=>assert.equal(validateRegistry(data).reference_count,131));
 test('all nine selectors preserved',()=>assert.equal(searchLoad(data,{category:'selector',limit:50}).total,9));
 test('45 unique CCC route keys indexed',()=>assert.equal(searchLoad(data,{category:'ccc_route',limit:100}).total,45));
 test('adapter is discoverable without claiming installed execution',()=>{
