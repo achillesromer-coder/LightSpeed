@@ -4,6 +4,8 @@
  * cannot authenticate a host, verify installation, accept a DBR, or run setup.
  */
 export const SCHEMA='CGX-LS-NATIVE-RUNTIME-READBACK-REVIEW/0.1';
+const BOOTSTRAP_HEAD='f331ce56a70018550b92b9b4ce9dbebbf05a719d';
+const BOOTSTRAP_BLOB='0d9bb63fa5d300e96150589f6bb01666f0bd8442';
 const FLOOR_IDS=Object.freeze({
  Trinity:'Z+3_Trinity',Neo:'Z+2_Neo',Architect:'Z+1_Architect',
  TheConstruct:'Z0_TheConstruct',Morpheus:'Z-1_Morpheus',
@@ -153,7 +155,7 @@ export function reviewNativeRuntimeReadback(input){
   !id(b.capability_id)||!sha(b.load_source_revision)||
   b.runtime_owner!=='lightspeed_runtime.runtime_productization'||
   b.startup_owner!=='lightspeed_runtime.startup_options'||
-  !sha(b.bootstrap_source_head)||!sha(b.bootstrap_source_blob)||
+  b.bootstrap_source_head!==BOOTSTRAP_HEAD||b.bootstrap_source_blob!==BOOTSTRAP_BLOB||
   ['native_admitted','capability_installed','host_authenticated',
    'lease_verified','dbr_readback_verified','canonical_mutation',
    'ls_go_enabled'].some(k=>b[k]!==false)||b.source_bytes_copied!==0)
