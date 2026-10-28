@@ -8,11 +8,14 @@ export const ACTIONS = Object.freeze({
   'load.hydrate': 'review',
   'ccc.discover': 'review',
   'ccc.install': 'wizard',
+  'load.switch_view': 'review',
+  'load.match_novel': 'review',
+  'load.tune_context': 'review',
 });
 export const MENUS = Object.freeze({
-  filespace: ['alexandria.open','alexandria.resolve','load.attach','load.hydrate','ccc.discover','ccc.install'],
-  object: ['alexandria.resolve','alexandria.sources','ccc.discover'],
-  file: ['alexandria.resolve','alexandria.sources'],
+  filespace: ['alexandria.open','alexandria.resolve','load.attach','load.hydrate','ccc.discover','ccc.install','load.switch_view','load.match_novel','load.tune_context'],
+  object: ['alexandria.resolve','alexandria.sources','ccc.discover','load.switch_view','load.match_novel','load.tune_context'],
+  file: ['alexandria.resolve','alexandria.sources','load.match_novel'],
 });
 const BAD = /[\u0000-\u001f]/;
 const UNSAFE = /(?:^|[\\/])\.\.(?:[\\/]|$)/;
