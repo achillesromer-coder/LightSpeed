@@ -31,7 +31,7 @@ function validObservedAt(v){
 function validateConcept(x){
  if(!obj(x)||!ECO_TYPES.has(x.semantic_type)||!stringList(x.source_refs))throw Error("INVALID_ECO_CONCEPT");
  if(x.object_id!==undefined&&!good(x.object_id))throw Error("INVALID_OBJECT_ID");
- for(const f of [...IDENTITY,"observed_at","method_id","unit","frame","environment_id","configuration","epoch","aggregation_scope","baseline_id","observed_variable","native_interval","aggregation_period","station_instrument_id","qa_flag","missing_data_state","calibration_verification_ref","siting_metadata_ref","source_provenance_ref","measurement_basis","correction_method_id","uncertainty_basis"]){
+ for(const f of [...IDENTITY,"observed_at","method_id","unit","frame","environment_id","configuration","epoch","aggregation_scope","baseline_id","observed_variable","native_interval","aggregation_period","station_instrument_id","qa_flag","missing_data_state","calibration_verification_ref","siting_metadata_ref","source_provenance_ref","measurement_basis","correction_method_id","uncertainty_basis","result_qualifier"]){
   if(x[f]!==undefined&&x[f]!==null&&!good(x[f]))throw Error("INVALID_ECO_FIELD_"+f);
  }
  if(x.sample_count!==undefined&&(!Number.isSafeInteger(x.sample_count)||x.sample_count<1))throw Error("INVALID_SAMPLE_COUNT");
@@ -55,6 +55,11 @@ function validateConcept(x){
   const u=x.measurement_uncertainty;
   if(!obj(u)||typeof u.value!=="number"||!Number.isFinite(u.value)||u.value<0||!good(u.unit))
    throw Error("INVALID_MEASUREMENT_UNCERTAINTY");
+ }
+ if(x.result_qualifier!==undefined&&!["quantified","below_detection_limit","below_quantification_limit","above_range"].includes(x.result_qualifier))throw Error("INVALID_RESULT_QUALIFIER");
+ if(x.reporting_bound!==undefined){
+  const b=x.reporting_bound;
+  if(!obj(b)||!["LOD","LOQ","UPPER_RANGE"].includes(b.kind)||typeof b.value!=="number"||!Number.isFinite(b.value)||b.value<=0||!good(b.unit)||(b.method_ref!==undefined&&!good(b.method_ref)))throw Error("INVALID_REPORTING_BOUND");
  }
 }
 const add=(checks,c)=>{if(!checks.includes(c))checks.push(c)};
@@ -87,6 +92,8 @@ function compare(a,b,checks){
  }
  if(!equal(a.measurement_uncertainty??null,b.measurement_uncertainty??null))
   add(checks,"MEASUREMENT_UNCERTAINTY_DIFFERENT_OR_UNDECLARED");
+ if(a.result_qualifier!==b.result_qualifier)add(checks,"RESULT_QUALIFIER_DIFFERENT_OR_UNDECLARED");
+ if(!equal(a.reporting_bound??null,b.reporting_bound??null))add(checks,"REPORTING_BOUND_DIFFERENT_OR_UNDECLARED");
  // Field QA, missingness and instrument provenance are independent of measured value.
  for(const [field,flag] of [
   ["station_instrument_id","INSTRUMENT_ID_DIFFERENT_OR_UNDECLARED"],
@@ -129,6 +136,20 @@ function completeness(x,checks){
   if(!x.measurement)add(checks,"UNCERTAINTY_WITHOUT_MEASUREMENT");
   if(!good(x.uncertainty_basis))add(checks,"UNCERTAINTY_BASIS_REQUIRED");
   if(x.measurement&&x.measurement_uncertainty.unit!==x.measurement.unit)add(checks,"UNCERTAINTY_UNIT_CONFLICT");
+ }
+
+ // Censored reports are bounds, not measured point values.
+ if(x.reporting_bound&&!good(x.result_qualifier))add(checks,"RESULT_QUALIFIER_REQUIRED");
+ if(x.reporting_bound){
+  if(!good(x.reporting_bound.method_ref))add(checks,"REPORTING_BOUND_METHOD_REQUIRED");
+  if(good(x.unit)&&x.reporting_bound.unit!==x.unit)add(checks,"REPORTING_BOUND_UNIT_CONFLICT");
+ }
+ const kinds={below_detection_limit:"LOD",below_quantification_limit:"LOQ",above_range:"UPPER_RANGE"};
+ if(kinds[x.result_qualifier]){
+  add(checks,"CENSORED_RESULT_REQUIRES_REVIEW");
+  if(!x.reporting_bound)add(checks,"CENSORED_REPORTING_BOUND_REQUIRED");
+  else if(x.reporting_bound.kind!==kinds[x.result_qualifier])add(checks,"CENSOR_BOUND_KIND_MISMATCH");
+  if(x.measurement)add(checks,"CENSORED_RESULT_NUMERIC_POINT_CONFLICT");
  }
  if(OBSERVATIONS.has(x.semantic_type)){
   // These optional source QA fields must never silently certify an observation.
