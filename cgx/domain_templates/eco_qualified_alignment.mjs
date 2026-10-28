@@ -88,6 +88,20 @@ function validateConcept(x){
   for(const f of ["baseline_ref","control_ref","seasonal_alignment_ref","method_comparability_ref","detectability_model_ref","sampling_design_ref"])
    if(c[f]!==undefined&&!good(c[f]))throw Error("INVALID_SURVEY_COMPARISON_"+f.toUpperCase());
  }
+
+ // Source-only receiving pathway declaration; a claimed link is not verified hydrology.
+ if(x.receiving_pathway!==undefined){
+  const p=x.receiving_pathway;
+  if(!obj(p)||typeof p.proposed!=="boolean")throw Error("INVALID_RECEIVING_PATHWAY");
+  for(const [field,allowed] of [
+   ["pathway_kind",["surface_water","groundwater","coastal","unknown"]],
+   ["outcome_claim",["none","hypothesised","simulated","source_asserted","observed"]],
+   ["site_condition",["intact","self_repairing","degraded","unknown"]],
+   ["action",["protect_monitor","intervene","undetermined"]]])
+   if(p[field]!==undefined&&!allowed.includes(p[field]))throw Error("INVALID_RECEIVING_"+field.toUpperCase());
+  for(const field of ["source_system_ref","target_system_ref","pathway_evidence_ref","spatial_frame_ref","baseline_ref","method_ref","counterevidence_ref","accounting_scope_ref","field_receipt_ref","custodial_review_ref"])
+   if(p[field]!==undefined&&!good(p[field]))throw Error("INVALID_RECEIVING_"+field.toUpperCase());
+ }
  if(x.measurement_basis!==undefined&&!["raw","corrected","derived","reference"].includes(x.measurement_basis))throw Error("INVALID_MEASUREMENT_BASIS");
  if(x.measurement_uncertainty!==undefined){
   const u=x.measurement_uncertainty;
@@ -137,6 +151,7 @@ function compare(a,b,checks){
  if(!equal(a.fungal_inoculation??null,b.fungal_inoculation??null))add(checks,"FUNGAL_TREATMENT_DISPOSITION_OR_EVIDENCE_DIFFERENT");
  if(!equal(a.survey??null,b.survey??null))add(checks,"SURVEY_EFFORT_METHOD_OR_DETECTION_DIFFERENT");
  if(!equal(a.survey_comparison??null,b.survey_comparison??null))add(checks,"SURVEY_COMPARISON_DESIGN_DIFFERENT");
+ if(!equal(a.receiving_pathway??null,b.receiving_pathway??null))add(checks,"RECEIVING_PATHWAY_PROVENANCE_OR_SCOPE_DIFFERENT");
  // Field QA, missingness and instrument provenance are independent of measured value.
  for(const [field,flag] of [
   ["station_instrument_id","INSTRUMENT_ID_DIFFERENT_OR_UNDECLARED"],
@@ -236,6 +251,39 @@ function completeness(x,checks){
    ["detectability_model_ref","SURVEY_COMPARISON_DETECTABILITY_REQUIRED"],
    ["sampling_design_ref","SURVEY_COMPARISON_SAMPLING_DESIGN_REQUIRED"]])
    if(!good(x.survey_comparison[field]))add(checks,flag);
+ }
+
+ // Receiving-system impact and intervention assertions require independent review.
+ if(x.receiving_pathway?.proposed){
+  const p=x.receiving_pathway;
+  add(checks,"RECEIVING_PATHWAY_REVIEW_REQUIRED");
+  for(const [field,flag] of [
+   ["source_system_ref","RECEIVING_SOURCE_SYSTEM_REQUIRED"],
+   ["target_system_ref","RECEIVING_TARGET_SYSTEM_REQUIRED"],
+   ["pathway_kind","RECEIVING_PATHWAY_KIND_REQUIRED"],
+   ["pathway_evidence_ref","RECEIVING_PATHWAY_EVIDENCE_REQUIRED"],
+   ["spatial_frame_ref","RECEIVING_SPATIAL_FRAME_REQUIRED"],
+   ["site_condition","RECEIVING_SITE_CONDITION_REQUIRED"],
+   ["action","RECEIVING_ACTION_REQUIRED"],
+   ["outcome_claim","RECEIVING_OUTCOME_BASIS_REQUIRED"]])
+   if(!good(p[field]))add(checks,flag);
+  if(good(p.source_system_ref)&&p.source_system_ref===p.target_system_ref)add(checks,"RECEIVING_SELF_LINK_REVIEW_REQUIRED");
+  if(p.pathway_kind==="unknown")add(checks,"RECEIVING_PATHWAY_TYPE_UNRESOLVED");
+  if(["intact","self_repairing"].includes(p.site_condition)&&p.action==="intervene")add(checks,"INTACT_SYSTEM_INTERVENTION_REVIEW_REQUIRED");
+  if(p.outcome_claim&&p.outcome_claim!=="none"){
+   add(checks,"RECEIVING_OUTCOME_NOT_VERIFIED");
+   add(checks,"RECEIVING_NO_DOUBLE_COUNT_REVIEW_REQUIRED");
+   for(const [field,flag] of [
+    ["baseline_ref","RECEIVING_BASELINE_REQUIRED"],
+    ["method_ref","RECEIVING_OUTCOME_METHOD_REQUIRED"],
+    ["counterevidence_ref","RECEIVING_COUNTEREVIDENCE_REQUIRED"],
+    ["accounting_scope_ref","RECEIVING_ACCOUNTING_SCOPE_REQUIRED"]])
+    if(!good(p[field]))add(checks,flag);
+   if(p.outcome_claim==="observed"){
+    add(checks,"RECEIVING_OBSERVED_CLAIM_REQUIRES_INDEPENDENT_REVIEW");
+    if(!good(p.field_receipt_ref))add(checks,"RECEIVING_FIELD_RECEIPT_REQUIRED");
+   }
+  }
  }
  // Censored reports are bounds, not measured point values.
  if(x.reporting_bound&&!good(x.result_qualifier))add(checks,"RESULT_QUALIFIER_REQUIRED");
