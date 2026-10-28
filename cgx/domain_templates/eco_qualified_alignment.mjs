@@ -50,6 +50,14 @@ function validateConcept(x){
   if(!obj(x.measurement)||typeof x.measurement.value!=="number"||!Number.isFinite(x.measurement.value)||
    !good(x.measurement.unit))throw Error("INVALID_MEASUREMENT");
  }
+ // BioBlocks: native species identity does not establish biological movement safety.
+ if(x.biological_transfer!==undefined){
+  const b=x.biological_transfer;
+  if(!obj(b)||typeof b.proposed!=="boolean"||!["none","seed","spore","inoculum","soil_root","plant_material","organic_substrate","equipment"].includes(b.carrier_class)||(b.proposed&&b.carrier_class==="none"))throw Error("INVALID_BIOLOGICAL_TRANSFER");
+  for(const f of ["origin_ref","destination_ref","provenance_ref","movement_rule_ref","biosecurity_review_ref","custodial_authority_ref"]){
+   if(b[f]!==undefined&&!good(b[f]))throw Error("INVALID_BIOLOGICAL_TRANSFER_"+f.toUpperCase());
+  }
+ }
  if(x.measurement_basis!==undefined&&!["raw","corrected","derived","reference"].includes(x.measurement_basis))throw Error("INVALID_MEASUREMENT_BASIS");
  if(x.measurement_uncertainty!==undefined){
   const u=x.measurement_uncertainty;
@@ -94,6 +102,7 @@ function compare(a,b,checks){
   add(checks,"MEASUREMENT_UNCERTAINTY_DIFFERENT_OR_UNDECLARED");
  if(a.result_qualifier!==b.result_qualifier)add(checks,"RESULT_QUALIFIER_DIFFERENT_OR_UNDECLARED");
  if(!equal(a.reporting_bound??null,b.reporting_bound??null))add(checks,"REPORTING_BOUND_DIFFERENT_OR_UNDECLARED");
+ if(!equal(a.biological_transfer??null,b.biological_transfer??null))add(checks,"BIOLOGICAL_TRANSFER_SCOPE_OR_PROVENANCE_DIFFERENT");
  // Field QA, missingness and instrument provenance are independent of measured value.
  for(const [field,flag] of [
   ["station_instrument_id","INSTRUMENT_ID_DIFFERENT_OR_UNDECLARED"],
@@ -138,6 +147,13 @@ function completeness(x,checks){
   if(x.measurement&&x.measurement_uncertainty.unit!==x.measurement.unit)add(checks,"UNCERTAINTY_UNIT_CONFLICT");
  }
 
+ // Proposed movement always requires specialist and applicable custodial/statutory review.
+ if(x.biological_transfer?.proposed){
+  add(checks,"BIOLOGICAL_TRANSFER_REVIEW_REQUIRED");
+  for(const [f,flag] of [["origin_ref","BIOLOGICAL_TRANSFER_ORIGIN_REQUIRED"],["destination_ref","BIOLOGICAL_TRANSFER_DESTINATION_REQUIRED"],["provenance_ref","BIOLOGICAL_TRANSFER_PROVENANCE_REQUIRED"],["movement_rule_ref","BIOLOGICAL_TRANSFER_MOVEMENT_RULE_REQUIRED"],["biosecurity_review_ref","BIOLOGICAL_TRANSFER_REVIEW_RECEIPT_REQUIRED"]]){
+   if(!good(x.biological_transfer[f]))add(checks,flag);
+  }
+ }
  // Censored reports are bounds, not measured point values.
  if(x.reporting_bound&&!good(x.result_qualifier))add(checks,"RESULT_QUALIFIER_REQUIRED");
  if(x.reporting_bound){
