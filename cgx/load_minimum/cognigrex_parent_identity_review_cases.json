@@ -103,6 +103,11 @@
       "id": "C14",
       "input": "A regenerated pre-canonical S92 child carrier retains its semantic Object_ID label but differs from unavailable original historical instance bytes/hash",
       "expected": "DISTINCT_CARRIER_INSTANCE; preserve both source histories and do not claim exact-byte equivalence, promotion or accepted child authority without independently verified native receipts"
+    },
+    {
+      "id": "C15",
+      "input": "An R0 S92 recovery carrier classified Restricted / Internal by its exact root-promotion receipt currently has Google Drive anyone-with-link reader permission, while a separate R0_REFERENCE_ONLY private copy is owner-only.",
+      "expected": "SOURCE_RIGHTS_ACL_HOLD; do not treat link readability as redistribution permission, source-to-native admission, public projection approval or reason to mutate original permissions. Escalate visibility decision to the existing security owner; retain original and private reference as distinct provider instances."
     }
   ],
   "validation_state": "STATIC_SOURCE_REVIEW_ONLY",
@@ -168,5 +173,31 @@
     "no_canonical_write": true,
     "owner_authority_effect": "NONE",
     "public_payload_policy": "Hashes, sizes, archive member names and source-only caveats only; no original source bodies, personal content, access keys or private URLs."
+  },
+  "source_visibility_gate": {
+    "observation_date": "2026-10-28",
+    "evidence_class": "AUTHENTICATED_DRIVE_PERMISSION_METADATA_PLUS_EXACT_PRIVATE_R0_RECEIPT_BYTES",
+    "historical_receipt_schema": "CGX-ROOT-PROMOTION-RECEIPT/0.1",
+    "private_reference_receipt_sha256": "abd448a288d6122d3a3f4c951ca0320aa9db51f7d64f924e33e2adf8f3de6fe6",
+    "historical_classification": "Restricted / Internal",
+    "historical_public_projection": "opaque receipt reference only",
+    "current_original_recovery_carrier_permission": "anyone:reader; allowFileDiscovery=false",
+    "current_recovery_parent_permission": "anyone:reader; allowFileDiscovery=false",
+    "current_private_reference_copy_permission": "owner-only; no anyone permission",
+    "current_private_intake_root_permission": "owner-only; no anyone permission",
+    "classification_vs_acl": "MISMATCH_REQUIRES_OWNER_REVIEW",
+    "native_admission_effect": "NONE",
+    "rights_inference": "NONE",
+    "permission_mutations": "NONE",
+    "owners": {
+      "source_rights": "Cognigrex parent",
+      "security_visibility": "Achilles / existing issue #158"
+    },
+    "next_negative_test": "Without changing permissions, check unauthenticated and revoked read surfaces, inheritance, and approved public-safe projection only after owner authorization.",
+    "limits": [
+      "Private reference receipt bytes are not independently proven equal to the original historical receipt in this run.",
+      "Provider permission metadata establishes sharing configuration, not a live unauthenticated download test.",
+      "No native RootAuthority or DBR readback performed."
+    ]
   }
 }
