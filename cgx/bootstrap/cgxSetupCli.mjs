@@ -6,14 +6,14 @@
  * the separate native authenticated host, not from CLI argument flags.
  */
 import {planCGXSetup,planOngoingSetup} from './unifiedBootstrap.mjs';
-const supported=new Set(['--family','--mode','--profile','--device','--ls-go','--got','--offline','--help']);
+const supported=new Set(['--family','--mode','--profile','--device','--ls-go','--offline','--help']);
 function parse(argv){
  const x={};
  for(let i=0;i<argv.length;i++){
   const [k,v]=argv[i].split('=',2);
   if(!supported.has(k))throw Error('UNKNOWN_OPTION:'+k);
   if(k==='--help')return {help:true};
-  if(['--ls-go','--got','--offline'].includes(k)){
+  if(['--ls-go','--offline'].includes(k)){
    const actual=v??'true';
    if(!['true','false'].includes(actual))throw Error('INVALID_BOOLEAN:'+k);
    x[k.slice(2)]=actual==='true';
@@ -32,7 +32,7 @@ try{
   process.stdout.write('node cgx/bootstrap/cgxSetupCli.mjs --family Romer.cgx --mode first-run --device desktop --profile core --ls-go=true\n');
  }else{
   const plan=planCGXSetup({family:args.family,mode:args.mode??'first-run',device:args.device??'desktop',
-   profile:args.profile??'core',lsGORequested:args['ls-go']===true,gotRequested:args.got===true,
+   profile:args.profile??'core',lsGORequested:args['ls-go']===true,
    offlinePreferred:args.offline!==false});
   if(plan.state==='DENIED')process.exitCode=2;
   process.stdout.write(JSON.stringify({
