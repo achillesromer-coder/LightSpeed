@@ -1409,8 +1409,14 @@
       "category": "ccc_route",
       "source_key": "assurance.mpl.probe",
       "display": "assurance.mpl.probe",
-      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
-      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+      "source_git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e",
+      "route_source_proofs": {
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        }
+      },
       "selector_sources": [
         "romer-grex"
       ],
@@ -1425,6 +1431,44 @@
       "display": "assurance.preflight",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -1445,8 +1489,18 @@
       "category": "ccc_route",
       "source_key": "cad.freecad",
       "display": "cad.freecad",
-      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
-      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "source_registry": "plugins/packages/raphael/references/capabilities.json",
+      "source_git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf",
+      "route_source_proofs": {
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        }
+      },
       "selector_sources": [
         "raphael",
         "romer-grex"
@@ -1460,8 +1514,18 @@
       "category": "ccc_route",
       "source_key": "cad.freecad.bom",
       "display": "cad.freecad.bom",
-      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
-      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "source_registry": "plugins/packages/raphael/references/capabilities.json",
+      "source_git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf",
+      "route_source_proofs": {
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        }
+      },
       "selector_sources": [
         "raphael",
         "romer-grex"
@@ -1475,8 +1539,18 @@
       "category": "ccc_route",
       "source_key": "cad.freecad.probe",
       "display": "cad.freecad.probe",
-      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
-      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "source_registry": "plugins/packages/raphael/references/capabilities.json",
+      "source_git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf",
+      "route_source_proofs": {
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        }
+      },
       "selector_sources": [
         "raphael",
         "romer-grex"
@@ -1492,6 +1566,44 @@
       "display": "cgx.cross_analysis",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -1514,6 +1626,44 @@
       "display": "cgx.minimum_work",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -1536,6 +1686,44 @@
       "display": "cgx.object_context",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -1558,6 +1746,44 @@
       "display": "cgx.plan_query",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -1580,6 +1806,44 @@
       "display": "cgx.resolve_context",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -1602,6 +1866,44 @@
       "display": "consequence.preflight",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -1624,6 +1926,44 @@
       "display": "custodial.preflight",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -1644,8 +1984,18 @@
       "category": "ccc_route",
       "source_key": "data.validate",
       "display": "data.validate",
-      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
-      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "source_registry": "plugins/packages/achilles/references/capabilities.json",
+      "source_git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        }
+      },
       "selector_sources": [
         "achilles",
         "emassc"
@@ -1661,6 +2011,44 @@
       "display": "definitions.search",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -1681,8 +2069,18 @@
       "category": "ccc_route",
       "source_key": "eco.assess",
       "display": "eco.assess",
-      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
-      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "source_registry": "plugins/packages/athene/references/capabilities.json",
+      "source_git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84",
+      "route_source_proofs": {
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        }
+      },
       "selector_sources": [
         "athene",
         "eco-grex"
@@ -1698,6 +2096,44 @@
       "display": "extensions.plan",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -1720,6 +2156,44 @@
       "display": "extensions.tool",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -1740,8 +2214,14 @@
       "category": "ccc_route",
       "source_key": "files.list",
       "display": "files.list",
-      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
-      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+      "source_git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0",
+      "route_source_proofs": {
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "lightspeed"
       ],
@@ -1754,8 +2234,14 @@
       "category": "ccc_route",
       "source_key": "files.open",
       "display": "files.open",
-      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
-      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+      "source_git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0",
+      "route_source_proofs": {
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "lightspeed"
       ],
@@ -1768,8 +2254,14 @@
       "category": "ccc_route",
       "source_key": "governance.action_ledger",
       "display": "governance.action_ledger",
-      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
-      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "source_registry": "plugins/packages/emassc/references/capabilities.json",
+      "source_git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7",
+      "route_source_proofs": {
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        }
+      },
       "selector_sources": [
         "emassc"
       ],
@@ -1784,6 +2276,44 @@
       "display": "interface.capabilities",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -1806,6 +2336,44 @@
       "display": "interface.help",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -1826,8 +2394,14 @@
       "category": "ccc_route",
       "source_key": "knowns.proof_queue",
       "display": "knowns.proof_queue",
-      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
-      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "source_registry": "plugins/packages/achilles/references/capabilities.json",
+      "source_git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        }
+      },
       "selector_sources": [
         "achilles"
       ],
@@ -1840,8 +2414,18 @@
       "category": "ccc_route",
       "source_key": "knowns.read",
       "display": "knowns.read",
-      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
-      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "source_registry": "plugins/packages/achilles/references/capabilities.json",
+      "source_git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        }
+      },
       "selector_sources": [
         "achilles",
         "emassc"
@@ -1857,6 +2441,44 @@
       "display": "local.supervise",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -1879,6 +2501,44 @@
       "display": "node.compute",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -1901,6 +2561,44 @@
       "display": "node.exchange.status",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -1923,6 +2621,44 @@
       "display": "node.transfer",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -1943,8 +2679,14 @@
       "category": "ccc_route",
       "source_key": "ops.consolidate",
       "display": "ops.consolidate",
-      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
-      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+      "source_git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0",
+      "route_source_proofs": {
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "lightspeed"
       ],
@@ -1957,8 +2699,22 @@
       "category": "ccc_route",
       "source_key": "ops.finalize",
       "display": "ops.finalize",
-      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
-      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "source_registry": "plugins/packages/achilles/references/capabilities.json",
+      "source_git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "emassc",
@@ -1975,6 +2731,44 @@
       "display": "ops.health",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -1995,8 +2789,18 @@
       "category": "ccc_route",
       "source_key": "ops.queue",
       "display": "ops.queue",
-      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
-      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "source_registry": "plugins/packages/neo/references/capabilities.json",
+      "source_git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba",
+      "route_source_proofs": {
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "neo",
         "lightspeed"
@@ -2012,6 +2816,44 @@
       "display": "ops.route_probe",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -2032,8 +2874,14 @@
       "category": "ccc_route",
       "source_key": "physics.femm.probe",
       "display": "physics.femm.probe",
-      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
-      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "source_registry": "plugins/packages/raphael/references/capabilities.json",
+      "source_git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf",
+      "route_source_proofs": {
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        }
+      },
       "selector_sources": [
         "raphael"
       ],
@@ -2048,6 +2896,44 @@
       "display": "portfolio.printable_catalogue",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -2068,8 +2954,14 @@
       "category": "ccc_route",
       "source_key": "protocols.build",
       "display": "protocols.build",
-      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
-      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "source_registry": "plugins/packages/achilles/references/capabilities.json",
+      "source_git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        }
+      },
       "selector_sources": [
         "achilles"
       ],
@@ -2084,6 +2976,44 @@
       "display": "receipts.list",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -2106,6 +3036,44 @@
       "display": "receipts.open",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -2128,6 +3096,44 @@
       "display": "runtime.productization",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -2148,8 +3154,18 @@
       "category": "ccc_route",
       "source_key": "science.gmat.probe",
       "display": "science.gmat.probe",
-      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
-      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "source_registry": "plugins/packages/raphael/references/capabilities.json",
+      "source_git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf",
+      "route_source_proofs": {
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        }
+      },
       "selector_sources": [
         "raphael",
         "romer-grex"
@@ -2163,8 +3179,18 @@
       "category": "ccc_route",
       "source_key": "science.mark3_simulate",
       "display": "science.mark3_simulate",
-      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
-      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "source_registry": "plugins/packages/raphael/references/capabilities.json",
+      "source_git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf",
+      "route_source_proofs": {
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        }
+      },
       "selector_sources": [
         "raphael",
         "romer-grex"
@@ -2180,6 +3206,44 @@
       "display": "science.query",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -2200,8 +3264,18 @@
       "category": "ccc_route",
       "source_key": "science.rfs_emff_sweep",
       "display": "science.rfs_emff_sweep",
-      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
-      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "source_registry": "plugins/packages/raphael/references/capabilities.json",
+      "source_git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf",
+      "route_source_proofs": {
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        }
+      },
       "selector_sources": [
         "raphael",
         "romer-grex"
@@ -2217,6 +3291,44 @@
       "display": "sources.envelope",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
@@ -2239,6 +3351,44 @@
       "display": "tests.plan",
       "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
       "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
       "selector_sources": [
         "achilles",
         "neo",
