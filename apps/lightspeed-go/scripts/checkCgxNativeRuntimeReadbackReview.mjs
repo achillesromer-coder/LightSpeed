@@ -24,7 +24,7 @@ function fixture(){
   runtime_status:{schema:'LIGHTSPEED-RUNTIME-PRODUCTIZATION-STATUS/0.1',
    slot:'neo-review',source_head:'b'.repeat(40),managed_root:'D:/review',
    slot_root:'D:/review/neo-review',managed_marker:false,configured:false,
-   profile:'core',installed:false,python:'D:/review/venv/Scripts/python.exe',
+   profile:'core',installed:false,python:'D:/review/neo-review/venv/Scripts/python.exe',
    recent_receipts:[],authority:'status-only'},
   startup_profile:{root:'D:/LightSpeed/App',
    source_files:{settings:'D:/LightSpeed/App/config/settings.json'},
@@ -65,7 +65,7 @@ test('mismatched slot and invalid runtime source hash fail closed',()=>{
  denied(x=>{x.runtime_status.source_head='unverified';},'RUNTIME_STATUS_SHAPE_INVALID');
 });
 test('status receipt paths are references only and cannot smuggle authority',()=>{
- const x=fixture();x.runtime_status.recent_receipts=['D:/review/receipt.json'];
+ const x=fixture();x.runtime_status.recent_receipts=['D:/review/_receipts/neo-review-status-20261028T100000Z.json'];
  assert.equal(review(x).dbr_readback_verified,false);
  denied(x=>{x.runtime_status.signed_lease=true;},'RUNTIME_STATUS_SHAPE_INVALID');
 });
@@ -120,4 +120,47 @@ test('managed slot ABI preserves the 48-character bound, rejects 49',()=>{
  assert.equal(review(good).state,'AUTHENTICATED_HOST_READBACK_REQUIRED');
  denied(x=>{x.request.slot='n'.repeat(49);x.runtime_status.slot=x.request.slot;},
   'REQUEST_SCOPE_MISMATCH');
+});
+
+test('runtime paths must be lexically bound to the declared managed slot',()=>{
+ denied(x=>{x.runtime_status.slot_root='D:/elsewhere/neo-review';},
+  'RUNTIME_STATUS_SHAPE_INVALID');
+ denied(x=>{x.runtime_status.python='D:/review/other/venv/Scripts/python.exe';},
+  'RUNTIME_STATUS_SHAPE_INVALID');
+ denied(x=>{x.runtime_status.python='D:/review/neo-review/venv/bin/python';},
+  'RUNTIME_STATUS_SHAPE_INVALID');
+});
+test('relative, traversal and UNC runtime paths fail closed',()=>{
+ for(const bad of ['review','D:/review/../other','//server/share','D://review']){
+  denied(x=>{x.runtime_status.managed_root=bad;},'RUNTIME_STATUS_SHAPE_INVALID');
+ }
+ denied(x=>{x.runtime_status.slot_root='D:/review/../review/neo-review';},
+  'RUNTIME_STATUS_SHAPE_INVALID');
+});
+test('operator receipt references must remain in the managed receipt directory',()=>{
+ const good=fixture();
+ good.runtime_status.recent_receipts=['D:/review/_receipts/neo-review-rollback-20261028T100000Z.json'];
+ assert.equal(review(good).state,'AUTHENTICATED_HOST_READBACK_REQUIRED');
+ for(const bad of ['D:/elsewhere/neo-review-status.json',
+  'D:/review/_receipts/other-slot-status.json',
+  'D:/review/_receipts/nested/neo-review-status.json',
+  'D:/review/_receipts/neo-review-status.txt']){
+  denied(x=>{x.runtime_status.recent_receipts=[bad];},'RUNTIME_STATUS_SHAPE_INVALID');
+ }
+});
+test('Windows paths normalize case and separators without attesting host existence',()=>{
+ const x=fixture();
+ x.runtime_status.managed_root='D:\\REVIEW';
+ x.runtime_status.slot_root='d:/review/NEO-REVIEW';
+ x.runtime_status.python='d:\\review\\neo-review\\venv\\Scripts\\python.exe';
+ assert.equal(review(x).state,'AUTHENTICATED_HOST_READBACK_REQUIRED');
+ assert.equal(review(x).host_authenticated,false);
+});
+test('POSIX absolute paths may be reviewed without claiming installation',()=>{
+ const x=fixture();
+ x.runtime_status.managed_root='/tmp/managed';
+ x.runtime_status.slot_root='/tmp/managed/neo-review';
+ x.runtime_status.python='/tmp/managed/neo-review/venv/Scripts/python.exe';
+ assert.equal(review(x).state,'AUTHENTICATED_HOST_READBACK_REQUIRED');
+ assert.equal(review(x).runtime_installed_verified,false);
 });
