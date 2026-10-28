@@ -3,6 +3,7 @@
  * Source-only, deterministic, nonexecuting: no I/O, network, DBR, token or renderer calls.
  * A host MUST independently enforce current policy and authoritative Object_ID state.
  */
+import {validateRegistry} from './loadOnlineRegistry.mjs';
 export const SPREAD_SCHEMA = "LOAD-SEMANTIC-SPREAD-PLAN/0.1";
 export const NOVEL_SCHEMA = "LOAD-NOVEL-TO-KNOWN-PLAN/0.1";
 const DENY = "DENIED";
@@ -123,13 +124,18 @@ export function planViewportSwitch({spread,to,from=null}={}){
  * never inventing Object_IDs or treating a name match as empirical evidence.
  */
 export function planNovelMatching(registry,{source_hash=null,source_id=null,domain,source_name=null}={}){
- if(!obj(registry)||registry.state!=="GIT_SOURCE_ONLY_NOT_CANONICAL"||!Array.isArray(registry.records))throw Error("UNTRUSTED_LOAD_INDEX");
+ validateRegistry(registry);
  if(!good(domain)||(source_id!=null&&!good(source_id))||(source_name!=null&&!good(source_name))||
     (source_hash!=null && !/^[0-9a-f]{64}$/i.test(source_hash)))throw Error("INVALID_SOURCE");
  const mappings=registry.records.filter(r=>r.category==="conversion_source"&&r.owner_domain===domain);
- const exact=mappings.filter(r=>(source_id&&r.source_drive_id===source_id)||(source_hash&&r.source_sha256===source_hash));
- const named=source_name?mappings.filter(r=>r.display.toLocaleLowerCase()===source_name.toLocaleLowerCase()&&!exact.includes(r)):[];
- return {schema:NOVEL_SCHEMA,status:exact.length?"SOURCE_IDENTITY_CANDIDATE":named.length?"SEMANTIC_MATCH_REVIEW":"FRONTIER_NEW",
+ const byId=source_id?mappings.filter(r=>r.source_drive_id===source_id):[];
+ const byHash=source_hash?mappings.filter(r=>r.source_sha256===source_hash):[];
+ // When both identifiers are supplied, they must agree on the SAME source mapping.
+ const exact=source_id&&source_hash?byId.filter(r=>r.source_sha256===source_hash):source_id?byId:byHash;
+ const identityConflict=Boolean(source_id&&source_hash&&!exact.length&&(byId.length||byHash.length));
+ const named=!identityConflict&&source_name?mappings.filter(r=>r.display.toLocaleLowerCase()===source_name.toLocaleLowerCase()&&!exact.includes(r)):[];
+ return {schema:NOVEL_SCHEMA,status:identityConflict?"SOURCE_IDENTITY_CONFLICT":exact.length?"SOURCE_IDENTITY_CANDIDATE":named.length?"SEMANTIC_MATCH_REVIEW":"FRONTIER_NEW",
+  conflict_mapping_ids:identityConflict?[...new Set([...byId,...byHash].map(r=>r.source_key))]:[],
   domain,source_matches:exact.map(r=>({mapping_id:r.source_key,candidate_object_id:r.candidate_object_id,source_registry:r.source_registry})),
   lexical_matches:named.map(r=>({mapping_id:r.source_key,candidate_object_id:r.candidate_object_id})),
   verified_object_id:null,created_object_ids:0,native_admission:false,
