@@ -277,3 +277,21 @@ test("traceable sensor QA references avoid missing-proof flags but never verify 
  assert.ok(!x.novel_checks.includes("QA_VALIDATION_CALIBRATION_REF_REQUIRED"));
  assert.equal(x.accepted_native_identity,false);assert.equal(x.db_readback,false);
 });
+
+// Synthetic BioBlocks biological-transfer fixtures; no release or clearance.
+const transfer={proposed:true,carrier_class:"inoculum"};
+test("proposed inoculum transfer without provenance remains held with zero candidates",()=>{
+ const x=planEcoAlignment({novel:{...base,semantic_type:"intervention",biological_transfer:transfer},known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ for(const flag of ["BIOLOGICAL_TRANSFER_REVIEW_REQUIRED","BIOLOGICAL_TRANSFER_ORIGIN_REQUIRED","BIOLOGICAL_TRANSFER_DESTINATION_REQUIRED","BIOLOGICAL_TRANSFER_PROVENANCE_REQUIRED","BIOLOGICAL_TRANSFER_MOVEMENT_RULE_REQUIRED","BIOLOGICAL_TRANSFER_REVIEW_RECEIPT_REQUIRED"])assert.ok(x.novel_checks.includes(flag));
+ assert.equal(x.accepted_native_identity,false);
+});
+test("source-declared biosecurity references are not evidence of actual clearance",()=>{
+ const x=planEcoAlignment({novel:{...base,semantic_type:"intervention",biological_transfer:{...transfer,origin_ref:"synthetic:origin",destination_ref:"synthetic:destination",provenance_ref:"synthetic:provenance",movement_rule_ref:"synthetic:rule",biosecurity_review_ref:"synthetic:review"}},known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("BIOLOGICAL_TRANSFER_REVIEW_REQUIRED"));assert.equal(x.novel_qualification_state,"REVIEW_REQUIRED");assert.equal(x.ecological_effect_verified,false);
+});
+test("different biological carrier or origin cannot silently align",()=>{
+ const a={...base,semantic_type:"intervention",biological_transfer:{...transfer,origin_ref:"synthetic:site-a"}};
+ const b={...known,...a,object_id:"known:1",source_refs:["src-a"],biological_transfer:{...transfer,carrier_class:"seed",origin_ref:"synthetic:site-b"}};
+ const x=run(a,b).candidates[0];assert.equal(x.state,"REVIEW_DIFFERENCE");assert.ok(x.checks.includes("BIOLOGICAL_TRANSFER_SCOPE_OR_PROVENANCE_DIFFERENT"));
+});
+test("invalid biological transfer declaration is rejected",()=>assert.throws(()=>run({...base,biological_transfer:{proposed:true,carrier_class:"none"}}),/INVALID_BIOLOGICAL_TRANSFER/));
