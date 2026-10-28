@@ -68,6 +68,8 @@ function compare(a,b,checks){
 }
 function completeness(x,checks){
  if(!good(x.evidence_class))add(checks,"EVIDENCE_CLASS_REQUIRED");
+ if(x.semantic_type==="sensor_reading"&&!x.measurement)add(checks,"SENSOR_MEASUREMENT_REQUIRED");
+ if(x.measurement&&good(x.unit)&&x.unit!==x.measurement.unit)add(checks,"MEASUREMENT_UNIT_CONFLICT");
  if(OBSERVATIONS.has(x.semantic_type)){
   if(!good(x.observed_at))add(checks,"OBSERVATION_TIME_REQUIRED");
   if(!good(x.method_id))add(checks,"METHOD_REQUIRED");
