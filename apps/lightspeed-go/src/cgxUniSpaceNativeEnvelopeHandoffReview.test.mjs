@@ -36,10 +36,13 @@ async function fixture() {
   const envelope = {
     schema:"CGX-SOURCE-ENVELOPE/0.1",source_id:"src:"+HELLO_SHA,
     sha256:HELLO_SHA,byte_length:5,source_name:"DO_NOT_ECHO_FILENAME.txt",
-    extension:".txt",adapter_id:"text-stdlib-v0.1",
+    media_type:"text/plain",extension:".txt",adapter_id:"text-stdlib-v0.1",
+    authority:"source",evidence_state:"OBSERVED",release_class:"Internal",
+    envelope_sha256:"a".repeat(64),warnings:[],unresolved:[],
     native_preservation:{
       source_ref:"DO_NOT_ECHO_PRIVATE_PATH",source_sha256:HELLO_SHA,
-      source_byte_length:5,round_trip_claim:"SOURCE_BYTES_PRESERVED"
+      source_byte_length:5,adapter_version:"0.1",
+      round_trip_claim:"SEMANTIC_PROJECTION_ONLY"
     },
     lineage:{parent_source_id:null,canonical_mutation:false,projection_only:true},
     projections:[{kind:"text",text:"DO_NOT_ECHO_PRIVATE_CONTENT"}]
@@ -137,4 +140,33 @@ test("registered source hash equality is string comparison, not original verific
 test("missing source ref is held without echoing private values",async()=>{
   const x=await fixture();x.envelope.native_preservation.source_ref="";
   assert.equal(run(x).hold_code,"ENVELOPE_SOURCE_SHAPE_OR_DIGEST_MISMATCH");
+});
+
+// Contract-shape tests against native source_envelope_contract.json and
+// desktop/LightSpeed_Runtime/lightspeed_runtime/source_intake.py.
+test("native required envelope fields must exist before review shape match",async()=>{
+  for (const key of ["source_name","media_type","adapter_id","authority",
+    "evidence_state","release_class","projections","warnings","unresolved",
+    "envelope_sha256"]) {
+    const x=await fixture();delete x.envelope[key];
+    assert.equal(run(x).hold_code,"ENVELOPE_SOURCE_SHAPE_OR_DIGEST_MISMATCH",key);
+  }
+});
+test("native adapter version and round-trip claims must match current contract",async()=>{
+  for (const mutate of [
+    x=>delete x.envelope.native_preservation.adapter_version,
+    x=>x.envelope.native_preservation.adapter_version="0.2",
+    x=>x.envelope.native_preservation.round_trip_claim="SOURCE_BYTES_PRESERVED",
+    x=>x.envelope.native_preservation.round_trip_claim="PARTIAL_PROJECTION_ONLY"
+  ]) {
+    const x=await fixture();mutate(x);
+    assert.equal(run(x).hold_code,"ENVELOPE_SOURCE_SHAPE_OR_DIGEST_MISMATCH");
+  }
+});
+test("native source_ref null is a valid no-path reference, never authenticated",async()=>{
+  const x=await fixture();x.envelope.native_preservation.source_ref=null;
+  const r=run(x);
+  assert.equal(r.state,"NATIVE_ENVELOPE_SHAPE_MATCH_REVIEW_HOLD");
+  assert.equal(r.owner_session_verified,false);
+  assert.equal(r.dbr_readback_verified,false);
 });
