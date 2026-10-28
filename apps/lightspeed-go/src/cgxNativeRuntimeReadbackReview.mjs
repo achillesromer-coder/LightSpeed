@@ -87,8 +87,8 @@ function statusPaths(s,slotName){
  const prefix=root+'/_receipts/'+name+'-';
  return s.recent_receipts.every(path=>{
   const p=absolutePath(path);
-  return p!==null&&p.startsWith(prefix)&&p.endsWith('.json')&&
-   !p.slice(prefix.length).includes('/');
+  return p!==null&&p.startsWith(prefix)&&
+   /^(?:configure|rollback|install(?:-installer)?|update(?:-installer)?)-\d{4}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])T(?:[01]\d|2[0-3])[0-5]\d[0-5]\dZ\.json$/i.test(p.slice(prefix.length));
  });
 }
 function statusShape(s,slot){
