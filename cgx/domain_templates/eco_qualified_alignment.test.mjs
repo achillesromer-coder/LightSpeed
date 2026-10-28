@@ -355,3 +355,31 @@ test("fully declared detection still does not establish ecology efficacy or DBR"
  assert.ok(!x.novel_checks.includes("SURVEY_EFFORT_REQUIRED"));
  assert.equal(x.accepted_native_identity,false);assert.equal(x.db_readback,false);assert.equal(x.ecological_effect_verified,false);
 });
+
+// Synthetic biodiversity comparisons. No field result or ecological improvement asserted.
+const cmpSurvey={detection_status:"detected",protocol_ref:"synthetic:transect",effort_value:10,effort_unit:"transect-min",survey_window:"synthetic:2026-Q1"};
+const cmp={proposed:true,baseline_ref:"synthetic:baseline",control_ref:"synthetic:control",seasonal_alignment_ref:"synthetic:season",method_comparability_ref:"synthetic:method",detectability_model_ref:"synthetic:detectability",sampling_design_ref:"synthetic:design"};
+test("proposed comparison without baseline and control is held",()=>{
+ const x=noKnown({...base,survey:cmpSurvey,survey_comparison:{proposed:true}});
+ for(const f of ["BIODIVERSITY_CHANGE_COMPARISON_REQUIRES_REVIEW","SURVEY_COMPARISON_BASELINE_REQUIRED","SURVEY_COMPARISON_CONTROL_REQUIRED"])assert.ok(x.novel_checks.includes(f));
+});
+test("seasonality, method, detectability and design cannot be omitted",()=>{
+ const x=noKnown({...base,survey:cmpSurvey,survey_comparison:{proposed:true,baseline_ref:"synthetic:baseline",control_ref:"synthetic:control"}});
+ for(const f of ["SURVEY_COMPARISON_SEASONAL_ALIGNMENT_REQUIRED","SURVEY_COMPARISON_METHOD_ALIGNMENT_REQUIRED","SURVEY_COMPARISON_DETECTABILITY_REQUIRED","SURVEY_COMPARISON_SAMPLING_DESIGN_REQUIRED"])assert.ok(x.novel_checks.includes(f));
+});
+test("fully referenced comparison still requires review and is not verified",()=>{
+ const x=noKnown({...base,survey:cmpSurvey,survey_comparison:cmp});
+ assert.ok(x.novel_checks.includes("BIODIVERSITY_CHANGE_COMPARISON_REQUIRES_REVIEW"));
+ assert.equal(x.ecological_effect_verified,false);assert.equal(x.accepted_native_identity,false);assert.equal(x.db_readback,false);
+});
+test("different control provenance cannot silently align",()=>{
+ const a={...base,survey:cmpSurvey,survey_comparison:cmp};
+ const b={...known,...a,object_id:"known:1",source_refs:["src-a"],survey_comparison:{...cmp,control_ref:"synthetic:other-control"}};
+ const x=run(a,b).candidates[0];assert.ok(x.checks.includes("SURVEY_COMPARISON_DESIGN_DIFFERENT"));assert.equal(x.state,"REVIEW_DIFFERENCE");
+});
+test("unconducted survey cannot support biodiversity comparison",()=>{
+ const x=noKnown({...base,survey:{detection_status:"not_surveyed"},survey_comparison:cmp});
+ assert.ok(x.novel_checks.includes("SURVEY_COMPARISON_OBSERVATION_REQUIRED"));
+ assert.ok(x.novel_checks.includes("OBSERVED_EVIDENCE_WITH_NO_SURVEY"));
+});
+test("malformed proposed comparison rejected",()=>assert.throws(()=>noKnown({...base,survey_comparison:{proposed:"yes"}}),/INVALID_SURVEY_COMPARISON/));
