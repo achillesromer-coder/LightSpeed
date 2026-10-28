@@ -26,6 +26,14 @@ const FLOOR_KEYS=['floor','canonical_id','enabled','autostart',
 const REQUEST_KEYS=['family','object_id','capability_id','source_revision',
  'slot','intent','execution_requested','install_requested',
  'canonical_mutation_requested'];
+// Exact output envelope from cgxUnifiedBootstrapReview.mjs; reject invented authority.
+const BOOTSTRAP_KEYS=['schema','state','candidate_filespace','parent_filespace',
+ 'parent_ccc','candidate_object_id','capability_id','bootstrap_source_head',
+ 'bootstrap_source_blob','load_source_revision','runtime_owner','startup_owner',
+ 'ls_go_requested','ls_go_enabled','native_admitted','capability_installed',
+ 'host_authenticated','lease_verified','dbr_readback_verified',
+ 'canonical_mutation','network_fetch','source_bytes_copied',
+ 'required_host_checks'];
 const SECRET=/(?:^|[_-])(secret|token|password|credential|private[_-]?key|authorization|cookie|session|bearer|api[_-]?key)(?:$|[_-])/i;
 const obj=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 const keys=(x,allow)=>Object.keys(x).every(k=>allow.includes(k));
@@ -148,7 +156,11 @@ export function reviewNativeRuntimeReadback(input){
   !keys(input,['bootstrap_review','runtime_status','startup_profile','request']))
   return hold('INVALID_OR_SENSITIVE_ENVELOPE');
  const {bootstrap_review:b,runtime_status:s,startup_profile:p,request:r}=input;
- if(b.schema!=='CGX-LS-UNIFIED-BOOTSTRAP-REVIEW/0.1'||
+ if(!keys(b,BOOTSTRAP_KEYS)||typeof b.ls_go_requested!=='boolean'||
+  b.network_fetch!==false||!Array.isArray(b.required_host_checks)||
+  b.required_host_checks.length<1||b.required_host_checks.length>20||
+  !b.required_host_checks.every(txt)||
+  b.schema!=='CGX-LS-UNIFIED-BOOTSTRAP-REVIEW/0.1'||
   b.state!=='HOST_NEGATIVE_TESTS_REQUIRED'||
   b.candidate_filespace!=='LS.cgx'||b.parent_filespace!=='EMASSC.cgx'||
   b.parent_ccc!=='Cognigrex.cgx:/ccc'||!id(b.candidate_object_id)||
