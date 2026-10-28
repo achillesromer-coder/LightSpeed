@@ -4,9 +4,29 @@ import argparse, json, zipfile
 from pathlib import Path
 
 ENTRY='library/one_of_one.json'
+MAX_LIBRARY_BYTES=60*1024*1024
+
 def read_library(carrier):
-    with zipfile.ZipFile(carrier) as z: lib=json.loads(z.read(ENTRY))
-    ids=[e['ref_id'] for e in lib['entries']]
+    # This is a bounded, untrusted source-reference read, never native admission.
+    # Reject ambiguous ZIP member selection and oversized decompression before JSON parsing.
+    with zipfile.ZipFile(carrier) as z:
+        matches=[info for info in z.infolist() if info.filename==ENTRY]
+        if len(matches)!=1 or matches[0].is_dir():
+            raise ValueError('missing or duplicate LOAD library entry')
+        if matches[0].file_size>MAX_LIBRARY_BYTES:
+            raise ValueError('LOAD library exceeds bounded read')
+        with z.open(matches[0]) as stream:
+            raw=stream.read(MAX_LIBRARY_BYTES+1)
+        if len(raw)>MAX_LIBRARY_BYTES:
+            raise ValueError('LOAD library exceeds bounded read')
+    lib=json.loads(raw)
+    if not isinstance(lib,dict) or not isinstance(lib.get('entries'),list):
+        raise ValueError('invalid LOAD library entries')
+    ids=[]
+    for entry in lib['entries']:
+        if not isinstance(entry,dict) or not isinstance(entry.get('ref_id'),str) or not entry['ref_id'].strip():
+            raise ValueError('invalid LOAD reference id')
+        ids.append(entry['ref_id'])
     if len(ids)!=len(set(ids)): raise ValueError('ambiguous duplicate load-reference-id')
     return lib
 
