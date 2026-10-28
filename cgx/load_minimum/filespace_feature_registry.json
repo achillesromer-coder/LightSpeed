@@ -65,6 +65,49 @@
         "filespace"
       ],
       "mode": "wizard_only"
+    },
+    "load.switch_view": {
+      "label": "Switch semantic view…",
+      "targets": [
+        "filespace",
+        "object"
+      ],
+      "mode": "review",
+      "handler_ref": "cgx/load_minimum/loadSemanticViewport.mjs:planViewportSwitch",
+      "projection_only": true
+    },
+    "load.match_novel": {
+      "label": "Match with Alexandria knowledge…",
+      "targets": [
+        "filespace",
+        "object",
+        "file"
+      ],
+      "mode": "review",
+      "handler_ref": "cgx/load_minimum/loadSemanticViewport.mjs:planNovelMatching",
+      "identity_mutation": false
+    },
+    "load.tune_context": {
+      "label": "Adjust knowledge spread and compute budget…",
+      "targets": [
+        "filespace",
+        "object"
+      ],
+      "mode": "review",
+      "handler_ref": "cgx/load_minimum/loadSemanticViewport.mjs:planKnowledgeSpread",
+      "independent_controls": [
+        "max_nodes",
+        "max_hops",
+        "max_cross_domains",
+        "max_cross_edges",
+        "max_evidence_refs",
+        "reasoning_depth",
+        "device_hydration",
+        "execution_depth",
+        "max_compute_ms",
+        "max_ops_per_second",
+        "max_transfer_bytes"
+      ]
     }
   },
   "wizard": [
@@ -156,5 +199,6 @@
     "keep current child authority",
     "composition mode policy-constrained",
     "require host authority, DBR and readback"
-  ]
+  ],
+  "additional_viewport_contract": "semantic_viewport_contract.json"
 }
