@@ -1,4 +1,4 @@
-import test from 'node:test';
+import { test } from 'vitest';
 import assert from 'node:assert/strict';
 import {planUniSpaceLoadViewportInspector as plan} from './cgxLoadViewportInspectorPlan.mjs';
 const budgets={reasoning_depth:'standard',device_hydration:'reader',execution_depth:'inspect',max_nodes:16,max_hops:2,max_cross_domains:1,max_cross_edges:4,max_evidence_refs:32,max_compute_ms:2000,max_ops_per_second:50,max_transfer_bytes:1048576};

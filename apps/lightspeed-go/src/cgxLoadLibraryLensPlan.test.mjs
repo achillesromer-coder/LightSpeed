@@ -1,4 +1,4 @@
-import {test} from 'node:test';
+import {test} from 'vitest';
 import assert from 'node:assert/strict';
 import {projectUniSpaceLoadLens as project} from './cgxLoadLibraryLensPlan.mjs';
 const SHA='75d913822e4da42e64ab8a2274c84d6f853340b3';

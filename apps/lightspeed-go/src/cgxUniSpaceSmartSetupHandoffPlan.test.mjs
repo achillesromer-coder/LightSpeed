@@ -1,4 +1,4 @@
-import test from 'node:test';
+import { test } from 'vitest';
 import assert from 'node:assert/strict';
 import {planUniSpaceSmartSetupHandoff as plan} from './cgxUniSpaceSmartSetupHandoffPlan.mjs';
 function fixture({mode='first-run',offline=false,action='smart_setup.open'}={}){

@@ -1,4 +1,4 @@
-import test from 'node:test';
+import { test } from 'vitest';
 import assert from 'node:assert/strict';
 import {reviewUniSpaceStaticAssetBoundary as review} from './cgxUniSpaceStaticAssetBoundaryReview.mjs';
 const fixture=()=>({selection:{parent_filespace:'Cognigrex.cgx',object_id:'WT-001',filespace:'Romer.cgx',identity_status:'SOURCE_CANDIDATE_NOT_NATIVE_ACCEPTED',evidence_class:'scientific'},client_permissions:{mode:'review_only',revoked:false,allowed_object_ids:['WT-001'],allowed_filespaces:['Romer.cgx']},assets:[{asset_id:'catalogue',repository_path:'apps/lightspeed-go/public/data/cgx_object_review_catalogue.json',blob_sha:'e05b728562fc5c67a3fe5b283d03e28b8a375ca6',source_class:'INTERNAL_REVIEW',scope:'MULTI_OBJECT',rights:'UNRESOLVED',owner_clearance:false}]});

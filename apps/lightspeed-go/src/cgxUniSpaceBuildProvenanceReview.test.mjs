@@ -1,4 +1,4 @@
-import test from 'node:test';
+import { test } from 'vitest';
 import assert from 'node:assert/strict';
 import {reviewUniSpaceBuildProvenance as review} from './cgxUniSpaceBuildProvenanceReview.mjs';
 const fixture=()=>({selection:{parent_filespace:'Cognigrex.cgx',object_id:'WT-001',filespace:'Romer.cgx',identity_status:'SOURCE_CANDIDATE_NOT_NATIVE_ACCEPTED',evidence_class:'scientific'},

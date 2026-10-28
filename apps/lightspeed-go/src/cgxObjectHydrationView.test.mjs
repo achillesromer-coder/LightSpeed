@@ -1,4 +1,4 @@
-import {test} from 'node:test';
+import {test} from 'vitest';
 import assert from 'node:assert/strict';
 import {projectCgxOneObjectView as plan} from './cgxObjectHydrationView.mjs';
 // Object_ID, FileSpace and Git blob SHA are real registry metadata; receipt
