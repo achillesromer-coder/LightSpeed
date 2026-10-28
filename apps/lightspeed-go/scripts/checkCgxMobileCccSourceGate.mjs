@@ -156,3 +156,113 @@ test('untrusted clock and wrong capability never create a runnable state',()=>{
   const y=hostCase();y.now_utc='not-a-clock';
   assert.equal(reviewHost(y).hold_code,'CLOCK_OR_EXPIRY_FORMAT_INVALID');
 });
+
+
+// LOAD.cgx draft PR #205 -> Neo LS.cgx source-only host-hydration crosswalk.
+// Fixture pins are read from the provider's review branch; a matching string is
+// NOT authenticated provider readback, a licence grant or native S92 acceptance.
+import {reviewCgxLoadHostHydration as reviewLoad} from '../src/cgxLoadHostHydrationReview.mjs';
+const loadCase=()=>{
+ const candidate=make();
+ candidate.candidate.capability_id='load-hydration-review';
+ candidate.candidate.source.path='cgx/load_minimum/loadOnlineRegistry.mjs';
+ candidate.candidate.source.revision='4c65cbf2d069579ea24ca4f6466901d4530253bb';
+ candidate.candidate.source.blob_sha='f6f2ada9b46a72eefe3904bf410ad2d8b4e56a49';
+ // Synthetic content hash: test fixture only, not verified source proof.
+ candidate.candidate.source.content_sha256='a'.repeat(64);
+ const c=plan(candidate),objectId='cgx:domain:lightspeed';
+ return {
+  source_pin:{schema:'LOAD-ALEXANDRIA-SOURCE-REGISTRY-PROJECTION/0.1',
+   state:'GIT_SOURCE_ONLY_NOT_CANONICAL',repository:'achillesromer-coder/LightSpeed',
+   revision:'4c65cbf2d069579ea24ca4f6466901d4530253bb',
+   registry_blob:'6cb487d8a10827b14284dc63088d908138cc7f80',
+   native_accepted:0,native_host_verified:false,source_bodies_copied:0},
+  mapping:{category:'filespace_action',source_key:'load.hydrate',
+   source_registry:'cgx/load_minimum/filespace_feature_registry.json',
+   source_git_blob:'31ab6c546f17d086424a42b7821796bc80128b94',
+   admission:'SOURCE_REGISTRY_ONLY',installed_online:false},
+  feature_plan:{schema:'CGX-UNISPACE-FILESPACE-FEATURE-PLAN/0.1',
+   action:'load.hydrate',status:'REVIEW_ONLY',
+   target:{kind:'filespace',fileSpace:'LS.cgx',parentFileSpace:'EMASSC.cgx',
+    owner:'Neo',objectId},
+   requestedHydration:'minimal',requestedMode:'TRACK',sourceByteCount:0,
+   blockers:[],sourceCopied:false,canonicalMutation:false,
+   networkFetch:false,install:false,execute:false,publish:false},
+  scoped_plan:{schema:'LOAD-SCOPED-FILESPACE-PLAN/0.1',
+   state:'HOST_PREFLIGHT_REQUIRED',target:{fileSpace:'LS.cgx',owner:'Neo',objectId},
+   source_metadata_only:true,external_fetch:false,source_bodies_copied:0,
+   created_object_ids:0,ccc_installed:false,dbr_mutated:false},
+  ccc_preflight:c,
+  request:{mode:'metadata_only',requested_hydration:'minimal',operation:'load.hydrate',
+   owner:'Neo',object_id:objectId,capability_id:c.capability_id,
+   expected_load_revision:'4c65cbf2d069579ea24ca4f6466901d4530253bb',
+   expected_load_registry_blob:'6cb487d8a10827b14284dc63088d908138cc7f80',
+   expected_source_registry_blob:'31ab6c546f17d086424a42b7821796bc80128b94',
+   max_transfer_bytes:0,network_permission:false,execution_requested:false,
+   install_requested:false,publish_requested:false,canonical_mutation_requested:false},
+ };
+};
+const expectLoadHold=(mutate,code)=>{
+ const x=loadCase();mutate(x);assert.equal(reviewLoad(x).hold_code,code);
+};
+test('LOAD source pin and CCC plan produce only a host-handshake proposal',()=>{
+ const x=reviewLoad(loadCase());assert.equal(x.state,'HOST_HANDSHAKE_REQUIRED');
+ assert.equal(x.target_filespace,'LS.cgx');assert.equal(x.parent_ccc,'Cognigrex.cgx:/ccc');
+ for(const k of ['native_admitted','capability_installed','host_authenticated',
+  'owner_lease_verified','dbr_readback_verified','hydration_performed',
+  'network_fetch','canonical_mutation','source_proof_independently_verified',
+  'source_rights_verified'])assert.equal(x[k],false,k);
+ assert.equal(x.source_bytes_copied,0);
+});
+test('LOAD source registry must remain source-only',()=>expectLoadHold(
+ x=>{x.source_pin.native_accepted=1;},'LOAD_SOURCE_PROOF_NOT_QUALIFIED'));
+test('LOAD source revision must match caller pin',()=>expectLoadHold(
+ x=>{x.request.expected_load_revision='f'.repeat(40);},'SOURCE_MAPPING_OR_PIN_MISMATCH'));
+test('LOAD registry Git blob must match pinned review blob',()=>expectLoadHold(
+ x=>{x.request.expected_load_registry_blob='f'.repeat(40);},'SOURCE_MAPPING_OR_PIN_MISMATCH'));
+test('LOAD action mapping source Git blob mismatch is held',()=>expectLoadHold(
+ x=>{x.mapping.source_git_blob='f'.repeat(40);},'SOURCE_MAPPING_OR_PIN_MISMATCH'));
+test('legacy/other action cannot masquerade as load.hydrate',()=>expectLoadHold(
+ x=>{x.mapping.source_key='ccc.install';},'SOURCE_MAPPING_OR_PIN_MISMATCH'));
+test('Römer or Eco child cannot be silently substituted for Neo LS',()=>expectLoadHold(
+ x=>{x.feature_plan.target.fileSpace='Eco.cgx';},'FEATURE_PLAN_NOT_SOURCE_SAFE'));
+test('feature planning cannot install, mutate, publish or execute',()=>{
+ for(const k of ['sourceCopied','canonicalMutation','networkFetch','install','execute','publish'])
+  expectLoadHold(x=>{x.feature_plan[k]=true;},'FEATURE_PLAN_NOT_SOURCE_SAFE');
+});
+test('LOAD review forbids full-approved network hydration',()=>expectLoadHold(
+ x=>{x.feature_plan.requestedHydration='full-approved';},'FEATURE_PLAN_NOT_SOURCE_SAFE'));
+test('LOAD review forbids unaccepted EMBED and PIN composition',()=>{
+ for(const mode of ['EMBED','PIN'])
+  expectLoadHold(x=>{x.feature_plan.requestedMode=mode;},'FEATURE_PLAN_NOT_SOURCE_SAFE');
+});
+test('scoped plan cannot claim DBR mutation or installed CCC',()=>{
+ for(const k of ['dbr_mutated','ccc_installed'])
+  expectLoadHold(x=>{x.scoped_plan[k]=true;},'SCOPED_HYDRATION_PLAN_INVALID');
+});
+test('CCC ABI/version mismatch is rejected',()=>{
+ expectLoadHold(x=>{x.ccc_preflight.candidate_abi='native/999';},'CCC_REVIEW_GATE_INVALID');
+ expectLoadHold(x=>{x.ccc_preflight.candidate_version='latest';},'CCC_REVIEW_GATE_INVALID');
+});
+test('CCC cannot claim verified rights, native admission or authenticated provider readback',()=>{
+ for(const k of ['source_rights_verified','native_admitted','provider_readback_authenticated'])
+  expectLoadHold(x=>{x.ccc_preflight={...x.ccc_preflight,[k]:true};},'CCC_REVIEW_GATE_INVALID');
+});
+test('request cannot transfer R0 bytes, execute, install, publish or access network',()=>{
+ expectLoadHold(x=>{x.request.max_transfer_bytes=1;},'REQUEST_EXCEEDS_REVIEW_SCOPE');
+ for(const k of ['network_permission','execution_requested','install_requested','publish_requested'])
+  expectLoadHold(x=>{x.request[k]=true;},'REQUEST_EXCEEDS_REVIEW_SCOPE');
+});
+test('untrusted matching host claim cannot become authenticated host proof',()=>{
+ const x=loadCase();x.host_claim={object_id:x.request.object_id,
+  capability_id:x.request.capability_id,load_revision:x.source_pin.revision,
+  decision:'CAN_DO',dbr_verified:true};
+ const result=reviewLoad(x);assert.equal(result.state,'HOST_HANDSHAKE_REQUIRED');
+ assert.equal(result.host_authenticated,false);assert.equal(result.dbr_readback_verified,false);
+});
+test('mismatched or credential-bearing host claims fail closed without echo',()=>{
+ expectLoadHold(x=>{x.host_claim={object_id:'other'};},'UNTRUSTED_OR_MISMATCHED_HOST_CLAIM');
+ const x=loadCase();x.host_claim={session_token:'SECRET_FIXTURE'};
+ const result=reviewLoad(x);assert.equal(result.hold_code,'SENSITIVE_OR_UNBOUNDED_INPUT');
+ assert.equal(JSON.stringify(result).includes('SECRET_FIXTURE'),false);
+});
