@@ -1,6 +1,15 @@
 name: CGX Neo Runtime Readback Source Review
 
 on:
+  # Conflict-safe source-only checks on this existing review branch.
+  # Does not merge, install, use secrets, or contact a host.
+  push:
+    branches:
+      - feature/lsgo-mobile-link-20261013
+    paths:
+      - 'apps/lightspeed-go/src/cgxNativeRuntimeReadbackReview.mjs'
+      - 'apps/lightspeed-go/scripts/checkCgxNativeRuntimeReadbackReview.mjs'
+      - '.github/workflows/cgx-neo-runtime-review-validation.yml'
   pull_request:
     branches:
       - main
