@@ -37,11 +37,14 @@ export async function scanUniSpaceViteStaticReview(input) {
   const maxFile = limits.max_file_bytes ?? 2 * 1024 * 1024;
   if (![maxFiles,maxTotal,maxFile].every(Number.isSafeInteger) || maxFiles < 1 || maxFiles > 1024 ||
       maxTotal < 1 || maxTotal > 60 * 1024 * 1024 || maxFile < 1 || maxFile > 4 * 1024 * 1024 || maxFile > maxTotal) return hold('INVALID_SCAN_LIMIT');
-  let files = 0, bytes = 0;
+  let files = 0, bytes = 0, complete = true;
   const findings = [];
-  const add = (rootTag, rel, reasons, sha256 = null) => findings.push(Object.freeze({
+  const add = (rootTag, rel, reasons, sha256 = null) => {
+    if (reasons.some(x => ['SYMLINK_NOT_FOLLOWED','NONREGULAR_ASSET','UNINSPECTED_SIZE_LIMIT','UNINSPECTABLE_BINARY_RIGHTS_UNKNOWN','UNPARSEABLE_JSON'].includes(x))) complete = false;
+    findings.push(Object.freeze({
     asset_key: hash(rootTag + "\0" + rel).slice(0, 24), sha256, reason_codes: Object.freeze([...new Set(reasons)].sort())
   }));
+  };
   async function walk(root, rootTag) {
     const stat = await lstat(root);
     if (!stat.isDirectory() || stat.isSymbolicLink()) throw Error('INVALID_ROOT_TYPE');
@@ -93,7 +96,7 @@ export async function scanUniSpaceViteStaticReview(input) {
   return Object.freeze({ schema: SCHEMA, state: 'SOURCE_SCAN_REVIEW_ONLY',
     parent_filespace: s.parent_filespace, candidate_object_id: s.object_id, filespace: s.filespace,
     evidence_class: s.evidence_class, alias: 'LOAD.cgx', alias_role: 'ALEXANDRIA_ENTRY_NOT_PARENT',
-    file_entries: files, bytes_inspected: bytes, source_scan_complete: true,
+    file_entries: files, bytes_inspected: bytes, source_scan_complete: complete,
     public_source_scanned: true, dist_source_scanned: dist_root !== null && dist_root !== undefined,
     findings: Object.freeze(ordered), risk_count: ordered.filter(x=>x.reason_codes.length).length,
     dist_verified: false, host_http_verified: false, release_accepted: false, canonical_mutation: false,
