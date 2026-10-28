@@ -12,7 +12,7 @@
 
 ## Contract
 
-`planEcoAlignment` accepts explicitly permitted source and known-object IDs, rejects duplicate authorised IDs, discriminates subject/taxon/specimen/population/site/station identity, geospatial CRS and point, time, evidence class, method, units, measurement and environmental context. It marks missing mandatory observation metadata. Geometry is a source-declared point only; no interpolation, CRS transform, inferred 3D, map reconstruction or environmental impact simulation.
+`planEcoAlignment` accepts explicitly permitted source and known-object IDs, rejects duplicate authorised IDs, discriminates subject/taxon/specimen/population/site/station identity, geospatial CRS and point, time, evidence class, method, units, measurement and environmental context. It marks missing mandatory observation metadata, including impossible calendar dates and unzoned timestamps. Geometry is a source-declared point only; no interpolation, CRS transform, inferred 3D, map reconstruction or environmental impact simulation.
 
 Source-lineage review now distinguishes **overlapping permitted references**, **disjoint permitted references**, and **partially authorised reference sets**. Disjoint lineages produce `SOURCE_LINEAGE_DISJOINT_REVIEW`; filtered-out source references produce `NOVEL_SOURCE_SCOPE_PARTIAL` or `KNOWN_SOURCE_SCOPE_PARTIAL`. These are review warnings, not a prohibition on independently corroborated cross-source alignment. No unpermitted source ID or private source body is emitted. Provider ACL visibility does not by itself establish copyright, data reuse, or cultural stewardship rights.
 
@@ -24,8 +24,12 @@ All outputs are source-only. A typed alignment candidate never means the objects
 node --test cgx/domain_templates/eco_qualified_alignment.test.mjs
 ~~~
 
-Twenty-three declared Node regression cases cover distinct taxon/specimen/coordinates/evidence/time/method/environment/units, missing observation metadata, invalid coordinates, 3D vertical datum, permissions, duplicate IDs and no automatic native promotion. All 23 committed regression test bodies passed in an isolated V8 compatibility harness against the exact read-back module; this is **not a Node CI run or host acceptance**. A same-ID proof-priority regression was detected and corrected before the final passing run. These are **source-level negative tests**, not host, DBR, field or two-node tests.
+Twenty-seven declared Node regression cases cover distinct taxon/specimen/coordinates/evidence/time/method/environment/units, missing observation metadata, invalid coordinates, 3D vertical datum, permissions, duplicate IDs and no automatic native promotion. All 27 committed regression test bodies passed in an isolated V8 compatibility harness against the exact read-back module; this is **not a Node CI run or host acceptance**. A same-ID proof-priority regression was detected and corrected before the final passing run. These are **source-level negative tests**, not host, DBR, field or two-node tests.
 
 ## Native integration holds
 
 Source rights/ACL and exact original byte hashes; GPT shard and manual-intake reconciliation; accepted current root and child; source-specific R1 reversible parse and loss report; scoped R2/Frontier/Overlay; independent DBR/root readback; issue #158 public static privacy; issue #161 two-node transfer if requested; ecological measurement and counterevidence before impact claims. No canonical write, installer, live solver or release.
+
+## 2026-10-28 additional review gate
+
+A declared observation timestamp such as `2026-02-29T12:00:00Z` (invalid calendar date), `2026-10-01T12:00:00` (no timezone) or an impossible UTC offset now yields `OBSERVATION_TIMESTAMP_INVALID_OR_UNZONED`. Valid leap dates with explicit offsets remain candidates. This is a conservative R1/R2 timestamp qualification, not a conversion or native timestamp resolver. The 27 fixtures passed in an isolated V8 compatibility harness; Node CI and host/DBR acceptance must be checked separately.
