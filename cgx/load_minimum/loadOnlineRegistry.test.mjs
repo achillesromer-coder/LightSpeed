@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {validateRegistry,searchLoad,resolveLoad,planScopedLoad} from './loadOnlineRegistry.mjs';
 const data=JSON.parse(readFileSync(new URL('./online_registry_projection_2026-10-28.json',import.meta.url),'utf8'));
 const copy=x=>JSON.parse(JSON.stringify(x));
@@ -72,4 +73,31 @@ test('reject missing or altered selector-level route provenance',()=>{
  const y=copy(data),q=y.records.find(v=>v.category==='ccc_route'&&v.source_key==='cad.freecad');
  q.route_source_proofs.raphael.git_blob='0'.repeat(40);
  assert.throws(()=>validateRegistry(y),/CCC_ROUTE_PROVENANCE_MISMATCH/);
+});
+
+test('checked-out source bytes match all 14 projected Git blob fingerprints',()=>{
+ const sources=Object.entries(data.source_registries);
+ assert.equal(sources.length,14);
+ for(const [p,proof] of sources){
+  assert.match(p,/^(cgx|plugins)\/[a-zA-Z0-9_./-]+$/);
+  assert.ok(!p.split('/').includes('..'));
+  const bytes=readFileSync(new URL('../../'+p,import.meta.url));
+  const gitBlob=createHash('sha1').update(Buffer.from('blob '+bytes.length+'\0')).update(bytes).digest('hex');
+  assert.equal(gitBlob,proof.git_blob,'SOURCE_BYTES_DRIFT: '+p);
+ }
+});
+test('all projected CCC routes are present in their actual declaring selector files',()=>{
+ const routes=data.records.filter(r=>r.category==='ccc_route');
+ let declarations=0;
+ for(const r of routes){
+  for(const selector of r.selector_sources){
+   const p='plugins/packages/'+selector+'/references/capabilities.json';
+   const body=JSON.parse(readFileSync(new URL('../../'+p,import.meta.url),'utf8'));
+   assert.ok(Object.hasOwn(body.routes??{},r.source_key),'ROUTE_NOT_DECLARED: '+selector+'/'+r.source_key);
+   declarations++;
+  }
+ }
+ assert.equal(routes.length,45);
+ assert.equal(declarations,265);
+ assert.equal(declarations,Object.values(data.summary.selector_route_counts).reduce((n,x)=>n+x,0));
 });
