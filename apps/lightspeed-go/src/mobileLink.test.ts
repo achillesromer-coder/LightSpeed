@@ -83,7 +83,13 @@ describe("CGX mobile bootstrap (no mobile runtime)", () => {
     expect(carrier.bridge).not.toHaveProperty("origin");
   });
   it("never treats HTTPS loopback as an off-device route", () => {
-    for (const origin of ["https://localhost", "https://localhost.", "https://x.localhost", "https://127.0.0.1", "https://127.0.0.2", "https://[::1]", "https://[::ffff:127.0.0.1]"]) {
+    for (const origin of [
+      "https://localhost", "https://localhost.", "https://x.localhost",
+      "https://127.0.0.1", "https://127.0.0.2", "https://[::1]", "https://[::]",
+      "https://[::ffff:127.0.0.1]", "https://[::ffff:127.0.0.2]",
+      "https://[::ffff:7f00:2]", "https://[::ffff:7f01:203]",
+      "https://[::ffff:7fff:ffff]", "https://[::ffff:0:0]",
+    ]) {
       expect(() => resolveMobileRelayOrigin(origin, "hosted.example.test")).toThrow("HTTPS relay");
       expect(resolveActiveDesktopOrigin(origin, undefined, "hosted.example.test")).toBe("");
     }
