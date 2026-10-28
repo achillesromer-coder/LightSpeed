@@ -20,9 +20,27 @@ test('typed known matches are only candidates, not minted',()=>{
  assert.equal(x.matched_candidates[0].auto_merge,false);
 });
 test('private known Object_ID is omitted entirely',()=>assert.ok(!JSON.stringify(run()).includes('fixture:private')));
-test('same IDs do not independently prove semantic equivalence',()=>{
+test('same Object_ID label with disjoint R0 source lines cannot imply identity',()=>{
  const x=run({novel:{...novel,object_id:'fixture:one'}});
- assert.equal(x.matched_candidates[0].state,'SAME_ID_CLAIM_REQUIRES_PROOF');
+ const c=x.matched_candidates.find(r=>r.known_object_id==='fixture:one');
+ assert.equal(c.state,'REVIEW_DIFFERENCE');
+ assert.ok(c.checks.includes('SOURCE_LINEAGE_DISJOINT'));
+ assert.equal(c.auto_merge,false);
+});
+test('shared authorised R0 reference still requires independent identity proof',()=>{
+ const n={...novel,object_id:'fixture:one',source_refs:['fixture:known']};
+ const x=run({novel:n});
+ const c=x.matched_candidates.find(r=>r.known_object_id==='fixture:one');
+ assert.equal(c.state,'SAME_ID_CLAIM_REQUIRES_PROOF');
+ assert.ok(!c.checks.includes('SOURCE_LINEAGE_DISJOINT'));
+ assert.equal(c.existing_object_authority_verified,false);
+});
+test('distinct source versions are not merged by matching semantic type, units or frame',()=>{
+ const x=run();
+ const c=x.matched_candidates.find(r=>r.known_object_id==='fixture:one');
+ assert.ok(c.checks.includes('SOURCE_LINEAGE_DISJOINT'));
+ assert.equal(c.state,'REVIEW_DIFFERENCE');
+ assert.equal(x.objects_minted,0);
 });
 test('coordinate frame mismatch preserved',()=>assert.ok(run().matched_candidates.some(x=>x.checks.includes('FRAME_TRANSFORM_OR_DEFINITION_REQUIRED'))));
 test('units mismatch requires explicit unit conversion',()=>assert.ok(run().matched_candidates.some(x=>x.checks.includes('UNIT_CONVERSION_REQUIRED'))));
