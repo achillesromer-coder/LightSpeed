@@ -117,6 +117,8 @@ test('managed slot ABI rejects path-like and non-native names before host status
 test('managed slot ABI preserves the 48-character bound, rejects 49',()=>{
  const good=fixture();good.request.slot='n'.repeat(48);
  good.runtime_status.slot=good.request.slot;
+ good.runtime_status.slot_root='D:/review/'+good.request.slot;
+ good.runtime_status.python=good.runtime_status.slot_root+'/venv/Scripts/python.exe';
  assert.equal(review(good).state,'AUTHENTICATED_HOST_READBACK_REQUIRED');
  denied(x=>{x.request.slot='n'.repeat(49);x.runtime_status.slot=x.request.slot;},
   'REQUEST_SCOPE_MISMATCH');
