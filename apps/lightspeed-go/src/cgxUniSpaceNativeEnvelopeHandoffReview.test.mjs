@@ -170,3 +170,35 @@ test("native source_ref null is a valid no-path reference, never authenticated",
   assert.equal(r.owner_session_verified,false);
   assert.equal(r.dbr_readback_verified,false);
 });
+
+
+test("native adapter mapping is extension-specific and rejects cross-format substitutions",async()=>{
+  const x=await fixture();
+  x.envelope.adapter_id="json-stdlib-v0.1"; // .txt source cannot claim JSON adapter
+  assert.equal(run(x).hold_code,"ENVELOPE_SOURCE_SHAPE_OR_DIGEST_MISMATCH");
+  x.envelope.adapter_id="text-stdlib-v0.1";
+  x.envelope.extension=".json"; // extension drift must also fail
+  assert.equal(run(x).hold_code,"ENVELOPE_SOURCE_SHAPE_OR_DIGEST_MISMATCH");
+});
+
+test("native source_intake adapter mapping matches all supported private preflight extensions",async()=>{
+  // Synthetic envelope shape only; no actual format parsing or native execution.
+  const pairs=[
+    ["txt","text-stdlib-v0.1"],["md","text-stdlib-v0.1"],
+    ["csv","csv-stdlib-v0.1"],["json","json-stdlib-v0.1"],
+    ["pdf","pdf-pypdf-v0.1"],["png","image-metadata-stdlib-v0.1"],
+    ["jpg","image-metadata-stdlib-v0.1"],["jpeg","image-metadata-stdlib-v0.1"],
+    ["webp","image-reference-v0.1"],["obj","obj-mesh-stdlib-v0.1"],
+    ["stl","stl-mesh-stdlib-v0.1"],["glb","gltf-stdlib-v0.1"],
+    ["gltf","gltf-stdlib-v0.1"]
+  ];
+  for(const [ext,adapter] of pairs){
+    const x=await fixture();
+    x.preflight={...x.preflight,file_type:ext};
+    x.envelope.extension="."+ext;
+    x.envelope.adapter_id=adapter;
+    assert.equal(run(x).state,"NATIVE_ENVELOPE_SHAPE_MATCH_REVIEW_HOLD",ext);
+    x.envelope.adapter_id=adapter==="text-stdlib-v0.1"?"json-stdlib-v0.1":"text-stdlib-v0.1";
+    assert.equal(run(x).hold_code,"ENVELOPE_SOURCE_SHAPE_OR_DIGEST_MISMATCH",ext);
+  }
+});
