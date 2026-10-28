@@ -48,6 +48,8 @@ export async function preflightPrivateObjectDrop(input = {}) {
       return hold("CLIENT_SCOPE_MISMATCH");
   if (!record(p) || p.object_id !== s.object_id || p.filespace !== s.filespace ||
       p.mapping_id !== card.source_mapping_id || p.mapping_blob_sha !== card.source_mapping_blob_sha ||
+      p.mapping_stage !== card.mapping_stage ||
+      !["R0_R1_REFERENCE", "R0_R1_R2_REFERENCE"].includes(p.mapping_stage) ||
       !SHA1.test(p.mapping_blob_sha || "") || !SHA256.test(p.r0_source_sha256 || "") ||
       !["scientific", "creative", "mixed", "unknown"].includes(p.evidence_class) ||
       p.evidence_class !== card.evidence_class ||
