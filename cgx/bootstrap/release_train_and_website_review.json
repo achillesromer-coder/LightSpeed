@@ -26,7 +26,6 @@
         "Python 3.11 runtime dependency/profile checks",
         "single settings owner, no-loss migration from legacy wizards",
         "managed runtime install/update/rollback tests",
-        "GOT exact meaning if enabled",
         "signed provider/agent node handshake"
       ],
       "proof": "one independent cold install/restart/resume/negative receipt"
@@ -123,12 +122,6 @@
   },
   "user_decisions_for_finish": [
     {
-      "id": "DEC_GOT",
-      "question": "What exact source-backed component does GOT refer to?",
-      "default": "leave disabled in wizard; do not invent acronym",
-      "blocking": "GOT enabled only"
-    },
-    {
       "id": "DEC_RELEASE_SCOPE",
       "question": "Which CGX and research content is PUBLIC_SAFE versus private/internal or patent-sensitive?",
       "default": "private",
@@ -155,5 +148,6 @@
     "production_merge": false,
     "canonical_mutation": false,
     "archive_delete": false
-  }
+  },
+  "nonblocking_source_note": "GOT was not a source-validated component; reconcile transcription to Git/GPT/GO using contemporaneous context when needed."
 }
