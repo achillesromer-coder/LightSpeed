@@ -57,7 +57,9 @@ function absolutePath(value){
  if(segments.some(s=>s===''||s==='.'||s==='..'))return null;
  // Windows path aliases and alternate data streams must not qualify as receipt paths.
  // This is lexical rejection only; it does not prove canonical filesystem identity.
- if(windows&&segments.some(s=>/[<>:"|?*]/.test(s)||/[. ]$/.test(s)))return null;
+ // Win32 DOS device basenames are reserved even when followed by an extension.
+ const winDevice=/^(?:CON|PRN|AUX|NUL|COM[1-9¹²³]|LPT[1-9¹²³]|CONIN\$|CONOUT\$)(?:\.|$)/i;
+ if(windows&&segments.some(s=>/[<>:"|?*]/.test(s)||/[. ]$/.test(s)||winDevice.test(s)))return null;
  return windows?p.toLowerCase():p;
 }
 function statusPaths(s,slotName){
