@@ -30,10 +30,11 @@ test('even observed proofs only qualify for authenticated host preflight, not re
  assert.equal(p.ls_go.enabled,false);assert.equal(p.ls_go.actual_toggle_write,false);
  assert.equal(p.canonical_accepted,false);assert.equal(p.published,false);
 });
-test('GOT does not get invented, installed or auto-expanded',()=>{
+test('legacy transcription of GOT cannot introduce a capability or startup blocker',()=>{
  const p=planCGXSetup({family,observed:proof,gotRequested:true});
- assert.equal(p.got.status,'SOURCE_UNRESOLVED_OPTIONAL');
- assert.ok(p.blockers.includes('GOT_MEANING_AND_REGISTERED_CAPABILITY_UNRESOLVED'));
+ assert.equal(p.state,'REVIEW_ONLY');
+ assert.equal(Object.hasOwn(p,'got'),false);
+ assert.ok(p.blockers.every(s=>!s.includes('GOT')));
 });
 test('oversized source segment requires bounded intake',()=>{
  const p=planCGXSetup({family,sourceBytesPerChunk:64*1024*1024});
