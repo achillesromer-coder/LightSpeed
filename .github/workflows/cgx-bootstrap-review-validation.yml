@@ -1,0 +1,38 @@
+name: CGX Unified Bootstrap Review Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'cgx/bootstrap/**'
+      - '.github/workflows/cgx-bootstrap-review-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    name: Source-only bootstrap and handshake validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify syntax of non-installing planners
+        run: |
+          node --check cgx/bootstrap/unifiedBootstrap.mjs
+          node --check cgx/bootstrap/cgxHandshakeReview.mjs
+          node --check cgx/bootstrap/cgxSetupCli.mjs
+      - name: Test startup and native handshake review guards
+        run: |
+          node --test cgx/bootstrap/unifiedBootstrap.test.mjs cgx/bootstrap/cgxHandshakeReview.test.mjs
+      - name: Verify review-only plans and no unsupported GOT installer
+        run: |
+          node cgx/bootstrap/cgxSetupCli.mjs --family Eco.cgx --mode first-run --ls-go=true > "$RUNNER_TEMP/setup.json"
+          node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync(process.argv[1]));if(p.setup.canonical_accepted||p.setup.ls_go.enabled||p.setup.website_deployed||p.setup.got)process.exit(1);" "$RUNNER_TEMP/setup.json"
