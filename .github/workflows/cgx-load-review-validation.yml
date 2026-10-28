@@ -33,6 +33,8 @@ jobs:
           node --check cgx/load_minimum/refreshLoadRegistry.mjs
       - name: Check source-registry drift against checked-out Git blobs
         run: node cgx/load_minimum/refreshLoadRegistry.mjs --check
+      - name: Run bounded Python LOAD reader negative tests (synthetic only)
+        run: python3 -m unittest discover -s cgx/load_minimum -p 'test_load_reader.py' -v
       - name: Run LOAD source-only regression and negative tests
         run: |
           node --test cgx/load_minimum/cgxLoadFeaturePlanner.test.mjs cgx/load_minimum/loadOnlineRegistry.test.mjs cgx/load_minimum/loadSemanticViewport.test.mjs cgx/load_minimum/loadQualifiedKnowledge.test.mjs
