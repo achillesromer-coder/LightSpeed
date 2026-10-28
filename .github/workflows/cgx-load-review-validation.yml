@@ -1,0 +1,38 @@
+name: CGX LOAD Source Review Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'cgx/load_minimum/**'
+      - '.github/workflows/cgx-load-review-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    name: Non-installing LOAD provenance and negative tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout reviewed source
+        uses: actions/checkout@v4
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify non-installing JavaScript syntax
+        run: |
+          node --check cgx/load_minimum/cgxLoadFeaturePlanner.mjs
+          node --check cgx/load_minimum/loadOnlineRegistry.mjs
+          node --check cgx/load_minimum/loadQualifiedKnowledge.mjs
+          node --check cgx/load_minimum/loadSemanticViewport.mjs
+          node --check cgx/load_minimum/refreshLoadRegistry.mjs
+      - name: Check source-registry drift against checked-out Git blobs
+        run: node cgx/load_minimum/refreshLoadRegistry.mjs --check
+      - name: Run LOAD source-only regression and negative tests
+        run: |
+          node --test cgx/load_minimum/cgxLoadFeaturePlanner.test.mjs cgx/load_minimum/loadOnlineRegistry.test.mjs cgx/load_minimum/loadSemanticViewport.test.mjs cgx/load_minimum/loadQualifiedKnowledge.test.mjs
