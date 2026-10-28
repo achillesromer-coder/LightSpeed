@@ -114,3 +114,59 @@ test("unsupported source mapping stage denied", async () => {
   const x=fixture();x.source.mapping_stage="R3_ADMITTED";
   assert.equal((await run(x)).hold_code,"SOURCE_PROVENANCE_MISMATCH");
 });
+
+
+test("binary extension with text payload is rejected before hashing", async () => {
+  for (const [name,mime] of [
+    ["bad.pdf","application/pdf"],["bad.png","image/png"],
+    ["bad.jpg","image/jpeg"],["bad.webp","image/webp"],
+    ["bad.glb","model/gltf-binary"]]) {
+    const x=fixture(); x.drop.files[0].name=name; x.drop.files[0].mime=mime;
+    assert.equal((await run(x)).hold_code,"BINARY_SIGNATURE_MISMATCH",name);
+  }
+});
+test("PDF magic is header triage only, not a format or safety validation", async () => {
+  const x=fixture(),bytes=new TextEncoder().encode("%PDF-1.7\\n");
+  x.drop.files[0]={name:"note.pdf",mime:"application/pdf",size:bytes.length,bytes};
+  const r=await run(x);
+  assert.equal(r.state,"R0_HASHED_PREFLIGHT_HOLD");
+  assert.equal(r.binary_signature_status,"HEADER_MATCH_ONLY_NOT_FORMAT_VALIDATED");
+  assert.equal(r.format_parsed,false);
+  assert.equal(r.malware_checked,false);
+  assert.equal(r.native_admitted,false);
+});
+test("PNG signature is header triage only, not valid image proof", async () => {
+  const x=fixture(),bytes=new Uint8Array([137,80,78,71,13,10,26,10]);
+  x.drop.files[0]={name:"note.png",mime:"image/png",size:bytes.length,bytes};
+  const r=await run(x);
+  assert.equal(r.state,"R0_HASHED_PREFLIGHT_HOLD");
+  assert.equal(r.binary_signature_status,"HEADER_MATCH_ONLY_NOT_FORMAT_VALIDATED");
+  assert.equal(r.format_parsed,false);
+});
+test("WebP RIFF length mismatch is rejected", async () => {
+  const x=fixture(),bytes=new Uint8Array([82,73,70,70,0,0,0,0,87,69,66,80]);
+  x.drop.files[0]={name:"note.webp",mime:"image/webp",size:bytes.length,bytes};
+  assert.equal((await run(x)).hold_code,"BINARY_SIGNATURE_MISMATCH");
+});
+test("GLB version and declared length mismatches are rejected", async () => {
+  for (const bytes of [
+    new Uint8Array([103,108,84,70,1,0,0,0,12,0,0,0]),
+    new Uint8Array([103,108,84,70,2,0,0,0,20,0,0,0])]) {
+    const x=fixture();x.drop.files[0]={name:"note.glb",mime:"model/gltf-binary",size:bytes.length,bytes};
+    assert.equal((await run(x)).hold_code,"BINARY_SIGNATURE_MISMATCH");
+  }
+});
+test("GLB matching 2.0 header is not geometry validation", async () => {
+  const x=fixture(),bytes=new Uint8Array([103,108,84,70,2,0,0,0,12,0,0,0]);
+  x.drop.files[0]={name:"note.glb",mime:"model/gltf-binary",size:bytes.length,bytes};
+  const r=await run(x);
+  assert.equal(r.state,"R0_HASHED_PREFLIGHT_HOLD");
+  assert.equal(r.binary_signature_status,"HEADER_MATCH_ONLY_NOT_FORMAT_VALIDATED");
+  assert.equal(r.r2_modelled,false);
+  assert.equal(r.r3_live,false);
+});
+test("text input remains explicitly unchecked for binary signatures", async () => {
+  const r=await run(fixture());
+  assert.equal(r.binary_signature_status,"NO_FIXED_SIGNATURE_CHECK");
+  assert.equal(r.format_parsed,false);
+});
