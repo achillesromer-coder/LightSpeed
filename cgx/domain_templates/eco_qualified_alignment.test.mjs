@@ -89,3 +89,37 @@ test("zero known candidates: schema example without measurement/evidence is not 
  const x=planEcoAlignment({novel:{...base,semantic_type:"sensor_reading",measurement:undefined,evidence_class:undefined},known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
  assert.ok(x.novel_checks.includes("EVIDENCE_CLASS_REQUIRED"));assert.ok(x.novel_checks.includes("SENSOR_MEASUREMENT_REQUIRED"));
 });
+
+test("distinct source QA states are not aligned by identical values",()=>{
+ const a={...base,qa_flag:"flagged"},b={...known,source_refs:["src-a"],qa_flag:"validated"};
+ const x=run(a,b).candidates[0];
+ assert.equal(x.state,"REVIEW_DIFFERENCE");
+ assert.ok(x.checks.includes("QA_STATE_DIFFERENT_OR_UNDECLARED"));
+ assert.ok(x.checks.includes("QA_STATE_REQUIRES_REVIEW"));
+});
+test("missing field data with numeric zero cannot become observed evidence",()=>{
+ const a={...base,semantic_type:"sensor_reading",missing_data_state:"missing",measurement:{value:0,unit:"mg/L"}};
+ const x=planEcoAlignment({novel:a,known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.equal(x.novel_qualification_state,"REVIEW_REQUIRED");
+ assert.ok(x.novel_checks.includes("MISSING_DATA_MEASUREMENT_CONFLICT"));
+ assert.ok(x.novel_checks.includes("OBSERVED_EVIDENCE_WITH_MISSING_DATA"));
+});
+test("provisional QA remains a review gate even with zero known candidates",()=>{
+ const x=planEcoAlignment({novel:{...base,qa_flag:"provisional"},known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("QA_STATE_REQUIRES_REVIEW"));
+ assert.equal(x.novel_qualification_state,"REVIEW_REQUIRED");
+});
+test("instrument and calibration source changes remain distinct",()=>{
+ const a={...base,station_instrument_id:"sensor-2",calibration_verification_ref:"cal-2"};
+ const b={...known,source_refs:["src-a"],station_instrument_id:"sensor-1",calibration_verification_ref:"cal-1"};
+ const c=run(a,b).candidates[0].checks;
+ assert.ok(c.includes("INSTRUMENT_ID_DIFFERENT_OR_UNDECLARED"));
+ assert.ok(c.includes("CALIBRATION_REF_DIFFERENT_OR_UNDECLARED"));
+});
+test("source provenance revisions and station siting cannot silently collapse",()=>{
+ const a={...base,source_provenance_ref:"dataset-v2",siting_metadata_ref:"site-rev2"};
+ const b={...known,source_refs:["src-a"],source_provenance_ref:"dataset-v1",siting_metadata_ref:"site-rev1"};
+ const c=run(a,b).candidates[0].checks;
+ assert.ok(c.includes("PROVENANCE_REVISION_DIFFERENT_OR_UNDECLARED"));
+ assert.ok(c.includes("SITING_REF_DIFFERENT_OR_UNDECLARED"));
+});
