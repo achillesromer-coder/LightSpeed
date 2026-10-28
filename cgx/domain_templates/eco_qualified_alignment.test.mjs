@@ -424,3 +424,41 @@ test("ecological function without identity is held and never implies measured ef
  assert.equal(x.ecological_effect_verified,false);
  assert.equal(x.db_readback,false);
 });
+
+
+// Synthetic receiving-system attribution tests; no real observations or coordinates.
+const pathFixture={proposed:true,pathway_kind:"surface_water",source_system_ref:"fixture:up",target_system_ref:"fixture:down",
+ pathway_evidence_ref:"fixture:pathway",spatial_frame_ref:"fixture:frame",site_condition:"degraded",
+ action:"protect_monitor",outcome_claim:"hypothesised",baseline_ref:"fixture:baseline",
+ method_ref:"fixture:method",counterevidence_ref:"fixture:counter",accounting_scope_ref:"fixture:scope"};
+const pathNovel=p=>({semantic_type:"receiving_system",receiving_system_id:"fixture:system",source_refs:["fixture:source"],
+ evidence_class:"source_asserted",receiving_pathway:p});
+const pathPlan=p=>planEcoAlignment({novel:pathNovel(p),authorised_source_ids:["fixture:source"]});
+test("receiving pathway without physical context remains held",()=>{
+ const x=pathPlan({proposed:true,outcome_claim:"hypothesised"});
+ for(const f of ["RECEIVING_SOURCE_SYSTEM_REQUIRED","RECEIVING_TARGET_SYSTEM_REQUIRED","RECEIVING_PATHWAY_KIND_REQUIRED",
+  "RECEIVING_PATHWAY_EVIDENCE_REQUIRED","RECEIVING_SPATIAL_FRAME_REQUIRED","RECEIVING_BASELINE_REQUIRED",
+  "RECEIVING_COUNTEREVIDENCE_REQUIRED","RECEIVING_ACCOUNTING_SCOPE_REQUIRED"])assert.ok(x.novel_checks.includes(f),f);
+});
+test("intact or self-repairing systems require intervention review",()=>{
+ for(const condition of ["intact","self_repairing"])assert.ok(pathPlan({...pathFixture,site_condition:condition,action:"intervene"}).novel_checks.includes("INTACT_SYSTEM_INTERVENTION_REVIEW_REQUIRED"));
+});
+test("observed receiving-system benefit without field receipt is held",()=>{
+ const x=pathPlan({...pathFixture,outcome_claim:"observed"});
+ assert.ok(x.novel_checks.includes("RECEIVING_FIELD_RECEIPT_REQUIRED"));
+ assert.ok(x.novel_checks.includes("RECEIVING_OBSERVED_CLAIM_REQUIRES_INDEPENDENT_REVIEW"));
+});
+test("complete source references never prove effect or double-counting",()=>{
+ const x=pathPlan({...pathFixture,outcome_claim:"observed",field_receipt_ref:"fixture:receipt"});
+ assert.ok(x.novel_checks.includes("RECEIVING_OUTCOME_NOT_VERIFIED"));
+ assert.ok(x.novel_checks.includes("RECEIVING_NO_DOUBLE_COUNT_REVIEW_REQUIRED"));
+ assert.equal(x.ecological_effect_verified,false);assert.equal(x.db_readback,false);assert.equal(x.object_ids_minted,0);
+});
+test("different receiving-system pathway types cannot align",()=>{
+ const a=pathNovel(pathFixture),b={...a,object_id:"fixture:known",receiving_pathway:{...pathFixture,pathway_kind:"groundwater"}};
+ const x=planEcoAlignment({novel:a,known_objects:[b],authorised_object_ids:["fixture:known"],authorised_source_ids:["fixture:source"]});
+ assert.ok(x.candidates[0].checks.includes("RECEIVING_PATHWAY_PROVENANCE_OR_SCOPE_DIFFERENT"));
+ assert.equal(x.candidates[0].auto_merge,false);
+});
+test("same source and target system is a review gate",()=>assert.ok(pathPlan({...pathFixture,target_system_ref:pathFixture.source_system_ref}).novel_checks.includes("RECEIVING_SELF_LINK_REVIEW_REQUIRED")));
+test("invalid pathway kind is rejected",()=>assert.throws(()=>pathPlan({...pathFixture,pathway_kind:"guaranteed_reef_benefit"}),/INVALID_RECEIVING_PATHWAY_KIND/));
