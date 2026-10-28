@@ -1,0 +1,159 @@
+{
+  "schema": "CGX-LAUNCH-TRAIN-AND-PUBLIC-RELEASE/0.1",
+  "status": "DRAFT_REVIEW_ONLY",
+  "date": "2026-10-28",
+  "rule": "Finish native CGX + LS private operator first; UniSpace separate product trial and public CGX website only after independent approval and authentic live readback.",
+  "phases": [
+    {
+      "id": "A",
+      "name": "Native CGX source and identity",
+      "status": "HOLD",
+      "requires": [
+        "Full R0 source/rights reconciliation: original GPT 12 shards and actual manual-intake owner path",
+        "current accepted CGX root + four child native acceptance receipts",
+        "existing LOAD Object_ID + CCC alias binding",
+        "typed R1/R2 source conversions and Frontier review",
+        "authentic DBR/root readback"
+      ],
+      "proof": "First source-qualified accepted Object_ID and native child readback"
+    },
+    {
+      "id": "B",
+      "name": "Unified LS / CGX setup",
+      "status": "SOURCE_REVIEW",
+      "requires": [
+        "host BouwerBase online and authorised for install",
+        "Python 3.11 runtime dependency/profile checks",
+        "single settings owner, no-loss migration from legacy wizards",
+        "managed runtime install/update/rollback tests",
+        "GOT exact meaning if enabled",
+        "signed provider/agent node handshake"
+      ],
+      "proof": "one independent cold install/restart/resume/negative receipt"
+    },
+    {
+      "id": "C",
+      "name": "Per-Grex LS GO operator beta",
+      "status": "HOLD",
+      "requires": [
+        "LS GO per-child toggles linked to accepted FileSpace",
+        "private static / object-review boundary issue #158",
+        "two real node DataSpace exchange issue #161 where relevant",
+        "browser+mobile+offline read-only and revoked access negatives",
+        "signed owner scope and DBR readback"
+      ],
+      "proof": "private operator beta on one grex, then repeat with independent receipts for other children"
+    },
+    {
+      "id": "D",
+      "name": "UniSpace product readiness",
+      "status": "HOLD",
+      "requires": [
+        "separate product application, pricing/licence/trial terms and usage rights",
+        "CGX capability contract stable, installer/user account and support path",
+        "public-safe demo dataset distinct from internal object reviews",
+        "positive accessibility/mobile + negative privacy/security suite",
+        "distribution package signature and rollback"
+      ],
+      "proof": "explicit owner review of testable download/trial and audited public build"
+    },
+    {
+      "id": "E",
+      "name": "CGX information website and public communication",
+      "status": "HOLD",
+      "requires": [
+        "approved external claims and architecture explanation",
+        "separate CGX core vs UniSpace trial messaging",
+        "images/iconography/font/palette and licence verification",
+        "source citations, claim confidence, patent/IP/publication rights and legal terms",
+        "real HTTPS domain and deployed site readback",
+        "outreach recipient/release approval"
+      ],
+      "proof": "owner-approved, content-hashed and deployed site; external outreach separately approved"
+    }
+  ],
+  "website_information_architecture": [
+    {
+      "page": "CGX",
+      "description": "What the FileSpace/Family Set is, source and authority distinction, one qualified Object_ID; no universal-completeness claim"
+    },
+    {
+      "page": "Architecture",
+      "description": "Cognigrex parent, Grex families, LOAD/Alexandria, CCC typed capabilities, FS/DS sparse hydration, optional LS GO"
+    },
+    {
+      "page": "Alexandria / LOAD",
+      "description": "Minimal library, source-linked knowledge and offline-to-network hydration with licences, no broad archive-mirror claims"
+    },
+    {
+      "page": "Grex tools and LightSpeed",
+      "description": "Real installed versus registered capabilities, safe demo and release levels; no live solver claims without receipts"
+    },
+    {
+      "page": "UniSpace",
+      "description": "Separate consumer/product interface with features only as supported by accepted build"
+    },
+    {
+      "page": "Try for free",
+      "description": "Only enabled after public-safe sample, account/licence, installer/hosting and privacy testing; no fake links"
+    },
+    {
+      "page": "Documentation",
+      "description": "Operator installation, smart setup, user controls, evidence ceilings, source provenance and changelog"
+    },
+    {
+      "page": "Research and findings",
+      "description": "Review-qualified, cited factual outputs; speculative, modelling and physical outcomes explicitly distinguished"
+    },
+    {
+      "page": "Privacy, rights and terms",
+      "description": "Accurate controls, data access, IP/licence, external providers, security disclosures and support"
+    }
+  ],
+  "readiness": {
+    "parent_accepted": false,
+    "child_accepted": false,
+    "load_accepted": false,
+    "full_corpus_absorbed": false,
+    "host_connected": false,
+    "grex_ls_go_beta_verified": false,
+    "uniSpace_public_trial_verified": false,
+    "website_deployed": false,
+    "outreach_sent": false
+  },
+  "user_decisions_for_finish": [
+    {
+      "id": "DEC_GOT",
+      "question": "What exact source-backed component does GOT refer to?",
+      "default": "leave disabled in wizard; do not invent acronym",
+      "blocking": "GOT enabled only"
+    },
+    {
+      "id": "DEC_RELEASE_SCOPE",
+      "question": "Which CGX and research content is PUBLIC_SAFE versus private/internal or patent-sensitive?",
+      "default": "private",
+      "blocking": "public site and outreach"
+    },
+    {
+      "id": "DEC_TRIAL",
+      "question": "Which UniSpace features and licence/terms define the first free trial?",
+      "default": "not advertised until accepted",
+      "blocking": "UniSpace free trial"
+    },
+    {
+      "id": "DEC_HOST",
+      "question": "When BouwerBase reconnects, which accepted root/child carrier and signed owner lease should be admitted?",
+      "default": "read-only preflight",
+      "blocking": "native release"
+    }
+  ],
+  "external_actions": {
+    "website_publish": false,
+    "email_outreach": false,
+    "public_download": false,
+    "pricing_or_payment": false,
+    "production_merge": false,
+    "canonical_mutation": false,
+    "archive_delete": false
+  }
+}
