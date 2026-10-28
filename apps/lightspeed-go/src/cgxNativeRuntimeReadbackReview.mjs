@@ -75,6 +75,18 @@ function absolutePath(value){
  if(windows&&segments.some(s=>/[<>:"|?*]/.test(s)||/[. ]$/.test(s)||winDevice.test(s)))return null;
  return windows?p.toLowerCase():p;
 }
+// Python runtime_productization uses UTC strftime("%Y%m%dT%H%M%SZ").
+ // Reject calendar-impossible receipt labels before any host attestation.
+function validUTCReceiptStamp(stamp){
+ if(!/^\d{8}T\d{6}Z$/.test(stamp))return false;
+ const year=Number(stamp.slice(0,4)),month=Number(stamp.slice(4,6));
+ const day=Number(stamp.slice(6,8)),hour=Number(stamp.slice(9,11));
+ const minute=Number(stamp.slice(11,13)),second=Number(stamp.slice(13,15));
+ const leap=year%4===0&&(year%100!==0||year%400===0);
+ const days=[31,leap?29:28,31,30,31,30,31,31,30,31,30,31];
+ return year>=1&&year<=9999&&month>=1&&month<=12&&
+  day>=1&&day<=days[month-1]&&hour<=23&&minute<=59&&second<=59;
+}
 function statusPaths(s,slotName){
  const root=absolutePath(s.managed_root);
  const slotRoot=absolutePath(s.slot_root);
@@ -87,8 +99,9 @@ function statusPaths(s,slotName){
  const prefix=root+'/_receipts/'+name+'-';
  return s.recent_receipts.every(path=>{
   const p=absolutePath(path);
-  return p!==null&&p.startsWith(prefix)&&
-   /^(?:configure|rollback|install(?:-installer)?|update(?:-installer)?)-\d{4}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])T(?:[01]\d|2[0-3])[0-5]\d[0-5]\dZ\.json$/i.test(p.slice(prefix.length));
+  if(p===null||!p.startsWith(prefix))return false;
+  const match=/^(?:configure|rollback|install(?:-installer)?|update(?:-installer)?)-(\d{8}T\d{6}Z)\.json$/i.exec(p.slice(prefix.length));
+  return match!==null&&validUTCReceiptStamp(match[1].toUpperCase());
  });
 }
 function statusShape(s,slot){
