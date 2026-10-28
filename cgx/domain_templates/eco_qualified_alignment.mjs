@@ -101,6 +101,9 @@ export function planEcoAlignment({novel,known_objects=[],authorised_object_ids=[
   completeness(novel,checks);completeness(k,checks);compare(novel,k,checks);
   const refs=k.source_refs.filter(s=>allowedSources.has(s));
   if(!novelRefs.length||!refs.length)add(checks,"EVIDENCE_SOURCE_GAP");
+  else if(!refs.some(s=>novelRefs.includes(s)))add(checks,"SOURCE_LINEAGE_DISJOINT_REVIEW");
+  if(novelRefs.length<novel.source_refs.length)add(checks,"NOVEL_SOURCE_SCOPE_PARTIAL");
+  if(refs.length<k.source_refs.length)add(checks,"KNOWN_SOURCE_SCOPE_PARTIAL");
   const exactId=novel.object_id===k.object_id;
   out.push({known_object_id:k.object_id,
    state:checks.length?"REVIEW_DIFFERENCE":exactId?"SAME_ID_CLAIM_REQUIRES_PROOF":"TYPED_ALIGNMENT_CANDIDATE",
