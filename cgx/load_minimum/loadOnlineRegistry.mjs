@@ -23,6 +23,21 @@ export function validateRegistry(registry) {
   if(seen.has(id))throw Error("DUPLICATE_REGISTRY_KEY:"+id);
   seen.add(id);
   if(!Object.hasOwn(registry.source_registries,r.source_registry)||!SHA.test(r.source_git_blob)||registry.source_registries[r.source_registry].git_blob!==r.source_git_blob)throw Error("SOURCE_PROOF_MISMATCH");
+  if(r.category==="ccc_route"){
+   if(!Array.isArray(r.selector_sources)||!r.selector_sources.length||!isObj(r.route_source_proofs)||
+      new Set(r.selector_sources).size!==r.selector_sources.length||
+      Object.keys(r.route_source_proofs).length!==r.selector_sources.length)
+    throw Error("CCC_ROUTE_PROVENANCE_MISMATCH");
+   for(const selector of r.selector_sources){
+    const p='plugins/packages/'+selector+'/references/capabilities.json';
+    const proof=r.route_source_proofs[selector];
+    if(!isObj(proof)||proof.source_registry!==p||!isObj(registry.source_registries[p])||
+       proof.git_blob!==registry.source_registries[p].git_blob)
+     throw Error("CCC_ROUTE_PROVENANCE_MISMATCH");
+   }
+   if(!r.selector_sources.some(selector=>r.route_source_proofs[selector].source_registry===r.source_registry))
+    throw Error("CCC_ROUTE_PROVENANCE_MISMATCH");
+  }
   if(r.native_absorbed===true||r.installed_online===true)throw Error("UNVERIFIED_INSTALLATION");
  }
  return {valid:true,source_registry_count:Object.keys(registry.source_registries).length,reference_count:seen.size,frontier_count:registry.frontier.length};
