@@ -49,3 +49,20 @@ test("novel source references outside the authorised scope remain visibly partia
 test("known source references outside the authorised scope remain visibly partial",()=>{
  assert.ok(flags(base,{...known,source_refs:["src-a","unapproved-src"]}).includes("KNOWN_SOURCE_SCOPE_PARTIAL"));
 });
+
+test("unzoned timestamps cannot qualify",()=>{
+ const a={...base,observed_at:"2026-10-01T12:00:00"},b={...known,source_refs:["src-a"],observed_at:"2026-10-01T12:00:00"};
+ const x=run(a,b).candidates[0];assert.equal(x.state,"REVIEW_DIFFERENCE");assert.ok(x.checks.includes("OBSERVATION_TIMESTAMP_INVALID_OR_UNZONED"));
+});
+test("invalid leap day cannot qualify",()=>{
+ const a={...base,observed_at:"2026-02-29T12:00:00Z"},b={...known,source_refs:["src-a"],observed_at:"2026-02-29T12:00:00Z"};
+ assert.ok(run(a,b).candidates[0].checks.includes("OBSERVATION_TIMESTAMP_INVALID_OR_UNZONED"));
+});
+test("invalid timezone offset cannot qualify",()=>{
+ const a={...base,observed_at:"2026-10-01T12:00:00+15:00"},b={...known,source_refs:["src-a"],observed_at:"2026-10-01T12:00:00+15:00"};
+ assert.ok(run(a,b).candidates[0].checks.includes("OBSERVATION_TIMESTAMP_INVALID_OR_UNZONED"));
+});
+test("valid leap day and offset retain typed candidate",()=>{
+ const a={...base,observed_at:"2024-02-29T12:00:00+10:00"},b={...known,source_refs:["src-a"],observed_at:"2024-02-29T12:00:00+10:00"};
+ assert.equal(run(a,b).candidates[0].state,"TYPED_ALIGNMENT_CANDIDATE");
+});
