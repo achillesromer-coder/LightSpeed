@@ -1,0 +1,34 @@
+name: CGX Neo Runtime Readback Source Review
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'apps/lightspeed-go/src/cgxNativeRuntimeReadbackReview.mjs'
+      - 'apps/lightspeed-go/scripts/checkCgxNativeRuntimeReadbackReview.mjs'
+      - '.github/workflows/cgx-neo-runtime-review-validation.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  source-review:
+    name: Source-only runtime ABI and negative tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout review branch without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check of source-only runtime adapter and tests
+        run: |
+          node --check apps/lightspeed-go/src/cgxNativeRuntimeReadbackReview.mjs
+          node --check apps/lightspeed-go/scripts/checkCgxNativeRuntimeReadbackReview.mjs
+      - name: Run bounded native Node source-review tests (no host or DBR)
+        run: node --test apps/lightspeed-go/scripts/checkCgxNativeRuntimeReadbackReview.mjs
