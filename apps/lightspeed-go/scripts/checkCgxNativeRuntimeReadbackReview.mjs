@@ -334,3 +334,24 @@ test('Python operator receipt action and UTC timestamp contract fail closed',()=
    'RUNTIME_STATUS_SHAPE_INVALID');
  }
 });
+
+test('UTC receipt filename dates must be calendar-real, not just regex-shaped',()=>{
+ for(const stamp of ['20260229T100000Z','20260431T100000Z',
+  '20261000T100000Z','20261032T100000Z','20261301T100000Z',
+  '00001028T100000Z','20261028T240000Z','20261028T106000Z',
+  '20261028T100060Z']){
+  denied(x=>{x.runtime_status.recent_receipts=[
+   'D:/review/_receipts/neo-review-configure-'+stamp+'.json'];},
+   'RUNTIME_STATUS_SHAPE_INVALID');
+ }
+});
+test('valid leap-day and year-boundary UTC receipts stay source-only',()=>{
+ for(const stamp of ['20280229T235959Z','20261231T000000Z',
+  '20000229T120000Z']){
+  const x=fixture();x.runtime_status.recent_receipts=[
+   'D:/review/_receipts/neo-review-rollback-'+stamp+'.json'];
+  const y=review(x);
+  assert.equal(y.state,'AUTHENTICATED_HOST_READBACK_REQUIRED',stamp);
+  assert.equal(y.runtime_installed_verified,false);
+ }
+});
