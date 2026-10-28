@@ -82,6 +82,12 @@ function validateConcept(x){
   if(s.effort_value!==undefined&&(typeof s.effort_value!=="number"||!Number.isFinite(s.effort_value)||s.effort_value<=0))
    throw Error("INVALID_SURVEY_EFFORT");
  }
+ if(x.survey_comparison!==undefined){
+  const c=x.survey_comparison;
+  if(!obj(c)||typeof c.proposed!=="boolean")throw Error("INVALID_SURVEY_COMPARISON");
+  for(const f of ["baseline_ref","control_ref","seasonal_alignment_ref","method_comparability_ref","detectability_model_ref","sampling_design_ref"])
+   if(c[f]!==undefined&&!good(c[f]))throw Error("INVALID_SURVEY_COMPARISON_"+f.toUpperCase());
+ }
  if(x.measurement_basis!==undefined&&!["raw","corrected","derived","reference"].includes(x.measurement_basis))throw Error("INVALID_MEASUREMENT_BASIS");
  if(x.measurement_uncertainty!==undefined){
   const u=x.measurement_uncertainty;
@@ -130,6 +136,7 @@ function compare(a,b,checks){
  if(!equal(a.seed_lot??null,b.seed_lot??null))add(checks,"SEED_LOT_IDENTITY_OR_QA_DIFFERENT");
  if(!equal(a.fungal_inoculation??null,b.fungal_inoculation??null))add(checks,"FUNGAL_TREATMENT_DISPOSITION_OR_EVIDENCE_DIFFERENT");
  if(!equal(a.survey??null,b.survey??null))add(checks,"SURVEY_EFFORT_METHOD_OR_DETECTION_DIFFERENT");
+ if(!equal(a.survey_comparison??null,b.survey_comparison??null))add(checks,"SURVEY_COMPARISON_DESIGN_DIFFERENT");
  // Field QA, missingness and instrument provenance are independent of measured value.
  for(const [field,flag] of [
   ["station_instrument_id","INSTRUMENT_ID_DIFFERENT_OR_UNDECLARED"],
@@ -216,6 +223,19 @@ function completeness(x,checks){
     if(!good(s.detectability_ref))add(checks,"DETECTABILITY_UNVERIFIED");
    }
   }
+ }
+ // A proposed biodiversity change comparison is never proof of ecological impact.
+ if(x.survey_comparison?.proposed){
+  add(checks,"BIODIVERSITY_CHANGE_COMPARISON_REQUIRES_REVIEW");
+  if(!x.survey||!["detected","not_detected"].includes(x.survey.detection_status))add(checks,"SURVEY_COMPARISON_OBSERVATION_REQUIRED");
+  for(const [field,flag] of [
+   ["baseline_ref","SURVEY_COMPARISON_BASELINE_REQUIRED"],
+   ["control_ref","SURVEY_COMPARISON_CONTROL_REQUIRED"],
+   ["seasonal_alignment_ref","SURVEY_COMPARISON_SEASONAL_ALIGNMENT_REQUIRED"],
+   ["method_comparability_ref","SURVEY_COMPARISON_METHOD_ALIGNMENT_REQUIRED"],
+   ["detectability_model_ref","SURVEY_COMPARISON_DETECTABILITY_REQUIRED"],
+   ["sampling_design_ref","SURVEY_COMPARISON_SAMPLING_DESIGN_REQUIRED"]])
+   if(!good(x.survey_comparison[field]))add(checks,flag);
  }
  // Censored reports are bounds, not measured point values.
  if(x.reporting_bound&&!good(x.result_qualifier))add(checks,"RESULT_QUALIFIER_REQUIRED");
