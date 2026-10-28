@@ -20,6 +20,21 @@ const TYPES = Object.freeze({
   glb: ["model/gltf-binary", "application/octet-stream"],
   gltf: ["model/gltf+json", "application/json"]
 });
+/** R0-only header triage: never a parser, safety scan, or content authentication. */
+function binaryHeaderStatus(ext, b) {
+  const eq = (offset, values) => values.every((v, i) => b[offset + i] === v);
+  const u32 = offset => (b[offset] | (b[offset+1] << 8) | (b[offset+2] << 16) | (b[offset+3] << 24)) >>> 0;
+  switch (ext) {
+    case "pdf": return b.length >= 5 && eq(0, [37,80,68,70,45]);
+    case "png": return b.length >= 8 && eq(0, [137,80,78,71,13,10,26,10]);
+    case "jpg": case "jpeg": return b.length >= 3 && eq(0, [255,216,255]);
+    case "webp": return b.length >= 12 && eq(0, [82,73,70,70]) &&
+      eq(8, [87,69,66,80]) && u32(4) === b.length - 8;
+    case "glb": return b.length >= 12 && eq(0, [103,108,84,70]) &&
+      u32(4) === 2 && u32(8) === b.length;
+    default: return null; // no reliable fixed header; native adapter must parse.
+  }
+}
 const record = x => x !== null && typeof x === "object" && !Array.isArray(x);
 const hold = code => Object.freeze({
   schema: SCHEMA, state: "HOLD", hold_code: code,
@@ -69,6 +84,8 @@ export async function preflightPrivateObjectDrop(input = {}) {
   if (!Number.isSafeInteger(file.size) || file.size < 1 || file.size > max_bytes ||
       !(file.bytes instanceof Uint8Array) || file.bytes.byteLength !== file.size)
       return hold("BYTE_LENGTH_OR_LIMIT_MISMATCH");
+  const binaryHeader = binaryHeaderStatus(ext, file.bytes);
+  if (binaryHeader === false) return hold("BINARY_SIGNATURE_MISMATCH");
   if (file.claimed_sha256 !== undefined && !SHA256.test(file.claimed_sha256))
       return hold("INVALID_CLAIMED_HASH");
   if (!globalThis.crypto?.subtle?.digest) return hold("WEBCRYPTO_UNAVAILABLE");
@@ -88,7 +105,10 @@ export async function preflightPrivateObjectDrop(input = {}) {
     parent_filespace: s.parent_filespace, candidate_object_id: s.object_id,
     child_filespace: s.filespace, source_mapping_id: p.mapping_id,
     evidence_class: p.evidence_class, file_type: ext, file_bytes: file.size,
-    candidate_r0_sha256: digest, source_reference_hash_verified: false,
+    candidate_r0_sha256: digest,
+    binary_signature_status: binaryHeader === true ?
+      "HEADER_MATCH_ONLY_NOT_FORMAT_VALIDATED" : "NO_FIXED_SIGNATURE_CHECK",
+    source_reference_hash_verified: false,
     rights_status: "UNVERIFIED", identity_collision_checked: false,
     format_parsed: false, malware_checked: false,
     r1_typed: false, r2_modelled: false, r3_live: false,
