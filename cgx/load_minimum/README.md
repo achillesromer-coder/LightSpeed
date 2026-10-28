@@ -27,8 +27,16 @@ The field \`authorized_object_ids\` and \`authorized_source_ids\` **must** be ex
 ### Integration sequence and tests
 
 \`\`\`sh
-node --test cgx/load_minimum/cgxLoadFeaturePlanner.test.mjs cgx/load_minimum/loadOnlineRegistry.test.mjs cgx/load_minimum/loadSemanticViewport.test.mjs
+node --test cgx/load_minimum/cgxLoadFeaturePlanner.test.mjs cgx/load_minimum/loadOnlineRegistry.test.mjs cgx/load_minimum/loadSemanticViewport.test.mjs cgx/load_minimum/loadQualifiedKnowledge.test.mjs
 node cgx/load_minimum/refreshLoadRegistry.mjs --check
 \`\`\`
 
 UniSpace context-menu/wizard should call \`planFeature\` and \`planKnowledgeSpread\` / \`planViewportSwitch\` using the current accepted CGX identity and authorised per-device scope. The existing host's CCC application, rendering providers, compute queue and RootAuthority/DBR readback must be integrated **separately**. Nothing in this review branch demonstrates a fully deployed 3D/chat interactive runtime or installed large Alexandria corpus. Keep public/private source boundaries and the #158/#161 acceptance holds.
+
+## Novel-to-known definition, equation and reinforcement (source-only)
+
+`loadQualifiedKnowledge.mjs` now compares a new family concept to explicitly authorised known objects by declared semantic type, dimensional basis, unit labels, coordinate frame, configuration, epoch and accessible evidence. Type matches, exact source bytes and even same asserted Object_ID are **review cues**, not proof of equivalence. Conflicting frames/units must be handled by separately qualified transforms, and evidence from the same source must not be misrepresented as independent corroboration.
+
+`planQualifiedOperator` accepts externally supplied typed binding declarations for an already indexed CCC route, checks the required inputs and reports a host/lease/DBR preflight. It intentionally returns **no numeric solution**, performs no simulation, does not assume the route has been installed and requires real mathematical/empirical validation afterwards. This separates **define → compare → plan solver → execute under authority → independently test/reinforce**.
+
+The optional `max_planned_operations = floor(max_compute_ms × max_ops_per_second / 1000)` is a deterministic upper-bound **planning value**. It is not a benchmark, execution estimate, CPU service guarantee, billing amount or permission to perform the work. Inclusion and evidence budgets remain orthogonal.
