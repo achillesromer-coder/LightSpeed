@@ -24,7 +24,7 @@ All outputs are source-only. A typed alignment candidate never means the objects
 node --test cgx/domain_templates/eco_qualified_alignment.test.mjs
 ~~~
 
-Twenty-three declared Node regression cases cover distinct taxon/specimen/coordinates/evidence/time/method/environment/units, missing observation metadata, invalid coordinates, 3D vertical datum, permissions, duplicate IDs and no automatic native promotion. Five isolated V8 checks for the new lineage guards passed against the exact source prior to commit; the full Node suite is **not reported as executed**. These are **source-level negative tests**, not host, DBR, field or two-node tests.
+Twenty-three declared Node regression cases cover distinct taxon/specimen/coordinates/evidence/time/method/environment/units, missing observation metadata, invalid coordinates, 3D vertical datum, permissions, duplicate IDs and no automatic native promotion. All 23 committed regression test bodies passed in an isolated V8 compatibility harness against the exact read-back module; this is **not a Node CI run or host acceptance**. A same-ID proof-priority regression was detected and corrected before the final passing run. These are **source-level negative tests**, not host, DBR, field or two-node tests.
 
 ## Native integration holds
 
