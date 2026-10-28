@@ -108,6 +108,16 @@
       "id": "C15",
       "input": "An R0 S92 recovery carrier classified Restricted / Internal by its exact root-promotion receipt currently has Google Drive anyone-with-link reader permission, while a separate R0_REFERENCE_ONLY private copy is owner-only.",
       "expected": "SOURCE_RIGHTS_ACL_HOLD; do not treat link readability as redistribution permission, source-to-native admission, public projection approval or reason to mutate original permissions. Escalate visibility decision to the existing security owner; retain original and private reference as distinct provider instances."
+    },
+    {
+      "id": "C16",
+      "input": "A GPT export_manifest.json declares twelve conversations-000.json through conversations-011.json files (434547139 total declared bytes), and a user-reported local path mentions conversations-008.json, but no original shard bytes, per-shard provider revision, SHA-256, rights/ACL or conversation branch/time context have been independently read.",
+      "expected": "FOUND_REFERENCE_ONLY; manifest and screenshot are locators, not original shard byte evidence. Do not claim HASH_VERIFIED, R1_TYPED, corpus parity, source-qualified Object_ID, DBR admission or a completed intake. On authenticated access, read one original shard in <=60 MiB bounded units, verify exact source version/hash, rights/ACL and chronology; retain R0 unchanged and use existing source envelope/parser."
+    },
+    {
+      "id": "C17",
+      "input": "A candidate qualified CGX Object_ID is proposed using a structurally valid CGX-SOURCE-ENVELOPE/0.1 record, but original source revision, rights/ACL or historical branch/time context is unknown or contradictory; the source-envelope required-fields list alone does not supply these qualifications.",
+      "expected": "SOURCE_QUALIFICATION_HOLD; retain competing R0/version hypotheses and explicit unresolved fields. No alias merge, ownership transfer, qualified minting, R2 authority or native DBR acceptance until owner, version, hash, rights, ACL and applicable time context are independently resolved."
     }
   ],
   "validation_state": "STATIC_SOURCE_REVIEW_ONLY",
