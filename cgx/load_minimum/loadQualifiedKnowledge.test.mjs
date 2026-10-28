@@ -92,3 +92,22 @@ test('partial method unit basis is held independently of a conversion claim',()=
  assert.ok(!p.operator_candidates[0].blockers.includes('UNIT_CONVERSION_METHOD_REQUIRED'));
  assert.equal(p.object_ids_minted,0);
 });
+
+test('method provenance is denied when method source is not in the explicit source ACL',()=>{
+ const p=planQualifiedOperator({registry,problem:novel,authorised_source_ids:['fixture:novel'],
+  bindings:[{route_key:'science.query',input_type:'orbital_state',required_dimensions:novel.dimensions,
+   required_units:novel.units,qualified_method_source:'fixture:private-method'}]});
+ assert.equal(p.operator_candidates.length,1);
+ assert.ok(p.operator_candidates[0].blockers.includes('METHOD_SOURCE_NOT_AUTHORISED'));
+ assert.equal(p.computation_executed,false);
+});
+test('method provenance ACL gate clears only for explicitly authorised method source',()=>{
+ const p=planQualifiedOperator({registry,problem:novel,
+  authorised_source_ids:['fixture:novel','fixture:qualified-method'],
+  bindings:[{route_key:'science.query',input_type:'orbital_state',required_dimensions:novel.dimensions,
+   required_units:novel.units,qualified_method_source:'fixture:qualified-method'}]});
+ assert.equal(p.operator_candidates.length,1);
+ assert.ok(!p.operator_candidates[0].blockers.includes('METHOD_SOURCE_NOT_AUTHORISED'));
+ assert.ok(p.operator_candidates[0].blockers.includes('HOST_CAPABILITY_LEASE_AND_DB_R_READBACK_REQUIRED'));
+ assert.equal(p.computation_executed,false);
+});
