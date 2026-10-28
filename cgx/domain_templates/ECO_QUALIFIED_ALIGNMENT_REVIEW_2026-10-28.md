@@ -14,6 +14,8 @@
 
 `planEcoAlignment` accepts explicitly permitted source and known-object IDs, rejects duplicate authorised IDs, discriminates subject/taxon/specimen/population/site/station identity, geospatial CRS and point, time, evidence class, method, units, measurement and environmental context. It marks missing mandatory observation metadata. Geometry is a source-declared point only; no interpolation, CRS transform, inferred 3D, map reconstruction or environmental impact simulation.
 
+Source-lineage review now distinguishes **overlapping permitted references**, **disjoint permitted references**, and **partially authorised reference sets**. Disjoint lineages produce `SOURCE_LINEAGE_DISJOINT_REVIEW`; filtered-out source references produce `NOVEL_SOURCE_SCOPE_PARTIAL` or `KNOWN_SOURCE_SCOPE_PARTIAL`. These are review warnings, not a prohibition on independently corroborated cross-source alignment. No unpermitted source ID or private source body is emitted. Provider ACL visibility does not by itself establish copyright, data reuse, or cultural stewardship rights.
+
 All outputs are source-only. A typed alignment candidate never means the objects are identical, rights-cleared, measured, accepted or safe to release. Integration with the shared LOAD plan must remain a *review gate*, not a parallel source of canonical authority. No original source is copied into this repository.
 
 ## Reproduce
@@ -22,7 +24,7 @@ All outputs are source-only. A typed alignment candidate never means the objects
 node --test cgx/domain_templates/eco_qualified_alignment.test.mjs
 ~~~
 
-Twenty synthetic cases cover distinct taxon/specimen/coordinates/evidence/time/method/environment/units, missing observation metadata, invalid coordinates, 3D vertical datum, permissions, duplicate IDs and no automatic native promotion. These are **source-level negative tests**, not host, DBR, field or two-node tests.
+Twenty-three declared Node regression cases cover distinct taxon/specimen/coordinates/evidence/time/method/environment/units, missing observation metadata, invalid coordinates, 3D vertical datum, permissions, duplicate IDs and no automatic native promotion. Five isolated V8 checks for the new lineage guards passed against the exact source prior to commit; the full Node suite is **not reported as executed**. These are **source-level negative tests**, not host, DBR, field or two-node tests.
 
 ## Native integration holds
 
