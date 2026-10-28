@@ -13,6 +13,14 @@ const STATUS_KEYS=['schema','slot','source_head','managed_root','slot_root',
  'managed_marker','configured','profile','installed','python',
  'recent_receipts','authority'];
 const STARTUP_KEYS=['root','source_files','global_options','floors'];
+// Source: lightspeed_runtime.startup_options.read_startup_options (Python).
+// Validate its optional fields without treating caller JSON as host evidence.
+const GLOBAL_BOOLEAN_KEYS=['first_run_complete','show_splash_screen',
+ 'z_floor_dropdown_enabled','ollama_auto_start','web_server_auto_start',
+ 'db_auto_backup','db_vacuum_on_startup'];
+const GLOBAL_KEYS=[...GLOBAL_BOOLEAN_KEYS,'max_concurrent_jobs','holospace_entry_policy'];
+const FLOOR_KEYS=['floor','canonical_id','enabled','autostart',
+ 'port','responsibility','description'];
 const REQUEST_KEYS=['family','object_id','capability_id','source_revision',
  'slot','intent','execution_requested','install_requested',
  'canonical_mutation_requested'];
@@ -100,16 +108,30 @@ function startupShape(p){
  if(!obj(p)||!keys(p,STARTUP_KEYS)||!sourceFilesShape(p)||
   !obj(p.global_options)||!obj(p.floors)||
   Object.keys(p.floors).length!==8||
-  Object.keys(p.floors).some(k=>!Object.hasOwn(FLOOR_IDS,k)))return false;
+  Object.keys(p.floors).some(k=>!Object.hasOwn(FLOOR_IDS,k))||
+  !keys(p.global_options,GLOBAL_KEYS)||
+  !GLOBAL_BOOLEAN_KEYS.every(k=>!Object.hasOwn(p.global_options,k)||
+   typeof p.global_options[k]==='boolean')||
+  (Object.hasOwn(p.global_options,'holospace_entry_policy')&&
+   !txt(p.global_options.holospace_entry_policy)))return false;
  for(const [name,canonical_id] of Object.entries(FLOOR_IDS)){
   const f=p.floors[name];
-  if(!obj(f)||f.floor!==name||f.canonical_id!==canonical_id||
-    typeof f.enabled!=='boolean'||typeof f.autostart!=='boolean')return false;
+  if(!obj(f)||!keys(f,FLOOR_KEYS)||f.floor!==name||
+    f.canonical_id!==canonical_id||typeof f.enabled!=='boolean'||
+    typeof f.autostart!=='boolean'||
+    (Object.hasOwn(f,'port')&&!(f.port==null||f.port===''||
+      (Number.isInteger(f.port)&&f.port>=0&&f.port<=65535)||
+      (typeof f.port==='string'&&/^\\d{1,5}$/.test(f.port)&&
+       Number(f.port)<=65535)))||
+    ['responsibility','description'].some(k=>Object.hasOwn(f,k)&&
+      (typeof f[k]!=='string'||f[k].length>512||
+       /[\\u0000-\\u001f]/.test(f[k]))))return false;
  }
  return typeof p.global_options.first_run_complete==='boolean'&&
   typeof p.global_options.show_splash_screen==='boolean'&&
   Number.isSafeInteger(p.global_options.max_concurrent_jobs)&&
   p.global_options.max_concurrent_jobs>=1&&
+  p.global_options.max_concurrent_jobs<=64&&
   Object.values(p.source_files).every(txt);
 }
 /** Syntax-only crosswalk; even a positive installed flag is NOT a host receipt. */
