@@ -58,6 +58,20 @@ function validateConcept(x){
    if(b[f]!==undefined&&!good(b[f]))throw Error("INVALID_BIOLOGICAL_TRANSFER_"+f.toUpperCase());
   }
  }
+ // BioBlocks seed lot and optional fungal-treatment source declarations: references are not approvals.
+ if(x.seed_lot!==undefined){
+  const s=x.seed_lot;
+  if(!obj(s))throw Error("INVALID_SEED_LOT");
+  for(const f of ["lot_id","taxon_id","parent_plant_ref","collection_site_ref","collection_year","qa_protocol_ref","sampling_ref","viability_ref","custody_ref","storage_history_ref","test_date"])
+   if(s[f]!==undefined&&!good(s[f]))throw Error("INVALID_SEED_LOT_"+f.toUpperCase());
+  if(s.collection_year!==undefined&&!/^\\d{4}$/.test(s.collection_year))throw Error("INVALID_SEED_COLLECTION_YEAR");
+ }
+ if(x.fungal_inoculation!==undefined){
+  const f=x.fungal_inoculation;
+  if(!obj(f)||!["HOLD","DO_NOT_INOCULATE","INOCULATE"].includes(f.disposition))throw Error("INVALID_FUNGAL_DISPOSITION");
+  for(const k of ["tst004_ref","fm039_ref","pathogen_screen_ref","host_association_ref","strain_source_ref"])
+   if(f[k]!==undefined&&!good(f[k]))throw Error("INVALID_FUNGAL_"+k.toUpperCase());
+ }
  if(x.measurement_basis!==undefined&&!["raw","corrected","derived","reference"].includes(x.measurement_basis))throw Error("INVALID_MEASUREMENT_BASIS");
  if(x.measurement_uncertainty!==undefined){
   const u=x.measurement_uncertainty;
@@ -103,6 +117,8 @@ function compare(a,b,checks){
  if(a.result_qualifier!==b.result_qualifier)add(checks,"RESULT_QUALIFIER_DIFFERENT_OR_UNDECLARED");
  if(!equal(a.reporting_bound??null,b.reporting_bound??null))add(checks,"REPORTING_BOUND_DIFFERENT_OR_UNDECLARED");
  if(!equal(a.biological_transfer??null,b.biological_transfer??null))add(checks,"BIOLOGICAL_TRANSFER_SCOPE_OR_PROVENANCE_DIFFERENT");
+ if(!equal(a.seed_lot??null,b.seed_lot??null))add(checks,"SEED_LOT_IDENTITY_OR_QA_DIFFERENT");
+ if(!equal(a.fungal_inoculation??null,b.fungal_inoculation??null))add(checks,"FUNGAL_TREATMENT_DISPOSITION_OR_EVIDENCE_DIFFERENT");
  // Field QA, missingness and instrument provenance are independent of measured value.
  for(const [field,flag] of [
   ["station_instrument_id","INSTRUMENT_ID_DIFFERENT_OR_UNDECLARED"],
@@ -152,6 +168,24 @@ function completeness(x,checks){
   add(checks,"BIOLOGICAL_TRANSFER_REVIEW_REQUIRED");
   for(const [f,flag] of [["origin_ref","BIOLOGICAL_TRANSFER_ORIGIN_REQUIRED"],["destination_ref","BIOLOGICAL_TRANSFER_DESTINATION_REQUIRED"],["provenance_ref","BIOLOGICAL_TRANSFER_PROVENANCE_REQUIRED"],["movement_rule_ref","BIOLOGICAL_TRANSFER_MOVEMENT_RULE_REQUIRED"],["biosecurity_review_ref","BIOLOGICAL_TRANSFER_REVIEW_RECEIPT_REQUIRED"]]){
    if(!good(x.biological_transfer[f]))add(checks,flag);
+  }
+ }
+ // A proposed seed transfer cannot be qualified from a species label alone.
+ if(x.biological_transfer?.proposed&&x.biological_transfer.carrier_class==="seed"){
+  if(!x.seed_lot)add(checks,"SEED_LOT_DESCRIPTOR_REQUIRED");
+  else{
+   for(const [f,flag] of [["lot_id","SEED_LOT_ID_REQUIRED"],["taxon_id","SEED_LOT_TAXON_REQUIRED"],["parent_plant_ref","SEED_PARENT_PROVENANCE_REQUIRED"],["collection_site_ref","SEED_COLLECTION_SITE_REQUIRED"],["qa_protocol_ref","SEED_QUALITY_PROTOCOL_REQUIRED"],["sampling_ref","SEED_SAMPLING_RATIONALE_REQUIRED"],["custody_ref","SEED_CUSTODY_REQUIRED"]])
+    if(!good(x.seed_lot[f]))add(checks,flag);
+   if(good(x.taxon_id)&&good(x.seed_lot.taxon_id)&&x.taxon_id!==x.seed_lot.taxon_id)add(checks,"SEED_LOT_TAXON_CONFLICT");
+  }
+ }
+ // TST-004/FM-039 fungal disposition is a source claim, not movement or release authority.
+ if(x.biological_transfer?.proposed&&["inoculum","spore"].includes(x.biological_transfer.carrier_class)){
+  if(!x.fungal_inoculation)add(checks,"FUNGAL_DISPOSITION_REQUIRED");
+  else if(x.fungal_inoculation.disposition==="DO_NOT_INOCULATE")add(checks,"FUNGAL_PROPOSED_TRANSFER_CONTRADICTS_EXCLUSION");
+  else if(x.fungal_inoculation.disposition==="INOCULATE"){
+   for(const [f,flag] of [["tst004_ref","FUNGAL_TST004_REQUIRED"],["fm039_ref","FUNGAL_FM039_REQUIRED"],["pathogen_screen_ref","FUNGAL_PATHOGEN_SCREEN_REQUIRED"],["host_association_ref","FUNGAL_HOST_EVIDENCE_REQUIRED"],["strain_source_ref","FUNGAL_STRAIN_PROVENANCE_REQUIRED"]])
+    if(!good(x.fungal_inoculation[f]))add(checks,flag);
   }
  }
  // Censored reports are bounds, not measured point values.
