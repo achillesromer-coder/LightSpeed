@@ -7,18 +7,6 @@
   "load_alias": "LOAD.cgx",
   "separate_product": "UniSpace",
   "setup_owner": "CGX startup orchestrator binds existing lightspeed_runtime.startup_options and runtime_productization; does not overwrite those implementations",
-  "reserved_got": {
-    "label": "GOT",
-    "expansion": "UNRESOLVED_BY_CURRENT_SOURCE_REVIEW",
-    "source_status": "NOT_FOUND_AS_EXACT_CGX_CAPABILITY",
-    "integration": "OPTIONAL_DISCOVERY_STEP_NOT_INSTALLED",
-    "requires": [
-      "exact existing full name and authenticated original provider",
-      "source-linked type/function/authority",
-      "CCC collision search, adapter contract and tests"
-    ],
-    "never": "do not invent new GOT root, code implementation, startup authority or user-visible installed feature"
-  },
   "steps": [
     {
       "id": "discover",
@@ -77,11 +65,10 @@
     {
       "id": "tools",
       "stage": "review",
-      "title": "Inspect CCC toolkits, adapters, GOT and capability registration",
+      "title": "Inspect CCC registered tools, adapters and installed capabilities",
       "must": [
         "installed-vs-registered distinction",
-        "licence and provider status",
-        "GOT unresolved until source"
+        "licence and provider status"
       ],
       "can_skip": true
     },
@@ -190,5 +177,15 @@
     "uniSpace_product": "public-safe product trial/download onboarding distinct from LS GO",
     "website": "new CGX architecture public-safe explanation and approved UniSpace integration",
     "release_gate": "source provenance, patent/IP, rights, security #158, independent review, owner approval, live tested site readback; no premature publication"
+  },
+  "source_name_reconciliation": {
+    "status": "NONBLOCKING_TRANSCRIPTION_AMBIGUITY",
+    "observed": "GOT",
+    "candidates": [
+      "Git",
+      "GPT",
+      "LightSpeed GO"
+    ],
+    "decision": "No independently established GOT capability; resolve context before interpreting occurrence as a tool, but do not add any wizard toggle, installation or launch hold."
   }
 }
