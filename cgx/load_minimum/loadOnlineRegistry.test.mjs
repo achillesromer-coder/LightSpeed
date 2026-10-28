@@ -128,3 +128,33 @@ test('Eco relation grammar collision and version mismatch fail closed without ca
  assert.equal(clear.native_admitted,false);
  assert.equal(clear.qualified_object_id,null);
 });
+
+test('shared/Eco relation lexical reuse is preserved as unresolved owner crosswalk candidates', async()=>{
+ const {inspectRelationGrammar}=await import('./inspectRelationGrammar.mjs');
+ const eco=JSON.parse(readFileSync(new URL('../domain_templates/eco_relation_registry.json',import.meta.url),'utf8'));
+ const shared=JSON.parse(readFileSync(new URL('../domain_templates/relation_qualifier_contract.json',import.meta.url),'utf8'));
+ const result=inspectRelationGrammar(eco,shared);
+ const byId=new Map(result.crosswalk_candidates.map(x=>[x.relation_id,x]));
+ assert.deepEqual([...byId.keys()].sort(),['DERIVED_FROM','EVIDENCED_BY','GATED_BY','HAS_CRITERION','MITIGATED_BY','USES_INPUT']);
+ assert.equal(result.crosswalk_candidates.length,6);
+ assert.equal(byId.get('USES_INPUT').domain_family,'recipe_test');
+ assert.equal(byId.get('USES_INPUT').shared_family,'process');
+ assert.equal(byId.get('MITIGATED_BY').domain_family,'intervention');
+ assert.equal(byId.get('MITIGATED_BY').shared_family,'risk');
+ assert.equal(byId.get('DERIVED_FROM').shared_family,'provenance');
+ for(const candidate of result.crosswalk_candidates){
+  assert.equal(candidate.classification,'UNRESOLVED_SHARED_TYPE_REUSE');
+  assert.equal(candidate.qualified_object_id,null);
+  assert.equal(candidate.owner_qualified,false);
+  assert.equal(candidate.native_admitted,false);
+ }
+ assert.equal(result.status,'HOLD'); // Real Eco /0.1 contract and MODIFIES duplication remain.
+ assert.equal(result.dbr_readback_verified,false);
+ const synthetic=copy(eco);
+ synthetic.extends=shared.schema;
+ synthetic.families.intervention.find(x=>x.id==='MODIFIES').id='MODIFIES_INTERVENTION_SYNTHETIC';
+ const structurallyClean=inspectRelationGrammar(synthetic,shared);
+ assert.equal(structurallyClean.status,'SOURCE_CONTRACT_CHECK_ONLY');
+ assert.equal(structurallyClean.crosswalk_candidates.length,6);
+ assert.ok(structurallyClean.crosswalk_candidates.every(x=>x.owner_qualified===false));
+});
