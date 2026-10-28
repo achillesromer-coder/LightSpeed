@@ -31,7 +31,7 @@ function validObservedAt(v){
 function validateConcept(x){
  if(!obj(x)||!ECO_TYPES.has(x.semantic_type)||!stringList(x.source_refs))throw Error("INVALID_ECO_CONCEPT");
  if(x.object_id!==undefined&&!good(x.object_id))throw Error("INVALID_OBJECT_ID");
- for(const f of [...IDENTITY,"observed_at","method_id","unit","frame","environment_id","configuration","epoch","aggregation_scope","baseline_id","station_instrument_id","qa_flag","missing_data_state","calibration_verification_ref","siting_metadata_ref","source_provenance_ref"]){
+ for(const f of [...IDENTITY,"observed_at","method_id","unit","frame","environment_id","configuration","epoch","aggregation_scope","baseline_id","observed_variable","native_interval","aggregation_period","station_instrument_id","qa_flag","missing_data_state","calibration_verification_ref","siting_metadata_ref","source_provenance_ref"]){
   if(x[f]!==undefined&&x[f]!==null&&!good(x[f]))throw Error("INVALID_ECO_FIELD_"+f);
  }
  if(x.sample_count!==undefined&&(!Number.isSafeInteger(x.sample_count)||x.sample_count<1))throw Error("INVALID_SAMPLE_COUNT");
@@ -61,6 +61,14 @@ function compare(a,b,checks){
  if(a.aggregation_scope!==b.aggregation_scope)add(checks,"AGGREGATION_SCOPE_DIFFERENT_OR_UNDECLARED");
  if(a.sample_count!==b.sample_count)add(checks,"SAMPLE_COUNT_DIFFERENT_OR_UNDECLARED");
  if(a.baseline_id!==b.baseline_id)add(checks,"BASELINE_DIFFERENT_OR_UNDECLARED");
+ // Source-declared variable identity and temporal support are not interchangeable.
+ // Same numeric value/unit does not make DO, nutrients, native cadence or aggregates equivalent.
+ for(const [field,flag] of [
+  ["observed_variable","OBSERVED_VARIABLE_DIFFERENT_OR_UNDECLARED"],
+  ["native_interval","NATIVE_INTERVAL_DIFFERENT_OR_UNDECLARED"],
+  ["aggregation_period","AGGREGATION_PERIOD_DIFFERENT_OR_UNDECLARED"]]){
+  if(a[field]!==b[field])add(checks,flag);
+ }
  if(a.evidence_class!==b.evidence_class)add(checks,"EVIDENCE_CLASS_DIFFERENT_OR_UNDECLARED");
  if(a.observed_at!==b.observed_at)add(checks,"OBSERVATION_TIME_DIFFERENT_OR_UNDECLARED");
  if(a.method_id!==b.method_id)add(checks,"METHOD_DIFFERENT_OR_UNDECLARED");
@@ -95,6 +103,10 @@ function compare(a,b,checks){
 function completeness(x,checks){
  if(!good(x.evidence_class))add(checks,"EVIDENCE_CLASS_REQUIRED");
  if(x.semantic_type==="sensor_reading"&&!x.measurement)add(checks,"SENSOR_MEASUREMENT_REQUIRED");
+ if(x.semantic_type==="sensor_reading"&&!good(x.observed_variable))add(checks,"OBSERVED_VARIABLE_REQUIRED");
+ if(x.semantic_type==="sensor_reading"&&!good(x.native_interval))add(checks,"NATIVE_INTERVAL_REQUIRED");
+ if(["average","mean","accumulated","sum","rolling_average","rolling_sum"].includes(x.aggregation_scope?.toLowerCase())&&!good(x.aggregation_period))
+  add(checks,"AGGREGATION_PERIOD_REQUIRED");
  if(x.measurement&&good(x.unit)&&x.unit!==x.measurement.unit)add(checks,"MEASUREMENT_UNIT_CONFLICT");
  if(OBSERVATIONS.has(x.semantic_type)){
   // These optional source QA fields must never silently certify an observation.
