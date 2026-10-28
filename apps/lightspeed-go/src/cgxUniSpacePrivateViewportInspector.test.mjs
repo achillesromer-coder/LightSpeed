@@ -1,0 +1,33 @@
+/** Synthetic, source-only #158/#161 negatives. No host, browser, DBR, Vite dist or rights proof. */
+import {test} from "node:test";
+import assert from "node:assert/strict";
+import {planPrivateR3Card} from "./cgxUniSpacePrivateR3Card.mjs";
+import {planPrivateViewportInspector} from "./cgxUniSpacePrivateViewportInspector.mjs";
+const fixture=()=>{
+ const selection={parent_filespace:"Cognigrex.cgx",object_id:"WT-001",filespace:"Romer.cgx",identity_status:"SOURCE_CANDIDATE_NOT_NATIVE_ACCEPTED"};
+ const source={object_id:"WT-001",filespace:"Romer.cgx",mapping_id:"FF-WATCHTOWER-FCSTD-001",mapping_blob_sha:"15ac42e257220e0efd30c8521fe2c319b9a25013",r0_source_sha256:"c476f9f2f9946ab8e99e58dd399aa7b02bac630c5d9336b80ef66f5f2a397321",evidence_class:"scientific",rights:"UNRESOLVED",mapping_stage:"R0_R1_R2_REFERENCE",geometry_state:"SOURCE_DERIVED_GEOMETRY",geometry_frame:null,geometry_units:null,private_source_locator:"PRIVATE_DO_NOT_EXPOSE"};
+ const client={mode:"review_only",revoked:false,allowed_object_ids:["WT-001"],allowed_filespaces:["Romer.cgx"]};
+ const request={view:"3d",requested_hydration:"H2"};
+ const card=planPrivateR3Card({selection,source,client,request});
+ return {card,selection,source,client,request};
+};
+const plan=x=>planPrivateViewportInspector(x);
+test("one exact source-mapped object and child",()=>{const p=plan(fixture());assert.equal(p.state,"R3_PRIVATE_INSPECTOR_CANDIDATE");assert.equal(p.candidate_object_id,"WT-001");assert.equal(p.child_filespace,"Romer.cgx");});
+test("all six views preserve identity and H0",()=>{for(const view of ["document","3d","chat","graph","interactive","matrix"]){const x=fixture();x.request.view=view;const p=plan(x);assert.equal(p.selected_view,view);assert.equal(p.candidate_object_id,"WT-001");assert.equal(p.display_hydration,"H0_REFERENCE_ONLY");}});
+test("no source locator, source hash or identity leaks into HTML",()=>{const p=plan(fixture());assert.doesNotMatch(p.html,/WT-001|PRIVATE_DO_NOT_EXPOSE|c476f9f2|15ac42e2|<script>/);});
+test("accessibility controls are labelled and disabled",()=>{const p=plan(fixture());assert.match(p.html,/aria-label="Knowledge breadth"/);assert.match(p.html,/<fieldset disabled>/);assert.match(p.html,/role="status"/);});
+test("3D lacks qualified geometry frame and units",()=>{assert.ok(plan(fixture()).frontier.includes("GEOMETRY_FRAME_UNITS_OR_RIGHTS_FRONTIER"));});
+test("geometry source claim cannot establish a rendered twin",()=>{const x=fixture();x.source.geometry_frame="local";x.source.geometry_units="m";assert.equal(plan(x).geometry_status,"FRONTIER_NO_AUTHORISED_RENDER");});
+test("revoked client is denied",()=>{const x=fixture();x.client.revoked=true;assert.equal(plan(x).state,"HOLD");});
+test("object substitution is denied",()=>{const x=fixture();x.selection.object_id="WT-002";assert.equal(plan(x).state,"HOLD");});
+test("child FileSpace substitution is denied",()=>{const x=fixture();x.selection.filespace="Eco.cgx";assert.equal(plan(x).state,"HOLD");});
+test("source mapping blob substitution is denied",()=>{const x=fixture();x.source.mapping_blob_sha="f".repeat(40);assert.equal(plan(x).state,"HOLD");});
+test("counterfeit host-verified card is rejected",()=>{const x=fixture();x.card={...x.card,host_verified:true};assert.equal(plan(x).state,"HOLD");});
+test("missing R3 card is denied",()=>{const x=fixture();x.card=null;assert.equal(plan(x).state,"HOLD");});
+test("over-budget request is denied",()=>{const x=fixture();x.request.controls={max_transfer_bytes:60*1024*1024+1};assert.equal(plan(x).state,"HOLD");});
+test("unknown budget field is denied",()=>{const x=fixture();x.request.controls={owner_bypass:true};assert.equal(plan(x).state,"HOLD");});
+test("unsupported view is denied",()=>{const x=fixture();x.request.view="<script>";assert.equal(plan(x).state,"HOLD");});
+test("H4 request remains H0 non-executable",()=>{const x=fixture();x.request.requested_hydration="H4";const p=plan(x);assert.equal(p.display_hydration,"H0_REFERENCE_ONLY");assert.equal(p.executable,false);assert.ok(p.frontier.includes("HIGHER_HYDRATION_DENIED"));});
+test("cross-domain requests do not hydrate edges",()=>{const x=fixture();x.request.controls={max_cross_domains:2,max_cross_edges:10};const p=plan(x);assert.equal(p.semantic_halo.edges,null);assert.ok(p.frontier.includes("CROSS_DOMAIN_EDGES_NOT_HYDRATED"));});
+test("compute and evidence are not fabricated",()=>{const p=plan(fixture());assert.equal(p.actual_compute_ms,null);assert.equal(p.permitted_evidence_refs,null);assert.equal(p.semantic_halo.actual_nodes,null);});
+test("no release, host, installation, fetch, mutation or Vite exposure claims",()=>{const p=plan(fixture());for(const k of ["native_admitted","host_verified","dist_verified","release_accepted","canonical_mutation","network_fetch","executable","installable","public_vite_asset","source_bytes_embedded"])assert.equal(p[k],false,k);});
