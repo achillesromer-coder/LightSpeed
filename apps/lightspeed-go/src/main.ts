@@ -63,7 +63,7 @@ import {
 } from "./resultReceipts";
 import { renderRepresentationGraphs } from "./representationGraphs";
 import { loadType1CatalogueProjection, type Type1CatalogueProjection } from "./utpCatalogue";
-import { bindCgxReviewProjection, loadCgxReviewProjection, type CgxReviewProjection } from "./cgxReview";
+
 
 import { sourceLinks } from "./sourceRegistry";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
@@ -900,19 +900,11 @@ void refreshDesktop();
 const objectReviewMount = byId("object-review-catalogue");
 objectReviewMount.innerHTML = `<article class="panel" data-cgx-private-review-hold="issue-158"><p class="eyebrow">CGX object review</p><h2>Private catalogue held</h2><p class="muted">Internal object and component review assets are not loaded from public static paths. A verified owner session, exact Object_ID and child FileSpace, source rights, authenticated host resolver, and independent denied-access and distribution tests are required. Offline view: H0 identity only. No private catalogue has been hydrated.</p></article>`;
 
+// #158: this internal review projection is not an authorised public-static source.
+// Preserve the original projection and renderer for future authenticated host binding.
+// Source-only hold: no network request, native admission, or deployment assertion.
 const cgxReviewMount = byId("cgx-review-lens");
-const cgxReviewUrl = new URL("./data/cgx_internal_review_projection.json", document.baseURI).toString();
-void loadCgxReviewProjection(async () => {
-  const response = await fetch(cgxReviewUrl, { cache: "no-store" });
-  if (!response.ok) throw new Error(`CGX review projection returned HTTP ${response.status}`);
-  return (await response.json()) as CgxReviewProjection;
-}).then(({ html }) => {
-  cgxReviewMount.innerHTML = html;
-  bindCgxReviewProjection(cgxReviewMount);
-}).catch((error) => {
-  const message = error instanceof Error ? error.message : "CGX review projection unavailable.";
-  cgxReviewMount.innerHTML = `<article class="panel"><p class="eyebrow">.cgx review lens</p><h2>Projection unavailable</h2><p class="muted">${escapeHtml(message)}</p></article>`;
-});
+cgxReviewMount.innerHTML = `<article class="panel" data-cgx-private-projection-hold="issue-158"><p class="eyebrow">.cgx review lens</p><h2>Private projection held</h2><p class="muted">The internal CGX review projection is not loaded from Vite public assets. Requires an authenticated host resolver, exact accepted Object_ID and child FileSpace, verified source rights, root/DBR permission checks and independent anonymous/revoked-session and deployed-dist negative tests. Offline view: H0 identity only. No private projection has been hydrated.</p></article>`;
 
 const type1CatalogueMount = byId("type1-catalogue-projection");
 const type1CatalogueUrl = new URL("./data/type1_catalogue_projection.json", document.baseURI).toString();
