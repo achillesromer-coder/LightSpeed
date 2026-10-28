@@ -101,3 +101,30 @@ test('all projected CCC routes are present in their actual declaring selector fi
  assert.equal(declarations,265);
  assert.equal(declarations,Object.values(data.summary.selector_route_counts).reduce((n,x)=>n+x,0));
 });
+
+test('Eco relation grammar collision and version mismatch fail closed without canonical identity', async()=>{
+ const {inspectRelationGrammar}=await import('./inspectRelationGrammar.mjs');
+ const eco=JSON.parse(readFileSync(new URL('../domain_templates/eco_relation_registry.json',import.meta.url),'utf8'));
+ const shared=JSON.parse(readFileSync(new URL('../domain_templates/relation_qualifier_contract.json',import.meta.url),'utf8'));
+ const result=inspectRelationGrammar(eco,shared);
+ assert.equal(result.stage,'SOURCE_REVIEW_ONLY');
+ assert.equal(result.status,'HOLD');
+ assert.equal(result.qualified_object_id,null);
+ assert.equal(result.native_admitted,false);
+ assert.equal(result.dbr_readback_verified,false);
+ const collision=result.issues.find(i=>i.code==='RELATION_TYPE_NAMESPACE_AMBIGUITY'&&i.relation_id==='MODIFIES');
+ assert.deepEqual(collision.source_declarations.map(x=>x.family),['process','intervention']);
+ const version=result.issues.find(i=>i.code==='RELATION_SCHEMA_COMPATIBILITY_HOLD');
+ assert.equal(version.declared_extends,'CGX-RELATION-QUALIFIER/0.1');
+ assert.equal(version.available_contract,'CGX-RELATION-QUALIFIER/0.2');
+ // Synthetic correction proves the checker can distinguish a clean source schema,
+ // not that the real Eco registry has been corrected or owner-approved.
+ const synthetic=copy(eco);
+ synthetic.extends=shared.schema;
+ synthetic.families.intervention.find(x=>x.id==='MODIFIES').id='MODIFIES_INTERVENTION_SYNTHETIC';
+ const clear=inspectRelationGrammar(synthetic,shared);
+ assert.equal(clear.status,'SOURCE_CONTRACT_CHECK_ONLY');
+ assert.equal(clear.issues.length,0);
+ assert.equal(clear.native_admitted,false);
+ assert.equal(clear.qualified_object_id,null);
+});
