@@ -76,3 +76,19 @@ test('operator rejects forged native-admission count in source-only catalogue',(
  assert.throws(()=>planQualifiedOperator({registry:forged,problem:novel,
   authorised_source_ids:['fixture:novel'],bindings:[]}),/UNSUPPORTED_AUTHORITY_CLAIM/);
 });
+
+test('dimensioned operator without declared method units is held, not silently treated as compatible',()=>{
+ const p=planQualifiedOperator({registry,problem:novel,authorised_source_ids:['fixture:novel'],
+  bindings:[{route_key:'science.query',input_type:'orbital_state',required_dimensions:novel.dimensions,
+   qualified_method_source:'fixture:math-method'}]});
+ assert.ok(p.operator_candidates[0].blockers.includes('METHOD_UNITS_UNDECLARED'));
+ assert.equal(p.computation_executed,false);
+});
+test('partial method unit basis is held independently of a conversion claim',()=>{
+ const p=planQualifiedOperator({registry,problem:novel,authorised_source_ids:['fixture:novel'],
+  bindings:[{route_key:'science.query',input_type:'orbital_state',required_dimensions:novel.dimensions,
+   required_units:{position:'km'},qualified_method_source:'fixture:math-method'}]});
+ assert.ok(p.operator_candidates[0].blockers.includes('METHOD_UNITS_UNDECLARED'));
+ assert.ok(!p.operator_candidates[0].blockers.includes('UNIT_CONVERSION_METHOD_REQUIRED'));
+ assert.equal(p.object_ids_minted,0);
+});
