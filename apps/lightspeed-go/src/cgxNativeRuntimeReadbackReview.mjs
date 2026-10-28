@@ -59,6 +59,9 @@ function unsafe(x,depth=0,seen=new Set()){
 // Lexical consistency only. This does NOT attest that a path exists on a host.
 function absolutePath(value){
  if(!txt(value))return null;
+ // POSIX backslashes are literal filename bytes, not directory separators.
+ // Reject rather than collapsing distinct paths into a forged match.
+ if(value.startsWith('/')&&value.includes('\\'))return null;
  const p=value.replaceAll('\\','/');
  if(p.startsWith('//')||p.includes('//'))return null;
  const windows=/^[A-Za-z]:\//.test(p);
