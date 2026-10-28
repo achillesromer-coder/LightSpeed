@@ -90,7 +90,7 @@ function sourceFilesShape(p){
  if(!root||!obj(p.source_files)||
   Object.keys(p.source_files).length!==Object.keys(SOURCE_PATHS).length||
   !keys(p.source_files,Object.keys(SOURCE_PATHS)))return false;
- const win=/^[a-z]:\\//.test(root);
+ const win=root.length>=3&&root[1]===':'&&root[2]==='/';
  return Object.entries(SOURCE_PATHS).every(([name,relative])=>{
   const path=absolutePath(p.source_files[name]);
   return path!==null&&path===root+'/'+(win?relative.toLowerCase():relative);
