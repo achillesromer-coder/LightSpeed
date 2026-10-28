@@ -109,5 +109,64 @@
   "native_tests_executed": false,
   "provider_readback_required": true,
   "owner_authorization": "NONE_FOR_CANONICAL_MUTATION",
-  "public_safe": true
+  "public_safe": true,
+  "r0_direct_provider_recheck": {
+    "observation_date": "2026-10-28",
+    "evidence_class": "DIRECT_AUTHENTICATED_DRIVE_R0_BYTES_AND_ZIP_CENTRAL_DIRECTORY",
+    "admission_ceiling": "R0_SOURCE_BYTES_VERIFIED_ONLY",
+    "scope": "Re-read exact provider file bytes in a bounded cloud connector review; independently computed SHA-256. No native runtime, signature, RootAuthority, lease or DBR verification.",
+    "verified_files": [
+      {
+        "source": "S92 parent recovery carrier",
+        "size_bytes": 3657250,
+        "sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+        "matches_prior_receipt": true,
+        "zip_central_directory_entries": 1277,
+        "zip_duplicate_entry_names": 0,
+        "zip_unsafe_entry_paths": 0,
+        "topology_index_archive_entry_present": true,
+        "manifest_archive_entry_present": true,
+        "manifest_membership_and_profile_proof": "NOT_VERIFIED"
+      },
+      {
+        "source": "S92 regenerated PRE_CANONICAL child package",
+        "size_bytes": 540891,
+        "sha256": "36349987fa34dc0f85e26c9658fbf8e3814010f7cc9f536b836920eab239a90d",
+        "matches_prior_receipt": true,
+        "zip_central_directory_entries": 7,
+        "zip_duplicate_entry_names": 0,
+        "zip_unsafe_entry_paths": 0,
+        "embedded_carrier_names": [
+          "Romer.cgx",
+          "Eco.cgx",
+          "EMASSC.cgx",
+          "LS.cgx"
+        ],
+        "embedded_member_sha256_recomputed": false,
+        "authority_transfer": false
+      },
+      {
+        "source": "Original GPT export_manifest.json",
+        "size_bytes": 953271,
+        "sha256": "0941773a84c5552aa62f37282ee180b9c8df2b5c284c8c412be9e4a336212894",
+        "matches_prior_receipt": true,
+        "manifest_version": 1,
+        "declared_conversation_shards": 12,
+        "declared_conversation_bytes": 434547139,
+        "original_shard_bytes_read": 0
+      }
+    ],
+    "source_recovery_blockers": [
+      "Original conversations-000.json through conversations-011.json absent from exact-name authenticated Drive searches; six large conversations*.txt alternatives are not byte-equivalent by assumption.",
+      "Authoritative unabsorbed CGX MANUAL INTAKE root not independently identified.",
+      "No current S97 carrier exact-byte proof obtained.",
+      "Issue #51 S87/S88 runtime/developer hydration-entry-not-in-manifest remains historical FAIL CLOSED; S92 ZIP entry presence alone cannot prove corrected profile-specific hydration.",
+      "Accepted current parent/child/LOAD Object_ID, State Root and DBR Root require authenticated native readback."
+    ],
+    "test_boundary": "SHA-256 function self-test on ASCII abc matched NIST known digest; direct full-byte hashes checked against existing receipts; ZIP central directory was parsed without inflating member payloads.",
+    "transfer_bytes": 5151412,
+    "no_canonical_write": true,
+    "owner_authority_effect": "NONE",
+    "public_payload_policy": "Hashes, sizes, archive member names and source-only caveats only; no original source bodies, personal content, access keys or private URLs."
+  }
 }
