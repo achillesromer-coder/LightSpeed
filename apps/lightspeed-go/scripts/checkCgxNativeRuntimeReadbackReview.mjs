@@ -27,7 +27,15 @@ function fixture(){
    profile:'core',installed:false,python:'D:/review/neo-review/venv/Scripts/python.exe',
    recent_receipts:[],authority:'status-only'},
   startup_profile:{root:'D:/LightSpeed/App',
-   source_files:{settings:'D:/LightSpeed/App/config/settings.json'},
+   source_files:{
+    settings:'D:/LightSpeed/App/config/settings.json',
+    lightspeed:'D:/LightSpeed/App/config/lightspeed_config.json',
+    unified:'D:/LightSpeed/App/config/unified_config.json',
+    host_runtime_policy:'D:/LightSpeed/App/config/host_runtime_policy.json',
+    workspace_lanes:'D:/LightSpeed/App/config/workspace_lanes.json',
+    launch_control:'D:/LightSpeed/App/config/launch_control.json',
+    floor_stage_population:'D:/LightSpeed/App/Z Axis/Z-3_Smith/data/staging/floor_stage_population.json'
+   },
    global_options:{first_run_complete:false,show_splash_screen:true,
     max_concurrent_jobs:4},
    floors:Object.fromEntries(Object.entries(floors).map(([name,canonical_id])=>
@@ -165,4 +173,24 @@ test('POSIX absolute paths may be reviewed without claiming installation',()=>{
  x.runtime_status.python='/tmp/managed/neo-review/venv/Scripts/python.exe';
  assert.equal(review(x).state,'AUTHENTICATED_HOST_READBACK_REQUIRED');
  assert.equal(review(x).runtime_installed_verified,false);
+});
+
+test('startup source-file map must match Python _config_paths exactly',()=>{
+ const good=fixture();assert.equal(review(good).state,'AUTHENTICATED_HOST_READBACK_REQUIRED');
+ denied(x=>{delete x.startup_profile.source_files.unified;},'STARTUP_PROFILE_SHAPE_INVALID');
+ denied(x=>{x.startup_profile.source_files.extra='D:/LightSpeed/App/config/extra.json';},
+  'STARTUP_PROFILE_SHAPE_INVALID');
+ denied(x=>{x.startup_profile.source_files.settings='D:/elsewhere/settings.json';},
+  'STARTUP_PROFILE_SHAPE_INVALID');
+ denied(x=>{x.startup_profile.source_files.launch_control='D:/LightSpeed/App/config/../secrets.json';},
+  'STARTUP_PROFILE_SHAPE_INVALID');
+ denied(x=>{x.startup_profile.source_files.floor_stage_population=
+  'D:/LightSpeed/App/Z Axis/Z-2_Oracle/data/staging/floor_stage_population.json';},
+  'STARTUP_PROFILE_SHAPE_INVALID');
+});
+test('startup root and source files normalize Windows case without host claims',()=>{
+ const x=fixture();x.startup_profile.root='d:\\\\lightspeed\\\\APP';
+ x.startup_profile.source_files.settings='d:\\\\LIGHTSPEED\\\\APP\\\\CONFIG\\\\SETTINGS.JSON';
+ const y=review(x);assert.equal(y.state,'AUTHENTICATED_HOST_READBACK_REQUIRED');
+ assert.equal(y.host_authenticated,false);assert.equal(y.runtime_installed_verified,false);
 });
