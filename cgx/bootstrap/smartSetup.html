@@ -39,7 +39,6 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 </div>
 <div class="choice"><input type="checkbox" id="lsgo"><label for="lsgo">Request LS GO for this Grex (private operator surface)</label></div>
 <div class="choice"><input type="checkbox" id="offline" checked><label for="offline">Use minimum offline LOAD/Alexandria first</label></div>
-<div class="choice"><input type="checkbox" id="got"><label for="got">Review GOT capability discovery (definition pending)</label></div>
 <button type="submit">Preview setup and missing gates</button>
 </form>
 <section class="panel" aria-live="polite" aria-atomic="true" id="result">
@@ -55,7 +54,7 @@ const line=(parent,tag,text)=>{const n=document.createElement(tag);n.textContent
 $('setup').addEventListener('submit',event=>{
  event.preventDefault();
  const plan=planCGXSetup({family:$('family').value,mode:$('mode').value,device:$('device').value,profile:$('profile').value,
-  lsGORequested:$('lsgo').checked,offlinePreferred:$('offline').checked,gotRequested:$('got').checked});
+  lsGORequested:$('lsgo').checked,offlinePreferred:$('offline').checked});
  output.replaceChildren();
  line(output,'h2','Setup readiness');
  line(output,'p','NOT INSTALLED — REVIEW ONLY').className='status';
