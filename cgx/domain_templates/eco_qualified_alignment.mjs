@@ -31,7 +31,7 @@ function validObservedAt(v){
 function validateConcept(x){
  if(!obj(x)||!ECO_TYPES.has(x.semantic_type)||!stringList(x.source_refs))throw Error("INVALID_ECO_CONCEPT");
  if(x.object_id!==undefined&&!good(x.object_id))throw Error("INVALID_OBJECT_ID");
- for(const f of [...IDENTITY,"observed_at","method_id","unit","frame","environment_id","configuration","epoch","aggregation_scope","baseline_id","observed_variable","native_interval","aggregation_period","station_instrument_id","qa_flag","missing_data_state","calibration_verification_ref","siting_metadata_ref","source_provenance_ref"]){
+ for(const f of [...IDENTITY,"observed_at","method_id","unit","frame","environment_id","configuration","epoch","aggregation_scope","baseline_id","observed_variable","native_interval","aggregation_period","station_instrument_id","qa_flag","missing_data_state","calibration_verification_ref","siting_metadata_ref","source_provenance_ref","measurement_basis","correction_method_id","uncertainty_basis"]){
   if(x[f]!==undefined&&x[f]!==null&&!good(x[f]))throw Error("INVALID_ECO_FIELD_"+f);
  }
  if(x.sample_count!==undefined&&(!Number.isSafeInteger(x.sample_count)||x.sample_count<1))throw Error("INVALID_SAMPLE_COUNT");
@@ -49,6 +49,12 @@ function validateConcept(x){
  if(x.measurement!==undefined){
   if(!obj(x.measurement)||typeof x.measurement.value!=="number"||!Number.isFinite(x.measurement.value)||
    !good(x.measurement.unit))throw Error("INVALID_MEASUREMENT");
+ }
+ if(x.measurement_basis!==undefined&&!["raw","corrected","derived","reference"].includes(x.measurement_basis))throw Error("INVALID_MEASUREMENT_BASIS");
+ if(x.measurement_uncertainty!==undefined){
+  const u=x.measurement_uncertainty;
+  if(!obj(u)||typeof u.value!=="number"||!Number.isFinite(u.value)||u.value<0||!good(u.unit))
+   throw Error("INVALID_MEASUREMENT_UNCERTAINTY");
  }
 }
 const add=(checks,c)=>{if(!checks.includes(c))checks.push(c)};
@@ -72,6 +78,15 @@ function compare(a,b,checks){
  if(a.evidence_class!==b.evidence_class)add(checks,"EVIDENCE_CLASS_DIFFERENT_OR_UNDECLARED");
  if(a.observed_at!==b.observed_at)add(checks,"OBSERVATION_TIME_DIFFERENT_OR_UNDECLARED");
  if(a.method_id!==b.method_id)add(checks,"METHOD_DIFFERENT_OR_UNDECLARED");
+ // Raw, corrected and derived readings must not collapse solely on value/unit.
+ for(const [field,flag] of [
+  ["measurement_basis","MEASUREMENT_BASIS_DIFFERENT_OR_UNDECLARED"],
+  ["correction_method_id","CORRECTION_METHOD_DIFFERENT_OR_UNDECLARED"],
+  ["uncertainty_basis","UNCERTAINTY_BASIS_DIFFERENT_OR_UNDECLARED"]]){
+  if(a[field]!==b[field])add(checks,flag);
+ }
+ if(!equal(a.measurement_uncertainty??null,b.measurement_uncertainty??null))
+  add(checks,"MEASUREMENT_UNCERTAINTY_DIFFERENT_OR_UNDECLARED");
  // Field QA, missingness and instrument provenance are independent of measured value.
  for(const [field,flag] of [
   ["station_instrument_id","INSTRUMENT_ID_DIFFERENT_OR_UNDECLARED"],
@@ -108,6 +123,13 @@ function completeness(x,checks){
  if(["average","mean","accumulated","sum","rolling_average","rolling_sum"].includes(x.aggregation_scope?.toLowerCase())&&!good(x.aggregation_period))
   add(checks,"AGGREGATION_PERIOD_REQUIRED");
  if(x.measurement&&good(x.unit)&&x.unit!==x.measurement.unit)add(checks,"MEASUREMENT_UNIT_CONFLICT");
+ if(x.measurement_basis==="corrected"&&!good(x.correction_method_id))add(checks,"CORRECTION_METHOD_REQUIRED");
+ if(good(x.correction_method_id)&&!good(x.measurement_basis))add(checks,"MEASUREMENT_BASIS_REQUIRED");
+ if(x.measurement_uncertainty){
+  if(!x.measurement)add(checks,"UNCERTAINTY_WITHOUT_MEASUREMENT");
+  if(!good(x.uncertainty_basis))add(checks,"UNCERTAINTY_BASIS_REQUIRED");
+  if(x.measurement&&x.measurement_uncertainty.unit!==x.measurement.unit)add(checks,"UNCERTAINTY_UNIT_CONFLICT");
+ }
  if(OBSERVATIONS.has(x.semantic_type)){
   // These optional source QA fields must never silently certify an observation.
   if(["provisional","flagged","missing","not_run","untested","pending"].includes(x.qa_flag?.toLowerCase().replace(/[\s-]+/g,"_")))add(checks,"QA_STATE_REQUIRES_REVIEW");
