@@ -305,3 +305,17 @@ test('bootstrap network and host-check metadata cannot bypass source review',()=
  denied(x=>{x.bootstrap_review.required_host_checks=[''];},'BOOTSTRAP_REVIEW_NOT_QUALIFIED');
  denied(x=>{x.bootstrap_review.required_host_checks='forged';},'BOOTSTRAP_REVIEW_NOT_QUALIFIED');
 });
+
+test('POSIX backslashes cannot alias distinct runtime or startup paths',()=>{
+ // POSIX treats a backslash as a filename byte; only Windows may normalize it.
+ denied(x=>{x.runtime_status.managed_root='/tmp\\managed';},
+  'RUNTIME_STATUS_SHAPE_INVALID');
+ const x=fixture();x.startup_profile.root='/tmp\\app';
+ assert.equal(review(x).hold_code,'STARTUP_PROFILE_SHAPE_INVALID');
+ const y=fixture();y.startup_profile.root='/tmp/app';
+ y.startup_profile.source_files=Object.fromEntries(
+  Object.entries(y.startup_profile.source_files).map(([k,v])=>
+   [k,v.replace('D:/LightSpeed/App/','/tmp/app/')]));
+ y.startup_profile.source_files.settings='/tmp/app/config\\settings.json';
+ assert.equal(review(y).hold_code,'STARTUP_PROFILE_SHAPE_INVALID');
+});
