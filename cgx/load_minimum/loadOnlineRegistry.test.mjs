@@ -45,3 +45,31 @@ test('unregistered family does not inherit another domains source mappings',()=>
  const publicShared=data.records.filter(r=>r.category!=='conversion_source').length;
  assert.equal(p.source_references,publicShared);assert.equal(p.external_fetch,false);
 });
+
+test('each CCC route retains source-blob evidence from its actual declaring selectors',()=>{
+ const routes=data.records.filter(r=>r.category==='ccc_route');
+ assert.equal(routes.length,45);
+ for(const r of routes){
+  assert.ok(r.selector_sources.some(s=>r.route_source_proofs[s].source_registry===r.source_registry));
+  for(const selector of r.selector_sources){
+   const p=`plugins/packages/${selector}/references/capabilities.json`;
+   assert.equal(r.route_source_proofs[selector].source_registry,p);
+   assert.equal(r.route_source_proofs[selector].git_blob,data.source_registries[p].git_blob);
+  }
+ }
+});
+test('reject forged CCC route attribution to a selector that never declared it',()=>{
+ const x=copy(data),r=x.records.find(v=>v.category==='ccc_route'&&v.source_key==='cad.freecad');
+ const p='plugins/packages/cognigrex/references/capabilities.json';
+ assert.ok(!r.selector_sources.includes('cognigrex'));
+ r.source_registry=p;r.source_git_blob=x.source_registries[p].git_blob;
+ assert.throws(()=>validateRegistry(x),/CCC_ROUTE_PROVENANCE_MISMATCH/);
+});
+test('reject missing or altered selector-level route provenance',()=>{
+ const x=copy(data),r=x.records.find(v=>v.category==='ccc_route'&&v.source_key==='cad.freecad');
+ delete r.route_source_proofs.raphael;
+ assert.throws(()=>validateRegistry(x),/CCC_ROUTE_PROVENANCE_MISMATCH/);
+ const y=copy(data),q=y.records.find(v=>v.category==='ccc_route'&&v.source_key==='cad.freecad');
+ q.route_source_proofs.raphael.git_blob='0'.repeat(40);
+ assert.throws(()=>validateRegistry(y),/CCC_ROUTE_PROVENANCE_MISMATCH/);
+});
