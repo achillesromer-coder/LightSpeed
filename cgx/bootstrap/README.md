@@ -41,3 +41,9 @@ node --test cgx/bootstrap/unifiedBootstrap.test.mjs
 ~~~
 
 The tests are deterministic source-only regressions; they cannot certify a host install, a signed node handshake, full corpus ingestion, a live LS GO toggle, or an accepted web release.
+
+## Browser Smart Setup preview
+
+The additive [smartSetup.html](./smartSetup.html) offers an accessible progressive flow for selecting one recognised Grex, first-run/resume/repair/upgrade, runtime profile, offline LOAD, optional GOT lookup, and a requested Grex LS GO toggle. It displays the wizard and explicit missing proof, **not an install success screen**. It imports the read-only setup planner. No permissions, DBR writes, network scans, local storage, credentials or external scripts are created by the preview.
+
+The page is not wired to a live UniSpace product or LS GO server. Do not move this private review page or internal static assets into a public server or download bundle without #158 and source-rights approval.
