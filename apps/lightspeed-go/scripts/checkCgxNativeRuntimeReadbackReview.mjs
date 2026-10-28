@@ -194,3 +194,42 @@ test('startup root and source files normalize Windows case without host claims',
  const y=review(x);assert.equal(y.state,'AUTHENTICATED_HOST_READBACK_REQUIRED');
  assert.equal(y.host_authenticated,false);assert.equal(y.runtime_installed_verified,false);
 });
+
+test('complete Python startup options remain review-only, never host proof',()=>{
+ const x=fixture();
+ Object.assign(x.startup_profile.global_options,{
+  z_floor_dropdown_enabled:true,ollama_auto_start:false,
+  web_server_auto_start:false,db_auto_backup:true,
+  db_vacuum_on_startup:false,
+  holospace_entry_policy:'Construct-owned opt-in context'
+ });
+ Object.assign(x.startup_profile.floors.Neo,{
+  port:8765,responsibility:'Neo review',description:'Source-only floor'
+ });
+ const y=review(x);
+ assert.equal(y.state,'AUTHENTICATED_HOST_READBACK_REQUIRED');
+ assert.equal(y.host_authenticated,false);
+ assert.equal(y.runtime_installed_verified,false);
+});
+test('unknown startup and floor fields cannot smuggle execution assertions',()=>{
+ denied(x=>{x.startup_profile.global_options.host_command='run';},
+  'STARTUP_PROFILE_SHAPE_INVALID');
+ denied(x=>{x.startup_profile.floors.Neo.execution_requested=true;},
+  'STARTUP_PROFILE_SHAPE_INVALID');
+});
+test('optional startup toggles and Z-floor port metadata are typed',()=>{
+ denied(x=>{x.startup_profile.global_options.web_server_auto_start='yes';},
+  'STARTUP_PROFILE_SHAPE_INVALID');
+ denied(x=>{x.startup_profile.global_options.holospace_entry_policy=42;},
+  'STARTUP_PROFILE_SHAPE_INVALID');
+ denied(x=>{x.startup_profile.floors.Neo.port='not-a-port';},
+  'STARTUP_PROFILE_SHAPE_INVALID');
+ denied(x=>{x.startup_profile.floors.Neo.description=String.fromCharCode(1);},
+  'STARTUP_PROFILE_SHAPE_INVALID');
+});
+test('review bounds job count independently of native runtime claims',()=>{
+ denied(x=>{x.startup_profile.global_options.max_concurrent_jobs=65;},
+  'STARTUP_PROFILE_SHAPE_INVALID');
+ const x=fixture();x.startup_profile.global_options.max_concurrent_jobs=64;
+ assert.equal(review(x).state,'AUTHENTICATED_HOST_READBACK_REQUIRED');
+});
