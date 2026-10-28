@@ -27,8 +27,63 @@ export const resolveDesktopOrigin = (configuredOrigin?: string): string => {
   return parsed.origin;
 };
 
-export const DEFAULT_DESKTOP_ORIGIN = resolveDesktopOrigin(
+// Only the operator-selected relay URL is retained. Owner tokens remain in memory.
+export const MOBILE_LINK_ORIGIN_KEY = "lightspeed-go-private-origin-v1";
+export const MOBILE_LINK_DISCONNECTED_KEY = "lightspeed-go-disconnected-v1";
+
+export const isLoopbackOriginHost = (host: string): boolean => {
+  const value = host.toLowerCase().replace(/\.$/, "");
+  // WHATWG URL canonicalizes IPv4-mapped IPv6 loopback to hex pairs
+  // (for example, ::ffff:127.0.0.2 becomes [::ffff:7f00:2]).
+  // Reject the full mapped 127/8 range, not only 127.0.0.1.
+  const mapped = value.match(/^\[?::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})\]?$/);
+  if (mapped) {
+    const high = Number.parseInt(mapped[1], 16);
+    const low = Number.parseInt(mapped[2], 16);
+    if ((high >> 8) === 127 || (high === 0 && low === 0)) return true;
+  }
+  return value === "localhost" || value.endsWith(".localhost") || value.startsWith("127.") ||
+    ["0.0.0.0", "::", "[::]", "::1", "[::1]", "[::ffff:7f00:1]"].includes(value) ||
+    value.includes("::ffff:127.");
+};
+
+export const resolveActiveDesktopOrigin = (
+  savedOrigin: string | null,
+  compiledOrigin?: string,
+  pageHostname = "localhost",
+): string => {
+  const isLocalPage = new Set(["localhost", "127.0.0.1", "::1", "[::1]"]).has(pageHostname.toLowerCase());
+  const safeOrigin = (value?: string): string => {
+    try {
+      const origin = resolveDesktopOrigin(value);
+      const hostname = new URL(origin).hostname;
+      const isLoopback = isLoopbackOriginHost(hostname);
+      return isLocalPage || !isLoopback && origin.startsWith("https://") ? origin : "";
+    } catch { return ""; }
+  };
+  const fallback = safeOrigin(compiledOrigin);
+  if (!savedOrigin?.trim()) return fallback;
+  return safeOrigin(savedOrigin) || fallback;
+};
+
+const savedMobileOrigin = (): string | null => {
+  try {
+    return typeof localStorage === "undefined" ? null : localStorage.getItem(MOBILE_LINK_ORIGIN_KEY);
+  } catch {
+    return null;
+  }
+};
+
+const explicitlyDisconnected = (): boolean => {
+  try { return typeof localStorage !== "undefined" && localStorage.getItem(MOBILE_LINK_DISCONNECTED_KEY) === "true"; }
+  catch { return false; }
+};
+
+export const DESKTOP_EXPLICITLY_DISCONNECTED = explicitlyDisconnected();
+export const DEFAULT_DESKTOP_ORIGIN = DESKTOP_EXPLICITLY_DISCONNECTED ? "" : resolveActiveDesktopOrigin(
+  savedMobileOrigin(),
   import.meta.env.VITE_LIGHTSPEED_DESKTOP_ORIGIN,
+  typeof window === "undefined" ? "localhost" : window.location.hostname,
 );
 
 export const FLOORS = [
@@ -630,6 +685,8 @@ export class DesktopRequestError extends Error {
 }
 
 const withTimeout = async <T>(url: string, init: RequestInit, timeoutMs = 3500): Promise<T> => {
+  // An unconfigured/disconnected off-device page must never fall back to its own API.
+  if (!/^https?:\/\//.test(url)) throw new TypeError("Connect to the approved private desktop origin first");
   const controller = new AbortController();
   const timer = window.setTimeout(() => controller.abort(), timeoutMs);
   try {
