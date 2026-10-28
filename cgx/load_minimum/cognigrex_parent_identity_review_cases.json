@@ -1,0 +1,95 @@
+{
+  "schema": "CGX-LOAD-PARENT-IDENTITY-REVIEW-CASES/0.1",
+  "status": "SOURCE_ONLY_NEGATIVE_FIXTURES_NOT_NATIVE_ACCEPTANCE",
+  "scope": "Cognigrex.cgx parent identity, LOAD.cgx Alexandria alias, cross-family references",
+  "source_contracts": [
+    {
+      "path": "cgx/domain_templates/cognigrex_parent_topology.json",
+      "git_blob_sha": "128269eed66fc97b27b1bf6c9f19ba0dbea34402"
+    },
+    {
+      "path": "cgx/domain_templates/relation_qualifier_contract.json",
+      "git_blob_sha": "989685153af6da031b5e4f09c189834ed8f38de2"
+    },
+    {
+      "path": "cgx/domain_templates/cross_domain_bridge_registry.json",
+      "git_blob_sha": "202b74ddb1e4b5ee8c50e768e4ae175a5853703e"
+    },
+    {
+      "path": "cgx/domain_templates/source_envelope_contract.json",
+      "git_blob_sha": "0839fb67855c434892c509c4c9dfb812b79328a4"
+    },
+    {
+      "path": "cgx/load_minimum/load_reader.py",
+      "git_blob_sha": "3d075a293b1721420032852c6a85b51a8c16db61"
+    }
+  ],
+  "observed_gap": "The current draft LOAD reader opens ZIP and parses library/one_of_one.json, checking only duplicate ref_id values. It does not call native carrier manifest/content-root/DBR verification or enforce authenticated Object_ID binding. Treat all results as untrusted source references until native checks are independently verified.",
+  "cases": [
+    {
+      "id": "C01",
+      "input": "Existing canonical Object_ID matches a candidate LOAD source alias but source identity/owner hash is unresolved",
+      "expected": "HOLD_COLLISION; no new Object_ID or automatic alias binding"
+    },
+    {
+      "id": "C02",
+      "input": "Two LOAD entries have different ref_id but the same alias",
+      "expected": "AMBIGUOUS; no first-match authority; current draft resolve() returns AMBIGUOUS for matching aliases"
+    },
+    {
+      "id": "C03",
+      "input": "Same provider source ID referenced by Romer.cgx and Eco.cgx",
+      "expected": "SHARED_SOURCE_REFERENCE; do not duplicate source authority or child-owned state"
+    },
+    {
+      "id": "C04",
+      "input": "Same title and URI, distinct source hashes or time epochs",
+      "expected": "DISTINCT_VERSIONED_R0; no silent source collapse"
+    },
+    {
+      "id": "C05",
+      "input": "LifeSpace legacy term and LS.cgx/LightSpeed name resemble one another",
+      "expected": "NO_EQUIVALENCE until original source ID, semantics and owner verified"
+    },
+    {
+      "id": "C06",
+      "input": "CCC historical mint-pack/ERC money record compared to CGX Object_ID mint operation",
+      "expected": "DISTINCT_TYPED_FUNCTIONS; financial action DENIED without independent authorization"
+    },
+    {
+      "id": "C07",
+      "input": "Romer/Eco/EMASSC relation registry extends qualifier /0.1 while current shared contract declares /0.2",
+      "expected": "SCHEMA_COMPATIBILITY_HOLD until explicit version crosswalk and negative tests"
+    },
+    {
+      "id": "C08",
+      "input": "Arbitrary ZIP contains library/one_of_one.json but has no valid CGX native manifest or DBR root",
+      "expected": "REJECT_NATIVE_CARRIER; draft load_reader.py does not enforce this; acceptance gate remains HOLD"
+    },
+    {
+      "id": "C09",
+      "input": "Source locator exists but R0 source bytes/hash/ACL not verified",
+      "expected": "REFERENCE_ONLY; do not upgrade to R1 or native admitted"
+    },
+    {
+      "id": "C10",
+      "input": "Unauthenticated or self-reported DBR receipt, no receiver readback",
+      "expected": "NO_CANONICAL_WRITE; do not claim accepted or live installed"
+    },
+    {
+      "id": "C11",
+      "input": "LOAD.cgx offline H0-H3 reference resolves to a capability without signed execution lease",
+      "expected": "H4_EXECUTION_DENIED; qualified capability description is not runtime permission"
+    },
+    {
+      "id": "C12",
+      "input": "Cross-domain CORRESPONDS_TO asserted without registry namespace or owner/evidence qualifiers",
+      "expected": "FRONTIER; not SAME_AS; no endpoint authority transfer"
+    }
+  ],
+  "validation_state": "STATIC_SOURCE_REVIEW_ONLY",
+  "native_tests_executed": false,
+  "provider_readback_required": true,
+  "owner_authorization": "NONE_FOR_CANONICAL_MUTATION",
+  "public_safe": true
+}
