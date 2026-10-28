@@ -60,8 +60,14 @@ for(const name of SELECTORS){
 for(const [k,values] of [...routes.entries()].sort((a,b)=>a[0].localeCompare(b[0]))){
  const count=new Set(values.map(x=>x.signature)).size;
  const selector_sources=values.map(x=>x.selector);
- add('ccc_route',k,k,'plugins/packages/cognigrex/references/capabilities.json',{
-  selector_sources,route_signatures:count,
+ const primarySelector=selector_sources.includes('cognigrex')?'cognigrex':selector_sources[0];
+ const primary='plugins/packages/'+primarySelector+'/references/capabilities.json';
+ const route_source_proofs=Object.fromEntries(selector_sources.map(selector=>{
+  const source_registry='plugins/packages/'+selector+'/references/capabilities.json';
+  return [selector,{source_registry,git_blob:data[source_registry].sha}];
+ }));
+ add('ccc_route',k,k,primary,{
+  route_source_proofs,selector_sources,route_signatures:count,
   admission:count===1?'SOURCE_REGISTRY_ONLY':'FRONTIER_CONFLICT',installed_online:false,provider_readback:false
  });
  if(count>1)frontier.push({category:'ccc_route',source_key:k,reason:'CROSS_SELECTOR_VARIANCE',selectors:selector_sources});
