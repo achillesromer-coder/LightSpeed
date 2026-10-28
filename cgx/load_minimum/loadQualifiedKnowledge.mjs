@@ -1,6 +1,7 @@
 /** Source-only typed novel-to-known and qualified solver routing for LOAD.cgx.
  * Zero numeric solving, DBR writes, source acquisition or actual tool execution.
  */
+import {validateRegistry} from './loadOnlineRegistry.mjs';
 export const KNOWN_SCHEMA="LOAD-QUALIFIED-KNOWN-REUSE/0.1";
 const good=x=>typeof x==="string"&&x.trim().length>0&&x.length<=256&&!/[\u0000-\u001f]/.test(x);
 const obj=x=>x!==null&&typeof x==="object"&&!Array.isArray(x);
@@ -54,6 +55,7 @@ export function planKnownAlignment({novel,known_objects,authorised_object_ids,au
  * Note: registry presence does NOT verify installed host tooling or mathematical correctness.
  */
 export function planQualifiedOperator({registry,problem,bindings,authorised_source_ids=[]}={}){
+ validateRegistry(registry);
  if(!obj(registry)||registry.state!=="GIT_SOURCE_ONLY_NOT_CANONICAL"||!Array.isArray(registry.records)||!obj(problem)||
   !good(problem.semantic_type)||!obj(problem.dimensions)||!arr(problem.source_refs)||!Array.isArray(bindings)||
   bindings.length>500||!arr(authorised_source_ids))throw Error("INVALID_OPERATOR_REQUEST");
