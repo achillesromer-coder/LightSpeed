@@ -12,6 +12,12 @@ const CHILDREN = new Set(["Romer.cgx", "Eco.cgx", "EMASSC.cgx", "LS.cgx"]);
 const SHA256 = /^[0-9a-f]{64}$/i;
 const SHA1 = /^[0-9a-f]{40}$/i;
 const MAX_BYTES = 60 * 1024 * 1024;
+// Exact source-envelope contract enum; a runtime-specific loss claim outside
+// this enum remains Frontier until the native contract is reconciled.
+const ROUND_TRIP = new Set([
+  "NONE", "IDENTITY_REFERENCE_ONLY", "STRUCTURE_PRESERVED",
+  "SEMANTIC_PROJECTION_ONLY", "LOSSLESS_FOR_DECLARED_FIELDS"
+]);
 const record = x => x !== null && typeof x === "object" && !Array.isArray(x);
 const one = (xs, v) => Array.isArray(xs) && xs.length === 1 && xs[0] === v;
 const hold = code => Object.freeze({
@@ -64,6 +70,17 @@ export function reviewNativeEnvelopeHandoff(input = {}) {
   // only an authenticated native consumer may actually build/bind it.
   if (!record(e) || e.schema !== "CGX-SOURCE-ENVELOPE/0.1" ||
       Object.hasOwn(e, "admission_state") ||
+      // Required by cgx/domain_templates/source_envelope_contract.json;
+      // these are caller assertions, never provider authentication.
+      typeof e.source_name !== "string" || !e.source_name ||
+      typeof e.media_type !== "string" || !e.media_type ||
+      typeof e.adapter_id !== "string" || !e.adapter_id ||
+      typeof e.authority !== "string" || !e.authority ||
+      typeof e.evidence_state !== "string" || !e.evidence_state ||
+      typeof e.release_class !== "string" || !e.release_class ||
+      !Array.isArray(e.projections) || !Array.isArray(e.warnings) ||
+      !Array.isArray(e.unresolved) ||
+      !SHA256.test(e.envelope_sha256 || "") ||
       !SHA256.test(e.sha256 || "") ||
       e.sha256.toLowerCase() !== p.candidate_r0_sha256.toLowerCase() ||
       e.source_id !== "src:" + e.sha256 ||
@@ -72,12 +89,16 @@ export function reviewNativeEnvelopeHandoff(input = {}) {
       !record(e.native_preservation) ||
       e.native_preservation.source_sha256 !== e.sha256 ||
       e.native_preservation.source_byte_length !== e.byte_length ||
-      typeof e.native_preservation.source_ref !== "string" ||
-      !e.native_preservation.source_ref ||
+      !(e.native_preservation.source_ref === null ||
+        (typeof e.native_preservation.source_ref === "string" &&
+         e.native_preservation.source_ref.length > 0)) ||
+      e.native_preservation.adapter_version !== "0.1" ||
+      !ROUND_TRIP.has(e.native_preservation.round_trip_claim) ||
       !record(e.lineage) || e.lineage.canonical_mutation !== false ||
       e.lineage.projection_only !== true ||
       e.lineage.parent_source_id !== null)
     return hold("ENVELOPE_SOURCE_SHAPE_OR_DIGEST_MISMATCH");
+  // envelope_sha256 is checked for SHAPE only, never recomputed or trusted.
   // Do not echo e.source_name, e.native_preservation.source_ref,
   // e.projections, private mapping locators, client credentials, or raw bytes.
   return Object.freeze({
