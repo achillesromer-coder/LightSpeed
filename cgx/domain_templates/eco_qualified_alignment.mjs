@@ -72,6 +72,16 @@ function validateConcept(x){
   for(const k of ["tst004_ref","fm039_ref","pathogen_screen_ref","host_association_ref","strain_source_ref"])
    if(f[k]!==undefined&&!good(f[k]))throw Error("INVALID_FUNGAL_"+k.toUpperCase());
  }
+ // Source-only ecological survey evidence: non-detection is not species absence.
+ if(x.survey!==undefined){
+  const s=x.survey;
+  if(!obj(s)||!["detected","not_detected","not_surveyed","unknown"].includes(s.detection_status))throw Error("INVALID_ECO_SURVEY");
+  for(const f of ["protocol_ref","effort_unit","survey_window","seasonal_context_ref","detectability_ref"]){
+   if(s[f]!==undefined&&!good(s[f]))throw Error("INVALID_SURVEY_FIELD_"+f.toUpperCase());
+  }
+  if(s.effort_value!==undefined&&(typeof s.effort_value!=="number"||!Number.isFinite(s.effort_value)||s.effort_value<=0))
+   throw Error("INVALID_SURVEY_EFFORT");
+ }
  if(x.measurement_basis!==undefined&&!["raw","corrected","derived","reference"].includes(x.measurement_basis))throw Error("INVALID_MEASUREMENT_BASIS");
  if(x.measurement_uncertainty!==undefined){
   const u=x.measurement_uncertainty;
@@ -119,6 +129,7 @@ function compare(a,b,checks){
  if(!equal(a.biological_transfer??null,b.biological_transfer??null))add(checks,"BIOLOGICAL_TRANSFER_SCOPE_OR_PROVENANCE_DIFFERENT");
  if(!equal(a.seed_lot??null,b.seed_lot??null))add(checks,"SEED_LOT_IDENTITY_OR_QA_DIFFERENT");
  if(!equal(a.fungal_inoculation??null,b.fungal_inoculation??null))add(checks,"FUNGAL_TREATMENT_DISPOSITION_OR_EVIDENCE_DIFFERENT");
+ if(!equal(a.survey??null,b.survey??null))add(checks,"SURVEY_EFFORT_METHOD_OR_DETECTION_DIFFERENT");
  // Field QA, missingness and instrument provenance are independent of measured value.
  for(const [field,flag] of [
   ["station_instrument_id","INSTRUMENT_ID_DIFFERENT_OR_UNDECLARED"],
@@ -186,6 +197,24 @@ function completeness(x,checks){
   else if(x.fungal_inoculation.disposition==="INOCULATE"){
    for(const [f,flag] of [["tst004_ref","FUNGAL_TST004_REQUIRED"],["fm039_ref","FUNGAL_FM039_REQUIRED"],["pathogen_screen_ref","FUNGAL_PATHOGEN_SCREEN_REQUIRED"],["host_association_ref","FUNGAL_HOST_EVIDENCE_REQUIRED"],["strain_source_ref","FUNGAL_STRAIN_PROVENANCE_REQUIRED"]])
     if(!good(x.fungal_inoculation[f]))add(checks,flag);
+  }
+ }
+ // Ecology survey methods/frequencies are design declarations, not actual sampling receipts.
+ // Even a properly documented zero-detection survey cannot prove biological absence.
+ if(x.survey){
+  const s=x.survey;
+  if(s.detection_status==="not_surveyed"){
+   add(checks,"SURVEY_NOT_CONDUCTED");
+   if(x.evidence_class==="observed")add(checks,"OBSERVED_EVIDENCE_WITH_NO_SURVEY");
+  }else if(s.detection_status==="unknown")add(checks,"SURVEY_DETECTION_STATUS_UNKNOWN");
+  else{
+   if(!good(s.protocol_ref))add(checks,"SURVEY_PROTOCOL_REQUIRED");
+   if(!Number.isFinite(s.effort_value)||s.effort_value<=0||!good(s.effort_unit))add(checks,"SURVEY_EFFORT_REQUIRED");
+   if(!good(s.survey_window))add(checks,"SURVEY_WINDOW_REQUIRED");
+   if(s.detection_status==="not_detected"){
+    add(checks,"NONDETECTION_NOT_ABSENCE");
+    if(!good(s.detectability_ref))add(checks,"DETECTABILITY_UNVERIFIED");
+   }
   }
  }
  // Censored reports are bounds, not measured point values.
