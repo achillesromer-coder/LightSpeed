@@ -1,0 +1,158 @@
+{
+  "schema": "CGX-STARTUP-OVERLAP-AND-SUCCESSOR-REGISTER/0.1",
+  "status": "SOURCE_REVIEW_CANDIDATES_NOT_DELETION_AUTHORITY",
+  "date": "2026-10-28",
+  "repo": "achillesromer-coder/LightSpeed",
+  "comparison_rule": "Function/subroutine and authority overlap is not identical source identity. Do not delete original provider files, duplicate runtime tools or historical workbooks without native cross-reference, audit and readback.",
+  "areas": [
+    {
+      "area": "first-run wizard entrypoints",
+      "overlap": "HIGH_FUNCTIONAL",
+      "candidate_successor": "cgx/bootstrap/unifiedBootstrap.mjs + existing Trinity Settings Hub",
+      "candidates": [
+        "Launcher/first_run.py",
+        "desktop/Desktop_Hooks/LightSpeed/Z Axis/FirstRun.py",
+        "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/startup_wizard.py",
+        "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/setup_wizard.py",
+        "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/enhanced_startup_wizard.py",
+        "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/cognigrex_setup_wizard.py",
+        "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/unified_wizard_complete.py",
+        "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/tools/enhanced_trinity_wizard.py"
+      ],
+      "resolution": "one CGX entry/wizard using source-qualified adapters to existing settings and runtime; historical UI remains callable until proven no consumer",
+      "archive_state": "ARCHIVE_CANDIDATE_DELETE_HELD",
+      "acceptance": "live configured host wizard test, no-loss config migration, user/agent role parity, current Object_ID and DBR binding"
+    },
+    {
+      "area": "startup settings writers",
+      "overlap": "MEDIUM_AUTHORITY_COLLISION",
+      "candidate_successor": "desktop/LightSpeed_Runtime/lightspeed_runtime/startup_options.py",
+      "candidates": [
+        "Launcher/first_run.py:data/config.json",
+        "Launcher/N.py:config/auth.json",
+        "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/wizards/setup_wizard.py:config/user_config.json",
+        "desktop/LightSpeed_Runtime/lightspeed_runtime/startup_options.py"
+      ],
+      "resolution": "distinguish auth/user prefs from supported runtime startup flags; migrate each key with loss ledger; prefer existing startup_options owner, never force one common settings file for all semantics",
+      "archive_state": "MIGRATION_HOLD",
+      "acceptance": "exact key map, ownership/role policy and cold-boot/readback tests"
+    },
+    {
+      "area": "runtime install/manage and package",
+      "overlap": "INTENTIONAL_LAYERING",
+      "candidate_successor": "tools/manage_lightspeed_runtime.ps1 -> lightspeed_runtime.runtime_productization -> tools/install_lightspeed_runtime.ps1",
+      "candidates": [
+        "tools/manage_lightspeed_runtime.ps1",
+        "desktop/LightSpeed_Runtime/lightspeed_runtime/runtime_productization.py",
+        "tools/install_lightspeed_runtime.ps1"
+      ],
+      "resolution": "retain lower-level install helper as subordinate bounded capability; don't collapse distinct concerns into duplicate script; protect slot and rollback",
+      "archive_state": "RETAIN_DISTINCT",
+      "acceptance": "real Python 3.11 install/profile/import, status, rollback and negative-path tests"
+    },
+    {
+      "area": "legacy Oracle/Z-stack intake vs CGX native LOAD",
+      "overlap": "SEMANTIC_SOURCE_ROUTING",
+      "candidate_successor": "Cognigrex.cgx / native source conversion / LOAD.cgx, with LS/Neo bounded adapters",
+      "candidates": [
+        "legacy Z+3 and Oracle intake/indexing flows",
+        "desktop/LightSpeed_Runtime/lightspeed_runtime/source_intake.py",
+        "desktop/LightSpeed_Runtime/lightspeed_runtime/source_intake_executor.py",
+        "cgx/domain_templates/source_format_adapter_registry.json",
+        "cgx/load_minimum/online_registry_projection_2026-10-28.json (draft PR #205)"
+      ],
+      "resolution": "source-preserving adapters and historical registries feed current CGX/LOAD; old snapshot intake does NOT mint native accepted identity",
+      "archive_state": "FUNCTION_TRANSLATION_HOLD",
+      "acceptance": "one accepted original+adapter+Object_ID, DBR/source receipts, rights and exact readback"
+    },
+    {
+      "area": "standalone Alexandria and per-Grex libraries",
+      "overlap": "RISK_OF_DUPLICATE_SEMANTIC_MASTER",
+      "candidate_successor": "Cognigrex.cgx:/LOAD.cgx (proposed current accepted identity lookup required)",
+      "candidates": [
+        "historical Alexandria standalone folders and dictionaries",
+        "cgx/load_minimum/ activation and reader (draft PR #205)",
+        "Grex-specific family dictionaries",
+        "UniSpace discovery representations"
+      ],
+      "resolution": "one governed identity per distinct concept and multiple qualified source/evidence/view representations; attach existing LOAD reference to each child, not one redundant library per domain",
+      "archive_state": "SOURCE_REFERENCE_HOLD",
+      "acceptance": "accepted LOAD alias Object_ID+State Root+DBR Root, negative collision and offline/online hydration proof"
+    },
+    {
+      "area": "CCC selector route and tool catalogues",
+      "overlap": "EXPECTED_CROSS_SELECTOR_REUSE",
+      "candidate_successor": "native Cognigrex CCC registry and qualified typed tools",
+      "candidates": [
+        "nine plugins/packages/*/references/capabilities.json selectors",
+        "cgx/domain_templates/toolkit_registry.json",
+        "legacy ERC/CCC money and mint-pack contracts"
+      ],
+      "resolution": "reuse 45 unique source route keys from nine selectors; contracts with different signatures remain distinct versions; legacy finance/mint functions require independent legal/technical approval",
+      "archive_state": "RETAIN_ALIASES_QUALIFY_CAPABILITIES",
+      "acceptance": "route schema/ABI/license/source identity/installed host proof and independent negative tests"
+    },
+    {
+      "area": "LS GO Grex operator vs UniSpace product",
+      "overlap": "SHARED_REPRESENTATION_NOT_SAME_PRODUCT",
+      "candidate_successor": "one semantic kernel, separate authorised consumers",
+      "candidates": [
+        "apps/lightspeed-go/src/osShell.ts",
+        "apps/lightspeed-go/src/main.ts",
+        "UniSpace product/prototype surfaces",
+        "Trinity Z-stack app UX"
+      ],
+      "resolution": "LS GO is a per-Grex scoped private operator interface, UniSpace remains distinct public/private user product; reuse view component contracts and rights boundaries, not one universal shared auth surface",
+      "archive_state": "RETAIN_SEPARATE_CONSUMERS",
+      "acceptance": "per-Grex accepted object/ACL/toggle proof, public static #158 negative tests, product rights and browser readback"
+    },
+    {
+      "area": "Z-stack agents and five cloud automations",
+      "overlap": "NAME_AND_FUNCTION_INTERSECTION",
+      "candidate_successor": "Cognigrex scoped AgentObject/Role/Capability/Policy registry; one Neo/LS runtime, five independent cloud lanes",
+      "candidates": [
+        "Z-axis 8 floors and agents",
+        "scheduled Achilles/Neo/Athene/Cognigrex/UniSpace tasks",
+        "legacy agent homes and handbook copies"
+      ],
+      "resolution": "retain unique agent and subsystem identities; classify planned roles, executable runtime handlers and scheduled agents; no duplicate root/master and no mandatory serial queue",
+      "archive_state": "RECONCILE_NOT_DELETE",
+      "acceptance": "agent authority + original home + actual runtime receipt + accepted object/role mapping"
+    },
+    {
+      "area": "GOT name and smart setup",
+      "overlap": "UNRESOLVED_NAMING",
+      "candidate_successor": "Existing CGX CCC qualified capability only if discovered",
+      "candidates": [
+        "User phrase 'GOT' in 2026-10-28 conversation",
+        "Git search exact GOT.cgx and G.O.T. yielded no confirmed registered CGX route"
+      ],
+      "resolution": "retain GOT as unexpanded discovery slot; match full historical term and function contract before semantic merge, alias minting or UI visibility",
+      "archive_state": "FRONTIER_NAME_HOLD",
+      "acceptance": "authoritative historical expansion + source/owner + exact route and ABI/rights evidence"
+    },
+    {
+      "area": "marketing website and public publishing",
+      "overlap": "MULTIPLE_PUBLIC_RENDER_SHELLS",
+      "candidate_successor": "one approved CGX-public information architecture with separate UniSpace product site/pages",
+      "candidates": [
+        "existing public LightSpeed/CGX static demos",
+        "UniSpace creator/Press proposals",
+        "LS GO internal object-review static Vite assets"
+      ],
+      "resolution": "classify internal vs public-safe materials; publish source-qualified R3 views only through authorized site with full revocation and licence; never publish restricted internals",
+      "archive_state": "PUBLIC_RELEASE_HOLD",
+      "acceptance": "issue #158 and rights gates, operator approval, download package signing, actual deployed site and unauthenticated endpoint negatives"
+    }
+  ],
+  "priority": [
+    "CGX parent/child acceptance and host reconnect",
+    "GOT source resolution",
+    "startup owner and no-loss mapping",
+    "native LOAD/CCC intake and tool ABI",
+    "Grex LS GO private beta and two-node/ACL tests",
+    "UniSpace product trial/onboarding",
+    "public-safe website and outreach authorisation"
+  ],
+  "deletion_policy": "None of these records is READY_TO_DELETE. All archives require exact accepted successor, signed owner approval, rollback and provider readback; historical content kept."
+}
