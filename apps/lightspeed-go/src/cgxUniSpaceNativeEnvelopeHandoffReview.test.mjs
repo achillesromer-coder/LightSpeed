@@ -216,8 +216,8 @@ test("untrusted identity and digest primitive-type coercion fails closed",async(
   ];
   for(const [mutate,code] of cases){
     const x=await fixture();mutate(x);
-    const r=assert.doesNotThrow(()=>run(x));
-    // doesNotThrow returns undefined in Node; inspect a separate deterministic call.
-    assert.equal(run(x).hold_code,code);
+    let result;
+    assert.doesNotThrow(()=>{result=run(x);});
+    assert.equal(result.hold_code,code);
   }
 });
