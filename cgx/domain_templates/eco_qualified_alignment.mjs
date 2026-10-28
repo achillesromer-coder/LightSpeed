@@ -98,7 +98,7 @@ function completeness(x,checks){
  if(x.measurement&&good(x.unit)&&x.unit!==x.measurement.unit)add(checks,"MEASUREMENT_UNIT_CONFLICT");
  if(OBSERVATIONS.has(x.semantic_type)){
   // These optional source QA fields must never silently certify an observation.
-  if(["provisional","flagged","missing"].includes(x.qa_flag?.toLowerCase()))add(checks,"QA_STATE_REQUIRES_REVIEW");
+  if(["provisional","flagged","missing","not_run","untested","pending"].includes(x.qa_flag?.toLowerCase().replace(/[\s-]+/g,"_")))add(checks,"QA_STATE_REQUIRES_REVIEW");
   if(x.missing_data_state&&x.missing_data_state.toLowerCase()!=="observed"){
    add(checks,"MISSING_OR_NONOBSERVED_DATA_STATE");
    if(x.measurement)add(checks,"MISSING_DATA_MEASUREMENT_CONFLICT");
@@ -115,6 +115,7 @@ function completeness(x,checks){
  if(x.semantic_type==="specimen"&&!good(x.specimen_id))add(checks,"SPECIMEN_ID_REQUIRED");
  if(["species","taxon"].includes(x.semantic_type)&&!good(x.taxon_id))add(checks,"TAXON_ID_REQUIRED");
  if(x.semantic_type==="population"&&(!good(x.population_id)||!good(x.taxon_id)))add(checks,"POPULATION_TAXON_ID_REQUIRED");
+ if(x.geometry&&good(x.frame)&&x.frame!==x.geometry.crs)add(checks,"FRAME_CRS_RECONCILIATION_REQUIRED");
  if(x.geometry?.coordinates.length===3&&!x.geometry.vertical_datum)add(checks,"VERTICAL_DATUM_REQUIRED");
 }
 export function planEcoAlignment({novel,known_objects=[],authorised_object_ids=[],authorised_source_ids=[],max_candidates=20}={}){
