@@ -261,3 +261,19 @@ test("bound-only censored reading never implies admission",()=>{
 });
 test("negative detection limit rejected",()=>assert.throws(()=>run({...base,reporting_bound:{...bound,value:-1}}),/INVALID_REPORTING_BOUND/));
 test("missing reporting method is held",()=>assert.ok(noKnown({...base,result_qualifier:"below_detection_limit",reporting_bound:{kind:"LOD",value:0.02,unit:"mg/L"}}).novel_checks.includes("REPORTING_BOUND_METHOD_REQUIRED")));
+
+// Synthetic QA provenance checks: no claim of an actually calibrated probe.
+test("validated sensor QA without instrument and calibration evidence remains held",()=>{
+ const a={...base,semantic_type:"sensor_reading",observed_variable:"dissolved_oxygen",native_interval:"PT1M",qa_flag:"validated"};
+ const x=planEcoAlignment({novel:a,known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("QA_VALIDATION_INSTRUMENT_REQUIRED"));
+ assert.ok(x.novel_checks.includes("QA_VALIDATION_CALIBRATION_REF_REQUIRED"));
+ assert.equal(x.novel_qualification_state,"REVIEW_REQUIRED");
+});
+test("traceable sensor QA references avoid missing-proof flags but never verify calibration",()=>{
+ const a={...base,semantic_type:"sensor_reading",observed_variable:"dissolved_oxygen",native_interval:"PT1M",qa_flag:"validated",station_instrument_id:"synthetic:probe-1",calibration_verification_ref:"synthetic:check-1"};
+ const x=planEcoAlignment({novel:a,known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.ok(!x.novel_checks.includes("QA_VALIDATION_INSTRUMENT_REQUIRED"));
+ assert.ok(!x.novel_checks.includes("QA_VALIDATION_CALIBRATION_REF_REQUIRED"));
+ assert.equal(x.accepted_native_identity,false);assert.equal(x.db_readback,false);
+});
