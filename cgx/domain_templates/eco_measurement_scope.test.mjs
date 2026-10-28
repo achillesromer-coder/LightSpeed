@@ -43,3 +43,19 @@ test("scope qualification never verifies ecological outcomes or admits identitie
  assert.equal(r.accepted_native_identity,false);
  assert.equal(r.db_readback,false);
 });
+
+test("sensor reading with no measurement is held even when both candidates omit it",()=>{
+ const a={...base,semantic_type:"sensor_reading",measurement:undefined,unit:undefined};
+ const b={...known,semantic_type:"sensor_reading",measurement:undefined,unit:undefined};
+ assert.ok(flags(a,b).includes("SENSOR_MEASUREMENT_REQUIRED"));
+});
+test("declared top-level and measured units cannot contradict silently",()=>{
+ const a={...base,measurement:{value:4,unit:"mg/L"},unit:"kg"};
+ const b={...known,measurement:{value:4,unit:"mg/L"},unit:"kg"};
+ assert.ok(flags(a,b).includes("MEASUREMENT_UNIT_CONFLICT"));
+});
+test("consistent measurement units avoid false conflict",()=>{
+ const a={...base,measurement:{value:4,unit:"mg/L"},unit:"mg/L"};
+ const b={...known,measurement:{value:4,unit:"mg/L"},unit:"mg/L"};
+ assert.ok(!flags(a,b).includes("MEASUREMENT_UNIT_CONFLICT"));
+});
