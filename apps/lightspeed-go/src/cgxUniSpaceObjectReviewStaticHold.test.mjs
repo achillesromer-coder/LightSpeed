@@ -34,9 +34,23 @@ test('existing public source assets remain: static exposure is NOT fixed by this
   assert.equal(existsSync(join(publicRoot, 'cgx_object_review_catalogue.json')), true);
   assert.equal(existsSync(join(publicRoot, 'component_geometry_atlas_public_review.json')), true);
 });
-test('separate CGX lens remains and still requires independent #158 review', () => {
-  assert.match(main, /const cgxReviewUrl = new URL/);
-  assert.match(main, /fetch\(cgxReviewUrl/);
+test('internal CGX projection is held without public-static browser fetch', () => {
+  assert.match(main, /data-cgx-private-projection-hold="issue-158"/);
+  assert.match(main, /No private projection has been hydrated/);
+  assert.doesNotMatch(main, /cgx_internal_review_projection\\.json/);
+  assert.doesNotMatch(main, /fetch\\(cgxReviewUrl/);
+  assert.doesNotMatch(main, /loadCgxReviewProjection\\s*\\(/);
+});
+test('CGX projection renderer is preserved and public static asset still requires isolation', () => {
+  const renderer = readFileSync(join(here, 'cgxReview.ts'), 'utf8');
+  assert.match(renderer, /export const loadCgxReviewProjection/);
+  assert.equal(existsSync(join(publicRoot, 'cgx_internal_review_projection.json')), true);
+});
+test('CGX projection hold cannot assert host or release acceptance', () => {
+  const segment = main.slice(main.indexOf('data-cgx-private-projection-hold'), main.indexOf('const type1CatalogueMount'));
+  assert.match(segment, /root\\/DBR permission checks/);
+  assert.match(segment, /Offline view: H0 identity only/);
+  assert.doesNotMatch(segment, /host_http_verified:\\s*true|release_accepted:\\s*true|native_admitted:\\s*true/);
 });
 test('no claims of host or release acceptance in hold message', () => {
   const segment = main.slice(main.indexOf('data-cgx-private-review-hold'), main.indexOf('const cgxReviewMount'));
