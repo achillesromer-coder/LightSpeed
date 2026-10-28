@@ -123,3 +123,23 @@ test("source provenance revisions and station siting cannot silently collapse",(
  assert.ok(c.includes("PROVENANCE_REVISION_DIFFERENT_OR_UNDECLARED"));
  assert.ok(c.includes("SITING_REF_DIFFERENT_OR_UNDECLARED"));
 });
+
+
+test("declared coordinate frame inconsistent with geometry CRS is a review gate even without known candidates",()=>{
+ const x=planEcoAlignment({novel:{...base,frame:"EPSG:3857"},known_objects:[],
+  authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("FRAME_CRS_RECONCILIATION_REQUIRED"));
+ assert.equal(x.novel_qualification_state,"REVIEW_REQUIRED");
+});
+test("matching known records do not conceal an internally inconsistent coordinate frame",()=>{
+ const a={...base,frame:"EPSG:3857"},b={...known,source_refs:["src-a"],frame:"EPSG:3857"};
+ const x=run(a,b).candidates[0];
+ assert.ok(x.checks.includes("FRAME_CRS_RECONCILIATION_REQUIRED"));
+ assert.equal(x.state,"REVIEW_DIFFERENCE");
+});
+test("Not run QA cannot qualify as measured observation",()=>{
+ const x=planEcoAlignment({novel:{...base,qa_flag:"Not run"},known_objects:[],
+  authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("QA_STATE_REQUIRES_REVIEW"));
+ assert.equal(x.novel_qualification_state,"REVIEW_REQUIRED");
+});
