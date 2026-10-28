@@ -69,3 +69,90 @@ test('null or cyclic candidate is held',()=>{
   const x=make();x.candidate.self=x.candidate;
   assert.equal(plan(x).hold_code,'SENSITIVE_OR_UNBOUNDED_INPUT');
 });
+
+import { reviewCgxMobileHostCapabilityClaim as reviewHost } from '../src/cgxMobileHostAssessmentReview.mjs';
+
+const hostCase = () => {
+  const p = plan(make());
+  const request = {
+    schema_version:'cgx-roaming-request-v1', request_id:'neo-host-claim-001',
+    required_capability_id:p.capability_id, expected_revision_or_cursor:p.source_revision,
+    input_content_hashes:['b'.repeat(64)], status:'staged', requested_intent:'metadata_only',
+    created_utc:'2026-10-28T03:00:00Z', expires_utc:'2026-10-28T04:00:00Z',
+  };
+  return {preflight:p, request, now_utc:'2026-10-28T03:15:00Z'};
+};
+const claimed = x => ({
+  schema:'CGX-ROAMING-ASSESSMENT-CANDIDATE/0.1', request_id:x.request.request_id,
+  required_capability_id:x.request.required_capability_id,
+  source_revision:x.request.expected_revision_or_cursor,
+  input_content_hashes:[...x.request.input_content_hashes],
+  decision:'CAN_DO', operation_state:'assessed',
+});
+test('without host claim preflight remains WAIT_HOST and HELD',()=>{
+  const r=reviewHost(hostCase());assert.equal(r.state,'WAIT_HOST');
+  assert.equal(r.effective_decision,'HELD');assert.equal(r.execution_performed,false);
+});
+test('claimed CAN_DO never becomes host permission, DBR or installed runtime',()=>{
+  const x=hostCase();x.assessment=claimed(x);
+  const r=reviewHost(x);assert.equal(r.state,'UNVERIFIED_HOST_CLAIM');
+  assert.equal(r.reported_decision,'CAN_DO');assert.equal(r.effective_decision,'HELD');
+  for(const key of ['host_readback_authenticated','owner_lease_verified','native_admitted',
+    'execution_performed','dbr_receipt_verified','drive_backup_verified'])
+    assert.equal(r[key],false,key);
+});
+test('claimed CAN_DO_WHEN_READY and UNSUPPORTED remain source-only',()=>{
+  for(const decision of ['CAN_DO_WHEN_READY','UNSUPPORTED']){
+    const x=hostCase();x.assessment={...claimed(x),decision};
+    const r=reviewHost(x);assert.equal(r.reported_decision,decision);
+    assert.equal(r.effective_decision,'HELD');
+  }
+});
+test('claimed HELD is held, not promoted',()=>{
+  const x=hostCase();x.assessment={...claimed(x),decision:'HELD',operation_state:'held'};
+  assert.equal(reviewHost(x).hold_code,'HOST_REPORTS_HELD');
+});
+test('claim with different request id is rejected',()=>{
+  const x=hostCase();x.assessment={...claimed(x),request_id:'different'};
+  assert.equal(reviewHost(x).hold_code,'HOST_CLAIM_IDENTITY_OR_HASH_MISMATCH');
+});
+test('claim with different source revision is rejected',()=>{
+  const x=hostCase();x.assessment={...claimed(x),source_revision:'c'.repeat(40)};
+  assert.equal(reviewHost(x).hold_code,'HOST_CLAIM_IDENTITY_OR_HASH_MISMATCH');
+});
+test('claim with conflicting input hash is rejected',()=>{
+  const x=hostCase();x.assessment={...claimed(x),input_content_hashes:['c'.repeat(64)]};
+  assert.equal(reviewHost(x).hold_code,'HOST_CLAIM_IDENTITY_OR_HASH_MISMATCH');
+});
+test('expired or premature request is held at deterministic fixture clock',()=>{
+  for(const now of ['2026-10-28T02:59:59Z','2026-10-28T04:00:00Z']){
+    const x=hostCase();x.now_utc=now;
+    assert.equal(reviewHost(x).hold_code,'REQUEST_NOT_CURRENT_AT_FIXTURE_CLOCK');
+  }
+});
+test('replayed request ID is held',()=>{
+  const x=hostCase();x.seen_request_ids=[x.request.request_id];
+  assert.equal(reviewHost(x).hold_code,'DUPLICATE_REQUEST_ID');
+});
+test('host claims of execution or running cannot pass review',()=>{
+  for(const variant of [{execution_performed:true},{operation_state:'running'},{operation_state:'executed'}]){
+    const x=hostCase();x.assessment={...claimed(x),...variant};
+    assert.equal(reviewHost(x).hold_code,'HOST_CLAIM_NOT_REVIEWABLE');
+  }
+});
+test('secret-bearing claim is rejected without echo',()=>{
+  const x=hostCase();x.assessment={...claimed(x),session_token:'DO_NOT_ECHO'};
+  const r=reviewHost(x);assert.equal(r.hold_code,'SENSITIVE_OR_UNBOUNDED_INPUT');
+  assert.equal(JSON.stringify(r).includes('DO_NOT_ECHO'),false);
+});
+test('source gate HOLD cannot be upgraded by a forged host claim',()=>{
+  const x=hostCase();x.preflight={...x.preflight,state:'HOLD'};
+  x.assessment=claimed(x);
+  assert.equal(reviewHost(x).hold_code,'SOURCE_PREFLIGHT_NOT_QUALIFIED');
+});
+test('untrusted clock and wrong capability never create a runnable state',()=>{
+  const x=hostCase();x.request.required_capability_id='other';
+  assert.equal(reviewHost(x).hold_code,'REQUEST_IDENTITY_OR_SCOPE_INVALID');
+  const y=hostCase();y.now_utc='not-a-clock';
+  assert.equal(reviewHost(y).hold_code,'CLOCK_OR_EXPIRY_FORMAT_INVALID');
+});
