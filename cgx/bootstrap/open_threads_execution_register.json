@@ -1,0 +1,142 @@
+{
+  "schema": "CGX-OPEN-THREAD-EXECUTION-REGISTER/0.1",
+  "state": "SOURCE_REVIEW_ONLY",
+  "date": "2026-10-28",
+  "primary_authority": "Current accepted Cognigrex.cgx parent / FileSpace and real provider DBR (must be read back)",
+  "source_repo": "achillesromer-coder/LightSpeed",
+  "reviewed_pull_requests": [
+    {
+      "pr": 205,
+      "domain": "LOAD.cgx / Alexandria source catalogue, matching, CCC and semantic views",
+      "status": "DRAFT_UNMERGED",
+      "readiness": "source-only 131 references; no native admission or public release"
+    },
+    {
+      "pr": 206,
+      "domain": "one LS/CGX smart setup, legacy wizard reconciliation, handshake review and Grex LS GO preflight",
+      "status": "DRAFT_UNMERGED",
+      "readiness": "Node source-only review CI success; no host install or Grex activation"
+    }
+  ],
+  "resolved": [
+    {
+      "id": "ALIAS-GOT",
+      "status": "FALSE_COMPONENT_CLOSED",
+      "result": "Git/GPT/GO contextual voice transcription only; no GOT capability/CCC route/product or owner gate."
+    },
+    {
+      "id": "WIZARD-SOURCE-OWNER",
+      "status": "REVIEW_OWNER_CHOSEN",
+      "result": "Reuse `lightspeed_runtime.startup_options`, `runtime_productization`, and native Cognigrex parent; historical wizard UIs preserved until no-loss migration/consumer audit."
+    },
+    {
+      "id": "ONE-OF-EVERYTHING",
+      "status": "ARCHITECTURAL_CONTRACT",
+      "result": "Library references and typed functions may be reused; source variations/evidence remain distinct; native resolution requires accepted Object_ID and DBR."
+    }
+  ],
+  "open": [
+    {
+      "id": "H-01",
+      "lane": "Cognigrex",
+      "priority": 1,
+      "status": "BLOCKED_AUTHORITY",
+      "problem": "Live parent and children, LOAD alias and current signed root/DBR readback; S92 source-only and review PRs not sufficient.",
+      "next": "Read current verified Recovery provider receipt, exact root and child registry on authenticated host; one object H0-H3 admission+readback.",
+      "owner_question": "none until current host/source evidence available"
+    },
+    {
+      "id": "S-01",
+      "lane": "Cognigrex",
+      "priority": 1,
+      "status": "SOURCE_INCOMPLETE",
+      "problem": "Original 12 GPT JSON shards plus real CGX manual intake root not source-verified as complete.",
+      "next": "Resolve exact original provider IDs; reconstruct 150-message context; hash/parity, source rights and R0/R1 per item, <=60MiB work units.",
+      "owner_question": "only if actual intake path conflict remains"
+    },
+    {
+      "id": "I-01",
+      "lane": "Neo",
+      "priority": 2,
+      "status": "HOST_OFFLINE",
+      "problem": "BouwerBase offline; no Python 3.11 installation/cold-start/rollback or native CCC adapter acceptance receipt.",
+      "next": "When connected, run existing manager status then reviewed install/rollback negative tests, preserve C:/D: alias rules and one authorised runtime.",
+      "owner_question": "host reconnection/lease when available"
+    },
+    {
+      "id": "I-02",
+      "lane": "Neo",
+      "priority": 2,
+      "status": "SOURCE_ONLY",
+      "problem": "CGX smart setup and handshake validator have successful PR review CI but no real provider signature or native lease proof.",
+      "next": "One authenticated host preflight + source-specific scope/lease verifier; actual DBR before claim of installed tools.",
+      "owner_question": "none"
+    },
+    {
+      "id": "L-01",
+      "lane": "Neo",
+      "priority": 2,
+      "status": "SOURCE_ONLY",
+      "problem": "LOAD source catalogue and typed conversions are not native CCC installed operators.",
+      "next": "Prove one real source-backed existing method and runtime adapter with exact ABI/rights and negative tests.",
+      "owner_question": "none"
+    },
+    {
+      "id": "P-01",
+      "lane": "Achilles",
+      "priority": 1,
+      "status": "SECURITY_HOLD",
+      "problem": "Issue #158 internal object review assets potentially in unauthenticated Vite static/public; actual deployment not proven.",
+      "next": "Identify public-safe subset, remove sensitive source from static pipeline, test unauthenticated and revoked requests and dist residue.",
+      "owner_question": "approve public subset after evidence"
+    },
+    {
+      "id": "D-01",
+      "lane": "Neo",
+      "priority": 2,
+      "status": "INTEROP_HOLD",
+      "problem": "Issue #161 independent two-node DataSpace transport acceptance not proven.",
+      "next": "Current separate nodes with signed identities, lease, content hash/size, resumable transfer and receiver readback.",
+      "owner_question": "none until proof results"
+    },
+    {
+      "id": "G-01",
+      "lane": "UniSpace",
+      "priority": 3,
+      "status": "GREX_OPERATOR_HOLD",
+      "problem": "LS GO per-Grex toggles are plan-only and must not be confused with UniSpace product.",
+      "next": "Bind accepted Grex child to existing private LS GO shell, authenticated per-family toggle and negative ACL tests; one pilot.",
+      "owner_question": "approve actual private beta release after tests"
+    },
+    {
+      "id": "E-01",
+      "lane": "Athene",
+      "priority": 3,
+      "status": "DOMAIN_SOURCE_FRONTIER",
+      "problem": "Eco.cgx models/workbooks and source-rights need native R0-R2 mapping, with distinct observed vs simulated claims.",
+      "next": "One Eco source-qualified meaningful child/functional operator; no inferred physical or ecological performance.",
+      "owner_question": "none"
+    },
+    {
+      "id": "U-01",
+      "lane": "UniSpace",
+      "priority": 4,
+      "status": "PRODUCT_RELEASE_HOLD",
+      "problem": "UniSpace site/trial/download and CGX public communication require an independently approved product release.",
+      "next": "After Grex LS GO private pilot, publish only rights-cleared docs/demo/trial, with privacy/IP, website QA and deployment readback.",
+      "owner_question": "public scope, licence, first free tier and marketing approvals at release gate"
+    }
+  ],
+  "cross_cutting_rules": [
+    "Every run make independent non-duplicate source- or code-backed progress.",
+    "Keep the original user documents and file providers unchanged until accepted successor and consent.",
+    "A PR merge or status run is not native admission.",
+    "Do not mint identity from filenames, label collisions or voice transcripts.",
+    "Keep source, digital, simulated, measured, reviewed and regulatory evidence states separate.",
+    "No public publish, outreach or release changes without explicit owner approval and security gate closure."
+  ],
+  "owner_action_now": "Reconnect authenticated BouwerBase when available; no decision on GOT needed.",
+  "deletion_ready_count": 0,
+  "actual_native_writes_proven_in_this_pass": 0,
+  "release_ready": false
+}
