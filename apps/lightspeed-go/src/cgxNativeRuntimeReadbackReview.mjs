@@ -75,9 +75,30 @@ function statusShape(s,slot){
  s.recent_receipts.every(txt)&&statusPaths(s,slot)&&
  (s.profile==null||['core','api','data','validation','dev','desktop'].includes(s.profile));
 }
+// The existing startup_options._config_paths map, not arbitrary caller paths.
+// Lexical comparison only: no host filesystem identity or existence proof.
+const SOURCE_PATHS=Object.freeze({
+ settings:'config/settings.json',lightspeed:'config/lightspeed_config.json',
+ unified:'config/unified_config.json',
+ host_runtime_policy:'config/host_runtime_policy.json',
+ workspace_lanes:'config/workspace_lanes.json',
+ launch_control:'config/launch_control.json',
+ floor_stage_population:'Z Axis/Z-3_Smith/data/staging/floor_stage_population.json'
+});
+function sourceFilesShape(p){
+ const root=absolutePath(p.root);
+ if(!root||!obj(p.source_files)||
+  Object.keys(p.source_files).length!==Object.keys(SOURCE_PATHS).length||
+  !keys(p.source_files,Object.keys(SOURCE_PATHS)))return false;
+ const win=/^[a-z]:\\//.test(root);
+ return Object.entries(SOURCE_PATHS).every(([name,relative])=>{
+  const path=absolutePath(p.source_files[name]);
+  return path!==null&&path===root+'/'+(win?relative.toLowerCase():relative);
+ });
+}
 function startupShape(p){
- if(!obj(p)||!keys(p,STARTUP_KEYS)||!txt(p.root)||
-  !obj(p.source_files)||!obj(p.global_options)||!obj(p.floors)||
+ if(!obj(p)||!keys(p,STARTUP_KEYS)||!sourceFilesShape(p)||
+  !obj(p.global_options)||!obj(p.floors)||
   Object.keys(p.floors).length!==8||
   Object.keys(p.floors).some(k=>!Object.hasOwn(FLOOR_IDS,k)))return false;
  for(const [name,canonical_id] of Object.entries(FLOOR_IDS)){
