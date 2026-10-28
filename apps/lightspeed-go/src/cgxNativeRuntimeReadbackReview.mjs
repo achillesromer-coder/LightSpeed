@@ -54,7 +54,7 @@ function statusPaths(s,slotName){
  const slotRoot=absolutePath(s.slot_root);
  const python=absolutePath(s.python);
  if(!root||!slotRoot||!python)return false;
- const win=/^[a-z]:\//.test(root);
+ const win=root.length>=3&&root[1]===':'&&root[2]==='/';
  const name=win?slotName.toLowerCase():slotName;
  if(slotRoot!==root+'/'+name)return false;
  if(python!==slotRoot+'/'+(win?'venv/scripts/python.exe':'venv/Scripts/python.exe'))return false;
