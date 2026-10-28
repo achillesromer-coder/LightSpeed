@@ -120,16 +120,18 @@
       "acceptance": "agent authority + original home + actual runtime receipt + accepted object/role mapping"
     },
     {
-      "area": "GOT name and smart setup",
-      "overlap": "UNRESOLVED_NAMING",
-      "candidate_successor": "Existing CGX CCC qualified capability only if discovered",
+      "area": "Voice/GPT/Git/GO transcription ambiguity",
+      "overlap": "LEXICAL_ONLY_NOT_FUNCTIONAL",
+      "candidate_successor": "No standalone component; context-sensitive source-text reconciliation",
       "candidates": [
-        "User phrase 'GOT' in 2026-10-28 conversation",
-        "Git search exact GOT.cgx and G.O.T. yielded no confirmed registered CGX route"
+        "User correction 2026-10-28: 'GOT' often substituted for Git/GPT",
+        "Exact uppercase GOT in four partial GPT text fragments: one unrelated veterinary AST enzyme synonym",
+        "No verified GOT.cgx or standalone CCC route from current Git code searches",
+        "LightSpeed GO remains independently named product/host context"
       ],
-      "resolution": "retain GOT as unexpanded discovery slot; match full historical term and function contract before semantic merge, alias minting or UI visibility",
-      "archive_state": "FRONTIER_NAME_HOLD",
-      "acceptance": "authoritative historical expansion + source/owner + exact route and ABI/rights evidence"
+      "resolution": "No GOT install, CCC entry, wizard toggle, user decision or launch blocker. Preserve uncertain raw utterance when relevant and resolve Git/GPT/GO from immediate semantic context; never auto-replace inside source quotations.",
+      "archive_state": "FALSE_COMPONENT_CLOSED_KEEP_EVIDENCE_NOTE",
+      "acceptance": "No functional GOT references in UI, CLI, host/agent contracts; original source references retained"
     },
     {
       "area": "marketing website and public publishing",
@@ -147,7 +149,6 @@
   ],
   "priority": [
     "CGX parent/child acceptance and host reconnect",
-    "GOT source resolution",
     "startup owner and no-loss mapping",
     "native LOAD/CCC intake and tool ABI",
     "Grex LS GO private beta and two-node/ACL tests",
