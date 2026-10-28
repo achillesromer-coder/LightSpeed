@@ -143,3 +143,46 @@ test("Not run QA cannot qualify as measured observation",()=>{
  assert.ok(x.novel_checks.includes("QA_STATE_REQUIRES_REVIEW"));
  assert.equal(x.novel_qualification_state,"REVIEW_REQUIRED");
 });
+
+
+// Source-backed negative cases: Type 1 Eco-Grex Second Cycle field schema, not field data.
+test("different water-quality variables sharing mg/L cannot align",()=>{
+ const a={...base,semantic_type:"sensor_reading",observed_variable:"dissolved_oxygen",native_interval:"PT1M"};
+ const b={...known,...a,object_id:"known:1",source_refs:["src-a"],observed_variable:"nitrate"};
+ const x=run(a,b).candidates[0];
+ assert.equal(x.state,"REVIEW_DIFFERENCE");
+ assert.ok(x.checks.includes("OBSERVED_VARIABLE_DIFFERENT_OR_UNDECLARED"));
+});
+test("missing sensor variable remains held with zero known candidates",()=>{
+ const a={...base,semantic_type:"sensor_reading",native_interval:"PT1M"};
+ const x=planEcoAlignment({novel:a,known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("OBSERVED_VARIABLE_REQUIRED"));
+ assert.equal(x.novel_qualification_state,"REVIEW_REQUIRED");
+});
+test("missing native sampling interval remains explicit",()=>{
+ const a={...base,semantic_type:"sensor_reading",observed_variable:"dissolved_oxygen"};
+ const x=planEcoAlignment({novel:a,known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("NATIVE_INTERVAL_REQUIRED"));
+});
+test("different native intervals cannot silently collapse",()=>{
+ const a={...base,semantic_type:"sensor_reading",observed_variable:"dissolved_oxygen",native_interval:"PT1M"};
+ const b={...known,...a,object_id:"known:1",source_refs:["src-a"],native_interval:"PT5M"};
+ assert.ok(run(a,b).candidates[0].checks.includes("NATIVE_INTERVAL_DIFFERENT_OR_UNDECLARED"));
+});
+test("different aggregation periods are separate even with equal numeric values",()=>{
+ const a={...base,semantic_type:"sensor_reading",observed_variable:"dissolved_oxygen",native_interval:"PT1M",aggregation_scope:"average",aggregation_period:"PT1H"};
+ const b={...known,...a,object_id:"known:1",source_refs:["src-a"],aggregation_period:"PT24H"};
+ assert.ok(run(a,b).candidates[0].checks.includes("AGGREGATION_PERIOD_DIFFERENT_OR_UNDECLARED"));
+});
+test("aggregated reading with undeclared period requires review",()=>{
+ const a={...base,semantic_type:"sensor_reading",observed_variable:"dissolved_oxygen",native_interval:"PT1M",aggregation_scope:"average"};
+ const x=planEcoAlignment({novel:a,known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("AGGREGATION_PERIOD_REQUIRED"));
+});
+test("matching declared variable and temporal support remains source-only candidate",()=>{
+ const a={...base,semantic_type:"sensor_reading",observed_variable:"dissolved_oxygen",native_interval:"PT1M",aggregation_scope:"average",aggregation_period:"PT1H"};
+ const b={...known,...a,object_id:"known:1",source_refs:["src-a"]};
+ const x=run(a,b).candidates[0];
+ assert.equal(x.state,"TYPED_ALIGNMENT_CANDIDATE");
+ assert.equal(x.auto_merge,false);
+});
