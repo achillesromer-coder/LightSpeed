@@ -1,0 +1,97 @@
+{
+  "schema": "GIT-CGX-REVIEW-TRANSFER/0.1",
+  "date": "2026-10-29",
+  "requested_target_repository": "Git.CGX",
+  "target_repository_created": false,
+  "staging_branch": "review/git-cgx-public-base-20261029",
+  "staging_mode": "SOURCE_REVIEW_HANDOFF_ONLY",
+  "source_authority": "ORIGINAL_PUBLIC_SYNTHETIC_CODE",
+  "root": "cgx:root:cognigrex",
+  "release_class": "PUBLIC_SYNTHETIC_REVIEW_ONLY",
+  "new_technical_authority": false,
+  "canonical_admission": false,
+  "host_execution": false,
+  "external_url_status": "NOT_HOSTED",
+  "native_peer_handshake": false,
+  "static_ci_handshake": "NODE_TESTS_ALLOWLIST_HASHES",
+  "tested": {
+    "node_source_tests": "12/12_PASS",
+    "chromium_interactions": "8_routes_and_simulated_FSDSPress",
+    "mobile_390px_overflow": "PASS",
+    "unhandled_js_exceptions": 0
+  },
+  "packages": [
+    {
+      "name": "Git.CGX_v0.1.0_Public_Review_Repository.zip",
+      "sha256": "2716ae439f4de0695d7b92a4fb4bf9ab73e843dfb25a9b79bdfa3fee1e2447ab",
+      "bytes": 40914,
+      "entries": 20
+    },
+    {
+      "name": "Git.CGX_v0.1.0_Public_Static_Only.zip",
+      "sha256": "f0718081d384314ef3be7f56cee781ebf462686121244a6bddbc5edaf078a3f0",
+      "bytes": 15089,
+      "entries": 5
+    }
+  ],
+  "source_modules": [
+    "index.html",
+    "assets.css",
+    "app.js",
+    "data/catalogue.js",
+    "scripts/build.mjs",
+    "tests/public.test.mjs",
+    ".github/workflows/static-review.yml"
+  ],
+  "routes": [
+    "overview",
+    "graph",
+    "filespace",
+    "dataspace",
+    "printspace",
+    "alexandria",
+    "press",
+    "status"
+  ],
+  "public_only": [
+    "Synthetic portfolio summaries",
+    "Qualified links to reviewed public contracts",
+    "Original standalone review code"
+  ],
+  "excluded": [
+    "Private CGX carriers",
+    "GPT raw shards",
+    "Internal review meshes",
+    "Credentials",
+    "Live DBR roots",
+    "Owner account/session tokens",
+    "Native host executors"
+  ],
+  "next_actions": [
+    {
+      "owner": "Owner/GitHub admin",
+      "description": "Create empty public Git.CGX repository and enable Pages from Actions after publication/rights approval",
+      "gate": "NEW_REPO_NOT_CREATED"
+    },
+    {
+      "owner": "UniSpace",
+      "description": "Transfer exact public review source from owner-approved package into new repo and independently hash/read back",
+      "gate": "SOURCE_TRANSFER_PENDING"
+    },
+    {
+      "owner": "Neo",
+      "description": "Keep GitHub CI/release handshake separate from native LS and signed node/DBR transport",
+      "gate": "NATIVE_APPROVAL_SEPARATE"
+    },
+    {
+      "owner": "Achilles",
+      "description": "Classify publication/licence and avoid private asset #158 transfer",
+      "gate": "PUBLIC_PRIVATE_BOUNDARY"
+    }
+  ],
+  "statements": [
+    "No merger to main requested.",
+    "No developer can infer installation from source CI.",
+    "The source package is available as a ChatGPT downloadable attachment in the owner's conversation, not automatically available to a GitHub runner."
+  ]
+}
