@@ -21,7 +21,7 @@
     },
     {
       "path": "cgx/load_minimum/load_reader.py",
-      "git_blob_sha": "3d075a293b1721420032852c6a85b51a8c16db61"
+      "git_blob_sha": "29653fe174ce39460e40db169f3bebdf472e5676"
     },
     {
       "path": "cgx/domain_templates/root_authority_decision_receipt_2026-10-01.json",
@@ -32,7 +32,7 @@
       "git_blob_sha": "77861c734b3c63c394031c79bf830154faaec1e3"
     }
   ],
-  "observed_gap": "The current draft LOAD reader opens ZIP and parses library/one_of_one.json, checking only duplicate ref_id values. It does not call native carrier manifest/content-root/DBR verification or enforce authenticated Object_ID binding. Treat all results as untrusted source references until native checks are independently verified.",
+  "observed_gap": "The current LOAD reader bounds library/one_of_one.json decompression to 60 MiB and rejects missing/duplicate library members, malformed entry structures and duplicate ref_id values. It remains a source-reference inspector: it does not verify the CGX native manifest/content root, RootAuthority/DBR signatures, current lease, rights/ACL or accepted Object_ID binding. No R0/R1/R2 admission follows from successful parsing.",
   "cases": [
     {
       "id": "C01",
