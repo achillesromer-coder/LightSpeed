@@ -54,19 +54,23 @@ export function planKnownAlignment({novel,known_objects,authorised_object_ids,au
 /** Reuse only explicitly typed CCC route declarations whose route keys exist in current source registry.
  * Note: registry presence does NOT verify installed host tooling or mathematical correctness.
  */
-export function planQualifiedOperator({registry,problem,bindings,authorised_source_ids=[]}={}){
+export function planQualifiedOperator({registry,problem,bindings,authorised_source_ids=[],selector=null}={}){
  validateRegistry(registry);
  if(!obj(registry)||registry.state!=="GIT_SOURCE_ONLY_NOT_CANONICAL"||!Array.isArray(registry.records)||!obj(problem)||
   !good(problem.semantic_type)||!obj(problem.dimensions)||!arr(problem.source_refs)||!Array.isArray(bindings)||
-  bindings.length>500||!arr(authorised_source_ids))throw Error("INVALID_OPERATOR_REQUEST");
+  bindings.length>500||!arr(authorised_source_ids)||(selector!==null&&!good(selector)))throw Error("INVALID_OPERATOR_REQUEST");
  const permitted=new Set(authorised_source_ids),sourceRefs=problem.source_refs.filter(x=>permitted.has(x));
- const routes=new Set(registry.records.filter(x=>x.category==="ccc_route"&&x.admission==="SOURCE_REGISTRY_ONLY").map(x=>x.source_key));
+ const routes=new Map(registry.records.filter(x=>x.category==="ccc_route"&&x.admission==="SOURCE_REGISTRY_ONLY").map(x=>[x.source_key,x]));
  const selected=[];
  for(const b of bindings){
   if(!obj(b)||!good(b.route_key)||!good(b.input_type)||!obj(b.required_dimensions))throw Error("INVALID_OPERATOR_BINDING");
   if(!routes.has(b.route_key))continue;
   if(b.input_type!==problem.semantic_type||!dimEqual(b.required_dimensions,problem.dimensions))continue;
   const blockers=[];
+  // A selector label is only a source-catalogue declaration, never a verified host ACL.
+  if(selector===null)blockers.push("SELECTOR_SCOPE_UNDECLARED");
+  else if(!Array.isArray(routes.get(b.route_key).selector_sources)||!routes.get(b.route_key).selector_sources.includes(selector))
+   blockers.push("SELECTOR_ROUTE_NOT_DECLARED");
   if(!sourceRefs.length)blockers.push("EVIDENCE_SOURCE_REQUIRED");
   if(Object.keys(problem.dimensions).length>0){
    if(!obj(problem.units)||!Object.keys(problem.dimensions).every(f=>good(problem.units[f])))blockers.push("UNITS_UNDECLARED");
