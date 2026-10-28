@@ -7,7 +7,6 @@
 export const SCHEMA="CGX-UNIFIED-BOOTSTRAP-PLAN/0.1";
 const FAMILIES=new Set(["Cognigrex.cgx","Romer.cgx","Eco.cgx","EMASSC.cgx","LS.cgx"]);
 const STEPS=["discover","resume","identity","sources","load","tools","runtime","ls_go","handshake","verify","handoff"];
-const HOLDS=["ISSUE_158_PRIVATE_STATIC_ASSETS","ISSUE_161_TWO_NODE_PROOF","NATIVE_ROOT_AUTHORITY","NATIVE_CHILD_ACCEPTANCE","PROVIDER_RIGHTS","SIGNED_LEASE","DBR_READBACK","INDEPENDENT_RELEASE","GOT_CAPABILITY_UNRESOLVED"];
 const text=x=>typeof x==="string"&&x.length>0&&x.length<=256&&!/[\u0000-\u001f]/.test(x)&&!/(?:^|[/\\])\.\.(?:[/\\]|$)/.test(x);
 const isObj=x=>x!==null&&typeof x==="object"&&!Array.isArray(x);
 const grant=x=>x===true;
@@ -16,7 +15,7 @@ const requireProof=(v,flag,blockers)=>{if(!grant(v))blockers.push(flag)};
 export function planCGXSetup(config={}){
  if(!isObj(config))return {state:"DENIED",reason:"INVALID_CONFIGURATION"};
  const {family,mode="first-run",intent="plan",device="desktop",profile="core",lsGORequested=false,
-  gotRequested=false,offlinePreferred=true,sourceBytesPerChunk=60*1024*1024,receipt=null,
+  offlinePreferred=true,sourceBytesPerChunk=60*1024*1024,receipt=null,
   observed={}}=config;
  if(!FAMILIES.has(family))return {state:"DENIED",reason:"UNKNOWN_FILESPACE"};
  if(!["first-run","resume","repair","upgrade"].includes(mode))return {state:"DENIED",reason:"UNKNOWN_SETUP_MODE"};
@@ -42,7 +41,6 @@ export function planCGXSetup(config={}){
   requireProof(observed.familyUiBindingVerified,"GREX_UI_BINDING_UNVERIFIED",optional);
  }
  if(observed.nodeExchangeRequested===true)requireProof(observed.twoNodeProof,"ISSUE_161_TWO_NODE_HOLD",optional);
- if(gotRequested)optional.push("GOT_MEANING_AND_REGISTERED_CAPABILITY_UNRESOLVED");
  if(!grant(observed.loadAliasVerified))optional.push("LOAD_EXISTING_IDENTITY_NOT_VERIFIED");
  if(!grant(observed.sourceRightsVerified))optional.push("PROVIDER_SOURCE_RIGHTS_NOT_VERIFIED");
  const requestedLSGO=!!lsGORequested;
@@ -58,7 +56,6 @@ export function planCGXSetup(config={}){
   source_chunk_limit:sourceBytesPerChunk,offline_minimum:offlinePreferred!==false,
   existing_runtime:{status_owner:"lightspeed_runtime.runtime_productization",settings_owner:"lightspeed_runtime.startup_options"},
   library:{name:"LOAD.cgx",bind:"EXISTING_IDENTITY_ONLY",install:false,network_hydration:false},
-  got:{name:"GOT",status:"SOURCE_UNRESOLVED_OPTIONAL",requested:!!gotRequested,install:false},
   ls_go:{product:"Grex-scoped LS GO",requested:requestedLSGO,enabled:false,
     ready_for_authenticated_host_preflight:requestedLSGO&&mandatory.length===0&&optional.filter(x=>x.startsWith("ISSUE_158")||x.startsWith("GREX_UI")).length===0,
     separate_product:"UniSpace",actual_toggle_write:false},
