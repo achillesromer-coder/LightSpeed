@@ -18,6 +18,41 @@ export function inspectRelationGrammar(domainRegistry, sharedQualifier) {
       occurrences.set(entry.id, group);
     }
   }
+  // Shared vocabulary reuse is a crosswalk candidate, never an identity merge.
+  // A shared type may intentionally be reused with domain-specific qualifiers;
+  // owner/rights/source/version and authenticated DBR proof are outside this preflight.
+  const sharedTypes = sharedQualifier.shared_relation_types;
+  if (!sharedTypes || typeof sharedTypes !== 'object' || Array.isArray(sharedTypes)) {
+    throw new TypeError('INVALID_SHARED_RELATION_TYPES');
+  }
+  const sharedOccurrences = new Map();
+  for (const [sharedFamily, entries] of Object.entries(sharedTypes)) {
+    if (!Array.isArray(entries)) throw new TypeError('INVALID_SHARED_RELATION_FAMILY');
+    for (const entry of entries) {
+      if (!entry || typeof entry.id !== 'string' || !/^[A-Z][A-Z0-9_]*$/.test(entry.id)) {
+        throw new TypeError('INVALID_SHARED_RELATION_TYPE');
+      }
+      const families = sharedOccurrences.get(entry.id) ?? [];
+      families.push(sharedFamily);
+      sharedOccurrences.set(entry.id, families);
+    }
+  }
+  const crosswalk_candidates = [];
+  for (const [id, declarations] of occurrences) {
+    for (const sharedFamily of sharedOccurrences.get(id) ?? []) {
+      for (const declaration of declarations) {
+        crosswalk_candidates.push({
+          relation_id: id,
+          domain_family: declaration.family,
+          shared_family: sharedFamily,
+          classification: 'UNRESOLVED_SHARED_TYPE_REUSE',
+          qualified_object_id: null,
+          owner_qualified: false,
+          native_admitted: false
+        });
+      }
+    }
+  }
   const issues = [];
   if (domainRegistry.extends !== sharedQualifier.schema) {
     issues.push({
@@ -39,6 +74,7 @@ export function inspectRelationGrammar(domainRegistry, sharedQualifier) {
     stage: 'SOURCE_REVIEW_ONLY',
     status: issues.length ? 'HOLD' : 'SOURCE_CONTRACT_CHECK_ONLY',
     issues,
+    crosswalk_candidates,
     relation_declarations: [...occurrences.values()].reduce((n, group) => n + group.length, 0),
     distinct_lexical_ids: occurrences.size,
     qualified_object_id: null,
