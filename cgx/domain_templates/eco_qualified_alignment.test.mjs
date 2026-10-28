@@ -237,3 +237,27 @@ test("fully declared corrected sensor fixture remains source-only, not native or
  assert.equal(x.accepted_native_identity,false);
  assert.equal(x.db_readback,false);
 });
+
+const bound={kind:"LOD",value:0.02,unit:"mg/L",method_ref:"synthetic:lab-v1"};
+const noKnown=a=>planEcoAlignment({novel:a,known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+test("censored zero is not an observed point",()=>{
+ const x=noKnown({...base,result_qualifier:"below_detection_limit",reporting_bound:bound,measurement:{value:0,unit:"mg/L"}});
+ assert.ok(x.novel_checks.includes("CENSORED_RESULT_NUMERIC_POINT_CONFLICT"));assert.equal(x.novel_qualification_state,"REVIEW_REQUIRED");
+});
+test("missing censor bound is held",()=>assert.ok(noKnown({...base,result_qualifier:"below_quantification_limit"}).novel_checks.includes("CENSORED_REPORTING_BOUND_REQUIRED")));
+test("LOD cannot replace LOQ",()=>{
+ const a={...base,result_qualifier:"below_quantification_limit",reporting_bound:bound};
+ assert.ok(run(a,{...known,...a,object_id:"known:1",source_refs:["src-a"]}).candidates[0].checks.includes("CENSOR_BOUND_KIND_MISMATCH"));
+});
+test("censor bound unit conflict is held",()=>assert.ok(noKnown({...base,result_qualifier:"below_detection_limit",reporting_bound:{...bound,unit:"ug/L"}}).novel_checks.includes("REPORTING_BOUND_UNIT_CONFLICT")));
+test("different reporting limits remain distinct",()=>{
+ const a={...base,result_qualifier:"quantified",reporting_bound:bound};
+ const b={...known,...a,object_id:"known:1",source_refs:["src-a"],reporting_bound:{...bound,value:0.05}};
+ assert.ok(run(a,b).candidates[0].checks.includes("REPORTING_BOUND_DIFFERENT_OR_UNDECLARED"));
+});
+test("bound-only censored reading never implies admission",()=>{
+ const x=noKnown({...base,measurement:undefined,result_qualifier:"below_detection_limit",reporting_bound:bound});
+ assert.ok(x.novel_checks.includes("CENSORED_RESULT_REQUIRES_REVIEW"));assert.equal(x.accepted_native_identity,false);
+});
+test("negative detection limit rejected",()=>assert.throws(()=>run({...base,reporting_bound:{...bound,value:-1}}),/INVALID_REPORTING_BOUND/));
+test("missing reporting method is held",()=>assert.ok(noKnown({...base,result_qualifier:"below_detection_limit",reporting_bound:{kind:"LOD",value:0.02,unit:"mg/L"}}).novel_checks.includes("REPORTING_BOUND_METHOD_REQUIRED")));
