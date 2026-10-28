@@ -263,3 +263,27 @@ test('Windows trailing-dot and trailing-space aliases fail closed even when path
   assert.equal(review(y).hold_code,'STARTUP_PROFILE_SHAPE_INVALID');
  }
 });
+
+test('Windows reserved DOS device basenames reject forged runtime and startup paths',()=>{
+ for(const name of ['CON','con.txt','PRN','AUX.log','NUL','COM1','COM¹.log','LPT9','CONIN$','CONOUT$']){
+  const x=fixture();x.runtime_status.managed_root='D:/review/'+name;
+  x.runtime_status.slot_root=x.runtime_status.managed_root+'/neo-review';
+  x.runtime_status.python=x.runtime_status.slot_root+'/venv/Scripts/python.exe';
+  assert.equal(review(x).hold_code,'RUNTIME_STATUS_SHAPE_INVALID',name);
+  const y=fixture();y.startup_profile.root='D:/LightSpeed/'+name;
+  y.startup_profile.source_files=Object.fromEntries(
+   Object.entries(y.startup_profile.source_files).map(([k,v])=>
+    [k,v.replace('D:/LightSpeed/App/',y.startup_profile.root+'/')]));
+  assert.equal(review(y).hold_code,'STARTUP_PROFILE_SHAPE_INVALID',name);
+ }
+});
+test('nonreserved Windows names and POSIX paths retain source-only shape review',()=>{
+ for(const root of ['D:/review/CONIFER','D:/review/LPT10','/tmp/CON']){
+  const x=fixture();x.runtime_status.managed_root=root;
+  x.runtime_status.slot_root=root+'/neo-review';
+  x.runtime_status.python=x.runtime_status.slot_root+'/venv/Scripts/python.exe';
+  const result=review(x);
+  assert.equal(result.state,'AUTHENTICATED_HOST_READBACK_REQUIRED',root);
+  assert.equal(result.host_authenticated,false);
+ }
+});
