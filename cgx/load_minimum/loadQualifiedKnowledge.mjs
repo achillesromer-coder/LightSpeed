@@ -79,6 +79,7 @@ export function planQualifiedOperator({registry,problem,bindings,authorised_sour
   if(b.epoch_required&&!good(problem.epoch))blockers.push("EPOCH_REQUIRED");
   if(b.configuration_required&&!good(problem.configuration))blockers.push("CONFIGURATION_REQUIRED");
   if(!good(b.qualified_method_source))blockers.push("INDEPENDENT_METHOD_SOURCE_REQUIRED");
+  else if(!permitted.has(b.qualified_method_source))blockers.push("METHOD_SOURCE_NOT_AUTHORISED");
   blockers.push("HOST_CAPABILITY_LEASE_AND_DB_R_READBACK_REQUIRED");
   selected.push({route_key:b.route_key,state:"EXPLICIT_TYPED_OPERATOR_CANDIDATE",blockers,
     solver_invoked:false,results_generated:false});
