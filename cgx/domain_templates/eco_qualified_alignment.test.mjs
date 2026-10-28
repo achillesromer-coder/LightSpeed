@@ -186,3 +186,54 @@ test("matching declared variable and temporal support remains source-only candid
  assert.equal(x.state,"TYPED_ALIGNMENT_CANDIDATE");
  assert.equal(x.auto_merge,false);
 });
+
+
+// Source-backed method/uncertainty distinctions: Type 1 Eco-Grex WQ schema and QA register.
+// All numeric values below are synthetic fixtures, never observed field measurements.
+test("raw and corrected DO readings with equal values cannot silently align",()=>{
+ const a={...base,semantic_type:"sensor_reading",observed_variable:"dissolved_oxygen",native_interval:"PT1M",measurement_basis:"raw"};
+ const b={...known,...a,object_id:"known:1",source_refs:["src-a"],measurement_basis:"corrected",correction_method_id:"salinity-correction:v1"};
+ const x=run(a,b).candidates[0];
+ assert.equal(x.state,"REVIEW_DIFFERENCE");
+ assert.ok(x.checks.includes("MEASUREMENT_BASIS_DIFFERENT_OR_UNDECLARED"));
+});
+test("corrected sensor data without correction method remains held even with zero candidates",()=>{
+ const a={...base,semantic_type:"sensor_reading",observed_variable:"dissolved_oxygen",native_interval:"PT1M",measurement_basis:"corrected"};
+ const x=planEcoAlignment({novel:a,known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("CORRECTION_METHOD_REQUIRED"));
+ assert.equal(x.novel_qualification_state,"REVIEW_REQUIRED");
+});
+test("different correction method revisions require review",()=>{
+ const a={...base,measurement_basis:"corrected",correction_method_id:"salinity-correction:v2"};
+ const b={...known,...a,object_id:"known:1",source_refs:["src-a"],correction_method_id:"salinity-correction:v1"};
+ assert.ok(run(a,b).candidates[0].checks.includes("CORRECTION_METHOD_DIFFERENT_OR_UNDECLARED"));
+});
+test("uncertainty units must agree with measured quantity units",()=>{
+ const a={...base,measurement_uncertainty:{value:0.2,unit:"ug/L"},uncertainty_basis:"standard_1sigma"};
+ const x=planEcoAlignment({novel:a,known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("UNCERTAINTY_UNIT_CONFLICT"));
+});
+test("same measurement with different stated uncertainty requires review",()=>{
+ const a={...base,measurement_uncertainty:{value:0.2,unit:"mg/L"},uncertainty_basis:"standard_1sigma"};
+ const b={...known,...a,object_id:"known:1",source_refs:["src-a"],measurement_uncertainty:{value:0.4,unit:"mg/L"}};
+ assert.ok(run(a,b).candidates[0].checks.includes("MEASUREMENT_UNCERTAINTY_DIFFERENT_OR_UNDECLARED"));
+});
+test("negative uncertainty is invalid input",()=>{
+ assert.throws(()=>run({...base,measurement_uncertainty:{value:-0.1,unit:"mg/L"}}),/INVALID_MEASUREMENT_UNCERTAINTY/);
+});
+test("uncertainty without basis cannot qualify",()=>{
+ const a={...base,measurement_uncertainty:{value:0.2,unit:"mg/L"}};
+ const x=planEcoAlignment({novel:a,known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("UNCERTAINTY_BASIS_REQUIRED"));
+});
+test("fully declared corrected sensor fixture remains source-only, not native or empirically validated",()=>{
+ const a={...base,semantic_type:"sensor_reading",observed_variable:"dissolved_oxygen",native_interval:"PT1M",
+  measurement_basis:"corrected",correction_method_id:"synthetic:salinity-correction",
+  measurement_uncertainty:{value:0.2,unit:"mg/L"},uncertainty_basis:"standard_1sigma"};
+ const b={...known,...a,object_id:"known:1",source_refs:["src-a"]};
+ const x=run(a,b);
+ assert.equal(x.candidates[0].state,"TYPED_ALIGNMENT_CANDIDATE");
+ assert.equal(x.ecological_effect_verified,false);
+ assert.equal(x.accepted_native_identity,false);
+ assert.equal(x.db_readback,false);
+});
