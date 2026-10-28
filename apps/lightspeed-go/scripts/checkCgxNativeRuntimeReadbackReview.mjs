@@ -106,3 +106,18 @@ test('secret-bearing keys and untrusted host receipts never echo',()=>{
  assert.equal(JSON.stringify(y).includes('NEVER_ECHO'),false);
  denied(x=>{x.host_receipt={signed:true};},'INVALID_OR_SENSITIVE_ENVELOPE');
 });
+
+test('managed slot ABI rejects path-like and non-native names before host status',()=>{
+ // Python runtime_productization.SLOT_RE: ^[A-Za-z0-9][A-Za-z0-9_.-]{0,47}$
+ for(const bad of ['neo/review','neo:review','neo\\\\review',' neo',
+                   '.neo','neo review','neo/review/child','éneo']){
+  denied(x=>{x.request.slot=bad;x.runtime_status.slot=bad;},'REQUEST_SCOPE_MISMATCH');
+ }
+});
+test('managed slot ABI preserves the 48-character bound, rejects 49',()=>{
+ const good=fixture();good.request.slot='n'.repeat(48);
+ good.runtime_status.slot=good.request.slot;
+ assert.equal(review(good).state,'AUTHENTICATED_HOST_READBACK_REQUIRED');
+ denied(x=>{x.request.slot='n'.repeat(49);x.runtime_status.slot=x.request.slot;},
+  'REQUEST_SCOPE_MISMATCH');
+});
