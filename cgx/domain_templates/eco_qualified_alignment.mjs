@@ -31,7 +31,7 @@ function validObservedAt(v){
 function validateConcept(x){
  if(!obj(x)||!ECO_TYPES.has(x.semantic_type)||!stringList(x.source_refs))throw Error("INVALID_ECO_CONCEPT");
  if(x.object_id!==undefined&&!good(x.object_id))throw Error("INVALID_OBJECT_ID");
- for(const f of [...IDENTITY,"observed_at","method_id","unit","frame","environment_id","configuration","epoch","aggregation_scope","baseline_id"]){
+ for(const f of [...IDENTITY,"observed_at","method_id","unit","frame","environment_id","configuration","epoch","aggregation_scope","baseline_id","station_instrument_id","qa_flag","missing_data_state","calibration_verification_ref","siting_metadata_ref","source_provenance_ref"]){
   if(x[f]!==undefined&&x[f]!==null&&!good(x[f]))throw Error("INVALID_ECO_FIELD_"+f);
  }
  if(x.sample_count!==undefined&&(!Number.isSafeInteger(x.sample_count)||x.sample_count<1))throw Error("INVALID_SAMPLE_COUNT");
@@ -64,6 +64,16 @@ function compare(a,b,checks){
  if(a.evidence_class!==b.evidence_class)add(checks,"EVIDENCE_CLASS_DIFFERENT_OR_UNDECLARED");
  if(a.observed_at!==b.observed_at)add(checks,"OBSERVATION_TIME_DIFFERENT_OR_UNDECLARED");
  if(a.method_id!==b.method_id)add(checks,"METHOD_DIFFERENT_OR_UNDECLARED");
+ // Field QA, missingness and instrument provenance are independent of measured value.
+ for(const [field,flag] of [
+  ["station_instrument_id","INSTRUMENT_ID_DIFFERENT_OR_UNDECLARED"],
+  ["qa_flag","QA_STATE_DIFFERENT_OR_UNDECLARED"],
+  ["missing_data_state","MISSING_DATA_STATE_DIFFERENT_OR_UNDECLARED"],
+  ["calibration_verification_ref","CALIBRATION_REF_DIFFERENT_OR_UNDECLARED"],
+  ["siting_metadata_ref","SITING_REF_DIFFERENT_OR_UNDECLARED"],
+  ["source_provenance_ref","PROVENANCE_REVISION_DIFFERENT_OR_UNDECLARED"]]){
+  if(a[field]!==b[field])add(checks,flag);
+ }
  if(a.frame!==b.frame)add(checks,"FRAME_TRANSFORM_OR_DEFINITION_REQUIRED");
  if(a.configuration!==b.configuration)add(checks,"CONFIGURATION_VARIANT");
  if(a.epoch!==b.epoch)add(checks,"TIME_VARIANT");
@@ -87,6 +97,13 @@ function completeness(x,checks){
  if(x.semantic_type==="sensor_reading"&&!x.measurement)add(checks,"SENSOR_MEASUREMENT_REQUIRED");
  if(x.measurement&&good(x.unit)&&x.unit!==x.measurement.unit)add(checks,"MEASUREMENT_UNIT_CONFLICT");
  if(OBSERVATIONS.has(x.semantic_type)){
+  // These optional source QA fields must never silently certify an observation.
+  if(["provisional","flagged","missing"].includes(x.qa_flag?.toLowerCase()))add(checks,"QA_STATE_REQUIRES_REVIEW");
+  if(x.missing_data_state&&x.missing_data_state.toLowerCase()!=="observed"){
+   add(checks,"MISSING_OR_NONOBSERVED_DATA_STATE");
+   if(x.measurement)add(checks,"MISSING_DATA_MEASUREMENT_CONFLICT");
+   if(x.evidence_class==="observed")add(checks,"OBSERVED_EVIDENCE_WITH_MISSING_DATA");
+  }
   if(!good(x.observed_at))add(checks,"OBSERVATION_TIME_REQUIRED");
   else if(!validObservedAt(x.observed_at))add(checks,"OBSERVATION_TIMESTAMP_INVALID_OR_UNZONED");
   if(!good(x.method_id))add(checks,"METHOD_REQUIRED");
