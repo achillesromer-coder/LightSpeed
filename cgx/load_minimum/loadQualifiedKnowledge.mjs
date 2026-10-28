@@ -29,6 +29,10 @@ export function planKnownAlignment({novel,known_objects,authorised_object_ids,au
   if(k.semantic_type!==novel.semantic_type)continue;
   const checks=[];
   if(!dimEqual(k.dimensions,novel.dimensions))checks.push("INCOMPATIBLE_DIMENSIONS");
+  if(Object.keys(novel.dimensions).length>0){
+   if(!obj(novel.units)||!obj(k.units)||!Object.keys(novel.dimensions).every(f=>good(novel.units[f])&&good(k.units[f])))checks.push("UNITS_UNDECLARED");
+   else if(!Object.keys(novel.dimensions).every(f=>novel.units[f]===k.units[f]))checks.push("UNIT_CONVERSION_REQUIRED");
+  }
   if(k.frame!==novel.frame)checks.push("FRAME_TRANSFORM_OR_DEFINITION_REQUIRED");
   if(k.configuration!==novel.configuration)checks.push("CONFIGURATION_VARIANT");
   if(k.epoch!==novel.epoch)checks.push("TIME_VARIANT");
@@ -62,6 +66,10 @@ export function planQualifiedOperator({registry,problem,bindings,authorised_sour
   if(b.input_type!==problem.semantic_type||!dimEqual(b.required_dimensions,problem.dimensions))continue;
   const blockers=[];
   if(!sourceRefs.length)blockers.push("EVIDENCE_SOURCE_REQUIRED");
+  if(Object.keys(problem.dimensions).length>0){
+   if(!obj(problem.units)||!Object.keys(problem.dimensions).every(f=>good(problem.units[f])))blockers.push("UNITS_UNDECLARED");
+   else if(obj(b.required_units)&&!Object.keys(b.required_dimensions).every(f=>b.required_units[f]===problem.units[f]))blockers.push("UNIT_CONVERSION_METHOD_REQUIRED");
+  }
   if(b.frame && b.frame!==problem.frame)blockers.push("FRAME_TRANSFORMATION_REQUIRED");
   if(b.epoch_required&&!good(problem.epoch))blockers.push("EPOCH_REQUIRED");
   if(b.configuration_required&&!good(problem.configuration))blockers.push("CONFIGURATION_REQUIRED");
