@@ -121,11 +121,11 @@ function startupShape(p){
     typeof f.autostart!=='boolean'||
     (Object.hasOwn(f,'port')&&!(f.port==null||f.port===''||
       (Number.isInteger(f.port)&&f.port>=0&&f.port<=65535)||
-      (typeof f.port==='string'&&/^\\d{1,5}$/.test(f.port)&&
+      (typeof f.port==='string'&&/^[0-9]{1,5}$/.test(f.port)&&
        Number(f.port)<=65535)))||
     ['responsibility','description'].some(k=>Object.hasOwn(f,k)&&
       (typeof f[k]!=='string'||f[k].length>512||
-       /[\\u0000-\\u001f]/.test(f[k]))))return false;
+       Array.from(f[k]).some(ch=>ch.charCodeAt(0)<32))))return false;
  }
  return typeof p.global_options.first_run_complete==='boolean'&&
   typeof p.global_options.show_splash_screen==='boolean'&&
