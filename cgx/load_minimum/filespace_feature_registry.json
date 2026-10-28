@@ -1,0 +1,160 @@
+{
+  "schema": "CGX-UNISPACE-FILESPACE-FEATURE-CATALOG/0.1",
+  "status": "SOURCE_REVIEW_NOT_NATIVE_ADMISSION",
+  "parent": "Cognigrex.cgx",
+  "authority": "Cognigrex.cgx:/ccc plus scoped FileSpace owner",
+  "alias": {
+    "value": "LOAD",
+    "file": "LOAD.cgx",
+    "display": "Library Of Alexandria Database",
+    "status": "FOUNDER_DIRECTED_NAME__OBJECT_ID_UNRESOLVED",
+    "one_instance_reference_binding": true,
+    "offline_minimum": true,
+    "network_hydration": "permissioned_only"
+  },
+  "actions": {
+    "alexandria.open": {
+      "label": "Explore Alexandria",
+      "targets": [
+        "filespace"
+      ],
+      "mode": "read"
+    },
+    "alexandria.resolve": {
+      "label": "Resolve with Alexandria…",
+      "targets": [
+        "filespace",
+        "object",
+        "file"
+      ],
+      "mode": "review"
+    },
+    "alexandria.sources": {
+      "label": "Inspect source provenance",
+      "targets": [
+        "object",
+        "file"
+      ],
+      "mode": "read"
+    },
+    "load.attach": {
+      "label": "Equip FileSpace with LOAD…",
+      "targets": [
+        "filespace"
+      ],
+      "mode": "wizard_only"
+    },
+    "load.hydrate": {
+      "label": "Hydrate library references…",
+      "targets": [
+        "filespace"
+      ],
+      "mode": "review"
+    },
+    "ccc.discover": {
+      "label": "Find capabilities in CCC…",
+      "targets": [
+        "filespace",
+        "object"
+      ],
+      "mode": "review"
+    },
+    "ccc.install": {
+      "label": "Install CCC capability…",
+      "targets": [
+        "filespace"
+      ],
+      "mode": "wizard_only"
+    }
+  },
+  "wizard": [
+    "identify accepted FileSpace and owner",
+    "resolve existing LOAD/Alexandria identity and collision",
+    "choose existing TRACK/REFERENCE/PIN/EMBED",
+    "verify sources, rights, permissions and requested hydration",
+    "review negative preflight and reversible delta",
+    "explicit host apply and independent native DBR readback"
+  ],
+  "existing_domains": [
+    "FileSpace",
+    "DataSpace",
+    "PrintSpace",
+    "UniSpace",
+    "Alexandria",
+    "CCC",
+    "LightSpeed/LS.cgx",
+    "Romer.cgx",
+    "Eco.cgx",
+    "EMASSC.cgx"
+  ],
+  "inherited_function_decomposition": {
+    "F00": "identity/source",
+    "F10": "geometry/coordinate",
+    "F20": "collision/environment",
+    "F30": "render/LOD",
+    "F40": "state/dynamics/clock",
+    "F50": "audio",
+    "F60": "input/accessibility",
+    "F70": "reference/delta transport",
+    "F80": "execution adapters",
+    "F90": "proof/replay/DBR"
+  },
+  "optional_shortcuts_review_only": [
+    {
+      "name": "CALC",
+      "maps_to": [
+        "LightSpeed compute-routing",
+        "EMASSC methods"
+      ]
+    },
+    {
+      "name": "SIM",
+      "maps_to": [
+        "LightSpeed jobs",
+        "qualified simulation adapters"
+      ]
+    },
+    {
+      "name": "SHAPE",
+      "maps_to": [
+        "F10",
+        "F30",
+        "UniSpace geometry"
+      ]
+    },
+    {
+      "name": "TRACE",
+      "maps_to": [
+        "F00",
+        "F90",
+        "Alexandria provenance"
+      ]
+    },
+    {
+      "name": "SYNC",
+      "maps_to": [
+        "DataSpace exchange",
+        "F70"
+      ],
+      "hold": "#161 two-node auth"
+    },
+    {
+      "name": "PRESS",
+      "maps_to": [
+        "UniSpace/CGX Press",
+        "publication preflight"
+      ],
+      "hold": "public rights gate"
+    }
+  ],
+  "requirements": [
+    "do not mint duplicate Object_ID",
+    "never treat plan as install",
+    "source R0 refs unchanged",
+    "no silent network fetch",
+    "no unapproved public projection",
+    "keep current child authority",
+    "composition mode policy-constrained",
+    "require host authority, DBR and readback"
+  ]
+}
