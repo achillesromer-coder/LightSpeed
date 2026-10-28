@@ -9,8 +9,8 @@ const obj=x=>x!==null&&typeof x==="object"&&!Array.isArray(x);
 const stringList=x=>Array.isArray(x)&&x.length<=5000&&x.every(good);
 const equal=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 const EVIDENCE=new Set(["observed","simulated","source_asserted","hypothesised","inferred","independently_reviewed"]);
-const ECO_TYPES=new Set(["taxon","species","specimen","population","ecological_observation","sensor_reading","site","habitat","intervention","experiment","ecological_state_estimate"]);
-const IDENTITY=["taxon_id","specimen_id","population_id","site_id","station_id","subject_kind","subject_id"];
+const ECO_TYPES=new Set(["taxon","species","specimen","population","ecological_observation","sensor_reading","site","habitat","intervention","experiment","ecological_state_estimate","ecological_function","functional_guild","receiving_system"]);
+const IDENTITY=["taxon_id","specimen_id","population_id","site_id","station_id","subject_kind","subject_id","ecological_function_id","functional_guild_id","receiving_system_id"];
 const OBSERVATIONS=new Set(["ecological_observation","sensor_reading"]);
 // Validate absolute ISO timestamp and actual calendar date before aligning observations.
 function validObservedAt(v){
@@ -272,6 +272,9 @@ function completeness(x,checks){
   if(x.measurement&&!good(x.measurement.unit))add(checks,"UNIT_REQUIRED");
   if(x.geometry&&!good(x.geometry.crs))add(checks,"GEOMETRY_CRS_REQUIRED");
  }
+ if(x.semantic_type==="ecological_function"&&!good(x.ecological_function_id))add(checks,"ECOLOGICAL_FUNCTION_ID_REQUIRED");
+ if(x.semantic_type==="functional_guild"&&!good(x.functional_guild_id))add(checks,"FUNCTIONAL_GUILD_ID_REQUIRED");
+ if(x.semantic_type==="receiving_system"&&!good(x.receiving_system_id))add(checks,"RECEIVING_SYSTEM_ID_REQUIRED");
  if(x.semantic_type==="specimen"&&!good(x.specimen_id))add(checks,"SPECIMEN_ID_REQUIRED");
  if(["species","taxon"].includes(x.semantic_type)&&!good(x.taxon_id))add(checks,"TAXON_ID_REQUIRED");
  if(x.semantic_type==="population"&&(!good(x.population_id)||!good(x.taxon_id)))add(checks,"POPULATION_TAXON_ID_REQUIRED");
