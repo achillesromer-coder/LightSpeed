@@ -66,3 +66,26 @@ test("valid leap day and offset retain typed candidate",()=>{
  const a={...base,observed_at:"2024-02-29T12:00:00+10:00"},b={...known,source_refs:["src-a"],observed_at:"2024-02-29T12:00:00+10:00"};
  assert.equal(run(a,b).candidates[0].state,"TYPED_ALIGNMENT_CANDIDATE");
 });
+
+// Incoming evidence must be qualified independently of the known-object catalogue.
+test("zero known candidates: valid incoming schema is only source-qualified, never admitted",()=>{
+ const x=planEcoAlignment({novel:base,known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.equal(x.candidate_count,0);assert.equal(x.novel_qualification_state,"SCHEMA_QUALIFIED_SOURCE_ONLY");
+ assert.equal(x.accepted_native_identity,false);assert.equal(x.db_readback,false);
+});
+test("zero known candidates: missing observation timestamp remains an explicit gate",()=>{
+ const x=planEcoAlignment({novel:{...base,observed_at:undefined},known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.equal(x.novel_qualification_state,"REVIEW_REQUIRED");assert.ok(x.novel_checks.includes("OBSERVATION_TIME_REQUIRED"));
+});
+test("zero known candidates: no authorised source and partial scope remain explicit",()=>{
+ const x=planEcoAlignment({novel:base,known_objects:[],authorised_object_ids:[],authorised_source_ids:[]});
+ assert.ok(x.novel_checks.includes("EVIDENCE_SOURCE_GAP"));assert.ok(x.novel_checks.includes("NOVEL_SOURCE_SCOPE_PARTIAL"));
+});
+test("zero known candidates: impossible calendar date is not qualified",()=>{
+ const x=planEcoAlignment({novel:{...base,observed_at:"2026-02-29T12:00:00Z"},known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.equal(x.novel_qualification_state,"REVIEW_REQUIRED");assert.ok(x.novel_checks.includes("OBSERVATION_TIMESTAMP_INVALID_OR_UNZONED"));
+});
+test("zero known candidates: schema example without measurement/evidence is not an observed sensor reading",()=>{
+ const x=planEcoAlignment({novel:{...base,semantic_type:"sensor_reading",measurement:undefined,evidence_class:undefined},known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("EVIDENCE_CLASS_REQUIRED"));assert.ok(x.novel_checks.includes("SENSOR_MEASUREMENT_REQUIRED"));
+});
