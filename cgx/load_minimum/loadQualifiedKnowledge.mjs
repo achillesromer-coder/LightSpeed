@@ -15,6 +15,13 @@ function validConcept(c){
  if(!obj(c)||!good(c.semantic_type)||!obj(c.dimensions)||!arr(c.source_refs))throw Error("INVALID_SEMANTIC_CONCEPT");
  if(c.object_id!=null&&!good(c.object_id))throw Error("INVALID_OBJECT_ID");
  for(const [k,v] of Object.entries(c.dimensions))if(!good(k)||!good(v))throw Error("INVALID_DIMENSIONS");
+ // A provider ID alone is not an R0 byte identity; optional hashes must be qualified and source-bound.
+ if(c.source_sha256_by_ref!=null){
+  if(!obj(c.source_sha256_by_ref))throw Error("INVALID_SOURCE_FINGERPRINTS");
+  for(const [ref,hash] of Object.entries(c.source_sha256_by_ref))
+   if(!c.source_refs.includes(ref)||typeof hash!=="string"||!/^[0-9a-f]{64}$/i.test(hash))
+    throw Error("INVALID_SOURCE_FINGERPRINTS");
+ }
 }
 export function planKnownAlignment({novel,known_objects,authorised_object_ids,authorised_source_ids,max_candidates=20}={}){
  validConcept(novel);
@@ -40,6 +47,10 @@ export function planKnownAlignment({novel,known_objects,authorised_object_ids,au
   const kRefs=k.source_refs.filter(s=>srcs.has(s));
   if(!targetRefs.length||!kRefs.length)checks.push("EVIDENCE_GAP");
   else if(!kRefs.some(s=>targetRefs.includes(s)))checks.push("SOURCE_LINEAGE_DISJOINT");
+  else if(kRefs.some(ref=>targetRefs.includes(ref)&&novel.source_sha256_by_ref?.[ref]&&
+    k.source_sha256_by_ref?.[ref]&&
+    novel.source_sha256_by_ref[ref].toLowerCase()!==k.source_sha256_by_ref[ref].toLowerCase()))
+   checks.push("SOURCE_BYTES_CONFLICT");
   // A repeated Object_ID label is a claim, never proof; independent source lines
   // cannot be collapsed into one R0 identity without qualified reconciliation.
   const exactId=novel.object_id&&novel.object_id===k.object_id;
