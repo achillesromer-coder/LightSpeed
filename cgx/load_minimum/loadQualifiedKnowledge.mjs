@@ -39,6 +39,9 @@ export function planKnownAlignment({novel,known_objects,authorised_object_ids,au
   if(k.epoch!==novel.epoch)checks.push("TIME_VARIANT");
   const kRefs=k.source_refs.filter(s=>srcs.has(s));
   if(!targetRefs.length||!kRefs.length)checks.push("EVIDENCE_GAP");
+  else if(!kRefs.some(s=>targetRefs.includes(s)))checks.push("SOURCE_LINEAGE_DISJOINT");
+  // A repeated Object_ID label is a claim, never proof; independent source lines
+  // cannot be collapsed into one R0 identity without qualified reconciliation.
   const exactId=novel.object_id&&novel.object_id===k.object_id;
   const state=checks.length?"REVIEW_DIFFERENCE":exactId?"SAME_ID_CLAIM_REQUIRES_PROOF":"TYPED_ALIGNMENT_CANDIDATE";
   candidates.push({known_object_id:k.object_id,state,checks,permitted_known_evidence:kRefs,
