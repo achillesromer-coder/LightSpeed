@@ -1,0 +1,35 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdtemp, mkdir, writeFile, symlink, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { scanUniSpaceViteStaticReview as scan } from './cgxUniSpaceViteStaticScan.mjs';
+const fixture = async () => {
+ const root=await mkdtemp(join(tmpdir(),'cgx-review-'));
+ const pub=join(root,'public'),dist=join(root,'dist');
+ await mkdir(join(pub,'data'),{recursive:true});await mkdir(dist);
+ await writeFile(join(pub,'data','review.json'),JSON.stringify({status:'INTERNAL_REVIEW / PHYSICAL_NOT_RUN',object_id:'WT-001'}));
+ await writeFile(join(dist,'index.html'),'<html>public test shell</html>');
+ return {root,pub,dist};
+};
+const input=(f)=>({selection:{parent_filespace:'Cognigrex.cgx',object_id:'WT-001',filespace:'Romer.cgx',identity_status:'SOURCE_CANDIDATE_NOT_NATIVE_ACCEPTED',evidence_class:'scientific'},client_permissions:{mode:'review_only',revoked:false,allowed_object_ids:['WT-001'],allowed_filespaces:['Romer.cgx']},public_root:f.pub,dist_root:f.dist});
+async function withFixture(fn){const f=await fixture();try{return await fn(f);}finally{await rm(f.root,{recursive:true,force:true});}}
+test('actual bytes scanned but never released',()=>withFixture(async f=>{const r=await scan(input(f));assert.equal(r.state,'SOURCE_SCAN_REVIEW_ONLY');assert.equal(r.file_entries,2);assert.equal(r.release_accepted,false);assert.equal(r.host_http_verified,false);}));
+test('internal review JSON is flagged',()=>withFixture(async f=>{const r=await scan(input(f));assert.ok(r.findings.some(x=>x.reason_codes.includes('PRIVATE_REVIEW_MARKER_IN_STATIC_TREE')));}));
+test('internal status is flagged',()=>withFixture(async f=>{const r=await scan(input(f));assert.ok(r.findings.some(x=>x.reason_codes.includes('INTERNAL_STATUS_IN_STATIC_JSON')));}));
+test('even innocuous public file has unresolved rights',()=>withFixture(async f=>{const r=await scan(input(f));assert.ok(r.findings.every(x=>x.reason_codes.includes('PUBLIC_RIGHTS_AND_OWNER_CLEARANCE_UNVERIFIED')));}));
+test('output does not expose path or content',()=>withFixture(async f=>{const r=await scan(input(f));const s=JSON.stringify(r);assert.ok(!s.includes('review.json'));assert.ok(!s.includes(f.root));assert.ok(!s.includes('PHYSICAL_NOT_RUN'));}));
+test('SHA256 is actual file bytes',()=>withFixture(async f=>{const r=await scan(input(f));assert.ok(r.findings.every(x=>/^[a-f0-9]{64}$/.test(x.sha256)));}));
+test('same filesystem yields deterministic manifest',()=>withFixture(async f=>{const a=await scan(input(f)),b=await scan(input(f));assert.deepEqual(a.findings,b.findings);}));
+test('revoked access fails closed',()=>withFixture(async f=>{const i=input(f);i.client_permissions.revoked=true;assert.equal((await scan(i)).hold_code,'CLIENT_SCOPE_MISMATCH');}));
+test('cross-FileSpace scope fails closed',()=>withFixture(async f=>{const i=input(f);i.client_permissions.allowed_filespaces=['Eco.cgx'];assert.equal((await scan(i)).state,'HOLD');}));
+test('domain-level identity cannot masquerade as exact object',()=>withFixture(async f=>{const i=input(f);i.selection.object_id='cgx:domain:romer';assert.equal((await scan(i)).hold_code,'EXACT_CANDIDATE_REQUIRED');}));
+test('symlink not followed',()=>withFixture(async f=>{await symlink(join(f.root,'secret'),join(f.pub,'linked'));const r=await scan(input(f));assert.ok(r.findings.some(x=>x.reason_codes.includes('SYMLINK_NOT_FOLLOWED')));}));
+test('sensitive field is flagged without leaking value',()=>withFixture(async f=>{await writeFile(join(f.pub,'data','sensitive.json'),'\u007b"source_locator":"PRIVATE_VALUE_123"\u007d');const r=await scan(input(f));assert.ok(r.findings.some(x=>x.reason_codes.includes('POTENTIAL_PRIVATE_METADATA_IN_STATIC_TREE')));assert.ok(!JSON.stringify(r).includes('PRIVATE_VALUE_123'));}));
+test('binary has rights hold',()=>withFixture(async f=>{await writeFile(join(f.pub,'sample.glb'),Buffer.from([0,1,2,3]));const r=await scan(input(f));assert.ok(r.findings.some(x=>x.reason_codes.includes('UNINSPECTABLE_BINARY_RIGHTS_UNKNOWN')));}));
+test('oversize never read',()=>withFixture(async f=>{await writeFile(join(f.pub,'big.txt'),'x'.repeat(300));const i=input(f);i.limits={max_files:30,max_file_bytes:256,max_total_bytes:4096};const r=await scan(i);assert.ok(r.findings.some(x=>x.reason_codes.includes('UNINSPECTED_SIZE_LIMIT')));}));
+test('missing dist is explicit not verified',()=>withFixture(async f=>{const i=input(f);i.dist_root=null;const r=await scan(i);assert.equal(r.dist_source_scanned,false);assert.equal(r.dist_verified,false);}));
+test('missing directory fails closed',()=>withFixture(async f=>{const i=input(f);i.public_root=join(f.root,'missing');assert.equal((await scan(i)).hold_code,'SCAN_IO_OR_PERMISSION_FAILURE');}));
+test('bad input root fails closed',()=>withFixture(async f=>{const i=input(f);i.public_root='../../';assert.equal((await scan(i)).hold_code,'INVALID_SCAN_ROOT');}));
+test('unknown keys do not pass',()=>withFixture(async f=>{const i=input(f);i.token='PRIVATE';assert.equal((await scan(i)).state,'HOLD');}));
+test('no host acceptance implied by scan',()=>withFixture(async f=>{const r=await scan(input(f));assert.equal(r.native_admitted,false);assert.equal(r.canonical_mutation,false);assert.equal(r.alias_role,'ALEXANDRIA_ENTRY_NOT_PARENT');}));
