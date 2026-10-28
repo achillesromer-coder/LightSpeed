@@ -8,8 +8,9 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "check": "tsc --noEmit",
-    "test": "vitest run --pool=threads --maxWorkers=1 --no-file-parallelism && node --test scripts/checkCgxMobileCccSourceGate.mjs",
-    "check:cgx-ccc-mobile": "node --test scripts/checkCgxMobileCccSourceGate.mjs"
+    "test": "vitest run --pool=threads --maxWorkers=1 --no-file-parallelism && node --test scripts/checkCgxMobileCccSourceGate.mjs scripts/checkCgxLoadSemanticReview.mjs",
+    "check:cgx-ccc-mobile": "node --test scripts/checkCgxMobileCccSourceGate.mjs",
+    "check:cgx-load-semantic": "node --test scripts/checkCgxLoadSemanticReview.mjs"
   },
   "dependencies": {
     "typescript": "^5.7.0",
