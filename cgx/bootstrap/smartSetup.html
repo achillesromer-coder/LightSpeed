@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CGX | Smart Setup Review</title>
+<style>
+:root{color-scheme:dark;--bg:#101621;--surface:#1a2331;--border:#354559;--text:#f3f6fb;--muted:#c1c9d7;--accent:#a7d6e9;--warn:#ffd29d}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--text);font-family:system-ui,Arial,sans-serif;max-width:1000px;padding:24px;margin:auto;line-height:1.5}
+header{border-bottom:1px solid var(--border);margin-bottom:18px}h1{font-size:1.6rem;margin-bottom:6px}h2{font-size:1.12rem}small,.muted{color:var(--muted)}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin:16px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}label{font-weight:600;display:block;margin:6px 0}
+select,button{width:100%;border:1px solid #58677a;border-radius:8px;background:#0e1620;color:var(--text);padding:11px;font:inherit}
+button{margin-top:18px;background:#a7d6e9;color:#0e1821;cursor:pointer;font-weight:700}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #ffd29d;outline-offset:2px}
+.choice{display:flex;align-items:center;gap:8px;margin:12px 0}.choice label{margin:0}
+.status{color:var(--warn);font-weight:700}.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:10px;padding:0;list-style:none}
+.steps li{padding:12px;border:1px solid var(--border);border-radius:8px}.warning{border-left:4px solid var(--warn);padding-left:12px}
+</style>
+</head>
+<body>
+<header><small>CGX · FILESPACE · LIGHTSPEED</small><h1>Smart setup</h1>
+<p class="muted">Source-only preview. This page does not discover private devices, connect to providers, store credentials, install software, enable LS GO or admit any CGX objects.</p></header>
+<main>
+<form id="setup" class="panel">
+<h2>Choose your CGX workspace</h2>
+<div class="grid">
+<div><label for="family">FileSpace / Grex family</label><select id="family">
+<option>Cognigrex.cgx</option><option>Romer.cgx</option><option>Eco.cgx</option><option>EMASSC.cgx</option><option>LS.cgx</option>
+</select></div>
+<div><label for="mode">Setup experience</label><select id="mode">
+<option value="first-run">First use</option><option value="resume">Returning user</option>
+<option value="repair">Repair</option><option value="upgrade">Upgrade</option></select></div>
+<div><label for="device">Device interface</label><select id="device">
+<option value="desktop">Desktop</option><option value="browser">Browser</option>
+<option value="mobile">Mobile</option><option value="server">Server</option></select></div>
+<div><label for="profile">Existing runtime profile</label><select id="profile">
+<option>core</option><option>desktop</option><option>api</option><option>data</option><option>validation</option><option>dev</option>
+</select></div>
+</div>
+<div class="choice"><input type="checkbox" id="lsgo"><label for="lsgo">Request LS GO for this Grex (private operator surface)</label></div>
+<div class="choice"><input type="checkbox" id="offline" checked><label for="offline">Use minimum offline LOAD/Alexandria first</label></div>
+<div class="choice"><input type="checkbox" id="got"><label for="got">Review GOT capability discovery (definition pending)</label></div>
+<button type="submit">Preview setup and missing gates</button>
+</form>
+<section class="panel" aria-live="polite" aria-atomic="true" id="result">
+<h2>Setup readiness</h2><p class="status">NOT INSTALLED — REVIEW ONLY</p>
+<p>Choose a FileSpace to inspect the proposed steps and current acceptance requirements.</p></section>
+<p class="muted">Uses existing setup and runtime owners. UniSpace is a separate product; this view does not create an additional CGX root or new Alexandria database.</p>
+</main>
+<script type="module">
+import {planCGXSetup} from './unifiedBootstrap.mjs';
+const $=id=>document.getElementById(id);
+const output=$('result');
+const line=(parent,tag,text)=>{const n=document.createElement(tag);n.textContent=text;parent.appendChild(n);return n};
+$('setup').addEventListener('submit',event=>{
+ event.preventDefault();
+ const plan=planCGXSetup({family:$('family').value,mode:$('mode').value,device:$('device').value,profile:$('profile').value,
+  lsGORequested:$('lsgo').checked,offlinePreferred:$('offline').checked,gotRequested:$('got').checked});
+ output.replaceChildren();
+ line(output,'h2','Setup readiness');
+ line(output,'p','NOT INSTALLED — REVIEW ONLY').className='status';
+ if(plan.state==='DENIED'){line(output,'p',plan.reason);return}
+ line(output,'p','Family: '+plan.family+' · Mode: '+plan.mode+' · Offline minimum: '+(plan.offline_minimum?'on':'off'));
+ line(output,'p','Requested Grex LS GO: '+(plan.ls_go.requested?'yes':'no')+' · Actually enabled: NO');
+ line(output,'h2','Required independent proof and source decisions');
+ const blockers=plan.blockers.length?plan.blockers:['No reported missing fields from untrusted UI input; current native host proof is still mandatory.'];
+ const ul=document.createElement('ul');
+ for(const b of blockers)line(ul,'li',b.replaceAll('_',' ').toLowerCase());
+ output.appendChild(ul);
+ line(output,'h2','Progressive wizard steps');
+ const steps=document.createElement('ol');steps.className='steps';
+ for(const s of plan.steps)line(steps,'li',s.id.replaceAll('_',' ')+' — '+s.status.replaceAll('_',' ').toLowerCase());
+ output.appendChild(steps);
+ line(output,'p','Next: authenticate the actual current CGX host, parent/child identity, source rights and DBR. This preview cannot certify or perform those operations.').className='warning';
+});
+</script>
+</body></html>
