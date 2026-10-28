@@ -20,6 +20,8 @@ const SECRET=/(?:^|[_-])(secret|token|password|credential|private[_-]?key|author
 const obj=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 const keys=(x,allow)=>Object.keys(x).every(k=>allow.includes(k));
 const id=x=>typeof x==='string'&&/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,199}$/.test(x)&&!x.includes('..');
+// Match runtime_productization.SLOT_RE exactly; an Object_ID is not a slot.
+const slot=x=>typeof x==='string'&&/^[A-Za-z0-9][A-Za-z0-9_.-]{0,47}$/.test(x);
 const sha=x=>typeof x==='string'&&/^[a-f0-9]{40}$/i.test(x);
 const txt=x=>typeof x==='string'&&x.length>0&&x.length<=512&&!/[\u0000-\u001f]/.test(x);
 const hold=code=>Object.freeze({schema:SCHEMA,state:'HOLD',hold_code:code,
@@ -83,7 +85,7 @@ export function reviewNativeRuntimeReadback(input){
   return hold('BOOTSTRAP_REVIEW_NOT_QUALIFIED');
  if(!obj(r)||!keys(r,REQUEST_KEYS)||r.family!=='LS.cgx'||
   r.object_id!==b.candidate_object_id||r.capability_id!==b.capability_id||
-  r.source_revision!==b.load_source_revision||!id(r.slot)||
+  r.source_revision!==b.load_source_revision||!slot(r.slot)||
   r.intent!=='review'||r.execution_requested!==false||
   r.install_requested!==false||r.canonical_mutation_requested!==false)
   return hold('REQUEST_SCOPE_MISMATCH');
