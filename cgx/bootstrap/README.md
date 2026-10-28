@@ -17,7 +17,7 @@ This returns a review plan with missing native proofs. It deliberately does not 
 
 The one-wizard flow has 11 staged steps: discover, resume, identity, sources, LOAD, CCC tools, runtime, Grex LS GO, node/agent handshake, verify and handoff. smart_setup_surface_contract.json describes accessible newcomer/returning/expert/operator interfaces, targeted repair, offline-first mode, permission/receipt rechecks and per-Grex source-halo preferences. Client-side simulations are not two independent node proofs.
 
-**GOT:** reserved as a source-resolution slot only. Neither connected code-search nor sampled GPT-export fragments established its exact registered full name. Do not invent a new GOT.cgx root or install an unrelated library. The one-wizard flow is independent of this optional naming gate.
+Source reconciliation: the speech-derived text **GOT** is a nonblocking transcription ambiguity for *Git*, *GPT*, or possibly *LightSpeed GO*, depending on context. No independent GOT tool or FileSpace was identified. The Smart Setup UI and CLI no longer expose a GOT option or gate; see the source-only correction record.
 
 ## Duplicate decisions
 
@@ -44,6 +44,6 @@ The tests are deterministic source-only regressions; they cannot certify a host 
 
 ## Browser Smart Setup preview
 
-The additive [smartSetup.html](./smartSetup.html) offers an accessible progressive flow for selecting one recognised Grex, first-run/resume/repair/upgrade, runtime profile, offline LOAD, optional GOT lookup, and a requested Grex LS GO toggle. It displays the wizard and explicit missing proof, **not an install success screen**. It imports the read-only setup planner. No permissions, DBR writes, network scans, local storage, credentials or external scripts are created by the preview.
+The additive [smartSetup.html](./smartSetup.html) offers an accessible progressive flow for selecting one recognised Grex, first-run/resume/repair/upgrade, runtime profile, offline LOAD, and a requested Grex LS GO toggle. It displays the wizard and explicit missing proof, **not an install success screen**. It imports the read-only setup planner. No permissions, DBR writes, network scans, local storage, credentials or external scripts are created by the preview.
 
 The page is not wired to a live UniSpace product or LS GO server. Do not move this private review page or internal static assets into a public server or download bundle without #158 and source-rights approval.
