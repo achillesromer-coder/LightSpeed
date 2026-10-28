@@ -20,7 +20,8 @@ function fixture(){
    startup_owner:'lightspeed_runtime.startup_options',
    native_admitted:false,capability_installed:false,host_authenticated:false,
    lease_verified:false,dbr_readback_verified:false,canonical_mutation:false,
-   ls_go_enabled:false,source_bytes_copied:0},
+   ls_go_enabled:false,ls_go_requested:false,network_fetch:false,
+   required_host_checks:['independent host review required'],source_bytes_copied:0},
   runtime_status:{schema:'LIGHTSPEED-RUNTIME-PRODUCTIZATION-STATUS/0.1',
    slot:'neo-review',source_head:'b'.repeat(40),managed_root:'D:/review',
    slot_root:'D:/review/neo-review',managed_marker:false,configured:false,
@@ -291,4 +292,16 @@ test('nonreserved Windows names and POSIX paths retain source-only shape review'
 test('runtime review rejects superseded bootstrap source pins',()=>{
  denied(x=>{x.bootstrap_review.bootstrap_source_head='34f45718c13a1667bdb49fb6aea6736f4bf703eb';},'BOOTSTRAP_REVIEW_NOT_QUALIFIED');
  denied(x=>{x.bootstrap_review.bootstrap_source_blob='dde0600c354799dbb428183c83ece7403b933b45';},'BOOTSTRAP_REVIEW_NOT_QUALIFIED');
+});
+
+test('bootstrap output rejects unknown authority and receipt injection',()=>{
+ denied(x=>{x.bootstrap_review.runtime_installed=true;},'BOOTSTRAP_REVIEW_NOT_QUALIFIED');
+ denied(x=>{x.bootstrap_review.host_receipt={verified:true};},'BOOTSTRAP_REVIEW_NOT_QUALIFIED');
+ denied(x=>{x.bootstrap_review.native_receipt='forged';},'BOOTSTRAP_REVIEW_NOT_QUALIFIED');
+});
+test('bootstrap network and host-check metadata cannot bypass source review',()=>{
+ denied(x=>{x.bootstrap_review.network_fetch=true;},'BOOTSTRAP_REVIEW_NOT_QUALIFIED');
+ denied(x=>{x.bootstrap_review.ls_go_requested='yes';},'BOOTSTRAP_REVIEW_NOT_QUALIFIED');
+ denied(x=>{x.bootstrap_review.required_host_checks=[''];},'BOOTSTRAP_REVIEW_NOT_QUALIFIED');
+ denied(x=>{x.bootstrap_review.required_host_checks='forged';},'BOOTSTRAP_REVIEW_NOT_QUALIFIED');
 });
