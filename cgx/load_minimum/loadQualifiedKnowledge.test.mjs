@@ -60,3 +60,19 @@ test('typed operator mismatched unit basis gets conversion gate',()=>{
  required_units:{position:'m',velocity:'m/s'},qualified_method_source:'fixture:math-method'}]});
  assert.ok(p.operator_candidates[0].blockers.includes('UNIT_CONVERSION_METHOD_REQUIRED'));
 });
+
+test('operator rejects forged source-registry route provenance',()=>{
+ const forged=JSON.parse(JSON.stringify(registry));
+ const route=forged.records.find(x=>x.category==='ccc_route');
+ forged.records.push({...route,source_key:'fixture.injected',source_git_blob:'0'.repeat(40)});
+ assert.throws(()=>planQualifiedOperator({registry:forged,problem:novel,
+  authorised_source_ids:['fixture:novel'],
+  bindings:[{route_key:'fixture.injected',input_type:'orbital_state',
+   required_dimensions:novel.dimensions,qualified_method_source:'fixture:math-method'}]}),
+  /SOURCE_PROOF_MISMATCH/);
+});
+test('operator rejects forged native-admission count in source-only catalogue',()=>{
+ const forged=JSON.parse(JSON.stringify(registry));forged.summary.native_accepted=1;
+ assert.throws(()=>planQualifiedOperator({registry:forged,problem:novel,
+  authorised_source_ids:['fixture:novel'],bindings:[]}),/UNSUPPORTED_AUTHORITY_CLAIM/);
+});
