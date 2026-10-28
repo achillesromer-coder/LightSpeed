@@ -102,3 +102,15 @@ test("a claimed PRIVATE_SCOPED right cannot grant release", async () => {
   const x=fixture();x.source.rights="PRIVATE_SCOPED";
   const r=await run(x);assert.equal(r.rights_status,"UNVERIFIED");assert.equal(r.release_accepted,false);
 });
+
+test("source mapping stage drift denied before hashing", async () => {
+  const x=fixture();x.source.mapping_stage="R0_R1_REFERENCE";
+  const r=await run(x);
+  assert.equal(r.hold_code,"SOURCE_PROVENANCE_MISMATCH");
+  assert.equal(r.network_fetch,false);
+  assert.equal(r.native_admitted,false);
+});
+test("unsupported source mapping stage denied", async () => {
+  const x=fixture();x.source.mapping_stage="R3_ADMITTED";
+  assert.equal((await run(x)).hold_code,"SOURCE_PROVENANCE_MISMATCH");
+});
