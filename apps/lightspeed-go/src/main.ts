@@ -64,7 +64,7 @@ import {
 import { renderRepresentationGraphs } from "./representationGraphs";
 import { loadType1CatalogueProjection, type Type1CatalogueProjection } from "./utpCatalogue";
 import { bindCgxReviewProjection, loadCgxReviewProjection, type CgxReviewProjection } from "./cgxReview";
-import { bindObjectReview, loadObjectReview, type ComponentAtlas, type ObjectReviewCatalogue } from "./objectReview";
+
 import { sourceLinks } from "./sourceRegistry";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
 
@@ -894,27 +894,11 @@ byId("refresh-desktop").addEventListener("click", () => void refreshDesktop());
 renderPending();
 void refreshDesktop();
 
+// #158: public Vite assets are not a private owner-session resolver.
+// Keep the existing source review catalogue intact, but do not fetch or render
+// it until a host-scoped Object_ID/child FileSpace ACL and dist/HTTP negatives pass.
 const objectReviewMount = byId("object-review-catalogue");
-const objectReviewUrl = new URL("./data/cgx_object_review_catalogue.json", document.baseURI).toString();
-const componentAtlasUrl = new URL("./data/component_geometry_atlas_public_review.json", document.baseURI).toString();
-void loadObjectReview(
-  async () => {
-    const response = await fetch(objectReviewUrl, { cache: "no-store" });
-    if (!response.ok) throw new Error(`Object review catalogue returned HTTP ${response.status}`);
-    return (await response.json()) as ObjectReviewCatalogue;
-  },
-  async () => {
-    const response = await fetch(componentAtlasUrl, { cache: "no-store" });
-    if (!response.ok) throw new Error(`Component atlas review projection returned HTTP ${response.status}`);
-    return (await response.json()) as ComponentAtlas;
-  },
-).then(({ html, atlas }) => {
-  objectReviewMount.innerHTML = html;
-  bindObjectReview(objectReviewMount, atlas);
-}).catch((error) => {
-  const message = error instanceof Error ? error.message : "CGX object review catalogue unavailable.";
-  objectReviewMount.innerHTML = `<article class="panel"><p class="eyebrow">CGX object review</p><h2>Catalogue unavailable</h2><p class="muted">${escapeHtml(message)}</p></article>`;
-});
+objectReviewMount.innerHTML = `<article class="panel" data-cgx-private-review-hold="issue-158"><p class="eyebrow">CGX object review</p><h2>Private catalogue held</h2><p class="muted">Internal object and component review assets are not loaded from public static paths. A verified owner session, exact Object_ID and child FileSpace, source rights, authenticated host resolver, and independent denied-access and distribution tests are required. Offline view: H0 identity only. No private catalogue has been hydrated.</p></article>`;
 
 const cgxReviewMount = byId("cgx-review-lens");
 const cgxReviewUrl = new URL("./data/cgx_internal_review_projection.json", document.baseURI).toString();
