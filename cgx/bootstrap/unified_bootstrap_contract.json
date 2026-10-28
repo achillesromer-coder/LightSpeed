@@ -1,0 +1,194 @@
+{
+  "schema": "CGX-UNIFIED-BOOTSTRAP-CONTRACT/0.1",
+  "state": "SOURCE_REVIEW_NO_NATIVE_ADMISSION",
+  "scope": "CGX-enabled LightSpeed platform first; separate UniSpace product launch and external web publishing",
+  "root": "Cognigrex.cgx",
+  "runtime_owner": "LS.cgx",
+  "load_alias": "LOAD.cgx",
+  "separate_product": "UniSpace",
+  "setup_owner": "CGX startup orchestrator binds existing lightspeed_runtime.startup_options and runtime_productization; does not overwrite those implementations",
+  "reserved_got": {
+    "label": "GOT",
+    "expansion": "UNRESOLVED_BY_CURRENT_SOURCE_REVIEW",
+    "source_status": "NOT_FOUND_AS_EXACT_CGX_CAPABILITY",
+    "integration": "OPTIONAL_DISCOVERY_STEP_NOT_INSTALLED",
+    "requires": [
+      "exact existing full name and authenticated original provider",
+      "source-linked type/function/authority",
+      "CCC collision search, adapter contract and tests"
+    ],
+    "never": "do not invent new GOT root, code implementation, startup authority or user-visible installed feature"
+  },
+  "steps": [
+    {
+      "id": "discover",
+      "stage": "read-only",
+      "title": "Locate authoritative CGX host, FileSpace and runtime",
+      "must": [
+        "host reachable",
+        "current accepted root identity"
+      ],
+      "can_skip": false
+    },
+    {
+      "id": "resume",
+      "stage": "read-only",
+      "title": "Recover prior accepted setup receipt and options",
+      "must": [
+        "read old typed config if available",
+        "replay-safe plan/receipt version"
+      ],
+      "can_skip": false
+    },
+    {
+      "id": "identity",
+      "stage": "read-only",
+      "title": "Verify Cognigrex parent and selected Grex children",
+      "must": [
+        "Object_ID, namespace, State Root, DBR Root verified",
+        "collision-free alias",
+        "child owner ACL"
+      ],
+      "can_skip": false
+    },
+    {
+      "id": "sources",
+      "stage": "review",
+      "title": "Review original sources and CGX manual intake",
+      "must": [
+        "R0 provider identity/version/hash/rights",
+        "R1/R2 typed extraction plan",
+        "Frontier/loss report",
+        "bounded 60MiB transfer"
+      ],
+      "can_skip": true
+    },
+    {
+      "id": "load",
+      "stage": "review",
+      "title": "Bind existing Alexandria LOAD minimum and online hydration",
+      "must": [
+        "exact existing alias or held review candidate",
+        "sparse offline H0/H1 state",
+        "no automatic network or rights elevation"
+      ],
+      "can_skip": true
+    },
+    {
+      "id": "tools",
+      "stage": "review",
+      "title": "Inspect CCC toolkits, adapters, GOT and capability registration",
+      "must": [
+        "installed-vs-registered distinction",
+        "licence and provider status",
+        "GOT unresolved until source"
+      ],
+      "can_skip": true
+    },
+    {
+      "id": "runtime",
+      "stage": "read-only",
+      "title": "Preflight existing LS managed runtime and startup toggles",
+      "must": [
+        "Python 3.11 probe",
+        "existing managed slot and profile",
+        "rollback/status ability"
+      ],
+      "can_skip": false
+    },
+    {
+      "id": "ls_go",
+      "stage": "review",
+      "title": "Enable separate LS GO Grex family operator surface",
+      "must": [
+        "accepted family child and scoped UI identity",
+        "private assets boundary #158",
+        "device/network permission"
+      ],
+      "can_skip": true
+    },
+    {
+      "id": "handshake",
+      "stage": "review",
+      "title": "Preflight node/agent/provider handshake and resumption",
+      "must": [
+        "signed node identity, lease, current root and ACL",
+        "two-node interoperability #161",
+        "idempotency and readback"
+      ],
+      "can_skip": false
+    },
+    {
+      "id": "verify",
+      "stage": "read-only",
+      "title": "Negative tests, rollback path and independent acceptance",
+      "must": [
+        "root/DBR readback",
+        "static asset privacy",
+        "no unapproved release"
+      ],
+      "can_skip": false
+    },
+    {
+      "id": "handoff",
+      "stage": "review",
+      "title": "Produce owner-ready execution package and next-boot guidance",
+      "must": [
+        "no automatic production mutation or public publish",
+        "specific missing gates and evidence receipts"
+      ],
+      "can_skip": false
+    }
+  ],
+  "smart_setup": {
+    "first_use": "short, progressive, context-sensitive discovery",
+    "returning_user": "read-only check changed source/config/tool identity and resume from accepted receipt",
+    "recovery": "recheck and rerun only failed bounded steps; preserve history",
+    "offline": "minimal LOAD + read-only tools and local receipts, no stale-source elevation",
+    "agent_handshake": "all agents use one typed context envelope, not mandatory chains",
+    "user_accessibility": "long-press/right-click/command palette, clear what is installed, optional expert mode",
+    "hydration": "one source-linked Object_ID with configurable knowledge spread and compute budgets",
+    "shared_settings_owner": "lightspeed_runtime.startup_options"
+  },
+  "grex_ls_go": {
+    "product_name": "LS GO (Grex-scoped operator extension)",
+    "families": [
+      "Cognigrex.cgx",
+      "Romer.cgx",
+      "Eco.cgx",
+      "EMASSC.cgx",
+      "LS.cgx"
+    ],
+    "rule": "per-child opt-in, exact authorised Object_ID, minimum safe offline, disabled until host validation",
+    "default_enabled": false,
+    "universe_view": "filtered scoped operator UI only, not UniSpace public product"
+  },
+  "negative_gate_ids": [
+    "ISSUE-40",
+    "ISSUE-158",
+    "ISSUE-161",
+    "ROOT_AUTHORITY",
+    "CHILD_FILESPACE_ACCEPTANCE",
+    "LIVE_HOST",
+    "SIGNED_LEASE",
+    "DBR_READBACK",
+    "LICENCE",
+    "IP_RELEASE",
+    "PRIVACY",
+    "PHYSICAL_ASSURANCE",
+    "PUBLIC_RELEASE"
+  ],
+  "outputs": {
+    "plan_only": true,
+    "actual_installs": false,
+    "actual_file_moves": false,
+    "online_deploy": false,
+    "public_email_or_outreach": false,
+    "delete_or_archive": false
+  },
+  "separate_future_publication": {
+    "uniSpace_product": "public-safe product trial/download onboarding distinct from LS GO",
+    "website": "new CGX architecture public-safe explanation and approved UniSpace integration",
+    "release_gate": "source provenance, patent/IP, rights, security #158, independent review, owner approval, live tested site readback; no premature publication"
+  }
+}
