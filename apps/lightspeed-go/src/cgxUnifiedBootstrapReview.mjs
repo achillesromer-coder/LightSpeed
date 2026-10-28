@@ -4,8 +4,8 @@
  * Source pins are selectors, not signatures or installation receipts.
  */
 export const SCHEMA='CGX-LS-UNIFIED-BOOTSTRAP-REVIEW/0.1';
-const HEAD='34f45718c13a1667bdb49fb6aea6736f4bf703eb';
-const BLOB='dde0600c354799dbb428183c83ece7403b933b45';
+const HEAD='f331ce56a70018550b92b9b4ce9dbebbf05a719d';
+const BLOB='0d9bb63fa5d300e96150589f6bb01666f0bd8442';
 const FIELDS=['native_admitted','capability_installed','host_authenticated',
  'lease_verified','dbr_readback_verified','solver_invoked','rendered',
  'hydration_performed','canonical_mutation','network_fetch'];
