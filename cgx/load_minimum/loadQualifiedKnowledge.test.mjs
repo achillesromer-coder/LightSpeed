@@ -27,13 +27,22 @@ test('same Object_ID label with disjoint R0 source lines cannot imply identity',
  assert.ok(c.checks.includes('SOURCE_LINEAGE_DISJOINT'));
  assert.equal(c.auto_merge,false);
 });
-test('shared authorised R0 reference still requires independent identity proof',()=>{
+test('shared provider reference without R0 fingerprints is held for byte identity',()=>{
  const n={...novel,object_id:'fixture:one',source_refs:['fixture:known']};
  const x=run({novel:n});
  const c=x.matched_candidates.find(r=>r.known_object_id==='fixture:one');
- assert.equal(c.state,'SAME_ID_CLAIM_REQUIRES_PROOF');
+ assert.equal(c.state,'REVIEW_DIFFERENCE');
+ assert.ok(c.checks.includes('SOURCE_FINGERPRINT_GAP'));
  assert.ok(!c.checks.includes('SOURCE_LINEAGE_DISJOINT'));
  assert.equal(c.existing_object_authority_verified,false);
+});
+test('one-sided R0 fingerprint cannot establish matching source bytes',()=>{
+ const ref='fixture:known',hash='a'.repeat(64);
+ const n={...novel,object_id:'fixture:one',source_refs:[ref],source_sha256_by_ref:{[ref]:hash}};
+ const c=run({novel:n}).matched_candidates.find(x=>x.known_object_id==='fixture:one');
+ assert.equal(c.state,'REVIEW_DIFFERENCE');
+ assert.ok(c.checks.includes('SOURCE_FINGERPRINT_GAP'));
+ assert.equal(c.auto_merge,false);
 });
 test('distinct source versions are not merged by matching semantic type, units or frame',()=>{
  const x=run();
