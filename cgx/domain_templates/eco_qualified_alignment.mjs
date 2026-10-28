@@ -15,9 +15,10 @@ const OBSERVATIONS=new Set(["ecological_observation","sensor_reading"]);
 function validateConcept(x){
  if(!obj(x)||!ECO_TYPES.has(x.semantic_type)||!stringList(x.source_refs))throw Error("INVALID_ECO_CONCEPT");
  if(x.object_id!==undefined&&!good(x.object_id))throw Error("INVALID_OBJECT_ID");
- for(const f of [...IDENTITY,"observed_at","method_id","unit","frame","environment_id","configuration","epoch"]){
+ for(const f of [...IDENTITY,"observed_at","method_id","unit","frame","environment_id","configuration","epoch","aggregation_scope","baseline_id"]){
   if(x[f]!==undefined&&x[f]!==null&&!good(x[f]))throw Error("INVALID_ECO_FIELD_"+f);
  }
+ if(x.sample_count!==undefined&&(!Number.isSafeInteger(x.sample_count)||x.sample_count<1))throw Error("INVALID_SAMPLE_COUNT");
  if(x.evidence_class!==undefined&&!EVIDENCE.has(x.evidence_class))throw Error("INVALID_EVIDENCE_CLASS");
  if(x.geometry!==undefined){
   const g=x.geometry;
@@ -41,6 +42,9 @@ function compare(a,b,checks){
    add(checks,a[f]===undefined||b[f]===undefined?"IDENTITY_FIELD_MISSING_"+f.toUpperCase():"IDENTITY_DIFFERENCE_"+f.toUpperCase());
   }
  }
+ if(a.aggregation_scope!==b.aggregation_scope)add(checks,"AGGREGATION_SCOPE_DIFFERENT_OR_UNDECLARED");
+ if(a.sample_count!==b.sample_count)add(checks,"SAMPLE_COUNT_DIFFERENT_OR_UNDECLARED");
+ if(a.baseline_id!==b.baseline_id)add(checks,"BASELINE_DIFFERENT_OR_UNDECLARED");
  if(a.evidence_class!==b.evidence_class)add(checks,"EVIDENCE_CLASS_DIFFERENT_OR_UNDECLARED");
  if(a.observed_at!==b.observed_at)add(checks,"OBSERVATION_TIME_DIFFERENT_OR_UNDECLARED");
  if(a.method_id!==b.method_id)add(checks,"METHOD_DIFFERENT_OR_UNDECLARED");
