@@ -111,3 +111,28 @@ test('method provenance ACL gate clears only for explicitly authorised method so
  assert.ok(p.operator_candidates[0].blockers.includes('HOST_CAPABILITY_LEASE_AND_DB_R_READBACK_REQUIRED'));
  assert.equal(p.computation_executed,false);
 });
+
+test('typed operator without a declared selector scope remains held',()=>{
+ const p=planQualifiedOperator({registry,problem:novel,authorised_source_ids:['fixture:novel','fixture:method'],
+  bindings:[{route_key:'science.query',input_type:'orbital_state',required_dimensions:novel.dimensions,
+   required_units:novel.units,qualified_method_source:'fixture:method'}]});
+ assert.ok(p.operator_candidates[0].blockers.includes('SELECTOR_SCOPE_UNDECLARED'));
+ assert.equal(p.computation_executed,false);
+});
+test('registered route not declared for requested family selector remains held',()=>{
+ const p=planQualifiedOperator({registry,problem:novel,selector:'cognigrex',
+  authorised_source_ids:['fixture:novel','fixture:method'],
+  bindings:[{route_key:'cad.freecad',input_type:'orbital_state',required_dimensions:novel.dimensions,
+   required_units:novel.units,qualified_method_source:'fixture:method'}]});
+ assert.ok(p.operator_candidates[0].blockers.includes('SELECTOR_ROUTE_NOT_DECLARED'));
+ assert.equal(p.object_ids_minted,0);
+});
+test('declared family selector removes only catalogue mismatch, not host acceptance',()=>{
+ const p=planQualifiedOperator({registry,problem:novel,selector:'romer-grex',
+  authorised_source_ids:['fixture:novel','fixture:method'],
+  bindings:[{route_key:'cad.freecad',input_type:'orbital_state',required_dimensions:novel.dimensions,
+   required_units:novel.units,qualified_method_source:'fixture:method'}]});
+ assert.ok(!p.operator_candidates[0].blockers.includes('SELECTOR_ROUTE_NOT_DECLARED'));
+ assert.ok(p.operator_candidates[0].blockers.includes('HOST_CAPABILITY_LEASE_AND_DB_R_READBACK_REQUIRED'));
+ assert.equal(p.computation_executed,false);
+});
