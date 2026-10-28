@@ -323,3 +323,35 @@ test("INOCULATE without TST-004 FM-039 and specialist evidence remains held",()=
  for(const flag of ["FUNGAL_TST004_REQUIRED","FUNGAL_FM039_REQUIRED","FUNGAL_PATHOGEN_SCREEN_REQUIRED","FUNGAL_HOST_EVIDENCE_REQUIRED","FUNGAL_STRAIN_PROVENANCE_REQUIRED"])assert.ok(x.novel_checks.includes(flag));
  assert.ok(x.novel_checks.includes("BIOLOGICAL_TRANSFER_REVIEW_REQUIRED"));assert.equal(x.ecological_effect_verified,false);
 });
+
+// Synthetic biodiversity survey cases. No observed population absence or field survey is asserted.
+test("no-match non-detection requires survey method effort and window",()=>{
+ const x=noKnown({...base,measurement:undefined,survey:{detection_status:"not_detected"}});
+ for(const f of ["SURVEY_PROTOCOL_REQUIRED","SURVEY_EFFORT_REQUIRED","SURVEY_WINDOW_REQUIRED","NONDETECTION_NOT_ABSENCE","DETECTABILITY_UNVERIFIED"])assert.ok(x.novel_checks.includes(f));
+ assert.equal(x.candidate_count,0);assert.equal(x.novel_qualification_state,"REVIEW_REQUIRED");
+});
+test("complete non-detection survey is still not biological absence",()=>{
+ const s={detection_status:"not_detected",protocol_ref:"synthetic:visual-transect",effort_value:20,effort_unit:"min",survey_window:"synthetic:2026-Q1",detectability_ref:"synthetic:review"};
+ const x=noKnown({...base,measurement:undefined,survey:s});
+ assert.ok(x.novel_checks.includes("NONDETECTION_NOT_ABSENCE"));
+ assert.ok(!x.novel_checks.includes("SURVEY_EFFORT_REQUIRED"));
+ assert.equal(x.ecological_effect_verified,false);assert.equal(x.accepted_native_identity,false);
+});
+test("not surveyed cannot be recorded as an observed ecological survey",()=>{
+ const x=noKnown({...base,measurement:undefined,survey:{detection_status:"not_surveyed"}});
+ assert.ok(x.novel_checks.includes("SURVEY_NOT_CONDUCTED"));
+ assert.ok(x.novel_checks.includes("OBSERVED_EVIDENCE_WITH_NO_SURVEY"));
+});
+test("distinct survey effort and detection method do not silently align",()=>{
+ const s={detection_status:"detected",protocol_ref:"synthetic:photo-quadrat",effort_value:5,effort_unit:"quadrats",survey_window:"synthetic:2026-Q1"};
+ const a={...base,survey:s};
+ const b={...known,...a,object_id:"known:1",source_refs:["src-a"],survey:{...s,effort_value:20}};
+ assert.ok(run(a,b).candidates[0].checks.includes("SURVEY_EFFORT_METHOD_OR_DETECTION_DIFFERENT"));
+});
+test("negative survey effort is invalid",()=>assert.throws(()=>run({...base,survey:{detection_status:"detected",effort_value:-2}}),/INVALID_SURVEY_EFFORT/));
+test("fully declared detection still does not establish ecology efficacy or DBR",()=>{
+ const s={detection_status:"detected",protocol_ref:"synthetic:photo-quadrat",effort_value:5,effort_unit:"quadrats",survey_window:"synthetic:2026-Q1"};
+ const x=noKnown({...base,survey:s});
+ assert.ok(!x.novel_checks.includes("SURVEY_EFFORT_REQUIRED"));
+ assert.equal(x.accepted_native_identity,false);assert.equal(x.db_readback,false);assert.equal(x.ecological_effect_verified,false);
+});
