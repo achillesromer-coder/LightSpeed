@@ -14,8 +14,8 @@ function fixture(){
    state:'HOST_NEGATIVE_TESTS_REQUIRED',candidate_filespace:'LS.cgx',
    parent_filespace:'EMASSC.cgx',parent_ccc:'Cognigrex.cgx:/ccc',
    candidate_object_id:id,capability_id:cap,load_source_revision:rev,
-   bootstrap_source_head:'34f45718c13a1667bdb49fb6aea6736f4bf703eb',
-   bootstrap_source_blob:'dde0600c354799dbb428183c83ece7403b933b45',
+   bootstrap_source_head:'f331ce56a70018550b92b9b4ce9dbebbf05a719d',
+   bootstrap_source_blob:'0d9bb63fa5d300e96150589f6bb01666f0bd8442',
    runtime_owner:'lightspeed_runtime.runtime_productization',
    startup_owner:'lightspeed_runtime.startup_options',
    native_admitted:false,capability_installed:false,host_authenticated:false,
@@ -286,4 +286,9 @@ test('nonreserved Windows names and POSIX paths retain source-only shape review'
   assert.equal(result.state,'AUTHENTICATED_HOST_READBACK_REQUIRED',root);
   assert.equal(result.host_authenticated,false);
  }
+});
+
+test('runtime review rejects superseded bootstrap source pins',()=>{
+ denied(x=>{x.bootstrap_review.bootstrap_source_head='34f45718c13a1667bdb49fb6aea6736f4bf703eb';},'BOOTSTRAP_REVIEW_NOT_QUALIFIED');
+ denied(x=>{x.bootstrap_review.bootstrap_source_blob='dde0600c354799dbb428183c83ece7403b933b45';},'BOOTSTRAP_REVIEW_NOT_QUALIFIED');
 });
