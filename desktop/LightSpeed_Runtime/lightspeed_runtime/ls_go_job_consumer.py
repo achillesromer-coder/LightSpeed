@@ -1,25 +1,57 @@
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
+import hashlib
 import importlib
 import json
 import os
 from pathlib import Path
 import re
+import subprocess
+import sys
 import threading
 import time
 from typing import Any
+from uuid import uuid4
 
+from lightspeed_runtime.corpus_test_orchestrator import (
+    CorpusTestPlanError,
+    assess_frontier_unit,
+)
 from lightspeed_runtime.local_agent_cycle import run_cycle
 from lightspeed_runtime.local_floor_runner import run_floor
 from lightspeed_runtime.cognigrex_supervisor import run_supervised_workflow
 from lightspeed_runtime.storage_paths import neo_actions_root
-from lightspeed_runtime.source_intake_executor import execute_source_intake
+from lightspeed_runtime.source_intake import SourceIntakeError
+from lightspeed_runtime.source_intake_executor import (
+    execute_source_intake, validate_intake_payload, verify_source_intake_readback,
+)
 
 
 CONSUMER_SCHEMA = "lightspeed-ls-go-job-consumer-v1"
 RESULT_SCHEMA = "lightspeed-go-local-result-v1"
 POLL_SECONDS = 1.0
+JSON_REPLACE_RETRIES = 4
+JSON_REPLACE_RETRY_SECONDS = 0.05
+CLAIM_LEASE_SECONDS = 900
+CLAIM_LEASE_SCHEMA = "LSGO-CLAIM-LEASE/0.1"
+FLOOR_NATIVE_BUDGET = {
+    "schema": "LSGO-FLOOR-NATIVE-BUDGET/0.1",
+    "client_wall_deadline_seconds": 185,
+    "ollama_timeout_seconds": 180,
+    "requested_completion_token_cap": 1024,
+    "total_token_postflight_ceiling": 2048,
+    "source_excerpt_char_cap": 600,
+    "prompt_utf8_byte_ceiling": 7000,
+    "model_function_tool_calls": 0,
+    "cost_usd": None,
+}
+
+
+class FloorExecutionUncertain(RuntimeError):
+    """The client was stopped, but server completion/cancellation is unknown."""
+
+
 SAFE_ACTIONS = {
     "source_preserving_intake",
     "cognigrex_workflow",
@@ -39,6 +71,25 @@ COMPATIBILITY_ACTIONS = {
 
 def utc_now_iso() -> str:
     return datetime.now(UTC).isoformat(timespec="seconds")
+
+
+def _claim_lease_live(claim: dict[str, Any], *, at: datetime | None = None) -> bool:
+    """Treat missing, malformed, or expired new execution leases as revoked."""
+    expires = claim.get("lease_expires_utc")
+    started = claim.get("started_utc")
+    if not isinstance(expires, str) or not isinstance(started, str):
+        return False
+    try:
+        deadline = datetime.fromisoformat(expires)
+        began = datetime.fromisoformat(started)
+    except ValueError:
+        return False
+    instant = datetime.now(UTC) if at is None else at
+    return (
+        began.tzinfo is not None and deadline.tzinfo is not None and instant.tzinfo is not None
+        and began <= instant < deadline
+        and deadline - began <= timedelta(seconds=CLAIM_LEASE_SECONDS)
+    )
 
 
 def _safe_id(value: Any) -> str:
@@ -90,7 +141,14 @@ def _write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + f".tmp.{os.getpid()}")
     temporary.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    temporary.replace(path)
+    for attempt in range(JSON_REPLACE_RETRIES):
+        try:
+            temporary.replace(path)
+            return
+        except PermissionError:
+            if attempt + 1 >= JSON_REPLACE_RETRIES:
+                raise
+            time.sleep(JSON_REPLACE_RETRY_SECONDS)
 
 
 def _append_jsonl(path: Path, payload: dict[str, Any]) -> None:
@@ -105,8 +163,28 @@ def result_id_for(command_id: str) -> str:
     return "LSGO-RESULT-" + _safe_id(command_id)
 
 
-def result_file_path(shell_root: Path, command_id: str) -> Path:
+def _legacy_result_file_path(shell_root: Path, command_id: str) -> Path:
+    """Historical lossy filename; read-only compatibility for exact identity."""
     return neo_actions_root(shell_root) / "results" / f"{_safe_id(result_id_for(command_id))}.json"
+
+
+def result_file_path(shell_root: Path, command_id: str) -> Path:
+    """Bind the receipt filename to the *entire original* command identity.
+
+    The readable prefix is not injective; the digest prevents distinct command
+    IDs such as 'a/b' and 'a_b' from sharing the same receipt path.
+    """
+    identity = str(command_id)
+    digest = hashlib.sha256(identity.encode("utf-8")).hexdigest()
+    label = _safe_id(result_id_for(identity))[:72]
+    return neo_actions_root(shell_root) / "results" / f"{label}-{digest}.json"
+
+
+def identity_hold_file_path(shell_root: Path, command_id: str, job_id: int, task_id: Any) -> Path:
+    """Keep a conflicting job's hold separate from the original command receipt."""
+    identity = json.dumps([command_id, job_id, task_id], ensure_ascii=False, separators=(",", ":"))
+    digest = hashlib.sha256(identity.encode("utf-8")).hexdigest()
+    return neo_actions_root(shell_root) / "results" / f"LSGO-IDENTITY-HOLD-{digest}.json"
 
 
 def result_queue_path(shell_root: Path) -> Path:
@@ -248,6 +326,67 @@ def _try_get_db(shell_root: Path):
         return None
 
 
+def host_cpu_admission(shell_root: Path | str, *,
+                       observed_percent: float | None = None,
+                       previous_hold: bool = False) -> dict[str, Any]:
+    """Advisory aggregate CPU gate for *new jobs*, not a hard Windows CPU cap.
+
+    Keep worker/heartbeat responsive. Windows Job Object CPU-rate limits for
+    all LS children, machine thermal controls and actual 80% physical cap
+    require a separate LOCAL signed witness. Synthetic injected samples are
+    allowed only for unit tests; ordinary production samples use psutil.
+    """
+    import math
+
+    policy = _read_json(Path(shell_root) / "config" / "host_runtime_policy.json")
+    raw = policy.get("runtime_limits")
+    limits = raw if isinstance(raw, dict) else {}
+    ceiling = limits.get("max_total_host_cpu_percent", 80)
+    resume = limits.get("cpu_dispatch_resume_percent", 70)
+    interval = limits.get("cpu_sampling_interval_seconds", 0.25)
+    if (type(ceiling) not in (int, float) or type(resume) not in (int, float)
+            or isinstance(ceiling, bool) or isinstance(resume, bool)
+            or not (0 < float(resume) < float(ceiling) <= 80)
+            or type(interval) not in (int, float) or isinstance(interval, bool)
+            or not (0.05 <= float(interval) <= 1.0)):
+        return {
+            "state": "cpu_policy_invalid", "allow_new_jobs": False,
+            "aggregate_cpu_hard_cap_verified": False,
+            "measured_total_cpu_percent": None,
+        }
+    if observed_percent is None:
+        try:
+            import psutil
+            measured = psutil.cpu_percent(interval=float(interval))
+        except (ImportError, OSError, RuntimeError, ValueError):
+            measured = None
+    else:
+        measured = observed_percent
+    if (type(measured) not in (int, float) or isinstance(measured, bool)
+            or not math.isfinite(float(measured))
+            or not (0 <= float(measured) <= 100)):
+        return {
+            "state": "cpu_monitor_unavailable", "allow_new_jobs": False,
+            "aggregate_cpu_hard_cap_verified": False,
+            "measured_total_cpu_percent": None,
+            "max_total_host_cpu_percent": float(ceiling),
+        }
+    reading = float(measured)
+    cpu_hold = reading >= float(ceiling) or (
+        previous_hold and reading > float(resume)
+    )
+    return {
+        "state": "paused_cpu_pressure" if cpu_hold else "ready",
+        "allow_new_jobs": not cpu_hold,
+        "aggregate_cpu_hard_cap_verified": False,
+        "measured_total_cpu_percent": reading,
+        "max_total_host_cpu_percent": float(ceiling),
+        "resume_cpu_percent": float(resume),
+        "mobile_device_required": False,
+        "cpu_control_scope": "DISPATCH_ADMISSION_ONLY",
+    }
+
+
 class LSGoJobConsumer:
     """Smith-owned durable consumer for DB-backed LS GO jobs.
 
@@ -265,6 +404,8 @@ class LSGoJobConsumer:
         self._stop = threading.Event()
         self._job_columns_cache: set[str] | None = None
         self._task_columns_cache: set[str] | None = None
+        self._cpu_pressure_hold = False
+        self._execution_claims: dict[int, dict[str, Any]] = {}
 
     def _columns(self, table: str) -> set[str]:
         cache_name = "_job_columns_cache" if table == "jobs" else "_task_columns_cache"
@@ -314,76 +455,366 @@ class LSGoJobConsumer:
         )
         return self.db.execute_query(query, ("ls_go_command", max(1, min(int(limit), 100))))
 
-    def _claim_job(self, job_id: int) -> bool:
-        cols = self._columns("jobs")
-        now = utc_now_iso()
-        if "updated_at" in cols:
-            count = self.db.execute_update(
-                "UPDATE jobs SET status = ?, updated_at = ? "
-                "WHERE id = ? AND status IN ('pending','queued','review')",
-                ("running", now, job_id),
-            )
-        else:
-            count = self.db.execute_update(
-                "UPDATE jobs SET status = ? WHERE id = ? AND status IN ('pending','queued','review')",
-                ("running", job_id),
-            )
-        return int(count or 0) == 1
+    def unresolved_running_job_ids(self) -> list[int]:
+        """Detect prior in-flight work before this singleton claims new jobs.
 
-    def _update_job(self, job_id: int, *, status: str, result: dict[str, Any]) -> None:
-        cols = self._columns("jobs")
-        assignments: list[str] = []
-        values: list[Any] = []
-        for column, value in (
-            ("status", status),
-            ("result_json", json.dumps(result, ensure_ascii=False)),
-            ("error", result.get("error")),
-            ("completed_at", utc_now_iso() if status in {"completed", "blocked", "held"} else None),
-            ("updated_at", utc_now_iso()),
-        ):
-            if column in cols and (value is not None or column == "error"):
-                assignments.append(f"{column} = ?")
-                values.append(value)
-        if not assignments:
+        A prior process may have executed an action before losing its durable
+        result. Such work cannot safely be replayed or assumed complete here.
+        """
+        if self.db is None or not callable(getattr(self.db, "execute_query", None)):
+            return []
+        if not {"id", "job_type", "status", "metadata_json"}.issubset(self._columns("jobs")):
+            return []
+        rows = self.db.execute_query(
+            "SELECT id,status,metadata_json FROM jobs WHERE job_type = ? "
+            "AND (status = ? OR metadata_json LIKE ?) ORDER BY id ASC LIMIT 101",
+            ("ls_go_command", "running", '%ls_go_execution_uncertain%'),
+        )
+        return [int(row["id"]) for row in rows if row["status"] == "running"
+                or bool(_json_dict(row["metadata_json"]).get("ls_go_execution_uncertain"))]
+
+    def _verify_completed_intake_result(self, result: dict[str, Any],
+                                        params: dict[str, Any]) -> None:
+        command_id = str(params.get("command_id") or "").strip()
+        action_type, _source = resolve_action(command_id, params)
+        if action_type != "source_preserving_intake" or result.get("status") != "completed":
             return
-        values.append(job_id)
-        self.db.execute_update(
-            f"UPDATE jobs SET {', '.join(assignments)} WHERE id = ?",
-            tuple(values),
+        if result.get("action_type") != action_type:
+            raise SourceIntakeError("completed intake action identity differs")
+        request = validate_intake_payload(params.get("action_payload"))
+        verify_source_intake_readback(
+            result.get("intake"), command_id=command_id, shell_root=self.shell_root,
+            source_sha256=request["source_sha256"],
         )
 
-    def _update_task(self, task_id: Any, *, status: str, receipt: dict[str, Any]) -> None:
-        if self.db is None or not task_id:
-            return
-        cols = self._columns("tasks")
-        assignments: list[str] = []
-        values: list[Any] = []
-        if "status" in cols:
-            assignments.append("status = ?")
-            values.append(status)
-        if "updated_at" in cols:
-            assignments.append("updated_at = ?")
-            values.append(utc_now_iso())
-        if "metadata_json" in cols:
-            rows = self.db.execute_query("SELECT metadata_json FROM tasks WHERE id = ?", (int(task_id),))
-            metadata = _json_dict(rows[0].get("metadata_json") if rows else None)
+    def _reconcile_running_job_receipt(self, job_id: int) -> bool:
+        """Atomically finish only a prior run with an exact durable result.
+
+        Unknown execution remains running for the startup hold. This route
+        never calls an action or creates a replacement result receipt.
+        """
+        connection = getattr(self.db, "get_connection", None)
+        if not callable(connection):
+            return False
+        with connection() as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            raw_job = conn.execute(
+                "SELECT id, status, params_json, metadata_json, task_id FROM jobs "
+                "WHERE id = ? AND job_type = ?", (job_id, "ls_go_command"),
+            ).fetchone()
+            if raw_job is None:
+                return False
+            job = dict(raw_job)
+            if _json_dict(job["metadata_json"]).get("ls_go_execution_uncertain"):
+                return False
+            if job["status"] != "running" or type(job.get("task_id")) is not int:
+                return False
+            command_id = str(_json_dict(job.get("params_json")).get("command_id") or "").strip()
+            if not command_id:
+                return False
+            result = self._existing_result(command_id)
+            task_id = job["task_id"]
+            if not (
+                type(result.get("job_id")) is int and result.get("job_id") == job_id
+                and type(result.get("task_id")) is int and result.get("task_id") == task_id
+                and result.get("status") in {"completed", "blocked", "held"}
+                and result.get("result_id") == result_id_for(command_id)
+            ):
+                return False
+            prior_claim = _json_dict(job.get("metadata_json")).get("ls_go_execution_claim")
+            if prior_claim is not None:
+                receipt_claim = result.get("execution_claim")
+                if (isinstance(prior_claim, dict) and prior_claim.get("purpose") == "execute"
+                        and (prior_claim.get("lease_schema") == CLAIM_LEASE_SCHEMA
+                             or isinstance(receipt_claim, dict)
+                             and receipt_claim.get("lease_schema") == CLAIM_LEASE_SCHEMA)):
+                    completed = result.get("completed_utc")
+                    try:
+                        completed_at = datetime.fromisoformat(completed) if isinstance(completed, str) else None
+                    except ValueError:
+                        completed_at = None
+                    if (completed_at is None or prior_claim.get("lease_schema") != CLAIM_LEASE_SCHEMA
+                            or not isinstance(receipt_claim, dict)
+                            or receipt_claim.get("lease_schema") != CLAIM_LEASE_SCHEMA
+                            or receipt_claim.get("started_utc") != prior_claim.get("started_utc")
+                            or receipt_claim.get("lease_expires_utc") != prior_claim.get("lease_expires_utc")
+                            or not _claim_lease_live(prior_claim, at=completed_at)):
+                        return False
+                if not (
+                    isinstance(prior_claim, dict)
+                    and prior_claim.get("job_id") == job_id
+                    and prior_claim.get("task_id") == task_id
+                    and prior_claim.get("command_id") == command_id
+                    and prior_claim.get("job_params_sha256") == hashlib.sha256(
+                        job["params_json"].encode("utf-8")
+                    ).hexdigest()
+                    and (
+                        (isinstance(receipt_claim, dict)
+                         and receipt_claim.get("claim_id") == prior_claim.get("claim_id"))
+                        or (prior_claim.get("purpose") == "reconcile" and receipt_claim is None)
+                    )
+                ):
+                    return False
+            try:
+                self._verify_completed_intake_result(result, _json_dict(job["params_json"]))
+            except (SourceIntakeError, OSError, TypeError, ValueError):
+                return False
+            raw_task = conn.execute(
+                "SELECT status, metadata_json FROM tasks WHERE id = ?", (task_id,)
+            ).fetchone()
+            if raw_task is None:
+                return False
+            task = dict(raw_task)
+            final_status = str(result["status"])
+            if task["status"] in {"completed", "blocked", "held"} and task["status"] != final_status:
+                return False
+            metadata = _json_dict(task.get("metadata_json"))
             metadata["ls_go_local_result"] = {
-                "result_id": receipt.get("result_id"),
-                "receipt_path": receipt.get("receipt_path"),
-                "job_id": receipt.get("job_id"),
-                "status": receipt.get("status"),
+                "result_id": result["result_id"],
+                "receipt_path": result["receipt_path"],
+                "job_id": job_id,
+                "status": final_status,
             }
-            assignments.append("metadata_json = ?")
-            values.append(json.dumps(metadata, ensure_ascii=False))
-        if assignments:
-            values.append(int(task_id))
-            self.db.execute_update(
-                f"UPDATE tasks SET {', '.join(assignments)} WHERE id = ?",
-                tuple(values),
+            now = utc_now_iso()
+            task_update = conn.execute(
+                "UPDATE tasks SET status = ?, updated_at = ?, metadata_json = ? "
+                "WHERE id = ? AND status = ?",
+                (final_status, now, json.dumps(metadata, ensure_ascii=False), task_id, task["status"]),
             )
+            if task_update.rowcount != 1:
+                raise RuntimeError("running result task changed during reconciliation")
+            job_update = conn.execute(
+                "UPDATE jobs SET status = ?, result_json = ?, error = ?, completed_at = ?, updated_at = ? "
+                "WHERE id = ? AND job_type = ? AND status = ? AND params_json = ? AND task_id = ?",
+                (final_status, json.dumps(result, ensure_ascii=False), result.get("error"), now, now,
+                 job_id, "ls_go_command", "running", job["params_json"], task_id),
+            )
+            if job_update.rowcount != 1:
+                raise RuntimeError("running result job changed during reconciliation")
+        return True
+
+    def _claim_job(self, job_id: int, *, expected_job: dict[str, Any],
+                   purpose: str = "execute", durable_receipt: dict[str, Any] | None = None) -> bool:
+        """Bind one selected DB work item to a durable, single-use claim."""
+        if purpose not in {"execute", "reconcile", "hold"}:
+            raise ValueError("unsupported claim purpose")
+        connection = getattr(self.db, "get_connection", None)
+        if not callable(connection) or not {"metadata_json", "updated_at", "task_id"}.issubset(self._columns("jobs")):
+            raise RuntimeError("durable job claim requires transactional DB and identity columns")
+        with connection() as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            row = conn.execute(
+                "SELECT job_type,status,params_json,metadata_json,task_id FROM jobs WHERE id = ?",
+                (job_id,),
+            ).fetchone()
+            if row is None or row["job_type"] != "ls_go_command" or row["status"] not in {
+                "pending", "queued", "review",
+            }:
+                return False
+            if (row["params_json"] != expected_job.get("params_json")
+                    or row["task_id"] != expected_job.get("task_id")):
+                raise RuntimeError("queued job identity changed before claim")
+            metadata = _json_dict(row["metadata_json"])
+            params = _json_dict(row["params_json"])
+            action_payload = params.get("action_payload")
+            frontier_admission = None
+            top_level_frontier = "frontier_request" in params
+            nested_frontier = isinstance(action_payload, dict) and "frontier_request" in action_payload
+            if top_level_frontier or nested_frontier:
+                try:
+                    if top_level_frontier and nested_frontier:
+                        raise CorpusTestPlanError("ambiguous frontier request locations")
+                    request = (params["frontier_request"] if top_level_frontier
+                               else action_payload["frontier_request"])
+                    decision = assess_frontier_unit(request)
+                    frontier_admission = {
+                        "schema": decision["schema"],
+                        "domain": decision["domain"],
+                        "object_id": decision["object_id"],
+                        "owner": decision["owner"],
+                        "work_key": decision["work_key"],
+                        "source_sha256": decision["source_sha256"],
+                        "evidence_class": decision["evidence_class"],
+                        "verdict": decision["verdict"],
+                        "reason": decision["reason"],
+                        "reported_usage_is_unverified": True,
+                        "resource_ceiling_enforced_by_this_function": False,
+                        "native_execution_authorized": False,
+                    }
+                except CorpusTestPlanError as exc:
+                    frontier_admission = {
+                        "schema": "CGX-FRONTIER-ADMISSION/0.1",
+                        "work_key": None,
+                        "verdict": "HOLD",
+                        "reason": f"INVALID_FRONTIER_REQUEST:{exc}",
+                        "native_execution_authorized": False,
+                    }
+            now = utc_now_iso()
+            params_hash = hashlib.sha256(row["params_json"].encode("utf-8")).hexdigest()
+            command_id = str(params.get("command_id") or "").strip() or None
+            action_type, _action_source = resolve_action(command_id or "", params)
+            frontier_budget = None
+            if (frontier_admission is not None
+                    and frontier_admission["verdict"] == "READY_FOR_BOUNDED_WORK"
+                    and "frontier_request" in params
+                    and action_type == "source_preserving_intake"
+                    and isinstance(action_payload, dict)):
+                request = params["frontier_request"]
+                source_matches = (
+                    request["operation"] == "source_preserving_intake"
+                    and action_payload.get("source_sha256") == frontier_admission["source_sha256"]
+                    and params.get("execution_mode") == "queue"
+                    and params.get("execute") is True
+                    and params.get("allow_heavy") is False
+                    and expected_job.get("z_context") == "Neo"
+                    and isinstance(params.get("frontier_authenticated_actor"), str)
+                    and bool(params["frontier_authenticated_actor"].strip())
+                )
+                usage = request["usage"]
+                zero_initial_usage = (all(usage[field] == 0 for field in (
+                    "elapsed_s", "tokens", "tool_calls", "retries",
+                )) and usage.get("cost_usd", 0) == 0)
+                if source_matches and zero_initial_usage:
+                    limits = request["limits"]
+                    frontier_budget = {field: limits[field] for field in (
+                        "max_elapsed_s", "max_tokens", "max_tool_calls", "max_retries",
+                    )}
+                    if "max_cost_usd" in limits:
+                        frontier_budget["max_cost_usd"] = limits["max_cost_usd"]
+                    frontier_admission["native_preflight_ready"] = True
+                else:
+                    frontier_admission["verdict"] = "HOLD"
+                    frontier_admission["reason"] = "FRONTIER_INTAKE_SOURCE_OR_NATIVE_PRECONDITION_MISMATCH"
+            claim = metadata.get("ls_go_execution_claim")
+            if claim is not None:
+                receipt_claim = (durable_receipt or {}).get("execution_claim")
+                exact_prior_claim = (
+                    purpose != "execute" and durable_receipt is not None
+                    and isinstance(claim, dict)
+                    and claim.get("job_id") == job_id
+                    and claim.get("task_id") == row["task_id"]
+                    and claim.get("command_id") == command_id
+                    and claim.get("job_params_sha256") == params_hash
+                    and (
+                        (isinstance(receipt_claim, dict)
+                         and receipt_claim.get("claim_id") == claim.get("claim_id"))
+                        or (claim.get("purpose") == "reconcile" and receipt_claim is None)
+                    )
+                )
+                if not exact_prior_claim:
+                    raise RuntimeError("queued job retains prior execution claim; reconcile before retry")
+            else:
+                claim = {
+                    "claim_id": uuid4().hex,
+                    "lease_schema": CLAIM_LEASE_SCHEMA,
+                    "purpose": purpose,
+                    "job_id": job_id,
+                    "task_id": row["task_id"],
+                    "command_id": command_id,
+                    "job_params_sha256": params_hash,
+                    **({"native_budget": dict(FLOOR_NATIVE_BUDGET)}
+                       if purpose == "execute" and action_type == "local_floor_wakeup"
+                       and bool(params.get("execute", True)) else {}),
+                    **({"frontier_admission": frontier_admission} if frontier_admission is not None else {}),
+                    **({"frontier_budget": frontier_budget} if frontier_budget is not None else {}),
+                    "started_utc": now,
+                    "lease_expires_utc": (
+                        datetime.fromisoformat(now) + timedelta(seconds=CLAIM_LEASE_SECONDS)
+                    ).isoformat(timespec="seconds"),
+                    "pid": os.getpid(),
+                }
+            metadata["ls_go_execution_claim"] = claim
+            updated = conn.execute(
+                "UPDATE jobs SET status = ?, metadata_json = ?, updated_at = ? "
+                "WHERE id = ? AND job_type = ? AND status = ? AND params_json = ? AND task_id IS ?",
+                ("running", json.dumps(metadata, ensure_ascii=False), now, job_id,
+                 "ls_go_command", row["status"], row["params_json"], row["task_id"]),
+            )
+            if updated.rowcount != 1:
+                raise RuntimeError("queued job changed during transactional claim")
+        self._execution_claims[job_id] = claim
+        return True
+
+    def _finish_claimed_job(self, job_id: int, *, receipt: dict[str, Any],
+                            update_task: bool = True) -> None:
+        """Fence and atomically commit the exact claimed job/task result."""
+        claim = self._execution_claims.get(job_id)
+        if claim is None:
+            raise RuntimeError("terminal result has no local execution claim")
+        status = receipt.get("status")
+        if status not in {"completed", "blocked", "held"}:
+            raise RuntimeError("terminal result has invalid status")
+        receipt_claim = receipt.get("execution_claim")
+        if receipt_claim is not None:
+            if not isinstance(receipt_claim, dict) or receipt_claim.get("claim_id") != claim["claim_id"]:
+                raise RuntimeError("terminal receipt claim differs from active claim")
+        elif claim["purpose"] == "execute":
+            raise RuntimeError("executed result lacks its durable claim")
+        if (type(receipt.get("job_id")) is not int or receipt["job_id"] != job_id
+                or type(receipt.get("task_id")) is not type(claim["task_id"])
+                or receipt.get("task_id") != claim["task_id"]
+                or receipt.get("command_id") != claim["command_id"]):
+            raise RuntimeError("terminal receipt differs from claimed work identity")
+        with self.db.get_connection() as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            raw_job = conn.execute(
+                "SELECT status,params_json,metadata_json,task_id FROM jobs "
+                "WHERE id = ? AND job_type = ?", (job_id, "ls_go_command"),
+            ).fetchone()
+            if raw_job is None or raw_job["status"] != "running":
+                raise RuntimeError("claimed job no longer running; terminal write fenced")
+            persisted_claim = _json_dict(raw_job["metadata_json"]).get("ls_go_execution_claim")
+            if (not isinstance(persisted_claim, dict)
+                    or persisted_claim.get("claim_id") != claim["claim_id"]
+                    or persisted_claim.get("lease_expires_utc") != claim.get("lease_expires_utc")
+                    or persisted_claim.get("native_budget") != claim.get("native_budget")
+                    or persisted_claim.get("frontier_admission") != claim.get("frontier_admission")
+                    or persisted_claim.get("frontier_budget") != claim.get("frontier_budget")
+                    or raw_job["task_id"] != claim["task_id"]
+                    or hashlib.sha256(raw_job["params_json"].encode("utf-8")).hexdigest()
+                    != claim["job_params_sha256"]):
+                raise RuntimeError("persisted work claim changed; terminal write fenced")
+            self._verify_completed_intake_result(receipt, _json_dict(raw_job["params_json"]))
+            if claim["purpose"] == "execute" and not _claim_lease_live(persisted_claim):
+                raise RuntimeError("execution claim lease expired; terminal write fenced")
+            task_id = claim["task_id"]
+            task = None
+            if update_task and task_id is not None:
+                raw_task = conn.execute(
+                    "SELECT status,metadata_json FROM tasks WHERE id = ?", (task_id,),
+                ).fetchone()
+                if raw_task is None:
+                    raise RuntimeError("claimed task missing; terminal write fenced")
+                task = dict(raw_task)
+                if task["status"] in {"completed", "blocked", "held"} and task["status"] != status:
+                    raise RuntimeError("claimed task has conflicting terminal state")
+            now = utc_now_iso()
+            updated = conn.execute(
+                "UPDATE jobs SET status = ?, result_json = ?, error = ?, completed_at = ?, updated_at = ? "
+                "WHERE id = ? AND job_type = ? AND status = ? AND params_json = ? AND task_id IS ?",
+                (status, json.dumps(receipt, ensure_ascii=False), receipt.get("error"), now, now,
+                 job_id, "ls_go_command", "running", raw_job["params_json"], task_id),
+            )
+            if updated.rowcount != 1:
+                raise RuntimeError("claimed job changed during terminal commit")
+            if task is not None:
+                metadata = _json_dict(task.get("metadata_json"))
+                metadata["ls_go_local_result"] = {
+                    "result_id": receipt.get("result_id"),
+                    "receipt_path": receipt.get("receipt_path"),
+                    "job_id": job_id,
+                    "status": status,
+                }
+                updated = conn.execute(
+                    "UPDATE tasks SET status = ?, updated_at = ?, metadata_json = ? "
+                    "WHERE id = ? AND status = ?",
+                    (status, now, json.dumps(metadata, ensure_ascii=False), task_id, task["status"]),
+                )
+                if updated.rowcount != 1:
+                    raise RuntimeError("claimed task changed during terminal commit")
 
     def _persist_result(self, receipt: dict[str, Any]) -> dict[str, Any]:
-        command_id = str(receipt.get("command_id") or "unknown")
+        command_id = str(receipt.get("command_id") or f"MISSING-JOB-{receipt.get('job_id') or 'UNKNOWN'}")
         path = result_file_path(self.shell_root, command_id)
         receipt["receipt_path"] = str(path)
         _write_json(path, receipt)
@@ -391,12 +822,59 @@ class LSGoJobConsumer:
         return receipt
 
     def _existing_result(self, command_id: str) -> dict[str, Any]:
-        path = result_file_path(self.shell_root, command_id)
-        payload = _read_json(path)
-        if payload and payload.get("command_id") == command_id:
-            payload.setdefault("receipt_path", str(path))
-            return payload
+        for path in (
+            result_file_path(self.shell_root, command_id),
+            _legacy_result_file_path(self.shell_root, command_id),
+        ):
+            payload = _read_json(path)
+            if payload and payload.get("command_id") == command_id:
+                # The durable file actually read is the result source; an
+                # embedded path must not redirect recovery evidence elsewhere.
+                payload["receipt_path"] = str(path)
+                return payload
         return {}
+
+    def _identity_hold(self, command_id: str, job_id: int, task_id: Any,
+                       existing: dict[str, Any], job: dict[str, Any]) -> dict[str, Any] | None:
+        path = identity_hold_file_path(self.shell_root, command_id, job_id, task_id)
+        receipt = _read_json(path)
+        if path.exists() and (
+            not receipt
+            or receipt.get("command_id") != command_id
+            or type(receipt.get("job_id")) is not type(job_id)
+            or receipt.get("job_id") != job_id
+            or type(receipt.get("task_id")) is not type(task_id)
+            or receipt.get("task_id") != task_id
+            or receipt.get("status") != "held"
+        ):
+            raise ValueError("existing identity-hold receipt failed exact readback")
+        if not self._claim_job(job_id, expected_job=job, purpose="hold",
+                               durable_receipt=receipt or None):
+            return None
+        if not receipt:
+            receipt = {
+                "schema_version": RESULT_SCHEMA,
+                "result_id": f"LSGO-IDENTITY-HOLD-{job_id}",
+                "created_utc": utc_now_iso(),
+                "command_id": command_id,
+                "job_id": job_id,
+                "task_id": task_id,
+                "execution_claim": self._execution_claims[job_id],
+                "status": "held",
+                "error": "command receipt does not match exact job/task identity or terminal status",
+                "conflicting_receipt_path": existing.get("receipt_path"),
+                "conflicting_job_id": existing.get("job_id"),
+                "conflicting_task_id": existing.get("task_id"),
+                "drive_write_executed": False,
+                "public_publish_authorized": False,
+                "receipt_path": str(path),
+            }
+            _write_json(path, receipt)
+            _append_jsonl(result_queue_path(self.shell_root), receipt)
+        # A duplicate job may point at the original task. Do not regress it.
+        self._finish_claimed_job(job_id, receipt=receipt,
+                                 update_task=task_id != existing.get("task_id"))
+        return receipt
 
     def _transport_diagnostic(
         self,
@@ -443,6 +921,183 @@ class LSGoJobConsumer:
                 else "Repair only the failed local prerequisite, then reconcile this same job identity without redispatch."
             ),
         }
+
+    def _require_live_claim(self, job_id: int) -> None:
+        """Stop cooperative native work when its exact DB lease is revoked."""
+        if self._stop.is_set():
+            raise RuntimeError("source intake cancelled by consumer shutdown")
+        claim = self._execution_claims[job_id]
+        with self.db.get_connection() as conn:
+            row = conn.execute(
+                "SELECT status,params_json,metadata_json,task_id FROM jobs "
+                "WHERE id = ? AND job_type = ?", (job_id, "ls_go_command"),
+            ).fetchone()
+        if (row is None or row["status"] != "running"
+                or row["task_id"] != claim["task_id"]
+                or hashlib.sha256(row["params_json"].encode("utf-8")).hexdigest()
+                != claim["job_params_sha256"]
+                or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("claim_id")
+                != claim["claim_id"]
+                or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("lease_expires_utc")
+                != claim.get("lease_expires_utc")
+                or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("native_budget")
+                != claim.get("native_budget")
+                or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("frontier_admission")
+                != claim.get("frontier_admission")
+                or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("frontier_budget")
+                != claim.get("frontier_budget")):
+            raise RuntimeError("source intake execution claim was revoked or changed")
+        if not _claim_lease_live(_json_dict(row["metadata_json"]).get("ls_go_execution_claim", {})):
+            raise RuntimeError("source intake execution claim lease expired")
+
+    def _mark_floor_uncertain(self, job_id: int, reason: str) -> None:
+        """Retain a DB recovery hold even if an external cancel changed status."""
+        claim = self._execution_claims[job_id]
+        with self.db.get_connection() as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            row = conn.execute(
+                "SELECT metadata_json FROM jobs WHERE id = ? AND job_type = ?",
+                (job_id, "ls_go_command"),
+            ).fetchone()
+            metadata = _json_dict(row["metadata_json"]) if row is not None else {}
+            persisted = metadata.get("ls_go_execution_claim")
+            if not isinstance(persisted, dict) or persisted.get("claim_id") != claim["claim_id"]:
+                raise RuntimeError("cannot durably mark uncertain floor: claim identity changed")
+            metadata["ls_go_execution_uncertain"] = {
+                "claim_id": claim["claim_id"], "observed_utc": utc_now_iso(),
+                "reason": reason, "server_cancellation_verified": False,
+            }
+            conn.execute(
+                "UPDATE jobs SET metadata_json = ?, updated_at = ? WHERE id = ?",
+                (json.dumps(metadata, ensure_ascii=False), utc_now_iso(), job_id),
+            )
+
+    def _hold_floor_uncertain(self, job_id: int, reason: str) -> None:
+        """Fence further queue work after a child may have reached Ollama."""
+        self._stop.set()
+        try:
+            self._mark_floor_uncertain(job_id, reason)
+        except Exception as exc:
+            raise FloorExecutionUncertain(
+                "floor outcome unverified and recovery marker could not be persisted"
+            ) from exc
+        raise FloorExecutionUncertain(
+            "floor outcome unverified; retain running claim until independent reconciliation"
+        )
+
+    def _run_floor_supervised(self, *, job_id: int, floor: str,
+                              allow_heavy: bool, receipt_target: str) -> dict[str, Any]:
+        """Bound one existing floor runner call; stop this worker on uncertain cancellation."""
+        if receipt_target not in {"neo", "floor"}:
+            raise ValueError("unsupported floor receipt target")
+        self._require_live_claim(job_id)
+        claim = self._execution_claims[job_id]
+        claim_id = claim["claim_id"]
+        budget = claim.get("native_budget")
+        if budget != FLOOR_NATIVE_BUDGET:
+            raise RuntimeError("floor execution requires exact durable native budget")
+        command = [
+            sys.executable, "-m", "lightspeed_runtime.local_floor_runner",
+            "--floor", floor, "--execute", "--receipt-target", receipt_target,
+            "--timeout-seconds", str(budget["ollama_timeout_seconds"]),
+            "--num-predict", str(budget["requested_completion_token_cap"]),
+            "--max-total-tokens", str(budget["total_token_postflight_ceiling"]),
+            "--max-source-excerpt-chars", str(budget["source_excerpt_char_cap"]),
+            "--max-prompt-utf8-bytes", str(budget["prompt_utf8_byte_ceiling"]),
+            "--execution-claim-id", claim_id,
+        ]
+        if allow_heavy:
+            command.append("--allow-heavy")
+        child = subprocess.Popen(
+            command, cwd=Path(__file__).resolve().parents[1],
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+        )
+        deadline = time.monotonic() + budget["client_wall_deadline_seconds"]
+        while True:
+            try:
+                if self._stop.is_set():
+                    raise RuntimeError("floor cancelled by consumer shutdown")
+                self._require_live_claim(job_id)
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise TimeoutError("floor exceeded claimed supervised deadline")
+                output, _ = child.communicate(timeout=min(0.25, remaining))
+                break
+            except subprocess.TimeoutExpired:
+                continue
+            except Exception as exc:
+                # The Ollama server may still be finishing a disconnected request.
+                # Do not start another queue item or replay this claim on restart.
+                self._stop.set()
+                try:
+                    child.terminate()
+                    try:
+                        child.communicate(timeout=5)
+                    except subprocess.TimeoutExpired:
+                        child.kill()
+                        child.communicate(timeout=5)
+                except Exception:
+                    pass
+                try:
+                    self._mark_floor_uncertain(job_id, type(exc).__name__)
+                except Exception as mark_exc:
+                    raise FloorExecutionUncertain(
+                        "floor client stopped, but uncertain recovery marker could not be persisted"
+                    ) from mark_exc
+                raise FloorExecutionUncertain(
+                    "floor client stopped; Ollama server outcome unverified; retain running claim for recovery"
+                ) from exc
+        if child.returncode != 0:
+            self._hold_floor_uncertain(job_id, "floor_child_nonzero_exit")
+        try:
+            summary = json.loads(output)
+            path = Path(summary["receipt_path"])
+            receipt = json.loads(path.read_text(encoding="utf-8"))
+        except (KeyError, OSError, ValueError, TypeError):
+            self._hold_floor_uncertain(job_id, "floor_receipt_unreadable")
+        if (not isinstance(summary, dict) or not isinstance(receipt, dict)
+                or not path.is_absolute() or receipt.get("receipt_path") != str(path)
+                or str(receipt.get("floor") or "").casefold() != floor.casefold()
+                or receipt.get("execution_claim_id") != claim_id
+                or receipt.get("status") != summary.get("status")):
+            self._hold_floor_uncertain(job_id, "floor_receipt_identity_mismatch")
+        if (receipt.get("server_outcome_uncertain") is True
+                or (receipt.get("status") == "failed"
+                    and receipt.get("server_outcome_uncertain") is not False)):
+            self._hold_floor_uncertain(job_id, "ollama_server_outcome_unverified")
+        if receipt.get("status") == "completed":
+            prompt_preflight = receipt.get("prompt_preflight")
+            if (not isinstance(prompt_preflight, dict)
+                    or type(prompt_preflight.get("utf8_bytes")) is not int
+                    or not 0 < prompt_preflight["utf8_bytes"] <= budget["prompt_utf8_byte_ceiling"]
+                    or prompt_preflight.get("ceiling") != budget["prompt_utf8_byte_ceiling"]
+                    or prompt_preflight.get("state") != "within_ceiling"
+                    or prompt_preflight.get("hard_token_limit") is not False
+                    or receipt.get("source_excerpt_char_cap") != budget["source_excerpt_char_cap"]):
+                raise RuntimeError("floor runner receipt lacks claimed prompt preflight proof")
+            usage = receipt.get("usage_accounting")
+            if not isinstance(usage, dict):
+                raise RuntimeError("floor runner receipt lacks measured token counters")
+            prompt = usage.get("prompt_tokens")
+            completion = usage.get("completion_tokens")
+            total = usage.get("total_tokens")
+            if (usage.get("state") != "MEASURED_OLLAMA_RESPONSE"
+                    or type(prompt) is not int or prompt < 0
+                    or type(completion) is not int or completion < 0
+                    or type(total) is not int or total != prompt + completion
+                    or total > budget["total_token_postflight_ceiling"]
+                    or usage.get("ollama_generate_attempts") != 1
+                    or type(usage.get("tool_calls")) is not int
+                    or usage["tool_calls"] != budget["model_function_tool_calls"]
+                    or usage.get("tool_call_scope")
+                    != "model_function_tools_not_exposed_by_local_generate"):
+                raise RuntimeError("floor runner receipt lacks consistent measured usage or no-tools proof")
+            if receipt.get("total_token_postflight") != {
+                "ceiling": budget["total_token_postflight_ceiling"],
+                "state": "within_ceiling", "hard_generation_limit": False,
+            }:
+                raise RuntimeError("floor runner receipt lacks measured total token ceiling proof")
+        return receipt
 
     def _execute_action(
         self,
@@ -496,7 +1151,9 @@ class LSGoJobConsumer:
             configured = (home.get("environment") or {}).get("assimilation_source_root")
             intake = execute_source_intake(params.get("action_payload"), command_id=command_id,
                                           shell_root=self.shell_root,
-                                          allowed_roots=[Path(configured)] if configured else [])
+                                          allowed_roots=[Path(configured)] if configured else [],
+                                          check_active=lambda: self._require_live_claim(job["id"]),
+                                          frontier_budget=self._execution_claims[job["id"]].get("frontier_budget"))
             return {"status": intake["status"], "action_type": action_type, "intake": intake,
                     "summary": "Exact source snapshot and derived extraction persisted for review.",
                     "next_action": "Review source ownership, extraction coverage and domain mapping before semantic ingestion."}
@@ -583,17 +1240,41 @@ class LSGoJobConsumer:
                     "error": "typed local_floor_wakeup requires floor",
                     "next_action": "Supply an explicit canonical floor identity.",
                 }
-            floor_receipt = run_floor(
-                floor=floor,
-                dry_run=not bool(params.get("execute", True)),
-                allow_heavy=bool(params.get("allow_heavy", False)),
-                receipt_target=str(params.get("receipt_target") or "neo"),
-            )
+            if bool(params.get("execute", True)):
+                floor_receipt = self._run_floor_supervised(
+                    job_id=job["id"], floor=floor,
+                    allow_heavy=bool(params.get("allow_heavy", False)),
+                    receipt_target=str(params.get("receipt_target") or "neo"),
+                )
+            else:
+                floor_receipt = run_floor(
+                    floor=floor, dry_run=True,
+                    allow_heavy=bool(params.get("allow_heavy", False)),
+                    receipt_target=str(params.get("receipt_target") or "neo"),
+                )
             return {
                 "status": "completed" if floor_receipt.get("status") == "completed" else "blocked",
                 "action_type": action_type,
                 "summary": f"Bounded local floor wake-up returned for {floor}.",
                 "floor_receipt": floor_receipt,
+                "floor_supervision": {
+                    "client_wall_deadline_seconds": (
+                        self._execution_claims[job["id"]]["native_budget"]["client_wall_deadline_seconds"]
+                        if bool(params.get("execute", True)) else None),
+                    "requested_completion_token_cap": (
+                        self._execution_claims[job["id"]]["native_budget"]["requested_completion_token_cap"]
+                        if bool(params.get("execute", True)) else None),
+                    "total_token_postflight_ceiling": (
+                        self._execution_claims[job["id"]]["native_budget"]["total_token_postflight_ceiling"]
+                        if bool(params.get("execute", True)) else None),
+                    "source_excerpt_char_cap": (
+                        self._execution_claims[job["id"]]["native_budget"]["source_excerpt_char_cap"]
+                        if bool(params.get("execute", True)) else None),
+                    "prompt_utf8_byte_ceiling": (
+                        self._execution_claims[job["id"]]["native_budget"]["prompt_utf8_byte_ceiling"]
+                        if bool(params.get("execute", True)) else None),
+                    "server_cancellation_verified": False,
+                },
                 "next_action": "Reconcile the floor receipt through Neo/Achilles before any promotion.",
             }
         return {
@@ -612,7 +1293,7 @@ class LSGoJobConsumer:
         params = _json_dict(job.get("params_json"))
         command_id = str(params.get("command_id") or "").strip()
         if not command_id:
-            if self._claim_job(job_id):
+            if self._claim_job(job_id, expected_job=job, purpose="hold"):
                 receipt = self._persist_result(
                     {
                         "schema_version": RESULT_SCHEMA,
@@ -621,33 +1302,56 @@ class LSGoJobConsumer:
                         "job_id": job_id,
                         "task_id": job.get("task_id"),
                         "command_id": None,
+                        "execution_claim": self._execution_claims[job_id],
                         "status": "held",
                         "error": "ls_go_command job has no command_id",
                         "public_publish_authorized": False,
                         "drive_write_executed": False,
                     }
                 )
-                self._update_job(job_id, status="held", result=receipt)
-                self._update_task(job.get("task_id"), status="held", receipt=receipt)
+                self._finish_claimed_job(job_id, receipt=receipt)
                 return receipt
             return None
 
         existing = self._existing_result(command_id)
         if existing:
             # Crash-safe reconciliation: if a receipt was durably written before
-            # the DB status update, consume the receipt rather than re-executing.
-            final_status = str(existing.get("status") or "held")
-            self._update_job(job_id, status=final_status, result=existing)
-            self._update_task(job.get("task_id"), status=final_status, receipt=existing)
+            # the DB status update, reconcile only the *same* claimed work item.
+            task_id = job.get("task_id")
+            exact_identity = (
+                task_id is not None
+                and type(existing.get("job_id")) is type(job_id)
+                and existing.get("job_id") == job_id
+                and type(existing.get("task_id")) is type(task_id)
+                and existing.get("task_id") == task_id
+                and existing.get("status") in {"completed", "blocked", "held"}
+            )
+            if not exact_identity:
+                return self._identity_hold(command_id, job_id, task_id, existing, job)
+            if not self._claim_job(job_id, expected_job=job, purpose="reconcile",
+                                   durable_receipt=existing):
+                return None
+            self._finish_claimed_job(job_id, receipt=existing)
             return existing
 
-        if not self._claim_job(job_id):
+        if not self._claim_job(job_id, expected_job=job):
             return None
 
         envelope, envelope_count = find_command_envelope(self.shell_root, command_id)
         action_type, action_source = resolve_action(command_id, params)
         started = utc_now_iso()
-        if action_type is None:
+        action_started_ns = time.monotonic_ns()
+        frontier_admission = self._execution_claims[job_id].get("frontier_admission")
+        if frontier_admission is not None:
+            action_result = {
+                "status": "held",
+                "action_type": action_type,
+                "frontier_admission": frontier_admission,
+                "error": "frontier work requires installed native budget and cancellation enforcement",
+                "summary": "Source-addressed frontier decision is bound to this job claim; no action was run.",
+                "next_action": "Review the exact claim and enable native limits through the existing owner gate before a new accepted work identity.",
+            }
+        elif action_type is None:
             action_result = {
                 "status": "held",
                 "action_type": None,
@@ -665,6 +1369,9 @@ class LSGoJobConsumer:
                     envelope=envelope,
                     envelope_count=envelope_count,
                 )
+            except FloorExecutionUncertain:
+                # No terminal receipt: restart must hold the unresolved running claim.
+                raise
             except Exception as exc:
                 action_result = {
                     "status": "blocked",
@@ -674,6 +1381,7 @@ class LSGoJobConsumer:
                     "next_action": "Repair the typed action/runtime prerequisite; do not substitute a new command identity unless required by the contract.",
                 }
 
+        action_elapsed_ns = time.monotonic_ns() - action_started_ns
         receipt = {
             "schema_version": RESULT_SCHEMA,
             "result_id": result_id_for(command_id),
@@ -686,6 +1394,9 @@ class LSGoJobConsumer:
             "task_id": job.get("task_id"),
             "target_floor": job.get("z_context") or (envelope or {}).get("target_floor"),
             "action_source": action_source,
+            "action_wall_elapsed_ms": action_elapsed_ns // 1_000_000,
+            "action_wall_clock_source": "time.monotonic_ns; excludes durable receipt persistence",
+            "action_wall_clock_budget_enforced": False,
             "shell_root": str(self.shell_root),
             "queue_identity_count": envelope_count,
             "proof_required": bool((envelope or {}).get("proof_required", True)),
@@ -693,17 +1404,18 @@ class LSGoJobConsumer:
             "drive_write_executed": False,
             "public_publish_authorized": False,
             **action_result,
+            "execution_claim": self._execution_claims[job_id],
         }
         receipt = self._persist_result(receipt)
-        final_status = str(receipt.get("status") or "held")
-        self._update_job(job_id, status=final_status, result=receipt)
-        self._update_task(job.get("task_id"), status=final_status, receipt=receipt)
+        self._finish_claimed_job(job_id, receipt=receipt)
         return receipt
 
     def process_once(self, limit: int = 8) -> dict[str, Any]:
         jobs = self.pending_jobs(limit=limit)
         results: list[dict[str, Any]] = []
         for job in jobs:
+            if self._stop.is_set():
+                break
             receipt = self.process_job(job)
             if receipt:
                 results.append(receipt)
@@ -769,11 +1481,52 @@ class LSGoJobConsumer:
     def run_forever(self, *, poll_seconds: float = POLL_SECONDS) -> None:
         self._acquire_heartbeat_lock()
         try:
+            unresolved = self.unresolved_running_job_ids()
+            if unresolved:
+                if len(unresolved) <= 100:
+                    unresolved = [
+                        job_id for job_id in unresolved
+                        if not self._reconcile_running_job_receipt(job_id)
+                    ]
+            if unresolved:
+                _write_json(status_receipt_path(self.shell_root), {
+                    "schema_version": CONSUMER_SCHEMA,
+                    "checked_utc": utc_now_iso(),
+                    "state": "recovery_hold_unresolved_running",
+                    "shell_root": str(self.shell_root),
+                    "unresolved_job_ids_sample": unresolved[:100],
+                    "unresolved_job_ids_truncated": len(unresolved) > 100,
+                    "pending_jobs_untouched": True,
+                    "results_written": 0,
+                    "public_publish_authorized": False,
+                    "next_action": "Reconcile each job against its exact durable receipt before restarting; never replay unknown work.",
+                })
+                self._stop.set()
+                return
             while not self._stop.is_set():
                 state = "polling"
                 try:
-                    summary = self.process_once()
-                    state = str(summary.get("state") or "ready")
+                    cpu_gate = host_cpu_admission(
+                        self.shell_root,
+                        previous_hold=self._cpu_pressure_hold,
+                    )
+                    if cpu_gate["allow_new_jobs"]:
+                        self._cpu_pressure_hold = False
+                        summary = self.process_once()
+                        state = str(summary.get("state") or "ready")
+                    else:
+                        self._cpu_pressure_hold = True
+                        state = str(cpu_gate["state"])
+                        _write_json(status_receipt_path(self.shell_root), {
+                            "schema_version": CONSUMER_SCHEMA,
+                            "checked_utc": utc_now_iso(),
+                            "state": state,
+                            "shell_root": str(self.shell_root),
+                            "cpu_gate": cpu_gate,
+                            "pending_jobs_untouched": True,
+                            "results_written": 0,
+                            "public_publish_authorized": False,
+                        })
                 except Exception as exc:
                     state = f"error:{type(exc).__name__}"
                     _write_json(
@@ -787,7 +1540,26 @@ class LSGoJobConsumer:
                             "public_publish_authorized": False,
                         },
                     )
-                self._heartbeat(state)
+                try:
+                    self._heartbeat(state)
+                except Exception as exc:
+                    failure_state = f"fatal_heartbeat_error:{type(exc).__name__}"
+                    try:
+                        _write_json(
+                            status_receipt_path(self.shell_root),
+                            {
+                                "schema_version": CONSUMER_SCHEMA,
+                                "checked_utc": utc_now_iso(),
+                                "state": failure_state,
+                                "error": str(exc),
+                                "shell_root": str(self.shell_root),
+                                "public_publish_authorized": False,
+                            },
+                        )
+                    except Exception:
+                        pass
+                    self._stop.set()
+                    break
                 self._stop.wait(max(0.25, float(poll_seconds)))
         finally:
             try:

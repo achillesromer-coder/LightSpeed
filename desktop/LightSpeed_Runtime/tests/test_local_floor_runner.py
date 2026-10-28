@@ -1,14 +1,17 @@
 from __future__ import annotations
 
 import json
+import hashlib
 from pathlib import Path
 import sys
+import pytest
 
 RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 if str(RUNTIME_ROOT) not in sys.path:
     sys.path.insert(0, str(RUNTIME_ROOT))
 
 from lightspeed_runtime.local_floor_runner import (
+    _ollama_usage_accounting,
     _canonical_loopback_endpoint,
     LocalFloorRunnerError,
     build_ollama_request,
@@ -101,6 +104,16 @@ def test_dry_run_writes_neo_receipt_without_http(tmp_path: Path) -> None:
     assert receipt_path.exists()
 
 
+def test_floor_receipt_preserves_exact_execution_claim(tmp_path: Path) -> None:
+    contract_path = _contract(tmp_path)
+    claim_id = "a" * 32
+    receipt = run_floor(contract_path=contract_path, floor="Neo", execution_claim_id=claim_id)
+    assert receipt["execution_claim_id"] == claim_id
+    assert json.loads(Path(receipt["receipt_path"]).read_text())["execution_claim_id"] == claim_id
+    with pytest.raises(LocalFloorRunnerError, match="claim id is invalid"):
+        run_floor(contract_path=contract_path, floor="Neo", execution_claim_id="unbound")
+
+
 def test_request_overrides_force_safe_values_and_bound_num_predict(tmp_path: Path) -> None:
     contract_path = _contract(tmp_path)
     contract = json.loads(contract_path.read_text(encoding="utf-8"))
@@ -123,6 +136,7 @@ def test_manual_heavy_floor_is_blocked_without_allow_flag(tmp_path: Path) -> Non
 
     assert receipt["status"] == "blocked"
     assert "manual/heavy" in receipt["blocked_reason"]
+    assert receipt["usage_accounting"]["ollama_generate_attempts"] == 0
     assert Path(receipt["receipt_path"]).exists()
 
 
@@ -132,7 +146,8 @@ def test_execute_uses_mocked_http_and_writes_floor_receipt(tmp_path: Path) -> No
 
     def fake_http(url: str, payload: dict[str, object], timeout: float) -> dict[str, object]:
         calls.append((url, payload, timeout))
-        return {"response": "{\"floor_summary\":\"ok\"}", "done": True}
+        return {"response": "{\"floor_summary\":\"ok\"}", "done": True,
+                "prompt_eval_count": 17, "eval_count": 5}
 
     receipt = run_floor(
         contract_path=contract_path,
@@ -160,6 +175,125 @@ def test_execute_uses_mocked_http_and_writes_floor_receipt(tmp_path: Path) -> No
     assert "TheConstruct" in str(receipt["receipt_path"])
     assert receipt["resource_preflight"]["execution_state"] == "ready"
     assert receipt["resource_preflight"]["ollama"]["loaded_model_count"] == 1
+    assert receipt["usage_accounting"] == {
+        "state": "MEASURED_OLLAMA_RESPONSE", "prompt_tokens": 17,
+        "completion_tokens": 5, "total_tokens": 22,
+        "ollama_generate_attempts": 1,
+        "tool_calls": 0,
+        "tool_call_scope": "model_function_tools_not_exposed_by_local_generate",
+        "cost_usd": None, "budget_enforced": False,
+    }
+
+
+def test_ollama_usage_does_not_invent_missing_or_malformed_counters() -> None:
+    for response in (None, {"done": True},
+                     {"done": True, "prompt_eval_count": True, "eval_count": 5},
+                     {"done": False, "prompt_eval_count": 17, "eval_count": 5}):
+        usage = _ollama_usage_accounting(response)
+        assert usage["state"] == "UNKNOWN"
+        assert usage["total_tokens"] is None
+        assert usage["ollama_generate_attempts"] == 0
+        assert usage["cost_usd"] is None
+        assert usage["tool_calls"] == 0
+        assert usage["tool_call_scope"] == "model_function_tools_not_exposed_by_local_generate"
+        assert usage["budget_enforced"] is False
+
+
+@pytest.mark.parametrize(
+    ("response", "expected_status", "expected_state"),
+    [
+        ({"response": "ok", "done": True, "prompt_eval_count": 17, "eval_count": 5},
+         "completed", "within_ceiling"),
+        ({"response": "ok", "done": True, "prompt_eval_count": 19, "eval_count": 5},
+         "blocked", "exceeded"),
+        ({"response": "ok", "done": True}, "blocked", "unmeasured"),
+    ],
+)
+def test_total_token_postflight_blocks_unmeasured_or_excess_use(
+    tmp_path: Path, response: dict[str, object], expected_status: str, expected_state: str,
+) -> None:
+    contract_path = _contract(tmp_path)
+    receipt = run_floor(
+        contract_path=contract_path, floor="Neo", dry_run=False, max_total_tokens=22,
+        http_post=lambda _url, _payload, _timeout: response,
+        ollama_status_probe=lambda _endpoint, _timeout: {
+            "state": "available", "loaded_model_count": 1,
+            "loaded_models": [{"name": "qwen3:8b"}],
+        },
+        memory_snapshot=lambda: (32 * 1024**3, 16 * 1024**3),
+        lock=False,
+    )
+    assert receipt["status"] == expected_status
+    assert receipt["total_token_postflight"] == {
+        "ceiling": 22, "state": expected_state, "hard_generation_limit": False,
+    }
+    assert receipt["usage_accounting"]["budget_enforced"] is False
+    assert json.loads(Path(receipt["receipt_path"]).read_text())["status"] == expected_status
+
+
+def test_total_token_ceiling_rejects_invalid_values(tmp_path: Path) -> None:
+    with pytest.raises(LocalFloorRunnerError, match="positive integer"):
+        run_floor(contract_path=_contract(tmp_path), floor="Neo", max_total_tokens=0)
+
+
+def test_prompt_byte_preflight_blocks_before_ollama(tmp_path: Path) -> None:
+    contract_path = _contract(tmp_path)
+
+    def forbidden_http(_url: str, _payload: dict[str, object], _timeout: float) -> dict[str, object]:
+        raise AssertionError("oversize prompt must not reach Ollama")
+
+    receipt = run_floor(
+        contract_path=contract_path, floor="Neo", dry_run=False,
+        max_prompt_utf8_bytes=100, http_post=forbidden_http, lock=False,
+    )
+    assert receipt["status"] == "blocked"
+    assert receipt["prompt_preflight"]["state"] == "exceeded"
+    assert receipt["prompt_preflight"]["utf8_bytes"] > 100
+    assert receipt["usage_accounting"]["ollama_generate_attempts"] == 0
+
+
+def test_excerpt_cap_retains_full_source_identity(tmp_path: Path) -> None:
+    contract_path = _contract(tmp_path)
+    source = tmp_path / "source.txt"
+    source.write_text("Source facts remain distinct from model output. " * 30, encoding="utf-8")
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    contract["source_context"] = [{
+        "path": str(source), "sha256": digest, "max_chars": 1000,
+    }]
+    contract_path.write_text(json.dumps(contract), encoding="utf-8")
+    receipt = run_floor(
+        contract_path=contract_path, floor="Neo",
+        max_source_excerpt_chars=20, max_prompt_utf8_bytes=7000,
+    )
+    evidence = receipt["source_evidence"][0]
+    assert evidence["sha256"] == digest
+    assert len(evidence["excerpt"]) == 20
+    assert evidence["excerpt_sha256"] == hashlib.sha256(evidence["excerpt"].encode()).hexdigest()
+    assert evidence["truncated"] is True
+    assert receipt["source_excerpt_char_cap"] == 20
+    assert receipt["prompt_preflight"]["state"] == "within_ceiling"
+
+
+def test_lost_ollama_response_marks_server_outcome_uncertain(tmp_path: Path) -> None:
+    contract_path = _contract(tmp_path)
+
+    def lost_response(_url: str, _payload: dict[str, object], _timeout: float) -> dict[str, object]:
+        raise TimeoutError("Ollama response deadline")
+
+    receipt = run_floor(
+        contract_path=contract_path, floor="Neo", dry_run=False,
+        http_post=lost_response,
+        ollama_status_probe=lambda _endpoint, _timeout: {
+            "state": "available", "loaded_model_count": 1, "loaded_models": [],
+        },
+        memory_snapshot=lambda: (32 * 1024**3, 16 * 1024**3),
+        lock=False,
+    )
+    assert receipt["status"] == "failed"
+    assert receipt["server_outcome_uncertain"] is True
+    assert receipt["usage_accounting"]["state"] == "UNKNOWN"
+    assert json.loads(Path(receipt["receipt_path"]).read_text())["server_outcome_uncertain"] is True
 
 
 def test_resource_preflight_is_bounded_and_reports_last_receipt(tmp_path: Path) -> None:
@@ -284,6 +418,50 @@ def test_canonical_loopback_endpoint_preserves_remote_hosts() -> None:
         == "https://models.example:11434"
     )
 
+
+@pytest.mark.parametrize("endpoint", [
+    "https://models.example:11434", "https://localhost:11434",
+    "http://127.0.0.1:11434/other", "http://127.0.0.1:11434@models.example",
+    "http://user:pass@localhost:11434", "http://127.0.0.1", "http://[::1",
+])
+def test_nonlocal_or_malformed_floor_endpoint_never_posts(
+    tmp_path: Path, endpoint: str,
+) -> None:
+    contract_path = _contract(tmp_path)
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    contract["floors"][0]["ollama_connection"]["endpoint"] = endpoint
+    contract_path.write_text(json.dumps(contract), encoding="utf-8")
+
+    def forbidden_http(*_args):
+        raise AssertionError("nonlocal floor endpoint must not post")
+
+    receipt = run_floor(
+        contract_path=contract_path, floor="Neo", dry_run=False,
+        allow_heavy=True, http_post=forbidden_http, lock=False,
+    )
+    assert receipt["status"] == "blocked"
+    assert "Ollama endpoint" in receipt["blocked_reason"]
+    assert receipt["usage_accounting"]["ollama_generate_attempts"] == 0
+    assert receipt["endpoint_policy"] == "loopback_http_only"
+
+
+def test_cloud_named_floor_model_stays_blocked_with_heavy_flag(tmp_path: Path) -> None:
+    contract_path = _contract(tmp_path)
+    contract = json.loads(contract_path.read_text(encoding="utf-8"))
+    contract["floors"][0]["ollama_connection"]["model"] = "remote-model:cloud"
+    contract_path.write_text(json.dumps(contract), encoding="utf-8")
+
+    def forbidden_http(*_args):
+        raise AssertionError("cloud-named model must not post")
+
+    receipt = run_floor(
+        contract_path=contract_path, floor="Neo", dry_run=False,
+        allow_heavy=True, http_post=forbidden_http, lock=False,
+    )
+    assert receipt["status"] == "blocked"
+    assert "cloud model blocked" in receipt["blocked_reason"]
+    assert receipt["usage_accounting"]["ollama_generate_attempts"] == 0
+
 from lightspeed_runtime.local_floor_runner import (
     _receipt_timestamp,
     validate_grounded_response,
@@ -384,3 +562,80 @@ def test_quote_selection_exposes_status_beyond_header_and_preserves_literals() -
     assert any('quoted' in option for option in options)
     assert all(option in excerpt for option in options)
     assert len(_citation_quote_candidates('\n'.join(f'evidence passage {i}' for i in range(100)))) == 64
+
+
+def test_host_cpu_preflight_fails_closed_above_eighty_percent(tmp_path: Path) -> None:
+    path=_contract(tmp_path)
+    obj=json.loads(path.read_text(encoding="utf-8"))
+    obj["policy"]["resource_guard"]={"max_host_cpu_percent":80}
+    path.write_text(json.dumps(obj),encoding="utf-8")
+
+    def forbidden_http(*args):
+        raise AssertionError("host CPU guard cannot start Ollama at >80%")
+
+    receipt=run_floor(
+        contract_path=path,floor="Neo",dry_run=False,
+        cpu_snapshot=lambda:81.5,
+        memory_snapshot=lambda:(32*1024**3,16*1024**3),
+        http_post=forbidden_http,lock=False)
+    guard=receipt["resource_preflight"]
+    assert receipt["status"]=="blocked"
+    assert guard["execution_state"]=="stop"
+    assert guard["cpu"]["state"]=="stop"
+    assert guard["cpu"]["max_host_cpu_percent"]==80
+    assert guard["cpu"]["is_continuous_process_cpu_hard_cap"] is False
+    assert "host CPU 81.50%" in receipt["blocked_reason"]
+
+
+def test_host_cpu_probe_unavailable_blocks_new_ollama_session(tmp_path: Path) -> None:
+    path=_contract(tmp_path)
+    obj=json.loads(path.read_text(encoding="utf-8"))
+    obj["policy"]["resource_guard"]={"max_host_cpu_percent":80}
+    path.write_text(json.dumps(obj),encoding="utf-8")
+
+    def cpu_missing():
+        raise OSError("no psutil sampler")
+
+    def forbidden_http(*args):
+        raise AssertionError("unmeasured host CPU cannot start a new session")
+
+    result=run_floor(contract_path=path,floor="Neo",dry_run=False,
+                     cpu_snapshot=cpu_missing,memory_snapshot=lambda:(32*1024**3,16*1024**3),
+                     http_post=forbidden_http,lock=False)
+    assert result["status"]=="blocked"
+    assert result["resource_preflight"]["cpu"]["state"]=="unavailable"
+    assert "host CPU measurement unavailable" in result["blocked_reason"]
+
+
+def test_cpu_preflight_below_ceiling_allows_existing_bounded_floor(tmp_path: Path) -> None:
+    path=_contract(tmp_path)
+    obj=json.loads(path.read_text(encoding="utf-8"))
+    obj["policy"]["resource_guard"]={"max_host_cpu_percent":80}
+    path.write_text(json.dumps(obj),encoding="utf-8")
+    called=[]
+    def fake_http(*args):
+        called.append(1)
+        return {"response":"ok","done":True}
+    result=run_floor(contract_path=path,floor="Neo",dry_run=False,
+                     cpu_snapshot=lambda:58.1,memory_snapshot=lambda:(32*1024**3,16*1024**3),
+                     ollama_status_probe=lambda *args:{"state":"available","loaded_model_count":0,
+                                                       "loaded_models":[]},
+                     http_post=fake_http,lock=False)
+    assert result["status"]=="completed"
+    assert called==[1]
+    assert result["resource_preflight"]["cpu"]["state"]=="ready"
+    assert result["resource_preflight"]["cpu"]["observed_percent"]==58.1
+
+
+def test_invalid_cpu_policy_cannot_grant_more_than_80_percent(tmp_path: Path) -> None:
+    path=_contract(tmp_path)
+    obj=json.loads(path.read_text(encoding="utf-8"))
+    obj["policy"]["resource_guard"]={"max_host_cpu_percent":95}
+    path.write_text(json.dumps(obj),encoding="utf-8")
+    def forbidden_http(*args):
+        raise AssertionError("CPU >80% policy must fail closed")
+    result=run_floor(contract_path=path,floor="Neo",dry_run=False,
+                     memory_snapshot=lambda:(32*1024**3,16*1024**3),
+                     http_post=forbidden_http,lock=False)
+    assert result["status"]=="blocked"
+    assert result["resource_preflight"]["cpu"]["state"]=="invalid_policy"

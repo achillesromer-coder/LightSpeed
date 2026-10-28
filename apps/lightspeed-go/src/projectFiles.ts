@@ -87,7 +87,7 @@ export const renderProjectFilesError = (message: string): string => `
 
 export const renderProjectFileOpenResult = (result: ProjectFileOpenResult): string => {
   const preview = result.preview;
-  let content = `<p class="muted">Metadata only. Binary or non-UTF-8 content is not transferred into LS GO.</p>`;
+  let content = `<p class="muted">Metadata only. Binary or non-UTF-8 content is not transferred into UniSpace.</p>`;
   if (preview.state === "empty") {
     content = `<p class="muted">The file is empty.</p>`;
   } else if (preview.state === "available") {
