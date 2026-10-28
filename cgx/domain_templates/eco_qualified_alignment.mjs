@@ -106,7 +106,7 @@ export function planEcoAlignment({novel,known_objects=[],authorised_object_ids=[
   if(refs.length<k.source_refs.length)add(checks,"KNOWN_SOURCE_SCOPE_PARTIAL");
   const exactId=novel.object_id===k.object_id;
   out.push({known_object_id:k.object_id,
-   state:checks.length?"REVIEW_DIFFERENCE":exactId?"SAME_ID_CLAIM_REQUIRES_PROOF":"TYPED_ALIGNMENT_CANDIDATE",
+   state:exactId?"SAME_ID_CLAIM_REQUIRES_PROOF":checks.length?"REVIEW_DIFFERENCE":"TYPED_ALIGNMENT_CANDIDATE",
    checks,permitted_known_source_refs:refs,auto_merge:false,object_id_minted:false,source_rights_verified:false});
  }
  out.sort((a,b)=>a.checks.length-b.checks.length||a.known_object_id.localeCompare(b.known_object_id));
