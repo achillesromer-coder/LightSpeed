@@ -46,11 +46,18 @@ export function planKnownAlignment({novel,known_objects,authorised_object_ids,au
   if(k.epoch!==novel.epoch)checks.push("TIME_VARIANT");
   const kRefs=k.source_refs.filter(s=>srcs.has(s));
   if(!targetRefs.length||!kRefs.length)checks.push("EVIDENCE_GAP");
-  else if(!kRefs.some(s=>targetRefs.includes(s)))checks.push("SOURCE_LINEAGE_DISJOINT");
-  else if(kRefs.some(ref=>targetRefs.includes(ref)&&novel.source_sha256_by_ref?.[ref]&&
-    k.source_sha256_by_ref?.[ref]&&
-    novel.source_sha256_by_ref[ref].toLowerCase()!==k.source_sha256_by_ref[ref].toLowerCase()))
-   checks.push("SOURCE_BYTES_CONFLICT");
+  else {
+   const sharedRefs=kRefs.filter(ref=>targetRefs.includes(ref));
+   if(!sharedRefs.length)checks.push("SOURCE_LINEAGE_DISJOINT");
+   else {
+    // Shared provider IDs are not byte identities: both sides need an R0 fingerprint.
+    if(sharedRefs.some(ref=>!novel.source_sha256_by_ref?.[ref]||!k.source_sha256_by_ref?.[ref]))
+     checks.push("SOURCE_FINGERPRINT_GAP");
+    if(sharedRefs.some(ref=>novel.source_sha256_by_ref?.[ref]&&k.source_sha256_by_ref?.[ref]&&
+      novel.source_sha256_by_ref[ref].toLowerCase()!==k.source_sha256_by_ref[ref].toLowerCase()))
+     checks.push("SOURCE_BYTES_CONFLICT");
+   }
+  }
   // A repeated Object_ID label is a claim, never proof; independent source lines
   // cannot be collapsed into one R0 identity without qualified reconciliation.
   const exactId=novel.object_id&&novel.object_id===k.object_id;
