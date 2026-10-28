@@ -93,6 +93,7 @@ export function planKnowledgeSpread({nodes,focus_id,access,budgets={}}={}){
  if(queue.length)frontier.push({reason:"BUDGET_LIMITED",omitted_count:"NOT_REVEALED"});
  return {schema:SPREAD_SCHEMA,status:"REVIEW_ONLY",focus_id,objects:included,edges:viewEdges.filter(e=>seen.has(e.from)&&seen.has(e.to)),
    budgets:b,frontier,source_ref_count:evidenceCount,domains_visited:[...visitedDomains],
+   max_planned_operations:Math.floor(b.max_compute_ms*b.max_ops_per_second/1000),
    actual_compute_ms:null,actual_ops_per_second:null,requested_ceiling_only:true,
    network_fetch:false,rendered:false,canonical_mutation:false,hydration_complete:false};
 }
