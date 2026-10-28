@@ -241,8 +241,8 @@ test('scoped plan cannot claim DBR mutation or installed CCC',()=>{
   expectLoadHold(x=>{x.scoped_plan[k]=true;},'SCOPED_HYDRATION_PLAN_INVALID');
 });
 test('CCC ABI/version mismatch is rejected',()=>{
- expectLoadHold(x=>{x.ccc_preflight.candidate_abi='native/999';},'CCC_REVIEW_GATE_INVALID');
- expectLoadHold(x=>{x.ccc_preflight.candidate_version='latest';},'CCC_REVIEW_GATE_INVALID');
+ expectLoadHold(x=>{x.ccc_preflight={...x.ccc_preflight,candidate_abi:'native/999'};},'CCC_REVIEW_GATE_INVALID');
+ expectLoadHold(x=>{x.ccc_preflight={...x.ccc_preflight,candidate_version:'latest'};},'CCC_REVIEW_GATE_INVALID');
 });
 test('CCC cannot claim verified rights, native admission or authenticated provider readback',()=>{
  for(const k of ['source_rights_verified','native_admitted','provider_readback_authenticated'])
