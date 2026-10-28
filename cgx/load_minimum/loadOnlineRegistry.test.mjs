@@ -30,3 +30,18 @@ test('cannot duplicate categorical key',()=>{
 });
 test('reject invalid search quota',()=>assert.throws(()=>searchLoad(data,{limit:500}),/INVALID_QUERY/));
 test('reject empty target',()=>assert.throws(()=>planScopedLoad(data,{fileSpace:'',owner:'Athene'}),/INVALID_TARGET/));
+
+test('cross-family discovery does not copy other domains into a child',()=>{
+ const from=data.records.filter(r=>r.category==='conversion_source');
+ const shared=data.records.length-from.length;
+ for(const [fileSpace,domain] of [['Romer.cgx','romer'],['Eco.cgx','eco'],['EMASSC.cgx','emassc'],['LS.cgx','lightspeed']]){
+  const plan=planScopedLoad(data,{fileSpace,owner:'test-owner',objectId:'cgx:test'});
+  assert.equal(plan.source_references,shared+from.filter(r=>r.owner_domain===domain).length);
+  assert.equal(plan.source_bodies_copied,0);
+ }
+});
+test('unregistered family does not inherit another domains source mappings',()=>{
+ const p=planScopedLoad(data,{fileSpace:'Unregistered.cgx',owner:'test-owner',objectId:'cgx:test'});
+ const publicShared=data.records.filter(r=>r.category!=='conversion_source').length;
+ assert.equal(p.source_references,publicShared);assert.equal(p.external_fetch,false);
+});
