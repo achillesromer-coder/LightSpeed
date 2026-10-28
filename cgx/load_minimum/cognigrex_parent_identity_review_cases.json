@@ -30,6 +30,10 @@
     {
       "path": "cgx/domain_templates/s92_domain_children_acceptance_audit_2026-10-04.json",
       "git_blob_sha": "77861c734b3c63c394031c79bf830154faaec1e3"
+    },
+    {
+      "path": "cgx/domain_templates/eco_relation_registry.json",
+      "git_blob_sha": "47241ad132cc53fa4e90f5b8ec65fe23412be95a"
     }
   ],
   "observed_gap": "The current LOAD reader bounds library/one_of_one.json decompression to 60 MiB and rejects missing/duplicate library members, malformed entry structures and duplicate ref_id values. It remains a source-reference inspector: it does not verify the CGX native manifest/content root, RootAuthority/DBR signatures, current lease, rights/ACL or accepted Object_ID binding. No R0/R1/R2 admission follows from successful parsing.",
@@ -118,6 +122,11 @@
       "id": "C17",
       "input": "A candidate qualified CGX Object_ID is proposed using a structurally valid CGX-SOURCE-ENVELOPE/0.1 record, but original source revision, rights/ACL or historical branch/time context is unknown or contradictory; the source-envelope required-fields list alone does not supply these qualifications.",
       "expected": "SOURCE_QUALIFICATION_HOLD; retain competing R0/version hypotheses and explicit unresolved fields. No alias merge, ownership transfer, qualified minting, R2 authority or native DBR acceptance until owner, version, hash, rights, ACL and applicable time context are independently resolved."
+    },
+    {
+      "id": "C18",
+      "input": "The Eco.cgx relation registry CGX-ECO-RELATION-REGISTRY/0.2 declares relation type MODIFIES twice, once in families.process and once in families.intervention, both with the same unqualified id; shared CGX-RELATION-QUALIFIER/0.2 is still referenced as /0.1 by the child registry.",
+      "expected": "RELATION_TYPE_NAMESPACE_AMBIGUITY; preserve both original declarations and their category provenance, do not create two canonical relation Object_IDs or infer semantic equivalence solely from the lexical ID. Require explicit owner-approved single qualified relation identity with multiple category tags or a source-preserving typed distinction and an explicit /0.1-to-/0.2 compatibility crosswalk; no R2 admission/DBR promotion on this fixture."
     }
   ],
   "validation_state": "STATIC_SOURCE_REVIEW_ONLY",
