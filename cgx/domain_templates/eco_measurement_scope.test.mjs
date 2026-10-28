@@ -28,7 +28,7 @@ test("different baselines are not silently aligned",()=>{
 });
 test("matching declared scope, count and baseline does not add spurious differences",()=>{
  const a={...base,aggregation_scope:"per_block",sample_count:1,baseline_id:"fixture:baseline-a"};
- const b={...known,aggregation_scope:"per_block",sample_count:1,baseline_id:"fixture:baseline-a"};
+ const b={...known,source_refs:["fixture:novel"],aggregation_scope:"per_block",sample_count:1,baseline_id:"fixture:baseline-a"};
  assert.deepEqual(flags(a,b),[]);
 });
 test("invalid sample count rejected",()=>{
