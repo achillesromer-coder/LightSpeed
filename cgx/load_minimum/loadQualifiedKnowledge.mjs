@@ -70,7 +70,10 @@ export function planQualifiedOperator({registry,problem,bindings,authorised_sour
   if(!sourceRefs.length)blockers.push("EVIDENCE_SOURCE_REQUIRED");
   if(Object.keys(problem.dimensions).length>0){
    if(!obj(problem.units)||!Object.keys(problem.dimensions).every(f=>good(problem.units[f])))blockers.push("UNITS_UNDECLARED");
-   else if(obj(b.required_units)&&!Object.keys(b.required_dimensions).every(f=>b.required_units[f]===problem.units[f]))blockers.push("UNIT_CONVERSION_METHOD_REQUIRED");
+   else if(!obj(b.required_units)||!Object.keys(b.required_dimensions).every(f=>good(b.required_units[f])))
+    blockers.push("METHOD_UNITS_UNDECLARED");
+   else if(!Object.keys(b.required_dimensions).every(f=>b.required_units[f]===problem.units[f]))
+    blockers.push("UNIT_CONVERSION_METHOD_REQUIRED");
   }
   if(b.frame && b.frame!==problem.frame)blockers.push("FRAME_TRANSFORMATION_REQUIRED");
   if(b.epoch_required&&!good(problem.epoch))blockers.push("EPOCH_REQUIRED");
