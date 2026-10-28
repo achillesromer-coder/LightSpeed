@@ -38,6 +38,33 @@ function unsafe(x,depth=0,seen=new Set()){
  }
  seen.delete(x);return false;
 }
+// Lexical consistency only. This does NOT attest that a path exists on a host.
+function absolutePath(value){
+ if(!txt(value))return null;
+ const p=value.replaceAll('\\','/');
+ if(p.startsWith('//')||p.includes('//'))return null;
+ const windows=/^[A-Za-z]:\//.test(p);
+ if(!windows&&!p.startsWith('/'))return null;
+ const segments=p.split('/').slice(1);
+ if(segments.some(s=>s===''||s==='.'||s==='..'))return null;
+ return windows?p.toLowerCase():p;
+}
+function statusPaths(s,slotName){
+ const root=absolutePath(s.managed_root);
+ const slotRoot=absolutePath(s.slot_root);
+ const python=absolutePath(s.python);
+ if(!root||!slotRoot||!python)return false;
+ const win=/^[a-z]:\//.test(root);
+ const name=win?slotName.toLowerCase():slotName;
+ if(slotRoot!==root+'/'+name)return false;
+ if(python!==slotRoot+'/'+(win?'venv/scripts/python.exe':'venv/Scripts/python.exe'))return false;
+ const prefix=root+'/_receipts/'+name+'-';
+ return s.recent_receipts.every(path=>{
+  const p=absolutePath(path);
+  return p!==null&&p.startsWith(prefix)&&p.endsWith('.json')&&
+   !p.slice(prefix.length).includes('/');
+ });
+}
 function statusShape(s,slot){
  return obj(s)&&keys(s,STATUS_KEYS)&&
  s.schema==='LIGHTSPEED-RUNTIME-PRODUCTIZATION-STATUS/0.1'&&
@@ -45,7 +72,7 @@ function statusShape(s,slot){
  typeof s.managed_marker==='boolean'&&typeof s.configured==='boolean'&&
  typeof s.installed==='boolean'&&txt(s.managed_root)&&txt(s.slot_root)&&
  txt(s.python)&&Array.isArray(s.recent_receipts)&&s.recent_receipts.length<=20&&
- s.recent_receipts.every(txt)&&
+ s.recent_receipts.every(txt)&&statusPaths(s,slot)&&
  (s.profile==null||['core','api','data','validation','dev','desktop'].includes(s.profile));
 }
 function startupShape(p){
