@@ -42,7 +42,8 @@ export function reviewNativeEnvelopeHandoff(input = {}) {
   const {preflight:p, envelope:e, selection:s, source:m, client:c} = input;
   if (!record(s) || s.parent_filespace !== PARENT ||
       !CHILDREN.has(s.filespace) ||
-      !/^[A-Za-z0-9][A-Za-z0-9:_-]{0,127}$/.test(s.object_id || "") ||
+      typeof s.object_id !== "string" ||
+      !/^[A-Za-z0-9][A-Za-z0-9:_-]{0,127}$/.test(s.object_id) ||
       s.object_id === "cgx:root:cognigrex" ||
       s.object_id.startsWith("cgx:domain:") ||
       s.identity_status !== "SOURCE_CANDIDATE_NOT_NATIVE_ACCEPTED")
@@ -52,8 +53,8 @@ export function reviewNativeEnvelopeHandoff(input = {}) {
       !one(c.allowed_filespaces, s.filespace))
     return hold("CLIENT_SCOPE_MISMATCH");
   if (!record(m) || m.object_id !== s.object_id ||
-      m.filespace !== s.filespace || !SHA1.test(m.mapping_blob_sha || "") ||
-      !SHA256.test(m.r0_source_sha256 || "") ||
+      m.filespace !== s.filespace || (typeof m.mapping_blob_sha !== "string" || !SHA1.test(m.mapping_blob_sha)) ||
+      (typeof m.r0_source_sha256 !== "string" || !SHA256.test(m.r0_source_sha256)) ||
       !["R0_R1_REFERENCE", "R0_R1_R2_REFERENCE"].includes(m.mapping_stage) ||
       !["UNRESOLVED", "PRIVATE_SCOPED", "PUBLIC_SAFE"].includes(m.rights) ||
       !["scientific", "creative", "mixed", "unknown"].includes(m.evidence_class))
@@ -64,10 +65,10 @@ export function reviewNativeEnvelopeHandoff(input = {}) {
       p.child_filespace !== s.filespace ||
       p.source_mapping_id !== m.mapping_id ||
       p.evidence_class !== m.evidence_class ||
-      !SHA256.test(p.candidate_r0_sha256 || "") ||
+      (typeof p.candidate_r0_sha256 !== "string" || !SHA256.test(p.candidate_r0_sha256)) ||
       !Number.isSafeInteger(p.file_bytes) || p.file_bytes < 1 ||
       p.file_bytes > MAX_BYTES ||
-      !/^[a-z0-9]{2,8}$/.test(p.file_type || "") ||
+      (typeof p.file_type !== "string" || !/^[a-z0-9]{2,8}$/.test(p.file_type)) ||
       p.source_reference_hash_verified !== false ||
       p.native_admitted !== false || p.host_verified !== false ||
       p.release_accepted !== false || p.canonical_mutation !== false ||
@@ -89,8 +90,8 @@ export function reviewNativeEnvelopeHandoff(input = {}) {
       typeof e.release_class !== "string" || !e.release_class ||
       !Array.isArray(e.projections) || !Array.isArray(e.warnings) ||
       !Array.isArray(e.unresolved) ||
-      !SHA256.test(e.envelope_sha256 || "") ||
-      !SHA256.test(e.sha256 || "") ||
+      (typeof e.envelope_sha256 !== "string" || !SHA256.test(e.envelope_sha256)) ||
+      (typeof e.sha256 !== "string" || !SHA256.test(e.sha256)) ||
       e.sha256.toLowerCase() !== p.candidate_r0_sha256.toLowerCase() ||
       e.source_id !== "src:" + e.sha256 ||
       e.byte_length !== p.file_bytes ||
