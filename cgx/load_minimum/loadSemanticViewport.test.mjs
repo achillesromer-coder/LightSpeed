@@ -64,6 +64,32 @@ test('unmatched novel source becomes Frontier without object invention',()=>{
  const p=planNovelMatching(registry,{domain:'eco',source_name:'fixture:unseen'});
  assert.equal(p.status,'FRONTIER_NEW');assert.equal(p.verified_object_id,null);
 });
+test('novel matching rejects forged registry source provenance',()=>{
+ const forged=JSON.parse(JSON.stringify(registry));
+ const source=forged.records.find(r=>r.category==='conversion_source');
+ source.source_git_blob='0'.repeat(40);
+ assert.throws(()=>planNovelMatching(forged,{domain:source.owner_domain,source_hash:source.source_sha256}),/SOURCE_PROOF_MISMATCH/);
+});
+test('novel matching rejects false native acceptance claims',()=>{
+ const forged=JSON.parse(JSON.stringify(registry));forged.summary.native_accepted=1;
+ assert.throws(()=>planNovelMatching(forged,{domain:'romer',source_name:'fixture'}),/UNSUPPORTED_AUTHORITY_CLAIM/);
+});
+test('provider ID and checksum disagreement is a Frontier identity conflict, not an OR match',()=>{
+ const source=registry.records.find(r=>r.category==='conversion_source'&&r.source_drive_id&&r.source_sha256);
+ assert.ok(source);
+ const p=planNovelMatching(registry,{domain:source.owner_domain,source_id:source.source_drive_id,source_hash:'f'.repeat(64)});
+ assert.equal(p.status,'SOURCE_IDENTITY_CONFLICT');
+ assert.deepEqual(p.source_matches,[]);
+ assert.ok(p.conflict_mapping_ids.includes(source.source_key));
+ assert.equal(p.verified_object_id,null);
+ assert.equal(p.native_admission,false);
+});
+test('concordant provider ID and checksum remain source-only candidates',()=>{
+ const source=registry.records.find(r=>r.category==='conversion_source'&&r.source_drive_id&&r.source_sha256);
+ const p=planNovelMatching(registry,{domain:source.owner_domain,source_id:source.source_drive_id,source_hash:source.source_sha256});
+ assert.equal(p.status,'SOURCE_IDENTITY_CANDIDATE');
+ assert.equal(p.native_admission,false);
+});
 test('unknown view is rejected',()=>assert.throws(()=>planViewportSwitch({spread:spread(),to:'teleport'}),/UNKNOWN_VIEW/));
 test('all projections remain non-mutating and no implicit network hydration occurs',()=>{
  const a=spread();const b=planViewportSwitch({spread:a,to:'3d'});
