@@ -33,8 +33,18 @@ export const MOBILE_LINK_DISCONNECTED_KEY = "lightspeed-go-disconnected-v1";
 
 export const isLoopbackOriginHost = (host: string): boolean => {
   const value = host.toLowerCase().replace(/\.$/, "");
+  // WHATWG URL canonicalizes IPv4-mapped IPv6 loopback to hex pairs
+  // (for example, ::ffff:127.0.0.2 becomes [::ffff:7f00:2]).
+  // Reject the full mapped 127/8 range, not only 127.0.0.1.
+  const mapped = value.match(/^\[?::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})\]?$/);
+  if (mapped) {
+    const high = Number.parseInt(mapped[1], 16);
+    const low = Number.parseInt(mapped[2], 16);
+    if ((high >> 8) === 127 || (high === 0 && low === 0)) return true;
+  }
   return value === "localhost" || value.endsWith(".localhost") || value.startsWith("127.") ||
-    ["0.0.0.0", "::1", "[::1]", "[::ffff:7f00:1]"].includes(value) || value.includes("::ffff:127.");
+    ["0.0.0.0", "::", "[::]", "::1", "[::1]", "[::ffff:7f00:1]"].includes(value) ||
+    value.includes("::ffff:127.");
 };
 
 export const resolveActiveDesktopOrigin = (
