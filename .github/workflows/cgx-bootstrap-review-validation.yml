@@ -29,9 +29,10 @@ jobs:
           node --check cgx/bootstrap/unifiedBootstrap.mjs
           node --check cgx/bootstrap/cgxHandshakeReview.mjs
           node --check cgx/bootstrap/cgxSetupCli.mjs
-      - name: Test startup and native handshake review guards
+          node --check cgx/bootstrap/cgxWindowsHostPreflightReview.mjs
+      - name: Test startup, Windows diagnostic and native handshake review guards
         run: |
-          node --test cgx/bootstrap/unifiedBootstrap.test.mjs cgx/bootstrap/cgxHandshakeReview.test.mjs
+          node --test cgx/bootstrap/unifiedBootstrap.test.mjs cgx/bootstrap/cgxHandshakeReview.test.mjs cgx/bootstrap/cgxWindowsHostPreflightReview.test.mjs
       - name: Verify review-only plans and no unsupported GOT installer
         run: |
           node cgx/bootstrap/cgxSetupCli.mjs --family Eco.cgx --mode first-run --ls-go=true > "$RUNNER_TEMP/setup.json"
