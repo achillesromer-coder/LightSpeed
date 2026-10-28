@@ -13,8 +13,9 @@ const run=(a=base,b=known,opts={})=>planEcoAlignment({novel:a,known_objects:[b],
  authorised_object_ids:["known:1"],authorised_source_ids:["src-a","src-b"],...opts});
 const flags=(a,b=known)=>run(a,b).candidates[0].checks;
 const changed=(key,value)=>({...base,[key]:value});
-test("same type and source-qualified context yields review candidate, never native merge",()=>{
- const x=run();assert.equal(x.candidates[0].state,"TYPED_ALIGNMENT_CANDIDATE");
+test("disjoint permitted source lineage is a review difference, never native merge",()=>{
+ const x=run();assert.equal(x.candidates[0].state,"REVIEW_DIFFERENCE");
+ assert.ok(x.candidates[0].checks.includes("SOURCE_LINEAGE_DISJOINT_REVIEW"));
  assert.equal(x.candidates[0].auto_merge,false);assert.equal(x.object_ids_minted,0);
  assert.equal(x.accepted_native_identity,false);assert.equal(x.db_readback,false);
 });
@@ -37,3 +38,14 @@ test("invalid WGS84 longitude is rejected",()=>assert.throws(()=>run(changed("ge
 test("known Object_ID cannot be self-certified",()=>assert.equal(run({...base,object_id:"known:1"}).candidates[0].state,"SAME_ID_CLAIM_REQUIRES_PROOF"));
 test("duplicate authorised Object_ID rejected",()=>assert.throws(()=>planEcoAlignment({novel:base,known_objects:[known,known],authorised_object_ids:["known:1"],authorised_source_ids:["src-a","src-b"]}),/DUPLICATE_AUTHORISED_OBJECT_ID/));
 test("no ecological impact is verified by alignment",()=>assert.equal(run().ecological_effect_verified,false));
+test("shared permitted source lineage can remain a typed candidate without native admission",()=>{
+ const x=run(base,{...known,source_refs:["src-a"]});
+ assert.equal(x.candidates[0].state,"TYPED_ALIGNMENT_CANDIDATE");
+ assert.equal(x.candidates[0].auto_merge,false);
+});
+test("novel source references outside the authorised scope remain visibly partial",()=>{
+ assert.ok(flags({...base,source_refs:["src-a","unapproved-src"]},{...known,source_refs:["src-a"]}).includes("NOVEL_SOURCE_SCOPE_PARTIAL"));
+});
+test("known source references outside the authorised scope remain visibly partial",()=>{
+ assert.ok(flags(base,{...known,source_refs:["src-a","unapproved-src"]}).includes("KNOWN_SOURCE_SCOPE_PARTIAL"));
+});
