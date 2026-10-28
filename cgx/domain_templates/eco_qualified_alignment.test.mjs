@@ -295,3 +295,31 @@ test("different biological carrier or origin cannot silently align",()=>{
  const x=run(a,b).candidates[0];assert.equal(x.state,"REVIEW_DIFFERENCE");assert.ok(x.checks.includes("BIOLOGICAL_TRANSFER_SCOPE_OR_PROVENANCE_DIFFERENT"));
 });
 test("invalid biological transfer declaration is rejected",()=>assert.throws(()=>run({...base,biological_transfer:{proposed:true,carrier_class:"none"}}),/INVALID_BIOLOGICAL_TRANSFER/));
+
+
+const seedScope={proposed:true,carrier_class:"seed"};
+const fungusScope={proposed:true,carrier_class:"inoculum"};
+test("proposed seed movement without lot is held",()=>{
+ const x=noKnown({...base,semantic_type:"intervention",biological_transfer:seedScope});
+ assert.ok(x.novel_checks.includes("SEED_LOT_DESCRIPTOR_REQUIRED"));assert.equal(x.accepted_native_identity,false);
+});
+test("seed lot requires provenance sampling and custody",()=>{
+ const x=noKnown({...base,semantic_type:"intervention",biological_transfer:seedScope,seed_lot:{lot_id:"synthetic:lot-1",taxon_id:"taxon:1"}});
+ for(const flag of ["SEED_PARENT_PROVENANCE_REQUIRED","SEED_COLLECTION_SITE_REQUIRED","SEED_QUALITY_PROTOCOL_REQUIRED","SEED_SAMPLING_RATIONALE_REQUIRED","SEED_CUSTODY_REQUIRED"])assert.ok(x.novel_checks.includes(flag));
+});
+test("different seed lot identity remains distinct",()=>{
+ const a={...base,semantic_type:"intervention",biological_transfer:seedScope,seed_lot:{lot_id:"synthetic:lot-a",taxon_id:"taxon:1"}};
+ const b={...known,...a,object_id:"known:1",source_refs:["src-a"],seed_lot:{...a.seed_lot,lot_id:"synthetic:lot-b"}};
+ assert.ok(run(a,b).candidates[0].checks.includes("SEED_LOT_IDENTITY_OR_QA_DIFFERENT"));
+});
+test("fungal movement without TST-004 disposition is held",()=>{
+ assert.ok(noKnown({...base,semantic_type:"intervention",biological_transfer:fungusScope}).novel_checks.includes("FUNGAL_DISPOSITION_REQUIRED"));
+});
+test("proposed fungal movement contradicts do-not-inoculate disposition",()=>{
+ assert.ok(noKnown({...base,semantic_type:"intervention",biological_transfer:fungusScope,fungal_inoculation:{disposition:"DO_NOT_INOCULATE"}}).novel_checks.includes("FUNGAL_PROPOSED_TRANSFER_CONTRADICTS_EXCLUSION"));
+});
+test("INOCULATE without TST-004 FM-039 and specialist evidence remains held",()=>{
+ const x=noKnown({...base,semantic_type:"intervention",biological_transfer:fungusScope,fungal_inoculation:{disposition:"INOCULATE"}});
+ for(const flag of ["FUNGAL_TST004_REQUIRED","FUNGAL_FM039_REQUIRED","FUNGAL_PATHOGEN_SCREEN_REQUIRED","FUNGAL_HOST_EVIDENCE_REQUIRED","FUNGAL_STRAIN_PROVENANCE_REQUIRED"])assert.ok(x.novel_checks.includes(flag));
+ assert.ok(x.novel_checks.includes("BIOLOGICAL_TRANSFER_REVIEW_REQUIRED"));assert.equal(x.ecological_effect_verified,false);
+});
