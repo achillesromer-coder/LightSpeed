@@ -154,3 +154,25 @@ test('declared family selector removes only catalogue mismatch, not host accepta
  assert.ok(p.operator_candidates[0].blockers.includes('HOST_CAPABILITY_LEASE_AND_DB_R_READBACK_REQUIRED'));
  assert.equal(p.computation_executed,false);
 });
+
+test('shared provider ID with contradictory R0 SHA-256 bytes is a distinct source-version conflict',()=>{
+ const source='fixture:known', a='a'.repeat(64), b='b'.repeat(64);
+ const n={...novel,object_id:'fixture:one',source_refs:[source],source_sha256_by_ref:{[source]:a}};
+ const objects=known.map(k=>k.object_id==='fixture:one'?{...k,source_sha256_by_ref:{[source]:b}}:k);
+ const c=run({novel:n,known_objects:objects}).matched_candidates.find(x=>x.known_object_id==='fixture:one');
+ assert.equal(c.state,'REVIEW_DIFFERENCE');
+ assert.ok(c.checks.includes('SOURCE_BYTES_CONFLICT'));
+ assert.equal(c.auto_merge,false);
+});
+test('matching R0 SHA-256 does not certify Object_ID authority or DBR acceptance',()=>{
+ const source='fixture:known',hash='a'.repeat(64);
+ const n={...novel,object_id:'fixture:one',source_refs:[source],source_sha256_by_ref:{[source]:hash}};
+ const objects=known.map(k=>k.object_id==='fixture:one'?{...k,source_sha256_by_ref:{[source]:hash}}:k);
+ const c=run({novel:n,known_objects:objects}).matched_candidates.find(x=>x.known_object_id==='fixture:one');
+ assert.equal(c.state,'SAME_ID_CLAIM_REQUIRES_PROOF');
+ assert.equal(c.existing_object_authority_verified,false);
+});
+test('malformed or unbound R0 fingerprints are rejected before candidate matching',()=>{
+ assert.throws(()=>run({novel:{...novel,source_sha256_by_ref:{'fixture:novel':'not-a-hash'}}}),/INVALID_SOURCE_FINGERPRINTS/);
+ assert.throws(()=>run({novel:{...novel,source_sha256_by_ref:{'fixture:unlisted':'a'.repeat(64)}}}),/INVALID_SOURCE_FINGERPRINTS/);
+});
