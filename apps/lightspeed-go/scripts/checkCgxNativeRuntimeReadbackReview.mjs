@@ -189,8 +189,8 @@ test('startup source-file map must match Python _config_paths exactly',()=>{
   'STARTUP_PROFILE_SHAPE_INVALID');
 });
 test('startup root and source files normalize Windows case without host claims',()=>{
- const x=fixture();x.startup_profile.root='d:\\\\lightspeed\\\\APP';
- x.startup_profile.source_files.settings='d:\\\\LIGHTSPEED\\\\APP\\\\CONFIG\\\\SETTINGS.JSON';
+ const x=fixture();x.startup_profile.root=['d:','lightspeed','APP'].join(String.fromCharCode(92));
+ x.startup_profile.source_files.settings=['d:','LIGHTSPEED','APP','CONFIG','SETTINGS.JSON'].join(String.fromCharCode(92));
  const y=review(x);assert.equal(y.state,'AUTHENTICATED_HOST_READBACK_REQUIRED');
  assert.equal(y.host_authenticated,false);assert.equal(y.runtime_installed_verified,false);
 });
