@@ -233,3 +233,33 @@ test('review bounds job count independently of native runtime claims',()=>{
  const x=fixture();x.startup_profile.global_options.max_concurrent_jobs=64;
  assert.equal(review(x).state,'AUTHENTICATED_HOST_READBACK_REQUIRED');
 });
+
+test('Windows ADS and illegal receipt filename characters are rejected before host review',()=>{
+ const valid=fixture();
+ valid.runtime_status.recent_receipts=['D:/review/_receipts/neo-review-status-20261028.json'];
+ assert.equal(review(valid).state,'AUTHENTICATED_HOST_READBACK_REQUIRED');
+ for(const bad of [
+  'D:/review/_receipts/neo-review-status:forged.json',
+  'D:/review/_receipts/neo-review-status.json:stream.json',
+  'D:/review/_receipts/neo-review-status?.json',
+  'D:/review/_receipts/neo-review-status*.json',
+  'D:/review/_receipts/neo-review-status|fake.json'
+ ]){
+  denied(x=>{x.runtime_status.recent_receipts=[bad];},'RUNTIME_STATUS_SHAPE_INVALID');
+ }
+});
+test('Windows trailing-dot and trailing-space aliases fail closed even when paths agree',()=>{
+ for(const suffix of ['.',' ']){
+  const x=fixture();
+  x.runtime_status.managed_root='D:/review'+suffix;
+  x.runtime_status.slot_root=x.runtime_status.managed_root+'/neo-review';
+  x.runtime_status.python=x.runtime_status.slot_root+'/venv/Scripts/python.exe';
+  assert.equal(review(x).hold_code,'RUNTIME_STATUS_SHAPE_INVALID');
+  const y=fixture();
+  y.startup_profile.root='D:/LightSpeed/App'+suffix;
+  y.startup_profile.source_files=Object.fromEntries(
+   Object.entries(y.startup_profile.source_files).map(([k,v])=>[k,v.replace('D:/LightSpeed/App/','D:/LightSpeed/App'+suffix+'/')])
+  );
+  assert.equal(review(y).hold_code,'STARTUP_PROFILE_SHAPE_INVALID');
+ }
+});
