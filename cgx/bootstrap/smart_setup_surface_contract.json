@@ -51,8 +51,7 @@
       "controls": [
         "CCC Discover",
         "Qualified installed capabilities",
-        "Requested adapters",
-        "GOT source-resolution indicator"
+        "Requested adapters"
       ],
       "defaults": "Distinguish registered, installed, missing, gated",
       "authority": "capability host and licence"
@@ -158,5 +157,9 @@
     "resume on changed sources",
     "per-family LS GO on/off with independent proof",
     "LOAD and CCC as easy-right-click features"
-  ]
+  ],
+  "transcript_resolution": {
+    "note": "Unverified GOT is a probable Git/GPT/GO transcription ambiguity; not a capability",
+    "product_surface": "Do not display a GOT feature or install option"
+  }
 }
