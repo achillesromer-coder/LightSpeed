@@ -107,6 +107,12 @@ export function planEcoAlignment({novel,known_objects=[],authorised_object_ids=[
   throw Error("INVALID_ECO_SCOPE");
  const allowedIds=new Set(authorised_object_ids),allowedSources=new Set(authorised_source_ids);
  const novelRefs=novel.source_refs.filter(s=>allowedSources.has(s));
+ // Qualify incoming evidence even if there are no authorised known-object matches.
+ // A zero-match result is not proof that the observation or source is complete.
+ const novelChecks=[];
+ completeness(novel,novelChecks);
+ if(!novelRefs.length)add(novelChecks,"EVIDENCE_SOURCE_GAP");
+ if(novelRefs.length<novel.source_refs.length)add(novelChecks,"NOVEL_SOURCE_SCOPE_PARTIAL");
  const seen=new Set(),out=[];
  for(const k of known_objects){
   validateConcept(k);
@@ -130,6 +136,8 @@ export function planEcoAlignment({novel,known_objects=[],authorised_object_ids=[
  return {schema:ECO_ALIGNMENT_SCHEMA,state:"SOURCE_ONLY_ECO_REVIEW",file_space:"Eco.cgx",
   parent:"Cognigrex.cgx",semantic_type:novel.semantic_type,
   candidate_count:out.length,candidates:out.slice(0,max_candidates),
+  novel_qualification_state:novelChecks.length?"REVIEW_REQUIRED":"SCHEMA_QUALIFIED_SOURCE_ONLY",
+  novel_checks:novelChecks,
   incomplete_coverage:out.length>max_candidates,novel_permitted_source_refs:novelRefs,
   distinct_r0_sources_preserved:true,accepted_native_identity:false,db_readback:false,
   object_ids_minted:0,ecological_effect_verified:false,compute_invoked:false,
