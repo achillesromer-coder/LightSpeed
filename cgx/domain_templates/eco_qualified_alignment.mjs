@@ -154,6 +154,12 @@ function completeness(x,checks){
  if(OBSERVATIONS.has(x.semantic_type)){
   // These optional source QA fields must never silently certify an observation.
   if(["provisional","flagged","missing","not_run","untested","pending"].includes(x.qa_flag?.toLowerCase().replace(/[\s-]+/g,"_")))add(checks,"QA_STATE_REQUIRES_REVIEW");
+  // A source-asserted validated sensor QA flag needs traceable instrument and verification references.
+  // References are not proof that calibration or QA succeeded.
+  if(x.semantic_type==="sensor_reading"&&["validated","verified","calibrated","qa_pass","passed"].includes(x.qa_flag?.toLowerCase().replace(/[\s-]+/g,"_"))){
+   if(!good(x.station_instrument_id))add(checks,"QA_VALIDATION_INSTRUMENT_REQUIRED");
+   if(!good(x.calibration_verification_ref))add(checks,"QA_VALIDATION_CALIBRATION_REF_REQUIRED");
+  }
   if(x.missing_data_state&&x.missing_data_state.toLowerCase()!=="observed"){
    add(checks,"MISSING_OR_NONOBSERVED_DATA_STATE");
    if(x.measurement)add(checks,"MISSING_DATA_MEASUREMENT_CONFLICT");
