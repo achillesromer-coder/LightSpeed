@@ -383,3 +383,44 @@ test("unconducted survey cannot support biodiversity comparison",()=>{
  assert.ok(x.novel_checks.includes("OBSERVED_EVIDENCE_WITH_NO_SURVEY"));
 });
 test("malformed proposed comparison rejected",()=>assert.throws(()=>noKnown({...base,survey_comparison:{proposed:"yes"}}),/INVALID_SURVEY_COMPARISON/));
+
+
+// Generic ecological ontology fixtures: no private source, species coordinates or real survey claims.
+test("functional guild without its own identity remains review-only",()=>{
+ const x=planEcoAlignment({novel:{semantic_type:"functional_guild",source_refs:["fixture:source"],evidence_class:"source_asserted"},
+  authorised_source_ids:["fixture:source"]});
+ assert.ok(x.novel_checks.includes("FUNCTIONAL_GUILD_ID_REQUIRED"));
+ assert.equal(x.object_ids_minted,0);
+});
+test("distinct functional guilds never align by label-free source equality",()=>{
+ const a={semantic_type:"functional_guild",functional_guild_id:"fixture:guild-a",source_refs:["fixture:source"],evidence_class:"source_asserted"};
+ const b={...a,object_id:"fixture:known",functional_guild_id:"fixture:guild-b"};
+ const x=planEcoAlignment({novel:a,known_objects:[b],authorised_object_ids:["fixture:known"],authorised_source_ids:["fixture:source"]});
+ assert.ok(x.candidates[0].checks.includes("IDENTITY_DIFFERENCE_FUNCTIONAL_GUILD_ID"));
+ assert.equal(x.candidates[0].auto_merge,false);
+});
+test("functional guild is not a species identity",()=>{
+ const a={semantic_type:"functional_guild",functional_guild_id:"fixture:guild-a",source_refs:["fixture:source"],evidence_class:"source_asserted"};
+ const b={semantic_type:"species",object_id:"fixture:known",taxon_id:"fixture:taxon",source_refs:["fixture:source"],evidence_class:"source_asserted"};
+ const x=planEcoAlignment({novel:a,known_objects:[b],authorised_object_ids:["fixture:known"],authorised_source_ids:["fixture:source"]});
+ assert.equal(x.candidate_count,0);
+});
+test("receiving system needs an independent identity",()=>{
+ const x=planEcoAlignment({novel:{semantic_type:"receiving_system",source_refs:["fixture:source"],evidence_class:"source_asserted"},
+  authorised_source_ids:["fixture:source"]});
+ assert.ok(x.novel_checks.includes("RECEIVING_SYSTEM_ID_REQUIRED"));
+});
+test("different receiving systems remain separate even with shared sources",()=>{
+ const a={semantic_type:"receiving_system",receiving_system_id:"fixture:system-a",source_refs:["fixture:source"],evidence_class:"source_asserted"};
+ const b={...a,object_id:"fixture:known",receiving_system_id:"fixture:system-b"};
+ const x=planEcoAlignment({novel:a,known_objects:[b],authorised_object_ids:["fixture:known"],authorised_source_ids:["fixture:source"]});
+ assert.ok(x.candidates[0].checks.includes("IDENTITY_DIFFERENCE_RECEIVING_SYSTEM_ID"));
+ assert.equal(x.accepted_native_identity,false);
+});
+test("ecological function without identity is held and never implies measured efficacy",()=>{
+ const x=planEcoAlignment({novel:{semantic_type:"ecological_function",source_refs:["fixture:source"],evidence_class:"hypothesised"},
+  authorised_source_ids:["fixture:source"]});
+ assert.ok(x.novel_checks.includes("ECOLOGICAL_FUNCTION_ID_REQUIRED"));
+ assert.equal(x.ecological_effect_verified,false);
+ assert.equal(x.db_readback,false);
+});
