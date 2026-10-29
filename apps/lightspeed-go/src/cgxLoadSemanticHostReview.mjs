@@ -14,6 +14,8 @@ const ID=/^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,199}$/;
 const SECRET=/(?:^|[_-])(secret|token|password|credential|private[_-]?key|authorization|cookie|session|bearer|api[_-]?key)(?:$|[_-])/i;
 const obj=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 const id=x=>typeof x==='string'&&ID.test(x)&&!x.includes('..');
+const qualifiedText=x=>typeof x==='string'&&x.trim().length>0&&x.length<=256&&
+ !/[\u0000-\u001f]/.test(x);
 const falseKeys=(o,keys)=>keys.every(k=>o[k]===false);
 const hold=code=>Object.freeze({schema:SCHEMA,state:'HOLD',hold_code:code,
  native_admitted:false,capability_installed:false,host_authenticated:false,
@@ -139,6 +141,17 @@ export function reviewLoadSemanticHost(input){
      v.selected_object_ids.length!==s.objects.length||
      v.selected_object_ids.some((selected,i)=>selected!==s.objects[i].object_id)||
      !falseKeys(v,['network_fetch','rendered','interactive_execution','semantic_mutation','public_release']))
+     return hold('VIEWPORT_NOT_SOURCE_QUALIFIED');
+  // The LOAD planner cannot mark a source-unavailable focus as VIEW_PLAN_READY.
+  // Independently match its focus evidence and geometry provenance, not just IDs.
+  const focus=byId.get(r.focus_id);
+  if(focus.source_available!==true||focus.source_refs.length===0||
+     !Array.isArray(v.source_refs)||v.source_refs.length!==focus.source_refs.length||
+     v.source_refs.some((ref,i)=>ref!==focus.source_refs[i]))
+     return hold('VIEWPORT_NOT_SOURCE_QUALIFIED');
+  if(v.to==='3d'&&(!obj(focus.geometry)||
+     !qualifiedText(focus.geometry.source_ref)||!qualifiedText(focus.geometry.frame)||
+     !qualifiedText(focus.geometry.units)||v.geometry_ref!==focus.geometry.source_ref))
      return hold('VIEWPORT_NOT_SOURCE_QUALIFIED');
  }else if(v!==undefined&&v!==null)return hold('UNEXPECTED_VIEWPORT_PLAN');
  const op=input.operator_plan;
