@@ -75,6 +75,7 @@ export function reviewNativeEnvelopeHandoff(input = {}) {
       p.child_filespace !== s.filespace ||
       (typeof p.source_mapping_id !== "string" || !MAPPING_ID.test(p.source_mapping_id)) ||
       p.source_mapping_id !== m.mapping_id ||
+      p.mapping_stage !== m.mapping_stage ||
       p.evidence_class !== m.evidence_class ||
       (typeof p.candidate_r0_sha256 !== "string" || !SHA256.test(p.candidate_r0_sha256)) ||
       !Number.isSafeInteger(p.file_bytes) || p.file_bytes < 1 ||
