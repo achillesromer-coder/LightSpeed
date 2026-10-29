@@ -13,7 +13,7 @@ const nodes=[
 const access={authorized_object_ids:['fixture:eco:one'],authorized_source_ids:['fixture:eco:source']};
 const source_envelopes=[{source_id:'fixture:eco:source',sha256:h,version:'fixture-v1',owner:'fixture-owner',rights:'OWNER_PRIVATE',proof_class:'scientific'},
  {source_id:'fixture:romer:private-source',sha256:'b'.repeat(64),version:'secret',owner:'secret',rights:'OWNER_PRIVATE',proof_class:'engineering'}];
-const args={nodes,focus_id:'fixture:eco:one',access,file_space:'Eco.cgx',source_envelopes};
+const args={nodes,focus_id:'fixture:eco:one',access,file_space:'Eco.cgx',source_envelopes,surface:'private'};
 test('one exact child FileSpace and Object_ID, no parent alias or cross-domain leak',()=>{
  const x=inspect(args);assert.equal(x.identity,'fixture:eco:one');assert.equal(x.selected_file_space,'Eco.cgx');
  assert.deepEqual(x.h1.object_ids,['fixture:eco:one']);assert.ok(!JSON.stringify(x).includes('fixture:romer:private'));
@@ -144,4 +144,21 @@ test('cross-Grex authorized halo refuses a sibling spoofed into the wrong child 
  const valid=inspect({...args,budgets,access:accessBoth});
  assert.equal(valid.status,'SOURCE_REVIEW_ONLY');
  assert.deepEqual(valid.h1.object_ids,['fixture:eco:one','fixture:romer:private']);
+});
+
+// #158: a source-only inspector cannot become a public Vite data source via
+// caller-declared PUBLIC_SAFE rights or by omitting the surface selection.
+test('public, omitted and unknown surfaces fail closed without H0-H4 or private provenance',()=>{
+ for(const surface of ['public','untrusted',null]){
+  const x=inspect({...args,surface,source_envelopes:[{...source_envelopes[0],rights:'PUBLIC_SAFE'}]});
+  assert.equal(x.status,'DENIED');
+  assert.equal(x.reason,'PRIVATE_INSPECTOR_SURFACE_REQUIRED');
+  assert.equal(x.public_release,false);
+  assert.equal(x.canonical_mutation,false);
+  assert.ok(!JSON.stringify(x).includes('fixture:eco:source'));
+  assert.ok(!JSON.stringify(x).includes('fixture:romer:private-source'));
+ }
+ const omitted={...args};delete omitted.surface;
+ assert.equal(inspect(omitted).status,'DENIED');
+ assert.equal(inspect(args).status,'SOURCE_REVIEW_ONLY');
 });
