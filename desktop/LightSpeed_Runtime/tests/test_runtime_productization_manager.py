@@ -128,3 +128,31 @@ def test_update_requires_installed_slot(monkeypatch, tmp_path: Path) -> None:
     )
     with pytest.raises(rp.RuntimeProductizationError, match="not installed"):
         rp.manage_runtime_productization("update", slot="alpha", confirmed=True)
+
+
+def test_installer_command_respects_host_execution_policy(monkeypatch, tmp_path: Path) -> None:
+    """Mock subprocess only; verify no policy override or actual installer run."""
+    from types import SimpleNamespace
+
+    _set_root(monkeypatch, tmp_path)
+    fake_script = tmp_path / "installer.ps1"
+    fake_script.write_text("# no execution", encoding="utf-8")
+    monkeypatch.setattr(rp, "INSTALLER", fake_script)
+    observed = []
+
+    def fake_run(command, **kwargs):
+        observed.append((command, kwargs))
+        return SimpleNamespace(returncode=1, stdout="", stderr="policy denied")
+
+    monkeypatch.setattr(rp.subprocess, "run", fake_run)
+    with pytest.raises(rp.RuntimeProductizationError, match="policy denied"):
+        rp._run_installer_process(rp._paths("alpha"), profile="core", action="install")
+
+    assert len(observed) == 1
+    command, options = observed[0]
+    assert command[:2] == ["powershell", "-NoProfile"]
+    assert "-ExecutionPolicy" not in command
+    assert "Bypass" not in command
+    assert command[command.index("-File") + 1] == str(fake_script)
+    assert options["check"] is False
+    assert options["timeout"] == 900
