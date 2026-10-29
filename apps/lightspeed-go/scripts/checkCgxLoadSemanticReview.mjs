@@ -240,3 +240,25 @@ test('viewport budget snapshot cannot substitute source spread ceilings or depth
  denied(x=>{x.viewport_plan.independent_budget.reasoning_depth='audit';},'VIEWPORT_NOT_SOURCE_QUALIFIED');
  denied(x=>{delete x.viewport_plan.independent_budget;},'VIEWPORT_NOT_SOURCE_QUALIFIED');
 });
+
+test('effectful depth claims remain held in source-only LS review',()=>{
+ for(const depth of ['simulate','execute','build','publish','unknown'])
+  denied(x=>{x.spread.budgets.execution_depth=depth;
+    x.viewport_plan.independent_budget.execution_depth=depth;},
+   'UNQUALIFIED_DEPTH_OR_HYDRATION');
+ for(const hydration of ['editor','workstation','distributed','unknown'])
+  denied(x=>{x.spread.budgets.device_hydration=hydration;
+    x.viewport_plan.independent_budget.device_hydration=hydration;},
+   'UNQUALIFIED_DEPTH_OR_HYDRATION');
+ for(const reasoning of ['raw','unknown'])
+  denied(x=>{x.spread.budgets.reasoning_depth=reasoning;
+    x.viewport_plan.independent_budget.reasoning_depth=reasoning;},
+   'UNQUALIFIED_DEPTH_OR_HYDRATION');
+ const x=fixture();x.spread.budgets.execution_depth='propose';
+ x.viewport_plan.independent_budget.execution_depth='propose';
+ x.spread.budgets.device_hydration='projection-lite';
+ x.viewport_plan.independent_budget.device_hydration='projection-lite';
+ assert.equal(review(x).state,'HOST_REVALIDATION_REQUIRED');
+ assert.equal(review(x).host_authenticated,false);
+ assert.equal(review(x).canonical_mutation,false);
+});
