@@ -561,3 +561,66 @@ test("nonfinite projected values are invalid",()=>{
  assert.throws(()=>planEcoAlignment({novel:projectionFixture({estimated_value:Infinity}),known_objects:[],
  authorised_source_ids:["src-a"]}),/INVALID_PROJECTION_ESTIMATE/);
 });
+
+
+// ONT-009 / ONT-019: projection-to-observation validation comparison is source-only.
+// All refs and numbers are synthetic; no field data, predictive skill or ecology benefit asserted.
+const syntheticComparison={
+ proposed:true,observation_ref:"obs:synthetic",observation_source_ref:"src-a",
+ metric_ref:"metric:synthetic",unit:"index",spatial_support_ref:"space:synthetic",
+ temporal_support_ref:"2035",baseline_ref:"baseline:synthetic",
+ method_ref:"method:synthetic",uncertainty_ref:"uncertainty:observed-synthetic",
+ observation_qa_ref:"qa:synthetic",comparison_method_ref:"compare:synthetic",
+ counterevidence_ref:"counter:synthetic"};
+const comparisonFixture=(overrides={})=>({
+ ...projectionFixture({spatial_support_ref:"space:synthetic"}),
+ projection_observation_comparison:{...syntheticComparison,...overrides}});
+test("projection-to-observation validation comparison needs independent observation and QA references",()=>{
+ const x=planEcoAlignment({novel:comparisonFixture({observation_ref:undefined,observation_qa_ref:undefined}),
+  known_objects:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("PROJECTION_COMPARISON_OBSERVATION_REQUIRED"));
+ assert.ok(x.novel_checks.includes("PROJECTION_COMPARISON_OBSERVATION_QA_REQUIRED"));
+ assert.ok(x.novel_checks.includes("PROJECTION_OBSERVATION_COMPARISON_REQUIRES_REVIEW"));
+});
+test("matched synthetic comparison is never an observed ecological outcome",()=>{
+ const x=planEcoAlignment({novel:comparisonFixture(),known_objects:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("PROJECTION_OBSERVATION_COMPARISON_REQUIRES_REVIEW"));
+ assert.equal(x.ecological_effect_verified,false);assert.equal(x.db_readback,false);
+ assert.equal(x.object_ids_minted,0);
+});
+test("metric, units, space, horizon and baseline mismatches remain explicit",()=>{
+ const x=planEcoAlignment({novel:comparisonFixture({
+  metric_ref:"metric:different",unit:"other",spatial_support_ref:"space:different",
+  temporal_support_ref:"2040",baseline_ref:"baseline:different"}),
+  known_objects:[],authorised_source_ids:["src-a"]});
+ for(const f of ["PROJECTION_COMPARISON_METRIC_MISMATCH","PROJECTION_COMPARISON_UNIT_MISMATCH",
+  "PROJECTION_COMPARISON_SPATIAL_SUPPORT_MISMATCH","PROJECTION_COMPARISON_TEMPORAL_SUPPORT_MISMATCH",
+  "PROJECTION_COMPARISON_BASELINE_MISMATCH"])assert.ok(x.novel_checks.includes(f));
+});
+test("comparison cannot infer projection spatial support from observation metadata",()=>{
+ const x=planEcoAlignment({novel:{...projectionFixture(),projection_observation_comparison:syntheticComparison},
+  known_objects:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("PROJECTION_SPATIAL_SUPPORT_REQUIRED_FOR_COMPARISON"));
+});
+test("observation source outside authorised scope is explicitly partial",()=>{
+ const x=planEcoAlignment({novel:comparisonFixture({observation_source_ref:"source:unapproved"}),
+  known_objects:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("NOVEL_COMPARISON_OBSERVATION_SOURCE_SCOPE_PARTIAL"));
+});
+test("distinct observation validation plans are separate candidate variants",()=>{
+ const a=comparisonFixture(),b={...a,object_id:"known:1",
+  projection_observation_comparison:{...syntheticComparison,observation_ref:"obs:other"}};
+ const x=planEcoAlignment({novel:a,known_objects:[b],authorised_object_ids:["known:1"],
+  authorised_source_ids:["src-a"]});
+ assert.ok(x.candidates[0].checks.includes("PROJECTION_OBSERVATION_VALIDATION_DESIGN_DIFFERENT"));
+ assert.equal(x.candidates[0].state,"REVIEW_DIFFERENCE");
+});
+test("malformed projection observation comparison cannot be typed",()=>{
+ assert.throws(()=>planEcoAlignment({novel:comparisonFixture({observation_ref:3}),
+  known_objects:[],authorised_source_ids:["src-a"]}),/INVALID_PROJECTION_OBSERVATION_OBSERVATION_REF/);
+});
+test("projection comparison attached to a field observation is a type conflict",()=>{
+ const x=planEcoAlignment({novel:{...base,projection_observation_comparison:syntheticComparison},
+  known_objects:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("PROJECTION_COMPARISON_TYPE_CONFLICT"));
+});
