@@ -4,10 +4,12 @@
 
 - [Open `Git.cgx` review entry](./Git.cgx) — readable, declarative pointer only. GitHub does **not** natively execute a `.cgx` file.
 - [Transfer + SHA256 ledger](./GIT_CGX_REVIEW_TRANSFER.json) — exact portable package receipts and open gates.
-- Owner-downloadable v0.2 complete Git.CGX source ZIP (30 files, SHA-256 `4a550dad37375000ca17e2f3d70fd2e4c3efb72b8a8e5d85f48066d26870b142`) contains the interactive site itself; the source ZIP is **not uploaded to GitHub** yet.
-- Owner-downloadable static Pages ZIP (14 files, SHA-256 `b971c1c1db256dba9dd2b585d3a23a8cca41e8de0187186191cf35325086a6b8`) is an unsigned public-only build candidate.
+- Owner-downloadable v0.2 complete Git.CGX source ZIP (33 files, SHA-256 `5ac10fa97c0057458f0fa40c46109b8b2265041636a1e973f129a8b0a0c9ff82`) contains the interactive site itself; the source ZIP is **not uploaded to GitHub** yet.
+- Owner-downloadable static Pages ZIP (14 files, SHA-256 `7ede5db6942b6ec81389b88b42aeca0379bdb99f09867d3a07e80366d49daed9`) is an unsigned public-only build candidate.
 
-**Functional scope of source package:** 11 web routes, 32 public-safe component records, semantic graph, R0 metadata/hash, synthetic DataSpace proposals, bounded PrintSpace calculation, Alexandria, Press exports, searchable registry, GitHub source lookup, eight reconciliation dispositions, five noncanonical review-ledger entries, nine release gates. **24/24 local Node tests pass; 11 routes passed Chromium injected-source tests.** Real Pages HTTP/CSP operation is not established.
+**Functional scope of source package:** 11 web routes, 32 public-safe component records, semantic graph, R0 metadata/hash, synthetic DataSpace proposals, bounded PrintSpace calculation, Alexandria, Press exports, searchable registry, GitHub source lookup, eight reconciliation dispositions, five noncanonical review-ledger entries, nine release gates. **27/27 local Node tests pass; 11 routes passed Chromium injected-source tests.** Real Pages HTTP/CSP operation is not established.
+
+**Public source readback:** The portable source now includes a small daily/manual GitHub Actions audit limited to metadata for the two confirmed public repos. It is not a private feed or native handshake and has not run in the target repository.
 
 **Repository reconciliation:** Verified public upstream references: `achillesromer-coder/LightSpeed` and `NCNBOUWER/Raphael`. Their histories, ownership, licences and current consumers are preserved. No repository was archived or deleted. Planned `achillesromer-coder/Git.CGX` was not found in the connected account and connected tool lacks repo creation, so owner action is required.
 
