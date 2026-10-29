@@ -283,6 +283,7 @@ test('S92 durable readback and acceptance audit agree on four exact historical i
   const receipt = JSON.parse(raw.toString('utf8'));
   const audit = json('../domain_templates/s92_domain_children_acceptance_audit_2026-10-04.json');
   const childNames = {romer:'Romer.cgx',eco:'Eco.cgx',emassc:'EMASSC.cgx',lightspeed:'LS.cgx'};
+  const historicalDbrRoots = {"romer":"9dd7c89aa8a86b86c9ed96e42c67454a5bf80d8f0d0017876a664befc9c8e7f0","eco":"8f762bc7ecb02976a51dd8c929f7986ba91a89c4fab3b83eb0755f38d3f8430c","emassc":"e777cbb08a2133a3e0f5356dbfe5f9b60ac497379fddafddbf87f819e07af4c7","lightspeed":"146e56589fa4ee6db60de6721e7d42bb999c6be2ecff408f54c897ff61d20f66"};
   function requireHistoricalOnly(p,a) {
     assert.equal(p.authority.parent_recovery_state,'S92');
     assert.equal(p.authority.candidate_state,'PRE_CANONICAL');
@@ -302,7 +303,7 @@ test('S92 durable readback and acceptance audit agree on four exact historical i
       assert.equal(source.tracked_objects,reviewed.tracked_objects,name);
       assert.match(source.carrier_instance_object_id,/^cgx:local:/);
       assert.match(source.content_root,/^[a-f0-9]{64}$/);
-      assert.match(source.dbr_root,/^[a-f0-9]{64}$/); // Historical packed carrier root only.
+      assert.equal(source.dbr_root,historicalDbrRoots[key]); // Pinned historical value; NOT signed live DBR.
       assert.equal(source.verify,'PASS');
       assert.equal(reviewed.binding_mode,'REFERENCE');
       assert.equal(reviewed.authority_transfer,false);
@@ -317,9 +318,7 @@ test('S92 durable readback and acceptance audit agree on four exact historical i
   assert.throws(() => requireHistoricalOnly(forgedPromotion,audit));
   const alteredChild = structuredClone(receipt);
   alteredChild.outputs.lightspeed.dbr_root = '0'.repeat(64);
-  // A plausible-looking changed DBR root alone is not detectable without an external signed root receipt.
-  assert.notDeepEqual(alteredChild.outputs.lightspeed,receipt.outputs.lightspeed);
-  assert.equal(requireHistoricalOnly(alteredChild,audit),'HISTORICAL_SOURCE_VERIFIED_NATIVE_HOLD');
+  assert.throws(() => requireHistoricalOnly(alteredChild,audit)); // Rejects drift from the pinned historical receipt, not proof of live DBR.
   const forgedBinding = structuredClone(audit);
   forgedBinding.exact_members['LS.cgx'].authority_transfer = true;
   assert.throws(() => requireHistoricalOnly(receipt,forgedBinding));
