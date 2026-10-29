@@ -70,6 +70,16 @@ def _safe_slot(slot: str) -> str:
         raise RuntimeProductizationError(
             "slot must match ^[A-Za-z0-9][A-Za-z0-9_.-]{0,47}$"
         )
+    # Windows device aliases and trailing dots are not distinct filesystem slots.
+    # Reject before constructing any managed path or receipt identifier.
+    if slot.endswith(".") or re.fullmatch(
+        r"(?:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\\..*)?",
+        slot,
+        flags=re.IGNORECASE,
+    ):
+        raise RuntimeProductizationError(
+            "slot uses a Windows-reserved device name or trailing dot"
+        )
     return slot
 
 
