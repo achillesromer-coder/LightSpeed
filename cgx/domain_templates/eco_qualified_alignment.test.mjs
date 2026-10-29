@@ -462,3 +462,52 @@ test("different receiving-system pathway types cannot align",()=>{
 });
 test("same source and target system is a review gate",()=>assert.ok(pathPlan({...pathFixture,target_system_ref:pathFixture.source_system_ref}).novel_checks.includes("RECEIVING_SELF_LINK_REVIEW_REQUIRED")));
 test("invalid pathway kind is rejected",()=>assert.throws(()=>pathPlan({...pathFixture,pathway_kind:"guaranteed_reef_benefit"}),/INVALID_RECEIVING_PATHWAY_KIND/));
+
+
+// Synthetic receiving-system benefit-accounting negatives. No actual reef/catchment impact.
+const benefitFixture={proposed:true,claim_ref:"fixture:claim-1",receiving_system_ref:"fixture:down",
+ accounting_period:"fixture:2026-Q3",metric_id:"fixture:sediment-load",unit:"tonne",
+ baseline_ref:"fixture:baseline",allocation_method_ref:"fixture:allocation",
+ overlap_register_ref:"fixture:overlap-ledger",source_revision_ref:"fixture:rev-1",
+ counterevidence_ref:"fixture:counter",contribution_basis:"hypothesised"};
+const benefitPlan=(b,p=pathFixture)=>planEcoAlignment({
+ novel:{...pathNovel(p),benefit_accounting:b},authorised_source_ids:["fixture:source"]});
+test("benefit accounting without allocation and overlap scope stays held",()=>{
+ const x=benefitPlan({proposed:true,contribution_basis:"hypothesised"});
+ for(const f of ["BENEFIT_CLAIM_REF_REQUIRED","BENEFIT_ACCOUNTING_PERIOD_REQUIRED","BENEFIT_ALLOCATION_METHOD_REQUIRED","BENEFIT_OVERLAP_REGISTER_REQUIRED"])
+  assert.ok(x.novel_checks.includes(f),f);
+ assert.ok(x.novel_checks.includes("BENEFIT_ACCOUNTING_NO_DOUBLE_COUNT_REVIEW_REQUIRED"));
+});
+test("complete source-only accounting references never verify a downstream benefit",()=>{
+ const x=benefitPlan(benefitFixture);
+ assert.ok(x.novel_checks.includes("BENEFIT_ACCOUNTING_NOT_VERIFIED"));
+ assert.equal(x.ecological_effect_verified,false);assert.equal(x.db_readback,false);
+});
+test("observed benefit claim without independent receipt stays held",()=>{
+ const x=benefitPlan({...benefitFixture,contribution_basis:"observed"}, {...pathFixture,outcome_claim:"observed"});
+ assert.ok(x.novel_checks.includes("BENEFIT_INDEPENDENT_RECEIPT_REQUIRED"));
+ assert.ok(x.novel_checks.includes("BENEFIT_OBSERVED_ATTRIBUTION_REQUIRES_INDEPENDENT_REVIEW"));
+});
+test("different accounting periods cannot silently align even with equal claimed values",()=>{
+ const a={...pathNovel(pathFixture),benefit_accounting:{...benefitFixture,reported_value:5}};
+ const b={...a,object_id:"fixture:known",benefit_accounting:{...benefitFixture,accounting_period:"fixture:2026-Q4",reported_value:5}};
+ const x=planEcoAlignment({novel:a,known_objects:[b],authorised_object_ids:["fixture:known"],authorised_source_ids:["fixture:source"]});
+ assert.ok(x.candidates[0].checks.includes("BENEFIT_ACCOUNTING_CLAIM_SCOPE_OR_ATTRIBUTION_DIFFERENT"));
+ assert.equal(x.candidates[0].auto_merge,false);
+});
+test("benefit ledger must agree with receiving pathway target",()=>{
+ const x=benefitPlan({...benefitFixture,receiving_system_ref:"fixture:other"});
+ assert.ok(x.novel_checks.includes("BENEFIT_RECEIVING_SYSTEM_CONFLICT"));
+});
+test("benefit ledger without a proposed receiving pathway remains held",()=>{
+ const x=planEcoAlignment({novel:{semantic_type:"receiving_system",receiving_system_id:"fixture:down",source_refs:["fixture:source"],
+ evidence_class:"hypothesised",benefit_accounting:benefitFixture},authorised_source_ids:["fixture:source"]});
+ assert.ok(x.novel_checks.includes("BENEFIT_ACCOUNTING_PATHWAY_REQUIRED"));
+});
+test("modelled benefit cannot be relabelled observed by the accounting envelope",()=>{
+ const x=benefitPlan({...benefitFixture,contribution_basis:"observed"});
+ assert.ok(x.novel_checks.includes("BENEFIT_OUTCOME_BASIS_CONFLICT"));
+});
+test("invalid accounting evidence class is rejected",()=>{
+ assert.throws(()=>benefitPlan({...benefitFixture,contribution_basis:"verified_reef_recovery"}),/INVALID_BENEFIT_ACCOUNTING/);
+});
