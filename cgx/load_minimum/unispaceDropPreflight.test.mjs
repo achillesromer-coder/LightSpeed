@@ -38,7 +38,8 @@ test('filename traversal, MIME mismatch, oversized, zero or fractional size hold
 });
 test('source collision holds; exact same source identity is a no-op',()=>{
  const exact=[{source_id:source.source_id,sha256:source.sha256,version:source.version,
-  owner:source.owner,rights:source.rights,proof_class:source.proof_class}];
+  owner:source.owner,rights:source.rights,proof_class:source.proof_class,
+  object_id:target.object_id,file_space:target.file_space}];
  assert.equal(plan({...args,existing_sources:exact}).status,'NOOP_REVIEW');
  const conflict=[{source_id:source.source_id,sha256:'b'.repeat(64)}];
  assert.equal(plan({...args,existing_sources:conflict}).reason,'SOURCE_IDENTITY_COLLISION');
@@ -56,7 +57,8 @@ test('offline preflight retains metadata-only hold and no network hydration',()=
 // A same-byte digest is insufficient to collapse distinct R0 versions or grants.
 test('same hash requires full version owner rights and proof-class equality before NOOP',()=>{
  const exact={source_id:source.source_id,sha256:source.sha256,version:source.version,
-  owner:source.owner,rights:source.rights,proof_class:source.proof_class};
+  owner:source.owner,rights:source.rights,proof_class:source.proof_class,
+  object_id:target.object_id,file_space:target.file_space};
  const partial=plan({...args,existing_sources:[{source_id:source.source_id,sha256:source.sha256}]});
  assert.equal(partial.status,'HOLD');
  assert.equal(partial.reason,'EXISTING_SOURCE_IDENTITY_UNQUALIFIED');noEffects(partial);
@@ -69,4 +71,26 @@ test('same hash requires full version owner rights and proof-class equality befo
  }
  const matched=plan({...args,existing_sources:[exact]});
  assert.equal(matched.status,'NOOP_REVIEW');noEffects(matched);
+});
+
+test('same source identity in another child or Object_ID cannot silently NOOP',()=>{
+ const exact={source_id:source.source_id,sha256:source.sha256,version:source.version,
+  owner:source.owner,rights:source.rights,proof_class:source.proof_class,
+  object_id:target.object_id,file_space:target.file_space};
+ for(const prior of [
+  {...exact,file_space:'Romer.cgx'},
+  {...exact,object_id:'fixture:eco:another-object'}
+ ]){
+  const x=plan({...args,existing_sources:[prior]});
+  assert.equal(x.status,'HOLD');
+  assert.equal(x.reason,'EXISTING_REFERENCE_SCOPE_COLLISION');
+  assert.ok(!JSON.stringify(x).includes(source.source_id));
+  noEffects(x);
+ }
+ const legacy={...exact};delete legacy.object_id;delete legacy.file_space;
+ const x=plan({...args,existing_sources:[legacy]});
+ assert.equal(x.status,'HOLD');
+ assert.equal(x.reason,'EXISTING_REFERENCE_SCOPE_UNQUALIFIED');
+ noEffects(x);
+ assert.equal(plan({...args,existing_sources:[exact]}).status,'NOOP_REVIEW');
 });
