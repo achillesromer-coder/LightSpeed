@@ -20,10 +20,17 @@ test('cross-Grex FileSpace impersonation and missing scope deny without source d
   const x=plan(a);assert.equal(x.status,'HOLD');assert.ok(!JSON.stringify(x).includes(source.source_id));noEffects(x);
  }
 });
-test('private source never enters public static even with caller ACL list',()=>{
+test('public source alone cannot promote a private or unqualified target Object_ID',()=>{
  const x=plan({...args,surface:'public'});assert.equal(x.reason,'PRIVATE_SOURCE_PUBLIC_BOUNDARY');noEffects(x);
- const y=plan({...args,surface:'public',source:{...source,rights:'PUBLIC_SAFE'}});
- assert.equal(y.status,'REVIEW_CANDIDATE');assert.equal(y.public_release,false);
+ for(const targetRights of [undefined,'OWNER_PRIVATE','UNKNOWN','LICENSE_RESTRICTED']){
+  const y=plan({...args,surface:'public',target:{...target,rights:targetRights},source:{...source,rights:'PUBLIC_SAFE'}});
+  assert.equal(y.status,'HOLD');assert.equal(y.reason,'TARGET_PUBLIC_RIGHTS_UNVERIFIED');
+  assert.ok(!JSON.stringify(y).includes(source.source_id));noEffects(y);
+ }
+ // Both declarations only permit review; they do not establish real ACL or public release.
+ const declared=plan({...args,surface:'public',target:{...target,rights:'PUBLIC_SAFE'},source:{...source,rights:'PUBLIC_SAFE'}});
+ assert.equal(declared.status,'REVIEW_CANDIDATE');assert.equal(declared.acl_verified,false);
+ assert.equal(declared.public_release,false);noEffects(declared);
 });
 test('unknown or restricted rights hold; creative remains distinct from scientific',()=>{
  for(const r of ['UNKNOWN','LICENSE_RESTRICTED'])assert.equal(plan({...args,source:{...source,rights:r}}).status,'HOLD');
