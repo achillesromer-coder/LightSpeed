@@ -89,3 +89,24 @@ test("case-varied raw geometry keys are also review-gated",()=>{
  const x=run({...base,GeoJSON:{type:"Point",coordinates:[153.1,-27.5]}});
  assert.ok(x.checks.includes("RAW_SPATIAL_COORDINATES_NOT_ACCEPTED_IN_SOURCE_ONLY_BRIDGE"));
 });
+
+test("nested geometry under metadata is review-gated, not silently treated as a safe site label",()=>{
+ const x=run({...base,metadata:{sampling:{siteGeometry:{type:"Point",coordinates:[12.34,56.78]}}}});
+ assert.ok(x.checks.includes("RAW_SPATIAL_COORDINATES_NOT_ACCEPTED_IN_SOURCE_ONLY_BRIDGE"));
+ assert.equal(x.geometry_emitted,false);
+});
+test("array-wrapped and camel-case coordinate aliases remain spatially sensitive",()=>{
+ const x=run({...base,details:[{context:{GPSLocation:{lat:12.34,lng:56.78}}}]});
+ assert.ok(x.checks.includes("RAW_SPATIAL_COORDINATES_NOT_ACCEPTED_IN_SOURCE_ONLY_BRIDGE"));
+});
+test("oversized or deeply nested metadata fails closed to explicit spatial review",()=>{
+ let payload={safe:"synthetic"};for(let i=0;i<12;i++)payload={child:payload};
+ const x=run({...base,metadata:payload});
+ assert.ok(x.checks.includes("SPATIAL_PAYLOAD_REVIEW_LIMIT_EXCEEDED"));
+ assert.equal(x.state,"REVIEW_REQUIRED");
+});
+test("ordinary nested nonspatial synthetic metadata does not imply observed evidence",()=>{
+ const x=run({...base,metadata:{weather:{quality:"synthetic",method:"example"}}});
+ assert.equal(x.state,"SCHEMA_BRIDGE_CANDIDATE_ONLY");
+ assert.equal(x.field_observation_verified,false);
+});
