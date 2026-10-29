@@ -1,97 +1,84 @@
 {
-  "schema": "GIT-CGX-REVIEW-TRANSFER/0.1",
-  "date": "2026-10-29",
-  "requested_target_repository": "Git.CGX",
-  "target_repository_created": false,
-  "staging_branch": "review/git-cgx-public-base-20261029",
-  "staging_mode": "SOURCE_REVIEW_HANDOFF_ONLY",
-  "source_authority": "ORIGINAL_PUBLIC_SYNTHETIC_CODE",
-  "root": "cgx:root:cognigrex",
-  "release_class": "PUBLIC_SYNTHETIC_REVIEW_ONLY",
-  "new_technical_authority": false,
-  "canonical_admission": false,
-  "host_execution": false,
-  "external_url_status": "NOT_HOSTED",
-  "native_peer_handshake": false,
-  "static_ci_handshake": "NODE_TESTS_ALLOWLIST_HASHES",
-  "tested": {
-    "node_source_tests": "12/12_PASS",
-    "chromium_interactions": "8_routes_and_simulated_FSDSPress",
-    "mobile_390px_overflow": "PASS",
-    "unhandled_js_exceptions": 0
+  "schema": "GIT-CGX-REVIEW-TRANSFER/0.2",
+  "as_of": "2026-10-29",
+  "authority": "SOURCE_REVIEW_ONLY_NOT_NATIVE_DBR",
+  "root_semantic_reference": "cgx:root:cognigrex",
+  "new_repository": "achillesromer-coder/Git.CGX",
+  "new_repository_status": "NOT_VERIFIED_CREATED",
+  "target_repository_activation_owner": "REPOSITORY_ADMIN",
+  "existing_repositories_preserved": true,
+  "legacy_repository_retirement": "MIGRATION_PARITY_AND_OWNER_APPROVAL_HOLD",
+  "handoff_branch": "review/git-cgx-public-base-20261029",
+  "site_source_in_this_branch": "MANIFEST_ONLY_NOT_FULL_SOURCE",
+  "package_disposition": "OWNER_DOWNLOADABLE_PORTABLE_REVIEW_SOURCE",
+  "release_class": "PUBLIC_REFERENCE_ONLY",
+  "latest": {
+    "version": "0.2.0",
+    "source_archive": {
+      "file": "Git.CGX_v0.2.0_Source_Repository.zip",
+      "sha256": "4a550dad37375000ca17e2f3d70fd2e4c3efb72b8a8e5d85f48066d26870b142",
+      "bytes": 47474,
+      "entries": 30
+    },
+    "static_archive": {
+      "file": "Git.CGX_v0.2.0_Static_Web.zip",
+      "sha256": "b971c1c1db256dba9dd2b585d3a23a8cca41e8de0187186191cf35325086a6b8",
+      "bytes": 27921,
+      "entries": 14
+    },
+    "test_results": {
+      "node": "24/24 PASS",
+      "browser": "11 routes in Chromium injected-source harness, mobile no horizontal overflow",
+      "real_pages_http": "NOT_VERIFIED"
+    },
+    "surface": {
+      "web_routes": 11,
+      "public_components": 32,
+      "review_decisions": 5,
+      "resolution_items": 8,
+      "release_gates": 9,
+      "github_repo_entries": 3,
+      "verified_existing_public_repos": 2,
+      "native_accepted": 0,
+      "private_feed": "NOT_IMPLEMENTED"
+    },
+    "entry": "Git.cgx",
+    "web_entry": "index.html",
+    "build": "npm run check",
+    "github_pages": "MANUAL_OWNER_GATED"
   },
-  "packages": [
-    {
-      "name": "Git.CGX_v0.1.0_Public_Review_Repository.zip",
-      "sha256": "2716ae439f4de0695d7b92a4fb4bf9ab73e843dfb25a9b79bdfa3fee1e2447ab",
-      "bytes": 40914,
-      "entries": 20
-    },
-    {
-      "name": "Git.CGX_v0.1.0_Public_Static_Only.zip",
-      "sha256": "f0718081d384314ef3be7f56cee781ebf462686121244a6bddbc5edaf078a3f0",
-      "bytes": 15089,
-      "entries": 5
-    }
+  "original": {
+    "source_sha256": "2716ae439f4de0695d7b92a4fb4bf9ab73e843dfb25a9b79bdfa3fee1e2447ab",
+    "release": "0.1.0"
+  },
+  "do_not_publish": [
+    "GPT export source bodies",
+    "CGX native carriers or signed authority",
+    "Private internal Vite Objects assets",
+    "Credentials, session tokens, local source paths",
+    "Unreleased material or copyright-controlled works"
   ],
-  "source_modules": [
-    "index.html",
-    "assets.css",
-    "app.js",
-    "data/catalogue.js",
-    "scripts/build.mjs",
-    "tests/public.test.mjs",
-    ".github/workflows/static-review.yml"
+  "owners": {
+    "public_product": "UniSpace",
+    "native_root": "Cognigrex",
+    "runtime": "Neo / LightSpeed",
+    "rights": "Achilles",
+    "ecology": "Athene",
+    "science": "Raphael"
+  },
+  "requirements": [
+    "Create new Git.CGX repository with authorized owner rights.",
+    "Transfer 30 exact source files from portable reviewed ZIP; no runner auto-access to conversation attachments.",
+    "Validate Node source tests and source SHA-256 in GitHub CI.",
+    "Owner approve release and enable Actions Pages, then test actual deployment/private-byte checks.",
+    "For legacy repo retirement, require full history, ACL/IP/licence and consumer parity plus owner sign-off. No destruction.",
+    "For private feed, implement an independent authenticated, rights-reviewed server-side public aggregate export; do not embed private bytes in static assets."
   ],
-  "routes": [
-    "overview",
-    "graph",
-    "filespace",
-    "dataspace",
-    "printspace",
-    "alexandria",
-    "press",
-    "status"
-  ],
-  "public_only": [
-    "Synthetic portfolio summaries",
-    "Qualified links to reviewed public contracts",
-    "Original standalone review code"
-  ],
-  "excluded": [
-    "Private CGX carriers",
-    "GPT raw shards",
-    "Internal review meshes",
-    "Credentials",
-    "Live DBR roots",
-    "Owner account/session tokens",
-    "Native host executors"
-  ],
-  "next_actions": [
-    {
-      "owner": "Owner/GitHub admin",
-      "description": "Create empty public Git.CGX repository and enable Pages from Actions after publication/rights approval",
-      "gate": "NEW_REPO_NOT_CREATED"
-    },
-    {
-      "owner": "UniSpace",
-      "description": "Transfer exact public review source from owner-approved package into new repo and independently hash/read back",
-      "gate": "SOURCE_TRANSFER_PENDING"
-    },
-    {
-      "owner": "Neo",
-      "description": "Keep GitHub CI/release handshake separate from native LS and signed node/DBR transport",
-      "gate": "NATIVE_APPROVAL_SEPARATE"
-    },
-    {
-      "owner": "Achilles",
-      "description": "Classify publication/licence and avoid private asset #158 transfer",
-      "gate": "PUBLIC_PRIVATE_BOUNDARY"
-    }
-  ],
-  "statements": [
-    "No merger to main requested.",
-    "No developer can infer installation from source CI.",
-    "The source package is available as a ChatGPT downloadable attachment in the owner's conversation, not automatically available to a GitHub runner."
+  "related": [
+    "https://github.com/achillesromer-coder/LightSpeed/pull/174",
+    "https://github.com/achillesromer-coder/LightSpeed/pull/188",
+    "https://github.com/achillesromer-coder/LightSpeed/issues/158",
+    "https://github.com/achillesromer-coder/LightSpeed/issues/161",
+    "https://github.com/achillesromer-coder/LightSpeed/pull/206"
   ]
 }
