@@ -40,6 +40,13 @@ export function reviewEcoObservationShowcase({record,authorised_source_refs=[],p
    if(record[field]!==undefined&&!ref(record[field]))throw Error("INVALID_ECO_MINT_FIELD_"+field.toUpperCase());
  }
  const checks=[];
+ // Raw spatial coordinates are not accepted by this source-only public showcase bridge.
+ // A location label is not validated geometry; preserve precise locations in protected R0.
+ const rawSpatialKeys=new Set(["latitude","longitude","lat","lon","lng","coordinates",
+  "geometry","geojson","wkt","gps","precise_location","site_geometry",
+  "location_geometry","sensitive_coordinates","raw_geometry"]);
+ if(Object.keys(record).some(k=>rawSpatialKeys.has(k.toLowerCase())))
+  add(checks,"RAW_SPATIAL_COORDINATES_NOT_ACCEPTED_IN_SOURCE_ONLY_BRIDGE");
  for(const [field,flag] of [["taxon","TAXON_REFERENCE_REQUIRED"],["place","PLACE_REFERENCE_REQUIRED"],
   ["method","METHOD_REFERENCE_REQUIRED"],["source_provenance","SOURCE_PROVENANCE_REQUIRED"]])
   if(!ref(record[field]))add(checks,flag);
