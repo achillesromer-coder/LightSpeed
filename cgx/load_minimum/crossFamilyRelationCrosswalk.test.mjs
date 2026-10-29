@@ -276,3 +276,51 @@ test('S92 historical review cannot be promoted by altered metadata or fabricated
   fakeCanonical.durable_candidate.state='CANONICAL';
   assert.throws(()=>requireCandidateOnly(fakeCanonical));
 });
+
+test('S92 durable readback and acceptance audit agree on four exact historical instances without native promotion', () => {
+  const raw = read('../domain_templates/s92_domain_children_persistence_verification_2026-10-04.json');
+  assert.equal(gitBlob(raw),'44285b9f26bc84e6438c9ab6a133cc69fbe922bb');
+  const receipt = JSON.parse(raw.toString('utf8'));
+  const audit = json('../domain_templates/s92_domain_children_acceptance_audit_2026-10-04.json');
+  const childNames = {romer:'Romer.cgx',eco:'Eco.cgx',emassc:'EMASSC.cgx',lightspeed:'LS.cgx'};
+  function requireHistoricalOnly(p,a) {
+    assert.equal(p.authority.parent_recovery_state,'S92');
+    assert.equal(p.authority.candidate_state,'PRE_CANONICAL');
+    assert.equal(p.authority.promotion_performed,false);
+    assert.equal(p.authority.fresh_acceptance_required,true);
+    assert.equal(a.recommendation.promotion_performed,false);
+    assert.equal(p.durable_package.sha256,a.durable_candidate.package_sha256);
+    assert.equal(p.durable_package.drive_id,a.durable_candidate.drive_id);
+    assert.equal(p.durable_package.size_bytes,a.durable_candidate.size_bytes);
+    assert.equal(p.authority.parent_sha256,a.parent_recovery.sha256);
+    same(sorted(Object.keys(p.outputs)),sorted(Object.keys(childNames)));
+    for (const [key,name] of Object.entries(childNames)) {
+      const source = p.outputs[key], reviewed = a.exact_members[name];
+      assert.equal(source.member,name);
+      assert.equal(source.sha256,reviewed.sha256,name);
+      assert.equal(source.semantic_object_id,reviewed.semantic_object_id,name);
+      assert.equal(source.tracked_objects,reviewed.tracked_objects,name);
+      assert.match(source.carrier_instance_object_id,/^cgx:local:/);
+      assert.match(source.content_root,/^[a-f0-9]{64}$/);
+      assert.match(source.dbr_root,/^[a-f0-9]{64}$/); // Historical packed carrier root only.
+      assert.equal(source.verify,'PASS');
+      assert.equal(reviewed.binding_mode,'REFERENCE');
+      assert.equal(reviewed.authority_transfer,false);
+    }
+    assert.equal(p.outputs.lightspeed.semantic_object_id,a.exact_members['LS.cgx'].semantic_object_id);
+    assert.equal(a.exact_members['LS.cgx'].parent_semantic_object_id,a.exact_members['EMASSC.cgx'].semantic_object_id);
+    return 'HISTORICAL_SOURCE_VERIFIED_NATIVE_HOLD';
+  }
+  assert.equal(requireHistoricalOnly(receipt,audit),'HISTORICAL_SOURCE_VERIFIED_NATIVE_HOLD');
+  const forgedPromotion = structuredClone(receipt);
+  forgedPromotion.authority.promotion_performed = true;
+  assert.throws(() => requireHistoricalOnly(forgedPromotion,audit));
+  const alteredChild = structuredClone(receipt);
+  alteredChild.outputs.lightspeed.dbr_root = '0'.repeat(64);
+  // A plausible-looking changed DBR root alone is not detectable without an external signed root receipt.
+  assert.notDeepEqual(alteredChild.outputs.lightspeed,receipt.outputs.lightspeed);
+  assert.equal(requireHistoricalOnly(alteredChild,audit),'HISTORICAL_SOURCE_VERIFIED_NATIVE_HOLD');
+  const forgedBinding = structuredClone(audit);
+  forgedBinding.exact_members['LS.cgx'].authority_transfer = true;
+  assert.throws(() => requireHistoricalOnly(receipt,forgedBinding));
+});
