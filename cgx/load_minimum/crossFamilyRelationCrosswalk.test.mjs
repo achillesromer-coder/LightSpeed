@@ -147,3 +147,81 @@ test('negative mutations fail: missing relation, invented declaration, forged au
   const forgedSource = clone(); forgedSource.source_snapshots[0].git_blob = '0'.repeat(40);
   assert.notEqual(gitBlob(read(sourceFiles.romer)),forgedSource.source_snapshots[0].git_blob);
 });
+
+
+test('inverse fan-in remains a typed ambiguity requiring explicit source-pinned cardinality evidence', () => {
+  const decomposition = sources.romer.families.decomposition;
+  const incoming = new Map();
+  for (const declaration of decomposition) {
+    if (!declaration.inverse) continue;
+    const forward = incoming.get(declaration.inverse) ?? [];
+    forward.push(declaration.id);
+    incoming.set(declaration.inverse,forward);
+  }
+  const ambiguous = [...incoming].filter(([,forward]) => new Set(forward).size > 1);
+  same(ambiguous.map(([target]) => target),['COMPONENT_OF']);
+  same(sorted(incoming.get('COMPONENT_OF')),['COMPOSED_OF','HAS_COMPONENT']);
+  // This is a source declaration fan-in, NOT an accepted cardinality or inverse equivalence.
+  const romerBlob = delta.source_snapshots.find(s => s.source === 'romer').git_blob;
+  function requireExplicitReviewEvidence(proof) {
+    assert.equal(proof?.source_git_blob,romerBlob);
+    assert.equal(proof?.inverse_target,'COMPONENT_OF');
+    same(sorted(proof?.forward_types ?? []),sorted(incoming.get('COMPONENT_OF')));
+    assert.equal(proof?.cardinality,'MANY_TO_ONE_DECLARATIONS');
+    assert.equal(proof?.canonical_object_id,null);
+    assert.equal(proof?.native_dbr_readback,null);
+    return 'SOURCE_REVIEW_ONLY';
+  }
+  assert.throws(() => requireExplicitReviewEvidence({inverse_target:'COMPONENT_OF',forward_types:['HAS_COMPONENT']}));
+  assert.throws(() => requireExplicitReviewEvidence({source_git_blob:'0'.repeat(40),inverse_target:'COMPONENT_OF',forward_types:['COMPOSED_OF','HAS_COMPONENT'],cardinality:'MANY_TO_ONE_DECLARATIONS'}));
+  assert.equal(requireExplicitReviewEvidence({
+    source_git_blob:romerBlob,inverse_target:'COMPONENT_OF',
+    forward_types:['COMPOSED_OF','HAS_COMPONENT'],cardinality:'MANY_TO_ONE_DECLARATIONS',
+    canonical_object_id:null,native_dbr_readback:null
+  }),'SOURCE_REVIEW_ONLY');
+});
+
+test('temporal and spatial crosswalks require source-specific fields and cannot inherit shared qualifiers', () => {
+  const sharedOptional = sources.shared.relation_record.optional;
+  for (const key of ['valid_from','valid_to','time_ref','spatial_ref','geometry_ref']) {
+    assert.ok(sharedOptional.includes(key));
+  }
+  const romerQualifiers = sources.romer.common_qualifiers;
+  const ecoQualifiers = sources.eco.common_qualifiers;
+  for (const key of ['effective_from','effective_to']) assert.ok(romerQualifiers.includes(key));
+  for (const key of ['timestamp','site_id','geometry_ref']) assert.ok(ecoQualifiers.includes(key));
+  assert.equal(romerQualifiers.includes('valid_from'),false);
+  assert.equal(ecoQualifiers.includes('valid_from'),false);
+  assert.equal(romerQualifiers.includes('spatial_ref'),false);
+  // No source asserts that effective_from == valid_from or timestamp == time_ref.
+  const sourceBlob = Object.fromEntries(delta.source_snapshots.map(s => [s.source,s.git_blob]));
+  function requireExplicitTypedBridge(proof,dimension,source,sourceField,sharedField) {
+    assert.equal(proof?.dimension,dimension);
+    assert.equal(proof?.source,source);
+    assert.equal(proof?.source_git_blob,sourceBlob[source]);
+    assert.equal(proof?.shared_git_blob,sourceBlob.shared);
+    assert.equal(proof?.source_field,sourceField);
+    assert.equal(proof?.shared_field,sharedField);
+    assert.ok(typeof proof?.frame === 'string' && proof.frame.length > 0);
+    assert.ok(typeof proof?.configuration_ref === 'string' && proof.configuration_ref.length > 0);
+    assert.ok(typeof proof?.evidence_ref === 'string' && proof.evidence_ref.length > 0);
+    assert.equal(proof?.canonical_object_id,null);
+    assert.equal(proof?.native_dbr_readback,null);
+    return 'SOURCE_REVIEW_ONLY';
+  }
+  const temporal = {dimension:'temporal',source:'romer',source_git_blob:sourceBlob.romer,
+    shared_git_blob:sourceBlob.shared,source_field:'effective_from',shared_field:'valid_from',
+    canonical_object_id:null,native_dbr_readback:null};
+  assert.throws(() => requireExplicitTypedBridge(temporal,'temporal','romer','effective_from','valid_from'));
+  assert.throws(() => requireExplicitTypedBridge({...temporal,frame:'UTC',configuration_ref:'synthetic',evidence_ref:'synthetic',source_git_blob:'0'.repeat(40)},'temporal','romer','effective_from','valid_from'));
+  const spatial = {dimension:'spatial',source:'eco',source_git_blob:sourceBlob.eco,
+    shared_git_blob:sourceBlob.shared,source_field:'geometry_ref',shared_field:'spatial_ref',
+    canonical_object_id:null,native_dbr_readback:null};
+  assert.throws(() => requireExplicitTypedBridge(spatial,'spatial','eco','geometry_ref','spatial_ref'));
+  for (const relationId of ['PRECEDES','TARGETS']) {
+    const candidate = delta.new_overlap_candidates.find(c => c.relation_id === relationId);
+    assert.equal(candidate.semantic_equivalence,'UNDETERMINED');
+    assert.equal(candidate.candidate_owner_qualified,false);
+    assert.equal(candidate.canonical_object_id,null);
+  }
+});
