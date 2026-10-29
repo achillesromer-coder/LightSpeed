@@ -6,7 +6,7 @@
   "planned_web_entry": "index.html",
   "status": "FULL_PORTABLE_SOURCE_READY_TARGET_REPO_NOT_CREATED",
   "source_release": "Git.CGX_LIVE_Source_Repository.zip",
-  "source_sha256": "6a6ac0db808da5b0c4b1463b552bfd8e97861cf095c7ec899fab5df410b95f7f",
+  "source_sha256": "118367a223320eedb56b490a686ab4b648bd678f5b690376eece6c92199667f4",
   "static_release": "Git.CGX_LIVE_Public_Web.zip",
   "static_sha256": "2175af87dd2316ab1810b5898bc6f2c84dc37158c895e9a4e69bafea84afad53",
   "review_components": 32,
