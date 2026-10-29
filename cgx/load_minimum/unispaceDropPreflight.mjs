@@ -39,7 +39,17 @@ export function planUniSpaceDropPreflight({target,file,source,access,existing_so
  const matching=existing_sources.filter(x=>x.source_id===source.source_id);
  if(matching.length>1||matching.some(x=>x.sha256.toLowerCase()!==source.sha256.toLowerCase()))
   return result('SOURCE_IDENTITY_COLLISION');
- if(matching.length===1)return result('EXISTING_REFERENCE_NO_DUPLICATE','NOOP_REVIEW');
+ if(matching.length===1){
+  // A matching digest alone does not prove that two observations, revisions,
+  // rights grants or proof classes are the same qualified R0 source.
+  // Legacy id+hash hints cannot authorize a duplicate-suppression decision.
+  const prior=matching[0];
+  if(!label(prior.version)||!label(prior.owner)||!rights.has(prior.rights)||!classes.has(prior.proof_class))
+   return result('EXISTING_SOURCE_IDENTITY_UNQUALIFIED');
+  if(prior.version!==source.version||prior.owner!==source.owner||prior.rights!==source.rights||prior.proof_class!==source.proof_class)
+   return result('SOURCE_IDENTITY_COLLISION');
+  return result('EXISTING_REFERENCE_NO_DUPLICATE','NOOP_REVIEW');
+ }
  if(offline)return result('OFFLINE_METADATA_ONLY');
  return {...result('HOST_AND_DBR_REVALIDATION_REQUIRED','REVIEW_CANDIDATE'),
   target:{object_id:target.object_id,file_space:target.file_space,domain:target.domain},
