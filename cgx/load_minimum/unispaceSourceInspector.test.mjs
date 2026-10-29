@@ -128,3 +128,20 @@ test('known Grex domain cannot be impersonated by a different child FileSpace',(
  assert.equal(valid.admission_stage,'R3_VIEW_PROPOSAL');
  assert.equal(valid.host_authenticated,false);
 });
+
+
+test('cross-Grex authorized halo refuses a sibling spoofed into the wrong child FileSpace',()=>{
+ const budgets={max_cross_domains:1,max_cross_edges:1,max_hops:1};
+ const accessBoth={authorized_object_ids:['fixture:eco:one','fixture:romer:private'],
+  authorized_source_ids:['fixture:eco:source','fixture:romer:private-source']};
+ const spoofed=[nodes[0],{...nodes[1],file_space:'Eco.cgx'}];
+ const denied=inspect({...args,nodes:spoofed,budgets,access:accessBoth});
+ assert.equal(denied.status,'DENIED');
+ assert.equal(denied.reason,'CHILD_FILESPACE_SCOPE_CONFLICT');
+ assert.equal(denied.canonical_mutation,false);
+ assert.equal(denied.public_release,false);
+ assert.ok(!JSON.stringify(denied).includes('fixture:romer:private'));
+ const valid=inspect({...args,budgets,access:accessBoth});
+ assert.equal(valid.status,'SOURCE_REVIEW_ONLY');
+ assert.deepEqual(valid.h1.object_ids,['fixture:eco:one','fixture:romer:private']);
+});
