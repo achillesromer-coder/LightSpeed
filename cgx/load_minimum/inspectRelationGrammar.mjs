@@ -72,7 +72,9 @@ export function inspectRelationGrammar(domainRegistry, sharedQualifier) {
   }
   return {
     stage: 'SOURCE_REVIEW_ONLY',
-    status: issues.length ? 'HOLD' : 'SOURCE_CONTRACT_CHECK_ONLY',
+    // Unresolved lexical reuse is a separate owner/identity gate even if both schemas parse cleanly.
+    status: (issues.length || crosswalk_candidates.length) ? 'HOLD' : 'SOURCE_CONTRACT_CHECK_ONLY',
+    unresolved_crosswalk_count: crosswalk_candidates.length,
     issues,
     crosswalk_candidates,
     relation_declarations: [...occurrences.values()].reduce((n, group) => n + group.length, 0),
