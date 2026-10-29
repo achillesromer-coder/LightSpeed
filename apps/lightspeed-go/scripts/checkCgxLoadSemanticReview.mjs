@@ -190,6 +190,7 @@ test('valid two-hop directed spread remains review-only, not host authority',()=
   {from:'fixture:ls:root',to:'fixture:ls:hop0',relation:'HAS_CHILD'},
   {from:'fixture:ls:hop0',to:'fixture:ls:hop1',relation:'HAS_CHILD'}
  ];
+ x.viewport_plan.selected_object_ids=x.spread.objects.map(o=>o.object_id);
  const y=review(x);
  assert.equal(y.state,'HOST_REVALIDATION_REQUIRED');
  assert.equal(y.native_admitted,false);
