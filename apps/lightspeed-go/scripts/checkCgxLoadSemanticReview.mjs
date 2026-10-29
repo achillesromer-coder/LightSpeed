@@ -18,7 +18,7 @@ function fixture(mode='viewport'){
   },
   spread:{
    schema:'LOAD-SEMANTIC-SPREAD-PLAN/0.1',status:'REVIEW_ONLY',focus_id:id,
-   objects:[{object_id:id,domain:'lightspeed',source_refs:['fixture:source']}],
+   objects:[{object_id:id,domain:'lightspeed',source_refs:['fixture:source'],source_available:true}],
    edges:[],frontier:[],source_ref_count:1,budgets:{...ceilings,reasoning_depth:'standard',
      device_hydration:'reader',execution_depth:'inspect'},
    max_planned_operations:100,actual_compute_ms:null,actual_ops_per_second:null,
@@ -35,7 +35,7 @@ function fixture(mode='viewport'){
  if(mode==='viewport'){
   x.request.view='graph';
   x.viewport_plan={schema:'LOAD-VIEWPORT-SWITCH-PLAN/0.1',identity:id,
-   to:'graph',state:'VIEW_PLAN_READY',selected_object_ids:[id],network_fetch:false,rendered:false,
+   to:'graph',state:'VIEW_PLAN_READY',selected_object_ids:[id],source_refs:['fixture:source'],geometry_ref:null,network_fetch:false,rendered:false,
    interactive_execution:false,semantic_mutation:false,public_release:false};
  }else{
   x.operator_plan={schema:'LOAD-QUALIFIED-OPERATOR-PLAN/0.1',
@@ -213,4 +213,23 @@ test('viewport selection must match the spread objects exactly, without substitu
  const accepted=review(x);
  assert.equal(accepted.state,'HOST_REVALIDATION_REQUIRED');
  assert.equal(accepted.native_admitted,false);
+});
+
+// Planner state and evidence provenance are source-only invariants, not host authority.
+test('source-unavailable or substituted focus evidence cannot claim viewport readiness',()=>{
+ denied(x=>{x.spread.objects[0].source_refs=[];x.spread.objects[0].source_available=false;
+  x.spread.source_ref_count=0;x.viewport_plan.source_refs=[];},'VIEWPORT_NOT_SOURCE_QUALIFIED');
+ denied(x=>{x.viewport_plan.source_refs=['fixture:unrelated'];},'VIEWPORT_NOT_SOURCE_QUALIFIED');
+});
+test('3d viewport requires qualified geometry source, frame, units and matching reference',()=>{
+ denied(x=>{x.request.view='3d';x.viewport_plan.to='3d';},'VIEWPORT_NOT_SOURCE_QUALIFIED');
+ const x=fixture();x.request.view='3d';x.viewport_plan.to='3d';
+ x.spread.objects[0].geometry={source_ref:'fixture:geometry',frame:'EPSG:4978',units:'m'};
+ x.viewport_plan.geometry_ref='fixture:geometry';
+ assert.equal(review(x).state,'HOST_REVALIDATION_REQUIRED');
+ assert.equal(review(x).native_admitted,false);
+ x.spread.objects[0].geometry.units='';
+ assert.equal(review(x).hold_code,'VIEWPORT_NOT_SOURCE_QUALIFIED');
+ x.spread.objects[0].geometry.units='m';x.viewport_plan.geometry_ref='fixture:unrelated';
+ assert.equal(review(x).hold_code,'VIEWPORT_NOT_SOURCE_QUALIFIED');
 });
