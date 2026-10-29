@@ -257,3 +257,31 @@ test("untrusted identity and digest primitive-type coercion fails closed",async(
     assert.equal(result.hold_code,code);
   }
 });
+
+test("R0 preflight cannot forge qualified rights, parsing, admission, or publication",async()=>{
+  const forged={
+    rights_status:"CLEARED", identity_collision_checked:true,
+    format_parsed:true, malware_checked:true, r1_typed:true,
+    r2_modelled:true, r3_live:true, source_bytes_embedded:true,
+    public_vite_asset:true, binary_signature_status:"FORMAT_VALIDATED",
+    recommended_route:"CGX_NATIVE_ADMIT", offline_display:"FULL_PRIVATE_SOURCE"
+  };
+  for(const [key,value] of Object.entries(forged)){
+    const x=await fixture();
+    x.preflight={...x.preflight,[key]:value};
+    const r=run(x);
+    assert.equal(r.hold_code,"UNTRUSTED_PREFLIGHT",key);
+    assert.equal(r.native_admitted,false,key);
+    assert.equal(r.public_vite_asset,false,key);
+  }
+});
+
+test("missing R0 negative-evidence fields cannot pass by omission",async()=>{
+  for(const key of ["rights_status","identity_collision_checked","r1_typed",
+    "source_bytes_embedded","public_vite_asset","offline_display"]){
+    const x=await fixture();
+    x.preflight={...x.preflight};
+    delete x.preflight[key];
+    assert.equal(run(x).hold_code,"UNTRUSTED_PREFLIGHT",key);
+  }
+});
