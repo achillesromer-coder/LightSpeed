@@ -85,3 +85,31 @@ test('invalid view, budget, or graph fails closed without disclosing private sib
   assert.ok(!JSON.stringify(result).includes('fixture:romer:private-source'));
  }
 });
+
+test('explicit cross-domain budget cannot override Object_ID/source ACL or leak sibling provenance',()=>{
+ const budget={max_cross_domains:1,max_cross_edges:1,max_hops:1};
+ // A requested cross-domain halo is not itself an access grant.
+ const denied=inspect({...args,budgets:budget});
+ assert.equal(denied.status,'SOURCE_REVIEW_ONLY');
+ assert.deepEqual(denied.h1.object_ids,['fixture:eco:one']);
+ assert.equal(denied.h1.edges.length,0);
+ assert.ok(!JSON.stringify(denied).includes('fixture:romer:private-source'));
+ // Even an authorised object does not expose source evidence without its own ACL.
+ const objectOnly=inspect({...args,budgets:budget,access:{
+  authorized_object_ids:['fixture:eco:one','fixture:romer:private'],
+  authorized_source_ids:['fixture:eco:source']
+ }});
+ assert.deepEqual(objectOnly.h1.object_ids,['fixture:eco:one','fixture:romer:private']);
+ assert.ok(!JSON.stringify(objectOnly).includes('fixture:romer:private-source'));
+ assert.deepEqual(objectOnly.h2.source_claims.map(x=>x.source_id),['fixture:eco:source']);
+ // An explicit grant to both source and object can expand H1, never H4 authority.
+ const permitted=inspect({...args,budgets:budget,access:{
+  authorized_object_ids:['fixture:eco:one','fixture:romer:private'],
+  authorized_source_ids:['fixture:eco:source','fixture:romer:private-source']
+ }});
+ assert.deepEqual(permitted.h1.object_ids,['fixture:eco:one','fixture:romer:private']);
+ assert.equal(permitted.h1.edges.length,1);
+ assert.equal(permitted.h4.installed,false);
+ assert.equal(permitted.provider_readback,false);
+ assert.equal(permitted.public_release,false);
+});
