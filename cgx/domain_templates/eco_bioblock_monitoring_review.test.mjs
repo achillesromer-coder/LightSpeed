@@ -163,3 +163,40 @@ test("invalid time context, raw coordinates and unbounded records fail closed",(
  assert.throws(()=>schedule(Array(101).fill(longitudinalBase),
   {deployment_at:deployAt}),/INVALID_BIOBLOCK_SCHEDULE_INPUT/);
 });
+
+
+test("repeated identical monthly timestamps do not satisfy 12 independent visits",()=>{
+ const r=schedule(Array(12).fill(scheduleRow("monthly","2026-02-01T00:00:00Z")),
+  {deployment_at:deployAt,as_of:"2027-04-01T00:00:00Z",coverage_complete:true});
+ assert.ok(r.flags.includes("FIRST_YEAR_MONTHLY_DUPLICATE_TIMEPOINT_REVIEW"));
+ assert.ok(r.flags.includes("FIRST_YEAR_MONTHLY_COVERAGE_REVIEW"));
+ assert.equal(r.schedule_compliance_verified,false);
+});
+test("12 clustered synthetic monthly visits require spacing review",()=>{
+ const rows=Array.from({length:12},(_,i)=>scheduleRow("monthly",
+  `2026-02-${String(i+1).padStart(2,"0")}T00:00:00Z`));
+ const r=schedule(rows,{deployment_at:deployAt,as_of:"2027-04-01T00:00:00Z",
+  coverage_complete:true});
+ assert.ok(r.flags.includes("FIRST_YEAR_MONTHLY_VISIT_SPACING_REVIEW"));
+ assert.equal(r.field_observation_verified,false);
+});
+test("records after declared as_of cannot fill monitoring coverage",()=>{
+ const rows=[scheduleRow("quarterly","2027-04-02T00:00:00Z"),
+  scheduleRow("annual","2027-04-02T00:00:00Z")];
+ const r=schedule(rows,{deployment_at:deployAt,as_of:"2027-04-01T00:00:00Z",
+  coverage_complete:true});
+ for(const flag of ["MONITORING_RECORD_AFTER_AS_OF_REVIEW",
+  "POST_YEAR_ONE_QUARTERLY_COVERAGE_REVIEW","ANNUAL_REVIEW_COVERAGE_REVIEW"])
+  assert.ok(r.flags.includes(flag));
+ assert.equal(r.schedule_compliance_verified,false);
+});
+test("spaced synthetic visits remain source-only without compliance promotion",()=>{
+ const rows=Array.from({length:12},(_,i)=>scheduleRow("monthly",
+  new Date(Date.UTC(2026,i,22)).toISOString()));
+ const r=schedule(rows,{deployment_at:deployAt,as_of:"2027-04-01T00:00:00Z",
+  coverage_complete:true});
+ assert.ok(!r.flags.includes("FIRST_YEAR_MONTHLY_COVERAGE_REVIEW"));
+ assert.ok(!r.flags.includes("FIRST_YEAR_MONTHLY_VISIT_SPACING_REVIEW"));
+ assert.equal(r.schedule_compliance_verified,false);
+ assert.equal(r.biodiversity_gain_verified,false);
+});
