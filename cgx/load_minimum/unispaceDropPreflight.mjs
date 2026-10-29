@@ -25,7 +25,8 @@ export function planUniSpaceDropPreflight({target,file,source,access,existing_so
     !access.authorized_object_ids.includes(target.object_id)||!access.authorized_file_spaces.includes(target.file_space))
   return result('TARGET_SCOPE_NOT_DECLARED');
  if(!label(file.name)||file.name==='.'||file.name==='..'||file.name.includes('..')||/[\\/:]/.test(file.name)||
-    !Number.isSafeInteger(file.size)||file.size<1||file.size>MAX_BYTES||!mime.has(file.type))
+    !Number.isSafeInteger(file.size)||file.size<1||file.size>MAX_BYTES||!mime.has(file.type)||
+    /[\u061c\u200b-\u200f\u202a-\u202e\u2060\u2066-\u2069\ufeff]/u.test(file.name))
   return result('FILE_METADATA_OR_SIZE_UNSUPPORTED');
  if(!label(source.source_id)||!label(source.version)||!label(source.owner)||!digest(source.sha256)||
     !rights.has(source.rights)||!classes.has(source.proof_class))
