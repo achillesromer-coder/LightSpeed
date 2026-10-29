@@ -29,18 +29,45 @@ const spatialKey=k=>k.toLowerCase().replace(/[^a-z0-9]/g,"");
 const rawSpatialKeys=new Set(["latitude","longitude","lat","lon","lng","coords",
  "coordinates","geometry","geojson","wkt","gps","gpslocation","latlng",
  "preciselocation","sitegeometry","locationgeometry","sensitivecoordinates",
- "rawgeometry","featurecollection","pointgeometry"]);
+ "rawgeometry","featurecollection","pointgeometry","geohash","pluscode","what3words",
+ "utm","easting","northing","bbox","boundingbox","gridreference","exifgps",
+ "mapurl","locationurl","locationpoint","latitudedeg","longitudedeg"]);
+// Textual coordinate candidates also require spatial review; no negative result
+// from this heuristic is a proof of privacy or permission to publish.
+const spatialText=s=>{
+ if(s.length>4096)return {found:false,limit:true};
+ if(/\bPOINT\s*\(\s*-?\d+(?:\.\d+)?\s+-?\d+(?:\.\d+)?\s*\)|["']?coordinates["']?\s*:\s*\[|(?:[?&]|\b)(?:lat|latitude|lon|lng|longitude)=\s*-?\d+(?:\.\d+)?/i.test(s))
+  return {found:true,limit:false};
+ const pairs=/(^|[^\d])(-?\d{1,3}\.\d{2,})\s*,\s*(-?\d{1,3}\.\d{2,})(?=$|[^\d])/g;
+ for(const match of s.matchAll(pairs)){
+  const x=Number(match[2]),y=Number(match[3]);
+  if((Math.abs(x)<=90&&Math.abs(y)<=180)||(Math.abs(y)<=90&&Math.abs(x)<=180))
+   return {found:true,limit:false};
+ }
+ return {found:false,limit:false};
+};
 const inspectRawSpatial=root=>{
  const pending=[{value:root,depth:0}],seen=new WeakSet();
- let visited=0;
+ let visited=0,fields=0;
  while(pending.length){
   const {value,depth}=pending.pop();
+  if(typeof value==="string"){
+   const signal=spatialText(value);
+   if(signal.found||signal.limit)return signal;
+   continue;
+  }
   if(value===null||typeof value!=="object"||seen.has(value))continue;
   seen.add(value);
   if(++visited>2048||depth>8)return {found:false,limit:true};
-  for(const [key,child] of Object.entries(value)){
+  if(Array.isArray(value)&&value.length>4096-fields)return {found:false,limit:true};
+  const keys=Object.keys(value);
+  if(keys.length>4096-fields)return {found:false,limit:true};
+  fields+=keys.length;
+  for(const key of keys){
    if(rawSpatialKeys.has(spatialKey(key)))return {found:true,limit:false};
-   if(child!==null&&typeof child==="object")pending.push({value:child,depth:depth+1});
+   const child=value[key];
+   if(child!==null&&(typeof child==="object"||typeof child==="string"))
+    pending.push({value:child,depth:depth+1});
   }
  }
  return {found:false,limit:false};
