@@ -104,6 +104,7 @@ export async function preflightPrivateObjectDrop(input = {}) {
     schema: SCHEMA, state: "R0_HASHED_PREFLIGHT_HOLD",
     parent_filespace: s.parent_filespace, candidate_object_id: s.object_id,
     child_filespace: s.filespace, source_mapping_id: p.mapping_id,
+    mapping_stage: p.mapping_stage, // carry source qualification into the native handoff
     evidence_class: p.evidence_class, file_type: ext, file_bytes: file.size,
     candidate_r0_sha256: digest,
     binary_signature_status: binaryHeader === true ?
