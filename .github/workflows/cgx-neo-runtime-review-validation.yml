@@ -9,6 +9,9 @@ on:
     paths:
       - 'apps/lightspeed-go/src/cgxNativeRuntimeReadbackReview.mjs'
       - 'apps/lightspeed-go/scripts/checkCgxNativeRuntimeReadbackReview.mjs'
+      - 'apps/lightspeed-go/scripts/checkNeoIntegrationReview.mjs'
+      - 'apps/lightspeed-go/src/main.ts'
+      - 'desktop/source-manifest.json'
       - '.github/workflows/cgx-neo-runtime-review-validation.yml'
   pull_request:
     branches:
@@ -16,6 +19,9 @@ on:
     paths:
       - 'apps/lightspeed-go/src/cgxNativeRuntimeReadbackReview.mjs'
       - 'apps/lightspeed-go/scripts/checkCgxNativeRuntimeReadbackReview.mjs'
+      - 'apps/lightspeed-go/scripts/checkNeoIntegrationReview.mjs'
+      - 'apps/lightspeed-go/src/main.ts'
+      - 'desktop/source-manifest.json'
       - '.github/workflows/cgx-neo-runtime-review-validation.yml'
 
 permissions:
@@ -39,5 +45,6 @@ jobs:
         run: |
           node --check apps/lightspeed-go/src/cgxNativeRuntimeReadbackReview.mjs
           node --check apps/lightspeed-go/scripts/checkCgxNativeRuntimeReadbackReview.mjs
+          node --check apps/lightspeed-go/scripts/checkNeoIntegrationReview.mjs
       - name: Run bounded native Node source-review tests (no host or DBR)
-        run: node --test apps/lightspeed-go/scripts/checkCgxNativeRuntimeReadbackReview.mjs
+        run: node --test apps/lightspeed-go/scripts/checkCgxNativeRuntimeReadbackReview.mjs apps/lightspeed-go/scripts/checkNeoIntegrationReview.mjs
