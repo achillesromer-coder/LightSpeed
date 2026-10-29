@@ -139,3 +139,73 @@ export function reviewBioBlockMonitoringSeries(records){
   longitudinal_field_evidence_verified:false,biodiversity_gain_verified:false,
   public_release_authorised:false,field_release_authorised:false};
 }
+
+
+/**
+ * Source-only alignment with Bio-Blocks workbook "Monitoring Schedule":
+ * pre-deployment, deployment day, week 2, months 1-12, quarterly after
+ * year one, and annual review. Windows are conservative review heuristics,
+ * not proof of protocol compliance or an enforced ecological field schedule.
+ * Missing visits are assessed only when the caller declares a complete
+ * dataset and supplies an explicit as_of time.
+ */
+export function reviewBioBlockMonitoringSchedule(records, options={}) {
+ if(!Array.isArray(records)||records.length<1||records.length>100||
+  options===null||typeof options!=="object"||Array.isArray(options)||
+  Object.keys(options).some(k=>!["deployment_at","as_of","coverage_complete"].includes(k)))
+  throw Error("INVALID_BIOBLOCK_SCHEDULE_INPUT");
+ const {deployment_at,as_of=null,coverage_complete=false}=options;
+ if(!zoned(deployment_at)||typeof coverage_complete!=="boolean"||
+  (as_of!==null&&!zoned(as_of))||(coverage_complete&&as_of===null))
+  throw Error("INVALID_BIOBLOCK_SCHEDULE_TIME");
+ const deploy=Date.parse(deployment_at),asOf=as_of===null?null:Date.parse(as_of);
+ if(asOf!==null&&asOf<deploy)throw Error("INVALID_BIOBLOCK_SCHEDULE_TIME");
+ records.forEach(reviewBioBlockMonitoringRecord);
+ const phases=["pre_deployment","deployment","week_2","monthly","quarterly","annual"];
+ const phase_counts=Object.fromEntries(phases.map(k=>[k,0]));
+ const flags=new Set(["SOURCE_ONLY_NOT_FIELD_VERIFIED",
+  "MONITORING_SCHEDULE_IS_SOURCE_ASSERTED_PLANNING"]);
+ const DAY=86400000;
+ for(const r of records){
+  phase_counts[r.monitoring_phase]++;
+  if(!zoned(r.observed_at)){
+   flags.add("MONITORING_TIMEPOINT_TIMESTAMP_REQUIRED");
+   continue;
+  }
+  const days=(Date.parse(r.observed_at)-deploy)/DAY;
+  if(r.monitoring_phase==="pre_deployment"&&days>=0)
+   flags.add("BASELINE_NOT_BEFORE_DEPLOYMENT_REVIEW");
+  if(r.monitoring_phase==="deployment"&&(days<0||days>1))
+   flags.add("DEPLOYMENT_DAY_TIMEPOINT_REVIEW");
+  if(r.monitoring_phase==="week_2"&&(days<7||days>21))
+   flags.add("WEEK_TWO_WINDOW_REVIEW");
+  if(r.monitoring_phase==="monthly"&&(days<21||days>366))
+   flags.add("FIRST_YEAR_MONTHLY_WINDOW_REVIEW");
+  if(r.monitoring_phase==="quarterly"&&days<365)
+   flags.add("POST_YEAR_ONE_QUARTERLY_WINDOW_REVIEW");
+  if(r.monitoring_phase==="annual"&&days<300)
+   flags.add("ANNUAL_REVIEW_WINDOW_REVIEW");
+  if(r.monitoring_phase!=="pre_deployment"&&days<0)
+   flags.add("POST_DEPLOYMENT_PHASE_PRECEDES_DEPLOYMENT");
+ }
+ if(coverage_complete){
+  for(const [phase,flag] of [
+   ["pre_deployment","BASELINE_NOT_IN_DECLARED_COMPLETE_SERIES"],
+   ["deployment","DEPLOYMENT_LOG_NOT_IN_DECLARED_COMPLETE_SERIES"],
+   ["week_2","WEEK_TWO_NOT_IN_DECLARED_COMPLETE_SERIES"]])
+   if(phase_counts[phase]===0)flags.add(flag);
+  const elapsed=(asOf-deploy)/DAY;
+  if(elapsed>=365&&phase_counts.monthly<12)
+   flags.add("FIRST_YEAR_MONTHLY_COVERAGE_REVIEW");
+  if(elapsed>=455&&phase_counts.quarterly===0)
+   flags.add("POST_YEAR_ONE_QUARTERLY_COVERAGE_REVIEW");
+  if(elapsed>=365&&phase_counts.annual===0)
+   flags.add("ANNUAL_REVIEW_COVERAGE_REVIEW");
+ }
+ return {schema:BIOBLOCK_MONITORING_SCHEMA,parent:"Cognigrex.cgx",
+  owner_family:"Eco.cgx",phase_counts,coverage_complete_declared:coverage_complete,
+  flags:[...flags],source_only:true,native_object_id:null,db_readback:false,
+  schedule_compliance_verified:false,field_observation_verified:false,
+  biodiversity_gain_verified:false,public_release_authorised:false,
+  field_release_authorised:false};
+}
