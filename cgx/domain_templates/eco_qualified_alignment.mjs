@@ -9,7 +9,7 @@ const obj=x=>x!==null&&typeof x==="object"&&!Array.isArray(x);
 const stringList=x=>Array.isArray(x)&&x.length<=5000&&x.every(good);
 const equal=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 const EVIDENCE=new Set(["observed","simulated","source_asserted","hypothesised","inferred","independently_reviewed"]);
-const ECO_TYPES=new Set(["taxon","species","specimen","population","ecological_observation","sensor_reading","site","habitat","intervention","experiment","ecological_state_estimate","ecological_function","functional_guild","receiving_system"]);
+const ECO_TYPES=new Set(["taxon","species","specimen","population","ecological_observation","sensor_reading","site","habitat","intervention","experiment","ecological_state_estimate","ecological_function","functional_guild","receiving_system","projection_result"]);
 const IDENTITY=["taxon_id","specimen_id","population_id","site_id","station_id","subject_kind","subject_id","ecological_function_id","functional_guild_id","receiving_system_id"];
 const OBSERVATIONS=new Set(["ecological_observation","sensor_reading"]);
 // Validate absolute ISO timestamp and actual calendar date before aligning observations.
@@ -114,7 +114,17 @@ function validateConcept(x){
   if(a.reported_value!==undefined&&(typeof a.reported_value!=="number"||!Number.isFinite(a.reported_value)))
    throw Error("INVALID_BENEFIT_ACCOUNTING_VALUE");
  }
- if(x.measurement_basis!==undefined&&!["raw","corrected","derived","reference"].includes(x.measurement_basis))throw Error("INVALID_MEASUREMENT_BASIS");
+ // Formula-derived ecological projections are scenario evidence, never field observations.
+ if(x.projection_result!==undefined){
+  const p=x.projection_result;
+  if(!obj(p))throw Error("INVALID_ECO_PROJECTION");
+  for(const f of ["scenario_ref","metric_ref","formula_ref","parameter_set_ref","horizon_ref","baseline_ref","uncertainty_ref","model_version_ref","unit"])
+   if(p[f]!==undefined&&!good(p[f]))throw Error("INVALID_PROJECTION_"+f.toUpperCase());
+  if(p.input_source_refs!==undefined&&!stringList(p.input_source_refs))throw Error("INVALID_PROJECTION_INPUT_SOURCES");
+  if(p.estimated_value!==undefined&&(typeof p.estimated_value!=="number"||!Number.isFinite(p.estimated_value)))
+   throw Error("INVALID_PROJECTION_ESTIMATE");
+ }
+ if(x.measurement_basis!==undefined&&["raw","corrected","derived","reference"].includes(x.measurement_basis)===false)throw Error("INVALID_MEASUREMENT_BASIS");
  if(x.measurement_uncertainty!==undefined){
   const u=x.measurement_uncertainty;
   if(!obj(u)||typeof u.value!=="number"||!Number.isFinite(u.value)||u.value<0||!good(u.unit))
@@ -165,6 +175,7 @@ function compare(a,b,checks){
  if(!equal(a.survey_comparison??null,b.survey_comparison??null))add(checks,"SURVEY_COMPARISON_DESIGN_DIFFERENT");
  if(!equal(a.receiving_pathway??null,b.receiving_pathway??null))add(checks,"RECEIVING_PATHWAY_PROVENANCE_OR_SCOPE_DIFFERENT");
  if(!equal(a.benefit_accounting??null,b.benefit_accounting??null))add(checks,"BENEFIT_ACCOUNTING_CLAIM_SCOPE_OR_ATTRIBUTION_DIFFERENT");
+ if(!equal(a.projection_result??null,b.projection_result??null))add(checks,"PROJECTION_SCENARIO_OR_MODEL_PROVENANCE_DIFFERENT");
  // Field QA, missingness and instrument provenance are independent of measured value.
  for(const [field,flag] of [
   ["station_instrument_id","INSTRUMENT_ID_DIFFERENT_OR_UNDECLARED"],
@@ -328,6 +339,28 @@ function completeness(x,checks){
    if(!good(a.independent_receipt_ref))add(checks,"BENEFIT_INDEPENDENT_RECEIPT_REQUIRED");
   }
  }
+ // ONT-019: model projections are not field observations, even with an estimated number.
+ if(x.semantic_type==="projection_result"){
+  add(checks,"PROJECTION_NOT_FIELD_OBSERVATION");
+  add(checks,"PROJECTION_REQUIRES_MODEL_REVIEW");
+  if(x.evidence_class==="observed")add(checks,"PROJECTION_OBSERVED_EVIDENCE_CONFLICT");
+  if(!x.projection_result)add(checks,"PROJECTION_DESCRIPTOR_REQUIRED");
+  else{
+   const p=x.projection_result;
+   for(const [field,flag] of [
+    ["scenario_ref","PROJECTION_SCENARIO_REQUIRED"],
+    ["metric_ref","PROJECTION_METRIC_REQUIRED"],
+    ["formula_ref","PROJECTION_FORMULA_REQUIRED"],
+    ["parameter_set_ref","PROJECTION_PARAMETERS_REQUIRED"],
+    ["horizon_ref","PROJECTION_HORIZON_REQUIRED"],
+    ["baseline_ref","PROJECTION_BASELINE_REQUIRED"],
+    ["uncertainty_ref","PROJECTION_UNCERTAINTY_REQUIRED"],
+    ["model_version_ref","PROJECTION_MODEL_VERSION_REQUIRED"]])
+    if(!good(p[field]))add(checks,flag);
+   if(!p.input_source_refs?.length)add(checks,"PROJECTION_INPUT_SOURCES_REQUIRED");
+   if(p.estimated_value!==undefined&&!good(p.unit))add(checks,"PROJECTION_ESTIMATE_UNIT_REQUIRED");
+  }
+ }
  // Censored reports are bounds, not measured point values.
  if(x.reporting_bound&&!good(x.result_qualifier))add(checks,"RESULT_QUALIFIER_REQUIRED");
  if(x.reporting_bound){
@@ -385,6 +418,8 @@ export function planEcoAlignment({novel,known_objects=[],authorised_object_ids=[
  completeness(novel,novelChecks);
  if(!novelRefs.length)add(novelChecks,"EVIDENCE_SOURCE_GAP");
  if(novelRefs.length<novel.source_refs.length)add(novelChecks,"NOVEL_SOURCE_SCOPE_PARTIAL");
+ if(novel.projection_result?.input_source_refs?.some(s=>!allowedSources.has(s)))
+  add(novelChecks,"NOVEL_PROJECTION_INPUT_SOURCE_SCOPE_PARTIAL");
  const seen=new Set(),out=[];
  for(const k of known_objects){
   validateConcept(k);
@@ -399,6 +434,10 @@ export function planEcoAlignment({novel,known_objects=[],authorised_object_ids=[
   else if(!refs.some(s=>novelRefs.includes(s)))add(checks,"SOURCE_LINEAGE_DISJOINT_REVIEW");
   if(novelRefs.length<novel.source_refs.length)add(checks,"NOVEL_SOURCE_SCOPE_PARTIAL");
   if(refs.length<k.source_refs.length)add(checks,"KNOWN_SOURCE_SCOPE_PARTIAL");
+ if(novel.projection_result?.input_source_refs?.some(s=>!allowedSources.has(s)))
+  add(checks,"NOVEL_PROJECTION_INPUT_SOURCE_SCOPE_PARTIAL");
+ if(k.projection_result?.input_source_refs?.some(s=>!allowedSources.has(s)))
+  add(checks,"KNOWN_PROJECTION_INPUT_SOURCE_SCOPE_PARTIAL");
   const exactId=novel.object_id===k.object_id;
   out.push({known_object_id:k.object_id,
    state:exactId?"SAME_ID_CLAIM_REQUIRES_PROOF":checks.length?"REVIEW_DIFFERENCE":"TYPED_ALIGNMENT_CANDIDATE",
