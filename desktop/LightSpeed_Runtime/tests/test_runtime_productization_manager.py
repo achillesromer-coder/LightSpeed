@@ -272,3 +272,65 @@ def test_windows_reparse_attribute_is_fail_closed_without_writes(
         rp.manage_runtime_productization("configure", slot="alpha", confirmed=True)
     assert not (slot / rp.MARKER_NAME).exists()
     assert not (root / "_receipts").exists()
+
+@pytest.mark.parametrize("redirected", ["receipts", "venv", "scripts"])
+def test_nested_managed_directory_symlinks_fail_closed(
+    monkeypatch, tmp_path: Path, redirected: str
+) -> None:
+    root = _set_root(monkeypatch, tmp_path)
+    slot = root / "alpha"
+    slot.mkdir(parents=True)
+    outside = tmp_path / "unrelated"
+    outside.mkdir()
+    (outside / "keep.txt").write_text("preserve", encoding="utf-8")
+    if redirected == "receipts":
+        link = root / "_receipts"
+    elif redirected == "venv":
+        link = slot / "venv"
+    else:
+        (slot / "venv").mkdir()
+        link = slot / "venv" / "Scripts"
+    try:
+        link.symlink_to(outside, target_is_directory=True)
+    except (OSError, NotImplementedError):
+        pytest.skip("directory symlink creation unavailable on this host")
+    for action in ("status", "configure"):
+        with pytest.raises(rp.RuntimeProductizationError, match="reparse point"):
+            rp.manage_runtime_productization(
+                action, slot="alpha", confirmed=(action == "configure")
+            )
+    assert (outside / "keep.txt").read_text(encoding="utf-8") == "preserve"
+    assert not (slot / rp.MARKER_NAME).exists()
+    assert not (slot / rp.CONFIG_NAME).exists()
+
+
+@pytest.mark.parametrize("redirected", ["receipts", "venv", "scripts"])
+def test_nested_windows_reparse_attributes_fail_closed(
+    monkeypatch, tmp_path: Path, redirected: str
+) -> None:
+    from types import SimpleNamespace
+
+    root = _set_root(monkeypatch, tmp_path)
+    slot = root / "alpha"
+    (slot / "venv" / "Scripts").mkdir(parents=True)
+    target = {
+        "receipts": root / "_receipts",
+        "venv": slot / "venv",
+        "scripts": slot / "venv" / "Scripts",
+    }[redirected]
+    if redirected == "receipts":
+        target.mkdir()
+    original_lstat = Path.lstat
+
+    def simulated_windows_lstat(self):
+        if self == target:
+            return SimpleNamespace(st_file_attributes=0x400)
+        return original_lstat(self)
+
+    monkeypatch.setattr(Path, "lstat", simulated_windows_lstat)
+    with pytest.raises(rp.RuntimeProductizationError, match="reparse point"):
+        rp.runtime_productization_status("alpha")
+    with pytest.raises(rp.RuntimeProductizationError, match="reparse point"):
+        rp.manage_runtime_productization("configure", slot="alpha", confirmed=True)
+    assert not (slot / rp.MARKER_NAME).exists()
+    assert not (root / "_receipts" / "alpha-configure.json").exists()
