@@ -10,6 +10,8 @@ on:
       - 'apps/lightspeed-go/src/cgxNativeRuntimeReadbackReview.mjs'
       - 'apps/lightspeed-go/scripts/checkCgxNativeRuntimeReadbackReview.mjs'
       - 'apps/lightspeed-go/scripts/checkNeoIntegrationReview.mjs'
+      - 'apps/lightspeed-go/src/cgxLoadSemanticHostReview.mjs'
+      - 'apps/lightspeed-go/scripts/checkCgxLoadSemanticReview.mjs'
       - 'apps/lightspeed-go/src/main.ts'
       - 'desktop/source-manifest.json'
       - '.github/workflows/cgx-neo-runtime-review-validation.yml'
@@ -20,6 +22,8 @@ on:
       - 'apps/lightspeed-go/src/cgxNativeRuntimeReadbackReview.mjs'
       - 'apps/lightspeed-go/scripts/checkCgxNativeRuntimeReadbackReview.mjs'
       - 'apps/lightspeed-go/scripts/checkNeoIntegrationReview.mjs'
+      - 'apps/lightspeed-go/src/cgxLoadSemanticHostReview.mjs'
+      - 'apps/lightspeed-go/scripts/checkCgxLoadSemanticReview.mjs'
       - 'apps/lightspeed-go/src/main.ts'
       - 'desktop/source-manifest.json'
       - '.github/workflows/cgx-neo-runtime-review-validation.yml'
@@ -46,5 +50,7 @@ jobs:
           node --check apps/lightspeed-go/src/cgxNativeRuntimeReadbackReview.mjs
           node --check apps/lightspeed-go/scripts/checkCgxNativeRuntimeReadbackReview.mjs
           node --check apps/lightspeed-go/scripts/checkNeoIntegrationReview.mjs
+          node --check apps/lightspeed-go/src/cgxLoadSemanticHostReview.mjs
+          node --check apps/lightspeed-go/scripts/checkCgxLoadSemanticReview.mjs
       - name: Run bounded native Node source-review tests (no host or DBR)
-        run: node --test apps/lightspeed-go/scripts/checkCgxNativeRuntimeReadbackReview.mjs apps/lightspeed-go/scripts/checkNeoIntegrationReview.mjs
+        run: node --test apps/lightspeed-go/scripts/checkCgxNativeRuntimeReadbackReview.mjs apps/lightspeed-go/scripts/checkNeoIntegrationReview.mjs apps/lightspeed-go/scripts/checkCgxLoadSemanticReview.mjs
