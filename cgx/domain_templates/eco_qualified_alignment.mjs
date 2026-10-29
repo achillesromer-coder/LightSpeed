@@ -139,7 +139,7 @@ function validateConcept(x){
    throw Error("INVALID_VALIDATION_STATISTICS");
   for(const f of ["statistic_unit","validation_set_ref","validation_source_ref","independence_design_ref",
    "uncertainty_propagation_ref","benchmark_ref","residual_diagnostics_ref",
-   "counterevidence_ref","evaluation_period_ref","evaluation_spatial_support_ref"])
+   "counterevidence_ref","evaluation_period_ref","evaluation_spatial_support_ref","training_set_ref","holdout_policy_ref","split_unit_ref","leakage_audit_ref"])
    if(v[f]!==undefined&&!good(v[f]))throw Error("INVALID_VALIDATION_STATISTICS_"+f.toUpperCase());
   if(v.value!==undefined&&(typeof v.value!=="number"||!Number.isFinite(v.value)))
    throw Error("INVALID_VALIDATION_STATISTIC_VALUE");
@@ -426,6 +426,10 @@ function completeness(x,checks){
   for(const [f,flag] of [
    ["statistic_unit","VALIDATION_STATISTIC_UNIT_REQUIRED"],
    ["validation_set_ref","VALIDATION_SET_REQUIRED"],
+   ["training_set_ref","VALIDATION_TRAINING_SET_REQUIRED"],
+   ["holdout_policy_ref","VALIDATION_HOLDOUT_POLICY_REQUIRED"],
+   ["split_unit_ref","VALIDATION_SPLIT_UNIT_REQUIRED"],
+   ["leakage_audit_ref","VALIDATION_LEAKAGE_AUDIT_REQUIRED"],
    ["validation_source_ref","VALIDATION_SOURCE_REQUIRED"],
    ["independence_design_ref","VALIDATION_INDEPENDENCE_DESIGN_REQUIRED"],
    ["uncertainty_propagation_ref","VALIDATION_UNCERTAINTY_PROPAGATION_REQUIRED"],
@@ -435,6 +439,8 @@ function completeness(x,checks){
    ["evaluation_period_ref","VALIDATION_PERIOD_REQUIRED"],
    ["evaluation_spatial_support_ref","VALIDATION_SPATIAL_SUPPORT_REQUIRED"]])
    if(!good(v[f]))add(checks,flag);
+  if(good(v.training_set_ref)&&good(v.validation_set_ref)&&v.training_set_ref===v.validation_set_ref)
+   add(checks,"VALIDATION_TRAINING_AND_HOLDOUT_IDENTICAL");
   if(!Number.isSafeInteger(v.sample_count))add(checks,"VALIDATION_SAMPLE_COUNT_REQUIRED");
   if(v.value===undefined)add(checks,"VALIDATION_STATISTIC_VALUE_REQUIRED");
   if(["rmse","mae","bias"].includes(v.statistic_kind)&&
