@@ -148,7 +148,18 @@ function validateConcept(x){
   if(v.statistic_kind==="interval_coverage"&&v.value!==undefined&&(v.value<0||v.value>100))
    throw Error("INVALID_INTERVAL_COVERAGE");
  }
- if(x.measurement_basis!==undefined&&["raw","corrected","derived","reference"].includes(x.measurement_basis)===false)throw Error("INVALID_MEASUREMENT_BASIS");
+ // Source-only geometry-export pointer: never an actual validated or released map.
+ if(x.geometry_export!==undefined){
+  const g=x.geometry_export;
+  if(!obj(g)||typeof g.proposed!=="boolean"||
+   !["Point","LineString","Polygon","MultiPoint","MultiLineString","MultiPolygon","unknown"].includes(g.geometry_kind)||
+   !["restricted","internal","aggregate_candidate","public_candidate"].includes(g.release_class)||
+   (g.public_release_requested!==undefined&&typeof g.public_release_requested!=="boolean")||
+   (g.has_z!==undefined&&typeof g.has_z!=="boolean"))throw Error("INVALID_GEOMETRY_EXPORT");
+  for(const f of ["source_geometry_ref","source_revision_ref","crs","coordinate_unit","spatial_support_ref","geometry_validation_ref","generalisation_method_ref","sensitivity_review_ref","rights_review_ref","stewardship_review_ref","public_permission_ref","vertical_datum_ref"])
+   if(g[f]!==undefined&&!good(g[f]))throw Error("INVALID_GEOMETRY_EXPORT_"+f.toUpperCase());
+ }
+if(x.measurement_basis!==undefined&&["raw","corrected","derived","reference"].includes(x.measurement_basis)===false)throw Error("INVALID_MEASUREMENT_BASIS");
  if(x.measurement_uncertainty!==undefined){
   const u=x.measurement_uncertainty;
   if(!obj(u)||typeof u.value!=="number"||!Number.isFinite(u.value)||u.value<0||!good(u.unit))
@@ -199,7 +210,8 @@ function compare(a,b,checks){
  if(!equal(a.survey_comparison??null,b.survey_comparison??null))add(checks,"SURVEY_COMPARISON_DESIGN_DIFFERENT");
  if(!equal(a.receiving_pathway??null,b.receiving_pathway??null))add(checks,"RECEIVING_PATHWAY_PROVENANCE_OR_SCOPE_DIFFERENT");
  if(!equal(a.benefit_accounting??null,b.benefit_accounting??null))add(checks,"BENEFIT_ACCOUNTING_CLAIM_SCOPE_OR_ATTRIBUTION_DIFFERENT");
- if(!equal(a.projection_result??null,b.projection_result??null))add(checks,"PROJECTION_SCENARIO_OR_MODEL_PROVENANCE_DIFFERENT");
+ if(!equal(a.geometry_export??null,b.geometry_export??null))add(checks,"GEOMETRY_EXPORT_PROVENANCE_OR_RELEASE_SCOPE_DIFFERENT");
+if(!equal(a.projection_result??null,b.projection_result??null))add(checks,"PROJECTION_SCENARIO_OR_MODEL_PROVENANCE_DIFFERENT");
  if(!equal(a.projection_observation_comparison??null,b.projection_observation_comparison??null))
   add(checks,"PROJECTION_OBSERVATION_VALIDATION_DESIGN_DIFFERENT");
  if(!equal(a.validation_statistics??null,b.validation_statistics??null))
@@ -367,7 +379,34 @@ function completeness(x,checks){
    if(!good(a.independent_receipt_ref))add(checks,"BENEFIT_INDEPENDENT_RECEIPT_REQUIRED");
   }
  }
- // ONT-019: model projections are not field observations, even with an estimated number.
+ // Receiving-system source geometry is not verified field geometry or public release.
+ if(x.geometry_export?.proposed){
+  const g=x.geometry_export;
+  add(checks,"GEOMETRY_EXPORT_SOURCE_ONLY_REVIEW_REQUIRED");
+  if(!["receiving_system","site","habitat"].includes(x.semantic_type))add(checks,"GEOMETRY_EXPORT_TYPE_REVIEW_REQUIRED");
+  for(const [f,flag] of [
+   ["source_geometry_ref","GEOMETRY_EXPORT_SOURCE_REQUIRED"],
+   ["source_revision_ref","GEOMETRY_EXPORT_REVISION_REQUIRED"],
+   ["crs","GEOMETRY_EXPORT_CRS_REQUIRED"],
+   ["coordinate_unit","GEOMETRY_EXPORT_COORDINATE_UNIT_REQUIRED"],
+   ["spatial_support_ref","GEOMETRY_EXPORT_SPATIAL_SUPPORT_REQUIRED"],
+   ["geometry_validation_ref","GEOMETRY_EXPORT_VALIDATION_REQUIRED"],
+   ["rights_review_ref","GEOMETRY_EXPORT_RIGHTS_REVIEW_REQUIRED"],
+   ["stewardship_review_ref","GEOMETRY_EXPORT_STEWARDSHIP_REVIEW_REQUIRED"]])
+   if(!good(g[f]))add(checks,flag);
+  if(g.geometry_kind==="unknown")add(checks,"GEOMETRY_EXPORT_KIND_UNRESOLVED");
+  if(g.has_z&&!good(g.vertical_datum_ref))add(checks,"GEOMETRY_EXPORT_VERTICAL_DATUM_REQUIRED");
+  if(g.public_release_requested){
+   add(checks,"GEOMETRY_EXPORT_PUBLIC_RELEASE_NOT_AUTHORISED");
+   if(["restricted","internal"].includes(g.release_class))add(checks,"GEOMETRY_EXPORT_RELEASE_CLASS_CONFLICT");
+   for(const [f,flag] of [
+    ["generalisation_method_ref","GEOMETRY_EXPORT_GENERALISATION_REQUIRED"],
+    ["sensitivity_review_ref","GEOMETRY_EXPORT_SENSITIVITY_REVIEW_REQUIRED"],
+    ["public_permission_ref","GEOMETRY_EXPORT_PUBLIC_PERMISSION_REQUIRED"]])
+    if(!good(g[f]))add(checks,flag);
+  }
+ }
+// ONT-019: model projections are not field observations, even with an estimated number.
  if(x.semantic_type==="projection_result"){
   add(checks,"PROJECTION_NOT_FIELD_OBSERVATION");
   add(checks,"PROJECTION_REQUIRES_MODEL_REVIEW");
