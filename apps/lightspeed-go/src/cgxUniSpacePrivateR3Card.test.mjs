@@ -74,3 +74,25 @@ test("source-only proof never asserts admission or host/release",()=>{
  const p=planPrivateR3Card(fixture());
  for(const k of ["native_admitted","host_verified","dist_verified","release_accepted","canonical_mutation","network_fetch","executable","installable"])assert.equal(p[k],false,k);
 });
+
+test("candidate Object_ID rejects coercible non-string values without throwing",()=>{
+ for(const id of [["WT-001"],Object("WT-001"),42]){
+  const x=fixture();x.selection.object_id=id;
+  const r=planPrivateR3Card(x);
+  assert.equal(r.state,"HOLD");
+  assert.equal(r.code,"UNQUALIFIED_SELECTION");
+  assert.equal(r.native_admitted,false);
+ }
+});
+test("registered source and mapping digests must be primitive strings",()=>{
+ for(const key of ["r0_source_sha256","mapping_blob_sha"]){
+  const good=fixture().source[key];
+  for(const bad of [[good],Object(good)]){
+   const x=fixture();x.source[key]=bad;
+   const r=planPrivateR3Card(x);
+   assert.equal(r.state,"HOLD",key);
+   assert.equal(r.code,"SOURCE_MAPPING_MISMATCH",key);
+   assert.equal(r.network_fetch,false);
+  }
+ }
+});
