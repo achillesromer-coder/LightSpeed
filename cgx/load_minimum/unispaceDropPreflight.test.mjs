@@ -37,7 +37,8 @@ test('filename traversal, MIME mismatch, oversized, zero or fractional size hold
  }
 });
 test('source collision holds; exact same source identity is a no-op',()=>{
- const exact=[{source_id:source.source_id,sha256:source.sha256}];
+ const exact=[{source_id:source.source_id,sha256:source.sha256,version:source.version,
+  owner:source.owner,rights:source.rights,proof_class:source.proof_class}];
  assert.equal(plan({...args,existing_sources:exact}).status,'NOOP_REVIEW');
  const conflict=[{source_id:source.source_id,sha256:'b'.repeat(64)}];
  assert.equal(plan({...args,existing_sources:conflict}).reason,'SOURCE_IDENTITY_COLLISION');
@@ -50,4 +51,22 @@ test('invalid source hash, missing owner/version and malformed existing refs fai
 });
 test('offline preflight retains metadata-only hold and no network hydration',()=>{
  const x=plan({...args,offline:true});assert.equal(x.reason,'OFFLINE_METADATA_ONLY');noEffects(x);
+});
+
+// A same-byte digest is insufficient to collapse distinct R0 versions or grants.
+test('same hash requires full version owner rights and proof-class equality before NOOP',()=>{
+ const exact={source_id:source.source_id,sha256:source.sha256,version:source.version,
+  owner:source.owner,rights:source.rights,proof_class:source.proof_class};
+ const partial=plan({...args,existing_sources:[{source_id:source.source_id,sha256:source.sha256}]});
+ assert.equal(partial.status,'HOLD');
+ assert.equal(partial.reason,'EXISTING_SOURCE_IDENTITY_UNQUALIFIED');noEffects(partial);
+ for(const [field,value] of [['version','1'],['owner','different-owner'],
+  ['rights','PUBLIC_SAFE'],['proof_class','creative']]){
+  const x=plan({...args,existing_sources:[{...exact,[field]:value}]});
+  assert.equal(x.status,'HOLD',field);
+  assert.equal(x.reason,'SOURCE_IDENTITY_COLLISION',field);noEffects(x);
+  assert.ok(!JSON.stringify(x).includes(source.source_id));
+ }
+ const matched=plan({...args,existing_sources:[exact]});
+ assert.equal(matched.status,'NOOP_REVIEW');noEffects(matched);
 });
