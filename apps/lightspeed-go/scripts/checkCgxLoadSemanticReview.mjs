@@ -41,7 +41,7 @@ function fixture(mode='viewport'){
  }else{
   x.operator_plan={schema:'LOAD-QUALIFIED-OPERATOR-PLAN/0.1',
    status:'SOURCE_ONLY_NO_EXECUTION',computation_executed:false,
-   numeric_result:null,object_ids_minted:0,operator_candidates:[{
+   numeric_result:null,object_ids_minted:0,source_references:['fixture:source'],operator_candidates:[{
     route_key:'science.query',state:'EXPLICIT_TYPED_OPERATOR_CANDIDATE',
     solver_invoked:false,results_generated:false,
     blockers:['HOST_CAPABILITY_LEASE_AND_DB_R_READBACK_REQUIRED']
@@ -268,4 +268,20 @@ test('effectful depth claims remain held in source-only LS review',()=>{
  assert.equal(review(x).state,'HOST_REVALIDATION_REQUIRED');
  assert.equal(review(x).host_authenticated,false);
  assert.equal(review(x).canonical_mutation,false);
+});
+
+test('operator source evidence must be available, scoped and non-duplicated',()=>{
+ denied(x=>{x.spread.objects[0].source_available=false;},
+  'OPERATOR_EVIDENCE_NOT_QUALIFIED','operator');
+ denied(x=>{x.operator_plan.source_references=[];},
+  'OPERATOR_EVIDENCE_NOT_QUALIFIED','operator');
+ denied(x=>{x.operator_plan.source_references=['fixture:unrelated'];},
+  'OPERATOR_EVIDENCE_NOT_QUALIFIED','operator');
+ denied(x=>{x.operator_plan.source_references=['fixture:source','fixture:source'];},
+  'OPERATOR_EVIDENCE_NOT_QUALIFIED','operator');
+ denied(x=>{delete x.operator_plan.source_references;},
+  'OPERATOR_EVIDENCE_NOT_QUALIFIED','operator');
+ const valid=review(fixture('operator'));
+ assert.equal(valid.state,'HOST_REVALIDATION_REQUIRED');
+ assert.equal(valid.capability_installed,false);
 });
