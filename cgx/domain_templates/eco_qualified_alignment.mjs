@@ -118,11 +118,18 @@ function validateConcept(x){
  if(x.projection_result!==undefined){
   const p=x.projection_result;
   if(!obj(p))throw Error("INVALID_ECO_PROJECTION");
-  for(const f of ["scenario_ref","metric_ref","formula_ref","parameter_set_ref","horizon_ref","baseline_ref","uncertainty_ref","model_version_ref","unit"])
+  for(const f of ["scenario_ref","metric_ref","formula_ref","parameter_set_ref","horizon_ref","baseline_ref","uncertainty_ref","model_version_ref","spatial_support_ref","unit"])
    if(p[f]!==undefined&&!good(p[f]))throw Error("INVALID_PROJECTION_"+f.toUpperCase());
   if(p.input_source_refs!==undefined&&!stringList(p.input_source_refs))throw Error("INVALID_PROJECTION_INPUT_SOURCES");
   if(p.estimated_value!==undefined&&(typeof p.estimated_value!=="number"||!Number.isFinite(p.estimated_value)))
    throw Error("INVALID_PROJECTION_ESTIMATE");
+ }
+ // An observation-to-projection comparison is a proposed validation plan, never an observed outcome.
+ if(x.projection_observation_comparison!==undefined){
+  const c=x.projection_observation_comparison;
+  if(!obj(c)||typeof c.proposed!=="boolean")throw Error("INVALID_PROJECTION_OBSERVATION_COMPARISON");
+  for(const f of ["observation_ref","observation_source_ref","metric_ref","unit","spatial_support_ref","temporal_support_ref","baseline_ref","method_ref","uncertainty_ref","observation_qa_ref","comparison_method_ref","counterevidence_ref"])
+   if(c[f]!==undefined&&!good(c[f]))throw Error("INVALID_PROJECTION_OBSERVATION_"+f.toUpperCase());
  }
  if(x.measurement_basis!==undefined&&["raw","corrected","derived","reference"].includes(x.measurement_basis)===false)throw Error("INVALID_MEASUREMENT_BASIS");
  if(x.measurement_uncertainty!==undefined){
@@ -176,6 +183,8 @@ function compare(a,b,checks){
  if(!equal(a.receiving_pathway??null,b.receiving_pathway??null))add(checks,"RECEIVING_PATHWAY_PROVENANCE_OR_SCOPE_DIFFERENT");
  if(!equal(a.benefit_accounting??null,b.benefit_accounting??null))add(checks,"BENEFIT_ACCOUNTING_CLAIM_SCOPE_OR_ATTRIBUTION_DIFFERENT");
  if(!equal(a.projection_result??null,b.projection_result??null))add(checks,"PROJECTION_SCENARIO_OR_MODEL_PROVENANCE_DIFFERENT");
+ if(!equal(a.projection_observation_comparison??null,b.projection_observation_comparison??null))
+  add(checks,"PROJECTION_OBSERVATION_VALIDATION_DESIGN_DIFFERENT");
  // Field QA, missingness and instrument provenance are independent of measured value.
  for(const [field,flag] of [
   ["station_instrument_id","INSTRUMENT_ID_DIFFERENT_OR_UNDECLARED"],
@@ -361,6 +370,34 @@ function completeness(x,checks){
    if(p.estimated_value!==undefined&&!good(p.unit))add(checks,"PROJECTION_ESTIMATE_UNIT_REQUIRED");
   }
  }
+ // ONT-009 vs ONT-019: matching reference labels is not proof of predictive accuracy.
+ if(x.projection_observation_comparison?.proposed){
+  const c=x.projection_observation_comparison,p=x.projection_result;
+  add(checks,"PROJECTION_OBSERVATION_COMPARISON_REQUIRES_REVIEW");
+  if(x.semantic_type!=="projection_result")add(checks,"PROJECTION_COMPARISON_TYPE_CONFLICT");
+  for(const [f,flag] of [
+   ["observation_ref","PROJECTION_COMPARISON_OBSERVATION_REQUIRED"],
+   ["observation_source_ref","PROJECTION_COMPARISON_OBSERVATION_SOURCE_REQUIRED"],
+   ["metric_ref","PROJECTION_COMPARISON_METRIC_REQUIRED"],
+   ["unit","PROJECTION_COMPARISON_UNIT_REQUIRED"],
+   ["spatial_support_ref","PROJECTION_COMPARISON_SPATIAL_SUPPORT_REQUIRED"],
+   ["temporal_support_ref","PROJECTION_COMPARISON_TEMPORAL_SUPPORT_REQUIRED"],
+   ["baseline_ref","PROJECTION_COMPARISON_BASELINE_REQUIRED"],
+   ["method_ref","PROJECTION_COMPARISON_OBSERVATION_METHOD_REQUIRED"],
+   ["uncertainty_ref","PROJECTION_COMPARISON_OBSERVATION_UNCERTAINTY_REQUIRED"],
+   ["observation_qa_ref","PROJECTION_COMPARISON_OBSERVATION_QA_REQUIRED"],
+   ["comparison_method_ref","PROJECTION_COMPARISON_METHOD_REQUIRED"],
+   ["counterevidence_ref","PROJECTION_COMPARISON_COUNTEREVIDENCE_REQUIRED"]])
+   if(!good(c[f]))add(checks,flag);
+  if(!good(p?.spatial_support_ref))add(checks,"PROJECTION_SPATIAL_SUPPORT_REQUIRED_FOR_COMPARISON");
+  for(const [cf,pf,flag] of [
+   ["metric_ref","metric_ref","PROJECTION_COMPARISON_METRIC_MISMATCH"],
+   ["unit","unit","PROJECTION_COMPARISON_UNIT_MISMATCH"],
+   ["spatial_support_ref","spatial_support_ref","PROJECTION_COMPARISON_SPATIAL_SUPPORT_MISMATCH"],
+   ["temporal_support_ref","horizon_ref","PROJECTION_COMPARISON_TEMPORAL_SUPPORT_MISMATCH"],
+   ["baseline_ref","baseline_ref","PROJECTION_COMPARISON_BASELINE_MISMATCH"]])
+   if(good(c[cf])&&good(p?.[pf])&&c[cf]!==p[pf])add(checks,flag);
+ }
  // Censored reports are bounds, not measured point values.
  if(x.reporting_bound&&!good(x.result_qualifier))add(checks,"RESULT_QUALIFIER_REQUIRED");
  if(x.reporting_bound){
@@ -420,6 +457,9 @@ export function planEcoAlignment({novel,known_objects=[],authorised_object_ids=[
  if(novelRefs.length<novel.source_refs.length)add(novelChecks,"NOVEL_SOURCE_SCOPE_PARTIAL");
  if(novel.projection_result?.input_source_refs?.some(s=>!allowedSources.has(s)))
   add(novelChecks,"NOVEL_PROJECTION_INPUT_SOURCE_SCOPE_PARTIAL");
+ if(novel.projection_observation_comparison?.observation_source_ref&&
+    !allowedSources.has(novel.projection_observation_comparison.observation_source_ref))
+  add(novelChecks,"NOVEL_COMPARISON_OBSERVATION_SOURCE_SCOPE_PARTIAL");
  const seen=new Set(),out=[];
  for(const k of known_objects){
   validateConcept(k);
@@ -438,6 +478,12 @@ export function planEcoAlignment({novel,known_objects=[],authorised_object_ids=[
   add(checks,"NOVEL_PROJECTION_INPUT_SOURCE_SCOPE_PARTIAL");
  if(k.projection_result?.input_source_refs?.some(s=>!allowedSources.has(s)))
   add(checks,"KNOWN_PROJECTION_INPUT_SOURCE_SCOPE_PARTIAL");
+ if(novel.projection_observation_comparison?.observation_source_ref&&
+    !allowedSources.has(novel.projection_observation_comparison.observation_source_ref))
+  add(checks,"NOVEL_COMPARISON_OBSERVATION_SOURCE_SCOPE_PARTIAL");
+ if(k.projection_observation_comparison?.observation_source_ref&&
+    !allowedSources.has(k.projection_observation_comparison.observation_source_ref))
+  add(checks,"KNOWN_COMPARISON_OBSERVATION_SOURCE_SCOPE_PARTIAL");
   const exactId=novel.object_id===k.object_id;
   out.push({known_object_id:k.object_id,
    state:exactId?"SAME_ID_CLAIM_REQUIRES_PROOF":checks.length?"REVIEW_DIFFERENCE":"TYPED_ALIGNMENT_CANDIDATE",
