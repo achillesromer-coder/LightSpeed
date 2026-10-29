@@ -16,19 +16,19 @@
     "version": "0.2.0",
     "source_archive": {
       "file": "Git.CGX_v0.2.0_Source_Repository.zip",
-      "sha256": "4a550dad37375000ca17e2f3d70fd2e4c3efb72b8a8e5d85f48066d26870b142",
-      "bytes": 47474,
-      "entries": 30
+      "sha256": "5ac10fa97c0057458f0fa40c46109b8b2265041636a1e973f129a8b0a0c9ff82",
+      "bytes": 50413,
+      "entries": 33
     },
     "static_archive": {
       "file": "Git.CGX_v0.2.0_Static_Web.zip",
-      "sha256": "b971c1c1db256dba9dd2b585d3a23a8cca41e8de0187186191cf35325086a6b8",
+      "sha256": "7ede5db6942b6ec81389b88b42aeca0379bdb99f09867d3a07e80366d49daed9",
       "bytes": 27921,
       "entries": 14
     },
     "test_results": {
-      "node": "24/24 PASS",
-      "browser": "11 routes in Chromium injected-source harness, mobile no horizontal overflow",
+      "node": "27/27 PASS",
+      "browser": "11 routes Chromium injected-source harness; 390px mobile no horizontal overflow",
       "real_pages_http": "NOT_VERIFIED"
     },
     "surface": {
@@ -45,7 +45,15 @@
     "entry": "Git.cgx",
     "web_entry": "index.html",
     "build": "npm run check",
-    "github_pages": "MANUAL_OWNER_GATED"
+    "github_pages": "MANUAL_OWNER_GATED",
+    "public_upstream_audit": {
+      "source_module": "scripts/github-public-audit.mjs",
+      "workflow": ".github/workflows/public-source-audit.yml",
+      "scope": "TWO_VERIFIED_PUBLIC_GITHUB_REPOSITORIES_ONLY",
+      "run_status": "NOT_EXECUTED_ON_TARGET_GITHUB_REPO",
+      "cadence": "daily after target repository activation",
+      "changes_existing_repositories": false
+    }
   },
   "original": {
     "source_sha256": "2716ae439f4de0695d7b92a4fb4bf9ab73e843dfb25a9b79bdfa3fee1e2447ab",
@@ -72,7 +80,8 @@
     "Validate Node source tests and source SHA-256 in GitHub CI.",
     "Owner approve release and enable Actions Pages, then test actual deployment/private-byte checks.",
     "For legacy repo retirement, require full history, ACL/IP/licence and consumer parity plus owner sign-off. No destruction.",
-    "For private feed, implement an independent authenticated, rights-reviewed server-side public aggregate export; do not embed private bytes in static assets."
+    "For private feed, implement an independent authenticated, rights-reviewed server-side public aggregate export; do not embed private bytes in static assets.",
+    "Run optional GitHub Actions public-source-audit job and inspect artifact; it is public-only provider metadata readback, not a live private feed."
   ],
   "related": [
     "https://github.com/achillesromer-coder/LightSpeed/pull/174",
