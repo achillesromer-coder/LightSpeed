@@ -16,7 +16,7 @@ const delta = json('./cross_family_relation_overlap_delta_2026-10-29.json');
 const prior = json('./eco_shared_relation_crosswalk_candidates_2026-10-29.json');
 const sources = Object.fromEntries(Object.entries(sourceFiles).map(([key,path]) => [key,json(path)]));
 const gitBlob = bytes => createHash('sha1').update(Buffer.concat([
-  Buffer.from('blob ' + bytes.length + '\\0'), bytes
+  Buffer.from('blob ' + bytes.length + '\0'), bytes
 ])).digest('hex');
 const same = (a,b) => assert.deepEqual(a,b);
 const sorted = arr => [...arr].sort();
