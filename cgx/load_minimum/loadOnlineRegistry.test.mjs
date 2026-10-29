@@ -192,7 +192,7 @@ function verifyEcoSharedCandidateSnapshot(snapshot) {
   const sharedBytes=readFileSync(new URL('../domain_templates/relation_qualifier_contract.json',import.meta.url));
   const eco=JSON.parse(ecoBytes.toString('utf8'));
   const shared=JSON.parse(sharedBytes.toString('utf8'));
-  const gitBlob=bytes=>createHash('sha1').update(Buffer.from('blob '+bytes.length+'\\0')).update(bytes).digest('hex');
+  const gitBlob=bytes=>createHash('sha1').update(Buffer.from('blob '+bytes.length+'\0')).update(bytes).digest('hex');
   assert.equal(snapshot.schema,'CGX-CROSS-FAMILY-RELATION-CANDIDATES/0.1');
   assert.equal(snapshot.stage,'SOURCE_REVIEW_ONLY');
   assert.equal(snapshot.status,'HOLD');
