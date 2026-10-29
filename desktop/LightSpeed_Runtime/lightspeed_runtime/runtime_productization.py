@@ -134,6 +134,9 @@ def _require_confirmed(action: str, confirmed: bool) -> None:
 
 
 def _validate_marker(paths: dict[str, Path], slot: str) -> dict[str, Any]:
+    # Never trust a marker reached through a redirected slot directory.
+    if paths["slot_dir"].is_symlink():
+        raise RuntimeProductizationError("managed slot must not be a symlink")
     marker_path = paths["marker"]
     if not marker_path.exists():
         raise RuntimeProductizationError(
@@ -210,10 +213,15 @@ def runtime_productization_status(slot: str = "default") -> dict[str, Any]:
 
 
 def _configure(paths: dict[str, Path], slot: str, profile: str) -> dict[str, Any]:
-    paths["slot_dir"].mkdir(parents=True, exist_ok=True)
-    if paths["marker"].exists():
+    # Do not adopt a pre-existing unmarked directory: a later rollback would
+    # otherwise delete unrelated files after this method minted a marker.
+    slot_dir = paths["slot_dir"]
+    if slot_dir.is_symlink():
+        raise RuntimeProductizationError("managed slot must not be a symlink")
+    if slot_dir.exists():
         _validate_marker(paths, slot)
     else:
+        slot_dir.mkdir(parents=True, exist_ok=False)
         _write_json(paths["marker"], _marker(slot, profile))
     payload = {
         "schema": "LIGHTSPEED-RUNTIME-SLOT-CONFIG/0.1",
