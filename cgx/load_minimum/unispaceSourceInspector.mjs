@@ -12,6 +12,12 @@ const proofClasses=new Set(['creative','scientific','engineering','historical','
 // A known Grex domain must never be presented under another child's FileSpace.
 // This is a review boundary, not an authoritative namespace resolver.
 const knownChildSpaces=Object.freeze({eco:'Eco.cgx',romer:'Romer.cgx',emassc:'EMASSC.cgx',ls:'LS.cgx'});
+// Reserved Grex FileSpaces are bidirectional: an unknown/aliased domain cannot
+// claim an established child's namespace, even with caller-supplied ACL arrays.
+const reservedChildSpaces=Object.freeze(Object.fromEntries(Object.entries(knownChildSpaces).map(([domain,space])=>[space,domain])));
+const childSpaceMatches=n=>object(n)&&good(n.domain)&&good(n.file_space)&&
+ (Object.hasOwn(knownChildSpaces,n.domain)?knownChildSpaces[n.domain]===n.file_space:
+  !Object.hasOwn(reservedChildSpaces,n.file_space));
 const hold=(reason)=>({schema:INSPECTOR_SCHEMA,status:'DENIED',reason,canonical_mutation:false,public_release:false});
 
 /** Builds one bounded FileSpace inspector plan, never an authenticated view. */
@@ -27,7 +33,7 @@ export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,vi
  // must not silently select a different domain's FileSpace.
  const selected=nodes.filter(n=>object(n)&&n.object_id===focus_id);
  if(selected.length!==1||selected[0].file_space!==file_space)return hold('FILESPACE_OR_ID_UNRESOLVED');
- if(Object.hasOwn(knownChildSpaces,selected[0].domain)&&knownChildSpaces[selected[0].domain]!==file_space)
+ if(!childSpaceMatches(selected[0]))
   return hold('FILESPACE_OR_ID_UNRESOLVED');
  // The planner validates untrusted graph, view and budget input by throwing.
  // A user-facing inspector must convert those failures into a non-disclosing HOLD.
@@ -41,7 +47,7 @@ export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,vi
   const byId=new Map(nodes.map(n=>[n.object_id,n]));
   if(spread.objects.some(o=>{
    const n=byId.get(o.object_id);
-   return !n||(Object.hasOwn(knownChildSpaces,n.domain)&&n.file_space!==knownChildSpaces[n.domain]);
+   return !childSpaceMatches(n);
   }))return hold('CHILD_FILESPACE_SCOPE_CONFLICT');
   switchPlan=planViewportSwitch({spread,to:view});
  } catch {
