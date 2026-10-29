@@ -783,3 +783,39 @@ test("malformed temporal embargo and leakage audit references are rejected",()=>
  assert.throws(()=>planEcoAlignment({novel:statsFixture({[field]:42}),authorised_source_ids:["src-a"]}),
  /INVALID_VALIDATION_STATISTICS_/);
 });
+
+
+// Synthetic dependence/replication controls; references are not evidence of predictive skill.
+test("spatial autocorrelation, temporal dependence and replication require separate assessments",()=>{
+ const x=planEcoAlignment({novel:statsFixture(),authorised_source_ids:["src-a"]});
+ for(const flag of ["VALIDATION_SPATIAL_AUTOCORRELATION_ASSESSMENT_REQUIRED",
+  "VALIDATION_TEMPORAL_DEPENDENCE_ASSESSMENT_REQUIRED",
+  "VALIDATION_SAMPLING_UNIT_INDEPENDENCE_REQUIRED",
+  "VALIDATION_REPLICATE_STRUCTURE_REQUIRED"])
+  assert.ok(x.novel_checks.includes(flag),flag);
+});
+test("declared dependence references never self-certify validation or ecological benefit",()=>{
+ const x=planEcoAlignment({novel:statsFixture({
+  spatial_autocorrelation_assessment_ref:"assessment:synthetic",
+  temporal_dependence_assessment_ref:"dependence:synthetic",
+  sampling_unit_independence_ref:"sampling:synthetic",
+  replicate_structure_ref:"replicates:synthetic"
+ }),authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("VALIDATION_STATISTICS_INDEPENDENT_REVIEW_REQUIRED"));
+ assert.equal(x.accepted_native_identity,false);
+ assert.equal(x.ecological_effect_verified,false);
+});
+test("different autocorrelation assessments preserve competing validation variants",()=>{
+ const a=statsFixture({spatial_autocorrelation_assessment_ref:"assessment:A"});
+ const b={...a,object_id:"known:dependence",validation_statistics:{
+  ...a.validation_statistics,spatial_autocorrelation_assessment_ref:"assessment:B"}};
+ const x=planEcoAlignment({novel:a,known_objects:[b],
+  authorised_object_ids:["known:dependence"],authorised_source_ids:["src-a"]});
+ assert.ok(x.candidates[0].checks.includes("VALIDATION_STATISTICS_DESIGN_OR_RESULT_DIFFERENT"));
+ assert.equal(x.candidates[0].auto_merge,false);
+});
+test("malformed replication and dependence references are rejected",()=>{
+ for(const field of ["replicate_structure_ref","temporal_dependence_assessment_ref"])
+  assert.throws(()=>planEcoAlignment({novel:statsFixture({[field]:42}),
+   authorised_source_ids:["src-a"]}),/INVALID_VALIDATION_STATISTICS_/);
+});
