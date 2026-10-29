@@ -226,3 +226,49 @@ def test_symlinked_managed_slot_cannot_be_configured_or_rolled_back(
     assert (target / "keep.txt").read_text(encoding="utf-8") == "preserve"
     assert not (target / rp.MARKER_NAME).exists()
     assert not (root / "_receipts").exists()
+
+
+def test_symlinked_managed_root_cannot_be_configured_or_rolled_back(
+    monkeypatch, tmp_path: Path
+) -> None:
+    root = _set_root(monkeypatch, tmp_path)
+    target = tmp_path / "unrelated-root"
+    target.mkdir()
+    (target / "keep.txt").write_text("preserve", encoding="utf-8")
+    try:
+        root.symlink_to(target, target_is_directory=True)
+    except (OSError, NotImplementedError):
+        pytest.skip("directory symlink creation unavailable on this host")
+
+    for action in ("configure", "rollback"):
+        with pytest.raises(rp.RuntimeProductizationError, match="managed root.*reparse"):
+            rp.manage_runtime_productization(action, slot="alpha", confirmed=True)
+    assert (target / "keep.txt").read_text(encoding="utf-8") == "preserve"
+    assert not (target / "alpha").exists()
+    assert not (target / "_receipts").exists()
+
+
+@pytest.mark.parametrize("redirected", ["root", "slot"])
+def test_windows_reparse_attribute_is_fail_closed_without_writes(
+    monkeypatch, tmp_path: Path, redirected: str
+) -> None:
+    from types import SimpleNamespace
+
+    root = _set_root(monkeypatch, tmp_path)
+    slot = root / "alpha"
+    slot.mkdir(parents=True)
+    target = root if redirected == "root" else slot
+    original_lstat = Path.lstat
+
+    def simulated_windows_lstat(self):
+        if self == target:
+            return SimpleNamespace(st_file_attributes=0x400)
+        return original_lstat(self)
+
+    monkeypatch.setattr(Path, "lstat", simulated_windows_lstat)
+    with pytest.raises(rp.RuntimeProductizationError, match="reparse point"):
+        rp.runtime_productization_status("alpha")
+    with pytest.raises(rp.RuntimeProductizationError, match="reparse point"):
+        rp.manage_runtime_productization("configure", slot="alpha", confirmed=True)
+    assert not (slot / rp.MARKER_NAME).exists()
+    assert not (root / "_receipts").exists()
