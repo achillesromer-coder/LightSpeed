@@ -684,3 +684,33 @@ test("validation evaluation period and spatial support cannot silently mismatch"
  assert.ok(x.novel_checks.includes("VALIDATION_EVALUATION_PERIOD_MISMATCH"));
  assert.ok(x.novel_checks.includes("VALIDATION_EVALUATION_SPACE_MISMATCH"));
 });
+
+// Synthetic validation partition controls; references are NOT proof of independent holdout.
+test("validation partition requires training set, holdout policy, grouping unit and leakage audit",()=>{
+ const x=planEcoAlignment({novel:statsFixture(),known_objects:[],authorised_source_ids:["src-a"]});
+ for(const flag of ["VALIDATION_TRAINING_SET_REQUIRED","VALIDATION_HOLDOUT_POLICY_REQUIRED",
+  "VALIDATION_SPLIT_UNIT_REQUIRED","VALIDATION_LEAKAGE_AUDIT_REQUIRED"])assert.ok(x.novel_checks.includes(flag),flag);
+});
+test("training set reused as validation holdout is explicitly flagged",()=>{
+ const x=planEcoAlignment({novel:statsFixture({training_set_ref:"val:synthetic",holdout_policy_ref:"policy:site",
+  split_unit_ref:"group:site",leakage_audit_ref:"audit:synthetic"}),authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("VALIDATION_TRAINING_AND_HOLDOUT_IDENTICAL"));
+});
+test("declared independent partition never self-certifies predictive skill",()=>{
+ const x=planEcoAlignment({novel:statsFixture({training_set_ref:"train:synthetic",holdout_policy_ref:"policy:site",
+  split_unit_ref:"group:site",leakage_audit_ref:"audit:synthetic"}),authorised_source_ids:["src-a"]});
+ assert.ok(!x.novel_checks.includes("VALIDATION_TRAINING_AND_HOLDOUT_IDENTICAL"));
+ assert.ok(x.novel_checks.includes("VALIDATION_STATISTICS_INDEPENDENT_REVIEW_REQUIRED"));
+ assert.equal(x.ecological_effect_verified,false);assert.equal(x.accepted_native_identity,false);
+});
+test("different holdout grouping provenance remains distinct",()=>{
+ const a=statsFixture({training_set_ref:"train:synthetic",holdout_policy_ref:"policy:site",
+  split_unit_ref:"group:site",leakage_audit_ref:"audit:synthetic"});
+ const b={...a,object_id:"known:validation",validation_statistics:{...a.validation_statistics,split_unit_ref:"group:observation"}};
+ const x=planEcoAlignment({novel:a,known_objects:[b],authorised_object_ids:["known:validation"],authorised_source_ids:["src-a"]});
+ assert.ok(x.candidates[0].checks.includes("VALIDATION_STATISTICS_DESIGN_OR_RESULT_DIFFERENT"));
+});
+test("malformed validation leakage audit reference is rejected",()=>{
+ assert.throws(()=>planEcoAlignment({novel:statsFixture({leakage_audit_ref:42}),authorised_source_ids:["src-a"]}),
+  /INVALID_VALIDATION_STATISTICS_LEAKAGE_AUDIT_REF/);
+});
