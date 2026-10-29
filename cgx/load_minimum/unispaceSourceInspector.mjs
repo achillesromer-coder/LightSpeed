@@ -55,11 +55,17 @@ export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,vi
   if(!object(e)||!good(e.source_id)||!refSet.has(e.source_id)||!permitted.has(e.source_id))continue;
   if(seen.has(e.source_id)){conflicts.add(e.source_id);continue;}
   seen.add(e.source_id);
-  const valid=sha(e.sha256)&&good(e.version)&&good(e.owner)&&rights.has(e.rights)&&e.rights!=='UNKNOWN'&&e.rights!=='LICENSE_RESTRICTED'&&proofClasses.has(e.proof_class);
+  // C33: caller-supplied revocation/supersession evidence is a veto, never a grant.
+  // Missing rights-state is still unverified; explicit non-ACTIVE state fails closed.
+  const rightsActive=e.rights_state===undefined||e.rights_state==='ACTIVE';
+  const notRevoked=e.revoked!==true&&e.rights_revoked!==true&&
+   !Object.hasOwn(e,'revoked_at')&&!Object.hasOwn(e,'superseded_by');
+  const valid=rightsActive&&notRevoked&&sha(e.sha256)&&good(e.version)&&good(e.owner)&&rights.has(e.rights)&&e.rights!=='UNKNOWN'&&e.rights!=='LICENSE_RESTRICTED'&&proofClasses.has(e.proof_class);
   claims.push({source_id:e.source_id,sha256:valid?e.sha256.toLowerCase():null,
    version:valid?e.version:null,owner:valid?e.owner:null,
    rights:valid?e.rights:'UNRESOLVED',proof_class:valid?e.proof_class:'unclassified',
-   qualification:valid?'DECLARED_NOT_PROVIDER_VERIFIED':'FRONTIER_SOURCE_QUALIFICATION'});
+   qualification:valid?'DECLARED_NOT_PROVIDER_VERIFIED':
+    (!rightsActive||!notRevoked?'FRONTIER_RIGHTS_REVOKED_OR_UNRESOLVED':'FRONTIER_SOURCE_QUALIFICATION')});
  }
  for(const claim of claims)if(conflicts.has(claim.source_id)){claim.qualification='FRONTIER_COLLIDING_SOURCE';claim.sha256=null;}
  // Do not mark an R3 candidate if any focus evidence was filtered by ACL or budget.

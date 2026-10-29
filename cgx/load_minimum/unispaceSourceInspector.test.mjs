@@ -162,3 +162,26 @@ test('public, omitted and unknown surfaces fail closed without H0-H4 or private 
  assert.equal(inspect(omitted).status,'DENIED');
  assert.equal(inspect(args).status,'SOURCE_REVIEW_ONLY');
 });
+
+// #158 / C33: rights revocation or supersession must invalidate a previously
+// qualified private R3 review candidate; no provider/host claim is made.
+test('revoked superseded or non-ACTIVE source envelopes cannot support R3',()=>{
+ for(const signal of [
+  {rights_state:'REVOKED'},{rights_state:'SUPERSEDED'},{rights_state:'UNRESOLVED'},
+  {rights_state:'VALID'},{revoked:true},{rights_revoked:true},
+  {revoked_at:'2026-10-30T00:00:00Z'},{superseded_by:'next-grant'}
+ ]){
+  const x=inspect({...args,source_envelopes:[{...source_envelopes[0],...signal}]});
+  assert.equal(x.status,'SOURCE_REVIEW_ONLY');
+  assert.equal(x.viewport.state,'FRONTIER');
+  assert.equal(x.admission_stage,'R2_REVIEW_FRONTIER');
+  assert.equal(x.h2.source_claims[0].qualification,'FRONTIER_RIGHTS_REVOKED_OR_UNRESOLVED');
+  assert.equal(x.h2.source_claims[0].sha256,null);
+  assert.equal(x.h4.installed,false);
+  assert.equal(x.provider_readback,false);
+  assert.equal(x.public_release,false);
+ }
+ const stillReview=inspect({...args,source_envelopes:[{...source_envelopes[0],rights_state:'ACTIVE'}]});
+ assert.equal(stillReview.admission_stage,'R3_VIEW_PROPOSAL');
+ assert.equal(stillReview.host_authenticated,false);
+});
