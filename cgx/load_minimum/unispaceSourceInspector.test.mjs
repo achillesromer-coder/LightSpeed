@@ -113,3 +113,18 @@ test('explicit cross-domain budget cannot override Object_ID/source ACL or leak 
  assert.equal(permitted.provider_readback,false);
  assert.equal(permitted.public_release,false);
 });
+
+test('known Grex domain cannot be impersonated by a different child FileSpace',()=>{
+ const wrong=[{...nodes[0],domain:'romer'},nodes[1]];
+ const x=inspect({...args,nodes:wrong});
+ assert.equal(x.status,'DENIED');
+ assert.equal(x.reason,'FILESPACE_OR_ID_UNRESOLVED');
+ assert.equal(x.canonical_mutation,false);
+ assert.equal(x.public_release,false);
+ assert.ok(!JSON.stringify(x).includes('fixture:romer:private-source'));
+ // The original authorised Eco fixture remains an R3 private proposal only.
+ const valid=inspect(args);
+ assert.equal(valid.status,'SOURCE_REVIEW_ONLY');
+ assert.equal(valid.admission_stage,'R3_VIEW_PROPOSAL');
+ assert.equal(valid.host_authenticated,false);
+});
