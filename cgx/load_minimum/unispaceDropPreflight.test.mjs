@@ -115,12 +115,12 @@ test('Unicode bidi and invisible filename controls cannot spoof a FileSpace drop
 
 test('bidi and invisible controls in source authority identities fail closed',()=>{
  const cases=[
-  [{...args,target:{...target,object_id:target.object_id+'\\u202e'}},'EXACT_CHILD_FILESPACE_UNRESOLVED'],
-  [{...args,target:{...target,owner:'Romer\\u200b'}},'EXACT_CHILD_FILESPACE_UNRESOLVED'],
-  [{...args,source:{...source,source_id:source.source_id+'\\u202e'}},'SOURCE_QUALIFICATION_INCOMPLETE'],
-  [{...args,source:{...source,owner:'owner\\u2066'}},'SOURCE_QUALIFICATION_INCOMPLETE'],
-  [{...args,source:{...source,version:'2\\u200b'}},'SOURCE_QUALIFICATION_INCOMPLETE'],
-  [{...args,existing_sources:[{source_id:'alias\\u202e',sha256:source.sha256}]},'EXISTING_SOURCE_REGISTRY_UNQUALIFIED']
+  [{...args,target:{...target,object_id:target.object_id+'\u202e'}},'EXACT_CHILD_FILESPACE_UNRESOLVED'],
+  [{...args,target:{...target,owner:'Romer\u200b'}},'EXACT_CHILD_FILESPACE_UNRESOLVED'],
+  [{...args,source:{...source,source_id:source.source_id+'\u202e'}},'SOURCE_QUALIFICATION_INCOMPLETE'],
+  [{...args,source:{...source,owner:'owner\u2066'}},'SOURCE_QUALIFICATION_INCOMPLETE'],
+  [{...args,source:{...source,version:'2\u200b'}},'SOURCE_QUALIFICATION_INCOMPLETE'],
+  [{...args,existing_sources:[{source_id:'alias\u202e',sha256:source.sha256}]},'EXISTING_SOURCE_REGISTRY_UNQUALIFIED']
  ];
  for(const [input,reason] of cases){
   const x=plan(input);
@@ -132,8 +132,8 @@ test('bidi and invisible controls in source authority identities fail closed',()
   owner:source.owner,rights:source.rights,proof_class:source.proof_class,
   object_id:target.object_id,file_space:target.file_space};
  for(const [field,value,reason] of [
-  ['owner','owner\\u200b','EXISTING_SOURCE_IDENTITY_UNQUALIFIED'],
-  ['object_id','fixture:eco:existing\\u202e','EXISTING_REFERENCE_SCOPE_UNQUALIFIED']
+  ['owner','owner\u200b','EXISTING_SOURCE_IDENTITY_UNQUALIFIED'],
+  ['object_id','fixture:eco:existing\u202e','EXISTING_REFERENCE_SCOPE_UNQUALIFIED']
  ]){
   const x=plan({...args,existing_sources:[{...exact,[field]:value}]});
   assert.equal(x.status,'HOLD',field);
