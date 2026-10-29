@@ -46,6 +46,12 @@ export function planUniSpaceDropPreflight({target,file,source,access,existing_so
   const prior=matching[0];
   if(!label(prior.version)||!label(prior.owner)||!rights.has(prior.rights)||!classes.has(prior.proof_class))
    return result('EXISTING_SOURCE_IDENTITY_UNQUALIFIED');
+  // Identical R0 evidence can legitimately be referenced by different objects.
+  // A source match alone must not suppress intake for another child FileSpace.
+  if(!label(prior.object_id)||!label(prior.file_space))
+   return result('EXISTING_REFERENCE_SCOPE_UNQUALIFIED');
+  if(prior.object_id!==target.object_id||prior.file_space!==target.file_space)
+   return result('EXISTING_REFERENCE_SCOPE_COLLISION');
   if(prior.version!==source.version||prior.owner!==source.owner||prior.rights!==source.rights||prior.proof_class!==source.proof_class)
    return result('SOURCE_IDENTITY_COLLISION');
   return result('EXISTING_REFERENCE_NO_DUPLICATE','NOOP_REVIEW');
