@@ -199,3 +199,26 @@ test('revoked superseded or non-ACTIVE source envelopes cannot support R3',()=>{
  assert.equal(stillReview.admission_stage,'R3_VIEW_PROPOSAL');
  assert.equal(stillReview.host_authenticated,false);
 });
+
+test('#209 metric 3D stop-ship rejects claimed verification and decorative geometry',()=>{
+ const forged={...source_envelopes[0],provider_readback:true,hash_verified:true,
+  metric_verified:true,independent_numeric_validation:true,native_admitted:true,
+  host_authenticated:true,signed_handshake:true};
+ for(const proof_class of ['scientific','engineering','operational','creative']){
+  const x=inspect({...args,view:'3d',source_envelopes:[{...forged,proof_class}]});
+  assert.equal(x.status,'SOURCE_REVIEW_ONLY');
+  assert.equal(x.viewport.state,'FRONTIER');
+  assert.equal(x.admission_stage,'R2_REVIEW_FRONTIER');
+  assert.ok(x.viewport.frontier.includes('METRIC_GEOMETRY_PROVIDER_AND_INDEPENDENT_VALIDATION_REQUIRED'));
+  assert.equal(x.viewport.geometry_ref,null);
+  assert.equal(x.viewport.metric_authority,'NOT_VERIFIED');
+  assert.equal(x.viewport.rendered,false);
+  assert.equal(x.host_authenticated,false);
+  assert.equal(x.provider_readback,false);
+  assert.equal(x.h4.installed,false);
+  assert.equal(x.public_release,false);
+ }
+ const doc=inspect({...args,view:'document'});
+ assert.equal(doc.admission_stage,'R3_VIEW_PROPOSAL');
+ assert.equal(doc.viewport.metric_authority,'NOT_VERIFIED');
+});
