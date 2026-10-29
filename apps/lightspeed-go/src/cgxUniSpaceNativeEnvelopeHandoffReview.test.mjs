@@ -219,6 +219,26 @@ test("native source_intake adapter mapping matches all supported private preflig
   }
 });
 
+test("untrusted source mapping ID must be qualified even when both caller claims agree",async()=>{
+  for(const mappingId of [undefined,"", "FF-INVALID/", ["FF-WATCHTOWER-FCSTD-001"], 42]){
+    const x=await fixture();
+    x.preflight={...x.preflight}; // preflight output is frozen
+    if(mappingId===undefined){delete x.source.mapping_id;delete x.preflight.source_mapping_id;}
+    else {x.source.mapping_id=mappingId;x.preflight.source_mapping_id=mappingId;}
+    assert.equal(run(x).hold_code,"UNQUALIFIED_SOURCE_MAPPING",String(mappingId));
+  }
+});
+
+test("preflight mapping ID cannot be absent, malformed, or cross-mapped",async()=>{
+  for(const mappingId of [undefined,"", "FF-INVALID/", "FF-WATCHTOWER-FCSTD-002"]){
+    const x=await fixture();
+    x.preflight={...x.preflight};
+    if(mappingId===undefined)delete x.preflight.source_mapping_id;
+    else x.preflight.source_mapping_id=mappingId;
+    assert.equal(run(x).hold_code,"UNTRUSTED_PREFLIGHT",String(mappingId));
+  }
+});
+
 test("untrusted identity and digest primitive-type coercion fails closed",async()=>{
   const cases=[
     [x=>{x.selection.object_id=42;}, "UNQUALIFIED_OBJECT"],
