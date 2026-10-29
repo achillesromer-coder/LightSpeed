@@ -7,6 +7,10 @@ const MAX_BYTES=60*1024*1024;
 const spaces=Object.freeze({eco:'Eco.cgx',romer:'Romer.cgx',emassc:'EMASSC.cgx',ls:'LS.cgx'});
 const rights=new Set(['PUBLIC_SAFE','OWNER_PRIVATE','LICENSE_RESTRICTED','UNKNOWN']);
 const classes=new Set(['creative','scientific','engineering','historical','operational']);
+// Caller-declared rights state is a review hint, never a signed grant or DBR receipt.
+const rightsStates=new Set(['ACTIVE','REVOKED','SUPERSEDED','UNRESOLVED']);
+const revocationEvidence=x=>x.revoked===true||x.rights_revoked===true||
+ Object.hasOwn(x,'revoked_at')||Object.hasOwn(x,'superseded_by');
 const mime=new Set(['application/json','text/plain','text/markdown','text/csv','application/pdf','image/png','image/jpeg','model/gltf-binary']);
 const obj=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 const label=x=>typeof x==='string'&&x.trim().length>0&&x.length<=256&&!/[\u0000-\u001f\u007f]/.test(x);
@@ -32,6 +36,10 @@ export function planUniSpaceDropPreflight({target,file,source,access,existing_so
  if(!identityLabel(source.source_id)||!identityLabel(source.version)||!identityLabel(source.owner)||!digest(source.sha256)||
     !rights.has(source.rights)||!classes.has(source.proof_class))
   return result('SOURCE_QUALIFICATION_INCOMPLETE');
+ if(source.rights_state!==undefined&&!rightsStates.has(source.rights_state))
+  return result('SOURCE_RIGHTS_STATE_UNQUALIFIED');
+ if(revocationEvidence(source)||(source.rights_state!==undefined&&source.rights_state!=='ACTIVE'))
+  return result('SOURCE_RIGHTS_NOT_ACTIVE');
  if(surface!=='private'&&surface!=='public')return result('UNSUPPORTED_SURFACE');
  if(source.rights==='UNKNOWN'||source.rights==='LICENSE_RESTRICTED')return result('RIGHTS_REVIEW_REQUIRED');
  if(surface==='public'&&source.rights!=='PUBLIC_SAFE')return result('PRIVATE_SOURCE_PUBLIC_BOUNDARY');
@@ -59,6 +67,14 @@ export function planUniSpaceDropPreflight({target,file,source,access,existing_so
    return result('EXISTING_REFERENCE_SCOPE_COLLISION');
   if(prior.version!==source.version||prior.owner!==source.owner||prior.rights!==source.rights||prior.proof_class!==source.proof_class)
    return result('SOURCE_IDENTITY_COLLISION');
+  // NOOP is rights-dependent: legacy/missing state and any revocation/supersession
+  // must fail closed. ACTIVE is still unverified until independent host/DBR proof.
+  if(prior.rights_state!==undefined&&!rightsStates.has(prior.rights_state))
+   return result('EXISTING_RIGHTS_STATE_UNQUALIFIED');
+  if(revocationEvidence(prior)||(prior.rights_state!==undefined&&prior.rights_state!=='ACTIVE'))
+   return result('EXISTING_RIGHTS_NOT_ACTIVE');
+  if(prior.rights_state!=='ACTIVE'||source.rights_state!=='ACTIVE')
+   return result('RIGHTS_STATE_UNQUALIFIED');
   return result('EXISTING_REFERENCE_NO_DUPLICATE','NOOP_REVIEW');
  }
  if(offline)return result('OFFLINE_METADATA_ONLY');
