@@ -24,11 +24,11 @@ function validateManifest(input) {
     assert.ok(!segments.some(part => /[. ]$/.test(part) ||
       /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\..*)?$/i.test(part)) &&
       !/[<>:"|?*\x00-\x1f]/.test(record.path), 'non-portable Windows path');
+    assert.ok(!paths.has(record.path), 'duplicate manifest path');
+    paths.add(record.path);
     const windowsAlias = record.path.normalize('NFC').toLowerCase();
     assert.ok(!windowsAliases.has(windowsAlias), 'case-insensitive manifest alias');
     windowsAliases.add(windowsAlias);
-    assert.ok(!paths.has(record.path), 'duplicate manifest path');
-    paths.add(record.path);
     assert.match(record.sha256, /^[a-f0-9]{64}$/);
     assert.ok(Number.isSafeInteger(record.bytes) && record.bytes >= 0);
   }
