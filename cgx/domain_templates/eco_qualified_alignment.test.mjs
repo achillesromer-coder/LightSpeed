@@ -714,3 +714,37 @@ test("malformed validation leakage audit reference is rejected",()=>{
  assert.throws(()=>planEcoAlignment({novel:statsFixture({leakage_audit_ref:42}),authorised_source_ids:["src-a"]}),
   /INVALID_VALIDATION_STATISTICS_LEAKAGE_AUDIT_REF/);
 });
+
+
+// Synthetic source-only geometry-export fixtures: no site coordinates or actual GeoJSON.
+const geometryExportBase={semantic_type:"receiving_system",receiving_system_id:"system:synthetic",
+ source_refs:["src-a"],evidence_class:"source_asserted",geometry_export:{
+ proposed:true,geometry_kind:"MultiPolygon",release_class:"restricted",public_release_requested:false,
+ source_geometry_ref:"geom:synthetic",source_revision_ref:"rev:synthetic",crs:"EPSG:4326",
+ coordinate_unit:"degree",spatial_support_ref:"region:synthetic",geometry_validation_ref:"qa:synthetic",
+ rights_review_ref:"rights:synthetic",stewardship_review_ref:"steward:synthetic"}};
+const geoRun=(g)=>planEcoAlignment({novel:{...geometryExportBase,geometry_export:{...geometryExportBase.geometry_export,...g}},authorised_source_ids:["src-a"]});
+test("geometry source pointer cannot self-verify an actual map or field effect",()=>{
+ const x=geoRun({});assert.ok(x.novel_checks.includes("GEOMETRY_EXPORT_SOURCE_ONLY_REVIEW_REQUIRED"));
+ assert.equal(x.db_readback,false);assert.equal(x.ecological_effect_verified,false);
+});
+test("missing geometry frame, revision, QA and stewardship are held",()=>{
+ const x=geoRun({crs:undefined,source_revision_ref:undefined,geometry_validation_ref:undefined,stewardship_review_ref:undefined});
+ for(const f of ["GEOMETRY_EXPORT_CRS_REQUIRED","GEOMETRY_EXPORT_REVISION_REQUIRED","GEOMETRY_EXPORT_VALIDATION_REQUIRED","GEOMETRY_EXPORT_STEWARDSHIP_REVIEW_REQUIRED"])
+ assert.ok(x.novel_checks.includes(f),f);
+});
+test("restricted geometry release attempt is blocked regardless of references",()=>{
+ const x=geoRun({public_release_requested:true});
+ for(const f of ["GEOMETRY_EXPORT_PUBLIC_RELEASE_NOT_AUTHORISED","GEOMETRY_EXPORT_RELEASE_CLASS_CONFLICT","GEOMETRY_EXPORT_GENERALISATION_REQUIRED","GEOMETRY_EXPORT_SENSITIVITY_REVIEW_REQUIRED","GEOMETRY_EXPORT_PUBLIC_PERMISSION_REQUIRED"])
+ assert.ok(x.novel_checks.includes(f),f);
+});
+test("distinct geometry sources never silently align",()=>{
+ const b={...geometryExportBase,object_id:"known:geom",geometry_export:{...geometryExportBase.geometry_export,source_geometry_ref:"geom:other"}};
+ const x=planEcoAlignment({novel:geometryExportBase,known_objects:[b],authorised_object_ids:["known:geom"],authorised_source_ids:["src-a"]});
+ assert.ok(x.candidates[0].checks.includes("GEOMETRY_EXPORT_PROVENANCE_OR_RELEASE_SCOPE_DIFFERENT"));
+ assert.equal(x.candidates[0].auto_merge,false);
+});
+test("unsupported geometry export kind rejected; 3D datum requires review",()=>{
+ assert.throws(()=>geoRun({geometry_kind:"Voxel"}),/INVALID_GEOMETRY_EXPORT/);
+ assert.ok(geoRun({has_z:true}).novel_checks.includes("GEOMETRY_EXPORT_VERTICAL_DATUM_REQUIRED"));
+});
