@@ -105,13 +105,18 @@ def _paths(slot: str) -> dict[str, Path]:
     slot_dir = root / slot
     _reject_redirected_directory(root, "managed root")
     _reject_redirected_directory(slot_dir, "managed slot")
+    # Nested runtime and receipt paths must not redirect outside the managed root.
+    _reject_redirected_directory(slot_dir / "venv", "managed venv")
+    _reject_redirected_directory(slot_dir / "venv" / "Scripts", "managed venv scripts")
+    receipt_root = root / "_receipts"
+    _reject_redirected_directory(receipt_root, "receipt root")
     return {
         "root": root,
         "slot_dir": slot_dir,
         "venv": slot_dir / "venv",
         "marker": slot_dir / MARKER_NAME,
         "config": slot_dir / CONFIG_NAME,
-        "receipt_root": root / "_receipts",
+        "receipt_root": receipt_root,
     }
 
 
@@ -177,6 +182,7 @@ def _operator_receipt(
     status: str,
     detail: dict[str, Any],
 ) -> Path:
+    _reject_redirected_directory(paths["receipt_root"], "receipt root")
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     receipt = paths["receipt_root"] / f"{slot}-{action}-{stamp}.json"
     _write_json(
@@ -259,6 +265,9 @@ def _run_installer_process(
     profile: str,
     action: str,
 ) -> dict[str, Any]:
+    _reject_redirected_directory(paths["venv"], "managed venv")
+    _reject_redirected_directory(paths["venv"] / "Scripts", "managed venv scripts")
+    _reject_redirected_directory(paths["receipt_root"], "receipt root")
     if not INSTALLER.exists():
         raise RuntimeProductizationError(f"installer missing: {INSTALLER}")
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
