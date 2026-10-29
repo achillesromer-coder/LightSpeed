@@ -9,6 +9,9 @@ const object=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 const sha=x=>typeof x==='string'&&/^[0-9a-f]{64}$/i.test(x);
 const rights=new Set(['PUBLIC_SAFE','OWNER_PRIVATE','LICENSE_RESTRICTED','UNKNOWN']);
 const proofClasses=new Set(['creative','scientific','engineering','historical','operational']);
+// A known Grex domain must never be presented under another child's FileSpace.
+// This is a review boundary, not an authoritative namespace resolver.
+const knownChildSpaces=Object.freeze({eco:'Eco.cgx',romer:'Romer.cgx',emassc:'EMASSC.cgx',ls:'LS.cgx'});
 const hold=(reason)=>({schema:INSPECTOR_SCHEMA,status:'DENIED',reason,canonical_mutation:false,public_release:false});
 
 /** Builds one bounded FileSpace inspector plan, never an authenticated view. */
@@ -21,6 +24,8 @@ export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,vi
  // must not silently select a different domain's FileSpace.
  const selected=nodes.filter(n=>object(n)&&n.object_id===focus_id);
  if(selected.length!==1||selected[0].file_space!==file_space)return hold('FILESPACE_OR_ID_UNRESOLVED');
+ if(Object.hasOwn(knownChildSpaces,selected[0].domain)&&knownChildSpaces[selected[0].domain]!==file_space)
+  return hold('FILESPACE_OR_ID_UNRESOLVED');
  // The planner validates untrusted graph, view and budget input by throwing.
  // A user-facing inspector must convert those failures into a non-disclosing HOLD.
  let spread,switchPlan;
