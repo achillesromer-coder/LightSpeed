@@ -65,3 +65,10 @@ test("a complete-looking field record still requires independent field review",(
 test("invalid measurement cannot enter bridge",()=>{
  assert.throws(()=>run({...base,measured:true,measurement:{value:Infinity,unit:"mg/L"}}),/INVALID_ECO_MINT_MEASUREMENT/);
 });
+
+test("impossible calendar date is rejected even when the timestamp is ISO-shaped",()=>{
+ const x=run({...base,synthetic:false,evidence_class:"observed",field_record_ref:"synthetic:receipt",
+  observed_at:"2026-02-29T10:00:00Z",seasonal_frame_ref:"synthetic:season",
+  source_hash_sha256:"a".repeat(64)});
+ assert.ok(x.checks.includes("ZONED_OBSERVATION_TIMESTAMP_REQUIRED"));
+});
