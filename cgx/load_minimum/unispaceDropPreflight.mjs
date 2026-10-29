@@ -34,6 +34,9 @@ export function planUniSpaceDropPreflight({target,file,source,access,existing_so
  if(surface!=='private'&&surface!=='public')return result('UNSUPPORTED_SURFACE');
  if(source.rights==='UNKNOWN'||source.rights==='LICENSE_RESTRICTED')return result('RIGHTS_REVIEW_REQUIRED');
  if(surface==='public'&&source.rights!=='PUBLIC_SAFE')return result('PRIVATE_SOURCE_PUBLIC_BOUNDARY');
+ // A public-safe incoming source does not make its destination Object_ID public.
+ // Caller declarations are preflight hints only, never host ACL/rights receipts.
+ if(surface==='public'&&target.rights!=='PUBLIC_SAFE')return result('TARGET_PUBLIC_RIGHTS_UNVERIFIED');
  // Existing references are collision hints only; caller-provided list is not DBR.
  if(existing_sources.some(x=>!obj(x)||!label(x.source_id)||!digest(x.sha256)))
   return result('EXISTING_SOURCE_REGISTRY_UNQUALIFIED');
