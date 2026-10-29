@@ -11,12 +11,22 @@ function validateManifest(input) {
   assert.equal(input?.schema_version, 1);
   assert.ok(Array.isArray(input.records));
   const paths = new Set();
+  const windowsAliases = new Set();
   for (const record of input.records) {
     assert.equal(typeof record.path, 'string');
     assert.ok(record.path.length > 0 && !record.path.startsWith('/') &&
       !record.path.includes('\\') && !/^[A-Za-z]:/.test(record.path) &&
       !record.path.split('/').some(part => part === '..' || part === '.' || part === ''),
       'manifest path must be relative and normalized');
+    // A review manifest must not silently alias distinct R0 paths on a Windows host.
+    // This is a portable-name gate, not a native filesystem or R0 hash readback.
+    const segments = record.path.split('/');
+    assert.ok(!segments.some(part => /[. ]$/.test(part) ||
+      /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\\..*)?$/i.test(part)) &&
+      !/[<>:"|?*\\x00-\\x1f]/.test(record.path), 'non-portable Windows path');
+    const windowsAlias = record.path.normalize('NFC').toLowerCase();
+    assert.ok(!windowsAliases.has(windowsAlias), 'case-insensitive manifest alias');
+    windowsAliases.add(windowsAlias);
     assert.ok(!paths.has(record.path), 'duplicate manifest path');
     paths.add(record.path);
     assert.match(record.sha256, /^[a-f0-9]{64}$/);
@@ -45,6 +55,21 @@ test('duplicate source paths fail closed', () => {
   const x = fixture();
   x.records.push({...x.records[0]});
   assert.throws(() => validateManifest(x), /duplicate manifest path/);
+});
+
+test('case-insensitive Windows source path aliases fail closed', () => {
+  const x = fixture();
+  x.records.push({...x.records[0], path: 'SAFE/Source.py'});
+  assert.throws(() => validateManifest(x), /case-insensitive manifest alias/);
+});
+
+test('Windows reserved names, trailing dots, and alternate data streams fail closed', () => {
+  for (const path of ['safe/CON.txt', 'safe/lpt1', 'safe/file.', 'safe/file ', 'safe/file:stream',
+    'safe/question?.txt', 'safe/pipe|name']) {
+    const x = fixture();
+    x.records[0].path = path;
+    assert.throws(() => validateManifest(x), /non-portable Windows path/, path);
+  }
 });
 
 test('malformed source hash fails closed', () => {
