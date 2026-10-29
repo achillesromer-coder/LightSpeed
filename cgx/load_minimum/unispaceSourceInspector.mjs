@@ -21,9 +21,16 @@ export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,vi
  // must not silently select a different domain's FileSpace.
  const selected=nodes.filter(n=>object(n)&&n.object_id===focus_id);
  if(selected.length!==1||selected[0].file_space!==file_space)return hold('FILESPACE_OR_ID_UNRESOLVED');
- const spread=planKnowledgeSpread({nodes,focus_id,access,budgets:{max_cross_domains:0,max_cross_edges:0,...budgets}});
- if(spread.status!=='REVIEW_ONLY')return hold('OBJECT_SCOPE_NOT_AUTHORIZED');
- const switchPlan=planViewportSwitch({spread,to:view});
+ // The planner validates untrusted graph, view and budget input by throwing.
+ // A user-facing inspector must convert those failures into a non-disclosing HOLD.
+ let spread,switchPlan;
+ try {
+  spread=planKnowledgeSpread({nodes,focus_id,access,budgets:{max_cross_domains:0,max_cross_edges:0,...budgets}});
+  if(spread.status!=='REVIEW_ONLY')return hold('OBJECT_SCOPE_NOT_AUTHORIZED');
+  switchPlan=planViewportSwitch({spread,to:view});
+ } catch {
+  return hold('INVALID_GRAPH_VIEW_OR_BUDGET');
+ }
  const focus=selected[0];
  const permitted=new Set(access.authorized_source_ids);
  const refSet=new Set(spread.objects.find(n=>n.object_id===focus_id)?.source_refs??[]);
