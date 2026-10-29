@@ -9,6 +9,7 @@ const DEFAULT_BYTES = 8 * 1024 * 1024;
 const ID = /^[A-Za-z0-9][A-Za-z0-9:_-]{0,127}$/;
 const SHA1 = /^[a-f0-9]{40}$/i;
 const SHA256 = /^[a-f0-9]{64}$/i;
+const MAPPING_ID = /^FF-[A-Z0-9-]{4,90}$/;
 const NAME = /^[A-Za-z0-9][A-Za-z0-9 _.()-]{0,127}$/;
 const TYPES = Object.freeze({
   txt: ["text/plain"], md: ["text/markdown", "text/plain"],
@@ -63,6 +64,7 @@ export async function preflightPrivateObjectDrop(input = {}) {
       !exact(c.allowed_object_ids, s.object_id) || !exact(c.allowed_filespaces, s.filespace))
       return hold("CLIENT_SCOPE_MISMATCH");
   if (!record(p) || p.object_id !== s.object_id || p.filespace !== s.filespace ||
+      (typeof p.mapping_id !== "string" || !MAPPING_ID.test(p.mapping_id)) ||
       p.mapping_id !== card.source_mapping_id || p.mapping_blob_sha !== card.source_mapping_blob_sha ||
       p.mapping_stage !== card.mapping_stage ||
       !["R0_R1_REFERENCE", "R0_R1_R2_REFERENCE"].includes(p.mapping_stage) ||
