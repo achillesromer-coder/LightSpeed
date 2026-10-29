@@ -131,3 +131,49 @@ test("hydraulic path units and negative static lift are rejected",()=>{
  assert.throws(()=>run({hydraulic_path_review:{...base,nozzle_pressure_required:{value:20,unit:"kPa"}}}),/INVALID_HYDRAULIC_QUANTITY/);
  assert.throws(()=>run({hydraulic_path_review:{...base,static_lift:{value:-1,unit:"m"}}}),/INVALID_HYDRAULIC_QUANTITY/);
 });
+
+
+const marineStatic={
+ body_length:{value:1.2,unit:"m"},body_diameter:{value:0.6,unit:"m"},
+ shell_volume_fraction:{value:0.12,unit:"1"},material_density:{value:950,unit:"kg/m3"},
+ ballast_mass:{value:80,unit:"kg"},projected_drag_area:{value:0.5,unit:"m2"},
+ drag_coefficient:{value:1.1,unit:"1"},wave_surge_factor:{value:2.5,unit:"1"},
+ anchor_holding_capacity:{value:10000,unit:"N"}
+};
+test("synthetic Second Cycle cylinder and anchor baseline matches workbook proxies, not marine certification",()=>{
+ const x=run({inputs:{...inputs,current_speed:{value:0.8,unit:"m/s"},
+  water_density:{value:1025,unit:"kg/m3"}},marine_static_review:marineStatic});
+ const m=x.marine_static_review;
+ assert.ok(Math.abs(m.displacement_volume_m3-0.33929200658769765)<1e-9);
+ assert.ok(Math.abs(m.buoyancy_margin_kg-229.09501800139256)<1e-9);
+ assert.ok(Math.abs(m.drag_force_n-180.4)<1e-9);
+ assert.ok(Math.abs(m.design_line_load_n-451)<1e-9);
+ assert.ok(Math.abs(m.anchor_static_margin_ratio-22.17294900221729)<1e-9);
+ assert.equal(m.marine_safety_verified,false);assert.equal(x.native_admitted,false);
+});
+test("static ratio above conceptual threshold never certifies mooring or site safety",()=>{
+ const x=run({marine_static_review:marineStatic});
+ assert.ok(x.review_flags.includes("WAVE_FATIGUE_SCOUR_AND_DYNAMIC_MOORING_UNMODELLED"));
+ assert.ok(x.review_flags.includes("MARINE_ENGINEERING_AND_PERMITS_NOT_VERIFIED"));
+ assert.equal(x.marine_static_review.marine_safety_verified,false);
+});
+test("insufficient ideal buoyancy and anchor static ratio remain explicit independent warnings",()=>{
+ const x=run({marine_static_review:{...marineStatic,
+  ballast_mass:{value:500,unit:"kg"},anchor_holding_capacity:{value:1,unit:"N"}}});
+ assert.ok(x.review_flags.includes("NONPOSITIVE_IDEAL_STATIC_BUOYANCY_MARGIN"));
+ assert.ok(x.review_flags.includes("ANCHOR_STATIC_RATIO_BELOW_CONCEPT_SCREENING_THRESHOLD"));
+});
+test("marine proxy refuses invalid units and impossible shell fraction",()=>{
+ assert.throws(()=>run({marine_static_review:{...marineStatic,
+  projected_drag_area:{value:0.5,unit:"m"}}}),/INVALID_MARINE_STATIC_QUANTITY/);
+ assert.throws(()=>run({marine_static_review:{...marineStatic,
+  shell_volume_fraction:{value:1.2,unit:"1"}}}),/MARINE_STATIC_PROXY_DOMAIN_ERROR/);
+});
+test("missing marine geometry or evidence cannot silently become measured safety",()=>{
+ const a=run();assert.equal(a.marine_static_review,null);
+ assert.ok(a.review_flags.includes("MARINE_STATIC_BUOYANCY_AND_MOORING_UNQUANTIFIED"));
+ const b=run({marine_static_review:marineStatic});
+ assert.ok(b.review_flags.includes("MARINE_STATIC_SOURCE_EVIDENCE_REQUIRED"));
+ assert.ok(b.review_flags.includes("ANCHOR_CHAIN_HARDWARE_MASS_AND_LINE_ANGLES_EXCLUDED"));
+ assert.equal(b.live_installed,false);
+});
