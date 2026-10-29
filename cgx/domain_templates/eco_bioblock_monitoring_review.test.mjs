@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {reviewBioBlockMonitoringRecord as review} from "./eco_bioblock_monitoring_review.mjs";
+import {reviewBioBlockMonitoringRecord as review, reviewBioBlockMonitoringSeries as series} from "./eco_bioblock_monitoring_review.mjs";
 const base={source_ref:"synthetic-source",seed_count:220,germinated_count:12,
  surviving_count:8,monitoring_phase:"monthly"};
 test("arithmetic count ratios are not verified field survival",()=>{
@@ -52,4 +52,55 @@ test("predeployment baseline does not demand postdeployment counts",()=>{
   observed_at:"2026-10-30T05:00:00+10:00"});
  assert.ok(!r.flags.includes("MONITORING_COUNTS_REQUIRED"));
  assert.equal(r.field_observation_verified,false);
+});
+
+const longitudinalBase={...base,observed_at:"2026-10-01T00:00:00+10:00",
+ run_ref:"run",block_ref:"block",recipe_ref:"recipe",site_ref:"site",taxon_ref:"taxon",
+ cohort_ref:"cohort",replicate_ref:"rep",method_ref:"method",control_ref:"control",
+ baseline_ref:"baseline"};
+const later={...longitudinalBase,observed_at:"2026-10-30T00:00:00+10:00"};
+test("matched synthetic series remains unverified, with no invented ecological effect",()=>{
+ const r=series([longitudinalBase,later]);
+ assert.equal(r.record_count,2);
+ assert.equal(r.longitudinal_field_evidence_verified,false);
+ assert.equal(r.biodiversity_gain_verified,false);
+ assert.ok(!r.flags.includes("LONGITUDINAL_COUNTS_NOT_COMPARABLE"));
+});
+test("changed cohort cannot be silently pooled",()=>{
+ const r=series([longitudinalBase,{...later,cohort_ref:"other"}]);
+ assert.ok(r.flags.includes("SERIES_COHORT_REF_MISMATCH"));
+ assert.ok(r.flags.includes("LONGITUDINAL_COUNTS_NOT_COMPARABLE"));
+});
+test("timepoint order must be strictly increasing in absolute time",()=>{
+ const r=series([later,longitudinalBase]);
+ assert.ok(r.flags.includes("NONINCREASING_LONGITUDINAL_TIME"));
+});
+test("changed seed denominator requires independent review",()=>{
+ const r=series([longitudinalBase,{...later,seed_count:221}]);
+ assert.ok(r.flags.includes("SEED_DENOMINATOR_CHANGED_REVIEW_REQUIRED"));
+ assert.ok(r.flags.includes("LONGITUDINAL_COUNTS_NOT_COMPARABLE"));
+});
+test("increasing survivor count is reviewable, not automatically impossible",()=>{
+ const r=series([longitudinalBase,{...later,surviving_count:9}]);
+ assert.ok(r.flags.includes("SURVIVAL_INCREASE_REQUIRES_RECRUITMENT_OR_METHOD_REVIEW"));
+ assert.equal(r.longitudinal_field_evidence_verified,false);
+});
+test("declining germination count requires cumulative versus interval metric clarification",()=>{
+ const r=series([longitudinalBase,{...later,germinated_count:11}]);
+ assert.ok(r.flags.includes("GERMINATION_DECREASE_REQUIRES_METRIC_SCOPE_REVIEW"));
+});
+test("missing timestamp prevents longitudinal comparison",()=>{
+ const r=series([longitudinalBase,{...later,observed_at:null}]);
+ assert.ok(r.flags.includes("LONGITUDINAL_ZONED_TIMESTAMPS_REQUIRED"));
+});
+test("mixed simulated and observed labels cannot establish a common measured series",()=>{
+ const r=series([longitudinalBase,{...later,evidence_class:"observed"}]);
+ assert.ok(r.flags.includes("MIXED_EVIDENCE_CLASSES_NOT_COMPARABLE"));
+ assert.ok(r.flags.includes("LONGITUDINAL_COUNTS_NOT_COMPARABLE"));
+});
+test("raw spatial fields and unbounded series fail closed",()=>{
+ assert.throws(()=>series([longitudinalBase,{...later,coordinates:[1,2]}]),
+  /INVALID_BIOBLOCK_MONITORING_FIELDS/);
+ assert.throws(()=>series([longitudinalBase]),/INVALID_BIOBLOCK_SERIES_LENGTH/);
+ assert.throws(()=>series(Array(101).fill(longitudinalBase)),/INVALID_BIOBLOCK_SERIES_LENGTH/);
 });
