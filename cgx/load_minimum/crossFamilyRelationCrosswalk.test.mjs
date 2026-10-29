@@ -426,3 +426,32 @@ test('Eco duplicate MODIFIES and qualifier-version mismatch remain independent s
   same(eco.families.process.filter(row => row.id === 'MODIFIES').map(row => row.id), ['MODIFIES']);
   same(eco.families.intervention.filter(row => row.id === 'MODIFIES').map(row => row.id), ['MODIFIES']);
 });
+
+test('inverse targets fail closed when absent, malformed or directionally contradictory', () => {
+  const base = structuredClone(sources.romer);
+  base.extends = sources.shared.schema; // isolate inverse validation from historical /0.1 drift
+  const inspect = registry => inspectRelationGrammar(registry,sources.shared);
+  const inverseCodes = result => result.issues.filter(issue => issue.code.startsWith('RELATION_INVERSE_')).map(issue => issue.code);
+  same(inverseCodes(inspect(base)),[]); // existing original inverse declarations remain unchanged
+
+  const missing = structuredClone(base);
+  missing.families.decomposition.find(r => r.id === 'PART_OF').inverse = 'NONEXISTENT';
+  assert.ok(inverseCodes(inspect(missing)).includes('RELATION_INVERSE_TARGET_UNDECLARED'));
+
+  const malformed = structuredClone(base);
+  malformed.families.decomposition.find(r => r.id === 'PART_OF').inverse = '../escape';
+  assert.ok(inverseCodes(inspect(malformed)).includes('RELATION_INVERSE_INVALID'));
+
+  const contradictory = structuredClone(base);
+  contradictory.families.decomposition.find(r => r.id === 'HAS_PART').inverse = 'COMPONENT_OF';
+  assert.ok(inverseCodes(inspect(contradictory)).includes('RELATION_INVERSE_NONRECIPROCAL'));
+
+  for (const mutated of [missing,malformed,contradictory]) {
+    const result = inspect(mutated);
+    assert.equal(result.stage,'SOURCE_REVIEW_ONLY');
+    assert.equal(result.status,'HOLD');
+    assert.equal(result.qualified_object_id,null);
+    assert.equal(result.native_admitted,false);
+    assert.equal(result.dbr_readback_verified,false);
+  }
+});
