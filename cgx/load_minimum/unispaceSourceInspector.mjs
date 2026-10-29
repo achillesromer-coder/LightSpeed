@@ -46,7 +46,11 @@ export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,vi
    qualification:valid?'DECLARED_NOT_PROVIDER_VERIFIED':'FRONTIER_SOURCE_QUALIFICATION'});
  }
  for(const claim of claims)if(conflicts.has(claim.source_id)){claim.qualification='FRONTIER_COLLIDING_SOURCE';claim.sha256=null;}
- const allQualified=refSet.size>0&&claims.length===refSet.size&&claims.every(c=>c.qualification==='DECLARED_NOT_PROVIDER_VERIFIED');
+ // Do not mark an R3 candidate if any focus evidence was filtered by ACL or budget.
+ // Never return the withheld identifiers or counts to the presentation layer.
+ const requiredRefs=new Set(Array.isArray(focus.source_refs)?focus.source_refs:[]);
+ const fullEvidenceScope=requiredRefs.size===refSet.size&&[...requiredRefs].every(id=>refSet.has(id));
+ const allQualified=fullEvidenceScope&&refSet.size>0&&claims.length===refSet.size&&claims.every(c=>c.qualification==='DECLARED_NOT_PROVIDER_VERIFIED');
  const geometryQualified=view!=='3d'||Boolean(switchPlan.geometry_ref&&claims.some(c=>c.source_id===switchPlan.geometry_ref&&c.sha256));
  const frontier=[];
  if(!allQualified)frontier.push('SOURCE_VERSION_HASH_OWNER_RIGHTS_OR_CLASS_UNRESOLVED');
