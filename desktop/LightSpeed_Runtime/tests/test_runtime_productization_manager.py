@@ -376,10 +376,16 @@ def test_windows_reparse_ancestor_of_managed_root_is_rejected(
     assert not root.exists()
 
 
-@pytest.mark.parametrize("managed_root", ["relative-managed", "segment/../managed"])
+@pytest.mark.parametrize("root_kind", ["relative", "absolute-parent-traversal"])
 def test_nonabsolute_or_parent_traversal_managed_root_is_rejected(
-    monkeypatch, managed_root: str
+    monkeypatch, tmp_path: Path, root_kind: str
 ) -> None:
+    managed_root = (
+        "relative-managed"
+        if root_kind == "relative"
+        else str(tmp_path / "segment" / ".." / "managed")
+    )
     monkeypatch.setenv("LIGHTSPEED_RUNTIME_MANAGED_ROOT", managed_root)
     with pytest.raises(rp.RuntimeProductizationError, match="absolute path without parent traversal"):
         rp.runtime_productization_status("alpha")
+    assert not (tmp_path / "managed").exists()
