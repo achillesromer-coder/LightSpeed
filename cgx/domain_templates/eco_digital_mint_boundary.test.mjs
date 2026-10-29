@@ -110,3 +110,27 @@ test("ordinary nested nonspatial synthetic metadata does not imply observed evid
  assert.equal(x.state,"SCHEMA_BRIDGE_CANDIDATE_ONLY");
  assert.equal(x.field_observation_verified,false);
 });
+
+test("coordinate-like free text in a site label is spatially review-gated",()=>{
+ const x=run({...base,place:"synthetic site -27.5000,153.1000"});
+ assert.ok(x.checks.includes("RAW_SPATIAL_COORDINATES_NOT_ACCEPTED_IN_SOURCE_ONLY_BRIDGE"));
+ assert.equal(x.public_release_authorised,false);
+});
+test("nested WKT text cannot bypass geometry screening",()=>{
+ const x=run({...base,metadata:{notes:"POINT(153.1000 -27.5000)"}});
+ assert.ok(x.checks.includes("RAW_SPATIAL_COORDINATES_NOT_ACCEPTED_IN_SOURCE_ONLY_BRIDGE"));
+});
+test("geohash and grid-reference metadata are held without revealing values",()=>{
+ const x=run({...base,metadata:{geohash:"synthetic:hash",grid_reference:"synthetic:grid"}});
+ assert.ok(x.checks.includes("RAW_SPATIAL_COORDINATES_NOT_ACCEPTED_IN_SOURCE_ONLY_BRIDGE"));
+});
+test("flat metadata with too many scalar fields fails closed",()=>{
+ const metadata=Object.fromEntries(Array.from({length:4100},(_,i)=>["k"+i,"synthetic"]));
+ const x=run({...base,metadata});
+ assert.ok(x.checks.includes("SPATIAL_PAYLOAD_REVIEW_LIMIT_EXCEEDED"));
+});
+test("ordinary non-coordinate model prose stays a source-only candidate",()=>{
+ const x=run({...base,metadata:{model:"flow=0.8 m/s; area=0.02 m2"}});
+ assert.equal(x.state,"SCHEMA_BRIDGE_CANDIDATE_ONLY");
+ assert.equal(x.field_observation_verified,false);
+});
