@@ -3,7 +3,7 @@
 This branch is the **source-review handoff**, not the standalone Git.CGX repository, website, native CGX or authoritative DBR.
 
 ### Working package
-- Source: `Git.CGX_LIVE_Source_Repository.zip` — 44 files, SHA-256 `6a6ac0db808da5b0c4b1463b552bfd8e97861cf095c7ec899fab5df410b95f7f`.
+- Source: `Git.CGX_LIVE_Source_Repository.zip` — 44 files, SHA-256 `118367a223320eedb56b490a686ab4b648bd678f5b690376eece6c92199667f4`.
 - Public static: `Git.CGX_LIVE_Public_Web.zip` — 17 static files, SHA-256 `2175af87dd2316ab1810b5898bc6f2c84dc37158c895e9a4e69bafea84afad53`.
 - Verified in original isolated build: 37/37 Node tests, 13-route Chromium injected-source smoke, 390px mobile overflow checks, strict public static allowlist.
 - **Synthetic** five-repository metadata ingest + repeat verified: 5 hash-chain entries on first pass; zero entries on unchanged repeat. Real GitHub Actions job **has not run**; source package not uploaded to GitHub.
