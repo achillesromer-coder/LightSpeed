@@ -384,3 +384,45 @@ test('all domain qualifier 0.1 declarations remain incompatible with shared 0.2 
   }
   // Passing the pinned preflight is never proof that a /0.1 -> /0.2 semantic bridge exists.
 });
+
+test('Eco duplicate MODIFIES and qualifier-version mismatch remain independent source-only holds', () => {
+  // This is a synthetic mutation test. Preserve both original Eco R0 declarations.
+  const eco = sources.eco;
+  const baseline = inspectRelationGrammar(eco, sources.shared);
+  const ambiguity = baseline.issues.find(issue =>
+    issue.code === 'RELATION_TYPE_NAMESPACE_AMBIGUITY' && issue.relation_id === 'MODIFIES');
+  assert.ok(ambiguity);
+  same(sorted(ambiguity.source_declarations.map(row => row.family)), ['intervention', 'process']);
+  assert.ok(baseline.issues.some(issue =>
+    issue.code === 'RELATION_SCHEMA_COMPATIBILITY_HOLD' &&
+    issue.declared_extends === 'CGX-RELATION-QUALIFIER/0.1' &&
+    issue.available_contract === 'CGX-RELATION-QUALIFIER/0.2'));
+  assert.equal(baseline.status, 'HOLD');
+  assert.equal(baseline.native_admitted, false);
+  assert.equal(baseline.dbr_readback_verified, false);
+
+  // Correcting only the declared qualifier version must not hide the duplicate type.
+  const versionAligned = inspectRelationGrammar(
+    {...eco, extends: sources.shared.schema}, sources.shared);
+  assert.ok(versionAligned.issues.some(issue =>
+    issue.code === 'RELATION_TYPE_NAMESPACE_AMBIGUITY' && issue.relation_id === 'MODIFIES'));
+  assert.equal(versionAligned.status, 'HOLD');
+  assert.equal(versionAligned.native_admitted, false);
+
+  // Removing one duplicate only in an isolated fixture must not bypass version qualification.
+  const syntheticDedup = structuredClone(eco);
+  syntheticDedup.families.intervention = syntheticDedup.families.intervention
+    .filter(row => row.id !== 'MODIFIES');
+  const dedupResult = inspectRelationGrammar(syntheticDedup, sources.shared);
+  assert.equal(dedupResult.issues.some(issue =>
+    issue.code === 'RELATION_TYPE_NAMESPACE_AMBIGUITY' && issue.relation_id === 'MODIFIES'), false);
+  assert.ok(dedupResult.issues.some(issue => issue.code === 'RELATION_SCHEMA_COMPATIBILITY_HOLD'));
+  assert.equal(dedupResult.status, 'HOLD');
+  assert.equal(dedupResult.qualified_object_id, null);
+  assert.equal(dedupResult.native_admitted, false);
+  assert.equal(dedupResult.dbr_readback_verified, false);
+
+  // No source registry was changed or relation identity promoted.
+  same(eco.families.process.filter(row => row.id === 'MODIFIES').map(row => row.id), ['MODIFIES']);
+  same(eco.families.intervention.filter(row => row.id === 'MODIFIES').map(row => row.id), ['MODIFIES']);
+});
