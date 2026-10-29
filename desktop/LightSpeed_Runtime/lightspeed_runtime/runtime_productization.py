@@ -233,8 +233,7 @@ def _run_installer_process(
     command = [
         "powershell",
         "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
+        # Inherit effective host policy; never request a process-level bypass.
         "-File",
         str(INSTALLER),
         "-Profile",
