@@ -334,3 +334,52 @@ def test_nested_windows_reparse_attributes_fail_closed(
         rp.manage_runtime_productization("configure", slot="alpha", confirmed=True)
     assert not (slot / rp.MARKER_NAME).exists()
     assert not (root / "_receipts" / "alpha-configure.json").exists()
+
+
+def test_redirected_ancestor_of_managed_root_is_rejected(
+    monkeypatch, tmp_path: Path
+) -> None:
+    outside = tmp_path / "unrelated"
+    outside.mkdir()
+    (outside / "keep.txt").write_text("preserve", encoding="utf-8")
+    alias = tmp_path / "redirected-parent"
+    try:
+        alias.symlink_to(outside, target_is_directory=True)
+    except (OSError, NotImplementedError):
+        pytest.skip("directory symlink creation unavailable on this host")
+    monkeypatch.setenv("LIGHTSPEED_RUNTIME_MANAGED_ROOT", str(alias / "managed"))
+    for action in ("status", "configure"):
+        with pytest.raises(rp.RuntimeProductizationError, match="managed root ancestor.*reparse"):
+            rp.manage_runtime_productization(
+                action, slot="alpha", confirmed=(action == "configure")
+            )
+    assert (outside / "keep.txt").read_text(encoding="utf-8") == "preserve"
+    assert not (outside / "managed").exists()
+
+
+def test_windows_reparse_ancestor_of_managed_root_is_rejected(
+    monkeypatch, tmp_path: Path
+) -> None:
+    from types import SimpleNamespace
+
+    root = _set_root(monkeypatch, tmp_path)
+    original_lstat = Path.lstat
+
+    def simulated_windows_lstat(self):
+        if self == root.parent:
+            return SimpleNamespace(st_file_attributes=0x400)
+        return original_lstat(self)
+
+    monkeypatch.setattr(Path, "lstat", simulated_windows_lstat)
+    with pytest.raises(rp.RuntimeProductizationError, match="managed root ancestor.*reparse"):
+        rp.runtime_productization_status("alpha")
+    assert not root.exists()
+
+
+@pytest.mark.parametrize("managed_root", ["relative-managed", "segment/../managed"])
+def test_nonabsolute_or_parent_traversal_managed_root_is_rejected(
+    monkeypatch, managed_root: str
+) -> None:
+    monkeypatch.setenv("LIGHTSPEED_RUNTIME_MANAGED_ROOT", managed_root)
+    with pytest.raises(rp.RuntimeProductizationError, match="absolute path without parent traversal"):
+        rp.runtime_productization_status("alpha")
