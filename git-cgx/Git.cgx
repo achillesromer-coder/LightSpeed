@@ -1,0 +1,19 @@
+{
+  "schema": "GIT-CGX-ENTRY/0.2",
+  "kind": "GITHUB_SOURCE_REVIEW_ENTRY_NOT_NATIVE_CGX",
+  "reference_root": "cgx:root:cognigrex",
+  "planned_repository": "achillesromer-coder/Git.CGX",
+  "planned_web_entry": "index.html",
+  "status": "SOURCE_BUNDLE_READY_REPO_CREATION_PENDING",
+  "source_release": "Git.CGX_v0.2.0_Source_Repository.zip",
+  "review_components": 32,
+  "reconciliations": 8,
+  "dbr_review_records": 5,
+  "personal_or_private_data_included": false,
+  "canonical_dbr_signed": false,
+  "legacy_repositories_retired": false,
+  "other_repo_authority_transferred": false,
+  "readme": "git-cgx/README.md",
+  "source_transfer": "git-cgx/GIT_CGX_REVIEW_TRANSFER.json",
+  "note": "GitHub renders a .cgx file as source data. For the interactive experience, open index.html from the owner source bundle or future owner-approved GitHub Pages. This is not native CGX execution."
+}
