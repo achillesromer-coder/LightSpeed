@@ -94,3 +94,13 @@ test('same source identity in another child or Object_ID cannot silently NOOP',(
  noEffects(x);
  assert.equal(plan({...args,existing_sources:[exact]}).status,'NOOP_REVIEW');
 });
+
+test('Unicode bidi and invisible filename controls cannot spoof a FileSpace drop',()=>{
+ for(const name of ['report\u202ejson.exe','note\u200b.json','doc\u2066.json','draft\ufeff.json']){
+  const x=plan({...args,file:{...file,name}});
+  assert.equal(x.status,'HOLD',JSON.stringify(name));
+  assert.equal(x.reason,'FILE_METADATA_OR_SIZE_UNSUPPORTED');
+  assert.ok(!JSON.stringify(x).includes(source.source_id));
+  noEffects(x);
+ }
+});
