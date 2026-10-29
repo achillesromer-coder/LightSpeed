@@ -101,6 +101,21 @@ test('UniSpace identity and product navigation survive Neo integration', () => {
   }
 });
 
+test('six current-main UniSpace integration markers survive Neo mobile additions', () => {
+  // Review-only three-way preservation guard: this does not execute a Git merge.
+  for (const marker of [
+    '<p class="eyebrow">Cognigrex · powered by LightSpeed</p>',
+    '<h1>UniSpace</h1>',
+    'aria-label="UniSpace views"',
+    '<h2>UniSpace on LightSpeed</h2>',
+    '<span>UniSpace</span><i>→</i><span>Achilles</span>',
+    '<strong>UniSpace</strong><span>owner commands, review and bounded decisions</span>',
+  ]) assert.ok(app.includes(marker), marker);
+  for (const stale of ['<h1>Command Centre</h1>', 'aria-label="LS GO views"']) {
+    assert.ok(!app.includes(stale), stale);
+  }
+});
+
 test('Neo connection controls and event handlers remain explicit', () => {
   for (const text of ['id="mobile-connect-form"', 'id="mobile-disconnect"',
     'id="mobile-carrier"', 'id="mobile-signin"',
