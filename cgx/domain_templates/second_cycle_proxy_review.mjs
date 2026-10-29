@@ -80,6 +80,41 @@ export function qualifySecondCycleProxy(candidate){
   if(candidate.required_atomisation_power_w>calculated.hydraulic_power_w)
    flags.push("ATOMISATION_ENERGY_EXCEEDS_IDEALISED_PROXY");
  }
+
+ // Review-only pressure accounting; the workbook's flow coefficient is already labelled
+ // a loss/valve coefficient, so a second pressure-loss subtraction can double count.
+ // No nozzle performance, spray formation or deployment adequacy is inferred.
+ let hydraulic_path_review=null;
+ if(candidate.hydraulic_path_review!==undefined){
+  const h=candidate.hydraulic_path_review;
+  if(!isObject(h))throw new TypeError("INVALID_HYDRAULIC_PATH_REVIEW");
+  const required={valve_pressure_drop:"Pa",nozzle_pressure_required:"Pa",
+   other_pressure_drop:"Pa",static_lift:"m"};
+  const values={};
+  for(const [key,unit] of Object.entries(required)){
+   const q=h[key];
+   if(!isObject(q)||!isFiniteNumber(q.value)||q.value<0||q.unit!==unit)
+    throw new TypeError("INVALID_HYDRAULIC_QUANTITY_"+key.toUpperCase());
+   values[key]=q.value;
+  }
+  if(!["includes_valve_losses","geometry_only","unspecified"].includes(h.flow_coefficient_scope))
+   throw new TypeError("INVALID_FLOW_COEFFICIENT_SCOPE");
+  const pressure_budget_required_pa=values.valve_pressure_drop+
+   values.nozzle_pressure_required+values.other_pressure_drop+
+   p.water_density*9.80665*values.static_lift;
+  hydraulic_path_review={pressure_budget_required_pa,
+   ideal_current_dynamic_pressure_pa:calculated.dynamic_pressure_pa,
+   flow_coefficient_scope:h.flow_coefficient_scope,
+   source_ref:isRef(h.evidence_ref)?h.evidence_ref:null,
+   physically_validated:false};
+  if(pressure_budget_required_pa>calculated.dynamic_pressure_pa+1e-9)
+   flags.push("PRESSURE_BUDGET_EXCEEDS_IDEAL_CURRENT_DYNAMIC_PRESSURE");
+  if(h.flow_coefficient_scope==="includes_valve_losses")
+   flags.push("POTENTIAL_LOSS_DOUBLE_COUNT_REVIEW");
+  if(h.flow_coefficient_scope==="unspecified")
+   flags.push("FLOW_COEFFICIENT_LOSS_SCOPE_UNRESOLVED");
+  if(!isRef(h.evidence_ref))flags.push("HYDRAULIC_PATH_EVIDENCE_REQUIRED");
+ }else flags.push("HYDRAULIC_PATH_LOSSES_UNQUANTIFIED");
  if(candidate.reported!==undefined){
   if(!isObject(candidate.reported))throw new TypeError("INVALID_REPORTED_OUTPUTS");
   for(const [name,unit] of Object.entries(outputs)){
@@ -94,7 +129,7 @@ export function qualifySecondCycleProxy(candidate){
   schema:SECOND_CYCLE_PROXY_SCHEMA,
   candidate_filespace:"Eco.cgx/second-cycle/passive-flow-mist-proxy",
   source:{id:source.id,revision:source.revision,sha256:source.sha256},
-  calculated,calculated_units:outputs,
+  calculated,calculated_units:outputs,hydraulic_path_review,
   evidence_class:"simulated",stage:"R2_REVIEW_CANDIDATE",
   review_flags:[...new Set(flags)].sort(),
   native_admitted:false,live_installed:false,public_release_authorised:false,
