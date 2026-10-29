@@ -140,6 +140,10 @@ export function reviewLoadSemanticHost(input){
      !Array.isArray(v.selected_object_ids)||
      v.selected_object_ids.length!==s.objects.length||
      v.selected_object_ids.some((selected,i)=>selected!==s.objects[i].object_id)||
+     !obj(v.independent_budget)||
+     ![...budgetKeys,'reasoning_depth','device_hydration','execution_depth'].every(k=>
+       Object.hasOwn(s.budgets,k)&&Object.hasOwn(v.independent_budget,k)&&
+       v.independent_budget[k]===s.budgets[k])||
      !falseKeys(v,['network_fetch','rendered','interactive_execution','semantic_mutation','public_release']))
      return hold('VIEWPORT_NOT_SOURCE_QUALIFIED');
   // The LOAD planner cannot mark a source-unavailable focus as VIEW_PLAN_READY.
