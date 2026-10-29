@@ -135,6 +135,9 @@ export function reviewLoadSemanticHost(input){
   if(!obj(v)||v.schema!=='LOAD-VIEWPORT-SWITCH-PLAN/0.1'||
      v.identity!==r.focus_id||!['document','3d','chat','graph','interactive','matrix'].includes(v.to)||
      v.to!==r.view||v.state!=='VIEW_PLAN_READY'||
+     !Array.isArray(v.selected_object_ids)||
+     v.selected_object_ids.length!==s.objects.length||
+     v.selected_object_ids.some((selected,i)=>selected!==s.objects[i].object_id)||
      !falseKeys(v,['network_fetch','rendered','interactive_execution','semantic_mutation','public_release']))
      return hold('VIEWPORT_NOT_SOURCE_QUALIFIED');
  }else if(v!==undefined&&v!==null)return hold('UNEXPECTED_VIEWPORT_PLAN');
