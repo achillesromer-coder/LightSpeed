@@ -9,7 +9,20 @@ const object=x=>x!==null&&typeof x==="object"&&!Array.isArray(x);
 const ref=x=>typeof x==="string"&&x.length>0&&x.length<=256&&!/[\u0000-\u001f]/.test(x);
 const add=(a,s)=>{if(!a.includes(s))a.push(s)};
 const classes=new Set(["observed","simulated","source_asserted","hypothesised","inferred"]);
-const isoZoned=x=>ref(x)&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(x)&&Number.isFinite(Date.parse(x));
+const isoZoned=x=>{
+ if(!ref(x))return false;
+ const m=/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,9})?(Z|[+-](\d{2}):(\d{2}))$/.exec(x);
+ if(!m)return false;
+ const [y,mo,d,h,mi,s]=m.slice(1,7).map(Number);
+ const leap=y%4===0&&(y%100!==0||y%400===0);
+ const days=[31,leap?29:28,31,30,31,30,31,31,30,31,30,31];
+ if(y<1||mo<1||mo>12||d<1||d>days[mo-1]||h>23||mi>59||s>59)return false;
+ if(m[7]!=="Z"){
+  const oh=Number(m[8]),om=Number(m[9]);
+  if(oh>14||om>59||(oh===14&&om!==0))return false;
+ }
+ return true;
+};
 export function reviewEcoObservationShowcase({record,authorised_source_refs=[],public_release_requested=false}={}){
  if(!object(record)||record.kind!=="EcoObservation"||typeof record.measured!=="boolean"||
     !Array.isArray(authorised_source_refs)||authorised_source_refs.length>5000||
