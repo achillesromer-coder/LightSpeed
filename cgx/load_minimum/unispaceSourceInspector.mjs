@@ -74,7 +74,14 @@ export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,vi
  const fullEvidenceScope=requiredRefs.size===refSet.size&&[...requiredRefs].every(id=>refSet.has(id));
  const allQualified=fullEvidenceScope&&refSet.size>0&&claims.length===refSet.size&&claims.every(c=>c.qualification==='DECLARED_NOT_PROVIDER_VERIFIED');
  const geometryQualified=view!=='3d'||Boolean(switchPlan.geometry_ref&&claims.some(c=>c.source_id===switchPlan.geometry_ref&&c.sha256));
+ // #209 scientific-asset stop-ship: this adapter has caller declarations only.
+ // Even plausible units/frame/hash or caller-supplied "verified" flags cannot
+ // establish one physical metric model, independent numeric proof or host DBR.
+ // A future verified native reader must supply a separately authenticated
+ // geometry receipt; this review-only adapter must not fabricate that route.
+ const metricGeometryUnverified=view==='3d';
  const frontier=[];
+ if(metricGeometryUnverified)frontier.push('METRIC_GEOMETRY_PROVIDER_AND_INDEPENDENT_VALIDATION_REQUIRED');
  if(!allQualified)frontier.push('SOURCE_VERSION_HASH_OWNER_RIGHTS_OR_CLASS_UNRESOLVED');
  if(!geometryQualified)frontier.push('GEOMETRY_SOURCE_PROOF_UNRESOLVED');
  if(switchPlan.state.startsWith('FRONTIER'))frontier.push(switchPlan.state);
@@ -87,7 +94,8 @@ export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,vi
   h3:{qualified_capabilities:[],catalogue_discovery_only:true},
   h4:{permissioned_execution:'HOST_DENIED_UNTIL_INDEPENDENT_ROOT_LEASE_DBR',installed:false},
   viewport:{state:viewCandidate?'R3_PRIVATE_VIEW_CANDIDATE':'FRONTIER',lens:switchPlan.registered_lens,
-   projection:switchPlan.projection,geometry_ref:geometryQualified?switchPlan.geometry_ref:null,
+   projection:switchPlan.projection,geometry_ref:geometryQualified&&!metricGeometryUnverified?switchPlan.geometry_ref:null,
+   metric_authority:'NOT_VERIFIED',
    frontier,rendered:false},
   budgets:spread.budgets,admission_stage:viewCandidate?'R3_VIEW_PROPOSAL':'R2_REVIEW_FRONTIER',
   source_bytes_copied:false,network_fetch:false,host_authenticated:false,provider_readback:false,
