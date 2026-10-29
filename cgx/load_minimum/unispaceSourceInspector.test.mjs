@@ -51,6 +51,18 @@ test('offline and constrained budgets do not trigger hydration or writes',()=>{
  assert.equal(x.offline_fallback,'H0_H2_DECLARED_METADATA_ONLY');assert.equal(x.network_fetch,false);
  assert.equal(x.canonical_mutation,false);assert.equal(x.budgets.max_transfer_bytes,0);
 });
+test('R3 proposal cannot omit a denied or budget-truncated focus source',()=>{
+ const extra='fixture:eco:restricted-source';
+ const restrictedNodes=[{...nodes[0],source_refs:['fixture:eco:source',extra]},nodes[1]];
+ const x=inspect({...args,nodes:restrictedNodes});
+ assert.equal(x.viewport.state,'FRONTIER');
+ assert.equal(x.admission_stage,'R2_REVIEW_FRONTIER');
+ assert.ok(!JSON.stringify(x).includes(extra));
+ const budgeted=inspect({...args,budgets:{max_evidence_refs:0}});
+ assert.equal(budgeted.viewport.state,'FRONTIER');
+ assert.equal(budgeted.admission_stage,'R2_REVIEW_FRONTIER');
+});
+
 test('conflicting duplicate source envelope holds rather than taking first record',()=>{
  const x=inspect({...args,source_envelopes:[source_envelopes[0],{...source_envelopes[0],sha256:'b'.repeat(64)}]});
  assert.equal(x.viewport.state,'FRONTIER');assert.equal(x.h2.source_claims[0].qualification,'FRONTIER_COLLIDING_SOURCE');
