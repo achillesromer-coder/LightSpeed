@@ -42,6 +42,29 @@ def test_unsafe_slot_is_rejected(monkeypatch, tmp_path: Path) -> None:
         rp.runtime_productization_status("../escape")
 
 
+@pytest.mark.parametrize(
+    "slot",
+    [
+        "CON", "con.txt", "PRN", "AUX.cfg", "NUL", "COM1", "com9.log",
+        "LPT1", "lpt9.tmp", "alpha.", "alpha..",
+    ],
+)
+def test_windows_reserved_slot_names_fail_closed_without_side_effects(
+    monkeypatch, tmp_path: Path, slot: str
+) -> None:
+    root = _set_root(monkeypatch, tmp_path)
+    with pytest.raises(rp.RuntimeProductizationError, match="Windows-reserved"):
+        rp.runtime_productization_status(slot)
+    assert not root.exists()
+
+
+@pytest.mark.parametrize("slot", ["alpha", "conductor", "COM10", "alpha.config"])
+def test_non_reserved_slot_names_remain_valid(monkeypatch, tmp_path: Path, slot: str) -> None:
+    root = _set_root(monkeypatch, tmp_path)
+    assert rp.runtime_productization_status(slot)["slot"] == slot
+    assert not root.exists()
+
+
 def test_configure_writes_bounded_marker_and_config(monkeypatch, tmp_path: Path) -> None:
     root = _set_root(monkeypatch, tmp_path)
     result = rp.manage_runtime_productization(
