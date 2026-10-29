@@ -73,7 +73,7 @@ def _safe_slot(slot: str) -> str:
     # Windows device aliases and trailing dots are not distinct filesystem slots.
     # Reject before constructing any managed path or receipt identifier.
     if slot.endswith(".") or re.fullmatch(
-        r"(?:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\\..*)?",
+        r"(?:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:[.].*)?",
         slot,
         flags=re.IGNORECASE,
     ):
