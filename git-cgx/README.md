@@ -1,15 +1,20 @@
-# Git.CGX — public static review transfer (source-only)
+# Git.CGX · canonical-reference umbrella / public review handoff v0.2
 
-This isolated branch is a **review handoff**, not the Git.CGX repository, a CGX root or a live website.
+**Status: Public review software built and locally verified; NOT a native CGX kernel, established DBR, independent FileSpace store or approved live site.** This is an isolated LightSpeed handoff branch, **not** the proposed new `Git.CGX` repository.
 
-The portable Git.CGX v0.1.0 package was built and tested independently from original public-safe code. Its ZIP SHA-256s, 16 curated review-node scope, eight routes, CI contract, and transfer/rights requirements are recorded in [GIT_CGX_REVIEW_TRANSFER.json](./GIT_CGX_REVIEW_TRANSFER.json).
+- [Open `Git.cgx` review entry](./Git.cgx) — readable, declarative pointer only. GitHub does **not** natively execute a `.cgx` file.
+- [Transfer + SHA256 ledger](./GIT_CGX_REVIEW_TRANSFER.json) — exact portable package receipts and open gates.
+- Owner-downloadable v0.2 complete Git.CGX source ZIP (30 files, SHA-256 `4a550dad37375000ca17e2f3d70fd2e4c3efb72b8a8e5d85f48066d26870b142`) contains the interactive site itself; the source ZIP is **not uploaded to GitHub** yet.
+- Owner-downloadable static Pages ZIP (14 files, SHA-256 `b971c1c1db256dba9dd2b585d3a23a8cca41e8de0187186191cf35325086a6b8`) is an unsigned public-only build candidate.
 
-**Status:** 12/12 Node source tests passed, 8 browser routes and mobile responsiveness verified in a controlled local harness. Four static assets are packaged through a deny-by-default allowlist with SHA-256 release receipts. The GitHub repository-creation operation is not exposed by the connected account tools and no new Git.CGX repository has been confirmed.
+**Functional scope of source package:** 11 web routes, 32 public-safe component records, semantic graph, R0 metadata/hash, synthetic DataSpace proposals, bounded PrintSpace calculation, Alexandria, Press exports, searchable registry, GitHub source lookup, eight reconciliation dispositions, five noncanonical review-ledger entries, nine release gates. **24/24 local Node tests pass; 11 routes passed Chromium injected-source tests.** Real Pages HTTP/CSP operation is not established.
 
-The actual full source package remains an owner-downloadable ZIP from the originating ChatGPT conversation; it is **not embedded in this branch or accessible to GitHub Actions yet**. Use the ZIP to create the Git.CGX repository, then verify each source file and CI result before enabling GitHub Pages.
+**Repository reconciliation:** Verified public upstream references: `achillesromer-coder/LightSpeed` and `NCNBOUWER/Raphael`. Their histories, ownership, licences and current consumers are preserved. No repository was archived or deleted. Planned `achillesromer-coder/Git.CGX` was not found in the connected account and connected tool lacks repo creation, so owner action is required.
 
-**Owner gating:** Do not publish original CGX carriers, GPT export shards, private Vite review/catalogue assets, session keys, native RootAuthority/DBR receipts or credentials. Git-hosted Actions checks only source/build integrity, **not** a signed node handshake, real peer, native integration or execution authority.
+**Release:** Create the new repo, transfer the exact owner-reviewed source, require fresh Node Actions CI, independently review public/private source and rights, enable GitHub Pages as a manually dispatched owner-gated workflow. No private GPT export shards, internal Vite Objects, native source carrier, credentials, secrets or DBR proofs may be bundled.
 
-Related work: [public synthetic viewer #174](https://github.com/achillesromer-coder/LightSpeed/pull/174), [deny-by-default build #188](https://github.com/achillesromer-coder/LightSpeed/pull/188), [private asset hold #158](https://github.com/achillesromer-coder/LightSpeed/issues/158), [native exchange #161](https://github.com/achillesromer-coder/LightSpeed/issues/161) and [unified bootstrap #206](https://github.com/achillesromer-coder/LightSpeed/pull/206).
+**Private feeds:** Not enabled. A future authenticated **server-side** rights-approved sanitization/projection process can publish approved aggregate records; no private records can safely exist in static JS/JSON/HTML, whether visible or hidden. Signed native host/node transfer remains in LightSpeed/Cognigrex (#158, #161) and cannot be simulated by GitHub Actions.
 
-This branch MUST NOT be merged into production LightSpeed as a substitute for a separate public repo, release/rights approval or independently accepted native CGX.
+Related review: [UniSpace public synthetic viewer #174](https://github.com/achillesromer-coder/LightSpeed/pull/174), [deny-by-default public bundle #188](https://github.com/achillesromer-coder/LightSpeed/pull/188), [one bootstrap #206](https://github.com/achillesromer-coder/LightSpeed/pull/206).
+
+**Do not merge this folder into production LightSpeed** as a substitute for the planned standalone, rights-qualified Git.CGX source repository.
