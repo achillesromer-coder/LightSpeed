@@ -32,6 +32,14 @@ export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,vi
  try {
   spread=planKnowledgeSpread({nodes,focus_id,access,budgets:{max_cross_domains:0,max_cross_edges:0,...budgets}});
   if(spread.status!=='REVIEW_ONLY')return hold('OBJECT_SCOPE_NOT_AUTHORIZED');
+  // Cross-Grex traversal must preserve each child's own FileSpace, even when
+  // caller-supplied object/source ACL arrays include that sibling. Never
+  // render a Romer/Eco/EMASSC/LS object under a spoofed child namespace.
+  const byId=new Map(nodes.map(n=>[n.object_id,n]));
+  if(spread.objects.some(o=>{
+   const n=byId.get(o.object_id);
+   return !n||(Object.hasOwn(knownChildSpaces,n.domain)&&n.file_space!==knownChildSpaces[n.domain]);
+  }))return hold('CHILD_FILESPACE_SCOPE_CONFLICT');
   switchPlan=planViewportSwitch({spread,to:view});
  } catch {
   return hold('INVALID_GRAPH_VIEW_OR_BUDGET');
