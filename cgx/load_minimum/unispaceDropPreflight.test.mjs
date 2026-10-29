@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {planUniSpaceDropPreflight as plan} from './unispaceDropPreflight.mjs';
 const target={object_id:'fixture:eco:existing',file_space:'Eco.cgx',domain:'eco',owner:'Eco-Grex'};
 const file={name:'observation.json',type:'application/json',size:123};
-const source={source_id:'fixture:eco:source-v2',version:'2',owner:'fixture-owner',sha256:'a'.repeat(64),rights:'OWNER_PRIVATE',proof_class:'scientific'};
+const source={source_id:'fixture:eco:source-v2',version:'2',owner:'fixture-owner',sha256:'a'.repeat(64),rights:'OWNER_PRIVATE',proof_class:'scientific',rights_state:'ACTIVE'};
 const access={authorized_object_ids:[target.object_id],authorized_file_spaces:[target.file_space]};
 const args={target,file,source,access};
 const noEffects=x=>{
@@ -46,7 +46,7 @@ test('filename traversal, MIME mismatch, oversized, zero or fractional size hold
 test('source collision holds; exact same source identity is a no-op',()=>{
  const exact=[{source_id:source.source_id,sha256:source.sha256,version:source.version,
   owner:source.owner,rights:source.rights,proof_class:source.proof_class,
-  object_id:target.object_id,file_space:target.file_space}];
+  object_id:target.object_id,file_space:target.file_space,rights_state:source.rights_state}];
  assert.equal(plan({...args,existing_sources:exact}).status,'NOOP_REVIEW');
  const conflict=[{source_id:source.source_id,sha256:'b'.repeat(64)}];
  assert.equal(plan({...args,existing_sources:conflict}).reason,'SOURCE_IDENTITY_COLLISION');
@@ -65,7 +65,7 @@ test('offline preflight retains metadata-only hold and no network hydration',()=
 test('same hash requires full version owner rights and proof-class equality before NOOP',()=>{
  const exact={source_id:source.source_id,sha256:source.sha256,version:source.version,
   owner:source.owner,rights:source.rights,proof_class:source.proof_class,
-  object_id:target.object_id,file_space:target.file_space};
+  object_id:target.object_id,file_space:target.file_space,rights_state:source.rights_state};
  const partial=plan({...args,existing_sources:[{source_id:source.source_id,sha256:source.sha256}]});
  assert.equal(partial.status,'HOLD');
  assert.equal(partial.reason,'EXISTING_SOURCE_IDENTITY_UNQUALIFIED');noEffects(partial);
@@ -83,7 +83,7 @@ test('same hash requires full version owner rights and proof-class equality befo
 test('same source identity in another child or Object_ID cannot silently NOOP',()=>{
  const exact={source_id:source.source_id,sha256:source.sha256,version:source.version,
   owner:source.owner,rights:source.rights,proof_class:source.proof_class,
-  object_id:target.object_id,file_space:target.file_space};
+  object_id:target.object_id,file_space:target.file_space,rights_state:source.rights_state};
  for(const prior of [
   {...exact,file_space:'Romer.cgx'},
   {...exact,object_id:'fixture:eco:another-object'}
@@ -130,7 +130,7 @@ test('bidi and invisible controls in source authority identities fail closed',()
  }
  const exact={source_id:source.source_id,sha256:source.sha256,version:source.version,
   owner:source.owner,rights:source.rights,proof_class:source.proof_class,
-  object_id:target.object_id,file_space:target.file_space};
+  object_id:target.object_id,file_space:target.file_space,rights_state:source.rights_state};
  for(const [field,value,reason] of [
   ['owner','owner\u200b','EXISTING_SOURCE_IDENTITY_UNQUALIFIED'],
   ['object_id','fixture:eco:existing\u202e','EXISTING_REFERENCE_SCOPE_UNQUALIFIED']
@@ -145,4 +145,36 @@ test('bidi and invisible controls in source authority identities fail closed',()
   source:{...source,owner:'José'},target:{...target,owner:'Römer'}});
  assert.equal(visible.status,'REVIEW_CANDIDATE');
  noEffects(visible);
+});
+
+
+test('C33 revocation supersession and unqualified rights state fail closed before NOOP',()=>{
+ const exact={source_id:source.source_id,sha256:source.sha256,version:source.version,
+  owner:source.owner,rights:source.rights,proof_class:source.proof_class,
+  object_id:target.object_id,file_space:target.file_space,rights_state:'ACTIVE'};
+ assert.equal(plan({...args,existing_sources:[exact]}).status,'NOOP_REVIEW');
+ for(const state of ['REVOKED','SUPERSEDED','UNRESOLVED']){
+  const incoming=plan({...args,source:{...source,rights_state:state},existing_sources:[exact]});
+  assert.equal(incoming.reason,'SOURCE_RIGHTS_NOT_ACTIVE',state);noEffects(incoming);
+  const prior=plan({...args,existing_sources:[{...exact,rights_state:state}]});
+  assert.equal(prior.reason,'EXISTING_RIGHTS_NOT_ACTIVE',state);noEffects(prior);
+ }
+ for(const signal of [{revoked:true},{rights_revoked:true},{revoked_at:'2026-10-30'},
+  {superseded_by:'grant-next'}]){
+  const incoming=plan({...args,source:{...source,...signal},existing_sources:[exact]});
+  assert.equal(incoming.reason,'SOURCE_RIGHTS_NOT_ACTIVE');noEffects(incoming);
+  const prior=plan({...args,existing_sources:[{...exact,...signal}]});
+  assert.equal(prior.reason,'EXISTING_RIGHTS_NOT_ACTIVE');noEffects(prior);
+ }
+ const old={...exact};delete old.rights_state;
+ const oldSource={...source};delete oldSource.rights_state;
+ for(const x of [plan({...args,existing_sources:[old]}),
+  plan({...args,source:oldSource,existing_sources:[exact]})]){
+  assert.equal(x.reason,'RIGHTS_STATE_UNQUALIFIED');noEffects(x);
+ }
+ const malformed=plan({...args,existing_sources:[{...exact,rights_state:'VALID'}]});
+ assert.equal(malformed.reason,'EXISTING_RIGHTS_STATE_UNQUALIFIED');noEffects(malformed);
+ // No matching source may remain a review candidate; never grants authority.
+ const candidate=plan({...args,source:oldSource});
+ assert.equal(candidate.status,'REVIEW_CANDIDATE');noEffects(candidate);
 });
