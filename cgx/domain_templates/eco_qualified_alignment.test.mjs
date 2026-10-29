@@ -624,3 +624,63 @@ test("projection comparison attached to a field observation is a type conflict",
   known_objects:[],authorised_source_ids:["src-a"]});
  assert.ok(x.novel_checks.includes("PROJECTION_COMPARISON_TYPE_CONFLICT"));
 });
+
+
+// Synthetic predictive-validation statistics: neither error agreement nor coverage is ecological benefit.
+const syntheticStats={proposed:true,statistic_kind:"rmse",value:0.5,statistic_unit:"index",
+ sample_count:20,validation_set_ref:"val:synthetic",validation_source_ref:"src-a",
+ independence_design_ref:"split:synthetic",uncertainty_propagation_ref:"prop:synthetic",
+ benchmark_ref:"benchmark:synthetic",residual_diagnostics_ref:"residuals:synthetic",
+ counterevidence_ref:"counter:synthetic",evaluation_period_ref:"2035",
+ evaluation_spatial_support_ref:"space:synthetic"};
+const statsFixture=(overrides={})=>({...comparisonFixture(),
+ validation_statistics:{...syntheticStats,...overrides}});
+test("numeric model-validation statistic never establishes predictive skill or impact",()=>{
+ const x=planEcoAlignment({novel:statsFixture(),known_objects:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("VALIDATION_STATISTICS_INDEPENDENT_REVIEW_REQUIRED"));
+ assert.equal(x.ecological_effect_verified,false);assert.equal(x.db_readback,false);
+});
+test("validation statistics require independent split, propagation, benchmark and residual provenance",()=>{
+ const x=planEcoAlignment({novel:statsFixture({independence_design_ref:undefined,
+  uncertainty_propagation_ref:undefined,benchmark_ref:undefined,residual_diagnostics_ref:undefined}),
+  known_objects:[],authorised_source_ids:["src-a"]});
+ for(const f of ["VALIDATION_INDEPENDENCE_DESIGN_REQUIRED","VALIDATION_UNCERTAINTY_PROPAGATION_REQUIRED",
+  "VALIDATION_BENCHMARK_REQUIRED","VALIDATION_RESIDUAL_DIAGNOSTICS_REQUIRED"])
+  assert.ok(x.novel_checks.includes(f),f);
+});
+test("validation source outside authorised scope stays partial",()=>{
+ const x=planEcoAlignment({novel:statsFixture({validation_source_ref:"source:restricted"}),
+  known_objects:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("NOVEL_VALIDATION_SOURCE_SCOPE_PARTIAL"));
+});
+test("RMSE unit cannot silently differ from projection metric unit",()=>{
+ const x=planEcoAlignment({novel:statsFixture({statistic_unit:"kg"}),
+  known_objects:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("VALIDATION_STATISTIC_UNIT_CONFLICT"));
+});
+test("validation summary cannot float without an observation-comparison design",()=>{
+ const x=planEcoAlignment({novel:{...projectionFixture(),validation_statistics:syntheticStats},
+  known_objects:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("VALIDATION_COMPARISON_DESIGN_REQUIRED"));
+});
+test("different validation sets stay distinct despite identical RMSE",()=>{
+ const a=statsFixture(),b={...a,object_id:"known:validation",
+  validation_statistics:{...syntheticStats,validation_set_ref:"val:other"}};
+ const x=planEcoAlignment({novel:a,known_objects:[b],authorised_object_ids:["known:validation"],
+  authorised_source_ids:["src-a"]});
+ assert.ok(x.candidates[0].checks.includes("VALIDATION_STATISTICS_DESIGN_OR_RESULT_DIFFERENT"));
+ assert.equal(x.candidates[0].auto_merge,false);
+});
+test("invalid sample counts, infinite errors and out-of-range coverage are rejected",()=>{
+ for(const bad of [{sample_count:1},{value:Infinity},
+  {statistic_kind:"interval_coverage",value:105,statistic_unit:"percent"}])
+  assert.throws(()=>planEcoAlignment({novel:statsFixture(bad),known_objects:[],
+   authorised_source_ids:["src-a"]}),/INVALID_/);
+});
+test("validation evaluation period and spatial support cannot silently mismatch",()=>{
+ const x=planEcoAlignment({novel:statsFixture({evaluation_period_ref:"2040",
+  evaluation_spatial_support_ref:"space:other"}),known_objects:[],
+  authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("VALIDATION_EVALUATION_PERIOD_MISMATCH"));
+ assert.ok(x.novel_checks.includes("VALIDATION_EVALUATION_SPACE_MISMATCH"));
+});
