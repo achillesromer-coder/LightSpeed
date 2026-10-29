@@ -35,7 +35,7 @@ function fixture(mode='viewport'){
  if(mode==='viewport'){
   x.request.view='graph';
   x.viewport_plan={schema:'LOAD-VIEWPORT-SWITCH-PLAN/0.1',identity:id,
-   to:'graph',state:'VIEW_PLAN_READY',network_fetch:false,rendered:false,
+   to:'graph',state:'VIEW_PLAN_READY',selected_object_ids:[id],network_fetch:false,rendered:false,
    interactive_execution:false,semantic_mutation:false,public_release:false};
  }else{
   x.operator_plan={schema:'LOAD-QUALIFIED-OPERATOR-PLAN/0.1',
@@ -194,4 +194,22 @@ test('valid two-hop directed spread remains review-only, not host authority',()=
  assert.equal(y.state,'HOST_REVALIDATION_REQUIRED');
  assert.equal(y.native_admitted,false);
  assert.equal(y.dbr_readback_verified,false);
+});
+
+test('viewport selection must match the spread objects exactly, without substitutions',()=>{
+ denied(x=>{x.viewport_plan.selected_object_ids=['fixture:ls:unauthorised'];},
+  'VIEWPORT_NOT_SOURCE_QUALIFIED');
+ denied(x=>{x.viewport_plan.selected_object_ids=[];},
+  'VIEWPORT_NOT_SOURCE_QUALIFIED');
+ denied(x=>{x.viewport_plan.selected_object_ids=['fixture:ls:root','fixture:ls:root'];},
+  'VIEWPORT_NOT_SOURCE_QUALIFIED');
+ const x=fixture();
+ x.spread.objects.push({object_id:'fixture:ls:child',domain:'lightspeed',source_refs:[]});
+ x.spread.edges=[{from:'fixture:ls:root',to:'fixture:ls:child',relation:'HAS_CHILD'}];
+ x.viewport_plan.selected_object_ids=['fixture:ls:child','fixture:ls:root'];
+ assert.equal(review(x).hold_code,'VIEWPORT_NOT_SOURCE_QUALIFIED');
+ x.viewport_plan.selected_object_ids=['fixture:ls:root','fixture:ls:child'];
+ const accepted=review(x);
+ assert.equal(accepted.state,'HOST_REVALIDATION_REQUIRED');
+ assert.equal(accepted.native_admitted,false);
 });
