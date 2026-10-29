@@ -1,4 +1,11 @@
-# Git.CGX · canonical-reference umbrella / public review handoff v0.2
+# Git.CGX · LIVE source and digital mint review handoff
+
+**Current source implementation (29 October 2026):** One portable, public-safe Git.CGX browser showcase includes 15 typed class-set contracts, 10 reproducible synthetic gallery objects, SHA-256 content-addressed review mint, offline receipt export/verification, session reason-chain, and 17 functional routes. 52/52 isolated Node tests PASS; browser source-injection harness exercises the mint/gallery/classset and mobile paths. This is deliberately **not a native CGX/DBR mint, rights assignment, token issuance or signed notary**.
+
+[Authoritative current transfer receipt](./DIGITAL_MINT_REVIEW_HANDOFF.json) · [Source pointer](./Git.cgx). The **entire** source ZIP is an owner-downloadable ChatGPT artifact, NOT uploaded to the LightSpeed review branch or any new Git.CGX repository. No live Pages deployment has been proved. Git commits remain historical provenance; LIVE refers to the latest approved public state, not disabled Git history.
+
+---
+
 
 **Status: Public review software built and locally verified; NOT a native CGX kernel, established DBR, independent FileSpace store or approved live site.** This is an isolated LightSpeed handoff branch, **not** the proposed new `Git.CGX` repository.
 
