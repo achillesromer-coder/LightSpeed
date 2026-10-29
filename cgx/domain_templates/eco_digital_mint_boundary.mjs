@@ -23,6 +23,28 @@ const isoZoned=x=>{
  }
  return true;
 };
+// Inspect nested synthetic payloads without emitting them. Bounded traversal prevents
+// cycles or oversized metadata from bypassing the source-only geometry review gate.
+const spatialKey=k=>k.toLowerCase().replace(/[^a-z0-9]/g,"");
+const rawSpatialKeys=new Set(["latitude","longitude","lat","lon","lng","coords",
+ "coordinates","geometry","geojson","wkt","gps","gpslocation","latlng",
+ "preciselocation","sitegeometry","locationgeometry","sensitivecoordinates",
+ "rawgeometry","featurecollection","pointgeometry"]);
+const inspectRawSpatial=root=>{
+ const pending=[{value:root,depth:0}],seen=new WeakSet();
+ let visited=0;
+ while(pending.length){
+  const {value,depth}=pending.pop();
+  if(value===null||typeof value!=="object"||seen.has(value))continue;
+  seen.add(value);
+  if(++visited>2048||depth>8)return {found:false,limit:true};
+  for(const [key,child] of Object.entries(value)){
+   if(rawSpatialKeys.has(spatialKey(key)))return {found:true,limit:false};
+   if(child!==null&&typeof child==="object")pending.push({value:child,depth:depth+1});
+  }
+ }
+ return {found:false,limit:false};
+};
 export function reviewEcoObservationShowcase({record,authorised_source_refs=[],public_release_requested=false}={}){
  if(!object(record)||record.kind!=="EcoObservation"||typeof record.measured!=="boolean"||
     !Array.isArray(authorised_source_refs)||authorised_source_refs.length>5000||
@@ -42,11 +64,9 @@ export function reviewEcoObservationShowcase({record,authorised_source_refs=[],p
  const checks=[];
  // Raw spatial coordinates are not accepted by this source-only public showcase bridge.
  // A location label is not validated geometry; preserve precise locations in protected R0.
- const rawSpatialKeys=new Set(["latitude","longitude","lat","lon","lng","coordinates",
-  "geometry","geojson","wkt","gps","precise_location","site_geometry",
-  "location_geometry","sensitive_coordinates","raw_geometry"]);
- if(Object.keys(record).some(k=>rawSpatialKeys.has(k.toLowerCase())))
-  add(checks,"RAW_SPATIAL_COORDINATES_NOT_ACCEPTED_IN_SOURCE_ONLY_BRIDGE");
+ const spatial=inspectRawSpatial(record);
+ if(spatial.found)add(checks,"RAW_SPATIAL_COORDINATES_NOT_ACCEPTED_IN_SOURCE_ONLY_BRIDGE");
+ if(spatial.limit)add(checks,"SPATIAL_PAYLOAD_REVIEW_LIMIT_EXCEEDED");
  for(const [field,flag] of [["taxon","TAXON_REFERENCE_REQUIRED"],["place","PLACE_REFERENCE_REQUIRED"],
   ["method","METHOD_REFERENCE_REQUIRED"],["source_provenance","SOURCE_PROVENANCE_REQUIRED"]])
   if(!ref(record[field]))add(checks,flag);
