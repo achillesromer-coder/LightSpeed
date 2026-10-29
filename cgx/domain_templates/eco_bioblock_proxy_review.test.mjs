@@ -39,3 +39,46 @@ test("invalid physical inputs fail closed",()=>{
   {dry_biomass_kg:NaN},{organic_matter_fraction:Infinity}])
  assert.throws(()=>reviewBioBlockProxy({...base,...bad}),/INVALID_BIOBLOCK_PROXY_INPUT/);
 });
+
+
+import {reviewBioBlockEstablishmentProxy} from "./eco_bioblock_proxy_review.mjs";
+const establishment={seed_count:220,viability_fraction:0.75,germination_fraction:0.55,
+ site_suitability_factor:0.65,survival_fraction:0.45,source_ref:"synthetic-workbook-scenario"};
+test("Bio-Blocks workbook synthetic baseline is an expectation not observed plants",()=>{
+ const r=reviewBioBlockEstablishmentProxy(establishment);
+ assert.ok(Math.abs(r.proxies.expected_established_plants-26.544375)<1e-9);
+ assert.ok(r.flags.includes("EXPECTED_COUNT_NOT_OBSERVED"));
+ assert.equal(r.field_observation_verified,false);
+});
+test("zero seeds yields zero expectation, not evidence of a failed field trial",()=>{
+ const r=reviewBioBlockEstablishmentProxy({...establishment,seed_count:0});
+ assert.equal(r.proxies.expected_established_plants,0);
+ assert.equal(r.field_observation_verified,false);
+});
+test("invalid probabilities, fractional seed count and contradictory observed counts fail closed",()=>{
+ for(const bad of [{viability_fraction:1.1},{survival_fraction:-0.1},{seed_count:1.5},
+  {germinated_count:3,surviving_count:4},{germinated_count:221},{site_suitability_factor:NaN}])
+  assert.throws(()=>reviewBioBlockEstablishmentProxy({...establishment,...bad}),/INVALID_BIOBLOCK_ESTABLISHMENT_INPUT/);
+});
+test("observed label without counts, provenance, method, controls or replicates remains blocked",()=>{
+ const r=reviewBioBlockEstablishmentProxy({...establishment,evidence_class:"observed"});
+ for(const f of ["FIELD_EVIDENCE_NOT_INDEPENDENTLY_VERIFIED","OBSERVED_COUNTS_REQUIRED",
+  "MISSING_TAXON_REF","MISSING_SITE_REF","MISSING_SAMPLING_DATE",
+  "MISSING_CONTROL_REF","REPLICATED_TRIAL_EVIDENCE_REQUIRED"])
+  assert.ok(r.flags.includes(f));
+});
+test("complete-looking field references never self-verify an ecological claim",()=>{
+ const r=reviewBioBlockEstablishmentProxy({...establishment,evidence_class:"observed",
+  claim:"biodiversity_gain",germinated_count:12,surviving_count:8,replicate_count:3,
+  seed_batch_ref:"seed",taxon_ref:"taxon",recipe_ref:"recipe",site_ref:"restricted-site",
+  sampling_date:"2026-10-01",method_ref:"method",raw_data_ref:"data",
+  baseline_ref:"baseline",control_ref:"control"});
+ assert.equal(r.biodiversity_gain_verified,false);
+ assert.equal(r.field_release_authorised,false);
+ assert.ok(r.flags.includes("BIODIVERSITY_GAIN_NOT_VERIFIED"));
+});
+test("synthetic counts are not promoted to field observations",()=>{
+ const r=reviewBioBlockEstablishmentProxy({...establishment,germinated_count:12,surviving_count:8});
+ assert.ok(r.flags.includes("COUNTS_NOT_VERIFIED_AS_FIELD_OBSERVATIONS"));
+ assert.equal(r.field_observation_verified,false);
+});
