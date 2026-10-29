@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {reviewBioBlockMonitoringRecord as review, reviewBioBlockMonitoringSeries as series} from "./eco_bioblock_monitoring_review.mjs";
+import {reviewBioBlockMonitoringRecord as review, reviewBioBlockMonitoringSeries as series, reviewBioBlockMonitoringSchedule as schedule} from "./eco_bioblock_monitoring_review.mjs";
 const base={source_ref:"synthetic-source",seed_count:220,germinated_count:12,
  surviving_count:8,monitoring_phase:"monthly"};
 test("arithmetic count ratios are not verified field survival",()=>{
@@ -103,4 +103,63 @@ test("raw spatial fields and unbounded series fail closed",()=>{
   /INVALID_BIOBLOCK_MONITORING_FIELDS/);
  assert.throws(()=>series([longitudinalBase]),/INVALID_BIOBLOCK_SERIES_LENGTH/);
  assert.throws(()=>series(Array(101).fill(longitudinalBase)),/INVALID_BIOBLOCK_SERIES_LENGTH/);
+});
+
+
+const deployAt="2026-01-01T00:00:00Z";
+const scheduleRow=(monitoring_phase,observed_at)=>({...longitudinalBase,
+ monitoring_phase,observed_at});
+test("workbook timepoint phases remain review-only and do not imply field observations",()=>{
+ const rows=[
+  scheduleRow("pre_deployment","2025-12-31T00:00:00Z"),
+  scheduleRow("deployment","2026-01-01T08:00:00Z"),
+  scheduleRow("week_2","2026-01-15T00:00:00Z"),
+  scheduleRow("monthly","2026-02-01T00:00:00Z"),
+  scheduleRow("quarterly","2027-02-01T00:00:00Z"),
+  scheduleRow("annual","2027-01-02T00:00:00Z")
+ ];
+ const r=schedule(rows,{deployment_at:deployAt});
+ assert.equal(r.schedule_compliance_verified,false);
+ assert.equal(r.field_observation_verified,false);
+ assert.equal(r.phase_counts.week_2,1);
+ assert.ok(!r.flags.includes("WEEK_TWO_WINDOW_REVIEW"));
+ assert.ok(!r.flags.includes("FIRST_YEAR_MONTHLY_WINDOW_REVIEW"));
+ assert.ok(!r.flags.includes("POST_YEAR_ONE_QUARTERLY_WINDOW_REVIEW"));
+});
+test("early quarterly and late week-two observations trigger review not fabricated efficacy",()=>{
+ const r=schedule([
+  scheduleRow("week_2","2026-02-15T00:00:00Z"),
+  scheduleRow("quarterly","2026-03-01T00:00:00Z")
+ ],{deployment_at:deployAt});
+ assert.ok(r.flags.includes("WEEK_TWO_WINDOW_REVIEW"));
+ assert.ok(r.flags.includes("POST_YEAR_ONE_QUARTERLY_WINDOW_REVIEW"));
+ assert.equal(r.biodiversity_gain_verified,false);
+});
+test("partial source-only series does not invent missing visits",()=>{
+ const r=schedule([scheduleRow("monthly","2026-02-01T00:00:00Z")],
+  {deployment_at:deployAt});
+ assert.ok(!r.flags.includes("BASELINE_NOT_IN_DECLARED_COMPLETE_SERIES"));
+ assert.ok(!r.flags.includes("FIRST_YEAR_MONTHLY_COVERAGE_REVIEW"));
+});
+test("declared complete year-old series flags missing baseline, visits and review",()=>{
+ const r=schedule([scheduleRow("monthly","2026-02-01T00:00:00Z")],
+  {deployment_at:deployAt,as_of:"2027-04-01T00:00:00Z",
+   coverage_complete:true});
+ for(const f of ["BASELINE_NOT_IN_DECLARED_COMPLETE_SERIES",
+  "DEPLOYMENT_LOG_NOT_IN_DECLARED_COMPLETE_SERIES",
+  "WEEK_TWO_NOT_IN_DECLARED_COMPLETE_SERIES",
+  "FIRST_YEAR_MONTHLY_COVERAGE_REVIEW",
+  "POST_YEAR_ONE_QUARTERLY_COVERAGE_REVIEW",
+  "ANNUAL_REVIEW_COVERAGE_REVIEW"])assert.ok(r.flags.includes(f));
+});
+test("invalid time context, raw coordinates and unbounded records fail closed",()=>{
+ assert.throws(()=>schedule([scheduleRow("monthly","2026-02-01T00:00:00Z")],
+  {deployment_at:"2026-02-30T00:00:00Z"}),/INVALID_BIOBLOCK_SCHEDULE_TIME/);
+ assert.throws(()=>schedule([scheduleRow("monthly","2026-02-01T00:00:00Z")],
+  {deployment_at:deployAt,coverage_complete:true}),/INVALID_BIOBLOCK_SCHEDULE_TIME/);
+ assert.throws(()=>schedule([scheduleRow("monthly","2026-02-01T00:00:00Z"),
+  {...longitudinalBase,gps:"-27.5,153.0"}],
+  {deployment_at:deployAt}),/INVALID_BIOBLOCK_MONITORING_FIELDS/);
+ assert.throws(()=>schedule(Array(101).fill(longitudinalBase),
+  {deployment_at:deployAt}),/INVALID_BIOBLOCK_SCHEDULE_INPUT/);
 });
