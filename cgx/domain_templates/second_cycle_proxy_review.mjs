@@ -51,6 +51,16 @@ export function qualifySecondCycleProxy(candidate){
  if(!isRef(evidence.mist_measurement_ref))flags.push("MIST_MEASUREMENT_REQUIRED");
  if(candidate.claimed_observed_mist===true)flags.push("OBSERVED_MIST_CLAIM_REQUIRES_INDEPENDENT_VALIDATION");
  if(candidate.claimed_ecological_benefit===true)flags.push("ECOLOGICAL_BENEFIT_CLAIM_BLOCKED");
+ // Source-asserted outcomes remain hypotheses until separately measured and independently reviewed.
+ const claimReviewFlags={
+  claimed_rainfall_induction:"RAINFALL_INDUCTION_UNVERIFIED",
+  claimed_weather_modification:"WEATHER_MODIFICATION_UNVERIFIED",
+  claimed_coral_recovery:"CORAL_RECOVERY_UNVERIFIED",
+  claimed_carbon_sequestration:"CARBON_SEQUESTRATION_UNVERIFIED",
+  claimed_pump_free_as_energy_free:"AMBIENT_CURRENT_IS_AN_ENERGY_SOURCE"
+ };
+ for(const [key,flag] of Object.entries(claimReviewFlags))
+  if(candidate[key]===true)flags.push(flag);
  if(candidate.residence_index_claimed_as_time===true)flags.push("RESIDENCE_INDEX_NOT_A_VALIDATED_TIME");
  if(candidate.required_atomisation_power_w!==undefined){
   if(!isFiniteNumber(candidate.required_atomisation_power_w) || candidate.required_atomisation_power_w<0)
