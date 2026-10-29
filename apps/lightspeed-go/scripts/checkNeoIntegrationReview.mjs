@@ -22,8 +22,8 @@ function validateManifest(input) {
     // This is a portable-name gate, not a native filesystem or R0 hash readback.
     const segments = record.path.split('/');
     assert.ok(!segments.some(part => /[. ]$/.test(part) ||
-      /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\\..*)?$/i.test(part)) &&
-      !/[<>:"|?*\\x00-\\x1f]/.test(record.path), 'non-portable Windows path');
+      /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\..*)?$/i.test(part)) &&
+      !/[<>:"|?*\x00-\x1f]/.test(record.path), 'non-portable Windows path');
     const windowsAlias = record.path.normalize('NFC').toLowerCase();
     assert.ok(!windowsAliases.has(windowsAlias), 'case-insensitive manifest alias');
     windowsAliases.add(windowsAlias);
