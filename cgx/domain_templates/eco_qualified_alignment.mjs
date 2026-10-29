@@ -102,6 +102,18 @@ function validateConcept(x){
   for(const field of ["source_system_ref","target_system_ref","pathway_evidence_ref","spatial_frame_ref","baseline_ref","method_ref","counterevidence_ref","accounting_scope_ref","field_receipt_ref","custodial_review_ref"])
    if(p[field]!==undefined&&!good(p[field]))throw Error("INVALID_RECEIVING_"+field.toUpperCase());
  }
+
+ // Proposed benefit accounting is a distinct claim ledger, not a measured receiving-system outcome.
+ if(x.benefit_accounting!==undefined){
+  const a=x.benefit_accounting;
+  if(!obj(a)||typeof a.proposed!=="boolean"||
+   (a.contribution_basis!==undefined&&!["hypothesised","simulated","source_asserted","observed"].includes(a.contribution_basis)))
+   throw Error("INVALID_BENEFIT_ACCOUNTING");
+  for(const f of ["claim_ref","receiving_system_ref","accounting_period","metric_id","unit","baseline_ref","allocation_method_ref","overlap_register_ref","source_revision_ref","counterevidence_ref","independent_receipt_ref"])
+   if(a[f]!==undefined&&!good(a[f]))throw Error("INVALID_BENEFIT_ACCOUNTING_"+f.toUpperCase());
+  if(a.reported_value!==undefined&&(typeof a.reported_value!=="number"||!Number.isFinite(a.reported_value)))
+   throw Error("INVALID_BENEFIT_ACCOUNTING_VALUE");
+ }
  if(x.measurement_basis!==undefined&&!["raw","corrected","derived","reference"].includes(x.measurement_basis))throw Error("INVALID_MEASUREMENT_BASIS");
  if(x.measurement_uncertainty!==undefined){
   const u=x.measurement_uncertainty;
@@ -152,6 +164,7 @@ function compare(a,b,checks){
  if(!equal(a.survey??null,b.survey??null))add(checks,"SURVEY_EFFORT_METHOD_OR_DETECTION_DIFFERENT");
  if(!equal(a.survey_comparison??null,b.survey_comparison??null))add(checks,"SURVEY_COMPARISON_DESIGN_DIFFERENT");
  if(!equal(a.receiving_pathway??null,b.receiving_pathway??null))add(checks,"RECEIVING_PATHWAY_PROVENANCE_OR_SCOPE_DIFFERENT");
+ if(!equal(a.benefit_accounting??null,b.benefit_accounting??null))add(checks,"BENEFIT_ACCOUNTING_CLAIM_SCOPE_OR_ATTRIBUTION_DIFFERENT");
  // Field QA, missingness and instrument provenance are independent of measured value.
  for(const [field,flag] of [
   ["station_instrument_id","INSTRUMENT_ID_DIFFERENT_OR_UNDECLARED"],
@@ -283,6 +296,36 @@ function completeness(x,checks){
     add(checks,"RECEIVING_OBSERVED_CLAIM_REQUIRES_INDEPENDENT_REVIEW");
     if(!good(p.field_receipt_ref))add(checks,"RECEIVING_FIELD_RECEIPT_REQUIRED");
    }
+  }
+ }
+
+ // Shared receiving systems and upstream interventions cannot independently claim the same benefit.
+ // Every proposed allocation stays unverified, even with a receipt or numeric contribution.
+ if(x.benefit_accounting?.proposed){
+  const a=x.benefit_accounting;
+  add(checks,"BENEFIT_ACCOUNTING_NOT_VERIFIED");
+  add(checks,"BENEFIT_ACCOUNTING_NO_DOUBLE_COUNT_REVIEW_REQUIRED");
+  if(!x.receiving_pathway?.proposed)add(checks,"BENEFIT_ACCOUNTING_PATHWAY_REQUIRED");
+  for(const [field,flag] of [
+   ["claim_ref","BENEFIT_CLAIM_REF_REQUIRED"],
+   ["receiving_system_ref","BENEFIT_RECEIVING_SYSTEM_REQUIRED"],
+   ["accounting_period","BENEFIT_ACCOUNTING_PERIOD_REQUIRED"],
+   ["metric_id","BENEFIT_METRIC_REQUIRED"],
+   ["unit","BENEFIT_UNIT_REQUIRED"],
+   ["baseline_ref","BENEFIT_BASELINE_REQUIRED"],
+   ["allocation_method_ref","BENEFIT_ALLOCATION_METHOD_REQUIRED"],
+   ["overlap_register_ref","BENEFIT_OVERLAP_REGISTER_REQUIRED"],
+   ["source_revision_ref","BENEFIT_SOURCE_REVISION_REQUIRED"],
+   ["counterevidence_ref","BENEFIT_COUNTEREVIDENCE_REQUIRED"],
+   ["contribution_basis","BENEFIT_EVIDENCE_BASIS_REQUIRED"]])
+   if(!good(a[field]))add(checks,flag);
+  if(good(a.receiving_system_ref)&&good(x.receiving_pathway?.target_system_ref)&&
+   a.receiving_system_ref!==x.receiving_pathway.target_system_ref)add(checks,"BENEFIT_RECEIVING_SYSTEM_CONFLICT");
+  if(good(a.contribution_basis)&&good(x.receiving_pathway?.outcome_claim)&&
+   a.contribution_basis!==x.receiving_pathway.outcome_claim)add(checks,"BENEFIT_OUTCOME_BASIS_CONFLICT");
+  if(a.contribution_basis==="observed"){
+   add(checks,"BENEFIT_OBSERVED_ATTRIBUTION_REQUIRES_INDEPENDENT_REVIEW");
+   if(!good(a.independent_receipt_ref))add(checks,"BENEFIT_INDEPENDENT_RECEIPT_REQUIRED");
   }
  }
  // Censored reports are bounds, not measured point values.
