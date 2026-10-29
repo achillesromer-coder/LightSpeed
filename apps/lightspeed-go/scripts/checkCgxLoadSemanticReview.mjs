@@ -35,7 +35,8 @@ function fixture(mode='viewport'){
  if(mode==='viewport'){
   x.request.view='graph';
   x.viewport_plan={schema:'LOAD-VIEWPORT-SWITCH-PLAN/0.1',identity:id,
-   to:'graph',state:'VIEW_PLAN_READY',selected_object_ids:[id],source_refs:['fixture:source'],geometry_ref:null,network_fetch:false,rendered:false,
+   to:'graph',state:'VIEW_PLAN_READY',selected_object_ids:[id],source_refs:['fixture:source'],geometry_ref:null,
+   independent_budget:{...x.spread.budgets},network_fetch:false,rendered:false,
    interactive_execution:false,semantic_mutation:false,public_release:false};
  }else{
   x.operator_plan={schema:'LOAD-QUALIFIED-OPERATOR-PLAN/0.1',
@@ -232,4 +233,10 @@ test('3d viewport requires qualified geometry source, frame, units and matching 
  assert.equal(review(x).hold_code,'VIEWPORT_NOT_SOURCE_QUALIFIED');
  x.spread.objects[0].geometry.units='m';x.viewport_plan.geometry_ref='fixture:unrelated';
  assert.equal(review(x).hold_code,'VIEWPORT_NOT_SOURCE_QUALIFIED');
+});
+
+test('viewport budget snapshot cannot substitute source spread ceilings or depth',()=>{
+ denied(x=>{x.viewport_plan.independent_budget.max_nodes=9;},'VIEWPORT_NOT_SOURCE_QUALIFIED');
+ denied(x=>{x.viewport_plan.independent_budget.reasoning_depth='audit';},'VIEWPORT_NOT_SOURCE_QUALIFIED');
+ denied(x=>{delete x.viewport_plan.independent_budget;},'VIEWPORT_NOT_SOURCE_QUALIFIED');
 });
