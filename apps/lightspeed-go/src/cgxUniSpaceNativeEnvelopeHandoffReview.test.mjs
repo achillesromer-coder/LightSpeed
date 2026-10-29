@@ -156,12 +156,28 @@ test("native adapter version and round-trip claims must match current contract",
   for (const mutate of [
     x=>delete x.envelope.native_preservation.adapter_version,
     x=>x.envelope.native_preservation.adapter_version="0.2",
-    x=>x.envelope.native_preservation.round_trip_claim="SOURCE_BYTES_PRESERVED",
-    x=>x.envelope.native_preservation.round_trip_claim="PARTIAL_PROJECTION_ONLY"
+    x=>x.envelope.native_preservation.round_trip_claim="SOURCE_BYTES_PRESERVED"
   ]) {
     const x=await fixture();mutate(x);
     assert.equal(run(x).hold_code,"ENVELOPE_SOURCE_SHAPE_OR_DIGEST_MISMATCH");
   }
+});
+test("runtime-only native loss claims are held as explicit contract drift, without source disclosure",async()=>{
+  for (const claim of ["PARTIAL_PROJECTION_ONLY", "TEXT_PROJECTION_ONLY_LAYOUT_NOT_PRESERVED"]) {
+    const x=await fixture();
+    x.envelope.native_preservation.round_trip_claim=claim;
+    const r=run(x);
+    assert.equal(r.hold_code,"NATIVE_RUNTIME_ROUND_TRIP_CONTRACT_DRIFT",claim);
+    assert.equal(r.native_admitted,false);
+    assert.equal(r.dbr_readback_verified,false);
+    assert.doesNotMatch(JSON.stringify(r),/DO_NOT_ECHO/);
+  }
+});
+test("runtime-only claim cannot conceal an independent source digest mismatch",async()=>{
+  const x=await fixture();
+  x.envelope.native_preservation.round_trip_claim="PARTIAL_PROJECTION_ONLY";
+  x.envelope.sha256="f".repeat(64);
+  assert.equal(run(x).hold_code,"ENVELOPE_SOURCE_SHAPE_OR_DIGEST_MISMATCH");
 });
 test("native source_ref null is a valid no-path reference, never authenticated",async()=>{
   const x=await fixture();x.envelope.native_preservation.source_ref=null;
