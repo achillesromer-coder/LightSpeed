@@ -61,6 +61,9 @@ test('existing Python installer policy is classified from source without running
  const classification=explicitBypass?'EXPLICIT_BYPASS':'NO_EXPLICIT_OVERRIDE';
  const x=reviewWindowsCGXHost({...base,installerInvocationPolicy:classification});
  assert.equal(x.installer_invocation_policy_observation,classification);
+ assert.equal(classification,'NO_EXPLICIT_OVERRIDE');
+ assert.equal(x.state,'REVIEW_ONLY');
+ assert.equal(x.runtime_installed,false);
  assert.equal(x.may_execute,false);assert.equal(x.may_change_execution_policy,false);
  if(explicitBypass)assert.ok(x.holds.includes('NATIVE_INSTALLER_POLICY_BYPASS_SOURCE_HOLD'));
 });
