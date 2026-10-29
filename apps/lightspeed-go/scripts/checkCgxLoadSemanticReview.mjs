@@ -92,6 +92,13 @@ test('compute milliseconds and rate have independent ceilings',()=>{
    'INDEPENDENT_BUDGET_EXCEEDED');
  }
 });
+test('missing or malformed budget envelopes fail closed without throwing',()=>{
+ denied(x=>{delete x.spread.budgets;},'INDEPENDENT_BUDGET_EXCEEDED');
+ denied(x=>{x.spread.budgets=null;},'INDEPENDENT_BUDGET_EXCEEDED');
+ denied(x=>{x.spread.budgets=[];},'INDEPENDENT_BUDGET_EXCEEDED');
+ denied(x=>{delete x.request.budget_ceiling;},'INDEPENDENT_BUDGET_EXCEEDED');
+ denied(x=>{x.request.budget_ceiling={};},'INDEPENDENT_BUDGET_EXCEEDED');
+});
 test('declared maximum operations must equal floor(ms * rate / 1000)',()=>{
  denied(x=>{x.spread.max_planned_operations=101;},'INDEPENDENT_BUDGET_EXCEEDED');
 });
