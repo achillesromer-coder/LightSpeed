@@ -19,6 +19,8 @@ const NATIVE_ADAPTER_BY_EXTENSION = Object.freeze({
 });
 const SHA256 = /^[0-9a-f]{64}$/i;
 const SHA1 = /^[0-9a-f]{40}$/i;
+// Mirror the existing private R3 card mapping identity contract.
+const MAPPING_ID = /^FF-[A-Z0-9-]{4,90}$/;
 const MAX_BYTES = 60 * 1024 * 1024;
 // Exact source-envelope contract enum; a runtime-specific loss claim outside
 // this enum remains Frontier until the native contract is reconciled.
@@ -59,7 +61,9 @@ export function reviewNativeEnvelopeHandoff(input = {}) {
       !one(c.allowed_filespaces, s.filespace))
     return hold("CLIENT_SCOPE_MISMATCH");
   if (!record(m) || m.object_id !== s.object_id ||
-      m.filespace !== s.filespace || (typeof m.mapping_blob_sha !== "string" || !SHA1.test(m.mapping_blob_sha)) ||
+      m.filespace !== s.filespace ||
+      typeof m.mapping_id !== "string" || !MAPPING_ID.test(m.mapping_id) ||
+      (typeof m.mapping_blob_sha !== "string" || !SHA1.test(m.mapping_blob_sha)) ||
       (typeof m.r0_source_sha256 !== "string" || !SHA256.test(m.r0_source_sha256)) ||
       !["R0_R1_REFERENCE", "R0_R1_R2_REFERENCE"].includes(m.mapping_stage) ||
       !["UNRESOLVED", "PRIVATE_SCOPED", "PUBLIC_SAFE"].includes(m.rights) ||
@@ -69,6 +73,7 @@ export function reviewNativeEnvelopeHandoff(input = {}) {
       p.state !== "R0_HASHED_PREFLIGHT_HOLD" ||
       p.parent_filespace !== PARENT || p.candidate_object_id !== s.object_id ||
       p.child_filespace !== s.filespace ||
+      (typeof p.source_mapping_id !== "string" || !MAPPING_ID.test(p.source_mapping_id)) ||
       p.source_mapping_id !== m.mapping_id ||
       p.evidence_class !== m.evidence_class ||
       (typeof p.candidate_r0_sha256 !== "string" || !SHA256.test(p.candidate_r0_sha256)) ||
