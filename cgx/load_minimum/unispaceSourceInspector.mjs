@@ -13,7 +13,7 @@ const hold=(reason)=>({schema:INSPECTOR_SCHEMA,status:'DENIED',reason,canonical_
 
 /** Builds one bounded FileSpace inspector plan, never an authenticated view. */
 export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,view='document',budgets={},source_envelopes=[]}={}){
- if(!good(file_space)||!good(focus_id)||!Array.isArray(nodes)||!Array.isArray(source_envelopes)||source_envelopes.length>512)
+ if(!good(file_space)||!good(focus_id)||!Array.isArray(nodes)||!object(budgets)||!Array.isArray(source_envelopes)||source_envelopes.length>512)
   return hold('INVALID_INSPECTOR_SCOPE');
  if(!object(access)||!Array.isArray(access.authorized_source_ids)||!Array.isArray(access.authorized_object_ids))
   return hold('EXPLICIT_SCOPE_REQUIRED');
