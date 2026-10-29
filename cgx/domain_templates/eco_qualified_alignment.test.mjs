@@ -511,3 +511,53 @@ test("modelled benefit cannot be relabelled observed by the accounting envelope"
 test("invalid accounting evidence class is rejected",()=>{
  assert.throws(()=>benefitPlan({...benefitFixture,contribution_basis:"verified_reef_recovery"}),/INVALID_BENEFIT_ACCOUNTING/);
 });
+
+ 
+// Eco-X original dossier, 09 Evidence-Objects ONT-019: projections are not observations.
+// All values and source identifiers below are synthetic negative fixtures.
+const syntheticProjection={scenario_ref:"scenario:synthetic-2035",metric_ref:"metric:synthetic",
+ formula_ref:"formula:synthetic",parameter_set_ref:"parameters:synthetic-v1",
+ horizon_ref:"2035",baseline_ref:"baseline:synthetic",uncertainty_ref:"uncertainty:synthetic",
+ model_version_ref:"model:synthetic-v1",input_source_refs:["src-a"],estimated_value:12.5,unit:"index"};
+const projectionFixture=(overrides={})=>({...base,semantic_type:"projection_result",evidence_class:"simulated",
+ projection_result:{...syntheticProjection,...overrides}});
+test("projection result without descriptor cannot qualify",()=>{
+ const x=planEcoAlignment({novel:{...base,semantic_type:"projection_result",evidence_class:"simulated"},
+ known_objects:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("PROJECTION_DESCRIPTOR_REQUIRED"));
+ assert.equal(x.novel_qualification_state,"REVIEW_REQUIRED");
+});
+test("model projection labelled observed remains an explicit contradiction",()=>{
+ const x=planEcoAlignment({novel:{...projectionFixture(),evidence_class:"observed"},
+ known_objects:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("PROJECTION_OBSERVED_EVIDENCE_CONFLICT"));
+ assert.equal(x.ecological_effect_verified,false);
+});
+test("projection formula and uncertainty provenance cannot silently disappear",()=>{
+ const x=planEcoAlignment({novel:projectionFixture({formula_ref:undefined,uncertainty_ref:undefined}),
+ known_objects:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("PROJECTION_FORMULA_REQUIRED"));
+ assert.ok(x.novel_checks.includes("PROJECTION_UNCERTAINTY_REQUIRED"));
+});
+test("unapproved model input references remain visible even if outer source is allowed",()=>{
+ const x=planEcoAlignment({novel:projectionFixture({input_source_refs:["src-a","unapproved-input"]}),
+ known_objects:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("NOVEL_PROJECTION_INPUT_SOURCE_SCOPE_PARTIAL"));
+});
+test("different scenarios with same estimate do not align",()=>{
+ const a=projectionFixture(),b={...a,object_id:"known:1",source_refs:["src-a"],
+ projection_result:{...syntheticProjection,scenario_ref:"scenario:synthetic-2040"}};
+ const x=planEcoAlignment({novel:a,known_objects:[b],authorised_object_ids:["known:1"],authorised_source_ids:["src-a"]});
+ assert.ok(x.candidates[0].checks.includes("PROJECTION_SCENARIO_OR_MODEL_PROVENANCE_DIFFERENT"));
+ assert.equal(x.candidates[0].state,"REVIEW_DIFFERENCE");
+});
+test("fully declared synthetic projection stays review-only and never native admitted",()=>{
+ const x=planEcoAlignment({novel:projectionFixture(),known_objects:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("PROJECTION_NOT_FIELD_OBSERVATION"));
+ assert.equal(x.accepted_native_identity,false);assert.equal(x.db_readback,false);
+ assert.equal(x.object_ids_minted,0);assert.equal(x.ecological_effect_verified,false);
+});
+test("nonfinite projected values are invalid",()=>{
+ assert.throws(()=>planEcoAlignment({novel:projectionFixture({estimated_value:Infinity}),known_objects:[],
+ authorised_source_ids:["src-a"]}),/INVALID_PROJECTION_ESTIMATE/);
+});
