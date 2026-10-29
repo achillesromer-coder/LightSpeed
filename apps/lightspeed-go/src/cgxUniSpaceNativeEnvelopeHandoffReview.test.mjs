@@ -301,3 +301,20 @@ test("hash divergence outranks known native round-trip drift",async()=>{
   x.envelope.native_preservation.round_trip_claim="PARTIAL_PROJECTION_ONLY";
   assert.equal(run(x).hold_code,"REGISTERED_SOURCE_HASH_DIVERGENCE");
 });
+
+
+test("private R0 preflight carries the source mapping stage without admission",async()=>{
+  const x=await fixture();
+  assert.equal(x.preflight.mapping_stage,"R0_R1_R2_REFERENCE");
+  assert.equal(x.preflight.native_admitted,false);
+  assert.equal(run(x).state,"NATIVE_ENVELOPE_SHAPE_MATCH_REVIEW_HOLD");
+});
+test("native handoff rejects stage substitution and missing stage despite matching mapping ID",async()=>{
+  const x=await fixture();
+  x.source.mapping_stage="R0_R1_REFERENCE";
+  assert.equal(run(x).hold_code,"UNTRUSTED_PREFLIGHT");
+  const y=await fixture();
+  y.preflight={...y.preflight};
+  delete y.preflight.mapping_stage;
+  assert.equal(run(y).hold_code,"UNTRUSTED_PREFLIGHT");
+});
