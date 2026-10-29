@@ -115,6 +115,21 @@ export function reviewLoadSemanticHost(input){
  }
  if(crossEdges>s.budgets.max_cross_edges)
    return hold('INDEPENDENT_BUDGET_EXCEEDED');
+ // Independent directed reachability and shortest-hop ceiling; the source
+ // planner's max_hops declaration is not proof of actual selected depth.
+ const adjacency=new Map(s.objects.map(o=>[o.object_id,[]]));
+ for(const e of s.edges)adjacency.get(e.from).push(e.to);
+ const hops=new Map([[r.focus_id,0]]),queue=[r.focus_id];
+ for(let i=0;i<queue.length;i++){
+  const from=queue[i],nextHop=hops.get(from)+1;
+  for(const to of adjacency.get(from)){
+   if(hops.has(to))continue;
+   hops.set(to,nextHop);queue.push(to);
+  }
+ }
+ if(hops.size!==s.objects.length)return hold('UNQUALIFIED_OR_COLLIDING_EDGES');
+ if([...hops.values()].some(h=>h>s.budgets.max_hops))
+   return hold('INDEPENDENT_BUDGET_EXCEEDED');
  const v=input.viewport_plan;
  if(r.mode==='viewport'){
   if(!obj(v)||v.schema!=='LOAD-VIEWPORT-SWITCH-PLAN/0.1'||
