@@ -16,7 +16,7 @@ async function fixture() {
   const source = {
     object_id:"WT-001",filespace:"Romer.cgx",mapping_id:"FF-WATCHTOWER-FCSTD-001",
     mapping_blob_sha:"15ac42e257220e0efd30c8521fe2c319b9a25013",
-    r0_source_sha256:"c476f9f2f9946ab8e99e58dd399aa7b02bac630c5d9336b80ef66f5f2a397321",
+    r0_source_sha256:HELLO_SHA,
     mapping_stage:"R0_R1_R2_REFERENCE",evidence_class:"scientific",
     rights:"UNRESOLVED",private_source_locator:"DO_NOT_ECHO_MAPPING_LOCATOR"
   };
@@ -58,7 +58,7 @@ test("matches exact one-object R0 digest and native envelope schema, remains hel
   assert.equal(r.child_filespace,"Romer.cgx");
   assert.equal(r.candidate_source_id,"src:"+HELLO_SHA);
   assert.equal(r.envelope_shape_matched,true);
-  assert.equal(r.registered_original_hash_string_match_only,false);
+  assert.equal(r.registered_original_hash_string_match_only,true);
 });
 test("all effectful or authoritative states remain false",async()=>{
   const r=run(await fixture());
@@ -284,4 +284,20 @@ test("missing R0 negative-evidence fields cannot pass by omission",async()=>{
     delete x.preflight[key];
     assert.equal(run(x).hold_code,"UNTRUSTED_PREFLIGHT",key);
   }
+});
+
+test("different registered R0 hash cannot be rebound to the selected mapping",async()=>{
+  const x=await fixture();
+  x.source.r0_source_sha256="c476f9f2f9946ab8e99e58dd399aa7b02bac630c5d9336b80ef66f5f2a397321";
+  const r=run(x);
+  assert.equal(r.hold_code,"REGISTERED_SOURCE_HASH_DIVERGENCE");
+  assert.equal(r.native_admitted,false);
+  assert.equal(r.envelope_shape_matched,false);
+  assert.doesNotMatch(JSON.stringify(r),/DO_NOT_ECHO/);
+});
+test("hash divergence outranks known native round-trip drift",async()=>{
+  const x=await fixture();
+  x.source.r0_source_sha256="c476f9f2f9946ab8e99e58dd399aa7b02bac630c5d9336b80ef66f5f2a397321";
+  x.envelope.native_preservation.round_trip_claim="PARTIAL_PROJECTION_ONLY";
+  assert.equal(run(x).hold_code,"REGISTERED_SOURCE_HASH_DIVERGENCE");
 });
