@@ -128,6 +128,12 @@ export function reviewNativeEnvelopeHandoff(input = {}) {
       e.lineage.projection_only !== true ||
       e.lineage.parent_source_id !== null)
     return hold("ENVELOPE_SOURCE_SHAPE_OR_DIGEST_MISMATCH");
+  // The registered R0 source hash and newly hashed candidate are different
+  // identities if their strings diverge. Never rebind the mapped original
+  // to an unrelated drop, even when the caller envelope matches the drop.
+  // Equality is NOT proof that registered original bytes were inspected.
+  if (m.r0_source_sha256.toLowerCase() !== p.candidate_r0_sha256.toLowerCase())
+    return hold("REGISTERED_SOURCE_HASH_DIVERGENCE");
   // Distinguish known native-runtime/contract drift from unknown values.
   // Both remain HOLD; never accept a runtime-only loss claim by implication.
   if (!ROUND_TRIP.has(e.native_preservation.round_trip_claim)) {
