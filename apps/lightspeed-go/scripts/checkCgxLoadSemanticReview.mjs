@@ -164,3 +164,34 @@ test('unresolved endpoints and duplicate typed edges are not qualified',()=>{
   {from:'fixture:ls:root',to:'fixture:ls:root',relation:'REL'}
  ];},'UNQUALIFIED_OR_COLLIDING_EDGES');
 });
+
+test('actual directed hop depth cannot exceed declared max_hops',()=>{
+ denied(x=>{
+  for(let i=0;i<3;i++)x.spread.objects.push({
+   object_id:'fixture:ls:hop'+i,domain:'lightspeed',source_refs:[]});
+  x.spread.edges=[
+   {from:'fixture:ls:root',to:'fixture:ls:hop0',relation:'HAS_CHILD'},
+   {from:'fixture:ls:hop0',to:'fixture:ls:hop1',relation:'HAS_CHILD'},
+   {from:'fixture:ls:hop1',to:'fixture:ls:hop2',relation:'HAS_CHILD'}
+  ];
+ },'INDEPENDENT_BUDGET_EXCEEDED');
+});
+test('disconnected selected node cannot bypass directed graph validation',()=>{
+ denied(x=>{x.spread.objects.push({
+  object_id:'fixture:ls:unreachable',domain:'lightspeed',source_refs:[]});
+ },'UNQUALIFIED_OR_COLLIDING_EDGES');
+});
+test('valid two-hop directed spread remains review-only, not host authority',()=>{
+ const x=fixture();
+ x.spread.objects.push(
+  {object_id:'fixture:ls:hop0',domain:'lightspeed',source_refs:[]},
+  {object_id:'fixture:ls:hop1',domain:'lightspeed',source_refs:[]});
+ x.spread.edges=[
+  {from:'fixture:ls:root',to:'fixture:ls:hop0',relation:'HAS_CHILD'},
+  {from:'fixture:ls:hop0',to:'fixture:ls:hop1',relation:'HAS_CHILD'}
+ ];
+ const y=review(x);
+ assert.equal(y.state,'HOST_REVALIDATION_REQUIRED');
+ assert.equal(y.native_admitted,false);
+ assert.equal(y.dbr_readback_verified,false);
+});
