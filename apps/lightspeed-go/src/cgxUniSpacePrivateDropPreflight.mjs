@@ -48,7 +48,8 @@ export async function preflightPrivateObjectDrop(input = {}) {
   if (!record(input)) return hold("INVALID_INPUT");
   const {selection:s, card, client:c, source:p, drop, max_bytes = DEFAULT_BYTES} = input;
   if (!record(s) || s.parent_filespace !== "Cognigrex.cgx" ||
-      !ID.test(s.object_id || "") || s.object_id === "cgx:root:cognigrex" ||
+      (typeof s.object_id !== "string" || !ID.test(s.object_id)) ||
+      s.object_id === "cgx:root:cognigrex" ||
       s.object_id.startsWith("cgx:domain:") ||
       !["Romer.cgx", "Eco.cgx", "EMASSC.cgx", "LS.cgx"].includes(s.filespace) ||
       s.identity_status !== "SOURCE_CANDIDATE_NOT_NATIVE_ACCEPTED") return hold("UNQUALIFIED_SELECTION");
@@ -65,7 +66,8 @@ export async function preflightPrivateObjectDrop(input = {}) {
       p.mapping_id !== card.source_mapping_id || p.mapping_blob_sha !== card.source_mapping_blob_sha ||
       p.mapping_stage !== card.mapping_stage ||
       !["R0_R1_REFERENCE", "R0_R1_R2_REFERENCE"].includes(p.mapping_stage) ||
-      !SHA1.test(p.mapping_blob_sha || "") || !SHA256.test(p.r0_source_sha256 || "") ||
+      (typeof p.mapping_blob_sha !== "string" || !SHA1.test(p.mapping_blob_sha)) ||
+      (typeof p.r0_source_sha256 !== "string" || !SHA256.test(p.r0_source_sha256)) ||
       !["scientific", "creative", "mixed", "unknown"].includes(p.evidence_class) ||
       p.evidence_class !== card.evidence_class ||
       !["UNRESOLVED", "PRIVATE_SCOPED", "PUBLIC_SAFE"].includes(p.rights))
@@ -86,7 +88,8 @@ export async function preflightPrivateObjectDrop(input = {}) {
       return hold("BYTE_LENGTH_OR_LIMIT_MISMATCH");
   const binaryHeader = binaryHeaderStatus(ext, file.bytes);
   if (binaryHeader === false) return hold("BINARY_SIGNATURE_MISMATCH");
-  if (file.claimed_sha256 !== undefined && !SHA256.test(file.claimed_sha256))
+  if (file.claimed_sha256 !== undefined &&
+      (typeof file.claimed_sha256 !== "string" || !SHA256.test(file.claimed_sha256)))
       return hold("INVALID_CLAIMED_HASH");
   if (!globalThis.crypto?.subtle?.digest) return hold("WEBCRYPTO_UNAVAILABLE");
   let digest;
