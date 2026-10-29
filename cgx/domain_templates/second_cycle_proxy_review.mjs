@@ -15,7 +15,8 @@ const requiredUnits = Object.freeze({
 });
 const outputs = Object.freeze({
  volumetric_flow_lps: "L/s", mist_output_lps: "L/s",
- dynamic_pressure_pa: "Pa", hydraulic_power_w: "W"
+ dynamic_pressure_pa: "Pa", hydraulic_power_w: "W",
+ ideal_current_only_head_m: "m"
 });
 function approx(a,b){ return Math.abs(a-b) <= Math.max(1e-9,1e-6*Math.max(Math.abs(a),Math.abs(b))); }
 export function qualifySecondCycleProxy(candidate){
@@ -39,11 +40,15 @@ export function qualifySecondCycleProxy(candidate){
   volumetric_flow_lps:q_m3s*1000,
   mist_output_lps:q_m3s*1000*p.mist_fraction,
   dynamic_pressure_pa:0.5*p.water_density*p.current_speed*p.current_speed,
-  hydraulic_power_w:0.5*p.water_density*p.current_speed*p.current_speed*q_m3s
+  hydraulic_power_w:0.5*p.water_density*p.current_speed*p.current_speed*q_m3s,
+  // Bernoulli stagnation-head proxy at standard gravity: no wave/elevation/pressurised source.
+  // Not a measured spout height or a universal bound for externally energised systems.
+  ideal_current_only_head_m:p.current_speed*p.current_speed/(2*9.80665)
  };
  const flags=["FLOW_PROXY_NOT_OBSERVED","MIST_FRACTION_SYNTHETIC_UNTIL_MEASURED",
   "NOZZLE_ATOMISATION_UNVERIFIED","NO_ECOLOGICAL_OR_ATMOSPHERIC_EFFECT_PROVEN",
-  "PHYSICAL_SITE_FRAME_NOT_VERIFIED","INDEPENDENT_REVIEW_REQUIRED"];
+  "PHYSICAL_SITE_FRAME_NOT_VERIFIED","INDEPENDENT_REVIEW_REQUIRED",
+  "IDEAL_CURRENT_ONLY_HEAD_NOT_OBSERVED"];
  if(!isRef(source.rights_review_ref))flags.push("SOURCE_REUSE_RIGHTS_UNVERIFIED");
  const evidence=isObject(candidate.evidence)?candidate.evidence:{};
  if(!isRef(evidence.flume_calibration_ref))flags.push("FLUME_CALIBRATION_REQUIRED");
@@ -62,6 +67,13 @@ export function qualifySecondCycleProxy(candidate){
  for(const [key,flag] of Object.entries(claimReviewFlags))
   if(candidate[key]===true)flags.push(flag);
  if(candidate.residence_index_claimed_as_time===true)flags.push("RESIDENCE_INDEX_NOT_A_VALIDATED_TIME");
+ if(candidate.claimed_current_only_spout_height_m!==undefined){
+  const h=candidate.claimed_current_only_spout_height_m;
+  if(!isFiniteNumber(h) || h<0)throw new TypeError("INVALID_CLAIMED_CURRENT_ONLY_SPOUT_HEIGHT_M");
+  if(h>calculated.ideal_current_only_head_m+1e-9)
+   flags.push("SPOUT_HEIGHT_EXCEEDS_IDEAL_CURRENT_ONLY_HEAD");
+  // Passing this check does not demonstrate jet formation, pressure recovery or atomisation.
+ }
  if(candidate.required_atomisation_power_w!==undefined){
   if(!isFiniteNumber(candidate.required_atomisation_power_w) || candidate.required_atomisation_power_w<0)
    throw new TypeError("INVALID_ATOMISATION_POWER");
