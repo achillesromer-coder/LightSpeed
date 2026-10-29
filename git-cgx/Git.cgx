@@ -4,9 +4,9 @@
   "reference_root": "cgx:root:cognigrex",
   "planned_repository": "achillesromer-coder/Git.CGX",
   "planned_web_entry": "index.html",
-  "status": "FULL_PORTABLE_SOURCE_READY_TARGET_REPO_NOT_CREATED",
-  "source_release": "Git.CGX_LIVE_Source_Repository.zip",
-  "source_sha256": "118367a223320eedb56b490a686ab4b648bd678f5b690376eece6c92199667f4",
+  "status": "STANDALONE_PUBLIC_REVIEW_MINT_SOURCE_READY_REPO_NOT_CREATED",
+  "source_release": "Git.CGX_Digital_Mint_Source.zip",
+  "source_sha256": "9d5c798df034eeeab2377121c44ecdf26a182ef4f974e0419ffc6b79b95aa08a",
   "static_release": "Git.CGX_LIVE_Public_Web.zip",
   "static_sha256": "2175af87dd2316ab1810b5898bc6f2c84dc37158c895e9a4e69bafea84afad53",
   "review_components": 32,
@@ -22,5 +22,34 @@
   "canonical_dbr_signed": false,
   "private_source_feed_enabled": false,
   "operator_handoff": "git-cgx/LIVE_SOURCE_CONTINUATION.md",
-  "note": "This is a source-review entry not native CGX. Git commits preserve history; current/latest source snapshots require an owner-reviewed GitHub PR. Full source package remains a user downloadable artifact, NOT in this GitHub staging branch."
+  "note": "This is a source-review entry not native CGX. Git commits preserve history; current/latest source snapshots require an owner-reviewed GitHub PR. Full source package remains a user downloadable artifact, NOT in this GitHub staging branch.",
+  "digital_mint": {
+    "kind": "DETERMINISTIC_DIGITAL_REVIEW_MINT_NOT_NATIVE_ADMISSION",
+    "state": "SOURCE_BUILD_TESTED_NOT_HOSTED",
+    "available_routes": [
+      "classes",
+      "mint",
+      "gallery",
+      "mintlog"
+    ],
+    "class_contracts": 15,
+    "synthetic_gallery_receipts": 10,
+    "curated_component_records": 32,
+    "total_routes": 17,
+    "source_bundle": "Git.CGX_Digital_Mint_Source.zip",
+    "source_sha256": "9d5c798df034eeeab2377121c44ecdf26a182ef4f974e0419ffc6b79b95aa08a",
+    "static_bundle": "Git.CGX_Digital_Mint_Static_Web.zip",
+    "static_sha256": "0dd34420bdfdf229a2c34bf6b0f4ee1154a9c4228179d4fd14da25efbcb5bafc",
+    "tested": {
+      "node_tests": "52/52 PASS",
+      "browser_injected_harness": "17 routes, 10 gallery proofs, receipt export/import, mobile 390px, 0 JS exceptions"
+    },
+    "source_fully_uploaded_to_this_branch": false,
+    "private_corpus_bundled": false,
+    "token_issued": false,
+    "signed_native_dbr": false,
+    "native_object_minted": false,
+    "ownership_granted": false
+  },
+  "current_view": "LIVE"
 }
