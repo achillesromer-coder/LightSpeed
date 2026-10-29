@@ -90,6 +90,50 @@ test('all eleven source declarations are exact, reversible and explicitly noncan
   assertReviewOnly(delta);
 });
 
+
+test('directionality and inverse cardinality are not inferred across source domains', () => {
+  // The same lexical CONNECTS_TO label has different declared symmetry evidence.
+  const romerConnect = sources.romer.families.interface.find(r => r.id === 'CONNECTS_TO');
+  const lsConnect = sources.emassc_ls.lightspeed.find(r => r.id === 'CONNECTS_TO');
+  assert.equal(romerConnect.symmetric,true);
+  assert.equal(Object.hasOwn(lsConnect,'symmetric'),false);
+  const connectCandidate = delta.new_overlap_candidates.find(c => c.relation_id === 'CONNECTS_TO');
+  same(sorted(connectCandidate.declarations.map(d => d.source)),['emassc_ls','romer']);
+  assert.equal(connectCandidate.semantic_equivalence,'UNDETERMINED');
+  assert.equal(connectCandidate.canonical_object_id,null);
+
+  // Two distinct forward types point to COMPONENT_OF; no automatic bijection is permitted.
+  const decomposition = sources.romer.families.decomposition;
+  const inbound = decomposition.filter(r => r.inverse === 'COMPONENT_OF').map(r => r.id);
+  same(sorted(inbound),['COMPOSED_OF','HAS_COMPONENT']);
+  const componentOf = decomposition.find(r => r.id === 'COMPONENT_OF');
+  assert.ok(componentOf);
+  assert.equal(Object.hasOwn(componentOf,'inverse'),false);
+  const invented = structuredClone(decomposition);
+  invented.find(r => r.id === 'COMPONENT_OF').inverse = 'HAS_COMPONENT';
+  assert.notDeepEqual(invented,decomposition);
+});
+
+test('temporal, spatial and causal qualifiers remain source-scoped, not merged by label', () => {
+  const precedes = delta.new_overlap_candidates.find(c => c.relation_id === 'PRECEDES');
+  const romerPrecedes = precedes.declarations.find(d => d.source === 'romer');
+  const sharedPrecedes = precedes.declarations.find(d => d.source === 'shared');
+  assert.match(romerPrecedes.source_declaration.rule,/does not imply causation/);
+  assert.equal(Object.hasOwn(sharedPrecedes.source_declaration,'rule'),false);
+  const targets = delta.new_overlap_candidates.find(c => c.relation_id === 'TARGETS');
+  same(sorted(targets.declarations.map(d => d.source + ':' + d.family)),['eco:intervention','romer:spatial']);
+  assert.ok(sources.romer.common_qualifiers.includes('effective_from'));
+  assert.ok(sources.romer.common_qualifiers.includes('effective_to'));
+  assert.ok(sources.eco.common_qualifiers.includes('timestamp'));
+  assert.ok(sources.eco.common_qualifiers.includes('geometry_ref'));
+  for (const candidate of [precedes,targets]) {
+    assert.equal(candidate.semantic_equivalence,'UNDETERMINED');
+    assert.equal(candidate.candidate_owner_qualified,false);
+    assert.equal(candidate.canonical_object_id,null);
+    assert.equal(candidate.native_dbr_readback,null);
+  }
+});
+
 test('negative mutations fail: missing relation, invented declaration, forged authority, and source drift', () => {
   const clone = () => structuredClone(delta);
   const omitted = clone(); omitted.new_overlap_candidates.pop();
