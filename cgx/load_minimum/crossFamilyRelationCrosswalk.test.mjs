@@ -225,3 +225,54 @@ test('temporal and spatial crosswalks require source-specific fields and cannot 
     assert.equal(candidate.canonical_object_id,null);
   }
 });
+
+
+test('historical S92 four-child carrier audit remains technical-candidate evidence, not current native admission', () => {
+  const bytes = read('../domain_templates/s92_domain_children_acceptance_audit_2026-10-04.json');
+  assert.equal(gitBlob(bytes),'77861c734b3c63c394031c79bf830154faaec1e3');
+  const audit = JSON.parse(bytes.toString('utf8'));
+  assert.equal(audit.schema,'CGX-S92-DOMAIN-CHILD-ACCEPTANCE-AUDIT/0.1');
+  assert.match(audit.status,/ROOT_AUTHORITY_DECISION_OPEN/);
+  assert.match(audit.authority_effect,/does not accept, promote, or mutate child authority/);
+  assert.equal(audit.durable_candidate.state,'PRE_CANONICAL');
+  assert.equal(audit.recommendation.promotion_performed,false);
+  assert.equal(audit.durable_candidate.package_sha256,'36349987fa34dc0f85e26c9658fbf8e3814010f7cc9f536b836920eab239a90d');
+  const members = audit.exact_members;
+  same(sorted(Object.keys(members)),sorted(['Romer.cgx','Eco.cgx','EMASSC.cgx','LS.cgx']));
+  for (const [name,child] of Object.entries(members)) {
+    assert.equal(child.authority_transfer,false,name);
+    assert.equal(child.binding_mode,'REFERENCE',name);
+    assert.match(child.sha256,/^[a-f0-9]{64}$/,name);
+    assert.ok(child.tracked_objects > 0,name); // Historical carrier count, not admitted population.
+  }
+  assert.equal(members['LS.cgx'].parent_semantic_object_id,members['EMASSC.cgx'].semantic_object_id);
+  for (const name of ['Romer.cgx','Eco.cgx','EMASSC.cgx']) {
+    assert.equal(members[name].parent_semantic_object_id,'Cognigrex.cgx');
+  }
+  assert.equal(audit.parent_recovery.readback,'VERIFIED'); // Historical S92 only.
+  assert.equal(audit.recommendation.promotion_performed,false); // Not signed current RootAuthority/DBR.
+});
+
+test('S92 historical review cannot be promoted by altered metadata or fabricated child authority', () => {
+  const original = json('../domain_templates/s92_domain_children_acceptance_audit_2026-10-04.json');
+  function requireCandidateOnly(audit) {
+    assert.equal(audit.durable_candidate.state,'PRE_CANONICAL');
+    assert.equal(audit.recommendation.promotion_performed,false);
+    assert.match(audit.status,/ROOT_AUTHORITY_DECISION_OPEN/);
+    for (const child of Object.values(audit.exact_members)) {
+      assert.equal(child.authority_transfer,false);
+      assert.equal(child.binding_mode,'REFERENCE');
+    }
+    return 'SOURCE_REVIEW_ONLY';
+  }
+  assert.equal(requireCandidateOnly(original),'SOURCE_REVIEW_ONLY');
+  const fakePromotion=structuredClone(original);
+  fakePromotion.recommendation.promotion_performed=true;
+  assert.throws(()=>requireCandidateOnly(fakePromotion));
+  const fakeChild=structuredClone(original);
+  fakeChild.exact_members['LS.cgx'].authority_transfer=true;
+  assert.throws(()=>requireCandidateOnly(fakeChild));
+  const fakeCanonical=structuredClone(original);
+  fakeCanonical.durable_candidate.state='CANONICAL';
+  assert.throws(()=>requireCandidateOnly(fakeCanonical));
+});
