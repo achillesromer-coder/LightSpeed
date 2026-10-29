@@ -78,6 +78,25 @@ export function inspectRelationGrammar(domainRegistry, sharedQualifier) {
       });
     }
   }
+  // An inverse label is not an admitted edge unless its target is declared in
+  // this source registry. Preserve source-specific inverse direction and never
+  // silently borrow a same-named type from another family's vocabulary.
+  const allEntries = Object.values(groups).flat();
+  for (const [family, entries] of Object.entries(groups)) {
+    for (const entry of entries) {
+      if (!Object.hasOwn(entry, 'inverse')) continue;
+      if (typeof entry.inverse !== 'string' || !/^[A-Z][A-Z0-9_]*$/.test(entry.inverse)) {
+        issues.push({code: 'RELATION_INVERSE_INVALID', relation_id: entry.id, family});
+        continue;
+      }
+      const targets = allEntries.filter(target => target.id === entry.inverse);
+      if (targets.length === 0) {
+        issues.push({code: 'RELATION_INVERSE_TARGET_UNDECLARED', relation_id: entry.id, inverse_relation: entry.inverse, family});
+      } else if (targets.some(target => Object.hasOwn(target, 'inverse') && target.inverse !== entry.id)) {
+        issues.push({code: 'RELATION_INVERSE_NONRECIPROCAL', relation_id: entry.id, inverse_relation: entry.inverse, family});
+      }
+    }
+  }
   return {
     stage: 'SOURCE_REVIEW_ONLY',
     // Unresolved lexical reuse is a separate owner/identity gate even if both schemas parse cleanly.
