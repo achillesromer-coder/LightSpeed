@@ -139,7 +139,9 @@ function validateConcept(x){
    throw Error("INVALID_VALIDATION_STATISTICS");
   for(const f of ["statistic_unit","validation_set_ref","validation_source_ref","independence_design_ref",
    "uncertainty_propagation_ref","benchmark_ref","residual_diagnostics_ref",
-   "counterevidence_ref","evaluation_period_ref","evaluation_spatial_support_ref","training_set_ref","holdout_policy_ref","split_unit_ref","leakage_audit_ref"])
+   "counterevidence_ref","evaluation_period_ref","evaluation_spatial_support_ref","training_set_ref","holdout_policy_ref","split_unit_ref","leakage_audit_ref",
+   "training_spatial_support_ref","validation_spatial_support_ref","training_temporal_support_ref","validation_temporal_support_ref",
+   "spatial_partition_ref","temporal_partition_ref","spatial_buffer_ref","temporal_embargo_ref","spatial_leakage_audit_ref","temporal_leakage_audit_ref"])
    if(v[f]!==undefined&&!good(v[f]))throw Error("INVALID_VALIDATION_STATISTICS_"+f.toUpperCase());
   if(v.value!==undefined&&(typeof v.value!=="number"||!Number.isFinite(v.value)))
    throw Error("INVALID_VALIDATION_STATISTIC_VALUE");
@@ -476,10 +478,26 @@ function completeness(x,checks){
    ["residual_diagnostics_ref","VALIDATION_RESIDUAL_DIAGNOSTICS_REQUIRED"],
    ["counterevidence_ref","VALIDATION_COUNTEREVIDENCE_REQUIRED"],
    ["evaluation_period_ref","VALIDATION_PERIOD_REQUIRED"],
-   ["evaluation_spatial_support_ref","VALIDATION_SPATIAL_SUPPORT_REQUIRED"]])
+   ["evaluation_spatial_support_ref","VALIDATION_SPATIAL_SUPPORT_REQUIRED"],
+   ["training_spatial_support_ref","VALIDATION_TRAINING_SPATIAL_SUPPORT_REQUIRED"],
+   ["validation_spatial_support_ref","VALIDATION_HOLDOUT_SPATIAL_SUPPORT_REQUIRED"],
+   ["training_temporal_support_ref","VALIDATION_TRAINING_TEMPORAL_SUPPORT_REQUIRED"],
+   ["validation_temporal_support_ref","VALIDATION_HOLDOUT_TEMPORAL_SUPPORT_REQUIRED"],
+   ["spatial_partition_ref","VALIDATION_SPATIAL_PARTITION_REQUIRED"],
+   ["temporal_partition_ref","VALIDATION_TEMPORAL_PARTITION_REQUIRED"],
+   ["spatial_buffer_ref","VALIDATION_SPATIAL_BUFFER_REVIEW_REQUIRED"],
+   ["temporal_embargo_ref","VALIDATION_TEMPORAL_EMBARGO_REVIEW_REQUIRED"],
+   ["spatial_leakage_audit_ref","VALIDATION_SPATIAL_LEAKAGE_AUDIT_REQUIRED"],
+   ["temporal_leakage_audit_ref","VALIDATION_TEMPORAL_LEAKAGE_AUDIT_REQUIRED"]])
    if(!good(v[f]))add(checks,flag);
   if(good(v.training_set_ref)&&good(v.validation_set_ref)&&v.training_set_ref===v.validation_set_ref)
    add(checks,"VALIDATION_TRAINING_AND_HOLDOUT_IDENTICAL");
+  // Identical support can be valid for some designs, but is never independent by declaration alone.
+  // These are review flags, not proofs of overlap or actual data leakage.
+  if(good(v.training_spatial_support_ref)&&v.training_spatial_support_ref===v.validation_spatial_support_ref)
+   add(checks,"VALIDATION_SPATIAL_SUPPORT_OVERLAP_REVIEW");
+  if(good(v.training_temporal_support_ref)&&v.training_temporal_support_ref===v.validation_temporal_support_ref)
+   add(checks,"VALIDATION_TEMPORAL_SUPPORT_OVERLAP_REVIEW");
   if(!Number.isSafeInteger(v.sample_count))add(checks,"VALIDATION_SAMPLE_COUNT_REQUIRED");
   if(v.value===undefined)add(checks,"VALIDATION_STATISTIC_VALUE_REQUIRED");
   if(["rmse","mae","bias"].includes(v.statistic_kind)&&
