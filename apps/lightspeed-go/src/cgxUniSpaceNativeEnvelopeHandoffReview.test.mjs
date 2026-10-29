@@ -225,8 +225,8 @@ test("untrusted identity and digest primitive-type coercion fails closed",async(
     [x=>{x.selection.object_id=Object("WT-001");}, "UNQUALIFIED_OBJECT"],
     [x=>{x.source.r0_source_sha256=[x.source.r0_source_sha256];}, "UNQUALIFIED_SOURCE_MAPPING"],
     [x=>{x.source.mapping_blob_sha=[x.source.mapping_blob_sha];}, "UNQUALIFIED_SOURCE_MAPPING"],
-    [x=>{x.preflight.candidate_r0_sha256=[HELLO_SHA];}, "UNTRUSTED_PREFLIGHT"],
-    [x=>{x.preflight.file_type=["txt"];}, "UNTRUSTED_PREFLIGHT"],
+    [x=>{x.preflight={...x.preflight,candidate_r0_sha256:[HELLO_SHA]};}, "UNTRUSTED_PREFLIGHT"],
+    [x=>{x.preflight={...x.preflight,file_type:["txt"]};}, "UNTRUSTED_PREFLIGHT"],
     [x=>{x.envelope.sha256=[HELLO_SHA];}, "ENVELOPE_SOURCE_SHAPE_OR_DIGEST_MISMATCH"],
     [x=>{x.envelope.envelope_sha256=["a".repeat(64)];}, "ENVELOPE_SOURCE_SHAPE_OR_DIGEST_MISMATCH"]
   ];
