@@ -131,6 +131,23 @@ function validateConcept(x){
   for(const f of ["observation_ref","observation_source_ref","metric_ref","unit","spatial_support_ref","temporal_support_ref","baseline_ref","method_ref","uncertainty_ref","observation_qa_ref","comparison_method_ref","counterevidence_ref"])
    if(c[f]!==undefined&&!good(c[f]))throw Error("INVALID_PROJECTION_OBSERVATION_"+f.toUpperCase());
  }
+ // Proposed validation statistics remain unverified even when the numeric summary is complete.
+ if(x.validation_statistics!==undefined){
+  const v=x.validation_statistics;
+  if(!obj(v)||typeof v.proposed!=="boolean"||
+   !["rmse","mae","bias","interval_coverage"].includes(v.statistic_kind))
+   throw Error("INVALID_VALIDATION_STATISTICS");
+  for(const f of ["statistic_unit","validation_set_ref","validation_source_ref","independence_design_ref",
+   "uncertainty_propagation_ref","benchmark_ref","residual_diagnostics_ref",
+   "counterevidence_ref","evaluation_period_ref","evaluation_spatial_support_ref"])
+   if(v[f]!==undefined&&!good(v[f]))throw Error("INVALID_VALIDATION_STATISTICS_"+f.toUpperCase());
+  if(v.value!==undefined&&(typeof v.value!=="number"||!Number.isFinite(v.value)))
+   throw Error("INVALID_VALIDATION_STATISTIC_VALUE");
+  if(v.sample_count!==undefined&&(!Number.isSafeInteger(v.sample_count)||v.sample_count<2))
+   throw Error("INVALID_VALIDATION_SAMPLE_COUNT");
+  if(v.statistic_kind==="interval_coverage"&&v.value!==undefined&&(v.value<0||v.value>100))
+   throw Error("INVALID_INTERVAL_COVERAGE");
+ }
  if(x.measurement_basis!==undefined&&["raw","corrected","derived","reference"].includes(x.measurement_basis)===false)throw Error("INVALID_MEASUREMENT_BASIS");
  if(x.measurement_uncertainty!==undefined){
   const u=x.measurement_uncertainty;
@@ -185,6 +202,8 @@ function compare(a,b,checks){
  if(!equal(a.projection_result??null,b.projection_result??null))add(checks,"PROJECTION_SCENARIO_OR_MODEL_PROVENANCE_DIFFERENT");
  if(!equal(a.projection_observation_comparison??null,b.projection_observation_comparison??null))
   add(checks,"PROJECTION_OBSERVATION_VALIDATION_DESIGN_DIFFERENT");
+ if(!equal(a.validation_statistics??null,b.validation_statistics??null))
+  add(checks,"VALIDATION_STATISTICS_DESIGN_OR_RESULT_DIFFERENT");
  // Field QA, missingness and instrument provenance are independent of measured value.
  for(const [field,flag] of [
   ["station_instrument_id","INSTRUMENT_ID_DIFFERENT_OR_UNDECLARED"],
@@ -398,6 +417,38 @@ function completeness(x,checks){
    ["baseline_ref","baseline_ref","PROJECTION_COMPARISON_BASELINE_MISMATCH"]])
    if(good(c[cf])&&good(p?.[pf])&&c[cf]!==p[pf])add(checks,flag);
  }
+ // A summary error statistic does not demonstrate predictive skill, uncertainty calibration or ecological benefit.
+ if(x.validation_statistics?.proposed){
+  const v=x.validation_statistics;
+  add(checks,"VALIDATION_STATISTICS_INDEPENDENT_REVIEW_REQUIRED");
+  if(x.semantic_type!=="projection_result"||!x.projection_observation_comparison?.proposed)
+   add(checks,"VALIDATION_COMPARISON_DESIGN_REQUIRED");
+  for(const [f,flag] of [
+   ["statistic_unit","VALIDATION_STATISTIC_UNIT_REQUIRED"],
+   ["validation_set_ref","VALIDATION_SET_REQUIRED"],
+   ["validation_source_ref","VALIDATION_SOURCE_REQUIRED"],
+   ["independence_design_ref","VALIDATION_INDEPENDENCE_DESIGN_REQUIRED"],
+   ["uncertainty_propagation_ref","VALIDATION_UNCERTAINTY_PROPAGATION_REQUIRED"],
+   ["benchmark_ref","VALIDATION_BENCHMARK_REQUIRED"],
+   ["residual_diagnostics_ref","VALIDATION_RESIDUAL_DIAGNOSTICS_REQUIRED"],
+   ["counterevidence_ref","VALIDATION_COUNTEREVIDENCE_REQUIRED"],
+   ["evaluation_period_ref","VALIDATION_PERIOD_REQUIRED"],
+   ["evaluation_spatial_support_ref","VALIDATION_SPATIAL_SUPPORT_REQUIRED"]])
+   if(!good(v[f]))add(checks,flag);
+  if(!Number.isSafeInteger(v.sample_count))add(checks,"VALIDATION_SAMPLE_COUNT_REQUIRED");
+  if(v.value===undefined)add(checks,"VALIDATION_STATISTIC_VALUE_REQUIRED");
+  if(["rmse","mae","bias"].includes(v.statistic_kind)&&
+   good(v.statistic_unit)&&good(x.projection_result?.unit)&&v.statistic_unit!==x.projection_result.unit)
+   add(checks,"VALIDATION_STATISTIC_UNIT_CONFLICT");
+  if(v.statistic_kind==="interval_coverage"&&v.statistic_unit!=="percent")
+   add(checks,"VALIDATION_COVERAGE_PERCENT_UNIT_REQUIRED");
+  if(good(v.evaluation_period_ref)&&good(x.projection_observation_comparison?.temporal_support_ref)&&
+   v.evaluation_period_ref!==x.projection_observation_comparison.temporal_support_ref)
+   add(checks,"VALIDATION_EVALUATION_PERIOD_MISMATCH");
+  if(good(v.evaluation_spatial_support_ref)&&good(x.projection_observation_comparison?.spatial_support_ref)&&
+   v.evaluation_spatial_support_ref!==x.projection_observation_comparison.spatial_support_ref)
+   add(checks,"VALIDATION_EVALUATION_SPACE_MISMATCH");
+ }
  // Censored reports are bounds, not measured point values.
  if(x.reporting_bound&&!good(x.result_qualifier))add(checks,"RESULT_QUALIFIER_REQUIRED");
  if(x.reporting_bound){
@@ -460,6 +511,9 @@ export function planEcoAlignment({novel,known_objects=[],authorised_object_ids=[
  if(novel.projection_observation_comparison?.observation_source_ref&&
     !allowedSources.has(novel.projection_observation_comparison.observation_source_ref))
   add(novelChecks,"NOVEL_COMPARISON_OBSERVATION_SOURCE_SCOPE_PARTIAL");
+ if(novel.validation_statistics?.validation_source_ref&&
+    !allowedSources.has(novel.validation_statistics.validation_source_ref))
+  add(novelChecks,"NOVEL_VALIDATION_SOURCE_SCOPE_PARTIAL");
  const seen=new Set(),out=[];
  for(const k of known_objects){
   validateConcept(k);
@@ -484,6 +538,12 @@ export function planEcoAlignment({novel,known_objects=[],authorised_object_ids=[
  if(k.projection_observation_comparison?.observation_source_ref&&
     !allowedSources.has(k.projection_observation_comparison.observation_source_ref))
   add(checks,"KNOWN_COMPARISON_OBSERVATION_SOURCE_SCOPE_PARTIAL");
+  if(k.validation_statistics?.validation_source_ref&&
+     !allowedSources.has(k.validation_statistics.validation_source_ref))
+   add(checks,"KNOWN_VALIDATION_SOURCE_SCOPE_PARTIAL");
+  if(novel.validation_statistics?.validation_source_ref&&
+     !allowedSources.has(novel.validation_statistics.validation_source_ref))
+   add(checks,"NOVEL_VALIDATION_SOURCE_SCOPE_PARTIAL");
   const exactId=novel.object_id===k.object_id;
   out.push({known_object_id:k.object_id,
    state:exactId?"SAME_ID_CLAIM_REQUIRES_PROOF":checks.length?"REVIEW_DIFFERENCE":"TYPED_ALIGNMENT_CANDIDATE",
