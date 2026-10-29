@@ -748,3 +748,38 @@ test("unsupported geometry export kind rejected; 3D datum requires review",()=>{
  assert.throws(()=>geoRun({geometry_kind:"Voxel"}),/INVALID_GEOMETRY_EXPORT/);
  assert.ok(geoRun({has_z:true}).novel_checks.includes("GEOMETRY_EXPORT_VERTICAL_DATUM_REQUIRED"));
 });
+
+ 
+// Spatial/temporal validation partition: references alone do not establish independence.
+test("spatial and temporal holdout support and leakage controls are separately required",()=>{
+ const x=planEcoAlignment({novel:statsFixture(),authorised_source_ids:["src-a"]});
+ for(const flag of ["VALIDATION_TRAINING_SPATIAL_SUPPORT_REQUIRED","VALIDATION_HOLDOUT_SPATIAL_SUPPORT_REQUIRED",
+ "VALIDATION_TRAINING_TEMPORAL_SUPPORT_REQUIRED","VALIDATION_HOLDOUT_TEMPORAL_SUPPORT_REQUIRED",
+ "VALIDATION_SPATIAL_PARTITION_REQUIRED","VALIDATION_TEMPORAL_PARTITION_REQUIRED",
+ "VALIDATION_SPATIAL_BUFFER_REVIEW_REQUIRED","VALIDATION_TEMPORAL_EMBARGO_REVIEW_REQUIRED",
+ "VALIDATION_SPATIAL_LEAKAGE_AUDIT_REQUIRED","VALIDATION_TEMPORAL_LEAKAGE_AUDIT_REQUIRED"])
+ assert.ok(x.novel_checks.includes(flag),flag);
+});
+test("identical training and holdout spatial support triggers overlap review not proof of leakage",()=>{
+ const x=planEcoAlignment({novel:statsFixture({training_spatial_support_ref:"site:synthetic",
+ validation_spatial_support_ref:"site:synthetic"}),authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("VALIDATION_SPATIAL_SUPPORT_OVERLAP_REVIEW"));
+ assert.equal(x.ecological_effect_verified,false);
+});
+test("identical training and holdout temporal support triggers overlap review",()=>{
+ const x=planEcoAlignment({novel:statsFixture({training_temporal_support_ref:"window:synthetic",
+ validation_temporal_support_ref:"window:synthetic"}),authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("VALIDATION_TEMPORAL_SUPPORT_OVERLAP_REVIEW"));
+});
+test("distinct spatial partition provenance remains separate despite matching statistics",()=>{
+ const a=statsFixture({spatial_partition_ref:"partition:spatial-A"});
+ const b={...a,object_id:"known:spatial",validation_statistics:{...a.validation_statistics,spatial_partition_ref:"partition:spatial-B"}};
+ const x=planEcoAlignment({novel:a,known_objects:[b],authorised_object_ids:["known:spatial"],authorised_source_ids:["src-a"]});
+ assert.ok(x.candidates[0].checks.includes("VALIDATION_STATISTICS_DESIGN_OR_RESULT_DIFFERENT"));
+ assert.equal(x.candidates[0].auto_merge,false);
+});
+test("malformed temporal embargo and leakage audit references are rejected",()=>{
+ for(const field of ["temporal_embargo_ref","spatial_leakage_audit_ref"])
+ assert.throws(()=>planEcoAlignment({novel:statsFixture({[field]:42}),authorised_source_ids:["src-a"]}),
+ /INVALID_VALIDATION_STATISTICS_/);
+});
