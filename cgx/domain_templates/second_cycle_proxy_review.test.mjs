@@ -77,3 +77,27 @@ test("absent source claims do not silently appear as measured outcomes",()=>{
   assert.equal(a.review_flags.includes(k),false);
  assert.equal(a.observed_mist_verified,false);
 });
+
+
+test("source-backed baseline current yields only 3.26 cm ideal current-only stagnation head",()=>{
+ const b={...inputs,current_speed:{value:0.8,unit:"m/s"},intake_area:{value:0.02,unit:"m2"},
+  flow_coefficient:{value:0.6,unit:"1"},mist_fraction:{value:0.08,unit:"1"},
+  water_density:{value:1025,unit:"kg/m3"}};
+ const a=run({inputs:b});
+ assert.ok(Math.abs(a.calculated.ideal_current_only_head_m-0.03263)<0.00001);
+ assert.ok(a.review_flags.includes("IDEAL_CURRENT_ONLY_HEAD_NOT_OBSERVED"));
+ assert.equal(a.observed_mist_verified,false);
+});
+test("claimed current-only spout exceeding ideal stagnation head is flagged",()=>{
+ const a=run({claimed_current_only_spout_height_m:1});
+ assert.ok(a.review_flags.includes("SPOUT_HEIGHT_EXCEEDS_IDEAL_CURRENT_ONLY_HEAD"));
+});
+test("passing ideal head check does not establish a real jet or mist",()=>{
+ const a=run({claimed_current_only_spout_height_m:0.01});
+ assert.equal(a.review_flags.includes("SPOUT_HEIGHT_EXCEEDS_IDEAL_CURRENT_ONLY_HEAD"),false);
+ assert.equal(a.observed_mist_verified,false);
+});
+test("negative or nonnumeric current-only spout heights are rejected",()=>{
+ assert.throws(()=>run({claimed_current_only_spout_height_m:-0.1}),/INVALID_CLAIMED_CURRENT_ONLY_SPOUT_HEIGHT_M/);
+ assert.throws(()=>run({claimed_current_only_spout_height_m:"1"}),/INVALID_CLAIMED_CURRENT_ONLY_SPOUT_HEIGHT_M/);
+});
