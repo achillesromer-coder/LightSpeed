@@ -179,3 +179,50 @@ def test_installer_command_respects_host_execution_policy(monkeypatch, tmp_path:
     assert command[command.index("-File") + 1] == str(fake_script)
     assert options["check"] is False
     assert options["timeout"] == 900
+
+
+@pytest.mark.parametrize("action", ["configure", "install"])
+@pytest.mark.parametrize("preexisting_file", [False, True])
+def test_existing_unmarked_slot_is_never_adopted(
+    monkeypatch, tmp_path: Path, action: str, preexisting_file: bool
+) -> None:
+    root = _set_root(monkeypatch, tmp_path)
+    slot = root / "alpha"
+    slot.mkdir(parents=True)
+    if preexisting_file:
+        (slot / "keep.txt").write_text("preserve", encoding="utf-8")
+
+    with pytest.raises(rp.RuntimeProductizationError, match="managed marker missing"):
+        rp.manage_runtime_productization(
+            action, slot="alpha", profile="core", confirmed=True
+        )
+
+    assert slot.is_dir()
+    assert not (slot / rp.MARKER_NAME).exists()
+    assert not (slot / rp.CONFIG_NAME).exists()
+    if preexisting_file:
+        assert (slot / "keep.txt").read_text(encoding="utf-8") == "preserve"
+    assert not (root / "_receipts").exists()
+
+
+def test_symlinked_managed_slot_cannot_be_configured_or_rolled_back(
+    monkeypatch, tmp_path: Path
+) -> None:
+    root = _set_root(monkeypatch, tmp_path)
+    root.mkdir()
+    target = tmp_path / "unrelated"
+    target.mkdir()
+    (target / "keep.txt").write_text("preserve", encoding="utf-8")
+    link = root / "alpha"
+    try:
+        link.symlink_to(target, target_is_directory=True)
+    except (OSError, NotImplementedError):
+        pytest.skip("directory symlink creation unavailable on this host")
+
+    for action in ("configure", "rollback"):
+        with pytest.raises(rp.RuntimeProductizationError, match="symlink"):
+            rp.manage_runtime_productization(action, slot="alpha", confirmed=True)
+
+    assert (target / "keep.txt").read_text(encoding="utf-8") == "preserve"
+    assert not (target / rp.MARKER_NAME).exists()
+    assert not (root / "_receipts").exists()
