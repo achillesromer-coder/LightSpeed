@@ -222,3 +222,36 @@ test('#209 metric 3D stop-ship rejects claimed verification and decorative geome
  assert.equal(doc.admission_stage,'R3_VIEW_PROPOSAL');
  assert.equal(doc.viewport.metric_authority,'NOT_VERIFIED');
 });
+
+
+// #158: source-scoped ACL arrays cannot turn an unknown/aliased domain into
+// a reserved Grex child FileSpace, including through an authorised halo.
+test('reserved child FileSpace cannot be claimed by an unknown domain or alias',()=>{
+ for(const domain of ['unknown','Eco','custom']){
+  const spoofed=[{...nodes[0],domain},nodes[1]];
+  const x=inspect({...args,nodes:spoofed});
+  assert.equal(x.status,'DENIED',domain);
+  assert.equal(x.reason,'FILESPACE_OR_ID_UNRESOLVED',domain);
+  assert.equal(x.canonical_mutation,false);
+  assert.equal(x.public_release,false);
+  assert.ok(!JSON.stringify(x).includes('fixture:eco:source'));
+ }
+ // Custom, non-reserved child FileSpaces remain reviewable, never admitted.
+ const custom=[{...nodes[0],domain:'custom',file_space:'Custom.cgx'},nodes[1]];
+ const review=inspect({...args,nodes:custom,file_space:'Custom.cgx'});
+ assert.equal(review.status,'SOURCE_REVIEW_ONLY');
+ assert.equal(review.host_authenticated,false);
+ assert.equal(review.h4.installed,false);
+});
+test('unknown-domain sibling cannot impersonate reserved Grex FileSpace in halo',()=>{
+ const spoofed=[nodes[0],{...nodes[1],domain:'unregistered',file_space:'Romer.cgx'}];
+ const x=inspect({...args,nodes:spoofed,
+  budgets:{max_cross_domains:1,max_cross_edges:1,max_hops:1},
+  access:{authorized_object_ids:['fixture:eco:one','fixture:romer:private'],
+   authorized_source_ids:['fixture:eco:source','fixture:romer:private-source']}});
+ assert.equal(x.status,'DENIED');
+ assert.equal(x.reason,'CHILD_FILESPACE_SCOPE_CONFLICT');
+ assert.equal(x.canonical_mutation,false);
+ assert.equal(x.public_release,false);
+ assert.ok(!JSON.stringify(x).includes('fixture:romer:private'));
+});
