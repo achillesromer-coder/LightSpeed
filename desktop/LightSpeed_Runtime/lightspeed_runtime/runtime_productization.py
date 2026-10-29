@@ -64,6 +64,22 @@ def _managed_root() -> Path:
     return Path(value).expanduser() if value else DEFAULT_MANAGED_ROOT
 
 
+def _reject_redirected_directory(path: Path, label: str) -> None:
+    """Reject symlinks and Windows junction/reparse directories before file access.
+
+    On Windows, junctions can have the reparse attribute without reporting as
+    Path.is_symlink(). 0x400 is FILE_ATTRIBUTE_REPARSE_POINT.
+    """
+    try:
+        metadata = path.lstat()
+    except (FileNotFoundError, NotADirectoryError):
+        return
+    if (getattr(metadata, "st_file_attributes", 0) & 0x400) or path.is_symlink():
+        raise RuntimeProductizationError(
+            f"{label} must not be a symlink or Windows reparse point"
+        )
+
+
 def _safe_slot(slot: str) -> str:
     slot = str(slot or "").strip()
     if not SLOT_RE.fullmatch(slot):
@@ -87,6 +103,8 @@ def _paths(slot: str) -> dict[str, Path]:
     slot = _safe_slot(slot)
     root = _managed_root()
     slot_dir = root / slot
+    _reject_redirected_directory(root, "managed root")
+    _reject_redirected_directory(slot_dir, "managed slot")
     return {
         "root": root,
         "slot_dir": slot_dir,
@@ -134,9 +152,9 @@ def _require_confirmed(action: str, confirmed: bool) -> None:
 
 
 def _validate_marker(paths: dict[str, Path], slot: str) -> dict[str, Any]:
-    # Never trust a marker reached through a redirected slot directory.
-    if paths["slot_dir"].is_symlink():
-        raise RuntimeProductizationError("managed slot must not be a symlink")
+    # Recheck root and slot immediately before trusting a marker.
+    _reject_redirected_directory(paths["root"], "managed root")
+    _reject_redirected_directory(paths["slot_dir"], "managed slot")
     marker_path = paths["marker"]
     if not marker_path.exists():
         raise RuntimeProductizationError(
@@ -216,8 +234,8 @@ def _configure(paths: dict[str, Path], slot: str, profile: str) -> dict[str, Any
     # Do not adopt a pre-existing unmarked directory: a later rollback would
     # otherwise delete unrelated files after this method minted a marker.
     slot_dir = paths["slot_dir"]
-    if slot_dir.is_symlink():
-        raise RuntimeProductizationError("managed slot must not be a symlink")
+    _reject_redirected_directory(paths["root"], "managed root")
+    _reject_redirected_directory(slot_dir, "managed slot")
     if slot_dir.exists():
         _validate_marker(paths, slot)
     else:
