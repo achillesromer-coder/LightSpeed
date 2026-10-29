@@ -1,0 +1,50 @@
+/** UniSpace FileSpace drag/drop metadata preflight, source-only review.
+ * Never reads file bytes, grants ACL, verifies a digest, mints an Object_ID,
+ * uploads, hydrates, installs, or writes DBR. Host must independently decide.
+ */
+export const DROP_SCHEMA='UNISPACE-DROP-PREFLIGHT/0.1';
+const MAX_BYTES=60*1024*1024;
+const spaces=Object.freeze({eco:'Eco.cgx',romer:'Romer.cgx',emassc:'EMASSC.cgx',ls:'LS.cgx'});
+const rights=new Set(['PUBLIC_SAFE','OWNER_PRIVATE','LICENSE_RESTRICTED','UNKNOWN']);
+const classes=new Set(['creative','scientific','engineering','historical','operational']);
+const mime=new Set(['application/json','text/plain','text/markdown','text/csv','application/pdf','image/png','image/jpeg','model/gltf-binary']);
+const obj=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
+const label=x=>typeof x==='string'&&x.trim().length>0&&x.length<=256&&!/[\u0000-\u001f\u007f]/.test(x);
+const digest=x=>typeof x==='string'&&/^[a-f0-9]{64}$/i.test(x);
+const result=(reason,code='HOLD')=>({schema:DROP_SCHEMA,status:code,reason,bytes_read:0,uploaded:false,
+ network_fetch:false,hash_verified:false,acl_verified:false,object_id_minted:false,
+ native_admitted:false,public_release:false,canonical_mutation:false});
+/** One selected existing identity and one incoming source, not an ingestion transaction. */
+export function planUniSpaceDropPreflight({target,file,source,access,existing_sources=[],surface='private',offline=false}={}){
+ if(!obj(target)||!obj(file)||!obj(source)||!obj(access)||!Array.isArray(existing_sources)||existing_sources.length>512)
+  return result('INVALID_PREFLIGHT_INPUT');
+ if(!label(target.object_id)||!label(target.file_space)||!label(target.domain)||!label(target.owner)||
+    !Object.hasOwn(spaces,target.domain)||spaces[target.domain]!==target.file_space)
+  return result('EXACT_CHILD_FILESPACE_UNRESOLVED');
+ if(!Array.isArray(access.authorized_object_ids)||!Array.isArray(access.authorized_file_spaces)||
+    !access.authorized_object_ids.includes(target.object_id)||!access.authorized_file_spaces.includes(target.file_space))
+  return result('TARGET_SCOPE_NOT_DECLARED');
+ if(!label(file.name)||file.name==='.'||file.name==='..'||file.name.includes('..')||/[\\/:]/.test(file.name)||
+    !Number.isSafeInteger(file.size)||file.size<1||file.size>MAX_BYTES||!mime.has(file.type))
+  return result('FILE_METADATA_OR_SIZE_UNSUPPORTED');
+ if(!label(source.source_id)||!label(source.version)||!label(source.owner)||!digest(source.sha256)||
+    !rights.has(source.rights)||!classes.has(source.proof_class))
+  return result('SOURCE_QUALIFICATION_INCOMPLETE');
+ if(surface!=='private'&&surface!=='public')return result('UNSUPPORTED_SURFACE');
+ if(source.rights==='UNKNOWN'||source.rights==='LICENSE_RESTRICTED')return result('RIGHTS_REVIEW_REQUIRED');
+ if(surface==='public'&&source.rights!=='PUBLIC_SAFE')return result('PRIVATE_SOURCE_PUBLIC_BOUNDARY');
+ // Existing references are collision hints only; caller-provided list is not DBR.
+ if(existing_sources.some(x=>!obj(x)||!label(x.source_id)||!digest(x.sha256)))
+  return result('EXISTING_SOURCE_REGISTRY_UNQUALIFIED');
+ const matching=existing_sources.filter(x=>x.source_id===source.source_id);
+ if(matching.length>1||matching.some(x=>x.sha256.toLowerCase()!==source.sha256.toLowerCase()))
+  return result('SOURCE_IDENTITY_COLLISION');
+ if(matching.length===1)return result('EXISTING_REFERENCE_NO_DUPLICATE','NOOP_REVIEW');
+ if(offline)return result('OFFLINE_METADATA_ONLY');
+ return {...result('HOST_AND_DBR_REVALIDATION_REQUIRED','REVIEW_CANDIDATE'),
+  target:{object_id:target.object_id,file_space:target.file_space,domain:target.domain},
+  proposed_source:{source_id:source.source_id,version:source.version,proof_class:source.proof_class,
+   rights:source.rights,sha256_claim:source.sha256.toLowerCase(),hash_status:'DECLARED_UNVERIFIED'},
+  file_metadata:{name:file.name,mime:file.type,size:file.size},
+  next_action:'HOST_POLICY_SOURCE_BYTES_HASH_RIGHTS_COLLISION_AND_DBR_PREFLIGHT'};
+}
