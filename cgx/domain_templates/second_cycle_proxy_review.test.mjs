@@ -48,3 +48,32 @@ test("malformed reported units and source hashes are rejected",()=>{
  assert.throws(()=>run({reported:{volumetric_flow_lps:{value:5,unit:"m/s"}}}),/INVALID_REPORTED_UNIT/);
  assert.throws(()=>run({source:{...source,sha256:"not-a-hash"}}),/SOURCE_ID_REVISION_HASH_REQUIRED/);
 });
+
+test("original-concept rainfall and weather claims remain unverified",()=>{
+ const a=run({claimed_rainfall_induction:true,claimed_weather_modification:true});
+ assert.ok(a.review_flags.includes("RAINFALL_INDUCTION_UNVERIFIED"));
+ assert.ok(a.review_flags.includes("WEATHER_MODIFICATION_UNVERIFIED"));
+ assert.equal(a.ecological_effect_verified,false);
+});
+test("coral recovery is not inferred from passive-flow proxy",()=>{
+ const a=run({claimed_coral_recovery:true});
+ assert.ok(a.review_flags.includes("CORAL_RECOVERY_UNVERIFIED"));
+ assert.equal(a.native_admitted,false);
+});
+test("carbon sequestration needs independent measurement and baseline",()=>{
+ const a=run({claimed_carbon_sequestration:true});
+ assert.ok(a.review_flags.includes("CARBON_SEQUESTRATION_UNVERIFIED"));
+ assert.equal(a.ecological_effect_verified,false);
+});
+test("pump-free is not energy-free: moving water supplies kinetic energy",()=>{
+ const a=run({claimed_pump_free_as_energy_free:true});
+ assert.ok(a.review_flags.includes("AMBIENT_CURRENT_IS_AN_ENERGY_SOURCE"));
+ assert.equal(a.live_installed,false);
+});
+test("absent source claims do not silently appear as measured outcomes",()=>{
+ const a=run();
+ for(const k of ["RAINFALL_INDUCTION_UNVERIFIED","WEATHER_MODIFICATION_UNVERIFIED",
+  "CORAL_RECOVERY_UNVERIFIED","CARBON_SEQUESTRATION_UNVERIFIED"])
+  assert.equal(a.review_flags.includes(k),false);
+ assert.equal(a.observed_mist_verified,false);
+});
