@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { reviewWindowsCGXHost } from './cgxWindowsHostPreflightReview.mjs';
 const base = {connection:'ONLINE', fileAccess:'VERIFIED_READ_ONLY', policies:{CurrentUser:'RemoteSigned'},signature:'VALID',zone:'LOCAL'};
 test('online and read-only does not certify native root or execution',()=>{
@@ -52,4 +53,27 @@ test('all declared input error classes remain non-executing',()=>{
   const x=reviewWindowsCGXHost({...base,startupError:status});
   assert.equal(x.may_execute,false);assert.equal(x.may_publish,false);
  }
+});
+
+test('existing Python installer policy is classified from source without running it',()=>{
+ const source=readFileSync(new URL('../../desktop/LightSpeed_Runtime/lightspeed_runtime/runtime_productization.py',import.meta.url),'utf8');
+ const explicitBypass=/["']-ExecutionPolicy["']\\s*,\\s*["']Bypass["']/.test(source);
+ const classification=explicitBypass?'EXPLICIT_BYPASS':'NO_EXPLICIT_OVERRIDE';
+ const x=reviewWindowsCGXHost({...base,installerInvocationPolicy:classification});
+ assert.equal(x.installer_invocation_policy_observation,classification);
+ assert.equal(x.may_execute,false);assert.equal(x.may_change_execution_policy,false);
+ if(explicitBypass)assert.ok(x.holds.includes('NATIVE_INSTALLER_POLICY_BYPASS_SOURCE_HOLD'));
+});
+test('explicit source-level execution-policy bypass remains HOLD even if host policy appears permissive',()=>{
+ for(const policy of ['RemoteSigned','AllSigned','Unrestricted','Bypass']){
+  const x=reviewWindowsCGXHost({...base,policies:{CurrentUser:policy},installerInvocationPolicy:'EXPLICIT_BYPASS'});
+  assert.equal(x.state,'HOLD');
+  assert.ok(x.holds.includes('NATIVE_INSTALLER_POLICY_BYPASS_SOURCE_HOLD'));
+  assert.equal(x.may_execute,false);
+ }
+});
+test('installer invocation observation is closed-schema and never host proof',()=>{
+ const x=reviewWindowsCGXHost({...base,installerInvocationPolicy:'NO_EXPLICIT_OVERRIDE'});
+ assert.equal(x.state,'REVIEW_ONLY');assert.equal(x.authority_verified,false);
+ assert.equal(reviewWindowsCGXHost({...base,installerInvocationPolicy:'OWNER_APPROVED'}).state,'DENIED');
 });
