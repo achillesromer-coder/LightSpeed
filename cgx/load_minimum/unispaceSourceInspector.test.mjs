@@ -11,7 +11,7 @@ const nodes=[
   source_refs:['fixture:romer:private-source'],edges:[]}
 ];
 const access={authorized_object_ids:['fixture:eco:one'],authorized_source_ids:['fixture:eco:source']};
-const source_envelopes=[{source_id:'fixture:eco:source',sha256:h,version:'fixture-v1',owner:'fixture-owner',rights:'OWNER_PRIVATE',proof_class:'scientific'},
+const source_envelopes=[{source_id:'fixture:eco:source',sha256:h,version:'fixture-v1',owner:'fixture-owner',rights:'OWNER_PRIVATE',proof_class:'scientific',rights_state:'ACTIVE'},
  {source_id:'fixture:romer:private-source',sha256:'b'.repeat(64),version:'secret',owner:'secret',rights:'OWNER_PRIVATE',proof_class:'engineering'}];
 const args={nodes,focus_id:'fixture:eco:one',access,file_space:'Eco.cgx',source_envelopes,surface:'private'};
 test('one exact child FileSpace and Object_ID, no parent alias or cross-domain leak',()=>{
@@ -165,6 +165,20 @@ test('public, omitted and unknown surfaces fail closed without H0-H4 or private 
 
 // #158 / C33: rights revocation or supersession must invalidate a previously
 // qualified private R3 review candidate; no provider/host claim is made.
+// An absent grant state must not look like a qualified R3 private viewport.
+test('missing rights-state is Frontier despite a syntactically valid source envelope',()=>{
+ const envelope={...source_envelopes[0]};delete envelope.rights_state;
+ const x=inspect({...args,source_envelopes:[envelope]});
+ assert.equal(x.status,'SOURCE_REVIEW_ONLY');
+ assert.equal(x.viewport.state,'FRONTIER');
+ assert.equal(x.admission_stage,'R2_REVIEW_FRONTIER');
+ assert.equal(x.h2.source_claims[0].qualification,'FRONTIER_RIGHTS_REVOKED_OR_UNRESOLVED');
+ assert.equal(x.h2.source_claims[0].sha256,null);
+ assert.equal(x.host_authenticated,false);
+ assert.equal(x.provider_readback,false);
+ assert.equal(x.public_release,false);
+});
+
 test('revoked superseded or non-ACTIVE source envelopes cannot support R3',()=>{
  for(const signal of [
   {rights_state:'REVOKED'},{rights_state:'SUPERSEDED'},{rights_state:'UNRESOLVED'},
