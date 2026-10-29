@@ -175,6 +175,14 @@ export function reviewLoadSemanticHost(input){
      !Array.isArray(op.operator_candidates)||op.operator_candidates.length<1||
      op.operator_candidates.length>10)
      return hold('OPERATOR_NOT_SOURCE_QUALIFIED');
+  // LOAD operator source_references are permitted problem evidence only, not
+  // authenticated rights or solver authority. Missing/substituted evidence HOLDS.
+  const focus=byId.get(r.focus_id);
+  if(focus.source_available!==true||focus.source_refs.length===0||
+     !Array.isArray(op.source_references)||op.source_references.length===0||
+     new Set(op.source_references).size!==op.source_references.length||
+     op.source_references.some(ref=>!focus.source_refs.includes(ref)))
+     return hold('OPERATOR_EVIDENCE_NOT_QUALIFIED');
   const routes=new Set();
   for(const c of op.operator_candidates){
    if(!obj(c)||!id(c.route_key)||routes.has(c.route_key)||
