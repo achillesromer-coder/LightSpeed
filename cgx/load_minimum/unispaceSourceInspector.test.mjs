@@ -55,3 +55,21 @@ test('conflicting duplicate source envelope holds rather than taking first recor
  const x=inspect({...args,source_envelopes:[source_envelopes[0],{...source_envelopes[0],sha256:'b'.repeat(64)}]});
  assert.equal(x.viewport.state,'FRONTIER');assert.equal(x.h2.source_claims[0].qualification,'FRONTIER_COLLIDING_SOURCE');
 });
+
+test('invalid view, budget, or graph fails closed without disclosing private sibling',()=>{
+ const invalid=[
+  {...args,view:'unregistered-view'},
+  {...args,budgets:{max_nodes:0}},
+  {...args,budgets:null},
+  {...args,nodes:[...nodes,nodes[0]]},
+  {...args,nodes:[{...nodes[0],edges:[{to:'fixture:romer:private'}]},nodes[1]]}
+ ];
+ for(const input of invalid){
+  let result;
+  assert.doesNotThrow(()=>{result=inspect(input)});
+  assert.equal(result.status,'DENIED');
+  assert.equal(result.canonical_mutation,false);
+  assert.equal(result.public_release,false);
+  assert.ok(!JSON.stringify(result).includes('fixture:romer:private-source'));
+ }
+});
