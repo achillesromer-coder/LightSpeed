@@ -19,7 +19,7 @@ function fixture(mode='viewport'){
   spread:{
    schema:'LOAD-SEMANTIC-SPREAD-PLAN/0.1',status:'REVIEW_ONLY',focus_id:id,
    objects:[{object_id:id,domain:'lightspeed',source_refs:['fixture:source']}],
-   edges:[],frontier:[],budgets:{...ceilings,reasoning_depth:'standard',
+   edges:[],frontier:[],source_ref_count:1,budgets:{...ceilings,reasoning_depth:'standard',
      device_hydration:'reader',execution_depth:'inspect'},
    max_planned_operations:100,actual_compute_ms:null,actual_ops_per_second:null,
    requested_ceiling_only:true,network_fetch:false,rendered:false,
@@ -132,4 +132,35 @@ test('secret-bearing fields are rejected without echoing their value',()=>{
 });
 test('operator plan cannot be swapped into viewport mode',()=>{
  denied(x=>{x.operator_plan=fixture('operator').operator_plan;},'UNEXPECTED_OPERATOR_PLAN');
+});
+
+test('actual selected objects cannot exceed declared node inclusion budget',()=>{
+ denied(x=>{
+  for(let i=1;i<=8;i++)x.spread.objects.push({
+   object_id:'fixture:ls:node'+i,domain:'lightspeed',source_refs:[]});
+ },'INDEPENDENT_BUDGET_EXCEEDED');
+});
+test('actual cross-domain edges cannot exceed cross-edge budget',()=>{
+ denied(x=>{
+  x.spread.objects.push({object_id:'fixture:romer:site',domain:'romer',source_refs:[]});
+  x.spread.edges=Array.from({length:5},(_,i)=>({
+   from:'fixture:ls:root',to:'fixture:romer:site',relation:'REL'+i}));
+ },'INDEPENDENT_BUDGET_EXCEEDED');
+});
+test('actual evidence references and declared evidence count are independently checked',()=>{
+ denied(x=>{
+  x.spread.objects[0].source_refs=Array.from({length:9},(_,i)=>'fixture:source'+i);
+  x.spread.source_ref_count=9;
+ },'INDEPENDENT_BUDGET_EXCEEDED');
+ denied(x=>{x.spread.source_ref_count=2;},'EVIDENCE_COUNT_MISMATCH');
+ denied(x=>{x.spread.objects[0].source_refs=['bad'+String.fromCharCode(10)+'ref'];},
+  'UNQUALIFIED_EVIDENCE_REFERENCES');
+});
+test('unresolved endpoints and duplicate typed edges are not qualified',()=>{
+ denied(x=>{x.spread.edges=[{from:'fixture:ls:root',to:'fixture:unknown',relation:'REL'}];},
+  'UNQUALIFIED_OR_COLLIDING_EDGES');
+ denied(x=>{x.spread.edges=[
+  {from:'fixture:ls:root',to:'fixture:ls:root',relation:'REL'},
+  {from:'fixture:ls:root',to:'fixture:ls:root',relation:'REL'}
+ ];},'UNQUALIFIED_OR_COLLIDING_EDGES');
 });
