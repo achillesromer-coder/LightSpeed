@@ -1,13 +1,21 @@
 // Source-only cross-family relation grammar preflight. No Object_ID mint, DBR write or owner approval.
 export function inspectRelationGrammar(domainRegistry, sharedQualifier) {
-  if (!domainRegistry || typeof domainRegistry !== 'object' || !domainRegistry.families || typeof domainRegistry.families !== 'object' || Array.isArray(domainRegistry.families)) {
+  if (!domainRegistry || typeof domainRegistry !== 'object' || Array.isArray(domainRegistry)) {
+    throw new TypeError('INVALID_DOMAIN_RELATION_REGISTRY');
+  }
+  // EMASSC/LS declares three typed groups at the root rather than under "families".
+  // Do not interpret host_local_noncanonical entries as shared relation types.
+  const groups = domainRegistry.schema === 'CGX-EMASSC-LS-RELATION-REGISTRY/0.2'
+    ? Object.fromEntries(['emassc', 'lightspeed', 'bridge'].map(key => [key, domainRegistry[key]]))
+    : domainRegistry.families;
+  if (!groups || typeof groups !== 'object' || Array.isArray(groups)) {
     throw new TypeError('INVALID_DOMAIN_RELATION_REGISTRY');
   }
   if (!sharedQualifier || typeof sharedQualifier.schema !== 'string') {
     throw new TypeError('INVALID_SHARED_RELATION_CONTRACT');
   }
   const occurrences = new Map();
-  for (const [family, entries] of Object.entries(domainRegistry.families)) {
+  for (const [family, entries] of Object.entries(groups)) {
     if (!Array.isArray(entries)) throw new TypeError('INVALID_RELATION_FAMILY');
     for (const entry of entries) {
       if (!entry || typeof entry.id !== 'string' || !/^[A-Z][A-Z0-9_]*$/.test(entry.id)) {
