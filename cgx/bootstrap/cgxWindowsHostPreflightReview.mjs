@@ -12,16 +12,20 @@ const ACCESS = new Set(["VERIFIED_READ_ONLY", "QUOTA_BLOCKED", "DENIED", "NOT_CH
 const SIGNATURES = new Set(["VALID", "NOT_SIGNED", "INVALID", "UNKNOWN"]);
 const ZONES = new Set(["INTERNET", "LOCAL", "UNKNOWN"]);
 const ERRORS = new Set(["NONE", "UNSIGNED_SCRIPT", "PARSE_ERROR", "ARGUMENT_TYPES_DO_NOT_MATCH", "OTHER"]);
+// Caller-supplied source observation, NOT proof of effective host policy.
+const INSTALLER_POLICIES = new Set(["UNKNOWN", "EXPLICIT_BYPASS", "NO_EXPLICIT_OVERRIDE"]);
 const cleanObject = value => value !== null && typeof value === "object" && !Array.isArray(value);
 
 export function reviewWindowsCGXHost(observed = {}) {
   if (!cleanObject(observed)) return {schema: WINDOWS_PREFLIGHT_SCHEMA, state: "DENIED", reason: "INVALID_OBSERVATION"};
   const {
     connection = "UNKNOWN", fileAccess = "NOT_CHECKED", policies = {},
-    signature = "UNKNOWN", zone = "UNKNOWN", startupError = "NONE", psVersion = "UNKNOWN"
+    signature = "UNKNOWN", zone = "UNKNOWN", startupError = "NONE", psVersion = "UNKNOWN",
+    installerInvocationPolicy = "UNKNOWN"
   } = observed;
   if (!STATES.has(connection) || !ACCESS.has(fileAccess) || !cleanObject(policies) ||
       !SIGNATURES.has(signature) || !ZONES.has(zone) || !ERRORS.has(startupError) ||
+      !INSTALLER_POLICIES.has(installerInvocationPolicy) ||
       typeof psVersion !== "string" || psVersion.length > 40 || /[\u0000-\u001f]/.test(psVersion) ||
       Object.keys(policies).some(k => !SCOPE_ORDER.includes(k) || !POLICY_VALUES.has(policies[k]))) {
     return {schema: WINDOWS_PREFLIGHT_SCHEMA, state: "DENIED", reason: "INVALID_OBSERVATION"};
@@ -40,12 +44,16 @@ export function reviewWindowsCGXHost(observed = {}) {
   if (startupError === "ARGUMENT_TYPES_DO_NOT_MATCH") holds.push("WIZARD_RUNTIME_ARGUMENT_HOLD");
   if (startupError === "OTHER") holds.push("UNCLASSIFIED_STARTUP_FAILURE");
   if (effectivePolicy === "Restricted") holds.push("POWERSHELL_SCRIPT_EXECUTION_RESTRICTED");
+  if (installerInvocationPolicy === "EXPLICIT_BYPASS")
+    holds.push("NATIVE_INSTALLER_POLICY_BYPASS_SOURCE_HOLD");
   // An AllSigned/RemoteSigned/Bypass observation is diagnostic data, not execution permission.
   const noHostReadback = fileAccess !== "VERIFIED_READ_ONLY";
   const nextReadOnly = holds.includes("PROVIDER_MONTHLY_QUOTA_HOLD_DO_NOT_RETRY")
     ? "Wait for provider quota reset or receive owner-supplied redacted diagnostics; do not retry this provider."
     : holds.includes("SCRIPT_SIGNING_POLICY_HOLD")
       ? "Inspect Get-ExecutionPolicy -List and Get-AuthenticodeSignature; do not disable a managed signing policy."
+      : holds.includes("NATIVE_INSTALLER_POLICY_BYPASS_SOURCE_HOLD")
+      ? "Review runtime_productization.py installer invocation against signed-policy requirements; do not run or override policy."
       : holds.includes("WIZARD_RUNTIME_ARGUMENT_HOLD")
         ? "Inspect the wizard's stage-specific exception and stack; do not infer native CGX failure."
         : holds.includes("POWERSHELL_SCRIPT_PARSE_HOLD")
@@ -58,7 +66,9 @@ export function reviewWindowsCGXHost(observed = {}) {
     effective_policy: effectivePolicy, effective_policy_scope: effectiveScope,
     signature_observation: signature, zone_observation: zone,
     powershell_version_observation: psVersion,
-    startup_error_class: startupError, holds: [...new Set(holds)],
+    startup_error_class: startupError,
+    installer_invocation_policy_observation: installerInvocationPolicy,
+    holds: [...new Set(holds)],
     next_read_only_step: nextReadOnly,
     // This source-only review never proves an action, regardless of user-supplied flags.
     authority_verified: false, signed_lease_verified: false, dbr_verified: false,
