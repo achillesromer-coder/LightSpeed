@@ -80,6 +80,21 @@ def _reject_redirected_directory(path: Path, label: str) -> None:
         )
 
 
+def _reject_redirected_ancestors(path: Path, label: str) -> None:
+    """Fail closed on redirected ancestors, not only the managed-root leaf.
+
+    This is a preflight check, not an atomic guarantee against filesystem
+    races; target-host acceptance must separately test reparse/TOCTOU cases.
+    """
+    if not path.is_absolute() or ".." in path.parts:
+        raise RuntimeProductizationError(
+            f"{label} must be an absolute path without parent traversal"
+        )
+    for ancestor in reversed(path.parents):
+        _reject_redirected_directory(ancestor, f"{label} ancestor")
+    _reject_redirected_directory(path, label)
+
+
 def _safe_slot(slot: str) -> str:
     slot = str(slot or "").strip()
     if not SLOT_RE.fullmatch(slot):
@@ -103,7 +118,7 @@ def _paths(slot: str) -> dict[str, Path]:
     slot = _safe_slot(slot)
     root = _managed_root()
     slot_dir = root / slot
-    _reject_redirected_directory(root, "managed root")
+    _reject_redirected_ancestors(root, "managed root")
     _reject_redirected_directory(slot_dir, "managed slot")
     # Nested runtime and receipt paths must not redirect outside the managed root.
     _reject_redirected_directory(slot_dir / "venv", "managed venv")
@@ -158,7 +173,7 @@ def _require_confirmed(action: str, confirmed: bool) -> None:
 
 def _validate_marker(paths: dict[str, Path], slot: str) -> dict[str, Any]:
     # Recheck root and slot immediately before trusting a marker.
-    _reject_redirected_directory(paths["root"], "managed root")
+    _reject_redirected_ancestors(paths["root"], "managed root")
     _reject_redirected_directory(paths["slot_dir"], "managed slot")
     marker_path = paths["marker"]
     if not marker_path.exists():
@@ -182,6 +197,7 @@ def _operator_receipt(
     status: str,
     detail: dict[str, Any],
 ) -> Path:
+    _reject_redirected_ancestors(paths["root"], "managed root")
     _reject_redirected_directory(paths["receipt_root"], "receipt root")
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     receipt = paths["receipt_root"] / f"{slot}-{action}-{stamp}.json"
@@ -240,7 +256,7 @@ def _configure(paths: dict[str, Path], slot: str, profile: str) -> dict[str, Any
     # Do not adopt a pre-existing unmarked directory: a later rollback would
     # otherwise delete unrelated files after this method minted a marker.
     slot_dir = paths["slot_dir"]
-    _reject_redirected_directory(paths["root"], "managed root")
+    _reject_redirected_ancestors(paths["root"], "managed root")
     _reject_redirected_directory(slot_dir, "managed slot")
     if slot_dir.exists():
         _validate_marker(paths, slot)
@@ -265,6 +281,7 @@ def _run_installer_process(
     profile: str,
     action: str,
 ) -> dict[str, Any]:
+    _reject_redirected_ancestors(paths["root"], "managed root")
     _reject_redirected_directory(paths["venv"], "managed venv")
     _reject_redirected_directory(paths["venv"] / "Scripts", "managed venv scripts")
     _reject_redirected_directory(paths["receipt_root"], "receipt root")
