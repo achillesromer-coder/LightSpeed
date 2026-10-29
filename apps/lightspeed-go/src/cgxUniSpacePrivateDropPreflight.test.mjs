@@ -195,3 +195,17 @@ test("claimed SHA-256 must be primitive string, never an array or boxed string",
     assert.equal(r.native_admitted,false);
   }
 });
+
+
+test("forged caller card cannot launder malformed source mapping IDs into R0", async () => {
+  for (const id of ["BAD", ["FF-WATCHTOWER-FCSTD-001"], Object("FF-WATCHTOWER-FCSTD-001"), 42]) {
+    const x=fixture();
+    // Deliberately bypass the card planner: both card and source are untrusted caller input.
+    x.source.mapping_id=id;
+    x.card={...x.card,source_mapping_id:id};
+    const r=await run(x);
+    assert.equal(r.hold_code,"SOURCE_PROVENANCE_MISMATCH");
+    assert.equal(r.upload_performed,false);
+    assert.equal(r.native_admitted,false);
+  }
+});
