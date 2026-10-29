@@ -184,3 +184,66 @@ test('structurally valid schemas still HOLD when shared lexical crosswalks lack 
  assert.equal(noOverlap.native_admitted,false);
  assert.equal(noOverlap.qualified_object_id,null);
 });
+
+
+// Eco/shared candidate crosswalk snapshot: source-only, no owner qualification or mint.
+function verifyEcoSharedCandidateSnapshot(snapshot) {
+  const ecoBytes=readFileSync(new URL('../domain_templates/eco_relation_registry.json',import.meta.url));
+  const sharedBytes=readFileSync(new URL('../domain_templates/relation_qualifier_contract.json',import.meta.url));
+  const eco=JSON.parse(ecoBytes.toString('utf8'));
+  const shared=JSON.parse(sharedBytes.toString('utf8'));
+  const gitBlob=bytes=>createHash('sha1').update(Buffer.from('blob '+bytes.length+'\\0')).update(bytes).digest('hex');
+  assert.equal(snapshot.schema,'CGX-CROSS-FAMILY-RELATION-CANDIDATES/0.1');
+  assert.equal(snapshot.stage,'SOURCE_REVIEW_ONLY');
+  assert.equal(snapshot.status,'HOLD');
+  assert.equal(snapshot.sources.domain.path,'cgx/domain_templates/eco_relation_registry.json');
+  assert.equal(snapshot.sources.shared.path,'cgx/domain_templates/relation_qualifier_contract.json');
+  assert.equal(snapshot.sources.domain.git_blob,gitBlob(ecoBytes),'ECO_SOURCE_BYTES_DRIFT');
+  assert.equal(snapshot.sources.shared.git_blob,gitBlob(sharedBytes),'SHARED_SOURCE_BYTES_DRIFT');
+  assert.equal(snapshot.sources.domain.schema,eco.schema);
+  assert.equal(snapshot.sources.domain.extends,eco.extends);
+  assert.equal(snapshot.sources.shared.schema,shared.schema);
+  const expected=[];
+  for(const [domain_family,entries] of Object.entries(eco.families))
+    for(const domain_declaration of entries)
+      for(const [shared_family,sharedEntries] of Object.entries(shared.shared_relation_types))
+        for(const shared_declaration of sharedEntries)
+          if(domain_declaration.id===shared_declaration.id)
+            expected.push({relation_id:domain_declaration.id,domain_family,shared_family,domain_declaration,shared_declaration});
+  const key=x=>[x.relation_id,x.domain_family,x.shared_family].join('/');
+  const actual=snapshot.candidates.map(x=>({
+    relation_id:x.relation_id,domain_family:x.domain_family,shared_family:x.shared_family,
+    domain_declaration:x.domain_declaration,shared_declaration:x.shared_declaration
+  }));
+  assert.deepEqual(actual.sort((a,b)=>key(a).localeCompare(key(b))),
+    expected.sort((a,b)=>key(a).localeCompare(key(b))),'SOURCE_OVERLAP_DRIFT');
+  assert.equal(new Set(actual.map(key)).size,actual.length,'DUPLICATE_CROSSWALK_CANDIDATE');
+  assert.equal(actual.length,6);
+  for(const c of snapshot.candidates) {
+    assert.equal(c.semantic_equivalence,'UNDETERMINED');
+    assert.equal(c.owner_qualified,false);
+    assert.equal(c.source_rights_qualified,false);
+    assert.equal(c.source_acl_qualified,false);
+    assert.equal(c.canonical_object_id,null);
+    assert.equal(c.native_dbr_readback,null);
+    assert.equal(c.disposition,'HOLD');
+  }
+  assert.equal(snapshot.canonical_relations_minted,0);
+  assert.equal(snapshot.authority_transferred,false);
+  assert.equal(snapshot.readback_verified,false);
+}
+test('Eco/shared candidate crosswalk snapshot is source-byte-pinned and noncanonical',()=>{
+  const snapshot=JSON.parse(readFileSync(new URL('./eco_shared_relation_crosswalk_candidates_2026-10-29.json',import.meta.url),'utf8'));
+  verifyEcoSharedCandidateSnapshot(snapshot);
+});
+test('Eco/shared candidate crosswalk rejects drift, missing relation and forged authority',()=>{
+  const original=JSON.parse(readFileSync(new URL('./eco_shared_relation_crosswalk_candidates_2026-10-29.json',import.meta.url),'utf8'));
+  const altered=copy(original);altered.sources.domain.git_blob='0'.repeat(40);
+  assert.throws(()=>verifyEcoSharedCandidateSnapshot(altered),/ECO_SOURCE_BYTES_DRIFT/);
+  const missing=copy(original);missing.candidates.pop();
+  assert.throws(()=>verifyEcoSharedCandidateSnapshot(missing),/SOURCE_OVERLAP_DRIFT/);
+  const promoted=copy(original);promoted.candidates[0].owner_qualified=true;
+  assert.throws(()=>verifyEcoSharedCandidateSnapshot(promoted));
+  const minted=copy(original);minted.candidates[0].canonical_object_id='cgx:forged';
+  assert.throws(()=>verifyEcoSharedCandidateSnapshot(minted));
+});
