@@ -83,3 +83,59 @@ export function reviewBioBlockMonitoringRecord(input={}){
   db_readback:false,field_observation_verified:false,biodiversity_gain_verified:false,
   public_release_authorised:false,field_release_authorised:false};
 }
+
+/**
+ * Review-only comparison of successive monitoring records.
+ * These checks are warnings, not ecological effect estimates or field validation.
+ * Changes in counts can reflect recruitment, metric scope or sampling changes.
+ */
+export function reviewBioBlockMonitoringSeries(records){
+ if(!Array.isArray(records)||records.length<2||records.length>100)
+  throw Error("INVALID_BIOBLOCK_SERIES_LENGTH");
+ const summaries=records.map(reviewBioBlockMonitoringRecord);
+ const flags=new Set(["SOURCE_ONLY_NOT_FIELD_VERIFIED",
+  "LONGITUDINAL_SERIES_REQUIRES_INDEPENDENT_QA"]);
+ const fields=["run_ref","block_ref","recipe_ref","site_ref","taxon_ref",
+  "cohort_ref","replicate_ref","method_ref","control_ref","baseline_ref"];
+ const first=records[0];
+ for(let i=0;i<records.length;i++){
+  const row=records[i];
+  if(fields.some(k=>!ref(row[k])))flags.add("INCOMPLETE_LONGITUDINAL_LINKAGE");
+  if(i===0)continue;
+  const prev=records[i-1];
+  if(summaries[i].evidence_class!==summaries[0].evidence_class)
+   flags.add("MIXED_EVIDENCE_CLASSES_NOT_COMPARABLE");
+  for(const k of fields)
+   if(ref(row[k])&&ref(first[k])&&row[k]!==first[k])
+    flags.add("SERIES_"+k.toUpperCase()+"_MISMATCH");
+  if(!zoned(row.observed_at)||!zoned(prev.observed_at)){
+   flags.add("LONGITUDINAL_ZONED_TIMESTAMPS_REQUIRED");
+   continue;
+  }
+  if(!(Date.parse(row.observed_at)>Date.parse(prev.observed_at))){
+   flags.add("NONINCREASING_LONGITUDINAL_TIME");
+   continue;
+  }
+  if(row.seed_count!==null&&prev.seed_count!==null&&row.seed_count!==prev.seed_count)
+   flags.add("SEED_DENOMINATOR_CHANGED_REVIEW_REQUIRED");
+  const comparable=summaries[i].evidence_class===summaries[0].evidence_class&&
+   Number.isSafeInteger(row.seed_count)&&row.seed_count>0&&
+   row.seed_count===prev.seed_count&&
+   fields.every(k=>ref(row[k])&&ref(prev[k])&&row[k]===prev[k]);
+  if(!comparable){
+   flags.add("LONGITUDINAL_COUNTS_NOT_COMPARABLE");
+   continue;
+  }
+  if(row.surviving_count!==null&&prev.surviving_count!==null&&
+   row.surviving_count>prev.surviving_count)
+   flags.add("SURVIVAL_INCREASE_REQUIRES_RECRUITMENT_OR_METHOD_REVIEW");
+  if(row.germinated_count!==null&&prev.germinated_count!==null&&
+   row.germinated_count<prev.germinated_count)
+   flags.add("GERMINATION_DECREASE_REQUIRES_METRIC_SCOPE_REVIEW");
+ }
+ return {schema:BIOBLOCK_MONITORING_SCHEMA,parent:"Cognigrex.cgx",
+  owner_family:"Eco.cgx",record_count:records.length,flags:[...flags],
+  source_only:true,native_object_id:null,db_readback:false,
+  longitudinal_field_evidence_verified:false,biodiversity_gain_verified:false,
+  public_release_authorised:false,field_release_authorised:false};
+}
