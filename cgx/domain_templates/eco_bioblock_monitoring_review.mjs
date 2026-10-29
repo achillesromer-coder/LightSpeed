@@ -163,6 +163,7 @@ export function reviewBioBlockMonitoringSchedule(records, options={}) {
  records.forEach(reviewBioBlockMonitoringRecord);
  const phases=["pre_deployment","deployment","week_2","monthly","quarterly","annual"];
  const phase_counts=Object.fromEntries(phases.map(k=>[k,0]));
+ const qualifying_visits={monthly:[],quarterly:[],annual:[]};
  const flags=new Set(["SOURCE_ONLY_NOT_FIELD_VERIFIED",
   "MONITORING_SCHEDULE_IS_SOURCE_ASSERTED_PLANNING"]);
  const DAY=86400000;
@@ -172,7 +173,18 @@ export function reviewBioBlockMonitoringSchedule(records, options={}) {
    flags.add("MONITORING_TIMEPOINT_TIMESTAMP_REQUIRED");
    continue;
   }
-  const days=(Date.parse(r.observed_at)-deploy)/DAY;
+  const observed=Date.parse(r.observed_at);
+  if(asOf!==null&&observed>asOf){
+   flags.add("MONITORING_RECORD_AFTER_AS_OF_REVIEW");
+   continue;
+  }
+  const days=(observed-deploy)/DAY;
+  if(r.monitoring_phase==="monthly"&&days>=21&&days<=366)
+   qualifying_visits.monthly.push(observed);
+  if(r.monitoring_phase==="quarterly"&&days>=365)
+   qualifying_visits.quarterly.push(observed);
+  if(r.monitoring_phase==="annual"&&days>=300)
+   qualifying_visits.annual.push(observed);
   if(r.monitoring_phase==="pre_deployment"&&days>=0)
    flags.add("BASELINE_NOT_BEFORE_DEPLOYMENT_REVIEW");
   if(r.monitoring_phase==="deployment"&&(days<0||days>1))
@@ -195,11 +207,17 @@ export function reviewBioBlockMonitoringSchedule(records, options={}) {
    ["week_2","WEEK_TWO_NOT_IN_DECLARED_COMPLETE_SERIES"]])
    if(phase_counts[phase]===0)flags.add(flag);
   const elapsed=(asOf-deploy)/DAY;
-  if(elapsed>=365&&phase_counts.monthly<12)
+  const monthly=[...new Set(qualifying_visits.monthly)].sort((a,b)=>a-b);
+  if(elapsed>=365&&monthly.length<12)
    flags.add("FIRST_YEAR_MONTHLY_COVERAGE_REVIEW");
-  if(elapsed>=455&&phase_counts.quarterly===0)
+  if(elapsed>=365&&phase_counts.monthly>=12&&monthly.length<phase_counts.monthly)
+   flags.add("FIRST_YEAR_MONTHLY_DUPLICATE_TIMEPOINT_REVIEW");
+  // Conservative spacing review only; no inferred site-local calendar or compliance.
+  if(elapsed>=365&&monthly.some((t,i)=>i>0&&t-monthly[i-1]<21*DAY))
+   flags.add("FIRST_YEAR_MONTHLY_VISIT_SPACING_REVIEW");
+  if(elapsed>=455&&qualifying_visits.quarterly.length===0)
    flags.add("POST_YEAR_ONE_QUARTERLY_COVERAGE_REVIEW");
-  if(elapsed>=365&&phase_counts.annual===0)
+  if(elapsed>=365&&qualifying_visits.annual.length===0)
    flags.add("ANNUAL_REVIEW_COVERAGE_REVIEW");
  }
  return {schema:BIOBLOCK_MONITORING_SCHEMA,parent:"Cognigrex.cgx",
