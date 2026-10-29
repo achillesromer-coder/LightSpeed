@@ -101,3 +101,33 @@ test("negative or nonnumeric current-only spout heights are rejected",()=>{
  assert.throws(()=>run({claimed_current_only_spout_height_m:-0.1}),/INVALID_CLAIMED_CURRENT_ONLY_SPOUT_HEIGHT_M/);
  assert.throws(()=>run({claimed_current_only_spout_height_m:"1"}),/INVALID_CLAIMED_CURRENT_ONLY_SPOUT_HEIGHT_M/);
 });
+
+test("unquantified valve and nozzle losses remain review-gated",()=>{
+ const r=run();
+ assert.ok(r.review_flags.includes("HYDRAULIC_PATH_LOSSES_UNQUANTIFIED"));
+ assert.equal(r.hydraulic_path_review,null);
+});
+test("synthetic nozzle demand above ideal current dynamic pressure is flagged",()=>{
+ const r=run({hydraulic_path_review:{
+  valve_pressure_drop:{value:0,unit:"Pa"},nozzle_pressure_required:{value:1000,unit:"Pa"},
+  other_pressure_drop:{value:0,unit:"Pa"},static_lift:{value:0,unit:"m"},
+  flow_coefficient_scope:"geometry_only",evidence_ref:"synthetic:pressure-curve"}});
+ assert.ok(r.review_flags.includes("PRESSURE_BUDGET_EXCEEDS_IDEAL_CURRENT_DYNAMIC_PRESSURE"));
+ assert.equal(r.hydraulic_path_review.physically_validated,false);
+});
+test("valve loss already in workbook coefficient cannot be subtracted twice without review",()=>{
+ const r=run({hydraulic_path_review:{
+  valve_pressure_drop:{value:20,unit:"Pa"},nozzle_pressure_required:{value:30,unit:"Pa"},
+  other_pressure_drop:{value:0,unit:"Pa"},static_lift:{value:0,unit:"m"},
+  flow_coefficient_scope:"includes_valve_losses"}});
+ assert.ok(r.review_flags.includes("POTENTIAL_LOSS_DOUBLE_COUNT_REVIEW"));
+ assert.ok(r.review_flags.includes("HYDRAULIC_PATH_EVIDENCE_REQUIRED"));
+ assert.equal(r.observed_mist_verified,false);
+});
+test("hydraulic path units and negative static lift are rejected",()=>{
+ const base={valve_pressure_drop:{value:0,unit:"Pa"},nozzle_pressure_required:{value:20,unit:"Pa"},
+  other_pressure_drop:{value:0,unit:"Pa"},static_lift:{value:0,unit:"m"},
+  flow_coefficient_scope:"geometry_only"};
+ assert.throws(()=>run({hydraulic_path_review:{...base,nozzle_pressure_required:{value:20,unit:"kPa"}}}),/INVALID_HYDRAULIC_QUANTITY/);
+ assert.throws(()=>run({hydraulic_path_review:{...base,static_lift:{value:-1,unit:"m"}}}),/INVALID_HYDRAULIC_QUANTITY/);
+});
