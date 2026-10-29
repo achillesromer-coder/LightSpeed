@@ -80,6 +80,16 @@ export function reviewNativeEnvelopeHandoff(input = {}) {
       !Number.isSafeInteger(p.file_bytes) || p.file_bytes < 1 ||
       p.file_bytes > MAX_BYTES ||
       (typeof p.file_type !== "string" || !/^[a-z0-9]{2,8}$/.test(p.file_type)) ||
+      // R0 preflight cannot promote rights, parsing, safety, geometry or publication.
+      // Check the complete negative-evidence surface, not just admission flags.
+      p.rights_status !== "UNVERIFIED" ||
+      p.identity_collision_checked !== false ||
+      p.format_parsed !== false || p.malware_checked !== false ||
+      p.r1_typed !== false || p.r2_modelled !== false || p.r3_live !== false ||
+      p.source_bytes_embedded !== false || p.public_vite_asset !== false ||
+      !["NO_FIXED_SIGNATURE_CHECK", "HEADER_MATCH_ONLY_NOT_FORMAT_VALIDATED"].includes(p.binary_signature_status) ||
+      p.recommended_route !== "CGX_NATIVE_INTAKE_PRECHECK_ONLY" ||
+      p.offline_display !== "HASH_AND_TYPE_ONLY" ||
       p.source_reference_hash_verified !== false ||
       p.native_admitted !== false || p.host_verified !== false ||
       p.release_accepted !== false || p.canonical_mutation !== false ||
