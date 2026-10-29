@@ -115,6 +115,54 @@ export function qualifySecondCycleProxy(candidate){
    flags.push("FLOW_COEFFICIENT_LOSS_SCOPE_UNRESOLVED");
   if(!isRef(h.evidence_ref))flags.push("HYDRAULIC_PATH_EVIDENCE_REQUIRED");
  }else flags.push("HYDRAULIC_PATH_LOSSES_UNQUANTIFIED");
+
+ // Static marine concept check, sourced to the Second Cycle Digital Twin v0.1.
+ // Full-cylinder displacement and 12% shell-volume fraction are SYNTHETIC assumptions.
+ // This is not stability, freeboard, fatigue, storm survivability or anchor certification.
+ let marine_static_review=null;
+ if(candidate.marine_static_review!==undefined){
+  const m=candidate.marine_static_review;
+  if(!isObject(m))throw new TypeError("INVALID_MARINE_STATIC_REVIEW");
+  const units={body_length:"m",body_diameter:"m",shell_volume_fraction:"1",
+   material_density:"kg/m3",ballast_mass:"kg",projected_drag_area:"m2",
+   drag_coefficient:"1",wave_surge_factor:"1",anchor_holding_capacity:"N"};
+  const v={};
+  for(const [key,unit] of Object.entries(units)){
+   const q=m[key];
+   if(!isObject(q)||!isFiniteNumber(q.value)||q.unit!==unit)
+    throw new TypeError("INVALID_MARINE_STATIC_QUANTITY_"+key.toUpperCase());
+   v[key]=q.value;
+  }
+  if(v.body_length<=0||v.body_diameter<=0||v.shell_volume_fraction<=0||
+   v.shell_volume_fraction>1||v.material_density<=0||v.ballast_mass<0||
+   v.projected_drag_area<=0||v.drag_coefficient<0||v.wave_surge_factor<1||
+   v.anchor_holding_capacity<=0)
+   throw new RangeError("MARINE_STATIC_PROXY_DOMAIN_ERROR");
+  const displacement_volume_m3=Math.PI*(v.body_diameter/2)**2*v.body_length;
+  const shell_mass_kg=displacement_volume_m3*v.shell_volume_fraction*v.material_density;
+  const dry_mass_kg=shell_mass_kg+v.ballast_mass;
+  const buoyant_capacity_kg=p.water_density*displacement_volume_m3;
+  const buoyancy_margin_kg=buoyant_capacity_kg-dry_mass_kg;
+  const drag_force_n=0.5*p.water_density*v.drag_coefficient*
+   v.projected_drag_area*p.current_speed**2;
+  const design_line_load_n=drag_force_n*v.wave_surge_factor;
+  const anchor_static_margin_ratio=design_line_load_n>0?
+   v.anchor_holding_capacity/design_line_load_n:null;
+  marine_static_review={
+   displacement_volume_m3,shell_mass_kg,dry_mass_kg,buoyant_capacity_kg,
+   buoyancy_margin_kg,drag_force_n,design_line_load_n,anchor_static_margin_ratio,
+   source_ref:isRef(m.evidence_ref)?m.evidence_ref:null,
+   evidence_class:"synthetic_calculated_proxy",marine_safety_verified:false
+  };
+  if(buoyancy_margin_kg<=0)flags.push("NONPOSITIVE_IDEAL_STATIC_BUOYANCY_MARGIN");
+  if(anchor_static_margin_ratio!==null&&anchor_static_margin_ratio<2)
+   flags.push("ANCHOR_STATIC_RATIO_BELOW_CONCEPT_SCREENING_THRESHOLD");
+  if(!isRef(m.evidence_ref))flags.push("MARINE_STATIC_SOURCE_EVIDENCE_REQUIRED");
+  flags.push("FULL_SUBMERGENCE_DISPLACEMENT_NOT_FREEBOARD_OR_STABILITY");
+  flags.push("ANCHOR_CHAIN_HARDWARE_MASS_AND_LINE_ANGLES_EXCLUDED");
+  flags.push("WAVE_FATIGUE_SCOUR_AND_DYNAMIC_MOORING_UNMODELLED");
+  flags.push("MARINE_ENGINEERING_AND_PERMITS_NOT_VERIFIED");
+ }else flags.push("MARINE_STATIC_BUOYANCY_AND_MOORING_UNQUANTIFIED");
  if(candidate.reported!==undefined){
   if(!isObject(candidate.reported))throw new TypeError("INVALID_REPORTED_OUTPUTS");
   for(const [name,unit] of Object.entries(outputs)){
@@ -129,7 +177,7 @@ export function qualifySecondCycleProxy(candidate){
   schema:SECOND_CYCLE_PROXY_SCHEMA,
   candidate_filespace:"Eco.cgx/second-cycle/passive-flow-mist-proxy",
   source:{id:source.id,revision:source.revision,sha256:source.sha256},
-  calculated,calculated_units:outputs,hydraulic_path_review,
+  calculated,calculated_units:outputs,hydraulic_path_review,marine_static_review,
   evidence_class:"simulated",stage:"R2_REVIEW_CANDIDATE",
   review_flags:[...new Set(flags)].sort(),
   native_admitted:false,live_installed:false,public_release_authorised:false,
