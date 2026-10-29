@@ -10,6 +10,7 @@ const classes=new Set(['creative','scientific','engineering','historical','opera
 const mime=new Set(['application/json','text/plain','text/markdown','text/csv','application/pdf','image/png','image/jpeg','model/gltf-binary']);
 const obj=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 const label=x=>typeof x==='string'&&x.trim().length>0&&x.length<=256&&!/[\u0000-\u001f\u007f]/.test(x);
+const identityLabel=x=>label(x)&&!/[\u061c\u200b-\u200f\u202a-\u202e\u2060\u2066-\u2069\ufeff]/u.test(x);
 const digest=x=>typeof x==='string'&&/^[a-f0-9]{64}$/i.test(x);
 const result=(reason,code='HOLD')=>({schema:DROP_SCHEMA,status:code,reason,bytes_read:0,uploaded:false,
  network_fetch:false,hash_verified:false,acl_verified:false,object_id_minted:false,
@@ -18,7 +19,7 @@ const result=(reason,code='HOLD')=>({schema:DROP_SCHEMA,status:code,reason,bytes
 export function planUniSpaceDropPreflight({target,file,source,access,existing_sources=[],surface='private',offline=false}={}){
  if(!obj(target)||!obj(file)||!obj(source)||!obj(access)||!Array.isArray(existing_sources)||existing_sources.length>512)
   return result('INVALID_PREFLIGHT_INPUT');
- if(!label(target.object_id)||!label(target.file_space)||!label(target.domain)||!label(target.owner)||
+ if(!identityLabel(target.object_id)||!identityLabel(target.file_space)||!identityLabel(target.domain)||!identityLabel(target.owner)||
     !Object.hasOwn(spaces,target.domain)||spaces[target.domain]!==target.file_space)
   return result('EXACT_CHILD_FILESPACE_UNRESOLVED');
  if(!Array.isArray(access.authorized_object_ids)||!Array.isArray(access.authorized_file_spaces)||
@@ -28,7 +29,7 @@ export function planUniSpaceDropPreflight({target,file,source,access,existing_so
     !Number.isSafeInteger(file.size)||file.size<1||file.size>MAX_BYTES||!mime.has(file.type)||
     /[\u061c\u200b-\u200f\u202a-\u202e\u2060\u2066-\u2069\ufeff]/u.test(file.name))
   return result('FILE_METADATA_OR_SIZE_UNSUPPORTED');
- if(!label(source.source_id)||!label(source.version)||!label(source.owner)||!digest(source.sha256)||
+ if(!identityLabel(source.source_id)||!identityLabel(source.version)||!identityLabel(source.owner)||!digest(source.sha256)||
     !rights.has(source.rights)||!classes.has(source.proof_class))
   return result('SOURCE_QUALIFICATION_INCOMPLETE');
  if(surface!=='private'&&surface!=='public')return result('UNSUPPORTED_SURFACE');
@@ -38,7 +39,7 @@ export function planUniSpaceDropPreflight({target,file,source,access,existing_so
  // Caller declarations are preflight hints only, never host ACL/rights receipts.
  if(surface==='public'&&target.rights!=='PUBLIC_SAFE')return result('TARGET_PUBLIC_RIGHTS_UNVERIFIED');
  // Existing references are collision hints only; caller-provided list is not DBR.
- if(existing_sources.some(x=>!obj(x)||!label(x.source_id)||!digest(x.sha256)))
+ if(existing_sources.some(x=>!obj(x)||!identityLabel(x.source_id)||!digest(x.sha256)))
   return result('EXISTING_SOURCE_REGISTRY_UNQUALIFIED');
  const matching=existing_sources.filter(x=>x.source_id===source.source_id);
  if(matching.length>1||matching.some(x=>x.sha256.toLowerCase()!==source.sha256.toLowerCase()))
@@ -48,11 +49,11 @@ export function planUniSpaceDropPreflight({target,file,source,access,existing_so
   // rights grants or proof classes are the same qualified R0 source.
   // Legacy id+hash hints cannot authorize a duplicate-suppression decision.
   const prior=matching[0];
-  if(!label(prior.version)||!label(prior.owner)||!rights.has(prior.rights)||!classes.has(prior.proof_class))
+  if(!identityLabel(prior.version)||!identityLabel(prior.owner)||!rights.has(prior.rights)||!classes.has(prior.proof_class))
    return result('EXISTING_SOURCE_IDENTITY_UNQUALIFIED');
   // Identical R0 evidence can legitimately be referenced by different objects.
   // A source match alone must not suppress intake for another child FileSpace.
-  if(!label(prior.object_id)||!label(prior.file_space))
+  if(!identityLabel(prior.object_id)||!identityLabel(prior.file_space))
    return result('EXISTING_REFERENCE_SCOPE_UNQUALIFIED');
   if(prior.object_id!==target.object_id||prior.file_space!==target.file_space)
    return result('EXISTING_REFERENCE_SCOPE_COLLISION');
