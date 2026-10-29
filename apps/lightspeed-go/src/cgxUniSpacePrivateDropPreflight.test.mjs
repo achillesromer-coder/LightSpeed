@@ -170,3 +170,28 @@ test("text input remains explicitly unchecked for binary signatures", async () =
   assert.equal(r.binary_signature_status,"NO_FIXED_SIGNATURE_CHECK");
   assert.equal(r.format_parsed,false);
 });
+
+
+test("non-string candidate Object_IDs fail closed without coercion or exception", async () => {
+  for (const id of [42, 0, ["WT-001"], Object("WT-001")]) {
+    const x=fixture();x.selection.object_id=id;
+    const r=await run(x);
+    assert.equal(r.hold_code,"UNQUALIFIED_SELECTION",String(id));
+    assert.equal(r.upload_performed,false);
+  }
+});
+test("source digest primitives cannot be array-wrapped into valid SHA claims", async () => {
+  for (const key of ["mapping_blob_sha","r0_source_sha256"]) {
+    const x=fixture();x.source[key]=[x.source[key]];
+    const r=await run(x);
+    assert.equal(r.hold_code,"SOURCE_PROVENANCE_MISMATCH",key);
+  }
+});
+test("claimed SHA-256 must be primitive string, never an array or boxed string", async () => {
+  for (const hash of [[HELLO_SHA256],Object(HELLO_SHA256)]) {
+    const x=fixture();x.drop.files[0].claimed_sha256=hash;
+    const r=await run(x);
+    assert.equal(r.hold_code,"INVALID_CLAIMED_HASH");
+    assert.equal(r.native_admitted,false);
+  }
+});
