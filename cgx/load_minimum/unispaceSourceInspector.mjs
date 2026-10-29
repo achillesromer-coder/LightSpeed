@@ -15,7 +15,10 @@ const knownChildSpaces=Object.freeze({eco:'Eco.cgx',romer:'Romer.cgx',emassc:'EM
 const hold=(reason)=>({schema:INSPECTOR_SCHEMA,status:'DENIED',reason,canonical_mutation:false,public_release:false});
 
 /** Builds one bounded FileSpace inspector plan, never an authenticated view. */
-export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,view='document',budgets={},source_envelopes=[]}={}){
+export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,view='document',budgets={},source_envelopes=[],surface=null}={}){
+ // Fail closed unless the caller explicitly selects the private review surface.
+ // This is not host authentication: #158 still requires real session/ACL checks.
+ if(surface!=='private')return hold('PRIVATE_INSPECTOR_SURFACE_REQUIRED');
  if(!good(file_space)||!good(focus_id)||!Array.isArray(nodes)||!object(budgets)||!Array.isArray(source_envelopes)||source_envelopes.length>512)
   return hold('INVALID_INSPECTOR_SCOPE');
  if(!object(access)||!Array.isArray(access.authorized_source_ids)||!Array.isArray(access.authorized_object_ids))
