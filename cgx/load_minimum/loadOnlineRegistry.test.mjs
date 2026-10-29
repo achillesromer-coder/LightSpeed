@@ -123,7 +123,8 @@ test('Eco relation grammar collision and version mismatch fail closed without ca
  synthetic.extends=shared.schema;
  synthetic.families.intervention.find(x=>x.id==='MODIFIES').id='MODIFIES_INTERVENTION_SYNTHETIC';
  const clear=inspectRelationGrammar(synthetic,shared);
- assert.equal(clear.status,'SOURCE_CONTRACT_CHECK_ONLY');
+ assert.equal(clear.status,'HOLD'); // Lexical crosswalks still require owner qualification.
+ assert.equal(clear.unresolved_crosswalk_count,6);
  assert.equal(clear.issues.length,0);
  assert.equal(clear.native_admitted,false);
  assert.equal(clear.qualified_object_id,null);
@@ -154,7 +155,32 @@ test('shared/Eco relation lexical reuse is preserved as unresolved owner crosswa
  synthetic.extends=shared.schema;
  synthetic.families.intervention.find(x=>x.id==='MODIFIES').id='MODIFIES_INTERVENTION_SYNTHETIC';
  const structurallyClean=inspectRelationGrammar(synthetic,shared);
- assert.equal(structurallyClean.status,'SOURCE_CONTRACT_CHECK_ONLY');
+ assert.equal(structurallyClean.status,'HOLD');
+ assert.equal(structurallyClean.unresolved_crosswalk_count,6);
  assert.equal(structurallyClean.crosswalk_candidates.length,6);
  assert.ok(structurallyClean.crosswalk_candidates.every(x=>x.owner_qualified===false));
+});
+
+
+test('structurally valid schemas still HOLD when shared lexical crosswalks lack owner proof', async()=>{
+ const {inspectRelationGrammar}=await import('./inspectRelationGrammar.mjs');
+ const eco=JSON.parse(readFileSync(new URL('../domain_templates/eco_relation_registry.json',import.meta.url),'utf8'));
+ const shared=JSON.parse(readFileSync(new URL('../domain_templates/relation_qualifier_contract.json',import.meta.url),'utf8'));
+ const corrected=copy(eco);
+ corrected.extends=shared.schema;
+ corrected.families.intervention.find(x=>x.id==='MODIFIES').id='MODIFIES_INTERVENTION_SYNTHETIC';
+ const unresolved=inspectRelationGrammar(corrected,shared);
+ assert.equal(unresolved.issues.length,0);
+ assert.equal(unresolved.crosswalk_candidates.length,6);
+ assert.equal(unresolved.unresolved_crosswalk_count,6);
+ assert.equal(unresolved.status,'HOLD');
+ assert.equal(unresolved.native_admitted,false);
+ assert.equal(unresolved.dbr_readback_verified,false);
+ // No shared lexical overlap is a structural check only, never native acceptance.
+ const isolated=copy(shared);isolated.shared_relation_types={};
+ const noOverlap=inspectRelationGrammar(corrected,isolated);
+ assert.equal(noOverlap.status,'SOURCE_CONTRACT_CHECK_ONLY');
+ assert.equal(noOverlap.unresolved_crosswalk_count,0);
+ assert.equal(noOverlap.native_admitted,false);
+ assert.equal(noOverlap.qualified_object_id,null);
 });
