@@ -26,6 +26,12 @@ const ROUND_TRIP = new Set([
   "NONE", "IDENTITY_REFERENCE_ONLY", "STRUCTURE_PRESERVED",
   "SEMANTIC_PROJECTION_ONLY", "LOSSLESS_FOR_DECLARED_FIELDS"
 ]);
+// Native Python emits these two loss claims, but the authoritative /0.1
+// envelope contract does not enumerate them. Report contract drift without
+// treating either claim as accepted or elevating R0/R1/R2/R3 authority.
+const RUNTIME_ONLY_ROUND_TRIP = new Set([
+  "PARTIAL_PROJECTION_ONLY", "TEXT_PROJECTION_ONLY_LAYOUT_NOT_PRESERVED"
+]);
 const record = x => x !== null && typeof x === "object" && !Array.isArray(x);
 const one = (xs, v) => Array.isArray(xs) && xs.length === 1 && xs[0] === v;
 const hold = code => Object.freeze({
@@ -103,11 +109,17 @@ export function reviewNativeEnvelopeHandoff(input = {}) {
         (typeof e.native_preservation.source_ref === "string" &&
          e.native_preservation.source_ref.length > 0)) ||
       e.native_preservation.adapter_version !== "0.1" ||
-      !ROUND_TRIP.has(e.native_preservation.round_trip_claim) ||
       !record(e.lineage) || e.lineage.canonical_mutation !== false ||
       e.lineage.projection_only !== true ||
       e.lineage.parent_source_id !== null)
     return hold("ENVELOPE_SOURCE_SHAPE_OR_DIGEST_MISMATCH");
+  // Distinguish known native-runtime/contract drift from unknown values.
+  // Both remain HOLD; never accept a runtime-only loss claim by implication.
+  if (!ROUND_TRIP.has(e.native_preservation.round_trip_claim)) {
+    return hold(RUNTIME_ONLY_ROUND_TRIP.has(e.native_preservation.round_trip_claim)
+      ? "NATIVE_RUNTIME_ROUND_TRIP_CONTRACT_DRIFT"
+      : "ENVELOPE_SOURCE_SHAPE_OR_DIGEST_MISMATCH");
+  }
   // envelope_sha256 is checked for SHAPE only, never recomputed or trusted.
   // Do not echo e.source_name, e.native_preservation.source_ref,
   // e.projections, private mapping locators, client credentials, or raw bytes.
