@@ -72,3 +72,20 @@ test("impossible calendar date is rejected even when the timestamp is ISO-shaped
   source_hash_sha256:"a".repeat(64)});
  assert.ok(x.checks.includes("ZONED_OBSERVATION_TIMESTAMP_REQUIRED"));
 });
+
+test("raw numeric coordinates cannot silently pass the source-only bridge",()=>{
+ const x=run({...base,latitude:-27.5,longitude:153.1});
+ assert.equal(x.state,"REVIEW_REQUIRED");
+ assert.ok(x.checks.includes("RAW_SPATIAL_COORDINATES_NOT_ACCEPTED_IN_SOURCE_ONLY_BRIDGE"));
+ assert.equal(x.geometry_emitted,false);
+ assert.equal(x.public_release_authorised,false);
+});
+test("GeoJSON-like geometry is not accepted as a synthetic observation",()=>{
+ const x=run({...base,geometry:{type:"Point",coordinates:[153.1,-27.5]}});
+ assert.ok(x.checks.includes("RAW_SPATIAL_COORDINATES_NOT_ACCEPTED_IN_SOURCE_ONLY_BRIDGE"));
+ assert.equal(x.native_object_id,null);
+});
+test("case-varied raw geometry keys are also review-gated",()=>{
+ const x=run({...base,GeoJSON:{type:"Point",coordinates:[153.1,-27.5]}});
+ assert.ok(x.checks.includes("RAW_SPATIAL_COORDINATES_NOT_ACCEPTED_IN_SOURCE_ONLY_BRIDGE"));
+});
