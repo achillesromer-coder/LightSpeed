@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
+import {inspectRelationGrammar} from './inspectRelationGrammar.mjs';
 
 const sourceFiles = {
   romer: '../domain_templates/romer_relation_registry.json',
@@ -322,4 +323,26 @@ test('S92 durable readback and acceptance audit agree on four exact historical i
   const forgedBinding = structuredClone(audit);
   forgedBinding.exact_members['LS.cgx'].authority_transfer = true;
   assert.throws(() => requireHistoricalOnly(receipt,forgedBinding));
+});
+
+test('EMASSC/LS root-group relation grammar parses and remains source-only with negative guards', () => {
+  const emassc = inspectRelationGrammar(sources.emassc_ls, sources.shared);
+  const expectedCount = ['emassc', 'lightspeed', 'bridge']
+    .reduce((count, key) => count + sources.emassc_ls[key].length, 0);
+  assert.equal(emassc.relation_declarations, expectedCount);
+  assert.equal(emassc.status, 'HOLD');
+  assert.ok(emassc.issues.some(issue => issue.code === 'RELATION_SCHEMA_COMPATIBILITY_HOLD'));
+  assert.ok(emassc.crosswalk_candidates.some(item => item.relation_id === 'USES_CONTROL'));
+  assert.equal(emassc.qualified_object_id, null);
+  assert.equal(emassc.native_admitted, false);
+  assert.equal(emassc.dbr_readback_verified, false);
+  assert.equal(emassc.authority_transferred, false);
+  assert.throws(
+    () => inspectRelationGrammar({...sources.emassc_ls, bridge: {}}, sources.shared),
+    /INVALID_RELATION_FAMILY/
+  );
+  assert.throws(
+    () => inspectRelationGrammar({schema: 'UNKNOWN/0.1'}, sources.shared),
+    /INVALID_DOMAIN_RELATION_REGISTRY/
+  );
 });
