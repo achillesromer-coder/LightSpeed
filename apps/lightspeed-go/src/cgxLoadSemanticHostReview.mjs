@@ -82,6 +82,9 @@ export function reviewLoadSemanticHost(input){
     s.rendered!==false||s.canonical_mutation!==false||
     s.hydration_complete!==false)
     return hold('SEMANTIC_SPREAD_NOT_REVIEW_ONLY');
+ // Validate budget envelope before reading its depth selectors: malformed
+ // planner output must HOLD, never throw past the source-review boundary.
+ if(!checkBudgets(s,r.budget_ceiling))return hold('INDEPENDENT_BUDGET_EXCEEDED');
  // LOAD permits broader planning modes, but this LS source-review adapter
  // cannot qualify raw R0 access, host hydration or effectful execution depth.
  // A real host may separately negotiate those under signed owner authority.
@@ -89,7 +92,6 @@ export function reviewLoadSemanticHost(input){
     !['projection-lite','reader'].includes(s.budgets.device_hydration)||
     !['inspect','propose'].includes(s.budgets.execution_depth))
    return hold('UNQUALIFIED_DEPTH_OR_HYDRATION');
- if(!checkBudgets(s,r.budget_ceiling))return hold('INDEPENDENT_BUDGET_EXCEEDED');
  // Actual inclusion cannot exceed the declared independent node ceiling.
  if(s.objects.length>s.budgets.max_nodes)return hold('INDEPENDENT_BUDGET_EXCEEDED');
  // A source planner's selected objects are not a host ACL proof.
