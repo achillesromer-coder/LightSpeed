@@ -443,7 +443,7 @@ test('inverse targets fail closed when absent, malformed or directionally contra
   assert.ok(inverseCodes(inspect(malformed)).includes('RELATION_INVERSE_INVALID'));
 
   const contradictory = structuredClone(base);
-  contradictory.families.decomposition.find(r => r.id === 'HAS_PART').inverse = 'COMPONENT_OF';
+  contradictory.families.decomposition.find(r => r.id === 'HAS_PART').inverse = 'HAS_SUBSYSTEM';
   assert.ok(inverseCodes(inspect(contradictory)).includes('RELATION_INVERSE_NONRECIPROCAL'));
 
   for (const mutated of [missing,malformed,contradictory]) {
