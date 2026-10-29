@@ -346,3 +346,41 @@ test('EMASSC/LS root-group relation grammar parses and remains source-only with 
     /INVALID_DOMAIN_RELATION_REGISTRY/
   );
 });
+
+test('all domain qualifier 0.1 declarations remain incompatible with shared 0.2 absent an independently qualified bridge', () => {
+  const sharedSnapshot = delta.source_snapshots.find(s => s.source === 'shared');
+  assert.equal(gitBlob(read(sourceFiles.shared)), sharedSnapshot.git_blob);
+  assert.equal(sources.shared.schema, 'CGX-RELATION-QUALIFIER/0.2');
+
+  function inspectPinnedDomain(source, candidate, qualifier = sources.shared) {
+    const snapshot = delta.source_snapshots.find(s => s.source === source);
+    assert.equal(gitBlob(read(sourceFiles[source])), snapshot.git_blob);
+    // Source version and exact declaration must survive any proposed compatibility adapter.
+    same(candidate, sources[source]);
+    same(qualifier, sources.shared);
+    const review = inspectRelationGrammar(candidate, qualifier);
+    const versionIssue = review.issues.find(issue => issue.code === 'RELATION_SCHEMA_COMPATIBILITY_HOLD');
+    assert.ok(versionIssue, source);
+    assert.equal(versionIssue.declared_extends, 'CGX-RELATION-QUALIFIER/0.1');
+    assert.equal(versionIssue.available_contract, 'CGX-RELATION-QUALIFIER/0.2');
+    assert.equal(review.stage, 'SOURCE_REVIEW_ONLY');
+    assert.equal(review.status, 'HOLD');
+    assert.equal(review.qualified_object_id, null);
+    assert.equal(review.native_admitted, false);
+    assert.equal(review.dbr_readback_verified, false);
+    assert.equal(review.authority_transferred, false);
+    return review;
+  }
+
+  for (const source of ['romer', 'eco', 'emassc_ls']) {
+    const original = sources[source];
+    inspectPinnedDomain(source, original);
+    assert.throws(() => inspectPinnedDomain(source, {
+      ...structuredClone(original), extends: sources.shared.schema
+    }), /Expected values to be strictly deep-equal/);
+    assert.throws(() => inspectPinnedDomain(source, original, {
+      ...structuredClone(sources.shared), schema: 'CGX-RELATION-QUALIFIER/0.1'
+    }), /Expected values to be strictly deep-equal/);
+  }
+  // Passing the pinned preflight is never proof that a /0.1 -> /0.2 semantic bridge exists.
+});
