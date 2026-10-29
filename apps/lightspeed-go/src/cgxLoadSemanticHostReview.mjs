@@ -81,11 +81,40 @@ export function reviewLoadSemanticHost(input){
     s.hydration_complete!==false)
     return hold('SEMANTIC_SPREAD_NOT_REVIEW_ONLY');
  if(!checkBudgets(s,r.budget_ceiling))return hold('INDEPENDENT_BUDGET_EXCEEDED');
+ // Actual inclusion cannot exceed the declared independent node ceiling.
+ if(s.objects.length>s.budgets.max_nodes)return hold('INDEPENDENT_BUDGET_EXCEEDED');
  // A source planner's selected objects are not a host ACL proof.
  if(s.objects.some(o=>!obj(o)||!id(o.object_id)||!id(o.domain))||
     new Set(s.objects.map(o=>o.object_id)).size!==s.objects.length||
     s.edges.length>LIMITS.max_nodes*LIMITS.max_nodes)
     return hold('UNQUALIFIED_OR_COLLIDING_OBJECTS');
+ const byId=new Map(s.objects.map(o=>[o.object_id,o]));
+ const domains=new Set(s.objects.map(o=>o.domain));
+ if(domains.size-1>s.budgets.max_cross_domains)
+   return hold('INDEPENDENT_BUDGET_EXCEEDED');
+ let evidence=0;
+ for(const o of s.objects){
+  if(!Array.isArray(o.source_refs)||o.source_refs.some(ref=>
+     typeof ref!=='string'||ref.length===0||ref.length>256||/[\u0000-\u001f]/.test(ref)))
+    return hold('UNQUALIFIED_EVIDENCE_REFERENCES');
+  evidence+=o.source_refs.length;
+ }
+ if(!Number.isSafeInteger(s.source_ref_count)||s.source_ref_count!==evidence)
+   return hold('EVIDENCE_COUNT_MISMATCH');
+ if(evidence>s.budgets.max_evidence_refs)
+   return hold('INDEPENDENT_BUDGET_EXCEEDED');
+ let crossEdges=0;const edgeKeys=new Set();
+ for(const e of s.edges){
+  if(!obj(e)||!id(e.from)||!id(e.to)||!id(e.relation)||
+     !byId.has(e.from)||!byId.has(e.to))
+    return hold('UNQUALIFIED_OR_COLLIDING_EDGES');
+  const key=JSON.stringify([e.from,e.to,e.relation]);
+  if(edgeKeys.has(key))return hold('UNQUALIFIED_OR_COLLIDING_EDGES');
+  edgeKeys.add(key);
+  if(byId.get(e.from).domain!==byId.get(e.to).domain)crossEdges++;
+ }
+ if(crossEdges>s.budgets.max_cross_edges)
+   return hold('INDEPENDENT_BUDGET_EXCEEDED');
  const v=input.viewport_plan;
  if(r.mode==='viewport'){
   if(!obj(v)||v.schema!=='LOAD-VIEWPORT-SWITCH-PLAN/0.1'||
