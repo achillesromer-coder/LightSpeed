@@ -1,0 +1,75 @@
+{
+  "schema": "GIT-CGX-DIGITAL-MINT-HANDOFF/LIVE",
+  "date": "2026-10-29",
+  "release_class": "PUBLIC_SYNTHETIC_REVIEW_ONLY",
+  "kind": "NEWLY_AUTHORED_STATIC_SHOWCASE_SOURCE",
+  "root_semantic_reference": "cgx:root:cognigrex",
+  "status": "PORTABLE_SOURCE_TESTED_NO_NATIVE_MINT",
+  "source_archive": {
+    "name": "Git.CGX_Digital_Mint_Source.zip",
+    "sha256": "9d5c798df034eeeab2377121c44ecdf26a182ef4f974e0419ffc6b79b95aa08a",
+    "bytes": 93873,
+    "entries": 53
+  },
+  "static_archive": {
+    "name": "Git.CGX_Digital_Mint_Static_Web.zip",
+    "sha256": "0dd34420bdfdf229a2c34bf6b0f4ee1154a9c4228179d4fd14da25efbcb5bafc",
+    "bytes": 49186,
+    "entries": 22
+  },
+  "class_library": [
+    "SourceArtifact",
+    "FamilyFileSpace",
+    "SemanticObject",
+    "RelationEdge",
+    "SpatialChunk",
+    "TemporalEvent",
+    "TransferProposal",
+    "ComputeCapability",
+    "PrintDesign",
+    "TestEvidence",
+    "PressPublication",
+    "RightsGrant",
+    "EcoObservation",
+    "ArchiveReference",
+    "DigitalMintReview"
+  ],
+  "source_components": 32,
+  "public_routes": 17,
+  "synthetic_gallery_receipts": 10,
+  "implemented": [
+    "Field-typed contract and samples",
+    "Pure-JavaScript SHA-256 with Node crypto parity",
+    "Deterministic key-sorted UTF-8 payload digest",
+    "Unsigned noncanonical review receipt",
+    "Export/import + offline receipt revalidation",
+    "Append-only in-session hash-chain reason log",
+    "10 precompiled synthetic gallery examples",
+    "Source-linked components/Press/Alexandria",
+    "No external web API in static client",
+    "Strict public allowlist and build hash receipt"
+  ],
+  "tests": {
+    "node": "52/52 PASS",
+    "browser": "17 routes, 390px mobile, 2-receipt mint, local export-import, 10 gallery examples, no uncaught errors",
+    "browser_kind": "INJECTED_SOURCE_NOT_LIVE_PAGES_CSP"
+  },
+  "source_bytes_in_git_branch": false,
+  "target_repo": "achillesromer-coder/Git.CGX",
+  "target_repo_created": false,
+  "no_public_private_leak_claim": "REQUIRES_DEPLOYED_HOST_AUDIT",
+  "private_source_bundled": false,
+  "native_dbr": false,
+  "native_object_id": false,
+  "tokens_issued": false,
+  "rights_granted": false,
+  "repositories_retired": false,
+  "owner_actions": [
+    "Create separate Git.CGX repository under owner admin",
+    "Import complete source archive preserving public/private allowlists",
+    "Run npm run check and compare exact archive/file manifests",
+    "Verify deployed Pages headers, CSP, tests and actual public-only payload",
+    "Review specific public rights before enabling Pages",
+    "Keep native parent/DBR/peer, issue #158 and #161 separate"
+  ]
+}
