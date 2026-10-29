@@ -141,7 +141,7 @@ function validateConcept(x){
    "uncertainty_propagation_ref","benchmark_ref","residual_diagnostics_ref",
    "counterevidence_ref","evaluation_period_ref","evaluation_spatial_support_ref","training_set_ref","holdout_policy_ref","split_unit_ref","leakage_audit_ref",
    "training_spatial_support_ref","validation_spatial_support_ref","training_temporal_support_ref","validation_temporal_support_ref",
-   "spatial_partition_ref","temporal_partition_ref","spatial_buffer_ref","temporal_embargo_ref","spatial_leakage_audit_ref","temporal_leakage_audit_ref"])
+   "spatial_partition_ref","temporal_partition_ref","spatial_buffer_ref","temporal_embargo_ref","spatial_leakage_audit_ref","temporal_leakage_audit_ref","spatial_autocorrelation_assessment_ref","temporal_dependence_assessment_ref","sampling_unit_independence_ref","replicate_structure_ref"])
    if(v[f]!==undefined&&!good(v[f]))throw Error("INVALID_VALIDATION_STATISTICS_"+f.toUpperCase());
   if(v.value!==undefined&&(typeof v.value!=="number"||!Number.isFinite(v.value)))
    throw Error("INVALID_VALIDATION_STATISTIC_VALUE");
@@ -488,7 +488,11 @@ function completeness(x,checks){
    ["spatial_buffer_ref","VALIDATION_SPATIAL_BUFFER_REVIEW_REQUIRED"],
    ["temporal_embargo_ref","VALIDATION_TEMPORAL_EMBARGO_REVIEW_REQUIRED"],
    ["spatial_leakage_audit_ref","VALIDATION_SPATIAL_LEAKAGE_AUDIT_REQUIRED"],
-   ["temporal_leakage_audit_ref","VALIDATION_TEMPORAL_LEAKAGE_AUDIT_REQUIRED"]])
+   ["temporal_leakage_audit_ref","VALIDATION_TEMPORAL_LEAKAGE_AUDIT_REQUIRED"],
+   ["spatial_autocorrelation_assessment_ref","VALIDATION_SPATIAL_AUTOCORRELATION_ASSESSMENT_REQUIRED"],
+   ["temporal_dependence_assessment_ref","VALIDATION_TEMPORAL_DEPENDENCE_ASSESSMENT_REQUIRED"],
+   ["sampling_unit_independence_ref","VALIDATION_SAMPLING_UNIT_INDEPENDENCE_REQUIRED"],
+   ["replicate_structure_ref","VALIDATION_REPLICATE_STRUCTURE_REQUIRED"]])
    if(!good(v[f]))add(checks,flag);
   if(good(v.training_set_ref)&&good(v.validation_set_ref)&&v.training_set_ref===v.validation_set_ref)
    add(checks,"VALIDATION_TRAINING_AND_HOLDOUT_IDENTICAL");
