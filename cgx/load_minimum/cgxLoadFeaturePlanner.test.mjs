@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { ACTIONS, menuForTarget, planFeature, planSourceDropPreflight } from './cgxLoadFeaturePlanner.mjs';
+import { ACTIONS, menuForTarget, planFeature, planSourceDropPreflight, planUniSpaceHostBridgeHandoff } from './cgxLoadFeaturePlanner.mjs';
 const target = {kind:'filespace',fileSpace:'Romer.cgx',domain:'romer',owner:'Römer-Grex',objectId:'cgx:accepted:example',parentFileSpace:'Cognigrex.cgx'};
 const good = { readable:true, acceptedParent:true, existingAliasChecked:true, ownerApproved:true, rightsVerified:true, signedLeaseVerified:true, providerReadbackReady:true, registeredCapabilityVerified:true };
 test('right click on selected child offers LOAD and CCC without creating new masters',()=>{
@@ -229,4 +229,112 @@ test('unreadable private drop refuses metadata and Object_ID disclosure before s
  assert.equal(review.providerReadback,false);
  assert.equal(review.nativeAdmitted,false);
  assert.equal(review.publicRelease,false);
+});
+
+
+// Source-review-only browser/mobile/Windows handoff. All fixtures are synthetic.
+const claimedHost={
+ parentFileSpace:'Cognigrex.cgx',childFileSpace:'Romer.cgx',
+ objectId:'cgx:accepted:example',issuerId:'fixture:local-host',
+ stateRootSha256:'a'.repeat(64),dbrRootSha256:'b'.repeat(64),
+ leaseId:'fixture:lease',readbackId:'fixture:readback',
+ signatureVerified:true,leaseVerified:true,hostAuthenticated:true,
+ privilegedToken:'NEVER_ECHO_THIS_SECRET'
+};
+const claimedRights={sourceRef:'fixture:source',revision:'fixture:v1',
+ licenceId:'CC0-1.0',owner:'fixture:author',rightsVerified:true};
+
+test('public and ambiguous host pairing surfaces deny without metadata disclosure',()=>{
+ for(const surface of [null,undefined,'public','static','PRIVATE','private-preview']){
+  const x=planUniSpaceHostBridgeHandoff({surface,target,device:'windows',mode:'pair',
+   ownerConsent:true,brokerDetected:true,hostEvidence:claimedHost,rightsEvidence:claimedRights});
+  assert.equal(x.state,'DENIED');
+  assert.equal(x.reason,'PRIVATE_HOST_BRIDGE_SURFACE_REQUIRED');
+  assert.equal(x.canonicalMutation,false);
+  assert.equal(x.mayExecute,false);
+  assert.ok(!JSON.stringify(x).includes('cgx:accepted:example'));
+  assert.ok(!JSON.stringify(x).includes('NEVER_ECHO'));
+ }
+});
+
+test('missing device authorisation guides existing setup but never pairs or executes',()=>{
+ const x=planUniSpaceHostBridgeHandoff({surface:'private',target,
+  device:'windows',mode:'pair'});
+ assert.equal(x.state,'SOURCE_REVIEW_ONLY');
+ assert.equal(x.phase,'HOST_PAIRING_PROPOSAL');
+ assert.equal(x.next_ui_step,'ASK_OWNER_TO_AUTHORISE_THIS_DEVICE');
+ assert.ok(x.blockers.includes('OWNER_DEVICE_PAIRING_CONSENT_REQUIRED'));
+ assert.ok(x.blockers.includes('EXISTING_LOCAL_BROKER_NOT_CONNECTED'));
+ assert.equal(x.hostAuthenticated,false);
+ assert.equal(x.mayInstall,false);
+ assert.equal(x.mayExecute,false);
+ assert.equal(x.providerReadback,false);
+});
+
+test('private host pairing never turns caller evidence into native authority',()=>{
+ const x=planUniSpaceHostBridgeHandoff({surface:'private',target,
+  device:'windows',mode:'pair',ownerConsent:true,brokerDetected:true,
+  hostEvidence:claimedHost,rightsEvidence:claimedRights});
+ assert.equal(x.state,'SOURCE_REVIEW_ONLY');
+ assert.equal(x.next_ui_step,'REQUEST_INDEPENDENT_NATIVE_ROOT_LEASE_ACL_DBR_CHECK');
+ for(const b of ['INDEPENDENT_NATIVE_ROOT_ACL_LEASE_AND_RIGHTS_VERIFICATION_REQUIRED',
+  'REVOKED_AND_ANONYMOUS_HOST_NEGATIVE_TESTS_REQUIRED',
+  'INDEPENDENT_NATIVE_DBR_READBACK_REQUIRED'])assert.ok(x.blockers.includes(b),b);
+ for(const b of ['hostAuthenticated','signatureVerified','leaseVerified','rightsVerified',
+  'providerReadback','mayInstall','mayExecute','mayPublish','canonicalMutation'])
+  assert.equal(x[b],false,b);
+ assert.equal(x.endpoint,null);assert.equal(x.token,null);assert.equal(x.installCommand,null);
+ assert.ok(!JSON.stringify(x).includes(claimedHost.stateRootSha256));
+ assert.ok(!JSON.stringify(x).includes('NEVER_ECHO_THIS_SECRET'));
+ assert.ok(!JSON.stringify(x).includes(claimedRights.sourceRef));
+});
+
+test('host reported identity mismatch and child spoof fail closed without secret leakage',()=>{
+ for(const hostEvidence of [
+  {...claimedHost,childFileSpace:'Eco.cgx'},
+  {...claimedHost,parentFileSpace:'Untrusted.cgx'},
+  {...claimedHost,objectId:'fixture:other-id'}
+ ]){
+  const x=planUniSpaceHostBridgeHandoff({surface:'private',target,mode:'pair',
+   device:'windows',ownerConsent:true,brokerDetected:true,hostEvidence});
+  assert.equal(x.state,'DENIED');
+  assert.equal(x.reason,'HOST_IDENTITY_MISMATCH');
+  assert.ok(!JSON.stringify(x).includes('fixture:other-id'));
+ }
+ const wrongChild=planUniSpaceHostBridgeHandoff({surface:'private',
+  target:{...target,domain:'eco'},device:'windows',mode:'pair'});
+ assert.equal(wrongChild.state,'DENIED');
+ assert.equal(wrongChild.reason,'CHILD_FILESPACE_SCOPE_CONFLICT');
+});
+
+test('read-only browser/mobile fallback cannot claim native device installation',()=>{
+ for(const device of ['browser','ios','android']){
+  const x=planUniSpaceHostBridgeHandoff({surface:'private',target,
+   device,mode:'explore',ownerConsent:true,brokerDetected:false});
+  assert.equal(x.phase,'OFFLINE_DISCOVERY_ONLY');
+  assert.equal(x.offlineFallback,'H0_ONLY_UNVERIFIED_METADATA');
+  assert.ok(x.blockers.includes('NATIVE_DEVICE_INSTALL_REQUIRES_SEPARATE_APPROVED_COMPANION'));
+  assert.equal(x.next_ui_step,'OPEN_READ_ONLY_LOAD_FRONTIER');
+  assert.equal(x.mayInstall,false);
+  assert.equal(x.mayPublish,false);
+ }
+ const x=planUniSpaceHostBridgeHandoff({surface:'private',target,device:'wearable',mode:'pair'});
+ assert.equal(x.state,'DENIED');
+ assert.equal(x.reason,'INVALID_BRIDGE_INPUT');
+});
+
+test('free-knowledge intent and claimed licences cannot waive independent source rights',()=>{
+ for(const rightsEvidence of [null,{},{
+  ...claimedRights,licenceId:'all rights reserved',
+ },{
+  ...claimedRights,licenceId:'CC-BY-SA-4.0',allRightsReserved:true,
+ }]){
+  const x=planUniSpaceHostBridgeHandoff({surface:'private',target,mode:'pair',
+   device:'windows',ownerConsent:true,brokerDetected:true,
+   hostEvidence:claimedHost,rightsEvidence});
+  assert.equal(x.state,'SOURCE_REVIEW_ONLY');
+  assert.equal(x.rightsVerified,false);
+  assert.equal(x.mayPublish,false);
+  assert.ok(x.blockers.includes('INDEPENDENT_NATIVE_ROOT_ACL_LEASE_AND_RIGHTS_VERIFICATION_REQUIRED'));
+ }
 });
