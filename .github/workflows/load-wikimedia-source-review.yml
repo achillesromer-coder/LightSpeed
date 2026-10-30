@@ -1,0 +1,39 @@
+name: LOAD Wikimedia Source Adapter Review
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'cgx/alexandria/source_adapters/**'
+      - '.github/workflows/load-wikimedia-source-review.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4.2.2? pinned
+      - name: Python 3.11
+        uses: actions/setup-python@5fda1f8471e7d866b367bb95c8eaa3ee675923e1 # v4? pinned
+        with:
+          python-version: '3.11'
+      - name: Syntax validation
+        run: python -m py_compile cgx/alexandria/source_adapters/wikimedia_source_projection.py cgx/alexandria/source_adapters/test_wikimedia_source_projection.py
+      - name: Review-only XML and Wayback negative tests
+        run: python -m unittest discover -s cgx/alexandria/source_adapters -p 'test_*.py' -v
+      - name: Verify licence bibliography stays review-only
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open('cgx/alexandria/source_adapters/traditional_source_bibliography.json'))
+          assert p['actual_ingestion_proof']['native_admitted'] is False
+          assert p['actual_ingestion_proof']['raw_page_xml_bytes_retrieved'] is False
+          assert p['authority']['shared_ccc'] == 'Cognigrex.cgx:/ccc'
+          assert p['geometry']['dodecahedron']['vertices']-p['geometry']['dodecahedron']['edges']+p['geometry']['dodecahedron']['faces']==2
+          print('SOURCE_ONLY_REVIEW_ACCEPTANCE_PASS')
+          PY
