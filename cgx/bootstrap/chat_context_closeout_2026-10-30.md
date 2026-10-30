@@ -102,6 +102,10 @@ These are the **same five existing enabled automations**. Do not create new over
 
 **Current owner decision needed:** none to preserve this checkpoint or continue source-review activity. Future decisions should be raised only with original source evidence, specific alternatives, risks and a minimal required approval. The user will help manually with primary sources here.
 
+## Final CI closure receipt (30 October 2026)
+
+At review head `c2efe7764f8e234191b14bffa72fd2e81f0479c7` of draft [PR #206](https://github.com/achillesromer-coder/LightSpeed/pull/206), four GitHub Actions workflows completed **SUCCESS**: [CGX Unified Bootstrap Review Validation](https://github.com/achillesromer-coder/LightSpeed/actions/runs/40997607268), [LightSpeed Surface Validation](https://github.com/achillesromer-coder/LightSpeed/actions/runs/40997607262), [Merovingian Project Routing](https://github.com/achillesromer-coder/LightSpeed/actions/runs/40997607192), and [Runtime Productization Validation](https://github.com/achillesromer-coder/LightSpeed/actions/runs/40997607197). These four results close the previous **pending CI observation** for this precise source revision. They do not constitute an accepted local native installation, signed RootAuthority/DBR, external publication or completed Alexandria ingestion. Future edits must revalidate against the new PR head.
+
 ## VIII. Exact resume rule (next CGX session)
 
 1. Read this document and its **single** [machine-readable execution register](./open_threads_execution_register.json). Verify latest original heads/automation results; these snapshots age.
