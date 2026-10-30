@@ -97,7 +97,10 @@ export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,vi
   // C33: caller-supplied revocation/supersession evidence is a veto, never a grant.
   // Missing or non-ACTIVE rights state is a Frontier veto, never an R3 grant.
   const rightsActive=e.rights_state==='ACTIVE';
-  const notRevoked=e.revoked!==true&&e.rights_revoked!==true&&
+  // Explicit revocation fields must be boolean false to be non-vetoes.
+  // String/number/null/undefined values are ambiguous and fail closed.
+  const notRevoked=(!Object.hasOwn(e,'revoked')||e.revoked===false)&&
+   (!Object.hasOwn(e,'rights_revoked')||e.rights_revoked===false)&&
    !Object.hasOwn(e,'revoked_at')&&!Object.hasOwn(e,'superseded_by');
   const valid=rightsActive&&notRevoked&&sha(e.sha256)&&unambiguous(e.version)&&unambiguous(e.owner)&&rights.has(e.rights)&&e.rights!=='UNKNOWN'&&e.rights!=='LICENSE_RESTRICTED'&&proofClasses.has(e.proof_class);
   claims.push({source_id:e.source_id,sha256:valid?e.sha256.toLowerCase():null,
