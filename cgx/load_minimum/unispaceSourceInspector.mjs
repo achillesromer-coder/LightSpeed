@@ -21,10 +21,11 @@ const childSpaceMatches=n=>object(n)&&good(n.domain)&&good(n.file_space)&&
 const hold=(reason)=>({schema:INSPECTOR_SCHEMA,status:'DENIED',reason,canonical_mutation:false,public_release:false});
 
 /** Builds one bounded FileSpace inspector plan, never an authenticated view. */
-export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,view='document',budgets={},source_envelopes=[],surface=null}={}){
+export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,view='document',budgets={},source_envelopes=[],surface=null,offline=false}={}){
  // Fail closed unless the caller explicitly selects the private review surface.
  // This is not host authentication: #158 still requires real session/ACL checks.
  if(surface!=='private')return hold('PRIVATE_INSPECTOR_SURFACE_REQUIRED');
+ if(typeof offline!=='boolean')return hold('INVALID_OFFLINE_MODE');
  if(!good(file_space)||!good(focus_id)||!Array.isArray(nodes)||!object(budgets)||!Array.isArray(source_envelopes)||source_envelopes.length>512)
   return hold('INVALID_INSPECTOR_SCOPE');
  if(!object(access)||!Array.isArray(access.authorized_source_ids)||!Array.isArray(access.authorized_object_ids))
@@ -35,6 +36,28 @@ export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,vi
  if(selected.length!==1||selected[0].file_space!==file_space)return hold('FILESPACE_OR_ID_UNRESOLVED');
  if(!childSpaceMatches(selected[0]))
   return hold('FILESPACE_OR_ID_UNRESOLVED');
+ // Offline state has no authoritative rights-revocation, root or session check.
+ // Permit only a metadata-only H0 projection of the exact caller-scoped identity:
+ // no cached source hashes, sibling graph, capabilities or R3 promotion.
+ if(offline){
+  if(!new Set(['document','3d','chat','graph','interactive','matrix']).has(view))
+   return hold('INVALID_GRAPH_VIEW_OR_BUDGET');
+  if(!access.authorized_object_ids.includes(focus_id))
+   return hold('OBJECT_SCOPE_NOT_AUTHORIZED');
+  return {schema:INSPECTOR_SCHEMA,status:'SOURCE_REVIEW_ONLY',
+   selected_file_space:file_space,identity:focus_id,view,
+   h0:{object_id:focus_id,owner:null,accepted:false},
+   h1:{edges:[],object_ids:[focus_id],cross_domain_enabled:false},
+   h2:{source_claims:[],source_proof:'OFFLINE_UNVERIFIED',proof_classes:[]},
+   h3:{qualified_capabilities:[],catalogue_discovery_only:false},
+   h4:{permissioned_execution:'HOST_DENIED_UNTIL_INDEPENDENT_ROOT_LEASE_DBR',installed:false},
+   viewport:{state:'FRONTIER',lens:null,projection:'metadata-only',geometry_ref:null,
+    metric_authority:'NOT_VERIFIED',frontier:['OFFLINE_AUTHORITY_AND_REVOCATION_UNVERIFIED'],rendered:false},
+   budgets:{max_nodes:1,max_hops:0,max_transfer_bytes:0},
+   admission_stage:'R2_REVIEW_FRONTIER',source_bytes_copied:false,network_fetch:false,
+   host_authenticated:false,provider_readback:false,canonical_mutation:false,public_release:false,
+   offline_fallback:'H0_ONLY_UNVERIFIED_METADATA'};
+ }
  // The planner validates untrusted graph, view and budget input by throwing.
  // A user-facing inspector must convert those failures into a non-disclosing HOLD.
  let spread,switchPlan;
