@@ -15,7 +15,11 @@ const revocationEvidence=x=>x.revoked===true||x.rights_revoked===true||
 const mime=new Set(['application/json','text/plain','text/markdown','text/csv','application/pdf','image/png','image/jpeg','model/gltf-binary']);
 const obj=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 const label=x=>typeof x==='string'&&x.trim().length>0&&x.length<=256&&!/[\u0000-\u001f\u007f]/.test(x);
-const identityLabel=x=>label(x)&&!/[\u061c\u200b-\u200f\u202a-\u202e\u2060\u2066-\u2069\ufeff]/u.test(x);
+// Identity strings are opaque exact keys: reject alternate Unicode normalization
+// and all default-ignorable controls, matching the private LOAD inspector.
+// Do not silently normalize: the native resolver must decide any alias/collision.
+const identityLabel=x=>label(x)&&x===x.normalize('NFC')&&
+ !/[\p{Default_Ignorable_Code_Point}\p{Cc}]/u.test(x);
 const digest=x=>typeof x==='string'&&/^[a-f0-9]{64}$/i.test(x);
 const result=(reason,code='HOLD')=>({schema:DROP_SCHEMA,status:code,reason,bytes_read:0,uploaded:false,
  network_fetch:false,hash_verified:false,acl_verified:false,object_id_minted:false,
