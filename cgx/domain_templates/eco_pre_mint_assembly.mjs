@@ -172,6 +172,64 @@ function reviewCellAnchor(anchor,source){
     source_cell_bytes_reread:false,formula_verified:false};
 }
 
+
+/**
+ * Pairwise cell crosswalk for an original workbook and an independently
+ * identified translated Sheet. The caller supplies bounded cell observations
+ * from its authenticated provider boundary. This module does NOT fetch either
+ * provider, attest the observations, or establish workbook equivalence.
+ * Only comparison flags are returned; no formulas or cell values are emitted.
+ */
+function reviewCellCrosswalk(pair,source,anchor,lineage,evidenceClass){
+  if(pair===null)return {state:"CELL_CROSSWALK_NOT_SUPPLIED",
+    caller_declared_pair_compared:false,provider_cells_fetched_by_module:false,
+    original_and_translation_equivalent:false};
+  const allowed=new Set(["source_ref","source_revision","source_sha256",
+    "related_source_ref","related_revision_ref","original_cell","related_cell"]);
+  const cellAllowed=new Set(["sheet","cell","formula","unit","numeric_value",
+    "evidence_class"]);
+  const validCell=c=>obj(c)&&Object.keys(c).every(k=>cellAllowed.has(k))&&
+    token(c.sheet)&&c.sheet.length<=64&&
+    /^[A-Z]{1,3}[1-9]\\d{0,6}$/.test(c.cell)&&
+    typeof c.formula==="string"&&
+    /^=[A-Za-z0-9+*\\/(). ^-]{1,128}$/.test(c.formula)&&
+    token(c.unit)&&c.unit.length<=32&&
+    Number.isFinite(c.numeric_value)&&Math.abs(c.numeric_value)<=1e12&&
+    c.evidence_class===evidenceClass;
+  if(!obj(pair)||Object.keys(pair).some(k=>!allowed.has(k))||
+    !source.proof_hash||!obj(anchor)||!obj(lineage)||
+    pair.source_ref!==source.source_ref||
+    pair.source_revision!==source.revision||
+    pair.source_sha256!==source.proof_hash||
+    pair.related_source_ref!==lineage.related_source_ref||
+    pair.related_revision_ref!==lineage.related_revision_ref||
+    !validCell(pair.original_cell)||!validCell(pair.related_cell)||
+    pair.original_cell.sheet!==anchor.sheet||
+    pair.original_cell.cell!==anchor.cell)
+    throw Error("INVALID_ECO_SOURCE_CELL_CROSSWALK");
+  const a=pair.original_cell,b=pair.related_cell;
+  const formulaMatch=a.formula===b.formula;
+  const unitMatch=a.unit===b.unit;
+  const scale=Math.max(1,Math.abs(a.numeric_value),Math.abs(b.numeric_value));
+  const valueMatch=Math.abs(a.numeric_value-b.numeric_value)<=1e-10*scale;
+  const consistent=formulaMatch&&unitMatch&&valueMatch;
+  return {
+    state:consistent?"R1_CALLER_DECLARED_PAIRWISE_MATCH_NOT_EQUIVALENCE":
+      "R1_CALLER_DECLARED_CELL_DISCREPANCY_HOLD",
+    original_anchor_ref:anchor.sheet+"!"+anchor.cell,
+    related_cell_ref:b.sheet+"!"+b.cell,
+    formula_match:formulaMatch,unit_match:unitMatch,
+    numeric_value_match:valueMatch,evidence_class_match:true,
+    caller_declared_pair_compared:true,
+    provider_cells_fetched_by_module:false,
+    provider_origin_authenticated_by_module:false,
+    independent_cell_readback_verified:false,
+    original_and_translation_equivalent:false,
+    source_rights_verified:false,geometry_validated:false,
+    field_outcome_verified:false,native_admitted:false
+  };
+}
+
 /**
  * Accept a review input, never an externally asserted "passed" receipt.
  * A fresh integrated cascade execution generates all actual executed flags.
@@ -179,11 +237,11 @@ function reviewCellAnchor(anchor,source){
 export function prepareEcoPreMintAssembly(request={}){
   if(!obj(request)||Object.keys(request).some(k=>![
     "cascade_input","geometry_descriptor","cell_anchor",
-    "requested_hydration","observation_showcase","source_lineage","access_posture"].includes(k)))
+    "requested_hydration","observation_showcase","source_lineage","access_posture",\n    "cell_crosswalk"].includes(k)))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const {cascade_input,geometry_descriptor=null,cell_anchor=null,
     requested_hydration="H3",observation_showcase=null,source_lineage=null,
-    access_posture=null}=request;
+    access_posture=null,cell_crosswalk=null}=request;
   if(!obj(cascade_input)||!levels.includes(requested_hydration))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const executed=runEcoReviewCascade(cascade_input);
@@ -199,7 +257,7 @@ export function prepareEcoPreMintAssembly(request={}){
   const geom=reviewGeometryDescriptor(geometry_descriptor,source.source_ref);
   const anchor=reviewCellAnchor(cell_anchor,source);
   const lineage=reviewSourceLineage(source_lineage,source);
-  const access=reviewAccessPosture(access_posture,{...source,id:executed.source_reference.id});
+  const access=reviewAccessPosture(access_posture,{...source,id:executed.source_reference.id});\n  const pair=reviewCellCrosswalk(cell_crosswalk,source,cell_anchor,source_lineage,executed.evidence_class);
   let showcase=null;
   if(observation_showcase!==null){
     if(!obj(observation_showcase)||
@@ -232,8 +290,7 @@ export function prepareEcoPreMintAssembly(request={}){
     blockers.push("GEOMETRY_SOURCE_FRAME_OR_REVIEW_INCOMPLETE");
   if(source_lineage!==null)
     blockers.push("RELATED_SOURCE_LINEAGE_NOT_INDEPENDENTLY_VERIFIED");
-  if(access_posture!==null)
-    blockers.push("DECLARED_SOURCE_ACCESS_POSTURE_NOT_RIGHTS_APPROVAL");
+  if(cell_crosswalk!==null){\n    blockers.push("CELL_CROSSWALK_PROVIDER_ATTESTATION_AND_FULL_EQUIVALENCE_REQUIRED");\n    if(pair.state==="R1_CALLER_DECLARED_CELL_DISCREPANCY_HOLD")\n      blockers.push("SOURCE_TRANSLATION_CELL_DISCREPANCY");\n  }\n  if(access_posture!==null)\n    blockers.push("DECLARED_SOURCE_ACCESS_POSTURE_NOT_RIGHTS_APPROVAL");
   if(showcase!==null)
     blockers.push("ECO_OBSERVATION_SHOWCASE_NOT_NATIVE_MINT_OR_FIELD_EVIDENCE");
 
@@ -276,7 +333,7 @@ export function prepareEcoPreMintAssembly(request={}){
       alignment:executed.step_receipts.scoped_alignment,
       ecological_review:executed.step_receipts.ecological_review},
     hydration:hydrate,geomatrix:geom,
-    source_lineage_review:level>=2?lineage:{state:"NOT_REQUESTED"},
+    source_lineage_review:level>=2?lineage:{state:"NOT_REQUESTED"},\n    source_cell_crosswalk_review:level>=2?pair:{state:"NOT_REQUESTED"},
     access_posture_review:level>=2?access:{state:"NOT_REQUESTED"},
     mint_showcase_review:level>=3&&showcase!==null?{
       schema:showcase.schema,state:showcase.state,
@@ -287,7 +344,7 @@ export function prepareEcoPreMintAssembly(request={}){
     stack_layers:[
       {layer:"source",state:source.proof_hash?"HASH_REFERENCE_VERIFIED":"R0_UNVERIFIED_THIS_RUN"},
       {layer:"lineage",state:level>=2?lineage.state:"NOT_REQUESTED"},
-      {layer:"access",state:level>=2?access.state:"NOT_REQUESTED"},
+      {layer:"access",state:level>=2?access.state:"NOT_REQUESTED"},\n      {layer:"cell_crosswalk",state:level>=2?pair.state:"NOT_REQUESTED"},
       {layer:"semantic",state:"R1_REVIEW_ONLY"},
       {layer:"geometry",state:geom.state},
       {layer:"temporal",state:geom.time_frame_ref_present?"REFERENCE_ONLY":"MISSING_SOURCE_TIME_FRAME"},
@@ -295,7 +352,7 @@ export function prepareEcoPreMintAssembly(request={}){
       {layer:"native",state:"NOT_ADMITTED"}
     ],
     loss_ledger:["RAW_WORKBOOK_OR_PDF_BYTES_NOT_REPRODUCED",
-      "NO_SOURCE_CELL_CONTENT_OR_FORMULA_READBACK",
+      "NO_SOURCE_CELL_CONTENT_OR_FORMULA_READBACK",\n      "CALLER_DECLARED_PAIRWISE_CELLS_NOT_INDEPENDENT_PROVIDER_ATTESTATION",
       "NO_METRIC_GEOMETRY_OR_CRS_TRANSFORM",
       "NO_R2_ONTOLOGY_OR_NATIVE_OBJECT_ID_PROOF",
       "NO_NATIVE_CCC_INSTALL_OR_DATASPACE_SYNC",
