@@ -38,7 +38,14 @@ export function validateRegistry(registry) {
    if(!r.selector_sources.some(selector=>r.route_source_proofs[selector].source_registry===r.source_registry))
     throw Error("CCC_ROUTE_PROVENANCE_MISMATCH");
   }
-  if(r.native_absorbed===true||r.installed_online===true)throw Error("UNVERIFIED_INSTALLATION");
+  // This catalogue is a source projection, never an admission or a live host receipt.
+  // Record-level assertions must not override the source-only aggregate summary.
+  if(r.admission!=="SOURCE_REGISTRY_ONLY")throw Error("UNSUPPORTED_RECORD_ADMISSION");
+  if((r.native_absorbed!==undefined&&r.native_absorbed!==false)||
+     (r.installed_online!==undefined&&r.installed_online!==false)||
+     (r.canonical_object_id!==undefined&&r.canonical_object_id!==null)||
+     (r.native_dbr_readback!==undefined&&r.native_dbr_readback!==null))
+    throw Error("UNVERIFIED_INSTALLATION");
  }
  return {valid:true,source_registry_count:Object.keys(registry.source_registries).length,reference_count:seen.size,frontier_count:registry.frontier.length};
 }
