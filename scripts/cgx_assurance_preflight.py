@@ -11,7 +11,8 @@ ACCEPTED_METHOD_STATES={"COMPLETE","BOUNDED","NOT_APPLICABLE"}
 # If the caller omits/misclassifies tags, source-level preflight cannot prove kind.
 SCIENTIFIC_ASSET_TAGS={"scientific-asset","scientific-projection","ephemeris","spatial-scale","scientific-measurement",
     "orbital-geometry","orbital-scale","geometry-asset","simulation-asset",
-    "engineering-asset","ecological-asset","operational-asset"}
+    "engineering-asset","ecological-asset","operational-asset",
+    "horizons-vectors","spice-ephemeris","gmat-trajectory","solar-system-state"}
 # Even a non-actuating simulation can emit a falsely authoritative numerical asset.
 # Source-only inspection/proposal remains separate from validated simulation output.
 SCIENTIFIC_CONSEQUENTIAL_DEPTHS={"simulate","build","execute","publish"}
