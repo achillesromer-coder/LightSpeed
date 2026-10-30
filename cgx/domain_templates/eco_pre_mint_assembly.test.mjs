@@ -150,3 +150,47 @@ test("non-Eco and unrecognized domains cannot inherit an Eco mint path",()=>{
  assert.throws(()=>prepare({cascade_input:input,requested_hydration:"H5"}),
   /INVALID_ECO_PRE_MINT_REQUEST/);
 });
+
+const observation={kind:"EcoObservation",synthetic:true,measured:false,
+  evidence_class:"simulated",taxon:"synthetic:taxon",place:"synthetic:site",
+  method:"synthetic:method",source_provenance:source.source_ref,
+  source_revision_ref:source.revision,source_hash_sha256:digest,
+  source_owner_ref:"synthetic:owner"};
+test("EcoObservation showcase is reviewed by the existing boundary, not minted",()=>{
+ const r=prepare({cascade_input:input,observation_showcase:observation});
+ assert.equal(r.mint_showcase_review.state,"SCHEMA_BRIDGE_CANDIDATE_ONLY");
+ assert.equal(r.mint_showcase_review.field_observation_verified,false);
+ assert.equal(r.mint_showcase_review.native_object_id,null);
+ assert.equal(r.mint_showcase_review.public_release_authorised,false);
+ assert.ok(r.blocking_gates.includes(
+  "ECO_OBSERVATION_SHOWCASE_NOT_NATIVE_MINT_OR_FIELD_EVIDENCE"));
+ assert.equal(r.release.mint_allowed,false);
+});
+test("showcase source revision, digest and evidence must bind to executed cascade",()=>{
+ for(const changed of [
+  {...observation,source_provenance:"synthetic:other-source"},
+  {...observation,source_revision_ref:"stale-revision"},
+  {...observation,source_hash_sha256:"0".repeat(64)},
+  {...observation,evidence_class:"observed"},
+  {...observation,source_hash_sha256:undefined}
+ ])assert.throws(()=>prepare({cascade_input:input,
+  observation_showcase:changed}),/ECO_MINT_SHOWCASE_SOURCE_OR_EVIDENCE_CONFLICT/);
+});
+test("raw spatial content cannot cross from observation showcase to pre-Mint",()=>{
+ for(const changed of [
+  {...observation,latitude:-27.5,longitude:153.1},
+  {...observation,metadata:{siteGeometry:{coordinates:[153.1,-27.5]}}},
+  {...observation,place:"synthetic site -27.5000,153.1000"}
+ ])assert.throws(()=>prepare({cascade_input:input,
+  observation_showcase:changed}),/ECO_MINT_SHOWCASE_SPATIAL_PAYLOAD_HOLD/);
+});
+test("H0 cannot hydrate the optional mint showcase review",()=>{
+ const r=prepare({cascade_input:input,observation_showcase:observation,
+  requested_hydration:"H0"});
+ assert.equal(r.mint_showcase_review.state,"NOT_REQUESTED_OR_NOT_SUPPLIED");
+ assert.equal(r.hydration.H3.state,"NOT_REQUESTED");
+});
+test("unexpected top-level fields are rejected instead of silently ignored",()=>{
+ assert.throws(()=>prepare({cascade_input:input,
+  geometry:{coordinates:[153.1,-27.5]}}),/INVALID_ECO_PRE_MINT_REQUEST/);
+});
