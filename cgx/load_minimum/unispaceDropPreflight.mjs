@@ -48,6 +48,7 @@ export function planUniSpaceDropPreflight({target,file,source,access,existing_so
   return result('SOURCE_RIGHTS_STATE_UNQUALIFIED');
  if(revocationEvidence(source)||(source.rights_state!==undefined&&source.rights_state!=='ACTIVE'))
   return result('SOURCE_RIGHTS_NOT_ACTIVE');
+ if(typeof offline!=='boolean')return result('INVALID_OFFLINE_MODE');
  if(surface!=='private'&&surface!=='public')return result('UNSUPPORTED_SURFACE');
  if(source.rights==='UNKNOWN'||source.rights==='LICENSE_RESTRICTED')return result('RIGHTS_REVIEW_REQUIRED');
  if(surface==='public'&&source.rights!=='PUBLIC_SAFE')return result('PRIVATE_SOURCE_PUBLIC_BOUNDARY');
