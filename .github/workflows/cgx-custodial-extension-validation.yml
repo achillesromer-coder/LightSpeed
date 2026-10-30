@@ -25,6 +25,7 @@ on:
       - "scripts/audit_cgx_lease_issuer_boundary.py"
       - "scripts/audit_cgx_lease_scope_boundary.py"
       - "scripts/audit_cgx_lease_replay_boundary.py"
+      - "scripts/audit_cgx_project_file_symlink_boundary.py"
       - "scripts/cgx_assurance_route.py"
       - "cgx/domain_templates/mpl_assurance_adapter.json"
       - "cgx/domain_templates/assurance_relation_registry.json"
@@ -39,6 +40,7 @@ on:
     paths:
       - "scripts/audit_cgx_lease_scope_boundary.py"
       - "scripts/audit_cgx_lease_replay_boundary.py"
+      - "scripts/audit_cgx_project_file_symlink_boundary.py"
       - "scripts/cgx_assurance_preflight.py"
       - "scripts/validate_scientific_asset_stopship.py"
       - "scripts/cgx_assurance_route.py"
@@ -121,6 +123,8 @@ jobs:
         run: python scripts/audit_cgx_lease_scope_boundary.py
       - name: Audit Achilles T2 lease replay and consumption boundary (HOLD finding)
         run: python scripts/audit_cgx_lease_replay_boundary.py
+      - name: Audit Achilles T5 blocked-file symlink alias (HOLD finding)
+        run: python scripts/audit_cgx_project_file_symlink_boundary.py
       - name: Route InterSol assurance scenario
         run: python scripts/cgx_assurance_route.py --domain romer --execution-depth build --cascade-class C2 --tags intersol,facility,battery-room,public-route
       - name: Resolve observational scenario
