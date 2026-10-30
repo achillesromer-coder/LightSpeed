@@ -348,6 +348,23 @@
         "V_AND_V"
       ],
       "minimum_state": "ANALYSE"
+    },
+    {
+      "id": "AR-18",
+      "match": {
+        "tags_any": [
+          "scientific-asset",
+          "scientific-projection",
+          "ephemeris",
+          "spatial-scale",
+          "scientific-measurement"
+        ]
+      },
+      "methods": [
+        "V_AND_V",
+        "AI_IMPACT"
+      ],
+      "minimum_state": "VERIFY"
     }
   ],
   "escalation": [
