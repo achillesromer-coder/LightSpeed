@@ -189,6 +189,12 @@ def _validate_marker(paths: dict[str, Path], slot: str) -> dict[str, Any]:
         raise RuntimeProductizationError("managed marker schema mismatch")
     if marker.get("slot") != slot:
         raise RuntimeProductizationError("managed marker slot mismatch")
+    # A matching slot/schema alone cannot establish managed ownership.
+    # Keep the local marker a bounded ownership signal, never a host lease.
+    if marker.get("authority") != "digital-runtime-slot-only":
+        raise RuntimeProductizationError("managed marker authority mismatch")
+    if not isinstance(marker.get("profile"), str) or marker["profile"] not in PROFILES:
+        raise RuntimeProductizationError("managed marker profile invalid")
     return marker
 
 
