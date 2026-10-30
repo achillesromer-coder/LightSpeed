@@ -1,0 +1,194 @@
+{
+  "schema": "LOAD-ALEXANDRIA-TRADITIONAL-LIBRARIES-AND-GEOMETRY/0.1",
+  "state": "R0_R1_SOURCE_REVIEW_NOT_NATIVE_ADMISSION",
+  "review_date": "2026-10-30",
+  "authority": {
+    "root": "Cognigrex.cgx",
+    "library_alias": "LOAD.cgx",
+    "shared_ccc": "Cognigrex.cgx:/ccc",
+    "proposed_friendly_name": "CCC.cgx",
+    "note": "CCC.cgx has no verified independent canonical FileSpace Object_ID; do not mint from name",
+    "child_domains": [
+      "Romer.cgx",
+      "Eco.cgx",
+      "EMASSC.cgx",
+      "LS.cgx"
+    ],
+    "interoperation": "existing FileSpace source identity and DataSpace signed sparse hydration, not a second data store"
+  },
+  "geometry": {
+    "semantic_view": "dual-dodecahedral or nested facets as an optionally navigable UI model, not canonical semantic identity",
+    "dodecahedron": {
+      "faces": 12,
+      "edges": 30,
+      "vertices": 20,
+      "euler_characteristic": 2,
+      "level": "COMBINATORIAL_GEOMETRY_OF_REGULAR_DODECAHEDRON"
+    },
+    "locator_rule": "review prototype SHAKE256(source revision key) modulo 12 gives a deterministic UI path, not admitted universal address",
+    "mapping_not_yet_proven": [
+      "exact nested face/vertex/edge composition and orientation",
+      "physical CAD coordinate frame and units for actual objects",
+      "lossless round-trip into all R0 source types",
+      "cross-family inverse relation and stable-root reconciliation",
+      "LOD and temporal/spatial bounds in authorised viewport",
+      "safe conflict resolution and DBR readback",
+      "measured device/network bandwidth costs"
+    ],
+    "layers": [
+      {
+        "level": "R0",
+        "content": "immutable original export segment or authoritative provider reference, checksum, licence, revision",
+        "scope": "provider source identity retained"
+      },
+      {
+        "level": "R1",
+        "content": "page and revision IDs, temporal metadata, lexical link candidates, source-text hash and loss ledger",
+        "scope": "reversible only within declared extracted fields"
+      },
+      {
+        "level": "R2",
+        "content": "typed claims/entities/equations/relations with independent evidence and dimensional/temporal validity",
+        "scope": "no automatic Wikipedia truth or QID merge"
+      },
+      {
+        "level": "R3",
+        "content": "document, graph, chat, map, 3D/interactive projections over the same qualified identity",
+        "scope": "no fabricated physical coordinates or views"
+      },
+      {
+        "level": "F",
+        "content": "registered, licence-qualified and host-proven algorithms/methods",
+        "scope": "source catalogue ≠ installed executable"
+      }
+    ]
+  },
+  "sources": [
+    {
+      "key": "wikimedia:content-current",
+      "order": 1,
+      "source": "https://wikitech.wikimedia.org/wiki/MediaWiki_Content_File_Exports",
+      "type": "revisioned article XML",
+      "status": "PROTOTYPE_CONVERTER_COMMITTED_SOURCE_ONLY",
+      "licence": "CC BY-SA page-level plus media separate; source revision/attribution required",
+      "edge": "page ID ↔ revision, lexical wiki links only until entity evidence"
+    },
+    {
+      "key": "wikidata:entities",
+      "order": 2,
+      "source": "https://www.wikidata.org/wiki/Wikidata:Database_download",
+      "type": "QID/PID structured graph and qualifiers",
+      "status": "INDEXED_NOT_INGESTED",
+      "licence": "check Wikidata CC0 per dataset; statement references/licence of linked assets separate",
+      "edge": "verified sitelink candidate join not inferred from article title"
+    },
+    {
+      "key": "wikipedia:content-history",
+      "order": 3,
+      "source": "https://wikitech.wikimedia.org/wiki/MediaWiki_Content_File_Exports",
+      "type": "time-indexed Wikipedia revisions",
+      "status": "INDEXED_NOT_INGESTED",
+      "licence": "snapshot, revision and attribution chain",
+      "edge": "revision supersession and conflicting historical claims"
+    },
+    {
+      "key": "nist:codata",
+      "order": 4,
+      "source": "https://physics.nist.gov/cuu/Constants/",
+      "type": "physical constants/metrology",
+      "status": "INDEXED_NOT_INGESTED",
+      "licence": "NIST use/terms, revision and uncertainty specific",
+      "edge": "typed quantity, unit, uncertainty, source year"
+    },
+    {
+      "key": "nasa:pds-gmat-spice",
+      "order": 5,
+      "source": "https://pds.nasa.gov/",
+      "type": "orbital data/functional solvers",
+      "status": "INDEXED_NOT_INGESTED",
+      "licence": "NASA/third-party per package and JPL toolkit terms",
+      "edge": "epoch, frame, unit, reference-body, numerical method, executable ABI"
+    },
+    {
+      "key": "opentree:taxonomy",
+      "order": 6,
+      "source": "https://tree.opentreeoflife.org/",
+      "type": "organisms and phylogenetic releases",
+      "status": "INDEXED_NOT_INGESTED",
+      "licence": "dataset/reuse review and provider OTT identity",
+      "edge": "taxon/observation distinct, dated scientific name"
+    },
+    {
+      "key": "osm:naturalearth",
+      "order": 7,
+      "source": "https://planet.openstreetmap.org/",
+      "type": "map/coordinates/site extents",
+      "status": "INDEXED_NOT_INGESTED",
+      "licence": "OSM ODbL and Natural Earth separately; database rights",
+      "edge": "CRS, provenance, geometry accuracy/epoch and ODbL separation"
+    },
+    {
+      "key": "media:commons",
+      "order": 8,
+      "source": "https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia",
+      "type": "images/video/3d media",
+      "status": "INDEXED_NOT_INGESTED",
+      "licence": "individual-file licence, attribution and model/people rights",
+      "edge": "asset ID/creator/version/format -> qualified viewport"
+    },
+    {
+      "key": "software:freedoom-blender-opengameart",
+      "order": 9,
+      "source": "https://github.com/freedoom/freedoom",
+      "type": "engines/assets/interactive",
+      "status": "INDEXED_NOT_INGESTED",
+      "licence": "per code and per artwork licence, including GPL and CC; source obligations",
+      "edge": "tool/renderer ABI/installation vs media separate"
+    },
+    {
+      "key": "wayback:memento",
+      "order": 10,
+      "source": "https://archive.org/wayback/available",
+      "type": "temporal website capture locator",
+      "status": "METADATA_ONLY_ADAPTER_SOURCE_REVIEW",
+      "licence": "archive capture does NOT grant use/republication rights",
+      "edge": "URL, capture timestamp, HTTP status, current-live diff"
+    },
+    {
+      "key": "kiwix:zim",
+      "order": 11,
+      "source": "https://library.kiwix.org/",
+      "type": "offline article mirror benchmark",
+      "status": "INDEXED_NOT_INGESTED",
+      "licence": "article and media licences retained; software code separately",
+      "edge": "check parity, revision and accessibility against source"
+    }
+  ],
+  "actual_ingestion_proof": {
+    "verified_wikipedia_page_url": "https://en.wikipedia.org/wiki/Dodecahedron",
+    "permanent_link_observed": "https://en.wikipedia.org/w/index.php?oldid=1360997768&title=Dodecahedron",
+    "wikipedia_qid_link_observed": "https://www.wikidata.org/wiki/Special:EntityPage/Q178296",
+    "raw_page_xml_bytes_retrieved": false,
+    "source_body_sha256": null,
+    "page_id": null,
+    "full_revision_metadata_verified": false,
+    "synthetic_xml_converter_ci": "PENDING",
+    "native_admitted": false,
+    "note": "Live web article inspected and provider licence/docs checked. This is not a real Wikipedia source-body ingest; local synthetic XML exercises converter until one exact original snapshot/host-approved fetch arrives."
+  },
+  "prior_catalogue": {
+    "external_candidates_from_private_ledger": 14,
+    "original_hasher_refs_from_private_ledger": 10,
+    "private_w6_workbooks_excluded": true,
+    "source_review": "UniSpace_Alexandria_Unified_Resources_and_Licences_v07.md"
+  },
+  "policy": [
+    "One of everything = one qualified concept identity, many source revision/evidence/media relationships.",
+    "Distinct physical object, shape class, model, namespace, revision and version must not fuse solely on a shared label.",
+    "Keep original bytes when offline exact reproduction is required; compact semantic graph does not reproduce unretained prose.",
+    "No illegal third-party redistribution; Wikipedia licensing includes attribution and share alike; media independent.",
+    "CDX/Memento/Wayback availability says only a capture exists and when, not permission or accuracy.",
+    "Traditional open-source software licences differ from Wikipedia content licences and Wikidata structured-data rights.",
+    "Do not modify accepted CGX carriers or create a new CCC.cgx root before Object_ID and DBR validation."
+  ]
+}
