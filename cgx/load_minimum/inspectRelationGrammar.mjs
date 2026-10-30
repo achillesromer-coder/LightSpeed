@@ -39,10 +39,15 @@ export function inspectRelationGrammar(domainRegistry, sharedQualifier) {
   const sharedOccurrences = new Map();
   for (const [sharedFamily, entries] of Object.entries(sharedTypes)) {
     if (!Array.isArray(entries)) throw new TypeError('INVALID_SHARED_RELATION_FAMILY');
+    const localIds = new Set();
     for (const entry of entries) {
       if (!entry || typeof entry.id !== 'string' || !/^[A-Z][A-Z0-9_]*$/.test(entry.id)) {
         throw new TypeError('INVALID_SHARED_RELATION_TYPE');
       }
+      // A repeated ID inside one declaring family cannot represent two distinct
+      // source declarations. Cross-family reuse remains an unresolved ambiguity.
+      if (localIds.has(entry.id)) throw new TypeError('DUPLICATE_SHARED_RELATION_IN_FAMILY');
+      localIds.add(entry.id);
       const families = sharedOccurrences.get(entry.id) ?? [];
       families.push(sharedFamily);
       sharedOccurrences.set(entry.id, families);
@@ -65,6 +70,17 @@ export function inspectRelationGrammar(domainRegistry, sharedQualifier) {
     }
   }
   const issues = [];
+  // Even a shared vocabulary is not an authority to merge homonymous relation
+  // types across its own distinct families. Surface any ambiguity explicitly.
+  for (const [id, families] of sharedOccurrences) {
+    if (families.length > 1) {
+      issues.push({
+        code: 'SHARED_RELATION_TYPE_NAMESPACE_AMBIGUITY',
+        relation_id: id,
+        source_families: [...families]
+      });
+    }
+  }
   if (domainRegistry.extends !== sharedQualifier.schema) {
     issues.push({
       code: 'RELATION_SCHEMA_COMPATIBILITY_HOLD',
