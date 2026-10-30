@@ -173,6 +173,9 @@ if(x.measurement_basis!==undefined&&["raw","corrected","derived","reference"].in
   if(!obj(b)||!["LOD","LOQ","UPPER_RANGE"].includes(b.kind)||typeof b.value!=="number"||!Number.isFinite(b.value)||b.value<=0||!good(b.unit)||(b.method_ref!==undefined&&!good(b.method_ref)))throw Error("INVALID_REPORTING_BOUND");
  }
 }
+// Translation can preserve formula syntax while corrupting SI unit glyphs.
+// A flagged unit is not silently repaired or converted into scientific proof.
+const suspiciousUnitEncoding=s=>good(s)&&/(?:\u00c2[\u00a0-\u00bf]|\u00c3[\u0080-\u00bf]|\u00e2[\u0080-\u00bf])/.test(s);
 const add=(checks,c)=>{if(!checks.includes(c))checks.push(c)};
 function compare(a,b,checks){
  for(const f of IDENTITY){
@@ -247,6 +250,10 @@ if(!equal(a.projection_result??null,b.projection_result??null))add(checks,"PROJE
     b.geometry?.coordinates.length===3&&!b.geometry.vertical_datum)add(checks,"VERTICAL_DATUM_REQUIRED");
 }
 function completeness(x,checks){
+ const unitFields=[x.unit,x.measurement?.unit,x.measurement_uncertainty?.unit,
+  x.reporting_bound?.unit,x.projection_result?.unit,x.benefit_accounting?.unit,
+  x.geometry_export?.coordinate_unit,x.validation_statistics?.statistic_unit];
+ if(unitFields.some(suspiciousUnitEncoding))add(checks,"SOURCE_UNIT_ENCODING_UNRESOLVED");
  if(!good(x.evidence_class))add(checks,"EVIDENCE_CLASS_REQUIRED");
  if(x.semantic_type==="sensor_reading"&&!x.measurement)add(checks,"SENSOR_MEASUREMENT_REQUIRED");
  if(x.semantic_type==="sensor_reading"&&!good(x.observed_variable))add(checks,"OBSERVED_VARIABLE_REQUIRED");
