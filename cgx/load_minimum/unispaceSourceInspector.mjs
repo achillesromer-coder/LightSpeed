@@ -195,6 +195,13 @@ export function planUniSpaceOperatorCockpit({
       inspector.viewport.state==='FRONTIER'));
  if(offline?!offlinePlan:!onlinePlan)
   return cockpitDeny('REVIEW_EVIDENCE_STAGE_CONFLICT');
+ // #209/#158: the caller can hand in a fabricated inspector object. The
+ // source-only inspector never qualifies metric 3D as R3; neither may this
+ // operator projection. A conflicting Frontier/metric badge is also a veto.
+ if(!offline&&inspector.admission_stage==='R3_VIEW_PROPOSAL'&&
+    (inspector.view==='3d'||inspector.viewport.metric_authority!=='NOT_VERIFIED'||
+     !Array.isArray(inspector.viewport.frontier)||inspector.viewport.frontier.length!==0))
+  return cockpitDeny('UNVERIFIED_METRIC_VIEW_CANNOT_BE_R3');
  const candidate=!offline&&inspector.admission_stage==='R3_VIEW_PROPOSAL';
  const blockers=[
   'SOURCE_ORIGINAL_REVISION_HASH_RIGHTS_NOT_PROVIDER_VERIFIED',
