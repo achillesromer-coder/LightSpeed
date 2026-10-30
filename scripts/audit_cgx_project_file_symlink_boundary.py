@@ -29,7 +29,7 @@ class SyntheticPipeline:
     def __init__(self, authority_root: Path, project_root: Path):
         self.config = {
             "drive_writeback": {
-                "blocked_artifact_patterns": [".env", ".env.*", "*.pem", "*.key"]
+                "blocked_artifact_patterns": [".env", ".env.*", "*.pem", "*.key", "credentials*.json"]
             }
         }
         self._authority_root = authority_root
@@ -68,11 +68,11 @@ def run() -> int:
         project = authority / "project"
         project.mkdir(parents=True)
         marker = "SYNTHETIC_PRIVATE_SENTINEL_NOT_A_REAL_SECRET"
-        (project / ".env").write_text(marker, encoding="utf-8")
+        (project / "credentials.json").write_text(marker, encoding="utf-8")
         (project / "safe.txt").write_text("SYNTHETIC_PUBLIC_TEXT", encoding="utf-8")
         outside = base / "outside.txt"
         outside.write_text("SYNTHETIC_OUTSIDE_TEXT", encoding="utf-8")
-        (project / "review.txt").symlink_to(project / ".env")
+        (project / "review.txt").symlink_to(project / "credentials.json")
         (project / "outside_alias.txt").symlink_to(outside)
         pipeline = SyntheticPipeline(authority, project)
 
@@ -80,7 +80,7 @@ def run() -> int:
             pipeline, project_id="fixture-project", relative_path="safe.txt"
         )
         safe_control = safe["preview"]["text"] == "SYNTHETIC_PUBLIC_TEXT"
-        direct_blocked = denied(ProjectFileBlocked, pipeline, ".env")
+        direct_blocked = denied(ProjectFileBlocked, pipeline, "credentials.json")
         external_blocked = denied(
             ProjectFilePathRejected, pipeline, "outside_alias.txt"
         )
@@ -102,7 +102,7 @@ def run() -> int:
         "evidence_class": "SOURCE_ONLY_SYNTHETIC_NEGATIVE",
         "candidate_filespace": "Cognigrex.cgx:/LS.cgx/project-file-browser",
         "source_under_review": "desktop/LightSpeed_Runtime/lightspeed_runtime/project_file_browser.py",
-        "synthetic_blocked_target_via_in_root_symlink": (
+        "synthetic_blocked_json_via_in_root_symlink": (
             "ALLOW" if alias_exposed else "DENY"
         ),
         "controls": {
