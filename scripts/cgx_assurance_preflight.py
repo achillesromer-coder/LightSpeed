@@ -12,7 +12,9 @@ ACCEPTED_METHOD_STATES={"COMPLETE","BOUNDED","NOT_APPLICABLE"}
 SCIENTIFIC_ASSET_TAGS={"scientific-asset","scientific-projection","ephemeris","spatial-scale","scientific-measurement",
     "orbital-geometry","orbital-scale","geometry-asset","simulation-asset",
     "engineering-asset","ecological-asset","operational-asset"}
-SCIENTIFIC_CONSEQUENTIAL_DEPTHS={"build","execute","publish"}
+# Even a non-actuating simulation can emit a falsely authoritative numerical asset.
+# Source-only inspection/proposal remains separate from validated simulation output.
+SCIENTIFIC_CONSEQUENTIAL_DEPTHS={"simulate","build","execute","publish"}
 SAFETY_TAGS={"replication-control","hard-stop","containment","life-support","hazard-control","planetary-protection","unknown-life","nuclear","radioactive"}
 
 def read_json(path):
