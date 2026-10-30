@@ -225,7 +225,12 @@ def _operator_receipt(
 def runtime_productization_status(slot: str = "default") -> dict[str, Any]:
     paths = _paths(slot)
     config = _load_slot_config(paths)
-    marker = _read_json(paths["marker"]) if paths["marker"].exists() else None
+    # A corrupt ownership marker must never make status appear installed.
+    # Status is read-only; keep invalid marker bytes untouched for diagnosis.
+    try:
+        marker = _read_json(paths["marker"]) if paths["marker"].exists() else None
+    except (RuntimeProductizationError, OSError, ValueError, UnicodeError):
+        marker = None
     python_path = paths["venv"] / "Scripts" / "python.exe"
     receipts = []
     if paths["receipt_root"].exists():
