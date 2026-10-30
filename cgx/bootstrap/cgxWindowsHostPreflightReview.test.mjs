@@ -93,11 +93,29 @@ test('source classifier detects quoted PowerShell argv bypass with whitespace an
  }
 });
 test('source classifier does not promote ordinary or unknown policy observations',()=>{
- for(const source of ['["-ExecutionPolicy", "RemoteSigned"]','powershell.exe -NoProfile -File script.ps1','']){
+ for(const source of ['powershell.exe -NoProfile -File script.ps1','']){
   assert.equal(classifyInstallerPolicySource(source),'NO_EXPLICIT_OVERRIDE');
  }
  for(const source of [null,{},'x'.repeat(2*1024*1024+1)]){
   assert.equal(classifyInstallerPolicySource(source),'UNKNOWN');
   assert.equal(reviewWindowsCGXHost({...base,installerInvocationPolicy:classifyInstallerPolicySource(source)}).state,'REVIEW_ONLY');
+ }
+});
+
+test('explicit non-Bypass and dynamically supplied policy switches require source review',()=>{
+ for(const source of [
+  'args = ["-ExecutionPolicy", policy]',
+  'powershell.exe -ExecutionPolicy $Policy -File script.ps1',
+  '["-ExecutionPolicy", "RemoteSigned"]',
+  'powershell.exe -ExecutionPolicy AllSigned -File script.ps1'
+ ]){
+  const classification=classifyInstallerPolicySource(source);
+  assert.equal(classification,'EXPLICIT_POLICY_OVERRIDE_UNVERIFIED');
+  const x=reviewWindowsCGXHost({...base,installerInvocationPolicy:classification});
+  assert.equal(x.state,'HOLD');
+  assert.ok(x.holds.includes('NATIVE_INSTALLER_POLICY_OVERRIDE_REQUIRES_REVIEW'));
+  assert.match(x.next_read_only_step,/do not assume/i);
+  assert.equal(x.may_execute,false);
+  assert.equal(x.may_change_execution_policy,false);
  }
 });
