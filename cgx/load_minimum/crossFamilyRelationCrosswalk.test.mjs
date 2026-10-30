@@ -382,6 +382,55 @@ test('EMASSC/LS root-group relation grammar parses and remains source-only with 
   );
 });
 
+test('source-only qualifier inventories expose version gaps without silently mapping field names', () => {
+  const romer = inspectRelationGrammar(sources.romer, sources.shared);
+  const eco = inspectRelationGrammar(sources.eco, sources.shared);
+  const emassc = inspectRelationGrammar(sources.emassc_ls, sources.shared);
+  for (const result of [romer,eco,emassc]) {
+    assert.equal(result.qualifier_alignment.declared_contract, 'CGX-RELATION-QUALIFIER/0.1');
+    assert.equal(result.qualifier_alignment.available_contract, 'CGX-RELATION-QUALIFIER/0.2');
+    assert.equal(result.qualifier_alignment.bridge_proven, false);
+    assert.equal(result.qualifier_alignment.semantic_equivalence, 'UNDETERMINED');
+    assert.equal(result.qualifier_alignment.qualified_object_id, null);
+    assert.equal(result.qualifier_alignment.native_admitted, false);
+    assert.equal(result.status, 'HOLD');
+    assert.ok(result.issues.some(issue => issue.code === 'RELATION_SCHEMA_COMPATIBILITY_HOLD'));
+  }
+  same(romer.qualifier_alignment.domain_only_names, [
+    'revision','operating_mode','interface_id','load_case','effective_from','effective_to','authority'
+  ]);
+  assert.ok(romer.qualifier_alignment.shared_only_names.includes('valid_from'));
+  assert.ok(romer.qualifier_alignment.shared_only_names.includes('assertion_owner'));
+  assert.ok(eco.qualifier_alignment.domain_only_names.includes('timestamp'));
+  assert.ok(eco.qualifier_alignment.domain_only_names.includes('detection_limit'));
+  assert.ok(eco.qualifier_alignment.shared_only_names.includes('time_ref'));
+  assert.equal(emassc.qualifier_alignment.domain_qualifier_inventory, 'NOT_DECLARED');
+  assert.equal(emassc.qualifier_alignment.exact_name_overlaps, null);
+  assert.equal(emassc.qualifier_alignment.domain_only_names, null);
+  assert.equal(emassc.qualifier_alignment.shared_only_names, null);
+});
+
+test('malformed qualifier contracts cannot manufacture compatibility evidence', () => {
+  const missingRecord = structuredClone(sources.shared);
+  delete missingRecord.relation_record;
+  assert.throws(() => inspectRelationGrammar(sources.romer, missingRecord), /INVALID_SHARED_RELATION_RECORD/);
+  const duplicateField = structuredClone(sources.shared);
+  duplicateField.relation_record.optional.push('relation_id');
+  assert.throws(() => inspectRelationGrammar(sources.romer, duplicateField), /INVALID_SHARED_RELATION_FIELDS/);
+  const invalidDomain = structuredClone(sources.romer);
+  invalidDomain.common_qualifiers.push('authority');
+  assert.throws(() => inspectRelationGrammar(invalidDomain, sources.shared), /INVALID_DOMAIN_COMMON_QUALIFIERS/);
+  // Even a forged version label on a synthetic copy does not prove a bridge or native admission.
+  const spoofed = structuredClone(sources.romer);
+  spoofed.extends = sources.shared.schema;
+  const review = inspectRelationGrammar(spoofed, sources.shared);
+  assert.equal(review.qualifier_alignment.bridge_proven, false);
+  assert.equal(review.qualifier_alignment.semantic_equivalence, 'UNDETERMINED');
+  assert.equal(review.native_admitted, false);
+  assert.equal(review.dbr_readback_verified, false);
+  assert.equal(sources.romer.extends, 'CGX-RELATION-QUALIFIER/0.1');
+});
+
 test('all domain qualifier 0.1 declarations remain incompatible with shared 0.2 absent an independently qualified bridge', () => {
   const sharedSnapshot = delta.source_snapshots.find(s => s.source === 'shared');
   assert.equal(gitBlob(read(sourceFiles.shared)), sharedSnapshot.git_blob);
