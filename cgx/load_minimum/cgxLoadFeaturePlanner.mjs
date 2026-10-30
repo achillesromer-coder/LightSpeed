@@ -22,6 +22,12 @@ const UNSAFE = /(?:^|[\\/])\.\.(?:[\\/]|$)/;
 const safeText = (s) => typeof s === 'string' && s.trim().length > 0 && s.length <= 512 && !BAD.test(s) && !UNSAFE.test(s);
 const isObj = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
 const allow = (x) => x === true;
+// Source-review scope check: a menu declaration is not native Object_ID authority.
+const childSpaces=Object.freeze({eco:'Eco.cgx',romer:'Romer.cgx',emassc:'EMASSC.cgx',ls:'LS.cgx'});
+const reservedSpaces=Object.freeze(Object.fromEntries(Object.entries(childSpaces).map(([domain,space])=>[space,domain])));
+const unambiguous=s=>safeText(s)&&s===s.normalize('NFC')&&!/[\\p{Default_Ignorable_Code_Point}\\p{Cc}]/u.test(s);
+const childMatches=(domain,space)=>!Object.hasOwn(childSpaces,domain)||childSpaces[domain]===space;
+const reservedMatches=(domain,space)=>!Object.hasOwn(reservedSpaces,space)||reservedSpaces[space]===domain;
 
 /** Return only menu identifiers; host UI controls labels / icons and attaches callbacks separately. */
 export function menuForTarget(kind, { readable = false } = {}) {
@@ -41,6 +47,16 @@ export function planFeature(request) {
     return { state: 'DENIED', reason: 'INVALID_TARGET' };
   }
   if (!MENUS[target.kind].includes(action)) return { state: 'DENIED', reason: 'ACTION_NOT_APPLICABLE' };
+  if (!unambiguous(target.fileSpace)||!unambiguous(target.owner)||
+      (target.domain != null&&!unambiguous(target.domain))||
+      (target.objectId != null&&!unambiguous(target.objectId))||
+      (capabilityId != null&&!unambiguous(capabilityId)))
+    return {state:'DENIED',reason:'AMBIGUOUS_IDENTITY_OR_SCOPE'};
+  if (target.parentFileSpace != null && target.parentFileSpace !== 'Cognigrex.cgx')
+    return {state:'DENIED',reason:'COMPETING_PARENT_ROOT'};
+  if (target.domain != null && (!childMatches(target.domain,target.fileSpace)||
+      !reservedMatches(target.domain,target.fileSpace)))
+    return {state:'DENIED',reason:'CHILD_FILESPACE_SCOPE_CONFLICT'};
   if (!['TRACK','REFERENCE','PIN','EMBED'].includes(mode)) return { state:'DENIED', reason:'UNKNOWN_COMPOSITION_MODE' };
   if (!['minimal','offline','on-demand','full-approved'].includes(hydration)) return { state:'DENIED', reason:'UNKNOWN_HYDRATION' };
   if (!Number.isSafeInteger(sourceByteCount) || sourceByteCount < 0 || sourceByteCount > 60*1024*1024) return { state:'DENIED', reason:'BOUNDED_SOURCE_EXCEEDED' };
@@ -53,7 +69,7 @@ export function planFeature(request) {
   const parent = target.parentFileSpace || 'Cognigrex.cgx';
   if (!safeText(parent)) return { state:'DENIED',reason:'INVALID_PARENT' };
   const intent = {
-    schema: CONTRACT, action, target: { kind:target.kind, fileSpace:target.fileSpace, owner:target.owner, objectId:id??null, parentFileSpace:parent },
+    schema: CONTRACT, action, target: { kind:target.kind, fileSpace:target.fileSpace, domain:target.domain??null, owner:target.owner, objectId:id??null, parentFileSpace:parent },
     requestedMode:mode, requestedHydration:hydration,
     sourceByteCount, sourceCopied:false,
     requestedCapability: action === 'ccc.install' ? capabilityId : action === 'ccc.discover' ? 'CCC_DISCOVERY_ONLY' : 'ALEXANDRIA_LOAD',
@@ -63,6 +79,7 @@ export function planFeature(request) {
   if (allow(request.offline)) intent.offlineMode = 'MINIMAL_LOCAL_REFERENCE';
   if (!allow(request.readable)) intent.blockers.push('SCOPE_READ_UNVERIFIED');
   if (!safeText(id)) intent.blockers.push('EXACT_OBJECT_ID_UNRESOLVED');
+  if (target.domain == null) intent.blockers.push('CHILD_DOMAIN_UNVERIFIED');
   if (mutating) {
     intent.wizard = ['scope-target-and-current-accepted-parent','resolve-existing-LOAD-and-Alexandria-aliases',
       'choose-TRACK-REFERENCE-PIN-EMBED','verify-source-rights-and-hydration-policy',
