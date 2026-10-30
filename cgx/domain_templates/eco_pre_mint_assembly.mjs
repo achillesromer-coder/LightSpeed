@@ -108,6 +108,51 @@ function reviewSourceLineage(link,source){
   };
 }
 
+/**
+ * Read-only, caller-declared Drive permission snapshot. Metadata is not an
+ * owner rights grant, provider-authenticated receipt or publication licence.
+ * Only permission classes are emitted; no user identities or raw ACLs.
+ */
+function reviewAccessPosture(posture,source){
+  if(posture===null)return {state:"ACCESS_POSTURE_NOT_SUPPLIED",
+    provider_authenticated_by_module:false,rights_approved:false,
+    public_release_authorised:false,
+    flags:["CURRENT_PROVIDER_ACL_READBACK_REQUIRED"]};
+  const types=new Set(["anyone","user","group","domain"]);
+  const roles=new Set(["owner","writer","reader","commenter","organizer","fileOrganizer"]);
+  if(!obj(posture)||Object.keys(posture).some(k=>![
+      "source_ref","source_id","provider_observation_ref","permissions"].includes(k))||
+      posture.source_ref!==source.source_ref||
+      posture.source_id!==source.id||
+      !token(posture.provider_observation_ref)||
+      !Array.isArray(posture.permissions)||posture.permissions.length>100||
+      posture.permissions.some(p=>!obj(p)||
+        Object.keys(p).some(k=>!["type","role","allowFileDiscovery"].includes(k))||
+        !types.has(p.type)||!roles.has(p.role)||
+        (p.allowFileDiscovery!==undefined&&p.allowFileDiscovery!==null&&
+         typeof p.allowFileDiscovery!=="boolean")))
+    throw Error("INVALID_ECO_ACCESS_POSTURE");
+  const anyone=posture.permissions.filter(p=>p.type==="anyone");
+  const broad=posture.permissions.some(p=>p.type==="domain"||p.type==="group");
+  const flags=["CALLER_ACL_SNAPSHOT_NOT_AUTHENTICATED_BY_MODULE",
+    "SOURCE_REUSE_RIGHTS_AND_OWNER_APPROVAL_REQUIRED"];
+  if(anyone.length)flags.push("ANYONE_LINK_ACCESS_PRESENT_NOT_PUBLICATION_LICENCE");
+  if(anyone.some(p=>p.role!=="reader"&&p.role!=="commenter"))
+    flags.push("ANYONE_WRITE_OR_ADMIN_PERMISSION_REVIEW_REQUIRED");
+  if(anyone.some(p=>p.allowFileDiscovery===false))
+    flags.push("NON_DISCOVERABLE_LINK_STILL_ACCESSIBLE_TO_LINK_HOLDERS");
+  if(broad)flags.push("GROUP_OR_DOMAIN_SCOPE_REVIEW_REQUIRED");
+  if(!anyone.length)flags.push("NO_ANYONE_ENTRY_DOES_NOT_PROVE_PRIVATE");
+  return {state:"DECLARED_ACCESS_POSTURE_REVIEW_ONLY",
+    anyone_link_present:anyone.length>0,
+    broad_group_or_domain_present:broad,
+    provider_authenticated_by_module:false,
+    current_provider_acl_readback_verified_by_module:false,
+    source_reuse_rights_verified:false,
+    rights_approved:false,public_release_authorised:false,
+    flags};
+}
+
 function reviewCellAnchor(anchor,source){
   if(anchor===null)return {state:"SOURCE_CELL_ANCHOR_REQUIRED",
     sheet_ref:null,cell_ref:null,declared_anchor_matched:false,
@@ -134,10 +179,11 @@ function reviewCellAnchor(anchor,source){
 export function prepareEcoPreMintAssembly(request={}){
   if(!obj(request)||Object.keys(request).some(k=>![
     "cascade_input","geometry_descriptor","cell_anchor",
-    "requested_hydration","observation_showcase","source_lineage"].includes(k)))
+    "requested_hydration","observation_showcase","source_lineage","access_posture"].includes(k)))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const {cascade_input,geometry_descriptor=null,cell_anchor=null,
-    requested_hydration="H3",observation_showcase=null,source_lineage=null}=request;
+    requested_hydration="H3",observation_showcase=null,source_lineage=null,
+    access_posture=null}=request;
   if(!obj(cascade_input)||!levels.includes(requested_hydration))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const executed=runEcoReviewCascade(cascade_input);
@@ -153,6 +199,7 @@ export function prepareEcoPreMintAssembly(request={}){
   const geom=reviewGeometryDescriptor(geometry_descriptor,source.source_ref);
   const anchor=reviewCellAnchor(cell_anchor,source);
   const lineage=reviewSourceLineage(source_lineage,source);
+  const access=reviewAccessPosture(access_posture,{...source,id:executed.source_reference.id});
   let showcase=null;
   if(observation_showcase!==null){
     if(!obj(observation_showcase)||
@@ -185,6 +232,8 @@ export function prepareEcoPreMintAssembly(request={}){
     blockers.push("GEOMETRY_SOURCE_FRAME_OR_REVIEW_INCOMPLETE");
   if(source_lineage!==null)
     blockers.push("RELATED_SOURCE_LINEAGE_NOT_INDEPENDENTLY_VERIFIED");
+  if(access_posture!==null)
+    blockers.push("DECLARED_SOURCE_ACCESS_POSTURE_NOT_RIGHTS_APPROVAL");
   if(showcase!==null)
     blockers.push("ECO_OBSERVATION_SHOWCASE_NOT_NATIVE_MINT_OR_FIELD_EVIDENCE");
 
@@ -228,6 +277,7 @@ export function prepareEcoPreMintAssembly(request={}){
       ecological_review:executed.step_receipts.ecological_review},
     hydration:hydrate,geomatrix:geom,
     source_lineage_review:level>=2?lineage:{state:"NOT_REQUESTED"},
+    access_posture_review:level>=2?access:{state:"NOT_REQUESTED"},
     mint_showcase_review:level>=3&&showcase!==null?{
       schema:showcase.schema,state:showcase.state,
       checks:showcase.checks,
@@ -237,6 +287,7 @@ export function prepareEcoPreMintAssembly(request={}){
     stack_layers:[
       {layer:"source",state:source.proof_hash?"HASH_REFERENCE_VERIFIED":"R0_UNVERIFIED_THIS_RUN"},
       {layer:"lineage",state:level>=2?lineage.state:"NOT_REQUESTED"},
+      {layer:"access",state:level>=2?access.state:"NOT_REQUESTED"},
       {layer:"semantic",state:"R1_REVIEW_ONLY"},
       {layer:"geometry",state:geom.state},
       {layer:"temporal",state:geom.time_frame_ref_present?"REFERENCE_ONLY":"MISSING_SOURCE_TIME_FRAME"},
@@ -248,7 +299,8 @@ export function prepareEcoPreMintAssembly(request={}){
       "NO_METRIC_GEOMETRY_OR_CRS_TRANSFORM",
       "NO_R2_ONTOLOGY_OR_NATIVE_OBJECT_ID_PROOF",
       "NO_NATIVE_CCC_INSTALL_OR_DATASPACE_SYNC",
-      "NO_RELATED_SOURCE_BYTE_EQUIVALENCE_OR_OWNER_PERMISSION_PROOF"],
+      "NO_RELATED_SOURCE_BYTE_EQUIVALENCE_OR_OWNER_PERMISSION_PROOF",
+      "NO_INDEPENDENT_ACL_RIGHTS_ATTESTATION"],
     blocking_gates:[...new Set(blockers.concat(geom.flags))],
     permissions:{file_space_write:false,data_space_write:false,
       device_automation:false,public_publish:false,
