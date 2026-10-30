@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {planUniSpaceDropPreflight as plan} from './unispaceDropPreflight.mjs';
+import {planUniSpaceDropPreflight as plan,planUniSpacePrivateObjectDrop as handoff} from './unispaceDropPreflight.mjs';
 const target={object_id:'fixture:eco:existing',file_space:'Eco.cgx',domain:'eco',owner:'Eco-Grex'};
 const file={name:'observation.json',type:'application/json',size:123};
 const source={source_id:'fixture:eco:source-v2',version:'2',owner:'fixture-owner',sha256:'a'.repeat(64),rights:'OWNER_PRIVATE',proof_class:'scientific',rights_state:'ACTIVE'};
@@ -177,4 +177,120 @@ test('C33 revocation supersession and unqualified rights state fail closed befor
  // No matching source may remain a review candidate; never grants authority.
  const candidate=plan({...args,source:oldSource});
  assert.equal(candidate.status,'REVIEW_CANDIDATE');noEffects(candidate);
+});
+
+
+// Private UniSpace source-inspector → R0 drop preflight integration. Fixtures
+// are synthetic, not canonical object identities, signed roots or host receipts.
+const inspectorInput={
+ surface:'private',file_space:target.file_space,focus_id:target.object_id,
+ nodes:[{object_id:target.object_id,file_space:target.file_space,
+  domain:target.domain,owner:target.owner,kind:'observation',
+  source_refs:[],edges:[],evidence_ceiling:'synthetic'}],
+ access:{authorized_object_ids:[target.object_id],authorized_source_ids:[]},
+ source_envelopes:[]
+};
+const scopedDrop={surface:'private',inspectorInput,
+ dropInput:{target,file,source,existing_sources:[]}};
+const handoffInert=x=>{
+ for(const k of ['uploaded','hash_verified','acl_verified','host_authenticated',
+  'provider_readback','native_admitted','public_release','canonical_mutation'])
+  assert.equal(x[k],false,k);
+ assert.equal(x.bytes_read,0);
+};
+
+test('private inspector to R0 intake handoff never promotes caller proof or mints an ID',()=>{
+ const x=handoff(scopedDrop);
+ assert.equal(x.state,'SOURCE_REVIEW_ONLY');
+ assert.equal(x.selected_object_id,target.object_id);
+ assert.equal(x.selected_file_space,'Eco.cgx');
+ assert.equal(x.family,'Cognigrex.cgx');
+ assert.equal(x.source_view_state,'FRONTIER');
+ assert.equal(x.intake_preflight,'REVIEW_CANDIDATE');
+ assert.equal(x.source.source_id,source.source_id);
+ assert.equal(x.source.hash_status,'DECLARED_UNVERIFIED');
+ assert.ok(x.blockers.includes('SIGNED_NATIVE_OBJECT_ID_ROOT_LEASE_DBR_NOT_VERIFIED'));
+ handoffInert(x);
+});
+
+test('public surface, inconsistent context and a second ACL cannot bypass private scope',()=>{
+ for(const patch of [
+  {...scopedDrop,surface:'public'},
+  {...scopedDrop,surface:undefined},
+  {...scopedDrop,inspectorInput:{...inspectorInput,surface:'public'}},
+  {...scopedDrop,dropInput:{...scopedDrop.dropInput,surface:'public'}},
+  {...scopedDrop,dropInput:{...scopedDrop.dropInput,access:{
+   authorized_object_ids:['fixture:other'],authorized_file_spaces:['Romer.cgx']}}
+  }
+ ]){
+  const x=handoff(patch);
+  assert.equal(x.state,'DENIED');
+  assert.ok(!JSON.stringify(x).includes(source.source_id));
+  assert.ok(!JSON.stringify(x).includes(target.object_id));
+  handoffInert(x);
+ }
+});
+
+test('changed Object_ID, child or owner between inspector and intake fails closed',()=>{
+ for(const t of [
+  {...target,object_id:'fixture:eco:other'},
+  {...target,file_space:'Romer.cgx'},
+  {...target,domain:'romer'},
+  {...target,owner:'competing-owner'}
+ ]){
+  const x=handoff({...scopedDrop,dropInput:{...scopedDrop.dropInput,target:t}});
+  assert.equal(x.state,'DENIED');
+  assert.ok(!JSON.stringify(x).includes(source.source_id));
+  handoffInert(x);
+ }
+ const spoofed={...inspectorInput,nodes:[{
+  ...inspectorInput.nodes[0],domain:'romer'
+ }]};
+ assert.equal(handoff({...scopedDrop,inspectorInput:spoofed}).state,'DENIED');
+});
+
+test('offline intake, revoked source and missing rights state cannot become a proposal',()=>{
+ const cases=[
+  {...scopedDrop,offline:true},
+  {...scopedDrop,inspectorInput:{...inspectorInput,offline:true}},
+  {...scopedDrop,dropInput:{...scopedDrop.dropInput,source:{...source,rights_state:'REVOKED'}}},
+  {...scopedDrop,dropInput:{...scopedDrop.dropInput,source:{...source,revoked:true}}},
+  {...scopedDrop,dropInput:{...scopedDrop.dropInput,source:{...source,rights_state:undefined}}}
+ ];
+ for(const input of cases){
+  const x=handoff(input);
+  assert.equal(x.state,'DENIED');
+  assert.ok(!JSON.stringify(x).includes(source.source_id));
+  handoffInert(x);
+ }
+});
+
+test('source collisions remain holds; exact scoped duplicate is only a NOOP review',()=>{
+ const prior={source_id:source.source_id,sha256:source.sha256,
+  version:source.version,owner:source.owner,rights:source.rights,
+  proof_class:source.proof_class,object_id:target.object_id,
+  file_space:target.file_space,rights_state:'ACTIVE'};
+ const conflict=handoff({...scopedDrop,dropInput:{...scopedDrop.dropInput,
+  existing_sources:[{...prior,file_space:'Romer.cgx'}]}});
+ assert.equal(conflict.state,'DENIED');
+ handoffInert(conflict);
+ const noop=handoff({...scopedDrop,dropInput:{...scopedDrop.dropInput,
+  existing_sources:[prior]}});
+ assert.equal(noop.state,'SOURCE_REVIEW_ONLY');
+ assert.equal(noop.intake_preflight,'NOOP_REVIEW');
+ assert.equal(noop.source,null);
+ assert.equal(noop.provider_readback,false);
+ handoffInert(noop);
+});
+
+test('forged host/science proof cannot elevate private handoff into execution',()=>{
+ const x=handoff({...scopedDrop,host_authenticated:true,provider_readback:true,
+  native_admitted:true,dropInput:{...scopedDrop.dropInput,
+   signedRootVerified:true,source:{...source,scientificVerified:true,
+    hashVerified:true,rightsVerified:true},hostToken:'PRIVATE_DO_NOT_ECHO'}});
+ assert.equal(x.state,'SOURCE_REVIEW_ONLY');
+ assert.equal(x.source_proof,'CALLER_DECLARATION_NOT_PROVIDER_VERIFIED');
+ assert.equal(x.installed,false);
+ assert.ok(!JSON.stringify(x).includes('PRIVATE_DO_NOT_ECHO'));
+ handoffInert(x);
 });
