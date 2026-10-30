@@ -102,3 +102,68 @@ export function planFeature(request) {
   // Explicitly still a plan. Host makes the authoritative acceptance decision and records separate signed DBR.
   return intent;
 }
+
+
+/**
+ * Private UniSpace browser drag/drop metadata preflight. A File's name, type,
+ * size and optional digest are caller claims, never provider evidence. This
+ * does not read File bytes, assign Object_ID, call a native intake adapter,
+ * publish an asset, or grant host rights. Actual R0 byte ingestion requires
+ * an independently authorised provider transaction and readback.
+ */
+export const DROP_PREFLIGHT_SCHEMA='CGX-UNISPACE-DROP-PREFLIGHT/0.1';
+const dropName=s=>unambiguous(s)&&s.length<=255&&s.trim()===s&&
+ !s.startsWith('.')&&!/[\\/:*?"<>|&]/.test(s)&&
+ !/^(?:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\.|$)/i.test(s);
+const dropMime=s=>s===''||(typeof s==='string'&&s.length<=127&&
+ /^[a-z0-9.+-]+\/[a-z0-9.+-]+$/i.test(s));
+const dropRights=new Set(['PUBLIC_SAFE','OWNER_PRIVATE','LICENSE_RESTRICTED','UNKNOWN']);
+const dropProof=new Set(['creative','scientific','engineering','historical','operational','unknown']);
+
+export function planSourceDropPreflight({target,file,readable=false,offline=false}={}){
+ const deny=reason=>({schema:DROP_PREFLIGHT_SCHEMA,state:'DENIED',reason,
+  canonicalMutation:false,sourceBytesRead:false,hashVerified:false,publicRelease:false});
+ if(!isObj(target)||target.kind!=='filespace')return deny('DROP_REQUIRES_CHILD_FILESPACE');
+ if(typeof offline!=='boolean'||typeof readable!=='boolean')return deny('INVALID_PREFLIGHT_MODE');
+ if(!isObj(file)||!dropName(file.name)||!dropMime(file.type??''))
+  return deny('INVALID_SOURCE_METADATA');
+ if(!Number.isSafeInteger(file.size)||file.size<0||file.size>60*1024*1024)
+  return deny('BOUNDED_SOURCE_EXCEEDED');
+ for(const key of ['sourceId','revision','owner','licenseId']){
+  if(file[key]!=null&&!unambiguous(file[key]))return deny('AMBIGUOUS_SOURCE_METADATA');
+ }
+ if(file.sha256!=null&&!(typeof file.sha256==='string'&&/^[0-9a-f]{64}$/i.test(file.sha256)))
+  return deny('INVALID_UNVERIFIED_DIGEST_CLAIM');
+ if(file.rights!=null&&!dropRights.has(file.rights))return deny('UNKNOWN_RIGHTS_DECLARATION');
+ if(file.proofClass!=null&&!dropProof.has(file.proofClass))return deny('UNKNOWN_PROOF_CLASS');
+ const scope=planFeature({action:'alexandria.resolve',target,readable,
+  offline,hydration:'minimal',sourceByteCount:file.size});
+ if(scope.state==='DENIED')return deny(scope.reason);
+ const blockers=[...scope.blockers,'SOURCE_BYTES_NOT_READ','SOURCE_HASH_NOT_PROVIDER_VERIFIED',
+  'CURRENT_HOST_ACL_UNVERIFIED','SOURCE_RIGHTS_NOT_PROVIDER_VERIFIED',
+  'NATIVE_OBJECT_ID_AND_DBR_UNVERIFIED','PUBLIC_STATIC_ASSET_ROUTE_FORBIDDEN'];
+ if(!file.sha256)blockers.push('SOURCE_DIGEST_NOT_SUPPLIED');
+ if(!file.sourceId||!file.revision)blockers.push('SOURCE_ID_OR_REVISION_UNRESOLVED');
+ if(!file.owner)blockers.push('SOURCE_OWNER_UNRESOLVED');
+ if(!file.rights||file.rights==='UNKNOWN')blockers.push('SOURCE_RIGHTS_UNKNOWN');
+ if(file.rights==='LICENSE_RESTRICTED'&&!file.licenseId)
+  blockers.push('LICENSE_TERMS_UNRESOLVED');
+ if(!file.proofClass||file.proofClass==='unknown')blockers.push('PROOF_CLASS_UNRESOLVED');
+ if(!file.type)blockers.push('MIME_UNVERIFIED');
+ if(file.size===0)blockers.push('EMPTY_SOURCE_REVIEW_REQUIRED');
+ if(offline)blockers.push('OFFLINE_AUTHORITY_AND_REVOCATION_UNVERIFIED');
+ return {
+  schema:DROP_PREFLIGHT_SCHEMA,state:'REVIEW_ONLY',admissionStage:'R0_METADATA_PREFLIGHT',
+  target:scope.target,source:{
+   name:file.name,byteCount:file.size,mimeType:file.type||null,
+   proofClass:file.proofClass??'unknown',rightsClaim:file.rights??'UNKNOWN',
+   digestClaimPresent:!!file.sha256,providerReferenceClaimPresent:!!file.sourceId,
+   revisionClaimPresent:!!file.revision
+  },
+  blockers:[...new Set(blockers)],
+  transferBudgetBytes:0,sourceBytesRead:false,hashVerified:false,
+  hostAuthenticated:false,providerReadback:false,nativeAdmitted:false,
+  canonicalMutation:false,networkFetch:false,install:false,execute:false,
+  publicRelease:false,rendered:false
+ };
+}
