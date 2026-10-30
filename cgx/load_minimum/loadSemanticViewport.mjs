@@ -20,6 +20,10 @@ const VIEWS={
  interactive:{lens:"hybrid-canonical-cells",projection:"read-only-controls"},
  matrix:{lens:"matrix",projection:"traceability"}
 };
+// Shared read-only UI view mapping; not an authenticated renderer or capability.
+export function getRegisteredViewIntent(view){
+ return Object.hasOwn(VIEWS,view)?Object.freeze({...VIEWS[view]}):null;
+}
 const good=s=>typeof s==="string" && s.trim().length>0 && s.length<=256 && !/[\u0000-\u001f]/.test(s);
 const obj=x=>x!==null&&typeof x==="object"&&!Array.isArray(x);
 const ints=(list)=>Array.isArray(list)&&list.every(good);
