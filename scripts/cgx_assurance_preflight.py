@@ -7,7 +7,11 @@ sys.path.insert(0,str(ROOT/"scripts"))
 from cgx_assurance_route import route,STATE_RANK
 
 ACCEPTED_METHOD_STATES={"COMPLETE","BOUNDED","NOT_APPLICABLE"}
-SCIENTIFIC_ASSET_TAGS={"scientific-asset","scientific-projection","ephemeris","spatial-scale","scientific-measurement"}
+# These are explicit upstream classifications, not inferred from asset content.
+# If the caller omits/misclassifies tags, source-level preflight cannot prove kind.
+SCIENTIFIC_ASSET_TAGS={"scientific-asset","scientific-projection","ephemeris","spatial-scale","scientific-measurement",
+    "orbital-geometry","orbital-scale","geometry-asset","simulation-asset",
+    "engineering-asset","ecological-asset","operational-asset"}
 SCIENTIFIC_CONSEQUENTIAL_DEPTHS={"build","execute","publish"}
 SAFETY_TAGS={"replication-control","hard-stop","containment","life-support","hazard-control","planetary-protection","unknown-life","nuclear","radioactive"}
 
