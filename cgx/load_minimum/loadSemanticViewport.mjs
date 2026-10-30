@@ -160,3 +160,76 @@ export function planNovelMatching(registry,{source_hash=null,source_id=null,doma
   required:["original source and version","type/units/time/configuration comparison","semantic difference and loss ledger","rights and owner authority","native RootAuthority/DBR acceptance"],
   note:"A matching native source or filename is not sufficient to prove semantic identity, truth or installed capability."};
 }
+
+
+/**
+ * UniSpace private source-review inspector, derived from one LOAD spread.
+ * This is a browser presentation contract, NOT a native Object_ID resolver.
+ * Neither spread ACL claims nor caller receipts prove signed host authority.
+ */
+export const UNISPACE_INSPECTOR_SCHEMA='CGX-UNISPACE-PRIVATE-EVIDENCE-INSPECTOR/0.1';
+const familyScope=Object.freeze({
+ eco:{fileSpace:'Eco.cgx',parent:'Cognigrex.cgx'},
+ romer:{fileSpace:'Romer.cgx',parent:'Cognigrex.cgx'},
+ emassc:{fileSpace:'EMASSC.cgx',parent:'Cognigrex.cgx'},
+ ls:{fileSpace:'LS.cgx',parent:'EMASSC.cgx'}
+});
+export function planUniSpaceEvidenceInspector({spread,target,view='document',surface=null}={}){
+ const deny=reason=>({schema:UNISPACE_INSPECTOR_SCHEMA,state:'DENIED',reason,
+  sourceBytesRead:false,hostVerified:false,publicRelease:false,mayExecute:false,
+  canonicalMutation:false});
+ if(surface!=='private')return deny('PRIVATE_INSPECTOR_SURFACE_REQUIRED');
+ if(!obj(spread)||spread.schema!==SPREAD_SCHEMA||spread.status!=='REVIEW_ONLY'||
+    !Array.isArray(spread.objects)||!Array.isArray(spread.edges)||
+    !good(spread.focus_id)||!obj(target))return deny('UNTRUSTED_SPREAD_OR_TARGET');
+ const focus=spread.objects.find(n=>n.object_id===spread.focus_id);
+ if(!focus||spread.objects.filter(n=>n.object_id===spread.focus_id).length!==1)
+  return deny('FOCUS_ID_NOT_UNIQUE');
+ const scope=familyScope[focus.domain];
+ if(!scope||target.objectId!==spread.focus_id||target.domain!==focus.domain||
+    target.fileSpace!==scope.fileSpace||target.parentFileSpace!==scope.parent||
+    target.rootFileSpace!=='Cognigrex.cgx')
+  return deny('EXACT_CHILD_SCOPE_MISMATCH');
+ if(!Array.isArray(focus.source_refs)||!focus.source_refs.every(good)||
+    typeof focus.source_available!=='boolean'||!good(focus.source_ceiling))
+  return deny('UNTRUSTED_FOCUS_EVIDENCE');
+ if(!spread.objects.every(n=>obj(n)&&good(n.object_id)&&good(n.domain))||
+    new Set(spread.objects.map(n=>n.object_id)).size!==spread.objects.length)
+  return deny('UNTRUSTED_SPREAD_IDENTITIES');
+ // Use existing viewport planner. Never bypass its geometry and proof holds.
+ let viewport;
+ try{viewport=planViewportSwitch({spread,to:view});}
+ catch{return deny('INVALID_VIEWPORT_PROJECTION');}
+ const includedIds=new Set(spread.objects.map(n=>n.object_id));
+ if(spread.edges.some(e=>!obj(e)||!includedIds.has(e.from)||!includedIds.has(e.to)||
+    !good(e.relation)))return deny('UNTRUSTED_EDGE_SCOPE');
+ const edges=spread.edges.filter(e=>e.from===spread.focus_id||e.to===spread.focus_id);
+ const sources=[...new Set(focus.source_refs)];
+ const frontier=[];
+ if(!sources.length)frontier.push('PERMITTED_R0_SOURCE_MISSING');
+ if(view==='3d'&&viewport.state==='FRONTIER_GEOMETRY_UNQUALIFIED')
+  frontier.push('QUALIFIED_GEOMETRY_MISSING');
+ frontier.push('SOURCE_RIGHTS_AND_REVISION_NOT_PROVIDER_VERIFIED');
+ frontier.push('CURRENT_NATIVE_OBJECT_ID_ROOT_ACL_LEASE_DBR_NOT_VERIFIED');
+ frontier.push('ACTUAL_BROWSER_AND_HOST_READBACK_NOT_VERIFIED');
+ return {
+  schema:UNISPACE_INSPECTOR_SCHEMA,state:'PRIVATE_SOURCE_REVIEW_ONLY',
+  family:'Cognigrex.cgx',child_file_space:scope.fileSpace,
+  parent_file_space:scope.parent,selected_object_id:spread.focus_id,
+  selected_domain:focus.domain,view:viewport.to,view_state:viewport.state,
+  evidence_ceiling:'CALLER_SOURCE_CLAIMS_ONLY',
+  hydration:'H0_H2_SPARSE_REVIEW',
+  layers:{
+   H0:{state:'CLAIMED_EXACT_ID_NOT_NATIVE_VERIFIED'},
+   H1:{state:'AUTHORISED_SPREAD_CLAIM_ONLY',edge_count:edges.length},
+   H2:{state:sources.length?'PERMITTED_SOURCE_REFS_CLAIMED':'FRONTIER_SOURCE_UNAVAILABLE',source_count:sources.length},
+   H3:{state:'CCC_CAPABILITIES_NOT_NATIVE_VERIFIED'},
+   H4:{state:'HOST_EXECUTION_NOT_AUTHORISED'}
+  },
+  source_refs:sources,selected_edges:edges,
+  frontier,next_step:'RESOLVE_NATIVE_OBJECT_RIGHTS_AND_SIGNED_HOST_DBR_WITH_INDEPENDENT_READBACK',
+  sourceBytesRead:false,rightsVerified:false,hostVerified:false,
+  nativeAdmitted:false,rendered:false,mayExecute:false,publicRelease:false,
+  canonicalMutation:false
+ };
+}
