@@ -231,6 +231,17 @@ export function planUniSpaceOperatorCockpit({
           inspector.viewport.projection!==intent.projection){
   return cockpitDeny('VIEWPORT_INTENT_PROJECTION_MISMATCH');
  }
+ // Online review plans must also be inert at H3/H4. A forged widget may
+ // advertise a CCC capability, execution lease or metric proof while keeping
+ // top-level host flags false. Deny rather than normalise that contradiction.
+ // Offline H0 uses a separate, stricter check above.
+ if(!offline&&(
+   !object(inspector.h3)||!Array.isArray(inspector.h3.qualified_capabilities)||
+   inspector.h3.qualified_capabilities.length!==0||
+   inspector.h3.catalogue_discovery_only!==true||
+   inspector.h4.permissioned_execution!=='HOST_DENIED_UNTIL_INDEPENDENT_ROOT_LEASE_DBR'||
+   inspector.viewport.metric_authority!=='NOT_VERIFIED'
+ ))return cockpitDeny('ONLINE_REVIEW_CAPABILITY_OR_AUTHORITY_CONFLICT');
  // #209/#158: the caller can hand in a fabricated inspector object. The
  // source-only inspector never qualifies metric 3D as R3; neither may this
  // operator projection. A conflicting Frontier/metric badge is also a veto.
