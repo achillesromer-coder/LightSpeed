@@ -89,6 +89,15 @@ export function runEcoReviewCascade(input) {
 
   // Snapshot hashing is bounded and occurs only after source-scope checks.
   const sourceProof=reviewSourceSnapshot(source,source_snapshot);
+  // A verified workbook hash does not bind a claim if the claim points at a
+  // different revision or digest. Never treat a file-level hash as claim proof.
+  if (record.source_revision != null && record.source_revision !== source.revision)
+    throw Error("ECO_CLAIM_SOURCE_REVISION_CONFLICT");
+  if (sourceProof !== null &&
+      (record.source_revision !== source.revision ||
+       typeof record.source_sha256 !== "string" ||
+       record.source_sha256.toLowerCase() !== sourceProof.sha256))
+    throw Error("ECO_CLAIM_SNAPSHOT_BINDING_REQUIRED_OR_CONFLICT");
 
   // Reuse the established Eco qualified alignment module, not a parallel resolver.
   const alignment = planEcoAlignment({
