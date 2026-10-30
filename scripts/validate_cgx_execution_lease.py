@@ -134,6 +134,39 @@ def main():
       "limits":"No signature, nonce, issuer authentication, DBR, real project ACL, downstream tool or host tested; absence of project_ids currently means unrestricted project matching in this wrapper."
     }
 
+    # ACHILLES T3: required lease.scope must not silently become an
+    # unrestricted empty dictionary. Synthetic validator-only observations.
+    x=base_lease()
+    x["root_authority_receipt_ref"]="fixture:root-approval"
+    x.pop("scope",None)
+    missing_scope_ok,missing_scope_reasons,_=check(x)
+
+    x=base_lease()
+    x["root_authority_receipt_ref"]="fixture:root-approval"
+    x["scope"]={}
+    empty_scope_ok,empty_scope_reasons,_=check(x)
+
+    x=base_lease()
+    x["root_authority_receipt_ref"]="fixture:root-approval"
+    x["scope"]["task_ids"]=["fixture:task:unrelated"]
+    wrong_task_ok,wrong_task_reasons,_=check(x)
+    wrong_task_control=(not wrong_task_ok and
+                        "lease-task-out-of-scope:CGX-LAUNCH-006" in wrong_task_reasons)
+    if not wrong_task_control:
+        failures.append("T3 mismatched-task denial control failed")
+
+    t3={
+      "test_id":"T3-LEASE-MISSING-SCOPE-REQUIRED-FIELD",
+      "evidence_class":"SOURCE_ONLY_SYNTHETIC_NEGATIVE",
+      "contract":"cgx/domain_templates/execution_lease_contract.json:required_fields/scope",
+      "missing_scope":"ALLOW" if missing_scope_ok else "DENY",
+      "empty_scope":"ALLOW" if empty_scope_ok else "DENY",
+      "wrong_task_denial_control":"PASS" if wrong_task_control else "FAIL",
+      "gate":"HOLD" if missing_scope_ok or empty_scope_ok else "REQUIRES_INDEPENDENT_AUTHORITY_READBACK",
+      "native_admitted":False,
+      "limits":"Wrapper only; required scope field is not validated. Empty scope policy and downstream tool/object/project enforcement require separate owner review; no real lease, issuer, DBR or host tested."
+    }
+
     t1={
       "test_id":"T1-LEASE-ISSUER-IDENTITY",
       "evidence_class":"SOURCE_ONLY_SYNTHETIC_NEGATIVE",
@@ -145,7 +178,7 @@ def main():
       "native_admitted":False,
       "limits":"Wrapper-only fixture; no signature, revocation registry, downstream tool, real issuer, host, DBR, or lease authentication exercised."
     }
-    print({"status":"PASS" if not failures else "FAIL","failures":failures,"achilles_t1_negative_audit":t1,"achilles_t2_negative_audit":t2})
+    print({"status":"PASS" if not failures else "FAIL","failures":failures,"achilles_t1_negative_audit":t1,"achilles_t2_negative_audit":t2,"achilles_t3_negative_audit":t3})
     return 1 if failures else 0
 
 if __name__=="__main__":
