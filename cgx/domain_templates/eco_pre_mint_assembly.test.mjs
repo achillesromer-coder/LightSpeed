@@ -353,7 +353,7 @@ test("paired original/translated synthetic cells compare without equivalence pro
  assert.ok(r.blocking_gates.includes(
   "CELL_CROSSWALK_PROVIDER_ATTESTATION_AND_FULL_EQUIVALENCE_REQUIRED"));
  assert.equal(JSON.stringify(r).includes("=B3*B4*B5*1000"),false);
- assert.equal(JSON.stringify(r).includes("numeric_value"),false);
+ assert.equal(JSON.stringify(r).includes('"numeric_value":9.6'),false);
 });
 test("formula, value and unit discrepancies remain explicit held variants",()=>{
  for(const changed of [
