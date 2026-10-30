@@ -153,3 +153,41 @@ test("uppercase hexadecimal digest is equivalent to the exact verified digest",(
  assert.equal(r.source_reference.hash_verified_this_execution,true);
  assert.equal(r.release_gates.native_admitted,false);
 });
+
+test("BioBlocks source snapshot reaches the existing qualified review without field promotion",()=>{
+ const bioNovel={...novel,semantic_type:"ecological_observation",evidence_class:"simulated"};
+ const bioRecord={evidence_class:"simulated",source_ref:source.source_ref,
+  source_revision:source.revision,source_sha256:fixtureSha,
+  seed_count:20,germinated_count:8,surviving_count:5};
+ const result=runEcoReviewCascade({source,scope,novel:bioNovel,
+  domain:"bioblock_monitoring",record:bioRecord,source_snapshot});
+ assert.equal(result.source_reference.hash_verified_this_execution,true);
+ assert.equal(result.step_receipts.ecological_review.executed,true);
+ assert.equal(result.step_receipts.ecological_review.evidence_class,"simulated");
+ assert.ok(result.step_receipts.ecological_review.flags.includes(
+  "NONOBSERVED_COUNTS_CANNOT_ESTABLISH_FIELD_SURVIVAL"));
+ assert.equal(result.release_gates.native_admitted,false);
+ assert.equal(result.release_gates.independent_science_validated,false);
+ assert.equal(result.release_gates.public_release_authorised,false);
+});
+test("BioBlocks cross-revision and cross-digest claim binding fails closed",()=>{
+ const bioNovel={...novel,semantic_type:"ecological_observation",evidence_class:"simulated"};
+ const rec={evidence_class:"simulated",source_ref:source.source_ref,
+  source_revision:source.revision,source_sha256:fixtureSha};
+ for(const altered of [{...rec,source_revision:"stale-revision"},
+  {...rec,source_sha256:"0".repeat(64)}]){
+  assert.throws(()=>runEcoReviewCascade({source,scope,novel:bioNovel,
+   domain:"bioblock_monitoring",record:altered,source_snapshot}),
+   /ECO_CLAIM_SOURCE_REVISION_CONFLICT|ECO_CLAIM_SNAPSHOT_BINDING_REQUIRED_OR_CONFLICT/);
+ }
+});
+test("BioBlocks declared original digest cannot override missing authenticated bytes",()=>{
+ const bioNovel={...novel,semantic_type:"ecological_observation",evidence_class:"simulated"};
+ const rec={evidence_class:"simulated",source_ref:source.source_ref,
+  source_revision:source.revision,source_sha256:fixtureSha};
+ const result=runEcoReviewCascade({source,scope,novel:bioNovel,
+  domain:"bioblock_monitoring",record:rec});
+ assert.equal(result.source_reference.hash_verified_this_execution,false);
+ assert.equal(result.source_reference.bytes_read_this_execution,false);
+ assert.equal(result.release_gates.db_readback,false);
+});
