@@ -120,6 +120,29 @@ def main():
             if status != "HOLD" or generic_hold not in reasons:
                 generic_failures.append((domain, tags, status, reasons))
     checks["unclassified-publication-matrix-16-forged-receipts-rejected"] = not generic_failures
+    # Without authenticated classification, even an untagged simulation can
+    # produce a consequential numerical claim. Forged receipts cannot clear it.
+    simulation_hold = "simulation-authenticated-asset-classification-and-native-verifier-unavailable"
+    unclassified_simulation_failures = []
+    for domain in ("romer", "eco", "emassc", "lightspeed"):
+        for tags in ([], ["public-claim"], ["unclassified"], ["render-preview"]):
+            resolution = route(domain, "simulate", "C0", tags)
+            forged = {"source_verified": True, "method_receipts": {
+                method: {"state": "COMPLETE", "evidence_ids": ["caller-self-attested"]}
+                for method in resolution["required_methods"]}}
+            decision, reasons = assess(resolution, forged)
+            if decision != "HOLD" or simulation_hold not in reasons:
+                unclassified_simulation_failures.append((domain, tags, decision, reasons))
+    checks["unclassified-simulation-matrix-16-forged-receipts-rejected"] = (
+        not unclassified_simulation_failures)
+    simulation_cli = subprocess.run(
+        [sys.executable, str(Path(__file__).resolve().parent / "cgx_assurance_preflight.py"),
+         "--domain", "lightspeed", "--execution-depth", "simulate", "--tags", "render-preview"],
+        capture_output=True, text=True, timeout=15, check=False)
+    simulation_receipt = json.loads(simulation_cli.stdout) if simulation_cli.stdout.strip() else {}
+    checks["unclassified-simulation-cli-held"] = (
+        simulation_cli.returncode == 3 and simulation_receipt.get("decision") == "HOLD"
+        and simulation_hold in simulation_receipt.get("hold_reasons", []))
     # Both the assurance CLI and the composed consequence CLI must enforce it.
     script_dir = Path(__file__).resolve().parent
     assurance_cli = subprocess.run(
