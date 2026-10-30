@@ -32,6 +32,14 @@ def assess(resolution,assessment):
             "scientific-asset-authoritative-vector-verifier-not-integrated",
             "scientific-asset-native-object-and-runtime-readback-not-verified",
         ]
+    # Source-only review has no authenticated classification, rights/ACL,
+    # owner release grant, revocation check, or signed DBR readback. A caller
+    # can omit scientific tags entirely, so all publish scopes must stop here.
+    # This is an interim assurance containment, not a publication verifier.
+    if ctx.get("execution_depth")=="publish":
+        return "HOLD",[
+            "publication-authenticated-source-classification-rights-and-owner-approval-unverified"
+        ]
     if state=="HOLD":
         return "HOLD",["router-hold:no-sufficient-method-route-for-high-consequence-action"]
     if STATE_RANK[state]<STATE_RANK["VERIFY"]:
