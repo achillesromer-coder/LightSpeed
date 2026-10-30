@@ -71,7 +71,8 @@ const metadata={id:source.id,revision:source.revision,
 const source_snapshot={metadata,original_bytes:originalBytes,
   expected_sha256:fixtureSha};
 const integrated=(snapshot=source_snapshot)=>runEcoReviewCascade({
-  source,scope,novel,domain:"second_cycle_claim",record:claim,
+  source,scope,novel,domain:"second_cycle_claim",
+  record:{...claim,source_sha256:fixtureSha,source_revision:source.revision},
   source_snapshot:snapshot
 });
 
@@ -122,4 +123,33 @@ test("only Drive source snapshots are accepted by this scoped adapter",()=>{
  assert.throws(()=>runEcoReviewCascade({source:{...source,provider:"github"},
   scope,novel,domain:"second_cycle_claim",record:claim,source_snapshot}),
   /INVALID_ECO_SOURCE_SNAPSHOT/);
+});
+
+test("a real source digest must match the exact claim's declared digest",()=>{
+ assert.throws(()=>runEcoReviewCascade({
+  source,scope,novel,domain:"second_cycle_claim",
+  record:{...claim,source_revision:source.revision,
+   source_sha256:"0".repeat(64)},source_snapshot}),
+  /ECO_CLAIM_SNAPSHOT_BINDING_REQUIRED_OR_CONFLICT/);
+});
+test("a real source snapshot cannot be attached to an unbound claim",()=>{
+ assert.throws(()=>runEcoReviewCascade({
+  source,scope,novel,domain:"second_cycle_claim",
+  record:claim,source_snapshot}),
+  /ECO_CLAIM_SNAPSHOT_BINDING_REQUIRED_OR_CONFLICT/);
+});
+test("cross-revision claim lineage is rejected even without source bytes",()=>{
+ assert.throws(()=>runEcoReviewCascade({
+  source,scope,novel,domain:"second_cycle_claim",
+  record:{...claim,source_revision:"different-revision"}}),
+  /ECO_CLAIM_SOURCE_REVISION_CONFLICT/);
+});
+test("uppercase hexadecimal digest is equivalent to the exact verified digest",()=>{
+ const r=runEcoReviewCascade({source,scope,novel,
+  domain:"second_cycle_claim",
+  record:{...claim,source_revision:source.revision,
+   source_sha256:fixtureSha.toUpperCase()},
+  source_snapshot});
+ assert.equal(r.source_reference.hash_verified_this_execution,true);
+ assert.equal(r.release_gates.native_admitted,false);
 });
