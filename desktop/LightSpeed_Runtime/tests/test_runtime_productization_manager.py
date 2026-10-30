@@ -589,3 +589,51 @@ def test_status_quarantines_untrusted_slot_config_without_modifying_it(
     assert config_path.read_bytes() == original
     assert python_path.read_text(encoding="utf-8") == "fixture-only"
     assert not (root / "_receipts").exists()
+
+
+@pytest.mark.parametrize(
+    "variant",
+    ["wrong_authority", "missing_authority", "invalid_profile", "missing_profile", "nonstring_profile"],
+)
+def test_invalid_marker_authority_or_profile_never_authorizes_mutation(
+    monkeypatch, tmp_path: Path, variant: str
+) -> None:
+    root = _set_root(monkeypatch, tmp_path)
+    slot = root / "alpha"
+    python_path = slot / "venv" / "Scripts" / "python.exe"
+    python_path.parent.mkdir(parents=True)
+    python_path.write_text("fixture-only; never execute", encoding="utf-8")
+    protected = slot / "preserve.txt"
+    protected.write_text("unrelated bytes", encoding="utf-8")
+    marker_path = slot / rp.MARKER_NAME
+    marker = {
+        "schema": "LIGHTSPEED-MANAGED-RUNTIME-MARKER/0.1",
+        "slot": "alpha",
+        "authority": "digital-runtime-slot-only",
+        "profile": "core",
+    }
+    if variant == "wrong_authority":
+        marker["authority"] = "host-root-authority"
+    elif variant == "missing_authority":
+        del marker["authority"]
+    elif variant == "invalid_profile":
+        marker["profile"] = "arbitrary-executable"
+    elif variant == "missing_profile":
+        del marker["profile"]
+    elif variant == "nonstring_profile":
+        marker["profile"] = ["core"]
+    marker_path.write_text(json.dumps(marker), encoding="utf-8")
+    marker_bytes = marker_path.read_bytes()
+
+    status = rp.runtime_productization_status("alpha")
+    assert status["installed"] is False
+    assert status["authority"] == "status-only"
+    for action in ("configure", "update", "rollback"):
+        with pytest.raises(rp.RuntimeProductizationError, match="managed marker"):
+            rp.manage_runtime_productization(
+                action, slot="alpha", profile="core", confirmed=True
+            )
+    assert marker_path.read_bytes() == marker_bytes
+    assert protected.read_text(encoding="utf-8") == "unrelated bytes"
+    assert python_path.read_text(encoding="utf-8") == "fixture-only; never execute"
+    assert not (root / "_receipts").exists()
