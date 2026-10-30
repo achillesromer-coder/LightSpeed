@@ -465,6 +465,35 @@ test('unqualified R2 Frontier cannot become ready through a forged stage',()=>{
  assert.equal(cockpit({...statusInput,inspector:forged}).state,'DENIED');
 });
 
+// #158/#209: R3 review status cannot be synthesized from an empty or
+// internally inconsistent set of R0 source declarations. These are negative
+// UI contract tests, not real provider ACL, native DBR or browser acceptance.
+test('R3 document claims cannot be fabricated from missing or contradictory R0 proof',()=>{
+ const valid=statusInput.inspector;
+ assert.equal(cockpit(statusInput).presentation_stage,'R3_VIEW_PROPOSAL');
+ const claim=valid.h2.source_claims[0];
+ const variants=[
+  {...valid,h2:{...valid.h2,source_claims:[]}},
+  {...valid,h2:{...valid.h2,proof_classes:[]}},
+  {...valid,h2:{...valid.h2,source_claims:[claim,claim]}},
+  {...valid,h2:{...valid.h2,source_claims:[{...claim,qualification:'FRONTIER_RIGHTS_REVOKED_OR_UNRESOLVED'}]}},
+  {...valid,h2:{...valid.h2,source_claims:[{...claim,sha256:null}]}},
+  {...valid,h2:{...valid.h2,source_claims:[{...claim,version:null}]}},
+  {...valid,h2:{...valid.h2,source_claims:[{...claim,rights:'LICENSE_RESTRICTED'}]}},
+  {...valid,h2:{...valid.h2,source_claims:[{...claim,proof_class:'creative'}]}}
+ ];
+ for(const inspector of variants){
+  const denied=cockpit({...statusInput,inspector});
+  assert.equal(denied.state,'DENIED');
+  assert.equal(denied.reason,'R3_SOURCE_PROOF_CLAIMS_UNQUALIFIED');
+  assert.equal(denied.may_execute,false);
+  assert.equal(denied.released,false);
+  assert.ok(!JSON.stringify(denied).includes('fixture:eco:source'));
+ }
+ const frontier=inspect({...args,source_envelopes:[]});
+ assert.equal(cockpit({...statusInput,inspector:frontier}).presentation_stage,'R2_REVIEW_FRONTIER');
+});
+
 test('#209 cockpit rejects forged metric R3, conflicting Frontier and verified badges',()=>{
  const real3d=inspect({...args,view:'3d'});
  assert.equal(real3d.admission_stage,'R2_REVIEW_FRONTIER');
