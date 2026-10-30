@@ -27,9 +27,13 @@ test('public source alone cannot promote a private or unqualified target Object_
   assert.equal(y.status,'HOLD');assert.equal(y.reason,'TARGET_PUBLIC_RIGHTS_UNVERIFIED');
   assert.ok(!JSON.stringify(y).includes(source.source_id));noEffects(y);
  }
- // Both declarations only permit review; they do not establish real ACL or public release.
+ // Even both PUBLIC_SAFE declarations cannot bypass native ACL/rights verification.
  const declared=plan({...args,surface:'public',target:{...target,rights:'PUBLIC_SAFE'},source:{...source,rights:'PUBLIC_SAFE'}});
- assert.equal(declared.status,'REVIEW_CANDIDATE');assert.equal(declared.acl_verified,false);
+ assert.equal(declared.status,'HOLD');
+ assert.equal(declared.reason,'PUBLIC_ROUTE_REQUIRES_VERIFIED_NATIVE_ACL');
+ assert.ok(!JSON.stringify(declared).includes(source.source_id));
+ assert.ok(!JSON.stringify(declared).includes(target.object_id));
+ assert.equal(declared.acl_verified,false);
  assert.equal(declared.public_release,false);noEffects(declared);
 });
 test('unknown or restricted rights hold; creative remains distinct from scientific',()=>{
@@ -356,4 +360,17 @@ test('NFC and default-ignorable Unicode cannot create competing source identitie
   target:{...target,owner:'Römer'}});
  assert.equal(allowed.status,'REVIEW_CANDIDATE');
  noEffects(allowed);
+});
+
+
+test('public route cannot elevate caller-supplied host or DBR receipts into source disclosure',()=>{
+ const x=plan({...args,surface:'public',target:{...target,rights:'PUBLIC_SAFE'},
+  source:{...source,rights:'PUBLIC_SAFE'},access:{...access,
+   host_authenticated:true,acl_verified:true,root_signed:true,dbr_readback:true},
+  hostReceipt:{verified:true,issuer:'caller-only'}});
+ assert.equal(x.status,'HOLD');
+ assert.equal(x.reason,'PUBLIC_ROUTE_REQUIRES_VERIFIED_NATIVE_ACL');
+ assert.ok(!JSON.stringify(x).includes(source.source_id));
+ assert.ok(!JSON.stringify(x).includes(target.object_id));
+ noEffects(x);
 });
