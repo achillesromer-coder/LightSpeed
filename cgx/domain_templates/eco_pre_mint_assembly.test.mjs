@@ -194,3 +194,65 @@ test("unexpected top-level fields are rejected instead of silently ignored",()=>
  assert.throws(()=>prepare({cascade_input:input,
   geometry:{coordinates:[153.1,-27.5]}}),/INVALID_ECO_PRE_MINT_REQUEST/);
 });
+
+
+// Type-I source manifest cases are synthetic: they exercise the verified
+// relationship boundary without embedding owner-only Drive IDs or workbooks.
+const lineage={
+ source_ref:source.source_ref,
+ related_source_ref:"synthetic:translated-type1-sheet",
+ relation_kind:"embedded_translation",
+ manifest_location_ref:"01_Source_Manifest!A2:B2",
+ manifest_source_sha256:digest,
+ related_revision_ref:"synthetic-related-provider-revision",
+ claimed_translation_state:"translated_verified"
+};
+test("source lineage manifest hash may match original bytes without proving related-sheet equivalence",()=>{
+ const r=prepare({cascade_input:input,source_lineage:lineage});
+ assert.equal(r.source_lineage_review.state,"R1_SOURCE_LINEAGE_CANDIDATE_NOT_EQUIVALENCE");
+ assert.equal(r.source_lineage_review.manifest_source_hash_matches_original_bytes_this_execution,true);
+ assert.equal(r.source_lineage_review.related_source_hash_verified_this_execution,false);
+ assert.equal(r.source_lineage_review.byte_equivalence_verified,false);
+ assert.equal(r.source_lineage_review.related_provider_revision_authenticated_by_module,false);
+ assert.equal(r.source_lineage_review.related_source_rights_verified,false);
+ assert.equal(r.source_lineage_review.claimed_translation_state,"translated_verified");
+ assert.equal(r.release.mint_allowed,false);
+ assert.ok(r.blocking_gates.includes("RELATED_SOURCE_LINEAGE_NOT_INDEPENDENTLY_VERIFIED"));
+});
+test("unhashed original never borrows proof from an embedded manifest",()=>{
+ const r=prepare({cascade_input:{...input,source_snapshot:undefined},source_lineage:lineage});
+ assert.equal(r.source_lineage_review.manifest_source_hash_matches_original_bytes_this_execution,false);
+ assert.equal(r.source_lineage_review.related_source_bytes_read_this_execution,false);
+ assert.equal(r.source_lineage_review.byte_equivalence_verified,false);
+ assert.equal(r.candidate_object_id,null);
+});
+test("stale or fabricated manifest source hash is rejected against actual original bytes",()=>{
+ assert.throws(()=>prepare({cascade_input:input,
+  source_lineage:{...lineage,manifest_source_sha256:"f".repeat(64)}}),
+  /ECO_LINEAGE_MANIFEST_SOURCE_HASH_MISMATCH/);
+});
+test("related source must have a distinct identity; alias labels cannot collapse R0s",()=>{
+ assert.throws(()=>prepare({cascade_input:input,
+  source_lineage:{...lineage,related_source_ref:source.source_ref}}),
+  /INVALID_ECO_SOURCE_LINEAGE/);
+});
+test("lineage descriptor cannot smuggle embedded workbook bytes, geometry or permissions",()=>{
+ for(const bad of [
+  {...lineage,source_bytes:Buffer.from("private")},
+  {...lineage,coordinates:[153.1,-27.5]},
+  {...lineage,owner_approved:true},
+  {...lineage,relation_kind:"native_minted"}
+ ])assert.throws(()=>prepare({cascade_input:input,source_lineage:bad}),
+  /INVALID_ECO_SOURCE_LINEAGE/);
+});
+test("H0 suppresses source lineage identifiers and cannot be used as a public release",()=>{
+ const r=prepare({cascade_input:input,source_lineage:lineage,requested_hydration:"H0"});
+ assert.deepEqual(r.source_lineage_review,{state:"NOT_REQUESTED"});
+ assert.equal(r.release.public_release_authorised,false);
+ assert.equal(r.hydration.H4.source_bytes_emitted,false);
+});
+test("no related source requested retains original review route without lineage claims",()=>{
+ const r=prepare({cascade_input:input});
+ assert.deepEqual(r.source_lineage_review,{state:"NO_RELATED_SOURCE_REQUESTED"});
+ assert.equal(r.stack_layers.find(x=>x.layer==="lineage").state,"NO_RELATED_SOURCE_REQUESTED");
+});
