@@ -174,15 +174,24 @@ def main():
         and p["origin"] == "500@10" and p["reference_plane"] == "ECLIPTIC"
         and p["reference_system"] == "ICRF" and p["units"] == "KM-S"
         and p["vector_table"] == 2 and p["correction"] == "NONE"
+        and p["tdb_minus_ut_report_requested"] is True
+        and p["calendar_type"] == "GREGORIAN"
+        and p["vector_component_labels_requested"] is True
         and p["source_documentation"] == DOC for p in planned)
     required = {"COMMAND", "CENTER", "TLIST", "TLIST_TYPE", "TIME_TYPE",
                 "REF_PLANE", "REF_SYSTEM", "OUT_UNITS", "VEC_TABLE",
-                "VEC_CORR", "EPHEM_TYPE", "TIME_DIGITS"}
+                "VEC_CORR", "EPHEM_TYPE", "TIME_DIGITS",
+                "VEC_DELTA_T", "CAL_TYPE", "VEC_LABELS"}
     checks["horizons-request-spec-url-parameters"] = all(
         urlsplit(p["url"]).netloc == "ssd.jpl.nasa.gov"
         and required <= parse_qs(urlsplit(p["url"]).query).keys()
         and parse_qs(urlsplit(p["url"]).query)["COMMAND"] == [f"'{p['target_naif']}'"]
         and parse_qs(urlsplit(p["url"]).query)["TLIST"] == [f"'{EPOCH_UT}'"]
+        for p in planned)
+    checks["horizons-request-spec-explicit-timescale-offset-and-labels"] = all(
+        parse_qs(urlsplit(p["url"]).query).get("VEC_DELTA_T") == ["\'YES\'"]
+        and parse_qs(urlsplit(p["url"]).query).get("CAL_TYPE") == ["\'GREGORIAN\'"]
+        and parse_qs(urlsplit(p["url"]).query).get("VEC_LABELS") == ["\'YES\'"]
         for p in planned)
     rejected = 0
     for invalid in (3, 10, 0, 999, "399", True, None, 399.0):
