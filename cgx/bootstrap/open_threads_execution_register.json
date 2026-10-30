@@ -79,7 +79,32 @@
       "status": "HISTORICAL_S92_R0_VERIFIED_NATIVE_HOLD",
       "problem": "S92 parent+4 historical child carrier bytes and 807 manifests verified on 30 Oct; S97 authoritative source and current signed RootAuthority/DBR, child namespace binding, LOAD identity still pending.",
       "next": "Obtain current accepted S97 root and owner-signed provider DBR readback; do not rehash unchanged S92 repeatedly.",
-      "owner_question": "none until current host/source evidence available"
+      "owner_question": "none until current host/source evidence available",
+      "s87_s88_profile_negative_review": {
+        "review_id": "H-01-S87-S88-PROFILE-SOURCE-NEGATIVE-20261030",
+        "evidence_class": "GITHUB_SOURCE_READBACK_PLUS_DOCUMENTARY_NEGATIVE_ASSERTIONS; NOT_CURRENT_RUNTIME_EXECUTION",
+        "issue": "https://github.com/achillesromer-coder/LightSpeed/issues/51",
+        "sources": [
+          {
+            "path": "cgx/domain_templates/S87_HYDRATION_GATE.md",
+            "git_blob": "6741a2bd0768d74209d140c5654517c3ee1264ce",
+            "reader_profile": "PASS; 55 entries; 708388 bytes; stack f31830cbb168a1e5211542426370a627f013b58494d0c9b05501723047516067",
+            "runtime_developer_profile": "FAIL_CLOSED; hydration-entry-not-in-manifest; cgx/topology_index.json"
+          },
+          {
+            "path": "cgx/domain_templates/S88_CORPUS_AWARE_SHELL_STATUS.md",
+            "git_blob": "2ea072212f044c594ea5e98b5b5aa206c994e81e",
+            "reader_profile": "PASS; 57 entries; 725172 bytes; stack d08d989d7ef3d6ab61bc2bf4c0243f1b0e7098709f87544e164195ac791db3a3",
+            "runtime_profile": "FAIL_CLOSED; master-proof-rejected:hydration-entry-not-in-manifest"
+          }
+        ],
+        "source_assertions_passed": 6,
+        "source_assertions_total": 6,
+        "comparison": "S87->S88 reader selection +2 entries and +16784 bytes, but both historical runtime hydration profiles remain explicitly fail-closed; historical regression totals 70/70 and 71/71 do not override the profile failure.",
+        "acceptance_gate": "On exact current authoritative carrier, verify canonical-core control entry against embedded manifest and distribution proof; run fresh-clone reader/runtime/developer adversarial hydration, independently read back signed current RootAuthority/DBR and lease. S87/S88 documents do not establish S92/S97 native state.",
+        "authority": "NO_CURRENT_NATIVE_PROFILE_PROOF; NO_OBJECT_ID_MINT; NO_ROOTAUTHORITY_PROMOTION; NO_HOST_EXECUTION",
+        "owner": "Cognigrex parent identity/profile contract; Neo to execute authenticated host tests"
+      }
     },
     {
       "id": "S-01",
