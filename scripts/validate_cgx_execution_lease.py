@@ -81,7 +81,41 @@ def main():
     if not ok:
         failures.append("distributed-operation lease incorrectly inherited prelaunch root receipt requirement: "+",".join(reasons))
 
-    print({"status":"PASS" if not failures else "FAIL","failures":failures})
+    # ACHILLES T1: issuer identity is a required authority boundary, not merely
+    # a descriptive string. These are synthetic negative observations only.
+    # A successful audit execution must never be called lease acceptance.
+    x=base_lease()
+    x["root_authority_receipt_ref"]="fixture:root-approval"
+    x["issued_by"]="Neo"  # self-issuance forbidden by lease contract
+    self_issued_ok,_,_=check(x)
+
+    x=base_lease()
+    x["root_authority_receipt_ref"]="fixture:root-approval"
+    x.pop("issued_by",None)
+    missing_issuer_ok,_,_=check(x)
+
+    x=base_lease()
+    x["root_authority_receipt_ref"]="fixture:root-approval"
+    now=datetime.now(UTC)
+    x["valid_from"]=(now-timedelta(hours=2)).isoformat()
+    x["valid_until"]=(now-timedelta(hours=1)).isoformat()
+    expired_ok,expired_reasons,_=check(x)
+    expired_control=(not expired_ok and "lease-outside-validity-window" in expired_reasons)
+    if not expired_control:
+        failures.append("expired synthetic lease denial control did not hold")
+
+    t1={
+      "test_id":"T1-LEASE-ISSUER-IDENTITY",
+      "evidence_class":"SOURCE_ONLY_SYNTHETIC_NEGATIVE",
+      "source_under_review":"scripts/run_cgx_agent_runtime.py:validate_lease",
+      "synthetic_self_issued_lease":"ALLOW" if self_issued_ok else "DENY",
+      "synthetic_missing_issuer_lease":"ALLOW" if missing_issuer_ok else "DENY",
+      "expired_lease_control":"DENY" if expired_control else "NOT_VERIFIED",
+      "gate":"HOLD" if self_issued_ok or missing_issuer_ok else "REQUIRES_INDEPENDENT_AUTHORITY_READBACK",
+      "native_admitted":False,
+      "limits":"Wrapper-only fixture; no signature, revocation registry, downstream tool, real issuer, host, DBR, or lease authentication exercised."
+    }
+    print({"status":"PASS" if not failures else "FAIL","failures":failures,"achilles_t1_negative_audit":t1})
     return 1 if failures else 0
 
 if __name__=="__main__":
