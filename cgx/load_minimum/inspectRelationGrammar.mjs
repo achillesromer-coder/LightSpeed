@@ -53,6 +53,39 @@ export function inspectRelationGrammar(domainRegistry, sharedQualifier) {
       sharedOccurrences.set(entry.id, families);
     }
   }
+  // Inventory lexical qualifier coverage without inventing a /0.1 -> /0.2
+  // conversion. A common spelling is not proof of compatible semantics,
+  // cardinality, units, provenance or authority.
+  const record = sharedQualifier.relation_record;
+  if (!record || !Array.isArray(record.required) || !Array.isArray(record.optional)) {
+    throw new TypeError('INVALID_SHARED_RELATION_RECORD');
+  }
+  const sharedFields = [...record.required, ...record.optional];
+  if (sharedFields.some(field => typeof field !== 'string' || !/^[a-z][a-z0-9_]*$/.test(field)) ||
+      new Set(sharedFields).size !== sharedFields.length) {
+    throw new TypeError('INVALID_SHARED_RELATION_FIELDS');
+  }
+  const sourceFields = domainRegistry.common_qualifiers;
+  if (sourceFields !== undefined &&
+      (!Array.isArray(sourceFields) ||
+       sourceFields.some(field => typeof field !== 'string' || !/^[a-z][a-z0-9_]*$/.test(field)) ||
+       new Set(sourceFields).size !== sourceFields.length)) {
+    throw new TypeError('INVALID_DOMAIN_COMMON_QUALIFIERS');
+  }
+  const sharedSet = new Set(sharedFields);
+  const sourceSet = sourceFields === undefined ? null : new Set(sourceFields);
+  const qualifier_alignment = {
+    declared_contract: domainRegistry.extends ?? null,
+    available_contract: sharedQualifier.schema,
+    bridge_proven: false,
+    semantic_equivalence: 'UNDETERMINED',
+    domain_qualifier_inventory: sourceFields === undefined ? 'NOT_DECLARED' : 'DECLARED',
+    exact_name_overlaps: sourceFields === undefined ? null : sourceFields.filter(field => sharedSet.has(field)),
+    domain_only_names: sourceFields === undefined ? null : sourceFields.filter(field => !sharedSet.has(field)),
+    shared_only_names: sourceSet === null ? null : sharedFields.filter(field => !sourceSet.has(field)),
+    qualified_object_id: null,
+    native_admitted: false
+  };
   const crosswalk_candidates = [];
   for (const [id, declarations] of occurrences) {
     for (const sharedFamily of sharedOccurrences.get(id) ?? []) {
@@ -123,6 +156,7 @@ export function inspectRelationGrammar(domainRegistry, sharedQualifier) {
     // Unresolved lexical reuse is a separate owner/identity gate even if both schemas parse cleanly.
     status: (issues.length || crosswalk_candidates.length) ? 'HOLD' : 'SOURCE_CONTRACT_CHECK_ONLY',
     unresolved_crosswalk_count: crosswalk_candidates.length,
+    qualifier_alignment,
     issues,
     crosswalk_candidates,
     relation_declarations: [...occurrences.values()].reduce((n, group) => n + group.length, 0),
