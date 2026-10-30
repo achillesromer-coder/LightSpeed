@@ -23,7 +23,7 @@ from lightspeed_runtime.project_file_browser import (
     list_project_files,
 )
 
-SCHEMA = "ACHILLES-PROJECT-FILE-SYMLINK-NEGATIVE-AUDIT/0.2"
+SCHEMA = "ACHILLES-PROJECT-FILE-SYMLINK-NEGATIVE-AUDIT/0.3"
 
 
 class SyntheticPipeline:
@@ -78,6 +78,12 @@ def run() -> int:
         outside = base / "outside.txt"
         outside.write_text("SYNTHETIC_OUTSIDE_TEXT", encoding="utf-8")
         (project / "review.txt").symlink_to(project / "credentials.json")
+        # Independent hardlink case: lexical and resolved paths both have a
+        # benign basename, but the inode is the blocked synthetic fixture.
+        (project / "linked_copy.json").hardlink_to(project / "credentials.json")
+        hardlink_same_file = (project / "linked_copy.json").samefile(
+            project / "credentials.json"
+        )
         (project / "outside_alias.txt").symlink_to(outside)
         # Independent T5 case: in-root directory symlink to an ignored tree.
         ignored_dir = project / ".git"
@@ -97,6 +103,7 @@ def run() -> int:
             item["relative_path"] for item in listed["files"]
         }
         alias_listed = "review.txt" in listed_names
+        hardlink_listed = "linked_copy.json" in listed_names
         direct_hidden_in_list = "credentials.json" not in listed_names
         external_hidden_in_list = "outside_alias.txt" not in listed_names
         safe_listed = "safe.txt" in listed_names
@@ -121,6 +128,17 @@ def run() -> int:
             ignored_alias_exposed = (
                 ignored_alias["preview"].get("text") == "SYNTHETIC_INTERNAL_ONLY"
             )
+        # T5 independent inode-alias case: filename and symlink-target checks
+        # alone cannot identify a hardlink to a blocked in-root file.
+        try:
+            hardlink = open_project_file(
+                pipeline, project_id="fixture-project",
+                relative_path="linked_copy.json",
+            )
+        except (ProjectFileBlocked, ProjectFilePathRejected):
+            hardlink_exposed = False
+        else:
+            hardlink_exposed = hardlink["preview"].get("text") == marker
         # T5/T4 policy consistency: direct open must not bypass scan-policy ignored files.
         try:
             ignored_file = open_project_file(
@@ -152,18 +170,25 @@ def run() -> int:
         safe_control and direct_blocked and ignored_direct_blocked
         and external_blocked and traversal_blocked
         and direct_hidden_in_list and external_hidden_in_list and safe_listed
-        and ignored_file_hidden_in_list
+        and ignored_file_hidden_in_list and hardlink_same_file
     )
     print(json.dumps({
         "schema": SCHEMA,
         "evidence_class": "SOURCE_ONLY_SYNTHETIC_NEGATIVE",
         "candidate_filespace": "Cognigrex.cgx:/LS.cgx/project-file-browser",
         "source_under_review": "desktop/LightSpeed_Runtime/lightspeed_runtime/project_file_browser.py",
+        "test_id": "T5-INROOT-HARDLINK-BLOCKED-TARGET",
         "synthetic_blocked_json_via_in_root_symlink": (
             "ALLOW" if alias_exposed else "DENY"
         ),
         "synthetic_blocked_json_metadata_via_list_alias": (
             "ALLOW" if alias_listed else "DENY"
+        ),
+        "synthetic_blocked_json_via_in_root_hardlink": (
+            "ALLOW" if hardlink_exposed else "DENY"
+        ),
+        "synthetic_blocked_json_metadata_via_list_hardlink": (
+            "ALLOW" if hardlink_listed else "DENY"
         ),
         "synthetic_ignored_directory_via_in_root_symlink": (
             "ALLOW" if ignored_alias_exposed else "DENY"
@@ -173,6 +198,7 @@ def run() -> int:
         ),
         "controls": {
             "direct_blocked_name": "DENY" if direct_blocked else "NOT_VERIFIED",
+            "hardlink_fixture_same_file": "PASS" if hardlink_same_file else "FAIL",
             "direct_ignored_directory": (
                 "DENY" if ignored_direct_blocked else "NOT_VERIFIED"
             ),
@@ -194,13 +220,15 @@ def run() -> int:
         },
         "gate": (
             "HOLD" if alias_exposed or alias_listed or ignored_alias_exposed
-            or ignored_file_exposed
+            or ignored_file_exposed or hardlink_exposed or hardlink_listed
             else "REQUIRES_INDEPENDENT_ACCEPTANCE"
         ),
         "limits": (
             "Synthetic fixture only. Listing reveals alias metadata, not target bytes. "
             "Ignored-directory symlink case concerns preview bytes only. "
             "Configured ignored-file direct open is synthetic only. "
+            "In-root hardlink alias uses the same inode as a synthetic blocked "
+            "fixture; it does not demonstrate real secret exfiltration. "
             "No real private data, credential, remote user, "
             "host installation, Windows reparse-point or TOCTOU behavior tested. "
             "Downstream authorization and real release permissions unverified."
