@@ -81,7 +81,6 @@ export function inspectRelationGrammar(domainRegistry, sharedQualifier) {
   // An inverse label is not an admitted edge unless its target is declared in
   // this source registry. Preserve source-specific inverse direction and never
   // silently borrow a same-named type from another family's vocabulary.
-  const allEntries = Object.values(groups).flat();
   for (const [family, entries] of Object.entries(groups)) {
     for (const entry of entries) {
       if (!Object.hasOwn(entry, 'inverse')) continue;
@@ -89,7 +88,10 @@ export function inspectRelationGrammar(domainRegistry, sharedQualifier) {
         issues.push({code: 'RELATION_INVERSE_INVALID', relation_id: entry.id, family});
         continue;
       }
-      const targets = allEntries.filter(target => target.id === entry.inverse);
+      // Inverse targets are scoped to the declaring family. A same-named
+      // relation in another group is only a crosswalk candidate, never proof
+      // of this family's inverse target or its reciprocal direction.
+      const targets = entries.filter(target => target.id === entry.inverse);
       if (targets.length === 0) {
         issues.push({code: 'RELATION_INVERSE_TARGET_UNDECLARED', relation_id: entry.id, inverse_relation: entry.inverse, family});
       } else if (targets.some(target => Object.hasOwn(target, 'inverse') && target.inverse !== entry.id)) {
