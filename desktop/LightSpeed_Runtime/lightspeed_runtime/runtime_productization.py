@@ -227,8 +227,21 @@ def _operator_receipt(
 
 
 def runtime_productization_status(slot: str = "default") -> dict[str, Any]:
+    slot = _safe_slot(slot)
     paths = _paths(slot)
-    config = _load_slot_config(paths)
+    # Status is diagnostic and read-only. Malformed or foreign slot configs
+    # are not trusted as configured; preserve their bytes for investigation.
+    try:
+        config = _load_slot_config(paths)
+    except (RuntimeProductizationError, OSError, ValueError, UnicodeError):
+        config = None
+    if config and (
+        config.get("schema") != "LIGHTSPEED-RUNTIME-SLOT-CONFIG/0.1"
+        or config.get("slot") != slot
+        or config.get("profile") not in PROFILES
+        or config.get("authority") != "digital-runtime-config-only"
+    ):
+        config = None
     # A corrupt ownership marker must never make status appear installed.
     # Status is read-only; keep invalid marker bytes untouched for diagnosis.
     try:
@@ -248,10 +261,11 @@ def runtime_productization_status(slot: str = "default") -> dict[str, Any]:
     # Presence of python.exe alone is not proof of managed installation.
     # Keep status read-only and fail closed on absent/invalid ownership evidence.
     try:
-        _validate_marker(paths, _safe_slot(slot))
+        validated_marker = _validate_marker(paths, slot)
         managed_ownership_valid = True
     except (RuntimeProductizationError, OSError, ValueError, TypeError):
         managed_ownership_valid = False
+        validated_marker = None
     return {
         "schema": "LIGHTSPEED-RUNTIME-PRODUCTIZATION-STATUS/0.1",
         "slot": _safe_slot(slot),
@@ -260,7 +274,7 @@ def runtime_productization_status(slot: str = "default") -> dict[str, Any]:
         "slot_root": str(paths["slot_dir"]),
         "managed_marker": marker is not None,
         "configured": config is not None,
-        "profile": (config or {}).get("profile") or (marker or {}).get("profile"),
+        "profile": (config or {}).get("profile") or (validated_marker or {}).get("profile"),
         "installed": managed_ownership_valid and python_path.is_file(),
         "python": str(python_path),
         "recent_receipts": receipts,
