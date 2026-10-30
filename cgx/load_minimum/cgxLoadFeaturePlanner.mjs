@@ -172,3 +172,88 @@ export function planSourceDropPreflight({target,file,readable=false,offline=fals
   publicRelease:false,rendered:false
  };
 }
+
+
+/**
+ * UniSpace frontend → EXISTING LightSpeed host pairing review.
+ * No protocol call, credentials, native host proof, or delegated authority.
+ * All hostEvidence and rights fields are CLIENT CLAIMS, including signed=true.
+ * Native host + signed trusted root/lease + DBR must independently attest.
+ * This is UI handoff planning; do not replace Neo's handshake validator.
+ */
+export const HOST_BRIDGE_SCHEMA='CGX-UNISPACE-HOST-BRIDGE-HANDOFF/0.1';
+const bridgeDevices=new Set(['browser','windows','macos','linux','android','ios']);
+const bridgeModes=new Set(['explore','pair','resume']);
+const hash64=s=>typeof s==='string'&&/^[a-f0-9]{64}$/i.test(s);
+
+export function planUniSpaceHostBridgeHandoff({
+ surface=null,target,device='browser',mode='explore',ownerConsent=false,
+ brokerDetected=false,hostEvidence=null,rightsEvidence=null
+}={}){
+ const deny=reason=>({schema:HOST_BRIDGE_SCHEMA,state:'DENIED',reason,
+  hostAuthenticated:false,mayInstall:false,mayExecute:false,mayPublish:false,
+  canonicalMutation:false});
+ // Site and public Vite scripts cannot be local broker authority (#158).
+ if(surface!=='private')return deny('PRIVATE_HOST_BRIDGE_SURFACE_REQUIRED');
+ if(!bridgeDevices.has(device)||!bridgeModes.has(mode)||
+    typeof ownerConsent!=='boolean'||typeof brokerDetected!=='boolean')
+  return deny('INVALID_BRIDGE_INPUT');
+ // Reuse current LOAD child/parent/identity checks; never resolve an alias
+ // or infer Object_ID from a user-visible file name.
+ const selected=planFeature({action:'alexandria.resolve',target,readable:true,
+  hydration:'minimal',sourceByteCount:0});
+ if(selected.state==='DENIED')return deny(selected.reason);
+ const blocks=[...selected.blockers];
+ if(!ownerConsent)blocks.push('OWNER_DEVICE_PAIRING_CONSENT_REQUIRED');
+ if(mode!=='explore'&&!brokerDetected)blocks.push('EXISTING_LOCAL_BROKER_NOT_CONNECTED');
+ if(device==='browser'||device==='ios'||device==='android')
+  blocks.push('NATIVE_DEVICE_INSTALL_REQUIRES_SEPARATE_APPROVED_COMPANION');
+ if(!isObj(hostEvidence)){
+  blocks.push('HOST_ORIGINAL_ROOT_LEASE_AND_DBR_RECEIPT_REQUIRED');
+ }else{
+  // These are syntactic checks ONLY. Never copy any claimed secret, token,
+  // issuer or source hash into an HTML/Squarespace response.
+  if(hostEvidence.parentFileSpace!=='Cognigrex.cgx'||
+      hostEvidence.childFileSpace!==target.fileSpace||
+      hostEvidence.objectId!==target.objectId)
+   return deny('HOST_IDENTITY_MISMATCH');
+  if(!unambiguous(hostEvidence.issuerId)||
+     !hash64(hostEvidence.stateRootSha256)||
+     !hash64(hostEvidence.dbrRootSha256)||
+     !unambiguous(hostEvidence.leaseId)||
+     !unambiguous(hostEvidence.readbackId))
+   blocks.push('HOST_EVIDENCE_FIELDS_INCOMPLETE');
+ }
+ if(!isObj(rightsEvidence)||
+    !unambiguous(rightsEvidence.sourceRef)||
+    !unambiguous(rightsEvidence.revision)||
+    !unambiguous(rightsEvidence.licenceId)||
+    !unambiguous(rightsEvidence.owner))
+  blocks.push('SOURCE_RIGHTS_OR_LICENCE_EVIDENCE_REQUIRED');
+ // A client's presented source licence/consent/host signature is NOT evidence
+ // that native authority has verified it. Also applies to "all rights reserved"
+ // and open-knowledge governance assertions.
+ blocks.push('INDEPENDENT_NATIVE_ROOT_ACL_LEASE_AND_RIGHTS_VERIFICATION_REQUIRED');
+ blocks.push('REVOKED_AND_ANONYMOUS_HOST_NEGATIVE_TESTS_REQUIRED');
+ blocks.push('INDEPENDENT_NATIVE_DBR_READBACK_REQUIRED');
+ return {
+  schema:HOST_BRIDGE_SCHEMA,state:'SOURCE_REVIEW_ONLY',
+  phase: mode==='explore'?'OFFLINE_DISCOVERY_ONLY':'HOST_PAIRING_PROPOSAL',
+  device,selected_file_space:target.fileSpace,selected_object_id:target.objectId??null,
+  family:'Cognigrex.cgx',
+  next_ui_step:!ownerConsent?'ASK_OWNER_TO_AUTHORISE_THIS_DEVICE':
+    (mode==='explore'?'OPEN_READ_ONLY_LOAD_FRONTIER':
+     !brokerDetected?'OPEN_EXISTING_LIGHTSPEED_SETUP_AND_PAIR':
+     'REQUEST_INDEPENDENT_NATIVE_ROOT_LEASE_ACL_DBR_CHECK'),
+  required_owner_action:!ownerConsent?'PAIRING_CONSENT':'NONE_FOR_REVIEW',
+  blockers:[...new Set(blocks)],
+  hostEvidenceClass:'CALLER_FIELDS_NOT_INDEPENDENTLY_VERIFIED',
+  sourceRightsClass:'CALLER_FIELDS_NOT_PROVIDER_VERIFIED',
+  offlineFallback:'H0_ONLY_UNVERIFIED_METADATA',
+  endpoint:null,token:null,installCommand:null,sourceBytesRead:false,
+  hostAuthenticated:false,signatureVerified:false,leaseVerified:false,
+  rightsVerified:false,providerReadback:false,mayInstall:false,
+  mayExecute:false,mayPublish:false,canonicalMutation:false,
+  nextNativeOwner:'EXISTING_LIGHTSPEED_LS_CGX_HOST'
+ };
+}
