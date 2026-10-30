@@ -71,7 +71,9 @@ export function planKnowledgeSpread({nodes,focus_id,access,budgets={}}={}){
    epistemic_state:good(n.epistemic_state)?n.epistemic_state:"unknown",
    source_refs:refs,source_ceiling:n.evidence_ceiling??"unverified",
    source_available:refs.length>0,geometry: null};
-  if(obj(n.geometry)&&good(n.geometry.source_ref)&&a.sources.has(n.geometry.source_ref)){
+  // An ACL grant for a source does not prove that source belongs to this
+  // object. Never project geometry from a permitted but unbound R0 reference.
+  if(obj(n.geometry)&&good(n.geometry.source_ref)&&n.source_refs.includes(n.geometry.source_ref)&&a.sources.has(n.geometry.source_ref)){
    summary.geometry={source_ref:n.geometry.source_ref,frame:good(n.geometry.frame)?n.geometry.frame:null,
    units:good(n.geometry.units)?n.geometry.units:null,geometry_kind:n.geometry.geometry_kind??"source-linked"};
   }
