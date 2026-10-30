@@ -20,6 +20,7 @@ from lightspeed_runtime.project_file_browser import (
     ProjectFileBlocked,
     ProjectFilePathRejected,
     open_project_file,
+    list_project_files,
 )
 
 SCHEMA = "ACHILLES-PROJECT-FILE-SYMLINK-NEGATIVE-AUDIT/0.1"
@@ -76,6 +77,19 @@ def run() -> int:
         (project / "outside_alias.txt").symlink_to(outside)
         pipeline = SyntheticPipeline(authority, project)
 
+        # T5 follow-on: the listing route must apply blocked-file policy to
+        # the resolved target, not only to the caller-visible alias name.
+        listed = list_project_files(
+            pipeline, project_id="fixture-project", limit=20
+        )
+        listed_names = {
+            item["relative_path"] for item in listed["files"]
+        }
+        alias_listed = "review.txt" in listed_names
+        direct_hidden_in_list = "credentials.json" not in listed_names
+        external_hidden_in_list = "outside_alias.txt" not in listed_names
+        safe_listed = "safe.txt" in listed_names
+
         safe = open_project_file(
             pipeline, project_id="fixture-project", relative_path="safe.txt"
         )
@@ -96,7 +110,10 @@ def run() -> int:
         else:
             alias_exposed = alias["preview"].get("text") == marker
 
-    controls = safe_control and direct_blocked and external_blocked and traversal_blocked
+    controls = (
+        safe_control and direct_blocked and external_blocked and traversal_blocked
+        and direct_hidden_in_list and external_hidden_in_list and safe_listed
+    )
     print(json.dumps({
         "schema": SCHEMA,
         "evidence_class": "SOURCE_ONLY_SYNTHETIC_NEGATIVE",
@@ -105,15 +122,31 @@ def run() -> int:
         "synthetic_blocked_json_via_in_root_symlink": (
             "ALLOW" if alias_exposed else "DENY"
         ),
+        "synthetic_blocked_json_metadata_via_list_alias": (
+            "ALLOW" if alias_listed else "DENY"
+        ),
         "controls": {
             "direct_blocked_name": "DENY" if direct_blocked else "NOT_VERIFIED",
             "outside_root_symlink": "DENY" if external_blocked else "NOT_VERIFIED",
             "lexical_parent_traversal": "DENY" if traversal_blocked else "NOT_VERIFIED",
             "ordinary_read_only_preview": "ALLOW" if safe_control else "NOT_VERIFIED",
+            "direct_blocked_name_absent_from_listing": (
+                "PASS" if direct_hidden_in_list else "FAIL"
+            ),
+            "outside_root_alias_absent_from_listing": (
+                "PASS" if external_hidden_in_list else "FAIL"
+            ),
+            "ordinary_safe_name_present_in_listing": (
+                "PASS" if safe_listed else "FAIL"
+            ),
         },
-        "gate": "HOLD" if alias_exposed else "REQUIRES_INDEPENDENT_ACCEPTANCE",
+        "gate": (
+            "HOLD" if alias_exposed or alias_listed
+            else "REQUIRES_INDEPENDENT_ACCEPTANCE"
+        ),
         "limits": (
-            "Synthetic fixture only. No real private data, credential, remote user, "
+            "Synthetic fixture only. Listing reveals alias metadata, not target bytes. "
+            "No real private data, credential, remote user, "
             "host installation, Windows reparse-point or TOCTOU behavior tested. "
             "Downstream authorization and real release permissions unverified."
         ),
