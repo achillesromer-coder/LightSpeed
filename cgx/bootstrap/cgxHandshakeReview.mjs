@@ -8,6 +8,12 @@ const id=x=>typeof x==="string"&&x.length>0&&x.length<=256&&!/[\u0000-\u001f]/.t
 const obj=x=>x!==null&&typeof x==="object"&&!Array.isArray(x);
 const allowed=new Set(["read","metadata","digital_write","compute_only"]);
 const AUTHORITY="HOST_SIGNATURE_AND_DBR_NOT_VERIFIED_BY_PLANNER";
+// Distinct source-review holds: a claimed key, request scope or nonce is not host proof.
+const LEASE_BOUNDARY_HOLDS=Object.freeze([
+ "ISSUER_ROOT_AUTHORITY_NOT_VERIFIED",
+ "REQUEST_BOUND_OBJECT_TOOL_RESOURCE_SCOPE_NOT_VERIFIED",
+ "LEASE_NONCE_CONSUMPTION_NOT_VERIFIED"
+]);
 export function planCGXHandshake({parent,child,lease,exchange=null,now=null}={}){
  if(!obj(parent)||!obj(child)||!obj(lease))return {status:"DENIED",reason:"MISSING_CONTEXT"};
  for(const x of [parent.object_id,parent.state_root,parent.dbr_root,child.object_id,child.filespace,child.parent_object_id,lease.lease_id,lease.target_object_id,lease.scope]){
@@ -17,7 +23,7 @@ export function planCGXHandshake({parent,child,lease,exchange=null,now=null}={})
  if(child.parent_object_id!==parent.object_id)return {status:"DENIED",reason:"CROSS_PARENT_CHILD"};
  if(lease.target_object_id!==child.object_id)return {status:"DENIED",reason:"LEASE_SUBJECT_MISMATCH"};
  if(!allowed.has(lease.scope))return {status:"DENIED",reason:"UNRECOGNISED_LEASE_SCOPE"};
- const holds=[AUTHORITY],facts={};
+ const holds=[AUTHORITY,...LEASE_BOUNDARY_HOLDS],facts={};
  if(!obj(lease.signer_ref)||!id(lease.signer_ref.key_id))holds.push("SIGNED_LEASE_PROVIDER_REQUIRED");
  if(!Number.isFinite(Date.parse(lease.expires_utc??""))){holds.push("INVALID_LEASE_EXPIRY");}
  else if(now!==null){
@@ -48,6 +54,6 @@ export function planCGXHandshake({parent,child,lease,exchange=null,now=null}={})
   root_authority_verified:false,receiver_readback_independently_verified:false,
   db_r_mutated:false,node_transfer_executed:false,
   ls_go_toggle_enabled:false,may_execute:false,may_publish:false,
-  next_native_step:"Resolve true signed roots, lease and distinct node identity on the host. Verify provider receipt signature, exact hash/size and DBR readback in separate authenticated tests."
+  next_native_step:"On the authorised host verify issuer signature, RootAuthority/revocation, request-bound object/tool/resource scope and atomic nonce consumption. Separately authenticate distinct nodes, exact receiver hash/size and signed DBR readback."
  };
 }
