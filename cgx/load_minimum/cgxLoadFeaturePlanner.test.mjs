@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { ACTIONS, menuForTarget, planFeature } from './cgxLoadFeaturePlanner.mjs';
-const target = {kind:'filespace',fileSpace:'Romer.cgx',owner:'Römer-Grex',objectId:'cgx:accepted:example',parentFileSpace:'Cognigrex.cgx'};
+const target = {kind:'filespace',fileSpace:'Romer.cgx',domain:'romer',owner:'Römer-Grex',objectId:'cgx:accepted:example',parentFileSpace:'Cognigrex.cgx'};
 const good = { readable:true, acceptedParent:true, existingAliasChecked:true, ownerApproved:true, rightsVerified:true, signedLeaseVerified:true, providerReadbackReady:true, registeredCapabilityVerified:true };
 test('right click on selected child offers LOAD and CCC without creating new masters',()=>{
  const menu=menuForTarget('filespace',{readable:true});assert.ok(menu.includes('load.attach'));assert.ok(menu.includes('ccc.install'));
@@ -52,4 +52,51 @@ test('invalid request forms rejected',()=>{
 
 test('CCC install requires named capability, not just a generic install flag',()=>{
  const v=planFeature({action:'ccc.install',target,...good});assert.equal(v.reason,'CAPABILITY_ID_REQUIRED');
+});
+
+test('menu cannot propose host preflight for a competing parent or wrong Grex child',()=>{
+ const variants=[
+  [{...target,parentFileSpace:'OtherRoot.cgx'},'COMPETING_PARENT_ROOT'],
+  [{...target,domain:'eco'},'CHILD_FILESPACE_SCOPE_CONFLICT'],
+  [{...target,domain:'unknown'},'CHILD_FILESPACE_SCOPE_CONFLICT'],
+  [{...target,fileSpace:'Eco.cgx'},'CHILD_FILESPACE_SCOPE_CONFLICT'],
+  [{...target,domain:'romer',fileSpace:'LS.cgx'},'CHILD_FILESPACE_SCOPE_CONFLICT']
+ ];
+ for(const [bad,reason] of variants){
+  const x=planFeature({action:'load.attach',target:bad,...good});
+  assert.equal(x.state,'DENIED');
+  assert.equal(x.reason,reason);
+  assert.ok(!Object.hasOwn(x,'install'));
+ }
+ const valid=planFeature({action:'load.attach',target,...good});
+ assert.equal(valid.status,'READY_FOR_AUTHENTICATED_HOST_PREFLIGHT');
+ assert.equal(valid.target.domain,'romer');
+ assert.equal(valid.target.parentFileSpace,'Cognigrex.cgx');
+ assert.equal(valid.install,false);
+ assert.equal(valid.canonicalMutation,false);
+});
+test('missing child domain is a non-executable review HOLD rather than an accepted scope',()=>{
+ const x=planFeature({action:'load.attach',target:{...target,domain:undefined},...good});
+ assert.equal(x.status,'REVIEW_ONLY');
+ assert.ok(x.blockers.includes('CHILD_DOMAIN_UNVERIFIED'));
+ assert.equal(x.target.domain,null);
+ assert.equal(x.canonicalMutation,false);
+ assert.equal(x.install,false);
+});
+test('opaque menu identifiers reject bidi, default-ignorable and non-NFC ambiguity',()=>{
+ for(const mark of ['\u202e','\u200b','\u034f']){
+  for(const key of ['fileSpace','domain','owner','objectId']){
+   const bad={...target,[key]:target[key]+mark};
+   const x=planFeature({action:'alexandria.resolve',target:bad,...good});
+   assert.equal(x.state,'DENIED',key);
+   assert.equal(x.reason,'AMBIGUOUS_IDENTITY_OR_SCOPE',key);
+  }
+  const capability=planFeature({action:'ccc.install',target,capabilityId:'fixture:cap'+mark,...good});
+  assert.equal(capability.reason,'AMBIGUOUS_IDENTITY_OR_SCOPE');
+ }
+ const decomposed=planFeature({action:'alexandria.resolve',target:{...target,objectId:'cafe\u0301'},...good});
+ assert.equal(decomposed.reason,'AMBIGUOUS_IDENTITY_OR_SCOPE');
+ const normal=planFeature({action:'alexandria.resolve',target:{...target,owner:'Römer-Grex'},...good});
+ assert.equal(normal.status,'REVIEW_ONLY');
+ assert.equal(normal.networkFetch,false);
 });
