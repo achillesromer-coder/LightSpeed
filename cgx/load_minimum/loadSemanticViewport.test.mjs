@@ -42,6 +42,32 @@ test('view switch preserves ID, source, scope and evidence ceiling',()=>{
   assert.equal(v.evidence_ceiling,'synthetic-fixture');assert.equal(v.semantic_mutation,false);
  }
 });
+test('C39 geometry source must be bound to focus R0 as well as separately ACL-permitted',()=>{
+ const unbound=nodes.map(n=>n.object_id==='fixture:eco:tree'
+  ? {...n,source_refs:['fixture:s1'],geometry:{source_ref:'fixture:geo',frame:'EPSG:7856',units:'m'}}
+  : n);
+ const plan=spread({nodes:unbound});
+ assert.equal(plan.status,'REVIEW_ONLY');
+ assert.equal(plan.objects[0].geometry,null);
+ assert.ok(!JSON.stringify(plan).includes('fixture:geo'));
+ const switched=planViewportSwitch({spread:plan,to:'3d'});
+ assert.equal(switched.state,'FRONTIER_GEOMETRY_UNQUALIFIED');
+ assert.equal(switched.geometry_ref,null);
+ assert.equal(switched.public_release,false);
+ assert.equal(switched.interactive_execution,false);
+ // A legitimate attachment still only produces a non-rendered view plan.
+ const bound=unbound.map(n=>n.object_id==='fixture:eco:tree'
+  ? {...n,source_refs:['fixture:s1','fixture:geo']} : n);
+ const candidate=planViewportSwitch({spread:spread({nodes:bound}),to:'3d'});
+ assert.equal(candidate.state,'VIEW_PLAN_READY');
+ assert.equal(candidate.geometry_ref,'fixture:geo');
+ assert.equal(candidate.rendered,false);
+ assert.equal(candidate.public_release,false);
+ // A bound but non-permitted source remains unavailable.
+ const withheld=spread({nodes:bound,access:{...access,authorized_source_ids:['fixture:s1']}});
+ assert.equal(withheld.objects[0].geometry,null);
+ assert.equal(planViewportSwitch({spread:withheld,to:'3d'}).state,'FRONTIER_GEOMETRY_UNQUALIFIED');
+});
 test('3D requires permitted native geometry and units/coordinate frame',()=>{
  const changed=nodes.map(n=>n.object_id==='fixture:eco:tree'?{...n,geometry:{source_ref:'fixture:hidden',units:null,frame:null}}:n);
  const a=spread({nodes:changed});assert.equal(planViewportSwitch({spread:a,to:'3d'}).state,'FRONTIER_GEOMETRY_UNQUALIFIED');
