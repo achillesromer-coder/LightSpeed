@@ -77,3 +77,14 @@ export function reviewWindowsCGXHost(observed = {}) {
     may_publish: false
   };
 }
+
+/** Classify only explicit PowerShell policy-bypass spellings in reviewed source.
+ * Static source inspection cannot prove host policy, signed script status or execution.
+ * Dynamic invocation construction must be reviewed separately.
+ */
+export function classifyInstallerPolicySource(source) {
+  if (typeof source !== "string" || source.length > 2 * 1024 * 1024) return "UNKNOWN";
+  const argvBypass = /["']-ExecutionPolicy["']\s*,\s*["']Bypass["']/i.test(source);
+  const commandBypass = /(?:^|[\s"'\x60])-ExecutionPolicy\s+Bypass(?:\s|["'\x60]|$)/im.test(source);
+  return argvBypass || commandBypass ? "EXPLICIT_BYPASS" : "NO_EXPLICIT_OVERRIDE";
+}
