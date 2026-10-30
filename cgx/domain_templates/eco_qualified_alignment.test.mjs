@@ -819,3 +819,25 @@ test("malformed replication and dependence references are rejected",()=>{
   assert.throws(()=>planEcoAlignment({novel:statsFixture({[field]:42}),
    authorised_source_ids:["src-a"]}),/INVALID_VALIDATION_STATISTICS_/);
 });
+
+
+test("mojibake in a source unit is held without automatic SI conversion",()=>{
+ const novel={...base,unit:"m\u00c2\u00b2",measurement:{value:4.3,unit:"m\u00c2\u00b2"}};
+ const r=planEcoAlignment({novel,known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.equal(r.novel_qualification_state,"REVIEW_REQUIRED");
+ assert.ok(r.novel_checks.includes("SOURCE_UNIT_ENCODING_UNRESOLVED"));
+ assert.equal(r.object_ids_minted,0);assert.equal(r.db_readback,false);
+});
+test("valid superscript SI units are not mistaken for corrupted source encoding",()=>{
+ const novel={...base,unit:"m²",measurement:{value:4.3,unit:"m²"}};
+ const r=planEcoAlignment({novel,known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.ok(!r.novel_checks.includes("SOURCE_UNIT_ENCODING_UNRESOLVED"));
+ assert.equal(r.novel_qualification_state,"SCHEMA_QUALIFIED_SOURCE_ONLY");
+});
+test("corrupt projected or geometry unit references also require review",()=>{
+ const novel={semantic_type:"projection_result",source_refs:["src-a"],
+   evidence_class:"simulated",projection_result:{unit:"kg/m\u00c2\u00b3"}};
+ const r=planEcoAlignment({novel,known_objects:[],authorised_object_ids:[],authorised_source_ids:["src-a"]});
+ assert.ok(r.novel_checks.includes("SOURCE_UNIT_ENCODING_UNRESOLVED"));
+ assert.equal(r.ecological_effect_verified,false);
+});
