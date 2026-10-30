@@ -25,7 +25,7 @@ const allow = (x) => x === true;
 // Source-review scope check: a menu declaration is not native Object_ID authority.
 const childSpaces=Object.freeze({eco:'Eco.cgx',romer:'Romer.cgx',emassc:'EMASSC.cgx',ls:'LS.cgx'});
 const reservedSpaces=Object.freeze(Object.fromEntries(Object.entries(childSpaces).map(([domain,space])=>[space,domain])));
-const unambiguous=s=>safeText(s)&&s===s.normalize('NFC')&&!/[\\p{Default_Ignorable_Code_Point}\\p{Cc}]/u.test(s);
+const unambiguous=s=>safeText(s)&&s===s.normalize('NFC')&&!/[\p{Default_Ignorable_Code_Point}\p{Cc}]/u.test(s);
 const childMatches=(domain,space)=>!Object.hasOwn(childSpaces,domain)||childSpaces[domain]===space;
 const reservedMatches=(domain,space)=>!Object.hasOwn(reservedSpaces,space)||reservedSpaces[space]===domain;
 
