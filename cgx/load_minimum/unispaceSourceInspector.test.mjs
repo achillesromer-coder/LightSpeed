@@ -546,10 +546,10 @@ test('#209 R3 viewport intent and geometry cannot be spoofed by a caller',()=>{
   {...base,viewport:{...base.viewport,geometry_ref:'fixture:unauthorised:geometry'}},
   {...base,viewport:{...base.viewport,geometry_ref:undefined}}
  ];
- for(const inspector of variants){
+ for(const [index,inspector] of variants.entries()){
   const denied=cockpit({...statusInput,inspector});
   assert.equal(denied.state,'DENIED');
-  assert.equal(denied.reason,'UNVERIFIED_METRIC_VIEW_CANNOT_BE_R3');
+  assert.equal(denied.reason,index<3?'UNREGISTERED_VIEW_INTENT':'UNVERIFIED_METRIC_VIEW_CANNOT_BE_R3');
   assert.equal(denied.may_execute,false);
   assert.equal(denied.native_admitted,false);
   assert.equal(denied.live_verified,false);
@@ -586,5 +586,45 @@ test('registered LOAD lens/projection cannot be relabelled by a caller',()=>{
   assert.equal(result.canonical_mutation,false);
   assert.equal(result.released,false);
   assert.ok(!JSON.stringify(result).includes('fixture:eco:source'));
+ }
+});
+
+
+test('R2 Frontier cannot bypass the registered LOAD view contract',()=>{
+ const frontier=inspect({...args,view:'3d'});
+ assert.equal(frontier.admission_stage,'R2_REVIEW_FRONTIER');
+ const forged={...frontier,view:'unknown-projection'};
+ const denied=cockpit({...statusInput,inspector:forged});
+ assert.equal(denied.state,'DENIED');
+ assert.equal(denied.reason,'UNREGISTERED_VIEW_INTENT');
+ assert.equal(denied.native_admitted,false);
+ assert.equal(denied.released,false);
+ assert.ok(!JSON.stringify(denied).includes('fixture:eco:source'));
+ const safe=cockpit({...statusInput,inspector:frontier});
+ assert.equal(safe.state,'SOURCE_REVIEW_ONLY');
+ assert.equal(safe.presentation_stage,'R2_REVIEW_FRONTIER');
+});
+
+test('offline H0-only review rejects cached graph, source and geometry projections',()=>{
+ const offlineInspector=inspect({...args,offline:true});
+ const safe=cockpit({...statusInput,inspector:offlineInspector,offline:true});
+ assert.equal(safe.presentation_stage,'H0_OFFLINE_UNVERIFIED');
+ const variants=[
+  {...offlineInspector,view:'unknown-projection'},
+  {...offlineInspector,h1:{...offlineInspector.h1,object_ids:[selected.object_id,'fixture:romer:private']}},
+  {...offlineInspector,h1:{...offlineInspector.h1,edges:[{from:selected.object_id,to:'fixture:romer:private',relation:'HAS_SITE'}]}},
+  {...offlineInspector,h2:{...offlineInspector.h2,source_claims:[{source_id:'fixture:eco:source'}]}},
+  {...offlineInspector,viewport:{...offlineInspector.viewport,geometry_ref:'fixture:eco:source'}},
+  {...offlineInspector,viewport:{...offlineInspector.viewport,projection:'geometry-twin'}},
+  {...offlineInspector,viewport:{...offlineInspector.viewport,lens:'twin-3d'}}
+ ];
+ for(const [index,inspector] of variants.entries()){
+  const denied=cockpit({...statusInput,inspector,offline:true});
+  assert.equal(denied.state,'DENIED');
+  assert.equal(denied.reason,index===0?'UNREGISTERED_VIEW_INTENT':'OFFLINE_H0_PROJECTION_CONFLICT');
+  assert.equal(denied.native_admitted,false);
+  assert.equal(denied.released,false);
+  assert.ok(!JSON.stringify(denied).includes('fixture:eco:source'));
+  assert.ok(!JSON.stringify(denied).includes('fixture:romer:private'));
  }
 });
