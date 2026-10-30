@@ -106,7 +106,7 @@ test('metadata-only FileSpace drop is source-review preflight, not native intake
  const file={name:'field-observation.json',size:2048,type:'application/json',
   sha256:'a'.repeat(64),sourceId:'source:existing:one',revision:'rev:one',
   owner:'Römer-Grex',rights:'OWNER_PRIVATE',proofClass:'historical'};
- const x=planSourceDropPreflight({target,file,readable:true});
+ const x=planSourceDropPreflight({surface:'private',target,file,readable:true});
  assert.equal(x.state,'REVIEW_ONLY');
  assert.equal(x.admissionStage,'R0_METADATA_PREFLIGHT');
  assert.equal(x.target.fileSpace,'Romer.cgx');
@@ -142,7 +142,7 @@ test('drop rejects unsafe names, hidden assets, Unicode ambiguity, MIME and unbo
   [{...file,proofClass:'scientifically_validated'},'UNKNOWN_PROOF_CLASS']
  ];
  for(const [input,reason] of bad){
-  const x=planSourceDropPreflight({target,file:input,readable:true});
+  const x=planSourceDropPreflight({surface:'private',target,file:input,readable:true});
   assert.equal(x.state,'DENIED',reason);
   assert.equal(x.reason,reason);
   assert.equal(x.publicRelease,false);
@@ -152,7 +152,7 @@ test('drop rejects unsafe names, hidden assets, Unicode ambiguity, MIME and unbo
 });
 
 test('offline drop cannot claim hash, rights, native admission or source qualification',()=>{
- const x=planSourceDropPreflight({target:{...target,objectId:null},
+ const x=planSourceDropPreflight({surface:'private',target:{...target,objectId:null},
   file:{name:'archive.txt',size:0,type:'',rights:'LICENSE_RESTRICTED',proofClass:'unknown'},
   offline:true});
  assert.equal(x.state,'REVIEW_ONLY');
@@ -169,17 +169,40 @@ test('offline drop cannot claim hash, rights, native admission or source qualifi
 
 test('drop must remain in selected child and cannot be used as a public or file-target intake',()=>{
  const file={name:'public-safe.png',size:1024,type:'image/png',rights:'PUBLIC_SAFE'};
- const wrong=planSourceDropPreflight({target:{...target,domain:'eco'},file,readable:true});
+ const wrong=planSourceDropPreflight({surface:'private',target:{...target,domain:'eco'},file,readable:true});
  assert.equal(wrong.state,'DENIED');
  assert.equal(wrong.reason,'CHILD_FILESPACE_SCOPE_CONFLICT');
- const competing=planSourceDropPreflight({target:{...target,parentFileSpace:'Second.cgx'},file});
+ const competing=planSourceDropPreflight({surface:'private',target:{...target,parentFileSpace:'Second.cgx'},file});
  assert.equal(competing.reason,'COMPETING_PARENT_ROOT');
- const fileTarget=planSourceDropPreflight({target:{...target,kind:'file'},file});
+ const fileTarget=planSourceDropPreflight({surface:'private',target:{...target,kind:'file'},file});
  assert.equal(fileTarget.reason,'DROP_REQUIRES_CHILD_FILESPACE');
- const x=planSourceDropPreflight({target,file,readable:true});
+ const x=planSourceDropPreflight({surface:'private',target,file,readable:true});
  assert.equal(x.state,'REVIEW_ONLY');
  assert.equal(x.source.rightsClaim,'PUBLIC_SAFE');
  assert.equal(x.publicRelease,false);
  assert.ok(x.blockers.includes('SOURCE_RIGHTS_NOT_PROVIDER_VERIFIED'));
  assert.ok(x.blockers.includes('PUBLIC_STATIC_ASSET_ROUTE_FORBIDDEN'));
+});
+
+test('drop preflight fails closed outside explicit private surface without leaking source or Object_ID',()=>{
+ const file={name:'owner-secret-candidate.json',size:1024,type:'application/json',
+  rights:'OWNER_PRIVATE',sourceId:'private:source',sha256:'b'.repeat(64)};
+ for(const surface of [undefined,null,'public','static','private-preview','PRIVATE',true]){
+  const x=planSourceDropPreflight({target,file,readable:true,surface});
+  assert.equal(x.state,'DENIED');
+  assert.equal(x.reason,'PRIVATE_DROP_SURFACE_REQUIRED');
+  assert.equal(x.canonicalMutation,false);
+  assert.equal(x.sourceBytesRead,false);
+  assert.equal(x.hashVerified,false);
+  assert.equal(x.publicRelease,false);
+  assert.ok(!Object.hasOwn(x,'source'));
+  assert.ok(!Object.hasOwn(x,'target'));
+  assert.ok(!JSON.stringify(x).includes('owner-secret-candidate'));
+  assert.ok(!JSON.stringify(x).includes('cgx:accepted:example'));
+ }
+ const privatePlan=planSourceDropPreflight({target,file,readable:true,surface:'private'});
+ assert.equal(privatePlan.state,'REVIEW_ONLY');
+ assert.equal(privatePlan.hostAuthenticated,false);
+ assert.equal(privatePlan.providerReadback,false);
+ assert.equal(privatePlan.publicRelease,false);
 });
