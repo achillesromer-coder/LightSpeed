@@ -77,6 +77,15 @@ test('root/authority/network changes require renewed proof, not wizard rewrite',
  const p=planOngoingSetup({family,current:{},changes:['root','network']});
  assert.equal(p.mode,'REVERIFY_AUTHORITY');assert.equal(p.mutation,false);
 });
+test('source, ACL, DBR, host and tool ABI changes invalidate incremental authority reuse',()=>{
+ for(const changed of ['source','source_hash','acl','dbr','config','capability','tool_abi','host']){
+  const p=planOngoingSetup({family,current:{},previous:{},changes:[changed]});
+  assert.equal(p.mode,'REVERIFY_AUTHORITY',changed);
+  assert.equal(p.mutation,false,changed);
+  assert.equal(p.source_copy,false,changed);
+  assert.equal(p.install,false,changed);
+ }
+});
 test('no missing returned receipts from invalid mode',()=>{
  assert.equal(planCGXSetup({family,mode:'panic'}).reason,'UNKNOWN_SETUP_MODE');
 });
