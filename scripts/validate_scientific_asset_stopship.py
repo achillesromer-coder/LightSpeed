@@ -193,6 +193,30 @@ def main():
         and parse_qs(urlsplit(p["url"]).query).get("CAL_TYPE") == ["\'GREGORIAN\'"]
         and parse_qs(urlsplit(p["url"]).query).get("VEC_LABELS") == ["\'YES\'"]
         for p in planned)
+    # Recompute the planned-request digest independently from URL parameters.
+    # It is intentionally NOT a response-body hash or CGX Object_ID.
+    from hashlib import sha256
+    from cgx_horizons_request_review import SCHEMA, ENDPOINT
+    def independent_spec_digest(planned_request):
+        query = parse_qs(urlsplit(planned_request["url"]).query, strict_parsing=True)
+        params = {key: values[0] for key, values in query.items()}
+        canonical = json.dumps(
+            {"schema": SCHEMA, "endpoint": ENDPOINT, "params": params},
+            sort_keys=True, separators=(",", ":"), ensure_ascii=True,
+        ).encode("utf-8")
+        return sha256(canonical).hexdigest()
+    checks["horizons-request-spec-digest-independent-recompute"] = all(
+        p["request_spec_sha256"] == independent_spec_digest(p)
+        and p["request_spec_hash_scope"] == "canonical-json-schema-endpoint-params-only"
+        for p in planned)
+    checks["horizons-request-spec-digest-distinct-and-repeatable"] = (
+        len({p["request_spec_sha256"] for p in planned}) == len(TARGETS)
+        and planned == [plan_vector_request(body) for body in TARGETS])
+    checks["horizons-request-hash-is-not-fabricated-source-hash"] = all(
+        p["source_response_sha256"] is None
+        and p["source_response_bytes"] is None
+        and p["raw_source_verified"] is False
+        and p["network_executed"] is False for p in planned)
     rejected = 0
     for invalid in (3, 10, 0, 999, "399", True, None, 399.0):
         try:
