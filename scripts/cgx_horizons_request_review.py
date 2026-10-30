@@ -87,3 +87,21 @@ def plan_vector_request(target_naif: int) -> dict:
         "native_admitted": False,
         "runtime_verified": False,
     }
+
+
+def verify_planned_request(candidate: object) -> dict:
+    """Fail closed when consuming an untrusted review-plan envelope.
+
+    Compares every field against the canonical local source-only planner,
+    including the complete encoded URL, digest, documentation revision and
+    non-admission flags. This is NOT validation of a Horizons response.
+    """
+    if type(candidate) is not dict:
+        raise ValueError("HORIZONS_REVIEW_PLAN_MALFORMED")
+    target = candidate.get("target_naif")
+    if type(target) is not int or target not in TARGETS:
+        raise ValueError("HORIZONS_REVIEW_PLAN_INVALID_TARGET")
+    canonical = plan_vector_request(target)
+    if candidate != canonical:
+        raise ValueError("HORIZONS_REVIEW_PLAN_NONCANONICAL")
+    return canonical
