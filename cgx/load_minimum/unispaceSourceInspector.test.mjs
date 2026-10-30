@@ -660,3 +660,33 @@ test('offline H0 projection rejects cached authority, rights, capabilities and b
   assert.ok(!JSON.stringify(denied).includes('fixture:eco:source'));
  }
 });
+
+
+// #158/#209: online review widgets cannot invent H3 CCC installs, H4 lease
+// authority or independent metric verification by editing a projected object.
+// Both R3 proposal and R2 Frontier are covered; neither is a host receipt.
+test('online cockpit rejects forged capabilities, execution and metric authority',()=>{
+ const r3=inspect(args);
+ const r2=inspect({...args,source_envelopes:[]});
+ for(const base of [r3,r2]){
+  const clean=cockpit({...statusInput,inspector:base});
+  assert.equal(clean.state,'SOURCE_REVIEW_ONLY');
+  const variants=[
+   {...base,h3:{...base.h3,qualified_capabilities:['ccc.install']}},
+   {...base,h3:{...base.h3,catalogue_discovery_only:false}},
+   {...base,h3:{...base.h3,qualified_capabilities:null}},
+   {...base,h3:null},
+   {...base,h4:{...base.h4,permissioned_execution:'HOST_VERIFIED'}},
+   {...base,viewport:{...base.viewport,metric_authority:'INDEPENDENTLY_VERIFIED'}}
+  ];
+  for(const forged of variants){
+   const denied=cockpit({...statusInput,inspector:forged});
+   assert.equal(denied.state,'DENIED');
+   assert.equal(denied.reason,'ONLINE_REVIEW_CAPABILITY_OR_AUTHORITY_CONFLICT');
+   assert.equal(denied.may_execute,false);
+   assert.equal(denied.native_admitted,false);
+   assert.equal(denied.released,false);
+   assert.ok(!JSON.stringify(denied).includes('fixture:eco:source'));
+  }
+ }
+});
