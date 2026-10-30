@@ -199,11 +199,14 @@ export function planUniSpaceOperatorCockpit({
  // source-only inspector never qualifies metric 3D as R3; neither may this
  // operator projection. A conflicting Frontier/metric badge is also a veto.
  // A forged review projection cannot relabel a metric scene as a document,
- // invent an unregistered viewport intent, or smuggle a geometry reference
- // into an otherwise non-metric R3 proposal. The host remains authoritative.
+ // invent an unregistered viewport intent, or smuggle an unqualified geometry
+ // reference into a non-metric R3 proposal. The host remains authoritative.
  if(!offline&&inspector.admission_stage==='R3_VIEW_PROPOSAL'&&
     (!new Set(['document','chat','graph','interactive','matrix']).has(inspector.view)||
-     inspector.viewport.geometry_ref!==null||
+     !(inspector.viewport.geometry_ref===null||
+       (unambiguous(inspector.viewport.geometry_ref)&&
+        inspector.h2.source_claims.some(c=>c?.source_id===inspector.viewport.geometry_ref&&
+         c.qualification==='DECLARED_NOT_PROVIDER_VERIFIED')))||
      inspector.viewport.metric_authority!=='NOT_VERIFIED'||
      !Array.isArray(inspector.viewport.frontier)||inspector.viewport.frontier.length!==0))
   return cockpitDeny('UNVERIFIED_METRIC_VIEW_CANNOT_BE_R3');
