@@ -255,3 +255,57 @@ test('unknown-domain sibling cannot impersonate reserved Grex FileSpace in halo'
  assert.equal(x.public_release,false);
  assert.ok(!JSON.stringify(x).includes('fixture:romer:private'));
 });
+
+test('offline mode cannot reuse cached ACTIVE rights or expose stored provenance',()=>{
+ const cached={...source_envelopes[0],rights_state:'ACTIVE'};
+ for(const view of ['document','3d','chat','graph','interactive','matrix']){
+  const x=inspect({...args,view,offline:true,source_envelopes:[cached],
+   budgets:{max_cross_domains:1,max_cross_edges:1,max_hops:1},
+   access:{authorized_object_ids:['fixture:eco:one','fixture:romer:private'],
+    authorized_source_ids:['fixture:eco:source','fixture:romer:private-source']}});
+  assert.equal(x.status,'SOURCE_REVIEW_ONLY');
+  assert.equal(x.identity,'fixture:eco:one');
+  assert.equal(x.selected_file_space,'Eco.cgx');
+  assert.equal(x.viewport.state,'FRONTIER');
+  assert.equal(x.admission_stage,'R2_REVIEW_FRONTIER');
+  assert.deepEqual(x.viewport.frontier,['OFFLINE_AUTHORITY_AND_REVOCATION_UNVERIFIED']);
+  assert.deepEqual(x.h1.object_ids,['fixture:eco:one']);
+  assert.deepEqual(x.h1.edges,[]);
+  assert.deepEqual(x.h2.source_claims,[]);
+  assert.equal(x.h2.source_proof,'OFFLINE_UNVERIFIED');
+  assert.equal(x.viewport.geometry_ref,null);
+  assert.equal(x.viewport.rendered,false);
+  assert.equal(x.budgets.max_transfer_bytes,0);
+  assert.equal(x.network_fetch,false);
+  assert.equal(x.host_authenticated,false);
+  assert.equal(x.provider_readback,false);
+  assert.equal(x.h4.installed,false);
+  assert.equal(x.canonical_mutation,false);
+  assert.equal(x.public_release,false);
+  assert.ok(!JSON.stringify(x).includes('fixture:eco:source'));
+  assert.ok(!JSON.stringify(x).includes('fixture:romer:private'));
+  assert.ok(!JSON.stringify(x).includes(cached.sha256));
+ }
+});
+test('offline identity and mode validation deny without source leakage',()=>{
+ const invalid=[
+  {...args,offline:true,access:{authorized_object_ids:[],
+   authorized_source_ids:['fixture:eco:source']}},
+  {...args,offline:true,view:'unregistered'},
+  {...args,offline:'true'},
+  {...args,offline:null},
+  {...args,offline:true,file_space:'Romer.cgx'}
+ ];
+ for(const input of invalid){
+  const x=inspect(input);
+  assert.equal(x.status,'DENIED');
+  assert.equal(x.canonical_mutation,false);
+  assert.equal(x.public_release,false);
+  assert.ok(!JSON.stringify(x).includes('fixture:eco:source'));
+ }
+ // Online behaviour remains a review proposal, never provider verification.
+ const online=inspect(args);
+ assert.equal(online.status,'SOURCE_REVIEW_ONLY');
+ assert.equal(online.admission_stage,'R3_VIEW_PROPOSAL');
+ assert.equal(online.provider_readback,false);
+});
