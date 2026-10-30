@@ -33,7 +33,7 @@ def base_lease():
       "authority_phase_ref":"cgx://internal/governance/root-authority-phase"
     }
 
-def check(lease, execution_depth="execute", action_class="execute", consequential=True):
+def check(lease, execution_depth="execute", action_class="execute", consequential=True, project_id=None):
     return validate_lease(
       lease,
       agent_id="Neo",
@@ -41,7 +41,7 @@ def check(lease, execution_depth="execute", action_class="execute", consequentia
       execution_depth=execution_depth,
       cascade_class="C2",
       task_id="CGX-LAUNCH-006",
-      project_id=None,
+      project_id=project_id,
       action_class=action_class,
       execution_class="DIGITAL_WRITE",
       planned_floors=["Neo"],
@@ -104,6 +104,36 @@ def main():
     if not expired_control:
         failures.append("expired synthetic lease denial control did not hold")
 
+    # ACHILLES T2: a consequential lease with no project_ids restriction
+    # is accepted for two different project contexts. This is a synthetic
+    # wrapper-level replay/scope observation, NOT a signed-envelope replay.
+    # The bounded-scope denial control must work to make this test meaningful.
+    x=base_lease()
+    x["root_authority_receipt_ref"]="fixture:root-approval"
+    x["scope"]["project_ids"]=["fixture:project:A"]
+    bounded_a_ok,_,_=check(x,project_id="fixture:project:A")
+    bounded_b_ok,bounded_b_reasons,_=check(x,project_id="fixture:project:B")
+    bounded_control=(bounded_a_ok and not bounded_b_ok and
+                     "lease-project-out-of-scope:fixture:project:B" in bounded_b_reasons)
+    if not bounded_control:
+        failures.append("project-bound lease acceptance/denial control failed")
+
+    x=base_lease()
+    x["root_authority_receipt_ref"]="fixture:root-approval"
+    unbound_a_ok,_,_=check(x,project_id="fixture:project:A")
+    unbound_b_ok,_,_=check(x,project_id="fixture:project:B")
+    t2={
+      "test_id":"T2-LEASE-PROJECT-REPLAY-UNBOUND-SCOPE",
+      "evidence_class":"SOURCE_ONLY_SYNTHETIC_NEGATIVE",
+      "source_under_review":"scripts/run_cgx_agent_runtime.py:subset_scope/validate_lease",
+      "same_lease_project_A":"ALLOW" if unbound_a_ok else "DENY",
+      "same_lease_project_B":"ALLOW" if unbound_b_ok else "DENY",
+      "bounded_scope_denial_control":"PASS" if bounded_control else "FAIL",
+      "gate":"HOLD" if unbound_a_ok and unbound_b_ok else "REQUIRES_AUTHORITY_REVIEW",
+      "native_admitted":False,
+      "limits":"No signature, nonce, issuer authentication, DBR, real project ACL, downstream tool or host tested; absence of project_ids currently means unrestricted project matching in this wrapper."
+    }
+
     t1={
       "test_id":"T1-LEASE-ISSUER-IDENTITY",
       "evidence_class":"SOURCE_ONLY_SYNTHETIC_NEGATIVE",
@@ -115,7 +145,7 @@ def main():
       "native_admitted":False,
       "limits":"Wrapper-only fixture; no signature, revocation registry, downstream tool, real issuer, host, DBR, or lease authentication exercised."
     }
-    print({"status":"PASS" if not failures else "FAIL","failures":failures,"achilles_t1_negative_audit":t1})
+    print({"status":"PASS" if not failures else "FAIL","failures":failures,"achilles_t1_negative_audit":t1,"achilles_t2_negative_audit":t2})
     return 1 if failures else 0
 
 if __name__=="__main__":
