@@ -256,3 +256,68 @@ test("no related source requested retains original review route without lineage 
  assert.deepEqual(r.source_lineage_review,{state:"NO_RELATED_SOURCE_REQUESTED"});
  assert.equal(r.stack_layers.find(x=>x.layer==="lineage").state,"NO_RELATED_SOURCE_REQUESTED");
 });
+
+
+// Access posture tests use synthetic provider ACLs, not real owner identities.
+// Metadata visibility is not licence or consent for downstream source reuse.
+const acl={source_ref:source.source_ref,source_id:source.id,
+ provider_observation_ref:"synthetic:provider-acl-readback",
+ permissions:[{type:"anyone",role:"reader",allowFileDiscovery:false},
+  {type:"user",role:"owner",allowFileDiscovery:null}]};
+test("anyone-reader link is not private even when undiscoverable",()=>{
+ const r=prepare({cascade_input:input,access_posture:acl});
+ assert.equal(r.access_posture_review.anyone_link_present,true);
+ assert.equal(r.access_posture_review.provider_authenticated_by_module,false);
+ assert.equal(r.access_posture_review.rights_approved,false);
+ assert.equal(r.release.public_release_authorised,false);
+ assert.ok(r.access_posture_review.flags.includes(
+  "NON_DISCOVERABLE_LINK_STILL_ACCESSIBLE_TO_LINK_HOLDERS"));
+ assert.ok(r.blocking_gates.includes("DECLARED_SOURCE_ACCESS_POSTURE_NOT_RIGHTS_APPROVAL"));
+ assert.equal(JSON.stringify(r).includes("synthetic:provider-acl-readback"),false);
+});
+test("no anyone entry does not prove restricted source rights",()=>{
+ const r=prepare({cascade_input:input,access_posture:{...acl,
+  permissions:[{type:"user",role:"owner"}]}});
+ assert.equal(r.access_posture_review.anyone_link_present,false);
+ assert.ok(r.access_posture_review.flags.includes(
+  "NO_ANYONE_ENTRY_DOES_NOT_PROVE_PRIVATE"));
+ assert.equal(r.access_posture_review.source_reuse_rights_verified,false);
+});
+test("anyone writer is a stronger ACL risk and never an approval",()=>{
+ const r=prepare({cascade_input:input,access_posture:{...acl,
+  permissions:[{type:"anyone",role:"writer",allowFileDiscovery:true}]}});
+ assert.ok(r.access_posture_review.flags.includes(
+  "ANYONE_WRITE_OR_ADMIN_PERMISSION_REVIEW_REQUIRED"));
+ assert.equal(r.release.mint_allowed,false);
+});
+test("domain and group scopes are not equivalent to private ACL",()=>{
+ const r=prepare({cascade_input:input,access_posture:{...acl,
+  permissions:[{type:"group",role:"reader"},{type:"domain",role:"reader"}]}});
+ assert.equal(r.access_posture_review.broad_group_or_domain_present,true);
+ assert.ok(r.access_posture_review.flags.includes(
+  "GROUP_OR_DOMAIN_SCOPE_REVIEW_REQUIRED"));
+});
+test("ACL snapshot rejects unscoped IDs and sensitive identity fields",()=>{
+ for(const bad of [
+  {...acl,source_id:"other-source"},
+  {...acl,source_ref:"other-ref"},
+  {...acl,permissions:[{type:"user",role:"owner",emailAddress:"private@example.invalid"}]},
+  {...acl,permissions:[{type:"domain",role:"reader",domain:"private.example"}]},
+  {...acl,permissions:[{type:"anyone",role:"reader",allowFileDiscovery:"false"}]},
+  {...acl,permissions:[{type:"public",role:"reader"}]},
+  {...acl,provider_authenticated:true}
+ ])assert.throws(()=>prepare({cascade_input:input,access_posture:bad}),
+  /INVALID_ECO_ACCESS_POSTURE/);
+});
+test("H0 source-only viewport omits permission classification",()=>{
+ const r=prepare({cascade_input:input,access_posture:acl,requested_hydration:"H0"});
+ assert.deepEqual(r.access_posture_review,{state:"NOT_REQUESTED"});
+ assert.equal(r.hydration.H2.state,"NOT_REQUESTED");
+ assert.equal(r.release.public_release_authorised,false);
+});
+test("missing ACL snapshot is explicitly unverified and never a grant",()=>{
+ const r=prepare({cascade_input:input});
+ assert.equal(r.access_posture_review.state,"ACCESS_POSTURE_NOT_SUPPLIED");
+ assert.ok(r.access_posture_review.flags.includes("CURRENT_PROVIDER_ACL_READBACK_REQUIRED"));
+ assert.equal(r.access_posture_review.rights_approved,false);
+});
