@@ -195,14 +195,23 @@ export function planUniSpaceOperatorCockpit({
       inspector.viewport.state==='FRONTIER'));
  if(offline?!offlinePlan:!onlinePlan)
   return cockpitDeny('REVIEW_EVIDENCE_STAGE_CONFLICT');
- // Even a source-only R3/R2 proposal must use the same registered view lens
- // and projection as LOAD. Caller-provided document labels cannot disguise
- // a geometry/interactive projection; this is consistency, not host proof.
- if(!offline){
-  const intent=getRegisteredViewIntent(inspector.view);
-  if(intent&&(inspector.viewport.lens!==intent.lens||
-              inspector.viewport.projection!==intent.projection))
-   return cockpitDeny('VIEWPORT_INTENT_PROJECTION_MISMATCH');
+ // All online and offline review states must name an existing LOAD view.
+ // R2 Frontier is not a bypass for an unregistered lens; offline remains H0
+ // metadata-only even when the user selected a recognised future view.
+ const intent=getRegisteredViewIntent(inspector.view);
+ if(!intent)return cockpitDeny('UNREGISTERED_VIEW_INTENT');
+ if(offline){
+  if(inspector.viewport.lens!==null||
+     inspector.viewport.projection!=='metadata-only'||
+     inspector.viewport.geometry_ref!==null||
+     !Array.isArray(inspector.h1.edges)||inspector.h1.edges.length!==0||
+     inspector.h1.object_ids.length!==1||
+     inspector.h1.object_ids[0]!==selection.object_id||
+     inspector.h2.source_claims.length!==0)
+   return cockpitDeny('OFFLINE_H0_PROJECTION_CONFLICT');
+ }else if(inspector.viewport.lens!==intent.lens||
+          inspector.viewport.projection!==intent.projection){
+  return cockpitDeny('VIEWPORT_INTENT_PROJECTION_MISMATCH');
  }
  // #209/#158: the caller can hand in a fabricated inspector object. The
  // source-only inspector never qualifies metric 3D as R3; neither may this
