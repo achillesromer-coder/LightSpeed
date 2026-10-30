@@ -210,15 +210,19 @@ function reviewCellCrosswalk(pair,source,anchor,lineage,evidenceClass){
   const a=pair.original_cell,b=pair.related_cell;
   const formulaMatch=a.formula===b.formula;
   const unitMatch=a.unit===b.unit;
+  // Common UTF-8/Latin-1 mojibake must not qualify as a physical unit,
+  // even if the original and translated strings happen to be identical.
+  const unitEncodingValid=!/[ÂÃ�]/.test(a.unit+b.unit);
   const scale=Math.max(1,Math.abs(a.numeric_value),Math.abs(b.numeric_value));
   const valueMatch=Math.abs(a.numeric_value-b.numeric_value)<=1e-10*scale;
-  const consistent=formulaMatch&&unitMatch&&valueMatch;
+  const consistent=formulaMatch&&unitMatch&&unitEncodingValid&&valueMatch;
   return {
     state:consistent?"R1_CALLER_DECLARED_PAIRWISE_MATCH_NOT_EQUIVALENCE":
       "R1_CALLER_DECLARED_CELL_DISCREPANCY_HOLD",
     original_anchor_ref:anchor.sheet+"!"+anchor.cell,
     related_cell_ref:b.sheet+"!"+b.cell,
     formula_match:formulaMatch,unit_match:unitMatch,
+    unit_encoding_valid:unitEncodingValid,
     numeric_value_match:valueMatch,evidence_class_match:true,
     caller_declared_pair_compared:true,
     provider_cells_fetched_by_module:false,
