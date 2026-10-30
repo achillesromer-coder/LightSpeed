@@ -120,7 +120,10 @@ export function planUniSpacePrivateObjectDrop({
  if(!obj(inspectorInput)||!obj(dropInput)||!obj(dropInput.target)||
     inspectorInput.surface!=='private'||
     (dropInput.surface!==undefined&&dropInput.surface!=='private')||
-    inspectorInput.offline===true)
+    // A child widget cannot claim offline while its parent requests online intake.
+    // Reject ambiguous strings and contradictory nested flags, not just true.
+    (inspectorInput.offline!==undefined&&inspectorInput.offline!==false)||
+    (dropInput.offline!==undefined&&dropInput.offline!==false))
   return dropHandoffDeny('INCONSISTENT_PRIVATE_REVIEW_CONTEXT');
  // No second independently supplied ACL array is accepted for this handoff:
  // the source inspector's exact selected scope is reused, never widened.
