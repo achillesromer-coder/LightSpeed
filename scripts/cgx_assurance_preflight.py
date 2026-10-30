@@ -35,6 +35,13 @@ def assess(resolution,assessment):
             "scientific-asset-authoritative-vector-verifier-not-integrated",
             "scientific-asset-native-object-and-runtime-readback-not-verified",
         ]
+    # The caller supplies classification tags, so an untagged simulation cannot
+    # be proven non-scientific or non-authoritative by this source-only gate.
+    # Keep inspect/propose available; do not grant simulation on a missing label.
+    if ctx.get("execution_depth") == "simulate":
+        return "HOLD", [
+            "simulation-authenticated-asset-classification-and-native-verifier-unavailable"
+        ]
     # Source-only review has no authenticated classification, rights/ACL,
     # owner release grant, revocation check, or signed DBR readback. A caller
     # can omit scientific tags entirely, so all publish scopes must stop here.
