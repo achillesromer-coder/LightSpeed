@@ -198,9 +198,11 @@ test('C33 revocation supersession and unqualified rights state fail closed befor
  }
  const malformed=plan({...args,existing_sources:[{...exact,rights_state:'VALID'}]});
  assert.equal(malformed.reason,'EXISTING_RIGHTS_STATE_UNQUALIFIED');noEffects(malformed);
- // No matching source may remain a review candidate; never grants authority.
+ // A novel source without ACTIVE rights must remain HOLD, even without
+ // a matching registry entry. This is still caller metadata, not host proof.
  const candidate=plan({...args,source:oldSource});
- assert.equal(candidate.status,'REVIEW_CANDIDATE');noEffects(candidate);
+ assert.equal(candidate.status,'HOLD');
+ assert.equal(candidate.reason,'RIGHTS_STATE_UNQUALIFIED');noEffects(candidate);
 });
 
 
