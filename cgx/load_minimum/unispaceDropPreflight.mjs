@@ -137,6 +137,13 @@ export function planUniSpacePrivateObjectDrop({
  if(!inspector.h0||!identityLabel(inspector.h0.owner)||
     inspector.h0.owner!==dropInput.target.owner)
   return dropHandoffDeny('OBJECT_OWNER_UNRESOLVED_OR_MISMATCHED');
+ // An R0 source ID already referenced by this selected object cannot be
+ // reintroduced as a "new" drop. Equal bytes do not establish a duplicate;
+ // changed bytes/version require native identity and rights resolution.
+ // Caller node data is a veto hint, not authenticated DBR proof.
+ const selectedNode=inspectorInput.nodes.find(n=>n.object_id===inspector.identity);
+ if(selectedNode.source_refs.includes(dropInput.source?.source_id))
+  return dropHandoffDeny('SELECTED_R0_SOURCE_ID_REQUIRES_NATIVE_RESOLUTION');
  // A missing/revoked source rights state cannot become a qualified intake
  // proposal merely because a browser reports a plausible licence.
  if(!obj(dropInput.source)||dropInput.source.rights_state!=='ACTIVE'||
