@@ -120,9 +120,10 @@ const dropMime=s=>s===''||(typeof s==='string'&&s.length<=127&&
 const dropRights=new Set(['PUBLIC_SAFE','OWNER_PRIVATE','LICENSE_RESTRICTED','UNKNOWN']);
 const dropProof=new Set(['creative','scientific','engineering','historical','operational','unknown']);
 
-export function planSourceDropPreflight({target,file,readable=false,offline=false}={}){
+export function planSourceDropPreflight({target,file,readable=false,offline=false,surface=null}={}){
  const deny=reason=>({schema:DROP_PREFLIGHT_SCHEMA,state:'DENIED',reason,
   canonicalMutation:false,sourceBytesRead:false,hashVerified:false,publicRelease:false});
+ if(surface!=='private')return deny('PRIVATE_DROP_SURFACE_REQUIRED');
  if(!isObj(target)||target.kind!=='filespace')return deny('DROP_REQUIRES_CHILD_FILESPACE');
  if(typeof offline!=='boolean'||typeof readable!=='boolean')return deny('INVALID_PREFLIGHT_MODE');
  if(!isObj(file)||!dropName(file.name)||!dropMime(file.type??''))
