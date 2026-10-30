@@ -19,7 +19,7 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4.2.2? pinned
       - name: Python 3.11
-        uses: actions/setup-python@5fda1f8471e7d866b367bb95c8eaa3ee675923e1 # v4? pinned
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v4? pinned
         with:
           python-version: '3.11'
       - name: Syntax validation
