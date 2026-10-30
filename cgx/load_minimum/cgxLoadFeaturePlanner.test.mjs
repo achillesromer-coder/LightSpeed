@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { ACTIONS, menuForTarget, planFeature } from './cgxLoadFeaturePlanner.mjs';
+import { ACTIONS, menuForTarget, planFeature, planSourceDropPreflight } from './cgxLoadFeaturePlanner.mjs';
 const target = {kind:'filespace',fileSpace:'Romer.cgx',domain:'romer',owner:'Römer-Grex',objectId:'cgx:accepted:example',parentFileSpace:'Cognigrex.cgx'};
 const good = { readable:true, acceptedParent:true, existingAliasChecked:true, ownerApproved:true, rightsVerified:true, signedLeaseVerified:true, providerReadbackReady:true, registeredCapabilityVerified:true };
 test('right click on selected child offers LOAD and CCC without creating new masters',()=>{
@@ -99,4 +99,87 @@ test('opaque menu identifiers reject bidi, default-ignorable and non-NFC ambigui
  const normal=planFeature({action:'alexandria.resolve',target:{...target,owner:'Römer-Grex'},...good});
  assert.equal(normal.status,'REVIEW_ONLY');
  assert.equal(normal.networkFetch,false);
+});
+
+
+test('metadata-only FileSpace drop is source-review preflight, not native intake',()=>{
+ const file={name:'field-observation.json',size:2048,type:'application/json',
+  sha256:'a'.repeat(64),sourceId:'source:existing:one',revision:'rev:one',
+  owner:'Römer-Grex',rights:'OWNER_PRIVATE',proofClass:'historical'};
+ const x=planSourceDropPreflight({target,file,readable:true});
+ assert.equal(x.state,'REVIEW_ONLY');
+ assert.equal(x.admissionStage,'R0_METADATA_PREFLIGHT');
+ assert.equal(x.target.fileSpace,'Romer.cgx');
+ assert.equal(x.target.objectId,'cgx:accepted:example');
+ assert.equal(x.source.byteCount,2048);
+ assert.equal(x.source.digestClaimPresent,true);
+ assert.ok(x.blockers.includes('SOURCE_HASH_NOT_PROVIDER_VERIFIED'));
+ assert.ok(x.blockers.includes('CURRENT_HOST_ACL_UNVERIFIED'));
+ assert.ok(x.blockers.includes('PUBLIC_STATIC_ASSET_ROUTE_FORBIDDEN'));
+ for(const k of ['sourceBytesRead','hashVerified','hostAuthenticated','providerReadback',
+  'nativeAdmitted','canonicalMutation','networkFetch','install','execute','publicRelease','rendered'])
+  assert.equal(x[k],false,k);
+ assert.equal(x.transferBudgetBytes,0);
+ assert.ok(!JSON.stringify(x).includes('a'.repeat(64)));
+ assert.ok(!JSON.stringify(x).includes('source:existing:one'));
+});
+
+test('drop rejects unsafe names, hidden assets, Unicode ambiguity, MIME and unbounded sizes',()=>{
+ const file={name:'source.txt',size:1,type:'text/plain'};
+ const bad=[
+  [{...file,name:'../private'},'INVALID_SOURCE_METADATA'],
+  [{...file,name:'.env'},'INVALID_SOURCE_METADATA'],
+  [{...file,name:'CON.txt'},'INVALID_SOURCE_METADATA'],
+  [{...file,name:'a<script>.txt'},'INVALID_SOURCE_METADATA'],
+  [{...file,name:'spoof\u202e.txt'},'INVALID_SOURCE_METADATA'],
+  [{...file,name:'cafe\u0301.txt'},'INVALID_SOURCE_METADATA'],
+  [{...file,type:'text/html;evil'},'INVALID_SOURCE_METADATA'],
+  [{...file,size:60*1024*1024+1},'BOUNDED_SOURCE_EXCEEDED'],
+  [{...file,size:NaN},'BOUNDED_SOURCE_EXCEEDED'],
+  [{...file,sha256:'not-a-digest'},'INVALID_UNVERIFIED_DIGEST_CLAIM'],
+  [{...file,sourceId:'source\u200b'},'AMBIGUOUS_SOURCE_METADATA'],
+  [{...file,rights:'GRANTED'},'UNKNOWN_RIGHTS_DECLARATION'],
+  [{...file,proofClass:'scientifically_validated'},'UNKNOWN_PROOF_CLASS']
+ ];
+ for(const [input,reason] of bad){
+  const x=planSourceDropPreflight({target,file:input,readable:true});
+  assert.equal(x.state,'DENIED',reason);
+  assert.equal(x.reason,reason);
+  assert.equal(x.publicRelease,false);
+  assert.equal(x.canonicalMutation,false);
+  assert.ok(!Object.hasOwn(x,'source'));
+ }
+});
+
+test('offline drop cannot claim hash, rights, native admission or source qualification',()=>{
+ const x=planSourceDropPreflight({target:{...target,objectId:null},
+  file:{name:'archive.txt',size:0,type:'',rights:'LICENSE_RESTRICTED',proofClass:'unknown'},
+  offline:true});
+ assert.equal(x.state,'REVIEW_ONLY');
+ for(const reason of ['EXACT_OBJECT_ID_UNRESOLVED','SOURCE_DIGEST_NOT_SUPPLIED',
+  'SOURCE_ID_OR_REVISION_UNRESOLVED','SOURCE_OWNER_UNRESOLVED',
+  'LICENSE_TERMS_UNRESOLVED','PROOF_CLASS_UNRESOLVED','MIME_UNVERIFIED',
+  'EMPTY_SOURCE_REVIEW_REQUIRED','OFFLINE_AUTHORITY_AND_REVOCATION_UNVERIFIED'])
+  assert.ok(x.blockers.includes(reason),reason);
+ assert.equal(x.source.rightsClaim,'LICENSE_RESTRICTED');
+ assert.equal(x.source.digestClaimPresent,false);
+ assert.equal(x.nativeAdmitted,false);
+ assert.equal(x.publicRelease,false);
+});
+
+test('drop must remain in selected child and cannot be used as a public or file-target intake',()=>{
+ const file={name:'public-safe.png',size:1024,type:'image/png',rights:'PUBLIC_SAFE'};
+ const wrong=planSourceDropPreflight({target:{...target,domain:'eco'},file,readable:true});
+ assert.equal(wrong.state,'DENIED');
+ assert.equal(wrong.reason,'CHILD_FILESPACE_SCOPE_CONFLICT');
+ const competing=planSourceDropPreflight({target:{...target,parentFileSpace:'Second.cgx'},file});
+ assert.equal(competing.reason,'COMPETING_PARENT_ROOT');
+ const fileTarget=planSourceDropPreflight({target:{...target,kind:'file'},file});
+ assert.equal(fileTarget.reason,'DROP_REQUIRES_CHILD_FILESPACE');
+ const x=planSourceDropPreflight({target,file,readable:true});
+ assert.equal(x.state,'REVIEW_ONLY');
+ assert.equal(x.source.rightsClaim,'PUBLIC_SAFE');
+ assert.equal(x.publicRelease,false);
+ assert.ok(x.blockers.includes('SOURCE_RIGHTS_NOT_PROVIDER_VERIFIED'));
+ assert.ok(x.blockers.includes('PUBLIC_STATIC_ASSET_ROUTE_FORBIDDEN'));
 });
