@@ -455,3 +455,37 @@ test('inverse targets fail closed when absent, malformed or directionally contra
     assert.equal(result.dbr_readback_verified,false);
   }
 });
+
+test('inverse lookup cannot borrow a same-named target from a different family', () => {
+  const moved = structuredClone(sources.romer);
+  moved.extends = sources.shared.schema; // isolate inverse scope from qualifier drift
+  const decomposition = moved.families.decomposition;
+  const targetIndex = decomposition.findIndex(r => r.id === 'HAS_PART');
+  assert.ok(targetIndex >= 0);
+  const [target] = decomposition.splice(targetIndex,1);
+  moved.families.interface.push(target); // synthetic: same label, wrong declaring family
+  const review = inspectRelationGrammar(moved,sources.shared);
+  assert.ok(review.issues.some(issue =>
+    issue.code === 'RELATION_INVERSE_TARGET_UNDECLARED' &&
+    issue.relation_id === 'PART_OF' && issue.family === 'decomposition'));
+  assert.equal(review.stage,'SOURCE_REVIEW_ONLY');
+  assert.equal(review.status,'HOLD');
+  assert.equal(review.native_admitted,false);
+  assert.equal(review.dbr_readback_verified,false);
+});
+
+test('a conflicting same-name relation in another family cannot poison a valid local inverse', () => {
+  const variant = structuredClone(sources.romer);
+  variant.extends = sources.shared.schema;
+  variant.families.interface.push({id:'HAS_PART',inverse:'SUBSYSTEM_OF'});
+  const review = inspectRelationGrammar(variant,sources.shared);
+  assert.ok(review.issues.some(issue =>
+    issue.code === 'RELATION_TYPE_NAMESPACE_AMBIGUITY' &&
+    issue.relation_id === 'HAS_PART'));
+  assert.equal(review.issues.some(issue =>
+    issue.code === 'RELATION_INVERSE_NONRECIPROCAL' &&
+    issue.relation_id === 'PART_OF' && issue.family === 'decomposition'),false);
+  assert.equal(review.status,'HOLD'); // ambiguity remains; never merge labels
+  assert.equal(review.qualified_object_id,null);
+  assert.equal(review.native_admitted,false);
+});
