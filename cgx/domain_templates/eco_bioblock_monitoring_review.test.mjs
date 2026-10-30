@@ -200,3 +200,14 @@ test("spaced synthetic visits remain source-only without compliance promotion",(
  assert.equal(r.schedule_compliance_verified,false);
  assert.equal(r.biodiversity_gain_verified,false);
 });
+
+test("declared source revision and SHA256 are syntax-only without authenticated bytes",()=>{
+ const r=review({...base,source_revision:"synthetic-revision",
+  source_sha256:"a".repeat(64)});
+ assert.equal(r.source_only,true);
+ assert.equal(r.field_observation_verified,false);
+ assert.equal(r.native_object_id,null);
+ for(const bad of [{source_revision:""},{source_revision:"bad\nrevision"},
+  {source_sha256:"bad-hash"},{source_sha256:"g".repeat(64)}])
+  assert.throws(()=>review({...base,...bad}),/INVALID_BIOBLOCK_MONITORING_INPUT/);
+});
