@@ -40,6 +40,9 @@ def plan_vector_request(target_naif: int) -> dict:
         "VEC_TABLE": "'2'",
         "VEC_CORR": "'NONE'",
         "TIME_DIGITS": "'SECONDS'",
+        "VEC_DELTA_T": "'YES'",
+        "CAL_TYPE": "'GREGORIAN'",
+        "VEC_LABELS": "'YES'",
     }
     url = ENDPOINT + "?" + urlencode(params, quote_via=quote)
     return {
@@ -54,6 +57,9 @@ def plan_vector_request(target_naif: int) -> dict:
         "units": "KM-S",
         "vector_table": 2,
         "correction": "NONE",
+        "tdb_minus_ut_report_requested": True,
+        "calendar_type": "GREGORIAN",
+        "vector_component_labels_requested": True,
         "url": url,
         "evidence_stage": "REQUEST_SPEC_ONLY",
         "network_executed": False,
