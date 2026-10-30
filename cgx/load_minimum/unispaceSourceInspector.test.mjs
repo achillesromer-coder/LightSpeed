@@ -564,3 +564,27 @@ test('#209 R3 viewport intent and geometry cannot be spoofed by a caller',()=>{
   assert.equal(result.released,false);
  }
 });
+
+
+// #158/#209: source-only caller projections cannot relabel an R2/R3 view.
+test('registered LOAD lens/projection cannot be relabelled by a caller',()=>{
+ const valid=statusInput.inspector;
+ const frontier=inspect({...args,view:'3d'});
+ assert.equal(cockpit(statusInput).state,'SOURCE_REVIEW_ONLY');
+ assert.equal(cockpit({...statusInput,inspector:frontier}).state,'SOURCE_REVIEW_ONLY');
+ const variants=[
+  {...valid,viewport:{...valid.viewport,lens:'twin-3d'}},
+  {...valid,viewport:{...valid.viewport,projection:'geometry-twin'}},
+  {...valid,view:'graph'},
+  {...frontier,viewport:{...frontier.viewport,lens:'active-object-inspector'}},
+  {...frontier,viewport:{...frontier.viewport,projection:'document-section'}}
+ ];
+ for(const inspector of variants){
+  const result=cockpit({...statusInput,inspector});
+  assert.equal(result.state,'DENIED');
+  assert.equal(result.reason,'VIEWPORT_INTENT_PROJECTION_MISMATCH');
+  assert.equal(result.canonical_mutation,false);
+  assert.equal(result.released,false);
+  assert.ok(!JSON.stringify(result).includes('fixture:eco:source'));
+ }
+});
