@@ -482,10 +482,23 @@ test('R3 document claims cannot be fabricated from missing or contradictory R0 p
   {...valid,h2:{...valid.h2,source_claims:[{...claim,rights:'LICENSE_RESTRICTED'}]}},
   {...valid,h2:{...valid.h2,source_claims:[{...claim,proof_class:'creative'}]}}
  ];
- for(const inspector of variants){
+ // The geometry-reference consistency veto runs before the R0-claim veto.
+ // Missing/revoked geometry anchor claims must deny as metric-unverified;
+ // the remaining malformed R0 claims must deny as source-unqualified.
+ const expectedReasons=[
+  'UNVERIFIED_METRIC_VIEW_CANNOT_BE_R3',
+  'R3_SOURCE_PROOF_CLAIMS_UNQUALIFIED',
+  'R3_SOURCE_PROOF_CLAIMS_UNQUALIFIED',
+  'UNVERIFIED_METRIC_VIEW_CANNOT_BE_R3',
+  'R3_SOURCE_PROOF_CLAIMS_UNQUALIFIED',
+  'R3_SOURCE_PROOF_CLAIMS_UNQUALIFIED',
+  'R3_SOURCE_PROOF_CLAIMS_UNQUALIFIED',
+  'R3_SOURCE_PROOF_CLAIMS_UNQUALIFIED'
+ ];
+ for(const [index,inspector] of variants.entries()){
   const denied=cockpit({...statusInput,inspector});
   assert.equal(denied.state,'DENIED');
-  assert.equal(denied.reason,'R3_SOURCE_PROOF_CLAIMS_UNQUALIFIED');
+  assert.equal(denied.reason,expectedReasons[index]);
   assert.equal(denied.may_execute,false);
   assert.equal(denied.released,false);
   assert.ok(!JSON.stringify(denied).includes('fixture:eco:source'));
