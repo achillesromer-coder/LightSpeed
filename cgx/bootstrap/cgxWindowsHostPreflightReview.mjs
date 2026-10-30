@@ -13,7 +13,7 @@ const SIGNATURES = new Set(["VALID", "NOT_SIGNED", "INVALID", "UNKNOWN"]);
 const ZONES = new Set(["INTERNET", "LOCAL", "UNKNOWN"]);
 const ERRORS = new Set(["NONE", "UNSIGNED_SCRIPT", "PARSE_ERROR", "ARGUMENT_TYPES_DO_NOT_MATCH", "OTHER"]);
 // Caller-supplied source observation, NOT proof of effective host policy.
-const INSTALLER_POLICIES = new Set(["UNKNOWN", "EXPLICIT_BYPASS", "NO_EXPLICIT_OVERRIDE"]);
+const INSTALLER_POLICIES = new Set(["UNKNOWN", "EXPLICIT_BYPASS", "EXPLICIT_POLICY_OVERRIDE_UNVERIFIED", "NO_EXPLICIT_OVERRIDE"]);
 const cleanObject = value => value !== null && typeof value === "object" && !Array.isArray(value);
 
 export function reviewWindowsCGXHost(observed = {}) {
@@ -46,6 +46,8 @@ export function reviewWindowsCGXHost(observed = {}) {
   if (effectivePolicy === "Restricted") holds.push("POWERSHELL_SCRIPT_EXECUTION_RESTRICTED");
   if (installerInvocationPolicy === "EXPLICIT_BYPASS")
     holds.push("NATIVE_INSTALLER_POLICY_BYPASS_SOURCE_HOLD");
+  if (installerInvocationPolicy === "EXPLICIT_POLICY_OVERRIDE_UNVERIFIED")
+    holds.push("NATIVE_INSTALLER_POLICY_OVERRIDE_REQUIRES_REVIEW");
   // An AllSigned/RemoteSigned/Bypass observation is diagnostic data, not execution permission.
   const noHostReadback = fileAccess !== "VERIFIED_READ_ONLY";
   const nextReadOnly = holds.includes("PROVIDER_MONTHLY_QUOTA_HOLD_DO_NOT_RETRY")
@@ -54,6 +56,8 @@ export function reviewWindowsCGXHost(observed = {}) {
       ? "Inspect Get-ExecutionPolicy -List and Get-AuthenticodeSignature; do not disable a managed signing policy."
       : holds.includes("NATIVE_INSTALLER_POLICY_BYPASS_SOURCE_HOLD")
       ? "Review runtime_productization.py installer invocation against signed-policy requirements; do not run or override policy."
+      : holds.includes("NATIVE_INSTALLER_POLICY_OVERRIDE_REQUIRES_REVIEW")
+      ? "Review explicit or dynamically constructed PowerShell execution-policy arguments; do not assume the invocation is safe or run it."
       : holds.includes("WIZARD_RUNTIME_ARGUMENT_HOLD")
         ? "Inspect the wizard's stage-specific exception and stack; do not infer native CGX failure."
         : holds.includes("POWERSHELL_SCRIPT_PARSE_HOLD")
@@ -86,5 +90,9 @@ export function classifyInstallerPolicySource(source) {
   if (typeof source !== "string" || source.length > 2 * 1024 * 1024) return "UNKNOWN";
   const argvBypass = /["']-ExecutionPolicy["']\s*,\s*["']Bypass["']/i.test(source);
   const commandBypass = /(?:^|[\s"'\x60])-ExecutionPolicy\s+Bypass(?:\s|["'\x60]|$)/im.test(source);
-  return argvBypass || commandBypass ? "EXPLICIT_BYPASS" : "NO_EXPLICIT_OVERRIDE";
+  if (argvBypass || commandBypass) return "EXPLICIT_BYPASS";
+  // A non-Bypass or dynamic -ExecutionPolicy switch still changes policy semantics.
+  // Static inspection cannot prove the effective argument; hold for source review.
+  if (/-ExecutionPolicy\b/i.test(source)) return "EXPLICIT_POLICY_OVERRIDE_UNVERIFIED";
+  return "NO_EXPLICIT_OVERRIDE";
 }
