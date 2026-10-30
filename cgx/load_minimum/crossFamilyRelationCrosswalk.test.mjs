@@ -64,6 +64,29 @@ function assertReviewOnly(document) {
   }
 }
 
+test('shared vocabulary rejects duplicate relation declarations within one family', () => {
+  const shared = structuredClone(sources.shared);
+  shared.shared_relation_types.process.push(structuredClone(shared.shared_relation_types.process[0]));
+  assert.throws(() => inspectRelationGrammar(sources.romer, shared), /DUPLICATE_SHARED_RELATION_IN_FAMILY/);
+  assert.equal(sources.shared.shared_relation_types.process.filter(row => row.id === 'PRECEDES').length, 1);
+});
+
+test('shared vocabulary reuse across different families stays ambiguous and noncanonical', () => {
+  const shared = structuredClone(sources.shared);
+  shared.shared_relation_types.risk.push({id:'PRECEDES'});
+  const review = inspectRelationGrammar(sources.romer, shared);
+  const issue = review.issues.find(row =>
+    row.code === 'SHARED_RELATION_TYPE_NAMESPACE_AMBIGUITY' && row.relation_id === 'PRECEDES');
+  assert.deepEqual(issue?.source_families, ['process','risk']);
+  assert.equal(review.status, 'HOLD');
+  assert.equal(review.stage, 'SOURCE_REVIEW_ONLY');
+  assert.equal(review.qualified_object_id, null);
+  assert.equal(review.native_admitted, false);
+  assert.equal(review.dbr_readback_verified, false);
+  assert.equal(review.authority_transferred, false);
+  assert.equal(sources.shared.shared_relation_types.risk.some(row => row.id === 'PRECEDES'), false);
+});
+
 test('same-family duplicate IDs fail closed without changing source registries', () => {
   const romer = structuredClone(sources.romer);
   const existing = romer.families.interface[0];
