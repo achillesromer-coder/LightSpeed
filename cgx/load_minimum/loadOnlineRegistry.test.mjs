@@ -23,6 +23,21 @@ test('supplied ID permits only host preflight',()=>{
 test('cannot assert native acceptance by editing metadata',()=>{
  const x=copy(data);x.summary.native_accepted=5;assert.throws(()=>validateRegistry(x),/UNSUPPORTED_AUTHORITY_CLAIM/);
 });
+test('source-only LOAD rejects per-record forged acceptance even with a zero-admission summary',()=>{
+ const x=copy(data);x.records[0].admission='NATIVE_ACCEPTED';
+ assert.throws(()=>validateRegistry(x),/UNSUPPORTED_RECORD_ADMISSION/);
+ assert.throws(()=>searchLoad(x,{query:x.records[0].source_key}),/UNSUPPORTED_RECORD_ADMISSION/);
+ assert.throws(()=>resolveLoad(x,{category:x.records[0].category,sourceKey:x.records[0].source_key}),/UNSUPPORTED_RECORD_ADMISSION/);
+});
+test('source-only LOAD rejects alternative installation fields and invented DBR receipts',()=>{
+ for(const [field,value] of [
+  ['admission',null],['native_absorbed','true'],['installed_online','true'],
+  ['canonical_object_id','cgx:forged'],['native_dbr_readback',{accepted:true}]
+ ]){
+  const x=copy(data);x.records[0][field]=value;
+  assert.throws(()=>validateRegistry(x),/UNSUPPORTED_RECORD_ADMISSION|UNVERIFIED_INSTALLATION/,field);
+ }
+});
 test('cannot replace trusted source blob',()=>{
  const x=copy(data);x.records[0].source_git_blob='0'.repeat(40);assert.throws(()=>validateRegistry(x),/SOURCE_PROOF_MISMATCH/);
 });
