@@ -384,6 +384,40 @@ test('NFC and default-ignorable Unicode cannot create competing source identitie
 });
 
 
+
+// #158/C33: browser metadata cannot turn ambiguous revocation flags into an
+// ACTIVE rights grant or an existing-reference NOOP. Only absent/false passes.
+test('explicit non-boolean revocation flags deny incoming, prior and private handoff',()=>{
+ const prior={source_id:source.source_id,sha256:source.sha256,
+  version:source.version,owner:source.owner,rights:source.rights,
+  proof_class:source.proof_class,object_id:target.object_id,
+  file_space:target.file_space,rights_state:'ACTIVE'};
+ for(const field of ['revoked','rights_revoked']){
+  for(const value of [undefined,null,'false','true',0,1,{},[]]){
+   const incoming=plan({...args,source:{...source,[field]:value}});
+   assert.equal(incoming.status,'HOLD',field+':incoming');
+   assert.equal(incoming.reason,'SOURCE_RIGHTS_NOT_ACTIVE',field+':incoming');
+   assert.ok(!JSON.stringify(incoming).includes(source.source_id));noEffects(incoming);
+   const existing=plan({...args,existing_sources:[{...prior,[field]:value}]});
+   assert.equal(existing.status,'HOLD',field+':prior');
+   assert.equal(existing.reason,'EXISTING_RIGHTS_NOT_ACTIVE',field+':prior');
+   assert.ok(!JSON.stringify(existing).includes(source.source_id));noEffects(existing);
+   const privateHandoff=handoff({...scopedDrop,dropInput:{...scopedDrop.dropInput,
+    source:{...source,[field]:value}}});
+   assert.equal(privateHandoff.state,'DENIED',field+':handoff');
+   assert.equal(privateHandoff.reason,'INCOMING_SOURCE_RIGHTS_NOT_ACTIVE',field+':handoff');
+   assert.ok(!JSON.stringify(privateHandoff).includes(source.source_id));handoffInert(privateHandoff);
+  }
+  const permitted=plan({...args,source:{...source,[field]:false}});
+  assert.equal(permitted.status,'REVIEW_CANDIDATE');noEffects(permitted);
+  const noOp=plan({...args,existing_sources:[{...prior,[field]:false}]});
+  assert.equal(noOp.status,'NOOP_REVIEW');noEffects(noOp);
+  const privateHandoff=handoff({...scopedDrop,dropInput:{...scopedDrop.dropInput,
+   source:{...source,[field]:false}}});
+  assert.equal(privateHandoff.state,'SOURCE_REVIEW_ONLY');handoffInert(privateHandoff);
+ }
+});
+
 test('public route cannot elevate caller-supplied host or DBR receipts into source disclosure',()=>{
  const x=plan({...args,surface:'public',target:{...target,rights:'PUBLIC_SAFE'},
   source:{...source,rights:'PUBLIC_SAFE'},access:{...access,
