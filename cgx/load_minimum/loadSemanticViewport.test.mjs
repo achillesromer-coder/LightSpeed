@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {planKnowledgeSpread,planViewportSwitch,planNovelMatching} from './loadSemanticViewport.mjs';
+import {planKnowledgeSpread,planViewportSwitch,planNovelMatching,planUniSpaceEvidenceInspector} from './loadSemanticViewport.mjs';
 const registry=JSON.parse(readFileSync(new URL('./online_registry_projection_2026-10-28.json',import.meta.url),'utf8'));
 // Deliberately SYNTHETIC regression fixtures: not published objects, measured geometry or native IDs.
 const nodes=[
@@ -166,4 +166,85 @@ test('creative source-linked 3D is still nonmetric and not native/owner accepted
  assert.equal(v.metric_geometry_verified,false);
  assert.equal(v.interactive_execution,false);
  assert.equal(v.public_release,false);
+});
+
+
+const ecoTarget={objectId:'fixture:eco:tree',domain:'eco',fileSpace:'Eco.cgx',
+ parentFileSpace:'Cognigrex.cgx',rootFileSpace:'Cognigrex.cgx'};
+const inspect=(opts={})=>planUniSpaceEvidenceInspector({
+ spread:spread(),target:ecoTarget,surface:'private',...opts
+});
+test('private UniSpace inspector preserves one exact selected Object_ID and source scope',()=>{
+ const x=inspect();
+ assert.equal(x.state,'PRIVATE_SOURCE_REVIEW_ONLY');
+ assert.equal(x.selected_object_id,'fixture:eco:tree');
+ assert.equal(x.child_file_space,'Eco.cgx');
+ assert.equal(x.parent_file_space,'Cognigrex.cgx');
+ assert.equal(x.hydration,'H0_H2_SPARSE_REVIEW');
+ assert.deepEqual(x.source_refs,['fixture:s1']);
+ assert.equal(x.layers.H4.state,'HOST_EXECUTION_NOT_AUTHORISED');
+ for(const k of ['sourceBytesRead','rightsVerified','hostVerified','nativeAdmitted',
+  'rendered','mayExecute','publicRelease','canonicalMutation'])assert.equal(x[k],false,k);
+});
+test('public/static inspector denies without leaking source or selected identity',()=>{
+ for(const surface of [undefined,null,'public','static','private-preview']){
+  const x=inspect({surface});
+  assert.equal(x.state,'DENIED');
+  assert.equal(x.reason,'PRIVATE_INSPECTOR_SURFACE_REQUIRED');
+  assert.ok(!JSON.stringify(x).includes('fixture:eco:tree'));
+  assert.ok(!JSON.stringify(x).includes('fixture:s1'));
+ }
+});
+test('wrong child, parent or selected identity denies instead of remapping',()=>{
+ for(const target of [
+  {...ecoTarget,domain:'romer'},
+  {...ecoTarget,fileSpace:'Romer.cgx'},
+  {...ecoTarget,parentFileSpace:'EMASSC.cgx'},
+  {...ecoTarget,rootFileSpace:'OtherRoot.cgx'},
+  {...ecoTarget,objectId:'fixture:eco:taxon'}
+ ]){
+  const x=inspect({target});
+  assert.equal(x.state,'DENIED');
+  assert.equal(x.reason,'EXACT_CHILD_SCOPE_MISMATCH');
+  assert.equal(x.mayExecute,false);
+ }
+});
+test('3D inspector inherits missing geometry Frontier and cannot assert metric scale',()=>{
+ const x=inspect({view:'3d'});
+ assert.equal(x.view_state,'FRONTIER_GEOMETRY_UNQUALIFIED');
+ assert.ok(x.frontier.includes('QUALIFIED_GEOMETRY_MISSING'));
+ assert.equal(x.hostVerified,false);
+ assert.equal(x.nativeAdmitted,false);
+ const bound=nodes.map(n=>n.object_id==='fixture:eco:tree'
+  ?{...n,source_refs:['fixture:s1','fixture:geo']}:n);
+ const y=inspect({spread:spread({nodes:bound}),view:'3d'});
+ assert.equal(y.view_state,'SOURCE_LINKED_3D_REVIEW_ONLY');
+ assert.equal(y.rendered,false);
+ assert.equal(y.mayExecute,false);
+});
+test('forged native receipts and evidence labels do not elevate source-only inspector',()=>{
+ const s=spread();
+ s.objects[0].source_ceiling='NATIVE_ACCEPTED';
+ s.objects[0].native_admitted=true;
+ s.host_handshake_verified=true;
+ s.rights_verified=true;
+ const x=inspect({spread:s,hostReceipt:{signed:true},rightsReceipt:{verified:true}});
+ assert.equal(x.state,'PRIVATE_SOURCE_REVIEW_ONLY');
+ assert.equal(x.evidence_ceiling,'CALLER_SOURCE_CLAIMS_ONLY');
+ assert.equal(x.layers.H3.state,'CCC_CAPABILITIES_NOT_NATIVE_VERIFIED');
+ assert.equal(x.layers.H4.state,'HOST_EXECUTION_NOT_AUTHORISED');
+ assert.equal(x.nativeAdmitted,false);
+ assert.equal(x.rightsVerified,false);
+ assert.equal(x.hostVerified,false);
+});
+test('tampered spread duplicate ID or unauthorised edge fails closed',()=>{
+ const duplicate=spread();
+ duplicate.objects.push({...duplicate.objects[0]});
+ assert.equal(inspect({spread:duplicate}).reason,'FOCUS_ID_NOT_UNIQUE');
+ const foreign=spread();
+ foreign.edges.push({from:'fixture:eco:tree',to:'fixture:secret',relation:'EVIDENCED_BY'});
+ assert.equal(inspect({spread:foreign}).reason,'UNTRUSTED_EDGE_SCOPE');
+ const bad=spread();
+ bad.objects[0].source_refs=[''];
+ assert.equal(inspect({spread:bad}).reason,'UNTRUSTED_FOCUS_EVIDENCE');
 });
