@@ -63,10 +63,11 @@ def main():
                         or "scientific-asset-authoritative-vector-verifier-not-integrated" not in reasons):
                     astro_failures.append((domain, depth, tag, decision))
     checks["astronomical-adapter-alias-matrix-64-forged-receipts-rejected"] = not astro_failures
-    # Review/inspection still permit source-only work; neither admits a solver.
-    checks["astronomical-source-inspection-not-native-admission"] = (
+    # Source-only inspection still requires an assurance assessment before
+    # this route could be cleared; no missing receipt implies native admission.
+    checks["astronomical-source-inspection-without-receipt-held"] = (
         assess(route("lightspeed", "inspect", "C0", ["horizons-vectors"]), None)[0]
-        != "HOLD")
+        == "HOLD")
     # CLI parsing is the final untrusted classification boundary.
     astro_cmd = [sys.executable,
         str(Path(__file__).resolve().parent / "cgx_assurance_preflight.py"),
