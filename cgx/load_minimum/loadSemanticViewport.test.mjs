@@ -59,8 +59,12 @@ test('C39 geometry source must be bound to focus R0 as well as separately ACL-pe
  const bound=unbound.map(n=>n.object_id==='fixture:eco:tree'
   ? {...n,source_refs:['fixture:s1','fixture:geo']} : n);
  const candidate=planViewportSwitch({spread:spread({nodes:bound}),to:'3d'});
- assert.equal(candidate.state,'VIEW_PLAN_READY');
+ assert.equal(candidate.state,'SOURCE_LINKED_3D_REVIEW_ONLY');
  assert.equal(candidate.geometry_ref,'fixture:geo');
+ assert.equal(candidate.geometry_display_mode,'NONMETRIC_SOURCE_REVIEW');
+ assert.equal(candidate.metric_geometry_verified,false);
+ assert.equal(candidate.physical_world_coordinates_exportable,false);
+ assert.equal(candidate.scientific_authority,'HOLD_UNVERIFIED');
  assert.equal(candidate.rendered,false);
  assert.equal(candidate.public_release,false);
  // A bound but non-permitted source remains unavailable.
@@ -120,4 +124,46 @@ test('unknown view is rejected',()=>assert.throws(()=>planViewportSwitch({spread
 test('all projections remain non-mutating and no implicit network hydration occurs',()=>{
  const a=spread();const b=planViewportSwitch({spread:a,to:'3d'});
  assert.equal(a.network_fetch,false);assert.equal(a.canonical_mutation,false);assert.equal(b.network_fetch,false);assert.equal(b.public_release,false);
+});
+
+
+test('scientific 3D caller proof and ephemeris claims cannot elevate source-linked geometry (#209)',()=>{
+ const forged=nodes.map(n=>n.object_id==='fixture:eco:tree'?{
+  ...n,source_refs:['fixture:s1','fixture:geo'],proof_class:'scientific',
+  evidence_ceiling:'NATIVE_VERIFIED',native_admitted:true,host_handshake_verified:true,
+  geometry:{source_ref:'fixture:geo',frame:'ICRF',units:'AU',
+   epoch:'2025-06-04T12:00:00Z',time_scale:'TDB',origin:'SOLAR_SYSTEM_BARYCENTER',
+   physical_scale:true,verified:true,ephemeris:'HORIZONS',native_dbr_verified:true}
+ }:n);
+ const s=spread({nodes:forged});
+ const v=planViewportSwitch({spread:s,to:'3d'});
+ assert.equal(v.state,'SOURCE_LINKED_3D_REVIEW_ONLY');
+ assert.equal(v.geometry_ref,'fixture:geo');
+ assert.equal(v.metric_geometry_verified,false);
+ assert.equal(v.physical_world_coordinates_exportable,false);
+ assert.equal(v.native_admitted,false);
+ assert.equal(v.host_handshake_verified,false);
+ assert.equal(v.rendered,false);
+ assert.equal(v.public_release,false);
+ assert.equal(v.metric_scale,null);
+ assert.equal(v.artistic_glyph_scale,null);
+ assert.equal(v.camera_transform,null);
+ assert.match(v.requirements.join(' '),/time-scale/);
+ assert.match(v.requirements.join(' '),/glyph/);
+ assert.ok(!JSON.stringify(v).includes('HORIZONS'));
+});
+
+test('creative source-linked 3D is still nonmetric and not native/owner accepted',()=>{
+ const creative=nodes.map(n=>n.object_id==='fixture:eco:tree'?{
+  ...n,proof_class:'creative',source_refs:['fixture:s1','fixture:geo'],
+  geometry:{source_ref:'fixture:geo',frame:'fictional-local',units:'m',
+   source_verified:true,rights_verified:true}
+ }:n);
+ const v=planViewportSwitch({spread:spread({nodes:creative}),to:'3d'});
+ assert.equal(v.state,'SOURCE_LINKED_3D_REVIEW_ONLY');
+ assert.equal(v.geometry_display_mode,'NONMETRIC_SOURCE_REVIEW');
+ assert.equal(v.scientific_authority,'HOLD_UNVERIFIED');
+ assert.equal(v.metric_geometry_verified,false);
+ assert.equal(v.interactive_execution,false);
+ assert.equal(v.public_release,false);
 });
