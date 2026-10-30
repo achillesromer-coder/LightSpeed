@@ -14,6 +14,26 @@ test('single exact child and source metadata yields review candidate, never admi
  const x=plan(args);assert.equal(x.status,'REVIEW_CANDIDATE');assert.equal(x.target.object_id,target.object_id);
  assert.equal(x.target.file_space,'Eco.cgx');assert.equal(x.proposed_source.hash_status,'DECLARED_UNVERIFIED');noEffects(x);
 });
+// #158: the standalone drag/drop preflight must fail closed on an absent
+// rights state, not merely the stricter private inspector handoff.
+test('standalone new-source intake requires explicit ACTIVE rights state',()=>{
+ for(const state of [undefined,null,'UNRESOLVED']){
+  const incoming={...source,rights_state:state};
+  const x=plan({...args,source:incoming});
+  assert.equal(x.status,'HOLD');
+  assert.equal(x.reason,state==='UNRESOLVED'?'SOURCE_RIGHTS_NOT_ACTIVE':
+   state===null?'SOURCE_RIGHTS_STATE_UNQUALIFIED':'RIGHTS_STATE_UNQUALIFIED');
+  assert.ok(!JSON.stringify(x).includes(source.source_id));
+  noEffects(x);
+ }
+ const omitted={...source};delete omitted.rights_state;
+ const x=plan({...args,source:omitted});
+ assert.equal(x.status,'HOLD');
+ assert.equal(x.reason,'RIGHTS_STATE_UNQUALIFIED');
+ assert.ok(!JSON.stringify(x).includes(source.source_id));
+ noEffects(x);
+});
+
 test('cross-Grex FileSpace impersonation and missing scope deny without source disclosure',()=>{
  for(const a of [{...args,target:{...target,domain:'romer'}},{...args,access:{...access,authorized_object_ids:[]}},
   {...args,target:{...target,file_space:'Romer.cgx'}}]){
