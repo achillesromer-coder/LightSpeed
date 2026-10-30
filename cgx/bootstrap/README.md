@@ -47,3 +47,7 @@ The tests are deterministic source-only regressions; they cannot certify a host 
 The additive [smartSetup.html](./smartSetup.html) offers an accessible progressive flow for selecting one recognised Grex, first-run/resume/repair/upgrade, runtime profile, offline LOAD, and a requested Grex LS GO toggle. It displays the wizard and explicit missing proof, **not an install success screen**. It imports the read-only setup planner. No permissions, DBR writes, network scans, local storage, credentials or external scripts are created by the preview.
 
 The page is not wired to a live UniSpace product or LS GO server. Do not move this private review page or internal static assets into a public server or download bundle without #158 and source-rights approval.
+
+## Latest context archive and continuation queue (2026-10-30)
+
+**No new GPT export is expected soon.** Begin all future CGX/LightSpeed continuation from [chat-context closeout](./chat_context_closeout_2026-10-30.md), then the same [open-thread execution register](./open_threads_execution_register.json) already owned by this bootstrap lane. The checkpoint records current source/geometry/rights/function decisions and verified five-lane progress, with manual source handoff through the chat. It is not a full raw chat transcript or a native CGX admission. Preserve all originals and hold deletion and publication pending independent acceptance.
