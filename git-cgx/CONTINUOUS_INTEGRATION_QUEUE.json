@@ -1,0 +1,59 @@
+{
+  "schema": "GIT-CGX-CONTINUATION-QUEUE/1",
+  "as_of": "2026-10-30",
+  "authority": "REVIEW_ONLY",
+  "root": "cgx:root:cognigrex",
+  "target_repository": "achillesromer-coder/Git.CGX",
+  "target_status": "NOT_FOUND_AT_CHECK",
+  "latest_existing_mint": {
+    "entry": "git-cgx/Git.cgx",
+    "routes": 17,
+    "tests": "52/52 PASS REPORTED IN ENTRY",
+    "source_artifact": "Git.CGX_Digital_Mint_Source.zip"
+  },
+  "gates": [
+    {
+      "id": "G1",
+      "task": "Owner creates independent Git.CGX repository",
+      "state": "BLOCKED_OWNER_ADMIN",
+      "proof": "GitHub get_repo 404"
+    },
+    {
+      "id": "G2",
+      "task": "Upload exact portable source and verify file hashes/rights",
+      "state": "PENDING_G1"
+    },
+    {
+      "id": "G3",
+      "task": "Execute actual GitHub Actions and inspect logs",
+      "state": "PENDING_G2"
+    },
+    {
+      "id": "G4",
+      "task": "Approve public-only Pages deployment",
+      "state": "PENDING_G3_AND_RIGHTS"
+    },
+    {
+      "id": "G5",
+      "task": "Ingest permitted public repository metadata through PR with reason-chain readback",
+      "state": "PENDING_G3"
+    },
+    {
+      "id": "G6",
+      "task": "Recover original private GPT shards and native DBR under separate auth",
+      "state": "PRIVATE_HOLD"
+    },
+    {
+      "id": "G7",
+      "task": "Migrate/retire legacy repos only after full history, licence, consumer and authority parity",
+      "state": "HOLD"
+    }
+  ],
+  "rules": [
+    "Never overwrite latest Git.cgx with stale release manifest",
+    "Never equate static GitHub CI with native CGX admission",
+    "Keep original repositories and private material unmodified",
+    "Do not run unattended private source export into public repository"
+  ],
+  "next_owner": "UniSpace public portal and repo mint; Cognigrex provenance; Achilles rights; Neo native bridge; Athene domain evidence"
+}
