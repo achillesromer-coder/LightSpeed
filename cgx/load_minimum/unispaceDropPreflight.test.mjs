@@ -269,6 +269,27 @@ test('offline intake, revoked source and missing rights state cannot become a pr
  }
 });
 
+// #158: an inner drag/drop widget cannot silently override the private
+// inspector's online context with offline or ambiguous string flags.
+test('nested offline flags cannot bypass online-only private intake preflight',()=>{
+ const cases=[
+  {...scopedDrop,dropInput:{...scopedDrop.dropInput,offline:true}},
+  {...scopedDrop,dropInput:{...scopedDrop.dropInput,offline:'false'}},
+  {...scopedDrop,inspectorInput:{...inspectorInput,offline:'false'}}
+ ];
+ for(const input of cases){
+  const x=handoff(input);
+  assert.equal(x.state,'DENIED');
+  assert.equal(x.reason,'INCONSISTENT_PRIVATE_REVIEW_CONTEXT');
+  assert.ok(!JSON.stringify(x).includes(source.source_id));
+  handoffInert(x);
+ }
+ const valid=handoff(scopedDrop);
+ assert.equal(valid.state,'SOURCE_REVIEW_ONLY');
+ assert.equal(valid.native_admitted,false);
+ handoffInert(valid);
+});
+
 test('source collisions remain holds; exact scoped duplicate is only a NOOP review',()=>{
  const prior={source_id:source.source_id,sha256:source.sha256,
   version:source.version,owner:source.owner,rights:source.rights,
