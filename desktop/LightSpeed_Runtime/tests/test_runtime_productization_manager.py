@@ -426,6 +426,7 @@ def test_status_requires_valid_managed_ownership_not_just_python_file(
         ownership in ("valid", "wrong_schema", "wrong_slot")
     )
     assert status["authority"] == "status-only"
+    assert status["profile"] == ("core" if ownership == "valid" else None)
     assert marker_path.exists() is (ownership != "missing")
     if marker_bytes_before is not None:
         assert marker_path.read_bytes() == marker_bytes_before
@@ -531,4 +532,58 @@ def test_windows_reparse_leaf_files_fail_closed(
                 action, slot="alpha", confirmed=(action == "configure")
             )
     assert target.read_text(encoding="utf-8") == "preserve"
+    assert not (root / "_receipts").exists()
+
+@pytest.mark.parametrize(
+    "variant",
+    [
+        "valid", "wrong_schema", "wrong_slot", "wrong_authority",
+        "unsupported_profile", "malformed", "non_object",
+    ],
+)
+def test_status_quarantines_untrusted_slot_config_without_modifying_it(
+    monkeypatch, tmp_path: Path, variant: str
+) -> None:
+    root = _set_root(monkeypatch, tmp_path)
+    slot = root / "alpha"
+    python_path = slot / "venv" / "Scripts" / "python.exe"
+    python_path.parent.mkdir(parents=True)
+    python_path.write_text("fixture-only", encoding="utf-8")
+    marker = {
+        "schema": "LIGHTSPEED-MANAGED-RUNTIME-MARKER/0.1",
+        "slot": "alpha",
+        "profile": "core",
+        "authority": "digital-runtime-slot-only",
+    }
+    (slot / rp.MARKER_NAME).write_text(json.dumps(marker), encoding="utf-8")
+    config = {
+        "schema": "LIGHTSPEED-RUNTIME-SLOT-CONFIG/0.1",
+        "slot": "alpha",
+        "profile": "api",
+        "authority": "digital-runtime-config-only",
+    }
+    if variant == "wrong_schema":
+        config["schema"] = "FOREIGN-CONFIG/0.1"
+    elif variant == "wrong_slot":
+        config["slot"] = "beta"
+    elif variant == "wrong_authority":
+        config["authority"] = "untrusted"
+    elif variant == "unsupported_profile":
+        config["profile"] = "arbitrary-program"
+    config_path = slot / rp.CONFIG_NAME
+    if variant == "malformed":
+        config_path.write_text("{broken", encoding="utf-8")
+    elif variant == "non_object":
+        config_path.write_text("[]", encoding="utf-8")
+    else:
+        config_path.write_text(json.dumps(config), encoding="utf-8")
+
+    original = config_path.read_bytes()
+    status = rp.runtime_productization_status("alpha")
+    assert status["configured"] is (variant == "valid")
+    assert status["profile"] == ("api" if variant == "valid" else "core")
+    assert status["installed"] is True
+    assert status["authority"] == "status-only"
+    assert config_path.read_bytes() == original
+    assert python_path.read_text(encoding="utf-8") == "fixture-only"
     assert not (root / "_receipts").exists()
