@@ -126,6 +126,10 @@ export function planSourceDropPreflight({target,file,readable=false,offline=fals
  if(surface!=='private')return deny('PRIVATE_DROP_SURFACE_REQUIRED');
  if(!isObj(target)||target.kind!=='filespace')return deny('DROP_REQUIRES_CHILD_FILESPACE');
  if(typeof offline!=='boolean'||typeof readable!=='boolean')return deny('INVALID_PREFLIGHT_MODE');
+ // A private surface label is not an ACL. Never echo source or Object_ID
+ // metadata when the caller cannot even assert readable scope. A true
+ // readable flag remains a non-authoritative claim until host ACL readback.
+ if(!readable)return deny('PRIVATE_READ_SCOPE_REQUIRED');
  if(!isObj(file)||!dropName(file.name)||!dropMime(file.type??''))
   return deny('INVALID_SOURCE_METADATA');
  if(!Number.isSafeInteger(file.size)||file.size<0||file.size>60*1024*1024)
