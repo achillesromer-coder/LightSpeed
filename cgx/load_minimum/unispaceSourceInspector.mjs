@@ -201,6 +201,24 @@ export function planUniSpaceOperatorCockpit({
  const intent=getRegisteredViewIntent(inspector.view);
  if(!intent)return cockpitDeny('UNREGISTERED_VIEW_INTENT');
  if(offline){
+  // #158: an offline H0-only plan cannot carry cached owner, source-class,
+  // CCC capability, execution, metric, budget or revocation assertions.
+  // The cockpit accepts only the exact inert offline shape emitted above.
+  if(inspector.h0.owner!==null||
+     inspector.h1.cross_domain_enabled!==false||
+     !Array.isArray(inspector.h2.proof_classes)||inspector.h2.proof_classes.length!==0||
+     !object(inspector.h3)||!Array.isArray(inspector.h3.qualified_capabilities)||
+     inspector.h3.qualified_capabilities.length!==0||
+     inspector.h3.catalogue_discovery_only!==false||
+     inspector.h4.permissioned_execution!=='HOST_DENIED_UNTIL_INDEPENDENT_ROOT_LEASE_DBR'||
+     inspector.viewport.metric_authority!=='NOT_VERIFIED'||
+     !Array.isArray(inspector.viewport.frontier)||
+     inspector.viewport.frontier.length!==1||
+     inspector.viewport.frontier[0]!=='OFFLINE_AUTHORITY_AND_REVOCATION_UNVERIFIED'||
+     !object(inspector.budgets)||inspector.budgets.max_nodes!==1||
+     inspector.budgets.max_hops!==0||inspector.budgets.max_transfer_bytes!==0||
+     inspector.offline_fallback!=='H0_ONLY_UNVERIFIED_METADATA')
+   return cockpitDeny('OFFLINE_H0_PROJECTION_CONFLICT');
   if(inspector.viewport.lens!==null||
      inspector.viewport.projection!=='metadata-only'||
      inspector.viewport.geometry_ref!==null||
