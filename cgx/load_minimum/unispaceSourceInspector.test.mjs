@@ -464,3 +464,30 @@ test('unqualified R2 Frontier cannot become ready through a forged stage',()=>{
  const forged={...inspector,admission_stage:'R3_VIEW_PROPOSAL'};
  assert.equal(cockpit({...statusInput,inspector:forged}).state,'DENIED');
 });
+
+test('#209 cockpit rejects forged metric R3, conflicting Frontier and verified badges',()=>{
+ const real3d=inspect({...args,view:'3d'});
+ assert.equal(real3d.admission_stage,'R2_REVIEW_FRONTIER');
+ const safe=cockpit({...statusInput,inspector:real3d});
+ assert.equal(safe.state,'SOURCE_REVIEW_ONLY');
+ assert.equal(safe.presentation_stage,'R2_REVIEW_FRONTIER');
+ const variants=[
+  {...real3d,admission_stage:'R3_VIEW_PROPOSAL',
+   viewport:{...real3d.viewport,state:'R3_PRIVATE_VIEW_CANDIDATE'}},
+  {...statusInput.inspector,viewport:{...statusInput.inspector.viewport,
+   metric_authority:'INDEPENDENTLY_VERIFIED'}},
+  {...statusInput.inspector,viewport:{...statusInput.inspector.viewport,
+   frontier:['METRIC_PROOF_MISSING']}},
+  {...statusInput.inspector,viewport:{...statusInput.inspector.viewport,
+   frontier:null}}
+ ];
+ for(const inspector of variants){
+  const denied=cockpit({...statusInput,inspector});
+  assert.equal(denied.state,'DENIED');
+  assert.equal(denied.reason,'UNVERIFIED_METRIC_VIEW_CANNOT_BE_R3');
+  assert.equal(denied.native_admitted,false);
+  assert.equal(denied.live_verified,false);
+  assert.equal(denied.released,false);
+  assert.ok(!JSON.stringify(denied).includes('fixture:eco:source'));
+ }
+});
