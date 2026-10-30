@@ -6,6 +6,13 @@ import {planKnowledgeSpread,planViewportSwitch} from './loadSemanticViewport.mjs
 export const INSPECTOR_SCHEMA='UNISPACE-LOAD-SOURCE-INSPECTOR/0.1';
 const good=x=>typeof x==='string'&&x.trim().length>0&&x.length<=256&&!/[\u0000-\u001f]/.test(x);
 const object=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
+// Opaque identities, authority scopes and graph edges must not contain Unicode
+// directional/default-ignorable controls or alternate-normalisation spellings.
+// This is a source-review guard, not an authoritative CGX Object_ID resolver.
+const unambiguous=s=>good(s)&&s===s.normalize('NFC')&&!/[\p{Default_Ignorable_Code_Point}\p{Cc}]/u.test(s);
+const safeNode=n=>object(n)&&unambiguous(n.object_id)&&unambiguous(n.domain)&&
+ unambiguous(n.file_space)&&Array.isArray(n.source_refs)&&n.source_refs.every(unambiguous)&&
+ Array.isArray(n.edges)&&n.edges.every(e=>object(e)&&unambiguous(e.to)&&unambiguous(e.relation));
 const sha=x=>typeof x==='string'&&/^[0-9a-f]{64}$/i.test(x);
 const rights=new Set(['PUBLIC_SAFE','OWNER_PRIVATE','LICENSE_RESTRICTED','UNKNOWN']);
 const proofClasses=new Set(['creative','scientific','engineering','historical','operational']);
@@ -30,6 +37,9 @@ export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,vi
   return hold('INVALID_INSPECTOR_SCOPE');
  if(!object(access)||!Array.isArray(access.authorized_source_ids)||!Array.isArray(access.authorized_object_ids))
   return hold('EXPLICIT_SCOPE_REQUIRED');
+ if(!unambiguous(file_space)||!unambiguous(focus_id)||
+  !access.authorized_object_ids.every(unambiguous)||!access.authorized_source_ids.every(unambiguous)||
+  !nodes.every(safeNode))return hold('AMBIGUOUS_IDENTITY_OR_SCOPE');
  // An exact child FileSpace is required. Display labels, parent aliases and paths
  // must not silently select a different domain's FileSpace.
  const selected=nodes.filter(n=>object(n)&&n.object_id===focus_id);
@@ -81,7 +91,7 @@ export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,vi
  const refSet=new Set(spread.objects.find(n=>n.object_id===focus_id)?.source_refs??[]);
  const claims=[];const seen=new Set();const conflicts=new Set();
  for(const e of source_envelopes){
-  if(!object(e)||!good(e.source_id)||!refSet.has(e.source_id)||!permitted.has(e.source_id))continue;
+  if(!object(e)||!unambiguous(e.source_id)||!refSet.has(e.source_id)||!permitted.has(e.source_id))continue;
   if(seen.has(e.source_id)){conflicts.add(e.source_id);continue;}
   seen.add(e.source_id);
   // C33: caller-supplied revocation/supersession evidence is a veto, never a grant.
@@ -89,7 +99,7 @@ export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,vi
   const rightsActive=e.rights_state==='ACTIVE';
   const notRevoked=e.revoked!==true&&e.rights_revoked!==true&&
    !Object.hasOwn(e,'revoked_at')&&!Object.hasOwn(e,'superseded_by');
-  const valid=rightsActive&&notRevoked&&sha(e.sha256)&&good(e.version)&&good(e.owner)&&rights.has(e.rights)&&e.rights!=='UNKNOWN'&&e.rights!=='LICENSE_RESTRICTED'&&proofClasses.has(e.proof_class);
+  const valid=rightsActive&&notRevoked&&sha(e.sha256)&&unambiguous(e.version)&&unambiguous(e.owner)&&rights.has(e.rights)&&e.rights!=='UNKNOWN'&&e.rights!=='LICENSE_RESTRICTED'&&proofClasses.has(e.proof_class);
   claims.push({source_id:e.source_id,sha256:valid?e.sha256.toLowerCase():null,
    version:valid?e.version:null,owner:valid?e.owner:null,
    rights:valid?e.rights:'UNRESOLVED',proof_class:valid?e.proof_class:'unclassified',
@@ -117,7 +127,7 @@ export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,vi
  const viewCandidate=frontier.length===0;
  return {schema:INSPECTOR_SCHEMA,status:'SOURCE_REVIEW_ONLY',
   selected_file_space:file_space,identity:focus_id,view,
-  h0:{object_id:focus_id,owner:good(focus.owner)?focus.owner:null,accepted:false},
+  h0:{object_id:focus_id,owner:unambiguous(focus.owner)?focus.owner:null,accepted:false},
   h1:{edges:spread.edges,object_ids:spread.objects.map(n=>n.object_id),cross_domain_enabled:spread.budgets.max_cross_domains>0},
   h2:{source_claims:claims,source_proof:'CALLER_DECLARATIONS_ONLY',proof_classes:[...new Set(claims.map(c=>c.proof_class))]},
   h3:{qualified_capabilities:[],catalogue_discovery_only:true},
