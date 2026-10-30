@@ -294,3 +294,36 @@ test('forged host/science proof cannot elevate private handoff into execution',(
  assert.ok(!JSON.stringify(x).includes('PRIVATE_DO_NOT_ECHO'));
  handoffInert(x);
 });
+
+
+test('selected R0 source identity cannot be silently reintroduced by drop',()=>{
+ const selectedSource=source.source_id;
+ const inspected={
+  ...inspectorInput,
+  nodes:[{...inspectorInput.nodes[0],source_refs:[selectedSource]}],
+  access:{...inspectorInput.access,authorized_source_ids:[selectedSource]},
+  source_envelopes:[{...source,sha256:'b'.repeat(64)}]
+ };
+ // Matching and changed R0 bytes are both native-resolution questions,
+ // never a browser duplicate decision or a novel source proposal.
+ for(const incoming of [
+  {...source,sha256:'b'.repeat(64)},
+  {...source,sha256:'c'.repeat(64),version:'3'},
+  source
+ ]){
+  const x=handoff({...scopedDrop,inspectorInput:inspected,
+   dropInput:{...scopedDrop.dropInput,source:incoming}});
+  assert.equal(x.state,'DENIED');
+  assert.equal(x.reason,'SELECTED_R0_SOURCE_ID_REQUIRES_NATIVE_RESOLUTION');
+  assert.ok(!JSON.stringify(x).includes(selectedSource));
+  handoffInert(x);
+ }
+ // A distinct source identity can still be proposed for independent review.
+ const novel=handoff({...scopedDrop,inspectorInput:inspected,
+  dropInput:{...scopedDrop.dropInput,
+   source:{...source,source_id:'fixture:eco:novel-r0'}}});
+ assert.equal(novel.state,'SOURCE_REVIEW_ONLY');
+ assert.equal(novel.intake_preflight,'REVIEW_CANDIDATE');
+ assert.equal(novel.native_admitted,false);
+ handoffInert(novel);
+});
