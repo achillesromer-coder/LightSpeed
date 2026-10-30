@@ -405,6 +405,34 @@
       "rule": "One original R0 artifact, two distinct typed family references; EMASSC owns source-grounded scientific claims, LS is runtime adapter only; lexical/filename/hash match cannot merge distinct semantic identities or imply native admission",
       "admission": "SOURCE_REVIEW_ONLY",
       "blocked": "Rights, original PDF corroboration, full R1 loss ledger, R2 scoped acceptance, signed RootAuthority/DBR and host lease"
+    },
+    {
+      "review_id": "MARK3-FAMILY-ID-VS-SOURCE-OBJECT-20261030",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_registry_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "mapping_ids": [
+        "FF-MARK3-XLSX-001",
+        "FF-MARK3-FCSTD-001"
+      ],
+      "candidate_filespace": "Romer.cgx:/romer/mark-iii",
+      "source_sha256_by_mapping": {
+        "FF-MARK3-XLSX-001": "fab23970e80c016a2140ec0f87c1d0d7e15c365190fdacb5dc2ee2a1c2a81075",
+        "FF-MARK3-FCSTD-001": "4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b"
+      },
+      "evidence_class": "GIT_REGISTRY_COLLISION_NEGATIVE_REVIEW_PLUS_PREVIOUS_WORKBOOK_R0_AND_PROVIDER_REVISION_READBACK",
+      "tests": {
+        "both_mappings_exist": true,
+        "shared_filespace_target": true,
+        "distinct_source_sha256": true,
+        "distinct_media_types": true,
+        "workbook_points_to_family_namespace": true,
+        "cad_uses_separate_source_scoped_label": true,
+        "workbook_original_revision_recorded": true,
+        "canonical_object_identity_proven": false
+      },
+      "rule": "The domain semantic ID cgx:domain:romer identifies a candidate family namespace, not the workbook source artifact or an admitted unique Object_ID. The separate FCStd SPACE-01 source label and shared /romer/mark-iii target do not establish same-object identity. Preserve both original R0 source versions; qualify source-scoped relations without lexical/target-based merge.",
+      "admission": "SOURCE_REVIEW_ONLY; NO_CANONICAL_MINT_OR_DBR",
+      "blocked": "CAD source revision/rights and source-scoped reversible R1 not fully qualified; signed native RootAuthority/DBR readback and owner acceptance absent"
     }
   ]
 }
