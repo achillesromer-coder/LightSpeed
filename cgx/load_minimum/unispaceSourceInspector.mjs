@@ -140,3 +140,105 @@ export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,vi
   source_bytes_copied:false,network_fetch:false,host_authenticated:false,provider_readback:false,
   canonical_mutation:false,public_release:false,offline_fallback:'H0_H2_DECLARED_METADATA_ONLY'};
 }
+
+
+/**
+ * UniSpace operator cockpit: one private, non-executing progress projection.
+ * Consumes an inspector plan, NOT a native receipt. This must never elevate
+ * caller claims into accepted Object_ID, root, rights, host or deployment proof.
+ * Private UI source-review only; never embed in a public Vite/static route.
+ */
+export const OPERATOR_COCKPIT_SCHEMA='UNISPACE-PRIVATE-OPERATOR-STATUS/0.1';
+const cockpitDeny=reason=>({
+ schema:OPERATOR_COCKPIT_SCHEMA,state:'DENIED',reason,
+ native_admitted:false,host_authenticated:false,provider_readback:false,
+ deployed:false,live_verified:false,owner_accepted:false,
+ released:false,may_execute:false,canonical_mutation:false
+});
+export function planUniSpaceOperatorCockpit({
+ surface=null,selection=null,inspector=null,offline=false,hostReceipt=null
+}={}){
+ if(surface!=='private')return cockpitDeny('PRIVATE_OPERATOR_SURFACE_REQUIRED');
+ if(typeof offline!=='boolean'||!object(selection)||!object(inspector))
+  return cockpitDeny('INVALID_COCKPIT_INPUT');
+ if(!unambiguous(selection.object_id)||!unambiguous(selection.file_space)||
+    !unambiguous(selection.domain)||selection.parent_file_space!=='Cognigrex.cgx'||
+    !Object.hasOwn(knownChildSpaces,selection.domain)||
+    knownChildSpaces[selection.domain]!==selection.file_space)
+  return cockpitDeny('EXACT_CHILD_IDENTITY_REQUIRED');
+ if(inspector.schema!==INSPECTOR_SCHEMA||
+    inspector.status!=='SOURCE_REVIEW_ONLY'||
+    inspector.identity!==selection.object_id||
+    inspector.selected_file_space!==selection.file_space||
+    !object(inspector.h0)||inspector.h0.object_id!==selection.object_id||
+    !object(inspector.h1)||!Array.isArray(inspector.h1.object_ids)||
+    !inspector.h1.object_ids.includes(selection.object_id)||
+    !object(inspector.h2)||!Array.isArray(inspector.h2.source_claims)||
+    !object(inspector.h4)||!object(inspector.viewport))
+  return cockpitDeny('INSPECTOR_SELECTION_OR_SCHEMA_MISMATCH');
+ // The only accepted input is a review-only projection, with all authority
+ // fields still false. A "verified" flag on a caller/hostReceipt is never a
+ // native verification and is deliberately not read or copied into output.
+ if(inspector.h0.accepted!==false||inspector.h4.installed!==false||
+    inspector.host_authenticated!==false||inspector.provider_readback!==false||
+    inspector.canonical_mutation!==false||inspector.public_release!==false||
+    inspector.source_bytes_copied!==false||inspector.network_fetch!==false||
+    inspector.viewport.rendered!==false)
+  return cockpitDeny('UNTRUSTED_ELEVATED_REVIEW_PLAN');
+ const offlinePlan=inspector.h2.source_proof==='OFFLINE_UNVERIFIED'&&
+    inspector.admission_stage==='R2_REVIEW_FRONTIER'&&
+    inspector.viewport.state==='FRONTIER';
+ const onlinePlan=inspector.h2.source_proof==='CALLER_DECLARATIONS_ONLY'&&(
+    (inspector.admission_stage==='R3_VIEW_PROPOSAL'&&
+      inspector.viewport.state==='R3_PRIVATE_VIEW_CANDIDATE')||
+    (inspector.admission_stage==='R2_REVIEW_FRONTIER'&&
+      inspector.viewport.state==='FRONTIER'));
+ if(offline?!offlinePlan:!onlinePlan)
+  return cockpitDeny('REVIEW_EVIDENCE_STAGE_CONFLICT');
+ const candidate=!offline&&inspector.admission_stage==='R3_VIEW_PROPOSAL';
+ const blockers=[
+  'SOURCE_ORIGINAL_REVISION_HASH_RIGHTS_NOT_PROVIDER_VERIFIED',
+  'CURRENT_NATIVE_ROOT_OBJECT_ID_ACL_LEASE_DBR_NOT_READ_BACK',
+  'UNAUTHENTICATED_REVOKED_VALID_HOST_NEGATIVE_TESTS_REQUIRED',
+  'PRIVATE_HOST_AND_BROWSER_READBACK_REQUIRED',
+  'OWNER_ACCEPTANCE_AND_PUBLIC_RELEASE_NOT_GRANTED'
+ ];
+ if(offline)blockers.unshift('OFFLINE_AUTHORITY_AND_RIGHTS_REVOCATION_UNKNOWN');
+ if(!candidate&&!offline)blockers.unshift('VIEW_EVIDENCE_FRONTIER');
+ // Do not echo source IDs, digests, private graph edges, rights declarations,
+ // raw host receipts or remote addresses. A native host must independently
+ // validate any future proof, then return a separate trusted projection.
+ return {
+  schema:OPERATOR_COCKPIT_SCHEMA,state:'SOURCE_REVIEW_ONLY',
+  identity:selection.object_id,file_space:selection.file_space,
+  parent_file_space:'Cognigrex.cgx',domain:selection.domain,
+  presentation_stage:offline?'H0_OFFLINE_UNVERIFIED':
+    candidate?'R3_VIEW_PROPOSAL':'R2_REVIEW_FRONTIER',
+  view:offline?'metadata-only':inspector.view,
+  source_evidence:'UNVERIFIED_CALLER_REVIEW',
+  source_rights:'NOT_PROVIDER_VERIFIED',
+  root_authority:'NOT_NATIVE_VERIFIED',
+  host_connection:'NOT_AUTHENTICATED',
+  cross_platform_sync:'NOT_VERIFIED',
+  workflow:[
+   {stage:'DISCOVERED',status:'CALLER_DECLARED'},
+   {stage:'QUALIFIED',status:'HOLD_PROVIDER_PROOF'},
+   {stage:'STAGED',status:'SOURCE_REVIEW_ONLY'},
+   {stage:'TESTED',status:'NOT_RUNTIME_VERIFIED'},
+   {stage:'ADMITTED',status:'HOLD'},
+   {stage:'DEPLOYED',status:'HOLD'},
+   {stage:'LIVE_VERIFIED',status:'HOLD'},
+   {stage:'OWNER_ACCEPTED',status:'HOLD'},
+   {stage:'RELEASED',status:'HOLD'}
+  ],
+  blockers,
+  next_step:offline?'CONNECT_AUTHENTICATED_PRIVATE_PROVIDER':
+    candidate?'REQUEST_INDEPENDENT_NATIVE_ROOT_LEASE_ACL_DBR_AND_READBACK':
+      'QUALIFY_SOURCE_AND_VIEW_EVIDENCE',
+  metrics:{latency_ms:null,metric_fidelity:null,transfer_bytes:null},
+  host_receipt_accepted:false,source_bytes_read:false,rendered:false,
+  native_admitted:false,host_authenticated:false,provider_readback:false,
+  deployed:false,live_verified:false,owner_accepted:false,released:false,
+  may_execute:false,canonical_mutation:false
+ };
+}
