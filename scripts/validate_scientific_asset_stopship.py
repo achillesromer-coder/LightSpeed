@@ -196,18 +196,37 @@ def main():
     # Recompute the planned-request digest independently from URL parameters.
     # It is intentionally NOT a response-body hash or CGX Object_ID.
     from hashlib import sha256
-    from cgx_horizons_request_review import SCHEMA, ENDPOINT
+    from cgx_horizons_request_review import SCHEMA, ENDPOINT, API_DOC_VERSION, API_DOC_DATE
     def independent_spec_digest(planned_request):
         query = parse_qs(urlsplit(planned_request["url"]).query, strict_parsing=True)
         params = {key: values[0] for key, values in query.items()}
         canonical = json.dumps(
-            {"schema": SCHEMA, "endpoint": ENDPOINT, "params": params},
+            {"schema": SCHEMA, "endpoint": ENDPOINT, "documentation": DOC,
+             "api_document_version": API_DOC_VERSION, "api_document_date": API_DOC_DATE,
+             "params": params},
             sort_keys=True, separators=(",", ":"), ensure_ascii=True,
         ).encode("utf-8")
         return sha256(canonical).hexdigest()
     checks["horizons-request-spec-digest-independent-recompute"] = all(
         p["request_spec_sha256"] == independent_spec_digest(p)
-        and p["request_spec_hash_scope"] == "canonical-json-schema-endpoint-params-only"
+        and p["request_spec_hash_scope"] == "canonical-json-schema-endpoint-documentation-version-date-params-only"
+        for p in planned)
+    checks["horizons-request-spec-documentation-version-bound"] = all(
+        p["source_documentation"] == DOC
+        and p["source_documentation_version"] == "1.3"
+        and p["source_documentation_date"] == "2025 June"
+        and p["request_spec_sha256"] == independent_spec_digest(p)
+        for p in planned)
+    # The version/date is part of the digest preimage; an independent
+    # recomputation with a different documented API revision must differ.
+    checks["horizons-request-spec-version-substitution-changes-hash"] = all(
+        sha256(json.dumps({
+            "schema": SCHEMA, "endpoint": ENDPOINT, "documentation": DOC,
+            "api_document_version": "0.0-unverified", "api_document_date": API_DOC_DATE,
+            "params": {k: v[0] for k, v in parse_qs(
+                urlsplit(p["url"]).query, strict_parsing=True).items()},
+        }, sort_keys=True, separators=(",", ":"), ensure_ascii=True
+        ).encode("utf-8")).hexdigest() != p["request_spec_sha256"]
         for p in planned)
     checks["horizons-request-spec-digest-distinct-and-repeatable"] = (
         len({p["request_spec_sha256"] for p in planned}) == len(TARGETS)
