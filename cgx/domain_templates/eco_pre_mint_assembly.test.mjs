@@ -399,3 +399,16 @@ test("H0 never exposes the crosswalk even if caller supplied a pair",()=>{
  assert.equal(r.hydration.H2.state,"NOT_REQUESTED");
  assert.equal(r.release.public_release_authorised,false);
 });
+
+test("mojibake in physical units is a discrepancy even when strings match",()=>{
+ for(const units of [["m²","mÂ²"],["kg/mÂ³","kg/mÂ³"]]){
+  const pair={...cellPair,
+   original_cell:{...cellPair.original_cell,unit:units[0]},
+   related_cell:{...cellPair.related_cell,unit:units[1]}};
+  const r=prepare(withCellPair(pair));
+  assert.equal(r.source_cell_crosswalk_review.unit_encoding_valid,false);
+  assert.equal(r.source_cell_crosswalk_review.state,
+   "R1_CALLER_DECLARED_CELL_DISCREPANCY_HOLD");
+  assert.equal(r.release.mint_allowed,false);
+ }
+});
