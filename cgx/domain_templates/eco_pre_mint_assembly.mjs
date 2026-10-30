@@ -64,6 +64,50 @@ function reviewGeometryDescriptor(g,source_ref){
   };
 }
 
+/**
+ * Link an independently identified original to an embedded/translated reference
+ * without treating a source manifest's "verified" label as byte equivalence.
+ * This deliberately does not dereference the related provider, attest rights,
+ * mint identities or return protected source contents.
+ */
+function reviewSourceLineage(link,source){
+  if(link===null)return {state:"NO_RELATED_SOURCE_REQUESTED"};
+  const allowed=new Set(["source_ref","related_source_ref","relation_kind",
+    "manifest_location_ref","manifest_source_sha256",
+    "related_revision_ref","claimed_translation_state"]);
+  const kinds=new Set(["embedded_translation","source_manifest_reference",
+    "claimed_duplicate","derived_view"]);
+  if(!obj(link)||Object.keys(link).some(k=>!allowed.has(k))||
+     link.source_ref!==source.source_ref||
+     !token(link.related_source_ref)||link.related_source_ref===source.source_ref||
+     !kinds.has(link.relation_kind)||!token(link.manifest_location_ref)||
+     typeof link.manifest_source_sha256!=="string"||
+     !SHA.test(link.manifest_source_sha256)||
+     (link.related_revision_ref!==undefined&&!token(link.related_revision_ref))||
+     (link.claimed_translation_state!==undefined&&
+      !token(link.claimed_translation_state)))
+    throw Error("INVALID_ECO_SOURCE_LINEAGE");
+  const hashMatches=source.proof_hash!==null&&
+    link.manifest_source_sha256.toLowerCase()===source.proof_hash;
+  if(source.proof_hash!==null&&!hashMatches)
+    throw Error("ECO_LINEAGE_MANIFEST_SOURCE_HASH_MISMATCH");
+  return {
+    state:"R1_SOURCE_LINEAGE_CANDIDATE_NOT_EQUIVALENCE",
+    relation_kind:link.relation_kind,source_ref:source.source_ref,
+    related_source_ref:link.related_source_ref,
+    manifest_location_ref:link.manifest_location_ref,
+    related_revision_ref:link.related_revision_ref??null,
+    claimed_translation_state:link.claimed_translation_state??null,
+    manifest_source_hash_matches_original_bytes_this_execution:hashMatches,
+    related_source_bytes_read_this_execution:false,
+    related_source_hash_verified_this_execution:false,
+    related_provider_revision_authenticated_by_module:false,
+    related_source_rights_verified:false,
+    byte_equivalence_verified:false,related_source_native_admitted:false,
+    original_preserved:true,public_release_authorised:false
+  };
+}
+
 function reviewCellAnchor(anchor,source){
   if(anchor===null)return {state:"SOURCE_CELL_ANCHOR_REQUIRED",
     sheet_ref:null,cell_ref:null,declared_anchor_matched:false,
@@ -90,10 +134,10 @@ function reviewCellAnchor(anchor,source){
 export function prepareEcoPreMintAssembly(request={}){
   if(!obj(request)||Object.keys(request).some(k=>![
     "cascade_input","geometry_descriptor","cell_anchor",
-    "requested_hydration","observation_showcase"].includes(k)))
+    "requested_hydration","observation_showcase","source_lineage"].includes(k)))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const {cascade_input,geometry_descriptor=null,cell_anchor=null,
-    requested_hydration="H3",observation_showcase=null}=request;
+    requested_hydration="H3",observation_showcase=null,source_lineage=null}=request;
   if(!obj(cascade_input)||!levels.includes(requested_hydration))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const executed=runEcoReviewCascade(cascade_input);
@@ -108,6 +152,7 @@ export function prepareEcoPreMintAssembly(request={}){
     proof_hash:executed.source_proof?.sha256??null};
   const geom=reviewGeometryDescriptor(geometry_descriptor,source.source_ref);
   const anchor=reviewCellAnchor(cell_anchor,source);
+  const lineage=reviewSourceLineage(source_lineage,source);
   let showcase=null;
   if(observation_showcase!==null){
     if(!obj(observation_showcase)||
@@ -138,6 +183,8 @@ export function prepareEcoPreMintAssembly(request={}){
     blockers.push("SOURCE_CELL_ANCHOR_MISSING");
   if(geom.state!=="REFERENCES_STAGED_NOT_ACCEPTED")
     blockers.push("GEOMETRY_SOURCE_FRAME_OR_REVIEW_INCOMPLETE");
+  if(source_lineage!==null)
+    blockers.push("RELATED_SOURCE_LINEAGE_NOT_INDEPENDENTLY_VERIFIED");
   if(showcase!==null)
     blockers.push("ECO_OBSERVATION_SHOWCASE_NOT_NATIVE_MINT_OR_FIELD_EVIDENCE");
 
@@ -180,6 +227,7 @@ export function prepareEcoPreMintAssembly(request={}){
       alignment:executed.step_receipts.scoped_alignment,
       ecological_review:executed.step_receipts.ecological_review},
     hydration:hydrate,geomatrix:geom,
+    source_lineage_review:level>=2?lineage:{state:"NOT_REQUESTED"},
     mint_showcase_review:level>=3&&showcase!==null?{
       schema:showcase.schema,state:showcase.state,
       checks:showcase.checks,
@@ -188,6 +236,7 @@ export function prepareEcoPreMintAssembly(request={}){
     }:{state:"NOT_REQUESTED_OR_NOT_SUPPLIED"},
     stack_layers:[
       {layer:"source",state:source.proof_hash?"HASH_REFERENCE_VERIFIED":"R0_UNVERIFIED_THIS_RUN"},
+      {layer:"lineage",state:level>=2?lineage.state:"NOT_REQUESTED"},
       {layer:"semantic",state:"R1_REVIEW_ONLY"},
       {layer:"geometry",state:geom.state},
       {layer:"temporal",state:geom.time_frame_ref_present?"REFERENCE_ONLY":"MISSING_SOURCE_TIME_FRAME"},
@@ -198,7 +247,8 @@ export function prepareEcoPreMintAssembly(request={}){
       "NO_SOURCE_CELL_CONTENT_OR_FORMULA_READBACK",
       "NO_METRIC_GEOMETRY_OR_CRS_TRANSFORM",
       "NO_R2_ONTOLOGY_OR_NATIVE_OBJECT_ID_PROOF",
-      "NO_NATIVE_CCC_INSTALL_OR_DATASPACE_SYNC"],
+      "NO_NATIVE_CCC_INSTALL_OR_DATASPACE_SYNC",
+      "NO_RELATED_SOURCE_BYTE_EQUIVALENCE_OR_OWNER_PERMISSION_PROOF"],
     blocking_gates:[...new Set(blockers.concat(geom.flags))],
     permissions:{file_space_write:false,data_space_write:false,
       device_automation:false,public_publish:false,
