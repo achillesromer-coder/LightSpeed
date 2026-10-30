@@ -228,6 +228,27 @@ def main():
         }, sort_keys=True, separators=(",", ":"), ensure_ascii=True
         ).encode("utf-8")).hexdigest() != p["request_spec_sha256"]
         for p in planned)
+    # Fail closed on silently added API parameters; only the reviewed request
+    # contract may be emitted. This is source-plan integrity, not JPL proof.
+    checks["horizons-request-spec-parameter-allowlist"] = all(
+        set(parse_qs(urlsplit(p["url"]).query, strict_parsing=True))
+        == required | {"format", "OBJ_DATA", "MAKE_EPHEM"}
+        for p in planned)
+    # An altered target, center, timescale, frame or unit must invalidate the
+    # request-spec digest. No digest here authenticates any response bytes.
+    from urllib.parse import urlencode, quote
+    tamper_cases = (("COMMAND", "'3'"), ("CENTER", "'500@399'"),
+                    ("TIME_TYPE", "'TDB'"), ("REF_PLANE", "'FRAME'"),
+                    ("OUT_UNITS", "'AU-D'"))
+    def altered_request_digest(p, key, replacement):
+        params = {k: values[0] for k, values in parse_qs(
+            urlsplit(p["url"]).query, strict_parsing=True).items()}
+        params[key] = replacement
+        return independent_spec_digest({**p, "url": ENDPOINT + "?" +
+            urlencode(params, quote_via=quote)})
+    checks["horizons-request-spec-scientific-parameter-tamper-rejected"] = all(
+        altered_request_digest(p, key, value) != p["request_spec_sha256"]
+        for p in planned for key, value in tamper_cases)
     checks["horizons-request-spec-digest-distinct-and-repeatable"] = (
         len({p["request_spec_sha256"] for p in planned}) == len(TARGETS)
         and planned == [plan_vector_request(body) for body in TARGETS])
