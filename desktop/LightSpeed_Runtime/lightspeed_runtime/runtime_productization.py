@@ -236,6 +236,13 @@ def runtime_productization_status(slot: str = "default") -> dict[str, Any]:
             ),
             reverse=True,
         )[:20]
+    # Presence of python.exe alone is not proof of managed installation.
+    # Keep status read-only and fail closed on absent/invalid ownership evidence.
+    try:
+        _validate_marker(paths, _safe_slot(slot))
+        managed_ownership_valid = True
+    except (RuntimeProductizationError, OSError, ValueError, TypeError):
+        managed_ownership_valid = False
     return {
         "schema": "LIGHTSPEED-RUNTIME-PRODUCTIZATION-STATUS/0.1",
         "slot": _safe_slot(slot),
@@ -245,7 +252,7 @@ def runtime_productization_status(slot: str = "default") -> dict[str, Any]:
         "managed_marker": marker is not None,
         "configured": config is not None,
         "profile": (config or {}).get("profile") or (marker or {}).get("profile"),
-        "installed": python_path.exists(),
+        "installed": managed_ownership_valid and python_path.is_file(),
         "python": str(python_path),
         "recent_receipts": receipts,
         "authority": "status-only",
