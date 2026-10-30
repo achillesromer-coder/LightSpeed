@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {planUniSpaceSourceInspector as inspect} from './unispaceSourceInspector.mjs';
+import {planUniSpaceSourceInspector as inspect,planUniSpaceOperatorCockpit as cockpit} from './unispaceSourceInspector.mjs';
 const h='a'.repeat(64);
 // Synthetic fixtures only; not native Object_IDs, real R0 bytes, or live ACLs.
 const nodes=[
@@ -360,4 +360,107 @@ test('non-NFC Object_ID and deceptive owner version text cannot become private v
  assert.equal(normal.status,'SOURCE_REVIEW_ONLY');
  assert.equal(normal.h0.owner,'Römer-Grex');
  assert.equal(normal.host_authenticated,false);
+});
+
+
+// Cockpit is a private R3 proposal/Frontier status adapter, never an actual
+// browser session, native RootAuthority acceptance, or DBR/host readback.
+const selected={parent_file_space:'Cognigrex.cgx',file_space:'Eco.cgx',
+ domain:'eco',object_id:'fixture:eco:one'};
+const statusInput={surface:'private',selection:selected,inspector:inspect(args)};
+
+test('private cockpit maps exact review identity to non-elevated DAG',()=>{
+ const x=cockpit(statusInput);
+ assert.equal(x.state,'SOURCE_REVIEW_ONLY');
+ assert.equal(x.identity,selected.object_id);
+ assert.equal(x.file_space,'Eco.cgx');
+ assert.equal(x.presentation_stage,'R3_VIEW_PROPOSAL');
+ assert.equal(x.next_step,'REQUEST_INDEPENDENT_NATIVE_ROOT_LEASE_ACL_DBR_AND_READBACK');
+ assert.deepEqual(x.workflow.map(y=>y.stage),[
+  'DISCOVERED','QUALIFIED','STAGED','TESTED','ADMITTED',
+  'DEPLOYED','LIVE_VERIFIED','OWNER_ACCEPTED','RELEASED']);
+ for(const stage of x.workflow.slice(4))assert.equal(stage.status,'HOLD');
+ for(const k of ['host_receipt_accepted','source_bytes_read','rendered',
+  'native_admitted','host_authenticated','provider_readback','deployed',
+  'live_verified','owner_accepted','released','may_execute','canonical_mutation'])
+  assert.equal(x[k],false,k);
+ assert.equal(x.metrics.latency_ms,null);
+ assert.equal(x.metrics.metric_fidelity,null);
+ assert.ok(!JSON.stringify(x).includes('fixture:eco:source'));
+});
+
+test('public/static and omitted surfaces deny without leaking selected identity',()=>{
+ for(const surface of ['public','static','private-preview',undefined,null]){
+  const x=cockpit({...statusInput,surface});
+  assert.equal(x.state,'DENIED');
+  assert.equal(x.reason,'PRIVATE_OPERATOR_SURFACE_REQUIRED');
+  assert.ok(!JSON.stringify(x).includes(selected.object_id));
+  assert.equal(x.released,false);
+ }
+});
+
+test('wrong parent, child, domain or Object_ID denies without exposing graph',()=>{
+ const variants=[
+  {...selected,parent_file_space:'Another.cgx'},
+  {...selected,file_space:'Romer.cgx'},
+  {...selected,domain:'romer'},
+  {...selected,object_id:'fixture:romer:private'},
+  {...selected,domain:'unregistered'},
+  {...selected,object_id:'fixture:eco:\u202Eone'}
+ ];
+ for(const selection of variants){
+  const x=cockpit({...statusInput,selection});
+  assert.equal(x.state,'DENIED');
+  assert.equal(x.canonical_mutation,false);
+  assert.ok(!JSON.stringify(x).includes('fixture:eco:source'));
+  assert.ok(!JSON.stringify(x).includes('fixture:romer:private-source'));
+ }
+});
+
+test('claimed host and native proof cannot promote a private source review plan',()=>{
+ const secret='DO_NOT_ECHO_HOST_TOKEN';
+ const forgedReceipt={session:'valid',signed:true,rootVerified:true,
+  dbrVerified:true,providerReadback:true,hostAuthenticated:true,token:secret};
+ const x=cockpit({...statusInput,hostReceipt:forgedReceipt});
+ assert.equal(x.state,'SOURCE_REVIEW_ONLY');
+ assert.equal(x.host_authenticated,false);
+ assert.equal(x.provider_readback,false);
+ assert.equal(x.host_receipt_accepted,false);
+ assert.equal(x.released,false);
+ assert.ok(!JSON.stringify(x).includes(secret));
+ for(const flag of [
+  ['host_authenticated',true],['provider_readback',true],
+  ['public_release',true],['canonical_mutation',true],
+  ['source_bytes_copied',true]
+ ]){
+  const altered={...statusInput.inspector,[flag[0]]:flag[1]};
+  const y=cockpit({...statusInput,inspector:altered});
+  assert.equal(y.state,'DENIED',flag[0]);
+  assert.equal(y.reason,'UNTRUSTED_ELEVATED_REVIEW_PLAN');
+ }
+});
+
+test('offline H0-only fallback cannot reuse cached rights or an online view',()=>{
+ const inspector=inspect({...args,offline:true});
+ const x=cockpit({...statusInput,inspector,offline:true});
+ assert.equal(x.state,'SOURCE_REVIEW_ONLY');
+ assert.equal(x.presentation_stage,'H0_OFFLINE_UNVERIFIED');
+ assert.equal(x.view,'metadata-only');
+ assert.equal(x.next_step,'CONNECT_AUTHENTICATED_PRIVATE_PROVIDER');
+ assert.ok(x.blockers.includes('OFFLINE_AUTHORITY_AND_RIGHTS_REVOCATION_UNKNOWN'));
+ assert.equal(x.source_bytes_read,false);
+ assert.ok(!JSON.stringify(x).includes('fixture:eco:source'));
+ assert.equal(cockpit({...statusInput,inspector,offline:false}).state,'DENIED');
+ assert.equal(cockpit({...statusInput,offline:true}).state,'DENIED');
+});
+
+test('unqualified R2 Frontier cannot become ready through a forged stage',()=>{
+ const inspector=inspect({...args,source_envelopes:[]});
+ const x=cockpit({...statusInput,inspector});
+ assert.equal(x.state,'SOURCE_REVIEW_ONLY');
+ assert.equal(x.presentation_stage,'R2_REVIEW_FRONTIER');
+ assert.equal(x.next_step,'QUALIFY_SOURCE_AND_VIEW_EVIDENCE');
+ assert.ok(x.blockers.includes('VIEW_EVIDENCE_FRONTIER'));
+ const forged={...inspector,admission_stage:'R3_VIEW_PROPOSAL'};
+ assert.equal(cockpit({...statusInput,inspector:forged}).state,'DENIED');
 });
