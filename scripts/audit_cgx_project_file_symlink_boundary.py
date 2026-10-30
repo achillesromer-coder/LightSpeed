@@ -29,6 +29,7 @@ SCHEMA = "ACHILLES-PROJECT-FILE-SYMLINK-NEGATIVE-AUDIT/0.2"
 class SyntheticPipeline:
     def __init__(self, authority_root: Path, project_root: Path):
         self.config = {
+            "scan_policy": {"ignored_files": ["internal_note.txt"]},
             "drive_writeback": {
                 "blocked_artifact_patterns": [".env", ".env.*", "*.pem", "*.key", "credentials*.json"]
             }
@@ -71,6 +72,9 @@ def run() -> int:
         marker = "SYNTHETIC_PRIVATE_SENTINEL_NOT_A_REAL_SECRET"
         (project / "credentials.json").write_text(marker, encoding="utf-8")
         (project / "safe.txt").write_text("SYNTHETIC_PUBLIC_TEXT", encoding="utf-8")
+        (project / "internal_note.txt").write_text(
+            "SYNTHETIC_IGNORED_FILE_ONLY", encoding="utf-8"
+        )
         outside = base / "outside.txt"
         outside.write_text("SYNTHETIC_OUTSIDE_TEXT", encoding="utf-8")
         (project / "review.txt").symlink_to(project / "credentials.json")
@@ -96,6 +100,7 @@ def run() -> int:
         direct_hidden_in_list = "credentials.json" not in listed_names
         external_hidden_in_list = "outside_alias.txt" not in listed_names
         safe_listed = "safe.txt" in listed_names
+        ignored_file_hidden_in_list = "internal_note.txt" not in listed_names
 
         safe = open_project_file(
             pipeline, project_id="fixture-project", relative_path="safe.txt"
@@ -116,6 +121,18 @@ def run() -> int:
             ignored_alias_exposed = (
                 ignored_alias["preview"].get("text") == "SYNTHETIC_INTERNAL_ONLY"
             )
+        # T5/T4 policy consistency: direct open must not bypass scan-policy ignored files.
+        try:
+            ignored_file = open_project_file(
+                pipeline, project_id="fixture-project",
+                relative_path="internal_note.txt",
+            )
+        except (ProjectFileBlocked, ProjectFilePathRejected):
+            ignored_file_exposed = False
+        else:
+            ignored_file_exposed = (
+                ignored_file["preview"].get("text") == "SYNTHETIC_IGNORED_FILE_ONLY"
+            )
         external_blocked = denied(
             ProjectFilePathRejected, pipeline, "outside_alias.txt"
         )
@@ -135,6 +152,7 @@ def run() -> int:
         safe_control and direct_blocked and ignored_direct_blocked
         and external_blocked and traversal_blocked
         and direct_hidden_in_list and external_hidden_in_list and safe_listed
+        and ignored_file_hidden_in_list
     )
     print(json.dumps({
         "schema": SCHEMA,
@@ -149,6 +167,9 @@ def run() -> int:
         ),
         "synthetic_ignored_directory_via_in_root_symlink": (
             "ALLOW" if ignored_alias_exposed else "DENY"
+        ),
+        "synthetic_ignored_file_via_direct_open": (
+            "ALLOW" if ignored_file_exposed else "DENY"
         ),
         "controls": {
             "direct_blocked_name": "DENY" if direct_blocked else "NOT_VERIFIED",
@@ -167,14 +188,19 @@ def run() -> int:
             "ordinary_safe_name_present_in_listing": (
                 "PASS" if safe_listed else "FAIL"
             ),
+            "configured_ignored_file_absent_from_listing": (
+                "PASS" if ignored_file_hidden_in_list else "FAIL"
+            ),
         },
         "gate": (
             "HOLD" if alias_exposed or alias_listed or ignored_alias_exposed
+            or ignored_file_exposed
             else "REQUIRES_INDEPENDENT_ACCEPTANCE"
         ),
         "limits": (
             "Synthetic fixture only. Listing reveals alias metadata, not target bytes. "
             "Ignored-directory symlink case concerns preview bytes only. "
+            "Configured ignored-file direct open is synthetic only. "
             "No real private data, credential, remote user, "
             "host installation, Windows reparse-point or TOCTOU behavior tested. "
             "Downstream authorization and real release permissions unverified."
