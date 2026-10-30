@@ -123,6 +123,10 @@ def _paths(slot: str) -> dict[str, Path]:
     # Nested runtime and receipt paths must not redirect outside the managed root.
     _reject_redirected_directory(slot_dir / "venv", "managed venv")
     _reject_redirected_directory(slot_dir / "venv" / "Scripts", "managed venv scripts")
+    # Leaf files can also redirect outside the managed slot (not only directories).
+    _reject_redirected_directory(slot_dir / MARKER_NAME, "managed marker")
+    _reject_redirected_directory(slot_dir / CONFIG_NAME, "managed config")
+    _reject_redirected_directory(slot_dir / "venv" / "Scripts" / "python.exe", "managed python")
     receipt_root = root / "_receipts"
     _reject_redirected_directory(receipt_root, "receipt root")
     return {
