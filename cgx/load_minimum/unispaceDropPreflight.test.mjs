@@ -327,3 +327,33 @@ test('selected R0 source identity cannot be silently reintroduced by drop',()=>{
  assert.equal(novel.native_admitted,false);
  handoffInert(novel);
 });
+
+
+test('NFC and default-ignorable Unicode cannot create competing source identities',()=>{
+ const cases=[
+  [{...args,target:{...target,owner:'Cafe\u0301'}},'EXACT_CHILD_FILESPACE_UNRESOLVED'],
+  [{...args,source:{...source,source_id:'fixture:eco:cafe\u0301'}},'SOURCE_QUALIFICATION_INCOMPLETE'],
+  [{...args,source:{...source,source_id:source.source_id+'\u034f'}},'SOURCE_QUALIFICATION_INCOMPLETE'],
+  [{...args,source:{...source,version:'2\uFE0F'}},'SOURCE_QUALIFICATION_INCOMPLETE'],
+  [{...args,existing_sources:[{source_id:source.source_id+'\u034f',sha256:source.sha256}]},'EXISTING_SOURCE_REGISTRY_UNQUALIFIED']
+ ];
+ for(const [input,reason] of cases){
+  const x=plan(input);
+  assert.equal(x.status,'HOLD',reason);
+  assert.equal(x.reason,reason);
+  assert.ok(!JSON.stringify(x).includes(source.source_id));
+  noEffects(x);
+ }
+ const prior={source_id:source.source_id,sha256:source.sha256,
+  version:source.version,owner:'Cafe\u0301',rights:source.rights,
+  proof_class:source.proof_class,object_id:target.object_id,
+  file_space:target.file_space,rights_state:'ACTIVE'};
+ const y=plan({...args,existing_sources:[prior]});
+ assert.equal(y.reason,'EXISTING_SOURCE_IDENTITY_UNQUALIFIED');
+ noEffects(y);
+ // NFC accented identifiers remain legal; they are not transliterated.
+ const allowed=plan({...args,source:{...source,source_id:'fixture:eco:café',owner:'José'},
+  target:{...target,owner:'Römer'}});
+ assert.equal(allowed.status,'REVIEW_CANDIDATE');
+ noEffects(allowed);
+});
