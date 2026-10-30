@@ -7,6 +7,7 @@
  * Caller retains authenticated original bytes privately; this function omits them.
  */
 import {runEcoReviewCascade} from "./eco_review_cascade.mjs";
+import {reviewEcoObservationShowcase} from "./eco_digital_mint_boundary.mjs";
 
 export const ECO_PRE_MINT_SCHEMA="CGX-ECO-PRE-MINT-ASSEMBLY/0.1";
 const obj=x=>x!==null&&typeof x==="object"&&!Array.isArray(x);
@@ -86,10 +87,13 @@ function reviewCellAnchor(anchor,source){
  * Accept a review input, never an externally asserted "passed" receipt.
  * A fresh integrated cascade execution generates all actual executed flags.
  */
-export function prepareEcoPreMintAssembly({
-  cascade_input,geometry_descriptor=null,cell_anchor=null,
-  requested_hydration="H3"
-}={}){
+export function prepareEcoPreMintAssembly(request={}){
+  if(!obj(request)||Object.keys(request).some(k=>![
+    "cascade_input","geometry_descriptor","cell_anchor",
+    "requested_hydration","observation_showcase"].includes(k)))
+    throw Error("INVALID_ECO_PRE_MINT_REQUEST");
+  const {cascade_input,geometry_descriptor=null,cell_anchor=null,
+    requested_hydration="H3",observation_showcase=null}=request;
   if(!obj(cascade_input)||!levels.includes(requested_hydration))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const executed=runEcoReviewCascade(cascade_input);
@@ -104,6 +108,25 @@ export function prepareEcoPreMintAssembly({
     proof_hash:executed.source_proof?.sha256??null};
   const geom=reviewGeometryDescriptor(geometry_descriptor,source.source_ref);
   const anchor=reviewCellAnchor(cell_anchor,source);
+  let showcase=null;
+  if(observation_showcase!==null){
+    if(!obj(observation_showcase)||
+       observation_showcase.source_provenance!==source.source_ref||
+       observation_showcase.source_revision_ref!==source.revision||
+       observation_showcase.evidence_class!==executed.evidence_class||
+       (source.proof_hash!==null&&
+        (typeof observation_showcase.source_hash_sha256!=="string"||
+         observation_showcase.source_hash_sha256.toLowerCase()!==source.proof_hash)))
+      throw Error("ECO_MINT_SHOWCASE_SOURCE_OR_EVIDENCE_CONFLICT");
+    showcase=reviewEcoObservationShowcase({
+      record:observation_showcase,
+      authorised_source_refs:[source.source_ref],
+      public_release_requested:false
+    });
+    if(showcase.checks.includes("RAW_SPATIAL_COORDINATES_NOT_ACCEPTED_IN_SOURCE_ONLY_BRIDGE")||
+       showcase.checks.includes("SPATIAL_PAYLOAD_REVIEW_LIMIT_EXCEEDED"))
+      throw Error("ECO_MINT_SHOWCASE_SPATIAL_PAYLOAD_HOLD");
+  }
   const blockers=["CANONICAL_OBJECT_ID_NOT_MINTED","SIGNED_ROOT_AND_DBR_READBACK_REQUIRED",
     "SOURCE_RIGHTS_ACL_AND_STEWARDSHIP_NOT_VERIFIED",
     "INDEPENDENT_SCIENCE_AND_PHYSICAL_GEOMETRY_NOT_VERIFIED",
@@ -115,6 +138,8 @@ export function prepareEcoPreMintAssembly({
     blockers.push("SOURCE_CELL_ANCHOR_MISSING");
   if(geom.state!=="REFERENCES_STAGED_NOT_ACCEPTED")
     blockers.push("GEOMETRY_SOURCE_FRAME_OR_REVIEW_INCOMPLETE");
+  if(showcase!==null)
+    blockers.push("ECO_OBSERVATION_SHOWCASE_NOT_NATIVE_MINT_OR_FIELD_EVIDENCE");
 
   const hydrate={
     H0:{state:"CANDIDATE_IDENTITY_ONLY",family:executed.family,
@@ -155,6 +180,12 @@ export function prepareEcoPreMintAssembly({
       alignment:executed.step_receipts.scoped_alignment,
       ecological_review:executed.step_receipts.ecological_review},
     hydration:hydrate,geomatrix:geom,
+    mint_showcase_review:level>=3&&showcase!==null?{
+      schema:showcase.schema,state:showcase.state,
+      checks:showcase.checks,
+      field_observation_verified:false,native_object_id:null,
+      public_release_authorised:false,geometry_emitted:false
+    }:{state:"NOT_REQUESTED_OR_NOT_SUPPLIED"},
     stack_layers:[
       {layer:"source",state:source.proof_hash?"HASH_REFERENCE_VERIFIED":"R0_UNVERIFIED_THIS_RUN"},
       {layer:"semantic",state:"R1_REVIEW_ONLY"},
