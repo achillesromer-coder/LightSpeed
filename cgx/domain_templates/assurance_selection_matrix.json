@@ -357,7 +357,14 @@
           "scientific-projection",
           "ephemeris",
           "spatial-scale",
-          "scientific-measurement"
+          "scientific-measurement",
+          "orbital-geometry",
+          "orbital-scale",
+          "geometry-asset",
+          "simulation-asset",
+          "engineering-asset",
+          "ecological-asset",
+          "operational-asset"
         ]
       },
       "methods": [
