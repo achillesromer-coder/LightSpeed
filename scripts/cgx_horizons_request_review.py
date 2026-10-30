@@ -102,6 +102,12 @@ def verify_planned_request(candidate: object) -> dict:
     if type(target) is not int or target not in TARGETS:
         raise ValueError("HORIZONS_REVIEW_PLAN_INVALID_TARGET")
     canonical = plan_vector_request(target)
-    if candidate != canonical:
+    # Python considers False == 0, True == 1 and 2 == 2.0. Reject these
+    # untrusted JSON type substitutions rather than accepting a shape that
+    # differs from the typed source-only contract. All current fields are flat.
+    if (candidate.keys() != canonical.keys()
+            or any(type(candidate[key]) is not type(expected)
+                   or candidate[key] != expected
+                   for key, expected in canonical.items())):
         raise ValueError("HORIZONS_REVIEW_PLAN_NONCANONICAL")
     return canonical
