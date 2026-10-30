@@ -40,3 +40,27 @@ test('no operational or release authority granted by planner',()=>{
  const r=planCGXHandshake({...base,exchange});
  for (const prop of ['host_signature_verified','db_r_mutated','node_transfer_executed','may_execute','may_publish'])assert.equal(r[prop],false);
 });
+
+test('forged signer and request-looking fields never qualify issuer, scope or nonce consumption',()=>{
+ const lease={...base.lease,signer_ref:{key_id:'fixture:untrusted-key'},
+  request_nonce:'fixture:nonce',object_id:base.child.object_id,tool_id:'fixture:tool',
+  resource_usage:{compute_ms:1},scope:'digital_write'};
+ const result=planCGXHandshake({...base,lease});
+ assert.equal(result.status,'UNVERIFIED_SHAPE_REVIEW');
+ for(const gate of ['ISSUER_ROOT_AUTHORITY_NOT_VERIFIED',
+   'REQUEST_BOUND_OBJECT_TOOL_RESOURCE_SCOPE_NOT_VERIFIED',
+   'LEASE_NONCE_CONSUMPTION_NOT_VERIFIED']) assert.ok(result.holds.includes(gate));
+ assert.equal(result.host_signature_verified,false);
+ assert.equal(result.root_authority_verified,false);
+ assert.equal(result.may_execute,false);
+});
+test('repeating a self-claimed nonce cannot turn a source plan into an execution receipt',()=>{
+ const lease={...base.lease,request_nonce:'fixture:reused-nonce'};
+ const first=planCGXHandshake({...base,lease});
+ const second=planCGXHandshake({...base,lease});
+ for(const result of [first,second]){
+  assert.ok(result.holds.includes('LEASE_NONCE_CONSUMPTION_NOT_VERIFIED'));
+  assert.equal(result.may_execute,false);
+  assert.equal(result.db_r_mutated,false);
+ }
+});
