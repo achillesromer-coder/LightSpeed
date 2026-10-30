@@ -321,3 +321,81 @@ test("missing ACL snapshot is explicitly unverified and never a grant",()=>{
  assert.ok(r.access_posture_review.flags.includes("CURRENT_PROVIDER_ACL_READBACK_REQUIRED"));
  assert.equal(r.access_posture_review.rights_approved,false);
 });
+
+
+// Pairwise source/embedded-sheet crosswalk: entirely synthetic fixtures.
+// A formula/value match is not provider attestation or whole-workbook parity.
+const cellPair={
+ source_ref:source.source_ref,source_revision:source.revision,
+ source_sha256:digest,related_source_ref:lineage.related_source_ref,
+ related_revision_ref:lineage.related_revision_ref,
+ original_cell:{sheet:anchor.sheet,cell:anchor.cell,
+  formula:"=B3*B4*B5*1000",unit:"L/s",numeric_value:9.6,
+  evidence_class:"simulated"},
+ related_cell:{sheet:"SYNTHETIC_EMBEDDED_07_Flow_Mist_Model",cell:"B8",
+  formula:"=B3*B4*B5*1000",unit:"L/s",numeric_value:9.6,
+  evidence_class:"simulated"}
+};
+const withCellPair=(pair=cellPair)=>({cascade_input:input,
+ cell_anchor:anchor,source_lineage:lineage,cell_crosswalk:pair});
+test("paired original/translated synthetic cells compare without equivalence promotion",()=>{
+ const r=prepare(withCellPair());
+ const c=r.source_cell_crosswalk_review;
+ assert.equal(c.state,"R1_CALLER_DECLARED_PAIRWISE_MATCH_NOT_EQUIVALENCE");
+ assert.equal(c.formula_match,true);
+ assert.equal(c.numeric_value_match,true);
+ assert.equal(c.unit_match,true);
+ assert.equal(c.provider_cells_fetched_by_module,false);
+ assert.equal(c.independent_cell_readback_verified,false);
+ assert.equal(c.original_and_translation_equivalent,false);
+ assert.equal(r.release.mint_allowed,false);
+ assert.equal(r.candidate_object_id,null);
+ assert.ok(r.blocking_gates.includes(
+  "CELL_CROSSWALK_PROVIDER_ATTESTATION_AND_FULL_EQUIVALENCE_REQUIRED"));
+ assert.equal(JSON.stringify(r).includes("=B3*B4*B5*1000"),false);
+ assert.equal(JSON.stringify(r).includes("numeric_value"),false);
+});
+test("formula, value and unit discrepancies remain explicit held variants",()=>{
+ for(const changed of [
+  {...cellPair.related_cell,formula:"=B3*B4*B5"},
+  {...cellPair.related_cell,numeric_value:9.7},
+  {...cellPair.related_cell,unit:"m3/s"}
+ ]){
+  const r=prepare(withCellPair({...cellPair,related_cell:changed}));
+  assert.equal(r.source_cell_crosswalk_review.state,
+   "R1_CALLER_DECLARED_CELL_DISCREPANCY_HOLD");
+  assert.ok(r.blocking_gates.includes("SOURCE_TRANSLATION_CELL_DISCREPANCY"));
+  assert.equal(r.release.mint_allowed,false);
+ }
+});
+test("crosswalk cannot claim a stale revision or mismatched original digest",()=>{
+ for(const bad of [
+  {...cellPair,source_revision:"stale"},
+  {...cellPair,source_sha256:"0".repeat(64)},
+  {...cellPair,related_revision_ref:"stale-related"},
+  {...cellPair,related_source_ref:"synthetic:unrelated"},
+  {...cellPair,original_cell:{...cellPair.original_cell,cell:"C9"}}
+ ])assert.throws(()=>prepare(withCellPair(bad)),
+  /INVALID_ECO_SOURCE_CELL_CROSSWALK/);
+});
+test("crosswalk rejects observed-label promotion and hidden raw payloads",()=>{
+ for(const bad of [
+  {...cellPair,related_cell:{...cellPair.related_cell,evidence_class:"observed"}},
+  {...cellPair,related_cell:{...cellPair.related_cell,coordinates:[153,-27]}},
+  {...cellPair,original_cell:{...cellPair.original_cell,raw_file:"private"}},
+  {...cellPair,source_bytes:"private"}
+ ])assert.throws(()=>prepare(withCellPair(bad)),
+  /INVALID_ECO_SOURCE_CELL_CROSSWALK/);
+});
+test("crosswalk requires a distinct related source lineage and anchored original",()=>{
+ assert.throws(()=>prepare({cascade_input:input,cell_anchor:anchor,
+  cell_crosswalk:cellPair}),/INVALID_ECO_SOURCE_CELL_CROSSWALK/);
+ assert.throws(()=>prepare({cascade_input:input,source_lineage:lineage,
+  cell_crosswalk:cellPair}),/INVALID_ECO_SOURCE_CELL_CROSSWALK/);
+});
+test("H0 never exposes the crosswalk even if caller supplied a pair",()=>{
+ const r=prepare({...withCellPair(),requested_hydration:"H0"});
+ assert.deepEqual(r.source_cell_crosswalk_review,{state:"NOT_REQUESTED"});
+ assert.equal(r.hydration.H2.state,"NOT_REQUESTED");
+ assert.equal(r.release.public_release_authorised,false);
+});
