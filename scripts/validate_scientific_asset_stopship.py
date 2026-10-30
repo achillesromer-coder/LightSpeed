@@ -43,6 +43,43 @@ def main():
                     "scientific-asset-authoritative-vector-verifier-not-integrated" not in reasons):
                     failures.append(f"{domain}/{depth}/{tag}")
     checks["explicit-asset-alias-matrix-112-forged-receipts-rejected"]=not failures
+    # These are actual named source/solver *route labels*, not installed tools.
+    # Their spelling, case and padding must not bypass the scientific stop-ship.
+    astro_aliases = ("horizons-vectors", "spice-ephemeris",
+                     "gmat-trajectory", "solar-system-state")
+    astro_failures = []
+    for domain in ("romer", "eco", "emassc", "lightspeed"):
+        for depth in ("simulate", "build", "execute", "publish"):
+            for tag in astro_aliases:
+                resolution = route(domain, depth, "C0", [f" {tag.upper()} "])
+                fake = {"source_verified": True, "method_receipts": {
+                    method: {"state": "COMPLETE", "evidence_ids": ["forged-source"]}
+                    for method in resolution["required_methods"]}}
+                decision, reasons = assess(resolution, fake)
+                if (resolution["context"]["tags"] != [tag]
+                        or "AR-18" not in resolution["matched_routes"]
+                        or "V_AND_V" not in resolution["required_methods"]
+                        or decision != "HOLD"
+                        or "scientific-asset-authoritative-vector-verifier-not-integrated" not in reasons):
+                    astro_failures.append((domain, depth, tag, decision))
+    checks["astronomical-adapter-alias-matrix-64-forged-receipts-rejected"] = not astro_failures
+    # Review/inspection still permit source-only work; neither admits a solver.
+    checks["astronomical-source-inspection-not-native-admission"] = (
+        assess(route("lightspeed", "inspect", "C0", ["horizons-vectors"]), None)[0]
+        != "HOLD")
+    # CLI parsing is the final untrusted classification boundary.
+    astro_cmd = [sys.executable,
+        str(Path(__file__).resolve().parent / "cgx_assurance_preflight.py"),
+        "--domain", "lightspeed", "--execution-depth", "simulate",
+        "--tags", " SPICE-EPHEMERIS "]
+    astro_proc = subprocess.run(astro_cmd, capture_output=True, text=True,
+                                timeout=15, check=False)
+    astro_cli = json.loads(astro_proc.stdout) if astro_proc.stdout.strip() else {}
+    checks["spice-simulation-cli-fail-closed"] = (
+        astro_proc.returncode == 3 and astro_cli.get("decision") == "HOLD"
+        and "AR-18" in astro_cli.get("resolution", {}).get("matched_routes", [])
+        and "scientific-asset-authoritative-vector-verifier-not-integrated"
+        in astro_cli.get("hold_reasons", []))
     # Test the real CLI boundary, not just the Python function under test.
     cmd=[sys.executable,str(Path(__file__).resolve().parent/"cgx_assurance_preflight.py"),
          "--domain","romer","--execution-depth","build","--tags","orbital-geometry"]
