@@ -309,3 +309,55 @@ test('offline identity and mode validation deny without source leakage',()=>{
  assert.equal(online.admission_stage,'R3_VIEW_PROPOSAL');
  assert.equal(online.provider_readback,false);
 });
+
+test('opaque source, Object_ID and graph identifiers reject directional/invisible Unicode controls',()=>{
+ for(const mark of ['\u202e','\u2066','\u200b','\u034f']){
+  const ambiguousId='fixture:eco:one'+mark;
+  const changed=[{...nodes[0],object_id:ambiguousId},nodes[1]];
+  const cases=[
+   {...args,focus_id:ambiguousId,nodes:changed,
+    access:{...access,authorized_object_ids:[ambiguousId]}},
+   {...args,access:{...access,authorized_source_ids:['fixture:eco:source'+mark]}},
+   {...args,nodes:[{...nodes[0],domain:'eco'+mark},nodes[1]]},
+   {...args,nodes:[{...nodes[0],edges:[{to:'fixture:romer:private',relation:'HAS_SITE'+mark}]},nodes[1]]},
+   {...args,nodes:[{...nodes[0],source_refs:['fixture:eco:source'+mark]},nodes[1]]},
+   {...args,offline:true,file_space:'Eco.cgx'+mark,
+    nodes:[{...nodes[0],file_space:'Eco.cgx'+mark},nodes[1]]}
+  ];
+  for(const input of cases){
+   const x=inspect(input);
+   assert.equal(x.status,'DENIED');
+   assert.equal(x.reason,'AMBIGUOUS_IDENTITY_OR_SCOPE');
+   assert.equal(x.canonical_mutation,false);
+   assert.equal(x.public_release,false);
+   assert.ok(!JSON.stringify(x).includes('fixture:eco:source'));
+  }
+ }
+});
+test('non-NFC Object_ID and deceptive owner version text cannot become private view claims',()=>{
+ const decomposedId='fixture:eco:cafe\u0301';
+ const changed=[{...nodes[0],object_id:decomposedId},nodes[1]];
+ const denied=inspect({...args,focus_id:decomposedId,nodes:changed,
+  access:{...access,authorized_object_ids:[decomposedId]}});
+ assert.equal(denied.status,'DENIED');
+ assert.equal(denied.reason,'AMBIGUOUS_IDENTITY_OR_SCOPE');
+ const active={...source_envelopes[0]};
+ for(const unsafe of [
+  {...active,version:'v1\u2066'},
+  {...active,owner:'apparent-owner\u202e'}
+ ]){
+  const x=inspect({...args,source_envelopes:[unsafe]});
+  assert.equal(x.status,'SOURCE_REVIEW_ONLY');
+  assert.equal(x.viewport.state,'FRONTIER');
+  assert.equal(x.admission_stage,'R2_REVIEW_FRONTIER');
+  assert.equal(x.h2.source_claims[0].qualification,'FRONTIER_SOURCE_QUALIFICATION');
+  assert.equal(x.h2.source_claims[0].sha256,null);
+  assert.equal(x.h4.installed,false);
+  assert.equal(x.public_release,false);
+ }
+ // Ordinary Unicode names and native ASCII IDs remain valid review metadata.
+ const normal=inspect({...args,nodes:[{...nodes[0],owner:'Römer-Grex'},nodes[1]]});
+ assert.equal(normal.status,'SOURCE_REVIEW_ONLY');
+ assert.equal(normal.h0.owner,'Römer-Grex');
+ assert.equal(normal.host_authenticated,false);
+});
