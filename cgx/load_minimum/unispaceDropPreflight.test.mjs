@@ -81,6 +81,16 @@ test('invalid source hash, missing owner/version and malformed existing refs fai
   assert.equal(plan({...args,source:s}).status,'HOLD');
  assert.equal(plan({...args,existing_sources:[{source_id:source.source_id,sha256:'bad'}]}).status,'HOLD');
 });
+test('standalone intake rejects ambiguous offline flags before candidate or source disclosure',()=>{
+ for(const offline of [null,0,1,'','false',{},[]]){
+  const x=plan({...args,offline});
+  assert.equal(x.status,'HOLD');
+  assert.equal(x.reason,'INVALID_OFFLINE_MODE');
+  assert.ok(!JSON.stringify(x).includes(source.source_id));
+  noEffects(x);
+ }
+});
+
 test('offline preflight retains metadata-only hold and no network hydration',()=>{
  const x=plan({...args,offline:true});assert.equal(x.reason,'OFFLINE_METADATA_ONLY');noEffects(x);
 });
