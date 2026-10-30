@@ -64,6 +64,18 @@ function assertReviewOnly(document) {
   }
 }
 
+test('same-family duplicate IDs fail closed without changing source registries', () => {
+  const romer = structuredClone(sources.romer);
+  const existing = romer.families.interface[0];
+  romer.families.interface.push(structuredClone(existing));
+  assert.throws(() => inspectRelationGrammar(romer, sources.shared), /DUPLICATE_RELATION_IN_FAMILY/);
+  // Lexical reuse across distinct families remains a source-review ambiguity, not a parse failure.
+  const eco = inspectRelationGrammar(sources.eco, sources.shared);
+  assert.ok(eco.issues.some(issue => issue.code === 'RELATION_TYPE_NAMESPACE_AMBIGUITY' && issue.relation_id === 'MODIFIES'));
+  assert.equal(eco.status, 'HOLD');
+  assert.equal(eco.native_admitted, false);
+});
+
 test('original relation source Git blob bytes and qualifier versions are pinned', () => {
   for (const snapshot of delta.source_snapshots) {
     const actual = read(sourceFiles[snapshot.source]);
