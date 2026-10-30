@@ -303,6 +303,21 @@ def main():
     checks["horizons-review-plan-consumer-rejects-malformed-types"] = all(
         rejects_review_plan(candidate) for candidate in
         (None, True, 399, "399", [], {"target_naif": 399}))
+    # Python's bool/int/float equality can otherwise admit an untyped
+    # external JSON plan even when every nominal value appears canonical.
+    # These 56 negative cases do not simulate or certify ephemeris data.
+    type_confusions = (
+        ("vector_table", 2.0),
+        ("tdb_minus_ut_report_requested", 1),
+        ("network_executed", 0),
+        ("raw_source_verified", 0),
+        ("numerical_result_verified", 0),
+        ("native_admitted", 0),
+        ("runtime_verified", 0),
+    )
+    checks["horizons-review-plan-consumer-rejects-56-type-confusions"] = all(
+        rejects_review_plan({**p, key: replacement})
+        for p in planned for key, replacement in type_confusions)
     assert all(checks.values()),checks
     print(json.dumps({"schema":"CGX-SCIENTIFIC-STOPSHIP-REGRESSION/1.0", "tests":checks,
         "passed":sum(checks.values()),"total":len(checks),
