@@ -47,6 +47,7 @@ export function planFeature(request) {
     return { state: 'DENIED', reason: 'INVALID_TARGET' };
   }
   if (!MENUS[target.kind].includes(action)) return { state: 'DENIED', reason: 'ACTION_NOT_APPLICABLE' };
+  if (target.objectId != null && !safeText(target.objectId)) return {state:'DENIED',reason:'INVALID_OBJECT_ID'};
   if (!unambiguous(target.fileSpace)||!unambiguous(target.owner)||
       (target.domain != null&&!unambiguous(target.domain))||
       (target.objectId != null&&!unambiguous(target.objectId))||
