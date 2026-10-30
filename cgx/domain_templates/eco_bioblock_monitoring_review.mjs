@@ -8,6 +8,7 @@
 export const BIOBLOCK_MONITORING_SCHEMA="CGX-ECO-BIOBLOCK-MONITORING-REVIEW/0.1";
 const ref=x=>typeof x==="string"&&x.length>0&&x.length<=256&&!/[\u0000-\u001f]/.test(x);
 const count=x=>x===null||(Number.isSafeInteger(x)&&x>=0&&x<=1e9);
+const sha256=x=>typeof x==="string"&&/^[0-9a-fA-F]{64}$/.test(x);
 const numeric=x=>x===null||(typeof x==="number"&&Number.isFinite(x)&&x>=0);
 const zoned=x=>{
  if(!ref(x))return false;
@@ -19,7 +20,7 @@ const zoned=x=>{
  return y>=1&&mo>=1&&mo<=12&&d>=1&&d<=days[mo-1]&&h<=23&&mi<=59&&s<=59&&
   (m[7]==="Z"||(Number(m[8])<=14&&Number(m[9])<=59&&(Number(m[8])<14||Number(m[9])===0)));
 };
-const allowed=new Set(["evidence_class","source_ref","run_ref","block_ref","recipe_ref","site_ref",
+const allowed=new Set(["evidence_class","source_ref","source_revision","source_sha256","run_ref","block_ref","recipe_ref","site_ref",
  "taxon_ref","cohort_ref","replicate_ref","observed_at","monitoring_phase","seed_count",
  "germinated_count","surviving_count","weed_cover_pct","soil_moisture","soil_moisture_unit",
  "method_ref","baseline_ref","control_ref","raw_data_ref","photo_ref","calibration_ref",
@@ -27,7 +28,7 @@ const allowed=new Set(["evidence_class","source_ref","run_ref","block_ref","reci
 export function reviewBioBlockMonitoringRecord(input={}){
  if(input===null||typeof input!=="object"||Array.isArray(input)||
   Object.keys(input).some(k=>!allowed.has(k)))throw Error("INVALID_BIOBLOCK_MONITORING_FIELDS");
- const x={evidence_class:"simulated",source_ref:null,run_ref:null,block_ref:null,recipe_ref:null,
+ const x={evidence_class:"simulated",source_ref:null,source_revision:null,source_sha256:null,run_ref:null,block_ref:null,recipe_ref:null,
   site_ref:null,taxon_ref:null,cohort_ref:null,replicate_ref:null,observed_at:null,
   monitoring_phase:"monthly",seed_count:null,germinated_count:null,surviving_count:null,
   weed_cover_pct:null,soil_moisture:null,soil_moisture_unit:null,method_ref:null,
@@ -39,6 +40,8 @@ export function reviewBioBlockMonitoringRecord(input={}){
  if(!["observed","simulated","source_asserted","hypothesised","inferred"].includes(x.evidence_class)||
   !["pre_deployment","deployment","week_2","monthly","quarterly","annual"].includes(x.monitoring_phase)||
   refs.some(k=>x[k]!==null&&!ref(x[k]))||
+  (x.source_revision!==null&&!ref(x.source_revision))||
+  (x.source_sha256!==null&&!sha256(x.source_sha256))||
   !["seed_count","germinated_count","surviving_count"].every(k=>count(x[k]))||
   !numeric(x.weed_cover_pct)||!numeric(x.soil_moisture)||
   (x.weed_cover_pct!==null&&x.weed_cover_pct>100)||
