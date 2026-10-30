@@ -628,3 +628,35 @@ test('offline H0-only review rejects cached graph, source and geometry projectio
   assert.ok(!JSON.stringify(denied).includes('fixture:romer:private'));
  }
 });
+
+
+// #158: a stale or caller-forged offline inspector must not smuggle source
+// classes, owner identity, capabilities, execution or metric proof into H0.
+test('offline H0 projection rejects cached authority, rights, capabilities and budgets',()=>{
+ const base=inspect({...args,offline:true});
+ assert.equal(cockpit({...statusInput,inspector:base,offline:true}).presentation_stage,
+  'H0_OFFLINE_UNVERIFIED');
+ const secret='PRIVATE_SOURCE_NOT_FOR_OFFLINE';
+ const variants=[
+  {...base,h0:{...base.h0,owner:secret}},
+  {...base,h1:{...base.h1,cross_domain_enabled:true}},
+  {...base,h2:{...base.h2,proof_classes:['scientific']}},
+  {...base,h3:{...base.h3,qualified_capabilities:['ccc.install']}},
+  {...base,h3:{...base.h3,catalogue_discovery_only:true}},
+  {...base,h4:{...base.h4,permissioned_execution:'HOST_VERIFIED'}},
+  {...base,viewport:{...base.viewport,metric_authority:'VERIFIED'}},
+  {...base,viewport:{...base.viewport,frontier:[]}},
+  {...base,budgets:{...base.budgets,max_transfer_bytes:1}},
+  {...base,budgets:{...base.budgets,max_nodes:2}},
+  {...base,offline_fallback:'H0_H2_DECLARED_METADATA_ONLY'}
+ ];
+ for(const inspector of variants){
+  const denied=cockpit({...statusInput,inspector,offline:true});
+  assert.equal(denied.state,'DENIED');
+  assert.equal(denied.reason,'OFFLINE_H0_PROJECTION_CONFLICT');
+  assert.equal(denied.may_execute,false);
+  assert.equal(denied.released,false);
+  assert.ok(!JSON.stringify(denied).includes(secret));
+  assert.ok(!JSON.stringify(denied).includes('fixture:eco:source'));
+ }
+});
