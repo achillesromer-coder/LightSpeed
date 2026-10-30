@@ -64,3 +64,12 @@ test('repeating a self-claimed nonce cannot turn a source plan into an execution
   assert.equal(result.db_r_mutated,false);
  }
 });
+
+test('malformed or timezone-free transfer timestamps are rejected before review',()=>{
+ for(const created_utc of ['not-a-date','2026-10-28T00:00:00']){
+  assert.equal(planCGXHandshake({...base,exchange:{...exchange,created_utc}}).reason,'INVALID_TRANSFER_TIMESTAMP');
+ }
+});
+test('Windows drive-root transfer path is never treated as relative',()=>{
+ assert.equal(planCGXHandshake({...base,exchange:{...exchange,target_relative_path:'C:/CGX/unsafe'}}).reason,'UNSAFE_TRANSFER_TARGET');
+});
