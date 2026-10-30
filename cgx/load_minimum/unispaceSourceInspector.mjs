@@ -240,7 +240,8 @@ export function planUniSpaceOperatorCockpit({
    inspector.h3.qualified_capabilities.length!==0||
    inspector.h3.catalogue_discovery_only!==true||
    inspector.h4.permissioned_execution!=='HOST_DENIED_UNTIL_INDEPENDENT_ROOT_LEASE_DBR'||
-   inspector.viewport.metric_authority!=='NOT_VERIFIED'
+   (inspector.admission_stage==='R2_REVIEW_FRONTIER'&&
+    inspector.viewport.metric_authority!=='NOT_VERIFIED')
  ))return cockpitDeny('ONLINE_REVIEW_CAPABILITY_OR_AUTHORITY_CONFLICT');
  // #209/#158: the caller can hand in a fabricated inspector object. The
  // source-only inspector never qualifies metric 3D as R3; neither may this
