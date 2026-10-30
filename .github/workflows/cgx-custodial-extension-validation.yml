@@ -34,6 +34,11 @@ on:
       - ".github/workflows/cgx-custodial-extension-validation.yml"
   pull_request:
     paths:
+      - "scripts/cgx_assurance_preflight.py"
+      - "scripts/validate_scientific_asset_stopship.py"
+      - "scripts/cgx_assurance_route.py"
+      - "scripts/cgx_consequence_preflight.py"
+      - ".github/workflows/cgx-custodial-extension-validation.yml"
       - "cgx/domain_templates/**"
       - "scripts/resolve_cgx_extensions.py"
       - "scripts/cgx_custodial_preflight.py"
