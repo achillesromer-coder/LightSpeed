@@ -362,6 +362,49 @@
       "rights": "Google Drive link-reader ACL is not a redistribution licence; owner rights/usage terms remain unverified",
       "authority": "NO_NATIVE_OBJECT_ID_MINT; NO_SIGNED_ROOTAUTHORITY_DBR_READBACK; NO_PHYSICAL_CERTIFICATION",
       "action": "Preserve original and revision; require full loss-accounted reversible R1, rights qualification and native DBR before promotion"
+    },
+    {
+      "mapping_id": "FF-RFS-EMFF-XLSX-001",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_file": "RFS_EMFF_Digital_Twin_Test_Sandbox_v0_1.xlsx",
+      "source_provider": "Google Drive original (Nathaniel account)",
+      "source_file_id": "1YDs4fjNZgzDAB1LJcf7xT9N-bywD4Qgf",
+      "source_revision_id": "0BwJNKUfDWAPsTFJUM3ZQVWVWTVF1MzQwelNyNGczZ05wRTZ3PQ",
+      "revision_modified_time": "2026-05-19T10:47:38.000Z",
+      "revision_size_bytes": 47907,
+      "sha256_original": "1cc3f421ed128186b1ab018f7af8eda27bc30572b21bc8b8a1d2bada91c9a58f",
+      "evidence": "AUTHENTICATED_ORIGINAL_BYTES_SHA256_MATCH_EXISTING_GIT_REGISTRY; PROVIDER_REVISION_METADATA_READBACK; ZIP_CRC_PASS",
+      "source_structure": "26 sheets; 37 ZIP members; zero unsafe paths, VBA or external link parts",
+      "original_evidence_ceiling": "Internal prototype/synthetic scaffold; original test log has 2 template rows, not measured runs; original validation gates 1 PASS / 7 PENDING / 2 BLOCKED",
+      "candidate_filespace": "EMASSC.cgx:/emassc/rfs-emff",
+      "cross_family_bridge": "FF-RFS-LS-BRIDGE-001 -> EMASSC.cgx/LS.cgx runtime binding candidate; same R0 bytes, distinct typed reference, no scientific truth duplication",
+      "r1_scope": "BOUNDED_PARTIAL_TYPED; original workbook not fully reversibly parsed",
+      "rights": "Anyone-with-link reader ACL is NOT a redistribution licence; source-linked private references only; no public source content",
+      "authority": "NO_CANONICAL_OBJECT_ID_MINT; NO_SIGNED_ROOTAUTHORITY_DBR; NO_RUNTIME_RECEIPT; NO_MEASURED_PHYSICAL_PERFORMANCE",
+      "action": "Preserve R0 unchanged; reconcile original PDF and LinkDrive source rights before R2; native bridge only after accepted EMASSC object, lease and DBR"
+    }
+  ],
+  "source_identity_collision_reviews": [
+    {
+      "review_id": "CROSS-FAMILY-RFS-EMFF-SINGLE-R0-20261030",
+      "source_sha256": "1cc3f421ed128186b1ab018f7af8eda27bc30572b21bc8b8a1d2bada91c9a58f",
+      "mapping_ids": [
+        "FF-RFS-EMFF-XLSX-001",
+        "FF-RFS-LS-BRIDGE-001"
+      ],
+      "evidence_class": "ORIGINAL_BYTES_HASH_VERIFIED_PLUS_EXISTING_GIT_MAPPING_CONTRACT",
+      "tests": {
+        "both_mappings_exist": true,
+        "same_original_source": true,
+        "distinct_mapping_ids": true,
+        "distinct_family_targets": true,
+        "bridge_has_no_runtime_receipt": true,
+        "no_science_duplication": true,
+        "no_authority_transfer": true
+      },
+      "rule": "One original R0 artifact, two distinct typed family references; EMASSC owns source-grounded scientific claims, LS is runtime adapter only; lexical/filename/hash match cannot merge distinct semantic identities or imply native admission",
+      "admission": "SOURCE_REVIEW_ONLY",
+      "blocked": "Rights, original PDF corroboration, full R1 loss ledger, R2 scoped acceptance, signed RootAuthority/DBR and host lease"
     }
   ]
 }
