@@ -108,9 +108,20 @@ export function planViewportSwitch({spread,to,from=null}={}){
  if(!focus)throw Error("MISSING_FOCUS");
  const def=VIEWS[to];let state="VIEW_PLAN_READY";const requirements=[];
  if(!focus.source_available){state="FRONTIER_SOURCE_UNAVAILABLE";requirements.push("permitted R0/R1 source reference");}
- if(to==="3d"&&(!focus.geometry||!focus.geometry.frame||!focus.geometry.units)){
-  state="FRONTIER_GEOMETRY_UNQUALIFIED";
-  requirements.push("geometry source + calibrated coordinate frame + units");
+ if(to==="3d"){
+  if(!focus.geometry||!focus.geometry.frame||!focus.geometry.units){
+   state="FRONTIER_GEOMETRY_UNQUALIFIED";
+   requirements.push("geometry source + calibrated coordinate frame + units");
+  }else{
+   // A source-linked frame/units is a *candidate*, not a verified metric
+   // world state. The browser cannot validate issuer, ephemeris, native DBR,
+   // physical scale or owner acceptance. Even a caller-supplied "verified"
+   // flag must not elevate a science asset (#209).
+   state="SOURCE_LINKED_3D_REVIEW_ONLY";
+   requirements.push("independent source bytes/hash/rights, epoch/time-scale/origin and metric model validation");
+   requirements.push("native signed root, scoped ACL/lease, DBR and actual host readback");
+   requirements.push("keep artistic glyph magnification and camera transforms separate from world metric coordinates");
+  }
  }
  if(to==="interactive")requirements.push("host verified interaction capability and permissions for anything beyond read-only");
  if(to==="chat")requirements.push("model/provider capability and token budget separately verified");
@@ -120,6 +131,11 @@ export function planViewportSwitch({spread,to,from=null}={}){
   geometry_ref:focus.geometry?.source_ref??null,
   evidence_ceiling:focus.source_ceiling,requirements,
   independent_budget:spread.budgets,network_fetch:false,rendered:false,interactive_execution:false,
+  // No client-side review plan can assert scientific, physical or host proof.
+  metric_geometry_verified:false,physical_world_coordinates_exportable:false,
+  scientific_authority:"HOLD_UNVERIFIED",native_admitted:false,host_handshake_verified:false,
+  geometry_display_mode:to==="3d"?"NONMETRIC_SOURCE_REVIEW":"NOT_APPLICABLE",
+  metric_scale:null,artistic_glyph_scale:null,camera_transform:null,
   semantic_mutation:false,public_release:false};
 }
 /** Novel source proposals can match an exact registered source or similar candidate,
