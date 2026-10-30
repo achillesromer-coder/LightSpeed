@@ -679,10 +679,12 @@ test('online cockpit rejects forged capabilities, execution and metric authority
    {...base,h4:{...base.h4,permissioned_execution:'HOST_VERIFIED'}},
    {...base,viewport:{...base.viewport,metric_authority:'INDEPENDENTLY_VERIFIED'}}
   ];
-  for(const forged of variants){
+  for(const [index,forged] of variants.entries()){
    const denied=cockpit({...statusInput,inspector:forged});
    assert.equal(denied.state,'DENIED');
-   assert.equal(denied.reason,'ONLINE_REVIEW_CAPABILITY_OR_AUTHORITY_CONFLICT');
+   assert.equal(denied.reason,index===5&&base.admission_stage==='R3_VIEW_PROPOSAL'?
+    'UNVERIFIED_METRIC_VIEW_CANNOT_BE_R3':
+    'ONLINE_REVIEW_CAPABILITY_OR_AUTHORITY_CONFLICT');
    assert.equal(denied.may_execute,false);
    assert.equal(denied.native_admitted,false);
    assert.equal(denied.released,false);
