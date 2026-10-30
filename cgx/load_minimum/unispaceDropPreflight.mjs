@@ -1,3 +1,4 @@
+import {planUniSpaceSourceInspector} from './unispaceSourceInspector.mjs';
 /** UniSpace FileSpace drag/drop metadata preflight, source-only review.
  * Never reads file bytes, grants ACL, verifies a digest, mints an Object_ID,
  * uploads, hydrates, installs, or writes DBR. Host must independently decide.
@@ -84,4 +85,89 @@ export function planUniSpaceDropPreflight({target,file,source,access,existing_so
    rights:source.rights,sha256_claim:source.sha256.toLowerCase(),hash_status:'DECLARED_UNVERIFIED'},
   file_metadata:{name:file.name,mime:file.type,size:file.size},
   next_action:'HOST_POLICY_SOURCE_BYTES_HASH_RIGHTS_COLLISION_AND_DBR_PREFLIGHT'};
+}
+
+
+/**
+ * Private UniSpace FileSpace inspector → qualified R0 intake handoff.
+ * Reuses the existing inspector and drag/drop preflight, so the selected
+ * Object_ID and child FileSpace cannot silently change between views.
+ * Caller ACL/rights/host flags are NEVER independent native proof.
+ * This function does not read, upload, hydrate, install or admit anything.
+ */
+export const PRIVATE_OBJECT_DROP_SCHEMA='UNISPACE-PRIVATE-OBJECT-DROP-HANDOFF/0.1';
+const dropHandoffDeny=reason=>({
+ schema:PRIVATE_OBJECT_DROP_SCHEMA,state:'DENIED',reason,
+ bytes_read:0,uploaded:false,hash_verified:false,acl_verified:false,
+ host_authenticated:false,provider_readback:false,native_admitted:false,
+ public_release:false,canonical_mutation:false
+});
+export function planUniSpacePrivateObjectDrop({
+ surface=null,inspectorInput=null,dropInput=null,offline=false
+}={}){
+ // Public Vite routes and browser-originated "private" flags are not host
+ // authentication. This is a private source-review UI contract only (#158).
+ if(surface!=='private')return dropHandoffDeny('PRIVATE_OPERATOR_SURFACE_REQUIRED');
+ if(offline!==false)return dropHandoffDeny('OFFLINE_INTAKE_FORBIDDEN');
+ if(!obj(inspectorInput)||!obj(dropInput)||!obj(dropInput.target)||
+    inspectorInput.surface!=='private'||
+    (dropInput.surface!==undefined&&dropInput.surface!=='private')||
+    inspectorInput.offline===true)
+  return dropHandoffDeny('INCONSISTENT_PRIVATE_REVIEW_CONTEXT');
+ // No second independently supplied ACL array is accepted for this handoff:
+ // the source inspector's exact selected scope is reused, never widened.
+ if(dropInput.access!==undefined)
+  return dropHandoffDeny('DUPLICATE_ACCESS_CONTEXT_FORBIDDEN');
+ if(inspectorInput.focus_id!==dropInput.target.object_id||
+    inspectorInput.file_space!==dropInput.target.file_space)
+  return dropHandoffDeny('OBJECT_OR_CHILD_FILESPACE_CHANGED');
+ let inspector;
+ try{
+  inspector=planUniSpaceSourceInspector({
+   ...inspectorInput,surface:'private',offline:false,view:'document',
+   budgets:{max_nodes:1,max_hops:0,max_cross_domains:0,max_cross_edges:0,
+    max_evidence_refs:32,max_transfer_bytes:0}
+  });
+ }catch{
+  return dropHandoffDeny('INSPECTOR_PROJECTION_FAILED');
+ }
+ if(inspector.status!=='SOURCE_REVIEW_ONLY'||inspector.identity!==dropInput.target.object_id||
+    inspector.selected_file_space!==dropInput.target.file_space)
+  return dropHandoffDeny('INSPECTOR_EXACT_SCOPE_NOT_RESOLVED');
+ if(!inspector.h0||!identityLabel(inspector.h0.owner)||
+    inspector.h0.owner!==dropInput.target.owner)
+  return dropHandoffDeny('OBJECT_OWNER_UNRESOLVED_OR_MISMATCHED');
+ // A missing/revoked source rights state cannot become a qualified intake
+ // proposal merely because a browser reports a plausible licence.
+ if(!obj(dropInput.source)||dropInput.source.rights_state!=='ACTIVE'||
+    revocationEvidence(dropInput.source))
+  return dropHandoffDeny('INCOMING_SOURCE_RIGHTS_NOT_ACTIVE');
+ const preflight=planUniSpaceDropPreflight({
+  target:dropInput.target,file:dropInput.file,source:dropInput.source,
+  access:{authorized_object_ids:[inspector.identity],
+   authorized_file_spaces:[inspector.selected_file_space]},
+  existing_sources:dropInput.existing_sources??[],surface:'private',offline:false
+ });
+ if(preflight.status!=='REVIEW_CANDIDATE'&&preflight.status!=='NOOP_REVIEW')
+  return dropHandoffDeny('SOURCE_PREFLIGHT_'+preflight.reason);
+ return {
+  schema:PRIVATE_OBJECT_DROP_SCHEMA,state:'SOURCE_REVIEW_ONLY',
+  family:'Cognigrex.cgx',selected_object_id:inspector.identity,
+  selected_file_space:inspector.selected_file_space,
+  source_view_state:inspector.viewport.state,
+  inspector_stage:inspector.admission_stage,
+  intake_preflight:preflight.status,
+  source:preflight.status==='REVIEW_CANDIDATE'?preflight.proposed_source:null,
+  file_metadata:preflight.status==='REVIEW_CANDIDATE'?preflight.file_metadata:null,
+  source_proof:'CALLER_DECLARATION_NOT_PROVIDER_VERIFIED',
+  next_action:'INDEPENDENT_NATIVE_R0_HASH_RIGHTS_COLLISION_ROOT_LEASE_DBR_REVIEW',
+  blockers:['SOURCE_BYTES_AND_SHA256_NOT_INDEPENDENTLY_VERIFIED',
+   'RIGHTS_OWNER_ACL_AND_REVOCATION_NOT_PROVIDER_VERIFIED',
+   'SIGNED_NATIVE_OBJECT_ID_ROOT_LEASE_DBR_NOT_VERIFIED',
+   'ISSUE_158_PRIVATE_ROUTE_NEGATIVE_TESTS_REQUIRED'],
+  bytes_read:0,uploaded:false,network_fetch:false,hash_verified:false,
+  acl_verified:false,host_authenticated:false,provider_readback:false,
+  native_admitted:false,installed:false,public_release:false,
+  canonical_mutation:false
+ };
 }
