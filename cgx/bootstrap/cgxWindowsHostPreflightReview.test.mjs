@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { reviewWindowsCGXHost } from './cgxWindowsHostPreflightReview.mjs';
+import { reviewWindowsCGXHost, classifyInstallerPolicySource } from './cgxWindowsHostPreflightReview.mjs';
 const base = {connection:'ONLINE', fileAccess:'VERIFIED_READ_ONLY', policies:{CurrentUser:'RemoteSigned'},signature:'VALID',zone:'LOCAL'};
 test('online and read-only does not certify native root or execution',()=>{
  const x=reviewWindowsCGXHost(base);
@@ -57,7 +57,7 @@ test('all declared input error classes remain non-executing',()=>{
 
 test('existing Python installer policy is classified from source without running it',()=>{
  const source=readFileSync(new URL('../../desktop/LightSpeed_Runtime/lightspeed_runtime/runtime_productization.py',import.meta.url),'utf8');
- const explicitBypass=/["']-ExecutionPolicy["']\\s*,\\s*["']Bypass["']/.test(source);
+ const explicitBypass=classifyInstallerPolicySource(source)==='EXPLICIT_BYPASS';
  const classification=explicitBypass?'EXPLICIT_BYPASS':'NO_EXPLICIT_OVERRIDE';
  const x=reviewWindowsCGXHost({...base,installerInvocationPolicy:classification});
  assert.equal(x.installer_invocation_policy_observation,classification);
@@ -79,4 +79,25 @@ test('installer invocation observation is closed-schema and never host proof',()
  const x=reviewWindowsCGXHost({...base,installerInvocationPolicy:'NO_EXPLICIT_OVERRIDE'});
  assert.equal(x.state,'REVIEW_ONLY');assert.equal(x.authority_verified,false);
  assert.equal(reviewWindowsCGXHost({...base,installerInvocationPolicy:'OWNER_APPROVED'}).state,'DENIED');
+});
+
+test('source classifier detects quoted PowerShell argv bypass with whitespace and newline',()=>{
+ for(const source of [
+  'args = ["-ExecutionPolicy", "Bypass", "-File", script]',
+  "args = ['-ExecutionPolicy',\\n  'Bypass']".replace('\\n','\n'),
+  'powershell.exe -ExecutionPolicy Bypass -File script.ps1'
+ ]){
+  assert.equal(classifyInstallerPolicySource(source),'EXPLICIT_BYPASS');
+  const x=reviewWindowsCGXHost({...base,installerInvocationPolicy:classifyInstallerPolicySource(source)});
+  assert.equal(x.state,'HOLD');assert.equal(x.may_execute,false);
+ }
+});
+test('source classifier does not promote ordinary or unknown policy observations',()=>{
+ for(const source of ['["-ExecutionPolicy", "RemoteSigned"]','powershell.exe -NoProfile -File script.ps1','']){
+  assert.equal(classifyInstallerPolicySource(source),'NO_EXPLICIT_OVERRIDE');
+ }
+ for(const source of [null,{},'x'.repeat(2*1024*1024+1)]){
+  assert.equal(classifyInstallerPolicySource(source),'UNKNOWN');
+  assert.equal(reviewWindowsCGXHost({...base,installerInvocationPolicy:classifyInstallerPolicySource(source)}).state,'REVIEW_ONLY');
+ }
 });
