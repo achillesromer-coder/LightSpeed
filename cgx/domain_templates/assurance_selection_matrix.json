@@ -364,7 +364,11 @@
           "simulation-asset",
           "engineering-asset",
           "ecological-asset",
-          "operational-asset"
+          "operational-asset",
+          "horizons-vectors",
+          "spice-ephemeris",
+          "gmat-trajectory",
+          "solar-system-state"
         ]
       },
       "methods": [
