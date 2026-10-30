@@ -530,7 +530,7 @@ test('#209 R3 viewport intent and geometry cannot be spoofed by a caller',()=>{
   {...base,view:'3D'},
   {...base,view:'unregistered'},
   {...base,view:null},
-  {...base,viewport:{...base.viewport,geometry_ref:'fixture:eco:source'}},
+  {...base,viewport:{...base.viewport,geometry_ref:'fixture:unauthorised:geometry'}},
   {...base,viewport:{...base.viewport,geometry_ref:undefined}}
  ];
  for(const inspector of variants){
