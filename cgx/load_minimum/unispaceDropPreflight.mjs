@@ -10,7 +10,10 @@ const rights=new Set(['PUBLIC_SAFE','OWNER_PRIVATE','LICENSE_RESTRICTED','UNKNOW
 const classes=new Set(['creative','scientific','engineering','historical','operational']);
 // Caller-declared rights state is a review hint, never a signed grant or DBR receipt.
 const rightsStates=new Set(['ACTIVE','REVOKED','SUPERSEDED','UNRESOLVED']);
-const revocationEvidence=x=>x.revoked===true||x.rights_revoked===true||
+// An explicit revocation flag is non-vetoing ONLY when strictly boolean false.
+// Ambiguous strings, numbers, null and even an own undefined value fail closed.
+const revocationEvidence=x=>(Object.hasOwn(x,'revoked')&&x.revoked!==false)||
+ (Object.hasOwn(x,'rights_revoked')&&x.rights_revoked!==false)||
  Object.hasOwn(x,'revoked_at')||Object.hasOwn(x,'superseded_by');
 const mime=new Set(['application/json','text/plain','text/markdown','text/csv','application/pdf','image/png','image/jpeg','model/gltf-binary']);
 const obj=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
