@@ -5,7 +5,7 @@ Synthetic evidence is deliberately adversarial; no test asserts that it
 certifies a real astronomical source, DBR admission, or publication.
 """
 from __future__ import annotations
-import json,sys
+import json,sys,subprocess
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from cgx_assurance_route import route
@@ -24,6 +24,33 @@ def main():
         status,reasons=assess(resolution,fake)
         checks[depth+"-forged-complete-receipts-rejected"]=(status=="HOLD" and
             "scientific-asset-authoritative-vector-verifier-not-integrated" in reasons)
+    # Explicit asset-class aliases must never bypass the science stop-ship, even
+    # with fabricated COMPLETE receipts. Exercise every family and effectful depth.
+    aliases=("orbital-geometry","orbital-scale","geometry-asset",
+             "simulation-asset","engineering-asset","ecological-asset",
+             "operational-asset")
+    failures=[]
+    for domain in ("romer","eco","emassc","lightspeed"):
+        for depth in ("build","execute","publish"):
+            for tag in aliases:
+                resolution=route(domain,depth,"C0",[tag])
+                fake={"source_verified":True,"method_receipts":{
+                    m:{"state":"COMPLETE","evidence_ids":["synthetic-self-claim"]}
+                    for m in resolution["required_methods"]}}
+                status,reasons=assess(resolution,fake)
+                if ("V_AND_V" not in resolution["required_methods"] or
+                    status!="HOLD" or
+                    "scientific-asset-authoritative-vector-verifier-not-integrated" not in reasons):
+                    failures.append(f"{domain}/{depth}/{tag}")
+    checks["explicit-asset-alias-matrix-84-forged-receipts-rejected"]=not failures
+    # Test the real CLI boundary, not just the Python function under test.
+    cmd=[sys.executable,str(Path(__file__).resolve().parent/"cgx_assurance_preflight.py"),
+         "--domain","romer","--execution-depth","build","--tags","orbital-geometry"]
+    proc=subprocess.run(cmd,capture_output=True,text=True,timeout=15,check=False)
+    cli=json.loads(proc.stdout) if proc.stdout.strip() else {}
+    checks["orbital-geometry-cli-fail-closed"]=(proc.returncode==3 and
+        cli.get("decision")=="HOLD" and
+        "scientific-asset-authoritative-vector-verifier-not-integrated" in cli.get("hold_reasons",[]))
     missing=route("romer","publish","C0",["ephemeris"])
     checks["ephemeris-alias-rejected"]=assess(missing,None)[0]=="HOLD"
     # Must not change existing low-consequence inspection route semantics.
