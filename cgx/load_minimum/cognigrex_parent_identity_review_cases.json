@@ -127,6 +127,11 @@
       "id": "C18",
       "input": "The Eco.cgx relation registry CGX-ECO-RELATION-REGISTRY/0.2 declares relation type MODIFIES twice, once in families.process and once in families.intervention, both with the same unqualified id; shared CGX-RELATION-QUALIFIER/0.2 is still referenced as /0.1 by the child registry.",
       "expected": "RELATION_TYPE_NAMESPACE_AMBIGUITY; preserve both original declarations and their category provenance, do not create two canonical relation Object_IDs or infer semantic equivalence solely from the lexical ID. Require explicit owner-approved single qualified relation identity with multiple category tags or a source-preserving typed distinction and an explicit /0.1-to-/0.2 compatibility crosswalk; no R2 admission/DBR promotion on this fixture."
+    },
+    {
+      "id": "C19",
+      "input": "Historical S91 seed-child and first-file child carriers reuse the same local Object_ID label for different exact R0 carrier byte sequences, while subsequent S92 rebuilt child carriers have new instance bytes and labels. The shared semantic family candidate alone is not proof of instance equivalence or current namespace authority.",
+      "expected": "VERSION_SCOPED_LOCAL_ID_COLLISION; preserve both S91 source instances, their original hashes and lineage, and separate S92 instances. Do not deduplicate by local label, mint or promote a canonical child Object_ID, transfer authority, or infer native DBR admission until exact current source/version/owner/rights/ACL and signed RootAuthority/DBR readback are qualified."
     }
   ],
   "validation_state": "STATIC_SOURCE_REVIEW_ONLY",
