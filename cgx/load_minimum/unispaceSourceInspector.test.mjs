@@ -520,3 +520,34 @@ test('#209 cockpit rejects forged metric R3, conflicting Frontier and verified b
   assert.ok(!JSON.stringify(denied).includes('fixture:eco:source'));
  }
 });
+
+
+// #158/#209: the inspector object is untrusted, including its view label.
+test('#209 R3 viewport intent and geometry cannot be spoofed by a caller',()=>{
+ const base=statusInput.inspector;
+ assert.equal(cockpit(statusInput).presentation_stage,'R3_VIEW_PROPOSAL');
+ const variants=[
+  {...base,view:'3D'},
+  {...base,view:'unregistered'},
+  {...base,view:null},
+  {...base,viewport:{...base.viewport,geometry_ref:'fixture:eco:source'}},
+  {...base,viewport:{...base.viewport,geometry_ref:undefined}}
+ ];
+ for(const inspector of variants){
+  const denied=cockpit({...statusInput,inspector});
+  assert.equal(denied.state,'DENIED');
+  assert.equal(denied.reason,'UNVERIFIED_METRIC_VIEW_CANNOT_BE_R3');
+  assert.equal(denied.may_execute,false);
+  assert.equal(denied.native_admitted,false);
+  assert.equal(denied.live_verified,false);
+  assert.ok(!JSON.stringify(denied).includes('fixture:eco:source'));
+ }
+ // Registered, non-metric source-review views remain review-only.
+ for(const view of ['document','chat','graph','interactive','matrix']){
+  const candidate=inspect({...args,view});
+  if(candidate.admission_stage!=='R3_VIEW_PROPOSAL')continue;
+  const result=cockpit({...statusInput,inspector:candidate});
+  assert.equal(result.state,'SOURCE_REVIEW_ONLY');
+  assert.equal(result.released,false);
+ }
+});
