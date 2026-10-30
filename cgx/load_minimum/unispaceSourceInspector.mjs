@@ -2,7 +2,7 @@
  * Pure adapter over existing LOAD planners. Never treats caller ACL declarations as
  * host authentication, source envelopes as provider receipts, or R3 as admission.
  */
-import {planKnowledgeSpread,planViewportSwitch} from './loadSemanticViewport.mjs';
+import {planKnowledgeSpread,planViewportSwitch,getRegisteredViewIntent} from './loadSemanticViewport.mjs';
 export const INSPECTOR_SCHEMA='UNISPACE-LOAD-SOURCE-INSPECTOR/0.1';
 const good=x=>typeof x==='string'&&x.trim().length>0&&x.length<=256&&!/[\u0000-\u001f]/.test(x);
 const object=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
@@ -195,6 +195,15 @@ export function planUniSpaceOperatorCockpit({
       inspector.viewport.state==='FRONTIER'));
  if(offline?!offlinePlan:!onlinePlan)
   return cockpitDeny('REVIEW_EVIDENCE_STAGE_CONFLICT');
+ // Even a source-only R3/R2 proposal must use the same registered view lens
+ // and projection as LOAD. Caller-provided document labels cannot disguise
+ // a geometry/interactive projection; this is consistency, not host proof.
+ if(!offline){
+  const intent=getRegisteredViewIntent(inspector.view);
+  if(intent&&(inspector.viewport.lens!==intent.lens||
+              inspector.viewport.projection!==intent.projection))
+   return cockpitDeny('VIEWPORT_INTENT_PROJECTION_MISMATCH');
+ }
  // #209/#158: the caller can hand in a fabricated inspector object. The
  // source-only inspector never qualifies metric 3D as R3; neither may this
  // operator projection. A conflicting Frontier/metric badge is also a veto.
