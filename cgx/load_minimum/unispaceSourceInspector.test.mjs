@@ -179,6 +179,29 @@ test('missing rights-state is Frontier despite a syntactically valid source enve
  assert.equal(x.public_release,false);
 });
 
+// #158: ambiguous revocation values must not silently grant a private R3
+// source proposal. Only an absent flag or explicit boolean false is non-veto.
+test('ambiguous explicit revocation flags fail closed before R3 proposal',()=>{
+ const clean=inspect(args);
+ assert.equal(clean.admission_stage,'R3_VIEW_PROPOSAL');
+ for(const field of ['revoked','rights_revoked']){
+  const allowed=inspect({...args,source_envelopes:[{...source_envelopes[0],[field]:false}]});
+  assert.equal(allowed.admission_stage,'R3_VIEW_PROPOSAL',field);
+  for(const value of ['true','false',1,0,null,undefined,{},[]]){
+   const denied=inspect({...args,source_envelopes:[{...source_envelopes[0],[field]:value}]});
+   assert.equal(denied.status,'SOURCE_REVIEW_ONLY',field);
+   assert.equal(denied.viewport.state,'FRONTIER',field);
+   assert.equal(denied.admission_stage,'R2_REVIEW_FRONTIER',field);
+   assert.equal(denied.h2.source_claims[0].qualification,
+    'FRONTIER_RIGHTS_REVOKED_OR_UNRESOLVED',field);
+   assert.equal(denied.h2.source_claims[0].sha256,null);
+   assert.equal(denied.h4.installed,false);
+   assert.equal(denied.provider_readback,false);
+   assert.equal(denied.public_release,false);
+  }
+ }
+});
+
 test('revoked superseded or non-ACTIVE source envelopes cannot support R3',()=>{
  for(const signal of [
   {rights_state:'REVOKED'},{rights_state:'SUPERSEDED'},{rights_state:'UNRESOLVED'},
