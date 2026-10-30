@@ -51,6 +51,10 @@ export function planUniSpaceDropPreflight({target,file,source,access,existing_so
  // A public-safe incoming source does not make its destination Object_ID public.
  // Caller declarations are preflight hints only, never host ACL/rights receipts.
  if(surface==='public'&&target.rights!=='PUBLIC_SAFE')return result('TARGET_PUBLIC_RIGHTS_UNVERIFIED');
+ // #158: PUBLIC_SAFE is a caller declaration, not a signed public grant.
+ // A browser/static route cannot independently establish host root, ACL,
+ // revocation or DBR. Never return source IDs/digests as public candidates.
+ if(surface==='public')return result('PUBLIC_ROUTE_REQUIRES_VERIFIED_NATIVE_ACL');
  // Existing references are collision hints only; caller-provided list is not DBR.
  if(existing_sources.some(x=>!obj(x)||!identityLabel(x.source_id)||!digest(x.sha256)))
   return result('EXISTING_SOURCE_REGISTRY_UNQUALIFIED');
