@@ -17,10 +17,13 @@ export function inspectRelationGrammar(domainRegistry, sharedQualifier) {
   const occurrences = new Map();
   for (const [family, entries] of Object.entries(groups)) {
     if (!Array.isArray(entries)) throw new TypeError('INVALID_RELATION_FAMILY');
+    const localIds = new Set();
     for (const entry of entries) {
       if (!entry || typeof entry.id !== 'string' || !/^[A-Z][A-Z0-9_]*$/.test(entry.id)) {
         throw new TypeError('INVALID_RELATION_TYPE');
       }
+      if (localIds.has(entry.id)) throw new TypeError('DUPLICATE_RELATION_IN_FAMILY');
+      localIds.add(entry.id);
       const group = occurrences.get(entry.id) ?? [];
       group.push({family, source_relation_id: entry.id});
       occurrences.set(entry.id, group);
