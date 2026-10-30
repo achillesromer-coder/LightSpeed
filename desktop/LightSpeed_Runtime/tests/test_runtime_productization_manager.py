@@ -538,7 +538,7 @@ def test_windows_reparse_leaf_files_fail_closed(
     "variant",
     [
         "valid", "wrong_schema", "wrong_slot", "wrong_authority",
-        "unsupported_profile", "malformed", "non_object",
+        "unsupported_profile", "nonstring_profile", "malformed", "non_object",
     ],
 )
 def test_status_quarantines_untrusted_slot_config_without_modifying_it(
@@ -570,6 +570,8 @@ def test_status_quarantines_untrusted_slot_config_without_modifying_it(
         config["authority"] = "untrusted"
     elif variant == "unsupported_profile":
         config["profile"] = "arbitrary-program"
+    elif variant == "nonstring_profile":
+        config["profile"] = ["api"]
     config_path = slot / rp.CONFIG_NAME
     if variant == "malformed":
         config_path.write_text("{broken", encoding="utf-8")
