@@ -14,6 +14,8 @@ import json
 SCHEMA = "CGX-HORIZONS-VECTORS-REQUEST-REVIEW/0.1"
 ENDPOINT = "https://ssd.jpl.nasa.gov/api/horizons.api"
 DOC = "https://ssd-api.jpl.nasa.gov/doc/horizons.html"
+API_DOC_VERSION = "1.3"
+API_DOC_DATE = "2025 June"
 TARGETS = (199, 299, 399, 499, 599, 699, 799, 899)
 EPOCH_UT = "2025-Jun-04 12:00:00"
 
@@ -49,7 +51,9 @@ def plan_vector_request(target_naif: int) -> dict:
     # This digest binds the exact *planned request*, not a Horizons response,
     # a scientific state, a canonical Object_ID, or an admitted CGX source.
     canonical_spec = json.dumps(
-        {"schema": SCHEMA, "endpoint": ENDPOINT, "params": params},
+        {"schema": SCHEMA, "endpoint": ENDPOINT, "documentation": DOC,
+         "api_document_version": API_DOC_VERSION, "api_document_date": API_DOC_DATE,
+         "params": params},
         sort_keys=True, separators=(",", ":"), ensure_ascii=True,
     ).encode("utf-8")
     request_spec_sha256 = sha256(canonical_spec).hexdigest()
@@ -57,6 +61,8 @@ def plan_vector_request(target_naif: int) -> dict:
     return {
         "schema": SCHEMA,
         "source_documentation": DOC,
+        "source_documentation_version": API_DOC_VERSION,
+        "source_documentation_date": API_DOC_DATE,
         "target_naif": target_naif,
         "epoch_input": EPOCH_UT,
         "time_scale_requested": "UT",
@@ -71,7 +77,7 @@ def plan_vector_request(target_naif: int) -> dict:
         "vector_component_labels_requested": True,
         "url": url,
         "request_spec_sha256": request_spec_sha256,
-        "request_spec_hash_scope": "canonical-json-schema-endpoint-params-only",
+        "request_spec_hash_scope": "canonical-json-schema-endpoint-documentation-version-date-params-only",
         "source_response_sha256": None,
         "source_response_bytes": None,
         "evidence_stage": "REQUEST_SPEC_ONLY",
