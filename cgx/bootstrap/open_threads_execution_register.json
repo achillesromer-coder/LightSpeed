@@ -458,6 +458,50 @@
       "rule": "The domain semantic ID cgx:domain:romer identifies a candidate family namespace, not the workbook source artifact or an admitted unique Object_ID. The separate FCStd SPACE-01 source label and shared /romer/mark-iii target do not establish same-object identity. Preserve both original R0 source versions; qualify source-scoped relations without lexical/target-based merge.",
       "admission": "SOURCE_REVIEW_ONLY; NO_CANONICAL_MINT_OR_DBR",
       "blocked": "CAD source revision/rights and source-scoped reversible R1 not fully qualified; signed native RootAuthority/DBR readback and owner acceptance absent"
+    },
+    {
+        "review_id": "MARK3-FCSTD-VS-PR34-GENERATED-GEOMETRY-20261031",
+        "owner_lane": "Cognigrex parent provenance/alias grammar; Romer owns engineering qualification",
+        "candidate_filespace": "Romer.cgx:/romer/mark-iii",
+        "source_registry": {
+            "path": "cgx/domain_templates/first_file_conversion_registry.json",
+            "git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+            "mapping_id": "FF-MARK3-FCSTD-001",
+            "fcstd_source_sha256_registry_claim": "4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b",
+            "source_scoped_label": "SPACE-01",
+            "source_structure_registry_claim": {
+                "object_data_records": 474,
+                "partdesign_bodies": 17
+            }
+        },
+        "derived_review": {
+            "pr": 34,
+            "head": "cf2867af5c14bef3e19157527049e5ce96016e44",
+            "state": "DRAFT_UNMERGED",
+            "model_version": "Mark III v0.3.3",
+            "named_nodes_pr_claim": 786,
+            "source": "GitHub PR metadata; NOT independently revalidated model geometry"
+        },
+        "owner_document": {
+            "drive_id": "1ZAPSA3MmUHfkXNr6qDaIZIDMpcKLD7QJaof2ueFbGZU",
+            "title": "ACR3 Closure Handoff — Luke II & Mark III Canonical Execution — 2026-08-23",
+            "modified_time": "2026-08-23T00:17:44.665Z",
+            "classification": "OWNER_DOCUMENTARY_HANDOFF_NOT_PRIMARY_CAD"
+        },
+        "evidence_class": "GITHUB_REGISTRY_AND_PR_METADATA_READBACK_PLUS_OWNER_DOCUMENT_READ; NOT ORIGINAL_FCSTD_BYTES_OR_GEOMETRY_VERIFICATION",
+        "negative_tests": {
+            "same_candidate_family_target": true,
+            "distinct_source_representation": true,
+            "fcstd_original_drive_id_verified": false,
+            "fcstd_original_bytes_verified": false,
+            "pr34_geometry_equivalent_to_fcstd_proven": false,
+            "derivation_chain_proven": false,
+            "physical_qualification_proven": false
+        },
+        "relation_rule": "Do not identify the FCStd source object, the Mark III XLSX source, and PR #34 generated parametric geometry as one object merely because names/family targets match. Preserve each R0/derived artifact separately. DERIVED_FROM or MODEL_VERSION_OF is candidate-only until exact source/revision/hash/rights and deterministic conversion lineage are proven; PR #34's digital design-review status is not native CGX/DBR admission.",
+        "stage": "SOURCE_REFERENCE_CROSSWALK; NO_R0_FCSTD_BYTE_VERIFICATION; NO_R2_ADMISSION; NO_CANONICAL_MINT",
+        "blocked": "Original Mark III.FCStd exact provider ID/bytes/revision/rights and PR #34 source-to-FCStd lineage; native signed RootAuthority/DBR, independent geometry/physical acceptance",
+        "next": "Romer owner locates exact original FCStd by source ID/hash without replacing it; compare original CAD source tree to PR #34 source-manifest and reversible conversion ledger, then parent reviews typed relation only"
     }
   ]
 }
