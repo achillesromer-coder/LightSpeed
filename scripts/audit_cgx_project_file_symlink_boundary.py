@@ -23,7 +23,7 @@ from lightspeed_runtime.project_file_browser import (
     list_project_files,
 )
 
-SCHEMA = "ACHILLES-PROJECT-FILE-SYMLINK-NEGATIVE-AUDIT/0.1"
+SCHEMA = "ACHILLES-PROJECT-FILE-SYMLINK-NEGATIVE-AUDIT/0.2"
 
 
 class SyntheticPipeline:
@@ -75,6 +75,13 @@ def run() -> int:
         outside.write_text("SYNTHETIC_OUTSIDE_TEXT", encoding="utf-8")
         (project / "review.txt").symlink_to(project / "credentials.json")
         (project / "outside_alias.txt").symlink_to(outside)
+        # Independent T5 case: in-root directory symlink to an ignored tree.
+        ignored_dir = project / ".git"
+        ignored_dir.mkdir()
+        (ignored_dir / "synthetic_note.txt").write_text(
+            "SYNTHETIC_INTERNAL_ONLY", encoding="utf-8"
+        )
+        (project / "docs_alias").symlink_to(ignored_dir, target_is_directory=True)
         pipeline = SyntheticPipeline(authority, project)
 
         # T5 follow-on: the listing route must apply blocked-file policy to
@@ -95,6 +102,20 @@ def run() -> int:
         )
         safe_control = safe["preview"]["text"] == "SYNTHETIC_PUBLIC_TEXT"
         direct_blocked = denied(ProjectFileBlocked, pipeline, "credentials.json")
+        ignored_direct_blocked = denied(
+            ProjectFileBlocked, pipeline, ".git/synthetic_note.txt"
+        )
+        try:
+            ignored_alias = open_project_file(
+                pipeline, project_id="fixture-project",
+                relative_path="docs_alias/synthetic_note.txt",
+            )
+        except (ProjectFileBlocked, ProjectFilePathRejected):
+            ignored_alias_exposed = False
+        else:
+            ignored_alias_exposed = (
+                ignored_alias["preview"].get("text") == "SYNTHETIC_INTERNAL_ONLY"
+            )
         external_blocked = denied(
             ProjectFilePathRejected, pipeline, "outside_alias.txt"
         )
@@ -111,7 +132,8 @@ def run() -> int:
             alias_exposed = alias["preview"].get("text") == marker
 
     controls = (
-        safe_control and direct_blocked and external_blocked and traversal_blocked
+        safe_control and direct_blocked and ignored_direct_blocked
+        and external_blocked and traversal_blocked
         and direct_hidden_in_list and external_hidden_in_list and safe_listed
     )
     print(json.dumps({
@@ -125,8 +147,14 @@ def run() -> int:
         "synthetic_blocked_json_metadata_via_list_alias": (
             "ALLOW" if alias_listed else "DENY"
         ),
+        "synthetic_ignored_directory_via_in_root_symlink": (
+            "ALLOW" if ignored_alias_exposed else "DENY"
+        ),
         "controls": {
             "direct_blocked_name": "DENY" if direct_blocked else "NOT_VERIFIED",
+            "direct_ignored_directory": (
+                "DENY" if ignored_direct_blocked else "NOT_VERIFIED"
+            ),
             "outside_root_symlink": "DENY" if external_blocked else "NOT_VERIFIED",
             "lexical_parent_traversal": "DENY" if traversal_blocked else "NOT_VERIFIED",
             "ordinary_read_only_preview": "ALLOW" if safe_control else "NOT_VERIFIED",
@@ -141,11 +169,12 @@ def run() -> int:
             ),
         },
         "gate": (
-            "HOLD" if alias_exposed or alias_listed
+            "HOLD" if alias_exposed or alias_listed or ignored_alias_exposed
             else "REQUIRES_INDEPENDENT_ACCEPTANCE"
         ),
         "limits": (
             "Synthetic fixture only. Listing reveals alias metadata, not target bytes. "
+            "Ignored-directory symlink case concerns preview bytes only. "
             "No real private data, credential, remote user, "
             "host installation, Windows reparse-point or TOCTOU behavior tested. "
             "Downstream authorization and real release permissions unverified."
