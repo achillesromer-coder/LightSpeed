@@ -162,6 +162,40 @@ def main():
         consequence_cli.returncode == 3 and c_receipt.get("decision") == "HOLD"
         and c_receipt.get("assurance", {}).get("decision") == "HOLD"
         and generic_hold in c_receipt.get("assurance", {}).get("hold_reasons", []))
+    # Source-only JPL request contracts: no URL is fetched and no vector is asserted.
+    from urllib.parse import urlsplit, parse_qs
+    from cgx_horizons_request_review import plan_vector_request, TARGETS, EPOCH_UT, DOC
+    planned = [plan_vector_request(body) for body in TARGETS]
+    checks["horizons-request-spec-eight-planet-centers"] = (
+        len(planned) == 8 and len({p["target_naif"] for p in planned}) == 8
+        and 399 in TARGETS and 3 not in TARGETS)
+    checks["horizons-request-spec-exact-epoch-frame-units"] = all(
+        p["epoch_input"] == EPOCH_UT and p["time_scale_requested"] == "UT"
+        and p["origin"] == "500@10" and p["reference_plane"] == "ECLIPTIC"
+        and p["reference_system"] == "ICRF" and p["units"] == "KM-S"
+        and p["vector_table"] == 2 and p["correction"] == "NONE"
+        and p["source_documentation"] == DOC for p in planned)
+    required = {"COMMAND", "CENTER", "TLIST", "TLIST_TYPE", "TIME_TYPE",
+                "REF_PLANE", "REF_SYSTEM", "OUT_UNITS", "VEC_TABLE",
+                "VEC_CORR", "EPHEM_TYPE", "TIME_DIGITS"}
+    checks["horizons-request-spec-url-parameters"] = all(
+        urlsplit(p["url"]).netloc == "ssd.jpl.nasa.gov"
+        and required <= parse_qs(urlsplit(p["url"]).query).keys()
+        and parse_qs(urlsplit(p["url"]).query)["COMMAND"] == [f"'{p['target_naif']}'"]
+        and parse_qs(urlsplit(p["url"]).query)["TLIST"] == [f"'{EPOCH_UT}'"]
+        for p in planned)
+    rejected = 0
+    for invalid in (3, 10, 0, 999, "399", True, None, 399.0):
+        try:
+            plan_vector_request(invalid)
+        except ValueError:
+            rejected += 1
+    checks["horizons-request-spec-rejects-barycenter-and-ambiguous-types"] = rejected == 8
+    checks["horizons-request-spec-never-promotes-to-raw-or-native"] = all(
+        p["evidence_stage"] == "REQUEST_SPEC_ONLY"
+        and all(p[flag] is False for flag in (
+            "network_executed", "raw_source_verified", "numerical_result_verified",
+            "native_admitted", "runtime_verified")) for p in planned)
     assert all(checks.values()),checks
     print(json.dumps({"schema":"CGX-SCIENTIFIC-STOPSHIP-REGRESSION/1.0", "tests":checks,
         "passed":sum(checks.values()),"total":len(checks),
