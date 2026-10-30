@@ -86,6 +86,17 @@ test('source, ACL, DBR, host and tool ABI changes invalidate incremental authori
   assert.equal(p.install,false,changed);
  }
 });
+test('unknown and future authority-affecting change types fail closed',()=>{
+ for(const changed of ['plugin_route','licence','version','abi','source_revision','revocation','peer_identity','new_field']){
+  const p=planOngoingSetup({family,current:{},changes:[changed]});
+  assert.equal(p.mode,'REVERIFY_AUTHORITY',changed);
+  assert.equal(p.mutation,false,changed);
+  assert.equal(p.install,false,changed);
+ }
+ const mixed=planOngoingSetup({family,current:{},changes:['theme','plugin_route']});
+ assert.equal(mixed.mode,'REVERIFY_AUTHORITY');
+ assert.equal(planOngoingSetup({family,current:{},changes:[]}).mode,'INCREMENTAL_CHECK');
+});
 test('no missing returned receipts from invalid mode',()=>{
  assert.equal(planCGXSetup({family,mode:'panic'}).reason,'UNKNOWN_SETUP_MODE');
 });
