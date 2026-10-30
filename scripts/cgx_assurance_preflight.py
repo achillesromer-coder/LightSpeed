@@ -7,6 +7,8 @@ sys.path.insert(0,str(ROOT/"scripts"))
 from cgx_assurance_route import route,STATE_RANK
 
 ACCEPTED_METHOD_STATES={"COMPLETE","BOUNDED","NOT_APPLICABLE"}
+SCIENTIFIC_ASSET_TAGS={"scientific-asset","scientific-projection","ephemeris","spatial-scale","scientific-measurement"}
+SCIENTIFIC_CONSEQUENTIAL_DEPTHS={"build","execute","publish"}
 SAFETY_TAGS={"replication-control","hard-stop","containment","life-support","hazard-control","planetary-protection","unknown-life","nuclear","radioactive"}
 
 def read_json(path):
@@ -16,6 +18,16 @@ def read_json(path):
 def assess(resolution,assessment):
     required=resolution["required_methods"]
     state=resolution["minimum_assurance_state"]
+    # Scientific public/operational claims require a trusted external-source and native
+    # readback verifier, not caller-supplied receipts or an image-labelled 'accurate'.
+    # This remains a hard stop until the owner-approved verifier is integrated.
+    ctx=resolution.get("context",{})
+    if (set(ctx.get("tags",[])) & SCIENTIFIC_ASSET_TAGS
+            and ctx.get("execution_depth") in SCIENTIFIC_CONSEQUENTIAL_DEPTHS):
+        return "HOLD",[
+            "scientific-asset-authoritative-vector-verifier-not-integrated",
+            "scientific-asset-native-object-and-runtime-readback-not-verified",
+        ]
     if state=="HOLD":
         return "HOLD",["router-hold:no-sufficient-method-route-for-high-consequence-action"]
     if STATE_RANK[state]<STATE_RANK["VERIFY"]:
