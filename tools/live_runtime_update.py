@@ -151,15 +151,26 @@ def git(repo, *args):
     return subprocess.check_output(['git', '-C', str(repo), *args], text=True, timeout=30).strip()
 
 
-def windows_idle():
-    if os.name != 'nt':
-        raise ValueError('live operator requires Windows')
-    script = "Get-CimInstance Win32_Process | Select-Object ProcessId,CommandLine | ConvertTo-Json -Compress"
-    rows = json.loads(subprocess.check_output(['powershell.exe', '-NoProfile', '-Command', script], text=True, timeout=20))
+def active_runtime_processes(rows, own_pid):
+    """Inspect Python service owners, not shells merely mentioning a filename."""
     markers = ('run_ls_go_bridge.py', 'run_merovingian', 'ls_go_job_consumer', 'cognigrex_setup_wizard.py',
                'ensure_cognigrex_local_stack.py', 'run_cognigrex_local_stack.py', 'lightspeed\\app\\__main__.py',
                'desktop_hooks\\lightspeed\\__main__.py')
-    if any(r['ProcessId'] != os.getpid() and any(x in (r.get('CommandLine') or '').lower() for x in markers) for r in rows):
+    if isinstance(rows, dict):
+        rows = [rows]
+    if not isinstance(rows, list):
+        raise ValueError('process inventory unavailable')
+    return [r for r in rows if r.get('ProcessId') != own_pid
+            and str(r.get('Name', '')).lower() in ('python.exe', 'pythonw.exe')
+            and any(x in (r.get('CommandLine') or '').lower() for x in markers)]
+
+
+def windows_idle():
+    if os.name != 'nt':
+        raise ValueError('live operator requires Windows')
+    script = "Get-CimInstance Win32_Process | Select-Object ProcessId,Name,CommandLine | ConvertTo-Json -Compress"
+    rows = json.loads(subprocess.check_output(['powershell.exe', '-NoProfile', '-Command', script], text=True, timeout=20))
+    if active_runtime_processes(rows, os.getpid()):
         raise ValueError('live services or setup wizard still running; stop through existing controls first')
     task = subprocess.check_output(['powershell.exe', '-NoProfile', '-Command',
         "(Get-ScheduledTask -TaskName 'LightSpeed Cognigrex Local Guard' -ErrorAction Stop).State.ToString()"], text=True, timeout=20).strip()

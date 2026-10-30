@@ -59,6 +59,18 @@ class RuntimeUpdateTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 update.member(self.target, name)
 
+    def test_process_guard_distinguishes_observation_from_service(self):
+        rows = [
+            {'ProcessId': 10, 'Name': 'pwsh.exe', 'CommandLine': 'Get-FileHash ls_go_job_consumer.py'},
+            {'ProcessId': 11, 'Name': 'python.exe', 'CommandLine': r'python D:\LightSpeed\Tools\run_ls_go_bridge.py'},
+            {'ProcessId': 12, 'Name': 'pythonw.exe', 'CommandLine': r'pythonw D:\LightSpeed\App\__main__.py'},
+        ]
+        self.assertEqual([r['ProcessId'] for r in update.active_runtime_processes(rows, 99)], [11, 12])
+        self.assertEqual(update.active_runtime_processes(rows[:1], 99), [])
+        self.assertEqual(update.active_runtime_processes(rows[1], 11), [])
+        with self.assertRaises(ValueError):
+            update.active_runtime_processes(None, 99)
+
 
 if __name__ == '__main__':
     unittest.main()
