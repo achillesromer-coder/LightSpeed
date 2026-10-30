@@ -72,7 +72,9 @@ export function planCGXSetup(config={}){
 export function planOngoingSetup({family,current,previous=null,changes=[]}={}){
  if(!FAMILIES.has(family)||!isObj(current)||!(previous===null||isObj(previous))||!safeArray(changes))
   return {state:"DENIED",reason:"INVALID_RESUME_CONTEXT"};
- const restart=changes.some(x=>["root","authority","identity","rights","network","lease","runtime"].includes(x));
+ // Changes to provenance, permissions, host binding or tool ABI must not reuse old authority checks.
+ const restart=changes.some(x=>["root","authority","identity","rights","network","lease","runtime",
+  "source","source_hash","acl","dbr","config","capability","tool_abi","host"].includes(x));
  return {schema:"CGX-ONGOING-SETUP-PLAN/0.1",state:"READ_ONLY",
   family,mode:restart?"REVERIFY_AUTHORITY":"INCREMENTAL_CHECK",
   requested_changes:changes,run_wizard_from_scratch:false,
