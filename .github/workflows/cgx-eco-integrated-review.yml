@@ -7,6 +7,7 @@ on:
       - 'cgx/domain_templates/eco_qualified_alignment.mjs'
       - 'cgx/domain_templates/eco_second_cycle_claim_review.mjs'
       - 'cgx/domain_templates/eco_bioblock_monitoring_review.mjs'
+      - 'cgx/domain_templates/eco_bioblock_monitoring_review.test.mjs'
       - '.github/workflows/cgx-eco-integrated-review.yml'
   workflow_dispatch:
 permissions:
@@ -21,4 +22,4 @@ jobs:
         with:
           node-version: '22'
       - name: Execute integrated Eco source-to-review and negative gates
-        run: node --test cgx/domain_templates/eco_review_cascade.test.mjs
+        run: node --test cgx/domain_templates/eco_review_cascade.test.mjs cgx/domain_templates/eco_bioblock_monitoring_review.test.mjs
