@@ -389,3 +389,85 @@ def test_nonabsolute_or_parent_traversal_managed_root_is_rejected(
     with pytest.raises(rp.RuntimeProductizationError, match="absolute path without parent traversal"):
         rp.runtime_productization_status("alpha")
     assert not (tmp_path / "managed").exists()
+@pytest.mark.parametrize(
+    "ownership",
+    ["missing", "valid", "wrong_schema", "wrong_slot", "non_object", "invalid_json"],
+)
+def test_status_requires_valid_managed_ownership_not_just_python_file(
+    monkeypatch, tmp_path: Path, ownership: str
+) -> None:
+    root = _set_root(monkeypatch, tmp_path)
+    slot_dir = root / "alpha"
+    python_path = slot_dir / "venv" / "Scripts" / "python.exe"
+    python_path.parent.mkdir(parents=True)
+    python_path.write_text("not an executable; status fixture only", encoding="utf-8")
+    marker_path = slot_dir / rp.MARKER_NAME
+    marker = {
+        "schema": "LIGHTSPEED-MANAGED-RUNTIME-MARKER/0.1",
+        "slot": "alpha",
+        "profile": "core",
+        "authority": "digital-runtime-slot-only",
+    }
+    if ownership == "wrong_schema":
+        marker["schema"] = "UNTRUSTED-MARKER/0.1"
+    elif ownership == "wrong_slot":
+        marker["slot"] = "other"
+    if ownership == "non_object":
+        marker_path.write_text("[]", encoding="utf-8")
+    elif ownership == "invalid_json":
+        marker_path.write_text("{invalid-json", encoding="utf-8")
+    elif ownership != "missing":
+        marker_path.write_text(json.dumps(marker), encoding="utf-8")
+
+    marker_bytes_before = marker_path.read_bytes() if marker_path.exists() else None
+    status = rp.runtime_productization_status("alpha")
+    assert status["installed"] is (ownership == "valid")
+    assert status["managed_marker"] is (
+        ownership in ("valid", "wrong_schema", "wrong_slot")
+    )
+    assert status["authority"] == "status-only"
+    assert marker_path.exists() is (ownership != "missing")
+    if marker_bytes_before is not None:
+        assert marker_path.read_bytes() == marker_bytes_before
+    assert python_path.read_text(encoding="utf-8") == (
+        "not an executable; status fixture only"
+    )
+    assert not (root / "_receipts").exists()
+
+
+def test_status_valid_marker_without_python_file_is_not_installed(
+    monkeypatch, tmp_path: Path
+) -> None:
+    root = _set_root(monkeypatch, tmp_path)
+    slot = root / "alpha"
+    slot.mkdir(parents=True)
+    marker = {
+        "schema": "LIGHTSPEED-MANAGED-RUNTIME-MARKER/0.1",
+        "slot": "alpha",
+        "profile": "core",
+        "authority": "digital-runtime-slot-only",
+    }
+    (slot / rp.MARKER_NAME).write_text(json.dumps(marker), encoding="utf-8")
+    status = rp.runtime_productization_status("alpha")
+    assert status["managed_marker"] is True
+    assert status["installed"] is False
+    assert not (slot / "venv").exists()
+
+
+def test_status_executable_directory_does_not_count_as_installed(
+    monkeypatch, tmp_path: Path
+) -> None:
+    root = _set_root(monkeypatch, tmp_path)
+    slot = root / "alpha"
+    python_path = slot / "venv" / "Scripts" / "python.exe"
+    python_path.mkdir(parents=True)
+    marker = {
+        "schema": "LIGHTSPEED-MANAGED-RUNTIME-MARKER/0.1",
+        "slot": "alpha",
+        "profile": "core",
+        "authority": "digital-runtime-slot-only",
+    }
+    (slot / rp.MARKER_NAME).write_text(json.dumps(marker), encoding="utf-8")
+    status = rp.runtime_productization_status("alpha")
+    assert status["managed_marker"] is True
+    assert status["installed"] is False
