@@ -202,6 +202,25 @@ export function planUniSpaceOperatorCockpit({
     (inspector.view==='3d'||inspector.viewport.metric_authority!=='NOT_VERIFIED'||
      !Array.isArray(inspector.viewport.frontier)||inspector.viewport.frontier.length!==0))
   return cockpitDeny('UNVERIFIED_METRIC_VIEW_CANNOT_BE_R3');
+ // R3 is only a caller-declared proposal. Even at that low ceiling, a
+ // forged inspector must not advertise a qualified document/graph/chat view
+ // with zero, revoked, malformed, duplicate or contradictory R0 claims.
+ // This validates internal review consistency, NOT provider authenticity.
+ if(!offline&&inspector.admission_stage==='R3_VIEW_PROPOSAL'){
+  const claims=inspector.h2.source_claims;
+  const classes=inspector.h2.proof_classes;
+  const unique=new Set(claims.map(c=>c?.source_id));
+  const qualified=claims.length>0&&unique.size===claims.length&&
+   Array.isArray(classes)&&classes.length>0&&
+   classes.length===new Set(classes).size&&
+   claims.every(c=>object(c)&&unambiguous(c.source_id)&&sha(c.sha256)&&
+    unambiguous(c.version)&&unambiguous(c.owner)&&
+    (c.rights==='PUBLIC_SAFE'||c.rights==='OWNER_PRIVATE')&&
+    proofClasses.has(c.proof_class)&&classes.includes(c.proof_class)&&
+    c.qualification==='DECLARED_NOT_PROVIDER_VERIFIED')&&
+   classes.every(cls=>claims.some(c=>c.proof_class===cls));
+  if(!qualified)return cockpitDeny('R3_SOURCE_PROOF_CLAIMS_UNQUALIFIED');
+ }
  const candidate=!offline&&inspector.admission_stage==='R3_VIEW_PROPOSAL';
  const blockers=[
   'SOURCE_ORIGINAL_REVISION_HASH_RIGHTS_NOT_PROVIDER_VERIFIED',
