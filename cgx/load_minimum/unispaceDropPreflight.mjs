@@ -89,6 +89,9 @@ export function planUniSpaceDropPreflight({target,file,source,access,existing_so
    return result('RIGHTS_STATE_UNQUALIFIED');
   return result('EXISTING_REFERENCE_NO_DUPLICATE','NOOP_REVIEW');
  }
+ // #158: absence of an explicit ACTIVE rights-state cannot produce even a
+ // standalone R0 intake candidate. A browser declaration remains unverified.
+ if(source.rights_state!=='ACTIVE')return result('RIGHTS_STATE_UNQUALIFIED');
  if(offline)return result('OFFLINE_METADATA_ONLY');
  return {...result('HOST_AND_DBR_REVALIDATION_REQUIRED','REVIEW_CANDIDATE'),
   target:{object_id:target.object_id,file_space:target.file_space,domain:target.domain},
