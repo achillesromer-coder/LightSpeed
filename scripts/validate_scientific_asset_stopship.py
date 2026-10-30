@@ -269,6 +269,40 @@ def main():
         and all(p[flag] is False for flag in (
             "network_executed", "raw_source_verified", "numerical_result_verified",
             "native_admitted", "runtime_verified")) for p in planned)
+    # Review-plan consumer boundary: a locally planned URL/digest is not an
+    # authoritative R0 source, and no caller can promote it by editing fields.
+    from cgx_horizons_request_review import verify_planned_request
+    checks["horizons-review-plan-consumer-accepts-only-canonical-plans"] = all(
+        verify_planned_request(p) == p for p in planned)
+    def rejects_review_plan(candidate):
+        try:
+            verify_planned_request(candidate)
+        except ValueError:
+            return True
+        return False
+    plan_tamper_cases = (
+        lambda p: {**p, "url": p["url"] + "&COMMAND=%273%27"},
+        lambda p: {**p, "url": p["url"].replace("CENTER=%27500%4010%27", "CENTER=%27500%40399%27")},
+        lambda p: {**p, "request_spec_sha256": "0" * 64},
+        lambda p: {**p, "source_documentation_version": "unverified"},
+        lambda p: {**p, "epoch_input": "2025-Jun-05 12:00:00"},
+        lambda p: {**p, "target_naif": 3},
+        lambda p: {**p, "target_naif": True},
+        lambda p: {**p, "source_response_sha256": "forged"},
+        lambda p: {**p, "source_response_bytes": 123},
+        lambda p: {**p, "network_executed": True},
+        lambda p: {**p, "raw_source_verified": True},
+        lambda p: {**p, "native_admitted": True},
+        lambda p: {**p, "runtime_verified": True},
+        lambda p: {**p, "evidence_stage": "ADMITTED"},
+        lambda p: {**p, "unreviewed_extra_parameter": "1"},
+    )
+    checks["horizons-review-plan-consumer-rejects-tampering"] = all(
+        rejects_review_plan(mutator(p)) for p in planned
+        for mutator in plan_tamper_cases)
+    checks["horizons-review-plan-consumer-rejects-malformed-types"] = all(
+        rejects_review_plan(candidate) for candidate in
+        (None, True, 399, "399", [], {"target_naif": 399}))
     assert all(checks.values()),checks
     print(json.dumps({"schema":"CGX-SCIENTIFIC-STOPSHIP-REGRESSION/1.0", "tests":checks,
         "passed":sum(checks.values()),"total":len(checks),
