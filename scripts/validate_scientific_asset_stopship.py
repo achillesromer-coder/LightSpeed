@@ -14,7 +14,7 @@ from cgx_assurance_preflight import assess
 
 def main():
     checks={}
-    for depth in ("build","execute","publish"):
+    for depth in ("simulate","build","execute","publish"):
         resolution=route("romer",depth,"C0",["scientific-asset"])
         assert "V_AND_V" in resolution["required_methods"]
         fake={"source_verified":True,"method_receipts":{
@@ -31,7 +31,7 @@ def main():
              "operational-asset")
     failures=[]
     for domain in ("romer","eco","emassc","lightspeed"):
-        for depth in ("build","execute","publish"):
+        for depth in ("simulate","build","execute","publish"):
             for tag in aliases:
                 resolution=route(domain,depth,"C0",[tag])
                 fake={"source_verified":True,"method_receipts":{
@@ -42,7 +42,7 @@ def main():
                     status!="HOLD" or
                     "scientific-asset-authoritative-vector-verifier-not-integrated" not in reasons):
                     failures.append(f"{domain}/{depth}/{tag}")
-    checks["explicit-asset-alias-matrix-84-forged-receipts-rejected"]=not failures
+    checks["explicit-asset-alias-matrix-112-forged-receipts-rejected"]=not failures
     # Test the real CLI boundary, not just the Python function under test.
     cmd=[sys.executable,str(Path(__file__).resolve().parent/"cgx_assurance_preflight.py"),
          "--domain","romer","--execution-depth","build","--tags","orbital-geometry"]
@@ -51,6 +51,15 @@ def main():
     checks["orbital-geometry-cli-fail-closed"]=(proc.returncode==3 and
         cli.get("decision")=="HOLD" and
         "scientific-asset-authoritative-vector-verifier-not-integrated" in cli.get("hold_reasons",[]))
+    # A numerical simulation is not made authoritative by a caller-supplied receipt.
+    # The real CLI must stop even before an authenticated solver or DBR exists.
+    sim_cmd=[sys.executable,str(Path(__file__).resolve().parent/"cgx_assurance_preflight.py"),
+         "--domain","lightspeed","--execution-depth","simulate","--tags","simulation-asset"]
+    sim_proc=subprocess.run(sim_cmd,capture_output=True,text=True,timeout=15,check=False)
+    sim_cli=json.loads(sim_proc.stdout) if sim_proc.stdout.strip() else {}
+    checks["simulation-asset-cli-fail-closed"]=(sim_proc.returncode==3 and
+        sim_cli.get("decision")=="HOLD" and
+        "scientific-asset-authoritative-vector-verifier-not-integrated" in sim_cli.get("hold_reasons",[]))
     missing=route("romer","publish","C0",["ephemeris"])
     checks["ephemeris-alias-rejected"]=assess(missing,None)[0]=="HOLD"
     # Must not change existing low-consequence inspection route semantics.
