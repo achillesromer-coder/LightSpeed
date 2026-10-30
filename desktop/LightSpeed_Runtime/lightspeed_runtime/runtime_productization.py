@@ -238,6 +238,7 @@ def runtime_productization_status(slot: str = "default") -> dict[str, Any]:
     if config and (
         config.get("schema") != "LIGHTSPEED-RUNTIME-SLOT-CONFIG/0.1"
         or config.get("slot") != slot
+        or not isinstance(config.get("profile"), str)
         or config.get("profile") not in PROFILES
         or config.get("authority") != "digital-runtime-config-only"
     ):
