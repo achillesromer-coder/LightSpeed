@@ -343,5 +343,25 @@
     "native_admission_or_external_release": false,
     "archive_originals_unchanged": true,
     "auto_resume_from_queue": true
-  }
+  },
+  "source_revision_reviews": [
+    {
+      "mapping_id": "FF-MARK3-XLSX-001",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_file": "Mark_III_Digital_Twin_v0_1.xlsx",
+      "source_provider": "Google Drive (owner-linked; original bytes verified separately)",
+      "source_file_id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2",
+      "source_revision_id": "0BwJNKUfDWAPsQVV4NHFIYWJ4QUppTnZ0RmxZSWJjejVadlgwPQ",
+      "revision_metadata_checked": "2026-10-30",
+      "revision_modified_time": "2026-05-19T20:52:08.000Z",
+      "revision_size_bytes": 87108,
+      "sha256_original": "fab23970e80c016a2140ec0f87c1d0d7e15c365190fdacb5dc2ee2a1c2a81075",
+      "evidence": "PROVIDER_REVISION_METADATA_READBACK_PLUS_PREVIOUS_R0_HASH_VERIFICATION",
+      "candidate_filespace": "Romer.cgx:/romer/mark-iii",
+      "r1_scope": "PARTIAL_TYPED; 13-cell historical fixture proof is not whole 37-sheet workbook reversibility",
+      "rights": "Google Drive link-reader ACL is not a redistribution licence; owner rights/usage terms remain unverified",
+      "authority": "NO_NATIVE_OBJECT_ID_MINT; NO_SIGNED_ROOTAUTHORITY_DBR_READBACK; NO_PHYSICAL_CERTIFICATION",
+      "action": "Preserve original and revision; require full loss-accounted reversible R1, rights qualification and native DBR before promotion"
+    }
+  ]
 }
