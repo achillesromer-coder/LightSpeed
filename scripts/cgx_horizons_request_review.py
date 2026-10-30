@@ -8,6 +8,8 @@ Source: https://ssd-api.jpl.nasa.gov/doc/horizons.html (API v1.3, 2025 June).
 from __future__ import annotations
 
 from urllib.parse import quote, urlencode
+from hashlib import sha256
+import json
 
 SCHEMA = "CGX-HORIZONS-VECTORS-REQUEST-REVIEW/0.1"
 ENDPOINT = "https://ssd.jpl.nasa.gov/api/horizons.api"
@@ -44,6 +46,13 @@ def plan_vector_request(target_naif: int) -> dict:
         "CAL_TYPE": "'GREGORIAN'",
         "VEC_LABELS": "'YES'",
     }
+    # This digest binds the exact *planned request*, not a Horizons response,
+    # a scientific state, a canonical Object_ID, or an admitted CGX source.
+    canonical_spec = json.dumps(
+        {"schema": SCHEMA, "endpoint": ENDPOINT, "params": params},
+        sort_keys=True, separators=(",", ":"), ensure_ascii=True,
+    ).encode("utf-8")
+    request_spec_sha256 = sha256(canonical_spec).hexdigest()
     url = ENDPOINT + "?" + urlencode(params, quote_via=quote)
     return {
         "schema": SCHEMA,
@@ -61,6 +70,10 @@ def plan_vector_request(target_naif: int) -> dict:
         "calendar_type": "GREGORIAN",
         "vector_component_labels_requested": True,
         "url": url,
+        "request_spec_sha256": request_spec_sha256,
+        "request_spec_hash_scope": "canonical-json-schema-endpoint-params-only",
+        "source_response_sha256": None,
+        "source_response_bytes": None,
         "evidence_stage": "REQUEST_SPEC_ONLY",
         "network_executed": False,
         "raw_source_verified": False,
