@@ -471,3 +471,64 @@ def test_status_executable_directory_does_not_count_as_installed(
     status = rp.runtime_productization_status("alpha")
     assert status["managed_marker"] is True
     assert status["installed"] is False
+@pytest.mark.parametrize("leaf", ["marker", "config", "python"])
+def test_redirected_managed_leaf_files_fail_closed(
+    monkeypatch, tmp_path: Path, leaf: str
+) -> None:
+    root = _set_root(monkeypatch, tmp_path)
+    slot = root / "alpha"
+    targets = {
+        "marker": slot / rp.MARKER_NAME,
+        "config": slot / rp.CONFIG_NAME,
+        "python": slot / "venv" / "Scripts" / "python.exe",
+    }
+    link = targets[leaf]
+    link.parent.mkdir(parents=True, exist_ok=True)
+    outside = tmp_path / "unrelated-leaf.json"
+    outside.write_text('{"keep": "unchanged"}', encoding="utf-8")
+    try:
+        link.symlink_to(outside, target_is_directory=False)
+    except (OSError, NotImplementedError):
+        pytest.skip("file symlink creation unavailable on this host")
+
+    for action in ("status", "configure"):
+        with pytest.raises(rp.RuntimeProductizationError, match="reparse point"):
+            rp.manage_runtime_productization(
+                action, slot="alpha", confirmed=(action == "configure")
+            )
+    assert outside.read_text(encoding="utf-8") == '{"keep": "unchanged"}'
+    assert link.is_symlink()
+    assert not (root / "_receipts").exists()
+
+
+@pytest.mark.parametrize("leaf", ["marker", "config", "python"])
+def test_windows_reparse_leaf_files_fail_closed(
+    monkeypatch, tmp_path: Path, leaf: str
+) -> None:
+    from types import SimpleNamespace
+
+    root = _set_root(monkeypatch, tmp_path)
+    slot = root / "alpha"
+    targets = {
+        "marker": slot / rp.MARKER_NAME,
+        "config": slot / rp.CONFIG_NAME,
+        "python": slot / "venv" / "Scripts" / "python.exe",
+    }
+    target = targets[leaf]
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text("preserve", encoding="utf-8")
+    original_lstat = Path.lstat
+
+    def simulated_windows_lstat(self):
+        if self == target:
+            return SimpleNamespace(st_file_attributes=0x400)
+        return original_lstat(self)
+
+    monkeypatch.setattr(Path, "lstat", simulated_windows_lstat)
+    for action in ("status", "configure"):
+        with pytest.raises(rp.RuntimeProductizationError, match="reparse point"):
+            rp.manage_runtime_productization(
+                action, slot="alpha", confirmed=(action == "configure")
+            )
+    assert target.read_text(encoding="utf-8") == "preserve"
+    assert not (root / "_receipts").exists()
