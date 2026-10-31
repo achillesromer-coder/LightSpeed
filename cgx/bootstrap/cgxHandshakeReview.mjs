@@ -28,12 +28,13 @@ const validInstant=value=>{
 };
 // Portable shape review only; host must still resolve and attest final containment.
 // Reject aliases that Windows, POSIX or Unicode normalization can collapse.
-// Invisible Unicode format controls (Cf), including bidi marks and zero-width
-// separators, are unsafe in portable transfer paths even without traversal.
+// Invisible format controls (Cf), line/paragraph separators (Zl/Zp), and
+// unpaired UTF-16 surrogates (Cs) are unsafe in portable transfer paths:
+// they can spoof log boundaries or change when transcoded to UTF-8.
 const safeRelativeTransferPath=path=>{
  if(path.startsWith("/")||path.startsWith(".")||path.includes("..")||
     path.includes("\\")||/[:%<>"|?*\u007f-\u009f]/.test(path)||path!==path.normalize("NFC")||
-    /\p{Cf}/u.test(path))return false;
+    /[\p{Cf}\p{Zl}\p{Zp}\p{Cs}]/u.test(path))return false;
  return path.split("/").every(segment=>{
   if(!segment||segment==="."||segment===".."||segment.trim()!==segment||
      /[. ]$/.test(segment))return false;
