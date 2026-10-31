@@ -1,0 +1,259 @@
+/** CGX LOAD + CCC invocation planning, pure and authority-free. No transport, tokens, disk, or execution. */
+export const CONTRACT = 'CGX-UNISPACE-FILESPACE-FEATURE-PLAN/0.1';
+export const ACTIONS = Object.freeze({
+  'alexandria.open': 'read',
+  'alexandria.resolve': 'review',
+  'alexandria.sources': 'read',
+  'load.attach': 'wizard',
+  'load.hydrate': 'review',
+  'ccc.discover': 'review',
+  'ccc.install': 'wizard',
+  'load.switch_view': 'review',
+  'load.match_novel': 'review',
+  'load.tune_context': 'review',
+});
+export const MENUS = Object.freeze({
+  filespace: ['alexandria.open','alexandria.resolve','load.attach','load.hydrate','ccc.discover','ccc.install','load.switch_view','load.match_novel','load.tune_context'],
+  object: ['alexandria.resolve','alexandria.sources','ccc.discover','load.switch_view','load.match_novel','load.tune_context'],
+  file: ['alexandria.resolve','alexandria.sources','load.match_novel'],
+});
+const BAD = /[\u0000-\u001f]/;
+const UNSAFE = /(?:^|[\\/])\.\.(?:[\\/]|$)/;
+const safeText = (s) => typeof s === 'string' && s.trim().length > 0 && s.length <= 512 && !BAD.test(s) && !UNSAFE.test(s);
+const isObj = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
+const allow = (x) => x === true;
+// Source-review scope check: a menu declaration is not native Object_ID authority.
+const childSpaces=Object.freeze({eco:'Eco.cgx',romer:'Romer.cgx',emassc:'EMASSC.cgx',ls:'LS.cgx'});
+const reservedSpaces=Object.freeze(Object.fromEntries(Object.entries(childSpaces).map(([domain,space])=>[space,domain])));
+const unambiguous=s=>safeText(s)&&s===s.normalize('NFC')&&!/[\p{Default_Ignorable_Code_Point}\p{Cc}]/u.test(s);
+const childMatches=(domain,space)=>!Object.hasOwn(childSpaces,domain)||childSpaces[domain]===space;
+const reservedMatches=(domain,space)=>!Object.hasOwn(reservedSpaces,space)||reservedSpaces[space]===domain;
+
+/** Return only menu identifiers; host UI controls labels / icons and attaches callbacks separately. */
+export function menuForTarget(kind, { readable = false } = {}) {
+  if (!Object.hasOwn(MENUS, kind) || !readable) return [];
+  return [...MENUS[kind]];
+}
+
+/**
+ * A native host MUST verify target id and incoming lease against current authority.
+ * This planner cannot grant permissions or assume a downloaded carrier has been admitted.
+ */
+export function planFeature(request) {
+  if (!isObj(request)) return { state: 'DENIED', reason: 'INVALID_REQUEST' };
+  const { action, target, capabilityId, mode = 'TRACK', hydration = 'minimal', sourceByteCount = 0 } = request;
+  if (!Object.hasOwn(ACTIONS, action)) return { state: 'DENIED', reason: 'UNKNOWN_ACTION' };
+  if (!isObj(target) || !Object.hasOwn(MENUS, target.kind) || !safeText(target.fileSpace) || !safeText(target.owner)) {
+    return { state: 'DENIED', reason: 'INVALID_TARGET' };
+  }
+  if (!MENUS[target.kind].includes(action)) return { state: 'DENIED', reason: 'ACTION_NOT_APPLICABLE' };
+  if (target.objectId != null && !safeText(target.objectId)) return {state:'DENIED',reason:'INVALID_OBJECT_ID'};
+  if (!unambiguous(target.fileSpace)||!unambiguous(target.owner)||
+      (target.domain != null&&!unambiguous(target.domain))||
+      (target.objectId != null&&!unambiguous(target.objectId))||
+      (capabilityId != null&&!unambiguous(capabilityId)))
+    return {state:'DENIED',reason:'AMBIGUOUS_IDENTITY_OR_SCOPE'};
+  if (target.parentFileSpace != null && target.parentFileSpace !== 'Cognigrex.cgx')
+    return {state:'DENIED',reason:'COMPETING_PARENT_ROOT'};
+  if (target.domain != null && (!childMatches(target.domain,target.fileSpace)||
+      !reservedMatches(target.domain,target.fileSpace)))
+    return {state:'DENIED',reason:'CHILD_FILESPACE_SCOPE_CONFLICT'};
+  if (!['TRACK','REFERENCE','PIN','EMBED'].includes(mode)) return { state:'DENIED', reason:'UNKNOWN_COMPOSITION_MODE' };
+  if (!['minimal','offline','on-demand','full-approved'].includes(hydration)) return { state:'DENIED', reason:'UNKNOWN_HYDRATION' };
+  if (!Number.isSafeInteger(sourceByteCount) || sourceByteCount < 0 || sourceByteCount > 60*1024*1024) return { state:'DENIED', reason:'BOUNDED_SOURCE_EXCEEDED' };
+  const mutating = action === 'load.attach' || action === 'ccc.install';
+  if (mutating && target.kind !== 'filespace') return { state:'DENIED', reason:'TARGET_NOT_A_FILESPACE' };
+  if (action === 'ccc.install' && !safeText(capabilityId)) return {state:'DENIED',reason:'CAPABILITY_ID_REQUIRED'};
+  const id = target.objectId;
+  // Do not guess object identity from file names, paths, labels, or domain IDs.
+  if (id != null && !safeText(id)) return { state:'DENIED',reason:'INVALID_OBJECT_ID' };
+  const parent = target.parentFileSpace || 'Cognigrex.cgx';
+  if (!safeText(parent)) return { state:'DENIED',reason:'INVALID_PARENT' };
+  const intent = {
+    schema: CONTRACT, action, target: { kind:target.kind, fileSpace:target.fileSpace, domain:target.domain??null, owner:target.owner, objectId:id??null, parentFileSpace:parent },
+    requestedMode:mode, requestedHydration:hydration,
+    sourceByteCount, sourceCopied:false,
+    requestedCapability: action === 'ccc.install' ? capabilityId : action === 'ccc.discover' ? 'CCC_DISCOVERY_ONLY' : 'ALEXANDRIA_LOAD',
+    canonicalMutation:false, networkFetch:false, install:false, execute:false, publish:false,
+    status: 'REVIEW_ONLY', blockers:[],
+  };
+  if (allow(request.offline)) intent.offlineMode = 'MINIMAL_LOCAL_REFERENCE';
+  if (!allow(request.readable)) intent.blockers.push('SCOPE_READ_UNVERIFIED');
+  if (!safeText(id)) intent.blockers.push('EXACT_OBJECT_ID_UNRESOLVED');
+  if (target.domain == null) intent.blockers.push('CHILD_DOMAIN_UNVERIFIED');
+  if (mutating) {
+    intent.wizard = ['scope-target-and-current-accepted-parent','resolve-existing-LOAD-and-Alexandria-aliases',
+      'choose-TRACK-REFERENCE-PIN-EMBED','verify-source-rights-and-hydration-policy',
+      'show-delta-and-negative-preflight','host-permitted-apply-with-DBR-readback'];
+    if (!allow(request.acceptedParent)) intent.blockers.push('PARENT_AUTHORITY_UNVERIFIED');
+    if (!allow(request.existingAliasChecked)) intent.blockers.push('LOAD_ALIAS_COLLISION_CHECK_REQUIRED');
+    if (!allow(request.ownerApproved)) intent.blockers.push('OWNER_CONSENT_REQUIRED');
+    if (!allow(request.rightsVerified)) intent.blockers.push('SOURCE_RIGHTS_UNVERIFIED');
+    if (!allow(request.signedLeaseVerified)) intent.blockers.push('LEASE_UNVERIFIED');
+    if (!allow(request.providerReadbackReady)) intent.blockers.push('DBR_READBACK_UNVERIFIED');
+  }
+  if (action === 'load.hydrate' && hydration !== 'minimal' && !allow(request.networkPermission)) {
+    intent.blockers.push('NETWORK_HYDRATION_NOT_AUTHORIZED');
+  }
+  if (action.startsWith('ccc.') && !allow(request.registeredCapabilityVerified)) {
+    intent.blockers.push('CCC_CAPABILITY_REGISTRATION_UNVERIFIED');
+  }
+  if (!intent.blockers.length && mutating) intent.status='READY_FOR_AUTHENTICATED_HOST_PREFLIGHT';
+  // Explicitly still a plan. Host makes the authoritative acceptance decision and records separate signed DBR.
+  return intent;
+}
+
+
+/**
+ * Private UniSpace browser drag/drop metadata preflight. A File's name, type,
+ * size and optional digest are caller claims, never provider evidence. This
+ * does not read File bytes, assign Object_ID, call a native intake adapter,
+ * publish an asset, or grant host rights. Actual R0 byte ingestion requires
+ * an independently authorised provider transaction and readback.
+ */
+export const DROP_PREFLIGHT_SCHEMA='CGX-UNISPACE-DROP-PREFLIGHT/0.1';
+const dropName=s=>unambiguous(s)&&s.length<=255&&s.trim()===s&&
+ !s.startsWith('.')&&!/[\\/:*?"<>|&]/.test(s)&&
+ !/^(?:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\.|$)/i.test(s);
+const dropMime=s=>s===''||(typeof s==='string'&&s.length<=127&&
+ /^[a-z0-9.+-]+\/[a-z0-9.+-]+$/i.test(s));
+const dropRights=new Set(['PUBLIC_SAFE','OWNER_PRIVATE','LICENSE_RESTRICTED','UNKNOWN']);
+const dropProof=new Set(['creative','scientific','engineering','historical','operational','unknown']);
+
+export function planSourceDropPreflight({target,file,readable=false,offline=false,surface=null}={}){
+ const deny=reason=>({schema:DROP_PREFLIGHT_SCHEMA,state:'DENIED',reason,
+  canonicalMutation:false,sourceBytesRead:false,hashVerified:false,publicRelease:false});
+ if(surface!=='private')return deny('PRIVATE_DROP_SURFACE_REQUIRED');
+ if(!isObj(target)||target.kind!=='filespace')return deny('DROP_REQUIRES_CHILD_FILESPACE');
+ if(typeof offline!=='boolean'||typeof readable!=='boolean')return deny('INVALID_PREFLIGHT_MODE');
+ // A private surface label is not an ACL. Never echo source or Object_ID
+ // metadata when the caller cannot even assert readable scope. A true
+ // readable flag remains a non-authoritative claim until host ACL readback.
+ if(!readable)return deny('PRIVATE_READ_SCOPE_REQUIRED');
+ if(!isObj(file)||!dropName(file.name)||!dropMime(file.type??''))
+  return deny('INVALID_SOURCE_METADATA');
+ if(!Number.isSafeInteger(file.size)||file.size<0||file.size>60*1024*1024)
+  return deny('BOUNDED_SOURCE_EXCEEDED');
+ for(const key of ['sourceId','revision','owner','licenseId']){
+  if(file[key]!=null&&!unambiguous(file[key]))return deny('AMBIGUOUS_SOURCE_METADATA');
+ }
+ if(file.sha256!=null&&!(typeof file.sha256==='string'&&/^[0-9a-f]{64}$/i.test(file.sha256)))
+  return deny('INVALID_UNVERIFIED_DIGEST_CLAIM');
+ if(file.rights!=null&&!dropRights.has(file.rights))return deny('UNKNOWN_RIGHTS_DECLARATION');
+ if(file.proofClass!=null&&!dropProof.has(file.proofClass))return deny('UNKNOWN_PROOF_CLASS');
+ const scope=planFeature({action:'alexandria.resolve',target,readable,
+  offline,hydration:'minimal',sourceByteCount:file.size});
+ if(scope.state==='DENIED')return deny(scope.reason);
+ const blockers=[...scope.blockers,'SOURCE_BYTES_NOT_READ','SOURCE_HASH_NOT_PROVIDER_VERIFIED',
+  'CURRENT_HOST_ACL_UNVERIFIED','SOURCE_RIGHTS_NOT_PROVIDER_VERIFIED',
+  'NATIVE_OBJECT_ID_AND_DBR_UNVERIFIED','PUBLIC_STATIC_ASSET_ROUTE_FORBIDDEN'];
+ if(!file.sha256)blockers.push('SOURCE_DIGEST_NOT_SUPPLIED');
+ if(!file.sourceId||!file.revision)blockers.push('SOURCE_ID_OR_REVISION_UNRESOLVED');
+ if(!file.owner)blockers.push('SOURCE_OWNER_UNRESOLVED');
+ if(!file.rights||file.rights==='UNKNOWN')blockers.push('SOURCE_RIGHTS_UNKNOWN');
+ if(file.rights==='LICENSE_RESTRICTED'&&!file.licenseId)
+  blockers.push('LICENSE_TERMS_UNRESOLVED');
+ if(!file.proofClass||file.proofClass==='unknown')blockers.push('PROOF_CLASS_UNRESOLVED');
+ if(!file.type)blockers.push('MIME_UNVERIFIED');
+ if(file.size===0)blockers.push('EMPTY_SOURCE_REVIEW_REQUIRED');
+ if(offline)blockers.push('OFFLINE_AUTHORITY_AND_REVOCATION_UNVERIFIED');
+ return {
+  schema:DROP_PREFLIGHT_SCHEMA,state:'REVIEW_ONLY',admissionStage:'R0_METADATA_PREFLIGHT',
+  target:scope.target,source:{
+   name:file.name,byteCount:file.size,mimeType:file.type||null,
+   proofClass:file.proofClass??'unknown',rightsClaim:file.rights??'UNKNOWN',
+   digestClaimPresent:!!file.sha256,providerReferenceClaimPresent:!!file.sourceId,
+   revisionClaimPresent:!!file.revision
+  },
+  blockers:[...new Set(blockers)],
+  transferBudgetBytes:0,sourceBytesRead:false,hashVerified:false,
+  hostAuthenticated:false,providerReadback:false,nativeAdmitted:false,
+  canonicalMutation:false,networkFetch:false,install:false,execute:false,
+  publicRelease:false,rendered:false
+ };
+}
+
+
+/**
+ * UniSpace frontend → EXISTING LightSpeed host pairing review.
+ * No protocol call, credentials, native host proof, or delegated authority.
+ * All hostEvidence and rights fields are CLIENT CLAIMS, including signed=true.
+ * Native host + signed trusted root/lease + DBR must independently attest.
+ * This is UI handoff planning; do not replace Neo's handshake validator.
+ */
+export const HOST_BRIDGE_SCHEMA='CGX-UNISPACE-HOST-BRIDGE-HANDOFF/0.1';
+const bridgeDevices=new Set(['browser','windows','macos','linux','android','ios']);
+const bridgeModes=new Set(['explore','pair','resume']);
+const hash64=s=>typeof s==='string'&&/^[a-f0-9]{64}$/i.test(s);
+
+export function planUniSpaceHostBridgeHandoff({
+ surface=null,target,device='browser',mode='explore',ownerConsent=false,
+ brokerDetected=false,hostEvidence=null,rightsEvidence=null
+}={}){
+ const deny=reason=>({schema:HOST_BRIDGE_SCHEMA,state:'DENIED',reason,
+  hostAuthenticated:false,mayInstall:false,mayExecute:false,mayPublish:false,
+  canonicalMutation:false});
+ // Site and public Vite scripts cannot be local broker authority (#158).
+ if(surface!=='private')return deny('PRIVATE_HOST_BRIDGE_SURFACE_REQUIRED');
+ if(!bridgeDevices.has(device)||!bridgeModes.has(mode)||
+    typeof ownerConsent!=='boolean'||typeof brokerDetected!=='boolean')
+  return deny('INVALID_BRIDGE_INPUT');
+ // Reuse current LOAD child/parent/identity checks; never resolve an alias
+ // or infer Object_ID from a user-visible file name.
+ const selected=planFeature({action:'alexandria.resolve',target,readable:true,
+  hydration:'minimal',sourceByteCount:0});
+ if(selected.state==='DENIED')return deny(selected.reason);
+ const blocks=[...selected.blockers];
+ if(!ownerConsent)blocks.push('OWNER_DEVICE_PAIRING_CONSENT_REQUIRED');
+ if(mode!=='explore'&&!brokerDetected)blocks.push('EXISTING_LOCAL_BROKER_NOT_CONNECTED');
+ if(device==='browser'||device==='ios'||device==='android')
+  blocks.push('NATIVE_DEVICE_INSTALL_REQUIRES_SEPARATE_APPROVED_COMPANION');
+ if(!isObj(hostEvidence)){
+  blocks.push('HOST_ORIGINAL_ROOT_LEASE_AND_DBR_RECEIPT_REQUIRED');
+ }else{
+  // These are syntactic checks ONLY. Never copy any claimed secret, token,
+  // issuer or source hash into an HTML/Squarespace response.
+  if(hostEvidence.parentFileSpace!=='Cognigrex.cgx'||
+      hostEvidence.childFileSpace!==target.fileSpace||
+      hostEvidence.objectId!==target.objectId)
+   return deny('HOST_IDENTITY_MISMATCH');
+  if(!unambiguous(hostEvidence.issuerId)||
+     !hash64(hostEvidence.stateRootSha256)||
+     !hash64(hostEvidence.dbrRootSha256)||
+     !unambiguous(hostEvidence.leaseId)||
+     !unambiguous(hostEvidence.readbackId))
+   blocks.push('HOST_EVIDENCE_FIELDS_INCOMPLETE');
+ }
+ if(!isObj(rightsEvidence)||
+    !unambiguous(rightsEvidence.sourceRef)||
+    !unambiguous(rightsEvidence.revision)||
+    !unambiguous(rightsEvidence.licenceId)||
+    !unambiguous(rightsEvidence.owner))
+  blocks.push('SOURCE_RIGHTS_OR_LICENCE_EVIDENCE_REQUIRED');
+ // A client's presented source licence/consent/host signature is NOT evidence
+ // that native authority has verified it. Also applies to "all rights reserved"
+ // and open-knowledge governance assertions.
+ blocks.push('INDEPENDENT_NATIVE_ROOT_ACL_LEASE_AND_RIGHTS_VERIFICATION_REQUIRED');
+ blocks.push('REVOKED_AND_ANONYMOUS_HOST_NEGATIVE_TESTS_REQUIRED');
+ blocks.push('INDEPENDENT_NATIVE_DBR_READBACK_REQUIRED');
+ return {
+  schema:HOST_BRIDGE_SCHEMA,state:'SOURCE_REVIEW_ONLY',
+  phase: mode==='explore'?'OFFLINE_DISCOVERY_ONLY':'HOST_PAIRING_PROPOSAL',
+  device,selected_file_space:target.fileSpace,selected_object_id:target.objectId??null,
+  family:'Cognigrex.cgx',
+  next_ui_step:!ownerConsent?'ASK_OWNER_TO_AUTHORISE_THIS_DEVICE':
+    (mode==='explore'?'OPEN_READ_ONLY_LOAD_FRONTIER':
+     !brokerDetected?'OPEN_EXISTING_LIGHTSPEED_SETUP_AND_PAIR':
+     'REQUEST_INDEPENDENT_NATIVE_ROOT_LEASE_ACL_DBR_CHECK'),
+  required_owner_action:!ownerConsent?'PAIRING_CONSENT':'NONE_FOR_REVIEW',
+  blockers:[...new Set(blocks)],
+  hostEvidenceClass:'CALLER_FIELDS_NOT_INDEPENDENTLY_VERIFIED',
+  sourceRightsClass:'CALLER_FIELDS_NOT_PROVIDER_VERIFIED',
+  offlineFallback:'H0_ONLY_UNVERIFIED_METADATA',
+  endpoint:null,token:null,installCommand:null,sourceBytesRead:false,
+  hostAuthenticated:false,signatureVerified:false,leaseVerified:false,
+  rightsVerified:false,providerReadback:false,mayInstall:false,
+  mayExecute:false,mayPublish:false,canonicalMutation:false,
+  nextNativeOwner:'EXISTING_LIGHTSPEED_LS_CGX_HOST'
+ };
+}

@@ -1,0 +1,3532 @@
+{
+  "schema": "LOAD-ALEXANDRIA-SOURCE-REGISTRY-PROJECTION/0.1",
+  "state": "GIT_SOURCE_ONLY_NOT_CANONICAL",
+  "generated_at": "2026-10-28",
+  "parent": "Cognigrex.cgx",
+  "file_space": "LOAD.cgx",
+  "purpose": "Reference-preserving online catalogue compiling existing Git source adapters, toolkits, selectors and CCC functional routes",
+  "source_repo": "achillesromer-coder/LightSpeed",
+  "source_branch_main": "main",
+  "scoped_review_branch": "review/load-alexandria-minimal-20261028",
+  "source_registries": {
+    "cgx/domain_templates/first_file_conversion_registry.json": {
+      "git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013"
+    },
+    "cgx/domain_templates/source_format_adapter_registry.json": {
+      "git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0"
+    },
+    "cgx/domain_templates/toolkit_registry.json": {
+      "git_blob": "0dbd3247322b6755be263231e7076877160e85ef"
+    },
+    "cgx/domain_templates/plugin_selector_registry.json": {
+      "git_blob": "e182e2fe6e723e0e54e4dc8c9c07657dc514c0bd"
+    },
+    "cgx/load_minimum/filespace_feature_registry.json": {
+      "git_blob": "31ab6c546f17d086424a42b7821796bc80128b94"
+    },
+    "plugins/packages/achilles/references/capabilities.json": {
+      "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+    },
+    "plugins/packages/neo/references/capabilities.json": {
+      "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+    },
+    "plugins/packages/athene/references/capabilities.json": {
+      "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+    },
+    "plugins/packages/raphael/references/capabilities.json": {
+      "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+    },
+    "plugins/packages/cognigrex/references/capabilities.json": {
+      "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+    },
+    "plugins/packages/romer-grex/references/capabilities.json": {
+      "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+    },
+    "plugins/packages/eco-grex/references/capabilities.json": {
+      "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+    },
+    "plugins/packages/emassc/references/capabilities.json": {
+      "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+    },
+    "plugins/packages/lightspeed/references/capabilities.json": {
+      "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+    }
+  },
+  "summary": {
+    "record_count": 131,
+    "record_categories": {
+      "conversion_source": 19,
+      "format_adapter": 26,
+      "toolkit": 12,
+      "selector": 9,
+      "filespace_action": 10,
+      "ccc_route": 45,
+      "function_family": 10
+    },
+    "selector_route_counts": {
+      "achilles": 31,
+      "neo": 27,
+      "athene": 27,
+      "raphael": 33,
+      "cognigrex": 26,
+      "romer-grex": 33,
+      "eco-grex": 27,
+      "emassc": 30,
+      "lightspeed": 31
+    },
+    "distinct_capability_routes": 45,
+    "source_drive_id_count": 3,
+    "shared_candidate_semantic_ids": 3,
+    "frontier_count": 3,
+    "native_accepted": 0,
+    "native_host_verified": false,
+    "source_bodies_copied": 0
+  },
+  "invariants": [
+    "one authoritative source identity per native source, no duplicate CGX Object_ID mint",
+    "cross-selector route key may share a name, but divergent signatures must stay Frontier",
+    "declared implementation status is not live installation or runtime proof",
+    "R0 provider bytes and legal rights remain with original source provider",
+    "no programmatic network fetch, file deletion, host execution or DBR writes",
+    "all records are discoverable INDEX REFERENCES, not accepted CGX semantic objects"
+  ],
+  "records": [
+    {
+      "category": "conversion_source",
+      "source_key": "FF-MARK3-XLSX-001",
+      "display": "Mark_III_Digital_Twin_v0_1.xlsx",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "candidate_object_id": "cgx:domain:romer",
+      "source_drive_id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2",
+      "source_sha256": "fab23970e80c016a2140ec0f87c1d0d7e15c365190fdacb5dc2ee2a1c2a81075",
+      "source_media_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "owner_domain": "romer",
+      "source_target": "/romer/mark-iii",
+      "source_granularity": "NATIVE_SOURCE_REFERENCE",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "native_absorbed": false,
+      "source_rights": "NOT_RECHECKED",
+      "role": "SOURCE_MAPPING",
+      "evidence_ceiling": "functional/scaffold + source-bounded engineering semantics; no geometry/physical validation promotion"
+    },
+    {
+      "category": "conversion_source",
+      "source_key": "FF-MARK3-FCSTD-001",
+      "display": "Mark III.FCStd",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "candidate_object_id": "SPACE-01",
+      "source_drive_id": null,
+      "source_sha256": "4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b",
+      "source_media_type": "application/x-freecad",
+      "owner_domain": "romer",
+      "source_target": "/romer/mark-iii",
+      "source_granularity": "NATIVE_SOURCE_REFERENCE",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "native_absorbed": false,
+      "source_rights": "NOT_RECHECKED",
+      "role": "SOURCE_MAPPING",
+      "evidence_ceiling": "native CAD source identity + explicit FCStd object/property/dependency structure + current three-appendage topology + source-backed Mark III↔Mark III cooperative interlock function; exact interlock geometry/tolerances, physical performance and certification remain gated"
+    },
+    {
+      "category": "conversion_source",
+      "source_key": "FF-WATCHTOWER-FCSTD-001",
+      "display": "InterSol - Watch Tower In Site Footprint.FCStd",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "candidate_object_id": "WT-001",
+      "source_drive_id": null,
+      "source_sha256": "c476f9f2f9946ab8e99e58dd399aa7b02bac630c5d9336b80ef66f5f2a397321",
+      "source_media_type": "application/x-freecad",
+      "owner_domain": "romer",
+      "source_target": "/romer/watchtower",
+      "source_granularity": "NATIVE_SOURCE_REFERENCE",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "native_absorbed": false,
+      "source_rights": "NOT_RECHECKED",
+      "role": "SOURCE_MAPPING",
+      "evidence_ceiling": "source identity + FCStd structural/geometry-authority binding; engineering, site, material, cable, A/C and certification semantics remain gated"
+    },
+    {
+      "category": "conversion_source",
+      "source_key": "FF-PAYLOAD-CAPSULE-FCSTD-001",
+      "display": "Payload Capsule.FCStd",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "candidate_object_id": "SPACE-07",
+      "source_drive_id": null,
+      "source_sha256": "9606755c4fff3d94ade1ed61ee41808e9a05237b6bdd857b09dcb067d6e0b61c",
+      "source_media_type": "application/x-freecad",
+      "owner_domain": "romer",
+      "source_target": "/romer/payload-capsule",
+      "source_granularity": "NATIVE_SOURCE_REFERENCE",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "native_absorbed": false,
+      "source_rights": "NOT_RECHECKED",
+      "role": "SOURCE_MAPPING",
+      "evidence_ceiling": "exact native-source identity and historical-to-current FreeCAD DBR transition only; aerothermal, structural, material, mission, manufacturing and certification semantics remain gated"
+    },
+    {
+      "category": "conversion_source",
+      "source_key": "FF-ECO-BIOBLOCK-XLSX-001",
+      "display": "Embedded_Bio_Blocks_Digital_Twin_v0_1.xlsx",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "candidate_object_id": "cgx:domain:eco",
+      "source_drive_id": "1wgUWkkr1mQIPMmmF1V7eaweToUAu8UxK",
+      "source_sha256": "f1cf7a5d3a2e463881cd5389d265d0b70f1b56f849d87da70c57697b75b61d0b",
+      "source_media_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "owner_domain": "eco",
+      "source_target": "/eco/bio-blocks",
+      "source_granularity": "NATIVE_SOURCE_REFERENCE",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "native_absorbed": false,
+      "source_rights": "NOT_RECHECKED",
+      "role": "SOURCE_MAPPING",
+      "evidence_ceiling": "ecological design/test semantics; field survival/biosecurity/ecological performance remain empirical"
+    },
+    {
+      "category": "conversion_source",
+      "source_key": "FF-RFS-EMFF-XLSX-001",
+      "display": "RFS_EMFF_Digital_Twin_Test_Sandbox_v0_1.xlsx",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "candidate_object_id": "cgx:domain:emassc",
+      "source_drive_id": "1YDs4fjNZgzDAB1LJcf7xT9N-bywD4Qgf",
+      "source_sha256": "1cc3f421ed128186b1ab018f7af8eda27bc30572b21bc8b8a1d2bada91c9a58f",
+      "source_media_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "owner_domain": "emassc",
+      "source_target": "/emassc/rfs-emff",
+      "source_granularity": "NATIVE_SOURCE_REFERENCE",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "native_absorbed": false,
+      "source_rights": "NOT_RECHECKED",
+      "role": "SOURCE_MAPPING",
+      "evidence_ceiling": "simulation/synthetic/model/test-design semantics only until corresponding empirical measurements exist"
+    },
+    {
+      "category": "conversion_source",
+      "source_key": "FF-RFS-LS-BRIDGE-001",
+      "display": "RFS_EMFF_Digital_Twin_Test_Sandbox_v0_1.xlsx",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "candidate_object_id": "cgx:domain:lightspeed",
+      "source_drive_id": "1YDs4fjNZgzDAB1LJcf7xT9N-bywD4Qgf",
+      "source_sha256": "1cc3f421ed128186b1ab018f7af8eda27bc30572b21bc8b8a1d2bada91c9a58f",
+      "source_media_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "owner_domain": "lightspeed",
+      "source_target": "/lightspeed/runtime/rfs-emff",
+      "source_granularity": "NATIVE_SOURCE_REFERENCE",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "native_absorbed": false,
+      "source_rights": "NOT_RECHECKED",
+      "role": "SOURCE_MAPPING",
+      "evidence_ceiling": "runtime binding proposal only; LS does not own or duplicate EMASSC scientific truth"
+    },
+    {
+      "category": "conversion_source",
+      "source_key": "FF-M1-BASEKM-FCSTD-001",
+      "display": "SEQLD Pilot Base km Stretch.FCStd",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "candidate_object_id": "T1-M1",
+      "source_drive_id": null,
+      "source_sha256": "98865b2a2bc805f7faa4df45db94d67cc6ea82c83e0eea9885f4a82a5739746b",
+      "source_media_type": "application/x-freecad",
+      "owner_domain": "romer",
+      "source_target": "/romer/m1/base-km",
+      "source_granularity": "NATIVE_SOURCE_REFERENCE",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "native_absorbed": false,
+      "source_rights": "NOT_RECHECKED",
+      "role": "SOURCE_MAPPING",
+      "evidence_ceiling": "exact current native common-baseline identity; proven 870-object/name/label subset of Central-A1 and Pilot-Build; structural/site/road/geotechnical adequacy and certification remain gated"
+    },
+    {
+      "category": "conversion_source",
+      "source_key": "FF-M1-CENTRAL-A1-FCSTD-001",
+      "display": "SEQLD Pilot Build W Central Column A1.FCStd",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "candidate_object_id": "T1-M1",
+      "source_drive_id": null,
+      "source_sha256": "7878082116b0017cfe64e26a6f26e380b954e4f87f9f25e9ecfd9ccf4c990d68",
+      "source_media_type": "application/x-freecad",
+      "owner_domain": "romer",
+      "source_target": "/romer/m1/central-a1",
+      "source_granularity": "NATIVE_SOURCE_REFERENCE",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "native_absorbed": false,
+      "source_rights": "NOT_RECHECKED",
+      "role": "SOURCE_MAPPING",
+      "evidence_ceiling": "source/archive identity plus normalized Document.xml parity and scope-resolved Central-A1 specialization; engineering adequacy remains gated"
+    },
+    {
+      "category": "conversion_source",
+      "source_key": "FF-M1-PILOT-BUILD-FCSTD-001",
+      "display": "SEQLD Pilot Build.FCStd",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "candidate_object_id": "T1-M1",
+      "source_drive_id": null,
+      "source_sha256": "b9fcb7093793c50ab4d97d2d95ce66bb18a23f6475fc16eb02e0a123e957e2ae",
+      "source_media_type": "application/x-freecad",
+      "owner_domain": "romer",
+      "source_target": "/romer/m1/pilot-build",
+      "source_granularity": "NATIVE_SOURCE_REFERENCE",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "native_absorbed": false,
+      "source_rights": "NOT_RECHECKED",
+      "role": "SOURCE_MAPPING",
+      "evidence_ceiling": "exact structural source expansion only; no automatic interpretation of added FreeCAD object function or engineering adequacy"
+    },
+    {
+      "category": "conversion_source",
+      "source_key": "FF-MARKV-FCSTD-001",
+      "display": "MarkV.FCStd",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "candidate_object_id": "SPACE-02",
+      "source_drive_id": null,
+      "source_sha256": "40bd51c0ce6fcad2f5a32894b15005d4383c73a378b9328185557549674346c5",
+      "source_media_type": "application/x-freecad",
+      "owner_domain": "romer",
+      "source_target": "/romer/mark-v",
+      "source_granularity": "NATIVE_SOURCE_REFERENCE",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "native_absorbed": false,
+      "source_rights": "NOT_RECHECKED",
+      "role": "SOURCE_MAPPING",
+      "evidence_ceiling": "exact source identity plus normalized Document.xml parity; telemetry/performance/material/manufacturing/certification remain gated"
+    },
+    {
+      "category": "conversion_source",
+      "source_key": "FF-LUKE4-FCSTD-001",
+      "display": "Luke IV.FCStd",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "candidate_object_id": "SPACE-03",
+      "source_drive_id": null,
+      "source_sha256": "88ca5a84fb65d29ecaf4ccd8ec975a6ccad8bb426a078851109b2e16db5af1d6",
+      "source_media_type": "application/x-freecad",
+      "owner_domain": "romer",
+      "source_target": "/romer/luke-iv",
+      "source_granularity": "NATIVE_SOURCE_REFERENCE",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "native_absorbed": false,
+      "source_rights": "NOT_RECHECKED",
+      "role": "SOURCE_MAPPING",
+      "evidence_ceiling": "current native full-source structure plus resolved sibling-configuration relation to Single Node; EM/return performance, structural adequacy, physical validation and certification remain gated"
+    },
+    {
+      "category": "conversion_source",
+      "source_key": "FF-LUKE4-SINGLE-NODE-FCSTD-001",
+      "display": "Luke IV Single Node.FCStd",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "candidate_object_id": "SPACE-03",
+      "source_drive_id": null,
+      "source_sha256": "ae8f6a022bdbd436fd24ae05ee7f6c6f70496515f2ee81e4ec0dd1cb5b0c3f40",
+      "source_media_type": "application/x-freecad",
+      "owner_domain": "romer",
+      "source_target": "/romer/luke-iv/single-node",
+      "source_granularity": "NATIVE_SOURCE_REFERENCE",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "native_absorbed": false,
+      "source_rights": "NOT_RECHECKED",
+      "role": "SOURCE_MAPPING",
+      "evidence_ceiling": "exact single-node source identity plus resolved sibling-configuration relation to full Luke IV; EM braking, controlled-return, structural adequacy and manufacturing/certification remain gated"
+    },
+    {
+      "category": "conversion_source",
+      "source_key": "FF-FREEFLOW-BATTERY-FCSTD-001",
+      "display": "Free Flow Battery.FCStd",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "candidate_object_id": "SF-01",
+      "source_drive_id": null,
+      "source_sha256": "8f2cda7ea111d8706e2bb0e0726c3cc0c0b7e7114a7e56875af5e3877c7df64c",
+      "source_media_type": "application/x-freecad",
+      "owner_domain": "romer",
+      "source_target": "/romer/free-flow/battery",
+      "source_granularity": "NATIVE_SOURCE_REFERENCE",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "native_absorbed": false,
+      "source_rights": "NOT_RECHECKED",
+      "role": "SOURCE_MAPPING",
+      "evidence_ceiling": "exact geometry source identity and normalized parity only; measured electrical/material/safety performance remains gated"
+    },
+    {
+      "category": "conversion_source",
+      "source_key": "FF-FREEFLOW-CAPACITORS-FCSTD-001",
+      "display": "Free Flow Capacitors.FCStd",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "candidate_object_id": "SF-01",
+      "source_drive_id": null,
+      "source_sha256": "61dbb8fd31306920befd57ee5fd40de33588aad40f5d8cfb337cce829a93147f",
+      "source_media_type": "application/x-freecad",
+      "owner_domain": "romer",
+      "source_target": "/romer/free-flow/capacitors",
+      "source_granularity": "NATIVE_SOURCE_REFERENCE",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "native_absorbed": false,
+      "source_rights": "NOT_RECHECKED",
+      "role": "SOURCE_MAPPING",
+      "evidence_ceiling": "exact structural source revision only; electrical/material/performance/safety/manufacturing semantics remain gated"
+    },
+    {
+      "category": "conversion_source",
+      "source_key": "FF-FREEFLOW-SOLENOID-FCSTD-001",
+      "display": "Free Flow Solenoid.FCStd",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "candidate_object_id": "SF-01",
+      "source_drive_id": null,
+      "source_sha256": "6ef10e499d36e2eb48aa45b824401459851b4a870b0b1b75b94f4c5bba111afb",
+      "source_media_type": "application/x-freecad",
+      "owner_domain": "romer",
+      "source_target": "/romer/free-flow/solenoid",
+      "source_granularity": "NATIVE_SOURCE_REFERENCE",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "native_absorbed": false,
+      "source_rights": "NOT_RECHECKED",
+      "role": "SOURCE_MAPPING",
+      "evidence_ceiling": "exact structural source revision only; electromagnetic/electrical/material/performance/safety/manufacturing semantics remain gated"
+    },
+    {
+      "category": "conversion_source",
+      "source_key": "FF-INTERSOL-FCSTD-001",
+      "display": "InterSol.FCStd",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "candidate_object_id": "INF-001",
+      "source_drive_id": null,
+      "source_sha256": "0a0c3d60792eea7d5fb7d5ef0d60436afad17b72ae448207f7bab8ccce1b66f5",
+      "source_media_type": "application/x-freecad",
+      "owner_domain": "romer",
+      "source_target": "/romer/intersol",
+      "source_granularity": "NATIVE_SOURCE_REFERENCE",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "native_absorbed": false,
+      "source_rights": "NOT_RECHECKED",
+      "role": "SOURCE_MAPPING",
+      "evidence_ceiling": "exact native source identity and structural configuration bound to existing INF-001; current whole-facility geometry authority, site/geodetic placement, engineering adequacy, materials, interfaces, certification and public release remain gated"
+    },
+    {
+      "category": "conversion_source",
+      "source_key": "FF-M1-BASE-PILLAR-TWIST-Y-FCSTD-001",
+      "display": "Base pillar - Twist and Y branch.FCStd",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "candidate_object_id": "T1-M1",
+      "source_drive_id": null,
+      "source_sha256": "02b707a9e5b7c8ca32bb93d9943b2a3911c95a5ea837959ebecd17add55ff3be",
+      "source_media_type": "application/x-freecad",
+      "owner_domain": "romer",
+      "source_target": "/romer/m1/components/base-pillar-twist-y",
+      "source_granularity": "NATIVE_SOURCE_REFERENCE",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "native_absorbed": false,
+      "source_rights": "NOT_RECHECKED",
+      "role": "SOURCE_MAPPING",
+      "evidence_ceiling": "component-source identity and strong structural inclusion in current Pilot-Build source; structural adequacy, scale validity, site use, manufacturing and certification remain gated"
+    },
+    {
+      "category": "conversion_source",
+      "source_key": "FF-M1-BASE-PILLAR-TWIST-Y-X2-FCSTD-001",
+      "display": "Base pillar - Twist and Y branch (x2 scale).FCStd",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "candidate_object_id": "T1-M1",
+      "source_drive_id": null,
+      "source_sha256": "0dcb3618c6b1bc5de6eb218f8150702354677e69fb026fe7c7289b006ac59706",
+      "source_media_type": "application/x-freecad",
+      "owner_domain": "romer",
+      "source_target": "/romer/m1/components/base-pillar-twist-y-x2",
+      "source_granularity": "NATIVE_SOURCE_REFERENCE",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "native_absorbed": false,
+      "source_rights": "NOT_RECHECKED",
+      "role": "SOURCE_MAPPING",
+      "evidence_ceiling": "component-source identity and complete raw-name containment in current Pilot-Build source; x2 naming does not by itself validate engineering scale, structural adequacy, site use, manufacturing or certification"
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "text-stdlib-v0.1",
+      "display": "text-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".txt",
+        ".md",
+        ".markdown",
+        ".py",
+        ".yaml",
+        ".yml",
+        ".ini",
+        ".cfg",
+        ".toml"
+      ],
+      "projection_kinds": [
+        "text",
+        "structure",
+        "citation_map"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "json-stdlib-v0.1",
+      "display": "json-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".json",
+        ".jsonl"
+      ],
+      "projection_kinds": [
+        "structure",
+        "text",
+        "citation_map"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "csv-stdlib-v0.1",
+      "display": "csv-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".csv",
+        ".tsv"
+      ],
+      "projection_kinds": [
+        "table",
+        "structure",
+        "citation_map"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "html-stdlib-v0.1",
+      "display": "html-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".html",
+        ".htm"
+      ],
+      "projection_kinds": [
+        "text",
+        "structure",
+        "relationship"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "docx-ooxml-stdlib-v0.1",
+      "display": "docx-ooxml-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".docx"
+      ],
+      "projection_kinds": [
+        "text",
+        "structure",
+        "relationship",
+        "metadata"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "xlsx-ooxml-stdlib-v0.1",
+      "display": "xlsx-ooxml-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".xlsx",
+        ".xlsm"
+      ],
+      "projection_kinds": [
+        "table",
+        "formula",
+        "structure",
+        "relationship",
+        "metadata"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "pdf-pypdf-v0.1",
+      "display": "pdf-pypdf-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".pdf"
+      ],
+      "projection_kinds": [
+        "metadata"
+      ],
+      "implementation_declared": "CAPABILITY_BINDING_REQUIRED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "image-reference-v0.1",
+      "display": "image-reference-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".webp",
+        ".tif",
+        ".tiff"
+      ],
+      "projection_kinds": [
+        "metadata",
+        "preview"
+      ],
+      "implementation_declared": "REFERENCE_ONLY",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "gltf-stdlib-v0.1",
+      "display": "gltf-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".gltf",
+        ".glb"
+      ],
+      "projection_kinds": [
+        "structure",
+        "relationship",
+        "metadata"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "svg-xml-stdlib-v0.1",
+      "display": "svg-xml-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".svg"
+      ],
+      "projection_kinds": [
+        "structure",
+        "relationship",
+        "metadata"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "image-metadata-stdlib-v0.1",
+      "display": "image-metadata-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".gif"
+      ],
+      "projection_kinds": [
+        "metadata"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "step-part21-stdlib-v0.1",
+      "display": "step-part21-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".step",
+        ".stp"
+      ],
+      "projection_kinds": [
+        "structure",
+        "metadata",
+        "citation_map"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "freecad-fcstd-stdlib-v0.1",
+      "display": "freecad-fcstd-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".fcstd"
+      ],
+      "projection_kinds": [
+        "structure",
+        "relationship",
+        "metadata"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "obj-mesh-stdlib-v0.1",
+      "display": "obj-mesh-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".obj"
+      ],
+      "projection_kinds": [
+        "structure",
+        "relationship",
+        "metadata",
+        "citation_map"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "stl-mesh-stdlib-v0.1",
+      "display": "stl-mesh-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".stl"
+      ],
+      "projection_kinds": [
+        "structure",
+        "metadata",
+        "citation_map"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "pptx-ooxml-stdlib-v0.1",
+      "display": "pptx-ooxml-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".pptx"
+      ],
+      "projection_kinds": [
+        "text",
+        "structure",
+        "relationship",
+        "metadata"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "xml-stdlib-v0.1",
+      "display": "xml-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".xml"
+      ],
+      "projection_kinds": [
+        "structure",
+        "text",
+        "metadata",
+        "citation_map"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "zip-stdlib-v0.1",
+      "display": "zip-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".zip"
+      ],
+      "projection_kinds": [
+        "structure",
+        "metadata"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "ply-mesh-stdlib-v0.1",
+      "display": "ply-mesh-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".ply"
+      ],
+      "projection_kinds": [
+        "structure",
+        "metadata",
+        "citation_map"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "3mf-stdlib-v0.1",
+      "display": "3mf-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".3mf"
+      ],
+      "projection_kinds": [
+        "structure",
+        "relationship",
+        "metadata"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "toml-stdlib-v0.1",
+      "display": "toml-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".toml"
+      ],
+      "projection_kinds": [
+        "structure",
+        "metadata"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "odf-stdlib-v0.1",
+      "display": "odf-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".odt",
+        ".ods",
+        ".odp"
+      ],
+      "projection_kinds": [
+        "text",
+        "table",
+        "structure",
+        "relationship",
+        "metadata"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "sqlite-stdlib-v0.1",
+      "display": "sqlite-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".sqlite",
+        ".sqlite3",
+        ".db"
+      ],
+      "projection_kinds": [
+        "structure",
+        "metadata",
+        "relationship"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "dxf-ascii-stdlib-v0.1",
+      "display": "dxf-ascii-stdlib-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".dxf"
+      ],
+      "projection_kinds": [
+        "structure",
+        "metadata",
+        "citation_map"
+      ],
+      "implementation_declared": "IMPLEMENTED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "dwg-reference-v0.1",
+      "display": "dwg-reference-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".dwg"
+      ],
+      "projection_kinds": [
+        "metadata"
+      ],
+      "implementation_declared": "CAPABILITY_BINDING_REQUIRED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "format_adapter",
+      "source_key": "parquet-reference-v0.1",
+      "display": "parquet-reference-v0.1",
+      "source_registry": "cgx/domain_templates/source_format_adapter_registry.json",
+      "source_git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0",
+      "extensions": [
+        ".parquet"
+      ],
+      "projection_kinds": [
+        "metadata"
+      ],
+      "implementation_declared": "CAPABILITY_BINDING_REQUIRED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "live_provider_verified": false
+    },
+    {
+      "category": "toolkit",
+      "source_key": "cgx-core",
+      "display": "cgx-core",
+      "source_registry": "cgx/domain_templates/toolkit_registry.json",
+      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "capabilities": [
+        "filespace",
+        "db-r",
+        "security",
+        "routing",
+        "host",
+        "ccc",
+        "extension-resolution",
+        "custodial-preflight",
+        "assurance-routing",
+        "assurance-preflight",
+        "unified-risk-object"
+      ],
+      "kind": "base",
+      "binding": "master-hydration",
+      "registry_state": "NOT_SPECIFIED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "toolkit",
+      "source_key": "lightspeed",
+      "display": "lightspeed",
+      "source_registry": "cgx/domain_templates/toolkit_registry.json",
+      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "capabilities": [
+        "compute-routing",
+        "jobs",
+        "receipts",
+        "local-llm",
+        "remote-llm",
+        "tools"
+      ],
+      "kind": "runtime",
+      "binding": "local-or-distributed",
+      "registry_state": "NOT_SPECIFIED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "toolkit",
+      "source_key": "openai",
+      "display": "openai",
+      "source_registry": "cgx/domain_templates/toolkit_registry.json",
+      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "capabilities": [
+        "reasoning",
+        "vision",
+        "tool-use",
+        "structured-output"
+      ],
+      "kind": "api",
+      "binding": "optional",
+      "registry_state": "NOT_SPECIFIED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "toolkit",
+      "source_key": "local-llm",
+      "display": "local-llm",
+      "source_registry": "cgx/domain_templates/toolkit_registry.json",
+      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "capabilities": [
+        "private-reasoning",
+        "offline-reasoning"
+      ],
+      "kind": "runtime",
+      "binding": "optional",
+      "registry_state": "NOT_SPECIFIED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "toolkit",
+      "source_key": "google-drive",
+      "display": "google-drive",
+      "source_registry": "cgx/domain_templates/toolkit_registry.json",
+      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "capabilities": [
+        "read",
+        "range-read",
+        "bounded-write",
+        "native-docs",
+        "native-sheets",
+        "native-slides",
+        "file-lifecycle"
+      ],
+      "kind": "provider",
+      "binding": "oauth-or-provider-managed",
+      "registry_state": "NOT_SPECIFIED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "toolkit",
+      "source_key": "github",
+      "display": "github",
+      "source_registry": "cgx/domain_templates/toolkit_registry.json",
+      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "capabilities": [
+        "code",
+        "branches",
+        "tests",
+        "issues",
+        "pull-requests",
+        "commits"
+      ],
+      "kind": "provider",
+      "binding": "oauth-or-token-ref",
+      "registry_state": "NOT_SPECIFIED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "toolkit",
+      "source_key": "python",
+      "display": "python",
+      "source_registry": "cgx/domain_templates/toolkit_registry.json",
+      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "capabilities": [
+        "analysis",
+        "simulation",
+        "conversion",
+        "automation"
+      ],
+      "kind": "local-tool",
+      "binding": "host",
+      "registry_state": "NOT_SPECIFIED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "toolkit",
+      "source_key": "freecad",
+      "display": "freecad",
+      "source_registry": "cgx/domain_templates/toolkit_registry.json",
+      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "capabilities": [
+        "cad",
+        "fcstd",
+        "geometry",
+        "object-tree",
+        "derived-bom",
+        "read-only-inspection"
+      ],
+      "kind": "desktop-tool",
+      "binding": "host",
+      "registry_state": "available_read_only",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "toolkit",
+      "source_key": "web",
+      "display": "web",
+      "source_registry": "cgx/domain_templates/toolkit_registry.json",
+      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "capabilities": [
+        "research",
+        "public-evidence",
+        "urls"
+      ],
+      "kind": "provider",
+      "binding": "network",
+      "registry_state": "NOT_SPECIFIED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "toolkit",
+      "source_key": "email",
+      "display": "email",
+      "source_registry": "cgx/domain_templates/toolkit_registry.json",
+      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "capabilities": [
+        "draft",
+        "attachment-package",
+        "send-gated"
+      ],
+      "kind": "provider",
+      "binding": "oauth",
+      "registry_state": "NOT_SPECIFIED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "toolkit",
+      "source_key": "calendar",
+      "display": "calendar",
+      "source_registry": "cgx/domain_templates/toolkit_registry.json",
+      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "capabilities": [
+        "read",
+        "schedule-gated"
+      ],
+      "kind": "provider",
+      "binding": "oauth",
+      "registry_state": "NOT_SPECIFIED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "toolkit",
+      "source_key": "ccc",
+      "display": "ccc",
+      "source_registry": "cgx/domain_templates/toolkit_registry.json",
+      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "capabilities": [
+        "discover",
+        "plan",
+        "verify",
+        "apply",
+        "unapply",
+        "receipts"
+      ],
+      "kind": "package-registry",
+      "binding": "cgx-native",
+      "registry_state": "NOT_SPECIFIED",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "selector",
+      "source_key": "achilles",
+      "display": "achilles",
+      "source_registry": "cgx/domain_templates/plugin_selector_registry.json",
+      "source_git_blob": "e182e2fe6e723e0e54e4dc8c9c07657dc514c0bd",
+      "kind": "agent",
+      "owner_domain": "emassc",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "selector",
+      "source_key": "neo",
+      "display": "neo",
+      "source_registry": "cgx/domain_templates/plugin_selector_registry.json",
+      "source_git_blob": "e182e2fe6e723e0e54e4dc8c9c07657dc514c0bd",
+      "kind": "agent",
+      "owner_domain": "romer",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "selector",
+      "source_key": "athene",
+      "display": "athene",
+      "source_registry": "cgx/domain_templates/plugin_selector_registry.json",
+      "source_git_blob": "e182e2fe6e723e0e54e4dc8c9c07657dc514c0bd",
+      "kind": "agent",
+      "owner_domain": "eco",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "selector",
+      "source_key": "raphael",
+      "display": "raphael",
+      "source_registry": "cgx/domain_templates/plugin_selector_registry.json",
+      "source_git_blob": "e182e2fe6e723e0e54e4dc8c9c07657dc514c0bd",
+      "kind": "agent",
+      "owner_domain": null,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "selector",
+      "source_key": "cognigrex",
+      "display": "cognigrex",
+      "source_registry": "cgx/domain_templates/plugin_selector_registry.json",
+      "source_git_blob": "e182e2fe6e723e0e54e4dc8c9c07657dc514c0bd",
+      "kind": "system",
+      "owner_domain": null,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "selector",
+      "source_key": "romer-grex",
+      "display": "romer-grex",
+      "source_registry": "cgx/domain_templates/plugin_selector_registry.json",
+      "source_git_blob": "e182e2fe6e723e0e54e4dc8c9c07657dc514c0bd",
+      "kind": "domain",
+      "owner_domain": "romer",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "selector",
+      "source_key": "eco-grex",
+      "display": "eco-grex",
+      "source_registry": "cgx/domain_templates/plugin_selector_registry.json",
+      "source_git_blob": "e182e2fe6e723e0e54e4dc8c9c07657dc514c0bd",
+      "kind": "domain",
+      "owner_domain": "eco",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "selector",
+      "source_key": "emassc",
+      "display": "emassc",
+      "source_registry": "cgx/domain_templates/plugin_selector_registry.json",
+      "source_git_blob": "e182e2fe6e723e0e54e4dc8c9c07657dc514c0bd",
+      "kind": "domain",
+      "owner_domain": "emassc",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "selector",
+      "source_key": "lightspeed",
+      "display": "lightspeed",
+      "source_registry": "cgx/domain_templates/plugin_selector_registry.json",
+      "source_git_blob": "e182e2fe6e723e0e54e4dc8c9c07657dc514c0bd",
+      "kind": "system",
+      "owner_domain": null,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "filespace_action",
+      "source_key": "alexandria.open",
+      "display": "Explore Alexandria",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "targets": [
+        "filespace"
+      ],
+      "mode": "read",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "filespace_action",
+      "source_key": "alexandria.resolve",
+      "display": "Resolve with Alexandria…",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "targets": [
+        "filespace",
+        "object",
+        "file"
+      ],
+      "mode": "review",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "filespace_action",
+      "source_key": "alexandria.sources",
+      "display": "Inspect source provenance",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "targets": [
+        "object",
+        "file"
+      ],
+      "mode": "read",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "filespace_action",
+      "source_key": "load.attach",
+      "display": "Equip FileSpace with LOAD…",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "targets": [
+        "filespace"
+      ],
+      "mode": "wizard_only",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "filespace_action",
+      "source_key": "load.hydrate",
+      "display": "Hydrate library references…",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "targets": [
+        "filespace"
+      ],
+      "mode": "review",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "filespace_action",
+      "source_key": "ccc.discover",
+      "display": "Find capabilities in CCC…",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "targets": [
+        "filespace",
+        "object"
+      ],
+      "mode": "review",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "filespace_action",
+      "source_key": "ccc.install",
+      "display": "Install CCC capability…",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "targets": [
+        "filespace"
+      ],
+      "mode": "wizard_only",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "filespace_action",
+      "source_key": "load.switch_view",
+      "display": "Switch semantic view…",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "targets": [
+        "filespace",
+        "object"
+      ],
+      "mode": "review",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "filespace_action",
+      "source_key": "load.match_novel",
+      "display": "Match with Alexandria knowledge…",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "targets": [
+        "filespace",
+        "object",
+        "file"
+      ],
+      "mode": "review",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "filespace_action",
+      "source_key": "load.tune_context",
+      "display": "Adjust knowledge spread and compute budget…",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "targets": [
+        "filespace",
+        "object"
+      ],
+      "mode": "review",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "assurance.mpl.probe",
+      "display": "assurance.mpl.probe",
+      "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+      "source_git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e",
+      "route_source_proofs": {
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        }
+      },
+      "selector_sources": [
+        "romer-grex"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "assurance.preflight",
+      "display": "assurance.preflight",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "cad.freecad",
+      "display": "cad.freecad",
+      "source_registry": "plugins/packages/raphael/references/capabilities.json",
+      "source_git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf",
+      "route_source_proofs": {
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        }
+      },
+      "selector_sources": [
+        "raphael",
+        "romer-grex"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "cad.freecad.bom",
+      "display": "cad.freecad.bom",
+      "source_registry": "plugins/packages/raphael/references/capabilities.json",
+      "source_git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf",
+      "route_source_proofs": {
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        }
+      },
+      "selector_sources": [
+        "raphael",
+        "romer-grex"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "cad.freecad.probe",
+      "display": "cad.freecad.probe",
+      "source_registry": "plugins/packages/raphael/references/capabilities.json",
+      "source_git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf",
+      "route_source_proofs": {
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        }
+      },
+      "selector_sources": [
+        "raphael",
+        "romer-grex"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "cgx.cross_analysis",
+      "display": "cgx.cross_analysis",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "cgx.minimum_work",
+      "display": "cgx.minimum_work",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "cgx.object_context",
+      "display": "cgx.object_context",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "cgx.plan_query",
+      "display": "cgx.plan_query",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "cgx.resolve_context",
+      "display": "cgx.resolve_context",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "consequence.preflight",
+      "display": "consequence.preflight",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "custodial.preflight",
+      "display": "custodial.preflight",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "data.validate",
+      "display": "data.validate",
+      "source_registry": "plugins/packages/achilles/references/capabilities.json",
+      "source_git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "emassc"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "definitions.search",
+      "display": "definitions.search",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "eco.assess",
+      "display": "eco.assess",
+      "source_registry": "plugins/packages/athene/references/capabilities.json",
+      "source_git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84",
+      "route_source_proofs": {
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        }
+      },
+      "selector_sources": [
+        "athene",
+        "eco-grex"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "extensions.plan",
+      "display": "extensions.plan",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "extensions.tool",
+      "display": "extensions.tool",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "files.list",
+      "display": "files.list",
+      "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+      "source_git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0",
+      "route_source_proofs": {
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "files.open",
+      "display": "files.open",
+      "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+      "source_git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0",
+      "route_source_proofs": {
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "governance.action_ledger",
+      "display": "governance.action_ledger",
+      "source_registry": "plugins/packages/emassc/references/capabilities.json",
+      "source_git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7",
+      "route_source_proofs": {
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        }
+      },
+      "selector_sources": [
+        "emassc"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "interface.capabilities",
+      "display": "interface.capabilities",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "interface.help",
+      "display": "interface.help",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "knowns.proof_queue",
+      "display": "knowns.proof_queue",
+      "source_registry": "plugins/packages/achilles/references/capabilities.json",
+      "source_git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        }
+      },
+      "selector_sources": [
+        "achilles"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "knowns.read",
+      "display": "knowns.read",
+      "source_registry": "plugins/packages/achilles/references/capabilities.json",
+      "source_git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "emassc"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "local.supervise",
+      "display": "local.supervise",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "node.compute",
+      "display": "node.compute",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "node.exchange.status",
+      "display": "node.exchange.status",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "node.transfer",
+      "display": "node.transfer",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "ops.consolidate",
+      "display": "ops.consolidate",
+      "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+      "source_git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0",
+      "route_source_proofs": {
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "ops.finalize",
+      "display": "ops.finalize",
+      "source_registry": "plugins/packages/achilles/references/capabilities.json",
+      "source_git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "ops.health",
+      "display": "ops.health",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "ops.queue",
+      "display": "ops.queue",
+      "source_registry": "plugins/packages/neo/references/capabilities.json",
+      "source_git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba",
+      "route_source_proofs": {
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "neo",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "ops.route_probe",
+      "display": "ops.route_probe",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "physics.femm.probe",
+      "display": "physics.femm.probe",
+      "source_registry": "plugins/packages/raphael/references/capabilities.json",
+      "source_git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf",
+      "route_source_proofs": {
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        }
+      },
+      "selector_sources": [
+        "raphael"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "portfolio.printable_catalogue",
+      "display": "portfolio.printable_catalogue",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "protocols.build",
+      "display": "protocols.build",
+      "source_registry": "plugins/packages/achilles/references/capabilities.json",
+      "source_git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        }
+      },
+      "selector_sources": [
+        "achilles"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "receipts.list",
+      "display": "receipts.list",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "receipts.open",
+      "display": "receipts.open",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "runtime.productization",
+      "display": "runtime.productization",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "science.gmat.probe",
+      "display": "science.gmat.probe",
+      "source_registry": "plugins/packages/raphael/references/capabilities.json",
+      "source_git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf",
+      "route_source_proofs": {
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        }
+      },
+      "selector_sources": [
+        "raphael",
+        "romer-grex"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "science.mark3_simulate",
+      "display": "science.mark3_simulate",
+      "source_registry": "plugins/packages/raphael/references/capabilities.json",
+      "source_git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf",
+      "route_source_proofs": {
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        }
+      },
+      "selector_sources": [
+        "raphael",
+        "romer-grex"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "science.query",
+      "display": "science.query",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "science.rfs_emff_sweep",
+      "display": "science.rfs_emff_sweep",
+      "source_registry": "plugins/packages/raphael/references/capabilities.json",
+      "source_git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf",
+      "route_source_proofs": {
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        }
+      },
+      "selector_sources": [
+        "raphael",
+        "romer-grex"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "sources.envelope",
+      "display": "sources.envelope",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "ccc_route",
+      "source_key": "tests.plan",
+      "display": "tests.plan",
+      "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+      "source_git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b",
+      "route_source_proofs": {
+        "achilles": {
+          "source_registry": "plugins/packages/achilles/references/capabilities.json",
+          "git_blob": "4c5782d2c1eadafa43dd49b46623e8a90320443c"
+        },
+        "neo": {
+          "source_registry": "plugins/packages/neo/references/capabilities.json",
+          "git_blob": "025c8465c39021dd61a9446c511e51ab39dab5ba"
+        },
+        "athene": {
+          "source_registry": "plugins/packages/athene/references/capabilities.json",
+          "git_blob": "414144cfaf6b0f21dc87ead465bc2fbf8ad35a84"
+        },
+        "raphael": {
+          "source_registry": "plugins/packages/raphael/references/capabilities.json",
+          "git_blob": "e5f372ede58fe3d1a734cb50b6f753ee700731cf"
+        },
+        "cognigrex": {
+          "source_registry": "plugins/packages/cognigrex/references/capabilities.json",
+          "git_blob": "9630714a9a10077fdc184605ac0182000e9edb7b"
+        },
+        "romer-grex": {
+          "source_registry": "plugins/packages/romer-grex/references/capabilities.json",
+          "git_blob": "8557cdd7469625c88f259ef0818ec041afd3c59e"
+        },
+        "eco-grex": {
+          "source_registry": "plugins/packages/eco-grex/references/capabilities.json",
+          "git_blob": "03f630a2dee49bfc4c07bdc0a134c6aed94c50af"
+        },
+        "emassc": {
+          "source_registry": "plugins/packages/emassc/references/capabilities.json",
+          "git_blob": "bb7117262c76e274f781338ce73f8257a1d86fd7"
+        },
+        "lightspeed": {
+          "source_registry": "plugins/packages/lightspeed/references/capabilities.json",
+          "git_blob": "8d120b252e70c54ddc2f727baebc9612e5860af0"
+        }
+      },
+      "selector_sources": [
+        "achilles",
+        "neo",
+        "athene",
+        "raphael",
+        "cognigrex",
+        "romer-grex",
+        "eco-grex",
+        "emassc",
+        "lightspeed"
+      ],
+      "route_signatures": 1,
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "installed_online": false,
+      "provider_readback": false
+    },
+    {
+      "category": "function_family",
+      "source_key": "F00",
+      "display": "identity/source",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "qualified_implementations": 0
+    },
+    {
+      "category": "function_family",
+      "source_key": "F10",
+      "display": "geometry/coordinate",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "qualified_implementations": 0
+    },
+    {
+      "category": "function_family",
+      "source_key": "F20",
+      "display": "collision/environment",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "qualified_implementations": 0
+    },
+    {
+      "category": "function_family",
+      "source_key": "F30",
+      "display": "render/LOD",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "qualified_implementations": 0
+    },
+    {
+      "category": "function_family",
+      "source_key": "F40",
+      "display": "state/dynamics/clock",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "qualified_implementations": 0
+    },
+    {
+      "category": "function_family",
+      "source_key": "F50",
+      "display": "audio",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "qualified_implementations": 0
+    },
+    {
+      "category": "function_family",
+      "source_key": "F60",
+      "display": "input/accessibility",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "qualified_implementations": 0
+    },
+    {
+      "category": "function_family",
+      "source_key": "F70",
+      "display": "reference/delta transport",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "qualified_implementations": 0
+    },
+    {
+      "category": "function_family",
+      "source_key": "F80",
+      "display": "execution adapters",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "qualified_implementations": 0
+    },
+    {
+      "category": "function_family",
+      "source_key": "F90",
+      "display": "proof/replay/DBR",
+      "source_registry": "cgx/load_minimum/filespace_feature_registry.json",
+      "source_git_blob": "31ab6c546f17d086424a42b7821796bc80128b94",
+      "admission": "SOURCE_REGISTRY_ONLY",
+      "qualified_implementations": 0
+    }
+  ],
+  "frontier": [
+    {
+      "reason": "MULTIPLE_MAPPING_SAME_SEMANTIC_ID",
+      "candidate_object_id": "T1-M1",
+      "mapping_count": 5,
+      "mapping_refs": [
+        "FF-M1-BASEKM-FCSTD-001",
+        "FF-M1-CENTRAL-A1-FCSTD-001",
+        "FF-M1-PILOT-BUILD-FCSTD-001",
+        "FF-M1-BASE-PILLAR-TWIST-Y-FCSTD-001",
+        "FF-M1-BASE-PILLAR-TWIST-Y-X2-FCSTD-001"
+      ]
+    },
+    {
+      "reason": "MULTIPLE_MAPPING_SAME_SEMANTIC_ID",
+      "candidate_object_id": "SPACE-03",
+      "mapping_count": 2,
+      "mapping_refs": [
+        "FF-LUKE4-FCSTD-001",
+        "FF-LUKE4-SINGLE-NODE-FCSTD-001"
+      ]
+    },
+    {
+      "reason": "MULTIPLE_MAPPING_SAME_SEMANTIC_ID",
+      "candidate_object_id": "SF-01",
+      "mapping_count": 3,
+      "mapping_refs": [
+        "FF-FREEFLOW-BATTERY-FCSTD-001",
+        "FF-FREEFLOW-CAPACITORS-FCSTD-001",
+        "FF-FREEFLOW-SOLENOID-FCSTD-001"
+      ]
+    }
+  ]
+}

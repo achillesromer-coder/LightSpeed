@@ -1,0 +1,285 @@
+{
+  "schema": "CGX-LOAD-PARENT-IDENTITY-REVIEW-CASES/0.1",
+  "status": "SOURCE_ONLY_NEGATIVE_FIXTURES_NOT_NATIVE_ACCEPTANCE",
+  "scope": "Cognigrex.cgx parent identity, LOAD.cgx Alexandria alias, cross-family references",
+  "source_contracts": [
+    {
+      "path": "cgx/domain_templates/cognigrex_parent_topology.json",
+      "git_blob_sha": "128269eed66fc97b27b1bf6c9f19ba0dbea34402"
+    },
+    {
+      "path": "cgx/domain_templates/relation_qualifier_contract.json",
+      "git_blob_sha": "989685153af6da031b5e4f09c189834ed8f38de2"
+    },
+    {
+      "path": "cgx/domain_templates/cross_domain_bridge_registry.json",
+      "git_blob_sha": "202b74ddb1e4b5ee8c50e768e4ae175a5853703e"
+    },
+    {
+      "path": "cgx/domain_templates/source_envelope_contract.json",
+      "git_blob_sha": "0839fb67855c434892c509c4c9dfb812b79328a4"
+    },
+    {
+      "path": "cgx/load_minimum/load_reader.py",
+      "git_blob_sha": "29653fe174ce39460e40db169f3bebdf472e5676"
+    },
+    {
+      "path": "cgx/domain_templates/root_authority_decision_receipt_2026-10-01.json",
+      "git_blob_sha": "a13c92b1b1a8ae39abcae5b8cbaa01cbe628732b"
+    },
+    {
+      "path": "cgx/domain_templates/s92_domain_children_acceptance_audit_2026-10-04.json",
+      "git_blob_sha": "77861c734b3c63c394031c79bf830154faaec1e3"
+    },
+    {
+      "path": "cgx/domain_templates/eco_relation_registry.json",
+      "git_blob_sha": "47241ad132cc53fa4e90f5b8ec65fe23412be95a"
+    }
+  ],
+  "observed_gap": "The current LOAD reader bounds library/one_of_one.json decompression to 60 MiB and rejects missing/duplicate library members, malformed entry structures and duplicate ref_id values. It remains a source-reference inspector: it does not verify the CGX native manifest/content root, RootAuthority/DBR signatures, current lease, rights/ACL or accepted Object_ID binding. No R0/R1/R2 admission follows from successful parsing.",
+  "cases": [
+    {
+      "id": "C01",
+      "input": "Existing canonical Object_ID matches a candidate LOAD source alias but source identity/owner hash is unresolved",
+      "expected": "HOLD_COLLISION; no new Object_ID or automatic alias binding"
+    },
+    {
+      "id": "C02",
+      "input": "Two LOAD entries have different ref_id but the same alias",
+      "expected": "AMBIGUOUS; no first-match authority; current draft resolve() returns AMBIGUOUS for matching aliases"
+    },
+    {
+      "id": "C03",
+      "input": "Same provider source ID referenced by Romer.cgx and Eco.cgx",
+      "expected": "SHARED_SOURCE_REFERENCE; do not duplicate source authority or child-owned state"
+    },
+    {
+      "id": "C04",
+      "input": "Same title and URI, distinct source hashes or time epochs",
+      "expected": "DISTINCT_VERSIONED_R0; no silent source collapse"
+    },
+    {
+      "id": "C05",
+      "input": "LifeSpace legacy term and LS.cgx/LightSpeed name resemble one another",
+      "expected": "NO_EQUIVALENCE until original source ID, semantics and owner verified"
+    },
+    {
+      "id": "C06",
+      "input": "CCC historical mint-pack/ERC money record compared to CGX Object_ID mint operation",
+      "expected": "DISTINCT_TYPED_FUNCTIONS; financial action DENIED without independent authorization"
+    },
+    {
+      "id": "C07",
+      "input": "Romer/Eco/EMASSC relation registry extends qualifier /0.1 while current shared contract declares /0.2",
+      "expected": "SCHEMA_COMPATIBILITY_HOLD until explicit version crosswalk and negative tests"
+    },
+    {
+      "id": "C08",
+      "input": "Arbitrary ZIP contains library/one_of_one.json but has no valid CGX native manifest or DBR root",
+      "expected": "REJECT_NATIVE_CARRIER; draft load_reader.py does not enforce this; acceptance gate remains HOLD"
+    },
+    {
+      "id": "C09",
+      "input": "Source locator exists but R0 source bytes/hash/ACL not verified",
+      "expected": "REFERENCE_ONLY; do not upgrade to R1 or native admitted"
+    },
+    {
+      "id": "C10",
+      "input": "Unauthenticated or self-reported DBR receipt, no receiver readback",
+      "expected": "NO_CANONICAL_WRITE; do not claim accepted or live installed"
+    },
+    {
+      "id": "C11",
+      "input": "LOAD.cgx offline H0-H3 reference resolves to a capability without signed execution lease",
+      "expected": "H4_EXECUTION_DENIED; qualified capability description is not runtime permission"
+    },
+    {
+      "id": "C12",
+      "input": "Cross-domain CORRESPONDS_TO asserted without registry namespace or owner/evidence qualifiers",
+      "expected": "FRONTIER; not SAME_AS; no endpoint authority transfer"
+    },
+    {
+      "id": "C13",
+      "input": "PRE_LAUNCH RootAuthority standing internal execution authorization is presented as proof of current signed execution lease or promoted native parent/LOAD Object_ID",
+      "expected": "DENY_NATIVE_ACCEPTANCE; historical standing approval is not an active scoped lease, authenticated root binding or atomic DBR readback"
+    },
+    {
+      "id": "C14",
+      "input": "A regenerated pre-canonical S92 child carrier retains its semantic Object_ID label but differs from unavailable original historical instance bytes/hash",
+      "expected": "DISTINCT_CARRIER_INSTANCE; preserve both source histories and do not claim exact-byte equivalence, promotion or accepted child authority without independently verified native receipts"
+    },
+    {
+      "id": "C15",
+      "input": "An R0 S92 recovery carrier classified Restricted / Internal by its exact root-promotion receipt currently has Google Drive anyone-with-link reader permission, while a separate R0_REFERENCE_ONLY private copy is owner-only.",
+      "expected": "SOURCE_RIGHTS_ACL_HOLD; do not treat link readability as redistribution permission, source-to-native admission, public projection approval or reason to mutate original permissions. Escalate visibility decision to the existing security owner; retain original and private reference as distinct provider instances."
+    },
+    {
+      "id": "C16",
+      "input": "A GPT export_manifest.json declares twelve conversations-000.json through conversations-011.json files (434547139 total declared bytes), and a user-reported local path mentions conversations-008.json, but no original shard bytes, per-shard provider revision, SHA-256, rights/ACL or conversation branch/time context have been independently read.",
+      "expected": "FOUND_REFERENCE_ONLY; manifest and screenshot are locators, not original shard byte evidence. Do not claim HASH_VERIFIED, R1_TYPED, corpus parity, source-qualified Object_ID, DBR admission or a completed intake. On authenticated access, read one original shard in <=60 MiB bounded units, verify exact source version/hash, rights/ACL and chronology; retain R0 unchanged and use existing source envelope/parser."
+    },
+    {
+      "id": "C17",
+      "input": "A candidate qualified CGX Object_ID is proposed using a structurally valid CGX-SOURCE-ENVELOPE/0.1 record, but original source revision, rights/ACL or historical branch/time context is unknown or contradictory; the source-envelope required-fields list alone does not supply these qualifications.",
+      "expected": "SOURCE_QUALIFICATION_HOLD; retain competing R0/version hypotheses and explicit unresolved fields. No alias merge, ownership transfer, qualified minting, R2 authority or native DBR acceptance until owner, version, hash, rights, ACL and applicable time context are independently resolved."
+    },
+    {
+      "id": "C18",
+      "input": "The Eco.cgx relation registry CGX-ECO-RELATION-REGISTRY/0.2 declares relation type MODIFIES twice, once in families.process and once in families.intervention, both with the same unqualified id; shared CGX-RELATION-QUALIFIER/0.2 is still referenced as /0.1 by the child registry.",
+      "expected": "RELATION_TYPE_NAMESPACE_AMBIGUITY; preserve both original declarations and their category provenance, do not create two canonical relation Object_IDs or infer semantic equivalence solely from the lexical ID. Require explicit owner-approved single qualified relation identity with multiple category tags or a source-preserving typed distinction and an explicit /0.1-to-/0.2 compatibility crosswalk; no R2 admission/DBR promotion on this fixture."
+    },
+    {
+      "id": "C19",
+      "input": "Historical S91 seed-child and first-file child carriers reuse the same local Object_ID label for different exact R0 carrier byte sequences, while subsequent S92 rebuilt child carriers have new instance bytes and labels. The shared semantic family candidate alone is not proof of instance equivalence or current namespace authority.",
+      "expected": "VERSION_SCOPED_LOCAL_ID_COLLISION; preserve both S91 source instances, their original hashes and lineage, and separate S92 instances. Do not deduplicate by local label, mint or promote a canonical child Object_ID, transfer authority, or infer native DBR admission until exact current source/version/owner/rights/ACL and signed RootAuthority/DBR readback are qualified."
+    },
+    {
+      "id": "C20",
+      "input": "A versioned historical working architecture represents LightSpeed as a direct /lightspeed/ parent-root folder, while a later Cognigrex parent topology review blueprint places LS.cgx beneath EMASSC.cgx. Both are source-stage representations with different provenance and chronology; neither document supplies current signed native child binding.",
+      "expected": "VERSIONED_TOPOLOGY_FRONTIER; preserve the earlier folder-route/source alias and the later proposed semantic parent edge as distinct source-scoped assertions. Do not rewrite historical R0, infer SAME_AS or accepted reparenting, duplicate LS.cgx as a peer child, or promote either topology to native authority without owner-qualified version/rights/ACL, signed RootAuthority and independent DBR readback."
+    },
+    {
+      "id": "C21",
+      "input": "The historical Cognigrex parent topology review blueprint records Romer.cgx principal_agent=Neo and EMASSC.cgx principal_agent=Achilles, while the current cross-family relation overlap review assigns candidate_owner_lanes.romer='Achilles / Romer-Grex' and delegates LS execution to Neo. These fields name agent, candidate custodian and runtime delegate in different source scopes, not an independently accepted ownership transfer.",
+      "expected": "DISTINCT_ROLE_TYPES_REVIEW; preserve source/version/field provenance, distinguish principal_agent, semantic_family_owner, grammar_owner and execution_delegate; do not infer Neo owns Romer source/IP, overwrite the Achilles candidate owner, reparent LS, or assert current native ACL/DBR authority. Require qualified owner+scope+rights/ACL and signed native root/DBR readback before binding effectful roles."
+    }
+  ],
+  "validation_state": "STATIC_SOURCE_REVIEW_ONLY",
+  "native_tests_executed": false,
+  "provider_readback_required": true,
+  "owner_authorization": "NONE_FOR_CANONICAL_MUTATION",
+  "public_safe": true,
+  "r0_direct_provider_recheck": {
+    "observation_date": "2026-10-28",
+    "evidence_class": "DIRECT_AUTHENTICATED_DRIVE_R0_BYTES_AND_ZIP_CENTRAL_DIRECTORY",
+    "admission_ceiling": "R0_SOURCE_BYTES_VERIFIED_ONLY",
+    "scope": "Re-read exact provider file bytes in a bounded cloud connector review; independently computed SHA-256. No native runtime, signature, RootAuthority, lease or DBR verification.",
+    "verified_files": [
+      {
+        "source": "S92 parent recovery carrier",
+        "size_bytes": 3657250,
+        "sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+        "matches_prior_receipt": true,
+        "zip_central_directory_entries": 1277,
+        "zip_duplicate_entry_names": 0,
+        "zip_unsafe_entry_paths": 0,
+        "topology_index_archive_entry_present": true,
+        "manifest_archive_entry_present": true,
+        "manifest_membership_and_profile_proof": "NOT_VERIFIED"
+      },
+      {
+        "source": "S92 regenerated PRE_CANONICAL child package",
+        "size_bytes": 540891,
+        "sha256": "36349987fa34dc0f85e26c9658fbf8e3814010f7cc9f536b836920eab239a90d",
+        "matches_prior_receipt": true,
+        "zip_central_directory_entries": 7,
+        "zip_duplicate_entry_names": 0,
+        "zip_unsafe_entry_paths": 0,
+        "embedded_carrier_names": [
+          "Romer.cgx",
+          "Eco.cgx",
+          "EMASSC.cgx",
+          "LS.cgx"
+        ],
+        "embedded_member_sha256_recomputed": false,
+        "authority_transfer": false
+      },
+      {
+        "source": "Original GPT export_manifest.json",
+        "size_bytes": 953271,
+        "sha256": "0941773a84c5552aa62f37282ee180b9c8df2b5c284c8c412be9e4a336212894",
+        "matches_prior_receipt": true,
+        "manifest_version": 1,
+        "declared_conversation_shards": 12,
+        "declared_conversation_bytes": 434547139,
+        "original_shard_bytes_read": 0
+      }
+    ],
+    "source_recovery_blockers": [
+      "Original conversations-000.json through conversations-011.json absent from exact-name authenticated Drive searches; six large conversations*.txt alternatives are not byte-equivalent by assumption.",
+      "Authoritative unabsorbed CGX MANUAL INTAKE root not independently identified.",
+      "No current S97 carrier exact-byte proof obtained.",
+      "Issue #51 S87/S88 runtime/developer hydration-entry-not-in-manifest remains historical FAIL CLOSED; S92 ZIP entry presence alone cannot prove corrected profile-specific hydration.",
+      "Accepted current parent/child/LOAD Object_ID, State Root and DBR Root require authenticated native readback."
+    ],
+    "test_boundary": "SHA-256 function self-test on ASCII abc matched NIST known digest; direct full-byte hashes checked against existing receipts; ZIP central directory was parsed without inflating member payloads.",
+    "transfer_bytes": 5151412,
+    "no_canonical_write": true,
+    "owner_authority_effect": "NONE",
+    "public_payload_policy": "Hashes, sizes, archive member names and source-only caveats only; no original source bodies, personal content, access keys or private URLs."
+  },
+  "source_visibility_gate": {
+    "observation_date": "2026-10-28",
+    "evidence_class": "AUTHENTICATED_DRIVE_PERMISSION_METADATA_PLUS_EXACT_PRIVATE_R0_RECEIPT_BYTES",
+    "historical_receipt_schema": "CGX-ROOT-PROMOTION-RECEIPT/0.1",
+    "private_reference_receipt_sha256": "abd448a288d6122d3a3f4c951ca0320aa9db51f7d64f924e33e2adf8f3de6fe6",
+    "historical_classification": "Restricted / Internal",
+    "historical_public_projection": "opaque receipt reference only",
+    "current_original_recovery_carrier_permission": "anyone:reader; allowFileDiscovery=false",
+    "current_recovery_parent_permission": "anyone:reader; allowFileDiscovery=false",
+    "current_private_reference_copy_permission": "owner-only; no anyone permission",
+    "current_private_intake_root_permission": "owner-only; no anyone permission",
+    "classification_vs_acl": "MISMATCH_REQUIRES_OWNER_REVIEW",
+    "native_admission_effect": "NONE",
+    "rights_inference": "NONE",
+    "permission_mutations": "NONE",
+    "owners": {
+      "source_rights": "Cognigrex parent",
+      "security_visibility": "Achilles / existing issue #158"
+    },
+    "next_negative_test": "Without changing permissions, check unauthenticated and revoked read surfaces, inheritance, and approved public-safe projection only after owner authorization.",
+    "limits": [
+      "Private reference receipt bytes are not independently proven equal to the original historical receipt in this run.",
+      "Provider permission metadata establishes sharing configuration, not a live unauthenticated download test.",
+      "No native RootAuthority or DBR readback performed."
+    ]
+  },
+  "r0_provider_revision_readback_2026_10_31": {
+    "evidence_class": "AUTHENTICATED_GOOGLE_DRIVE_REVISIONS_LIST_METADATA_ONLY",
+    "observation_date": "2026-10-31",
+    "source_mutation": false,
+    "byte_retransfer": false,
+    "version_scope": "Current Drive revision identifiers and metadata; not independent historical version comparison, redistribution licence, native carrier admission or DBR.",
+    "originals": [
+      {
+        "source": "S92 recovery parent",
+        "provider": "Google Drive Nathaniel",
+        "file_id": "1ap1xHVQ0cDWeJDAVWxvY_VqMkSzwpG6i",
+        "current_revision_id": "0BwJNKUfDWAPsdGxPaEp5ODc1N3U3bnBzOEl6RWJtMmZwN2g4PQ",
+        "previous_revision_id": null,
+        "revision_modified_time": "2026-09-30T10:56:10.470Z",
+        "revision_size_bytes": 3657250,
+        "revision_keep_forever": false,
+        "revision_published": false,
+        "prior_independently_verified_sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+        "prior_hash_recomputed_this_run": false,
+        "owner": "Cognigrex parent",
+        "admission_ceiling": "R0_REVISION_METADATA_LINKED_TO_PRIOR_HASH; NO_CURRENT_S97_OR_DBR",
+        "rights_acl": "HOLD; restricted/internal classification vs existing link-readable ACL mismatch remains independently gated"
+      },
+      {
+        "source": "Mark III Digital Twin original workbook",
+        "provider": "Google Drive Nathaniel",
+        "file_id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2",
+        "current_revision_id": "0BwJNKUfDWAPsQVV4NHFIYWJ4QUppTnZ0RmxZSWJjejVadlgwPQ",
+        "previous_revision_id": null,
+        "revision_modified_time": "2026-05-19T20:52:08.000Z",
+        "revision_size_bytes": 87108,
+        "revision_keep_forever": true,
+        "revision_published": false,
+        "prior_independently_verified_sha256": "fab23970e80c016a2140ec0f87c1d0d7e15c365190fdacb5dc2ee2a1c2a81075",
+        "prior_hash_recomputed_this_run": false,
+        "candidate_filespace": "Romer.cgx:/romer/mark-iii",
+        "admission_ceiling": "R0_REVISION_METADATA_LINKED_TO_PRIOR_HASH; R1_PARTIAL_TYPED; R2_HOLD",
+        "rights_acl": "HOLD; anyone-with-link reader does not grant redistribution or engineering certification"
+      }
+    ],
+    "negative_assertions": [
+      "A Drive currentRevisionId does not prove an accepted CGX Object_ID or signed RootAuthority/DBR.",
+      "A single returned revision with previousRevisionId=null does not prove no earlier external or overwritten source copies.",
+      "keepForever/published metadata are revision-retention/publication flags, not source rights, verified ACL safety or native acceptance.",
+      "Prior SHA-256 values were verified on 2026-10-30; this 2026-10-31 check did not download or rehash either original."
+    ],
+    "status": "SOURCE_REVIEW_ONLY_NO_NATIVE_WRITE"
+  }
+}
