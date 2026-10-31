@@ -473,3 +473,58 @@ test("H0 omits pairwise access classes and never upgrades rights",()=>{
  assert.equal(r.hydration.H2.state,"NOT_REQUESTED");
  assert.equal(r.permissions.public_publish,false);
 });
+
+
+test("symbolic-expression crosswalk holds source-to-translation mojibake without repair",()=>{
+ const symbolicAnchor={...anchor,sheet:"31_Formula_Library",cell:"B3"};
+ const pair={source_ref:source.source_ref,source_revision:source.revision,
+  source_sha256:digest,related_source_ref:lineage.related_source_ref,
+  related_revision_ref:lineage.related_revision_ref,
+  original_cell:{sheet:symbolicAnchor.sheet,cell:"B3",
+   expression_text:"F = m × a",evidence_class:"simulated"},
+  related_cell:{sheet:"SYNTHETIC_31_Formula_Library",cell:"B3",
+   expression_text:"F = m Ã— a",evidence_class:"simulated"}};
+ const r=prepare({cascade_input:input,cell_anchor:symbolicAnchor,
+  source_lineage:lineage,symbolic_expression_crosswalk:pair});
+ const c=r.source_symbolic_expression_crosswalk_review;
+ assert.equal(c.state,"R1_CALLER_DECLARED_SYMBOLIC_EXPRESSION_DISCREPANCY_HOLD");
+ assert.equal(c.expression_text_match,false);
+ assert.equal(c.original_encoding_valid,true);
+ assert.equal(c.related_encoding_valid,false);
+ assert.ok(r.blocking_gates.includes("SOURCE_TRANSLATION_SYMBOLIC_EXPRESSION_DISCREPANCY"));
+ assert.equal(r.release.mint_allowed,false);
+ assert.equal(r.candidate_object_id,null);
+ assert.equal(JSON.stringify(r).includes("F = m"),false);
+ const clean={...pair,related_cell:{...pair.related_cell,
+  expression_text:pair.original_cell.expression_text}};
+ const ok=prepare({cascade_input:input,cell_anchor:symbolicAnchor,
+  source_lineage:lineage,symbolic_expression_crosswalk:clean});
+ assert.equal(ok.source_symbolic_expression_crosswalk_review.state,
+  "R1_CALLER_DECLARED_SYMBOLIC_TEXT_MATCH_NOT_EQUIVALENCE");
+ assert.equal(ok.source_symbolic_expression_crosswalk_review.scientific_equivalence_verified,false);
+ assert.equal(ok.release.mint_allowed,false);
+});
+test("symbolic-expression crosswalk rejects stale provenance, wrong anchor, evidence and raw payload",()=>{
+ const symbolicAnchor={...anchor,sheet:"31_Formula_Library",cell:"B3"};
+ const pair={source_ref:source.source_ref,source_revision:source.revision,
+  source_sha256:digest,related_source_ref:lineage.related_source_ref,
+  related_revision_ref:lineage.related_revision_ref,
+  original_cell:{sheet:symbolicAnchor.sheet,cell:"B3",
+   expression_text:"F = m × a",evidence_class:"simulated"},
+  related_cell:{sheet:"SYNTHETIC_31_Formula_Library",cell:"B3",
+   expression_text:"F = m × a",evidence_class:"simulated"}};
+ const call=p=>prepare({cascade_input:input,cell_anchor:symbolicAnchor,
+  source_lineage:lineage,symbolic_expression_crosswalk:p});
+ for(const bad of [
+  {...pair,source_revision:"stale"},
+  {...pair,source_sha256:"0".repeat(64)},
+  {...pair,related_revision_ref:"stale"},
+  {...pair,original_cell:{...pair.original_cell,cell:"B4"}},
+  {...pair,related_cell:{...pair.related_cell,evidence_class:"observed"}},
+  {...pair,related_cell:{...pair.related_cell,coordinates:[153,-27]}},
+  {...pair,original_cell:{...pair.original_cell,expression_text:"line\\nunsafe"}}
+ ])assert.throws(()=>call(bad),/INVALID_ECO_SYMBOLIC_EXPRESSION_CROSSWALK/);
+ const h0=prepare({cascade_input:input,cell_anchor:symbolicAnchor,
+  source_lineage:lineage,symbolic_expression_crosswalk:pair,requested_hydration:"H0"});
+ assert.equal(h0.source_symbolic_expression_crosswalk_review.state,"NOT_REQUESTED");
+});
