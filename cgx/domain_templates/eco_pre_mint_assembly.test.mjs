@@ -412,3 +412,64 @@ test("mojibake in physical units is a discrepancy even when strings match",()=>{
   assert.equal(r.release.mint_allowed,false);
  }
 });
+
+
+// Pairwise ACL posture: synthetic snapshots only; never actual permission grants.
+const translatedAcl={
+ source_ref:lineage.related_source_ref,source_id:"synthetic:translated-id",
+ source_revision:lineage.related_revision_ref,
+ provider_observation_ref:"synthetic:related-acl-observation",
+ permissions:[{type:"user",role:"owner"}]
+};
+test("original link-reader versus translated owner-only ACL classes remain held",()=>{
+ const r=prepare({cascade_input:input,source_lineage:lineage,
+   access_posture:acl,related_access_posture:translatedAcl});
+ const a=r.related_access_posture_review;
+ assert.equal(a.state,"R1_DECLARED_ACCESS_POSTURE_DIVERGENCE_HOLD");
+ assert.equal(a.original_anyone_link_present,true);
+ assert.equal(a.related_anyone_link_present,false);
+ assert.equal(a.access_classes_divergent,true);
+ assert.equal(a.acl_equivalent,false);
+ assert.equal(a.independent_acl_readback_verified,false);
+ assert.equal(r.release.mint_allowed,false);
+ assert.ok(r.blocking_gates.includes("SOURCE_TRANSLATION_ACCESS_POSTURE_DIVERGENCE"));
+ assert.equal(JSON.stringify(r).includes("synthetic:related-acl-observation"),false);
+});
+test("matching declared ACL classes still cannot establish equivalence or rights",()=>{
+ const r=prepare({cascade_input:input,source_lineage:lineage,
+   access_posture:acl,related_access_posture:{...translatedAcl,
+     permissions:[{type:"anyone",role:"reader",allowFileDiscovery:false},
+       {type:"user",role:"owner"}]}});
+ assert.equal(r.related_access_posture_review.state,
+   "R1_DECLARED_ACCESS_CLASSES_MATCH_NOT_EQUIVALENCE");
+ assert.equal(r.related_access_posture_review.acl_equivalent,false);
+ assert.equal(r.related_access_posture_review.rights_approved,false);
+ assert.ok(r.blocking_gates.includes(
+   "PAIRWISE_ACCESS_POSTURES_NOT_INDEPENDENTLY_ATTESTED"));
+});
+test("related ACL requires both source lineage and original ACL",()=>{
+ for(const req of [
+   {cascade_input:input,access_posture:acl,related_access_posture:translatedAcl},
+   {cascade_input:input,source_lineage:lineage,related_access_posture:translatedAcl}
+ ])assert.throws(()=>prepare(req),/INVALID_ECO_RELATED_ACCESS_POSTURE/);
+});
+test("related ACL rejects wrong source, stale revision and identity leakage",()=>{
+ for(const bad of [
+   {...translatedAcl,source_ref:"synthetic:unrelated"},
+   {...translatedAcl,source_revision:"stale"},
+   {...translatedAcl,source_id:""},
+   {...translatedAcl,permissions:[{type:"user",role:"owner",
+     emailAddress:"private@example.invalid"}]},
+   {...translatedAcl,provider_authenticated:true}
+ ])assert.throws(()=>prepare({cascade_input:input,source_lineage:lineage,
+   access_posture:acl,related_access_posture:bad}),
+   /INVALID_ECO_RELATED_ACCESS_POSTURE|INVALID_ECO_ACCESS_POSTURE/);
+});
+test("H0 omits pairwise access classes and never upgrades rights",()=>{
+ const r=prepare({cascade_input:input,source_lineage:lineage,
+   access_posture:acl,related_access_posture:translatedAcl,
+   requested_hydration:"H0"});
+ assert.deepEqual(r.related_access_posture_review,{state:"NOT_REQUESTED"});
+ assert.equal(r.hydration.H2.state,"NOT_REQUESTED");
+ assert.equal(r.permissions.public_publish,false);
+});
