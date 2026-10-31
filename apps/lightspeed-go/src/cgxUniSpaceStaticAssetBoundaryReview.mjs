@@ -40,7 +40,11 @@ export function reviewUniSpaceStaticAssetBoundary(input){
   if(isStatic&&!item.owner_clearance)risks.push('OWNER_CLEARANCE_MISSING');
   if(item.scope!=='ONE_OBJECT')risks.push('NOT_EXACT_OBJECT_SCOPED');
   if(item.source_class==='UNKNOWN')risks.push('SOURCE_CLASS_UNKNOWN');
-  results.push(Object.freeze({asset_id:item.asset_id,source_blob_sha:item.blob_sha,static_source_path:isStatic,review_result:risks.length?'SOURCE_RISK_HOLD':'SOURCE_METADATA_ONLY_NOT_RELEASE_PROOF',risk_codes:Object.freeze(risks)}));
+  results.push(Object.freeze({asset_id:item.asset_id,source_blob_sha:item.blob_sha,static_source_path:isStatic,
+   // Source-stage caller declarations: retained for exact source-to-build comparison.
+   // These are NOT independently signed rights, owner clearance or release proof.
+   source_class:item.source_class,scope:item.scope,rights:item.rights,owner_clearance:item.owner_clearance,
+   review_result:risks.length?'SOURCE_RISK_HOLD':'SOURCE_METADATA_ONLY_NOT_RELEASE_PROOF',risk_codes:Object.freeze(risks)}));
  }
  const riskCount=results.filter(r=>r.risk_codes.length>0).length;
  return Object.freeze({schema:STATIC_BOUNDARY_SCHEMA,state:'SOURCE_REVIEW_ONLY',parent_filespace:'Cognigrex.cgx',filespace:s.filespace,candidate_object_id:s.object_id,evidence_class:s.evidence_class,alias:'LOAD.cgx',alias_role:'ALEXANDRIA_ENTRY_NOT_PARENT',asset_count:results.length,source_risk_count:riskCount,assets:Object.freeze(results),risk_signal:riskCount?'SOURCE_STATIC_BOUNDARY_REVIEW_REQUIRED':'NO_SOURCE_RISK_IN_SUPPLIED_METADATA',source_scan_verified:false,host_http_verified:false,dist_verified:false,release_accepted:false,canonical_mutation:false,network_fetch:false,source_bytes_transferred:0,offline_hydration:'H0_METADATA_ONLY',gate:'HOLD_ISSUE_158_AND_161',next_step:'INDEPENDENT_ANONYMOUS_REVOKED_OWNER_HTTP_AND_BUILT_DIST_READBACK',claim_boundary:'Provider-supplied Git metadata is not an authenticated deployed host/browser test; no public-release inference.'});
