@@ -117,3 +117,55 @@ export function reviewSecondCycleClaim(input){
   ecological_effect_verified:false,owner_accepted:false,
   public_release_authorised:false,field_deployment_authorised:false};
 }
+
+/**
+ * Source-only semantic guard for two physically distinct Second Cycle
+ * coefficients sharing a symbol in a human-readable formula library.
+ * All values/anchors are caller-declared, never provider-attested here.
+ * No source values are emitted and no coefficient can be substituted.
+ */
+export function reviewSecondCycleCoefficientRoles(input){
+ const top=new Set(["source_ref","source_revision","source_sha256","flow","drag"]);
+ if(!input||typeof input!=="object"||Array.isArray(input)||
+    Object.keys(input).some(k=>!top.has(k))||
+    !ref(input.source_ref)||!ref(input.source_revision)||
+    typeof input.source_sha256!=="string"||
+    !/^[a-f0-9]{64}$/i.test(input.source_sha256))
+   throw Error("INVALID_SECOND_CYCLE_COEFFICIENT_ROLES");
+ const keys=new Set(["formula_id","sheet_ref","parameter_cell_ref","role",
+   "symbol","numeric_value","unit","evidence_class"]);
+ const specs={
+   flow:{formula_id:"FM-001",sheet_ref:"07_Flow_Mist_Model",
+     parameter_cell_ref:"B5",role:"flow_coefficient"},
+   drag:{formula_id:"FM-004",sheet_ref:"11_Anchor_Mooring",
+     parameter_cell_ref:"B4",role:"drag_coefficient"}
+ };
+ for(const kind of ["flow","drag"]){
+   const v=input[kind],spec=specs[kind];
+   if(!v||typeof v!=="object"||Array.isArray(v)||
+      Object.keys(v).some(k=>!keys.has(k))||
+      Object.entries(spec).some(([k,expected])=>v[k]!==expected)||
+      typeof v.symbol!=="string"||
+      !/^[A-Za-z][A-Za-z0-9_]{0,15}$/.test(v.symbol)||
+      typeof v.numeric_value!=="number"||
+      !Number.isFinite(v.numeric_value)||v.numeric_value<=0||
+      v.numeric_value>100||v.unit!=="ratio"||
+      v.evidence_class!=="simulated")
+     throw Error("INVALID_SECOND_CYCLE_COEFFICIENT_ROLES");
+ }
+ const overloaded=input.flow.symbol===input.drag.symbol;
+ return {
+   state:overloaded?"R1_COEFFICIENT_SYMBOL_OVERLOAD_HOLD":
+     "R1_DISTINCT_COEFFICIENT_SYMBOLS_REVIEW_ONLY",
+   flow_formula_id:"FM-001",drag_formula_id:"FM-004",
+   same_symbol_distinct_roles:overloaded,
+   distinct_parameter_anchors:true,
+   different_declared_baselines:input.flow.numeric_value!==input.drag.numeric_value,
+   coefficient_interchange_allowed:false,
+   provider_source_cells_fetched_by_module:false,
+   provider_identity_authenticated_by_module:false,
+   physical_model_validated:false,field_outcome_verified:false,
+   native_admitted:false,public_release_authorised:false,
+   stage:"R1_REVIEW_ONLY"
+ };
+}
