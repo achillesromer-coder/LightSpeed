@@ -122,7 +122,14 @@
       "status": "HOST_NATIVE_HOLD",
       "problem": "Source and Windows CI tests exist, but no current connected BouwerBase cold-start/native operational receipt.",
       "next": "When connected inspect native runtime/status marker, do actual cold-start/restart/rollback and signed host proof; duplicate wizard cleanup remains held.",
-      "owner_question": "host reconnection/lease when available"
+      "owner_question": "host reconnection/lease when available",
+      "source_ci_review_2026_11_01": {
+        "head": "c3fec17396a3d6333462fc2880e8ed9de6af7ade",
+        "runtime_productization_run": "https://github.com/achillesromer-coder/LightSpeed/actions/runs/41233129943",
+        "conclusion": "success",
+        "native_cold_start_status": "UNVERIFIED",
+        "host_execution": "NONE"
+      }
     },
     {
       "id": "I-02",
@@ -160,6 +167,66 @@
         "interpretation": "Green workflow means source-only negative audits ran, NOT that issuer, lease scope, replay or downstream effectful runtime are safe. No authenticated issuer/signature, revocation/consumption registry, host handshake, signed DBR or native acceptance was tested.",
         "native_status": "HOST_NATIVE_HOLD",
         "next": "Qualify accepted issuer/signature/RootAuthority and request-bound object/tool/resource/nonce consumption against existing runtime ABI; add fail-closed negatives in existing review path before any host acceptance."
+      },
+      "lease_abi_compatibility_review_2026_11_01": {
+        "evidence_class": "AUTHENTICATED_GITHUB_SOURCE_BLOB_AND_CI_READBACK; SOURCE_ONLY_CONTRACT_NEGATIVE",
+        "review_branch": "review/cgx-ls-unified-bootstrap-20261028",
+        "review_pr": "https://github.com/achillesromer-coder/LightSpeed/pull/206",
+        "observed_head": "c3fec17396a3d6333462fc2880e8ed9de6af7ade",
+        "native_lease_contract": {
+          "path": "cgx/domain_templates/execution_lease_contract.json",
+          "blob": "637de5a3b904b5df0e865dd8f9477b3e7750c3d7",
+          "schema": "CGX-EXECUTION-LEASE-CONTRACT/0.1",
+          "fields": [
+            "issued_by",
+            "subject_agent",
+            "valid_from",
+            "valid_until",
+            "scope (structured object)"
+          ]
+        },
+        "bootstrap_handshake": {
+          "path": "cgx/bootstrap/cgxHandshakeReview.mjs",
+          "blob": "7f7a559aa2bccc4f1aef9761f5617d3dfee09a3e",
+          "schema": "CGX-BOOTSTRAP-HANDSHAKE-REVIEW/0.1",
+          "fields": [
+            "signer_ref.key_id",
+            "target_object_id",
+            "expires_utc",
+            "scope (single enum)"
+          ]
+        },
+        "negative_tests": {
+          "path": "cgx/bootstrap/cgxHandshakeReview.test.mjs",
+          "blob": "c643500a753986c71e0789a792056c9ff5c3e46a",
+          "finding": "Unmapped native lease DENIED; cosmetically mapped issuer/scope/nonce remains UNVERIFIED_SHAPE_REVIEW with may_execute=false."
+        },
+        "ci": [
+          {
+            "name": "CGX Unified Bootstrap Review Validation",
+            "run": "https://github.com/achillesromer-coder/LightSpeed/actions/runs/41233129913",
+            "conclusion": "success"
+          },
+          {
+            "name": "Runtime Productization Validation",
+            "run": "https://github.com/achillesromer-coder/LightSpeed/actions/runs/41233129943",
+            "conclusion": "success"
+          },
+          {
+            "name": "LightSpeed Surface Validation",
+            "run": "https://github.com/achillesromer-coder/LightSpeed/actions/runs/41233129884",
+            "conclusion": "success"
+          },
+          {
+            "name": "Merovingian Project Routing",
+            "run": "https://github.com/achillesromer-coder/LightSpeed/actions/runs/41233129878",
+            "conclusion": "success"
+          }
+        ],
+        "status": "SOURCE_REVIEW_CI_VERIFIED_NATIVE_HOLD",
+        "blocked_gate": "No authenticated ABI adapter, issuer/signature RootAuthority, current revocation, request-bound scope, nonce consumption, trusted host clock or signed DBR readback. Green CI does not qualify operational authority.",
+        "next": "On the existing runtime authority boundary, specify a versioned non-authorising ABI translation contract; test forged issuer, stale/revoked lease, wrong object/tool/resource, replay and expiry against authenticated host proof before any native admission.",
+        "effectful_actions": "NONE"
       }
     },
     {
