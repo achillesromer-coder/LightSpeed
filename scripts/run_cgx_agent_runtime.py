@@ -111,6 +111,13 @@ def validate_lease(
     if not isinstance(lease, dict):
         return False, ["execution-lease-invalid"], summary
 
+    # Required reference fields are typed identifiers only; checking their shape
+    # does not authenticate the issuer, referenced receipt, or native DBR.
+    def require_ref(field: str, reason: str) -> None:
+        value = lease.get(field)
+        if not isinstance(value, str) or not value.strip():
+            reasons.append(reason)
+
     # Structural identity checks are necessary but NOT issuer authentication.
     # Cryptographic issuer/RootAuthority verification and replay consumption
     # remain separate native host gates.
@@ -186,24 +193,19 @@ def validate_lease(
     phase = str(lease.get("authority_phase") or "")
     if phase not in {"PRE_LAUNCH","LAUNCH_TRANSITION","DISTRIBUTED_OPERATION","SUCCESSION_OR_RECOVERY"}:
         reasons.append("lease-authority-phase-invalid")
-    if not lease.get("authority_phase_ref"):
-        reasons.append("lease-authority-phase-ref-missing")
+    require_ref("authority_phase_ref", "lease-authority-phase-ref-missing")
     if EXECUTION_CLASS_RANK[execution_class] >= EXECUTION_CLASS_RANK["DIGITAL_WRITE"]:
-        if not lease.get("rollback_or_recovery_ref"):
-            reasons.append("lease-rollback-or-recovery-ref-missing")
+        require_ref("rollback_or_recovery_ref", "lease-rollback-or-recovery-ref-missing")
     if EXECUTION_CLASS_RANK[execution_class] >= EXECUTION_CLASS_RANK["EXTERNAL_ACTION"]:
-        if not lease.get("stop_authority_ref"):
-            reasons.append("lease-stop-authority-missing")
-        if not lease.get("safe_state_ref"):
-            reasons.append("lease-safe-state-missing")
+        require_ref("stop_authority_ref", "lease-stop-authority-missing")
+        require_ref("safe_state_ref", "lease-safe-state-missing")
     if consequential:
         for field in ("assurance_receipt_ref", "custodial_receipt_ref", "risk_acceptance_ref"):
-            if not lease.get(field):
-                reasons.append("lease-" + field.replace("_", "-") + "-missing")
-        if phase in {"PRE_LAUNCH","LAUNCH_TRANSITION"} and not lease.get("root_authority_receipt_ref"):
-            reasons.append("lease-root-authority-receipt-ref-missing")
-    if execution_depth == "publish" and not lease.get("release_receipt_ref"):
-        reasons.append("lease-release-receipt-ref-missing")
+            require_ref(field, "lease-" + field.replace("_", "-") + "-missing")
+        if phase in {"PRE_LAUNCH","LAUNCH_TRANSITION"}:
+            require_ref("root_authority_receipt_ref", "lease-root-authority-receipt-ref-missing")
+    if execution_depth == "publish":
+        require_ref("release_receipt_ref", "lease-release-receipt-ref-missing")
     return not reasons, reasons, summary
 
 def atomic_write(path: Path, payload: dict[str, Any]) -> None:
