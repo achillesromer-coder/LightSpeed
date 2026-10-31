@@ -132,6 +132,11 @@
       "id": "C19",
       "input": "Historical S91 seed-child and first-file child carriers reuse the same local Object_ID label for different exact R0 carrier byte sequences, while subsequent S92 rebuilt child carriers have new instance bytes and labels. The shared semantic family candidate alone is not proof of instance equivalence or current namespace authority.",
       "expected": "VERSION_SCOPED_LOCAL_ID_COLLISION; preserve both S91 source instances, their original hashes and lineage, and separate S92 instances. Do not deduplicate by local label, mint or promote a canonical child Object_ID, transfer authority, or infer native DBR admission until exact current source/version/owner/rights/ACL and signed RootAuthority/DBR readback are qualified."
+    },
+    {
+      "id": "C20",
+      "input": "A versioned historical working architecture represents LightSpeed as a direct /lightspeed/ parent-root folder, while a later Cognigrex parent topology review blueprint places LS.cgx beneath EMASSC.cgx. Both are source-stage representations with different provenance and chronology; neither document supplies current signed native child binding.",
+      "expected": "VERSIONED_TOPOLOGY_FRONTIER; preserve the earlier folder-route/source alias and the later proposed semantic parent edge as distinct source-scoped assertions. Do not rewrite historical R0, infer SAME_AS or accepted reparenting, duplicate LS.cgx as a peer child, or promote either topology to native authority without owner-qualified version/rights/ACL, signed RootAuthority and independent DBR readback."
     }
   ],
   "validation_state": "STATIC_SOURCE_REVIEW_ONLY",
