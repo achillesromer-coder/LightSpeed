@@ -96,3 +96,20 @@ test('valid leap-day and explicit offset remain source-review only',()=>{
  assert.ok(!r.holds.includes('INVALID_LEASE_EXPIRY'));
  assert.equal(r.may_execute,false);
 });
+
+test('portable transfer targets reject aliasing, reserved devices and ambiguous segments',()=>{
+ for(const target_relative_path of [
+  'staged//chunk1','staged/./chunk1','staged/CON','staged/CON.txt',
+  'staged/aux','staged/NUL.bin','staged/COM1.log','staged/LPT9',
+  'staged/trailing.','staged/trailing ','staged/ leading',
+  'staged/cafe\u0301.txt','staged/\u202ehidden'
+ ]){
+  assert.equal(planCGXHandshake({...base,exchange:{...exchange,target_relative_path}}).reason,
+   'UNSAFE_TRANSFER_TARGET',target_relative_path);
+ }
+ for(const target_relative_path of ['staged/chunk1','staged/café.txt','staged/report_v2.json']){
+  const result=planCGXHandshake({...base,exchange:{...exchange,target_relative_path}});
+  assert.equal(result.status,'UNVERIFIED_SHAPE_REVIEW',target_relative_path);
+  assert.equal(result.may_execute,false);
+ }
+});
