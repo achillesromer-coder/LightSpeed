@@ -177,3 +177,27 @@ test('rights revocation after an R3 review render clears stale status before R2 
  assert.equal(denied.status,'DENIED');
  assert.equal(flatten(mount),'');
 });
+
+
+// Source-only DOM regression: changing a selection to another Grex or an
+// incorrect parent must erase the previous private status, not leave stale H0.
+test('#158 cross-Grex or wrong-parent selection clears stale private status before denial',()=>{
+ for(const invalid of [
+  {...selection,domain:'romer'},
+  {...selection,parent_file_space:'Romer.cgx'},
+  {...selection,file_space:'Romer.cgx'}
+ ]){
+  const mount=fakeMount();
+  assert.equal(render({...input,mount}).status,'RENDERED_SOURCE_REVIEW');
+  assert.match(flatten(mount),/fixture:eco:one/);
+  const result=render({...input,mount,selection:invalid});
+  assert.equal(result.status,'DENIED');
+  assert.equal(result.reason,'EXACT_CHILD_IDENTITY_REQUIRED');
+  assert.equal(flatten(mount),'');
+  assert.equal(mount.children.length,0);
+  assert.equal(result.host_authenticated,false);
+  assert.equal(result.public_release,false);
+  assert.equal(result.may_execute,false);
+  assert.ok(!JSON.stringify(result).includes(source.source_id));
+ }
+});
