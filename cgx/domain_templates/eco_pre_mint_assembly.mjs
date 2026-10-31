@@ -277,6 +277,60 @@ function reviewCellCrosswalk(pair,source,anchor,lineage,evidenceClass){
 }
 
 /**
+ * R1 source/translation crosswalk for human-readable symbolic expressions.
+ * Unlike executable spreadsheet formulas, these are source-authored text
+ * (e.g. scientific notation). Do not silently repair mojibake or infer
+ * formula correctness. Raw expression strings are never returned.
+ */
+function reviewSymbolicExpressionCrosswalk(pair,source,anchor,lineage,evidenceClass){
+  if(pair===null)return {state:"SYMBOLIC_EXPRESSION_CROSSWALK_NOT_SUPPLIED",
+    caller_declared_pair_compared:false,provider_cells_fetched_by_module:false,
+    scientific_equivalence_verified:false};
+  const allowed=new Set(["source_ref","source_revision","source_sha256",
+    "related_source_ref","related_revision_ref","original_cell","related_cell"]);
+  const cellAllowed=new Set(["sheet","cell","expression_text","evidence_class"]);
+  const validCell=c=>obj(c)&&Object.keys(c).every(k=>cellAllowed.has(k))&&
+    token(c.sheet)&&c.sheet.length<=64&&
+    /^[A-Z]{1,3}[1-9]\\d{0,6}$/.test(c.cell)&&
+    token(c.expression_text)&&c.expression_text.length<=256&&
+    c.evidence_class===evidenceClass;
+  if(!obj(pair)||Object.keys(pair).some(k=>!allowed.has(k))||
+    !source.proof_hash||!obj(anchor)||!obj(lineage)||
+    pair.source_ref!==source.source_ref||
+    pair.source_revision!==source.revision||
+    pair.source_sha256!==source.proof_hash||
+    pair.related_source_ref!==lineage.related_source_ref||
+    pair.related_revision_ref!==lineage.related_revision_ref||
+    !validCell(pair.original_cell)||!validCell(pair.related_cell)||
+    pair.original_cell.sheet!==anchor.sheet||
+    pair.original_cell.cell!==anchor.cell)
+    throw Error("INVALID_ECO_SYMBOLIC_EXPRESSION_CROSSWALK");
+  const a=pair.original_cell,b=pair.related_cell;
+  // Review flag only; Unicode symbols in the original remain unchanged.
+  const suspectedMojibake=s=>/[\\u00c2\\u00c3\\u00cf\\ufffd]/u.test(s);
+  const originalEncodingValid=!suspectedMojibake(a.expression_text);
+  const relatedEncodingValid=!suspectedMojibake(b.expression_text);
+  const textMatch=a.expression_text===b.expression_text;
+  const consistent=originalEncodingValid&&relatedEncodingValid&&textMatch;
+  return {
+    state:consistent?"R1_CALLER_DECLARED_SYMBOLIC_TEXT_MATCH_NOT_EQUIVALENCE":
+      "R1_CALLER_DECLARED_SYMBOLIC_EXPRESSION_DISCREPANCY_HOLD",
+    original_anchor_ref:anchor.sheet+"!"+anchor.cell,
+    related_cell_ref:b.sheet+"!"+b.cell,
+    expression_text_match:textMatch,
+    original_encoding_valid:originalEncodingValid,
+    related_encoding_valid:relatedEncodingValid,
+    caller_declared_pair_compared:true,
+    provider_cells_fetched_by_module:false,
+    provider_origin_authenticated_by_module:false,
+    independent_cell_readback_verified:false,
+    scientific_equivalence_verified:false,
+    source_rights_verified:false,native_admitted:false,
+    public_release_authorised:false
+  };
+}
+
+/**
  * Accept a review input, never an externally asserted "passed" receipt.
  * A fresh integrated cascade execution generates all actual executed flags.
  */
@@ -284,11 +338,13 @@ export function prepareEcoPreMintAssembly(request={}){
   if(!obj(request)||Object.keys(request).some(k=>![
     "cascade_input","geometry_descriptor","cell_anchor",
     "requested_hydration","observation_showcase","source_lineage","access_posture",
-    "related_access_posture","cell_crosswalk"].includes(k)))
+    "related_access_posture","cell_crosswalk",
+    "symbolic_expression_crosswalk"].includes(k)))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const {cascade_input,geometry_descriptor=null,cell_anchor=null,
     requested_hydration="H3",observation_showcase=null,source_lineage=null,
-    access_posture=null,related_access_posture=null,cell_crosswalk=null}=request;
+    access_posture=null,related_access_posture=null,cell_crosswalk=null,
+    symbolic_expression_crosswalk=null}=request;
   if(!obj(cascade_input)||!levels.includes(requested_hydration))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const executed=runEcoReviewCascade(cascade_input);
@@ -308,6 +364,8 @@ export function prepareEcoPreMintAssembly(request={}){
   const relatedAccess=reviewRelatedAccessPosture(related_access_posture,
     access_posture,source_lineage,{...source,id:executed.source_reference.id});
   const pair=reviewCellCrosswalk(cell_crosswalk,source,cell_anchor,source_lineage,executed.evidence_class);
+  const symbolic=reviewSymbolicExpressionCrosswalk(symbolic_expression_crosswalk,
+    source,cell_anchor,source_lineage,executed.evidence_class);
   let showcase=null;
   if(observation_showcase!==null){
     if(!obj(observation_showcase)||
@@ -344,6 +402,11 @@ export function prepareEcoPreMintAssembly(request={}){
     blockers.push("CELL_CROSSWALK_PROVIDER_ATTESTATION_AND_FULL_EQUIVALENCE_REQUIRED");
     if(pair.state==="R1_CALLER_DECLARED_CELL_DISCREPANCY_HOLD")
       blockers.push("SOURCE_TRANSLATION_CELL_DISCREPANCY");
+  }
+  if(symbolic_expression_crosswalk!==null){
+    blockers.push("SYMBOLIC_EXPRESSION_PROVIDER_ATTESTATION_REQUIRED");
+    if(symbolic.state==="R1_CALLER_DECLARED_SYMBOLIC_EXPRESSION_DISCREPANCY_HOLD")
+      blockers.push("SOURCE_TRANSLATION_SYMBOLIC_EXPRESSION_DISCREPANCY");
   }
   if(access_posture!==null)
     blockers.push("DECLARED_SOURCE_ACCESS_POSTURE_NOT_RIGHTS_APPROVAL");
@@ -396,6 +459,7 @@ export function prepareEcoPreMintAssembly(request={}){
     hydration:hydrate,geomatrix:geom,
     source_lineage_review:level>=2?lineage:{state:"NOT_REQUESTED"},
     source_cell_crosswalk_review:level>=2?pair:{state:"NOT_REQUESTED"},
+    source_symbolic_expression_crosswalk_review:level>=2?symbolic:{state:"NOT_REQUESTED"},
     access_posture_review:level>=2?access:{state:"NOT_REQUESTED"},
     related_access_posture_review:level>=2?relatedAccess:{state:"NOT_REQUESTED"},
     mint_showcase_review:level>=3&&showcase!==null?{
@@ -410,6 +474,7 @@ export function prepareEcoPreMintAssembly(request={}){
       {layer:"access",state:level>=2?access.state:"NOT_REQUESTED"},
       {layer:"related_access",state:level>=2?relatedAccess.state:"NOT_REQUESTED"},
       {layer:"cell_crosswalk",state:level>=2?pair.state:"NOT_REQUESTED"},
+      {layer:"symbolic_expression",state:level>=2?symbolic.state:"NOT_REQUESTED"},
       {layer:"semantic",state:"R1_REVIEW_ONLY"},
       {layer:"geometry",state:geom.state},
       {layer:"temporal",state:geom.time_frame_ref_present?"REFERENCE_ONLY":"MISSING_SOURCE_TIME_FRAME"},
@@ -419,6 +484,7 @@ export function prepareEcoPreMintAssembly(request={}){
     loss_ledger:["RAW_WORKBOOK_OR_PDF_BYTES_NOT_REPRODUCED",
       "NO_SOURCE_CELL_CONTENT_OR_FORMULA_READBACK",
       "CALLER_DECLARED_PAIRWISE_CELLS_NOT_INDEPENDENT_PROVIDER_ATTESTATION",
+      "SYMBOLIC_EXPRESSION_TEXT_NOT_INDEPENDENTLY_VERIFIED_OR_REPAIRED",
       "NO_METRIC_GEOMETRY_OR_CRS_TRANSFORM",
       "NO_R2_ONTOLOGY_OR_NATIVE_OBJECT_ID_PROOF",
       "NO_NATIVE_CCC_INSTALL_OR_DATASPACE_SYNC",
