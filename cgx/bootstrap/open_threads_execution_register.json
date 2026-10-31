@@ -227,6 +227,29 @@
         "blocked_gate": "No authenticated ABI adapter, issuer/signature RootAuthority, current revocation, request-bound scope, nonce consumption, trusted host clock or signed DBR readback. Green CI does not qualify operational authority.",
         "next": "On the existing runtime authority boundary, specify a versioned non-authorising ABI translation contract; test forged issuer, stale/revoked lease, wrong object/tool/resource, replay and expiry against authenticated host proof before any native admission.",
         "effectful_actions": "NONE"
+      },
+      "lease_abi_adapter_review_2026_11_01": {
+        "evidence_class": "AUTHENTICATED_GITHUB_SOURCE_BLOB_READBACK_AND_ACTIONS_JOB_LOG; SOURCE_ONLY_SYNTHETIC_NEGATIVES",
+        "review_pr": "https://github.com/achillesromer-coder/LightSpeed/pull/206",
+        "code_commit": "193111bed122961b150f1c04e198918b6398b266",
+        "tests_commit": "326f6f3d05c5c97f5913214094b11f6b949724b8",
+        "adapter_path": "cgx/bootstrap/cgxHandshakeReview.mjs",
+        "adapter_blob": "a105d49a743cef7238510ade033945b1400312fd",
+        "test_path": "cgx/bootstrap/cgxHandshakeReview.test.mjs",
+        "test_blob": "d1e3ba7cc0bea8c93d88afd6f96f6488cd28d5f2",
+        "schema": "CGX-NATIVE-LEASE-BOOTSTRAP-ABI-REVIEW/0.1",
+        "native_schema": "CGX-EXECUTION-LEASE-CONTRACT/0.1",
+        "workflow_run": "https://github.com/achillesromer-coder/LightSpeed/actions/runs/41243187015",
+        "workflow_job_id": 124661115979,
+        "node_tests": {
+          "passed": 68,
+          "failed": 0,
+          "new_adapter_tests": 5
+        },
+        "native_readiness": "HOST_NATIVE_HOLD",
+        "negative_scope": "Unknown ABI, revoked/suspended/consumed, expired/not-yet-valid, wrong object/tool/agent/domain/action/depth, missing/exceeded resource budget and unsupported effectful class DENIED. Forged issuer and repeated nonce remain UNVERIFIED_SHAPE_REVIEW with may_execute=false.",
+        "authority": "NON_AUTHORISING_SOURCE_PROJECTION_ONLY; NO SIGNATURE/REVOCATION/REPLAY REGISTRY/CLOCK/DBR/HOST RECEIPT",
+        "next": "At existing native authority boundary, obtain current RootAuthority signer/lease/revocation and trusted clock, atomic nonce consumption and signed DBR readback; separately test real host/peer; do not map this shape result to execution."
       }
     },
     {
