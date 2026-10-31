@@ -105,6 +105,16 @@ def validate_lease(
     summary: dict[str, Any] = {}
     if lease is None:
         return False, ["execution-lease-missing"], summary
+    if not isinstance(lease, dict):
+        return False, ["execution-lease-invalid"], summary
+
+    # Structural identity checks are necessary but NOT issuer authentication.
+    # Cryptographic issuer/RootAuthority verification and replay consumption
+    # remain separate native host gates.
+    for field in ("lease_id", "issued_by", "subject_agent"):
+        value = lease.get(field)
+        if not isinstance(value, str) or not value.strip():
+            reasons.append("lease-" + field.replace("_", "-") + "-invalid")
 
     lease_class = str(lease.get("lease_class") or "")
     summary = {
