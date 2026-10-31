@@ -335,7 +335,8 @@ def build_evidence(
         "services": services,
         "boot": {
             "existing_stack_prerequisites_ready": existing_stack_ready,
-            "complete_integrated_cgx_ready": integrated_cgx_ready,
+            "family_source_wiring_candidate": integrated_cgx_ready,
+            "complete_integrated_cgx_ready": False,
             "boot_executed_by_this_probe": False,
             "boot_requires_explicit_operator_action": True,
         },
