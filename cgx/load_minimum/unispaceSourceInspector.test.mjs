@@ -397,6 +397,7 @@ test('private cockpit maps exact review identity to non-elevated DAG',()=>{
  assert.equal(x.state,'SOURCE_REVIEW_ONLY');
  assert.equal(x.identity,selected.object_id);
  assert.equal(x.file_space,'Eco.cgx');
+ assert.equal(x.parent_file_space,'Cognigrex.cgx');
  assert.equal(x.presentation_stage,'R3_VIEW_PROPOSAL');
  assert.equal(x.next_step,'REQUEST_INDEPENDENT_NATIVE_ROOT_LEASE_ACL_DBR_AND_READBACK');
  assert.deepEqual(x.workflow.map(y=>y.stage),[
@@ -763,6 +764,7 @@ test('LS child cockpit enforces EMASSC parent rather than direct Cognigrex paren
  const accepted=cockpit({surface:'private',selection,inspector:online});
  assert.equal(accepted.state,'SOURCE_REVIEW_ONLY');
  assert.equal(accepted.file_space,'LS.cgx');
+ assert.equal(accepted.parent_file_space,'EMASSC.cgx');
  assert.equal(accepted.native_admitted,false);
  assert.equal(accepted.provider_readback,false);
  assert.ok(!JSON.stringify(accepted).includes('fixture:ls:source'));
@@ -775,6 +777,7 @@ test('LS child cockpit enforces EMASSC parent rather than direct Cognigrex paren
  const offline=inspect({...lsArgs,offline:true});
  const offlineAccepted=cockpit({surface:'private',selection,inspector:offline,offline:true});
  assert.equal(offlineAccepted.state,'SOURCE_REVIEW_ONLY');
+ assert.equal(offlineAccepted.parent_file_space,'EMASSC.cgx');
  assert.equal(offlineAccepted.native_admitted,false);
  assert.equal(offlineAccepted.provider_readback,false);
 });
