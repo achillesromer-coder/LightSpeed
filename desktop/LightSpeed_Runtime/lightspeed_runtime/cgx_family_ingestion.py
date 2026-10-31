@@ -104,6 +104,13 @@ def _load_counts(projection: dict[str, Any], domains: set[str]) -> dict[str, Any
             or summary.get("source_bodies_copied") != 0
             or len(records) > 10000 or len(frontier) > 1000):
         raise CGXFamilyIngestionError("LOAD_NOT_SOURCE_ONLY_OR_INVALID")
+    for registry_path, provenance in registries.items():
+        if (not isinstance(registry_path, str)
+                or not registry_path.startswith(("cgx/", "plugins/"))
+                or not isinstance(provenance, dict)
+                or not isinstance(provenance.get("git_blob"), str)
+                or re.fullmatch(r"[0-9a-f]{40}", provenance["git_blob"]) is None):
+            raise CGXFamilyIngestionError("LOAD_REGISTRY_PROVENANCE_INVALID")
     keys = set()
     categories: Counter[str] = Counter()
     domains_count: Counter[str] = Counter()
@@ -127,6 +134,24 @@ def _load_counts(projection: dict[str, Any], domains: set[str]) -> dict[str, Any
                 or record.get("native_absorbed") not in (None, False)
                 or record.get("installed_online") not in (None, False)):
             raise CGXFamilyIngestionError("LOAD_RECORD_PROOF_OR_ADMISSION_MISMATCH")
+        if cat == "ccc_route":
+            selectors = record.get("selector_sources")
+            sources = record.get("route_source_proofs")
+            if (not isinstance(selectors, list) or not selectors
+                    or len(selectors) != len(set(selectors))
+                    or not isinstance(sources, dict)
+                    or len(sources) != len(selectors)):
+                raise CGXFamilyIngestionError("CCC_ROUTE_PROVENANCE_MISMATCH")
+            for selector in selectors:
+                expected_path = f"plugins/packages/{selector}/references/capabilities.json"
+                item = sources.get(selector)
+                if (not isinstance(selector, str) or not isinstance(item, dict)
+                        or item.get("source_registry") != expected_path
+                        or expected_path not in registries
+                        or item.get("git_blob") != registries[expected_path]["git_blob"]):
+                    raise CGXFamilyIngestionError("CCC_ROUTE_PROVENANCE_MISMATCH")
+            if not any(sources[selector]["source_registry"] == reference for selector in selectors):
+                raise CGXFamilyIngestionError("CCC_ROUTE_PROVENANCE_MISMATCH")
         keys.add((cat, key))
         categories[cat] += 1
         domain = record.get("owner_domain")
