@@ -95,3 +95,35 @@ test("invalid time and nonfinite or negative numbers fail closed",()=>{
   {...base,numeric_value:Infinity,unit:"L/s"}
  ])assert.throws(()=>review(row),/INVALID_SECOND_CYCLE_REVIEW_INPUT/);
 });
+
+test("hydraulic available-power screen is typed W and remains a dependent synthetic proxy",()=>{
+ const r=review({claim_kind:"hydraulic_power_proxy",evidence_class:"simulated",
+  numeric_value:3.1488,unit:"W",source_ref:"synthetic:source",
+  issuer_ref:"synthetic:issuer"});
+ assert.equal(r.declared_unit,"W");
+ assert.ok(r.flags.includes("HYDRAULIC_POWER_PROXY_NOT_NET_OR_EXTRACTABLE_POWER"));
+ assert.ok(r.flags.includes("SAME_INPUT_ALGEBRA_NOT_INDEPENDENT_PHYSICAL_VALIDATION"));
+ assert.ok(r.flags.includes("HYDRAULIC_LOSSES_GEOMETRY_AND_BENCH_CALIBRATION_REQUIRED"));
+ assert.ok(r.flags.includes("SIMULATION_NOT_FIELD_OBSERVATION"));
+ assert.equal(r.physical_metric_verified,false);
+ assert.equal(r.field_observation_verified,false);
+ assert.equal(r.native_object_id,null);
+ assert.equal(r.db_readback,false);
+ assert.equal(r.public_release_authorised,false);
+ for(const unit of ["J","kW","L/s","mÂ²"])
+  assert.throws(()=>review({claim_kind:"hydraulic_power_proxy",
+   evidence_class:"simulated",numeric_value:3.1488,unit}),
+   /INVALID_SECOND_CYCLE_REVIEW_INPUT/);
+});
+test("hydraulic source assertion or observed label cannot self-verify a power outcome",()=>{
+ for(const evidence_class of ["source_asserted","observed"]){
+  const r=review({claim_kind:"hydraulic_power_proxy",evidence_class,
+   numeric_value:3.1488,unit:"W",source_ref:"synthetic:source",
+   source_revision:"synthetic:revision",issuer_ref:"synthetic:issuer"});
+  assert.equal(r.physical_metric_verified,false);
+  assert.equal(r.field_observation_verified,false);
+  assert.equal(r.owner_accepted,false);
+  assert.equal(r.public_release_authorised,false);
+  assert.ok(r.flags.includes("SAME_INPUT_ALGEBRA_NOT_INDEPENDENT_PHYSICAL_VALIDATION"));
+ }
+});
