@@ -30,13 +30,13 @@ const validInstant=value=>{
 // Reject aliases that Windows, POSIX or Unicode normalization can collapse.
 const safeRelativeTransferPath=path=>{
  if(path.startsWith("/")||path.startsWith(".")||path.includes("..")||
-    path.includes("\\")||/[:%]/.test(path)||path!==path.normalize("NFC")||
+    path.includes("\\")||/[:%<>"|?*\u007f-\u009f]/.test(path)||path!==path.normalize("NFC")||
     /[\u202a-\u202e\u2066-\u2069]/.test(path))return false;
  return path.split("/").every(segment=>{
   if(!segment||segment==="."||segment===".."||segment.trim()!==segment||
      /[. ]$/.test(segment))return false;
   const stem=segment.split(".")[0];
-  return !/^(?:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$/i.test(stem);
+  return !/^(?:CON|PRN|AUX|NUL|COM[1-9\u00b9\u00b2\u00b3]|LPT[1-9\u00b9\u00b2\u00b3])$/i.test(stem);
  });
 };
 const AUTHORITY="HOST_SIGNATURE_AND_DBR_NOT_VERIFIED_BY_PLANNER";
