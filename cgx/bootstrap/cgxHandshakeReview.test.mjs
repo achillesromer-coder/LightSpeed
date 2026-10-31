@@ -135,39 +135,7 @@ test('Windows-illegal characters, C1 controls and superscript device aliases fai
 
 test('Windows console device endpoints cannot masquerade as transfer files',()=>{
  for(const target_relative_path of [
-  'staged/CONIN
- const afterExpiry=planCGXHandshake({...base,
-  lease:{...base.lease,expires_utc:'2026-10-28T00:00:00Z'},exchange});
- assert.equal(afterExpiry.status,'UNVERIFIED_SHAPE_REVIEW');
- assert.ok(afterExpiry.holds.includes('TRANSFER_CREATED_AFTER_LEASE_EXPIRY'));
- assert.equal(afterExpiry.may_execute,false);
- const future=planCGXHandshake({...base,exchange:{...exchange,created_utc:'2026-10-29T00:00:00Z'}});
- assert.ok(future.holds.includes('FUTURE_TRANSFER_TIMESTAMP'));
- assert.equal(future.receiver_readback_independently_verified,false);
- assert.equal(future.may_execute,false);
-});
-test('malformed observation time is denied even if lease expiry is malformed',()=>{
- const result=planCGXHandshake({...base,now:'invalid',lease:{...base.lease,expires_utc:'invalid'}});
- assert.equal(result.status,'DENIED');
- assert.equal(result.reason,'INVALID_NOW');
-});
-, 'staged/CONOUT
- const afterExpiry=planCGXHandshake({...base,
-  lease:{...base.lease,expires_utc:'2026-10-28T00:00:00Z'},exchange});
- assert.equal(afterExpiry.status,'UNVERIFIED_SHAPE_REVIEW');
- assert.ok(afterExpiry.holds.includes('TRANSFER_CREATED_AFTER_LEASE_EXPIRY'));
- assert.equal(afterExpiry.may_execute,false);
- const future=planCGXHandshake({...base,exchange:{...exchange,created_utc:'2026-10-29T00:00:00Z'}});
- assert.ok(future.holds.includes('FUTURE_TRANSFER_TIMESTAMP'));
- assert.equal(future.receiver_readback_independently_verified,false);
- assert.equal(future.may_execute,false);
-});
-test('malformed observation time is denied even if lease expiry is malformed',()=>{
- const result=planCGXHandshake({...base,now:'invalid',lease:{...base.lease,expires_utc:'invalid'}});
- assert.equal(result.status,'DENIED');
- assert.equal(result.reason,'INVALID_NOW');
-});
-, 'staged/conin$.txt',
+  'staged/CONIN$', 'staged/CONOUT$', 'staged/conin$.txt',
   'staged/ConOut$.log', 'CONIN$/nested'
  ]){
   const result=planCGXHandshake({...base,exchange:{...exchange,target_relative_path}});
