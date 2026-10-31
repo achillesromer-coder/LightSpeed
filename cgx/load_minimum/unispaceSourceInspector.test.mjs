@@ -781,3 +781,39 @@ test('LS child cockpit enforces EMASSC parent rather than direct Cognigrex paren
  assert.equal(offlineAccepted.native_admitted,false);
  assert.equal(offlineAccepted.provider_readback,false);
 });
+
+ 
+// Source IDs and Object_IDs are opaque exact keys. Lone surrogates are not
+// valid Unicode scalar values and may change across JSON/provider boundaries.
+test('unpaired UTF-16 surrogates cannot become source or Object_ID scope',()=>{
+ for(const mark of ['\\uD800','\\uDC00']){
+  const changedId='fixture:eco:one'+mark;
+  const cases=[
+   {...args,focus_id:changedId,
+    nodes:[{...nodes[0],object_id:changedId},nodes[1]],
+    access:{...access,authorized_object_ids:[changedId]}},
+   {...args,nodes:[{...nodes[0],source_refs:['fixture:eco:source'+mark]},nodes[1]]},
+   {...args,nodes:[{...nodes[0],domain:'eco'+mark},nodes[1]]},
+   {...args,nodes:[{...nodes[0],file_space:'Eco.cgx'+mark},nodes[1]],
+    file_space:'Eco.cgx'+mark},
+   {...args,access:{...access,authorized_source_ids:['fixture:eco:source'+mark]}}
+  ];
+  for(const input of cases){
+   const denied=inspect(input);
+   assert.equal(denied.status,'DENIED');
+   assert.equal(denied.canonical_mutation,false);
+   assert.equal(denied.public_release,false);
+   assert.ok(!JSON.stringify(denied).includes('fixture:eco:source'));
+  }
+  const badEnvelope=inspect({...args,source_envelopes:[
+   {...source_envelopes[0],owner:'fixture'+mark}
+  ]});
+  assert.equal(badEnvelope.status,'SOURCE_REVIEW_ONLY');
+  assert.equal(badEnvelope.viewport.state,'FRONTIER');
+  assert.equal(badEnvelope.h2.source_claims[0].qualification,'FRONTIER_SOURCE_QUALIFICATION');
+  const deniedCockpit=cockpit({...statusInput,selection:{...selected,object_id:changedId}});
+  assert.equal(deniedCockpit.state,'DENIED');
+  assert.equal(deniedCockpit.native_admitted,false);
+ }
+ assert.equal(inspect(args).admission_stage,'R3_VIEW_PROPOSAL');
+});
