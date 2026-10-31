@@ -54,6 +54,7 @@ def load_source():
         "file_space": "LOAD.cgx",
         "summary": {
             "record_count": 1, "record_categories": {"conversion_source": 1},
+            "frontier_count": 0,
             "native_accepted": 0, "native_host_verified": False,
             "source_bodies_copied": 0,
         },
