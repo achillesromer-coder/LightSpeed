@@ -42,7 +42,8 @@ export function planUniSpaceDropPreflight({target,file,source,access,existing_so
   return result('TARGET_SCOPE_NOT_DECLARED');
  if(!label(file.name)||file.name==='.'||file.name==='..'||file.name.includes('..')||/[\\/:]/.test(file.name)||
     !Number.isSafeInteger(file.size)||file.size<1||file.size>MAX_BYTES||!mime.has(file.type)||
-    /[\u061c\u200b-\u200f\u202a-\u202e\u2060\u2066-\u2069\ufeff\p{Cs}]/u.test(file.name))
+    file.name!==file.name.normalize('NFC')||
+    /[\p{Default_Ignorable_Code_Point}\p{Cs}]/u.test(file.name))
   return result('FILE_METADATA_OR_SIZE_UNSUPPORTED');
  if(!identityLabel(source.source_id)||!identityLabel(source.version)||!identityLabel(source.owner)||!digest(source.sha256)||
     !rights.has(source.rights)||!classes.has(source.proof_class))
