@@ -31,7 +31,17 @@ const knownChildParents=Object.freeze({eco:'Cognigrex.cgx',romer:'Cognigrex.cgx'
 // The sole parent and Alexandria LOAD activation alias are not new child
 // FileSpaces. Unknown/custom domains cannot claim either namespace by label.
 const reservedNonChildSpaces=new Set(['Cognigrex.cgx','LOAD.cgx']);
+// A presentation alias differing only by case must not impersonate an
+// established Grex, parent or LOAD FileSpace as an unrelated custom child.
+// Native Resolve may later register an explicit alias; this source-only
+// inspector must not silently grant it a second namespace.
+const reservedDomainCasefold=new Set(Object.keys(knownChildSpaces).map(s=>s.toLowerCase()));
+const reservedSpaceCasefold=new Set(
+ [...Object.values(knownChildSpaces),...reservedNonChildSpaces].map(s=>s.toLowerCase()));
 const childSpaceMatches=n=>object(n)&&good(n.domain)&&good(n.file_space)&&
+ (!reservedDomainCasefold.has(n.domain.toLowerCase())||Object.hasOwn(knownChildSpaces,n.domain))&&
+ (!reservedSpaceCasefold.has(n.file_space.toLowerCase())||
+  Object.hasOwn(reservedChildSpaces,n.file_space)||reservedNonChildSpaces.has(n.file_space))&&
  (Object.hasOwn(knownChildSpaces,n.domain)?knownChildSpaces[n.domain]===n.file_space:
   !Object.hasOwn(reservedChildSpaces,n.file_space)&&!reservedNonChildSpaces.has(n.file_space));
 const hold=(reason)=>({schema:INSPECTOR_SCHEMA,status:'DENIED',reason,canonical_mutation:false,public_release:false});
