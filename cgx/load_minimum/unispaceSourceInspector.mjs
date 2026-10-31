@@ -9,7 +9,9 @@ const object=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 // Opaque identities, authority scopes and graph edges must not contain Unicode
 // directional/default-ignorable controls or alternate-normalisation spellings.
 // This is a source-review guard, not an authoritative CGX Object_ID resolver.
-const unambiguous=s=>good(s)&&s===s.normalize('NFC')&&!/[\p{Default_Ignorable_Code_Point}\p{Cc}]/u.test(s);
+// Reject unpaired UTF-16 surrogates too: they can be replaced during JSON or
+// provider transport and create ambiguous source/Object_ID round trips.
+const unambiguous=s=>good(s)&&s===s.normalize('NFC')&&!/[\p{Default_Ignorable_Code_Point}\p{Cc}\p{Cs}]/u.test(s);
 const safeNode=n=>object(n)&&unambiguous(n.object_id)&&!reservedChildIdentity(n.object_id)&&unambiguous(n.domain)&&
  unambiguous(n.file_space)&&Array.isArray(n.source_refs)&&n.source_refs.every(unambiguous)&&
  Array.isArray(n.edges)&&n.edges.every(e=>object(e)&&unambiguous(e.to)&&unambiguous(e.relation));
