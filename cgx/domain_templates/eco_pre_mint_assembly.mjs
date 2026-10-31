@@ -153,6 +153,48 @@ function reviewAccessPosture(posture,source){
     flags};
 }
 
+
+/**
+ * Compare caller-declared ACL classes for an original and a translated source.
+ * A permission-class match is NOT ACL equivalence, provider attestation,
+ * licence, rights approval, or permission to publish.
+ */
+function reviewRelatedAccessPosture(related,original,lineage,source){
+  if(related===null)return {state:"RELATED_ACCESS_POSTURE_NOT_SUPPLIED",
+    provider_authenticated_by_module:false,acl_equivalent:false,
+    rights_approved:false,public_release_authorised:false};
+  if(!obj(lineage)||!obj(original)||!obj(related)||
+     Object.keys(related).some(k=>![
+       "source_ref","source_id","source_revision",
+       "provider_observation_ref","permissions"].includes(k))||
+     related.source_ref!==lineage.related_source_ref||
+     related.source_revision!==lineage.related_revision_ref||
+     !token(related.source_id))
+    throw Error("INVALID_ECO_RELATED_ACCESS_POSTURE");
+  const a=reviewAccessPosture(original,source);
+  const b=reviewAccessPosture({
+    source_ref:related.source_ref,source_id:related.source_id,
+    provider_observation_ref:related.provider_observation_ref,
+    permissions:related.permissions
+  },{source_ref:lineage.related_source_ref,id:related.source_id});
+  const divergent=a.anyone_link_present!==b.anyone_link_present||
+    a.broad_group_or_domain_present!==b.broad_group_or_domain_present;
+  return {
+    state:divergent?"R1_DECLARED_ACCESS_POSTURE_DIVERGENCE_HOLD":
+      "R1_DECLARED_ACCESS_CLASSES_MATCH_NOT_EQUIVALENCE",
+    original_anyone_link_present:a.anyone_link_present,
+    related_anyone_link_present:b.anyone_link_present,
+    original_broad_group_or_domain_present:a.broad_group_or_domain_present,
+    related_broad_group_or_domain_present:b.broad_group_or_domain_present,
+    access_classes_divergent:divergent,
+    provider_authenticated_by_module:false,
+    related_provider_revision_authenticated_by_module:false,
+    independent_acl_readback_verified:false,
+    acl_equivalent:false,source_reuse_rights_verified:false,
+    rights_approved:false,public_release_authorised:false
+  };
+}
+
 function reviewCellAnchor(anchor,source){
   if(anchor===null)return {state:"SOURCE_CELL_ANCHOR_REQUIRED",
     sheet_ref:null,cell_ref:null,declared_anchor_matched:false,
@@ -242,11 +284,11 @@ export function prepareEcoPreMintAssembly(request={}){
   if(!obj(request)||Object.keys(request).some(k=>![
     "cascade_input","geometry_descriptor","cell_anchor",
     "requested_hydration","observation_showcase","source_lineage","access_posture",
-    "cell_crosswalk"].includes(k)))
+    "related_access_posture","cell_crosswalk"].includes(k)))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const {cascade_input,geometry_descriptor=null,cell_anchor=null,
     requested_hydration="H3",observation_showcase=null,source_lineage=null,
-    access_posture=null,cell_crosswalk=null}=request;
+    access_posture=null,related_access_posture=null,cell_crosswalk=null}=request;
   if(!obj(cascade_input)||!levels.includes(requested_hydration))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const executed=runEcoReviewCascade(cascade_input);
@@ -263,6 +305,8 @@ export function prepareEcoPreMintAssembly(request={}){
   const anchor=reviewCellAnchor(cell_anchor,source);
   const lineage=reviewSourceLineage(source_lineage,source);
   const access=reviewAccessPosture(access_posture,{...source,id:executed.source_reference.id});
+  const relatedAccess=reviewRelatedAccessPosture(related_access_posture,
+    access_posture,source_lineage,{...source,id:executed.source_reference.id});
   const pair=reviewCellCrosswalk(cell_crosswalk,source,cell_anchor,source_lineage,executed.evidence_class);
   let showcase=null;
   if(observation_showcase!==null){
@@ -303,6 +347,11 @@ export function prepareEcoPreMintAssembly(request={}){
   }
   if(access_posture!==null)
     blockers.push("DECLARED_SOURCE_ACCESS_POSTURE_NOT_RIGHTS_APPROVAL");
+  if(related_access_posture!==null){
+    blockers.push("PAIRWISE_ACCESS_POSTURES_NOT_INDEPENDENTLY_ATTESTED");
+    if(relatedAccess.access_classes_divergent)
+      blockers.push("SOURCE_TRANSLATION_ACCESS_POSTURE_DIVERGENCE");
+  }
   if(showcase!==null)
     blockers.push("ECO_OBSERVATION_SHOWCASE_NOT_NATIVE_MINT_OR_FIELD_EVIDENCE");
 
@@ -348,6 +397,7 @@ export function prepareEcoPreMintAssembly(request={}){
     source_lineage_review:level>=2?lineage:{state:"NOT_REQUESTED"},
     source_cell_crosswalk_review:level>=2?pair:{state:"NOT_REQUESTED"},
     access_posture_review:level>=2?access:{state:"NOT_REQUESTED"},
+    related_access_posture_review:level>=2?relatedAccess:{state:"NOT_REQUESTED"},
     mint_showcase_review:level>=3&&showcase!==null?{
       schema:showcase.schema,state:showcase.state,
       checks:showcase.checks,
@@ -358,6 +408,7 @@ export function prepareEcoPreMintAssembly(request={}){
       {layer:"source",state:source.proof_hash?"HASH_REFERENCE_VERIFIED":"R0_UNVERIFIED_THIS_RUN"},
       {layer:"lineage",state:level>=2?lineage.state:"NOT_REQUESTED"},
       {layer:"access",state:level>=2?access.state:"NOT_REQUESTED"},
+      {layer:"related_access",state:level>=2?relatedAccess.state:"NOT_REQUESTED"},
       {layer:"cell_crosswalk",state:level>=2?pair.state:"NOT_REQUESTED"},
       {layer:"semantic",state:"R1_REVIEW_ONLY"},
       {layer:"geometry",state:geom.state},
@@ -372,7 +423,8 @@ export function prepareEcoPreMintAssembly(request={}){
       "NO_R2_ONTOLOGY_OR_NATIVE_OBJECT_ID_PROOF",
       "NO_NATIVE_CCC_INSTALL_OR_DATASPACE_SYNC",
       "NO_RELATED_SOURCE_BYTE_EQUIVALENCE_OR_OWNER_PERMISSION_PROOF",
-      "NO_INDEPENDENT_ACL_RIGHTS_ATTESTATION"],
+      "NO_INDEPENDENT_ACL_RIGHTS_ATTESTATION",
+      "NO_PAIRWISE_PROVIDER_ACL_EQUIVALENCE_PROOF"],
     blocking_gates:[...new Set(blockers.concat(geom.flags))],
     permissions:{file_space_write:false,data_space_write:false,
       device_automation:false,public_publish:false,
