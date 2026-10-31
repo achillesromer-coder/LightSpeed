@@ -36,7 +36,8 @@ const safeRelativeTransferPath=path=>{
   if(!segment||segment==="."||segment===".."||segment.trim()!==segment||
      /[. ]$/.test(segment))return false;
   const stem=segment.split(".")[0];
-  // CONIN$ and CONOUT$ are Windows console device endpoints, not transfer files.\n  return !/^(?:CON|PRN|AUX|NUL|CONIN\$|CONOUT\$|COM[1-9\u00b9\u00b2\u00b3]|LPT[1-9\u00b9\u00b2\u00b3])$/i.test(stem);
+  // CONIN$ and CONOUT$ are Windows console device endpoints, not transfer files.
+  return !/^(?:CON|PRN|AUX|NUL|CONIN\$|CONOUT\$|COM[1-9\u00b9\u00b2\u00b3]|LPT[1-9\u00b9\u00b2\u00b3])$/i.test(stem);
  });
 };
 const AUTHORITY="HOST_SIGNATURE_AND_DBR_NOT_VERIFIED_BY_PLANNER";
