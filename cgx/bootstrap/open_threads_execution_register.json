@@ -272,6 +272,26 @@
         "native_readiness": "HOST_NATIVE_HOLD",
         "authority": "NO ISSUER/SIGNATURE/ROOT/REVOCATION/NONCE/DBR/HOST PROOF; NO NATIVE ADMISSION",
         "next": "Bind exact issuer/root, signed lease, request-bound nonce and scope to authenticated host/runtime verifier with independent DBR readback; keep #161 two-node proof separate."
+      },
+      "lease_abi_budget_ceiling_review_2026_11_01": {
+        "evidence_class": "AUTHENTICATED_GITHUB_SOURCE_BLOB_AND_ACTIONS_JOB_LOG_READBACK; SOURCE_ONLY_NEGATIVE",
+        "review_pr": "https://github.com/achillesromer-coder/LightSpeed/pull/206",
+        "source_commit": "1023d5eb5ae029205b7cd466cb04c276b29982c9",
+        "source_path": "cgx/bootstrap/cgxHandshakeReview.mjs",
+        "source_blob": "d575b69335ab8c5aa4d4e58ab24861045309a2ee",
+        "test_commit": "145c4faa78bcfa6b78ad01fa9167accee78a434f",
+        "test_path": "cgx/bootstrap/cgxHandshakeReview.test.mjs",
+        "test_blob": "0a60bded323298966b5a43d4b8ca0990a5ac570b",
+        "workflow_run": "https://github.com/achillesromer-coder/LightSpeed/actions/runs/41251855861",
+        "workflow_job_id": 124686857766,
+        "node_tests": {
+          "passed": 71,
+          "failed": 0
+        },
+        "negative_cases": "Empty, unknown, negative, fractional, string, infinite and inherited resource budget ceilings DENIED; valid additional zero ceiling remains source-only UNVERIFIED_SHAPE_REVIEW.",
+        "native_status": "HOST_NATIVE_HOLD",
+        "blocked_gate": "Source ABI budget shape is not issuer signature, RootAuthority, revocation, nonce consumption, trusted host time, tool installation or signed DBR proof.",
+        "effectful_actions": "NONE"
       }
     },
     {
