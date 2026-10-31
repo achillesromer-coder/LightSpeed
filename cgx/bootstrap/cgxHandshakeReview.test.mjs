@@ -113,3 +113,21 @@ test('portable transfer targets reject aliasing, reserved devices and ambiguous 
   assert.equal(result.may_execute,false);
  }
 });
+
+test('Windows-illegal characters, C1 controls and superscript device aliases fail closed',()=>{
+ for(const target_relative_path of [
+  'staged/report?.json','staged/data*.bin','staged/a|b','staged/a<b',
+  'staged/a>b','staged/"quoted".txt','staged/COM\u00b9.txt',
+  'staged/LPT\u00b2.log','staged/COM\u00b3','staged/del\u007f',
+  'staged/c1\u0085'
+ ]){
+  const result=planCGXHandshake({...base,exchange:{...exchange,target_relative_path}});
+  assert.equal(result.reason,'UNSAFE_TRANSFER_TARGET',JSON.stringify(target_relative_path));
+  assert.equal(result.status,'DENIED',JSON.stringify(target_relative_path));
+ }
+ for(const target_relative_path of ['staged/report_v2.json','staged/café.txt']){
+  const result=planCGXHandshake({...base,exchange:{...exchange,target_relative_path}});
+  assert.equal(result.status,'UNVERIFIED_SHAPE_REVIEW',target_relative_path);
+  assert.equal(result.may_execute,false);
+ }
+});
