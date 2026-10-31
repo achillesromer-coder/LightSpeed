@@ -909,3 +909,37 @@ test('single parent and LOAD alias cannot be impersonated as custom child FileSp
  assert.equal(review.native_admitted,undefined);
  assert.equal(review.host_authenticated,false);
 });
+
+
+test('case-folded reserved child, parent and LOAD names never create second FileSpace identity',()=>{
+ // Case differences are unresolved aliases, not independent qualified domains.
+ // No native Resolve or authenticated ACL proof is supplied by these fixtures.
+ const variants=[
+  {domain:'Eco',file_space:'Custom.cgx'},
+  {domain:'LS',file_space:'Custom.cgx'},
+  {domain:'custom',file_space:'eco.cgx'},
+  {domain:'custom',file_space:'emassc.cgx'},
+  {domain:'custom',file_space:'load.cgx'},
+  {domain:'custom',file_space:'cognigrex.cgx'}
+ ];
+ for(const variant of variants){
+  const x=inspect({...args,nodes:[{...nodes[0],...variant},nodes[1]],
+   file_space:variant.file_space});
+  assert.equal(x.status,'DENIED',JSON.stringify(variant));
+  assert.equal(x.reason,'FILESPACE_OR_ID_UNRESOLVED',JSON.stringify(variant));
+  assert.equal(x.canonical_mutation,false);
+  assert.equal(x.public_release,false);
+  assert.ok(!JSON.stringify(x).includes('fixture:eco:source'));
+ }
+ // Explicit cross-domain breadth and caller ACLs cannot admit a sibling
+ // whose display domain impersonates a reserved Grex by case.
+ const sibling=[nodes[0],{...nodes[1],domain:'LS',file_space:'Custom.cgx'}];
+ const halo=inspect({...args,nodes:sibling,
+  budgets:{max_cross_domains:1,max_cross_edges:1,max_hops:1},
+  access:{authorized_object_ids:['fixture:eco:one','fixture:romer:private'],
+   authorized_source_ids:['fixture:eco:source','fixture:romer:private-source']}});
+ assert.equal(halo.status,'DENIED');
+ assert.equal(halo.reason,'CHILD_FILESPACE_SCOPE_CONFLICT');
+ assert.ok(!JSON.stringify(halo).includes('fixture:romer:private-source'));
+ assert.equal(inspect(args).status,'SOURCE_REVIEW_ONLY');
+});
