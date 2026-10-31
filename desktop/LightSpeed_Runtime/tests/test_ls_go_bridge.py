@@ -2065,3 +2065,124 @@ def test_frontier_intake_identity_is_bounded_in_existing_command_and_job(tmp_pat
     command['frontier_request']['source_sha256'] = 'a' * 64
     command['frontier_request']['usage']['tool_calls'] = 1
     assert client.post('/api/v1/ls-go/commands', json=command, headers=headers).status_code == 400
+
+
+# CGX Achilles S92 owner review: read-only bridge integration.
+# Deliberately uses a stub rather than creating or promoting operational objects.
+class _CGXRootReviewEdgeStub:
+    enabled = True
+
+    def __init__(self):
+        self.review_writes = 0
+
+    def seed_proof_graphs(self, **_kwargs):
+        return None
+
+    def status(self):
+        return {"migration_applied": True, "enabled": True}
+
+    def graph(self, object_id):
+        assert object_id == "cgx:phase-a:42d99b46c0d322f08b59b7b7"
+        return {
+            "object": {"object_id": object_id, "state": "candidate"},
+            "representations": [{
+                "representation_type": "R0_source",
+                "state": "candidate",
+                "content_sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+            }],
+        }
+
+    def _semantic_graph_hash(self, object_id):
+        assert object_id == "cgx:phase-a:42d99b46c0d322f08b59b7b7"
+        return "a1d4555cec34326a3a674c94d82ffd742d34a34b7ec4302a876b9ccfb6f606e5"
+
+    def _prepare_review_packet(self, **_kwargs):
+        self.review_writes += 1
+        raise AssertionError("read-only preflight must never create review packets")
+
+
+def _cgx_root_review_body():
+    return {
+        "object_id": "cgx:phase-a:42d99b46c0d322f08b59b7b7",
+        "graph_sha256": "a1d4555cec34326a3a674c94d82ffd742d34a34b7ec4302a876b9ccfb6f606e5",
+        "carrier_sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+    }
+
+
+def _cgx_root_review_client(monkeypatch, tmp_path, edge):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    monkeypatch.setattr(ls_go_bridge, "build_representation_edge_store", lambda _root: edge)
+
+    def verified_owner(_confirmation, *, session_token=None, **_kwargs):
+        if session_token != "fixture-owner-session":
+            raise AssertionError("session token was not verified by route")
+        return "fixture:owner"
+
+    monkeypatch.setattr(ls_go_bridge, "_verified_owner_actor", verified_owner)
+    return TestClient(ls_go_bridge.create_app(tmp_path))
+
+
+def test_cgx_root_review_preflight_fails_closed_without_owner_session(tmp_path, monkeypatch):
+    edge = _CGXRootReviewEdgeStub()
+    client = _cgx_root_review_client(monkeypatch, tmp_path, edge)
+    result = client.post(
+        "/api/v1/representation-root-review/preflight",
+        json=_cgx_root_review_body(),
+    )
+    assert result.status_code == 401
+    assert edge.review_writes == 0
+
+
+def test_cgx_root_review_preflight_exact_owner_and_native_hash(tmp_path, monkeypatch):
+    edge = _CGXRootReviewEdgeStub()
+    client = _cgx_root_review_client(monkeypatch, tmp_path, edge)
+    result = client.post(
+        "/api/v1/representation-root-review/preflight",
+        headers={"X-LightSpeed-Session": "fixture-owner-session"},
+        json=_cgx_root_review_body(),
+    )
+    assert result.status_code == 200
+    payload = result.json()
+    assert payload["state"] == "READ_ONLY_PREFLIGHT_PASS"
+    assert payload["native_review_id"] == "LSGO-REVIEW-A128DC4AC722F2C0"
+    assert payload["owner_session_verified"] is True
+    assert payload["signed_execution_lease_verified"] is False
+    assert payload["native_review_inserted"] is False
+    assert payload["canonical_mutation"] is False
+    assert payload["parent_activated"] is False
+    assert edge.review_writes == 0
+    assert result.headers["Cache-Control"] == "no-store"
+
+
+def test_cgx_root_review_preflight_rejects_hash_drift_and_write_payload(tmp_path, monkeypatch):
+    edge = _CGXRootReviewEdgeStub()
+    client = _cgx_root_review_client(monkeypatch, tmp_path, edge)
+    headers = {"X-LightSpeed-Session": "fixture-owner-session"}
+    drift = {**_cgx_root_review_body(), "graph_sha256": "0" * 64}
+    response = client.post(
+        "/api/v1/representation-root-review/preflight",
+        headers=headers,
+        json=drift,
+    )
+    assert response.status_code == 409
+    injected = {**_cgx_root_review_body(), "execute": True}
+    response = client.post(
+        "/api/v1/representation-root-review/preflight",
+        headers=headers,
+        json=injected,
+    )
+    assert response.status_code == 400
+    assert edge.review_writes == 0
+
+
+def test_cgx_root_review_preflight_requires_enabled_representation_edge(tmp_path, monkeypatch):
+    edge = _CGXRootReviewEdgeStub()
+    edge.enabled = False
+    client = _cgx_root_review_client(monkeypatch, tmp_path, edge)
+    response = client.post(
+        "/api/v1/representation-root-review/preflight",
+        headers={"X-LightSpeed-Session": "fixture-owner-session"},
+        json=_cgx_root_review_body(),
+    )
+    assert response.status_code == 404
+    assert edge.review_writes == 0
