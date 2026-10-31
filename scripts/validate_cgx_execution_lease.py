@@ -242,6 +242,42 @@ def main():
             if result.returncode!=4 or expected not in reasons:
                 failures.append(f"CLI {label} negative failed: code={result.returncode}, reasons={reasons}, stderr={result.stderr[:200]}")
 
+    # CLI omitted targets must not bypass lease-declared scope. The existing
+    # fixture declares all three scoped identities, but the command omits
+    # target flags. A fail-closed exit must occur before any supervisor call.
+    x=base_lease()
+    x["execution_depths"].append("inspect")
+    x["scope"]["action_classes"].append("inspect")
+    x["scope"].update({
+        "object_ids":["cgx://review/allowed-object"],
+        "tool_scopes":["ccc:review:allowed-tool"],
+        "configuration_ids":["review-allowed-config"],
+    })
+    with tempfile.TemporaryDirectory(prefix="cgx-lease-omitted-targets-") as temp:
+        lease_path=Path(temp)/"synthetic-lease.json"
+        lease_path.write_text(json.dumps(x),encoding="utf-8")
+        argv=[sys.executable,str(ROOT/"scripts"/"run_cgx_agent_runtime.py"),
+              "--instruction","synthetic omitted-target scope rejection",
+              "--domain","romer","--execution-depth","inspect",
+              "--execution-class","COMPUTE_ONLY","--agent-id","Neo",
+              "--task-id","CGX-LAUNCH-006","--execute",
+              "--execution-lease-json",str(lease_path)]
+        result=subprocess.run(argv,capture_output=True,text=True,timeout=15,check=False)
+        try:
+            receipt=json.loads(result.stdout)
+            reasons=receipt["execution_lease"]["reasons"]
+        except (ValueError,KeyError,TypeError):
+            receipt={}
+            reasons=[]
+        expected={"lease-scope-requires-object","lease-scope-requires-tool",
+                  "lease-scope-requires-configuration"}
+        if (result.returncode!=4 or not expected.issubset(set(reasons))
+                or receipt.get("supervisor_receipt") is not None):
+            failures.append("CLI omitted target scope not fail-closed before supervisor: "
+                            +repr({"exit":result.returncode,"reasons":reasons,
+                                   "supervisor":receipt.get("supervisor_receipt"),
+                                   "stderr":result.stderr[:200]}))
+
     print({"status":"PASS" if not failures else "FAIL","failures":failures})
     return 1 if failures else 0
 
