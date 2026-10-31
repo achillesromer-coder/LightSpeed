@@ -77,6 +77,7 @@ def _family_identity(path: Path) -> dict[str, Any]:
         or not isinstance(children, dict) or not children):
         raise ValueError("SINGLE_CGX_PARENT_NOT_VERIFIED")
     seen = {SEMANTIC_ROOT}
+    filespaces = {"Cognigrex.cgx"}
     rows = []
     for name, child in sorted(children.items()):
         if not isinstance(child, dict):
@@ -87,9 +88,11 @@ def _family_identity(path: Path) -> dict[str, Any]:
         if (child.get("domain_id") != name
             or not isinstance(object_id, str) or not object_id.startswith("cgx:domain:")
             or object_id in seen or not isinstance(filespace, str)
-            or not filespace.endswith(".cgx") or not isinstance(parent, str)):
+            or not filespace.endswith(".cgx") or filespace in filespaces
+            or not isinstance(parent, str)):
             raise ValueError("FAMILY_ID_COLLISION_OR_INVALID")
         seen.add(object_id)
+        filespaces.add(filespace)
         rows.append({
             "domain": name, "semantic_object_id": object_id,
             "filespace": filespace, "parent_semantic_object_id": parent,
@@ -185,17 +188,26 @@ def _load_projection(path: Path | None) -> dict[str, Any]:
     for record in records:
         if not isinstance(record, dict):
             raise ValueError("ALEXANDRIA_RECORD_INVALID")
-        key = (record.get("category"), record.get("source_key"))
+        category, source_key = record.get("category"), record.get("source_key")
         ref, blob = record.get("source_registry"), record.get("source_git_blob")
-        if (key in unique or not isinstance(key[0], str) or not isinstance(key[1], str)
+        if (not isinstance(category, str) or not isinstance(source_key, str)
             or not isinstance(ref, str) or ref not in registries
             or not isinstance(registries[ref], dict) or registries[ref].get("git_blob") != blob
             or not isinstance(blob, str) or not HEX40.fullmatch(blob)
-            or record.get("admission") != "SOURCE_REGISTRY_ONLY"):
+            or record.get("admission") != "SOURCE_REGISTRY_ONLY"
+            or record.get("canonical_object_id") is not None
+            or record.get("native_absorbed") not in (None, False)
+            or record.get("installed_online") not in (None, False)):
+            raise ValueError("ALEXANDRIA_SOURCE_PROVENANCE_OR_COLLISION_HOLD")
+        key = (category, source_key)
+        if key in unique:
             raise ValueError("ALEXANDRIA_SOURCE_PROVENANCE_OR_COLLISION_HOLD")
         unique.add(key)
-        counts[key[0]] += 1
-    if summary.get("record_count") != len(unique) or summary.get("record_categories") != dict(counts):
+        counts[category] += 1
+    if (summary.get("record_count") != len(unique)
+        or summary.get("record_categories") != dict(counts)
+        or not isinstance(data.get("frontier"), list)
+        or summary.get("frontier_count") != len(data["frontier"])):
         raise ValueError("ALEXANDRIA_SUMMARY_NOT_RECONCILED")
     return {
         "state": "GIT_SOURCE_ONLY_NOT_CANONICAL",
