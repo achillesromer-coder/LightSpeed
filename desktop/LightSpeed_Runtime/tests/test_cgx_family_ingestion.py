@@ -57,6 +57,7 @@ def load_projection():
         "summary": {
             "record_count": 1, "record_categories": {"conversion_source": 1},
             "frontier_count": 0, "native_accepted": 0,
+            "selector_route_counts": {"achilles": 31, "neo": 27},
             "native_host_verified": False, "source_bodies_copied": 0,
         },
         "records": [{
@@ -115,6 +116,8 @@ def test_read_only_family_ingestion_uses_one_parent_and_child_hierarchy(tmp_path
     assert all(x["native_child_accepted"] is False for x in result["families"])
     assert result["load_alexandria"]["reference_count"] == 1
     assert result["load_alexandria"]["native_accepted"] == 0
+    assert result["load_alexandria"]["selector_source_route_counts"]["achilles"] == 31
+    assert result["load_alexandria"]["selector_routes_are_installed"] is False
     assert "PRIVATE_DO_NOT_EXPOSE" not in json.dumps(result)
     assert result["effects"]["canonical_db_writes"] == 0
     assert hashlib.sha256(db.read_bytes()).hexdigest() == before
@@ -150,6 +153,7 @@ def test_family_parent_collisions_or_cycles_fail_closed(tmp_path, mutate):
     lambda x: x["records"][0].update(admission="NATIVE_ACCEPTED"),
     lambda x: x["records"][0].update(source_git_blob="0" * 40),
     lambda x: x["records"][0].update(installed_online=True),
+    lambda x: x["summary"].update(selector_route_counts={"neo": "installed"}),
 ])
 def test_load_source_only_provenance_and_install_claims_fail_closed(tmp_path, mutation):
     family, load, db = fixture(tmp_path)
