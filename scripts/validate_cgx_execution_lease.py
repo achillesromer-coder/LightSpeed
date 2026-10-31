@@ -103,6 +103,26 @@ def main():
         if ok or expected_reason not in reasons:
             failures.append(label + ": expected " + expected_reason + "; got " + ",".join(reasons))
 
+    # Typed allowlists reject malformed and mixed-type values, even when the
+    # requested legitimate entry is also present. Source-only; not issuer proof.
+    malformed_allowlists = [
+        ("domains", ["romer", 42], "lease-domains-allowlist-invalid"),
+        ("domains", "romer", "lease-domains-allowlist-invalid"),
+        ("domains", None, "lease-domains-allowlist-invalid"),
+        ("execution_depths", ["execute", None], "lease-execution-depths-allowlist-invalid"),
+        ("execution_depths", "execute", "lease-execution-depths-allowlist-invalid"),
+        ("allowed_floors", ["Neo", {"unexpected": "claim"}], "lease-allowed-floors-allowlist-invalid"),
+        ("allowed_floors", ["Neo", " "], "lease-allowed-floors-allowlist-invalid"),
+        ("allowed_floors", {"0": "Neo"}, "lease-allowed-floors-allowlist-invalid"),
+    ]
+    for field, bad_value, expected_reason in malformed_allowlists:
+        x=base_lease()
+        x["root_authority_receipt_ref"]="fixture:root-approval"
+        x[field]=copy.deepcopy(bad_value)
+        ok,reasons,_=check(x)
+        if ok or expected_reason not in reasons:
+            failures.append(field + " malformed typed allowlist was not rejected: " + ",".join(reasons))
+
     x=base_lease()
     x["root_authority_receipt_ref"]="fixture:root-approval"
     ok,reasons,_=check(x,project_id="PROJECT-ONE")

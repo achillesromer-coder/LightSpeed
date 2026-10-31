@@ -77,6 +77,16 @@ def subset_scope(name: str, allowed: list[str] | None, requested: str | None, re
     elif requested not in allowed:
         reasons.append(f"lease-{name}-out-of-scope:{requested}")
 
+def validated_allowlist(name: str, value: Any, reasons: list[str]) -> set[str]:
+    # Lease scope fields must be explicit typed lists; stringification can admit
+    # malformed mixed-type claims as if they were approved identities.
+    if not isinstance(value, list) or not value or any(
+        not isinstance(item, str) or not item.strip() for item in value
+    ):
+        reasons.append(f"lease-{name}-allowlist-invalid")
+        return set()
+    return set(value)
+
 def validate_lease(
     lease: dict[str, Any] | None,
     *,
@@ -125,9 +135,11 @@ def validate_lease(
             reasons.append("lease-outside-validity-window")
     except (KeyError, ValueError, TypeError):
         reasons.append("lease-time-invalid")
-    if domain not in set(map(str, lease.get("domains") or [])):
+    domains = validated_allowlist("domains", lease.get("domains"), reasons)
+    if domain not in domains:
         reasons.append(f"lease-domain-out-of-scope:{domain}")
-    if execution_depth not in set(map(str, lease.get("execution_depths") or [])):
+    depths = validated_allowlist("execution-depths", lease.get("execution_depths"), reasons)
+    if execution_depth not in depths:
         reasons.append(f"lease-execution-depth-out-of-scope:{execution_depth}")
     ceiling = str(lease.get("max_cascade_class") or "")
     if ceiling not in CASCADE:
@@ -135,7 +147,7 @@ def validate_lease(
     elif CASCADE[cascade_class] > CASCADE[ceiling]:
         reasons.append(f"lease-cascade-exceeded:{cascade_class}>{ceiling}")
 
-    allowed_floors = set(map(str, lease.get("allowed_floors") or []))
+    allowed_floors = validated_allowlist("allowed-floors", lease.get("allowed_floors"), reasons)
     if not allowed_floors:
         reasons.append("lease-allowed-floors-empty")
     else:
