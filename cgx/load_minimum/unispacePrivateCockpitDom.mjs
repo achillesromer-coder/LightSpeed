@@ -67,6 +67,24 @@ export function renderUniSpacePrivateStatus({
   line(doc,'Next bounded action',status.next_step)
  );
  section.append(details);
+ // Explicit H0–H4 boundaries are descriptive only: never expose graph edges,
+ // source locators, hashes, capability installers or execution controls.
+ section.append(element(doc,'h3','Hydration boundaries — source review'));
+ const layers=doc.createElement('dl');
+ layers.append(
+  line(doc,'H0 Identity','Exact caller-scoped identity; native acceptance unverified'),
+  line(doc,'H1 Semantic edges',offline?'Unavailable offline — H0 metadata only':'Edges withheld from status projection'),
+  line(doc,'H2 Source and provenance',offline?'Unavailable offline — rights and revocation unverified':'Caller declarations only — no provider proof'),
+  line(doc,'H3 Qualified capabilities',offline?'Unavailable offline':'CCC discovery review only — none installed'),
+  line(doc,'H4 Permissioned execution','Denied — signed root, ACL, lease and DBR not verified')
+ );
+ section.append(layers);
+ section.append(element(doc,'h3','View intents — non-executing'));
+ const intents=doc.createElement('ul');
+ intents.setAttribute('aria-label','UniSpace review view intents');
+ for(const intent of status.accessibility.view_intents)
+  intents.append(element(doc,'li',intent.id+' — '+intent.state+(intent.selected?' — selected':'')));
+ section.append(intents);
  section.append(element(doc,'h3','Workflow proof gates'));
  const workflow=doc.createElement('ol');
  for(const step of status.workflow)
