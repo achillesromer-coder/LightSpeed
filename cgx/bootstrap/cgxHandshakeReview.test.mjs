@@ -73,3 +73,19 @@ test('malformed or timezone-free transfer timestamps are rejected before review'
 test('Windows drive-root transfer path is never treated as relative',()=>{
  assert.equal(planCGXHandshake({...base,exchange:{...exchange,target_relative_path:'C:/CGX/unsafe'}}).reason,'UNSAFE_TRANSFER_TARGET');
 });
+
+test('impossible calendar dates fail closed in transfer, lease expiry and supplied now',()=>{
+ for(const stamp of ['2026-02-30T00:00:00Z','2026-04-31T00:00:00Z','2026-10-28T00:00:00+15:00']){
+  assert.equal(planCGXHandshake({...base,exchange:{...exchange,created_utc:stamp}}).reason,'INVALID_TRANSFER_TIMESTAMP');
+  assert.ok(planCGXHandshake({...base,lease:{...base.lease,expires_utc:stamp}}).holds.includes('INVALID_LEASE_EXPIRY'));
+  assert.equal(planCGXHandshake({...base,now:stamp}).reason,'INVALID_NOW');
+ }
+});
+test('valid leap-day and explicit offset remain source-review only',()=>{
+ const r=planCGXHandshake({...base,now:'2028-02-29T12:00:00+10:00',
+  lease:{...base.lease,expires_utc:'2028-03-01T00:00:00Z'},
+  exchange:{...exchange,created_utc:'2028-02-29T12:00:00+10:00'}});
+ assert.equal(r.status,'UNVERIFIED_SHAPE_REVIEW');
+ assert.ok(!r.holds.includes('INVALID_LEASE_EXPIRY'));
+ assert.equal(r.may_execute,false);
+});

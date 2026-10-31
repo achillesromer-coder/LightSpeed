@@ -7,6 +7,25 @@ const SHA=/^[a-f0-9]{64}$/i;
 const id=x=>typeof x==="string"&&x.length>0&&x.length<=256&&!/[\u0000-\u001f]/.test(x);
 const obj=x=>x!==null&&typeof x==="object"&&!Array.isArray(x);
 const allowed=new Set(["read","metadata","digital_write","compute_only"]);
+// Calendar-valid, offset-aware timestamps only. Date.parse alone normalises
+// impossible days (e.g. February 30) and cannot qualify source chronology.
+const ISO_INSTANT=/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d+)?(Z|[+-]\d{2}:\d{2})$/;
+const validInstant=value=>{
+ if(typeof value!=="string")return false;
+ const m=ISO_INSTANT.exec(value);
+ if(!m)return false;
+ const year=Number(m[1]),month=Number(m[2]),day=Number(m[3]);
+ const hour=Number(m[4]),minute=Number(m[5]),second=Number(m[6]);
+ const leap=year%4===0&&(year%100!==0||year%400===0);
+ const days=[31,leap?29:28,31,30,31,30,31,31,30,31,30,31];
+ if(month<1||month>12||day<1||day>days[month-1]||hour>23||minute>59||second>59)return false;
+ const zone=m[7];
+ if(zone!=="Z"){
+  const offsetHour=Number(zone.slice(1,3)),offsetMinute=Number(zone.slice(4,6));
+  if(offsetHour>14||offsetMinute>59||(offsetHour===14&&offsetMinute!==0))return false;
+ }
+ return Number.isFinite(Date.parse(value));
+};
 const AUTHORITY="HOST_SIGNATURE_AND_DBR_NOT_VERIFIED_BY_PLANNER";
 // Distinct source-review holds: a claimed key, request scope or nonce is not host proof.
 const LEASE_BOUNDARY_HOLDS=Object.freeze([
@@ -25,9 +44,9 @@ export function planCGXHandshake({parent,child,lease,exchange=null,now=null}={})
  if(!allowed.has(lease.scope))return {status:"DENIED",reason:"UNRECOGNISED_LEASE_SCOPE"};
  const holds=[AUTHORITY,...LEASE_BOUNDARY_HOLDS],facts={};
  if(!obj(lease.signer_ref)||!id(lease.signer_ref.key_id))holds.push("SIGNED_LEASE_PROVIDER_REQUIRED");
- if(!Number.isFinite(Date.parse(lease.expires_utc??""))){holds.push("INVALID_LEASE_EXPIRY");}
+ if(!validInstant(lease.expires_utc)){holds.push("INVALID_LEASE_EXPIRY");}
  else if(now!==null){
-  if(!Number.isFinite(Date.parse(now)))return {status:"DENIED",reason:"INVALID_NOW"};
+  if(!validInstant(now))return {status:"DENIED",reason:"INVALID_NOW"};
   if(Date.parse(lease.expires_utc)<=Date.parse(now))holds.push("LEASE_EXPIRED");
  }
  if(exchange!==null){
@@ -35,9 +54,7 @@ export function planCGXHandshake({parent,child,lease,exchange=null,now=null}={})
   const required=["transfer_id","source_node_id","target_node_id","source_ref","source_sha256","size_bytes","target_root_id","target_relative_path","created_utc"];
   if(required.some(x=>exchange[x]===null||exchange[x]===undefined))return {status:"DENIED",reason:"MISSING_EXCHANGE_FIELD"};
   // Source-envelope chronology is shape data, never a provider timestamp attestation.
-  if(typeof exchange.created_utc!=="string"||
-     !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(exchange.created_utc)||
-     !Number.isFinite(Date.parse(exchange.created_utc)))return {status:"DENIED",reason:"INVALID_TRANSFER_TIMESTAMP"};
+  if(!validInstant(exchange.created_utc))return {status:"DENIED",reason:"INVALID_TRANSFER_TIMESTAMP"};
   if(![exchange.transfer_id,exchange.source_node_id,exchange.target_node_id,exchange.source_ref,exchange.target_root_id,exchange.target_relative_path].every(id)
   ||!SHA.test(exchange.source_sha256)||!Number.isSafeInteger(exchange.size_bytes)||exchange.size_bytes<0)
    return {status:"DENIED",reason:"INVALID_TRANSFER_ENVELOPE"};
