@@ -353,3 +353,27 @@ test('malformed optional native context allowlists fail closed without host auth
   }
  }
 });
+
+test('native ABI rejects malformed or unsupported declared budget ceilings',()=>{
+ const baseBudget=nativeABIBase.nativeLease.scope.resource_budgets;
+ const make=resource_budgets=>reviewNativeLeaseHandshakeABI({...nativeABIBase,
+  nativeLease:{...nativeABIBase.nativeLease,
+   scope:{...nativeABIBase.nativeLease.scope,resource_budgets}}});
+ for(const bad of [
+  {},{...baseBudget,memory_bytes:-1},{...baseBudget,io_bytes:1.5},
+  {...baseBudget,ops:'100'},{...baseBudget,unknown_cost:10},
+  {...baseBudget,io_bytes:Number.POSITIVE_INFINITY}
+ ]){
+  const r=make(bad);
+  assert.equal(r.status,'DENIED',JSON.stringify(bad));
+  assert.equal(r.reason,'NATIVE_RESOURCE_BUDGET_EXCEEDED_OR_UNBOUND');
+  assert.equal(r.may_execute,false);
+ }
+ const inherited=Object.create({compute_ms:100});
+ const r=make(inherited);
+ assert.equal(r.status,'DENIED');
+ assert.equal(r.reason,'NATIVE_RESOURCE_BUDGET_EXCEEDED_OR_UNBOUND');
+ const valid=make({...baseBudget,io_bytes:0});
+ assert.equal(valid.status,'UNVERIFIED_SHAPE_REVIEW');
+ assert.equal(valid.may_execute,false);
+});
