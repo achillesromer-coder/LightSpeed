@@ -300,7 +300,7 @@ export function planUniSpaceOperatorCockpit({
  return {
   schema:OPERATOR_COCKPIT_SCHEMA,state:'SOURCE_REVIEW_ONLY',
   identity:selection.object_id,file_space:selection.file_space,
-  parent_file_space:'Cognigrex.cgx',domain:selection.domain,
+  parent_file_space:selection.parent_file_space,domain:selection.domain,
   presentation_stage:offline?'H0_OFFLINE_UNVERIFIED':
     candidate?'R3_VIEW_PROPOSAL':'R2_REVIEW_FRONTIER',
   view:offline?'metadata-only':inspector.view,
