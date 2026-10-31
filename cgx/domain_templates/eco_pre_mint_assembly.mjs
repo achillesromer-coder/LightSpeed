@@ -377,6 +377,78 @@ function reviewFormulaInventoryDelta(inventory,source,lineage){
 }
 
 /**
+ * Reversible, cell-addressed review candidates for translated symbolic text.
+ * Caller supplies independently retrieved source cells. No text is emitted,
+ * rewritten or treated as authenticated by this module.
+ */
+function reviewSymbolicCorrectionBatch(batch,source,lineage,evidenceClass){
+  if(batch===null)return {state:"SYMBOLIC_CORRECTION_BATCH_NOT_SUPPLIED",
+    correction_records:[],source_cells_fetched_by_module:false,
+    source_or_translation_modified:false};
+  const keys=new Set(["source_ref","source_revision","source_sha256",
+    "related_source_ref","related_revision_ref","entries"]);
+  const entryKeys=new Set(["formula_id","original_cell","related_cell",
+    "review_action"]);
+  if(!obj(batch)||Object.keys(batch).some(k=>!keys.has(k))||
+     !obj(lineage)||!source.proof_hash||
+     batch.source_ref!==source.source_ref||
+     batch.source_revision!==source.revision||
+     batch.source_sha256!==source.proof_hash||
+     batch.related_source_ref!==lineage.related_source_ref||
+     batch.related_revision_ref!==lineage.related_revision_ref||
+     !Array.isArray(batch.entries)||batch.entries.length<1||
+     batch.entries.length>32)
+    throw Error("INVALID_ECO_SYMBOLIC_CORRECTION_BATCH");
+  const seenIds=new Set(),seenOriginal=new Set(),seenRelated=new Set();
+  const records=[];
+  for(const e of batch.entries){
+    if(!obj(e)||Object.keys(e).some(k=>!entryKeys.has(k))||
+       typeof e.formula_id!=="string"||
+       !/^FM-[0-9]{3}$/.test(e.formula_id)||
+       !obj(e.original_cell)||!obj(e.related_cell)||
+       !["REVIEW_TRANSLATION_ENCODING","PRESERVE_SOURCE_MATCH"].includes(e.review_action))
+      throw Error("INVALID_ECO_SYMBOLIC_CORRECTION_ENTRY");
+    const anchor={source_ref:source.source_ref,source_revision:source.revision,
+      source_sha256:source.proof_hash,
+      sheet:e.original_cell.sheet,cell:e.original_cell.cell};
+    const pair={source_ref:source.source_ref,source_revision:source.revision,
+      source_sha256:source.proof_hash,
+      related_source_ref:lineage.related_source_ref,
+      related_revision_ref:lineage.related_revision_ref,
+      original_cell:e.original_cell,related_cell:e.related_cell};
+    const checked=reviewSymbolicExpressionCrosswalk(
+      pair,source,anchor,lineage,evidenceClass);
+    const originalRef=e.original_cell.sheet+"!"+e.original_cell.cell;
+    const relatedRef=e.related_cell.sheet+"!"+e.related_cell.cell;
+    if(seenIds.has(e.formula_id)||seenOriginal.has(originalRef)||
+       seenRelated.has(relatedRef))
+      throw Error("DUPLICATE_ECO_SYMBOLIC_CORRECTION_ANCHOR");
+    seenIds.add(e.formula_id);seenOriginal.add(originalRef);
+    seenRelated.add(relatedRef);
+    const discrepant=checked.state===
+      "R1_CALLER_DECLARED_SYMBOLIC_EXPRESSION_DISCREPANCY_HOLD";
+    if(e.review_action!==(discrepant?
+       "REVIEW_TRANSLATION_ENCODING":"PRESERVE_SOURCE_MATCH"))
+      throw Error("ECO_SYMBOLIC_CORRECTION_ACTION_CONFLICT");
+    records.push({formula_id:e.formula_id,
+      original_cell_ref:originalRef,translated_cell_ref:relatedRef,
+      review_action:e.review_action,expression_text_match:checked.expression_text_match,
+      original_encoding_valid:checked.original_encoding_valid,
+      related_encoding_valid:checked.related_encoding_valid,
+      original_text_preserved:true,translated_text_modified:false,
+      source_bytes_embedded:false,provider_cells_fetched_by_module:false,
+      repair_applied:false,scientific_equivalence_verified:false});
+  }
+  const count=records.filter(x=>x.review_action==="REVIEW_TRANSLATION_ENCODING").length;
+  return {state:count?"R1_TRANSLATION_CORRECTION_CANDIDATES_HOLD":
+      "R1_DECLARED_SYMBOLIC_TEXT_MATCHES_NOT_EQUIVALENCE",
+    candidate_correction_count:count,compared_count:records.length,
+    correction_records:records,source_cells_fetched_by_module:false,
+    independent_provider_attestation:false,source_or_translation_modified:false,
+    native_admitted:false,public_release_authorised:false};
+}
+
+/**
  * Accept a review input, never an externally asserted "passed" receipt.
  * A fresh integrated cascade execution generates all actual executed flags.
  */
@@ -385,12 +457,14 @@ export function prepareEcoPreMintAssembly(request={}){
     "cascade_input","geometry_descriptor","cell_anchor",
     "requested_hydration","observation_showcase","source_lineage","access_posture",
     "related_access_posture","cell_crosswalk",
-    "symbolic_expression_crosswalk","formula_inventory"].includes(k)))
+    "symbolic_expression_crosswalk","formula_inventory",
+    "symbolic_correction_batch"].includes(k)))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const {cascade_input,geometry_descriptor=null,cell_anchor=null,
     requested_hydration="H3",observation_showcase=null,source_lineage=null,
     access_posture=null,related_access_posture=null,cell_crosswalk=null,
-    symbolic_expression_crosswalk=null,formula_inventory=null}=request;
+    symbolic_expression_crosswalk=null,formula_inventory=null,
+    symbolic_correction_batch=null}=request;
   if(!obj(cascade_input)||!levels.includes(requested_hydration))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const executed=runEcoReviewCascade(cascade_input);
@@ -413,6 +487,8 @@ export function prepareEcoPreMintAssembly(request={}){
   const symbolic=reviewSymbolicExpressionCrosswalk(symbolic_expression_crosswalk,
     source,cell_anchor,source_lineage,executed.evidence_class);
   const formulaInventory=reviewFormulaInventoryDelta(formula_inventory,source,source_lineage);
+  const symbolicCorrections=reviewSymbolicCorrectionBatch(symbolic_correction_batch,
+    source,source_lineage,executed.evidence_class);
   let showcase=null;
   if(observation_showcase!==null){
     if(!obj(observation_showcase)||
@@ -454,6 +530,11 @@ export function prepareEcoPreMintAssembly(request={}){
     blockers.push("SYMBOLIC_EXPRESSION_PROVIDER_ATTESTATION_REQUIRED");
     if(symbolic.state==="R1_CALLER_DECLARED_SYMBOLIC_EXPRESSION_DISCREPANCY_HOLD")
       blockers.push("SOURCE_TRANSLATION_SYMBOLIC_EXPRESSION_DISCREPANCY");
+  }
+  if(symbolic_correction_batch!==null){
+    blockers.push("SYMBOLIC_CORRECTION_BATCH_PROVIDER_ATTESTATION_REQUIRED");
+    if(symbolicCorrections.candidate_correction_count>0)
+      blockers.push("TRANSLATED_SYMBOLIC_TEXT_REPAIR_NOT_APPLIED");
   }
   if(formula_inventory!==null){
     blockers.push("FORMULA_INVENTORY_PROVIDER_ATTESTATION_REQUIRED");
@@ -513,6 +594,7 @@ export function prepareEcoPreMintAssembly(request={}){
     source_cell_crosswalk_review:level>=2?pair:{state:"NOT_REQUESTED"},
     source_symbolic_expression_crosswalk_review:level>=2?symbolic:{state:"NOT_REQUESTED"},
     formula_inventory_review:level>=2?formulaInventory:{state:"NOT_REQUESTED"},
+    symbolic_correction_batch_review:level>=2?symbolicCorrections:{state:"NOT_REQUESTED"},
     access_posture_review:level>=2?access:{state:"NOT_REQUESTED"},
     related_access_posture_review:level>=2?relatedAccess:{state:"NOT_REQUESTED"},
     mint_showcase_review:level>=3&&showcase!==null?{
@@ -529,6 +611,7 @@ export function prepareEcoPreMintAssembly(request={}){
       {layer:"cell_crosswalk",state:level>=2?pair.state:"NOT_REQUESTED"},
       {layer:"symbolic_expression",state:level>=2?symbolic.state:"NOT_REQUESTED"},
       {layer:"formula_inventory",state:level>=2?formulaInventory.state:"NOT_REQUESTED"},
+      {layer:"symbolic_corrections",state:level>=2?symbolicCorrections.state:"NOT_REQUESTED"},
       {layer:"semantic",state:"R1_REVIEW_ONLY"},
       {layer:"geometry",state:geom.state},
       {layer:"temporal",state:geom.time_frame_ref_present?"REFERENCE_ONLY":"MISSING_SOURCE_TIME_FRAME"},
@@ -539,6 +622,7 @@ export function prepareEcoPreMintAssembly(request={}){
       "NO_SOURCE_CELL_CONTENT_OR_FORMULA_READBACK",
       "CALLER_DECLARED_PAIRWISE_CELLS_NOT_INDEPENDENT_PROVIDER_ATTESTATION",
       "SYMBOLIC_EXPRESSION_TEXT_NOT_INDEPENDENTLY_VERIFIED_OR_REPAIRED",
+      "SYMBOLIC_CORRECTION_BATCH_NOT_APPLIED_TO_SOURCE",
       "NO_METRIC_GEOMETRY_OR_CRS_TRANSFORM",
       "NO_R2_ONTOLOGY_OR_NATIVE_OBJECT_ID_PROOF",
       "NO_NATIVE_CCC_INSTALL_OR_DATASPACE_SYNC",
