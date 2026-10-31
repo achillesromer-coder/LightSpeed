@@ -132,6 +132,12 @@ def _load_counts(projection: dict[str, Any], domains: set[str]) -> dict[str, Any
         domain = record.get("owner_domain")
         if domain in domains:
             domains_count[domain] += 1
+    selectors = summary.get("selector_route_counts", {})
+    if (not isinstance(selectors, dict) or len(selectors) > 32 or any(
+            not isinstance(name, str) or len(name) > 64
+            or type(count) is not int or count < 0 or count > 10000
+            for name, count in selectors.items())):
+        raise CGXFamilyIngestionError("LOAD_SELECTOR_DECLARATIONS_INVALID")
     if (summary.get("record_count") != len(keys)
             or summary.get("record_categories") != dict(categories)
             or summary.get("frontier_count") != len(frontier)
@@ -144,6 +150,8 @@ def _load_counts(projection: dict[str, Any], domains: set[str]) -> dict[str, Any
         "frontier_count": len(frontier),
         "categories": dict(sorted(categories.items())),
         "by_domain": dict(sorted(domains_count.items())),
+        "selector_source_route_counts": dict(sorted(selectors.items())),
+        "selector_routes_are_installed": False,
         "source_bodies_copied": 0,
         "native_accepted": 0,
         "provider_fetch_executed": False,
@@ -239,6 +247,7 @@ def build_oversight(
             "state": "LOAD_SOURCE_PROJECTION_NOT_CONFIGURED",
             "reference_count": 0, "source_registry_count": 0,
             "frontier_count": 0, "categories": {}, "by_domain": {},
+            "selector_source_route_counts": {}, "selector_routes_are_installed": False,
             "native_accepted": 0, "source_bodies_copied": 0,
         }
     )
