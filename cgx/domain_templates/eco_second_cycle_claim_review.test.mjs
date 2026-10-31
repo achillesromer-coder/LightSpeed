@@ -127,3 +127,35 @@ test("hydraulic source assertion or observed label cannot self-verify a power ou
   assert.ok(r.flags.includes("SAME_INPUT_ALGEBRA_NOT_INDEPENDENT_PHYSICAL_VALIDATION"));
  }
 });
+
+import {reviewSecondCycleCoefficientRoles as rolesReview} from "./eco_second_cycle_claim_review.mjs";
+test("synthetic Second Cycle coefficient symbol collision is held without numeric disclosure",()=>{
+ const src={source_ref:"synthetic:second-cycle",source_revision:"synthetic:revision",
+   source_sha256:"a".repeat(64)};
+ const flow={formula_id:"FM-001",sheet_ref:"07_Flow_Mist_Model",
+   parameter_cell_ref:"B5",role:"flow_coefficient",symbol:"Cd",
+   numeric_value:0.5,unit:"ratio",evidence_class:"simulated"};
+ const drag={formula_id:"FM-004",sheet_ref:"11_Anchor_Mooring",
+   parameter_cell_ref:"B4",role:"drag_coefficient",symbol:"Cd",
+   numeric_value:1.2,unit:"ratio",evidence_class:"simulated"};
+ const review=rolesReview({...src,flow,drag});
+ assert.equal(review.state,"R1_COEFFICIENT_SYMBOL_OVERLOAD_HOLD");
+ assert.equal(review.same_symbol_distinct_roles,true);
+ assert.equal(review.different_declared_baselines,true);
+ assert.equal(review.coefficient_interchange_allowed,false);
+ assert.equal(review.physical_model_validated,false);
+ assert.equal(review.native_admitted,false);
+ assert.equal(JSON.stringify(review).includes("0.5"),false);
+ const separated=rolesReview({...src,flow:{...flow,symbol:"Cflow"},drag});
+ assert.equal(separated.same_symbol_distinct_roles,false);
+ assert.equal(separated.physical_model_validated,false);
+ for(const bad of [
+   {...src,flow:{...flow,parameter_cell_ref:"B4"},drag},
+   {...src,flow,drag:{...drag,role:"flow_coefficient"}},
+   {...src,flow,drag:{...drag,evidence_class:"observed"}},
+   {...src,flow:{...flow,coordinates:[0,0]},drag},
+   {...src,flow:{...flow,unit:"m/s"},drag},
+   {...src,flow:{...flow,numeric_value:Infinity},drag},
+   {...src,source_sha256:"invalid",flow,drag}
+ ])assert.throws(()=>rolesReview(bad),/INVALID_SECOND_CYCLE_COEFFICIENT_ROLES/);
+});
