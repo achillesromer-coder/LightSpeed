@@ -327,6 +327,9 @@ export function planUniSpaceOperatorCockpit({
   presentation_stage:offline?'H0_OFFLINE_UNVERIFIED':
     candidate?'R3_VIEW_PROPOSAL':'R2_REVIEW_FRONTIER',
   view:offline?'metadata-only':inspector.view,
+  evidence_ceiling:offline?'H0_IDENTITY_METADATA_UNVERIFIED':
+    candidate?'R3_PRESENTATION_ONLY_NO_SCIENTIFIC_OR_METRIC_AUTHORITY':
+      'R2_FRONTIER_NO_QUALIFIED_VIEW',
   source_evidence:'UNVERIFIED_CALLER_REVIEW',
   source_rights:'NOT_PROVIDER_VERIFIED',
   root_authority:'NOT_NATIVE_VERIFIED',
