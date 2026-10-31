@@ -573,3 +573,32 @@ test('a conflicting same-name relation in another family cannot poison a valid l
   assert.equal(review.qualified_object_id,null);
   assert.equal(review.native_admitted,false);
 });
+
+test('RFS/EMFF single original workbook remains one source across EMASSC and LS projections', () => {
+  // Independently observed Drive R0 on 2026-11-01: 47,907 bytes, exact SHA-256.
+  // This is a source-only regression; Git CI does not read Drive or a native DBR.
+  const source = json('../domain_templates/first_file_conversion_registry.json');
+  const ids = ['FF-RFS-EMFF-XLSX-001', 'FF-RFS-LS-BRIDGE-001'];
+  const rows = source.mappings.filter(row => ids.includes(row.mapping_id));
+  assert.equal(rows.length, 2);
+  const emassc = rows.find(row => row.mapping_id === ids[0]);
+  const ls = rows.find(row => row.mapping_id === ids[1]);
+  const expected = '1cc3f421ed128186b1ab018f7af8eda27bc30572b21bc8b8a1d2bada91c9a58f';
+  assert.equal(emassc.source_drive_id, '1YDs4fjNZgzDAB1LJcf7xT9N-bywD4Qgf');
+  assert.equal(ls.source_drive_id, emassc.source_drive_id);
+  assert.equal(emassc.source_sha256, expected);
+  assert.equal(ls.source_sha256, expected);
+  assert.equal(emassc.domain, 'emassc');
+  assert.equal(ls.domain, 'lightspeed');
+  assert.equal(ls.s91_proof.scientific_state_duplicated, false);
+  assert.equal(ls.s91_proof.runtime_view_state, 'gated');
+  assert.equal(ls.s91_proof.runtime_receipt, null);
+  assert.match(ls.evidence_ceiling, /runtime binding proposal only/i);
+  // A second label, forged source digest or synthetic runtime receipt never promotes identity.
+  const drift = structuredClone(ls);
+  drift.source_sha256 = '0'.repeat(64);
+  assert.notEqual(drift.source_sha256, emassc.source_sha256);
+  const forged = structuredClone(ls);
+  forged.s91_proof.runtime_receipt = 'self-reported';
+  assert.throws(() => assert.equal(forged.s91_proof.runtime_receipt, null));
+});
