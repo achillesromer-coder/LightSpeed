@@ -46,6 +46,14 @@ export function planUniSpaceSourceInspector({nodes,focus_id,access,file_space,vi
   return hold('INVALID_INSPECTOR_SCOPE');
  if(!object(access)||!Array.isArray(access.authorized_source_ids)||!Array.isArray(access.authorized_object_ids))
   return hold('EXPLICIT_SCOPE_REQUIRED');
+ // This adapter is an inert private review viewport, not a launcher. A caller
+ // cannot request effectful F-depth or an editor/distributed hydration tier
+ // and still receive an R3 review proposal. Native host policy is separate.
+ if(Object.hasOwn(budgets,'execution_depth')&&budgets.execution_depth!=='inspect')
+  return hold('REVIEW_EXECUTION_DEPTH_FORBIDDEN');
+ if(Object.hasOwn(budgets,'device_hydration')&&
+    !['projection-lite','reader'].includes(budgets.device_hydration))
+  return hold('REVIEW_HYDRATION_TIER_FORBIDDEN');
  if(!unambiguous(file_space)||!unambiguous(focus_id)||
   !access.authorized_object_ids.every(unambiguous)||!access.authorized_source_ids.every(unambiguous)||
   !nodes.every(safeNode))return hold('AMBIGUOUS_IDENTITY_OR_SCOPE');
