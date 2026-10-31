@@ -125,7 +125,7 @@ export function reviewSecondCycleClaim(input){
  * No source values are emitted and no coefficient can be substituted.
  */
 export function reviewSecondCycleCoefficientRoles(input){
- const top=new Set(["source_ref","source_revision","source_sha256","flow","drag"]);
+ const top=new Set(["source_ref","source_revision","source_sha256","flow","drag","translation"]);
  if(!input||typeof input!=="object"||Array.isArray(input)||
     Object.keys(input).some(k=>!top.has(k))||
     !ref(input.source_ref)||!ref(input.source_revision)||
@@ -153,6 +153,52 @@ export function reviewSecondCycleCoefficientRoles(input){
       v.evidence_class!=="simulated")
      throw Error("INVALID_SECOND_CYCLE_COEFFICIENT_ROLES");
  }
+ // A translated Google Sheet is a separate source identity and revision.
+ // This optional pair is caller-declared: provider reads must occur outside
+ // this pure review guard. No workbook values or source bytes are returned.
+ let translationCrosswalk=null;
+ if(input.translation!==undefined){
+   const tr=input.translation;
+   const trKeys=new Set(["source_ref","revision_ref","flow","drag"]);
+   if(!tr||typeof tr!=="object"||Array.isArray(tr)||
+      Object.keys(tr).some(k=>!trKeys.has(k))||
+      !ref(tr.source_ref)||!ref(tr.revision_ref)||
+      tr.source_ref===input.source_ref)
+     throw Error("INVALID_SECOND_CYCLE_TRANSLATION_SOURCE");
+   const matches={};
+   for(const kind of ["flow","drag"]){
+     const v=tr[kind],spec=specs[kind];
+     if(!v||typeof v!=="object"||Array.isArray(v)||
+        Object.keys(v).some(k=>!keys.has(k))||
+        Object.entries(spec).some(([k,expected])=>
+          v[k]!==((k==="sheet_ref")?"SECON0E3E_"+expected:expected))||
+        typeof v.symbol!=="string"||
+        !/^[A-Za-z][A-Za-z0-9_]{0,15}$/.test(v.symbol)||
+        typeof v.numeric_value!=="number"||!Number.isFinite(v.numeric_value)||
+        v.numeric_value<=0||v.numeric_value>100||
+        v.unit!=="ratio"||v.evidence_class!=="simulated")
+       throw Error("INVALID_SECOND_CYCLE_TRANSLATION_COEFFICIENT");
+     matches[kind]=v.numeric_value===input[kind].numeric_value &&
+       v.symbol===input[kind].symbol;
+   }
+   const swapped=tr.flow.numeric_value===input.drag.numeric_value &&
+     tr.drag.numeric_value===input.flow.numeric_value &&
+     input.flow.numeric_value!==input.drag.numeric_value;
+   translationCrosswalk={
+     state:matches.flow&&matches.drag?
+       "R1_CALLER_DECLARED_COEFFICIENT_PAIR_MATCH_NOT_EQUIVALENCE":
+       "R1_COEFFICIENT_TRANSLATION_DELTA_HOLD",
+     flow_role_and_baseline_match:matches.flow,
+     drag_role_and_baseline_match:matches.drag,
+     suspected_cross_role_baseline_swap:swapped,
+     separate_translation_source_identity:true,
+     original_and_translation_equivalent:false,
+     provider_cells_fetched_by_module:false,
+     source_and_translation_revisions_authenticated_by_module:false,
+     coefficient_interchange_allowed:false,
+     native_admitted:false,public_release_authorised:false
+   };
+ }
  const overloaded=input.flow.symbol===input.drag.symbol;
  return {
    state:overloaded?"R1_COEFFICIENT_SYMBOL_OVERLOAD_HOLD":
@@ -162,6 +208,7 @@ export function reviewSecondCycleCoefficientRoles(input){
    distinct_parameter_anchors:true,
    different_declared_baselines:input.flow.numeric_value!==input.drag.numeric_value,
    coefficient_interchange_allowed:false,
+   translation_crosswalk:translationCrosswalk,
    provider_source_cells_fetched_by_module:false,
    provider_identity_authenticated_by_module:false,
    physical_model_validated:false,field_outcome_verified:false,
