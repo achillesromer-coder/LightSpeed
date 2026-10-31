@@ -744,3 +744,37 @@ test('reserved root and domain identities cannot masquerade as child objects',()
  assert.equal(ordinary.status,'SOURCE_REVIEW_ONLY');
  assert.equal(ordinary.admission_stage,'R3_VIEW_PROPOSAL');
 });
+
+
+// Synthetic LS lineage: EMASSC.cgx is a Cognigrex child, LS.cgx its nested child.
+// Neither a direct-root shortcut nor an unrelated Grex parent may be accepted.
+test('LS child cockpit enforces EMASSC parent rather than direct Cognigrex parent',()=>{
+ const lsNode={...nodes[0],object_id:'fixture:ls:one',file_space:'LS.cgx',
+  domain:'ls',owner:'LS-Grex',source_refs:['fixture:ls:source'],edges:[]};
+ const lsSource={...source_envelopes[0],source_id:'fixture:ls:source'};
+ const lsArgs={nodes:[lsNode],focus_id:'fixture:ls:one',
+  access:{authorized_object_ids:['fixture:ls:one'],authorized_source_ids:['fixture:ls:source']},
+  file_space:'LS.cgx',source_envelopes:[lsSource],surface:'private'};
+ const online=inspect(lsArgs);
+ assert.equal(online.status,'SOURCE_REVIEW_ONLY');
+ assert.equal(online.admission_stage,'R3_VIEW_PROPOSAL');
+ const selection={object_id:'fixture:ls:one',domain:'ls',file_space:'LS.cgx',
+  parent_file_space:'EMASSC.cgx'};
+ const accepted=cockpit({surface:'private',selection,inspector:online});
+ assert.equal(accepted.state,'SOURCE_REVIEW_ONLY');
+ assert.equal(accepted.file_space,'LS.cgx');
+ assert.equal(accepted.native_admitted,false);
+ assert.equal(accepted.provider_readback,false);
+ assert.ok(!JSON.stringify(accepted).includes('fixture:ls:source'));
+ for(const parent_file_space of ['Cognigrex.cgx','Eco.cgx',null,undefined]){
+  const denied=cockpit({surface:'private',selection:{...selection,parent_file_space},inspector:online});
+  assert.equal(denied.state,'DENIED');
+  assert.equal(denied.reason,'EXACT_CHILD_IDENTITY_REQUIRED');
+  assert.ok(!JSON.stringify(denied).includes('fixture:ls:source'));
+ }
+ const offline=inspect({...lsArgs,offline:true});
+ const offlineAccepted=cockpit({surface:'private',selection,inspector:offline,offline:true});
+ assert.equal(offlineAccepted.state,'SOURCE_REVIEW_ONLY');
+ assert.equal(offlineAccepted.native_admitted,false);
+ assert.equal(offlineAccepted.provider_readback,false);
+});
