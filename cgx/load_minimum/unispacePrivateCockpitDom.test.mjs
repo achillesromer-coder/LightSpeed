@@ -42,6 +42,9 @@ test('one private source-review DOM status has accessible labels and no active c
  const text=flatten(mount);
  assert.match(text,/UniSpace — private source review only/);
  assert.match(text,/fixture:eco:one/);
+ assert.match(text,/Source rights NOT_PROVIDER_VERIFIED/);
+ assert.match(text,/Root authority NOT_NATIVE_VERIFIED/);
+ assert.match(text,/Cross-platform sync NOT_VERIFIED/);
  assert.match(text,/ADMITTED — HOLD/);
  assert.match(text,/LIVE_VERIFIED — HOLD/);
  assert.match(text,/No host command/);
