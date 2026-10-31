@@ -782,11 +782,11 @@ test('LS child cockpit enforces EMASSC parent rather than direct Cognigrex paren
  assert.equal(offlineAccepted.provider_readback,false);
 });
 
- 
+
 // Source IDs and Object_IDs are opaque exact keys. Lone surrogates are not
 // valid Unicode scalar values and may change across JSON/provider boundaries.
 test('unpaired UTF-16 surrogates cannot become source or Object_ID scope',()=>{
- for(const mark of ['\\uD800','\\uDC00']){
+ for(const mark of ['\uD800','\uDC00']){
   const changedId='fixture:eco:one'+mark;
   const cases=[
    {...args,focus_id:changedId,
