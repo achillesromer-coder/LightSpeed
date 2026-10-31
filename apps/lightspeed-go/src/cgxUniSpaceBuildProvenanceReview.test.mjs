@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {reviewUniSpaceBuildProvenance as review} from './cgxUniSpaceBuildProvenanceReview.mjs';
 const fixture=()=>({selection:{parent_filespace:'Cognigrex.cgx',object_id:'WT-001',filespace:'Romer.cgx',identity_status:'SOURCE_CANDIDATE_NOT_NATIVE_ACCEPTED',evidence_class:'scientific'},
 client_permissions:{mode:'review_only',revoked:false,allowed_object_ids:['WT-001'],allowed_filespaces:['Romer.cgx']},
-source_review:{schema:'UNISPACE-STATIC-ASSET-BOUNDARY-REVIEW/0.1',state:'SOURCE_REVIEW_ONLY',parent_filespace:'Cognigrex.cgx',filespace:'Romer.cgx',candidate_object_id:'WT-001',evidence_class:'scientific',source_scan_verified:false,host_http_verified:false,dist_verified:false,release_accepted:false,canonical_mutation:false,assets:[{asset_id:'catalogue',source_blob_sha:'a'.repeat(40),static_source_path:true,review_result:'SOURCE_RISK_HOLD',risk_codes:['INTERNAL_SOURCE_IN_STATIC_TREE']}]},
+source_review:{schema:'UNISPACE-STATIC-ASSET-BOUNDARY-REVIEW/0.1',state:'SOURCE_REVIEW_ONLY',parent_filespace:'Cognigrex.cgx',filespace:'Romer.cgx',candidate_object_id:'WT-001',evidence_class:'scientific',source_scan_verified:false,host_http_verified:false,dist_verified:false,release_accepted:false,canonical_mutation:false,assets:[{asset_id:'catalogue',source_blob_sha:'a'.repeat(40),static_source_path:true,source_class:'INTERNAL_REVIEW',scope:'MULTI_OBJECT',rights:'UNRESOLVED',owner_clearance:false,review_result:'SOURCE_RISK_HOLD',risk_codes:['INTERNAL_SOURCE_IN_STATIC_TREE']}]},
 entries:[{asset_id:'catalogue',source_blob_sha:'a'.repeat(40),build_sha256:'b'.repeat(64),distribution_class:'PUBLIC_STATIC',source_class:'INTERNAL_REVIEW',scope:'MULTI_OBJECT',rights:'UNRESOLVED',owner_clearance:false,object_id:'WT-001',filespace:'Romer.cgx'}]});
 test('source-only never certifies dist or host',()=>{const x=review(fixture());assert.equal(x.state,'SOURCE_REVIEW_ONLY');assert.equal(x.dist_verified,false);assert.equal(x.host_http_verified,false);assert.equal(x.release_accepted,false);});
 test('internal source held',()=>{assert.ok(review(fixture()).assets[0].risk_codes.includes('NONPUBLIC_SOURCE_IN_STATIC_BUILD'));});
@@ -11,7 +11,7 @@ test('rights hold',()=>{assert.ok(review(fixture()).assets[0].risk_codes.include
 test('multi-object hold',()=>{assert.ok(review(fixture()).assets[0].risk_codes.includes('NOT_SINGLE_OBJECT'));});
 test('source risk carried forward',()=>{assert.ok(review(fixture()).assets[0].risk_codes.includes('UNRESOLVED_SOURCE_REVIEW_RISK'));});
 test('source hash mismatch flagged',()=>{const f=fixture();f.entries[0].source_blob_sha='c'.repeat(40);assert.ok(review(f).assets[0].risk_codes.includes('SOURCE_BLOB_MISMATCH'));});
-test('public safe metadata not release proof',()=>{const f=fixture();f.source_review.assets[0].risk_codes=[];Object.assign(f.entries[0],{source_class:'PUBLIC_CANDIDATE',scope:'ONE_OBJECT',rights:'CLEARED_PUBLIC',owner_clearance:true});const x=review(f);assert.equal(x.risk_count,0);assert.equal(x.release_accepted,false);});
+test('public safe metadata not release proof',()=>{const f=fixture();Object.assign(f.source_review.assets[0],{source_class:'PUBLIC_CANDIDATE',scope:'ONE_OBJECT',rights:'CLEARED_PUBLIC',owner_clearance:true,risk_codes:[]});Object.assign(f.entries[0],{source_class:'PUBLIC_CANDIDATE',scope:'ONE_OBJECT',rights:'CLEARED_PUBLIC',owner_clearance:true});const x=review(f);assert.equal(x.risk_count,0);assert.equal(x.release_accepted,false);});
 test('private build remains host-unverified',()=>{const f=fixture();f.source_review.assets[0].risk_codes=[];f.entries[0].distribution_class='AUTHENTICATED_PRIVATE';assert.ok(review(f).assets[0].risk_codes.includes('PRIVATE_ROUTE_HOST_DENIAL_NOT_VERIFIED'));});
 test('wrong object rejected',()=>{const f=fixture();f.entries[0].object_id='WT-002';assert.equal(review(f).hold_code,'CROSS_OBJECT_OR_FILESPACE_BUILD');});
 test('wrong child rejected',()=>{const f=fixture();f.entries[0].filespace='Eco.cgx';assert.equal(review(f).state,'HOLD');});
@@ -27,3 +27,40 @@ test('source identity mismatch rejected',()=>{const f=fixture();f.source_review.
 test('untrusted source HTTP claim rejected',()=>{const f=fixture();f.source_review.host_http_verified=true;assert.equal(review(f).state,'HOLD');});
 test('offline H0 and LOAD alias only',()=>{const x=review(fixture());assert.equal(x.offline_hydration,'H0_METADATA_ONLY');assert.equal(x.alias_role,'ALEXANDRIA_ENTRY_NOT_PARENT');});
 test('circular input fails closed',()=>{const f=fixture();f.loop=f;assert.equal(review(f).state,'HOLD');});
+
+// #158: same exact Git blob is not evidence of permission to reclassify an
+// internal source as public in a later build-stage declaration.
+test('unchanged blob with forged build public classification remains explicit HOLD',()=>{
+ const f=fixture();f.source_review.assets[0].risk_codes=[];
+ Object.assign(f.entries[0],{source_class:'PUBLIC_CANDIDATE',scope:'ONE_OBJECT',rights:'CLEARED_PUBLIC',owner_clearance:true});
+ const x=review(f);
+ assert.equal(x.state,'SOURCE_REVIEW_ONLY');
+ assert.equal(x.risk_count,1);
+ const codes=x.assets[0].risk_codes;
+ for(const code of ['SOURCE_CLASS_RECLASSIFICATION_UNVERIFIED','SOURCE_SCOPE_RECLASSIFICATION_UNVERIFIED',
+  'SOURCE_RIGHTS_RECLASSIFICATION_UNVERIFIED','SOURCE_CLEARANCE_RECLASSIFICATION_UNVERIFIED'])
+  assert.ok(codes.includes(code),code);
+ assert.equal(x.release_accepted,false);
+ assert.equal(x.host_http_verified,false);
+});
+
+test('source-stage classification provenance is mandatory even when build claims public clearance',()=>{
+ for(const field of ['source_class','scope','rights','owner_clearance']){
+  const f=fixture();delete f.source_review.assets[0][field];
+  Object.assign(f.entries[0],{source_class:'PUBLIC_CANDIDATE',scope:'ONE_OBJECT',rights:'CLEARED_PUBLIC',owner_clearance:true});
+  const x=review(f);
+  assert.equal(x.state,'HOLD',field);
+  assert.equal(x.hold_code,'SOURCE_CLASSIFICATION_PROVENANCE_REQUIRED',field);
+  assert.equal(x.release_accepted,false);
+ }
+});
+
+test('source-stage owner clearance cannot be forged by build stage alone',()=>{
+ const f=fixture();f.source_review.assets[0].risk_codes=[];
+ Object.assign(f.source_review.assets[0],{source_class:'PUBLIC_CANDIDATE',scope:'ONE_OBJECT',rights:'CLEARED_PUBLIC',owner_clearance:false});
+ Object.assign(f.entries[0],{source_class:'PUBLIC_CANDIDATE',scope:'ONE_OBJECT',rights:'CLEARED_PUBLIC',owner_clearance:true});
+ const x=review(f);
+ assert.equal(x.risk_count,1);
+ assert.ok(x.assets[0].risk_codes.includes('SOURCE_CLEARANCE_RECLASSIFICATION_UNVERIFIED'));
+ assert.equal(x.release_accepted,false);
+});
