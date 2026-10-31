@@ -61,6 +61,12 @@ def load_optional(path: Path | None) -> dict[str, Any] | None:
         raise ValueError(f"expected JSON object: {path}")
     return payload
 
+def valid_lease_claim_text(value: Any) -> bool:
+    # A claim is a single printable identifier, never a multiline or control-
+    # character-delimited record. This is syntax validation, NOT issuer trust.
+    return (isinstance(value, str) and bool(value.strip())
+            and not any(ord(ch) < 0x20 or ord(ch) == 0x7F for ch in value))
+
 def subset_scope(name: str, allowed: list[str] | None, requested: str | None, reasons: list[str]) -> None:
     # An absent allowlist is not a wildcard for a requested task, project or action.
     if allowed is None:
@@ -68,7 +74,7 @@ def subset_scope(name: str, allowed: list[str] | None, requested: str | None, re
             reasons.append(f"lease-{name}-scope-missing")
         return
     if not isinstance(allowed, list) or not allowed or any(
-        not isinstance(item, str) or not item.strip() for item in allowed
+        not valid_lease_claim_text(item) for item in allowed
     ):
         reasons.append(f"lease-{name}-scope-invalid")
         return
@@ -81,7 +87,7 @@ def validated_allowlist(name: str, value: Any, reasons: list[str]) -> set[str]:
     # Lease scope fields must be explicit typed lists; stringification can admit
     # malformed mixed-type claims as if they were approved identities.
     if not isinstance(value, list) or not value or any(
-        not isinstance(item, str) or not item.strip() for item in value
+        not valid_lease_claim_text(item) for item in value
     ):
         reasons.append(f"lease-{name}-allowlist-invalid")
         return set()
@@ -115,8 +121,7 @@ def validate_lease(
     # does not authenticate the issuer, referenced receipt, or native DBR.
     def require_ref(field: str, reason: str) -> None:
         value = lease.get(field)
-        if (not isinstance(value, str) or not value.strip()
-                or any(ord(ch) < 0x20 or ord(ch) == 0x7F for ch in value)):
+        if not valid_lease_claim_text(value):
             reasons.append(reason)
 
     # Structural identity checks are necessary but NOT issuer authentication.
@@ -124,7 +129,7 @@ def validate_lease(
     # remain separate native host gates.
     for field in ("lease_id", "issued_by", "subject_agent"):
         value = lease.get(field)
-        if not isinstance(value, str) or not value.strip():
+        if not valid_lease_claim_text(value):
             reasons.append("lease-" + field.replace("_", "-") + "-invalid")
 
     lease_class = str(lease.get("lease_class") or "")
