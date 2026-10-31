@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - review/cgx-ls-unified-bootstrap-20261028
     paths:
       - 'cgx/bootstrap/**'
       - 'scripts/run_cgx_agent_runtime.py'
