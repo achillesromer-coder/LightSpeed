@@ -10,9 +10,10 @@ const object=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 // directional/default-ignorable controls or alternate-normalisation spellings.
 // This is a source-review guard, not an authoritative CGX Object_ID resolver.
 const unambiguous=s=>good(s)&&s===s.normalize('NFC')&&!/[\p{Default_Ignorable_Code_Point}\p{Cc}]/u.test(s);
-const safeNode=n=>object(n)&&unambiguous(n.object_id)&&unambiguous(n.domain)&&
+const safeNode=n=>object(n)&&unambiguous(n.object_id)&&!reservedChildIdentity(n.object_id)&&unambiguous(n.domain)&&
  unambiguous(n.file_space)&&Array.isArray(n.source_refs)&&n.source_refs.every(unambiguous)&&
  Array.isArray(n.edges)&&n.edges.every(e=>object(e)&&unambiguous(e.to)&&unambiguous(e.relation));
+const reservedChildIdentity=id=>id==='cgx:root:cognigrex'||id.startsWith('cgx:domain:');
 const sha=x=>typeof x==='string'&&/^[0-9a-f]{64}$/i.test(x);
 const rights=new Set(['PUBLIC_SAFE','OWNER_PRIVATE','LICENSE_RESTRICTED','UNKNOWN']);
 const proofClasses=new Set(['creative','scientific','engineering','historical','operational']);
@@ -164,7 +165,7 @@ export function planUniSpaceOperatorCockpit({
  if(surface!=='private')return cockpitDeny('PRIVATE_OPERATOR_SURFACE_REQUIRED');
  if(typeof offline!=='boolean'||!object(selection)||!object(inspector))
   return cockpitDeny('INVALID_COCKPIT_INPUT');
- if(!unambiguous(selection.object_id)||!unambiguous(selection.file_space)||
+ if(!unambiguous(selection.object_id)||reservedChildIdentity(selection.object_id)||!unambiguous(selection.file_space)||
     !unambiguous(selection.domain)||selection.parent_file_space!=='Cognigrex.cgx'||
     !Object.hasOwn(knownChildSpaces,selection.domain)||
     knownChildSpaces[selection.domain]!==selection.file_space)
