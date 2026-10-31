@@ -103,3 +103,70 @@ export function planCGXHandshake({parent,child,lease,exchange=null,now=null}={})
   next_native_step:"On the authorised host verify issuer signature, RootAuthority/revocation, request-bound object/tool/resource scope and atomic nonce consumption. Separately authenticate distinct nodes, exact receiver hash/size and signed DBR readback."
  };
 }
+
+
+/**
+ * Non-authorising ABI projection from the *separate* native execution lease
+ * contract to the bootstrap handshake SHAPE review. No issuer verification,
+ * clock attestation, nonce registry, host transport, DBR or tool invocation.
+ * Explicit request binding is required; absent scope/budget is never wildcard.
+ */
+export const NATIVE_LEASE_ABI_REVIEW_SCHEMA="CGX-NATIVE-LEASE-BOOTSTRAP-ABI-REVIEW/0.1";
+export function reviewNativeLeaseHandshakeABI({
+ sourceSchema,nativeLease,parent,child,request,now
+}={}){
+ const deny=reason=>({schema:NATIVE_LEASE_ABI_REVIEW_SCHEMA,status:"DENIED",reason,
+  may_execute:false,host_signature_verified:false,db_r_mutated:false});
+ if(sourceSchema!=="CGX-EXECUTION-LEASE-CONTRACT/0.1")
+  return deny("UNSUPPORTED_NATIVE_LEASE_ABI");
+ if(!obj(nativeLease)||!obj(request)||!obj(parent)||!obj(child))
+  return deny("MISSING_ABI_CONTEXT");
+ if(!validInstant(now))return deny("INVALID_REVIEW_CLOCK");
+ if(nativeLease.state!=="ACTIVE"||nativeLease.revocable!==true)
+  return deny("NATIVE_LEASE_INACTIVE_OR_NONREVOCABLE");
+ if(![nativeLease.lease_id,nativeLease.issued_by,nativeLease.subject_agent,
+      request.agent_id,request.object_id,request.tool_scope,request.domain,
+      request.execution_depth,request.action_class,request.nonce].every(id))
+  return deny("MISSING_REQUEST_BOUND_IDENTITY");
+ if(nativeLease.subject_agent!==request.agent_id)
+  return deny("NATIVE_LEASE_AGENT_MISMATCH");
+ const scopes=nativeLease.scope;
+ const includes=(xs,x)=>Array.isArray(xs)&&xs.length>0&&xs.length<=100&&xs.every(id)&&xs.includes(x);
+ if(!obj(scopes)||!includes(scopes.object_ids,request.object_id)||
+    !includes(scopes.tool_scopes,request.tool_scope)||
+    !includes(scopes.action_classes,request.action_class)||
+    !includes(nativeLease.domains,request.domain)||
+    !includes(nativeLease.execution_depths,request.execution_depth))
+  return deny("NATIVE_LEASE_REQUEST_SCOPE_MISMATCH");
+ if(request.object_id!==child.object_id)return deny("NATIVE_LEASE_CHILD_MISMATCH");
+ if(!validInstant(nativeLease.valid_from)||!validInstant(nativeLease.valid_until)||
+    Date.parse(nativeLease.valid_from)>=Date.parse(nativeLease.valid_until)||
+    Date.parse(now)<Date.parse(nativeLease.valid_from)||
+    Date.parse(now)>=Date.parse(nativeLease.valid_until))
+  return deny("NATIVE_LEASE_TIME_WINDOW_INVALID");
+ const budget=scopes.resource_budgets,usage=request.resource_usage;
+ if(!obj(budget)||!obj(usage))return deny("NATIVE_RESOURCE_BUDGET_UNDECLARED");
+ const keys=Object.keys(usage);
+ if(keys.length===0||keys.length>16||Object.keys(budget).length>16||
+    keys.some(k=>!["compute_ms","memory_bytes","io_bytes","ops"].includes(k)||
+      !Number.isSafeInteger(usage[k])||usage[k]<0||
+      !Number.isSafeInteger(budget[k])||budget[k]<0||usage[k]>budget[k]))
+  return deny("NATIVE_RESOURCE_BUDGET_EXCEEDED_OR_UNBOUND");
+ const mapped={READ_ONLY:"read",COMPUTE_ONLY:"compute_only",
+  DIGITAL_WRITE:"digital_write"}[nativeLease.lease_class];
+ if(!mapped)return deny("NATIVE_LEASE_CLASS_UNSUPPORTED_BY_HANDSHAKE");
+ // Intentionally do not forge signer_ref from issued_by or treat a nonce as consumed.
+ const projectedLease={lease_id:nativeLease.lease_id,target_object_id:request.object_id,
+  scope:mapped,expires_utc:nativeLease.valid_until,signer_ref:null};
+ const shape=planCGXHandshake({parent,child,lease:projectedLease,now});
+ if(shape.status==="DENIED")return deny("BOOTSTRAP_SHAPE_"+shape.reason);
+ return {...shape,schema:NATIVE_LEASE_ABI_REVIEW_SCHEMA,
+  source_schema:sourceSchema,status:"UNVERIFIED_SHAPE_REVIEW",
+  holds:[...new Set([...shape.holds,"NATIVE_LEASE_ABI_TRANSLATION_NOT_AUTHORITY",
+   "HOST_CLOCK_NOT_ATTESTED","REQUEST_NONCE_UNBOUND_TO_NATIVE_LEASE",
+   "NATIVE_ISSUER_SIGNATURE_AND_REVOCATION_NOT_VERIFIED"])],
+  issuer_claim:nativeLease.issued_by,subject_agent_claim:nativeLease.subject_agent,
+  request_binding_reviewed:true,resource_budget_shape_reviewed:true,
+  host_signature_verified:false,root_authority_verified:false,
+  db_r_mutated:false,may_execute:false,may_publish:false};
+}
