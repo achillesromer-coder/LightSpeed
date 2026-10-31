@@ -14,6 +14,33 @@ const access={authorized_object_ids:['fixture:eco:one'],authorized_source_ids:['
 const source_envelopes=[{source_id:'fixture:eco:source',sha256:h,version:'fixture-v1',owner:'fixture-owner',rights:'OWNER_PRIVATE',proof_class:'scientific',rights_state:'ACTIVE'},
  {source_id:'fixture:romer:private-source',sha256:'b'.repeat(64),version:'secret',owner:'secret',rights:'OWNER_PRIVATE',proof_class:'engineering'}];
 const args={nodes,focus_id:'fixture:eco:one',access,file_space:'Eco.cgx',source_envelopes,surface:'private'};
+
+test('inert UniSpace inspector rejects effectful F-depth and heavy hydration hints',()=>{
+ for(const execution_depth of ['propose','simulate','execute','build','publish']){
+  const x=inspect({...args,budgets:{execution_depth}});
+  assert.equal(x.status,'DENIED',execution_depth);
+  assert.equal(x.reason,'REVIEW_EXECUTION_DEPTH_FORBIDDEN');
+  assert.equal(x.canonical_mutation,false);
+  assert.equal(x.public_release,false);
+  assert.ok(!JSON.stringify(x).includes('fixture:eco:source'));
+ }
+ for(const device_hydration of ['editor','workstation','distributed']){
+  const x=inspect({...args,budgets:{device_hydration}});
+  assert.equal(x.status,'DENIED',device_hydration);
+  assert.equal(x.reason,'REVIEW_HYDRATION_TIER_FORBIDDEN');
+  assert.equal(x.canonical_mutation,false);
+  assert.ok(!JSON.stringify(x).includes('fixture:eco:source'));
+ }
+ for(const device_hydration of ['projection-lite','reader']){
+  const x=inspect({...args,budgets:{execution_depth:'inspect',device_hydration}});
+  assert.equal(x.status,'SOURCE_REVIEW_ONLY');
+  assert.equal(x.admission_stage,'R3_VIEW_PROPOSAL');
+  assert.equal(x.host_authenticated,false);
+  assert.equal(x.provider_readback,false);
+  assert.equal(x.h4.installed,false);
+ }
+});
+
 test('one exact child FileSpace and Object_ID, no parent alias or cross-domain leak',()=>{
  const x=inspect(args);assert.equal(x.identity,'fixture:eco:one');assert.equal(x.selected_file_space,'Eco.cgx');
  assert.deepEqual(x.h1.object_ids,['fixture:eco:one']);assert.ok(!JSON.stringify(x).includes('fixture:romer:private'));
