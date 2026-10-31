@@ -25,6 +25,7 @@ from lightspeed_runtime.corpus_test_orchestrator import (
 )
 from lightspeed_runtime.cgx_conversion_planner import CGXConversionPlanError, compile_conversion_plan
 from lightspeed_runtime.cgx_object_context import CGXObjectContextError, resolve_object_context
+from lightspeed_runtime.cgx_family_ingestion import CGXFamilyIngestionError, build_oversight
 from lightspeed_runtime.project_artifact_store import stage_project_artifacts
 from lightspeed_runtime.node_exchange import (
     NodeExchangeError,
@@ -2122,6 +2123,50 @@ def create_app(root: Path | str) -> FastAPI:
         except KeyError:
             raise HTTPException(status_code=404, detail="Canonical object candidate not found")
         return JSONResponse({"graph": graph})
+
+    @app.get("/api/v1/cgx/family-oversight")
+    async def read_cgx_family_oversight(
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        """Owner-private, metadata-only LS ingestion of the existing CGX Family Set.
+
+        Paths are host-configured; request parameters cannot choose source files.
+        This never creates an Object_ID, executes a source adapter, or writes DBR.
+        """
+        if not owner_session:
+            raise HTTPException(status_code=401, detail="An active owner session is required")
+        _verified_owner_actor(
+            None,
+            session_token=owner_session,
+            credential_store=credential_store,
+            session_store=owner_sessions,
+        )
+        registry = os.environ.get("CGX_FAMILY_IDENTITY_REGISTRY", "").strip()
+        if not registry:
+            raise HTTPException(status_code=503, detail="CGX_FAMILY_REGISTRY_NOT_CONFIGURED")
+        load_registry = os.environ.get("CGX_LOAD_SOURCE_REGISTRY", "").strip()
+        root_registry = os.environ.get("CGX_ROOT_REGISTRY", "").strip()
+        carrier = os.environ.get("CGX_ROOT_CARRIER", "").strip()
+        if bool(root_registry) != bool(carrier):
+            raise HTTPException(status_code=503, detail="CGX_ROOT_CARRIER_BINDING_INCOMPLETE")
+        canonical_db = os.environ.get("LIGHTSPEED_CANONICAL_DB", "").strip()
+        database_path = Path(canonical_db) if canonical_db else (
+            shell_root.parent / "Data" / "db" / "lightspeed_unified.db"
+        )
+        try:
+            snapshot = build_oversight(
+                family_registry_path=Path(registry),
+                database_path=database_path,
+                load_registry_path=Path(load_registry) if load_registry else None,
+                root_registry_path=Path(root_registry) if root_registry else None,
+                carrier_path=Path(carrier) if carrier else None,
+            )
+        except CGXFamilyIngestionError as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
+        return JSONResponse(
+            {**snapshot, "owner_session_verified_by_bridge": True},
+            headers={"Cache-Control": "no-store"},
+        )
 
     @app.post("/api/v1/representation-root-review/preflight")
     async def preflight_cognigrex_root_review(
