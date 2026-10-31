@@ -122,6 +122,7 @@ test('offline mode renders H0 metadata only and retains non-live proof gates',()
  const x=render({...input,mount,inspector:offline,offline:true});
  assert.equal(x.status,'RENDERED_SOURCE_REVIEW');
  assert.equal(x.presentation_stage,'H0_OFFLINE_UNVERIFIED');
+ assert.match(flatten(mount),/Evidence ceiling H0_IDENTITY_METADATA_UNVERIFIED/);
  assert.match(flatten(mount),/metadata-only/);
  assert.ok(!flatten(mount).includes(source.source_id));
  assert.equal(x.may_execute,false);
@@ -165,6 +166,7 @@ test('rights revocation after an R3 review render clears stale status before R2 
  const downgraded=render({...input,mount,inspector:revoked});
  assert.equal(downgraded.status,'RENDERED_SOURCE_REVIEW');
  assert.equal(downgraded.presentation_stage,'R2_REVIEW_FRONTIER');
+ assert.match(flatten(mount),/Evidence ceiling R2_FRONTIER_NO_QUALIFIED_VIEW/);
  const visible=flatten(mount);
  assert.match(visible,/R2_REVIEW_FRONTIER/);
  assert.ok(!visible.includes('R3_VIEW_PROPOSAL'));
