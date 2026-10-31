@@ -207,9 +207,17 @@ export function planUniSpaceEvidenceInspector({spread,target,view='document',sur
  const includedIds=new Set(spread.objects.map(n=>n.object_id));
  if(spread.edges.some(e=>!obj(e)||!includedIds.has(e.from)||!includedIds.has(e.to)||
     !good(e.relation)))return deny('UNTRUSTED_EDGE_SCOPE');
- const edges=spread.edges.filter(e=>e.from===spread.focus_id||e.to===spread.focus_id);
+ // A child FileSpace inspector cannot project another child's Object_ID,
+ // even if the broader Alexandria spread independently authorises it.
+ // Cross-child discovery belongs to universal search, not scoped R3 views.
+ const domains=new Map(spread.objects.map(n=>[n.object_id,n.domain]));
+ const crossChildHeld=spread.edges.some(e=>(e.from===spread.focus_id||e.to===spread.focus_id)&&
+   (domains.get(e.from)!==focus.domain||domains.get(e.to)!==focus.domain));
+ const edges=spread.edges.filter(e=>(e.from===spread.focus_id||e.to===spread.focus_id)&&
+   domains.get(e.from)===focus.domain&&domains.get(e.to)===focus.domain);
  const sources=[...new Set(focus.source_refs)];
  const frontier=[];
+ if(crossChildHeld)frontier.push('CROSS_CHILD_REFERENCES_HELD_FOR_EXPLICIT_SCOPE');
  if(!sources.length)frontier.push('PERMITTED_R0_SOURCE_MISSING');
  if(view==='3d'&&viewport.state==='FRONTIER_GEOMETRY_UNQUALIFIED')
   frontier.push('QUALIFIED_GEOMETRY_MISSING');
