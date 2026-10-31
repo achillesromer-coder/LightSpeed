@@ -159,11 +159,15 @@ export function reviewNativeLeaseHandshakeABI({
   return deny("NATIVE_LEASE_TIME_WINDOW_INVALID");
  const budget=scopes.resource_budgets,usage=request.resource_usage;
  if(!obj(budget)||!obj(usage))return deny("NATIVE_RESOURCE_BUDGET_UNDECLARED");
- const keys=Object.keys(usage);
- if(keys.length===0||keys.length>16||Object.keys(budget).length>16||
-    keys.some(k=>!["compute_ms","memory_bytes","io_bytes","ops"].includes(k)||
-      !Number.isSafeInteger(usage[k])||usage[k]<0||
-      !Number.isSafeInteger(budget[k])||budget[k]<0||usage[k]>budget[k]))
+ const keys=Object.keys(usage),budgetKeys=Object.keys(budget);
+ const knownBudgetKeys=new Set(["compute_ms","memory_bytes","io_bytes","ops"]);
+ // A projection must not ignore a malformed or unknown declared ceiling.
+ // Only own, supported integer budgets can bind an explicit usage request.
+ if(keys.length===0||keys.length>16||budgetKeys.length===0||budgetKeys.length>16||
+    budgetKeys.some(k=>!knownBudgetKeys.has(k)||
+      !Number.isSafeInteger(budget[k])||budget[k]<0)||
+    keys.some(k=>!knownBudgetKeys.has(k)||!Object.hasOwn(budget,k)||
+      !Number.isSafeInteger(usage[k])||usage[k]<0||usage[k]>budget[k]))
   return deny("NATIVE_RESOURCE_BUDGET_EXCEEDED_OR_UNBOUND");
  const mapped={READ_ONLY:"read",COMPUTE_ONLY:"compute_only",
   DIGITAL_WRITE:"digital_write"}[nativeLease.lease_class];
