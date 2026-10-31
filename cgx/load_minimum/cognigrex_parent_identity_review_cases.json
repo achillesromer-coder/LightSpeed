@@ -223,5 +223,53 @@
       "Provider permission metadata establishes sharing configuration, not a live unauthenticated download test.",
       "No native RootAuthority or DBR readback performed."
     ]
+  },
+  "r0_provider_revision_readback_2026_10_31": {
+    "evidence_class": "AUTHENTICATED_GOOGLE_DRIVE_REVISIONS_LIST_METADATA_ONLY",
+    "observation_date": "2026-10-31",
+    "source_mutation": false,
+    "byte_retransfer": false,
+    "version_scope": "Current Drive revision identifiers and metadata; not independent historical version comparison, redistribution licence, native carrier admission or DBR.",
+    "originals": [
+      {
+        "source": "S92 recovery parent",
+        "provider": "Google Drive Nathaniel",
+        "file_id": "1ap1xHVQ0cDWeJDAVWxvY_VqMkSzwpG6i",
+        "current_revision_id": "0BwJNKUfDWAPsdGxPaEp5ODc1N3U3bnBzOEl6RWJtMmZwN2g4PQ",
+        "previous_revision_id": null,
+        "revision_modified_time": "2026-09-30T10:56:10.470Z",
+        "revision_size_bytes": 3657250,
+        "revision_keep_forever": false,
+        "revision_published": false,
+        "prior_independently_verified_sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+        "prior_hash_recomputed_this_run": false,
+        "owner": "Cognigrex parent",
+        "admission_ceiling": "R0_REVISION_METADATA_LINKED_TO_PRIOR_HASH; NO_CURRENT_S97_OR_DBR",
+        "rights_acl": "HOLD; restricted/internal classification vs existing link-readable ACL mismatch remains independently gated"
+      },
+      {
+        "source": "Mark III Digital Twin original workbook",
+        "provider": "Google Drive Nathaniel",
+        "file_id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2",
+        "current_revision_id": "0BwJNKUfDWAPsQVV4NHFIYWJ4QUppTnZ0RmxZSWJjejVadlgwPQ",
+        "previous_revision_id": null,
+        "revision_modified_time": "2026-05-19T20:52:08.000Z",
+        "revision_size_bytes": 87108,
+        "revision_keep_forever": true,
+        "revision_published": false,
+        "prior_independently_verified_sha256": "fab23970e80c016a2140ec0f87c1d0d7e15c365190fdacb5dc2ee2a1c2a81075",
+        "prior_hash_recomputed_this_run": false,
+        "candidate_filespace": "Romer.cgx:/romer/mark-iii",
+        "admission_ceiling": "R0_REVISION_METADATA_LINKED_TO_PRIOR_HASH; R1_PARTIAL_TYPED; R2_HOLD",
+        "rights_acl": "HOLD; anyone-with-link reader does not grant redistribution or engineering certification"
+      }
+    ],
+    "negative_assertions": [
+      "A Drive currentRevisionId does not prove an accepted CGX Object_ID or signed RootAuthority/DBR.",
+      "A single returned revision with previousRevisionId=null does not prove no earlier external or overwritten source copies.",
+      "keepForever/published metadata are revision-retention/publication flags, not source rights, verified ACL safety or native acceptance.",
+      "Prior SHA-256 values were verified on 2026-10-30; this 2026-10-31 check did not download or rehash either original."
+    ],
+    "status": "SOURCE_REVIEW_ONLY_NO_NATIVE_WRITE"
   }
 }
