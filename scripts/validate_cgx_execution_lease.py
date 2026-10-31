@@ -145,8 +145,8 @@ def main():
     with tempfile.TemporaryDirectory(prefix="cgx-lease-identity-negative-") as temp:
         lease_path=Path(temp)/"synthetic-identity.json"
         for field,bad,expected in (
-            ("lease_id", "fixture:lease\\nforged", "lease-lease-id-invalid"),
-            ("issued_by", "\\x00fixture:root-authority", "lease-issued-by-invalid"),
+            ("lease_id", "fixture:lease\nforged", "lease-lease-id-invalid"),
+            ("issued_by", "\x00fixture:root-authority", "lease-issued-by-invalid"),
         ):
             x=base_lease()
             x["root_authority_receipt_ref"]="fixture:root-approval"
