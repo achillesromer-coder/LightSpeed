@@ -291,7 +291,7 @@ function reviewSymbolicExpressionCrosswalk(pair,source,anchor,lineage,evidenceCl
   const cellAllowed=new Set(["sheet","cell","expression_text","evidence_class"]);
   const validCell=c=>obj(c)&&Object.keys(c).every(k=>cellAllowed.has(k))&&
     token(c.sheet)&&c.sheet.length<=64&&
-    /^[A-Z]{1,3}[1-9]\\d{0,6}$/.test(c.cell)&&
+    /^[A-Z]{1,3}[1-9]\d{0,6}$/.test(c.cell)&&
     token(c.expression_text)&&c.expression_text.length<=256&&
     c.evidence_class===evidenceClass;
   if(!obj(pair)||Object.keys(pair).some(k=>!allowed.has(k))||
@@ -307,7 +307,7 @@ function reviewSymbolicExpressionCrosswalk(pair,source,anchor,lineage,evidenceCl
     throw Error("INVALID_ECO_SYMBOLIC_EXPRESSION_CROSSWALK");
   const a=pair.original_cell,b=pair.related_cell;
   // Review flag only; Unicode symbols in the original remain unchanged.
-  const suspectedMojibake=s=>/[\\u00c2\\u00c3\\u00cf\\ufffd]/u.test(s);
+  const suspectedMojibake=s=>/[\u00c2\u00c3\u00cf\ufffd]/u.test(s);
   const originalEncodingValid=!suspectedMojibake(a.expression_text);
   const relatedEncodingValid=!suspectedMojibake(b.expression_text);
   const textMatch=a.expression_text===b.expression_text;
