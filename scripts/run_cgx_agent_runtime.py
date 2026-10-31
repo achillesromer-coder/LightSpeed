@@ -224,6 +224,10 @@ def main() -> int:
     source.add_argument("--instruction-file", type=Path)
     ap.add_argument("--task-id")
     ap.add_argument("--project-id")
+    # Source-review request labels only; never trusted as authenticated target identity.
+    ap.add_argument("--object-id")
+    ap.add_argument("--tool-scope")
+    ap.add_argument("--configuration-id")
     ap.add_argument("--agent-id", default="Neo")
     ap.add_argument("--domain", required=True, choices=["romer", "eco", "emassc", "lightspeed"])
     ap.add_argument("--execution-depth", required=True, choices=["inspect", "propose", "simulate", "execute", "build", "publish"])
@@ -282,6 +286,9 @@ def main() -> int:
             execution_class=args.execution_class,
             planned_floors=list(plan.floor_sequence),
             consequential=consequential,
+            object_id=args.object_id,
+            tool_scope=args.tool_scope,
+            configuration_id=args.configuration_id,
         )
     else:
         lease_ok, lease_reasons, lease_summary = False, [], {}
@@ -335,7 +342,12 @@ def main() -> int:
             "tags": tags,
             "action_class": action_class,
             "execution_class": args.execution_class,
-        },
+            "requested_target_unverified": {
+                "object_id": args.object_id,
+                "tool_scope": args.tool_scope,
+                "configuration_id": args.configuration_id,
+            },
+        }
         "planned_floors": list(plan.floor_sequence),
         "decision": decision,
         "execution_requested": args.execute,
