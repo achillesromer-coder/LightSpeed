@@ -206,7 +206,8 @@ class WindowsBootEvidenceTests(unittest.TestCase):
         (self.repo / "desktop/LightSpeed_Runtime/lightspeed_runtime").mkdir(parents=True, exist_ok=True)
         (self.repo / "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_family_ingestion.py").write_text("fixture")
         output = self.run_probe()
-        self.assertTrue(output["boot"]["complete_integrated_cgx_ready"])
+        self.assertTrue(output["boot"]["family_source_wiring_candidate"])
+        self.assertFalse(output["boot"]["complete_integrated_cgx_ready"])
         self.assertFalse(output["mint"]["native_mint_authorised"])
         self.assertIn("ATOMIC_DBR_AND_INDEPENDENT_RECEIVER_NOT_VERIFIED", output["holds"])
 
