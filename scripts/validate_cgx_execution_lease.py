@@ -95,6 +95,8 @@ def main():
         ("task-allowlist-empty", {"task_ids":[], "action_classes":["execute"]}, "lease-task-scope-invalid"),
         ("action-allowlist-absent", {"task_ids":["CGX-LAUNCH-006"]}, "lease-action-class-scope-missing"),
         ("action-allowlist-empty", {"task_ids":["CGX-LAUNCH-006"], "action_classes":[]}, "lease-action-class-scope-invalid"),
+        ("task-allowlist-control-char", {"task_ids":["CGX-LAUNCH-006","OTHER\nforged"], "action_classes":["execute"]}, "lease-task-scope-invalid"),
+        ("action-allowlist-control-char", {"task_ids":["CGX-LAUNCH-006"], "action_classes":["execute","publish\x00"]}, "lease-action-class-scope-invalid"),
         ("task-not-allowed", {"task_ids":["OTHER"], "action_classes":["execute"]}, "lease-task-out-of-scope:CGX-LAUNCH-006"),
         ("action-not-allowed", {"task_ids":["CGX-LAUNCH-006"], "action_classes":["publish"]}, "lease-action-class-out-of-scope:execute"),
     ]
@@ -126,6 +128,9 @@ def main():
         ("subject_agent", None, "lease-subject-agent-invalid"),
         ("subject_agent", {}, "lease-subject-agent-invalid"),
         ("subject_agent", "   ", "lease-subject-agent-invalid"),
+        ("lease_id", "fixture:lease\nforged", "lease-lease-id-invalid"),
+        ("issued_by", "\x00fixture:root-authority", "lease-issued-by-invalid"),
+        ("subject_agent", "Neo\x7f", "lease-subject-agent-invalid"),
     ]
     for field, bad_value, expected_reason in malformed_identity:
         x=base_lease()
@@ -134,6 +139,40 @@ def main():
         ok,reasons,_=check(x)
         if ok or expected_reason not in reasons:
             failures.append(field + " invalid identity type not rejected: " + ",".join(reasons))
+
+    # Source-only CLI identity regression: malformed issuer/lease IDs must
+    # fail before supervisor invocation; no cryptographic trust is established.
+    with tempfile.TemporaryDirectory(prefix="cgx-lease-identity-negative-") as temp:
+        lease_path=Path(temp)/"synthetic-identity.json"
+        for field,bad,expected in (
+            ("lease_id", "fixture:lease\\nforged", "lease-lease-id-invalid"),
+            ("issued_by", "\\x00fixture:root-authority", "lease-issued-by-invalid"),
+        ):
+            x=base_lease()
+            x["root_authority_receipt_ref"]="fixture:root-approval"
+            x["execution_depths"].append("inspect")
+            x["scope"]["action_classes"].append("inspect")
+            x[field]=bad
+            lease_path.write_text(json.dumps(x),encoding="utf-8")
+            argv=[sys.executable,str(ROOT/"scripts"/"run_cgx_agent_runtime.py"),
+                  "--instruction","synthetic identity control-character rejection",
+                  "--domain","romer","--execution-depth","inspect",
+                  "--execution-class","COMPUTE_ONLY","--agent-id","Neo",
+                  "--task-id","CGX-LAUNCH-006","--execute",
+                  "--execution-lease-json",str(lease_path)]
+            result=subprocess.run(argv,capture_output=True,text=True,timeout=15,check=False)
+            try:
+                receipt=json.loads(result.stdout)
+                reasons=receipt["execution_lease"]["reasons"]
+            except (ValueError,KeyError,TypeError):
+                receipt={}
+                reasons=[]
+            if (result.returncode!=4 or expected not in reasons
+                    or receipt.get("supervisor_receipt") is not None):
+                failures.append(f"CLI identity {field} failed closed incorrectly: "
+                                +repr({"exit":result.returncode,"reasons":reasons,
+                                       "supervisor":receipt.get("supervisor_receipt"),
+                                       "stderr":result.stderr[:200]}))
 
     # Truthy non-string receipt references must not satisfy structural gates.
     # These are source-only typed-reference checks, NOT proof of signature,
@@ -212,6 +251,9 @@ def main():
         ("allowed_floors", ["Neo", {"unexpected": "claim"}], "lease-allowed-floors-allowlist-invalid"),
         ("allowed_floors", ["Neo", " "], "lease-allowed-floors-allowlist-invalid"),
         ("allowed_floors", {"0": "Neo"}, "lease-allowed-floors-allowlist-invalid"),
+        ("domains", ["romer", "eco\nforged"], "lease-domains-allowlist-invalid"),
+        ("execution_depths", ["execute", "inspect\x7f"], "lease-execution-depths-allowlist-invalid"),
+        ("allowed_floors", ["Neo", "Other\x00floor"], "lease-allowed-floors-allowlist-invalid"),
     ]
     for field, bad_value, expected_reason in malformed_allowlists:
         x=base_lease()
