@@ -26,6 +26,9 @@ const label=x=>typeof x==='string'&&x.trim().length>0&&x.length<=256&&!/[\u0000-
 const identityLabel=x=>label(x)&&x===x.normalize('NFC')&&
  !/[\p{Default_Ignorable_Code_Point}\p{Cc}\p{Cs}]/u.test(x);
 const digest=x=>typeof x==='string'&&/^[a-f0-9]{64}$/i.test(x);
+// Parent and namespace identities are never selectable child Object_IDs.
+// Keep standalone drop preflight consistent with the private LOAD inspector.
+const reservedObjectId=id=>id==='cgx:root:cognigrex'||id.startsWith('cgx:domain:');
 const result=(reason,code='HOLD')=>({schema:DROP_SCHEMA,status:code,reason,bytes_read:0,uploaded:false,
  network_fetch:false,hash_verified:false,acl_verified:false,object_id_minted:false,
  native_admitted:false,public_release:false,canonical_mutation:false});
@@ -33,7 +36,7 @@ const result=(reason,code='HOLD')=>({schema:DROP_SCHEMA,status:code,reason,bytes
 export function planUniSpaceDropPreflight({target,file,source,access,existing_sources=[],surface='private',offline=false}={}){
  if(!obj(target)||!obj(file)||!obj(source)||!obj(access)||!Array.isArray(existing_sources)||existing_sources.length>512)
   return result('INVALID_PREFLIGHT_INPUT');
- if(!identityLabel(target.object_id)||!identityLabel(target.file_space)||!identityLabel(target.domain)||!identityLabel(target.owner)||
+ if(!identityLabel(target.object_id)||reservedObjectId(target.object_id)||!identityLabel(target.file_space)||!identityLabel(target.domain)||!identityLabel(target.owner)||
     !Object.hasOwn(spaces,target.domain)||spaces[target.domain]!==target.file_space)
   return result('EXACT_CHILD_FILESPACE_UNRESOLVED');
  if(!Array.isArray(access.authorized_object_ids)||!Array.isArray(access.authorized_file_spaces)||
