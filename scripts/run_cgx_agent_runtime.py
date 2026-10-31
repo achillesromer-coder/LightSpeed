@@ -62,11 +62,19 @@ def load_optional(path: Path | None) -> dict[str, Any] | None:
     return payload
 
 def subset_scope(name: str, allowed: list[str] | None, requested: str | None, reasons: list[str]) -> None:
-    if not allowed:
+    # An absent allowlist is not a wildcard for a requested task, project or action.
+    if allowed is None:
+        if requested is not None:
+            reasons.append(f"lease-{name}-scope-missing")
+        return
+    if not isinstance(allowed, list) or not allowed or any(
+        not isinstance(item, str) or not item.strip() for item in allowed
+    ):
+        reasons.append(f"lease-{name}-scope-invalid")
         return
     if not requested:
         reasons.append(f"lease-scope-requires-{name}")
-    elif requested not in set(map(str, allowed)):
+    elif requested not in allowed:
         reasons.append(f"lease-{name}-out-of-scope:{requested}")
 
 def validate_lease(
@@ -135,7 +143,10 @@ def validate_lease(
         if missing:
             reasons.append("lease-floor-out-of-scope:" + ",".join(missing))
 
-    scope = lease.get("scope") or {}
+    scope = lease.get("scope")
+    if not isinstance(scope, dict):
+        reasons.append("lease-scope-invalid")
+        scope = {}
     subset_scope("task", scope.get("task_ids"), task_id, reasons)
     subset_scope("project", scope.get("project_ids"), project_id, reasons)
     subset_scope("action-class", scope.get("action_classes"), action_class, reasons)
