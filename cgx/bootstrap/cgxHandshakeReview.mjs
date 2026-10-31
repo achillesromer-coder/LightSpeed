@@ -48,6 +48,7 @@ const LEASE_BOUNDARY_HOLDS=Object.freeze([
 ]);
 export function planCGXHandshake({parent,child,lease,exchange=null,now=null}={}){
  if(!obj(parent)||!obj(child)||!obj(lease))return {status:"DENIED",reason:"MISSING_CONTEXT"};
+ if(now!==null&&!validInstant(now))return {status:"DENIED",reason:"INVALID_NOW"};
  for(const x of [parent.object_id,parent.state_root,parent.dbr_root,child.object_id,child.filespace,child.parent_object_id,lease.lease_id,lease.target_object_id,lease.scope]){
   if(!id(x))return {status:"DENIED",reason:"INCOMPLETE_IDENTITY_OR_LEASE"};
  }
@@ -59,7 +60,6 @@ export function planCGXHandshake({parent,child,lease,exchange=null,now=null}={})
  if(!obj(lease.signer_ref)||!id(lease.signer_ref.key_id))holds.push("SIGNED_LEASE_PROVIDER_REQUIRED");
  if(!validInstant(lease.expires_utc)){holds.push("INVALID_LEASE_EXPIRY");}
  else if(now!==null){
-  if(!validInstant(now))return {status:"DENIED",reason:"INVALID_NOW"};
   if(Date.parse(lease.expires_utc)<=Date.parse(now))holds.push("LEASE_EXPIRED");
  }
  if(exchange!==null){
@@ -71,6 +71,11 @@ export function planCGXHandshake({parent,child,lease,exchange=null,now=null}={})
   if(![exchange.transfer_id,exchange.source_node_id,exchange.target_node_id,exchange.source_ref,exchange.target_root_id,exchange.target_relative_path].every(id)
   ||!SHA.test(exchange.source_sha256)||!Number.isSafeInteger(exchange.size_bytes)||exchange.size_bytes<0)
    return {status:"DENIED",reason:"INVALID_TRANSFER_ENVELOPE"};
+  // Chronology is only a self-reported consistency check, never host time attestation.
+  if(validInstant(lease.expires_utc)&&Date.parse(exchange.created_utc)>=Date.parse(lease.expires_utc))
+   holds.push("TRANSFER_CREATED_AFTER_LEASE_EXPIRY");
+  if(now!==null&&Date.parse(exchange.created_utc)>Date.parse(now))
+   holds.push("FUTURE_TRANSFER_TIMESTAMP");
   if(exchange.source_node_id===exchange.target_node_id)holds.push("DISTINCT_SECOND_NODE_NOT_PROVEN");
   if(exchange.source_node_id!==exchange.target_node_id)facts.distinct_node_ids_claimed=true;
   if(!exchange.receiver_receipt||exchange.receiver_receipt.sha256!==exchange.source_sha256||
