@@ -95,6 +95,24 @@ test('offline preflight retains metadata-only hold and no network hydration',()=
  const x=plan({...args,offline:true});assert.equal(x.reason,'OFFLINE_METADATA_ONLY');noEffects(x);
 });
 
+// #158: stale caller registry hints cannot establish duplicate identity or
+// revocation while offline. No offline NOOP_REVIEW or source ID disclosure.
+test('offline preflight holds before matching prior-source NOOP or collision hints',()=>{
+ const exact={source_id:source.source_id,sha256:source.sha256,
+  version:source.version,owner:source.owner,rights:source.rights,
+  proof_class:source.proof_class,object_id:target.object_id,
+  file_space:target.file_space,rights_state:'ACTIVE'};
+ for(const existing_sources of [[],[exact],[{...exact,sha256:'b'.repeat(64)}]]){
+  const x=plan({...args,offline:true,existing_sources});
+  assert.equal(x.status,'HOLD');
+  assert.equal(x.reason,'OFFLINE_METADATA_ONLY');
+  assert.ok(!JSON.stringify(x).includes(source.source_id));
+  noEffects(x);
+ }
+ // Online review preserves existing behaviour, without claiming DBR proof.
+ assert.equal(plan({...args,existing_sources:[exact]}).status,'NOOP_REVIEW');
+});
+
 // A same-byte digest is insufficient to collapse distinct R0 versions or grants.
 test('same hash requires full version owner rights and proof-class equality before NOOP',()=>{
  const exact={source_id:source.source_id,sha256:source.sha256,version:source.version,
