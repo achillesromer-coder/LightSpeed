@@ -100,6 +100,9 @@ def validate_lease(
     execution_class: str,
     planned_floors: list[str],
     consequential: bool,
+    object_id: str | None = None,
+    tool_scope: str | None = None,
+    configuration_id: str | None = None,
 ) -> tuple[bool, list[str], dict[str, Any]]:
     reasons: list[str] = []
     summary: dict[str, Any] = {}
@@ -172,6 +175,11 @@ def validate_lease(
     subset_scope("task", scope.get("task_ids"), task_id, reasons)
     subset_scope("project", scope.get("project_ids"), project_id, reasons)
     subset_scope("action-class", scope.get("action_classes"), action_class, reasons)
+    # Additional request-bound claims are checked only when the caller supplies
+    # the actual target. This is structural preflight, NOT tool authorization.
+    subset_scope("object", scope.get("object_ids"), object_id, reasons)
+    subset_scope("tool", scope.get("tool_scopes"), tool_scope, reasons)
+    subset_scope("configuration", scope.get("configuration_ids"), configuration_id, reasons)
 
     if lease.get("revocable") is not True:
         reasons.append("lease-not-revocable")
