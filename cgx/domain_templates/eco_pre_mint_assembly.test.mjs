@@ -528,3 +528,37 @@ test("symbolic-expression crosswalk rejects stale provenance, wrong anchor, evid
   source_lineage:lineage,symbolic_expression_crosswalk:pair,requested_hydration:"H0"});
  assert.equal(h0.source_symbolic_expression_crosswalk_review.state,"NOT_REQUESTED");
 });
+
+test("synthetic three-factor and Greek/superscript encoding regressions remain held",()=>{
+ const symbolicAnchor={...anchor,sheet:"31_Formula_Library",cell:"B9"};
+ const examples=[
+  ["score = alpha × beta × gamma","score = alpha Ã— beta Ã— gamma"],
+  ["pressure = 0.5ρv²","pressure = 0.5ÏvÂ²"]
+ ];
+ for(const [original,translated] of examples){
+  const pair={source_ref:source.source_ref,source_revision:source.revision,
+   source_sha256:digest,related_source_ref:"synthetic:translated-type1-sheet",
+   related_revision_ref:"synthetic-related-provider-revision",
+   original_cell:{sheet:"31_Formula_Library",cell:"B9",
+    expression_text:original,evidence_class:"simulated"},
+   related_cell:{sheet:"SYNTHETIC_31_Formula_Library",cell:"B9",
+    expression_text:translated,evidence_class:"simulated"}};
+  const sourceLineage={source_ref:source.source_ref,
+   related_source_ref:pair.related_source_ref,
+   relation_kind:"embedded_translation",
+   manifest_location_ref:"01_Source_Manifest!A3:B3",
+   manifest_source_sha256:digest,
+   related_revision_ref:pair.related_revision_ref};
+  const result=prepare({cascade_input:input,cell_anchor:symbolicAnchor,
+   source_lineage:sourceLineage,symbolic_expression_crosswalk:pair});
+  const review=result.source_symbolic_expression_crosswalk_review;
+  assert.equal(review.state,"R1_CALLER_DECLARED_SYMBOLIC_EXPRESSION_DISCREPANCY_HOLD");
+  assert.equal(review.expression_text_match,false);
+  assert.equal(review.related_encoding_valid,false);
+  assert.equal(review.scientific_equivalence_verified,false);
+  assert.equal(result.release.mint_allowed,false);
+  assert.equal(result.release.public_release_authorised,false);
+  assert.equal(JSON.stringify(result).includes(original),false);
+  assert.equal(JSON.stringify(result).includes(translated),false);
+ }
+});
