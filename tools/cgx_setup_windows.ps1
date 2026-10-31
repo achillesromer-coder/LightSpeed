@@ -67,7 +67,7 @@ if ($Evidence.schema -ne 'CGX-WINDOWS-SETUP-AND-BOOT-EVIDENCE/0.1' -or
 $Node = Get-Command node.exe -ErrorAction SilentlyContinue
 $PlannerState = 'NODE_NOT_INSTALLED'
 if ($Node) {
-    $PlannerOutput = & $Node.Source $Planner --family Cognigrex.cgx --mode $Mode --device desktop --profile core --offline=true --ls-go=false
+    $PlannerOutput = & ($Node.Source) $Planner --family Cognigrex.cgx --mode $Mode --device desktop --profile core --offline=true --ls-go=false
     if ($LASTEXITCODE -ne 0) { throw 'Existing CGX bootstrap planner rejected source.' }
     $Planned = ($PlannerOutput -join [Environment]::NewLine) | ConvertFrom-Json
     if ($Planned.setup.canonical_accepted -ne $false -or
