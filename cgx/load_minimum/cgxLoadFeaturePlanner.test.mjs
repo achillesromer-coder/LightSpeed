@@ -338,3 +338,46 @@ test('free-knowledge intent and claimed licences cannot waive independent source
   assert.ok(x.blockers.includes('INDEPENDENT_NATIVE_ROOT_ACL_LEASE_AND_RIGHTS_VERIFICATION_REQUIRED'));
  }
 });
+
+test('nested LS.cgx immediate-parent lineage is preserved in LOAD, drop and host preflight',()=>{
+ const lsTarget={...target,fileSpace:'LS.cgx',domain:'ls',owner:'EMASSC-Grex',parentFileSpace:'EMASSC.cgx'};
+ const plan=planFeature({action:'load.attach',target:lsTarget,...good});
+ assert.equal(plan.status,'READY_FOR_AUTHENTICATED_HOST_PREFLIGHT');
+ assert.equal(plan.target.parentFileSpace,'EMASSC.cgx');
+ assert.equal(plan.canonicalMutation,false);
+ assert.equal(plan.install,false);
+ const drop=planSourceDropPreflight({surface:'private',target:lsTarget,
+  file:{name:'source.json',size:12,type:'application/json'},readable:true});
+ assert.equal(drop.state,'REVIEW_ONLY');
+ assert.equal(drop.target.parentFileSpace,'EMASSC.cgx');
+ assert.equal(drop.sourceBytesRead,false);
+ assert.equal(drop.nativeAdmitted,false);
+ const missing={...lsTarget};delete missing.parentFileSpace;
+ assert.equal(planFeature({action:'load.attach',target:missing,...good}).reason,'EXACT_CHILD_PARENT_REQUIRED');
+ const wrong={...lsTarget,parentFileSpace:'Cognigrex.cgx'};
+ assert.equal(planFeature({action:'load.attach',target:wrong,...good}).reason,'COMPETING_PARENT_ROOT');
+ const hostEvidence={parentFileSpace:'EMASSC.cgx',childFileSpace:'LS.cgx',
+  objectId:lsTarget.objectId,issuerId:'fixture-issuer',
+  stateRootSha256:'a'.repeat(64),dbrRootSha256:'b'.repeat(64),
+  leaseId:'fixture-lease',readbackId:'fixture-readback'};
+ const rightsEvidence={sourceRef:'fixture:source',revision:'fixture-v1',
+  licenceId:'fixture-licence',owner:'fixture-owner'};
+ const bridge=planUniSpaceHostBridgeHandoff({surface:'private',target:lsTarget,
+  device:'windows',mode:'pair',ownerConsent:true,brokerDetected:true,
+  hostEvidence,rightsEvidence});
+ assert.equal(bridge.state,'SOURCE_REVIEW_ONLY');
+ assert.equal(bridge.family,'Cognigrex.cgx');
+ assert.equal(bridge.selected_file_space,'LS.cgx');
+ assert.equal(bridge.hostAuthenticated,false);
+ assert.equal(bridge.providerReadback,false);
+ assert.equal(bridge.mayInstall,false);
+ assert.equal(bridge.mayExecute,false);
+ assert.equal(bridge.mayPublish,false);
+ assert.ok(bridge.blockers.includes('INDEPENDENT_NATIVE_DBR_READBACK_REQUIRED'));
+ const wrongHost=planUniSpaceHostBridgeHandoff({surface:'private',target:lsTarget,
+  device:'windows',mode:'pair',ownerConsent:true,brokerDetected:true,
+  hostEvidence:{...hostEvidence,parentFileSpace:'Cognigrex.cgx'},rightsEvidence});
+ assert.equal(wrongHost.state,'DENIED');
+ assert.equal(wrongHost.reason,'HOST_IDENTITY_MISMATCH');
+ assert.equal(wrongHost.hostAuthenticated,false);
+});
