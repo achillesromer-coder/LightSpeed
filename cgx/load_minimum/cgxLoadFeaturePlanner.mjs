@@ -25,6 +25,8 @@ const allow = (x) => x === true;
 // Source-review scope check: a menu declaration is not native Object_ID authority.
 const childSpaces=Object.freeze({eco:'Eco.cgx',romer:'Romer.cgx',emassc:'EMASSC.cgx',ls:'LS.cgx'});
 const reservedSpaces=Object.freeze(Object.fromEntries(Object.entries(childSpaces).map(([domain,space])=>[space,domain])));
+// The sole family parent and Alexandria activation alias are not selectable child FileSpaces.
+const reservedNonChildSpaces=new Set(['Cognigrex.cgx','LOAD.cgx']);
 // Immediate parent lineage, distinct from the single Cognigrex.cgx family root.
 // LS.cgx is nested under EMASSC.cgx, not a direct root child.
 const childParents=Object.freeze({eco:'Cognigrex.cgx',romer:'Cognigrex.cgx',emassc:'Cognigrex.cgx',ls:'EMASSC.cgx'});
@@ -56,6 +58,10 @@ export function planFeature(request) {
       (target.objectId != null&&!unambiguous(target.objectId))||
       (capabilityId != null&&!unambiguous(capabilityId)))
     return {state:'DENIED',reason:'AMBIGUOUS_IDENTITY_OR_SCOPE'};
+  // A custom domain must not turn the root or LOAD alias into a new child.
+  // Keep menu, drop and host handoff aligned with the private inspector.
+  if(reservedNonChildSpaces.has(target.fileSpace))
+    return {state:'DENIED',reason:'PARENT_OR_LIBRARY_NOT_CHILD_FILESPACE'};
   const expectedParent=target.domain!=null&&Object.hasOwn(childParents,target.domain)?
     childParents[target.domain]:'Cognigrex.cgx';
   // Do not silently infer the nested LS parent from an absent caller field.
