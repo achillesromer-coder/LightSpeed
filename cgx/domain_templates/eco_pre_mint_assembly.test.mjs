@@ -522,7 +522,7 @@ test("symbolic-expression crosswalk rejects stale provenance, wrong anchor, evid
   {...pair,original_cell:{...pair.original_cell,cell:"B4"}},
   {...pair,related_cell:{...pair.related_cell,evidence_class:"observed"}},
   {...pair,related_cell:{...pair.related_cell,coordinates:[153,-27]}},
-  {...pair,original_cell:{...pair.original_cell,expression_text:"line\\nunsafe"}}
+  {...pair,original_cell:{...pair.original_cell,expression_text:"line\nunsafe"}}
  ])assert.throws(()=>call(bad),/INVALID_ECO_SYMBOLIC_EXPRESSION_CROSSWALK/);
  const h0=prepare({cascade_input:input,cell_anchor:symbolicAnchor,
   source_lineage:lineage,symbolic_expression_crosswalk:pair,requested_hydration:"H0"});
