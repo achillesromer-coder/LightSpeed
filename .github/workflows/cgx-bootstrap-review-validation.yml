@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - 'cgx/bootstrap/**'
+      - 'scripts/run_cgx_agent_runtime.py'
+      - 'scripts/validate_cgx_execution_lease.py'
       - '.github/workflows/cgx-bootstrap-review-validation.yml'
   workflow_dispatch:
 
@@ -33,6 +35,8 @@ jobs:
       - name: Test startup, Windows diagnostic and native handshake review guards
         run: |
           node --test cgx/bootstrap/unifiedBootstrap.test.mjs cgx/bootstrap/cgxHandshakeReview.test.mjs cgx/bootstrap/cgxWindowsHostPreflightReview.test.mjs
+      - name: Validate Python lease scope regression (source-only)
+        run: python3 scripts/validate_cgx_execution_lease.py
       - name: Verify review-only plans and no unsupported GOT installer
         run: |
           node cgx/bootstrap/cgxSetupCli.mjs --family Eco.cgx --mode first-run --ls-go=true > "$RUNNER_TEMP/setup.json"
