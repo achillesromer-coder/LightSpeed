@@ -103,6 +103,32 @@ def main():
         if ok or expected_reason not in reasons:
             failures.append(label + ": expected " + expected_reason + "; got " + ",".join(reasons))
 
+    # Invalid envelope/identity types must fail closed, even when other
+    # lease fields look valid. These are NOT signature-verification tests.
+    for bad_envelope in ([], "lease", 42):
+        ok,reasons,_=check(bad_envelope)
+        if ok or "execution-lease-invalid" not in reasons:
+            failures.append("non-object lease envelope accepted: " + repr(bad_envelope))
+    malformed_identity = [
+        ("lease_id", None, "lease-lease-id-invalid"),
+        ("lease_id", "", "lease-lease-id-invalid"),
+        ("lease_id", 17, "lease-lease-id-invalid"),
+        ("lease_id", "   ", "lease-lease-id-invalid"),
+        ("issued_by", None, "lease-issued-by-invalid"),
+        ("issued_by", [], "lease-issued-by-invalid"),
+        ("issued_by", "   ", "lease-issued-by-invalid"),
+        ("subject_agent", None, "lease-subject-agent-invalid"),
+        ("subject_agent", {}, "lease-subject-agent-invalid"),
+        ("subject_agent", "   ", "lease-subject-agent-invalid"),
+    ]
+    for field, bad_value, expected_reason in malformed_identity:
+        x=base_lease()
+        x["root_authority_receipt_ref"]="fixture:root-approval"
+        x[field]=copy.deepcopy(bad_value)
+        ok,reasons,_=check(x)
+        if ok or expected_reason not in reasons:
+            failures.append(field + " invalid identity type not rejected: " + ",".join(reasons))
+
     # Typed allowlists reject malformed and mixed-type values, even when the
     # requested legitimate entry is also present. Source-only; not issuer proof.
     malformed_allowlists = [
