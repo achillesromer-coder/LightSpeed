@@ -36,6 +36,8 @@ const fixture = (): CgxFamilyOversightSnapshot => ({
   load_alexandria: {
     state: "SOURCE_REFERENCES_ONLY_NOT_ADMITTED", reference_count: 131,
     source_registry_count: 14, frontier_count: 3, native_accepted: 0,
+    selector_source_route_counts: { achilles: 31, neo: 27 },
+    selector_routes_are_installed: false,
   },
   effects: {
     canonical_db_writes: 0, object_ids_minted: 0,
@@ -51,6 +53,8 @@ describe("CGX LS owner-only family oversight renderer", () => {
     expect(output).toContain("cgx:domain:emassc");
     expect(output).toContain("131");
     expect(output).toContain("14");
+    expect(output).toContain("achilles: 31");
+    expect(output).toContain("not installed");
     expect(output).toContain("3");
     expect(output).toContain("not an owner signature");
   });
