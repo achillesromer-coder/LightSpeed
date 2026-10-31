@@ -138,6 +138,19 @@ export function reviewNativeLeaseHandshakeABI({
     !includes(nativeLease.domains,request.domain)||
     !includes(nativeLease.execution_depths,request.execution_depth))
   return deny("NATIVE_LEASE_REQUEST_SCOPE_MISMATCH");
+ // The native contract also scopes task/project/configuration when declared.
+ // Do not call a request bound merely because object/tool/action match while
+ // another explicitly restricted native dimension was omitted or changed.
+ for(const [scopeKey,requestKey] of [
+  ["task_ids","task_id"],["project_ids","project_id"],
+  ["configuration_ids","configuration_id"]]){
+  if(Object.hasOwn(scopes,scopeKey)){
+   const entries=scopes[scopeKey];
+   if(!Array.isArray(entries)||entries.length>100||!entries.every(id)||
+      (entries.length>0&&(!id(request[requestKey])||!entries.includes(request[requestKey]))))
+    return deny("NATIVE_LEASE_CONTEXT_SCOPE_MISMATCH");
+  }
+ }
  if(request.object_id!==child.object_id)return deny("NATIVE_LEASE_CHILD_MISMATCH");
  if(!validInstant(nativeLease.valid_from)||!validInstant(nativeLease.valid_until)||
     Date.parse(nativeLease.valid_from)>=Date.parse(nativeLease.valid_until)||
