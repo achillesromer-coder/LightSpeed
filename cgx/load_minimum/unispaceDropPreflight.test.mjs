@@ -40,6 +40,17 @@ test('cross-Grex FileSpace impersonation and missing scope deny without source d
   const x=plan(a);assert.equal(x.status,'HOLD');assert.ok(!JSON.stringify(x).includes(source.source_id));noEffects(x);
  }
 });
+test('standalone preflight cannot bind parent or reserved domain namespace as child Object_ID',()=>{
+ for(const object_id of ['cgx:root:cognigrex','cgx:domain:eco','cgx:domain:romer']){
+  const x=plan({...args,target:{...target,object_id},access:{
+   ...access,authorized_object_ids:[object_id]}});
+  assert.equal(x.status,'HOLD');
+  assert.equal(x.reason,'EXACT_CHILD_FILESPACE_UNRESOLVED');
+  assert.ok(!JSON.stringify(x).includes(object_id));
+  assert.ok(!JSON.stringify(x).includes(source.source_id));
+  noEffects(x);
+ }
+});
 test('public source alone cannot promote a private or unqualified target Object_ID',()=>{
  const x=plan({...args,surface:'public'});assert.equal(x.reason,'PRIVATE_SOURCE_PUBLIC_BOUNDARY');noEffects(x);
  for(const targetRights of [undefined,'OWNER_PRIVATE','UNKNOWN','LICENSE_RESTRICTED']){
