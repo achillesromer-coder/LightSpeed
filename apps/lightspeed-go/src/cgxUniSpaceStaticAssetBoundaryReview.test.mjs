@@ -24,3 +24,15 @@ test('offline fallback remains H0',()=>{assert.equal(review(fixture()).offline_h
 test('empty asset list rejected',()=>{const f=fixture();f.assets=[];assert.equal(review(f).state,'HOLD');});
 test('circular input rejected',()=>{const f=fixture();f.loop=f;assert.equal(review(f).state,'HOLD');});
 test('unexpected evidence keys rejected',()=>{const f=fixture();f.assets[0].http_status=403;assert.equal(review(f).state,'HOLD');});
+
+// #158: source-stage classification is carried into the review contract,
+// but remains unverified metadata; never expose repository path or raw bytes.
+test('source classification provenance is preserved for build parity only',()=>{
+ const x=review(fixture());const a=x.assets[0];
+ assert.equal(a.source_class,'INTERNAL_REVIEW');
+ assert.equal(a.scope,'MULTI_OBJECT');
+ assert.equal(a.rights,'UNRESOLVED');
+ assert.equal(a.owner_clearance,false);
+ assert.equal(x.release_accepted,false);
+ assert.ok(!JSON.stringify(x).includes('cgx_object_review_catalogue.json'));
+});
