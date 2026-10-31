@@ -318,3 +318,38 @@ test('native ABI unsupported effectful class never silently maps to bootstrap',(
   assert.equal(r.reason,'NATIVE_LEASE_CLASS_UNSUPPORTED_BY_HANDSHAKE');
  }
 });
+
+test('native lease ABI binds explicitly scoped task, project and configuration',()=>{
+ const scope={...nativeABIBase.nativeLease.scope,
+  task_ids:['fixture:task'],project_ids:['fixture:project'],
+  configuration_ids:['fixture:configuration']};
+ const lease={...nativeABIBase.nativeLease,scope};
+ const request={...nativeABIBase.request,task_id:'fixture:task',
+  project_id:'fixture:project',configuration_id:'fixture:configuration'};
+ const qualified=reviewNativeLeaseHandshakeABI({...nativeABIBase,nativeLease:lease,request});
+ assert.equal(qualified.status,'UNVERIFIED_SHAPE_REVIEW');
+ assert.equal(qualified.request_binding_reviewed,true);
+ assert.equal(qualified.may_execute,false);
+ for(const field of ['task_id','project_id','configuration_id']){
+  for(const bad of [undefined,'fixture:other']){
+   const altered={...request,[field]:bad};
+   const result=reviewNativeLeaseHandshakeABI({...nativeABIBase,nativeLease:lease,request:altered});
+   assert.equal(result.status,'DENIED',field+':'+String(bad));
+   assert.equal(result.reason,'NATIVE_LEASE_CONTEXT_SCOPE_MISMATCH');
+   assert.equal(result.may_execute,false);
+  }
+ }
+});
+
+test('malformed optional native context allowlists fail closed without host authority',()=>{
+ for(const field of ['task_ids','project_ids','configuration_ids']){
+  for(const invalid of [null,'fixture:task',[17],['fixture:bad\\nspoof']]){
+   const scope={...nativeABIBase.nativeLease.scope,[field]:invalid};
+   const result=reviewNativeLeaseHandshakeABI({...nativeABIBase,
+    nativeLease:{...nativeABIBase.nativeLease,scope}});
+   assert.equal(result.status,'DENIED',field+':'+JSON.stringify(invalid));
+   assert.equal(result.reason,'NATIVE_LEASE_CONTEXT_SCOPE_MISMATCH');
+   assert.equal(result.may_execute,false);
+  }
+ }
+});
