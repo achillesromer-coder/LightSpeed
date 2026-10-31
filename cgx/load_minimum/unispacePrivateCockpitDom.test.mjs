@@ -53,6 +53,32 @@ test('one private source-review DOM status has accessible labels and no active c
  assert.ok(!tags(mount).some(t=>['button','a','input','script','iframe'].includes(t)));
 });
 
+test('H0–H4 and all six viewport intents render as inert accessible review metadata',()=>{
+ const mount=fakeMount();
+ const x=render({...input,mount});
+ assert.equal(x.status,'RENDERED_SOURCE_REVIEW');
+ const txt=flatten(mount);
+ for(const layer of ['H0 Identity','H1 Semantic edges','H2 Source and provenance',
+                     'H3 Qualified capabilities','H4 Permissioned execution'])
+  assert.ok(txt.includes(layer),layer);
+ for(const view of ['document','3d','chat','graph','interactive','matrix'])
+  assert.match(txt,new RegExp(view+' — '));
+ assert.match(txt,/document — REVIEW_REQUEST_ONLY — selected/);
+ assert.match(txt,/3d — METRIC_GEOMETRY_FRONTIER/);
+ assert.match(txt,/Denied — signed root, ACL, lease and DBR not verified/);
+ assert.ok(!txt.includes(source.source_id));
+ assert.ok(!txt.includes(source.sha256));
+ assert.ok(!tags(mount).some(t=>['button','a','input','script','iframe'].includes(t)));
+ const offlineMount=fakeMount();
+ const offline=planUniSpaceSourceInspector({...inspectInput,offline:true});
+ const y=render({...input,mount:offlineMount,inspector:offline,offline:true});
+ assert.equal(y.status,'RENDERED_SOURCE_REVIEW');
+ assert.match(flatten(offlineMount),/H0 metadata only/);
+ assert.match(flatten(offlineMount),/3d — OFFLINE_UNAVAILABLE/);
+ assert.ok(!flatten(offlineMount).includes(' — selected'));
+ assert.equal(y.may_execute,false);
+});
+
 test('#158 public route transition erases stale private DOM without disclosing identity',()=>{
  const mount=fakeMount();
  assert.equal(render({...input,mount}).status,'RENDERED_SOURCE_REVIEW');
