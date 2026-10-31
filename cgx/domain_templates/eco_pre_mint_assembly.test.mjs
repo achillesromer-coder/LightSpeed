@@ -741,3 +741,32 @@ test("symbolic correction formula ID requires paired A-row identity anchors",()=
   {...entry,original_id_anchor:{...entry.original_id_anchor,raw_bytes:"secret"}}
  ])assert.throws(()=>run([bad]),/ECO_SYMBOLIC_FORMULA_ID_ROW_BINDING_CONFLICT/);
 });
+
+test("Second Cycle coefficient role collision is retained as held pre-Mint review",()=>{
+ const roleInput={source_ref:source.source_ref,source_revision:source.revision,
+   source_sha256:digest,
+   flow:{formula_id:"FM-001",sheet_ref:"07_Flow_Mist_Model",
+     parameter_cell_ref:"B5",role:"flow_coefficient",symbol:"Cd",
+     numeric_value:0.5,unit:"ratio",evidence_class:"simulated"},
+   drag:{formula_id:"FM-004",sheet_ref:"11_Anchor_Mooring",
+     parameter_cell_ref:"B4",role:"drag_coefficient",symbol:"Cd",
+     numeric_value:1.2,unit:"ratio",evidence_class:"simulated"}};
+ const result=prepare({cascade_input:input,coefficient_roles:roleInput});
+ assert.equal(result.coefficient_roles_review.state,"R1_COEFFICIENT_SYMBOL_OVERLOAD_HOLD");
+ assert.ok(result.blocking_gates.includes("SECOND_CYCLE_COEFFICIENT_SYMBOL_OVERLOAD_HOLD"));
+ assert.ok(result.blocking_gates.includes("COEFFICIENT_ROLES_REQUIRE_PROVIDER_CELL_ATTESTATION"));
+ assert.equal(result.coefficient_roles_review.provider_source_cells_fetched_by_module,false);
+ assert.equal(result.release.mint_allowed,false);
+ assert.equal(result.canonical_write,false);
+ assert.equal(result.candidate_object_id,null);
+ assert.equal(JSON.stringify(result).includes("0.5"),false);
+ const h0=prepare({cascade_input:input,coefficient_roles:roleInput,requested_hydration:"H0"});
+ assert.equal(h0.coefficient_roles_review.state,"NOT_REQUESTED");
+ for(const bad of [
+   {...roleInput,source_revision:"stale"},
+   {...roleInput,source_sha256:"0".repeat(64)},
+   {...roleInput,drag:{...roleInput.drag,parameter_cell_ref:"B5"}},
+   {...roleInput,flow:{...roleInput.flow,evidence_class:"observed"}}
+ ])assert.throws(()=>prepare({cascade_input:input,coefficient_roles:bad}),
+   /ECO_COEFFICIENT_SOURCE_OR_EVIDENCE_CONFLICT|INVALID_SECOND_CYCLE_COEFFICIENT_ROLES/);
+});
