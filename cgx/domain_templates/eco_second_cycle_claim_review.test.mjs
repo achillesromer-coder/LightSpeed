@@ -10,6 +10,22 @@ test("source-only model never becomes a physical or live CGX result",()=>{
  assert.equal(r.admission_stage,"R1_REVIEW_ONLY");
  assert.ok(r.flags.includes("R0_ORIGINAL_BYTE_HASH_REQUIRED"));
 });
+test("source assertion, hypothesis and inference stay distinct from measured outcomes",()=>{
+ const cases=[
+  ["source_asserted","SOURCE_ASSERTION_NOT_MEASUREMENT_OR_VALIDATED_OUTCOME"],
+  ["hypothesised","HYPOTHESIS_REQUIRES_TESTABLE_BASELINE_CONTROL_AND_FALSIFIER"],
+  ["inferred","INFERENCE_REQUIRES_INPUT_EVIDENCE_AND_UNCERTAINTY"]
+ ];
+ for(const [evidence_class,flag] of cases){
+  const r=review({claim_kind:"weather_effect",evidence_class,
+   source_ref:"synthetic:source",issuer_ref:"synthetic:issuer"});
+  assert.ok(r.flags.includes(flag));
+  assert.ok(r.flags.includes("WEATHER_CAUSALITY_NOT_ESTABLISHED"));
+  assert.equal(r.field_observation_verified,false);
+  assert.equal(r.ecological_effect_verified,false);
+  assert.equal(r.public_release_authorised,false);
+ }
+});
 test("strict units prohibit velocity being presented as volumetric flow",()=>{
  assert.throws(()=>review({...base,numeric_value:1.2,unit:"m/s"}),/INVALID_SECOND_CYCLE_REVIEW_INPUT/);
 });
