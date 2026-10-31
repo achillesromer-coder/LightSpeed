@@ -852,3 +852,33 @@ test('accessible review controls never promise offline hydration, metric 3D or h
  assert.equal(denied.state,'DENIED');
  assert.equal(Object.hasOwn(denied,'accessibility'),false);
 });
+
+
+test('single parent and LOAD alias cannot be impersonated as custom child FileSpaces',()=>{
+ // Both names are non-child presentation/source-federation entrypoints. Neither
+ // is a valid new child FileSpace merely because a caller supplied an ACL array.
+ for(const alias of ['Cognigrex.cgx','LOAD.cgx']){
+  const custom=[{...nodes[0],domain:'custom',file_space:alias},nodes[1]];
+  const denied=inspect({...args,nodes:custom,file_space:alias});
+  assert.equal(denied.status,'DENIED',alias);
+  assert.equal(denied.reason,'FILESPACE_OR_ID_UNRESOLVED',alias);
+  assert.equal(denied.canonical_mutation,false,alias);
+  assert.equal(denied.public_release,false,alias);
+  assert.ok(!JSON.stringify(denied).includes('fixture:eco:source'),alias);
+  // Even a permitted cross-domain halo must not project the alias as a child.
+  const sibling=[nodes[0],{...nodes[1],domain:'custom',file_space:alias}];
+  const halo=inspect({...args,nodes:sibling,
+   budgets:{max_cross_domains:1,max_cross_edges:1,max_hops:1},
+   access:{authorized_object_ids:['fixture:eco:one','fixture:romer:private'],
+    authorized_source_ids:['fixture:eco:source','fixture:romer:private-source']}});
+  assert.equal(halo.status,'DENIED',alias);
+  assert.equal(halo.reason,'CHILD_FILESPACE_SCOPE_CONFLICT',alias);
+  assert.ok(!JSON.stringify(halo).includes('fixture:romer:private-source'),alias);
+ }
+ // A genuinely distinct custom child remains a source-review candidate only.
+ const custom=[{...nodes[0],domain:'custom',file_space:'Custom.cgx'},nodes[1]];
+ const review=inspect({...args,nodes:custom,file_space:'Custom.cgx'});
+ assert.equal(review.status,'SOURCE_REVIEW_ONLY');
+ assert.equal(review.native_admitted,undefined);
+ assert.equal(review.host_authenticated,false);
+});
