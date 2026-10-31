@@ -133,7 +133,39 @@ test('Windows-illegal characters, C1 controls and superscript device aliases fai
 });
 
 
-test('transfer chronology after lease expiry or observation time stays held, never executed',()=>{
+test('Windows console device endpoints cannot masquerade as transfer files',()=>{\n for(const target_relative_path of [\n  'staged/CONIN
+ const afterExpiry=planCGXHandshake({...base,
+  lease:{...base.lease,expires_utc:'2026-10-28T00:00:00Z'},exchange});
+ assert.equal(afterExpiry.status,'UNVERIFIED_SHAPE_REVIEW');
+ assert.ok(afterExpiry.holds.includes('TRANSFER_CREATED_AFTER_LEASE_EXPIRY'));
+ assert.equal(afterExpiry.may_execute,false);
+ const future=planCGXHandshake({...base,exchange:{...exchange,created_utc:'2026-10-29T00:00:00Z'}});
+ assert.ok(future.holds.includes('FUTURE_TRANSFER_TIMESTAMP'));
+ assert.equal(future.receiver_readback_independently_verified,false);
+ assert.equal(future.may_execute,false);
+});
+test('malformed observation time is denied even if lease expiry is malformed',()=>{
+ const result=planCGXHandshake({...base,now:'invalid',lease:{...base.lease,expires_utc:'invalid'}});
+ assert.equal(result.status,'DENIED');
+ assert.equal(result.reason,'INVALID_NOW');
+});
+, 'staged/CONOUT
+ const afterExpiry=planCGXHandshake({...base,
+  lease:{...base.lease,expires_utc:'2026-10-28T00:00:00Z'},exchange});
+ assert.equal(afterExpiry.status,'UNVERIFIED_SHAPE_REVIEW');
+ assert.ok(afterExpiry.holds.includes('TRANSFER_CREATED_AFTER_LEASE_EXPIRY'));
+ assert.equal(afterExpiry.may_execute,false);
+ const future=planCGXHandshake({...base,exchange:{...exchange,created_utc:'2026-10-29T00:00:00Z'}});
+ assert.ok(future.holds.includes('FUTURE_TRANSFER_TIMESTAMP'));
+ assert.equal(future.receiver_readback_independently_verified,false);
+ assert.equal(future.may_execute,false);
+});
+test('malformed observation time is denied even if lease expiry is malformed',()=>{
+ const result=planCGXHandshake({...base,now:'invalid',lease:{...base.lease,expires_utc:'invalid'}});
+ assert.equal(result.status,'DENIED');
+ assert.equal(result.reason,'INVALID_NOW');
+});
+, 'staged/conin$.txt',\n  'staged/ConOut$.log', 'CONIN$/nested'\n ]){\n  const result=planCGXHandshake({...base,exchange:{...exchange,target_relative_path}});\n  assert.equal(result.reason,'UNSAFE_TRANSFER_TARGET',target_relative_path);\n  assert.equal(result.status,'DENIED',target_relative_path);\n }\n const ordinary=planCGXHandshake({...base,exchange:{...exchange,target_relative_path:'staged/console-input$.txt'}});\n assert.equal(ordinary.status,'UNVERIFIED_SHAPE_REVIEW');\n assert.equal(ordinary.may_execute,false);\n});\n\ntest('transfer chronology after lease expiry or observation time stays held, never executed',()=>{
  const afterExpiry=planCGXHandshake({...base,
   lease:{...base.lease,expires_utc:'2026-10-28T00:00:00Z'},exchange});
  assert.equal(afterExpiry.status,'UNVERIFIED_SHAPE_REVIEW');
