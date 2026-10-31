@@ -9,6 +9,7 @@ import argparse
 from collections import Counter
 import hashlib
 import json
+import re
 from pathlib import Path
 import sqlite3
 from typing import Any
@@ -54,6 +55,7 @@ def _identity_rows(registry: dict[str, Any]) -> tuple[dict[str, Any], list[dict[
             or root.get("filespace") != "Cognigrex.cgx"):
         raise CGXFamilyIngestionError("CANONICAL_FAMILY_IDENTITY_MISMATCH")
     ids = {ROOT_ID}
+    filespaces = {root["filespace"]}
     rows = []
     for key, child in sorted(children.items()):
         if not isinstance(child, dict) or child.get("domain_id") != key:
@@ -63,9 +65,11 @@ def _identity_rows(registry: dict[str, Any]) -> tuple[dict[str, Any], list[dict[
         filespace = child.get("filespace")
         if (not isinstance(semantic, str) or not semantic.startswith("cgx:domain:")
                 or semantic in ids or not isinstance(filespace, str)
-                or not filespace.endswith(".cgx") or not isinstance(parent, str)):
+                or not filespace.endswith(".cgx") or filespace in filespaces
+                or not isinstance(parent, str)):
             raise CGXFamilyIngestionError("FAMILY_IDENTITY_COLLISION_OR_INVALID")
         ids.add(semantic)
+        filespaces.add(filespace)
         rows.append({
             "domain": key, "semantic_object_id": semantic,
             "parent_semantic_object_id": parent, "filespace": filespace,
@@ -111,11 +115,13 @@ def _load_counts(projection: dict[str, Any], domains: set[str]) -> dict[str, Any
         reference = record.get("source_registry")
         proof = record.get("source_git_blob")
         if (cat not in CATEGORIES or not isinstance(key, str) or not key
-                or len(key) > 200 or (cat, key) in keys
+                or not re.fullmatch(r"[a-z0-9][a-z0-9_.:/-]{0,199}", key, re.I)
+                or (cat, key) in keys
                 or not isinstance(reference, str) or reference not in registries
                 or not isinstance(registries[reference], dict)
                 or registries[reference].get("git_blob") != proof
-                or not isinstance(proof, str) or len(proof) != 40
+                or not isinstance(proof, str)
+                or re.fullmatch(r"[0-9a-f]{40}", proof) is None
                 or record.get("admission") != "SOURCE_REGISTRY_ONLY"
                 or record.get("canonical_object_id") is not None
                 or record.get("native_absorbed") not in (None, False)
@@ -232,7 +238,7 @@ def build_oversight(
         if load_registry_path else {
             "state": "LOAD_SOURCE_PROJECTION_NOT_CONFIGURED",
             "reference_count": 0, "source_registry_count": 0,
-            "frontier_count": 0, "by_domain": {},
+            "frontier_count": 0, "categories": {}, "by_domain": {},
             "native_accepted": 0, "source_bodies_copied": 0,
         }
     )
@@ -265,7 +271,7 @@ def build_oversight(
         },
         "families": family_rows,
         "load_alexandria": load,
-        "unisp ace".replace(" ", ""): {
+        "unispace": {
             "role": "NON_AUTHORITATIVE_OWNER_INTERFACE",
             "native_source_authority": False, "private_hydration": False,
             "public_release": False,
