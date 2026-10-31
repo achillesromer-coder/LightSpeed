@@ -60,6 +60,7 @@ export function renderUniSpacePrivateStatus({
   line(doc,'Parent FileSpace',status.parent_file_space),
   line(doc,'View',status.view),
   line(doc,'Presentation stage',status.presentation_stage),
+  line(doc,'Evidence ceiling',status.evidence_ceiling),
   line(doc,'Source evidence',status.source_evidence),
   line(doc,'Source rights',status.source_rights),
   line(doc,'Root authority',status.root_authority),
