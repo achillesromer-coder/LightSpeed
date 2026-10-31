@@ -1,3 +1,4 @@
+import {readFileSync} from 'node:fs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {planCGXHandshake} from './cgxHandshakeReview.mjs';
@@ -199,4 +200,41 @@ test('malformed observation time is denied even if lease expiry is malformed',()
  const result=planCGXHandshake({...base,now:'invalid',lease:{...base.lease,expires_utc:'invalid'}});
  assert.equal(result.status,'DENIED');
  assert.equal(result.reason,'INVALID_NOW');
+});
+
+test('native execution lease contract is not implicitly the bootstrap handshake lease ABI',()=>{
+ const contract=JSON.parse(readFileSync(new URL('../domain_templates/execution_lease_contract.json',import.meta.url),'utf8'));
+ assert.equal(contract.schema,'CGX-EXECUTION-LEASE-CONTRACT/0.1');
+ for(const field of ['issued_by','subject_agent','valid_from','valid_until','scope','authority_phase_ref'])
+  assert.ok(contract.required_fields.includes(field),field);
+ const nativeLease={lease_id:'fixture:native',lease_class:'DIGITAL_WRITE',state:'ACTIVE',
+  issued_by:'fixture:unverified-issuer',subject_agent:'Neo',
+  valid_from:'2026-10-28T00:00:00Z',valid_until:'2026-11-01T00:00:00Z',
+  domains:['lightspeed'],execution_depths:['execute'],max_cascade_class:'C1',
+  allowed_floors:['Neo'],scope:{object_ids:[base.child.object_id],
+   action_classes:['execute'],tool_scopes:['fixture:tool']},revocable:true,
+  authority_phase:'PRE_LAUNCH',authority_phase_ref:'fixture:unverified-phase'};
+ // The canonical runtime schema has a structured scope and valid_until,
+ // whereas the shape planner expects a single scope and expires_utc.
+ // Never silently reinterpret the two as an authenticated execution lease.
+ const result=planCGXHandshake({...base,lease:nativeLease});
+ assert.equal(result.status,'DENIED');
+ assert.equal(result.reason,'INCOMPLETE_IDENTITY_OR_LEASE');
+});
+test('cosmetic lease ABI mapping cannot attest issuer, request scope or replay protection',()=>{
+ const claimed={...base.lease,scope:'digital_write',
+  signer_ref:{key_id:'fixture:claimed-issuer'},request_nonce:'fixture:replay',
+  issued_by:'fixture:claimed-issuer',subject_agent:'Neo',
+  valid_until:base.lease.expires_utc,
+  tool_scope:'fixture:tool',resource_budget:{max_wall_seconds:1}};
+ for(let i=0;i<2;i++){
+  const result=planCGXHandshake({...base,lease:claimed});
+  assert.equal(result.status,'UNVERIFIED_SHAPE_REVIEW');
+  for(const hold of ['ISSUER_ROOT_AUTHORITY_NOT_VERIFIED',
+    'REQUEST_BOUND_OBJECT_TOOL_RESOURCE_SCOPE_NOT_VERIFIED',
+    'LEASE_NONCE_CONSUMPTION_NOT_VERIFIED'])assert.ok(result.holds.includes(hold));
+  assert.equal(result.host_signature_verified,false);
+  assert.equal(result.may_execute,false);
+  assert.equal(result.db_r_mutated,false);
+ }
 });
