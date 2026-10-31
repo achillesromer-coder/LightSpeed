@@ -514,7 +514,7 @@ export function prepareEcoPreMintAssembly(request={}){
     source,source_lineage,executed.evidence_class);
   let coeff={state:"COEFFICIENT_ROLES_NOT_SUPPLIED"};
   if(coefficient_roles!==null){
-    if(cascade_input.domain!=="second_cycle_claim"||
+    if(!obj(coefficient_roles)||cascade_input.domain!=="second_cycle_claim"||
        !source.proof_hash||
        coefficient_roles.source_ref!==source.source_ref||
        coefficient_roles.source_revision!==source.revision||
