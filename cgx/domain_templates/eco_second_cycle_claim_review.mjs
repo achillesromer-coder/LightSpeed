@@ -80,6 +80,12 @@ export function reviewSecondCycleClaim(input){
    flags.push("OBSERVATION_EVIDENCE_INCOMPLETE");
  }else if(x.evidence_class==="simulated"){
   flags.push("SIMULATION_NOT_FIELD_OBSERVATION");
+ }else if(x.evidence_class==="source_asserted"){
+  flags.push("SOURCE_ASSERTION_NOT_MEASUREMENT_OR_VALIDATED_OUTCOME");
+ }else if(x.evidence_class==="hypothesised"){
+  flags.push("HYPOTHESIS_REQUIRES_TESTABLE_BASELINE_CONTROL_AND_FALSIFIER");
+ }else if(x.evidence_class==="inferred"){
+  flags.push("INFERENCE_REQUIRES_INPUT_EVIDENCE_AND_UNCERTAINTY");
  }
  switch(x.claim_kind){
   case "passive_flow":flags.push("HYDRODYNAMIC_BENCH_CALIBRATION_REQUIRED");break;
