@@ -388,7 +388,14 @@ function reviewSymbolicCorrectionBatch(batch,source,lineage,evidenceClass){
   const keys=new Set(["source_ref","source_revision","source_sha256",
     "related_source_ref","related_revision_ref","entries"]);
   const entryKeys=new Set(["formula_id","original_cell","related_cell",
-    "review_action"]);
+    "original_id_anchor","related_id_anchor","review_action"]);
+  const idAnchorKeys=new Set(["sheet","cell","formula_id"]);
+  const validIdAnchor=(a,c,id)=>obj(a)&&obj(c)&&
+    Object.keys(a).every(k=>idAnchorKeys.has(k))&&
+    a.sheet===c.sheet&&a.formula_id===id&&
+    /^A[1-9]\d{0,6}$/.test(a.cell)&&
+    /^B[1-9]\d{0,6}$/.test(c.cell)&&
+    a.cell.slice(1)===c.cell.slice(1);
   if(!obj(batch)||Object.keys(batch).some(k=>!keys.has(k))||
      !obj(lineage)||!source.proof_hash||
      batch.source_ref!==source.source_ref||
@@ -408,6 +415,15 @@ function reviewSymbolicCorrectionBatch(batch,source,lineage,evidenceClass){
        !obj(e.original_cell)||!obj(e.related_cell)||
        !["REVIEW_TRANSLATION_ENCODING","PRESERVE_SOURCE_MATCH"].includes(e.review_action))
       throw Error("INVALID_ECO_SYMBOLIC_CORRECTION_ENTRY");
+    // Caller-supplied A-row formula ID must bind to the adjacent B-row
+    // expression in both R0 and translation; no provider attestation implied.
+    const bound=e.original_id_anchor!==undefined&&
+      e.related_id_anchor!==undefined;
+    if((e.original_id_anchor===undefined)!==
+         (e.related_id_anchor===undefined)||
+       (bound&&(!validIdAnchor(e.original_id_anchor,e.original_cell,e.formula_id)||
+                !validIdAnchor(e.related_id_anchor,e.related_cell,e.formula_id))))
+      throw Error("ECO_SYMBOLIC_FORMULA_ID_ROW_BINDING_CONFLICT");
     const anchor={source_ref:source.source_ref,source_revision:source.revision,
       source_sha256:source.proof_hash,
       sheet:e.original_cell.sheet,cell:e.original_cell.cell};
@@ -432,6 +448,10 @@ function reviewSymbolicCorrectionBatch(batch,source,lineage,evidenceClass){
       throw Error("ECO_SYMBOLIC_CORRECTION_ACTION_CONFLICT");
     records.push({formula_id:e.formula_id,
       original_cell_ref:originalRef,translated_cell_ref:relatedRef,
+      original_id_cell_ref:bound?e.original_id_anchor.sheet+"!"+e.original_id_anchor.cell:null,
+      translated_id_cell_ref:bound?e.related_id_anchor.sheet+"!"+e.related_id_anchor.cell:null,
+      formula_id_row_binding_declared:bound,
+      formula_id_row_binding_provider_attested:false,
       review_action:e.review_action,expression_text_match:checked.expression_text_match,
       original_encoding_valid:checked.original_encoding_valid,
       related_encoding_valid:checked.related_encoding_valid,
@@ -443,6 +463,8 @@ function reviewSymbolicCorrectionBatch(batch,source,lineage,evidenceClass){
   return {state:count?"R1_TRANSLATION_CORRECTION_CANDIDATES_HOLD":
       "R1_DECLARED_SYMBOLIC_TEXT_MATCHES_NOT_EQUIVALENCE",
     candidate_correction_count:count,compared_count:records.length,
+    formula_id_row_binding_declared_count:records.filter(x=>x.formula_id_row_binding_declared).length,
+    formula_id_row_binding_required_count:records.filter(x=>!x.formula_id_row_binding_declared).length,
     correction_records:records,source_cells_fetched_by_module:false,
     independent_provider_attestation:false,source_or_translation_modified:false,
     native_admitted:false,public_release_authorised:false};
@@ -533,6 +555,8 @@ export function prepareEcoPreMintAssembly(request={}){
   }
   if(symbolic_correction_batch!==null){
     blockers.push("SYMBOLIC_CORRECTION_BATCH_PROVIDER_ATTESTATION_REQUIRED");
+    if(symbolicCorrections.formula_id_row_binding_required_count>0)
+      blockers.push("FORMULA_ID_SOURCE_ROW_BINDING_REQUIRED");
     if(symbolicCorrections.candidate_correction_count>0)
       blockers.push("TRANSLATED_SYMBOLIC_TEXT_REPAIR_NOT_APPLIED");
   }
