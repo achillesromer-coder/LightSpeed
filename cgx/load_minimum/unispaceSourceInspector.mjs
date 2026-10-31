@@ -28,9 +28,12 @@ const reservedChildSpaces=Object.freeze(Object.fromEntries(Object.entries(knownC
 // LS.cgx is nested under EMASSC.cgx; the other Grex children are direct
 // children of Cognigrex.cgx. This is a review lineage guard, not DBR proof.
 const knownChildParents=Object.freeze({eco:'Cognigrex.cgx',romer:'Cognigrex.cgx',emassc:'Cognigrex.cgx',ls:'EMASSC.cgx'});
+// The sole parent and Alexandria LOAD activation alias are not new child
+// FileSpaces. Unknown/custom domains cannot claim either namespace by label.
+const reservedNonChildSpaces=new Set(['Cognigrex.cgx','LOAD.cgx']);
 const childSpaceMatches=n=>object(n)&&good(n.domain)&&good(n.file_space)&&
  (Object.hasOwn(knownChildSpaces,n.domain)?knownChildSpaces[n.domain]===n.file_space:
-  !Object.hasOwn(reservedChildSpaces,n.file_space));
+  !Object.hasOwn(reservedChildSpaces,n.file_space)&&!reservedNonChildSpaces.has(n.file_space));
 const hold=(reason)=>({schema:INSPECTOR_SCHEMA,status:'DENIED',reason,canonical_mutation:false,public_release:false});
 
 /** Builds one bounded FileSpace inspector plan, never an authenticated view. */
