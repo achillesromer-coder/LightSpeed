@@ -562,3 +562,41 @@ test("synthetic three-factor and Greek/superscript encoding regressions remain h
   assert.equal(JSON.stringify(result).includes(translated),false);
  }
 });
+
+test("formula inventory additions cannot inherit original provenance",()=>{
+ const inventory={source_ref:source.source_ref,source_revision:source.revision,
+   source_sha256:digest,related_source_ref:lineage.related_source_ref,
+   related_revision_ref:lineage.related_revision_ref,
+   original_ids:["FM-001","FM-002","FM-003","FM-004","FM-005","FM-006","FM-007"],
+   related_ids:["FM-001","FM-002","FM-003","FM-004","FM-005","FM-006","FM-007","FM-008","FM-009"]};
+ const r=prepare({cascade_input:input,source_lineage:lineage,
+   formula_inventory:inventory});
+ assert.equal(r.formula_inventory_review.state,
+   "R1_TRANSLATION_FORMULA_INVENTORY_DELTA_HOLD");
+ assert.deepEqual(r.formula_inventory_review.added_related_formula_ids,["FM-008","FM-009"]);
+ assert.equal(r.formula_inventory_review.original_formula_count,7);
+ assert.equal(r.formula_inventory_review.related_formula_count,9);
+ assert.equal(r.formula_inventory_review.original_formula_inventory_authenticated_by_module,false);
+ assert.equal(r.formula_inventory_review.independent_physics_validated,false);
+ assert.ok(r.blocking_gates.includes("TRANSLATION_FORMULA_LIBRARY_DELTA_REQUIRES_PROVENANCE"));
+ assert.equal(r.release.mint_allowed,false);
+ assert.equal(r.candidate_object_id,null);
+});
+test("formula inventory rejects unpinned, duplicated and cross-source IDs",()=>{
+ const base={source_ref:source.source_ref,source_revision:source.revision,
+   source_sha256:digest,related_source_ref:lineage.related_source_ref,
+   related_revision_ref:lineage.related_revision_ref,
+   original_ids:["FM-001"],related_ids:["FM-001"]};
+ for(const bad of [
+   {...base,source_sha256:"0".repeat(64)},
+   {...base,related_revision_ref:"stale"},
+   {...base,original_ids:["FM-001","FM-001"]},
+   {...base,related_ids:["FM-001","PRIVATE-RAW"]},
+   {...base,related_source_ref:"synthetic:other"}
+ ])assert.throws(()=>prepare({cascade_input:input,source_lineage:lineage,
+   formula_inventory:bad}),/INVALID_ECO_FORMULA_INVENTORY/);
+ const r=prepare({cascade_input:input,source_lineage:lineage,
+   formula_inventory:base,requested_hydration:"H0"});
+ assert.equal(r.formula_inventory_review.state,"NOT_REQUESTED");
+ assert.equal(r.release.public_release_authorised,false);
+});
