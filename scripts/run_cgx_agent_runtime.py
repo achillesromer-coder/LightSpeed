@@ -61,13 +61,37 @@ def load_optional(path: Path | None) -> dict[str, Any] | None:
         raise ValueError(f"expected JSON object: {path}")
     return payload
 
+def valid_lease_claim_text(value: Any) -> bool:
+    # A claim is a single printable identifier, never a multiline or control-
+    # character-delimited record. This is syntax validation, NOT issuer trust.
+    return (isinstance(value, str) and bool(value.strip())
+            and not any(ord(ch) < 0x20 or ord(ch) == 0x7F for ch in value))
+
 def subset_scope(name: str, allowed: list[str] | None, requested: str | None, reasons: list[str]) -> None:
-    if not allowed:
+    # An absent allowlist is not a wildcard for a requested task, project or action.
+    if allowed is None:
+        if requested is not None:
+            reasons.append(f"lease-{name}-scope-missing")
+        return
+    if not isinstance(allowed, list) or not allowed or any(
+        not valid_lease_claim_text(item) for item in allowed
+    ):
+        reasons.append(f"lease-{name}-scope-invalid")
         return
     if not requested:
         reasons.append(f"lease-scope-requires-{name}")
-    elif requested not in set(map(str, allowed)):
+    elif requested not in allowed:
         reasons.append(f"lease-{name}-out-of-scope:{requested}")
+
+def validated_allowlist(name: str, value: Any, reasons: list[str]) -> set[str]:
+    # Lease scope fields must be explicit typed lists; stringification can admit
+    # malformed mixed-type claims as if they were approved identities.
+    if not isinstance(value, list) or not value or any(
+        not valid_lease_claim_text(item) for item in value
+    ):
+        reasons.append(f"lease-{name}-allowlist-invalid")
+        return set()
+    return set(value)
 
 def validate_lease(
     lease: dict[str, Any] | None,
@@ -82,11 +106,31 @@ def validate_lease(
     execution_class: str,
     planned_floors: list[str],
     consequential: bool,
+    object_id: str | None = None,
+    tool_scope: str | None = None,
+    configuration_id: str | None = None,
 ) -> tuple[bool, list[str], dict[str, Any]]:
     reasons: list[str] = []
     summary: dict[str, Any] = {}
     if lease is None:
         return False, ["execution-lease-missing"], summary
+    if not isinstance(lease, dict):
+        return False, ["execution-lease-invalid"], summary
+
+    # Required reference fields are typed identifiers only; checking their shape
+    # does not authenticate the issuer, referenced receipt, or native DBR.
+    def require_ref(field: str, reason: str) -> None:
+        value = lease.get(field)
+        if not valid_lease_claim_text(value):
+            reasons.append(reason)
+
+    # Structural identity checks are necessary but NOT issuer authentication.
+    # Cryptographic issuer/RootAuthority verification and replay consumption
+    # remain separate native host gates.
+    for field in ("lease_id", "issued_by", "subject_agent"):
+        value = lease.get(field)
+        if not valid_lease_claim_text(value):
+            reasons.append("lease-" + field.replace("_", "-") + "-invalid")
 
     lease_class = str(lease.get("lease_class") or "")
     summary = {
@@ -117,9 +161,11 @@ def validate_lease(
             reasons.append("lease-outside-validity-window")
     except (KeyError, ValueError, TypeError):
         reasons.append("lease-time-invalid")
-    if domain not in set(map(str, lease.get("domains") or [])):
+    domains = validated_allowlist("domains", lease.get("domains"), reasons)
+    if domain not in domains:
         reasons.append(f"lease-domain-out-of-scope:{domain}")
-    if execution_depth not in set(map(str, lease.get("execution_depths") or [])):
+    depths = validated_allowlist("execution-depths", lease.get("execution_depths"), reasons)
+    if execution_depth not in depths:
         reasons.append(f"lease-execution-depth-out-of-scope:{execution_depth}")
     ceiling = str(lease.get("max_cascade_class") or "")
     if ceiling not in CASCADE:
@@ -127,7 +173,7 @@ def validate_lease(
     elif CASCADE[cascade_class] > CASCADE[ceiling]:
         reasons.append(f"lease-cascade-exceeded:{cascade_class}>{ceiling}")
 
-    allowed_floors = set(map(str, lease.get("allowed_floors") or []))
+    allowed_floors = validated_allowlist("allowed-floors", lease.get("allowed_floors"), reasons)
     if not allowed_floors:
         reasons.append("lease-allowed-floors-empty")
     else:
@@ -135,34 +181,37 @@ def validate_lease(
         if missing:
             reasons.append("lease-floor-out-of-scope:" + ",".join(missing))
 
-    scope = lease.get("scope") or {}
+    scope = lease.get("scope")
+    if not isinstance(scope, dict):
+        reasons.append("lease-scope-invalid")
+        scope = {}
     subset_scope("task", scope.get("task_ids"), task_id, reasons)
     subset_scope("project", scope.get("project_ids"), project_id, reasons)
     subset_scope("action-class", scope.get("action_classes"), action_class, reasons)
+    # Additional request-bound claims are checked only when the caller supplies
+    # the actual target. This is structural preflight, NOT tool authorization.
+    subset_scope("object", scope.get("object_ids"), object_id, reasons)
+    subset_scope("tool", scope.get("tool_scopes"), tool_scope, reasons)
+    subset_scope("configuration", scope.get("configuration_ids"), configuration_id, reasons)
 
     if lease.get("revocable") is not True:
         reasons.append("lease-not-revocable")
     phase = str(lease.get("authority_phase") or "")
     if phase not in {"PRE_LAUNCH","LAUNCH_TRANSITION","DISTRIBUTED_OPERATION","SUCCESSION_OR_RECOVERY"}:
         reasons.append("lease-authority-phase-invalid")
-    if not lease.get("authority_phase_ref"):
-        reasons.append("lease-authority-phase-ref-missing")
+    require_ref("authority_phase_ref", "lease-authority-phase-ref-missing")
     if EXECUTION_CLASS_RANK[execution_class] >= EXECUTION_CLASS_RANK["DIGITAL_WRITE"]:
-        if not lease.get("rollback_or_recovery_ref"):
-            reasons.append("lease-rollback-or-recovery-ref-missing")
+        require_ref("rollback_or_recovery_ref", "lease-rollback-or-recovery-ref-missing")
     if EXECUTION_CLASS_RANK[execution_class] >= EXECUTION_CLASS_RANK["EXTERNAL_ACTION"]:
-        if not lease.get("stop_authority_ref"):
-            reasons.append("lease-stop-authority-missing")
-        if not lease.get("safe_state_ref"):
-            reasons.append("lease-safe-state-missing")
+        require_ref("stop_authority_ref", "lease-stop-authority-missing")
+        require_ref("safe_state_ref", "lease-safe-state-missing")
     if consequential:
         for field in ("assurance_receipt_ref", "custodial_receipt_ref", "risk_acceptance_ref"):
-            if not lease.get(field):
-                reasons.append("lease-" + field.replace("_", "-") + "-missing")
-        if phase in {"PRE_LAUNCH","LAUNCH_TRANSITION"} and not lease.get("root_authority_receipt_ref"):
-            reasons.append("lease-root-authority-receipt-ref-missing")
-    if execution_depth == "publish" and not lease.get("release_receipt_ref"):
-        reasons.append("lease-release-receipt-ref-missing")
+            require_ref(field, "lease-" + field.replace("_", "-") + "-missing")
+        if phase in {"PRE_LAUNCH","LAUNCH_TRANSITION"}:
+            require_ref("root_authority_receipt_ref", "lease-root-authority-receipt-ref-missing")
+    if execution_depth == "publish":
+        require_ref("release_receipt_ref", "lease-release-receipt-ref-missing")
     return not reasons, reasons, summary
 
 def atomic_write(path: Path, payload: dict[str, Any]) -> None:
@@ -183,6 +232,10 @@ def main() -> int:
     source.add_argument("--instruction-file", type=Path)
     ap.add_argument("--task-id")
     ap.add_argument("--project-id")
+    # Source-review request labels only; never trusted as authenticated target identity.
+    ap.add_argument("--object-id")
+    ap.add_argument("--tool-scope")
+    ap.add_argument("--configuration-id")
     ap.add_argument("--agent-id", default="Neo")
     ap.add_argument("--domain", required=True, choices=["romer", "eco", "emassc", "lightspeed"])
     ap.add_argument("--execution-depth", required=True, choices=["inspect", "propose", "simulate", "execute", "build", "publish"])
@@ -241,6 +294,9 @@ def main() -> int:
             execution_class=args.execution_class,
             planned_floors=list(plan.floor_sequence),
             consequential=consequential,
+            object_id=args.object_id,
+            tool_scope=args.tool_scope,
+            configuration_id=args.configuration_id,
         )
     else:
         lease_ok, lease_reasons, lease_summary = False, [], {}
@@ -294,6 +350,11 @@ def main() -> int:
             "tags": tags,
             "action_class": action_class,
             "execution_class": args.execution_class,
+            "requested_target_unverified": {
+                "object_id": args.object_id,
+                "tool_scope": args.tool_scope,
+                "configuration_id": args.configuration_id,
+            },
         },
         "planned_floors": list(plan.floor_sequence),
         "decision": decision,

@@ -1,0 +1,536 @@
+{
+  "schema": "CGX-OPEN-THREAD-EXECUTION-REGISTER/0.2",
+  "state": "SOURCE_REVIEW_ONLY",
+  "date": "2026-10-30",
+  "primary_authority": "Current accepted Cognigrex.cgx parent / FileSpace and real provider DBR (must be read back)",
+  "source_repo": "achillesromer-coder/LightSpeed",
+  "reviewed_pull_requests": [
+    {
+      "pr": 205,
+      "source": "https://github.com/achillesromer-coder/LightSpeed/pull/205",
+      "domain": "LOAD/Alexandria registry and semantic view",
+      "observed_head_on_2026_10_30": "895897b6165cbfe7f91ed0e8523e8dc920f40221",
+      "status": "DRAFT_UNMERGED",
+      "caveat": "source-review/CI status is not native admission"
+    },
+    {
+      "pr": 206,
+      "source": "https://github.com/achillesromer-coder/LightSpeed/pull/206",
+      "domain": "CGX/LS Smart Setup and handshake",
+      "observed_head_on_2026_10_30": "dab65fd01277cf25e1e335c485f814cef59f3bdf",
+      "status": "DRAFT_UNMERGED",
+      "caveat": "source-review/CI status is not native admission"
+    },
+    {
+      "pr": 207,
+      "source": "https://github.com/achillesromer-coder/LightSpeed/pull/207",
+      "domain": "Eco BioBlocks and Second Cycle",
+      "observed_head_on_2026_10_30": "8a364fdf1c9a9087afff0e9c4aa6ce9e0e9d3c97",
+      "status": "DRAFT_UNMERGED",
+      "caveat": "source-review/CI status is not native admission"
+    },
+    {
+      "pr": 208,
+      "source": "https://github.com/achillesromer-coder/LightSpeed/pull/208",
+      "domain": "Further CGX source review",
+      "observed_head_on_2026_10_30": "3b28df87ab2a7c2a20d54d45ef0d45a03f78aae9",
+      "status": "DRAFT_UNMERGED",
+      "caveat": "source-review/CI status is not native admission"
+    },
+    {
+      "pr": 210,
+      "source": "https://github.com/achillesromer-coder/LightSpeed/pull/210",
+      "domain": "Scientific assurance and astrophysics",
+      "observed_head_on_2026_10_30": "fa57bcde8c9e8d23c70f4b9828a9fa08f7ee84a2",
+      "status": "DRAFT_UNMERGED",
+      "caveat": "source-review/CI status is not native admission"
+    },
+    {
+      "pr": 211,
+      "source": "https://github.com/achillesromer-coder/LightSpeed/pull/211",
+      "domain": "Wikimedia source-to-LOAD prototype",
+      "observed_head_on_2026_10_30": "897957fbb094daab86aea662e81a3af07536258b",
+      "status": "DRAFT_UNMERGED",
+      "caveat": "source-review/CI status is not native admission"
+    }
+  ],
+  "resolved": [
+    {
+      "id": "ALIAS-GOT",
+      "status": "FALSE_COMPONENT_CLOSED",
+      "result": "Git/GPT/GO contextual voice transcription only; no GOT capability/CCC route/product or owner gate."
+    },
+    {
+      "id": "WIZARD-SOURCE-OWNER",
+      "status": "REVIEW_OWNER_CHOSEN",
+      "result": "Reuse `lightspeed_runtime.startup_options`, `runtime_productization`, and native Cognigrex parent; historical wizard UIs preserved until no-loss migration/consumer audit."
+    },
+    {
+      "id": "ONE-OF-EVERYTHING",
+      "status": "ARCHITECTURAL_CONTRACT",
+      "result": "Library references and typed functions may be reused; source variations/evidence remain distinct; native resolution requires accepted Object_ID and DBR."
+    }
+  ],
+  "open": [
+    {
+      "id": "H-01",
+      "lane": "Cognigrex",
+      "priority": 1,
+      "status": "HISTORICAL_S92_R0_VERIFIED_NATIVE_HOLD",
+      "problem": "S92 parent+4 historical child carrier bytes and 807 manifests verified on 30 Oct; S97 authoritative source and current signed RootAuthority/DBR, child namespace binding, LOAD identity still pending.",
+      "next": "Obtain current accepted S97 root and owner-signed provider DBR readback; do not rehash unchanged S92 repeatedly.",
+      "owner_question": "none until current host/source evidence available",
+      "s87_s88_profile_negative_review": {
+        "review_id": "H-01-S87-S88-PROFILE-SOURCE-NEGATIVE-20261030",
+        "evidence_class": "GITHUB_SOURCE_READBACK_PLUS_DOCUMENTARY_NEGATIVE_ASSERTIONS; NOT_CURRENT_RUNTIME_EXECUTION",
+        "issue": "https://github.com/achillesromer-coder/LightSpeed/issues/51",
+        "sources": [
+          {
+            "path": "cgx/domain_templates/S87_HYDRATION_GATE.md",
+            "git_blob": "6741a2bd0768d74209d140c5654517c3ee1264ce",
+            "reader_profile": "PASS; 55 entries; 708388 bytes; stack f31830cbb168a1e5211542426370a627f013b58494d0c9b05501723047516067",
+            "runtime_developer_profile": "FAIL_CLOSED; hydration-entry-not-in-manifest; cgx/topology_index.json"
+          },
+          {
+            "path": "cgx/domain_templates/S88_CORPUS_AWARE_SHELL_STATUS.md",
+            "git_blob": "2ea072212f044c594ea5e98b5b5aa206c994e81e",
+            "reader_profile": "PASS; 57 entries; 725172 bytes; stack d08d989d7ef3d6ab61bc2bf4c0243f1b0e7098709f87544e164195ac791db3a3",
+            "runtime_profile": "FAIL_CLOSED; master-proof-rejected:hydration-entry-not-in-manifest"
+          }
+        ],
+        "source_assertions_passed": 6,
+        "source_assertions_total": 6,
+        "comparison": "S87->S88 reader selection +2 entries and +16784 bytes, but both historical runtime hydration profiles remain explicitly fail-closed; historical regression totals 70/70 and 71/71 do not override the profile failure.",
+        "acceptance_gate": "On exact current authoritative carrier, verify canonical-core control entry against embedded manifest and distribution proof; run fresh-clone reader/runtime/developer adversarial hydration, independently read back signed current RootAuthority/DBR and lease. S87/S88 documents do not establish S92/S97 native state.",
+        "authority": "NO_CURRENT_NATIVE_PROFILE_PROOF; NO_OBJECT_ID_MINT; NO_ROOTAUTHORITY_PROMOTION; NO_HOST_EXECUTION",
+        "owner": "Cognigrex parent identity/profile contract; Neo to execute authenticated host tests"
+      }
+    },
+    {
+      "id": "S-01",
+      "lane": "Cognigrex",
+      "priority": 1,
+      "status": "UNVERIFIED_CORPUS_PARITY",
+      "problem": "Historical GPT export manifest exists, but 12 original conversation JSON payloads and full true unabsorbed manual-intake bytes are not yet independently reconciled. User is not doing another export soon.",
+      "next": "Use existing export index, original source locations and manual submissions in this chat; recover original shards/bytes with exact manifests and 150-message windows; never demand a new export.",
+      "owner_question": "only if actual intake path conflict remains"
+    },
+    {
+      "id": "I-01",
+      "lane": "Neo",
+      "priority": 2,
+      "status": "HOST_NATIVE_HOLD",
+      "problem": "Source and Windows CI tests exist, but no current connected BouwerBase cold-start/native operational receipt.",
+      "next": "When connected inspect native runtime/status marker, do actual cold-start/restart/rollback and signed host proof; duplicate wizard cleanup remains held.",
+      "owner_question": "host reconnection/lease when available"
+    },
+    {
+      "id": "I-02",
+      "lane": "Neo",
+      "priority": 2,
+      "status": "SOURCE_ONLY",
+      "problem": "CGX smart setup and handshake validator have successful PR review CI but no real provider signature or native lease proof.",
+      "next": "One authenticated host preflight + source-specific scope/lease verifier; actual DBR before claim of installed tools.",
+      "owner_question": "none",
+      "lease_boundary_negative_review_2026_10_31": {
+        "evidence_class": "AUTHENTICATED_GITHUB_CI_LOG_READBACK; SOURCE_ONLY_SYNTHETIC_NEGATIVE",
+        "review_source": "https://github.com/achillesromer-coder/LightSpeed/pull/210",
+        "source_head": "2c2e84ac1627aae822df4e297accfb68be1b8bfa",
+        "runtime_validator_path": "scripts/run_cgx_agent_runtime.py",
+        "runtime_validator_git_blob": "8b161ccd9b8677feba90be6e2dbc64b2d4f3f9bc",
+        "workflow_run": "https://github.com/achillesromer-coder/LightSpeed/actions/runs/41097134420",
+        "workflow_job_id": 124205592778,
+        "findings": [
+          {
+            "gate": "ISSUER_AND_ROOT_REF",
+            "observation": "Synthetic forged issuer and fabricated RootAuthority receipt reference were ALLOW; explicit revoked state DENY.",
+            "status": "HOLD"
+          },
+          {
+            "gate": "REQUEST_BOUND_SCOPE",
+            "observation": "Synthetic narrow lease ALLOW without requested object_id, tool_id, resource_usage parameters; domain/task/action mismatch controls DENY.",
+            "status": "HOLD"
+          },
+          {
+            "gate": "REPLAY_CONSUMPTION",
+            "observation": "Same synthetic single-use lease first and second use ALLOW; explicit CONSUMED state DENY; request_nonce, consumption_registry, request_principal bindings absent.",
+            "status": "HOLD"
+          }
+        ],
+        "interpretation": "Green workflow means source-only negative audits ran, NOT that issuer, lease scope, replay or downstream effectful runtime are safe. No authenticated issuer/signature, revocation/consumption registry, host handshake, signed DBR or native acceptance was tested.",
+        "native_status": "HOST_NATIVE_HOLD",
+        "next": "Qualify accepted issuer/signature/RootAuthority and request-bound object/tool/resource/nonce consumption against existing runtime ABI; add fail-closed negatives in existing review path before any host acceptance."
+      }
+    },
+    {
+      "id": "L-01",
+      "lane": "Neo",
+      "priority": 2,
+      "status": "SOURCE_TO_NATIVE_ADAPTER_HOLD",
+      "problem": "LOAD 131 source-linked registry items and Wikipedia source prototype are review-stage only. No real authoritative Wikipedia XML byte source or accepted CCC execution receipt.",
+      "next": "First one real R0 MediaWiki XML segment with exact page ID/revision/hash/licence, R1 projection+loss report then R2/QID review; validate one registered CCC operator with native host lease.",
+      "owner_question": "none"
+    },
+    {
+      "id": "P-01",
+      "lane": "Achilles",
+      "priority": 1,
+      "status": "REVIEW_CORRECTION_HOST_NEGATIVE_HOLD",
+      "problem": "C39 source provenance safeguard in PR205 CI verified. Browser/static #158 and original signed source envelope/rights still not host-verified.",
+      "next": "Unauthenticated, revoked and valid-session browser tests plus evidence-root source association.",
+      "owner_question": "approve public subset after evidence"
+    },
+    {
+      "id": "D-01",
+      "lane": "Neo",
+      "priority": 2,
+      "status": "INTEROP_HOLD",
+      "problem": "Issue #161 independent two-node DataSpace transport acceptance not proven.",
+      "next": "Current separate nodes with signed identities, lease, content hash/size, resumable transfer and receiver readback.",
+      "owner_question": "none until proof results"
+    },
+    {
+      "id": "G-01",
+      "lane": "UniSpace",
+      "priority": 3,
+      "status": "GREX_OPERATOR_HOLD",
+      "problem": "LS GO per-Grex toggles are plan-only and must not be confused with UniSpace product.",
+      "next": "Bind accepted Grex child to existing private LS GO shell, authenticated per-family toggle and negative ACL tests; one pilot.",
+      "owner_question": "approve actual private beta release after tests"
+    },
+    {
+      "id": "E-01",
+      "lane": "Athene",
+      "priority": 3,
+      "status": "BIOBLOCKS_R0_VERIFIED_FIELD_HOLD",
+      "problem": "Original BioBlocks workbook verified and PR207 source integration tested; linked TBP Bio Blocks.pdf original content/rights unverified, no field evidence.",
+      "next": "Reconcile source cells against original PDF and exact field measurements before R2 and effects claims.",
+      "owner_question": "none"
+    },
+    {
+      "id": "U-01",
+      "lane": "UniSpace",
+      "priority": 4,
+      "status": "PRODUCT_RELEASE_HOLD",
+      "problem": "UniSpace site/trial/download and CGX public communication require an independently approved product release.",
+      "next": "After Grex LS GO private pilot, publish only rights-cleared docs/demo/trial, with privacy/IP, website QA and deployment readback.",
+      "owner_question": "public scope, licence, first free tier and marketing approvals at release gate"
+    },
+    {
+      "id": "W-01",
+      "lane": "Cognigrex + Neo",
+      "status": "NEW_REVIEW_READY_R0_NEEDED",
+      "problem": "Wikipedia/MediaWiki converter in PR #211 has only synthetic XML fixtures.",
+      "next": "User/provider supply one exact original XML export segment, page and revision metadata, rights; run converter, hashes, loss ledger; no artificial page→concept identity."
+    },
+    {
+      "id": "X-01",
+      "lane": "Neo + Cognigrex",
+      "status": "MATHEMATICAL_PROOF_ONLY",
+      "problem": "Dodecahedron F=12 E=30 V=20 proven as regular polyhedron combinatorics; CGX nested 12-face addresses, metric geometry, temporal and spatial coordinate frames not accepted.",
+      "next": "Qualify geometry address conventions and loss/LOD/CRS with real source geometry and measured cross-viewport round-trip."
+    },
+    {
+      "id": "B-01",
+      "lane": "Achilles + Cognigrex",
+      "status": "RIGHTS_REVIEW_HOLD",
+      "problem": "Historical Alexandria ledger includes 10 hashed internal originals and 14 external candidates; Wikipedia CC BY-SA, Wikidata, Wikimedia Commons, OSM ODbL and Wayback each differ in licences and attribution.",
+      "next": "Expand per-source revision/rights/attribution/bill-of-materials, only allow qualified redistribution and native references."
+    },
+    {
+      "id": "A-01",
+      "lane": "Achilles + Neo",
+      "status": "SCIENTIFIC_PUBLISH_HOLD",
+      "problem": "Issue #209 scientific/ephemeris and asserted geometry release gate; no live Horizons source and independent numerical validation.",
+      "next": "Verify original ephemeris vector/epoch/frame/units and independent numerical comparison before scientifically accurate orbit/planetary claims."
+    },
+    {
+      "id": "U-02",
+      "lane": "UniSpace + Neo",
+      "status": "SETUP_SOURCE_READY_NATIVE_UI_HOLD",
+      "problem": "Smart Setup and LS GO per-family activation planner remain preview-only; no authenticated installed product.",
+      "next": "Use existing runtime installer/source setting owners and private FileSpace/LS GO UI, real host/ACL/DBR before enable; UniSpace consumer product later."
+    }
+  ],
+  "cross_cutting_rules": [
+    "Every run make independent non-duplicate source- or code-backed progress.",
+    "Keep the original user documents and file providers unchanged until accepted successor and consent.",
+    "A PR merge or status run is not native admission.",
+    "Do not mint identity from filenames, label collisions or voice transcripts.",
+    "Keep source, digital, simulated, measured, reviewed and regulatory evidence states separate.",
+    "No public publish, outreach or release changes without explicit owner approval and security gate closure."
+  ],
+  "owner_action_now": "No new GPT export. Provide original source files/revisions through this chat as available; authenticated host/S97 and root/DBR evidence when connected. No mandatory decision on GOT.",
+  "deletion_ready_count": 0,
+  "actual_native_writes_proven_in_this_pass": 0,
+  "release_ready": false,
+  "checkpoint": "CHAT-CLOSEOUT-2026-10-30-AEST",
+  "source_export_policy": {
+    "new_gpt_export_expected_soon": false,
+    "do_not_wait_for_future_export": true,
+    "manual_source_handoff_in_chat": true,
+    "raw_chat_text_archived_here": false,
+    "remaining_original_gpt_shards": "12 original payload shards not yet verified against manifest",
+    "record_exceptions": "Source-only record and verified refs are not a literal verbatim chat archive; original conversation remains its own source."
+  },
+  "hierarchy": {
+    "single_root": "Cognigrex.cgx",
+    "peer_children": [
+      "Romer.cgx",
+      "Eco.cgx",
+      "EMASSC.cgx"
+    ],
+    "nested_runtime_child": "EMASSC.cgx/LS.cgx",
+    "shared_capabilities": "Cognigrex.cgx:/ccc",
+    "alexandria_alias": "LOAD.cgx",
+    "grex_operator": "LS GO (private per-family)",
+    "separate_product": "UniSpace",
+    "rule": "One identity per distinct thing; source original/revision/evidence stays retrievable. No second CCC or CGX master."
+  },
+  "latest_verified_lane_results": [
+    {
+      "lane": "Cognigrex",
+      "source": "automation 2026-10-30",
+      "finding": "Original S92 Recovery ZIP and four historical child carriers independently hash/manifest verified: parent 3,657,250 bytes, child package 540,891 bytes, 807/807 entries. Historical root promotion receipt recovered. S97/current native authority unverified.",
+      "admission": "R0 hash-verified, NOT native",
+      "receipt": "S92 parent sha256 722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5"
+    },
+    {
+      "lane": "Achilles",
+      "finding": "C39 3D provenance bound to selected object's R0 source relationship as well as ACL, 153/153 LOAD source regressions CI passed.",
+      "admission": "source only",
+      "source": "PR #205; issue #209"
+    },
+    {
+      "lane": "Neo",
+      "finding": "PR #210 source-level astrophysical assurance covers horizons-vectors, spice-ephemeris, gmat-trajectory, solar-system-state; 64 adversarial combinations and 16 scientific checks passed.",
+      "admission": "no JPL vector/operational solver validation",
+      "source": "PR #210"
+    },
+    {
+      "lane": "Athene",
+      "finding": "Original BioBlocks workbook verified (49,833 bytes; 36 sheets). Eco PR #207 46/46 integration tests passed; original PDF/field data still pending.",
+      "admission": "R0 verified R1 inspected R2/native/field pending",
+      "source": "PR #207"
+    },
+    {
+      "lane": "UniSpace",
+      "finding": "Private LOAD source drag-and-drop metadata preflight rejects unsafe identifiers and >60 MiB; 20 regression cases passed. No actual payload read or deployed UI.",
+      "admission": "R0 metadata preflight only",
+      "source": "PR #205"
+    },
+    {
+      "lane": "This chat",
+      "finding": "Wikimedia XML review converter, 12 synthetic tests; regular-dodecahedron incidence proof 6 tests; PR #211 exact-head CI run 40982540817 succeeded.",
+      "admission": "No genuine article XML ingested, no QID or 3D authority",
+      "source": "PR #211"
+    }
+  ],
+  "automations": [
+    {
+      "lane": "Achilles",
+      "minute": 3,
+      "id": "6ae145af16308191b5ac90dad715700b",
+      "enabled_verified_2026_10_30": true,
+      "cadence": "hourly",
+      "rule": "independent domain progress; annotate queue; keep existing schedule; no automatic cross-owner authority"
+    },
+    {
+      "lane": "Neo",
+      "minute": 15,
+      "id": "6ae145b1cc048191bf37dceb7762f4b4",
+      "enabled_verified_2026_10_30": true,
+      "cadence": "hourly",
+      "rule": "independent domain progress; annotate queue; keep existing schedule; no automatic cross-owner authority"
+    },
+    {
+      "lane": "Athene",
+      "minute": 27,
+      "id": "6ae145b5005c819185e589e04c32c647",
+      "enabled_verified_2026_10_30": true,
+      "cadence": "hourly",
+      "rule": "independent domain progress; annotate queue; keep existing schedule; no automatic cross-owner authority"
+    },
+    {
+      "lane": "Cognigrex",
+      "minute": 39,
+      "id": "6ae145b807b48191be7a2eb66b62f8e1",
+      "enabled_verified_2026_10_30": true,
+      "cadence": "hourly",
+      "rule": "independent domain progress; annotate queue; keep existing schedule; no automatic cross-owner authority"
+    },
+    {
+      "lane": "UniSpace",
+      "minute": 51,
+      "id": "6ae145bb0c788191b6283b964893caae",
+      "enabled_verified_2026_10_30": true,
+      "cadence": "hourly",
+      "rule": "independent domain progress; annotate queue; keep existing schedule; no automatic cross-owner authority"
+    }
+  ],
+  "closed_or_nonblocking": [
+    {
+      "id": "ALIAS-GOT",
+      "status": "FALSE_COMPONENT_CLOSED",
+      "result": "Git/GPT/GO contextual voice transcription only; no GOT capability/CCC route/product or owner gate."
+    },
+    {
+      "id": "WIZARD-SOURCE-OWNER",
+      "status": "REVIEW_OWNER_CHOSEN",
+      "result": "Reuse `lightspeed_runtime.startup_options`, `runtime_productization`, and native Cognigrex parent; historical wizard UIs preserved until no-loss migration/consumer audit."
+    },
+    {
+      "id": "ONE-OF-EVERYTHING",
+      "status": "ARCHITECTURAL_CONTRACT",
+      "result": "Library references and typed functions may be reused; source variations/evidence remain distinct; native resolution requires accepted Object_ID and DBR."
+    },
+    {
+      "id": "VOICE-GOT",
+      "status": "CLOSED_FALSE_COMPONENT",
+      "result": "GOT arose from Git/GPT/GO transcription; not a registered standalone tool or launch blocker."
+    }
+  ],
+  "closure": {
+    "original_chat_full_verbatim_backed_up": false,
+    "github_checkpoint_path": "cgx/bootstrap/chat_context_closeout_2026-10-30.md",
+    "queue_owner_path": "cgx/bootstrap/open_threads_execution_register.json",
+    "native_admission_or_external_release": false,
+    "archive_originals_unchanged": true,
+    "auto_resume_from_queue": true
+  },
+  "source_revision_reviews": [
+    {
+      "mapping_id": "FF-MARK3-XLSX-001",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_file": "Mark_III_Digital_Twin_v0_1.xlsx",
+      "source_provider": "Google Drive (owner-linked; original bytes verified separately)",
+      "source_file_id": "1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2",
+      "source_revision_id": "0BwJNKUfDWAPsQVV4NHFIYWJ4QUppTnZ0RmxZSWJjejVadlgwPQ",
+      "revision_metadata_checked": "2026-10-30",
+      "revision_modified_time": "2026-05-19T20:52:08.000Z",
+      "revision_size_bytes": 87108,
+      "sha256_original": "fab23970e80c016a2140ec0f87c1d0d7e15c365190fdacb5dc2ee2a1c2a81075",
+      "evidence": "PROVIDER_REVISION_METADATA_READBACK_PLUS_PREVIOUS_R0_HASH_VERIFICATION",
+      "candidate_filespace": "Romer.cgx:/romer/mark-iii",
+      "r1_scope": "PARTIAL_TYPED; 13-cell historical fixture proof is not whole 37-sheet workbook reversibility",
+      "rights": "Google Drive link-reader ACL is not a redistribution licence; owner rights/usage terms remain unverified",
+      "authority": "NO_NATIVE_OBJECT_ID_MINT; NO_SIGNED_ROOTAUTHORITY_DBR_READBACK; NO_PHYSICAL_CERTIFICATION",
+      "action": "Preserve original and revision; require full loss-accounted reversible R1, rights qualification and native DBR before promotion"
+    },
+    {
+      "mapping_id": "FF-RFS-EMFF-XLSX-001",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_file": "RFS_EMFF_Digital_Twin_Test_Sandbox_v0_1.xlsx",
+      "source_provider": "Google Drive original (Nathaniel account)",
+      "source_file_id": "1YDs4fjNZgzDAB1LJcf7xT9N-bywD4Qgf",
+      "source_revision_id": "0BwJNKUfDWAPsTFJUM3ZQVWVWTVF1MzQwelNyNGczZ05wRTZ3PQ",
+      "revision_modified_time": "2026-05-19T10:47:38.000Z",
+      "revision_size_bytes": 47907,
+      "sha256_original": "1cc3f421ed128186b1ab018f7af8eda27bc30572b21bc8b8a1d2bada91c9a58f",
+      "evidence": "AUTHENTICATED_ORIGINAL_BYTES_SHA256_MATCH_EXISTING_GIT_REGISTRY; PROVIDER_REVISION_METADATA_READBACK; ZIP_CRC_PASS",
+      "source_structure": "26 sheets; 37 ZIP members; zero unsafe paths, VBA or external link parts",
+      "original_evidence_ceiling": "Internal prototype/synthetic scaffold; original test log has 2 template rows, not measured runs; original validation gates 1 PASS / 7 PENDING / 2 BLOCKED",
+      "candidate_filespace": "EMASSC.cgx:/emassc/rfs-emff",
+      "cross_family_bridge": "FF-RFS-LS-BRIDGE-001 -> EMASSC.cgx/LS.cgx runtime binding candidate; same R0 bytes, distinct typed reference, no scientific truth duplication",
+      "r1_scope": "BOUNDED_PARTIAL_TYPED; original workbook not fully reversibly parsed",
+      "rights": "Anyone-with-link reader ACL is NOT a redistribution licence; source-linked private references only; no public source content",
+      "authority": "NO_CANONICAL_OBJECT_ID_MINT; NO_SIGNED_ROOTAUTHORITY_DBR; NO_RUNTIME_RECEIPT; NO_MEASURED_PHYSICAL_PERFORMANCE",
+      "action": "Preserve R0 unchanged; reconcile original PDF and LinkDrive source rights before R2; native bridge only after accepted EMASSC object, lease and DBR"
+    }
+  ],
+  "source_identity_collision_reviews": [
+    {
+      "review_id": "CROSS-FAMILY-RFS-EMFF-SINGLE-R0-20261030",
+      "source_sha256": "1cc3f421ed128186b1ab018f7af8eda27bc30572b21bc8b8a1d2bada91c9a58f",
+      "mapping_ids": [
+        "FF-RFS-EMFF-XLSX-001",
+        "FF-RFS-LS-BRIDGE-001"
+      ],
+      "evidence_class": "ORIGINAL_BYTES_HASH_VERIFIED_PLUS_EXISTING_GIT_MAPPING_CONTRACT",
+      "tests": {
+        "both_mappings_exist": true,
+        "same_original_source": true,
+        "distinct_mapping_ids": true,
+        "distinct_family_targets": true,
+        "bridge_has_no_runtime_receipt": true,
+        "no_science_duplication": true,
+        "no_authority_transfer": true
+      },
+      "rule": "One original R0 artifact, two distinct typed family references; EMASSC owns source-grounded scientific claims, LS is runtime adapter only; lexical/filename/hash match cannot merge distinct semantic identities or imply native admission",
+      "admission": "SOURCE_REVIEW_ONLY",
+      "blocked": "Rights, original PDF corroboration, full R1 loss ledger, R2 scoped acceptance, signed RootAuthority/DBR and host lease"
+    },
+    {
+      "review_id": "MARK3-FAMILY-ID-VS-SOURCE-OBJECT-20261030",
+      "source_registry": "cgx/domain_templates/first_file_conversion_registry.json",
+      "source_registry_git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+      "mapping_ids": [
+        "FF-MARK3-XLSX-001",
+        "FF-MARK3-FCSTD-001"
+      ],
+      "candidate_filespace": "Romer.cgx:/romer/mark-iii",
+      "source_sha256_by_mapping": {
+        "FF-MARK3-XLSX-001": "fab23970e80c016a2140ec0f87c1d0d7e15c365190fdacb5dc2ee2a1c2a81075",
+        "FF-MARK3-FCSTD-001": "4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b"
+      },
+      "evidence_class": "GIT_REGISTRY_COLLISION_NEGATIVE_REVIEW_PLUS_PREVIOUS_WORKBOOK_R0_AND_PROVIDER_REVISION_READBACK",
+      "tests": {
+        "both_mappings_exist": true,
+        "shared_filespace_target": true,
+        "distinct_source_sha256": true,
+        "distinct_media_types": true,
+        "workbook_points_to_family_namespace": true,
+        "cad_uses_separate_source_scoped_label": true,
+        "workbook_original_revision_recorded": true,
+        "canonical_object_identity_proven": false
+      },
+      "rule": "The domain semantic ID cgx:domain:romer identifies a candidate family namespace, not the workbook source artifact or an admitted unique Object_ID. The separate FCStd SPACE-01 source label and shared /romer/mark-iii target do not establish same-object identity. Preserve both original R0 source versions; qualify source-scoped relations without lexical/target-based merge.",
+      "admission": "SOURCE_REVIEW_ONLY; NO_CANONICAL_MINT_OR_DBR",
+      "blocked": "CAD source revision/rights and source-scoped reversible R1 not fully qualified; signed native RootAuthority/DBR readback and owner acceptance absent"
+    },
+    {
+      "review_id": "MARK3-FCSTD-VS-PR34-GENERATED-GEOMETRY-20261031",
+      "owner_lane": "Cognigrex parent provenance/alias grammar; Romer owns engineering qualification",
+      "candidate_filespace": "Romer.cgx:/romer/mark-iii",
+      "source_registry": {
+        "path": "cgx/domain_templates/first_file_conversion_registry.json",
+        "git_blob": "15ac42e257220e0efd30c8521fe2c319b9a25013",
+        "mapping_id": "FF-MARK3-FCSTD-001",
+        "fcstd_source_sha256_registry_claim": "4e9255b6c2149f3971aea1fad413c880fe693a6ffee194c2821901ae9e45349b",
+        "source_scoped_label": "SPACE-01",
+        "source_structure_registry_claim": {
+          "object_data_records": 474,
+          "partdesign_bodies": 17
+        }
+      },
+      "derived_review": {
+        "pr": 34,
+        "head": "cf2867af5c14bef3e19157527049e5ce96016e44",
+        "state": "DRAFT_UNMERGED",
+        "model_version": "Mark III v0.3.3",
+        "named_nodes_pr_claim": 786,
+        "source": "GitHub PR metadata; NOT independently revalidated model geometry"
+      },
+      "owner_document": {
+        "drive_id": "1ZAPSA3MmUHfkXNr6qDaIZIDMpcKLD7QJaof2ueFbGZU",
+        "title": "ACR3 Closure Handoff — Luke II & Mark III Canonical Execution — 2026-08-23",
+        "modified_time": "2026-08-23T00:17:44.665Z",
+        "classification": "OWNER_DOCUMENTARY_HANDOFF_NOT_PRIMARY_CAD"
+      },
+      "evidence_class": "GITHUB_REGISTRY_AND_PR_METADATA_READBACK_PLUS_OWNER_DOCUMENT_READ; NOT ORIGINAL_FCSTD_BYTES_OR_GEOMETRY_VERIFICATION",
+      "negative_tests": {
+        "same_candidate_family_target": true,
+        "distinct_source_representation": true,
+        "fcstd_original_drive_id_verified": false,
+        "fcstd_original_bytes_verified": false,
+        "pr34_geometry_equivalent_to_fcstd_proven": false,
+        "derivation_chain_proven": false,
+        "physical_qualification_proven": false
+      },
+      "relation_rule": "Do not identify the FCStd source object, the Mark III XLSX source, and PR #34 generated parametric geometry as one object merely because names/family targets match. Preserve each R0/derived artifact separately. DERIVED_FROM or MODEL_VERSION_OF is candidate-only until exact source/revision/hash/rights and deterministic conversion lineage are proven; PR #34's digital design-review status is not native CGX/DBR admission.",
+      "stage": "SOURCE_REFERENCE_CROSSWALK; NO_R0_FCSTD_BYTE_VERIFICATION; NO_R2_ADMISSION; NO_CANONICAL_MINT",
+      "blocked": "Original Mark III.FCStd exact provider ID/bytes/revision/rights and PR #34 source-to-FCStd lineage; native signed RootAuthority/DBR, independent geometry/physical acceptance",
+      "next": "Romer owner locates exact original FCStd by source ID/hash without replacing it; compare original CAD source tree to PR #34 source-manifest and reversible conversion ledger, then parent reviews typed relation only"
+    }
+  ]
+}
