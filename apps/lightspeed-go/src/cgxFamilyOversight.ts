@@ -34,6 +34,8 @@ export interface CgxFamilyOversightSnapshot {
     state: string; reference_count: number;
     source_registry_count: number; frontier_count: number;
     native_accepted: number;
+    selector_source_route_counts?: Record<string, number>;
+    selector_routes_are_installed?: false;
   };
   effects: {
     canonical_db_writes: number; object_ids_minted: number;
@@ -56,6 +58,18 @@ export function renderCgxFamilyOversight(value: CgxFamilyOversightSnapshot): str
       || !Array.isArray(value.families)) {
     return '<p class="muted">Family evidence contract invalid; hold oversight view.</p>';
   }
+  const selectorRoutes = Object.entries(
+    value.load_alexandria?.selector_source_route_counts ?? {},
+  ).filter(([name, count]) =>
+    name.length < 65 && Number.isSafeInteger(count) && count >= 0,
+  ).sort(([a], [b]) => a.localeCompare(b));
+  const selectorSummary = selectorRoutes.length
+    ? `<details><summary>Declared agent selector coverage (source-only)</summary>
+      <p class="muted">${selectorRoutes.map(([name, count]) =>
+        `${esc(name)}: ${number(count)}`).join(" · ")}</p>
+      <p class="muted">Route declarations are not installed tools,
+      authenticated providers, or executable capabilities.</p></details>`
+    : "";
   const rows = value.families.map(family => {
     if (family.native_child_accepted !== false || family.scope_owner_acl_verified !== false
       || family.load_alias_admitted !== false || family.runtime_capability_installed !== false) {
@@ -82,6 +96,7 @@ export function renderCgxFamilyOversight(value: CgxFamilyOversightSnapshot): str
   references across ${number(value.load_alexandria?.source_registry_count)} registries,
   ${number(value.load_alexandria?.frontier_count)} Frontier cases.
   Source mode: ${esc(value.load_alexandria?.state)}. Native LOAD admission: none.</p>
+  ${selectorSummary}
   <p class="muted">UniSpace remains a private, non-authoritative oversight lens.
   Source bytes, remote fetch, installer actions, and canonical writes are excluded.</p>`;
 }
