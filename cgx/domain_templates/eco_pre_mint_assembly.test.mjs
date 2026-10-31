@@ -705,3 +705,39 @@ test("symbolic correction plan rejects source-free, raw and fabricated records",
    symbolic_correction_batch:{...base,entries:[entry]}}),
    /INVALID_ECO_SYMBOLIC_CORRECTION_BATCH/);
 });
+
+
+test("symbolic correction formula ID requires paired A-row identity anchors",()=>{
+ const base={source_ref:source.source_ref,source_revision:source.revision,
+  source_sha256:digest,related_source_ref:lineage.related_source_ref,
+  related_revision_ref:lineage.related_revision_ref};
+ const entry={formula_id:"FM-001",review_action:"REVIEW_TRANSLATION_ENCODING",
+  original_cell:{sheet:"31_Formula_Library",cell:"B3",
+   expression_text:"synthetic = v × A",evidence_class:"simulated"},
+  related_cell:{sheet:"SYNTHETIC_31_Formula_Library",cell:"B3",
+   expression_text:"synthetic = v Ã— A",evidence_class:"simulated"},
+  original_id_anchor:{sheet:"31_Formula_Library",cell:"A3",formula_id:"FM-001"},
+  related_id_anchor:{sheet:"SYNTHETIC_31_Formula_Library",cell:"A3",formula_id:"FM-001"}};
+ const run=entries=>prepare({cascade_input:input,source_lineage:lineage,
+  symbolic_correction_batch:{...base,entries}});
+ const r=run([entry]),p=r.symbolic_correction_batch_review;
+ assert.equal(p.formula_id_row_binding_declared_count,1);
+ assert.equal(p.formula_id_row_binding_required_count,0);
+ assert.equal(p.correction_records[0].original_id_cell_ref,"31_Formula_Library!A3");
+ assert.equal(p.correction_records[0].translated_id_cell_ref,
+  "SYNTHETIC_31_Formula_Library!A3");
+ assert.equal(p.correction_records[0].formula_id_row_binding_provider_attested,false);
+ assert.equal(r.release.mint_allowed,false);
+ assert.equal(r.canonical_write,false);
+ assert.equal(JSON.stringify(r).includes("synthetic = v"),false);
+ const unbound=run([{...entry,original_id_anchor:undefined,related_id_anchor:undefined}]);
+ assert.equal(unbound.symbolic_correction_batch_review.formula_id_row_binding_required_count,1);
+ assert.ok(unbound.blocking_gates.includes("FORMULA_ID_SOURCE_ROW_BINDING_REQUIRED"));
+ for(const bad of [
+  {...entry,original_id_anchor:{...entry.original_id_anchor,formula_id:"FM-002"}},
+  {...entry,original_id_anchor:{...entry.original_id_anchor,cell:"A4"}},
+  {...entry,related_id_anchor:{...entry.related_id_anchor,sheet:"other"}},
+  {...entry,related_id_anchor:undefined},
+  {...entry,original_id_anchor:{...entry.original_id_anchor,raw_bytes:"secret"}}
+ ])assert.throws(()=>run([bad]),/ECO_SYMBOLIC_FORMULA_ID_ROW_BINDING_CONFLICT/);
+});
