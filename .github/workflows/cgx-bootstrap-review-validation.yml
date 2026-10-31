@@ -11,6 +11,13 @@ on:
       - 'scripts/validate_cgx_execution_lease.py'
       - 'tools/cgx_setup_windows.ps1'
       - '.github/workflows/cgx-bootstrap-review-validation.yml'
+  push:
+    branches:
+      - review/cgx-windows-boot-mint-gates-20261031
+    paths:
+      - 'cgx/bootstrap/**'
+      - 'tools/cgx_setup_windows.ps1'
+      - '.github/workflows/cgx-bootstrap-review-validation.yml'
   workflow_dispatch:
 
 permissions:
