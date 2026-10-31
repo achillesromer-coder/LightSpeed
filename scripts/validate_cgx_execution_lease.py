@@ -33,7 +33,7 @@ def base_lease():
       "authority_phase_ref":"cgx://internal/governance/root-authority-phase"
     }
 
-def check(lease, execution_depth="execute", action_class="execute", consequential=True):
+def check(lease, execution_depth="execute", action_class="execute", consequential=True, project_id=None):
     return validate_lease(
       lease,
       agent_id="Neo",
@@ -41,7 +41,7 @@ def check(lease, execution_depth="execute", action_class="execute", consequentia
       execution_depth=execution_depth,
       cascade_class="C2",
       task_id="CGX-LAUNCH-006",
-      project_id=None,
+      project_id=project_id,
       action_class=action_class,
       execution_class="DIGITAL_WRITE",
       planned_floors=["Neo"],
@@ -80,6 +80,38 @@ def main():
     ok,reasons,_=check(x)
     if not ok:
         failures.append("distributed-operation lease incorrectly inherited prelaunch root receipt requirement: "+",".join(reasons))
+
+    # Synthetic scope-only regressions: no host call, signature or DBR acceptance.
+    scope_negatives = [
+        ("scope-absent", None, "lease-scope-invalid"),
+        ("scope-not-object", [], "lease-scope-invalid"),
+        ("task-allowlist-absent", {"action_classes":["execute"]}, "lease-task-scope-missing"),
+        ("task-allowlist-empty", {"task_ids":[], "action_classes":["execute"]}, "lease-task-scope-invalid"),
+        ("action-allowlist-absent", {"task_ids":["CGX-LAUNCH-006"]}, "lease-action-class-scope-missing"),
+        ("action-allowlist-empty", {"task_ids":["CGX-LAUNCH-006"], "action_classes":[]}, "lease-action-class-scope-invalid"),
+        ("task-not-allowed", {"task_ids":["OTHER"], "action_classes":["execute"]}, "lease-task-out-of-scope:CGX-LAUNCH-006"),
+        ("action-not-allowed", {"task_ids":["CGX-LAUNCH-006"], "action_classes":["publish"]}, "lease-action-class-out-of-scope:execute"),
+    ]
+    for label, scope_value, expected_reason in scope_negatives:
+        x=base_lease()
+        x["root_authority_receipt_ref"]="fixture:root-approval"
+        if scope_value is None:
+            x.pop("scope",None)
+        else:
+            x["scope"]=copy.deepcopy(scope_value)
+        ok,reasons,_=check(x)
+        if ok or expected_reason not in reasons:
+            failures.append(label + ": expected " + expected_reason + "; got " + ",".join(reasons))
+
+    x=base_lease()
+    x["root_authority_receipt_ref"]="fixture:root-approval"
+    ok,reasons,_=check(x,project_id="PROJECT-ONE")
+    if ok or "lease-project-scope-missing" not in reasons:
+        failures.append("requested project without allowlist was not rejected")
+    x["scope"]["project_ids"]=["PROJECT-ONE"]
+    ok,reasons,_=check(x,project_id="PROJECT-ONE")
+    if not ok:
+        failures.append("explicitly scoped project fixture failed: " + ",".join(reasons))
 
     print({"status":"PASS" if not failures else "FAIL","failures":failures})
     return 1 if failures else 0
