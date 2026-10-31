@@ -34,6 +34,10 @@
     {
       "path": "cgx/domain_templates/eco_relation_registry.json",
       "git_blob_sha": "47241ad132cc53fa4e90f5b8ec65fe23412be95a"
+    },
+    {
+      "path": "cgx/domain_templates/first_file_conversion_registry.json",
+      "git_blob_sha": "15ac42e257220e0efd30c8521fe2c319b9a25013"
     }
   ],
   "observed_gap": "The current LOAD reader bounds library/one_of_one.json decompression to 60 MiB and rejects missing/duplicate library members, malformed entry structures and duplicate ref_id values. It remains a source-reference inspector: it does not verify the CGX native manifest/content root, RootAuthority/DBR signatures, current lease, rights/ACL or accepted Object_ID binding. No R0/R1/R2 admission follows from successful parsing.",
@@ -142,6 +146,11 @@
       "id": "C21",
       "input": "The historical Cognigrex parent topology review blueprint records Romer.cgx principal_agent=Neo and EMASSC.cgx principal_agent=Achilles, while the current cross-family relation overlap review assigns candidate_owner_lanes.romer='Achilles / Romer-Grex' and delegates LS execution to Neo. These fields name agent, candidate custodian and runtime delegate in different source scopes, not an independently accepted ownership transfer.",
       "expected": "DISTINCT_ROLE_TYPES_REVIEW; preserve source/version/field provenance, distinguish principal_agent, semantic_family_owner, grammar_owner and execution_delegate; do not infer Neo owns Romer source/IP, overwrite the Achilles candidate owner, reparent LS, or assert current native ACL/DBR authority. Require qualified owner+scope+rights/ACL and signed native root/DBR readback before binding effectful roles."
+    },
+    {
+      "id": "C22",
+      "input": "Historical FF-MARK3-XLSX-001 registry maps original Mark_III_Digital_Twin_v0_1.xlsx (Drive 1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2; 87108 bytes; SHA256 fab23970e80c016a2140ec0f87c1d0d7e15c365190fdacb5dc2ee2a1c2a81075) to R0_EXACT/R1_SEMANTIC_REVERSIBLE/R2_RECONSTRUCTED/R3_GENERATIVE, but its explicit S91 proof covers only a 13-cell, 8-object, 6-relation fixture. Independent bounded original-workbook review identifies 37 sheets, only PARTIAL_TYPED R1 coverage and 7 FAIL plus 2 CONDITIONAL validation gates. Original Drive link-reader ACL does not establish redistribution rights.",
+      "expected": "FIXTURE_SCOPED_PROOF_ONLY; preserve the exact original R0 and the historical fixture claims, but never infer full-workbook reversible R1, all-sheet R2/R3 coverage, physical validation, public release or native Object_ID admission from class labels or fixture roundtrip. Require explicit cell/sheet coverage map, reversible loss ledger, source revision and rights/ACL qualification, independent validation-gate resolution and signed native RootAuthority/DBR readback before broader promotion. Keep Romer.cgx:/romer/mark-iii as a candidate FileSpace route, not a newly minted identity."
     }
   ],
   "validation_state": "STATIC_SOURCE_REVIEW_ONLY",
