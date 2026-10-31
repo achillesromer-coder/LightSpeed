@@ -21,8 +21,10 @@ const label=x=>typeof x==='string'&&x.trim().length>0&&x.length<=256&&!/[\u0000-
 // Identity strings are opaque exact keys: reject alternate Unicode normalization
 // and all default-ignorable controls, matching the private LOAD inspector.
 // Do not silently normalize: the native resolver must decide any alias/collision.
+// Match the private inspector: unpaired UTF-16 surrogates cannot round-trip
+// reliably through JSON/provider transport and must not enter R0 identity hints.
 const identityLabel=x=>label(x)&&x===x.normalize('NFC')&&
- !/[\p{Default_Ignorable_Code_Point}\p{Cc}]/u.test(x);
+ !/[\p{Default_Ignorable_Code_Point}\p{Cc}\p{Cs}]/u.test(x);
 const digest=x=>typeof x==='string'&&/^[a-f0-9]{64}$/i.test(x);
 const result=(reason,code='HOLD')=>({schema:DROP_SCHEMA,status:code,reason,bytes_read:0,uploaded:false,
  network_fetch:false,hash_verified:false,acl_verified:false,object_id_minted:false,
@@ -35,11 +37,12 @@ export function planUniSpaceDropPreflight({target,file,source,access,existing_so
     !Object.hasOwn(spaces,target.domain)||spaces[target.domain]!==target.file_space)
   return result('EXACT_CHILD_FILESPACE_UNRESOLVED');
  if(!Array.isArray(access.authorized_object_ids)||!Array.isArray(access.authorized_file_spaces)||
+    !access.authorized_object_ids.every(identityLabel)||!access.authorized_file_spaces.every(identityLabel)||
     !access.authorized_object_ids.includes(target.object_id)||!access.authorized_file_spaces.includes(target.file_space))
   return result('TARGET_SCOPE_NOT_DECLARED');
  if(!label(file.name)||file.name==='.'||file.name==='..'||file.name.includes('..')||/[\\/:]/.test(file.name)||
     !Number.isSafeInteger(file.size)||file.size<1||file.size>MAX_BYTES||!mime.has(file.type)||
-    /[\u061c\u200b-\u200f\u202a-\u202e\u2060\u2066-\u2069\ufeff]/u.test(file.name))
+    /[\u061c\u200b-\u200f\u202a-\u202e\u2060\u2066-\u2069\ufeff\p{Cs}]/u.test(file.name))
   return result('FILE_METADATA_OR_SIZE_UNSUPPORTED');
  if(!identityLabel(source.source_id)||!identityLabel(source.version)||!identityLabel(source.owner)||!digest(source.sha256)||
     !rights.has(source.rights)||!classes.has(source.proof_class))
