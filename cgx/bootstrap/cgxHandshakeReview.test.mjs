@@ -1,7 +1,7 @@
 import {readFileSync} from 'node:fs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {planCGXHandshake} from './cgxHandshakeReview.mjs';
+import {planCGXHandshake,reviewNativeLeaseHandshakeABI} from './cgxHandshakeReview.mjs';
 const base={
  parent:{object_id:'fixture:root',state_root:'a'.repeat(64),dbr_root:'b'.repeat(64)},
  child:{object_id:'fixture:eco',parent_object_id:'fixture:root',filespace:'Eco.cgx'},
@@ -236,5 +236,85 @@ test('cosmetic lease ABI mapping cannot attest issuer, request scope or replay p
   assert.equal(result.host_signature_verified,false);
   assert.equal(result.may_execute,false);
   assert.equal(result.db_r_mutated,false);
+ }
+});
+
+
+const nativeABIBase={
+ sourceSchema:'CGX-EXECUTION-LEASE-CONTRACT/0.1',
+ parent:base.parent,child:base.child,now:base.now,
+ nativeLease:{lease_id:'fixture:native',lease_class:'COMPUTE_ONLY',
+  state:'ACTIVE',revocable:true,issued_by:'fixture:unverified-issuer',
+  subject_agent:'Neo',valid_from:'2026-10-27T00:00:00Z',
+  valid_until:'2026-11-01T00:00:00Z',domains:['lightspeed'],
+  execution_depths:['simulate'],scope:{object_ids:[base.child.object_id],
+   tool_scopes:['fixture:solver'],action_classes:['simulate'],
+   resource_budgets:{compute_ms:100}}},
+ request:{agent_id:'Neo',object_id:base.child.object_id,tool_scope:'fixture:solver',
+  domain:'lightspeed',execution_depth:'simulate',action_class:'simulate',
+  nonce:'fixture:unconsumed-nonce',resource_usage:{compute_ms:20}}
+};
+test('native lease ABI adapter never confers operational authority',()=>{
+ const r=reviewNativeLeaseHandshakeABI(nativeABIBase);
+ assert.equal(r.status,'UNVERIFIED_SHAPE_REVIEW');
+ assert.equal(r.schema,'CGX-NATIVE-LEASE-BOOTSTRAP-ABI-REVIEW/0.1');
+ assert.equal(r.request_binding_reviewed,true);
+ for(const hold of ['SIGNED_LEASE_PROVIDER_REQUIRED',
+  'ISSUER_ROOT_AUTHORITY_NOT_VERIFIED','LEASE_NONCE_CONSUMPTION_NOT_VERIFIED',
+  'HOST_CLOCK_NOT_ATTESTED','NATIVE_ISSUER_SIGNATURE_AND_REVOCATION_NOT_VERIFIED'])
+  assert.ok(r.holds.includes(hold),hold);
+ for(const field of ['may_execute','may_publish','host_signature_verified',
+  'root_authority_verified','db_r_mutated'])assert.equal(r[field],false,field);
+});
+test('native lease ABI version, revocation and time negatives fail closed',()=>{
+ const check=x=>reviewNativeLeaseHandshakeABI(x).status;
+ assert.equal(check({...nativeABIBase,sourceSchema:'CGX-EXECUTION-LEASE-CONTRACT/0.2'}),'DENIED');
+ for(const state of ['REVOKED','SUSPENDED','CONSUMED','EXPIRED']){
+  assert.equal(check({...nativeABIBase,nativeLease:{...nativeABIBase.nativeLease,state}}),'DENIED');
+ }
+ assert.equal(check({...nativeABIBase,nativeLease:{...nativeABIBase.nativeLease,revocable:false}}),'DENIED');
+ assert.equal(check({...nativeABIBase,now:'2026-11-02T00:00:00Z'}),'DENIED');
+ assert.equal(check({...nativeABIBase,now:'2026-10-26T00:00:00Z'}),'DENIED');
+ assert.equal(check({...nativeABIBase,now:'2026-02-30T00:00:00Z'}),'DENIED');
+});
+test('native ABI request object, tool, agent, domain and resource must be explicit subsets',()=>{
+ const req=nativeABIBase.request,lease=nativeABIBase.nativeLease;
+ for(const changed of [
+  {object_id:'fixture:other'}, {tool_scope:'fixture:other'},
+  {agent_id:'fixture:other'}, {domain:'eco'},
+  {execution_depth:'publish'}, {action_class:'external'},
+  {resource_usage:{compute_ms:101}}, {resource_usage:{io_bytes:1}},
+  {resource_usage:{}}
+ ]){
+  const r=reviewNativeLeaseHandshakeABI({...nativeABIBase,request:{...req,...changed}});
+  assert.equal(r.status,'DENIED',JSON.stringify(changed));
+  assert.equal(r.may_execute,false);
+ }
+ for(const scope of [{...lease.scope,object_ids:[]},
+  {...lease.scope,tool_scopes:[]},{...lease.scope,resource_budgets:{}}]){
+  assert.equal(reviewNativeLeaseHandshakeABI({...nativeABIBase,
+   nativeLease:{...lease,scope}}).status,'DENIED');
+ }
+});
+test('forged issuer claims and replayed nonce cannot become signed host proof',()=>{
+ for(const issued_by of ['fixture:forged','fixture:other-key']){
+  const payload={...nativeABIBase,nativeLease:{...nativeABIBase.nativeLease,issued_by}};
+  const first=reviewNativeLeaseHandshakeABI(payload);
+  const replay=reviewNativeLeaseHandshakeABI(payload);
+  for(const r of [first,replay]){
+   assert.equal(r.status,'UNVERIFIED_SHAPE_REVIEW');
+   assert.equal(r.may_execute,false);
+   assert.equal(r.root_authority_verified,false);
+   assert.ok(r.holds.includes('REQUEST_NONCE_UNBOUND_TO_NATIVE_LEASE'));
+   assert.ok(r.holds.includes('LEASE_NONCE_CONSUMPTION_NOT_VERIFIED'));
+  }
+ }
+});
+test('native ABI unsupported effectful class never silently maps to bootstrap',()=>{
+ for(const lease_class of ['EXTERNAL_ACTION','PHYSICAL_ACTUATION','unknown']){
+  const r=reviewNativeLeaseHandshakeABI({...nativeABIBase,
+   nativeLease:{...nativeABIBase.nativeLease,lease_class}});
+  assert.equal(r.status,'DENIED');
+  assert.equal(r.reason,'NATIVE_LEASE_CLASS_UNSUPPORTED_BY_HANDSHAKE');
  }
 });
