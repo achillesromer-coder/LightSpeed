@@ -347,7 +347,7 @@ def main() -> int:
                 "tool_scope": args.tool_scope,
                 "configuration_id": args.configuration_id,
             },
-        }
+        },
         "planned_floors": list(plan.floor_sequence),
         "decision": decision,
         "execution_requested": args.execute,
