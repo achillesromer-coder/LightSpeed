@@ -600,3 +600,36 @@ test("formula inventory rejects unpinned, duplicated and cross-source IDs",()=>{
  assert.equal(r.formula_inventory_review.state,"NOT_REQUESTED");
  assert.equal(r.release.public_release_authorised,false);
 });
+
+test("combined manifest status and symbolic corruption never authorise Eco admission",()=>{
+ // Synthetic-only integration regression: a source manifest label is not
+ // evidence that a translated scientific expression or inventory is faithful.
+ const symbolicAnchor={...anchor,sheet:"31_Formula_Library",cell:"B3"};
+ const pair={source_ref:source.source_ref,source_revision:source.revision,
+  source_sha256:digest,related_source_ref:lineage.related_source_ref,
+  related_revision_ref:lineage.related_revision_ref,
+  original_cell:{sheet:symbolicAnchor.sheet,cell:"B3",
+   expression_text:"score = x × y",evidence_class:"simulated"},
+  related_cell:{sheet:"SYNTHETIC_31_Formula_Library",cell:"B3",
+   expression_text:"score = x Ã— y",evidence_class:"simulated"}};
+ const inventory={source_ref:source.source_ref,source_revision:source.revision,
+  source_sha256:digest,related_source_ref:lineage.related_source_ref,
+  related_revision_ref:lineage.related_revision_ref,
+  original_ids:["FM-001"],related_ids:["FM-001","FM-008"]};
+ const r=prepare({cascade_input:input,source_lineage:lineage,
+  cell_anchor:symbolicAnchor,symbolic_expression_crosswalk:pair,
+  formula_inventory:inventory});
+ assert.equal(r.source_lineage_review.claimed_translation_state,"translated_verified");
+ assert.equal(r.source_lineage_review.byte_equivalence_verified,false);
+ assert.equal(r.source_symbolic_expression_crosswalk_review.state,
+  "R1_CALLER_DECLARED_SYMBOLIC_EXPRESSION_DISCREPANCY_HOLD");
+ assert.equal(r.formula_inventory_review.state,
+  "R1_TRANSLATION_FORMULA_INVENTORY_DELTA_HOLD");
+ assert.ok(r.blocking_gates.includes("SOURCE_TRANSLATION_SYMBOLIC_EXPRESSION_DISCREPANCY"));
+ assert.ok(r.blocking_gates.includes("TRANSLATION_FORMULA_LIBRARY_DELTA_REQUIRES_PROVENANCE"));
+ assert.equal(r.candidate_object_id,null);
+ assert.equal(r.release.mint_allowed,false);
+ assert.equal(r.release.public_release_authorised,false);
+ assert.equal(r.canonical_write,false);
+ assert.equal(JSON.stringify(r).includes("score = x"),false);
+});
