@@ -32,9 +32,12 @@ export function reviewUniSpaceBuildProvenance(input){
  !Array.isArray(r.assets)||r.assets.length<1||r.assets.length>16)return hold('SOURCE_REVIEW_BINDING_REQUIRED');
  const sourceMap=new Map();
  for(const a of r.assets){
- if(!keys(a,['asset_id','source_blob_sha','static_source_path','review_result','risk_codes'])||
+ if(!keys(a,['asset_id','source_blob_sha','static_source_path','source_class','scope','rights','owner_clearance','review_result','risk_codes'])||
  typeof a.asset_id!=='string'||!sha1.test(a.source_blob_sha||'')||typeof a.static_source_path!=='boolean'||
- !Array.isArray(a.risk_codes)||a.risk_codes.some(c=>typeof c!=='string')||sourceMap.has(a.asset_id))return hold('INVALID_SOURCE_ASSET');
+ !['INTERNAL_REVIEW','OWNER_PRIVATE','PUBLIC_CANDIDATE','UNKNOWN'].includes(a.source_class)||
+ !['ONE_OBJECT','MULTI_OBJECT','UNKNOWN'].includes(a.scope)||
+ !['CLEARED_PUBLIC','UNRESOLVED','RESTRICTED'].includes(a.rights)||typeof a.owner_clearance!=='boolean'||
+ !Array.isArray(a.risk_codes)||a.risk_codes.some(c=>typeof c!=='string')||sourceMap.has(a.asset_id))return hold('SOURCE_CLASSIFICATION_PROVENANCE_REQUIRED');
  sourceMap.set(a.asset_id,a);
  }
  if(!Array.isArray(entries)||entries.length!==sourceMap.size)return hold('BUILD_ENTRY_PARITY_REQUIRED');
@@ -50,6 +53,13 @@ export function reviewUniSpaceBuildProvenance(input){
  seen.add(e.asset_id);
  const a=sourceMap.get(e.asset_id),risks=[];
  if(a.source_blob_sha!==e.source_blob_sha)risks.push('SOURCE_BLOB_MISMATCH');
+ // #158: a build-stage PUBLIC_CANDIDATE label cannot silently overwrite
+ // original source-stage classification, rights, scope or owner clearance.
+ // Exact parity is only caller-declared metadata consistency, never signed proof.
+ if(a.source_class!==e.source_class)risks.push('SOURCE_CLASS_RECLASSIFICATION_UNVERIFIED');
+ if(a.scope!==e.scope)risks.push('SOURCE_SCOPE_RECLASSIFICATION_UNVERIFIED');
+ if(a.rights!==e.rights)risks.push('SOURCE_RIGHTS_RECLASSIFICATION_UNVERIFIED');
+ if(a.owner_clearance!==e.owner_clearance)risks.push('SOURCE_CLEARANCE_RECLASSIFICATION_UNVERIFIED');
  if(a.risk_codes.length)risks.push('UNRESOLVED_SOURCE_REVIEW_RISK');
  if(e.distribution_class==='PUBLIC_STATIC'){
  if(e.source_class!=='PUBLIC_CANDIDATE')risks.push('NONPUBLIC_SOURCE_IN_STATIC_BUILD');
