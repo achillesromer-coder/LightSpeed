@@ -461,3 +461,55 @@ test('public route cannot elevate caller-supplied host or DBR receipts into sour
  assert.ok(!JSON.stringify(x).includes(target.object_id));
  noEffects(x);
 });
+
+
+// #158 / LOAD inspector parity: reject unpaired UTF-16 surrogates in every
+// exact identity, ACL hint, prior reference and filename. These are synthetic
+// metadata-only fixtures; no bytes, root, lease, DBR or host session are read.
+test('unpaired UTF-16 source identities and scope fail closed across standalone preflight',()=>{
+ const lone='\uD800';
+ const cases=[
+  [{...args,target:{...target,object_id:target.object_id+lone}},'EXACT_CHILD_FILESPACE_UNRESOLVED'],
+  [{...args,target:{...target,owner:target.owner+lone}},'EXACT_CHILD_FILESPACE_UNRESOLVED'],
+  [{...args,source:{...source,source_id:source.source_id+lone}},'SOURCE_QUALIFICATION_INCOMPLETE'],
+  [{...args,source:{...source,version:'2'+lone}},'SOURCE_QUALIFICATION_INCOMPLETE'],
+  [{...args,source:{...source,owner:'owner'+lone}},'SOURCE_QUALIFICATION_INCOMPLETE'],
+  [{...args,access:{...access,authorized_object_ids:[target.object_id,'other'+lone]}},'TARGET_SCOPE_NOT_DECLARED'],
+  [{...args,access:{...access,authorized_file_spaces:[target.file_space,'other'+lone]}},'TARGET_SCOPE_NOT_DECLARED'],
+  [{...args,file:{...file,name:'observation'+lone+'.json'}},'FILE_METADATA_OR_SIZE_UNSUPPORTED'],
+  [{...args,existing_sources:[{source_id:'prior'+lone,sha256:source.sha256}]},'EXISTING_SOURCE_REGISTRY_UNQUALIFIED']
+ ];
+ for(const [input,reason] of cases){
+  const x=plan(input);
+  assert.equal(x.status,'HOLD',reason);
+  assert.equal(x.reason,reason);
+  assert.ok(!JSON.stringify(x).includes(source.source_id));
+  noEffects(x);
+ }
+ // Valid non-BMP Unicode must not be rejected merely for using a surrogate pair.
+ const valid=plan({...args,source:{...source,owner:'owner🙂'},
+  file:{...file,name:'observation🙂.json'}});
+ assert.equal(valid.status,'REVIEW_CANDIDATE');
+ noEffects(valid);
+});
+
+test('private inspector-to-drop handoff cannot launder malformed UTF-16 source metadata',()=>{
+ const lone='\uDC00';
+ for(const patch of [
+  {source:{...source,source_id:source.source_id+lone}},
+  {source:{...source,owner:'owner'+lone}},
+  {file:{...file,name:'observation'+lone+'.json'}},
+  {existing_sources:[{source_id:'prior'+lone,sha256:source.sha256}]}
+ ]){
+  const x=handoff({...scopedDrop,dropInput:{...scopedDrop.dropInput,...patch}});
+  assert.equal(x.state,'DENIED');
+  assert.ok(x.reason.startsWith('SOURCE_PREFLIGHT_'));
+  assert.ok(!JSON.stringify(x).includes(source.source_id));
+  handoffInert(x);
+ }
+ const inspectorSpoof=handoff({...scopedDrop,inspectorInput:{...inspectorInput,
+  focus_id:target.object_id+lone}});
+ assert.equal(inspectorSpoof.state,'DENIED');
+ assert.ok(!JSON.stringify(inspectorSpoof).includes(source.source_id));
+ handoffInert(inspectorSpoof);
+});
