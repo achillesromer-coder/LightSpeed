@@ -8,6 +8,7 @@
  */
 import {runEcoReviewCascade} from "./eco_review_cascade.mjs";
 import {reviewEcoObservationShowcase} from "./eco_digital_mint_boundary.mjs";
+import {reviewSecondCycleCoefficientRoles} from "./eco_second_cycle_claim_review.mjs";
 
 export const ECO_PRE_MINT_SCHEMA="CGX-ECO-PRE-MINT-ASSEMBLY/0.1";
 const obj=x=>x!==null&&typeof x==="object"&&!Array.isArray(x);
@@ -480,13 +481,13 @@ export function prepareEcoPreMintAssembly(request={}){
     "requested_hydration","observation_showcase","source_lineage","access_posture",
     "related_access_posture","cell_crosswalk",
     "symbolic_expression_crosswalk","formula_inventory",
-    "symbolic_correction_batch"].includes(k)))
+    "symbolic_correction_batch","coefficient_roles"].includes(k)))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const {cascade_input,geometry_descriptor=null,cell_anchor=null,
     requested_hydration="H3",observation_showcase=null,source_lineage=null,
     access_posture=null,related_access_posture=null,cell_crosswalk=null,
     symbolic_expression_crosswalk=null,formula_inventory=null,
-    symbolic_correction_batch=null}=request;
+    symbolic_correction_batch=null,coefficient_roles=null}=request;
   if(!obj(cascade_input)||!levels.includes(requested_hydration))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const executed=runEcoReviewCascade(cascade_input);
@@ -511,6 +512,17 @@ export function prepareEcoPreMintAssembly(request={}){
   const formulaInventory=reviewFormulaInventoryDelta(formula_inventory,source,source_lineage);
   const symbolicCorrections=reviewSymbolicCorrectionBatch(symbolic_correction_batch,
     source,source_lineage,executed.evidence_class);
+  let coeff={state:"COEFFICIENT_ROLES_NOT_SUPPLIED"};
+  if(coefficient_roles!==null){
+    if(cascade_input.domain!=="second_cycle_claim"||
+       !source.proof_hash||
+       coefficient_roles.source_ref!==source.source_ref||
+       coefficient_roles.source_revision!==source.revision||
+       coefficient_roles.source_sha256.toLowerCase()!==source.proof_hash||
+       executed.evidence_class!=="simulated")
+      throw Error("ECO_COEFFICIENT_SOURCE_OR_EVIDENCE_CONFLICT");
+    coeff=reviewSecondCycleCoefficientRoles(coefficient_roles);
+  }
   let showcase=null;
   if(observation_showcase!==null){
     if(!obj(observation_showcase)||
@@ -564,6 +576,11 @@ export function prepareEcoPreMintAssembly(request={}){
     blockers.push("FORMULA_INVENTORY_PROVIDER_ATTESTATION_REQUIRED");
     if(formulaInventory.state==="R1_TRANSLATION_FORMULA_INVENTORY_DELTA_HOLD")
       blockers.push("TRANSLATION_FORMULA_LIBRARY_DELTA_REQUIRES_PROVENANCE");
+  }
+  if(coefficient_roles!==null){
+    blockers.push("COEFFICIENT_ROLES_REQUIRE_PROVIDER_CELL_ATTESTATION");
+    if(coeff.same_symbol_distinct_roles)
+      blockers.push("SECOND_CYCLE_COEFFICIENT_SYMBOL_OVERLOAD_HOLD");
   }
   if(access_posture!==null)
     blockers.push("DECLARED_SOURCE_ACCESS_POSTURE_NOT_RIGHTS_APPROVAL");
@@ -619,6 +636,7 @@ export function prepareEcoPreMintAssembly(request={}){
     source_symbolic_expression_crosswalk_review:level>=2?symbolic:{state:"NOT_REQUESTED"},
     formula_inventory_review:level>=2?formulaInventory:{state:"NOT_REQUESTED"},
     symbolic_correction_batch_review:level>=2?symbolicCorrections:{state:"NOT_REQUESTED"},
+    coefficient_roles_review:level>=2?coeff:{state:"NOT_REQUESTED"},
     access_posture_review:level>=2?access:{state:"NOT_REQUESTED"},
     related_access_posture_review:level>=2?relatedAccess:{state:"NOT_REQUESTED"},
     mint_showcase_review:level>=3&&showcase!==null?{
@@ -636,6 +654,7 @@ export function prepareEcoPreMintAssembly(request={}){
       {layer:"symbolic_expression",state:level>=2?symbolic.state:"NOT_REQUESTED"},
       {layer:"formula_inventory",state:level>=2?formulaInventory.state:"NOT_REQUESTED"},
       {layer:"symbolic_corrections",state:level>=2?symbolicCorrections.state:"NOT_REQUESTED"},
+      {layer:"coefficient_roles",state:level>=2?coeff.state:"NOT_REQUESTED"},
       {layer:"semantic",state:"R1_REVIEW_ONLY"},
       {layer:"geometry",state:geom.state},
       {layer:"temporal",state:geom.time_frame_ref_present?"REFERENCE_ONLY":"MISSING_SOURCE_TIME_FRAME"},
@@ -647,6 +666,7 @@ export function prepareEcoPreMintAssembly(request={}){
       "CALLER_DECLARED_PAIRWISE_CELLS_NOT_INDEPENDENT_PROVIDER_ATTESTATION",
       "SYMBOLIC_EXPRESSION_TEXT_NOT_INDEPENDENTLY_VERIFIED_OR_REPAIRED",
       "SYMBOLIC_CORRECTION_BATCH_NOT_APPLIED_TO_SOURCE",
+      "COEFFICIENT_ROLES_NOT_INDEPENDENTLY_PROVIDER_ATTESTED",
       "NO_METRIC_GEOMETRY_OR_CRS_TRANSFORM",
       "NO_R2_ONTOLOGY_OR_NATIVE_OBJECT_ID_PROOF",
       "NO_NATIVE_CCC_INSTALL_OR_DATASPACE_SYNC",
