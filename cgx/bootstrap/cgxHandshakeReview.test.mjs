@@ -168,6 +168,22 @@ test('invisible Unicode format controls cannot spoof portable transfer targets',
  assert.equal(ordinary.may_execute,false);
 });
 
+test('Unicode line separators and unpaired UTF-16 surrogates fail closed in transfer paths',()=>{
+ for(const target_relative_path of [
+  'staged/a\\u2028b.txt', // Unicode line separator, can spoof logs
+  'staged/a\\u2029b.txt', // Unicode paragraph separator
+  'staged/a\\ud800b.txt', // unpaired high surrogate
+  'staged/a\\udc00b.txt'  // unpaired low surrogate
+ ]){
+  const result=planCGXHandshake({...base,exchange:{...exchange,target_relative_path}});
+  assert.equal(result.status,'DENIED',JSON.stringify(target_relative_path));
+  assert.equal(result.reason,'UNSAFE_TRANSFER_TARGET',JSON.stringify(target_relative_path));
+ }
+ const valid=planCGXHandshake({...base,exchange:{...exchange,target_relative_path:'staged/café-2026.txt'}});
+ assert.equal(valid.status,'UNVERIFIED_SHAPE_REVIEW');
+ assert.equal(valid.may_execute,false);
+});
+
 test('transfer chronology after lease expiry or observation time stays held, never executed',()=>{
  const afterExpiry=planCGXHandshake({...base,
   lease:{...base.lease,expires_utc:'2026-10-28T00:00:00Z'},exchange});
