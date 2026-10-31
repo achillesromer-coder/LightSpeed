@@ -25,6 +25,9 @@ const allow = (x) => x === true;
 // Source-review scope check: a menu declaration is not native Object_ID authority.
 const childSpaces=Object.freeze({eco:'Eco.cgx',romer:'Romer.cgx',emassc:'EMASSC.cgx',ls:'LS.cgx'});
 const reservedSpaces=Object.freeze(Object.fromEntries(Object.entries(childSpaces).map(([domain,space])=>[space,domain])));
+// Immediate parent lineage, distinct from the single Cognigrex.cgx family root.
+// LS.cgx is nested under EMASSC.cgx, not a direct root child.
+const childParents=Object.freeze({eco:'Cognigrex.cgx',romer:'Cognigrex.cgx',emassc:'Cognigrex.cgx',ls:'EMASSC.cgx'});
 const unambiguous=s=>safeText(s)&&s===s.normalize('NFC')&&!/[\p{Default_Ignorable_Code_Point}\p{Cc}]/u.test(s);
 const childMatches=(domain,space)=>!Object.hasOwn(childSpaces,domain)||childSpaces[domain]===space;
 const reservedMatches=(domain,space)=>!Object.hasOwn(reservedSpaces,space)||reservedSpaces[space]===domain;
@@ -53,7 +56,12 @@ export function planFeature(request) {
       (target.objectId != null&&!unambiguous(target.objectId))||
       (capabilityId != null&&!unambiguous(capabilityId)))
     return {state:'DENIED',reason:'AMBIGUOUS_IDENTITY_OR_SCOPE'};
-  if (target.parentFileSpace != null && target.parentFileSpace !== 'Cognigrex.cgx')
+  const expectedParent=target.domain!=null&&Object.hasOwn(childParents,target.domain)?
+    childParents[target.domain]:'Cognigrex.cgx';
+  // Do not silently infer the nested LS parent from an absent caller field.
+  if(target.domain==='ls'&&target.parentFileSpace==null)
+    return {state:'DENIED',reason:'EXACT_CHILD_PARENT_REQUIRED'};
+  if(target.parentFileSpace!=null&&target.parentFileSpace!==expectedParent)
     return {state:'DENIED',reason:'COMPETING_PARENT_ROOT'};
   if (target.domain != null && (!childMatches(target.domain,target.fileSpace)||
       !reservedMatches(target.domain,target.fileSpace)))
@@ -67,7 +75,7 @@ export function planFeature(request) {
   const id = target.objectId;
   // Do not guess object identity from file names, paths, labels, or domain IDs.
   if (id != null && !safeText(id)) return { state:'DENIED',reason:'INVALID_OBJECT_ID' };
-  const parent = target.parentFileSpace || 'Cognigrex.cgx';
+  const parent = target.parentFileSpace || expectedParent;
   if (!safeText(parent)) return { state:'DENIED',reason:'INVALID_PARENT' };
   const intent = {
     schema: CONTRACT, action, target: { kind:target.kind, fileSpace:target.fileSpace, domain:target.domain??null, owner:target.owner, objectId:id??null, parentFileSpace:parent },
@@ -213,7 +221,7 @@ export function planUniSpaceHostBridgeHandoff({
  }else{
   // These are syntactic checks ONLY. Never copy any claimed secret, token,
   // issuer or source hash into an HTML/Squarespace response.
-  if(hostEvidence.parentFileSpace!=='Cognigrex.cgx'||
+  if(hostEvidence.parentFileSpace!==selected.target.parentFileSpace||
       hostEvidence.childFileSpace!==target.fileSpace||
       hostEvidence.objectId!==target.objectId)
    return deny('HOST_IDENTITY_MISMATCH');
