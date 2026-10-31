@@ -170,10 +170,10 @@ test('invisible Unicode format controls cannot spoof portable transfer targets',
 
 test('Unicode line separators and unpaired UTF-16 surrogates fail closed in transfer paths',()=>{
  for(const target_relative_path of [
-  'staged/a\\u2028b.txt', // Unicode line separator, can spoof logs
-  'staged/a\\u2029b.txt', // Unicode paragraph separator
-  'staged/a\\ud800b.txt', // unpaired high surrogate
-  'staged/a\\udc00b.txt'  // unpaired low surrogate
+  'staged/a\u2028b.txt', // Unicode line separator, can spoof logs
+  'staged/a\u2029b.txt', // Unicode paragraph separator
+  'staged/a\ud800b.txt', // unpaired high surrogate
+  'staged/a\udc00b.txt'  // unpaired low surrogate
  ]){
   const result=planCGXHandshake({...base,exchange:{...exchange,target_relative_path}});
   assert.equal(result.status,'DENIED',JSON.stringify(target_relative_path));
