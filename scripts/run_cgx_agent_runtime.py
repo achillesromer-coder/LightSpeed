@@ -115,7 +115,8 @@ def validate_lease(
     # does not authenticate the issuer, referenced receipt, or native DBR.
     def require_ref(field: str, reason: str) -> None:
         value = lease.get(field)
-        if not isinstance(value, str) or not value.strip():
+        if (not isinstance(value, str) or not value.strip()
+                or any(ord(ch) < 0x20 or ord(ch) == 0x7F for ch in value)):
             reasons.append(reason)
 
     # Structural identity checks are necessary but NOT issuer authentication.
