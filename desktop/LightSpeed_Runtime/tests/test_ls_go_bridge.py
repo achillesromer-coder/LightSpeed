@@ -2186,3 +2186,66 @@ def test_cgx_root_review_preflight_requires_enabled_representation_edge(tmp_path
     )
     assert response.status_code == 404
     assert edge.review_writes == 0
+
+
+def test_cgx_family_oversight_requires_real_owner_session(tmp_path, monkeypatch):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    called = []
+
+    def forbidden(*_args, **_kwargs):
+        called.append(True)
+        raise AssertionError("Must authenticate before reading family input")
+
+    monkeypatch.setattr(ls_go_bridge, "build_oversight", forbidden)
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    response = client.get("/api/v1/cgx/family-oversight")
+    assert response.status_code == 401
+    assert called == []
+
+
+def test_cgx_family_oversight_source_config_and_output_are_owner_scoped(tmp_path, monkeypatch):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    calls = []
+
+    def owner(_confirmation, *, session_token=None, **_kwargs):
+        assert session_token == "test-current-owner-session"
+        return "test-owner"
+
+    def ingest(**kwargs):
+        calls.append(kwargs)
+        return {
+            "schema": "CGX-LS-FAMILY-OVERSIGHT/0.1",
+            "families": [{"domain": "romer", "native_child_accepted": False}],
+            "effects": {"canonical_db_writes": 0, "object_ids_minted": 0},
+        }
+
+    monkeypatch.setattr(ls_go_bridge, "_verified_owner_actor", owner)
+    monkeypatch.setattr(ls_go_bridge, "build_oversight", ingest)
+    monkeypatch.setenv("CGX_FAMILY_IDENTITY_REGISTRY", str(tmp_path / "identity.json"))
+    monkeypatch.setenv("CGX_LOAD_SOURCE_REGISTRY", str(tmp_path / "load.json"))
+    monkeypatch.setenv("LIGHTSPEED_CANONICAL_DB", str(tmp_path / "native.db"))
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    response = client.get(
+        "/api/v1/cgx/family-oversight",
+        headers={"X-LightSpeed-Session": "test-current-owner-session"},
+    )
+    assert response.status_code == 200
+    assert response.headers["Cache-Control"] == "no-store"
+    assert response.json()["owner_session_verified_by_bridge"] is True
+    assert response.json()["effects"]["canonical_db_writes"] == 0
+    assert len(calls) == 1
+    assert calls[0]["database_path"] == tmp_path / "native.db"
+    assert calls[0]["family_registry_path"] == tmp_path / "identity.json"
+
+
+def test_cgx_family_oversight_fails_closed_without_registry_config(tmp_path, monkeypatch):
+    monkeypatch.setattr(ls_go_bridge, "_try_get_services", lambda _root: (None, None))
+    monkeypatch.setattr(ls_go_bridge, "_verified_owner_actor", lambda *_a, **_k: "test-owner")
+    monkeypatch.delenv("CGX_FAMILY_IDENTITY_REGISTRY", raising=False)
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    response = client.get(
+        "/api/v1/cgx/family-oversight",
+        headers={"X-LightSpeed-Session": "test-current-owner-session"},
+    )
+    assert response.status_code == 503
+    assert response.json()["detail"] == "CGX_FAMILY_REGISTRY_NOT_CONFIGURED"
