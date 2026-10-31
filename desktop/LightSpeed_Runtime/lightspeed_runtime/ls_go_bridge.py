@@ -25,6 +25,7 @@ from lightspeed_runtime.corpus_test_orchestrator import (
 )
 from lightspeed_runtime.cgx_conversion_planner import CGXConversionPlanError, compile_conversion_plan
 from lightspeed_runtime.cgx_object_context import CGXObjectContextError, resolve_object_context
+from lightspeed_runtime.cgx_family_ingestion import CGXFamilyIngestionError, build_oversight
 from lightspeed_runtime.project_artifact_store import stage_project_artifacts
 from lightspeed_runtime.node_exchange import (
     NodeExchangeError,
@@ -2122,6 +2123,131 @@ def create_app(root: Path | str) -> FastAPI:
         except KeyError:
             raise HTTPException(status_code=404, detail="Canonical object candidate not found")
         return JSONResponse({"graph": graph})
+
+    @app.get("/api/v1/cgx/family-oversight")
+    async def read_cgx_family_oversight(
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        """Owner-private, metadata-only LS ingestion of the existing CGX Family Set.
+
+        Paths are host-configured; request parameters cannot choose source files.
+        This never creates an Object_ID, executes a source adapter, or writes DBR.
+        """
+        if not owner_session:
+            raise HTTPException(status_code=401, detail="An active owner session is required")
+        _verified_owner_actor(
+            None,
+            session_token=owner_session,
+            credential_store=credential_store,
+            session_store=owner_sessions,
+        )
+        registry = os.environ.get("CGX_FAMILY_IDENTITY_REGISTRY", "").strip()
+        if not registry:
+            raise HTTPException(status_code=503, detail="CGX_FAMILY_REGISTRY_NOT_CONFIGURED")
+        load_registry = os.environ.get("CGX_LOAD_SOURCE_REGISTRY", "").strip()
+        root_registry = os.environ.get("CGX_ROOT_REGISTRY", "").strip()
+        carrier = os.environ.get("CGX_ROOT_CARRIER", "").strip()
+        if bool(root_registry) != bool(carrier):
+            raise HTTPException(status_code=503, detail="CGX_ROOT_CARRIER_BINDING_INCOMPLETE")
+        canonical_db = os.environ.get("LIGHTSPEED_CANONICAL_DB", "").strip()
+        database_path = Path(canonical_db) if canonical_db else (
+            shell_root.parent / "Data" / "db" / "lightspeed_unified.db"
+        )
+        try:
+            snapshot = build_oversight(
+                family_registry_path=Path(registry),
+                database_path=database_path,
+                load_registry_path=Path(load_registry) if load_registry else None,
+                root_registry_path=Path(root_registry) if root_registry else None,
+                carrier_path=Path(carrier) if carrier else None,
+            )
+        except CGXFamilyIngestionError as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
+        return JSONResponse(
+            {**snapshot, "owner_session_verified_by_bridge": True},
+            headers={"Cache-Control": "no-store"},
+        )
+
+    @app.post("/api/v1/representation-root-review/preflight")
+    async def preflight_cognigrex_root_review(
+        body: dict[str, Any],
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        """Owner-session-only, read-only preflight for the existing S92 root.
+
+        This route deliberately has no execution-lease, review-insert, owner-decision,
+        or state-promotion capability. A validated session is NOT a write lease.
+        """
+        if not owner_session:
+            raise HTTPException(status_code=401, detail="An active owner session is required")
+        _verified_owner_actor(
+            None,
+            session_token=owner_session,
+            credential_store=credential_store,
+            session_store=owner_sessions,
+        )
+        required = {"object_id", "graph_sha256", "carrier_sha256"}
+        if not isinstance(body, dict) or set(body) != required:
+            raise HTTPException(
+                status_code=400,
+                detail="Only object_id, graph_sha256 and carrier_sha256 are permitted",
+            )
+        object_id = _bounded(body.get("object_id"), maximum=160, required=True)
+        if object_id != "cgx:phase-a:42d99b46c0d322f08b59b7b7":
+            raise HTTPException(status_code=400, detail="Only the existing S92 parent is in scope")
+        expected_graph = _bounded(body.get("graph_sha256"), maximum=64, required=True).lower()
+        expected_carrier = _bounded(body.get("carrier_sha256"), maximum=64, required=True).lower()
+        if not all(re.fullmatch(r"[0-9a-f]{64}", value) for value in (expected_graph, expected_carrier)):
+            raise HTTPException(status_code=400, detail="Exact SHA-256 values are required")
+
+        edge = require_representation_edge()
+        try:
+            graph = edge.graph(object_id)
+            current_graph_hash = edge._semantic_graph_hash(object_id)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail="Existing S92 parent not found") from exc
+        if graph.get("object", {}).get("state") != "candidate":
+            raise HTTPException(status_code=409, detail="Parent state changed; new review required")
+        r0 = [
+            row for row in graph.get("representations", [])
+            if row.get("representation_type") == "R0_source"
+        ]
+        if (
+            len(r0) != 1
+            or r0[0].get("state") != "candidate"
+            or r0[0].get("content_sha256") != expected_carrier
+            or current_graph_hash != expected_graph
+        ):
+            raise HTTPException(status_code=409, detail="Native graph or carrier differs from review evidence")
+        review_id = (
+            "LSGO-REVIEW-"
+            + hashlib.sha256(
+                f"cognigrex-representation-edge-v1|{object_id}".encode("utf-8")
+            ).hexdigest()[:16].upper()
+        )
+        return JSONResponse(
+            {
+                "schema": "CGX-OWNER-ROOT-REVIEW-PREFLIGHT/0.1",
+                "state": "READ_ONLY_PREFLIGHT_PASS",
+                "object_id": object_id,
+                "graph_sha256": current_graph_hash,
+                "carrier_sha256": expected_carrier,
+                "native_review_id": review_id,
+                "owner_session_verified": True,
+                "signed_execution_lease_verified": False,
+                "native_review_inserted": False,
+                "owner_decision_recorded": False,
+                "parent_activated": False,
+                "source_hydration_performed": False,
+                "canonical_mutation": False,
+                "public_release": False,
+                "next_gate": (
+                    "Independent signed lease + revocation/issuer verification, "
+                    "atomic review creation with rollback, and owner decision."
+                ),
+            },
+            headers={"Cache-Control": "no-store"},
+        )
 
     @app.get("/api/v1/representation-reviews")
     async def list_representation_reviews():

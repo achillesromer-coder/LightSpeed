@@ -18,6 +18,7 @@ on:
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_family_ingestion.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_job_consumer.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_cycle.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_wakeup.py"
@@ -27,6 +28,7 @@ on:
       - "desktop/LightSpeed_Runtime/tests/test_cognigrex_supervisor.py"
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/tests/test_cgx_family_ingestion.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_job_consumer.py"
       - "desktop/LightSpeed_Runtime/tests/test_local_agent_cycle.py"
       - "desktop/LightSpeed_Runtime/tests/test_local_agent_wakeup.py"
@@ -83,6 +85,7 @@ on:
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_family_ingestion.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_job_consumer.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_cycle.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_wakeup.py"
@@ -92,6 +95,7 @@ on:
       - "desktop/LightSpeed_Runtime/tests/test_cognigrex_supervisor.py"
       - "desktop/LightSpeed_Runtime/tests/test_project_pipeline.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py"
+      - "desktop/LightSpeed_Runtime/tests/test_cgx_family_ingestion.py"
       - "desktop/LightSpeed_Runtime/tests/test_ls_go_job_consumer.py"
       - "desktop/LightSpeed_Runtime/tests/test_local_agent_cycle.py"
       - "desktop/LightSpeed_Runtime/tests/test_local_agent_wakeup.py"
@@ -173,6 +177,7 @@ jobs:
             desktop/LightSpeed_Runtime/lightspeed_runtime/project_pipeline.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/project_artifact_store.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py \
+            desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_family_ingestion.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_job_consumer.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_cycle.py \
             desktop/LightSpeed_Runtime/lightspeed_runtime/local_agent_wakeup.py \
@@ -244,6 +249,7 @@ jobs:
             desktop/LightSpeed_Runtime/tests/test_corpus_test_orchestrator.py \
             desktop/LightSpeed_Runtime/tests/test_project_pipeline.py \
             desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py \
+            desktop/LightSpeed_Runtime/tests/test_cgx_family_ingestion.py \
             desktop/LightSpeed_Runtime/tests/test_ls_go_job_consumer.py \
             desktop/LightSpeed_Runtime/tests/test_owner_credentials.py \
             desktop/LightSpeed_Runtime/tests/test_local_agent_cycle.py \

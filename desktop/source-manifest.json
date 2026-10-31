@@ -3296,9 +3296,14 @@
       "sha256": "8efc3372e032bcb1c156c93aa67b7fbe77a63ee696b77e021cd74be6a29a7f50"
     },
     {
-      "bytes": 99055,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/cgx_family_ingestion.py",
+      "bytes": 16440,
+      "sha256": "87ee17a596ef276b1c1701f0974d59c406e8a1cd095b3431e8c7ec81bf938a2c"
+    },
+    {
+      "bytes": 105281,
       "path": "LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py",
-      "sha256": "890ccd3668d7a6a3aad15f8890d0649b868e66b581973e3935b12ed584e58d26"
+      "sha256": "bedd16f20fe35eaf1effdb3446e8e04e3edc43331a3c0be850bc50fd867ee8e7"
     },
     {
       "bytes": 11584,
@@ -3506,9 +3511,14 @@
       "sha256": "0dd8802798ec34c6f90a7ea18da001d71da34603af67f1f651e2d4aeb9e57db0"
     },
     {
-      "bytes": 80298,
+      "path": "LightSpeed_Runtime/tests/test_cgx_family_ingestion.py",
+      "bytes": 10362,
+      "sha256": "d32f149e34f5f2493446cf5b68b46ab7ccca56f280af3ee09d98403b47ce090f"
+    },
+    {
+      "bytes": 87891,
       "path": "LightSpeed_Runtime/tests/test_ls_go_bridge.py",
-      "sha256": "7e4cf9a1798ef36cf3b7b04198056f4018ff053d3e52d257e202c9b66bea8c3a"
+      "sha256": "6c012ea8eaee33695d90f603f5a2b24c0b85d2d852840af5a8753a47b043abef"
     },
     {
       "bytes": 8601,
