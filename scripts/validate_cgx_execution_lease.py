@@ -278,6 +278,60 @@ def main():
                                    "supervisor":receipt.get("supervisor_receipt"),
                                    "stderr":result.stderr[:200]}))
 
+    # T1 temporal/state fail-closed negatives at both validator and actual CLI.
+    # These are synthetic structural checks, NOT signature, issuer, revocation
+    # registry, durable replay, host or DBR verification.
+    now=datetime.now(UTC)
+    t1_cases=(
+        ("expired", {
+            "valid_from":(now-timedelta(hours=2)).isoformat(),
+            "valid_until":(now-timedelta(hours=1)).isoformat(),
+        }, "lease-outside-validity-window"),
+        ("not-yet-valid", {
+            "valid_from":(now+timedelta(hours=1)).isoformat(),
+            "valid_until":(now+timedelta(hours=2)).isoformat(),
+        }, "lease-outside-validity-window"),
+        ("inverted-window", {
+            "valid_from":(now+timedelta(hours=1)).isoformat(),
+            "valid_until":(now-timedelta(hours=1)).isoformat(),
+        }, "lease-invalid-time-window"),
+        ("naive-expiry", {
+            "valid_until":(now+timedelta(hours=1)).replace(tzinfo=None).isoformat(),
+        }, "lease-time-invalid"),
+        ("revoked-state", {"state":"REVOKED"}, "lease-not-active:REVOKED"),
+    )
+    with tempfile.TemporaryDirectory(prefix="cgx-t1-lease-negatives-") as temp:
+        lease_path=Path(temp)/"synthetic-t1-lease.json"
+        for label, changes, expected in t1_cases:
+            x=base_lease()
+            x["root_authority_receipt_ref"]="fixture:root-approval"
+            x["execution_depths"].append("inspect")
+            x["scope"]["action_classes"].append("inspect")
+            x.update(changes)
+            ok,reasons,_=check(x)
+            if ok or expected not in reasons:
+                failures.append(f"T1 {label}: validator did not reject: {reasons}")
+            lease_path.write_text(json.dumps(x),encoding="utf-8")
+            argv=[sys.executable,str(ROOT/"scripts"/"run_cgx_agent_runtime.py"),
+                  "--instruction","synthetic T1 temporal/state rejection",
+                  "--domain","romer","--execution-depth","inspect",
+                  "--execution-class","COMPUTE_ONLY","--agent-id","Neo",
+                  "--task-id","CGX-LAUNCH-006","--execute",
+                  "--execution-lease-json",str(lease_path)]
+            result=subprocess.run(argv,capture_output=True,text=True,timeout=15,check=False)
+            try:
+                receipt=json.loads(result.stdout)
+                cli_reasons=receipt["execution_lease"]["reasons"]
+            except (ValueError,KeyError,TypeError):
+                receipt={}
+                cli_reasons=[]
+            if (result.returncode!=4 or expected not in cli_reasons
+                    or receipt.get("supervisor_receipt") is not None):
+                failures.append(f"T1 {label}: CLI failed closed incorrectly: "
+                                +repr({"exit":result.returncode,"reasons":cli_reasons,
+                                       "supervisor":receipt.get("supervisor_receipt"),
+                                       "stderr":result.stderr[:200]}))
+
     print({"status":"PASS" if not failures else "FAIL","failures":failures})
     return 1 if failures else 0
 
