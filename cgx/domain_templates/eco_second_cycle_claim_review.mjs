@@ -7,7 +7,7 @@
  */
 export const SECOND_CYCLE_REVIEW_SCHEMA="CGX-ECO-SECOND-CYCLE-CLAIM-REVIEW/0.1";
 const expectedUnits=Object.freeze({
- passive_flow:"L/s", mist_output:"L/s",
+ passive_flow:"L/s", mist_output:"L/s", hydraulic_power_proxy:"W",
  aerosol_residence_index:"arbitrary_index", mooring_margin:"ratio"
 });
 const kinds=new Set([...Object.keys(expectedUnits),
@@ -90,6 +90,10 @@ export function reviewSecondCycleClaim(input){
  switch(x.claim_kind){
   case "passive_flow":flags.push("HYDRODYNAMIC_BENCH_CALIBRATION_REQUIRED");break;
   case "mist_output":flags.push("NO_ATMOSPHERIC_EFFECT_INFERRED");break;
+  case "hydraulic_power_proxy":
+   flags.push("HYDRAULIC_POWER_PROXY_NOT_NET_OR_EXTRACTABLE_POWER");
+   flags.push("SAME_INPUT_ALGEBRA_NOT_INDEPENDENT_PHYSICAL_VALIDATION");
+   flags.push("HYDRAULIC_LOSSES_GEOMETRY_AND_BENCH_CALIBRATION_REQUIRED");break;
   case "aerosol_residence_index":
    flags.push("ARBITRARY_INDEX_NOT_DIMENSIONLESS_PHYSICAL_METRIC");break;
   case "mooring_margin":flags.push("MOORING_ENGINEERING_SIGNOFF_REQUIRED");break;
