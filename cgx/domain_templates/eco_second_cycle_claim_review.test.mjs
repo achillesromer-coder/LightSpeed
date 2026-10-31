@@ -159,3 +159,45 @@ test("synthetic Second Cycle coefficient symbol collision is held without numeri
    {...src,source_sha256:"invalid",flow,drag}
  ])assert.throws(()=>rolesReview(bad),/INVALID_SECOND_CYCLE_COEFFICIENT_ROLES/);
 });
+
+test("caller-declared translated coefficient pair preserves distinct roles without source equivalence",()=>{
+ const src={source_ref:"synthetic:original",source_revision:"r1",source_sha256:"b".repeat(64)};
+ const flow={formula_id:"FM-001",sheet_ref:"07_Flow_Mist_Model",
+  parameter_cell_ref:"B5",role:"flow_coefficient",symbol:"Cd",
+  numeric_value:0.4,unit:"ratio",evidence_class:"simulated"};
+ const drag={formula_id:"FM-004",sheet_ref:"11_Anchor_Mooring",
+  parameter_cell_ref:"B4",role:"drag_coefficient",symbol:"Cd",
+  numeric_value:1.3,unit:"ratio",evidence_class:"simulated"};
+ const tr={source_ref:"synthetic:translated",revision_ref:"r2",
+  flow:{...flow,sheet_ref:"SECON0E3E_07_Flow_Mist_Model"},
+  drag:{...drag,sheet_ref:"SECON0E3E_11_Anchor_Mooring"}};
+ const ok=rolesReview({...src,flow,drag,translation:tr});
+ assert.equal(ok.translation_crosswalk.state,
+  "R1_CALLER_DECLARED_COEFFICIENT_PAIR_MATCH_NOT_EQUIVALENCE");
+ assert.equal(ok.translation_crosswalk.original_and_translation_equivalent,false);
+ assert.equal(ok.translation_crosswalk.provider_cells_fetched_by_module,false);
+ assert.equal(ok.translation_crosswalk.source_and_translation_revisions_authenticated_by_module,false);
+ assert.equal(ok.native_admitted,false);
+ const swap=rolesReview({...src,flow,drag,translation:{...tr,
+  flow:{...tr.flow,numeric_value:drag.numeric_value},
+  drag:{...tr.drag,numeric_value:flow.numeric_value}}});
+ assert.equal(swap.translation_crosswalk.state,"R1_COEFFICIENT_TRANSLATION_DELTA_HOLD");
+ assert.equal(swap.translation_crosswalk.suspected_cross_role_baseline_swap,true);
+ assert.equal(swap.translation_crosswalk.coefficient_interchange_allowed,false);
+ assert.equal(JSON.stringify(swap).includes("1.3"),false);
+ const drift=rolesReview({...src,flow,drag,translation:{...tr,
+  drag:{...tr.drag,numeric_value:1.4}}});
+ assert.equal(drift.translation_crosswalk.drag_role_and_baseline_match,false);
+ assert.equal(drift.translation_crosswalk.suspected_cross_role_baseline_swap,false);
+ for(const bad of [
+  {...tr,source_ref:src.source_ref},
+  {...tr,revision_ref:""},
+  {...tr,flow:{...tr.flow,sheet_ref:"07_Flow_Mist_Model"}},
+  {...tr,drag:{...tr.drag,role:"flow_coefficient"}},
+  {...tr,flow:{...tr.flow,evidence_class:"observed"}},
+  {...tr,flow:{...tr.flow,unit:"m/s"}},
+  {...tr,drag:{...tr.drag,numeric_value:Infinity}},
+  {...tr,extra:"not allowed"}
+ ])assert.throws(()=>rolesReview({...src,flow,drag,translation:bad}),
+  /INVALID_SECOND_CYCLE_TRANSLATION/);
+});
