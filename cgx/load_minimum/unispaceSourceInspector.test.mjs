@@ -715,3 +715,32 @@ test('online cockpit rejects forged capabilities, execution and metric authority
   }
  }
 });
+
+
+// #161: source-review arrays must not reinterpret the single canonical root
+// or Grex domain aliases as an accepted child Object_ID. This is an identity
+// preflight only, not proof that any native Object_ID has been resolved.
+test('reserved root and domain identities cannot masquerade as child objects',()=>{
+ for(const id of ['cgx:root:cognigrex','cgx:domain:eco','cgx:domain:romer']){
+  const spoof=[{...nodes[0],object_id:id},nodes[1]];
+  const denied=inspect({...args,focus_id:id,nodes:spoof,
+   access:{...access,authorized_object_ids:[id]}});
+  assert.equal(denied.status,'DENIED',id);
+  assert.equal(denied.canonical_mutation,false,id);
+  assert.equal(denied.public_release,false,id);
+  assert.ok(!JSON.stringify(denied).includes('fixture:eco:source'),id);
+  const cockpitDenied=cockpit({...statusInput,
+   selection:{...selected,object_id:id}});
+  assert.equal(cockpitDenied.state,'DENIED',id);
+  assert.equal(cockpitDenied.native_admitted,false,id);
+  assert.ok(!JSON.stringify(cockpitDenied).includes('fixture:eco:source'),id);
+ }
+ // A reserved alias in the requested halo is not a valid child object either.
+ const halo=inspect({...args,nodes:[nodes[0],{...nodes[1],object_id:'cgx:root:cognigrex'}],
+  budgets:{max_cross_domains:1,max_cross_edges:1,max_hops:1}});
+ assert.equal(halo.status,'DENIED');
+ assert.equal(halo.public_release,false);
+ const ordinary=inspect(args);
+ assert.equal(ordinary.status,'SOURCE_REVIEW_ONLY');
+ assert.equal(ordinary.admission_stage,'R3_VIEW_PROPOSAL');
+});
