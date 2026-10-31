@@ -817,3 +817,38 @@ test('unpaired UTF-16 surrogates cannot become source or Object_ID scope',()=>{
  }
  assert.equal(inspect(args).admission_stage,'R3_VIEW_PROPOSAL');
 });
+
+
+// Accessible product contract is intentionally inert until bound to a private,
+ // authenticated browser surface. This is not a host/browser accessibility audit.
+test('accessible review controls never promise offline hydration, metric 3D or host execution',()=>{
+ const online=cockpit(statusInput);
+ assert.equal(online.state,'SOURCE_REVIEW_ONLY');
+ assert.equal(online.accessibility.role,'status');
+ assert.equal(online.accessibility.aria_live,'polite');
+ assert.equal(online.accessibility.binding_state,'SOURCE_CONTRACT_NOT_BROWSER_BOUND');
+ assert.equal(online.accessibility.selected_view,'document');
+ assert.deepEqual(online.accessibility.view_intents.map(v=>v.id),
+  ['document','3d','chat','graph','interactive','matrix']);
+ assert.equal(online.accessibility.view_intents.filter(v=>v.selected).length,1);
+ assert.equal(online.accessibility.view_intents.find(v=>v.id==='3d').state,'METRIC_GEOMETRY_FRONTIER');
+ assert.ok(online.accessibility.view_intents.every(v=>!v.may_execute&&!v.rendered));
+ assert.equal(online.accessibility.host_action_enabled,false);
+ const frontier=cockpit({...statusInput,inspector:inspect({...args,view:'3d'})});
+ assert.equal(frontier.presentation_stage,'R2_REVIEW_FRONTIER');
+ assert.equal(frontier.accessibility.selected_view,'3d');
+ assert.equal(frontier.accessibility.view_intents.find(v=>v.id==='3d').state,'METRIC_GEOMETRY_FRONTIER');
+ const offline=cockpit({...statusInput,inspector:inspect({...args,offline:true}),offline:true});
+ assert.equal(offline.accessibility.selected_view,'metadata-only');
+ assert.ok(offline.accessibility.view_intents.every(v=>v.state==='OFFLINE_UNAVAILABLE'&&!v.selected));
+ assert.equal(offline.accessibility.host_action_enabled,false);
+ for(const x of [online,frontier,offline]){
+  assert.equal(x.accessibility.source_refs_exposed,false);
+  assert.ok(!JSON.stringify(x.accessibility).includes('fixture:eco:source'));
+  assert.ok(!JSON.stringify(x.accessibility).includes('fixture:romer:private'));
+  assert.equal(x.released,false);
+ }
+ const denied=cockpit({...statusInput,surface:'public'});
+ assert.equal(denied.state,'DENIED');
+ assert.equal(Object.hasOwn(denied,'accessibility'),false);
+});
