@@ -2,7 +2,10 @@
 from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 import copy
+import json
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -195,6 +198,49 @@ def main():
         ok,reasons,_=check(x)
         if ok or f"lease-scope-requires-{label}" not in reasons:
             failures.append(f"{label}: declared scope without request target accepted: {reasons}")
+
+    # Exercise the real CLI's request-to-validator binding with intentionally
+    # mismatched synthetic scopes. The invalid lease exits before model/runtime
+    # invocation. This does not authenticate issuer, host, CCC tool or DBR.
+    x=base_lease()
+    x["execution_depths"].append("inspect")
+    x["scope"]["action_classes"].append("inspect")
+    x["scope"].update({
+        "object_ids":["cgx://review/allowed-object"],
+        "tool_scopes":["ccc:review:allowed-tool"],
+        "configuration_ids":["review-allowed-config"],
+    })
+    with tempfile.TemporaryDirectory(prefix="cgx-lease-scope-negative-") as temp:
+        lease_path=Path(temp)/"synthetic-lease.json"
+        lease_path.write_text(json.dumps(x),encoding="utf-8")
+        for label, flag, requested in (
+            ("object","--object-id","cgx://review/denied-object"),
+            ("tool","--tool-scope","ccc:review:denied-tool"),
+            ("configuration","--configuration-id","review-denied-config"),
+        ):
+            targets={
+                "--object-id":"cgx://review/allowed-object",
+                "--tool-scope":"ccc:review:allowed-tool",
+                "--configuration-id":"review-allowed-config",
+            }
+            targets[flag]=requested
+            argv=[sys.executable,str(ROOT/"scripts"/"run_cgx_agent_runtime.py"),
+                  "--instruction","synthetic source-review scope rejection",
+                  "--domain","romer","--execution-depth","inspect",
+                  "--execution-class","COMPUTE_ONLY","--agent-id","Neo",
+                  "--task-id","CGX-LAUNCH-006","--execute",
+                  "--execution-lease-json",str(lease_path)]
+            for name,value in targets.items():
+                argv.extend((name,value))
+            result=subprocess.run(argv,capture_output=True,text=True,timeout=15,check=False)
+            try:
+                receipt=json.loads(result.stdout)
+                reasons=receipt["execution_lease"]["reasons"]
+            except (ValueError,KeyError,TypeError):
+                reasons=[]
+            expected=f"lease-{label}-out-of-scope:{requested}"
+            if result.returncode!=4 or expected not in reasons:
+                failures.append(f"CLI {label} negative failed: code={result.returncode}, reasons={reasons}, stderr={result.stderr[:200]}")
 
     print({"status":"PASS" if not failures else "FAIL","failures":failures})
     return 1 if failures else 0
