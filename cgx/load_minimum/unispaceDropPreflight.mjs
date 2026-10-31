@@ -63,6 +63,9 @@ export function planUniSpaceDropPreflight({target,file,source,access,existing_so
  // A browser/static route cannot independently establish host root, ACL,
  // revocation or DBR. Never return source IDs/digests as public candidates.
  if(surface==='public')return result('PUBLIC_ROUTE_REQUIRES_VERIFIED_NATIVE_ACL');
+ // Offline cannot revalidate provider revocation or DBR, so even a byte-
+ // identical prior reference must not be labelled NOOP_REVIEW. Keep H0 only.
+ if(offline)return result('OFFLINE_METADATA_ONLY');
  // Existing references are collision hints only; caller-provided list is not DBR.
  if(existing_sources.some(x=>!obj(x)||!identityLabel(x.source_id)||!digest(x.sha256)))
   return result('EXISTING_SOURCE_REGISTRY_UNQUALIFIED');
@@ -97,7 +100,6 @@ export function planUniSpaceDropPreflight({target,file,source,access,existing_so
  // #158: absence of an explicit ACTIVE rights-state cannot produce even a
  // standalone R0 intake candidate. A browser declaration remains unverified.
  if(source.rights_state!=='ACTIVE')return result('RIGHTS_STATE_UNQUALIFIED');
- if(offline)return result('OFFLINE_METADATA_ONLY');
  return {...result('HOST_AND_DBR_REVALIDATION_REQUIRED','REVIEW_CANDIDATE'),
   target:{object_id:target.object_id,file_space:target.file_space,domain:target.domain},
   proposed_source:{source_id:source.source_id,version:source.version,proof_class:source.proof_class,
