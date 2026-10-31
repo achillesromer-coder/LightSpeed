@@ -32,12 +32,15 @@ const line=(doc,label,value)=>{
 export function renderUniSpacePrivateStatus({
  mount=null,surface=null,selection=null,inspector=null,offline=false,hostReceipt=null
 }={}){
- if(!mount||typeof mount.replaceChildren!=='function'||
-    !mount.ownerDocument||typeof mount.ownerDocument.createElement!=='function')
+ if(!mount||typeof mount.replaceChildren!=='function')
   return denied('INVALID_MOUNT');
- // Clear any previous private projection BEFORE checking a new surface.
- // A public-route transition must not leave stale private DOM behind.
- mount.replaceChildren();
+ // Clear a previous private projection before inspecting the new document or
+ // surface. A detached/rebound mount with an invalid ownerDocument must not
+ // retain a stale private Object_ID when a caller attempts to re-render it.
+ try { mount.replaceChildren(); }
+ catch { return denied('INVALID_MOUNT'); }
+ if(!mount.ownerDocument||typeof mount.ownerDocument.createElement!=='function')
+  return denied('INVALID_MOUNT');
  const status=planUniSpaceOperatorCockpit({surface,selection,inspector,offline,hostReceipt});
  if(status.state!=='SOURCE_REVIEW_ONLY')
   return denied(status.reason||'REVIEW_PLAN_NOT_ACCEPTED');
