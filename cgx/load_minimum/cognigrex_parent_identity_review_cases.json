@@ -137,6 +137,11 @@
       "id": "C20",
       "input": "A versioned historical working architecture represents LightSpeed as a direct /lightspeed/ parent-root folder, while a later Cognigrex parent topology review blueprint places LS.cgx beneath EMASSC.cgx. Both are source-stage representations with different provenance and chronology; neither document supplies current signed native child binding.",
       "expected": "VERSIONED_TOPOLOGY_FRONTIER; preserve the earlier folder-route/source alias and the later proposed semantic parent edge as distinct source-scoped assertions. Do not rewrite historical R0, infer SAME_AS or accepted reparenting, duplicate LS.cgx as a peer child, or promote either topology to native authority without owner-qualified version/rights/ACL, signed RootAuthority and independent DBR readback."
+    },
+    {
+      "id": "C21",
+      "input": "The historical Cognigrex parent topology review blueprint records Romer.cgx principal_agent=Neo and EMASSC.cgx principal_agent=Achilles, while the current cross-family relation overlap review assigns candidate_owner_lanes.romer='Achilles / Romer-Grex' and delegates LS execution to Neo. These fields name agent, candidate custodian and runtime delegate in different source scopes, not an independently accepted ownership transfer.",
+      "expected": "DISTINCT_ROLE_TYPES_REVIEW; preserve source/version/field provenance, distinguish principal_agent, semantic_family_owner, grammar_owner and execution_delegate; do not infer Neo owns Romer source/IP, overwrite the Achilles candidate owner, reparent LS, or assert current native ACL/DBR authority. Require qualified owner+scope+rights/ACL and signed native root/DBR readback before binding effectful roles."
     }
   ],
   "validation_state": "STATIC_SOURCE_REVIEW_ONLY",
