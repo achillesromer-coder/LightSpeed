@@ -343,7 +343,7 @@ test('native lease ABI binds explicitly scoped task, project and configuration',
 
 test('malformed optional native context allowlists fail closed without host authority',()=>{
  for(const field of ['task_ids','project_ids','configuration_ids']){
-  for(const invalid of [null,'fixture:task',[17],['fixture:bad\\nspoof']]){
+  for(const invalid of [null,'fixture:task',[17],['fixture:bad\nspoof']]){
    const scope={...nativeABIBase.nativeLease.scope,[field]:invalid};
    const result=reviewNativeLeaseHandshakeABI({...nativeABIBase,
     nativeLease:{...nativeABIBase.nativeLease,scope}});
