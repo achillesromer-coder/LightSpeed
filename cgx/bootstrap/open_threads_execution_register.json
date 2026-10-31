@@ -250,6 +250,28 @@
         "negative_scope": "Unknown ABI, revoked/suspended/consumed, expired/not-yet-valid, wrong object/tool/agent/domain/action/depth, missing/exceeded resource budget and unsupported effectful class DENIED. Forged issuer and repeated nonce remain UNVERIFIED_SHAPE_REVIEW with may_execute=false.",
         "authority": "NON_AUTHORISING_SOURCE_PROJECTION_ONLY; NO SIGNATURE/REVOCATION/REPLAY REGISTRY/CLOCK/DBR/HOST RECEIPT",
         "next": "At existing native authority boundary, obtain current RootAuthority signer/lease/revocation and trusted clock, atomic nonce consumption and signed DBR readback; separately test real host/peer; do not map this shape result to execution."
+      },
+      "lease_abi_context_scope_review_2026_11_01": {
+        "evidence_class": "AUTHENTICATED_GITHUB_SOURCE_BLOB_AND_ACTIONS_LOG_READBACK; SOURCE_ONLY_SYNTHETIC_NEGATIVE",
+        "review_pr": "https://github.com/achillesromer-coder/LightSpeed/pull/206",
+        "source_commit": "4f72c4b5c7c137db88ff6d73e30815e12966241a",
+        "source_path": "cgx/bootstrap/cgxHandshakeReview.mjs",
+        "source_blob": "d98cdf751e7de1d342e9cbe9ac3307e2267a06c3",
+        "test_commit": "8e2e242eee4cb6c3216b8b0ed890853d5cee0623",
+        "test_path": "cgx/bootstrap/cgxHandshakeReview.test.mjs",
+        "test_blob": "869a0832a3e245d1eb36bc9b6f08155459a97382",
+        "workflow_run": "https://github.com/achillesromer-coder/LightSpeed/actions/runs/41247317098",
+        "workflow_job_id": 124673331471,
+        "node_tests": {
+          "passed": 70,
+          "failed": 0,
+          "new_context_scope_tests": 2
+        },
+        "python_lease_validation": "PASS (source-only)",
+        "finding": "Native ABI translation now rejects omitted/mismatched task, project or configuration when a native lease declares a nonempty corresponding allowlist; malformed allowlist types/control characters fail closed. Exact scoped request remains UNVERIFIED_SHAPE_REVIEW with may_execute=false.",
+        "native_readiness": "HOST_NATIVE_HOLD",
+        "authority": "NO ISSUER/SIGNATURE/ROOT/REVOCATION/NONCE/DBR/HOST PROOF; NO NATIVE ADMISSION",
+        "next": "Bind exact issuer/root, signed lease, request-bound nonce and scope to authenticated host/runtime verifier with independent DBR readback; keep #161 two-node proof separate."
       }
     },
     {
