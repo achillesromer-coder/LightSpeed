@@ -764,6 +764,9 @@ test("Second Cycle coefficient role collision is retained as held pre-Mint revie
  assert.equal(h0.coefficient_roles_review.state,"NOT_REQUESTED");
  for(const bad of [
    {...roleInput,source_revision:"stale"},
+   {...roleInput,source_sha256:undefined},
+   null,
+   "invalid",
    {...roleInput,source_sha256:"0".repeat(64)},
    {...roleInput,drag:{...roleInput.drag,parameter_cell_ref:"B5"}},
    {...roleInput,flow:{...roleInput.flow,evidence_class:"observed"}}
