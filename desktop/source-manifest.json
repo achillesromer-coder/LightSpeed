@@ -3297,8 +3297,8 @@
     },
     {
       "path": "LightSpeed_Runtime/lightspeed_runtime/cgx_family_ingestion.py",
-      "bytes": 14121,
-      "sha256": "b30168ba0c33d694f4c31780a836bc4892b64c5b529691dec9736e4d373be29c"
+      "bytes": 14710,
+      "sha256": "93d7a8627ec9b52c11bea6cf8f525cc6aab15e22b388f9bf0bfa676cd11de354"
     },
     {
       "bytes": 105281,
@@ -3512,8 +3512,8 @@
     },
     {
       "path": "LightSpeed_Runtime/tests/test_cgx_family_ingestion.py",
-      "bytes": 8292,
-      "sha256": "dd14bf8b6a541740ffe9e5cc469c7f28bd3d7d1629ba90774d2666a220b340fc"
+      "bytes": 8603,
+      "sha256": "556b7a431b351380a5814a48771d7536578e4ac25db545a493f0e331babf97e5"
     },
     {
       "bytes": 87891,
