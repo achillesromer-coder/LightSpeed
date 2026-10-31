@@ -331,6 +331,52 @@ function reviewSymbolicExpressionCrosswalk(pair,source,anchor,lineage,evidenceCl
 }
 
 /**
+ * Compare formula ID inventories observed by the caller at the authenticated
+ * original/translated provider boundary. Added translation-only entries are
+ * NOT retroactively part of the original workbook or independent evidence.
+ * The module cannot attest either provider read, formula, or physics.
+ */
+function reviewFormulaInventoryDelta(inventory,source,lineage){
+  if(inventory===null)return {state:"FORMULA_INVENTORY_NOT_SUPPLIED",
+    provider_cells_fetched_by_module:false,original_and_translation_equivalent:false};
+  const keys=new Set(["source_ref","source_revision","source_sha256",
+    "related_source_ref","related_revision_ref","original_ids","related_ids"]);
+  const ids=a=>Array.isArray(a)&&a.length>0&&a.length<=128&&
+    a.every(x=>typeof x==="string"&&/^FM-[0-9]{3}$/.test(x))&&
+    new Set(a).size===a.length;
+  if(!obj(inventory)||Object.keys(inventory).some(k=>!keys.has(k))||
+    !obj(lineage)||!source.proof_hash||
+    inventory.source_ref!==source.source_ref||
+    inventory.source_revision!==source.revision||
+    inventory.source_sha256!==source.proof_hash||
+    inventory.related_source_ref!==lineage.related_source_ref||
+    inventory.related_revision_ref!==lineage.related_revision_ref||
+    !ids(inventory.original_ids)||!ids(inventory.related_ids))
+    throw Error("INVALID_ECO_FORMULA_INVENTORY");
+  const original=new Set(inventory.original_ids);
+  const related=new Set(inventory.related_ids);
+  const added=[...related].filter(id=>!original.has(id)).sort();
+  const missing=[...original].filter(id=>!related.has(id)).sort();
+  const divergent=added.length>0||missing.length>0;
+  return {
+    state:divergent?"R1_TRANSLATION_FORMULA_INVENTORY_DELTA_HOLD":
+      "R1_CALLER_DECLARED_FORMULA_IDS_MATCH_NOT_EQUIVALENCE",
+    original_formula_count:original.size,related_formula_count:related.size,
+    added_related_formula_ids:added,missing_related_formula_ids:missing,
+    original_formula_ids_in_related:[...original].filter(id=>related.has(id)).length,
+    translation_only_entries_not_original_evidence:added.length>0,
+    caller_declared_inventory_compared:true,
+    provider_cells_fetched_by_module:false,
+    original_formula_inventory_authenticated_by_module:false,
+    related_formula_inventory_authenticated_by_module:false,
+    formula_semantics_validated:false,independent_physics_validated:false,
+    original_and_translation_equivalent:false,
+    source_rights_verified:false,native_admitted:false,
+    public_release_authorised:false
+  };
+}
+
+/**
  * Accept a review input, never an externally asserted "passed" receipt.
  * A fresh integrated cascade execution generates all actual executed flags.
  */
@@ -339,12 +385,12 @@ export function prepareEcoPreMintAssembly(request={}){
     "cascade_input","geometry_descriptor","cell_anchor",
     "requested_hydration","observation_showcase","source_lineage","access_posture",
     "related_access_posture","cell_crosswalk",
-    "symbolic_expression_crosswalk"].includes(k)))
+    "symbolic_expression_crosswalk","formula_inventory"].includes(k)))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const {cascade_input,geometry_descriptor=null,cell_anchor=null,
     requested_hydration="H3",observation_showcase=null,source_lineage=null,
     access_posture=null,related_access_posture=null,cell_crosswalk=null,
-    symbolic_expression_crosswalk=null}=request;
+    symbolic_expression_crosswalk=null,formula_inventory=null}=request;
   if(!obj(cascade_input)||!levels.includes(requested_hydration))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const executed=runEcoReviewCascade(cascade_input);
@@ -366,6 +412,7 @@ export function prepareEcoPreMintAssembly(request={}){
   const pair=reviewCellCrosswalk(cell_crosswalk,source,cell_anchor,source_lineage,executed.evidence_class);
   const symbolic=reviewSymbolicExpressionCrosswalk(symbolic_expression_crosswalk,
     source,cell_anchor,source_lineage,executed.evidence_class);
+  const formulaInventory=reviewFormulaInventoryDelta(formula_inventory,source,source_lineage);
   let showcase=null;
   if(observation_showcase!==null){
     if(!obj(observation_showcase)||
@@ -407,6 +454,11 @@ export function prepareEcoPreMintAssembly(request={}){
     blockers.push("SYMBOLIC_EXPRESSION_PROVIDER_ATTESTATION_REQUIRED");
     if(symbolic.state==="R1_CALLER_DECLARED_SYMBOLIC_EXPRESSION_DISCREPANCY_HOLD")
       blockers.push("SOURCE_TRANSLATION_SYMBOLIC_EXPRESSION_DISCREPANCY");
+  }
+  if(formula_inventory!==null){
+    blockers.push("FORMULA_INVENTORY_PROVIDER_ATTESTATION_REQUIRED");
+    if(formulaInventory.state==="R1_TRANSLATION_FORMULA_INVENTORY_DELTA_HOLD")
+      blockers.push("TRANSLATION_FORMULA_LIBRARY_DELTA_REQUIRES_PROVENANCE");
   }
   if(access_posture!==null)
     blockers.push("DECLARED_SOURCE_ACCESS_POSTURE_NOT_RIGHTS_APPROVAL");
@@ -460,6 +512,7 @@ export function prepareEcoPreMintAssembly(request={}){
     source_lineage_review:level>=2?lineage:{state:"NOT_REQUESTED"},
     source_cell_crosswalk_review:level>=2?pair:{state:"NOT_REQUESTED"},
     source_symbolic_expression_crosswalk_review:level>=2?symbolic:{state:"NOT_REQUESTED"},
+    formula_inventory_review:level>=2?formulaInventory:{state:"NOT_REQUESTED"},
     access_posture_review:level>=2?access:{state:"NOT_REQUESTED"},
     related_access_posture_review:level>=2?relatedAccess:{state:"NOT_REQUESTED"},
     mint_showcase_review:level>=3&&showcase!==null?{
@@ -475,6 +528,7 @@ export function prepareEcoPreMintAssembly(request={}){
       {layer:"related_access",state:level>=2?relatedAccess.state:"NOT_REQUESTED"},
       {layer:"cell_crosswalk",state:level>=2?pair.state:"NOT_REQUESTED"},
       {layer:"symbolic_expression",state:level>=2?symbolic.state:"NOT_REQUESTED"},
+      {layer:"formula_inventory",state:level>=2?formulaInventory.state:"NOT_REQUESTED"},
       {layer:"semantic",state:"R1_REVIEW_ONLY"},
       {layer:"geometry",state:geom.state},
       {layer:"temporal",state:geom.time_frame_ref_present?"REFERENCE_ONLY":"MISSING_SOURCE_TIME_FRAME"},
