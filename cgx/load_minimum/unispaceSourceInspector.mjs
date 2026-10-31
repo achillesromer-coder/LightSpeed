@@ -326,6 +326,28 @@ export function planUniSpaceOperatorCockpit({
   next_step:offline?'CONNECT_AUTHENTICATED_PRIVATE_PROVIDER':
     candidate?'REQUEST_INDEPENDENT_NATIVE_ROOT_LEASE_ACL_DBR_AND_READBACK':
       'QUALIFY_SOURCE_AND_VIEW_EVIDENCE',
+  // UNISPACE_A11Y_REVIEW_CONTROLS: presentation metadata, not a browser binding.
+  // An offline H0 projection cannot advertise interactive view availability.
+  // No shortcut here executes a command or changes the selected Object_ID.
+  accessibility:{
+   role:'status',aria_live:'polite',aria_atomic:true,
+   label:'UniSpace private source-review status',
+   announcement:offline?
+    'Offline identity metadata only. Rights, revocation and host authority are unverified.':
+    candidate?
+     'Source-review view proposed. Provider evidence, native admission and host authentication remain unverified.':
+     'Source or geometry evidence unresolved. No live or authenticated view is available.',
+   selected_view:offline?'metadata-only':inspector.view,
+   view_intents:['document','3d','chat','graph','interactive','matrix'].map(id=>({
+    id,selected:!offline&&id===inspector.view,
+    state:offline?'OFFLINE_UNAVAILABLE':
+     id==='3d'?'METRIC_GEOMETRY_FRONTIER':'REVIEW_REQUEST_ONLY',
+    may_execute:false,rendered:false
+   })),
+   keyboard_intents:{focus:'Tab',request_context_menu:'Shift+F10',dismiss:'Escape'},
+   binding_state:'SOURCE_CONTRACT_NOT_BROWSER_BOUND',
+   source_refs_exposed:false,host_action_enabled:false
+  },
   metrics:{latency_ms:null,metric_fidelity:null,transfer_bytes:null},
   host_receipt_accepted:false,source_bytes_read:false,rendered:false,
   native_admitted:false,host_authenticated:false,provider_readback:false,
