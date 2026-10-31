@@ -89,6 +89,22 @@ test('#158 public route transition erases stale private DOM without disclosing i
  assert.equal(mount.children.length,0);
 });
 
+test('#158 invalid document boundary clears stale private identity before denial',()=>{
+ const mount=fakeMount();
+ assert.equal(render({...input,mount}).status,'RENDERED_SOURCE_REVIEW');
+ assert.match(flatten(mount),/fixture:eco:one/);
+ // Simulates a re-bound or invalidated host document during a route change.
+ // The existing private DOM must be erased even though a new view cannot mount.
+ mount.ownerDocument=null;
+ const result=render({...input,mount,surface:'public'});
+ assert.equal(result.status,'DENIED');
+ assert.equal(result.reason,'INVALID_MOUNT');
+ assert.equal(flatten(mount),'');
+ assert.equal(mount.children.length,0);
+ assert.equal(result.host_authenticated,false);
+ assert.equal(result.public_release,false);
+});
+
 test('claimed signed host receipt never becomes a badge or is serialized',()=>{
  const mount=fakeMount();
  const secret='DO_NOT_ECHO_SESSION_SECRET';
