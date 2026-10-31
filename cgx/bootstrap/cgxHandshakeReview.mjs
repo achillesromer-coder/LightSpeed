@@ -26,6 +26,19 @@ const validInstant=value=>{
  }
  return Number.isFinite(Date.parse(value));
 };
+// Portable shape review only; host must still resolve and attest final containment.
+// Reject aliases that Windows, POSIX or Unicode normalization can collapse.
+const safeRelativeTransferPath=path=>{
+ if(path.startsWith("/")||path.startsWith(".")||path.includes("..")||
+    path.includes("\\")||/[:%]/.test(path)||path!==path.normalize("NFC")||
+    /[\u202a-\u202e\u2066-\u2069]/.test(path))return false;
+ return path.split("/").every(segment=>{
+  if(!segment||segment==="."||segment===".."||segment.trim()!==segment||
+     /[. ]$/.test(segment))return false;
+  const stem=segment.split(".")[0];
+  return !/^(?:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$/i.test(stem);
+ });
+};
 const AUTHORITY="HOST_SIGNATURE_AND_DBR_NOT_VERIFIED_BY_PLANNER";
 // Distinct source-review holds: a claimed key, request scope or nonce is not host proof.
 const LEASE_BOUNDARY_HOLDS=Object.freeze([
@@ -66,9 +79,8 @@ export function planCGXHandshake({parent,child,lease,exchange=null,now=null}={})
   // Reject Windows alternate-data-stream colons and encoded path ambiguity, even
   // when the relative path is reviewed on a non-Windows machine. Host still owns
   // final canonical path resolution and containment checks before any write.
-  if(exchange.target_relative_path.startsWith("/")||exchange.target_relative_path.includes("..")||
-   exchange.target_relative_path.includes("\\")||exchange.target_relative_path.startsWith(".")||
-   /[:%]/.test(exchange.target_relative_path))return {status:"DENIED",reason:"UNSAFE_TRANSFER_TARGET"};
+  if(!safeRelativeTransferPath(exchange.target_relative_path))
+   return {status:"DENIED",reason:"UNSAFE_TRANSFER_TARGET"};
   if(exchange.size_bytes>60*1024*1024)holds.push("BOUNDED_TRANSFER_SEGMENT_REQUIRED");
  }
  return {
