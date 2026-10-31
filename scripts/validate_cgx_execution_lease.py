@@ -33,7 +33,7 @@ def base_lease():
       "authority_phase_ref":"cgx://internal/governance/root-authority-phase"
     }
 
-def check(lease, execution_depth="execute", action_class="execute", consequential=True, project_id=None):
+def check(lease, execution_depth="execute", action_class="execute", consequential=True, project_id=None, object_id=None, tool_scope=None, configuration_id=None):
     return validate_lease(
       lease,
       agent_id="Neo",
@@ -46,6 +46,9 @@ def check(lease, execution_depth="execute", action_class="execute", consequentia
       execution_class="DIGITAL_WRITE",
       planned_floors=["Neo"],
       consequential=consequential,
+      object_id=object_id,
+      tool_scope=tool_scope,
+      configuration_id=configuration_id,
     )
 
 def main():
@@ -158,6 +161,40 @@ def main():
     ok,reasons,_=check(x,project_id="PROJECT-ONE")
     if not ok:
         failures.append("explicitly scoped project fixture failed: " + ",".join(reasons))
+
+    # Request-bound CCC tool/object/configuration scopes. These checks verify
+    # typed structural allowlists, NOT signature, revocation, nonce consumption,
+    # host permission, tool installation or signed DBR admission.
+    for field, argument, value, label in (
+        ("object_ids", "object_id", "cgx://review/object-1", "object"),
+        ("tool_scopes", "tool_scope", "ccc:review:science.query", "tool"),
+        ("configuration_ids", "configuration_id", "review-config-1", "configuration"),
+    ):
+        x=base_lease()
+        x["root_authority_receipt_ref"]="fixture:root-approval"
+        ok,reasons,_=check(x, **{argument:value})
+        if ok or f"lease-{label}-scope-missing" not in reasons:
+            failures.append(f"{label}: requested scope without explicit allowlist accepted: {reasons}")
+
+        x["scope"][field]=[value]
+        ok,reasons,_=check(x, **{argument:value})
+        if not ok:
+            failures.append(f"{label}: explicit requested scope rejected: {reasons}")
+
+        x["scope"][field]=["other"]
+        ok,reasons,_=check(x, **{argument:value})
+        if ok or f"lease-{label}-out-of-scope:{value}" not in reasons:
+            failures.append(f"{label}: out-of-scope request accepted: {reasons}")
+
+        x["scope"][field]=[value, None]
+        ok,reasons,_=check(x, **{argument:value})
+        if ok or f"lease-{label}-scope-invalid" not in reasons:
+            failures.append(f"{label}: mixed-type allowlist accepted: {reasons}")
+
+        x["scope"][field]=[value]
+        ok,reasons,_=check(x)
+        if ok or f"lease-scope-requires-{label}" not in reasons:
+            failures.append(f"{label}: declared scope without request target accepted: {reasons}")
 
     print({"status":"PASS" if not failures else "FAIL","failures":failures})
     return 1 if failures else 0
