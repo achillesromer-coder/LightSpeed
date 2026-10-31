@@ -513,3 +513,24 @@ test('private inspector-to-drop handoff cannot launder malformed UTF-16 source m
  assert.ok(!JSON.stringify(inspectorSpoof).includes(source.source_id));
  handoffInert(inspectorSpoof);
 });
+
+// #158: Unicode default-ignorable filename controls beyond bidi/ZWSP and
+// non-NFC spellings must never become an R0 intake candidate or a private handoff.
+test('CGJ variation selector and non-NFC filenames fail closed without source disclosure',()=>{
+ for(const name of ['report\u034f.json','report\ufe0f.json','cafe\u0301.json']){
+  const candidate=plan({...args,file:{...file,name}});
+  assert.equal(candidate.status,'HOLD',JSON.stringify(name));
+  assert.equal(candidate.reason,'FILE_METADATA_OR_SIZE_UNSUPPORTED');
+  assert.ok(!JSON.stringify(candidate).includes(source.source_id));
+  noEffects(candidate);
+  const privateDrop=handoff({...scopedDrop,dropInput:{...scopedDrop.dropInput,
+   file:{...file,name}}});
+  assert.equal(privateDrop.state,'DENIED',JSON.stringify(name));
+  assert.equal(privateDrop.reason,'SOURCE_PREFLIGHT_FILE_METADATA_OR_SIZE_UNSUPPORTED');
+  assert.ok(!JSON.stringify(privateDrop).includes(source.source_id));
+  handoffInert(privateDrop);
+ }
+ const composed=plan({...args,file:{...file,name:'café.json'}});
+ assert.equal(composed.status,'REVIEW_CANDIDATE');
+ noEffects(composed);
+});
