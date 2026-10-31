@@ -518,6 +518,7 @@ export function prepareEcoPreMintAssembly(request={}){
        !source.proof_hash||
        coefficient_roles.source_ref!==source.source_ref||
        coefficient_roles.source_revision!==source.revision||
+       typeof coefficient_roles.source_sha256!=="string"||
        coefficient_roles.source_sha256.toLowerCase()!==source.proof_hash||
        executed.evidence_class!=="simulated")
       throw Error("ECO_COEFFICIENT_SOURCE_OR_EVIDENCE_CONFLICT");
