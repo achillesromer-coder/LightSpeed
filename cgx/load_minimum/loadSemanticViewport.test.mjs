@@ -186,6 +186,19 @@ test('private UniSpace inspector preserves one exact selected Object_ID and sour
  for(const k of ['sourceBytesRead','rightsVerified','hostVerified','nativeAdmitted',
   'rendered','mayExecute','publicRelease','canonicalMutation'])assert.equal(x[k],false,k);
 });
+test('private Eco inspector holds cross-child identities even if universal spread permits them',()=>{
+ const s=spread();
+ assert.ok(s.edges.some(e=>e.to==='fixture:romer:site'));
+ const x=inspect({spread:s});
+ assert.equal(x.state,'PRIVATE_SOURCE_REVIEW_ONLY');
+ assert.deepEqual(x.selected_edges,[{from:'fixture:eco:tree',to:'fixture:eco:taxon',relation:'PART_OF'}]);
+ assert.equal(x.layers.H1.edge_count,1);
+ assert.ok(x.frontier.includes('CROSS_CHILD_REFERENCES_HELD_FOR_EXPLICIT_SCOPE'));
+ assert.ok(!JSON.stringify(x).includes('fixture:romer:site'));
+ assert.ok(!JSON.stringify(x).includes('fixture:s3'));
+ assert.equal(x.nativeAdmitted,false);
+ assert.equal(x.publicRelease,false);
+});
 test('public/static inspector denies without leaking source or selected identity',()=>{
  for(const surface of [undefined,null,'public','static','private-preview']){
   const x=inspect({surface});
