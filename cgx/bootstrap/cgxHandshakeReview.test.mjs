@@ -147,6 +147,27 @@ test('Windows console device endpoints cannot masquerade as transfer files',()=>
  assert.equal(ordinary.may_execute,false);
 });
 
+test('invisible Unicode format controls cannot spoof portable transfer targets',()=>{
+ for(const target_relative_path of [
+  'staged/a\u200bb.txt', // zero-width space
+  'staged/a\u200cb.txt', // zero-width non-joiner
+  'staged/a\u200db.txt', // zero-width joiner
+  'staged/a\u200eb.txt', // left-to-right mark
+  'staged/a\u200fb.txt', // right-to-left mark
+  'staged/a\u061cb.txt', // Arabic letter mark
+  'staged/a\u2060b.txt', // word joiner
+  'staged/a\ufeffb.txt'  // zero-width no-break space
+ ]){
+  const result=planCGXHandshake({...base,exchange:{...exchange,target_relative_path}});
+  assert.equal(result.status,'DENIED',JSON.stringify(target_relative_path));
+  assert.equal(result.reason,'UNSAFE_TRANSFER_TARGET',JSON.stringify(target_relative_path));
+  assert.equal(result.may_execute,undefined);
+ }
+ const ordinary=planCGXHandshake({...base,exchange:{...exchange,target_relative_path:'staged/café.txt'}});
+ assert.equal(ordinary.status,'UNVERIFIED_SHAPE_REVIEW');
+ assert.equal(ordinary.may_execute,false);
+});
+
 test('transfer chronology after lease expiry or observation time stays held, never executed',()=>{
  const afterExpiry=planCGXHandshake({...base,
   lease:{...base.lease,expires_utc:'2026-10-28T00:00:00Z'},exchange});
