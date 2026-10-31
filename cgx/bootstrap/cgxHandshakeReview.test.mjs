@@ -32,6 +32,13 @@ test('missing matching receiver sha/size cannot qualify transfer',()=>assert.ok(
  .holds.includes('EXACT_RECEIVER_HASH_SIZE_READBACK_REQUIRED')));
 test('source transfer path traversal rejected',()=>assert.equal(
  planCGXHandshake({...base,exchange:{...exchange,target_relative_path:'../unsafe'}}).reason,'UNSAFE_TRANSFER_TARGET'));
+test('Windows alternate data streams and encoded traversal are unsafe transfer targets',()=>{
+ for(const target_relative_path of ['staged/data.bin:shadow','staged/%2e%2e/secret',
+  'staged/%2Froot','staged/%252e%252e/secret']){
+  assert.equal(planCGXHandshake({...base,exchange:{...exchange,target_relative_path}}).reason,
+   'UNSAFE_TRANSFER_TARGET');
+ }
+});
 test('source segment above 60 MiB is held',()=>assert.ok(
  planCGXHandshake({...base,exchange:{...exchange,size_bytes:70*1024*1024}}).holds.includes('BOUNDED_TRANSFER_SEGMENT_REQUIRED')));
 test('missing signer reference held',()=>assert.ok(
