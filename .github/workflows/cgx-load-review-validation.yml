@@ -31,6 +31,7 @@ jobs:
           node --check cgx/load_minimum/loadQualifiedKnowledge.mjs
           node --check cgx/load_minimum/loadSemanticViewport.mjs
           node --check cgx/load_minimum/unispaceSourceInspector.mjs
+          node --check cgx/load_minimum/unispacePrivateCockpitDom.mjs
           node --check cgx/load_minimum/unispaceDropPreflight.mjs
           node --check cgx/load_minimum/refreshLoadRegistry.mjs
       - name: Check source-registry drift against checked-out Git blobs
@@ -39,4 +40,4 @@ jobs:
         run: python3 -m unittest discover -s cgx/load_minimum -p 'test_load_reader.py' -v
       - name: Run LOAD source-only regression and negative tests
         run: |
-          node --test cgx/load_minimum/cgxLoadFeaturePlanner.test.mjs cgx/load_minimum/loadOnlineRegistry.test.mjs cgx/load_minimum/loadSemanticViewport.test.mjs cgx/load_minimum/loadQualifiedKnowledge.test.mjs cgx/load_minimum/crossFamilyRelationCrosswalk.test.mjs cgx/load_minimum/unispaceSourceInspector.test.mjs cgx/load_minimum/unispaceDropPreflight.test.mjs
+          node --test cgx/load_minimum/cgxLoadFeaturePlanner.test.mjs cgx/load_minimum/loadOnlineRegistry.test.mjs cgx/load_minimum/loadSemanticViewport.test.mjs cgx/load_minimum/loadQualifiedKnowledge.test.mjs cgx/load_minimum/crossFamilyRelationCrosswalk.test.mjs cgx/load_minimum/unispaceSourceInspector.test.mjs cgx/load_minimum/unispacePrivateCockpitDom.test.mjs cgx/load_minimum/unispaceDropPreflight.test.mjs
