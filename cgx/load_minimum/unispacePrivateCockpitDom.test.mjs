@@ -132,3 +132,32 @@ test('invalid mount and forged authority plan fail closed without rendering',()=
  assert.equal(x.reason,'UNTRUSTED_ELEVATED_REVIEW_PLAN');
  assert.equal(flatten(mount),'');
 });
+
+test('rights revocation after an R3 review render clears stale status before R2 Frontier',()=>{
+ const mount=fakeMount();
+ const initial=render({...input,mount});
+ assert.equal(initial.status,'RENDERED_SOURCE_REVIEW');
+ assert.equal(initial.presentation_stage,'R3_VIEW_PROPOSAL');
+ assert.match(flatten(mount),/R3_VIEW_PROPOSAL/);
+ // A fresh caller-declared rights veto must downgrade presentation even
+ // when an earlier private projection occupied the same DOM mount.
+ const revoked=planUniSpaceSourceInspector({
+  ...inspectInput,source_envelopes:[{...source,rights_state:'REVOKED'}]
+ });
+ assert.equal(revoked.viewport.state,'FRONTIER');
+ const downgraded=render({...input,mount,inspector:revoked});
+ assert.equal(downgraded.status,'RENDERED_SOURCE_REVIEW');
+ assert.equal(downgraded.presentation_stage,'R2_REVIEW_FRONTIER');
+ const visible=flatten(mount);
+ assert.match(visible,/R2_REVIEW_FRONTIER/);
+ assert.ok(!visible.includes('R3_VIEW_PROPOSAL'));
+ assert.ok(!visible.includes(source.source_id));
+ assert.ok(!visible.includes(source.sha256));
+ assert.ok(!tags(mount).some(t=>['button','a','input','script','iframe'].includes(t)));
+ assert.equal(downgraded.host_authenticated,false);
+ assert.equal(downgraded.public_release,false);
+ // A subsequent unauthorised route must erase the remaining H0 projection.
+ const denied=render({...input,mount,inspector:revoked,surface:'public'});
+ assert.equal(denied.status,'DENIED');
+ assert.equal(flatten(mount),'');
+});
