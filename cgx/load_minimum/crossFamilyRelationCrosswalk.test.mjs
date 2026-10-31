@@ -602,3 +602,25 @@ test('RFS/EMFF single original workbook remains one source across EMASSC and LS 
   forged.s91_proof.runtime_receipt = 'self-reported';
   assert.throws(() => assert.equal(forged.s91_proof.runtime_receipt, null));
 });
+
+test('bridge recommended_admission is advisory, never an accepted native edge', () => {
+  // Source-pinned cross-domain grammar: advisory recommendations are not admission receipts.
+  const bridgePath = '../domain_templates/cross_domain_bridge_registry.json';
+  const bridge = json(bridgePath);
+  assert.equal(gitBlob(read(bridgePath)), '202b74ddb1e4b5ee8c50e768e4ae175a5853703e');
+  assert.equal(bridge.status, 'review-blueprint');
+  assert.ok(bridge.admission_states.includes('accepted'));
+  const suggested = bridge.bridge_types.filter(edge => edge.recommended_admission === 'accepted');
+  same(sorted(suggested.map(edge => edge.id)), ['EXECUTED_BY_RUNTIME', 'REQUESTS_VALIDATION_METHOD']);
+  const requireNoncanonical = edge => {
+    assert.equal(Object.hasOwn(edge, 'admission_state'), false);
+    assert.equal(Object.hasOwn(edge, 'source_object_id'), false);
+    assert.equal(Object.hasOwn(edge, 'target_object_id'), false);
+    assert.equal(Object.hasOwn(edge, 'signed_dbr_receipt'), false);
+  };
+  for (const edge of suggested) requireNoncanonical(edge);
+  const forged = structuredClone(suggested[0]);
+  forged.admission_state = 'accepted';
+  assert.throws(() => requireNoncanonical(forged));
+  // No recommendation or forged field proves endpoint/DBR authority.
+});
