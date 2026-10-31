@@ -416,10 +416,11 @@ byId<HTMLButtonElement>("cgx-family-refresh").addEventListener("click", async ()
     mount.textContent = "Current owner sign-in is required. No family source was requested.";
     return;
   }
+  const requestedOwnerSession = ownerSessionToken;
   mount.textContent = "Reading the existing Family Set and LOAD source index…";
   try {
-    const snapshot = await readCgxFamilyOversight(ownerSessionToken);
-    if (!ownerSessionToken) {
+    const snapshot = await readCgxFamilyOversight(requestedOwnerSession);
+    if (!ownerSessionToken || ownerSessionToken !== requestedOwnerSession) {
       mount.textContent = "Owner session cleared; family evidence hidden.";
       return;
     }
