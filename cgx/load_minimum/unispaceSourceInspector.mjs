@@ -23,6 +23,9 @@ const knownChildSpaces=Object.freeze({eco:'Eco.cgx',romer:'Romer.cgx',emassc:'EM
 // Reserved Grex FileSpaces are bidirectional: an unknown/aliased domain cannot
 // claim an established child's namespace, even with caller-supplied ACL arrays.
 const reservedChildSpaces=Object.freeze(Object.fromEntries(Object.entries(knownChildSpaces).map(([domain,space])=>[space,domain])));
+// LS.cgx is nested under EMASSC.cgx; the other Grex children are direct
+// children of Cognigrex.cgx. This is a review lineage guard, not DBR proof.
+const knownChildParents=Object.freeze({eco:'Cognigrex.cgx',romer:'Cognigrex.cgx',emassc:'Cognigrex.cgx',ls:'EMASSC.cgx'});
 const childSpaceMatches=n=>object(n)&&good(n.domain)&&good(n.file_space)&&
  (Object.hasOwn(knownChildSpaces,n.domain)?knownChildSpaces[n.domain]===n.file_space:
   !Object.hasOwn(reservedChildSpaces,n.file_space));
@@ -166,9 +169,9 @@ export function planUniSpaceOperatorCockpit({
  if(typeof offline!=='boolean'||!object(selection)||!object(inspector))
   return cockpitDeny('INVALID_COCKPIT_INPUT');
  if(!unambiguous(selection.object_id)||reservedChildIdentity(selection.object_id)||!unambiguous(selection.file_space)||
-    !unambiguous(selection.domain)||selection.parent_file_space!=='Cognigrex.cgx'||
-    !Object.hasOwn(knownChildSpaces,selection.domain)||
-    knownChildSpaces[selection.domain]!==selection.file_space)
+    !unambiguous(selection.domain)||!Object.hasOwn(knownChildSpaces,selection.domain)||
+    knownChildSpaces[selection.domain]!==selection.file_space||
+    knownChildParents[selection.domain]!==selection.parent_file_space)
   return cockpitDeny('EXACT_CHILD_IDENTITY_REQUIRED');
  if(inspector.schema!==INSPECTOR_SCHEMA||
     inspector.status!=='SOURCE_REVIEW_ONLY'||
