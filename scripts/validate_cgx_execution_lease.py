@@ -150,7 +150,7 @@ def main():
         ("safe_state_ref", "execute", "lease-safe-state-missing"),
     )
     for field, depth, expected in typed_reference_cases:
-        for bad in (17, ["fixture:reference"], "   "):
+        for bad in (17, ["fixture:reference"], "   ", "\x00fixture:reference", "fixture:reference\nforged"):
             x=base_lease()
             x["root_authority_receipt_ref"]="fixture:root-approval"
             x["release_receipt_ref"]="fixture:release"
@@ -172,6 +172,8 @@ def main():
         for field, depth, bad, expected in (
             ("authority_phase_ref", "inspect", 17, "lease-authority-phase-ref-missing"),
             ("release_receipt_ref", "publish", ["fixture:release"], "lease-release-receipt-ref-missing"),
+            ("authority_phase_ref", "inspect", "\x00fixture:phase", "lease-authority-phase-ref-missing"),
+            ("release_receipt_ref", "publish", "fixture:release\nforged", "lease-release-receipt-ref-missing"),
         ):
             x=base_lease()
             x["root_authority_receipt_ref"]="fixture:root-approval"
