@@ -381,3 +381,35 @@ test('nested LS.cgx immediate-parent lineage is preserved in LOAD, drop and host
  assert.equal(wrongHost.reason,'HOST_IDENTITY_MISMATCH');
  assert.equal(wrongHost.hostAuthenticated,false);
 });
+
+
+// #158 / #161: no caller-defined custom domain may reclassify the sole root
+// or Alexandria LOAD activation alias as a child FileSpace. These are inert
+// source-only review negatives; no actual host/ACL proof is implied.
+test('parent and LOAD alias are never selectable child FileSpaces in UniSpace review handoffs',()=>{
+ for(const fileSpace of ['Cognigrex.cgx','LOAD.cgx']){
+  const spoof={...target,domain:'custom',fileSpace,parentFileSpace:'Cognigrex.cgx'};
+  const feature=planFeature({action:'load.attach',target:spoof,...good});
+  assert.equal(feature.state,'DENIED',fileSpace);
+  assert.equal(feature.reason,'PARENT_OR_LIBRARY_NOT_CHILD_FILESPACE',fileSpace);
+  assert.ok(!JSON.stringify(feature).includes(spoof.objectId));
+  const drop=planSourceDropPreflight({surface:'private',target:spoof,readable:true,
+   file:{name:'review.json',size:128,type:'application/json'}});
+  assert.equal(drop.state,'DENIED',fileSpace);
+  assert.equal(drop.reason,'PARENT_OR_LIBRARY_NOT_CHILD_FILESPACE',fileSpace);
+  assert.equal(drop.sourceBytesRead,false);
+  assert.equal(drop.publicRelease,false);
+  const bridge=planUniSpaceHostBridgeHandoff({surface:'private',target:spoof,
+   device:'browser',mode:'explore'});
+  assert.equal(bridge.state,'DENIED',fileSpace);
+  assert.equal(bridge.reason,'PARENT_OR_LIBRARY_NOT_CHILD_FILESPACE',fileSpace);
+  assert.equal(bridge.hostAuthenticated,false);
+  assert.equal(bridge.mayExecute,false);
+ }
+ // A non-reserved custom child remains a source-only candidate, never installed.
+ const custom={...target,domain:'custom',fileSpace:'Custom.cgx',parentFileSpace:'Cognigrex.cgx'};
+ const allowed=planFeature({action:'load.attach',target:custom,...good});
+ assert.equal(allowed.status,'READY_FOR_AUTHENTICATED_HOST_PREFLIGHT');
+ assert.equal(allowed.canonicalMutation,false);
+ assert.equal(allowed.install,false);
+});
