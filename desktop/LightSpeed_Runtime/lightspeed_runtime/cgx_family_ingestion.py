@@ -138,6 +138,7 @@ def _load_counts(projection: dict[str, Any], domains: set[str]) -> dict[str, Any
             selectors = record.get("selector_sources")
             sources = record.get("route_source_proofs")
             if (not isinstance(selectors, list) or not selectors
+                    or any(not isinstance(x, str) or not x for x in selectors)
                     or len(selectors) != len(set(selectors))
                     or not isinstance(sources, dict)
                     or len(sources) != len(selectors)):
