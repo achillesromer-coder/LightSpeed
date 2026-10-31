@@ -36,7 +36,7 @@ def base_lease():
       "authority_phase_ref":"cgx://internal/governance/root-authority-phase"
     }
 
-def check(lease, execution_depth="execute", action_class="execute", consequential=True, project_id=None, object_id=None, tool_scope=None, configuration_id=None):
+def check(lease, execution_depth="execute", action_class="execute", consequential=True, project_id=None, object_id=None, tool_scope=None, configuration_id=None, execution_class="DIGITAL_WRITE"):
     return validate_lease(
       lease,
       agent_id="Neo",
@@ -46,7 +46,7 @@ def check(lease, execution_depth="execute", action_class="execute", consequentia
       task_id="CGX-LAUNCH-006",
       project_id=project_id,
       action_class=action_class,
-      execution_class="DIGITAL_WRITE",
+      execution_class=execution_class,
       planned_floors=["Neo"],
       consequential=consequential,
       object_id=object_id,
@@ -134,6 +134,70 @@ def main():
         ok,reasons,_=check(x)
         if ok or expected_reason not in reasons:
             failures.append(field + " invalid identity type not rejected: " + ",".join(reasons))
+
+    # Truthy non-string receipt references must not satisfy structural gates.
+    # These are source-only typed-reference checks, NOT proof of signature,
+    # revocation registry, issuer trust or native DBR admission.
+    typed_reference_cases = (
+        ("authority_phase_ref", "execute", "lease-authority-phase-ref-missing"),
+        ("rollback_or_recovery_ref", "execute", "lease-rollback-or-recovery-ref-missing"),
+        ("assurance_receipt_ref", "execute", "lease-assurance-receipt-ref-missing"),
+        ("custodial_receipt_ref", "execute", "lease-custodial-receipt-ref-missing"),
+        ("risk_acceptance_ref", "execute", "lease-risk-acceptance-ref-missing"),
+        ("root_authority_receipt_ref", "execute", "lease-root-authority-receipt-ref-missing"),
+        ("release_receipt_ref", "publish", "lease-release-receipt-ref-missing"),
+        ("stop_authority_ref", "execute", "lease-stop-authority-missing"),
+        ("safe_state_ref", "execute", "lease-safe-state-missing"),
+    )
+    for field, depth, expected in typed_reference_cases:
+        for bad in (17, ["fixture:reference"], "   "):
+            x=base_lease()
+            x["root_authority_receipt_ref"]="fixture:root-approval"
+            x["release_receipt_ref"]="fixture:release"
+            x["stop_authority_ref"]="fixture:stop"
+            x["safe_state_ref"]="fixture:safe"
+            is_external=field in {"stop_authority_ref", "safe_state_ref"}
+            if is_external:
+                x["lease_class"]="EXTERNAL_ACTION"
+            x[field]=copy.deepcopy(bad)
+            ok,reasons,_=check(x, execution_depth=depth, action_class=depth,
+                               execution_class="EXTERNAL_ACTION" if is_external else "DIGITAL_WRITE")
+            if ok or expected not in reasons:
+                failures.append(f"typed receipt {field} accepted {bad!r}: {reasons}")
+
+    # Actual CLI negative bindings: malformed truthy references must return 4
+    # without supervisor invocation. No signed authority or host is exercised.
+    with tempfile.TemporaryDirectory(prefix="cgx-lease-typed-refs-") as temp:
+        lease_path=Path(temp)/"synthetic-typed-ref.json"
+        for field, depth, bad, expected in (
+            ("authority_phase_ref", "inspect", 17, "lease-authority-phase-ref-missing"),
+            ("release_receipt_ref", "publish", ["fixture:release"], "lease-release-receipt-ref-missing"),
+        ):
+            x=base_lease()
+            x["root_authority_receipt_ref"]="fixture:root-approval"
+            x["execution_depths"].append("inspect")
+            x["scope"]["action_classes"].append("inspect")
+            x[field]=bad
+            lease_path.write_text(json.dumps(x),encoding="utf-8")
+            argv=[sys.executable,str(ROOT/"scripts"/"run_cgx_agent_runtime.py"),
+                  "--instruction","synthetic typed reference rejection",
+                  "--domain","romer","--execution-depth",depth,
+                  "--execution-class","COMPUTE_ONLY","--agent-id","Neo",
+                  "--task-id","CGX-LAUNCH-006","--execute",
+                  "--execution-lease-json",str(lease_path)]
+            result=subprocess.run(argv,capture_output=True,text=True,timeout=15,check=False)
+            try:
+                receipt=json.loads(result.stdout)
+                reasons=receipt["execution_lease"]["reasons"]
+            except (ValueError,KeyError,TypeError):
+                receipt={}
+                reasons=[]
+            if (result.returncode!=4 or expected not in reasons
+                    or receipt.get("supervisor_receipt") is not None):
+                failures.append(f"CLI typed ref {field} did not fail closed: "
+                                +repr({"exit":result.returncode,"reasons":reasons,
+                                       "supervisor":receipt.get("supervisor_receipt"),
+                                       "stderr":result.stderr[:200]}))
 
     # Typed allowlists reject malformed and mixed-type values, even when the
     # requested legitimate entry is also present. Source-only; not issuer proof.
