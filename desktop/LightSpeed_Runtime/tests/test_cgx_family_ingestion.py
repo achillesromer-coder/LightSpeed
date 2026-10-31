@@ -207,3 +207,44 @@ def test_missing_canonical_database_holds_instead_of_creating_it(tmp_path):
     with pytest.raises(CGXFamilyIngestionError, match="CANONICAL_DB_MISSING"):
         build_oversight(family_registry_path=family, database_path=db)
     assert not db.exists()
+
+def test_load_ccc_route_requires_each_original_selector_blob(tmp_path):
+    family, load, db = fixture(tmp_path)
+    projection = load_projection()
+    proof = "b" * 40
+    registry = "plugins/packages/achilles/references/capabilities.json"
+    projection["source_registries"] = {registry: {"git_blob": proof}}
+    projection["summary"]["record_categories"] = {"ccc_route": 1}
+    record = projection["records"][0]
+    record.update({
+        "category": "ccc_route", "source_registry": registry,
+        "source_git_blob": proof, "selector_sources": ["achilles"],
+        "route_source_proofs": {
+            "achilles": {"source_registry": registry, "git_blob": proof},
+        },
+    })
+    write_json(load, projection)
+    good = build_oversight(
+        family_registry_path=family, database_path=db, load_registry_path=load,
+    )
+    assert good["load_alexandria"]["categories"]["ccc_route"] == 1
+    record["route_source_proofs"]["achilles"]["git_blob"] = "c" * 40
+    write_json(load, projection)
+    with pytest.raises(CGXFamilyIngestionError, match="CCC_ROUTE_PROVENANCE_MISMATCH"):
+        build_oversight(
+            family_registry_path=family, database_path=db, load_registry_path=load,
+        )
+
+
+def test_unreferenced_registry_must_still_have_a_real_git_blob_shape(tmp_path):
+    family, load, db = fixture(tmp_path)
+    projection = load_projection()
+    projection["source_registries"]["plugins/packages/neo/references/capabilities.json"] = {
+        "git_blob": "not-a-valid-git-blob",
+    }
+    write_json(load, projection)
+    with pytest.raises(CGXFamilyIngestionError, match="LOAD_REGISTRY_PROVENANCE_INVALID"):
+        build_oversight(
+            family_registry_path=family, database_path=db, load_registry_path=load,
+        )
+
