@@ -633,3 +633,75 @@ test("combined manifest status and symbolic corruption never authorise Eco admis
  assert.equal(r.canonical_write,false);
  assert.equal(JSON.stringify(r).includes("score = x"),false);
 });
+
+
+test("cell-addressed symbolic correction candidates preserve original and omit text",()=>{
+ const base={source_ref:source.source_ref,source_revision:source.revision,
+   source_sha256:digest,related_source_ref:lineage.related_source_ref,
+   related_revision_ref:lineage.related_revision_ref};
+ const entries=[
+  {formula_id:"FM-001",original_cell:{sheet:"31_Formula_Library",cell:"B3",
+    expression_text:"synthetic = x × y",evidence_class:"simulated"},
+   related_cell:{sheet:"SYNTHETIC_31_Formula_Library",cell:"B3",
+    expression_text:"synthetic = x Ã— y",evidence_class:"simulated"},
+   review_action:"REVIEW_TRANSLATION_ENCODING"},
+  {formula_id:"FM-005",original_cell:{sheet:"31_Formula_Library",cell:"B7",
+    expression_text:"synthetic = x / y",evidence_class:"simulated"},
+   related_cell:{sheet:"SYNTHETIC_31_Formula_Library",cell:"B7",
+    expression_text:"synthetic = x / y",evidence_class:"simulated"},
+   review_action:"PRESERVE_SOURCE_MATCH"}
+ ];
+ const r=prepare({cascade_input:input,source_lineage:lineage,
+   symbolic_correction_batch:{...base,entries}});
+ const p=r.symbolic_correction_batch_review;
+ assert.equal(p.state,"R1_TRANSLATION_CORRECTION_CANDIDATES_HOLD");
+ assert.equal(p.candidate_correction_count,1);
+ assert.equal(p.compared_count,2);
+ assert.deepEqual(p.correction_records.map(x=>x.formula_id),["FM-001","FM-005"]);
+ assert.equal(p.correction_records[0].original_cell_ref,"31_Formula_Library!B3");
+ assert.equal(p.correction_records[0].translated_cell_ref,
+   "SYNTHETIC_31_Formula_Library!B3");
+ assert.equal(p.correction_records[0].repair_applied,false);
+ assert.equal(p.correction_records[1].review_action,"PRESERVE_SOURCE_MATCH");
+ assert.equal(p.source_or_translation_modified,false);
+ assert.equal(p.independent_provider_attestation,false);
+ assert.equal(r.canonical_write,false);
+ assert.equal(r.release.mint_allowed,false);
+ assert.ok(r.blocking_gates.includes("TRANSLATED_SYMBOLIC_TEXT_REPAIR_NOT_APPLIED"));
+ assert.equal(JSON.stringify(r).includes("synthetic = x"),false);
+ const call=entries=>prepare({cascade_input:input,source_lineage:lineage,
+   symbolic_correction_batch:{...base,entries}});
+ assert.throws(()=>call([entries[0],{...entries[0]}]),
+   /DUPLICATE_ECO_SYMBOLIC_CORRECTION_ANCHOR/);
+ assert.throws(()=>call([{...entries[0],review_action:"PRESERVE_SOURCE_MATCH"}]),
+   /ECO_SYMBOLIC_CORRECTION_ACTION_CONFLICT/);
+ assert.throws(()=>call([{...entries[0],original_cell:{
+   ...entries[0].original_cell,evidence_class:"observed"}}]),
+   /INVALID_ECO_SYMBOLIC_EXPRESSION_CROSSWALK/);
+ assert.throws(()=>prepare({cascade_input:input,source_lineage:lineage,
+   symbolic_correction_batch:{...base,source_revision:"stale",entries}}),
+   /INVALID_ECO_SYMBOLIC_CORRECTION_BATCH/);
+ const h0=prepare({cascade_input:input,source_lineage:lineage,
+   symbolic_correction_batch:{...base,entries},requested_hydration:"H0"});
+ assert.equal(h0.symbolic_correction_batch_review.state,"NOT_REQUESTED");
+});
+test("symbolic correction plan rejects source-free, raw and fabricated records",()=>{
+ const base={source_ref:source.source_ref,source_revision:source.revision,
+   source_sha256:digest,related_source_ref:lineage.related_source_ref,
+   related_revision_ref:lineage.related_revision_ref};
+ const entry={formula_id:"FM-002",review_action:"REVIEW_TRANSLATION_ENCODING",
+  original_cell:{sheet:"31_Formula_Library",cell:"B4",
+   expression_text:"synthetic × x",evidence_class:"simulated"},
+  related_cell:{sheet:"SYNTHETIC_31_Formula_Library",cell:"B4",
+   expression_text:"synthetic Ã— x",evidence_class:"simulated"}};
+ for(const bad of [
+   {...entry,raw_source_bytes:"private"},
+   {...entry,formula_id:"UNVERIFIED"},
+   {...entry,related_cell:{...entry.related_cell,coordinates:[0,0]}}
+ ])assert.throws(()=>prepare({cascade_input:input,source_lineage:lineage,
+   symbolic_correction_batch:{...base,entries:[bad]}}),
+   /INVALID_ECO_SYMBOLIC_CORRECTION_ENTRY|INVALID_ECO_SYMBOLIC_EXPRESSION_CROSSWALK/);
+ assert.throws(()=>prepare({cascade_input:input,
+   symbolic_correction_batch:{...base,entries:[entry]}}),
+   /INVALID_ECO_SYMBOLIC_CORRECTION_BATCH/);
+});
