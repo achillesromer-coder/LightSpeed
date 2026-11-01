@@ -52,7 +52,7 @@ def _load_json(path: Path) -> dict[str, Any]:
 
 
 def _sha256(path: Path) -> str:
-    if not path.is_file() or path.stat().st_size > MAX_CARRIER_BYTES:
+    if path.is_symlink() or not path.is_file() or path.stat().st_size > MAX_CARRIER_BYTES:
         raise ValueError("CARRIER_MISSING_OR_TOO_LARGE")
     digest = hashlib.sha256()
     with path.open("rb") as stream:
