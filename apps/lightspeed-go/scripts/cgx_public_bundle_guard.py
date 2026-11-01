@@ -92,7 +92,7 @@ class _PublicHtmlReferences(HTMLParser):
     """Parse HTML attributes rather than rely on quote-sensitive regex scans."""
     RESOURCE_TAGS = frozenset({
         "script", "link", "img", "source", "video", "audio",
-        "track", "iframe", "embed", "object", "a", "area",
+        "track", "iframe", "embed", "object", "a", "area", "input",
     })
     RESOURCE_ATTRS = frozenset({"src", "href", "poster", "data"})
 
@@ -120,6 +120,9 @@ class _PublicHtmlReferences(HTMLParser):
             raise BundleHold(f"unreviewed HTML meta refresh: {self.relative}")
         if any(key in values for key in ("srcdoc", "srcset", "ping")):
             raise BundleHold(f"unreviewed embedded, responsive or beacon attribute: {self.relative}")
+        # Legacy HTML background attributes can initiate resource loads without src/href.
+        if "background" in values:
+            raise BundleHold(f"unreviewed legacy HTML background resource: {self.relative}")
         if tag in self.RESOURCE_TAGS:
             for key in self.RESOURCE_ATTRS.intersection(values):
                 uri = values[key]
