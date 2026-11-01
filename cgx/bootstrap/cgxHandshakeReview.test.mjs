@@ -247,7 +247,9 @@ const nativeABIBase={
   state:'ACTIVE',revocable:true,issued_by:'fixture:unverified-issuer',
   subject_agent:'Neo',valid_from:'2026-10-27T00:00:00Z',
   valid_until:'2026-11-01T00:00:00Z',domains:['lightspeed'],
-  execution_depths:['simulate'],max_cascade_class:'C2',allowed_floors:['Neo','Athene'],scope:{object_ids:[base.child.object_id],
+  execution_depths:['simulate'],max_cascade_class:'C2',allowed_floors:['Neo','Athene'],
+  authority_phase:'PRE_LAUNCH',authority_phase_ref:'fixture:unverified-phase',
+  scope:{object_ids:[base.child.object_id],
    tool_scopes:['fixture:solver'],action_classes:['simulate'],
    resource_budgets:{compute_ms:100}}},
  request:{agent_id:'Neo',object_id:base.child.object_id,tool_scope:'fixture:solver',
@@ -265,6 +267,25 @@ test('native lease ABI adapter never confers operational authority',()=>{
   assert.ok(r.holds.includes(hold),hold);
  for(const field of ['may_execute','may_publish','host_signature_verified',
   'root_authority_verified','db_r_mutated'])assert.equal(r[field],false,field);
+});
+test('native lease ABI requires declared authority phase and phase reference',()=>{
+ const lease=nativeABIBase.nativeLease;
+ for(const changed of [
+  {authority_phase:undefined},{authority_phase:'UNRECOGNISED'},
+  {authority_phase_ref:undefined},{authority_phase_ref:''},
+  {authority_phase_ref:'fixture:spoof\\nref'}
+ ]){
+  const result=reviewNativeLeaseHandshakeABI({...nativeABIBase,
+   nativeLease:{...lease,...changed}});
+  assert.equal(result.status,'DENIED',JSON.stringify(changed));
+  assert.equal(result.reason,'NATIVE_LEASE_AUTHORITY_PHASE_UNBOUND');
+  assert.equal(result.may_execute,false);
+ }
+ const shape=reviewNativeLeaseHandshakeABI(nativeABIBase);
+ assert.equal(shape.status,'UNVERIFIED_SHAPE_REVIEW');
+ assert.ok(shape.holds.includes('NATIVE_ISSUER_SIGNATURE_AND_REVOCATION_NOT_VERIFIED'));
+ assert.equal(shape.root_authority_verified,false);
+ assert.equal(shape.may_execute,false);
 });
 test('native lease ABI version, revocation and time negatives fail closed',()=>{
  const check=x=>reviewNativeLeaseHandshakeABI(x).status;
