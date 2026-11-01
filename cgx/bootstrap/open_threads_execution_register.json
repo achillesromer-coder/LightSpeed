@@ -191,6 +191,33 @@
         "tests": "STATIC_SOURCE_CONTRACT_CHECK; NO HOST_OR_RUNTIME_EXECUTION; NO ORIGINAL_SHARD_REPARSE",
         "authority": "No signer/lease/revocation/lock/DBR readback; #158/#161/#209 unaffected",
         "next": "Implement and independently negative-test resumable <=60MiB source parsing in the existing approved private/PR217 review path; retain originals, do not rerun the existing 12-shard ingestion or alter active host worker."
+      },
+      "current_pr217_streaming_range_and_occurrence_followup_2026_11_02": {
+        "evidence_class": "AUTHENTICATED_GITHUB_PR217_SOURCE_BLOB_AND_TEST_SOURCE_READBACK; STATIC_SOURCE_CONTRACT_NEGATIVE_NOT_ORIGINAL_SHARD_OR_HOST_EXECUTION",
+        "source_pr": 217,
+        "observed_head": "8f243aff079d23c338e4ce81e33f844166a10564",
+        "parser_path": "scripts/achilles_private_corpus_review.py",
+        "parser_blob": "97186302cf25d0270eba0ac0ff48dcb3ee4fcb95",
+        "test_path": "tests/test_achilles_private_corpus_review.py",
+        "test_blob": "bdab217c5f69d0dcddd45b7f613231a14cd426b3",
+        "checks": {
+          "bounded_record_stream": true,
+          "full_shard_ingest": true,
+          "no_persistent_range_cursor": true,
+          "occurrence_key_missing_ordinal": true,
+          "occurrence_insert_ignore": true,
+          "repeat_test_expectation": true,
+          "hash_guard": true
+        },
+        "correction": "Previous whole-shard json.loads negative describes older PR217 source. Current head has incremental top-level JSON array parsing and <=60MiB per-record rejection, plus exact second-pass full-shard digest before commit. Do not report current parser as whole-file read_bytes/json.loads.",
+        "remaining_holds": [
+          "Current ingest_shard still consumes and commits a complete shard as one transaction; no persistent source-byte/record cursor or idempotent <=60MiB resumable work unit. Record bounded memory is not proof of per-run transfer compliance.",
+          "Occurrence primary key (shard,conversation_id,node_id) and INSERT OR IGNORE omit conversation occurrence ordinal, so repeated same-shard conversation/node occurrences can collapse; current synthetic test expects only 2 occurrence rows for 2 repeated conversations each with 2 nodes.",
+          "Message projection checks only text_sha256 and role on duplicate message ID; channel/time/parent/nontext metadata variants require loss-accounted per-occurrence preservation.",
+          "No original 12-shard reparsing in this review, no signed S97 issuer/lease/revocation/DBR readback, no native admission."
+        ],
+        "status": "PARTIAL_SOURCE_FIX_VERIFIED__RESUMABLE_RANGE_AND_OCCURRENCE_NO_LOSS_HOLD",
+        "next": "In existing PR217 source owner path, add synthetic same-shard repeated-conversation collision negative and source-occurrence ordinal metadata schema; implement stable bounded resume cursor with original SHA/revision guard, test in separate private review DB. Parent retains S-01 relation grammar; no raw content in public Git."
       }
     },
     {
