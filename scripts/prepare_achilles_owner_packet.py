@@ -64,9 +64,17 @@ def _resolve_plan(instruction: str, task_id: str, planner: Callable | None) -> d
     plan = planner(instruction, task_id=task_id)
     payload = plan.to_dict() if hasattr(plan, "to_dict") else dict(plan)
     sequence = payload.get("floor_sequence") or []
-    if (not isinstance(sequence, (list, tuple)) or not sequence
-        or sequence[0] != "Neo" or sequence[-1] != "Morpheus"):
+    # The existing Neo supervisor only routes through these specialist floors.
+    # An unrecognised intermediate floor or repeated gate is not review-safe.
+    permitted_specialists = {"Merovingian", "Trinity", "TheConstruct", "Smith", "Oracle", "Architect"}
+    if (not isinstance(sequence, (list, tuple)) or len(sequence) < 3
+        or sequence[0] != "Neo" or sequence[-1] != "Morpheus"
+        or any(not isinstance(floor, str) or floor not in permitted_specialists
+               for floor in sequence[1:-1])
+        or len(set(sequence)) != len(sequence)):
         raise ProfileHold("ACHILLES_SUPERVISOR_ROUTE_HOLD")
+    if payload.get("proof_required") is not True:
+        raise ProfileHold("ACHILLES_SUPERVISOR_PROOF_HOLD")
     if (payload.get("canonical_promotion_authorized") is not False
         or payload.get("public_publish_authorized") is not False):
         raise ProfileHold("ACHILLES_SELF_PROMOTION_HOLD")
