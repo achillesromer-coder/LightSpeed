@@ -68,4 +68,4 @@ def test_cloud_provider_and_unknown_model_block_before_network(monkeypatch):
     with pytest.raises(ValueError, match="MODEL_NAME_OR_CLOUD_SCOPE_HOLD"):
         rag.infer_local(evidence, "Review", "deepseek-v3.1:671b-cloud")
     with pytest.raises(ValueError, match="MODEL_NAME_OR_CLOUD_SCOPE_HOLD"):
-        rag.infer_local(evidence, "Review", "../models/other")
+        rag.infer_local(evidence, "Review", "../models/other?key=sensitive")
