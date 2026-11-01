@@ -1,6 +1,7 @@
 """Offline, fixture-only tests; never validates an actual S92 authority or host lease."""
 from __future__ import annotations
 
+from contextlib import closing
 import hashlib
 import json
 from pathlib import Path
@@ -73,7 +74,7 @@ def load_source():
 
 def database(path, sha, *, state="candidate"):
     path.parent.mkdir(parents=True, exist_ok=True)
-    with sqlite3.connect(path) as conn:
+    with closing(sqlite3.connect(path)) as conn, conn:
         conn.executescript("""
             CREATE TABLE canonical_objects(object_id TEXT, state TEXT);
             CREATE TABLE object_representations(
@@ -230,7 +231,7 @@ class WindowsBootEvidenceTests(unittest.TestCase):
         self.assertFalse(output["s92_carrier"]["native_signature_verified"])
 
     def test_changed_r0_hash_blocks_boot(self):
-        with sqlite3.connect(self.db) as con:
+        with closing(sqlite3.connect(self.db)) as con, con:
             con.execute(
                 "UPDATE object_representations SET content_sha256=?",
                 ("0" * 64,),
@@ -257,7 +258,7 @@ class WindowsBootEvidenceTests(unittest.TestCase):
         self.assertFalse(self.db.exists())
 
     def test_fake_active_operational_row_still_not_native_admission(self):
-        with sqlite3.connect(self.db) as con:
+        with closing(sqlite3.connect(self.db)) as con, con:
             con.execute("UPDATE canonical_objects SET state='active'")
         (self.repo / "desktop/LightSpeed_Runtime/lightspeed_runtime").mkdir(parents=True, exist_ok=True)
         (self.repo / "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_family_ingestion.py").write_text("fixture")
