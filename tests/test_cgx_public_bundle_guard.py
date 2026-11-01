@@ -72,7 +72,7 @@ class PublicBundleTests(unittest.TestCase):
 
     def test_dynamic_network_and_code_paths_hold_even_when_private_name_is_split(self):
         attacks = [
-            'fetch("/da" + "ta/cgx_object_review_catalogue.json")',
+            'fetch("/da" + "ta/cgx_object_review_" + "catalogue.json")',
             'const x = new XMLHttpRequest();',
             'const x = new WebSocket("wss://example.invalid/socket");',
             'const x = new EventSource("/events");',
