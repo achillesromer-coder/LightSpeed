@@ -113,7 +113,30 @@
       "status": "UNVERIFIED_CORPUS_PARITY",
       "problem": "Historical GPT export manifest exists, but 12 original conversation JSON payloads and full true unabsorbed manual-intake bytes are not yet independently reconciled. User is not doing another export soon.",
       "next": "Use existing export index, original source locations and manual submissions in this chat; recover original shards/bytes with exact manifests and 150-message windows; never demand a new export.",
-      "owner_question": "only if actual intake path conflict remains"
+      "owner_question": "only if actual intake path conflict remains",
+      "provider_listing_negative_review_2026_11_01": {
+        "evidence_class": "AUTHENTICATED_DRIVE_METADATA_PAGINATED_DOCUMENT_SUBSET; NOT_JSON_BODY_READBACK",
+        "provider": "Owner Google Drive; source folder ID and file identities deliberately withheld from public review",
+        "document_subset_pages_read": 5,
+        "document_subset_entries_returned": 486,
+        "document_subset_mime_counts": {
+          "application/pdf": 230,
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": 176,
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document": 41,
+          "application/vnd.openxmlformats-officedocument.presentationml.presentation": 3,
+          "text/html": 36
+        },
+        "direct_child_folders_visible": 1,
+        "exact_shard_name_search": "NO_ACCESSIBLE_EXACT_MATCH",
+        "filter_limitation": "item_type=document excludes JSON and other unclassified/binary MIME types; 486 is NOT full folder cardinality and zero shard matches does NOT establish shard absence",
+        "manifest_checkpoint": "Two owner-account original manifest bytes previously verified byte-identical, 953271 bytes SHA256 0941773a84c5552aa62f37282ee180b9c8df2b5c284c8c412be9e4a336212894; 12 shard declarations 434547139 bytes; declarations only",
+        "privacy": "Original export folder broad-link ACL previously observed; ACL_REVIEW_HOLD; no permission changes, source-body transfer or raw file identifiers in Git",
+        "raw_shards_read": 0,
+        "reversible_r1_shards": 0,
+        "native_objects_admitted": 0,
+        "next": "Locate one exact original shard with authenticated provider file ID and full-MIME discovery, then private bytes/size/SHA256/rights and loss-accounted R1; retain original R0. Do not request new export.",
+        "stage": "METADATA_ONLY_S01_HOLD"
+      }
     },
     {
       "id": "I-01",
