@@ -97,7 +97,7 @@ def check_git(repo: Path) -> None:
     for raw in ignored.split(b"\x00"):
         if not raw:
             continue
-        item = raw.decode("utf-8", errors="replace").replace("\\\\", "/").lower()
+        item = raw.decode("utf-8", errors="replace").replace("\\", "/").lower()
         if "__pycache__" in item.split("/") or item.endswith(importable_suffixes):
             raise Stage35Hold("REVIEW_IGNORED_EXECUTABLE_SOURCE_SHADOW")
     # These exact test and bridge entrypoint bytes must match the approved Git
