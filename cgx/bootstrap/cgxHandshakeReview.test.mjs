@@ -499,3 +499,28 @@ test('native ABI binds cascade class and planned specialist floors',()=>{
  assert.equal(subset.host_signature_verified,false);
  assert.equal(subset.may_execute,false);
 });
+
+test('C1 and Unicode identity spoofing fail closed across bootstrap and native lease ABI',()=>{
+ const controls=['\\u007f','\\u0085','\\u202e','\\u2028','\\ud800'];
+ for(const escaped of controls){
+  const control=JSON.parse('"'+escaped+'"');
+  const a=planCGXHandshake({...base,lease:{...base.lease,lease_id:'fixture:lease'+control}});
+  assert.equal(a.status,'DENIED',escaped);
+  assert.equal(a.reason,'INCOMPLETE_IDENTITY_OR_LEASE',escaped);
+  const b=planCGXHandshake({...base,exchange:{...exchange,transfer_id:'fixture:transfer'+control}});
+  assert.equal(b.status,'DENIED',escaped);
+  assert.equal(b.reason,'INVALID_TRANSFER_ENVELOPE',escaped);
+  const c=reviewNativeLeaseHandshakeABI({...nativeABIBase,
+   request:{...nativeABIBase.request,nonce:'fixture:nonce'+control}});
+  assert.equal(c.status,'DENIED',escaped);
+  assert.equal(c.reason,'MISSING_REQUEST_BOUND_IDENTITY',escaped);
+  const tool='fixture:solver'+control;
+  const d=reviewNativeLeaseHandshakeABI({...nativeABIBase,
+   nativeLease:{...nativeABIBase.nativeLease,
+    scope:{...nativeABIBase.nativeLease.scope,tool_scopes:[tool]}},
+   request:{...nativeABIBase.request,tool_scope:tool}});
+  assert.equal(d.status,'DENIED',escaped);
+  assert.equal(d.reason,'NATIVE_LEASE_REQUEST_SCOPE_MISMATCH',escaped);
+  assert.equal(d.may_execute,false);
+ }
+});
