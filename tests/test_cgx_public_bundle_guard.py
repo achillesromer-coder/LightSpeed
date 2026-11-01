@@ -144,6 +144,40 @@ class PublicBundleTests(unittest.TestCase):
                 with self.assertRaises(mod.BundleHold):
                     mod.inspect_public_bundle(c)
 
+    def test_embedded_markup_and_inline_event_resource_surfaces_hold(self):
+        # Reviewed HTML shells contain no inline SVG, MathML, styles or handlers.
+        attacks = [
+            '<svg><image href="https://example.invalid/pixel.svg"/></svg>',
+            '<math><annotation-xml encoding="text/html">unreviewed</annotation-xml></math>',
+            '<style>.x{background:image-set("https://example.invalid/pixel.png" 1x)}</style>',
+            '<div style="background-image:url(https://example.invalid/pixel.png)"></div>',
+            '<img src="./assets/viewer.css" onerror="alert(1)">',
+        ]
+        for attack in attacks:
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as d:
+                c = Path(d) / "cgx"
+                shutil.copytree(mod.SOURCE, c)
+                with (c / "index.html").open("a", encoding="utf-8") as handle:
+                    handle.write("\n" + attack)
+                with self.assertRaises(mod.BundleHold):
+                    mod.inspect_public_bundle(c)
+
+    def test_css_non_url_resource_and_obfuscation_negatives(self):
+        attacks = [
+            '.x{background:image-set("https://example.invalid/pixel.png" 1x)}',
+            '.x{background:-webkit-image-set("https://example.invalid/pixel.png" 1x)}',
+            '.x{background:url(/*masked*/https://example.invalid/pixel.png)}',
+            '.x{background:u\\72l(https://example.invalid/pixel.png)}',
+        ]
+        for attack in attacks:
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as d:
+                c = Path(d) / "cgx"
+                shutil.copytree(mod.SOURCE, c)
+                with (c / "assets/viewer.css").open("a", encoding="utf-8") as handle:
+                    handle.write("\n" + attack)
+                with self.assertRaises(mod.BundleHold):
+                    mod.inspect_public_bundle(c)
+
     def test_no_symlink_intake(self):
         with tempfile.TemporaryDirectory() as d:
             c=Path(d)/"cgx"
