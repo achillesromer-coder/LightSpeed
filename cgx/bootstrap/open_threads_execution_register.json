@@ -136,6 +136,25 @@
         "native_objects_admitted": 0,
         "next": "Locate one exact original shard with authenticated provider file ID and full-MIME discovery, then private bytes/size/SHA256/rights and loss-accounted R1; retain original R0. Do not request new export.",
         "stage": "METADATA_ONLY_S01_HOLD"
+      },
+      "replica_metadata_crosscheck_2026_11_01": {
+        "evidence_class": "TWO_AUTHENTICATED_DRIVE_ACCOUNTS_PAGINATED_DOCUMENT_SUBSET_METADATA; NO_RAW_JSON_READBACK",
+        "owner_account": {
+          "pages": 5,
+          "document_subset_entries": 486,
+          "next_page_token_exhausted": true
+        },
+        "achilles_account": {
+          "pages": 5,
+          "document_subset_entries": 486,
+          "next_page_token_exhausted": true
+        },
+        "cross_account_result": "Equal document-subset counts only; no per-file hash/identity equality established",
+        "search_result": "Exact shard-name and application/json MIME-filter searches returned no accessible matches; NOT evidence of absence",
+        "exclusion": "The document-only paginated listing excludes JSON/binary/unclassified MIME; manifest 3780 physical paths are declarations and cannot be compared as a complete folder count",
+        "intake_state": "12 original conversation JSON bodies 0 BYTES_READ; 0 HASH_VERIFIED; 0 R1_TYPED; no native DBR",
+        "source_confidentiality": "Original folder/file identifiers, personal conversation content and broad-link ACL details withheld from public Git; original bytes unchanged",
+        "next": "Seek exact existing source locator from authorised private manifest or provider full-MIME cursor; do not bulk copy, create a new export, or claim native admission"
       }
     },
     {
