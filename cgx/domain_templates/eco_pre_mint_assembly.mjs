@@ -672,6 +672,23 @@ export function prepareEcoPreMintAssembly(request={}){
        translatedOnly.some(id=>originalIds.has(id)||!relatedIds.has(id)))
       throw Error("ECO_FORMULA_RECEIPT_INVENTORY_CONFLICT");
   }
+  // Independent R1 views of the same symbolic cells must agree on source
+  // identity, A1 anchors, ID-row binding and exact-vs-discrepant status.
+  // Neither caller-declared view authenticates provider cells or rights.
+  if(symbolic_correction_batch!==null&&original_cell_digest_crosswalk!==null){
+    const receipts=new Map(originalCellDigests.formula_records.map(r=>
+      [r.formula_id,r]));
+    for(const r of symbolicCorrections.correction_records){
+      const d=receipts.get(r.formula_id);
+      if(!d||d.original_anchor!==r.original_cell_ref||
+         d.translated_anchor!==r.translated_cell_ref||
+         d.original_id_cell_ref!==r.original_id_cell_ref||
+         d.translated_id_cell_ref!==r.translated_id_cell_ref||
+         (d.status==="TEXT_EXACT")!==
+           (r.review_action==="PRESERVE_SOURCE_MATCH"))
+        throw Error("ECO_SYMBOLIC_CORRECTION_DIGEST_CONFLICT");
+    }
+  }
   let coeff={state:"COEFFICIENT_ROLES_NOT_SUPPLIED"};
   if(coefficient_roles!==null){
     if(!obj(coefficient_roles)||cascade_input.domain!=="second_cycle_claim"||
