@@ -70,6 +70,37 @@ class PublicBundleTests(unittest.TestCase):
                 with self.assertRaises(mod.BundleHold):
                     mod.inspect_public_bundle(c)
 
+    def test_scripted_navigation_escapes_fail_closed(self):
+        # #158: connect-src 'none' is not a navigation/redirect ACL.
+        # Only the reviewed read-only location.pathname usage is permitted.
+        attacks = [
+            'window.location = "https://example.invalid/collect"',
+            'location.href = "/owner-private/receipt.json"',
+            'location.assign("/owner-private/receipt.json")',
+            'document.location.replace("https://example.invalid/collect")',
+            'top.location = "/owner-private/receipt.json"',
+            'window.open("https://example.invalid/collect", "_self")',
+            'globalThis["open"]("https://example.invalid/collect")',
+            'window["location"]["href"] = "/owner-private/receipt.json"',
+            'location["href"] = "/owner-private/receipt.json"',
+        ]
+        for attack in attacks:
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as d:
+                c = Path(d) / "cgx"
+                shutil.copytree(mod.SOURCE, c)
+                with (c / "assets/core.js").open("a", encoding="utf-8") as handle:
+                    handle.write("\\n" + attack)
+                with self.assertRaisesRegex(mod.BundleHold, "scripted navigation escape"):
+                    mod.inspect_public_bundle(c)
+
+    def test_read_only_location_pathname_remains_allowed(self):
+        with tempfile.TemporaryDirectory() as d:
+            c = Path(d) / "cgx"
+            shutil.copytree(mod.SOURCE, c)
+            with (c / "assets/core.js").open("a", encoding="utf-8") as handle:
+                handle.write("\\nconst currentRoute = location.pathname;")
+            self.assertEqual(mod.inspect_public_bundle(c)["file_count"], 12)
+
     def test_dynamic_network_and_code_paths_hold_even_when_private_name_is_split(self):
         attacks = [
             'fetch("/da" + "ta/cgx_object_review_" + "catalogue.json")',
