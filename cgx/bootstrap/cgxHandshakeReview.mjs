@@ -124,6 +124,13 @@ export function reviewNativeLeaseHandshakeABI({
  if(!validInstant(now))return deny("INVALID_REVIEW_CLOCK");
  if(nativeLease.state!=="ACTIVE"||nativeLease.revocable!==true)
   return deny("NATIVE_LEASE_INACTIVE_OR_NONREVOCABLE");
+ // The native contract requires an explicit governance phase and a phase
+ // authority reference. This is only a syntactic gate: the referenced
+ // authority still requires independent host resolution and verification.
+ const phases=new Set(["PRE_LAUNCH","LAUNCH_TRANSITION",
+  "DISTRIBUTED_OPERATION","SUCCESSION_OR_RECOVERY"]);
+ if(!phases.has(nativeLease.authority_phase)||!id(nativeLease.authority_phase_ref))
+  return deny("NATIVE_LEASE_AUTHORITY_PHASE_UNBOUND");
  if(![nativeLease.lease_id,nativeLease.issued_by,nativeLease.subject_agent,
       request.agent_id,request.object_id,request.tool_scope,request.domain,
       request.execution_depth,request.action_class,request.nonce].every(id))
