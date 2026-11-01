@@ -81,7 +81,7 @@ def test_payload_tamper_fails_without_overwriting_committed_state(tmp_path):
     con = mod.connect(tmp_path / "review.sqlite")
     try:
         mod.ingest_shard(con, source, entry)
-        source.write_text(source.read_text().replace("Owner only", "Changed text"), encoding="utf-8")
+        source.write_text(source.read_text().replace("Owner only", "Owner else"), encoding="utf-8")
         with pytest.raises(ValueError, match="SOURCE_SHA256_MISMATCH"):
             mod.ingest_shard(con, source, entry)
         assert mod.summary(con)["shards"] == 1
