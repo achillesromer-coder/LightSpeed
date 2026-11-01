@@ -85,6 +85,10 @@ def _resolve_plan(instruction: str, task_id: str, planner: Callable | None) -> d
         raise ProfileHold("ACHILLES_SUPERVISOR_ROUTE_HOLD")
     if payload.get("proof_required") is not True:
         raise ProfileHold("ACHILLES_SUPERVISOR_PROOF_HOLD")
+    # A claimed Neo plan without an exact instruction binding is not proof.
+    # Only the explicit RUNTIME_NOT_AVAILABLE fallback may omit this digest.
+    if payload.get("instruction_sha256") != _hash(instruction):
+        raise ProfileHold("ACHILLES_SUPERVISOR_INSTRUCTION_BINDING_HOLD")
     if (payload.get("canonical_promotion_authorized") is not False
         or payload.get("public_publish_authorized") is not False):
         raise ProfileHold("ACHILLES_SELF_PROMOTION_HOLD")
