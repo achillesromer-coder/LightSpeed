@@ -683,6 +683,46 @@
       "stage": "SOURCE_REFERENCE_CROSSWALK; NO_R0_FCSTD_BYTE_VERIFICATION; NO_R2_ADMISSION; NO_CANONICAL_MINT",
       "blocked": "Original Mark III.FCStd exact provider ID/bytes/revision/rights and PR #34 source-to-FCStd lineage; native signed RootAuthority/DBR, independent geometry/physical acceptance",
       "next": "Romer owner locates exact original FCStd by source ID/hash without replacing it; compare original CAD source tree to PR #34 source-manifest and reversible conversion ledger, then parent reviews typed relation only"
+    },
+    {
+      "review_id": "RA-20261001-GENERAL-PRELAUNCH-VS-S92-EXACT-CHILD-20261101",
+      "owner_lane": "Cognigrex parent — authority/identity grammar",
+      "evidence_class": "AUTHENTICATED_GITHUB_SOURCE_BLOB_READBACK_AND_DOCUMENTARY_SCOPE_NEGATIVE; NOT_SIGNED_NATIVE_DBR",
+      "sources": [
+        {
+          "path": "cgx/domain_templates/root_authority_decision_receipt_2026-10-01.json",
+          "git_blob": "a13c92b1b1a8ae39abcae5b8cbaa01cbe628732b",
+          "date": "2026-10-01",
+          "document_state": "APPROVED_AND_LOCKED",
+          "scope": "PRE_LAUNCH standing internal reversible actions under otherwise-valid ACTIVE execution lease; does not promote distributed governance or exact child package"
+        },
+        {
+          "path": "cgx/domain_templates/s92_domain_children_persistence_verification_2026-10-04.json",
+          "git_blob": "44285b9f26bc84e6438c9ab6a133cc69fbe922bb",
+          "date": "2026-10-04",
+          "package_sha256": "36349987fa34dc0f85e26c9658fbf8e3814010f7cc9f536b836920eab239a90d",
+          "status": "DURABLE_PRE_CANONICAL_PACKAGE_READBACK_VERIFIED / FRESH_ACCEPTANCE_OPEN",
+          "historical_oct1_exact_carriers_recovered": false
+        },
+        {
+          "path": "cgx/domain_templates/s92_domain_children_acceptance_audit_2026-10-04.json",
+          "git_blob": "77861c734b3c63c394031c79bf830154faaec1e3",
+          "date": "2026-10-04",
+          "status": "TECHNICAL_ACCEPTANCE_AUDIT_PASS / ROOT_AUTHORITY_DECISION_OPEN",
+          "promotion_performed": false
+        }
+      ],
+      "source_scoped_negative_assertions": {
+        "standing_internal_prelaunch_authority_is_specific_child_acceptance": false,
+        "oct1_unpersisted_child_bytes_equal_oct4_rebuilt_child_bytes": false,
+        "oct4_technical_audit_is_rootauthority_promotion": false,
+        "historical_carrier_dbr_root_is_current_signed_provider_dbr": false,
+        "source_document_states_are_native_host_readback": false
+      },
+      "relation_rule": "SCOPE_DISTINCT: the Oct 1 standing PRE_LAUNCH reversible-execution decision is a general governance/lease policy, not a signed exact-byte acceptance for the Oct 4 regenerated S92 child carriers. Preserve both dated receipts and exact carrier hashes. The later source-specific FRESH_ACCEPTANCE_OPEN status controls this candidate set; no implicit temporal override, Object_ID mint, alias binding or native DBR admission.",
+      "stage": "SOURCE_REVIEW_ONLY",
+      "blocked": "Current S97 accepted root/source bytes, authenticated lease issuer/signature/revocation, exact child RootAuthority acceptance, signed provider DBR readback and independent host receiver proof.",
+      "next": "On authenticated native host, resolve current S97/root Object_ID and accepted exact child hashes against lease/RootAuthority and independent DBR; otherwise preserve source-only HOLD."
     }
   ]
 }
