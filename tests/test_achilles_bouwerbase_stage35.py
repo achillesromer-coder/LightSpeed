@@ -44,8 +44,8 @@ class Stage35PureTests(unittest.TestCase):
 
     def test_rejects_untracked_shadow_module(self):
         with patch.object(runner, "git", side_effect=[
-            (runner.FAMILY_COMMIT + "\\n").encode("ascii"),
-            b"?? desktop/LightSpeed_Runtime/lightspeed_runtime/untrusted.py\\x00",
+            (runner.FAMILY_COMMIT + "\n").encode("ascii"),
+            b"?? desktop/LightSpeed_Runtime/lightspeed_runtime/untrusted.py\x00",
         ]):
             with self.assertRaisesRegex(
                 runner.Stage35Hold, "REVIEW_WORKTREE_TRACKED_OR_UNTRACKED_DRIFT"
@@ -64,14 +64,14 @@ class Stage35PureTests(unittest.TestCase):
             for path in paths:
                 target = root / path
                 target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_bytes(b"print('source')\\r\\n")
+                target.write_bytes(b"print('source')\r\n")
             def pinned_git(repo, *args):
                 if args == ("rev-parse", "HEAD"):
-                    return runner.FAMILY_COMMIT.encode("ascii") + b"\\n"
+                    return runner.FAMILY_COMMIT.encode("ascii") + b"\n"
                 if args == ("status", "--porcelain=v1", "--untracked-files=all", "-z"):
                     return b""
                 if args[0] == "show":
-                    return b"print('source')\\n"
+                    return b"print('source')\n"
                 raise AssertionError(args)
             with patch.object(runner, "git", side_effect=pinned_git):
                 runner.check_git(root)
@@ -88,14 +88,14 @@ class Stage35PureTests(unittest.TestCase):
             for path in paths:
                 target = root / path
                 target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_text("print('source')\\n")
-            (root / paths[0]).write_text("print('modified')\\n")
+                target.write_text("print('source')\n")
+            (root / paths[0]).write_text("print('modified')\n")
             def pinned_git(repo, *args):
                 if args == ("rev-parse", "HEAD"):
-                    return runner.FAMILY_COMMIT.encode("ascii") + b"\\n"
+                    return runner.FAMILY_COMMIT.encode("ascii") + b"\n"
                 if args[0] == "status":
                     return b""
-                return b"print('source')\\n"
+                return b"print('source')\n"
             with patch.object(runner, "git", side_effect=pinned_git):
                 with self.assertRaisesRegex(
                     runner.Stage35Hold, "REVIEW_EXECUTABLE_SOURCE_DRIFT"
@@ -146,7 +146,7 @@ class Stage35PureTests(unittest.TestCase):
                 "apps/lightspeed-go/src/desktopBridge.ts",
                 "apps/lightspeed-go/src/cgxFamilyOversight.ts",
             ]
-            payload = b"print('fixture source')\\n"
+            payload = b"print('fixture source')\n"
             proofs = [{
                 "path": path,
                 "git_blob_content_sha256": runner.digest(payload),
