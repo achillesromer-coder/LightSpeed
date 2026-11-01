@@ -82,3 +82,42 @@ test("synthetic counts are not promoted to field observations",()=>{
  assert.ok(r.flags.includes("COUNTS_NOT_VERIFIED_AS_FIELD_OBSERVATIONS"));
  assert.equal(r.field_observation_verified,false);
 });
+
+import {reviewBioBlockGateLineage as gateLineage} from "./eco_bioblock_proxy_review.mjs";
+const gates={original_source_ref:"synthetic-original",translated_source_ref:"synthetic-translation",
+ original_gate_ids:["VG-001","VG-002","VG-004"],
+ translated_gate_ids:["VG-001","VG-002","VG-008"],
+ translated_risk_gate_refs:[{cell_ref:"Synthetic_Risk!F12",gate_ids:["VG-004"]}]};
+test("missing original gate and orphan translated reference remain explicit R1 HOLD",()=>{
+ const r=gateLineage(gates);
+ assert.deepEqual(r.missing_original_gate_ids,["VG-004"]);
+ assert.deepEqual(r.orphan_translated_risk_references,
+  [{cell_ref:"Synthetic_Risk!F12",gate_id:"VG-004"}]);
+ assert.deepEqual(r.translation_only_gate_ids,["VG-008"]);
+ assert.equal(r.r2_equivalence_verified,false);
+ assert.equal(r.production_qa_verified,false);
+ assert.equal(r.native_object_id,null);
+});
+test("preserved gate identifiers never self-attest source rights or gate closure",()=>{
+ const r=gateLineage({...gates,translated_gate_ids:["VG-001","VG-002","VG-004"]});
+ assert.deepEqual(r.missing_original_gate_ids,[]);
+ assert.deepEqual(r.orphan_translated_risk_references,[]);
+ assert.equal(r.source_owner_disposition_verified,false);
+ assert.equal(r.rights_verified,false);
+ assert.equal(r.db_readback,false);
+});
+test("unqualified translation-only gate is not silently treated as original",()=>{
+ const r=gateLineage({...gates,translated_gate_ids:["VG-001","VG-002","VG-004","VG-008"]});
+ assert.deepEqual(r.translation_only_gate_ids,["VG-008"]);
+ assert.ok(r.flags.includes("TRANSLATION_ONLY_GATES_REQUIRE_SOURCE_ATTRIBUTION"));
+});
+test("duplicate IDs, raw fields and malformed risk anchors fail closed",()=>{
+ for(const bad of [
+  {original_gate_ids:["VG-001","VG-001"]},
+  {translated_gate_ids:["VG-001","VG-001"]},
+  {raw_source_rows:[{site:"private"}]},
+  {translated_risk_gate_refs:[{cell_ref:"gps:-27,153",gate_ids:["VG-004"]}]},
+  {translated_risk_gate_refs:[{cell_ref:"Synthetic_Risk!F12",gate_ids:["VG-004","VG-004"]}]},
+  {original_source_ref:"synthetic-translation"}
+ ])assert.throws(()=>gateLineage({...gates,...bad}),/INVALID_BIOBLOCK_GATE_LINEAGE/);
+});
