@@ -375,6 +375,27 @@ test('malformed optional native context allowlists fail closed without host auth
  }
 });
 
+test('unknown native lease scope axes cannot be silently ignored by the 0.1 ABI',()=>{
+ const lease=nativeABIBase.nativeLease;
+ for(const extra of [
+  {destination_node_ids:['fixture:peer']},
+  {rights_scope:'private'},
+  {unknown_budget_ceiling:0},
+  {['__proto__']:'fixture:spoofed-scope'}
+ ]){
+  const scope={...lease.scope,...extra};
+  const r=reviewNativeLeaseHandshakeABI({...nativeABIBase,
+   nativeLease:{...lease,scope}});
+  assert.equal(r.status,'DENIED',JSON.stringify(extra));
+  assert.equal(r.reason,'NATIVE_LEASE_SCOPE_AXIS_UNMAPPED');
+  assert.equal(r.may_execute,false);
+  assert.equal(r.host_signature_verified,false);
+ }
+ const baseline=reviewNativeLeaseHandshakeABI(nativeABIBase);
+ assert.equal(baseline.status,'UNVERIFIED_SHAPE_REVIEW');
+ assert.equal(baseline.may_execute,false);
+});
+
 test('unmapped native geographic or orbital lease scope fails closed',()=>{
  // The contract lists this axis but supplies no typed frame/units/containment
  // ABI. A synthetic matching label is not host spatial authority.
