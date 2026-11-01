@@ -6,7 +6,7 @@ non-dispatching source-qualified *review* adapter, not a new autonomous agent.
 No remote provider calls, model training, DBR writes or tool execution.
 """
 from __future__ import annotations
-import argparse, datetime as dt, hashlib, json
+import argparse, datetime as dt, hashlib, json, os, secrets
 from pathlib import Path
 import re, sqlite3, urllib.request
 
@@ -107,6 +107,33 @@ def build_review(db_path: Path, query: str, model: str, infer: bool) -> dict:
     return result
 
 
+
+def publish_review_exclusive(output: Path, review: dict) -> None:
+    """Publish only a new owner-private review file, never replace another path.
+
+    Exclusive temporary creation resists planted symlinks. Hard-link publication
+    fails when a destination already exists, including a symlink or hardlink.
+    No rename/replace or write-through fallback is permitted. Parent directory
+    ACL, symlink/junction containment and native authority remain host gates.
+    """
+    payload = (json.dumps(review, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
+    temporary = output.with_name(
+        f".{output.name}.{os.getpid()}.{secrets.token_hex(16)}.tmp")
+    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
+    flags |= getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_BINARY", 0)
+    fd = os.open(temporary, flags, 0o600)
+    try:
+        with os.fdopen(fd, "wb") as stream:
+            stream.write(payload)
+            stream.flush()
+            os.fsync(stream.fileno())
+        # Atomic no-clobber creation on the same filesystem. If unsupported,
+        # fail closed; a falling-back rename could overwrite private records.
+        os.link(temporary, output)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--db", required=True, type=Path)
@@ -120,9 +147,7 @@ def main() -> int:
     if args.output.resolve().parent != args.db.resolve().parent:
         raise ValueError("REVIEW_OUTPUT_MUST_BE_ADJACENT_TO_PRIVATE_DB")
     review = build_review(args.db, args.query, args.model, args.infer)
-    temp = args.output.with_suffix(args.output.suffix + ".tmp")
-    temp.write_text(json.dumps(review, indent=2, ensure_ascii=False), encoding="utf-8")
-    temp.replace(args.output)
+    publish_review_exclusive(args.output, review)
     print(json.dumps({"schema": SCHEMA, "state": review["stage"],
                       "source_count": review["source_count"],
                       "inference_state": review["local_model"]["state"],
