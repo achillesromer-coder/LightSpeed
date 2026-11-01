@@ -45,7 +45,7 @@ export function projectOwnerReviewPacket(input: unknown): OwnerPacketProjection 
 
   const count = input.private_source_count;
   const digests = input.private_source_id_hashes;
-  if (!Number.isSafeInteger(count) || (count as number) < 0 ||
+  if (typeof count !== "number" || !Number.isSafeInteger(count) || count < 0 ||
       (count as number) > 100 || !Array.isArray(digests) ||
       digests.length !== count || new Set(digests).size !== digests.length ||
       !digests.every((digest: unknown) => typeof digest === "string" && SHA256.test(digest))) hold();
