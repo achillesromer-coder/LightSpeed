@@ -179,3 +179,85 @@ def test_duplicate_conversation_variant_is_preserved_by_original_shard(tmp_path)
         assert con.execute("SELECT count(*) FROM shard").fetchone()[0] == 2
     finally:
         con.close()
+
+
+def test_chunked_reader_handles_shard_larger_than_individual_record_bound(tmp_path):
+    records = [{"id": f"conversation-{i}", "title": "private", "mapping": {}}
+               for i in range(40)]
+    p = tmp_path / "conversations-008.json"
+    p.write_text(json.dumps(records, ensure_ascii=False), encoding="utf-8")
+    receipt = {"shard": p.name, "size_bytes": p.stat().st_size,
+               "sha256": hashlib.sha256(p.read_bytes()).hexdigest()}
+    assert receipt["size_bytes"] > 1024
+    rows = list(mod.iter_source_conversations(
+        p, receipt, max_record_bytes=1024, chunk_bytes=97))
+    assert len(rows) == 40
+    assert rows[0]["id"] == "conversation-0"
+    assert rows[-1]["id"] == "conversation-39"
+
+
+def test_chunked_reader_rejects_oversized_record(tmp_path):
+    p = tmp_path / "conversations-008.json"
+    p.write_text(json.dumps([{"id": "one", "padding": "a" * 3000}]),
+                 encoding="utf-8")
+    receipt = {"shard": p.name, "size_bytes": p.stat().st_size,
+               "sha256": hashlib.sha256(p.read_bytes()).hexdigest()}
+    with pytest.raises(ValueError, match="SOURCE_RECORD_EXCEEDS_60MIB_HOLD"):
+        list(mod.iter_source_conversations(
+            p, receipt, max_record_bytes=512, chunk_bytes=64))
+
+
+@pytest.mark.parametrize("payload", [
+    '[{"id":"a"},]',
+    '[{"id":"a"}]{"outside":true}',
+    '[{"id":"a"}, {"id":"b"}',
+    '[NaN]',
+])
+def test_chunked_reader_fails_closed_on_bad_json(tmp_path, payload):
+    p = tmp_path / "conversations-008.json"
+    p.write_text(payload, encoding="utf-8")
+    receipt = {"shard": p.name, "size_bytes": p.stat().st_size,
+               "sha256": hashlib.sha256(p.read_bytes()).hexdigest()}
+    with pytest.raises(ValueError):
+        list(mod.iter_source_conversations(
+            p, receipt, max_record_bytes=512, chunk_bytes=64))
+
+
+def test_chunked_reader_preserves_unicode_variants_and_occurrences(tmp_path):
+    p = tmp_path / "conversations-008.json"
+    conv = {"id": "one", "title": "private", "mapping": {
+        "first": {"message": {"id": "same", "author": {"role": "user"},
+                              "content": {"parts": ["🧩 alpha"]}}},
+        "second": {"message": {"id": "same", "author": {"role": "user"},
+                               "content": {"parts": ["🧩 alpha"]}}},
+    }}
+    p.write_text(json.dumps([conv, conv], ensure_ascii=False), encoding="utf-8")
+    receipt = {"shard": p.name, "size_bytes": p.stat().st_size,
+               "sha256": hashlib.sha256(p.read_bytes()).hexdigest()}
+    db = mod.connect(tmp_path / "review.sqlite")
+    try:
+        assert mod.ingest_shard(db, p, receipt)[0] == 2
+        assert db.execute("SELECT count(*) FROM conversation_variant").fetchone()[0] == 2
+        assert db.execute("SELECT count(*) FROM occurrence").fetchone()[0] == 2
+        assert db.execute("SELECT count(*) FROM message").fetchone()[0] == 1
+        assert mod.summary(db)["native_admission"] is False
+    finally:
+        db.close()
+
+
+def test_chunked_reader_second_pass_digest_mismatch_rolls_back(tmp_path, monkeypatch):
+    source, receipt = sample(tmp_path)
+    original = mod.verify_source
+    def change_after_hash(path, identity):
+        digest = original(path, identity)
+        path.write_text(path.read_text().replace("Owner only", "Other words"), encoding="utf-8")
+        return digest
+    monkeypatch.setattr(mod, "verify_source", change_after_hash)
+    db = mod.connect(tmp_path / "review.sqlite")
+    try:
+        with pytest.raises(ValueError, match="SOURCE_SNAPSHOT_CHANGED_DURING_READ_HOLD"):
+            mod.ingest_shard(db, source, receipt)
+        assert db.execute("SELECT count(*) FROM shard").fetchone()[0] == 0
+        assert db.execute("SELECT count(*) FROM message").fetchone()[0] == 0
+    finally:
+        db.close()
