@@ -149,6 +149,30 @@ class WindowsBootEvidenceTests(unittest.TestCase):
         self.assertEqual(children["lightspeed"]["parent_semantic_object_id"], "cgx:domain:emassc")
         self.assertEqual(len(children), 4)
 
+    def test_required_family_children_cannot_be_omitted_or_reparented(self):
+        # A syntactically valid acyclic registry is not sufficient for the
+        # canonical Romer/Eco/EMASSC -> LS relationship.
+        cases = ("missing_ls", "ls_reparented", "romer_id_changed", "eco_filespace_changed")
+        path = self.repo / "cgx/domain_templates/domain_child_identity_registry.json"
+        for case in cases:
+            with self.subTest(case=case):
+                source = family()
+                if case == "missing_ls":
+                    del source["children"]["lightspeed"]
+                elif case == "ls_reparented":
+                    source["children"]["lightspeed"]["parent_semantic_object_id"] = probe.SEMANTIC_ROOT
+                elif case == "romer_id_changed":
+                    source["children"]["romer"]["semantic_object_id"] = "cgx:domain:other-romer"
+                else:
+                    source["children"]["eco"]["filespace"] = "OtherEco.cgx"
+                write_json(path, source)
+                with self.assertRaisesRegex(ValueError, "FAMILY_REQUIRED_CHILD_MISSING_OR_MISBOUND"):
+                    probe._family_identity(path)
+                result = self.run_probe()
+                self.assertIn("CANONICAL_FAMILY_REGISTRY_UNVERIFIED", result["holds"])
+                self.assertFalse(result["boot"]["existing_stack_prerequisites_ready"])
+        write_json(path, family())
+
     def test_root_drift_and_parent_cycle_fail_closed(self):
         source = family()
         source["children"]["emassc"]["parent_semantic_object_id"] = "cgx:domain:lightspeed"
