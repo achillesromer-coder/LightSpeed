@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { renderCgxFamilyOversight, type CgxFamilyOversightSnapshot } from "./cgxFamilyOversight";
+import { createCgxFamilyReadGuard, renderCgxFamilyOversight, type CgxFamilyOversightSnapshot } from "./cgxFamilyOversight";
 
 const fixture = (): CgxFamilyOversightSnapshot => ({
   schema: "CGX-LS-FAMILY-OVERSIGHT/0.1",
@@ -72,5 +72,38 @@ describe("CGX LS owner-only family oversight renderer", () => {
     const mutated = fixture();
     mutated.effects.canonical_db_writes = 1;
     expect(renderCgxFamilyOversight(mutated)).toContain("contract invalid");
+  });
+});
+
+// Synthetic async-completion ordering, not an authenticated host/browser test.
+describe("CGX private Family Set read lifecycle (#158)", () => {
+  it("rejects overlapping owner-private responses completed out of order", () => {
+    const guard = createCgxFamilyReadGuard();
+    const first = guard.begin("session-A");
+    const second = guard.begin("session-A");
+    expect(first("session-A")).toBe(false);
+    expect(second("session-A")).toBe(true);
+  });
+  it("invalidates a pending response immediately on logout or auth transition", () => {
+    const guard = createCgxFamilyReadGuard();
+    const pending = guard.begin("session-A");
+    guard.invalidate();
+    expect(pending("session-A")).toBe(false);
+    expect(pending("session-B")).toBe(false);
+    const afterLogin = guard.begin("session-B");
+    expect(afterLogin("session-B")).toBe(true);
+    guard.invalidate();
+    expect(afterLogin("session-B")).toBe(false);
+  });
+  it("never accepts an empty or changed session and blocks a reused stale token", () => {
+    const guard = createCgxFamilyReadGuard();
+    const empty = guard.begin("");
+    expect(empty("")).toBe(false);
+    const stale = guard.begin("session-A");
+    guard.invalidate();
+    const resumed = guard.begin("session-A");
+    expect(stale("session-A")).toBe(false);
+    expect(resumed("session-A")).toBe(true);
+    expect(resumed("session-B")).toBe(false);
   });
 });
