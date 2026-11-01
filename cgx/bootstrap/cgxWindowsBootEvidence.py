@@ -27,6 +27,12 @@ SEMANTIC_ROOT = "cgx:root:cognigrex"
 FAMILY_IDENTITY_SCHEMA = "CGX-DOMAIN-CHILD-IDENTITY/0.1"
 LOAD_SOURCE_SCHEMA = "LOAD-ALEXANDRIA-SOURCE-REGISTRY-PROJECTION/0.1"
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
+REQUIRED_FAMILY_BINDINGS = {
+    "romer": ("cgx:domain:romer", SEMANTIC_ROOT, "Romer.cgx"),
+    "eco": ("cgx:domain:eco", SEMANTIC_ROOT, "Eco.cgx"),
+    "emassc": ("cgx:domain:emassc", SEMANTIC_ROOT, "EMASSC.cgx"),
+    "lightspeed": ("cgx:domain:lightspeed", "cgx:domain:emassc", "LS.cgx"),
+}
 MAX_JSON_BYTES = 8 * 1024 * 1024
 MAX_CARRIER_BYTES = 128 * 1024 * 1024
 
@@ -108,6 +114,15 @@ def _family_identity(path: Path) -> dict[str, Any]:
             next_parent = parent_map[next_parent]
     if len({r["filespace"] for r in rows}) != len(rows):
         raise ValueError("DUPLICATE_FAMILY_FILESPACE")
+    # The registry may gain qualified children, but cannot omit or re-parent
+    # the four currently required identities and still pass native preflight.
+    by_domain = {row["domain"]: row for row in rows}
+    for domain, expected in REQUIRED_FAMILY_BINDINGS.items():
+        row = by_domain.get(domain)
+        if row is None or (
+            row["semantic_object_id"], row["parent_semantic_object_id"], row["filespace"]
+        ) != expected:
+            raise ValueError("FAMILY_REQUIRED_CHILD_MISSING_OR_MISBOUND:" + domain)
     return {"semantic_parent": SEMANTIC_ROOT, "filespace": "Cognigrex.cgx", "children": rows}
 
 
