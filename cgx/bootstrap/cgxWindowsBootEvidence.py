@@ -87,7 +87,7 @@ def _portable_filespace(value: Any) -> bool:
         return False
     stem = value.split(".", 1)[0]
     if not stem or re.fullmatch(
-        r"(?:CON|PRN|AUX|NUL|CONIN\\$|CONOUT\\$|COM[1-9¹²³]|LPT[1-9¹²³])",
+        r"(?:CON|PRN|AUX|NUL|CONIN\$|CONOUT\$|COM[1-9¹²³]|LPT[1-9¹²³])",
         stem, flags=re.IGNORECASE,
     ):
         return False
