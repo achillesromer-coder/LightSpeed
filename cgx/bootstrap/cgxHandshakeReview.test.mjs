@@ -247,12 +247,12 @@ const nativeABIBase={
   state:'ACTIVE',revocable:true,issued_by:'fixture:unverified-issuer',
   subject_agent:'Neo',valid_from:'2026-10-27T00:00:00Z',
   valid_until:'2026-11-01T00:00:00Z',domains:['lightspeed'],
-  execution_depths:['simulate'],scope:{object_ids:[base.child.object_id],
+  execution_depths:['simulate'],max_cascade_class:'C2',allowed_floors:['Neo','Athene'],scope:{object_ids:[base.child.object_id],
    tool_scopes:['fixture:solver'],action_classes:['simulate'],
    resource_budgets:{compute_ms:100}}},
  request:{agent_id:'Neo',object_id:base.child.object_id,tool_scope:'fixture:solver',
   domain:'lightspeed',execution_depth:'simulate',action_class:'simulate',
-  nonce:'fixture:unconsumed-nonce',resource_usage:{compute_ms:20}}
+  nonce:'fixture:unconsumed-nonce',cascade_class:'C1',planned_floors:['Neo'],resource_usage:{compute_ms:20}}
 };
 test('native lease ABI adapter never confers operational authority',()=>{
  const r=reviewNativeLeaseHandshakeABI(nativeABIBase);
@@ -376,4 +376,33 @@ test('native ABI rejects malformed or unsupported declared budget ceilings',()=>
  const valid=make({...baseBudget,io_bytes:0});
  assert.equal(valid.status,'UNVERIFIED_SHAPE_REVIEW');
  assert.equal(valid.may_execute,false);
+});
+
+test('native ABI binds cascade class and planned specialist floors',()=>{
+ const valid=reviewNativeLeaseHandshakeABI(nativeABIBase);
+ assert.equal(valid.status,'UNVERIFIED_SHAPE_REVIEW');
+ assert.equal(valid.may_execute,false);
+ const denied=[
+  {request:{...nativeABIBase.request,cascade_class:'C3'}},
+  {request:{...nativeABIBase.request,cascade_class:'C9'}},
+  {request:{...nativeABIBase.request,cascade_class:undefined}},
+  {request:{...nativeABIBase.request,planned_floors:['Neo','Other']}},
+  {request:{...nativeABIBase.request,planned_floors:[]}},
+  {request:{...nativeABIBase.request,planned_floors:undefined}},
+  {nativeLease:{...nativeABIBase.nativeLease,max_cascade_class:'C9'}},
+  {nativeLease:{...nativeABIBase.nativeLease,allowed_floors:[]}},
+  {nativeLease:{...nativeABIBase.nativeLease,allowed_floors:['Neo',17]}},
+  {nativeLease:{...nativeABIBase.nativeLease,allowed_floors:undefined}}
+ ];
+ for(const changed of denied){
+  const result=reviewNativeLeaseHandshakeABI({...nativeABIBase,...changed});
+  assert.equal(result.status,'DENIED',JSON.stringify(changed));
+  assert.equal(result.reason,'NATIVE_LEASE_CASCADE_OR_FLOOR_SCOPE_MISMATCH');
+  assert.equal(result.may_execute,false);
+ }
+ const subset=reviewNativeLeaseHandshakeABI({...nativeABIBase,
+  request:{...nativeABIBase.request,cascade_class:'C2',planned_floors:['Neo','Athene']}});
+ assert.equal(subset.status,'UNVERIFIED_SHAPE_REVIEW');
+ assert.equal(subset.host_signature_verified,false);
+ assert.equal(subset.may_execute,false);
 });
