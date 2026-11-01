@@ -254,6 +254,13 @@ def make_public_bundle(dest:Path,source:Path=SOURCE)->dict[str,Any]:
                 for v in x.get("headers",[])) for x in policy.get("headers",[])
         ):
             raise BundleHold("public content security policy has drifted")
+        # #158: a safe-looking CSP on one route is insufficient when a second
+        # header, rewrite, redirect, or route can override/escape it. Pin the
+        # entire reviewed hosting contract; JSON formatting/key order is ignored.
+        # This is source-level packaging validation, NOT deployed ACL proof.
+        expected_policy=json.loads("{\"version\":2,\"trailingSlash\":true,\"headers\":[{\"source\":\"/cgx/(.*)\",\"headers\":[{\"key\":\"X-Content-Type-Options\",\"value\":\"nosniff\"},{\"key\":\"Referrer-Policy\",\"value\":\"strict-origin-when-cross-origin\"},{\"key\":\"Permissions-Policy\",\"value\":\"camera=(), microphone=(), geolocation=()\"},{\"key\":\"Content-Security-Policy\",\"value\":\"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors https://romer.industries https://www.romer.industries\"}]}],\"redirects\":[{\"source\":\"/Cgx\",\"destination\":\"/cgx\",\"permanent\":true},{\"source\":\"/Cgx/:path*\",\"destination\":\"/cgx/:path*\",\"permanent\":true}]}")
+        if policy!=expected_policy:
+            raise BundleHold("unreviewed public hosting policy drift")
         (dst/"vercel.json").write_text(json.dumps(policy,indent=2)+"\n",encoding="utf-8")
         (dst/"cgx-package-review.json").write_text(json.dumps(result,indent=2)+"\n",encoding="utf-8")
         # Post-copy exact byte check, with an explicit tiny allowlist of sidecars.
