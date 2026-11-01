@@ -131,6 +131,12 @@ def main():
         ("lease_id", "fixture:lease\nforged", "lease-lease-id-invalid"),
         ("issued_by", "\x00fixture:root-authority", "lease-issued-by-invalid"),
         ("subject_agent", "Neo\x7f", "lease-subject-agent-invalid"),
+        # Unicode formatting/bidi, separators and lone surrogates must not
+        # become valid identity claims or split downstream audit records.
+        ("lease_id", "fixture:lease\u202eforged", "lease-lease-id-invalid"),
+        ("issued_by", "fixture:root\u200b-authority", "lease-issued-by-invalid"),
+        ("subject_agent", "Neo\u2028", "lease-subject-agent-invalid"),
+        ("lease_id", "fixture:lease\ud800", "lease-lease-id-invalid"),
     ]
     for field, bad_value, expected_reason in malformed_identity:
         x=base_lease()
@@ -147,6 +153,8 @@ def main():
         for field,bad,expected in (
             ("lease_id", "fixture:lease\nforged", "lease-lease-id-invalid"),
             ("issued_by", "\x00fixture:root-authority", "lease-issued-by-invalid"),
+            ("lease_id", "fixture:lease\u202eforged", "lease-lease-id-invalid"),
+            ("issued_by", "fixture:root\u200b-authority", "lease-issued-by-invalid"),
         ):
             x=base_lease()
             x["root_authority_receipt_ref"]="fixture:root-approval"
@@ -212,6 +220,7 @@ def main():
             ("authority_phase_ref", "inspect", 17, "lease-authority-phase-ref-missing"),
             ("release_receipt_ref", "publish", ["fixture:release"], "lease-release-receipt-ref-missing"),
             ("authority_phase_ref", "inspect", "\x00fixture:phase", "lease-authority-phase-ref-missing"),
+            ("authority_phase_ref", "inspect", "fixture:phase\u2029forged", "lease-authority-phase-ref-missing"),
             ("release_receipt_ref", "publish", "fixture:release\nforged", "lease-release-receipt-ref-missing"),
         ):
             x=base_lease()
@@ -254,6 +263,8 @@ def main():
         ("domains", ["romer", "eco\nforged"], "lease-domains-allowlist-invalid"),
         ("execution_depths", ["execute", "inspect\x7f"], "lease-execution-depths-allowlist-invalid"),
         ("allowed_floors", ["Neo", "Other\x00floor"], "lease-allowed-floors-allowlist-invalid"),
+        ("domains", ["romer", "eco\u202eforged"], "lease-domains-allowlist-invalid"),
+        ("allowed_floors", ["Neo", "Neo\ud800"], "lease-allowed-floors-allowlist-invalid"),
     ]
     for field, bad_value, expected_reason in malformed_allowlists:
         x=base_lease()
