@@ -161,6 +161,23 @@ class PublicBundleTests(unittest.TestCase):
                 with self.assertRaises(mod.BundleHold):
                     mod.inspect_public_bundle(c)
 
+    def test_duplicate_html_resource_attributes_fail_closed(self):
+        # HTMLParser preserves duplicate attrs, but dict() silently keeps only
+        # the last one. Browser-first semantics can load an unapproved URL.
+        attacks = [
+            '<img src="/owner-private/receipt.json" src="/cgx/assets/viewer.css">',
+            '<img src="/cgx/assets/viewer.css" src="/owner-private/receipt.json">',
+            '<a HREF="https://example.invalid/collect" href="#overview">demo</a>',
+        ]
+        for attack in attacks:
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as d:
+                c = Path(d) / "cgx"
+                shutil.copytree(mod.SOURCE, c)
+                with (c / "index.html").open("a", encoding="utf-8") as handle:
+                    handle.write("\n" + attack)
+                with self.assertRaisesRegex(mod.BundleHold, "duplicate HTML attributes"):
+                    mod.inspect_public_bundle(c)
+
     def test_reviewed_local_anchor_routes_and_fragments_remain_allowed(self):
         with tempfile.TemporaryDirectory() as d:
             c = Path(d) / "cgx"
