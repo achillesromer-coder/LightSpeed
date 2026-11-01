@@ -100,6 +100,13 @@ def inspect_public_bundle(source:Path=SOURCE)->dict[str,Any]:
         for uri in re.findall(r"""(?:import\s*(?:[^;]*?\s+from\s*)?|from\s*)['"]([^'"]+)['"]""",text):
             _validate_static_reference(relative,uri)
         if relative.endswith(".html"):
+            # #158: deny HTML-only navigation/exfiltration surfaces that do not
+            # invoke fetch() and are not covered by src/href asset checks.
+            # This synthetic demonstration requires no redirect, base or form.
+            if re.search(r"<\s*meta\b[^>]*\bhttp-equiv\s*=\s*[\'\"]?refresh\b", text, re.I):
+                raise BundleHold(f"unreviewed HTML meta refresh: {relative}")
+            if re.search(r"<\s*(?:base|form)\b", text, re.I):
+                raise BundleHold(f"unreviewed HTML navigation or form: {relative}")
             # Passive resource loads are network-capable even when no fetch() call
             # exists. Restrict them to the same exact reviewed asset allowlist.
             for uri in re.findall(
