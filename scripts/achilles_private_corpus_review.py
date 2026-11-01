@@ -158,6 +158,102 @@ def user_ancestor(node: dict, mapping: dict, limit: int = 120) -> tuple[str | No
     return None, steps
 
 
+
+def iter_source_conversations(source: Path, entry: dict, *,
+                              max_record_bytes: int = 60 * 1024 * 1024,
+                              chunk_bytes: int = 256 * 1024):
+    """Bounded R0 JSON array reader; yield only complete conversation objects.
+
+    Entire shards may exceed 60 MiB. One record may not. Verify the exact
+    second-pass original bytes *after* the iterator is exhausted; the caller
+    must keep all SQLite writes uncommitted until then.
+    """
+    import codecs
+    if (type(max_record_bytes) is not int or max_record_bytes <= 0
+            or type(chunk_bytes) is not int or chunk_bytes <= 0
+            or chunk_bytes > max_record_bytes):
+        raise ValueError("INVALID_STREAM_BOUNDS")
+    if not source.is_file() or source.is_symlink():
+        raise ValueError("SOURCE_FILE_IDENTITY_HOLD:" + entry["shard"])
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_BINARY", 0)
+    fd = os.open(source, flags)
+    with os.fdopen(fd, "rb") as stream:
+        if os.fstat(stream.fileno()).st_size != entry["size_bytes"]:
+            raise ValueError("SOURCE_SNAPSHOT_CHANGED_DURING_READ_HOLD:" + entry["shard"])
+        utf8 = codecs.getincrementaldecoder("utf-8")("strict")
+        parser = json.JSONDecoder(parse_constant=lambda _: (_ for _ in ()).throw(
+            ValueError("SOURCE_JSON_CONSTANT_HOLD")))
+        digest = hashlib.sha256()
+        buffer, cursor, eof, total_bytes = "", 0, False, 0
+
+        def fill():
+            nonlocal buffer, eof, total_bytes
+            chunk = stream.read(chunk_bytes)
+            if chunk:
+                total_bytes += len(chunk)
+                digest.update(chunk)
+                buffer += utf8.decode(chunk, final=False)
+            else:
+                buffer += utf8.decode(b"", final=True)
+                eof = True
+
+        def ready():
+            nonlocal buffer, cursor
+            while True:
+                while cursor < len(buffer) and buffer[cursor] in " \t\r\n":
+                    cursor += 1
+                if cursor < len(buffer):
+                    return True
+                buffer, cursor = "", 0
+                if eof:
+                    return False
+                fill()
+
+        if not ready() or buffer[cursor] != "[":
+            raise ValueError("SOURCE_JSON_FORMAT_HOLD")
+        cursor += 1
+        state = "first"
+        while True:
+            if not ready():
+                raise ValueError("SOURCE_JSON_TRUNCATED_HOLD")
+            ch = buffer[cursor]
+            if state in ("first", "required"):
+                if ch == "]" and state == "first":
+                    cursor += 1
+                    break
+                if ch != "{":
+                    raise ValueError("SOURCE_CONVERSATION_SHAPE_HOLD")
+                while True:
+                    try:
+                        value, finish = parser.raw_decode(buffer, cursor)
+                        break
+                    except json.JSONDecodeError as exc:
+                        if eof:
+                            raise ValueError("SOURCE_JSON_TRUNCATED_OR_MALFORMED_HOLD") from exc
+                        if len(buffer[cursor:].encode("utf-8")) > max_record_bytes:
+                            raise ValueError("SOURCE_RECORD_EXCEEDS_60MIB_HOLD")
+                        fill()
+                if len(buffer[cursor:finish].encode("utf-8")) > max_record_bytes:
+                    raise ValueError("SOURCE_RECORD_EXCEEDS_60MIB_HOLD")
+                if not isinstance(value, dict):
+                    raise ValueError("SOURCE_CONVERSATION_SHAPE_HOLD")
+                buffer, cursor = buffer[finish:], 0
+                yield value
+                state = "separator"
+            else:
+                if ch == "]":
+                    cursor += 1
+                    break
+                if ch != ",":
+                    raise ValueError("SOURCE_JSON_SEPARATOR_HOLD")
+                cursor += 1
+                state = "required"
+        if ready():
+            raise ValueError("SOURCE_JSON_TRAILING_DATA_HOLD")
+        if total_bytes != entry["size_bytes"] or digest.hexdigest() != entry["sha256"]:
+            raise ValueError("SOURCE_SNAPSHOT_CHANGED_DURING_READ_HOLD:" + entry["shard"])
+
+
 def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[int, int, int]:
     digest = verify_source(source, entry)
     previous = con.execute("SELECT sha256,state FROM shard WHERE name=?", (entry["shard"],)).fetchone()
@@ -165,20 +261,12 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
         if previous == (digest, "VERIFIED_R1_COMMITTED"):
             return -1, 0, 0
         raise ValueError("SOURCE_PREVIOUS_STATE_HOLD:" + entry["shard"])
-    # The exact bytes PARSED must equal the digest verified above. The source
-    # may be replaced between verification and a second read, especially on a
-    # synced folder; never silently mix a verified hash with changed content.
-    parsed_bytes = source.read_bytes()
-    if (len(parsed_bytes) != entry["size_bytes"]
-        or hashlib.sha256(parsed_bytes).hexdigest() != digest):
-        raise ValueError("SOURCE_SNAPSHOT_CHANGED_DURING_READ_HOLD:" + entry["shard"])
-    raw = json.loads(parsed_bytes)
-    if not isinstance(raw, list):
-        raise ValueError("SOURCE_JSON_FORMAT_HOLD")
-    visible = 0
+    # Stream verified R0 bytes; only commit after iterator end/hash readback.
+    visible, conversation_count = 0, 0
     try:
         con.execute("BEGIN")
-        for conv_index, conv in enumerate(raw):
+        for conv_index, conv in enumerate(iter_source_conversations(source, entry)):
+            conversation_count += 1
             if not isinstance(conv, dict):
                 raise ValueError("SOURCE_CONVERSATION_SHAPE_HOLD")
             cid = str(conv.get("conversation_id") or conv.get("id") or "")
@@ -251,13 +339,13 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
             con.execute("INSERT OR IGNORE INTO conversation VALUES (?,?,?,?,?,?)",
                         (cid, entry["shard"], title, created, updated, words_sum))
         con.execute("INSERT INTO shard VALUES (?,?,?,?,?,?,?)",
-                    (entry["shard"], digest, entry["size_bytes"], len(raw), visible,
+                    (entry["shard"], digest, entry["size_bytes"], conversation_count, visible,
                      "VERIFIED_R1_COMMITTED", dt.datetime.now(dt.timezone.utc).isoformat()))
         con.commit()
     except Exception:
         con.rollback()
         raise
-    return len(raw), visible, entry["size_bytes"]
+    return conversation_count, visible, entry["size_bytes"]
 
 
 def summary(con: sqlite3.Connection) -> dict:
