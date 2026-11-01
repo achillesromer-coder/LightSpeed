@@ -168,6 +168,11 @@ def inspect_public_bundle(source:Path=SOURCE)->dict[str,Any]:
         try:text=blob.decode("utf-8")
         except UnicodeError as exc:raise BundleHold("non-UTF8 public payload") from exc
         if relative.endswith(".js"):
+            # Exact reviewed JS assets contain no template literals. Reject
+            # interpolated computed properties rather than pretending a regex
+            # scan of fetch()/bracket literals is a complete JS parser (#158).
+            if "`" in text:
+                raise BundleHold(f"unreviewed JavaScript template literal: {relative}")
             _reject_split_computed_transport(text, relative)
         for label,pattern in BLOCKED.items():
             if pattern.search(text):
