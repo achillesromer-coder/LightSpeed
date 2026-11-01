@@ -230,6 +230,24 @@ class WindowsBootEvidenceTests(unittest.TestCase):
         self.assertFalse(output["mint"]["native_mint_authorised"])
         self.assertFalse(output["s92_carrier"]["native_signature_verified"])
 
+    def test_malformed_root_carrier_binding_fails_closed_without_mutation(self):
+        # A syntactically valid JSON root with a truthy non-object binding
+        # must produce a HOLD receipt, never crash the one-wizard preflight.
+        root_path = self.host / "cognigrex.root.json"
+        carrier_path = self.host / "Cognigrex.cgx"
+        before_db = hashlib.sha256(self.db.read_bytes()).hexdigest()
+        before_carrier = hashlib.sha256(carrier_path.read_bytes()).hexdigest()
+        for malformed in ("forged", ["forged"], 17, True, None):
+            with self.subTest(binding=repr(malformed)):
+                write_json(root_path, {"root_carrier": malformed})
+                receipt = self.run_probe()
+                self.assertIn("HOST_S92_ROOT_CARRIER_UNAVAILABLE", receipt["holds"])
+                self.assertFalse(receipt["boot"]["existing_stack_prerequisites_ready"])
+                self.assertFalse(receipt["mint"]["native_mint_authorised"])
+                self.assertEqual(receipt["mint"]["canonical_db_writes"], 0)
+                self.assertEqual(before_db, hashlib.sha256(self.db.read_bytes()).hexdigest())
+                self.assertEqual(before_carrier, hashlib.sha256(carrier_path.read_bytes()).hexdigest())
+
     def test_changed_r0_hash_blocks_boot(self):
         with closing(sqlite3.connect(self.db)) as con, con:
             con.execute(
