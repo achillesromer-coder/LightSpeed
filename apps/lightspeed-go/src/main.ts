@@ -63,7 +63,7 @@ import {
   renderResultReceiptsError,
 } from "./resultReceipts";
 import { renderRepresentationGraphs } from "./representationGraphs";
-import { renderCgxFamilyOversight } from "./cgxFamilyOversight";
+import { createCgxFamilyReadGuard, renderCgxFamilyOversight } from "./cgxFamilyOversight";
 import { loadType1CatalogueProjection, type Type1CatalogueProjection } from "./utpCatalogue";
 import { bindCgxReviewProjection, loadCgxReviewProjection, type CgxReviewProjection } from "./cgxReview";
 import { bindObjectReview, loadObjectReview, type ComponentAtlas, type ObjectReviewCatalogue } from "./objectReview";
@@ -307,6 +307,7 @@ let currentAuthorityContract: AuthorityContract | null = null;
 let currentReviews: ReviewRecord[] = [];
 let currentRepresentationGraphs: RepresentationGraph[] = [];
 let ownerSessionToken = "";
+const familyReadGuard = createCgxFamilyReadGuard();
 let ownerPasswordChangeToken = "";
 let ownerUsername = "NCNB";
 
@@ -320,6 +321,10 @@ const applyOwnerAuth = (response: OwnerAuthResponse): void => {
   const loginForm = byId<HTMLFormElement>("owner-login-form");
   const changeForm = byId<HTMLFormElement>("owner-change-form");
   const logoutButton = byId<HTMLButtonElement>("owner-logout");
+  // An auth transition revokes the previous private projection immediately,
+  // including when a backend returns the same session token.
+  familyReadGuard.invalidate();
+  byId("cgx-family-oversight").textContent = "Owner session changed; read family status again.";
   ownerUsername = response.credential?.username || ownerUsername;
   ownerSessionToken = response.session_token || "";
   ownerPasswordChangeToken = response.password_change_token || "";
@@ -401,6 +406,9 @@ byId<HTMLButtonElement>("owner-logout").addEventListener("click", async () => {
   const token = ownerSessionToken;
   ownerSessionToken = "";
   ownerPasswordChangeToken = "";
+  familyReadGuard.invalidate();
+  // Do not retain private DOM during a slow or failed logout network request.
+  byId("cgx-family-oversight").textContent = "Owner session cleared; family evidence hidden.";
   if (token) {
     try { await logoutDesktopOwner(token); } catch { /* The local session is already cleared. */ }
   }
@@ -417,15 +425,14 @@ byId<HTMLButtonElement>("cgx-family-refresh").addEventListener("click", async ()
     return;
   }
   const requestedOwnerSession = ownerSessionToken;
+  const isCurrentRead = familyReadGuard.begin(requestedOwnerSession);
   mount.textContent = "Reading the existing Family Set and LOAD source index…";
   try {
     const snapshot = await readCgxFamilyOversight(requestedOwnerSession);
-    if (!ownerSessionToken || ownerSessionToken !== requestedOwnerSession) {
-      mount.textContent = "Owner session cleared; family evidence hidden.";
-      return;
-    }
+    if (!isCurrentRead(ownerSessionToken)) return;
     mount.innerHTML = renderCgxFamilyOversight(snapshot);
   } catch (error) {
+    if (!isCurrentRead(ownerSessionToken)) return;
     mount.textContent = error instanceof Error
       ? `Family oversight held: ${error.message}`
       : "Family oversight is unavailable.";
