@@ -23,7 +23,8 @@ test('child FileSpace names fail closed consistently with Windows basename safet
   '../escape.cgx','..\\escape.cgx','C:stream.cgx','CON.cgx',
   'LPT1.cgx','CONIN$.cgx','CONOUT$.cgx','bad\u200b.cgx',
   'bad\n.cgx','e\u0301.cgx','a%2fb.cgx','Other-Science.CGX',
-  'x'.repeat(129)+'.cgx','staged/Other-Science.cgx'
+  'x'.repeat(129)+'.cgx','staged/Other-Science.cgx',
+  'Ordinary .cgx','Ordinary.v2 .cgx','CON .cgx','LPT1 .cgx'
  ]){
   const result=planCGXHandshake({...base,child:{...base.child,filespace}});
   assert.equal(result.status,'DENIED',JSON.stringify(filespace));
