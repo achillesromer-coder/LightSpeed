@@ -113,7 +113,7 @@ export type PrivateSandboxManifestProjection = Readonly<{
 }>;
 
 export function projectPrivateSandboxManifest(input: unknown): PrivateSandboxManifestProjection {
-  if (!record(input)) hold();
+  if (!record(input)) throw new Error("OWNER_PACKET_REVIEW_HOLD");
   if (input.schema !== "CGX-PRIVATE-SOURCE-SANDBOX/0.1" ||
       input.status !== "SANDBOX_SOURCE_INDEX_READY_NOT_CANONICAL" ||
       input.canonical_target !== "Cognigrex.cgx" ||
@@ -143,7 +143,7 @@ export function projectPrivateSandboxManifest(input: unknown): PrivateSandboxMan
   const seen = new Set<string>();
   for (let i = 0; i < 12; i++) {
     const entry: unknown = entries[i];
-    if (!record(entry)) hold();
+    if (!record(entry)) throw new Error("OWNER_PACKET_REVIEW_HOLD");
     if (entry.shard !== `conversations-${String(i).padStart(3, "0")}.json` ||
         entry.verified !== true ||
         typeof entry.expected_sha256 !== "string" ||
