@@ -74,14 +74,31 @@ def git(repo: Path, *args: str) -> bytes:
 
 
 def check_git(repo: Path) -> None:
-    head = git(repo, "rev-parse", "HEAD").decode().strip()
-    # The review job itself may be a descendant of the exact family source.
-    ancestor = subprocess.run(
-        ("git", "-C", str(repo), "merge-base", "--is-ancestor", FAMILY_COMMIT, head),
-        capture_output=True, timeout=30, check=False,
-    )
-    if ancestor.returncode != 0 or git(repo, "status", "--porcelain", "--untracked-files=no").strip():
-        raise Stage35Hold("REVIEW_WORKTREE_NOT_EXACT_DESCENDANT_OR_DIRTY")
+    """Execute tests ONLY against the exact Stage34-approved family tree.
+
+    A descendant commit—even an apparently harmless update—changes dependency
+    authority. Tracked, untracked and nested source shadowing are all HOLD.
+    Do not silently update, reset, pull or clean an operator worktree.
+    """
+    head = git(repo, "rev-parse", "HEAD").decode("ascii").strip()
+    if head != FAMILY_COMMIT:
+        raise Stage35Hold("REVIEW_HEAD_NOT_EXACT_PINNED_FAMILY_COMMIT")
+    status = git(repo, "status", "--porcelain=v1", "--untracked-files=all", "-z")
+    if status:
+        raise Stage35Hold("REVIEW_WORKTREE_TRACKED_OR_UNTRACKED_DRIFT")
+    # These exact test and bridge entrypoint bytes must match the approved Git
+    # revision; Windows CRLF/BOM-only smudge remains source-equivalent.
+    for path in (
+        "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_family_ingestion.py",
+        "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py",
+        "desktop/LightSpeed_Runtime/tests/test_cgx_family_ingestion.py",
+        "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py",
+    ):
+        local = repo / path
+        if not local.is_file() or local.is_symlink():
+            raise Stage35Hold("REVIEW_EXECUTABLE_SOURCE_MISSING_OR_SYMLINK")
+        if normalized(git(repo, "show", FAMILY_COMMIT + ":" + path)) != normalized(local.read_bytes()):
+            raise Stage35Hold("REVIEW_EXECUTABLE_SOURCE_DRIFT")
 
 
 def check_bundle(repo: Path, receipt: dict[str, Any], bundle: Path) -> None:
