@@ -310,7 +310,9 @@ def build_evidence(
         issues.append("CANONICAL_FAMILY_REGISTRY_UNVERIFIED")
     try:
         root = _load_json(host_root / "cognigrex.root.json")
-        binding = root.get("root_carrier") or {}
+        binding = root.get("root_carrier")
+        if not isinstance(binding, dict):
+            raise ValueError("ROOT_CARRIER_BINDING_INVALID")
         bytes_sha = _sha256(host_root / "Cognigrex.cgx")
         same = (binding.get("object_id") == S92_INSTANCE
                 and binding.get("sha256") == S92_SHA256
