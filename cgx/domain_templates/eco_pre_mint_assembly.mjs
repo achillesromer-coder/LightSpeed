@@ -660,6 +660,18 @@ export function prepareEcoPreMintAssembly(request={}){
     source,source_lineage,executed.evidence_class);
   const originalCellDigests=reviewDeclaredOriginalCellDigestCrosswalk(
     original_cell_digest_crosswalk,source,source_lineage,executed.evidence_class);
+  // A source-bound digest receipt and formula inventory are two independent
+  // caller-declared views. Reject contradictions before any R1 projection:
+  // translated-only IDs cannot become original source-authored evidence.
+  if(formula_inventory!==null&&original_cell_digest_crosswalk!==null){
+    const originalIds=new Set(formula_inventory.original_ids);
+    const relatedIds=new Set(formula_inventory.related_ids);
+    const receiptIds=originalCellDigests.formula_records.map(x=>x.formula_id);
+    const translatedOnly=originalCellDigests.translation_only_formula_ids;
+    if(receiptIds.some(id=>!originalIds.has(id)||!relatedIds.has(id))||
+       translatedOnly.some(id=>originalIds.has(id)||!relatedIds.has(id)))
+      throw Error("ECO_FORMULA_RECEIPT_INVENTORY_CONFLICT");
+  }
   let coeff={state:"COEFFICIENT_ROLES_NOT_SUPPLIED"};
   if(coefficient_roles!==null){
     if(!obj(coefficient_roles)||cascade_input.domain!=="second_cycle_claim"||
