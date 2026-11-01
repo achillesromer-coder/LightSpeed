@@ -52,6 +52,20 @@ class Stage35PureTests(unittest.TestCase):
             ):
                 runner.check_git(Path("unused"))
 
+    def test_rejects_ignored_python_import_shadow(self):
+        ignored_python = (
+            b"desktop/LightSpeed_Runtime/lightspeed_runtime/__pycache__/ls_go_bridge.cpython-311.pyc\x00"
+        )
+        with patch.object(runner, "git", side_effect=[
+            (runner.FAMILY_COMMIT + "\n").encode("ascii"),
+            b"",
+            ignored_python,
+        ]):
+            with self.assertRaisesRegex(
+                runner.Stage35Hold, "REVIEW_IGNORED_EXECUTABLE_SOURCE_SHADOW"
+            ):
+                runner.check_git(Path("unused"))
+
     def test_clean_exact_revision_accepts_crlf_only(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
@@ -69,6 +83,8 @@ class Stage35PureTests(unittest.TestCase):
                 if args == ("rev-parse", "HEAD"):
                     return runner.FAMILY_COMMIT.encode("ascii") + b"\n"
                 if args == ("status", "--porcelain=v1", "--untracked-files=all", "-z"):
+                    return b""
+                if args[0] == "ls-files":
                     return b""
                 if args[0] == "show":
                     return b"print('source')\n"
@@ -93,7 +109,7 @@ class Stage35PureTests(unittest.TestCase):
             def pinned_git(repo, *args):
                 if args == ("rev-parse", "HEAD"):
                     return runner.FAMILY_COMMIT.encode("ascii") + b"\n"
-                if args[0] == "status":
+                if args[0] in ("status", "ls-files"):
                     return b""
                 return b"print('source')\n"
             with patch.object(runner, "git", side_effect=pinned_git):
