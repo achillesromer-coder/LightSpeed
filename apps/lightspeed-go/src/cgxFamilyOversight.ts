@@ -100,3 +100,20 @@ export function renderCgxFamilyOversight(value: CgxFamilyOversightSnapshot): str
   <p class="muted">UniSpace remains a private, non-authoritative oversight lens.
   Source bytes, remote fetch, installer actions, and canonical writes are excluded.</p>`;
 }
+
+/**
+ * Client-only stale-response fence for the owner-private Family Set panel.
+ * This does NOT authenticate, authorise or validate the backend response.
+ * A new read or any auth transition invalidates all previous pending reads.
+ */
+export function createCgxFamilyReadGuard() {
+  let epoch = 0;
+  return {
+    invalidate(): void { epoch += 1; },
+    begin(session: string): (activeSession: string) => boolean {
+      const ticket = ++epoch;
+      return (activeSession: string): boolean =>
+        Boolean(session) && activeSession === session && ticket === epoch;
+    },
+  };
+}
