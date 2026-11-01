@@ -11,6 +11,7 @@ import hashlib
 import json
 import posixpath
 import re
+from html.parser import HTMLParser
 import shutil
 from pathlib import Path
 from typing import Any
@@ -61,6 +62,37 @@ def _validate_static_reference(relative:str,uri:str) -> None:
     if target not in APPROVED:
         raise BundleHold(f"reference not in exact CGX public allowlist: {relative} => {target}")
 
+class _PublicHtmlReferences(HTMLParser):
+    """Parse HTML attributes rather than rely on quote-sensitive regex scans."""
+    RESOURCE_TAGS = frozenset({
+        "script", "link", "img", "source", "video", "audio",
+        "track", "iframe", "embed", "object",
+    })
+    RESOURCE_ATTRS = frozenset({"src", "href", "poster", "data"})
+
+    def __init__(self, relative: str):
+        super().__init__(convert_charrefs=True)
+        self.relative = relative
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        values = dict(attrs)
+        if tag in {"base", "form"}:
+            raise BundleHold(f"unreviewed HTML navigation or form: {self.relative}")
+        if tag == "meta" and (values.get("http-equiv") or "").casefold() == "refresh":
+            raise BundleHold(f"unreviewed HTML meta refresh: {self.relative}")
+        if any(key in values for key in ("srcdoc", "srcset", "ping")):
+            raise BundleHold(f"unreviewed embedded, responsive or beacon attribute: {self.relative}")
+        if tag in self.RESOURCE_TAGS:
+            for key in self.RESOURCE_ATTRS.intersection(values):
+                uri = values[key]
+                if uri is None:
+                    raise BundleHold(f"empty HTML resource attribute: {self.relative}")
+                _validate_static_reference(self.relative, uri)
+
+    def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.handle_starttag(tag, attrs)
+
+
 def _source_files(root:Path) -> dict[str,Path]:
     if not root.is_dir() or root.is_symlink():
         raise BundleHold("expected ordinary public/cgx source directory")
@@ -100,23 +132,7 @@ def inspect_public_bundle(source:Path=SOURCE)->dict[str,Any]:
         for uri in re.findall(r"""(?:import\s*(?:[^;]*?\s+from\s*)?|from\s*)['"]([^'"]+)['"]""",text):
             _validate_static_reference(relative,uri)
         if relative.endswith(".html"):
-            # #158: deny HTML-only navigation/exfiltration surfaces that do not
-            # invoke fetch() and are not covered by src/href asset checks.
-            # This synthetic demonstration requires no redirect, base or form.
-            if re.search(r"<\s*meta\b[^>]*\bhttp-equiv\s*=\s*[\'\"]?refresh\b", text, re.I):
-                raise BundleHold(f"unreviewed HTML meta refresh: {relative}")
-            if re.search(r"<\s*(?:base|form)\b", text, re.I):
-                raise BundleHold(f"unreviewed HTML navigation or form: {relative}")
-            # Passive resource loads are network-capable even when no fetch() call
-            # exists. Restrict them to the same exact reviewed asset allowlist.
-            for uri in re.findall(
-                r"""<(?:script|link|img|source|video|audio|track|iframe|embed|object)\b[^>]*?\b(?:src|href|poster|data)\s*=\s*['"]([^'"]+)['"]""",
-                text,re.I,
-            ):
-                _validate_static_reference(relative,uri)
-            # Responsive source sets can hide an additional unreviewed endpoint.
-            if re.search(r"""\bsrcset\s*=""",text,re.I):
-                raise BundleHold(f"unreviewed responsive media source: {relative}")
+            _PublicHtmlReferences(relative).feed(text)
         if relative.endswith(".css") and re.search(r"@import\b",text,re.I):
             raise BundleHold(f"unreviewed CSS import: {relative}")
         if relative.endswith((".css",".html")):
