@@ -520,7 +520,14 @@ def test_stale_consumer_lock_with_live_reused_pid_remains_held(tmp_path: Path, m
     try:
         consumer._acquire_heartbeat_lock()
     except RuntimeError as exc:
-        assert "already active as PID 424242" in str(exc)
+        # The current consumer reports the live PID. The separate draft
+        # Achilles singleton hardening (#217) instead requires owner-reviewed
+        # reconciliation for every existing lock, including a reused PID.
+        # Preserve the invariant across both review branches without treating
+        # a PID or an error-message spelling as authenticated ownership.
+        message = str(exc)
+        assert ("already active as PID 424242" in message
+                or "owner-reviewed" in message)
     else:
         raise AssertionError("stale timestamp bypassed live-PID singleton hold")
     assert json.loads(lock.read_text(encoding="utf-8")) == original
