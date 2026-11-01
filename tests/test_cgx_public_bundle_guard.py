@@ -124,6 +124,25 @@ class PublicBundleTests(unittest.TestCase):
                 with self.assertRaises(mod.BundleHold):
                     mod.inspect_public_bundle(c)
 
+    def test_public_anchor_navigation_does_not_escape_allowlist(self):
+        # #158: anchors and image-map areas are navigational disclosure
+        # surfaces even without fetch(), form submission or inline scripts.
+        attacks = [
+            '<a href="/owner-private/achilles-status.json">private</a>',
+            '<a href="javascript:alert(1)">script URL</a>',
+            '<a href="data:text/html,private">data URL</a>',
+            '<a href="https://example.invalid/collect">remote</a>',
+            '<area href="//example.invalid/collect" alt="remote">',
+        ]
+        for attack in attacks:
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as d:
+                c = Path(d) / "cgx"
+                shutil.copytree(mod.SOURCE, c)
+                with (c / "index.html").open("a", encoding="utf-8") as handle:
+                    handle.write("\\n" + attack)
+                with self.assertRaises(mod.BundleHold):
+                    mod.inspect_public_bundle(c)
+
     def test_unquoted_html_and_embedded_private_resource_negatives(self):
         # #158: HTMLParser must inspect unquoted and entity-decoded URLs;
         # regex scans of only quoted src/href silently miss browser loads.
