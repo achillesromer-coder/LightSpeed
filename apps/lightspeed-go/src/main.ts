@@ -412,6 +412,9 @@ byId<HTMLButtonElement>("owner-logout").addEventListener("click", async () => {
   if (token) {
     try { await logoutDesktopOwner(token); } catch { /* The local session is already cleared. */ }
   }
+  // A new sign-in may finish while the old logout request is in flight.
+  // Never let the old completion overwrite that newer owner session UI.
+  if (ownerSessionToken) return;
   byId<HTMLButtonElement>("owner-logout").hidden = true;
   byId("owner-auth-state").textContent = "Signed out";
   ownerAuthMessage("warn", "Owner session cleared from this page.");
