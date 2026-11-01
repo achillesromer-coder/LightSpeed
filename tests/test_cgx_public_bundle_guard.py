@@ -272,7 +272,7 @@ class PublicBundleTests(unittest.TestCase):
                 c = Path(d) / "cgx"
                 shutil.copytree(mod.SOURCE, c)
                 with (c / "index.html").open("a", encoding="utf-8") as handle:
-                    handle.write("\\n" + attack)
+                    handle.write("\n" + attack)
                 with self.assertRaises(mod.BundleHold):
                     mod.inspect_public_bundle(c)
 
@@ -281,7 +281,7 @@ class PublicBundleTests(unittest.TestCase):
             c = Path(d) / "cgx"
             shutil.copytree(mod.SOURCE, c)
             with (c / "index.html").open("a", encoding="utf-8") as handle:
-                handle.write('\\n<input type="search" aria-label="Local demo filter">')
+                handle.write('\n<input type="search" aria-label="Local demo filter">')
             self.assertEqual(mod.inspect_public_bundle(c)["file_count"], 12)
 
     def test_no_symlink_intake(self):
