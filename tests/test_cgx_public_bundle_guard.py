@@ -90,6 +90,23 @@ class PublicBundleTests(unittest.TestCase):
                 with self.assertRaisesRegex(mod.BundleHold, "active network or dynamic code API"):
                     mod.inspect_public_bundle(c)
 
+    def test_passive_html_css_network_resources_fail_closed(self):
+        # Network-capable passive resource attributes and CSS url() must be
+        # rejected even if CSP is intended to deny their runtime requests.
+        attacks = [
+            ("assets/viewer.css", '\n.tile{background-image:url("https://example.invalid/pixel.png")}'),
+            ("index.html", '<img src="https://example.invalid/pixel.png" alt="unreviewed">'),
+            ("index.html", '<img srcset="https://example.invalid/pixel.png 1x" alt="unreviewed">'),
+        ]
+        for relative, attack in attacks:
+            with self.subTest(relative=relative, attack=attack), tempfile.TemporaryDirectory() as d:
+                c = Path(d) / "cgx"
+                shutil.copytree(mod.SOURCE, c)
+                with (c / relative).open("a", encoding="utf-8") as handle:
+                    handle.write("\n" + attack)
+                with self.assertRaises(mod.BundleHold):
+                    mod.inspect_public_bundle(c)
+
     def test_no_symlink_intake(self):
         with tempfile.TemporaryDirectory() as d:
             c=Path(d)/"cgx"
