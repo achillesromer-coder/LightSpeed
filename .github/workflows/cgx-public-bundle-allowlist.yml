@@ -5,6 +5,8 @@ on:
       - "apps/lightspeed-go/public/cgx/**"
       - "apps/lightspeed-go/scripts/cgx_public_bundle_guard.py"
       - "apps/lightspeed-go/tests/unispace-*.test.mjs"
+      - "apps/lightspeed-go/src/ownerProgressProjection.ts"
+      - "apps/lightspeed-go/tests/owner-progress.test.mjs"
       - "tests/test_cgx_public_bundle_guard.py"
       - ".github/workflows/cgx-public-bundle-allowlist.yml"
   workflow_dispatch:
@@ -30,7 +32,8 @@ jobs:
         working-directory: apps/lightspeed-go
         run: |
           npm ci --silent
-          npm test -- --run tests/unispace-public.test.mjs tests/unispace-domains.test.mjs
+          npm run check
+          npm test -- --run tests/unispace-public.test.mjs tests/unispace-domains.test.mjs tests/owner-progress.test.mjs
       - name: Build isolated nonproduction public-only candidate
         run: |
           python apps/lightspeed-go/scripts/cgx_public_bundle_guard.py --output "$RUNNER_TEMP/unispace-cgx-review" > "$RUNNER_TEMP/unispace-review.json"
