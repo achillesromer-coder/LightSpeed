@@ -292,6 +292,26 @@
         "native_status": "HOST_NATIVE_HOLD",
         "blocked_gate": "Source ABI budget shape is not issuer signature, RootAuthority, revocation, nonce consumption, trusted host time, tool installation or signed DBR proof.",
         "effectful_actions": "NONE"
+      },
+      "lease_abi_cascade_floor_review_2026_11_01": {
+        "evidence_class": "AUTHENTICATED_GITHUB_SOURCE_AND_ACTIONS_LOG_READBACK; SOURCE_ONLY_SYNTHETIC_NEGATIVE",
+        "review_pr": "https://github.com/achillesromer-coder/LightSpeed/pull/206",
+        "source_commit": "da7397e879b2ffeafd4330653081a4cd335329c1",
+        "source_path": "cgx/bootstrap/cgxHandshakeReview.mjs",
+        "source_blob": "7f9b5171396e7ceb85bbcab2e5cfa6820464bb9a",
+        "test_commit": "ad8acbf27b5cc04b5b6c5d1ba95fc34c8fe9d269",
+        "test_path": "cgx/bootstrap/cgxHandshakeReview.test.mjs",
+        "test_blob": "8556ea32e386d2e028731b95a63d585fe2127708",
+        "workflow_run": "https://github.com/achillesromer-coder/LightSpeed/actions/runs/41256069605",
+        "workflow_job_id": 124699375800,
+        "node_tests": {
+          "passed": 72,
+          "failed": 0
+        },
+        "finding": "Native ABI source-review now explicitly binds requested C0-C4 cascade to lease max_cascade_class and nonempty planned_floors subset of allowed_floors. Missing, unknown, exceeding, malformed or foreign specialist-floor declarations DENIED. Valid scoped requests remain UNVERIFIED_SHAPE_REVIEW and may_execute=false.",
+        "native_readiness": "HOST_NATIVE_HOLD",
+        "blocked_gate": "No signed issuer/root/revocation, trusted host clock, nonce consumption, real CCC runtime binding, or DBR/peer readback. Source review does not install or authorise execution.",
+        "effectful_actions": "NONE"
       }
     },
     {
