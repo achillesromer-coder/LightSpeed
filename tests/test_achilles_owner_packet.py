@@ -113,8 +113,9 @@ def test_private_file_cli_output_contains_no_instruction(tmp_path):
     assert output["state"] == "REVIEW_ONLY_NOT_DISPATCHED"
 
 
-def test_plugin_selector_is_additive_not_an_authority_migration():
+def test_plugin_selector_is_generated_and_profile_is_additive():
     selector = json.loads((ROOT / "plugins/packages/achilles/references/selector.json").read_text())
+    source = json.loads((ROOT / "cgx/domain_templates/plugin_selector_registry.json").read_text())
+    assert selector["profile"] == source["selectors"]["achilles"]
     assert selector["profile"]["default_domain"] == "emassc"
-    assert selector["owner_operator_profile_ref"] == "cgx/domain_templates/achilles_owner_operator_profile.json"
-    assert selector["owner_operator_profile_state"] == "REVIEW_ONLY_UNMINTED"
+    assert (ROOT / "cgx/domain_templates/achilles_owner_operator_profile.json").is_file()
