@@ -133,6 +133,8 @@ def inspect_lock_path(path: Path, *, now: datetime | None = None) -> dict[str, A
         lock = json.loads(raw.decode("utf-8-sig"))
     except (UnicodeError, json.JSONDecodeError) as exc:
         raise ConsumerHealthHold("CONSUMER_LOCK_JSON_HOLD") from exc
+    if not isinstance(lock, dict):
+        raise ConsumerHealthHold("CONSUMER_LOCK_SCHEMA_HOLD")
     observed = process_snapshot_windows(lock.get("pid"))
     result = inspect_heartbeat(lock, observed, now=now)
     result["lock_sha256"] = hashlib.sha256(raw).hexdigest()
