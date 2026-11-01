@@ -158,6 +158,15 @@ export function reviewNativeLeaseHandshakeABI({
     return deny("NATIVE_LEASE_CONTEXT_SCOPE_MISMATCH");
   }
  }
+ // The native lease contract names geographic_or_orbital_scope but does not
+ // define a portable typed frame/units/region containment ABI. The existing
+ // native runtime validator also does not bind this axis. Never report a
+ // request as scope-bound if either side declares spatial restrictions: a
+ // host-qualified schema and independent frame-aware containment proof are
+ // required first. This review adapter remains non-authorising regardless.
+ if(Object.hasOwn(scopes,"geographic_or_orbital_scope")||
+    Object.hasOwn(request,"geographic_or_orbital_scope"))
+  return deny("NATIVE_LEASE_SPATIAL_SCOPE_UNMAPPED");
  // The native execution contract separately bounds cascade severity and specialist floors.
  // Source-review must not mark request scope bound while ignoring these axes.
  const cascadeRank={C0:0,C1:1,C2:2,C3:3,C4:4};
