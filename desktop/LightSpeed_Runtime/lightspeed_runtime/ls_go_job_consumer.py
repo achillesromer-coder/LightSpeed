@@ -1437,34 +1437,27 @@ class LSGoJobConsumer:
     def _acquire_heartbeat_lock(self) -> None:
         path = heartbeat_path(self.shell_root)
         path.parent.mkdir(parents=True, exist_ok=True)
-        for _attempt in range(2):
-            try:
-                descriptor = os.open(str(path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-            except FileExistsError:
-                payload = _read_json(path)
-                try:
-                    pid = int(payload.get("pid"))
-                except (TypeError, ValueError):
-                    pid = None
-                if _pid_alive(pid):
-                    raise RuntimeError(f"LS GO job consumer already active as PID {pid}")
-                try:
-                    path.unlink()
-                except OSError as exc:
-                    raise RuntimeError(f"stale LS GO consumer lock cannot be removed: {exc}") from exc
-                continue
-            payload = {
-                "schema_version": CONSUMER_SCHEMA,
-                "pid": os.getpid(),
-                "started_utc": utc_now_iso(),
-                "heartbeat_utc": utc_now_iso(),
-                "state": "starting",
-            }
-            with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
-                json.dump(payload, stream, indent=2, sort_keys=True)
-                stream.write("\n")
-            return
-        raise RuntimeError("unable to acquire LS GO consumer lock")
+        try:
+            descriptor = os.open(str(path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError as exc:
+            # A PID is not a process identity: Windows can reuse a recorded PID.
+            # Neither a live nor a dead PID authorises deletion of durable lock
+            # evidence, claim replay, or a second singleton. Owner-reviewed
+            # recovery must reconcile process, lease, queue and receipts first.
+            raise RuntimeError(
+                "LS GO consumer singleton lock exists; owner-reviewed "
+                "process/lease/claim reconciliation required before recovery"
+            ) from exc
+        payload = {
+            "schema_version": CONSUMER_SCHEMA,
+            "pid": os.getpid(),
+            "started_utc": utc_now_iso(),
+            "heartbeat_utc": utc_now_iso(),
+            "state": "starting",
+        }
+        with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
+            json.dump(payload, stream, indent=2, sort_keys=True)
+            stream.write("\n")
 
     def _heartbeat(self, state: str) -> None:
         _write_json(
