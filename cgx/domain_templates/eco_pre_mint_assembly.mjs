@@ -402,6 +402,96 @@ function reviewFormulaInventoryDelta(inventory,source,lineage){
   };
 }
 
+
+/**
+ * Attach a PRIVATE original-cell receipt to the existing Eco review chain.
+ * Only caller-declared hashes and A1 anchors cross this boundary. The module
+ * does not read the receipt, source cells, related provider, rights or DBR.
+ * This is NOT issuer attestation, translation equivalence or an R2 model.
+ */
+function reviewDeclaredOriginalCellDigestCrosswalk(packet,source,lineage,evidenceClass){
+  if(packet===null)return {state:"ORIGINAL_CELL_DIGEST_RECEIPT_NOT_SUPPLIED",
+    independent_receipt_readback:false,original_cells_reread:false,
+    native_admitted:false};
+  const keys=new Set(["source_ref","source_revision","source_sha256",
+    "related_source_ref","related_revision_ref","receipt_ref","receipt_sha256",
+    "evidence_class","entries","translation_only_ids","unit_defect_refs"]);
+  const entryKeys=new Set(["formula_id","original_anchor","translated_anchor",
+    "original_text_sha256","translated_text_sha256","status"]);
+  const cell=/^[A-Za-z0-9_]{1,64}![A-Z]{1,3}[1-9]\\d{0,6}$/;
+  const expression=/^[A-Za-z0-9_]{1,64}!B([1-9]\\d{0,6})$/;
+  const allowedStatuses=new Set(["TEXT_EXACT","REVERSIBLE_ENCODING_CANDIDATE"]);
+  if(!obj(packet)||Object.keys(packet).some(k=>!keys.has(k))||
+     !source.proof_hash||!obj(lineage)||
+     packet.source_ref!==source.source_ref||
+     packet.source_revision!==source.revision||
+     packet.source_sha256!==source.proof_hash||
+     packet.related_source_ref!==lineage.related_source_ref||
+     packet.related_revision_ref!==lineage.related_revision_ref||
+     packet.evidence_class!==evidenceClass||
+     !token(packet.receipt_ref)||!SHA.test(packet.receipt_sha256)||
+     !Array.isArray(packet.entries)||packet.entries.length<1||
+     packet.entries.length>32||
+     !Array.isArray(packet.translation_only_ids)||
+     packet.translation_only_ids.length>32||
+     !Array.isArray(packet.unit_defect_refs)||packet.unit_defect_refs.length>16)
+    throw Error("INVALID_ECO_ORIGINAL_CELL_DIGEST_CROSSWALK");
+  const seen=new Set(),originalAnchors=new Set(),relatedAnchors=new Set();
+  const records=[];
+  for(const e of packet.entries){
+    if(!obj(e)||Object.keys(e).some(k=>!entryKeys.has(k))||
+       !/^FM-[0-9]{3}$/.test(e.formula_id)||
+       !expression.test(e.original_anchor)||
+       !expression.test(e.translated_anchor)||
+       !SHA.test(e.original_text_sha256)||!SHA.test(e.translated_text_sha256)||
+       !allowedStatuses.has(e.status)||
+       seen.has(e.formula_id)||originalAnchors.has(e.original_anchor)||
+       relatedAnchors.has(e.translated_anchor))
+      throw Error("INVALID_ECO_ORIGINAL_CELL_DIGEST_ENTRY");
+    const equal=e.original_text_sha256.toLowerCase()===
+      e.translated_text_sha256.toLowerCase();
+    if((e.status==="TEXT_EXACT")!==equal)
+      throw Error("ECO_ORIGINAL_CELL_DIGEST_STATUS_CONFLICT");
+    seen.add(e.formula_id);originalAnchors.add(e.original_anchor);
+    relatedAnchors.add(e.translated_anchor);
+    records.push({formula_id:e.formula_id,
+      original_anchor:e.original_anchor,translated_anchor:e.translated_anchor,
+      original_text_sha256:e.original_text_sha256.toLowerCase(),
+      translated_text_sha256:e.translated_text_sha256.toLowerCase(),
+      status:e.status,original_source_preserved:true,
+      cell_text_exposed:false,provider_cell_readback_by_module:false,
+      mathematical_equivalence_verified:false});
+  }
+  const additions=new Set();
+  for(const id of packet.translation_only_ids){
+    if(typeof id!=="string"||!/^FM-[0-9]{3}$/.test(id)||
+       additions.has(id)||seen.has(id))
+      throw Error("ECO_TRANSLATION_ONLY_ID_ATTRIBUTION_CONFLICT");
+    additions.add(id);
+  }
+  const units=new Set();
+  for(const ref of packet.unit_defect_refs){
+    if(typeof ref!=="string"||!cell.test(ref)||units.has(ref))
+      throw Error("INVALID_ECO_TRANSLATION_UNIT_DEFECT_REFERENCE");
+    units.add(ref);
+  }
+  return {state:"R1_CALLER_DECLARED_ORIGINAL_CELL_DIGESTS_HOLD",
+    receipt_ref:packet.receipt_ref,receipt_sha256:packet.receipt_sha256.toLowerCase(),
+    compared_count:records.length,
+    mismatched_text_count:records.filter(x=>x.status!=="TEXT_EXACT").length,
+    original_text_exact_count:records.filter(x=>x.status==="TEXT_EXACT").length,
+    translation_only_formula_ids:[...additions].sort(),
+    unqualified_unit_defect_refs:[...units].sort(),
+    formula_records:records,
+    receipt_sha256_cryptographically_verified_by_module:false,
+    original_source_sha_bound_to_executed_cascade:true,
+    original_cells_reread:false,related_cells_reread:false,
+    issuer_authenticated:false,rights_verified:false,
+    translation_equivalence_verified:false,unit_validity_verified:false,
+    independent_science_verified:false,native_admitted:false,
+    source_or_translation_modified:false,public_release_authorised:false};
+}
+
 /**
  * Reversible, cell-addressed review candidates for translated symbolic text.
  * Caller supplies independently retrieved source cells. No text is emitted,
@@ -513,13 +603,14 @@ export function prepareEcoPreMintAssembly(request={}){
     "requested_hydration","observation_showcase","source_lineage","access_posture",
     "related_access_posture","cell_crosswalk",
     "symbolic_expression_crosswalk","formula_inventory",
-    "symbolic_correction_batch","coefficient_roles"].includes(k)))
+    "symbolic_correction_batch","original_cell_digest_crosswalk","coefficient_roles"].includes(k)))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const {cascade_input,geometry_descriptor=null,cell_anchor=null,
     requested_hydration="H3",observation_showcase=null,source_lineage=null,
     access_posture=null,related_access_posture=null,cell_crosswalk=null,
     symbolic_expression_crosswalk=null,formula_inventory=null,
-    symbolic_correction_batch=null,coefficient_roles=null}=request;
+    symbolic_correction_batch=null,original_cell_digest_crosswalk=null,
+    coefficient_roles=null}=request;
   if(!obj(cascade_input)||!levels.includes(requested_hydration))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const executed=runEcoReviewCascade(cascade_input);
@@ -544,6 +635,8 @@ export function prepareEcoPreMintAssembly(request={}){
   const formulaInventory=reviewFormulaInventoryDelta(formula_inventory,source,source_lineage);
   const symbolicCorrections=reviewSymbolicCorrectionBatch(symbolic_correction_batch,
     source,source_lineage,executed.evidence_class);
+  const originalCellDigests=reviewDeclaredOriginalCellDigestCrosswalk(
+    original_cell_digest_crosswalk,source,source_lineage,executed.evidence_class);
   let coeff={state:"COEFFICIENT_ROLES_NOT_SUPPLIED"};
   if(coefficient_roles!==null){
     if(!obj(coefficient_roles)||cascade_input.domain!=="second_cycle_claim"||
@@ -610,6 +703,13 @@ export function prepareEcoPreMintAssembly(request={}){
     if(formulaInventory.state==="R1_TRANSLATION_FORMULA_INVENTORY_DELTA_HOLD")
       blockers.push("TRANSLATION_FORMULA_LIBRARY_DELTA_REQUIRES_PROVENANCE");
   }
+  if(original_cell_digest_crosswalk!==null){
+    blockers.push("PRIVATE_ORIGINAL_CELL_RECEIPT_NOT_INDEPENDENTLY_ATTESTED_BY_MODULE");
+    if(originalCellDigests.translation_only_formula_ids.length)
+      blockers.push("TRANSLATION_ONLY_FORMULAS_NOT_ORIGINAL_SOURCE_EVIDENCE");
+    if(originalCellDigests.unqualified_unit_defect_refs.length)
+      blockers.push("TRANSLATED_PHYSICAL_UNITS_UNQUALIFIED");
+  }
   if(coefficient_roles!==null){
     blockers.push("COEFFICIENT_ROLES_REQUIRE_PROVIDER_CELL_ATTESTATION");
     if(coeff.same_symbol_distinct_roles)
@@ -669,6 +769,7 @@ export function prepareEcoPreMintAssembly(request={}){
     source_symbolic_expression_crosswalk_review:level>=2?symbolic:{state:"NOT_REQUESTED"},
     formula_inventory_review:level>=2?formulaInventory:{state:"NOT_REQUESTED"},
     symbolic_correction_batch_review:level>=2?symbolicCorrections:{state:"NOT_REQUESTED"},
+    original_cell_digest_crosswalk_review:level>=2?originalCellDigests:{state:"NOT_REQUESTED"},
     coefficient_roles_review:level>=2?coeff:{state:"NOT_REQUESTED"},
     access_posture_review:level>=2?access:{state:"NOT_REQUESTED"},
     related_access_posture_review:level>=2?relatedAccess:{state:"NOT_REQUESTED"},
@@ -687,6 +788,7 @@ export function prepareEcoPreMintAssembly(request={}){
       {layer:"symbolic_expression",state:level>=2?symbolic.state:"NOT_REQUESTED"},
       {layer:"formula_inventory",state:level>=2?formulaInventory.state:"NOT_REQUESTED"},
       {layer:"symbolic_corrections",state:level>=2?symbolicCorrections.state:"NOT_REQUESTED"},
+      {layer:"original_cell_digests",state:level>=2?originalCellDigests.state:"NOT_REQUESTED"},
       {layer:"coefficient_roles",state:level>=2?coeff.state:"NOT_REQUESTED"},
       {layer:"semantic",state:"R1_REVIEW_ONLY"},
       {layer:"geometry",state:geom.state},
@@ -699,6 +801,7 @@ export function prepareEcoPreMintAssembly(request={}){
       "CALLER_DECLARED_PAIRWISE_CELLS_NOT_INDEPENDENT_PROVIDER_ATTESTATION",
       "SYMBOLIC_EXPRESSION_TEXT_NOT_INDEPENDENTLY_VERIFIED_OR_REPAIRED",
       "SYMBOLIC_CORRECTION_BATCH_NOT_APPLIED_TO_SOURCE",
+      "ORIGINAL_CELL_DIGEST_RECEIPT_NOT_INDEPENDENTLY_RETRIEVED_BY_MODULE",
       "COEFFICIENT_ROLES_NOT_INDEPENDENTLY_PROVIDER_ATTESTED",
       "NO_METRIC_GEOMETRY_OR_CRS_TRANSFORM",
       "NO_R2_ONTOLOGY_OR_NATIVE_OBJECT_ID_PROOF",
