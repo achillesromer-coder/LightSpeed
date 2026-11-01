@@ -213,5 +213,42 @@ class WindowsBootEvidenceTests(unittest.TestCase):
         self.assertIn("ATOMIC_DBR_AND_INDEPENDENT_RECEIVER_NOT_VERIFIED", output["holds"])
 
 
+    def test_loopback_health_non_object_json_fails_closed_without_network(self):
+        # A localhost HTTP 200 response is not authenticated native authority.
+        # Non-object JSON must not crash the read-only host diagnostic.
+        class Response:
+            status = 200
+            def __init__(self, payload):
+                self.payload = payload
+            def __enter__(self):
+                return self
+            def __exit__(self, exc_type, exc, tb):
+                return False
+            def read(self, limit):
+                return self.payload[:limit]
+
+        class Opener:
+            def __init__(self, bridge_payload):
+                self.bridge_payload = bridge_payload
+            def open(self, request, timeout):
+                if request.full_url.endswith("/api/v1/status"):
+                    return Response(self.bridge_payload)
+                return Response(b"<!doctype html><html></html>")
+
+        for payload, expected in (
+            (b"[]", "UNRECOGNISED_SERVICE"),
+            (b"null", "UNRECOGNISED_SERVICE"),
+            (b'"ls-go"', "UNRECOGNISED_SERVICE"),
+            (b'{"bridge":"other"}', "UNRECOGNISED_SERVICE"),
+            (b'{"bridge":"ls-go"}', "LS_GO_IDENTITY_SEEN"),
+            (b"not-json", "NOT_VERIFIED"),
+        ):
+            with self.subTest(payload=payload):
+                with patch.object(probe, "build_opener", return_value=Opener(payload)):
+                    result = probe._loopback_status(False)
+                self.assertEqual(result["bridge"], expected)
+                self.assertEqual(result["go"], "HTTP_200")
+
+
 if __name__ == "__main__":
     unittest.main()
