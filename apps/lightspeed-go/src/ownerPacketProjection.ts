@@ -127,8 +127,8 @@ export function projectPrivateSandboxManifest(input: unknown): PrivateSandboxMan
   const entries = input.source_verification;
   const occurrences = input.raw_export_message_occurrences;
   const duplicates = input.repeat_identity_occurrences;
-  if (!record(counts) || !record(gates) || !Array.isArray(entries) ||
-      entries.length !== 12 || counts.source_shards !== 12 ||
+  if (!record(counts) || !record(gates) || !Array.isArray(entries)) throw new Error("OWNER_PACKET_REVIEW_HOLD");
+  if (entries.length !== 12 || counts.source_shards !== 12 ||
       !Number.isSafeInteger(counts.distinct_messages) ||
       (counts.distinct_messages as number) < 0 ||
       !Number.isSafeInteger(occurrences) || !Number.isSafeInteger(duplicates) ||
@@ -151,7 +151,7 @@ export function projectPrivateSandboxManifest(input: unknown): PrivateSandboxMan
         entry.expected_sha256 !== entry.observed_sha256 ||
         seen.has(entry.expected_sha256) ||
         !Number.isSafeInteger(entry.size) || (entry.size as number) <= 0) hold();
-    seen.add(entry.expected_sha256);
+    seen.add(entry.expected_sha256 as string);
   }
 
   // Never emit private filenames, SHA values, source titles, message bodies,
