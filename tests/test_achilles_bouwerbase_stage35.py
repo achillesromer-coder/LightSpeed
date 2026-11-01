@@ -183,10 +183,62 @@ class Stage35PureTests(unittest.TestCase):
                 archive.writestr("manifest.json", json.dumps(manifest))
                 archive.writestr("extra.json", "{}")
             receipt["source_bundle"].update(sha256=runner.digest(zip_path.read_bytes()), readback_pass=True)
-            with patch.object(runner, "git", return_value=payload):
-                with self.assertRaises(runner.Stage35Hold) as found:
-                    runner.check_bundle(root, receipt, zip_path)
+            with patch.object(runner, "STAGE34_BUNDLE_SHA256", runner.digest(zip_path.read_bytes())):
+                with patch.object(runner, "git", return_value=payload):
+                    with self.assertRaises(runner.Stage35Hold) as found:
+                        runner.check_bundle(root, receipt, zip_path)
             self.assertIn("UNEXPECTED_MEMBER", str(found.exception))
+
+    def test_immutable_stage34_bundle_pin_rejects_self_consistent_alternate_zip(self):
+        # Same five Git-backed source members; ZIP packaging alone changes.
+        # A matching mutable receipt must never authorise the alternate ZIP.
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            paths = (
+                "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_family_ingestion.py",
+                "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py",
+                "apps/lightspeed-go/src/main.ts",
+                "apps/lightspeed-go/src/desktopBridge.ts",
+                "apps/lightspeed-go/src/cgxFamilyOversight.ts",
+            )
+            payload = b"print('source')\\n"
+            manifest = {
+                "schema": runner.BUNDLE_SCHEMA,
+                "state": "REVIEW_ONLY_NOT_INSTALLED",
+                "source_commit": runner.FAMILY_COMMIT,
+            }
+            archives = []
+            for name, comment in (("approved.zip", b""), ("alternate.zip", b"repacked")):
+                path = root / name
+                with zipfile.ZipFile(path, "w") as archive:
+                    for member in paths:
+                        archive.writestr("source/" + member, payload)
+                    archive.writestr("manifest.json", json.dumps(manifest))
+                    archive.comment = comment
+                archives.append(path)
+            approved, alternate = archives
+            self.assertNotEqual(runner.digest(approved.read_bytes()), runner.digest(alternate.read_bytes()))
+            def receipt_for(path):
+                return {
+                    "source_bundle": {"sha256": runner.digest(path.read_bytes()), "readback_pass": True},
+                    "source_proofs": [
+                        {"path": member, "git_blob_content_sha256": runner.digest(payload)}
+                        for member in paths
+                    ],
+                }
+            with patch.object(runner, "STAGE34_BUNDLE_SHA256", runner.digest(approved.read_bytes())):
+                with patch.object(runner, "git", return_value=payload):
+                    runner.check_bundle(root, receipt_for(approved), approved)
+                    with self.assertRaisesRegex(
+                        runner.Stage35Hold, "STAGE34_BUNDLE_PIN_MISMATCH"
+                    ):
+                        runner.check_bundle(root, receipt_for(alternate), alternate)
+                    wrong_receipt = receipt_for(approved)
+                    wrong_receipt["source_bundle"]["sha256"] = runner.digest(alternate.read_bytes())
+                    with self.assertRaisesRegex(
+                        runner.Stage35Hold, "STAGE34_BUNDLE_HASH_HOLD"
+                    ):
+                        runner.check_bundle(root, wrong_receipt, approved)
 
     def test_unreachable_bridge_fails_closed(self):
         with patch.object(runner, "build_opener") as build:
