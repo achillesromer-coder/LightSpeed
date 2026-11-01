@@ -33,7 +33,7 @@ const result=(reason,code='HOLD')=>({schema:DROP_SCHEMA,status:code,reason,bytes
  network_fetch:false,hash_verified:false,acl_verified:false,object_id_minted:false,
  native_admitted:false,public_release:false,canonical_mutation:false});
 /** One selected existing identity and one incoming source, not an ingestion transaction. */
-export function planUniSpaceDropPreflight({target,file,source,access,existing_sources=[],surface='private',offline=false}={}){
+export function planUniSpaceDropPreflight({target,file,source,access,existing_sources=[],surface=null,offline=false}={}){
  if(!obj(target)||!obj(file)||!obj(source)||!obj(access)||!Array.isArray(existing_sources)||existing_sources.length>512)
   return result('INVALID_PREFLIGHT_INPUT');
  if(!identityLabel(target.object_id)||reservedObjectId(target.object_id)||!identityLabel(target.file_space)||!identityLabel(target.domain)||!identityLabel(target.owner)||
