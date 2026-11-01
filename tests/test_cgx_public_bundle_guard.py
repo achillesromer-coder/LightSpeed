@@ -124,4 +124,14 @@ class PublicBundleTests(unittest.TestCase):
         with self.assertRaises(mod.BundleHold):
             mod.make_public_bundle(ROOT/"apps/lightspeed-go/public/new_release_subtree")
 
+    def test_operator_build_destinations_fail_closed_before_copy(self):
+        # #158: do not contaminate LS GO dist/build/Vite cache with a
+        # separately reviewed public-only CGX candidate.
+        for relative in ("dist", "build", ".vite", "public"):
+            dest=ROOT/"apps/lightspeed-go"/relative/"__cgx_public_guard_negative_20261101__"
+            with self.subTest(relative=relative):
+                with self.assertRaisesRegex(mod.BundleHold,"operator application/build/static tree"):
+                    mod.make_public_bundle(dest)
+                self.assertFalse(dest.exists())
+
 if __name__=="__main__":unittest.main()
