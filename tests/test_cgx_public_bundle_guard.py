@@ -140,7 +140,7 @@ class PublicBundleTests(unittest.TestCase):
                 c = Path(d) / "cgx"
                 shutil.copytree(mod.SOURCE, c)
                 with (c / "assets/core.js").open("a", encoding="utf-8") as handle:
-                    handle.write("\\n" + attack)
+                    handle.write("\n" + attack)
                 with self.assertRaisesRegex(mod.BundleHold, "unreviewed JavaScript template literal"):
                     mod.inspect_public_bundle(c)
 
