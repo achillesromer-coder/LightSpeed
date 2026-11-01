@@ -86,5 +86,104 @@
     "runtime": "existing LightSpeed Neo-supervised floor runner and local models",
     "presentation": "existing UniSpace and LS GO review shell; no independent product backend",
     "acceptance_dependency": "review/cgx-achilles-bouwerbase-stage35-20261101 requires independent authenticated host receipt; do not change its pinned tree"
+  },
+  "completion_gradient": {
+    "schema": "CGX-ACHILLES-100-UNIT-WORK-CLOSURE/0.1",
+    "purpose": "Classify original, shelved, partially built and implemented work by evidence before owner-lane execution",
+    "source_inputs": [
+      "existing LightSpeed gated_build_tasks",
+      "existing consolidation_registry",
+      "original R0 GPT export and local intake",
+      "current Git SHA and native host receipts"
+    ],
+    "weighted_proof_units": [
+      {
+        "phase": "R0 source identity and version",
+        "units": 10
+      },
+      {
+        "phase": "R0 rights and ACL",
+        "units": 10
+      },
+      {
+        "phase": "R1 reversible parse and loss",
+        "units": 10
+      },
+      {
+        "phase": "R2 typed semantic and spatial lineage",
+        "units": 10
+      },
+      {
+        "phase": "Family owner and exact Object_ID",
+        "units": 10
+      },
+      {
+        "phase": "CCC skillset and capability binding",
+        "units": 10
+      },
+      {
+        "phase": "Executable implemented function",
+        "units": 10
+      },
+      {
+        "phase": "Host and negative regression testing",
+        "units": 10
+      },
+      {
+        "phase": "Native signed DBR and rollback",
+        "units": 10
+      },
+      {
+        "phase": "Permissioned UniSpace acceptance",
+        "units": 10
+      }
+    ],
+    "scenario_A": "At least 72 independently verified units: close missing integration/final ~20 units; unverified historical 80-percent claims are only A candidates",
+    "scenario_B": "At most 20 independently verified units and at least 80 demonstrably missing: build foundation and missing implementation; scaffolds are only B candidates",
+    "intermediate": "Keep 21-71 or unmeasured work separately; never coerce into A/B",
+    "source_claim_labels": {
+      "implemented_and_tested": "A_CANDIDATE_UNMEASURED",
+      "contracted_and_partially_bound": "MIXED_UNMEASURED",
+      "ready_no_risk_seed": "B_CANDIDATE_UNMEASURED"
+    },
+    "required_receipt_fields": [
+      "original_locator",
+      "original_sha256",
+      "source_revision",
+      "owner_lane",
+      "rights_acl",
+      "scope",
+      "test_command",
+      "observed_result",
+      "negative_case",
+      "independent_readback",
+      "rollback",
+      "accepted_authority"
+    ],
+    "enforcement": {
+      "legacy_label_is_verified_progress": false,
+      "incomplete_receipt_earns_units": false,
+      "unmeasured_completion_percent": null,
+      "auto_dispatch": false,
+      "recursive_self_build": false,
+      "model_weight_training": false,
+      "new_scheduler": false,
+      "mint_without_signed_dbr": false,
+      "public_release_without_owner": false
+    },
+    "ownership": {
+      "Achilles": "Portfolio decision, independent safety and rights review",
+      "Neo": "Existing supervised LS runtime, host agents and execution",
+      "Athene": "Eco evidence and ecological qualifiers",
+      "Cognigrex": "Parent identity and FileSpace/LOAD resolver",
+      "UniSpace": "Permissioned R3 operator interface",
+      "Oracle": "Original ingestion, dictionary and source lookup",
+      "Morpheus": "Independent proof and falsification",
+      "Smith": "Approved queued work and idempotent receipts",
+      "Merovingian": "Negative QA and release audit",
+      "Trinity": "Unified shell/UI",
+      "TheConstruct": "Manual-heavy geometry and simulation",
+      "Architect": "Existing architectural synthesis"
+    }
   }
 }
