@@ -29,8 +29,8 @@ const hold = (): never => { throw new Error("OWNER_PACKET_REVIEW_HOLD"); };
 
 /** Render-safe, deliberately minimal projection; never a credential check. */
 export function projectOwnerReviewPacket(input: unknown): OwnerPacketProjection {
-  if (!record(input) ||
-      input.schema !== "CGX-ACHILLES-OWNER-REVIEW-PACKET/0.1" ||
+  if (!record(input)) throw new Error("OWNER_PACKET_REVIEW_HOLD");
+  if (input.schema !== "CGX-ACHILLES-OWNER-REVIEW-PACKET/0.1" ||
       input.state !== "REVIEW_ONLY_NOT_DISPATCHED" ||
       input.selector !== "achilles" ||
       input.authority_domain !== "emassc" ||
