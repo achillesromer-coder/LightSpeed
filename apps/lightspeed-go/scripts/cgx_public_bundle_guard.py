@@ -53,6 +53,22 @@ MAX_BYTES=1_000_000
 class BundleHold(ValueError):
     pass
 
+def _reject_split_computed_transport(text: str, relative: str) -> None:
+    """Deny literal-string assembly of browser transport property names (#158).
+
+    This is a bounded source-level negative, not a JS parser or runtime ACL.
+    """
+    for match in re.finditer(
+        r"""\[\s*(?:['"][^'"\n]{1,40}['"]\s*\+\s*)+['"][^'"\n]{1,40}['"]\s*\]""",
+        text,
+    ):
+        fragments = re.findall(r"""['"]([^'"\n]*)['"]""", match.group(0))
+        if "".join(fragments).casefold() in {
+            "fetch", "xmlhttprequest", "websocket", "eventsource",
+            "sendbeacon", "serviceworker", "importscripts", "eval", "function",
+        }:
+            raise BundleHold(f"computed split network API access: {relative}")
+
 def _validate_static_reference(relative:str,uri:str) -> None:
     # A parent-relative link is permitted only when the resolved target
     # still names one of the exact CGX public package assets.
@@ -148,6 +164,8 @@ def inspect_public_bundle(source:Path=SOURCE)->dict[str,Any]:
         if total>MAX_BYTES:raise BundleHold("public package size beyond bounded review")
         try:text=blob.decode("utf-8")
         except UnicodeError as exc:raise BundleHold("non-UTF8 public payload") from exc
+        if relative.endswith(".js"):
+            _reject_split_computed_transport(text, relative)
         for label,pattern in BLOCKED.items():
             if pattern.search(text):
                 raise BundleHold(f"{label}: {relative}")
