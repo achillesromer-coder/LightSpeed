@@ -61,6 +61,7 @@ test("bridge reachability cannot override stale PID/lease", () => {
 test("wrong child FileSpace, missing ID or revision fails source identity", () => {
   for (const source of [
     {...full().source, filespace:"Eco.cgx/FileSpace"},
+    {...full().source, object_id:"Eco.cgx:/FileSpace/foreign-object"},
     {...full().source, object_id:null},
     {...full().source, revision:"unsigned"},
   ]) {
@@ -68,6 +69,10 @@ test("wrong child FileSpace, missing ID or revision fails source identity", () =
     const v=projectOwnerProgress(x);
     assert.equal(v.access,"HOLD_SOURCE_IDENTITY");
     assert.equal(v.object_id,null);
+    assert.equal(v.progress,null);
+    assert.equal(v.bridge,"BRIDGE_WITHHELD");
+    assert.equal(v.consumer,"CONSUMER_HELD");
+    assert.equal(v.source_revision,null);
   }
 });
 
