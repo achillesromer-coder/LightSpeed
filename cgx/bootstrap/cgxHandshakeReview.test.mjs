@@ -273,6 +273,14 @@ const nativeABIBase={
   domain:'lightspeed',execution_depth:'simulate',action_class:'simulate',
   nonce:'fixture:unconsumed-nonce',cascade_class:'C1',planned_floors:['Neo'],resource_usage:{compute_ms:20}}
 };
+test('native lease ABI shape review also rejects unsafe child FileSpace names',()=>{
+ for(const filespace of ['../escape.cgx','CON.cgx','bad\u200b.cgx']){
+  const result=reviewNativeLeaseHandshakeABI({...nativeABIBase,
+   child:{...nativeABIBase.child,filespace}});
+  assert.equal(result.status,'DENIED',filespace);
+  assert.equal(result.reason,'BOOTSTRAP_SHAPE_UNSAFE_CHILD_FILESPACE',filespace);
+ }
+});
 test('native lease ABI adapter never confers operational authority',()=>{
  const r=reviewNativeLeaseHandshakeABI(nativeABIBase);
  assert.equal(r.status,'UNVERIFIED_SHAPE_REVIEW');
