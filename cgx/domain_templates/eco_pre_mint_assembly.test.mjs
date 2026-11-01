@@ -827,3 +827,60 @@ test("Second Cycle coefficient role collision is retained as held pre-Mint revie
  ])assert.throws(()=>prepare({cascade_input:input,coefficient_roles:bad}),
    /ECO_COEFFICIENT_SOURCE_OR_EVIDENCE_CONFLICT|INVALID_SECOND_CYCLE_COEFFICIENT_ROLES/);
 });
+
+
+test("original cell digest crosswalk binds receipt hashes without promoting private source or physics",()=>{
+ const base={source_ref:source.source_ref,source_revision:source.revision,
+  source_sha256:digest,related_source_ref:lineage.related_source_ref,
+  related_revision_ref:lineage.related_revision_ref,
+  receipt_ref:"synthetic:private-receipt",receipt_sha256:"a".repeat(64),
+  evidence_class:"simulated"};
+ const entries=[
+  {formula_id:"FM-001",original_anchor:"31_Formula_Library!B3",
+   translated_anchor:"SYNTHETIC_31_Formula_Library!B3",
+   original_text_sha256:"1".repeat(64),translated_text_sha256:"2".repeat(64),
+   status:"REVERSIBLE_ENCODING_CANDIDATE"},
+  {formula_id:"FM-005",original_anchor:"31_Formula_Library!B7",
+   translated_anchor:"SYNTHETIC_31_Formula_Library!B7",
+   original_text_sha256:"3".repeat(64),translated_text_sha256:"3".repeat(64),
+   status:"TEXT_EXACT"}];
+ const packet={...base,entries,translation_only_ids:["FM-008","FM-009"],
+   unit_defect_refs:["SYNTHETIC_07_Flow_Mist_Model!C4",
+    "SYNTHETIC_07_Flow_Mist_Model!C7"]};
+ const run=x=>prepare({cascade_input:input,source_lineage:lineage,
+   original_cell_digest_crosswalk:x});
+ const r=run(packet),p=r.original_cell_digest_crosswalk_review;
+ assert.equal(p.state,"R1_CALLER_DECLARED_ORIGINAL_CELL_DIGESTS_HOLD");
+ assert.equal(p.compared_count,2);
+ assert.equal(p.mismatched_text_count,1);
+ assert.equal(p.original_text_exact_count,1);
+ assert.deepEqual(p.translation_only_formula_ids,["FM-008","FM-009"]);
+ assert.equal(p.unqualified_unit_defect_refs.length,2);
+ assert.equal(p.original_source_sha_bound_to_executed_cascade,true);
+ assert.equal(p.receipt_sha256_cryptographically_verified_by_module,false);
+ assert.equal(p.original_cells_reread,false);
+ assert.equal(p.translation_equivalence_verified,false);
+ assert.equal(r.canonical_write,false);
+ assert.equal(r.release.mint_allowed,false);
+ assert.ok(r.blocking_gates.includes("TRANSLATED_PHYSICAL_UNITS_UNQUALIFIED"));
+ assert.ok(r.blocking_gates.includes("TRANSLATION_ONLY_FORMULAS_NOT_ORIGINAL_SOURCE_EVIDENCE"));
+ assert.equal(JSON.stringify(r).includes("synthetic = v"),false);
+ assert.throws(()=>run({...packet,source_revision:"stale"}),
+   /INVALID_ECO_ORIGINAL_CELL_DIGEST_CROSSWALK/);
+ assert.throws(()=>run({...packet,source_sha256:"0".repeat(64)}),
+   /INVALID_ECO_ORIGINAL_CELL_DIGEST_CROSSWALK/);
+ assert.throws(()=>run({...packet,evidence_class:"observed"}),
+   /INVALID_ECO_ORIGINAL_CELL_DIGEST_CROSSWALK/);
+ assert.throws(()=>run({...packet,entries:[{...entries[0],status:"TEXT_EXACT"}]}),
+   /ECO_ORIGINAL_CELL_DIGEST_STATUS_CONFLICT/);
+ assert.throws(()=>run({...packet,translation_only_ids:["FM-001"]}),
+   /ECO_TRANSLATION_ONLY_ID_ATTRIBUTION_CONFLICT/);
+ assert.throws(()=>run({...packet,unit_defect_refs:["SYNTHETIC_07_Flow_Mist_Model!C4",
+   "SYNTHETIC_07_Flow_Mist_Model!C4"]}),
+   /INVALID_ECO_TRANSLATION_UNIT_DEFECT_REFERENCE/);
+ assert.throws(()=>run({...packet,entries:[{...entries[0],raw_text:"private"}]}),
+   /INVALID_ECO_ORIGINAL_CELL_DIGEST_ENTRY/);
+ const h0=prepare({cascade_input:input,source_lineage:lineage,
+  original_cell_digest_crosswalk:packet,requested_hydration:"H0"});
+ assert.equal(h0.original_cell_digest_crosswalk_review.state,"NOT_REQUESTED");
+});
