@@ -56,3 +56,35 @@ This packet does not itself execute models, queue tasks, mint Object_IDs, approv
 6. UniSpace displays only ACL-qualified R3 information; autonomy growth follows proposal -> isolated tests -> independent review -> signed promotion.
 
 Open stop ships: #154, #158, #161, #209, S92/S97. No PR auto-merge, credential installation, public publication or scheduled agent wake-up follows from this patch.
+
+## 1 November: LS GO singleton consumer health integration (review stage)
+
+The owner-local source review confirmed that an HTTP-responsive LS GO bridge does **not**
+prove the singleton Smith/Neo consumer is healthy. In the observed Windows host
+state, the consumer heartbeat was stale and its recorded process ID had been
+reused by an unrelated process. The existing native queue and database identities
+were read-only and not modified.
+
+The additive `scripts/achilles_lsgo_consumer_preflight.py` uses a bounded Windows
+process query and existing lock metadata to classify stale heartbeats, reused PIDs,
+wrong processes and malformed locks. It **never** deletes a lock, restarts a service,
+authenticates the owner, obtains leases, submits a queue item, or grants execution.
+Even a fresh matching Python process is only a candidate until authenticated
+thread, lease, owner and receipt proof independently pass.
+
+`tests/test_achilles_lsgo_consumer_preflight.py` provides fail-closed test coverage.
+The exact source/test Git blobs were run in a private BouwerBase review staging
+environment, where eight built-in negative checks and thirteen focused pytest
+cases passed; this is not a Stage35 host acceptance or native installation.
+
+The host-local queue review adapter separately verified exact-command-ID lookup,
+duplicate/DB identity alignment and source-reference-only search. Its initial
+non-dispatching UniSpace task packet remains owner-private, never a new source of
+truth or separate scheduler. The existing LS GO command ledger and consumer
+retain ownership. Do **not** queue tasks while singleton consumer readiness is
+unverified; require exact owner-authorised recovery of the original service,
+durable task/claim receipt reconciliation, and an independent post-restart
+heartbeat/consumer readback.
+
+The unminted Achilles profile, generated plugin selector and existing approval
+and Stage35 pins remain unchanged.
