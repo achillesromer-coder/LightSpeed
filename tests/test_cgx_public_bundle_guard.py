@@ -89,7 +89,7 @@ class PublicBundleTests(unittest.TestCase):
                 c = Path(d) / "cgx"
                 shutil.copytree(mod.SOURCE, c)
                 with (c / "assets/core.js").open("a", encoding="utf-8") as handle:
-                    handle.write("\\n" + attack)
+                    handle.write("\n" + attack)
                 with self.assertRaisesRegex(mod.BundleHold, "scripted navigation escape"):
                     mod.inspect_public_bundle(c)
 
@@ -98,7 +98,7 @@ class PublicBundleTests(unittest.TestCase):
             c = Path(d) / "cgx"
             shutil.copytree(mod.SOURCE, c)
             with (c / "assets/core.js").open("a", encoding="utf-8") as handle:
-                handle.write("\\nconst currentRoute = location.pathname;")
+                handle.write("\nconst currentRoute = location.pathname;")
             self.assertEqual(mod.inspect_public_bundle(c)["file_count"], 12)
 
     def test_dynamic_network_and_code_paths_hold_even_when_private_name_is_split(self):
