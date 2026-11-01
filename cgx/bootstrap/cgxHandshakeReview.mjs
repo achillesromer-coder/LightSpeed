@@ -81,7 +81,8 @@ export function planCGXHandshake({parent,child,lease,exchange=null,now=null}={})
   if(required.some(x=>exchange[x]===null||exchange[x]===undefined))return {status:"DENIED",reason:"MISSING_EXCHANGE_FIELD"};
   // Source-envelope chronology is shape data, never a provider timestamp attestation.
   if(!validInstant(exchange.created_utc))return {status:"DENIED",reason:"INVALID_TRANSFER_TIMESTAMP"};
-  if(![exchange.transfer_id,exchange.source_node_id,exchange.target_node_id,exchange.source_ref,exchange.target_root_id,exchange.target_relative_path].every(id)
+  if(![exchange.transfer_id,exchange.source_node_id,exchange.target_node_id,exchange.source_ref,exchange.target_root_id].every(id)
+  ||typeof exchange.target_relative_path!=="string"
   ||!SHA.test(exchange.source_sha256)||!Number.isSafeInteger(exchange.size_bytes)||exchange.size_bytes<0)
    return {status:"DENIED",reason:"INVALID_TRANSFER_ENVELOPE"};
   // Chronology is only a self-reported consistency check, never host time attestation.
