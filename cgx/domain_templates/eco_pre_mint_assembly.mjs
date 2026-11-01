@@ -418,8 +418,8 @@ function reviewDeclaredOriginalCellDigestCrosswalk(packet,source,lineage,evidenc
     "evidence_class","entries","translation_only_ids","unit_defect_refs"]);
   const entryKeys=new Set(["formula_id","original_anchor","translated_anchor",
     "original_text_sha256","translated_text_sha256","status"]);
-  const cell=/^[A-Za-z0-9_]{1,64}![A-Z]{1,3}[1-9]\\d{0,6}$/;
-  const expression=/^[A-Za-z0-9_]{1,64}!B([1-9]\\d{0,6})$/;
+  const cell=/^[A-Za-z0-9_]{1,64}![A-Z]{1,3}[1-9]\d{0,6}$/;
+  const expression=/^[A-Za-z0-9_]{1,64}!B([1-9]\d{0,6})$/;
   const allowedStatuses=new Set(["TEXT_EXACT","REVERSIBLE_ENCODING_CANDIDATE"]);
   if(!obj(packet)||Object.keys(packet).some(k=>!keys.has(k))||
      !source.proof_hash||!obj(lineage)||
