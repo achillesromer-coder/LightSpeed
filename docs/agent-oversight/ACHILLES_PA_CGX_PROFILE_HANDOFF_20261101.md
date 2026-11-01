@@ -36,7 +36,7 @@ The existing review/cgx-achilles-bouwerbase-stage35-20261101 branch is a separat
 ## Narrow integration this patch adds
 
 1. cgx/domain_templates/achilles_owner_operator_profile.json — typed, review-only P.A intent, operator role, existing components, source ladder, first UniSpace delivery task, permission ceiling and holds.
-2. plugins/packages/achilles/references/selector.json — additive profile reference; existing emassc default preserved.
+2. plugins/packages/achilles/references/selector.json — generated plugin selector intentionally remains unchanged; the separate owner-profile is loaded by the review packet script. Existing emassc default is preserved.
 3. scripts/prepare_achilles_owner_packet.py — deterministic non-dispatching owner packet, optionally using existing cognigrex_supervisor.build_workflow_plan; SHA-256 hashes private identifiers without including their raw contents.
 4. tests/test_achilles_owner_packet.py — negative tests for privilege escalation, foreign domain, unsafe floor routing, duplicate references, source leakage and CLI private-file usage.
 
