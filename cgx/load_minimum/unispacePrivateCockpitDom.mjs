@@ -9,6 +9,26 @@ import {planUniSpaceOperatorCockpit} from './unispaceSourceInspector.mjs';
 export const PRIVATE_STATUS_DOM_SCHEMA='UNISPACE-PRIVATE-STATUS-DOM/0.1';
 const denied=reason=>({schema:PRIVATE_STATUS_DOM_SCHEMA,status:'DENIED',reason,
   host_authenticated:false,rendered_live:false,public_release:false,may_execute:false});
+// Caller-supplied, source-only owner progress. This is NOT a host/DBR receipt.
+// Only a fixed vocabulary may cross into the private review DOM: never raw
+// conversation text, command history, token URLs, source hashes or locators.
+const ownerStatusValues=Object.freeze({
+ bridge_status:new Set(['BRIDGE_REACHABLE','BRIDGE_UNREACHABLE','BRIDGE_UNKNOWN']),
+ consumer_status:new Set(['CONSUMER_HELD','CONSUMER_UNKNOWN']),
+ r1_status:new Set(['PRIVATE_R1_CANDIDATE','R1_UNVERIFIED']),
+ r2_status:new Set(['R2_DISCOVERY_ONLY','R2_UNVERIFIED'])
+});
+const ownerReviewProjection=(report,selection,offline)=>{
+ if(report==null)return {state:'ABSENT'};
+ if(offline)return {state:'DENIED',reason:'OFFLINE_OWNER_REVIEW_UNAVAILABLE'};
+ if(!report||typeof report!=='object'||Array.isArray(report)||
+    report.object_id!==selection.object_id||report.file_space!==selection.file_space||
+    Object.entries(ownerStatusValues).some(([key,allowed])=>!allowed.has(report[key])))
+  return {state:'DENIED',reason:'OWNER_REVIEW_SCOPE_OR_STATUS_INVALID'};
+ return {state:'CALLER_REVIEW_ONLY',
+  bridge:report.bridge_status,consumer:report.consumer_status,
+  r1:report.r1_status,r2:report.r2_status};
+};
 const element=(doc,tag,text)=>{
  const node=doc.createElement(tag);
  node.textContent=String(text);
@@ -30,7 +50,7 @@ const line=(doc,label,value)=>{
  * passing surface='private' alone is not a security check.
  */
 export function renderUniSpacePrivateStatus({
- mount=null,surface=null,selection=null,inspector=null,offline=false,hostReceipt=null
+ mount=null,surface=null,selection=null,inspector=null,offline=false,hostReceipt=null,ownerReview=null
 }={}){
  if(!mount||typeof mount.replaceChildren!=='function')
   return denied('INVALID_MOUNT');
@@ -44,6 +64,8 @@ export function renderUniSpacePrivateStatus({
  const status=planUniSpaceOperatorCockpit({surface,selection,inspector,offline,hostReceipt});
  if(status.state!=='SOURCE_REVIEW_ONLY')
   return denied(status.reason||'REVIEW_PLAN_NOT_ACCEPTED');
+ const ownerProjection=ownerReviewProjection(ownerReview,selection,offline);
+ if(ownerProjection.state==='DENIED')return denied(ownerProjection.reason);
  const doc=mount.ownerDocument;
  const section=doc.createElement('section');
  section.setAttribute('role','status');
@@ -71,6 +93,18 @@ export function renderUniSpacePrivateStatus({
   line(doc,'Next bounded action',status.next_step)
  );
  section.append(details);
+ if(ownerProjection.state==='CALLER_REVIEW_ONLY'){
+  section.append(element(doc,'h3','Achilles owner progress — historical source-review report'));
+  const progress=doc.createElement('dl');
+  progress.append(
+   line(doc,'Bridge report',ownerProjection.bridge+' — caller reported; current authentication unverified'),
+   line(doc,'Smith consumer report',ownerProjection.consumer+' — no execution readiness inferred'),
+   line(doc,'R1 FileSpace evidence',ownerProjection.r1+' — not native admitted'),
+   line(doc,'R2 relation evidence',ownerProjection.r2+' — not independently accepted'),
+   line(doc,'Progress authority','CALLER_REPORTED_NOT_PROVIDER_READBACK')
+  );
+  section.append(progress);
+ }
  // Explicit H0–H4 boundaries are descriptive only: never expose graph edges,
  // source locators, hashes, capability installers or execution controls.
  section.append(element(doc,'h3','Hydration boundaries — source review'));
