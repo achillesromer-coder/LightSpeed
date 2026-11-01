@@ -39,6 +39,12 @@ def test_owner_packet_routes_with_supervisor_and_no_sensitive_raw_payload():
     serialized = json.dumps(packet)
     assert text not in serialized
     assert source not in serialized
+    assert module._hash(source) not in serialized
+    assert "private_source_id_hashes" not in packet
+    assert packet["output_classification"] == "PRIVATE_OWNER_REVIEW_ONLY"
+    assert packet["public_projection_authorized"] is False
+    assert packet["private_source_set_binding"] == "NOT_INCLUDED_REQUIRES_PRIVATE_REVALIDATION"
+    assert packet["authorization"]["private_source_set_approved"] is False
     assert packet["supervisor"]["floor_sequence"] == ["Neo", "Architect", "Morpheus"]
     assert packet["private_source_count"] == 1
     assert packet["authorization"]["effective_tool_permissions"] == []
@@ -54,6 +60,13 @@ def test_idempotency_preserves_same_task_and_deduplicates_references():
     assert a["idempotency_fingerprint"] == b["idempotency_fingerprint"]
     assert a["idempotency_fingerprint"] != c["idempotency_fingerprint"]
     assert a["private_source_count"] == 2
+    # Different same-size source sets deliberately share a public-safe fingerprint.
+    # This MUST NOT be used as source-set equality or dispatch approval.
+    d = module.prepare_packet("same work", "TASK-2", private_source_ids=("c", "d"), planner=planned)
+    e = module.prepare_packet("same work", "TASK-2", private_source_ids=("a",), planner=planned)
+    assert d["idempotency_fingerprint"] == a["idempotency_fingerprint"]
+    assert e["idempotency_fingerprint"] != a["idempotency_fingerprint"]
+    assert d["authorization"]["private_source_set_approved"] is False
 
 
 def test_mutated_profile_fails_closed(tmp_path):
