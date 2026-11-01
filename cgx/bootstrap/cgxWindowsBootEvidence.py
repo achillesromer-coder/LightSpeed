@@ -86,9 +86,11 @@ def _portable_filespace(value: Any) -> bool:
                for ch in value)):
         return False
     stem = value.split(".", 1)[0]
-    # Fail closed on a space immediately before the extension. Win32 name
-    # normalization and device-name handling must not vary by caller/host.
-    if not stem or stem.endswith(" "):
+    # Preserve the first-component device-name check, while also rejecting
+    # spaces before .cgx even when an earlier dot exists in the basename.
+    # The JS bootstrap handshake uses the same conservative portable rule.
+    basename_without_extension = value[:-4]
+    if not stem or basename_without_extension.endswith(" "):
         return False
     if re.fullmatch(
         r"(?:CON|PRN|AUX|NUL|CONIN\$|CONOUT\$|COM[1-9¹²³]|LPT[1-9¹²³])",
