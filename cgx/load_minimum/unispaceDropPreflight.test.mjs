@@ -5,11 +5,27 @@ const target={object_id:'fixture:eco:existing',file_space:'Eco.cgx',domain:'eco'
 const file={name:'observation.json',type:'application/json',size:123};
 const source={source_id:'fixture:eco:source-v2',version:'2',owner:'fixture-owner',sha256:'a'.repeat(64),rights:'OWNER_PRIVATE',proof_class:'scientific',rights_state:'ACTIVE'};
 const access={authorized_object_ids:[target.object_id],authorized_file_spaces:[target.file_space]};
-const args={target,file,source,access};
+const args={target,file,source,access,surface:'private'};
 const noEffects=x=>{
  for(const k of ['bytes_read','uploaded','network_fetch','hash_verified','acl_verified','object_id_minted','native_admitted','public_release','canonical_mutation'])
   assert.equal(x[k],k==='bytes_read'?0:false,k+' must be inert');
 };
+
+// #158: a standalone browser-originated caller must not inherit a private
+// surface merely because the call omitted an explicit context label.
+test('#158 omitted or ambiguous surface denies private drop metadata',()=>{
+ const missing={...args};delete missing.surface;
+ for(const input of [missing,...[undefined,null,'','PRIVATE',{},[]].map(surface=>({...args,surface}))]){
+  const x=plan(input);
+  assert.equal(x.status,'HOLD');
+  assert.equal(x.reason,'UNSUPPORTED_SURFACE');
+  assert.ok(!JSON.stringify(x).includes(source.source_id));
+  assert.ok(!JSON.stringify(x).includes(source.sha256));
+  assert.ok(!JSON.stringify(x).includes(target.object_id));
+  noEffects(x);
+ }
+ assert.equal(plan(args).status,'REVIEW_CANDIDATE');
+});
 test('single exact child and source metadata yields review candidate, never admission',()=>{
  const x=plan(args);assert.equal(x.status,'REVIEW_CANDIDATE');assert.equal(x.target.object_id,target.object_id);
  assert.equal(x.target.file_space,'Eco.cgx');assert.equal(x.proposed_source.hash_status,'DECLARED_UNVERIFIED');noEffects(x);
