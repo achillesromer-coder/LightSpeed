@@ -72,15 +72,21 @@ class Stage35PureTests(unittest.TestCase):
     def test_source_archive_rejects_extra_files_and_tampering(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
-            original_path = "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_family_ingestion.py"
-            payload = b"print('fixture source')\n"
-            proof = {
-                "path": original_path,
+            paths = [
+                "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_family_ingestion.py",
+                "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py",
+                "apps/lightspeed-go/src/main.ts",
+                "apps/lightspeed-go/src/desktopBridge.ts",
+                "apps/lightspeed-go/src/cgxFamilyOversight.ts",
+            ]
+            payload = b"print('fixture source')\\n"
+            proofs = [{
+                "path": path,
                 "git_blob_content_sha256": runner.digest(payload),
-            }
+            } for path in paths]
             receipt = {
                 "source_bundle": {"sha256": ""},
-                "source_proofs": [proof] * 5,
+                "source_proofs": proofs,
             }
             zip_path = root / "source.zip"
             manifest = {
@@ -89,7 +95,8 @@ class Stage35PureTests(unittest.TestCase):
                 "source_commit": runner.FAMILY_COMMIT,
             }
             with zipfile.ZipFile(zip_path, "w") as archive:
-                archive.writestr("source/" + original_path, payload)
+                for path in paths:
+                    archive.writestr("source/" + path, payload)
                 archive.writestr("manifest.json", json.dumps(manifest))
                 archive.writestr("extra.json", "{}")
             receipt["source_bundle"].update(sha256=runner.digest(zip_path.read_bytes()), readback_pass=True)
