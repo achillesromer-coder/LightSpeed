@@ -121,6 +121,12 @@ if ($BootExistingStack) {
     if ($Evidence.boot.existing_stack_prerequisites_ready -ne $true) {
         throw 'Existing stack preflight failed; no service start attempted.'
     }
+    # Source inventory, HTTP 200 and an operator switch are not signed native
+    # authority. The existing verifier has not yet produced a scoped host lease,
+    # issuer/revocation, owner ACL and independent DBR readback receipt. Keep
+    # this optional restart path fail-closed until that verifier is integrated;
+    # do not call the legacy launcher from a source-only setup probe.
+    throw 'NATIVE_RESTART_HOLD: signed host lease/ACL/revocation and independent DBR readback are not verified by this wizard.'
     # Process/child-only host configuration, not a persistent Windows setting.
     $env:CGX_FAMILY_IDENTITY_REGISTRY = Join-Path $Repo 'cgx\domain_templates\domain_child_identity_registry.json'
     $env:LIGHTSPEED_CANONICAL_DB = Join-Path $CanonicalRoot 'Data\db\lightspeed_unified.db'
