@@ -320,3 +320,73 @@ test('private Objects facet delegates exact child identity and never upgrades so
  assert.equal(fallback.presentation_stage,'H0_OFFLINE_UNVERIFIED');
  assert.equal(fallback.may_execute,false);
 });
+
+
+const heldOwnerReview={
+ object_id:objectId,file_space:'Eco.cgx',
+ bridge_status:'BRIDGE_REACHABLE',consumer_status:'CONSUMER_HELD',
+ r1_status:'PRIVATE_R1_CANDIDATE',r2_status:'R2_DISCOVERY_ONLY',
+ // Untrusted private material must never be projected into a DOM or response.
+ raw_chat:'PRIVATE_CONVERSATION_MUST_NOT_RENDER',
+ token_url:'PRIVATE_LOCALHOST_TOKEN_MUST_NOT_RENDER',
+ command_history:'PRIVATE_REMOTE_COMMAND_MUST_NOT_RENDER',
+ source_hash:'PRIVATE_SHA_MUST_NOT_RENDER'
+};
+
+test('Achilles source-review owner progress separates bridge reachability from held Smith consumer',()=>{
+ const mount=fakeMount();
+ const result=render({...input,mount,ownerReview:heldOwnerReview});
+ assert.equal(result.status,'RENDERED_SOURCE_REVIEW');
+ const txt=flatten(mount);
+ assert.match(txt,/Bridge report BRIDGE_REACHABLE — caller reported; current authentication unverified/);
+ assert.match(txt,/Smith consumer report CONSUMER_HELD — no execution readiness inferred/);
+ assert.match(txt,/R1 FileSpace evidence PRIVATE_R1_CANDIDATE — not native admitted/);
+ assert.match(txt,/R2 relation evidence R2_DISCOVERY_ONLY — not independently accepted/);
+ assert.match(txt,/CALLER_REPORTED_NOT_PROVIDER_READBACK/);
+ assert.match(txt,/Host authentication NOT_AUTHENTICATED/);
+ assert.match(txt,/Live deployment HOLD — not verified/);
+ for(const privateValue of ['PRIVATE_CONVERSATION_MUST_NOT_RENDER','PRIVATE_LOCALHOST_TOKEN_MUST_NOT_RENDER',
+   'PRIVATE_REMOTE_COMMAND_MUST_NOT_RENDER','PRIVATE_SHA_MUST_NOT_RENDER'])
+  assert.ok(!txt.includes(privateValue));
+ assert.ok(!tags(mount).some(t=>['button','a','input','script','iframe'].includes(t)));
+ assert.equal(result.may_execute,false);
+ assert.equal(result.host_authenticated,false);
+ assert.equal(result.public_release,false);
+});
+
+test('owner progress cannot claim execute-ready or cross-child identity and clears stale private status',()=>{
+ const invalid=[
+  {...heldOwnerReview,consumer_status:'CONSUMER_READY'},
+  {...heldOwnerReview,bridge_status:'AUTHENTICATED'},
+  {...heldOwnerReview,r1_status:'NATIVE_ADMITTED'},
+  {...heldOwnerReview,r2_status:'R2_ACCEPTED'},
+  {...heldOwnerReview,object_id:'fixture:romer:private'},
+  {...heldOwnerReview,file_space:'Romer.cgx'}
+ ];
+ for(const ownerReview of invalid){
+  const mount=fakeMount();
+  assert.equal(render({...input,mount,ownerReview:heldOwnerReview}).status,'RENDERED_SOURCE_REVIEW');
+  const denied=render({...input,mount,ownerReview});
+  assert.equal(denied.status,'DENIED');
+  assert.equal(denied.reason,'OWNER_REVIEW_SCOPE_OR_STATUS_INVALID');
+  assert.equal(flatten(mount),'');
+  assert.equal(denied.may_execute,false);
+  assert.equal(denied.host_authenticated,false);
+ }
+});
+
+test('offline and public surfaces cannot replay a historical owner progress report',()=>{
+ const offline=planUniSpaceSourceInspector({...inspectInput,offline:true});
+ const mount=fakeMount();
+ const denied=render({...input,mount,offline:true,inspector:offline,ownerReview:heldOwnerReview});
+ assert.equal(denied.status,'DENIED');
+ assert.equal(denied.reason,'OFFLINE_OWNER_REVIEW_UNAVAILABLE');
+ assert.equal(flatten(mount),'');
+ const publicMount=fakeMount();
+ const publicResult=render({...input,mount:publicMount,surface:'public',ownerReview:heldOwnerReview});
+ assert.equal(publicResult.status,'DENIED');
+ assert.equal(flatten(publicMount),'');
+ const offlineH0=render({...input,mount,offline:true,inspector:offline});
+ assert.equal(offlineH0.status,'RENDERED_SOURCE_REVIEW');
+ assert.ok(!flatten(mount).includes('BRIDGE_REACHABLE'));
+});
