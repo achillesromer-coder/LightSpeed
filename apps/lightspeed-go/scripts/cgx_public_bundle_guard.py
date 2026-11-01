@@ -59,6 +59,12 @@ def _validate_static_reference(relative:str,uri:str) -> None:
         raise BundleHold(f"reference leaves public site boundary: {relative}")
     else:
         target=posixpath.normpath(posixpath.join(posixpath.dirname(relative),addr))
+    # Static directory routes resolve to the already-allowlisted index.html.
+    # Never generalise to arbitrary files or external navigation.
+    if target == ".":
+        target = "index.html"
+    elif target + "/index.html" in APPROVED:
+        target += "/index.html"
     if target not in APPROVED:
         raise BundleHold(f"reference not in exact CGX public allowlist: {relative} => {target}")
 
@@ -93,6 +99,8 @@ class _PublicHtmlReferences(HTMLParser):
                 uri = values[key]
                 if uri is None:
                     raise BundleHold(f"empty HTML resource attribute: {self.relative}")
+                if tag in {"a", "area"} and key == "href" and uri.startswith("#"):
+                    continue  # in-document fragment: no navigation outside the static root
                 _validate_static_reference(self.relative, uri)
 
     def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
