@@ -31,6 +31,7 @@ SCHEMA = "CGX-ACHILLES-ISOLATED-ACCEPTANCE/35.1"
 STAGE34_SCHEMA = "CGX-ACHILLES-DEPLOYMENT-CANDIDATE/34.0"
 BUNDLE_SCHEMA = "CGX-LS-GO-STAGED-SOURCE-PACKAGE/0.1"
 FAMILY_COMMIT = "124262b61fdbb5e181f1c21d064182cd21f74adb"
+STAGE34_BUNDLE_SHA256 = "479cb7b3287f806baf9dbecd36153fca42ba6f9fed5c62e5572a2ca81bb9b604"
 ROOT_OBJECT = "cgx:phase-a:42d99b46c0d322f08b59b7b7"
 R0_SHA = "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5"
 MAX_INPUT_BYTES = 5 * 1024 * 1024
@@ -117,9 +118,14 @@ def check_git(repo: Path) -> None:
 
 def check_bundle(repo: Path, receipt: dict[str, Any], bundle: Path) -> None:
     source = receipt.get("source_bundle") or {}
-    if (not bundle.is_file() or bundle.stat().st_size > MAX_ARCHIVE_BYTES
-            or source.get("sha256") != digest(bundle.read_bytes())
-            or source.get("readback_pass") is not True):
+    if not bundle.is_file() or bundle.stat().st_size > MAX_ARCHIVE_BYTES:
+        raise Stage35Hold("STAGE34_BUNDLE_HASH_HOLD")
+    bundle_sha = digest(bundle.read_bytes())
+    # An internally consistent local receipt cannot substitute for the
+    # independently approved immutable Stage34 archive identity.
+    if bundle_sha != STAGE34_BUNDLE_SHA256:
+        raise Stage35Hold("STAGE34_BUNDLE_PIN_MISMATCH")
+    if source.get("sha256") != bundle_sha or source.get("readback_pass") is not True:
         raise Stage35Hold("STAGE34_BUNDLE_HASH_HOLD")
     proofs = receipt.get("source_proofs")
     if not isinstance(proofs, list) or len(proofs) != 5:
