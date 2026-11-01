@@ -1,0 +1,94 @@
+{
+  "schema": "CGX-ACHILLES-LOCAL-EXECUTION-QUEUE/0.1",
+  "task_id": "CGX-ACHILLES-BOUWERBASE-STAGE35-20261101",
+  "owner_lane": "Achilles / Romer.cgx assurance",
+  "peer_lanes": [
+    "Neo / LS.cgx test execution",
+    "Cognigrex.cgx parent identity review",
+    "UniSpace Product private readback"
+  ],
+  "parent_semantic_object_id": "cgx:root:cognigrex",
+  "host": {
+    "registered_device": "BouwerBase",
+    "device_id": "be89f2af-3d25-4ef6-9cce-b303909d34c0",
+    "observed_state_at_submission": "OFFLINE",
+    "last_seen_approximate": "18h",
+    "reconnect_command": "npx.cmd @wonderwhy-er/desktop-commander@latest remote",
+    "reconnect_command_executed": false,
+    "remote_reconnect_not_possible_from_cloud": true
+  },
+  "source": {
+    "repository": "achillesromer-coder/LightSpeed",
+    "family_review_commit": "124262b61fdbb5e181f1c21d064182cd21f74adb",
+    "load_projection_commit": "6532e6a819c976ac7269764e036d7f0cd6925a7b",
+    "runner_path": "scripts/achilles_bouwerbase_stage35.py",
+    "source_review_branch": "review/cgx-achilles-bouwerbase-stage35-20261101",
+    "trust_requirement": "Exact source review commit and clean local checkout; no unpinned latest code",
+    "runner_git_blob_sha": "aa6c3bbc1d0d64640ef22a6c853650aad8b9cdb5",
+    "runner_git_review_commit": "46ae623a85692de2302d10e42e984f7e0f8e1506",
+    "strict_test_source_checkout": "Exact family HEAD 124262b61fdbb5e181f1c21d064182cd21f74adb; no descendants; status including untracked must be empty",
+    "runner_resolution": "Read source at pinned runner_git_review_commit, verify Git blob SHA unchanged; do not execute a floating branch file or script from an untrusted location"
+  },
+  "input_evidence": {
+    "stage31": "CGX_WINDOWS_SETUP_20261031T060150756Z.json",
+    "stage32": "CGX_ACHILLES_STAGE32_20261031T063353162305Z.json",
+    "stage33": "CGX_ACHILLES_STAGE33_20261031T063804397292Z.json",
+    "stage34": "CGX_ACHILLES_STAGE34_20261031T064323473210Z.json",
+    "stage34_source_zip": "CGX_LS_GO_SOURCE_STAGE34_20261031T064323473210Z.zip",
+    "stage34_bundle_sha256": "479cb7b3287f806baf9dbecd36153fca42ba6f9fed5c62e5572a2ca81bb9b604",
+    "private_receipts_not_stored_in_repository": true
+  },
+  "runtime": {
+    "managed_python": "D:\\LightSpeed\\Environment\\Scripts\\python.exe",
+    "existing_family_review_worktree": "C:\\LightSpeed_Consolidated\\_analysis_remote\\CGX_Family_Review",
+    "native_sqlite_readonly": "D:\\LightSpeed\\Data\\db\\lightspeed_unified.db",
+    "bridge_loopback": "http://127.0.0.1:8765",
+    "expected_live_endpoint_before_deployment": "GET /api/v1/cgx/family-oversight -> HTTP 404",
+    "old_parent_state": "candidate",
+    "required_windows_execution_policy": "AllSigned"
+  },
+  "policy": {
+    "run_only_if_registered_device_online": true,
+    "verify_actual_host_identity": true,
+    "verify_signed_operator_execution_envelope_before_any_consequential_action": true,
+    "use_existing_review_worktree_not_canonical_checkout": true,
+    "host_local_test_only": true,
+    "source_test_runner": "python",
+    "no_unsigned_ps1": true,
+    "no_execution_policy_change": true,
+    "no_remote_agent_install_or_bootstrap_via_untrusted_queue": true,
+    "no_service_restart": true,
+    "no_background_network_listener": true,
+    "no_mint": true,
+    "no_native_dbr_write": true,
+    "no_provider_source_ingest": true,
+    "no_auto_merge": true,
+    "no_public_release": true,
+    "no_execute_on_cloud_runner_as_local_proof": true,
+    "no_run_before_source_commit_validated": true,
+    "require_runner_review_blob_proof": true,
+    "reject_descendant_git_commit": true,
+    "reject_all_untracked_shadow_files": true,
+    "require_all_executable_test_entrypoints_match_pinned_git": true,
+    "no_unverified_local_polling_channel": true,
+    "reject_ignored_importable_shadows": true
+  },
+  "result_requirements": {
+    "receipt_schema": "CGX-ACHILLES-ISOLATED-ACCEPTANCE/35.1",
+    "local_result_filename_pattern": "CGX_ACHILLES_STAGE35_*.json",
+    "required_pass_state": "ISOLATED_TESTS_PASS_NOT_DEPLOYED",
+    "required_native_snapshot_unchanged": true,
+    "require_explicit_local_windows_readback": true,
+    "cloud_github_ci_is_not_host_execution": true
+  },
+  "delivery": {
+    "state": "STAGED_FOR_ACHILLES_CLOUD_REVIEW_NOT_LOCAL_DELIVERY",
+    "local_queue_enqueued": false,
+    "host_command_executed": false,
+    "independent_host_readback": false,
+    "next_gate": "ACTUAL_ONLINE_HOST_CONNECTOR_THEN_AUTHENTICATED_LOCAL_STAGE35",
+    "known_blocker": "Registered BouwerBase device offline; local Smith/Neo queue not externally writable from GitHub cloud branch",
+    "achilles_automation_enabled": true,
+    "achilles_immediate_run_finding": "Reviewed and remedied descendant-commit mismatch and ignored importable-source shadow threats. CI and local Windows readback remain separate."
+  }
+}
