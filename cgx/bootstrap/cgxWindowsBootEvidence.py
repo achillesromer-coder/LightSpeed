@@ -86,7 +86,11 @@ def _portable_filespace(value: Any) -> bool:
                for ch in value)):
         return False
     stem = value.split(".", 1)[0]
-    if not stem or re.fullmatch(
+    # Fail closed on a space immediately before the extension. Win32 name
+    # normalization and device-name handling must not vary by caller/host.
+    if not stem or stem.endswith(" "):
+        return False
+    if re.fullmatch(
         r"(?:CON|PRN|AUX|NUL|CONIN\$|CONOUT\$|COM[1-9¹²³]|LPT[1-9¹²³])",
         stem, flags=re.IGNORECASE,
     ):
