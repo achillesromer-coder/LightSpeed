@@ -335,5 +335,18 @@ class WindowsBootEvidenceTests(unittest.TestCase):
         self.assertFalse(probe._portable_filespace(astral * 64 + ".cgx"))
 
 
+    def test_unsigned_boot_wizard_restart_path_is_source_held(self):
+        # Source-level regression only. CI must never invoke the native launcher.
+        wizard = Path(__file__).resolve().parents[2] / "tools/cgx_setup_windows.ps1"
+        source = wizard.read_text(encoding="utf-8")
+        self.assertEqual(source.count("if ($BootExistingStack) {"), 1)
+        branch = source.split("if ($BootExistingStack) {", 1)[1]
+        hold = branch.find("throw 'NATIVE_RESTART_HOLD:")
+        launcher = branch.find("& $Launcher -NoBrowser")
+        self.assertGreaterEqual(hold, 0)
+        self.assertGreater(launcher, hold)
+        self.assertIn("signed host lease/ACL/revocation", branch)
+
+
 if __name__ == "__main__":
     unittest.main()
