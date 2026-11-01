@@ -5,6 +5,8 @@ on:
       - "apps/lightspeed-go/src/main.ts"
       - "apps/lightspeed-go/src/privateObjectReview.ts"
       - "apps/lightspeed-go/src/privateObjectReview.test.ts"
+      - "apps/lightspeed-go/src/ownerPacketProjection.ts"
+      - "apps/lightspeed-go/src/ownerPacketProjection.test.ts"
       - "apps/lightspeed-go/src/objectReview.ts"
       - "apps/lightspeed-go/src/meshViewer.ts"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py"
