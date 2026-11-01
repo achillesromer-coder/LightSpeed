@@ -273,7 +273,7 @@ test('native lease ABI requires declared authority phase and phase reference',()
  for(const changed of [
   {authority_phase:undefined},{authority_phase:'UNRECOGNISED'},
   {authority_phase_ref:undefined},{authority_phase_ref:''},
-  {authority_phase_ref:'fixture:spoof\\nref'}
+  {authority_phase_ref:'fixture:spoof'+String.fromCharCode(10)+'ref'}
  ]){
   const result=reviewNativeLeaseHandshakeABI({...nativeABIBase,
    nativeLease:{...lease,...changed}});
