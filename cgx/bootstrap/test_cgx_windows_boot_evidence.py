@@ -248,6 +248,24 @@ class WindowsBootEvidenceTests(unittest.TestCase):
                 self.assertEqual(before_db, hashlib.sha256(self.db.read_bytes()).hexdigest())
                 self.assertEqual(before_carrier, hashlib.sha256(carrier_path.read_bytes()).hexdigest())
 
+    def test_symlinked_s92_carrier_fails_closed(self):
+        # A matching digest at an untrusted redirected path is not a host-root
+        # carrier binding. This fixture never invokes a native launcher.
+        carrier = self.host / "Cognigrex.cgx"
+        outside = self.repo / "outside-review-carrier.cgx"
+        outside.write_bytes(self.fake_bytes)
+        carrier.unlink()
+        try:
+            carrier.symlink_to(outside)
+        except (OSError, NotImplementedError):
+            self.skipTest("symlink creation unavailable in this test environment")
+        receipt = self.run_probe()
+        self.assertIn("HOST_S92_ROOT_CARRIER_UNAVAILABLE", receipt["holds"])
+        self.assertFalse(receipt["boot"]["existing_stack_prerequisites_ready"])
+        self.assertFalse(receipt["mint"]["native_mint_authorised"])
+        self.assertEqual(receipt["mint"]["canonical_db_writes"], 0)
+        self.assertEqual(outside.read_bytes(), self.fake_bytes)
+
     def test_changed_r0_hash_blocks_boot(self):
         with closing(sqlite3.connect(self.db)) as con, con:
             con.execute(
