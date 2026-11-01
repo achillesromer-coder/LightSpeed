@@ -417,7 +417,8 @@ function reviewDeclaredOriginalCellDigestCrosswalk(packet,source,lineage,evidenc
     "related_source_ref","related_revision_ref","receipt_ref","receipt_sha256",
     "evidence_class","entries","translation_only_ids","unit_defect_refs"]);
   const entryKeys=new Set(["formula_id","original_anchor","translated_anchor",
-    "original_text_sha256","translated_text_sha256","status"]);
+    "original_text_sha256","translated_text_sha256","status",
+    "original_id_anchor","translated_id_anchor"]);
   const cell=/^[A-Za-z0-9_]{1,64}![A-Z]{1,3}[1-9]\d{0,6}$/;
   const expression=/^[A-Za-z0-9_]{1,64}!B([1-9]\d{0,6})$/;
   const allowedStatuses=new Set(["TEXT_EXACT","REVERSIBLE_ENCODING_CANDIDATE"]);
@@ -436,6 +437,12 @@ function reviewDeclaredOriginalCellDigestCrosswalk(packet,source,lineage,evidenc
      packet.translation_only_ids.length>32||
      !Array.isArray(packet.unit_defect_refs)||packet.unit_defect_refs.length>16)
     throw Error("INVALID_ECO_ORIGINAL_CELL_DIGEST_CROSSWALK");
+  // Address binding is caller-declared only: A-row formula IDs must sit
+  // beside the hashed B-row expressions in both independent sources.
+  const rowBound=(idAnchor,expressionAnchor)=>{
+    const m=/^([A-Za-z0-9_]{1,64})!B([1-9]\d{0,6})$/.exec(expressionAnchor);
+    return Boolean(m)&&idAnchor===m[1]+"!A"+m[2];
+  };
   const seen=new Set(),originalAnchors=new Set(),relatedAnchors=new Set();
   const records=[];
   for(const e of packet.entries){
@@ -452,13 +459,25 @@ function reviewDeclaredOriginalCellDigestCrosswalk(packet,source,lineage,evidenc
       e.translated_text_sha256.toLowerCase();
     if((e.status==="TEXT_EXACT")!==equal)
       throw Error("ECO_ORIGINAL_CELL_DIGEST_STATUS_CONFLICT");
+    const bound=e.original_id_anchor!==undefined&&
+      e.translated_id_anchor!==undefined;
+    if((e.original_id_anchor===undefined)!==
+         (e.translated_id_anchor===undefined)||
+       (bound&&(!rowBound(e.original_id_anchor,e.original_anchor)||
+                !rowBound(e.translated_id_anchor,e.translated_anchor))))
+      throw Error("ECO_ORIGINAL_CELL_DIGEST_FORMULA_ID_ROW_BINDING_CONFLICT");
     seen.add(e.formula_id);originalAnchors.add(e.original_anchor);
     relatedAnchors.add(e.translated_anchor);
     records.push({formula_id:e.formula_id,
       original_anchor:e.original_anchor,translated_anchor:e.translated_anchor,
       original_text_sha256:e.original_text_sha256.toLowerCase(),
       translated_text_sha256:e.translated_text_sha256.toLowerCase(),
-      status:e.status,original_source_preserved:true,
+      status:e.status,
+      original_id_cell_ref:bound?e.original_id_anchor:null,
+      translated_id_cell_ref:bound?e.translated_id_anchor:null,
+      formula_id_row_binding_declared:bound,
+      formula_id_row_binding_provider_attested:false,
+      original_source_preserved:true,
       cell_text_exposed:false,provider_cell_readback_by_module:false,
       mathematical_equivalence_verified:false});
   }
@@ -478,6 +497,10 @@ function reviewDeclaredOriginalCellDigestCrosswalk(packet,source,lineage,evidenc
   return {state:"R1_CALLER_DECLARED_ORIGINAL_CELL_DIGESTS_HOLD",
     receipt_ref:packet.receipt_ref,receipt_sha256:packet.receipt_sha256.toLowerCase(),
     compared_count:records.length,
+    formula_id_row_binding_declared_count:records.filter(x=>
+      x.formula_id_row_binding_declared).length,
+    formula_id_row_binding_required_count:records.filter(x=>
+      !x.formula_id_row_binding_declared).length,
     mismatched_text_count:records.filter(x=>x.status!=="TEXT_EXACT").length,
     original_text_exact_count:records.filter(x=>x.status==="TEXT_EXACT").length,
     translation_only_formula_ids:[...additions].sort(),
@@ -705,6 +728,8 @@ export function prepareEcoPreMintAssembly(request={}){
   }
   if(original_cell_digest_crosswalk!==null){
     blockers.push("PRIVATE_ORIGINAL_CELL_RECEIPT_NOT_INDEPENDENTLY_ATTESTED_BY_MODULE");
+    if(originalCellDigests.formula_id_row_binding_required_count>0)
+      blockers.push("ORIGINAL_CELL_DIGEST_FORMULA_ID_ROW_BINDING_REQUIRED");
     if(originalCellDigests.translation_only_formula_ids.length)
       blockers.push("TRANSLATION_ONLY_FORMULAS_NOT_ORIGINAL_SOURCE_EVIDENCE");
     if(originalCellDigests.unqualified_unit_defect_refs.length)

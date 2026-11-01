@@ -837,10 +837,14 @@ test("original cell digest crosswalk binds receipt hashes without promoting priv
   evidence_class:"simulated"};
  const entries=[
   {formula_id:"FM-001",original_anchor:"31_Formula_Library!B3",
+   original_id_anchor:"31_Formula_Library!A3",
+   translated_id_anchor:"SYNTHETIC_31_Formula_Library!A3",
    translated_anchor:"SYNTHETIC_31_Formula_Library!B3",
    original_text_sha256:"1".repeat(64),translated_text_sha256:"2".repeat(64),
    status:"REVERSIBLE_ENCODING_CANDIDATE"},
   {formula_id:"FM-005",original_anchor:"31_Formula_Library!B7",
+   original_id_anchor:"31_Formula_Library!A7",
+   translated_id_anchor:"SYNTHETIC_31_Formula_Library!A7",
    translated_anchor:"SYNTHETIC_31_Formula_Library!B7",
    original_text_sha256:"3".repeat(64),translated_text_sha256:"3".repeat(64),
    status:"TEXT_EXACT"}];
@@ -852,6 +856,10 @@ test("original cell digest crosswalk binds receipt hashes without promoting priv
  const r=run(packet),p=r.original_cell_digest_crosswalk_review;
  assert.equal(p.state,"R1_CALLER_DECLARED_ORIGINAL_CELL_DIGESTS_HOLD");
  assert.equal(p.compared_count,2);
+ assert.equal(p.formula_id_row_binding_declared_count,2);
+ assert.equal(p.formula_id_row_binding_required_count,0);
+ assert.equal(p.formula_records[0].formula_id_row_binding_provider_attested,false);
+ assert.equal(p.formula_records[0].original_id_cell_ref,"31_Formula_Library!A3");
  assert.equal(p.mismatched_text_count,1);
  assert.equal(p.original_text_exact_count,1);
  assert.deepEqual(p.translation_only_formula_ids,["FM-008","FM-009"]);
@@ -865,6 +873,21 @@ test("original cell digest crosswalk binds receipt hashes without promoting priv
  assert.ok(r.blocking_gates.includes("TRANSLATED_PHYSICAL_UNITS_UNQUALIFIED"));
  assert.ok(r.blocking_gates.includes("TRANSLATION_ONLY_FORMULAS_NOT_ORIGINAL_SOURCE_EVIDENCE"));
  assert.equal(JSON.stringify(r).includes("synthetic = v"),false);
+ const unbound=run({...packet,entries:entries.map(({original_id_anchor,
+  translated_id_anchor,...rest})=>rest)});
+ assert.equal(unbound.original_cell_digest_crosswalk_review
+  .formula_id_row_binding_required_count,2);
+ assert.ok(unbound.blocking_gates.includes(
+  "ORIGINAL_CELL_DIGEST_FORMULA_ID_ROW_BINDING_REQUIRED"));
+ for(const bad of [
+  {...entries[0],original_id_anchor:"31_Formula_Library!A4"},
+  {...entries[0],translated_id_anchor:"SYNTHETIC_31_Formula_Library!A4"},
+  {...entries[0],original_id_anchor:"OTHER!A3"},
+  {...entries[0],translated_id_anchor:undefined},
+  {...entries[0],original_id_anchor:"31_Formula_Library!A3",
+   translated_id_anchor:"SYNTHETIC_31_Formula_Library!A4"}
+ ])assert.throws(()=>run({...packet,entries:[bad]}),
+  /ECO_ORIGINAL_CELL_DIGEST_FORMULA_ID_ROW_BINDING_CONFLICT/);
  assert.throws(()=>run({...packet,source_revision:"stale"}),
    /INVALID_ECO_ORIGINAL_CELL_DIGEST_CROSSWALK/);
  assert.throws(()=>run({...packet,source_sha256:"0".repeat(64)}),
