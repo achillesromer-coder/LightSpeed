@@ -126,6 +126,24 @@ class PublicBundleTests(unittest.TestCase):
                 with self.assertRaisesRegex(mod.BundleHold, "computed split network API access"):
                     mod.inspect_public_bundle(c)
 
+    def test_js_template_literal_transport_fail_closed(self):
+        # #158: computed template literals can hide network API names from
+        # ordinary fetch() and bracket-quoted-property checks. The reviewed
+        # synthetic JS source uses no backticks, so fail closed on all of them.
+        attacks = [
+            'globalThis[`fetch`]("/owner-private/receipt.json")',
+            'globalThis[`fe\u0024{"t"}ch`]("/owner-private/receipt.json")',
+            'window[`WebSocket`]("wss://example.invalid/socket")',
+        ]
+        for attack in attacks:
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as d:
+                c = Path(d) / "cgx"
+                shutil.copytree(mod.SOURCE, c)
+                with (c / "assets/core.js").open("a", encoding="utf-8") as handle:
+                    handle.write("\\n" + attack)
+                with self.assertRaisesRegex(mod.BundleHold, "unreviewed JavaScript template literal"):
+                    mod.inspect_public_bundle(c)
+
     def test_passive_html_css_network_resources_fail_closed(self):
         # Network-capable passive resource attributes and CSS url() must be
         # rejected even if CSP is intended to deny their runtime requests.
