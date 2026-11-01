@@ -332,6 +332,31 @@ function reviewSymbolicExpressionCrosswalk(pair,source,anchor,lineage,evidenceCl
 }
 
 /**
+ * Strict caller-text roundtrip candidate for three observed Unicode mojibake
+ * sequences. Never edits source cells or treats text recovery as physical or
+ * scientific equivalence. Unrecognised substitutions fail closed.
+ */
+function reviewDeclaredSymbolRoundtrip(original,related){
+  const replacements=[["Ã—","×"],["Ï","ρ"],["Â²","²"]];
+  let decoded=related,encoded=original,changed=false;
+  for(const [broken,correct] of replacements){
+    if(decoded.includes(broken))changed=true;
+    decoded=decoded.split(broken).join(correct);
+    encoded=encoded.split(correct).join(broken);
+  }
+  const candidate=changed&&decoded===original&&encoded===related;
+  return {
+    state:candidate?"R1_CALLER_TEXT_ROUNDTRIP_CANDIDATE":
+      "NO_LOSSLESS_DECLARED_ENCODING_TRANSFORM",
+    caller_text_roundtrip_candidate:candidate,
+    transform_scope:"THREE_OBSERVED_UNICODE_MOJIBAKE_SEQUENCES_ONLY",
+    provider_cells_verified:false,source_bytes_embedded:false,
+    source_or_translation_modified:false,
+    scientific_equivalence_verified:false,native_admitted:false
+  };
+}
+
+/**
  * Compare formula ID inventories observed by the caller at the authenticated
  * original/translated provider boundary. Added translation-only entries are
  * NOT retroactively part of the original workbook or independent evidence.
@@ -444,6 +469,8 @@ function reviewSymbolicCorrectionBatch(batch,source,lineage,evidenceClass){
     seenRelated.add(relatedRef);
     const discrepant=checked.state===
       "R1_CALLER_DECLARED_SYMBOLIC_EXPRESSION_DISCREPANCY_HOLD";
+    const roundtrip=reviewDeclaredSymbolRoundtrip(
+      e.original_cell.expression_text,e.related_cell.expression_text);
     if(e.review_action!==(discrepant?
        "REVIEW_TRANSLATION_ENCODING":"PRESERVE_SOURCE_MATCH"))
       throw Error("ECO_SYMBOLIC_CORRECTION_ACTION_CONFLICT");
@@ -453,7 +480,10 @@ function reviewSymbolicCorrectionBatch(batch,source,lineage,evidenceClass){
       translated_id_cell_ref:bound?e.related_id_anchor.sheet+"!"+e.related_id_anchor.cell:null,
       formula_id_row_binding_declared:bound,
       formula_id_row_binding_provider_attested:false,
-      review_action:e.review_action,expression_text_match:checked.expression_text_match,
+      review_action:e.review_action,
+      caller_text_roundtrip_candidate:discrepant&&
+        checked.original_encoding_valid&&roundtrip.caller_text_roundtrip_candidate,
+      expression_text_match:checked.expression_text_match,
       original_encoding_valid:checked.original_encoding_valid,
       related_encoding_valid:checked.related_encoding_valid,
       original_text_preserved:true,translated_text_modified:false,
@@ -464,6 +494,8 @@ function reviewSymbolicCorrectionBatch(batch,source,lineage,evidenceClass){
   return {state:count?"R1_TRANSLATION_CORRECTION_CANDIDATES_HOLD":
       "R1_DECLARED_SYMBOLIC_TEXT_MATCHES_NOT_EQUIVALENCE",
     candidate_correction_count:count,compared_count:records.length,
+    caller_text_roundtrip_candidate_count:records.filter(
+      x=>x.caller_text_roundtrip_candidate).length,
     formula_id_row_binding_declared_count:records.filter(x=>x.formula_id_row_binding_declared).length,
     formula_id_row_binding_required_count:records.filter(x=>!x.formula_id_row_binding_declared).length,
     correction_records:records,source_cells_fetched_by_module:false,
