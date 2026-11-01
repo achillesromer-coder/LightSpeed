@@ -134,10 +134,14 @@ def inspect_public_bundle(source:Path=SOURCE)->dict[str,Any]:
 def make_public_bundle(dest:Path,source:Path=SOURCE)->dict[str,Any]:
     src=Path(source).resolve()
     dst=Path(dest).resolve()
-    operator_public=(ROOT/"apps/lightspeed-go/public").resolve()
+    # The isolated public candidate must never be generated anywhere inside
+    # the LS GO application, including its compiled dist/build/cache roots.
+    # A clean source allowlist alone cannot prevent contamination of operator
+    # release artifacts if the output destination overlaps those trees (#158).
+    operator_tree=(ROOT/"apps/lightspeed-go").resolve()
     if (dst==src or src in dst.parents or dst==ROOT.resolve() or
-        dst==operator_public or operator_public in dst.parents):
-        raise BundleHold("output cannot overlap source or operator static root")
+        dst==operator_tree or operator_tree in dst.parents):
+        raise BundleHold("output cannot overlap source or operator application/build/static tree")
     if dst.exists():
         raise BundleHold("refuse overwrite of prior release candidate")
     result=inspect_public_bundle(src)
