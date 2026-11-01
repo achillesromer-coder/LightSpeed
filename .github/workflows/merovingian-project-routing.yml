@@ -42,6 +42,9 @@ on:
       - "desktop/LightSpeed_Runtime/tests/test_corpus_test_orchestrator.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/source_intake.py"
       - "desktop/LightSpeed_Runtime/tests/test_source_intake.py"
+      - "scripts/prepare_achilles_owner_packet.py"
+      - "tests/test_achilles_owner_packet.py"
+      - "tests/test_achilles_file_space_launch_review_contract.py"
       - "scripts/project_cgx_source.py"
       - "tests/test_project_cgx_source.py"
       - "desktop/source-manifest.json"
@@ -234,6 +237,8 @@ jobs:
             tests/test_launcher_org_materialization.py \
             tests/test_merovingian_service_integration.py \
             tests/test_run_ls_go_bridge_layout.py \
+            tests/test_achilles_owner_packet.py \
+            tests/test_achilles_file_space_launch_review_contract.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_launcher_exe.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_functions_hub_operator_surface.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_operator_home_export_gates.py \
