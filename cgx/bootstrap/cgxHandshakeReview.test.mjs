@@ -20,9 +20,9 @@ test('fully described fields are not cryptographic attestation',()=>{
 });
 test('child FileSpace names fail closed consistently with Windows basename safety',()=>{
  for(const filespace of [
-  '../escape.cgx','..\\\\escape.cgx','C:stream.cgx','CON.cgx',
-  'LPT1.cgx','CONIN$.cgx','CONOUT$.cgx','bad\\u200b.cgx',
-  'bad\\n.cgx','e\\u0301.cgx','a%2fb.cgx','Other-Science.CGX',
+  '../escape.cgx','..\\escape.cgx','C:stream.cgx','CON.cgx',
+  'LPT1.cgx','CONIN$.cgx','CONOUT$.cgx','bad\u200b.cgx',
+  'bad\n.cgx','e\u0301.cgx','a%2fb.cgx','Other-Science.CGX',
   'x'.repeat(129)+'.cgx','staged/Other-Science.cgx'
  ]){
   const result=planCGXHandshake({...base,child:{...base.child,filespace}});
