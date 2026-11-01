@@ -93,6 +93,15 @@ def check_bundle(repo: Path, receipt: dict[str, Any], bundle: Path) -> None:
     proofs = receipt.get("source_proofs")
     if not isinstance(proofs, list) or len(proofs) != 5:
         raise Stage35Hold("STAGE34_SOURCE_COUNT_HOLD")
+    expected_paths = {
+        "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_family_ingestion.py",
+        "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py",
+        "apps/lightspeed-go/src/main.ts",
+        "apps/lightspeed-go/src/desktopBridge.ts",
+        "apps/lightspeed-go/src/cgxFamilyOversight.ts",
+    }
+    if {entry.get("path") for entry in proofs} != expected_paths:
+        raise Stage35Hold("STAGE34_UNEXPECTED_SOURCE_SET")
     declared = {"manifest.json"}
     with zipfile.ZipFile(bundle, "r") as archive:
         if any(x.file_size > MAX_MEMBER_BYTES or x.is_dir() for x in archive.infolist()):
@@ -284,12 +293,12 @@ def run(
         "tests": results,
         "parent_state": before_db["parent"][0][0],
         "review_rows_before": before_db["review_count"],
-        "native_database_unchanged": before_db == after_db,
+        "target_native_rows_unchanged": before_db == after_db,
         "installed_files_unchanged": before_files == after_files,
         "running_bridge_unchanged": before_bridge == after_bridge,
         "family_endpoint_current_status": after_bridge.get("family"),
         "effects": {
-            "production_db_writes_by_this_step": 0, "production_file_copies": 0,
+            "production_db_writes_requested_by_this_step": 0, "production_file_copies": 0,
             "service_restarts": 0, "object_ids_minted": 0, "git_merges": 0,
             "native_parent_promoted": False, "public_release": False,
         },
