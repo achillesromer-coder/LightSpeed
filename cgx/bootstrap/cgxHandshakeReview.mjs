@@ -138,6 +138,15 @@ export function reviewNativeLeaseHandshakeABI({
  if(nativeLease.subject_agent!==request.agent_id)
   return deny("NATIVE_LEASE_AGENT_MISMATCH");
  const scopes=nativeLease.scope;
+ // The native 0.1 contract enumerates every understood scope axis.
+ // An unknown declared restriction must not be silently ignored and reported
+ // as request-bound; require an explicit versioned ABI mapping instead.
+ const supportedScopeAxes=new Set([
+  "task_ids","project_ids","object_ids","action_classes","tool_scopes",
+  "resource_budgets","geographic_or_orbital_scope","configuration_ids"
+ ]);
+ if(obj(scopes)&&Reflect.ownKeys(scopes).some(k=>!supportedScopeAxes.has(k)))
+  return deny("NATIVE_LEASE_SCOPE_AXIS_UNMAPPED");
  const includes=(xs,x)=>Array.isArray(xs)&&xs.length>0&&xs.length<=100&&xs.every(id)&&xs.includes(x);
  if(!obj(scopes)||!includes(scopes.object_ids,request.object_id)||
     !includes(scopes.tool_scopes,request.tool_scope)||
