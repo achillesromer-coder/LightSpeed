@@ -204,3 +204,45 @@ test('#158 cross-Grex or wrong-parent selection clears stale private status befo
   assert.ok(!JSON.stringify(result).includes(source.source_id));
  }
 });
+
+
+// Synthetic same-child identity switch: a stale inspector is not an authority
+// token, and a new caller-declared ACL is never proof of a host session.
+test('#158 same-child Object_ID switch clears stale private review before scope rebind',()=>{
+ const mount=fakeMount();
+ assert.equal(render({...input,mount}).status,'RENDERED_SOURCE_REVIEW');
+ assert.match(flatten(mount),/fixture:eco:one/);
+ const secondId='fixture:eco:two';
+ const secondSource={...source,source_id:'fixture:eco:second-source'};
+ const secondNode={...node,object_id:secondId,source_refs:[secondSource.source_id]};
+ const secondSelection={...selection,object_id:secondId};
+ const stale=render({...input,mount,selection:secondSelection});
+ assert.equal(stale.status,'DENIED');
+ assert.equal(stale.reason,'INSPECTOR_SELECTION_OR_SCHEMA_MISMATCH');
+ assert.equal(flatten(mount),'');
+ const secondInspector=planUniSpaceSourceInspector({
+  ...inspectInput,nodes:[secondNode],focus_id:secondId,
+  access:{authorized_object_ids:[secondId],authorized_source_ids:[secondSource.source_id]},
+  source_envelopes:[secondSource]
+ });
+ assert.equal(secondInspector.status,'SOURCE_REVIEW_ONLY');
+ const rebound=render({...input,mount,selection:secondSelection,inspector:secondInspector});
+ assert.equal(rebound.status,'RENDERED_SOURCE_REVIEW');
+ assert.match(flatten(mount),/fixture:eco:two/);
+ assert.ok(!flatten(mount).includes('fixture:eco:one'));
+ assert.ok(!flatten(mount).includes(secondSource.source_id));
+ assert.equal(rebound.host_authenticated,false);
+ assert.equal(rebound.may_execute,false);
+ const revokedScope=planUniSpaceSourceInspector({
+  ...inspectInput,nodes:[secondNode],focus_id:secondId,
+  access:{authorized_object_ids:[],authorized_source_ids:[]},
+  source_envelopes:[secondSource]
+ });
+ assert.equal(revokedScope.status,'DENIED');
+ const denied=render({...input,mount,selection:secondSelection,inspector:revokedScope});
+ assert.equal(denied.status,'DENIED');
+ assert.equal(flatten(mount),'');
+ assert.equal(mount.children.length,0);
+ assert.equal(denied.public_release,false);
+ assert.ok(!JSON.stringify(denied).includes(secondSource.source_id));
+});
