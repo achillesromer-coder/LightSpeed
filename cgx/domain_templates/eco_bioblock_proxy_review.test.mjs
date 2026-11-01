@@ -121,3 +121,23 @@ test("duplicate IDs, raw fields and malformed risk anchors fail closed",()=>{
   {original_source_ref:"synthetic-translation"}
  ])assert.throws(()=>gateLineage({...gates,...bad}),/INVALID_BIOBLOCK_GATE_LINEAGE/);
 });
+
+test("translated roadmap still references missing original production QA gate",()=>{
+ const r=gateLineage({...gates,
+  translated_plan_gate_refs:[{cell_ref:"Synthetic_Roadmap!E6",gate_ids:["VG-004"]}]});
+ assert.deepEqual(r.orphan_translated_plan_references,
+  [{cell_ref:"Synthetic_Roadmap!E6",gate_id:"VG-004"}]);
+ assert.ok(r.flags.includes("TRANSLATED_PLAN_REFERENCES_ABSENT_GATE_REVIEW"));
+ assert.equal(r.source_owner_disposition_verified,false);
+ assert.equal(r.production_qa_verified,false);
+ assert.equal(r.r2_equivalence_verified,false);
+});
+test("invalid translated plan anchor and duplicate IDs fail closed",()=>{
+ for(const translated_plan_gate_refs of [
+  [{cell_ref:"Synthetic_Roadmap!E0",gate_ids:["VG-004"]}],
+  [{cell_ref:"Synthetic_Roadmap!E6",gate_ids:["VG-004","VG-004"]}],
+  [{cell_ref:"Synthetic_Roadmap!E6",gate_ids:["VG-004"],status:"passed"}],
+  "VG-004"
+ ])assert.throws(()=>gateLineage({...gates,translated_plan_gate_refs}),
+  /INVALID_BIOBLOCK_GATE_LINEAGE/);
+});
