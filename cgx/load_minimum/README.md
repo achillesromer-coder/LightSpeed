@@ -58,3 +58,16 @@ The optional `max_planned_operations = floor(max_compute_ms × max_ops_per_secon
 **First host-return receipt (read-only):** device+volume identity; existing root registry and allowed paths; current parent/LOAD alias lookup; source/branch/worktree SHA parity; availability of Git, Python, Node, Codex and existing plugins; current service/port status *without starting or killing processes*; free space and memory; current archive/ingest staging status; source manifest+checksums; ACL/rights classification; blockers and exact readback paths. Record each field as PASS/PARTIAL/HOLD/UNKNOWN, not assumed. Avoid dumping secrets, private file bodies or full user profiles.
 
 **Phase progression:** (1) read-only host/root and ACL proof, (2) existing plugin/runtime verification, (3) private GPT export shard-and-asset manifest parity, (4) one source-authorized bounded R0/R1 LOAD conversion, (5) exact FileSpace/DBR and receiver readback, (6) owner-gated rights-qualified hydration and UniSpace lens. Keep security issue #158 and signed independent two-node issue #161 independently open until accepted evidence. No local staging directory, production merge, bulk download, public release or native DBR write is authorized by this review note.
+
+## GPT DataExport private manifest identity intake (source-only)
+
+Use the existing Alexandria/LOAD R0 source-reference path, not a new export store. `gptExportManifestIntake.py` validates one explicitly supplied original `export_manifest.json` (v1) and emits a **metadata-only** JSON projection with source-manifest SHA-256, declared physical/logical counts, contiguous `conversations-000..N.json` shard declarations, and explicit no-admission/ACL holds.
+
+```sh
+python cgx/load_minimum/gptExportManifestIntake.py --manifest /path/to/private/export_manifest.json > /path/to/owner-private/r0-manifest-review.json
+python -m unittest discover -s cgx/load_minimum -p 'test_gpt_export_manifest_intake.py' -v
+```
+
+The path must be an existing operator-authorised private source. Do not run this against a public repository mirror of private chats. Input is bounded to 5 MiB, unknown keys in physical file rows are rejected, unsafe paths and malformed shard order/count fail closed. The output does **not** verify that declared source bodies are present, that their sizes/hashes agree, or that original provider rights allow redistribution. No conversation messages or raw assets are parsed; no external network, DBR or mint operation occurs. This is not the native R0 conversation-ingestion step.
+
+**1 Nov 2026 private provider pilot:** Two owner-controlled Drive locations returned byte-identical 953,271-byte export manifests (SHA-256 `0941773a84c5552aa62f37282ee180b9c8df2b5c284c8c412be9e4a336212894`) declaring 12 conversation shards totalling 434,547,139 bytes and 3,780 physical export records. These are *declarations only*. Full original shard bytes remain unverified and must stay outside public Git. Their source-folder ACLs require owner review; the restricted provider locators and the detailed private receipt are in the existing owner-only Alexandria intake workspace, not this public source branch.
