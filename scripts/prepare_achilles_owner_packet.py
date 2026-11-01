@@ -30,9 +30,19 @@ def load_profile(path: Path = PROFILE_PATH) -> dict[str, Any]:
         raise ProfileHold("ACHILLES_PROFILE_SCHEMA_HOLD")
     if profile.get("selector") != "achilles" or profile.get("status") != "REVIEW_ONLY_UNMINTED":
         raise ProfileHold("ACHILLES_PROFILE_STATE_HOLD")
-    identity = profile.get("identity") or {}
-    authority = profile.get("authority") or {}
-    lifecycle = profile.get("lifecycle") or {}
+    identity = profile.get("identity")
+    authority = profile.get("authority")
+    lifecycle = profile.get("lifecycle")
+    if not all(isinstance(section, dict) for section in (identity, authority, lifecycle)):
+        raise ProfileHold("ACHILLES_PROFILE_SECTION_SHAPE_HOLD")
+    # An altered review profile must not silently suppress standing HOLD gates.
+    issues = profile.get("open_issues")
+    if (not isinstance(issues, list)
+        or any(type(issue) is not int for issue in issues)
+        or not {40, 154, 158, 161, 209}.issubset(set(issues))):
+        raise ProfileHold("ACHILLES_PROFILE_HOLD_REGISTER_HOLD")
+    if not isinstance(identity.get("proposed_profile_name"), str) or not identity["proposed_profile_name"]:
+        raise ProfileHold("ACHILLES_PROFILE_NAME_HOLD")
     if (identity.get("agent") != "Achilles"
         or identity.get("canonical_semantic_parent") != "cgx:root:cognigrex"
         or identity.get("principal_domain") != "emassc"):
