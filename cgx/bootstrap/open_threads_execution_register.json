@@ -169,6 +169,28 @@
         "public_private_source_transfer": "NONE",
         "native_mint_or_install": false,
         "next": "Keep originals private; independently qualify one bounded original branch and all occurrence/metadata variants in a separate review database, then require authenticated signer/lease/DBR readback before native admission."
+      },
+      "bounded_original_range_negative_review_2026_11_02": {
+        "evidence_class": "OWNER_PRIVATE_CHECKSUM_RECEIPT_READBACK_AND_EXACT_PUBLIC_PR217_PARSER_BLOB_REVIEW; STATIC_NEGATIVE_ONLY",
+        "source_scope": "12 original GPT shard identities verified in separate owner-private scope; current cloud update did not read original JSON bodies or copy private data",
+        "parser_source": {
+          "review_pr": 217,
+          "head_observed": "107eaa1f5839532c5bfd1fc5726c92d861dff6ef",
+          "path": "scripts/achilles_private_corpus_review.py",
+          "blob": "aee12e9fd732334454cddb219a0a12cc8a906d80"
+        },
+        "bounded_transfer_ceiling_bytes": 62914560,
+        "oversized_shard_counts": {
+          "source_shards_total": 12,
+          "shards_over_ceiling": 2,
+          "oversized_total_bytes": 191120944
+        },
+        "negative_observation": "The reviewed parser verifies SHA256 in bounded 4MiB reads, but subsequently reads each entire source shard into memory for json.loads; two shards individually exceed the 60MiB source-work-unit limit. Hash-bound parsing is not bounded parsing. Historical completed private text R1 is not retroactively invalidated.",
+        "required_no_loss_cursor": "Preserve immutable source revision+full SHA256, verified range [start,end) with range SHA256, parser continuation state, conversation occurrence and node/message variants, last committed record cursor, nontext loss ledger, and final original SHA256. Never deduplicate only by message_id.",
+        "status": "SOURCE_ONLY_NEGATIVE__R1_RANGE_COMPLIANCE_HOLD__NO_NATIVE_MINT",
+        "tests": "STATIC_SOURCE_CONTRACT_CHECK; NO HOST_OR_RUNTIME_EXECUTION; NO ORIGINAL_SHARD_REPARSE",
+        "authority": "No signer/lease/revocation/lock/DBR readback; #158/#161/#209 unaffected",
+        "next": "Implement and independently negative-test resumable <=60MiB source parsing in the existing approved private/PR217 review path; retain originals, do not rerun the existing 12-shard ingestion or alter active host worker."
       }
     },
     {
