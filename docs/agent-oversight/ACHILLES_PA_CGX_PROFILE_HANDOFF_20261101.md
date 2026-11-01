@@ -88,3 +88,41 @@ heartbeat/consumer readback.
 
 The unminted Achilles profile, generated plugin selector and existing approval
 and Stage35 pins remain unchanged.
+
+
+## 1 November overnight manual research — owner-private, source-only
+
+The original twelve-shard owner-private export has a completed local visible-text
+statistical audit (roles, chronology, lengths, prompt-response ancestry, use-case
+co-occurrences and data-quality caveats). A single bounded, manually initiated
+local embedding-review worker samples user-authored source messages, uses the
+existing Ollama model and a protected review directory, and checkpoints
+vector/progress state. The workload explicitly yields to foreground CPU, RAM,
+GPU and disk pressure and expires after its fixed run horizon. This worker is
+not a second LightSpeed scheduler, not model weight training and not native CGX.
+
+Two inherited R1 audit findings are corrected in this draft branch:
+(1) verify the exact bytes that are actually parsed against the original R0
+SHA-256 and size, stopping if a source changes between verification and parse;
+(2) preserve repeated conversation title/timestamp/source variants in a
+distinct reversible candidate table instead of silently suppressing all
+alternate metadata with INSERT OR IGNORE. Existing R1 databases are not
+automatically migrated or reingested. Both changes require independent
+review, original-shard roundtrip and further multimodal/rights qualification
+before native admission.
+
+The additive review contract
+\`cgx/domain_templates/achilles_file_space_launch_review_contract.json\`
+formalises the source-preserving sequence: **FileSpace first**, followed by
+its permission-qualified UniSpace operator surface, **DataSpace only after
+accepted FileSpace**, then **PrintSpace** after its own safety tests. Standard
+printing and 3D outputs may eventually be represented as scoped interfaces;
+4D printing and material-response engineering remain independent,
+Römer-Grex-owned specialist work, not a UniSpace product.
+
+Private review evidence can be staged as an *unsigned* DBR candidate with
+content-addressed R0/R1/phase-plan references. A candidate is **not**
+RootAuthority signature, lease, native Object_ID, DBR lock or successful mint.
+All existing #154/#158/#161/#209, S92/S97, Stage35 and Smith singleton
+recovery stops remain active. No external model or tool is allowed to
+infer original owner's authorisation from generated source texts.
