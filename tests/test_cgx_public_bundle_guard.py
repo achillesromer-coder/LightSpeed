@@ -259,6 +259,31 @@ class PublicBundleTests(unittest.TestCase):
                 with self.assertRaises(mod.BundleHold):
                     mod.inspect_public_bundle(c)
 
+    def test_legacy_html_resource_loads_fail_closed(self):
+        # #158: input[type=image] and legacy background attributes can request
+        # resources even when ordinary src/href element scans pass.
+        attacks = [
+            '<input type="image" src="/owner-private/achilles-packet.json">',
+            '<body background="/owner-private/owner-background.png">',
+            '<table background="/owner-private/owner-background.png"></table>',
+        ]
+        for attack in attacks:
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as d:
+                c = Path(d) / "cgx"
+                shutil.copytree(mod.SOURCE, c)
+                with (c / "index.html").open("a", encoding="utf-8") as handle:
+                    handle.write("\\n" + attack)
+                with self.assertRaises(mod.BundleHold):
+                    mod.inspect_public_bundle(c)
+
+    def test_non_resource_input_remains_usable_in_public_shell(self):
+        with tempfile.TemporaryDirectory() as d:
+            c = Path(d) / "cgx"
+            shutil.copytree(mod.SOURCE, c)
+            with (c / "index.html").open("a", encoding="utf-8") as handle:
+                handle.write('\\n<input type="search" aria-label="Local demo filter">')
+            self.assertEqual(mod.inspect_public_bundle(c)["file_count"], 12)
+
     def test_no_symlink_intake(self):
         with tempfile.TemporaryDirectory() as d:
             c=Path(d)/"cgx"
