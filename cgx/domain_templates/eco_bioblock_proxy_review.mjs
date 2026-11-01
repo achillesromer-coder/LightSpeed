@@ -105,3 +105,57 @@ export function reviewBioBlockEstablishmentProxy({
   flags,native_object_id:null,db_readback:false,field_observation_verified:false,
   biodiversity_gain_verified:false,field_release_authorised:false,source_only:true};
 }
+
+/**
+ * Reversible, source-only Bio-Blocks gate-lineage consistency review.
+ * Caller supplies independently read original and translated gate inventories.
+ * This checks identity/reference loss; it cannot attest provider bytes, rights,
+ * a decision to retire a gate, production QA, or native CGX admission.
+ * Inputs are IDs and cell locators only, never source rows or site data.
+ */
+export function reviewBioBlockGateLineage(input={}) {
+ const keys=new Set(["original_source_ref","translated_source_ref","original_gate_ids",
+  "translated_gate_ids","translated_risk_gate_refs"]);
+ if(input===null||typeof input!=="object"||Array.isArray(input)||
+   Object.keys(input).some(k=>!keys.has(k)))throw Error("INVALID_BIOBLOCK_GATE_LINEAGE_FIELDS");
+ const {original_source_ref,translated_source_ref,original_gate_ids,
+  translated_gate_ids,translated_risk_gate_refs}=input;
+ const id=x=>typeof x==="string"&&/^VG-[0-9]{3}$/.test(x);
+ const inventory=x=>Array.isArray(x)&&x.length>0&&x.length<=200&&
+  x.every(id)&&new Set(x).size===x.length;
+ const cell=x=>typeof x==="string"&&
+  /^[A-Za-z0-9_ -]{1,80}![A-Z]{1,3}[1-9][0-9]{0,5}$/.test(x);
+ if(!reference(original_source_ref)||!reference(translated_source_ref)||
+  original_source_ref===translated_source_ref||
+  !inventory(original_gate_ids)||!inventory(translated_gate_ids)||
+  !Array.isArray(translated_risk_gate_refs)||translated_risk_gate_refs.length>200||
+  translated_risk_gate_refs.some(r=>r===null||typeof r!=="object"||Array.isArray(r)||
+   Object.keys(r).some(k=>!["cell_ref","gate_ids"].includes(k))||
+   !cell(r.cell_ref)||!Array.isArray(r.gate_ids)||r.gate_ids.length<1||
+   r.gate_ids.length>12||!r.gate_ids.every(id)||
+   new Set(r.gate_ids).size!==r.gate_ids.length))
+  throw Error("INVALID_BIOBLOCK_GATE_LINEAGE_INPUT");
+ const original=new Set(original_gate_ids),translated=new Set(translated_gate_ids);
+ const missing=original_gate_ids.filter(x=>!translated.has(x));
+ const added=translated_gate_ids.filter(x=>!original.has(x));
+ const orphan=translated_risk_gate_refs.flatMap(r=>r.gate_ids
+  .filter(x=>!translated.has(x)).map(gate_id=>({cell_ref:r.cell_ref,gate_id})));
+ const flags=["PROVIDER_ORIGINAL_AND_TRANSLATION_RECEIPTS_NOT_ATTESTED",
+  "SOURCE_OWNER_GATE_DISPOSITION_NOT_ATTESTED"];
+ if(missing.length)flags.push("ORIGINAL_GATES_MISSING_FROM_TRANSLATION_REVIEW");
+ if(orphan.length)flags.push("TRANSLATED_RISK_REFERENCES_ABSENT_GATE_REVIEW");
+ if(added.length)flags.push("TRANSLATION_ONLY_GATES_REQUIRE_SOURCE_ATTRIBUTION");
+ return {schema:"CGX-ECO-BIOBLOCK-GATE-LINEAGE-REVIEW/0.1",
+  parent:"Cognigrex.cgx",owner_family:"Eco.cgx",
+  original_source_ref,translated_source_ref,
+  original_gate_count:original_gate_ids.length,
+  translated_gate_count:translated_gate_ids.length,
+  missing_original_gate_ids:missing,translation_only_gate_ids:added,
+  orphan_translated_risk_references:orphan,flags,
+  evidence_class:"source_asserted_reference_consistency",
+  stage:"R1_REVIEW_ONLY",source_only:true,
+  source_owner_disposition_verified:false,rights_verified:false,
+  r2_equivalence_verified:false,native_object_id:null,
+  db_readback:false,production_qa_verified:false,
+  field_release_authorised:false,public_release_authorised:false};
+}
