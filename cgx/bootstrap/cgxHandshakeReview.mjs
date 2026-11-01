@@ -58,10 +58,10 @@ const LEASE_BOUNDARY_HOLDS=Object.freeze([
 export function planCGXHandshake({parent,child,lease,exchange=null,now=null}={}){
  if(!obj(parent)||!obj(child)||!obj(lease))return {status:"DENIED",reason:"MISSING_CONTEXT"};
  if(now!==null&&!validInstant(now))return {status:"DENIED",reason:"INVALID_NOW"};
+ if(!safeChildFilespace(child.filespace))return {status:"DENIED",reason:"UNSAFE_CHILD_FILESPACE"};
  for(const x of [parent.object_id,parent.state_root,parent.dbr_root,child.object_id,child.filespace,child.parent_object_id,lease.lease_id,lease.target_object_id,lease.scope]){
   if(!id(x))return {status:"DENIED",reason:"INCOMPLETE_IDENTITY_OR_LEASE"};
  }
- if(!safeChildFilespace(child.filespace))return {status:"DENIED",reason:"UNSAFE_CHILD_FILESPACE"};
  if(!SHA.test(parent.state_root)||!SHA.test(parent.dbr_root))return {status:"DENIED",reason:"INVALID_ROOT_HASH"};
  if(child.parent_object_id!==parent.object_id)return {status:"DENIED",reason:"CROSS_PARENT_CHILD"};
  if(lease.target_object_id!==child.object_id)return {status:"DENIED",reason:"LEASE_SUBJECT_MISMATCH"};
