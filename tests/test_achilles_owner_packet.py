@@ -18,6 +18,7 @@ def planned(instruction, task_id):
         "workflow_id": task_id,
         "instruction_sha256": module._hash(instruction),
         "floor_sequence": ["Neo", "Architect", "Morpheus"],
+        "proof_required": True,
         "canonical_promotion_authorized": False,
         "public_publish_authorized": False,
     }
@@ -119,3 +120,27 @@ def test_plugin_selector_is_generated_and_profile_is_additive():
     assert selector["profile"] == source["selectors"]["achilles"]
     assert selector["profile"]["default_domain"] == "emassc"
     assert (ROOT / "cgx/domain_templates/achilles_owner_operator_profile.json").is_file()
+
+
+def test_unknown_supervisor_floor_and_missing_proof_fail_closed():
+    def injected_floor(instruction, task_id):
+        result = planned(instruction, task_id)
+        result["floor_sequence"] = ["Neo", "UnapprovedTool", "Morpheus"]
+        return result
+    def proof_disabled(instruction, task_id):
+        result = planned(instruction, task_id)
+        result["proof_required"] = False
+        return result
+    def duplicate_gate(instruction, task_id):
+        result = planned(instruction, task_id)
+        result["floor_sequence"] = ["Neo", "Architect", "Architect", "Morpheus"]
+        return result
+    for provider, reason in ((injected_floor, "SUPERVISOR_ROUTE"),
+                             (proof_disabled, "SUPERVISOR_PROOF"),
+                             (duplicate_gate, "SUPERVISOR_ROUTE")):
+        try:
+            module.prepare_packet("review only", "TASK-NEGATIVE", planner=provider)
+        except module.ProfileHold as error:
+            assert reason in str(error)
+        else:
+            raise AssertionError("Supervisor negative case must fail closed")
