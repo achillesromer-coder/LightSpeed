@@ -86,6 +86,20 @@ def check_git(repo: Path) -> None:
     status = git(repo, "status", "--porcelain=v1", "--untracked-files=all", "-z")
     if status:
         raise Stage35Hold("REVIEW_WORKTREE_TRACKED_OR_UNTRACKED_DRIFT")
+    # Git status omits ignored files. Refuse ignored Python code/bytecode or
+    # importable archives that might shadow a source-pinned dependency.
+    ignored = git(
+        repo, "ls-files", "--others", "--ignored", "--exclude-standard",
+        "-z", "--", "desktop/LightSpeed_Runtime",
+    )
+    importable_suffixes = (".py", ".pyc", ".pyd", ".pth", ".dll", ".so",
+                           ".zip", ".egg", ".whl")
+    for raw in ignored.split(b"\x00"):
+        if not raw:
+            continue
+        item = raw.decode("utf-8", errors="replace").replace("\\\\", "/").lower()
+        if "__pycache__" in item.split("/") or item.endswith(importable_suffixes):
+            raise Stage35Hold("REVIEW_IGNORED_EXECUTABLE_SOURCE_SHADOW")
     # These exact test and bridge entrypoint bytes must match the approved Git
     # revision; Windows CRLF/BOM-only smudge remains source-equivalent.
     for path in (
