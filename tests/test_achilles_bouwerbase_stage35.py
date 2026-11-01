@@ -35,6 +35,73 @@ class Stage35PureTests(unittest.TestCase):
         self.assertEqual(runner.normalized(b"\xef\xbb\xbfabc\r\n"), "abc\n")
         self.assertNotEqual(runner.normalized(b"print(1)"), runner.normalized(b"print(2)"))
 
+    def test_rejects_descendant_commit_even_if_git_reports_clean(self):
+        with patch.object(runner, "git", return_value=b"f" * 40):
+            with self.assertRaisesRegex(
+                runner.Stage35Hold, "REVIEW_HEAD_NOT_EXACT_PINNED_FAMILY_COMMIT"
+            ):
+                runner.check_git(Path("unused"))
+
+    def test_rejects_untracked_shadow_module(self):
+        with patch.object(runner, "git", side_effect=[
+            (runner.FAMILY_COMMIT + "\\n").encode("ascii"),
+            b"?? desktop/LightSpeed_Runtime/lightspeed_runtime/untrusted.py\\x00",
+        ]):
+            with self.assertRaisesRegex(
+                runner.Stage35Hold, "REVIEW_WORKTREE_TRACKED_OR_UNTRACKED_DRIFT"
+            ):
+                runner.check_git(Path("unused"))
+
+    def test_clean_exact_revision_accepts_crlf_only(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            paths = (
+                "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_family_ingestion.py",
+                "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py",
+                "desktop/LightSpeed_Runtime/tests/test_cgx_family_ingestion.py",
+                "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py",
+            )
+            for path in paths:
+                target = root / path
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(b"print('source')\\r\\n")
+            def pinned_git(repo, *args):
+                if args == ("rev-parse", "HEAD"):
+                    return runner.FAMILY_COMMIT.encode("ascii") + b"\\n"
+                if args == ("status", "--porcelain=v1", "--untracked-files=all", "-z"):
+                    return b""
+                if args[0] == "show":
+                    return b"print('source')\\n"
+                raise AssertionError(args)
+            with patch.object(runner, "git", side_effect=pinned_git):
+                runner.check_git(root)
+
+    def test_exact_revision_rejects_executable_source_drift(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            paths = (
+                "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_family_ingestion.py",
+                "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py",
+                "desktop/LightSpeed_Runtime/tests/test_cgx_family_ingestion.py",
+                "desktop/LightSpeed_Runtime/tests/test_ls_go_bridge.py",
+            )
+            for path in paths:
+                target = root / path
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text("print('source')\\n")
+            (root / paths[0]).write_text("print('modified')\\n")
+            def pinned_git(repo, *args):
+                if args == ("rev-parse", "HEAD"):
+                    return runner.FAMILY_COMMIT.encode("ascii") + b"\\n"
+                if args[0] == "status":
+                    return b""
+                return b"print('source')\\n"
+            with patch.object(runner, "git", side_effect=pinned_git):
+                with self.assertRaisesRegex(
+                    runner.Stage35Hold, "REVIEW_EXECUTABLE_SOURCE_DRIFT"
+                ):
+                    runner.check_git(root)
+
     def test_receipt_size_and_object_shape(self):
         with tempfile.TemporaryDirectory() as temp:
             file = Path(temp) / "stage34.json"
