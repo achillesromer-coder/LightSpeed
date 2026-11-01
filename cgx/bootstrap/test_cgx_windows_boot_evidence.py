@@ -188,8 +188,9 @@ class WindowsBootEvidenceTests(unittest.TestCase):
 
         invalid = (
             "../escape.cgx", "..\\\\escape.cgx", "C:stream.cgx",
-            "CON.cgx", "LPT1.cgx", "bad\\u200b.cgx",
-            "bad\\n.cgx", "e\\u0301.cgx", "Other-Science.CGX",
+            "CON.cgx", "LPT1.cgx", "CONIN$.cgx", "CONOUT$.cgx",
+            "bad" + chr(0x200b) + ".cgx", "bad" + chr(10) + ".cgx",
+            "e" + chr(0x301) + ".cgx", "Other-Science.CGX",
             "ls.cgx", "cognigrex.cgx", "a%2fb.cgx",
         )
         for filespace in invalid:
