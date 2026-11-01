@@ -100,10 +100,22 @@ def inspect_public_bundle(source:Path=SOURCE)->dict[str,Any]:
         for uri in re.findall(r"""(?:import\s*(?:[^;]*?\s+from\s*)?|from\s*)['"]([^'"]+)['"]""",text):
             _validate_static_reference(relative,uri)
         if relative.endswith(".html"):
-            for uri in re.findall(r"""<(?:script|link)\b[^>]*?\b(?:src|href)\s*=\s*['"]([^'"]+)['"]""",text,re.I):
+            # Passive resource loads are network-capable even when no fetch() call
+            # exists. Restrict them to the same exact reviewed asset allowlist.
+            for uri in re.findall(
+                r"""<(?:script|link|img|source|video|audio|track|iframe|embed|object)\b[^>]*?\b(?:src|href|poster|data)\s*=\s*['"]([^'"]+)['"]""",
+                text,re.I,
+            ):
                 _validate_static_reference(relative,uri)
+            # Responsive source sets can hide an additional unreviewed endpoint.
+            if re.search(r"""\bsrcset\s*=""",text,re.I):
+                raise BundleHold(f"unreviewed responsive media source: {relative}")
         if relative.endswith(".css") and re.search(r"@import\b",text,re.I):
             raise BundleHold(f"unreviewed CSS import: {relative}")
+        if relative.endswith((".css",".html")):
+            # CSS and inline HTML styles may load remote pixels/fonts without JS.
+            for uri in re.findall(r"""\burl\(\s*['"]?([^)'"]+)['"]?\s*\)""",text,re.I):
+                _validate_static_reference(relative,uri.strip())
         all_text.append(text)
         file_index.append({
             "path":"cgx/"+relative,
