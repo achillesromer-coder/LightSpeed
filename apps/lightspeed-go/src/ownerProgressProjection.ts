@@ -45,7 +45,8 @@ const boundedCount = (value: unknown): number | null =>
     ? value : null;
 
 const validObjectId = (value: unknown): value is string =>
-  typeof value === "string" && /^[A-Za-z0-9][A-Za-z0-9._:/-]{1,159}$/.test(value);
+  typeof value === "string" && value.startsWith("Cognigrex.cgx:/FileSpace/") &&
+  /^[A-Za-z0-9][A-Za-z0-9._:/-]{1,159}$/.test(value);
 
 const validRevision = (value: unknown): value is string =>
   typeof value === "string" && /^[a-fA-F0-9]{40,64}$/.test(value);
@@ -82,6 +83,9 @@ export function projectOwnerProgress(input: OwnerProgressEnvelope | null | undef
   const child = source?.filespace === "Cognigrex.cgx/FileSpace";
   const qualifiedIdentity = child && validObjectId(source?.object_id) &&
     validRevision(source?.revision);
+  // A verified gateway is insufficient to expose another or unqualified child.
+  // Hold the entire private projection until the exact FileSpace identity binds.
+  if (!qualifiedIdentity) return { ...held, access: "HOLD_SOURCE_IDENTITY" as const };
   const checkpoint = input?.checkpoint;
   const latest = input?.latest;
   const state = latest?.state === "FAIL_CLOSED" || failureClass(latest?.error)
