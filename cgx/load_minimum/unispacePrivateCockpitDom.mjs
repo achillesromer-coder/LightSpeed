@@ -61,6 +61,9 @@ export function renderUniSpacePrivateStatus({
  catch { return denied('INVALID_MOUNT'); }
  if(!mount.ownerDocument||typeof mount.ownerDocument.createElement!=='function')
   return denied('INVALID_MOUNT');
+ // Defense in depth: even a substituted/misconfigured planner must never
+ // turn a public route into a private owner-status renderer (#158).
+ if(surface!=='private')return denied('PRIVATE_OPERATOR_SURFACE_REQUIRED');
  const status=planUniSpaceOperatorCockpit({surface,selection,inspector,offline,hostReceipt});
  if(status.state!=='SOURCE_REVIEW_ONLY')
   return denied(status.reason||'REVIEW_PLAN_NOT_ACCEPTED');
