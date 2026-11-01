@@ -314,6 +314,41 @@ class PublicBundleTests(unittest.TestCase):
                 mod.make_public_bundle(output,c)
             self.assertFalse(output.exists())
 
+    def test_host_policy_drift_cannot_override_reviewed_public_boundary(self):
+        # #158: a valid CSP entry must not mask an added rewrite, alternate
+        # header rule, or external redirect in the deployable policy sidecar.
+        for change in ("private_rewrite", "external_redirect", "extra_header_rule", "relaxed_csp"):
+            with self.subTest(change=change), tempfile.TemporaryDirectory() as d:
+                c = Path(d) / "cgx"
+                shutil.copytree(mod.SOURCE, c)
+                p = c / "deployment/vercel.json"
+                policy = json.loads(p.read_text(encoding="utf-8"))
+                if change == "private_rewrite":
+                    policy["rewrites"] = [{"source": "/cgx/private", "destination": "/api/v1/owner"}]
+                elif change == "external_redirect":
+                    policy["redirects"].append({"source": "/cgx/escape", "destination": "https://example.invalid/collect"})
+                elif change == "extra_header_rule":
+                    policy["headers"].append({"source": "/cgx/(.*)", "headers": [{"key": "Content-Security-Policy", "value": "default-src *"}]})
+                else:
+                    policy["headers"][0]["headers"][-1]["value"] += "; report-uri https://example.invalid/collect"
+                p.write_text(json.dumps(policy), encoding="utf-8")
+                output = Path(d) / "candidate"
+                with self.assertRaisesRegex(mod.BundleHold, "unreviewed public hosting policy drift"):
+                    mod.make_public_bundle(output, c)
+                self.assertFalse(output.exists())
+
+    def test_host_policy_json_formatting_does_not_change_accepted_semantics(self):
+        with tempfile.TemporaryDirectory() as d:
+            c = Path(d) / "cgx"
+            shutil.copytree(mod.SOURCE, c)
+            p = c / "deployment/vercel.json"
+            policy = json.loads(p.read_text(encoding="utf-8"))
+            p.write_text(json.dumps(policy, sort_keys=True, separators=(",", ":")), encoding="utf-8")
+            output = Path(d) / "candidate"
+            report = mod.make_public_bundle(output, c)
+            self.assertEqual(report["file_count"], 12)
+            self.assertTrue((output / "vercel.json").is_file())
+
     def test_does_not_write_under_operator_public(self):
         with self.assertRaises(mod.BundleHold):
             mod.make_public_bundle(ROOT/"apps/lightspeed-go/public/new_release_subtree")
