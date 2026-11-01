@@ -151,6 +151,18 @@ export function reviewNativeLeaseHandshakeABI({
     return deny("NATIVE_LEASE_CONTEXT_SCOPE_MISMATCH");
   }
  }
+ // The native execution contract separately bounds cascade severity and specialist floors.
+ // Source-review must not mark request scope bound while ignoring these axes.
+ const cascadeRank={C0:0,C1:1,C2:2,C3:3,C4:4};
+ const ceiling=nativeLease.max_cascade_class,requestedCascade=request.cascade_class;
+ const allowedFloors=nativeLease.allowed_floors,plannedFloors=request.planned_floors;
+ if(!Object.hasOwn(cascadeRank,ceiling)||!Object.hasOwn(cascadeRank,requestedCascade)||
+    cascadeRank[requestedCascade]>cascadeRank[ceiling]||
+    !Array.isArray(allowedFloors)||allowedFloors.length===0||allowedFloors.length>100||
+    !allowedFloors.every(id)||
+    !Array.isArray(plannedFloors)||plannedFloors.length===0||plannedFloors.length>100||
+    !plannedFloors.every(id)||!plannedFloors.every(f=>allowedFloors.includes(f)))
+  return deny("NATIVE_LEASE_CASCADE_OR_FLOOR_SCOPE_MISMATCH");
  if(request.object_id!==child.object_id)return deny("NATIVE_LEASE_CHILD_MISMATCH");
  if(!validInstant(nativeLease.valid_from)||!validInstant(nativeLease.valid_until)||
     Date.parse(nativeLease.valid_from)>=Date.parse(nativeLease.valid_until)||
