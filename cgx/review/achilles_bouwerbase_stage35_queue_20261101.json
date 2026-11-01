@@ -23,7 +23,11 @@
     "load_projection_commit": "6532e6a819c976ac7269764e036d7f0cd6925a7b",
     "runner_path": "scripts/achilles_bouwerbase_stage35.py",
     "source_review_branch": "review/cgx-achilles-bouwerbase-stage35-20261101",
-    "trust_requirement": "Exact source review commit and clean local checkout; no unpinned latest code"
+    "trust_requirement": "Exact source review commit and clean local checkout; no unpinned latest code",
+    "runner_git_blob_sha": "2cb8e3b62568a606006c66b5591817c7ed93729b",
+    "runner_git_review_commit": "53de9581c3cef966c97ed10e353b915c256ca134",
+    "strict_test_source_checkout": "Exact family HEAD 124262b61fdbb5e181f1c21d064182cd21f74adb; no descendants; status including untracked must be empty",
+    "runner_resolution": "Read source at pinned runner_git_review_commit, verify Git blob SHA unchanged; do not execute a floating branch file or script from an untrusted location"
   },
   "input_evidence": {
     "stage31": "CGX_WINDOWS_SETUP_20261031T060150756Z.json",
@@ -61,7 +65,12 @@
     "no_auto_merge": true,
     "no_public_release": true,
     "no_execute_on_cloud_runner_as_local_proof": true,
-    "no_run_before_source_commit_validated": true
+    "no_run_before_source_commit_validated": true,
+    "require_runner_review_blob_proof": true,
+    "reject_descendant_git_commit": true,
+    "reject_all_untracked_shadow_files": true,
+    "require_all_executable_test_entrypoints_match_pinned_git": true,
+    "no_unverified_local_polling_channel": true
   },
   "result_requirements": {
     "receipt_schema": "CGX-ACHILLES-ISOLATED-ACCEPTANCE/35.1",
@@ -76,6 +85,9 @@
     "local_queue_enqueued": false,
     "host_command_executed": false,
     "independent_host_readback": false,
-    "next_gate": "ACTUAL_ONLINE_HOST_CONNECTOR_THEN_AUTHENTICATED_LOCAL_STAGE35"
+    "next_gate": "ACTUAL_ONLINE_HOST_CONNECTOR_THEN_AUTHENTICATED_LOCAL_STAGE35",
+    "known_blocker": "Registered BouwerBase device offline; local Smith/Neo queue not externally writable from GitHub cloud branch",
+    "achilles_automation_enabled": true,
+    "achilles_immediate_run_finding": "Identified descendant-commit source integrity gap; remedied in pinned runner candidate, pending fresh CI and host readback"
   }
 }
