@@ -70,6 +70,26 @@ class PublicBundleTests(unittest.TestCase):
                 with self.assertRaises(mod.BundleHold):
                     mod.inspect_public_bundle(c)
 
+    def test_dynamic_network_and_code_paths_hold_even_when_private_name_is_split(self):
+        attacks = [
+            'fetch("/da" + "ta/cgx_object_review_catalogue.json")',
+            'const x = new XMLHttpRequest();',
+            'const x = new WebSocket("wss://example.invalid/socket");',
+            'const x = new EventSource("/events");',
+            'navigator.sendBeacon("/collect", "synthetic");',
+            'import("./" + "unreviewed.js")',
+            'navigator.serviceWorker.register("/sw.js")',
+            'eval("globalThis.privateData")',
+        ]
+        for attack in attacks:
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as d:
+                c = Path(d) / "cgx"
+                shutil.copytree(mod.SOURCE, c)
+                with (c / "assets/core.js").open("a", encoding="utf-8") as handle:
+                    handle.write("\\n" + attack)
+                with self.assertRaisesRegex(mod.BundleHold, "active network or dynamic code API"):
+                    mod.inspect_public_bundle(c)
+
     def test_no_symlink_intake(self):
         with tempfile.TemporaryDirectory() as d:
             c=Path(d)/"cgx"
