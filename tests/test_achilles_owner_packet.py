@@ -5,6 +5,7 @@ import importlib.util
 import json
 import subprocess
 import sys
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "prepare_achilles_owner_packet.py"
@@ -157,3 +158,40 @@ def test_unknown_supervisor_floor_and_missing_proof_fail_closed():
             assert reason in str(error)
         else:
             raise AssertionError("Supervisor negative case must fail closed")
+
+
+@pytest.mark.parametrize("section,bad", [
+    ("identity", []), ("identity", "foreign"),
+    ("authority", [1]), ("authority", True),
+    ("lifecycle", ["promoted"]), ("lifecycle", "released"),
+])
+def test_profile_section_shape_and_hold_register_fail_closed(tmp_path, section, bad):
+    profile = module.load_profile()
+    profile[section] = bad
+    candidate = tmp_path / "untrusted-profile.json"
+    candidate.write_text(json.dumps(profile), encoding="utf-8")
+    with pytest.raises(module.ProfileHold, match="ACHILLES_PROFILE_SECTION_SHAPE_HOLD"):
+        module.load_profile(candidate)
+
+
+@pytest.mark.parametrize("issues", [
+    [], [40, 154, 158, 161], [40, 154, 158, 161, True],
+    "40,154,158,161,209", None,
+])
+def test_missing_or_malformed_standing_hold_register_is_rejected(tmp_path, issues):
+    profile = module.load_profile()
+    profile["open_issues"] = issues
+    candidate = tmp_path / "untrusted-profile.json"
+    candidate.write_text(json.dumps(profile), encoding="utf-8")
+    with pytest.raises(module.ProfileHold, match="ACHILLES_PROFILE_HOLD_REGISTER_HOLD"):
+        module.load_profile(candidate)
+
+
+@pytest.mark.parametrize("name", [None, [], ""])
+def test_invalid_owner_profile_name_is_rejected(tmp_path, name):
+    profile = module.load_profile()
+    profile["identity"]["proposed_profile_name"] = name
+    candidate = tmp_path / "untrusted-profile.json"
+    candidate.write_text(json.dumps(profile), encoding="utf-8")
+    with pytest.raises(module.ProfileHold, match="ACHILLES_PROFILE_NAME_HOLD"):
+        module.load_profile(candidate)
