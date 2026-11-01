@@ -119,3 +119,63 @@ def test_preflight_does_not_create_database(tmp_path):
                                  "serve": False, "max_shards": 0, "port": 8767})
     assert mod.run(parser_args) == 0
     assert not (target / "semantic_review.sqlite").exists()
+
+
+def test_r1_parsed_snapshot_must_match_verified_bytes(tmp_path, monkeypatch):
+    source, entry = sample(tmp_path)
+    original = mod.verify_source
+
+    def change_between_verification_and_parse(path, identity):
+        verified = original(path, identity)
+        # Simulate an external sync replacing the file after its first hash pass.
+        path.write_text(path.read_text(encoding="utf-8").replace(
+            "Owner only private instruction", "Altered owner private instruction"
+        ), encoding="utf-8")
+        return verified
+
+    monkeypatch.setattr(mod, "verify_source", change_between_verification_and_parse)
+    con = mod.connect(tmp_path / "new_review.sqlite")
+    try:
+        with pytest.raises(ValueError, match="SOURCE_SNAPSHOT_CHANGED_DURING_READ_HOLD"):
+            mod.ingest_shard(con, source, entry)
+        assert con.execute("SELECT count(*) FROM shard").fetchone()[0] == 0
+        assert con.execute("SELECT count(*) FROM message").fetchone()[0] == 0
+    finally:
+        con.close()
+
+
+def test_duplicate_conversation_variant_is_preserved_by_original_shard(tmp_path):
+    first, original_identity = sample(tmp_path)
+    second = tmp_path / "conversations-010.json"
+    original_conv = json.loads(first.read_text(encoding="utf-8"))[0]
+    changed = dict(original_conv)
+    changed["title"] = "Achilles source metadata update"
+    changed["update_time"] = 4.0
+    second.write_text(json.dumps([changed]), encoding="utf-8")
+    later_identity = {
+        "shard": second.name,
+        "sha256": hashlib.sha256(second.read_bytes()).hexdigest(),
+        "size_bytes": second.stat().st_size,
+    }
+    con = mod.connect(tmp_path / "new_review.sqlite")
+    try:
+        mod.ingest_shard(con, first, original_identity)
+        mod.ingest_shard(con, second, later_identity)
+        variants = con.execute("""
+            SELECT shard,conversation_id,title,updated,source_visible_words,metadata_sha256
+            FROM conversation_variant WHERE conversation_id='conversation-a'
+            ORDER BY shard
+        """).fetchall()
+        assert len(variants) == 2
+        assert {v[0] for v in variants} == {
+            first.name, second.name
+        }
+        assert all(v[4] > 0 and len(v[5]) == 64 for v in variants)
+        assert con.execute("SELECT title FROM conversation WHERE id='conversation-a'").fetchone()[0] == "Achilles local review"
+        assert con.execute("SELECT count(*) FROM message").fetchone()[0] == 2
+        assert con.execute(
+            "SELECT count(*) FROM source_issue WHERE kind='CONVERSATION_METADATA_VARIANT'"
+        ).fetchone()[0] == 1
+        assert con.execute("SELECT count(*) FROM shard").fetchone()[0] == 2
+    finally:
+        con.close()
