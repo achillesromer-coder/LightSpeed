@@ -43,6 +43,11 @@ const safeRelativeTransferPath=path=>{
   return !/^(?:CON|PRN|AUX|NUL|CONIN\$|CONOUT\$|COM[1-9\u00b9\u00b2\u00b3]|LPT[1-9\u00b9\u00b2\u00b3])$/i.test(stem);
  });
 };
+// Align the non-authorising child FileSpace SHAPE with the Windows host
+// basename guard. This does not establish a unique Object_ID or native binding.
+const safeChildFilespace=value=>
+ typeof value==="string"&&value.length<=128&&value.endsWith(".cgx")&&
+ !value.includes("/")&&safeRelativeTransferPath(value);
 const AUTHORITY="HOST_SIGNATURE_AND_DBR_NOT_VERIFIED_BY_PLANNER";
 // Distinct source-review holds: a claimed key, request scope or nonce is not host proof.
 const LEASE_BOUNDARY_HOLDS=Object.freeze([
@@ -56,6 +61,7 @@ export function planCGXHandshake({parent,child,lease,exchange=null,now=null}={})
  for(const x of [parent.object_id,parent.state_root,parent.dbr_root,child.object_id,child.filespace,child.parent_object_id,lease.lease_id,lease.target_object_id,lease.scope]){
   if(!id(x))return {status:"DENIED",reason:"INCOMPLETE_IDENTITY_OR_LEASE"};
  }
+ if(!safeChildFilespace(child.filespace))return {status:"DENIED",reason:"UNSAFE_CHILD_FILESPACE"};
  if(!SHA.test(parent.state_root)||!SHA.test(parent.dbr_root))return {status:"DENIED",reason:"INVALID_ROOT_HASH"};
  if(child.parent_object_id!==parent.object_id)return {status:"DENIED",reason:"CROSS_PARENT_CHILD"};
  if(lease.target_object_id!==child.object_id)return {status:"DENIED",reason:"LEASE_SUBJECT_MISMATCH"};
