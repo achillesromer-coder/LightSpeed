@@ -155,6 +155,20 @@
         "intake_state": "12 original conversation JSON bodies 0 BYTES_READ; 0 HASH_VERIFIED; 0 R1_TYPED; no native DBR",
         "source_confidentiality": "Original folder/file identifiers, personal conversation content and broad-link ACL details withheld from public Git; original bytes unchanged",
         "next": "Seek exact existing source locator from authorised private manifest or provider full-MIME cursor; do not bulk copy, create a new export, or claim native admission"
+      },
+      "owner_private_scope_reconciliation_2026_11_02": {
+        "evidence_class": "SCOPED_PRIVATE_LIBRARY_HANDOFF_AND_OWNER_HOST_RECEIPTS; NOT_CURRENT_PUBLIC_GITHUB_OR_CLOUD_PROVIDER_SHARD_READBACK",
+        "historical_cloud_provider_result": "Original JSON shard bodies were not accessible in the earlier Drive-only discovery scope; retain this historical negative as valid for that scope.",
+        "separate_owner_private_result": "All twelve original shard identities and visible-text R1 review were independently verified in an owner-private build/host scope; source receipts are retained privately, not mirrored in this public repository.",
+        "current_public_register_status": "SOURCE_SCOPE_RECONCILED__NATIVE_AND_MANUAL_INTAKE_HOLD",
+        "source_occurrence_variants": "PARTIAL_R1__CURRENT_REVIEW_INGESTOR_REQUIRES_OCCURRENCE_KEY_AND_METADATA_VARIANT_NO_LOSS_FIX",
+        "nontext_and_attachments": "UNQUALIFIED__REQUIRES_SELECTIVE_ORIGINAL_HYDRATION",
+        "original_source_bytes_read_in_this_git_update": false,
+        "manual_intake_full_parity": "UNVERIFIED",
+        "accepted_parent_child_load_object_ids": "UNVERIFIED_SIGNED_S97_ROOTAUTHORITY_LEASE_DBR",
+        "public_private_source_transfer": "NONE",
+        "native_mint_or_install": false,
+        "next": "Keep originals private; independently qualify one bounded original branch and all occurrence/metadata variants in a separate review database, then require authenticated signer/lease/DBR readback before native admission."
       }
     },
     {
