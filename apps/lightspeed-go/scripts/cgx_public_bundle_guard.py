@@ -37,6 +37,14 @@ BLOCKED = {
     "private assets path": re.compile(r"(?<![a-z])/review/(?:mesh|renders)|/data/(?:cgx|component_geometry)",re.I),
     "native owner APIs": re.compile(r"/api/(?:v1|owner)|https?://(?:127\.0\.0\.1|localhost)(?::\d+)?/",re.I),
     "credential syntax": re.compile(r"(?:sk-proj-|ghp_[A-Za-z0-9]{20,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)",re.I),
+    # #158: CSP connect-src does not prevent top-level navigation or window.open.
+    # The reviewed public JS reads location.pathname but has no scripted navigation.
+    "scripted navigation escape": re.compile(
+        r"""\b(?:(?:window|document|self|top|parent|globalThis)\s*\.\s*)?location\s*"""
+        r"""(?:\.\s*(?:assign|replace)\s*\(|\.\s*href\s*=(?!=)|=(?!=)|\[)"""
+        r"""|\b(?:window|globalThis|self|top|parent)\s*\.\s*open\s*\("""
+        r"""|\b(?:window|document|globalThis|self|top|parent)\s*\[\s*['"](?:location|open)['"]\s*\]""", re.I),
+
     # Static demonstration code has no reason to initiate network reads or dynamic code loads.
     # CSP remains mandatory, but is not a substitute for rejecting source-level bypasses.
     # #158: bracket-property API invocation bypasses bare fetch()/sendBeacon() scans.
