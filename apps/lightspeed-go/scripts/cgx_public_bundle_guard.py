@@ -39,6 +39,10 @@ BLOCKED = {
     "credential syntax": re.compile(r"(?:sk-proj-|ghp_[A-Za-z0-9]{20,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)",re.I),
     # Static demonstration code has no reason to initiate network reads or dynamic code loads.
     # CSP remains mandatory, but is not a substitute for rejecting source-level bypasses.
+    # #158: bracket-property API invocation bypasses bare fetch()/sendBeacon() scans.
+    # This is a bounded static deny rule, not a replacement for runtime ACL/CSP.
+    "computed network API access": re.compile(
+        r"""\[\s*[\x27\x22](?:fetch|XMLHttpRequest|WebSocket|EventSource|sendBeacon|serviceWorker|importScripts|eval|Function)[\x27\x22]\s*\]""",re.I),
     "active network or dynamic code API": re.compile(
         r"\b(?:fetch\s*\(|XMLHttpRequest\b|WebSocket\b|EventSource\b|sendBeacon\s*\(|"
         r"serviceWorker\b|importScripts\s*\(|import\s*\(|eval\s*\(|Function\s*\()",re.I),
