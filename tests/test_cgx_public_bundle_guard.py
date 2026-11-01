@@ -139,7 +139,7 @@ class PublicBundleTests(unittest.TestCase):
                 c = Path(d) / "cgx"
                 shutil.copytree(mod.SOURCE, c)
                 with (c / "index.html").open("a", encoding="utf-8") as handle:
-                    handle.write("\\n" + attack)
+                    handle.write("\n" + attack)
                 with self.assertRaises(mod.BundleHold):
                     mod.inspect_public_bundle(c)
 
