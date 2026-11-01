@@ -105,12 +105,15 @@ def prepare_packet(
         raise ProfileHold("ACHILLES_PROJECT_ID_HOLD")
     if len(private_source_ids) > 100 or not all(isinstance(s, str) for s in private_source_ids):
         raise ProfileHold("ACHILLES_SOURCE_SET_HOLD")
-    # Only privacy-preserving identity digests travel in review packets.
-    # Digests alone never prove any source's authority, ACL, rights or content.
-    source_digests = sorted({_hash(s) for s in private_source_ids})
+    # Never serialise stable digests of private source identifiers: enumerable
+    # identifiers can be recovered by dictionary attack or cross-packet joins.
+    # The fingerprint deliberately binds only task/project/instruction/count;
+    # a private, authorised consumer MUST independently compare exact source
+    # identities and rights before treating this review packet as actionable.
+    source_count = len(set(private_source_ids))
     instruction_digest = _hash(instruction)
     fingerprint = _hash(json.dumps(
-        [task_id, project_id, instruction_digest, source_digests],
+        [task_id, project_id, instruction_digest, source_count],
         separators=(",", ":"),
     ))
     plan = _resolve_plan(instruction, task_id, planner)
@@ -119,6 +122,9 @@ def prepare_packet(
     return {
         "schema": PACKET_SCHEMA,
         "state": "REVIEW_ONLY_NOT_DISPATCHED",
+        "output_classification": "PRIVATE_OWNER_REVIEW_ONLY",
+        "public_projection_authorized": False,
+        "private_source_set_binding": "NOT_INCLUDED_REQUIRES_PRIVATE_REVALIDATION",
         "profile": profile["identity"]["proposed_profile_name"],
         "selector": "achilles",
         "authority_domain": "emassc",
@@ -128,8 +134,7 @@ def prepare_packet(
         "idempotency_fingerprint": fingerprint,
         "instruction_sha256": instruction_digest,
         "raw_instruction_persisted": False,
-        "private_source_count": len(source_digests),
-        "private_source_id_hashes": source_digests,
+        "private_source_count": source_count,
         "source_admission": "NOT_INFERRED_FROM_IDENTIFIERS_OR_DIGESTS",
         "supervisor": plan,
         "existing_execution_entrypoint": "scripts/run_cgx_agent_runtime.py",
@@ -142,6 +147,7 @@ def prepare_packet(
         },
         "authorization": {
             "owner_decision": "PENDING",
+            "private_source_set_approved": False,
             "lease_verified": False,
             "effective_tool_permissions": [],
             "native_dbr_admitted": False,
