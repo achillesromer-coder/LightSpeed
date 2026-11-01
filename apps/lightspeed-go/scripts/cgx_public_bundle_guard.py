@@ -76,6 +76,12 @@ class _PublicHtmlReferences(HTMLParser):
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = dict(attrs)
+        # These HTML surfaces can initiate passive loads or execute scripts
+        # outside the ordinary src/href checks; none belong to reviewed shells.
+        if tag in {"svg", "math", "style"}:
+            raise BundleHold(f"unreviewed embedded markup/style: {self.relative}")
+        if any(key == "style" or key.startswith("on") for key in values):
+            raise BundleHold(f"unreviewed inline style or event handler: {self.relative}")
         if tag in {"base", "form"}:
             raise BundleHold(f"unreviewed HTML navigation or form: {self.relative}")
         if tag == "meta" and (values.get("http-equiv") or "").casefold() == "refresh":
@@ -135,6 +141,13 @@ def inspect_public_bundle(source:Path=SOURCE)->dict[str,Any]:
             _PublicHtmlReferences(relative).feed(text)
         if relative.endswith(".css") and re.search(r"@import\b",text,re.I):
             raise BundleHold(f"unreviewed CSS import: {relative}")
+        if relative.endswith(".css"):
+            # No escapes, comments or image-set() occur in the approved CSS.
+            # Reject ambiguous syntax instead of claiming regex is a CSS parser.
+            if "\\" in text or "/*" in text:
+                raise BundleHold(f"unreviewed CSS escape/comment syntax: {relative}")
+            if re.search(r"(?<![\w-])(?:-webkit-)?image-set\s*\(",text,re.I):
+                raise BundleHold(f"unreviewed CSS image-set resource: {relative}")
         if relative.endswith((".css",".html")):
             # CSS and inline HTML styles may load remote pixels/fonts without JS.
             for uri in re.findall(r"""\burl\(\s*['"]?([^)'"]+)['"]?\s*\)""",text,re.I):
