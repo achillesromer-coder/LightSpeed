@@ -50,7 +50,7 @@ const safeRelativeTransferPath=path=>{
 // basename guard. This does not establish a unique Object_ID or native binding.
 const safeChildFilespace=value=>
  typeof value==="string"&&id(value)&&value.length<=128&&value.endsWith(".cgx")&&
- !value.includes("/")&&safeRelativeTransferPath(value);
+ !value.includes("/")&&!value.slice(0,-4).endsWith(" ")&&safeRelativeTransferPath(value);
 const AUTHORITY="HOST_SIGNATURE_AND_DBR_NOT_VERIFIED_BY_PLANNER";
 // Distinct source-review holds: a claimed key, request scope or nonce is not host proof.
 const LEASE_BOUNDARY_HOLDS=Object.freeze([
