@@ -38,10 +38,14 @@ export function projectOwnerReviewPacket(input: unknown): OwnerPacketProjection 
       input.source_admission !== "NOT_INFERRED_FROM_IDENTIFIERS_OR_DIGESTS" ||
       input.runtime_host_readback !== "NOT_PERFORMED") hold();
 
-  if (typeof input.Task_ID !== "string" || !TASK_ID.test(input.Task_ID) ||
-      typeof input.project_id !== "string" || !PROJECT_ID.test(input.project_id) ||
-      typeof input.idempotency_fingerprint !== "string" ||
-      !SHA256.test(input.idempotency_fingerprint)) hold();
+  const taskId = input.Task_ID;
+  const projectId = input.project_id;
+  const fingerprint = input.idempotency_fingerprint;
+  if (typeof taskId !== "string" || !TASK_ID.test(taskId) ||
+      typeof projectId !== "string" || !PROJECT_ID.test(projectId) ||
+      typeof fingerprint !== "string" || !SHA256.test(fingerprint)) {
+    throw new Error("OWNER_PACKET_REVIEW_HOLD");
+  }
 
   const count = input.private_source_count;
   const digests = input.private_source_id_hashes;
@@ -70,15 +74,15 @@ export function projectOwnerReviewPacket(input: unknown): OwnerPacketProjection 
   // execution arguments and untrusted review URLs. A signed link requires
   // an independently verified owner session and a separate server contract.
   return Object.freeze({
-    task_id: input.Task_ID,
-    project_id: input.project_id,
+    task_id: taskId,
+    project_id: projectId,
     semantic_parent: "cgx:root:cognigrex" as const,
     child_domain: "emassc" as const,
     evidence_class: "SOURCE_ONLY_REVIEW" as const,
     admission_stage: "NOT_NATIVE_ADMITTED" as const,
     state: "REVIEW_ONLY_NOT_DISPATCHED" as const,
     owner_decision: "PENDING" as const,
-    review_fingerprint: input.idempotency_fingerprint,
+    review_fingerprint: fingerprint,
     private_source_count: count as number,
     runtime_host_readback: "NOT_PERFORMED" as const,
     signed_review_link: null,
