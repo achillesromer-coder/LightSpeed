@@ -18,6 +18,23 @@ test('fully described fields are not cryptographic attestation',()=>{
  assert.equal(r.status,'UNVERIFIED_SHAPE_REVIEW');assert.equal(r.host_signature_verified,false);
  assert.equal(r.may_execute,false);assert.equal(r.ls_go_toggle_enabled,false);
 });
+test('child FileSpace names fail closed consistently with Windows basename safety',()=>{
+ for(const filespace of [
+  '../escape.cgx','..\\\\escape.cgx','C:stream.cgx','CON.cgx',
+  'LPT1.cgx','CONIN$.cgx','CONOUT$.cgx','bad\\u200b.cgx',
+  'bad\\n.cgx','e\\u0301.cgx','a%2fb.cgx','Other-Science.CGX',
+  'x'.repeat(129)+'.cgx','staged/Other-Science.cgx'
+ ]){
+  const result=planCGXHandshake({...base,child:{...base.child,filespace}});
+  assert.equal(result.status,'DENIED',JSON.stringify(filespace));
+  assert.equal(result.reason,'UNSAFE_CHILD_FILESPACE',JSON.stringify(filespace));
+ }
+ for(const filespace of ['Eco.cgx','Other-Science.cgx','café.cgx']){
+  const result=planCGXHandshake({...base,child:{...base.child,filespace}});
+  assert.equal(result.status,'UNVERIFIED_SHAPE_REVIEW',filespace);
+  assert.equal(result.may_execute,false);
+ }
+});
 test('foreign child parent rejected',()=>assert.equal(
  planCGXHandshake({...base,child:{...base.child,parent_object_id:'fixture:other'}}).reason,'CROSS_PARENT_CHILD'));
 test('lease belongs to exact child',()=>assert.equal(
