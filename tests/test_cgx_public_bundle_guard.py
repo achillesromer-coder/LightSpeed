@@ -124,6 +124,26 @@ class PublicBundleTests(unittest.TestCase):
                 with self.assertRaises(mod.BundleHold):
                     mod.inspect_public_bundle(c)
 
+    def test_unquoted_html_and_embedded_private_resource_negatives(self):
+        # #158: HTMLParser must inspect unquoted and entity-decoded URLs;
+        # regex scans of only quoted src/href silently miss browser loads.
+        attacks = [
+            '<img src=/owner-private/achilles-packet.json>',
+            '<object data=/owner-private/cognigrex-sandbox.sqlite></object>',
+            '<img src=&#47;owner-private&#47;packet.json>',
+            '<iframe srcdoc="&lt;img src=/owner-private/packet.json&gt;"></iframe>',
+            '<img srcset=/owner-private/packet.png>',
+            '<a href="#public" ping="/owner-private/beacon">demo</a>',
+        ]
+        for attack in attacks:
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as d:
+                c = Path(d) / "cgx"
+                shutil.copytree(mod.SOURCE, c)
+                with (c / "index.html").open("a", encoding="utf-8") as handle:
+                    handle.write("\n" + attack)
+                with self.assertRaises(mod.BundleHold):
+                    mod.inspect_public_bundle(c)
+
     def test_no_symlink_intake(self):
         with tempfile.TemporaryDirectory() as d:
             c=Path(d)/"cgx"
