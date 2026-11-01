@@ -143,6 +143,15 @@ class PublicBundleTests(unittest.TestCase):
                 with self.assertRaises(mod.BundleHold):
                     mod.inspect_public_bundle(c)
 
+    def test_reviewed_local_anchor_routes_and_fragments_remain_allowed(self):
+        with tempfile.TemporaryDirectory() as d:
+            c = Path(d) / "cgx"
+            shutil.copytree(mod.SOURCE, c)
+            with (c / "index.html").open("a", encoding="utf-8") as handle:
+                handle.write("\n" + '<a href="/cgx/">home</a><a href="/cgx/eco/">eco</a><a href="#overview">local</a>')
+            report = mod.inspect_public_bundle(c)
+            self.assertEqual(report["file_count"], 12)
+
     def test_unquoted_html_and_embedded_private_resource_negatives(self):
         # #158: HTMLParser must inspect unquoted and entity-decoded URLs;
         # regex scans of only quoted src/href silently miss browser loads.
