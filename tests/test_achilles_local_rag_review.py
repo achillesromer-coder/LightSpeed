@@ -69,3 +69,70 @@ def test_cloud_provider_and_unknown_model_block_before_network(monkeypatch):
         rag.infer_local(evidence, "Review", "deepseek-v3.1:671b-cloud")
     with pytest.raises(ValueError, match="MODEL_NAME_OR_CLOUD_SCOPE_HOLD"):
         rag.infer_local(evidence, "Review", "../models/other?key=sensitive")
+
+def test_exclusive_publication_preserves_existing_private_result(tmp_path):
+    out = tmp_path / "private-review.json"
+    rag.publish_review_exclusive(out, {"stage": "R1_REVIEW_ONLY"})
+    initial = out.read_bytes()
+    assert json.loads(initial)["stage"] == "R1_REVIEW_ONLY"
+    with pytest.raises(FileExistsError):
+        rag.publish_review_exclusive(out, {"stage": "UNAUTHORISED_OVERWRITE"})
+    assert out.read_bytes() == initial
+    assert list(tmp_path.glob(".*.tmp")) == []
+
+
+def test_legacy_predictable_temp_symlink_is_never_followed(tmp_path):
+    out = tmp_path / "private-review.json"
+    protected = tmp_path / "protected.txt"
+    protected.write_text("DO_NOT_TOUCH", encoding="utf-8")
+    old_temp = out.with_suffix(".json.tmp")
+    try:
+        old_temp.symlink_to(protected)
+    except (OSError, NotImplementedError):
+        pytest.skip("Host does not permit creation of test symlinks")
+    rag.publish_review_exclusive(out, {"status": "SAFE"})
+    assert protected.read_text(encoding="utf-8") == "DO_NOT_TOUCH"
+    assert old_temp.is_symlink()
+    assert json.loads(out.read_text(encoding="utf-8"))["status"] == "SAFE"
+
+
+def test_preplanted_new_temp_symlink_rejected_without_writing_target(tmp_path, monkeypatch):
+    import os
+    out = tmp_path / "private-review.json"
+    protected = tmp_path / "protected.txt"
+    protected.write_text("DO_NOT_TOUCH", encoding="utf-8")
+    monkeypatch.setattr(rag.secrets, "token_hex", lambda n: "fixednonce")
+    temporary = tmp_path / f".{out.name}.{os.getpid()}.fixednonce.tmp"
+    try:
+        temporary.symlink_to(protected)
+    except (OSError, NotImplementedError):
+        pytest.skip("Host does not permit creation of test symlinks")
+    with pytest.raises(FileExistsError):
+        rag.publish_review_exclusive(out, {"status": "UNSAFE"})
+    assert protected.read_text(encoding="utf-8") == "DO_NOT_TOUCH"
+    assert temporary.is_symlink()
+    assert not out.exists()
+
+
+def test_final_destination_race_fails_without_replacement(tmp_path, monkeypatch):
+    out = tmp_path / "private-review.json"
+    original_link = rag.os.link
+    def destination_claimed_during_publication(source, destination):
+        Path(destination).write_text("RACE_WINNER", encoding="utf-8")
+        return original_link(source, destination)
+    monkeypatch.setattr(rag.os, "link", destination_claimed_during_publication)
+    with pytest.raises(FileExistsError):
+        rag.publish_review_exclusive(out, {"status": "MUST_NOT_OVERWRITE"})
+    assert out.read_text(encoding="utf-8") == "RACE_WINNER"
+    assert not list(tmp_path.glob(".*.tmp"))
+
+
+def test_hardlink_unavailable_fails_closed_without_rename(tmp_path, monkeypatch):
+    out = tmp_path / "private-review.json"
+    def link_unavailable(source, destination):
+        raise OSError("HARD_LINK_UNAVAILABLE")
+    monkeypatch.setattr(rag.os, "link", link_unavailable)
+    with pytest.raises(OSError, match="HARD_LINK_UNAVAILABLE"):
+        rag.publish_review_exclusive(out, {"status": "NO_FALLBACK"})
+    assert not out.exists()
+    assert not list(tmp_path.glob(".*.tmp"))
