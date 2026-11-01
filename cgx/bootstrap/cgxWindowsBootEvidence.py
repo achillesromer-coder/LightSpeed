@@ -16,6 +16,7 @@ from pathlib import Path
 import re
 import sqlite3
 import subprocess
+import unicodedata
 from typing import Any
 from urllib.error import URLError, HTTPError
 from urllib.request import Request, build_opener, ProxyHandler
@@ -72,6 +73,27 @@ def _git_head(repo: Path) -> str | None:
         return None
 
 
+
+def _portable_filespace(value: Any) -> bool:
+    """Validate one local FileSpace basename, not a path or native admission."""
+    if (not isinstance(value, str) or len(value) > 128
+        or not value.endswith(".cgx") or value != value.strip()
+        or value != unicodedata.normalize("NFC", value)):
+        return False
+    if ("/" in value or "\\" in value or ":" in value or "%" in value
+        or ".." in value or any(ch in '<>"|?*' for ch in value)
+        or any(unicodedata.category(ch) in {"Cc", "Cf", "Cs", "Zl", "Zp"}
+               for ch in value)):
+        return False
+    stem = value.split(".", 1)[0]
+    if not stem or re.fullmatch(
+        r"(?:CON|PRN|AUX|NUL|CONIN\\$|CONOUT\\$|COM[1-9¹²³]|LPT[1-9¹²³])",
+        stem, flags=re.IGNORECASE,
+    ):
+        return False
+    return True
+
+
 def _family_identity(path: Path) -> dict[str, Any]:
     source = _load_json(path)
     root = source.get("root")
@@ -83,7 +105,7 @@ def _family_identity(path: Path) -> dict[str, Any]:
         or not isinstance(children, dict) or not children):
         raise ValueError("SINGLE_CGX_PARENT_NOT_VERIFIED")
     seen = {SEMANTIC_ROOT}
-    filespaces = {"Cognigrex.cgx"}
+    filespaces = {"Cognigrex.cgx".casefold()}
     rows = []
     for name, child in sorted(children.items()):
         if not isinstance(child, dict):
@@ -94,11 +116,11 @@ def _family_identity(path: Path) -> dict[str, Any]:
         if (child.get("domain_id") != name
             or not isinstance(object_id, str) or not object_id.startswith("cgx:domain:")
             or object_id in seen or not isinstance(filespace, str)
-            or not filespace.endswith(".cgx") or filespace in filespaces
+            or not _portable_filespace(filespace) or filespace.casefold() in filespaces
             or not isinstance(parent, str)):
             raise ValueError("FAMILY_ID_COLLISION_OR_INVALID")
         seen.add(object_id)
-        filespaces.add(filespace)
+        filespaces.add(filespace.casefold())
         rows.append({
             "domain": name, "semantic_object_id": object_id,
             "filespace": filespace, "parent_semantic_object_id": parent,
