@@ -497,3 +497,30 @@ def test_rfs_emff_dispatch_uses_executor_validator_and_command_identity(
     assert seen["job_id"] == 401
     assert seen["shell_root"] == tmp_path
     assert seen["allow_heavy"] is False
+
+def test_stale_consumer_lock_with_live_reused_pid_remains_held(tmp_path: Path, monkeypatch):
+    """Source-only singleton negative: age alone never authorises lock removal.
+
+    A recycled PID could belong to an unrelated live process. This test proves
+    fail-closed behaviour, NOT consumer identity or host liveness.
+    """
+    shell = tmp_path / "App"
+    lock = ls_go_job_consumer.heartbeat_path(shell)
+    lock.parent.mkdir(parents=True, exist_ok=True)
+    original = {
+        "schema_version": ls_go_job_consumer.CONSUMER_SCHEMA,
+        "pid": 424242,
+        "heartbeat_utc": "2026-10-30T04:28:00+00:00",
+        "state": "polling",
+    }
+    lock.write_text(json.dumps(original, sort_keys=True), encoding="utf-8")
+    monkeypatch.setattr(ls_go_job_consumer, "_pid_alive", lambda pid: pid == 424242)
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=object())
+
+    try:
+        consumer._acquire_heartbeat_lock()
+    except RuntimeError as exc:
+        assert "already active as PID 424242" in str(exc)
+    else:
+        raise AssertionError("stale timestamp bypassed live-PID singleton hold")
+    assert json.loads(lock.read_text(encoding="utf-8")) == original
