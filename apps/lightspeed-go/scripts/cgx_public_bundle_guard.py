@@ -85,6 +85,12 @@ class _PublicHtmlReferences(HTMLParser):
         self.relative = relative
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        # HTMLParser retains duplicate attributes while dict() discards them.
+        # Browsers may honour the first occurrence; a later allowlisted src/href
+        # must never conceal an earlier private or remote resource (#158).
+        keys = [key for key, _ in attrs]
+        if len(keys) != len(set(keys)):
+            raise BundleHold(f"duplicate HTML attributes: {self.relative}")
         values = dict(attrs)
         # These HTML surfaces can initiate passive loads or execute scripts
         # outside the ordinary src/href checks; none belong to reviewed shells.
