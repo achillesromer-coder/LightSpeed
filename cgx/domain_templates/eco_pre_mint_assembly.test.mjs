@@ -907,3 +907,42 @@ test("original cell digest crosswalk binds receipt hashes without promoting priv
   original_cell_digest_crosswalk:packet,requested_hydration:"H0"});
  assert.equal(h0.original_cell_digest_crosswalk_review.state,"NOT_REQUESTED");
 });
+
+test("formula digest receipt cannot contradict the independently declared inventory",()=>{
+ // All values are synthetic; the real Second Cycle source stays in Drive.
+ const provenance={source_ref:source.source_ref,source_revision:source.revision,
+  source_sha256:digest,related_source_ref:lineage.related_source_ref,
+  related_revision_ref:lineage.related_revision_ref};
+ const entry=(id,row,hash)=>({
+  formula_id:id,original_anchor:"31_Formula_Library!B"+row,
+  original_id_anchor:"31_Formula_Library!A"+row,
+  translated_anchor:"SYNTHETIC_31_Formula_Library!B"+row,
+  translated_id_anchor:"SYNTHETIC_31_Formula_Library!A"+row,
+  original_text_sha256:hash.repeat(64),
+  translated_text_sha256:hash.repeat(64),status:"TEXT_EXACT"});
+ const receipt={...provenance,receipt_ref:"synthetic:cell-receipt",
+  receipt_sha256:"a".repeat(64),evidence_class:"simulated",
+  entries:[entry("FM-001",3,"1"),entry("FM-005",7,"5")],
+  translation_only_ids:["FM-008","FM-009"],unit_defect_refs:[]};
+ const inventory={...provenance,original_ids:["FM-001","FM-005"],
+  related_ids:["FM-001","FM-005","FM-008","FM-009"]};
+ const review=i=>prepare({cascade_input:input,source_lineage:lineage,
+  formula_inventory:i,original_cell_digest_crosswalk:receipt});
+ const ok=review(inventory);
+ assert.equal(ok.original_cell_digest_crosswalk_review.compared_count,2);
+ assert.deepEqual(ok.formula_inventory_review.added_related_formula_ids,
+  ["FM-008","FM-009"]);
+ assert.equal(ok.release.mint_allowed,false);
+ assert.equal(ok.canonical_write,false);
+ for(const bad of [
+  {...inventory,original_ids:["FM-005"]},
+  {...inventory,related_ids:["FM-005","FM-008","FM-009"]},
+  {...inventory,original_ids:["FM-001","FM-005","FM-008"]},
+  {...inventory,related_ids:["FM-001","FM-005","FM-008"]}
+ ])assert.throws(()=>review(bad),/ECO_FORMULA_RECEIPT_INVENTORY_CONFLICT/);
+ const h0=prepare({cascade_input:input,source_lineage:lineage,
+  formula_inventory:inventory,original_cell_digest_crosswalk:receipt,
+  requested_hydration:"H0"});
+ assert.equal(h0.original_cell_digest_crosswalk_review.state,"NOT_REQUESTED");
+ assert.equal(h0.release.public_release_authorised,false);
+});
