@@ -185,5 +185,71 @@
       "TheConstruct": "Manual-heavy geometry and simulation",
       "Architect": "Existing architectural synthesis"
     }
+  },
+  "local_agent_standby": {
+    "schema": "CGX-ACHILLES-LOCAL-FLOOR-STANDBY/0.1",
+    "scope": "Existing Neo-supervised eight-floor LightSpeed runtime; no duplicate root or model service",
+    "agent_floor_order": [
+      "Neo",
+      "Oracle",
+      "Morpheus",
+      "Architect",
+      "Trinity",
+      "Smith",
+      "Merovingian",
+      "TheConstruct"
+    ],
+    "preparation_stages": [
+      "IDENTITY_AND_SOURCE_HOMES",
+      "PRIVATE_R0_R1_DOMAIN_CONTEXT",
+      "R2_CLAIM_COMPARISON",
+      "CCC_LOAD_TOOLKIT_MATCH",
+      "NEGATIVE_REGRESSIONS",
+      "HOST_RESOURCE_PREFLIGHT",
+      "LEASE_SINGLETON_AUTHORITY",
+      "READY_STANDBY",
+      "BOUNDED_SUPERVISED_TASK"
+    ],
+    "source_read_boundary": "Existing owner-private R1/R0 and LOAD/CCC source registers; never public raw GPT source",
+    "host_memory": {
+      "minimum_manual_free_fraction": 0.2,
+      "check_before_each_model_load": true,
+      "on_threshold_breach": "DEFER_NEW_LOAD_AND_RETURN_TO_STANDBY",
+      "allow_single_existing_model_session": true,
+      "heavy_model_autostart": false
+    },
+    "queue": {
+      "provenance": "existing gated_build_tasks.json and LS GO Task_ID",
+      "existing_seeded_count_at_review": 14,
+      "source_claim_not_verified_completion": true,
+      "duplicate_task_ids_denied": true,
+      "external_writes_require_owner_approval": true
+    },
+    "native_authority": {
+      "signed_lease_and_root_required": true,
+      "singleton_generation_proof_required": true,
+      "independent_dbr_readback_required": true,
+      "original_rights_acl_required": true,
+      "early_learning_has_no_mint_effect": true,
+      "automatic_promotion": false
+    },
+    "activation_receipt": {
+      "required": [
+        "host",
+        "floor",
+        "source_manifest_hash",
+        "task_id",
+        "latest_model_identity",
+        "memory_before",
+        "memory_after",
+        "singleton_status",
+        "owner_scope",
+        "lease_state",
+        "readback",
+        "rollback"
+      ],
+      "missing_receipt": "HOLD_NOT_LIVE_VERIFIED"
+    },
+    "activation_status": "SOURCE_CONTRACT_STAGED_ONLY_NOT_A_RUNTIME_COMMAND"
   }
 }
