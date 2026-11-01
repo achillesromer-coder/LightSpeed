@@ -108,6 +108,24 @@ class PublicBundleTests(unittest.TestCase):
                 with self.assertRaisesRegex(mod.BundleHold, "computed network API access"):
                     mod.inspect_public_bundle(c)
 
+    def test_split_computed_network_property_names_fail_closed(self):
+        # #158: bracket-string concatenation bypasses literal fetch() and
+        # bracket-single-string scans; deny this bounded known form.
+        attacks = [
+            'globalThis["fe" + "tch"]("/owner-private/receipt.json")',
+            "navigator['send'+'Beacon']('/collect', 'data')",
+            'window["Web" + "Socket"]("wss://example.invalid")',
+            'navigator["service" + "Worker"]["register"]("/sw.js")',
+        ]
+        for attack in attacks:
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as d:
+                c = Path(d) / "cgx"
+                shutil.copytree(mod.SOURCE, c)
+                with (c / "assets/core.js").open("a", encoding="utf-8") as handle:
+                    handle.write("\\n" + attack)
+                with self.assertRaisesRegex(mod.BundleHold, "computed split network API access"):
+                    mod.inspect_public_bundle(c)
+
     def test_passive_html_css_network_resources_fail_closed(self):
         # Network-capable passive resource attributes and CSS url() must be
         # rejected even if CSP is intended to deny their runtime requests.
