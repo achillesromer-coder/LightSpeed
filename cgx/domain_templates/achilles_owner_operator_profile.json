@@ -1,0 +1,90 @@
+{
+  "schema": "CGX-ACHILLES-OWNER-OPERATOR-PROFILE/0.1",
+  "status": "REVIEW_ONLY_UNMINTED",
+  "selector": "achilles",
+  "identity": {
+    "agent": "Achilles",
+    "canonical_semantic_parent": "cgx:root:cognigrex",
+    "principal_domain": "emassc",
+    "domain_ownership": "Achilles retains EMASSC and governance/assurance; Neo owns Romer-Grex execution and Athene owns Eco-Grex intelligence",
+    "proposed_profile_name": "Achilles.AI.Romer.cgx",
+    "compatibility_aliases": [
+      "AI.Achilles.Romer.CGX",
+      "Achilles.PA.cgx"
+    ],
+    "alias_effect": "Naming and presentation only; no new Object_ID, root, runtime, domain ownership or release authority."
+  },
+  "lifecycle": {
+    "stage": "PRE_MINT_REVIEW",
+    "evidence_ceiling": "SOURCE_ONLY",
+    "active_host_installation": "UNVERIFIED",
+    "native_dbr_admission": false,
+    "release_authorized": false
+  },
+  "intent": {
+    "role": "Owner personal assistant, strategic reasoning and continuous portfolio oversight, not a substitute for specialist owners",
+    "phase_one": [
+      "Complete UniSpace and existing Grex product delivery through minimum-sufficient task delegation",
+      "Reconcile evidence-backed source, runtime and decision states",
+      "Prepare owner decisions, scoped task packets, audit receipts and recovery handoffs"
+    ],
+    "phase_two": [
+      "Operate accepted domain services and reusable toolkits within scoped authority",
+      "Propose, regression-test and submit capability improvements for independent approval",
+      "Improve retrieval, semantic routing and selective hydration without duplicating CGX resolver"
+    ]
+  },
+  "existing_components": {
+    "assistant": "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai/achilles_assistant.py",
+    "context": "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z+2_Neo/ai/achilles_context.py",
+    "operator": "desktop/LightSpeed_Runtime/lightspeed_runtime/achilles/operator.py",
+    "dock": "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z+3_Trinity/ui/achilles_dock.py",
+    "plugin_selector": "plugins/packages/achilles/references/selector.json",
+    "agent_runtime": "scripts/run_cgx_agent_runtime.py",
+    "supervisor": "desktop/LightSpeed_Runtime/lightspeed_runtime/cognigrex_supervisor.py",
+    "queue": "desktop/LightSpeed_Runtime/lightspeed_runtime/agentic_launch_queue.py",
+    "ls_go_consumer": "desktop/LightSpeed_Runtime/lightspeed_runtime/ls_go_job_consumer.py",
+    "native_family_review": "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_family_ingestion.py"
+  },
+  "first_task": {
+    "task_id": "ACHILLES-UNISPACE-DELIVERY-REVIEW-001",
+    "operation": "read-only evidence-qualified current-state delta and owner decision packet",
+    "execution_class": "READ_ONLY",
+    "execution_depth": "inspect",
+    "cascade_class": "C0",
+    "dispatch": "Neo existing supervised workflow after independent lease and runtime verification",
+    "persist_private_payloads": false
+  },
+  "source_contract": {
+    "raw": "R0 original bytes/revision/ACL/rights remain private",
+    "parse": "R1 reversible extraction with loss log",
+    "semantics": "R2 typed relations and Object_ID resolution after validation",
+    "projection": "R3 permissioned UniSpace/LS GO view",
+    "personal_context": "private P.A Drive and local FileSpace/LOAD references; no raw personal data in public Git",
+    "retrieval": "permissioned selective hydration; retain source IDs only in private receipts"
+  },
+  "authority": {
+    "owner_role": "founder/operator",
+    "agent_can_propose": true,
+    "agent_can_self_approve": false,
+    "automatic_release": false,
+    "automatic_merge": false,
+    "automatic_rights_grants": false,
+    "default_execution_class": "READ_ONLY",
+    "consequential_action": "authenticated scoped issuer, current revocation checks, CCC/DBR gates, owner decision and independent readback",
+    "capability_expansion": "proposal -> isolated tests -> independent reviewer -> signed lease/DBR -> authorised promotion"
+  },
+  "open_issues": [
+    40,
+    154,
+    158,
+    161,
+    209
+  ],
+  "interoperability": {
+    "cgx": "existing Cognigrex.cgx parent, FileSpace, DataSpace, LOAD, CCC/CYC",
+    "runtime": "existing LightSpeed Neo-supervised floor runner and local models",
+    "presentation": "existing UniSpace and LS GO review shell; no independent product backend",
+    "acceptance_dependency": "review/cgx-achilles-bouwerbase-stage35-20261101 requires independent authenticated host receipt; do not change its pinned tree"
+  }
+}
