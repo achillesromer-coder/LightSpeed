@@ -520,7 +520,7 @@ test('C1 and Unicode identity spoofing fail closed across bootstrap and native l
     scope:{...nativeABIBase.nativeLease.scope,tool_scopes:[tool]}},
    request:{...nativeABIBase.request,tool_scope:tool}});
   assert.equal(d.status,'DENIED',escaped);
-  assert.equal(d.reason,'NATIVE_LEASE_REQUEST_SCOPE_MISMATCH',escaped);
+  assert.equal(d.reason,'MISSING_REQUEST_BOUND_IDENTITY',escaped);
   assert.equal(d.may_execute,false);
  }
 });
