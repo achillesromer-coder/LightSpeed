@@ -36,6 +36,11 @@ BLOCKED = {
     "private assets path": re.compile(r"(?<![a-z])/review/(?:mesh|renders)|/data/(?:cgx|component_geometry)",re.I),
     "native owner APIs": re.compile(r"/api/(?:v1|owner)|https?://(?:127\.0\.0\.1|localhost)(?::\d+)?/",re.I),
     "credential syntax": re.compile(r"(?:sk-proj-|ghp_[A-Za-z0-9]{20,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)",re.I),
+    # Static demonstration code has no reason to initiate network reads or dynamic code loads.
+    # CSP remains mandatory, but is not a substitute for rejecting source-level bypasses.
+    "active network or dynamic code API": re.compile(
+        r"\b(?:fetch\s*\(|XMLHttpRequest\b|WebSocket\b|EventSource\b|sendBeacon\s*\(|"
+        r"serviceWorker\b|importScripts\s*\(|import\s*\(|eval\s*\(|Function\s*\()",re.I),
 }
 MAX_FILE_BYTES=250_000
 MAX_BYTES=1_000_000
