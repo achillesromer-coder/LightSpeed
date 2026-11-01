@@ -90,6 +90,24 @@ class PublicBundleTests(unittest.TestCase):
                 with self.assertRaisesRegex(mod.BundleHold, "active network or dynamic code API"):
                     mod.inspect_public_bundle(c)
 
+    def test_computed_network_api_access_is_denied(self):
+        # #158: a public asset must not call browser transport APIs through
+        # computed properties even if no literal fetch( or sendBeacon( appears.
+        attacks = [
+            \x27globalThis["fetch"]("/owner-private/receipt.json")\x27,
+            \x27navigator["sendBeacon"]("/collect", "data")\x27,
+            \x27window["WebSocket"]("wss://example.invalid")\x27,
+            \x27navigator["serviceWorker"]["register"]("/sw.js")\x27,
+        ]
+        for attack in attacks:
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as d:
+                c = Path(d) / "cgx"
+                shutil.copytree(mod.SOURCE, c)
+                with (c / "assets/core.js").open("a", encoding="utf-8") as handle:
+                    handle.write("\\n" + attack)
+                with self.assertRaisesRegex(mod.BundleHold, "computed network API access"):
+                    mod.inspect_public_bundle(c)
+
     def test_passive_html_css_network_resources_fail_closed(self):
         # Network-capable passive resource attributes and CSS url() must be
         # rejected even if CSP is intended to deny their runtime requests.
