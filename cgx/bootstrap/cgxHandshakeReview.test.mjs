@@ -375,6 +375,32 @@ test('malformed optional native context allowlists fail closed without host auth
  }
 });
 
+test('unmapped native geographic or orbital lease scope fails closed',()=>{
+ // The contract lists this axis but supplies no typed frame/units/containment
+ // ABI. A synthetic matching label is not host spatial authority.
+ const spatial=[null,{},'Earth', {frame:'ICRF',body:'Earth'},
+  {frame:'J2000',origin:'500@10',region:'all'},[]];
+ for(const declared of spatial){
+  const scope={...nativeABIBase.nativeLease.scope,
+   geographic_or_orbital_scope:declared};
+  const result=reviewNativeLeaseHandshakeABI({...nativeABIBase,
+   nativeLease:{...nativeABIBase.nativeLease,scope}});
+  assert.equal(result.status,'DENIED',JSON.stringify(declared));
+  assert.equal(result.reason,'NATIVE_LEASE_SPATIAL_SCOPE_UNMAPPED');
+  assert.equal(result.may_execute,false);
+ }
+ for(const requested of [{frame:'ICRF',body:'Earth'},'Earth',null]){
+  const result=reviewNativeLeaseHandshakeABI({...nativeABIBase,
+   request:{...nativeABIBase.request,geographic_or_orbital_scope:requested}});
+  assert.equal(result.status,'DENIED',JSON.stringify(requested));
+  assert.equal(result.reason,'NATIVE_LEASE_SPATIAL_SCOPE_UNMAPPED');
+  assert.equal(result.may_execute,false);
+ }
+ const baseline=reviewNativeLeaseHandshakeABI(nativeABIBase);
+ assert.equal(baseline.status,'UNVERIFIED_SHAPE_REVIEW');
+ assert.equal(baseline.may_execute,false);
+});
+
 test('native ABI rejects malformed or unsupported declared budget ceilings',()=>{
  const baseBudget=nativeABIBase.nativeLease.scope.resource_budgets;
  const make=resource_budgets=>reviewNativeLeaseHandshakeABI({...nativeABIBase,
