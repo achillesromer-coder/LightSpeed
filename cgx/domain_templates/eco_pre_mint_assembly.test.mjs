@@ -742,6 +742,61 @@ test("symbolic correction formula ID requires paired A-row identity anchors",()=
  ])assert.throws(()=>run([bad]),/ECO_SYMBOLIC_FORMULA_ID_ROW_BINDING_CONFLICT/);
 });
 
+test("asymmetric original and translation row offsets retain six reversible text candidates",()=>{
+ // Synthetic strings and coordinates model an offset translation; no Drive
+ // workbook content, original provider assertion or ecological measurement.
+ const rows=[
+  ["q = v × A","q = v Ã— A"],
+  ["mist = q × f","mist = q Ã— f"],
+  ["pressure = 0.5ρv²","pressure = 0.5ÏvÂ²"],
+  ["drag = 0.5ρAv²","drag = 0.5ÏAvÂ²"],
+  ["margin = capacity / load","margin = capacity / load"],
+  ["index = q × wind","index = q Ã— wind"],
+  ["RPN = S × O × D","RPN = S Ã— O Ã— D"]
+ ];
+ const entries=rows.map(([original,related],i)=>{
+  const id="FM-"+String(i+1).padStart(3,"0");
+  return {formula_id:id,
+   review_action:original===related?"PRESERVE_SOURCE_MATCH":
+     "REVIEW_TRANSLATION_ENCODING",
+   original_cell:{sheet:"SYNTHETIC_ORIGINAL_FORMULAS",cell:"B"+(i+2),
+     expression_text:original,evidence_class:"simulated"},
+   related_cell:{sheet:"SYNTHETIC_TRANSLATION_FORMULAS",cell:"B"+(i+3),
+     expression_text:related,evidence_class:"simulated"},
+   original_id_anchor:{sheet:"SYNTHETIC_ORIGINAL_FORMULAS",
+     cell:"A"+(i+2),formula_id:id},
+   related_id_anchor:{sheet:"SYNTHETIC_TRANSLATION_FORMULAS",
+     cell:"A"+(i+3),formula_id:id}};
+ });
+ const base={source_ref:source.source_ref,source_revision:source.revision,
+  source_sha256:digest,related_source_ref:lineage.related_source_ref,
+  related_revision_ref:lineage.related_revision_ref};
+ const run=entries=>prepare({cascade_input:input,source_lineage:lineage,
+  symbolic_correction_batch:{...base,entries}});
+ const r=run(entries),p=r.symbolic_correction_batch_review;
+ assert.equal(p.compared_count,7);
+ assert.equal(p.candidate_correction_count,6);
+ assert.equal(p.caller_text_roundtrip_candidate_count,6);
+ assert.equal(p.formula_id_row_binding_declared_count,7);
+ assert.equal(p.formula_id_row_binding_required_count,0);
+ assert.equal(p.correction_records[0].original_cell_ref,
+  "SYNTHETIC_ORIGINAL_FORMULAS!B2");
+ assert.equal(p.correction_records[0].translated_cell_ref,
+  "SYNTHETIC_TRANSLATION_FORMULAS!B3");
+ assert.equal(p.correction_records[4].caller_text_roundtrip_candidate,false);
+ assert.equal(r.canonical_write,false);
+ assert.equal(r.release.mint_allowed,false);
+ assert.equal(JSON.stringify(r).includes("pressure ="),false);
+ assert.throws(()=>run([{...entries[0],
+   original_id_anchor:{...entries[0].original_id_anchor,cell:"A3"}}]),
+   /ECO_SYMBOLIC_FORMULA_ID_ROW_BINDING_CONFLICT/);
+ const unrecoverable=run([{...entries[0],
+   related_cell:{...entries[0].related_cell,expression_text:"q = v Ã— A?"}}]);
+ assert.equal(unrecoverable.symbolic_correction_batch_review
+   .caller_text_roundtrip_candidate_count,0);
+ assert.equal(unrecoverable.canonical_write,false);
+});
+
 test("Second Cycle coefficient role collision is retained as held pre-Mint review",()=>{
  const roleInput={source_ref:source.source_ref,source_revision:source.revision,
    source_sha256:digest,
