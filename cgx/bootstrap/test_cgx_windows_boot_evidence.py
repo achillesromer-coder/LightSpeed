@@ -310,15 +310,15 @@ class WindowsBootEvidenceTests(unittest.TestCase):
         # basename review. Neither validator grants an Object_ID, lease or DBR.
         invalid = (
             "COM1.cgx", "COM9.cgx", "LPT9.cgx",
-            "COM\\u00b9.cgx", "LPT\\u00b2.cgx", "COM\\u00b3.cgx",
-            "bad\\u007f.cgx", "bad\\u0085.cgx",
-            "bad\\u202e.cgx", "bad\\ud800.cgx",
+            "COM\u00b9.cgx", "LPT\u00b2.cgx", "COM\u00b3.cgx",
+            "bad\u007f.cgx", "bad\u0085.cgx",
+            "bad\u202e.cgx", "bad\ud800.cgx",
             "bad..cgx", "name:.cgx", "name%2e.cgx",
         )
         for name in invalid:
             with self.subTest(name=repr(name)):
                 self.assertFalse(probe._portable_filespace(name))
-        for name in ("Eco.cgx", "Other-Science.cgx", "caf\\u00e9.cgx"):
+        for name in ("Eco.cgx", "Other-Science.cgx", "caf\u00e9.cgx"):
             with self.subTest(name=name):
                 self.assertTrue(probe._portable_filespace(name))
 
