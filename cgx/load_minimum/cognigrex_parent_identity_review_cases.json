@@ -151,6 +151,11 @@
       "id": "C22",
       "input": "Historical FF-MARK3-XLSX-001 registry maps original Mark_III_Digital_Twin_v0_1.xlsx (Drive 1-6Jxye14_pQICcu_WxFmZIxnE2pDfHS2; 87108 bytes; SHA256 fab23970e80c016a2140ec0f87c1d0d7e15c365190fdacb5dc2ee2a1c2a81075) to R0_EXACT/R1_SEMANTIC_REVERSIBLE/R2_RECONSTRUCTED/R3_GENERATIVE, but its explicit S91 proof covers only a 13-cell, 8-object, 6-relation fixture. Independent bounded original-workbook review identifies 37 sheets, only PARTIAL_TYPED R1 coverage and 7 FAIL plus 2 CONDITIONAL validation gates. Original Drive link-reader ACL does not establish redistribution rights.",
       "expected": "FIXTURE_SCOPED_PROOF_ONLY; preserve the exact original R0 and the historical fixture claims, but never infer full-workbook reversible R1, all-sheet R2/R3 coverage, physical validation, public release or native Object_ID admission from class labels or fixture roundtrip. Require explicit cell/sheet coverage map, reversible loss ledger, source revision and rights/ACL qualification, independent validation-gate resolution and signed native RootAuthority/DBR readback before broader promotion. Keep Romer.cgx:/romer/mark-iii as a candidate FileSpace route, not a newly minted identity."
+    },
+    {
+      "id": "C23",
+      "input": "A historical S91 independent acceptance document recommends exact-byte Recovery promotion and a separate dated Recovery audit records PROMOTED for that S91 carrier, while later S92 carrier versions exist and the present S97/current native RootAuthority and DBR are not independently read back.",
+      "expected": "HISTORICAL_STAGE_SCOPED_ACCEPTANCE_ONLY; preserve S91 original R0, version and documentary Recovery decision separately from later S92 and unverified S97. Historical Content_Root/DBR_Root fields and Recovery promotion are not current signed native RootAuthority/DBR readback, live child binding, LOAD alias admission or permission to mint/merge/release."
     }
   ],
   "validation_state": "STATIC_SOURCE_REVIEW_ONLY",
