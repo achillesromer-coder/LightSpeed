@@ -66,7 +66,7 @@ class _PublicHtmlReferences(HTMLParser):
     """Parse HTML attributes rather than rely on quote-sensitive regex scans."""
     RESOURCE_TAGS = frozenset({
         "script", "link", "img", "source", "video", "audio",
-        "track", "iframe", "embed", "object",
+        "track", "iframe", "embed", "object", "a", "area",
     })
     RESOURCE_ATTRS = frozenset({"src", "href", "poster", "data"})
 
