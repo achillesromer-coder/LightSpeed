@@ -107,6 +107,23 @@ class PublicBundleTests(unittest.TestCase):
                 with self.assertRaises(mod.BundleHold):
                     mod.inspect_public_bundle(c)
 
+    def test_html_navigation_and_form_surfaces_fail_closed(self):
+        # #158: meta refresh, base URL rewriting and forms bypass fetch() scans.
+        attacks = [
+            '<meta http-equiv="refresh" content="0;url=https://example.invalid/leak">',
+            '<META content="0;url=/data/private" HTTP-EQUIV="REFRESH">',
+            '<base href="https://example.invalid/">',
+            '<form action="https://example.invalid/collect" method="post"></form>',
+        ]
+        for attack in attacks:
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as d:
+                c = Path(d) / "cgx"
+                shutil.copytree(mod.SOURCE, c)
+                with (c / "index.html").open("a", encoding="utf-8") as handle:
+                    handle.write("\n" + attack)
+                with self.assertRaises(mod.BundleHold):
+                    mod.inspect_public_bundle(c)
+
     def test_no_symlink_intake(self):
         with tempfile.TemporaryDirectory() as d:
             c=Path(d)/"cgx"
