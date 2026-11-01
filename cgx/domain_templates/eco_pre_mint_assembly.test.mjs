@@ -946,3 +946,57 @@ test("formula digest receipt cannot contradict the independently declared invent
  assert.equal(h0.original_cell_digest_crosswalk_review.state,"NOT_REQUESTED");
  assert.equal(h0.release.public_release_authorised,false);
 });
+
+test("independent symbolic correction and digest views cannot contradict A1 identity or text status",()=>{
+ // All strings/hashes are synthetic; no private original source is copied.
+ const base={source_ref:source.source_ref,source_revision:source.revision,
+  source_sha256:digest,related_source_ref:lineage.related_source_ref,
+  related_revision_ref:lineage.related_revision_ref};
+ const original={sheet:"SYNTHETIC_ORIGINAL",cell:"B3",
+  expression_text:"q = v × A",evidence_class:"simulated"};
+ const translated={sheet:"SYNTHETIC_TRANSLATION",cell:"B3",
+  expression_text:"q = v Ã— A",evidence_class:"simulated"};
+ const correction={formula_id:"FM-001",review_action:"REVIEW_TRANSLATION_ENCODING",
+  original_cell:original,related_cell:translated,
+  original_id_anchor:{sheet:original.sheet,cell:"A3",formula_id:"FM-001"},
+  related_id_anchor:{sheet:translated.sheet,cell:"A3",formula_id:"FM-001"}};
+ const digestEntry={formula_id:"FM-001",
+  original_anchor:"SYNTHETIC_ORIGINAL!B3",
+  translated_anchor:"SYNTHETIC_TRANSLATION!B3",
+  original_id_anchor:"SYNTHETIC_ORIGINAL!A3",
+  translated_id_anchor:"SYNTHETIC_TRANSLATION!A3",
+  original_text_sha256:"1".repeat(64),translated_text_sha256:"2".repeat(64),
+  status:"REVERSIBLE_ENCODING_CANDIDATE"};
+ const receipt={...base,receipt_ref:"synthetic:receipt",
+  receipt_sha256:"a".repeat(64),evidence_class:"simulated",
+  entries:[digestEntry],translation_only_ids:["FM-008","FM-009"],
+  unit_defect_refs:[]};
+ const run=(c=correction,d=digestEntry)=>prepare({
+  cascade_input:input,source_lineage:lineage,
+  symbolic_correction_batch:{...base,entries:[c]},
+  original_cell_digest_crosswalk:{...receipt,entries:[d]}});
+ const ok=run();
+ assert.equal(ok.symbolic_correction_batch_review.candidate_correction_count,1);
+ assert.equal(ok.original_cell_digest_crosswalk_review.mismatched_text_count,1);
+ assert.equal(ok.canonical_write,false);
+ assert.equal(ok.release.mint_allowed,false);
+ assert.equal(JSON.stringify(ok).includes("q = v"),false);
+ for(const [c,d] of [
+  [correction,{...digestEntry,formula_id:"FM-002"}],
+  [correction,{...digestEntry,translated_anchor:"SYNTHETIC_TRANSLATION!B4",
+    translated_id_anchor:"SYNTHETIC_TRANSLATION!A4"}],
+  [correction,{...digestEntry,original_id_anchor:undefined,
+    translated_id_anchor:undefined}],
+  [correction,{...digestEntry,original_text_sha256:"1".repeat(64),
+    translated_text_sha256:"1".repeat(64),status:"TEXT_EXACT"}]
+ ])assert.throws(()=>run(c,d),/ECO_SYMBOLIC_CORRECTION_DIGEST_CONFLICT/);
+ const same={...correction,review_action:"PRESERVE_SOURCE_MATCH",
+  related_cell:{...translated,expression_text:original.expression_text}};
+ const exact={...digestEntry,translated_text_sha256:"1".repeat(64),
+  status:"TEXT_EXACT"};
+ const match=run(same,exact);
+ assert.equal(match.symbolic_correction_batch_review.candidate_correction_count,0);
+ assert.equal(match.release.public_release_authorised,false);
+ assert.throws(()=>run(same,digestEntry),
+  /ECO_SYMBOLIC_CORRECTION_DIGEST_CONFLICT/);
+});
