@@ -100,3 +100,11 @@ def test_invalid_json_hold(tmp_path):
     candidate.write_text("{malformed", encoding="utf-8")
     with pytest.raises(ConsumerHealthHold, match="CONSUMER_LOCK_JSON_HOLD"):
         inspect_lock_path(candidate)
+
+
+@pytest.mark.parametrize("root", [[], None, "untrusted", 17, True])
+def test_nonobject_json_root_is_deterministic_hold(tmp_path, root):
+    candidate = tmp_path / "consumer.json"
+    candidate.write_text(json.dumps(root), encoding="utf-8")
+    with pytest.raises(ConsumerHealthHold, match="CONSUMER_LOCK_SCHEMA_HOLD"):
+        inspect_lock_path(candidate)
