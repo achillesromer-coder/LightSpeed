@@ -114,6 +114,19 @@ def test_unsafe_supervisor_route_or_release_raises_hold():
             raise AssertionError("Unsafe plan must fail closed")
 
 
+
+def test_missing_or_unbound_supervisor_instruction_digest_fails_closed():
+    # Review packets cannot inherit proof from a planner that omits the
+    # source instruction binding, even when its route and proof flag look safe.
+    for invalid_digest in (None, "", "0" * 64):
+        def unbound_plan(instruction, task_id):
+            result = planned(instruction, task_id)
+            result["instruction_sha256"] = invalid_digest
+            return result
+        with pytest.raises(module.ProfileHold, match="SUPERVISOR_INSTRUCTION_BINDING_HOLD"):
+            module.prepare_packet("private review only", "TASK-DIGEST-NEG", planner=unbound_plan)
+
+
 def test_private_file_cli_output_contains_no_instruction(tmp_path):
     source = tmp_path / "private.txt"
     source.write_text("PRIVATE-DO-NOT-COPY-RAW", encoding="utf-8")
