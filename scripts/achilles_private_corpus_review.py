@@ -106,6 +106,12 @@ def connect(path: Path) -> sqlite3.Connection:
     CREATE TABLE IF NOT EXISTS conversation(
       id TEXT PRIMARY KEY, shard TEXT, title TEXT, created REAL, updated REAL,
       visible_words INTEGER);
+    CREATE TABLE IF NOT EXISTS conversation_variant(
+      shard TEXT NOT NULL, conversation_id TEXT NOT NULL,
+      occurrence_index INTEGER NOT NULL, title TEXT NOT NULL,
+      created REAL, updated REAL, source_visible_words INTEGER NOT NULL,
+      mapping_node_count INTEGER NOT NULL, metadata_sha256 TEXT NOT NULL,
+      PRIMARY KEY(shard,conversation_id,occurrence_index));
     CREATE TABLE IF NOT EXISTS message(
       id TEXT PRIMARY KEY, conversation_id TEXT, role TEXT, channel TEXT,
       source_shard TEXT, created REAL, parent_node TEXT, text TEXT,
@@ -159,13 +165,20 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
         if previous == (digest, "VERIFIED_R1_COMMITTED"):
             return -1, 0, 0
         raise ValueError("SOURCE_PREVIOUS_STATE_HOLD:" + entry["shard"])
-    raw = json.loads(source.read_bytes())
+    # The exact bytes PARSED must equal the digest verified above. The source
+    # may be replaced between verification and a second read, especially on a
+    # synced folder; never silently mix a verified hash with changed content.
+    parsed_bytes = source.read_bytes()
+    if (len(parsed_bytes) != entry["size_bytes"]
+        or hashlib.sha256(parsed_bytes).hexdigest() != digest):
+        raise ValueError("SOURCE_SNAPSHOT_CHANGED_DURING_READ_HOLD:" + entry["shard"])
+    raw = json.loads(parsed_bytes)
     if not isinstance(raw, list):
         raise ValueError("SOURCE_JSON_FORMAT_HOLD")
     visible = 0
     try:
         con.execute("BEGIN")
-        for conv in raw:
+        for conv_index, conv in enumerate(raw):
             if not isinstance(conv, dict):
                 raise ValueError("SOURCE_CONVERSATION_SHAPE_HOLD")
             cid = str(conv.get("conversation_id") or conv.get("id") or "")
@@ -176,6 +189,7 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
                 raise ValueError("SOURCE_MAPPING_HOLD")
             title = str(conv.get("title") or "")
             words_sum = 0
+            source_words_sum = 0
             for node_id, node in mapping.items():
                 if not isinstance(node, dict):
                     continue
@@ -189,6 +203,7 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
                     continue
                 text, nontext = extract_text(msg)
                 words = len(WORDS.findall(text))
+                source_words_sum += words  # Each source occurrence, even duplicates.
                 text_hash = sha(text.encode("utf-8"))
                 old = con.execute("SELECT text_sha256,role FROM message WHERE id=?", (mid,)).fetchone()
                 if old and old != (text_hash, role):
@@ -214,9 +229,27 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
                                     ("UNRESOLVED_USER_PARENT", mid, "Original branch ancestry lacks user"))
                 words_sum += words
                 visible += 1
+            original = con.execute(
+                "SELECT title,created,updated FROM conversation WHERE id=?", (cid,)
+            ).fetchone()
+            created, updated = conv.get("create_time"), conv.get("update_time")
+            metadata = json.dumps(
+                [cid, title, created, updated, len(mapping), source_words_sum],
+                sort_keys=True, ensure_ascii=False, separators=(",", ":"),
+            )
+            con.execute(
+                "INSERT INTO conversation_variant VALUES (?,?,?,?,?,?,?,?,?)",
+                (entry["shard"], cid, conv_index, title, created, updated,
+                 source_words_sum, len(mapping), sha(metadata.encode("utf-8"))),
+            )
+            if original is not None and original != (title, created, updated):
+                con.execute(
+                    "INSERT INTO source_issue VALUES (?,?,?)",
+                    ("CONVERSATION_METADATA_VARIANT", cid,
+                     "Distinct original title/time record preserved in conversation_variant"),
+                )
             con.execute("INSERT OR IGNORE INTO conversation VALUES (?,?,?,?,?,?)",
-                        (cid, entry["shard"], title, conv.get("create_time"),
-                         conv.get("update_time"), words_sum))
+                        (cid, entry["shard"], title, created, updated, words_sum))
         con.execute("INSERT INTO shard VALUES (?,?,?,?,?,?,?)",
                     (entry["shard"], digest, entry["size_bytes"], len(raw), visible,
                      "VERIFIED_R1_COMMITTED", dt.datetime.now(dt.timezone.utc).isoformat()))
