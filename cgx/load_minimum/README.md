@@ -8,6 +8,15 @@ This is a **source-only reviewed bootstrap**, not a new canonical root, accepted
 
 **Hydration:** H0 identity/address; H1 relations; H2 source rights/provenance; H3 capability contract; H4 owner DBR/lease-gated execution (denied here). Geometry uses 12-face dodecahedral selector for view/addressing, never as identity authority. `unavailable`, `inaccessible`, `unknown` and `contested` remain distinct. Max per-work-unit 60 MiB, not an absolute data limit.
 
+### Reversible R0 shorthand reference (source-review adapter, 2 November 2026)
+
+`loadFractalReference.mjs` packs a **strict, lossless metadata descriptor** into a deterministic typed tuple, then reconstructs that descriptor exactly. It carries candidate identity, the existing Family Set child/parent binding, source locator, SHA-256, version, original byte length, rights class, declared external operator/version, child references and residual/geometry-reference labels. Unknown fields are rejected rather than silently discarded. This is **not** fractal compression of source bodies, geometry decoding, execution, native Object_ID issuance or cryptographic rights verification.
+
+The companion `planR0ReferenceHydration` only proposes H0/H1/H2 **permission-filtered metadata**. It requires explicit object/source allowlists and a matching claimed source digest; it does not establish host ACL or provider-independent fingerprint proof. Source bytes stay with the original provider. A source may exceed 60 MiB; any requested work chunk remains capped at 60 MiB. H3/H4, codec execution, public packaging and signed DBR are not supplied by this adapter.
+
+For DOOM WAD/WASM and other codec-specific workloads, the external geometry/topology codec must produce separately verified source-bound recipes, reversible residuals and reproducible byte readback. This adapter may reference a codec version but **never** implies gameplay, complete fractalisation, unique key admission or rights to publish third-party material. Its negative and round-trip tests run in existing `CGX LOAD Source Review Validation` CI, preserving the single Cognigrex parent and the current LOAD/CCC registries.
+
+
 **Before accepting:** current host connected, exact original/accepted parent Object_ID and State/DBR roots read back; alias collision and rights checked; signed capability lease, privacy #158 and two-node #161 independently accepted where relevant. No automatic merge, file deletion, external publication, token issuance, physical action or privileged network fetch. See draft activation_contract.json.
 
 
