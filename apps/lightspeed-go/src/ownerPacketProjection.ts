@@ -89,3 +89,85 @@ export function projectOwnerReviewPacket(input: unknown): OwnerPacketProjection 
     can_execute: false as const,
   });
 }
+
+
+/** Owner-private R0 index manifest view, NOT source verification or native admission.
+ * Caller must obtain the original manifest from an authenticated owner-scoped
+ * provider. This pure projection neither authenticates nor reads GPT shards.
+ * A manifest's self-reported digest match is NOT independent byte readback.
+ */
+export type PrivateSandboxManifestProjection = Readonly<{
+  semantic_parent: "cgx:root:cognigrex";
+  presentation_scope: "private_unispace_operator";
+  selected_object_id: null;
+  selected_filespace: null;
+  evidence_class: "MANIFEST_REPORTED_NOT_INDEPENDENT_R0_READBACK";
+  admission_stage: "SANDBOX_SOURCE_INDEX_ONLY";
+  source_shard_count: 12;
+  distinct_message_refs: number;
+  repeated_message_occurrences: number;
+  rights_state: "HOLD_OWNER_REVIEW";
+  runtime_host_readback: "NOT_PERFORMED";
+  signed_review_link: null;
+  can_execute: false;
+}>;
+
+export function projectPrivateSandboxManifest(input: unknown): PrivateSandboxManifestProjection {
+  if (!record(input) ||
+      input.schema !== "CGX-PRIVATE-SOURCE-SANDBOX/0.1" ||
+      input.status !== "SANDBOX_SOURCE_INDEX_READY_NOT_CANONICAL" ||
+      input.canonical_target !== "Cognigrex.cgx" ||
+      input.semantic_root_reference !== "cgx:root:cognigrex" ||
+      input.data_protection !== "PRIVATE_OWNER_ONLY; contains conversation titles and hashes; do not place in public Git" ||
+      input.native_root_minted !== false ||
+      input.physical_originals_modified !== false) hold();
+
+  const counts = input.index_counts;
+  const gates = input.gates;
+  const entries = input.source_verification;
+  const occurrences = input.raw_export_message_occurrences;
+  const duplicates = input.repeat_identity_occurrences;
+  if (!record(counts) || !record(gates) || !Array.isArray(entries) ||
+      entries.length !== 12 || counts.source_shards !== 12 ||
+      !Number.isSafeInteger(counts.distinct_messages) ||
+      (counts.distinct_messages as number) < 0 ||
+      !Number.isSafeInteger(occurrences) || !Number.isSafeInteger(duplicates) ||
+      (occurrences as number) < (counts.distinct_messages as number) ||
+      (duplicates as number) < 0 ||
+      (occurrences as number) - (counts.distinct_messages as number) !== duplicates ||
+      gates.full_R1_reversible_parse !== "NOT_CLAIMED_SOURCE_INDEX_EXCLUDES_FULL_BODIES" ||
+      gates.rights_ACL !== "HOLD_OWNER_REVIEW" ||
+      gates.native_DBR_mint !== "HOLD" ||
+      gates.public_R3 !== "HOLD_PRIVATE_SOURCE") hold();
+
+  const seen = new Set<string>();
+  for (let i = 0; i < 12; i++) {
+    const entry: unknown = entries[i];
+    if (!record(entry) || entry.shard !== `conversations-${String(i).padStart(3, "0")}.json` ||
+        entry.verified !== true ||
+        typeof entry.expected_sha256 !== "string" ||
+        !SHA256.test(entry.expected_sha256) ||
+        entry.expected_sha256 !== entry.observed_sha256 ||
+        seen.has(entry.expected_sha256) ||
+        !Number.isSafeInteger(entry.size) || (entry.size as number) <= 0) hold();
+    seen.add(entry.expected_sha256);
+  }
+
+  // Never emit private filenames, SHA values, source titles, message bodies,
+  // candidate domain assignments, raw locators or executable permissions.
+  return Object.freeze({
+    semantic_parent: "cgx:root:cognigrex" as const,
+    presentation_scope: "private_unispace_operator" as const,
+    selected_object_id: null,
+    selected_filespace: null,
+    evidence_class: "MANIFEST_REPORTED_NOT_INDEPENDENT_R0_READBACK" as const,
+    admission_stage: "SANDBOX_SOURCE_INDEX_ONLY" as const,
+    source_shard_count: 12 as const,
+    distinct_message_refs: counts.distinct_messages as number,
+    repeated_message_occurrences: duplicates as number,
+    rights_state: "HOLD_OWNER_REVIEW" as const,
+    runtime_host_readback: "NOT_PERFORMED" as const,
+    signed_review_link: null,
+    can_execute: false as const,
+  });
+}
