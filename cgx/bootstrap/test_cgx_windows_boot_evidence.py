@@ -173,6 +173,36 @@ class WindowsBootEvidenceTests(unittest.TestCase):
                 self.assertFalse(result["boot"]["existing_stack_prerequisites_ready"])
         write_json(path, family())
 
+    def test_additional_children_are_portable_and_casefold_collision_free(self):
+        path = self.repo / "cgx/domain_templates/domain_child_identity_registry.json"
+        source = family()
+        source["children"]["science"] = {
+            "semantic_object_id": "cgx:domain:science",
+            "parent_semantic_object_id": "cgx:domain:emassc",
+            "domain_id": "science",
+            "filespace": "Other-Science.cgx",
+        }
+        write_json(path, source)
+        accepted = probe._family_identity(path)
+        self.assertEqual(len(accepted["children"]), 5)
+
+        invalid = (
+            "../escape.cgx", "..\\\\escape.cgx", "C:stream.cgx",
+            "CON.cgx", "LPT1.cgx", "bad\\u200b.cgx",
+            "bad\\n.cgx", "e\\u0301.cgx", "Other-Science.CGX",
+            "ls.cgx", "cognigrex.cgx", "a%2fb.cgx",
+        )
+        for filespace in invalid:
+            with self.subTest(filespace=filespace):
+                source["children"]["science"]["filespace"] = filespace
+                write_json(path, source)
+                with self.assertRaisesRegex(ValueError, "FAMILY_ID_COLLISION_OR_INVALID"):
+                    probe._family_identity(path)
+                receipt = self.run_probe()
+                self.assertIn("CANONICAL_FAMILY_REGISTRY_UNVERIFIED", receipt["holds"])
+                self.assertFalse(receipt["boot"]["existing_stack_prerequisites_ready"])
+        write_json(path, family())
+
     def test_root_drift_and_parent_cycle_fail_closed(self):
         source = family()
         source["children"]["emassc"]["parent_semantic_object_id"] = "cgx:domain:lightspeed"
