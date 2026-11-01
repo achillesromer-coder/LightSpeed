@@ -316,7 +316,7 @@ class WindowsBootEvidenceTests(unittest.TestCase):
             "bad\u202e.cgx", "bad\ud800.cgx",
             "bad..cgx", "name:.cgx", "name%2e.cgx",
             "CON .cgx", "PRN .cgx", "COM1 .cgx", "LPT1 .cgx",
-            "Ordinary .cgx",
+            "Ordinary .cgx", "Ordinary.v2 .cgx", "CON.v2 .cgx",
         )
         for name in invalid:
             with self.subTest(name=repr(name)):
