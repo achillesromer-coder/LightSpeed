@@ -246,3 +246,77 @@ test('#158 same-child Object_ID switch clears stale private review before scope 
  assert.equal(denied.public_release,false);
  assert.ok(!JSON.stringify(denied).includes(secondSource.source_id));
 });
+
+
+// NOV-01: one source-only route contract, not a second UI or runtime.
+test('existing public CGX facets remain synthetic and never receive a private Object_ID',async()=>{
+ const {planUniSpaceFacetConvergence:plan}=await import('./unispaceFacetConvergence.mjs');
+ const expected={
+  '/cgx':'PUBLIC_SAFE_SYNTHETIC',
+  '/cgx/fs':'PUBLIC_SAFE_SYNTHETIC',
+  '/cgx/ds':'SIMULATED_NOT_AUTHENTICATED',
+  '/cgx/ps':'NUMERIC_DEMO_NOT_PHYSICAL',
+  '/cgx/doom':'CREATIVE_REFERENCE_NOT_GAME_ENGINE',
+  '/cgx/romer':'PUBLIC_SAFE_SYNTHETIC',
+  '/cgx/eco':'PUBLIC_SAFE_SYNTHETIC'
+ };
+ for(const [route,proof] of Object.entries(expected)){
+  const p=plan({surface:'public',route});
+  assert.equal(p.status,'SOURCE_REVIEW_ONLY',route);
+  assert.equal(p.evidence_ceiling,proof,route);
+  assert.deepEqual(p.source_prs,[174,188]);
+  assert.equal(p.selected_object_id,null);
+  assert.equal(p.selected_file_space,null);
+  assert.equal(p.may_execute,false);
+  assert.equal(p.deployed,false);
+  assert.equal(p.public_release,false);
+  assert.ok(!JSON.stringify(p).includes(objectId));
+  assert.ok(!JSON.stringify(p).includes(source.source_id));
+ }
+});
+
+test('#158 public-static facet cannot accept private inspector, host token or ambiguous route',async()=>{
+ const {planUniSpaceFacetConvergence:plan}=await import('./unispaceFacetConvergence.mjs');
+ for(const patch of [
+  {selection},{inspector:input.inspector},{hostReceipt:{session:'PRIVATE_SESSION'}},
+  {offline:true}
+ ]){
+  const p=plan({surface:'public',route:'/cgx/fs',...patch});
+  assert.equal(p.status,'DENIED');
+  assert.equal(p.reason,'PUBLIC_ROUTE_PRIVATE_CONTEXT_FORBIDDEN');
+  assert.ok(!JSON.stringify(p).includes(objectId));
+  assert.ok(!JSON.stringify(p).includes('PRIVATE_SESSION'));
+ }
+ for(const route of ['/operator/objects','/cgx/private','/cgx/../review',
+                     '/cgx/%2e%2e/review','/cgx/fs?source=private','/cgx/fs/']){
+  assert.equal(plan({surface:'public',route}).status,'DENIED',route);
+ }
+});
+
+test('private Objects facet delegates exact child identity and never upgrades source review',async()=>{
+ const {planUniSpaceFacetConvergence:plan}=await import('./unispaceFacetConvergence.mjs');
+ const receipt={verified:true,signed:true,session:'DO_NOT_EXPOSE_PRIVATE_TOKEN'};
+ const p=plan({surface:'private',route:'/operator/objects',
+  selection,inspector:input.inspector,hostReceipt:receipt});
+ assert.equal(p.status,'SOURCE_REVIEW_ONLY');
+ assert.equal(p.selected_object_id,objectId);
+ assert.equal(p.selected_file_space,'Eco.cgx');
+ assert.equal(p.presentation_stage,'R3_VIEW_PROPOSAL');
+ assert.deepEqual(p.source_prs,[192,205]);
+ assert.equal(p.host_authenticated,false);
+ assert.equal(p.native_admitted,false);
+ assert.equal(p.deployed,false);
+ assert.equal(p.may_execute,false);
+ assert.ok(!JSON.stringify(p).includes(source.source_id));
+ assert.ok(!JSON.stringify(p).includes(receipt.session));
+ const cross=plan({surface:'private',route:'/operator/objects',
+  selection:{...selection,file_space:'Romer.cgx'},inspector:input.inspector});
+ assert.equal(cross.status,'DENIED');
+ assert.equal(cross.reason,'EXACT_CHILD_IDENTITY_REQUIRED');
+ const offlineInspector=planUniSpaceSourceInspector({...inspectInput,offline:true});
+ const fallback=plan({surface:'private',route:'/operator/objects',
+  selection,inspector:offlineInspector,offline:true});
+ assert.equal(fallback.status,'SOURCE_REVIEW_ONLY');
+ assert.equal(fallback.presentation_stage,'H0_OFFLINE_UNVERIFIED');
+ assert.equal(fallback.may_execute,false);
+});
