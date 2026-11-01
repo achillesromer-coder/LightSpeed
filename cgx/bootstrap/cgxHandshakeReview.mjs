@@ -4,7 +4,10 @@
  */
 export const HANDSHAKE_SCHEMA="CGX-BOOTSTRAP-HANDSHAKE-REVIEW/0.1";
 const SHA=/^[a-f0-9]{64}$/i;
-// Identity/nonce/transfer references must not carry log-spoofing controls.\nconst id=x=>typeof x==="string"&&x.length>0&&x.length<=256&&\n !/[\u0000-\u001f\u007f-\u009f]/.test(x)&&\n !/[\p{Cf}\p{Zl}\p{Zp}\p{Cs}]/u.test(x);
+// Identity/nonce/transfer references must not carry log-spoofing controls.
+const id=x=>typeof x==="string"&&x.length>0&&x.length<=256&&
+ !/[\u0000-\u001f\u007f-\u009f]/.test(x)&&
+ !/[\p{Cf}\p{Zl}\p{Zp}\p{Cs}]/u.test(x);
 const obj=x=>x!==null&&typeof x==="object"&&!Array.isArray(x);
 const allowed=new Set(["read","metadata","digital_write","compute_only"]);
 // Calendar-valid, offset-aware timestamps only. Date.parse alone normalises
