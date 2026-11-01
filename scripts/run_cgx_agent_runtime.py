@@ -7,6 +7,7 @@ import hashlib
 import json
 from pathlib import Path
 import sys
+import unicodedata
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -62,10 +63,12 @@ def load_optional(path: Path | None) -> dict[str, Any] | None:
     return payload
 
 def valid_lease_claim_text(value: Any) -> bool:
-    # A claim is a single printable identifier, never a multiline or control-
-    # character-delimited record. This is syntax validation, NOT issuer trust.
+    # One printable identifier: exclude bidi/format controls, Unicode line
+    # separators and lone surrogates as well as ASCII controls. This is only
+    # structural validation, NOT issuer/signature/DBR authentication.
     return (isinstance(value, str) and bool(value.strip())
-            and not any(ord(ch) < 0x20 or ord(ch) == 0x7F for ch in value))
+            and not any(unicodedata.category(ch) in {"Cc", "Cf", "Cs", "Zl", "Zp"}
+                        for ch in value))
 
 def subset_scope(name: str, allowed: list[str] | None, requested: str | None, reasons: list[str]) -> None:
     # An absent allowlist is not a wildcard for a requested task, project or action.
