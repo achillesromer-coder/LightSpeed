@@ -326,5 +326,14 @@ class WindowsBootEvidenceTests(unittest.TestCase):
                 self.assertTrue(probe._portable_filespace(name))
 
 
+    def test_filespace_length_matches_js_utf16_code_unit_boundary(self):
+        # JS String.length and Windows paths count astral characters as two units.
+        # 62*2 + len('.cgx') = 128 (allowed); 63*2 + 4 = 130 (denied).
+        astral = "\U0001f6f0"
+        self.assertTrue(probe._portable_filespace(astral * 62 + ".cgx"))
+        self.assertFalse(probe._portable_filespace(astral * 63 + ".cgx"))
+        self.assertFalse(probe._portable_filespace(astral * 64 + ".cgx"))
+
+
 if __name__ == "__main__":
     unittest.main()
