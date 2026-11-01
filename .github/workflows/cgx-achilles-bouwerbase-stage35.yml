@@ -47,5 +47,11 @@ jobs:
           assert a['policy']['no_service_restart'] is True
           assert a['policy']['no_unsigned_ps1'] is True
           assert a['source']['family_review_commit'] == '124262b61fdbb5e181f1c21d064182cd21f74adb'
+          assert a['source']['runner_git_blob_sha'] == '2cb8e3b62568a606006c66b5591817c7ed93729b'
+          assert a['source']['runner_git_review_commit'] == '53de9581c3cef966c97ed10e353b915c256ca134'
+          assert a['policy']['reject_descendant_git_commit'] is True
+          assert a['policy']['reject_all_untracked_shadow_files'] is True
+          assert a['policy']['require_all_executable_test_entrypoints_match_pinned_git'] is True
+          assert a['delivery']['independent_host_readback'] is False
           print('CGX Achilles source-only queue validation PASS; no host operation claimed.')
           PY
