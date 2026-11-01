@@ -236,7 +236,7 @@ def _loopback_status(offline: bool) -> dict[str, Any]:
                     raise ValueError("HEALTH_RESPONSE_INVALID")
                 if name == "bridge":
                     parsed = json.loads(body)
-                    results[name] = "LS_GO_IDENTITY_SEEN" if parsed.get("bridge") == "ls-go" else "UNRECOGNISED_SERVICE"
+                    results[name] = ("LS_GO_IDENTITY_SEEN" if isinstance(parsed, dict) and parsed.get("bridge") == "ls-go" else "UNRECOGNISED_SERVICE")
                 else:
                     results[name] = "HTTP_200" if b"<html" in body.lower() or b"<!doctype html" in body.lower() else "UNRECOGNISED_PAGE"
         except (OSError, ValueError, URLError, HTTPError, json.JSONDecodeError):
