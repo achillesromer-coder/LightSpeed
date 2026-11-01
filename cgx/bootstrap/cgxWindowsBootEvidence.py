@@ -77,6 +77,9 @@ def _git_head(repo: Path) -> str | None:
 def _portable_filespace(value: Any) -> bool:
     """Validate one local FileSpace basename, not a path or native admission."""
     if (not isinstance(value, str) or len(value) > 128
+        # Windows and the JS bootstrap count UTF-16 code units, not Python code points.
+        # A supplementary-plane character consumes two units in a portable basename.
+        or len(value.encode("utf-16-le", errors="surrogatepass")) // 2 > 128
         or not value.endswith(".cgx") or value != value.strip()
         or value != unicodedata.normalize("NFC", value)):
         return False
