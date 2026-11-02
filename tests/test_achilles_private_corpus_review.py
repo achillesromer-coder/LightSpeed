@@ -582,3 +582,31 @@ def test_private_r0_source_or_receipt_reparse_alias_fails_closed(tmp_path, which
         mod.run(args)
     assert not (target / "semantic_review.sqlite").exists()
     assert (original / "receipt.json").is_file()
+
+
+def test_conflicting_message_id_never_leaks_source_identifier(tmp_path):
+    """A source-controlled message ID must not escape into error/progress logs."""
+    source, _ = sample(tmp_path)
+    first = json.loads(source.read_text(encoding="utf-8"))[0]
+    second = json.loads(json.dumps(first))
+    synthetic_private_id = "SYNTHETIC_PRIVATE_IDENTIFIER_DO_NOT_LOG"
+    first["mapping"]["u-node"]["message"]["id"] = synthetic_private_id
+    second["id"] = "conversation-conflict"
+    second["mapping"]["u-node"]["message"]["id"] = synthetic_private_id
+    second["mapping"]["u-node"]["message"]["content"]["parts"] = [
+        "Deliberately conflicting synthetic source text"
+    ]
+    source.write_text(json.dumps([first, second]), encoding="utf-8")
+    entry = {"shard": source.name, "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+             "size_bytes": source.stat().st_size}
+    con = mod.connect(tmp_path / "review.sqlite")
+    try:
+        with pytest.raises(ValueError) as caught:
+            mod.ingest_shard(con, source, entry)
+        assert str(caught.value) == "CONFLICTING_MESSAGE_ID_HOLD"
+        assert synthetic_private_id not in str(caught.value)
+        assert con.execute("SELECT count(*) FROM shard").fetchone()[0] == 0
+        assert con.execute("SELECT count(*) FROM message").fetchone()[0] == 0
+        assert mod.summary(con)["native_admission"] is False
+    finally:
+        con.close()
