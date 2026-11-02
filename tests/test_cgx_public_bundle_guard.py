@@ -230,6 +230,24 @@ class PublicBundleTests(unittest.TestCase):
                 with self.assertRaisesRegex(mod.BundleHold, "unreviewed JavaScript template literal"):
                     mod.inspect_public_bundle(c)
 
+    def test_inline_or_empty_source_script_fails_closed(self):
+        # #158: offline/static preview must not gain an unreviewed executable
+        # surface merely because the intended hosted CSP forbids inline JS.
+        attacks = [
+            '<script>document.body.innerHTML = "<img src=/owner-private/receipt.json>"</script>',
+            '<script type="module">globalThis.owner = true</script>',
+            '<script src=""></script>',
+            '<script type="module" src></script>',
+        ]
+        for attack in attacks:
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as d:
+                c = Path(d) / "cgx"
+                shutil.copytree(mod.SOURCE, c)
+                with (c / "index.html").open("a", encoding="utf-8") as handle:
+                    handle.write("\\n" + attack)
+                with self.assertRaisesRegex(mod.BundleHold, "inline or empty-source script"):
+                    mod.inspect_public_bundle(c)
+
     def test_passive_html_css_network_resources_fail_closed(self):
         # Network-capable passive resource attributes and CSS url() must be
         # rejected even if CSP is intended to deny their runtime requests.
