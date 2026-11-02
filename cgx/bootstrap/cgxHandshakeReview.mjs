@@ -34,6 +34,15 @@ const validInstant=value=>{
 // Invisible format controls (Cf), line/paragraph separators (Zl/Zp), and
 // unpaired UTF-16 surrogates (Cs) are unsafe in portable transfer paths:
 // they can spoof log boundaries or change when transcoded to UTF-8.
+const portableSegmentBytesOK=segment=>{
+ let bytes=0;
+ for(const scalar of segment){
+  const cp=scalar.codePointAt(0);
+  bytes+=cp<=0x7f?1:cp<=0x7ff?2:cp<=0xffff?3:4;
+  if(bytes>255)return false;
+ }
+ return true;
+};
 const safeRelativeTransferPath=path=>{
  // Source-only portable envelope: bound UTF-16 total length and per-component
  // UTF-8 bytes before any native Windows/POSIX containment or lease check.
@@ -44,7 +53,7 @@ const safeRelativeTransferPath=path=>{
  return path.split("/").every(segment=>{
   if(!segment||segment==="."||segment===".."||segment.trim()!==segment||
      /[. ]$/.test(segment)||segment.length>255||
-     new TextEncoder().encode(segment).length>255)return false;
+     !portableSegmentBytesOK(segment))return false;
   const stem=segment.split(".")[0];
   // CONIN$ and CONOUT$ are Windows console device endpoints, not transfer files.
   return !/^(?:CON|PRN|AUX|NUL|CONIN\$|CONOUT\$|COM[1-9\u00b9\u00b2\u00b3]|LPT[1-9\u00b9\u00b2\u00b3])$/i.test(stem);
