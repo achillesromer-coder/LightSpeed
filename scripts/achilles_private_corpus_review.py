@@ -470,7 +470,13 @@ document.getElementById('counts').textContent=(x.shards_completed||0)+' / 12 sha
 def run(args: argparse.Namespace) -> int:
     source = args.shards_dir.resolve()
     receipt = args.receipt.resolve()
-    target = args.private_dir.resolve()
+    # Do not resolve away an unapproved symlink/junction output alias before
+    # checking it: a redirected private directory could write R1 outside ACL.
+    raw_target = args.private_dir.absolute()
+    for ancestor in (raw_target, *raw_target.parents):
+        if ancestor.is_symlink() or getattr(ancestor, "is_junction", lambda: False)():
+            raise ValueError("PRIVATE_DIRECTORY_REPARSE_HOLD")
+    target = raw_target.resolve()
     if not source.is_dir() or not receipt.is_file() or source == target or source in target.parents:
         raise ValueError("SOURCE_OR_OUTPUT_PATH_HOLD")
     entries = qualified_receipt(receipt)
