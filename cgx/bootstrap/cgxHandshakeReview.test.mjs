@@ -58,6 +58,24 @@ test('Windows alternate data streams and encoded traversal are unsafe transfer t
    'UNSAFE_TRANSFER_TARGET');
  }
 });
+test('portable transfer path segments must fit both UTF-8 and UTF-16 limits',()=>{
+ const unsafe=[
+  'staged/'+ 'a'.repeat(256), // 256 ASCII bytes in one component
+  'staged/'+ 'é'.repeat(128), // 128 UTF-16 units but 256 UTF-8 bytes
+  'staged/'+ 'a'.repeat(4090), // exceeds total 4096 UTF-16 units
+ ];
+ for(const target_relative_path of unsafe){
+  const result=planCGXHandshake({...base,exchange:{...exchange,target_relative_path}});
+  assert.equal(result.status,'DENIED');
+  assert.equal(result.reason,'UNSAFE_TRANSFER_TARGET');
+ }
+ for(const target_relative_path of ['staged/'+ 'a'.repeat(255),'staged/'+ 'é'.repeat(127)]){
+  const result=planCGXHandshake({...base,exchange:{...exchange,target_relative_path}});
+  assert.equal(result.status,'UNVERIFIED_SHAPE_REVIEW');
+  assert.equal(result.may_execute,false);
+ }
+});
+
 test('source segment above 60 MiB is held',()=>assert.ok(
  planCGXHandshake({...base,exchange:{...exchange,size_bytes:70*1024*1024}}).holds.includes('BOUNDED_TRANSFER_SEGMENT_REQUIRED')));
 test('missing signer reference held',()=>assert.ok(
