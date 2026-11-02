@@ -544,12 +544,12 @@ test('self-parented FileSpace identity is denied in bootstrap and native ABI rev
 });
 
 test('reject padded and blank identity aliases before non-authorising shape review',()=>{
- for(const invalid of ['',' ','\\u00a0',' fixture:root','fixture:root ','\\u00a0fixture:root']){
+ for(const invalid of ['',' ','\u00a0',' fixture:root','fixture:root ','\u00a0fixture:root']){
   const r=planCGXHandshake({...base,parent:{...base.parent,object_id:invalid}});
   assert.equal(r.status,'DENIED',JSON.stringify(invalid));
   assert.equal(r.reason,'INCOMPLETE_IDENTITY_OR_LEASE',JSON.stringify(invalid));
  }
- for(const invalid of [' ','fixture:lease ','\\u00a0fixture:lease']){
+ for(const invalid of [' ','fixture:lease ','\u00a0fixture:lease']){
   const r=planCGXHandshake({...base,lease:{...base.lease,lease_id:invalid}});
   assert.equal(r.reason,'INCOMPLETE_IDENTITY_OR_LEASE',JSON.stringify(invalid));
  }
