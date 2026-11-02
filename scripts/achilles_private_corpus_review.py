@@ -315,9 +315,23 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
                 words = len(WORDS.findall(text))
                 source_words_sum += words  # Each source occurrence, even duplicates.
                 text_hash = sha(text.encode("utf-8"))
-                old = con.execute("SELECT text_sha256,role FROM message WHERE id=?", (mid,)).fetchone()
-                if old and old != (text_hash, role):
+                old = con.execute(
+                    "SELECT text_sha256,role,conversation_id,channel,created,parent_node,nontext_parts "
+                    "FROM message WHERE id=?", (mid,)
+                ).fetchone()
+                if old and old[:2] != (text_hash, role):
                     raise ValueError("CONFLICTING_MESSAGE_ID_HOLD:" + mid)
+                if old and old[2:] != (cid, channel, msg.get("create_time"),
+                                       node.get("parent"), nontext):
+                    # The message table is a first-seen text projection, NOT a
+                    # semantic identity proof. The source occurrence ledger
+                    # retains branch/time/channel variants for private R1 review.
+                    con.execute(
+                        "INSERT INTO source_issue VALUES (?,?,?)",
+                        ("MESSAGE_ID_METADATA_VARIANT", mid,
+                         "Source occurrence metadata differs from first-seen "
+                         "message; review before R2 identity or ancestry merge"),
+                    )
                 # This additive table is the source-occurrence ledger.
                 # The legacy occurrence table is intentionally not treated as
                 # a lossless count of repeated conversation variants.
