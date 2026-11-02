@@ -888,7 +888,7 @@ export function reviewEcoFormulaNamespaceCollision(pair={}){
   const valid=x=>obj(x)&&Object.keys(x).every(k=>allowed.has(k))&&
     token(x.source_ref)&&token(x.source_revision)&&
     typeof x.sheet==="string"&&/^[A-Za-z0-9_]{1,64}$/.test(x.sheet)&&
-    typeof x.cell==="string"&&/^B[1-9]\\d{0,6}$/.test(x.cell)&&
+    typeof x.cell==="string"&&/^B[1-9]\d{0,6}$/.test(x.cell)&&
     typeof x.formula_id==="string"&&/^FM-[0-9]{3}$/.test(x.formula_id)&&
     typeof x.expression_sha256==="string"&&SHA.test(x.expression_sha256)&&
     classes.has(x.evidence_class);
