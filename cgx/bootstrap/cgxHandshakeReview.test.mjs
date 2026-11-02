@@ -62,6 +62,7 @@ test('portable transfer path segments must fit both UTF-8 and UTF-16 limits',()=
  const unsafe=[
   'staged/'+ 'a'.repeat(256), // 256 ASCII bytes in one component
   'staged/'+ 'é'.repeat(128), // 128 UTF-16 units but 256 UTF-8 bytes
+  'staged/'+ '😀'.repeat(64), // 128 UTF-16 units but 256 UTF-8 bytes
   'staged/'+ 'a'.repeat(4090), // exceeds total 4096 UTF-16 units
  ];
  for(const target_relative_path of unsafe){
