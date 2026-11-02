@@ -669,3 +669,104 @@ def test_r0_identifier_types_do_not_coerce_into_existing_string_ids(tmp_path, ki
         assert mod.summary(con)["native_admission"] is False
     finally:
         con.close()
+
+
+@pytest.mark.parametrize("bad_parent", [0, False, 7, [], {}, ""])
+def test_source_parent_pointer_rejects_nonstring_without_commit(tmp_path, bad_parent):
+    """R0 parent references cannot silently become a false typed R1 edge."""
+    source, _ = sample(tmp_path)
+    conv = json.loads(source.read_text(encoding="utf-8"))[0]
+    conv["mapping"]["a-node"]["parent"] = bad_parent
+    source.write_text(json.dumps([conv]), encoding="utf-8")
+    entry = {"shard": source.name, "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+             "size_bytes": source.stat().st_size}
+    con = mod.connect(tmp_path / "typed_parent.sqlite")
+    try:
+        with pytest.raises(ValueError, match="SOURCE_PARENT_NODE_ID_HOLD"):
+            mod.ingest_shard(con, source, entry)
+        assert con.execute("SELECT count(*) FROM shard").fetchone()[0] == 0
+        assert con.execute("SELECT count(*) FROM message").fetchone()[0] == 0
+        assert con.execute("SELECT count(*) FROM prompt_response").fetchone()[0] == 0
+        assert mod.summary(con)["native_admission"] is False
+    finally:
+        con.close()
+
+
+@pytest.mark.parametrize("bad_parent", [0, False, []])
+def test_source_hidden_intermediate_parent_pointer_fails_closed(tmp_path, bad_parent):
+    """A filtered analysis node may be traversed but cannot launder a bad ID."""
+    source, _ = sample(tmp_path)
+    conv = json.loads(source.read_text(encoding="utf-8"))[0]
+    conv["mapping"]["a-node"]["parent"] = "hidden-node"
+    conv["mapping"]["hidden-node"]["parent"] = bad_parent
+    source.write_text(json.dumps([conv]), encoding="utf-8")
+    entry = {"shard": source.name, "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+             "size_bytes": source.stat().st_size}
+    con = mod.connect(tmp_path / "hidden_parent.sqlite")
+    try:
+        with pytest.raises(ValueError, match="SOURCE_PARENT_NODE_ID_HOLD"):
+            mod.ingest_shard(con, source, entry)
+        assert con.execute("SELECT count(*) FROM shard").fetchone()[0] == 0
+        assert con.execute("SELECT count(*) FROM prompt_response").fetchone()[0] == 0
+    finally:
+        con.close()
+
+
+@pytest.mark.parametrize("bad_id", [0, False, 7, None])
+def test_source_hidden_user_ancestor_id_is_not_string_coerced(tmp_path, bad_id):
+    """Even a filtered source user ancestor cannot mint a prompt identity."""
+    source, _ = sample(tmp_path)
+    conv = json.loads(source.read_text(encoding="utf-8"))[0]
+    conv["mapping"]["u-node"]["message"]["metadata"] = {"channel": "analysis"}
+    conv["mapping"]["u-node"]["message"]["id"] = bad_id
+    source.write_text(json.dumps([conv]), encoding="utf-8")
+    entry = {"shard": source.name, "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+             "size_bytes": source.stat().st_size}
+    con = mod.connect(tmp_path / "hidden_user.sqlite")
+    try:
+        with pytest.raises(ValueError, match="SOURCE_ANCESTOR_MESSAGE_ID_HOLD"):
+            mod.ingest_shard(con, source, entry)
+        assert con.execute("SELECT count(*) FROM shard").fetchone()[0] == 0
+        assert con.execute("SELECT count(*) FROM prompt_response").fetchone()[0] == 0
+    finally:
+        con.close()
+
+
+def test_source_filtered_user_ancestor_cannot_become_prompt_link(tmp_path):
+    """An excluded user channel is not a visible prompt-response source."""
+    source, _ = sample(tmp_path)
+    conv = json.loads(source.read_text(encoding="utf-8"))[0]
+    conv["mapping"]["u-node"]["message"]["metadata"] = {"channel": "analysis"}
+    source.write_text(json.dumps([conv]), encoding="utf-8")
+    entry = {"shard": source.name, "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+             "size_bytes": source.stat().st_size}
+    con = mod.connect(tmp_path / "filtered_user.sqlite")
+    try:
+        assert mod.ingest_shard(con, source, entry)[0] == 1
+        assert mod.summary(con)["unique_messages"] == 1
+        assert mod.summary(con)["prompt_response_links"] == 0
+        assert con.execute(
+            "SELECT count(*) FROM source_issue WHERE kind='UNRESOLVED_USER_PARENT'"
+        ).fetchone()[0] == 1
+        assert mod.summary(con)["native_admission"] is False
+    finally:
+        con.close()
+
+
+def test_source_omitted_ancestor_id_preserves_original_node_key_fallback(tmp_path):
+    """A missing ID differs from an explicitly invalid ID."""
+    source, _ = sample(tmp_path)
+    conv = json.loads(source.read_text(encoding="utf-8"))[0]
+    del conv["mapping"]["u-node"]["message"]["id"]
+    source.write_text(json.dumps([conv]), encoding="utf-8")
+    entry = {"shard": source.name, "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+             "size_bytes": source.stat().st_size}
+    con = mod.connect(tmp_path / "omitted_ancestor.sqlite")
+    try:
+        assert mod.ingest_shard(con, source, entry)[0] == 1
+        assert con.execute(
+            "SELECT prompt_id FROM prompt_response WHERE response_id='a-1'"
+        ).fetchone() == ("u-node",)
+        assert mod.summary(con)["native_admission"] is False
+    finally:
+        con.close()
