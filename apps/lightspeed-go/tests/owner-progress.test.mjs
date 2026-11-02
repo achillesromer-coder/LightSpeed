@@ -78,6 +78,29 @@ test("wrong child FileSpace, missing ID or revision fails source identity", () =
   }
 });
 
+test("private R3 selector accepts only exact Git SHA-1 or SHA-256 digest lengths", () => {
+  for (const length of [0, 1, 39, 41, 42, 63, 65]) {
+    const x=full(); x.source.revision="a".repeat(length);
+    x.checkpoint.source_revision=x.source.revision;
+    x.latest.source_revision=x.source.revision;
+    const v=projectOwnerProgress(x);
+    assert.equal(v.access,"HOLD_SOURCE_IDENTITY",String(length));
+    assert.equal(v.object_id,null);
+    assert.equal(v.progress,null);
+    assert.equal(v.bridge,"BRIDGE_WITHHELD");
+  }
+  for (const length of [40, 64]) {
+    const x=full(); x.source.revision="a".repeat(length);
+    x.checkpoint.source_revision=x.source.revision;
+    x.latest.source_revision=x.source.revision;
+    const v=projectOwnerProgress(x);
+    assert.equal(v.access,"PRIVATE_SOURCE_REVIEW",String(length));
+    assert.equal(v.progress_binding,"SOURCE_BOUND");
+    assert.equal(v.native_admitted,false);
+    assert.equal(v.dispatch_authorized,false);
+  }
+});
+
 test("private paths, tokens, raw prompts and arbitrary error text never project", () => {
   const x=full();
   x.private_path="C:\\Secret\\source.json";
