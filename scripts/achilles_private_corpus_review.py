@@ -499,7 +499,8 @@ def run(args: argparse.Namespace) -> int:
         if ancestor.is_symlink() or getattr(ancestor, "is_junction", lambda: False)():
             raise ValueError("PRIVATE_DIRECTORY_REPARSE_HOLD")
     target = raw_target.resolve()
-    if not source.is_dir() or not receipt.is_file() or source == target or source in target.parents:
+    if (not source.is_dir() or not receipt.is_file() or source == target
+            or source in target.parents or target in source.parents):
         raise ValueError("SOURCE_OR_OUTPUT_PATH_HOLD")
     entries = qualified_receipt(receipt)
     if args.preflight_only:
