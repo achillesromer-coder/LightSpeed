@@ -261,3 +261,31 @@ def test_chunked_reader_second_pass_digest_mismatch_rolls_back(tmp_path, monkeyp
         assert db.execute("SELECT count(*) FROM message").fetchone()[0] == 0
     finally:
         db.close()
+
+
+@pytest.mark.parametrize("payload", [
+    '[{"id":"a","title":"first","title":"second","mapping":{}}]',
+    '[{"id":"a","mapping":{"node":{"message":{"id":"m1"}},"node":{"message":{"id":"m2"}}}}]',
+    '[{"id":"a","mapping":{"node":{"parent":"p1","parent":"p2"}}}]',
+])
+def test_chunked_reader_rejects_duplicate_object_keys(tmp_path, payload):
+    """Source key collisions must not silently discard original R0 values."""
+    p = tmp_path / "conversations-011.json"
+    p.write_text(payload, encoding="utf-8")
+    receipt = {"shard": p.name, "size_bytes": p.stat().st_size,
+               "sha256": hashlib.sha256(p.read_bytes()).hexdigest()}
+    with pytest.raises(ValueError, match="SOURCE_DUPLICATE_JSON_KEY_HOLD"):
+        list(mod.iter_source_conversations(
+            p, receipt, max_record_bytes=1024, chunk_bytes=17))
+
+
+def test_chunked_reader_allows_equal_values_under_distinct_keys(tmp_path):
+    p = tmp_path / "conversations-011.json"
+    p.write_text('[{"id":"a","title":"same","description":"same","mapping":{}}]',
+                 encoding="utf-8")
+    receipt = {"shard": p.name, "size_bytes": p.stat().st_size,
+               "sha256": hashlib.sha256(p.read_bytes()).hexdigest()}
+    rows = list(mod.iter_source_conversations(
+        p, receipt, max_record_bytes=1024, chunk_bytes=17))
+    assert len(rows) == 1
+    assert rows[0]["title"] == rows[0]["description"] == "same"
