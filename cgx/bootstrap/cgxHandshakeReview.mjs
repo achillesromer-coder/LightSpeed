@@ -35,12 +35,16 @@ const validInstant=value=>{
 // unpaired UTF-16 surrogates (Cs) are unsafe in portable transfer paths:
 // they can spoof log boundaries or change when transcoded to UTF-8.
 const safeRelativeTransferPath=path=>{
+ // Source-only portable envelope: bound UTF-16 total length and per-component
+ // UTF-8 bytes before any native Windows/POSIX containment or lease check.
+ if(typeof path!=="string"||path.length>4096)return false;
  if(path.startsWith("/")||path.startsWith(".")||path.includes("..")||
     path.includes("\\")||/[:%<>"|?*\u007f-\u009f]/.test(path)||path!==path.normalize("NFC")||
     /[\p{Cf}\p{Zl}\p{Zp}\p{Cs}]/u.test(path))return false;
  return path.split("/").every(segment=>{
   if(!segment||segment==="."||segment===".."||segment.trim()!==segment||
-     /[. ]$/.test(segment))return false;
+     /[. ]$/.test(segment)||segment.length>255||
+     new TextEncoder().encode(segment).length>255)return false;
   const stem=segment.split(".")[0];
   // CONIN$ and CONOUT$ are Windows console device endpoints, not transfer files.
   return !/^(?:CON|PRN|AUX|NUL|CONIN\$|CONOUT\$|COM[1-9\u00b9\u00b2\u00b3]|LPT[1-9\u00b9\u00b2\u00b3])$/i.test(stem);
