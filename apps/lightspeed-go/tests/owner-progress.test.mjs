@@ -197,6 +197,12 @@ test("offline or missing bridge holds consumer-ready claim despite reported cons
 
 const currentPolicy = JSON.parse(readFileSync(new URL("../../../cgx/domain_templates/view_selection_policy.json", import.meta.url), "utf8"));
 const currentLenses = JSON.parse(readFileSync(new URL("../../../cgx/domain_templates/semantic_view_lens_registry.json", import.meta.url), "utf8"));
+const sourceBound = (x) => ({
+  object_id:x.envelope.source.object_id,
+  filespace:x.envelope.source.filespace,
+  source_revision:x.envelope.source.revision,
+  rights_verified:true,
+});
 const lensInput = (task="browse") => ({
   envelope:full(), task, policy:currentPolicy, registry:currentLenses,
   permitted_view_ids:currentLenses.shared_view_families.map(x=>x.id),
@@ -241,7 +247,7 @@ test("requested 3D view shows Frontier until source, frame and units qualify (#2
   let v=selectOwnerPrimaryView(x);
   assert.equal(v.primary_view,"active-object-inspector");
   assert.ok(v.frontier.includes("GEOMETRY_FRAME_UNVERIFIED"));
-  x.geometry={source_qualified:true,frame_verified:true,units_verified:true};
+  x.geometry={...sourceBound(x),source_qualified:true,frame_verified:true,units_verified:true};
   v=selectOwnerPrimaryView(x);
   assert.equal(v.primary_view,"twin-3d");
   assert.equal(v.state,"SOURCE_ONLY_VIEW_CANDIDATE");
@@ -252,15 +258,52 @@ test("requested 3D view shows Frontier until source, frame and units qualify (#2
 test("spatial and time-bearing views cannot invent CRS, datum or temporal frame", () => {
   const eco=lensInput("ecology");
   eco.requested_view="map-spatial";
-  eco.geometry={units_verified:true};
+  eco.geometry={...sourceBound(eco),units_verified:true};
   let v=selectOwnerPrimaryView(eco);
   assert.equal(v.primary_view,"active-object-inspector");
   assert.ok(v.frontier.includes("SPATIAL_CRS_UNVERIFIED"));
-  eco.spatial={crs_verified:true,datum_verified:true};
+  eco.spatial={...sourceBound(eco),crs_verified:true,datum_verified:true};
   assert.equal(selectOwnerPrimaryView(eco).primary_view,"map-spatial");
   const audit=lensInput("audit");
   audit.requested_view="timeline-dbr";
   v=selectOwnerPrimaryView(audit);
+  assert.notEqual(v.primary_view,"timeline-dbr");
+  assert.ok(v.frontier.includes("TEMPORAL_FRAME_UNVERIFIED"));
+});
+
+test("metric, spatial and temporal views reject foreign source, revision, child or rights (#158/#209)", () => {
+  const engineer=lensInput("engineer");
+  engineer.requested_view="twin-3d";
+  engineer.geometry={...sourceBound(engineer),source_qualified:true,frame_verified:true,units_verified:true};
+  assert.equal(selectOwnerPrimaryView(engineer).primary_view,"twin-3d");
+  for (const mutation of [
+    {object_id:"Cognigrex.cgx:/FileSpace/foreign"},
+    {filespace:"Eco.cgx/FileSpace"},
+    {source_revision:"b".repeat(64)},
+    {rights_verified:false},
+  ]) {
+    engineer.geometry={...sourceBound(engineer),...mutation,source_qualified:true,frame_verified:true,units_verified:true};
+    const v=selectOwnerPrimaryView(engineer);
+    assert.notEqual(v.primary_view,"twin-3d");
+    assert.ok(v.frontier.includes("GEOMETRY_FRAME_UNVERIFIED"));
+    assert.equal(v.native_admitted,false);
+  }
+  const eco=lensInput("ecology");
+  eco.requested_view="map-spatial";
+  eco.geometry={...sourceBound(eco),units_verified:true};
+  eco.spatial={...sourceBound(eco),crs_verified:true,datum_verified:true};
+  assert.equal(selectOwnerPrimaryView(eco).primary_view,"map-spatial");
+  eco.spatial={...eco.spatial,source_revision:"b".repeat(64)};
+  assert.notEqual(selectOwnerPrimaryView(eco).primary_view,"map-spatial");
+  eco.spatial={...sourceBound(eco),crs_verified:true,datum_verified:true};
+  eco.geometry={...eco.geometry,filespace:"Romer.cgx/FileSpace"};
+  assert.notEqual(selectOwnerPrimaryView(eco).primary_view,"map-spatial");
+  const audit=lensInput("audit");
+  audit.requested_view="timeline-dbr";
+  audit.temporal={...sourceBound(audit),scale_verified:true,valid_at_verified:true,recorded_at_verified:true};
+  assert.equal(selectOwnerPrimaryView(audit).primary_view,"timeline-dbr");
+  audit.temporal={...audit.temporal,object_id:"Cognigrex.cgx:/FileSpace/foreign"};
+  const v=selectOwnerPrimaryView(audit);
   assert.notEqual(v.primary_view,"timeline-dbr");
   assert.ok(v.frontier.includes("TEMPORAL_FRAME_UNVERIFIED"));
 });
