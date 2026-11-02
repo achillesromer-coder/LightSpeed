@@ -63,8 +63,10 @@ const validObjectId = (value: unknown): value is string => {
   );
 };
 
+// SHA-1 Git object IDs have 40 hex digits; SHA-256 digests have 64.
+// Shape checking is not source-hash verification or a permission grant.
 const validRevision = (value: unknown): value is string =>
-  typeof value === "string" && /^[a-fA-F0-9]{40,64}$/.test(value);
+  typeof value === "string" && /^(?:[a-fA-F0-9]{40}|[a-fA-F0-9]{64})$/.test(value);
 
 const failureClass = (error: unknown): string | null => {
   if (typeof error !== "string" || !error.trim()) return null;
