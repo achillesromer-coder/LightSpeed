@@ -176,6 +176,12 @@ class WindowsBootEvidenceTests(unittest.TestCase):
                 self.assertFalse(result["boot"]["existing_stack_prerequisites_ready"])
         write_json(path, family())
 
+    def test_utf8_component_byte_limit_matches_bootstrap_handshake(self):
+        # Both strings fit 128 UTF-16 units; only the first fits 255 UTF-8 bytes.
+        self.assertTrue(probe._portable_filespace("漢" * 83 + ".cgx"))
+        self.assertFalse(probe._portable_filespace("漢" * 84 + ".cgx"))
+        self.assertFalse(probe._portable_filespace("漢" * 124 + ".cgx"))
+
     def test_additional_children_are_portable_and_casefold_collision_free(self):
         path = self.repo / "cgx/domain_templates/domain_child_identity_registry.json"
         source = family()
@@ -195,6 +201,7 @@ class WindowsBootEvidenceTests(unittest.TestCase):
             "bad" + chr(0x200b) + ".cgx", "bad" + chr(10) + ".cgx",
             "e" + chr(0x301) + ".cgx", "Other-Science.CGX",
             "ls.cgx", "cognigrex.cgx", "a%2fb.cgx",
+            "漢" * 84 + ".cgx",  # 256 UTF-8 bytes, despite 88 UTF-16 units
         )
         for filespace in invalid:
             with self.subTest(filespace=filespace):
