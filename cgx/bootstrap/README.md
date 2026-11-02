@@ -75,19 +75,22 @@ For optional source-only LOAD catalogue metrics, supply an existing local
 with `-LoadSourceRegistry 'C:\path\to\review\online_registry_projection_2026-10-28.json'`.
 This does not download sources, register LOAD, ingest source bodies, or accept a new Object_ID.
 
-Only after the probe demonstrates that the **existing** stack prerequisites are
-present, an owner-controlled Windows terminal can explicitly request the original
-launcher and subsequent loopback readback:
+### Native boot is currently held
 
-~~~powershell
-& "$repo\tools\cgx_setup_windows.ps1" -Repo $repo -Mode resume -BootExistingStack -ApproveNativeStackRestart
-~~~
+The current `-BootExistingStack -ApproveNativeStackRestart` switches are **not an
+enabled boot path**. After writing the read-only preflight receipt, the wizard
+unconditionally raises `NATIVE_RESTART_HOLD` **before** the existing LightSpeed
+launcher can run, even when its inventory prerequisites are present. The
+`-ApproveNativeStackRestart` switch expresses operator intent only; it is not
+a signed execution lease, owner ACL, revocation check, or independent DBR proof.
+No post-boot receipt is produced by this held path.
 
-**Caution:** the original launcher may restart Ollama and start local services.
-No PowerShell execution-policy override or privilege escalation is applied. Respect
-managed script-signing restrictions. The boot action starts **only** the existing
-LightSpeed stack, not a CGX mint workflow. The diagnostic report is computed
-**before and after** boot and distinguishes the Desktop bridge from the UniSpace/LS GO page.
+Do not use this wizard to start or restart Ollama, Smith, or any other service.
+A future source-reviewed change must integrate the existing authoritative
+host-lease/RootAuthority verifier, scoped ACL, revocation and DBR readback
+before enabling the existing launcher. That change requires independent
+Windows negative tests and actual host receipts; source CI alone is insufficient.
+No PowerShell execution-policy override or privilege escalation is authorised.
 
 Host checks include: single Cognigrex semantic parent and domain children; exact S92
 carrier SHA-256 and root registry; existing operational SQLite via `mode=ro` and
