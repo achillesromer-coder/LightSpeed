@@ -37,6 +37,15 @@ BLOCKED = {
     "private assets path": re.compile(r"(?<![a-z])/review/(?:mesh|renders)|/data/(?:cgx|component_geometry)",re.I),
     "native owner APIs": re.compile(r"/api/(?:v1|owner)|https?://(?:127\.0\.0\.1|localhost)(?::\d+)?/",re.I),
     "credential syntax": re.compile(r"(?:sk-proj-|ghp_[A-Za-z0-9]{20,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----)",re.I),
+    # #158: a scripted image/iframe/worker can request same-origin private
+    # bytes even when fetch(), WebSocket and connect-src are denied.
+    # This bounded static sink guard is defence in depth, NOT an ACL test.
+    "scripted passive resource loads": re.compile(
+        r"""\bnew\s+(?:Image|Audio|Worker|SharedWorker)\s*\("""
+        r"""|\b(?:document|window\.document)\s*\.\s*createElement\s*\(\s*['"](?:img|iframe|script|link|audio|video|source|object|embed)['"]"""
+        r"""|\.\s*(?:src|srcset|poster)\s*=(?!=)"""
+        r"""|\.\s*setAttribute\s*\(\s*['"](?:src|srcset|poster|data)['"]"""
+        r"""|\[\s*['"](?:src|srcset|poster|data)['"]\s*\]\s*=(?!=)""", re.I),
     # #158: CSP connect-src does not prevent top-level navigation or window.open.
     # The reviewed public JS reads location.pathname but has no scripted navigation.
     "scripted navigation escape": re.compile(
