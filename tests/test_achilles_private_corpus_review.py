@@ -412,6 +412,57 @@ def test_repeated_conversation_source_visible_occurrence_ledger(tmp_path):
         db.close()
 
 
+def test_source_prompt_ancestry_preserves_repeated_response_branch_variants(tmp_path):
+    """Same response ID/text may have distinct source-local prompt ancestry."""
+    source, _ = sample(tmp_path)
+    first = json.loads(source.read_text(encoding="utf-8"))[0]
+    second = json.loads(json.dumps(first))
+    second["mapping"]["u-node"]["message"]["id"] = "u-second"
+    second["mapping"]["a-node"]["message"]["create_time"] = 3.0
+    source.write_text(json.dumps([first, second]), encoding="utf-8")
+    entry = {"shard": source.name, "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+             "size_bytes": source.stat().st_size}
+    db = mod.connect(tmp_path / "private_ancestry.sqlite")
+    try:
+        assert mod.ingest_shard(db, source, entry)[0] == 2
+        ancestry = db.execute("""
+            SELECT conversation_index,response_node_id,response_message_id,
+                   prompt_node_id,prompt_message_id,ancestor_hops,source_parent_node
+            FROM source_prompt_response_occurrence
+            ORDER BY conversation_index
+        """).fetchall()
+        assert ancestry == [
+            (0, "a-node", "a-1", "u-node", "u-1", 1, "u-node"),
+            (1, "a-node", "a-1", "u-node", "u-second", 1, "u-node"),
+        ]
+        assert db.execute(
+            "SELECT prompt_id FROM prompt_response WHERE response_id='a-1'"
+        ).fetchone()[0] == "u-1"  # legacy first-seen projection only
+        assert db.execute("SELECT sha256 FROM shard").fetchone()[0] == entry["sha256"]
+        assert mod.summary(db)["native_admission"] is False
+    finally:
+        db.close()
+
+
+def test_source_prompt_ancestry_excludes_hidden_user_source(tmp_path):
+    source, _ = sample(tmp_path)
+    original = json.loads(source.read_text(encoding="utf-8"))
+    original[0]["mapping"]["u-node"]["message"]["metadata"] = {"channel": "analysis"}
+    source.write_text(json.dumps(original), encoding="utf-8")
+    entry = {"shard": source.name, "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+             "size_bytes": source.stat().st_size}
+    db = mod.connect(tmp_path / "hidden_ancestry.sqlite")
+    try:
+        assert mod.ingest_shard(db, source, entry)[0] == 1
+        assert db.execute(
+            "SELECT count(*) FROM source_prompt_response_occurrence"
+        ).fetchone()[0] == 0
+        assert db.execute("SELECT count(*) FROM prompt_response").fetchone()[0] == 0
+        assert mod.summary(db)["native_admission"] is False
+    finally:
+        db.close()
+
+
 def test_reused_message_id_metadata_variant_is_flagged_before_r2(tmp_path):
     """Same text and ID do not certify equal source time, parent or channel."""
     source, _ = sample(tmp_path)
