@@ -557,3 +557,31 @@ test('reject padded and blank identity aliases before non-authorising shape revi
  assert.equal(valid.status,'UNVERIFIED_SHAPE_REVIEW');
  assert.equal(valid.may_execute,false);
 });
+
+
+test('native lease class/action contradictions are denied before request-bound shape review',()=>{
+ for(const [lease_class,action_class] of [
+  ['READ_ONLY','simulate'],['READ_ONLY','execute'],['READ_ONLY','digital_write'],
+  ['READ_ONLY','publish'],['COMPUTE_ONLY','digital_write'],
+  ['COMPUTE_ONLY','publication'],['DIGITAL_WRITE','external_action'],
+  ['DIGITAL_WRITE','physical_actuation'],['DIGITAL_WRITE','PuBlIsH']
+ ]){
+  const r=reviewNativeLeaseHandshakeABI({...nativeABIBase,
+   nativeLease:{...nativeABIBase.nativeLease,lease_class,
+    scope:{...nativeABIBase.nativeLease.scope,action_classes:[action_class]}},
+   request:{...nativeABIBase.request,action_class}});
+  assert.equal(r.status,'DENIED',lease_class+':'+action_class);
+  assert.equal(r.reason,'NATIVE_LEASE_CLASS_ACTION_MISMATCH');
+  assert.equal(r.may_execute,false);
+ }
+ for(const [lease_class,action_class] of [
+  ['READ_ONLY','review'],['COMPUTE_ONLY','simulate'],['DIGITAL_WRITE','digital_write']
+ ]){
+  const r=reviewNativeLeaseHandshakeABI({...nativeABIBase,
+   nativeLease:{...nativeABIBase.nativeLease,lease_class,
+    scope:{...nativeABIBase.nativeLease.scope,action_classes:[action_class]}},
+   request:{...nativeABIBase.request,action_class}});
+  assert.equal(r.status,'UNVERIFIED_SHAPE_REVIEW',lease_class+':'+action_class);
+  assert.equal(r.may_execute,false);
+ }
+});
