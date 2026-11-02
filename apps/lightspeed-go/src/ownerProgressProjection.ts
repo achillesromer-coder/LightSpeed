@@ -27,11 +27,17 @@ export interface OwnerProgressEnvelope {
     dispatch_ready?: boolean;
   };
   checkpoint?: {
+    object_id?: string | null;
+    filespace?: string;
+    source_revision?: string | null;
     reported_completed?: number | null;
     independently_verified_committed?: number | null;
     database_integrity_verified?: boolean;
   };
   latest?: {
+    object_id?: string | null;
+    filespace?: string;
+    source_revision?: string | null;
     state?: string;
     completed?: number | null;
     target?: number | null;
@@ -82,6 +88,7 @@ export function projectOwnerProgress(input: OwnerProgressEnvelope | null | undef
     bridge: "BRIDGE_WITHHELD" as const,
     consumer: "CONSUMER_HELD" as const,
     progress: null,
+    progress_binding: "HOLD_UNBOUND_PROGRESS" as const,
     native_admitted: false as const,
     dispatch_authorized: false as const,
     public_publish_authorized: false as const,
@@ -97,6 +104,14 @@ export function projectOwnerProgress(input: OwnerProgressEnvelope | null | undef
   if (!qualifiedIdentity) return { ...held, access: "HOLD_SOURCE_IDENTITY" as const };
   const checkpoint = input?.checkpoint;
   const latest = input?.latest;
+  // Never display one source's progress under a different authorised Object_ID.
+  // The authenticated host must attach these bindings from verified source refs,
+  // not copy untrusted worker JSON fields or infer them from a display label.
+  const bindsSelectedSource = (part: typeof checkpoint | typeof latest) =>
+    part?.object_id === source?.object_id &&
+    part?.filespace === source?.filespace &&
+    part?.source_revision === source?.revision;
+  const progressBound = bindsSelectedSource(checkpoint) && bindsSelectedSource(latest);
   const state = latest?.state === "FAIL_CLOSED" || failureClass(latest?.error)
     ? "FAIL_CLOSED"
     : latest?.state === "CANDIDATE_INDEX_COMPLETE" ? "CANDIDATE_INDEX_COMPLETE"
@@ -117,7 +132,8 @@ export function projectOwnerProgress(input: OwnerProgressEnvelope | null | undef
     evidence: "SOURCE_ONLY_UNADMITTED" as const,
     bridge: input?.bridge?.reachable === true ? "BRIDGE_REACHABLE" as const : "BRIDGE_OFFLINE" as const,
     consumer: consumerReadyClaim ? "CONSUMER_READY_CLAIM_NOT_AUTHORITY" as const : "CONSUMER_HELD" as const,
-    progress: {
+    progress_binding: progressBound ? "SOURCE_BOUND" as const : "HOLD_UNBOUND_PROGRESS" as const,
+    progress: progressBound ? {
       reported_checkpoint: boundedCount(checkpoint?.reported_completed),
       independently_verified_committed: verifiedCommitted,
       observed_attempted: boundedCount(latest?.observed_attempted),
@@ -125,7 +141,7 @@ export function projectOwnerProgress(input: OwnerProgressEnvelope | null | undef
       latest_target: boundedCount(latest?.target),
       latest_state: state,
       error_class: failureClass(latest?.error),
-    },
+    } : null,
     native_admitted: false as const,
     dispatch_authorized: false as const,
     public_publish_authorized: false as const,
