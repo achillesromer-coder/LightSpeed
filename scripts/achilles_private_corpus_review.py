@@ -245,6 +245,29 @@ def family_scores(text: str, title: str) -> list[tuple[str, int]]:
             if (score := sum(min(sample.count(t), 4) for t in terms)) >= 2]
 
 
+def source_role_channel(message: dict, *, ancestor: bool = False) -> tuple[str, str]:
+    """Fail closed on untyped source role/channel; never coerce R0 identity."""
+    author = message.get("author")
+    if author is None:
+        author = {}
+    if not isinstance(author, dict):
+        raise ValueError("SOURCE_ANCESTOR_AUTHOR_HOLD" if ancestor
+                         else "SOURCE_AUTHOR_SHAPE_HOLD")
+    role = author.get("role")
+    if role is not None and not isinstance(role, str):
+        raise ValueError("SOURCE_ROLE_TYPE_HOLD")
+    metadata = message.get("metadata")
+    if metadata is None:
+        metadata = {}
+    if not isinstance(metadata, dict):
+        raise ValueError("SOURCE_ANCESTOR_METADATA_HOLD" if ancestor
+                         else "SOURCE_METADATA_SHAPE_HOLD")
+    channel = metadata.get("channel")
+    if channel is not None and not isinstance(channel, str):
+        raise ValueError("SOURCE_CHANNEL_TYPE_HOLD")
+    return role or "", channel or ""
+
+
 def user_ancestor_with_node(node: dict, mapping: dict, limit: int = 120) -> tuple[str | None, str | None, int]:
     """Resolve only a typed, source-visible user ancestor, never a coerced ID.
 
@@ -268,17 +291,12 @@ def user_ancestor_with_node(node: dict, mapping: dict, limit: int = 120) -> tupl
         message = item.get("message") or {}
         if not isinstance(message, dict):
             break
-        author = message.get("author") or {}
-        if not isinstance(author, dict):
-            raise ValueError("SOURCE_ANCESTOR_AUTHOR_HOLD")
-        if author.get("role") == "user":
+        role, channel = source_role_channel(message, ancestor=True)
+        if role == "user":
             raw_id = message["id"] if "id" in message else parent
             if not isinstance(raw_id, str) or not raw_id:
                 raise ValueError("SOURCE_ANCESTOR_MESSAGE_ID_HOLD")
-            metadata = message.get("metadata") or {}
-            if not isinstance(metadata, dict):
-                raise ValueError("SOURCE_ANCESTOR_METADATA_HOLD")
-            if metadata.get("channel") in DENIED_CHANNELS:
+            if channel in DENIED_CHANNELS:
                 return None, None, steps
             return raw_id, parent, steps
         parent = item.get("parent")
@@ -448,8 +466,7 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
                 if not isinstance(raw_mid, str) or not raw_mid:
                     raise ValueError("SOURCE_MESSAGE_ID_HOLD")
                 mid = raw_mid
-                role = str((msg.get("author") or {}).get("role") or "")
-                channel = str((msg.get("metadata") or {}).get("channel") or "")
+                role, channel = source_role_channel(msg)
                 if role not in ("user", "assistant") or channel in DENIED_CHANNELS:
                     continue
                 message_created = source_timestamp(msg.get("create_time"))
