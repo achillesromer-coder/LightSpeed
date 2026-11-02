@@ -48,6 +48,33 @@ def sample(tmp_path: Path):
     return source, entry
 
 
+
+def test_atomic_json_does_not_follow_preplanted_predictable_tmp_symlink(tmp_path):
+    """A prior progress.json.tmp alias must not overwrite an outside sentinel."""
+    dest = tmp_path / "progress.json"
+    sentinel = tmp_path / "external.txt"
+    sentinel.write_text("DO_NOT_CHANGE", encoding="utf-8")
+    planted = tmp_path / "progress.json.tmp"
+    try:
+        planted.symlink_to(sentinel)
+    except (OSError, NotImplementedError) as exc:
+        pytest.skip(f"symlink creation unavailable on this filesystem: {exc}")
+    mod.atomic_json(dest, {"state": "REVIEW_ONLY"})
+    assert sentinel.read_text(encoding="utf-8") == "DO_NOT_CHANGE"
+    assert planted.is_symlink()
+    assert json.loads(dest.read_text(encoding="utf-8")) == {"state": "REVIEW_ONLY"}
+    assert not list(tmp_path.glob(".progress.json.*.tmp"))
+
+
+def test_atomic_json_replaces_existing_receipt_without_stale_tmp(tmp_path):
+    dest = tmp_path / "summary.json"
+    dest.write_text('{"state":"OLD"}', encoding="utf-8")
+    mod.atomic_json(dest, {"state": "REVIEW_ONLY"})
+    assert json.loads(dest.read_text(encoding="utf-8")) == {"state": "REVIEW_ONLY"}
+    assert not (tmp_path / "summary.json.tmp").exists()
+    assert not list(tmp_path.glob(".summary.json.*.tmp"))
+
+
 def test_private_r1_honours_user_assistant_roles_and_branch_parent(tmp_path):
     source, entry = sample(tmp_path)
     con = mod.connect(tmp_path / "review.sqlite")
