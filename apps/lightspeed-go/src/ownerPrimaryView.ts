@@ -22,6 +22,16 @@ export interface OwnerViewSelectionInput {
   temporal?: { scale_verified?: boolean; valid_at_verified?: boolean; recorded_at_verified?: boolean };
   device?: "desktop" | "phone" | "offline";
   inspector_open?: boolean;
+  /** Trusted local verifier output only; client flags do not constitute a signed grant. */
+  offline_cache?: {
+    object_id?: string;
+    filespace?: string;
+    source_revision?: string;
+    integrity_verified?: boolean;
+    offline_grant_verified?: boolean;
+    offline_grant_unexpired?: boolean;
+    source_rights_verified?: boolean;
+  };
 }
 
 export function selectOwnerPrimaryView(input: OwnerViewSelectionInput) {
@@ -51,6 +61,22 @@ export function selectOwnerPrimaryView(input: OwnerViewSelectionInput) {
     filespace: projection.filespace,
     evidence: "SOURCE_ONLY_UNADMITTED",
   };
+  // Offline is not a cached copy of the last online session. Require an exact
+  // source/revision/child binding plus trusted cache, grant and rights checks.
+  // These are injected review assertions, NOT browser-side cryptographic proof.
+  // No matching proof => withhold even the private source selector (#158).
+  if (input.device === "offline") {
+    const cache = input.offline_cache;
+    if (cache?.object_id !== projection.object_id ||
+        cache?.filespace !== projection.filespace ||
+        cache?.source_revision !== projection.source_revision ||
+        cache?.integrity_verified !== true ||
+        cache?.offline_grant_verified !== true ||
+        cache?.offline_grant_unexpired !== true ||
+        cache?.source_rights_verified !== true) {
+      return { ...held, state: "HOLD_OFFLINE_CACHE" };
+    }
+  }
   // The source contracts require exactly one primary view. A changed/invalid
   // policy is held rather than silently creating another UI or semantic master.
   if (input.policy?.hybridisation_policy?.max_primary_views !== 1 ||
