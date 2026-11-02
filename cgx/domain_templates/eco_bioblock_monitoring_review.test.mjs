@@ -287,7 +287,7 @@ test("receipt linkage accepts only opaque references, never embedded source or g
  for(const bad of [
   {site_binding_receipt_ref:{coordinates:[153.1,-27.5]}},
   {field_import_receipt_ref:""},
-  {site_binding_receipt_ref:"line\\nfeed"},
+  {site_binding_receipt_ref:"line\nfeed"},
   {field_import_receipt_ref:{approved:true}}
  ])assert.throws(()=>review({...base,...bad}),/INVALID_BIOBLOCK_MONITORING_INPUT/);
 });
