@@ -79,6 +79,31 @@ def inspect_database(path: Path) -> dict:
             ).fetchone()[0])
             unlinked = sum(x["count"] for x in matches if x["job_state"] == "UNLINKED")
             foreign = sum(x["count"] for x in matches if x["job_state"] == "FOREIGN_JOB_TYPE")
+            # An unassigned queue identity is not the same as a dangling
+            # reference to a missing job. Never disclose private command IDs
+            # and never infer either case is safe to replay.
+            unassigned = int(db.execute(
+                "SELECT COUNT(*) FROM ls_go_command_identities WHERE job_id IS NULL"
+            ).fetchone()[0])
+            dangling = int(db.execute(
+                "SELECT COUNT(*) FROM ls_go_command_identities i "
+                "WHERE i.job_id IS NOT NULL AND NOT EXISTS "
+                "(SELECT 1 FROM jobs j WHERE j.id=i.job_id)"
+            ).fetchone()[0])
+            if unassigned + dangling != unlinked:
+                raise RecoveryHold("UNLINKED_IDENTITY_COUNT_DIVERGENCE_HOLD")
+            unlinked_classes = [
+                {"queue_state": str(queue), "class": str(kind), "count": int(n)}
+                for queue, kind, n in db.execute(
+                    "SELECT i.queue_state, "
+                    "CASE WHEN i.job_id IS NULL THEN 'UNASSIGNED' "
+                    "WHEN j.id IS NULL THEN 'DANGLING_JOB_REF' "
+                    "ELSE 'LINKED' END, COUNT(*) "
+                    "FROM ls_go_command_identities i "
+                    "LEFT JOIN jobs j ON j.id=i.job_id "
+                    "GROUP BY 1,2 ORDER BY 1,2 LIMIT 80"
+                )
+            ]
             if sum(x["count"] for x in matches) != total:
                 raise RecoveryHold("INCOMPLETE_IDENTITY_LINKAGE_HOLD")
             verdict = ("UNRESOLVED_RUNNING_JOB_HOLD" if running else
@@ -94,6 +119,9 @@ def inspect_database(path: Path) -> dict:
                 "task_status": task_groups,
                 "identity_to_job_linkage": matches,
                 "unlinked_identity_count": unlinked,
+                "unassigned_identity_count": unassigned,
+                "dangling_job_reference_count": dangling,
+                "linkage_class_counts": unlinked_classes,
                 "foreign_job_link_count": foreign,
                 "unresolved_running_jobs": running,
                 "body_fields_read": False, "native_modified": False,
