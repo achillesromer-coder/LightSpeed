@@ -160,6 +160,58 @@ def test_new_singleton_lock_creation_remains_exclusive(tmp_path: Path):
     assert path.read_bytes() == before
 
 
+
+def test_singleton_heartbeat_keeps_exact_generation_and_original_file(tmp_path: Path):
+    shell = tmp_path / "App"
+    owner = ls_go_job_consumer.LSGoJobConsumer(shell, db=None)
+    owner._acquire_heartbeat_lock()
+    path = ls_go_job_consumer.heartbeat_path(shell)
+    acquired = json.loads(path.read_text(encoding="utf-8"))
+    identity = path.stat().st_ino
+    assert len(acquired["generation"]) == 32
+    owner._heartbeat("ready")
+    updated = json.loads(path.read_text(encoding="utf-8"))
+    assert updated["generation"] == acquired["generation"]
+    assert updated["state"] == "ready"
+    assert path.stat().st_ino == identity
+    owner._release_heartbeat_lock()
+    assert not path.exists()
+
+
+def test_different_generation_same_pid_denies_heartbeat_and_cleanup(tmp_path: Path):
+    shell = tmp_path / "App"
+    owner = ls_go_job_consumer.LSGoJobConsumer(shell, db=None)
+    owner._acquire_heartbeat_lock()
+    path = ls_go_job_consumer.heartbeat_path(shell)
+    replaced = json.loads(path.read_text(encoding="utf-8"))
+    replaced["generation"] = "f" * 32
+    path.write_text(json.dumps(replaced), encoding="utf-8")
+    before = path.read_bytes()
+    with pytest.raises(RuntimeError, match="generation"):
+        owner._heartbeat("ready")
+    with pytest.raises(RuntimeError, match="generation"):
+        owner._release_heartbeat_lock()
+    assert path.read_bytes() == before
+
+
+def test_replaced_lock_inode_denies_heartbeat_and_cleanup(tmp_path: Path):
+    shell = tmp_path / "App"
+    owner = ls_go_job_consumer.LSGoJobConsumer(shell, db=None)
+    owner._acquire_heartbeat_lock()
+    path = ls_go_job_consumer.heartbeat_path(shell)
+    other = path.with_suffix(".replacement")
+    other.write_bytes(path.read_bytes())
+    other.replace(path)
+    if path.stat().st_ino == owner._lock_identity[1]:
+        pytest.skip("Filesystem does not expose replacement inode changes")
+    before = path.read_bytes()
+    with pytest.raises(RuntimeError, match="identity changed"):
+        owner._heartbeat("ready")
+    with pytest.raises(RuntimeError, match="identity changed"):
+        owner._release_heartbeat_lock()
+    assert path.read_bytes() == before
+
+
 def test_run_forever_fails_closed_and_records_heartbeat_error(tmp_path: Path, monkeypatch):
     shell = tmp_path / "App"
     configure_shell(shell)
