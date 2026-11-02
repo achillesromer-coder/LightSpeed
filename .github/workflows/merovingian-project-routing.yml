@@ -45,7 +45,9 @@ on:
       - "scripts/prepare_achilles_owner_packet.py"
       - "tests/test_achilles_owner_packet.py"
       - "scripts/achilles_local_rag_review.py"
+      - "scripts/achilles_private_corpus_review.py"
       - "tests/test_achilles_local_rag_review.py"
+      - "tests/test_achilles_private_corpus_review.py"
       - "tests/test_achilles_file_space_launch_review_contract.py"
       - "scripts/project_cgx_source.py"
       - "tests/test_project_cgx_source.py"
@@ -241,6 +243,7 @@ jobs:
             tests/test_run_ls_go_bridge_layout.py \
             tests/test_achilles_owner_packet.py \
             tests/test_achilles_local_rag_review.py \
+            tests/test_achilles_private_corpus_review.py \
             tests/test_achilles_file_space_launch_review_contract.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_launcher_exe.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_functions_hub_operator_surface.py \
