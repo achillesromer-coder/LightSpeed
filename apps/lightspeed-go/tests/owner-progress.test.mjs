@@ -97,3 +97,31 @@ test("malformed counts never masquerade as verified progress", () => {
   assert.equal(v.progress.independently_verified_committed,null);
   assert.equal(v.progress.observed_attempted,null);
 });
+
+test("Object_ID selector rejects traversal, ambiguous and empty path segments (#158)", () => {
+  const rejected = [
+    "Cognigrex.cgx:/FileSpace/../Eco.cgx/secret",
+    "Cognigrex.cgx:/FileSpace/./qualified-candidate-1",
+    "Cognigrex.cgx:/FileSpace/qualified-candidate-1/..",
+    "Cognigrex.cgx:/FileSpace//qualified-candidate-1",
+    "Cognigrex.cgx:/FileSpace/qualified-candidate-1/",
+    "Cognigrex.cgx:/FileSpace/qualified-candidate-1:other",
+    "Cognigrex.cgx:/FileSpace/",
+    "Cognigrex.cgx:/FileSpace/" + "x".repeat(161),
+  ];
+  for (const object_id of rejected) {
+    const x=full(); x.source.object_id=object_id;
+    const view=projectOwnerProgress(x);
+    assert.equal(view.access,"HOLD_SOURCE_IDENTITY",object_id);
+    assert.equal(view.object_id,null);
+    assert.equal(view.progress,null);
+    assert.equal(view.bridge,"BRIDGE_WITHHELD");
+  }
+  const nested=full();
+  nested.source.object_id="Cognigrex.cgx:/FileSpace/owner-reviewed/qualified-candidate-1";
+  const view=projectOwnerProgress(nested);
+  assert.equal(view.access,"PRIVATE_SOURCE_REVIEW");
+  assert.equal(view.object_id,nested.source.object_id);
+  assert.equal(view.native_admitted,false);
+  assert.equal(view.dispatch_authorized,false);
+});
