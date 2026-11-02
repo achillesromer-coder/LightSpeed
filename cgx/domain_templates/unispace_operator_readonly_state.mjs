@@ -39,7 +39,8 @@ export function projectReadOnlyOperatorState(input = {}) {
     && authority.dbr_readback_verified === true;
 
   const runtime = input.runtime ?? {};
-  const bridge = runtime.bridge_http_ok === true ? "BRIDGE_REACHABLE" : "BRIDGE_UNVERIFIED";
+  // No cross-child or unqualified source can project private runtime/checkpoint metadata.
+  const bridge = qualified && runtime.bridge_http_ok === true ? "BRIDGE_REACHABLE" : "BRIDGE_UNVERIFIED";
   const consumer = runtime.consumer_state === "READY" && runtime.consumer_lease_verified === true
     && admitted ? "CONSUMER_READY_REPORTED" : "CONSUMER_HELD";
 
@@ -48,14 +49,14 @@ export function projectReadOnlyOperatorState(input = {}) {
   const target = p.committed_receipt_verified === true ? safeInt(p.committed_target) : null;
   const attempted = safeInt(p.latest_attempted);
   const runState = RUN_STATES.has(p.latest_run_state) ? p.latest_run_state : "UNKNOWN";
-  const progress = {
+  const progress = qualified ? {
     latest_run_state: runState,
     latest_attempted: attempted,
     last_committed: lastCommitted,
     committed_target: target,
     error_code: ERRORS.has(p.error_code) ? p.error_code : null,
     checkpoint_state: lastCommitted === null ? "UNVERIFIED" : "RECEIPT_VERIFIED",
-  };
+  } : null;
 
   return {
     ...denied,
