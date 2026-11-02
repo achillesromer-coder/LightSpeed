@@ -273,6 +273,46 @@ test("policy drift and empty host view allowance hold rather than manufacture a 
   assert.equal(v.primary_view,null);
 });
 
+test("v0.6 topology graph holds without exact R2 source, typed edges and rights (#158)", () => {
+  const x=lensInput("browse");
+  x.requested_view="topology-graph";
+  let v=selectOwnerPrimaryView(x);
+  assert.equal(v.primary_view,"filespace-tree");
+  assert.ok(v.frontier.includes("GRAPH_TOPOLOGY_UNVERIFIED"));
+  const bound={
+    object_id:x.envelope.source.object_id,
+    filespace:x.envelope.source.filespace,
+    source_revision:x.envelope.source.revision,
+    topology_source_verified:true,
+    typed_edges_verified:true,
+    rights_verified:true,
+  };
+  for (const mutation of [
+    {object_id:"Cognigrex.cgx:/FileSpace/foreign"},
+    {filespace:"Eco.cgx/FileSpace"},
+    {source_revision:"b".repeat(64)},
+    {topology_source_verified:false},
+    {typed_edges_verified:false},
+    {rights_verified:false},
+  ]) {
+    x.graph={...bound,...mutation};
+    v=selectOwnerPrimaryView(x);
+    assert.equal(v.primary_view,"filespace-tree",JSON.stringify(mutation));
+    assert.ok(v.frontier.includes("GRAPH_TOPOLOGY_UNVERIFIED"));
+    assert.equal(v.native_admitted,false);
+    assert.equal(v.dispatch_authorized,false);
+  }
+  x.graph=bound;
+  v=selectOwnerPrimaryView(x);
+  assert.equal(v.primary_view,"topology-graph");
+  assert.equal(v.object_id,bound.object_id);
+  assert.equal(v.source_revision,bound.source_revision);
+  assert.equal(v.filespace,bound.filespace);
+  assert.equal(v.evidence,"SOURCE_ONLY_UNADMITTED");
+  assert.equal(v.live_verified,false);
+  assert.equal(v.public_publish_authorized,false);
+});
+
 test("offline FileSpace denies missing, expired, cross-object and cross-revision cache (#158)", () => {
   const baseline=lensInput("browse");
   baseline.device="offline";
