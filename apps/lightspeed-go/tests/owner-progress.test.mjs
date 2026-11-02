@@ -245,6 +245,15 @@ test("spatial and time-bearing views cannot invent CRS, datum or temporal frame"
 test("offline lens has one metadata-only fallback, no live runtime claim", () => {
   const x=lensInput("runtime");
   x.device="offline";
+  x.offline_cache={
+    object_id:x.envelope.source.object_id,
+    filespace:x.envelope.source.filespace,
+    source_revision:x.envelope.source.revision,
+    integrity_verified:true,
+    offline_grant_verified:true,
+    offline_grant_unexpired:true,
+    source_rights_verified:true,
+  };
   x.requested_view="network-runtime";
   const v=selectOwnerPrimaryView(x);
   assert.equal(v.primary_view,"active-object-inspector");
@@ -262,4 +271,47 @@ test("policy drift and empty host view allowance hold rather than manufacture a 
   const v=selectOwnerPrimaryView(x);
   assert.equal(v.state,"HOLD_NO_QUALIFIED_VIEW");
   assert.equal(v.primary_view,null);
+});
+
+test("offline FileSpace denies missing, expired, cross-object and cross-revision cache (#158)", () => {
+  const baseline=lensInput("browse");
+  baseline.device="offline";
+  const denied=selectOwnerPrimaryView(baseline);
+  assert.equal(denied.state,"HOLD_OFFLINE_CACHE");
+  assert.equal(denied.object_id,null);
+  assert.equal(denied.source_revision,null);
+  assert.equal(denied.primary_view,null);
+  assert.equal(denied.dispatch_authorized,false);
+  const good={
+    object_id:baseline.envelope.source.object_id,
+    filespace:baseline.envelope.source.filespace,
+    source_revision:baseline.envelope.source.revision,
+    integrity_verified:true,offline_grant_verified:true,
+    offline_grant_unexpired:true,source_rights_verified:true,
+  };
+  for (const mutation of [
+    {object_id:"Cognigrex.cgx:/FileSpace/other"},
+    {filespace:"Eco.cgx/FileSpace"},
+    {source_revision:"b".repeat(64)},
+    {integrity_verified:false},
+    {offline_grant_verified:false},
+    {offline_grant_unexpired:false},
+    {source_rights_verified:false},
+  ]) {
+    const x=lensInput("browse"); x.device="offline";
+    x.offline_cache={...good,...mutation};
+    const v=selectOwnerPrimaryView(x);
+    assert.equal(v.state,"HOLD_OFFLINE_CACHE",JSON.stringify(mutation));
+    assert.equal(v.object_id,null);
+    assert.equal(v.primary_view,null);
+    assert.equal(v.live_verified,false);
+    assert.equal(v.public_publish_authorized,false);
+  }
+  baseline.offline_cache=good;
+  const permitted=selectOwnerPrimaryView(baseline);
+  assert.equal(permitted.state,"SOURCE_ONLY_VIEW_CANDIDATE");
+  assert.equal(permitted.primary_view,"filespace-tree");
+  assert.equal(permitted.hydration,"H0_H2_CACHED_METADATA_ONLY");
+  assert.equal(permitted.native_admitted,false);
+  assert.equal(permitted.dispatch_authorized,false);
 });
