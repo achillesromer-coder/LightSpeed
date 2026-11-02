@@ -1,7 +1,7 @@
 name: UniSpace CGX Public Viewer Validation
 on:
   push:
-    branches: ["feature/unispace-public-cgx-20261012"]
+    branches: ["feature/unispace-public-cgx-20261012", "integration/unispace-cgx-public-allowlist-20261020"]
     paths:
       - "apps/lightspeed-go/public/cgx/**"
       - "apps/lightspeed-go/tests/unispace-public.test.mjs"
@@ -65,6 +65,16 @@ jobs:
                   page.goto("http://127.0.0.1:8179/cgx/"+route,wait_until="networkidle",timeout=60000)
                   page.locator("h1").get_by_text(heading).wait_for()
                   proof["routes"][route or "overview"]="PASS"
+                  if route in ("","fs/"):
+                      page.locator("#orbit-view").wait_for()
+                      old_angle=page.locator("#orbit-readout").inner_text()
+                      page.locator("#orbit-right").click()
+                      assert page.locator("#orbit-readout").inner_text()!=old_angle
+                      page.locator("#orbit-focus").select_option("ls")
+                      assert "SEALED" in page.locator("#orbit-readout").inner_text()
+                      page.locator("#orbit-view").focus()
+                      page.keyboard.press("ArrowLeft")
+                      assert "Native Object_ID: NOT MINTED" in page.locator("#orbit-readout").inner_text()
                   if route=="fs/":
                       page.locator('[data-slice="material"]').click()
                       assert "Value: 4" in page.locator("#prism-out").inner_text()
