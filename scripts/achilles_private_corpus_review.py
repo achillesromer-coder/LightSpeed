@@ -381,7 +381,7 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
                     "FROM message WHERE id=?", (mid,)
                 ).fetchone()
                 if old and old[:2] != (text_hash, role):
-                    raise ValueError("CONFLICTING_MESSAGE_ID_HOLD:" + mid)
+                    raise ValueError("CONFLICTING_MESSAGE_ID_HOLD")
                 if old and old[2:] != (cid, channel, msg.get("create_time"),
                                        node.get("parent"), nontext):
                     # The message table is a first-seen text projection, NOT a
