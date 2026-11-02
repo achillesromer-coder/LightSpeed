@@ -219,6 +219,18 @@ export function reviewNativeLeaseHandshakeABI({
     keys.some(k=>!knownBudgetKeys.has(k)||!Object.hasOwn(budget,k)||
       !Number.isSafeInteger(usage[k])||usage[k]<0||usage[k]>budget[k]))
   return deny("NATIVE_RESOURCE_BUDGET_EXCEEDED_OR_UNBOUND");
+ // A source-declared action-class subset is not enough if the lease class
+ // forbids that action. These are explicitly understood high-risk verbs;
+ // unknown classes remain unverified and must be resolved by the native ABI.
+ const forbiddenActions={
+  READ_ONLY:new Set(["execute","compute","simulate","digital_write","write","mutate",
+   "publish","publication","external_action","physical_actuation"]),
+  COMPUTE_ONLY:new Set(["digital_write","write","mutate","publish","publication",
+   "external_action","physical_actuation"]),
+  DIGITAL_WRITE:new Set(["publish","publication","external_action","physical_actuation"])
+ };
+ if(forbiddenActions[nativeLease.lease_class]?.has(request.action_class.toLowerCase()))
+  return deny("NATIVE_LEASE_CLASS_ACTION_MISMATCH");
  const mapped={READ_ONLY:"read",COMPUTE_ONLY:"compute_only",
   DIGITAL_WRITE:"digital_write"}[nativeLease.lease_class];
  if(!mapped)return deny("NATIVE_LEASE_CLASS_UNSUPPORTED_BY_HANDSHAKE");
