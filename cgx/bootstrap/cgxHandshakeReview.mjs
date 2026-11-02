@@ -238,6 +238,16 @@ export function reviewNativeLeaseHandshakeABI({
  // A source-declared action-class subset is not enough if the lease class
  // forbids that action. These are explicitly understood high-risk verbs;
  // unknown classes remain unverified and must be resolved by the native ABI.
+ // Unknown action verbs have no qualified native 0.1 class mapping. A lease
+ // listing an arbitrary verb cannot make that verb request-bound in CCC/LS.
+ // This is a source-only ABI review, not a complete host tool-policy registry.
+ const mappedActionClasses=new Set([
+  "read","query","review","inspect","execute","compute","simulate",
+  "digital_write","write","mutate","publish","publication",
+  "external_action","physical_actuation"
+ ]);
+ if(!mappedActionClasses.has(request.action_class.toLowerCase()))
+  return deny("NATIVE_LEASE_ACTION_CLASS_UNMAPPED");
  const forbiddenActions={
   READ_ONLY:new Set(["execute","compute","simulate","digital_write","write","mutate",
    "publish","publication","external_action","physical_actuation"]),
