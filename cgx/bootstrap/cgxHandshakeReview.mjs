@@ -248,6 +248,17 @@ export function reviewNativeLeaseHandshakeABI({
  ]);
  if(!mappedActionClasses.has(request.action_class.toLowerCase()))
   return deny("NATIVE_LEASE_ACTION_CLASS_UNMAPPED");
+ // The execution depth is an independent authority axis. A READ_ONLY lease
+ // cannot become compute/write authority by calling the action "inspect";
+ // similarly, build/publish depths cannot be laundered through a lower class.
+ // This is a conservative source-shape compatibility gate, not host admission.
+ const forbiddenDepths={
+  READ_ONLY:new Set(["propose","simulate","execute","build","publish"]),
+  COMPUTE_ONLY:new Set(["build","publish"]),
+  DIGITAL_WRITE:new Set(["publish"])
+ };
+ if(forbiddenDepths[nativeLease.lease_class]?.has(request.execution_depth))
+  return deny("NATIVE_LEASE_CLASS_DEPTH_MISMATCH");
  const forbiddenActions={
   READ_ONLY:new Set(["execute","compute","simulate","digital_write","write","mutate",
    "publish","publication","external_action","physical_actuation"]),
