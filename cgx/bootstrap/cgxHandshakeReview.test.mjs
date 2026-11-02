@@ -634,12 +634,35 @@ test('unmapped native action verbs never become CCC request-bound by self-declar
  assert.equal(known.may_execute,false);
 });
 
+test('native action vocabulary is exact-case aligned with Python lease ABI',()=>{
+ // Synthetic source-only review: no signature, native lease, model or host.
+ for(const action_class of ['ReAd','rEaD','READ','CoMpUtE','PuBlIsH','EXTERNAL_ACTION']){
+  const nativeLease={...nativeABIBase.nativeLease,lease_class:'READ_ONLY',
+   execution_depths:['inspect'],scope:{...nativeABIBase.nativeLease.scope,
+    action_classes:[action_class]}};
+  const request={...nativeABIBase.request,execution_depth:'inspect',action_class};
+  const r=reviewNativeLeaseHandshakeABI({...nativeABIBase,nativeLease,request});
+  assert.equal(r.status,'DENIED',action_class);
+  assert.equal(r.reason,'NATIVE_LEASE_ACTION_CLASS_UNMAPPED',action_class);
+  assert.equal(r.may_execute,false);
+  assert.equal(r.host_signature_verified,false);
+ }
+ const nativeLease={...nativeABIBase.nativeLease,lease_class:'READ_ONLY',
+  execution_depths:['inspect'],scope:{...nativeABIBase.nativeLease.scope,
+   action_classes:['read']}};
+ const request={...nativeABIBase.request,execution_depth:'inspect',action_class:'read'};
+ const r=reviewNativeLeaseHandshakeABI({...nativeABIBase,nativeLease,request});
+ assert.equal(r.status,'UNVERIFIED_SHAPE_REVIEW');
+ assert.equal(r.request_binding_reviewed,true);
+ assert.equal(r.may_execute,false);
+});
+
 test('native lease class/action contradictions are denied before request-bound shape review',()=>{
  for(const [lease_class,action_class] of [
   ['READ_ONLY','simulate'],['READ_ONLY','execute'],['READ_ONLY','digital_write'],
   ['READ_ONLY','publish'],['COMPUTE_ONLY','digital_write'],
   ['COMPUTE_ONLY','publication'],['DIGITAL_WRITE','external_action'],
-  ['DIGITAL_WRITE','physical_actuation'],['DIGITAL_WRITE','PuBlIsH']
+  ['DIGITAL_WRITE','physical_actuation']
  ]){
   const r=reviewNativeLeaseHandshakeABI({...nativeABIBase,
    nativeLease:{...nativeABIBase.nativeLease,lease_class,
