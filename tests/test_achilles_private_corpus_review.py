@@ -435,3 +435,36 @@ def test_streaming_allows_exact_zero_json_decimals(tmp_path, numeric):
     entry = {"shard": source.name, "size_bytes": source.stat().st_size,
              "sha256": hashlib.sha256(source.read_bytes()).hexdigest()}
     assert len(list(mod.iter_source_conversations(source, entry, chunk_bytes=7))) == 1
+
+
+@pytest.mark.parametrize("through_parent", [False, True])
+def test_private_output_symlink_or_parent_junction_alias_fails_before_db_write(tmp_path, through_parent):
+    """A private-output alias cannot redirect R1 SQLite outside approved ACL."""
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    link = tmp_path / "private_alias"
+    try:
+        link.symlink_to(outside, target_is_directory=True)
+    except (OSError, NotImplementedError) as exc:
+        pytest.skip(f"Directory symlinks unavailable: {exc}")
+    target = link
+    if through_parent:
+        (outside / "review").mkdir()
+        target = link / "review"
+    receipt = tmp_path / "receipt.json"
+    entries = [{"shard": f"conversations-{n:03d}.json",
+                "size_bytes": 10, "sha256": "a" * 64} for n in range(12)]
+    receipt.write_text(json.dumps({
+        "schema": "CGX-OWNER-GPT-EXPORT-SHARD-RECEIPT/0.1",
+        "shards": entries, "total_bytes": 120
+    }), encoding="utf-8")
+    args = type("A", (), {
+        "shards_dir": raw, "receipt": receipt, "private_dir": target,
+        "preflight_only": False, "serve": False, "max_shards": 0, "port": 8767
+    })
+    with pytest.raises(ValueError, match="PRIVATE_DIRECTORY_REPARSE_HOLD"):
+        mod.run(args)
+    assert not (outside / "semantic_review.sqlite").exists()
+    assert not (outside / "review" / "semantic_review.sqlite").exists()
