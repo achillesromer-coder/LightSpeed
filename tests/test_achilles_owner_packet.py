@@ -208,3 +208,20 @@ def test_invalid_owner_profile_name_is_rejected(tmp_path, name):
     candidate.write_text(json.dumps(profile), encoding="utf-8")
     with pytest.raises(module.ProfileHold, match="ACHILLES_PROFILE_NAME_HOLD"):
         module.load_profile(candidate)
+
+
+@pytest.mark.parametrize("section,key,value", [
+    ("authority", "automatic_rights_grants", True),
+    ("lifecycle", "stage", "NATIVE_ADMITTED"),
+    ("lifecycle", "evidence_ceiling", "HOST_VERIFIED"),
+    ("lifecycle", "active_host_installation", "VERIFIED"),
+])
+def test_review_profile_lifecycle_and_rights_escalation_fail_closed(tmp_path, section, key, value):
+    # A source-only profile cannot silently claim higher authority than its
+    # explicit review envelope, even when other no-self-approval flags remain.
+    profile = module.load_profile()
+    profile[section][key] = value
+    candidate = tmp_path / "untrusted-profile.json"
+    candidate.write_text(json.dumps(profile), encoding="utf-8")
+    with pytest.raises(module.ProfileHold, match="ACHILLES_PRIVILEGE_ESCALATION_HOLD"):
+        module.load_profile(candidate)
