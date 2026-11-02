@@ -873,3 +873,47 @@ export function prepareEcoPreMintAssembly(request={}){
     next_gate:"OWNER_RIGHTS_AND_NATIVE_ROOT_DBR_PLUS_INDEPENDENT_MODEL_GEOMETRY_QA"
   };
 }
+
+
+/**
+ * R1 negative gate for a formula ID reused in distinct Eco source namespaces.
+ * Source-local labels such as FM-008 are not global CGX identities. Inputs are
+ * caller-declared source/row/hash references, never private expression text.
+ * This is a comparison, not authenticated provider attestation or native mint.
+ */
+export function reviewEcoFormulaNamespaceCollision(pair={}){
+  const allowed=new Set(["source_ref","source_revision","sheet","cell",
+    "formula_id","expression_sha256","evidence_class"]);
+  const classes=new Set(["source_asserted","simulated","model_derived","hypothesised"]);
+  const valid=x=>obj(x)&&Object.keys(x).every(k=>allowed.has(k))&&
+    token(x.source_ref)&&token(x.source_revision)&&
+    typeof x.sheet==="string"&&/^[A-Za-z0-9_]{1,64}$/.test(x.sheet)&&
+    typeof x.cell==="string"&&/^B[1-9]\\d{0,6}$/.test(x.cell)&&
+    typeof x.formula_id==="string"&&/^FM-[0-9]{3}$/.test(x.formula_id)&&
+    typeof x.expression_sha256==="string"&&SHA.test(x.expression_sha256)&&
+    classes.has(x.evidence_class);
+  if(!obj(pair)||Object.keys(pair).some(k=>!["left","right"].includes(k))||
+    !valid(pair.left)||!valid(pair.right))
+    throw Error("INVALID_ECO_FORMULA_NAMESPACE_PAIR");
+  const a=pair.left,b=pair.right;
+  const sameId=a.formula_id===b.formula_id;
+  const sameNamespace=a.source_ref===b.source_ref&&a.sheet===b.sheet;
+  const sameRevision=a.source_revision===b.source_revision;
+  const sameHash=a.expression_sha256.toLowerCase()===
+    b.expression_sha256.toLowerCase();
+  const state=!sameId?"R1_DISTINCT_LOCAL_FORMULA_IDS":
+    !sameNamespace?"R1_CROSS_NAMESPACE_LOCAL_ID_COLLISION_HOLD":
+    !sameRevision?"R1_VERSIONED_FORMULA_VARIANT_HOLD":
+    !sameHash?"R1_SAME_REVISION_FORMULA_DIGEST_CONFLICT_HOLD":
+    "R1_DECLARED_FORMULA_REFERENCE_MATCH_NOT_ATTESTED";
+  return {
+    state,local_formula_id:sameId?a.formula_id:null,
+    same_source_namespace:sameNamespace,same_source_revision:sameRevision,
+    same_expression_digest:sameHash,
+    source_local_identity_only:true,distinct_r0_sources_preserved:true,
+    cross_source_alias_accepted:false,formula_semantics_equivalent:false,
+    provider_cells_read_by_module:false,rights_verified:false,
+    native_object_id:null,db_readback:false,ecological_outcome_verified:false,
+    public_release_authorised:false
+  };
+}
