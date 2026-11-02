@@ -88,15 +88,24 @@ export function selectOwnerPrimaryView(input: OwnerViewSelectionInput) {
   }
   // The source contracts require exactly one primary view. A changed/invalid
   // policy is held rather than silently creating another UI or semantic master.
+  // Provider-sourced policy/registry data can be malformed at runtime despite
+  // TypeScript declarations. Reject malformed elements rather than throwing or
+  // constructing a partial owner view from an unreviewed lens (#158).
   if (input.policy?.hybridisation_policy?.max_primary_views !== 1 ||
-      !input.policy?.task_mapping || !Array.isArray(input.registry?.shared_view_families) ||
-      !Array.isArray(input.permitted_view_ids)) {
+      !input.policy?.task_mapping || typeof input.policy.task_mapping !== "object" ||
+      Array.isArray(input.policy.task_mapping) ||
+      !Array.isArray(input.registry?.shared_view_families) ||
+      !input.registry.shared_view_families.every(view =>
+        view !== null && typeof view === "object" && typeof view.id === "string") ||
+      !Array.isArray(input.permitted_view_ids) ||
+      !input.permitted_view_ids.every(view => typeof view === "string")) {
     return { ...scoped, state: "HOLD_VIEW_POLICY" };
   }
   const registered = new Set(input.registry.shared_view_families.map(view => view.id));
   const permitted = new Set(input.permitted_view_ids);
   const taskViews = input.policy.task_mapping[input.task];
-  if (!Array.isArray(taskViews)) return { ...scoped, state: "HOLD_VIEW_POLICY" };
+  if (!Array.isArray(taskViews) || !taskViews.every(view => typeof view === "string"))
+    return { ...scoped, state: "HOLD_VIEW_POLICY" };
   const frontier: string[] = [];
   const offline = input.device === "offline";
   const qualifies = (view: string): boolean => {
