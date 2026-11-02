@@ -713,14 +713,15 @@ export function prepareEcoPreMintAssembly(request={}){
     "related_access_posture","cell_crosswalk",
     "symbolic_expression_crosswalk","formula_inventory",
     "symbolic_correction_batch","original_cell_digest_crosswalk","coefficient_roles",
-    "water_quality_schema_delta"].includes(k)))
+    "water_quality_schema_delta","site_assessment"].includes(k)))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const {cascade_input,geometry_descriptor=null,cell_anchor=null,
     requested_hydration="H3",observation_showcase=null,source_lineage=null,
     access_posture=null,related_access_posture=null,cell_crosswalk=null,
     symbolic_expression_crosswalk=null,formula_inventory=null,
     symbolic_correction_batch=null,original_cell_digest_crosswalk=null,
-    coefficient_roles=null,water_quality_schema_delta=null}=request;
+    coefficient_roles=null,water_quality_schema_delta=null,
+    site_assessment=null}=request;
   if(!obj(cascade_input)||!levels.includes(requested_hydration))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const executed=runEcoReviewCascade(cascade_input);
@@ -799,6 +800,14 @@ export function prepareEcoPreMintAssembly(request={}){
       water_quality_schema_delta.related_source_ref!==source_lineage.related_source_ref||
       water_quality_schema_delta.related_revision_ref!==source_lineage.related_revision_ref))
     throw Error("ECO_WQ_SCHEMA_SOURCE_LINEAGE_CONFLICT");
+  const site=site_assessment===null?{state:"SITE_ASSESSMENT_NOT_SUPPLIED"}:
+    reviewEcoSiteReadiness(site_assessment);
+  if(site_assessment!==null&&
+     (cascade_input.domain!=="second_cycle_claim"||!source.proof_hash||
+      site_assessment.source_ref!==source.source_ref||
+      site_assessment.source_revision!==source.revision||
+      site_assessment.source_sha256.toLowerCase()!==source.proof_hash))
+    throw Error("ECO_SITE_ASSESSMENT_SOURCE_CONFLICT");
   let showcase=null;
   if(observation_showcase!==null){
     if(!obj(observation_showcase)||
@@ -882,6 +891,12 @@ export function prepareEcoPreMintAssembly(request={}){
     if(wq.row_reviews.some(r=>r.flags.includes("CONDUCTIVITY_SALINITY_QUANTITY_AND_UNIT_SPLIT_REQUIRED")))
       blockers.push("WQ_CONDUCTIVITY_SALINITY_QUANTITY_SPLIT_REQUIRED");
   }
+  if(site_assessment!==null){
+    blockers.push("SITE_ASSESSMENT_PROVIDER_AND_FIELD_EVIDENCE_NOT_ATTESTED");
+    blockers.push("SITE_CRITICAL_PERMIT_BIOSECURITY_AND_ECOLOGY_GATES_OPEN");
+    if(site.zero_score_count)
+      blockers.push("SITE_ZERO_SCORES_NOT_MEASURED_SUITABILITY");
+  }
   if(showcase!==null)
     blockers.push("ECO_OBSERVATION_SHOWCASE_NOT_NATIVE_MINT_OR_FIELD_EVIDENCE");
 
@@ -932,6 +947,7 @@ export function prepareEcoPreMintAssembly(request={}){
     original_cell_digest_crosswalk_review:level>=2?originalCellDigests:{state:"NOT_REQUESTED"},
     coefficient_roles_review:level>=2?coeff:{state:"NOT_REQUESTED"},
     water_quality_schema_review:level>=2?wq:{state:"NOT_REQUESTED"},
+    site_assessment_review:level>=2?site:{state:"NOT_REQUESTED"},
     access_posture_review:level>=2?access:{state:"NOT_REQUESTED"},
     related_access_posture_review:level>=2?relatedAccess:{state:"NOT_REQUESTED"},
     mint_showcase_review:level>=3&&showcase!==null?{
@@ -952,6 +968,7 @@ export function prepareEcoPreMintAssembly(request={}){
       {layer:"original_cell_digests",state:level>=2?originalCellDigests.state:"NOT_REQUESTED"},
       {layer:"coefficient_roles",state:level>=2?coeff.state:"NOT_REQUESTED"},
       {layer:"water_quality_schema",state:level>=2?wq.state:"NOT_REQUESTED"},
+      {layer:"site_assessment",state:level>=2?site.state:"NOT_REQUESTED"},
       {layer:"semantic",state:"R1_REVIEW_ONLY"},
       {layer:"geometry",state:geom.state},
       {layer:"temporal",state:geom.time_frame_ref_present?"REFERENCE_ONLY":"MISSING_SOURCE_TIME_FRAME"},
@@ -971,7 +988,8 @@ export function prepareEcoPreMintAssembly(request={}){
       "NO_RELATED_SOURCE_BYTE_EQUIVALENCE_OR_OWNER_PERMISSION_PROOF",
       "NO_INDEPENDENT_ACL_RIGHTS_ATTESTATION",
       "NO_PAIRWISE_PROVIDER_ACL_EQUIVALENCE_PROOF",
-      "NO_INDEPENDENT_WQ_SCHEMA_PROVIDER_CELL_OR_CALIBRATION_ATTESTATION"],
+      "NO_INDEPENDENT_WQ_SCHEMA_PROVIDER_CELL_OR_CALIBRATION_ATTESTATION",
+      "NO_SITE_SCORE_FIELD_EVIDENCE_OR_CRITICAL_GATE_ATTESTATION"],
     blocking_gates:[...new Set(blockers.concat(geom.flags))],
     permissions:{file_space_write:false,data_space_write:false,
       device_automation:false,public_publish:false,
@@ -1025,4 +1043,59 @@ export function reviewEcoFormulaNamespaceCollision(pair={}){
     native_object_id:null,db_readback:false,ecological_outcome_verified:false,
     public_release_authorised:false
   };
+}
+
+
+/**
+ * Second Cycle R1 site-score source-only guard. The seven weighted criteria
+ * are an unapproved decision-support schema, not measured site suitability.
+ * A zero can be an unassessed default; a positive score cannot clear a legal,
+ * ecological, custodial or biosecurity gate. No site names/coordinates enter.
+ */
+export function reviewEcoSiteReadiness(input={}){
+  const criteria=["Legal/permitting feasibility","Navigation/public safety",
+    "Hydrodynamic suitability","Ecological compatibility",
+    "Biosecurity clearance","Maintenance/access feasibility",
+    "Community/custodial pathway"];
+  const keys=new Set(["source_ref","source_revision","source_sha256","rows"]);
+  if(!obj(input)||Object.keys(input).some(k=>!keys.has(k))||
+     !token(input.source_ref)||!token(input.source_revision)||
+     typeof input.source_sha256!=="string"||!SHA.test(input.source_sha256)||
+     !Array.isArray(input.rows)||input.rows.length!==7)
+    throw Error("INVALID_ECO_SITE_ASSESSMENT");
+  const seen=new Set(),review=[];
+  for(const row of input.rows){
+    if(!obj(row)||Object.keys(row).some(k=>![
+      "criterion","weight","score","gate","evidence_ref"].includes(k))||
+      !criteria.includes(row.criterion)||seen.has(row.criterion)||
+      typeof row.weight!=="number"||!Number.isFinite(row.weight)||
+      row.weight<=0||row.weight>1||
+      typeof row.score!=="number"||!Number.isInteger(row.score)||
+      row.score<0||row.score>5||!token(row.gate)||
+      (row.evidence_ref!==null&&row.evidence_ref!==undefined&&
+       !token(row.evidence_ref)))
+      throw Error("INVALID_ECO_SITE_ASSESSMENT_ROW");
+    seen.add(row.criterion);
+    review.push({criterion:row.criterion,weight:row.weight,
+      score_declared:row.score,
+      evidence_reference_present:!!row.evidence_ref,
+      zero_score_not_field_evidence:row.score===0,
+      critical_gate_requires_independent_approval:
+        ["Legal/permitting feasibility","Navigation/public safety",
+         "Ecological compatibility","Biosecurity clearance",
+         "Community/custodial pathway"].includes(row.criterion)});
+  }
+  if(criteria.some(c=>!seen.has(c))||
+     Math.abs(review.reduce((a,r)=>a+r.weight,0)-1)>1e-9)
+    throw Error("ECO_SITE_ASSESSMENT_WEIGHTS_OR_CRITERIA_CONFLICT");
+  return {state:"R1_SITE_SCORE_SOURCE_ONLY_DEPLOYMENT_HOLD",
+    criteria_count:7,zero_score_count:review.filter(r=>r.zero_score_not_field_evidence).length,
+    weighted_score_declared:review.reduce((a,r)=>a+r.weight*r.score_declared,0),
+    critical_gate_count:review.filter(r=>r.critical_gate_requires_independent_approval).length,
+    criteria_review:review,provider_cells_read_by_module:false,
+    zero_means_unsuitable_verified:false,site_suitability_verified:false,
+    measured_habitat_improvement:false,geospatial_coordinates_verified:false,
+    permits_verified:false,biosecurity_approved:false,
+    cultural_stewardship_approved:false,field_qa_verified:false,
+    native_admitted:false,public_release_authorised:false};
 }
