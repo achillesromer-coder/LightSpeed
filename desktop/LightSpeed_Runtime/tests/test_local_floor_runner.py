@@ -755,3 +755,38 @@ def test_ollama_http_500_preserves_failed_uncertain_receipt_and_single_attempt(t
     assert persisted["status"] == "failed"
     assert persisted["server_outcome_uncertain"] is True
     assert persisted["usage_accounting"]["ollama_generate_attempts"] == 1
+
+
+def test_local_floor_lock_normal_cleanup_preserves_generation(tmp_path: Path) -> None:
+    from lightspeed_runtime.local_floor_runner import SingleSessionLock
+    path = tmp_path / "single-session.lock"
+    with SingleSessionLock(path):
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        assert payload["pid"] > 0
+        assert len(payload["generation"]) == 32
+    assert not path.exists()
+
+
+def test_local_floor_lock_generation_change_denies_cleanup(tmp_path: Path) -> None:
+    from lightspeed_runtime.local_floor_runner import SingleSessionLock
+    path = tmp_path / "single-session.lock"
+    with pytest.raises(LocalFloorRunnerError, match="generation changed"):
+        with SingleSessionLock(path):
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            payload["generation"] = "f" * 32 if payload["generation"] != "f" * 32 else "e" * 32
+            path.write_text(json.dumps(payload), encoding="utf-8")
+    assert path.exists()
+
+
+def test_local_floor_lock_replaced_inode_denies_cleanup(tmp_path: Path) -> None:
+    from lightspeed_runtime.local_floor_runner import SingleSessionLock
+    path = tmp_path / "single-session.lock"
+    with pytest.raises(LocalFloorRunnerError, match="identity changed"):
+        with SingleSessionLock(path):
+            original_inode = path.stat().st_ino
+            replacement = tmp_path / "replacement.lock"
+            replacement.write_bytes(path.read_bytes())
+            replacement.replace(path)
+            if path.stat().st_ino == original_inode:
+                pytest.skip("filesystem did not expose replacement inode change")
+    assert path.exists()
