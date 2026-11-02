@@ -236,6 +236,15 @@ def validate_lease(
     subset_scope("task", scope.get("task_ids"), task_id, reasons)
     subset_scope("project", scope.get("project_ids"), project_id, reasons)
     subset_scope("action-class", scope.get("action_classes"), action_class, reasons)
+    # Match the non-authorising JS bootstrap ABI review: an otherwise valid
+    # requested action cannot qualify a lease that also lists an unknown verb.
+    # New CCC action classes require a versioned native mapping, not a wildcard.
+    declared_actions = scope.get("action_classes")
+    if isinstance(declared_actions, list) and any(
+        isinstance(action, str) and action not in known_actions
+        for action in declared_actions
+    ):
+        reasons.append("lease-action-class-unmapped")
     # Additional request-bound claims are checked only when the caller supplies
     # the actual target. This is structural preflight, NOT tool authorization.
     subset_scope("object", scope.get("object_ids"), object_id, reasons)
