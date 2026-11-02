@@ -257,3 +257,37 @@ test("declared source revision and SHA256 are syntax-only without authenticated 
   {source_sha256:"bad-hash"},{source_sha256:"g".repeat(64)}])
   assert.throws(()=>review({...base,...bad}),/INVALID_BIOBLOCK_MONITORING_INPUT/);
 });
+
+// The Type-I translated field schema is only a template; site-binding and
+// import receipts must be independently attested, not inferred from site_id.
+test("observed field-template row without site/import receipt linkage is held",()=>{
+ const r=review({...base,evidence_class:"observed",
+  observed_at:"2026-11-02T12:00:00+10:00",site_ref:"synthetic-site"});
+ for(const flag of ["MISSING_SITE_BINDING_RECEIPT_REF",
+  "MISSING_FIELD_IMPORT_RECEIPT_REF","SOURCE_SNAPSHOT_REVISION_AND_HASH_REQUIRED"])
+  assert.ok(r.flags.includes(flag));
+ assert.equal(r.field_observation_verified,false);
+ assert.equal(r.site_binding_receipt_verified,false);
+ assert.equal(r.field_import_receipt_verified,false);
+});
+test("synthetic site and import receipt labels cannot self-certify field evidence",()=>{
+ const r=review({...base,evidence_class:"observed",
+  observed_at:"2026-11-02T12:00:00+10:00",
+  source_revision:"synthetic-revision",source_sha256:"a".repeat(64),
+  site_binding_receipt_ref:"synthetic:site-bind",
+  field_import_receipt_ref:"synthetic:field-import"});
+ assert.ok(r.flags.includes("SITE_BINDING_RECEIPT_NOT_INDEPENDENTLY_VERIFIED"));
+ assert.ok(r.flags.includes("FIELD_IMPORT_RECEIPT_NOT_INDEPENDENTLY_VERIFIED"));
+ assert.ok(!r.flags.includes("SOURCE_SNAPSHOT_REVISION_AND_HASH_REQUIRED"));
+ assert.equal(r.field_observation_verified,false);
+ assert.equal(r.native_object_id,null);
+ assert.equal(r.public_release_authorised,false);
+});
+test("receipt linkage accepts only opaque references, never embedded source or geometry",()=>{
+ for(const bad of [
+  {site_binding_receipt_ref:{coordinates:[153.1,-27.5]}},
+  {field_import_receipt_ref:""},
+  {site_binding_receipt_ref:"line\\nfeed"},
+  {field_import_receipt_ref:{approved:true}}
+ ])assert.throws(()=>review({...base,...bad}),/INVALID_BIOBLOCK_MONITORING_INPUT/);
+});
