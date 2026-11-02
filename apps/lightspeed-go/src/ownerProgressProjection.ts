@@ -44,9 +44,18 @@ const boundedCount = (value: unknown): number | null =>
   typeof value === "number" && Number.isSafeInteger(value) && value >= 0
     ? value : null;
 
-const validObjectId = (value: unknown): value is string =>
-  typeof value === "string" && value.startsWith("Cognigrex.cgx:/FileSpace/") &&
-  /^[A-Za-z0-9][A-Za-z0-9._:/-]{1,159}$/.test(value);
+const validObjectId = (value: unknown): value is string => {
+  // A path-shaped Object_ID is a source selector, never a filesystem path.
+  // Deny empty, dot and parent segments before any private R3 projection.
+  if (typeof value !== "string" || value.length > 160) return false;
+  const prefix = "Cognigrex.cgx:/FileSpace/";
+  if (!value.startsWith(prefix)) return false;
+  const tail = value.slice(prefix.length);
+  return tail.length > 0 && tail.split("/").every(segment =>
+    /^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(segment) &&
+    segment !== "." && segment !== ".."
+  );
+};
 
 const validRevision = (value: unknown): value is string =>
   typeof value === "string" && /^[a-fA-F0-9]{40,64}$/.test(value);
