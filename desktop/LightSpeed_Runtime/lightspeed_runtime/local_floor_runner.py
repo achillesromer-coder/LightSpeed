@@ -23,8 +23,10 @@ DEFAULT_TIMEOUT_SECONDS = 180
 DEFAULT_NUM_PREDICT = 512
 MAX_NUM_PREDICT = 1024
 HEAVY_MODEL_PATTERN = re.compile(r"(?:(?:27|70|120|405|671)b)|cloud", re.IGNORECASE)
-DEFAULT_WARNING_FREE_MEMORY_PERCENT = 15.0
-DEFAULT_CRITICAL_FREE_MEMORY_PERCENT = 8.0
+# Preserve at least 20% physical RAM for manual operator use.
+# A legacy source contract may tighten these limits, never relax the reserve.
+DEFAULT_WARNING_FREE_MEMORY_PERCENT = 24.0
+DEFAULT_CRITICAL_FREE_MEMORY_PERCENT = 20.0
 DEFAULT_MINIMUM_FREE_MEMORY_BYTES = 4 * 1024**3
 LAST_RECEIPT_TAIL_BYTES = 64 * 1024
 
@@ -734,6 +736,11 @@ def build_resource_preflight(
         "minimum_free_memory_bytes",
         DEFAULT_MINIMUM_FREE_MEMORY_BYTES,
     )
+    # Never allow an older 8% memory policy to undercut the founder's 20%
+    # reserved capacity for manual work. This is an admission gate, not a
+    # machine-wide hard memory cap after an Ollama request has started.
+    critical_percent = max(DEFAULT_CRITICAL_FREE_MEMORY_PERCENT, critical_percent)
+    warning_percent = max(DEFAULT_WARNING_FREE_MEMORY_PERCENT, warning_percent, critical_percent)
 
     snapshot = memory_snapshot or _memory_snapshot
     memory: dict[str, Any]
@@ -766,6 +773,7 @@ def build_resource_preflight(
             "free_percent": None,
             "error": str(exc),
         }
+        stop_reasons.append("physical RAM measurement unavailable; preserve manual reserve")
 
     # System-wide CPU pressure is a *start gate*, not a hard quota for all
     # CGX processes already running. A separate native Job Object/lease service
