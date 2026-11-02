@@ -250,6 +250,10 @@ def validate_lease(
     # issuer, revocation, host authority and DBR are NOT authenticated here.
     if isinstance(declared_actions, list) and lease_class in EXECUTION_CLASS_RANK:
         for declared_action in declared_actions:
+            # Malformed unhashable entries are rejected by subset_scope;
+            # never raise TypeError before the fail-closed receipt is emitted.
+            if not isinstance(declared_action, str):
+                continue
             required = minimum_action_class.get(declared_action)
             if required is not None and EXECUTION_CLASS_RANK[lease_class] < EXECUTION_CLASS_RANK[required]:
                 reasons.append("lease-declared-action-class-incompatible")
