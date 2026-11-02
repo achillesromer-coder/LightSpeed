@@ -616,6 +616,92 @@ function reviewSymbolicCorrectionBatch(batch,source,lineage,evidenceClass){
     native_admitted:false,public_release_authorised:false};
 }
 
+
+/**
+ * Source-only Second Cycle water-quality schema comparison. The original XLSX
+ * and its embedded Type-I translation remain distinct R0 identities. This
+ * compares caller-declared bounded schema cells, NOT field observations,
+ * calibration records, licences, source bytes or provider-authenticated cells.
+ * Conductivity and salinity are different quantities even when a source row
+ * presents an "or" unit. No automatic conversion or ecological inference.
+ */
+export function reviewEcoWaterQualitySchemaDelta(request={}) {
+  const keys=new Set(["source_ref","source_revision","source_sha256",
+    "related_source_ref","related_revision_ref","rows"]);
+  const rowKeys=new Set(["sheet","row","parameter","unit","required",
+    "qa_method","frequency","claim_status","source_rationale"]);
+  const expected=new Map([["Temperature",3],["Dissolved oxygen",4],
+    ["pH",5],["Conductivity / salinity",6],["Turbidity",7],
+    ["Nutrients",8],["Chlorophyll-a",9]]);
+  const validRow=(x,sheet)=>obj(x)&&
+    Object.keys(x).every(k=>rowKeys.has(k))&&x.sheet===sheet&&
+    expected.get(x.parameter)===x.row&&
+    ["Yes","Conditional"].includes(x.required)&&
+    ["unit","qa_method","frequency","claim_status","source_rationale"]
+      .every(k=>token(x[k]))&&x.unit.length<=64;
+  if(!obj(request)||Object.keys(request).some(k=>!keys.has(k))||
+     !token(request.source_ref)||!token(request.source_revision)||
+     !token(request.related_source_ref)||!token(request.related_revision_ref)||
+     request.source_ref===request.related_source_ref||
+     typeof request.source_sha256!=="string"||
+     !SHA.test(request.source_sha256)||
+     !Array.isArray(request.rows)||request.rows.length<1||
+     request.rows.length>7)
+    throw Error("INVALID_ECO_WQ_SCHEMA_DELTA");
+  const seen=new Set(),out=[];
+  for(const pair of request.rows){
+    if(!obj(pair)||Object.keys(pair).some(k=>!["original","translated"].includes(k))||
+       !validRow(pair.original,"20_WQ_DataSchema")||
+       !validRow(pair.translated,"SECON0E3E_20_WQ_DataSchema")||
+       pair.original.row!==pair.translated.row||
+       pair.original.parameter!==pair.translated.parameter||
+       seen.has(pair.original.row))
+      throw Error("ECO_WQ_SCHEMA_ROW_IDENTITY_OR_DUPLICATE_CONFLICT");
+    const a=pair.original,b=pair.translated;
+    seen.add(a.row);
+    const flags=[];
+    if(/[\u00c2\u00c3\u00cf\ufffd]/u.test(a.unit))
+      flags.push("ORIGINAL_UNIT_ENCODING_REVIEW_REQUIRED");
+    if(/[\u00c2\u00c3\u00cf\ufffd]/u.test(b.unit))
+      flags.push("TRANSLATION_UNIT_ENCODING_DEFECT");
+    if(a.unit!==b.unit)flags.push("UNIT_TEXT_CHANGED_NOT_EQUIVALENCE");
+    if(a.parameter==="Conductivity / salinity")
+      flags.push("CONDUCTIVITY_SALINITY_QUANTITY_AND_UNIT_SPLIT_REQUIRED");
+    if(a.frequency!==b.frequency)
+      flags.push("SAMPLING_POLICY_CHANGED_NOT_EQUIVALENCE");
+    if(a.qa_method!==b.qa_method)
+      flags.push("QA_METHOD_CHANGED_NOT_VALIDATED");
+    if(a.source_rationale!==b.source_rationale)
+      flags.push("SOURCE_RATIONALE_CHANGED_NOT_VERIFIED");
+    if(a.required!==b.required)
+      flags.push("REQUIRED_STATE_CHANGED");
+    if(a.claim_status!==b.claim_status)
+      flags.push("CLAIM_STATUS_CHANGED");
+    out.push({parameter:a.parameter,original_cell_ref:a.sheet+"!A"+a.row+
+      ":H"+a.row,translated_cell_ref:b.sheet+"!A"+b.row+":H"+b.row,
+      exact_schema_text_match:["unit","required","qa_method","frequency",
+        "claim_status","source_rationale"].every(k=>a[k]===b[k]),
+      flags,field_measurement_verified:false,qa_calibration_verified:false,
+      original_text_preserved:true,translated_text_modified:false});
+  }
+  const changes=out.filter(x=>!x.exact_schema_text_match).length;
+  return {schema:"CGX-ECO-WQ-SCHEMA-DELTA-R1/0.1",
+    state:changes?"R1_TRANSLATED_WQ_SCHEMA_DELTA_HOLD":
+      "R1_CALLER_DECLARED_WQ_SCHEMA_MATCH_NOT_EQUIVALENCE",
+    family:"Cognigrex.cgx/Eco.cgx",source_ref:request.source_ref,
+    source_revision:request.source_revision,
+    related_source_ref:request.related_source_ref,
+    related_revision_ref:request.related_revision_ref,
+    row_count:out.length,changed_row_count:changes,row_reviews:out,
+    source_hash_caller_declared_not_computed:true,
+    original_source_bytes_read_by_module:false,
+    original_and_translation_provider_cells_read_by_module:false,
+    source_rights_verified:false,measurement_observed:false,
+    sampling_policy_approved:false,field_qa_verified:false,
+    physical_geometry_verified:false,native_admitted:false,
+    public_release_authorised:false};
+}
+
 /**
  * Accept a review input, never an externally asserted "passed" receipt.
  * A fresh integrated cascade execution generates all actual executed flags.
@@ -626,14 +712,15 @@ export function prepareEcoPreMintAssembly(request={}){
     "requested_hydration","observation_showcase","source_lineage","access_posture",
     "related_access_posture","cell_crosswalk",
     "symbolic_expression_crosswalk","formula_inventory",
-    "symbolic_correction_batch","original_cell_digest_crosswalk","coefficient_roles"].includes(k)))
+    "symbolic_correction_batch","original_cell_digest_crosswalk","coefficient_roles",
+    "water_quality_schema_delta"].includes(k)))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const {cascade_input,geometry_descriptor=null,cell_anchor=null,
     requested_hydration="H3",observation_showcase=null,source_lineage=null,
     access_posture=null,related_access_posture=null,cell_crosswalk=null,
     symbolic_expression_crosswalk=null,formula_inventory=null,
     symbolic_correction_batch=null,original_cell_digest_crosswalk=null,
-    coefficient_roles=null}=request;
+    coefficient_roles=null,water_quality_schema_delta=null}=request;
   if(!obj(cascade_input)||!levels.includes(requested_hydration))
     throw Error("INVALID_ECO_PRE_MINT_REQUEST");
   const executed=runEcoReviewCascade(cascade_input);
@@ -701,6 +788,17 @@ export function prepareEcoPreMintAssembly(request={}){
       throw Error("ECO_COEFFICIENT_SOURCE_OR_EVIDENCE_CONFLICT");
     coeff=reviewSecondCycleCoefficientRoles(coefficient_roles);
   }
+  const wq=water_quality_schema_delta===null?{state:"WQ_SCHEMA_DELTA_NOT_SUPPLIED"}:
+    reviewEcoWaterQualitySchemaDelta(water_quality_schema_delta);
+  if(water_quality_schema_delta!==null&&
+     (cascade_input.domain!=="second_cycle_claim"||!source.proof_hash||
+      !obj(source_lineage)||
+      water_quality_schema_delta.source_ref!==source.source_ref||
+      water_quality_schema_delta.source_revision!==source.revision||
+      water_quality_schema_delta.source_sha256.toLowerCase()!==source.proof_hash||
+      water_quality_schema_delta.related_source_ref!==source_lineage.related_source_ref||
+      water_quality_schema_delta.related_revision_ref!==source_lineage.related_revision_ref))
+    throw Error("ECO_WQ_SCHEMA_SOURCE_LINEAGE_CONFLICT");
   let showcase=null;
   if(observation_showcase!==null){
     if(!obj(observation_showcase)||
@@ -776,6 +874,14 @@ export function prepareEcoPreMintAssembly(request={}){
     if(relatedAccess.access_classes_divergent)
       blockers.push("SOURCE_TRANSLATION_ACCESS_POSTURE_DIVERGENCE");
   }
+  if(water_quality_schema_delta!==null){
+    blockers.push("WQ_SCHEMA_PROVIDER_CELL_AND_RIGHTS_ATTESTATION_REQUIRED");
+    if(wq.changed_row_count)blockers.push("WQ_TRANSLATION_SCHEMA_DELTA_HOLD");
+    if(wq.row_reviews.some(r=>r.flags.includes("TRANSLATION_UNIT_ENCODING_DEFECT")))
+      blockers.push("WQ_TRANSLATION_UNIT_ENCODING_HOLD");
+    if(wq.row_reviews.some(r=>r.flags.includes("CONDUCTIVITY_SALINITY_QUANTITY_AND_UNIT_SPLIT_REQUIRED")))
+      blockers.push("WQ_CONDUCTIVITY_SALINITY_QUANTITY_SPLIT_REQUIRED");
+  }
   if(showcase!==null)
     blockers.push("ECO_OBSERVATION_SHOWCASE_NOT_NATIVE_MINT_OR_FIELD_EVIDENCE");
 
@@ -825,6 +931,7 @@ export function prepareEcoPreMintAssembly(request={}){
     symbolic_correction_batch_review:level>=2?symbolicCorrections:{state:"NOT_REQUESTED"},
     original_cell_digest_crosswalk_review:level>=2?originalCellDigests:{state:"NOT_REQUESTED"},
     coefficient_roles_review:level>=2?coeff:{state:"NOT_REQUESTED"},
+    water_quality_schema_review:level>=2?wq:{state:"NOT_REQUESTED"},
     access_posture_review:level>=2?access:{state:"NOT_REQUESTED"},
     related_access_posture_review:level>=2?relatedAccess:{state:"NOT_REQUESTED"},
     mint_showcase_review:level>=3&&showcase!==null?{
@@ -844,6 +951,7 @@ export function prepareEcoPreMintAssembly(request={}){
       {layer:"symbolic_corrections",state:level>=2?symbolicCorrections.state:"NOT_REQUESTED"},
       {layer:"original_cell_digests",state:level>=2?originalCellDigests.state:"NOT_REQUESTED"},
       {layer:"coefficient_roles",state:level>=2?coeff.state:"NOT_REQUESTED"},
+      {layer:"water_quality_schema",state:level>=2?wq.state:"NOT_REQUESTED"},
       {layer:"semantic",state:"R1_REVIEW_ONLY"},
       {layer:"geometry",state:geom.state},
       {layer:"temporal",state:geom.time_frame_ref_present?"REFERENCE_ONLY":"MISSING_SOURCE_TIME_FRAME"},
@@ -862,7 +970,8 @@ export function prepareEcoPreMintAssembly(request={}){
       "NO_NATIVE_CCC_INSTALL_OR_DATASPACE_SYNC",
       "NO_RELATED_SOURCE_BYTE_EQUIVALENCE_OR_OWNER_PERMISSION_PROOF",
       "NO_INDEPENDENT_ACL_RIGHTS_ATTESTATION",
-      "NO_PAIRWISE_PROVIDER_ACL_EQUIVALENCE_PROOF"],
+      "NO_PAIRWISE_PROVIDER_ACL_EQUIVALENCE_PROOF",
+      "NO_INDEPENDENT_WQ_SCHEMA_PROVIDER_CELL_OR_CALIBRATION_ATTESTATION"],
     blocking_gates:[...new Set(blockers.concat(geom.flags))],
     permissions:{file_space_write:false,data_space_write:false,
       device_automation:false,public_publish:false,
