@@ -293,6 +293,14 @@ export function reviewNativeLeaseHandshakeABI({
  };
  if(forbiddenDepths[nativeLease.lease_class]?.has(request.execution_depth))
   return deny("NATIVE_LEASE_CLASS_DEPTH_MISMATCH");
+ // A lease allowlist itself cannot mix verbs/depths that its declared class
+ // forbids, even if this particular request selects a benign member. This is
+ // a stricter non-authorising bootstrap review gate than native per-request
+ // validation; it does NOT validate signatures or grant runtime authority.
+ if(scopes.action_classes.some(action=>forbiddenActions[nativeLease.lease_class]?.has(action)))
+  return deny("NATIVE_LEASE_DECLARED_ACTION_CLASS_CONFLICT");
+ if(nativeLease.execution_depths.some(depth=>forbiddenDepths[nativeLease.lease_class]?.has(depth)))
+  return deny("NATIVE_LEASE_DECLARED_DEPTH_CLASS_CONFLICT");
  const mapped={READ_ONLY:"read",COMPUTE_ONLY:"compute_only",
   DIGITAL_WRITE:"digital_write"}[nativeLease.lease_class];
  if(!mapped)return deny("NATIVE_LEASE_CLASS_UNSUPPORTED_BY_HANDSHAKE");
