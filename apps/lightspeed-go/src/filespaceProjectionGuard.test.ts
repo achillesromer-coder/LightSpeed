@@ -57,9 +57,27 @@ describe("UniSpace source-scoped FileSpace R3 display guard", () => {
       ...scientific, geometry: { ...scientific.geometry!, independentlyMetricValidated: true },
     }).state).toBe("READY");
   });
+  it("requires independent metric validation for OPERATIONAL spatial projections", () => {
+    const operational: HostProjectionReceipt = {
+      ...receipt, geometry: { sourceVerified: true, frame: "local-frame", units: "m" },
+    };
+    expect(decide({ ...selection, view: "spatial" }, operational).state).toBe("FRONTIER");
+    expect(decide({ ...selection, view: "spatial" }, {
+      ...operational, geometry: { ...operational.geometry!, independentlyMetricValidated: true },
+    }).state).toBe("READY");
+  });
+  it("keeps CREATIVE spatial previews distinct from independently validated metrics", () => {
+    const creative: HostProjectionReceipt = {
+      ...receipt, evidenceClass: "CREATIVE",
+      geometry: { sourceVerified: true, frame: "illustrative-local", units: "arbitrary" },
+    };
+    const result = decide({ ...selection, view: "spatial" }, creative);
+    expect(result.state).toBe("READY");
+    if (result.state === "READY") expect(result.evidenceClass).toBe("CREATIVE");
+  });
   it("allows verified source-bound spatial presentation without increasing evidence", () => {
     const decision = decide({ ...selection, view: "spatial" }, {
-      ...receipt, geometry: { sourceVerified: true, frame: "local-frame", units: "m" },
+      ...receipt, geometry: { sourceVerified: true, independentlyMetricValidated: true, frame: "local-frame", units: "m" },
     });
     expect(decision.state).toBe("READY");
     if (decision.state === "READY") expect(decision.evidenceCeiling).toBe("R1");
