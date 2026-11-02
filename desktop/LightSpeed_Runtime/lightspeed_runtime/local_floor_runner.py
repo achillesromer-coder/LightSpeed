@@ -289,33 +289,31 @@ def build_ollama_request(
         "options": {"num_predict": bounded_num_predict, "num_ctx": num_ctx},
     }
     if policy.get("strict_response_contract"):
+        # Ollama 0.12.x grammar compilation can reject dynamic enum literals
+        # containing Windows paths, escaped quotes or UTF-8 source passages.
+        # Keep the grammar STRUCTURAL only. Exact route/source/hash/quote
+        # verification remains an independent, fail-closed host postcondition
+        # in validate_grounded_response(), not model-selected authority.
         request["format"] = {
             "type": "object",
             "properties": {
                 "floor_summary": {"type": "string"},
-                "safe_artifact_route": {"type": "string", "enum": [str(resolve_receipt_path(contract, floor))]},
+                "safe_artifact_route": {"type": "string"},
                 "blocker": {"type": ["string", "null"]},
                 "citations": {"type": "array", "items": {
                     "type": "object", "properties": {
-                        "path": {"type": "string"}, "sha256": {"type": "string"},
+                        "path": {"type": "string"},
+                        "sha256": {"type": "string"},
                         "quote": {"type": "string"},
                     }, "required": ["path", "sha256", "quote"],
+                    "additionalProperties": False,
                 }},
             },
             "required": ["floor_summary", "safe_artifact_route", "blocker", "citations"],
+            "additionalProperties": False,
         }
         if sources:
-            # The host owns source identities. The model selects evidence and
-            # quotes it; it must not invent paths or mix a path with another hash.
             request["format"]["properties"]["citations"]["minItems"] = 1
-            request["format"]["properties"]["citations"]["items"] = {"anyOf": [
-                {"type": "object", "properties": {
-                    "path": {"type": "string", "enum": [source["path"]]},
-                    "sha256": {"type": "string", "enum": [source["sha256"]]},
-                    "quote": {"type": "string", "enum": _citation_quote_candidates(str(source.get("excerpt") or ""))},
-                }, "required": ["path", "sha256", "quote"], "additionalProperties": False}
-                for source in sources
-            ]}
     return request
 
 
