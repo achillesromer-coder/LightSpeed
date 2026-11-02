@@ -221,10 +221,20 @@ def family_scores(text: str, title: str) -> list[tuple[str, int]]:
 
 
 def user_ancestor(node: dict, mapping: dict, limit: int = 120) -> tuple[str | None, int]:
+    """Resolve only a typed, source-visible user ancestor, never a coerced ID.
+
+    A hidden user or malformed parent pointer cannot become an R1
+    prompt-response identity merely because its text resembles another ID.
+    This is still a source-local review edge, not a canonical R2 relation.
+    """
     parent = node.get("parent")
     seen = set()
     steps = 0
-    while parent and parent not in seen and steps < limit:
+    while parent is not None and steps < limit:
+        if not isinstance(parent, str) or not parent:
+            raise ValueError("SOURCE_PARENT_NODE_ID_HOLD")
+        if parent in seen:
+            break
         seen.add(parent)
         steps += 1
         item = mapping.get(parent)
@@ -233,8 +243,19 @@ def user_ancestor(node: dict, mapping: dict, limit: int = 120) -> tuple[str | No
         message = item.get("message") or {}
         if not isinstance(message, dict):
             break
-        if (message.get("author") or {}).get("role") == "user":
-            return str(message.get("id") or parent), steps
+        author = message.get("author") or {}
+        if not isinstance(author, dict):
+            raise ValueError("SOURCE_ANCESTOR_AUTHOR_HOLD")
+        if author.get("role") == "user":
+            raw_id = message["id"] if "id" in message else parent
+            if not isinstance(raw_id, str) or not raw_id:
+                raise ValueError("SOURCE_ANCESTOR_MESSAGE_ID_HOLD")
+            metadata = message.get("metadata") or {}
+            if not isinstance(metadata, dict):
+                raise ValueError("SOURCE_ANCESTOR_METADATA_HOLD")
+            if metadata.get("channel") in DENIED_CHANNELS:
+                return None, steps
+            return raw_id, steps
         parent = item.get("parent")
     return None, steps
 
@@ -383,6 +404,10 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
                 msg = node.get("message")
                 if not isinstance(msg, dict):
                     continue
+                raw_parent = node.get("parent")
+                if raw_parent is not None and (
+                        not isinstance(raw_parent, str) or not raw_parent):
+                    raise ValueError("SOURCE_PARENT_NODE_ID_HOLD")
                 raw_mid = msg["id"] if "id" in msg else node_id
                 if not isinstance(raw_mid, str) or not raw_mid:
                     raise ValueError("SOURCE_MESSAGE_ID_HOLD")
