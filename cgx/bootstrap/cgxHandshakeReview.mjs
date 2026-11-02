@@ -248,6 +248,15 @@ export function reviewNativeLeaseHandshakeABI({
  ]);
  if(!mappedActionClasses.has(request.action_class.toLowerCase()))
   return deny("NATIVE_LEASE_ACTION_CLASS_UNMAPPED");
+ const forbiddenActions={
+  READ_ONLY:new Set(["execute","compute","simulate","digital_write","write","mutate",
+   "publish","publication","external_action","physical_actuation"]),
+  COMPUTE_ONLY:new Set(["digital_write","write","mutate","publish","publication",
+   "external_action","physical_actuation"]),
+  DIGITAL_WRITE:new Set(["publish","publication","external_action","physical_actuation"])
+ };
+ if(forbiddenActions[nativeLease.lease_class]?.has(request.action_class.toLowerCase()))
+  return deny("NATIVE_LEASE_CLASS_ACTION_MISMATCH");
  // The execution depth is an independent authority axis. A READ_ONLY lease
  // cannot become compute/write authority by calling the action "inspect";
  // similarly, build/publish depths cannot be laundered through a lower class.
@@ -259,15 +268,6 @@ export function reviewNativeLeaseHandshakeABI({
  };
  if(forbiddenDepths[nativeLease.lease_class]?.has(request.execution_depth))
   return deny("NATIVE_LEASE_CLASS_DEPTH_MISMATCH");
- const forbiddenActions={
-  READ_ONLY:new Set(["execute","compute","simulate","digital_write","write","mutate",
-   "publish","publication","external_action","physical_actuation"]),
-  COMPUTE_ONLY:new Set(["digital_write","write","mutate","publish","publication",
-   "external_action","physical_actuation"]),
-  DIGITAL_WRITE:new Set(["publish","publication","external_action","physical_actuation"])
- };
- if(forbiddenActions[nativeLease.lease_class]?.has(request.action_class.toLowerCase()))
-  return deny("NATIVE_LEASE_CLASS_ACTION_MISMATCH");
  const mapped={READ_ONLY:"read",COMPUTE_ONLY:"compute_only",
   DIGITAL_WRITE:"digital_write"}[nativeLease.lease_class];
  if(!mapped)return deny("NATIVE_LEASE_CLASS_UNSUPPORTED_BY_HANDSHAKE");
