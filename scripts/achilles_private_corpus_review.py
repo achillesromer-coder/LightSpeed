@@ -267,7 +267,7 @@ def user_ancestor_with_node(node: dict, mapping: dict, limit: int = 120) -> tupl
                 return None, None, steps
             return raw_id, parent, steps
         parent = item.get("parent")
-    return None, steps
+    return None, None, steps
 
 
 
