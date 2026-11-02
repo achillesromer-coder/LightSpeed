@@ -786,7 +786,10 @@ def test_local_floor_lock_replaced_inode_denies_cleanup(tmp_path: Path) -> None:
             original_inode = path.stat().st_ino
             replacement = tmp_path / "replacement.lock"
             replacement.write_bytes(path.read_bytes())
-            replacement.replace(path)
+            try:
+                replacement.replace(path)
+            except PermissionError:
+                pytest.skip("host forbids replacing an open lock; Windows negative requires host-specific fixture")
             if path.stat().st_ino == original_inode:
                 pytest.skip("filesystem did not expose replacement inode change")
     assert path.exists()
