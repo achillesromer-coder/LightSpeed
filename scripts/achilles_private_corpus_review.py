@@ -5,7 +5,7 @@ Additive R0->candidate R1 only. Never edits inputs, invokes models, executes
 assistant tasks, writes the native database, serves raw dialogue, or mints CGX.
 """
 from __future__ import annotations
-import argparse, datetime as dt, hashlib, hmac, html, http.server, json, os
+import argparse, datetime as dt, hashlib, hmac, html, http.server, json, math, os
 from pathlib import Path
 import re, secrets, sqlite3, threading, time, urllib.parse
 
@@ -33,6 +33,14 @@ SHA_RE = re.compile(r"^[a-f0-9]{64}$")
 
 def sha(b: bytes) -> str:
     return hashlib.sha256(b).hexdigest()
+
+
+def finite_json_float(token: str) -> float:
+    """Fail closed on JSON exponents that overflow Python finite timestamps."""
+    value = float(token)
+    if not math.isfinite(value):
+        raise ValueError("SOURCE_NONFINITE_JSON_NUMBER_HOLD")
+    return value
 
 
 def atomic_json(path: Path, value: dict) -> None:
@@ -203,6 +211,7 @@ def iter_source_conversations(source: Path, entry: dict, *,
 
         parser = json.JSONDecoder(
             object_pairs_hook=reject_duplicate_object_keys,
+            parse_float=finite_json_float,
             parse_constant=lambda _: (_ for _ in ()).throw(
                 ValueError("SOURCE_JSON_CONSTANT_HOLD")))
         digest = hashlib.sha256()
