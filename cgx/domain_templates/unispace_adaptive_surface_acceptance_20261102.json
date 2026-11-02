@@ -53,7 +53,13 @@
     ],
     "family_palette": "PRESENTATION_ONLY_NOT_AUTHORITY",
     "mobile": "SAME_SCOPE_REDUCED_HYDRATION",
-    "offline": "ONLY_PREVIOUSLY_AUTHORISED_REDACTED_READ_ONLY_PROJECTION"
+    "offline": "PUBLIC_SAFE_REDACTED_READ_ONLY_ONLY; PRIVATE_OBJECTS_REQUIRE_FRESH_AUTHENTICATED_SESSION_AND_REVOCATION_CHECK",
+    "offline_cache_policy": {
+      "default": "NO_PRIVATE_OBJECT_OR_SOURCE_METADATA_CACHE",
+      "allowed": "OWNER_APPROVED_PUBLIC_SAFE_REDACTED_METADATA_ONLY",
+      "private_r3_revalidation": "FRESH_ISSUER_SESSION_SCOPE_LEASE_AND_REVOCATION_BEFORE_PRIVATE_HYDRATION",
+      "revoked_or_unverifiable": "DENY_PRIVATE_R3_AND_CLEAR_PRIVATE_CACHE"
+    }
   },
   "negative_acceptance_cases": [
     {
@@ -100,6 +106,16 @@
       "id": "U-A09",
       "input": "source CI succeeds without host signed DBR/lease or browser readback",
       "expected": "TESTED_SOURCE_ONLY_NOT_LIVE_VERIFIED"
+    },
+    {
+      "id": "U-A10",
+      "input": "offline, expired lease, revoked session or revocation status unavailable",
+      "expected": "DENY_PRIVATE_OFFLINE_HYDRATION_ALLOW_PUBLIC_SAFE_REDACTED_ONLY"
+    },
+    {
+      "id": "U-A11",
+      "input": "desktop/bridge HTTP 200 without signed issuer, scope, lease and DBR readback",
+      "expected": "BRIDGE_STATUS_ONLY_NO_EXECUTION_AUTHORITY"
     }
   ],
   "pending_source_paths": [
