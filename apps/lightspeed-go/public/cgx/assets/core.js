@@ -143,3 +143,70 @@ export function sectionConvexMesh(mesh,plane){
           area:status==="DERIVED_PLANE_SECTION"?area:null,area_unit:mesh.unit+"^2",
           evidence:"SYNTHETIC_GEOMETRY_ONLY",published:false,authoritative:false,physical_proof:false};
 }
+
+
+/**
+ * Source-safe orbit atlas for the public UniSpace demonstration.
+ * This is a 3D -> 2D perspective projection of a FIXED synthetic family
+ * example, not a private object resolver, graph proof or native .cgx mint.
+ * Colour semantics: amber=fractal, blue=dedicated/sealed, green=open demo.
+ */
+export const PUBLIC_CGX_ATLAS=Object.freeze({
+  schema:"cgx-public-family-orbit/0.1",
+  source:"STATIC_SYNTHETIC_FIXTURE",
+  viewpoint:"PUBLIC_SURFACE_LOOKING_INWARD",
+  nodes:Object.freeze([
+    {id:"root",label:"Cognigrex",layer:"fractal",access:"SYNTHETIC",xyz:[0,0,0]},
+    {id:"romer",label:"Römer",layer:"fractal",access:"SYNTHETIC",xyz:[-1.38,.56,-.48]},
+    {id:"eco",label:"Eco",layer:"fractal",access:"SYNTHETIC",xyz:[1.32,.67,-.58]},
+    {id:"emassc",label:"EMASSC",layer:"fractal",access:"SYNTHETIC",xyz:[-.52,-.94,.85]},
+    {id:"ls",label:"LS / local",layer:"dedicated",access:"SEALED_NO_PUBLIC_OBJECT",xyz:[.72,-.82,.71]},
+    {id:"unisp",label:"UniSpace",layer:"dedicated",access:"SEALED_NO_PUBLIC_OBJECT",xyz:[.05,1.17,1.15]},
+    {id:"load",label:"LOAD · demo",layer:"open",access:"PUBLIC_SYNTHETIC_ONLY",xyz:[1.53,-.18,-.86]},
+    {id:"ccc",label:"CCC / CYC",layer:"dedicated",access:"SEALED_NO_PUBLIC_OBJECT",xyz:[-1.40,-.42,-1.14]},
+    {id:"open",label:"Open example",layer:"open",access:"PUBLIC_SYNTHETIC_ONLY",xyz:[.25,.11,-1.45]}
+  ]),
+  edges:Object.freeze([
+    ["root","romer"],["root","eco"],["root","emassc"],
+    ["root","ls"],["root","unisp"],["root","load"],["root","ccc"],
+    ["root","open"],["romer","emassc"],["eco","load"]
+  ])
+});
+const ORBIT_COLOURS=Object.freeze({fractal:"#ed9c45",dedicated:"#5daaff",open:"#45d994"});
+export function projectCgxOrbit({yaw=0,pitch=0.18,zoom=1,width=760,height=370}={}){
+  const hold=reason=>({status:reason,native_admitted:false,public_release_verified:false,nodes:[],edges:[]});
+  if (![yaw,pitch,zoom,width,height].every(v=>typeof v==="number"&&Number.isFinite(v)) ||
+      Math.abs(yaw)>1e7 || Math.abs(pitch)>1e7 || zoom<0.55 || zoom>2.5 ||
+      width<320 || width>4096 || height<200 || height>4096)
+    return hold("HOLD_INVALID_ORBIT_FRAME");
+  const a=yaw%(2*Math.PI),b=Math.max(-1.4,Math.min(1.4,pitch));
+  const ca=Math.cos(a),sa=Math.sin(a),cb=Math.cos(b),sb=Math.sin(b);
+  const nodes=PUBLIC_CGX_ATLAS.nodes.map(n=>{
+    const [x,y,z]=n.xyz;
+    const xx=x*ca-z*sa,zz=x*sa+z*ca,yy=y*cb-zz*sb,depth=y*sb+zz*cb;
+    const scale=5.5/(5.5-depth*zoom);
+    return {
+      id:n.id,label:n.label,layer:n.layer,access:n.access,color:ORBIT_COLOURS[n.layer],
+      x:width/2+xx*83*zoom*scale,
+      y:height/2-yy*83*zoom*scale,
+      radius:(n.id==="root"?21:12)*scale,
+      depth,opacity:Math.max(.55,Math.min(.98,.75+depth*.11)),
+      clickable_source_body:false
+    };
+  });
+  const lookup=new Map(nodes.map(n=>[n.id,n]));
+  const edges=PUBLIC_CGX_ATLAS.edges.map(([from,to])=>{
+    const a=lookup.get(from),b=lookup.get(to);
+    return {from,to,x1:a.x,y1:a.y,x2:b.x,y2:b.y,
+      opacity:Math.max(.24,Math.min(.8,(a.opacity+b.opacity)/2-.15))};
+  });
+  return {
+    status:"SYNTHETIC_ORBIT_PROJECTION_ONLY",schema:PUBLIC_CGX_ATLAS.schema,
+    viewpoint:PUBLIC_CGX_ATLAS.viewpoint,yaw:a,pitch:b,zoom,
+    nodes:nodes.sort((x,y)=>x.depth-y.depth),edges,
+    selectable_public_source:false,native_admitted:false,
+    governance_access:false,private_source_included:false,
+    public_release_verified:false,geospatial_frame_verified:false,
+    calculations:"PERSPECTIVE_PROJECTION_OF_SYNTHETIC_COORDINATES_ONLY"
+  };
+}
