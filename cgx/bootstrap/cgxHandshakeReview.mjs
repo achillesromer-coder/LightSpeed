@@ -222,6 +222,16 @@ export function reviewNativeLeaseHandshakeABI({
     !Array.isArray(plannedFloors)||plannedFloors.length===0||plannedFloors.length>100||
     !plannedFloors.every(id)||!plannedFloors.every(f=>allowedFloors.includes(f)))
   return deny("NATIVE_LEASE_CASCADE_OR_FLOOR_SCOPE_MISMATCH");
+ // The native contract has no portable case-folding rule for execution depth.
+ // Only exact, known 0.1 verbs may be classified. Otherwise a mixed-case
+ // "PuBlIsH" depth could evade a READ_ONLY/COMPUTE_ONLY restriction while
+ // being reported as request-bound. Unknown lease-listed verbs also hold.
+ const mappedExecutionDepths=new Set(["inspect","propose","simulate","execute","build","publish"]);
+ if(!mappedExecutionDepths.has(request.execution_depth)||
+    !Array.isArray(nativeLease.execution_depths)||
+    nativeLease.execution_depths.length===0||nativeLease.execution_depths.length>100||
+    !nativeLease.execution_depths.every(depth=>mappedExecutionDepths.has(depth)))
+  return deny("NATIVE_LEASE_EXECUTION_DEPTH_UNMAPPED");
  if(request.object_id!==child.object_id)return deny("NATIVE_LEASE_CHILD_MISMATCH");
  if(!validInstant(nativeLease.valid_from)||!validInstant(nativeLease.valid_until)||
     Date.parse(nativeLease.valid_from)>=Date.parse(nativeLease.valid_until)||
