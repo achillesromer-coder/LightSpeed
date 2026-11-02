@@ -71,8 +71,12 @@ def inspect_database(path: Path) -> dict:
             duplicates = db.execute(
                 "SELECT COUNT(*)-COUNT(DISTINCT command_id) FROM ls_go_command_identities"
             ).fetchone()[0]
-            running = next((row["count"] for row in job_groups
-                            if row["state"] == "running"), 0)
+            # Display groups are capped at 40; never derive a safety verdict
+            # from that truncated diagnostic projection.
+            running = int(db.execute(
+                "SELECT COUNT(*) FROM jobs WHERE job_type=? AND status=?",
+                ("ls_go_command", "running"),
+            ).fetchone()[0])
             unlinked = sum(x["count"] for x in matches if x["job_state"] == "UNLINKED")
             foreign = sum(x["count"] for x in matches if x["job_state"] == "FOREIGN_JOB_TYPE")
             if sum(x["count"] for x in matches) != total:
