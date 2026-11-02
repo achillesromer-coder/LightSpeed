@@ -610,7 +610,7 @@ def test_ollama_0129_schema_does_not_embed_windows_escaped_source_literals(tmp_p
     assert sample["path"] not in schema
     assert sample["excerpt"] not in schema
     assert "enum" not in schema and "anyOf" not in schema
-    assert sample["path"] in request["prompt"]
+    assert json.dumps(sample["path"], ensure_ascii=False) in request["prompt"]
     route = str(resolve_receipt_path(contract, floor))
     valid = {"floor_summary": "source only", "safe_artifact_route": route,
              "blocker": None, "citations": [dict(path=sample["path"],
