@@ -8,10 +8,16 @@
     "base": "main",
     "base_commit": "eee015e26997a843b80cabd5106694b58559fd4c",
     "review_branch": "review/unispace-adaptive-task-lenses-20261102",
-    "branch_at_inspection": "IDENTICAL_TO_MAIN",
+    "branch_at_inspection": "AHEAD_OF_MAIN_SOURCE_ONLY_REVIEW_COMMITS",
     "local_candidate_source": "UNAVAILABLE_TO_THIS_CLOUD_RUN",
     "verified_policy_blob": "27ca0230e75743448c91482f2ea0a454f67bfab6",
-    "verified_registry_blob": "d38ce3d837af66c05566689dafab743d9e302ec6"
+    "verified_registry_blob": "d38ce3d837af66c05566689dafab743d9e302ec6",
+    "compare_observed_ahead_by": 7,
+    "compare_observed_behind_by": 0,
+    "compare_observed_base_sha": "eee015e26997a843b80cabd5106694b58559fd4c",
+    "operator_adapter_blob": "d5342cd65a9d0d818817b52e57f3c179ab7c57b4",
+    "operator_test_blob": "f600919b197832e958634bda614aea4f7fd3f2f5",
+    "operator_test_execution": "14_OF_14_V8_HARNESS_PASS_NOT_NODE_CI"
   },
   "canonical_bindings": {
     "parent": "Cognigrex.cgx",
