@@ -66,6 +66,9 @@ export function planCGXHandshake({parent,child,lease,exchange=null,now=null}={})
   if(!id(x))return {status:"DENIED",reason:"INCOMPLETE_IDENTITY_OR_LEASE"};
  }
  if(!SHA.test(parent.state_root)||!SHA.test(parent.dbr_root))return {status:"DENIED",reason:"INVALID_ROOT_HASH"};
+ // The parent and child must be distinct typed identities, not a self-edge.
+ // A self-parented FileSpace cannot qualify even when its lease target agrees.
+ if(child.object_id===parent.object_id)return {status:"DENIED",reason:"SELF_PARENT_CHILD_IDENTITY"};
  if(child.parent_object_id!==parent.object_id)return {status:"DENIED",reason:"CROSS_PARENT_CHILD"};
  if(lease.target_object_id!==child.object_id)return {status:"DENIED",reason:"LEASE_SUBJECT_MISMATCH"};
  if(!allowed.has(lease.scope))return {status:"DENIED",reason:"UNRECOGNISED_LEASE_SCOPE"};
