@@ -76,6 +76,27 @@ def test_atomic_json_replaces_existing_receipt_without_stale_tmp(tmp_path):
     assert not list(tmp_path.glob(".summary.json.*.tmp"))
 
 
+@pytest.mark.parametrize("alias_kind", ["symlink", "hardlink"])
+def test_private_loopback_shortcut_never_follows_planted_output_alias(tmp_path, alias_kind):
+    """The loopback bearer-token shortcut must not overwrite an outside file."""
+    shortcut = tmp_path / "Open Achilles source progress.url"
+    sentinel = tmp_path / "outside_sentinel.txt"
+    sentinel.write_text("DO_NOT_CHANGE", encoding="utf-8")
+    try:
+        if alias_kind == "symlink":
+            shortcut.symlink_to(sentinel)
+        else:
+            os.link(sentinel, shortcut)
+    except (OSError, NotImplementedError) as exc:
+        pytest.skip(f"{alias_kind} creation unavailable: {exc}")
+    expected = "[InternetShortcut]\\nURL=http://127.0.0.1:8767/t/TEST_ONLY\\n"
+    mod.atomic_text(shortcut, expected)
+    assert sentinel.read_text(encoding="utf-8") == "DO_NOT_CHANGE"
+    assert shortcut.read_text(encoding="utf-8") == expected
+    assert not shortcut.is_symlink()
+    assert not list(tmp_path.glob(".Open Achilles source progress.url.*.tmp"))
+
+
 def test_private_r1_honours_user_assistant_roles_and_branch_parent(tmp_path):
     source, entry = sample(tmp_path)
     con = mod.connect(tmp_path / "review.sqlite")
