@@ -164,6 +164,32 @@ def main():
         if not ok:
             failures.append(f"Neo ABI valid {lease_class}/{depth}/{action}: {reasons}")
 
+    # A benign requested action cannot mask a second, unrecognised
+    # lease-listed CCC action. This is structural review, not issuer proof.
+    for extra_action in ("future:actuate", "ReAd", "custom:plugin.action"):
+        x = base_lease()
+        x["root_authority_receipt_ref"] = "fixture:root-approval"
+        x["execution_depths"].append("inspect")
+        x["scope"]["action_classes"] = ["inspect", extra_action]
+        ok, reasons, _ = check(
+            x, execution_depth="inspect", action_class="inspect",
+            consequential=False,
+        )
+        if ok or "lease-action-class-unmapped" not in reasons:
+            failures.append(
+                "Neo ABI unknown extra action accepted: " + repr((extra_action, reasons))
+            )
+    x = base_lease()
+    x["root_authority_receipt_ref"] = "fixture:root-approval"
+    x["execution_depths"].append("inspect")
+    x["scope"]["action_classes"] = ["inspect", "read"]
+    ok, reasons, _ = check(
+        x, execution_depth="inspect", action_class="inspect",
+        consequential=False,
+    )
+    if not ok:
+        failures.append("Neo ABI known extra action rejected: " + repr(reasons))
+
     # Real CLI negative, still without any model or LS GO invocation:
     # a READ_ONLY lease cannot launder simulate via --action-class.
     with tempfile.TemporaryDirectory(prefix="cgx-neo-lease-class-negative-") as temp:
