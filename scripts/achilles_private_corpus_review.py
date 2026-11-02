@@ -364,9 +364,12 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
             conversation_count += 1
             if not isinstance(conv, dict):
                 raise ValueError("SOURCE_CONVERSATION_SHAPE_HOLD")
-            cid = str(conv.get("conversation_id") or conv.get("id") or "")
-            if not cid:
+            raw_cid = conv.get("conversation_id") or conv.get("id")
+            # Source IDs are typed strings. Coercing numeric/boolean IDs to
+            # strings would merge distinct R0 representations before R2.
+            if not isinstance(raw_cid, str) or not raw_cid:
                 raise ValueError("SOURCE_CONVERSATION_ID_HOLD")
+            cid = raw_cid
             mapping = conv.get("mapping") or {}
             if not isinstance(mapping, dict):
                 raise ValueError("SOURCE_MAPPING_HOLD")
@@ -379,7 +382,10 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
                 msg = node.get("message")
                 if not isinstance(msg, dict):
                     continue
-                mid = str(msg.get("id") or node_id)
+                raw_mid = msg.get("id") or node_id
+                if not isinstance(raw_mid, str) or not raw_mid:
+                    raise ValueError("SOURCE_MESSAGE_ID_HOLD")
+                mid = raw_mid
                 role = str((msg.get("author") or {}).get("role") or "")
                 channel = str((msg.get("metadata") or {}).get("channel") or "")
                 if role not in ("user", "assistant") or channel in DENIED_CHANNELS:
