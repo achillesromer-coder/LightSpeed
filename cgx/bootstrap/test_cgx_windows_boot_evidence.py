@@ -167,7 +167,9 @@ class WindowsBootEvidenceTests(unittest.TestCase):
                 else:
                     source["children"]["eco"]["filespace"] = "OtherEco.cgx"
                 write_json(path, source)
-                with self.assertRaisesRegex(ValueError, "FAMILY_REQUIRED_CHILD_MISSING_OR_MISBOUND"):
+                expected = ("FAMILY_ID_COLLISION_OR_INVALID" if case == "romer_id_changed"
+                            else "FAMILY_REQUIRED_CHILD_MISSING_OR_MISBOUND")
+                with self.assertRaisesRegex(ValueError, expected):
                     probe._family_identity(path)
                 result = self.run_probe()
                 self.assertIn("CANONICAL_FAMILY_REGISTRY_UNVERIFIED", result["holds"])
