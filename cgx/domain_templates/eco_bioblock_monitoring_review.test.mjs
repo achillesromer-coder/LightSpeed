@@ -144,13 +144,36 @@ test("partial source-only series does not invent missing visits",()=>{
 test("declared complete year-old series flags missing baseline, visits and review",()=>{
  const r=schedule([scheduleRow("monthly","2026-02-01T00:00:00Z")],
   {deployment_at:deployAt,as_of:"2027-04-01T00:00:00Z",
-   coverage_complete:true});
+   coverage_complete:true,monthly_cadence_declared:true});
  for(const f of ["BASELINE_NOT_IN_DECLARED_COMPLETE_SERIES",
   "DEPLOYMENT_LOG_NOT_IN_DECLARED_COMPLETE_SERIES",
   "WEEK_TWO_NOT_IN_DECLARED_COMPLETE_SERIES",
   "FIRST_YEAR_MONTHLY_COVERAGE_REVIEW",
   "POST_YEAR_ONE_QUARTERLY_COVERAGE_REVIEW",
   "ANNUAL_REVIEW_COVERAGE_REVIEW"])assert.ok(r.flags.includes(f));
+});
+test("complete dataset does not imply a site-approved monthly protocol",()=>{
+ const r=schedule([scheduleRow("monthly","2026-02-01T00:00:00Z")],
+  {deployment_at:deployAt,as_of:"2027-04-01T00:00:00Z",
+   coverage_complete:true});
+ assert.equal(r.monthly_cadence_declared,false);
+ assert.ok(r.flags.includes("MONTHLY_CADENCE_NOT_DECLARED_NO_COVERAGE_INFERENCE"));
+ assert.ok(!r.flags.includes("FIRST_YEAR_MONTHLY_COVERAGE_REVIEW"));
+ assert.equal(r.schedule_compliance_verified,false);
+});
+test("explicit monthly protocol enables only heuristic coverage review",()=>{
+ const r=schedule([scheduleRow("monthly","2026-02-01T00:00:00Z")],
+  {deployment_at:deployAt,as_of:"2027-04-01T00:00:00Z",
+   coverage_complete:true,monthly_cadence_declared:true});
+ assert.equal(r.monthly_cadence_declared,true);
+ assert.ok(r.flags.includes("FIRST_YEAR_MONTHLY_COVERAGE_REVIEW"));
+ assert.ok(r.flags.includes("MONTHLY_SITE_CALENDAR_AND_PROTOCOL_REVIEW_REQUIRED"));
+ assert.equal(r.field_observation_verified,false);
+});
+test("untyped monthly cadence declaration fails closed",()=>{
+ assert.throws(()=>schedule([scheduleRow("monthly","2026-02-01T00:00:00Z")],
+  {deployment_at:deployAt,monthly_cadence_declared:"true"}),
+  /INVALID_BIOBLOCK_SCHEDULE_TIME/);
 });
 test("invalid time context, raw coordinates and unbounded records fail closed",()=>{
  assert.throws(()=>schedule([scheduleRow("monthly","2026-02-01T00:00:00Z")],
@@ -167,7 +190,7 @@ test("invalid time context, raw coordinates and unbounded records fail closed",(
 
 test("repeated identical monthly timestamps do not satisfy 12 independent visits",()=>{
  const r=schedule(Array(12).fill(scheduleRow("monthly","2026-02-01T00:00:00Z")),
-  {deployment_at:deployAt,as_of:"2027-04-01T00:00:00Z",coverage_complete:true});
+  {deployment_at:deployAt,as_of:"2027-04-01T00:00:00Z",coverage_complete:true,monthly_cadence_declared:true});
  assert.ok(r.flags.includes("FIRST_YEAR_MONTHLY_DUPLICATE_TIMEPOINT_REVIEW"));
  assert.ok(r.flags.includes("FIRST_YEAR_MONTHLY_COVERAGE_REVIEW"));
  assert.equal(r.schedule_compliance_verified,false);
@@ -176,7 +199,7 @@ test("12 clustered synthetic monthly visits require spacing review",()=>{
  const rows=Array.from({length:12},(_,i)=>scheduleRow("monthly",
   `2026-02-${String(i+1).padStart(2,"0")}T00:00:00Z`));
  const r=schedule(rows,{deployment_at:deployAt,as_of:"2027-04-01T00:00:00Z",
-  coverage_complete:true});
+  coverage_complete:true,monthly_cadence_declared:true});
  assert.ok(r.flags.includes("FIRST_YEAR_MONTHLY_VISIT_SPACING_REVIEW"));
  assert.equal(r.field_observation_verified,false);
 });
@@ -194,7 +217,7 @@ test("spaced synthetic visits remain source-only without compliance promotion",(
  const rows=Array.from({length:12},(_,i)=>scheduleRow("monthly",
   new Date(Date.UTC(2026,i,22)).toISOString()));
  const r=schedule(rows,{deployment_at:deployAt,as_of:"2027-04-01T00:00:00Z",
-  coverage_complete:true});
+  coverage_complete:true,monthly_cadence_declared:true});
  assert.ok(!r.flags.includes("FIRST_YEAR_MONTHLY_COVERAGE_REVIEW"));
  assert.ok(!r.flags.includes("FIRST_YEAR_MONTHLY_VISIT_SPACING_REVIEW"));
  assert.equal(r.schedule_compliance_verified,false);
