@@ -271,6 +271,29 @@ def validate_lease(
         require_ref("release_receipt_ref", "lease-release-receipt-ref-missing")
     return not reasons, reasons, summary
 
+def supervisor_receipt_complete(receipt: Any, *, expected_floors: list[str], execute: bool) -> bool:
+    """Structural result check only; no lease, signer or host authenticity implied."""
+    if not isinstance(receipt, dict) or not isinstance(expected_floors, (list, tuple)) or not expected_floors:
+        return False
+    rows = receipt.get("floors")
+    if not isinstance(rows, list) or len(rows) != len(expected_floors):
+        return False
+    expected_status = "completed" if execute else "dry_run"
+    return (
+        receipt.get("status") == "complete"
+        and receipt.get("complete_workflow") is True
+        and receipt.get("requested_execution") is execute
+        and receipt.get("floor_sequence") == list(expected_floors)
+        and all(
+            isinstance(row, dict)
+            and row.get("sequence") == index
+            and row.get("floor") == floor
+            and row.get("status") == expected_status
+            for index, (row, floor) in enumerate(zip(rows, expected_floors), start=1)
+        )
+    )
+
+
 def atomic_write(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + ".tmp")
@@ -388,15 +411,26 @@ def main() -> int:
             allow_heavy=args.allow_heavy,
             stop_on_failure=not args.continue_on_failure,
         )
-        if args.execute:
-            if effectful:
-                decision = "MODEL_PLAN_COMPLETE_CLEARED_FOR_TOOL_GATE"
-            else:
-                decision = "COMPUTE_EXECUTED_WITH_ACTION_BLOCKERS" if preflight_holds else "COMPUTE_EXECUTED_CLEAN"
-            exit_code = 0 if supervisor_receipt.get("status") != "failed" else 2
+        # Aggregate "complete" only means the supervisor iterated the floor plan;
+        # an unknown/partial floor result is not successful model execution.
+        # Validate each actual floor receipt before issuing a clean/cleared label.
+        result_complete = supervisor_receipt_complete(
+            supervisor_receipt, expected_floors=list(plan.floor_sequence),
+            execute=args.execute,
+        )
+        if not result_complete:
+            decision = "SUPERVISOR_RESULT_UNVERIFIED_HOLD"
+            exit_code = 2
+        elif args.execute:
+            decision = (
+                "MODEL_PLAN_COMPLETE_CLEARED_FOR_TOOL_GATE" if effectful
+                else ("COMPUTE_EXECUTED_WITH_ACTION_BLOCKERS" if preflight_holds
+                      else "COMPUTE_EXECUTED_CLEAN")
+            )
+            exit_code = 0
         else:
             decision = "DRY_RUN_WITH_BLOCKERS" if preflight_holds else "DRY_RUN_CLEARED"
-            exit_code = 0 if supervisor_receipt.get("status") != "failed" else 2
+            exit_code = 0
 
     receipt = {
         "schema": SCHEMA,
