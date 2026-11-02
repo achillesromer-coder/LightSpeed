@@ -1103,7 +1103,10 @@ def main(argv: list[str] | None = None) -> int:
         print(f"local_floor_runner: {exc}")
         return 2
     print(json.dumps({"status": receipt["status"], "receipt_path": receipt["receipt_path"]}, indent=2, sort_keys=True))
-    return 0
+    # A durable failure/blocked receipt is NOT a successful command execution.
+    # Do not let orchestrators mistake an HTTP 500 or uncertain model outcome
+    # for completed work merely because the receipt was written.
+    return 0 if receipt["status"] in {"completed", "dry_run"} else 1
 
 
 if __name__ == "__main__":
