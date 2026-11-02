@@ -87,6 +87,89 @@ def main():
     if not ok:
         failures.append("distributed-operation lease incorrectly inherited prelaunch root receipt requirement: "+",".join(reasons))
 
+    # Neo/LS 0.1 ABI regression: matching a self-declared lease allowlist
+    # must never make an effectful action/depth compatible with READ_ONLY or
+    # COMPUTE_ONLY. These are synthetic preflight checks, not host admission.
+    for lease_class, depth, action, expected in (
+        ("READ_ONLY", "simulate", "simulate", "lease-class-action-incompatible"),
+        ("READ_ONLY", "inspect", "execute", "lease-class-action-incompatible"),
+        ("READ_ONLY", "execute", "read", "lease-class-depth-incompatible"),
+        ("COMPUTE_ONLY", "inspect", "digital_write", "lease-class-action-incompatible"),
+        ("COMPUTE_ONLY", "build", "inspect", "lease-class-depth-incompatible"),
+        ("DIGITAL_WRITE", "inspect", "custom:plugin.action", "lease-action-class-unmapped"),
+        ("DIGITAL_WRITE", "inspect", "PuBlIsH", "lease-action-class-unmapped"),
+        ("DIGITAL_WRITE", "PuBlIsH", "inspect", "lease-execution-depth-unmapped"),
+    ):
+        x = base_lease()
+        x["lease_class"] = lease_class
+        x["root_authority_receipt_ref"] = "fixture:root-approval"
+        x["release_receipt_ref"] = "fixture:release"
+        if depth not in x["execution_depths"]:
+            x["execution_depths"].append(depth)
+        if action not in x["scope"]["action_classes"]:
+            x["scope"]["action_classes"].append(action)
+        ok, reasons, _ = check(
+            x, execution_depth=depth, action_class=action,
+            execution_class=lease_class, consequential=False,
+        )
+        if ok or expected not in reasons:
+            failures.append(f"Neo ABI {lease_class}/{depth}/{action}: {reasons}")
+
+    # An unknown *lease-listed* depth is not a valid wildcard even when the
+    # requested depth itself is understood.
+    x = base_lease()
+    x["execution_depths"].extend(["inspect", "future:opaque"])
+    x["scope"]["action_classes"].append("inspect")
+    ok, reasons, _ = check(x, execution_depth="inspect", action_class="inspect",
+                           consequential=False)
+    if ok or "lease-execution-depth-unmapped" not in reasons:
+        failures.append("Neo ABI unknown lease-listed depth not rejected: " + repr(reasons))
+
+    for lease_class, depth, action in (
+        ("READ_ONLY", "inspect", "read"),
+        ("COMPUTE_ONLY", "simulate", "simulate"),
+    ):
+        x = base_lease()
+        x["lease_class"] = lease_class
+        x["execution_depths"].append(depth)
+        x["scope"]["action_classes"].append(action)
+        ok, reasons, _ = check(
+            x, execution_depth=depth, action_class=action,
+            execution_class=lease_class, consequential=False,
+        )
+        if not ok:
+            failures.append(f"Neo ABI valid {lease_class}/{depth}/{action}: {reasons}")
+
+    # Real CLI negative, still without any model or LS GO invocation:
+    # a READ_ONLY lease cannot launder simulate via --action-class.
+    with tempfile.TemporaryDirectory(prefix="cgx-neo-lease-class-negative-") as temp:
+        x = base_lease()
+        x["lease_class"] = "READ_ONLY"
+        x["execution_depths"].append("inspect")
+        x["scope"]["action_classes"].append("simulate")
+        lease_path = Path(temp) / "synthetic-class.json"
+        lease_path.write_text(json.dumps(x), encoding="utf-8")
+        result = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "run_cgx_agent_runtime.py"),
+             "--instruction", "synthetic lease-class denial only",
+             "--domain", "romer", "--execution-depth", "inspect",
+             "--action-class", "simulate", "--execution-class", "READ_ONLY",
+             "--agent-id", "Neo", "--task-id", "CGX-LAUNCH-006",
+             "--execute", "--execution-lease-json", str(lease_path)],
+            capture_output=True, text=True, timeout=15, check=False,
+        )
+        try:
+            receipt = json.loads(result.stdout)
+            reasons = receipt["execution_lease"]["reasons"]
+        except (ValueError, KeyError, TypeError):
+            receipt, reasons = {}, []
+        if (result.returncode != 4
+                or "lease-class-action-incompatible" not in reasons
+                or receipt.get("supervisor_receipt") is not None):
+            failures.append("Neo ABI CLI denial failed: " +
+                            repr({"exit": result.returncode, "reasons": reasons,
+                                  "stderr": result.stderr[:200]}))
+
     # Synthetic scope-only regressions: no host call, signature or DBR acceptance.
     scope_negatives = [
         ("scope-absent", None, "lease-scope-invalid"),
