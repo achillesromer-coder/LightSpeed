@@ -119,6 +119,15 @@ def connect(path: Path) -> sqlite3.Connection:
     CREATE TABLE IF NOT EXISTS occurrence(
       shard TEXT, conversation_id TEXT, node_id TEXT, message_id TEXT,
       PRIMARY KEY(shard,conversation_id,node_id));
+    -- Legacy occurrence is a unique-ID lookup only. Source repeats must
+    -- retain their independent source conversation index and node order.
+    CREATE TABLE IF NOT EXISTS source_visible_occurrence(
+      shard TEXT NOT NULL, conversation_id TEXT NOT NULL,
+      conversation_index INTEGER NOT NULL, node_ordinal INTEGER NOT NULL,
+      node_id TEXT NOT NULL, message_id TEXT NOT NULL,
+      text_sha256 TEXT NOT NULL, role TEXT NOT NULL, channel TEXT NOT NULL,
+      parent_node TEXT, created REAL, nontext_parts INTEGER NOT NULL,
+      PRIMARY KEY(shard,conversation_index,node_id));
     CREATE INDEX IF NOT EXISTS message_parent_index ON message(parent_node);
     CREATE TABLE IF NOT EXISTS prompt_response(
       response_id TEXT PRIMARY KEY, prompt_id TEXT, conversation_id TEXT,
@@ -291,7 +300,7 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
             title = str(conv.get("title") or "")
             words_sum = 0
             source_words_sum = 0
-            for node_id, node in mapping.items():
+            for node_ordinal, (node_id, node) in enumerate(mapping.items()):
                 if not isinstance(node, dict):
                     continue
                 msg = node.get("message")
@@ -309,6 +318,15 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
                 old = con.execute("SELECT text_sha256,role FROM message WHERE id=?", (mid,)).fetchone()
                 if old and old != (text_hash, role):
                     raise ValueError("CONFLICTING_MESSAGE_ID_HOLD:" + mid)
+                # This additive table is the source-occurrence ledger.
+                # The legacy occurrence table is intentionally not treated as
+                # a lossless count of repeated conversation variants.
+                con.execute(
+                    "INSERT INTO source_visible_occurrence VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+                    (entry["shard"], cid, conv_index, node_ordinal,
+                     str(node_id), mid, text_hash, role, channel,
+                     node.get("parent"), msg.get("create_time"), nontext),
+                )
                 con.execute("INSERT OR IGNORE INTO occurrence VALUES (?,?,?,?)",
                             (entry["shard"], cid, str(node_id), mid))
                 if old:
