@@ -131,6 +131,11 @@ class _PublicHtmlReferences(HTMLParser):
         if len(keys) != len(set(keys)):
             raise BundleHold(f"duplicate HTML attributes: {self.relative}")
         values = dict(attrs)
+        # Reviewed shells load only exact allowlisted external JS modules.
+        # Inline scripts evade static resource-attribute checks and may execute
+        # during offline preview even where the intended host CSP blocks them.
+        if tag == "script" and not values.get("src"):
+            raise BundleHold(f"inline or empty-source script not reviewed: {self.relative}")
         # These HTML surfaces can initiate passive loads or execute scripts
         # outside the ordinary src/href checks; none belong to reviewed shells.
         if tag in {"svg", "math", "style"}:
