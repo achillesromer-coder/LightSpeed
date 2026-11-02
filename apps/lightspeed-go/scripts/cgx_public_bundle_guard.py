@@ -71,11 +71,17 @@ def _reject_split_computed_transport(text: str, relative: str) -> None:
         text,
     ):
         fragments = re.findall(r"""['"]([^'"\n]*)['"]""", match.group(0))
-        if "".join(fragments).casefold() in {
+        joined = "".join(fragments).casefold()
+        if joined in {
             "fetch", "xmlhttprequest", "websocket", "eventsource",
             "sendbeacon", "serviceworker", "importscripts", "eval", "function",
         }:
             raise BundleHold(f"computed split network API access: {relative}")
+        # #158: CSP connect-src cannot stop top-level navigation. Literal
+        # window["location"] and window["open"] are rejected above; these
+        # split-string spellings must also fail closed before static packaging.
+        if joined in {"location", "open", "assign", "replace", "href"}:
+            raise BundleHold(f"computed split navigation property access: {relative}")
 
 def _validate_static_reference(relative:str,uri:str) -> None:
     # A parent-relative link is permitted only when the resolved target
