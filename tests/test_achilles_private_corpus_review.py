@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib.util
 import hashlib
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -468,3 +469,35 @@ def test_private_output_symlink_or_parent_junction_alias_fails_before_db_write(t
         mod.run(args)
     assert not (outside / "semantic_review.sqlite").exists()
     assert not (outside / "review" / "semantic_review.sqlite").exists()
+
+
+@pytest.mark.parametrize("suffix", ["", "-wal", "-shm", "-journal"])
+def test_private_sqlite_alias_and_sidecar_rejected_before_open(tmp_path, suffix):
+    """Planted DB and SQLite sidecar symlinks must not escape private ACL."""
+    db = tmp_path / "private_review.sqlite"
+    sentinel = tmp_path / "outside_sentinel.bin"
+    sentinel.write_bytes(b"DO_NOT_MODIFY")
+    alias = Path(str(db) + suffix)
+    try:
+        alias.symlink_to(sentinel)
+    except (OSError, NotImplementedError) as exc:
+        pytest.skip(f"File symlinks unavailable: {exc}")
+    with pytest.raises(ValueError, match="PRIVATE_SQLITE_TARGET_ALIAS_HOLD"):
+        mod.connect(db)
+    assert sentinel.read_bytes() == b"DO_NOT_MODIFY"
+    if suffix:
+        assert not db.exists()
+
+
+def test_private_sqlite_hardlink_alias_rejected_before_open(tmp_path):
+    """A hardlinked existing DB must not mutate another source file."""
+    db = tmp_path / "private_review.sqlite"
+    sentinel = tmp_path / "outside_sentinel.bin"
+    sentinel.write_bytes(b"DO_NOT_MODIFY")
+    try:
+        os.link(sentinel, db)
+    except (OSError, NotImplementedError) as exc:
+        pytest.skip(f"Hardlinks unavailable: {exc}")
+    with pytest.raises(ValueError, match="PRIVATE_SQLITE_TARGET_ALIAS_HOLD"):
+        mod.connect(db)
+    assert sentinel.read_bytes() == b"DO_NOT_MODIFY"
