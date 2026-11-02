@@ -1,4 +1,4 @@
-import {test} from 'node:test';
+import {test} from 'vitest';
 import assert from 'node:assert/strict';
 import {radialTrianglePreview,projectUniSpaceFacet as project} from './cgxFacetProjection.mjs';
 const object=()=>({schema:'UNISPACE-CGX-ONE-OBJECT-VIEW-PLAN/0.1',
