@@ -146,8 +146,10 @@ export function reviewBioBlockMonitoringSeries(records){
 
 /**
  * Source-only alignment with Bio-Blocks workbook "Monitoring Schedule":
- * pre-deployment, deployment day, week 2, months 1-12, quarterly after
- * year one, and annual review. Windows are conservative review heuristics,
+ * pre-deployment, deployment day, early establishment, declared repeated
+ * measures, quarterly after year one, and annual review. Monthly cadence
+ * is only a candidate and must be explicitly declared for coverage checks.
+ * Windows are conservative review heuristics,
  * not proof of protocol compliance or an enforced ecological field schedule.
  * Missing visits are assessed only when the caller declares a complete
  * dataset and supplies an explicit as_of time.
@@ -155,10 +157,11 @@ export function reviewBioBlockMonitoringSeries(records){
 export function reviewBioBlockMonitoringSchedule(records, options={}) {
  if(!Array.isArray(records)||records.length<1||records.length>100||
   options===null||typeof options!=="object"||Array.isArray(options)||
-  Object.keys(options).some(k=>!["deployment_at","as_of","coverage_complete"].includes(k)))
+  Object.keys(options).some(k=>!["deployment_at","as_of","coverage_complete","monthly_cadence_declared"].includes(k)))
   throw Error("INVALID_BIOBLOCK_SCHEDULE_INPUT");
- const {deployment_at,as_of=null,coverage_complete=false}=options;
+ const {deployment_at,as_of=null,coverage_complete=false,monthly_cadence_declared=false}=options;
  if(!zoned(deployment_at)||typeof coverage_complete!=="boolean"||
+  typeof monthly_cadence_declared!=="boolean"||
   (as_of!==null&&!zoned(as_of))||(coverage_complete&&as_of===null))
   throw Error("INVALID_BIOBLOCK_SCHEDULE_TIME");
  const deploy=Date.parse(deployment_at),asOf=as_of===null?null:Date.parse(as_of);
@@ -211,13 +214,17 @@ export function reviewBioBlockMonitoringSchedule(records, options={}) {
    if(phase_counts[phase]===0)flags.add(flag);
   const elapsed=(asOf-deploy)/DAY;
   const monthly=[...new Set(qualifying_visits.monthly)].sort((a,b)=>a-b);
-  if(elapsed>=365&&monthly.length<12)
-   flags.add("FIRST_YEAR_MONTHLY_COVERAGE_REVIEW");
-  if(elapsed>=365&&phase_counts.monthly>=12&&monthly.length<phase_counts.monthly)
-   flags.add("FIRST_YEAR_MONTHLY_DUPLICATE_TIMEPOINT_REVIEW");
-  // Conservative spacing review only; no inferred site-local calendar or compliance.
-  if(elapsed>=365&&monthly.some((t,i)=>i>0&&t-monthly[i-1]<21*DAY))
-   flags.add("FIRST_YEAR_MONTHLY_VISIT_SPACING_REVIEW");
+  if(elapsed>=365&&!monthly_cadence_declared)
+   flags.add("MONTHLY_CADENCE_NOT_DECLARED_NO_COVERAGE_INFERENCE");
+  if(elapsed>=365&&monthly_cadence_declared){
+   if(monthly.length<12)flags.add("FIRST_YEAR_MONTHLY_COVERAGE_REVIEW");
+   if(phase_counts.monthly>=12&&monthly.length<phase_counts.monthly)
+    flags.add("FIRST_YEAR_MONTHLY_DUPLICATE_TIMEPOINT_REVIEW");
+   // Spacing is a review heuristic, not site-calendar month coverage proof.
+   if(monthly.some((t,i)=>i>0&&t-monthly[i-1]<21*DAY))
+    flags.add("FIRST_YEAR_MONTHLY_VISIT_SPACING_REVIEW");
+   flags.add("MONTHLY_SITE_CALENDAR_AND_PROTOCOL_REVIEW_REQUIRED");
+  }
   if(elapsed>=455&&qualifying_visits.quarterly.length===0)
    flags.add("POST_YEAR_ONE_QUARTERLY_COVERAGE_REVIEW");
   if(elapsed>=365&&qualifying_visits.annual.length===0)
@@ -225,6 +232,7 @@ export function reviewBioBlockMonitoringSchedule(records, options={}) {
  }
  return {schema:BIOBLOCK_MONITORING_SCHEMA,parent:"Cognigrex.cgx",
   owner_family:"Eco.cgx",phase_counts,coverage_complete_declared:coverage_complete,
+  monthly_cadence_declared,
   flags:[...flags],source_only:true,native_object_id:null,db_readback:false,
   schedule_compliance_verified:false,field_observation_verified:false,
   biodiversity_gain_verified:false,public_release_authorised:false,
