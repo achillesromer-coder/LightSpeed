@@ -1,4 +1,4 @@
-import {PUBLIC_OBJECT,DOOM_PROOF,SYNTHETIC_CUBE,sectionConvexMesh,selectRoute,walkSlice,handshake,applySparseDelta,evaluatePrint,numericSlice,PUBLIC_SCHEMA} from "./core.js";
+import {PUBLIC_OBJECT,DOOM_PROOF,SYNTHETIC_CUBE,sectionConvexMesh,selectRoute,walkSlice,handshake,applySparseDelta,evaluatePrint,numericSlice,PUBLIC_SCHEMA,PUBLIC_CGX_ATLAS,projectCgxOrbit} from "./core.js";
 const route=selectRoute(document.body.dataset.space||location.pathname);
 const labels={overview:"Universal Operating Model",fs:"FileSpace",ds:"DataSpace",ps:"PrintSpace",doom:"DOOM benchmark"};
 const $=id=>document.getElementById(id);
@@ -10,6 +10,73 @@ const panel=(title,body,eyebrow="PUBLIC SAFE / SOURCE BOUND")=>'<section class="
 const receipt=entry=>{const x=$("receipt");if(x)x.textContent=JSON.stringify({schema:PUBLIC_SCHEMA,object_id:PUBLIC_OBJECT.object_id,evidence:"SYNTHETIC",authenticated:false,canonical_promotion_authorized:false,...entry},null,2);};
 document.title="UniSpace | "+labels[route]+" · CGX";
 document.body.innerHTML='<div class="aura"></div><div class="container"><header class="mast"><a class="brand" href="/cgx/"><strong class="glyph">U</strong><span><strong>UniSpace</strong><small>Powered by CGX</small></span></a><span class="publictag">PUBLIC · INTERACTIVE DEMONSTRATION</span></header><nav class="nav" aria-label="UniSpace sections">'+link("overview","Overview")+link("fs","FileSpace")+link("ds","DataSpace")+link("ps","PrintSpace")+link("doom","DOOM")+'</nav><section class="hero"><p class="eyebrow">RÖMER INDUSTRIES · UNIVERSAL</p><h1>'+labels[route]+'</h1><p>One source-bound CGX object. Configurable interpretations. Local-first, evidence-aware interaction.</p><div class="pillrow"><span>Identity</span><span>Geometry</span><span>Semantic views</span><span>State + DBR</span><span>Frontier</span></div></section><main id="surface"></main><footer><strong>UniSpace / CGX</strong><p>Public synthetic examples only. Not a private LS GO operator session, source registry, live peer, or qualified physical control.</p><a href="https://romer.industries/" target="_top" rel="noreferrer">Römer Industries ↗</a></footer></div>';
+
+function orbitPanel(){
+  const options=PUBLIC_CGX_ATLAS.nodes.map(n=>'<option value="'+esc(n.id)+'">'+esc(n.label)+'</option>').join("");
+  return panel("FamilySpace · 360° orbit atlas",
+    '<p>Rotate the source-bound family illustration to explore depth and hierarchy. Amber denotes fractal family mass; blue is a sealed dedicated space; green denotes an open synthetic example. These colours do not grant rights.</p>'+
+    '<div class="orbit-layout"><div class="orbit-stage"><svg id="orbit-view" viewBox="0 0 760 370" tabindex="0" role="img" aria-label="Interactive perspective view of synthetic CGX family nodes. Use arrow keys to rotate, plus and minus to zoom."></svg>'+
+    '<p class="orbit-hint">Drag / swipe to orbit · arrow keys to rotate · + / − to zoom</p></div>'+
+    '<div class="orbit-controls"><label for="orbit-focus">Focus node</label><select id="orbit-focus">'+options+'</select>'+
+    '<div class="orbit-actions">'+button("orbit-left","↶ Left")+button("orbit-right","Right ↷")+button("orbit-up","Up")+button("orbit-down","Down")+button("orbit-in","Zoom +")+button("orbit-out","Zoom −")+button("orbit-reset","Reset")+'</div>'+
+    '<pre class="output orbit-readout" id="orbit-readout" aria-live="polite"></pre>'+
+    '<div class="orbit-legend"><span><i class="orbit-key fractal"></i>Fractal mass</span><span><i class="orbit-key dedicated"></i>Dedicated / sealed</span><span><i class="orbit-key open"></i>Open demo</span></div></div></div>'+
+    '<p class="small">Synthetic geometry only · PUBLIC SURFACE viewpoint. Private governance height/depth, original content, precise geospatial coordinates, live access grants and native minted identities are not projected. The authorised owner workspace is a separate security boundary.</p>',
+    "PUBLIC R3 DEMONSTRATION · NOT NATIVE ADMISSION");
+}
+function bindOrbit(){
+  const svg=$("orbit-view"),focus=$("orbit-focus"),out=$("orbit-readout");
+  if(!svg||!focus||!out)return;
+  let yaw=.65,pitch=.3,zoom=1,down=null;
+  const render=()=>{
+    const result=projectCgxOrbit({yaw,pitch,zoom});
+    if(result.status!=="SYNTHETIC_ORBIT_PROJECTION_ONLY"){
+      out.textContent="Orbit frame unavailable · unverified";return;
+    }
+    const f=focus.value;
+    const node=PUBLIC_CGX_ATLAS.nodes.find(x=>x.id===f);
+    const segments=result.edges.map(e=>'<line x1="'+e.x1.toFixed(2)+'" y1="'+e.y1.toFixed(2)+'" x2="'+e.x2.toFixed(2)+'" y2="'+e.y2.toFixed(2)+'" stroke="#ed9c45" stroke-opacity="'+e.opacity.toFixed(2)+'" stroke-width="2.2" class="orbit-edge"/>').join("");
+    const dots=result.nodes.map(n=>'<g class="orbit-node'+(n.id===f?' orbit-selected':'')+'" data-orbit-node="'+esc(n.id)+'">'+
+      '<circle cx="'+n.x.toFixed(2)+'" cy="'+n.y.toFixed(2)+'" r="'+(n.radius*2.25).toFixed(2)+'" fill="'+n.color+'" opacity=".095"/>'+
+      '<circle cx="'+n.x.toFixed(2)+'" cy="'+n.y.toFixed(2)+'" r="'+n.radius.toFixed(2)+'" fill="'+n.color+'" fill-opacity="'+n.opacity.toFixed(2)+'" stroke="'+n.color+'" stroke-width="'+(n.id===f?3:1.2)+'"/>'+
+      '<text x="'+n.x.toFixed(2)+'" y="'+(n.y-n.radius-14).toFixed(2)+'" text-anchor="middle">'+esc(n.label)+'</text></g>').join("");
+    svg.innerHTML='<g class="orbit-background"><circle cx="380" cy="185" r="159" fill="none" stroke="#385b71" stroke-dasharray="3 10"/><ellipse cx="380" cy="185" rx="230" ry="93" fill="none" stroke="#335262" stroke-dasharray="3 10"/></g>'+segments+dots;
+    const kind=node?.layer==="dedicated"?"SEALED · ACCESS NOT CONFERRED":node?.layer==="open"?"OPEN SYNTHETIC DEMO":"FRACTAL FAMILY · SOURCE REVIEW";
+    out.textContent="Focus: "+(node?.label||"Unknown")+"\nClass: "+kind+
+      "\nAzimuth: "+Math.round(((result.yaw%(2*Math.PI)+2*Math.PI)%(2*Math.PI))*180/Math.PI)+"° · Zoom: "+zoom.toFixed(2)+"×"+
+      "\nOriginal source: NOT HYDRATED\nNative Object_ID: NOT MINTED";
+  };
+  const rotate=(x,y)=>{yaw+=x;pitch=Math.max(-1.4,Math.min(1.4,pitch+y));render();};
+  const scale=n=>{zoom=Math.max(.55,Math.min(2.5,Math.round((zoom+n)*100)/100));render();};
+  const actions={
+    "orbit-left":()=>rotate(-.18,0),"orbit-right":()=>rotate(.18,0),
+    "orbit-up":()=>rotate(0,-.14),"orbit-down":()=>rotate(0,.14),
+    "orbit-in":()=>scale(.15),"orbit-out":()=>scale(-.15),
+    "orbit-reset":()=>{yaw=.65;pitch=.3;zoom=1;focus.value="root";render();}
+  };
+  Object.entries(actions).forEach(([id,cb])=>$(id).addEventListener("click",cb));
+  focus.addEventListener("change",render);
+  svg.addEventListener("keydown",e=>{
+    const map={ArrowLeft:actions["orbit-left"],ArrowRight:actions["orbit-right"],
+      ArrowUp:actions["orbit-up"],ArrowDown:actions["orbit-down"],
+      "+":actions["orbit-in"],"=":actions["orbit-in"],"-":actions["orbit-out"],Home:actions["orbit-reset"]};
+    if(map[e.key]){e.preventDefault();map[e.key]();}
+  });
+  svg.addEventListener("pointerdown",e=>{
+    down={x:e.clientX,y:e.clientY,id:e.pointerId};
+    if(svg.setPointerCapture)svg.setPointerCapture(e.pointerId);
+  });
+  svg.addEventListener("pointermove",e=>{
+    if(!down||down.id!==e.pointerId)return;
+    const dx=e.clientX-down.x,dy=e.clientY-down.y;
+    down={x:e.clientX,y:e.clientY,id:e.pointerId};rotate(dx*.009,dy*.009);
+  });
+  const stop=()=>{down=null;};
+  svg.addEventListener("pointerup",stop);svg.addEventListener("pointercancel",stop);
+  svg.addEventListener("wheel",e=>{e.preventDefault();scale(e.deltaY>0?-.1:.1);},{passive:false});
+  render();
+}
+
 function prism(){
 const palettes=["#648ed9","#42bba5","#a28ad8","#d6a262"];
 const planes=PUBLIC_OBJECT.slices.map((x,i)=>'<g><polygon points="60,'+(30+i*53)+' 238,'+(6+i*53)+' 348,'+(49+i*53)+' 168,'+(74+i*53)+'" fill="'+palettes[i]+'" fill-opacity=".36" stroke="'+palettes[i]+'" stroke-width="2" data-plane="'+x.id+'"></polygon><text x="201" y="'+(44+i*53)+'" class="svgtxt">'+esc(x.label)+'</text></g>').join("");
@@ -22,13 +89,13 @@ $("prism-out").textContent=lens==="frontier"?"UNKNOWN: there is no verified inte
 $("slice").addEventListener("change",update);$("lens").addEventListener("change",update);update();
 }
 function overview(){
-$("surface").innerHTML='<div class="cards">'+[
+$("surface").innerHTML=orbitPanel()+'<div class="cards">'+[
 ["fs","FileSpace","Objects · provenance · reversible source and frontier"],
 ["ds","DataSpace","Scoped context · sparse deltas · device lens negotiation"],
 ["ps","PrintSpace","Conditional fabrication · metrology · safe-state evidence"],
 ["doom","DOOM","Full offline executable · genuine 15-layer reconstruction"]
 ].map(x=>'<a class="tile" href="/cgx/'+x[0]+'/"><span class="eyebrow">'+x[0].toUpperCase()+'</span><h2>'+x[1]+'</h2><p>'+x[2]+'</p><strong>Explore →</strong></a>').join("")+'</div>'+prism()+panel("Current proof boundary",'<p>In-browser demonstrations are local simulations. DOOM has separate real-engine test evidence, but a public CGX handshake, signed transport and physical printing are not established by this page.</p>');
-bindPrism();
+bindPrism();bindOrbit();
 }
 function planeSectionPanel(){
 return panel("Exact 2D cut of a synthetic 3D vertex mesh",'<p>Finite indexed vertices and edges; this is a geometric derivation, not compression, source evidence, or a licensed Archimedean template.</p><label for="cut-axis">Plane normal</label><select id="cut-axis"><option value="z">XY (z constant)</option><option value="x">YZ (x constant)</option><option value="y">XZ (y constant)</option></select><label for="cut-offset">Plane offset (m)</label><input id="cut-offset" type="number" value="0" step="0.25"><pre class="output" id="cut-result"></pre>');
@@ -45,8 +112,9 @@ function bindPlaneSection(){
  render();
 }
 function fs(){
-$("surface").innerHTML=prism()+planeSectionPanel()+panel("Native FileSpace object view",'<p>The same canonical identity is exposed as a folder-like tree, geometry slice or provenance lens. No secondary database or owner is created.</p><div class="tree">'+PUBLIC_OBJECT.slices.map(x=>'<button type="button" data-slice="'+x.id+'">'+(x.parent?"└ ":"▣ ")+esc(x.label)+'</button>').join("")+'</div><pre class="output" id="filesrc"></pre>'+button("copy","Copy public fixture JSON"));
+$("surface").innerHTML=orbitPanel()+prism()+planeSectionPanel()+panel("Native FileSpace object view",'<p>The same canonical identity is exposed as a folder-like tree, geometry slice or provenance lens. No secondary database or owner is created.</p><div class="tree">'+PUBLIC_OBJECT.slices.map(x=>'<button type="button" data-slice="'+x.id+'">'+(x.parent?"└ ":"▣ ")+esc(x.label)+'</button>').join("")+'</div><pre class="output" id="filesrc"></pre>'+button("copy","Copy public fixture JSON"));
 bindPrism();
+bindOrbit();
 bindPlaneSection();
 $("filesrc").textContent=JSON.stringify({object_id:PUBLIC_OBJECT.object_id,source_root:PUBLIC_OBJECT.roots.source,licence:PUBLIC_OBJECT.licence,evidence:PUBLIC_OBJECT.evidence},null,2);
 document.querySelectorAll("[data-slice]").forEach(x=>x.addEventListener("click",()=>{$("slice").value=x.dataset.slice;$("slice").dispatchEvent(new Event("change"))}));
