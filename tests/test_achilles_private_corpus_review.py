@@ -321,3 +321,36 @@ def test_repeated_conversation_source_visible_occurrence_ledger(tmp_path):
         assert mod.summary(db)["native_admission"] is False
     finally:
         db.close()
+
+
+def test_reused_message_id_metadata_variant_is_flagged_before_r2(tmp_path):
+    """Same text and ID do not certify equal source time, parent or channel."""
+    source, _ = sample(tmp_path)
+    first = json.loads(source.read_text(encoding="utf-8"))[0]
+    second = json.loads(json.dumps(first))
+    second["mapping"]["u-node"]["message"]["create_time"] = 9.0
+    second["mapping"]["u-node"]["message"]["metadata"] = {"channel": "final"}
+    second["mapping"]["u-node"]["parent"] = "unresolved-external-parent"
+    source.write_text(json.dumps([first, second]), encoding="utf-8")
+    entry = {"shard": source.name, "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+             "size_bytes": source.stat().st_size}
+    db = mod.connect(tmp_path / "new_private_review.sqlite")
+    try:
+        assert mod.ingest_shard(db, source, entry)[0] == 2
+        rows = db.execute("""
+            SELECT conversation_index,message_id,created,channel,parent_node
+            FROM source_visible_occurrence
+            WHERE node_id='u-node' ORDER BY conversation_index
+        """).fetchall()
+        assert rows == [
+            (0, "u-1", 1.0, "", None),
+            (1, "u-1", 9.0, "final", "unresolved-external-parent"),
+        ]
+        assert db.execute(
+            "SELECT count(*) FROM source_issue "
+            "WHERE kind='MESSAGE_ID_METADATA_VARIANT' AND source_id='u-1'"
+        ).fetchone()[0] == 1
+        assert db.execute("SELECT created FROM message WHERE id='u-1'").fetchone()[0] == 1.0
+        assert mod.summary(db)["native_admission"] is False
+    finally:
+        db.close()
