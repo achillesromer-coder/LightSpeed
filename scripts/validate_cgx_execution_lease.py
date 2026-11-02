@@ -96,6 +96,8 @@ def main():
         ("READ_ONLY", "execute", "read", "lease-class-depth-incompatible"),
         ("COMPUTE_ONLY", "inspect", "digital_write", "lease-class-action-incompatible"),
         ("COMPUTE_ONLY", "build", "inspect", "lease-class-depth-incompatible"),
+        ("DIGITAL_WRITE", "inspect", "external_action", "lease-class-action-incompatible"),
+        ("EXTERNAL_ACTION", "inspect", "physical_actuation", "lease-class-action-incompatible"),
         ("DIGITAL_WRITE", "inspect", "custom:plugin.action", "lease-action-class-unmapped"),
         ("DIGITAL_WRITE", "inspect", "PuBlIsH", "lease-action-class-unmapped"),
         ("DIGITAL_WRITE", "PuBlIsH", "inspect", "lease-execution-depth-unmapped"),
@@ -114,6 +116,28 @@ def main():
         )
         if ok or expected not in reasons:
             failures.append(f"Neo ABI {lease_class}/{depth}/{action}: {reasons}")
+
+    # Even a strong lease cannot be downgraded by self-labelling an
+    # effectful request as COMPUTE_ONLY. The requested class must meet the
+    # independent semantic action/depth minimum.
+    for lease_class, depth, action, expected in (
+        ("PHYSICAL_ACTUATION", "inspect", "physical_actuation",
+         "request-class-action-incompatible"),
+        ("DIGITAL_WRITE", "build", "inspect",
+         "request-class-depth-incompatible"),
+    ):
+        x = base_lease()
+        x["lease_class"] = lease_class
+        if depth not in x["execution_depths"]:
+            x["execution_depths"].append(depth)
+        if action not in x["scope"]["action_classes"]:
+            x["scope"]["action_classes"].append(action)
+        ok, reasons, _ = check(
+            x, execution_depth=depth, action_class=action,
+            execution_class="COMPUTE_ONLY", consequential=False,
+        )
+        if ok or expected not in reasons:
+            failures.append(f"Neo request-class downgrade {lease_class}/{action}: {reasons}")
 
     # An unknown *lease-listed* depth is not a valid wildcard even when the
     # requested depth itself is understood.
