@@ -24,7 +24,7 @@ const allowed=new Set(["evidence_class","source_ref","source_revision","source_s
  "taxon_ref","cohort_ref","replicate_ref","observed_at","monitoring_phase","seed_count",
  "germinated_count","surviving_count","weed_cover_pct","soil_moisture","soil_moisture_unit",
  "method_ref","baseline_ref","control_ref","raw_data_ref","photo_ref","calibration_ref",
- "rights_review_ref","spatial_review_ref","field_geometry_present"]);
+ "rights_review_ref","spatial_review_ref","site_binding_receipt_ref","field_import_receipt_ref","field_geometry_present"]);
 export function reviewBioBlockMonitoringRecord(input={}){
  if(input===null||typeof input!=="object"||Array.isArray(input)||
   Object.keys(input).some(k=>!allowed.has(k)))throw Error("INVALID_BIOBLOCK_MONITORING_FIELDS");
@@ -33,10 +33,10 @@ export function reviewBioBlockMonitoringRecord(input={}){
   monitoring_phase:"monthly",seed_count:null,germinated_count:null,surviving_count:null,
   weed_cover_pct:null,soil_moisture:null,soil_moisture_unit:null,method_ref:null,
   baseline_ref:null,control_ref:null,raw_data_ref:null,photo_ref:null,calibration_ref:null,
-  rights_review_ref:null,spatial_review_ref:null,field_geometry_present:false,...input};
+  rights_review_ref:null,spatial_review_ref:null,site_binding_receipt_ref:null,field_import_receipt_ref:null,field_geometry_present:false,...input};
  const refs=["source_ref","run_ref","block_ref","recipe_ref","site_ref","taxon_ref","cohort_ref",
   "replicate_ref","method_ref","baseline_ref","control_ref","raw_data_ref","photo_ref",
-  "calibration_ref","rights_review_ref","spatial_review_ref"];
+  "calibration_ref","rights_review_ref","spatial_review_ref","site_binding_receipt_ref","field_import_receipt_ref"];
  if(!["observed","simulated","source_asserted","hypothesised","inferred"].includes(x.evidence_class)||
   !["pre_deployment","deployment","week_2","monthly","quarterly","annual"].includes(x.monitoring_phase)||
   refs.some(k=>x[k]!==null&&!ref(x[k]))||
@@ -62,9 +62,17 @@ export function reviewBioBlockMonitoringRecord(input={}){
   flags.push("SOIL_MOISTURE_CALIBRATION_REVIEW_REQUIRED");
  if(x.evidence_class==="observed"){
   flags.push("INDEPENDENT_FIELD_RECEIPT_AND_QA_REQUIRED");
+  if(!ref(x.source_revision)||!sha256(x.source_sha256))
+   flags.push("SOURCE_SNAPSHOT_REVISION_AND_HASH_REQUIRED");
+  // Caller-declared foreign keys are never authenticated provider receipts.
+  if(ref(x.site_binding_receipt_ref))
+   flags.push("SITE_BINDING_RECEIPT_NOT_INDEPENDENTLY_VERIFIED");
+  if(ref(x.field_import_receipt_ref))
+   flags.push("FIELD_IMPORT_RECEIPT_NOT_INDEPENDENTLY_VERIFIED");
   for(const k of ["run_ref","block_ref","recipe_ref","site_ref","taxon_ref","cohort_ref",
    "replicate_ref","method_ref","baseline_ref","control_ref","raw_data_ref","photo_ref",
-   "rights_review_ref","spatial_review_ref"])
+   "rights_review_ref","spatial_review_ref","site_binding_receipt_ref",
+   "field_import_receipt_ref"])
    if(!ref(x[k]))flags.push("MISSING_"+k.toUpperCase());
   if(!zoned(x.observed_at))flags.push("ZONED_OBSERVATION_TIMESTAMP_REQUIRED");
   if(["week_2","monthly","quarterly","annual"].includes(x.monitoring_phase)){
@@ -83,7 +91,9 @@ export function reviewBioBlockMonitoringRecord(input={}){
   evidence_class:x.evidence_class,monitoring_phase:x.monitoring_phase,units:{
    germinated_per_seed:"ratio (unverified)",surviving_per_germinated:"ratio (unverified)"},
   arithmetic_only_rates:rates,flags,source_only:true,native_object_id:null,
-  db_readback:false,field_observation_verified:false,biodiversity_gain_verified:false,
+  db_readback:false,site_binding_receipt_verified:false,
+  field_import_receipt_verified:false,field_observation_verified:false,
+  biodiversity_gain_verified:false,
   public_release_authorised:false,field_release_authorised:false};
 }
 
