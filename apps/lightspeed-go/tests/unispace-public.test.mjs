@@ -1,6 +1,6 @@
 import {test} from "vitest";
 import assert from "node:assert/strict";
-import {PUBLIC_OBJECT,DOOM_PROOF,SYNTHETIC_CUBE,sectionConvexMesh,selectRoute,walkSlice,handshake,applySparseDelta,evaluatePrint,numericSlice} from "../public/cgx/assets/core.js";
+import {PUBLIC_OBJECT,DOOM_PROOF,SYNTHETIC_CUBE,sectionConvexMesh,selectRoute,walkSlice,handshake,applySparseDelta,evaluatePrint,numericSlice,PUBLIC_CGX_ATLAS,projectCgxOrbit} from "../public/cgx/assets/core.js";
 test("five public routes resolve without internal fallback",()=>{
   assert.equal(selectRoute("/cgx/"),"overview");
   for(const x of ["fs","ds","ps","doom"])assert.equal(selectRoute("/cgx/"+x+"/"),x);
@@ -81,4 +81,64 @@ test("2D cut rejects invalid vertices, edges, normals and missing source units",
   const c=clone();c.convex=false;
   assert.equal(sectionConvexMesh(c,{normal:[0,0,1],offset:0}).status,"HOLD_INVALID_GEOMETRY");
   assert.equal(sectionConvexMesh(clone(),{normal:[0,0,1],offset:Infinity}).status,"HOLD_INVALID_PLANE");
+});
+
+
+test("orbit atlas is a bounded synthetic source-only family projection",()=>{
+  assert.equal(PUBLIC_CGX_ATLAS.schema,"cgx-public-family-orbit/0.1");
+  assert.equal(PUBLIC_CGX_ATLAS.viewpoint,"PUBLIC_SURFACE_LOOKING_INWARD");
+  assert.equal(PUBLIC_CGX_ATLAS.nodes.length,9);
+  assert.equal(new Set(PUBLIC_CGX_ATLAS.nodes.map(n=>n.id)).size,9);
+  const p=projectCgxOrbit({yaw:.2,pitch:.3});
+  assert.equal(p.status,"SYNTHETIC_ORBIT_PROJECTION_ONLY");
+  assert.equal(p.nodes.length,9);
+  assert.equal(p.edges.length,10);
+  assert.equal(p.private_source_included,false);
+  assert.equal(p.governance_access,false);
+  assert.equal(p.public_release_verified,false);
+  assert.equal(p.native_admitted,false);
+  assert.equal(p.geospatial_frame_verified,false);
+  assert.equal(p.selectable_public_source,false);
+  assert.ok(p.nodes.every(n=>Number.isFinite(n.x)&&Number.isFinite(n.y)&&Number.isFinite(n.radius)));
+});
+test("orbit returns to its initial screen coordinates after a 360-degree revolution",()=>{
+  const a=projectCgxOrbit({yaw:0,pitch:.31,zoom:1.2});
+  const b=projectCgxOrbit({yaw:2*Math.PI,pitch:.31,zoom:1.2});
+  for(let i=0;i<a.nodes.length;i++){
+    assert.equal(a.nodes[i].id,b.nodes[i].id);
+    assert.ok(Math.abs(a.nodes[i].x-b.nodes[i].x)<1e-9);
+    assert.ok(Math.abs(a.nodes[i].y-b.nodes[i].y)<1e-9);
+  }
+  assert.equal(projectCgxOrbit({yaw:Math.PI/2}).status,"SYNTHETIC_ORBIT_PROJECTION_ONLY");
+  assert.notDeepEqual(projectCgxOrbit({yaw:0}).nodes.map(n=>n.x),
+    projectCgxOrbit({yaw:Math.PI/2}).nodes.map(n=>n.x));
+});
+test("orbit perspective has real depth, zoom and legibility bounds",()=>{
+  const a=projectCgxOrbit({yaw:.5,zoom:1}),b=projectCgxOrbit({yaw:.5,zoom:2});
+  const left=id=>a.nodes.find(n=>n.id===id);
+  assert.ok(a.nodes.some(n=>n.depth>0)&&a.nodes.some(n=>n.depth<0));
+  assert.ok(a.nodes.every(n=>n.opacity>=.55&&n.opacity<=.98&&n.radius>0));
+  assert.ok(Math.abs(b.nodes.find(n=>n.id==="eco").x-380)>
+    Math.abs(left("eco").x-380));
+  assert.equal(projectCgxOrbit({pitch:1e3}).status,"SYNTHETIC_ORBIT_PROJECTION_ONLY");
+});
+test("orange, blue and green semantics never issue an access grant",()=>{
+  const p=projectCgxOrbit();
+  for(const layer of ["fractal","dedicated","open"])assert.ok(p.nodes.some(n=>n.layer===layer));
+  const sealed=p.nodes.filter(n=>n.layer==="dedicated");
+  assert.ok(sealed.length>=2);
+  assert.ok(sealed.every(n=>n.access==="SEALED_NO_PUBLIC_OBJECT"&&n.clickable_source_body===false));
+  assert.ok(p.nodes.filter(n=>n.layer==="open").every(n=>n.access==="PUBLIC_SYNTHETIC_ONLY"));
+  const text=JSON.stringify(p);
+  for(const forbidden of ["127.0.0.1","localhost","D:/LightSpeed","C:/Cognigrex",
+    "Bearer ","source_sha256","acl_ref","ownerAuth"]) assert.equal(text.includes(forbidden),false);
+});
+test("invalid orbit frames fail closed instead of emitting NaN or Infinity",()=>{
+  for(const f of [{yaw:NaN},{yaw:Infinity},{zoom:0},{zoom:3},{pitch:Infinity},
+    {width:10},{height:Infinity},{height:0},{yaw:1e9}]){
+    const r=projectCgxOrbit(f);
+    assert.equal(r.status,"HOLD_INVALID_ORBIT_FRAME");
+    assert.deepEqual(r.nodes,[]);
+    assert.equal(r.native_admitted,false);
+  }
 });
