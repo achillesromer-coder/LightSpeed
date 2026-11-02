@@ -61,7 +61,7 @@ def inspect_database(path: Path) -> dict:
                 for queue, job, n in db.execute(
                     "SELECT i.queue_state,"
                     "CASE WHEN j.id IS NULL THEN 'UNLINKED' "
-                    "WHEN j.job_type<>'ls_go_command' THEN 'FOREIGN_JOB_TYPE' "
+                    "WHEN j.job_type IS NULL OR j.job_type<>'ls_go_command' THEN 'FOREIGN_JOB_TYPE' "
                     "ELSE COALESCE(j.status,'UNKNOWN') END,COUNT(*) "
                     "FROM ls_go_command_identities i LEFT JOIN jobs j ON j.id=i.job_id "
                     "GROUP BY 1,2 ORDER BY 1,2 LIMIT 60"
