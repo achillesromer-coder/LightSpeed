@@ -6,6 +6,7 @@ dispatch, signed authority issuance, native admission, or database writes.
 """
 from __future__ import annotations
 import argparse
+from contextlib import closing
 import json
 from pathlib import Path
 import sqlite3
@@ -39,7 +40,7 @@ def inspect_database(path: Path) -> dict:
     if not path.is_file() or path.is_symlink():
         raise RecoveryHold("NATIVE_DB_MISSING_OR_REDIRECTED_HOLD")
     try:
-        with sqlite3.connect(path.as_uri() + "?mode=ro", uri=True, timeout=3) as db:
+        with closing(sqlite3.connect(path.as_uri() + "?mode=ro", uri=True, timeout=3)) as db:
             db.execute("PRAGMA query_only=ON")
             names = {row[0] for row in db.execute(
                 "SELECT name FROM sqlite_master WHERE type='table'")}
