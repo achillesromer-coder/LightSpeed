@@ -841,3 +841,30 @@ test("corrupt projected or geometry unit references also require review",()=>{
  assert.ok(r.novel_checks.includes("SOURCE_UNIT_ENCODING_UNRESOLVED"));
  assert.equal(r.ecological_effect_verified,false);
 });
+
+test("CONTRA-DEC material unresolved red-line stays held",()=>{
+ const c={proposed:true,issue_class:"RED_LINE",materiality_state:"MATERIAL",interim_state:"LIMITED-CONTEXT",adjudication_state:"OPEN",sensitivity_class:"RESTRICTED",source_ref_set:["src-a"],affected_gate_decision:["VG-019"]};
+ const x=planEcoAlignment({novel:{semantic_type:"habitat",source_refs:["src-a"],contradiction_review:c},known_objects:[],authorised_source_ids:["src-a"]});
+ for(const f of ["CONTRADICTION_ADJUDICATION_SOURCE_ONLY_HOLD","MATERIAL_CONTRADICTION_LIMITED_CONTEXT_SCOPE_REVIEW","MATERIAL_CONTRADICTION_SPECIALIST_AUTHORITY_REQUIRED"])assert.ok(x.novel_checks.includes(f));
+ assert.equal(x.accepted_native_identity,false);
+});
+test("CONTRA-DEC resolved claim without authority readback and action is held",()=>{
+ const c={proposed:true,issue_class:"SOURCE_CONFLICT",materiality_state:"NON_MATERIAL",interim_state:"HOLD",adjudication_state:"RESOLVED",sensitivity_class:"CONTROLLED",source_ref_set:["src-a"],affected_gate_decision:["VG-019"]};
+ const x=planEcoAlignment({novel:{semantic_type:"habitat",source_refs:["src-a"],contradiction_review:c},known_objects:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("RESOLVED_CONTRADICTION_READBACK_AND_ACTION_REQUIRED"));
+});
+test("CONTRA-DEC source outside authorised scope remains partial",()=>{
+ const c={proposed:true,issue_class:"ECOLOGICAL",materiality_state:"MATERIAL",interim_state:"NO-GO",adjudication_state:"OPEN",sensitivity_class:"RESTRICTED",source_ref_set:["private-src"],affected_gate_decision:["VG-019"]};
+ const x=planEcoAlignment({novel:{semantic_type:"habitat",source_refs:["src-a"],contradiction_review:c},known_objects:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("NOVEL_CONTRADICTION_SOURCE_SCOPE_PARTIAL"));
+});
+test("CONTRA-DEC public classification is not public release permission",()=>{
+ const c={proposed:true,issue_class:"CULTURAL",materiality_state:"UNKNOWN",interim_state:"HOLD",adjudication_state:"HELD",sensitivity_class:"PUBLIC",source_ref_set:["src-a"],affected_gate_decision:["VG-019"]};
+ const x=planEcoAlignment({novel:{semantic_type:"habitat",source_refs:["src-a"],contradiction_review:c},known_objects:[],authorised_source_ids:["src-a"]});
+ assert.ok(x.novel_checks.includes("CONTRADICTION_PUBLIC_SENSITIVITY_REVIEW_REQUIRED"));
+ assert.equal(x.ecological_effect_verified,false);
+});
+test("CONTRA-DEC malformed source references fail closed",()=>{
+ const c={proposed:true,issue_class:"DATA",materiality_state:"UNKNOWN",interim_state:"HOLD",adjudication_state:"OPEN",sensitivity_class:"CONTROLLED",source_ref_set:"bad",affected_gate_decision:["VG-019"]};
+ assert.throws(()=>planEcoAlignment({novel:{semantic_type:"habitat",source_refs:["src-a"],contradiction_review:c},known_objects:[],authorised_source_ids:["src-a"]}),/INVALID_CONTRADICTION_SOURCE_OR_GATE_REFS/);
+});
