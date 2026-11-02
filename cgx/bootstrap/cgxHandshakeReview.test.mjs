@@ -746,3 +746,23 @@ test('native lease ABI denies unmapped or mixed-case execution depths before req
  assert.equal(safe.status,'UNVERIFIED_SHAPE_REVIEW');
  assert.equal(safe.may_execute,false);
 });
+
+
+test('native ABI rejects unknown lease-listed action vocabulary even for a known request',()=>{
+ // An unrelated future verb must not be silently treated as mapped by the
+ // bootstrap source-review adapter. This never authorises execution.
+ for(const extra of ['future:actuate','PuBlIsH','READ','external_action_v2']){
+  const nativeLease={...nativeABIBase.nativeLease,
+   scope:{...nativeABIBase.nativeLease.scope,action_classes:['simulate',extra]}};
+  const r=reviewNativeLeaseHandshakeABI({...nativeABIBase,nativeLease});
+  assert.equal(r.status,'DENIED',extra);
+  assert.equal(r.reason,'NATIVE_LEASE_ACTION_CLASS_UNMAPPED',extra);
+  assert.equal(r.may_execute,false,extra);
+ }
+ const nativeLease={...nativeABIBase.nativeLease,
+  scope:{...nativeABIBase.nativeLease.scope,action_classes:['simulate','read']}};
+ const r=reviewNativeLeaseHandshakeABI({...nativeABIBase,nativeLease});
+ assert.equal(r.status,'UNVERIFIED_SHAPE_REVIEW');
+ assert.equal(r.request_binding_reviewed,true);
+ assert.equal(r.may_execute,false);
+});
