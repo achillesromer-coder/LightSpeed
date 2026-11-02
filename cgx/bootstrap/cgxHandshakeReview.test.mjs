@@ -627,13 +627,16 @@ test('native lease class/action contradictions are denied before request-bound s
   assert.equal(r.reason,'NATIVE_LEASE_CLASS_ACTION_MISMATCH');
   assert.equal(r.may_execute,false);
  }
- for(const [lease_class,action_class] of [
-  ['READ_ONLY','review'],['COMPUTE_ONLY','simulate'],['DIGITAL_WRITE','digital_write']
+ for(const [lease_class,execution_depth,action_class] of [
+  ['READ_ONLY','inspect','review'],
+  ['COMPUTE_ONLY','simulate','simulate'],
+  ['DIGITAL_WRITE','simulate','digital_write']
  ]){
   const r=reviewNativeLeaseHandshakeABI({...nativeABIBase,
    nativeLease:{...nativeABIBase.nativeLease,lease_class,
+    execution_depths:[execution_depth],
     scope:{...nativeABIBase.nativeLease.scope,action_classes:[action_class]}},
-   request:{...nativeABIBase.request,action_class}});
+   request:{...nativeABIBase.request,execution_depth,action_class}});
   assert.equal(r.status,'UNVERIFIED_SHAPE_REVIEW',lease_class+':'+action_class);
   assert.equal(r.may_execute,false);
  }
