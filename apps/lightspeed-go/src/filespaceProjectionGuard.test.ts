@@ -47,6 +47,16 @@ describe("UniSpace source-scoped FileSpace R3 display guard", () => {
     expect(decide({ ...selection, view: "spatial" }).state).toBe("FRONTIER");
     expect(decide({ ...selection, view: "spatial" }, { ...receipt, geometry: { sourceVerified: true, frame: "", units: "m" } }).state).toBe("FRONTIER");
   });
+  it("requires independent metric validation for SCIENTIFIC spatial projections", () => {
+    const scientific: HostProjectionReceipt = {
+      ...receipt, evidenceClass: "SCIENTIFIC",
+      geometry: { sourceVerified: true, frame: "EPSG:7856", units: "m" },
+    };
+    expect(decide({ ...selection, view: "spatial" }, scientific).state).toBe("FRONTIER");
+    expect(decide({ ...selection, view: "spatial" }, {
+      ...scientific, geometry: { ...scientific.geometry!, independentlyMetricValidated: true },
+    }).state).toBe("READY");
+  });
   it("allows verified source-bound spatial presentation without increasing evidence", () => {
     const decision = decide({ ...selection, view: "spatial" }, {
       ...receipt, geometry: { sourceVerified: true, frame: "local-frame", units: "m" },
