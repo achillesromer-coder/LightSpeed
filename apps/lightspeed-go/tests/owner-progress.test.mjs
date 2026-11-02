@@ -7,8 +7,8 @@ const full = () => ({
   source: { object_id:"Cognigrex.cgx:/FileSpace/qualified-candidate-1", filespace:"Cognigrex.cgx/FileSpace", revision:"a".repeat(64) },
   bridge: { reachable:true },
   consumer: { heartbeat_fresh:false, pid_identity_verified:false, lock_verified:false, lease_verified:false, dispatch_ready:false },
-  checkpoint: { reported_completed:3200, independently_verified_committed:3200, database_integrity_verified:false },
-  latest: { state:"FAIL_CLOSED", completed:0, target:0, observed_attempted:3216, error:"sqlite3.OperationalError: database is locked" },
+  checkpoint: { object_id:"Cognigrex.cgx:/FileSpace/qualified-candidate-1", filespace:"Cognigrex.cgx/FileSpace", source_revision:"a".repeat(64), reported_completed:3200, independently_verified_committed:3200, database_integrity_verified:false },
+  latest: { object_id:"Cognigrex.cgx:/FileSpace/qualified-candidate-1", filespace:"Cognigrex.cgx/FileSpace", source_revision:"a".repeat(64), state:"FAIL_CLOSED", completed:0, target:0, observed_attempted:3216, error:"sqlite3.OperationalError: database is locked" },
 });
 
 test("no session/ACL/handshake yields no private metadata", () => {
@@ -124,4 +124,30 @@ test("Object_ID selector rejects traversal, ambiguous and empty path segments (#
   assert.equal(view.object_id,nested.source.object_id);
   assert.equal(view.native_admitted,false);
   assert.equal(view.dispatch_authorized,false);
+});
+
+
+test("progress is withheld if either receipt belongs to another Object_ID, child or revision", () => {
+  const cases = [
+    ["checkpoint", "object_id", "Cognigrex.cgx:/FileSpace/other-source"],
+    ["latest", "object_id", "Cognigrex.cgx:/FileSpace/other-source"],
+    ["checkpoint", "filespace", "Eco.cgx/FileSpace"],
+    ["latest", "filespace", "Eco.cgx/FileSpace"],
+    ["checkpoint", "source_revision", "b".repeat(64)],
+    ["latest", "source_revision", "b".repeat(64)],
+    ["checkpoint", "source_revision", undefined],
+    ["latest", "object_id", undefined],
+  ];
+  for (const [part, key, value] of cases) {
+    const x = full(); x[part][key] = value;
+    const v = projectOwnerProgress(x);
+    assert.equal(v.access, "PRIVATE_SOURCE_REVIEW");
+    assert.equal(v.progress_binding, "HOLD_UNBOUND_PROGRESS");
+    assert.equal(v.progress, null);
+    assert.equal(v.native_admitted, false);
+    assert.equal(v.dispatch_authorized, false);
+  }
+  const v = projectOwnerProgress(full());
+  assert.equal(v.progress_binding, "SOURCE_BOUND");
+  assert.equal(v.progress.reported_checkpoint, 3200);
 });
