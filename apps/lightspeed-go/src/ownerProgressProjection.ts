@@ -117,7 +117,9 @@ export function projectOwnerProgress(input: OwnerProgressEnvelope | null | undef
     : latest?.state === "CANDIDATE_INDEX_COMPLETE" ? "CANDIDATE_INDEX_COMPLETE"
     : latest?.state === "RUNNING" ? "RUNNING" : "UNKNOWN";
   const consumer = input?.consumer;
-  const consumerReadyClaim = consumer?.heartbeat_fresh === true &&
+  // Bridge reachability is required separately from consumer-reported readiness.
+  const consumerReadyClaim = input?.bridge?.reachable === true &&
+    consumer?.heartbeat_fresh === true &&
     consumer.pid_identity_verified === true && consumer.lock_verified === true &&
     consumer.lease_verified === true && consumer.dispatch_ready === true;
   const verifiedCommitted = checkpoint?.database_integrity_verified === true
