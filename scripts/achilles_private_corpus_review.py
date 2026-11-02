@@ -80,7 +80,19 @@ def atomic_json(path: Path, value: dict) -> None:
 
 
 def qualified_receipt(path: Path) -> list[dict]:
-    data = json.loads(path.read_text(encoding="utf-8"))
+    # A receipt is R0 identity evidence. JSON object-key shadowing would
+    # discard a competing original shard/hash/size declaration before audit.
+    # Reject at every nesting depth without printing private source keys.
+    def reject_duplicate_keys(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("SOURCE_RECEIPT_DUPLICATE_KEY_HOLD")
+            result[key] = value
+        return result
+
+    data = json.loads(path.read_text(encoding="utf-8"),
+                      object_pairs_hook=reject_duplicate_keys)
     if data.get("schema") != "CGX-OWNER-GPT-EXPORT-SHARD-RECEIPT/0.1":
         raise ValueError("SOURCE_RECEIPT_SCHEMA_HOLD")
     result = data.get("shards")
