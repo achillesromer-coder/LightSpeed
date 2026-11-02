@@ -55,11 +55,12 @@ def source_timestamp(value: object) -> int | float | None:
 
     Original JSON numeric lexemes remain R0-only. This guard prevents
     strings, booleans and integers outside binary64's exact integer range
-    from masquerading as the same R1 source time.
+    from silently entering REAL columns. R0 retains exact numeric lexemes;
+    R1 does not claim to preserve int-vs-float spelling or all precision.
     """
     if value is None:
         return None
-    if type(value) not in (int, float) or not math.isfinite(value) or abs(value) >= 2**53:
+    if type(value) not in (int, float) or abs(value) >= 2**53 or not math.isfinite(value):
         raise ValueError("SOURCE_TIMESTAMP_TYPE_OR_PRECISION_HOLD")
     return value
 
