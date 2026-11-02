@@ -245,6 +245,22 @@ def validate_lease(
         for action in declared_actions
     ):
         reasons.append("lease-action-class-unmapped")
+    # A benign requested verb/depth must not qualify a lease whose other
+    # declared capabilities exceed its class. Structural ABI check only:
+    # issuer, revocation, host authority and DBR are NOT authenticated here.
+    if isinstance(declared_actions, list) and lease_class in EXECUTION_CLASS_RANK:
+        for declared_action in declared_actions:
+            required = minimum_action_class.get(declared_action)
+            if required is not None and EXECUTION_CLASS_RANK[lease_class] < EXECUTION_CLASS_RANK[required]:
+                reasons.append("lease-declared-action-class-incompatible")
+                break
+    if lease_class in EXECUTION_CLASS_RANK:
+        for declared_depth in depths:
+            required = minimum_depth_class.get(declared_depth)
+            if required is not None and EXECUTION_CLASS_RANK[lease_class] < EXECUTION_CLASS_RANK[required]:
+                reasons.append("lease-declared-depth-class-incompatible")
+                break
+
     # Additional request-bound claims are checked only when the caller supplies
     # the actual target. This is structural preflight, NOT tool authorization.
     subset_scope("object", scope.get("object_ids"), object_id, reasons)
