@@ -333,6 +333,13 @@ def main() -> int:
     else:
         lease_ok, lease_reasons, lease_summary = False, [], {}
 
+    # --execute invokes the existing model/supervisor even for an "inspect"
+    # depth. A READ_ONLY lease may qualify metadata inspection but must never
+    # be used to invoke a compute-capable supervisor by relabelling the request.
+    if args.execute and args.execution_class == "READ_ONLY":
+        lease_ok = False
+        lease_reasons.append("lease-read-only-supervisor-invocation-denied")
+
     supervisor_receipt: dict[str, Any] | None = None
     exit_code = 0
     if args.execute and effectful and preflight_holds:
