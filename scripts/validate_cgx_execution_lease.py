@@ -170,6 +170,36 @@ def main():
                             repr({"exit": result.returncode, "reasons": reasons,
                                   "stderr": result.stderr[:200]}))
 
+    # A structurally valid READ_ONLY inspect/read lease still cannot call
+    # the model/supervisor via --execute: that would be COMPUTE_ONLY work.
+    with tempfile.TemporaryDirectory(prefix="cgx-neo-read-only-no-model-") as temp:
+        x = base_lease()
+        x["lease_class"] = "READ_ONLY"
+        x["execution_depths"].append("inspect")
+        x["scope"]["action_classes"].append("read")
+        lease_path = Path(temp) / "synthetic-read-only.json"
+        lease_path.write_text(json.dumps(x), encoding="utf-8")
+        result = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "run_cgx_agent_runtime.py"),
+             "--instruction", "synthetic read-only no-model negative",
+             "--domain", "romer", "--execution-depth", "inspect",
+             "--action-class", "read", "--execution-class", "READ_ONLY",
+             "--agent-id", "Neo", "--task-id", "CGX-LAUNCH-006",
+             "--execute", "--execution-lease-json", str(lease_path)],
+            capture_output=True, text=True, timeout=15, check=False,
+        )
+        try:
+            receipt = json.loads(result.stdout)
+            reasons = receipt["execution_lease"]["reasons"]
+        except (ValueError, KeyError, TypeError):
+            receipt, reasons = {}, []
+        if (result.returncode != 4
+                or "lease-read-only-supervisor-invocation-denied" not in reasons
+                or receipt.get("supervisor_receipt") is not None):
+            failures.append("Neo READ_ONLY model bypass failed closed incorrectly: " +
+                            repr({"exit": result.returncode, "reasons": reasons,
+                                  "stderr": result.stderr[:200]}))
+
     # Synthetic scope-only regressions: no host call, signature or DBR acceptance.
     scope_negatives = [
         ("scope-absent", None, "lease-scope-invalid"),
