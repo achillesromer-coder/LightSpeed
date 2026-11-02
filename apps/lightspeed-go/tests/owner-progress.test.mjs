@@ -151,3 +151,21 @@ test("progress is withheld if either receipt belongs to another Object_ID, child
   assert.equal(v.progress_binding, "SOURCE_BOUND");
   assert.equal(v.progress.reported_checkpoint, 3200);
 });
+
+
+test("offline or missing bridge holds consumer-ready claim despite reported consumer flags (#158)", () => {
+  const x=full();
+  x.consumer={heartbeat_fresh:true,pid_identity_verified:true,lock_verified:true,lease_verified:true,dispatch_ready:true};
+  x.bridge.reachable=false;
+  let view=projectOwnerProgress(x);
+  assert.equal(view.bridge,"BRIDGE_OFFLINE");
+  assert.equal(view.consumer,"CONSUMER_HELD");
+  assert.equal(view.dispatch_authorized,false);
+  delete x.bridge;
+  view=projectOwnerProgress(x);
+  assert.equal(view.consumer,"CONSUMER_HELD");
+  x.bridge={reachable:true};
+  view=projectOwnerProgress(x);
+  assert.equal(view.consumer,"CONSUMER_READY_CLAIM_NOT_AUTHORITY");
+  assert.equal(view.dispatch_authorized,false);
+});
