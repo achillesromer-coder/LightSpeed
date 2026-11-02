@@ -1055,3 +1055,64 @@ test("formula namespace guard rejects unqualified IDs, locations and raw express
  assert.throws(()=>reviewNamespace({left:a,right:a,owner_approval:true}),
    /INVALID_ECO_FORMULA_NAMESPACE_PAIR/);
 });
+
+// Source-only water-quality schema comparison; all rows below are synthetic.
+
+const wqRow={sheet:"20_WQ_DataSchema",row:6,
+ parameter:"Conductivity / salinity",unit:"µS/cm or PSU",
+ required:"Yes",qa_method:"Calibration solution",frequency:"5-15 min",
+ claim_status:"Measurable",source_rationale:"Mixing/salinity context"};
+const wqTranslated={...wqRow,sheet:"SECON0E3E_20_WQ_DataSchema",
+ unit:"ÂµS/cm or PSU",qa_method:"Validated conductivity sensor",
+ frequency:"DQO-defined; continuous or fixed interval",
+ source_rationale:"SRC-020 method map"};
+const wqInput={source_ref:source.source_ref,source_revision:source.revision,
+ source_sha256:digest,related_source_ref:lineage.related_source_ref,
+ related_revision_ref:lineage.related_revision_ref,
+ rows:[{original:wqRow,translated:wqTranslated}]};
+test("WQ original/translation source schema delta preserves rights, QA and unit holds",()=>{
+ const r=prepare({cascade_input:input,source_lineage:lineage,
+   water_quality_schema_delta:wqInput});
+ const w=r.water_quality_schema_review;
+ assert.equal(w.state,"R1_TRANSLATED_WQ_SCHEMA_DELTA_HOLD");
+ assert.equal(w.changed_row_count,1);
+ assert.equal(w.row_reviews[0].flags.includes("TRANSLATION_UNIT_ENCODING_DEFECT"),true);
+ assert.equal(w.row_reviews[0].flags.includes("SAMPLING_POLICY_CHANGED_NOT_EQUIVALENCE"),true);
+ assert.equal(w.row_reviews[0].flags.includes("CONDUCTIVITY_SALINITY_QUANTITY_AND_UNIT_SPLIT_REQUIRED"),true);
+ assert.equal(w.measurement_observed,false);
+ assert.equal(w.source_rights_verified,false);
+ assert.equal(r.release.mint_allowed,false);
+ assert.equal(r.blocking_gates.includes("WQ_TRANSLATION_SCHEMA_DELTA_HOLD"),true);
+});
+test("WQ schema source-only review never grants matching-row equivalence",()=>{
+ const original={sheet:"20_WQ_DataSchema",row:3,parameter:"Temperature",
+   unit:"°C",required:"Yes",qa_method:"Calibrated probe",
+   frequency:"5-15 min",claim_status:"Measurable",
+   source_rationale:"Water-quality context"};
+ const translated={...original,sheet:"SECON0E3E_20_WQ_DataSchema"};
+ const r=prepare({cascade_input:input,source_lineage:lineage,
+   water_quality_schema_delta:{...wqInput,rows:[{original,translated}]}});
+ assert.equal(r.water_quality_schema_review.state,
+   "R1_CALLER_DECLARED_WQ_SCHEMA_MATCH_NOT_EQUIVALENCE");
+ assert.equal(r.water_quality_schema_review.field_qa_verified,false);
+ assert.equal(r.water_quality_schema_review.original_and_translation_provider_cells_read_by_module,false);
+});
+test("WQ schema source hash and related revision fail closed",()=>{
+ for(const bad of [
+  {...wqInput,source_sha256:"f".repeat(64)},
+  {...wqInput,related_revision_ref:"stale-revision"}
+ ])assert.throws(()=>prepare({cascade_input:input,source_lineage:lineage,
+    water_quality_schema_delta:bad}),/ECO_WQ_SCHEMA_SOURCE_LINEAGE_CONFLICT/);
+ assert.throws(()=>prepare({cascade_input:input,
+    water_quality_schema_delta:wqInput}),/ECO_WQ_SCHEMA_SOURCE_LINEAGE_CONFLICT/);
+});
+test("WQ schema rejects duplicate row, mismatched parameter and measured payload",()=>{
+ const pair=wqInput.rows[0];
+ for(const rows of [
+  [pair,pair],
+  [{original:pair.original,translated:{...pair.translated,parameter:"Turbidity"}}],
+  [{original:{...pair.original,measurement:42},translated:pair.translated}]
+ ])assert.throws(()=>prepare({cascade_input:input,source_lineage:lineage,
+   water_quality_schema_delta:{...wqInput,rows}}),
+   /ECO_WQ_SCHEMA_ROW_IDENTITY_OR_DUPLICATE_CONFLICT/);
+});
