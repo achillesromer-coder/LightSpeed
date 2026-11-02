@@ -170,6 +170,35 @@ def validate_lease(
     depths = validated_allowlist("execution-depths", lease.get("execution_depths"), reasons)
     if execution_depth not in depths:
         reasons.append(f"lease-execution-depth-out-of-scope:{execution_depth}")
+    # Non-authorising source-level ABI check. The class named by the caller
+    # cannot launder an effectful verb/depth through a weaker lease class.
+    # These 0.1 vocabularies are exact and case-sensitive; new verbs require
+    # an explicit reviewed native mapping, not an arbitrary lease allowlist.
+    known_depths = {"inspect", "propose", "simulate", "execute", "build", "publish"}
+    known_actions = {
+        "read", "query", "review", "inspect", "execute", "compute", "simulate",
+        "digital_write", "write", "mutate", "publish", "publication",
+        "external_action", "physical_actuation",
+    }
+    if execution_depth not in known_depths or any(d not in known_depths for d in depths):
+        reasons.append("lease-execution-depth-unmapped")
+    if action_class not in known_actions:
+        reasons.append("lease-action-class-unmapped")
+    forbidden_actions = {
+        "READ_ONLY": {"execute", "compute", "simulate", "digital_write",
+                      "write", "mutate", "publish", "publication",
+                      "external_action", "physical_actuation"},
+        "COMPUTE_ONLY": {"digital_write", "write", "mutate", "publish",
+                         "publication", "external_action", "physical_actuation"},
+    }
+    forbidden_depths = {
+        "READ_ONLY": {"propose", "simulate", "execute", "build", "publish"},
+        "COMPUTE_ONLY": {"build", "publish"},
+    }
+    if action_class in forbidden_actions.get(lease_class, set()):
+        reasons.append("lease-class-action-incompatible")
+    if execution_depth in forbidden_depths.get(lease_class, set()):
+        reasons.append("lease-class-depth-incompatible")
     ceiling = str(lease.get("max_cascade_class") or "")
     if ceiling not in CASCADE:
         reasons.append("lease-cascade-ceiling-invalid")
