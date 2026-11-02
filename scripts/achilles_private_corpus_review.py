@@ -490,6 +490,13 @@ document.getElementById('counts').textContent=(x.shards_completed||0)+' / 12 sha
 
 
 def run(args: argparse.Namespace) -> int:
+    # Preserve the exact owner-approved R0 directory and receipt locators.
+    # Resolving an alias first would erase evidence of a source reparse hop.
+    for original in (args.shards_dir.absolute(), args.receipt.absolute()):
+        for component in (original, *original.parents):
+            if (component.is_symlink()
+                    or getattr(component, "is_junction", lambda: False)()):
+                raise ValueError("SOURCE_INPUT_REPARSE_HOLD")
     source = args.shards_dir.resolve()
     receipt = args.receipt.resolve()
     # Do not resolve away an unapproved symlink/junction output alias before
