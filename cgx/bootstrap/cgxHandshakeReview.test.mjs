@@ -486,9 +486,25 @@ test('native ABI rejects malformed or unsupported declared budget ceilings',()=>
  const r=make(inherited);
  assert.equal(r.status,'DENIED');
  assert.equal(r.reason,'NATIVE_RESOURCE_BUDGET_EXCEEDED_OR_UNBOUND');
- const valid=make({...baseBudget,io_bytes:0});
- assert.equal(valid.status,'UNVERIFIED_SHAPE_REVIEW');
- assert.equal(valid.may_execute,false);
+ const omittedZero=make({...baseBudget,io_bytes:0});
+ assert.equal(omittedZero.status,'DENIED');
+ assert.equal(omittedZero.reason,'NATIVE_RESOURCE_BUDGET_EXCEEDED_OR_UNBOUND');
+ const omittedNonzero=make({...baseBudget,io_bytes:4096});
+ assert.equal(omittedNonzero.status,'DENIED');
+ assert.equal(omittedNonzero.reason,'NATIVE_RESOURCE_BUDGET_EXCEEDED_OR_UNBOUND');
+ const explicit=reviewNativeLeaseHandshakeABI({...nativeABIBase,
+  nativeLease:{...nativeABIBase.nativeLease,scope:{...nativeABIBase.nativeLease.scope,
+   resource_budgets:{...baseBudget,io_bytes:0}}},
+  request:{...nativeABIBase.request,resource_usage:{compute_ms:20,io_bytes:0}}});
+ assert.equal(explicit.status,'UNVERIFIED_SHAPE_REVIEW');
+ assert.equal(explicit.request_binding_reviewed,true);
+ assert.equal(explicit.may_execute,false);
+ const over=reviewNativeLeaseHandshakeABI({...nativeABIBase,
+  nativeLease:{...nativeABIBase.nativeLease,scope:{...nativeABIBase.nativeLease.scope,
+   resource_budgets:{...baseBudget,io_bytes:0}}},
+  request:{...nativeABIBase.request,resource_usage:{compute_ms:20,io_bytes:1}}});
+ assert.equal(over.status,'DENIED');
+ assert.equal(over.reason,'NATIVE_RESOURCE_BUDGET_EXCEEDED_OR_UNBOUND');
 });
 
 test('native ABI binds cascade class and planned specialist floors',()=>{
