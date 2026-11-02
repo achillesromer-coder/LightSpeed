@@ -205,6 +205,41 @@ class WindowsBootEvidenceTests(unittest.TestCase):
                 self.assertFalse(receipt["boot"]["existing_stack_prerequisites_ready"])
         write_json(path, family())
 
+    def test_semantic_child_identity_controls_and_key_mismatch_fail_closed(self):
+        # Semantic IDs must be unambiguous machine keys, not path, log or
+        # Unicode-format aliases. This is source review, not native admission.
+        path = self.repo / "cgx/domain_templates/domain_child_identity_registry.json"
+        for case in ("newline_key", "slash_key", "bidi_id", "mismatched_id", "oversized_key"):
+            with self.subTest(case=case):
+                source = family()
+                key = "science"
+                semantic = "cgx:domain:science"
+                if case == "newline_key":
+                    key, semantic = "science\\nforged", "cgx:domain:science\\nforged"
+                elif case == "slash_key":
+                    key, semantic = "science/escape", "cgx:domain:science/escape"
+                elif case == "bidi_id":
+                    semantic = "cgx:domain:science\\u202e"
+                elif case == "mismatched_id":
+                    semantic = "cgx:domain:other"
+                elif case == "oversized_key":
+                    key = "s" * 65
+                    semantic = "cgx:domain:" + key
+                source["children"][key] = {
+                    "semantic_object_id": semantic,
+                    "parent_semantic_object_id": probe.SEMANTIC_ROOT,
+                    "domain_id": key,
+                    "filespace": "Science.cgx",
+                }
+                write_json(path, source)
+                with self.assertRaisesRegex(ValueError, "FAMILY_ID_COLLISION_OR_INVALID"):
+                    probe._family_identity(path)
+                receipt = self.run_probe()
+                self.assertIn("CANONICAL_FAMILY_REGISTRY_UNVERIFIED", receipt["holds"])
+                self.assertFalse(receipt["boot"]["existing_stack_prerequisites_ready"])
+                self.assertFalse(receipt["mint"]["native_mint_authorised"])
+        write_json(path, family())
+
     def test_root_drift_and_parent_cycle_fail_closed(self):
         source = family()
         source["children"]["emassc"]["parent_semantic_object_id"] = "cgx:domain:lightspeed"
