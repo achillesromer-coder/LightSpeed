@@ -51,9 +51,29 @@ def finite_json_float(token: str) -> float:
 
 
 def atomic_json(path: Path, value: dict) -> None:
-    tmp = path.with_name(path.name + ".tmp")
-    tmp.write_text(json.dumps(value, indent=2, ensure_ascii=False), encoding="utf-8")
-    os.replace(tmp, path)
+    """Use a fresh exclusive temporary receipt, not a predictable .tmp alias.
+
+    This fixes the source-level pre-planted temporary symlink case. It does
+    NOT qualify the caller's parent-directory ACL or Windows reparse points.
+    """
+    tmp = path.with_name(f".{path.name}.{secrets.token_hex(16)}.tmp")
+    flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY
+    flags |= getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_BINARY", 0)
+    fd = os.open(tmp, flags, 0o600)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as stream:
+            json.dump(value, stream, indent=2, ensure_ascii=False)
+            stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(tmp, path)
+    finally:
+        # Best-effort cleanup of our exclusive temporary file on write error.
+        # A separately validated owner-private parent ACL remains mandatory.
+        try:
+            tmp.unlink(missing_ok=True)
+        except OSError:
+            pass
 
 
 def qualified_receipt(path: Path) -> list[dict]:
