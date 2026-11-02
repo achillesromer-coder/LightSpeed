@@ -29,6 +29,23 @@ test("exact child scope prevents cross-Grex hydration", () => {
   assert.equal(project(x).object_id, null);
   assert.equal(project(x).view, "OWNER_SOURCE_REVIEW_ONLY");
 });
+test("cross-child source cannot leak runtime checkpoint metadata", () => {
+  const x = base();
+  x.binding.authorised_child_filespace = "Eco.cgx";
+  const out = project(x);
+  assert.equal(out.progress, null);
+  assert.equal(out.bridge, "BRIDGE_UNVERIFIED");
+  assert.equal(out.consumer, "CONSUMER_HELD");
+  assert.equal(out.dispatch_ready, false);
+});
+test("unqualified rights cannot leak a verified owner checkpoint", () => {
+  const x = base();
+  x.binding.rights = "UNREVIEWED";
+  const out = project(x);
+  assert.equal(out.progress, null);
+  assert.equal(out.bridge, "BRIDGE_UNVERIFIED");
+  assert.equal(out.object_id, null);
+});
 test("source-only candidate cannot become R3 by UI choice", () => {
   const x = base(); x.binding.admission = "SANDBOX_STAGED";
   assert.equal(project(x).view, "OWNER_SOURCE_REVIEW_ONLY");
