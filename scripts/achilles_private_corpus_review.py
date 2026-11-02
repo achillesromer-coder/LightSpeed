@@ -200,6 +200,16 @@ def connect(path: Path) -> sqlite3.Connection:
       text_sha256 TEXT NOT NULL, role TEXT NOT NULL, channel TEXT NOT NULL,
       parent_node TEXT, created REAL, nontext_parts INTEGER NOT NULL,
       PRIMARY KEY(shard,conversation_index,node_id));
+    -- Every source-visible assistant ancestry edge is occurrence-scoped.
+    -- The legacy prompt_response table remains a first-seen message-ID view.
+    -- This review ledger does not certify semantic R2 or native DBR identity.
+    CREATE TABLE IF NOT EXISTS source_prompt_response_occurrence(
+      shard TEXT NOT NULL, conversation_id TEXT NOT NULL,
+      conversation_index INTEGER NOT NULL, response_node_id TEXT NOT NULL,
+      response_message_id TEXT NOT NULL, prompt_node_id TEXT NOT NULL,
+      prompt_message_id TEXT NOT NULL, ancestor_hops INTEGER NOT NULL,
+      source_parent_node TEXT,
+      PRIMARY KEY(shard,conversation_index,response_node_id));
     CREATE INDEX IF NOT EXISTS message_parent_index ON message(parent_node);
     CREATE TABLE IF NOT EXISTS prompt_response(
       response_id TEXT PRIMARY KEY, prompt_id TEXT, conversation_id TEXT,
@@ -220,7 +230,7 @@ def family_scores(text: str, title: str) -> list[tuple[str, int]]:
             if (score := sum(min(sample.count(t), 4) for t in terms)) >= 2]
 
 
-def user_ancestor(node: dict, mapping: dict, limit: int = 120) -> tuple[str | None, int]:
+def user_ancestor_with_node(node: dict, mapping: dict, limit: int = 120) -> tuple[str | None, str | None, int]:
     """Resolve only a typed, source-visible user ancestor, never a coerced ID.
 
     A hidden user or malformed parent pointer cannot become an R1
@@ -254,12 +264,18 @@ def user_ancestor(node: dict, mapping: dict, limit: int = 120) -> tuple[str | No
             if not isinstance(metadata, dict):
                 raise ValueError("SOURCE_ANCESTOR_METADATA_HOLD")
             if metadata.get("channel") in DENIED_CHANNELS:
-                return None, steps
-            return raw_id, steps
+                return None, None, steps
+            return raw_id, parent, steps
         parent = item.get("parent")
     return None, steps
 
 
+
+
+def user_ancestor(node: dict, mapping: dict, limit: int = 120) -> tuple[str | None, int]:
+    """Legacy first-seen prompt projection; source node identity stays in R1."""
+    uid, _, hops = user_ancestor_with_node(node, mapping, limit)
+    return uid, hops
 
 def iter_source_conversations(source: Path, entry: dict, *,
                               max_record_bytes: int = 60 * 1024 * 1024,
@@ -446,6 +462,19 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
                      str(node_id), mid, text_hash, role, channel,
                      node.get("parent"), msg.get("create_time"), nontext),
                 )
+                if role == "assistant":
+                    # Preserve each original branch's typed user ancestor even
+                    # when a repeated response message ID has a different parent.
+                    occurrence_uid, occurrence_prompt_node, occurrence_hops = (
+                        user_ancestor_with_node(node, mapping))
+                    if occurrence_uid is not None:
+                        con.execute(
+                            "INSERT INTO source_prompt_response_occurrence "
+                            "VALUES (?,?,?,?,?,?,?,?,?)",
+                            (entry["shard"], cid, conv_index, str(node_id), mid,
+                             occurrence_prompt_node, occurrence_uid,
+                             occurrence_hops, node.get("parent")),
+                        )
                 con.execute("INSERT OR IGNORE INTO occurrence VALUES (?,?,?,?)",
                             (entry["shard"], cid, str(node_id), mid))
                 if old:
