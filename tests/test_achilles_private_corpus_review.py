@@ -630,3 +630,35 @@ def test_conflicting_message_id_never_leaks_source_identifier(tmp_path):
         assert mod.summary(con)["native_admission"] is False
     finally:
         con.close()
+
+@pytest.mark.parametrize("kind,bad_id", [
+    ("conversation", 7),
+    ("conversation", True),
+    ("message", 7),
+    ("message", True),
+    ("message", 7.0),
+])
+def test_r0_identifier_types_do_not_coerce_into_existing_string_ids(tmp_path, kind, bad_id):
+    """A numeric/boolean source ID is not equivalent to its text rendering."""
+    source, entry = sample(tmp_path)
+    conv = json.loads(source.read_text(encoding="utf-8"))[0]
+    if kind == "conversation":
+        conv["conversation_id"] = bad_id
+    else:
+        conv["mapping"]["u-node"]["message"]["id"] = bad_id
+    source.write_text(json.dumps([conv]), encoding="utf-8")
+    entry = {"shard": source.name, "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+             "size_bytes": source.stat().st_size}
+    con = mod.connect(tmp_path / "typed_id_review.sqlite")
+    try:
+        with pytest.raises(ValueError, match=(
+            "SOURCE_CONVERSATION_ID_HOLD" if kind == "conversation"
+            else "SOURCE_MESSAGE_ID_HOLD"
+        )):
+            mod.ingest_shard(con, source, entry)
+        assert con.execute("SELECT count(*) FROM shard").fetchone()[0] == 0
+        assert con.execute("SELECT count(*) FROM message").fetchone()[0] == 0
+        assert con.execute("SELECT count(*) FROM conversation_variant").fetchone()[0] == 0
+        assert mod.summary(con)["native_admission"] is False
+    finally:
+        con.close()
