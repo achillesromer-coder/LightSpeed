@@ -335,6 +335,44 @@ def test_resource_preflight_is_bounded_and_reports_last_receipt(tmp_path: Path) 
     assert status["last_receipt"]["receipt_id"] == "prior-receipt"
 
 
+def test_20_percent_manual_ram_reserve_overrides_legacy_policy(tmp_path: Path) -> None:
+    contract = json.loads(_contract(tmp_path).read_text(encoding="utf-8"))
+    contract["policy"]["resource_guard"] = {
+        "critical_free_memory_percent": 8.0,
+        "warning_free_memory_percent": 12.0,
+        "minimum_free_memory_bytes": 1024,
+    }
+    for free_percent in (19, 20):
+        report = build_resource_preflight(
+            contract, endpoint="http://localhost:11434",
+            probe_ollama=False,
+            memory_snapshot=lambda pct=free_percent: (100 * 1024**3, pct * 1024**3),
+        )
+        assert report["execution_state"] == "stop"
+        assert report["memory"]["state"] == "stop"
+        assert report["thresholds"]["critical_free_memory_percent"] >= 20.0
+    ok = build_resource_preflight(
+        contract, endpoint="http://localhost:11434", probe_ollama=False,
+        memory_snapshot=lambda: (100 * 1024**3, 25 * 1024**3),
+    )
+    assert ok["execution_state"] == "ready"
+
+
+def test_unavailable_ram_measurement_refuses_new_model_session(tmp_path: Path) -> None:
+    contract = json.loads(_contract(tmp_path).read_text(encoding="utf-8"))
+    def unavailable():
+        raise OSError("memory telemetry unavailable")
+    report = build_resource_preflight(
+        contract, endpoint="http://localhost:11434", probe_ollama=True,
+        memory_snapshot=unavailable,
+        ollama_status_probe=lambda *_: (_ for _ in ()).throw(
+            AssertionError("must not probe model under uncertain RAM")),
+    )
+    assert report["execution_state"] == "stop"
+    assert report["memory"]["state"] == "unavailable"
+    assert report["ollama"]["state"] == "not_probed"
+
+
 def test_execute_stops_before_ollama_when_memory_is_critical(tmp_path: Path) -> None:
     contract_path = _contract(tmp_path)
 
