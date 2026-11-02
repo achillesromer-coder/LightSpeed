@@ -83,9 +83,10 @@ export function projectFileSpaceView(
   if (selection.offline && selection.hydration !== "H0") {
     return { state: "FRONTIER", reason: "OFFLINE_PUBLIC_H0_ONLY", view: "evidence", hydration: "H0" };
   }
+  // Metric scientific/operational views require independent verification; creative previews remain labelled.
   if (selection.view === "spatial" &&
       (receipt.geometry?.sourceVerified !== true ||
-       (receipt.evidenceClass === "SCIENTIFIC" && receipt.geometry?.independentlyMetricValidated !== true) ||
+       (receipt.evidenceClass !== "CREATIVE" && receipt.geometry?.independentlyMetricValidated !== true) ||
        typeof receipt.geometry.frame !== "string" || !receipt.geometry.frame.trim() ||
        typeof receipt.geometry.units !== "string" || !receipt.geometry.units.trim())) {
     return { state: "FRONTIER", reason: "GEOMETRY_FRAME_UNITS_OR_SOURCE_UNVERIFIED", view: "evidence", hydration: "H0" };
