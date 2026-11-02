@@ -66,6 +66,29 @@ test("matched synthetic series remains unverified, with no invented ecological e
  assert.equal(r.biodiversity_gain_verified,false);
  assert.ok(!r.flags.includes("LONGITUDINAL_COUNTS_NOT_COMPARABLE"));
 });
+test("different source identity cannot be pooled even with matched cohort",()=>{
+ const r=series([longitudinalBase,{...later,source_ref:"other-source"}]);
+ assert.ok(r.flags.includes("SERIES_SOURCE_REF_MISMATCH"));
+ assert.ok(r.flags.includes("LONGITUDINAL_COUNTS_NOT_COMPARABLE"));
+ assert.equal(r.longitudinal_field_evidence_verified,false);
+});
+test("different pinned source revision cannot be pooled",()=>{
+ const pinned={...longitudinalBase,source_revision:"r1",source_sha256:"a".repeat(64)};
+ const r=series([pinned,{...later,source_revision:"r2",source_sha256:"a".repeat(64)}]);
+ assert.ok(r.flags.includes("SERIES_SOURCE_REVISION_MISMATCH"));
+ assert.ok(r.flags.includes("LONGITUDINAL_COUNTS_NOT_COMPARABLE"));
+});
+test("different source hash cannot be pooled despite identical revision",()=>{
+ const pinned={...longitudinalBase,source_revision:"r1",source_sha256:"a".repeat(64)};
+ const r=series([pinned,{...later,source_revision:"r1",source_sha256:"b".repeat(64)}]);
+ assert.ok(r.flags.includes("SERIES_SOURCE_SHA256_MISMATCH"));
+ assert.ok(r.flags.includes("LONGITUDINAL_COUNTS_NOT_COMPARABLE"));
+});
+test("partial source pin cannot silently compare with a pinned snapshot",()=>{
+ const r=series([longitudinalBase,{...later,source_revision:"r1",source_sha256:"a".repeat(64)}]);
+ assert.ok(r.flags.includes("LONGITUDINAL_SOURCE_SNAPSHOT_UNPINNED"));
+ assert.ok(r.flags.includes("LONGITUDINAL_COUNTS_NOT_COMPARABLE"));
+});
 test("changed cohort cannot be silently pooled",()=>{
  const r=series([longitudinalBase,{...later,cohort_ref:"other"}]);
  assert.ok(r.flags.includes("SERIES_COHORT_REF_MISMATCH"));
