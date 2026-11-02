@@ -407,6 +407,28 @@ test('native lease ABI binds explicitly scoped task, project and configuration',
  }
 });
 
+test('native lease context subsets reject absent and empty allowlists without wildcard interpretation',()=>{
+ for(const [scopeKey,requestKey] of [
+  ['task_ids','task_id'],['project_ids','project_id'],
+  ['configuration_ids','configuration_id']
+ ]){
+  const request={...nativeABIBase.request,[requestKey]:'fixture:one'};
+  const missing=reviewNativeLeaseHandshakeABI({...nativeABIBase,request});
+  assert.equal(missing.status,'DENIED',scopeKey+':missing');
+  assert.equal(missing.reason,'NATIVE_LEASE_CONTEXT_SCOPE_MISMATCH');
+  const scope={...nativeABIBase.nativeLease.scope,[scopeKey]:[]};
+  const empty=reviewNativeLeaseHandshakeABI({...nativeABIBase,request,
+   nativeLease:{...nativeABIBase.nativeLease,scope}});
+  assert.equal(empty.status,'DENIED',scopeKey+':empty');
+  assert.equal(empty.reason,'NATIVE_LEASE_CONTEXT_SCOPE_MISMATCH');
+  const bound=reviewNativeLeaseHandshakeABI({...nativeABIBase,request,
+   nativeLease:{...nativeABIBase.nativeLease,
+    scope:{...scope,[scopeKey]:['fixture:one']}}});
+  assert.equal(bound.status,'UNVERIFIED_SHAPE_REVIEW',scopeKey+':bound');
+  assert.equal(bound.may_execute,false);
+ }
+});
+
 test('malformed optional native context allowlists fail closed without host authority',()=>{
  for(const field of ['task_ids','project_ids','configuration_ids']){
   for(const invalid of [null,'fixture:task',[17],['fixture:bad\nspoof']]){
