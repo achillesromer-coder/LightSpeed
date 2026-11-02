@@ -50,6 +50,20 @@ def finite_json_float(token: str) -> float:
     return value
 
 
+def source_timestamp(value: object) -> int | float | None:
+    """Keep R1 time typed; reject SQLite REAL coercion/precision loss.
+
+    Original JSON numeric lexemes remain R0-only. This guard prevents
+    strings, booleans and integers outside binary64's exact integer range
+    from masquerading as the same R1 source time.
+    """
+    if value is None:
+        return None
+    if type(value) not in (int, float) or not math.isfinite(value) or abs(value) >= 2**53:
+        raise ValueError("SOURCE_TIMESTAMP_TYPE_OR_PRECISION_HOLD")
+    return value
+
+
 def atomic_text(path: Path, value: str) -> None:
     """Replace a private text output without following a planted final symlink.
 
@@ -411,7 +425,12 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
             mapping = conv.get("mapping") or {}
             if not isinstance(mapping, dict):
                 raise ValueError("SOURCE_MAPPING_HOLD")
-            title = str(conv.get("title") or "")
+            raw_title = conv.get("title")
+            if raw_title is not None and not isinstance(raw_title, str):
+                raise ValueError("SOURCE_CONVERSATION_TITLE_TYPE_HOLD")
+            title = raw_title or ""
+            created = source_timestamp(conv.get("create_time"))
+            updated = source_timestamp(conv.get("update_time"))
             words_sum = 0
             source_words_sum = 0
             for node_ordinal, (node_id, node) in enumerate(mapping.items()):
@@ -432,6 +451,7 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
                 channel = str((msg.get("metadata") or {}).get("channel") or "")
                 if role not in ("user", "assistant") or channel in DENIED_CHANNELS:
                     continue
+                message_created = source_timestamp(msg.get("create_time"))
                 text, nontext = extract_text(msg)
                 words = len(WORDS.findall(text))
                 source_words_sum += words  # Each source occurrence, even duplicates.
@@ -442,7 +462,7 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
                 ).fetchone()
                 if old and old[:2] != (text_hash, role):
                     raise ValueError("CONFLICTING_MESSAGE_ID_HOLD")
-                if old and old[2:] != (cid, channel, msg.get("create_time"),
+                if old and old[2:] != (cid, channel, message_created,
                                        node.get("parent"), nontext):
                     # The message table is a first-seen text projection, NOT a
                     # semantic identity proof. The source occurrence ledger
@@ -460,7 +480,7 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
                     "INSERT INTO source_visible_occurrence VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
                     (entry["shard"], cid, conv_index, node_ordinal,
                      str(node_id), mid, text_hash, role, channel,
-                     node.get("parent"), msg.get("create_time"), nontext),
+                     node.get("parent"), message_created, nontext),
                 )
                 if role == "assistant":
                     # Preserve each original branch's typed user ancestor even
@@ -480,7 +500,7 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
                 if old:
                     continue
                 con.execute("INSERT INTO message VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-                            (mid, cid, role, channel, entry["shard"], msg.get("create_time"),
+                            (mid, cid, role, channel, entry["shard"], message_created,
                              node.get("parent"), text, words, text_hash, nontext))
                 con.execute("INSERT INTO message_fts VALUES (?,?)", (mid, text))
                 for family, score in family_scores(text, title):
@@ -499,7 +519,6 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
             original = con.execute(
                 "SELECT title,created,updated FROM conversation WHERE id=?", (cid,)
             ).fetchone()
-            created, updated = conv.get("create_time"), conv.get("update_time")
             metadata = json.dumps(
                 [cid, title, created, updated, len(mapping), source_words_sum],
                 sort_keys=True, ensure_ascii=False, separators=(",", ":"),
