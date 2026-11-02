@@ -153,6 +153,26 @@ def test_receipt_needs_twelve_distinct_size_hash_bound_sources(tmp_path):
         mod.qualified_receipt(p)
 
 
+@pytest.mark.parametrize("level", ["root", "nested"])
+def test_receipt_duplicate_json_keys_fail_before_source_identity_acceptance(tmp_path, level):
+    """Even identical/shadowed R0 receipt keys must never be silently discarded."""
+    entries = [{"shard": f"conversations-{n:03d}.json",
+                "size_bytes": 10, "sha256": "a" * 64} for n in range(12)]
+    original = json.dumps({"schema": "CGX-OWNER-GPT-EXPORT-SHARD-RECEIPT/0.1",
+                           "shards": entries, "total_bytes": 120})
+    if level == "root":
+        altered = original.replace('"total_bytes": 120',
+                                   '"total_bytes": 120, "total_bytes": 120', 1)
+    else:
+        altered = original.replace('"size_bytes": 10',
+                                   '"size_bytes": 10, "size_bytes": 11', 1)
+    assert altered != original
+    p = tmp_path / "receipt.json"
+    p.write_text(altered, encoding="utf-8")
+    with pytest.raises(ValueError, match="SOURCE_RECEIPT_DUPLICATE_KEY_HOLD"):
+        mod.qualified_receipt(p)
+
+
 @pytest.mark.parametrize("source_parts,target_parts", [
     (("raw",), ("raw", "private_output")),
     (("private_output", "raw"), ("private_output",)),
