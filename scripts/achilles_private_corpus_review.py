@@ -8,7 +8,7 @@ from __future__ import annotations
 from decimal import Decimal
 import argparse, datetime as dt, hashlib, hmac, html, http.server, json, math, os
 from pathlib import Path
-import re, secrets, sqlite3, threading, time, urllib.parse
+import re, secrets, sqlite3, stat, threading, time, urllib.parse
 
 SCHEMA = "CGX-ACHILLES-PRIVATE-R1/0.1"
 PROGRESS_SCHEMA = "CGX-ACHILLES-PRIVATE-R1-PROGRESS/0.1"
@@ -130,7 +130,29 @@ def extract_text(message: dict) -> tuple[str, int]:
     return "\n".join(text_parts), nontext
 
 
+def guard_private_sqlite_targets(path: Path) -> None:
+    """Fail closed on pre-existing DB/sidecar aliases before SQLite opens.
+
+    SQLite can follow a planted DB, WAL, SHM or rollback-journal symlink
+    outside the approved private directory. This is a preflight check, NOT
+    protection against a concurrent directory-entry swap; owner-only ACLs
+    and host-specific handle binding remain mandatory.
+    """
+    for candidate in (path, *(Path(str(path) + suffix)
+                              for suffix in ("-wal", "-shm", "-journal"))):
+        try:
+            metadata = candidate.lstat()
+        except FileNotFoundError:
+            continue
+        if (candidate.is_symlink()
+                or getattr(candidate, "is_junction", lambda: False)()
+                or not stat.S_ISREG(metadata.st_mode)
+                or metadata.st_nlink > 1):
+            raise ValueError("PRIVATE_SQLITE_TARGET_ALIAS_HOLD")
+
+
 def connect(path: Path) -> sqlite3.Connection:
+    guard_private_sqlite_targets(path)
     con = sqlite3.connect(path, timeout=30)
     con.execute("PRAGMA journal_mode=WAL")
     con.execute("PRAGMA synchronous=NORMAL")
