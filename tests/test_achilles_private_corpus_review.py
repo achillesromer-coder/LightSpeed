@@ -714,7 +714,7 @@ def test_source_hidden_intermediate_parent_pointer_fails_closed(tmp_path, bad_pa
 
 @pytest.mark.parametrize("bad_id", [0, False, 7, None])
 def test_source_hidden_user_ancestor_id_is_not_string_coerced(tmp_path, bad_id):
-    """Even a filtered source user ancestor cannot mint a prompt identity."""
+    """Even a filtered user is rejected at the earliest visible-node ID gate."""
     source, _ = sample(tmp_path)
     conv = json.loads(source.read_text(encoding="utf-8"))[0]
     conv["mapping"]["u-node"]["message"]["metadata"] = {"channel": "analysis"}
@@ -724,7 +724,7 @@ def test_source_hidden_user_ancestor_id_is_not_string_coerced(tmp_path, bad_id):
              "size_bytes": source.stat().st_size}
     con = mod.connect(tmp_path / "hidden_user.sqlite")
     try:
-        with pytest.raises(ValueError, match="SOURCE_ANCESTOR_MESSAGE_ID_HOLD"):
+        with pytest.raises(ValueError, match="SOURCE_MESSAGE_ID_HOLD"):
             mod.ingest_shard(con, source, entry)
         assert con.execute("SELECT count(*) FROM shard").fetchone()[0] == 0
         assert con.execute("SELECT count(*) FROM prompt_response").fetchone()[0] == 0
