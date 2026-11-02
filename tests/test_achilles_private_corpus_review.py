@@ -858,3 +858,63 @@ def test_source_metadata_types_reject_lossy_sqlite_coercion(tmp_path, field, bad
     finally:
         con.close()
 
+@pytest.mark.parametrize("field,bad_value,reason", [
+    ("role", 0, "SOURCE_ROLE_TYPE_HOLD"),
+    ("role", False, "SOURCE_ROLE_TYPE_HOLD"),
+    ("role", ["assistant"], "SOURCE_ROLE_TYPE_HOLD"),
+    ("author", ["assistant"], "SOURCE_AUTHOR_SHAPE_HOLD"),
+    ("author", "assistant", "SOURCE_AUTHOR_SHAPE_HOLD"),
+    ("metadata", ["final"], "SOURCE_METADATA_SHAPE_HOLD"),
+    ("metadata", "final", "SOURCE_METADATA_SHAPE_HOLD"),
+    ("channel", 0, "SOURCE_CHANNEL_TYPE_HOLD"),
+    ("channel", False, "SOURCE_CHANNEL_TYPE_HOLD"),
+    ("channel", ["final"], "SOURCE_CHANNEL_TYPE_HOLD"),
+])
+def test_source_role_channel_types_fail_closed_before_r1_commit(tmp_path, field, bad_value, reason):
+    """Malformed role/channel cannot become a typed occurrence or ancestry edge."""
+    source, _ = sample(tmp_path)
+    conv = json.loads(source.read_text(encoding="utf-8"))[0]
+    msg = conv["mapping"]["a-node"]["message"]
+    if field in ("author", "metadata"):
+        msg[field] = bad_value
+    elif field == "role":
+        msg["author"]["role"] = bad_value
+    else:
+        msg["metadata"] = {"channel": bad_value}
+    source.write_text(json.dumps([conv]), encoding="utf-8")
+    entry = {"shard": source.name, "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+             "size_bytes": source.stat().st_size}
+    con = mod.connect(tmp_path / "typed_role_channel.sqlite")
+    try:
+        with pytest.raises(ValueError, match=reason):
+            mod.ingest_shard(con, source, entry)
+        for table in ("shard", "conversation", "conversation_variant", "message",
+                      "source_visible_occurrence", "source_prompt_response_occurrence"):
+            assert con.execute(f"SELECT count(*) FROM {table}").fetchone()[0] == 0
+        assert mod.summary(con)["native_admission"] is False
+    finally:
+        con.close()
+
+
+@pytest.mark.parametrize("field,bad_value,reason", [
+    ("author", [], "SOURCE_ANCESTOR_AUTHOR_HOLD"),
+    ("metadata", [], "SOURCE_ANCESTOR_METADATA_HOLD"),
+    ("channel", True, "SOURCE_CHANNEL_TYPE_HOLD"),
+])
+def test_source_user_ancestor_rejects_malformed_role_channel(field, bad_value, reason):
+    """Ancestor resolution independently checks the original typed metadata."""
+    message = {"id": "synthetic-user", "author": {"role": "user"},
+               "metadata": {"channel": "final"}}
+    if field == "channel":
+        message["metadata"]["channel"] = bad_value
+    else:
+        message[field] = bad_value
+    mapping = {"synthetic-user-node": {"message": message, "parent": None}}
+    with pytest.raises(ValueError, match=reason):
+        mod.user_ancestor_with_node({"parent": "synthetic-user-node"}, mapping)
+
+
+def test_source_role_channel_valid_typed_identity():
+    assert mod.source_role_channel({
+        "author": {"role": "assistant"}, "metadata": {"channel": "final"}
+    }) == ("assistant", "final")
