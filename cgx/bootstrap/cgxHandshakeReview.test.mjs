@@ -766,3 +766,39 @@ test('native ABI rejects unknown lease-listed action vocabulary even for a known
  assert.equal(r.request_binding_reviewed,true);
  assert.equal(r.may_execute,false);
 });
+
+
+test('native ABI holds internally inconsistent lease-listed actions and depths',()=>{
+ // A harmless selected request does not make a contradictory broader lease
+ // an ABI-qualified source shape. Native host still owns real admission.
+ for(const [lease_class,extra] of [
+  ['READ_ONLY','physical_actuation'],['COMPUTE_ONLY','publish'],
+  ['DIGITAL_WRITE','external_action']]){
+  const nativeLease={...nativeABIBase.nativeLease,lease_class,
+   execution_depths:['inspect'],
+   scope:{...nativeABIBase.nativeLease.scope,action_classes:['read',extra]}};
+  const request={...nativeABIBase.request,execution_depth:'inspect',action_class:'read'};
+  const r=reviewNativeLeaseHandshakeABI({...nativeABIBase,nativeLease,request});
+  assert.equal(r.status,'DENIED',lease_class+':'+extra);
+  assert.equal(r.reason,'NATIVE_LEASE_DECLARED_ACTION_CLASS_CONFLICT');
+  assert.equal(r.may_execute,false);
+ }
+ for(const [lease_class,extra] of [
+  ['READ_ONLY','execute'],['COMPUTE_ONLY','build'],['DIGITAL_WRITE','publish']]){
+  const nativeLease={...nativeABIBase.nativeLease,lease_class,
+   execution_depths:['inspect',extra],
+   scope:{...nativeABIBase.nativeLease.scope,action_classes:['read']}};
+  const request={...nativeABIBase.request,execution_depth:'inspect',action_class:'read'};
+  const r=reviewNativeLeaseHandshakeABI({...nativeABIBase,nativeLease,request});
+  assert.equal(r.status,'DENIED',lease_class+':'+extra);
+  assert.equal(r.reason,'NATIVE_LEASE_DECLARED_DEPTH_CLASS_CONFLICT');
+  assert.equal(r.may_execute,false);
+ }
+ const nativeLease={...nativeABIBase.nativeLease,lease_class:'COMPUTE_ONLY',
+  execution_depths:['inspect','simulate'],
+  scope:{...nativeABIBase.nativeLease.scope,action_classes:['read','simulate']}};
+ const request={...nativeABIBase.request,execution_depth:'inspect',action_class:'read'};
+ const safe=reviewNativeLeaseHandshakeABI({...nativeABIBase,nativeLease,request});
+ assert.equal(safe.status,'UNVERIFIED_SHAPE_REVIEW');
+ assert.equal(safe.may_execute,false);
+});
