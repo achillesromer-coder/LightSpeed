@@ -122,8 +122,13 @@ def _family_identity(path: Path) -> dict[str, Any]:
         object_id = child.get("semantic_object_id")
         parent = child.get("parent_semantic_object_id")
         filespace = child.get("filespace")
-        if (child.get("domain_id") != name
-            or not isinstance(object_id, str) or not object_id.startswith("cgx:domain:")
+        # Registry keys and semantic IDs are machine identities, not display labels.
+        # Reject control/bidi/path aliases and mismatched child keys before evidence
+        # projection. Native Object_ID qualification remains a separate DBR gate.
+        if (not isinstance(name, str)
+            or re.fullmatch(r"[a-z][a-z0-9_-]{0,63}", name) is None
+            or child.get("domain_id") != name
+            or object_id != "cgx:domain:" + name
             or object_id in seen or not isinstance(filespace, str)
             or not _portable_filespace(filespace) or filespace.casefold() in filespaces
             or not isinstance(parent, str)):
