@@ -821,3 +821,40 @@ def test_source_omitted_ancestor_id_preserves_original_node_key_fallback(tmp_pat
         assert mod.summary(con)["native_admission"] is False
     finally:
         con.close()
+
+@pytest.mark.parametrize("field,bad_value,reason", [
+    ("title", 0, "SOURCE_CONVERSATION_TITLE_TYPE_HOLD"),
+    ("title", False, "SOURCE_CONVERSATION_TITLE_TYPE_HOLD"),
+    ("title", ["alias"], "SOURCE_CONVERSATION_TITLE_TYPE_HOLD"),
+    ("create_time", "1.0", "SOURCE_TIMESTAMP_TYPE_OR_PRECISION_HOLD"),
+    ("create_time", True, "SOURCE_TIMESTAMP_TYPE_OR_PRECISION_HOLD"),
+    ("update_time", [], "SOURCE_TIMESTAMP_TYPE_OR_PRECISION_HOLD"),
+    ("create_time", 2**53, "SOURCE_TIMESTAMP_TYPE_OR_PRECISION_HOLD"),
+    ("create_time", 10**400, "SOURCE_TIMESTAMP_TYPE_OR_PRECISION_HOLD"),
+    ("message_create_time", "2.0", "SOURCE_TIMESTAMP_TYPE_OR_PRECISION_HOLD"),
+    ("message_create_time", False, "SOURCE_TIMESTAMP_TYPE_OR_PRECISION_HOLD"),
+    ("message_create_time", 2**53, "SOURCE_TIMESTAMP_TYPE_OR_PRECISION_HOLD"),
+])
+def test_source_metadata_types_reject_lossy_sqlite_coercion(tmp_path, field, bad_value, reason):
+    """R1 must not silently conflate distinct R0 title/time JSON types."""
+    source, _ = sample(tmp_path)
+    conv = json.loads(source.read_text(encoding="utf-8"))[0]
+    if field == "message_create_time":
+        conv["mapping"]["a-node"]["message"]["create_time"] = bad_value
+    else:
+        conv[field] = bad_value
+    source.write_text(json.dumps([conv]), encoding="utf-8")
+    entry = {"shard": source.name, "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+             "size_bytes": source.stat().st_size}
+    con = mod.connect(tmp_path / "typed_metadata.sqlite")
+    try:
+        with pytest.raises(ValueError, match=reason):
+            mod.ingest_shard(con, source, entry)
+        for table in ("shard", "conversation", "conversation_variant",
+                      "message", "source_visible_occurrence",
+                      "source_prompt_response_occurrence"):
+            assert con.execute(f"SELECT count(*) FROM {table}").fetchone()[0] == 0
+        assert mod.summary(con)["native_admission"] is False
+    finally:
+        con.close()
+
