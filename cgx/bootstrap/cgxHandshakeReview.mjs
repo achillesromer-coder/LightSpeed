@@ -186,10 +186,18 @@ export function reviewNativeLeaseHandshakeABI({
  for(const [scopeKey,requestKey] of [
   ["task_ids","task_id"],["project_ids","project_id"],
   ["configuration_ids","configuration_id"]]){
-  if(Object.hasOwn(scopes,scopeKey)){
+  const declared=Object.hasOwn(scopes,scopeKey);
+  // Match native Python subset_scope: a requested context requires a
+  // nonempty allowlist, and a declared restriction requires a matching
+  // request. An empty array is never a wildcard or permission grant.
+  const requested=Object.hasOwn(request,requestKey)&&
+    request[requestKey]!==null&&request[requestKey]!==undefined;
+  if(requested&&!declared)return deny("NATIVE_LEASE_CONTEXT_SCOPE_MISMATCH");
+  if(declared){
    const entries=scopes[scopeKey];
-   if(!Array.isArray(entries)||entries.length>100||!entries.every(id)||
-      (entries.length>0&&(!id(request[requestKey])||!entries.includes(request[requestKey]))))
+   if(!Array.isArray(entries)||entries.length===0||entries.length>100||
+      !entries.every(id)||!id(request[requestKey])||
+      !entries.includes(request[requestKey]))
     return deny("NATIVE_LEASE_CONTEXT_SCOPE_MISMATCH");
   }
  }
