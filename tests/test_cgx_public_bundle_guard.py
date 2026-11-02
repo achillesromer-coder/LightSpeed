@@ -120,6 +120,36 @@ class PublicBundleTests(unittest.TestCase):
                 with self.assertRaisesRegex(mod.BundleHold, "scripted passive resource loads"):
                     mod.inspect_public_bundle(c)
 
+    def test_dom_and_cssom_string_injection_sinks_fail_closed(self):
+        # #158: passive private GET can be created via HTML/CSS parsing without
+        # fetch(), src=, createElement() or window navigation.
+        attacks = [
+            'document.write("<img src=/owner-private/receipt.json>")',
+            'document.writeln("<iframe src=/owner-private/status>")',
+            'surface.insertAdjacentHTML("beforeend", "<img src=/owner-private/x>")',
+            'panel.outerHTML = "<img src=/owner-private/x>"',
+            'range.createContextualFragment("<img src=/owner-private/x>")',
+            'sheet.insertRule("body{background:url(/owner-private/x)}")',
+            'sheet.replaceSync("body{background:url(/owner-private/x)}")',
+            'new DOMParser().parseFromString("<img src=/owner-private/x>", "text/html")',
+        ]
+        for attack in attacks:
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as d:
+                c = Path(d) / "cgx"
+                shutil.copytree(mod.SOURCE, c)
+                with (c / "assets/core.js").open("a", encoding="utf-8") as handle:
+                    handle.write("\\n" + attack)
+                with self.assertRaisesRegex(mod.BundleHold, "unreviewed DOM or stylesheet injection"):
+                    mod.inspect_public_bundle(c)
+
+    def test_text_only_dom_projection_remains_allowed(self):
+        with tempfile.TemporaryDirectory() as d:
+            c = Path(d) / "cgx"
+            shutil.copytree(mod.SOURCE, c)
+            with (c / "assets/core.js").open("a", encoding="utf-8") as handle:
+                handle.write('\\nnode.textContent = "PUBLIC_SAFE_SYNTHETIC";')
+            self.assertEqual(mod.inspect_public_bundle(c)["file_count"], 12)
+
     def test_dynamic_network_and_code_paths_hold_even_when_private_name_is_split(self):
         attacks = [
             'fetch("/da" + "ta/cgx_object_review_" + "catalogue.json")',
