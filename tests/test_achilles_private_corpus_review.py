@@ -634,9 +634,16 @@ def test_conflicting_message_id_never_leaks_source_identifier(tmp_path):
 @pytest.mark.parametrize("kind,bad_id", [
     ("conversation", 7),
     ("conversation", True),
+    ("conversation", 0),
+    ("conversation", False),
+    ("conversation", ""),
     ("message", 7),
     ("message", True),
     ("message", 7.0),
+    ("message", 0),
+    ("message", False),
+    ("message", ""),
+    ("message", None),
 ])
 def test_r0_identifier_types_do_not_coerce_into_existing_string_ids(tmp_path, kind, bad_id):
     """A numeric/boolean source ID is not equivalent to its text rendering."""
