@@ -53,29 +53,63 @@ class SingleSessionLock(AbstractContextManager["SingleSessionLock"]):
         self.path = path
         self.enabled = enabled
         self._fd: int | None = None
+        self._lock_identity: tuple[int, int] | None = None
+        self._lock_generation: str | None = None
 
     def __enter__(self) -> "SingleSessionLock":
         if not self.enabled:
             return self
         self.path.parent.mkdir(parents=True, exist_ok=True)
         flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY
+        flags |= getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_BINARY", 0)
         try:
-            self._fd = os.open(str(self.path), flags)
+            self._fd = os.open(str(self.path), flags, 0o600)
         except FileExistsError as exc:
             raise LocalFloorRunnerError(f"another local floor runner session is active: {self.path}") from exc
-        payload = {"pid": os.getpid(), "created_at": _utc_now_iso()}
+        identity = os.fstat(self._fd)
+        if not identity.st_ino:
+            os.close(self._fd)
+            self._fd = None
+            raise LocalFloorRunnerError("local floor lock filesystem identity unavailable")
+        self._lock_identity = (identity.st_dev, identity.st_ino)
+        self._lock_generation = uuid4().hex
+        payload = {
+            "pid": os.getpid(),
+            "generation": self._lock_generation,
+            "created_at": _utc_now_iso(),
+        }
         os.write(self._fd, json.dumps(payload, sort_keys=True).encode("utf-8"))
+        os.fsync(self._fd)
         return self
 
     def __exit__(self, exc_type: object, exc: object, tb: object) -> bool:
-        if self._fd is not None:
-            os.close(self._fd)
-            self._fd = None
-        if self.enabled:
-            try:
+        try:
+            if self.enabled and self._fd is not None:
+                if self.path.is_symlink():
+                    raise LocalFloorRunnerError("local floor lock redirected; cleanup denied")
+                try:
+                    identity = self.path.stat(follow_symlinks=False)
+                except FileNotFoundError as exc:
+                    raise LocalFloorRunnerError("local floor lock disappeared; cleanup denied") from exc
+                if (identity.st_dev, identity.st_ino) != self._lock_identity:
+                    raise LocalFloorRunnerError("local floor lock identity changed; cleanup denied")
+                try:
+                    payload = json.loads(self.path.read_text(encoding="utf-8"))
+                except (OSError, UnicodeError, ValueError) as exc:
+                    raise LocalFloorRunnerError("local floor lock metadata invalid; cleanup denied") from exc
+                if (not isinstance(payload, dict)
+                        or payload.get("generation") != self._lock_generation
+                        or type(payload.get("pid")) is not int
+                        or payload["pid"] != os.getpid()):
+                    raise LocalFloorRunnerError("local floor lock generation changed; cleanup denied")
+                # Advisory process lock only; signed host lease/DBR remains independent.
                 self.path.unlink()
-            except FileNotFoundError:
-                pass
+        finally:
+            if self._fd is not None:
+                os.close(self._fd)
+                self._fd = None
+            self._lock_identity = None
+            self._lock_generation = None
         return False
 
 
