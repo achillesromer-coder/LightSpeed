@@ -89,7 +89,7 @@ def test_private_loopback_shortcut_never_follows_planted_output_alias(tmp_path, 
             os.link(sentinel, shortcut)
     except (OSError, NotImplementedError) as exc:
         pytest.skip(f"{alias_kind} creation unavailable: {exc}")
-    expected = "[InternetShortcut]\\nURL=http://127.0.0.1:8767/t/TEST_ONLY\\n"
+    expected = "[InternetShortcut]\nURL=http://127.0.0.1:8767/t/TEST_ONLY\n"
     mod.atomic_text(shortcut, expected)
     assert sentinel.read_text(encoding="utf-8") == "DO_NOT_CHANGE"
     assert shortcut.read_text(encoding="utf-8") == expected
