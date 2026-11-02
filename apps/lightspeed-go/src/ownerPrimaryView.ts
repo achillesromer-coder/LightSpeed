@@ -20,6 +20,15 @@ export interface OwnerViewSelectionInput {
   geometry?: { source_qualified?: boolean; frame_verified?: boolean; units_verified?: boolean };
   spatial?: { crs_verified?: boolean; datum_verified?: boolean };
   temporal?: { scale_verified?: boolean; valid_at_verified?: boolean; recorded_at_verified?: boolean };
+  /** Host-bound R2 topology evidence; client assertions never grant ACL or DBR admission. */
+  graph?: {
+    object_id?: string;
+    filespace?: string;
+    source_revision?: string;
+    topology_source_verified?: boolean;
+    typed_edges_verified?: boolean;
+    rights_verified?: boolean;
+  };
   device?: "desktop" | "phone" | "offline";
   inspector_open?: boolean;
   /** Trusted local verifier output only; client flags do not constitute a signed grant. */
@@ -94,6 +103,18 @@ export function selectOwnerPrimaryView(input: OwnerViewSelectionInput) {
     if (!registered.has(view) || !permitted.has(view)) return false;
     if (offline && view !== "filespace-tree" && view !== "active-object-inspector") {
       frontier.push("OFFLINE_VIEW_NOT_CACHED");
+      return false;
+    }
+    // The v0.6 graph is a private R2 review candidate, not an automatic
+    // topology view. Fail closed on missing or cross-source typed-edge proof.
+    if (view === "topology-graph" &&
+        !(input.graph?.object_id === projection.object_id &&
+          input.graph.filespace === projection.filespace &&
+          input.graph.source_revision === projection.source_revision &&
+          input.graph.topology_source_verified === true &&
+          input.graph.typed_edges_verified === true &&
+          input.graph.rights_verified === true)) {
+      frontier.push("GRAPH_TOPOLOGY_UNVERIFIED");
       return false;
     }
     if (view === "twin-3d" &&
