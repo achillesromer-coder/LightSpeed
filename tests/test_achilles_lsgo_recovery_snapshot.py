@@ -102,3 +102,19 @@ def test_unsupported_symlink_refused(tmp_path):
         pytest.skip("OS denies symlink creation")
     with pytest.raises(module.RecoveryHold, match="REDIRECTED"):
         module.inspect_database(alias)
+
+def test_running_status_not_hidden_by_group_display_limit(tmp_path):
+    p = fixture(tmp_path)
+    with sqlite3.connect(p) as db:
+        db.execute("DELETE FROM jobs")
+        db.execute("DELETE FROM ls_go_command_identities")
+        db.executemany("INSERT INTO jobs(id,job_type,status) VALUES (?,?,?)",
+                       [(i + 1, "ls_go_command", f"a{i:03}") for i in range(45)]
+                       + [(46, "ls_go_command", "running")])
+    report = module.inspect_database(p)
+    assert len(report["ls_go_job_status"]) == 40
+    assert all(x["state"] != "running" for x in report["ls_go_job_status"])
+    assert report["unresolved_running_jobs"] == 1
+    assert report["state"] == "UNRESOLVED_RUNNING_JOB_HOLD"
+    assert report["consumer_restart_authorized"] is False
+    assert report["jobs_dispatched"] == 0
