@@ -132,6 +132,26 @@ def test_receipt_needs_twelve_distinct_size_hash_bound_sources(tmp_path):
         mod.qualified_receipt(p)
 
 
+@pytest.mark.parametrize("source_parts,target_parts", [
+    (("raw",), ("raw", "private_output")),
+    (("private_output", "raw"), ("private_output",)),
+])
+def test_preflight_rejects_source_output_ancestor_overlap(tmp_path, source_parts, target_parts):
+    """Both nesting directions are unsafe even before an SQLite DB exists."""
+    source_root = tmp_path.joinpath(*source_parts)
+    target = tmp_path.joinpath(*target_parts)
+    source_root.mkdir(parents=True, exist_ok=True)
+    target.mkdir(parents=True, exist_ok=True)
+    receipt = tmp_path / "shard_receipt.json"
+    receipt.write_text("{}", encoding="utf-8")
+    args = type("A", (), {"shards_dir": source_root, "receipt": receipt,
+                          "private_dir": target, "preflight_only": True,
+                          "serve": False, "max_shards": 0, "port": 8767})
+    with pytest.raises(ValueError, match="SOURCE_OR_OUTPUT_PATH_HOLD"):
+        mod.run(args)
+    assert not (target / "semantic_review.sqlite").exists()
+
+
 def test_preflight_does_not_create_database(tmp_path):
     source_root = tmp_path / "raw"
     source_root.mkdir()
