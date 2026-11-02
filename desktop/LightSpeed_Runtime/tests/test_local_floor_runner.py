@@ -575,14 +575,19 @@ def test_grounded_request_keeps_context_and_source_identities_bound(tmp_path: Pa
     request = build_ollama_request(contract, floor, source_evidence=sources)
     assert request["options"]["num_ctx"] == 8192
     props = request["format"]["properties"]
-    route = props["safe_artifact_route"]["enum"][0]
+    from lightspeed_runtime.local_floor_runner import resolve_receipt_path
+    route = str(resolve_receipt_path(contract, floor))
     assert route in request["prompt"]
-    alternatives = props["citations"]["items"]["anyOf"]
-    assert [(a["properties"]["path"]["enum"][0], a["properties"]["sha256"]["enum"][0])
-            for a in alternatives] == [(s["path"], s["sha256"]) for s in sources]
-    assert [a["properties"]["quote"]["enum"][0] for a in alternatives] == [
-        s["excerpt"] for s in sources
-    ]
+    assert props["safe_artifact_route"] == {"type": "string"}
+    assert props["citations"]["minItems"] == 1
+    assert props["citations"]["items"]["properties"]["path"] == {"type": "string"}
+    # No model grammar should encode exact Windows paths or source text.
+    constrained_schema = json.dumps(request["format"])
+    assert "anyOf" not in constrained_schema
+    assert "enum" not in constrained_schema
+    assert route not in constrained_schema
+    assert all(src["path"] not in constrained_schema for src in sources)
+    assert all(src["excerpt"] not in constrained_schema for src in sources)
     # Constrained generation does not replace the independent citation check.
     swapped = {"floor_summary": "review", "safe_artifact_route": route, "blocker": None,
                "citations": [{"path": sources[0]["path"], "sha256": sources[1]["sha256"],
@@ -590,6 +595,32 @@ def test_grounded_request_keeps_context_and_source_identities_bound(tmp_path: Pa
     assert validate_grounded_response({"response": json.dumps(swapped), "done": True}, route, sources)
     contract["policy"]["receipt_prompt_overrides"] = {"num_ctx": 999999}
     assert build_ollama_request(contract, floor, source_evidence=sources)["options"]["num_ctx"] == 8192
+
+
+def test_ollama_0129_schema_does_not_embed_windows_escaped_source_literals(tmp_path: Path) -> None:
+    from lightspeed_runtime.local_floor_runner import resolve_receipt_path
+    contract = json.loads(_contract(tmp_path).read_text(encoding="utf-8"))
+    contract["policy"]["strict_response_contract"] = True
+    floor = select_floor(contract, floor="Neo").floor
+    sample = {"path": r"C:\\LightSpeed\\Original Archive\\source.json",
+              "sha256": "f" * 64,
+              "excerpt": 'Original quote: "a \\"dangerous\\" JSON token" 🧩'}
+    request = build_ollama_request(contract, floor, source_evidence=[sample])
+    schema = json.dumps(request["format"], ensure_ascii=False)
+    assert sample["path"] not in schema
+    assert sample["excerpt"] not in schema
+    assert "enum" not in schema and "anyOf" not in schema
+    assert sample["path"] in request["prompt"]
+    route = str(resolve_receipt_path(contract, floor))
+    valid = {"floor_summary": "source only", "safe_artifact_route": route,
+             "blocker": None, "citations": [dict(path=sample["path"],
+             sha256=sample["sha256"], quote=sample["excerpt"])]}
+    assert validate_grounded_response({"response": json.dumps(valid),
+                                       "done": True}, route, [sample]) == []
+    valid["citations"][0]["sha256"] = "e" * 64
+    assert "citation is not present in the hash-bound excerpt" in (
+        validate_grounded_response({"response": json.dumps(valid),
+                                    "done": True}, route, [sample]))
 
 
 def test_quote_selection_exposes_status_beyond_header_and_preserves_literals() -> None:
