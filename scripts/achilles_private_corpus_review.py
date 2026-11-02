@@ -364,7 +364,8 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
             conversation_count += 1
             if not isinstance(conv, dict):
                 raise ValueError("SOURCE_CONVERSATION_SHAPE_HOLD")
-            raw_cid = conv.get("conversation_id") or conv.get("id")
+            raw_cid = (conv["conversation_id"] if "conversation_id" in conv
+                       else conv.get("id"))
             # Source IDs are typed strings. Coercing numeric/boolean IDs to
             # strings would merge distinct R0 representations before R2.
             if not isinstance(raw_cid, str) or not raw_cid:
@@ -382,7 +383,7 @@ def ingest_shard(con: sqlite3.Connection, source: Path, entry: dict) -> tuple[in
                 msg = node.get("message")
                 if not isinstance(msg, dict):
                     continue
-                raw_mid = msg.get("id") or node_id
+                raw_mid = msg["id"] if "id" in msg else node_id
                 if not isinstance(raw_mid, str) or not raw_mid:
                     raise ValueError("SOURCE_MESSAGE_ID_HOLD")
                 mid = raw_mid
