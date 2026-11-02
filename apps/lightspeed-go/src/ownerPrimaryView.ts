@@ -17,9 +17,10 @@ export interface OwnerViewSelectionInput {
     hybridisation_policy: { max_primary_views: number; secondary_panels_on_demand: boolean };
   };
   registry: { shared_view_families: Array<{ id: string }> };
-  geometry?: { source_qualified?: boolean; frame_verified?: boolean; units_verified?: boolean };
-  spatial?: { crs_verified?: boolean; datum_verified?: boolean };
-  temporal?: { scale_verified?: boolean; valid_at_verified?: boolean; recorded_at_verified?: boolean };
+  /** Source-scoped host evidence only; booleans are not browser-side proof. */
+  geometry?: { object_id?: string; filespace?: string; source_revision?: string; rights_verified?: boolean; source_qualified?: boolean; frame_verified?: boolean; units_verified?: boolean };
+  spatial?: { object_id?: string; filespace?: string; source_revision?: string; rights_verified?: boolean; crs_verified?: boolean; datum_verified?: boolean };
+  temporal?: { object_id?: string; filespace?: string; source_revision?: string; rights_verified?: boolean; scale_verified?: boolean; valid_at_verified?: boolean; recorded_at_verified?: boolean };
   /** Host-bound R2 topology evidence; client assertions never grant ACL or DBR admission. */
   graph?: {
     object_id?: string;
@@ -107,6 +108,13 @@ export function selectOwnerPrimaryView(input: OwnerViewSelectionInput) {
   if (!Array.isArray(taskViews) || !taskViews.every(view => typeof view === "string"))
     return { ...scoped, state: "HOLD_VIEW_POLICY" };
   const frontier: string[] = [];
+  // All scientific/metric view evidence must bind to the selected source.
+  // An assertion about a different object/revision/child is never reusable.
+  const sourceBound = (part: { object_id?: string; filespace?: string; source_revision?: string; rights_verified?: boolean } | undefined): boolean =>
+    part?.object_id === projection.object_id &&
+    part?.filespace === projection.filespace &&
+    part?.source_revision === projection.source_revision &&
+    part?.rights_verified === true;
   const offline = input.device === "offline";
   const qualifies = (view: string): boolean => {
     if (!registered.has(view) || !permitted.has(view)) return false;
@@ -117,30 +125,28 @@ export function selectOwnerPrimaryView(input: OwnerViewSelectionInput) {
     // The v0.6 graph is a private R2 review candidate, not an automatic
     // topology view. Fail closed on missing or cross-source typed-edge proof.
     if (view === "topology-graph" &&
-        !(input.graph?.object_id === projection.object_id &&
-          input.graph.filespace === projection.filespace &&
-          input.graph.source_revision === projection.source_revision &&
-          input.graph.topology_source_verified === true &&
-          input.graph.typed_edges_verified === true &&
-          input.graph.rights_verified === true)) {
+        !(sourceBound(input.graph) &&
+          input.graph?.topology_source_verified === true &&
+          input.graph.typed_edges_verified === true)) {
       frontier.push("GRAPH_TOPOLOGY_UNVERIFIED");
       return false;
     }
     if (view === "twin-3d" &&
-        !(input.geometry?.source_qualified === true &&
+        !(sourceBound(input.geometry) && input.geometry?.source_qualified === true &&
           input.geometry.frame_verified === true && input.geometry.units_verified === true)) {
       frontier.push("GEOMETRY_FRAME_UNVERIFIED");
       return false;
     }
     if (view === "map-spatial" &&
-        !(input.spatial?.crs_verified === true && input.spatial.datum_verified === true &&
+        !(sourceBound(input.spatial) && sourceBound(input.geometry) &&
+          input.spatial?.crs_verified === true && input.spatial.datum_verified === true &&
           input.geometry?.units_verified === true)) {
       frontier.push("SPATIAL_CRS_UNVERIFIED");
       return false;
     }
     if (view === "timeline-dbr" &&
-        !(input.temporal?.scale_verified === true && input.temporal.valid_at_verified === true &&
-          input.temporal.recorded_at_verified === true)) {
+        !(sourceBound(input.temporal) && input.temporal?.scale_verified === true &&
+          input.temporal.valid_at_verified === true && input.temporal.recorded_at_verified === true)) {
       frontier.push("TEMPORAL_FRAME_UNVERIFIED");
       return false;
     }
