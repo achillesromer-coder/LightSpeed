@@ -594,6 +594,24 @@ test('reject padded and blank identity aliases before non-authorising shape revi
 });
 
 
+test('unmapped native action verbs never become CCC request-bound by self-declaration',()=>{
+ for(const action_class of [
+  'deploy','network_send','physical-actuation','delete','mint','custom:plugin.action'
+ ]){
+  const r=reviewNativeLeaseHandshakeABI({...nativeABIBase,
+   nativeLease:{...nativeABIBase.nativeLease,
+    scope:{...nativeABIBase.nativeLease.scope,action_classes:[action_class]}},
+   request:{...nativeABIBase.request,action_class}});
+  assert.equal(r.status,'DENIED',action_class);
+  assert.equal(r.reason,'NATIVE_LEASE_ACTION_CLASS_UNMAPPED',action_class);
+  assert.equal(r.may_execute,false);
+  assert.equal(r.host_signature_verified,false);
+ }
+ const known=reviewNativeLeaseHandshakeABI(nativeABIBase);
+ assert.equal(known.status,'UNVERIFIED_SHAPE_REVIEW');
+ assert.equal(known.may_execute,false);
+});
+
 test('native lease class/action contradictions are denied before request-bound shape review',()=>{
  for(const [lease_class,action_class] of [
   ['READ_ONLY','simulate'],['READ_ONLY','execute'],['READ_ONLY','digital_write'],
