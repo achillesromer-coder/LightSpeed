@@ -267,7 +267,11 @@ export function reviewNativeLeaseHandshakeABI({
  // Match the native Python 0.1 action vocabulary exactly: it is case-sensitive.
  // A lease and request both declaring "ReAd" must not become request-bound
  // by case-folding a verb the native validator would reject.
- if(!mappedActionClasses.has(request.action_class))
+ // A known request verb cannot make an unknown lease-listed capability
+ // silently appear ABI-qualified. Future native verbs require a versioned map.
+ if(!mappedActionClasses.has(request.action_class)||
+    !Array.isArray(scopes.action_classes)||
+    !scopes.action_classes.every(action=>mappedActionClasses.has(action)))
   return deny("NATIVE_LEASE_ACTION_CLASS_UNMAPPED");
  const forbiddenActions={
   READ_ONLY:new Set(["execute","compute","simulate","digital_write","write","mutate",
