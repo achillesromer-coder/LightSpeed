@@ -5,7 +5,7 @@
 export const HANDSHAKE_SCHEMA="CGX-BOOTSTRAP-HANDSHAKE-REVIEW/0.1";
 const SHA=/^[a-f0-9]{64}$/i;
 // Identity/nonce/transfer references must not carry log-spoofing controls.
-const id=x=>typeof x==="string"&&x.length>0&&x.length<=256&&
+const id=x=>typeof x==="string"&&x.length>0&&x.length<=256&&x===x.trim()&&
  !/[\u0000-\u001f\u007f-\u009f]/.test(x)&&
  !/[\p{Cf}\p{Zl}\p{Zp}\p{Cs}]/u.test(x);
 const obj=x=>x!==null&&typeof x==="object"&&!Array.isArray(x);
