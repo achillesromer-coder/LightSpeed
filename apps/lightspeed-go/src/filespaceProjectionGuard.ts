@@ -32,7 +32,7 @@ export interface HostProjectionReceipt {
   maxHydration: "H0" | "H1" | "H2";
   evidenceClass: EvidenceClass;
   evidenceCeiling: "R0" | "R1" | "R2" | "R3";
-  geometry?: { sourceVerified: boolean; frame: string; units: string };
+  geometry?: { sourceVerified: boolean; independentlyMetricValidated?: boolean; frame: string; units: string };
 }
 
 export type ProjectionDecision =
@@ -85,6 +85,7 @@ export function projectFileSpaceView(
   }
   if (selection.view === "spatial" &&
       (receipt.geometry?.sourceVerified !== true ||
+       (receipt.evidenceClass === "SCIENTIFIC" && receipt.geometry?.independentlyMetricValidated !== true) ||
        typeof receipt.geometry.frame !== "string" || !receipt.geometry.frame.trim() ||
        typeof receipt.geometry.units !== "string" || !receipt.geometry.units.trim())) {
     return { state: "FRONTIER", reason: "GEOMETRY_FRAME_UNITS_OR_SOURCE_UNVERIFIED", view: "evidence", hydration: "H0" };
