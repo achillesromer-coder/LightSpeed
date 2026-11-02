@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {createHash} from "node:crypto";
-import {prepareEcoPreMintAssembly as prepare, reviewEcoFormulaNamespaceCollision as reviewNamespace} from "./eco_pre_mint_assembly.mjs";
+import {prepareEcoPreMintAssembly as prepare, reviewEcoFormulaNamespaceCollision as reviewNamespace,
+  reviewEcoSiteReadiness as reviewSite} from "./eco_pre_mint_assembly.mjs";
 
 // Synthetic fixtures only. Original Drive workbook/PDF bytes are never stored in Git.
 const source={provider:"drive",id:"synthetic-drive-id",
@@ -1115,4 +1116,62 @@ test("WQ schema rejects duplicate row, mismatched parameter and measured payload
  ])assert.throws(()=>prepare({cascade_input:input,source_lineage:lineage,
    water_quality_schema_delta:{...wqInput,rows}}),
    /ECO_WQ_SCHEMA_ROW_IDENTITY_OR_DUPLICATE_CONFLICT/);
+});
+
+const siteCriteria=[
+ ["Legal/permitting feasibility",0.18,"Blocks deployment"],
+ ["Navigation/public safety",0.15,"Blocks deployment"],
+ ["Hydrodynamic suitability",0.14,"Recipe/design selection"],
+ ["Ecological compatibility",0.18,"Blocks deployment"],
+ ["Biosecurity clearance",0.16,"Blocks habitat features"],
+ ["Maintenance/access feasibility",0.08,"Operations"],
+ ["Community/custodial pathway",0.11,"Public/social gate"]
+];
+const siteInput={source_ref:source.source_ref,source_revision:source.revision,
+ source_sha256:digest,rows:siteCriteria.map(([criterion,weight,gate])=>
+ ({criterion,weight,score:0,gate,evidence_ref:null}))};
+test("site-score zero defaults remain unmeasured and all critical gates held",()=>{
+ const r=reviewSite(siteInput);
+ assert.equal(r.criteria_count,7);
+ assert.equal(r.zero_score_count,7);
+ assert.equal(r.critical_gate_count,5);
+ assert.equal(r.weighted_score_declared,0);
+ assert.equal(r.zero_means_unsuitable_verified,false);
+ assert.equal(r.site_suitability_verified,false);
+ assert.equal(r.permits_verified,false);
+ assert.equal(r.geospatial_coordinates_verified,false);
+ assert.equal(r.native_admitted,false);
+});
+test("positive weighted score and evidence reference cannot approve site",()=>{
+ const rows=siteInput.rows.map((r,i)=>i===0?
+   {...r,score:5,evidence_ref:"source-only:unreviewed"}:r);
+ const r=reviewSite({...siteInput,rows});
+ assert.equal(r.weighted_score_declared,0.9);
+ assert.equal(r.critical_gate_count,5);
+ assert.equal(r.site_suitability_verified,false);
+ assert.equal(r.biosecurity_approved,false);
+ assert.equal(r.cultural_stewardship_approved,false);
+});
+test("site-score input rejects invented geometry, missing criteria and weight drift",()=>{
+ for(const bad of [
+  {...siteInput,rows:siteInput.rows.slice(1)},
+  {...siteInput,rows:siteInput.rows.map((r,i)=>i===0?{...r,weight:0.2}:r)},
+  {...siteInput,rows:siteInput.rows.map((r,i)=>i===0?{...r,coordinates:[1,2]}:r)},
+  {...siteInput,rows:siteInput.rows.map((r,i)=>i===0?{...r,score:6}:r)}
+ ])assert.throws(()=>reviewSite(bad),/ECO_SITE_ASSESSMENT/);
+});
+test("site-score review is integrated into existing pre-mint chain with source pin",()=>{
+ const r=prepare({cascade_input:input,site_assessment:siteInput});
+ assert.equal(r.site_assessment_review.state,"R1_SITE_SCORE_SOURCE_ONLY_DEPLOYMENT_HOLD");
+ assert.equal(r.site_assessment_review.zero_score_count,7);
+ assert.equal(r.stack_layers.find(x=>x.layer==="site_assessment").state,
+   "R1_SITE_SCORE_SOURCE_ONLY_DEPLOYMENT_HOLD");
+ assert.equal(r.blocking_gates.includes("SITE_CRITICAL_PERMIT_BIOSECURITY_AND_ECOLOGY_GATES_OPEN"),true);
+ assert.equal(r.release.mint_allowed,false);
+ assert.equal(r.release.public_release_authorised,false);
+ for(const bad of [
+  {...siteInput,source_revision:"stale"},
+  {...siteInput,source_sha256:"f".repeat(64)}
+ ])assert.throws(()=>prepare({cascade_input:input,site_assessment:bad}),
+   /ECO_SITE_ASSESSMENT_SOURCE_CONFLICT/);
 });
