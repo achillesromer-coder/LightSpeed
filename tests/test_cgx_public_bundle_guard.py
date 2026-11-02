@@ -101,6 +101,25 @@ class PublicBundleTests(unittest.TestCase):
                 handle.write("\nconst currentRoute = location.pathname;")
             self.assertEqual(mod.inspect_public_bundle(c)["file_count"], 12)
 
+    def test_scripted_passive_resource_sinks_fail_closed(self):
+        # #158: CSP connect-src 'none' does not deny same-origin img/worker GET.
+        attacks = [
+            'const i = new Image(); i.src="/owner-private/receipt.json";',
+            'const a = new Audio("/owner-private/voice.mp3");',
+            'const f = document.createElement("iframe");',
+            'img.setAttribute("src","/owner-private/receipt.json");',
+            'img["src"]="/owner-private/receipt.json";',
+            'const w = new Worker("/owner-private/worker.js");',
+        ]
+        for attack in attacks:
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as d:
+                c = Path(d) / "cgx"
+                shutil.copytree(mod.SOURCE, c)
+                with (c / "assets/core.js").open("a", encoding="utf-8") as handle:
+                    handle.write("\n" + attack)
+                with self.assertRaisesRegex(mod.BundleHold, "scripted passive resource loads"):
+                    mod.inspect_public_bundle(c)
+
     def test_dynamic_network_and_code_paths_hold_even_when_private_name_is_split(self):
         attacks = [
             'fetch("/da" + "ta/cgx_object_review_" + "catalogue.json")',
