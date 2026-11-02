@@ -521,3 +521,43 @@ def test_private_sqlite_hardlink_alias_rejected_before_open(tmp_path):
     with pytest.raises(ValueError, match="PRIVATE_SQLITE_TARGET_ALIAS_HOLD"):
         mod.connect(db)
     assert sentinel.read_bytes() == b"DO_NOT_MODIFY"
+
+
+@pytest.mark.parametrize("which", ["source", "receipt", "source_parent", "receipt_parent"])
+def test_private_r0_source_or_receipt_reparse_alias_fails_closed(tmp_path, which):
+    """Do not resolve away an unapproved source/receipt directory alias."""
+    original = tmp_path / "original"
+    original.mkdir()
+    (original / "raw").mkdir()
+    entries = [{"shard": f"conversations-{n:03d}.json",
+                "size_bytes": 10, "sha256": "a" * 64} for n in range(12)]
+    (original / "receipt.json").write_text(json.dumps({
+        "schema": "CGX-OWNER-GPT-EXPORT-SHARD-RECEIPT/0.1",
+        "shards": entries, "total_bytes": 120
+    }), encoding="utf-8")
+    alias = tmp_path / "alias"
+    if which in ("source", "receipt"):
+        destination = original / ("raw" if which == "source" else "receipt.json")
+        try:
+            alias.symlink_to(destination, target_is_directory=which == "source")
+        except (OSError, NotImplementedError) as exc:
+            pytest.skip(f"Symlinks unavailable: {exc}")
+        source = alias if which == "source" else original / "raw"
+        receipt = alias if which == "receipt" else original / "receipt.json"
+    else:
+        try:
+            alias.symlink_to(original, target_is_directory=True)
+        except (OSError, NotImplementedError) as exc:
+            pytest.skip(f"Directory symlinks unavailable: {exc}")
+        source = alias / "raw" if which == "source_parent" else original / "raw"
+        receipt = alias / "receipt.json" if which == "receipt_parent" else original / "receipt.json"
+    target = tmp_path / "approved_private"
+    target.mkdir()
+    args = type("A", (), {
+        "shards_dir": source, "receipt": receipt, "private_dir": target,
+        "preflight_only": True, "serve": False, "max_shards": 0, "port": 8767
+    })
+    with pytest.raises(ValueError, match="SOURCE_INPUT_REPARSE_HOLD"):
+        mod.run(args)
+    assert not (target / "semantic_review.sqlite").exists()
+    assert (original / "receipt.json").is_file()
