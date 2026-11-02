@@ -54,6 +54,14 @@ BLOCKED = {
         r"""|\b(?:window|globalThis|self|top|parent)\s*\.\s*open\s*\("""
         r"""|\b(?:window|document|globalThis|self|top|parent)\s*\[\s*['"](?:location|open)['"]\s*\]""", re.I),
 
+    # #158: these DOM/CSSOM APIs can manufacture same-origin passive resource
+    # requests from strings without using fetch(), createElement(), or src=.
+    # The reviewed demo uses fixed innerHTML layouts, so that sink is NOT
+    # covered here; this is a bounded negative, not an authenticated ACL.
+    "unreviewed DOM or stylesheet injection": re.compile(
+        r"\\b(?:document\\s*\\.\\s*(?:write|writeln)\\s*\\("
+        r"|(?:insertAdjacentHTML|createContextualFragment|parseFromString|insertRule|replaceSync|setHTMLUnsafe|parseHTMLUnsafe)\\s*\\("
+        r"|\\.\\s*outerHTML\\s*=(?!=))", re.I),
     # Static demonstration code has no reason to initiate network reads or dynamic code loads.
     # CSP remains mandatory, but is not a substitute for rejecting source-level bypasses.
     # #158: bracket-property API invocation bypasses bare fetch()/sendBeacon() scans.
