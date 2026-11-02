@@ -153,6 +153,41 @@ def main():
         if ok or expected not in reasons:
             failures.append(f"Neo ABI {lease_class}/{depth}/{action}: {reasons}")
 
+    # Contradictory extra lease capabilities fail even when this request
+    # is benign. These fixtures do not establish signature or host authority.
+    for lease_class, safe_depth, safe_action, axis, extra, expected in (
+        ("READ_ONLY", "inspect", "read", "action", "physical_actuation",
+         "lease-declared-action-class-incompatible"),
+        ("COMPUTE_ONLY", "inspect", "read", "action", "digital_write",
+         "lease-declared-action-class-incompatible"),
+        ("READ_ONLY", "inspect", "read", "depth", "execute",
+         "lease-declared-depth-class-incompatible"),
+        ("COMPUTE_ONLY", "inspect", "read", "depth", "build",
+         "lease-declared-depth-class-incompatible"),
+    ):
+        x = base_lease()
+        x["lease_class"] = lease_class
+        x["execution_depths"] = [safe_depth]
+        x["scope"]["action_classes"] = [safe_action]
+        if axis == "action":
+            x["scope"]["action_classes"].append(extra)
+        else:
+            x["execution_depths"].append(extra)
+        ok, reasons, _ = check(
+            x, execution_depth=safe_depth, action_class=safe_action,
+            execution_class=lease_class, consequential=False,
+        )
+        if ok or expected not in reasons:
+            failures.append(f"Neo declared {axis} {lease_class}/{extra}: {reasons}")
+
+    # Native DIGITAL_WRITE publish remains release-receipt gated.
+    x = base_lease()
+    x["root_authority_receipt_ref"] = "fixture:root-approval"
+    x["release_receipt_ref"] = "fixture:release"
+    ok, reasons, _ = check(x, execution_depth="publish", action_class="publish")
+    if not ok:
+        failures.append("declared-scope guard broke release-gated publish: " + repr(reasons))
+
     # Even a strong lease cannot be downgraded by self-labelling an
     # effectful request as COMPUTE_ONLY. The requested class must meet the
     # independent semantic action/depth minimum.
@@ -191,8 +226,8 @@ def main():
     ):
         x = base_lease()
         x["lease_class"] = lease_class
-        x["execution_depths"].append(depth)
-        x["scope"]["action_classes"].append(action)
+        x["execution_depths"] = [depth]
+        x["scope"]["action_classes"] = [action]
         ok, reasons, _ = check(
             x, execution_depth=depth, action_class=action,
             execution_class=lease_class, consequential=False,
