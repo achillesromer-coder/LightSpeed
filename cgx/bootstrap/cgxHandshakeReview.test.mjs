@@ -696,3 +696,30 @@ test('native lease class cannot be bypassed by a lower-risk action label at a hi
   assert.equal(result.may_execute,false);
  }
 });
+
+test('native lease ABI denies unmapped or mixed-case execution depths before request-bound review',()=>{
+ // A READ_ONLY lease must not classify a mixed-case "publish" as a benign
+ // unknown depth. Native 0.1 has no case-folding or future-verb authority.
+ for(const depth of ['PuBlIsH','PUBLISH','SiMuLaTe','ExEcUtE','future_depth']){
+  const nativeLease={...nativeABIBase.nativeLease,lease_class:'READ_ONLY',
+   execution_depths:[depth],
+   scope:{...nativeABIBase.nativeLease.scope,action_classes:['inspect']}};
+  const request={...nativeABIBase.request,execution_depth:depth,action_class:'inspect'};
+  const r=reviewNativeLeaseHandshakeABI({...nativeABIBase,nativeLease,request});
+  assert.equal(r.status,'DENIED',depth);
+  assert.equal(r.reason,'NATIVE_LEASE_EXECUTION_DEPTH_UNMAPPED',depth);
+  assert.equal(r.may_execute,false,depth);
+ }
+ // Unknown lease-listed depths are not ignored even when the requested one
+ // is known and allowed by the rest of the source-review shape.
+ for(const depth of ['PuBlIsH','future_depth']){
+  const nativeLease={...nativeABIBase.nativeLease,
+   execution_depths:['simulate',depth]};
+  const r=reviewNativeLeaseHandshakeABI({...nativeABIBase,nativeLease});
+  assert.equal(r.status,'DENIED',depth);
+  assert.equal(r.reason,'NATIVE_LEASE_EXECUTION_DEPTH_UNMAPPED',depth);
+ }
+ const safe=reviewNativeLeaseHandshakeABI(nativeABIBase);
+ assert.equal(safe.status,'UNVERIFIED_SHAPE_REVIEW');
+ assert.equal(safe.may_execute,false);
+});
