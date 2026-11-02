@@ -1,4 +1,6 @@
 import { test } from "vitest";
+import { readFileSync } from "node:fs";
+import { selectOwnerPrimaryView } from "../src/ownerPrimaryView.ts";
 import assert from "node:assert/strict";
 import { projectOwnerProgress } from "../src/ownerProgressProjection.ts";
 
@@ -168,4 +170,96 @@ test("offline or missing bridge holds consumer-ready claim despite reported cons
   view=projectOwnerProgress(x);
   assert.equal(view.consumer,"CONSUMER_READY_CLAIM_NOT_AUTHORITY");
   assert.equal(view.dispatch_authorized,false);
+});
+
+const currentPolicy = JSON.parse(readFileSync(new URL("../../../cgx/domain_templates/view_selection_policy.json", import.meta.url), "utf8"));
+const currentLenses = JSON.parse(readFileSync(new URL("../../../cgx/domain_templates/semantic_view_lens_registry.json", import.meta.url), "utf8"));
+const lensInput = (task="browse") => ({
+  envelope:full(), task, policy:currentPolicy, registry:currentLenses,
+  permitted_view_ids:currentLenses.shared_view_families.map(x=>x.id),
+  device:"desktop", inspector_open:false,
+});
+
+test("single primary owner lens follows existing source registry and preserves exact source (#158)", () => {
+  const x=lensInput("browse");
+  const v=selectOwnerPrimaryView(x);
+  assert.equal(v.state,"SOURCE_ONLY_VIEW_CANDIDATE");
+  assert.equal(v.primary_view,"filespace-tree");
+  assert.deepEqual(v.secondary_views,[]);
+  assert.equal(v.object_id,x.envelope.source.object_id);
+  assert.equal(v.source_revision,x.envelope.source.revision);
+  assert.equal(v.filespace,"Cognigrex.cgx/FileSpace");
+  assert.equal(v.evidence,"SOURCE_ONLY_UNADMITTED");
+  assert.equal(v.native_admitted,false);
+  assert.equal(v.live_verified,false);
+  assert.equal(v.dispatch_authorized,false);
+  assert.equal(v.public_publish_authorized,false);
+  x.inspector_open=true;
+  assert.deepEqual(selectOwnerPrimaryView(x).secondary_views,["active-object-inspector"]);
+});
+
+test("owner lens denies unverified gateway and cross-child identity without projection", () => {
+  const x=lensInput();
+  x.envelope.gateway.session_verified=false;
+  let v=selectOwnerPrimaryView(x);
+  assert.equal(v.state,"HOLD_PRIVATE_SCOPE");
+  assert.equal(v.object_id,null);
+  assert.equal(v.primary_view,null);
+  x.envelope=full();
+  x.envelope.source.filespace="Eco.cgx/FileSpace";
+  v=selectOwnerPrimaryView(x);
+  assert.equal(v.state,"HOLD_SOURCE_IDENTITY");
+  assert.equal(v.object_id,null);
+});
+
+test("requested 3D view shows Frontier until source, frame and units qualify (#209)", () => {
+  const x=lensInput("engineer");
+  x.requested_view="twin-3d";
+  let v=selectOwnerPrimaryView(x);
+  assert.equal(v.primary_view,"active-object-inspector");
+  assert.ok(v.frontier.includes("GEOMETRY_FRAME_UNVERIFIED"));
+  x.geometry={source_qualified:true,frame_verified:true,units_verified:true};
+  v=selectOwnerPrimaryView(x);
+  assert.equal(v.primary_view,"twin-3d");
+  assert.equal(v.state,"SOURCE_ONLY_VIEW_CANDIDATE");
+  assert.equal(v.live_verified,false);
+  assert.equal(v.native_admitted,false);
+});
+
+test("spatial and time-bearing views cannot invent CRS, datum or temporal frame", () => {
+  const eco=lensInput("ecology");
+  eco.requested_view="map-spatial";
+  eco.geometry={units_verified:true};
+  let v=selectOwnerPrimaryView(eco);
+  assert.equal(v.primary_view,"active-object-inspector");
+  assert.ok(v.frontier.includes("SPATIAL_CRS_UNVERIFIED"));
+  eco.spatial={crs_verified:true,datum_verified:true};
+  assert.equal(selectOwnerPrimaryView(eco).primary_view,"map-spatial");
+  const audit=lensInput("audit");
+  audit.requested_view="timeline-dbr";
+  v=selectOwnerPrimaryView(audit);
+  assert.notEqual(v.primary_view,"timeline-dbr");
+  assert.ok(v.frontier.includes("TEMPORAL_FRAME_UNVERIFIED"));
+});
+
+test("offline lens has one metadata-only fallback, no live runtime claim", () => {
+  const x=lensInput("runtime");
+  x.device="offline";
+  x.requested_view="network-runtime";
+  const v=selectOwnerPrimaryView(x);
+  assert.equal(v.primary_view,"active-object-inspector");
+  assert.equal(v.hydration,"H0_H2_CACHED_METADATA_ONLY");
+  assert.ok(v.frontier.includes("OFFLINE_VIEW_NOT_CACHED"));
+  assert.equal(v.dispatch_authorized,false);
+});
+
+test("policy drift and empty host view allowance hold rather than manufacture a UI", () => {
+  const x=lensInput();
+  x.policy={...currentPolicy,hybridisation_policy:{...currentPolicy.hybridisation_policy,max_primary_views:2}};
+  assert.equal(selectOwnerPrimaryView(x).state,"HOLD_VIEW_POLICY");
+  x.policy=currentPolicy;
+  x.permitted_view_ids=[];
+  const v=selectOwnerPrimaryView(x);
+  assert.equal(v.state,"HOLD_NO_QUALIFIED_VIEW");
+  assert.equal(v.primary_view,null);
 });
