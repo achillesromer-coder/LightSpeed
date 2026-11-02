@@ -19,10 +19,28 @@ class PublicBundleTests(unittest.TestCase):
         receipt=json.loads((ROOT/"cgx/review/unispace_public_source_fold_20261020.json").read_text(encoding="utf-8"))
         self.assertEqual(receipt["source_pr"],174)
         self.assertEqual(len(receipt["carried_source_files"]),18)
+        self.assertEqual(receipt["review_delta_schema"],"CGX-UNISPACE-PR188-ORBIT-DELTA/0.1")
+        deltas={x["path"]:x for x in receipt["review_deltas"]}
+        self.assertEqual(len(deltas),5)
+        self.assertEqual(set(deltas),{
+            ".github/workflows/unispace-public-viewer.yml",
+            "apps/lightspeed-go/public/cgx/assets/core.js",
+            "apps/lightspeed-go/public/cgx/assets/viewer.css",
+            "apps/lightspeed-go/public/cgx/assets/viewer.js",
+            "apps/lightspeed-go/tests/unispace-public.test.mjs",
+        })
         for item in receipt["carried_source_files"]:
             raw=(ROOT/item["path"]).read_bytes()
             blob=hashlib.sha1(b"blob "+str(len(raw)).encode()+bytes([0])+raw).hexdigest()
-            self.assertEqual(blob,item["git_blob_sha1"],item["path"])
+            if item["path"] in deltas:
+                delta=deltas[item["path"]]
+                # This preserves PR174 source lineage without claiming that
+                # intentionally modified PR188 review files are byte-identical.
+                self.assertEqual(delta["original_pr174_blob_sha1"],item["git_blob_sha1"])
+                self.assertEqual(delta["disposition"],"SOURCE_REVIEW_ONLY_NOT_PUBLIC_RELEASE")
+                self.assertEqual(blob,delta["review_branch_blob_sha1"],item["path"])
+            else:
+                self.assertEqual(blob,item["git_blob_sha1"],item["path"])
 
     def test_existing_cgx_tree_exact_allowlist(self):
         report=mod.inspect_public_bundle()
