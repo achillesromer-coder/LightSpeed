@@ -138,7 +138,7 @@ class PublicBundleTests(unittest.TestCase):
                 c = Path(d) / "cgx"
                 shutil.copytree(mod.SOURCE, c)
                 with (c / "assets/core.js").open("a", encoding="utf-8") as handle:
-                    handle.write("\\n" + attack)
+                    handle.write(chr(10) + attack)
                 with self.assertRaisesRegex(mod.BundleHold, "unreviewed DOM or stylesheet injection"):
                     mod.inspect_public_bundle(c)
 
@@ -147,7 +147,7 @@ class PublicBundleTests(unittest.TestCase):
             c = Path(d) / "cgx"
             shutil.copytree(mod.SOURCE, c)
             with (c / "assets/core.js").open("a", encoding="utf-8") as handle:
-                handle.write('\\nnode.textContent = "PUBLIC_SAFE_SYNTHETIC";')
+                handle.write(chr(10) + 'node.textContent = "PUBLIC_SAFE_SYNTHETIC";')
             self.assertEqual(mod.inspect_public_bundle(c)["file_count"], 12)
 
     def test_dynamic_network_and_code_paths_hold_even_when_private_name_is_split(self):
