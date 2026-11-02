@@ -5,6 +5,7 @@ Additive R0->candidate R1 only. Never edits inputs, invokes models, executes
 assistant tasks, writes the native database, serves raw dialogue, or mints CGX.
 """
 from __future__ import annotations
+from decimal import Decimal
 import argparse, datetime as dt, hashlib, hmac, html, http.server, json, math, os
 from pathlib import Path
 import re, secrets, sqlite3, threading, time, urllib.parse
@@ -36,10 +37,16 @@ def sha(b: bytes) -> str:
 
 
 def finite_json_float(token: str) -> float:
-    """Fail closed on JSON exponents that overflow Python finite timestamps."""
+    """Reject overflow and nonzero JSON decimals silently rounded to zero.
+
+    This guards catastrophic numeric loss, not general binary-float precision:
+    exact decimal lexemes and R1 numeric reversibility remain unqualified.
+    """
     value = float(token)
     if not math.isfinite(value):
         raise ValueError("SOURCE_NONFINITE_JSON_NUMBER_HOLD")
+    if value == 0.0 and not Decimal(token).is_zero():
+        raise ValueError("SOURCE_FLOAT_UNDERFLOW_HOLD")
     return value
 
 
