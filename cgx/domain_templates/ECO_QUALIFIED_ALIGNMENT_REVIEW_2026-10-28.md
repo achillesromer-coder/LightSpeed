@@ -130,3 +130,24 @@ A fresh authenticated, read-only comparison of two **distinct original R0 XLSX f
 - The prior two Second Cycle unit-string encoding losses remain unresolved. This comparison does not certify whole-sheet parity, formula provenance, revision equivalence, source rights, native geometry, DBR admission or release. The original R0 files and translated Sheet remain separate source identities. No source bodies, protected coordinates, species records, original provider IDs or private content are copied here.
 
 **Candidate FileSpace:** `Eco.cgx/SecondCycle/R1-translation-crosswalk` and `Eco.cgx/BioBlocks/R1-translation-crosswalk`. **Evidence:** source-extracted cached numeric values, translated formula readback and editorial-difference observation; not measured ecology. **Stage:** R1_REVIEW_ONLY. **Next falsifier:** obtain authenticated original XLSX formula XML and compare exact formula expressions, cached values, cell coordinates and annotated-note provenance at pinned revisions; fail closed on mismatches. No native mint or canonical write.
+
+## 2026-11-02 — Second Cycle formula-ID row binding and access-class discrepancy (authenticated source review)
+
+A fresh bounded read used the **original** `Second_Cycle_Digital_Twin_v0_1.xlsx` through the authenticated Drive readable-extraction boundary, the **distinct** native `Type 1 Eco-Grex` translated Sheet `SECON0E3E_31_Formula_Library!A2:F11` through the authenticated Sheets CellData boundary, and both current Drive permission-class metadata responses. Original metadata: 49,474 bytes, last modified `2026-05-19T23:33:23Z`; translated Sheet last modified `2026-09-28T00:15:14.256Z`. The previous original XLSX SHA-256 remains a **historical receipt**, **not rehashed in this comparison**. No private source bytes, source IDs, user ACL identities, or source expression bodies are committed here.
+
+| Source-local formula ID | Original extracted row candidate | Translated Sheet ID/formula row read back | Exact human-readable expression comparison |
+| --- | --- | --- | --- |
+| FM-001 | A3:B3 | A3:B3 | MISMATCH: multiplication-sign encoding |
+| FM-002 | A4:B4 | A4:B4 | MISMATCH: multiplication-sign encoding |
+| FM-003 | A5:B5 | A5:B5 | MISMATCH: rho and superscript encoding |
+| FM-004 | A6:B6 | A6:B6 | MISMATCH: rho and superscript encoding |
+| FM-005 | A7:B7 | A7:B7 | TEXT_EXACT in these readable views only |
+| FM-006 | A8:B8 | A8:B8 | MISMATCH: multiplication-sign encoding |
+| FM-007 | A9:B9 | A9:B9 | MISMATCH: multiplication-sign encoding |
+| FM-008, FM-009 | NOT PRESENT in seven original extracted formula IDs | A10:B11, translation only | NOT ORIGINAL SOURCE EVIDENCE |
+
+**Result:** 7 original source-local IDs versus 9 translated IDs; 6/7 shared expression strings differ, 1/7 matches in readable text. These are **source-representation discrepancies**, not scientific formula failures or environmental measurements. The original extraction uses zero-indexed tabular rows, so its A1 anchors above are **candidate mappings** requiring original XLSX worksheet XML readback; translated A1 anchors were independently read through the native Sheets API. Formula IDs are scoped to this specific original/translation pair and must not merge with identically named BioBlocks FM IDs.
+
+**Access-class delta:** original provider metadata reported `anyone:reader` plus individual owner/writer classes; translated provider metadata reported individual owner/writer classes and **no** `anyone` entry. This is a **permission-class divergence**, not proof of actual link discovery, licence, ownership transfer, source reuse rights, full ACL equivalence, or permission to publish. No permissions were changed.
+
+**Admission:** `Eco.cgx/SecondCycle/R1-translation-crosswalk` remains `R1_REVIEW_ONLY`. Existing `eco_pre_mint_assembly.mjs` guards already support original-cell digest/row binding, formula-inventory delta, symbolic correction proposals, and pairwise access posture; no duplicate validator or automatic repair was added. **HOLD:** original XML cell/formula-byte anchors, independent reversible roundtrip/loss account, original-vs-translation rights, measured field calibration, geometry/CRS, signed DBR/lease/ACL, native runtime and publication. **Next falsifier:** read the original XLSX worksheet XML in a trusted private provider boundary, verify exact A3:B9 coordinates and expression digests against the translated cells, and negative-test changed revision/encoding without modifying either R0.
