@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"scripts"))
-from run_cgx_agent_runtime import validate_lease
+from run_cgx_agent_runtime import validate_lease, supervisor_receipt_complete
 
 def base_lease():
     now=datetime.now(UTC)
@@ -56,6 +56,42 @@ def check(lease, execution_depth="execute", action_class="execute", consequentia
 
 def main():
     failures=[]
+    # Neo/LS source-only supervisor result ABI: an aggregate status alone
+    # cannot turn a failed, partial, unknown or duplicated floor into success.
+    def floor_result_fixture(execute=True):
+        floor_status = "completed" if execute else "dry_run"
+        return {
+            "status": "complete", "complete_workflow": True,
+            "requested_execution": execute, "floor_sequence": ["Neo", "Smith"],
+            "floors": [
+                {"sequence": 1, "floor": "Neo", "status": floor_status},
+                {"sequence": 2, "floor": "Smith", "status": floor_status},
+            ],
+        }
+
+    for label, execute, change, expected in (
+        ("completed", True, None, True),
+        ("dry-run", False, None, True),
+        ("failed", True, lambda r: r["floors"][1].update(status="failed"), False),
+        ("blocked", True, lambda r: r["floors"][1].update(status="blocked"), False),
+        ("unknown", True, lambda r: r["floors"][1].update(status="unknown"), False),
+        ("partial", True, lambda r: r.update(status="partial"), False),
+        ("false-complete", True, lambda r: r.update(complete_workflow=False), False),
+        ("missing-row", True, lambda r: r["floors"].pop(), False),
+        ("duplicate-floor", True, lambda r: r["floors"][1].update(floor="Neo"), False),
+        ("wrong-sequence", True, lambda r: r["floors"][1].update(sequence=1), False),
+        ("wrong-mode", True, lambda r: r.update(requested_execution=False), False),
+        ("wrong-plan", True, lambda r: r.update(floor_sequence=["Smith", "Neo"]), False),
+    ):
+        receipt = floor_result_fixture(execute)
+        if change is not None:
+            change(receipt)
+        observed = supervisor_receipt_complete(
+            receipt, expected_floors=["Neo", "Smith"], execute=execute
+        )
+        if observed is not expected:
+            failures.append(f"Neo supervisor receipt {label}: expected {expected}, got {observed}")
+
     x=base_lease()
     ok,reasons,_=check(x)
     if ok or "lease-root-authority-receipt-ref-missing" not in reasons:
