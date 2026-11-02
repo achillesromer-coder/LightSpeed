@@ -50,7 +50,11 @@ def load_profile(path: Path = PROFILE_PATH) -> dict[str, Any]:
     if (authority.get("agent_can_self_approve") is not False
         or authority.get("automatic_release") is not False
         or authority.get("automatic_merge") is not False
+        or authority.get("automatic_rights_grants") is not False
         or authority.get("default_execution_class") != "READ_ONLY"
+        or lifecycle.get("stage") != "PRE_MINT_REVIEW"
+        or lifecycle.get("evidence_ceiling") != "SOURCE_ONLY"
+        or lifecycle.get("active_host_installation") != "UNVERIFIED"
         or lifecycle.get("native_dbr_admission") is not False
         or lifecycle.get("release_authorized") is not False):
         raise ProfileHold("ACHILLES_PRIVILEGE_ESCALATION_HOLD")
