@@ -157,6 +157,25 @@ class PublicBundleTests(unittest.TestCase):
                 with self.assertRaisesRegex(mod.BundleHold, "computed split network API access"):
                     mod.inspect_public_bundle(c)
 
+    def test_split_computed_navigation_properties_fail_closed(self):
+        # #158: connect-src does not stop navigation via computed JS properties.
+        # These evade literal location.assign/window.open scanners.
+        attacks = [
+            'window["loc" + "ation"].assign("/owner-private/receipt.json")',
+            'globalThis["op" + "en"]("https://example.invalid/collect")',
+            'location["as" + "sign"]("/owner-private/receipt.json")',
+            'location["re" + "place"]("https://example.invalid/collect")',
+            'window.location["hr" + "ef"] = "/owner-private/receipt.json"',
+        ]
+        for attack in attacks:
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as d:
+                c = Path(d) / "cgx"
+                shutil.copytree(mod.SOURCE, c)
+                with (c / "assets/core.js").open("a", encoding="utf-8") as handle:
+                    handle.write("\\n" + attack)
+                with self.assertRaisesRegex(mod.BundleHold, "computed split navigation property access"):
+                    mod.inspect_public_bundle(c)
+
     def test_js_template_literal_transport_fail_closed(self):
         # #158: computed template literals can hide network API names from
         # ordinary fetch() and bracket-quoted-property checks. The reviewed
