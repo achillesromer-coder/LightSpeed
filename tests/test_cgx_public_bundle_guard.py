@@ -195,6 +195,23 @@ class PublicBundleTests(unittest.TestCase):
                 with self.assertRaisesRegex(mod.BundleHold, "computed split navigation property access"):
                     mod.inspect_public_bundle(c)
 
+    def test_escaped_js_computed_transport_and_navigation_hold(self):
+        # #158: JS string escapes bypass literal bracket-property regexes.
+        # These are synthetic negatives, not proof of a deployed ACL.
+        attacks = [
+            r'globalThis["\x66etch"]("/owner-private/receipt.json")',
+            r'window["\u006cocation"].assign("/owner-private/receipt.json")',
+            r'window["\u{6f}pen"]("https://example.invalid/collect")',
+        ]
+        for attack in attacks:
+            with self.subTest(attack=attack), tempfile.TemporaryDirectory() as d:
+                c = Path(d) / "cgx"
+                shutil.copytree(mod.SOURCE, c)
+                with (c / "assets/core.js").open("a", encoding="utf-8") as handle:
+                    handle.write("\n" + attack)
+                with self.assertRaisesRegex(mod.BundleHold, "unreviewed JavaScript hex/unicode escape"):
+                    mod.inspect_public_bundle(c)
+
     def test_js_template_literal_transport_fail_closed(self):
         # #158: computed template literals can hide network API names from
         # ordinary fetch() and bracket-quoted-property checks. The reviewed
