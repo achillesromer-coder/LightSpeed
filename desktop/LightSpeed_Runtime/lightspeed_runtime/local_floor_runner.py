@@ -83,8 +83,13 @@ class SingleSessionLock(AbstractContextManager["SingleSessionLock"]):
         return self
 
     def __exit__(self, exc_type: object, exc: object, tb: object) -> bool:
+        # Windows may deny unlink of an open CRT file descriptor. Keep the
+        # generation/inode checks below after closing, and fail closed on swap.
+        if self._fd is not None:
+            os.close(self._fd)
+            self._fd = None
         try:
-            if self.enabled and self._fd is not None:
+            if self.enabled and self._lock_generation is not None:
                 if self.path.is_symlink():
                     raise LocalFloorRunnerError("local floor lock redirected; cleanup denied")
                 try:
