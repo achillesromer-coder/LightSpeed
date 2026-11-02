@@ -525,3 +525,20 @@ test('C1 and Unicode identity spoofing fail closed across bootstrap and native l
   assert.equal(d.may_execute,false);
  }
 });
+
+test('self-parented FileSpace identity is denied in bootstrap and native ABI review',()=>{
+ const parent={...nativeABIBase.parent};
+ const child={...nativeABIBase.child,
+  object_id:parent.object_id,parent_object_id:parent.object_id};
+ const lease={...base.lease,target_object_id:parent.object_id};
+ const shape=planCGXHandshake({...base,parent,child,lease});
+ assert.equal(shape.status,'DENIED');
+ assert.equal(shape.reason,'SELF_PARENT_CHILD_IDENTITY');
+ const native=reviewNativeLeaseHandshakeABI({...nativeABIBase,child,
+  nativeLease:{...nativeABIBase.nativeLease,
+   scope:{...nativeABIBase.nativeLease.scope,object_ids:[parent.object_id]}},
+  request:{...nativeABIBase.request,object_id:parent.object_id}});
+ assert.equal(native.status,'DENIED');
+ assert.equal(native.reason,'BOOTSTRAP_SHAPE_SELF_PARENT_CHILD_IDENTITY');
+ assert.equal(native.may_execute,false);
+});
