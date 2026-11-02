@@ -50,11 +50,12 @@ def finite_json_float(token: str) -> float:
     return value
 
 
-def atomic_json(path: Path, value: dict) -> None:
-    """Use a fresh exclusive temporary receipt, not a predictable .tmp alias.
+def atomic_text(path: Path, value: str) -> None:
+    """Replace a private text output without following a planted final symlink.
 
-    This fixes the source-level pre-planted temporary symlink case. It does
-    NOT qualify the caller's parent-directory ACL or Windows reparse points.
+    Fresh exclusive temporary creation and atomic replacement protect both
+    JSON receipts and the token-bearing loopback .url file. The caller still
+    must independently verify the private parent ACL and Windows reparse hops.
     """
     tmp = path.with_name(f".{path.name}.{secrets.token_hex(16)}.tmp")
     flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY
@@ -62,18 +63,20 @@ def atomic_json(path: Path, value: dict) -> None:
     fd = os.open(tmp, flags, 0o600)
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as stream:
-            json.dump(value, stream, indent=2, ensure_ascii=False)
-            stream.write("\n")
+            stream.write(value)
             stream.flush()
             os.fsync(stream.fileno())
         os.replace(tmp, path)
     finally:
-        # Best-effort cleanup of our exclusive temporary file on write error.
-        # A separately validated owner-private parent ACL remains mandatory.
         try:
             tmp.unlink(missing_ok=True)
         except OSError:
             pass
+
+
+def atomic_json(path: Path, value: dict) -> None:
+    """Persist a private JSON receipt through the same exclusive writer."""
+    atomic_text(path, json.dumps(value, indent=2, ensure_ascii=False) + "\n")
 
 
 def qualified_receipt(path: Path) -> list[dict]:
@@ -551,9 +554,10 @@ def run(args: argparse.Namespace) -> int:
                 pass
         server = http.server.ThreadingHTTPServer(("127.0.0.1", args.port), Handler)
         threading.Thread(target=server.serve_forever, daemon=True).start()
-        (target / "Open Achilles source progress.url").write_text(
+        atomic_text(
+            target / "Open Achilles source progress.url",
             "[InternetShortcut]\nURL=http://127.0.0.1:"
-            + str(args.port) + "/t/" + token + "\n", encoding="utf-8")
+            + str(args.port) + "/t/" + token + "\n")
         print("LOOPBACK_DASHBOARD_STARTED; owner-private .url file available", flush=True)
     try:
         for index, item in enumerate(entries, 1):
