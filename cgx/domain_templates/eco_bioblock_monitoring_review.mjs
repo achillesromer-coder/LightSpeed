@@ -101,6 +101,11 @@ export function reviewBioBlockMonitoringSeries(records){
  const fields=["run_ref","block_ref","recipe_ref","site_ref","taxon_ref",
   "cohort_ref","replicate_ref","method_ref","control_ref","baseline_ref"];
  const first=records[0];
+ // A matching cohort is not a matching source snapshot. Keep R0 identity,
+ // revision and content hash separate from ecological subject linkage.
+ const sourceKeys=["source_ref","source_revision","source_sha256"];
+ if(records.some(r=>r.source_revision==null||r.source_sha256==null))
+  flags.add("LONGITUDINAL_SOURCE_SNAPSHOT_UNPINNED");
  for(let i=0;i<records.length;i++){
   const row=records[i];
   if(fields.some(k=>!ref(row[k])))flags.add("INCOMPLETE_LONGITUDINAL_LINKAGE");
@@ -111,6 +116,8 @@ export function reviewBioBlockMonitoringSeries(records){
   for(const k of fields)
    if(ref(row[k])&&ref(first[k])&&row[k]!==first[k])
     flags.add("SERIES_"+k.toUpperCase()+"_MISMATCH");
+  for(const k of sourceKeys)
+   if(row[k]!==first[k])flags.add("SERIES_"+k.toUpperCase()+"_MISMATCH");
   if(!zoned(row.observed_at)||!zoned(prev.observed_at)){
    flags.add("LONGITUDINAL_ZONED_TIMESTAMPS_REQUIRED");
    continue;
@@ -122,6 +129,7 @@ export function reviewBioBlockMonitoringSeries(records){
   if(row.seed_count!==null&&prev.seed_count!==null&&row.seed_count!==prev.seed_count)
    flags.add("SEED_DENOMINATOR_CHANGED_REVIEW_REQUIRED");
   const comparable=summaries[i].evidence_class===summaries[0].evidence_class&&
+   sourceKeys.every(k=>row[k]===first[k])&&ref(row.source_ref)&&
    Number.isSafeInteger(row.seed_count)&&row.seed_count>0&&
    row.seed_count===prev.seed_count&&
    fields.every(k=>ref(row[k])&&ref(prev[k])&&row[k]===prev[k]);
