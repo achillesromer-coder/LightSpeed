@@ -229,6 +229,9 @@ export function reviewNativeLeaseHandshakeABI({
  if(keys.length===0||keys.length>16||budgetKeys.length===0||budgetKeys.length>16||
     budgetKeys.some(k=>!knownBudgetKeys.has(k)||
       !Number.isSafeInteger(budget[k])||budget[k]<0)||
+    // No declared ceiling may be silently omitted from the usage envelope,
+    // including a zero ceiling. This is shape accounting, not measured usage.
+    budgetKeys.some(k=>!Object.hasOwn(usage,k))||
     keys.some(k=>!knownBudgetKeys.has(k)||!Object.hasOwn(budget,k)||
       !Number.isSafeInteger(usage[k])||usage[k]<0||usage[k]>budget[k]))
   return deny("NATIVE_RESOURCE_BUDGET_EXCEEDED_OR_UNBOUND");
