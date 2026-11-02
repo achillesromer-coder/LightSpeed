@@ -88,6 +88,10 @@ def _portable_filespace(value: Any) -> bool:
         or any(unicodedata.category(ch) in {"Cc", "Cf", "Cs", "Zl", "Zp"}
                for ch in value)):
         return False
+    # Match the bootstrap handshake portable per-component UTF-8 byte ceiling.
+    # UTF-16 length alone admits 3-byte BMP basenames that the JS ABI denies.
+    if len(value.encode("utf-8")) > 255:
+        return False
     stem = value.split(".", 1)[0]
     # Preserve the first-component device-name check, while also rejecting
     # spaces before .cgx even when an earlier dot exists in the basename.
