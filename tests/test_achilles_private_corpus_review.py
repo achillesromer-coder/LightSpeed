@@ -289,3 +289,35 @@ def test_chunked_reader_allows_equal_values_under_distinct_keys(tmp_path):
         p, receipt, max_record_bytes=1024, chunk_bytes=17))
     assert len(rows) == 1
     assert rows[0]["title"] == rows[0]["description"] == "same"
+
+
+def test_repeated_conversation_source_visible_occurrence_ledger(tmp_path):
+    """Repeated node IDs in one shard retain every visible source occurrence."""
+    source, entry = sample(tmp_path)
+    first = json.loads(source.read_text(encoding="utf-8"))[0]
+    second = json.loads(json.dumps(first))
+    second["title"] = "Second source occurrence, not an identity merge"
+    second["mapping"]["u-node"]["message"]["id"] = "u-variant"
+    second["mapping"]["u-node"]["message"]["create_time"] = 9.0
+    source.write_text(json.dumps([first, second]), encoding="utf-8")
+    entry = {"shard": source.name, "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+             "size_bytes": source.stat().st_size}
+    db = mod.connect(tmp_path / "new_private_review.sqlite")
+    try:
+        assert mod.ingest_shard(db, source, entry)[0] == 2
+        rows = db.execute("""
+            SELECT conversation_index,node_ordinal,node_id,message_id,created
+            FROM source_visible_occurrence
+            ORDER BY conversation_index,node_ordinal
+        """).fetchall()
+        assert len(rows) == 4
+        assert [row[0] for row in rows] == [0, 0, 1, 1]
+        assert [row[2] for row in rows] == ["u-node", "a-node", "u-node", "a-node"]
+        assert rows[0][3] == "u-1" and rows[2][3] == "u-variant"
+        assert rows[0][4] == 1.0 and rows[2][4] == 9.0
+        assert db.execute("SELECT count(*) FROM occurrence").fetchone()[0] == 2
+        assert db.execute("SELECT count(*) FROM conversation_variant").fetchone()[0] == 2
+        assert db.execute("SELECT count(*) FROM message").fetchone()[0] == 3
+        assert mod.summary(db)["native_admission"] is False
+    finally:
+        db.close()
