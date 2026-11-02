@@ -378,3 +378,25 @@ test("offline FileSpace denies missing, expired, cross-object and cross-revision
   assert.equal(permitted.native_admitted,false);
   assert.equal(permitted.dispatch_authorized,false);
 });
+
+test("malformed provider lens/policy input holds without an exception or private view (#158)", () => {
+  const cases = [
+    {registry:{shared_view_families:[null]}},
+    {registry:{shared_view_families:[{id:null}]}},
+    {registry:{shared_view_families:[{id:"filespace-tree"}, undefined]}},
+    {permitted_view_ids:[null]},
+    {policy:{...currentPolicy,task_mapping:[]}},
+    {policy:{...currentPolicy,task_mapping:{...currentPolicy.task_mapping,browse:["filespace-tree",null]}}},
+  ];
+  for (const mutation of cases) {
+    const x=lensInput("browse");
+    Object.assign(x,mutation);
+    const v=selectOwnerPrimaryView(x);
+    assert.equal(v.state,"HOLD_VIEW_POLICY",JSON.stringify(mutation));
+    assert.equal(v.primary_view,null);
+    assert.deepEqual(v.secondary_views,[]);
+    assert.equal(v.native_admitted,false);
+    assert.equal(v.dispatch_authorized,false);
+    assert.equal(v.public_publish_authorized,false);
+  }
+});
