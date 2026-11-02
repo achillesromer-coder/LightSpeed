@@ -184,21 +184,37 @@ def validate_lease(
         reasons.append("lease-execution-depth-unmapped")
     if action_class not in known_actions:
         reasons.append("lease-action-class-unmapped")
-    forbidden_actions = {
-        "READ_ONLY": {"execute", "compute", "simulate", "digital_write",
-                      "write", "mutate", "publish", "publication",
-                      "external_action", "physical_actuation"},
-        "COMPUTE_ONLY": {"digital_write", "write", "mutate", "publish",
-                         "publication", "external_action", "physical_actuation"},
+    # Minimum capability class is independent of the caller's class label
+    # and the lease's self-declared allowlist. Higher-risk classes still need
+    # their own signed host/tool/safety gates after this structural preflight.
+    minimum_action_class = {
+        "execute": "COMPUTE_ONLY", "compute": "COMPUTE_ONLY",
+        "simulate": "COMPUTE_ONLY",
+        "digital_write": "DIGITAL_WRITE", "write": "DIGITAL_WRITE",
+        "mutate": "DIGITAL_WRITE", "publish": "DIGITAL_WRITE",
+        "publication": "DIGITAL_WRITE",
+        "external_action": "EXTERNAL_ACTION",
+        "physical_actuation": "PHYSICAL_ACTUATION",
     }
-    forbidden_depths = {
-        "READ_ONLY": {"propose", "simulate", "execute", "build", "publish"},
-        "COMPUTE_ONLY": {"build", "publish"},
+    minimum_depth_class = {
+        "propose": "COMPUTE_ONLY", "simulate": "COMPUTE_ONLY",
+        "execute": "COMPUTE_ONLY", "build": "DIGITAL_WRITE",
+        "publish": "DIGITAL_WRITE",
     }
-    if action_class in forbidden_actions.get(lease_class, set()):
-        reasons.append("lease-class-action-incompatible")
-    if execution_depth in forbidden_depths.get(lease_class, set()):
-        reasons.append("lease-class-depth-incompatible")
+    for axis, required in (
+        ("action", minimum_action_class.get(action_class)),
+        ("depth", minimum_depth_class.get(execution_depth)),
+    ):
+        if required is None:
+            continue
+        if lease_class in EXECUTION_CLASS_RANK and (
+            EXECUTION_CLASS_RANK[lease_class] < EXECUTION_CLASS_RANK[required]
+        ):
+            reasons.append(f"lease-class-{axis}-incompatible")
+        if execution_class in EXECUTION_CLASS_RANK and (
+            EXECUTION_CLASS_RANK[execution_class] < EXECUTION_CLASS_RANK[required]
+        ):
+            reasons.append(f"request-class-{axis}-incompatible")
     ceiling = str(lease.get("max_cascade_class") or "")
     if ceiling not in CASCADE:
         reasons.append("lease-cascade-ceiling-invalid")
