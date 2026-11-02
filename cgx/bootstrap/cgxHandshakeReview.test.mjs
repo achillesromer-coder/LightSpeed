@@ -638,3 +638,36 @@ test('native lease class/action contradictions are denied before request-bound s
   assert.equal(r.may_execute,false);
  }
 });
+
+test('native lease class cannot be bypassed by a lower-risk action label at a higher execution depth',()=>{
+ const cases=[
+  ['READ_ONLY','simulate','inspect'],
+  ['READ_ONLY','execute','inspect'],
+  ['COMPUTE_ONLY','build','inspect'],
+  ['COMPUTE_ONLY','publish','inspect'],
+  ['DIGITAL_WRITE','publish','inspect']
+ ];
+ for(const [lease_class,execution_depth,action_class] of cases){
+  const nativeLease={...nativeABIBase.nativeLease,lease_class,
+   execution_depths:[execution_depth],
+   scope:{...nativeABIBase.nativeLease.scope,action_classes:[action_class]}};
+  const request={...nativeABIBase.request,execution_depth,action_class};
+  const result=reviewNativeLeaseHandshakeABI({...nativeABIBase,nativeLease,request});
+  assert.equal(result.status,'DENIED',lease_class+':'+execution_depth);
+  assert.equal(result.reason,'NATIVE_LEASE_CLASS_DEPTH_MISMATCH');
+  assert.equal(result.may_execute,false);
+ }
+ for(const [lease_class,execution_depth,action_class] of [
+  ['READ_ONLY','inspect','inspect'],
+  ['COMPUTE_ONLY','simulate','simulate'],
+  ['DIGITAL_WRITE','build','write']
+ ]){
+  const nativeLease={...nativeABIBase.nativeLease,lease_class,
+   execution_depths:[execution_depth],
+   scope:{...nativeABIBase.nativeLease.scope,action_classes:[action_class]}};
+  const request={...nativeABIBase.request,execution_depth,action_class};
+  const result=reviewNativeLeaseHandshakeABI({...nativeABIBase,nativeLease,request});
+  assert.equal(result.status,'UNVERIFIED_SHAPE_REVIEW',lease_class+':'+execution_depth);
+  assert.equal(result.may_execute,false);
+ }
+});
