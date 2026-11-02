@@ -150,6 +150,21 @@ function validateConcept(x){
   if(v.statistic_kind==="interval_coverage"&&v.value!==undefined&&(v.value<0||v.value>100))
    throw Error("INVALID_INTERVAL_COVERAGE");
  }
+ // Source-owned CONTRA-DEC adjudication envelope; never a legal, ecological or release approval.
+ if(x.contradiction_review!==undefined){
+  const c=x.contradiction_review;
+  if(!obj(c)||typeof c.proposed!=="boolean"||
+    !["SOURCE_CONFLICT","RED_LINE","LEGAL","CULTURAL","ECOLOGICAL","DATA"].includes(c.issue_class)||
+    !["MATERIAL","NON_MATERIAL","UNKNOWN"].includes(c.materiality_state)||
+    !["HOLD","NO-GO","LIMITED-CONTEXT"].includes(c.interim_state)||
+    !["OPEN","RESOLVED","HELD","SUPERSEDED"].includes(c.adjudication_state)||
+    !["PUBLIC","CONTROLLED","RESTRICTED"].includes(c.sensitivity_class))
+    throw Error("INVALID_CONTRADICTION_REVIEW");
+  if(!stringList(c.source_ref_set)||!stringList(c.affected_gate_decision))
+    throw Error("INVALID_CONTRADICTION_SOURCE_OR_GATE_REFS");
+  for(const f of ["contradiction_receipt_id","project_scope","conflict_summary","authority_precedence_basis","specialist_authority_review_ref","selected_interpretation_action","residual_uncertainty_followup","readback_ref","supersedes_receipt_id"])
+   if(c[f]!==undefined&&!good(c[f]))throw Error("INVALID_CONTRADICTION_"+f.toUpperCase());
+ }
  // Source-only geometry-export pointer: never an actual validated or released map.
  if(x.geometry_export!==undefined){
   const g=x.geometry_export;
@@ -215,6 +230,8 @@ function compare(a,b,checks){
  if(!equal(a.survey_comparison??null,b.survey_comparison??null))add(checks,"SURVEY_COMPARISON_DESIGN_DIFFERENT");
  if(!equal(a.receiving_pathway??null,b.receiving_pathway??null))add(checks,"RECEIVING_PATHWAY_PROVENANCE_OR_SCOPE_DIFFERENT");
  if(!equal(a.benefit_accounting??null,b.benefit_accounting??null))add(checks,"BENEFIT_ACCOUNTING_CLAIM_SCOPE_OR_ATTRIBUTION_DIFFERENT");
+ if(!equal(a.contradiction_review??null,b.contradiction_review??null))
+  add(checks,"CONTRADICTION_ADJUDICATION_PROVENANCE_OR_STATE_DIFFERENT");
  if(!equal(a.geometry_export??null,b.geometry_export??null))add(checks,"GEOMETRY_EXPORT_PROVENANCE_OR_RELEASE_SCOPE_DIFFERENT");
 if(!equal(a.projection_result??null,b.projection_result??null))add(checks,"PROJECTION_SCENARIO_OR_MODEL_PROVENANCE_DIFFERENT");
  if(!equal(a.projection_observation_comparison??null,b.projection_observation_comparison??null))
@@ -389,6 +406,26 @@ function completeness(x,checks){
   }
  }
  // Receiving-system source geometry is not verified field geometry or public release.
+ if(x.contradiction_review?.proposed){
+  const c=x.contradiction_review;
+  add(checks,"CONTRADICTION_ADJUDICATION_SOURCE_ONLY_HOLD");
+  for(const [f,flag] of [
+   ["contradiction_receipt_id","CONTRADICTION_RECEIPT_REQUIRED"],
+   ["project_scope","CONTRADICTION_PROJECT_SCOPE_REQUIRED"],
+   ["conflict_summary","CONTRADICTION_SUMMARY_REQUIRED"],
+   ["authority_precedence_basis","CONTRADICTION_AUTHORITY_BASIS_REQUIRED"],
+   ["residual_uncertainty_followup","CONTRADICTION_RESIDUAL_UNCERTAINTY_REQUIRED"]])
+   if(!good(c[f]))add(checks,flag);
+  if(!c.source_ref_set.length)add(checks,"CONTRADICTION_SOURCE_SET_REQUIRED");
+  if(!c.affected_gate_decision.length)add(checks,"CONTRADICTION_AFFECTED_GATE_REQUIRED");
+  if(c.materiality_state==="MATERIAL"&&c.adjudication_state!=="RESOLVED"&&c.interim_state==="LIMITED-CONTEXT")
+   add(checks,"MATERIAL_CONTRADICTION_LIMITED_CONTEXT_SCOPE_REVIEW");
+  if(c.materiality_state==="MATERIAL"&&!good(c.specialist_authority_review_ref))
+   add(checks,"MATERIAL_CONTRADICTION_SPECIALIST_AUTHORITY_REQUIRED");
+  if(c.adjudication_state==="RESOLVED"&&(!good(c.readback_ref)||!good(c.selected_interpretation_action)))
+   add(checks,"RESOLVED_CONTRADICTION_READBACK_AND_ACTION_REQUIRED");
+  if(c.sensitivity_class==="PUBLIC")add(checks,"CONTRADICTION_PUBLIC_SENSITIVITY_REVIEW_REQUIRED");
+ }
  if(x.geometry_export?.proposed){
   const g=x.geometry_export;
   add(checks,"GEOMETRY_EXPORT_SOURCE_ONLY_REVIEW_REQUIRED");
@@ -588,6 +625,8 @@ export function planEcoAlignment({novel,known_objects=[],authorised_object_ids=[
  if(novel.validation_statistics?.validation_source_ref&&
     !allowedSources.has(novel.validation_statistics.validation_source_ref))
   add(novelChecks,"NOVEL_VALIDATION_SOURCE_SCOPE_PARTIAL");
+ if(novel.contradiction_review?.source_ref_set?.some(v=>!allowedSources.has(v)))
+  add(novelChecks,"NOVEL_CONTRADICTION_SOURCE_SCOPE_PARTIAL");
  const seen=new Set(),out=[];
  for(const k of known_objects){
   validateConcept(k);
@@ -618,6 +657,10 @@ export function planEcoAlignment({novel,known_objects=[],authorised_object_ids=[
   if(novel.validation_statistics?.validation_source_ref&&
      !allowedSources.has(novel.validation_statistics.validation_source_ref))
    add(checks,"NOVEL_VALIDATION_SOURCE_SCOPE_PARTIAL");
+  if(k.contradiction_review?.source_ref_set?.some(v=>!allowedSources.has(v)))
+   add(checks,"KNOWN_CONTRADICTION_SOURCE_SCOPE_PARTIAL");
+  if(novel.contradiction_review?.source_ref_set?.some(v=>!allowedSources.has(v)))
+   add(checks,"NOVEL_CONTRADICTION_SOURCE_SCOPE_PARTIAL");
   const exactId=novel.object_id===k.object_id;
   out.push({known_object_id:k.object_id,
    state:exactId?"SAME_ID_CLAIM_REQUIRES_PROOF":checks.length?"REVIEW_DIFFERENCE":"TYPED_ALIGNMENT_CANDIDATE",
