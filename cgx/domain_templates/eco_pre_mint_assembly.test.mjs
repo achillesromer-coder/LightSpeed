@@ -1146,7 +1146,7 @@ test("positive weighted score and evidence reference cannot approve site",()=>{
  const rows=siteInput.rows.map((r,i)=>i===0?
    {...r,score:5,evidence_ref:"source-only:unreviewed"}:r);
  const r=reviewSite({...siteInput,rows});
- assert.equal(r.weighted_score_declared,0.9);
+ assert.ok(Math.abs(r.weighted_score_declared-0.9)<1e-12);
  assert.equal(r.critical_gate_count,5);
  assert.equal(r.site_suitability_verified,false);
  assert.equal(r.biosecurity_approved,false);
