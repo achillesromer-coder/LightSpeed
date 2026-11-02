@@ -104,6 +104,19 @@ def test_foreign_job_type_is_not_accepted_as_consumed(tmp_path):
     assert out["state"] == "FOREIGN_JOB_LINK_HOLD"
 
 
+def test_null_job_type_is_foreign_not_completed(tmp_path):
+    """SQLite NULL comparisons must not disguise a non-LS-GO job as completed."""
+    p = fixture(tmp_path)
+    with sqlite3.connect(p) as db:
+        db.execute("UPDATE jobs SET job_type=NULL WHERE id=4")
+        db.execute("UPDATE ls_go_command_identities SET job_id=4 WHERE command_id='A'")
+    report = module.inspect_database(p)
+    assert report["foreign_job_link_count"] == 1
+    assert report["state"] == "FOREIGN_JOB_LINK_HOLD"
+    assert report["consumer_restart_authorized"] is False
+    assert report["jobs_dispatched"] == 0
+
+
 def test_all_linked_still_requires_independent_lease_and_dbr(tmp_path):
     p = fixture(tmp_path)
     with sqlite3.connect(p) as db:
