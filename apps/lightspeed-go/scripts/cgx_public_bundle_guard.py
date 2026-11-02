@@ -196,6 +196,11 @@ def inspect_public_bundle(source:Path=SOURCE)->dict[str,Any]:
             # scan of fetch()/bracket literals is a complete JS parser (#158).
             if "`" in text:
                 raise BundleHold(f"unreviewed JavaScript template literal: {relative}")
+            # #158: JS escape sequences can hide computed transport/navigation
+            # properties from literal scans. The reviewed public JS needs
+            # only ordinary newline escapes and one regex slash escape.
+            if re.search(r"\\(?:x[0-9A-Fa-f]{2}|u(?:[0-9A-Fa-f]{4}|\{[0-9A-Fa-f]{1,6}\}))", text):
+                raise BundleHold(f"unreviewed JavaScript hex/unicode escape: {relative}")
             _reject_split_computed_transport(text, relative)
         for label,pattern in BLOCKED.items():
             if pattern.search(text):
