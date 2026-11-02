@@ -92,5 +92,38 @@
     "No owner/legal review of additional external content, rights or direct binaries",
     "No production merge or automatic promotion"
   ],
-  "behavior": "Copy only original PR174 synthetic public-viewer assets. Builder refuses extra/missing files, symlinks, credential/operator references, unsafe module paths, missing CSP and source races. Existing LS GO public/data and public/review remain outside the bundle; those source-level exposures remain separate #158 remediation."
+  "behavior": "Pin 18 immutable original PR174 source blob identities plus five explicit review-delta blobs for the synthetic 360° atlas. The builder retains its exact 12-file public allowlist; the original PR174 bytes remain recoverable in Git. No public deploy, private source or native CGX promotion.",
+  "review_delta_schema": "CGX-UNISPACE-PR188-ORBIT-DELTA/0.1",
+  "review_deltas": [
+    {
+      "path": ".github/workflows/unispace-public-viewer.yml",
+      "original_pr174_blob_sha1": "e5c5694741cb49c56f94289ea81c9afcd4b0866a",
+      "review_branch_blob_sha1": "d1fb1d4f5db0c9b4bf8327586680a90007bb8fda",
+      "disposition": "SOURCE_REVIEW_ONLY_NOT_PUBLIC_RELEASE"
+    },
+    {
+      "path": "apps/lightspeed-go/public/cgx/assets/core.js",
+      "original_pr174_blob_sha1": "ffa759963ad3252b52987048f82ea1c3c15393f3",
+      "review_branch_blob_sha1": "44983f4ca464377b01660ba141a3245fd816f8a0",
+      "disposition": "SOURCE_REVIEW_ONLY_NOT_PUBLIC_RELEASE"
+    },
+    {
+      "path": "apps/lightspeed-go/public/cgx/assets/viewer.css",
+      "original_pr174_blob_sha1": "29cd55cd83ec425b513edcd3412ad6623cb5d6b3",
+      "review_branch_blob_sha1": "bd4f3ef3e8a3afb761bcc3f770f524b20d0779ac",
+      "disposition": "SOURCE_REVIEW_ONLY_NOT_PUBLIC_RELEASE"
+    },
+    {
+      "path": "apps/lightspeed-go/public/cgx/assets/viewer.js",
+      "original_pr174_blob_sha1": "67847cf55eddc7cc607c65923c01271d6f1d97bc",
+      "review_branch_blob_sha1": "988aee5051d2da745c36c2924c3f9c5d72af9357",
+      "disposition": "SOURCE_REVIEW_ONLY_NOT_PUBLIC_RELEASE"
+    },
+    {
+      "path": "apps/lightspeed-go/tests/unispace-public.test.mjs",
+      "original_pr174_blob_sha1": "b2ace45c6ed4637de56a59f273beee24802148fb",
+      "review_branch_blob_sha1": "b22f7f3428ad4dd573a42178e15fc8f9f7a04127",
+      "disposition": "SOURCE_REVIEW_ONLY_NOT_PUBLIC_RELEASE"
+    }
+  ]
 }
