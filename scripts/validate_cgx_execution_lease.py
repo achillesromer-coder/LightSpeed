@@ -36,13 +36,13 @@ def base_lease():
       "authority_phase_ref":"cgx://internal/governance/root-authority-phase"
     }
 
-def check(lease, execution_depth="execute", action_class="execute", consequential=True, project_id=None, object_id=None, tool_scope=None, configuration_id=None, execution_class="DIGITAL_WRITE"):
+def check(lease, execution_depth="execute", action_class="execute", consequential=True, project_id=None, object_id=None, tool_scope=None, configuration_id=None, execution_class="DIGITAL_WRITE", cascade_class="C2"):
     return validate_lease(
       lease,
       agent_id="Neo",
       domain="romer",
       execution_depth=execution_depth,
-      cascade_class="C2",
+      cascade_class=cascade_class,
       task_id="CGX-LAUNCH-006",
       project_id=project_id,
       action_class=action_class,
@@ -91,6 +91,18 @@ def main():
         )
         if observed is not expected:
             failures.append(f"Neo supervisor receipt {label}: expected {expected}, got {observed}")
+
+    # Direct CCC/native adapter callers bypass argparse choices. Malformed
+    # request class/cascade labels must return a typed denial, not an exception.
+    for kwargs, expected in (
+        ({"execution_class": "UNKNOWN"}, "request-execution-class-invalid"),
+        ({"execution_class": []}, "request-execution-class-invalid"),
+        ({"cascade_class": "C99"}, "request-cascade-class-invalid"),
+        ({"cascade_class": []}, "request-cascade-class-invalid"),
+    ):
+        ok, reasons, _ = check(base_lease(), **kwargs)
+        if ok or expected not in reasons:
+            failures.append(f"Neo malformed direct-call class {kwargs}: {reasons}")
 
     x=base_lease()
     ok,reasons,_=check(x)
