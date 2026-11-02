@@ -47,6 +47,45 @@ def test_no_running_with_unlinked_identity_is_review_hold_and_no_db_change(tmp_p
     assert hashlib.sha256(p.read_bytes()).hexdigest() == before
 
 
+
+def test_unassigned_identity_is_not_misreported_as_a_broken_job_reference(tmp_path):
+    p = fixture(tmp_path)
+    r = module.inspect_database(p)
+    assert r["unassigned_identity_count"] == 1
+    assert r["dangling_job_reference_count"] == 0
+    assert any(x["class"] == "UNASSIGNED" and x["count"] == 1
+               for x in r["linkage_class_counts"])
+    assert r["state"] == "UNLINKED_COMMAND_IDENTITY_REVIEW_HOLD"
+    assert not r["consumer_restart_authorized"]
+
+
+def test_missing_job_reference_is_distinct_and_stays_held(tmp_path):
+    p = fixture(tmp_path)
+    with sqlite3.connect(p) as db:
+        db.execute("UPDATE ls_go_command_identities SET job_id=999 "
+                   "WHERE command_id='A'")
+    r = module.inspect_database(p)
+    assert r["unassigned_identity_count"] == 0
+    assert r["dangling_job_reference_count"] == 1
+    assert any(x["class"] == "DANGLING_JOB_REF" and x["count"] == 1
+               for x in r["linkage_class_counts"])
+    assert r["state"] == "UNLINKED_COMMAND_IDENTITY_REVIEW_HOLD"
+    assert not r["consumer_restart_authorized"]
+
+
+def test_mixed_unassigned_and_dangling_linkage_sum_matches_unlinked(tmp_path):
+    p = fixture(tmp_path)
+    with sqlite3.connect(p) as db:
+        db.execute("INSERT INTO ls_go_command_identities "
+                   "VALUES ('Z','review',999)")
+    r = module.inspect_database(p)
+    assert r["command_identities"] == 5
+    assert r["unlinked_identity_count"] == 2
+    assert r["unassigned_identity_count"] == 1
+    assert r["dangling_job_reference_count"] == 1
+    assert r["jobs_dispatched"] == 0
+
+
 def test_running_job_holds_even_with_completed_terminal_rows(tmp_path):
     p = fixture(tmp_path)
     with sqlite3.connect(p) as db:
