@@ -708,3 +708,20 @@ def test_invalid_cpu_policy_cannot_grant_more_than_80_percent(tmp_path: Path) ->
                      http_post=forbidden_http,lock=False)
     assert result["status"]=="blocked"
     assert result["resource_preflight"]["cpu"]["state"]=="invalid_policy"
+
+@pytest.mark.parametrize(("status", "expected_exit"), [
+    ("completed", 0), ("dry_run", 0),
+    ("failed", 1), ("blocked", 1), ("unknown", 1),
+])
+def test_cli_returns_nonzero_when_receipt_reports_failed_inference(
+        monkeypatch, capsys, status, expected_exit):
+    from lightspeed_runtime import local_floor_runner as runtime
+    monkeypatch.setattr(runtime, "run_floor", lambda **_args: {
+        "status": status, "receipt_path": "/review/owned-receipt.json",
+    })
+    result = runtime.main(["--floor", "Neo"])
+    assert result == expected_exit
+    output = json.loads(capsys.readouterr().out)
+    assert output["status"] == status
+
+
