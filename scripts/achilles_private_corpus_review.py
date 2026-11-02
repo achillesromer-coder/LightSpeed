@@ -181,8 +181,21 @@ def iter_source_conversations(source: Path, entry: dict, *,
         if os.fstat(stream.fileno()).st_size != entry["size_bytes"]:
             raise ValueError("SOURCE_SNAPSHOT_CHANGED_DURING_READ_HOLD:" + entry["shard"])
         utf8 = codecs.getincrementaldecoder("utf-8")("strict")
-        parser = json.JSONDecoder(parse_constant=lambda _: (_ for _ in ()).throw(
-            ValueError("SOURCE_JSON_CONSTANT_HOLD")))
+        # Fail closed rather than silently discarding earlier values when
+        # source JSON repeats an object key, including in nested mappings.
+        # Do not echo potentially private source keys into error receipts.
+        def reject_duplicate_object_keys(pairs):
+            result = {}
+            for key, value in pairs:
+                if key in result:
+                    raise ValueError("SOURCE_DUPLICATE_JSON_KEY_HOLD")
+                result[key] = value
+            return result
+
+        parser = json.JSONDecoder(
+            object_pairs_hook=reject_duplicate_object_keys,
+            parse_constant=lambda _: (_ for _ in ()).throw(
+                ValueError("SOURCE_JSON_CONSTANT_HOLD")))
         digest = hashlib.sha256()
         buffer, cursor, eof, total_bytes = "", 0, False, 0
 
