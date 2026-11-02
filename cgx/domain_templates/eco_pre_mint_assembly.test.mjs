@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {createHash} from "node:crypto";
-import {prepareEcoPreMintAssembly as prepare} from "./eco_pre_mint_assembly.mjs";
+import {prepareEcoPreMintAssembly as prepare, reviewEcoFormulaNamespaceCollision as reviewNamespace} from "./eco_pre_mint_assembly.mjs";
 
 // Synthetic fixtures only. Original Drive workbook/PDF bytes are never stored in Git.
 const source={provider:"drive",id:"synthetic-drive-id",
@@ -999,4 +999,59 @@ test("independent symbolic correction and digest views cannot contradict A1 iden
  assert.equal(match.release.public_release_authorised,false);
  assert.throws(()=>run(same,digestEntry),
   /ECO_SYMBOLIC_CORRECTION_DIGEST_CONFLICT/);
+});
+
+
+test("source-local FM labels reused by distinct Eco child namespaces never alias",()=>{
+ const left={source_ref:"fixture:eco-child-a",source_revision:"v1",
+   sheet:"CHILD_A_Formula_Library",cell:"B10",formula_id:"FM-008",
+   expression_sha256:"a".repeat(64),evidence_class:"model_derived"};
+ const right={...left,source_ref:"fixture:eco-child-b",
+   sheet:"CHILD_B_Formula_Library",expression_sha256:"b".repeat(64),
+   evidence_class:"source_asserted"};
+ const r=reviewNamespace({left,right});
+ assert.equal(r.state,"R1_CROSS_NAMESPACE_LOCAL_ID_COLLISION_HOLD");
+ assert.equal(r.same_source_namespace,false);
+ assert.equal(r.cross_source_alias_accepted,false);
+ assert.equal(r.native_object_id,null);
+ assert.equal(r.formula_semantics_equivalent,false);
+ assert.equal(r.provider_cells_read_by_module,false);
+ assert.equal(r.public_release_authorised,false);
+ // A coincident digest cannot collapse two original source identities.
+ assert.equal(reviewNamespace({left,right:{...right,expression_sha256:left.expression_sha256}}).state,
+   "R1_CROSS_NAMESPACE_LOCAL_ID_COLLISION_HOLD");
+});
+
+test("formula namespace guard preserves revisions, conflicts and distinct IDs",()=>{
+ const a={source_ref:"fixture:child",source_revision:"v1",
+   sheet:"CHILD_Formula_Library",cell:"B10",formula_id:"FM-009",
+   expression_sha256:"a".repeat(64),evidence_class:"simulated"};
+ const review=b=>reviewNamespace({left:a,right:b});
+ assert.equal(review({...a,source_revision:"v2"}).state,
+   "R1_VERSIONED_FORMULA_VARIANT_HOLD");
+ assert.equal(review({...a,expression_sha256:"b".repeat(64)}).state,
+   "R1_SAME_REVISION_FORMULA_DIGEST_CONFLICT_HOLD");
+ assert.equal(review({...a}).state,
+   "R1_DECLARED_FORMULA_REFERENCE_MATCH_NOT_ATTESTED");
+ assert.equal(review({...a,formula_id:"FM-010"}).state,
+   "R1_DISTINCT_LOCAL_FORMULA_IDS");
+ assert.equal(review({...a,sheet:"OTHER_Formula_Library"}).state,
+   "R1_CROSS_NAMESPACE_LOCAL_ID_COLLISION_HOLD");
+});
+
+test("formula namespace guard rejects unqualified IDs, locations and raw expression",()=>{
+ const a={source_ref:"fixture:child",source_revision:"v1",
+   sheet:"CHILD_Formula_Library",cell:"B10",formula_id:"FM-008",
+   expression_sha256:"a".repeat(64),evidence_class:"source_asserted"};
+ const review=x=>reviewNamespace({left:a,right:x});
+ for(const bad of [
+   {...a,formula_id:"FM-8"}, {...a,cell:"B0"},
+   {...a,cell:"A10"}, {...a,source_revision:""},
+   {...a,expression_sha256:"invalid"},
+   {...a,evidence_class:"observed"},
+   {...a,expression_text:"protected expression"},
+   {...a,source_ref:"fixture:child",sheet:"bad name"}
+ ])assert.throws(()=>review(bad),/INVALID_ECO_FORMULA_NAMESPACE_PAIR/);
+ assert.throws(()=>reviewNamespace({left:a,right:a,owner_approval:true}),
+   /INVALID_ECO_FORMULA_NAMESPACE_PAIR/);
 });
