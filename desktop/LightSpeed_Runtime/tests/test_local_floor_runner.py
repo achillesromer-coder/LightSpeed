@@ -724,4 +724,34 @@ def test_cli_returns_nonzero_when_receipt_reports_failed_inference(
     output = json.loads(capsys.readouterr().out)
     assert output["status"] == status
 
+def test_ollama_http_500_preserves_failed_uncertain_receipt_and_single_attempt(tmp_path: Path) -> None:
+    """Source-only regression for the Neo floor's observed HTTP 500; no host call."""
+    from urllib.error import HTTPError
 
+    contract_path = _contract(tmp_path)
+    attempts = []
+
+    def rejected(url, payload, timeout):
+        attempts.append((url, payload.get("model")))
+        raise HTTPError(url, 500, "Internal Server Error", {}, None)
+
+    receipt = run_floor(
+        contract_path=contract_path, floor="Neo", dry_run=False,
+        http_post=rejected,
+        ollama_status_probe=lambda _endpoint, _timeout: {
+            "state": "available", "loaded_model_count": 1, "loaded_models": [],
+        },
+        memory_snapshot=lambda: (32 * 1024**3, 16 * 1024**3),
+        lock=False,
+    )
+    assert len(attempts) == 1  # No automatic retry of an uncertain server outcome.
+    assert attempts[0][0].endswith("/api/generate")
+    assert receipt["status"] == "failed"
+    assert receipt["server_outcome_uncertain"] is True
+    assert receipt["usage_accounting"]["state"] == "UNKNOWN"
+    assert receipt["usage_accounting"]["ollama_generate_attempts"] == 1
+    assert "500" in receipt["error"]
+    persisted = json.loads(Path(receipt["receipt_path"]).read_text(encoding="utf-8"))
+    assert persisted["status"] == "failed"
+    assert persisted["server_outcome_uncertain"] is True
+    assert persisted["usage_accounting"]["ollama_generate_attempts"] == 1
