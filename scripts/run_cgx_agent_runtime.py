@@ -119,6 +119,12 @@ def validate_lease(
         return False, ["execution-lease-missing"], summary
     if not isinstance(lease, dict):
         return False, ["execution-lease-invalid"], summary
+    # Native callers may supply malformed class labels despite CLI choices.
+    # Return a denial receipt instead of raising KeyError/TypeError before DBR.
+    if not isinstance(execution_class, str) or execution_class not in EXECUTION_CLASS_RANK:
+        return False, ["request-execution-class-invalid"], summary
+    if not isinstance(cascade_class, str) or cascade_class not in CASCADE:
+        return False, ["request-cascade-class-invalid"], summary
 
     # Required reference fields are typed identifiers only; checking their shape
     # does not authenticate the issuer, referenced receipt, or native DBR.
