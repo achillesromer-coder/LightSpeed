@@ -354,3 +354,25 @@ def test_reused_message_id_metadata_variant_is_flagged_before_r2(tmp_path):
         assert mod.summary(db)["native_admission"] is False
     finally:
         db.close()
+
+
+@pytest.mark.parametrize("numeric", ["1e999", "-1e999", "1.0e10000"])
+def test_streaming_rejects_nonfinite_json_number_without_partial_commit(tmp_path, numeric):
+    """Valid JSON exponent syntax must not become infinite R1 time metadata."""
+    source = tmp_path / "conversations-011.json"
+    source.write_text('[{"id":"c","create_time":' + numeric +
+                      ',"mapping":{"n":{"message":{"id":"m","author":{"role":"user"},' +
+                      '"content":{"parts":["source only"]}}}}}]', encoding="utf-8")
+    entry = {"shard": source.name, "size_bytes": source.stat().st_size,
+             "sha256": hashlib.sha256(source.read_bytes()).hexdigest()}
+    with pytest.raises(ValueError, match="SOURCE_NONFINITE_JSON_NUMBER_HOLD"):
+        list(mod.iter_source_conversations(source, entry, chunk_bytes=7))
+    con = mod.connect(tmp_path / "review.sqlite")
+    try:
+        with pytest.raises(ValueError, match="SOURCE_NONFINITE_JSON_NUMBER_HOLD"):
+            mod.ingest_shard(con, source, entry)
+        assert con.execute("SELECT count(*) FROM shard").fetchone()[0] == 0
+        assert con.execute("SELECT count(*) FROM message").fetchone()[0] == 0
+        assert mod.summary(con)["native_admission"] is False
+    finally:
+        con.close()
