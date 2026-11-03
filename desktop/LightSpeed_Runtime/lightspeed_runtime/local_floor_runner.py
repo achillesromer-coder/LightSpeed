@@ -23,8 +23,10 @@ DEFAULT_TIMEOUT_SECONDS = 180
 DEFAULT_NUM_PREDICT = 512
 MAX_NUM_PREDICT = 1024
 HEAVY_MODEL_PATTERN = re.compile(r"(?:(?:27|70|120|405|671)b)|cloud", re.IGNORECASE)
-DEFAULT_WARNING_FREE_MEMORY_PERCENT = 15.0
-DEFAULT_CRITICAL_FREE_MEMORY_PERCENT = 8.0
+# Preserve at least 20% physical RAM for manual operator use.
+# A legacy source contract may tighten these limits, never relax the reserve.
+DEFAULT_WARNING_FREE_MEMORY_PERCENT = 24.0
+DEFAULT_CRITICAL_FREE_MEMORY_PERCENT = 20.0
 DEFAULT_MINIMUM_FREE_MEMORY_BYTES = 4 * 1024**3
 LAST_RECEIPT_TAIL_BYTES = 64 * 1024
 
@@ -51,29 +53,68 @@ class SingleSessionLock(AbstractContextManager["SingleSessionLock"]):
         self.path = path
         self.enabled = enabled
         self._fd: int | None = None
+        self._lock_identity: tuple[int, int] | None = None
+        self._lock_generation: str | None = None
 
     def __enter__(self) -> "SingleSessionLock":
         if not self.enabled:
             return self
         self.path.parent.mkdir(parents=True, exist_ok=True)
         flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY
+        flags |= getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_BINARY", 0)
         try:
-            self._fd = os.open(str(self.path), flags)
+            self._fd = os.open(str(self.path), flags, 0o600)
         except FileExistsError as exc:
             raise LocalFloorRunnerError(f"another local floor runner session is active: {self.path}") from exc
-        payload = {"pid": os.getpid(), "created_at": _utc_now_iso()}
+        identity = os.fstat(self._fd)
+        if not identity.st_ino:
+            os.close(self._fd)
+            self._fd = None
+            raise LocalFloorRunnerError("local floor lock filesystem identity unavailable")
+        self._lock_identity = (identity.st_dev, identity.st_ino)
+        self._lock_generation = uuid4().hex
+        payload = {
+            "pid": os.getpid(),
+            "generation": self._lock_generation,
+            "created_at": _utc_now_iso(),
+        }
         os.write(self._fd, json.dumps(payload, sort_keys=True).encode("utf-8"))
+        os.fsync(self._fd)
         return self
 
     def __exit__(self, exc_type: object, exc: object, tb: object) -> bool:
+        # Windows may deny unlink of an open CRT file descriptor. Keep the
+        # generation/inode checks below after closing, and fail closed on swap.
         if self._fd is not None:
             os.close(self._fd)
             self._fd = None
-        if self.enabled:
-            try:
+        try:
+            if self.enabled and self._lock_generation is not None:
+                if self.path.is_symlink():
+                    raise LocalFloorRunnerError("local floor lock redirected; cleanup denied")
+                try:
+                    identity = self.path.stat(follow_symlinks=False)
+                except FileNotFoundError as exc:
+                    raise LocalFloorRunnerError("local floor lock disappeared; cleanup denied") from exc
+                if (identity.st_dev, identity.st_ino) != self._lock_identity:
+                    raise LocalFloorRunnerError("local floor lock identity changed; cleanup denied")
+                try:
+                    payload = json.loads(self.path.read_text(encoding="utf-8"))
+                except (OSError, UnicodeError, ValueError) as exc:
+                    raise LocalFloorRunnerError("local floor lock metadata invalid; cleanup denied") from exc
+                if (not isinstance(payload, dict)
+                        or payload.get("generation") != self._lock_generation
+                        or type(payload.get("pid")) is not int
+                        or payload["pid"] != os.getpid()):
+                    raise LocalFloorRunnerError("local floor lock generation changed; cleanup denied")
+                # Advisory process lock only; signed host lease/DBR remains independent.
                 self.path.unlink()
-            except FileNotFoundError:
-                pass
+        finally:
+            if self._fd is not None:
+                os.close(self._fd)
+                self._fd = None
+            self._lock_identity = None
+            self._lock_generation = None
         return False
 
 
@@ -287,33 +328,31 @@ def build_ollama_request(
         "options": {"num_predict": bounded_num_predict, "num_ctx": num_ctx},
     }
     if policy.get("strict_response_contract"):
+        # Ollama 0.12.x grammar compilation can reject dynamic enum literals
+        # containing Windows paths, escaped quotes or UTF-8 source passages.
+        # Keep the grammar STRUCTURAL only. Exact route/source/hash/quote
+        # verification remains an independent, fail-closed host postcondition
+        # in validate_grounded_response(), not model-selected authority.
         request["format"] = {
             "type": "object",
             "properties": {
                 "floor_summary": {"type": "string"},
-                "safe_artifact_route": {"type": "string", "enum": [str(resolve_receipt_path(contract, floor))]},
+                "safe_artifact_route": {"type": "string"},
                 "blocker": {"type": ["string", "null"]},
                 "citations": {"type": "array", "items": {
                     "type": "object", "properties": {
-                        "path": {"type": "string"}, "sha256": {"type": "string"},
+                        "path": {"type": "string"},
+                        "sha256": {"type": "string"},
                         "quote": {"type": "string"},
                     }, "required": ["path", "sha256", "quote"],
+                    "additionalProperties": False,
                 }},
             },
             "required": ["floor_summary", "safe_artifact_route", "blocker", "citations"],
+            "additionalProperties": False,
         }
         if sources:
-            # The host owns source identities. The model selects evidence and
-            # quotes it; it must not invent paths or mix a path with another hash.
             request["format"]["properties"]["citations"]["minItems"] = 1
-            request["format"]["properties"]["citations"]["items"] = {"anyOf": [
-                {"type": "object", "properties": {
-                    "path": {"type": "string", "enum": [source["path"]]},
-                    "sha256": {"type": "string", "enum": [source["sha256"]]},
-                    "quote": {"type": "string", "enum": _citation_quote_candidates(str(source.get("excerpt") or ""))},
-                }, "required": ["path", "sha256", "quote"], "additionalProperties": False}
-                for source in sources
-            ]}
     return request
 
 
@@ -734,6 +773,11 @@ def build_resource_preflight(
         "minimum_free_memory_bytes",
         DEFAULT_MINIMUM_FREE_MEMORY_BYTES,
     )
+    # Never allow an older 8% memory policy to undercut the founder's 20%
+    # reserved capacity for manual work. This is an admission gate, not a
+    # machine-wide hard memory cap after an Ollama request has started.
+    critical_percent = max(DEFAULT_CRITICAL_FREE_MEMORY_PERCENT, critical_percent)
+    warning_percent = max(DEFAULT_WARNING_FREE_MEMORY_PERCENT, warning_percent, critical_percent)
 
     snapshot = memory_snapshot or _memory_snapshot
     memory: dict[str, Any]
@@ -766,6 +810,7 @@ def build_resource_preflight(
             "free_percent": None,
             "error": str(exc),
         }
+        stop_reasons.append("physical RAM measurement unavailable; preserve manual reserve")
 
     # System-wide CPU pressure is a *start gate*, not a hard quota for all
     # CGX processes already running. A separate native Job Object/lease service
@@ -1097,7 +1142,10 @@ def main(argv: list[str] | None = None) -> int:
         print(f"local_floor_runner: {exc}")
         return 2
     print(json.dumps({"status": receipt["status"], "receipt_path": receipt["receipt_path"]}, indent=2, sort_keys=True))
-    return 0
+    # A durable failure/blocked receipt is NOT a successful command execution.
+    # Do not let orchestrators mistake an HTTP 500 or uncertain model outcome
+    # for completed work merely because the receipt was written.
+    return 0 if receipt["status"] in {"completed", "dry_run"} else 1
 
 
 if __name__ == "__main__":

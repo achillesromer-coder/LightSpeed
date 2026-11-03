@@ -406,6 +406,8 @@ class LSGoJobConsumer:
         self._task_columns_cache: set[str] | None = None
         self._cpu_pressure_hold = False
         self._execution_claims: dict[int, dict[str, Any]] = {}
+        self._lock_generation: str | None = None
+        self._lock_identity: tuple[int, int] | None = None
 
     def _columns(self, table: str) -> set[str]:
         cache_name = "_job_columns_cache" if table == "jobs" else "_task_columns_cache"
@@ -1435,48 +1437,93 @@ class LSGoJobConsumer:
         return summary
 
     def _acquire_heartbeat_lock(self) -> None:
+        """Claim only a fresh singleton file; never delete an existing lease."""
         path = heartbeat_path(self.shell_root)
         path.parent.mkdir(parents=True, exist_ok=True)
-        for _attempt in range(2):
-            try:
-                descriptor = os.open(str(path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-            except FileExistsError:
-                payload = _read_json(path)
-                try:
-                    pid = int(payload.get("pid"))
-                except (TypeError, ValueError):
-                    pid = None
-                if _pid_alive(pid):
-                    raise RuntimeError(f"LS GO job consumer already active as PID {pid}")
-                try:
-                    path.unlink()
-                except OSError as exc:
-                    raise RuntimeError(f"stale LS GO consumer lock cannot be removed: {exc}") from exc
-                continue
-            payload = {
-                "schema_version": CONSUMER_SCHEMA,
-                "pid": os.getpid(),
-                "started_utc": utc_now_iso(),
-                "heartbeat_utc": utc_now_iso(),
-                "state": "starting",
-            }
-            with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
-                json.dump(payload, stream, indent=2, sort_keys=True)
-                stream.write("\n")
-            return
-        raise RuntimeError("unable to acquire LS GO consumer lock")
+        generation = uuid4().hex
+        flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY
+        flags |= getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_BINARY", 0)
+        try:
+            descriptor = os.open(str(path), flags, 0o600)
+        except FileExistsError as exc:
+            raise RuntimeError(
+                "LS GO consumer singleton lock exists; owner-reviewed "
+                "process/lease/claim reconciliation required before recovery"
+            ) from exc
+        stat = os.fstat(descriptor)
+        if not stat.st_ino:
+            os.close(descriptor)
+            raise RuntimeError("singleton lock filesystem identity unavailable")
+        payload = {
+            "schema_version": CONSUMER_SCHEMA,
+            "pid": os.getpid(),
+            "generation": generation,
+            "started_utc": utc_now_iso(),
+            "heartbeat_utc": utc_now_iso(),
+            "state": "starting",
+        }
+        with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
+            json.dump(payload, stream, indent=2, sort_keys=True)
+            stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        self._lock_generation = generation
+        self._lock_identity = (stat.st_dev, stat.st_ino)
+
+    def _require_owned_heartbeat(self) -> Path:
+        path = heartbeat_path(self.shell_root)
+        if self._lock_identity is None or self._lock_generation is None:
+            raise RuntimeError("consumer lock generation was not acquired")
+        if path.is_symlink():
+            raise RuntimeError("consumer singleton lock was redirected")
+        try:
+            info = path.stat(follow_symlinks=False)
+        except OSError as exc:
+            raise RuntimeError("consumer singleton lock disappeared") from exc
+        if (info.st_dev, info.st_ino) != self._lock_identity:
+            raise RuntimeError("consumer singleton identity changed; deny heartbeat")
+        data = _read_json(path)
+        if (data.get("generation") != self._lock_generation
+            or type(data.get("pid")) is not int or data["pid"] != os.getpid()):
+            raise RuntimeError("consumer singleton ownership generation changed")
+        return path
 
     def _heartbeat(self, state: str) -> None:
-        _write_json(
-            heartbeat_path(self.shell_root),
-            {
-                "schema_version": CONSUMER_SCHEMA,
-                "pid": os.getpid(),
-                "heartbeat_utc": utc_now_iso(),
-                "state": state,
+        path = self._require_owned_heartbeat()
+        flags = os.O_RDWR | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_BINARY", 0)
+        descriptor = os.open(str(path), flags)
+        with os.fdopen(descriptor, "r+", encoding="utf-8") as stream:
+            info = os.fstat(stream.fileno())
+            if (info.st_dev, info.st_ino) != self._lock_identity:
+                raise RuntimeError("consumer lock swapped between check and open")
+            payload = json.load(stream)
+            if (payload.get("generation") != self._lock_generation
+                or type(payload.get("pid")) is not int
+                or payload["pid"] != os.getpid()):
+                raise RuntimeError("consumer lock owner changed before heartbeat write")
+            payload.update({
+                "heartbeat_utc": utc_now_iso(), "state": state,
                 "shell_root": str(self.shell_root),
-            },
-        )
+            })
+            stream.seek(0)
+            json.dump(payload, stream, indent=2, sort_keys=True)
+            stream.write("\n")
+            stream.truncate()
+            stream.flush()
+            os.fsync(stream.fileno())
+        self._require_owned_heartbeat()
+
+    def _release_heartbeat_lock(self) -> None:
+        """Never remove a replacement lock, even if it reuses the same PID."""
+        path = self._require_owned_heartbeat()
+        # Both file identity and generation must match. A separate signed
+        # host/lease authority still gates cross-process recovery.
+        if (path.stat(follow_symlinks=False).st_dev,
+            path.stat(follow_symlinks=False).st_ino) != self._lock_identity:
+            raise RuntimeError("singleton changed before cleanup")
+        path.unlink()
+        self._lock_identity = None
+        self._lock_generation = None
 
     def run_forever(self, *, poll_seconds: float = POLL_SECONDS) -> None:
         self._acquire_heartbeat_lock()
@@ -1563,11 +1610,10 @@ class LSGoJobConsumer:
                 self._stop.wait(max(0.25, float(poll_seconds)))
         finally:
             try:
-                path = heartbeat_path(self.shell_root)
-                payload = _read_json(path)
-                if int(payload.get("pid") or 0) == os.getpid():
-                    path.unlink()
-            except (OSError, TypeError, ValueError):
+                self._release_heartbeat_lock()
+            except (OSError, RuntimeError, TypeError, ValueError):
+                # Preserve any unexpectedly replaced singleton for independent
+                # reconciliation. Never infer ownership from PID equality.
                 pass
 
     def stop(self) -> None:

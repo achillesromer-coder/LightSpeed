@@ -335,6 +335,44 @@ def test_resource_preflight_is_bounded_and_reports_last_receipt(tmp_path: Path) 
     assert status["last_receipt"]["receipt_id"] == "prior-receipt"
 
 
+def test_20_percent_manual_ram_reserve_overrides_legacy_policy(tmp_path: Path) -> None:
+    contract = json.loads(_contract(tmp_path).read_text(encoding="utf-8"))
+    contract["policy"]["resource_guard"] = {
+        "critical_free_memory_percent": 8.0,
+        "warning_free_memory_percent": 12.0,
+        "minimum_free_memory_bytes": 1024,
+    }
+    for free_percent in (19, 20):
+        report = build_resource_preflight(
+            contract, endpoint="http://localhost:11434",
+            probe_ollama=False,
+            memory_snapshot=lambda pct=free_percent: (100 * 1024**3, pct * 1024**3),
+        )
+        assert report["execution_state"] == "stop"
+        assert report["memory"]["state"] == "stop"
+        assert report["thresholds"]["critical_free_memory_percent"] >= 20.0
+    ok = build_resource_preflight(
+        contract, endpoint="http://localhost:11434", probe_ollama=False,
+        memory_snapshot=lambda: (100 * 1024**3, 25 * 1024**3),
+    )
+    assert ok["execution_state"] == "ready"
+
+
+def test_unavailable_ram_measurement_refuses_new_model_session(tmp_path: Path) -> None:
+    contract = json.loads(_contract(tmp_path).read_text(encoding="utf-8"))
+    def unavailable():
+        raise OSError("memory telemetry unavailable")
+    report = build_resource_preflight(
+        contract, endpoint="http://localhost:11434", probe_ollama=True,
+        memory_snapshot=unavailable,
+        ollama_status_probe=lambda *_: (_ for _ in ()).throw(
+            AssertionError("must not probe model under uncertain RAM")),
+    )
+    assert report["execution_state"] == "stop"
+    assert report["memory"]["state"] == "unavailable"
+    assert report["ollama"]["state"] == "not_probed"
+
+
 def test_execute_stops_before_ollama_when_memory_is_critical(tmp_path: Path) -> None:
     contract_path = _contract(tmp_path)
 
@@ -537,14 +575,19 @@ def test_grounded_request_keeps_context_and_source_identities_bound(tmp_path: Pa
     request = build_ollama_request(contract, floor, source_evidence=sources)
     assert request["options"]["num_ctx"] == 8192
     props = request["format"]["properties"]
-    route = props["safe_artifact_route"]["enum"][0]
+    from lightspeed_runtime.local_floor_runner import resolve_receipt_path
+    route = str(resolve_receipt_path(contract, floor))
     assert route in request["prompt"]
-    alternatives = props["citations"]["items"]["anyOf"]
-    assert [(a["properties"]["path"]["enum"][0], a["properties"]["sha256"]["enum"][0])
-            for a in alternatives] == [(s["path"], s["sha256"]) for s in sources]
-    assert [a["properties"]["quote"]["enum"][0] for a in alternatives] == [
-        s["excerpt"] for s in sources
-    ]
+    assert props["safe_artifact_route"] == {"type": "string"}
+    assert props["citations"]["minItems"] == 1
+    assert props["citations"]["items"]["properties"]["path"] == {"type": "string"}
+    # No model grammar should encode exact Windows paths or source text.
+    constrained_schema = json.dumps(request["format"])
+    assert "anyOf" not in constrained_schema
+    assert "enum" not in constrained_schema
+    assert route not in constrained_schema
+    assert all(src["path"] not in constrained_schema for src in sources)
+    assert all(src["excerpt"] not in constrained_schema for src in sources)
     # Constrained generation does not replace the independent citation check.
     swapped = {"floor_summary": "review", "safe_artifact_route": route, "blocker": None,
                "citations": [{"path": sources[0]["path"], "sha256": sources[1]["sha256"],
@@ -552,6 +595,32 @@ def test_grounded_request_keeps_context_and_source_identities_bound(tmp_path: Pa
     assert validate_grounded_response({"response": json.dumps(swapped), "done": True}, route, sources)
     contract["policy"]["receipt_prompt_overrides"] = {"num_ctx": 999999}
     assert build_ollama_request(contract, floor, source_evidence=sources)["options"]["num_ctx"] == 8192
+
+
+def test_ollama_0129_schema_does_not_embed_windows_escaped_source_literals(tmp_path: Path) -> None:
+    from lightspeed_runtime.local_floor_runner import resolve_receipt_path
+    contract = json.loads(_contract(tmp_path).read_text(encoding="utf-8"))
+    contract["policy"]["strict_response_contract"] = True
+    floor = select_floor(contract, floor="Neo").floor
+    sample = {"path": r"C:\\LightSpeed\\Original Archive\\source.json",
+              "sha256": "f" * 64,
+              "excerpt": 'Original quote: "a \\"dangerous\\" JSON token" 🧩'}
+    request = build_ollama_request(contract, floor, source_evidence=[sample])
+    schema = json.dumps(request["format"], ensure_ascii=False)
+    assert sample["path"] not in schema
+    assert sample["excerpt"] not in schema
+    assert "enum" not in schema and "anyOf" not in schema
+    assert json.dumps(sample["path"], ensure_ascii=False) in request["prompt"]
+    route = str(resolve_receipt_path(contract, floor))
+    valid = {"floor_summary": "source only", "safe_artifact_route": route,
+             "blocker": None, "citations": [dict(path=sample["path"],
+             sha256=sample["sha256"], quote=sample["excerpt"])]}
+    assert validate_grounded_response({"response": json.dumps(valid),
+                                       "done": True}, route, [sample]) == []
+    valid["citations"][0]["sha256"] = "e" * 64
+    assert "citation is not present in the hash-bound excerpt" in (
+        validate_grounded_response({"response": json.dumps(valid),
+                                    "done": True}, route, [sample]))
 
 
 def test_quote_selection_exposes_status_beyond_header_and_preserves_literals() -> None:
@@ -639,3 +708,88 @@ def test_invalid_cpu_policy_cannot_grant_more_than_80_percent(tmp_path: Path) ->
                      http_post=forbidden_http,lock=False)
     assert result["status"]=="blocked"
     assert result["resource_preflight"]["cpu"]["state"]=="invalid_policy"
+
+@pytest.mark.parametrize(("status", "expected_exit"), [
+    ("completed", 0), ("dry_run", 0),
+    ("failed", 1), ("blocked", 1), ("unknown", 1),
+])
+def test_cli_returns_nonzero_when_receipt_reports_failed_inference(
+        monkeypatch, capsys, status, expected_exit):
+    from lightspeed_runtime import local_floor_runner as runtime
+    monkeypatch.setattr(runtime, "run_floor", lambda **_args: {
+        "status": status, "receipt_path": "/review/owned-receipt.json",
+    })
+    result = runtime.main(["--floor", "Neo"])
+    assert result == expected_exit
+    output = json.loads(capsys.readouterr().out)
+    assert output["status"] == status
+
+def test_ollama_http_500_preserves_failed_uncertain_receipt_and_single_attempt(tmp_path: Path) -> None:
+    """Source-only regression for the Neo floor's observed HTTP 500; no host call."""
+    from urllib.error import HTTPError
+
+    contract_path = _contract(tmp_path)
+    attempts = []
+
+    def rejected(url, payload, timeout):
+        attempts.append((url, payload.get("model")))
+        raise HTTPError(url, 500, "Internal Server Error", {}, None)
+
+    receipt = run_floor(
+        contract_path=contract_path, floor="Neo", dry_run=False,
+        http_post=rejected,
+        ollama_status_probe=lambda _endpoint, _timeout: {
+            "state": "available", "loaded_model_count": 1, "loaded_models": [],
+        },
+        memory_snapshot=lambda: (32 * 1024**3, 16 * 1024**3),
+        lock=False,
+    )
+    assert len(attempts) == 1  # No automatic retry of an uncertain server outcome.
+    assert attempts[0][0].endswith("/api/generate")
+    assert receipt["status"] == "failed"
+    assert receipt["server_outcome_uncertain"] is True
+    assert receipt["usage_accounting"]["state"] == "UNKNOWN"
+    assert receipt["usage_accounting"]["ollama_generate_attempts"] == 1
+    assert "500" in receipt["error"]
+    persisted = json.loads(Path(receipt["receipt_path"]).read_text(encoding="utf-8"))
+    assert persisted["status"] == "failed"
+    assert persisted["server_outcome_uncertain"] is True
+    assert persisted["usage_accounting"]["ollama_generate_attempts"] == 1
+
+
+def test_local_floor_lock_normal_cleanup_preserves_generation(tmp_path: Path) -> None:
+    from lightspeed_runtime.local_floor_runner import SingleSessionLock
+    path = tmp_path / "single-session.lock"
+    with SingleSessionLock(path):
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        assert payload["pid"] > 0
+        assert len(payload["generation"]) == 32
+    assert not path.exists()
+
+
+def test_local_floor_lock_generation_change_denies_cleanup(tmp_path: Path) -> None:
+    from lightspeed_runtime.local_floor_runner import SingleSessionLock
+    path = tmp_path / "single-session.lock"
+    with pytest.raises(LocalFloorRunnerError, match="generation changed"):
+        with SingleSessionLock(path):
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            payload["generation"] = "f" * 32 if payload["generation"] != "f" * 32 else "e" * 32
+            path.write_text(json.dumps(payload), encoding="utf-8")
+    assert path.exists()
+
+
+def test_local_floor_lock_replaced_inode_denies_cleanup(tmp_path: Path) -> None:
+    from lightspeed_runtime.local_floor_runner import SingleSessionLock
+    path = tmp_path / "single-session.lock"
+    with pytest.raises(LocalFloorRunnerError, match="identity changed"):
+        with SingleSessionLock(path):
+            original_inode = path.stat().st_ino
+            replacement = tmp_path / "replacement.lock"
+            replacement.write_bytes(path.read_bytes())
+            try:
+                replacement.replace(path)
+            except PermissionError:
+                pytest.skip("host forbids replacing an open lock; Windows negative requires host-specific fixture")
+            if path.stat().st_ino == original_inode:
+                pytest.skip("filesystem did not expose replacement inode change")
+    assert path.exists()

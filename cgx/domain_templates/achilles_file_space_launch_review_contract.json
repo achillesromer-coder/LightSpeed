@@ -1,0 +1,184 @@
+{
+  "schema": "CGX-ACHILLES-FILESPACE-FIRST-REVIEW-CONTRACT/0.1",
+  "state": "REVIEW_ONLY_UNMINTED",
+  "canonical_parent": "cgx:root:cognigrex",
+  "canonical_objects_minted": 0,
+  "scope": "Existing Cognigrex.cgx Family Set and owner-lane review; additive source graph only",
+  "owner_roles": {
+    "achilles": {
+      "principal_domain": "emassc",
+      "role": "Owner decisions, independent evidence/approval and resource oversight",
+      "self_approval": false
+    },
+    "neo": {
+      "principal_domain": "romer",
+      "role": "Existing LightSpeed/Smith workflow and runner; effects only with current lease"
+    },
+    "athene": {
+      "principal_domain": "eco",
+      "role": "Scoped Eco-Grex source/observation/rights qualification"
+    },
+    "cognigrex": {
+      "principal_domain": "parent",
+      "role": "Canonical Object_ID, R0-R2 source resolution and typed relations"
+    },
+    "unispace": {
+      "principal_domain": "product",
+      "role": "Permission-aware, user-facing control plane; no second runtime"
+    }
+  },
+  "phase_order": [
+    {
+      "id": "file_space",
+      "ordinal": 1,
+      "domain": "Cognigrex.cgx/FileSpace",
+      "state": "PRIVATE_R1_CANDIDATE_NOT_ACCEPTED",
+      "scope": "R0 locators, verified byte hashes, original variants, access rights, reversible R1 parsing, typed Object_ID proposals and selective hydration",
+      "dependency": [],
+      "acceptance": [
+        "all original shards and attachments accounted",
+        "source snapshot equals parsed bytes",
+        "duplicate version metadata preserved",
+        "source and legal rights classified per asset",
+        "negative cross-platform tests",
+        "independent signed issuer/lease/DBR readback"
+      ],
+      "owner": "Cognigrex",
+      "may_self_mint": false
+    },
+    {
+      "id": "unispace_file_space_control",
+      "ordinal": 2,
+      "domain": "UniSpace private operator surface",
+      "state": "REVIEW_STAGE_BLOCKED_BY_FILESPACE_AND_R3",
+      "scope": "Permissioned tasks, receipts, alias/object search, human-assisted local model",
+      "dependency": [
+        "file_space:ACCEPTED"
+      ],
+      "acceptance": [
+        "authenticated R3 ACL",
+        "owner/role controls",
+        "existing LS GO singleton process and lease verified",
+        "operator UI readback",
+        "no public private-data leakage"
+      ],
+      "owner": "UniSpace",
+      "may_self_mint": false
+    },
+    {
+      "id": "data_space",
+      "ordinal": 3,
+      "domain": "Cognigrex.cgx/DataSpace",
+      "state": "NOT_ACTIVATED",
+      "scope": "Temporal/spatial/semantic graph overlays, N-node observer and permissions-safe model views",
+      "dependency": [
+        "file_space:LANDED_AND_ACCEPTED",
+        "unispace_file_space_control:TESTED"
+      ],
+      "acceptance": [
+        "selective hydration roundtrip",
+        "typed geometrical transforms and units",
+        "revocation and source lineage",
+        "performance/resource budget",
+        "independent DBR"
+      ],
+      "owner": "Cognigrex",
+      "may_self_mint": false
+    },
+    {
+      "id": "print_space",
+      "ordinal": 4,
+      "domain": "CGX PrintSpace future surface",
+      "state": "DESIGN_ONLY_NOT_ENABLED",
+      "scope": "Permissioned standard printing and 3D fabrication representations via validated FileSpace/DataSpace",
+      "dependency": [
+        "file_space:LANDED_AND_ACCEPTED",
+        "data_space:TESTED"
+      ],
+      "acceptance": [
+        "physical output safety",
+        "printer/controller isolation",
+        "material and geometry fidelity",
+        "human approval for physical actions",
+        "machine-specific export roundtrip"
+      ],
+      "owner": "Relevant scoped Grex",
+      "may_self_mint": false
+    }
+  ],
+  "separate_specialist_domains": {
+    "romer_grex_4d_printing": {
+      "owner": "Romer.cgx",
+      "state": "SPECIALIST_RESEARCH_ISOLATED",
+      "relation_to_print_space": "May be displayed as permissioned provenance-linked expert work; 4D printing is NOT a UniSpace product",
+      "constraints": [
+        "verified material response law",
+        "activation and strain frames",
+        "print-space geometry",
+        "actuation and safety gates",
+        "specialist engineering approvals"
+      ]
+    }
+  },
+  "shorthand_contract": {
+    "state": "CANDIDATE_ONLY",
+    "required": [
+      "canonical source identity",
+      "function token/version",
+      "input/output type",
+      "geometry boundaries",
+      "dimension",
+      "units",
+      "reference frame and time",
+      "transform law",
+      "roundtrip or explicitly quantified loss",
+      "rights and signer chain"
+    ],
+    "not_sufficient": "A square/hexagonal shape metaphor alone is not a computable, invertible or rights-admissible operation.",
+    "canonical_ccc_cyc": "Use existing CCC/CYC geometry dictionary, source registry and runtime; do not create second root or token vocabulary without reconciled source."
+  },
+  "model_and_training": {
+    "runtime": "Existing local Ollama under Neo; offline retrieval and embeddings permitted in owner-private sandbox",
+    "current_method": "R0/R1 lexical full text + sampled local Nomic user-message embeddings; provenance-bound similarity candidates",
+    "weights_finetuned": false,
+    "training_data_approval": "NOT_YET_QUALIFIED",
+    "model_license_and_facts": "Separate per-model and per-source rights; no blanket permission from free download",
+    "privacy": "No raw private GPT text, secrets, system prompts or unverified assistant claims in public Git or remote MCP logs",
+    "resource_policy": "Foreground-first: bounded CPU affinity, below-normal priority, free RAM/VRAM and thermal gates, timed stop, resumable checkpoint"
+  },
+  "mutation_policy": {
+    "allowed_in_private_review": [
+      "bounded derived statistics",
+      "source-hash bound embeddings",
+      "candidate relations",
+      "tests and proof receipts",
+      "private UI progress"
+    ],
+    "forbidden_without_independent_authority": [
+      "native DBR mint",
+      "merge or production deploy",
+      "public launch",
+      "owner ACL change",
+      "physical print or actuation",
+      "autonomous job dispatch",
+      "model weight fine-tune on unqualified source",
+      "live Smith singleton restart"
+    ]
+  },
+  "current_holds": [
+    "#154 credentials",
+    "#158 public/private ACL",
+    "#161 signed two-node acceptance",
+    "#209 science source evidence",
+    "S92/S97 authority",
+    "Stage35 Windows fixture acceptance",
+    "Smith stale PID reuse",
+    "historical R1 multimodal and prior source-variant completeness"
+  ],
+  "receipts": {
+    "stage": "UNSIGNED_CANDIDATE",
+    "signed_issuer": false,
+    "independent_host_acceptance": false,
+    "lease_verified": false
+  }
+}
