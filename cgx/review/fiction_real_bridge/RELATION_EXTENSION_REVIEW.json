@@ -1,0 +1,105 @@
+{
+  "admission_requirements": [
+    "independent owner and source right verification",
+    "schema proposal reviewed by canonical CGX owner",
+    "typed bridge semantics reviewed for direction and realm/time scopes",
+    "atomic signed DBR/ACL/lease and rollback",
+    "independent receiver readback, no automated public publication"
+  ],
+  "current_native_mint_count": 0,
+  "graph_sha256": "13a1b541f26e51ff6b33b0feb197f1f07c858a0712d99b361e2af1d57d923034",
+  "invariants": [
+    "no owl:sameAs from fictional narrative mention to real source by shared title",
+    "no identity merge across edition/work/fictional-artifact boundary",
+    "no unknown-is-fictional inference",
+    "one canonical object per distinct referent after independent acceptance",
+    "domain owner remains explicit",
+    "rights remain source-specific",
+    "cross-world links do not activate technology, translation, training or physical operation",
+    "no local file identity promoted from a review projection"
+  ],
+  "location_if_accepted": "Cognigrex.cgx:/graph/bridges/fiction-real",
+  "not_a_new_child_root": true,
+  "parent": "cgx:root:cognigrex",
+  "related_current_contracts": {
+    "cross_domain_bridge_registry.json": {
+      "schema": "CGX-CROSS-DOMAIN-BRIDGE-REGISTRY/0.1",
+      "sha256": "03cea6ba6fe8e33e661d4e148e99d9e657a6c1a08b9ba7406a124cc3bffb0b8b"
+    },
+    "node_exchange_contract.json": {
+      "schema": "CGX-NODE-EXCHANGE-CONTRACT/0.1",
+      "sha256": "854c229ed90837e4a6962221e6d471dd80da4cf4b9ef00d4ccd1176f4f7831b3"
+    },
+    "query_normalisation_policy.json": {
+      "schema": "CGX-QUERY-NORMALISATION-POLICY/0.1",
+      "sha256": "9a65d85f692f6dbe4c10443b62b93b485766ef03e5c0e7778c45783005407b26"
+    },
+    "relation_qualifier_contract.json": {
+      "schema": "CGX-RELATION-QUALIFIER/0.2",
+      "sha256": "2958a82b9b2927dcde3f3f61a8ac98c945fa45bfb413b47997c5349fe1cc72f9"
+    },
+    "semantic_view_lens_registry.json": {
+      "schema": "CGX-SEMANTIC-VIEW-LENS-REGISTRY/0.1",
+      "sha256": "602a00f4e74614b69e14bab7b9141b05577efda3a04fd0a68dcf252d4c33008e"
+    },
+    "source_envelope_contract.json": {
+      "schema": "CGX-SOURCE-ENVELOPE/0.1",
+      "sha256": "db15393d9393d4cd8eb670312c7e7b1c7a1ca62568edb5be62a40212de164f5a"
+    },
+    "universal_object_extension_contract.json": {
+      "schema": "CGX-UNIVERSAL-OBJECT-EXTENSION/0.1",
+      "sha256": "12cfcdb575d60d6dce46fadbdc683e80622561af008464eec594c9ce39f074f9"
+    }
+  },
+  "schema": "CGX-CROSS-WORLD-RELATION-EXTENSION-CANDIDATE/0.1",
+  "standards_alignment": {
+    "narrative": "Wikidata Fictional Universes P1074 and inspired-by P941 are relevant patterns",
+    "provenance": "W3C PROV-O qualified derivation/attribution patterns",
+    "similarity": "W3C SKOS relatedMatch/closeMatch require scoped comparison, not sameAs"
+  },
+  "state": "SCOPED_REVIEW_EXTENSION_NOT_NATIVE",
+  "types": [
+    {
+      "from": "narrative mention",
+      "id": "FICTION_MENTIONS_REAL_WORK",
+      "meaning": "diegetic reference resolves to existing independently sourced real work",
+      "to": "empirical publication/standard"
+    },
+    {
+      "from": "narrative mention",
+      "id": "FICTION_MENTIONS_CANDIDATE",
+      "meaning": "competing possible referent; no automatic match",
+      "to": "candidate work"
+    },
+    {
+      "from": "narrative mention",
+      "id": "FICTION_EMBEDS_FICTIONAL_OBJECT",
+      "meaning": "an imaginary artifact inside a real creative work",
+      "to": "fictional in-world artifact"
+    },
+    {
+      "from": "mention/work",
+      "id": "RELATED_NOT_IDENTICAL",
+      "meaning": "nonidentity family/nickname link; does not collapse entities",
+      "to": "historical work"
+    },
+    {
+      "from": "fictional item",
+      "id": "DIFFERENT_REFERENT",
+      "meaning": "explicit do-not-merge constraint",
+      "to": "real book with same name"
+    },
+    {
+      "from": "constructed language/creative artifact",
+      "id": "INSPIRED_BY",
+      "meaning": "historical influence rather than identity",
+      "to": "creative source"
+    },
+    {
+      "from": "constructed language",
+      "id": "HAS_REAL_WORLD_PRACTICE",
+      "meaning": "separate human use, not proof that fictional speakers exist",
+      "to": "source-qualified empirical activity"
+    }
+  ]
+}
