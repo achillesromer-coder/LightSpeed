@@ -26,6 +26,7 @@ import {
   planNodeCompute,
   planNodeTransfer,
   readDesktopStatus,
+  readCgxFamilyOversight,
   readPendingCommands,
   remoteAccessPresentation,
   removePendingCommand,
@@ -62,6 +63,7 @@ import {
   renderResultReceiptsError,
 } from "./resultReceipts";
 import { renderRepresentationGraphs } from "./representationGraphs";
+import { createCgxFamilyReadGuard, renderCgxFamilyOversight } from "./cgxFamilyOversight";
 import { loadType1CatalogueProjection, type Type1CatalogueProjection } from "./utpCatalogue";
 import { bindCgxReviewProjection, loadCgxReviewProjection, type CgxReviewProjection } from "./cgxReview";
 import { bindObjectReview, loadObjectReview, type ComponentAtlas, type ObjectReviewCatalogue } from "./objectReview";
@@ -210,6 +212,18 @@ app.innerHTML = `
         <p>The system coordinates GO, Desktop, Git, Drive, agents and human oversight while retaining separate authority, resource limits and reviewable receipts.</p>
       </article>
       <div class="agent-grid">${agentRows.map(([name, role]) => `<article class="agent"><strong>${name}</strong><span>${role}</span></article>`).join("")}</div>
+      <article class="panel">
+        <div class="panel-head">
+          <div><p class="eyebrow">CGX Family Set · owner lens</p>
+            <h2>LightSpeed ingestion and UniSpace oversight</h2></div>
+          <button type="button" id="cgx-family-refresh">Read family status</button>
+        </div>
+        <div id="cgx-family-oversight" aria-live="polite">
+          <p class="muted">Sign in as the owner to read current canonical identities and
+          source-only Alexandria metadata. No native admission or source hydration.</p>
+        </div>
+      </article>
+
       <div class="two-column">
         <article class="panel"><p class="eyebrow">Execution path</p><h2>One project, one receipt chain</h2><div class="flow"><span>UniSpace</span><i>→</i><span>Achilles</span><i>→</i><span>Neo + floor</span><i>→</i><span>Desktop project</span><i>→</i><span>Drive receipt</span><i>→</i><span>GO decision</span></div></article>
         <article class="panel"><p class="eyebrow">Existing twin context</p><h2>Spaceport contract retained</h2><p class="muted">${twinZones.length} zones · ${facilityRecords.length} facility records · ${workbookTabs.length} workbook tabs. The twin remains bounded context, not the command-centre homepage.</p></article>
@@ -293,6 +307,7 @@ let currentAuthorityContract: AuthorityContract | null = null;
 let currentReviews: ReviewRecord[] = [];
 let currentRepresentationGraphs: RepresentationGraph[] = [];
 let ownerSessionToken = "";
+const familyReadGuard = createCgxFamilyReadGuard();
 let ownerPasswordChangeToken = "";
 let ownerUsername = "NCNB";
 
@@ -306,6 +321,10 @@ const applyOwnerAuth = (response: OwnerAuthResponse): void => {
   const loginForm = byId<HTMLFormElement>("owner-login-form");
   const changeForm = byId<HTMLFormElement>("owner-change-form");
   const logoutButton = byId<HTMLButtonElement>("owner-logout");
+  // An auth transition revokes the previous private projection immediately,
+  // including when a backend returns the same session token.
+  familyReadGuard.invalidate();
+  byId("cgx-family-oversight").textContent = "Owner session changed; read family status again.";
   ownerUsername = response.credential?.username || ownerUsername;
   ownerSessionToken = response.session_token || "";
   ownerPasswordChangeToken = response.password_change_token || "";
@@ -387,12 +406,40 @@ byId<HTMLButtonElement>("owner-logout").addEventListener("click", async () => {
   const token = ownerSessionToken;
   ownerSessionToken = "";
   ownerPasswordChangeToken = "";
+  familyReadGuard.invalidate();
+  // Do not retain private DOM during a slow or failed logout network request.
+  byId("cgx-family-oversight").textContent = "Owner session cleared; family evidence hidden.";
   if (token) {
     try { await logoutDesktopOwner(token); } catch { /* The local session is already cleared. */ }
   }
+  // A new sign-in may finish while the old logout request is in flight.
+  // Never let the old completion overwrite that newer owner session UI.
+  if (ownerSessionToken) return;
   byId<HTMLButtonElement>("owner-logout").hidden = true;
   byId("owner-auth-state").textContent = "Signed out";
   ownerAuthMessage("warn", "Owner session cleared from this page.");
+  byId("cgx-family-oversight").textContent = "Owner session cleared; family evidence hidden.";
+});
+
+byId<HTMLButtonElement>("cgx-family-refresh").addEventListener("click", async () => {
+  const mount = byId("cgx-family-oversight");
+  if (!ownerSessionToken) {
+    mount.textContent = "Current owner sign-in is required. No family source was requested.";
+    return;
+  }
+  const requestedOwnerSession = ownerSessionToken;
+  const isCurrentRead = familyReadGuard.begin(requestedOwnerSession);
+  mount.textContent = "Reading the existing Family Set and LOAD source index…";
+  try {
+    const snapshot = await readCgxFamilyOversight(requestedOwnerSession);
+    if (!isCurrentRead(ownerSessionToken)) return;
+    mount.innerHTML = renderCgxFamilyOversight(snapshot);
+  } catch (error) {
+    if (!isCurrentRead(ownerSessionToken)) return;
+    mount.textContent = error instanceof Error
+      ? `Family oversight held: ${error.message}`
+      : "Family oversight is unavailable.";
+  }
 });
 
 const setNodePlanResult = (

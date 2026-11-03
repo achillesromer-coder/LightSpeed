@@ -650,6 +650,23 @@ const withTimeout = async <T>(url: string, init: RequestInit, timeoutMs = 3500):
   }
 };
 
+export const readCgxFamilyOversight = (
+  ownerSession: string,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<import("./cgxFamilyOversight").CgxFamilyOversightSnapshot> => {
+  if (!ownerSession || ownerSession.length > 256) {
+    throw new TypeError("Active owner session is required for CGX family oversight");
+  }
+  return withTimeout<import("./cgxFamilyOversight").CgxFamilyOversightSnapshot>(
+    `${origin}/api/v1/cgx/family-oversight`,
+    {
+      method: "GET",
+      headers: { "X-LightSpeed-Session": ownerSession },
+    },
+    15000,
+  );
+};
+
 export const readDesktopStatus = (origin = DEFAULT_DESKTOP_ORIGIN): Promise<DesktopStatus> =>
   withTimeout<DesktopStatus>(`${origin}/api/v1/status`, { method: "GET" }, 10000);
 
