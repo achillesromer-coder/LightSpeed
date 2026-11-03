@@ -348,6 +348,34 @@
         "V_AND_V"
       ],
       "minimum_state": "ANALYSE"
+    },
+    {
+      "id": "AR-18",
+      "match": {
+        "tags_any": [
+          "scientific-asset",
+          "scientific-projection",
+          "ephemeris",
+          "spatial-scale",
+          "scientific-measurement",
+          "orbital-geometry",
+          "orbital-scale",
+          "geometry-asset",
+          "simulation-asset",
+          "engineering-asset",
+          "ecological-asset",
+          "operational-asset",
+          "horizons-vectors",
+          "spice-ephemeris",
+          "gmat-trajectory",
+          "solar-system-state"
+        ]
+      },
+      "methods": [
+        "V_AND_V",
+        "AI_IMPACT"
+      ],
+      "minimum_state": "VERIFY"
     }
   ],
   "escalation": [
