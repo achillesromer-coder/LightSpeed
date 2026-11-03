@@ -1,0 +1,790 @@
+{
+  "authority": "REVIEW_ONLY",
+  "edges": [
+    {
+      "admission_state": "proposed",
+      "assertion_owner": "media",
+      "authority_transfer": false,
+      "claim_scope": "screen_reference",
+      "epistemic_state": "review-supported",
+      "equivalence": null,
+      "from": "cgx:review-fr:mention:451212af700469d311e24fa1",
+      "id": "cgx:review-fr:edge:29b1e286d6aefe720ba7facf",
+      "identity_key": "edge:hackers-orange",
+      "notes": "",
+      "source_ids": [
+        "film-transcript",
+        "orange-national-archive"
+      ],
+      "to": "cgx:review-fr:node:6f639aa22861111e3e9d6c90",
+      "type": "FICTION_MENTIONS_REAL_WORK"
+    },
+    {
+      "admission_state": "proposed",
+      "assertion_owner": "media",
+      "authority_transfer": false,
+      "claim_scope": "screen_reference",
+      "epistemic_state": "review-supported",
+      "equivalence": null,
+      "from": "cgx:review-fr:mention:b80f599b82c4919bb32c3627",
+      "id": "cgx:review-fr:edge:5dee94073a0be544ab9f6bd7",
+      "identity_key": "edge:hackers-pink",
+      "notes": "",
+      "source_ids": [
+        "film-transcript",
+        "norton-catalog"
+      ],
+      "to": "cgx:review-fr:node:befc209c803f0589f35c52db",
+      "type": "FICTION_MENTIONS_REAL_WORK"
+    },
+    {
+      "admission_state": "proposed",
+      "assertion_owner": "media",
+      "authority_transfer": false,
+      "claim_scope": "screen_reference",
+      "epistemic_state": "review-supported",
+      "equivalence": null,
+      "from": "cgx:review-fr:mention:36bf5aff196db6c8cd8926a6",
+      "id": "cgx:review-fr:edge:8b970324af8e7403c2cf8dcf",
+      "identity_key": "edge:hackers-devil",
+      "notes": "",
+      "source_ids": [
+        "film-transcript",
+        "bsd-freebsd"
+      ],
+      "to": "cgx:review-fr:node:3c499b424a7d422214f8966d",
+      "type": "FICTION_MENTIONS_REAL_WORK"
+    },
+    {
+      "admission_state": "proposed",
+      "assertion_owner": "media",
+      "authority_transfer": false,
+      "claim_scope": "screen_reference",
+      "epistemic_state": "review-supported",
+      "equivalence": null,
+      "from": "cgx:review-fr:mention:90cfae6fc1c1849c845064f4",
+      "id": "cgx:review-fr:edge:ffea3ac5364b0a653aa661db",
+      "identity_key": "edge:hackers-dragon",
+      "notes": "",
+      "source_ids": [
+        "film-transcript",
+        "dragon-catalog"
+      ],
+      "to": "cgx:review-fr:node:ae3c2feac74c77006dbde09d",
+      "type": "FICTION_MENTIONS_REAL_WORK"
+    },
+    {
+      "admission_state": "proposed",
+      "assertion_owner": "media",
+      "authority_transfer": false,
+      "claim_scope": "comparison",
+      "epistemic_state": "ambiguous",
+      "equivalence": null,
+      "from": "cgx:review-fr:mention:4090cb0cd1513bbadd037191",
+      "id": "cgx:review-fr:edge:f54e2727895d79c8e471b3b2",
+      "identity_key": "edge:hackers-green-related-posix",
+      "notes": "Possible historical family, not an exact edition match.",
+      "source_ids": [
+        "film-transcript",
+        "retro-technical"
+      ],
+      "to": "cgx:review-fr:node:0338140df7aea6b46e84cee0",
+      "type": "RELATED_NOT_IDENTICAL"
+    },
+    {
+      "admission_state": "proposed",
+      "assertion_owner": "media",
+      "authority_transfer": false,
+      "claim_scope": "comparison",
+      "epistemic_state": "review-supported",
+      "equivalence": null,
+      "from": "cgx:review-fr:mention:90cfae6fc1c1849c845064f4",
+      "id": "cgx:review-fr:edge:349c0c5770d5cdc192e11191",
+      "identity_key": "edge:hackers-dragon-other-edition",
+      "notes": "Earlier Dragon Book nickname applies to a different textbook.",
+      "source_ids": [
+        "retro-technical"
+      ],
+      "to": "cgx:review-fr:node:69520e177888eda3b0adf92a",
+      "type": "RELATED_NOT_IDENTICAL"
+    },
+    {
+      "admission_state": "proposed",
+      "assertion_owner": "media",
+      "authority_transfer": false,
+      "claim_scope": "screen_reference",
+      "epistemic_state": "ambiguous",
+      "equivalence": null,
+      "from": "cgx:review-fr:mention:e23afab9831dfda0ca76f83d",
+      "id": "cgx:review-fr:edge:137c6434ad491a05b4407fb3",
+      "identity_key": "edge:hackers-red-tni",
+      "notes": "",
+      "source_ids": [
+        "film-transcript",
+        "nsc-red"
+      ],
+      "to": "cgx:review-fr:node:93e0862392f9f55a5769fbf0",
+      "type": "FICTION_MENTIONS_CANDIDATE"
+    },
+    {
+      "admission_state": "proposed",
+      "assertion_owner": "media",
+      "authority_transfer": false,
+      "claim_scope": "screen_reference",
+      "epistemic_state": "ambiguous",
+      "equivalence": null,
+      "from": "cgx:review-fr:mention:e23afab9831dfda0ca76f83d",
+      "id": "cgx:review-fr:edge:dcfd89cba01acd492ba900fb",
+      "identity_key": "edge:hackers-red-posix",
+      "notes": "",
+      "source_ids": [
+        "film-transcript",
+        "posix-red-jargon"
+      ],
+      "to": "cgx:review-fr:node:0338140df7aea6b46e84cee0",
+      "type": "FICTION_MENTIONS_CANDIDATE"
+    },
+    {
+      "admission_state": "proposed",
+      "assertion_owner": "media",
+      "authority_transfer": false,
+      "claim_scope": "fictional_world",
+      "epistemic_state": "review-supported",
+      "equivalence": null,
+      "from": "cgx:review-fr:node:c039d7ec0d9be96a7ef2e25b",
+      "id": "cgx:review-fr:edge:e388f324b2931b33ff06dd2f",
+      "identity_key": "edge:klingon-star-trek",
+      "notes": "A functioning constructed language originated as a creative-work language.",
+      "source_ids": [
+        "klingon-institute"
+      ],
+      "to": "cgx:review-fr:node:54d169032f6f33a0f2df2a19",
+      "type": "INSPIRED_BY"
+    },
+    {
+      "admission_state": "proposed",
+      "assertion_owner": "linguistics",
+      "authority_transfer": false,
+      "claim_scope": "real_world_practice",
+      "epistemic_state": "review-supported",
+      "equivalence": null,
+      "from": "cgx:review-fr:node:c039d7ec0d9be96a7ef2e25b",
+      "id": "cgx:review-fr:edge:dafd55b0d3b5cc109f1a4c20",
+      "identity_key": "edge:klingon-real-human-use",
+      "notes": "Real human learning/speaking is documented, separate from fictional species.",
+      "source_ids": [
+        "klingon-institute"
+      ],
+      "to": "cgx:review-fr:node:360e44747c3407a8791c6bb2",
+      "type": "HAS_REAL_WORLD_PRACTICE"
+    },
+    {
+      "admission_state": "proposed",
+      "assertion_owner": "media",
+      "authority_transfer": false,
+      "claim_scope": "fictional_world",
+      "epistemic_state": "review-supported",
+      "equivalence": null,
+      "from": "cgx:review-fr:mention:7450782159cf4f2ae3e5d94a",
+      "id": "cgx:review-fr:edge:e2e283f92a9d5a456e0e9c63",
+      "identity_key": "edge:hitchhikers-guide-mention",
+      "notes": "",
+      "source_ids": [
+        "hitchhiker-fiction"
+      ],
+      "to": "cgx:review-fr:node:173e9aec258ae544b4901f4e",
+      "type": "FICTION_EMBEDS_FICTIONAL_OBJECT"
+    },
+    {
+      "admission_state": "proposed",
+      "assertion_owner": "media",
+      "authority_transfer": false,
+      "claim_scope": "comparison",
+      "epistemic_state": "review-supported",
+      "equivalence": null,
+      "from": "cgx:review-fr:node:173e9aec258ae544b4901f4e",
+      "id": "cgx:review-fr:edge:cb504fa252b2eb2e034e58e3",
+      "identity_key": "edge:hitchhikers-distinct-real-novel",
+      "notes": "Same title; distinct fictional in-world object and empirical published novel.",
+      "source_ids": [
+        "hitchhiker-fiction",
+        "hitchhiker-publisher"
+      ],
+      "to": "cgx:review-fr:node:d5b512d9e01040faa83c5f4f",
+      "type": "DIFFERENT_REFERENT"
+    }
+  ],
+  "graph_sha256": "13a1b541f26e51ff6b33b0feb197f1f07c858a0712d99b361e2af1d57d923034",
+  "mentions": [
+    {
+      "aliases": [
+        "international unix environments"
+      ],
+      "candidate_ids": [],
+      "context_node": "cgx:review-fr:node:2ff36fe7c442440c85870c48",
+      "id": "cgx:review-fr:mention:4090cb0cd1513bbadd037191",
+      "identity_key": "mention:hackers-books-green",
+      "label": "Green Book",
+      "notes": "Scene phrase may allude to UNIX/POSIX material; exact physical edition not verified.",
+      "source_ids": [
+        "film-transcript",
+        "retro-technical"
+      ],
+      "status": "unresolved",
+      "time_context": "fictional-film-scene-1995"
+    },
+    {
+      "aliases": [
+        "computer security criteria",
+        "DoD Standards"
+      ],
+      "candidate_ids": [
+        "cgx:review-fr:node:6f639aa22861111e3e9d6c90"
+      ],
+      "context_node": "cgx:review-fr:node:2ff36fe7c442440c85870c48",
+      "id": "cgx:review-fr:mention:451212af700469d311e24fa1",
+      "identity_key": "mention:hackers-books-orange",
+      "label": "Orange Book",
+      "notes": "",
+      "source_ids": [
+        "film-transcript",
+        "retro-technical",
+        "orange-national-archive"
+      ],
+      "status": "review-supported",
+      "time_context": "fictional-film-scene-1995"
+    },
+    {
+      "aliases": [
+        "IBM PC guide",
+        "pink shirt book"
+      ],
+      "candidate_ids": [
+        "cgx:review-fr:node:befc209c803f0589f35c52db"
+      ],
+      "context_node": "cgx:review-fr:node:2ff36fe7c442440c85870c48",
+      "id": "cgx:review-fr:mention:b80f599b82c4919bb32c3627",
+      "identity_key": "mention:hackers-books-pink",
+      "label": "Pink-Shirt Book",
+      "notes": "",
+      "source_ids": [
+        "film-transcript",
+        "retro-technical",
+        "norton-catalog"
+      ],
+      "status": "review-supported",
+      "time_context": "fictional-film-scene-1995"
+    },
+    {
+      "aliases": [
+        "Unix Bible"
+      ],
+      "candidate_ids": [
+        "cgx:review-fr:node:3c499b424a7d422214f8966d"
+      ],
+      "context_node": "cgx:review-fr:node:2ff36fe7c442440c85870c48",
+      "id": "cgx:review-fr:mention:36bf5aff196db6c8cd8926a6",
+      "identity_key": "mention:hackers-books-devil",
+      "label": "Devil Book",
+      "notes": "",
+      "source_ids": [
+        "film-transcript",
+        "retro-technical",
+        "bsd-freebsd"
+      ],
+      "status": "review-supported",
+      "time_context": "fictional-film-scene-1995"
+    },
+    {
+      "aliases": [
+        "compiler design"
+      ],
+      "candidate_ids": [
+        "cgx:review-fr:node:ae3c2feac74c77006dbde09d"
+      ],
+      "context_node": "cgx:review-fr:node:2ff36fe7c442440c85870c48",
+      "id": "cgx:review-fr:mention:90cfae6fc1c1849c845064f4",
+      "identity_key": "mention:hackers-books-dragon",
+      "label": "Dragon Book",
+      "notes": "",
+      "source_ids": [
+        "film-transcript",
+        "retro-technical",
+        "dragon-catalog"
+      ],
+      "status": "review-supported",
+      "time_context": "fictional-film-scene-1995"
+    },
+    {
+      "aliases": [
+        "NSA trusted networks",
+        "Ugly Red Book"
+      ],
+      "candidate_ids": [
+        "cgx:review-fr:node:93e0862392f9f55a5769fbf0",
+        "cgx:review-fr:node:0338140df7aea6b46e84cee0"
+      ],
+      "context_node": "cgx:review-fr:node:2ff36fe7c442440c85870c48",
+      "id": "cgx:review-fr:mention:e23afab9831dfda0ca76f83d",
+      "identity_key": "mention:hackers-books-red",
+      "label": "Red Book",
+      "notes": "Film dialogue conflates two separate historical red-book referents.",
+      "source_ids": [
+        "film-transcript",
+        "retro-technical",
+        "nsc-red",
+        "posix-red-jargon"
+      ],
+      "status": "ambiguous",
+      "time_context": "fictional-film-scene-1995"
+    },
+    {
+      "aliases": [
+        "The Hitchhiker's Guide to the Galaxy"
+      ],
+      "candidate_ids": [
+        "cgx:review-fr:node:173e9aec258ae544b4901f4e"
+      ],
+      "context_node": "cgx:review-fr:node:d5b512d9e01040faa83c5f4f",
+      "id": "cgx:review-fr:mention:7450782159cf4f2ae3e5d94a",
+      "identity_key": "mention:hitchhikers-fictional-guide",
+      "label": "Hitchhiker's Guide",
+      "notes": "",
+      "source_ids": [
+        "hitchhiker-fiction",
+        "hitchhiker-publisher"
+      ],
+      "status": "review-supported",
+      "time_context": "diegetic-reference"
+    }
+  ],
+  "metadata_only": true,
+  "native_admission": false,
+  "no_new_canonical_root": true,
+  "nodes": [
+    {
+      "admission_state": "proposed",
+      "aliases": [
+        "Hackers film",
+        "Hackers 1995"
+      ],
+      "canonical_object_minted": false,
+      "facets": {
+        "empirical_work": true,
+        "fictional_setting": true,
+        "publication_year": 1995
+      },
+      "id": "cgx:review-fr:node:2ff36fe7c442440c85870c48",
+      "identity_key": "film:hackers-1995",
+      "kind": "creative_work",
+      "owner_domain": "media",
+      "source_ids": [
+        "film-transcript"
+      ],
+      "title": "Hackers (1995)"
+    },
+    {
+      "admission_state": "proposed",
+      "aliases": [
+        "Orange Book",
+        "DoD security criteria"
+      ],
+      "canonical_object_minted": false,
+      "facets": {
+        "empirical_work": true,
+        "identifier": "DoD 5200.28-STD",
+        "published_year": 1985
+      },
+      "id": "cgx:review-fr:node:6f639aa22861111e3e9d6c90",
+      "identity_key": "standard:dod-5200.28-std-1985",
+      "kind": "documented_standard",
+      "owner_domain": "standards",
+      "source_ids": [
+        "orange-national-archive"
+      ],
+      "title": "Trusted Computer System Evaluation Criteria"
+    },
+    {
+      "admission_state": "proposed",
+      "aliases": [
+        "Pink-Shirt Book",
+        "Pink Shirt Book",
+        "Peter Norton IBM PC guide"
+      ],
+      "canonical_object_minted": false,
+      "facets": {
+        "empirical_work": true,
+        "isbn_10": "0914845462",
+        "published_year": 1985
+      },
+      "id": "cgx:review-fr:node:befc209c803f0589f35c52db",
+      "identity_key": "book:norton-ibm-pc-1985",
+      "kind": "real_work",
+      "owner_domain": "bibliography",
+      "source_ids": [
+        "norton-catalog"
+      ],
+      "title": "The Peter Norton Programmer's Guide to the IBM PC"
+    },
+    {
+      "admission_state": "proposed",
+      "aliases": [
+        "Devil Book",
+        "Daemon Book",
+        "Unix Bible"
+      ],
+      "canonical_object_minted": false,
+      "facets": {
+        "empirical_work": true,
+        "isbn_10": "0201061961",
+        "published_year": 1989
+      },
+      "id": "cgx:review-fr:node:3c499b424a7d422214f8966d",
+      "identity_key": "book:leffler-design-4.3bsd-1989",
+      "kind": "real_work",
+      "owner_domain": "bibliography",
+      "source_ids": [
+        "bsd-freebsd"
+      ],
+      "title": "The Design and Implementation of the 4.3BSD UNIX Operating System"
+    },
+    {
+      "admission_state": "proposed",
+      "aliases": [
+        "Dragon Book",
+        "Compiler Design",
+        "Red Dragon Book"
+      ],
+      "canonical_object_minted": false,
+      "facets": {
+        "empirical_work": true,
+        "isbn_10": "0201100886",
+        "published_year": 1986
+      },
+      "id": "cgx:review-fr:node:ae3c2feac74c77006dbde09d",
+      "identity_key": "book:aho-sethi-ullman-compilers-1986",
+      "kind": "real_work",
+      "owner_domain": "bibliography",
+      "source_ids": [
+        "dragon-catalog"
+      ],
+      "title": "Compilers: Principles, Techniques, and Tools"
+    },
+    {
+      "admission_state": "proposed",
+      "aliases": [
+        "Green Dragon Book"
+      ],
+      "canonical_object_minted": false,
+      "facets": {
+        "empirical_work": true,
+        "match_note": "Different earlier book, shares Dragon Book nickname",
+        "published_year": 1977
+      },
+      "id": "cgx:review-fr:node:69520e177888eda3b0adf92a",
+      "identity_key": "book:aho-ullman-principles-compiler-design-1977",
+      "kind": "real_work",
+      "owner_domain": "bibliography",
+      "source_ids": [
+        "retro-technical"
+      ],
+      "title": "Principles of Compiler Design"
+    },
+    {
+      "admission_state": "proposed",
+      "aliases": [
+        "Red Book (NSA)",
+        "NSA Trusted Networks",
+        "Trusted Network Interpretation"
+      ],
+      "canonical_object_minted": false,
+      "facets": {
+        "empirical_work": true,
+        "identifier": "NCSC-TG-005",
+        "published_year": 1987
+      },
+      "id": "cgx:review-fr:node:93e0862392f9f55a5769fbf0",
+      "identity_key": "standard:ncsc-tg-005-1987",
+      "kind": "documented_standard",
+      "owner_domain": "standards",
+      "source_ids": [
+        "nsc-red"
+      ],
+      "title": "Trusted Network Interpretation of the Trusted Computer System Evaluation Criteria"
+    },
+    {
+      "admission_state": "proposed",
+      "aliases": [
+        "Ugly Red Book That Won't Fit On A Shelf",
+        "POSIX Red Book"
+      ],
+      "canonical_object_minted": false,
+      "facets": {
+        "empirical_work": true,
+        "identifier": "IEEE 1003.1-1990",
+        "published_year": 1990,
+        "scope": "nickname reference only"
+      },
+      "id": "cgx:review-fr:node:0338140df7aea6b46e84cee0",
+      "identity_key": "standard:ieee-1003.1-1990",
+      "kind": "documented_standard",
+      "owner_domain": "standards",
+      "source_ids": [
+        "posix-red-jargon"
+      ],
+      "title": "IEEE 1003.1-1990 (POSIX)"
+    },
+    {
+      "admission_state": "proposed",
+      "aliases": [
+        "Klingon language",
+        "tlhIngan Hol",
+        "Klingon"
+      ],
+      "canonical_object_minted": false,
+      "facets": {
+        "fictional_origin": true,
+        "linguistic_system": true,
+        "not_evidence_of_fictional_species": true,
+        "real_world_usage": true,
+        "rights_and_grammar_access": "separate review",
+        "spoken_by_humans": true
+      },
+      "id": "cgx:review-fr:node:c039d7ec0d9be96a7ef2e25b",
+      "identity_key": "language:klingon-marc-okrands-conlang",
+      "kind": "constructed_language",
+      "owner_domain": "linguistics",
+      "source_ids": [
+        "klingon-institute"
+      ],
+      "title": "Klingon (constructed language)"
+    },
+    {
+      "admission_state": "proposed",
+      "aliases": [
+        "Star Trek"
+      ],
+      "canonical_object_minted": false,
+      "facets": {
+        "empirical_work": true,
+        "fictional_setting": true
+      },
+      "id": "cgx:review-fr:node:54d169032f6f33a0f2df2a19",
+      "identity_key": "fictional-franchise:star-trek",
+      "kind": "creative_work",
+      "owner_domain": "fiction",
+      "source_ids": [
+        "klingon-institute"
+      ],
+      "title": "Star Trek franchise"
+    },
+    {
+      "admission_state": "proposed",
+      "aliases": [
+        "Klingon speaker community",
+        "Speaking Klingon"
+      ],
+      "canonical_object_minted": false,
+      "facets": {
+        "documented_by": "Klingon Language Institute",
+        "empirical_activity": true,
+        "not_proof_of_inworld_species": true,
+        "performed_by_real_humans": true
+      },
+      "id": "cgx:review-fr:node:360e44747c3407a8791c6bb2",
+      "identity_key": "practice:klingon-human-speakers",
+      "kind": "documented_practice",
+      "owner_domain": "linguistics",
+      "source_ids": [
+        "klingon-institute"
+      ],
+      "title": "Documented human Klingon speaking and study"
+    },
+    {
+      "admission_state": "proposed",
+      "aliases": [
+        "The Hitchhiker's Guide to the Galaxy",
+        "Hitchhiker's Guide novel"
+      ],
+      "canonical_object_minted": false,
+      "facets": {
+        "authored_by": "Douglas Adams",
+        "empirical_work": true,
+        "not_same_as_diegetic_guide": true,
+        "published_year": 1979
+      },
+      "id": "cgx:review-fr:node:d5b512d9e01040faa83c5f4f",
+      "identity_key": "book:adams-hitchhikers-guide-1979",
+      "kind": "real_work",
+      "owner_domain": "bibliography",
+      "source_ids": [
+        "hitchhiker-publisher"
+      ],
+      "title": "The Hitchhiker's Guide to the Galaxy (published novel)"
+    },
+    {
+      "admission_state": "proposed",
+      "aliases": [
+        "The Hitchhiker's Guide to the Galaxy",
+        "Guidebook in Hitchhiker's"
+      ],
+      "canonical_object_minted": false,
+      "facets": {
+        "empirical_object": false,
+        "fictional_origin": true,
+        "real_printed_novel_is_distinct": true
+      },
+      "id": "cgx:review-fr:node:173e9aec258ae544b4901f4e",
+      "identity_key": "fictional-entity:hitchhikers-electronic-guide",
+      "kind": "fictional_entity",
+      "owner_domain": "fiction",
+      "source_ids": [
+        "hitchhiker-fiction",
+        "hitchhiker-publisher"
+      ],
+      "title": "The Hitchhiker's Guide to the Galaxy (in-universe guide)"
+    }
+  ],
+  "parent": "cgx:root:cognigrex",
+  "policies": {
+    "binary_hydration": "None; metadata links only",
+    "cross_world_sameAs": "Forbidden by default; only typed contextual connections",
+    "downstream_model_training": "Not licensed/authorised",
+    "identity_one_per_referent": "One proposed entity identity can have many appearances, versions and domain projections",
+    "language_threshold": "Fictional provenance and empirical language use may coexist",
+    "model_inferences": "Never promoted automatically",
+    "provenance_namespace": "W3C PROV-O aligned; source locator not source-body digest",
+    "release": "Founder and source-owner review required",
+    "unverified_not_false": "A missing catalog match is a frontier, never proof of fictitiousness"
+  },
+  "same_name_does_not_mean_same_identity": true,
+  "schema": "CGX-FICTION-REAL-MIRROR/0.1",
+  "sources": [
+    {
+      "admission": "review-candidate",
+      "id": "film-transcript",
+      "rights_note": "External metadata/reference link only; no publication text or imagery copied",
+      "role": "scene dialogue cross-check",
+      "sha256": null,
+      "source_bytes_hydrated": false,
+      "url": "https://transcripts.simpleremix.com/script.php/hackers-1995-TSV"
+    },
+    {
+      "admission": "review-candidate",
+      "id": "retro-technical",
+      "rights_note": "External metadata/reference link only; no publication text or imagery copied",
+      "role": "historical identification; community evidence, not primary",
+      "sha256": null,
+      "source_bytes_hydrated": false,
+      "url": "https://retrocomputing.stackexchange.com/questions/10997/were-any-of-the-books-mentioned-in-this-scene-from-the-movie-hackers-real"
+    },
+    {
+      "admission": "review-candidate",
+      "id": "norton-catalog",
+      "rights_note": "External metadata/reference link only; no publication text or imagery copied",
+      "role": "publisher/year bibliographic record",
+      "sha256": null,
+      "source_bytes_hydrated": false,
+      "url": "https://books.google.com/books/about/The_Peter_Norton_Programmer_s_Guide_to_t.html?id=ta9QAAAAMAAJ"
+    },
+    {
+      "admission": "review-candidate",
+      "id": "orange-national-archive",
+      "rights_note": "External metadata/reference link only; no publication text or imagery copied",
+      "role": "DoD standard 1985",
+      "sha256": null,
+      "source_bytes_hydrated": false,
+      "url": "https://nsarchive.gwu.edu/document/18466-national-security-archive-department-defense"
+    },
+    {
+      "admission": "review-candidate",
+      "id": "bsd-freebsd",
+      "rights_note": "External metadata/reference link only; no publication text or imagery copied",
+      "role": "FreeBSD bibliographic confirmation",
+      "sha256": null,
+      "source_bytes_hydrated": false,
+      "url": "https://docs-archive.freebsd.org/doc/13.0-RELEASE/usr/local/share/doc/freebsd/en/books/handbook/bibliography-osinternals.html"
+    },
+    {
+      "admission": "review-candidate",
+      "id": "dragon-catalog",
+      "rights_note": "External metadata/reference link only; no publication text or imagery copied",
+      "role": "1986 compilers title/authors",
+      "sha256": null,
+      "source_bytes_hydrated": false,
+      "url": "https://books.google.com/books?id=-4Q_AQAAIAAJ"
+    },
+    {
+      "admission": "review-candidate",
+      "id": "nsc-red",
+      "rights_note": "External metadata/reference link only; no publication text or imagery copied",
+      "role": "Trusted Network Interpretation identification",
+      "sha256": null,
+      "source_bytes_hydrated": false,
+      "url": "https://www.nationalacademies.org/read/1581/chapter/7"
+    },
+    {
+      "admission": "review-candidate",
+      "id": "posix-red-jargon",
+      "rights_note": "External metadata/reference link only; no publication text or imagery copied",
+      "role": "historic terminology and conflation, secondary",
+      "sha256": null,
+      "source_bytes_hydrated": false,
+      "url": "https://retrocomputing.stackexchange.com/questions/10997/were-any-of-the-books-mentioned-in-this-scene-from-the-movie-hackers-real/11000"
+    },
+    {
+      "admission": "review-candidate",
+      "id": "klingon-institute",
+      "rights_note": "External metadata/reference link only; no publication text or imagery copied",
+      "role": "institutional documentation of actual spoken conlang",
+      "sha256": null,
+      "source_bytes_hydrated": false,
+      "url": "https://www.kli.org/about-klingon/klingon-history/"
+    },
+    {
+      "admission": "review-candidate",
+      "id": "hitchhiker-publisher",
+      "rights_note": "External metadata/reference link only; no publication text or imagery copied",
+      "role": "real published book",
+      "sha256": null,
+      "source_bytes_hydrated": false,
+      "url": "https://www.panmacmillan.com.au/9781743033258/"
+    },
+    {
+      "admission": "review-candidate",
+      "id": "hitchhiker-fiction",
+      "rights_note": "External metadata/reference link only; no publication text or imagery copied",
+      "role": "distinct diegetic guide, encyclopedia secondary",
+      "sha256": null,
+      "source_bytes_hydrated": false,
+      "url": "https://en.wikipedia.org/wiki/The_Hitchhiker%27s_Guide_to_the_Galaxy_%28fictional%29"
+    },
+    {
+      "admission": "review-candidate",
+      "id": "w3c-prov",
+      "rights_note": "External metadata/reference link only; no publication text or imagery copied",
+      "role": "external provenance ontology",
+      "sha256": null,
+      "source_bytes_hydrated": false,
+      "url": "https://www.w3.org/TR/prov-o/"
+    },
+    {
+      "admission": "review-candidate",
+      "id": "w3c-skos",
+      "rights_note": "External metadata/reference link only; no publication text or imagery copied",
+      "role": "context-sensitive mapping distinctions",
+      "sha256": null,
+      "source_bytes_hydrated": false,
+      "url": "https://www.w3.org/TR/skos-reference/"
+    },
+    {
+      "admission": "review-candidate",
+      "id": "wikidata-worlds",
+      "rights_note": "External metadata/reference link only; no publication text or imagery copied",
+      "role": "fictional analog vs inspiration distinction",
+      "sha256": null,
+      "source_bytes_hydrated": false,
+      "url": "https://www.wikidata.org/wiki/Wikidata:WikiProject_Fictional_universes"
+    }
+  ]
+}
