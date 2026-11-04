@@ -1,0 +1,89 @@
+{
+  "schema": "CGX-ACHILLES-LOCAL-MODEL-WORKER-ACTIVATION-REVIEW/0.1",
+  "canonical_parent": "cgx:root:cognigrex",
+  "owner_lane": "Romer.cgx/Achilles",
+  "owner_directive_date": "2026-11-04",
+  "directive": "Authorise staged autonomous local model review workers, starting Achilles, with Achilles oversight of further existing Z-stack roles when independently qualified.",
+  "stage": "SOURCE_ONLY_REVIEW_CONTRACT_NOT_HOST_ACTIVATION",
+  "implementation_mode": "EXISTING_BOUWERBASE_PRIVATE_LOCAL_OLLAMA_AND_EXISTING_AGENT_HOMES",
+  "separation": {
+    "Achilles": "independent owner/risk review, not Neo execution",
+    "Neo": "EMASSC/LS.cgx engineering child; no replaced master",
+    "Athene": "Eco.cgx independent audit",
+    "UniSpace": "permissioned R3 consumer, not authority root",
+    "Smith": "existing single-consumer queue only, no duplicate or stale-lock bypass"
+  },
+  "existing_14_review_role_names": [
+    "Achilles",
+    "Merovingian",
+    "Trinity",
+    "Neo",
+    "Smith",
+    "Oracle",
+    "Morpheus",
+    "Architect",
+    "TheConstruct",
+    "LOAD",
+    "Athene",
+    "UniSpace",
+    "Romer",
+    "Raphael"
+  ],
+  "activation_order": "Achilles first, then one role at a time after independent acceptance of its review-only tests and current resource/singleton evidence; 14 roles are not 14 resident processes.",
+  "progress_protocol": "Four bounded source-verified implementation/integration advances followed by one independent negative review; batch dependencies before isolated debugging, never substitute a pass for native proof.",
+  "permitted_scope": [
+    "private local Ollama inference from permissioned source-grade metadata",
+    "private source-only test proposals and isolated non-effectful tests",
+    "private review receipts",
+    "non-destructive review branch source changes after actual connector authority and commit readback"
+  ],
+  "resource_gates": {
+    "min_free_ram_gib": 9,
+    "min_free_ram_fraction": 0.2,
+    "max_cpu_percent": 45,
+    "min_disk_free_gib": 30,
+    "gpu_thermal_check_before_gpu_use": true,
+    "first_run_gpu": 0,
+    "cpu_threads_max": 2,
+    "max_generated_tokens_per_request": 160,
+    "max_average_tokens_per_second": 4,
+    "max_concurrent_model_requests": 1
+  },
+  "blocked_effects": [
+    "arbitrary shell by model",
+    "new scheduler",
+    "unrestricted agent daemon",
+    "Smith lease recovery by lock deletion",
+    "device actuation",
+    "public deployment",
+    "model weight training without separate rights/approval",
+    "bulk private source publication",
+    "native DBR signature/self-approval",
+    "native Object_ID mint",
+    "financial token/transaction",
+    "physical printing"
+  ],
+  "previously_observed_source_only_holds": [
+    "R1 occurrence binding",
+    "R3 private identifier exposure",
+    "S92 LS parent ambiguity",
+    "Smith singleton process identity",
+    "signed RootAuthority/DBR/revocation/lease",
+    "#158 privacy",
+    "#161 two-node readback",
+    "#209 science evidence"
+  ],
+  "acceptance_granularity": [
+    "SOURCE_LANDED",
+    "R1_VERIFIED",
+    "R2_QUALIFIED",
+    "NATIVE_ADMITTED",
+    "LIVE_VERIFIED",
+    "OWNER_ACCEPTED",
+    "R3_VIEW_VERIFIED"
+  ],
+  "promotion_guard": "Current signed issuer, revocation, DBR, lease, scoped permission, negative tests and independent readback are mandatory for effectful native operation; no local model text creates authority.",
+  "host_resource_status_on_directive": "LIVE_RESOURCE_GUARD_HOLD_NO_MODEL_STARTED",
+  "no_canonical_mint": true,
+  "public_release_authorised": false
+}
