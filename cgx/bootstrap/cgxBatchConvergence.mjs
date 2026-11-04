@@ -90,6 +90,9 @@ export function convergeCGXBatch(input={}) {
     if(!sourceIds.has(c.source_id))blockers.push('CAPABILITY_SOURCE_UNRESOLVED:'+c.capability_id);
     const owners=uniq(sourceRecords.filter(s=>s.source_id===c.source_id).map(s=>s.owner));
     if(owners.length&&(!owners.includes(c.owner)||owners.length>1))blockers.push('CAPABILITY_OWNER_MISMATCH:'+c.capability_id);
+    const sourceBindings=sourceRecords.filter(s=>s.source_id===c.source_id);
+    if(sourceBindings.length&&sourceBindings.some(s=>s.abi!==c.abi))blockers.push('CAPABILITY_ABI_NOT_SOURCE_QUALIFIED:'+c.capability_id);
+    if(sourceBindings.some(s=>s.rights==='unknown'||s.acl==='unknown'||s.rights==='restricted'&&s.acl==='public'))blockers.push('CAPABILITY_SOURCE_RIGHTS_HOLD:'+c.capability_id);
     return {capability_id:c.capability_id,source_id:c.source_id,kind:c.kind,owner:c.owner,abi:c.abi,state:'QUALIFICATION_ONLY_NO_RUNTIME_BIND'};
   });
   return {schema:SCHEMA,state:blockers.length?'BATCH_REVIEW_WITH_HOLDS':'BATCH_REVIEW_ASSEMBLED',parent:ROOT,
