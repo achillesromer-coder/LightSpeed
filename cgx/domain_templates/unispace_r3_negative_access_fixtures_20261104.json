@@ -1,0 +1,92 @@
+{
+  "schema": "UNISPACE-R3-NEGATIVE-ACCESS-FIXTURES/0.1",
+  "status": "SOURCE_ONLY_REVIEW",
+  "source_policy_blob": "27ca0230e75743448c91482f2ea0a454f67bfab6",
+  "source_registry_blob": "d38ce3d837af66c05566689dafab743d9e302ec6",
+  "scope": "Cognigrex.cgx/UniSpace/FileSpace",
+  "object_id": "UNBOUND_REQUIRE_AUTHENTICATED_SOURCE",
+  "fixtures": [
+    {
+      "id": "U-R3-01",
+      "given": {
+        "session": "absent",
+        "source": "owner_private",
+        "view": "filespace-tree"
+      },
+      "expect": {
+        "decision": "DENY",
+        "payload_bytes": 0
+      }
+    },
+    {
+      "id": "U-R3-02",
+      "given": {
+        "session": "revoked",
+        "source": "owner_private",
+        "view": "topology-graph"
+      },
+      "expect": {
+        "decision": "DENY",
+        "payload_bytes": 0
+      }
+    },
+    {
+      "id": "U-R3-03",
+      "given": {
+        "session": "valid_but_wrong_child",
+        "source": "Eco.cgx",
+        "selected_child": "Romer.cgx",
+        "view": "active-object-inspector"
+      },
+      "expect": {
+        "decision": "DENY",
+        "payload_bytes": 0
+      }
+    },
+    {
+      "id": "U-R3-04",
+      "given": {
+        "session": "valid_scoped",
+        "source": "owner_private",
+        "geometry": {
+          "frame": null,
+          "units": null
+        },
+        "view": "twin-3d"
+      },
+      "expect": {
+        "decision": "FRONTIER",
+        "metric_geometry": false
+      }
+    },
+    {
+      "id": "U-R3-05",
+      "given": {
+        "session": "valid_scoped",
+        "source": "owner_private",
+        "evidence_ceiling": "R1",
+        "requested_view": "evidence-claim"
+      },
+      "expect": {
+        "decision": "LIMIT_TO_R1",
+        "native_admission_badge": false
+      }
+    },
+    {
+      "id": "U-R3-06",
+      "given": {
+        "session": "valid_scoped",
+        "source": "owner_private",
+        "bridge_http_status": 200,
+        "consumer": "PID_REUSED_AFTER_HEARTBEAT_HOLD"
+      },
+      "expect": {
+        "bridge": "REACHABLE",
+        "dispatch": "HELD"
+      }
+    }
+  ],
+  "execution": "NOT_EXECUTED_HOST_NEGATIVE_TESTS",
+  "public_static": "FORBIDDEN",
+  "native_admission": false
+}
