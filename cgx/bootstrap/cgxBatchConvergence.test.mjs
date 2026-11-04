@@ -49,6 +49,14 @@ test('owner mismatch and duplicate callable IDs cannot upgrade into authority',(
  const x=base();x.capabilities.push({capability_id:'cgx:render:review',source_id:'cgx:b',owner:'neo',kind:'tool',abi:'exec:1'});
  const a=convergeCGXBatch(x);assert.ok(a.blockers.some(s=>s.startsWith('CAPABILITY_OWNER_MISMATCH')));assert.ok(a.blockers.some(s=>s.startsWith('DUPLICATE_CAPABILITY_ID')));assert.equal(a.may_dispatch,false);
 });
+test('capability ABI must match every qualified source variant and rights must not be inherited',()=>{
+ const x=base();x.capabilities[0].abi='execute:privileged:2';
+ x.sources.push(src('cgx:a','11','e','shared:sort',{rights:'unknown',acl:'unknown'}));
+ const a=convergeCGXBatch(x);
+ assert.ok(a.blockers.includes('CAPABILITY_ABI_NOT_SOURCE_QUALIFIED:cgx:render:review'));
+ assert.ok(a.blockers.includes('CAPABILITY_SOURCE_RIGHTS_HOLD:cgx:render:review'));
+ assert.equal(a.may_dispatch,false);assert.equal(a.may_publish,false);
+});
 test('a zero-discrepancy assembly still cannot mint, publish or transact',()=>{
  const x=base();x.phases=x.phases.map(p=>({...p,dependency:p.dependency.map(d=>d==='file_space:LANDED_AND_ACCEPTED'?'file_space:ACCEPTED':d)}));
  const a=convergeCGXBatch(x);assert.equal(a.blockers.length,0);assert.equal(a.state,'BATCH_REVIEW_ASSEMBLED');assert.equal(a.native_admitted,false);assert.equal(a.may_publish,false);
