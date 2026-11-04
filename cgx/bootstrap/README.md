@@ -51,3 +51,71 @@ The page is not wired to a live UniSpace product or LS GO server. Do not move th
 ## Latest context archive and continuation queue (2026-10-30)
 
 **No new GPT export is expected soon.** Begin all future CGX/LightSpeed continuation from [chat-context closeout](./chat_context_closeout_2026-10-30.md), then the same [open-thread execution register](./open_threads_execution_register.json) already owned by this bootstrap lane. The checkpoint records current source/geometry/rights/function decisions and verified five-lane progress, with manual source handoff through the chat. It is not a full raw chat transcript or a native CGX admission. Preserve all originals and hold deletion and publication pending independent acceptance.
+
+
+## Windows host connection, debug, boot and mint review
+
+**Integration source:** [cgxWindowsBootEvidence.py](./cgxWindowsBootEvidence.py) and
+[tools/cgx_setup_windows.ps1](../../tools/cgx_setup_windows.ps1).
+These are additive to the existing setup planner and `tools/launch_lightspeed.ps1`.
+They do **not** install or update a managed runtime; `runtime_productization` and
+the canonical LightSpeed stack remain the sole environment owners.
+
+The default command inventories the exact existing Windows environment and writes a
+redacted, owner-private JSON receipt into Windows Downloads (exclusive-create, no
+existing file overwritten):
+
+~~~powershell
+$repo = 'C:\LightSpeed_Consolidated\_analysis_remote\LightSpeed_Canonical'
+& "$repo\tools\cgx_setup_windows.ps1" -Repo $repo -Mode resume -PrepareMintReview
+~~~
+
+For optional source-only LOAD catalogue metrics, supply an existing local
+`online_registry_projection_2026-10-28.json` from the **reviewed #205 source**
+with `-LoadSourceRegistry 'C:\path\to\review\online_registry_projection_2026-10-28.json'`.
+This does not download sources, register LOAD, ingest source bodies, or accept a new Object_ID.
+
+### Native boot is currently held
+
+The current `-BootExistingStack -ApproveNativeStackRestart` switches are **not an
+enabled boot path**. After writing the read-only preflight receipt, the wizard
+unconditionally raises `NATIVE_RESTART_HOLD` **before** the existing LightSpeed
+launcher can run, even when its inventory prerequisites are present. The
+`-ApproveNativeStackRestart` switch expresses operator intent only; it is not
+a signed execution lease, owner ACL, revocation check, or independent DBR proof.
+No post-boot receipt is produced by this held path.
+
+Do not use this wizard to start or restart Ollama, Smith, or any other service.
+A future source-reviewed change must integrate the existing authoritative
+host-lease/RootAuthority verifier, scoped ACL, revocation and DBR readback
+before enabling the existing launcher. That change requires independent
+Windows negative tests and actual host receipts; source CI alone is insufficient.
+No PowerShell execution-policy override or privilege escalation is authorised.
+
+Host checks include: single Cognigrex semantic parent and domain children; exact S92
+carrier SHA-256 and root registry; existing operational SQLite via `mode=ro` and
+`query_only=ON`; original R0 hash; native parent state (which may remain `candidate`);
+declared LOAD source-index identity; current managed Python, LS GO distribution and
+canonical runner; existing owner setup planner and #214 family-ingestion source;
+local loopback HTTP identity. Source Git HEAD and local results are **observations**,
+not promotion authority.
+
+The `-PrepareMintReview` option creates a **non-authorising review proposal** listing
+source-reference candidates and holds; it neither mints nor commits native objects.
+A verified historical S92 carrier is not enough to promote the operational parent.
+Never infer signed issuer/revocation authority, owner ACL/rights, native DBR
+readback or independent receiver from a status flag or an online registry projection.
+
+The setup wizard is ready for source review; **full host setup is NOT certified**
+until the host has an actually installed, reviewed integration of #213 (root
+preflight), #214 (native family read-only ingestion and owner-private UniSpace view),
+#205 (LOAD source metadata) and #206 (this existing unified startup lane), followed
+by separately verified native acceptance. Remote Desktop Commander may be paired
+while its command allowance is exhausted; do not retry a quota-blocked provider.
+
+Fixture-only validation:
+
+~~~sh
+python3 cgx/bootstrap/test_cgx_windows_boot_evidence.py
+node --test cgx/bootstrap/unifiedBootstrap.test.mjs cgx/bootstrap/cgxWindowsHostPreflightReview.test.mjs
+~~~
