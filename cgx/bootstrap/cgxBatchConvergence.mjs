@@ -1,6 +1,15 @@
 /** CGX source-only batch convergence. No I/O, mint, dispatch, privileges or release. */
 export const SCHEMA = 'CGX-BATCH-CONVERGENCE-REVIEW/0.1';
 const ROOT = 'cgx:root:cognigrex';
+// Source-only gate names never establish a signed/accepted fact. See cgxPhaseAcceptance_v01.json.
+export const PHASE_GATE_STATES=Object.freeze(['SOURCE_LANDED','R1_VERIFIED','R2_QUALIFIED','NATIVE_ADMITTED','LIVE_VERIFIED','OWNER_ACCEPTED','R3_VIEW_VERIFIED']);
+export const NATIVE_ACTIVATION_DEPENDENCIES=Object.freeze({
+  file_space:Object.freeze([]),
+  unispace_file_space_control:Object.freeze(['file_space:OWNER_ACCEPTED']),
+  data_space:Object.freeze(['file_space:OWNER_ACCEPTED','unispace_file_space_control:OWNER_ACCEPTED']),
+  print_space:Object.freeze(['file_space:OWNER_ACCEPTED','data_space:OWNER_ACCEPTED'])
+});
+const VALID_GATES=new Set(PHASE_GATE_STATES);
 const FAMILIES = new Set(['Cognigrex.cgx','Romer.cgx','Eco.cgx','EMASSC.cgx','LS.cgx']);
 const RIGHTS = new Set(['public_clear','internal_only','restricted','unknown']);
 const ACLS = new Set(['public','internal','owner_only','unknown']);
@@ -15,7 +24,7 @@ const sorted = xs => [...xs].sort((a,b)=>a<b?-1:a>b?1:0);
 const uniq = xs => sorted([...new Set(xs)]);
 const cmp = (a,b) => a<b?-1:a>b?1:0;
 const bySource = (a,b)=>cmp(a.source_id,b.source_id)||cmp(BigInt(a.revision),BigInt(b.revision))||cmp(a.sha256,b.sha256)||cmp(a.family,b.family);
-const blocked = (state,reason)=>({schema:SCHEMA,state:'DENIED_INVALID_REVIEW_INPUT',reason,source_records:[],capabilities:[],overlaps:[],blockers:[reason],native_admitted:false,may_mint:false,may_dispatch:false,may_publish:false,may_print:false,may_transact:false});
+const blocked = (reason)=>({schema:SCHEMA,state:'DENIED_INVALID_REVIEW_INPUT',reason,source_records:[],capabilities:[],overlaps:[],blockers:[reason],native_admitted:false,may_mint:false,may_dispatch:false,may_publish:false,may_print:false,may_transact:false});
 export function convergeCGXBatch(input={}) {
   if(!object(input)||input.parent!==ROOT) return blocked('INVALID_PARENT');
   const sources=input.sources??[], capabilities=input.capabilities??[], phases=input.phases??[], aliases=input.aliases??[];
@@ -29,7 +38,7 @@ export function convergeCGXBatch(input={}) {
   }
   for(const x of aliases){if(!object(x)||!validId(x.alias)||!validId(x.target)||x.alias===x.target)return blocked('INVALID_ALIAS');}
   for(const x of phases){
-    if(!object(x)||!validId(x.id)||!Number.isSafeInteger(x.ordinal)||x.ordinal<1||!Array.isArray(x.dependency)||x.dependency.length>40||x.dependency.some(d=>!validString(d)||!/^([a-z][a-z0-9_./-]*):([A-Z_]+)$/.test(d))||x.may_self_mint!==false)return blocked('INVALID_PHASE_CONTRACT');
+    if(!object(x)||!validId(x.id)||!Number.isSafeInteger(x.ordinal)||x.ordinal<1||!Array.isArray(x.dependency)||x.dependency.length>40||x.dependency.some(d=>!validString(d)||!/^([a-z][a-z0-9_./-]*):([A-Z][A-Z0-9_]+)$/.test(d))||x.may_self_mint!==false)return blocked('INVALID_PHASE_CONTRACT');
   }
   const sourceRecords=[...sources].sort(bySource);
   const blockers=[]; const overlaps=[]; const aliasReport=[];
@@ -78,12 +87,20 @@ export function convergeCGXBatch(input={}) {
     for(const d of p.dependency){
       const pos=d.lastIndexOf(':');const id=d.slice(0,pos),gate=d.slice(pos+1);
       if(!ids.has(id))blockers.push('UNKNOWN_PHASE_DEPENDENCY:'+p.id+':'+id);
+      if(!VALID_GATES.has(gate))blockers.push('AMBIGUOUS_OR_UNKNOWN_PHASE_GATE:'+p.id+':'+d);
       if(!gates.has(id))gates.set(id,new Set());gates.get(id).add(gate);
       const target=phases.find(x=>x.id===id);
       if(target&&target.ordinal>=p.ordinal)blockers.push('PHASE_BACKEDGE:'+p.id+':'+id);
     }
   }
-  for(const [id,values] of gates)if(values.size>1)blockers.push('UNRESOLVED_PHASE_GATE_GRAMMAR:'+id+':'+sorted(values).join('|'));
+  // Review dependency contracts are fixed by the existing phase owners; no unreviewed weaker gate substitutions.
+  for(const p of phases){
+    const expected=NATIVE_ACTIVATION_DEPENDENCIES[p.id];
+    if(expected&&!Array.isArray(expected))throw new TypeError('INVALID_STATIC_DEPENDENCY_CONTRACT');
+    if(expected&&JSON.stringify(uniq(p.dependency))!==JSON.stringify(uniq(expected)))blockers.push('PHASE_DEPENDENCY_CONTRACT_DRIFT:'+p.id);
+  }
+  // Distinct evidence stages are not synonyms, but can be separately required by consumers.
+  // The contract-drift comparison above decides if the requirement is exact.
   const capIds=new Map();
   const capReport=[...capabilities].sort((a,b)=>cmp(a.capability_id,b.capability_id)||cmp(a.source_id,b.source_id)).map(c=>{
     if(capIds.has(c.capability_id))blockers.push('DUPLICATE_CAPABILITY_ID:'+c.capability_id);capIds.set(c.capability_id,true);
@@ -98,7 +115,7 @@ export function convergeCGXBatch(input={}) {
   return {schema:SCHEMA,state:blockers.length?'BATCH_REVIEW_WITH_HOLDS':'BATCH_REVIEW_ASSEMBLED',parent:ROOT,
     source_records:sourceRecords.map(x=>({source_id:x.source_id,revision:x.revision,sha256:x.sha256,family:x.family,owner:x.owner,rights:x.rights,acl:x.acl,abi:x.abi,semantic_key:x.semantic_key,stage:'R1_R2_REVIEW_ONLY'})),
     overlaps,aliases:aliasReport,capabilities:capReport,
-    phases:[...phases].sort((a,b)=>cmp(a.ordinal,b.ordinal)||cmp(a.id,b.id)).map(p=>({id:p.id,ordinal:p.ordinal,dependency:[...p.dependency],status:'REVIEW_ONLY_NOT_NATIVE_ACCEPTED'})),
+    phases:[...phases].sort((a,b)=>cmp(a.ordinal,b.ordinal)||cmp(a.id,b.id)).map(p=>({id:p.id,ordinal:p.ordinal,dependency:[...p.dependency],status:'REVIEW_ONLY_NOT_NATIVE_ACCEPTED',signed_dependency_readback:'NOT_PRESENT_IN_SOURCE_REVIEW'})),
     blockers:uniq(blockers),metrics:{source_instances:sourceRecords.length,unique_source_ids:sourceIds.size,qualified_capability_refs:capReport.length,semantic_overlap_groups:overlaps.filter(x=>x.kind==='SEMANTIC_OVERLAP_REVIEW_ONLY').length,source_version_conflicts:overlaps.filter(x=>x.kind==='CONFLICT_HOLD').length,declared_transfer_bytes:input.transferred_bytes??0},
     hold_authority:['SIGNED_ROOT_ISSUER_REVOCATION_DBR','SOURCE_RIGHTS_AND_PRIVATE_ACL','ISSUE_158_PUBLIC_STATIC','ISSUE_161_TWO_NODE','ISSUE_209_SCIENCE','SMITH_SINGLETON','OWNER_PUBLICATION_AND_PHYSICAL'],
     native_admitted:false,may_mint:false,may_dispatch:false,may_publish:false,may_print:false,may_transact:false};

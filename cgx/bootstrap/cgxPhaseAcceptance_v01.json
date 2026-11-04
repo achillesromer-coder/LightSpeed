@@ -1,0 +1,61 @@
+{
+  "schema": "CGX-PHASE-ACCEPTANCE-REVIEW-GRAMMAR/0.1",
+  "state": "SOURCE_ONLY_REVIEW_NOT_CANONICAL",
+  "parent": "cgx:root:cognigrex",
+  "anchored_merged_contract": {
+    "path": "cgx/domain_templates/achilles_file_space_launch_review_contract.json",
+    "git_blob_sha1": "5bb49a3c6199c9b8211e48c0e194b6030d3d0ea7",
+    "legacy_terms": [
+      "ACCEPTED",
+      "LANDED_AND_ACCEPTED",
+      "TESTED"
+    ]
+  },
+  "evidence_stages": {
+    "SOURCE_LANDED": "Private-source locator and byte-hash readback; no acceptance or authority",
+    "R1_VERIFIED": "Reversible typed parse with loss ledger, original variants and source-snapshot hash checks",
+    "R2_QUALIFIED": "Typed scoped relations, rights/ACL, ownership and independently reviewed provenance",
+    "NATIVE_ADMITTED": "Current signed RootAuthority, issuer/revocation, scoped lease, DBR and native readback",
+    "LIVE_VERIFIED": "Authenticated runtime/consumer and relevant non-loopback multi-node readback",
+    "OWNER_ACCEPTED": "Actual recorded independent owner acceptance of the scoped object and native evidence",
+    "R3_VIEW_VERIFIED": "Independent permissioned view test and negative privacy checks; orthogonal to native admission"
+  },
+  "legacy_tokens": {
+    "ACCEPTED": "AMBIGUOUS_SCOPE_HOLD",
+    "LANDED_AND_ACCEPTED": "CONFLATES_SOURCE_LANDING_WITH_OWNER_ACCEPTANCE_HOLD",
+    "TESTED": "TEST_IS_EVIDENCE_NOT_NATIVE_ACCEPTANCE_HOLD"
+  },
+  "native_activation_dependencies": {
+    "file_space": [],
+    "unispace_file_space_control": [
+      "file_space:OWNER_ACCEPTED"
+    ],
+    "data_space": [
+      "file_space:OWNER_ACCEPTED",
+      "unispace_file_space_control:OWNER_ACCEPTED"
+    ],
+    "print_space": [
+      "file_space:OWNER_ACCEPTED",
+      "data_space:OWNER_ACCEPTED"
+    ]
+  },
+  "source_review_exception": {
+    "visual_print_and_digital_mint_review": true,
+    "private_dataspace_sandbox_preview": true,
+    "native_mint": false,
+    "physical_print": false,
+    "decentralized_launch": false,
+    "condition": "Nonoperational, ACL-scoped derived review only; never grants native or owner state"
+  },
+  "authority_holds": [
+    "signed current issuer/lease/DBR",
+    "rights and per-asset ACL",
+    "issue #158 public/static private asset negative tests",
+    "issue #161 authenticated two-node non-loopback readback",
+    "issue #209 scientific evidence",
+    "Smith singleton ownership",
+    "owner release, finance and physical approvals"
+  ],
+  "reconcile_policy": "Do not equate SOURCE_LANDED, R1/R2 qualification, NATIVE_ADMITTED, LIVE_VERIFIED, R3_VIEW_VERIFIED and OWNER_ACCEPTED. Exact signed provider receipts govern status, not string substitution.",
+  "semantic_family_owner": "Cognigrex parent; Achilles independent assurance for Romer; Neo scoped LS runtime; Athene Eco independent"
+}

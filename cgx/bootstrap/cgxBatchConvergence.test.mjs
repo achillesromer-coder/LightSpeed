@@ -1,15 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {convergeCGXBatch,renderBatchReviewHTML,SCHEMA} from './cgxBatchConvergence.mjs';
+import fs from 'node:fs';
+import {convergeCGXBatch,renderBatchReviewHTML,SCHEMA,PHASE_GATE_STATES,NATIVE_ACTIVATION_DEPENDENCIES} from './cgxBatchConvergence.mjs';
 const hash=x=>x.repeat(64);
 const src=(source_id,revision,sha,semantic_key='shared:sort',overrides={})=>({source_id,revision,sha256:hash(sha),semantic_key,owner:'achilles',family:'EMASSC.cgx',rights:'internal_only',acl:'owner_only',abi:'read:json:1',...overrides});
-const phases=[{id:'file_space',ordinal:1,dependency:[],may_self_mint:false},{id:'unispace_file_space_control',ordinal:2,dependency:['file_space:ACCEPTED'],may_self_mint:false},{id:'data_space',ordinal:3,dependency:['file_space:LANDED_AND_ACCEPTED','unispace_file_space_control:TESTED'],may_self_mint:false},{id:'print_space',ordinal:4,dependency:['data_space:TESTED'],may_self_mint:false}];
+const phases=[{id:'file_space',ordinal:1,dependency:[],may_self_mint:false},{id:'unispace_file_space_control',ordinal:2,dependency:['file_space:OWNER_ACCEPTED'],may_self_mint:false},{id:'data_space',ordinal:3,dependency:['file_space:OWNER_ACCEPTED','unispace_file_space_control:OWNER_ACCEPTED'],may_self_mint:false},{id:'print_space',ordinal:4,dependency:['file_space:OWNER_ACCEPTED','data_space:OWNER_ACCEPTED'],may_self_mint:false}];
 const base=()=>({parent:'cgx:root:cognigrex',sources:[src('cgx:a','10','a'),src('cgx:a','2','b'),src('cgx:b','1','c')],capabilities:[{capability_id:'cgx:render:review',source_id:'cgx:a',owner:'achilles',kind:'view',abi:'read:json:1'}],phases,aliases:[{alias:'cgx:old-a',target:'cgx:a'}],transferred_bytes:0});
 test('whole-framework convergence, deterministic numeric source order, no activation, print-review',()=>{
  const a=convergeCGXBatch(base());const b=convergeCGXBatch({...base(),sources:base().sources.reverse()});
  assert.equal(a.schema,SCHEMA);assert.deepEqual(a,b);assert.deepEqual(a.source_records.map(s=>s.source_id+'@'+s.revision),['cgx:a@2','cgx:a@10','cgx:b@1']);
  assert.deepEqual(a.phases.map(p=>p.id),['file_space','unispace_file_space_control','data_space','print_space']);
- assert.ok(a.blockers.some(x=>x.startsWith('UNRESOLVED_PHASE_GATE_GRAMMAR:file_space:')));
+ assert.equal(a.blockers.filter(x=>x.startsWith('AMBIGUOUS_OR_UNKNOWN_PHASE_GATE')).length,0);
  assert.equal(a.overlaps.filter(x=>x.kind==='SEMANTIC_OVERLAP_REVIEW_ONLY').length,1);
  for(const k of ['native_admitted','may_mint','may_dispatch','may_publish','may_print','may_transact'])assert.equal(a[k],false);
  const html=renderBatchReviewHTML(a);assert.match(html,/Batch Convergence/);assert.match(html,/Print & Mint Review/);assert.match(html,/Release: HOLD/);assert.doesNotMatch(html,/<script|<iframe|https?:\/\//);
@@ -58,11 +59,55 @@ test('capability ABI must match every qualified source variant and rights must n
  assert.equal(a.may_dispatch,false);assert.equal(a.may_publish,false);
 });
 test('a zero-discrepancy assembly still cannot mint, publish or transact',()=>{
- const x=base();x.phases=x.phases.map(p=>({...p,dependency:p.dependency.map(d=>d==='file_space:LANDED_AND_ACCEPTED'?'file_space:ACCEPTED':d)}));
+ const x=base();x.phases=x.phases.map(p=>({...p,dependency:[...p.dependency]}));
  const a=convergeCGXBatch(x);assert.equal(a.blockers.length,0);assert.equal(a.state,'BATCH_REVIEW_ASSEMBLED');assert.equal(a.native_admitted,false);assert.equal(a.may_publish,false);
 });
 test('print-review safely escapes provenance labels',()=>{
  const x=base();x.phases=x.phases.map(p=>({...p,dependency:[...p.dependency]}));const report=convergeCGXBatch(x);report.blockers.push('<img src=x onerror=alert(1)>');
  const html=renderBatchReviewHTML(report);assert.match(html,/&lt;img/);assert.doesNotMatch(html,/<img/);
  assert.throws(()=>renderBatchReviewHTML({}),/UNVERIFIED/);
+});
+
+test('exact grammar matches read-only acceptance contract and holds unverified stages',()=>{
+ const manifest=JSON.parse(fs.readFileSync(new URL('./cgxPhaseAcceptance_v01.json',import.meta.url),'utf8'));
+ assert.deepEqual(Object.keys(manifest.evidence_stages),PHASE_GATE_STATES);
+ assert.deepEqual(manifest.native_activation_dependencies,NATIVE_ACTIVATION_DEPENDENCIES);
+ assert.equal(manifest.state,'SOURCE_ONLY_REVIEW_NOT_CANONICAL');
+ assert.equal(manifest.source_review_exception.native_mint,false);
+ assert.equal(manifest.source_review_exception.decentralized_launch,false);
+ const a=convergeCGXBatch(base());
+ assert.equal(a.blockers.length,0);
+ assert.ok(a.phases.every(x=>x.signed_dependency_readback==='NOT_PRESENT_IN_SOURCE_REVIEW'));
+ assert.equal(a.native_admitted,false);
+});
+test('all three historical acceptance aliases fail closed rather than silently upgrading trust',()=>{
+ for(const gate of ['ACCEPTED','LANDED_AND_ACCEPTED','TESTED']){
+  const x=base();x.phases=x.phases.map(p=>({...p,dependency:p.dependency.map(d=>d==='file_space:OWNER_ACCEPTED'?`file_space:${gate}`:d)}));
+  const a=convergeCGXBatch(x);
+  assert.equal(a.state,'BATCH_REVIEW_WITH_HOLDS');
+  assert.ok(a.blockers.some(b=>b.includes('AMBIGUOUS_OR_UNKNOWN_PHASE_GATE')),gate);
+  assert.equal(a.native_admitted,false);
+ }
+});
+test('dropping a required signed native stage or replacing it with source landing is contract drift',()=>{
+ const x=base();x.phases=x.phases.map(p=>({...p,dependency:[...p.dependency]}));
+ x.phases[2].dependency=['file_space:SOURCE_LANDED'];
+ const a=convergeCGXBatch(x);
+ assert.ok(a.blockers.includes('PHASE_DEPENDENCY_CONTRACT_DRIFT:data_space'));
+ assert.equal(a.may_dispatch,false);
+ assert.equal(a.may_publish,false);
+});
+test('R3 view proof is independent of FileSpace signed owner acceptance',()=>{
+ const x=base();x.phases=x.phases.map(p=>({...p,dependency:[...p.dependency]}));
+ x.phases[2].dependency=['file_space:R3_VIEW_VERIFIED','unispace_file_space_control:OWNER_ACCEPTED'];
+ const a=convergeCGXBatch(x);
+ assert.ok(a.blockers.includes('PHASE_DEPENDENCY_CONTRACT_DRIFT:data_space'));
+ assert.equal(a.native_admitted,false);
+});
+
+test('invalid preflight always emits a machine-readable denial reason rather than undefined',()=>{
+ const d=convergeCGXBatch({parent:'invalid'});
+ assert.equal(d.reason,'INVALID_PARENT');
+ assert.deepEqual(d.blockers,['INVALID_PARENT']);
+ assert.equal(d.may_mint,false);
 });
