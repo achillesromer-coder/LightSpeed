@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {SCHEMA,packR0Reference,unpackR0Reference,planR0ReferenceHydration} from "./loadFractalReference.mjs";
+import {SCHEMA,packR0Reference,unpackR0Reference,planR0ReferenceHydration,planR0LeafPacket,LEAF_PACKET_SCHEMA} from "./loadFractalReference.mjs";
 const sample=Object.freeze({
  candidate_key:"candidate:emassc:wad-leaf",owner_domain:"emassc",
  file_space:"EMASSC.cgx",parent_file_space:"Cognigrex.cgx",
@@ -69,4 +69,47 @@ test("noncanonical/Unicode invisible identity and mismatched digest denied",()=>
 test("request budget is per chunk; source may be larger than 60 MiB",()=>{
  assert.equal(plan({requested_work_bytes:1024}).state,"SOURCE_REFERENCE_ONLY");
  assert.equal(plan({requested_work_bytes:60*1024*1024+1}).reason,"INVALID_HYDRATION_SCOPE");
+});
+
+test("leaf transport is deterministic metadata only, not a compressed or issued source",()=>{
+ const r=planR0LeafPacket({tuple:pack(),...scope,requested_leaf_keys:sample.children});
+ assert.equal(r.schema,LEAF_PACKET_SCHEMA);
+ assert.equal(r.state,"UNSIGNED_METADATA_PLAN_ONLY");
+ assert.deepEqual(r.leaves,[{candidate_key:sample.children[0],stage:"REFERENCE_ONLY",source_hash:null,rights_verified:false}]);
+ assert.equal(r.source_sha256,sample.source_sha256);
+ assert.equal(r.raw_source_included,false);
+ assert.equal(r.payload_bytes_transferred,0);
+ assert.equal(r.source_bytes_read,0);
+ assert.equal(r.codec_compression_verified,false);
+ assert.equal(r.native_mint,false);
+ assert.equal(r.public_release,false);
+ assert.ok(r.metadata_utf8_bytes<=r.max_packet_bytes);
+ assert.deepEqual(planR0LeafPacket({tuple:pack(),...scope,requested_leaf_keys:sample.children}),r);
+});
+test("skeletal packet can carry zero leaf references without treating source bytes as present",()=>{
+ const r=planR0LeafPacket({tuple:pack(),...scope});
+ assert.deepEqual(r.leaves,[]);
+ assert.equal(r.source_byte_length,sample.source_byte_length);
+ assert.equal(r.payload_bytes_transferred,0);
+});
+test("leaf-only scope, duplicate requests and sibling injection fail closed",()=>{
+ const blocked=planR0LeafPacket({tuple:pack(),...scope,authorized_keys:[sample.candidate_key],requested_leaf_keys:sample.children});
+ assert.equal(blocked.reason,"LEAF_NOT_AUTHORIZED");
+ const sibling=planR0LeafPacket({tuple:pack(),...scope,authorized_keys:[...scope.authorized_keys,"candidate:other:sibling"],requested_leaf_keys:["candidate:other:sibling"]});
+ assert.equal(sibling.reason,"LEAF_NOT_AUTHORIZED");
+ const repeated=planR0LeafPacket({tuple:pack(),...scope,requested_leaf_keys:[sample.children[0],sample.children[0]]});
+ assert.equal(repeated.reason,"INVALID_PACKET_REQUEST");
+ for(const r of [blocked,sibling,repeated])assert.ok(!JSON.stringify(r).includes(sample.source_ref));
+});
+test("public rights, corrupted hash, packet budget and malformed leaves deny transport plans",()=>{
+ const v=planR0LeafPacket({tuple:pack(),...scope,surface:"public"});
+ assert.equal(v.reason,"SOURCE_PUBLIC_RIGHTS_HOLD");
+ const bad=planR0LeafPacket({tuple:pack(),...scope,source_sha256:"b".repeat(64)});
+ assert.equal(bad.reason,"SOURCE_BYTES_IDENTITY_MISMATCH");
+ const tooSmall=planR0LeafPacket({tuple:pack(),...scope,max_packet_bytes:512});
+ assert.equal(tooSmall.reason,"PACKET_BUDGET_EXCEEDED");
+ for(const xs of [["../private"],["candidate:emassc:\\u202Efake"]]){
+   const r=planR0LeafPacket({tuple:pack(),...scope,requested_leaf_keys:xs});
+   assert.equal(r.reason,"INVALID_PACKET_REQUEST");
+ }
 });
