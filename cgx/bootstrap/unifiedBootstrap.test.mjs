@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import {planCGXSetup,planOngoingSetup} from './unifiedBootstrap.mjs';
 const family='Romer.cgx';
 const proof={hostReachable:true,acceptedParent:true,acceptedFamily:true,exactObjectId:true,ownerAcl:true,
@@ -99,4 +100,22 @@ test('unknown and future authority-affecting change types fail closed',()=>{
 });
 test('no missing returned receipts from invalid mode',()=>{
  assert.equal(planCGXSetup({family,mode:'panic'}).reason,'UNKNOWN_SETUP_MODE');
+});
+
+test('premint founder gates remain held despite design approval and dry-run readiness',()=>{
+ const spec=JSON.parse(readFileSync(new URL('./cgxPhaseAcceptance_v01.json',import.meta.url),'utf8'));
+ assert.equal(spec.state,'SOURCE_ONLY_REVIEW_NOT_CANONICAL');
+ const p=spec.premint_integration_design_v01;
+ assert.equal(p.status,'APPROVED_DESIGN_ONLY__NO_NATIVE_OR_PUBLIC_AUTHORITY');
+ assert.equal(p.canonical_parent,'cgx:root:cognigrex');
+ assert.equal(p.sole_resolver,'LOAD.cgx');
+ assert.equal(p.review_decision_semantics.approve,'QUALIFY_PROPOSED_VERSION_ONLY');
+ for(const [gate,status] of Object.entries(p.authority_gate_status))assert.equal(status,'HOLD',gate);
+ for(const key of ['R0_byte_reconstruction_and_hash_roundtrip',
+   'reject_duplicate_idempotency_intent_and_uncertain_ledger_retry',
+   'negative_no_signing_no_issuer_no_network_no_publication'])
+   assert.ok(p.deterministic_preflight_required.includes(key),key);
+ assert.equal(spec.source_review_exception.native_mint,false);
+ assert.equal(spec.source_review_exception.decentralized_launch,false);
+ assert.notEqual(spec.evidence_stages.R2_QUALIFIED,spec.evidence_stages.NATIVE_ADMITTED);
 });
