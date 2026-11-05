@@ -97,3 +97,50 @@ export function planR0ReferenceHydration({
   }
   return result;
 }
+
+/** Non-issuing skeletal/leaf transfer proposal, reusing canonical R0 reference metadata.
+ * This is NOT a compressor or a transport executor. Every leaf has its own
+ * source, permissions and hash proof to acquire before a byte may be hydrated.
+ */
+export const LEAF_PACKET_SCHEMA="CGX-LOAD-R0-LEAF-PACKET-PLAN/0.1";
+export function planR0LeafPacket({
+ tuple,authorized_keys,authorized_source_refs,source_sha256,
+ surface="private",requested_leaf_keys=[],max_packet_bytes=65536
+}={}){
+ const deny=reason=>({schema:LEAF_PACKET_SCHEMA,state:"DENIED",reason,
+   source_bytes_read:0,payload_bytes_transferred:0,canonical_writes:0,
+   native_mint:false,public_release:false});
+ if(!Array.isArray(requested_leaf_keys)||requested_leaf_keys.length>32||
+    !requested_leaf_keys.every(k=>txt(k)&&k.startsWith("candidate:"))||
+    new Set(requested_leaf_keys).size!==requested_leaf_keys.length||
+    !Number.isSafeInteger(max_packet_bytes)||max_packet_bytes<512||
+    max_packet_bytes>MAX_WORK)return deny("INVALID_PACKET_REQUEST");
+ const proof=planR0ReferenceHydration({tuple,authorized_keys,authorized_source_refs,
+   source_sha256,surface,level:2,requested_work_bytes:0});
+ if(proof.state!=="SOURCE_REFERENCE_ONLY")return deny(proof.reason||"SOURCE_NOT_AUTHORIZED");
+ const d=unpackR0Reference(tuple);
+ if(requested_leaf_keys.some(k=>!d.children.includes(k)||!authorized_keys.includes(k)))
+   return deny("LEAF_NOT_AUTHORIZED");
+ // Canonical child order is independent of request order, so plan replay is stable.
+ const requested=new Set(requested_leaf_keys);
+ const leaves=d.children.filter(k=>requested.has(k)).map(candidate_key=>({
+   candidate_key,stage:"REFERENCE_ONLY",source_hash:null,rights_verified:false
+ }));
+ const packet={
+   schema:LEAF_PACKET_SCHEMA,state:"UNSIGNED_METADATA_PLAN_ONLY",
+   candidate_key:d.candidate_key,file_space:d.file_space,parent_file_space:d.parent_file_space,
+   source_ref:d.source_ref,source_sha256:d.source_sha256,source_version:d.source_version,
+   source_byte_length:d.source_byte_length,rights:d.rights,
+   operator_ref:d.operator_ref,operator_version:d.operator_version,
+   residual_ref:d.residual_ref,geometry_profile:d.geometry_profile,leaves,
+   raw_source_included:false,payload_bytes_transferred:0,source_bytes_read:0,
+   leaf_byte_integrity_verified:false,child_rights_verified:false,
+   codec_compression_verified:false,network_executed:false,canonical_writes:0,
+   native_mint:false,public_release:false,
+   requires:["per-leaf independent source hash and rights","actual payload retrieval and byte verification",
+     "authenticated current issuer and DBR for native admission"]
+ };
+ const metadata_utf8_bytes=new TextEncoder().encode(JSON.stringify(packet)).length;
+ if(metadata_utf8_bytes>max_packet_bytes)return deny("PACKET_BUDGET_EXCEEDED");
+ return {...packet,metadata_utf8_bytes,max_packet_bytes};
+}
