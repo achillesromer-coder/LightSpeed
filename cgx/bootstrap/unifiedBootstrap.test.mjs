@@ -119,3 +119,17 @@ test('premint founder gates remain held despite design approval and dry-run read
  assert.equal(spec.source_review_exception.decentralized_launch,false);
  assert.notEqual(spec.evidence_stages.R2_QUALIFIED,spec.evidence_stages.NATIVE_ADMITTED);
 });
+
+test('LS GO host preflight holds LOAD rights and source identity independently',()=>{
+ for(const field of ['sourceRightsVerified','loadAliasVerified']){
+  const p=planCGXSetup({family,lsGORequested:true,observed:{...proof,[field]:false}});
+  assert.equal(p.ls_go.ready_for_authenticated_host_preflight,false,field);
+  assert.equal(p.ls_go.enabled,false);
+  assert.equal(p.canonical_accepted,false);
+ }
+});
+test('LS GO host preflight holds independently requested second-node evidence',()=>{
+ const p=planCGXSetup({family,lsGORequested:true,observed:{...proof,nodeExchangeRequested:true,twoNodeProof:false}});
+ assert.equal(p.ls_go.ready_for_authenticated_host_preflight,false);
+ assert.ok(p.blockers.includes('ISSUE_161_TWO_NODE_HOLD'));
+});

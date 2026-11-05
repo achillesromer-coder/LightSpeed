@@ -57,7 +57,7 @@ export function planCGXSetup(config={}){
   existing_runtime:{status_owner:"lightspeed_runtime.runtime_productization",settings_owner:"lightspeed_runtime.startup_options"},
   library:{name:"LOAD.cgx",bind:"EXISTING_IDENTITY_ONLY",install:false,network_hydration:false},
   ls_go:{product:"Grex-scoped LS GO",requested:requestedLSGO,enabled:false,
-    ready_for_authenticated_host_preflight:requestedLSGO&&mandatory.length===0&&optional.filter(x=>x.startsWith("ISSUE_158")||x.startsWith("GREX_UI")).length===0,
+    ready_for_authenticated_host_preflight:requestedLSGO&&mandatory.length===0&&optional.length===0,
     separate_product:"UniSpace",actual_toggle_write:false},
   handshake:{status:mandatory.length?"BLOCKED_PENDING_PROOF":"PREPARED_FOR_HOST_NEGATIVE_TESTS",
     observed_receipt_reuse:!!receipt&&!changed,node_transport:false,requires_two_node_when_requested:true,

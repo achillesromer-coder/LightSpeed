@@ -111,3 +111,22 @@ test('invalid preflight always emits a machine-readable denial reason rather tha
  assert.deepEqual(d.blockers,['INVALID_PARENT']);
  assert.equal(d.may_mint,false);
 });
+
+test('LOAD leaf skeleton composes with the existing CGX batch source registry, no second owner',async()=>{
+ const {buildReviewEnvelope,verifyReconstruction}=await import('./cgxLeafEnvelopeReview.mjs');
+ const raw=[Buffer.from('source segment A'),Buffer.from('source segment B')];
+ const env=buildReviewEnvelope({objectId:'cgx:load:fixture',version:'1',leaves:raw,
+  rightsRef:'private:rights',aclRef:'private:acl'});
+ assert.equal(verifyReconstruction(env,raw),true);
+ const batch=convergeCGXBatch({parent:'cgx:root:cognigrex',sources:[{
+  source_id:env.manifest.object_id,revision:env.manifest.version,
+  sha256:env.manifest.source.sha256,semantic_key:'load:fixture',owner:'achilles',
+  family:'Cognigrex.cgx',rights:'internal_only',acl:'owner_only',abi:'read:source:1'
+ }],capabilities:[],phases:[],aliases:[],transferred_bytes:0});
+ assert.equal(batch.state,'BATCH_REVIEW_ASSEMBLED');
+ assert.equal(batch.metrics.unique_source_ids,1);
+ assert.equal(batch.source_records[0].sha256,env.manifest.source.sha256);
+ assert.equal(batch.native_admitted,false);
+ assert.equal(batch.may_mint,false);
+ assert.equal(batch.may_dispatch,false);
+});
