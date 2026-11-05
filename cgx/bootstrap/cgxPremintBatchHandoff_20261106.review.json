@@ -1,0 +1,130 @@
+{
+  "schema": "CGX-PREMINT-BATCH-OWNER-HANDOFF/0.1",
+  "date": "2026-11-06",
+  "stage": "REVIEW_BRANCH_TESTED__NO_NATIVE_ADMISSION",
+  "branch": "review/cgx-ls-unified-bootstrap-20261028",
+  "tested_commit": "ddce8705e5f8468091f9e1675df9b8d8b93b56e6",
+  "canonical_parent": "cgx:root:cognigrex",
+  "design_boundary": {
+    "load": "One LOAD.cgx minimal identity and source resolver; not a second parent",
+    "filespace": "Immutable R0 source carriers and qualified source manifests",
+    "dataspace": "Typed assertions/relations, evidence ceiling and ACL",
+    "ccc": "Scoped tool/skill/capability routing with actual installed-vs-registered proof",
+    "lightspeed": "Neo/LS runtime and scoped agent orchestration",
+    "unispace": "Separate rights-filtered user-facing application and semantic views"
+  },
+  "verified_this_batch": {
+    "host": "BouwerBase reconnected, source tests on isolated git worktree; not full runtime acceptance",
+    "tests": [
+      {
+        "name": "Node bootstrap+handshake+Windows host+batch convergence+leaf envelope",
+        "result": "PASS",
+        "passed": 121,
+        "failed": 0
+      },
+      {
+        "name": "Python source-only lease and agent ABI validator",
+        "result": "PASS"
+      },
+      {
+        "name": "Windows CGX Shredder reversible staging tests",
+        "result": "PASS",
+        "passed": 6,
+        "failed": 0
+      }
+    ],
+    "git_source_mutation": {
+      "added_files": 2,
+      "updated_files": 3,
+      "commit": "ddce8705",
+      "pushed_existing_review_branch": true,
+      "production_merge": false
+    },
+    "local_role_api": {
+      "enabled": 14,
+      "total": 14,
+      "authenticated_agent_dispatch": false,
+      "resource_cpu_ceiling": 95,
+      "free_ram_reserve_gib": 1
+    },
+    "review_capability": "Deterministic content-addressed leaf/source manifest with exact R0 reconstruction, bounded work unit, permission-held selective hydration request; no real network transport, no measured compression ratio"
+  },
+  "owner_lanes": [
+    {
+      "lane": "Achilles/Romer",
+      "task": "Reconcile Calls 21-23 with source and host receipts; evidence/rights/security audit and cleanup successor/rollback approvals",
+      "writes": "Owner governance review only"
+    },
+    {
+      "lane": "Cognigrex parent",
+      "task": "Select source-qualified first LOAD candidate, preserve R0 variants, type R1, R2 assertions and dependency identities; negative collision and digest tests",
+      "writes": "CGX parent source review branch only"
+    },
+    {
+      "lane": "Neo/LS",
+      "task": "Reconcile non-mergeable PR206 against main in isolated worktree; verify singleton PID/creation-time/lease owner and service/test receipts; retain existing Python3.11 owner",
+      "writes": "LS/Bootstrap engineering review branch"
+    },
+    {
+      "lane": "Athene/Eco",
+      "task": "Verify original FM source formulas, units and translation variants; preserve unqualified ecology hypotheses",
+      "writes": "Eco review branch only"
+    },
+    {
+      "lane": "UniSpace product",
+      "task": "Integrate existing LOAD H0-H4 view and leaf request interface with exact scope and privacy #158; assess mobile, desktop and offline negative tests",
+      "writes": "UniSpace product review branch only"
+    }
+  ],
+  "cross_lane_rules": [
+    "No duplicate canonical parent, scheduler, DBR or standalone LOAD/UniSpace root",
+    "Use source hash/version, Object_ID or provisional ID, original locator, licence/ACL and source-to-result trace",
+    "Read back provider commit and test results; do not confuse local process presence with healthy agents",
+    "Retain and reconcile existing windows context menu, macOS/Linux review adapters and LS GO grex operator separately",
+    "No speculative equivalence; fiction, empirical source, hypothesis and creative view remain distinct evidence classes"
+  ],
+  "archival_candidates": [
+    {
+      "class": "Multiple old checkout and worktree histories",
+      "status": "RETAIN_IN_PLACE_AUDIT_OWNERSHIP",
+      "required": "exact immutable git refs, consumer-dependency scan, rollback, owner and remote readback"
+    },
+    {
+      "class": "Duplicate-process and watchdog instances",
+      "status": "INVESTIGATE_NO_TERMINATION",
+      "required": "process owner/ports/pid-start/lease/heartbeat, service plan and negative tests"
+    },
+    {
+      "class": "Old first-run wizard implementations",
+      "status": "MIGRATION_HOLD",
+      "required": "same-feature consumer inventory, no-loss config/role parity, source rights and rollback"
+    },
+    {
+      "class": "Old source archives and overlapping libraries",
+      "status": "NO_DELETE_PROVENANCE_REFERENCE_ONLY",
+      "required": "one accepted successor Object_ID, original digest and independent native retrieval"
+    }
+  ],
+  "negative_tests_pending": [
+    "Actual issuer/RootAuthority signing and revocation",
+    "Independent authenticated two-node DBR #161",
+    "Public static private-assets denial #158",
+    "R0/R1/R2/R3 exact current LOAD candidate acceptance",
+    "PR206 merge conflict correction with CI",
+    "Current agent process lease and long-running status",
+    "Current release rights and per-source licence"
+  ],
+  "gate_holds": {
+    "G01": "HOLD",
+    "G02": "HOLD",
+    "G03": "HOLD",
+    "G04": "HOLD",
+    "G05": "HOLD",
+    "G06": "HOLD",
+    "G07": "HOLD",
+    "migration": "HOLD",
+    "source_deletion": "HOLD",
+    "onchain_mint": "HOLD"
+  },
+  "next_batch": "Exact-branch back-sweep: merge-base conflict inventory; source-safe Neo fix with tests; selective LOAD R0 roundtrip and private/public UniSpace/LS GO boundary negative; no live mint."
+}
