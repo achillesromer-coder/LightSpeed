@@ -8,6 +8,9 @@ on:
       - 'cgx/bootstrap/**'
       - 'apps/lightspeed-go/scripts/package_unispace_premint.py'
       - 'apps/lightspeed-go/scripts/test_package_unispace_premint.py'
+      - 'apps/lightspeed-go/scripts/package_unispace_uos_integration.py'
+      - 'apps/lightspeed-go/scripts/test_package_unispace_uos_integration.py'
+      - 'apps/lightspeed-go/scripts/probe_uos_native_imports.py'
       - 'scripts/run_cgx_agent_runtime.py'
       - 'scripts/validate_cgx_execution_lease.py'
       - '.github/workflows/cgx-bootstrap-review-validation.yml'
@@ -46,6 +49,8 @@ jobs:
           python3 -m py_compile cgx/bootstrap/cgx_owner_gui_loopback.py cgx/bootstrap/cgx_owner_gui_launcher.pyw
       - name: Test deterministic UniSpace packaging, privacy and negative guards
         run: python3 -m unittest discover -s apps/lightspeed-go/scripts -p 'test_package_unispace_premint.py' -v
+      - name: Test staged native UOS archive, hashes and release blockers
+        run: python3 -m unittest discover -s apps/lightspeed-go/scripts -p 'test_package_unispace_uos_integration.py' -v
       - name: Validate Python lease scope regression (source-only)
         run: python3 scripts/validate_cgx_execution_lease.py
       - name: Verify merged runtime manifest exact source hashes and sizes
