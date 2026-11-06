@@ -178,8 +178,17 @@ function reviewRelatedAccessPosture(related,original,lineage,source){
     provider_observation_ref:related.provider_observation_ref,
     permissions:related.permissions
   },{source_ref:lineage.related_source_ref,id:related.source_id});
+  // A shared broad access category can conceal a reader->writer escalation
+  // or a changed discovery flag. Compare privacy-safe declared tuples only;
+  // provider ACL equivalence remains independently unverified.
+  const classes=p=>p.permissions.map(x=>[
+    x.type,x.role,x.allowFileDiscovery===true?"discoverable":
+      x.allowFileDiscovery===false?"not_discoverable":"unspecified"
+  ].join("|")).sort();
+  const permissionTupleDivergent=JSON.stringify(classes(original))!==JSON.stringify(classes(related));
   const divergent=a.anyone_link_present!==b.anyone_link_present||
-    a.broad_group_or_domain_present!==b.broad_group_or_domain_present;
+    a.broad_group_or_domain_present!==b.broad_group_or_domain_present||
+    permissionTupleDivergent;
   return {
     state:divergent?"R1_DECLARED_ACCESS_POSTURE_DIVERGENCE_HOLD":
       "R1_DECLARED_ACCESS_CLASSES_MATCH_NOT_EQUIVALENCE",
@@ -188,6 +197,7 @@ function reviewRelatedAccessPosture(related,original,lineage,source){
     original_broad_group_or_domain_present:a.broad_group_or_domain_present,
     related_broad_group_or_domain_present:b.broad_group_or_domain_present,
     access_classes_divergent:divergent,
+    declared_permission_tuple_divergent:permissionTupleDivergent,
     provider_authenticated_by_module:false,
     related_provider_revision_authenticated_by_module:false,
     independent_acl_readback_verified:false,
