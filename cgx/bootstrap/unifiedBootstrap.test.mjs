@@ -133,3 +133,14 @@ test('LS GO host preflight holds independently requested second-node evidence',(
  assert.equal(p.ls_go.ready_for_authenticated_host_preflight,false);
  assert.ok(p.blockers.includes('ISSUE_161_TWO_NODE_HOLD'));
 });
+
+test('setup flags reject nonboolean truthy and falsey coercion',()=>{
+ for(const flag of ['lsGORequested','offlinePreferred']){
+  for(const value of ['false','true',0,1,null,[],{}]){
+   const p=planCGXSetup({family,observed:proof,[flag]:value});
+   assert.equal(p.state,'DENIED',`${flag}:${String(value)}`);
+   assert.equal(p.reason,'INVALID_BOOLEAN_SETUP_FLAG');
+  }
+ }
+ assert.equal(planCGXSetup({family,lsGORequested:false,offlinePreferred:true}).state,'REVIEW_ONLY');
+});
