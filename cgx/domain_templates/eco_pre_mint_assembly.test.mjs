@@ -448,6 +448,33 @@ test("matching declared ACL classes still cannot establish equivalence or rights
  assert.ok(r.blocking_gates.includes(
    "PAIRWISE_ACCESS_POSTURES_NOT_INDEPENDENTLY_ATTESTED"));
 });
+test("translated ACL role escalation is held even when broad access classes match",()=>{
+ const r=prepare({cascade_input:input,source_lineage:lineage,access_posture:acl,
+   related_access_posture:{...translatedAcl,permissions:[
+     {type:"anyone",role:"writer",allowFileDiscovery:false},
+     {type:"user",role:"owner",allowFileDiscovery:null}]}});
+ const a=r.related_access_posture_review;
+ assert.equal(a.original_anyone_link_present,true);
+ assert.equal(a.related_anyone_link_present,true);
+ assert.equal(a.declared_permission_tuple_divergent,true);
+ assert.equal(a.access_classes_divergent,true);
+ assert.equal(a.state,"R1_DECLARED_ACCESS_POSTURE_DIVERGENCE_HOLD");
+ assert.ok(r.blocking_gates.includes("SOURCE_TRANSLATION_ACCESS_POSTURE_DIVERGENCE"));
+ assert.equal(r.release.mint_allowed,false);
+});
+test("translated discoverability change is held without revealing raw ACL records",()=>{
+ const r=prepare({cascade_input:input,source_lineage:lineage,access_posture:acl,
+   related_access_posture:{...translatedAcl,permissions:[
+     {type:"anyone",role:"reader",allowFileDiscovery:true},
+     {type:"user",role:"owner",allowFileDiscovery:null}]}});
+ const a=r.related_access_posture_review;
+ assert.equal(a.declared_permission_tuple_divergent,true);
+ assert.equal(a.state,"R1_DECLARED_ACCESS_POSTURE_DIVERGENCE_HOLD");
+ assert.equal(a.acl_equivalent,false);
+ assert.equal(a.provider_authenticated_by_module,false);
+ assert.equal(r.release.public_release_authorised,false);
+ assert.equal(JSON.stringify(a).includes("synthetic:related-acl-observation"),false);
+});
 test("related ACL requires both source lineage and original ACL",()=>{
  for(const req of [
    {cascade_input:input,access_posture:acl,related_access_posture:translatedAcl},
