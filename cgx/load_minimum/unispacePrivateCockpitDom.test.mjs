@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {planUniSpaceSourceInspector} from './unispaceSourceInspector.mjs';
 import {renderUniSpacePrivateStatus as render} from './unispacePrivateCockpitDom.mjs';
+import {makePrivateLoadBinding} from '../bootstrap/cgxPrivateLoadBindingReview.mjs';
 
 // Synthetic source and DOM fixtures only; no provider, browser or host receipts.
 class FakeElement {
@@ -17,6 +18,7 @@ const fakeMount=()=>{
 const flatten=node=>node.textContent+node.children.map(flatten).join(' ');
 const tags=node=>[node.tagName,...node.children.flatMap(tags)];
 const objectId='fixture:eco:one';
+const binding=packet=>makePrivateLoadBinding(packet,{objectId,fileSpace:'Eco.cgx'});
 const node={object_id:objectId,file_space:'Eco.cgx',domain:'eco',owner:'Eco-Grex',
  kind:'observation',source_refs:['fixture:eco:source'],edges:[]};
 const source={source_id:'fixture:eco:source',sha256:'a'.repeat(64),version:'v1',
@@ -400,7 +402,7 @@ test('private UniSpace facet binds the existing LOAD leaf packet to exact select
   semanticKey:'eco:fixture',originalLeaves:[Buffer.from(secret)],
   rights:'internal_only',acl:'owner_only',rightsRef:'private:rights',aclRef:'private:acl'});
  assert.equal(packet.state,'PREMINT_REVIEW_ONLY');
- const result=plan({...input,route:'/operator/objects',sourcePacket:packet});
+ const result=plan({...input,route:'/operator/objects',sourcePacket:binding(packet)});
  assert.equal(result.status,'SOURCE_REVIEW_ONLY');
  assert.equal(result.selected_object_id,objectId);
  assert.equal(result.source_review.manifest_digest,packet.envelope.digest_sha256);
@@ -416,7 +418,7 @@ test('public synthetic routes reject any private LOAD packet rather than project
  const {stageFamilyPacket}=await import('../bootstrap/cgxPremintFamilyProjection.mjs');
  const packet=stageFamilyPacket({objectId,version:'1',family:'Eco.cgx',owner:'achilles',
   semanticKey:'eco:fixture',originalLeaves:[Buffer.from('x')]});
- const result=plan({surface:'public',route:'/cgx',sourcePacket:packet});
+ const result=plan({surface:'public',route:'/cgx',sourcePacket:binding(packet)});
  assert.equal(result.status,'DENIED');
  assert.equal(result.reason,'PUBLIC_ROUTE_PRIVATE_CONTEXT_FORBIDDEN');
 });
@@ -428,12 +430,67 @@ test('private LOAD binding rejects wrong family, wrong source and altered leaf d
   originalLeaves:[Buffer.from('x')],rights:'internal_only',acl:'owner_only',
   rightsRef:'private:rights',aclRef:'private:acl',...override});
  const wrongFamily=plan({...input,route:'/operator/objects',
-  sourcePacket:fixture({family:'Romer.cgx'})});
+  sourcePacket:binding(fixture({family:'Romer.cgx'}))});
  assert.equal(wrongFamily.reason,'LOAD_PACKET_EXACT_SOURCE_FAMILY_MISMATCH');
  const wrongId=plan({...input,route:'/operator/objects',
-  sourcePacket:fixture({objectId:'fixture:eco:other'})});
+  sourcePacket:binding(fixture({objectId:'fixture:eco:other'}))});
  assert.equal(wrongId.reason,'LOAD_PACKET_EXACT_SOURCE_FAMILY_MISMATCH');
  const packet=fixture();packet.envelope.manifest.leaves[0].bytes=99;
- const tampered=plan({...input,route:'/operator/objects',sourcePacket:packet});
- assert.equal(tampered.reason,'LOAD_PACKET_REVIEW_OR_INTEGRITY_HOLD');
+ assert.equal(binding(packet).reason,'LOAD_PACKET_REVIEW_OR_INTEGRITY_HOLD');
+ const tampered=plan({...input,route:'/operator/objects',sourcePacket:binding(packet)});
+ assert.equal(tampered.reason,'LOAD_PACKET_EXACT_SOURCE_FAMILY_MISMATCH');
+});
+
+
+test('private UniSpace DOM displays bounded LOAD leaf review without source hashes or raw bytes',async()=>{
+ const {stageFamilyPacket}=await import('../bootstrap/cgxPremintFamilyProjection.mjs');
+ const raw='DO_NOT_EXPOSE_PRIVATE_SOURCE_BODY';
+ const packet=stageFamilyPacket({objectId,version:'1',family:'Eco.cgx',owner:'achilles',
+  semanticKey:'eco:fixture',originalLeaves:[Buffer.from(raw)],
+  rights:'internal_only',acl:'owner_only',rightsRef:'owner:rights',aclRef:'owner:acl'});
+ const mount=fakeMount();
+ const result=render({...input,mount,sourcePacket:binding(packet)});
+ assert.equal(result.status,'RENDERED_SOURCE_REVIEW');
+ const content=flatten(mount);
+ assert.match(content,/LOAD source leaves - private review only/);
+ assert.match(content,/Reviewed source leaves 1/);
+ assert.match(content,/Leaf hydration HOLD - no source transfer or execution/);
+ assert.ok(!content.includes(raw));
+ assert.ok(!content.includes(packet.envelope.manifest.source.sha256));
+ assert.ok(!content.includes(packet.envelope.digest_sha256));
+ assert.ok(!tags(mount).some(t=>['button','a','input','script','iframe'].includes(t)));
+});
+test('wrong or corrupted LOAD packet clears previously rendered private status',async()=>{
+ const {stageFamilyPacket}=await import('../bootstrap/cgxPremintFamilyProjection.mjs');
+ const make=family=>stageFamilyPacket({objectId,version:'1',family,owner:'achilles',
+  semanticKey:'eco:fixture',originalLeaves:[Buffer.from('x')],
+  rights:'internal_only',acl:'owner_only',rightsRef:'owner:rights',aclRef:'owner:acl'});
+ const mount=fakeMount();
+ assert.equal(render({...input,mount,sourcePacket:binding(make('Eco.cgx'))}).status,'RENDERED_SOURCE_REVIEW');
+ const denied=render({...input,mount,sourcePacket:binding(make('Romer.cgx'))});
+ assert.equal(denied.status,'DENIED');
+ assert.equal(mount.children.length,0);
+ const tampered=make('Eco.cgx');tampered.envelope.manifest.leaves[0].sha256='0'.repeat(64);
+ assert.equal(render({...input,mount,sourcePacket:binding(tampered)}).status,'DENIED');
+ assert.equal(mount.children.length,0);
+});
+test('public or offline rendering never admits a private LOAD leaf packet',async()=>{
+ const {stageFamilyPacket}=await import('../bootstrap/cgxPremintFamilyProjection.mjs');
+ const packet=stageFamilyPacket({objectId,version:'1',family:'Eco.cgx',owner:'achilles',
+  semanticKey:'eco:fixture',originalLeaves:[Buffer.from('x')]});
+ for(const overrides of [{surface:'public'},{offline:true}]){
+  const mount=fakeMount();
+  const result=render({...input,mount,sourcePacket:binding(packet),...overrides});
+  assert.equal(result.status,'DENIED');
+  assert.equal(mount.children.length,0);
+ }
+});
+
+test('browser-facing UniSpace source-review components never import Node-only bootstrap crypto',async()=>{
+ const {readFileSync}=await import('node:fs');
+ for(const name of ['unispaceFacetConvergence.mjs','unispacePrivateCockpitDom.mjs']){
+  const text=readFileSync(new URL('./'+name,import.meta.url),'utf8');
+  assert.doesNotMatch(text,/^\s*import\s+.*from\s+['"]node:/m,name);
+  assert.doesNotMatch(text,/^\s*import\s+.*from\s+['"]\.\.\/bootstrap\//m,name);
+ }
 });

@@ -5,6 +5,7 @@
  * All untrusted labels are inserted as textContent, never as HTML.
  */
 import {planUniSpaceOperatorCockpit} from './unispaceSourceInspector.mjs';
+import {planUniSpaceFacetConvergence} from './unispaceFacetConvergence.mjs';
 
 export const PRIVATE_STATUS_DOM_SCHEMA='UNISPACE-PRIVATE-STATUS-DOM/0.1';
 const denied=reason=>({schema:PRIVATE_STATUS_DOM_SCHEMA,status:'DENIED',reason,
@@ -50,7 +51,7 @@ const line=(doc,label,value)=>{
  * passing surface='private' alone is not a security check.
  */
 export function renderUniSpacePrivateStatus({
- mount=null,surface=null,selection=null,inspector=null,offline=false,hostReceipt=null,ownerReview=null
+ mount=null,surface=null,selection=null,inspector=null,offline=false,hostReceipt=null,ownerReview=null,sourcePacket=null
 }={}){
  if(!mount||typeof mount.replaceChildren!=='function')
   return denied('INVALID_MOUNT');
@@ -69,6 +70,14 @@ export function renderUniSpacePrivateStatus({
   return denied(status.reason||'REVIEW_PLAN_NOT_ACCEPTED');
  const ownerProjection=ownerReviewProjection(ownerReview,selection,offline);
  if(ownerProjection.state==='DENIED')return denied(ownerProjection.reason);
+ // Reuse the exact LOAD-facet binding: no independent Object_ID resolution.
+ // Offline status remains H0-only; never render a cached private leaf packet.
+ if(offline&&sourcePacket!==null)return denied('OFFLINE_LOAD_PACKET_UNVERIFIED');
+ const packetView=sourcePacket===null?null:planUniSpaceFacetConvergence({
+  surface,route:'/operator/objects',selection,inspector,offline,hostReceipt,sourcePacket
+ });
+ if(packetView!==null&&(packetView.status!=='SOURCE_REVIEW_ONLY'||!packetView.source_review))
+  return denied(packetView.reason||'LOAD_PACKET_REVIEW_DENIED');
  const doc=mount.ownerDocument;
  const section=doc.createElement('section');
  section.setAttribute('role','status');
@@ -96,6 +105,18 @@ export function renderUniSpacePrivateStatus({
   line(doc,'Next bounded action',status.next_step)
  );
  section.append(details);
+ if(packetView!==null){
+  // Only bounded status crosses the DOM; never source bytes, hashes or locators.
+  section.append(element(doc,'h3','LOAD source leaves - private review only'));
+  const leaves=doc.createElement('dl');
+  leaves.append(
+   line(doc,'Reviewed source leaves',String(packetView.source_review.leaf_count)),
+   line(doc,'Source integrity','Manifest-bound review; provider proof not verified'),
+   line(doc,'Leaf hydration','HOLD - no source transfer or execution'),
+   line(doc,'Native admission','HOLD - independent issuer, lease and DBR required')
+  );
+  section.append(leaves);
+ }
  if(ownerProjection.state==='CALLER_REVIEW_ONLY'){
   section.append(element(doc,'h3','Achilles owner progress — historical source-review report'));
   const progress=doc.createElement('dl');

@@ -5,7 +5,9 @@
  * Never import a private module into Vite public/static output (#158).
  */
 import {planUniSpaceOperatorCockpit} from './unispaceSourceInspector.mjs';
-import {projectUniSpace,SCHEMA as PACKET_SCHEMA} from '../bootstrap/cgxPremintFamilyProjection.mjs';
+// Private browser UI consumes only a sanitised server-side review binding.
+// No Node crypto, raw source carrier, issuer or transport API is imported here.
+const PACKET_SCHEMA='CGX-PRIVATE-LOAD-BINDING-REVIEW/0.1';
 
 export const FACET_CONVERGENCE_SCHEMA='UNISPACE-FACET-CONVERGENCE/0.1';
 const publicFacets=Object.freeze({
@@ -51,23 +53,25 @@ export function planUniSpaceFacetConvergence({
  if(p.state!=='SOURCE_REVIEW_ONLY')return deny(p.reason||'PRIVATE_INSPECTOR_HOLD');
  let sourceReview=null;
  if(sourcePacket!==null){
-  const records=sourcePacket?.convergence?.source_records;
-  if(sourcePacket?.schema!==PACKET_SCHEMA||sourcePacket?.state!=='PREMINT_REVIEW_ONLY'||
-     sourcePacket.canonical_parent!=='cgx:root:cognigrex'||
-     !Array.isArray(records)||records.length!==1||
-     records[0].source_id!==p.identity||records[0].family!==p.file_space||
-     records[0].sha256!==sourcePacket?.envelope?.manifest?.source?.sha256)
+  // This is a strictly inert, redacted review DTO, never an authority receipt.
+  const keys=['schema','state','object_id','file_space','manifest_digest','source_digest',
+   'leaf_count','hydration','source_qualified','native_admitted','network_transfer'];
+  const hex=/^[0-9a-f]{64}$/;
+  if(!sourcePacket||typeof sourcePacket!=='object'||Array.isArray(sourcePacket)||
+     Object.keys(sourcePacket).length!==keys.length||
+     keys.some(key=>!Object.hasOwn(sourcePacket,key))||
+     sourcePacket.schema!==PACKET_SCHEMA||sourcePacket.state!=='SOURCE_REVIEW_ONLY'||
+     sourcePacket.object_id!==p.identity||sourcePacket.file_space!==p.file_space||
+     !hex.test(sourcePacket.manifest_digest??'')||!hex.test(sourcePacket.source_digest??'')||
+     !Number.isSafeInteger(sourcePacket.leaf_count)||sourcePacket.leaf_count<1||
+     sourcePacket.leaf_count>1024||sourcePacket.hydration!=='HOLD'||
+     sourcePacket.source_qualified!==false||sourcePacket.native_admitted!==false||
+     sourcePacket.network_transfer!==false)
    return deny('LOAD_PACKET_EXACT_SOURCE_FAMILY_MISMATCH');
-  // Existing LOAD planner owns hash validation and projection; do not re-resolve identity.
-  const projected=projectUniSpace(sourcePacket,{audience:'owner',requestedLeaves:[]});
-  if(projected.state!=='SOURCE_ONLY_PRIVATE_PROJECTION'||
-     projected.h4.execution!=='DISABLED_AUTHORITY_HOLD'||
-     projected.h0.object_id!==p.identity)
-   return deny('LOAD_PACKET_REVIEW_OR_INTEGRITY_HOLD');
-  sourceReview={manifest_digest:projected.h0.manifest_digest,
-   source_digest:projected.h0.source_sha256,leaf_count:projected.h1.leaf_count,
-   hydration:projected.hydration.state,source_qualified:false,
-   installed_capabilities_verified:false,native_admitted:false,network_transfer:false};
+  sourceReview={manifest_digest:sourcePacket.manifest_digest,
+   source_digest:sourcePacket.source_digest,leaf_count:sourcePacket.leaf_count,
+   hydration:'HOLD',source_qualified:false,installed_capabilities_verified:false,
+   native_admitted:false,network_transfer:false};
  }
  return {schema:FACET_CONVERGENCE_SCHEMA,status:'SOURCE_REVIEW_ONLY',
   route,facet:'private_object_inspector',source_prs:[192,205],
