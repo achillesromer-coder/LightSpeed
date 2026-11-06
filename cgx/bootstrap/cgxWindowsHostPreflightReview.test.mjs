@@ -98,7 +98,7 @@ test('source classifier does not promote ordinary or unknown policy observations
  }
  for(const source of [null,{},'x'.repeat(2*1024*1024+1)]){
   assert.equal(classifyInstallerPolicySource(source),'UNKNOWN');
-  assert.equal(reviewWindowsCGXHost({...base,installerInvocationPolicy:classifyInstallerPolicySource(source)}).state,'REVIEW_ONLY');
+  assert.equal(reviewWindowsCGXHost({...base,installerInvocationPolicy:classifyInstallerPolicySource(source)}).state,'HOLD');
  }
 });
 
@@ -118,4 +118,11 @@ test('explicit non-Bypass and dynamically supplied policy switches require sourc
   assert.equal(x.may_execute,false);
   assert.equal(x.may_change_execution_policy,false);
  }
+});
+
+test('unknown installer source classification fails closed without host authority',()=>{
+ const x=reviewWindowsCGXHost({...base,installerInvocationPolicy:'UNKNOWN'});
+ assert.equal(x.state,'HOLD');
+ assert.ok(x.holds.includes('NATIVE_INSTALLER_POLICY_SOURCE_UNVERIFIED'));
+ assert.equal(x.may_execute,false);
 });
