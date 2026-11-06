@@ -59,7 +59,8 @@ const validObjectId = (value: unknown): value is string => {
   const tail = value.slice(prefix.length);
   return tail.length > 0 && tail.split("/").every(segment =>
     /^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(segment) &&
-    segment !== "." && segment !== ".."
+    segment !== "." && segment !== ".." &&
+    !["__proto__", "prototype", "constructor"].includes(segment.toLowerCase())
   );
 };
 
