@@ -1,3 +1,4 @@
+import {presentationStyle} from './cgxPresentationPreferences.mjs';
 /**
  * Additive preview on the existing UniSpace Objects tab, not another OS shell.
  * No host API, mint issuer, remote effects, source access or persistent approval.
@@ -8,7 +9,7 @@ export function mountFirstSpacesReview(root){
  if(!root||typeof root.replaceChildren!=='function'||!root.ownerDocument)
   return {state:'HOLD',reason:'INVALID_MOUNT'};
  const doc=root.ownerDocument;
- const state={layout:'lattice',focus:'facet.load',order:null,decisions:{}};
+ const state={layout:'lattice',focus:'facet.load',order:null,decisions:{},presentation:{}};
  const el=(tag,text='',cls='')=>{
   const node=doc.createElement(tag);node.textContent=text;
   if(cls)node.className=cls;
@@ -25,6 +26,8 @@ export function mountFirstSpacesReview(root){
   if(plan.state!=='SOURCE_REVIEW_ONLY')return;
   const section=el('article','','panel');
   section.setAttribute('data-cgx-press','SOURCE_REVIEW_ONLY');
+  const palette=presentationStyle(plan.presentation);
+  section.setAttribute('style','background:'+palette.background+';color:'+palette.foreground+';border-color:'+palette.accent+';padding:18px');
   section.append(el('p','LOAD startup / first spaces','eyebrow'));
   section.append(el('h2','CGX first-spaces lattice — design review only'));
   section.append(el('p','Mint, signing and deployment are held. Rearrangement affects the visual order only. No saved approvals.','muted'));
@@ -32,7 +35,17 @@ export function mountFirstSpacesReview(root){
   modes.setAttribute('aria-label','Choose first-spaces view');
   for(const mode of layouts)modes.append(button(mode,'data-cgx-layout',mode,mode===plan.layout));
   section.append(modes);
-  const cards=el('div','','graph-stack');cards.setAttribute('role','list');
+  const prefs=el('fieldset');prefs.append(el('legend','Appearance and display region'));
+  const fields=[['background',['midnight','slate','paper']],['hue',[205,145,35,285]],['density',['comfortable','compact']],['motion',['reduced','system']],['locale',['en','en-AU','en-GB','en-US','de','fr','ar']],['region',['unspecified','AU','NZ','GB','US','ZA','DE']]];
+  for(const [key,values] of fields){
+   const label=el('label',key+' ');const select=el('select');
+   select.setAttribute('data-cgx-preference',key);select.setAttribute('aria-label',key);
+   for(const value of values){const option=el('option',String(value));option.value=String(value);option.selected=value===plan.presentation[key];select.append(option);}
+   label.append(select);prefs.append(label);
+  }
+  prefs.append(el('p','Region is optional display context. Preferences apply to this preview and export; they grant no location, legal or SocialSpace permissions.','muted'));
+  section.append(prefs);
+  const cards=el('div','','graph-stack');cards.setAttribute('style','display:grid;gap:'+palette.gap);cards.setAttribute('role','list');
   cards.setAttribute('aria-label','Provisional families and first spaces');
   for(const node of plan.nodes){
    const row=el('div','','panel');row.setAttribute('role','listitem');
@@ -98,7 +111,18 @@ export function mountFirstSpacesReview(root){
   }else return;
   render();
  };
+ const onChange=event=>{
+  const target=event.target;
+  if(!target||!root.contains(target))return;
+  const key=target.getAttribute('data-cgx-preference');
+  if(!['background','hue','density','motion','locale','region'].includes(key))return;
+  const value=key==='hue'?Number(target.value):target.value;
+  const next={...state.presentation,[key]:value};
+  if(planFirstSpacesReview({...state,presentation:next}).state!=='SOURCE_REVIEW_ONLY')return;
+  state.presentation=next;render();
+ };
+ root.addEventListener('change',onChange);
  root.addEventListener('click',onClick);
  render();
- return {state:'SOURCE_REVIEW_ONLY',dispose:()=>root.removeEventListener('click',onClick)};
+ return {state:'SOURCE_REVIEW_ONLY',dispose:()=>{root.removeEventListener('click',onClick);root.removeEventListener('change',onChange);}};
 }

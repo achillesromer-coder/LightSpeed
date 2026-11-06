@@ -32,7 +32,7 @@ ALLOWED_PREFIXES = (
 ORDER = (
     "git-index", "source-manifest", "load-registry",
     "core-node", "facet-node", "load-python", "host-evidence",
-    "public-guard", "app-check", "app-vitest",
+    "public-guard", "app-check", "app-vitest", "product-package",
 )
 TIMEOUT_SECONDS = 180
 
@@ -63,6 +63,8 @@ def choose_lanes(paths: list[str]) -> tuple[str, ...]:
             lanes.add("host-evidence")
         if path.startswith("apps/lightspeed-go/"):
             lanes.update(("app-check", "app-vitest"))
+        if path.startswith("apps/lightspeed-go/scripts/package_unispace") or path.startswith("apps/lightspeed-go/scripts/test_package_unispace"):
+            lanes.add("product-package")
         if path.startswith("apps/lightspeed-go/public/") or "public_bundle" in path:
             lanes.add("public-guard")
     # Every batch includes publication isolation and object-policy negatives.
@@ -133,7 +135,12 @@ def test_commands(lanes: tuple[str, ...]) -> list[tuple[str, list[str], Path]]:
                                      "tests/unispace-domains.test.mjs",
                                      "tests/owner-progress.test.mjs",
                                      "tests/unispace-offline-selector-negative.test.mjs",
-                                     "src/cgxFacetProjection.test.mjs"], app))
+                                     "src/cgxFacetProjection.test.mjs",
+                                     "src/cgxFirstSpacesReview.test.mjs",
+                                     "src/cgxLoadBatchDraft.test.mjs"], app))
+    if "product-package" in lanes:
+        jobs.append(("product-package", [py, "-m", "unittest", "discover", "-s",
+                     "apps/lightspeed-go/scripts", "-p", "test_package_unispace*.py"], ROOT))
     return jobs
 
 

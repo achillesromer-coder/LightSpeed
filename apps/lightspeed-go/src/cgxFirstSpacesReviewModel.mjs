@@ -1,3 +1,4 @@
+import {presentationPreferences} from './cgxPresentationPreferences.mjs';
 /**
  * Public-safe topology and private/operator visual REVIEW model.
  * This is not a native Object_ID registry, signer, resolver, DBR or mint API.
@@ -31,7 +32,9 @@ const validDecisions=decisions=>decisions!==null&&typeof decisions==='object'&&
  ['approve','deny','defer'].includes(decisions[k]));
 const hold=reason=>Object.freeze({schema:SCHEMA,state:'HOLD',reason,
  native_minted:false,canonical_mutation:false,may_sign:false,may_publish:false});
-export function planFirstSpacesReview({order=null,layout='lattice',focus='facet.load',decisions={}}={}){
+export function planFirstSpacesReview({order=null,layout='lattice',focus='facet.load',decisions={},presentation={}}={}){
+ let preferences;
+ try{preferences=presentationPreferences(presentation);}catch{return hold('INVALID_PRESENTATION_PREFERENCES');}
  if(!['lattice','family-tree','space-grid'].includes(layout)||!KEYS.has(focus)||
    (order!==null&&!validOrder(order))||!validDecisions(decisions))return hold('INVALID_VISUAL_REVIEW_INPUT');
  const ordering=order??NODES.map(n=>n.key);
@@ -49,7 +52,7 @@ export function planFirstSpacesReview({order=null,layout='lattice',focus='facet.
   ...n.requires.map(x=>({from:x,to:n.key,kind:'dependency'}))
  ]);
  return {schema:SCHEMA,state:'SOURCE_REVIEW_ONLY',canonical_parent:'cgx:root:cognigrex',
-  library:'LOAD.cgx',product:'UniSpace',layout,focus,order:[...ordering],nodes,edges,
+  library:'LOAD.cgx',product:'UniSpace',presentation:preferences,layout,focus,order:[...ordering],nodes,edges,
   mint_sequence:['family.cognigrex','facet.load','family.romer','family.eco',
     'family.emassc','family.ls','space.filespace','space.unispace-control',
     'space.dataspace','space.printspace','facet.ccc'],
@@ -72,6 +75,8 @@ export function makeFirstSpacesDesignExport(options={}){
   state:'LOCAL_DESIGN_REVIEW_FOR_FOUNDER_RECONCILIATION',
   canonical_parent:view.canonical_parent,load_alias:view.library,
   selected_view:view.layout,selected_focus:view.focus,
+  presentation_preferences:view.presentation,
+  geography_is_presentation_only:true,social_opt_in_granted:false,
   visual_order:[...view.order],
   dependency_pinned_press_order:[...view.mint_sequence],
   choices:view.nodes.map(n=>({key:n.key,kind:n.kind,

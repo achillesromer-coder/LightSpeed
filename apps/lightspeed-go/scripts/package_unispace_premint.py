@@ -78,7 +78,7 @@ def static_lattice(repo:Path):
         "nodes:p.nodes.map(x=>({key:x.key,kind:x.kind,label:x.label,"
         "parent:x.parent,requires:x.requires,role:x.role})),"
         "edges:p.edges,sequence:p.mint_sequence,load_alias:p.library,"
-        "native_minted:p.native_minted,may_sign:p.may_sign}));")
+        "native_minted:p.native_minted,may_sign:p.may_sign,presentation:p.presentation}));")
     cp=subprocess.run(["node","--input-type=module","-e",js],cwd=repo,
                       capture_output=True,text=True,timeout=15,check=True)
     x=json.loads(cp.stdout)

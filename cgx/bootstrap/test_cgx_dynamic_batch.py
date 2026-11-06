@@ -57,6 +57,12 @@ class DynamicBatchTests(unittest.TestCase):
         for val in ("HEAD;echo hello","origin/main","", "../a", "1"*41):
             with self.subTest(val=val),self.assertRaises(ValueError):
                 mod.delta_from_base(val)
+    def test_product_source_selects_existing_packaging_and_manual_batch_tests(self):
+        lanes=mod.choose_lanes(["apps/lightspeed-go/scripts/package_unispace_uos_integration.py"])
+        jobs={job[0]:job[1] for job in mod.test_commands(lanes)}
+        self.assertIn("product-package",jobs)
+        self.assertIn("src/cgxLoadBatchDraft.test.mjs",jobs["app-vitest"])
+        self.assertIn("src/cgxFirstSpacesReview.test.mjs",jobs["app-vitest"])
 
 if __name__=="__main__":
     unittest.main()

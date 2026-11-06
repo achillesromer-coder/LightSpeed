@@ -64,6 +64,7 @@ def uos_artifacts(build:Path,viewer:Path,repo:Path):
       {"id":"frontend_ui","state":"SOURCE_COMPILED","proof":"compiled asset hashes"},
       {"id":"public_viewer","state":"SOURCE_VERIFIED","proof":"12-file allowlist hashes"},
       {"id":"first_spaces","state":"SOURCE_MODEL_ONLY","proof":"11-node pinned dependency graph"},
+      {"id":"load_batch_preparation","state":"LOCAL_UNSIGNED_METADATA_REVIEW","proof":"local index import, source inspection, deterministic batches and verified draft restore; chain binding unset"},
       {"id":"native_runtime","state":"SOURCE_PACKAGED_NOT_INSTALLED","proof":f"{count} Python syntax-qualified modules"},
       {"id":"desktop_shell","state":"NOT_BUNDLED","proof":"portable signed installers not accepted"},
       {"id":"macos_shell","state":"UNVERIFIED","proof":"OS integration and signing untested"},
@@ -72,6 +73,8 @@ def uos_artifacts(build:Path,viewer:Path,repo:Path):
       {"id":"dataspace","state":"INDEPENDENT_DBR_HOLD","proof":"no signed two-node DBR acceptance"},
       {"id":"ccc_skills_tools","state":"PLANNED_NOT_CONNECTED","proof":"native grants/lease/owner receipts held"},
       {"id":"load_alexandria","state":"EXTERNAL_NOT_BUNDLED","proof":"resolver/admission retained as separate systems"},
+      {"id":"socialspace","state":"BILATERAL_OPT_IN_AND_AI_POLICY_HOLD","proof":"existing UniSpace extension; no automatic activation"},
+      {"id":"printspace","state":"MEASURED_OUTPUT_ACCEPTANCE_HOLD","proof":"source model is not physical validation"},
       {"id":"native_mint","state":"BLOCKED","proof":"no verified issuer, transactions or RootAuthority"},
       {"id":"device_network","state":"BLOCKED","proof":"no OS consent/attested household endpoints"},
       {"id":"rights_distribution","state":"BLOCKED","proof":"per-component licences not accepted"}

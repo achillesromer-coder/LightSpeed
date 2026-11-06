@@ -86,3 +86,38 @@ test('export keeps visual choices but cannot grant native signing, mutation, min
  }
  assert.equal(makeFirstSpacesDesignExport({decisions:{'family.eco':'mint'}}).state,'HOLD');
 });
+
+test('presentation variants never alter identity, dependencies or authority',async()=>{
+ const {presentationPreferences,presentationStyle}=await import('./cgxPresentationPreferences.mjs');
+ const original=planFirstSpacesReview();
+ const preferences={locale:'en-AU',region:'AU',hue:145,background:'paper',density:'compact',motion:'reduced'};
+ const view=planFirstSpacesReview({presentation:preferences});
+ assert.equal(view.state,'SOURCE_REVIEW_ONLY');
+ assert.deepEqual(view.presentation,preferences);
+ assert.deepEqual(view.nodes,original.nodes);assert.deepEqual(view.edges,original.edges);
+ assert.deepEqual(view.mint_sequence,original.mint_sequence);
+ assert.equal(view.may_sign,false);assert.equal(view.may_publish,false);
+ const {makeFirstSpacesDesignExport}=await import('./cgxFirstSpacesReviewModel.mjs');
+ const output=makeFirstSpacesDesignExport({presentation:preferences});
+ assert.deepEqual(output.presentation_preferences,preferences);
+ assert.equal(output.geography_is_presentation_only,true);
+ assert.equal(output.social_opt_in_granted,false);
+ assert.equal(presentationStyle(preferences).background,'#f5f4ef');
+ for(const bad of [{hue:NaN},{hue:360},{hue:-1},{region:'<script>'},{locale:'invalid_locale'},
+   {background:'url(https://example.com)'},{mint:true},{social_opt_in:true},null,[]]){
+   assert.throws(()=>presentationPreferences(bad));
+   assert.equal(planFirstSpacesReview({presentation:bad}).state,'HOLD');
+ }
+});
+test('appearance controls update scoped preview and unregister on disposal',()=>{
+ const root=mount();const controller=mountFirstSpacesReview(root);
+ let select=find(root,'data-cgx-preference','background');select.value='paper';
+ root.handlers.change({target:select});
+ assert.match(find(root,'data-cgx-press','SOURCE_REVIEW_ONLY').getAttribute('style'),/#f5f4ef/);
+ select=find(root,'data-cgx-preference','region');select.value='AU';root.handlers.change({target:select});
+ assert.match(text(root),/no location, legal or SocialSpace permissions/);
+ const baseline=selectOrder(root);
+ select=find(root,'data-cgx-preference','hue');select.value='not-a-number';root.handlers.change({target:select});
+ assert.deepEqual(selectOrder(root),baseline);
+ controller.dispose();assert.equal(root.handlers.change,undefined);
+});
