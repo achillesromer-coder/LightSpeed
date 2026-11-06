@@ -126,5 +126,24 @@
     "source_deletion": "HOLD",
     "onchain_mint": "HOLD"
   },
-  "next_batch": "Exact-branch back-sweep: merge-base conflict inventory; source-safe Neo fix with tests; selective LOAD R0 roundtrip and private/public UniSpace/LS GO boundary negative; no live mint."
+  "public_viewer_fold_20261106": {
+    "source_pr": 188,
+    "source_head": "675816a21404c8cea3053bf2963c707eadd50500",
+    "target_branch": "review/cgx-ls-unified-bootstrap-20261028",
+    "scope": "28 additive original public-viewer source paths from an isolated review branch; no overwritten existing target paths",
+    "source_provenance": "Existing cgx/review/unispace_public_source_fold_20261020.json retains original PR174 versus PR188 blob lineage",
+    "local_validation": {
+      "bootstrap_load_node": "393 of 393 PASS",
+      "public_vitest": "42 of 42 PASS",
+      "typescript": "PASS",
+      "vite_compile": "PASS_SOURCE_BUILD_ONLY",
+      "public_guard": "34 of 35 PASS, one Windows symlink test SKIPPED for missing privilege; Linux CI must execute it",
+      "isolated_public_bundle": "12 allowlisted files, 50354 source bytes, nonpublishing",
+      "load_registry": "131 references, 45 CCC routes, zero registry drift"
+    },
+    "critical_public_boundary": "Ordinary LS GO Vite build copies public/data, public/review, physical-operations-seed and non-release deployment notes. The general application dist is NOT an approved public artifact. Never deploy it as the CGX public-only candidate.",
+    "release_path": "Fresh separately allowlisted public bundle only, after source rights, real browser negative tests, host ACL and independent publication approval",
+    "authority": "SOURCE_REVIEW_ONLY_NO_PRODUCTION_MERGE_NO_DEPLOY_NO_MINT"
+  },
+  "next_batch": "Run Linux CI for staged public-viewer fold; inspect issue 158 LS GO internal static exposure, 161 independent DBR and issuer; qualify LOAD and UniSpace functional host readback; do not merge production, publish or mint without independent acceptance."
 }
