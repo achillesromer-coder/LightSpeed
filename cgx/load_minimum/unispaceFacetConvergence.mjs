@@ -5,6 +5,7 @@
  * Never import a private module into Vite public/static output (#158).
  */
 import {planUniSpaceOperatorCockpit} from './unispaceSourceInspector.mjs';
+import {projectUniSpace,SCHEMA as PACKET_SCHEMA} from '../bootstrap/cgxPremintFamilyProjection.mjs';
 
 export const FACET_CONVERGENCE_SCHEMA='UNISPACE-FACET-CONVERGENCE/0.1';
 const publicFacets=Object.freeze({
@@ -26,12 +27,12 @@ const deny=reason=>({schema:FACET_CONVERGENCE_SCHEMA,status:'DENIED',reason,
  * to the existing LOAD cockpit planner; no second Object_ID resolver is minted.
  */
 export function planUniSpaceFacetConvergence({
- surface=null,route=null,selection=null,inspector=null,offline=false,hostReceipt=null
+ surface=null,route=null,selection=null,inspector=null,offline=false,hostReceipt=null,sourcePacket=null
 }={}){
  if(typeof offline!=='boolean'||typeof route!=='string'||route.length>128)
   return deny('INVALID_ROUTE_OR_MODE');
  if(surface==='public'){
-  if(selection!==null||inspector!==null||hostReceipt!==null||offline)
+  if(selection!==null||inspector!==null||hostReceipt!==null||sourcePacket!==null||offline)
    return deny('PUBLIC_ROUTE_PRIVATE_CONTEXT_FORBIDDEN');
   if(!Object.hasOwn(publicFacets,route))
    return deny('PUBLIC_ROUTE_NOT_ALLOWLISTED');
@@ -48,12 +49,32 @@ export function planUniSpaceFacetConvergence({
  if(route!=='/operator/objects')return deny('PRIVATE_ROUTE_NOT_ALLOWLISTED');
  const p=planUniSpaceOperatorCockpit({surface,selection,inspector,offline,hostReceipt});
  if(p.state!=='SOURCE_REVIEW_ONLY')return deny(p.reason||'PRIVATE_INSPECTOR_HOLD');
+ let sourceReview=null;
+ if(sourcePacket!==null){
+  const records=sourcePacket?.convergence?.source_records;
+  if(sourcePacket?.schema!==PACKET_SCHEMA||sourcePacket?.state!=='PREMINT_REVIEW_ONLY'||
+     sourcePacket.canonical_parent!=='cgx:root:cognigrex'||
+     !Array.isArray(records)||records.length!==1||
+     records[0].source_id!==p.identity||records[0].family!==p.file_space||
+     records[0].sha256!==sourcePacket?.envelope?.manifest?.source?.sha256)
+   return deny('LOAD_PACKET_EXACT_SOURCE_FAMILY_MISMATCH');
+  // Existing LOAD planner owns hash validation and projection; do not re-resolve identity.
+  const projected=projectUniSpace(sourcePacket,{audience:'owner',requestedLeaves:[]});
+  if(projected.state!=='SOURCE_ONLY_PRIVATE_PROJECTION'||
+     projected.h4.execution!=='DISABLED_AUTHORITY_HOLD'||
+     projected.h0.object_id!==p.identity)
+   return deny('LOAD_PACKET_REVIEW_OR_INTEGRITY_HOLD');
+  sourceReview={manifest_digest:projected.h0.manifest_digest,
+   source_digest:projected.h0.source_sha256,leaf_count:projected.h1.leaf_count,
+   hydration:projected.hydration.state,source_qualified:false,
+   installed_capabilities_verified:false,native_admitted:false,network_transfer:false};
+ }
  return {schema:FACET_CONVERGENCE_SCHEMA,status:'SOURCE_REVIEW_ONLY',
   route,facet:'private_object_inspector',source_prs:[192,205],
   selected_object_id:p.identity,selected_file_space:p.file_space,
   presentation_stage:p.presentation_stage,view:p.view,
   evidence_ceiling:p.evidence_ceiling,
-  render_mode:'INERT_PRIVATE_REVIEW',
+  render_mode:'INERT_PRIVATE_REVIEW',source_review:sourceReview,
   source_bytes_read:false,host_authenticated:false,native_admitted:false,
   may_execute:false,provider_readback:false,deployed:false,
   public_release:false,canonical_mutation:false};

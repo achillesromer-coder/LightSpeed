@@ -390,3 +390,50 @@ test('offline and public surfaces cannot replay a historical owner progress repo
  assert.equal(offlineH0.status,'RENDERED_SOURCE_REVIEW');
  assert.ok(!flatten(mount).includes('BRIDGE_REACHABLE'));
 });
+
+
+test('private UniSpace facet binds the existing LOAD leaf packet to exact selected child without transferring source',async()=>{
+ const {planUniSpaceFacetConvergence:plan}=await import('./unispaceFacetConvergence.mjs');
+ const {stageFamilyPacket}=await import('../bootstrap/cgxPremintFamilyProjection.mjs');
+ const secret='private original bytes never appear in the view';
+ const packet=stageFamilyPacket({objectId,version:'1',family:'Eco.cgx',owner:'achilles',
+  semanticKey:'eco:fixture',originalLeaves:[Buffer.from(secret)],
+  rights:'internal_only',acl:'owner_only',rightsRef:'private:rights',aclRef:'private:acl'});
+ assert.equal(packet.state,'PREMINT_REVIEW_ONLY');
+ const result=plan({...input,route:'/operator/objects',sourcePacket:packet});
+ assert.equal(result.status,'SOURCE_REVIEW_ONLY');
+ assert.equal(result.selected_object_id,objectId);
+ assert.equal(result.source_review.manifest_digest,packet.envelope.digest_sha256);
+ assert.equal(result.source_review.leaf_count,1);
+ assert.equal(result.source_review.hydration,'HOLD');
+ assert.equal(result.source_review.native_admitted,false);
+ assert.equal(result.may_execute,false);
+ assert.equal(result.public_release,false);
+ assert.equal(JSON.stringify(result).includes(secret),false);
+});
+test('public synthetic routes reject any private LOAD packet rather than projecting H0',async()=>{
+ const {planUniSpaceFacetConvergence:plan}=await import('./unispaceFacetConvergence.mjs');
+ const {stageFamilyPacket}=await import('../bootstrap/cgxPremintFamilyProjection.mjs');
+ const packet=stageFamilyPacket({objectId,version:'1',family:'Eco.cgx',owner:'achilles',
+  semanticKey:'eco:fixture',originalLeaves:[Buffer.from('x')]});
+ const result=plan({surface:'public',route:'/cgx',sourcePacket:packet});
+ assert.equal(result.status,'DENIED');
+ assert.equal(result.reason,'PUBLIC_ROUTE_PRIVATE_CONTEXT_FORBIDDEN');
+});
+test('private LOAD binding rejects wrong family, wrong source and altered leaf digest',async()=>{
+ const {planUniSpaceFacetConvergence:plan}=await import('./unispaceFacetConvergence.mjs');
+ const {stageFamilyPacket}=await import('../bootstrap/cgxPremintFamilyProjection.mjs');
+ const fixture=(override={})=>stageFamilyPacket({
+  objectId,version:'1',family:'Eco.cgx',owner:'achilles',semanticKey:'eco:fixture',
+  originalLeaves:[Buffer.from('x')],rights:'internal_only',acl:'owner_only',
+  rightsRef:'private:rights',aclRef:'private:acl',...override});
+ const wrongFamily=plan({...input,route:'/operator/objects',
+  sourcePacket:fixture({family:'Romer.cgx'})});
+ assert.equal(wrongFamily.reason,'LOAD_PACKET_EXACT_SOURCE_FAMILY_MISMATCH');
+ const wrongId=plan({...input,route:'/operator/objects',
+  sourcePacket:fixture({objectId:'fixture:eco:other'})});
+ assert.equal(wrongId.reason,'LOAD_PACKET_EXACT_SOURCE_FAMILY_MISMATCH');
+ const packet=fixture();packet.envelope.manifest.leaves[0].bytes=99;
+ const tampered=plan({...input,route:'/operator/objects',sourcePacket:packet});
+ assert.equal(tampered.reason,'LOAD_PACKET_REVIEW_OR_INTEGRITY_HOLD');
+});
