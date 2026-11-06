@@ -111,7 +111,7 @@ export function planR0LeafPacket({
    source_bytes_read:0,payload_bytes_transferred:0,canonical_writes:0,
    native_mint:false,public_release:false});
  if(!Array.isArray(requested_leaf_keys)||requested_leaf_keys.length>32||
-    !requested_leaf_keys.every(k=>txt(k)&&k.startsWith("candidate:"))||
+    !requested_leaf_keys.every(k=>txt(k)&&k.startsWith("candidate:")&&!k.includes("\\"))||
     new Set(requested_leaf_keys).size!==requested_leaf_keys.length||
     !Number.isSafeInteger(max_packet_bytes)||max_packet_bytes<512||
     max_packet_bytes>MAX_WORK)return deny("INVALID_PACKET_REQUEST");
