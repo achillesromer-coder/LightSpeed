@@ -131,6 +131,9 @@ test("Object_ID selector rejects traversal, ambiguous and empty path segments (#
     "Cognigrex.cgx:/FileSpace//qualified-candidate-1",
     "Cognigrex.cgx:/FileSpace/qualified-candidate-1/",
     "Cognigrex.cgx:/FileSpace/qualified-candidate-1:other",
+    "Cognigrex.cgx:/FileSpace/__proto__/secret",
+    "Cognigrex.cgx:/FileSpace/constructor",
+    "Cognigrex.cgx:/FileSpace/PROTOTYPE",
     "Cognigrex.cgx:/FileSpace/",
     "Cognigrex.cgx:/FileSpace/" + "x".repeat(161),
   ];
