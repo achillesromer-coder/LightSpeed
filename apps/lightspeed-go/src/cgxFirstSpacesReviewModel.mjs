@@ -61,3 +61,27 @@ export function planFirstSpacesReview({order=null,layout='lattice',focus='facet.
   may_sign:false,may_publish:false,may_deploy:false,
   source_bytes_transferred:0,network_transfer:false};
 }
+
+/** User-exportable design choices. Not a mint manifest, signature or authority. */
+export function makeFirstSpacesDesignExport(options={}){
+ const view=planFirstSpacesReview(options);
+ if(view.state!=='SOURCE_REVIEW_ONLY')return {schema:'CGX-FIRST-SPACES-DESIGN-EXPORT/0.1',
+  state:'HOLD',reason:view.reason,native_mint_authorised:false};
+ return {
+  schema:'CGX-FIRST-SPACES-DESIGN-EXPORT/0.1',
+  state:'LOCAL_DESIGN_REVIEW_FOR_FOUNDER_RECONCILIATION',
+  canonical_parent:view.canonical_parent,load_alias:view.library,
+  selected_view:view.layout,selected_focus:view.focus,
+  visual_order:[...view.order],
+  dependency_pinned_press_order:[...view.mint_sequence],
+  choices:view.nodes.map(n=>({key:n.key,kind:n.kind,
+   parent:n.parent,requires:[...n.requires],
+   display_order:n.display_order,
+   design_review_state:n.review_stage})),
+  rights_qualified:false,issuer_signed:false,independent_dbr_accepted:false,
+  founder_native_signoff:false,native_mint_authorised:false,
+  active_chain_transaction:null,public_release_authorised:false,
+  canonical_mutation:false,source_bytes_included:false,
+  note:'Founder may submit this export for design reconciliation; never treat it as native mint/signing approval.'
+ };
+}

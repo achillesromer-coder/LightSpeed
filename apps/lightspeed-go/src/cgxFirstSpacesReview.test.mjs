@@ -68,3 +68,21 @@ test('invalid host mount and forged mint or scope inputs fail closed',()=>{
  assert.ok(!all(root).some(x=>['script','iframe','form','input'].includes(x.tagName)));
  assert.equal(find(root,'data-cgx-design','mint'),undefined);
 });
+
+test('export keeps visual choices but cannot grant native signing, mutation, mint or release',async()=>{
+ const {makeFirstSpacesDesignExport}=await import('./cgxFirstSpacesReviewModel.mjs');
+ const original=planFirstSpacesReview();
+ const reverse=[...original.order].reverse();
+ const receipt=makeFirstSpacesDesignExport({order:reverse,layout:'space-grid',
+  focus:'family.eco',decisions:{'family.eco':'approve'}});
+ assert.equal(receipt.state,'LOCAL_DESIGN_REVIEW_FOR_FOUNDER_RECONCILIATION');
+ assert.deepEqual(receipt.visual_order,reverse);
+ assert.deepEqual(receipt.dependency_pinned_press_order,original.mint_sequence);
+ assert.equal(receipt.choices.find(x=>x.key==='family.eco').design_review_state,
+  'DESIGN_APPROVED_ONLY');
+ for(const key of ['founder_native_signoff','native_mint_authorised',
+ 'public_release_authorised','canonical_mutation','source_bytes_included']){
+  assert.equal(receipt[key],false,key);
+ }
+ assert.equal(makeFirstSpacesDesignExport({decisions:{'family.eco':'mint'}}).state,'HOLD');
+});
