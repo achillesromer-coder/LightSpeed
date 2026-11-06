@@ -6,6 +6,7 @@ import {createHash} from 'node:crypto';
 export const SCHEMA='CGX-REVIEW-LEAF-ENVELOPE/0.1';
 export const MAX_WORK_UNIT_BYTES=60*1024*1024;
 const hex=/^[0-9a-f]{64}$/;
+const validProofRef=x=>x===null||(typeof x==='string'&&x.length>0&&x.length<=256&&!/[\u0000-\u001f\u007f]/.test(x));
 const validId=x=>typeof x==='string'&&x.length>0&&x.length<=192
   &&!/[\\\u0000-\u001f]/.test(x)&&!x.includes('..')&&/^[A-Za-z0-9][A-Za-z0-9._:\/-]*$/.test(x);
 const digest=v=>createHash('sha256').update(v).digest('hex');
@@ -18,9 +19,16 @@ const denial=reason=>({state:'DENIED',reason,canonical_mutation:false,network_tr
 export function verifyEnvelope(envelope){
  if(!envelope||envelope.state!=='REVIEW_ONLY'||!envelope.manifest||!hex.test(envelope.digest_sha256??''))return false;
  const m=envelope.manifest;
- return m.schema===SCHEMA&&Array.isArray(m.leaves)&&m.leaves.length>0
+ return m.schema===SCHEMA&&validId(m.object_id)&&validId(m.version)
+  &&Array.isArray(m.leaves)&&m.leaves.length>0&&m.leaves.length<=1024
   &&m.leaves.every((x,i)=>!!x&&x.index===i&&hex.test(x.sha256)&&Number.isSafeInteger(x.bytes)&&x.bytes>=0)
-  &&!!m.source&&hex.test(m.source.sha256)&&digest(stable(m))===envelope.digest_sha256;
+  &&!!m.source&&hex.test(m.source.sha256)&&Number.isSafeInteger(m.source.bytes)
+  &&m.source.bytes>=0&&m.source.bytes<=MAX_WORK_UNIT_BYTES
+  &&m.leaves.reduce((n,x)=>n+x.bytes,0)===m.source.bytes
+  &&Array.isArray(m.dependencies)&&m.dependencies.length<=1024
+  &&m.dependencies.every(x=>!!x&&validId(x.object_id)&&validId(x.version)&&hex.test(x.manifest_sha256))
+  &&validProofRef(m.rights_ref)&&validProofRef(m.acl_ref)
+  &&digest(stable(m))===envelope.digest_sha256;
 }
 export function buildReviewEnvelope({objectId,version,leaves,dependencies=[],rightsRef=null,aclRef=null}={}){
  if(!validId(objectId)||!validId(version))return denial('IDENTITY_OR_VERSION_INVALID');
@@ -62,7 +70,8 @@ export function planHydration(envelope,requestedIndexes,proof={}){
   return denial('LEAF_REQUEST_INVALID');
  if(new Set(requestedIndexes).size!==requestedIndexes.length)return denial('LEAF_REQUEST_DUPLICATE');
  const m=envelope.manifest;
- if(!m.rights_ref||!m.acl_ref||proof.rightsVerified!==true||proof.aclVerified!==true||proof.sourceHashCurrent!==true)
+ if(!m.rights_ref||!m.acl_ref||!proof||typeof proof!=='object'||
+    proof.rightsVerified!==true||proof.aclVerified!==true||proof.sourceHashCurrent!==true)
   return {state:'HOLD',reason:'RIGHTS_ACL_OR_SOURCE_PROOF_UNVERIFIED',canonical_mutation:false,network_transfer:false};
  return {state:'REQUEST_PLAN_ONLY',manifest_digest:envelope.digest_sha256,
   selected_leaves:requestedIndexes.map(i=>m.leaves[i]),requested_bytes:requestedIndexes.reduce((n,i)=>n+m.leaves[i].bytes,0),

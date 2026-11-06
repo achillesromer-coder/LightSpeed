@@ -32,9 +32,12 @@ jobs:
           node --check cgx/bootstrap/cgxHandshakeReview.mjs
           node --check cgx/bootstrap/cgxSetupCli.mjs
           node --check cgx/bootstrap/cgxWindowsHostPreflightReview.mjs
+          node --check cgx/bootstrap/cgxLeafEnvelopeReview.mjs
+          node --check cgx/bootstrap/cgxPremintFamilyProjection.mjs
+          node --check cgx/bootstrap/cgxOfflineSourceProbe.mjs
       - name: Test startup, Windows diagnostic and native handshake review guards
         run: |
-          node --test cgx/bootstrap/unifiedBootstrap.test.mjs cgx/bootstrap/cgxHandshakeReview.test.mjs cgx/bootstrap/cgxWindowsHostPreflightReview.test.mjs
+          node --test cgx/bootstrap/*.test.mjs
       - name: Validate Python lease scope regression (source-only)
         run: python3 scripts/validate_cgx_execution_lease.py
       - name: Verify review-only plans and no unsupported GOT installer

@@ -51,3 +51,16 @@ The page is not wired to a live UniSpace product or LS GO server. Do not move th
 ## Latest context archive and continuation queue (2026-10-30)
 
 **No new GPT export is expected soon.** Begin all future CGX/LightSpeed continuation from [chat-context closeout](./chat_context_closeout_2026-10-30.md), then the same [open-thread execution register](./open_threads_execution_register.json) already owned by this bootstrap lane. The checkpoint records current source/geometry/rights/function decisions and verified five-lane progress, with manual source handoff through the chat. It is not a full raw chat transcript or a native CGX admission. Preserve all originals and hold deletion and publication pending independent acceptance.
+
+## Offline LOAD-to-UniSpace pre-mint review (2026-11-06)
+
+The existing bootstrap review branch also carries source-only `cgxLeafEnvelopeReview.mjs`, `cgxPremintFamilyProjection.mjs`, and `cgxOfflineSourceProbe.mjs`. These reuse `cgxBatchConvergence.mjs` to form one Object_ID/version source candidate, deterministic SHA-256 source/leaf manifest and dependency pins, and an owner-only H0–H4 UniSpace view. A review `REQUEST_PLAN_ONLY` does not transfer or hydrate network bytes, authenticate rights, activate CCC or issue any token.
+
+~~~sh
+node --test cgx/bootstrap/*.test.mjs
+node cgx/bootstrap/cgxOfflineSourceProbe.mjs --source cgx/bootstrap/unified_bootstrap_contract.json --object-id cgx:load:bootstrap-contract --version 1 --family Cognigrex.cgx --owner achilles --semantic-key load:bootstrap-contract
+~~~
+
+The probe reads a bounded 60 MiB-or-smaller regular source file, verifies exact byte reconstruction and prints a redacted JSON receipt (source digest, byte/leaf counts, immutable manifest digest; no source paths or original text). Rights/ACL remain unknown and all public/private native authority checks remain held until an authenticated independent proof is supplied. It never writes a source copy or calls a network service. Public preview is denied even for a caller-labelled `public_clear` source until separately authorised release.
+
+The CI workflow now runs **all** bootstrap `*.test.mjs` files rather than only the three original suites. Actual host tests and signed independent DBR/issuer confirmation remain separate. The initial reviewed test suite passed locally on BouwerBase under Node 22 and Python 3.11, but source-only tests are not a proof of product deployment.
