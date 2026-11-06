@@ -33,6 +33,10 @@ on:
       - ".github/workflows/cgx-custodial-extension-validation.yml"
   pull_request:
     paths:
+      - "scripts/cgx_consequence_preflight.py"
+      - "tests/test_cgx_publication_gate.py"
+      - "scripts/validate_cgx_preflight_chain.py"
+      - ".github/workflows/cgx-custodial-extension-validation.yml"
       - "cgx/domain_templates/**"
       - "scripts/resolve_cgx_extensions.py"
       - "scripts/cgx_custodial_preflight.py"
@@ -100,6 +104,8 @@ jobs:
         run: python scripts/validate_cgx_assurance.py
       - name: Validate consequence preflight chain
         run: python scripts/validate_cgx_preflight_chain.py
+      - name: Verify C37 publication stop-ship in real CLI subprocesses
+        run: python tests/test_cgx_publication_gate.py
       - name: Validate execution lease authority and release gates
         run: python scripts/validate_cgx_execution_lease.py
       - name: Route InterSol assurance scenario

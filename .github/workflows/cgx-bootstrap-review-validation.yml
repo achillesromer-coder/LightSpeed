@@ -37,7 +37,7 @@ jobs:
           node --check cgx/bootstrap/cgxOfflineSourceProbe.mjs
       - name: Test startup, Windows diagnostic and native handshake review guards
         run: |
-          node --test cgx/bootstrap/*.test.mjs
+          node --test cgx/bootstrap/*.test.mjs cgx/load_minimum/*.test.mjs
       - name: Validate Python lease scope regression (source-only)
         run: python3 scripts/validate_cgx_execution_lease.py
       - name: Verify merged runtime manifest exact source hashes and sizes
