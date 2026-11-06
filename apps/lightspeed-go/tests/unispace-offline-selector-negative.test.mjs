@@ -36,3 +36,22 @@ test("offline bridge never converts claimed consumer readiness into execution au
   assert.equal(view.dispatch_authorized, false);
   assert.equal(view.public_publish_authorized, false);
 });
+
+
+test("foreign child and cross-source progress are denied without source hydration", () => {
+  const id = "Cognigrex.cgx:/FileSpace/qualified-candidate-1";
+  const foreign = envelope(id);
+  foreign.source.filespace = "Cognigrex.cgx/Eco.cgx/FileSpace";
+  const denied = projectOwnerProgress(foreign);
+  assert.equal(denied.access, "HOLD_SOURCE_IDENTITY");
+  assert.equal(denied.object_id, null);
+  assert.equal(denied.progress, null);
+
+  const mixed = envelope(id);
+  mixed.latest.object_id = "Cognigrex.cgx:/FileSpace/another-source";
+  const held = projectOwnerProgress(mixed);
+  assert.equal(held.progress_binding, "HOLD_UNBOUND_PROGRESS");
+  assert.equal(held.progress, null);
+  assert.equal(held.dispatch_authorized, false);
+  assert.equal(held.public_publish_authorized, false);
+});
