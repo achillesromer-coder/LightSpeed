@@ -18,6 +18,8 @@ export function planCGXSetup(config={}){
   offlinePreferred=true,sourceBytesPerChunk=60*1024*1024,receipt=null,
   observed={}}=config;
  if(!FAMILIES.has(family))return {state:"DENIED",reason:"UNKNOWN_FILESPACE"};
+ if(typeof lsGORequested!=="boolean"||typeof offlinePreferred!=="boolean")
+  return {state:"DENIED",reason:"INVALID_BOOLEAN_SETUP_FLAG"};
  if(!["first-run","resume","repair","upgrade"].includes(mode))return {state:"DENIED",reason:"UNKNOWN_SETUP_MODE"};
  if(!["plan","inspect"].includes(intent))return {state:"DENIED",reason:"EXECUTION_NOT_AVAILABLE_IN_PLAN"};
  if(!["desktop","mobile","browser","server"].includes(device))return {state:"DENIED",reason:"UNSUPPORTED_DEVICE"};
