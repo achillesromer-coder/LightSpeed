@@ -158,5 +158,38 @@
     "release_path": "Fresh separately allowlisted public bundle only, after source rights, real browser negative tests, host ACL and independent publication approval",
     "authority": "SOURCE_REVIEW_ONLY_NO_PRODUCTION_MERGE_NO_DEPLOY_NO_MINT"
   },
-  "next_batch": "Run Linux CI for staged public-viewer fold; inspect issue 158 LS GO internal static exposure, 161 independent DBR and issuer; qualify LOAD and UniSpace functional host readback; do not merge production, publish or mint without independent acceptance."
+  "source_fold_pr205_review_20261106": {
+    "source_pr": 205,
+    "source_head": "465876bcd99a4fa2dc400cead4ad7c5f991410ad",
+    "source_paths": 38,
+    "byte_identical_with_integration": 31,
+    "preserved_integration_divergences": 7,
+    "disposition": "QUALIFIED_SOURCE_OVERLAP_NO_BLIND_MERGE_OR_DELETION",
+    "differences": [
+      "crossFamilyRelationCrosswalk.test.mjs - Windows checkout canonical byte comparison",
+      "loadFractalReference.mjs - equivalent escaped separator literal",
+      "loadOnlineRegistry.test.mjs - canonical Git blob verification",
+      "refreshLoadRegistry.mjs - exact indexed Git blob readback",
+      "unispaceFacetConvergence.mjs - private source scope and rights-hold binding",
+      "unispacePrivateCockpitDom.mjs - non-executing private leaf review",
+      "unispacePrivateCockpitDom.test.mjs - denial and no-source-leak checks"
+    ],
+    "remaining_native_acceptance": "SOURCE_RIGHTS_LEASE_ISSUER_INDEPENDENT_TWO_NODE_DBR_HOLD"
+  },
+  "private_r0_rights_hold_20261106": {
+    "git_review_commit": "a77ef543aef5a6d0650e3cd7ebc0f4b2e5fb8c87",
+    "source_class": "existing_local_CGX_Shredder_review_receipt",
+    "bytes_reconstructed": 2082,
+    "leaves_verified": 1,
+    "private_identity_match": true,
+    "private_status": "PRIVATE_H0_RIGHTS_HOLD",
+    "rights_and_acl": "UNCLASSIFIED_HOLD",
+    "source_bytes_exported": false,
+    "host_verified_native_identity": false,
+    "native_admission_or_live_mint": false,
+    "source_original_mutated": false,
+    "test_scope": "396 Node, 14 Python LOAD, 15 facet and 39 public guard tests with one Windows symlink skip; 120 source manifest hashes, 131 LOAD references",
+    "intent": "Preserve R0 reconstruction evidence without conferring rights, R3 or R4"
+  },
+  "next_batch": "Resume source-rights-qualified LOAD admission and signed lease/independent two-node DBR negative acceptance; ensure LS GO operator static route remains private; only qualified rights and host readback can advance release. No unrestricted production merge, source deletion, signing, mint or deploy."
 }
