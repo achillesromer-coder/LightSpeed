@@ -62,6 +62,29 @@ The source-only Windows startup diagnostics from dependent PR #215 are now exact
 
 If another Codex/owner lane has locally edited or unpushed files, reconcile its exact blobs and consumer dependencies **before Git reset/merge/archive**. Preserve original repository branches, Drive files, FileSpace R0 and audit receipts until verified successor IDs and rollback are established. Remote Desktop Commander user reserve: **at least 5,205 monthly calls; avoid exploratory remote use**. No source-only CI or review ledger grants live mint/deploy authority.
 
+## Windows owner-host diagnostics — source fold of PR #215
+
+The original source-only Windows diagnostics are preserved in
+[cgxWindowsBootEvidence.py](./cgxWindowsBootEvidence.py),
+[test_cgx_windows_boot_evidence.py](./test_cgx_windows_boot_evidence.py) and
+[cgx_setup_windows.ps1](../../tools/cgx_setup_windows.ps1). Their **Git blobs match
+PR #215 exactly**. The unified bootstrap CI runs the original fixture-only
+negative tests; no Windows service is started by CI.
+
+The tool reads the existing S92 carrier/registry, family identity, **read-only**
+operational SQLite, managed runtime prerequisites, bounded LOAD reference source
+and local HTTP identity; it does not create an Object_ID, ingest source bodies,
+accept a DBR, install a runtime or grant an issuer. Optional
+`-PrepareMintReview` creates a new, owner-private **review-only** receipt and
+is not a native mint or Git commit. Historical machine-specific checkout paths
+in PR #215 are *source history*, not a supported universal installer path.
+
+The optional `-BootExistingStack -ApproveNativeStackRestart` path **still
+unconditionally throws `NATIVE_RESTART_HOLD`** before invoking the existing
+launcher. Do not enable it until signed host lease, ACL, revocation and
+independent two-node DBR evidence have passed live host acceptance. Source
+presence and green Linux CI do not certify a working local Windows launch.
+
 ## Offline LOAD-to-UniSpace pre-mint review (2026-11-06)
 
 The existing bootstrap review branch also carries source-only `cgxLeafEnvelopeReview.mjs`, `cgxPremintFamilyProjection.mjs`, and `cgxOfflineSourceProbe.mjs`. These reuse `cgxBatchConvergence.mjs` to form one Object_ID/version source candidate, deterministic SHA-256 source/leaf manifest and dependency pins, and an owner-only H0–H4 UniSpace view. A review `REQUEST_PLAN_ONLY` does not transfer or hydrate network bytes, authenticate rights, activate CCC or issue any token.
