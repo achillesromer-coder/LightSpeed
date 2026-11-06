@@ -44,6 +44,8 @@ export function reviewWindowsCGXHost(observed = {}) {
   if (startupError === "ARGUMENT_TYPES_DO_NOT_MATCH") holds.push("WIZARD_RUNTIME_ARGUMENT_HOLD");
   if (startupError === "OTHER") holds.push("UNCLASSIFIED_STARTUP_FAILURE");
   if (effectivePolicy === "Restricted") holds.push("POWERSHELL_SCRIPT_EXECUTION_RESTRICTED");
+  if (installerInvocationPolicy === "UNKNOWN")
+    holds.push("NATIVE_INSTALLER_POLICY_SOURCE_UNVERIFIED");
   if (installerInvocationPolicy === "EXPLICIT_BYPASS")
     holds.push("NATIVE_INSTALLER_POLICY_BYPASS_SOURCE_HOLD");
   if (installerInvocationPolicy === "EXPLICIT_POLICY_OVERRIDE_UNVERIFIED")
