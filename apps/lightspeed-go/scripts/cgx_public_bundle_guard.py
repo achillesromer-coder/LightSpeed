@@ -318,13 +318,70 @@ def make_public_bundle(dest:Path,source:Path=SOURCE)->dict[str,Any]:
         raise
     return result
 
+
+def verify_existing_public_candidate(dest:Path,source:Path=SOURCE)->dict[str,Any]:
+    """Independently re-read a previously built *isolated* CGX static candidate.
+
+    Fail closed if the output was mutated after packaging or if someone passes
+    the ordinary LS GO Vite operator/dist tree as a public deployment source.
+    This does not check an actual deployed host or approve publication rights.
+    """
+    src=Path(source).resolve()
+    dst=Path(dest).resolve()
+    operator_tree=(ROOT/"apps/lightspeed-go").resolve()
+    if (dst==operator_tree or operator_tree in dst.parents or
+        dst==src or src in dst.parents or not dst.is_dir() or dst.is_symlink()):
+        raise BundleHold("candidate must be an existing isolated directory outside LS GO operator build/static trees")
+    expected=inspect_public_bundle(src)  # recheck the canonical allowlisted source
+    required={entry["path"] for entry in expected["assets"]}|{"vercel.json","cgx-package-review.json"}
+    observed=set()
+    for path in dst.rglob("*"):
+        if path.is_symlink():
+            raise BundleHold("candidate symlink is not permitted")
+        if path.is_file():
+            rel=path.relative_to(dst).as_posix()
+            observed.add(rel)
+    if observed!=required:
+        raise BundleHold(f"candidate changed file set: missing={len(required-observed)}, extra={len(observed-required)}")
+    receipt_file=dst/"cgx-package-review.json"
+    try:
+        receipt=json.loads(receipt_file.read_text(encoding="utf-8"))
+        hosted_policy=json.loads((dst/"vercel.json").read_text(encoding="utf-8"))
+        source_policy=json.loads((src/"deployment/vercel.json").read_text(encoding="utf-8"))
+    except (OSError,ValueError,UnicodeError) as exc:
+        raise BundleHold("candidate metadata or CSP is invalid") from exc
+    if receipt!=expected:
+        raise BundleHold("candidate receipt does not match qualified source review")
+    if hosted_policy!=source_policy:
+        raise BundleHold("candidate hosting policy differs from pinned source contract")
+    for entry in expected["assets"]:
+        blob=(dst/entry["path"]).read_bytes()
+        if len(blob)!=entry["bytes"] or hashlib.sha256(blob).hexdigest()!=entry["sha256"]:
+            raise BundleHold("candidate leaf bytes no longer match the source receipt")
+    return {
+        "schema":"CGX-PUBLIC-CANDIDATE-REVERIFY/0.1",
+        "state":"SOURCE_ONLY_CANDIDATE_REVERIFIED_NOT_PUBLISHED",
+        "verified_file_count":len(expected["assets"]),
+        "verified_source_bytes":expected["source_bytes"],
+        "operator_dist_accepted":False,
+        "rights_cleared":False,
+        "live_host_verified":False,
+        "native_admitted":False,
+        "publication_authorised":False,
+        "mint_authorised":False,
+    }
+
 if __name__=="__main__":
     parser=argparse.ArgumentParser()
     parser.add_argument("--source",type=Path,default=SOURCE)
-    parser.add_argument("--output",type=Path,help="write new, nonexisting candidate directory; NO upload")
+    flags=parser.add_mutually_exclusive_group()
+    flags.add_argument("--output",type=Path,help="write new, nonexisting candidate directory; NO upload")
+    flags.add_argument("--verify-output",type=Path,help="recheck an isolated existing candidate; NO deployment")
     args=parser.parse_args()
     try:
-        report=(make_public_bundle(args.output,args.source) if args.output else inspect_public_bundle(args.source))
+        report=(verify_existing_public_candidate(args.verify_output,args.source) if args.verify_output
+                else make_public_bundle(args.output,args.source) if args.output
+                else inspect_public_bundle(args.source))
         print(json.dumps(report,sort_keys=True,indent=2))
     except BundleHold as exc:
         parser.exit(2,"CGX_PUBLIC_HOLD: "+str(exc)+"\n")

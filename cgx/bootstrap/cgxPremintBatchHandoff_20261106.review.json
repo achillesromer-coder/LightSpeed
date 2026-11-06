@@ -126,6 +126,19 @@
     "source_deletion": "HOLD",
     "onchain_mint": "HOLD"
   },
+  "operator_release_reverify_20261106": {
+    "state": "SOURCE_ONLY_FAIL_CLOSED_NOT_PUBLICATION_ACCEPTED",
+    "issue_158": "HOLD_LS_GO_PUBLIC_STATIC_ROUTE_NEEDS_AUTHENTICATED_BOUNDARY",
+    "isolated_cgx_candidate": "12 allowlisted files, 50354 source bytes; locally re-read verified",
+    "ordinary_operator_dist": "REJECTED_AS_PUBLIC_CGX_RELEASE_SOURCE",
+    "after_copy_negative_tests": "tampered leaf, new review/data/index files, modified rights/host authority receipt and changed CSP denied",
+    "tests": "39 public guard tests passed with 1 Windows symlink privilege skip; 393 Node and 14 LOAD Python tests passed",
+    "host_live_http_proof": false,
+    "source_rights_accepted": false,
+    "independent_dbr": false,
+    "native_mint_or_publication": false,
+    "next": "Run Linux CI symlink test and browser runtime; only migrate operator public/data/review through authenticated provider after ownership and consumer readback. No generic operator dist deployment."
+  },
   "public_viewer_fold_20261106": {
     "source_pr": 188,
     "source_head": "675816a21404c8cea3053bf2963c707eadd50500",

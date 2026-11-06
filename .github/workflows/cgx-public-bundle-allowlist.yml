@@ -37,6 +37,7 @@ jobs:
       - name: Build isolated nonproduction public-only candidate
         run: |
           python apps/lightspeed-go/scripts/cgx_public_bundle_guard.py --output "$RUNNER_TEMP/unispace-cgx-review" > "$RUNNER_TEMP/unispace-review.json"
+          python apps/lightspeed-go/scripts/cgx_public_bundle_guard.py --verify-output "$RUNNER_TEMP/unispace-cgx-review" > "$RUNNER_TEMP/unispace-reverified.json"
           python - <<'PY'
           import json,os
           from pathlib import Path

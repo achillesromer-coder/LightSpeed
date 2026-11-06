@@ -550,4 +550,62 @@ class PublicBundleTests(unittest.TestCase):
         with self.assertRaisesRegex(mod.BundleHold,"unexpected public payload"):
             mod.inspect_public_bundle(ROOT/"apps/lightspeed-go/public")
 
+    def test_prebuilt_isolated_candidate_readback_remains_nonpublishing(self):
+        with tempfile.TemporaryDirectory() as d:
+            candidate=Path(d)/"cgx-candidate"
+            mod.make_public_bundle(candidate)
+            readback=mod.verify_existing_public_candidate(candidate)
+            self.assertEqual(readback["verified_file_count"],12)
+            self.assertEqual(readback["state"],"SOURCE_ONLY_CANDIDATE_REVERIFIED_NOT_PUBLISHED")
+            for gate in ("operator_dist_accepted","rights_cleared","live_host_verified",
+                         "native_admitted","publication_authorised","mint_authorised"):
+                self.assertIs(readback[gate],False,gate)
+
+    def test_public_candidate_byte_tamper_and_private_extra_fail_closed(self):
+        for variant in ("tamper_leaf","extra_review","extra_data","extra_index"):
+            with self.subTest(variant=variant),tempfile.TemporaryDirectory() as d:
+                candidate=Path(d)/"review"
+                mod.make_public_bundle(candidate)
+                if variant=="tamper_leaf":
+                    with (candidate/"cgx/assets/core.js").open("ab") as fp:fp.write(b"\n// changed")
+                elif variant=="extra_review":
+                    path=candidate/"review/owner-private.json"
+                    path.parent.mkdir(parents=True)
+                    path.write_text('{"owner":true}',encoding="utf-8")
+                elif variant=="extra_data":
+                    path=candidate/"data/source.json"
+                    path.parent.mkdir(parents=True)
+                    path.write_text('{"private":true}',encoding="utf-8")
+                else:
+                    (candidate/"index.html").write_text("not the isolated cgx root",encoding="utf-8")
+                with self.assertRaises(mod.BundleHold):
+                    mod.verify_existing_public_candidate(candidate)
+
+    def test_public_candidate_receipt_and_host_policy_tamper_fail_closed(self):
+        for change in ("rights","host_verified","CSP","asset_hash"):
+            with self.subTest(change=change),tempfile.TemporaryDirectory() as d:
+                candidate=Path(d)/"review"
+                mod.make_public_bundle(candidate)
+                receipt=candidate/"cgx-package-review.json"
+                policy=candidate/"vercel.json"
+                if change in ("rights","host_verified","asset_hash"):
+                    data=json.loads(receipt.read_text(encoding="utf-8"))
+                    if change=="rights":data["source_licences_independently_cleared"]=True
+                    elif change=="host_verified":data["external_host_live_verified"]=True
+                    else:data["assets"][0]["sha256"]="0"*64
+                    receipt.write_text(json.dumps(data),encoding="utf-8")
+                else:
+                    data=json.loads(policy.read_text(encoding="utf-8"))
+                    data["headers"][0]["headers"][-1]["value"]="default-src *"
+                    policy.write_text(json.dumps(data),encoding="utf-8")
+                with self.assertRaises(mod.BundleHold):
+                    mod.verify_existing_public_candidate(candidate)
+
+    def test_general_operator_dist_never_accepted_as_cgx_public_release(self):
+        for relative in ("dist","public","build",".vite"):
+            with self.subTest(relative=relative),self.assertRaisesRegex(
+                mod.BundleHold,"outside LS GO operator build/static trees"
+            ):
+                mod.verify_existing_public_candidate(ROOT/"apps/lightspeed-go"/relative)
+
 if __name__=="__main__":unittest.main()
