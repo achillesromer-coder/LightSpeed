@@ -73,3 +73,21 @@ test("offline snapshot cannot borrow a different child checkpoint or a claimed s
   assert.equal(denied.public_publish_authorized, false);
   assert.equal(denied.progress, null);
 });
+
+
+test("offline progress cannot hydrate a stale source revision or bypass rights", () => {
+  const id = "Cognigrex.cgx:/FileSpace/qualified-candidate-1";
+  const stale = envelope(id);
+  stale.latest.source_revision = "b".repeat(64);
+  const view = projectOwnerProgress(stale);
+  assert.equal(view.progress_binding, "HOLD_UNBOUND_PROGRESS");
+  assert.equal(view.progress, null);
+  assert.equal(view.dispatch_authorized, false);
+
+  const rights = envelope(id);
+  rights.gateway.source_rights_verified = false;
+  const denied = projectOwnerProgress(rights);
+  assert.equal(denied.access, "HOLD_PRIVATE_SCOPE");
+  assert.equal(denied.object_id, null);
+  assert.equal(denied.progress, null);
+});
