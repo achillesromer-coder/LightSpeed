@@ -134,3 +134,10 @@ test("ordinary non-coordinate model prose stays a source-only candidate",()=>{
  assert.equal(x.state,"SCHEMA_BRIDGE_CANDIDATE_ONLY");
  assert.equal(x.field_observation_verified,false);
 });
+
+test("nested DMS coordinates require spatial review without disclosing a site",()=>{
+ const x=run({...base,metadata:{notes:"12°34\u002756\"S 123°45\u002756\"E"}});
+ assert.ok(x.checks.includes("RAW_SPATIAL_COORDINATES_NOT_ACCEPTED_IN_SOURCE_ONLY_BRIDGE"));
+ assert.equal(x.geometry_emitted,false);
+ assert.equal(x.public_release_authorised,false);
+});
