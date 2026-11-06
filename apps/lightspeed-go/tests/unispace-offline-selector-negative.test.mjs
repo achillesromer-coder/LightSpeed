@@ -55,3 +55,21 @@ test("foreign child and cross-source progress are denied without source hydratio
   assert.equal(held.dispatch_authorized, false);
   assert.equal(held.public_publish_authorized, false);
 });
+
+
+test("offline snapshot cannot borrow a different child checkpoint or a claimed session", () => {
+  const id = "Cognigrex.cgx:/FileSpace/qualified-candidate-1";
+  const crossed = envelope(id);
+  crossed.checkpoint.filespace = "Cognigrex.cgx/Eco.cgx/FileSpace";
+  const view = projectOwnerProgress(crossed);
+  assert.equal(view.progress, null);
+  assert.equal(view.dispatch_authorized, false);
+  assert.equal(view.public_publish_authorized, false);
+
+  const unverified = envelope(id);
+  unverified.gateway.session_verified = false;
+  const denied = projectOwnerProgress(unverified);
+  assert.equal(denied.dispatch_authorized, false);
+  assert.equal(denied.public_publish_authorized, false);
+  assert.equal(denied.progress, null);
+});
