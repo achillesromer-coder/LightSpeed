@@ -3689,6 +3689,16 @@
       "bytes": 3254,
       "path": "LightSpeed_Runtime/tests/test_source_intake_remote.py",
       "sha256": "9d03d8991a7db573dacee13044ad58136e6dadaa2ebba16394321424eef04790"
+    },
+    {
+      "bytes": 4691,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/host_owned_receipts.py",
+      "sha256": "a74fc1f84d2b1a9dae517dab554469a9a0df16c72f64aa179bc0b61b3711f93c"
+    },
+    {
+      "bytes": 2906,
+      "path": "LightSpeed_Runtime/tests/test_host_owned_receipts.py",
+      "sha256": "1083a4a0671fa0b8081500d07a51ae296156284afa9b31ad6a754b9920fe9052"
     }
   ],
   "schema_version": 1

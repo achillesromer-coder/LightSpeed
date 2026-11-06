@@ -28,6 +28,9 @@ class DynamicBatchTests(unittest.TestCase):
                         ["cgx/foo","cgx/foo"],[],["cgx/foo"]*301):
             with self.subTest(invalid=invalid),self.assertRaises(ValueError):
                 mod.choose_lanes(invalid)
+    def test_global_manifest_is_exactly_qualified(self):
+        self.assertTrue(mod.allowed_path("desktop/source-manifest.json"))
+        self.assertFalse(mod.allowed_path("desktop/source-manifest.json.extra"))
     def test_documentation_change_still_checks_release_guards(self):
         got=mod.choose_lanes(["docs/ls-go-launch/a.md"])
         self.assertIn("public-guard",got)
@@ -45,6 +48,11 @@ class DynamicBatchTests(unittest.TestCase):
             self.assertNotIn("merge",argv)
             self.assertNotIn("mint",argv)
             self.assertNotIn("deploy",argv)
+    def test_facet_runner_does_not_load_vitest_in_node(self):
+        lanes=mod.choose_lanes(["apps/lightspeed-go/src/cgxFacetProjection.mjs"])
+        jobs={job[0]:job[1] for job in mod.test_commands(lanes)}
+        self.assertNotIn("apps/lightspeed-go/src/cgxFacetProjection.test.mjs",jobs["facet-node"])
+        self.assertIn("src/cgxFacetProjection.test.mjs",jobs["app-vitest"])
     def test_git_sha_validation_fails_closed(self):
         for val in ("HEAD;echo hello","origin/main","", "../a", "1"*41):
             with self.subTest(val=val),self.assertRaises(ValueError):

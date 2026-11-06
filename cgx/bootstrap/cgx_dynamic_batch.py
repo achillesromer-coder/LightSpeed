@@ -42,7 +42,7 @@ def allowed_path(path: str) -> bool:
         isinstance(path, str) and bool(PATH.fullmatch(path))
         and len(path) <= 240 and not path.startswith("/")
         and all(piece not in ("", ".", "..") for piece in path.split("/"))
-        and any(path.startswith(prefix) for prefix in ALLOWED_PREFIXES)
+        and (path == "desktop/source-manifest.json" or any(path.startswith(prefix) for prefix in ALLOWED_PREFIXES))
         and not path.startswith("apps/lightspeed-go/dist/")
         and not path.startswith("apps/lightspeed-go/node_modules/")
     )
@@ -112,8 +112,7 @@ def test_commands(lanes: tuple[str, ...]) -> list[tuple[str, list[str], Path]]:
             raise ValueError("CORE_TEST_DISCOVERY_EMPTY")
         jobs.append(("core-node", [node, "--test", *filenames], ROOT))
     if "facet-node" in lanes:
-        filenames = tests("cgx/review/*.test.mjs", "tests/test_unispace_permissioned_projection.mjs",
-                          "apps/lightspeed-go/src/cgxFacetProjection.test.mjs")
+        filenames = tests("cgx/review/*.test.mjs", "tests/test_unispace_permissioned_projection.mjs")
         if not filenames:
             raise ValueError("FACET_TEST_DISCOVERY_EMPTY")
         jobs.append(("facet-node", [node, "--test", *filenames], ROOT))
@@ -133,7 +132,8 @@ def test_commands(lanes: tuple[str, ...]) -> list[tuple[str, list[str], Path]]:
                                      "tests/unispace-public.test.mjs",
                                      "tests/unispace-domains.test.mjs",
                                      "tests/owner-progress.test.mjs",
-                                     "tests/unispace-offline-selector-negative.test.mjs"], app))
+                                     "tests/unispace-offline-selector-negative.test.mjs",
+                                     "src/cgxFacetProjection.test.mjs"], app))
     return jobs
 
 
