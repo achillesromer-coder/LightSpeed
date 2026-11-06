@@ -1,0 +1,165 @@
+{
+  "schema": "CGX-SMART-SETUP-UX-AND-HANDSHAKE/0.1",
+  "status": "REVIEW_ONLY",
+  "parent": "Cognigrex.cgx",
+  "surfaces": [
+    "Trinity Settings Hub",
+    "LightSpeed operator shell",
+    "Grex-scoped LS GO",
+    "CGX command palette",
+    "CGX mobile node"
+  ],
+  "one_wizard_sections": [
+    {
+      "id": "welcome",
+      "header": "Find or create your CGX workspace",
+      "controls": [
+        "Existing CGX FileSpace",
+        "Recover a previous setup",
+        "Explore offline first"
+      ],
+      "defaults": "Recover existing instance before offering new names",
+      "authority": "source and provider lookup"
+    },
+    {
+      "id": "identity",
+      "header": "Your FileSpace and Grex",
+      "controls": [
+        "Cognigrex parent",
+        "Selected authorised Grex children",
+        "Object_ID/source proof status",
+        "Working profile"
+      ],
+      "defaults": "Reuse known FileSpace IDs; unknown stays review-only",
+      "authority": "host root + owner ACL"
+    },
+    {
+      "id": "library",
+      "header": "Your library",
+      "controls": [
+        "Explore Alexandria",
+        "Equip existing LOAD if qualified",
+        "Knowledge-bandwidth and compute budgets",
+        "Offline-first mode"
+      ],
+      "defaults": "Minimum offline H0/H1 and permissioned on-demand",
+      "authority": "accepted LOAD alias and source rights"
+    },
+    {
+      "id": "capabilities",
+      "header": "Tools and extensions",
+      "controls": [
+        "CCC Discover",
+        "Qualified installed capabilities",
+        "Requested adapters"
+      ],
+      "defaults": "Distinguish registered, installed, missing, gated",
+      "authority": "capability host and licence"
+    },
+    {
+      "id": "runtime",
+      "header": "Your LightSpeed runtime",
+      "controls": [
+        "Python 3.11 profile",
+        "Existing managed runtime slot",
+        "Offline/online setting",
+        "Use local models where supported",
+        "Automatic start only after approval"
+      ],
+      "defaults": "No competing host or database created",
+      "authority": "startup_options + runtime_productization"
+    },
+    {
+      "id": "grexgo",
+      "header": "Enable LS GO for your Grex",
+      "controls": [
+        "Per-Grex toggle",
+        "Read-only preview",
+        "Private asset gate",
+        "Device/authenticated availability"
+      ],
+      "defaults": "Off until real signed host and DBR receipt",
+      "authority": "child owner and LS Go client; not UniSpace product"
+    },
+    {
+      "id": "handshake",
+      "header": "Connect providers and nodes",
+      "controls": [
+        "Provider opt-in",
+        "Source permissions",
+        "Node identity and lease",
+        "Check/fix/resume",
+        "Receipt viewer"
+      ],
+      "defaults": "Local read-only until verified",
+      "authority": "CGX node exchange / authenticated agents"
+    },
+    {
+      "id": "finish",
+      "header": "Ready to use?",
+      "controls": [
+        "Current verified feature list",
+        "Resolve remaining setup gaps",
+        "Open selected Grex",
+        "Export review receipt",
+        "Ask for help"
+      ],
+      "defaults": "Never show 'installed' without independent readback",
+      "authority": "runtime/DBR proof"
+    }
+  ],
+  "user_types": {
+    "newcomer": "minimal 3-click offline/read-only discovery then guided consent",
+    "returning": "last accepted snapshot comparison, only changed controls shown",
+    "expert": "all underlying capability, source, lease and evidence gates visible",
+    "operator": "separate release/repair/rollback path with logged actions",
+    "accessibility": "keyboard, screen reader, mobile long press, clear uncertainty labels"
+  },
+  "handshake_envelope_fields": [
+    "current_namespace",
+    "selected_family_object_id",
+    "accepted_parent_root",
+    "state_root",
+    "dbr_root",
+    "sender_role",
+    "receiver_role",
+    "scope_lease_id",
+    "scope_expiry",
+    "requested_operation",
+    "source_revision",
+    "source_sha256",
+    "idempotency_key",
+    "target_capability",
+    "negative_auth_check",
+    "receiver_readback"
+  ],
+  "handshake_invariants": [
+    "No envelope field is synthesized from a display label.",
+    "Repeated idempotency keys may resolve existing receipts, not repeat physical execution.",
+    "Offline/cached authority never broadens a lease.",
+    "Root mismatch, revoked provider or no ACL => stay read-only.",
+    "Cross-node transfer requires distinct node IDs and exact receiver hash/size before dependent work.",
+    "Agent failure returns work to resumable queue; no mandatory synchronous handoff between scheduled cloud agents.",
+    "A heartbeat is not evidence of successful source hydration, installed tools, or native FileSpace admission."
+  ],
+  "action_profiles": {
+    "user_education": "Show why missing rights hold work, and one actionable remedy.",
+    "smart_repair": "Compare receipts, source versions and capability registration; never overwrite accepted source.",
+    "guided_install": "Select existing managed LS profile and return explicit host command after operator review; no shell here.",
+    "autoboot": "Only enabled after opted-in host-run acceptance; no cron/watchdog generation in review.",
+    "network": "Provider opt-in and specific source types; unrelated accounts never scanned."
+  },
+  "goals": [
+    "one CGX entry point",
+    "no duplicate local root",
+    "complete verified capability inventory",
+    "multi-user ACL and privacy",
+    "resume on changed sources",
+    "per-family LS GO on/off with independent proof",
+    "LOAD and CCC as easy-right-click features"
+  ],
+  "transcript_resolution": {
+    "note": "Unverified GOT is a probable Git/GPT/GO transcription ambiguity; not a capability",
+    "product_surface": "Do not display a GOT feature or install option"
+  }
+}

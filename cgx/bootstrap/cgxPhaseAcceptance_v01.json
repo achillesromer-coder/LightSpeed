@@ -1,0 +1,126 @@
+{
+  "schema": "CGX-PHASE-ACCEPTANCE-REVIEW-GRAMMAR/0.1",
+  "state": "SOURCE_ONLY_REVIEW_NOT_CANONICAL",
+  "parent": "cgx:root:cognigrex",
+  "anchored_merged_contract": {
+    "path": "cgx/domain_templates/achilles_file_space_launch_review_contract.json",
+    "git_blob_sha1": "5bb49a3c6199c9b8211e48c0e194b6030d3d0ea7",
+    "legacy_terms": [
+      "ACCEPTED",
+      "LANDED_AND_ACCEPTED",
+      "TESTED"
+    ]
+  },
+  "evidence_stages": {
+    "SOURCE_LANDED": "Private-source locator and byte-hash readback; no acceptance or authority",
+    "R1_VERIFIED": "Reversible typed parse with loss ledger, original variants and source-snapshot hash checks",
+    "R2_QUALIFIED": "Typed scoped relations, rights/ACL, ownership and independently reviewed provenance",
+    "NATIVE_ADMITTED": "Current signed RootAuthority, issuer/revocation, scoped lease, DBR and native readback",
+    "LIVE_VERIFIED": "Authenticated runtime/consumer and relevant non-loopback multi-node readback",
+    "OWNER_ACCEPTED": "Actual recorded independent owner acceptance of the scoped object and native evidence",
+    "R3_VIEW_VERIFIED": "Independent permissioned view test and negative privacy checks; orthogonal to native admission"
+  },
+  "legacy_tokens": {
+    "ACCEPTED": "AMBIGUOUS_SCOPE_HOLD",
+    "LANDED_AND_ACCEPTED": "CONFLATES_SOURCE_LANDING_WITH_OWNER_ACCEPTANCE_HOLD",
+    "TESTED": "TEST_IS_EVIDENCE_NOT_NATIVE_ACCEPTANCE_HOLD"
+  },
+  "native_activation_dependencies": {
+    "file_space": [],
+    "unispace_file_space_control": [
+      "file_space:OWNER_ACCEPTED"
+    ],
+    "data_space": [
+      "file_space:OWNER_ACCEPTED",
+      "unispace_file_space_control:OWNER_ACCEPTED"
+    ],
+    "print_space": [
+      "file_space:OWNER_ACCEPTED",
+      "data_space:OWNER_ACCEPTED"
+    ]
+  },
+  "source_review_exception": {
+    "visual_print_and_digital_mint_review": true,
+    "private_dataspace_sandbox_preview": true,
+    "native_mint": false,
+    "physical_print": false,
+    "decentralized_launch": false,
+    "condition": "Nonoperational, ACL-scoped derived review only; never grants native or owner state"
+  },
+  "authority_holds": [
+    "signed current issuer/lease/DBR",
+    "rights and per-asset ACL",
+    "issue #158 public/static private asset negative tests",
+    "issue #161 authenticated two-node non-loopback readback",
+    "issue #209 scientific evidence",
+    "Smith singleton ownership",
+    "owner release, finance and physical approvals"
+  ],
+  "reconcile_policy": "Do not equate SOURCE_LANDED, R1/R2 qualification, NATIVE_ADMITTED, LIVE_VERIFIED, R3_VIEW_VERIFIED and OWNER_ACCEPTED. Exact signed provider receipts govern status, not string substitution.",
+  "semantic_family_owner": "Cognigrex parent; Achilles independent assurance for Romer; Neo scoped LS runtime; Athene Eco independent",
+  "premint_integration_design_v01": {
+    "status": "APPROVED_DESIGN_ONLY__NO_NATIVE_OR_PUBLIC_AUTHORITY",
+    "as_of": "2026-11-06",
+    "founder_calls": "08-23",
+    "source_of_authority": "Founder decisions in ChatGPT; BouwerBase Call 23 host-file readback not yet verified",
+    "canonical_parent": "cgx:root:cognigrex",
+    "sole_resolver": "LOAD.cgx",
+    "ownership": "Achilles independent assurance/Romer; Neo LightSpeed/LS engineering; Athene Eco; Cognigrex parent; UniSpace separate product viewer",
+    "review_manifest_required": [
+      "Object_ID_or_provisional_canonical_key",
+      "schema_version_and_semantic_class",
+      "source_identity_and_original_content_hash",
+      "R0_lossless_carrier_and_reconstruction_receipt",
+      "R1_typed_variants_with_loss_ledger",
+      "R2_qualified_assertions_and_conflicts",
+      "R3_domain_acceptance_when_applicable",
+      "rights_licence_attribution_privacy_acl",
+      "dependency_graph_version_pins_and_unresolved_forward_refs",
+      "content_addressed_asset_hashes_and_verified_retrieval_locations",
+      "durability_and_revocation_boundaries",
+      "founder_candidate_approve_deny_defer_and_audit"
+    ],
+    "deterministic_preflight_required": [
+      "frozen_exact_manifest_digest",
+      "R0_byte_reconstruction_and_hash_roundtrip",
+      "R1_R2_R3_source_evidence_checks",
+      "dependency_DAG_and_version_pin_validation",
+      "no_mint_on_missing_rights_or_invalid_ACL",
+      "reject_identity_collision_and_unknown_lease",
+      "reject_duplicate_idempotency_intent_and_uncertain_ledger_retry",
+      "deny_corrupt_unavailable_or_unlicensed_assets",
+      "offline_repeatable_dry_run_receipt",
+      "replay_previous_immutable_version_without_implicit_upgrade",
+      "negative_no_signing_no_issuer_no_network_no_publication"
+    ],
+    "review_decision_semantics": {
+      "approve": "QUALIFY_PROPOSED_VERSION_ONLY",
+      "deny": "EXCLUDE_VERSION_PRESERVE_AUDIT",
+      "defer": "HOLD_PENDING_EVIDENCE",
+      "umbrella_approval": "DOES_NOT_APPROVE_ALL_CHILDREN"
+    },
+    "version_policy": "Stable semantic Object_ID and provenance; content changes require new immutable version and pinned dependencies; deprecated versions remain auditable; migration is explicit and separately authorised.",
+    "type_coverage_policy": "Open-world extensible types, facets and operations; representative qualified proofs, never claim exhaustive enumeration or mint every composition.",
+    "capability_boundary": "Reuse existing CCC, Grex owner lanes, Smith/LightSpeed lease-managed execution, FileSpace/DataSpace source stores and UniSpace presentation. No duplicate root, issuer, DBR, worker scheduler or standalone LOAD.",
+    "authority_gate_status": {
+      "G01_source_rights": "HOLD",
+      "G02_native_issuer": "HOLD",
+      "G03_signed_RootAuthority": "HOLD",
+      "G04_independent_two_node_DBR": "HOLD",
+      "G05_exact_native_mint": "HOLD",
+      "G06_effectful_connector_access": "HOLD",
+      "G07_public_release": "HOLD",
+      "storage_migration": "HOLD",
+      "source_deletion": "HOLD"
+    },
+    "operational_evidence_snapshot": {
+      "evidence_class": "AUTHENTICATED_GITHUB_SOURCE_READBACK_AND_DESKTOP_CONNECTIVITY_STATUS; NOT_RUNNING_HOST_TESTS",
+      "host": "BouwerBase offline at 2026-11-06 check; reconnect and measure before asserting runtime readiness",
+      "bootstrap_pr_206": "DRAFT_UNMERGED_MERGE_CONFLICT",
+      "load_pr_205": "DRAFT_UNMERGED_SOURCE_ONLY",
+      "unispace_pr_188": "DRAFT_UNMERGED_SOURCE_ONLY",
+      "achilles_pa_pr_217": "MERGED_SOURCE_ONLY_NO_NATIVE_AUTHORITY"
+    },
+    "no_auto_mutation": "A successful source-only or dry-run test cannot mint, sign, publish, move, delete, deploy, or grant new provider rights."
+  }
+}

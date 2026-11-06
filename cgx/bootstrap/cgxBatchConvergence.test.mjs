@@ -1,0 +1,132 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {convergeCGXBatch,renderBatchReviewHTML,SCHEMA,PHASE_GATE_STATES,NATIVE_ACTIVATION_DEPENDENCIES} from './cgxBatchConvergence.mjs';
+const hash=x=>x.repeat(64);
+const src=(source_id,revision,sha,semantic_key='shared:sort',overrides={})=>({source_id,revision,sha256:hash(sha),semantic_key,owner:'achilles',family:'EMASSC.cgx',rights:'internal_only',acl:'owner_only',abi:'read:json:1',...overrides});
+const phases=[{id:'file_space',ordinal:1,dependency:[],may_self_mint:false},{id:'unispace_file_space_control',ordinal:2,dependency:['file_space:OWNER_ACCEPTED'],may_self_mint:false},{id:'data_space',ordinal:3,dependency:['file_space:OWNER_ACCEPTED','unispace_file_space_control:OWNER_ACCEPTED'],may_self_mint:false},{id:'print_space',ordinal:4,dependency:['file_space:OWNER_ACCEPTED','data_space:OWNER_ACCEPTED'],may_self_mint:false}];
+const base=()=>({parent:'cgx:root:cognigrex',sources:[src('cgx:a','10','a'),src('cgx:a','2','b'),src('cgx:b','1','c')],capabilities:[{capability_id:'cgx:render:review',source_id:'cgx:a',owner:'achilles',kind:'view',abi:'read:json:1'}],phases,aliases:[{alias:'cgx:old-a',target:'cgx:a'}],transferred_bytes:0});
+test('whole-framework convergence, deterministic numeric source order, no activation, print-review',()=>{
+ const a=convergeCGXBatch(base());const b=convergeCGXBatch({...base(),sources:base().sources.reverse()});
+ assert.equal(a.schema,SCHEMA);assert.deepEqual(a,b);assert.deepEqual(a.source_records.map(s=>s.source_id+'@'+s.revision),['cgx:a@2','cgx:a@10','cgx:b@1']);
+ assert.deepEqual(a.phases.map(p=>p.id),['file_space','unispace_file_space_control','data_space','print_space']);
+ assert.equal(a.blockers.filter(x=>x.startsWith('AMBIGUOUS_OR_UNKNOWN_PHASE_GATE')).length,0);
+ assert.equal(a.overlaps.filter(x=>x.kind==='SEMANTIC_OVERLAP_REVIEW_ONLY').length,1);
+ for(const k of ['native_admitted','may_mint','may_dispatch','may_publish','may_print','may_transact'])assert.equal(a[k],false);
+ const html=renderBatchReviewHTML(a);assert.match(html,/Batch Convergence/);assert.match(html,/Print & Mint Review/);assert.match(html,/Release: HOLD/);assert.doesNotMatch(html,/<script|<iframe|https?:\/\//);
+});
+test('duplicate identical source occurrence is retained, not silently deleted',()=>{
+ const x=base();x.sources.push({...x.sources[0]});const a=convergeCGXBatch(x);
+ assert.equal(a.source_records.length,4);assert.ok(a.overlaps.some(k=>k.kind==='SAME_VERSION_REPEATED_REFERENCE'));
+});
+test('same identity and revision but differing hash/rights/owner is a collision, preserving hypotheses',()=>{
+ const x=base();x.sources.push(src('cgx:a','2','d','shared:sort',{rights:'public_clear',acl:'public'}));
+ const a=convergeCGXBatch(x);assert.ok(a.blockers.includes('IDENTITY_VERSION_COLLISION:cgx:a@2'));
+ assert.equal(a.source_records.filter(x=>x.source_id==='cgx:a'&&x.revision==='2').length,2);
+});
+test('ABI variants do not silently imply one callable source or equivalent functions',()=>{
+ const x=base();x.sources.push(src('cgx:c','1','d','shared:sort',{abi:'write:asset:1'}));
+ const a=convergeCGXBatch(x);assert.ok(a.overlaps.some(x=>x.kind==='SEMANTIC_OVERLAP_REVIEW_ONLY'&&x.abi_variants===2));assert.equal(a.may_dispatch,false);
+});
+test('unknown rights, public exposure conflict and unauthorized capability are held',()=>{
+ const x=base();x.sources.push(src('cgx:c','1','d','unique',{rights:'unknown',acl:'unknown'}),src('cgx:d','1','e','unique2',{rights:'restricted',acl:'public'}));x.capabilities.push({capability_id:'cgx:bad:tool',source_id:'cgx:missing',owner:'achilles',kind:'tool',abi:'execute:1'});
+ const a=convergeCGXBatch(x);assert.ok(a.blockers.some(s=>s.startsWith('UNCLASSIFIED_RIGHTS_OR_ACL')));assert.ok(a.blockers.some(s=>s.startsWith('RIGHTS_ACL_CONFLICT')));assert.ok(a.blockers.some(s=>s.startsWith('CAPABILITY_SOURCE_UNRESOLVED')));
+});
+test('alias shadow, cycles, unresolved target and conflicting aliases deny without deleting originals',()=>{
+ const x=base();x.aliases.push({alias:'cgx:b',target:'cgx:a'},{alias:'cgx:loop1',target:'cgx:loop2'},{alias:'cgx:loop2',target:'cgx:loop1'},{alias:'cgx:unresolved',target:'cgx:missing'},{alias:'cgx:old-a',target:'cgx:b'});
+ const a=convergeCGXBatch(x);for(const k of ['ALIAS_SHADOWS_SOURCE_ID','ALIAS_CYCLE','ALIAS_TARGET_UNQUALIFIED','ALIAS_COLLISION'])assert.ok(a.blockers.some(s=>s.startsWith(k)),k);
+});
+test('invalid identity, syntax and oversized transfer fail before any work',()=>{
+ for(const change of [x=>x.sources[0].sha256='INVALID',x=>x.sources[0].source_id='../escape',x=>x.sources[0].revision='-1',x=>x.sources[0].family='OtherRoot',x=>x.sources[0].acl='world',x=>x.transferred_bytes=60*1024*1024+1,x=>x.parent='cgx:other:root']){
+  const x=base();change(x);const a=convergeCGXBatch(x);assert.equal(a.state,'DENIED_INVALID_REVIEW_INPUT');assert.equal(a.may_mint,false);
+ }
+});
+test('DAG detects missing dependencies, self-mint and backward edges',()=>{
+ const x=base();x.phases=x.phases.map(v=>({...v,dependency:[...v.dependency]}));x.phases[0].dependency=['data_space:TESTED'];x.phases[3].dependency=['unknown:TESTED'];
+ const a=convergeCGXBatch(x);assert.ok(a.blockers.some(s=>s.startsWith('PHASE_BACKEDGE')));assert.ok(a.blockers.some(s=>s.startsWith('UNKNOWN_PHASE_DEPENDENCY')));
+ x.phases[0].may_self_mint=true;assert.equal(convergeCGXBatch(x).state,'DENIED_INVALID_REVIEW_INPUT');
+});
+test('owner mismatch and duplicate callable IDs cannot upgrade into authority',()=>{
+ const x=base();x.capabilities.push({capability_id:'cgx:render:review',source_id:'cgx:b',owner:'neo',kind:'tool',abi:'exec:1'});
+ const a=convergeCGXBatch(x);assert.ok(a.blockers.some(s=>s.startsWith('CAPABILITY_OWNER_MISMATCH')));assert.ok(a.blockers.some(s=>s.startsWith('DUPLICATE_CAPABILITY_ID')));assert.equal(a.may_dispatch,false);
+});
+test('capability ABI must match every qualified source variant and rights must not be inherited',()=>{
+ const x=base();x.capabilities[0].abi='execute:privileged:2';
+ x.sources.push(src('cgx:a','11','e','shared:sort',{rights:'unknown',acl:'unknown'}));
+ const a=convergeCGXBatch(x);
+ assert.ok(a.blockers.includes('CAPABILITY_ABI_NOT_SOURCE_QUALIFIED:cgx:render:review'));
+ assert.ok(a.blockers.includes('CAPABILITY_SOURCE_RIGHTS_HOLD:cgx:render:review'));
+ assert.equal(a.may_dispatch,false);assert.equal(a.may_publish,false);
+});
+test('a zero-discrepancy assembly still cannot mint, publish or transact',()=>{
+ const x=base();x.phases=x.phases.map(p=>({...p,dependency:[...p.dependency]}));
+ const a=convergeCGXBatch(x);assert.equal(a.blockers.length,0);assert.equal(a.state,'BATCH_REVIEW_ASSEMBLED');assert.equal(a.native_admitted,false);assert.equal(a.may_publish,false);
+});
+test('print-review safely escapes provenance labels',()=>{
+ const x=base();x.phases=x.phases.map(p=>({...p,dependency:[...p.dependency]}));const report=convergeCGXBatch(x);report.blockers.push('<img src=x onerror=alert(1)>');
+ const html=renderBatchReviewHTML(report);assert.match(html,/&lt;img/);assert.doesNotMatch(html,/<img/);
+ assert.throws(()=>renderBatchReviewHTML({}),/UNVERIFIED/);
+});
+
+test('exact grammar matches read-only acceptance contract and holds unverified stages',()=>{
+ const manifest=JSON.parse(fs.readFileSync(new URL('./cgxPhaseAcceptance_v01.json',import.meta.url),'utf8'));
+ assert.deepEqual(Object.keys(manifest.evidence_stages),PHASE_GATE_STATES);
+ assert.deepEqual(manifest.native_activation_dependencies,NATIVE_ACTIVATION_DEPENDENCIES);
+ assert.equal(manifest.state,'SOURCE_ONLY_REVIEW_NOT_CANONICAL');
+ assert.equal(manifest.source_review_exception.native_mint,false);
+ assert.equal(manifest.source_review_exception.decentralized_launch,false);
+ const a=convergeCGXBatch(base());
+ assert.equal(a.blockers.length,0);
+ assert.ok(a.phases.every(x=>x.signed_dependency_readback==='NOT_PRESENT_IN_SOURCE_REVIEW'));
+ assert.equal(a.native_admitted,false);
+});
+test('all three historical acceptance aliases fail closed rather than silently upgrading trust',()=>{
+ for(const gate of ['ACCEPTED','LANDED_AND_ACCEPTED','TESTED']){
+  const x=base();x.phases=x.phases.map(p=>({...p,dependency:p.dependency.map(d=>d==='file_space:OWNER_ACCEPTED'?`file_space:${gate}`:d)}));
+  const a=convergeCGXBatch(x);
+  assert.equal(a.state,'BATCH_REVIEW_WITH_HOLDS');
+  assert.ok(a.blockers.some(b=>b.includes('AMBIGUOUS_OR_UNKNOWN_PHASE_GATE')),gate);
+  assert.equal(a.native_admitted,false);
+ }
+});
+test('dropping a required signed native stage or replacing it with source landing is contract drift',()=>{
+ const x=base();x.phases=x.phases.map(p=>({...p,dependency:[...p.dependency]}));
+ x.phases[2].dependency=['file_space:SOURCE_LANDED'];
+ const a=convergeCGXBatch(x);
+ assert.ok(a.blockers.includes('PHASE_DEPENDENCY_CONTRACT_DRIFT:data_space'));
+ assert.equal(a.may_dispatch,false);
+ assert.equal(a.may_publish,false);
+});
+test('R3 view proof is independent of FileSpace signed owner acceptance',()=>{
+ const x=base();x.phases=x.phases.map(p=>({...p,dependency:[...p.dependency]}));
+ x.phases[2].dependency=['file_space:R3_VIEW_VERIFIED','unispace_file_space_control:OWNER_ACCEPTED'];
+ const a=convergeCGXBatch(x);
+ assert.ok(a.blockers.includes('PHASE_DEPENDENCY_CONTRACT_DRIFT:data_space'));
+ assert.equal(a.native_admitted,false);
+});
+
+test('invalid preflight always emits a machine-readable denial reason rather than undefined',()=>{
+ const d=convergeCGXBatch({parent:'invalid'});
+ assert.equal(d.reason,'INVALID_PARENT');
+ assert.deepEqual(d.blockers,['INVALID_PARENT']);
+ assert.equal(d.may_mint,false);
+});
+
+test('LOAD leaf skeleton composes with the existing CGX batch source registry, no second owner',async()=>{
+ const {buildReviewEnvelope,verifyReconstruction}=await import('./cgxLeafEnvelopeReview.mjs');
+ const raw=[Buffer.from('source segment A'),Buffer.from('source segment B')];
+ const env=buildReviewEnvelope({objectId:'cgx:load:fixture',version:'1',leaves:raw,
+  rightsRef:'private:rights',aclRef:'private:acl'});
+ assert.equal(verifyReconstruction(env,raw),true);
+ const batch=convergeCGXBatch({parent:'cgx:root:cognigrex',sources:[{
+  source_id:env.manifest.object_id,revision:env.manifest.version,
+  sha256:env.manifest.source.sha256,semantic_key:'load:fixture',owner:'achilles',
+  family:'Cognigrex.cgx',rights:'internal_only',acl:'owner_only',abi:'read:source:1'
+ }],capabilities:[],phases:[],aliases:[],transferred_bytes:0});
+ assert.equal(batch.state,'BATCH_REVIEW_ASSEMBLED');
+ assert.equal(batch.metrics.unique_source_ids,1);
+ assert.equal(batch.source_records[0].sha256,env.manifest.source.sha256);
+ assert.equal(batch.native_admitted,false);
+ assert.equal(batch.may_mint,false);
+ assert.equal(batch.may_dispatch,false);
+});

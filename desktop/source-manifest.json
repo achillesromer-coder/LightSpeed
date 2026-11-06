@@ -3651,9 +3651,9 @@
       "sha256": "3689197885927ea02280862780b1c381b27835050e12b4e708933e865b7c7b9b"
     },
     {
-      "bytes": 13198,
+      "bytes": 18385,
       "path": "LightSpeed_Runtime/lightspeed_runtime/runtime_productization.py",
-      "sha256": "6d6c8e4bfafabb802da9a99738ae292879d6440dbedeb8c042e40f4c5125fcb5"
+      "sha256": "2060d473d124e5ce4bafbaced685479d9ee6c68195d0fadf4b71b06c8410ee15"
     },
     {
       "bytes": 167,
@@ -3671,9 +3671,9 @@
       "sha256": "a2333a1b4d4248208d4264ffcd138affc5edd9f86707ee2509c2c894218c3d10"
     },
     {
-      "bytes": 80165,
+      "bytes": 81799,
       "path": "LightSpeed_Runtime/tests/test_ls_go_job_consumer.py",
-      "sha256": "8e912af378cffe9c8c23a854c6b6bc5e0bd1a6147a6e5d2833116d3cf77f67b5"
+      "sha256": "d4d8ae19d614ebbeb269b760738cdb8b56a59a534cd017ae4049e75bbfdee50e"
     },
     {
       "bytes": 1853,
@@ -3689,6 +3689,16 @@
       "bytes": 3254,
       "path": "LightSpeed_Runtime/tests/test_source_intake_remote.py",
       "sha256": "9d03d8991a7db573dacee13044ad58136e6dadaa2ebba16394321424eef04790"
+    },
+    {
+      "bytes": 4691,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/host_owned_receipts.py",
+      "sha256": "a74fc1f84d2b1a9dae517dab554469a9a0df16c72f64aa179bc0b61b3711f93c"
+    },
+    {
+      "bytes": 2906,
+      "path": "LightSpeed_Runtime/tests/test_host_owned_receipts.py",
+      "sha256": "1083a4a0671fa0b8081500d07a51ae296156284afa9b31ad6a754b9920fe9052"
     }
   ],
   "schema_version": 1

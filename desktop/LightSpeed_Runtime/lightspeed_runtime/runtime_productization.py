@@ -64,11 +64,52 @@ def _managed_root() -> Path:
     return Path(value).expanduser() if value else DEFAULT_MANAGED_ROOT
 
 
+def _reject_redirected_directory(path: Path, label: str) -> None:
+    """Reject symlinks and Windows junction/reparse directories before file access.
+
+    On Windows, junctions can have the reparse attribute without reporting as
+    Path.is_symlink(). 0x400 is FILE_ATTRIBUTE_REPARSE_POINT.
+    """
+    try:
+        metadata = path.lstat()
+    except (FileNotFoundError, NotADirectoryError):
+        return
+    if (getattr(metadata, "st_file_attributes", 0) & 0x400) or path.is_symlink():
+        raise RuntimeProductizationError(
+            f"{label} must not be a symlink or Windows reparse point"
+        )
+
+
+def _reject_redirected_ancestors(path: Path, label: str) -> None:
+    """Fail closed on redirected ancestors, not only the managed-root leaf.
+
+    This is a preflight check, not an atomic guarantee against filesystem
+    races; target-host acceptance must separately test reparse/TOCTOU cases.
+    """
+    if not path.is_absolute() or ".." in path.parts:
+        raise RuntimeProductizationError(
+            f"{label} must be an absolute path without parent traversal"
+        )
+    for ancestor in reversed(path.parents):
+        _reject_redirected_directory(ancestor, f"{label} ancestor")
+    _reject_redirected_directory(path, label)
+
+
 def _safe_slot(slot: str) -> str:
     slot = str(slot or "").strip()
     if not SLOT_RE.fullmatch(slot):
         raise RuntimeProductizationError(
             "slot must match ^[A-Za-z0-9][A-Za-z0-9_.-]{0,47}$"
+        )
+    # Windows device aliases and trailing dots are not distinct filesystem slots.
+    # Reject before constructing any managed path or receipt identifier.
+    if slot.endswith(".") or re.fullmatch(
+        r"(?:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:[.].*)?",
+        slot,
+        flags=re.IGNORECASE,
+    ):
+        raise RuntimeProductizationError(
+            "slot uses a Windows-reserved device name or trailing dot"
         )
     return slot
 
@@ -77,13 +118,24 @@ def _paths(slot: str) -> dict[str, Path]:
     slot = _safe_slot(slot)
     root = _managed_root()
     slot_dir = root / slot
+    _reject_redirected_ancestors(root, "managed root")
+    _reject_redirected_directory(slot_dir, "managed slot")
+    # Nested runtime and receipt paths must not redirect outside the managed root.
+    _reject_redirected_directory(slot_dir / "venv", "managed venv")
+    _reject_redirected_directory(slot_dir / "venv" / "Scripts", "managed venv scripts")
+    # Leaf files can also redirect outside the managed slot (not only directories).
+    _reject_redirected_directory(slot_dir / MARKER_NAME, "managed marker")
+    _reject_redirected_directory(slot_dir / CONFIG_NAME, "managed config")
+    _reject_redirected_directory(slot_dir / "venv" / "Scripts" / "python.exe", "managed python")
+    receipt_root = root / "_receipts"
+    _reject_redirected_directory(receipt_root, "receipt root")
     return {
         "root": root,
         "slot_dir": slot_dir,
         "venv": slot_dir / "venv",
         "marker": slot_dir / MARKER_NAME,
         "config": slot_dir / CONFIG_NAME,
-        "receipt_root": root / "_receipts",
+        "receipt_root": receipt_root,
     }
 
 
@@ -124,6 +176,9 @@ def _require_confirmed(action: str, confirmed: bool) -> None:
 
 
 def _validate_marker(paths: dict[str, Path], slot: str) -> dict[str, Any]:
+    # Recheck root and slot immediately before trusting a marker.
+    _reject_redirected_ancestors(paths["root"], "managed root")
+    _reject_redirected_directory(paths["slot_dir"], "managed slot")
     marker_path = paths["marker"]
     if not marker_path.exists():
         raise RuntimeProductizationError(
@@ -134,6 +189,12 @@ def _validate_marker(paths: dict[str, Path], slot: str) -> dict[str, Any]:
         raise RuntimeProductizationError("managed marker schema mismatch")
     if marker.get("slot") != slot:
         raise RuntimeProductizationError("managed marker slot mismatch")
+    # A matching slot/schema alone cannot establish managed ownership.
+    # Keep the local marker a bounded ownership signal, never a host lease.
+    if marker.get("authority") != "digital-runtime-slot-only":
+        raise RuntimeProductizationError("managed marker authority mismatch")
+    if not isinstance(marker.get("profile"), str) or marker["profile"] not in PROFILES:
+        raise RuntimeProductizationError("managed marker profile invalid")
     return marker
 
 
@@ -146,6 +207,8 @@ def _operator_receipt(
     status: str,
     detail: dict[str, Any],
 ) -> Path:
+    _reject_redirected_ancestors(paths["root"], "managed root")
+    _reject_redirected_directory(paths["receipt_root"], "receipt root")
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     receipt = paths["receipt_root"] / f"{slot}-{action}-{stamp}.json"
     _write_json(
@@ -170,9 +233,28 @@ def _operator_receipt(
 
 
 def runtime_productization_status(slot: str = "default") -> dict[str, Any]:
+    slot = _safe_slot(slot)
     paths = _paths(slot)
-    config = _load_slot_config(paths)
-    marker = _read_json(paths["marker"]) if paths["marker"].exists() else None
+    # Status is diagnostic and read-only. Malformed or foreign slot configs
+    # are not trusted as configured; preserve their bytes for investigation.
+    try:
+        config = _load_slot_config(paths)
+    except (RuntimeProductizationError, OSError, ValueError, UnicodeError):
+        config = None
+    if config and (
+        config.get("schema") != "LIGHTSPEED-RUNTIME-SLOT-CONFIG/0.1"
+        or config.get("slot") != slot
+        or not isinstance(config.get("profile"), str)
+        or config.get("profile") not in PROFILES
+        or config.get("authority") != "digital-runtime-config-only"
+    ):
+        config = None
+    # A corrupt ownership marker must never make status appear installed.
+    # Status is read-only; keep invalid marker bytes untouched for diagnosis.
+    try:
+        marker = _read_json(paths["marker"]) if paths["marker"].exists() else None
+    except (RuntimeProductizationError, OSError, ValueError, UnicodeError):
+        marker = None
     python_path = paths["venv"] / "Scripts" / "python.exe"
     receipts = []
     if paths["receipt_root"].exists():
@@ -183,6 +265,14 @@ def runtime_productization_status(slot: str = "default") -> dict[str, Any]:
             ),
             reverse=True,
         )[:20]
+    # Presence of python.exe alone is not proof of managed installation.
+    # Keep status read-only and fail closed on absent/invalid ownership evidence.
+    try:
+        validated_marker = _validate_marker(paths, slot)
+        managed_ownership_valid = True
+    except (RuntimeProductizationError, OSError, ValueError, TypeError):
+        managed_ownership_valid = False
+        validated_marker = None
     return {
         "schema": "LIGHTSPEED-RUNTIME-PRODUCTIZATION-STATUS/0.1",
         "slot": _safe_slot(slot),
@@ -191,8 +281,8 @@ def runtime_productization_status(slot: str = "default") -> dict[str, Any]:
         "slot_root": str(paths["slot_dir"]),
         "managed_marker": marker is not None,
         "configured": config is not None,
-        "profile": (config or {}).get("profile") or (marker or {}).get("profile"),
-        "installed": python_path.exists(),
+        "profile": (config or {}).get("profile") or (validated_marker or {}).get("profile"),
+        "installed": managed_ownership_valid and python_path.is_file(),
         "python": str(python_path),
         "recent_receipts": receipts,
         "authority": "status-only",
@@ -200,10 +290,15 @@ def runtime_productization_status(slot: str = "default") -> dict[str, Any]:
 
 
 def _configure(paths: dict[str, Path], slot: str, profile: str) -> dict[str, Any]:
-    paths["slot_dir"].mkdir(parents=True, exist_ok=True)
-    if paths["marker"].exists():
+    # Do not adopt a pre-existing unmarked directory: a later rollback would
+    # otherwise delete unrelated files after this method minted a marker.
+    slot_dir = paths["slot_dir"]
+    _reject_redirected_ancestors(paths["root"], "managed root")
+    _reject_redirected_directory(slot_dir, "managed slot")
+    if slot_dir.exists():
         _validate_marker(paths, slot)
     else:
+        slot_dir.mkdir(parents=True, exist_ok=False)
         _write_json(paths["marker"], _marker(slot, profile))
     payload = {
         "schema": "LIGHTSPEED-RUNTIME-SLOT-CONFIG/0.1",
@@ -223,6 +318,10 @@ def _run_installer_process(
     profile: str,
     action: str,
 ) -> dict[str, Any]:
+    _reject_redirected_ancestors(paths["root"], "managed root")
+    _reject_redirected_directory(paths["venv"], "managed venv")
+    _reject_redirected_directory(paths["venv"] / "Scripts", "managed venv scripts")
+    _reject_redirected_directory(paths["receipt_root"], "receipt root")
     if not INSTALLER.exists():
         raise RuntimeProductizationError(f"installer missing: {INSTALLER}")
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -233,8 +332,7 @@ def _run_installer_process(
     command = [
         "powershell",
         "-NoProfile",
-        "-ExecutionPolicy",
-        "Bypass",
+        # Inherit effective host policy; never request a process-level bypass.
         "-File",
         str(INSTALLER),
         "-Profile",

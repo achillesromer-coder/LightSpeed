@@ -1,0 +1,78 @@
+{
+  "schema": "CGX-VOICE-LEXICAL-RECONCILIATION/0.1",
+  "state": "SOURCE_REVIEW__NONBLOCKING",
+  "issue": "Misheard GOT introduced as speculative CGX component, but source context identifies Git, GPT export and sometimes LightSpeed GO.",
+  "correction": "User clarifies no recollection of an independently built GOT component. Do not create it, show it as an installable feature, or block system release for its missing definition.",
+  "evidence": [
+    {
+      "type": "user-correction",
+      "date": "2026-10-28",
+      "finding": "GOT may be transcribed Git/GPT; previous standalone GOT assumption unsupported."
+    },
+    {
+      "type": "bounded-GPT-text-fragment-scan",
+      "scope": "Four available excerpt/fragment text files; original twelve JSON conversation shards not completely verified",
+      "finding": "One exact uppercase standalone GOT occurrence, in unrelated AST enzyme synonym text; no CGX GOT.cgx occurrence",
+      "non_cgx_quotation_omitted": true,
+      "raw_source_not_copied": true
+    },
+    {
+      "type": "GitHub search",
+      "source": "achillesromer-coder/LightSpeed; file/code search scoped to current accessible repository",
+      "finding": "No verified standalone GOT.cgx, G.O.T. or registered CCC capability identified."
+    },
+    {
+      "type": "source-roles",
+      "finding": "Git = code/source provider; GPT = conversational source/export processing; LightSpeed GO/LS GO = separately existing product/operator context."
+    }
+  ],
+  "transcriptions": [
+    {
+      "token": "GOT",
+      "interpretation": "Git",
+      "required_context": [
+        "repository",
+        "commit",
+        "branch",
+        "code",
+        "pull request"
+      ],
+      "auto_replace": false
+    },
+    {
+      "token": "GOT",
+      "interpretation": "GPT",
+      "required_context": [
+        "export",
+        "conversation",
+        "chat",
+        "model",
+        "automation"
+      ],
+      "auto_replace": false
+    },
+    {
+      "token": "GOT",
+      "interpretation": "GO",
+      "required_context": [
+        "LightSpeed",
+        "LS GO",
+        "app",
+        "runtime",
+        "toggle"
+      ],
+      "auto_replace": false
+    }
+  ],
+  "policy": [
+    "Preserve raw language when exact transcription matters.",
+    "Do not infer an alias or Object_ID from lexical similarity.",
+    "Resolve only with local 150-message context and provider evidence when available.",
+    "No user approval or launch gate needed for a nonexistent feature.",
+    "If new authoritative primary source appears later, reopen as a new source-backed investigation, not by reactivating a fake install flag."
+  ],
+  "installable": false,
+  "capability_id": null,
+  "canonical_mutation": false,
+  "owner_decision_pending": false
+}

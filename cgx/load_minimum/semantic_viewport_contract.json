@@ -1,0 +1,114 @@
+{
+  "schema": "LOAD-SEMANTIC-VIEWPORT-CONTRACT/0.1",
+  "status": "SOURCE_REVIEW_NOT_NATIVE_ADMISSION",
+  "purpose": "Source-preserving, selective semantic-halo hydration and deterministic viewport switch plans for one qualified CGX identity",
+  "authority": {
+    "root": "Cognigrex.cgx",
+    "library": "LOAD.cgx / Alexandria",
+    "children": [
+      "Romer.cgx",
+      "Eco.cgx",
+      "EMASSC.cgx",
+      "LS.cgx"
+    ],
+    "ui": "UniSpace",
+    "runtime": "LS.cgx",
+    "canonical_mutation": false
+  },
+  "existing_contracts": {
+    "shared_views": {
+      "path": "cgx/domain_templates/semantic_view_lens_registry.json",
+      "git_blob": "d38ce3d837af66c05566689dafab743d9e302ec6"
+    },
+    "view_selection": {
+      "path": "cgx/domain_templates/view_selection_policy.json",
+      "git_blob": "27ca0230e75743448c91482f2ea0a454f67bfab6"
+    },
+    "reasoning_depths": {
+      "path": "cgx/domain_templates/depth_profiles.json",
+      "git_blob": "b658d34dcee46ce1d467319a67afbdad72abe697"
+    },
+    "semantic_halo": {
+      "path": "cgx/domain_templates/reasoning_profiles.json",
+      "git_blob": "aa6ae853a398ec4527b6e16fa7049112fa0ea427"
+    },
+    "query_facets": {
+      "path": "cgx/domain_templates/query_normalisation_policy.json",
+      "git_blob": "282b2eb30c7bba0345abc7c47270224b62006b98"
+    }
+  },
+  "view_aliases": {
+    "document": {
+      "lens": "active-object-inspector",
+      "projection": "document-section",
+      "source_required": true
+    },
+    "3d": {
+      "lens": "twin-3d",
+      "projection": "geometry-twin",
+      "source_required": true,
+      "geometry_anchor_required": true,
+      "units_and_frame_required": true
+    },
+    "chat": {
+      "lens": "chat-generative",
+      "projection": "natural-language-interface",
+      "source_required": true
+    },
+    "graph": {
+      "lens": "topology-graph",
+      "projection": "typed-relations",
+      "source_required": true
+    },
+    "interactive": {
+      "lens": "hybrid-canonical-cells",
+      "projection": "read-only-controls",
+      "source_required": true,
+      "mutation_authority": false
+    },
+    "matrix": {
+      "lens": "matrix",
+      "projection": "traceability",
+      "source_required": true
+    }
+  },
+  "default_budget": {
+    "reasoning_depth": "standard",
+    "device_hydration": "reader",
+    "execution_depth": "inspect",
+    "max_nodes": 16,
+    "max_hops": 2,
+    "max_cross_domains": 1,
+    "max_cross_edges": 4,
+    "max_evidence_refs": 32,
+    "max_compute_ms": 2000,
+    "max_ops_per_second": 50,
+    "max_transfer_bytes": 1048576
+  },
+  "hard_ceiling": {
+    "max_nodes": 512,
+    "max_hops": 6,
+    "max_cross_domains": 8,
+    "max_cross_edges": 256,
+    "max_evidence_refs": 256,
+    "max_compute_ms": 120000,
+    "max_ops_per_second": 1000,
+    "max_transfer_bytes": 62914560
+  },
+  "novelty_match_rule": [
+    "Exact stable Object_ID match or exact source identity can reveal existing knowledge; do not mint from labels.",
+    "Semantic synonym/type/geometry/analogy matches are REVIEW CANDIDATES, never automatic truth or identity merges.",
+    "One domain-owned object may have many source-qualified evidence claims and representations without duplicate state.",
+    "Different version, physical instance, scientific model, config, measurement or rights may require distinct identity.",
+    "Support solved, contradicted, untested, inaccessible and unknown states separately; never complete from inference alone."
+  ],
+  "security": {
+    "default": "deny-all-unless-explicit-authorized-object-IDs",
+    "cross_domain": "never traverse unauthorized Object_ID or permissioned bridge",
+    "publication": "separate rights gate",
+    "execution": "planner must never perform runtime computation, native DBR write or implicit network hydration",
+    "source_byte_limit": "chunk and reference original R0; never copy full sources just to change viewport",
+    "geometry": "no geometry, SI frame or valid geometry source -> 3D unavailable, not fabricated",
+    "audience": "no view may increase evidence/authority/security ceiling"
+  }
+}

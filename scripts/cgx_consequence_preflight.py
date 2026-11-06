@@ -34,6 +34,12 @@ def main():
     holds=[]
     if assurance_decision=="HOLD": holds.extend(["assurance:"+x for x in assurance_reasons])
     if custodial_decision=="HOLD": holds.extend(["custodial:"+x for x in custodial_reasons])
+    # C37 interim stop-ship: this source-only CLI cannot authenticate source
+    # classification/rights, signed RootAuthority/DBR, ACL, or release readback.
+    # Caller tags and locally supplied assessment JSON cannot establish permission.
+    # Publication stays held until an independent provider-backed gate exists.
+    if args.execution_depth=="publish":
+        holds.append("publication:authenticated-source-rights-and-owner-release-unverified")
     consequential=args.execution_depth in ("execute","build","publish") or args.cascade_class in ("C2","C3","C4")
     overall="HOLD" if holds else ("CLEARED_FOR_AUTHORITY_GATE" if consequential else "ALLOW_WITH_RECEIPTS")
 
