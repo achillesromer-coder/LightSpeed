@@ -68,3 +68,26 @@ The CI workflow now runs **all** bootstrap `*.test.mjs` files rather than only t
 **Mainline reconciliation:** The review branch retains both the pre-existing Smith receipt/CPU-admission regressions from `main` and the scoped Neo singleton PID-reuse negative from this review lane. `cgxManifestIntegrityReview.py` checks exact newline-normalised SHA-256 and byte length of all 118 declared LightSpeed Runtime source records. Its output is source-integrity evidence, not a native execution approval. No original source or historical worktree should be deleted from this merge.
 
 **LOAD source-branch integration review:** The bootstrap review worktree now combines the existing LOAD/Alexandria source-review branch without creating another LOAD root, catalogue or DBR. Windows CRLF checkout bytes may differ from the canonical Git blob: the declared JSON source snapshots are checked against their original LF Git-blob fingerprints; none of the 14 pinned source-register SHA-1 IDs was silently rebaselined. The source-only leaf request planner also rejects Windows separator strings in candidate keys before permission checks. `cgxLoadCrossLaneReview.test.mjs` verifies the integrated existing LOAD catalogue (131 indexed refs; 45 CCC routes), source hash/reconstruction and disabled UniSpace H0–H4 execution. All native rights/signing/DBR/mint/publication holds remain in force.
+
+## UniSpace isolated public release verification (issue #158)
+
+The historical PR #188 public-viewer source and its blob-identity ledger remain immutable.
+The ordinary `apps/lightspeed-go/dist` output must **never** be treated as the
+CGX public-only deployment: the general Vite build can include LS GO `public/data`,
+`public/review` and operator seed files. This is a pre-mint HOLD, not proof that
+a deployed private endpoint is exposed.
+
+A nonpublishing synthetic viewer candidate may be built into a fresh directory
+outside the operator application, then independently re-read:
+
+```bash
+python apps/lightspeed-go/scripts/cgx_public_bundle_guard.py --output /tmp/unispace-cgx-review
+python apps/lightspeed-go/scripts/cgx_public_bundle_guard.py --verify-output /tmp/unispace-cgx-review
+```
+
+The second command verifies the 12-file allowlist, immutable source bytes,
+receipt, source-policy equivalence and isolation. It denies changed files,
+extra private assets, altered host/rights claims, changed CSP and a generic operator `dist`.
+It cannot approve actual publication, provider rights, signed issuer or two-node DBR.
+The remaining acceptance work requires authenticated private-asset routing,
+negative anonymous/revoked-session HTTP readback, source rights and founder release approval.

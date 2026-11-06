@@ -30,17 +30,5 @@ All model values and inputs are explicitly synthetic; static content roots are r
 ## Owner gates
 Source branch is review-only; no public CGX authority promotion, new canonical store or scheduler. Real device handshake requires an authenticated source adapter, signature/lease and independent receipt (LightSpeed issue #161). Private/public separation remains issue #158. Physical PrintSpace qualification remains Raphael PR #6. User-facing Squarespace paths are NOT modified merely by deploying Vercel.
 
-## Operator build isolation and post-package verification
-The ordinary `apps/lightspeed-go/dist` (from `npm run build`) is **not** a CGX public release. Vite copies `public/data`, `public/review` and other operator-oriented files into that tree; do not upload, alias or deploy it as the public UniSpace viewer. Issue #158 remains OPEN until a separately authenticated private-asset route and anonymous/revoked-session HTTP readbacks pass.
-
-For a **nonpublishing**, source-only static candidate, use the exact allowlist packager with a fresh directory *outside* the LightSpeed GO app and its public/dist trees. After creation, reverify the actual output bytes, metadata, and Vercel policy:
-
-```bash
-python apps/lightspeed-go/scripts/cgx_public_bundle_guard.py --output /tmp/unispace-cgx-review
-python apps/lightspeed-go/scripts/cgx_public_bundle_guard.py --verify-output /tmp/unispace-cgx-review
-```
-
-Verification succeeds only for the exact 12 allowlisted payload files and two policy/receipt sidecars. Tampering, added private paths, changed rights claims, policy drift, and general operator dist are denied. Successful verification is **not** permission to publish: independent rights, host/ACL, root/DBR and founder gates still apply.
-
 ## Acceptance to finish
 Open each Vercel route from a fresh desktop browser and phone; confirm HTTP 200 and local controls; install the Squarespace snippets; confirm five live romer.industries URLs, navigation, iframe size and mobile layout; separately verify the DOOM link target and source publication rights.
