@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { reviewWindowsCGXHost, classifyInstallerPolicySource } from './cgxWindowsHostPreflightReview.mjs';
-const base = {connection:'ONLINE', fileAccess:'VERIFIED_READ_ONLY', policies:{CurrentUser:'RemoteSigned'},signature:'VALID',zone:'LOCAL'};
+const base = {connection:'ONLINE', fileAccess:'VERIFIED_READ_ONLY', policies:{CurrentUser:'RemoteSigned'},signature:'VALID',zone:'LOCAL',installerInvocationPolicy:'NO_EXPLICIT_OVERRIDE'};
 test('online and read-only does not certify native root or execution',()=>{
  const x=reviewWindowsCGXHost(base);
  assert.equal(x.state,'REVIEW_ONLY');assert.equal(x.authority_verified,false);
