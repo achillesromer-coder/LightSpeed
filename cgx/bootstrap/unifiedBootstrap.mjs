@@ -27,6 +27,8 @@ export function planCGXSetup(config={}){
  if(!Number.isSafeInteger(sourceBytesPerChunk)||sourceBytesPerChunk<1||sourceBytesPerChunk>60*1024*1024)
   return {state:"DENIED",reason:"SOURCE_SEGMENT_TOO_LARGE"};
  if(!isObj(observed))return {state:"DENIED",reason:"INVALID_OBSERVATIONS"};
+ if(receipt!==null&&isObj(receipt)&&Object.hasOwn(receipt,'completed_steps')&&(!safeArray(receipt.completed_steps)||receipt.completed_steps.some(step=>!STEPS.includes(step))||new Set(receipt.completed_steps).size!==receipt.completed_steps.length))
+  return {state:"DENIED",reason:"INVALID_RECEIPT_STEPS"};
  if(receipt!==null&&(!isObj(receipt)||!text(receipt.receipt_id)||!text(receipt.family)||receipt.family!==family))
   return {state:"DENIED",reason:"RECEIPT_SCOPE_MISMATCH"};
  const mandatory=[];
