@@ -111,6 +111,7 @@ export function renderUniSpacePrivateStatus({
   const leaves=doc.createElement('dl');
   leaves.append(
    line(doc,'Reviewed source leaves',String(packetView.source_review.leaf_count)),
+   line(doc,'Source rights',packetView.source_review.state==='SOURCE_RIGHTS_HOLD'? 'HOLD - licence and ACL unqualified':'REVIEW - provider proof unverified'),
    line(doc,'Source integrity','Manifest-bound review; provider proof not verified'),
    line(doc,'Leaf hydration','HOLD - no source transfer or execution'),
    line(doc,'Native admission','HOLD - independent issuer, lease and DBR required')

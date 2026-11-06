@@ -494,3 +494,41 @@ test('browser-facing UniSpace source-review components never import Node-only bo
   assert.doesNotMatch(text,/^\s*import\s+.*from\s+['"]\.\.\/bootstrap\//m,name);
  }
 });
+
+test('unqualified rights remain an explicit private H0 status and never grant hydration',async()=>{
+ const {stageFamilyPacket}=await import('../bootstrap/cgxPremintFamilyProjection.mjs');
+ const packet=stageFamilyPacket({objectId,version:'1',family:'Eco.cgx',owner:'achilles',
+  semanticKey:'eco:fixture',originalLeaves:[Buffer.from('HIDDEN_PRIVATE_R0')],
+  rights:'unknown',acl:'unknown'});
+ assert.equal(packet.state,'REVIEW_WITH_HOLDS');
+ const sourcePacket=binding(packet);
+ assert.equal(sourcePacket.state,'SOURCE_RIGHTS_HOLD');
+ const mount=fakeMount();
+ const result=render({...input,mount,sourcePacket});
+ assert.equal(result.status,'RENDERED_SOURCE_REVIEW');
+ const output=flatten(mount);
+ assert.match(output,/Source rights HOLD - licence and ACL unqualified/);
+ assert.match(output,/Leaf hydration HOLD - no source transfer or execution/);
+ assert.ok(!output.includes('HIDDEN_PRIVATE_R0'));
+ assert.ok(!output.includes(packet.envelope.digest_sha256));
+ assert.equal(result.may_execute,false);
+ assert.equal(result.public_release,false);
+ assert.equal(render({...input,mount,surface:'public',sourcePacket}).status,'DENIED');
+ assert.equal(mount.children.length,0);
+});
+test('private source rights-hold adapter rejects unrelated blockers and forged elevated DTO',async()=>{
+ const {stageFamilyPacket}=await import('../bootstrap/cgxPremintFamilyProjection.mjs');
+ const packet=stageFamilyPacket({objectId,version:'1',family:'Eco.cgx',owner:'achilles',
+  semanticKey:'eco:fixture',originalLeaves:[Buffer.from('x')],
+  rights:'unknown',acl:'unknown'});
+ packet.convergence.blockers=['ISSUER_UNSIGNED'];
+ assert.equal(binding(packet).reason,'LOAD_PACKET_UNRELATED_BLOCKERS');
+ const clean=stageFamilyPacket({objectId,version:'1',family:'Eco.cgx',owner:'achilles',
+  semanticKey:'eco:fixture',originalLeaves:[Buffer.from('x')],
+  rights:'unknown',acl:'unknown'});
+ const dto=binding(clean);
+ const forged={...dto,source_qualified:true};
+ const denied=render({...input,mount:fakeMount(),sourcePacket:forged});
+ assert.equal(denied.status,'DENIED');
+ assert.equal(denied.may_execute,false);
+});

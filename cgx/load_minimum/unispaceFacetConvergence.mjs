@@ -60,7 +60,8 @@ export function planUniSpaceFacetConvergence({
   if(!sourcePacket||typeof sourcePacket!=='object'||Array.isArray(sourcePacket)||
      Object.keys(sourcePacket).length!==keys.length||
      keys.some(key=>!Object.hasOwn(sourcePacket,key))||
-     sourcePacket.schema!==PACKET_SCHEMA||sourcePacket.state!=='SOURCE_REVIEW_ONLY'||
+     sourcePacket.schema!==PACKET_SCHEMA||
+     !['SOURCE_REVIEW_ONLY','SOURCE_RIGHTS_HOLD'].includes(sourcePacket.state)||
      sourcePacket.object_id!==p.identity||sourcePacket.file_space!==p.file_space||
      !hex.test(sourcePacket.manifest_digest??'')||!hex.test(sourcePacket.source_digest??'')||
      !Number.isSafeInteger(sourcePacket.leaf_count)||sourcePacket.leaf_count<1||
@@ -68,7 +69,7 @@ export function planUniSpaceFacetConvergence({
      sourcePacket.source_qualified!==false||sourcePacket.native_admitted!==false||
      sourcePacket.network_transfer!==false)
    return deny('LOAD_PACKET_EXACT_SOURCE_FAMILY_MISMATCH');
-  sourceReview={manifest_digest:sourcePacket.manifest_digest,
+  sourceReview={state:sourcePacket.state,manifest_digest:sourcePacket.manifest_digest,
    source_digest:sourcePacket.source_digest,leaf_count:sourcePacket.leaf_count,
    hydration:'HOLD',source_qualified:false,installed_capabilities_verified:false,
    native_admitted:false,network_transfer:false};
