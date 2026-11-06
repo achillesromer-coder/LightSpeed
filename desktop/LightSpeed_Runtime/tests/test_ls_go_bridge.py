@@ -196,7 +196,7 @@ def test_neo_operator_approval_forwards_authority_contract() -> None:
     assert observed["kwargs"]["authority_contract"] == authority
 
 
-def test_half_speed_host_profile_bounds_background_work() -> None:
+def test_80pct_cpu_profile_preserves_singleton_background_work() -> None:
     policy_path = (
         RUNTIME_ROOT.parent
         / "Desktop_Hooks"
@@ -206,7 +206,11 @@ def test_half_speed_host_profile_bounds_background_work() -> None:
     )
     limits = json.loads(policy_path.read_text(encoding="utf-8"))["runtime_limits"]
 
-    assert limits["cognigrex_speed_percent"] == 50
+    assert limits["cognigrex_speed_percent"] == 80
+    assert limits["max_total_host_cpu_percent"] == 80
+    assert limits["cpu_dispatch_resume_percent"] == 70
+    assert limits["mobile_handoff_required"] is False
+    assert limits["cpu_limit_authority"] == "ADMISSION_ONLY_UNTIL_WINDOWS_PROCESS_GROUP_HARD_CAP_VERIFIED"
     assert limits["max_background_queue_workers"] == 1
     assert limits["max_concurrent_ollama_jobs"] == 1
     assert limits["max_floor_boot_parallelism"] == 2
@@ -1975,11 +1979,15 @@ def test_node_exchange_status_reads_host_root_registry_without_activating_peer_c
     assert exchange["activation"]["peer_compute_queue_ready"] is False
     assert exchange["compute"]["peer_compute_verified"] is False
 
-def test_source_intake_payload_is_bound_to_existing_command_identity(tmp_path, monkeypatch):
+@pytest.mark.parametrize("declared", [False, True])
+def test_source_intake_payload_is_bound_to_existing_command_identity(tmp_path, monkeypatch, declared):
     database = CommandFixtureDatabase(tmp_path / 'intake.db')
     monkeypatch.setattr(ls_go_bridge, '_try_get_services', lambda _root: (database, object()))
     client = TestClient(ls_go_bridge.create_app(tmp_path))
     payload = {'source_path': str(tmp_path / 'source.md'), 'source_sha256': 'a' * 64}
+    if declared:
+        payload['source_path'] = str(tmp_path / 'source.dat')
+        payload['declared_source_name'] = 'source.md'
     command = command_payload(schema_version='lightspeed-go-command-v2', command_id='LSGO-INTAKE-TEST',
                               action_type='source_preserving_intake', action_payload=payload,
                               target_floor='Neo', execution_mode='queue',
@@ -1990,8 +1998,70 @@ def test_source_intake_payload_is_bound_to_existing_command_identity(tmp_path, m
         params = json.loads(connection.execute('SELECT params_json FROM jobs').fetchone()[0])
     assert params['action_payload'] == payload
     assert params['execute'] is True and params['allow_heavy'] is False
-    command['action_payload']['source_sha256'] = 'b' * 64
+    if declared:
+        command['action_payload']['declared_source_name'] = 'changed.csv'
+    else:
+        command['action_payload']['source_sha256'] = 'b' * 64
     assert client.post('/api/v1/ls-go/commands', json=command).status_code == 409
     command['command_id'] = 'LSGO-INTAKE-INVALID'
     command['action_payload']['output_path'] = str(tmp_path / 'escape')
     assert client.post('/api/v1/ls-go/commands', json=command).status_code == 400
+
+
+def test_frontier_intake_identity_is_bounded_in_existing_command_and_job(tmp_path, monkeypatch):
+    database = CommandFixtureDatabase(tmp_path / 'frontier-intake.db')
+    database.execute_query = lambda _query, _params=(): []
+    database.execute_update = lambda _query, _params=(): 0
+    monkeypatch.setattr(ls_go_bridge, '_try_get_services', lambda _root: (database, object()))
+    sessions = ls_go_bridge.OwnerSessionStore()
+    owner_token, _ = sessions.issue(username='NCNB', credential_key_id='TEST-CREDENTIAL')
+    change_token, _ = sessions.issue(username='NCNB', credential_key_id='TEST-CREDENTIAL',
+                                     scope='password_change')
+    monkeypatch.setattr(ls_go_bridge, 'OwnerSessionStore', lambda: sessions)
+    monkeypatch.setattr(ls_go_bridge.CredentialStore, 'read_record',
+                        lambda _self, _username: {'credential_key_id': 'TEST-CREDENTIAL'})
+    monkeypatch.setattr(ls_go_bridge, 'credential_status', lambda _record: {
+        'configured': True, 'credential_key_id': 'TEST-CREDENTIAL', 'must_change': False,
+    })
+    client = TestClient(ls_go_bridge.create_app(tmp_path))
+    headers = {'X-LightSpeed-Session': owner_token}
+    source = {'source_path': str(tmp_path / 'source.md'), 'source_sha256': 'a' * 64}
+    frontier = {
+        'domain': 'COGNIGREX', 'object_id': 'cgx://source/example', 'owner': 'COGNIGREX',
+        'source_sha256': source['source_sha256'], 'operation': 'source_preserving_intake',
+        'acceptance_version': 'v1', 'evidence_class': 'UNVERIFIED',
+        'source_changed': True, 'dependencies_changed': False,
+        'limits': {'max_elapsed_s': 60, 'max_tokens': 1, 'max_tool_calls': 1,
+                   'max_retries': 0, 'max_cost_usd': 0.25},
+        'usage': {'elapsed_s': 0, 'tokens': 0, 'tool_calls': 0,
+                  'retries': 0, 'cost_usd': 0},
+    }
+    command = command_payload(schema_version='lightspeed-go-command-v2',
+                              command_id='LSGO-FRONTIER-INTAKE-TEST',
+                              action_type='source_preserving_intake', action_payload=source,
+                              frontier_request=frontier, target_floor='Neo', execution_mode='queue',
+                              authorised_scope='all floors; private local queue',
+                              requested_scope='Neo private local queue')
+    assert client.post('/api/v1/ls-go/commands', json=command).status_code == 401
+    assert client.post('/api/v1/ls-go/commands', json=command,
+                       headers={'X-LightSpeed-Session': 'invalid'}).status_code == 403
+    assert client.post('/api/v1/ls-go/commands', json=command,
+                       headers={'X-LightSpeed-Session': change_token}).status_code == 403
+    response = client.post('/api/v1/ls-go/commands', json=command, headers=headers)
+    assert response.status_code == 200, response.text
+    with database.get_connection() as connection:
+        task = json.loads(connection.execute('SELECT metadata_json FROM tasks').fetchone()[0])
+        job = json.loads(connection.execute('SELECT params_json FROM jobs').fetchone()[0])
+    assert task['frontier_request'] == frontier
+    assert job['frontier_request'] == frontier
+    assert task['frontier_authenticated_actor'] == 'NCNB'
+    assert job['frontier_authenticated_actor'] == 'NCNB'
+    assert job['action_payload'] == source
+    command['frontier_request']['acceptance_version'] = 'v2'
+    assert client.post('/api/v1/ls-go/commands', json=command, headers=headers).status_code == 409
+    command['command_id'] = 'LSGO-FRONTIER-MISMATCH'
+    command['frontier_request']['source_sha256'] = 'b' * 64
+    assert client.post('/api/v1/ls-go/commands', json=command, headers=headers).status_code == 400
+    command['frontier_request']['source_sha256'] = 'a' * 64
+    command['frontier_request']['usage']['tool_calls'] = 1
+    assert client.post('/api/v1/ls-go/commands', json=command, headers=headers).status_code == 400

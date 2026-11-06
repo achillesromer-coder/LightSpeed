@@ -79,7 +79,7 @@ const mount = async (): Promise<boolean> => {
     card.innerHTML = `
       <p class="eyebrow">Canonical source chain</p>
       <h2>One operator surface, durable receipts</h2>
-      <p>Desktop executes locally, Git carries implementation, Drive carries evidence and review records, and LS GO remains the operator decision surface. Alignment is shown only after current evidence validates.</p>
+      <p>Desktop executes locally, Git carries implementation, Drive carries evidence and review records, and UniSpace remains the operator decision surface, powered by LightSpeed. Alignment is shown only after current evidence validates.</p>
       <div class="site-chain">
         ${authority.map((item, index) => `${index ? "<i>→</i>" : ""}<span>${item}</span>`).join("")}
       </div>

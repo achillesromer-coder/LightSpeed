@@ -12,7 +12,7 @@ from fastapi.testclient import TestClient
 RUNTIME_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RUNTIME_ROOT))
 
-from lightspeed_runtime import ls_go_bridge, result_receipt_browser
+from lightspeed_runtime import ls_go_bridge, ls_go_job_consumer, result_receipt_browser
 
 
 def _results_root(shell: Path) -> Path:
@@ -55,6 +55,67 @@ def _snapshot(root: Path) -> dict[str, tuple[bytes, int]]:
         for path in root.iterdir()
         if path.is_file()
     }
+
+
+def test_result_browser_opens_hash_bound_receipts_by_unique_file_identity(tmp_path):
+    root = _results_root(tmp_path)
+    root.mkdir(parents=True)
+    labels = []
+    for job_id, command_id in ((601, "CMD/a"), (602, "CMD_a")):
+        path = ls_go_job_consumer.result_file_path(tmp_path, command_id)
+        payload = {
+            "schema_version": "lightspeed-go-local-result-v1",
+            "result_id": ls_go_job_consumer.result_id_for(command_id),
+            "command_id": command_id, "job_id": job_id, "task_id": job_id + 100,
+            "status": "completed",
+        }
+        path.write_text(json.dumps(payload), encoding="utf-8")
+        labels.append(path.stem)
+    assert labels[0] != labels[1]
+    assert ls_go_job_consumer.result_id_for("CMD/a") == ls_go_job_consumer.result_id_for("CMD_a")
+
+    listing = result_receipt_browser.list_result_receipts(tmp_path)
+    assert {item["result_id"] for item in listing["results"]} == set(labels)
+    assert {item["embedded_result_id"] for item in listing["results"]} == {"LSGO-RESULT-CMD_a"}
+    assert listing["summary"]["invalid_file_count"] == 0
+    for opaque_id in labels:
+        opened = result_receipt_browser.open_result_receipt(tmp_path, result_id=opaque_id)
+        assert opened["identity"]["result_id"] == opaque_id
+        assert opened["result"]["command_id"] in {"CMD/a", "CMD_a"}
+    with pytest.raises(result_receipt_browser.ResultReceiptNotFound):
+        result_receipt_browser.open_result_receipt(tmp_path, result_id="LSGO-RESULT-CMD_a")
+
+    forged = root / ("LSGO-RESULT-CMD_a-" + "0" * 64 + ".json")
+    forged.write_bytes((root / (labels[0] + ".json")).read_bytes())
+    assert result_receipt_browser.list_result_receipts(tmp_path)["summary"]["invalid_file_count"] == 1
+
+
+def test_result_browser_accepts_job_scoped_identity_hold_without_relabeling(tmp_path):
+    command_id = "GO-TASK-DUPLICATE"
+    path = ls_go_job_consumer.identity_hold_file_path(tmp_path, command_id, 602, 502)
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps({
+        "schema_version": "lightspeed-go-local-result-v1",
+        "result_id": "LSGO-IDENTITY-HOLD-602",
+        "command_id": command_id, "job_id": 602, "task_id": 502, "status": "held",
+    }), encoding="utf-8")
+    listing = result_receipt_browser.list_result_receipts(tmp_path)
+    assert listing["results"][0]["result_id"] == path.stem
+    assert listing["results"][0]["embedded_result_id"] == "LSGO-IDENTITY-HOLD-602"
+    assert result_receipt_browser.open_result_receipt(tmp_path, result_id=path.stem)["result"]["status"] == "held"
+
+
+def test_result_browser_reads_missing_command_hold_by_job_bound_filename(tmp_path):
+    path = ls_go_job_consumer.result_file_path(tmp_path, "MISSING-JOB-603")
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps({
+        "schema_version": "lightspeed-go-local-result-v1",
+        "result_id": "LSGO-RESULT-JOB-603", "command_id": None,
+        "job_id": 603, "task_id": 503, "status": "held",
+    }), encoding="utf-8")
+    listing = result_receipt_browser.list_result_receipts(tmp_path)
+    assert listing["results"][0]["result_id"] == path.stem
+    assert result_receipt_browser.open_result_receipt(tmp_path, result_id=path.stem)["result"]["job_id"] == 603
 
 
 def test_result_receipt_index_is_path_free_bounded_and_read_only(tmp_path):

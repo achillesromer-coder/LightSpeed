@@ -7,7 +7,77 @@ import zipfile
 
 import pytest
 
+from lightspeed_runtime import source_intake
+
 from lightspeed_runtime.source_intake import SourceIntakeError, bind_envelope_to_conversion_plan, build_source_envelope
+
+
+def test_scoped_limits_recover_csv_without_changing_defaults(monkeypatch):
+    monkeypatch.setattr(source_intake, "_MAX_ROWS", 2)
+    data = b"id,value\na,1\nb,2\n"
+    default = build_source_envelope(source_name="a.csv", data=data)
+    reviewed = build_source_envelope(source_name="a.csv", data=data, extraction_limits={"table_rows": 3})
+    assert default["unresolved"]
+    assert not reviewed["unresolved"]
+    assert reviewed["projections"][0]["row_count_sampled"] == 3
+    assert default["sha256"] == reviewed["sha256"]
+    assert default["envelope_sha256"] != reviewed["envelope_sha256"]
+    assert build_source_envelope(source_name="a.csv", data=data)["unresolved"]
+
+
+@pytest.mark.parametrize("limits", [{"text_bytes": True}, {"text_bytes": 0}, {"table_rows": 250001}, {"arbitrary": 1}])
+def test_unbounded_or_unknown_review_limits_are_rejected(limits):
+    with pytest.raises(SourceIntakeError):
+        build_source_envelope(source_name="a.txt", data=b"abc", extraction_limits=limits)
+
+
+def test_exact_text_byte_boundary_is_not_truncated(monkeypatch):
+    monkeypatch.setattr(source_intake, "_MAX_TEXT_BYTES", 3)
+    env = build_source_envelope(source_name="a.txt", data=b"abc")
+    assert not env["unresolved"]
+    assert not env["projections"][0]["truncated"]
+
+
+def test_truncated_html_preserves_native_identity_but_reports_partial_translation(monkeypatch):
+    monkeypatch.setattr(source_intake, "_MAX_TEXT_BYTES", 20)
+    data = b"<p>first paragraph</p><p>omitted paragraph</p>"
+    env = build_source_envelope(source_name="export.html", data=data)
+    assert env["byte_length"] == len(data)
+    assert "source_projection_byte_limit_reached" in env["unresolved"]
+    assert env["native_preservation"]["round_trip_claim"] == "PARTIAL_PROJECTION_ONLY"
+    assert env["lineage"]["canonical_mutation"] is False
+
+
+def test_limited_csv_cannot_claim_lossless_translation(monkeypatch):
+    monkeypatch.setattr(source_intake, "_MAX_ROWS", 2)
+    env = build_source_envelope(source_name="export.csv", data=b"id,value\na,1\nb,2\n")
+    assert len(env["projections"][0]["rows"]) == 2
+    assert "source_projection_structure_limit_reached" in env["unresolved"]
+    assert env["native_preservation"]["round_trip_claim"] == "PARTIAL_PROJECTION_ONLY"
+
+
+def test_xlsx_inline_rich_text_is_retained_without_evaluating_formula():
+    out = io.BytesIO()
+    with zipfile.ZipFile(out, "w") as z:
+        z.writestr("xl/worksheets/sheet1.xml", '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData><row r="1"><c r="A1" t="inlineStr"><is><r><t>Hello </t></r><r><t>CGX</t></r></is></c><c r="B1"><f>1+1</f><v>2</v></c></row></sheetData></worksheet>')
+    env = build_source_envelope(source_name="export.xlsx", data=out.getvalue())
+    sheet = env["projections"][0]["sheets"][0]
+    assert sheet["cells"][0]["value"] == "Hello CGX"
+    assert sheet["formulas"] == [{"ref": "B1", "formula": "1+1"}]
+    assert not env["unresolved"]
+
+
+@pytest.mark.parametrize("data", [b'{', b'{"value": 1}'])
+def test_ready_conversion_plan_does_not_admit_failed_or_truncated_projection(data, monkeypatch):
+    monkeypatch.setattr(source_intake, "_MAX_TEXT_BYTES", 4)
+    env = build_source_envelope(source_name="export.json", data=data)
+    plan = {"schema": "CGX-CONVERSION-PLAN/0.1", "source": {"sha256": env["sha256"], "file_name": "export.json"},
+            "type_profile": {"adapter": env["adapter_id"]},
+            "stages": [{"class": "R1_SEMANTIC_REVERSIBLE", "state": "READY"}]}
+    bound = bind_envelope_to_conversion_plan(env, plan)
+    assert bound["admission_state"] == "BLOCKED_PROJECTION_REVIEW"
+    assert bound["conversion_classes_admitted"] == ["R0_EXACT"]
+    assert all(p.get("admitted_semantic_class") is None for p in bound["projections"])
 
 
 def test_markdown_preserves_native_identity_and_heading_projection():

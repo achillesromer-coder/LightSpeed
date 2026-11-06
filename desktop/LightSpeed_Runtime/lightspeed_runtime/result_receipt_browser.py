@@ -104,15 +104,42 @@ def _receipt_record(path: Path, *, resolved_root: Path) -> tuple[dict[str, Any],
         raise ResultReceiptUnavailable("Result receipt schema is not eligible for this browser")
     embedded_id = _validated_result_id(str(payload.get("result_id") or ""))
     if embedded_id != path.stem:
-        raise ResultReceiptUnavailable("Result receipt identity does not match its fixed filename")
+        # New Smith receipts bind the filename to the original command ID.
+        # Recompute the exact path before exposing the opaque filename as the
+        # browser's unique open ID; never select by a lossy embedded label.
+        from lightspeed_runtime.ls_go_job_consumer import (
+            identity_hold_file_path, result_file_path, result_id_for,
+        )
+
+        command_id = payload.get("command_id")
+        job_id = payload.get("job_id")
+        if command_id is None and type(job_id) is int and job_id > 0:
+            command_id = f"MISSING-JOB-{job_id}"
+            expected_label = f"LSGO-RESULT-JOB-{job_id}"
+        elif isinstance(command_id, str) and command_id:
+            expected_label = result_id_for(command_id)
+        else:
+            raise ResultReceiptUnavailable("Result receipt has no verifiable command identity")
+        expected_name = result_file_path(Path("."), command_id).name
+        if (isinstance(payload.get("command_id"), str)
+                and embedded_id == f"LSGO-IDENTITY-HOLD-{job_id}"
+                and type(job_id) is int and job_id > 0):
+            expected_name = identity_hold_file_path(
+                Path("."), command_id, job_id, payload.get("task_id")
+            ).name
+            expected_label = embedded_id
+        if path.name != expected_name or embedded_id != expected_label:
+            raise ResultReceiptUnavailable("Result receipt identity does not match its fixed filename")
     identity = {
-        "result_id": embedded_id,
+        "result_id": path.stem,
         "size_bytes": int(stat_result.st_size),
         "modified_utc": datetime.fromtimestamp(stat_result.st_mtime, UTC).isoformat(
             timespec="seconds"
         ),
         "sha256": hashlib.sha256(content).hexdigest(),
     }
+    if embedded_id != path.stem:
+        identity["embedded_result_id"] = embedded_id
     return payload, identity
 
 
@@ -141,7 +168,7 @@ def _boolean_state(value: Any) -> str:
 
 
 def _metadata(payload: dict[str, Any], identity: dict[str, Any]) -> dict[str, Any]:
-    return {
+    metadata = {
         "result_id": identity["result_id"],
         "command_id": _string_or_none(payload.get("command_id"), maximum=192),
         "task_id": _integer_or_none(payload.get("task_id")),
@@ -159,6 +186,9 @@ def _metadata(payload: dict[str, Any], identity: dict[str, Any]) -> dict[str, An
         "modified_utc": identity["modified_utc"],
         "sha256": identity["sha256"],
     }
+    if "embedded_result_id" in identity:
+        metadata["embedded_result_id"] = identity["embedded_result_id"]
+    return metadata
 
 
 def _sort_key(item: dict[str, Any]) -> tuple[float, str]:

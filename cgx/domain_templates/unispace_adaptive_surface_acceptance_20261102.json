@@ -1,0 +1,151 @@
+{
+  "schema": "CGX-UNISPACE-ADAPTIVE-SURFACE-ACCEPTANCE/0.1",
+  "status": "SOURCE_ONLY_REVIEW_NOT_DEPLOYED",
+  "owner_lane": "UniSpace product / Cognigrex.cgx",
+  "target": "existing apps/lightspeed-go/src/osShell.ts mount; no second router, runtime, root or backend",
+  "observed_provider": {
+    "repo": "achillesromer-coder/LightSpeed",
+    "base": "main",
+    "base_commit": "eee015e26997a843b80cabd5106694b58559fd4c",
+    "review_branch": "review/unispace-adaptive-task-lenses-20261102",
+    "branch_at_inspection": "AHEAD_OF_MAIN_SOURCE_ONLY_REVIEW_COMMITS",
+    "local_candidate_source": "UNAVAILABLE_TO_THIS_CLOUD_RUN",
+    "verified_policy_blob": "27ca0230e75743448c91482f2ea0a454f67bfab6",
+    "verified_registry_blob": "d38ce3d837af66c05566689dafab743d9e302ec6",
+    "compare_observed_ahead_by": 7,
+    "compare_observed_behind_by": 0,
+    "compare_observed_base_sha": "eee015e26997a843b80cabd5106694b58559fd4c",
+    "operator_adapter_blob": "d5342cd65a9d0d818817b52e57f3c179ab7c57b4",
+    "operator_test_blob": "f600919b197832e958634bda614aea4f7fd3f2f5",
+    "operator_test_execution": "14_OF_14_V8_HARNESS_PASS_NOT_NODE_CI"
+  },
+  "canonical_bindings": {
+    "parent": "Cognigrex.cgx",
+    "surface": "UniSpace R3 permissioned FileSpace",
+    "object_id": "REQUIRED_FROM_ACCEPTED_RESOLVER_NO_SYNTHETIC_DEFAULT",
+    "child_filespace": "REQUIRED_EXACT_SCOPED_CHILD",
+    "evidence_ceiling": "CANNOT_RISE_BY_VIEW_SELECTION",
+    "source_rights": "REQUIRED_BEFORE_HYDRATION",
+    "session": "SERVER_VERIFIED_ISSUER_SCOPE_LEASE_AND_REVOCATION",
+    "source_root": "PRESERVE_ORIGINAL_IMMUTABLE_REFERENCE",
+    "canonical_mutation": false
+  },
+  "projection": {
+    "primary_view_count": 1,
+    "policy_priority": [
+      "security_and_admission",
+      "task_intent",
+      "active_object_domain_and_type",
+      "work_mode",
+      "device_hydration_capability",
+      "role_or_audience",
+      "saved_profile_preferences",
+      "session_override"
+    ],
+    "allowed_primary_views": [
+      "filespace-tree",
+      "topology-graph",
+      "map-spatial",
+      "twin-3d",
+      "network-runtime",
+      "evidence-claim",
+      "hybrid-canonical-cells"
+    ],
+    "secondary_inspector": "OPT_IN_ONLY",
+    "z_depth": [
+      1,
+      2,
+      3
+    ],
+    "family_palette": "PRESENTATION_ONLY_NOT_AUTHORITY",
+    "mobile": "SAME_SCOPE_REDUCED_HYDRATION",
+    "offline": "PUBLIC_SAFE_REDACTED_READ_ONLY_ONLY; PRIVATE_OBJECTS_REQUIRE_FRESH_AUTHENTICATED_SESSION_AND_REVOCATION_CHECK",
+    "offline_cache_policy": {
+      "default": "NO_PRIVATE_OBJECT_OR_SOURCE_METADATA_CACHE",
+      "allowed": "OWNER_APPROVED_PUBLIC_SAFE_REDACTED_METADATA_ONLY",
+      "private_r3_revalidation": "FRESH_ISSUER_SESSION_SCOPE_LEASE_AND_REVOCATION_BEFORE_PRIVATE_HYDRATION",
+      "revoked_or_unverifiable": "DENY_PRIVATE_R3_AND_CLEAR_PRIVATE_CACHE"
+    }
+  },
+  "negative_acceptance_cases": [
+    {
+      "id": "U-A01",
+      "input": "missing or unaccepted Object_ID",
+      "expected": "NO_OBJECT_HYDRATION_FRONTIER"
+    },
+    {
+      "id": "U-A02",
+      "input": "child FileSpace differs from accepted Object_ID binding",
+      "expected": "DENY_CROSS_CHILD_HYDRATION"
+    },
+    {
+      "id": "U-A03",
+      "input": "bridge reachable but Smith consumer PID reused or lease invalid",
+      "expected": "BRIDGE_REACHABLE_CONSUMER_HELD_NO_EXECUTION"
+    },
+    {
+      "id": "U-A04",
+      "input": "unauthenticated or revoked session requests owner/private view",
+      "expected": "NO_PRIVATE_PAYLOAD_OR_STATIC_RESIDUAL"
+    },
+    {
+      "id": "U-A05",
+      "input": "user forces 3D/map without validated frame, units, metric geometry or rights",
+      "expected": "FRONTIER_NOT_FAKE_GEOMETRY"
+    },
+    {
+      "id": "U-A06",
+      "input": "user switches family palette, device, view or Z depth",
+      "expected": "SAME_OBJECT_ID_SOURCE_ROOT_EVIDENCE_CEILING_AND_ACL"
+    },
+    {
+      "id": "U-A07",
+      "input": "private metadata appears in public Vite public/data, review or dist",
+      "expected": "FAIL_PUBLIC_STATIC_BUNDLE"
+    },
+    {
+      "id": "U-A08",
+      "input": "keyboard-only, 390px viewport or reduced motion",
+      "expected": "ONE_PRIMARY_VIEW_ACCESSIBLE_DRAWER_FOCUS_MANAGEMENT"
+    },
+    {
+      "id": "U-A09",
+      "input": "source CI succeeds without host signed DBR/lease or browser readback",
+      "expected": "TESTED_SOURCE_ONLY_NOT_LIVE_VERIFIED"
+    },
+    {
+      "id": "U-A10",
+      "input": "offline, expired lease, revoked session or revocation status unavailable",
+      "expected": "DENY_PRIVATE_OFFLINE_HYDRATION_ALLOW_PUBLIC_SAFE_REDACTED_ONLY"
+    },
+    {
+      "id": "U-A11",
+      "input": "desktop/bridge HTTP 200 without signed issuer, scope, lease and DBR readback",
+      "expected": "BRIDGE_STATUS_ONLY_NO_EXECUTION_AUTHORITY"
+    }
+  ],
+  "pending_source_paths": [
+    "apps/lightspeed-go/src/adaptiveWorkspaceModel.ts",
+    "apps/lightspeed-go/src/adaptiveWorkspace.ts",
+    "apps/lightspeed-go/src/adaptiveWorkspace.css",
+    "apps/lightspeed-go/src/adaptiveWorkspaceModel.test.ts",
+    "apps/lightspeed-go/src/osShell.ts"
+  ],
+  "next_acceptance_sequence": [
+    "obtain exact reviewed source bytes and hashes without public personal-source transfer",
+    "reconcile against current main and preserve existing osShell/Smith behavior",
+    "run TypeScript noEmit and Vite build on exact checked-in branch",
+    "run unit, mobile keyboard/focus, private/public static negatives",
+    "obtain actual authenticated host issuer/ACL/lease and independent browser readback",
+    "owner review before merge or deployment"
+  ],
+  "gates": [
+    "#154",
+    "#158",
+    "#161",
+    "#209",
+    "S92",
+    "S97"
+  ],
+  "release_authorised": false
+}

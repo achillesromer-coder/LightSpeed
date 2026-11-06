@@ -98,7 +98,7 @@ const makeAgentRail = (): HTMLElement => {
   rail.className = "ls-os-rail";
   rail.setAttribute("aria-label", "Cognigrex agent rail");
   rail.innerHTML = `
-    <button class="ls-os-mark" type="button" data-ls-home title="LightSpeed Cognigrex">LS</button>
+    <button class="ls-os-mark" type="button" data-ls-home title="UniSpace · Cognigrex" aria-label="UniSpace home">U</button>
     <div class="ls-os-agent-stack">
       ${AGENT_ROLES.map((agent) => `
         <button class="ls-os-agent" type="button" data-ls-agent="${agent.floor}" title="${escapeText(agent.floor)} — ${escapeText(agent.role)}">
@@ -123,7 +123,7 @@ const makeAgentRail = (): HTMLElement => {
 const makeStatusStrip = (): HTMLElement => {
   const strip = document.createElement("section");
   strip.className = "ls-os-status-strip";
-  strip.setAttribute("aria-label", "LightSpeed operating state");
+  strip.setAttribute("aria-label", "UniSpace operating state");
   strip.innerHTML = `
     <div><span class="ls-os-status-dot" id="ls-os-runtime-dot"></span><strong id="ls-os-runtime">Desktop checking</strong><small>${DEFAULT_DESKTOP_ORIGIN}</small></div>
     <div><span class="ls-os-status-dot stable"></span><strong>Neo operational head</strong><small>specialist-agent orchestration</small></div>
@@ -160,8 +160,8 @@ const makePalette = (): HTMLElement => {
   palette.id = "ls-os-palette";
   palette.hidden = true;
   palette.innerHTML = `
-    <div class="ls-os-palette-card" role="dialog" aria-modal="true" aria-label="LightSpeed command palette">
-      <div class="ls-os-palette-head"><strong>LightSpeed</strong><span>${SHELL_SCHEMA}</span><button type="button" data-ls-close aria-label="Close">×</button></div>
+    <div class="ls-os-palette-card" role="dialog" aria-modal="true" aria-label="UniSpace command palette">
+      <div class="ls-os-palette-head"><strong>UniSpace</strong><span>LightSpeed toolkit</span><button type="button" data-ls-close aria-label="Close">×</button></div>
       <input id="ls-os-palette-input" type="search" autocomplete="off" placeholder="Open workspace, select agent, or route an outcome…" />
       <div id="ls-os-palette-results" class="ls-os-palette-results"></div>
     </div>
@@ -251,7 +251,7 @@ const alignLegacySurfaceCopy = (shell: HTMLElement): void => {
 
   const flow = shell.querySelector<HTMLElement>("#view-system .flow");
   if (flow) {
-    flow.innerHTML = "<span>LS GO</span><i>→</i><span>Neo</span><i>→</i><span>specialist floors</span><i>→</i><span>Morpheus proof</span><i>→</i><span>Achilles gate</span><i>→</i><span>canon / release</span>";
+    flow.innerHTML = "<span>UniSpace</span><i>→</i><span>Neo</span><i>→</i><span>specialist floors</span><i>→</i><span>Morpheus proof</span><i>→</i><span>Achilles gate</span><i>→</i><span>canon / release</span>";
   }
 
   const agentGrid = shell.querySelector<HTMLElement>("#view-system .agent-grid");
@@ -322,7 +322,7 @@ const installShell = (): void => {
   document.documentElement.dataset.lsOsShell = SHELL_SCHEMA;
   document.body.classList.add("ls-os-enabled");
   document.body.dataset.lsFocus = state.focusMode ? "true" : "false";
-  document.title = "LightSpeed · Cognigrex";
+  document.title = "UniSpace · Cognigrex";
 
   document.body.prepend(makeAgentRail());
   shell.prepend(makeWorkflow());
@@ -330,11 +330,11 @@ const installShell = (): void => {
   document.body.append(makePalette());
 
   const heading = shell.querySelector(".topbar h1");
-  if (heading) heading.textContent = "Cognigrex";
+  if (heading) heading.textContent = "UniSpace";
   const eyebrow = shell.querySelector(".topbar .eyebrow");
-  if (eyebrow) eyebrow.textContent = "LightSpeed operating system";
+  if (eyebrow) eyebrow.textContent = "Cognigrex · powered by LightSpeed";
   const lede = shell.querySelector(".topbar .lede");
-  if (lede) lede.textContent = "Neo coordinates specialised purpose agents across intake, workshop execution, proof, canonical consolidation and publish-ready digital artifacts; Achilles governs evidence and release.";
+  if (lede) lede.textContent = "Your Cognigrex workspace for .cgx objects, local tools and evidence. Neo coordinates specialist agents through LightSpeed; Achilles governs evidence and release.";
 
   alignLegacySurfaceCopy(shell);
   bindExistingSurface();

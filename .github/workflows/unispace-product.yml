@@ -1,0 +1,19 @@
+name: UniSpace product carrier
+on:
+  push:
+    paths: ['UniSpace/**', 'tools/verify_unispace_product.py', 'tests/test_unispace_product.py', '.github/workflows/unispace-product.yml']
+  pull_request:
+    paths: ['UniSpace/**', 'tools/verify_unispace_product.py', 'tests/test_unispace_product.py', '.github/workflows/unispace-product.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python tools/verify_unispace_product.py
+      - run: python -m unittest discover -s tests -p test_unispace_product.py

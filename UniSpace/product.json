@@ -1,0 +1,17 @@
+{
+  "schema": "unispace-product-reference-v1",
+  "product": "UniSpace",
+  "carrier": "CGX.cgx",
+  "sha256": "1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
+  "bytes": 3609020,
+  "state_id": "S91",
+  "tracked_files": 432,
+  "release_state": "owner-authorized-public-reference",
+  "application_source": "../apps/lightspeed-go",
+  "toolkit_source": "../desktop/LightSpeed_Runtime",
+  "operational_carrier": "Cognigrex.cgx (host-local S92, not bundled)",
+  "runtime_activated": false,
+  "complete_product_acceptance": false,
+  "extensions": "Use the carrier's existing capability, dependency and frontier registries; no parallel registry.",
+  "license": "Carrier LICENSE.md and THIRD_PARTY_NOTICES.md retained unchanged; public availability does not change license terms."
+}

@@ -1,5 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+*.cgx binary
 .gitattributes text eol=lf
 
 # Vite emits portable LF bundles. Keep clean Windows builds byte-reproducible.

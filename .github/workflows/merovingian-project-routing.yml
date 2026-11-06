@@ -42,6 +42,15 @@ on:
       - "desktop/LightSpeed_Runtime/tests/test_corpus_test_orchestrator.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/source_intake.py"
       - "desktop/LightSpeed_Runtime/tests/test_source_intake.py"
+      - "scripts/prepare_achilles_owner_packet.py"
+      - "tests/test_achilles_owner_packet.py"
+      - "scripts/achilles_local_rag_review.py"
+      - "scripts/achilles_private_corpus_review.py"
+      - "tests/test_achilles_local_rag_review.py"
+      - "scripts/achilles_lsgo_recovery_snapshot.py"
+      - "tests/test_achilles_lsgo_recovery_snapshot.py"
+      - "tests/test_achilles_private_corpus_review.py"
+      - "tests/test_achilles_file_space_launch_review_contract.py"
       - "scripts/project_cgx_source.py"
       - "tests/test_project_cgx_source.py"
       - "desktop/source-manifest.json"
@@ -183,6 +192,7 @@ jobs:
             scripts/validate_lightspeed_surfaces.py \
             scripts/validate_cgx_domain_templates.py \
             scripts/migrate_first_file_semantics_to_s92.py \
+            scripts/achilles_lsgo_recovery_snapshot.py \
             scripts/project_cgx_source.py \
             scripts/run_merovingian_soft_launch.py \
             scripts/run_cognigrex_local_stack.py \
@@ -234,6 +244,11 @@ jobs:
             tests/test_launcher_org_materialization.py \
             tests/test_merovingian_service_integration.py \
             tests/test_run_ls_go_bridge_layout.py \
+            tests/test_achilles_owner_packet.py \
+            tests/test_achilles_local_rag_review.py \
+            tests/test_achilles_private_corpus_review.py \
+            tests/test_achilles_lsgo_recovery_snapshot.py \
+            tests/test_achilles_file_space_launch_review_contract.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_launcher_exe.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_functions_hub_operator_surface.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_operator_home_export_gates.py \
