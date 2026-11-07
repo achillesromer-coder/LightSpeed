@@ -96,7 +96,11 @@ export function mountFirstSpacesReview(root){
   }
   if(layout!==null&&layouts.includes(layout))state.layout=layout;
   else if(select!==null){
-   if(planFirstSpacesReview({...state,focus:select}).state==='SOURCE_REVIEW_ONLY')state.focus=select;
+   if(planFirstSpacesReview({...state,focus:select}).state==='SOURCE_REVIEW_ONLY'){
+    state.focus=select;
+    if(typeof root.dispatchEvent==='function'&&root.ownerDocument.defaultView?.CustomEvent)
+     root.dispatchEvent(new root.ownerDocument.defaultView.CustomEvent('cgx-review-focus',{bubbles:true,detail:{key:select}}));
+   }
   }else if(move!==null){
    const step=Number(target.getAttribute('data-cgx-step'));
    const order=state.order??planFirstSpacesReview(state).order;

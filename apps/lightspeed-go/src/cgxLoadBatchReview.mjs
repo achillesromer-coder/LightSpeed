@@ -100,6 +100,7 @@ export function mountLoadBatchReview(root){
    else if(action==='prepare'){
     state.busy=true;state.message='Hashing the selected references locally…';render();
     state.draft=await buildBatchDraft(state.index,{selectedRefs:[...state.selected],batchSize:state.size});
+    root.dispatchEvent(new root.ownerDocument.defaultView.CustomEvent('cgx-load-batch-prepared',{bubbles:true,detail:state.draft}));
     state.message='Unsigned metadata batch prepared. Native and chain readiness remain held.';
    }else if(action==='export'&&state.draft){
     if(downloadUrl)URL.revokeObjectURL(downloadUrl);

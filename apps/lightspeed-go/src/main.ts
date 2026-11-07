@@ -68,6 +68,8 @@ import { bindObjectReview, loadObjectReview, type ComponentAtlas, type ObjectRev
 import { sourceLinks } from "./sourceRegistry";
 import { mountFirstSpacesReview } from "./cgxFirstSpacesReview.mjs";
 import { mountLoadBatchReview } from "./cgxLoadBatchReview.mjs";
+import { mountPressSurface } from "./cgxPressSurface.mjs";
+import "./cgxPressSurface.css";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
 
 const app = document.getElementById("app");
@@ -191,6 +193,7 @@ app.innerHTML = `
         <div><p class="eyebrow">Canonical representation edge</p><h2>Identity, evidence, horizon, review</h2></div>
         <p>Three bounded local candidates prove the complete intake route. Drive becomes canonical only after owner decision, promotion, and exact readback.</p>
       </article>
+      <div id="cgx-press-surface" class="graph-stack"></div>
       <div id="cgx-first-spaces-review" class="graph-stack"></div>
       <div id="cgx-load-batch-review" class="graph-stack"></div>
       <div id="object-review-catalogue" class="graph-stack">
@@ -900,6 +903,7 @@ void refreshDesktop();
 
 mountFirstSpacesReview(byId("cgx-first-spaces-review"));
 mountLoadBatchReview(byId("cgx-load-batch-review"));
+mountPressSurface(byId("cgx-press-surface"));
 const objectReviewMount = byId("object-review-catalogue");
 const objectReviewUrl = new URL("./data/cgx_object_review_catalogue.json", document.baseURI).toString();
 const componentAtlasUrl = new URL("./data/component_geometry_atlas_public_review.json", document.baseURI).toString();
