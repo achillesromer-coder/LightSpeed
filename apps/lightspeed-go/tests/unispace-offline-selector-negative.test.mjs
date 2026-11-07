@@ -111,3 +111,32 @@ test("offline forged truthy ACL flags cannot hydrate private owner progress", ()
     }
   }
 });
+
+// #158: never forward private worker metadata, arbitrary source bodies or
+// malformed progress numbers into the owner R3 scalar projection.
+test("owner progress projection redacts injected private fields and malformed counters", () => {
+  const id = "Cognigrex.cgx:/FileSpace/qualified-candidate-1";
+  const x = envelope(id);
+  x.bridge.reachable = true;
+  x.checkpoint.database_integrity_verified = true;
+  x.checkpoint.independently_verified_committed = -1;
+  x.latest.completed = Number.POSITIVE_INFINITY;
+  x.latest.observed_attempted = 1.5;
+  x.latest.error = "secret token at /private/owner/database is locked";
+  x.latest.raw_source_text = "PRIVATE_SOURCE_BODY";
+  x.latest.access_token = "PRIVATE_TOKEN";
+  x.source.private_locator = "C:/private/source";
+  const view = projectOwnerProgress(x);
+  assert.equal(view.access, "PRIVATE_SOURCE_REVIEW");
+  assert.equal(view.progress.latest_state, "FAIL_CLOSED");
+  assert.equal(view.progress.error_class, "SQLITE_DATABASE_LOCKED");
+  assert.equal(view.progress.independently_verified_committed, null);
+  assert.equal(view.progress.latest_completed, null);
+  assert.equal(view.progress.observed_attempted, null);
+  assert.equal(view.dispatch_authorized, false);
+  assert.equal(view.public_publish_authorized, false);
+  const serialized = JSON.stringify(view);
+  for (const secret of ["PRIVATE_SOURCE_BODY", "PRIVATE_TOKEN", "C:/private/source", "/private/owner/"]) {
+    assert.equal(serialized.includes(secret), false, secret);
+  }
+});
