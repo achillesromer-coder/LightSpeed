@@ -58,7 +58,7 @@ class ShellPackagingTests(unittest.TestCase):
        manifest=json.loads(z.read("MANIFEST.json"))
        self.assertFalse(manifest["public_release_approved"])
        self.assertFalse(manifest["rights_qualified"])
-       self.assertEqual(len(json.loads(z.read("metadata/first-spaces-lattice.json"))["nodes"]),11)
+       self.assertEqual(len(json.loads(z.read("metadata/first-spaces-lattice.json"))["nodes"]),12)
        self.assertNotIn("SECRETS_MUST_NOT_SHIP",b"".join(z.read(x) for x in names).decode())
  def test_refuse_external_or_unlisted_script(self):
     (self.build/"index.html").write_text('<script src="https://outside/evil.js"></script>'+
