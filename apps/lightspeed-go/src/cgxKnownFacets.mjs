@@ -1,6 +1,7 @@
 /** Derived facet view over verified local composition bytes; never another object registry. */
 import {exportComposition} from './cgxPressComposition.mjs';
 import {restoreBatchDraft} from './cgxLoadBatchDraft.mjs';
+import {planFamilyAddresses} from './cgxFamilyAddressModel.mjs';
 export async function resolveKnownFacets(composition){
  const verified=await exportComposition(composition);
  const objects=composition.assets.map(a=>({
@@ -33,7 +34,7 @@ export async function resolveLoadReferenceFacets(text){
  }
  return {schema:'CGX-LOAD-FACET-PRERESOLUTION-REVIEW/0.1',parent:'Cognigrex.cgx',load_plan_sha256:draft.plan_sha256,
   source_reference_count:draft.source_records.length,selected_reference_count:draft.summary.selected_records,batch_count:draft.summary.batches,
-  candidate_groups:[...claimedGroups.values()],deduplication:'Declared same-digest groups only; no source deletion or semantic/native identity merge.',
+  candidate_groups:[...claimedGroups.values()],family_address_review:planFamilyAddresses([...claimedGroups.keys()]),deduplication:'Declared same-digest groups only; no source deletion or semantic/native identity merge.',
   representation_options:['flat-2d','dodecagon','folded-sheet','stacked-sheets','volume-3d'],representation_geometry_verified:false,
   socialspace:{parent:'FileSpace',kind:'constituent',user_domain_ref:null,profile_mint_authorized:false,visibility:'private',searchable:false,networking_enabled:false},
   native_mint_ready_objects:0,canonical_write:false,source_body_copies:0};

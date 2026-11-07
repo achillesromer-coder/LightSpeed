@@ -2,17 +2,30 @@ import {emptyComposition,sourceAsset,addAsset,addLayer,updateLayer,moveLayer,par
 import {planFirstSpacesReview} from './cgxFirstSpacesReviewModel.mjs';
 import {restoreBatchDraft} from './cgxLoadBatchDraft.mjs';
 import {resolveKnownFacets} from './cgxKnownFacets.mjs';
+import {createPressHistory} from './cgxPressHistory.mjs';
 /** The Objects composition facet, not a second FileSpace, registry or execution shell. */
 export function mountPressSurface(root){
  const doc=root.ownerDocument;let composition=emptyComposition(),selected=null,busy=false,stack='all',editing=false,pressedJson='',resolvedFacets=null,showSources=true,showInspector=true;
  const families=planFirstSpacesReview().nodes;
+ const history=createPressHistory(composition);
  const urls=new Map();let message='Drop local files to inspect and layer them. Save a draft before closing this page.';
  const el=(tag,text='',className='')=>{const e=doc.createElement(tag);e.textContent=text;e.className=className;return e;};
  const button=(text,fn)=>{const b=el('button',text);b.type='button';b.addEventListener('click',fn);return b;};
  const field=(title,input)=>{const label=el('label',title);label.append(input);return label;};
- const input=(label,value,fn,type='text')=>{const e=el('input');e.type=type;e.value=String(value);e.setAttribute('aria-label',label);e.addEventListener('input',()=>{editing=true;try{fn(type==='number'?Number(e.value):e.value);}finally{editing=false;}});e.addEventListener('change',()=>render());return e;};
- const run=async fn=>{const repaint=!editing;try{await fn();}catch(e){message=e.message;}if(repaint)render();};
+ const input=(label,value,fn,type='text')=>{const e=el('input');e.type=type;e.value=String(value);e.setAttribute('aria-label',label);e.addEventListener('input',()=>{editing=true;try{fn(type==='number'?Number(e.value):e.value);}finally{editing=false;}});e.addEventListener('change',()=>{history.record(composition);syncPreview();});return e;};
+ const run=async fn=>{const repaint=!editing;try{await fn();}catch(e){message=e.message;}if(repaint)render();else syncPreview();};
  const update=patch=>run(()=>{composition=updateLayer(composition,selected,patch);});
+ const removeSelected=()=>{if(!selected)return;const id=selected;composition={...composition,layers:composition.layers.filter(x=>x.id!==id).map(x=>x.parent_id===id?{...x,parent_id:null}:x)};selected=null;render();};
+ const undo=()=>{history.record(composition);composition=history.undo();if(!composition.layers.some(l=>l.id===selected))selected=composition.layers.at(-1)?.id||null;render();};
+ const redo=()=>{composition=history.redo();if(!composition.layers.some(l=>l.id===selected))selected=composition.layers.at(-1)?.id||null;render();};
+ function syncPreview(){
+  const l=composition.layers.find(l=>l.id===selected),item=[...root.querySelectorAll('[data-press-layer]')].find(e=>e.dataset.pressLayer===selected);
+  if(l&&item){Object.assign(item.style,{left:l.x+'%',top:l.y+'%',width:l.width+'%',height:l.height+'%',opacity:l.opacity/100,color:l.color,background:l.kind==='background'?l.color:'transparent'});
+   if(l.kind==='information'||l.kind==='contract')item.replaceChildren(el(l.kind==='contract'?'pre':'div',l.text||l.name));
+   if(l.kind==='table'){try{const table=el('table');for(const row of parseCsv(l.text).slice(0,15)){const tr=el('tr');for(const cell of row.slice(0,10))tr.append(el('td',cell));table.append(tr);}item.replaceChildren(table);}catch{item.replaceChildren(el('p','Table format needs review.'));}}
+  }
+  const u=root.querySelector('[data-press-history="undo"]'),r=root.querySelector('[data-press-history="redo"]');if(u)u.disabled=!history.canUndo;if(r)r.disabled=!history.canRedo;
+ }
  const pick=async files=>{
   if(busy)return;busy=true;render();let added=0,duplicates=0,held=0;
   try{for(const f of Array.from(files).slice(0,32)){
@@ -35,12 +48,15 @@ export function mountPressSurface(root){
  const imageUrl=a=>{if(!urls.has(a.id)){const bytes=Uint8Array.from(atob(a.base64),c=>c.charCodeAt(0));urls.set(a.id,URL.createObjectURL(new Blob([bytes],{type:a.mime})));}return urls.get(a.id);};
  const visible=l=>l.visible&&(!l.parent_id||composition.layers.find(p=>p.id===l.parent_id)&&visible(composition.layers.find(p=>p.id===l.parent_id)));
  function render(){
+  history.record(composition);
+  const keepCanvasFocus=root.contains(doc.activeElement)&&!doc.activeElement?.matches?.('input,textarea,select');
   root.replaceChildren();const panel=el('article','','panel cgx-composer'+(!showSources&&!showInspector?' press-focused':''));panel.append(el('p','UniSpace · FileSpace / visual Press','eyebrow'),el('h2','Layer your object'));
   panel.append(el('p','Arrange source facets on one surface. Image, information and contract views follow the selected layer. Original bytes remain unchanged.'));
   const meta=el('div','','press-toolbar');meta.append(field('Composition title',input('Composition title',composition.title,v=>{composition.title=v.slice(0,180);})),field('Existing object / family reference',input('Existing object or family reference',composition.object_ref,v=>{composition.object_ref=v.slice(0,500);})));panel.append(meta);
   const family=el('select');family.setAttribute('aria-label','Existing review family');const unset=el('option','Choose existing review family / space');unset.value='';family.append(unset);for(const node of families){const o=el('option',node.label);o.value=node.key;family.append(o);}family.value=composition.object_ref;family.addEventListener('change',()=>{composition.object_ref=family.value;message='Existing review reference selected; native identity remains unverified.';render();});panel.append(field('Family / space (existing review hierarchy)',family));
   const toolbar=el('div','','press-toolbar');const file=el('input');file.type='file';file.multiple=true;file.setAttribute('aria-label','Add local files or saved composition');file.disabled=busy;file.addEventListener('change',()=>pick(file.files));toolbar.append(file);
   toolbar.append(button(showSources?'Close sources panel':'Open sources panel',()=>{showSources=!showSources;render();}),button(showInspector?'Close inspector panel':'Open inspector panel',()=>{showInspector=!showInspector;render();}),button('Focus composition',()=>{showSources=false;showInspector=false;render();}));
+  const undoButton=button('Undo',undo);undoButton.dataset.pressHistory='undo';undoButton.disabled=!history.canUndo;const redoButton=button('Redo',redo);redoButton.dataset.pressHistory='redo';redoButton.disabled=!history.canRedo;toolbar.append(undoButton,redoButton);
   for(const kind of KINDS)toolbar.append(button('Add '+kind,()=>run(()=>{composition=addLayer(composition,kind);selected=composition.layers.at(kind==='background'?0:-1).id;})));
   toolbar.append(button('Press · save premint composition',()=>run(async()=>{
    const draft=await exportComposition(composition);pressedJson=JSON.stringify(draft,null,2);const url=URL.createObjectURL(new Blob([pressedJson],{type:'application/json'}));const a=el('a');a.href=url;a.download='CGX_Press_'+draft.composition_sha256.slice(0,16)+'.review.json';doc.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);message='Preparation download requested · SHA-256 '+draft.composition_sha256;
@@ -98,19 +114,31 @@ export function mountPressSurface(root){
    const parent=el('select');parent.setAttribute('aria-label','Layer parent');const none=el('option','No layer parent');none.value='';parent.append(none);for(const p of composition.layers.filter(p=>p.id!==l.id)){const o=el('option',p.name);o.value=p.id;parent.append(o);}parent.value=l.parent_id||'';parent.addEventListener('change',()=>update({parent_id:parent.value||null}));inspector.append(field('Hierarchy',parent));
    for(const key of ['x','y','width','height','opacity']){const n=input('Layer '+key,l[key],v=>update({[key]:v}),'number');n.min='0';n.max='100';n.step='1';inspector.append(field(key+' %',n));}
    inspector.append(field('Colour',input('Layer colour',l.color,v=>update({color:v}),'color')));
-   const text=el('textarea');text.rows=7;text.value=l.text;text.setAttribute('aria-label','Layer content');text.addEventListener('input',()=>{editing=true;update({text:text.value});editing=false;});text.addEventListener('change',()=>render());inspector.append(field(l.kind==='table'?'CSV table':l.kind==='contract'?'Contract data (inert)':'Information',text));
+   const text=el('textarea');text.rows=7;text.value=l.text;text.setAttribute('aria-label','Layer content');text.addEventListener('input',()=>{editing=true;update({text:text.value});editing=false;});text.addEventListener('change',()=>{history.record(composition);syncPreview();});inspector.append(field(l.kind==='table'?'CSV table':l.kind==='contract'?'Contract data (inert)':'Information',text));
    inspector.append(field('Source / shorthand reference',input('Layer source reference',l.source_ref,v=>update({source_ref:v}))));
-   inspector.append(button(l.visible?'Hide layer':'Show layer',()=>update({visible:!l.visible})),button('Remove from composition',()=>{composition={...composition,layers:composition.layers.filter(x=>x.id!==l.id).map(x=>x.parent_id===l.id?{...x,parent_id:null}:x)};selected=null;render();}));
+   inspector.append(button(l.visible?'Hide layer':'Show layer',()=>update({visible:!l.visible})),button('Remove from composition',removeSelected));
    const a=composition.assets.find(a=>a.id===l.asset_id);inspector.append(el('small',a?`${a.handler} · original SHA-256 ${a.id} · rights unverified`:'Display facet · no source identity bound'));
   }else inspector.append(el('p','Select a layer to inspect its content, placement, source or contract data.'));
   grid.append(library,center,inspector);panel.append(grid);
   const restore=el('details');restore.append(el('summary','Restore a saved composition from JSON'));const pasted=el('textarea');pasted.rows=3;pasted.setAttribute('aria-label','Saved composition JSON');restore.append(pasted,button('Restore composition JSON',()=>run(async()=>{const next=await restoreComposition(pasted.value);if(composition.layers.length&&!doc.defaultView.confirm('Replace this page’s composition with the saved draft?'))return;composition=next;selected=next.layers.at(-1)?.id||null;message='Restored and verified source bytes, layers and preparation digest.';})));panel.append(restore);
   panel.append(el('p','Private local preparation · changes stay in this page until saved · source rights unverified · contracts are inspected as data · native mint, publication and execution remain unset.','muted'));root.append(panel);
+  if(keepCanvasFocus){const target=[...root.querySelectorAll('[data-press-layer]')].find(e=>e.dataset.pressLayer===selected)||root.querySelector('[data-press-history="undo"]');target?.focus({preventScroll:true});}
  }
  const onFocus=e=>{if(families.some(n=>n.key===e.detail?.key)){composition.object_ref=e.detail.key;message='Selected existing family / space; your composition layers are retained.';render();}};
  const bindLoad=async draft=>{const verified=await restoreBatchDraft(JSON.stringify(draft));const d=verified.draft;composition.load_plan={plan_sha256:d.plan_sha256,references:d.summary.selected_records,batches:d.summary.batches,mint_ready:0};composition.object_ref='facet.load';message='Linked the existing verified unsigned LOAD plan. No launch execution enabled.';};
  const onLoad=e=>run(()=>bindLoad(e.detail));
  doc.addEventListener('cgx-review-focus',onFocus);
  doc.addEventListener('cgx-load-batch-prepared',onLoad);
- render();return {dispose(){doc.removeEventListener('cgx-review-focus',onFocus);doc.removeEventListener('cgx-load-batch-prepared',onLoad);for(const u of urls.values())URL.revokeObjectURL(u);root.replaceChildren();}};
+ const keydown=e=>{
+  if(e.defaultPrevented)return;
+  const mod=e.ctrlKey||e.metaKey,key=e.key.toLowerCase();
+  if(mod&&key==='s'){e.preventDefault();[...root.querySelectorAll('button')].find(b=>b.textContent==='Press · save premint composition')?.click();return;}
+  if(e.target?.closest?.('input,textarea,select,[contenteditable="true"]'))return;
+  if(mod&&key==='z'){e.preventDefault();e.shiftKey?redo():undo();}
+  else if(mod&&key==='y'){e.preventDefault();redo();}
+  else if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();removeSelected();}
+  else if(e.key==='Escape'){selected=null;render();}
+ };
+ root.addEventListener('keydown',keydown);
+ render();return {dispose(){root.removeEventListener('keydown',keydown);doc.removeEventListener('cgx-review-focus',onFocus);doc.removeEventListener('cgx-load-batch-prepared',onLoad);for(const u of urls.values())URL.revokeObjectURL(u);root.replaceChildren();}};
 }

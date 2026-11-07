@@ -1,4 +1,5 @@
 import {presentationStyle} from './cgxPresentationPreferences.mjs';
+import {planFamilyAddresses} from './cgxFamilyAddressModel.mjs';
 /**
  * Additive preview on the existing UniSpace Objects tab, not another OS shell.
  * No host API, mint issuer, remote effects, source access or persistent approval.
@@ -35,6 +36,10 @@ export function mountFirstSpacesReview(root){
   modes.setAttribute('aria-label','Choose first-spaces view');
   for(const mode of layouts)modes.append(button(mode,'data-cgx-layout',mode,mode===plan.layout));
   section.append(modes);
+  const addresses=planFamilyAddresses(plan.nodes.map(n=>n.key));
+  const addressing=el('details');addressing.append(el('summary','173 object slots + 174 reference · proposed family addressing'));
+  addressing.append(el('p','Up to 173 existing references per group; overflow folds into referenced umbrella groups. Position 174 refers to its own group and is never minted. Empty slots create no objects. This is an addressing proposal, not a verified geometry catalogue or ternary encoding.'));
+  addressing.append(el('pre',JSON.stringify(addresses,null,2)));section.append(addressing);
   const prefs=el('fieldset');prefs.append(el('legend','Appearance and display region'));
   const fields=[['background',['midnight','slate','paper']],['hue',[205,145,35,285]],['density',['comfortable','compact']],['motion',['reduced','system']],['locale',['en','en-AU','en-GB','en-US','de','fr','ar']],['region',['unspecified','AU','NZ','GB','US','ZA','DE']]];
   for(const [key,values] of fields){
