@@ -16,13 +16,15 @@ const raw=[
  ['space.filespace','FileSpace','functional-space','family.cognigrex',['facet.load'],'evidence'],
  ['space.unispace-control','UniSpace FileSpace control','product-facet','space.filespace',['space.filespace'],'presentation'],
  ['space.dataspace','DataSpace','functional-space','space.filespace',['space.filespace','space.unispace-control'],'evidence'],
+ ['space.socialspace','SocialSpace','constituent-space','space.filespace',['space.filespace'],'opt-in-social'],
  ['space.printspace','PrintSpace','functional-space','space.dataspace',['space.dataspace'],'creative'],
  ['facet.ccc','CCC / skill routing','orchestration-facet','facet.load',['facet.load','family.ls'],'execution'],
 ];
 const NODES=Object.freeze(raw.map(([key,label,kind,parent,requires,role])=>Object.freeze({
  key,label,kind,parent,requires:Object.freeze(requires),role,
  candidate_object_id:null,source_rights:'UNVERIFIED',
- native_issuer:'UNVERIFIED',native_minted:false
+ native_issuer:'UNVERIFIED',native_minted:false,
+ ...(key==='space.socialspace'?{profile_mint_authorized:false,visibility:'private',searchable:false,networking_enabled:false,user_domain_ref:null}:{})
 })));
 const KEYS=new Set(NODES.map(n=>n.key));
 const validOrder=order=>Array.isArray(order)&&order.length===NODES.length&&

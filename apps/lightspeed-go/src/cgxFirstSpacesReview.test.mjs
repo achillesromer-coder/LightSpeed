@@ -27,7 +27,7 @@ const selectOrder=root=>all(root).filter(x=>x.getAttribute('data-cgx-select')!==
 test('initial lattice is one parent, one LOAD and provenance-held first spaces',()=>{
  const model=planFirstSpacesReview();
  assert.equal(model.state,'SOURCE_REVIEW_ONLY');
- assert.equal(model.nodes.length,11);
+ assert.equal(model.nodes.length,12);
  assert.equal(model.nodes.filter(x=>x.kind==='canonical-parent').length,1);
  assert.equal(model.nodes.filter(x=>x.key==='facet.load').length,1);
  assert.equal(model.parent_identity_status,'SOURCE_DESIGN_NOT_NATIVE_ROOT');
@@ -36,6 +36,12 @@ test('initial lattice is one parent, one LOAD and provenance-held first spaces',
  assert.equal(model.may_deploy,false);
  assert.equal(model.may_publish,false);
  for(const n of model.nodes){assert.equal(n.source_rights,'UNVERIFIED');assert.equal(n.candidate_object_id,null);}
+});
+test('SocialSpace is an opt-in FileSpace constituent, with no profile or user-domain mint inferred',()=>{
+ const social=planFirstSpacesReview().nodes.find(n=>n.key==='space.socialspace');
+ assert.equal(social.parent,'space.filespace');assert.equal(social.kind,'constituent-space');
+ assert.equal(social.profile_mint_authorized,false);assert.equal(social.visibility,'private');
+ assert.equal(social.searchable,false);assert.equal(social.networking_enabled,false);assert.equal(social.user_domain_ref,null);
 });
 test('GUI rearrangement and view switching are live but do not change press sequence',()=>{
  const root=mount();

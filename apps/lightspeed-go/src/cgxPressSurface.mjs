@@ -1,9 +1,10 @@
 import {emptyComposition,sourceAsset,addAsset,addLayer,updateLayer,moveLayer,parseCsv,exportComposition,restoreComposition,KINDS} from './cgxPressComposition.mjs';
 import {planFirstSpacesReview} from './cgxFirstSpacesReviewModel.mjs';
 import {restoreBatchDraft} from './cgxLoadBatchDraft.mjs';
+import {resolveKnownFacets} from './cgxKnownFacets.mjs';
 /** The Objects composition facet, not a second FileSpace, registry or execution shell. */
 export function mountPressSurface(root){
- const doc=root.ownerDocument;let composition=emptyComposition(),selected=null,busy=false,stack='all',editing=false,pressedJson='';
+ const doc=root.ownerDocument;let composition=emptyComposition(),selected=null,busy=false,stack='all',editing=false,pressedJson='',resolvedFacets=null;
  const families=planFirstSpacesReview().nodes;
  const urls=new Map();let message='Drop local files to inspect and layer them. Save a draft before closing this page.';
  const el=(tag,text='',className='')=>{const e=doc.createElement(tag);e.textContent=text;e.className=className;return e;};
@@ -43,6 +44,8 @@ export function mountPressSurface(root){
   toolbar.append(button('Press · save premint composition',()=>run(async()=>{
    const draft=await exportComposition(composition);pressedJson=JSON.stringify(draft,null,2);const url=URL.createObjectURL(new Blob([pressedJson],{type:'application/json'}));const a=el('a');a.href=url;a.download='CGX_Press_'+draft.composition_sha256.slice(0,16)+'.review.json';doc.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);message='Preparation download requested · SHA-256 '+draft.composition_sha256;
   })));panel.append(toolbar);
+  toolbar.append(button('Resolve known facets',()=>run(async()=>{resolvedFacets=await resolveKnownFacets(composition);message='Known facets resolved from verified local bytes. Unknown facets remain unavailable; source bodies are referenced once.';})));
+  if(resolvedFacets){const known=el('details');known.append(el('summary','Last resolved source objects / known facets'));known.append(el('pre',JSON.stringify({composition_sha256:resolvedFacets.composition_sha256,source_objects:resolvedFacets.objects.map(o=>({source_ref:o.source_ref,known_fields:Object.keys(o.known),byte_size:o.known.byte_size,presentation_facets:o.presentation_facets,unresolved:o.unresolved})),display_only_layers:resolvedFacets.display_only_layers,new_database:false},null,2)));panel.append(known);}
   if(pressedJson){const saved=el('details');saved.append(el('summary','Last pressed snapshot · JSON save fallback'));const output=el('textarea');output.readOnly=true;output.rows=4;output.value=pressedJson;output.setAttribute('aria-label','Last pressed composition JSON');saved.append(output,button('Copy pressed JSON',()=>run(async()=>{await doc.defaultView.navigator.clipboard.writeText(pressedJson);message='Pressed JSON copied. Save it as a local .review.json file.';})),el('p','This is the last pressed snapshot. Press again after changing the composition.'));panel.append(saved);}
   const launch=el('div','','press-launch');launch.append(el('strong','Launch order: LOAD library → accepted LOAD completion → Grex families'),el('p',composition.load_plan?`${composition.load_plan.references} LOAD references · ${composition.load_plan.batches} sequential batches · 0 mint-ready · plan ${composition.load_plan.plan_sha256}`:'Prepare or restore the existing LOAD batch below to link its exact plan to this composition.'));
   launch.append(button('Prepare / inspect LOAD sequence',()=>doc.querySelector('#cgx-load-batch-review')?.scrollIntoView({behavior:'smooth'})),el('span','Mint held · signed launch adapter, source rights, native identities and DBR not accepted'));panel.append(launch);
