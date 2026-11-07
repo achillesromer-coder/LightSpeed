@@ -63,7 +63,7 @@ def uos_artifacts(build:Path,viewer:Path,repo:Path):
     matrix=[
       {"id":"frontend_ui","state":"SOURCE_COMPILED","proof":"compiled asset hashes"},
       {"id":"public_viewer","state":"SOURCE_VERIFIED","proof":"12-file allowlist hashes"},
-      {"id":"first_spaces","state":"SOURCE_MODEL_ONLY","proof":"11-node pinned dependency graph"},
+      {"id":"first_spaces","state":"SOURCE_MODEL_ONLY","proof":"12-node pinned dependency graph; SocialSpace is a FileSpace constituent"},
       {"id":"load_batch_preparation","state":"LOCAL_UNSIGNED_METADATA_REVIEW","proof":"local index import, source inspection, deterministic batches and verified draft restore; chain binding unset"},
       {"id":"native_runtime","state":"SOURCE_PACKAGED_NOT_INSTALLED","proof":f"{count} Python syntax-qualified modules"},
       {"id":"desktop_shell","state":"NOT_BUNDLED","proof":"portable signed installers not accepted"},

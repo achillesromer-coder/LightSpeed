@@ -35,6 +35,12 @@ class ShellPackagingTests(unittest.TestCase):
        "assets":assets
     }))
  def tearDown(self):self.temp.cleanup()
+ def test_socialspace_is_present_as_constituent_without_automatic_profile_mint(self):
+    from package_unispace_premint import static_lattice,PROJECT
+    lattice=static_lattice(PROJECT)
+    social=next(n for n in lattice['nodes'] if n['key']=='space.socialspace')
+    self.assertEqual((social['parent'],social['kind']),('space.filespace','constituent-space'))
+    self.assertNotIn('space.socialspace',lattice['sequence'])
  def test_public_shell_and_viewer_zip_are_deterministic_and_data_excluded(self):
     (self.build/"data").mkdir()
     (self.build/"data/private.json").write_text('SECRETS_MUST_NOT_SHIP')

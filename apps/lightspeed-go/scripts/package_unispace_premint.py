@@ -83,7 +83,10 @@ def static_lattice(repo:Path):
                       capture_output=True,text=True,timeout=15,check=True)
     x=json.loads(cp.stdout)
     require(x["parent"]=="cgx:root:cognigrex" and x["load_alias"]=="LOAD.cgx" and
-            len(x["nodes"])==11 and len(x["sequence"])==11 and
+            len(x["nodes"])==12 and len(x["sequence"])==11 and
+            "space.socialspace" not in x["sequence"] and
+            any(n["key"]=="space.socialspace" and n["parent"]=="space.filespace" and
+                n["kind"]=="constituent-space" for n in x["nodes"]) and
             not x["native_minted"] and not x["may_sign"],"LATTICE_ADMISSION_MISMATCH")
     return x
 def product_artifacts(build:Path,viewer:Path,repo:Path):
@@ -127,7 +130,7 @@ def product_artifacts(build:Path,viewer:Path,repo:Path):
       "======================================================\n"
       "shell/index.html : compiled UniSpace UI and first-spaces review control.\n"
       "viewer/cgx/index.html : separately allowlisted public-safe CGX preview.\n"
-      "metadata/first-spaces-lattice.json : 11-node source-only topological model.\n"
+      "metadata/first-spaces-lattice.json : 12-node source-only topological model.\n"
       "metadata/ccc-next-network-plan.json : NOT an active network.\n"
       "All LOAD/Alexandria/native issuer/DBR/provider data and private review files are EXCLUDED.\n"
       "Some dynamic panels need authenticated external data and may show unavailable states.\n"
