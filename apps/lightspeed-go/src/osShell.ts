@@ -2,6 +2,7 @@ import "./osShell.css";
 import { DEFAULT_DESKTOP_ORIGIN, readDesktopStatus, type Floor } from "./desktopBridge";
 import {
   AGENT_ROLES,
+  OBJECT_WORKSPACES, resolveObjectWindows, type ObjectWorkspace,
   inferWorkflowStage,
   normalizeShellView,
   routeOperationalFloor,
@@ -20,6 +21,8 @@ interface ShellState {
   activeView: ShellView;
   activeAgent: Floor;
   focusMode: boolean;
+  objectWindows?: ObjectWorkspace[];
+  activeObjectWindow?: ObjectWorkspace;
 }
 
 const defaultState: ShellState = {
@@ -38,6 +41,8 @@ const readState = (): ShellState => {
       activeView: shellViewFromSearch(window.location.search, parsed.activeView),
       activeAgent: floor,
       focusMode: Boolean(parsed.focusMode),
+      objectWindows:resolveObjectWindows(parsed.objectWindows,parsed.activeObjectWindow).open,
+      activeObjectWindow:resolveObjectWindows(parsed.objectWindows,parsed.activeObjectWindow).active,
     };
   } catch {
     return { ...defaultState };
@@ -338,6 +343,7 @@ const installShell = (): void => {
 
   alignLegacySurfaceCopy(shell);
   bindExistingSurface();
+  installObjectWorkspace();
   setActiveView(state.activeView);
   setActiveAgent(state.activeAgent);
 
@@ -366,3 +372,25 @@ const installShell = (): void => {
 };
 
 queueMicrotask(installShell);
+
+function installObjectWorkspace(): void {
+  const view=document.getElementById("view-objects"); if(!view)return;
+  const bar=document.createElement("nav");bar.className="ls-object-windows";bar.setAttribute("aria-label","Object workspace windows");
+  const panes=OBJECT_WORKSPACES.map(item=>({item,node:document.getElementById(item.element)}));
+  let windows=resolveObjectWindows(state.objectWindows,state.activeObjectWindow);
+  const activate=(id:ObjectWorkspace)=>{windows=resolveObjectWindows([...windows.open,id],id);render();};
+  const render=()=>{
+    writeState({objectWindows:windows.open,activeObjectWindow:windows.active});bar.replaceChildren();
+    for(const id of windows.open){const item=OBJECT_WORKSPACES.find(x=>x.id===id)!;const group=document.createElement("div");group.className="ls-object-window";
+      const select=document.createElement("button");select.type="button";select.textContent=item.label;select.setAttribute("aria-pressed",String(id===windows.active));select.addEventListener("click",()=>activate(id));
+      const close=document.createElement("button");close.type="button";close.textContent="×";close.setAttribute("aria-label","Close "+item.label+" window");close.disabled=windows.open.length===1;
+      close.addEventListener("click",()=>{windows=resolveObjectWindows(windows.open.filter(x=>x!==id),windows.active);render();});group.append(select,close);bar.append(group);
+    }
+    const picker=document.createElement("select");picker.setAttribute("aria-label","Open workspace window");const blank=document.createElement("option");blank.value="";blank.textContent="+ Open window";picker.append(blank);
+    for(const item of OBJECT_WORKSPACES){const option=document.createElement("option");option.value=item.id;option.textContent=item.label;picker.append(option);}picker.addEventListener("change",()=>{if(picker.value)activate(picker.value as ObjectWorkspace);});bar.append(picker);
+    for(const {item,node} of panes)if(node){node.dataset.cgxWorkspacePane=item.id;node.hidden=item.id!==windows.active;}
+    view.dataset.activeObjectWindow=windows.active;
+  };
+  view.prepend(bar);render();
+  document.addEventListener("cgx-open-object-tool",event=>{const id=(event as CustomEvent).detail?.id;if(OBJECT_WORKSPACES.some(x=>x.id===id))activate(id);});
+}
