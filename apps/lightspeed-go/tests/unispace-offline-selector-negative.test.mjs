@@ -91,3 +91,23 @@ test("offline progress cannot hydrate a stale source revision or bypass rights",
   assert.equal(denied.object_id, null);
   assert.equal(denied.progress, null);
 });
+
+// A deserialised offline file is untrusted: truthy strings and numeric flags
+// must never impersonate host-verified boolean grants (#158).
+test("offline forged truthy ACL flags cannot hydrate private owner progress", () => {
+  const id = "Cognigrex.cgx:/FileSpace/qualified-candidate-1";
+  for (const field of ["session_verified", "host_handshake_verified",
+    "root_acl_verified", "object_acl_verified", "source_rights_verified"]) {
+    for (const forged of ["true", 1, {}, []]) {
+      const x = envelope(id);
+      x.bridge.reachable = true;
+      x.gateway[field] = forged;
+      const view = projectOwnerProgress(x);
+      assert.equal(view.access, "HOLD_PRIVATE_SCOPE", field);
+      assert.equal(view.object_id, null);
+      assert.equal(view.progress, null);
+      assert.equal(view.dispatch_authorized, false);
+      assert.equal(view.public_publish_authorized, false);
+    }
+  }
+});
