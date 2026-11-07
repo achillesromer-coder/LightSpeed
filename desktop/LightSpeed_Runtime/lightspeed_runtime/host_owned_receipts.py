@@ -59,7 +59,13 @@ def validate_model_selection(result:dict[str,Any],ids:dict[str,dict[str,str]],so
         raise ValueError("model response incomplete")
     raw=result.get("response")
     if not isinstance(raw,str):raise ValueError("model response not text")
-    try:data=json.loads(raw)
+    def reject_duplicate_keys(pairs):
+        obj={}
+        for key,value in pairs:
+            if key in obj:raise ValueError("duplicate model JSON key")
+            obj[key]=value
+        return obj
+    try:data=json.loads(raw,object_pairs_hook=reject_duplicate_keys)
     except json.JSONDecodeError as e:raise ValueError("model response must be strict JSON") from e
     if not isinstance(data,dict) or set(data)!={"floor_summary","blocker","evidence_ids"}:
         raise ValueError("model fields are not exact")
