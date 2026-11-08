@@ -140,3 +140,29 @@ test("owner progress projection redacts injected private fields and malformed co
     assert.equal(serialized.includes(secret), false, secret);
   }
 });
+
+// Regression: a terminal SQLite failure must not erase a separately verified
+// durable checkpoint, nor treat a transient attempted count as committed.
+test("fail-closed worker preserves independently verified checkpoint without execution authority", () => {
+  const id = "Cognigrex.cgx:/FileSpace/qualified-candidate-1";
+  const x = envelope(id);
+  x.bridge.reachable = true;
+  x.checkpoint.reported_completed = 3200;
+  x.checkpoint.independently_verified_committed = 3200;
+  x.checkpoint.database_integrity_verified = true;
+  x.latest.state = "FAIL_CLOSED";
+  x.latest.completed = 0;
+  x.latest.target = 0;
+  x.latest.observed_attempted = 3216;
+  x.latest.error = "sqlite OperationalError database is locked";
+  const view = projectOwnerProgress(x);
+  assert.equal(view.progress_binding, "SOURCE_BOUND");
+  assert.equal(view.progress.latest_state, "FAIL_CLOSED");
+  assert.equal(view.progress.independently_verified_committed, 3200);
+  assert.equal(view.progress.observed_attempted, 3216);
+  assert.equal(view.progress.latest_completed, 0);
+  assert.equal(view.progress.error_class, "SQLITE_DATABASE_LOCKED");
+  assert.equal(view.native_admitted, false);
+  assert.equal(view.dispatch_authorized, false);
+  assert.equal(view.public_publish_authorized, false);
+});
