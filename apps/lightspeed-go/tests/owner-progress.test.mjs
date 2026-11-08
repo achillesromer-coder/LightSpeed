@@ -467,3 +467,22 @@ test("malformed provider lens/policy input holds without an exception or private
     assert.equal(v.public_publish_authorized,false);
   }
 });
+
+
+test("forged client authority flags never promote source-only R3 or publish (#158/#161)", () => {
+  const x=full();
+  Object.assign(x, {
+    native_admitted:true, dispatch_authorized:true, public_publish_authorized:true,
+    signed_root_authority:true, db_readback_verified:true,
+    owner_accepted:true, access:"LIVE_VERIFIED",
+  });
+  const view=projectOwnerProgress(x);
+  assert.equal(view.access,"PRIVATE_SOURCE_REVIEW");
+  assert.equal(view.evidence,"SOURCE_ONLY_UNADMITTED");
+  assert.equal(view.native_admitted,false);
+  assert.equal(view.dispatch_authorized,false);
+  assert.equal(view.public_publish_authorized,false);
+  const serial=JSON.stringify(view);
+  for (const injected of ["signed_root_authority","db_readback_verified","owner_accepted","LIVE_VERIFIED"])
+    assert.ok(!serial.includes(injected));
+});
