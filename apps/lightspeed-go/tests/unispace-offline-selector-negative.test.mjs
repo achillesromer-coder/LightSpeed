@@ -166,3 +166,22 @@ test("fail-closed worker preserves independently verified checkpoint without exe
   assert.equal(view.dispatch_authorized, false);
   assert.equal(view.public_publish_authorized, false);
 });
+
+// Offline snapshot fields are data, not an independently verified DB checkpoint.
+test("forged checkpoint integrity and consumer flags cannot elevate offline authority", () => {
+  const id = "Cognigrex.cgx:/FileSpace/qualified-candidate-1";
+  for (const forged of ["true", 1, {}, []]) {
+    const x = envelope(id);
+    x.bridge.reachable = true;
+    x.checkpoint.database_integrity_verified = forged;
+    x.checkpoint.independently_verified_committed = 3200;
+    x.consumer.lease_verified = forged;
+    const view = projectOwnerProgress(x);
+    assert.equal(view.progress_binding, "SOURCE_BOUND");
+    assert.equal(view.progress.independently_verified_committed, null);
+    assert.equal(view.consumer, "CONSUMER_HELD");
+    assert.equal(view.native_admitted, false);
+    assert.equal(view.dispatch_authorized, false);
+    assert.equal(view.public_publish_authorized, false);
+  }
+});
