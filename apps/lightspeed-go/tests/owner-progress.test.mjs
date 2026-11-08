@@ -155,6 +155,27 @@ test("Object_ID selector rejects traversal, ambiguous and empty path segments (#
 });
 
 
+test("encoded traversal and URL-shaped Object_ID selectors fail closed (#158)", () => {
+  const rejected = [
+    "Cognigrex.cgx:/FileSpace/%2e%2e/Eco.cgx/private",
+    "Cognigrex.cgx:/FileSpace/%252e%252e/private",
+    "Cognigrex.cgx:/FileSpace/owner%2fprivate",
+    "Cognigrex.cgx:/FileSpace/owner\\\\private",
+    "Cognigrex.cgx:/FileSpace/owner?child=Eco",
+    "Cognigrex.cgx:/FileSpace/owner#private",
+    "Cognigrex.cgx:/FileSpace/owner%00private",
+  ];
+  for (const object_id of rejected) {
+    const x=full(); x.source.object_id=object_id;
+    const view=projectOwnerProgress(x);
+    assert.equal(view.access,"HOLD_SOURCE_IDENTITY",object_id);
+    assert.equal(view.object_id,null);
+    assert.equal(view.progress,null);
+    assert.equal(view.native_admitted,false);
+    assert.equal(view.public_publish_authorized,false);
+  }
+});
+
 test("progress is withheld if either receipt belongs to another Object_ID, child or revision", () => {
   const cases = [
     ["checkpoint", "object_id", "Cognigrex.cgx:/FileSpace/other-source"],
