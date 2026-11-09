@@ -141,3 +141,9 @@ test("nested DMS coordinates require spatial review without disclosing a site",(
  assert.equal(x.geometry_emitted,false);
  assert.equal(x.public_release_authorised,false);
 });
+
+test("typographic double-prime DMS coordinates are held in nested source-only text",()=>{
+ const x=run({...base,metadata:{notes:"12°34′56″S 123°45′56″E"}});
+ assert.ok(x.checks.includes("RAW_SPATIAL_COORDINATES_NOT_ACCEPTED_IN_SOURCE_ONLY_BRIDGE"));
+ assert.equal(x.public_release_authorised,false);
+});
