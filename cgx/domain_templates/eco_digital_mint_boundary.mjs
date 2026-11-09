@@ -37,7 +37,7 @@ const rawSpatialKeys=new Set(["latitude","longitude","lat","lon","lng","coords",
 const spatialText=s=>{
  if(s.length>4096)return {found:false,limit:true};
  // DMS strings are candidate precise locations even without decimal coordinate pairs.
- if(/\d{1,3}\s*[°º]\s*\d{1,2}\s*[\u2032\u0027]\s*\d{1,2}(?:\.\d+)?\s*(?:[\u2033\u0022])?\s*[NS]\b[\s,;]+\d{1,3}\s*[°º]\s*\d{1,2}\s*[\u2032\u0027]\s*\d{1,2}(?:\.\d+)?\s*(?:[\u2033\u0022])?\s*[EW]\b/i.test(s))return {found:true,limit:false};
+ if(/\d{1,3}\s*[°º]\s*\d{1,2}\s*[\u2032\u0027]\s*\d{1,2}(?:\.\d+)?\s*(?:[\u2033\u0022\u201d\u201c])?\s*[NS]\b[\s,;]+\d{1,3}\s*[°º]\s*\d{1,2}\s*[\u2032\u0027]\s*\d{1,2}(?:\.\d+)?\s*(?:[\u2033\u0022\u201d\u201c])?\s*[EW]\b/i.test(s))return {found:true,limit:false};
  if(/\bPOINT\s*\(\s*-?\d+(?:\.\d+)?\s+-?\d+(?:\.\d+)?\s*\)|["']?coordinates["']?\s*:\s*\[|(?:[?&]|\b)(?:lat|latitude|lon|lng|longitude)=\s*-?\d+(?:\.\d+)?/i.test(s))
   return {found:true,limit:false};
  const pairs=/(^|[^\d])(-?\d{1,3}\.\d{2,})\s*,\s*(-?\d{1,3}\.\d{2,})(?=$|[^\d])/g;
