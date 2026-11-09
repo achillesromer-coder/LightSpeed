@@ -1065,6 +1065,8 @@ test("formula namespace guard preserves revisions, conflicts and distinct IDs",(
    "R1_DISTINCT_LOCAL_FORMULA_IDS");
  assert.equal(review({...a,sheet:"OTHER_Formula_Library"}).state,
    "R1_CROSS_NAMESPACE_LOCAL_ID_COLLISION_HOLD");
+ assert.equal(review({...a,cell:"B11"}).state,
+   "R1_CROSS_NAMESPACE_LOCAL_ID_COLLISION_HOLD");
 });
 
 test("formula namespace guard rejects unqualified IDs, locations and raw expression",()=>{
