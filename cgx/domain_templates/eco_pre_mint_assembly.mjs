@@ -1034,7 +1034,7 @@ export function reviewEcoFormulaNamespaceCollision(pair={}){
     throw Error("INVALID_ECO_FORMULA_NAMESPACE_PAIR");
   const a=pair.left,b=pair.right;
   const sameId=a.formula_id===b.formula_id;
-  const sameNamespace=a.source_ref===b.source_ref&&a.sheet===b.sheet;
+  const sameNamespace=a.source_ref===b.source_ref&&a.sheet===b.sheet&&a.cell===b.cell;
   const sameRevision=a.source_revision===b.source_revision;
   const sameHash=a.expression_sha256.toLowerCase()===
     b.expression_sha256.toLowerCase();
