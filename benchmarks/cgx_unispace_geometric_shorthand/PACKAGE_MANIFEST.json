@@ -1,0 +1,68 @@
+{
+  "schema": "cgx-unispace-geometric-shorthand-package/1",
+  "date": "2026-10-12",
+  "status": "R0_READ_ONLY_REFERENCE",
+  "licence": "Original standalone demonstration implementation; underlying Freedoom assets NOT included",
+  "files": [
+    {
+      "path": "cgx_geo.py",
+      "size": 20077,
+      "sha256": "62d9f9eafa3005139ba696c0a1f268c74821682a894939f178337ff486a43482"
+    },
+    {
+      "path": "read_lenses.py",
+      "size": 4175,
+      "sha256": "6c48261764fe4189504e6ef3023a3cdf2bbe1c927ba9e62481d4a54644968139"
+    },
+    {
+      "path": "test_cgx_geo.py",
+      "size": 6396,
+      "sha256": "c6b408dcec6ded2f4e6b2ce01a6c4e16c09905f834c4ad714545c07c90b2423e"
+    },
+    {
+      "path": "benchmark.py",
+      "size": 6041,
+      "sha256": "447b0e43649417a7299983371a06f6c198d97b1cf4f94280968a6dd43b0ba76f"
+    },
+    {
+      "path": "benchmark_results.json",
+      "size": 7452,
+      "sha256": "0e3daf756a6cf65ed5528725dbc78f0b5dd813fcbfe25a640dedcd7a55397d24"
+    },
+    {
+      "path": "README.md",
+      "size": 5876,
+      "sha256": "2a7f612f561eae398a218d0d6c6018a62f3222b443f40ee36ff1e42bdc368e6e"
+    },
+    {
+      "path": "ENGINEERING_DECISION_RECORD.md",
+      "size": 5320,
+      "sha256": "be84f95d839edd90252e544916416ba906f67566540bd2849cdc7f77f8308f3c"
+    },
+    {
+      "path": "CGX_UNISPACE_GEOMETRIC_SHORTHAND_CONTRACT.json",
+      "size": 5112,
+      "sha256": "fe9a2f3683eb65506e6dfca51019a2068b2ad4969d0adce7949ea71574dc3ad5"
+    },
+    {
+      "path": "example-source.json",
+      "size": 82,
+      "sha256": "b1ad8352f6fe73eeeb5e69b050129015c1ec00fc2d2315bc5c3f5f9366845a3a"
+    },
+    {
+      "path": "example-next.json",
+      "size": 82,
+      "sha256": "73aa9a0c4f7ab9c70f0843cbe6c814ad9e12b38e33220e36b065410c9b2adf87"
+    },
+    {
+      "path": "example-source.cgxs",
+      "size": 668,
+      "sha256": "7a1871108fda74db2f2c047989292534912e752b98f4aa875743e1a4bf476214"
+    },
+    {
+      "path": "example-update.cgxs",
+      "size": 534,
+      "sha256": "95dfa4e8bf97f3d39ce685bac8f0d856690d457eca97246d2088ceb829adff3f"
+    }
+  ]
+}
