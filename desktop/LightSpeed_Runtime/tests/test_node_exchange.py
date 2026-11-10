@@ -1009,3 +1009,30 @@ def test_existing_cgx_lenses_bind_maps_mpl_gmat_and_historical_selection_without
         "physical_transmission_authorized",
     ):
         assert facet[claim] is False
+
+@pytest.mark.parametrize(
+    ("peer_nodes", "registry_ready"),
+    [
+        (["node-b"], False),
+        (["node-b"], True),
+        (["node-b", "node-c"], True),
+        (["bouwerbase"], True),
+    ],
+)
+def def test_peer_names_are_discovery_only_without_independent_receipts(peer_nodes: list[str], registry_ready: bool) -> None:
+    """A peer list/root allowlist does not attest a second machine or leased execution."""
+    status = build_exchange_status(
+        local_node_id="bouwerbase",
+        local_compute_ready=True,
+        verified_carriers=["local-disk"],
+        peer_nodes=peer_nodes,
+        host_root_registry_ready=registry_ready,
+    )
+    assert status["compute"]["peer_nodes"] == peer_nodes  # Discovery visibility retained.
+    assert status["transport"]["peer_transport_verified"] is False
+    assert status["compute"]["peer_compute_verified"] is False
+    assert status["activation"]["peer_compute_queue_ready"] is False
+    assert status["activation"]["host_root_registry_ready"] is registry_ready
+    assert status["canonical_promotion_authorized"] is False
+    assert status["authority_transfer"] is False
+    assert "unverified" in status["claim_boundary"]
