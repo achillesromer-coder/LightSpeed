@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtempSync,writeFileSync,rmSync} from 'node:fs';
+import {mkdtempSync,writeFileSync,rmSync,symlinkSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {spawnSync} from 'node:child_process';
@@ -70,5 +70,47 @@ test('real on-disk child bytes reach private H0 rights HOLD without authority or
   assert.equal(receipt.public_release,false);
   assert.ok(!p.stdout.includes(source));
   assert.ok(!p.stdout.includes(dir));
+ }finally{rmSync(dir,{recursive:true,force:true});}
+});
+
+test('empty R0 file is not a source-bearing Object_ID',()=>{
+ const dir=mkdtempSync(join(tmpdir(),'cgx-empty-r0-denial-'));
+ try{
+  const f=join(dir,'empty.cgx');writeFileSync(f,'');
+  const r=run(f,{'--object-id':'cgx:source:review:empty'});
+  assert.notEqual(r.status,0);
+  assert.match(r.stderr,/SOURCE_NOT_REGULAR_OR_OVERSIZE/);
+  assert.equal(r.stdout,'');
+ }finally{rmSync(dir,{recursive:true,force:true});}
+});
+
+test('filesystem symlinks cannot impersonate an exact carrier',t=>{
+ const dir=mkdtempSync(join(tmpdir(),'cgx-symlink-r0-denial-'));
+ try{
+  const real=join(dir,'real.cgx'),link=join(dir,'alias.cgx');
+  writeFileSync(real,'CGX-CARRIER/fixture');
+  try{symlinkSync(real,link,'file');}catch(err){
+   if(['EPERM','EACCES','ENOTSUP'].includes(err.code)){t.skip('Host cannot create symlink');return;}
+   throw err;
+  }
+  const r=run(link);
+  assert.notEqual(r.status,0);
+  assert.match(r.stderr,/SOURCE_NOT_REGULAR_OR_OVERSIZE/);
+  assert.equal(r.stdout,'');
+ }finally{rmSync(dir,{recursive:true,force:true});}
+});
+
+test('actual parent identity never masquerades as a child FileSpace',()=>{
+ const dir=mkdtempSync(join(tmpdir(),'cgx-parent-file-space-review-'));
+ try{
+  const f=join(dir,'parent.cgx');writeFileSync(f,'CGX-CARRIER/fixture');
+  const p=run(f);
+  assert.equal(p.status,0,p.stderr);
+  const r=JSON.parse(p.stdout);
+  assert.equal(r.reconstructed,true);
+  assert.equal(r.private_review.state,'HOLD');
+  assert.equal(r.private_review.reason,'PARENT_NOT_CHILD_FILESPACE');
+  assert.equal(r.private_review.identity_match,false);
+  assert.equal(r.native_admitted,false);
  }finally{rmSync(dir,{recursive:true,force:true});}
 });

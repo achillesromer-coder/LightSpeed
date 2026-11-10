@@ -3,7 +3,7 @@
  * Offline, read-only R0/LOAD family source probe. Writes no files and
  * never communicates with remote services. Output is a redacted review receipt.
  */
-import {lstatSync,readFileSync,statSync} from 'node:fs';
+import {lstatSync,readFileSync} from 'node:fs';
 import {buildReviewEnvelope,verifyReconstruction,MAX_WORK_UNIT_BYTES} from './cgxLeafEnvelopeReview.mjs';
 import {stageFamilyPacket,projectUniSpace} from './cgxPremintFamilyProjection.mjs';
 import {makePrivateLoadBinding} from './cgxPrivateLoadBindingReview.mjs';
@@ -24,14 +24,17 @@ function run(argv){
  let buffer,statBefore,statAfter;
  try{
   statBefore=lstatSync(o['--source']);
-  if(!statBefore.isFile()||statBefore.size>MAX_WORK_UNIT_BYTES)return forbidden('SOURCE_NOT_REGULAR_OR_OVERSIZE');
+  if(!statBefore.isFile()||statBefore.size===0||statBefore.size>MAX_WORK_UNIT_BYTES)
+   return forbidden('SOURCE_NOT_REGULAR_OR_OVERSIZE');
   buffer=readFileSync(o['--source']);
-  statAfter=statSync(o['--source']);
+  statAfter=lstatSync(o['--source']);
  }catch{
   return forbidden('SOURCE_READ_FAILED');
  }
- if(buffer.length!==statBefore.size||statAfter.size!==statBefore.size||
-   statAfter.mtimeMs!==statBefore.mtimeMs)return forbidden('SOURCE_CHANGED_DURING_READ');
+ if(buffer.length!==statBefore.size||!statAfter.isFile()||
+   statAfter.size!==statBefore.size||statAfter.mtimeMs!==statBefore.mtimeMs||
+   statAfter.ctimeMs!==statBefore.ctimeMs||statAfter.dev!==statBefore.dev||
+   statAfter.ino!==statBefore.ino)return forbidden('SOURCE_CHANGED_DURING_READ');
  const leaves=[];
  for(let i=0;i<buffer.length;i+=1024*1024)leaves.push(buffer.subarray(i,Math.min(i+1024*1024,buffer.length)));
  if(leaves.length===0)leaves.push(Buffer.alloc(0));
