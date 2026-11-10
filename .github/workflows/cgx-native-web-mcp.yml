@@ -5,6 +5,8 @@ on:
     paths:
       - "desktop/LightSpeed_Runtime/mcp/cgx_tools/**"
       - ".github/workflows/cgx-native-web-mcp.yml"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/node_exchange.py"
+      - "desktop/LightSpeed_Runtime/tests/test_node_exchange.py"
   push:
     branches:
       - "cgx/dataspace-rolling-observer-facet-20261012"
@@ -13,6 +15,8 @@ on:
       - "tools/run_cgx_web_readonly_mcp.mjs"
       - "tools/setup_cgx_web_tunnel.ps1"
       - ".github/workflows/cgx-native-web-mcp.yml"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/node_exchange.py"
+      - "desktop/LightSpeed_Runtime/tests/test_node_exchange.py"
   workflow_dispatch:
 
 permissions:
@@ -61,3 +65,39 @@ jobs:
         run: |
           node --check server.mjs
           npm run test:web
+
+peer_claims_source_review:
+    name: Refuse unsupported peer attestation
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+      - name: Verify discovered nodes never self-attest
+        env:
+          PYTHONPATH: desktop/LightSpeed_Runtime
+        run: |
+          python - <<'PY'
+          from lightspeed_runtime.node_exchange import build_exchange_status
+          for nodes in ([], ["peer-b"], ["peer-b", "peer-c"], ["bouwerbase"]):
+              for root_ready in (False, True):
+                  status = build_exchange_status(
+                      local_node_id="bouwerbase",
+                      local_compute_ready=True,
+                      peer_nodes=nodes,
+                      verified_carriers=["local-volume"],
+                      host_root_registry_ready=root_ready,
+                  )
+                  assert status["compute"]["peer_nodes"] == nodes
+                  assert status["transport"]["peer_transport_verified"] is False
+                  assert status["compute"]["peer_compute_verified"] is False
+                  assert status["activation"]["peer_compute_queue_ready"] is False
+                  assert status["activation"]["host_root_registry_ready"] is root_ready
+                  assert status["canonical_promotion_authorized"] is False
+                  assert status["authority_transfer"] is False
+          print("PASS: eight identity-only peer scenarios fail closed")
+          PY
