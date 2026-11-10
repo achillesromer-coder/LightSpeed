@@ -442,23 +442,24 @@ def build_exchange_status(
         "transport": {
             "mode": "content_addressed_verified_readback",
             "verified_carriers": carriers,
-            "peer_transport_verified": bool(peers),
+            "peer_transport_verified": False,  # Names alone cannot prove a signed peer exchange.
         },
         "compute": {
             "local_ready": bool(local_compute_ready),
             "peer_nodes": peers,
-            "peer_compute_verified": bool(peers),
+            "peer_compute_verified": False,  # A remote execution receipt has not been independently checked.
             "lease_required": True,
             "heavy_execution_default": False,
         },
         "activation": {
             "host_root_registry_ready": bool(host_root_registry_ready),
             "typed_transfer_queue_ready": bool(host_root_registry_ready),
-            "peer_compute_queue_ready": bool(host_root_registry_ready and peers),
+            "peer_compute_queue_ready": False,  # Requires authenticated peer and lease integration.
         },
         "claim_boundary": (
             "Mounted carrier readback and local compute are distinct proofs; "
-            "peer compute remains unproven until an independently connected compute node returns a receipted result."
+            "peer names are unverified discovery identifiers, not peer authentication; "
+            "peer transport and compute require independent signed receipt verification."
         ),
         "authority_transfer": False,
         "canonical_promotion_authorized": False,
