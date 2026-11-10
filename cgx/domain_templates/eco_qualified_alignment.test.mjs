@@ -868,3 +868,11 @@ test("CONTRA-DEC malformed source references fail closed",()=>{
  const c={proposed:true,issue_class:"DATA",materiality_state:"UNKNOWN",interim_state:"HOLD",adjudication_state:"OPEN",sensitivity_class:"CONTROLLED",source_ref_set:"bad",affected_gate_decision:["VG-019"]};
  assert.throws(()=>planEcoAlignment({novel:{semantic_type:"habitat",source_refs:["src-a"],contradiction_review:c},known_objects:[],authorised_source_ids:["src-a"]}),/INVALID_CONTRADICTION_SOURCE_OR_GATE_REFS/);
 });
+
+// Regression for the 2026-11-10 seed collection-year regex correction.
+test("seed collection year requires exactly four ASCII digits",()=>{
+ const make=(collection_year)=>({...base,semantic_type:"intervention",seed_lot:{lot_id:"synthetic:lot-year",collection_year}});
+ for(const year of ["20AA","20260","202","２０２６","2026-01"])
+  assert.throws(()=>planEcoAlignment({novel:make(year),known_objects:[],authorised_source_ids:["src-a"]}),/INVALID_SEED_COLLECTION_YEAR/);
+ assert.doesNotThrow(()=>planEcoAlignment({novel:make("2026"),known_objects:[],authorised_source_ids:["src-a"]}));
+});
