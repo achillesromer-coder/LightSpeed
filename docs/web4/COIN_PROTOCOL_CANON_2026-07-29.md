@@ -82,3 +82,13 @@ The LightSpeed repository is public. Therefore the complete source fileset is no
 6. Perform only an ephemeral local-chain rehearsal using ephemeral keys.
 7. Return a redacted compile/security receipt through LS GO.
 8. Do not deploy, merge public protocol source or activate value functionality without a later explicit owner decision.
+
+## Type-1 CGX Chain source bridge — 2026-11-11
+
+This *existing COIN/DBR lineage* remains the basis for any later Type-1 CGX Chain. Do not mint a competing chain, object root, economic token or independent semantic database. The permissioned, source-preserving FileSpace/DataSpace network has separate semantic, cryptographic and empirical validation concerns; cryptographic agreement cannot validate a scientific claim.
+
+The additive [Type-1 readiness record](./CGX_TYPE1_CHAIN_READINESS_REVIEW_20261111.json) is guarded by [the fail-closed verifier](../../scripts/validate_cgx_type1_chain_review.py) and [negative tests](../../tests/test_cgx_type1_chain_review.py). All 14 native/peer/security acceptance items remain **HOLD**. A successful source-review CI run verifies refusal semantics only, not network consensus, signed DBR finality, installed root/lease, compiled contracts or independent peers.
+
+**Current owner direction:** retain existing Google Drive sharing until a proven decentralised replacement and a separately accepted cutover/rollback; do not confuse link accessibility with private ACL. Drive is still the canonical COIN source provider at this stage. Avoid replicating restricted R0 material, secrets or private citations into this public repo or an untrusted peer. No ACL mutation, source relocation or public release is authorised by this review bridge.
+
+**Minimum next engineering slice:** reuse the existing `CGX-NODE-EXCHANGE-CONTRACT/0.1`, the native root/DBR registrar and issue [#161](https://github.com/achillesromer-coder/LightSpeed/issues/161); independently attest two distinct devices (not two local drives or model processes), verify their current key/issuer/revocation, test one authorised hash-checked interrupted/resumed transfer, reject replay/fork/conflict/unauthorised access, and obtain receiver-side DBR readback. Then exercise one permissioned UniSpace Object_ID select/save/reopen and negative access test, preserving issue [#158](https://github.com/achillesromer-coder/LightSpeed/issues/158) public/static privacy HOLD. Only after these pass consider private release, then independently review any public chain or economic function.
