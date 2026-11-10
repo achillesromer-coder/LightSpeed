@@ -142,7 +142,7 @@ def main() -> None:
     projected = project(json.loads(source), source, a.repo)
     data = (json.dumps(projected, indent=2, ensure_ascii=False, sort_keys=True) + "\n").encode("utf-8")
     if a.check:
-        if not a.output.is_file() or a.output.read_bytes() != data:
+        if not a.output.is_file() or a.output.read_bytes().replace(b"\r\n", b"\n") != data:
             raise SystemExit("PREPOPULATION_REVIEW_DRIFT_HOLD")
     elif a.write:
         a.output.parent.mkdir(parents=True, exist_ok=True)
