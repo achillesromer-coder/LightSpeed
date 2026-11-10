@@ -216,3 +216,15 @@ change or create an execution task. Typed execution still uses the existing
 authenticated command route, current action authority and scoped claim. No
 parallel implementation queue, source canon, scheduler or automatic cleanup is
 introduced by these corrections.
+
+## Verified cross-platform execution checkpoint — 2026-11-11
+
+**Evidence:** authenticated GitHub/automation metadata and bounded read-only host diagnostics. **Public-safe source-review checkpoint only**; not a signed DBR, installed runtime proof, security clearance or public product release. Always refresh live provider state.
+
+- **Git source:** PR #159 (heartbeat fix) and #217 (Achilles P.A non-dispatching profile) are merged; installed consumer parity and native operator dispatch remain unverified. #205 (LOAD), #206 (unified bootstrap) and #220 (private UniSpace exact-object projection) remain draft review branches.
+- **Scheduled owners:** five current CGX v2 workstreams are enabled, with completed latest recorded runs. Earlier overlapping legacy workstreams remain disabled. Read existing canonical checkpoints and exact provider heads before changing anything; no duplicate automations.
+- **Owner host:** a bounded local inspection located the existing CGX directory and received HTTP 200 from local UniSpace and Ollama services. This is service reachability only, not authenticated Object_ID/DBR readback, completed model classification or functional UI round-trip.
+- **Private source ACL HOLD:** broadly shared Drive sources and inherited folder permissions require review, approved revocation and provider readback. Do not copy private IDs, GPT payloads, legal/IP details, permissions lists or credentials into this public repository.
+- **Critical execution order:** (1) private source ACL clearance, (2) installed version parity and independently issued root/lease/issuer proof, (3) one exact R0 source -> native Object_ID -> signed DBR -> permissioned UniSpace view/save/reopen plus negative tests, (4) bounded source-first domain hydration, (5) #158 public-static leak tests and #161 independent two-node FileSpace/DataSpace acceptance prior to release.
+
+**Continuity rule:** one Cognigrex.cgx parent. Reuse this README and the existing `open_threads_execution_register.json` rather than creating another master source store, scheduler or branch. Owner approval does not self-issue authentication, mint authority or automatically satisfy public release gates.
