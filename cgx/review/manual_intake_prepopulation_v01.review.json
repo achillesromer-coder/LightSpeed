@@ -1,0 +1,140 @@
+{
+  "canonical_parent": "cgx:root:cognigrex",
+  "duplicates": {
+    "deletion_eligible": 0,
+    "hashes_redacted": true,
+    "rule": "BYTE_EQUIVALENCE_IS_NOT_SOURCE_RIGHTS_OR_SUCCESSOR_ADMISSION",
+    "source_references_in_groups": 176,
+    "verified_groups": 45
+  },
+  "intake": {
+    "dispositions": {
+      "ARCHIVE_MEMBERS_UNRESOLVED": 4,
+      "BINARY_OR_UNKNOWN_FORMAT_UNRESOLVED": 1473,
+      "CONTENT_UNRESOLVED_'utf-8' codec can't decode byte 0x8f in position 24: invalid": 2,
+      "CONTENT_UNRESOLVED_'utf-8' codec can't decode byte 0x9b in position 14: invalid": 1,
+      "CONTENT_UNRESOLVED_'utf-8' codec can't decode byte 0xab in position 16: invalid": 1,
+      "CONTENT_UNRESOLVED_'utf-8' codec can't decode byte 0xf9 in position 24: invalid": 1,
+      "CONTENT_UNRESOLVED_'utf-8' codec can't decode byte 0xff in position 0: invalid ": 1,
+      "DEPENDENCY_TREE_DEFERRED_NOT_INVENTORIED": 13,
+      "GENERATED_BROWSER_CACHE_DEFERRED_NOT_INVENTORIED": 20,
+      "OVERSIZE_CONTENT_UNRESOLVED": 133,
+      "TEXT_EXTRACTION_DEFERRED_CHUNK_BUDGET": 58,
+      "TEXT_SOURCE_REVIEWED_NOT_ACCEPTED": 1589
+    },
+    "records_reviewed": 3296,
+    "root_count": 12,
+    "route_candidates": {
+      "Achilles": 14,
+      "UNASSIGNED_REQUIRES_SOURCE_QUALIFICATION": 3282
+    },
+    "route_policy": "EXACT_ROOT_ONLY_NO_CONTENT_INFERENCE"
+  },
+  "schema": "CGX-MANUAL-INTAKE-PREPOPULATION-REVIEW/0.1",
+  "semantic_profiles": [
+    {
+      "family": "Achilles",
+      "profile_file": "achilles_owner_operator_profile.json",
+      "source_sha256": "f934d3e20f418b1b871a661f390c952c454d90b0bb8052f047063bcc7543a41a",
+      "status": "SOURCE_TEMPLATE_CANDIDATE_NOT_QUALIFIED"
+    },
+    {
+      "family": "Cognigrex",
+      "profile_file": "depth_profiles.json",
+      "source_sha256": "b06f5809ef78892f69360d4ff131d6dfd5744c8ca5b01b4f780762978d648541",
+      "status": "SOURCE_TEMPLATE_CANDIDATE_NOT_QUALIFIED"
+    },
+    {
+      "family": "Eco",
+      "profile_file": "eco_semantic_library.json",
+      "source_sha256": "2a6a067b6c2477b63d545c638963c64789e7de555acf0d8ffc6993b95d4b7d93",
+      "status": "SOURCE_TEMPLATE_CANDIDATE_NOT_QUALIFIED"
+    },
+    {
+      "family": "EMASSC_LightSpeed",
+      "profile_file": "emassc_lightspeed_semantic_library.json",
+      "source_sha256": "7b3cb1d88af1b5ddb18456050cfa07f05cbf94c1e398d48fc6a78960dd51d49a",
+      "status": "SOURCE_TEMPLATE_CANDIDATE_NOT_QUALIFIED"
+    },
+    {
+      "family": "Romer",
+      "profile_file": "founder_semantic_delta_2026-10-02_romer.json",
+      "source_sha256": "f2cc7d81946340f8a34abe37620e648393685a1e7dbbd6c056c65fd73eb28920",
+      "status": "SOURCE_TEMPLATE_CANDIDATE_NOT_QUALIFIED"
+    },
+    {
+      "family": "Romer",
+      "profile_file": "founder_semantic_delta_2026-10-07_printable_solid_state.json",
+      "source_sha256": "1a3a1f428aee0c9e2a04808fa2e8e2d73f86d847ecdddd80e37170a4dc771624",
+      "status": "SOURCE_TEMPLATE_CANDIDATE_NOT_QUALIFIED"
+    },
+    {
+      "family": "Romer",
+      "profile_file": "mark3_interface_semantic_correction_2026-10-05.json",
+      "source_sha256": "51ee495cb1655043683656ba59ba15f8469db2ca6dd19f07606f1bbe58a55251",
+      "status": "SOURCE_TEMPLATE_CANDIDATE_NOT_QUALIFIED"
+    },
+    {
+      "family": "Cognigrex",
+      "profile_file": "reasoning_profiles.json",
+      "source_sha256": "8630a54b84c8a310ce380d65c539445ee2ca29e86a4682496494808b5e2f4924",
+      "status": "SOURCE_TEMPLATE_CANDIDATE_NOT_QUALIFIED"
+    },
+    {
+      "family": "Romer",
+      "profile_file": "romer_semantic_library.json",
+      "source_sha256": "3d0ebf8528733fcd5937ef306bd7811c09eb9f5f473356e7b31243aaa3669558",
+      "status": "SOURCE_TEMPLATE_CANDIDATE_NOT_QUALIFIED"
+    },
+    {
+      "family": "UniSpace",
+      "profile_file": "semantic_view_lens_registry.json",
+      "source_sha256": "602a00f4e74614b69e14bab7b9141b05577efda3a04fd0a68dcf252d4c33008e",
+      "status": "SOURCE_TEMPLATE_CANDIDATE_NOT_QUALIFIED"
+    }
+  ],
+  "skills": {
+    "canonical_core_count": 9,
+    "canonical_core_sha256": {
+      "cgx-capability-router": "ec1cb996d9aa711f0c8957f02a28917b6b8cd7aa3b8d5779c8d95cf043f1da7d",
+      "cgx-handshake": "fab232dff862de6857f63ad2344cec863de686b5faf4f2d9f8675862a94cc264",
+      "cgx-minimum-sufficient-work": "d2068f60eac436c79be1341c5d07917baed0bdabb081ebe5d3596076f517dc1a",
+      "cgx-mobile-node": "cb4f8489c0fd17ad3a2cb9c65c61ce7806d4a73696ece81bc9b4b8f7ccab5446",
+      "cgx-selector": "859d4feeb3ca296e6886421f7823892e78b58ddc693a7dfe0c5cc9b65eda518a",
+      "cgx-tool-extension": "9557115db6a5a8331e4aeebc6002e1cec90bf15588d2ad6c5f38bf3eb0c450f2",
+      "lightspeed-runtime-productization": "ee9ea54e26882e516f4e006d16439e882751fa6ca845fe180de0bf31ca909888",
+      "lightspeed-standalone-ui-acceptance": "4a327ad3cc1021ba5f7e4d0468822e585a10a460bba8e6064c08c39f98710200",
+      "utp-portfolio-catalogue": "bc84192f63d5563f8b0b342237b6b72f6cf9e794c9766b39af900f2ac2ef08cd"
+    },
+    "distributed_count": 81,
+    "drifted_distributed_skills": [],
+    "packages_by_family": {
+      "achilles": 9,
+      "athene": 9,
+      "cognigrex": 9,
+      "eco-grex": 9,
+      "emassc": 9,
+      "lightspeed": 9,
+      "neo": 9,
+      "raphael": 9,
+      "romer-grex": 9
+    },
+    "policy": "PACKAGE_COPIES_ARE_DISTRIBUTION_ARTIFACTS_NOT_NEW_CGX_TYPES"
+  },
+  "sole_load_resolver": "LOAD.cgx",
+  "source_head_reported": "fa1a637bd3f337790cef1144f2020d3c816bf59e",
+  "source_receipt_sha256": "3984a205056cb54f177b55c09aaeff041e7f23298fbcef86f6bcfa52a29889ca",
+  "states": {
+    "automatic_deletion": false,
+    "automatic_source_move": false,
+    "credential_or_lease_grant": false,
+    "independent_dbr": "HOLD",
+    "native_mint": "HOLD",
+    "public_release": "HOLD",
+    "r0_review": "PARTIAL_SOURCE_REVIEW_ONLY",
+    "r1": "CANDIDATE_ONLY",
+    "r2": "NOT_INFERRED",
+    "r3": "UNQUALIFIED"
+  },
+  "usage": "Read-only projection for existing owner lanes; never a new database, resolver or mint registry"
+}
