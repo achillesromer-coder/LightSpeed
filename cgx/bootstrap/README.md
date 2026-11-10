@@ -179,3 +179,11 @@ enablement, resource and stop controls. No second worker is required.
 These fixes establish bounded queue progress, not semantic or native acceptance.
 Failed model JSON remains a recorded failure; held file/member types and final
 independent coverage still require their specialist dispositions before cleanup.
+
+Captured Chromium-profile cache directories are now retained as one explicit
+`GENERATED_BROWSER_CACHE_DEFERRED_NOT_INVENTORIED` subtree hold. The predicate
+requires recognizable Chromium ancestry, a Default/Profile directory and an exact
+generated cache-directory name; similarly named owner folders remain eligible.
+An old saved cursor already inside that boundary is reconciled back to its safe
+parent without reading or deleting cached files. This is workload classification,
+not complete cache-member inventory, semantic acceptance or deletion clearance.

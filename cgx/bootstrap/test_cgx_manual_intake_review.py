@@ -101,4 +101,23 @@ class ManualIntakeReviewTests(unittest.TestCase):
   result=self.run_review(apply=True)
   self.assertEqual(result['source_records'],1)
   self.assertEqual(self.run_review(apply=True)['visited_entries'],0)
+ def test_captured_browser_cache_is_held_without_read_or_deletion(self):
+  folder=self.root/'chrome_profile_mobile_v2/Default/Code Cache/wasm';folder.mkdir(parents=True)
+  file=folder/'a.txt';file.write_text('source provenance private cached content')
+  with patch.object(M,'read_stable',side_effect=AssertionError('cache body must not be read')):report=self.run_review(apply=True)
+  self.assertEqual(report['dispositions']['GENERATED_BROWSER_CACHE_DEFERRED_NOT_INVENTORIED'],1)
+  self.assertEqual(report['bytes_read'],0);self.assertTrue(file.exists());self.assertFalse(report['content_ingestion_complete'])
+ def test_similarly_named_owner_folder_remains_eligible(self):
+  folder=self.root/'project/Code Cache';folder.mkdir(parents=True);(folder/'a.txt').write_text('source provenance owner work')
+  report=self.run_review(apply=True)
+  self.assertEqual(report['dispositions']['TEXT_SOURCE_REVIEWED_NOT_ACCEPTED'],1)
+  self.assertNotIn('GENERATED_BROWSER_CACHE_DEFERRED_NOT_INVENTORIED',report['dispositions'])
+ def test_old_cursor_inside_cache_resumes_without_consuming_cached_files(self):
+  relative=Path('chrome_capture/Default/Code Cache/wasm');folder=self.root/relative;folder.mkdir(parents=True);(folder/'a.txt').write_text('private cache')
+  key='manual_intake_review_v1:'+M.sha(str(self.root.absolute()).encode())
+  state={'schema':M.SCHEMA,'stack':[{'rel':str(relative),'offset':0}],'inventory_complete':False,'content_complete':False}
+  with closing(sqlite3.connect(self.path)) as db:db.execute('INSERT INTO progress VALUES(?,?)',(key,json.dumps(state)));db.commit()
+  with patch.object(M,'read_stable',side_effect=AssertionError('no cache reads')):report=self.run_review(apply=True)
+  self.assertEqual(report['dispositions']['GENERATED_BROWSER_CACHE_DEFERRED_NOT_INVENTORIED'],1)
+  self.assertEqual(report['bytes_read'],0);self.assertTrue((folder/'a.txt').exists());self.assertTrue(report['eligible_walk_complete'])
 if __name__=='__main__':unittest.main()

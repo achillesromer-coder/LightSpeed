@@ -15,6 +15,7 @@ SCHEMA='CGX-MANUAL-INTAKE-SOURCE-REVIEW/0.1'
 TEXT_EXT={'.txt','.md','.json','.csv','.py','.ps1','.js','.mjs','.ts','.tsx','.html','.css','.sql','.yaml','.yml','.xml','.cgx','.toml','.ini'}
 ARCHIVE_EXT={'.zip','.7z','.rar','.tar','.gz','.bz2','.xz'}
 DEPENDENCIES={'node_modules','.git','.venv','venv','__pycache__','.pytest_cache'}
+BROWSER_CACHE_DIRS={'cache','code cache','gpucache','shadercache','grshadercache','dawnwebgpucache','dawngraphitecache','cachestorage'}
 CHUNK_CHARS=1200
 MAX_TEXT_BYTES=1024*1024
 MAX_CHUNKS_PER_SOURCE=64
@@ -29,6 +30,17 @@ def safe_path(root,relative):
     for ancestor in [root,*[root/Path(*p.parts[:i]) for i in range(1,len(p.parts)+1)]]:
         if linklike(ancestor.lstat()):raise ValueError('LINK_OR_REPARSE_REFUSED')
     return target
+
+def browser_cache_boundary(relative):
+    """Only generated cache directories inside recognizable captured Chromium profiles."""
+    parts=Path(relative).parts
+    for i,part in enumerate(parts):
+        prior=[p.lower() for p in parts[:i]]
+        if (part.lower() in BROWSER_CACHE_DIRS and
+                any('chrome' in p or 'chromium' in p for p in prior) and
+                any(p=='default' or p.startswith('profile ') for p in prior)):
+            return str(Path(*parts[:i+1]))
+    return None
 
 def load_sorter(engine):
     engine=Path(engine).absolute()
@@ -183,6 +195,15 @@ def _review(root=APPROVED_ROOT,engine=ENGINE,*,apply=False,max_files=64,max_byte
             frame=state['stack'][-1]
             entry_started=False;entry_offset=frame['offset']
             try:
+                cache=browser_cache_boundary(frame['rel'])
+                if cache:
+                    # Reconcile an older saved cursor already below the new boundary.
+                    entry_started=True
+                    disposition(cache,'GENERATED_BROWSER_CACHE_DEFERRED_NOT_INVENTORIED',safe_path(root,cache).lstat())
+                    state['stack']=[f for f in state['stack'] if browser_cache_boundary(f['rel'])!=cache]
+                    report['visited_entries']+=1
+                    if apply:db.execute('INSERT OR REPLACE INTO progress VALUES(?,?)',(key,json.dumps(state)));db.commit()
+                    entry_started=False;continue
                 directory=safe_path(root,frame['rel']);ds=directory.lstat()
                 sig=[ds.st_mtime_ns,ds.st_ino]
                 if frame.get('signature') not in (None,sig):frame['offset']=0;report.setdefault('directory_rescans',0);report['directory_rescans']+=1
@@ -198,7 +219,8 @@ def _review(root=APPROVED_ROOT,engine=ENGINE,*,apply=False,max_files=64,max_byte
                         frame['offset']=idx+1;report['visited_entries']+=1
                         if linklike(s):disposition(rel,'LINK_OR_REPARSE_DEFERRED',s)
                         elif stat.S_ISDIR(s.st_mode):
-                            if entry.name.lower() in DEPENDENCIES:disposition(rel,'DEPENDENCY_TREE_DEFERRED_NOT_INVENTORIED',s)
+                            if browser_cache_boundary(rel):disposition(rel,'GENERATED_BROWSER_CACHE_DEFERRED_NOT_INVENTORIED',s)
+                            elif entry.name.lower() in DEPENDENCIES:disposition(rel,'DEPENDENCY_TREE_DEFERRED_NOT_INVENTORIED',s)
                             else:state['stack'].append({'rel':rel,'offset':0});exhausted=False;entry_started=False;break
                         elif not stat.S_ISREG(s.st_mode):disposition(rel,'NON_REGULAR_DEFERRED',s)
                         elif Path(entry.name).suffix.lower() in ARCHIVE_EXT:disposition(rel,'ARCHIVE_MEMBERS_UNRESOLVED',s)
