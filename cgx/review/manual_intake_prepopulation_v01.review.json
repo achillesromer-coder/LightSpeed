@@ -22,13 +22,20 @@
       "TEXT_EXTRACTION_DEFERRED_CHUNK_BUDGET": 58,
       "TEXT_SOURCE_REVIEWED_NOT_ACCEPTED": 1589
     },
+    "provenance_triage": {
+      "CODEX_GENERATED_OR_TRANSIENT_REVIEW": 2585,
+      "CODEX_OTHER_PROVENANCE_REVIEW": 520,
+      "NAMED_FAMILY_ROOT_REVIEW": 14,
+      "UNCLASSIFIED_ROOT_REVIEW": 177
+    },
     "records_reviewed": 3296,
     "root_count": 12,
     "route_candidates": {
       "Achilles": 14,
       "UNASSIGNED_REQUIRES_SOURCE_QUALIFICATION": 3282
     },
-    "route_policy": "EXACT_ROOT_ONLY_NO_CONTENT_INFERENCE"
+    "route_policy": "EXACT_ROOT_ONLY_NO_CONTENT_INFERENCE",
+    "triage_policy": "PATH_ANCESTRY_ONLY_NOT_SEMANTIC_IDENTITY_OR_DELETION_PROOF"
   },
   "schema": "CGX-MANUAL-INTAKE-PREPOPULATION-REVIEW/0.1",
   "semantic_profiles": [

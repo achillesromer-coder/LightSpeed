@@ -50,7 +50,7 @@ def project(receipt: dict, receipt_bytes: bytes, repo: Path) -> dict:
     dispositions = receipt.get("source_dispositions")
     if not isinstance(dispositions, dict):
         raise ValueError("SOURCE_DISPOSITION_SCHEMA_HOLD")
-    stages, roots, routes = Counter(), Counter(), Counter()
+    stages, roots, routes, triage = Counter(), Counter(), Counter(), Counter()
     for encoded, count in dispositions.items():
         if not isinstance(count, int) or count < 0:
             raise ValueError("SOURCE_RECORD_COUNT_INVALID")
@@ -65,6 +65,17 @@ def project(receipt: dict, receipt_bytes: bytes, repo: Path) -> dict:
         stages[stage] += count
         roots[root] += count
         routes[ROUTE_ROOTS.get(root, "UNASSIGNED_REQUIRES_SOURCE_QUALIFICATION")] += count
+        # Classify source *provenance*, never meaning/rights/semantic equivalence.
+        parts = rel.replace("\\", "/").split("/")
+        segment = (parts[3] if root == "Codex" and len(parts) > 3 else "").casefold()
+        if root == "Codex" and segment in {"outputs", "tmp", ".tmp", "logs"}:
+            triage["CODEX_GENERATED_OR_TRANSIENT_REVIEW"] += count
+        elif root == "Codex":
+            triage["CODEX_OTHER_PROVENANCE_REVIEW"] += count
+        elif root in ROUTE_ROOTS:
+            triage["NAMED_FAMILY_ROOT_REVIEW"] += count
+        else:
+            triage["UNCLASSIFIED_ROOT_REVIEW"] += count
     core = repo / "plugins" / "source" / "core-skills"
     distributed = repo / "plugins" / "packages"
     canonical = {p.parent.name: sha(p.read_bytes()) for p in core.glob("*/SKILL.md")}
@@ -93,6 +104,8 @@ def project(receipt: dict, receipt_bytes: bytes, repo: Path) -> dict:
         "intake": {"records_reviewed": sum(stages.values()),
                    "dispositions": dict(sorted(stages.items())),
                    "root_count": len(roots),
+                   "provenance_triage": dict(sorted(triage.items())),
+                   "triage_policy": "PATH_ANCESTRY_ONLY_NOT_SEMANTIC_IDENTITY_OR_DELETION_PROOF",
                    "route_candidates": dict(sorted(routes.items())),
                    "route_policy": "EXACT_ROOT_ONLY_NO_CONTENT_INFERENCE"},
         "duplicates": {"verified_groups": len(groups),

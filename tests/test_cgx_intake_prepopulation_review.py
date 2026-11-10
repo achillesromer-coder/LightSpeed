@@ -46,6 +46,9 @@ class PrepopulationTests(unittest.TestCase):
             self.assertEqual(a["intake"]["records_reviewed"],5)
             self.assertEqual(a["intake"]["route_candidates"]["Romer"],2)
             self.assertEqual(a["intake"]["route_candidates"]["UNASSIGNED_REQUIRES_SOURCE_QUALIFICATION"],3)
+            self.assertEqual(sum(a["intake"]["provenance_triage"].values()),5)
+            self.assertEqual(a["intake"]["provenance_triage"]["NAMED_FAMILY_ROOT_REVIEW"],2)
+            self.assertEqual(a["intake"]["provenance_triage"]["CODEX_OTHER_PROVENANCE_REVIEW"],3)
             self.assertEqual(a["skills"]["canonical_core_count"],1)
             self.assertEqual(a["skills"]["distributed_count"],1)
             self.assertEqual(a["duplicates"]["verified_groups"],1)
@@ -67,6 +70,20 @@ class PrepopulationTests(unittest.TestCase):
             receipt["native_mint_authorized"]=True
             with self.assertRaisesRegex(ValueError,"NATIVE_OR_CANONICAL"):
                 mod.project(receipt,b"x",root)
+    def test_generated_codex_output_is_triaged_not_minted_or_deleted(self):
+        with TemporaryDirectory() as td:
+            root=Path(td);receipt=fixture(root)
+            entry={"schema":"CGX-MANUAL-INTAKE-SOURCE-REVIEW/0.1",
+                   "relative":"Codex/2026-07-20/blease-run-a-quick-check-through/outputs/temp.pdf",
+                   "disposition":"BINARY_OR_UNKNOWN_FORMAT_UNRESOLVED",
+                   "native_admission":False,"executable_authority":False}
+            receipt["source_dispositions"][json.dumps(entry)]=7
+            a=mod.project(receipt,b"x",root)
+            self.assertEqual(a["intake"]["provenance_triage"]["CODEX_GENERATED_OR_TRANSIENT_REVIEW"],7)
+            self.assertEqual(a["intake"]["route_candidates"]["UNASSIGNED_REQUIRES_SOURCE_QUALIFICATION"],10)
+            self.assertEqual(a["duplicates"]["deletion_eligible"],0)
+            self.assertNotIn("temp.pdf",json.dumps(a))
+
     def test_detects_skill_distribution_drift_without_deleting(self):
         with TemporaryDirectory() as td:
             root=Path(td);receipt=fixture(root)
