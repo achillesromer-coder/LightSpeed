@@ -158,3 +158,24 @@ Deletion remains ineligible until independent retained-copy/inverse recovery,
 provenance, dependency, rights and acceptance gates pass. No cleanup follows an
 exhausted walk or a successful model response. Native intake still requires its
 own configured root, authenticated queue authority and live execution claim.
+
+### Resident backsweep corrections
+
+Applying intake batches now takes one OS-owned writer lock in the existing Engine
+state directory. A competing batch fails without changing the cursor; process exit
+releases ownership. Dry-run creates no lock or database writes. Mass passes must
+honour the same lock and memory/byte/time budgets as the resident rotation.
+
+Pending Manual Intake review inputs precede old backlog. The queue helper retains
+the no-proposal/late-ID guarantee and does not silently retry failed proposals.
+`source_review_only=True` selects only the new review inputs and fails closed when
+the input schema lacks the disposition column. This lets the existing Achilles
+role consume one of its own oversight pointers per rotation, in addition to its
+separate review of other agents' proposals. It does not grant new execution tools.
+The existing supervisor calls `work('Achilles', ..., source_review_only=True)`
+after the bounded intake tick and before its specialist rotation, subject to normal
+enablement, resource and stop controls. No second worker is required.
+
+These fixes establish bounded queue progress, not semantic or native acceptance.
+Failed model JSON remains a recorded failure; held file/member types and final
+independent coverage still require their specialist dispositions before cleanup.

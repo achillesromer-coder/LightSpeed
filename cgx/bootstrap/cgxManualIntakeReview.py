@@ -6,6 +6,7 @@ and deterministic put_item/facet functions. Original files remain in place.
 """
 from __future__ import annotations
 import argparse, hashlib, importlib.util, json, os, sqlite3, stat, time
+from contextlib import contextmanager
 from pathlib import Path
 
 APPROVED_ROOT=Path(r'C:\CGX\CGX_Manual_Intake')
@@ -97,7 +98,37 @@ def route_rows(engine,agents,lanes,rows,deadline=None):
         finally:db.close()
     return routed
 
+@contextmanager
+def batch_guard(engine):
+    """OS-owned writer lock; process exit releases it without stale PID cleanup."""
+    engine=Path(engine).absolute();directory=safe_path(engine,'state');path=directory/'manual_intake_review.lock'
+    if path.exists() and (linklike(path.lstat()) or not path.is_file()):raise ValueError('INTAKE_LOCK_PATH_REFUSED')
+    fd=os.open(path,os.O_RDWR|os.O_CREAT|getattr(os,'O_NOFOLLOW',0)|getattr(os,'O_BINARY',0),0o600)
+    locked=False
+    try:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):raise ValueError('INTAKE_LOCK_PATH_REFUSED')
+        if os.fstat(fd).st_size==0:os.write(fd,b'0')
+        os.lseek(fd,0,os.SEEK_SET)
+        if os.name=='nt':
+            import msvcrt
+            msvcrt.locking(fd,msvcrt.LK_NBLCK,1)
+        else:
+            import fcntl
+            fcntl.flock(fd,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        locked=True;yield
+    finally:
+        if locked:
+            os.lseek(fd,0,os.SEEK_SET)
+            if os.name=='nt':msvcrt.locking(fd,msvcrt.LK_UNLCK,1)
+            else:fcntl.flock(fd,fcntl.LOCK_UN)
+        os.close(fd)
+
 def review(root=APPROVED_ROOT,engine=ENGINE,*,apply=False,max_files=64,max_bytes=8*1024*1024,max_seconds=20,approved_root=APPROVED_ROOT,restart_walk=False):
+    args=dict(apply=apply,max_files=max_files,max_bytes=max_bytes,max_seconds=max_seconds,approved_root=approved_root,restart_walk=restart_walk)
+    if not apply:return _review(root,engine,**args)
+    with batch_guard(engine):return _review(root,engine,**args)
+
+def _review(root=APPROVED_ROOT,engine=ENGINE,*,apply=False,max_files=64,max_bytes=8*1024*1024,max_seconds=20,approved_root=APPROVED_ROOT,restart_walk=False):
     root=Path(root).absolute();engine=Path(engine).absolute()
     if root!=Path(approved_root).absolute():raise ValueError('ROOT_NOT_APPROVED')
     safe_path(root,'.')

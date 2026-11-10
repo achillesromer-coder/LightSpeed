@@ -92,4 +92,13 @@ class ManualIntakeReviewTests(unittest.TestCase):
   agents=[{'name':'Oracle','db_path':str(self.engine/'agents/../outside.db')}]
   with self.assertRaisesRegex(ValueError,'UNSAFE_RELATIVE_PATH'):M.route_rows(self.engine,agents,['Oracle'],[])
 
+ def test_only_one_intake_writer_and_released_lock_is_reusable(self):
+  (self.root/'a.txt').write_text('source provenance evidence')
+  with M.batch_guard(self.engine):
+   before=self.path.read_bytes()
+   with self.assertRaises(OSError):self.run_review(apply=True)
+   self.assertEqual(self.path.read_bytes(),before)
+  result=self.run_review(apply=True)
+  self.assertEqual(result['source_records'],1)
+  self.assertEqual(self.run_review(apply=True)['visited_entries'],0)
 if __name__=='__main__':unittest.main()
