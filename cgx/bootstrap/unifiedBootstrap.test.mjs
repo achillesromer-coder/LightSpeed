@@ -144,3 +144,11 @@ test('setup flags reject nonboolean truthy and falsey coercion',()=>{
  }
  assert.equal(planCGXSetup({family,lsGORequested:false,offlinePreferred:true}).state,'REVIEW_ONLY');
 });
+
+test('resume receipt rejects unknown, duplicate and malformed completed steps',()=>{
+ for(const completed_steps of [['identity','identity'],['identity','unapproved_dispatch'],['../identity'],[3], 'identity', null]){
+  const p=planCGXSetup({family,mode:'resume',receipt:{receipt_id:'fixture',family,completed_steps}});
+  assert.equal(p.state,'DENIED');
+  assert.equal(p.reason,'INVALID_RECEIPT_STEPS');
+ }
+});

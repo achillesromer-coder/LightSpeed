@@ -64,3 +64,11 @@ def test_source_limits_and_symlink_safety(tmp_path):
  with pytest.raises(ValueError):
   prepare_source(tmp_path/"not_found.txt")
  assert all(c["sha256"]==src["sha256"] for c in ids.values())
+@pytest.mark.parametrize("raw", [
+    '{"floor_summary":"safe","floor_summary":"override","blocker":null,"evidence_ids":["E00"]}',
+    '{"floor_summary":"safe","blocker":null,"evidence_ids":["E00"],"evidence_ids":["E00"]}',
+])
+def test_duplicate_json_keys_fail_closed(tmp_path,raw):
+    _,src,ids=setup(tmp_path)
+    with pytest.raises(ValueError,match="duplicate model JSON key"):
+        validate_model_selection({"response":raw,"done":True,"done_reason":"stop"},ids,src)

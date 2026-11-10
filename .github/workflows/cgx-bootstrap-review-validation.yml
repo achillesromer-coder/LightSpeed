@@ -43,6 +43,8 @@ jobs:
       - name: Test startup, Windows diagnostic and native handshake review guards
         run: |
           node --test cgx/bootstrap/*.test.mjs cgx/load_minimum/*.test.mjs
+      - name: Validate folded PR215 Windows startup diagnostics (fixture-only)
+        run: python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_windows_boot_evidence.py' -v
       - name: Validate local owner GUI isolation and device refusal guards
         run: |
           python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_owner_gui_loopback.py' -v

@@ -10,7 +10,10 @@ test('existing first-space contract creates a single parent, one LOAD alias and 
  assert.equal(p.canonical_parent,'cgx:root:cognigrex');
  assert.equal(p.resolver,'LOAD.cgx');
  assert.equal(p.bootstrap_family_count,5);
- assert.equal(p.lattice.nodes.length,11);
+ assert.equal(p.lattice.nodes.length,12);
+ const social=p.lattice.nodes.find(x=>x.key==='space.socialspace');
+ assert.equal(social?.parent,'space.filespace');
+ assert.equal(social?.profile_mint_authorized,false);
  assert.equal(p.press.candidates.length,11);
  assert.equal(p.press.canonical_type_candidates,6);
  assert.equal(p.first_spaces.length,4);

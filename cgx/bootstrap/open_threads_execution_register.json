@@ -829,5 +829,2073 @@
       "blocked": "Current S97 accepted root/source bytes, authenticated lease issuer/signature/revocation, exact child RootAuthority acceptance, signed provider DBR readback and independent host receiver proof.",
       "next": "On authenticated native host, resolve current S97/root Object_ID and accepted exact child hashes against lease/RootAuthority and independent DBR; otherwise preserve source-only HOLD."
     }
-  ]
+  ],
+  "git_crosslane_inventory_20261106": {
+    "schema": "CGX-CANONICAL-GIT-CROSSLANE-SWEEP/0.1",
+    "as_of": "2026-11-06",
+    "repository": "achillesromer-coder/LightSpeed",
+    "repository_coverage": "THIS_CONNECTED_REPOSITORY_ONLY; OTHER_OR_UNPUSHED_LOCAL_REPOS_NOT_AUDITED",
+    "source_of_truth": "Review integration PR206 for source code; original PR/branch Git refs preserved for immutable lineage",
+    "integration_pr": 206,
+    "integration_head_sha": "3909dd724509fbe2d29d4644e8406b88e197047f",
+    "integration_mergeable": true,
+    "integration_state": "open",
+    "integration_native_authority": false,
+    "counts": {
+      "open_prs": 64,
+      "branches": 224,
+      "unreviewed_closed_prs": "NOT_INVENTORIED",
+      "unreviewed_local_worktrees": "UNKNOWN_CONCURRENT_CODEX_WORK",
+      "branch_deletions": 0,
+      "original_source_deletions": 0,
+      "production_merges": 0
+    },
+    "pr215_exact_source_fold": {
+      "source_pr": 215,
+      "integrated_files": [
+        {
+          "path": "cgx/bootstrap/cgxWindowsBootEvidence.py",
+          "sha": "5f1da783c358a5e694fc2b971309fdd09f99d072"
+        },
+        {
+          "path": "cgx/bootstrap/test_cgx_windows_boot_evidence.py",
+          "sha": "c00ce848671a5eae0cb3c6a4487c5fb1b8314900"
+        },
+        {
+          "path": "tools/cgx_setup_windows.ps1",
+          "sha": "14151a6041287a79407af347cffb181d70b1cda8"
+        }
+      ],
+      "test_workflow_commit": "3909dd724509fbe2d29d4644e8406b88e197047f",
+      "other_two_paths_not_identical": [
+        ".github/workflows/cgx-bootstrap-review-validation.yml",
+        "cgx/bootstrap/README.md"
+      ],
+      "test_ci_status_at_last_check": "BOOTSTRAP_WORKFLOW_PASS; TWO_OTHER_WORKFLOWS_RUNNING",
+      "closure_approved": false
+    },
+    "semantic_authority_conflict": {
+      "observed_source_parent": "Cognigrex.cgx / cgx:root:cognigrex",
+      "later_target": "CGX.cgx as universal root, Build.cgx as build/import pipeline, Cognigrex.cgx as operational extension",
+      "status": "VERSIONED_MIGRATION_PROPOSAL_NOT_NATIVE_REPARENTING",
+      "required": "Owner-approved identity alias/versioned mapping; native RootAuthority and independently accepted DBR before root mutation"
+    },
+    "deduplication_contract": {
+      "raw_originals": "R0_ORIGINAL_BYTES_AND_PROVIDER_PATHS_PRESERVED",
+      "same_source_criterion": "Exact SHA and accepted stable source ID/version/rights/ACL; no title-only merging",
+      "reuse": "One typed CCC operator ABI and Object_ID graph edges; do not duplicate child-owned state in UniSpace or LOAD",
+      "drive": "Provider source aliases and copies remain pointers until hash+permission readback",
+      "data_space": "Typed claims/event receipts distinct from FileSpace source",
+      "retention": "No branch, repository, Library folder or archive deletion until consumer scan, canonical successor readback, rollback and owner signoff"
+    },
+    "next_gaps": [
+      "PR205 38-path LOAD source exact-code drift parity and separate native LOAD alias/rights",
+      "PR207 Eco 24 paths absent from PR206 change set; qualify methods, units, source and rights",
+      "PR208 live runtime 2 paths absent from PR206 change set; check lease/safe staged update",
+      "PR210 scientific assurance 8 paths absent from PR206 change set",
+      "PR211 Wikimedia/bibliography 7 paths absent from PR206 change set; per-source licences",
+      "PR214 family ingestion 10 paths absent from PR206 change set; owner identity/lease readback",
+      "PR215 three source paths exact folded, two modified docs/workflow preserve newest",
+      "PR223 fiction bridge deferred pending scientific, source-rights and fiction distinction",
+      "October Git branch chains and closed PRs need exact-file/merge-base comparison, not blind cherry-pick",
+      "Original GPT exported shards and Drive/Git/local R0 semantic coverage not proven complete from public code",
+      "Public asset privacy #158 and independent signed two-node DBR #161 remain hard holds",
+      "UOS installers, live authenticated FileSpace/DataSpace, CCC capability admission, mint/issuer and legal release not accepted"
+    ],
+    "owner_lanes": [
+      "Achilles/Romer governance + source rights",
+      "Cognigrex parent + LOAD source identities",
+      "Neo/LS runtime and Windows host",
+      "Athene/Eco scientific identity",
+      "UniSpace product/authenticated GUI"
+    ],
+    "open_prs": [
+      {
+        "number": 223,
+        "title": "[Review] CGX fiction–reality mirror: single-identity cross-domain resolver",
+        "head_branch": "review/cgx-fiction-reality-mirror-20261103",
+        "base_branch": "main",
+        "head_sha": "36fc655871c2c73c8f41d14cf1bae8058579a3c5",
+        "updated_at": "2026-11-03T05:14:38Z",
+        "disposition": "FUTURE_FICTION_LIBRARY_AFTER_SCIENTIFIC_OPERATIONAL_ACCEPTANCE",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/223"
+      },
+      {
+        "number": 222,
+        "title": "[Review] CGX local floors: host-owned evidence IDs and strict receipt validation",
+        "head_branch": "review/cgx-host-owned-evidence-ids-20261103",
+        "base_branch": "main",
+        "head_sha": "7003d010f8da708c02e5f5897f3862d9bbe64f16",
+        "updated_at": "2026-11-03T04:39:47Z",
+        "disposition": "ALL_PATHS_OVERLAP_PR206_DIFF__EXACT_BLOB_VERIFY_PENDING",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/222"
+      },
+      {
+        "number": 220,
+        "title": "[Review] UniSpace exact-object private R3 viewport projection guard",
+        "head_branch": "review/unispace-adaptive-task-lenses-20261102",
+        "base_branch": "main",
+        "head_sha": "9de5a4282ff65b8df3569fde31b19544619d4054",
+        "updated_at": "2026-11-04T13:50:28Z",
+        "disposition": "ALL_PATHS_OVERLAP_PR206_DIFF__EXACT_BLOB_VERIFY_PENDING",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/220"
+      },
+      {
+        "number": 218,
+        "title": "CGX UniSpace: bounded adaptive facet projection and source-qualified carrier contract",
+        "head_branch": "review/unispace-cgx-facet-projection-20261102",
+        "base_branch": "main",
+        "head_sha": "5e0dd335a1cc59579166f34ca24662e061d92aec",
+        "updated_at": "2026-11-02T09:01:50Z",
+        "disposition": "ALL_PATHS_OVERLAP_PR206_DIFF__EXACT_BLOB_VERIFY_PENDING",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/218"
+      },
+      {
+        "number": 216,
+        "title": "Achilles: BouwerBase offline-held Stage35 local execution packet and fixture validation",
+        "head_branch": "review/cgx-achilles-bouwerbase-stage35-20261101",
+        "base_branch": "review/cgx-ls-family-ingestion-20261031",
+        "head_sha": "b5ca7c2b96fb6e480d68eeab6fd433efae98d8e3",
+        "updated_at": "2026-11-01T09:00:21Z",
+        "disposition": "QUALIFY_SOURCE_RIGHTS_TESTS_AND_OWNER_BEFORE_FOLD",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/216"
+      },
+      {
+        "number": 215,
+        "title": "CGX / Windows: single setup diagnostics, native stack boot and mint-review checkpoint",
+        "head_branch": "review/cgx-windows-boot-mint-gates-20261031",
+        "base_branch": "review/cgx-ls-unified-bootstrap-20261028",
+        "head_sha": "5fef0bd971f5dda5c6dc96acf5284040a689c8bc",
+        "updated_at": "2026-11-03T00:17:19Z",
+        "disposition": "THREE_SOURCE_FILES_EXACT_FOLDED_TESTED; WORKFLOW_AND_README_NEWER_NOT_EQUAL_REVIEW_PENDING",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/215"
+      },
+      {
+        "number": 214,
+        "title": "CGX / LS: ingest native Family Set and Alexandria H0 metadata into owner-private UniSpace oversight",
+        "head_branch": "review/cgx-ls-family-ingestion-20261031",
+        "base_branch": "main",
+        "head_sha": "65dc890464e6e00aa8e9095f5210c478fdbcd9f1",
+        "updated_at": "2026-11-01T02:54:23Z",
+        "disposition": "QUALIFY_SOURCE_RIGHTS_TESTS_AND_OWNER_BEFORE_FOLD",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/214"
+      },
+      {
+        "number": 213,
+        "title": "CGX Achilles: owner-session-only S92 root-review preflight (read-only)",
+        "head_branch": "review/cgx-achilles-root-preflight-20261031",
+        "base_branch": "main",
+        "head_sha": "c4ca0cc798a03921badaf9f62fbe0729c63371c3",
+        "updated_at": "2026-10-31T04:47:14Z",
+        "disposition": "QUALIFY_SOURCE_RIGHTS_TESTS_AND_OWNER_BEFORE_FOLD",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/213"
+      },
+      {
+        "number": 211,
+        "title": "CGX LOAD review: Wikimedia-to-FileSpace source projection and open-library bibliography",
+        "head_branch": "review/load-wikimedia-ccc-source-federation-20261030",
+        "base_branch": "main",
+        "head_sha": "897957fbb094daab86aea662e81a3af07536258b",
+        "updated_at": "2026-10-30T00:54:51Z",
+        "disposition": "QUALIFY_SOURCE_RIGHTS_TESTS_AND_OWNER_BEFORE_FOLD",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/211"
+      },
+      {
+        "number": 210,
+        "title": "CGX scientific asset: fail-closed assurance route for unverified source and scale",
+        "head_branch": "review/scientific-asset-stopship-20261030",
+        "base_branch": "main",
+        "head_sha": "2c2e84ac1627aae822df4e297accfb68be1b8bfa",
+        "updated_at": "2026-10-30T17:14:52Z",
+        "disposition": "QUALIFY_SOURCE_RIGHTS_TESTS_AND_OWNER_BEFORE_FOLD",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/210"
+      },
+      {
+        "number": 208,
+        "title": "Prepare bounded update of the existing live runtime package",
+        "head_branch": "fix/live-runtime-update-20261029",
+        "base_branch": "main",
+        "head_sha": "3b28df87ab2a7c2a20d54d45ef0d45a03f78aae9",
+        "updated_at": "2026-10-30T00:14:49Z",
+        "disposition": "QUALIFY_SOURCE_RIGHTS_TESTS_AND_OWNER_BEFORE_FOLD",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/208"
+      },
+      {
+        "number": 207,
+        "title": "Eco.cgx review: qualify taxon, specimen, place, time and evidence before LOAD alignment",
+        "head_branch": "review/eco-identity-qualification-20261028",
+        "base_branch": "main",
+        "head_sha": "926496af0c3829a576c3d346b2a26a44578e9af0",
+        "updated_at": "2026-11-06T05:19:39Z",
+        "disposition": "QUALIFY_SOURCE_RIGHTS_TESTS_AND_OWNER_BEFORE_FOLD",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/207"
+      },
+      {
+        "number": 206,
+        "title": "CGX review: unify LightSpeed startup, Grex LS GO toggles and smart setup gates",
+        "head_branch": "review/cgx-ls-unified-bootstrap-20261028",
+        "base_branch": "main",
+        "head_sha": "3909dd724509fbe2d29d4644e8406b88e197047f",
+        "updated_at": "2026-11-06T13:06:34Z",
+        "disposition": "CANONICAL_SOURCE_REVIEW_BRANCH_UNMERGED",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/206"
+      },
+      {
+        "number": 205,
+        "title": "CGX review: LOAD.cgx minimum Alexandria library bootstrap",
+        "head_branch": "review/load-alexandria-minimal-20261028",
+        "base_branch": "main",
+        "head_sha": "465876bcd99a4fa2dc400cead4ad7c5f991410ad",
+        "updated_at": "2026-11-06T05:17:20Z",
+        "disposition": "ALL_38_PATHS_APPEAR_IN_PR206_DIFF__CONTENT_PARITY_MUST_BE_RECHECKED",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/205"
+      },
+      {
+        "number": 202,
+        "title": "Draft: Alexandria cross-scale interaction operators over existing Type-I VGK/CIM",
+        "head_branch": "integration/cgx-alexandria-cross-scale-transfer-lens-20261021",
+        "base_branch": "integration/cgx-alexandria-libjuice-r0-reconciliation-20261021",
+        "head_sha": "95ec9e800faaad09cf48e51d96a91cc545737ada",
+        "updated_at": "2026-10-21T03:29:19Z",
+        "disposition": "SCIENTIFIC_SOURCE_PROOF_IN_INDEPENDENT_LANE__DO_NOT_AUTO_PROMOTE",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/202"
+      },
+      {
+        "number": 199,
+        "title": "Draft: source-bound viscosity / fluid regime reuse of existing UTP-137 kernels",
+        "head_branch": "integration/cgx-fluid-regime-reuse-proof-20261021",
+        "base_branch": "integration/cgx-alexandria-libjuice-r0-reconciliation-20261021",
+        "head_sha": "0a6068ad66f74e772f20659592f4178421c25b58",
+        "updated_at": "2026-10-21T03:24:20Z",
+        "disposition": "SCIENTIFIC_SOURCE_PROOF_IN_INDEPENDENT_LANE__DO_NOT_AUTO_PROMOTE",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/199"
+      },
+      {
+        "number": 198,
+        "title": "Draft: fold exact libjuice R0 dependency proof into Alexandria source lineage",
+        "head_branch": "integration/cgx-alexandria-libjuice-r0-reconciliation-20261021",
+        "base_branch": "integration/cgx-alexandria-r0-source-fold-20261021",
+        "head_sha": "3b65f6e0c4ab863ba7644fee228bd93cc0002999",
+        "updated_at": "2026-10-21T02:00:13Z",
+        "disposition": "SCIENTIFIC_SOURCE_PROOF_IN_INDEPENDENT_LANE__DO_NOT_AUTO_PROMOTE",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/198"
+      },
+      {
+        "number": 197,
+        "title": "Draft: selectively fold latest Alexandria Hypersomnia/libdatachannel R0 source proofs",
+        "head_branch": "integration/cgx-alexandria-r0-source-fold-20261021",
+        "base_branch": "integration/cgx-finishline-evidence-map-20261021",
+        "head_sha": "0f12c45c300e3170e5655d0a6505c6994094eabe",
+        "updated_at": "2026-10-20T23:29:42Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/197"
+      },
+      {
+        "number": 196,
+        "title": "Draft: reconcile CGX source folds into evidence-defined completion and hurdle map",
+        "head_branch": "integration/cgx-finishline-evidence-map-20261021",
+        "base_branch": "integration/cgx-static-byte-disclosure-proof-20261021",
+        "head_sha": "4459f5ed9c75164f57635f160fde9b80b7a98581",
+        "updated_at": "2026-10-20T23:20:41Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/196"
+      },
+      {
+        "number": 195,
+        "title": "Draft: content-byte proof against CGX private asset leaks in compiled UniSpace output",
+        "head_branch": "integration/cgx-static-byte-disclosure-proof-20261021",
+        "base_branch": "integration/cgx-private-migration-readback-20261021",
+        "head_sha": "3bf4a2f30330013e7eaddb9f1b48bf62865c42e4",
+        "updated_at": "2026-10-20T22:03:30Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/195"
+      },
+      {
+        "number": 194,
+        "title": "Draft: verify private CGX asset staging byte-for-byte and reject unapproved extras",
+        "head_branch": "integration/cgx-private-migration-readback-20261021",
+        "base_branch": "integration/unispace-private-review-asset-migration-plan-20261021",
+        "head_sha": "0eb89172cb8ad503abc77598e98e57df70a9f2b4",
+        "updated_at": "2026-10-20T22:04:38Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/194"
+      },
+      {
+        "number": 193,
+        "title": "Draft: source-hash-exact, owner-approved private Objects migration plan (61 static asset HOLD)",
+        "head_branch": "integration/unispace-private-review-asset-migration-plan-20261021",
+        "base_branch": "integration/unispace-private-object-viewer-20261021",
+        "head_sha": "15d8c588395b656144fc8e0e341e194a0ea6d560",
+        "updated_at": "2026-10-20T21:07:16Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/193"
+      },
+      {
+        "number": 192,
+        "title": "Draft: authenticated CGX Objects gallery and mesh viewer; block public-static fallback",
+        "head_branch": "integration/unispace-private-object-viewer-20261021",
+        "base_branch": "integration/unispace-private-review-asset-gateway-20261020",
+        "head_sha": "8049aef6dd2eba9468bfaf620d359169c6d2a315",
+        "updated_at": "2026-11-01T10:55:41Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/192"
+      },
+      {
+        "number": 191,
+        "title": "Draft: owner-session-only CGX Objects asset gateway before private static relocation",
+        "head_branch": "integration/unispace-private-review-asset-gateway-20261020",
+        "base_branch": "integration/unispace-public-gate-offline-kit-20261020",
+        "head_sha": "65ed3fe56ab12b4bb47f503dd29efbce8ab4d408",
+        "updated_at": "2026-10-20T14:44:12Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/191"
+      },
+      {
+        "number": 190,
+        "title": "Draft: fail-closed UniSpace public build and deterministic Alexandria Basic offline review kit",
+        "head_branch": "integration/unispace-public-gate-offline-kit-20261020",
+        "base_branch": "integration/unispace-alexandria-library-release-gates-20261020",
+        "head_sha": "e1d1d71c08197600fc505927368ba695a13d9ea9",
+        "updated_at": "2026-10-20T14:07:32Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/190"
+      },
+      {
+        "number": 189,
+        "title": "Draft: Alexandria cross-domain library index and fail-closed UniSpace static-asset audit",
+        "head_branch": "integration/unispace-alexandria-library-release-gates-20261020",
+        "base_branch": "integration/unispace-cgx-observer-facets-20261020",
+        "head_sha": "1c61d07d64ad9eeea68315a8b439e082c2119819",
+        "updated_at": "2026-10-20T14:44:16Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/189"
+      },
+      {
+        "number": 188,
+        "title": "Draft: fold public UniSpace /cgx synthetic viewer with deny-by-default static packaging",
+        "head_branch": "integration/unispace-cgx-public-allowlist-20261020",
+        "base_branch": "integration/unispace-cgx-observer-facets-20261020",
+        "head_sha": "f25422a6c8d975faac21972f8a8cd218c0a7001b",
+        "updated_at": "2026-11-06T07:52:42Z",
+        "disposition": "PUBLIC_VIEWER_FOLD_RECEIPT_EXISTS__ORIGINAL_BLOB_PARITY_RECHECK_BEFORE_PR_CLOSE",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/188"
+      },
+      {
+        "number": 187,
+        "title": "Draft: opt-in DataSpace observer, N-node delta and H0–H9 hydration source fold",
+        "head_branch": "integration/unispace-cgx-observer-facets-20261020",
+        "base_branch": "integration/unispace-cgx-native-intake-20261020",
+        "head_sha": "ea8cb10b3060b01428504a0e613557baa99813be",
+        "updated_at": "2026-10-20T10:35:01Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/187"
+      },
+      {
+        "number": 186,
+        "title": "Draft: stage PR173 source-preserving native intake over UniSpace CGX R0/identity stack",
+        "head_branch": "integration/unispace-cgx-native-intake-20261020",
+        "base_branch": "integration/unispace-cgx-r0-transport-20261020",
+        "head_sha": "aedab4729c7c9c95b7185eb446eff76e145904ae",
+        "updated_at": "2026-10-20T09:19:33Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/186"
+      },
+      {
+        "number": 185,
+        "title": "Draft: selectively fold PR #175 R0 codec and source-readback proof into UniSpace stack",
+        "head_branch": "integration/unispace-cgx-r0-transport-20261020",
+        "base_branch": "integration/unispace-cgx-identity-library-20261020",
+        "head_sha": "bf49bd448e3779bbff2db97a905fde79363341ae",
+        "updated_at": "2026-10-20T09:29:25Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/185"
+      },
+      {
+        "number": 184,
+        "title": "Draft: fold exact CGX object identity and source-derived library coverage onto UniSpace #182",
+        "head_branch": "integration/unispace-cgx-identity-library-20261020",
+        "base_branch": "integration/unispace-cgx-source-convergence-20261020",
+        "head_sha": "127979f04243333884ba33a23d04c7addce5e457",
+        "updated_at": "2026-10-20T08:35:27Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/184"
+      },
+      {
+        "number": 183,
+        "title": "Current-main fold: exact CGX Object_ID resolution (supersedes #177)",
+        "head_branch": "fix/cgx-identity-current-main-fold-20261020",
+        "base_branch": "main",
+        "head_sha": "06a081018910d88c003a73d3d9fb46ab4107f096",
+        "updated_at": "2026-10-20T08:25:27Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/183"
+      },
+      {
+        "number": 182,
+        "title": "Draft: fold UniSpace CGX source families (#179, #180, #181) with exact-blob proof",
+        "head_branch": "integration/unispace-cgx-source-convergence-20261020",
+        "base_branch": "main",
+        "head_sha": "db147fae3a77654bf544da870a4c897216389012",
+        "updated_at": "2026-10-20T08:31:22Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/182"
+      },
+      {
+        "number": 181,
+        "title": "Draft: CGX modular facility asset-volume, interconnect and logistics compiler",
+        "head_branch": "feature/cgx-modular-facility-asset-packing-20261020",
+        "base_branch": "main",
+        "head_sha": "bd2117d3975cc4db10dfe763ce92d9b1ad623814",
+        "updated_at": "2026-10-20T08:15:25Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/181"
+      },
+      {
+        "number": 180,
+        "title": "Draft: Alexandria keyed filesets, public commons and rights-aware external catalogue",
+        "head_branch": "feature/unispace-keyed-alexandria-publication-20261020",
+        "base_branch": "main",
+        "head_sha": "b05fbeb44d04e6d328faddf6116991b3f164adb6",
+        "updated_at": "2026-10-21T05:38:15Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/180"
+      },
+      {
+        "number": 179,
+        "title": "Draft: UniSpace passive edge profiles and source-only node planning",
+        "head_branch": "feature/cgx-passive-edge-adapter-convergence-20261020",
+        "base_branch": "main",
+        "head_sha": "8cb826a3644a136af8af956804e4be8bc022b869",
+        "updated_at": "2026-10-20T09:48:52Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/179"
+      },
+      {
+        "number": 178,
+        "title": "Draft: build-only Android test APK from PR #176",
+        "head_branch": "build/cgx-android-test-apk-20261013",
+        "base_branch": "feature/lsgo-mobile-link-20261013",
+        "head_sha": "446a8835e51c23c523cf175296237fdbad89a284",
+        "updated_at": "2026-10-13T02:06:55Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/178"
+      },
+      {
+        "number": 177,
+        "title": "Require exact matches for CGX object identity queries",
+        "head_branch": "fix/cgx-exact-object-identity-20261013",
+        "base_branch": "main",
+        "head_sha": "a704a4836939851132d4704688049124cb134862",
+        "updated_at": "2026-10-20T08:31:19Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/177"
+      },
+      {
+        "number": 176,
+        "title": "Draft: bounded CGX mobile connection and Android carrier adapter",
+        "head_branch": "feature/lsgo-mobile-link-20261013",
+        "base_branch": "main",
+        "head_sha": "a895b2454247efd2f4d298f319eddd379ad89e34",
+        "updated_at": "2026-10-29T16:16:52Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/176"
+      },
+      {
+        "number": 175,
+        "title": "CGX UniSpace geometric shorthand byte-carrier proof",
+        "head_branch": "feature/cgx-unispace-r0-shorthand-20261012",
+        "base_branch": "main",
+        "head_sha": "906faddc1faaac8814ff670a6eb417856861de1e",
+        "updated_at": "2026-10-24T22:29:11Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/175"
+      },
+      {
+        "number": 174,
+        "title": "UniSpace CGX: isolated public FileSpace DataSpace PrintSpace and DOOM viewer",
+        "head_branch": "feature/unispace-public-cgx-20261012",
+        "base_branch": "main",
+        "head_sha": "b3baaa99bffb09631f0bf0b1636e5001f19d894c",
+        "updated_at": "2026-11-02T09:23:58Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/174"
+      },
+      {
+        "number": 173,
+        "title": "CGX: rolling observer + configurable N-node DataSpace facet within existing node exchange",
+        "head_branch": "cgx/dataspace-rolling-observer-facet-20261012",
+        "base_branch": "main",
+        "head_sha": "03448282109278aef1f2745086b5176cdb615159",
+        "updated_at": "2026-10-20T09:29:22Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/173"
+      },
+      {
+        "number": 172,
+        "title": "LS GO / CGX: integrate visitor access, review workspace and DBR receipts",
+        "head_branch": "feature/ls-go-cgx-visitor-contracts-20261011",
+        "base_branch": "main",
+        "head_sha": "7db64d48528c3da380bc269d5bfaaa080f5194d8",
+        "updated_at": "2026-10-18T23:42:04Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/172"
+      },
+      {
+        "number": 171,
+        "title": "Attach PR155 owner ancestry to Type-I maturity/composition branch",
+        "head_branch": "cgx/type1-functional-voxel-field-basis-20261009",
+        "base_branch": "cgx/type1-maturity-graph-20261010",
+        "head_sha": "8fcbc6f00ca544a001c654bb2fc656e7fcc6a781",
+        "updated_at": "2026-10-10T20:43:29Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/171"
+      },
+      {
+        "number": 167,
+        "title": "Add Type-I evidence maturity and universal 2D-to-4D composition",
+        "head_branch": "cgx/type1-maturity-graph-20261010",
+        "base_branch": "main",
+        "head_sha": "7a21f26c733e1c5d6eaf50e67ac5f77382f2b119",
+        "updated_at": "2026-10-10T22:22:04Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/167"
+      },
+      {
+        "number": 164,
+        "title": "Compile UTP-119 circular-feed reference/control packets",
+        "head_branch": "cgx/utp119-circular-feed-qualification-20261010",
+        "base_branch": "main",
+        "head_sha": "3087bfc04f05a3dc952e28df011a43fd604d4261",
+        "updated_at": "2026-10-10T09:07:33Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/164"
+      },
+      {
+        "number": 163,
+        "title": "Align local Guard with CGX assurance gates",
+        "head_branch": "cgx/local-application-assurance-20261010",
+        "base_branch": "main",
+        "head_sha": "efa7d4383b7cf84898148146b200d58828cb058e",
+        "updated_at": "2026-10-10T09:09:14Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/163"
+      },
+      {
+        "number": 156,
+        "title": "Owner auth: optional four-digit PIN policy with bounded login throttling",
+        "head_branch": "feature/lightspeed-owner-pin-policy-20261009",
+        "base_branch": "main",
+        "head_sha": "86ce6622b68821bfda49a421b2d94c9ab2fffe93",
+        "updated_at": "2026-10-10T09:24:19Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/156"
+      },
+      {
+        "number": 153,
+        "title": "BUILD-073: harden CGX execution boundaries (current-main reconciliation)",
+        "head_branch": "cgx/build073-execution-boundary-hardening-r2-20261009",
+        "base_branch": "main",
+        "head_sha": "6207af202449e0204fe093d1d98caed467963fbb",
+        "updated_at": "2026-10-10T09:23:09Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/153"
+      },
+      {
+        "number": 152,
+        "title": "Re-home CGX fail-closed view policy on current main",
+        "head_branch": "cgx/view-policy-runtime-current-20261009",
+        "base_branch": "main",
+        "head_sha": "1a3477e25f154901d682ffef41d7baae5b13dd5a",
+        "updated_at": "2026-10-10T09:11:00Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/152"
+      },
+      {
+        "number": 151,
+        "title": "BUILD-074: add Type-I interface operator kernel (current-main reconciliation)",
+        "head_branch": "cgx/build074-interface-operator-kernel-r2-20261009",
+        "base_branch": "main",
+        "head_sha": "078835f70d58cf7d056c1a7f787e9161dc371e79",
+        "updated_at": "2026-10-10T09:22:46Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/151"
+      },
+      {
+        "number": 144,
+        "title": "Rebase InterSol site/community contract onto current main",
+        "head_branch": "tmp/rebase-pr118-20261009",
+        "base_branch": "main",
+        "head_sha": "9e6e0501e10491c3620377593f329f5c30941ce0",
+        "updated_at": "2026-10-10T09:10:32Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/144"
+      },
+      {
+        "number": 143,
+        "title": "BUILD-071: Type-I engineering invariant library",
+        "head_branch": "cgx/build071-engineering-invariants-20261009",
+        "base_branch": "main",
+        "head_sha": "c31d10fd6f2efbcaf450c1e195e70e4e1cf92da3",
+        "updated_at": "2026-10-09T03:53:43Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/143"
+      },
+      {
+        "number": 88,
+        "title": "Preserve and queue browser-selected sources for review",
+        "head_branch": "source-intake-staging-20261004",
+        "base_branch": "main",
+        "head_sha": "9b56eaefe47a285122aa17b80f4425ec0f280318",
+        "updated_at": "2026-10-04T17:48:11Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/88"
+      },
+      {
+        "number": 55,
+        "title": "Enforce CGX view-selection policy in existing validation path",
+        "head_branch": "fix/cgx-view-policy-enforcement-20260926",
+        "base_branch": "main",
+        "head_sha": "28a5793fcc396c7f4dcbf3911481a3e7d1059624",
+        "updated_at": "2026-10-03T08:55:16Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/55"
+      },
+      {
+        "number": 53,
+        "title": "CGX: S91 Recovery physical field-conformance operational index",
+        "head_branch": "cgx/s88-field-conformance-index",
+        "base_branch": "main",
+        "head_sha": "eb31a9e4ff35071b4cf1e2cd81ba3456a3367147",
+        "updated_at": "2026-09-23T23:44:12Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/53"
+      },
+      {
+        "number": 47,
+        "title": "ACR3 handoff: decentralised systems and EMC² tokenization architecture",
+        "head_branch": "handoff/acr3-emc2-decentralised-2026-09-14",
+        "base_branch": "main",
+        "head_sha": "d24d596659c7fe43a198ba41fbb2ee25b16cb10b",
+        "updated_at": "2026-09-15T06:21:06Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/47"
+      },
+      {
+        "number": 35,
+        "title": "Watch Tower source-twin viewer contract v0.1",
+        "head_branch": "feature/watchtower-source-twin-v0-1",
+        "base_branch": "main",
+        "head_sha": "83482ab878d0c122f2befaeae9310b3237d49c96",
+        "updated_at": "2026-09-24T11:10:25Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/35"
+      },
+      {
+        "number": 34,
+        "title": "Refine Mark III original-layout serviceable print/plating reference v0.3.3",
+        "head_branch": "execution/mark-iii-original-layout-v0.3-2026-08-05",
+        "base_branch": "execution/luke-ii-parametric-reference-2026-08-04",
+        "head_sha": "cf2867af5c14bef3e19157527049e5ce96016e44",
+        "updated_at": "2026-08-27T22:52:03Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/34"
+      },
+      {
+        "number": 30,
+        "title": "Close Luke II as a serviceable interactive reference assembly",
+        "head_branch": "execution/luke-ii-parametric-reference-2026-08-04",
+        "base_branch": "main",
+        "head_sha": "4cbba640bf8f1589f542ec164016c4f39b4c85e1",
+        "updated_at": "2026-08-04T22:22:24Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/30"
+      },
+      {
+        "number": 29,
+        "title": "Harden Cognigrex runtime and add RFS/EMFF evidence workbooks",
+        "head_branch": "agent/cognigrex-half-speed-resource-profile",
+        "base_branch": "main",
+        "head_sha": "a9e27af0d2934b057c14cb8db957852acb10e592",
+        "updated_at": "2026-09-06T02:34:50Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/29"
+      },
+      {
+        "number": 28,
+        "title": "Public Castalia official-source materialization",
+        "head_branch": "public/castalia-official-materialization",
+        "base_branch": "main",
+        "head_sha": "ddb3182dd049b2845367a3ecef693e06ca31fa0f",
+        "updated_at": "2026-08-01T09:52:31Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/28"
+      },
+      {
+        "number": 25,
+        "title": "Public Eros official-source materialization",
+        "head_branch": "public/eros-official-materialization",
+        "base_branch": "main",
+        "head_sha": "1f6e8a564d8662f12ef168061bec3534ebe7ca26",
+        "updated_at": "2026-07-30T20:01:47Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/25"
+      },
+      {
+        "number": 24,
+        "title": "Record public-safe Web4 and COIN protocol canon topology",
+        "head_branch": "protocol/web4-coin-core-v0-1",
+        "base_branch": "main",
+        "head_sha": "e4f815e51587109c838f0185260c9cdd62aa69bd",
+        "updated_at": "2026-07-29T12:05:23Z",
+        "disposition": "RETAIN_PROVENANCE_UNTIL_EXACT_DIFF_AND_OWNER_DISPOSITION",
+        "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/24"
+      }
+    ],
+    "branch_refs": [
+      {
+        "ref": "agent/canonical-representation-edge-slice",
+        "sha": "1c650dda01cd66927ce40a14bf4e97c7f3eb32b1",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "agent/cognigrex-half-speed-resource-profile",
+        "sha": "a9e27af0d2934b057c14cb8db957852acb10e592",
+        "open_pr": 29,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "agent/local-to-git-reproducibility",
+        "sha": "bc796330e5ce761a34dab95a004f99bd5b0d18c5",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "agent/preserve-immutable-queue-mtimes",
+        "sha": "89d9ff0d5ac5c57c3f3d2dca51f0b957dab51927",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "audit/w3-source-provenance-2026-09-08",
+        "sha": "97c0ed2d7328f84817b1690313f10772aae25299",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "benchmark/cgx-doom-onefile-20261012",
+        "sha": "5a593dc033e36df8bdeceb5668e544c2dda1e4ba",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "build/cgx-android-test-apk-20261013",
+        "sha": "446a8835e51c23c523cf175296237fdbad89a284",
+        "open_pr": 178,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgp-ies-functional-handoff-20260930",
+        "sha": "12acb8008e3b7186ecc52da571521dc70bfc47c9",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgp-ies-launch-frontier-20260930",
+        "sha": "5a1f7a5a5be11d85d6e319dabf6a05fcfd044043",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/all-component-4k-symbolic-review-20261010",
+        "sha": "4f009fc049282545ea43042d493d1ed407c28c51",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/build068-requirement-target-closure-20261009",
+        "sha": "2b700cbdb2bcd8deacc1ae45e8555ef3fd7e75a7",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/build069-pr138-policy-reconcile-20261009",
+        "sha": "efc219ae3b939c89686447b3b103f1bafc207bd8",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/build069-volumetric-kernel-20261009",
+        "sha": "5093d434bfec5ce225f3d4c1bc6c1f6387d12092",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/build070-lsgo-printable-projection-20261009",
+        "sha": "bca5860686bb55545f704b06323140deefdde6d9",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/build070-printable-4d-stack-20261009",
+        "sha": "30e3fae88b738a52a78e10d7bf83a018e34128ab",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/build071-engineering-invariants-20261009",
+        "sha": "c31d10fd6f2efbcaf450c1e195e70e4e1cf92da3",
+        "open_pr": 143,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/build071-invariants-smartstack-20261009",
+        "sha": "6e79ebe9db108b93937f9e4e790ceb533cde3e6d",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/build072-lsgo-coverage-projection-20261009",
+        "sha": "4bfc10db99607fbd323d94a645a992442668fbb7",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/build072-topology-coverage-20261009",
+        "sha": "20226ae97e0ae3fcc5c51e4afc94de81784146bb",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/build073-execution-boundary-hardening-20261009",
+        "sha": "fc86fa6c2321fbc51f3e93b4a5e0ebce0acf5583",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/build073-execution-boundary-hardening-r2-20261009",
+        "sha": "6207af202449e0204fe093d1d98caed467963fbb",
+        "open_pr": 153,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/build074-interface-operator-kernel-20261009",
+        "sha": "e341f4d4accbac543baad4ab8b94c91abe614214",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/build074-interface-operator-kernel-r2-20261009",
+        "sha": "078835f70d58cf7d056c1a7f787e9161dc371e79",
+        "open_pr": 151,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/build075-witness-evidence-kernel-20261009",
+        "sha": "6ed4fc74b8ce9f381b9c232146385f39d2c04f08",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/chat-plugin-interface-2026-10-02",
+        "sha": "0977dfaac94266d6c5c24793ed7edb5c3d0b7fe9",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/component-atlas-gap-closure-20261008",
+        "sha": "119bfdd431c097075aa6cef61c1b5b724bd9b284",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/component-atlas-utp-gap-closure-20261008",
+        "sha": "0630e2226dd1513b3a141a18c2f0e2e46026288f",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/component-crosslane-bindings-20261009",
+        "sha": "9c33a575e52ffb66d56acf96da3f61579c082e8c",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/component-geometry-atlas-20261008",
+        "sha": "05894679a890c8eab798d92951dc77272d426df7",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/component-instance-proof-ladder-20261008",
+        "sha": "28bbd5d962ced33afa41b56565d0f4a427eb28c4",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/component-instance-register-population-20261008",
+        "sha": "56449c8447931eb70e19d77b65e6bf2d38da2751",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/component-reconcile-drive-owner-20261009",
+        "sha": "846277fce218eff1728cd6ed2ab9d5e2c5fcbbea",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/continuation-2026-09-18",
+        "sha": "cfd2b5c24e754f97e3ef81fc7839e948c2a73f63",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/corpus-bound-cascade-20261001",
+        "sha": "4cf2158a7f9aa27b1433521b9f418e8e8a7a2e83",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/corpus-bound-cascade-rebase-20261001",
+        "sha": "792a47af6256bf2534127e69876bbaaff0d0f5e0",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/dataspace-rolling-observer-facet-20261012",
+        "sha": "03448282109278aef1f2745086b5176cdb615159",
+        "open_pr": 173,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/domain-skeletons-2026-09-21",
+        "sha": "46ea4a3bce63e440ce449ee6c239d1b138f300c3",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/exact-binding-bridge-20261009",
+        "sha": "109f1e7049139fa2ebaea81add033d7a962a51b3",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/first-file-conformance-cli-20261001",
+        "sha": "52158c01cdf7666760941311437c27fcb104ca92",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/instance-source-binding-convergence-20261009",
+        "sha": "d5bb5d0aad3115159bf75dea2d0dd2cb80226de9",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/interactive-review-lens-20261009",
+        "sha": "82a599c0bb2b5422370ffe98bfdc584a59efe3f1",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/local-application-assurance-20261010",
+        "sha": "efa7d4383b7cf84898148146b200d58828cb058e",
+        "open_pr": 163,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/luke4-configuration-relation-20261005",
+        "sha": "887e886741926ee090f3c68d89d29b319aca7a2e",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/m1-component-mark3-audit-20261005",
+        "sha": "62afd1c4582272ee0d5f0628b28aa6edbdef132e",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/m1-precedence-execution-20261005",
+        "sha": "3a2d5fb57d3f41f56a7230b0ceee4bd3ebeaa92b",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/m1-scale-owner-audit-20261005",
+        "sha": "b19f798eaccebf6eb130cfd95ae52f91b371057f",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/manufacturing-compiler-20261009",
+        "sha": "0958f476aab761b606beff5718e96b3def32ee4a",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/mark3-interface-source-correction-20261005",
+        "sha": "00831b836ce09e2ed9e7b47a11593b0af36dd928",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/mark-v-uc005-reconciliation-20261007",
+        "sha": "4a0cf24e3c3419a65ad78bfa3834c71bbef12d20",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/neo-bus00-native-readiness-20261013",
+        "sha": "198761bf1d86332dd1b83a844f0f3336792a4609",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/node-exchange-2026-10-02",
+        "sha": "4b649e9b3f28b0dd3297a6561585f50f1d13b619",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/object-review-4k-interactive-20261010",
+        "sha": "d03f07fca6d9c507dbe1844c75d5d8406bc11242",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/object-review-catalogue-20261010",
+        "sha": "0e9b8e1334437c495ed7620a92420e77837269d1",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/object-review-lineage-bridges-20261010",
+        "sha": "2e0d1e2fc501c38b04f84a11399bcb14399e9413",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/payload-capsule-dbr-20261005",
+        "sha": "98b598c688b453b282395d05c76ba16e94ea457a",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/pc01-printceptor-convergence-20261009",
+        "sha": "1ddf653d0b04720d6a74fcd31af912c108dc4af3",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/pc01-route-family-convergence-20261009",
+        "sha": "2434b3fbe0a402a64f607a27f1ef70bb9bf33271",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/phase-b-v0.2",
+        "sha": "e3f4bb053dde385796430830fa6d28c7d44c25a0",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/phase-c-v0.5",
+        "sha": "e3f4bb053dde385796430830fa6d28c7d44c25a0",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/phase-c-v0.6",
+        "sha": "bf66daecd127c3cd5612112fb69859bd6c95bc97",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/phase-c-v0.8",
+        "sha": "3b1f56e3a60fe0c412f76fddd6988ecc91fdd706",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/phase-c-v1.1",
+        "sha": "3b1f56e3a60fe0c412f76fddd6988ecc91fdd706",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/phase-g-v1.7",
+        "sha": "3b1f56e3a60fe0c412f76fddd6988ecc91fdd706",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/phase-g-v1.9",
+        "sha": "3b1f56e3a60fe0c412f76fddd6988ecc91fdd706",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/phase-g-v1.10",
+        "sha": "3b1f56e3a60fe0c412f76fddd6988ecc91fdd706",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/plugin-capability-shortcalls-2026-10-02",
+        "sha": "89af2f919621e0f8f716398fb8ebf199a4719a43",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/plugin-control-plane-2026-10-02",
+        "sha": "23be4bf984ad559758b8350565d637f2f64c4af6",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/printable-catalogue-index-20261007",
+        "sha": "4a53de7fcfa05969d032026b44e479b0baef3b3c",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/printable-frontier-projections-20261007",
+        "sha": "0dfe4d65b9c4854c94f9483e67ef434e402a7112",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/printable-operational-decomposition-20261007",
+        "sha": "9557405b1283376a8a3ff023bdfea62d03635e34",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/printable-solid-state-20261007",
+        "sha": "3902afedf7323bd0766a379fda2dc97e3b8527b4",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/public-bootstrap-s89",
+        "sha": "b2c25f3d89e6de5fde1f99e1b8b6e34fd2821581",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/remaining-3d-source-bindings-20261005",
+        "sha": "f2d07d1972d1a26863b50388c3002ee4c9cea268",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/s88-field-conformance-index",
+        "sha": "eb31a9e4ff35071b4cf1e2cd81ba3456a3367147",
+        "open_pr": 53,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/secondary-fcstd-execution-20261005",
+        "sha": "a179e78c831c6ea64e37a3a3606909c32b2a61b7",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/semantic-unbound-blocker-20261009",
+        "sha": "c5f9fb8797db6e3ca1d304cfdf17e47d921f258c",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/source-intake-cad-structure-20261001",
+        "sha": "89dad896a99480070c6fc8cff15f63c97ccf37bf",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/source-intake-corpus-formats-20261001",
+        "sha": "080bd22b6aa5ea48e38e47a05eed8b36c0360acd",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/source-intake-mesh-structure-20261001",
+        "sha": "3237c4293ae2cd42368c457db3d2d59620d27a82",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/source-intake-native-projection-20261001",
+        "sha": "9af9c62dd5deee95fb69e2169fb3a7622e7307ff",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/source-intake-next-formats-20261001",
+        "sha": "3dccea14a07947b7dea636cf1cdb3053fbbbb624",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/source-intake-specialist-structure-20261001",
+        "sha": "2f69efff972913be51571467d8b38c7e1a8d7e9e",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/standalone-ui-acceptance-skill-20261007",
+        "sha": "6fe9cfb1a1b9ef1a83c08c0e7723bf5a026c66ff",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/type1-60field-owner-reconcile-20261009",
+        "sha": "1cb261158788e83450529e0ed3f2774cfa588adb",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/type1-functional-voxel-field-basis-20261009",
+        "sha": "8fcbc6f00ca544a001c654bb2fc656e7fcc6a781",
+        "open_pr": 171,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/type1-maturity-graph-20261010",
+        "sha": "7a21f26c733e1c5d6eaf50e67ac5f77382f2b119",
+        "open_pr": 167,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/type1-stack-compiler-ui-20261009",
+        "sha": "ad6a7ba1e3f94258179061c57a9b5c96ca2e6f63",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/type1-universal-stack-ui-20261009",
+        "sha": "73872a3e60141d4f116fc13d458c7a6b1c52b905",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/type1-volumetric-kernel-20261009",
+        "sha": "2f9cbd841a47d943fe52435facde787d6f7b704d",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/utp119-circular-feed-qualification-20261010",
+        "sha": "3087bfc04f05a3dc952e28df011a43fd604d4261",
+        "open_pr": 164,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/utp138-compound-decomposition-20261009",
+        "sha": "1c5abeb38781b96bc74fb0551b1c7be7700fbb01",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/view-policy-runtime-current-20261009",
+        "sha": "1a3477e25f154901d682ffef41d7baae5b13dd5a",
+        "open_pr": 152,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx/3d-intake-handoff-20261003",
+        "sha": "e7fa26d17c4da3a45a6ceada7b4815f176ccbac5",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx-capability-facades",
+        "sha": "e0eb17a7de18cc907e3605b0e00b1906363b9fdb",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx-capability-facades-20261002",
+        "sha": "dfd62ba4b1570092b365949ec7acec908589f2f7",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx-local-simulation-probes-20261004",
+        "sha": "6122fa6f058573ed2fd9586e82ef567561891213",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx-node-exchange-route-promotion-20261004",
+        "sha": "351103c0ea99ce160294a0944e7a1344821d3a86",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx-phase-b-v0.1",
+        "sha": "217fed6e304560ed2be1d530321c9f574db56c77",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx-provider-notification-evidence-20261004",
+        "sha": "93f679fee78112230ad49b877d97f4fcdf97a3f0",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx-s92-child-acceptance-audit-20261004",
+        "sha": "563bc377d8df98c4bdcbf0d317807aff71f13dcd",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx-s92-child-persistence-readback-20261004",
+        "sha": "e0912c261c9e6d027eb4e399dad54d9d6a953c60",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "cgx-windows-keystore-20261004",
+        "sha": "f2069f34a770392f3adfac826096934ecd9db626",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "chore/lsgo-source-map-js-1.2.2-20261010",
+        "sha": "671b6dacc7fb053ed100e9a2608bec9b699912c4",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "codex/intersol-site-community-cgx-2026-09-28",
+        "sha": "af17715beaaa2399fa46dc661f1a68f00c826a60",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "codex/lightspeed-clean-slate-2026-07-06",
+        "sha": "7a969ee45261c690ab2c330d45f042c747755738",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "codex/lightspeed-desktop-launch-sync-2026-07-07",
+        "sha": "e07195101c8e7027b410e9c06f0684d871356a73",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "codex/lightspeed-final-alignment",
+        "sha": "60c2c1ec3d3b82a346af5f5ae1a5163cf641ed7f",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "codex/lightspeed-final-bridge-realization-2026-07-07",
+        "sha": "68693fa4b99f7d0773d828f87162f3626d6a6786",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "codex/lightspeed-web-ui-bridge-2026-07-07",
+        "sha": "e8323e204b6d6511427d8377bd09e11a7b6aa647",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "codex/ls-go-command-centre-2026-07-19",
+        "sha": "eff622c1b05a7f3142073b44d38f702388e18f6a",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "codex/ls-go-current-integration-2026-07-14",
+        "sha": "52556dd1f24be2af930d3188da4ef952882a7e08",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "codex/ls-go-sites-side-edit-2026-07-20",
+        "sha": "e4ae985188b13db315e77015c17223cec3fcc6a1",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "core/go-achilles-owner-gate-2026-07-18",
+        "sha": "83d3ad562d932619fdb6988ff6c081c3fc7a7bb8",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "core/ls-go-canon-2026-07-20",
+        "sha": "1053f0273faac1248177bdf0701647533e0fd111",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "docs/cgx-component-atlas-taxonomy-20261008",
+        "sha": "68e3609847b6572fcfbe558970bf2b6075c82ab9",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "execution/final-home-canonical-consolidation-2026-08-28",
+        "sha": "c574682f84c425952ffc10bfcb57d1138a63f0ce",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "execution/luke-ii-parametric-reference-2026-08-04",
+        "sha": "4cbba640bf8f1589f542ec164016c4f39b4c85e1",
+        "open_pr": 30,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "execution/mark-iii-original-layout-v0.3-2026-08-05",
+        "sha": "cf2867af5c14bef3e19157527049e5ce96016e44",
+        "open_pr": 34,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "execution/mark-iii-serviceable-reference-2026-08-05",
+        "sha": "bdfb144469aecb8aa0bf858e1d1db7080bd9e3a3",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "feat/mark3-multi-unit-screening-contract",
+        "sha": "67e8ffb76389da32f9488fc895f8e420952e74eb",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "feature/achilles-romer-orchestration-scaffold-v0-1",
+        "sha": "ec9db957c3930fe2e5f1e14cdae490ee8402f21c",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "feature/cgx-mobile-secondary-node-20261008",
+        "sha": "8f63c4d4ce542698f523c084a6b8c1aaa9469a2f",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "feature/cgx-modular-facility-asset-packing-20261020",
+        "sha": "bd2117d3975cc4db10dfe763ce92d9b1ad623814",
+        "open_pr": 181,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "feature/cgx-passive-edge-adapter-convergence-20261020",
+        "sha": "8cb826a3644a136af8af956804e4be8bc022b869",
+        "open_pr": 179,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "feature/cgx-unispace-r0-shorthand-20261012",
+        "sha": "906faddc1faaac8814ff670a6eb417856861de1e",
+        "open_pr": 175,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "feature/lightspeed-owner-pin-policy-20261009",
+        "sha": "86ce6622b68821bfda49a421b2d94c9ab2fffe93",
+        "open_pr": 156,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "feature/lightspeed-wrapper-alignment",
+        "sha": "6ff587d6ec01119b8200b5d69356b470e5cebef1",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "feature/ls-go-cgx-visitor-contracts-20261011",
+        "sha": "7db64d48528c3da380bc269d5bfaaa080f5194d8",
+        "open_pr": 172,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "feature/lsgo-mobile-link-20261013",
+        "sha": "a895b2454247efd2f4d298f319eddd379ad89e34",
+        "open_pr": 176,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "feature/physical-operations-starter-2026-09-23",
+        "sha": "e9679dec8a2c909fd5ddc4a0ab80933c85cbc199",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "feature/unispace-keyed-alexandria-publication-20261020",
+        "sha": "b05fbeb44d04e6d328faddf6116991b3f164adb6",
+        "open_pr": 180,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "feature/unispace-public-cgx-20261012",
+        "sha": "b3baaa99bffb09631f0bf0b1636e5001f19d894c",
+        "open_pr": 174,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "feature/watchtower-source-twin-v0-1",
+        "sha": "83482ab878d0c122f2befaeae9310b3237d49c96",
+        "open_pr": 35,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/cgx-exact-object-identity-20261013",
+        "sha": "a704a4836939851132d4704688049124cb134862",
+        "open_pr": 177,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/cgx-identity-current-main-fold-20261020",
+        "sha": "06a081018910d88c003a73d3d9fb46ab4107f096",
+        "open_pr": 183,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/cgx-plugin-toml-newline-2026-10-02",
+        "sha": "b8a86a778581578032f2ffb6698a40b9233cf902",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/cgx-view-policy-enforcement-20260926",
+        "sha": "28a5793fcc396c7f4dcbf3911481a3e7d1059624",
+        "open_pr": 55,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/cognigrex-canonical-sync-2026-08-14",
+        "sha": "1254dd151dd44d58c7c2156bc4c1b652e50b30b0",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/cognigrex-canonical-sync-mainline-2026-09-08",
+        "sha": "4082e310ab482b18f242b5df87e961207c67fe58",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/desktop-dependency-profile-20261006",
+        "sha": "778170cc446dbb2cdb10fa127acbd59e61c1bed9",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/desporte-deferred-policy-20261007",
+        "sha": "9f214c1c8912e0e79b88d4d76e056b91a3d74bbc",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/desporte-desktop-soft-launch-2026-07-20",
+        "sha": "b3cca97027026c90b71e4b7780e621ca1f76b1b6",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/gst063-route-registry-2026-09-06",
+        "sha": "1a3844ef1ee6b0a42c24a3b94af1c9a5ac9785bf",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/idempotent-codex-marketplace-2026-10-02",
+        "sha": "65356adfc61cf598ac1cdaae297f101353b8e9d5",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/live-runtime-update-20261029",
+        "sha": "3b28df87ab2a7c2a20d54d45ef0d45a03f78aae9",
+        "open_pr": 208,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/ls-go-heartbeat-lock-recovery-20261010",
+        "sha": "91fea8b3c490670afd78f5f3b63f2e0b2cc6ce24",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/merovingian-liveness-2026-07-22",
+        "sha": "81ebbee85e672bff3b8f1f94ef2df449f40e26fe",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/packaged-runtime-discovery-20261005",
+        "sha": "b7a6cdcd0b8f4454227fc949972b67ec552c9ca8",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/r2-test-literal-newline-20261005",
+        "sha": "f4867f9e078dae2508af206fea1401ad6a9e0d28",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/readiness-runtime-discovery-20261006",
+        "sha": "ce5be4bf83ddab67b4a76086e78e2ffe5d913ac1",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/runtime-manifest-completeness-20261006",
+        "sha": "53de6e644d64ac9b77b9d27b6c2485fce953fc73",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/settings-wrapper-payload-20261006",
+        "sha": "e1fd71794d5b063cf521b4e30912618bdc881e4a",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/unispace-plane-scale-20261020-1422",
+        "sha": "317156f2b4ad9dddbc9ce5c2137407f726818d5c",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/w3-source-provenance-refresh-2026-09-08",
+        "sha": "6358c60dae445957ff113f80afe6dec0e4160211",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/windows-codex-cmd-2026-10-02",
+        "sha": "17c2cd5a64577dc1a249140305a8d76fb63b6c41",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "fix/windows-pth-bom-20261004",
+        "sha": "d2436b47977a5546731c8f8e1902dc8f00b406da",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "grounded-local-runner-20261004",
+        "sha": "c1151bc14c766af083853937eb55101376c2b122",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "handoff/acr3-emc2-decentralised-2026-09-14",
+        "sha": "d24d596659c7fe43a198ba41fbb2ee25b16cb10b",
+        "open_pr": 47,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/cgx-alexandria-cross-scale-interaction-20261021",
+        "sha": "739eb6465f32878f5d2b2a4d8574d3d1ae2b66a6",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/cgx-alexandria-cross-scale-operators-20261021",
+        "sha": "6c5fbee47f480e5c7e2be5a255bac61ab8d89b29",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/cgx-alexandria-cross-scale-transfer-lens-20261021",
+        "sha": "95ec9e800faaad09cf48e51d96a91cc545737ada",
+        "open_pr": 202,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/cgx-alexandria-libjuice-r0-reconciliation-20261021",
+        "sha": "3b65f6e0c4ab863ba7644fee228bd93cc0002999",
+        "open_pr": 198,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/cgx-alexandria-libsrtp-r0-source-fold-20261021",
+        "sha": "aba3861b7d4b3276beac78d71a965f341559d07e",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/cgx-alexandria-r0-source-fold-20261021",
+        "sha": "0f12c45c300e3170e5655d0a6505c6994094eabe",
+        "open_pr": 197,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/cgx-finishline-evidence-map-20261021",
+        "sha": "4459f5ed9c75164f57635f160fde9b80b7a98581",
+        "open_pr": 196,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/cgx-fluid-constitutive-regime-20261021",
+        "sha": "7e882e1e25f714dc4c18ab4f9f104af77bc3f4d7",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/cgx-fluid-regime-reuse-proof-20261021",
+        "sha": "0a6068ad66f74e772f20659592f4178421c25b58",
+        "open_pr": 199,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/cgx-private-migration-readback-20261021",
+        "sha": "0eb89172cb8ad503abc77598e98e57df70a9f2b4",
+        "open_pr": 194,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/cgx-static-byte-disclosure-proof-20261021",
+        "sha": "3bf4a2f30330013e7eaddb9f1b48bf62865c42e4",
+        "open_pr": 195,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/unispace-alexandria-library-release-gates-20261020",
+        "sha": "1c61d07d64ad9eeea68315a8b439e082c2119819",
+        "open_pr": 189,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/unispace-cgx-identity-library-20261020",
+        "sha": "127979f04243333884ba33a23d04c7addce5e457",
+        "open_pr": 184,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/unispace-cgx-native-intake-20261020",
+        "sha": "aedab4729c7c9c95b7185eb446eff76e145904ae",
+        "open_pr": 186,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/unispace-cgx-observer-facets-20261020",
+        "sha": "ea8cb10b3060b01428504a0e613557baa99813be",
+        "open_pr": 187,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/unispace-cgx-public-allowlist-20261020",
+        "sha": "f25422a6c8d975faac21972f8a8cd218c0a7001b",
+        "open_pr": 188,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/unispace-cgx-r0-transport-20261020",
+        "sha": "bf49bd448e3779bbff2db97a905fde79363341ae",
+        "open_pr": 185,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/unispace-cgx-source-convergence-20261020",
+        "sha": "db147fae3a77654bf544da870a4c897216389012",
+        "open_pr": 182,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/unispace-private-object-viewer-20261021",
+        "sha": "8049aef6dd2eba9468bfaf620d359169c6d2a315",
+        "open_pr": 192,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/unispace-private-review-asset-gateway-20261020",
+        "sha": "65ed3fe56ab12b4bb47f503dd29efbce8ab4d408",
+        "open_pr": 191,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/unispace-private-review-asset-migration-plan-20261021",
+        "sha": "15d8c588395b656144fc8e0e341e194a0ea6d560",
+        "open_pr": 193,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "integration/unispace-public-gate-offline-kit-20261020",
+        "sha": "e1d1d71c08197600fc505927368ba695a13d9ea9",
+        "open_pr": 190,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "internal/unispace-application-20261025",
+        "sha": "ab9c34b1114eb7e1484043eb9567419546a68dad",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "lightspeed/rfs-emff-systematic-1-7-2026-07-21",
+        "sha": "221c186dabfc9bebcf4acc2f8d9f0d4fc3a4db17",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "main",
+        "sha": "e46ca5e888dac9035f41f4b52a1cdd297b4c8cac",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "manual/runtime-productization-operator-ux-20261006",
+        "sha": "3431e57e0bc0c459b2cbb8d7e091f1e6d72e2b92",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "manual/utp-portfolio-catalogue-skill-20261007",
+        "sha": "f0903a4e12506d45c44750ba67e574dca667bd57",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "ops/agent-floor-storage-health-2026-07-22",
+        "sha": "29ae4bd38f14eefb71d30562afd06fda407ae65d",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "ops/cgx-launch-empirical-preflight-20261004",
+        "sha": "d315872aa0d5975e0574548ef21bd2207d779f0c",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "ops/codata-2022-em-constants-20261005",
+        "sha": "4ab4b2ee093e8256fa80eef669556003e9354f3f",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "ops/cognigrex-canonical-sync-2026-08-14",
+        "sha": "309571b6490d942042e65b4d61afb0783079cd53",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "ops/free-flow-battery-consistency-20261005",
+        "sha": "3c976d78223c5ce1abd5fe56aca77e2467f79cb1",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "ops/full-launch-readiness-2026-07-21",
+        "sha": "7c15908e93c42fb3f246073820df3704d762455e",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "ops/live-canon-final-sync-2026-07-31",
+        "sha": "991df2382674686466e22b34c6f3f2cb730a201c",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "ops/mark3-legacy-engineering-claim-hygiene-20261005",
+        "sha": "fc75fee7d4571cb157c7df42259d3d0b01afb9df",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "ops/mark3-rfs-legacy-claim-hygiene-20261005",
+        "sha": "e97e5de37b276cb63f697de36fadf6f2d2d83fab",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "ops/merovingian-project-routing-2026-07-20",
+        "sha": "5024aaf0b8feeb975e0cc4428fa6f46eee4670b2",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "ops/soft-launch-final-2026-07-21",
+        "sha": "13d3a7b46b6d2729125c57cd7f471df1c8e6b67d",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "protocol/web4-coin-core-v0-1",
+        "sha": "e4f815e51587109c838f0185260c9cdd62aa69bd",
+        "open_pr": 24,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "public/castalia-official-materialization",
+        "sha": "ddb3182dd049b2845367a3ecef693e06ca31fa0f",
+        "open_pr": 28,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "public/eros-official-materialization",
+        "sha": "1f6e8a564d8662f12ef168061bec3534ebe7ca26",
+        "open_pr": 25,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "reconcile/cgx-view-policy-runtime-20261008",
+        "sha": "c373664edba4846d3c94b2f87ed3d8c170c669ea",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "reconcile/intersol-site-community-contract-20261008",
+        "sha": "fff831387d6c89624ac016dc88c683f48cd77cc4",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "review/achilles-pa-cgx-owner-profile-20261101",
+        "sha": "2df4fc6b2001a949abd0d62489387d959459c823",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "review/cgx-achilles-bouwerbase-stage35-20261101",
+        "sha": "b5ca7c2b96fb6e480d68eeab6fd433efae98d8e3",
+        "open_pr": 216,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "review/cgx-achilles-root-preflight-20261031",
+        "sha": "c4ca0cc798a03921badaf9f62fbe0729c63371c3",
+        "open_pr": 213,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "review/cgx-fiction-reality-mirror-20261103",
+        "sha": "36fc655871c2c73c8f41d14cf1bae8058579a3c5",
+        "open_pr": 223,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "review/cgx-host-owned-evidence-ids-20261103",
+        "sha": "7003d010f8da708c02e5f5897f3862d9bbe64f16",
+        "open_pr": 222,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "review/cgx-ls-family-ingestion-20261031",
+        "sha": "65dc890464e6e00aa8e9095f5210c478fdbcd9f1",
+        "open_pr": 214,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "review/cgx-ls-unified-bootstrap-20261028",
+        "sha": "3909dd724509fbe2d29d4644e8406b88e197047f",
+        "open_pr": 206,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "review/cgx-windows-boot-mint-gates-20261031",
+        "sha": "5fef0bd971f5dda5c6dc96acf5284040a689c8bc",
+        "open_pr": 215,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "review/digital-twin-atrium-2026-09-11",
+        "sha": "91535953beb2ebfb9057b97c73e1fcb1c101f666",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "review/eco-identity-qualification-20261028",
+        "sha": "926496af0c3829a576c3d346b2a26a44578e9af0",
+        "open_pr": 207,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "review/git-cgx-public-base-20261029",
+        "sha": "01b38a29c5872d2607edbc207e51d7cc4e2292f2",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "review/load-alexandria-minimal-20261028",
+        "sha": "465876bcd99a4fa2dc400cead4ad7c5f991410ad",
+        "open_pr": 205,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "review/load-wikimedia-ccc-source-federation-20261030",
+        "sha": "897957fbb094daab86aea662e81a3af07536258b",
+        "open_pr": 211,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "review/m1-acoustic-vibration-2026-09-08",
+        "sha": "0a69f2e6b28647cbaf8b45ca3d591c6b0fff2896",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "review/scientific-asset-stopship-20261030",
+        "sha": "2c2e84ac1627aae822df4e297accfb68be1b8bfa",
+        "open_pr": 210,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "review/unispace-adaptive-task-lenses-20261102",
+        "sha": "9de5a4282ff65b8df3569fde31b19544619d4054",
+        "open_pr": 220,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "review/unispace-cgx-facet-projection-20261102",
+        "sha": "5e0dd335a1cc59579166f34ca24662e061d92aec",
+        "open_pr": 218,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "review/web2-prepublish-hybrid-2026-08-31",
+        "sha": "f78fd842aa117067a552793b4454e45df3f810af",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "runtime-productization-20261003",
+        "sha": "e2e36140f179747ab88e325ad84b7cf5c2238e23",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "s92-child-reconcile-20261001",
+        "sha": "129299c0ab9368c7c03774454c293fcca23a37e1",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "source-intake-execution-20261004",
+        "sha": "c1bf4b789eba2b1f6aec131ede4d208650e617e4",
+        "open_pr": null,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "source-intake-staging-20261004",
+        "sha": "9b56eaefe47a285122aa17b80f4425ec0f280318",
+        "open_pr": 88,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      },
+      {
+        "ref": "tmp/rebase-pr118-20261009",
+        "sha": "9e6e0501e10491c3620377593f329f5c30941ce0",
+        "open_pr": 144,
+        "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
+      }
+    ]
+  }
 }

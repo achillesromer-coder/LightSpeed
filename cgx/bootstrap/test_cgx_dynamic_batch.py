@@ -31,6 +31,9 @@ class DynamicBatchTests(unittest.TestCase):
     def test_global_manifest_is_exactly_qualified(self):
         self.assertTrue(mod.allowed_path("desktop/source-manifest.json"))
         self.assertFalse(mod.allowed_path("desktop/source-manifest.json.extra"))
+        self.assertTrue(mod.allowed_path("tools/cgx_setup_windows.ps1"))
+        self.assertFalse(mod.allowed_path("tools/arbitrary_installer.ps1"))
+        self.assertFalse(mod.allowed_path("tools/cgx_setup_windows.ps1.backup"))
     def test_documentation_change_still_checks_release_guards(self):
         got=mod.choose_lanes(["docs/ls-go-launch/a.md"])
         self.assertIn("public-guard",got)
