@@ -185,3 +185,24 @@ test("forged checkpoint integrity and consumer flags cannot elevate offline auth
     assert.equal(view.public_publish_authorized, false);
   }
 });
+
+// #158: a browser-controlled revision string is not a source binding. Reject
+// truncated, nonhex, decorated or object-prototype selector values fail closed.
+test("malformed revisions and prototype-shaped selectors cannot hydrate private R3", () => {
+  const id = "Cognigrex.cgx:/FileSpace/qualified-candidate-1";
+  for (const revision of ["", "a".repeat(39), "g".repeat(64), "a".repeat(65),
+    "a".repeat(64) + "?token=secret", "../" + "a".repeat(64)]) {
+    const x = envelope(id);
+    x.source.revision = revision;
+    const view = projectOwnerProgress(x);
+    assert.equal(view.access, "HOLD_SOURCE_IDENTITY");
+    assert.equal(view.object_id, null);
+    assert.equal(view.progress, null);
+    assert.equal(view.dispatch_authorized, false);
+  }
+  for (const tail of ["__proto__", "constructor", "prototype", "a/../b", "."]) {
+    const view = projectOwnerProgress(envelope("Cognigrex.cgx:/FileSpace/" + tail));
+    assert.equal(view.access, "HOLD_SOURCE_IDENTITY", tail);
+    assert.equal(view.progress, null);
+  }
+});
