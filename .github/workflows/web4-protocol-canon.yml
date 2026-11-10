@@ -5,12 +5,18 @@ on:
     paths:
       - "docs/web4/COIN_PROTOCOL_CANON_2026-07-29.*"
       - "scripts/validate_web4_protocol_canon.py"
+      - "scripts/validate_cgx_type1_chain_review.py"
+      - "tests/test_cgx_type1_chain_review.py"
+      - "docs/web4/CGX_TYPE1_CHAIN_READINESS_REVIEW_20261111.json"
       - ".github/workflows/web4-protocol-canon.yml"
   push:
     branches: [main]
     paths:
       - "docs/web4/COIN_PROTOCOL_CANON_2026-07-29.*"
       - "scripts/validate_web4_protocol_canon.py"
+      - "scripts/validate_cgx_type1_chain_review.py"
+      - "tests/test_cgx_type1_chain_review.py"
+      - "docs/web4/CGX_TYPE1_CHAIN_READINESS_REVIEW_20261111.json"
       - ".github/workflows/web4-protocol-canon.yml"
 
 permissions:
@@ -25,4 +31,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Validate public-safe protocol topology and negative gates
-        run: python scripts/validate_web4_protocol_canon.py
+        run: |
+          python scripts/validate_web4_protocol_canon.py
+          python scripts/validate_cgx_type1_chain_review.py --review docs/web4/CGX_TYPE1_CHAIN_READINESS_REVIEW_20261111.json --coin docs/web4/COIN_PROTOCOL_CANON_2026-07-29.json
+          python -m unittest discover -s tests -p test_cgx_type1_chain_review.py -v
