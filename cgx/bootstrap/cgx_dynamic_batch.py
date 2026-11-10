@@ -30,7 +30,7 @@ ALLOWED_PREFIXES = (
     "desktop/LightSpeed_Runtime/", "docs/", "scripts/", "tests/",
 )
 ORDER = (
-    "git-index", "source-manifest", "load-registry",
+    "continuity-commit", "git-index", "source-manifest", "load-registry",
     "core-node", "facet-node", "load-python", "host-evidence",
     "public-guard", "app-check", "app-vitest", "product-package",
 )
@@ -54,7 +54,7 @@ def choose_lanes(paths: list[str]) -> tuple[str, ...]:
         raise ValueError("EMPTY_OR_UNBOUNDED_DELTA")
     if len(paths) != len(set(paths)) or not all(allowed_path(p) for p in paths):
         raise ValueError("UNQUALIFIED_OR_DUPLICATE_SOURCE_PATH")
-    lanes = {"git-index", "source-manifest", "load-registry"}
+    lanes = {"continuity-commit", "git-index", "source-manifest", "load-registry"}
     for path in paths:
         if path.startswith("cgx/") or path.startswith("scripts/"):
             lanes.update(("core-node", "load-python"))
@@ -103,6 +103,8 @@ def test_commands(lanes: tuple[str, ...]) -> list[tuple[str, list[str], Path]]:
                  for pattern in patterns for p in ROOT.glob(pattern) if p.is_file()}
         return sorted(found)
     jobs = []
+    if "continuity-commit" in lanes:
+        jobs.append(("continuity-commit", [py, "cgx/bootstrap/cgxContinuitySnapshot.py"], ROOT))
     if "git-index" in lanes:
         jobs.append(("git-index", ["git", "diff", "--check", "HEAD"], ROOT))
     if "source-manifest" in lanes:

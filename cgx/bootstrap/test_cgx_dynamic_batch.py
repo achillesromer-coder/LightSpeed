@@ -15,7 +15,7 @@ class DynamicBatchTests(unittest.TestCase):
             "apps/lightspeed-go/src/cgxFacetProjection.mjs",
             "desktop/LightSpeed_Runtime/lightspeed_runtime/host_owned_receipts.py"
         ])
-        for expected in ("git-index","source-manifest","load-registry",
+        for expected in ("continuity-commit","git-index","source-manifest","load-registry",
                          "core-node","facet-node","host-evidence",
                          "public-guard","app-check","app-vitest","load-python"):
             self.assertIn(expected,got)

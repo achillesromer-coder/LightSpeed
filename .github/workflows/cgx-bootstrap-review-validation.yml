@@ -59,6 +59,10 @@ jobs:
         run: python3 -m unittest discover -s apps/lightspeed-go/scripts -p 'test_package_unispace_premint.py' -v
       - name: Test staged native UOS archive, hashes and release blockers
         run: python3 -m unittest discover -s apps/lightspeed-go/scripts -p 'test_package_unispace_uos_integration.py' -v
+      - name: Validate committed cross-chat continuity without promoting authority
+        run: |
+          python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_continuity_snapshot.py' -v
+          python3 cgx/bootstrap/cgxContinuitySnapshot.py
       - name: Validate Python lease scope regression (source-only)
         run: python3 scripts/validate_cgx_execution_lease.py
       - name: Verify merged runtime manifest exact source hashes and sizes
