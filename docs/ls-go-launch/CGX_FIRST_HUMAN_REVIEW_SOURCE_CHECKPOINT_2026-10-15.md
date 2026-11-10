@@ -43,3 +43,9 @@ At 15:00, the web lanes produce a REVIEW CANDIDATE, not an executable local `.cg
 **PASS:** owner-source discovery, S92 carrier bytes/CRC, draft source CI where exact HEAD verified. **PARTIAL:** historical science source-to-Object_ID crosswalk. **HOLD:** local D-drive scan, C-drive, installed runtimes, full native `.cgx` hydration, owner permissions/public reviewer, two-device, independent physical tests. Founder's first decision is to accept or reject D Phase 3 inventory proposal *after* exact native digest readback; otherwise hold and use this packet for manual review of unbound sources.
 
 Related Git: LightSpeed draft PRs #159, #172, #173, #174, #175, #176 (mobile adapter) and #177 (exact Object_ID), owner issues #158/#161. Original S92 receipt Drive-private, do not copy its restricted details to public web embeddings. ACR3 is archive-only.
+
+## 2026-11-11 — Peer identity claim hardening
+
+The existing `node_exchange.build_exchange_status` has a fail-closed source change: configured `peer_nodes` remain visible as discovery references but **cannot by themselves establish** `peer_transport_verified`, `peer_compute_verified` or `peer_compute_queue_ready`. Existing local root availability and local carrier evidence remain separate. Four configured-peer cases and a narrow CI matrix cover the distinction; independent CI and host acceptance must be read back before claiming live integration.
+
+Next binding requires two independently authenticated physical devices, current issuer/revocation and lease checks, the existing node-exchange transfer/compute receipts, interruption/replay/conflict negative tests, and receiver-side DBR verification. A second disk, loopback process, peer name or successful source test is not a second node. Preserve Drive sharing and the existing COIN/Web4 private archive while the DataSpace cutover is unproven. No new registrar, scheduler, peer root or public network has been activated by this change.
