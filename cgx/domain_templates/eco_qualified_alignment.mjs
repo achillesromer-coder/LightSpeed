@@ -64,7 +64,7 @@ function validateConcept(x){
   if(!obj(s))throw Error("INVALID_SEED_LOT");
   for(const f of ["lot_id","taxon_id","parent_plant_ref","collection_site_ref","collection_year","qa_protocol_ref","sampling_ref","viability_ref","custody_ref","storage_history_ref","test_date"])
    if(s[f]!==undefined&&!good(s[f]))throw Error("INVALID_SEED_LOT_"+f.toUpperCase());
-  if(s.collection_year!==undefined&&!/^\\d{4}$/.test(s.collection_year))throw Error("INVALID_SEED_COLLECTION_YEAR");
+  if(s.collection_year!==undefined&&!/^\d{4}$/.test(s.collection_year))throw Error("INVALID_SEED_COLLECTION_YEAR");
  }
  if(x.fungal_inoculation!==undefined){
   const f=x.fungal_inoculation;
