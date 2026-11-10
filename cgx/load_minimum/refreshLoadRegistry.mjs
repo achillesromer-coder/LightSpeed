@@ -106,7 +106,9 @@ const output={
  ],records:entries,frontier
 };
 const result=JSON.stringify(output,null,2)+'\n';
-const prior=file(OUTPUT).toString('utf8');
+// Windows may check out text with CRLF even when its Git blob is LF.
+// Normalise formatting for drift comparison only; source hashes remain exact Git blobs.
+const prior=file(OUTPUT).toString('utf8').replace(/\r\n/g,'\n');
 const drift=prior!==result;
 if(process.argv.includes('--write')){writeFileSync(resolve(ROOT,OUTPUT),result);console.log(JSON.stringify({review_only:true,updated:true,record_count:entries.length,drift}));}
 else {console.log(JSON.stringify({review_only:true,drift,record_count:entries.length,categories:byCat,frontier:frontier.length}));if(process.argv.includes('--check')&&drift)process.exitCode=1;}
