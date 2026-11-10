@@ -124,3 +124,37 @@ extra private assets, altered host/rights claims, changed CSP and a generic oper
 It cannot approve actual publication, provider rights, signed issuer or two-node DBR.
 The remaining acceptance work requires authenticated private-asset routing,
 negative anonymous/revoked-session HTTP readback, source rights and founder release approval.
+
+## Bounded resident Manual Intake review — 10 November 2026
+
+`cgxManualIntakeReview.py` connects the explicitly approved Manual Intake folder to
+the existing CGX Sorter review database and registered specialist input databases.
+It is a private source-review adapter, not native `source_preserving_intake`, a
+second runtime or canonical admission. Dry-run is the default; `--apply` requires
+intentional operator execution. `run_batch(engine_root, source_root, ...)` can be
+called once per existing singleton supervisor rotation after its normal resource,
+pause and stop checks. Never add a parallel model worker or reset review cursors.
+
+Each batch bounds entries, source bytes, per-source chunks and elapsed work. Text
+remains source-labelled and unvalidated; source paths and exact byte hashes remain
+attached. Specialists receive role-routed chunks; Achilles and Neo receive compact
+oversight pointers. Existing per-agent stores are required; no new database is
+created. Archives, dependency trees, binary/unknown formats, oversized content,
+unreadable or changed sources remain explicitly unresolved. Source files are
+never executed, deleted, moved or automatically promoted.
+
+Resume state lives in the existing sorter `progress` table. A routing failure
+retains the current entry for idempotent replay. `cgxResidentReviewQueue.py` selects
+inputs lacking proposal records, so a late-routed low item ID cannot disappear
+behind an old cursor. Failed proposals remain failed for explicit reconciliation.
+Readback verifies routed item identity/hash. These are queue and byte guarantees,
+not proof of semantic review, implementation, model fine-tuning or acceptance.
+
+Limits: directory offsets need an independent final coverage/parity audit;
+`--restart-walk` explicitly revisits new/changed versions. SQLite waits can exceed
+the cooperative work deadline by their bounded timeout. `eligible_walk_complete`
+never means full ingestion; full inventory/content completion remain false.
+Deletion remains ineligible until independent retained-copy/inverse recovery,
+provenance, dependency, rights and acceptance gates pass. No cleanup follows an
+exhausted walk or a successful model response. Native intake still requires its
+own configured root, authenticated queue authority and live execution claim.
