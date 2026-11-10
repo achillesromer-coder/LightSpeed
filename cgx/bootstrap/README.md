@@ -187,3 +187,32 @@ generated cache-directory name; similarly named owner folders remain eligible.
 An old saved cursor already inside that boundary is reconciled back to its safe
 parent without reading or deleting cached files. This is workload classification,
 not complete cache-member inventory, semantic acceptance or deletion clearance.
+
+### Rebuild provenance and oversight continuity — 11 November 2026
+
+The existing resident index rebuild must select the master input `ctype` and use
+`cgxReviewProvenance.source_review_disposition(ctype, derived_disposition)`.
+Exact `source_review` and `source_review_pointer` records stay unvalidated even
+when a model supplies another classification. Do not populate implementation
+instructions from these review input types. Existing non-review behavior remains
+unchanged. `repair_review_dispositions` repairs only existing agent rows with
+matching source ID, conversation, role, declared hash and actual text hash. It
+changes only the disposition field; collisions and unverified data remain held.
+Use bounded pages after pausing writers, with continuation and readback receipts.
+
+Achilles oversight now uses `cgxResidentOversightQueue.pending_oversight_rows`
+against its existing reviews and the existing lane stores. Selection excludes
+already-reviewed `lane:item_id` pairs, prefers Manual Intake within each lane and
+takes at most one per lane before rotating. The caller persists `next_lane` or
+the last attempted lane in the existing Achilles meta table. Older successful
+proposals cannot vanish behind a latest-two window, and alphabetical early lanes
+cannot monopolize each bounded pass. Source text must exist; selection never
+substitutes an empty source or accepts the proposal.
+
+Advisory findings enter the existing `ProjectPipeline.queue_project_work_receipt`
+review path when a concrete source-bounded change is ready. An owner review
+decision records acceptance evidence; it does not automatically implement a
+change or create an execution task. Typed execution still uses the existing
+authenticated command route, current action authority and scoped claim. No
+parallel implementation queue, source canon, scheduler or automatic cleanup is
+introduced by these corrections.

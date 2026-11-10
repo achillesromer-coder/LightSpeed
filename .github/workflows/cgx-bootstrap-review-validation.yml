@@ -49,6 +49,8 @@ jobs:
         run: |
           python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_manual_intake_review.py' -v
           python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_resident_review_queue.py' -v
+          python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_resident_oversight_queue.py' -v
+          python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_review_provenance.py' -v
       - name: Validate local owner GUI isolation and device refusal guards
         run: |
           python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_owner_gui_loopback.py' -v
