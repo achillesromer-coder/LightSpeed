@@ -1,0 +1,87 @@
+name: CGX Unified Bootstrap Review Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'cgx/bootstrap/**'
+      - 'apps/lightspeed-go/scripts/package_unispace_premint.py'
+      - 'apps/lightspeed-go/scripts/test_package_unispace_premint.py'
+      - 'apps/lightspeed-go/scripts/package_unispace_uos_integration.py'
+      - 'apps/lightspeed-go/scripts/test_package_unispace_uos_integration.py'
+      - 'apps/lightspeed-go/scripts/probe_uos_native_imports.py'
+      - 'scripts/run_cgx_agent_runtime.py'
+      - 'scripts/validate_cgx_execution_lease.py'
+      - '.github/workflows/cgx-bootstrap-review-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    name: Source-only bootstrap and handshake validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify syntax of non-installing planners
+        run: |
+          node --check cgx/bootstrap/unifiedBootstrap.mjs
+          node --check cgx/bootstrap/cgxHandshakeReview.mjs
+          node --check cgx/bootstrap/cgxSetupCli.mjs
+          node --check cgx/bootstrap/cgxWindowsHostPreflightReview.mjs
+          node --check cgx/bootstrap/cgxLeafEnvelopeReview.mjs
+          node --check cgx/bootstrap/cgxPremintFamilyProjection.mjs
+          node --check cgx/bootstrap/cgxOfflineSourceProbe.mjs
+      - name: Test startup, Windows diagnostic and native handshake review guards
+        run: |
+          node --test cgx/bootstrap/*.test.mjs cgx/load_minimum/*.test.mjs
+      - name: Validate folded PR215 Windows startup diagnostics (fixture-only)
+        run: python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_windows_boot_evidence.py' -v
+      - name: Validate bounded advisory Manual Intake and late reference routing
+        run: |
+          python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_manual_intake_review.py' -v
+          python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_resident_review_queue.py' -v
+          python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_resident_oversight_queue.py' -v
+          python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_review_provenance.py' -v
+      - name: Validate local owner GUI isolation and device refusal guards
+        run: |
+          python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_owner_gui_loopback.py' -v
+          python3 -m py_compile cgx/bootstrap/cgx_owner_gui_loopback.py cgx/bootstrap/cgx_owner_gui_launcher.pyw
+      - name: Test deterministic UniSpace packaging, privacy and negative guards
+        run: python3 -m unittest discover -s apps/lightspeed-go/scripts -p 'test_package_unispace_premint.py' -v
+      - name: Test staged native UOS archive, hashes and release blockers
+        run: python3 -m unittest discover -s apps/lightspeed-go/scripts -p 'test_package_unispace_uos_integration.py' -v
+      - name: Validate committed cross-chat continuity without promoting authority
+        run: |
+          python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_continuity_snapshot.py' -v
+          python3 cgx/bootstrap/cgxContinuitySnapshot.py
+      - name: Verify non-issuing CGX empty local genesis and refuse transactions
+        run: |
+          python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_empty_genesis_devnet.py' -v
+          python3 cgx/bootstrap/cgxEmptyGenesisDevnet.py init --state "$RUNNER_TEMP/cgx-empty-genesis.json"
+          python3 cgx/bootstrap/cgxEmptyGenesisDevnet.py verify --state "$RUNNER_TEMP/cgx-empty-genesis.json"
+      - name: Verify signed local two-process genesis review holds
+        run: |
+          python3 -m pip install --disable-pip-version-check 'cryptography==48.0.0'
+          python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_genesis_peer_review.py' -v
+          python3 -m py_compile cgx/bootstrap/cgxGenesisPeerReview.py
+      - name: Audit public-safe cross-surface source folds and cleanup holds
+        run: |
+          python3 -m unittest discover -s tests -p 'test_cgx_crosssurface_fold_review.py' -v
+          node --test cgx/bootstrap/cgxCrossSurfaceFoldAudit.test.mjs
+      - name: Validate Python lease scope regression (source-only)
+        run: python3 scripts/validate_cgx_execution_lease.py
+      - name: Verify merged runtime manifest exact source hashes and sizes
+        run: python3 cgx/bootstrap/cgxManifestIntegrityReview.py
+      - name: Verify review-only plans and no unsupported GOT installer
+        run: |
+          node cgx/bootstrap/cgxSetupCli.mjs --family Eco.cgx --mode first-run --ls-go=true > "$RUNNER_TEMP/setup.json"
+          node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync(process.argv[1]));if(p.setup.canonical_accepted||p.setup.ls_go.enabled||p.setup.website_deployed||p.setup.got)process.exit(1);" "$RUNNER_TEMP/setup.json"

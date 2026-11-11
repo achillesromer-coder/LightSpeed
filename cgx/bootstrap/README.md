@@ -1,0 +1,253 @@
+# CGX-enabled LightSpeed — one smart startup wizard (source review)
+
+**Status:** review-only. **No local install, host start, deployment, CGX root write, LS GO activation, email, public release or archival deletion.**
+
+This consolidates the owner-facing entry point into the existing CGX and LightSpeed managed-runtime architecture, not a new root or parallel queue. Keep Cognigrex.cgx and its accepted children authoritative. Romer.cgx, Eco.cgx, EMASSC.cgx and LS.cgx remain family members; LOAD.cgx is the Alexandria minimal-library alias whose exact accepted Object_ID must be read back. **UniSpace is a distinct product; LS GO is a Grex-scoped operator surface.**
+
+## Read-only setup preview
+
+Requires Node 20+ on a developer/operator checkout:
+
+~~~sh
+node cgx/bootstrap/cgxSetupCli.mjs --family Romer.cgx --mode first-run --device desktop --profile core --ls-go=true
+node --test cgx/bootstrap/unifiedBootstrap.test.mjs
+~~~
+
+This returns a review plan with missing native proofs. It deliberately does not trust CLI flags as real RootAuthority or DBR receipts. Use the existing authorized host's lightspeed_runtime.startup_options for startup settings and lightspeed_runtime.runtime_productization for managed-runtime status/configure/install/update/rollback. That runtime manager already requires confirmed=true for mutations and delegates to the existing install PowerShell script. Do **not** execute those actions as a consequence of this plan alone.
+
+The one-wizard flow has 11 staged steps: discover, resume, identity, sources, LOAD, CCC tools, runtime, Grex LS GO, node/agent handshake, verify and handoff. smart_setup_surface_contract.json describes accessible newcomer/returning/expert/operator interfaces, targeted repair, offline-first mode, permission/receipt rechecks and per-Grex source-halo preferences. Client-side simulations are not two independent node proofs.
+
+Source reconciliation: the speech-derived text **GOT** is a nonblocking transcription ambiguity for *Git*, *GPT*, or possibly *LightSpeed GO*, depending on context. No independent GOT tool or FileSpace was identified. The Smart Setup UI and CLI no longer expose a GOT option or gate; see the source-only correction record.
+
+## Duplicate decisions
+
+Review startup_overlap_register.json. The original first-run and Trinity wizards are candidate predecessor UI sources, not a reason to auto-delete source files. The common runtime manager and the installer are deliberately distinct layers. Legacy ERC/CCC contracts are source inputs, not a parallel financial engine. Public LS GO static assets and UniSpace product pages have different privacy/release requirements.
+
+## Integration and release gates
+
+1. Verify live parent RootAuthority, state/DBR root and every child Object_ID; source-only S92 and draft review carriers are not live native admission.
+2. Preserve original R0 data, verify rights, use bounded typed R1/R2 semantic adapters and source-quality/Frontier before Resolve. GPT original JSON shards and actual manual-intake folder are not proven complete.
+3. Bind approved LOAD and CCC source-only code from draft PR #205, not by copying its reference catalogue into a second master. Confirm exact accepted LOAD alias.
+4. Reconnect BouwerBase, check Python 3.11 runtime, slot and existing installer; collect real negative/positive receipts.
+5. Private Grex LS GO: resolve issue #158 unauthenticated asset exposure, #161 genuine distinct-node FS/DS acceptance, host auth/lease and session revocation. Enable child toggles separately with verified readback.
+6. Only after private CGX/LS GO acceptance pursue independent UniSpace product/free trial and website release. Source/IP privacy licences, actual HTTPS deployment and external outreach remain separate owner approvals.
+
+See release_train_and_website_review.json for five successive release phases and public page candidates. No public site copy, download/trial link or release claim is validated by the presence of these files.
+
+## Tests
+
+~~~sh
+node --test cgx/bootstrap/unifiedBootstrap.test.mjs
+~~~
+
+The tests are deterministic source-only regressions; they cannot certify a host install, a signed node handshake, full corpus ingestion, a live LS GO toggle, or an accepted web release.
+
+## Browser Smart Setup preview
+
+The additive [smartSetup.html](./smartSetup.html) offers an accessible progressive flow for selecting one recognised Grex, first-run/resume/repair/upgrade, runtime profile, offline LOAD, and a requested Grex LS GO toggle. It displays the wizard and explicit missing proof, **not an install success screen**. It imports the read-only setup planner. No permissions, DBR writes, network scans, local storage, credentials or external scripts are created by the preview.
+
+The page is not wired to a live UniSpace product or LS GO server. Do not move this private review page or internal static assets into a public server or download bundle without #158 and source-rights approval.
+
+## Latest context archive and continuation queue (2026-10-30)
+
+**No new GPT export is expected soon.** Begin all future CGX/LightSpeed continuation from [chat-context closeout](./chat_context_closeout_2026-10-30.md), then the same [open-thread execution register](./open_threads_execution_register.json) already owned by this bootstrap lane. The checkpoint records current source/geometry/rights/function decisions and verified five-lane progress, with manual source handoff through the chat. It is not a full raw chat transcript or a native CGX admission. Preserve all originals and hold deletion and publication pending independent acceptance.
+
+## Canonical continuation index — 2026-11-06 (read first)
+
+The **existing** [open-thread execution register](./open_threads_execution_register.json) now contains `git_crosslane_inventory_20261106`: an authenticated GitHub snapshot of **64 open pull requests and 224 named branches** in the connected `achillesromer-coder/LightSpeed` source repository, each with immutable source head, base branch, retention and review disposition. Its earlier October `reviewed_pull_requests` entries are historical; **do not use them as the current PR heads or infer implementation from titles**. The register is a review source locator, not a new registry or a license to delete branches.
+
+The source-only Windows startup diagnostics from dependent PR #215 are now exactly folded (three Git blob IDs preserved) into this review branch, with a fixture-only CI test. Two PR #215 paths overlap newer bootstrap README/workflow changes and **must not overwrite them**. Other branches — including Eco #207, scientific assurance #210, external LOAD adapters #211, Grex family ingestion #214 and fiction bridge #223 — remain provenance-linked for owner qualification; overlapping *paths* do not prove byte equality or canonical admission.
+
+**Authority identity conflict:** accepted historical source projections name `Cognigrex.cgx` / `cgx:root:cognigrex` as one parent. Later owner-directed `CGX.cgx` universal root + `Build.cgx` is a *target migration proposal*, not permission to silently reparent Object_IDs or mint a second live root. Source R0/provider rights, current lease/issuer/revocation, independent two-node DBR #161, public/private routing #158, scientific assurance #209 and live product release remain HOLD until independently proven.
+
+If another Codex/owner lane has locally edited or unpushed files, reconcile its exact blobs and consumer dependencies **before Git reset/merge/archive**. Preserve original repository branches, Drive files, FileSpace R0 and audit receipts until verified successor IDs and rollback are established. Remote Desktop Commander user reserve: **at least 5,205 monthly calls; avoid exploratory remote use**. No source-only CI or review ledger grants live mint/deploy authority.
+
+## Windows owner-host diagnostics — source fold of PR #215
+
+The original source-only Windows diagnostics are preserved in
+[cgxWindowsBootEvidence.py](./cgxWindowsBootEvidence.py),
+[test_cgx_windows_boot_evidence.py](./test_cgx_windows_boot_evidence.py) and
+[cgx_setup_windows.ps1](../../tools/cgx_setup_windows.ps1). Their **Git blobs match
+PR #215 exactly**. The unified bootstrap CI runs the original fixture-only
+negative tests; no Windows service is started by CI.
+
+The tool reads the existing S92 carrier/registry, family identity, **read-only**
+operational SQLite, managed runtime prerequisites, bounded LOAD reference source
+and local HTTP identity; it does not create an Object_ID, ingest source bodies,
+accept a DBR, install a runtime or grant an issuer. Optional
+`-PrepareMintReview` creates a new, owner-private **review-only** receipt and
+is not a native mint or Git commit. Historical machine-specific checkout paths
+in PR #215 are *source history*, not a supported universal installer path.
+
+The optional `-BootExistingStack -ApproveNativeStackRestart` path **still
+unconditionally throws `NATIVE_RESTART_HOLD`** before invoking the existing
+launcher. Do not enable it until signed host lease, ACL, revocation and
+independent two-node DBR evidence have passed live host acceptance. Source
+presence and green Linux CI do not certify a working local Windows launch.
+
+## Offline LOAD-to-UniSpace pre-mint review (2026-11-06)
+
+The existing bootstrap review branch also carries source-only `cgxLeafEnvelopeReview.mjs`, `cgxPremintFamilyProjection.mjs`, and `cgxOfflineSourceProbe.mjs`. These reuse `cgxBatchConvergence.mjs` to form one Object_ID/version source candidate, deterministic SHA-256 source/leaf manifest and dependency pins, and an owner-only H0–H4 UniSpace view. A review `REQUEST_PLAN_ONLY` does not transfer or hydrate network bytes, authenticate rights, activate CCC or issue any token.
+
+~~~sh
+node --test cgx/bootstrap/*.test.mjs
+node cgx/bootstrap/cgxOfflineSourceProbe.mjs --source cgx/bootstrap/unified_bootstrap_contract.json --object-id cgx:load:bootstrap-contract --version 1 --family Cognigrex.cgx --owner achilles --semantic-key load:bootstrap-contract
+~~~
+
+The probe reads a bounded 60 MiB-or-smaller regular source file, verifies exact byte reconstruction and prints a redacted JSON receipt (source digest, byte/leaf counts, immutable manifest digest; no source paths or original text). Rights/ACL remain unknown and all public/private native authority checks remain held until an authenticated independent proof is supplied. It never writes a source copy or calls a network service. Public preview is denied even for a caller-labelled `public_clear` source until separately authorised release.
+
+The CI workflow now runs **all** bootstrap `*.test.mjs` files rather than only the three original suites. Actual host tests and signed independent DBR/issuer confirmation remain separate. The initial reviewed test suite passed locally on BouwerBase under Node 22 and Python 3.11, but source-only tests are not a proof of product deployment.
+
+**Mainline reconciliation:** The review branch retains both the pre-existing Smith receipt/CPU-admission regressions from `main` and the scoped Neo singleton PID-reuse negative from this review lane. `cgxManifestIntegrityReview.py` checks exact newline-normalised SHA-256 and byte length of all 118 declared LightSpeed Runtime source records. Its output is source-integrity evidence, not a native execution approval. No original source or historical worktree should be deleted from this merge.
+
+**LOAD source-branch integration review:** The bootstrap review worktree now combines the existing LOAD/Alexandria source-review branch without creating another LOAD root, catalogue or DBR. Windows CRLF checkout bytes may differ from the canonical Git blob: the declared JSON source snapshots are checked against their original LF Git-blob fingerprints; none of the 14 pinned source-register SHA-1 IDs was silently rebaselined. The source-only leaf request planner also rejects Windows separator strings in candidate keys before permission checks. `cgxLoadCrossLaneReview.test.mjs` verifies the integrated existing LOAD catalogue (131 indexed refs; 45 CCC routes), source hash/reconstruction and disabled UniSpace H0–H4 execution. All native rights/signing/DBR/mint/publication holds remain in force.
+
+## UniSpace isolated public release verification (issue #158)
+
+The historical PR #188 public-viewer source and its blob-identity ledger remain immutable.
+The ordinary `apps/lightspeed-go/dist` output must **never** be treated as the
+CGX public-only deployment: the general Vite build can include LS GO `public/data`,
+`public/review` and operator seed files. This is a pre-mint HOLD, not proof that
+a deployed private endpoint is exposed.
+
+A nonpublishing synthetic viewer candidate may be built into a fresh directory
+outside the operator application, then independently re-read:
+
+```bash
+python apps/lightspeed-go/scripts/cgx_public_bundle_guard.py --output /tmp/unispace-cgx-review
+python apps/lightspeed-go/scripts/cgx_public_bundle_guard.py --verify-output /tmp/unispace-cgx-review
+```
+
+The second command verifies the 12-file allowlist, immutable source bytes,
+receipt, source-policy equivalence and isolation. It denies changed files,
+extra private assets, altered host/rights claims, changed CSP and a generic operator `dist`.
+It cannot approve actual publication, provider rights, signed issuer or two-node DBR.
+The remaining acceptance work requires authenticated private-asset routing,
+negative anonymous/revoked-session HTTP readback, source rights and founder release approval.
+
+## Bounded resident Manual Intake review — 10 November 2026
+
+`cgxManualIntakeReview.py` connects the explicitly approved Manual Intake folder to
+the existing CGX Sorter review database and registered specialist input databases.
+It is a private source-review adapter, not native `source_preserving_intake`, a
+second runtime or canonical admission. Dry-run is the default; `--apply` requires
+intentional operator execution. `run_batch(engine_root, source_root, ...)` can be
+called once per existing singleton supervisor rotation after its normal resource,
+pause and stop checks. Never add a parallel model worker or reset review cursors.
+
+Each batch bounds entries, source bytes, per-source chunks and elapsed work. Text
+remains source-labelled and unvalidated; source paths and exact byte hashes remain
+attached. Specialists receive role-routed chunks; Achilles and Neo receive compact
+oversight pointers. Existing per-agent stores are required; no new database is
+created. Archives, dependency trees, binary/unknown formats, oversized content,
+unreadable or changed sources remain explicitly unresolved. Source files are
+never executed, deleted, moved or automatically promoted.
+
+Resume state lives in the existing sorter `progress` table. A routing failure
+retains the current entry for idempotent replay. `cgxResidentReviewQueue.py` selects
+inputs lacking proposal records, so a late-routed low item ID cannot disappear
+behind an old cursor. Failed proposals remain failed for explicit reconciliation.
+Readback verifies routed item identity/hash. These are queue and byte guarantees,
+not proof of semantic review, implementation, model fine-tuning or acceptance.
+
+Limits: directory offsets need an independent final coverage/parity audit;
+`--restart-walk` explicitly revisits new/changed versions. SQLite waits can exceed
+the cooperative work deadline by their bounded timeout. `eligible_walk_complete`
+never means full ingestion; full inventory/content completion remain false.
+Deletion remains ineligible until independent retained-copy/inverse recovery,
+provenance, dependency, rights and acceptance gates pass. No cleanup follows an
+exhausted walk or a successful model response. Native intake still requires its
+own configured root, authenticated queue authority and live execution claim.
+
+### Resident backsweep corrections
+
+Applying intake batches now takes one OS-owned writer lock in the existing Engine
+state directory. A competing batch fails without changing the cursor; process exit
+releases ownership. Dry-run creates no lock or database writes. Mass passes must
+honour the same lock and memory/byte/time budgets as the resident rotation.
+
+Pending Manual Intake review inputs precede old backlog. The queue helper retains
+the no-proposal/late-ID guarantee and does not silently retry failed proposals.
+`source_review_only=True` selects only the new review inputs and fails closed when
+the input schema lacks the disposition column. This lets the existing Achilles
+role consume one of its own oversight pointers per rotation, in addition to its
+separate review of other agents' proposals. It does not grant new execution tools.
+The existing supervisor calls `work('Achilles', ..., source_review_only=True)`
+after the bounded intake tick and before its specialist rotation, subject to normal
+enablement, resource and stop controls. No second worker is required.
+
+These fixes establish bounded queue progress, not semantic or native acceptance.
+Failed model JSON remains a recorded failure; held file/member types and final
+independent coverage still require their specialist dispositions before cleanup.
+
+Captured Chromium-profile cache directories are now retained as one explicit
+`GENERATED_BROWSER_CACHE_DEFERRED_NOT_INVENTORIED` subtree hold. The predicate
+requires recognizable Chromium ancestry, a Default/Profile directory and an exact
+generated cache-directory name; similarly named owner folders remain eligible.
+An old saved cursor already inside that boundary is reconciled back to its safe
+parent without reading or deleting cached files. This is workload classification,
+not complete cache-member inventory, semantic acceptance or deletion clearance.
+
+### Rebuild provenance and oversight continuity — 11 November 2026
+
+The existing resident index rebuild must select the master input `ctype` and use
+`cgxReviewProvenance.source_review_disposition(ctype, derived_disposition)`.
+Exact `source_review` and `source_review_pointer` records stay unvalidated even
+when a model supplies another classification. Do not populate implementation
+instructions from these review input types. Existing non-review behavior remains
+unchanged. `repair_review_dispositions` repairs only existing agent rows with
+matching source ID, conversation, role, declared hash and actual text hash. It
+changes only the disposition field; collisions and unverified data remain held.
+Use bounded pages after pausing writers, with continuation and readback receipts.
+
+Achilles oversight now uses `cgxResidentOversightQueue.pending_oversight_rows`
+against its existing reviews and the existing lane stores. Selection excludes
+already-reviewed `lane:item_id` pairs, prefers Manual Intake within each lane and
+takes at most one per lane before rotating. The caller persists `next_lane` or
+the last attempted lane in the existing Achilles meta table. Older successful
+proposals cannot vanish behind a latest-two window, and alphabetical early lanes
+cannot monopolize each bounded pass. Source text must exist; selection never
+substitutes an empty source or accepts the proposal.
+
+Advisory findings enter the existing `ProjectPipeline.queue_project_work_receipt`
+review path when a concrete source-bounded change is ready. An owner review
+decision records acceptance evidence; it does not automatically implement a
+change or create an execution task. Typed execution still uses the existing
+authenticated command route, current action authority and scoped claim. No
+parallel implementation queue, source canon, scheduler or automatic cleanup is
+introduced by these corrections.
+
+## Verified cross-platform execution checkpoint — 2026-11-11
+
+**Evidence:** authenticated GitHub/automation metadata and bounded read-only host diagnostics. **Public-safe source-review checkpoint only**; not a signed DBR, installed runtime proof, security clearance or public product release. Always refresh live provider state.
+
+- **Git source:** PR #159 (heartbeat fix) and #217 (Achilles P.A non-dispatching profile) are merged; installed consumer parity and native operator dispatch remain unverified. #205 (LOAD), #206 (unified bootstrap) and #220 (private UniSpace exact-object projection) remain draft review branches.
+- **Scheduled owners:** five current CGX v2 workstreams are enabled, with completed latest recorded runs. Earlier overlapping legacy workstreams remain disabled. Read existing canonical checkpoints and exact provider heads before changing anything; no duplicate automations.
+- **Owner host:** a bounded local inspection located the existing CGX directory and received HTTP 200 from local UniSpace and Ollama services. This is service reachability only, not authenticated Object_ID/DBR readback, completed model classification or functional UI round-trip.
+- **Private source ACL HOLD:** broadly shared Drive sources and inherited folder permissions require review, approved revocation and provider readback. Do not copy private IDs, GPT payloads, legal/IP details, permissions lists or credentials into this public repository.
+- **Critical execution order:** (1) private source ACL clearance, (2) installed version parity and independently issued root/lease/issuer proof, (3) one exact R0 source -> native Object_ID -> signed DBR -> permissioned UniSpace view/save/reopen plus negative tests, (4) bounded source-first domain hydration, (5) #158 public-static leak tests and #161 independent two-node FileSpace/DataSpace acceptance prior to release.
+
+**Continuity rule:** one Cognigrex.cgx parent. Reuse this README and the existing `open_threads_execution_register.json` rather than creating another master source store, scheduler or branch. Owner approval does not self-issue authentication, mint authority or automatically satisfy public release gates.
+
+## Cross-chat / cross-platform continuity and approval boundaries — 2026-11-11
+
+This section is an **index to live evidence**, not a new root, database, scheduler, source canon or automatic chat-memory mechanism. ChatGPT, Work, Desktop, Canva, Drive and local operators may all be concurrent writers. A chat summary or agent assertion **never** outranks current authenticated provider readback.
+
+**Onboarding / compaction read order (for every new chat, agent or platform):**
+1. Fetch the *current remote head* of `review/cgx-ls-unified-bootstrap-20261028` and current PR #206 state; do not reuse any SHA printed in an earlier chat as current.
+2. Read this README, `cgx/bootstrap/open_threads_execution_register.json`, `cgx/bootstrap/cgxPhaseAcceptance_v01.json` and `cgx/bootstrap/cgxPremintBatchHandoff_20261106.review.json` as versioned review inputs. Resolve newer accepted receipts by exact date, source hash, owner and provider readback; stale documents are not governance authority.
+3. Compare current local host receipt to Git: `C:\Cognigrex\Receipts\INTAKE_MINT_READINESS_20261110T215838Z.json` is an **as-of intake receipt**, not a live total or an accepted native manifest. The public-safe `cgx/review/manual_intake_prepopulation_v01.review.json` contains aggregate-only family/profile/skill/dedup counts and the source receipt digest. Check drift before reuse. The authoritative original manual intake is `C:\CGX\CGX_Manual_Intake` and stays unmoved pending explicit lifecycle gates.
+4. Read existing owner lanes (Achilles/Romer, Neo/LightSpeed, Athene/Eco, Cognigrex parent, UniSpace product) and their latest completed automation runs; cross-owner edits require source-grade review. Do not spawn a sixth master, overwrite another lane's work, or count model proposals as implemented changes.
+5. Obtain installed build hashes, runtime health/readback, source rights/ACL proof, tests and provider deployment status *fresh*. Git CI green is not native issuer, signed RootAuthority, independent two-node DBR, or public deployment approval.
+
+**Founder future approvals:** A general “all Y” consents to source-preserving review, bounded tests, qualified pre-population, reversible branch commits, and other specifically permitted steps. It **does not** silently satisfy independent G01–G07 proof, third-party permissions, licence restrictions, issuer/lease authority, on-chain mint/signing, public deployment, destructive deletion or physical safety gates. Where owner decisions are permitted, record scope, evidence, dissent/negative case, rollback and exact version. Ethical/philosophical/analogical reasoning informs review but is not itself empirical evidence or a signed transaction.
+
+**Compact/close protocol:** Before a chat handoff, capture only (a) current *verified* repo/PR head and any pending CI, (b) tested source/result digests and installed-vs-source distinction, (c) open failed/held gates and reason, (d) owner-specific next executable task, (e) conflicts/concurrent writers, and (f) source locations permitted for the receiving audience. Update an existing scoped handoff or this README through a compare-and-swap commit; avoid huge duplicated chat narratives, private source payloads and new competing status databases. After successful readback, future chats start from current pointers—not an assumption that an earlier context window or model memory retained everything.
+
+**Cross-platform distribution boundary:** Git stores public-safe *pointers/contracts only*. The private source locator, rights/ACL evidence, original byte carriers, agent-home receipts, and protected DataSpace review belong in their existing restricted stores. Canva/Docs/outreach consume explicitly approved presentation derivatives, never private source or permissions lists by inheritance. Preserve original/version hashes and link to an accepted successor before proposing archive, move or deletion. Deployment copies of the nine canonical core skills are distribution artifacts, not 81 new ontological objects.
+
+**No-churn rule:** Batch reads and writes under current branch/owner scope; refresh remote head; use isolated worktree or expected-source SHA; run positive and negative tests; non-force push; provider readback; then close the completed thread. On conflict, reconcile the other writer's commit rather than creating a parallel root. Keep the minimum 40% monthly Remote Desktop Commander quota reserve until DataSpace is independently connected.
+
+### COIN / DataSpace cross-lane checkpoint — 2026-11-11
+
+Use the existing [COIN/Web4 draft PR #24](https://github.com/achillesromer-coder/LightSpeed/pull/24) and [DataSpace observer draft PR #173](https://github.com/achillesromer-coder/LightSpeed/pull/173) for source review. The original Drive COIN archive was independently SHA-256 and manifest verified; a **separate owner-private** candidate v3 ledger patch passed 19/19 sandbox ledger tests and offline source checks, but is **not installed** and its private implementation must not be copied into public Git. COIN draft source validation CI passed on the 11 November checkpoint. DataSpace peer names now remain discovery-only; signed peer transport/compute and multi-node DBR have **not** been proven. DataSpace CI status is not independently confirmed. Keep Google Drive sharing unchanged and require separate live issuer/lease, two-node and UniSpace readback receipts. No duplicate chain root, resolver, consumer, scheduler or public deployment is accepted by these updates.
