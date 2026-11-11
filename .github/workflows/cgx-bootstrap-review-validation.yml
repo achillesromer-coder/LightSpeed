@@ -68,6 +68,11 @@ jobs:
           python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_empty_genesis_devnet.py' -v
           python3 cgx/bootstrap/cgxEmptyGenesisDevnet.py init --state "$RUNNER_TEMP/cgx-empty-genesis.json"
           python3 cgx/bootstrap/cgxEmptyGenesisDevnet.py verify --state "$RUNNER_TEMP/cgx-empty-genesis.json"
+      - name: Verify signed local two-process genesis review holds
+        run: |
+          python3 -m pip install --disable-pip-version-check 'cryptography==48.0.0'
+          python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_genesis_peer_review.py' -v
+          python3 -m py_compile cgx/bootstrap/cgxGenesisPeerReview.py
       - name: Validate Python lease scope regression (source-only)
         run: python3 scripts/validate_cgx_execution_lease.py
       - name: Verify merged runtime manifest exact source hashes and sizes
