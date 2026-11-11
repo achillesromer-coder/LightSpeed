@@ -2897,5 +2897,198 @@
         "retention": "RETAIN_ORIGINAL_REF_PENDING_EXACT_OBJECT_AND_CONSUMER_PROOF"
       }
     ]
+  },
+  "cross_surface_fold_review_20261111": {
+    "schema": "CGX-CROSS-SURFACE-FOLD-REVIEW/0.1",
+    "status": "SOURCE_ONLY_NO_NATIVE_AUTHORITY",
+    "as_of": "2026-11-11",
+    "parent": "cgx:root:cognigrex",
+    "sole_resolver": "LOAD.cgx",
+    "integration_pr": 206,
+    "integration_branch": "review/cgx-ls-unified-bootstrap-20261028",
+    "as_of_integration_head": "fb23ccd41be6f05a1a4f9d67f5b43ef5c5d142db",
+    "public_repositories": [
+      {
+        "name": "NCNBOUWER/Raphael",
+        "default_branch": "main",
+        "tree_sha": "02b0d869e2fad14c3565fe8a1822fa143637182c",
+        "source_file_count": 184,
+        "scope": "Raphael geometry and mathematical evidence",
+        "disposition": "RETAIN_DISTINCT_ORIGINAL_SOURCE",
+        "snapshot_is_live": false
+      },
+      {
+        "name": "achillesromer-coder/Romer-MPL",
+        "default_branch": "main",
+        "tree_sha": "58a8f2f1c6f8853047e2450e2a25a0a763273d54",
+        "source_file_count": 40,
+        "scope": "Romer MPL and engineering proof",
+        "disposition": "RETAIN_DISTINCT_ORIGINAL_SOURCE",
+        "snapshot_is_live": false
+      },
+      {
+        "name": "achillesromer-coder/LightSpeed",
+        "default_branch": "main",
+        "tree_sha": "e46ca5e888dac9035f41f4b52a1cdd297b4c8cac",
+        "source_file_count": 1739,
+        "scope": "CGX integration code and LS orchestration",
+        "disposition": "RETAIN_DISTINCT_ORIGINAL_SOURCE",
+        "snapshot_is_live": false
+      },
+      {
+        "name": "achillesromer-coder/Operations",
+        "default_branch": "main",
+        "tree_sha": "506cf3afbf6f44cdafb44d01176bf7d148d4a44b",
+        "source_file_count": 29,
+        "scope": "Operational workflows and calculators",
+        "disposition": "RETAIN_DISTINCT_ORIGINAL_SOURCE",
+        "snapshot_is_live": false
+      },
+      {
+        "name": "achillesromer-coder/Data",
+        "default_branch": "main",
+        "tree_sha": "dbff21bffb4d726d5422081133f7001fb081db60",
+        "source_file_count": 202,
+        "scope": "Schemas and source-qualified datasets",
+        "disposition": "RETAIN_DISTINCT_ORIGINAL_SOURCE",
+        "snapshot_is_live": false
+      }
+    ],
+    "exact_blob_overlap_groups": [
+      {
+        "git_blob_sha": "67b737d466a4ef225857fde70061d4f9686ee4c5",
+        "repositories": [
+          "NCNBOUWER/Raphael",
+          "achillesromer-coder/Romer-MPL"
+        ],
+        "deletion_authorized": false
+      },
+      {
+        "git_blob_sha": "72ceb61ae624e48bd6c7ae8f670a10595ceb17be",
+        "repositories": [
+          "NCNBOUWER/Raphael",
+          "achillesromer-coder/Romer-MPL"
+        ],
+        "deletion_authorized": false
+      },
+      {
+        "git_blob_sha": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+        "repositories": [
+          "NCNBOUWER/Raphael",
+          "achillesromer-coder/LightSpeed"
+        ],
+        "deletion_authorized": false
+      },
+      {
+        "git_blob_sha": "df26a8d6805c030481a02a304977232676b2e0ec",
+        "repositories": [
+          "achillesromer-coder/Data",
+          "achillesromer-coder/LightSpeed"
+        ],
+        "deletion_authorized": false
+      }
+    ],
+    "local_worktree_review": {
+      "registered": 53,
+      "tracked_clean": 46,
+      "tracked_dirty": 7,
+      "missing": 0,
+      "untracked_not_scanned": true,
+      "stale_prune_candidates": 0,
+      "worktrees_deleted": 0,
+      "branches_deleted": 0,
+      "junction_is_independent_source": false,
+      "closeout_ready": false
+    },
+    "connected_surfaces": {
+      "drive": "PRIVATE_METADATA_POINTERS_ONLY",
+      "canva": "CONCURRENT_OWNER_LANE_NO_WRITE",
+      "live_source_acl_verified": false,
+      "individual_private_assets_exported": false
+    },
+    "functional_surfaces": [
+      {
+        "id": "cognigrex_parent",
+        "owner": "Cognigrex.cgx",
+        "contract": "cgx/bootstrap/cgxPhaseAcceptance_v01.json",
+        "state": "SOURCE_ONLY"
+      },
+      {
+        "id": "load_resolver",
+        "owner": "LOAD.cgx",
+        "contract": "cgx/bootstrap/cgxPremintFamilyProjection.mjs",
+        "state": "SOURCE_ONLY"
+      },
+      {
+        "id": "file_space",
+        "owner": "Cognigrex.cgx",
+        "contract": "cgx/bootstrap/cgxBatchConvergence.mjs",
+        "state": "NATIVE_ADMISSION_HOLD"
+      },
+      {
+        "id": "data_space",
+        "owner": "Cognigrex.cgx",
+        "contract": "cgx/domain_templates/payload_capsule_dbr_2026-10-05.json",
+        "state": "INDEPENDENT_DBR_HOLD"
+      },
+      {
+        "id": "unispace_product",
+        "owner": "UniSpace",
+        "contract": "cgx/load_minimum/unispacePrivateCockpitDom.mjs",
+        "state": "SOURCE_REVIEW_ONLY"
+      },
+      {
+        "id": "ls_go_operator",
+        "owner": "EMASSC.cgx",
+        "contract": "cgx/bootstrap/smart_setup_surface_contract.json",
+        "state": "HOST_QUALIFICATION_HOLD"
+      },
+      {
+        "id": "public_viewer",
+        "owner": "UniSpace",
+        "contract": "apps/lightspeed-go/scripts/cgx_public_bundle_guard.py",
+        "state": "PUBLIC_RELEASE_HOLD"
+      },
+      {
+        "id": "local_devnet",
+        "owner": "Cognigrex.cgx",
+        "contract": "cgx/bootstrap/cgxGenesisPeerReview.py",
+        "state": "LOCAL_REVIEW_HOLD"
+      }
+    ],
+    "owner_automations": {
+      "enabled": 3,
+      "disabled": 2,
+      "auto_restart_disabled": false
+    },
+    "cleanup": {
+      "original_source_deletions": 0,
+      "repos_archived": 0,
+      "unapproved_archive_moves": 0,
+      "unqualified_delete_candidates": 0,
+      "independent_recovery_verified": false,
+      "closure_ready": false,
+      "rule": "REQUIRE_EXACT_PROVENANCE_RBAC_CONSUMERS_ACCEPTED_SUCCESSOR_AND_RESTORE_PROOF"
+    },
+    "release": {
+      "gates": {
+        "G01": "HOLD",
+        "G02": "HOLD",
+        "G03": "HOLD",
+        "G04": "HOLD",
+        "G05": "HOLD",
+        "G06": "HOLD",
+        "G07": "HOLD"
+      },
+      "native_mint_authorized": false,
+      "independent_dbr_verified": false,
+      "production_merge_completed": false,
+      "public_launch_verified": false
+    },
+    "source_evidence": {
+      "repo_tree_shas_are_snapshots": true,
+      "worktree_private_receipt_sha256": "6abafa198314e2bc3259118955470ca0490b253e02d4cc3c026808a989efe074",
+      "provider_readback_required_before_mutation": true
+    }
   }
 }

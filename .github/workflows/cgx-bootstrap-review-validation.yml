@@ -73,6 +73,10 @@ jobs:
           python3 -m pip install --disable-pip-version-check 'cryptography==48.0.0'
           python3 -m unittest discover -s cgx/bootstrap -p 'test_cgx_genesis_peer_review.py' -v
           python3 -m py_compile cgx/bootstrap/cgxGenesisPeerReview.py
+      - name: Audit public-safe cross-surface source folds and cleanup holds
+        run: |
+          python3 -m unittest discover -s tests -p 'test_cgx_crosssurface_fold_review.py' -v
+          node --test cgx/bootstrap/cgxCrossSurfaceFoldAudit.test.mjs
       - name: Validate Python lease scope regression (source-only)
         run: python3 scripts/validate_cgx_execution_lease.py
       - name: Verify merged runtime manifest exact source hashes and sizes
