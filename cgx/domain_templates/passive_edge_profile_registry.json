@@ -1,0 +1,216 @@
+{
+  "schema": "CGX-PASSIVE-EDGE-PROFILES/0.1",
+  "status": "SOURCE_CANDIDATE_NO_DEVICE_ENROLLMENT",
+  "as_of": "2026-10-20",
+  "semantic_root": "cgx://cgx.cgx",
+  "parent_contracts": [
+    "CGX-MOBILE-NODE-BINDING/0.1",
+    "CGX-NODE-EXCHANGE-CONTRACT/0.1",
+    "CGX-FILE-CONVERSION-CONTRACT/0.1"
+  ],
+  "purpose": "Device- and bandwidth-bounded capability discovery and source/receipt planning without a new runtime or authority root.",
+  "tier_selection": "choose the smallest tier satisfying observed constraints; do not infer network throughput from browser hardware or advertise a live peer from a static carrier",
+  "bandwidth_tiers": [
+    {
+      "id": "T0_MINIMAL",
+      "max_transfer_bytes": 4096,
+      "chunk_bytes": 512,
+      "max_in_flight": 1,
+      "preferred": "offline manifest/reference/receipt only",
+      "eligible_views": [
+        "text",
+        "source_ref",
+        "status"
+      ]
+    },
+    {
+      "id": "T1_CONSTRAINED",
+      "max_transfer_bytes": 65536,
+      "chunk_bytes": 4096,
+      "max_in_flight": 1,
+      "preferred": "hashed missing-source fragments with explicit receiver proof",
+      "eligible_views": [
+        "text",
+        "svg-lite",
+        "event-delta"
+      ]
+    },
+    {
+      "id": "T2_STANDARD",
+      "max_transfer_bytes": 1048576,
+      "chunk_bytes": 32768,
+      "max_in_flight": 2,
+      "preferred": "verified source ranges and type projections",
+      "eligible_views": [
+        "text",
+        "svg",
+        "table",
+        "basic-3d"
+      ]
+    },
+    {
+      "id": "T3_EXTENDED",
+      "max_transfer_bytes": 8388608,
+      "chunk_bytes": 131072,
+      "max_in_flight": 4,
+      "preferred": "verified larger packages and richer views subject to platform limits",
+      "eligible_views": [
+        "text",
+        "svg",
+        "3d",
+        "media",
+        "offline-pack"
+      ]
+    }
+  ],
+  "profiles": [
+    {
+      "id": "WEB_OFFLINE",
+      "device_class": "browser-surface",
+      "max_authority": "LOCAL_REVIEW",
+      "installed_code_required": false,
+      "may_be_node": false,
+      "capabilities": [
+        "select-user-files",
+        "inspect",
+        "export-candidate",
+        "local-delta"
+      ],
+      "requirements": [
+        "no background processing promise",
+        "user gesture for imports/exports"
+      ],
+      "missing": [
+        "persistent peer identity",
+        "native watch/Android permissions"
+      ]
+    },
+    {
+      "id": "WEB_CONNECTED",
+      "device_class": "browser-surface",
+      "max_authority": "AUTHENTICATED_VIEW",
+      "installed_code_required": false,
+      "may_be_node": false,
+      "capabilities": [
+        "view-status",
+        "request-enrollment",
+        "import-signed-receipt"
+      ],
+      "requirements": [
+        "user-selected HTTPS origin",
+        "authenticated server session",
+        "server-side ACL"
+      ],
+      "missing": [
+        "unattended local host execution"
+      ]
+    },
+    {
+      "id": "ANDROID_RELAY",
+      "device_class": "phone-secondary-node-candidate",
+      "max_authority": "LEASE_SCOPED",
+      "installed_code_required": true,
+      "may_be_node": true,
+      "capabilities": [
+        "keystore-node-key",
+        "share-intent",
+        "user-consented-native-bridge",
+        "bounded-data-relay"
+      ],
+      "requirements": [
+        "native installation and OS permissions",
+        "signed capability readback",
+        "current host-root registry",
+        "lease for any mutation"
+      ],
+      "missing": [
+        "device acceptance receipt"
+      ]
+    },
+    {
+      "id": "WEARABLE_VIA_PHONE",
+      "device_class": "peripheral-data-source",
+      "max_authority": "READ_ONLY_OBSERVATION",
+      "installed_code_required": false,
+      "may_be_node": false,
+      "capabilities": [
+        "read-user-authorized-provider-export"
+      ],
+      "requirements": [
+        "existing phone companion software",
+        "verified and documented export/bridge route",
+        "separate explicit data consent",
+        "type/units/time/source attribution"
+      ],
+      "missing": [
+        "independent CGX process identity",
+        "proven Da Fit data API"
+      ]
+    },
+    {
+      "id": "DESKTOP_VERIFIED",
+      "device_class": "desktop-node-candidate",
+      "max_authority": "LEASE_SCOPED",
+      "installed_code_required": true,
+      "may_be_node": true,
+      "capabilities": [
+        "registered-deterministic-solver",
+        "content-addressed-transfer",
+        "receipted-file-readback"
+      ],
+      "requirements": [
+        "current host root registry",
+        "signed node identity",
+        "bounded executor",
+        "receipt-chain"
+      ],
+      "missing": [
+        "off-device acceptance"
+      ]
+    }
+  ],
+  "source_states": [
+    "UNKNOWN",
+    "NOT_CACHED",
+    "WITHHELD",
+    "UNSUPPORTED_VIEW",
+    "NOT_AUTHORISED",
+    "CONTESTED",
+    "OBSERVED_ZERO"
+  ],
+  "packet_rule": {
+    "private_keys": "never in packet",
+    "auth_tokens": "never in packet",
+    "source_paths": "never self-authorizing",
+    "watch_sensor_data": "never in a public/bootstrap packet",
+    "node_id": "null until independently enrolled",
+    "state_root": "verify from trusted resolver",
+    "public_asset_gate": "#158",
+    "peer_acceptance_gate": "#161",
+    "canonical_mutation": false,
+    "server_binding": "mandatory for any shared mutable state"
+  },
+  "security_invariants": [
+    "least privilege",
+    "HTTPS selected explicitly; no loopback or local IP from hosted page",
+    "source SHA-256 plus exact byte readback",
+    "CAS prior state root and replay/nonce checks at authenticated receiver",
+    "no auto-discovery of private apps",
+    "no unauthorized sensor data",
+    "no arbitrary shell/actuation",
+    "no fabricated offline peer acknowledgement",
+    "no inference of full fidelity from semantic alias"
+  ],
+  "acceptance_cases": [
+    "T0 offline import/export exact source hash",
+    "T1 bad prior-root rejects delta",
+    "T2 missing dependency returns NOT_CACHED",
+    "unverified watch stays source-only",
+    "public packet never contains secret/health data",
+    "private or loopback host rejected",
+    "same bytes can deduplicate without merging independent Object_IDs",
+    "valid device still cannot claim canonical authority",
+    "explicit signed peer receipt required before VERIFIED",
+    "source-only branch must retain PR #158/#161 gates"
+  ]
+}

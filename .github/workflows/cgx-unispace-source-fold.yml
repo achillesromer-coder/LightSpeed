@@ -1,0 +1,36 @@
+name: CGX UniSpace source fold cross-family verification
+on:
+  pull_request:
+    paths:
+      - "cgx/portable_node/**"
+      - "cgx/manufacturing/**"
+      - "cgx/review/unispace_source_fold_manifest_20261020.json"
+      - "cgx/review/alexandria_external_reference_intake_20261020.json"
+      - "cgx/review/unispace_keyed_publication_candidate_20261020.json"
+      - "tests/test_cgx_unispace_source_folding.py"
+      - ".github/workflows/cgx-unispace-source-fold.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  exact-source-fold:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: JSON source contract integrity
+        run: |
+          python -m json.tool cgx/review/unispace_source_fold_manifest_20261020.json > /dev/null
+          python -m json.tool cgx/review/alexandria_external_reference_intake_20261020.json > /dev/null
+      - name: Run all nine integration and source contract suites
+        run: |
+          python -m unittest discover -s tests -p 'test_cgx_passive_node_plan.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_keyed_alexandria_review.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_archive_claim_reconciliation.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_modular_facility_packing.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_modular_deployment_logistics.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_modular_facility_projection.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_unispace_source_folding.py' -v

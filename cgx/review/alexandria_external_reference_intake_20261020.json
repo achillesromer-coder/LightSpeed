@@ -1,0 +1,2988 @@
+{
+  "schema": "ALEXANDRIA-EXTERNAL-REFERENCE-INTAKE-CANDIDATE/0.1",
+  "status": "DISCOVERY_INDEX_NOT_DOWNLOADED_NOT_PLAYABLE",
+  "date": "2026-10-20",
+  "authority": "External authors/providers own their content; links are not CGX licences, verified source bytes or proof of redistributability.",
+  "groups": [
+    {
+      "origin": {
+        "name": "bobeff/open-source-games",
+        "type": "GAME_INDEX",
+        "commit": "3a9ab8fc892a2cdadf8989a72ba7624a11e39cec",
+        "readme_blob": "0a54e0898d52ffa31f83f843b66aee458c5a49b8",
+        "url": "https://github.com/bobeff/open-source-games/blob/3a9ab8fc892a2cdadf8989a72ba7624a11e39cec/README.md",
+        "index_licence": "CC0-1.0 (applies to index content, not upstream linked games/software)"
+      },
+      "source_lines": 161,
+      "distinct_links": 174,
+      "unresolved_unlinked_line_count": 25,
+      "records": [
+        {
+          "line": 28,
+          "category": "Action games",
+          "section": "",
+          "title": "Hypersomnia",
+          "sources": [
+            "https://github.com/TeamHypersomnia/Hypersomnia"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 32,
+          "category": "Adventure games",
+          "section": "",
+          "title": "Dead Ascend",
+          "sources": [
+            "https://github.com/larpon/DeadAscend"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 34,
+          "category": "Adventure games",
+          "section": "",
+          "title": "Endless Sky",
+          "sources": [
+            "https://github.com/endless-sky/endless-sky"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 36,
+          "category": "Adventure games",
+          "section": "",
+          "title": "Pioneer",
+          "sources": [
+            "https://github.com/pioneerspacesim/pioneer"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 38,
+          "category": "Adventure games",
+          "section": "",
+          "title": "ScummVM",
+          "sources": [
+            "https://github.com/scummvm/scummvm"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 40,
+          "category": "Adventure games",
+          "section": "",
+          "title": "The Legend of Zelda: Twilight Princess",
+          "sources": [
+            "https://github.com/zeldaret/tp"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 42,
+          "category": "Adventure games",
+          "section": "",
+          "title": "Zelda 3",
+          "sources": [
+            "https://github.com/snesrev/zelda3"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 46,
+          "category": "Business and Tycoon games",
+          "section": "",
+          "title": "CorsixTH",
+          "sources": [
+            "https://github.com/CorsixTH/CorsixTH"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 48,
+          "category": "Business and Tycoon games",
+          "section": "",
+          "title": "Hurry Curry!",
+          "sources": [
+            "https://codeberg.org/hurrycurry/hurrycurry"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 50,
+          "category": "Business and Tycoon games",
+          "section": "",
+          "title": "OpenLoco",
+          "sources": [
+            "https://github.com/OpenLoco/OpenLoco"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 52,
+          "category": "Business and Tycoon games",
+          "section": "",
+          "title": "OpenRCT2",
+          "sources": [
+            "https://github.com/OpenRCT2/OpenRCT2"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 54,
+          "category": "Business and Tycoon games",
+          "section": "",
+          "title": "OpenTTD",
+          "sources": [
+            "https://github.com/OpenTTD/OpenTTD"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 58,
+          "category": "City-Building games",
+          "section": "",
+          "title": "Akhenaten",
+          "sources": [
+            "https://github.com/dalerank/Akhenaten"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 60,
+          "category": "City-Building games",
+          "section": "",
+          "title": "Citybound",
+          "sources": [
+            "https://github.com/citybound/citybound"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 62,
+          "category": "City-Building games",
+          "section": "",
+          "title": "Cytopia",
+          "sources": [
+            "https://github.com/CytopiaTeam/Cytopia"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 64,
+          "category": "City-Building games",
+          "section": "",
+          "title": "Egregoria",
+          "sources": [
+            "https://github.com/Uriopass/Egregoria"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 66,
+          "category": "City-Building games",
+          "section": "",
+          "title": "IsoCity",
+          "sources": [
+            "https://github.com/amilich/isometric-city"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 68,
+          "category": "City-Building games",
+          "section": "",
+          "title": "Julius",
+          "sources": [
+            "https://github.com/bvschaik/julius"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 70,
+          "category": "City-Building games",
+          "section": "",
+          "title": "micropolisJS",
+          "sources": [
+            "https://github.com/graememcc/micropolisJS"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 74,
+          "category": "City-Building games",
+          "section": "",
+          "title": "Original:",
+          "sources": [
+            "https://github.com/unknown-horizons/unknown-horizons",
+            "https://github.com/fifengine/fifengine"
+          ],
+          "related_engine": {
+            "name": "FIFE",
+            "url": "https://www.fifengine.net/"
+          },
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 76,
+          "category": "City-Building games",
+          "section": "",
+          "title": "Godot port:",
+          "sources": [
+            "https://github.com/unknown-horizons/godot-port",
+            "https://github.com/godotengine/godot"
+          ],
+          "related_engine": {
+            "name": "Godot",
+            "url": "https://godotengine.org"
+          },
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 80,
+          "category": "First-Person games",
+          "section": "",
+          "title": ".kkrieger",
+          "sources": [
+            "https://github.com/farbrausch/fr_public/tree/master/werkkzeug3_kkrieger"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 82,
+          "category": "First-Person games",
+          "section": "",
+          "title": "Anarch",
+          "sources": [
+            "https://gitlab.com/drummyfish/anarch"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 84,
+          "category": "First-Person games",
+          "section": "",
+          "title": "AssaultCube",
+          "sources": [
+            "https://github.com/assaultcube/AC",
+            "https://github.com/bsegovia/cube"
+          ],
+          "related_engine": {
+            "name": "CUBE",
+            "url": "http://cubeengine.com"
+          },
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 86,
+          "category": "First-Person games",
+          "section": "",
+          "title": "Cube 2: Sauerbraten",
+          "sources": [
+            "https://sourceforge.net/projects/sauerbraten",
+            "https://github.com/bsegovia/cube"
+          ],
+          "related_engine": {
+            "name": "CUBE",
+            "url": "https://www.redeclipse.net"
+          },
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 88,
+          "category": "First-Person games",
+          "section": "",
+          "title": "Descent 3",
+          "sources": [
+            "https://github.com/kevinbentley/Descent3"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 90,
+          "category": "First-Person games",
+          "section": "",
+          "title": "Liblast",
+          "sources": [
+            "https://codeberg.org/liblast/liblast",
+            "https://github.com/godotengine/godot"
+          ],
+          "related_engine": {
+            "name": "Godot",
+            "url": "https://godotengine.org"
+          },
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 92,
+          "category": "First-Person games",
+          "section": "",
+          "title": "Red Eclipse",
+          "sources": [
+            "https://github.com/redeclipse/base",
+            "https://github.com/bsegovia/cube"
+          ],
+          "related_engine": {
+            "name": "CUBE",
+            "url": "https://www.redeclipse.net"
+          },
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 94,
+          "category": "First-Person games",
+          "section": "",
+          "title": "Surreal Engine",
+          "sources": [
+            "https://github.com/dpjudas/SurrealEngine"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 96,
+          "category": "First-Person games",
+          "section": "",
+          "title": "The Dark Mod",
+          "sources": [
+            "https://svn.thedarkmod.com/publicsvn/darkmod_src/trunk"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 98,
+          "category": "First-Person games",
+          "section": "",
+          "title": "Xonotic",
+          "sources": [
+            "https://gitlab.com/xonotic/xonotic"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 102,
+          "category": "First-Person games",
+          "section": "[Aliens Versus Predator](https://en.wikipedia.org/wiki/AliensVersusPredator(1999videogame)) game source ports",
+          "title": "AvP Forever",
+          "sources": [
+            "https://github.com/dreamer/avp-forever"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 104,
+          "category": "First-Person games",
+          "section": "[Aliens Versus Predator](https://en.wikipedia.org/wiki/AliensVersusPredator(1999videogame)) game source ports",
+          "title": "avpmp",
+          "sources": [
+            "https://github.com/mbait/avpmp"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 106,
+          "category": "First-Person games",
+          "section": "[Aliens Versus Predator](https://en.wikipedia.org/wiki/AliensVersusPredator(1999videogame)) game source ports",
+          "title": "NakedAVP",
+          "sources": [
+            "https://github.com/libsdl-org/SDL",
+            "https://github.com/atsb/NakedAVP"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 110,
+          "category": "First-Person games",
+          "section": "[Build engine](https://en.wikipedia.org/wiki/Build(gameengine)) [[source]](https://advsys.net/ken/buildsrc) based games",
+          "title": "Duke Nukem 3D",
+          "sources": [
+            "https://github.com/videogamepreservation/dukenukem3d"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 112,
+          "category": "First-Person games",
+          "section": "[Build engine](https://en.wikipedia.org/wiki/Build(gameengine)) [[source]](https://advsys.net/ken/buildsrc) based games",
+          "title": "Shadow Warrior",
+          "sources": [
+            "https://github.com/Azarien/shadow-warrior"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 116,
+          "category": "First-Person games",
+          "section": "Source Ports and Re-Implementations",
+          "title": "BuildGDX",
+          "sources": [
+            "https://github.com/vogonsorg/BuildGDX"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 120,
+          "category": "First-Person games",
+          "section": "Source Ports and Re-Implementations",
+          "title": "JFDuke3D",
+          "sources": [
+            "https://github.com/jonof/jfduke3d"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 124,
+          "category": "First-Person games",
+          "section": "Source Ports and Re-Implementations",
+          "title": "NBlood",
+          "sources": [
+            "https://github.com/NBlood/NBlood"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 126,
+          "category": "First-Person games",
+          "section": "Source Ports and Re-Implementations",
+          "title": "NuBuildGDX",
+          "sources": [
+            "https://github.com/atsb/NuBuildGDX"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 132,
+          "category": "First-Person games",
+          "section": "[id Software](https://en.wikipedia.org/wiki/IdSoftware) Games",
+          "title": "Doom",
+          "sources": [
+            "https://github.com/id-Software/DOOM"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 134,
+          "category": "First-Person games",
+          "section": "[id Software](https://en.wikipedia.org/wiki/IdSoftware) Games",
+          "title": "DOOM64-RE",
+          "sources": [
+            "https://github.com/Erick194/DOOM64-RE"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 136,
+          "category": "First-Person games",
+          "section": "[id Software](https://en.wikipedia.org/wiki/IdSoftware) Games",
+          "title": "Doom 3",
+          "sources": [
+            "https://github.com/id-Software/DOOM-3-BFG"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 138,
+          "category": "First-Person games",
+          "section": "[id Software](https://en.wikipedia.org/wiki/IdSoftware) Games",
+          "title": "Quake",
+          "sources": [
+            "https://github.com/id-Software/Quake"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 140,
+          "category": "First-Person games",
+          "section": "[id Software](https://en.wikipedia.org/wiki/IdSoftware) Games",
+          "title": "Quake II",
+          "sources": [
+            "https://github.com/id-Software/Quake-2"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 142,
+          "category": "First-Person games",
+          "section": "[id Software](https://en.wikipedia.org/wiki/IdSoftware) Games",
+          "title": "Quake III Arena",
+          "sources": [
+            "https://github.com/id-Software/Quake-III-Arena"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 144,
+          "category": "First-Person games",
+          "section": "[id Software](https://en.wikipedia.org/wiki/IdSoftware) Games",
+          "title": "Wolfenstein 3D",
+          "sources": [
+            "https://github.com/id-Software/wolf3d"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 150,
+          "category": "First-Person games",
+          "section": "Source Ports and Re-Implementations",
+          "title": "CatacombGL",
+          "sources": [
+            "https://github.com/ArnoAnsems/CatacombGL"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 154,
+          "category": "First-Person games",
+          "section": "Source Ports and Re-Implementations",
+          "title": "Chocolate Doom",
+          "sources": [
+            "https://github.com/chocolate-doom/chocolate-doom"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 156,
+          "category": "First-Person games",
+          "section": "Source Ports and Re-Implementations",
+          "title": "ZDoom",
+          "sources": [
+            "https://github.com/UZDoom/UZDoom"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 160,
+          "category": "First-Person games",
+          "section": "Source Ports and Re-Implementations",
+          "title": "Chocolate Quake",
+          "sources": [
+            "https://github.com/Henrique194/chocolate-quake"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 162,
+          "category": "First-Person games",
+          "section": "Source Ports and Re-Implementations",
+          "title": "FTEQW",
+          "sources": [
+            "https://github.com/fte-team/fteqw"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 166,
+          "category": "First-Person games",
+          "section": "Source Ports and Re-Implementations",
+          "title": "ECWolf",
+          "sources": [
+            "https://bitbucket.org/ecwolf/ecwolf"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 168,
+          "category": "First-Person games",
+          "section": "Source Ports and Re-Implementations",
+          "title": "Wolf4SDL",
+          "sources": [
+            "https://github.com/lazd/wolf4sdl"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 179,
+          "category": "Platformers",
+          "section": "",
+          "title": "Commander Keen in Keen Dreams",
+          "sources": [
+            "https://github.com/keendreams/keen"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 181,
+          "category": "Platformers",
+          "section": "",
+          "title": "Omnispeak",
+          "sources": [
+            "https://github.com/sulix/omnispeak"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 183,
+          "category": "Platformers",
+          "section": "",
+          "title": "DDraceNetwork",
+          "sources": [
+            "https://github.com/ddnet/ddnet"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 187,
+          "category": "Platformers",
+          "section": "",
+          "title": "Jumpy",
+          "sources": [
+            "https://github.com/fishfolk/jumpy",
+            "https://github.com/bevyengine/bevy"
+          ],
+          "related_engine": {
+            "name": "Bevy",
+            "url": "https://bevy.org/"
+          },
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 189,
+          "category": "Platformers",
+          "section": "",
+          "title": "Punchy",
+          "sources": [
+            "https://github.com/bevyengine/bevy"
+          ],
+          "related_engine": {
+            "name": "Bevy",
+            "url": "https://bevy.org/"
+          },
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 191,
+          "category": "Platformers",
+          "section": "",
+          "title": "Frogatto & Friends",
+          "sources": [
+            "https://github.com/frogatto/frogatto",
+            "https://github.com/anura-engine/anura"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 193,
+          "category": "Platformers",
+          "section": "",
+          "title": "OpenGOAL",
+          "sources": [
+            "https://github.com/water111/jak-project"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 195,
+          "category": "Platformers",
+          "section": "",
+          "title": "Rigel Engine",
+          "sources": [
+            "https://github.com/lethal-guitar/RigelEngine"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 197,
+          "category": "Platformers",
+          "section": "",
+          "title": "Sonic Robo Blast 2",
+          "sources": [
+            "https://git.do.srb2.org/STJr/SRB2"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 199,
+          "category": "Platformers",
+          "section": "",
+          "title": "Super Mario 64",
+          "sources": [
+            "https://github.com/n64decomp/sm64"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 201,
+          "category": "Platformers",
+          "section": "",
+          "title": "VVVVVV",
+          "sources": [
+            "https://github.com/TerryCavanagh/VVVVVV"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 205,
+          "category": "Puzzle games",
+          "section": "",
+          "title": "BlockOut II",
+          "sources": [
+            "https://sourceforge.net/projects/blockout/files/blockout/BlockOut%202.5"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 207,
+          "category": "Puzzle games",
+          "section": "",
+          "title": "Portal64",
+          "sources": [
+            "https://github.com/mwpenny/portal64-still-alive"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 209,
+          "category": "Puzzle games",
+          "section": "",
+          "title": "Whatajong",
+          "sources": [
+            "https://github.com/masylum/whatajong"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 213,
+          "category": "Racing games",
+          "section": "",
+          "title": "Dust Racing 2D",
+          "sources": [
+            "https://github.com/cflavio/yorg"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 215,
+          "category": "Racing games",
+          "section": "",
+          "title": "ManiaDrive",
+          "sources": [
+            "http://maniadrive.raydium.org/index.php?downloads=yes",
+            "https://raydium.org/data.php"
+          ],
+          "related_engine": {
+            "name": "Raydium",
+            "url": "https://raydium.org"
+          },
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 217,
+          "category": "Racing games",
+          "section": "",
+          "title": "Rigs of Rods",
+          "sources": [
+            "https://github.com/RigsOfRods/rigs-of-rods",
+            "https://github.com/OGRECave",
+            "https://github.com/ocornut/imgui"
+          ],
+          "related_engine": {
+            "name": "OGRE",
+            "url": "https://www.ogre3d.org"
+          },
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 219,
+          "category": "Racing games",
+          "section": "",
+          "title": "RVGL",
+          "sources": [
+            "https://gitlab.com/re-volt"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 221,
+          "category": "Racing games",
+          "section": "",
+          "title": "Speed Dreams",
+          "sources": [
+            "https://forge.a-lec.org/xavi/speed-dreams-code"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 223,
+          "category": "Racing games",
+          "section": "",
+          "title": "Stunt Rally",
+          "sources": [
+            "https://github.com/stuntrally/stuntrally3"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 225,
+          "category": "Racing games",
+          "section": "",
+          "title": "SuperTuxKart",
+          "sources": [
+            "https://github.com/supertuxkart/stk-code"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 227,
+          "category": "Racing games",
+          "section": "",
+          "title": "TORCS - The Open Racing Car Simulator",
+          "sources": [
+            "https://sourceforge.net/projects/torcs"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 229,
+          "category": "Racing games",
+          "section": "",
+          "title": "Trigger Rally",
+          "sources": [
+            "https://sourceforge.net/projects/trigger-rally"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 231,
+          "category": "Racing games",
+          "section": "",
+          "title": "VDrift",
+          "sources": [
+            "https://github.com/VDrift/vdrift"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 233,
+          "category": "Racing games",
+          "section": "",
+          "title": "Yorg",
+          "sources": [
+            "https://github.com/cflavio/yorg",
+            "https://github.com/panda3d/panda3d"
+          ],
+          "related_engine": {
+            "name": "Panda3D",
+            "url": "https://www.panda3d.org"
+          },
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 235,
+          "category": "Racing games",
+          "section": "",
+          "title": "wipEout",
+          "sources": [
+            "https://github.com/phoboslab/wipeout-rewrite"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 239,
+          "category": "Real-Time strategies",
+          "section": "",
+          "title": "0 A.D.",
+          "sources": [
+            "https://gitea.wildfiregames.com/0ad/0ad"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 241,
+          "category": "Real-Time strategies",
+          "section": "",
+          "title": "BAR",
+          "sources": [
+            "https://github.com/beyond-all-reason/Beyond-All-Reason",
+            "https://github.com/spring/spring"
+          ],
+          "related_engine": {
+            "name": "Spring",
+            "url": "https://springrts.com"
+          },
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 243,
+          "category": "Real-Time strategies",
+          "section": "",
+          "title": "Dune II The Maker",
+          "sources": [
+            "https://github.com/stefanhendriks/Dune-II---The-Maker"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 245,
+          "category": "Real-Time strategies",
+          "section": "",
+          "title": "Freeserf.net",
+          "sources": [
+            "https://github.com/Pyrdacor/freeserf.net"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 247,
+          "category": "Real-Time strategies",
+          "section": "",
+          "title": "Keeper FX",
+          "sources": [
+            "https://github.com/dkfans/keeperfx"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 249,
+          "category": "Real-Time strategies",
+          "section": "",
+          "title": "Mindustry",
+          "sources": [
+            "https://github.com/Anuken/Mindustry"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 251,
+          "category": "Real-Time strategies",
+          "section": "",
+          "title": "OpenAge",
+          "sources": [
+            "https://github.com/SFTtech/openage"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 253,
+          "category": "Real-Time strategies",
+          "section": "",
+          "title": "OpenHV",
+          "sources": [
+            "https://github.com/OpenHV/OpenHV"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 255,
+          "category": "Real-Time strategies",
+          "section": "",
+          "title": "OpenRA",
+          "sources": [
+            "https://github.com/OpenRA/OpenRA"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 257,
+          "category": "Real-Time strategies",
+          "section": "",
+          "title": "Permafrost Engine",
+          "sources": [
+            "https://github.com/eduard-permyakov/permafrost-engine"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 259,
+          "category": "Real-Time strategies",
+          "section": "",
+          "title": "Standard Of Iron",
+          "sources": [
+            "https://github.com/djeada/Standard-of-Iron"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 261,
+          "category": "Real-Time strategies",
+          "section": "",
+          "title": "Warzone 2100",
+          "sources": [
+            "https://github.com/Warzone2100/warzone2100"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 263,
+          "category": "Real-Time strategies",
+          "section": "",
+          "title": "Widelands",
+          "sources": [
+            "https://github.com/widelands/widelands"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 270,
+          "category": "Real-Time strategies",
+          "section": "[Blizzard Entertainment](https://en.wikipedia.org/wiki/BlizzardEntertainment) Games Re-Implementations",
+          "title": "OpenBW",
+          "sources": [
+            "https://github.com/OpenBW/openbw",
+            "https://github.com/OpenBW/bwapi"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 272,
+          "category": "Real-Time strategies",
+          "section": "[Blizzard Entertainment](https://en.wikipedia.org/wiki/BlizzardEntertainment) Games Re-Implementations",
+          "title": "Strategus",
+          "sources": [
+            "https://github.com/Wargus/stratagus"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 274,
+          "category": "Real-Time strategies",
+          "section": "[Blizzard Entertainment](https://en.wikipedia.org/wiki/BlizzardEntertainment) Games Re-Implementations",
+          "title": "War1gus",
+          "sources": [
+            "https://github.com/Wargus/war1gus"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 276,
+          "category": "Real-Time strategies",
+          "section": "[Blizzard Entertainment](https://en.wikipedia.org/wiki/BlizzardEntertainment) Games Re-Implementations",
+          "title": "Wargus",
+          "sources": [
+            "https://github.com/Wargus/wargus"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 278,
+          "category": "Real-Time strategies",
+          "section": "[Blizzard Entertainment](https://en.wikipedia.org/wiki/BlizzardEntertainment) Games Re-Implementations",
+          "title": "Wyrmsun",
+          "sources": [
+            "https://github.com/Andrettin/Wyrmsun"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 280,
+          "category": "Real-Time strategies",
+          "section": "[Blizzard Entertainment](https://en.wikipedia.org/wiki/BlizzardEntertainment) Games Re-Implementations",
+          "title": "Stargus",
+          "sources": [
+            "https://github.com/Wargus/stargus"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 282,
+          "category": "Real-Time strategies",
+          "section": "[Blizzard Entertainment](https://en.wikipedia.org/wiki/BlizzardEntertainment) Games Re-Implementations",
+          "title": "Warsmash Mod Engine",
+          "sources": [
+            "https://github.com/Retera/WarsmashModEngine",
+            "https://github.com/libgdx/libgdx"
+          ],
+          "related_engine": {
+            "name": "LibGDX",
+            "url": "https://libgdx.com"
+          },
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 286,
+          "category": "Real-Time strategies",
+          "section": "[Westwood Studios](https://en.wikipedia.org/wiki/WestwoodStudios) and [EA](https://en.wikipedia.org/wiki/ElectronicArts) Games from [Command & Conquer](https://en.wikipedia.org/wiki/Command%26Conquer) Series",
+          "title": "Command & Conquer Remastered Collection",
+          "sources": [
+            "https://github.com/electronicarts/CnC_Remastered_Collection"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 288,
+          "category": "Real-Time strategies",
+          "section": "[Westwood Studios](https://en.wikipedia.org/wiki/WestwoodStudios) and [EA](https://en.wikipedia.org/wiki/ElectronicArts) Games from [Command & Conquer](https://en.wikipedia.org/wiki/Command%26Conquer) Series",
+          "title": "Generals",
+          "sources": [
+            "https://github.com/electronicarts/CnC_Generals_Zero_Hour"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 290,
+          "category": "Real-Time strategies",
+          "section": "[Westwood Studios](https://en.wikipedia.org/wiki/WestwoodStudios) and [EA](https://en.wikipedia.org/wiki/ElectronicArts) Games from [Command & Conquer](https://en.wikipedia.org/wiki/Command%26Conquer) Series",
+          "title": "Red Alert",
+          "sources": [
+            "https://github.com/electronicarts/CnC_Red_Alert"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 292,
+          "category": "Real-Time strategies",
+          "section": "[Westwood Studios](https://en.wikipedia.org/wiki/WestwoodStudios) and [EA](https://en.wikipedia.org/wiki/ElectronicArts) Games from [Command & Conquer](https://en.wikipedia.org/wiki/Command%26Conquer) Series",
+          "title": "Tiberian Dawn",
+          "sources": [
+            "https://github.com/electronicarts/CnC_Tiberian_Dawn"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 296,
+          "category": "Roguelikes",
+          "section": "",
+          "title": "Brogue CE",
+          "sources": [
+            "https://github.com/tmewett/BrogueCE"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 298,
+          "category": "Roguelikes",
+          "section": "",
+          "title": "Cataclysm: Dark Days Ahead",
+          "sources": [
+            "https://github.com/CleverRaven/Cataclysm-DDA"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 300,
+          "category": "Roguelikes",
+          "section": "",
+          "title": "Dungeon Crawl Stone Soup",
+          "sources": [
+            "https://github.com/crawl/crawl"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 302,
+          "category": "Roguelikes",
+          "section": "",
+          "title": "NetHack",
+          "sources": [
+            "https://github.com/NetHack/NetHack"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 304,
+          "category": "Roguelikes",
+          "section": "",
+          "title": "Meritous",
+          "sources": [
+            "https://github.com/Patashu/Meritous"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 306,
+          "category": "Roguelikes",
+          "section": "",
+          "title": "OpenNefia",
+          "sources": [
+            "https://github.com/OpenNefia/OpenNefia"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 308,
+          "category": "Roguelikes",
+          "section": "",
+          "title": "Shattered Pixel Dungeon",
+          "sources": [
+            "https://github.com/00-Evan/shattered-pixel-dungeon"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 312,
+          "category": "Role-Playing games",
+          "section": "",
+          "title": "Ambermoon.net",
+          "sources": [
+            "https://github.com/Pyrdacor/Ambermoon.net"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 314,
+          "category": "Role-Playing games",
+          "section": "",
+          "title": "Daggerfall Unity",
+          "sources": [
+            "https://github.com/Interkarma/daggerfall-unity"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 316,
+          "category": "Role-Playing games",
+          "section": "",
+          "title": "Exult",
+          "sources": [
+            "https://github.com/exult/exult"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 318,
+          "category": "Role-Playing games",
+          "section": "",
+          "title": "Fallout Community Edition",
+          "sources": [
+            "https://github.com/alexbatalov/fallout1-ce"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 320,
+          "category": "Role-Playing games",
+          "section": "",
+          "title": "Fallout 2 Community Edition",
+          "sources": [
+            "https://github.com/alexbatalov/fallout2-ce"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 322,
+          "category": "Role-Playing games",
+          "section": "",
+          "title": "GemRB",
+          "sources": [
+            "https://en.wikipedia.org/wiki/Infinity_Engine"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 336,
+          "category": "Role-Playing games",
+          "section": "",
+          "title": "Kandria",
+          "sources": [
+            "https://codeberg.org/shirakumo/kandria",
+            "https://codeberg.org/shirakumo/trial"
+          ],
+          "related_engine": {
+            "name": "Trial",
+            "url": "https://shirakumo.org/docs/trial/"
+          },
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 338,
+          "category": "Role-Playing games",
+          "section": "",
+          "title": "Naev",
+          "sources": [
+            "https://codeberg.org/naev/naev"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 340,
+          "category": "Role-Playing games",
+          "section": "",
+          "title": "Oolite",
+          "sources": [
+            "https://github.com/OoliteProject/oolite"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 342,
+          "category": "Role-Playing games",
+          "section": "",
+          "title": "OpenEnroth",
+          "sources": [
+            "https://github.com/OpenEnroth/OpenEnroth"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 344,
+          "category": "Role-Playing games",
+          "section": "",
+          "title": "OpenMW",
+          "sources": [
+            "https://github.com/OpenMW/openmw"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 346,
+          "category": "Role-Playing games",
+          "section": "",
+          "title": "OpenNox",
+          "sources": [
+            "https://github.com/noxworld-dev/opennox"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 348,
+          "category": "Role-Playing games",
+          "section": "",
+          "title": "reone",
+          "sources": [
+            "https://github.com/seedhartha/reone"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 350,
+          "category": "Role-Playing games",
+          "section": "",
+          "title": "Severed Chains",
+          "sources": [
+            "https://github.com/Legend-of-Dragoon-Modding/Severed-Chains"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 352,
+          "category": "Role-Playing games",
+          "section": "",
+          "title": "Space Station 14",
+          "sources": [
+            "https://github.com/space-wizards/space-station-14"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 354,
+          "category": "Role-Playing games",
+          "section": "",
+          "title": "Ultima VII: Revisited",
+          "sources": [
+            "https://github.com/ViridianGames/U7Revisited"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 356,
+          "category": "Role-Playing games",
+          "section": "",
+          "title": "Veloren",
+          "sources": [
+            "https://github.com/veloren/veloren"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 360,
+          "category": "Role-Playing games",
+          "section": "[Diablo](https://en.wikipedia.org/wiki/Diablo(series)) Re-Implementations",
+          "title": "Abyss Engine",
+          "sources": [
+            "https://github.com/AbyssEngine/AbyssEngine"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 362,
+          "category": "Role-Playing games",
+          "section": "[Diablo](https://en.wikipedia.org/wiki/Diablo(series)) Re-Implementations",
+          "title": "DevilutionX",
+          "sources": [
+            "https://github.com/diasurgical/devilutionX"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 364,
+          "category": "Role-Playing games",
+          "section": "[Diablo](https://en.wikipedia.org/wiki/Diablo(series)) Re-Implementations",
+          "title": "Freeablo",
+          "sources": [
+            "https://github.com/wheybags/freeablo"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 366,
+          "category": "Role-Playing games",
+          "section": "[Diablo](https://en.wikipedia.org/wiki/Diablo(series)) Re-Implementations",
+          "title": "Open Diablo II",
+          "sources": [
+            "https://github.com/OpenDiablo2/OpenDiablo2"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 370,
+          "category": "Role-Playing games",
+          "section": "Massively Multiplayer Online Role-Playing Games",
+          "title": "OpenKO",
+          "sources": [
+            "https://github.com/Open-KO/KnightOnline"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 372,
+          "category": "Role-Playing games",
+          "section": "Massively Multiplayer Online Role-Playing Games",
+          "title": "OpenKore",
+          "sources": [
+            "https://github.com/OpenKore/openkore"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 376,
+          "category": "Sandbox games",
+          "section": "",
+          "title": "Minosoft",
+          "sources": [
+            "https://github.com/bixilon/minosoft",
+            "https://gitlab.bixilon.de/bixilon/minosoft"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 380,
+          "category": "Shoot 'em up games",
+          "section": "",
+          "title": "SDL Sopwith",
+          "sources": [
+            "https://github.com/fragglet/sdl-sopwith"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 382,
+          "category": "Shoot 'em up games",
+          "section": "",
+          "title": "Taisei Project",
+          "sources": [
+            "https://github.com/taisei-project/taisei"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 386,
+          "category": "Sport games",
+          "section": "",
+          "title": "Open Golf",
+          "sources": [
+            "https://github.com/mgerdes/Open-Golf"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 388,
+          "category": "Sport games",
+          "section": "",
+          "title": "Pooltool",
+          "sources": [
+            "https://github.com/ekiefl/pooltool"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 392,
+          "category": "Third-Person games",
+          "section": "",
+          "title": "Command & Conquer Renegade",
+          "sources": [
+            "https://github.com/electronicarts/CnC_Renegade"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 394,
+          "category": "Third-Person games",
+          "section": "",
+          "title": "CroftEngine",
+          "sources": [
+            "https://github.com/stohrendorf/CroftEngine"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 396,
+          "category": "Third-Person games",
+          "section": "",
+          "title": "Lugaru: The Rabbit's Foot",
+          "sources": [
+            "https://github.com/WolfireGames/lugaru"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 398,
+          "category": "Third-Person games",
+          "section": "",
+          "title": "OpenLara",
+          "sources": [
+            "https://github.com/XProger/OpenLara"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 400,
+          "category": "Third-Person games",
+          "section": "",
+          "title": "OpenRW",
+          "sources": [
+            "https://github.com/rwengine/openrw"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 402,
+          "category": "Third-Person games",
+          "section": "",
+          "title": "Overgrowth",
+          "sources": [
+            "https://github.com/WolfireGames/overgrowth"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 404,
+          "category": "Third-Person games",
+          "section": "",
+          "title": "RE3",
+          "sources": [
+            "https://github.com/VideogameSources/gta3-decomp-alt"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 406,
+          "category": "Third-Person games",
+          "section": "",
+          "title": "Tomb Engine",
+          "sources": [
+            "https://github.com/TombEngine/TombEngine"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 410,
+          "category": "Tower Defence games",
+          "section": "",
+          "title": "Server Survival",
+          "sources": [
+            "https://github.com/pshenok/server-survival"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 414,
+          "category": "Turn-Based strategies",
+          "section": "",
+          "title": "Ancient Beast",
+          "sources": [
+            "https://github.com/FreezingMoon/AncientBeast"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 416,
+          "category": "Turn-Based strategies",
+          "section": "",
+          "title": "Athena Crisis",
+          "sources": [
+            "https://github.com/nkzw-tech/athena-crisis"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 418,
+          "category": "Turn-Based strategies",
+          "section": "",
+          "title": "C-evo",
+          "sources": [
+            "http://c-evo.org/files/files.php"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 420,
+          "category": "Turn-Based strategies",
+          "section": "",
+          "title": "fheroes2",
+          "sources": [
+            "https://github.com/ihhub/fheroes2"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 422,
+          "category": "Turn-Based strategies",
+          "section": "",
+          "title": "FreeCol",
+          "sources": [
+            "https://github.com/FreeCol/freecol"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 424,
+          "category": "Turn-Based strategies",
+          "section": "",
+          "title": "Freeciv",
+          "sources": [
+            "https://github.com/freeciv/freeciv"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 426,
+          "category": "Turn-Based strategies",
+          "section": "",
+          "title": "FreeOrion",
+          "sources": [
+            "https://github.com/freeorion/freeorion"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 428,
+          "category": "Turn-Based strategies",
+          "section": "",
+          "title": "Hnefatafl",
+          "sources": [
+            "https://github.com/dcampbell24/hnefatafl"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 430,
+          "category": "Turn-Based strategies",
+          "section": "",
+          "title": "OpenPanzer",
+          "sources": [
+            "https://github.com/nicupavel/openpanzer"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 432,
+          "category": "Turn-Based strategies",
+          "section": "",
+          "title": "OpenXcom",
+          "sources": [
+            "https://github.com/OpenXcom/OpenXcom"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 434,
+          "category": "Turn-Based strategies",
+          "section": "",
+          "title": "The Battle for Wesnoth",
+          "sources": [
+            "https://github.com/wesnoth/wesnoth"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 436,
+          "category": "Turn-Based strategies",
+          "section": "",
+          "title": "Unciv",
+          "sources": [
+            "https://github.com/yairm210/Unciv"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 438,
+          "category": "Turn-Based strategies",
+          "section": "",
+          "title": "VCMI Project",
+          "sources": [
+            "https://github.com/vcmi/vcmi"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        }
+      ],
+      "unresolved_unlinked": [
+        {
+          "line": 72,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[Unknown Horizons](https://unknown-horizons.org)** - A 2D realtime strategy simulation with an emphasis on economy and city building."
+        },
+        {
+          "line": 118,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[EDuke32](https://voidpoint.io/terminx/eduke32)** - The official EDuke32 Git repository: home to the source code to EDuke32, [Ion Fury](https://en.wikipedia.org/wiki/Ion_Fury), VoidSW, Mapster32, and related projects based on the Build Engine."
+        },
+        {
+          "line": 122,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[JFShadowWarrior](https://www.jonof.id.au/jfsw)** - Port of the [3D Realms](https://en.wikipedia.org/wiki/3D_Realms) game [Shadow Warrior](https://en.wikipedia.org/wiki/Shadow_Warrior_(1997_video_game))."
+        },
+        {
+          "line": 128,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[Raze](https://github.com/ZDoom/Raze)** - Build engine port backed by GZDoom tech. Currently supports [Duke Nukem 3D](https://en.wikipedia.org/wiki/Duke_Nukem_3D), [Blood](https://en.wikipedia.org/wiki/Blood_(video_game)), [Shadow Warrior](https://en.wikipedia.org/wiki/Shadow_Warrior_(1997_video_game)), [Redneck Rampage](https://en.wikipedia.org/wiki/Redneck_Rampage) and [Powerslave](https://en.wikipedia.org/wiki/PowerSlave)/Exhumed."
+        },
+        {
+          "line": 148,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[Catacomb 3-D](https://en.wikipedia.org/wiki/Catacomb_3-D)**"
+        },
+        {
+          "line": 152,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[Doom](https://en.wikipedia.org/wiki/Doom_(1993_video_game))**"
+        },
+        {
+          "line": 158,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[Quake](https://en.wikipedia.org/wiki/Quake_(video_game))**"
+        },
+        {
+          "line": 164,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[Wolfenstein 3D](https://en.wikipedia.org/wiki/Wolfenstein_3D)**"
+        },
+        {
+          "line": 172,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[Commander Keen](https://en.wikipedia.org/wiki/Commander_Keen)**"
+        },
+        {
+          "line": 185,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[Fish Folk](https://fishfolk.org) Games**"
+        },
+        {
+          "line": 265,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[Zero-K](https://zero-k.info/)** - RTS game with physical projectiles, smart units"
+        },
+        {
+          "line": 326,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "  - [Baldur’s Gate](https://en.wikipedia.org/wiki/Baldur%27s_Gate_(video_game))"
+        },
+        {
+          "line": 328,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "  - [Baldur's Gate II: Shadows of Amn](https://en.wikipedia.org/wiki/Baldur%27s_Gate_II:_Shadows_of_Amn)"
+        },
+        {
+          "line": 330,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "  - [Icewind Dale](https://en.wikipedia.org/wiki/Icewind_Dale)"
+        },
+        {
+          "line": 332,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "  - [Icewind Dale II](https://en.wikipedia.org/wiki/Icewind_Dale_II)"
+        },
+        {
+          "line": 334,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "  - [Planescape: Torment](https://en.wikipedia.org/wiki/Planescape:_Torment)"
+        },
+        {
+          "line": 442,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[Awesome Game Remakes](https://github.com/radek-sprta/awesome-game-remakes)**"
+        },
+        {
+          "line": 444,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[Awesome Open Source Games](https://github.com/michelpereira/awesome-open-source-games)**"
+        },
+        {
+          "line": 446,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[Games on GitHub](https://github.com/leereilly/games)**"
+        },
+        {
+          "line": 448,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[Libre Game Wiki](https://libregamewiki.org)**"
+        },
+        {
+          "line": 450,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[List of (interesting) FOSS game engine replacement projects](https://forum.openmw.org/viewtopic.php?p=57882)**"
+        },
+        {
+          "line": 452,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[List of Open Source Games](https://trilarion.github.io/opensourcegames)**"
+        },
+        {
+          "line": 454,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[Mac Source Ports](https://www.macsourceports.com)**"
+        },
+        {
+          "line": 456,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[Open Source Game Clones](https://osgameclones.com)**"
+        },
+        {
+          "line": 458,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[Wikipedia list open-source video games](https://en.wikipedia.org/wiki/List_of_open-source_video_games)**"
+        }
+      ]
+    },
+    {
+      "origin": {
+        "name": "bobeff/open-source-engines",
+        "type": "ENGINE_INDEX",
+        "commit": "4d54f3995140e64beebef6575760996bf14324ec",
+        "readme_blob": "f315c4b33c4369db78cda7c6dbf8c407342f64f7",
+        "url": "https://github.com/bobeff/open-source-engines/blob/4d54f3995140e64beebef6575760996bf14324ec/README.md",
+        "index_licence": "CC0-1.0 (applies to index content, not upstream linked games/software)"
+      },
+      "source_lines": 46,
+      "distinct_links": 46,
+      "unresolved_unlinked_line_count": 2,
+      "records": [
+        {
+          "line": 21,
+          "category": "C",
+          "section": "",
+          "title": "raylib",
+          "sources": [
+            "https://github.com/raysan5/raylib"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 23,
+          "category": "C",
+          "section": "",
+          "title": "SGDK",
+          "sources": [
+            "https://github.com/Stephane-D/SGDK"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 25,
+          "category": "C",
+          "section": "",
+          "title": "Simple DirectMedia Layer",
+          "sources": [
+            "https://github.com/libsdl-org/SDL"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 27,
+          "category": "C",
+          "section": "",
+          "title": "Xash3D FWGS Engine",
+          "sources": [
+            "https://github.com/FWGS/xash3d-fwgs"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 34,
+          "category": "C#",
+          "section": "",
+          "title": "Murder",
+          "sources": [
+            "https://github.com/isadorasophia/murder"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 36,
+          "category": "C#",
+          "section": "",
+          "title": "NeoAxis",
+          "sources": [
+            "https://github.com/NeoAxis/NeoAxisEngine"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 38,
+          "category": "C#",
+          "section": "",
+          "title": "s&box",
+          "sources": [
+            "https://github.com/Facepunch/sbox-public"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 40,
+          "category": "C#",
+          "section": "",
+          "title": "Stride",
+          "sources": [
+            "https://github.com/stride3d/stride"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 44,
+          "category": "C++",
+          "section": "",
+          "title": "Cafu",
+          "sources": [
+            "https://bitbucket.org/cafu/cafu/src/master"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 46,
+          "category": "C++",
+          "section": "",
+          "title": "Carimbo",
+          "sources": [
+            "https://github.com/willtobyte/carimbo"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 48,
+          "category": "C++",
+          "section": "",
+          "title": "Cocos2d-x",
+          "sources": [
+            "https://github.com/cocos2d/cocos2d-x"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 50,
+          "category": "C++",
+          "section": "",
+          "title": "Cute Framework",
+          "sources": [
+            "https://github.com/RandyGaul/cute_framework"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 52,
+          "category": "C++",
+          "section": "",
+          "title": "Defold",
+          "sources": [
+            "https://github.com/defold/defold"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 54,
+          "category": "C++",
+          "section": "",
+          "title": "Esoterica Engine",
+          "sources": [
+            "https://github.com/BobbyAnguelov/Esoterica"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 56,
+          "category": "C++",
+          "section": "",
+          "title": "FIFE",
+          "sources": [
+            "https://github.com/fifengine/fifengine"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 58,
+          "category": "C++",
+          "section": "",
+          "title": "JNGL - Just a Neat Game Library",
+          "sources": [
+            "https://github.com/jhasse/jngl"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 60,
+          "category": "C++",
+          "section": "",
+          "title": "Godot",
+          "sources": [
+            "https://github.com/godotengine/godot"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 62,
+          "category": "C++",
+          "section": "",
+          "title": "Irrlicht",
+          "sources": [
+            "https://github.com/zaki/irrlicht"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 64,
+          "category": "C++",
+          "section": "",
+          "title": "Librebox",
+          "sources": [
+            "https://github.com/librebox-devs/librebox-demo"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 66,
+          "category": "C++",
+          "section": "",
+          "title": "Luanti",
+          "sources": [
+            "https://github.com/luanti-org/luanti"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 68,
+          "category": "C++",
+          "section": "",
+          "title": "Nebula",
+          "sources": [
+            "https://github.com/gscept/nebula"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 70,
+          "category": "C++",
+          "section": "",
+          "title": "O3DE",
+          "sources": [
+            "https://github.com/o3de/o3de"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 72,
+          "category": "C++",
+          "section": "",
+          "title": "Ogre",
+          "sources": [
+            "https://github.com/OGRECave/ogre"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 74,
+          "category": "C++",
+          "section": "",
+          "title": "SFML",
+          "sources": [
+            "https://github.com/SFML/SFML"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 76,
+          "category": "C++",
+          "section": "",
+          "title": "Serious Engine v.1.10",
+          "sources": [
+            "https://github.com/Croteam-official/Serious-Engine"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 80,
+          "category": "C++",
+          "section": "",
+          "title": "Spring",
+          "sources": [
+            "https://github.com/spring/spring"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 82,
+          "category": "C++",
+          "section": "",
+          "title": "Torque",
+          "sources": [
+            "https://github.com/TorqueGameEngines"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 90,
+          "category": "Common Lisp",
+          "section": "",
+          "title": "Trial",
+          "sources": [
+            "https://github.com/Shirakumo/trial"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 94,
+          "category": "F#",
+          "section": "",
+          "title": "Nu",
+          "sources": [
+            "https://github.com/bryanedds/Nu"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": true
+        },
+        {
+          "line": 98,
+          "category": "Go",
+          "section": "",
+          "title": "Ebitengine",
+          "sources": [
+            "https://github.com/hajimehoshi/ebiten"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 102,
+          "category": "Java",
+          "section": "",
+          "title": "libJDX",
+          "sources": [
+            "https://github.com/libgdx/libgdx"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 106,
+          "category": "JavaScript",
+          "section": "",
+          "title": "Kaplay",
+          "sources": [
+            "https://github.com/kaplayjs/kaplay"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 108,
+          "category": "JavaScript",
+          "section": "",
+          "title": "Phaser",
+          "sources": [
+            "https://github.com/photonstorm/phaser"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 110,
+          "category": "JavaScript",
+          "section": "",
+          "title": "Three.js",
+          "sources": [
+            "https://github.com/mrdoob/three.js"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 114,
+          "category": "Lua",
+          "section": "",
+          "title": "Gideros",
+          "sources": [
+            "https://github.com/gideros/gideros"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 116,
+          "category": "Lua",
+          "section": "",
+          "title": "LÖVE",
+          "sources": [
+            "https://github.com/love2d/love"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 118,
+          "category": "Lua",
+          "section": "",
+          "title": "LÖVR",
+          "sources": [
+            "https://github.com/bjornbytes/lovr"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 120,
+          "category": "Lua",
+          "section": "",
+          "title": "Solar2D",
+          "sources": [
+            "https://github.com/coronalabs/corona"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 124,
+          "category": "Pascal",
+          "section": "",
+          "title": "Castle Game Engine",
+          "sources": [
+            "https://github.com/castle-engine/castle-engine"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 128,
+          "category": "Python",
+          "section": "",
+          "title": "Pygame",
+          "sources": [
+            "https://github.com/pygame/pygame"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 130,
+          "category": "Python",
+          "section": "",
+          "title": "Pyxel",
+          "sources": [
+            "https://github.com/kitao/pyxel"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 134,
+          "category": "Rust",
+          "section": "",
+          "title": "Amethyst",
+          "sources": [
+            "https://github.com/amethyst/amethyst"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 136,
+          "category": "Rust",
+          "section": "",
+          "title": "Bevy",
+          "sources": [
+            "https://github.com/bevyengine/bevy"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 138,
+          "category": "Rust",
+          "section": "",
+          "title": "Comfy",
+          "sources": [
+            "https://github.com/darthdeus/comfy"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 140,
+          "category": "Rust",
+          "section": "",
+          "title": "Fyrox",
+          "sources": [
+            "https://github.com/FyroxEngine/Fyrox"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        },
+        {
+          "line": 142,
+          "category": "Rust",
+          "section": "",
+          "title": "Macroquad",
+          "sources": [
+            "https://github.com/not-fl3/macroquad"
+          ],
+          "related_engine": null,
+          "rights": "UPSTREAM_LICENSE_UNVERIFIED",
+          "state": "DISCOVERY_REFERENCE_ONLY",
+          "requires_review": false
+        }
+      ],
+      "unresolved_unlinked": [
+        {
+          "line": 31,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[MonoGame](https://monogame.net)** - One framework for creating"
+        },
+        {
+          "line": 78,
+          "reason": "NO_EXPLICIT_SOURCE_LINK",
+          "source_line": "- **[Solarus](https://www.solarus-games.org/)** - A lightweight, multiplatform, free and open-source 2D game engine. [[engine]](https://gitlab.com/solarus-games/solarus)"
+        }
+      ]
+    }
+  ],
+  "nasa_sources": [
+    {
+      "role": "NASA software official catalogue",
+      "url": "https://www.nasa.gov/software/",
+      "status": "SOURCE_CATALOGUE_ONLY"
+    },
+    {
+      "role": "NASA science data discovery",
+      "url": "https://science.data.nasa.gov/",
+      "status": "SOURCE_CATALOGUE_ONLY"
+    },
+    {
+      "role": "NASA Open MCT project candidate",
+      "url": "https://github.com/nasa/openmct",
+      "status": "LICENSE_VERSION_DEPENDENCY_REVIEW_REQUIRED"
+    },
+    {
+      "role": "NASA F Prime project candidate",
+      "url": "https://github.com/nasa/fprime",
+      "status": "LICENSE_VERSION_DEPENDENCY_REVIEW_REQUIRED"
+    },
+    {
+      "role": "NASA NASA Earthdata MCP candidate",
+      "url": "https://github.com/nasa/earthdata-mcp",
+      "status": "LICENSE_VERSION_DEPENDENCY_REVIEW_REQUIRED"
+    }
+  ],
+  "historical_web": [
+    {
+      "origin": "https://www.miniclip.com/",
+      "provider": "Internet Archive Wayback Machine",
+      "status": "CAPTURE_NOT_VERIFIED",
+      "rights": "ORIGINAL_GAME_ASSETS_UNVERIFIED",
+      "action": "link available archival capture metadata only after verification; do not redistribute unlicensed SWFs/assets"
+    },
+    {
+      "origin": "https://www.friv.com/",
+      "provider": "Internet Archive Wayback Machine",
+      "status": "CAPTURE_NOT_VERIFIED",
+      "rights": "ORIGINAL_GAME_ASSETS_UNVERIFIED",
+      "action": "link available archival capture metadata only after verification; do not redistribute unlicensed SWFs/assets"
+    }
+  ],
+  "admission_holds": [
+    "UPSTREAM_LICENSE_AND_ASSET_REVIEW",
+    "COMPATIBILITY_ABI_VERSION",
+    "SINGLE_ENGINE_REUSE_FUNCTIONAL_TEST",
+    "COLD_AND_WARM_BYTES_BENCHMARK",
+    "NO_UNVERIFIED_PHYSICAL_ORBITAL_MODELS",
+    "NO_EMBEDDED_THIRD_PARTY_GAME_ASSETS_IN_PUBLIC_KIT"
+  ],
+  "invariants": [
+    "catalogue source/index CC0 does not grant licences of linked works",
+    "no direct transclusion or mirror",
+    "source commit and line position preserve provenance",
+    "do not claim all indexed projects are playable or compatible",
+    "NASA software/project usage follows individual licence and data policy",
+    "Wayback snapshot reference is not a rights grant",
+    "do not merge semantic identity on keyword similarity"
+  ]
+}
