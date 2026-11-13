@@ -5,7 +5,7 @@ const fixture: Type1CatalogueProjection = {
   schema: "CGX-TYPE1-CATALOGUE-PROJECTION/0.5",
   generated_from: "owner",
   source_owner: { spreadsheet_id: "sheet", authority: "owner" },
-  metrics: { archetypes: 411, universal_matrix_fields: 60, directional_4d_fields: 16, quantitative_factorization_fields: 8, primitive_basis_classes: 20, equation_kernel_records: 20, volumetric_topology_kernels: 40, topology_generic_fallback: 9, printable_4d_templates: 411, quantitative_invariants: 7, smart_stack_regions: 12, compound_decomposition_templates: 9 },
+  metrics: { archetypes: 411, universal_matrix_fields: 60, directional_4d_fields: 16, quantitative_factorization_fields: 8, primitive_basis_classes: 20, equation_kernel_records: 20, volumetric_topology_kernels: 40, topology_generic_fallback: 9, printable_4d_templates: 411, quantitative_invariants: 7, smart_stack_regions: 12, compound_decomposition_templates: 9, functional_voxel_regions: 17, seed_graph_classes: 3, field_coupling_classes: 10, spatial_operator_classes: 10 },
   surfaces: [{ id: "32", name: "Universal <Matrix>", role: "directional stack" }],
   contracts: ["UTP-117", "UTP-124", "UTP-125"],
   inference_example: { label: "Capacitance", equation: "C=e0*er*A/d", inputs: "bound 50 um", result: "0.6020848 pF/mm2", evidence: "engineering inference only" },
@@ -27,7 +27,11 @@ describe("Type-I catalogue projection", () => {
     expect(html).toContain("quantitative invariants");
     expect(html).toContain("dense smart-stack regions");
     expect(html).toContain("compound-parent decomposition grammars");
-    expect(html).toContain("UTP-124/125/138/139");
+    expect(html).toContain("functional voxel regions");
+    expect(html).toContain("seed-graph classes");
+    expect(html).toContain("field / radiative coupling families");
+    expect(html).toContain("3D spatial operators");
+    expect(html).toContain("UTP-124/125/138/139/141-144");
     expect(html).toContain("0.6020848 pF/mm2");
     expect(html).toContain("not physical readiness");
     expect(html).not.toContain("Universal <Matrix>");
