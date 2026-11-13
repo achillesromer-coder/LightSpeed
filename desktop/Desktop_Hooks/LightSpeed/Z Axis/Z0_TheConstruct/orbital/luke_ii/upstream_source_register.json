@@ -1,0 +1,15 @@
+{
+  "schema_version": "luke-ii-v1.3-upstream-source-register-v1",
+  "canonical_folder_id": "1NwiFmDDKkxBWQV047G7c2A7aM_ANmyz_",
+  "sources": [
+    {"title":"Luke_LukeII_Apostle_Toroidal_EMF_Digital_Twin_Package_v0_1.zip","drive_file_id":"1H8QSbOkg9Hl6gfpLeklyfEMv8W4MEfqR","role":"canonical Luke/Luke II/Apostle baseline"},
+    {"title":"Mark_III_Digital_Twin_Package_v0_1.zip","drive_file_id":"15ikMRBSRpXys7v058C5IaPw35rpW_mkw","role":"upstream modular coupling, solenoid, power, sensor and arm-interface context"},
+    {"title":"Solar_Hull_Digital_Twin_Package_v0_2.zip","drive_file_id":"12TdrYRb4yysOaGopLMBh58GDE-SxETbF","role":"panelled external solar-hull inheritance"},
+    {"title":"Free_Flow_Solenoid_Stack_Digital_Twin_Package_v0_1.zip","drive_file_id":"1xpC7erL3Zn6d94_llOuW9ovqUYSEOR2w","role":"solenoid/field module scaffold"},
+    {"title":"Free_Flow_Batteries_Digital_Twin_Package_v0_1.zip","drive_file_id":"1RLWIsrNIqY77JIYxehTUyAkB_LIgg0Zz","role":"battery module spatial scaffold"},
+    {"title":"Free_Flow_Capacitors_Digital_Twin_Package_v0_1.zip","drive_file_id":"1JVIo_V2AIcZ6xQuMqKHJmt_1obhs0iUB","role":"capacitor/pulse module spatial scaffold"}
+  ],
+  "owner_visuals": ["1A.JPG","1B.JPG","1c(1).JPG","1D.JPG"],
+  "visual_scope": "external-form reference only; no dimensions inferred from raster views",
+  "claim_gate_state": "HELD_NO_ENGINEERING_CAPABILITY_PROMOTION"
+}
