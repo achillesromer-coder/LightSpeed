@@ -1,0 +1,104 @@
+name: Materialize Official 433 Eros Public Assets
+
+on:
+  push:
+    branches:
+      - public/eros-official-materialization
+    paths:
+      - public_artifacts/eros/materialize_official_eros.py
+      - public_artifacts/eros/review_materialized_eros_v1_2.py
+      - .github/workflows/materialize_eros_public.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - public_artifacts/eros/materialize_official_eros.py
+      - public_artifacts/eros/review_materialized_eros_v1_2.py
+      - .github/workflows/materialize_eros_public.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  materialize:
+    name: Retrieve, verify and review official Eros assets
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out isolated branch
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install public materialization dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install numpy matplotlib trimesh scipy networkx lxml pygltflib
+
+      - name: Materialize official NASA, PDS and JPL sources
+        env:
+          EROS_OUTPUT: ${{ github.workspace }}/eros_materialized
+        run: |
+          set -euo pipefail
+          python public_artifacts/eros/materialize_official_eros.py | tee materialization-summary.json
+
+      - name: Run corrected representation QA
+        env:
+          EROS_OUTPUT: ${{ github.workspace }}/eros_materialized
+          EROS_REVIEW_OUTPUT: ${{ github.workspace }}/eros_review_v1_2
+        run: |
+          set -euo pipefail
+          python public_artifacts/eros/review_materialized_eros_v1_2.py | tee representation-review-summary.json
+
+      - name: Display bounded receipt summary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          source = json.loads(Path('eros_materialized/metadata/materialization-receipt.json').read_text())
+          review = json.loads(Path('eros_review_v1_2/metadata/representation-qa.json').read_text())
+          assert source['state'] == 'MATERIALIZED_OFFICIAL_SOURCE_READY_FOR_REVIEW'
+          assert source['navigation_grade'] is False
+          assert source['mission_selected'] is False
+          assert review['state'] == 'REPRESENTATION_QA_COMPLETE'
+          assert review['scientific_primary']['mesh']['vertices'] == 24578
+          assert review['scientific_primary']['mesh']['faces'] == 49152
+          assert review['nasa_printable']['classification'] == 'TWO_WATERTIGHT_PRINTABLE_ASSEMBLY_HALVES_IN_ONE_LAYOUT'
+          assert review['comparison']['direct_shape_error_score'] == 'NOT_COMPUTED'
+          for key, value in review['hard_boundaries'].items():
+              assert value is False, (key, value)
+          print(json.dumps({
+              'source_state': source['state'],
+              'review_state': review['state'],
+              'scientific_mesh': review['scientific_primary']['mesh'],
+              'nasa_printable': review['nasa_printable'],
+          }, indent=2))
+          PY
+
+      - name: Upload source materialization artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: eros-official-materialized-v1-1-source-receipt
+          path: |
+            433_Eros_Official_Materialized_Public_Pack_v1_1.zip
+            433_Eros_Official_Materialized_Public_Pack_v1_1.zip.sha256
+            materialization-summary.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+
+      - name: Upload corrected representation review
+        uses: actions/upload-artifact@v4
+        with:
+          name: eros-representation-review-v1-2
+          path: |
+            433_Eros_Representation_Review_v1_2.zip
+            433_Eros_Representation_Review_v1_2.zip.sha256
+            representation-review-summary.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
