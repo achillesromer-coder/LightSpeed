@@ -48,3 +48,27 @@ class ProductTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d); self.fixture(p)
             self.assertFalse(module.verify(p)['embedded_code_executed'])
+
+
+class NestedReferenceTests(unittest.TestCase):
+    def test_nested(self):
+        import io
+        files={'a/x':b'x','a/b/y':b'y','z':b'x'}
+        e=[dict(path=k,size_bytes=len(v),sha256=hashlib.sha256(v).hexdigest()) for k,v in files.items()]
+        t=[dict(x,bytes=x['size_bytes'],semantic_path=['synthetic'],cell=x['path']) for x in e]
+        root=module.nested_reference_index(e,t)
+        self.assertEqual(root,module.nested_reference_index(e[::-1],t[::-1]))
+        b=io.BytesIO()
+        with zipfile.ZipFile(b,'w') as z:
+            for k,v in files.items(): z.writestr(k,v)
+        with zipfile.ZipFile(b) as z:
+            self.assertEqual(module.hydrate_nested(z,root,(),allowed_paths=set(files),max_bytes=3),files)
+            self.assertEqual(module.hydrate_nested(z,root,('a','b'),allowed_paths={'a/b/y'},max_bytes=1),{'a/b/y':b'y'})
+            with self.assertRaises(PermissionError): module.hydrate_nested(z,root,('a',),allowed_paths={'a/x'},max_bytes=3)
+            with self.assertRaises(ValueError): module.hydrate_nested(z,root,(),allowed_paths=set(files),max_bytes=2)
+    def test_synthetic_grammar(self):
+        r=[(1,None,2),(1,2,3),(1,2,4),(4,2,1),(1,3,None)]; v={1,2,3,4}
+        self.assertEqual(module.facet_transition_options(r,v,parent=1,neighbor=2),(3,4))
+        self.assertEqual(module.facet_transition_options(r,v,parent=1,neighbor=3,direction='previous'),(2,))
+        self.assertEqual(module.facet_transition_options(r,v,parent=4,neighbor=2),(1,))
+        with self.assertRaises(ValueError): module.facet_transition_options(r,v|{174},parent=1,neighbor=2)
