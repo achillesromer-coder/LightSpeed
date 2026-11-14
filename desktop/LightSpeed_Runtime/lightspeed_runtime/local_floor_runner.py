@@ -264,9 +264,38 @@ def run_floor(
     post = http_post or post_ollama_generate
     started = time.monotonic()
     server_outcome_uncertain = False
+    attempts: list[dict[str, Any]] = []
+    # Explicit limits and claimed execution are never expanded by this policy.
+    adaptive = num_predict is None and max_total_tokens is None and execution_claim_id is None
     with SingleSessionLock(lock_path, enabled=lock):
         try:
-            response = post(f"{endpoint.rstrip('/')}/api/generate", request_body, timeout_seconds)
+            while True:
+                remaining = max(0.1, timeout_seconds - (time.monotonic() - started))
+                budget = request_body["options"]["num_predict"]
+                attempt = {"budget": budget, "usage": None}
+                attempts.append(attempt)
+                response = post(f"{endpoint.rstrip('/')}/api/generate", request_body, remaining)
+                attempt["usage"] = _ollama_usage_accounting(response, ollama_generate_attempted=True)
+                attempt["done_reason"] = response.get("done_reason")
+                truncated = response.get("done") is True and (
+                    response.get("done_reason") == "length" or (
+                        type(response.get("eval_count")) is int and response["eval_count"] >= budget
+                        and bool((contract.get("policy") or {}).get("strict_response_contract"))
+                        and bool(validate_grounded_response(response, str(receipt_path), source_evidence))
+                    )
+                )
+                if not (adaptive and truncated and budget < MAX_NUM_PREDICT and len(attempts) < 3
+                        and timeout_seconds - (time.monotonic() - started) > 5):
+                    break
+                retry_guard = build_resource_preflight(
+                    contract, endpoint=endpoint, probe_ollama=True, timeout_seconds=5.0,
+                    ollama_status_probe=ollama_status_probe, memory_snapshot=memory_snapshot,
+                    cpu_snapshot=cpu_snapshot,
+                )
+                if retry_guard["execution_state"] != "ready" or timeout_seconds - (time.monotonic() - started) <= 5:
+                    break
+                request_body = {**request_body, "options": {**request_body["options"],
+                                    "num_predict": min(MAX_NUM_PREDICT, max(512, budget * 2))}}
             status = "completed"
             error = None
         except (HTTPError, URLError, TimeoutError, OSError, ValueError, LocalFloorRunnerError) as exc:
@@ -297,6 +326,14 @@ def run_floor(
         max_source_excerpt_chars=max_source_excerpt_chars,
         server_outcome_uncertain=server_outcome_uncertain,
     )
+    if len(attempts) > 1:
+        receipt["adaptive_budget_attempts"] = attempts
+        usage = receipt["usage_accounting"]
+        usage["ollama_generate_attempts"] = len(attempts)
+        measured = all(a["usage"] is not None and a["usage"]["total_tokens"] is not None for a in attempts)
+        for key in ("prompt_tokens", "completion_tokens", "total_tokens"):
+            usage[key] = sum(a["usage"][key] for a in attempts) if measured else None
+        usage["state"] = "MEASURED_OLLAMA_RESPONSE" if measured else "UNKNOWN"
     write_receipt(contract, receipt_path, receipt)
     return receipt
 

@@ -793,3 +793,22 @@ def test_local_floor_lock_replaced_inode_denies_cleanup(tmp_path: Path) -> None:
             if path.stat().st_ino == original_inode:
                 pytest.skip("filesystem did not expose replacement inode change")
     assert path.exists()
+
+
+@pytest.mark.parametrize("explicit", [None, 512])
+def test_adaptive_budget_expands_only_unclaimed_default(tmp_path, explicit):
+    calls = []
+    def post(_url, payload, _timeout):
+        cap = payload["options"]["num_predict"]
+        calls.append(cap)
+        return {"response": "ok", "done": True, "done_reason": "length" if len(calls) == 1 else "stop",
+                "prompt_eval_count": 20, "eval_count": cap if len(calls) == 1 else 100}
+    result = run_floor(contract_path=_contract(tmp_path), floor="Neo", dry_run=False,
+                       num_predict=explicit, http_post=post, lock=False,
+                       memory_snapshot=lambda: (32*1024**3, 16*1024**3),
+                       cpu_snapshot=lambda: 10.0,
+                       ollama_status_probe=lambda *args: {"state": "available", "loaded_model_count": 0, "loaded_models": []})
+    assert calls == ([512, 1024] if explicit is None else [512])
+    if explicit is None:
+        assert result["usage_accounting"]["ollama_generate_attempts"] == 2
+        assert result["usage_accounting"]["total_tokens"] == 652
