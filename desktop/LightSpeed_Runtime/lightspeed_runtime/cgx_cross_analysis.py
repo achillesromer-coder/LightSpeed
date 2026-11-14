@@ -161,7 +161,8 @@ def build_cross_analysis_plan(
     }
 
 
-__all__ = ["CGXCrossAnalysisError", "build_cross_analysis_plan"]
+__all__ = ["CGXCrossAnalysisError", "build_cross_analysis_plan",
+           "source_hybridisation_candidates", "mandelbrot_grid_candidate"]
 
 
 def source_hybridisation_candidates(sources: dict[str, bytes]) -> dict[str, Any]:
@@ -221,4 +222,50 @@ def source_hybridisation_candidates(sources: dict[str, bytes]) -> dict[str, Any]
         "semantic_equivalence_proven": False,
         "native_admitted": False,
         "execution_performed": False,
+    }
+
+
+
+def mandelbrot_grid_candidate(width: int, height: int, zoom: float,
+                             max_iter: int) -> dict[str, Any]:
+    """Bounded shared Raphael/LightSpeed numerical primitive, review-stage only.
+
+    Preserves the legacy pre-update escape check, including zero for no escape
+    observed within the iteration window. This is not a membership proof,
+    physical simulation, geometric catalogue admission, or native CGX mint.
+    """
+    if (type(width) is not int or type(height) is not int or
+            type(max_iter) is not int or not 1 <= width <= 128 or
+            not 1 <= height <= 128 or not 1 <= max_iter <= 256 or
+            width * height * max_iter > 1_000_000):
+        raise CGXCrossAnalysisError("invalid grid or iteration budget")
+    if type(zoom) not in (int, float) or not 1e-6 <= zoom <= 1e6:
+        raise CGXCrossAnalysisError("invalid zoom")
+    import numpy as np
+    xs = np.linspace(-2.0, 2.0, width) / zoom
+    ys = np.linspace(-2.0, 2.0, height) / zoom
+    grid = []
+    for x in xs:
+        row = []
+        for y in ys:
+            state = 0j
+            c = complex(x, y)
+            escape = 0
+            for step in range(max_iter):
+                if abs(state) > 2.0:
+                    escape = step
+                    break
+                state = state * state + c
+            row.append(escape)
+        grid.append(row)
+    return {
+        "schema": "CGX-RAPHAEL-ESCAPE-GRID-REVIEW/0.1",
+        "basis": "dimensionless_complex_plane",
+        "axes": ["real", "imaginary"],
+        "parameters": {"width": width, "height": height, "zoom": zoom,
+                       "max_iter": max_iter},
+        "zero_semantics": "escape_not_observed_before_iteration_limit",
+        "grid": grid,
+        "native_admitted": False,
+        "physical_claim": False,
     }
