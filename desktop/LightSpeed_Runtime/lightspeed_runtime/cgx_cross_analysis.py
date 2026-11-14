@@ -162,3 +162,63 @@ def build_cross_analysis_plan(
 
 
 __all__ = ["CGXCrossAnalysisError", "build_cross_analysis_plan"]
+
+
+def source_hybridisation_candidates(sources: dict[str, bytes]) -> dict[str, Any]:
+    """Bounded static reuse discovery; never imports or executes source modules.
+
+    Byte identity permits payload storage reuse only. Function syntax is a
+    candidate relation, not behavioural equivalence, scientific validation,
+    rights clearance, or permission to replace a role-specific implementation.
+    """
+    import ast
+    import hashlib
+    from collections import defaultdict
+
+    if not isinstance(sources, dict) or not sources or len(sources) > 256:
+        raise CGXCrossAnalysisError("invalid source collection")
+    if any(not isinstance(k, str) or not k or not isinstance(v, bytes)
+           for k, v in sources.items()):
+        raise CGXCrossAnalysisError("invalid source identity or bytes")
+    if sum(map(len, sources.values())) > 5 * 1024 * 1024:
+        raise CGXCrossAnalysisError("source budget exceeded")
+    payloads = defaultdict(list)
+    definitions = defaultdict(lambda: defaultdict(list))
+    unresolved = []
+    for source_id, raw in sorted(sources.items()):
+        digest = hashlib.sha256(raw).hexdigest()
+        payloads[digest].append(source_id)
+        try:
+            tree = ast.parse(raw)
+        except (SyntaxError, ValueError, RecursionError):
+            unresolved.append(source_id)
+            continue
+        for position, node in enumerate(tree.body):
+            if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            fingerprint = hashlib.sha256(ast.dump(node, include_attributes=False).encode()).hexdigest()
+            definitions[node.name][fingerprint].append(
+                {"source_id": source_id, "source_sha256": digest, "body_position": position}
+            )
+    return {
+        "schema": "CGX-SOURCE-HYBRIDISATION-REVIEW/0.1",
+        "source_count": len(sources),
+        "distinct_payload_count": len(payloads),
+        "exact_payload_groups": [
+            {"sha256": h, "occurrences": ids}
+            for h, ids in sorted(payloads.items()) if len(ids) > 1
+        ],
+        "function_candidates": [
+            {"name": name, "syntax_variants": [
+                {"syntax_sha256": h, "occurrences": refs}
+                for h, refs in sorted(variants.items())],
+             "requires": ["dependency_binding", "units_and_frame_if_applicable",
+                          "behavioural_tests", "rights_and_role_scope"]}
+            for name, variants in sorted(definitions.items())
+            if sum(map(len, variants.values())) > 1
+        ],
+        "unparsed_sources": unresolved,
+        "semantic_equivalence_proven": False,
+        "native_admitted": False,
+        "execution_performed": False,
+    }
