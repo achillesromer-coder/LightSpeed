@@ -285,6 +285,38 @@
       "Shorthand layer is not proof of model-weight compression.",
       "Provenance and stable identity do not establish scientific validity or model equivalence.",
       "No mint, release, new root or model deployment authorised by this specification."
-    ]
+    ],
+    "program_scope": {
+      "owner": "Achilles P.A. leads implementation with Neo as Zenith and existing specialists; no duplicate runtime",
+      "system": "One Achilles Dynamic System identity under the existing Cognigrex parent. Private P.A. and public Achilles are permissioned projections, not separate identities, models or data stores.",
+      "priority": "Complete and integrate the existing assistant, agentic, custodial, knowledge, execution and continuity components first; qualify their learning and operations before calling the integrated intelligence complete.",
+      "parallel_experiment": "Separately test a reversible CGX representation of GPT-OSS 120B alone against an unchanged reference. Do not confuse packaging, graph shorthand, weight compression, distillation, or continued training. A successful model-only trial informs but does not establish system-wide fidelity.",
+      "public_boundary": "Public projections use independently released material and separate permission scopes. Private owner context, secrets, unlicensed data and private training examples never automatically flow to the public projection."
+    },
+    "learning_and_evolution": {
+      "intake": "Ingest permitted materials, GPT outputs, local analyses and specialist contributions with source identity, revision, rights, quote or evidence anchors and distinction between observation, hypothesis and model output.",
+      "stages": [
+        "R0 preserve original bytes or resolvable source identity",
+        "R1 reversible extraction and loss accounting",
+        "R2 independently qualify typed knowledge, procedures and contradictions",
+        "Resolve geometry facets and deduplicate against canonical identity",
+        "Evaluate off-line with held-out tasks and provenance checks",
+        "Promote a reversible delta only under existing authority; preserve rejected hypotheses and recovery paths"
+      ],
+      "mechanisms": {
+        "retrieval_memory": "Immediate evidence-linked contextual learning without changing weights",
+        "procedural_learning": "Versioned, tested workflows and skill routing in existing capabilities",
+        "weight_training": "Optional separately authorised, rights-qualified fine-tuning or distillation only after baseline and evaluation; do not imply current ingestion trains weights"
+      },
+      "custodial_rubric": "Apply the existing universal rubric consistently; disclose assumptions and bias, preserve dissent, test symmetry, evidence quality and uncertainty. No claim of absolute neutrality.",
+      "agency": "Persistent identity and bounded operational discretion, explicit authority and ability to decline inappropriate or unsupported tasks; do not equate assistant persona with consciousness or self-granted legal authority.",
+      "evaluation": [
+        "baseline current Achilles P.A. and public-safe projection across representative tasks",
+        "test source fidelity, cross-format resolution, permission isolation and contradictory evidence",
+        "measure task success, context bytes/tokens, inference latency, peak memory and energy where measurable",
+        "test reversible updates, regression and recovery; evaluate weight changes separately if proposed",
+        "qualify independent validation and signed DBR before founder mint"
+      ]
+    }
   }
 }
