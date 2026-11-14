@@ -251,5 +251,40 @@
       "missing_receipt": "HOLD_NOT_LIVE_VERIFIED"
     },
     "activation_status": "SOURCE_CONTRACT_STAGED_ONLY_NOT_A_RUNTIME_COMMAND"
+  },
+  "dynamic_system_research": {
+    "status": "PROPOSED_PRE_MINT_RESEARCH_TARGET",
+    "candidate_name": "Achilles Dynamic System",
+    "identity_policy": "Extend the existing Achilles identity; a single evolving lineage, immutable revisions and rollback under Cognigrex, no parallel root or mint by this record.",
+    "model_reference": {
+      "tag": "gpt-oss:120b",
+      "purpose": "First integrated CGX AI candidate reference backend; qualification and rights pending",
+      "weights_policy": "Keep original bytes content-addressed and separately resolvable; do not assert lossless compression or equivalent reasoning from geometry alone. Current local models remain usable."
+    },
+    "dependency_policy": {
+      "geometry": "T173 proposed catalogue; admit only independently validated facets with stable identities; T174 reserved non-mintable sentinel",
+      "psi": "Upcoming complementary dependency, not assumed implemented",
+      "bootstrap": "Reuse LOAD Lite minimum handshake and LOAD full hydration; existing resolver, FileSpace and DataSpace; HTML, CGX and other wrappers are representations, not new identities."
+    },
+    "handshake": {
+      "bottom_up": "Leaf asserts content hash, type, schema, rights, evidence, capability and revision; parent resolves dependencies and verifies receipt.",
+      "top_down": "Root declares intent, bounded authority, required facets, dependencies and proof criteria; recurse only along relevant paths; fetch missing bytes by hash."
+    },
+    "reasoning_layer": {
+      "geometry": "Encode typed graph structure, routing, reusable procedures, constraints and provenance as nested geometric addresses with explicit reversible mapping. Do not conflate shape with truth.",
+      "model": "Interchangeable inference providers; route by task, capability, budget and measured performance; preserve provenance and versioned audit.",
+      "evolution": "One stable identity with append-only reviewed state transitions, independent tests and rollback; no autonomous self-approval."
+    },
+    "trial": {
+      "stage_1": "Demonstrate deterministic encode/decode on validated or explicitly synthetic small graph; test collision, ordering, invalid facet, missing dependency and rights denial.",
+      "stage_2": "Compare full context to sparse hydration on held-out tasks; report bytes, context tokens, latency, task accuracy, provenance and failures.",
+      "stage_3": "Compare equivalent prompts with reference backend where memory and license permit; record differences, no fidelity claim without measurement.",
+      "stage_4": "Verify independent host round-trip and reproducible package; qualify signed DBR and founder mint decision."
+    },
+    "claim_limits": [
+      "Shorthand layer is not proof of model-weight compression.",
+      "Provenance and stable identity do not establish scientific validity or model equivalence.",
+      "No mint, release, new root or model deployment authorised by this specification."
+    ]
   }
 }
