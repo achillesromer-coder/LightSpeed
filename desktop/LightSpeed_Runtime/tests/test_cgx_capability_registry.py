@@ -131,3 +131,38 @@ def test_romer_twin_shortcall_resolves_current_object_context_route():
 def test_shared_tool_plane_exposes_object_resolver():
     routes = load_capability_routes()
     assert "cgx_resolve_object" in routes["shared_tool_plane"]["tools"]
+
+
+
+def test_interop_shared_references_keep_selector_and_authority_boundaries():
+    import pytest
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review
+    a=capability_interop_review("Achilles")
+    n=capability_interop_review("Neo")
+    assert a==capability_interop_review("Achilles")
+    assert a["view_sha256"]!=n["view_sha256"]
+    shared=set(a["references"]) & set(n["references"])
+    assert all(a["references"][k]==n["references"][k] for k in shared if not k.startswith("surface:"))
+    key="skill:cgx-capability-router"
+    got=capability_interop_review("Achilles",reference=key,expected_view_sha256=a["view_sha256"])
+    assert got["descriptor"]==a["references"][key]
+    assert not got["execution_authorized"] and not got["authority_transfer"]
+    for bad in (None,n["view_sha256"],"0"*64):
+        with pytest.raises(CapabilityRegistryError):
+            capability_interop_review("Achilles",reference=key,expected_view_sha256=bad)
+    with pytest.raises(CapabilityRegistryError):
+        capability_interop_review("Achilles",reference="toolkit:freecad",expected_view_sha256=a["view_sha256"])
+
+
+def test_interop_all_existing_selectors_and_provider_gaps():
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review
+    for selector in load_selector_shortcalls()["selectors"]:
+        view=capability_interop_review(selector)
+        assert sum(k.startswith("skill:") for k in view["references"])==9
+        assert sum(k.startswith("surface:") for k in view["references"])==9
+        assert not view["native_admitted"] and not view["provider_invocation_performed"]
+        got=capability_interop_review(selector,reference="surface:remote-desktop",expected_view_sha256=view["view_sha256"])
+        assert "Remote_Desktop_Commander" in got["metadata"]["provider_candidates"]
+        assert got["metadata"]["provider_binding"]=="UNVERIFIED_AT_RUNTIME"
+        assert not got["execution_authorized"]
+        assert all(k in view["references"] for k in got["metadata"]["route_refs"])

@@ -12,7 +12,7 @@ if str(RUNTIME_ROOT) not in sys.path:
     sys.path.insert(0, str(RUNTIME_ROOT))
 
 from lightspeed_runtime.bridge_health import build_bridge_health
-from lightspeed_runtime.cgx_capability_registry import capability_summary, resolve_shortcall
+from lightspeed_runtime.cgx_capability_registry import capability_summary, resolve_shortcall, capability_interop_review
 from lightspeed_runtime.cgx_cross_analysis import build_cross_analysis_plan
 from lightspeed_runtime.cgx_extension_planner import plan_tool_extension
 from lightspeed_runtime.cgx_object_context import resolve_object_context
@@ -67,7 +67,13 @@ def _required_str(args: dict[str, Any], name: str) -> str:
 
 def dispatch(operation: str, args: dict[str, Any]) -> dict[str, Any]:
     if operation == "capabilities":
-        return capability_summary(_required_str(args, "selector"))
+        selector = _required_str(args, "selector")
+        if args.get("interoperability") is True:
+            return capability_interop_review(selector, reference=args.get("reference"),
+                         expected_view_sha256=args.get("expected_view_sha256"))
+        if args.get("reference") is not None or args.get("expected_view_sha256") is not None:
+            raise BridgeInputError("reference requires interoperability mode")
+        return capability_summary(selector)
     if operation == "resolve_shortcall":
         return resolve_shortcall(
             _required_str(args, "selector"),

@@ -75,10 +75,13 @@ server.registerTool("cgx_get_capabilities", {
   description: "Return the real registered capability/shortcall state for one of the nine CGX selectors.",
   inputSchema: {
     selector: z.string().min(1).describe("Selector name, e.g. Raphael or Römer-Grex"),
+    interoperability: z.boolean().optional().describe("Return source-bound shared capability references instead of the summary"),
+    reference: z.string().max(256).optional().describe("Exact metadata reference from current selector view"),
+    expected_view_sha256: z.string().regex(/^[a-f0-9]{64}$/).optional(),
   },
   annotations: { title: "CGX Capabilities", ...readOnly },
-}, async ({ selector }) => textResult(
-  await runBridge("capabilities", { selector })
+}, async args => textResult(
+  await runBridge("capabilities", args)
 ));
 
 server.registerTool("cgx_resolve_shortcall", {

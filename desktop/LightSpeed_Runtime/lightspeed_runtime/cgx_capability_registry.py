@@ -176,3 +176,110 @@ def capability_summary(selector: str) -> dict[str, Any]:
         "toolkits": profile.get("toolkits") or [],
         "gaps": profile.get("gaps") or [],
     }
+
+
+
+def capability_interop_review(selector: str, *, reference: str | None = None,
+                             expected_view_sha256: str | None = None) -> dict[str, Any]:
+    """Read-only shared catalogue projection; no provider invocation or authority.
+
+    Stable symbolic IDs reference canonical metadata objects across selectors.
+    Ternary roots use the existing transport primitive, not validated geometry.
+    A reference read is bound to the current selector view and exact revision.
+    """
+    import hashlib
+    from lightspeed_runtime.cgx_cross_analysis import pack_nested_review_payload
+
+    def canonical(value):
+        return json.dumps(value, sort_keys=True, separators=(",",":"),
+                          ensure_ascii=True, allow_nan=False).encode("ascii")
+
+    def digest(raw):
+        return hashlib.sha256(raw).hexdigest()
+
+    def read_source(path):
+        raw = path.read_bytes()
+        if not 1 <= len(raw) <= 1024 * 1024:
+            raise CapabilityRegistryError("interop source size")
+        return raw
+
+    toolkit_path = REPO_ROOT / "cgx/domain_templates/toolkit_registry.json"
+    config_path = REPO_ROOT / "plugins/source/selector_packages.json"
+    paths = (DEFAULT_ROUTES_PATH, DEFAULT_SHORTCALLS_PATH, toolkit_path, config_path)
+    raw = [read_source(path) for path in paths]
+    route_registry, shortcalls, toolkit_registry, config = (json.loads(x) for x in raw)
+    validate_capability_routes(route_registry)
+    validate_selector_shortcalls(shortcalls, route_registry)
+    profile = selector_profile(selector, routes=route_registry, shortcalls=shortcalls)
+    toolkits = {}
+    for item in toolkit_registry["toolkits"]:
+        key = item["id"]
+        if key in toolkits:
+            raise CapabilityRegistryError("duplicate toolkit ID")
+        # Do not propagate credential refs, executable paths or secret values.
+        toolkits[key] = {k:item[k] for k in ("id","kind","binding","capabilities","state") if k in item}
+    surfaces = toolkit_registry["interoperability_surfaces"]
+    if any(r not in route_registry["routes"] for v in surfaces.values() for r in v["routes"]):
+        raise CapabilityRegistryError("unknown surface route")
+    if any(k not in toolkits for v in surfaces.values() for k in v["toolkits"]):
+        raise CapabilityRegistryError("unknown surface toolkit")
+    if len(surfaces)>64 or len(profile["routes"])>256 or len(toolkits)>128:
+        raise CapabilityRegistryError("interop catalogue limit")
+
+    values = {}
+    refs = {}
+    def add(key, val):
+        if key in refs:
+            raise CapabilityRegistryError("duplicate metadata reference")
+        encoded=canonical(val)
+        root,_=pack_nested_review_payload(encoded)
+        refs[key]={"sha256":digest(encoded),"ternary_root":root,"bytes":len(encoded)}
+        values[key]=val
+
+    for rid, route in profile["routes"].items():
+        add("route:"+rid, {"route_id":rid, **{k:route[k] for k in
+            ("state","kind","ro","handler","uses","gate","limitation","authority_transfer") if k in route}})
+    for key in profile.get("toolkits") or []:
+        if key not in toolkits:
+            raise CapabilityRegistryError("unknown selector toolkit")
+        add("toolkit:"+key, toolkits[key])
+
+    for name in config["shared_skills"]:
+        if not isinstance(name,str) or not _SHORTCALL_RE.fullmatch(name):
+            raise CapabilityRegistryError("invalid shared skill name")
+        path=REPO_ROOT / "plugins/source/core-skills" / name / "SKILL.md"
+        data=read_source(path)
+        add("skill:"+name, {"skill_id":name,"source_path":path.relative_to(REPO_ROOT).as_posix(),
+                           "source_sha256":digest(data),"source_bytes":len(data),
+                           "execution_authorized":False})
+    for key,surface in sorted(surfaces.items()):
+        # Report missing selector exposure explicitly, never widen it.
+        add("surface:"+key, {
+            "surface_id":key,
+            "route_refs":["route:"+r for r in surface["routes"] if "route:"+r in refs],
+            "unexposed_routes":[r for r in surface["routes"] if "route:"+r not in refs],
+            "toolkit_refs":["toolkit:"+k for k in surface["toolkits"] if "toolkit:"+k in refs],
+            "unexposed_toolkits":[k for k in surface["toolkits"] if "toolkit:"+k not in refs],
+            "provider_candidates":surface["provider_candidates"],
+            "provider_binding":"UNVERIFIED_AT_RUNTIME",
+            "boundary":surface["boundary"],
+        })
+    view={"schema":"CGX-CAPABILITY-INTEROP-REVIEW/0.1",
+          "selector":profile["selector"],"floors":list(profile.get("floors") or []),
+          "source_sha256":{p.relative_to(REPO_ROOT).as_posix():digest(b) for p,b in zip(paths,raw)},
+          "references":dict(sorted(refs.items())),
+          "provider_invocation_performed":False,"authority_transfer":False,
+          "native_admitted":False}
+    stamp=digest(canonical(view))
+    if reference is None:
+        if expected_view_sha256 is not None:
+            raise CapabilityRegistryError("view revision without reference")
+        return {**view,"view_sha256":stamp}
+    if type(reference) is not str or reference not in refs:
+        raise CapabilityRegistryError("reference outside selector view")
+    if expected_view_sha256!=stamp:
+        raise CapabilityRegistryError("stale or missing selector view revision")
+    return {"schema":"CGX-CAPABILITY-METADATA-REFERENCE/0.1","selector":profile["selector"],
+            "view_sha256":stamp,"reference":reference,"descriptor":refs[reference],
+            "metadata":values[reference],"provider_invocation_performed":False,
+            "execution_authorized":False,"authority_transfer":False,"native_admitted":False}
