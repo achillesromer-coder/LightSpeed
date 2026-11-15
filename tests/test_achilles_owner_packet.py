@@ -235,3 +235,38 @@ def test_priority_suffix_task_binding_not_inherited():
     b=module.prepare_packet("same work", "ACHILLES-UNISPACE-DELIVERY-REVIEW-001b", planner=planned)
     assert a["idempotency_fingerprint"]!=b["idempotency_fingerprint"]
     assert not a["execution_request"]["execute"] and not b["execution_request"]["execute"]
+
+def test_owner_packet_composition_and_scoped_skill_review():
+    from copy import deepcopy
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review, CapabilityRegistryError
+    view=capability_interop_review("Achilles")
+    keys=("skill:cgx-capability-router","skill:cgx-handshake","role:achilles")
+    task="ACHILLES-UNISPACE-DELIVERY-REVIEW-001a"
+    def prepare(refs=keys, stamp=view["view_sha256"]):
+        return module.prepare_packet("private instruction",task,planner=planned,
+            skill_references=refs,expected_skill_view_sha256=stamp)
+    packet=prepare()
+    assert packet==prepare(keys[::-1])
+    assert packet["idempotency_fingerprint"]!=prepare(keys[:1])["idempotency_fingerprint"]
+    assert packet["idempotency_fingerprint"]!=module.prepare_packet("private instruction",task,planner=planned)["idempotency_fingerprint"]
+    assert "private instruction" not in json.dumps(packet)
+    assert not packet["skill_review"]["raw_skill_payload_persisted"]
+    stamp=packet["skill_review"]["composition"]["composition_sha256"]
+    def auth(t,k,s,h):return t==task and k==keys[0] and s=="fixture-scope" and h==stamp
+    def read(p=packet,selected=None,scope="fixture-scope",t=task):
+        return module.hydrate_packet_skill_review(p,expected_task_id=t,
+            expected_composition_sha256=stamp,selected_skills=selected or [keys[0]],
+            scope_revision=scope,max_bytes=100000,authorise=auth)
+    raw,receipt=read()
+    assert list(raw)==[keys[0]]
+    assert receipt["payload_bytes"]==len(raw[keys[0]]) and not receipt["execution_authorized"]
+    assert raw[keys[0]].decode("utf-8") not in json.dumps(packet)
+    with pytest.raises(PermissionError):read(selected=[keys[1]])
+    with pytest.raises(PermissionError):read(scope="revoked")
+    with pytest.raises(module.ProfileHold):read(t=task+"b")
+    bad=deepcopy(packet);bad["authorization"]["lease_verified"]=True
+    with pytest.raises(module.ProfileHold):read(bad)
+    bad=deepcopy(packet);bad["skill_review"]["composition"]["authority_transfer"]=True
+    with pytest.raises(CapabilityRegistryError):read(bad)
+    with pytest.raises(module.ProfileHold):prepare(stamp="0"*64)
+    with pytest.raises(module.ProfileHold):prepare(("role:smith",))

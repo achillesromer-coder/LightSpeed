@@ -115,6 +115,8 @@ def prepare_packet(
     private_source_ids: tuple[str, ...] = (),
     profile_path: Path = PROFILE_PATH,
     planner: Callable | None = None,
+    skill_references: tuple[str, ...] = (),
+    expected_skill_view_sha256: str | None = None,
 ) -> dict[str, Any]:
     profile = load_profile(profile_path)
     instruction = instruction.strip()
@@ -137,6 +139,22 @@ def prepare_packet(
         [task_id, project_id, instruction_digest, source_count],
         separators=(",", ":"),
     ))
+    composition = None
+    if skill_references or expected_skill_view_sha256 is not None:
+        if type(skill_references) is not tuple or not skill_references or not expected_skill_view_sha256:
+            raise ProfileHold("ACHILLES_SKILL_COMPOSITION_REQUEST_HOLD")
+        if Path(profile_path).resolve() != PROFILE_PATH.resolve():
+            raise ProfileHold("ACHILLES_SKILL_PROFILE_BINDING_HOLD")
+        if str(RUNTIME_ROOT) not in sys.path:
+            sys.path.insert(0, str(RUNTIME_ROOT))
+        from lightspeed_runtime.cgx_capability_registry import compose_capability_review, CapabilityRegistryError
+        try:
+            composition = compose_capability_review("Achilles", task_id=task_id,
+                expected_view_sha256=expected_skill_view_sha256, references=list(skill_references))
+        except CapabilityRegistryError as exc:
+            raise ProfileHold("ACHILLES_SKILL_COMPOSITION_HOLD") from exc
+        fingerprint = _hash(json.dumps([fingerprint, composition["composition_sha256"]],
+                                       separators=(",", ":")))
     plan = _resolve_plan(instruction, task_id, planner)
     if plan.get("instruction_sha256") not in (None, instruction_digest):
         raise ProfileHold("ACHILLES_INSTRUCTION_ROUTE_HASH_HOLD")
@@ -158,6 +176,9 @@ def prepare_packet(
         "private_source_count": source_count,
         "source_admission": "NOT_INFERRED_FROM_IDENTIFIERS_OR_DIGESTS",
         "supervisor": plan,
+        **({"skill_review": {"composition": composition,
+                            "raw_skill_payload_persisted": False,
+                            "scope_revalidation_required": True}} if composition is not None else {}),
         "existing_execution_entrypoint": "scripts/run_cgx_agent_runtime.py",
         "execution_request": {
             "agent_id": "Achilles", "domain": "emassc",
@@ -189,6 +210,43 @@ def prepare_packet(
     }
 
 
+def hydrate_packet_skill_review(packet: dict, *, expected_task_id: str,
+                                expected_composition_sha256: str,
+                                selected_skills: list[str], scope_revision: str,
+                                max_bytes: int, authorise) -> tuple[dict[str, bytes], dict]:
+    """Revalidate a metadata-only owner packet before scoped skill review.
+
+    The caller supplies an authenticated task, composition anchor and scope
+    callback. No packet flag grants access or establishes a signed lease.
+    """
+    if type(packet) is not dict:
+        raise ProfileHold("ACHILLES_SKILL_PACKET_SHAPE_HOLD")
+    review=packet.get("skill_review")
+    auth=packet.get("authorization")
+    request=packet.get("execution_request")
+    if (packet.get("schema")!=PACKET_SCHEMA or packet.get("state")!="REVIEW_ONLY_NOT_DISPATCHED"
+            or packet.get("output_classification")!="PRIVATE_OWNER_REVIEW_ONLY"
+            or packet.get("selector")!="achilles" or packet.get("Task_ID")!=expected_task_id
+            or packet.get("public_projection_authorized") is not False
+            or type(review) is not dict or review.get("raw_skill_payload_persisted") is not False
+            or review.get("scope_revalidation_required") is not True
+            or type(auth) is not dict or type(request) is not dict
+            or auth.get("owner_decision")!="PENDING" or auth.get("effective_tool_permissions")!=[]
+            or any(auth.get(k) is not False for k in ("lease_verified","native_dbr_admitted",
+                   "canonical_promotion_authorized","external_release_authorized",
+                   "private_source_set_approved"))
+            or auth.get("no_self_approval") is not True or request.get("execute") is not False
+            or request.get("execution_class")!="READ_ONLY"):
+        raise ProfileHold("ACHILLES_SKILL_PACKET_AUTHORITY_HOLD")
+    if str(RUNTIME_ROOT) not in sys.path:
+        sys.path.insert(0, str(RUNTIME_ROOT))
+    from lightspeed_runtime.cgx_capability_registry import hydrate_composed_skill_review
+    return hydrate_composed_skill_review("Achilles",task_id=expected_task_id,
+        composition=review.get("composition"),expected_composition_sha256=expected_composition_sha256,
+        selected_skills=selected_skills,scope_revision=scope_revision,
+        max_bytes=max_bytes,authorise=authorise)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     source = parser.add_mutually_exclusive_group(required=True)
@@ -198,6 +256,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--project-id", default="UniSpace")
     parser.add_argument("--private-source-id", action="append", default=[])
     parser.add_argument("--profile", type=Path, default=PROFILE_PATH)
+    parser.add_argument("--skill-reference", action="append", default=[])
+    parser.add_argument("--skill-view-sha256")
     parser.add_argument("--output", type=Path, help="Optional review metadata JSON, not raw instruction")
     args = parser.parse_args(argv)
     try:
@@ -206,7 +266,9 @@ def main(argv: list[str] | None = None) -> int:
         packet = prepare_packet(instruction, args.task_id,
                                 project_id=args.project_id,
                                 private_source_ids=tuple(args.private_source_id),
-                                profile_path=args.profile)
+                                profile_path=args.profile,
+                                skill_references=tuple(args.skill_reference),
+                                expected_skill_view_sha256=args.skill_view_sha256)
     except (ProfileHold, OSError, json.JSONDecodeError) as exc:
         print(json.dumps({"state": "HOLD", "reason": str(exc)}), file=sys.stderr)
         return 3
