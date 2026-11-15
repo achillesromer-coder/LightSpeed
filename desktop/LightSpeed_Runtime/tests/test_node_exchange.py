@@ -326,3 +326,25 @@ def test_transport_plan_policy_and_fallback():
                dict(allowed=["lan","lan"]),dict(max_metered_bytes=-1)):
         with pytest.raises(NodeExchangeError): plan(**kw)
     with pytest.raises(NodeExchangeError): plan([links[0],links[0]])
+
+
+def test_transport_offer_identity_survives_route_switch():
+    from lightspeed_runtime.node_exchange import bind_transport_offer, build_transfer_envelope_from_manifest
+    env=build_transfer_envelope_from_manifest(source_ref="source:abc",source_sha256="a"*64,
+        size_bytes=32,file_name="x.cgx",source_node_id="desktop",target_node_id="mobile",
+        source_root_id="filespace",target_root_id="mobile-cache",transfer_id="NXFER-1")
+    def offer(mode, e=env, **kw):
+        return bind_transport_offer(e,links=[dict(mode=mode,available=True,
+            permission_granted=True,metered=False,max_payload_bytes=100)],
+            **(dict(allowed=["lan","bluetooth"],scope_revision="scope-1",
+            nonce="a"*32,issued_at="2026-11-15T00:00:00+00:00")|kw))
+    a,b,c=offer("lan"),offer("bluetooth"),offer("https_relay")
+    assert [x["plan"]["mode"] for x in (a,b,c)]==["lan","bluetooth","offline"]
+    assert len({x["transfer_identity_sha256"] for x in (a,b,c)})==1
+    assert len({x["offer_sha256"] for x in (a,b,c)})==3
+    assert not a["execution_authorized"] and not a["plan"]["peer_authenticated"]
+    for key,value in (("target_node_id","other"),("source_sha256","b"*64),
+                      ("size_bytes",33),("target_relative_path","other/x.cgx")):
+        assert offer("lan",dict(env,**{key:value}))["transfer_identity_sha256"]!=a["transfer_identity_sha256"]
+    with pytest.raises(NodeExchangeError): offer("lan",dict(env,target_node_id="desktop"))
+    with pytest.raises(NodeExchangeError): offer("lan",nonce="bad")

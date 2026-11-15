@@ -626,6 +626,46 @@ def plan_transport_handshake(*, links, allowed, payload_bytes, max_metered_bytes
     return plan
 
 
+
+def bind_transport_offer(envelope, *, links, allowed, scope_revision, nonce,
+                         issued_at, max_metered_bytes=0, heartbeat_seconds=60):
+    """Bind a route proposal to an immutable transfer intent, not a grant."""
+    import re
+    if type(envelope) is not dict or envelope.get("schema_version") != TRANSFER_SCHEMA:
+        raise NodeExchangeError("invalid transfer envelope")
+    identity = {}
+    for k in ("transfer_id","source_node_id","target_node_id","source_root_id",
+              "target_root_id"):
+        identity[k] = _health_token(envelope.get(k),96)
+    if identity["source_node_id"] == identity["target_node_id"]:
+        raise NodeExchangeError("peer offer requires distinct nodes")
+    digest = envelope.get("source_sha256")
+    if type(digest) is not str or not re.fullmatch(r"[0-9a-f]{64}",digest):
+        raise NodeExchangeError("invalid transfer digest")
+    identity["source_sha256"] = digest
+    identity["size_bytes"] = envelope.get("size_bytes")
+    for k in ("source_ref","target_relative_path"):
+        v = envelope.get(k)
+        if type(v) is not str or not v or len(v)>1000:
+            raise NodeExchangeError("invalid transfer reference")
+        identity[k] = v
+    _health_token(scope_revision)
+    if type(nonce) is not str or not re.fullmatch(r"[0-9a-f]{32}",nonce):
+        raise NodeExchangeError("invalid offer challenge")
+    _health_time(issued_at)
+    plan = plan_transport_handshake(links=links,allowed=allowed,
+        payload_bytes=identity["size_bytes"],max_metered_bytes=max_metered_bytes,
+        heartbeat_seconds=heartbeat_seconds)
+    offer = {"schema":"CGX-TRANSPORT-OFFER/0.1",
+             "transfer_identity_sha256":_canonical_json_sha256(identity),
+             "source_node_id":identity["source_node_id"],
+             "target_node_id":identity["target_node_id"],
+             "scope_revision":scope_revision,"nonce":nonce,"issued_at":issued_at,
+             "plan":plan,"authority_transfer":False,"execution_authorized":False}
+    offer["offer_sha256"] = _canonical_json_sha256(offer)
+    return offer
+
+
 __all__ = [
     "COMPUTE_RECEIPT_SCHEMA",
     "COMPUTE_SCHEMA",
@@ -637,6 +677,7 @@ __all__ = [
     "build_compute_request",
     "build_exchange_status",
     "plan_transport_handshake",
+    "bind_transport_offer",
     "prepare_remote_health_review",
     "reconcile_remote_health_review",
     "build_transfer_envelope",
